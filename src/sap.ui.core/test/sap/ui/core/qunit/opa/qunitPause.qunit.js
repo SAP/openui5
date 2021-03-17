@@ -76,6 +76,15 @@ sap.ui.define([
 		});
 
 		oOpa.waitFor({
+			matchers: createMatcherForTestMessage({
+				passed: false
+			}),
+			success: function ($Messages) {
+				Opa5.assert.ok($Messages.text().match("Should poll"));
+			}
+		});
+
+		oOpa.waitFor({
 			success: function () {
 				Opa5.assert.deepEqual(Opa5.getWindow()._testSequence, [
 					// opa timeout
@@ -86,7 +95,8 @@ sap.ui.define([
 					"testStart", "onPause", "emitResume", "testDone",
 					// qunit timeout
 					"testStart", "onPause", "emitResume", "testDone",
-					"done"
+					// polling
+					"testStart", "poll: false", "testDone", "done", "poll: true", "poll: true"
 				]);
 			}
 		});

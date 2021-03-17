@@ -110,7 +110,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.NONE;
-			QUnit.config.testTimeout = 30000; // default
+			QUnit.config.testTimeout = 30000;
 		}
 	});
 
@@ -133,6 +133,36 @@ sap.ui.define([
 			success: function () {
 				Opa5.assert.ok(false, "should never get here");
 			}
+		});
+	});
+
+	var callPollForQUnitDone = function (iCount, iLimit) {
+		sap.ui.test.qunitPause.pollForQUnitDone(10000, function (mResult) {
+			window._testSequence.push("poll: " + mResult.qunitDone);
+			if (iCount < iLimit - 1) {
+				callPollForQUnitDone(iCount + 1, iLimit);
+			}
+		});
+	};
+
+	QUnit.module("QUnitPause - poll for QUnit to be done", {
+		beforeEach: function () {
+			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.POLL;
+			callPollForQUnitDone(0, 3);
+		},
+		afterEach: function () {
+			sap.ui.test.qunitPause.pauseRule = sap.ui.test.qunitPause.PAUSE_RULES.NONE;
+		}
+	});
+
+	opaTest("Should poll for QUnit to be done", function (Given, When, Then) {
+		Then.waitFor({
+			viewName: "myView",
+			id: "myButton1",
+			success: function () {
+				Opa5.assert.ok(true, "pass 2");
+			},
+			errorMessage: "Should poll"
 		});
 	});
 

@@ -10,7 +10,8 @@ sap.ui.define("sap/ui/test/qunitPause", [
 	var PAUSE_RULES = {
 		NONE: "none",
 		TIMEOUT: "timeout",
-		ASSERT: "assert"
+		ASSERT: "assert",
+		POLL: "poll"
 	};
 	var mTestTimeouts = {};
 	var _mListeners = {
@@ -20,13 +21,18 @@ sap.ui.define("sap/ui/test/qunitPause", [
 	var _mTestTimeout = {};
 	var paused = false;
 	var _pauseRule = PAUSE_RULES.NONE;
+	var _bQUnitDone = false;
 
 	function shouldPause () {
-		return _pauseRule !== PAUSE_RULES.NONE;
+		return _pauseRule !== PAUSE_RULES.NONE && _pauseRule !== PAUSE_RULES.POLL;
 	}
 
 	function shouldPauseOnAssert () {
 		return _pauseRule.indexOf(PAUSE_RULES.ASSERT) > -1;
+	}
+
+	function shouldPoll () {
+		return _pauseRule.indexOf(PAUSE_RULES.POLL) > -1;
 	}
 
 	function isQUnit2 () {
@@ -151,6 +157,41 @@ sap.ui.define("sap/ui/test/qunitPause", [
 		paused = false;
 	}
 
+	// checks if QUnit is done. Will call fnCallback with the result of the check.
+	// iPollInterval (ms) - the time to wait before checking if QUnit is done
+	function pollForQUnitDone (iPollInterval, fnCallback) {
+		QUnit.begin(function () {
+			_bQUnitDone = false;
+		});
+
+		var bCalled = false;
+		if (!QUnit) {
+			throw new Error("QUnitPause should start polling after QUnit is loaded!");
+		} else if (_bQUnitDone) {
+			fnCallback({
+				qunitDone: true
+			});
+		} else if (shouldPoll()) {
+			QUnit.done(function () {
+				_bQUnitDone = true;
+				if (!bCalled) {
+					fnCallback({
+						qunitDone: true
+					});
+				}
+			});
+
+			setTimeout(function () {
+				if (!_bQUnitDone && !bCalled) {
+					bCalled = true;
+					fnCallback({
+						qunitDone: false
+					});
+				}
+			}, iPollInterval);
+		}
+	}
+
 	function _isKnownRule (sRule) {
 		var bIsKnown = false;
 		for (var sKey in PAUSE_RULES) {
@@ -196,12 +237,14 @@ sap.ui.define("sap/ui/test/qunitPause", [
 		},
 		shouldPause: shouldPause,
 		shouldPauseOnAssert: shouldPauseOnAssert,
+		shouldPoll: shouldPoll,
 		setupAfterQUnit: setupAfterQUnit,
 		setupBeforeQUnit: setupBeforeQUnit,
 		setupBeforeOpaTest: setupBeforeOpaTest,
 		onPause: onPause,
 		onResume: onResume,
 		emitPause: emitPause,
-		emitResume: emitResume
+		emitResume: emitResume,
+		pollForQUnitDone: pollForQUnitDone
 	};
 }, true);
