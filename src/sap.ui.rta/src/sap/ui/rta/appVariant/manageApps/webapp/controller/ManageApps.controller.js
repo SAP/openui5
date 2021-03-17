@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/core/BusyIndicator",
-	"sap/base/i18n/ResourceBundle"
+	"sap/base/i18n/ResourceBundle",
+	"sap/m/MessageToast"
 ], function(
 	Controller,
 	Layer,
@@ -24,7 +25,8 @@ sap.ui.define([
 	RtaAppVariantFeature,
 	RuntimeAuthoring,
 	BusyIndicator,
-	ResourceBundle
+	ResourceBundle,
+	MessageToast
 ) {
 	"use strict";
 
@@ -79,6 +81,7 @@ sap.ui.define([
 
 		_highlightNewCreatedAppVariant: function(aAppVariantOverviewAttributes) {
 			var oTable = this.byId("Table1");
+			oTable.focus();
 
 			aAppVariantOverviewAttributes.forEach(function(oAppVariantDescriptor, index) {
 				if (oAppVariantDescriptor.currentStatus === oI18n.getText("MAA_NEW_APP_VARIANT")
@@ -263,6 +266,7 @@ sap.ui.define([
 		copyId: function(oEvent) {
 			var sCopiedId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
 			AppVariantUtils.copyId(sCopiedId);
+			MessageToast.show(oI18n.getText("MAA_COPY_ID_SUCCESS"));
 		},
 
 		deleteAppVariant: function(oEvent) {
