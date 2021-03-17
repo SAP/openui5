@@ -569,8 +569,9 @@ sap.ui.define([
 			var oIconInfo = IconPool.getIconInfo(this.getIcon());
 
 			// add tooltip if available
-			if (oIconInfo && oIconInfo.text) {
-				sTooltip = oIconInfo.text;
+			if (oIconInfo) {
+				// Fall back to the icon's name as a last resort
+				sTooltip = oIconInfo.text ? oIconInfo.text : oIconInfo.name;
 			}
 		}
 
@@ -615,6 +616,19 @@ sap.ui.define([
 
 		return !bAlreadyHasSelfReference && this._getText() &&
 			(aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent);
+	};
+
+	/*
+	* Determines whether a reference to the tooltip should be added in aria-labelledby
+	*
+	* @returns {boolean}
+	* @private
+	*/
+	Button.prototype._determineTooltipReferencePresence = function() {
+		var bHasLabels = this.getAriaLabelledBy().length > 0 || LabelEnablement.getReferencingLabels(this).length > 0;
+
+		// Should be true only for icon-only buttons which aren't labelled
+		return this.getIcon() && !(this.getText() || bHasLabels);
 	};
 
 	return Button;
