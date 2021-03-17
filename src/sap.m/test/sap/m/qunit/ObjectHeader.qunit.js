@@ -317,7 +317,7 @@ sap.ui.define([
 
 	QUnit.test("Flag Rendering Position", function(assert) {
 
-		assert.ok(Math.abs(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop - jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop) <= 1,
+		assert.ok(Math.abs(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop - jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop) <= 2,
 		"Attribute and flag should be rendered on the same row");
 	});
 
