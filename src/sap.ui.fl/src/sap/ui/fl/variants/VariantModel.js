@@ -1027,8 +1027,7 @@ sap.ui.define([
 			// TODO: To be removed in a separate change
 			// try-catch added to prevent FlexState initialize checks, since many tests use fake components / fake responses
 			try {
-				var oVariantsMap = VariantManagementState.getContent(this.sFlexReference);
-				merge(oVariantsMap, oStandardVariant);
+				VariantManagementState.addFakeStandardVariant(this.sFlexReference, oStandardVariant);
 			} catch (oError) {
 				Log.error("Variants Map was not found: " + oError.message);
 			}
@@ -1122,7 +1121,7 @@ sap.ui.define([
 		};
 	};
 
-	function _handleDirtyChanges(oFlexController, aCopiedVariantDirtyChanges, sVariantManagementReference, oAppComponent) {
+	function handleDirtyChanges(oFlexController, aCopiedVariantDirtyChanges, sVariantManagementReference, oAppComponent) {
 		if (!this._bDesignTimeMode) {
 			return oFlexController.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges, oAppComponent)
 				.then(function(oResponse) {
@@ -1224,7 +1223,7 @@ sap.ui.define([
 						vReference: sSourceVariantReference,
 						model: this
 					})
-						.then(_handleDirtyChanges.bind(this, this.oFlexController, aCopiedVariantDirtyChanges, sVariantManagementReference, oAppComponent));
+						.then(handleDirtyChanges.bind(this, this.oFlexController, aCopiedVariantDirtyChanges, sVariantManagementReference, oAppComponent));
 				}.bind(this));
 		}.bind(this, sVMReference, oAppComponent, mParameters), this, sVMReference)
 			.then(function() {
@@ -1426,6 +1425,7 @@ sap.ui.define([
 		}.bind(this));
 		return this._oVariantSwitchPromise
 			.then(function() {
+				VariantManagementState.clearFakedStandardVariants(this.sFlexReference);
 				VariantManagementState.resetContent(this.sFlexReference);
 				//re-initialize hash data and remove existing parameters
 				if (!bSkipURLHandling) {
