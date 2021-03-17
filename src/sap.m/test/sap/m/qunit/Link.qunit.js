@@ -491,23 +491,30 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oControl = new Link({text: "Text", href: "HRef"});
-		assert.ok(!!oControl.getAccessibilityInfo, "Link has a getAccessibilityInfo function");
-		var oInfo = oControl.getAccessibilityInfo();
-		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		var oControl = new Link({ text: "Text", href: "HRef" }),
+			oInfo = oControl.getAccessibilityInfo(),
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 		assert.strictEqual(oInfo.role, "link", "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK"), "Type");
+		assert.strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_LINK"), "Type");
 		assert.strictEqual(oInfo.description, "Text", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
-		oControl.setText("");
+
+
+		oControl.setEmphasized(true);
+		oControl.setSubtle(true);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.type, undefined, "No type, when no text");
+		assert.strictEqual(oInfo.description,  "Text " + oResourceBundle.getText("LINK_EMPHASIZED")
+			+ " " + oResourceBundle.getText("LINK_SUBTLE"), "Emphasized/Subtle information is added");
+
+		oControl.setText("");
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "HRef", "Description");
-		assert.strictEqual(oInfo.focusable, false, "Focusable");
+		assert.strictEqual(oInfo.type, undefined, "No type, when no text");
+		assert.strictEqual(oInfo.focusable, false, "Not focusable when disabled");
+
 		oControl.destroy();
 	});
 

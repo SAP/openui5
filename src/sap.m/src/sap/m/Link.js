@@ -384,10 +384,21 @@ function(
 	 * @returns {Object} The <code>sap.m.Link</code>  accessibility information
 	 */
 	Link.prototype.getAccessibilityInfo = function() {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sEmphasizedInfo = this.getEmphasized() ? oResourceBundle.getText("LINK_EMPHASIZED") : "",
+			sSubtleInfo = this.getSubtle() ? oResourceBundle.getText("LINK_SUBTLE") : "",
+			sText = this.getText(),
+			sDescription = sText;
+
+		if (sText) {
+			sEmphasizedInfo && (sDescription += " " + sEmphasizedInfo);
+			sSubtleInfo && (sDescription += " " + sSubtleInfo);
+		}
+
 		return {
 			role: "link",
-			type: this.getText() ? sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK") : undefined,
-			description: this.getText() || this.getHref() || "",
+			type: sText ? oResourceBundle.getText("ACC_CTR_TYPE_LINK") : undefined,
+			description: sDescription,
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()
 		};
