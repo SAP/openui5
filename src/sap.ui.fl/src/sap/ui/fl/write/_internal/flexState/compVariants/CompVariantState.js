@@ -334,12 +334,13 @@ sap.ui.define([
 			command: mPropertyBag.command,
 			generator: mPropertyBag.generator
 		};
-		// favorite and executeOnSelection have to be persisted within the content for variants
 		if (oChangeSpecificData.isVariant) {
-			oInfo.favorite = !!oChangeSpecificData.favorite;
+			oInfo.favorite = oChangeSpecificData.favorite;
+			// executeOnSelection has to be persisted within the content for variants
 			oInfo.content.executeOnSelection = oChangeSpecificData.content.executeOnSelection || !!oChangeSpecificData.executeOnSelection;
-			oInfo.contexts = oChangeSpecificData.contexts || {};
+			oInfo.contexts = oChangeSpecificData.contexts;
 		}
+
 
 		var FlexObjectClass = oChangeSpecificData.isVariant ? CompVariant : Change;
 		var oFile = FlexObjectClass.createInitialFileContent(oInfo);
@@ -413,25 +414,26 @@ sap.ui.define([
 		if (mPropertyBag.name) {
 			oVariant.setText("variantName", mPropertyBag.name);
 		}
+
+		if (mPropertyBag.favorite !== undefined) {
+			oVariant.storeFavorite(mPropertyBag.favorite);
+		}
 		var oContent = oVariant.getContent();
 		var oContentToBeWritten = mPropertyBag.content || oContent;
 
-		["favorite", "executeOnSelection"].forEach(function(sParam) {
-			if (mPropertyBag[sParam] !== undefined) {
-				oContentToBeWritten[sParam] = mPropertyBag[sParam];
-			} else if (!(mPropertyBag.revert && oContentToBeWritten[sParam] !== undefined) && oContent[sParam] !== undefined) {
-				// in case of revert triggered by undo
-				oContentToBeWritten[sParam] = oContent[sParam];
-			}
-		});
+		if (mPropertyBag.executeOnSelection !== undefined) {
+			oContentToBeWritten.executeOnSelection = mPropertyBag.executeOnSelection;
+		} else if (!(mPropertyBag.revert && oContentToBeWritten.executeOnSelection !== undefined) && oContent.executeOnSelection !== undefined) {
+			// in case of revert triggered by undo
+			oContentToBeWritten.executeOnSelection = oContent.executeOnSelection;
+		}
 
 		oVariant.setContent(oContentToBeWritten);
 		// also update the runtime instance
-		oVariant.setFavorite(!!oContentToBeWritten.favorite);
 		oVariant.setExecuteOnSelection(!!oContentToBeWritten.executeOnSelection);
 
 		if (mPropertyBag.contexts) {
-			oVariant.setContexts(mPropertyBag.contexts);
+			oVariant.storeContexts(mPropertyBag.contexts);
 		}
 
 		return oVariant;

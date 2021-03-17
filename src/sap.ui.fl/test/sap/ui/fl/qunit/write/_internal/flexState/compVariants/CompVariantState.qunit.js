@@ -89,7 +89,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("also stores the default executeOnSelection and favorite and contexts", function (assert) {
+		QUnit.test("does not store the default executeOnSelection and favorite and contexts", function (assert) {
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
 			var mPropertyBag = {
@@ -111,8 +111,6 @@ sap.ui.define([
 				content: {
 					executeOnSelection: false
 				},
-				favorite: false,
-				contexts: {},
 				fileType: "variant",
 				layer: Layer.CUSTOMER,
 				namespace: "apps/the.app.component/changes/",
@@ -581,9 +579,10 @@ sap.ui.define([
 				});
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
+				assert.equal(oVariant._oDefinition.favorite, true, "the favorite flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: true,
-					favorite: true
+					executeOnSelection: true
 				}, "1: after an update... is the content is correct");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 
@@ -603,9 +602,10 @@ sap.ui.define([
 				});
 				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
+				assert.equal(oVariant._oDefinition.favorite, false, "the favorite flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {
 					executeOnSelection: true,
-					favorite: false,
 					someKey: "someValue"
 				}, "2: after an update... is the content is correct");
 				assert.equal(oVariant.getText("variantName"), "myNewName", "and the name is updated");
@@ -619,9 +619,10 @@ sap.ui.define([
 				});
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
+				assert.equal(oVariant._oDefinition.favorite, true, "the favorite flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: true,
-					favorite: true
+					executeOnSelection: true
 				}, "3: after a revert... is the content is correct");
 				assert.equal(oVariant.getText("variantName"), "initialName", "and the name is also reverted");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
@@ -639,9 +640,10 @@ sap.ui.define([
 						role: ["someOtherRole"]
 					}
 				});
+				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
+				assert.equal(oVariant._oDefinition.favorite, false, "the favorite flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {
 					executeOnSelection: true,
-					favorite: false,
 					someKey: "someValue"
 				}, "4: after an update... is the content is correct");
 				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
@@ -657,9 +659,10 @@ sap.ui.define([
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
+				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
+				assert.equal(oVariant._oDefinition.favorite, true, "the favorite flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: true,
-					favorite: true
+					executeOnSelection: true
 				}, "5: after a revert... is the content is correct");
 
 				// (update, update, revert, update, revert, <<REVERT>>)
@@ -668,9 +671,10 @@ sap.ui.define([
 					reference: sComponentId,
 					persistencyKey: sPersistencyKey
 				});
+				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
+				assert.equal(oVariant._oDefinition.favorite, false, "the favorite flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: false,
-					favorite: false
+					executeOnSelection: false
 				}, "6: after a revert... is the content is correct");
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data entries are present");
 				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");

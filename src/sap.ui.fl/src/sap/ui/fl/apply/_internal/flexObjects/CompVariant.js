@@ -181,10 +181,28 @@ sap.ui.define([
 		return this.isReadOnly() || isReadOnlyDueToOriginalLanguage(this.getOriginalLanguage());
 	};
 
+	/**
+	 * Sets the favorite flag of the runtime instance as well as the persistent representation.
+	 * This results in setting the definition as well as flagging the entity as 'dirty'.
+	 *
+	 * @param {boolean} bFavorite - Boolean to which the favorite flag should be set
+	 *
+	 * @public
+	 */
+	CompVariant.prototype.storeFavorite = function (bFavorite) {
+		this._oDefinition.favorite = bFavorite;
+		this.setState(Change.states.DIRTY);
+		this.setFavorite(bFavorite);
+	};
+
 	CompVariant.createInitialFileContent = function (oPropertyBag) {
 		var oNewFile = Change.createInitialFileContent(oPropertyBag);
-		oNewFile.contexts = oPropertyBag.contexts || {};
-		oNewFile.favorite = oPropertyBag.favorite;
+		if (oPropertyBag.contexts) {
+			oNewFile.contexts = oPropertyBag.contexts;
+		}
+		if (oPropertyBag.favorite !== undefined) {
+			oNewFile.favorite = oPropertyBag.favorite;
+		}
 
 		// TODO: clean up the createInitialFileContent within the Change class plus create a base class FlexObject
 		return _pick(oNewFile, [
@@ -213,7 +231,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	CompVariant.prototype.setContexts = function (mContexts) {
+	CompVariant.prototype.storeContexts = function (mContexts) {
 		this.setProperty("contexts", mContexts);
 		this._oDefinition.contexts = mContexts;
 		this.setState(Change.states.DIRTY);
