@@ -42,7 +42,11 @@ sap.ui.define([
 				jQueryDOM("body").append(_$Component).addClass("sapUiOpaBodyComponent");
 
 				// create and place the component into html
-				_oComponentContainer = new ComponentContainer({component: oComponent});
+				_oComponentContainer = new ComponentContainer({
+					component: oComponent,
+					height: "100%",
+					width: "100%"
+				});
 
 				_oComponentContainer.placeAt(sId);
 			});
