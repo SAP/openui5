@@ -132,10 +132,31 @@ sap.ui.define([
 				reference: "test.app",
 				componentData: {}
 			};
+			var sCacheKey = "abc";
+			sandbox.stub(ManifestUtils, "getCacheKeyFromAsyncHints").returns(sCacheKey);
 			return Loader.loadFlexData(mPropertyBag).then(function (oResult) {
 				assert.equal(oResult.changes.changes.length, 0, "no changes were loaded");
 				assert.equal(this.oStorageCompleteFlexDataStub.callCount, 0, "and Storage.completeFlexData was NOT called");
 				assert.equal(this.oStorageLoadFlexDataStub.callCount, 1, "and Storage.loadFlexData was called");
+				assert.equal(this.oStorageLoadFlexDataStub.getCall(0).args[0].cacheKey, sCacheKey, "the cache key was passed correct");
+			}.bind(this));
+		});
+
+		QUnit.test("when 'loadChanges' is called with reinitialize", function (assert) {
+			var sCacheKey = "abc";
+			sandbox.stub(ManifestUtils, "getCacheKeyFromAsyncHints").returns(sCacheKey);
+
+			var mPropertyBag = {
+				manifest: this.oManifest,
+				reference: "test.app",
+				componentData: {},
+				reInitialize: true
+			};
+			return Loader.loadFlexData(mPropertyBag).then(function (oResult) {
+				assert.equal(oResult.changes.changes.length, 0, "no changes were loaded");
+				assert.equal(this.oStorageCompleteFlexDataStub.callCount, 0, "and Storage.completeFlexData was NOT called");
+				assert.equal(this.oStorageLoadFlexDataStub.callCount, 1, "and Storage.loadFlexData was called");
+				assert.equal(this.oStorageLoadFlexDataStub.getCall(0).args[0].cacheKey, undefined, "the cache key was NOT passed");
 			}.bind(this));
 		});
 	});
