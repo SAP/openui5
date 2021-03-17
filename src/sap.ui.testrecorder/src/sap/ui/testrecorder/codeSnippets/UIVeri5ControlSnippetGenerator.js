@@ -42,7 +42,8 @@ sap.ui.define([
 			} else if (mAssertion.propertyType === "boolean") {
 				sMatcher = ".toBeTruthy()";
 			} else {
-				sMatcher = '.toEqual("' + mAssertion.expectedValue + '")';
+				var sExpectedValue = this._escapeQuotes(mAssertion.expectedValue);
+				sMatcher = '.toEqual("' + sExpectedValue + '")';
 			}
 
 			return 'expect(' + sSelector + '.asControl().getProperty("' + mAssertion.propertyName + '"))' + sMatcher;
