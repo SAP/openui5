@@ -203,11 +203,6 @@ html.sap-desktop .sapMDialog {
 }
 
 .sapMDialog.sapUiPopupWithPadding:not(.sapUiNoContentPadding) {
-
-	&.sapMDialogWithScrollCont .sapMDialogScrollCont {
-		height: 100%;
-	}
-
 	.sapMDialogScrollCont {
 		padding: @_sap_m_Dialog_Padding;
 
@@ -225,21 +220,6 @@ html.sap-desktop .sapMDialog {
 .sapMMessageDialog .sapMDialogScrollCont {
 	box-sizing: border-box;
 	padding: 1rem;
-}
-
-.sapMDialogWithScrollCont .sapMDialogScroll {
-	/*
-	  This property together with the position: absolute in sapMDialogScrollCont fixes the browser bug stated here:
-	  http://stackoverflow.com/questions/8468066/child-inside-parent-with-min-height-100-not-inheriting-height
-  */
-	position: relative;
-}
-
-.sapMDialogWithScrollCont .sapMDialogScrollCont {
-	height: 100%;
-	padding: 0;
-	position: absolute;
-	width: 100%;
 }
 
 .sapMActionSheetDialog .sapMDialogScrollCont {

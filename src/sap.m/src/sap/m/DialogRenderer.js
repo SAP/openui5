@@ -103,10 +103,6 @@ sap.ui.define([
 			modal: true
 		});
 
-		if (oDialog._forceDisableScrolling) {
-			oRM.class("sapMDialogWithScrollCont");
-		}
-
 		if (oSubHeader && oSubHeader.getVisible()) {
 			oRM.class("sapMDialogWithSubHeader");
 			if (oSubHeader.getDesign() == library.ToolbarDesign.Info) {
