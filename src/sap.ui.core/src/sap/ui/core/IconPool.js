@@ -924,6 +924,7 @@ sap.ui.define([
 			var parts,
 				info,
 				async,
+				oLoaded,
 				nameIsURI = IconPool.isIconURI(iconName);
 
 			if (!iconName) {
@@ -987,7 +988,7 @@ sap.ui.define([
 
 			// load icon metadata if not available (except for default collection)
 			if (info === undefined && collectionName !== undefined) {
-				var oLoaded = IconPool._loadFontMetadata(collectionName, async);
+				oLoaded = IconPool._loadFontMetadata(collectionName, async);
 			}
 			if (async) {
 				if (oLoaded) {
@@ -999,12 +1000,10 @@ sap.ui.define([
 						}
 						return info;
 					});
+				} else if (loadingMode === "async") {
+					return Promise.resolve(info);
 				} else {
-					if (loadingMode === "async") {
-						return Promise.resolve(info);
-					} else {
-						info = getInfo();
-					}
+					info = getInfo();
 				}
 			} else {
 				// refresh info if needed and return it
@@ -1275,46 +1274,44 @@ sap.ui.define([
 
 					mFontRegistry[collectionName].metadataLoaded = oPromise;
 					return oPromise;
-				} else {
-					if (oConfig.metadataURI) {
-						if (mFontRegistry[collectionName].metadataXhr) { // there is an async request ongoing
-							// the async request is aborted before the sync request is sent
-							mFontRegistry[collectionName].metadataXhr.abort("Replaced by sync request");
-							mFontRegistry[collectionName].metadataXhr = null;
-						}
-						Log.warning("Synchronous loading of font meta data in IconPool, due to .getIconInfo() call" +
-							" for '" + collectionName + "'. Use loading mode 'async' to avoid this call.", "SyncXHR", null, function() {
-							return {
-								type: "SyncXHR",
-								name: "IconPool"
-							};
-						});
-						// load the metadata synchronously
-						jQuery.ajax(oConfig.metadataURI, {
-							dataType: "json",
-							async: false,
-							success: function (oJSON) {
-								loadFont(oJSON);
-								if (mFontRegistry[collectionName].metadataLoadedResolve) {
-									// resolve the Promise for the async request
-									mFontRegistry[collectionName].metadataLoadedResolve();
-									delete mFontRegistry[collectionName].metadataLoadedResolve;
-								}
-							},
-							error: function () {
-								if (mFontRegistry[collectionName].metadataLoadedResolve) {
-									// resolve the Promise for the async request
-									mFontRegistry[collectionName].metadataLoadedResolve();
-									delete mFontRegistry[collectionName].metadataLoadedResolve;
-								}
-								Log.error("An error occurred loading the font metadata for collection '" + collectionName + "'");
-								mFontRegistry[collectionName].metadataLoaded = false;
-							}
-						});
-					} else {
-						// pass on the configuration object
-						loadFont(oConfig.metadata);
+				} else if (oConfig.metadataURI) {
+					if (mFontRegistry[collectionName].metadataXhr) { // there is an async request ongoing
+						// the async request is aborted before the sync request is sent
+						mFontRegistry[collectionName].metadataXhr.abort("Replaced by sync request");
+						mFontRegistry[collectionName].metadataXhr = null;
 					}
+					Log.warning("Synchronous loading of font meta data in IconPool, due to .getIconInfo() call" +
+						" for '" + collectionName + "'. Use loading mode 'async' to avoid this call.", "SyncXHR", null, function() {
+						return {
+							type: "SyncXHR",
+							name: "IconPool"
+						};
+					});
+					// load the metadata synchronously
+					jQuery.ajax(oConfig.metadataURI, {
+						dataType: "json",
+						async: false,
+						success: function (oJSON) {
+							loadFont(oJSON);
+							if (mFontRegistry[collectionName].metadataLoadedResolve) {
+								// resolve the Promise for the async request
+								mFontRegistry[collectionName].metadataLoadedResolve();
+								delete mFontRegistry[collectionName].metadataLoadedResolve;
+							}
+						},
+						error: function () {
+							if (mFontRegistry[collectionName].metadataLoadedResolve) {
+								// resolve the Promise for the async request
+								mFontRegistry[collectionName].metadataLoadedResolve();
+								delete mFontRegistry[collectionName].metadataLoadedResolve;
+							}
+							Log.error("An error occurred loading the font metadata for collection '" + collectionName + "'");
+							mFontRegistry[collectionName].metadataLoaded = false;
+						}
+					});
+				} else {
+					// pass on the configuration object
+					loadFont(oConfig.metadata);
 				}
 			}
 		};
