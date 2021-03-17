@@ -63,7 +63,8 @@ sap.ui.define([
 	// shortcut for sap.m.ListMode
 	var ListMode = library.ListMode;
 
-
+	// shortcut for sap.m.WrappingType
+	var WrappingType = library.WrappingType;
 
 	/**
 	 * The TablePersoDialog can be used to display and allow modification of personalization settings relating to a Table. It displays the columns of the table that it refers to by using
@@ -180,6 +181,8 @@ sap.ui.define([
 			type: "Active",
 			cells: [
 				new Label({
+					wrapping: true,
+					wrappingType: WrappingType.Hyphenated,
 					text: "{Personalization>text}"
 				})
 			],
