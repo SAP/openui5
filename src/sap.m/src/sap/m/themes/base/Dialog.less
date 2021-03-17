@@ -316,7 +316,6 @@ html.sap-desktop .sapMDialog {
 .sapMDialogResizing * {
 	-moz-user-select: none;
 	-webkit-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 }
 
@@ -397,10 +396,6 @@ html.sap-desktop .sapMDialog {
 			top: 2px;
 			border: @sapUiContentFocusWidth dotted @sapUiContentFocusColor;
 			pointer-events: none;
-		}
-
-		html[data-sap-ui-browser^="ie"] &::after {
-			border: @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
 		}
 	}
 

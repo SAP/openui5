@@ -135,7 +135,6 @@
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: -moz-none;
-	-ms-user-select: none;
 }
 
 .sapMGTHdrTxt > .sapMGTTitle,
@@ -506,20 +505,10 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	}
 }
 
-/* Fix for IE not displaying items in line */
-html[data-sap-ui-browser*='ie'] .sapMGTLineMode .sapMGTTouchArea {
-	margin-bottom: 0px;
-	margin-top: 0px;
-}
-html[data-sap-ui-browser*='ie'] .sapUiSizeCompact .sapMGTLineMode .sapMGTTouchArea {
-	margin-top: 2px;
-	margin-bottom: 0px;
+.sapMGTLineMode .sapMGTLineModeFailedIcon {
+	text-align: start;
 }
 
-/* IE does not support text-align: start, this is a workaround:*/
-html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
-	text-align: right;
-}
 /* COMPACT */
 .sapUiMedia-GenericTileDeviceSet-small {
 	&.sapUiSizeCompact, .sapUiSizeCompact {
@@ -556,7 +545,6 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		user-select: none;
 		-webkit-user-select: none;
 		-moz-user-select: -moz-none;
-		-ms-user-select: none;
 		-webkit-text-size-adjust:100%;
 	}
 
@@ -785,7 +773,7 @@ html[dir=rtl] .sapMGenericTileFtrFldTxt {
 
 /* the max-height is calculated the same as webkit-line-clamping and supported to work when
 the screen size changes between small and large (e.g. mobile devices auto rotation) without rerendering*/
-html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+html[data-sap-ui-browser*='ff'] {
 	.sapMGT.sapMGTHeaderMode .sapMGTHdrContent .sapMTextMaxLine {
 		max-height: 6.85rem !important;
 	}
@@ -801,13 +789,13 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 		max-height: 2.36rem;
 	}
 
-	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+	html[data-sap-ui-browser*='ff'] {
 		&.sapMGT.sapMGTHeaderMode > .sapMGTHdrContent .sapMTextMaxLine {
 			max-height: 5.9rem !important;
 		}
 	}
 
-	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+	html[data-sap-ui-browser*='ff'] {
 		&.sapMGT:not(.sapMGTHeaderMode) > .sapMGTHdrContent .sapMTextMaxLine {
 			max-height: 3.54rem !important;
 		}
