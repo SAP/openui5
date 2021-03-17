@@ -1,5 +1,6 @@
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 	"sap/ui/model/json/JSONModel",
@@ -7,6 +8,7 @@ sap.ui.define([
 	"sap/ui/rta/dttool/util/DTToolUtils"
 ], function (
 	jQuery,
+	Log,
 	Controller,
 	ControlsInfo,
 	JSONModel,
@@ -81,13 +83,13 @@ sap.ui.define([
 		/**
 		 * Called when the iFrame is ready to receive messages
 		 */
-		onIFrameReady: function () {
+		onIFrameReady: function (oPayload) {
 			this.bIFrameReady = true;
 
 			if (this.sCompName) {
 				this.oPostMessageBus.publish({
-					target: DTToolUtils.getIframeWindow(),
-					origin: DTToolUtils.getIframeWindow().origin,
+					target: DTToolUtils.getIframeWindow(oPayload.source.frameElement.id),
+					origin: DTToolUtils.getIframeWindow(oPayload.source.frameElement.id).origin,
 					channelId: "dtTool",
 					eventId: "setComponent",
 					data: {
@@ -382,7 +384,7 @@ sap.ui.define([
 					});
 				}
 			} catch (ex) {
-				//jQuery.sap.log.error("Invalid effective DT data");
+				Log.error("Invalid effective DT data");
 			}
 		},
 

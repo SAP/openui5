@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/m/App",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Core",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	App,
+	XMLView,
 	Core,
 	ComponentContainer,
 	UIComponent,
@@ -121,8 +123,8 @@ sap.ui.define([
 		before: function(assert) {
 			var done = assert.async();
 
-			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null,
-			function(viewContent) {
+			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null, function(viewContent) {
+				var oViewPromise;
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
 						manifest: {
@@ -135,11 +137,13 @@ sap.ui.define([
 					},
 					createContent: function() {
 						var oApp = new App(this.createId("mockapp"));
-						var oView = sap.ui.xmlview({
+						oViewPromise = XMLView.create({
 							id: this.createId("mockview"),
-							viewContent: viewContent
+							definition: viewContent
+						}).then(function(oView) {
+							oApp.addPage(oView);
+							return oView.loaded();
 						});
-						oApp.addPage(oView);
 						return oApp;
 					}
 				});
@@ -148,7 +152,7 @@ sap.ui.define([
 					component: this.oComp
 				}).placeAt("qunit-fixture");
 
-				done();
+				oViewPromise.then(done);
 			}.bind(this));
 		},
 		after: function() {

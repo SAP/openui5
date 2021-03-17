@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/util/LibraryInfo",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/rta/dttool/util/DTToolUtils",
+	"sap/base/util/merge",
 	"sap/base/Log"
 ], function (
 	jQuery,
@@ -33,6 +34,7 @@ sap.ui.define([
 	LibraryInfo,
 	HashChanger,
 	DTToolUtils,
+	merge,
 	Log
 ) {
 	"use strict";
@@ -167,7 +169,7 @@ sap.ui.define([
 						className: sClassName
 					};
 					if (oContext.getProperty("NOPEcreateTemplate")) {
-						jQuery.extend(oData, {
+						merge(oData, {
 							module: oContext.getProperty("createTemplate")
 						});
 					}
@@ -568,9 +570,9 @@ sap.ui.define([
 
 				oDTData.propertiesList.forEach(function (oProperty) {
 					if (mElmntProps[oProperty.name] !== undefined) {
-						jQuery.extend(oProperty, {currentValue: mElmntProps[oProperty.name]});
+						merge(oProperty, {currentValue: mElmntProps[oProperty.name]});
 					} else {
-						jQuery.extend(oProperty, {currentValue: oProperty.defaultValue});
+						merge(oProperty, {currentValue: oProperty.defaultValue});
 					}
 				});
 
@@ -598,7 +600,7 @@ sap.ui.define([
 
 			delete oRuntimeData._element;
 
-			oData = jQuery.extend(true, {}, oRuntimeData, oDTData);
+			oData = merge(true, {}, oRuntimeData, oDTData);
 
 			var oElement = oData._element;
 			delete oData._element;

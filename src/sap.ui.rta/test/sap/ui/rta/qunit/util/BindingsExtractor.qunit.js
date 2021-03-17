@@ -1,10 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/m/Button"
-],
-function (
+], function(
+	XMLView,
 	BindingsExtractor,
 	Button
 ) {
@@ -19,10 +20,17 @@ function (
 	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
 	QUnit.module("Given a complex test view with oData Model...", {
 		before: function () {
-			this.oView = sap.ui.xmlview("idMain1", "sap.ui.rta.test.additionalElements.ComplexTest");
-			this.oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			return this.oView.getController().isDataReady();
+			return XMLView.create({
+				id: "idMain1",
+				viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
+			}).then(function(oView) {
+				this.oView = oView;
+				return oView.loaded();
+			}.bind(this)).then(function() {
+				this.oView.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				return this.oView.getController().isDataReady();
+			}.bind(this));
 		},
 		after: function () {
 			this.oView.destroy();

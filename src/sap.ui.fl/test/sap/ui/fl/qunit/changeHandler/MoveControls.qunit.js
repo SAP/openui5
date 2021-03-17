@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectHeader",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/ComponentContainer",
@@ -21,6 +22,7 @@ sap.ui.define([
 	Button,
 	ObjectAttribute,
 	ObjectHeader,
+	XMLView,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	ComponentContainer,
@@ -694,7 +696,6 @@ sap.ui.define([
 			// -- -- -- -- ObjectAttribute2
 			// -- -- Button
 
-			// define xml-structure for xmlView
 			var oXmlString =
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 						'xmlns:layout="sap.ui.layout" ' +
@@ -710,6 +711,7 @@ sap.ui.define([
 						'</layout:content>' +
 					'</layout:VerticalLayout>' +
 				'</mvc:View>';
+			var oViewPromise;
 
 			var Comp = UIComponent.extend("sap.ui.rta.control.enabling.comp", {
 				metadata: {
@@ -721,65 +723,51 @@ sap.ui.define([
 					}
 				},
 				createContent: function() {
-					// store it in outer scope
-					var oView = sap.ui.xmlview({
+					oViewPromise = XMLView.create({
 						id: this.createId("view"),
-						viewContent: oXmlString
+						definition: oXmlString
+					}).then(function(oView) {
+						return oView.loaded();
 					});
-					return oView;
 				}
-
 			});
 			this.oUiComponent = new Comp("comp");
 
-			// Place component in container and display
 			this.oUiComponentContainer = new ComponentContainer({
 				component: this.oUiComponent
 			});
 			this.oUiComponentContainer.placeAt("qunit-fixture");
 
-			this.oRootControl = this.oUiComponent.getRootControl();
-			this.oGlobalLayout = this.oRootControl.byId(myLayoutId);
-			this.oGlobalObjectHeader = this.oRootControl.byId(myObjectHeaderId);
-			this.oGlobalAttribute = this.oRootControl.byId(myObjectAttributeId);
-			this.oGlobalAttribute2 = this.oRootControl.byId(myObjectAttributeId2);
-			this.oGlobalButton = this.oRootControl.byId(myButtonId);
+			return oViewPromise.then(function(oView) {
+				this.oRootControl = oView;
+				this.oGlobalLayout = this.oRootControl.byId(myLayoutId);
+				var oGlobalLayoutId = this.oGlobalLayout.getId();
+				this.oGlobalObjectHeader = this.oRootControl.byId(myObjectHeaderId);
+				var oGlobalObjectHeaderId = this.oGlobalObjectHeader.getId();
+				this.oGlobalAttribute = this.oRootControl.byId(myObjectAttributeId);
+				var oGlobalAttributeId = this.oGlobalAttribute.getId();
+				this.oGlobalAttribute2 = this.oRootControl.byId(myObjectAttributeId2);
+				var oGlobalAttribute2Id = this.oGlobalAttribute2.getId();
+				this.oGlobalButton = this.oRootControl.byId(myButtonId);
 
-			// getXmlView with enriched template ids
-			var oDOMParser = new DOMParser();
-			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").childNodes[0];
-			this.oXmlView = XMLTemplateProcessor.enrichTemplateIds(oXmlDocument, this.oRootControl);
+				var oDOMParser = new DOMParser();
+				var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").childNodes[0];
+				this.oXmlView = XMLTemplateProcessor.enrichTemplateIds(oXmlDocument, this.oRootControl);
 
-			this.oXmlLayout = this.oXmlView.childNodes[0].childNodes[0];
-			this.oXmlObjectHeader = this.oXmlLayout.childNodes[0];
+				this.oXmlLayout = this.oXmlView.childNodes[0].childNodes[0];
+				this.oXmlObjectHeader = this.oXmlLayout.childNodes[0];
 
-			// local id's for XmlControlTreeModifier
-			this.mSelectorWithLocalId = getSelector(true, myLayoutId);
-
-			// global id's for XmlControlTreeModifier
-			this.mSelectorWithGlobalId = getSelector(false, this.oGlobalLayout.getId());
-
-			// local id's for XmlControlTreeModifier
-			this.mSingleMoveChangeContentWithLocalId = getSingleMoveChangeContent(
-				true, myObjectAttributeId, myObjectHeaderId, myLayoutId);
-
-			// global id's for XmlControlTreeModifier
-			this.mSingleMoveChangeContentWithGlobalId = getSingleMoveChangeContent(
-				false, this.oGlobalAttribute.getId(), this.oGlobalObjectHeader.getId(), this.oGlobalLayout.getId());
-
-			// local id's for XmlControlTreeModifier
-			this.mMultiMoveChangeContentWithLocalId = getMultiMoveChangeContent(
-				true, myObjectAttributeId, myObjectAttributeId2,
-				myObjectHeaderId, myLayoutId);
-
-			// global id's for XmlControlTreeModifier
-			this.mMultiMoveChangeContentWithGlobalId = getMultiMoveChangeContent(
-				false, this.oGlobalAttribute.getId(), this.oGlobalAttribute2.getId(),
-				this.oGlobalObjectHeader.getId(), this.oGlobalLayout.getId());
+				this.mSelectorWithLocalId = getSelector(true, myLayoutId);
+				this.mSelectorWithGlobalId = getSelector(false, oGlobalLayoutId);
+				this.mSingleMoveChangeContentWithLocalId = getSingleMoveChangeContent(true, myObjectAttributeId, myObjectHeaderId, myLayoutId);
+				this.mSingleMoveChangeContentWithGlobalId = getSingleMoveChangeContent(false, oGlobalAttributeId, oGlobalObjectHeaderId, oGlobalLayoutId);
+				this.mMultiMoveChangeContentWithLocalId = getMultiMoveChangeContent(true, myObjectAttributeId, myObjectAttributeId2, myObjectHeaderId, myLayoutId);
+				this.mMultiMoveChangeContentWithGlobalId = getMultiMoveChangeContent(false, oGlobalAttributeId, oGlobalAttribute2Id, oGlobalObjectHeaderId, oGlobalLayoutId);
+			}.bind(this));
 		},
-
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();
+			this.oRootControl.destroy();
 			sandbox.restore();
 		}
 	}, function() {
