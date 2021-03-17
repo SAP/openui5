@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView"
 ], function(
 	Table,
@@ -17,7 +16,6 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer,
 	ControlPersonalizationWriteAPI,
-	Core,
 	XMLView
 ) {
 	"use strict";
@@ -324,19 +322,6 @@ sap.ui.define([
 				};
 				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
 			});
-		});
-	});
-
-	// This QUnit test is temporary and should be removed once the Excel Export has been re-enabled
-	QUnit.test("Disable Excel Export", function(assert) {
-		var oTable = this.oTable;
-
-		return oTable._fullyInitialized().then(function() {
-			assert.notOk(oTable.getEnableExport(), "enableExport=false");
-			assert.equal(oTable._oExportButton, undefined, "Export button is not defined");
-			oTable.setEnableExport(true);
-			Core.applyChanges();
-			assert.notOk(oTable.getEnableExport(), "enableExport=false also after trying to set it to true");
 		});
 	});
 
