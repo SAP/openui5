@@ -290,6 +290,7 @@ sap.ui.define([
 	QUnit.test("All Properties", function (assert) {
 		assert.ok(!!oFeedList.getItems()[0].oAvatar.$(), "Avatar rendered");
 		assert.ok(oFeedList.getItems()[0].oAvatar.getSrc() === oFeedList.getItems()[0].getIcon(), "Avatar rendered (icon <> initial)");
+		assert.ok(oFeedList.getItems()[0].oAvatar.getId() === oFeedList.getItems()[0].getId() + '-icon', "ID is set");
 		assert.ok(oFeedList.getItems()[0].oAvatar.getDisplayShape(), "Avatar should have DisplayShape properties");
 		assert.ok(oFeedList.getItems()[0].oAvatar.getInitials(), "Avatar should have initials properties");
 		assert.ok(oFeedList.getItems()[0].oAvatar.getDisplaySize(), "Avatar should have DisplaySize properties");

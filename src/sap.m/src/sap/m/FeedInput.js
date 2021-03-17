@@ -500,8 +500,11 @@ sap.ui.define([
 	FeedInput.prototype._getAvatar = function() {
 		var sIcon = this.getIcon();
 		var sIconSrc = sIcon ? sIcon : IconPool.getIconURI("person-placeholder");
+		var sId = this.getId() + '-icon';
+
 		if (!this.oAvatar) {
 			this.oAvatar = new Avatar({
+				id: sId,
 				src: sIconSrc,
 				displayShape: this.getIconDisplayShape(),
 				initials: this.getIconInitials(),

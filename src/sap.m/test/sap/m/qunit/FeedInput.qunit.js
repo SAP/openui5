@@ -82,6 +82,7 @@ sap.ui.define([
 	QUnit.test("Icon", function (assert) {
 		this.oFeedInput.setIcon("myIcon");
 		assert.strictEqual(this.oFeedInput.getIcon(), "myIcon", "Getter should return correct non-default value");
+		assert.strictEqual(this.oFeedInput._getAvatar().sId, this.oFeedInput.getId() + '-icon', "Id should be same");
 		assert.strictEqual(this.oFeedInput._getAvatar().getSrc(), this.oFeedInput.getIcon(), "Property should be passed to avatar control");
 		assert.strictEqual(this.oFeedInput._getAvatar().getDisplayShape(), "Circle", "Should have 'Square' shape");
 		assert.strictEqual(this.oFeedInput._getAvatar().getDisplaySize(), "M", "Should have 'M' size");
