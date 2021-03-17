@@ -9,7 +9,6 @@
 @_sap_m_Dialog_SubHeaderHeight: 3rem;
 @_sap_m_Dialog_SubHeaderCompactHeight: 2rem;
 @_sap_m_Dialog_InfoDesignBarHeight: 2rem;
-@_sap_m_Dialog_InfoDesignBarCompactHeight: 2rem;
 
 @_sap_m_Dialog_Padding: 1rem;
 @_sap_m_Dialog_NoStateHeaderShadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor;
@@ -285,17 +284,6 @@ html.sap-desktop .sapMDialog {
 	border-bottom: none;
 }
 
-.sapMDialog > footer {
-
-	#dialogWithManyButtons-footer-overflowButton-inner {
-		padding-left: 0;
-	}
-
-	#dialogWithManyButtons-footer-overflowButton-img {
-		position: static;
-	}
-}
-
 /* Compact size */
 .sapUiSizeCompact {
 
@@ -309,11 +297,7 @@ html.sap-desktop .sapMDialog {
 			padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_SubHeaderCompactHeight;
 
 			&.sapMDialogSubHeaderInfoBar {
-				padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_InfoDesignBarCompactHeight;
-
-				.sapMDialogSubHeader {
-					height: @_sap_m_Dialog_InfoDesignBarCompactHeight;
-				}
+				padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_InfoDesignBarHeight;
 			}
 
 			&.sapMDialog-NoHeader {
