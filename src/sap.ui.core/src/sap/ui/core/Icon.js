@@ -281,6 +281,7 @@ sap.ui.define([
 	/**
 	 * Handle the click or tap event on the Icon.
 	 *
+	 * @param {sap.ui.base.Event} oEvent The event
 	 * @private
 	 */
 	Icon.prototype[Device.support.touch && !Device.system.desktop ? "ontap" : "onclick"] = function(oEvent) {
@@ -534,12 +535,10 @@ sap.ui.define([
 		if (this.getDecorative()) {
 			mAccAttributes.role = "presentation";
 			mAccAttributes.hidden = "true";
+		} else if (this.hasListeners("press")) {
+			mAccAttributes.role = "button";
 		} else {
-			if (this.hasListeners("press")) {
-				mAccAttributes.role = "button";
-			} else {
-				mAccAttributes.role = "img";
-			}
+			mAccAttributes.role = "img";
 		}
 
 		if (aLabelledBy.length > 0) {
