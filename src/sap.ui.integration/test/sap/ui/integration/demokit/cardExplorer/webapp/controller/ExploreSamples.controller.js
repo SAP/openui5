@@ -184,7 +184,7 @@ sap.ui.define([
 			var sEditorTitle = {
 				admin: "Administrator",
 				content: "Page/Content Administrator",
-				translator: "Translator"
+				translation: "Translator"
 			}[sMode];
 
 			this._loadCardEditorBundle()
@@ -206,7 +206,8 @@ sap.ui.define([
 								+ "You can edit it to adjust editor fields.<p>",
 						cardId: this._oCardSample.getId(),
 						mode: sMode,
-						designtime: this._extractDesigntimeMetadata(aArgs[1])
+						designtime: this._extractDesigntimeMetadata(aArgs[1]),
+						language: Core.getConfiguration().getLanguage()
 					}), "config");
 
 					oDialog.open();
