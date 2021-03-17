@@ -4196,7 +4196,7 @@ sap.ui.define([
 
 		// Act
 		oInput._sProposedItemText = "Bulgaria";
-		oInput.onsapfocusleave({relatedControlId: oInput.getId()});
+		oInput.onsaptabnext();
 		sap.ui.getCore().applyChanges();
 
 		// Assert
