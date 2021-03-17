@@ -916,6 +916,27 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'OData Batch Request',
+								key: 'batchRequest',
+								files: [
+									{
+										url: '/samples/data/batchRequest/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/data/batchRequest/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/data/batchRequest/BatchRequestExtension.js',
+										name: 'BatchRequestExtension.js',
+										key: 'BatchRequestExtension.js'
+									}
+								]
+							},
+							{
 								title: 'Using GraphQL',
 								key: 'graphql',
 								mockServer: true,
