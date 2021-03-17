@@ -1,6 +1,7 @@
 sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
@@ -9,6 +10,7 @@ sap.ui.define([
 ], function(
 	UriParameters,
 	Log,
+	Controller,
 	MockServer,
 	BindingMode,
 	JSONModel,
@@ -17,7 +19,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	sap.ui.controller("sap.ui.rta.qunitrta.ComplexTest", {
+	Controller.extend("sap.ui.rta.qunitrta.ComplexTest", {
 		onInit: function () {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var sManifestUrl = this._sResourcePath + "/manifest.json";

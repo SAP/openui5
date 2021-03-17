@@ -1,7 +1,10 @@
-(function() {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function(Controller) {
 	"use strict";
-	sap.ui.controller("rta.view.Test", {
+
+	return Controller.extend("rta.view.Test", {
 		onInit: function () {
 		}
 	});
-})();
+});

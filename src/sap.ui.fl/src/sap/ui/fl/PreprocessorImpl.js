@@ -2,20 +2,18 @@
  * ${copyright}
  */
 
-// Provides object sap.ui.fl.ProcessorImpl
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/base/Log"
-],
-function(
+], function(
 	Component,
 	Utils,
 	ChangePersistenceFactory,
 	Log
 ) {
-	'use strict';
+	"use strict";
 
 	function isCodeExt(oChange) {
 		return oChange.getChangeType() === "codeExt";
@@ -42,11 +40,11 @@ function(
 	 * Provides an array of extension providers. An extension provider is an object which were defined as controller extensions. These objects
 	 * provides lifecycle and event handler functions of a specific controller.
 	 *
-	 * @param {string} sControllerName - name of the controller
-	 * @param {string} sComponentId - unique id for the running controller - unique as well for manifest first
-	 * @param {boolean} bAsync - flag whether <code>Promise</code> should be returned or not (async=true)
-	 * @returns {Promise | Array} An empty array in case of a sync processing or a Promise with all successful loaded controller extensions
-	 * @see sap.ui.controller for an overview of the available functions on controllers.
+	 * @param {string} sControllerName - Name of the controller
+	 * @param {string} sComponentId - Unique id for the running controller - unique as well for manifest first
+	 * @param {boolean} bAsync - Flag whether <code>Promise</code> should be returned or not (async=true)
+	 * @returns {Promise|Array} An empty array in case of a sync processing or a Promise with all successful loaded controller extensions
+	 * @see sap.ui.core.mvc.Controller for an overview of the available functions on controllers.
 	 * @since 1.34.0
 	 * @public
 	 */
@@ -90,7 +88,7 @@ function(
 	/**
 	 * Asynchronous loading of all passed controller extensions.
 	 *
-	 * @param {Array} aCodeExtModuleNames - names of all controller extensions which have to be requested
+	 * @param {Array} aCodeExtModuleNames - Names of all controller extensions which have to be requested
 	 * @returns {Promise} Promise resolved with an array with all successful loaded controller extensions
 	 * @since 1.60.0
 	 */
