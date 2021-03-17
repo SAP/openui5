@@ -401,7 +401,7 @@ sap.ui.define([
 				var oController = this.getController(oControl, sControllerKey);
 
 				if (!oController){
-					Log.warning("No controller registered for state" + sControllerKey + " - state appliance ignored for this key.");
+					//TODO: p13nMode <> registerAdaptation <> StateUtil key alignment
 					return;
 				}
 
@@ -462,7 +462,7 @@ sap.ui.define([
 					oRetrievedState[sKey] = Engine.getInstance().getController(oControl, sKey).getCurrentState();
 				});
 
-				return oRetrievedState;
+				return merge({}, oRetrievedState);
 
 			});
 
