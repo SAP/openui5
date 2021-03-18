@@ -6,13 +6,16 @@ sap.ui.define([
 	'sap/ui/mdc/field/FieldValueHelpTableWrapperBase',
 	"sap/ui/mdc/util/loadModules",
 	"sap/base/util/deepEqual",
-	"sap/ui/mdc/library"
-
+	"sap/ui/mdc/library",
+	"sap/ui/mdc/enum/PersistenceMode",
+	"sap/ui/mdc/p13n/Engine"
 	], function(
 		FieldValueHelpTableWrapperBase,
 		loadModules,
 		deepEqual,
-		library
+		library,
+		PersistenceMode,
+		Engine
 	) {
 	"use strict";
 
@@ -57,9 +60,21 @@ sap.ui.define([
 		}
 	});
 
+
+
 	FieldValueHelpMdcTableWrapper.prototype.init = function() {
 		FieldValueHelpTableWrapperBase.prototype.init.apply(this, arguments);
 		this.OInnerWrapperClass = null; // wrapper class for internal table type;
+	};
+
+	FieldValueHelpMdcTableWrapper.prototype.setParent = function(oParent, sAggregationName) {
+		/* MDC.Table personalization inside ValueHelps should never be persisted,
+		 * therefore we add the Fieldhelp to a PersistenceProvider with transient configuration.
+		 */
+		if (oParent) {
+			Engine.getInstance().defaultProviderRegistry.attach(oParent, PersistenceMode.Transient);
+		}
+		FieldValueHelpTableWrapperBase.prototype.setParent.apply(this, arguments);
 	};
 
 	FieldValueHelpMdcTableWrapper.prototype._getStringType = function() {
@@ -136,6 +151,10 @@ sap.ui.define([
 	};
 
 	FieldValueHelpMdcTableWrapper.prototype.exit = function() {
+		var oParent = this.getParent();
+		if (oParent) {
+			Engine.getInstance().defaultProviderRegistry.detach(oParent);
+		}
 
 		this._oCurrentConditions = null;
 		this._bSuggestion = null;
@@ -214,7 +233,6 @@ sap.ui.define([
 		if (sMutation === "insert") {
 			this._updateInnerWrapperClass();
 			this._handleToolbarExtensions(oInnerTable);
-
 			this._oObserver.observe(oInnerTable, {bindings: ["rows"]});
 		}
 

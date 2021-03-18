@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/ui/core/library",
 	"sap/ui/mdc/p13n/StateUtil",
-	"sap/ui/core/Element"
-], function (merge, Log, SAPUriParameters, BaseObject, PropertyHelper, loadModules, P13nBuilder, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil, Element) {
+	"sap/ui/core/Element",
+	"sap/ui/mdc/p13n/DefaultProviderRegistry"
+], function (merge, Log, SAPUriParameters, BaseObject, PropertyHelper, loadModules, P13nBuilder, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil, Element, DefaultProviderRegistry) {
 	"use strict";
 
 	//Shortcut to 'MessageType'
@@ -51,6 +52,7 @@ sap.ui.define([
 		constructor: function() {
 			BaseObject.call(this);
 			this._aRegistry = [];
+			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance();
 		}
 	});
 
@@ -555,6 +557,19 @@ sap.ui.define([
 		if (oRegistryEntry && oRegistryEntry.controller.hasOwnProperty(sKey)) {
 			return oRegistryEntry.controller[sKey];
 		}
+	};
+
+	/**
+	 * This method can be used to determine if modification settings for a control have already been created.
+	 *
+	 * @private
+	 *
+	 * @param {sap.ui.mdc.Control} vControl The registered Control instance.
+ 	 * @returns {boolean} true if modification settings were already determined
+	 */
+	Engine.prototype.isRegisteredForModification = function(vControl) {
+		var oRegistryEntry = this._getRegistryEntry(vControl);
+		return oRegistryEntry && !!oRegistryEntry.modification;
 	};
 
 	Engine.prototype.getRegisteredControllers = function(vControl){
@@ -1170,6 +1185,8 @@ sap.ui.define([
 		oEngine = null;
 		this._aRegistry = null;
 		_mRegistry.delete(this);
+		this.defaultProviderRegistry.destroy();
+		this.defaultProviderRegistry = null;
 	};
 
 	return Engine;
