@@ -40,8 +40,8 @@
       "selector": {
         "persistencyKey": "variantManagement1"
       },
+      "favorite": true,
       "content": {
-        "favorite": true,
         "executeOnSelect": true
       },
       "texts": {

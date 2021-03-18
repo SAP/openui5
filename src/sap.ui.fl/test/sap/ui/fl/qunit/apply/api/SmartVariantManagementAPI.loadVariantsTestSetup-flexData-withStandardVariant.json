@@ -39,9 +39,9 @@
       "selector": {
         "persistencyKey": "variantManagement1"
       },
+      "favorite": true,
       "content": {
         "standardvariant": true,
-        "favorite": true,
         "executeOnSelect": true
       },
       "texts": {
@@ -55,8 +55,8 @@
       "selector": {
         "persistencyKey": "variantManagement1"
       },
+      "favorite": true,
       "content": {
-        "favorite": true,
         "executeOnSelect": true
       },
       "texts": {
@@ -70,9 +70,9 @@
       "selector": {
         "persistencyKey": "variantManagement1"
       },
+      "favorite": true,
       "content": {
         "standardvariant": true,
-        "favorite": true,
         "executeOnSelect": true
       },
       "texts": {

@@ -113,9 +113,15 @@ sap.ui.define([
 
 		constructor: function(oFile) {
 			Change.apply(this, arguments);
-			if (oFile.content && oFile.content.favorite) {
-				this.setFavorite(oFile.content.favorite);
+
+			if (oFile.layer === Layer.VENDOR || oFile.layer === Layer.CUSTOMER_BASE) {
+				this.setFavorite(true);
 			}
+
+			if (oFile.favorite !== undefined) {
+				this.setFavorite(oFile.favorite);
+			}
+
 			if (oFile.content && oFile.content.executeOnSelect) {
 				this.setExecuteOnSelect(oFile.content.executeOnSelect);
 			}

@@ -275,20 +275,63 @@ sap.ui.define([
 
 		QUnit.test("when favorite is set to false", function(assert) {
 			var oVariant = new CompVariant({
-				content: {
-					favorite: false
-				}
+				favorite: false
 			});
 			assert.equal(oVariant.getFavorite(), false, "then it is NOT a favorite");
 		});
 
 		QUnit.test("when favorite is set to true", function(assert) {
 			var oVariant = new CompVariant({
-				content: {
-					favorite: true
-				}
+				favorite: true
 			});
-			assert.equal(oVariant.getFavorite(), true, "then it is NOT a favorite");
+			assert.equal(oVariant.getFavorite(), true, "then it is a favorite");
+		});
+
+
+		QUnit.test("when favorite is set to false of a VENDOR layer variant", function(assert) {
+			var oVariant = new CompVariant({
+				layer: Layer.VENDOR,
+				favorite: false
+			});
+			assert.equal(oVariant.getFavorite(), false, "then it is NOT a favorite");
+		});
+
+		QUnit.test("when favorite is set to true of a VENDOR layer variant", function(assert) {
+			var oVariant = new CompVariant({
+				layer: Layer.VENDOR,
+				favorite: true
+			});
+			assert.equal(oVariant.getFavorite(), true, "then it is a favorite");
+		});
+
+		QUnit.test("when favorite is not set of a VENDOR layer variant", function(assert) {
+			var oVariant = new CompVariant({
+				layer: Layer.VENDOR
+			});
+			assert.equal(oVariant.getFavorite(), true, "then it is a favorite");
+		});
+
+		QUnit.test("when favorite is set to false of a CUSTOMER_BASE layer variant", function(assert) {
+			var oVariant = new CompVariant({
+				layer: Layer.CUSTOMER_BASE,
+				favorite: false
+			});
+			assert.equal(oVariant.getFavorite(), false, "then it is NOT a favorite");
+		});
+
+		QUnit.test("when favorite is set to true of a CUSTOMER_BASE layer variant", function(assert) {
+			var oVariant = new CompVariant({
+				layer: Layer.CUSTOMER_BASE,
+				favorite: true
+			});
+			assert.equal(oVariant.getFavorite(), true, "then it is a favorite");
+		});
+
+		QUnit.test("when favorite is not set of a CUSTOMER_BASE layer variant", function(assert) {
+			var oVariant = new CompVariant({
+				layer: Layer.CUSTOMER_BASE
+			});
+			assert.equal(oVariant.getFavorite(), true, "then it is a favorite");
 		});
 
 		QUnit.test("when no executeOnSelect is provided", function(assert) {
