@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
@@ -16,8 +17,8 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/base/util/uid",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
+	XMLView,
 	Utils,
 	VerticalLayout,
 	DesignTime,
@@ -38,9 +39,13 @@ function (
 
 	var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
 
-	var oMockedViewWithStableId = sap.ui.xmlview({
+	var oMockedViewWithStableId;
+	XMLView.create({
 		id: "mockview",
-		viewContent: viewContent
+		definition: viewContent
+	}).then(function(oView) {
+		oMockedViewWithStableId = oView;
+		QUnit.start();
 	});
 
 	var oMockedComponent = {
@@ -266,38 +271,6 @@ function (
 				bFirstCall = true;
 				assert.equal(this.oCreateContainer.getMenuItems([this.oFormOverlay]).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
 			}.bind(this));
-		});
-
-		QUnit.test("when an overlay has createContainer action, but its view has no stable id", function(assert) {
-			var oViewWithUnstableId = sap.ui.xmlview({
-				viewContent: viewContent
-			});
-			Utils.getViewForControl.restore();
-			sandbox.stub(Utils, "getViewForControl").returns(oViewWithUnstableId);
-
-			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations: {
-					formContainers: {
-						actions: {
-							createContainer: {
-								changeType: "addGroup"
-							}
-						}
-					}
-				}
-			});
-			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
-
-			return DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), false, "then isAvailable is called and it returns false");
-				assert.strictEqual(this.oCreateContainer.isEnabled(true, [this.oFormOverlay]), false, "then isEnabled is called and it returns true");
-				return this.oCreateContainer._isEditableCheck(this.oFormOverlay, false);
-			}.bind(this))
-			.then(function(bIsEditable) {
-				assert.notOk(bIsEditable, "then the overlay is not editable");
-			});
 		});
 
 		QUnit.test("when an overlay has createContainer action with changeOnRelevantContainer true, but its relevant container has no stable id", function(assert) {

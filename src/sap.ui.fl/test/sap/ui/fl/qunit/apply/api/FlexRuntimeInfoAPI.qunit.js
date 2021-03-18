@@ -1,9 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/App",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -14,9 +16,11 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	App,
 	ComponentContainer,
 	Control,
 	UIComponent,
+	XMLView,
 	Cache,
 	Layer,
 	Utils,
@@ -298,8 +302,8 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var done = assert.async();
 
-			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null,
-			function(viewContent) {
+			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null, function(viewContent) {
+				var oViewPromise;
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
 						manifest: {
@@ -311,28 +315,33 @@ sap.ui.define([
 						}
 					},
 					createContent: function() {
-						var oApp = new sap.m.App(this.createId("mockapp"));
-						var oView = sap.ui.xmlview({
+						var oApp = new App(this.createId("mockapp"));
+						oViewPromise = XMLView.create({
 							id: this.createId("mockview"),
-							viewContent: viewContent
+							definition: viewContent
+						}).then(function(oView) {
+							oApp.addPage(oView);
+							return oView.loaded();
 						});
-						oApp.addPage(oView);
 						return oApp;
 					}
 				});
 				this.oComp = new MockComponent("testComponent");
-				this.oFlexController = ChangesController.getFlexControllerInstance(this.oComp);
-				var oVariantModel = new VariantModel({
-					variantManagement: {
-						variants: []
-					}
-				}, this.oFlexController, this.oComp);
-				this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
-				this.oCompContainer = new ComponentContainer("sap-ui-static", {
-					component: this.oComp
-				}).placeAt("qunit-fixture");
 
-				done();
+				oViewPromise.then(function() {
+					this.oFlexController = ChangesController.getFlexControllerInstance(this.oComp);
+					var oVariantModel = new VariantModel({
+						variantManagement: {
+							variants: []
+						}
+					}, this.oFlexController, this.oComp);
+					this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+					this.oCompContainer = new ComponentContainer("sap-ui-static", {
+						component: this.oComp
+					}).placeAt("qunit-fixture");
+
+					done();
+				}.bind(this));
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -355,6 +364,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		jQuery("#qunit-fixture").hide();
 	});
 });

@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
@@ -17,8 +18,8 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/base/util/uid",
 	"sap/m/Button"
-],
-function (
+], function(
+	XMLView,
 	Utils,
 	VerticalLayout,
 	DesignTime,
@@ -41,9 +42,13 @@ function (
 	var TEST_URL = "http://www.sap.com";
 	var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
 
-	var oMockedViewWithStableId = sap.ui.xmlview({
+	var oMockedViewWithStableId;
+	XMLView.create({
 		id: "mockview",
-		viewContent: viewContent
+		definition: viewContent
+	}).then(function(oView) {
+		oMockedViewWithStableId = oView;
+		QUnit.start();
 	});
 
 	var oMockedComponent = {
@@ -337,38 +342,6 @@ function (
 					bAvailable = false;
 					assert.equal(this.oAddIFrame.getMenuItems([this.oButtonOverlay]).length, 0, "then no menu item was returned when the action is not available on the responsible element overlay");
 				}.bind(this));
-		});
-
-		QUnit.test("when an overlay has an addIFrame action, but its view has no stable ID", function(assert) {
-			var oViewWithUnstableId = sap.ui.xmlview({
-				viewContent: viewContent
-			});
-			Utils.getViewForControl.restore();
-			sandbox.stub(Utils, "getViewForControl").returns(oViewWithUnstableId);
-
-			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations: {
-					sections: {
-						actions: {
-							addIFrame: {
-								changeType: "addIFrame"
-							}
-						}
-					}
-				}
-			});
-			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
-			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
-
-			return DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable(false, [this.oObjectPageLayoutOverlay]), false, "then isAvailable is called and it returns false");
-				assert.strictEqual(this.oAddIFrame.isEnabled(true, [this.oObjectPageLayoutOverlay]), false, "then isEnabled is called and it returns true");
-				return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
-			}.bind(this))
-			.then(function(bIsEditable) {
-				assert.notOk(bIsEditable, "then the overlay is not editable");
-			});
 		});
 
 		QUnit.test("when an overlay has an addIFrame action in designTimeMetadata, and isEnabled property is a function", function(assert) {

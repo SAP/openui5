@@ -139,6 +139,7 @@ sap.ui.define([
 			},
 			"plugin/iframe/AddIFrame": {
 				group: "Plugin",
+				autostart: false,
 				coverage: {
 					only: [
 						"sap/ui/rta/plugin/iframe/AddIFrame",
@@ -171,6 +172,7 @@ sap.ui.define([
 			},
 			"plugin/CreateContainer": {
 				group: "Plugin",
+				autostart: false,
 				coverage: {
 					only: [
 						"sap/ui/rta/plugin/CreateContainer",

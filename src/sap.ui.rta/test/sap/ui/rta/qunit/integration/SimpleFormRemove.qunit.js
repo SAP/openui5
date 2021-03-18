@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/plugin/TabHandling",
@@ -11,8 +12,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/layout/library"
-],
-function(
+], function(
+	XMLView,
 	DesignTime,
 	OverlayRegistry,
 	TabHandlingPlugin,
@@ -46,27 +47,34 @@ function(
 
 				var done = assert.async();
 
-				oView = sap.ui.xmlview(oComponent.createId("qunit-fixture"), "sap.ui.rta.test.TestSimpleForm");
-				oSimpleForm = sap.ui.getCore().byId(oView.createId("SimpleForm0"));
-				oSimpleForm.setLayout(oSimpleFormLayout);
-				oView.placeAt("qunit-fixture");
+				XMLView.create({
+					id: oComponent.createId("qunit-fixture"),
+					viewName: "sap.ui.rta.test.TestSimpleForm"
+				}).then(function(oCreatedView) {
+					oView = oCreatedView;
+					return oView.loaded();
+				}).then(function() {
+					oSimpleForm = sap.ui.getCore().byId(oView.createId("SimpleForm0"));
+					oSimpleForm.setLayout(oSimpleFormLayout);
+					oView.placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+					sap.ui.getCore().applyChanges();
 
-				var oTabHandlingPlugin = new TabHandlingPlugin();
-				var oSelectionPlugin = new MouseSelectionPlugin();
+					var oTabHandlingPlugin = new TabHandlingPlugin();
+					var oSelectionPlugin = new MouseSelectionPlugin();
 
-				oRemove = new RemovePlugin({
-					commandFactory: oCommandFactory
-				});
+					oRemove = new RemovePlugin({
+						commandFactory: oCommandFactory
+					});
 
-				oDesignTime = new DesignTime({
-					plugins: [oTabHandlingPlugin, oSelectionPlugin, oRemove],
-					rootElements: [oView]
-				});
+					oDesignTime = new DesignTime({
+						plugins: [oTabHandlingPlugin, oSelectionPlugin, oRemove],
+						rootElements: [oView]
+					});
 
-				oDesignTime.attachEventOnce("synced", function() {
-					done();
+					oDesignTime.attachEventOnce("synced", function() {
+						done();
+					});
 				});
 			},
 
