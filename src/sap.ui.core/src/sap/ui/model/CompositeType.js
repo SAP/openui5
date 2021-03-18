@@ -86,8 +86,9 @@ sap.ui.define(['./SimpleType'],
 	 * @param {array} [aCurrentValues]
 	 *   The current values of all binding parts; required if {@link #getParseWithValues} returns
 	 *   <code>true</code>
-	 * @return {any[]}
-	 *   An array of raw values
+	 * @return {any[]|any}
+	 *   An array of raw values or the raw value returned by the type's conversion object in case it
+	 *   exists, see {@link sap.ui.model.SimpleType#getModelFormat SimpleType#getModelFormat}
 	 * @throws {sap.ui.model.ParseException}
 	 *   If parsing to the model type is not possible; the message of the exception is language
 	 *   dependent as it may be displayed on the UI
