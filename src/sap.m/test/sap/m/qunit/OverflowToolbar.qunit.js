@@ -1993,6 +1993,31 @@ sap.ui.define([
 		}, 200);
 	});
 
+	QUnit.test("OverflowToolbarLayoutData is always invalidated when 'priority' is changed", function (assert) {
+		// Arrange
+		var oLayoutData = new OverflowToolbarLayoutData({ priority: "High" }),
+			oButton = new Button({text: "Button",
+				layoutData: oLayoutData
+			}),
+			aContent = [oButton],
+			oSpyInvalidate = this.spy(oLayoutData, "invalidate"),
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent),
+			oStubInvalidateSuppressed = this.stub(oLayoutData , "isInvalidateSuppressed", function () {
+				return true;
+			});
+
+		// Act
+		oLayoutData.setPriority("AlwaysOverflow");
+
+		// Assert
+		assert.strictEqual(oSpyInvalidate.callCount, 1, "Invalidate is called");
+
+		// Clean up
+		oSpyInvalidate.restore();
+		oStubInvalidateSuppressed.restore();
+		oOverflowTB.destroy();
+	});
+
 	QUnit.module("Resize handling");
 
 	QUnit.test("Handling of resizes that don't move elements around", function (assert) {
