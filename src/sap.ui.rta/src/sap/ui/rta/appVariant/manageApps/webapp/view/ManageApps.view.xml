@@ -45,7 +45,7 @@
 				demandPopin="true"
 				popinDisplay="Inline"
 				hAlign="End">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_ACTIONS}" />
+				<core:InvisibleText text="{i18n>MAA_DIALOG_ACTIONS_HEADER}" />
 			</Column>
 		</columns>
 		<items>
