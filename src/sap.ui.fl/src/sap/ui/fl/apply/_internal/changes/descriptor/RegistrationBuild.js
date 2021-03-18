@@ -31,7 +31,8 @@ sap.ui.define([
 		appdescr_fiori_setRegistrationIds: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetRegistrationIds"),
 		appdescr_ui5_setFlexExtensionPointEnabled: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled"),
 		appdescr_ui5_addNewModel: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel"),
-		appdescr_app_addAnnotationsToOData: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData")
+		appdescr_app_addAnnotationsToOData: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData"),
+		appdescr_app_changeInbound: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound")
 	};
 
 	var RegistrationCopy = Object.assign({}, Registration);
