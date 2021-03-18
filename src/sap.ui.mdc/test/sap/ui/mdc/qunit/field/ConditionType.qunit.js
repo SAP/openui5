@@ -1964,4 +1964,567 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("multiple async requests", {
+		beforeEach: function() {
+			oFieldHelp = new FieldHelpBase("FH1");
+			var oStub = sinon.stub(oFieldHelp, "getTextForKey");
+			oStub.withArgs("S").returns("Sync Text");
+			oStub = sinon.stub(oFieldHelp, "getItemForValue");
+			oStub.withArgs("S").returns({key: "S", description: "Sync Text"});
+			oStub.withArgs("Sync Text").returns({key: "S", description: "Sync Text"});
+
+			oConditionType = new ConditionType({
+				display: "Description",
+				fieldHelpID: "FH1",
+				operators: ["EQ", "GT"],
+				asyncParsing: fnAsync,
+				delegate: FieldBaseDelegate,
+				bindingContext: "BC", // just dummy to test forwarding to fieldHelp
+				conditionModel: "CM", // just dummy to test forwarding to fieldHelp
+				conditionModelName: "Name" // just dummy to test forwarding to fieldHelp
+			});
+		},
+		afterEach: function() {
+			oFieldHelp.destroy();
+			oFieldHelp = undefined;
+			oConditionType.destroy();
+			oConditionType = undefined;
+			bAsyncCalled = undefined;
+		}
+	});
+
+	QUnit.test("Formatting: multiple promises", function(assert) {
+
+		var fResolve1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fResolve1 = fResolve;
+		});
+		var fResolve2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fResolve2 = fResolve;
+		});
+		var fResolve3;
+		var oPromise3 = new Promise(function(fResolve, fReject) {
+			fResolve3 = fResolve;
+		});
+		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
+		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
+		oFieldHelp.getTextForKey.withArgs("3").returns(oPromise3);
+
+		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		var vResult1 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		var vResult2 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.Validated);
+		var vResult3 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult3 instanceof Promise, "Promise returned");
+
+		fResolve2("Text 2");
+		fResolve3("Text 3");
+		fResolve1("Text 1");
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
+		var fnDone = assert.async();
+		Promise.all([vResult1, vResult2, vResult3]).then(function(aResult) {
+			assert.ok(true, "All promises resolved");
+			assert.equal(aResult[0], "Text 3", "Result 1");
+			assert.equal(aResult[1], "Text 2", "Result 2");
+			assert.equal(aResult[2], "Text 3", "Result 3");
+			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Formatting: multiple promises with error on last call", function(assert) {
+
+		var fResolve1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fResolve1 = fResolve;
+		});
+		var fResolve2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fResolve2 = fResolve;
+		});
+		var fReject3;
+		var oPromise3 = new Promise(function(fResolve, fReject) {
+			fReject3 = fReject;
+		});
+		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
+		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
+		oFieldHelp.getTextForKey.withArgs("3").returns(oPromise3);
+
+		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		var vResult1 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		var vResult2 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.Validated);
+		var vResult3 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult3 instanceof Promise, "Promise returned");
+
+		fResolve2("Text 2");
+		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+			fReject3(new FormatException("wrong value"));
+		}, 0);
+		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+			fResolve1("Text 1");
+		}, 0);
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last exception is shown
+		var fnDone = assert.async();
+
+		// PromiseAll cannot be used for test as we need to check exception for every single Promise
+		vResult1.then(function(sResult) {
+			assert.notOk(true, "Promise1 must not be resolved (as resolved after error)");
+			fnDone();
+		}).catch(function(oError) {
+			assert.ok(true, "Promise1 Catch called");
+			assert.ok(oError instanceof FormatException, "Error is a FormatException");
+			assert.equal(oError.message, "wrong value", "Error message");
+
+			vResult2.then(function(sResult) {
+				assert.ok(true, "Promise2 must be resolved (as resoved before error)");
+				assert.equal(sResult, "Text 2", "Result 2");
+
+				vResult3.then(function(sResult) {
+					assert.notOk(true, "Promise3 must not be resolved (as errot thrown)");
+					fnDone();
+				}).catch(function(oError) {
+					assert.ok(true, "Promise3 Catch called");
+					assert.ok(oError instanceof FormatException, "Error is a FormatException");
+					assert.equal(oError.message, "wrong value", "Error message");
+					assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+					fnDone();
+				});
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise2 Catch must not be called");
+				fnDone();
+			});
+		});
+
+	});
+
+	QUnit.test("Formatting: multiple promises with error between", function(assert) {
+
+		var fReject1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fReject1 = fReject;
+		});
+		var fReject2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fReject2 = fReject;
+		});
+		var fResolve3;
+		var oPromise3 = new Promise(function(fResolve, fReject) {
+			fResolve3 = fResolve;
+		});
+		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
+		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
+		oFieldHelp.getTextForKey.withArgs("3").returns(oPromise3);
+
+		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		var vResult1 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		var vResult2 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.Validated);
+		var vResult3 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult3 instanceof Promise, "Promise returned");
+
+		fReject2(new FormatException("wrong value"));
+		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+			fResolve3("Text 3");
+		}, 0);
+		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+			fReject1(new FormatException("wrong value"));
+		}, 0);
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
+		var fnDone = assert.async();
+		// PromiseAll cannot be used for test as we need to check exception for every single Promise
+		vResult1.then(function(sResult) {
+			assert.ok(true, "Promise1 must be resolved (as resoved after success)");
+			assert.equal(sResult, "Text 3", "Result 1");
+
+			vResult2.then(function(sResult) {
+				assert.notOk(true, "Promise2 must not be resolved (as errot thrown)");
+				fnDone();
+			}).catch(function(oError) {
+				assert.ok(true, "Promise2 Catch called");
+				assert.ok(oError instanceof FormatException, "Error is a FormatException");
+				assert.equal(oError.message, "wrong value", "Error message");
+
+				vResult3.then(function(sResult) {
+					assert.ok(true, "Promise3 must be resolved (rsolved as last)");
+					assert.equal(sResult, "Text 3", "Result 3");
+					assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+					fnDone();
+				}).catch(function(oError) {
+					assert.notOk(true, "Promise3 Catch must not be called");
+					fnDone();
+				});
+			});
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise1 Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Formatting: multiple promises and call with given description", function(assert) {
+
+		var fResolve1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fResolve1 = fResolve;
+		});
+		var fResolve2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fResolve2 = fResolve;
+		});
+		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
+		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
+
+		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		var vResult1 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		var vResult2 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		oCondition = Condition.createCondition("EQ", ["S", "Sync Text"], undefined, undefined, ConditionValidated.Validated);
+		var vResult3 = oConditionType.formatValue(oCondition);
+		assert.equal(vResult3, "Sync Text", "Description returned");
+
+		fResolve2("Text 2");
+		fResolve1("Text 1");
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
+		var fnDone = assert.async();
+		Promise.all([vResult1, vResult2]).then(function(aResult) {
+			assert.ok(true, "All promises resolved");
+			assert.equal(aResult[0], "Sync Text", "Result 1");
+			assert.equal(aResult[1], "Sync Text", "Result 2");
+			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Parsing: multiple promises", function(assert) {
+
+		var fResolve1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fResolve1 = fResolve;
+		});
+		var fResolve2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fResolve2 = fResolve;
+		});
+		var fResolve3;
+		var oPromise3 = new Promise(function(fResolve, fReject) {
+			fResolve3 = fResolve;
+		});
+		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
+		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
+		oFieldHelp.getItemForValue.withArgs("3").returns(oPromise3);
+
+		var vResult1 = oConditionType.parseValue("1");
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		var vResult2 = oConditionType.parseValue("2");
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		var vResult3 = oConditionType.parseValue("3");
+		assert.ok(vResult3 instanceof Promise, "Promise returned");
+
+		fResolve2({key: "2", description: "Text 2"});
+		fResolve3({key: "3", description: "Text 3"});
+		fResolve1({key: "1", description: "Text 1"});
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
+		var fnDone = assert.async();
+		Promise.all([vResult1, vResult2, vResult3]).then(function(aResult) {
+			assert.ok(true, "All promises resolved");
+			assert.equal(aResult[0].values[0], "3", "Result 1");
+			assert.equal(aResult[1].values[0], "2", "Result 2");
+			assert.equal(aResult[2].values[0], "3", "Result 3");
+			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Parsing: multiple promises with error on last call", function(assert) {
+
+		var fResolve1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fResolve1 = fResolve;
+		});
+		var fResolve2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fResolve2 = fResolve;
+		});
+		var fReject3;
+		var oPromise3 = new Promise(function(fResolve, fReject) {
+			fReject3 = fReject;
+		});
+		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
+		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
+		oFieldHelp.getItemForValue.withArgs("3").returns(oPromise3);
+
+		var vResult1 = oConditionType.parseValue("1");
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		var vResult2 = oConditionType.parseValue("2");
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		var vResult3 = oConditionType.parseValue("3");
+		assert.ok(vResult3 instanceof Promise, "Promise returned");
+
+		fResolve2({key: "2", description: "Text 2"});
+		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+			fReject3(new ParseException("wrong value"));
+		}, 0);
+		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+			fResolve1({key: "1", description: "Text 1"});
+		}, 0);
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last exception is shown
+		var fnDone = assert.async();
+
+		// PromiseAll cannot be used for test as we need to check exception for every single Promise
+		vResult1.then(function(oCondition) {
+			assert.notOk(true, "Promise1 must not be resolved (as resolved after error)");
+			fnDone();
+		}).catch(function(oError) {
+			assert.ok(true, "Promise1 Catch called");
+			assert.ok(oError instanceof ParseException, "Error is a ParseException");
+			assert.equal(oError.message, "wrong value", "Error message");
+
+			vResult2.then(function(oCondition) {
+				assert.ok(true, "Promise2 must be resolved (as resoved before error)");
+				assert.equal(oCondition.values[0], "2", "Result 2");
+
+				vResult3.then(function(oCondition) {
+					assert.notOk(true, "Promise3 must not be resolved (as errot thrown)");
+					fnDone();
+				}).catch(function(oError) {
+					assert.ok(true, "Promise3 Catch called");
+					assert.ok(oError instanceof ParseException, "Error is a ParseException");
+					assert.equal(oError.message, "wrong value", "Error message");
+					assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+					fnDone();
+				});
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise2 Catch must not be called");
+				fnDone();
+			});
+		});
+
+	});
+
+	QUnit.test("Parsing: multiple promises with error between", function(assert) {
+
+		var fReject1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fReject1 = fReject;
+		});
+		var fReject2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fReject2 = fReject;
+		});
+		var fResolve3;
+		var oPromise3 = new Promise(function(fResolve, fReject) {
+			fResolve3 = fResolve;
+		});
+		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
+		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
+		oFieldHelp.getItemForValue.withArgs("3").returns(oPromise3);
+
+		var vResult1 = oConditionType.parseValue("1");
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		var vResult2 = oConditionType.parseValue("2");
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		var vResult3 = oConditionType.parseValue("3");
+		assert.ok(vResult3 instanceof Promise, "Promise returned");
+
+		fReject2(new FormatException("wrong value"));
+		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+			fResolve3({key: "3", description: "Text 3"});
+		}, 0);
+		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+			fReject1(new FormatException("wrong value"));
+		}, 0);
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
+		var fnDone = assert.async();
+		// PromiseAll cannot be used for test as we need to check exception for every single Promise
+		vResult1.then(function(oCondition) {
+			assert.ok(true, "Promise1 must be resolved (as resoved after success)");
+			assert.equal(oCondition.values[0], "3", "Result 1");
+
+			vResult2.then(function(oCondition) {
+				assert.notOk(true, "Promise2 must not be resolved (as errot thrown)");
+				fnDone();
+			}).catch(function(oError) {
+				assert.ok(true, "Promise2 Catch called");
+				assert.ok(oError instanceof ParseException, "Error is a ParseException");
+				assert.equal(oError.message, "wrong value", "Error message");
+
+				vResult3.then(function(oCondition) {
+					assert.ok(true, "Promise3 must be resolved (rsolved as last)");
+					assert.equal(oCondition.values[0], "3", "Result 3");
+					assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+					fnDone();
+				}).catch(function(oError) {
+					assert.notOk(true, "Promise3 Catch must not be called");
+					fnDone();
+				});
+			});
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise1 Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Parsing: multiple promises and sync parsing", function(assert) {
+
+		var fResolve1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fResolve1 = fResolve;
+		});
+		var fResolve2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fResolve2 = fResolve;
+		});
+		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
+		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
+
+		var vResult1 = oConditionType.parseValue("1");
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		var vResult2 = oConditionType.parseValue("2");
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		var vResult3 = oConditionType.parseValue(">S");
+		assert.equal(vResult3.values[0], "S", "Condition returned");
+
+		fResolve2({key: "2", description: "Text 2"});
+		fResolve1({key: "1", description: "Text 1"});
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
+		var fnDone = assert.async();
+		Promise.all([vResult1, vResult2]).then(function(aResult) {
+			assert.ok(true, "All promises resolved");
+			assert.equal(aResult[0].values[0], "S", "Result 1");
+			assert.equal(aResult[1].values[0], "S", "Result 2");
+			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Formatting and Parsing", function(assert) {
+
+		var fResolve1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fResolve1 = fResolve;
+		});
+		var fResolve2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fResolve2 = fResolve;
+		});
+		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
+		oFieldHelp.getItemForValue.withArgs("2").returns(oPromise2);
+
+		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		var vResult1 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		var vResult2 = oConditionType.parseValue("2");
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		fResolve2({key: "2", description: "Text 2"});
+		fResolve1("Text 1");
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
+		var fnDone = assert.async();
+		Promise.all([vResult1, vResult2]).then(function(aResult) {
+			assert.ok(true, "All promises resolved");
+			assert.equal(aResult[0], "Text 2", "Result 1");
+			assert.equal(aResult[1].values[0], "2", "Result 2");
+			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Parsing and Formatting", function(assert) {
+
+		var fResolve1;
+		var oPromise1 = new Promise(function(fResolve, fReject) {
+			fResolve1 = fResolve;
+		});
+		var fResolve2;
+		var oPromise2 = new Promise(function(fResolve, fReject) {
+			fResolve2 = fResolve;
+		});
+		oFieldHelp.getItemForValue.withArgs("1").returns(oPromise1);
+		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
+
+		var vResult1 = oConditionType.parseValue("1");
+		assert.ok(vResult1 instanceof Promise, "Promise returned");
+
+		var oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		var vResult2 = oConditionType.formatValue(oCondition);
+		assert.ok(vResult2 instanceof Promise, "Promise returned");
+
+		fResolve2("Text 2");
+		fResolve1({key: "1", description: "Text 1"});
+
+		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
+		var fnDone = assert.async();
+		Promise.all([vResult1, vResult2]).then(function(aResult) {
+			assert.ok(true, "All promises resolved");
+			assert.equal(aResult[0].values[0], "2", "Result 1");
+			assert.equal(aResult[1], "Text 2", "Result 2");
+			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
+
+	});
+
 });
