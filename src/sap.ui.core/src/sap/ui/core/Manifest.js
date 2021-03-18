@@ -90,7 +90,8 @@ sap.ui.define([
 	/**
 	 * Freezes the object and nested objects to avoid later manipulation
 	 *
-	 * @param oObject the object to deep freeze
+	 * @param {object} oObject the object to deep freeze
+	 * @private
 	 */
 	function deepFreeze(oObject) {
 		if (oObject && typeof oObject === 'object' && !Object.isFrozen(oObject)) {
@@ -334,7 +335,7 @@ sap.ui.define([
 		 * section and by path allows to specify a concrete path to a dedicated entry
 		 * inside the manifest. The path syntax always starts with a slash (/).
 		 *
-		 * @param {string} sKey Either the manifest section name (namespace) or a concrete path
+		 * @param {string} sPath Either the manifest section name (namespace) or a concrete path
 		 * @return {any|null} Value of the key (could be any kind of value)
 		 * @public
 		 */
@@ -643,6 +644,8 @@ sap.ui.define([
 		/**
 		 * Initializes the manifest which executes checks, define the resource
 		 * roots, load the dependencies and the includes.
+		 *
+		 * @param {sap.ui.core.Component} [oInstance] Reference to the Component instance
 		 * @private
 		 */
 		init: function(oInstance) {
@@ -688,6 +691,8 @@ sap.ui.define([
 
 		/**
 		 * Terminates the manifest and does some final clean-up.
+		 *
+		 * @param {sap.ui.core.Component} [oInstance] Reference to the Component instance
 		 * @private
 		 */
 		exit: function(oInstance) {
@@ -789,10 +794,9 @@ sap.ui.define([
 	 *   }
 	 * }
 	 *
-	 * @param mSettings Map with model config settings
-	 * @param sBaseBundleUrlRelativeTo BundleUrlRelativeTo info from base config
-	 * @param bAlreadyResolvedOnRoot Whether the bundleUrl was already resolved (usually by the sap.ui.core.Component)
-	 *
+	 * @param {object} mSettings Map with model config settings
+	 * @param {string} sBaseBundleUrlRelativeTo BundleUrlRelativeTo info from base config
+	 * @param {boolean} [bAlreadyResolvedOnRoot] Whether the bundleUrl was already resolved (usually by the sap.ui.core.Component)
 	 * @private
 	 * @ui5-restricted sap.ui.core.Component
 	 */
