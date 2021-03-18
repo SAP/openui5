@@ -6,7 +6,7 @@
 	<Panel id="visibilityPanel">
 		<headerToolbar>
 			<Toolbar id="visibilityToolbar">
-				<Label id="visibilityToolbarLabel" labelFor="visibilityRadioButtonGroup" text="{i18n>RADIO_BUTTON_GROUP_LABEL}" design="Bold" />
+				<Label id="visibilityToolbarLabel" labelFor="visibilityRadioButtonGroup" text="{i18n>RADIO_BUTTON_GROUP_LABEL}" design="Bold"  />
 			</Toolbar>
 		</headerToolbar>
 		<content>
@@ -24,10 +24,10 @@
 				items="{selectedContexts>/selected}">
 				<headerToolbar>
 					<Toolbar style="Clear" id="restrictedToolbar">
-						<Label labelFor="selectedContextsList" text="{i18n>SELECTED_CONTEXT_LIST_TITLE}" design="Bold" required="true"/>
+						<Label labelFor="selectedContextsList" text="{i18n>SELECTED_CONTEXT_LIST_TITLE}" design="Bold" required="true" wrapping="true"/>
 						<ToolbarSpacer />
 						<Button id="removeAllButton" text="{i18n>REMOVE_ALL_BUTTON}" press=".removeAll" enabled="{path: 'selectedContexts>/selected', formatter: '.isRemoveAllEnabled'}"/>
-						<Button id="addContextsButton" text="{i18n>ADD_CONTEXTS_BUTTON}" press=".onAddContextsHandler"/>
+						<Button id="addContextsButton" ariaHasPopup="Dialog" text="{i18n>ADD_CONTEXTS_BUTTON}" press=".onAddContextsHandler"/>
 					</Toolbar>
 				</headerToolbar>
 				<StandardListItem
