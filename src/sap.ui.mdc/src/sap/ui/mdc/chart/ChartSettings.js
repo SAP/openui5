@@ -20,11 +20,11 @@ sap.ui.define([], function () {
 		},
 
 		showUIChart: function (oControl, oSource) {
-			oControl.getEngine().showUI(oControl, "Item");
+			oControl.getEngine().uimanager.show(oControl, "Item");
 		},
 
 		showUISort: function(oControl, oSource){
-			oControl.getEngine().showUI(oControl, "Sort");
+			oControl.getEngine().uimanager.show(oControl, "Sort");
 		}
 
 	};

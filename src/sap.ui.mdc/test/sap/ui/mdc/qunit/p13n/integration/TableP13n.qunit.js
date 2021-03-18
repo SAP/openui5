@@ -6,11 +6,6 @@ sap.ui.define([
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("Engine API tests showUI Table", {
-        setLiveMode: function(sController, bLiveMode) {
-            Engine.getInstance().getController(this.oTable, sController).getLiveMode = function() {
-                return bLiveMode;
-            };
-        },
 		beforeEach: function () {
 				var aPropertyInfos = [
 				{
@@ -75,42 +70,18 @@ sap.ui.define([
         assert.ok(Engine.getInstance().getController(this.oTable, "Filter"), "FilterController has been registered");
 	});
 
-	QUnit.test("liveMode true", function (assert) {
-		var done = assert.async();
-		var oBtn = new Button();
-        this.setLiveMode("Column", true);
-
-		Engine.getInstance().showUI(this.oTable, "Column", oBtn).then(function(oP13nControl){
-
-			//check container
-			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(oP13nControl.getVerticalScrolling(), "Vertical scrolling is active");
-			assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
-			assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("table.SETTINGS_COLUMN"), "Correct title has been set");
-			assert.ok(Engine.getInstance()._hasActiveP13n(this.oTable),"dialog is open");
-
-			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
-			assert.ok(oInnerTable, "Inner Table has been created");
-			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
-			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
-			done();
-		}.bind(this));
-	});
 
 	QUnit.test("liveMode false", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-		this.setLiveMode("Column", false);
 
-		Engine.getInstance().showUI(this.oTable, "Column", oBtn).then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oTable, "Column", oBtn).then(function(oP13nControl){
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
 			assert.ok(oP13nControl.isA("sap.m.Dialog"));
 			assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("table.SETTINGS_COLUMN"), "Correct title has been set");
-			assert.ok(Engine.getInstance()._hasActiveP13n(this.oTable),"dialog is open");
+			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
@@ -128,13 +99,13 @@ sap.ui.define([
 
 		this.oTable.initialized().then(function(){
 			this.oTable.retrieveInbuiltFilter().then(function(oP13nFilter){
-				Engine.getInstance().showUI(this.oTable, "Filter", oBtn).then(function(oP13nControl){
+				Engine.getInstance().uimanager.show(this.oTable, "Filter", oBtn).then(function(oP13nControl){
 
 					//check container
 					assert.ok(oP13nControl, "Container has been created");
 					assert.ok(oP13nControl.isA("sap.m.Dialog"));
 					assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE"), "Correct title has been set");
-					assert.ok(Engine.getInstance()._hasActiveP13n(this.oTable),"dialog is open");
+					assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 					//check inner Control
 					assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct control created");
@@ -156,7 +127,7 @@ sap.ui.define([
 
 		this.oTable.initialized().then(function(){
 			this.oTable.retrieveInbuiltFilter().then(function(oP13nFilter){
-				Engine.getInstance().showUI(this.oTable, "Filter", oBtn).then(function(oP13nControl){
+				Engine.getInstance().uimanager.show(this.oTable, "Filter", oBtn).then(function(oP13nControl){
 						var aFilterItems = oP13nControl.getContent()[0].getFilterItems();
 
 						//always display in Filter dialog by default
@@ -180,7 +151,7 @@ sap.ui.define([
 			}
 		];
 
-		Engine.getInstance().createUI(this.oTable, "Column", aPropertyInfos).then(function(oP13nControl){
+		Engine.getInstance().uimanager.create(this.oTable, "Column", aPropertyInfos).then(function(oP13nControl){
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
 			assert.ok(oP13nControl.isA("sap.m.Dialog"));
@@ -194,16 +165,16 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("_handleChange callback execution",function(assert){
+	QUnit.test("handleP13n callback execution",function(assert){
 		var done = assert.async();
 
 		//first we need to open the settings dialog to ensure that all models have been prepared
-		Engine.getInstance().showUI(this.oTable, "Column").then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oTable, "Column").then(function(oP13nControl){
 
 			//trigger event handler manually --> usually triggered by user interaction
 			//user interaction manipulates the inner model of the panel,
 			//to mock user interaction we directly act the change on the p13n panel model
-			var aItems = Engine.getInstance().getController(this.oTable, "Column").oP13nData.items;
+			var aItems = Engine.getInstance().getController(this.oTable, "Column").getP13nData();
 			aItems.pop(); //remove one item to trigger a change
 
 			var oModificationHandler = TestModificationHandler.getInstance();
@@ -223,7 +194,7 @@ sap.ui.define([
 			}.bind(this);
 			Engine.getInstance()._setModificationHandler(this.oTable, oModificationHandler);
 
-			Engine.getInstance()._handleChange(this.oTable, "Column", {items: aItems});
+			Engine.getInstance().handleP13n(this.oTable, ["Column"], {items: aItems});
 
 		}.bind(this));
 
@@ -233,12 +204,12 @@ sap.ui.define([
 		var done = assert.async();
 		var oBtn = new Button();
 
-		Engine.getInstance().showUI(this.oTable, "Sort", oBtn).then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oTable, "Sort", oBtn).then(function(oP13nControl){
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
 			assert.ok(oP13nControl.getVerticalScrolling(), "Vertical scrolling is active");
-			assert.ok(Engine.getInstance()._hasActiveP13n(this.oTable),"dialog is open");
+			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
@@ -273,11 +244,11 @@ sap.ui.define([
 
 		this.createTestObjects(aPropertyInfos);
 
-		Engine.getInstance().showUI(this.oTable, "Sort", oBtn).then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oTable, "Sort", oBtn).then(function(oP13nControl){
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(Engine.getInstance()._hasActiveP13n(this.oTable),"dialog is open");
+			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
@@ -316,11 +287,11 @@ sap.ui.define([
 
 		this.createTestObjects(aPropertyInfos);
 
-		Engine.getInstance().showUI(this.oTable, "Column", oBtn).then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oTable, "Column", oBtn).then(function(oP13nControl){
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(Engine.getInstance()._hasActiveP13n(this.oTable),"dialog is open");
+			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;

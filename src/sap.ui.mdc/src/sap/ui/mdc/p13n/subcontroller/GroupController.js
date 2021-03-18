@@ -22,10 +22,6 @@ sap.ui.define([
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
-    GroupController.prototype.getAdaptationUI = function () {
-        return "sap/ui/mdc/p13n/panels/SelectionPanel";
-    };
-
     GroupController.prototype.getChangeOperations = function () {
         return {
             add: "addGroup",
@@ -38,7 +34,7 @@ sap.ui.define([
         return "grouped";
     };
 
-    GroupController.prototype.setP13nData = function(oPropertyHelper) {
+    GroupController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
         var aItemState = this.getCurrentState();
         var mItemState = P13nBuilder.arrayToMap(aItemState);
@@ -58,11 +54,7 @@ sap.ui.define([
         oP13nData.presenceAttribute = this._getPresenceAttribute();
         oP13nData.items.forEach(function(oItem){delete oItem.groupPosition;});
 
-        this.oP13nData = oP13nData;
-    };
-
-    GroupController.prototype.getP13nData = function () {
-        return this.oP13nData;
+        return oP13nData;
     };
 
     return GroupController;

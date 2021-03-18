@@ -3,27 +3,24 @@
  */
 
 sap.ui.define([
+	"sap/ui/mdc/p13n/AdaptationProvider",
 	"sap/base/util/merge",
 	"sap/base/Log",
-	"sap/base/util/UriParameters",
-	"sap/ui/base/Object",
 	"sap/ui/mdc/util/PropertyHelper",
-	"sap/ui/mdc/util/loadModules",
-	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/ui/mdc/p13n/modification/FlexModificationHandler",
 	"sap/m/MessageStrip",
 	"sap/ui/core/library",
 	"sap/ui/mdc/p13n/StateUtil",
 	"sap/ui/core/Element",
-	"sap/ui/mdc/p13n/DefaultProviderRegistry"
-], function (merge, Log, SAPUriParameters, BaseObject, PropertyHelper, loadModules, P13nBuilder, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil, Element, DefaultProviderRegistry) {
+	"sap/ui/mdc/p13n/DefaultProviderRegistry",
+	"sap/ui/mdc/p13n/UIManager"
+], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil, Element, DefaultProviderRegistry, UIManager) {
 	"use strict";
+
+	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
 
 	//Shortcut to 'MessageType'
 	var MessageType = coreLibrary.MessageType;
-
-	//Used for experimental features (such as livemode)
-	var oURLParams = new SAPUriParameters(window.location.search);
 
 	/*global WeakMap */
 	var _mRegistry = new WeakMap();
@@ -48,11 +45,21 @@ sap.ui.define([
 	 * @since 1.87
 	 * @alias sap.ui.mdc.p13n.Engine
 	 */
-	var Engine = BaseObject.extend("sap.ui.mdc.p13n.Engine", {
+	var Engine = AdaptationProvider.extend("sap.ui.mdc.p13n.Engine", {
 		constructor: function() {
-			BaseObject.call(this);
+			AdaptationProvider.call(this);
+
+			if (oEngine) {
+				throw Error(ERROR_INSTANCING);
+			}
+
 			this._aRegistry = [];
+
+			//Default Provider Registry to be used for internal PersistenceProvider functionality access
 			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance();
+
+			//UIManager to be used for p13n UI creation
+			this.uimanager = UIManager.getInstance(this);
 		}
 	});
 
@@ -61,7 +68,6 @@ sap.ui.define([
 	 * classes of <code>sap.ui.mdc.p13n.Controller</code> for the control instance
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
 	 *
 	 * @param {sap.ui.mdc.Control} oControl The control insance to be registered for adaptation
 	 * @param {Object} oConfig The config object providing key value pairs of keys and
@@ -105,52 +111,30 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Deregister a registered control. By deregistering a control the control will
+	 * be removed from the <code>Engine</code> registry and all instance specific sub
+	 * modules such as the registered controllers are going to be destroyed.
+	 *
+	 * @param {sap.ui.mdc.Control} oControl
+	 */
 	Engine.prototype.deregisterAdaptation = function(oControl) {
 		var oRegistryEntry = this._getRegistryEntry(oControl);
+
+		//destroy subcontroller
 		Object.keys(oRegistryEntry.controller).forEach(function(sKey){
 			var oController = oRegistryEntry.controller[sKey];
 			oController.destroy();
 
 			delete oRegistryEntry.controller[sKey];
 		});
-	};
 
-	/**
-	 * Opens a personalization Dialog according to the provided Controller
-	 * in the registration that the Engine can find for the Control and key.
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance
-	 * @param {string} sKey The key for the according Controller
-	 * @param {sap.ui.core.Control} oSource The source to be used. This may only
-	 * be relevant in case the corresponding Controller is configured
-	 * for liveMode
-	 *
-	 * @returns {Promise} A Promise resolving in the P13n UI.
-	 */
-	Engine.prototype.showUI = function(vControl, sKey, oSource) {
+		//Remove the control from the weakmap housekeeping
+		_mRegistry.delete(oControl);
 
-		//!!!Warning: experimental and only for testing purposes!!!----------
-		if (oURLParams.getAll("sap-ui-xx-p13nLiveMode")[0] === "true"){
-			this.getController(vControl, sKey)._bLiveMode = true;
-			Log.warning("Please note that the p13n liveMode is experimental");
-		}
-		//--------------------------------------------------------------------
-
-		if (!this._hasActiveP13n(vControl)){
-			this._setActiveP13n(vControl, sKey);
-			return this.createUI(vControl, sKey).then(function(oP13nDialog){
-				this._openP13nControl(vControl, sKey, oP13nDialog, oSource);
-				return oP13nDialog;
-			}.bind(this), function(sErr){
-				this._setActiveP13n(vControl, null);
-				Log.error("P13n container creation failed: " + sErr);
-			}.bind(this));
-		} else {
-			return Promise.resolve();
-		}
+		//Remove the control from the array to maintain debugging
+		var iControlIndex = this._aRegistry.indexOf(oControl.getId());
+		this._aRegistry.splice(iControlIndex, 1);
 	};
 
 	/**
@@ -170,46 +154,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to create a customized P13nUI without using the default
-	 * implementation of <code>Engine#showUI</code> which will use all
-	 * properties available by default.
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance
-	 * @param {string} sKey The key for the according Controller
-	 * @param {Object[]} aCustomInfo A custom set of propertyinfos as base to create the UI
-	 *
-	 * @returns {Promise} A Promise resolving in the P13n UI.
-	 */
-	Engine.prototype.createUI = function(vControl, sKey, aCustomInfo) {
-		return this.initAdaptation(vControl, sKey, aCustomInfo).then(function(){
-			return this._retrieveP13nContainer(vControl, sKey).then(function(oContainer){
-				var oP13nUI = oContainer.getContent()[0];
-
-				var oController = this.getController(vControl, sKey);
-				oP13nUI.setP13nModel(oController.getP13nModel());
-
-				if (oP13nUI.setLiveMode){
-					oP13nUI.setLiveMode(oController.getLiveMode());
-				}
-
-				return oController.initializeUI().then(function(){
-					oController.getAdaptationControl().addDependent(oContainer);
-					return oContainer;
-				});
-
-			}.bind(this));
-		}.bind(this));
-	};
-
-	/**
 	 * <code>Engine#createChanges</code> can be used to programmatically trigger the creation
 	 * of a set of changes based on the current control state and the provided state.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
 	 *
 	 * @param {object} mDiffParameters A map defining the configuration to create the changes.
 	 * @param {sap.ui.mdc.Control} mDiffParameters.control The control instance tht should be adapted.
@@ -270,7 +218,6 @@ sap.ui.define([
 	 * This method can be used to trigger a reset on the provided control instance.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
 	 *
 	 * @param {sap.ui.mdc.Control} oControl The according control instance.
 	 * @param {string} sKey The key for the affected config.
@@ -285,8 +232,8 @@ sap.ui.define([
 				selector: oControl
 			}, oModificationSetting.payload).then(function(){
 				//Re-Init housekeeping after update
-				return this.initAdaptation(oControl, sKey).then(function(){
-					oController.update();
+				return this.initAdaptation(oControl, sKey).then(function(oPropertyHelper){
+					oController.update(oPropertyHelper);
 				});
 			}.bind(this));
 		} else {
@@ -343,7 +290,6 @@ sap.ui.define([
 	 * for keyuser personalization.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
 	 *
 	 * @param {sap.ui.mdc.Control} oControl The registered control instance.
 	 * @param {object} mPropertyBag The propertybag provided in the settings action.
@@ -376,7 +322,7 @@ sap.ui.define([
 
 		this._setModificationHandler(oControl, oModificationHandler);
 
-		this.showUI(oControl, sKey).then(function(oContainer){
+		this.uimanager.show(oControl, sKey).then(function(oContainer){
 			oContainer.addStyleClass(mPropertyBag.styleClass);
 		});
 
@@ -389,14 +335,30 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Apply a State on a control by passing an object that contains the
+	 * registered controller key and an object matching the innter subcontroller housekeeping.
+	 *
+	 * @example {
+	 * 		ControllerKey: [{<someState>}, {...}]
+	 * }
+	 *
+	 * @param {sap.ui.mdc.Control} oControl The registered control instance
+	 * @param {object} oState The state object
+	 * @param {boolean} bApplyAbsolute Defines whether the state should be an additional delta on the current control state
+	 *
+	 * @returns {Promise} A Promise resolving after the state has been applied
+	 */
 	Engine.prototype.applyState = function(oControl, oState, bApplyAbsolute) {
 
 		//Call retrieve only to ensure that the control is initialized and enabled for modification
 		return this.retrieveState(oControl).then(function(oCurrentState){
 
-			var aStatePromise = [], aChanges = [];
+			var aStatePromise = [], aChanges = [], mInfoState = {};
 
-			var mInfoState = oControl.validateState(StateUtil._externalizeKeys(oState));
+			if (oControl.validateState instanceof Function) {
+				mInfoState = oControl.validateState(StateUtil._externalizeKeys(oState));
+			}
 
 			if (mInfoState.validation === MessageType.Error){
 				Log.error(mInfoState.message);
@@ -443,7 +405,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @MDC_PUBLIC_CANDIDATE
 	 *
 	 * @param {object} oControl The control instance implementing IxState to retrieve the externalized state
 	 *
@@ -516,21 +477,11 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} A Promise resolving after the adaptation housekeeping has been initialized.
 	 */
-	Engine.prototype.initAdaptation = function(vControl, sKey, aCustomInfo) {
-
-		if (!this.getController(vControl, sKey)) {
-			var oControl = Engine.getControlInstance(vControl);
-			throw new Error("No controller registered yet for " + oControl.getId() + " and key: " + sKey);
-		}
+	Engine.prototype.initAdaptation = function(vControl, aKeys, aCustomInfo) {
+		this.verifyController(vControl, aKeys);
 
 		//1) Init property helper
-		return this._retrievePropertyHelper(vControl, aCustomInfo)
-
-		//2) Initialize SubController housekeeping
-		.then(function(){
-			this._prepareAdaptationData(vControl, sKey);
-			return;
-		}.bind(this));
+		return this._retrievePropertyHelper(vControl, aCustomInfo);
 
 	};
 
@@ -542,8 +493,8 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.p13n.subcontroller.Controller} oController The controller instance.
 	 * @param {string} sKey The key that defines the later access to the controller instance.
 	 */
-	Engine.prototype.addController = function(oController, sKey) {
-		var oRegistryEntry = this._createRegistryEntry(oController.getAdaptationControl());
+	Engine.prototype.addController = function(oController, sKey, oPreConfig) {
+		var oRegistryEntry = this._createRegistryEntry(oController.getAdaptationControl(), oPreConfig);
 		oRegistryEntry.controller[sKey] = oController;
 	};
 
@@ -564,11 +515,56 @@ sap.ui.define([
 	};
 
 	/**
+	 * Verifies the existence of a set of subcontrollers registered for a provided control instance.
+	 *
+	 * @param {sap.ui.mdc.Control} vControl The registered Control instance.
+	 * @param {string|array} vKey A key as string or an array of keys
+	 */
+	Engine.prototype.verifyController = function(vControl, vKey) {
+		var aKeys = vKey instanceof Array ? vKey : [vKey];
+
+		aKeys.forEach(function(sKey){
+			if (!this.getController(vControl, sKey)) {
+				var oControl = Engine.getControlInstance(vControl);
+				throw new Error("No controller registered yet for " + oControl.getId() + " and key: " + sKey);
+			}
+		}.bind(this));
+
+	};
+
+	/**
+	 * Retrieves the subcontroller UI settings for a provided control instance
+	 * and the set of provided registered keys.
+	 *
+	 * @param {sap.ui.mdc.Control} vControl The registered Control instance.
+	 * @param {string|array} vKey A key as string or an array of keys
+	 *
+	 * @returns {object} The requested UI settings of the control instance and provided keys
+	 */
+	Engine.prototype.getUISettings = function(vControl, aKeys) {
+		this.verifyController(vControl, aKeys);
+		var oPropertyHelper = this._getRegistryEntry(vControl).helper;
+		var mUiSettings = {};
+
+		aKeys.forEach(function(sKey){
+			var oController = this.getController(vControl, sKey);
+			mUiSettings[sKey] = {};
+			mUiSettings[sKey] = {
+				resetEnabled: oController.getResetEnabled(),
+				containerSettings: oController.getContainerSettings(),
+				adaptationUI: oController.getAdaptationUI(oPropertyHelper)
+			};
+		}.bind(this));
+
+		return mUiSettings;
+	};
+
+	/**
 	 * This method can be used to determine if modification settings for a control have already been created.
 	 *
 	 * @private
 	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered Control instance.
+	 * @param {sap.ui.mdc.Control} vControl The registered Control instance
  	 * @returns {boolean} true if modification settings were already determined
 	 */
 	Engine.prototype.isRegisteredForModification = function(vControl) {
@@ -576,18 +572,24 @@ sap.ui.define([
 		return oRegistryEntry && !!oRegistryEntry.modification;
 	};
 
+	/**
+	 * Retruns an array of all registered controllers
+	 *
+	 * @param {sap.ui.mdc.Control} vControl The registered Control instance
+	 * @returns {array} An array of all registered controller instances
+	 */
 	Engine.prototype.getRegisteredControllers = function(vControl){
 		var oRegistryEntry = this._getRegistryEntry(vControl);
 		return Object.keys(oRegistryEntry.controller);
 	};
 
 	/**
-	 * This method can be used to get the registry entry for a control instance.
+	 * This method can be used to get the registry entry for a control instance
 	 *
 	 * @private
 	 * @param {sap.ui.mdc.Control} vControl
 	 *
-	 * @returns {object} The according registry entry.
+	 * @returns {object} The according registry entry
 	 */
 	Engine.prototype._getRegistryEntry = function(vControl) {
 
@@ -597,10 +599,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to get the modification handling for a control instance.
+	 * This method can be used to get the modification handling for a control instance
 	 *
 	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * @param {sap.ui.mdc.Control} vControl
@@ -616,21 +617,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to create the registry entry for a control instance.
+	 * This method can be used to create the registry entry for a control instance
 	 *
 	 * @private
 	 * @param {sap.ui.mdc.Control} vControl
 	 *
-	 * @returns {object} The according registry entry.
+	 * @returns {object} The according registry entry
 	 */
-	Engine.prototype._createRegistryEntry = function(vControl) {
+	Engine.prototype._createRegistryEntry = function(vControl, oPreConfiguration) {
 
 		var oControl = Engine.getControlInstance(vControl);
 
 		if (!_mRegistry.has(oControl)) {
 
 			_mRegistry.set(oControl, {
-				modification: null,
+				modification: oPreConfiguration && oPreConfiguration.modification ? oPreConfiguration.modification : null,
 				controller: {},
 				activeP13n: null,
 				helper: null
@@ -641,18 +642,19 @@ sap.ui.define([
 		return _mRegistry.get(oControl);
 	};
 
+
 	/**
 	 * Determines and registeres the ModificationHandler per control instance
 	 *
 	 * @private
 	 * @param {sap.ui.mdc.Control} vControl
-	 * @returns {object} The according modification registry entry.
+	 * @returns {object} The according modification registry entry
 	 */
 	Engine.prototype._determineModification = function (vControl) {
 
 		var oRegistryEntry = this._getRegistryEntry(vControl);
 
-		//Modification setting is only calculated once per control instance.
+		//Modification setting is only calculated once per control instance
 		if (oRegistryEntry && oRegistryEntry.modification) {
 			return oRegistryEntry.modification;
 		}
@@ -763,9 +765,9 @@ sap.ui.define([
 	 * @private
 	 * @param {sap.ui.mdc.Control} vControl
 	 *
-	 * @returns {boolean} The according flag is the Control has an open P13n container.
+	 * @returns {boolean} The according flag is the Control has an open P13n container
 	 */
-	Engine.prototype._hasActiveP13n = function(vControl) {
+	Engine.prototype.hasActiveP13n = function(vControl) {
 		return !!this._getRegistryEntry(vControl).activeP13n;
 	};
 
@@ -779,89 +781,8 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
 	 * @param {string} sKey The registerd key to get the corresponding Controller.
 	 */
-	Engine.prototype._setActiveP13n = function(vControl, sKey) {
+	Engine.prototype.setActiveP13n = function(vControl, sKey) {
 		this._getRegistryEntry(vControl).activeP13n = sKey;
-	};
-
-	/**
-	 * This method can be used to open the p13n UI.
-	 *
-	 * @private
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
-	 * @param {sap.ui.core.Control} oP13nControl The created p13n UI to be displayed.
-	 * @param {sap.ui.core.Control} oSource The source control (only for livemode).
-	 */
-	Engine.prototype._openP13nControl = function(vControl, sKey, oP13nControl, oSource){
-		var oController = this.getController(vControl, sKey);
-		if (oController.getLiveMode()) {
-			oP13nControl.openBy(oSource);
-		} else {
-			oP13nControl.open();
-		}
-
-		this._validateP13n(vControl, sKey, oP13nControl.getContent()[0]);
-	};
-
-	/**
-	 * This method can be used to retrieve the p13n container.
-	 *
-	 * @private
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
-	 *
-	 * @returns {Promise} A Promise resolving in the according container
-	 * (Depending on the Controllers livemode config).
-	 */
-	Engine.prototype._retrieveP13nContainer = function (vControl, sKey) {
-		return new Promise(function (resolve, reject) {
-
-			var oController = this.getController(vControl, sKey);
-
-			var bLiveMode = oController.getLiveMode();
-			var vAdaptationUI = oController.getAdaptationUI();
-
-			var fnPrepareP13nUI = function(oP13nUI) {
-				if (bLiveMode && oP13nUI.attachChange) {
-					oP13nUI.attachChange(function(){
-						this._handleChange(oController.getAdaptationControl(), sKey, oController.getP13nData());
-					}.bind(this));
-				}
-
-				if (oP13nUI.attachChange) {
-					oP13nUI.attachChange(function(oEvt){
-						Engine.getInstance()._validateP13n(vControl, sKey, oP13nUI);
-					});
-				}
-
-				this._createUIContainer(vControl, sKey, oP13nUI).then(function(oDialog){
-					resolve(oDialog);
-				});
-			}.bind(this);
-
-			if (typeof vAdaptationUI === "string") {
-				var sPath = vAdaptationUI;
-				loadModules([sPath]).then(function(aModules){
-					var Panel = aModules[0];
-					var oPanel = new Panel();
-					fnPrepareP13nUI(oPanel);
-				});
-			} else if (vAdaptationUI instanceof Function) {
-				fnPrepareP13nUI(vAdaptationUI);
-			} else if (vAdaptationUI instanceof Promise) {
-				vAdaptationUI.then(function(oP13nUI){
-					fnPrepareP13nUI(oP13nUI);
-				});
-			}else if (vAdaptationUI.isA("sap.ui.core.Control")) {
-				var oP13nUI = vAdaptationUI;
-				fnPrepareP13nUI(oP13nUI);
-			} else {
-				reject(new Error("Please provide either a BasePanel derivation or a custom Control as personalization UI in AdaptationConfig"));
-			}
-
-		}.bind(this));
 	};
 
 	/**
@@ -875,7 +796,7 @@ sap.ui.define([
 	 * @param {string} sKey The registerd key to get the corresponding Controller.
 	 * @param {sap.ui.core.Control} oP13nUI The adaptation UI displayed in the container (e.g. BasePanel derivation).
 	 */
-	Engine.prototype._validateP13n = function(vControl, sKey, oP13nUI) {
+	Engine.prototype.validateP13n = function(vControl, sKey, oP13nUI) {
 		var oController = this.getController(vControl, sKey);
 		var oControl = Engine.getControlInstance(vControl);
 
@@ -908,195 +829,54 @@ sap.ui.define([
 	};
 
 	/**
-	 * The event handler called by the P13n UI.
+	 * Reads the current state of the subcontrollers and triggers a state appliance
 	 *
-	 * @private
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
-	 * @param {object} oNewState The state which is going to be applied absolute via Engine#createChanges
-	 * @param {object[]} aAdditionalChanges An array of additional changes that should be applied.
-	 * (For example Inbuilt Filtering)
+	 * @param {sap.ui.mdc.Control} vControl The registered Control instance.
+	 * @param {array} aKeys An array of keys
+	 * @returns {Promise} A Promise resolving after all p13n changes have been calculated and processed
 	 */
-	Engine.prototype._handleChange = function(oControl, sKey, oNewState, aAdditionalChanges) {
-		this.createChanges({
-			control: oControl,
-			key: sKey,
-			state: oNewState.items,
-			suppressAppliance: true,
-			applyAbsolute: true
-		}).then(function(aItemChanges){
+	Engine.prototype.handleP13n = function(oControl, aKeys) {
 
-			var aComulatedChanges = aAdditionalChanges ? aAdditionalChanges.concat(aItemChanges) : aItemChanges;
-			this._processChanges(oControl, aComulatedChanges);
+		var pChanges = [];
 
+		aKeys.forEach(function(sControllerKey){
+
+			var oController = this.getController(oControl, sControllerKey);
+
+			var p = this.createChanges({
+				control: oControl,
+				key: sControllerKey,
+				state: oController.getP13nData(),
+				suppressAppliance: true,
+				applyAbsolute: true
+			})
+			.then(function(aItemChanges){
+
+				return oController.getBeforeApply().then(function(aChanges){
+
+					var aComulatedChanges = aChanges ? aChanges.concat(aItemChanges) : aItemChanges;
+					return aComulatedChanges;
+
+				});
+			});
+
+			pChanges.push(p);
 		}.bind(this));
-	};
 
-	/**
-	 * This method can be used to create the p13n container instance.
-	 *
-	 * @private
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
-	 * @param {sap.ui.core.Control} oPanel The control instance which is set in the content area of the container.
-	 *
-	 * @returns {Promise} Returns a Promise resolving in the container instance
-	 */
-	Engine.prototype._createUIContainer = function (vControl, sKey, oPanel) {
+		return Promise.all(pChanges).then(function(aChangeMatrix){
 
-		var oController = this.getController(vControl, sKey);
-		var oContainerPromise;
+			var aApplyChanges = [];
 
-		if (oController.getLiveMode()) {
-			oContainerPromise = this._createPopover(vControl, sKey, oPanel);
-		} else {
-			oContainerPromise = this._createModalDialog(vControl, sKey, oPanel);
-		}
+			aChangeMatrix.forEach(function(aTypeChanges){
+				aApplyChanges = aApplyChanges.concat(aTypeChanges);
+			});
 
-		return oContainerPromise.then(function(oContainer){
-			// Add custom style class in order to display marked items accordingly
-			oContainer.addStyleClass("sapUiMdcPersonalizationDialog");
-
-			oContainer.isPopupAdaptationAllowed = function () {
-				return false;
-			};
-
-			//EscapeHandler is required for non-liveMode
-			if (!oController.getLiveMode()){
-				oContainer.setEscapeHandler(function(oDialogClose){
-					this._setActiveP13n(vControl, null);
-					oContainer.close();
-					oContainer.destroy();
-					oDialogClose.resolve();
-				}.bind(this));
+			if (aApplyChanges.length > 0) {
+				Engine.getInstance()._processChanges(oControl, aApplyChanges);
 			}
+		});
 
-			// Set compact style class if the table is compact too
-			oContainer.toggleStyleClass("sapUiSizeCompact", !!jQuery(oController.getAdaptationControl()).closest(".sapUiSizeCompact").length);
-			return oContainer;
-		}.bind(this));
-
-	};
-
-	/**
-	 * This method can be used to create a Popover as container instance.
-	 *
-	 * @private
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
-	 * @param {sap.ui.core.Control} oPanel The control instance which is set in the content area of the container.
-	 *
-	 * @returns {sap.m.ResponsivePopover} The popover instance.
-	 */
-	Engine.prototype._createPopover = function(vControl, sKey, oPanel){
-
-		var oController = this.getController(vControl, sKey);
-
-		var fnAfterDialogClose = function (oEvt) {
-			var oPopover = oEvt.getSource();
-			this._setActiveP13n(vControl, null);
-			oPopover.destroy();
-		}.bind(this);
-
-		var mSettings = Object.assign({
-			verticalScrolling: true,
-			afterClose: fnAfterDialogClose
-		}, oController.getContainerSettings());
-
-		if (oController.getResetEnabled()){
-			mSettings.reset = {
-				onExecute: function() {
-					this.reset(vControl, sKey);
-				}.bind(this)
-			};
-		}
-
-		return P13nBuilder.createP13nPopover(oPanel, mSettings);
-
-	};
-
-	/**
-	 * This method can be used to create a Dialog as container instance.
-	 *
-	 * @private
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
-	 * @param {sap.ui.core.Control} oPanel The control instance which is set in the content area of the container.
-	 *
-	 * @returns {sap.m.Dialog} The dialog instance.
-	 */
-	Engine.prototype._createModalDialog = function(vControl, sKey, oPanel){
-
-		var oController = this.getController(vControl, sKey);
-
-		var fnDialogOk = function (oEvt) {
-			var oDialog = oEvt.getSource().getParent();
-
-			var pConfirmContainer = this._confirmContainer(vControl, sKey, oPanel);
-
-			pConfirmContainer.then(function(){
-				this._setActiveP13n(vControl, null);
-				oDialog.close();
-			}.bind(this));
-
-		}.bind(this);
-
-		var fnDialogCancel = function(oEvt) {
-			var oContainer = oEvt.getSource().getParent();
-			this._setActiveP13n(vControl, null);
-			oContainer.close();
-		}.bind(this);
-
-		var mSettings = Object.assign({
-			verticalScrolling: true,
-			afterClose: function(oEvt) {
-				var oDialog = oEvt.getSource();
-				if (oDialog) {
-					oDialog.destroy();
-				}
-			},
-			cancel: fnDialogCancel
-		}, oController.getContainerSettings());
-
-		if (oController.getResetEnabled()){
-			mSettings.reset = {
-				onExecute: function() {
-					this.reset(vControl, sKey);
-				}.bind(this)
-			};
-		}
-
-		mSettings.confirm = {
-			handler: function(oEvt) {
-				fnDialogOk(oEvt);
-			}
-		};
-
-		return P13nBuilder.createP13nDialog(oPanel, mSettings);
-	};
-
-	/**
-	 * This method can be used to confirm a Dialog container instance.
-	 *
-	 * @private
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
-	 * @param {sap.ui.core.Control} oPanel The control instance which is set in the content area of the container.
-	 *
-	 */
-	Engine.prototype._confirmContainer = function(vControl, sKey, oPanel){
-		var oController = this.getController(vControl, sKey);
-
-		return oController.getBeforeApply(oPanel).then(function(aChanges){
-			return this._handleChange(oController.getAdaptationControl(), sKey, oController.getP13nData(), aChanges);
-		}.bind(this));
-
-	};
+    };
 
 	/**
 	 * This method can be used to retrieve the PropertyHelper for a registered Control.
@@ -1116,8 +896,8 @@ sap.ui.define([
 				oRegistryEntry.helper.destroy();
 			}
 			oRegistryEntry.helper = new PropertyHelper(aCustomPropertyInfo);
-			return Promise.resolve(oRegistryEntry.oPropertyHelper);
-		}
+			return Promise.resolve(oRegistryEntry.helper);
+        }
 
 		if (oRegistryEntry.helper) {
 			return Promise.resolve(oRegistryEntry.helper);
@@ -1125,33 +905,14 @@ sap.ui.define([
 
 		return vControl.initPropertyHelper().then(function(oPropertyHelper){
 			oRegistryEntry.helper = oPropertyHelper;
+			return oPropertyHelper;
 		}, function(sHelperError){
 			throw new Error(sHelperError);
 		});
 	};
 
 	/**
-	 * This method can be used to initialize the Controller housekeeping.
-	 *
 	 * @private
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
-	 *
-	 */
-	Engine.prototype._prepareAdaptationData = function(vControl, sKey){
-
-		var oRegistryEntry = this._getRegistryEntry(vControl);
-
-		var oController = this.getController(vControl, sKey);
-		var oPropertyHelper = oRegistryEntry.helper;
-
-		oController.setP13nData(oPropertyHelper);
-	};
-
-	/**
-	 * @private
-	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * This method is the central point of access to the Engine Singleton.
@@ -1182,12 +943,14 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Engine.prototype.destroy = function() {
-		BaseObject.prototype.destroy.apply(this, arguments);
+		AdaptationProvider.prototype.destroy.apply(this, arguments);
 		oEngine = null;
 		this._aRegistry = null;
 		_mRegistry.delete(this);
 		this.defaultProviderRegistry.destroy();
 		this.defaultProviderRegistry = null;
+		this.uimanager.destroy();
+		this.uimanager = null;
 	};
 
 	return Engine;

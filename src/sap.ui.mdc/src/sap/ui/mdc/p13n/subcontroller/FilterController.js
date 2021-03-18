@@ -34,19 +34,14 @@ sap.ui.define([
         };
     };
 
-    FilterController.prototype.getBeforeApply = function(oAdaptationUI) {
-        var pConditionPromise = oAdaptationUI ? oAdaptationUI.createConditionChanges() : Promise.resolve([]);
+    FilterController.prototype.getBeforeApply = function() {
+        var oAdaptationFilterBar = this.getAdaptationControl().getInbuiltFilter();
+        var pConditionPromise = oAdaptationFilterBar ? oAdaptationFilterBar.createConditionChanges() : Promise.resolve([]);
         return pConditionPromise;
     };
 
     FilterController.prototype.getFilterControl = function() {
         return this.getAdaptationControl().isA("sap.ui.mdc.IFilter") ? this.getAdaptationControl() : this.getAdaptationControl()._oP13nFilter;
-    };
-
-    FilterController.prototype.initializeUI = function() {
-        return this.getAdaptationUI().then(function(oAdaptationFilterBar){
-            return oAdaptationFilterBar.createFilterFields();
-        });
     };
 
     FilterController.prototype.sanityCheck = function(oState) {
@@ -87,15 +82,25 @@ sap.ui.define([
         }
     };
 
-    FilterController.prototype.getAdaptationUI = function (fnRegister) {
-        return this.getAdaptationControl().retrieveInbuiltFilter();
+    FilterController.prototype.getAdaptationUI = function (oPropertyHelper, oWrapper) {
+        var oAdaptationModel = this._getP13nModel(oPropertyHelper);
+
+        return this.getAdaptationControl().retrieveInbuiltFilter().then(function(oAdaptationFilterBar){
+            oAdaptationFilterBar.setP13nModel(oAdaptationModel);
+            oAdaptationFilterBar.setLiveMode(false);
+            this._oAdaptationFB = oAdaptationFilterBar;
+            return oAdaptationFilterBar.createFilterFields().then(function(){
+                return oAdaptationFilterBar;
+            });
+        }.bind(this));
     };
+
 
     FilterController.prototype.getDelta = function(mPropertyBag) {
         return FlexUtil.getConditionDeltaChanges(mPropertyBag);
     };
 
-    FilterController.prototype.setP13nData = function(oPropertyHelper) {
+    FilterController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
         var mExistingFilters = this.getCurrentState() || {};
 
@@ -114,7 +119,7 @@ sap.ui.define([
             position: undefined
         }, oP13nData.items);
 
-        this.oP13nData = oP13nData;
+        return oP13nData;
     };
 
 	return FilterController;

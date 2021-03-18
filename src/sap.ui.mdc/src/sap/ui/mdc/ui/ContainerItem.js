@@ -64,9 +64,12 @@ sap.ui.define(['sap/ui/core/Element'],
 		return this._oContent;
 	};
 
-	ContainerItem.prototype.exit = function() {
-		Element.prototype.exit.apply(this, arguments);
-		this._oContent = null;
+	ContainerItem.prototype.destroy = function() {
+		Element.prototype.destroy.apply(this, arguments);
+		if (this._oContent) {
+			this._oContent.destroy();
+			this._oContent = null;
+		}
 	};
 
 	return ContainerItem;

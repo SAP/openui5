@@ -215,6 +215,7 @@ sap.ui.define([
         assert.ok(Object.keys(oRegistryEntry).length, 4, "Correct amount of attributes created");
     });
 
+
     QUnit.test("Check 'registerAdaptation' Error upon using wrong", function(assert){
 		assert.throws(function() {
 			this.oEngine.registerAdaptation(new Control(), {});
@@ -226,52 +227,52 @@ sap.ui.define([
         assert.ok(this.oEngine.getController(this.oControl.getId(), "Test"), "Controller 'Test' found in engine");
     });
 
-    QUnit.test("Check 'showUI' and active UI", function(assert){
+    QUnit.test("Check 'uimanager.show' and active UI", function(assert){
         var done = assert.async();
 
-        assert.ok(!this.oEngine._hasActiveP13n(this.oControl, "Test"), "There is no personalization open");
+        assert.ok(!this.oEngine.hasActiveP13n(this.oControl, "Test"), "There is no personalization open");
 
-        var oP13nPromise = this.oEngine.showUI(this.oControl, "Test");
-        assert.ok(this.oEngine._hasActiveP13n(this.oControl, "Test"), "There personalization is flagged as open to only initialize it once");
+        var oP13nPromise = this.oEngine.uimanager.show(this.oControl, "Test");
+        assert.ok(this.oEngine.hasActiveP13n(this.oControl, "Test"), "There personalization is flagged as open to only initialize it once");
         assert.ok(oP13nPromise instanceof Promise, "Controller 'Test' P13n can be used for personalization");
 
         oP13nPromise
         .then(function(oP13nUI){
-            assert.ok(this.oEngine._hasActiveP13n(this.oControl, "Test"), "There personalization is flagged as open to only initialize it once");
+            assert.ok(this.oEngine.hasActiveP13n(this.oControl, "Test"), "There personalization is flagged as open to only initialize it once");
             assert.ok(oP13nUI.isA("sap.m.Dialog"), "A control instance has been returned as UI");
             assert.ok(oP13nUI.getContent()[0].isA("sap.ui.mdc.p13n.panels.BasePanel"), "A control instance has been returned as UI");
 
             oP13nUI.destroy();
-            this.oEngine._setActiveP13n(this.oControl, null);
+            this.oEngine.setActiveP13n(this.oControl, null);
 
             done();
         }.bind(this));
     });
 
-    QUnit.test("Check 'showUI' with an active personalization (should still return a Promise)", function(assert){
+    QUnit.test("Check 'uimanager.show' with an active personalization (should still return a Promise)", function(assert){
         var done = assert.async();
 
-        this.oEngine._setActiveP13n(this.oControl, "Test");
-        var oP13nPromise = this.oEngine.showUI(this.oControl, "Test");
+        this.oEngine.setActiveP13n(this.oControl, "Test");
+        var oP13nPromise = this.oEngine.uimanager.show(this.oControl, "Test");
         assert.ok(oP13nPromise instanceof Promise, "Controller 'Test' P13n can be used for personalization");
 
         oP13nPromise
         .then(function(){
-            assert.ok(true, "showUI resolves gracefully even if the personalization is active");
-            this.oEngine._setActiveP13n(this.oControl, null);
+            assert.ok(true, "uimanager.show resolves gracefully even if the personalization is active");
+            this.oEngine.setActiveP13n(this.oControl, null);
             done();
         }.bind(this));
     });
 
-    QUnit.test("Check 'createUI'", function(assert){
+    QUnit.test("Check 'uimanager.create'", function(assert){
         var done = assert.async();
 
-        var oP13nPromise = this.oEngine.createUI(this.oControl, "Test");
+        var oP13nPromise = this.oEngine.uimanager.create(this.oControl, "Test");
         assert.ok(oP13nPromise instanceof Promise, "Controller 'Test' P13n can be used for personalization");
 
         oP13nPromise
         .then(function(oP13nUI){
-            assert.ok(!this.oEngine._hasActiveP13n(this.oControl, "Test"), "There is no personalization open (only via showUI)");
+            assert.ok(!this.oEngine.hasActiveP13n(this.oControl, "Test"), "There is no personalization open (only via showUI)");
             assert.ok(oP13nUI.isA("sap.m.Dialog"), "A control instance has been returned as UI");
             assert.ok(oP13nUI.getContent()[0].isA("sap.ui.mdc.p13n.panels.BasePanel"), "A control instance has been returned as UI");
 
@@ -575,7 +576,7 @@ sap.ui.define([
 
     });
 
-    QUnit.test("Check '_validateP13n' message handling (warning should display a message strip)", function(assert){
+    QUnit.test("Check 'validateP13n' message handling (warning should display a message strip)", function(assert){
 
         sinon.stub(AggregationBaseDelegate, "validateState").callsFake(function(oControl, oState){
             assert.ok(oControl.isA("sap.ui.mdc.Control"), "Check that the control instance has been provided");
@@ -599,7 +600,7 @@ sap.ui.define([
         var oP13nUI = new BasePanel({
             id: "someTestPanel"
         });
-        Engine.getInstance()._validateP13n(this.oControl, "Test2", oP13nUI);
+        Engine.getInstance().validateP13n(this.oControl, "Test2", oP13nUI);
 
         //Check if the strip has been placed in the BasePanel content area
         var oMessageStrip = oP13nUI._oMessageStrip;
@@ -609,7 +610,7 @@ sap.ui.define([
 
     });
 
-    QUnit.test("Check '_validateP13n' message handling (valid validation should NOT display a message strip)", function(assert){
+    QUnit.test("Check 'validateP13n' message handling (valid validation should NOT display a message strip)", function(assert){
 
         sinon.stub(AggregationBaseDelegate, "validateState").callsFake(function(oControl, oState){
             assert.ok(oControl.isA("sap.ui.mdc.Control"), "Check that the control instance has been provided");
@@ -633,7 +634,7 @@ sap.ui.define([
         var oP13nUI = new BasePanel({
             id: "someTestPanel"
         });
-        Engine.getInstance()._validateP13n(this.oControl, "Test2", oP13nUI);
+        Engine.getInstance().validateP13n(this.oControl, "Test2", oP13nUI);
 
         //Check if the strip has been placed in the BasePanel content area
         var oMessageStrip = oP13nUI._oMessageStrip;
@@ -747,108 +748,6 @@ sap.ui.define([
 		assert.ok(true, "No error occured");
     });
 
-	QUnit.module("Engine p13n container creation", {
-		before: function() {
-            this.oEngine = Engine.getInstance();
-            this.oControl = new Control();
-			this.oEngine.registerAdaptation(this.oControl, {
-                controller: {
-                    ContainerTest: Controller
-                }
-            });
-		},
-		after: function() {
-			this.oEngine.destroy();
-		}
-	});
-
-	QUnit.test("call _createPopover - check vertical scrolling", function(assert) {
-		var done = assert.async();
-
-		this.oEngine._createPopover(this.oControl, "ContainerTest").then(function(oPopover){
-			var bVerticalScrolling = oPopover.getVerticalScrolling();
-
-			assert.ok(bVerticalScrolling, "Popover has been created with verticalScrolling set to true");
-			assert.ok(oPopover.isA("sap.m.ResponsivePopover"));
-
-			oPopover.destroy();
-			done();
-		});
-	});
-
-	QUnit.test("check live vertical scrolling", function(assert){
-		var done = assert.async();
-        var oController = Engine.getInstance().getController(this.oControl, "ContainerTest");
-        oController.getLiveMode = function() {
-            return true;
-        };
-
-		Engine.getInstance()._createUIContainer(this.oControl, "ContainerTest", new Control()).then(function(oContainer){
-			assert.ok(oContainer.isA("sap.m.ResponsivePopover"), "Popover in liveMode");
-			assert.ok(oContainer.getVerticalScrolling(), "Vertical Scrolling true by default");
-			oContainer.destroy();
-			done();
-		});
-	});
-
-	QUnit.test("check modal vertical scrolling", function(assert){
-        var done = assert.async();
-        var oController = Engine.getInstance().getController(this.oControl, "ContainerTest");
-        oController.getLiveMode = function() {
-            return false;
-        };
-
-		Engine.getInstance()._createUIContainer(this.oControl, "ContainerTest", new Control()).then(function(oContainer){
-			assert.ok(oContainer.isA("sap.m.Dialog"), "Dialog in non-liveMode");
-			assert.ok(oContainer.getVerticalScrolling(), "Vertical Scrolling true by default");
-			oContainer.destroy();
-			done();
-		});
-	});
-
-	QUnit.test("check container settings derivation in liveMode", function(assert){
-		var done = assert.async();
-        var oController = Engine.getInstance().getController(this.oControl, "ContainerTest");
-        oController.getLiveMode = function() {
-            return true;
-        };
-		oController.getContainerSettings = function(){
-			return {
-                verticalScrolling: false,
-				title: "Some Title"
-            };
-		};
-
-		Engine.getInstance()._createUIContainer(this.oControl, "ContainerTest", new Control()).then(function(oContainer){
-			assert.ok(!oContainer.getVerticalScrolling(), "Vertical Scrolling overwritten by config in liveMode");
-			assert.equal(oContainer.getTitle(), "Some Title", "Correct title provided");
-			oContainer.destroy();
-			done();
-		});
-	});
-
-	QUnit.test("check container settings derivation in non-liveMode", function(assert){
-        var done = assert.async();
-        var oController = Engine.getInstance().getController(this.oControl, "ContainerTest");
-        oController.getLiveMode = function() {
-            return false;
-        };
-        oController.getContainerSettings = function(){
-			return {
-                verticalScrolling: false,
-				title: "Some Title"
-            };
-		};
-
-		Engine.getInstance()._createUIContainer(this.oControl, "ContainerTest", new Control()).then(function(oContainer){
-			assert.ok(!oContainer.getVerticalScrolling(), "Vertical Scrolling overwritten by config in liveMode");
-            assert.equal(oContainer.getTitle(), "Some Title", "Correct title provided");
-            assert.ok(!oContainer.getCustomHeader(), "No custom header provided if no reset is provided");
-			oContainer.destroy();
-			done();
-		});
-    });
-
     QUnit.module("Static Engine methods", {
 		before: function() {
 		},
@@ -898,5 +797,4 @@ sap.ui.define([
 
         oHBox.destroy();
     });
-
 });

@@ -34,6 +34,7 @@ sap.ui.define([
 	var Container = Control.extend("sap.ui.mdc.ui.Container", {
 		metadata: {
 			library: "sap.ui.mdc",
+			defaultAggregation: "views",
 			properties: {
 				/**
 				 * Defines the default view for the <code>Container</code> content area
@@ -134,7 +135,8 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.ui.Container} The Container instance
 	 */
 	Container.prototype.removeView = function(vContainerItem, bSuppress){
-		var oContainerItem = this.removeAggregation("views", vContainerItem, bSuppress);
+		var oContainerItem = typeof vContainerItem == "string" ? this.getView(vContainerItem) : vContainerItem;
+		oContainerItem = this.removeAggregation("views", oContainerItem , bSuppress);
 		//In case the currently selected view has been removed, switch the view
 		if (oContainerItem && oContainerItem.getKey() === this.getCurrentViewKey()){
 			this.switchView();

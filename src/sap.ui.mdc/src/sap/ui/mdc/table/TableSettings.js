@@ -141,19 +141,19 @@ sap.ui.define([
 		},
 
 		showUIColumns: function(oControl, oSource) {
-			oControl.getEngine().showUI(oControl, "Column", oSource);
+			oControl.getEngine().uimanager.show(oControl, "Column", oSource);
 		},
 
 		showUISort: function(oControl, oSource) {
-			oControl.getEngine().showUI(oControl, "Sort", oSource);
+			oControl.getEngine().uimanager.show(oControl, "Sort", oSource);
 		},
 
 		showUIFilter: function(oControl, oSource) {
-			oControl.getEngine().showUI(oControl, "Filter", oSource);
+			oControl.getEngine().uimanager.show(oControl, "Filter", oSource);
 		},
 
 		showUIGroup: function (oControl, oSource) {
-			oControl.getEngine().showUI(oControl, "Group", oSource);
+			oControl.getEngine().uimanager.show(oControl, "Group", oSource);
 		},
 
 

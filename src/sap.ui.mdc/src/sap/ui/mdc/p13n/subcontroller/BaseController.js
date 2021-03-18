@@ -8,8 +8,9 @@ sap.ui.define([
     'sap/ui/mdc/p13n/P13nBuilder',
     'sap/base/util/merge',
     'sap/base/util/deepEqual',
-    'sap/ui/model/json/JSONModel'
-], function (BaseObject, FlexUtil, P13nBuilder, merge, deepEqual, JSONModel) {
+    'sap/ui/model/json/JSONModel',
+    'sap/ui/mdc/p13n/panels/SelectionPanel'
+], function (BaseObject, FlexUtil, P13nBuilder, merge, deepEqual, JSONModel, SelectionPanel) {
 	"use strict";
 
 	/**
@@ -33,7 +34,7 @@ sap.ui.define([
             BaseObject.call(this);
 
             this._oAdaptationControl = oControl;
-            this.oP13nData = null;
+            this._oP13nData = null;
             this._bLiveMode = false;
             this._bResetEnabled = false;
         }
@@ -91,16 +92,6 @@ sap.ui.define([
         return this._bResetEnabled;
     };
 
-    /**
-     * Allows calculations prior to opening the UI after it has been initialized
-     * (E.g. create FilterFields for example only if necessary)
-     *
-     * @returns {Promise} A Promise that should resolve after calculations are finished.
-     */
-    BaseController.prototype.initializeUI = function(){
-        return Promise.resolve();
-    };
-
     BaseController.prototype.sanityCheck = function(oState) {
         return oState;
     };
@@ -110,8 +101,13 @@ sap.ui.define([
      *
      * @returns {sap.ui.core.Control|string|Promise} The control which is going to be used in the p13n container.
      */
-    BaseController.prototype.getAdaptationUI = function(){
-        return "sap/ui/mdc/p13n/panels/SelectionPanel";
+    BaseController.prototype.getAdaptationUI = function(oPropertyHelper){
+
+        var oSelectionPanel = new SelectionPanel();
+        var oAdaptationModel = this._getP13nModel(oPropertyHelper);
+        oSelectionPanel.setP13nModel(oAdaptationModel);
+
+        return Promise.resolve(oSelectionPanel);
     };
 
     BaseController.prototype.getCurrentState = function(){
@@ -160,7 +156,7 @@ sap.ui.define([
      *
      * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The propertyhelper that should be utilized for property determination.
      */
-    BaseController.prototype.setP13nData = function(oPropertyHelper) {
+    BaseController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
         var aItemState = this.getCurrentState();
         var mItemState = P13nBuilder.arrayToMap(aItemState);
@@ -178,8 +174,7 @@ sap.ui.define([
         }, oP13nData.items);
 
         oP13nData.items.forEach(function(oItem){delete oItem.position;});
-
-        this.oP13nData = oP13nData;
+        return oP13nData;
     };
 
     /**
@@ -187,7 +182,7 @@ sap.ui.define([
      *
      */
     BaseController.prototype.getP13nData = function() {
-        return this._oAdaptationModel.getData();
+        return this._oAdaptationModel.getProperty("/items");
     };
 
     BaseController.prototype.model2State = false;
@@ -195,13 +190,15 @@ sap.ui.define([
     /**
      * Can be used to trigger update after UI interactions such as "Ok" and "Reset"
      */
-    BaseController.prototype.update = function() {
+    BaseController.prototype.update = function(oPropertyHelper) {
         if (this._oAdaptationModel) {
             //'setData' causes unnecessary rerendering in some cases
-            this._oAdaptationModel.setProperty("/items", this.oP13nData.items);
-            this._oAdaptationModel.setProperty("/itemsGrouped", this.oP13nData.itemsGrouped);
+            var oP13nData = this.mixInfoAndState(oPropertyHelper);
+            this._oAdaptationModel.setProperty("/items", oP13nData.items);
+            this._oAdaptationModel.setProperty("/itemsGrouped", oP13nData.itemsGrouped);
         }
     };
+
 
     //TODO: move to FlexUtil? --> Split FlexUtil<>DeltaUtil
     BaseController.prototype._getFilledArray = function(aPreviousItems, aNewItems, sRemoveProperty) {
@@ -236,20 +233,22 @@ sap.ui.define([
      * @returns {sap.ui.model.json.JSONModel} The personalization model.
      *
      */
-    BaseController.prototype.getP13nModel = function() {
-        if (!this._oAdaptationModel && this.oP13nData) {
-            this._oAdaptationModel = new JSONModel(this.oP13nData);
+    BaseController.prototype._getP13nModel = function(oPropertyHelper) {
+        if (!this._oAdaptationModel) {
+            this._oAdaptationModel = new JSONModel(this.mixInfoAndState(oPropertyHelper));
+            this._oP13nData = this._oAdaptationModel.getData();
             this._oAdaptationModel.setSizeLimit(10000);
         } else {
-            this.update();
+            this.update(oPropertyHelper);
         }
+
         return this._oAdaptationModel;
     };
+
 
     BaseController.prototype.destroy = function() {
 		BaseObject.prototype.destroy.apply(this, arguments);
         this._oAdaptationControl = null;
-        this.oP13nData = null;
         this._bLiveMode = null;
         this._bResetEnabled = null;
         this._oAdaptationModel = null;

@@ -6,11 +6,6 @@ sap.ui.define([
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("Controller API tests showUI Chart", {
-		setLiveMode: function(sController, bLiveMode) {
-            Engine.getInstance().getController(this.oChart, sController).getLiveMode = function() {
-                return bLiveMode;
-            };
-        },
 		beforeEach: function () {
 			//mock delegate data
 			var aPropertyInfos = [
@@ -66,14 +61,13 @@ sap.ui.define([
 
 	QUnit.test("use ChartItemPanel", function (assert) {
 		var done = assert.async();
-		this.setLiveMode("Item", true);
-		Engine.getInstance().showUI(this.oChart, "Item", new Button()).then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oChart, "Item", new Button()).then(function(oP13nControl){
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
+			assert.ok(oP13nControl.isA("sap.m.Dialog"));
 			assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE"), "Correct title has been set");
-			assert.ok(Engine.getInstance()._hasActiveP13n(this.oChart),"dialog is open");
+			assert.ok(Engine.getInstance().hasActiveP13n(this.oChart),"dialog is open");
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
@@ -113,7 +107,7 @@ sap.ui.define([
 
 		this.oChart.getItems()[0].setRole("series");
 
-		Engine.getInstance().showUI(this.oChart, "Item").then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oChart, "Item").then(function(oP13nControl){
 
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.equal(oInnerTable.getItems()[0].getCells()[2].getSelectedKey(), "series", "Correct role selected");
@@ -125,7 +119,6 @@ sap.ui.define([
 	QUnit.test("check sorting in Chart", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-		this.setLiveMode("Sort", true);
 
 		this.oChart.setSortConditions({
 			sorters: [
@@ -133,11 +126,11 @@ sap.ui.define([
 			]
 		});
 
-		Engine.getInstance().showUI(this.oChart, "Sort", oBtn).then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oChart, "Sort", oBtn).then(function(oP13nControl){
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
+			assert.ok(oP13nControl.isA("sap.m.Dialog"));
 			assert.equal(oP13nControl.getTitle(), "Sort", "Correct title has been set");
 
 			//check inner panel

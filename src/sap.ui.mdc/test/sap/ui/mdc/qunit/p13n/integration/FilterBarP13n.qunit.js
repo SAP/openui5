@@ -72,13 +72,13 @@ sap.ui.define([
 
         this.setLiveMode("Item", false);
 
-		Engine.getInstance().showUI(this.oFilterBar, "Item").then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
 			assert.ok(oP13nControl.isA("sap.m.Dialog"));
 			assert.ok(!oP13nControl.getVerticalScrolling(), "Vertical scrolling is disabled for FilterBarBase 'filterConfig'");
 			assert.equal(oP13nControl.getCustomHeader().getContentLeft()[0].getText(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
-			assert.ok(Engine.getInstance()._hasActiveP13n(this.oFilterBar),"dialog is open");
+			assert.ok(Engine.getInstance().hasActiveP13n(this.oFilterBar),"dialog is open");
 
 			//check inner panel
 			var oPanel = oP13nControl.getContent()[0]._oFilterBarLayout.getInner();
@@ -97,7 +97,7 @@ sap.ui.define([
 	QUnit.test("use AdaptationFilterBar", function (assert) {
         var done = assert.async();
 
-		Engine.getInstance().showUI(this.oFilterBar, "Item").then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
 
 			assert.ok(oP13nControl.isA("sap.m.Dialog"), "Dialog as container created");
 
@@ -125,7 +125,7 @@ sap.ui.define([
 
 	QUnit.test("check inner model reset", function (assert) {
 		var done = assert.async();
-		Engine.getInstance().showUI(this.oFilterBar, "Item").then(function(oP13nControl){
+		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
 
 			var oP13nFilter = oP13nControl.getContent()[0];
 			var oAFPanel = oP13nFilter._oFilterBarLayout.getInner();
@@ -139,15 +139,15 @@ sap.ui.define([
             assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
 
             var oAddaptFiltersController = Engine.getInstance().getController(this.oFilterBar, "Item");
-			var aModelItems = oAddaptFiltersController.getP13nModel().getData().items;
-			var aModelItemsGrouped = oAddaptFiltersController.getP13nModel().getData().itemsGrouped;
+			var aModelItems = oAddaptFiltersController._oAdaptationModel.getData().items;
+			var aModelItemsGrouped = oAddaptFiltersController._oAdaptationModel.getData().itemsGrouped;
 
 			aModelItems[2].visible = true;
 			aModelItemsGrouped[0].items[2].visible = true;
 
             //3 items selected --> mock a model change
-			oAddaptFiltersController.getP13nModel().setProperty("/items", aModelItems);
-			oAddaptFiltersController.getP13nModel().setProperty("/itemsGrouped", aModelItemsGrouped);
+			oAddaptFiltersController._oAdaptationModel.setProperty("/items", aModelItems);
+			oAddaptFiltersController._oAdaptationModel.setProperty("/itemsGrouped", aModelItemsGrouped);
 
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
 			assert.equal(oFirstGroupList.getSelectedItems().length, 3, "3 items selected");
