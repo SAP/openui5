@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @class
 	 * Handles hierarchical navigation between Pages or other fullscreen controls.
 	 *
-	 * All children of this control receive navigation events, such as {@link sap.m.NavContainerChild#event:beforeShow beforeShow},
+	 * All children of this control receive navigation events, such as {@link sap.m.NavContainerChild#event:BeforeShow BeforeShow},
 	 * they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 	 *
 	 * @see {@link topic:a4afb138acf64a61a038aa5b91a4f082 Nav Container}
@@ -57,7 +57,7 @@ sap.ui.define([
 				/**
 				 * Determines whether the initial focus is set automatically on first rendering and after navigating to a new page.
 				 * This is useful when on touch devices the keyboard pops out due to the focus being automatically set on an input field.
-				 * If necessary, the <code>afterShow</code> event can be used to focus another element, only if <code>autoFocus</code> is set to <code>false</code>.
+				 * If necessary, the <code>AfterShow</code> event can be used to focus another element, only if <code>autoFocus</code> is set to <code>false</code>.
 				 *
 				 * <b>Note:</b>  The following scenarios are possible, depending on where the focus
 				 * was before navigation to a new page:
@@ -99,9 +99,9 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * The content entities between which this NavContainer navigates. These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
+				 * The content entities between which this NavContainer navigates. These can be of type sap.m.Page, sap.ui.core.mvc.View, sap.m.Carousel or any other control with fullscreen/page semantics.
 				 *
-				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}
+				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#event:BeforeShow BeforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}
 				 */
 				pages: {type: "sap.ui.core.Control", multiple: true, singularName: "page"}
 			},
@@ -421,7 +421,7 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> Returns <code>undefined</code> if no page has been added yet,
 	 * otherwise returns an instance of <code>sap.m.Page</code>,
-	 * <code>sap.ui.core.View</code>, <code>sap.m.Carousel</code> or whatever is aggregated.
+	 * <code>sap.ui.core.mvc.View</code>, <code>sap.m.Carousel</code> or whatever is aggregated.
 	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -655,7 +655,7 @@ sap.ui.define([
 	 *
 	 * Available transitions currently include "slide" (default), "baseSlide",  "fade", "flip", and "show". None of these is currently making use of any given transitionParameters.
 	 *
-	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given data object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property.
+	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "BeforeHide" pseudo event on the source page and "BeforeFirstShow" (if applicable) and"BeforeShow" on the target page. Later - after the transition has completed - the "AfterShow" pseudo event is triggered on the target page and "AfterHide" on the page which has been left. The given data object is available in the "BeforeFirstShow", "BeforeShow" and "AfterShow" event object as "data" property.
 	 *
 	 * @param {string} pageId
 	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
@@ -666,7 +666,7 @@ sap.ui.define([
 	 *         None of the standard transitions is currently making use of any given transition parameters.
 	 * @param {object} data
 	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page.
-	 *         The "beforeShow" event on the target page will contain this data object as "data" property.
+	 *         The "BeforeShow" event on the target page will contain this data object as "data" property.
 
 	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
@@ -847,7 +847,7 @@ sap.ui.define([
 	/**
 	 * Navigates back one level. If already on the initial page and there is no place to go back, nothing happens.
 	 *
-	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
+	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "BeforeHide" pseudo event on the source page and "BeforeFirstShow" (if applicable) and"BeforeShow" on the target page. Later - after the transition has completed - the "AfterShow" pseudo event is triggered on the target page and "AfterHide" on the page which has been left. The given backData object is available in the "BeforeFirstShow", "BeforeShow" and "AfterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
 	 *
 	 * @param {object} [backData]
 	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
@@ -877,7 +877,7 @@ sap.ui.define([
 	 * Navigates back to the nearest previous page in the NavContainer history with the given ID. If there is no such page among the previous pages, nothing happens.
 	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
 	 *
-	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
+	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "BeforeHide" pseudo event on the source page and "BeforeFirstShow" (if applicable) and"BeforeShow" on the target page. Later - after the transition has completed - the "AfterShow" pseudo event is triggered on the target page and "AfterHide" on the page which has been left. The given backData object is available in the "BeforeFirstShow", "BeforeShow" and "AfterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
 	 *
 	 * @param {string} pageId
 	 *         The ID of the screen to which back navigation should happen. The ID or the control itself can be given. The nearest such page among the previous pages in the history stack will be used.
@@ -907,7 +907,7 @@ sap.ui.define([
 	 * Navigates back to the initial/top level (this is the element aggregated as "initialPage", or the first added element). If already on the initial page, nothing happens.
 	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
 	 *
-	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property.
+	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "BeforeHide" pseudo event on the source page and "BeforeFirstShow" (if applicable) and "BeforeShow" on the target page. Later - after the transition has completed - the "AfterShow" pseudo event is triggered on the target page and "AfterHide" on the page which has been left. The given backData object is available in the "BeforeFirstShow", "BeforeShow" and "AfterShow" event object as "data" property.
 	 *
 	 * @param {object} [backData]
 	 *         This optional object can carry any payload data which should be made available to the target page of the "backToTop" navigation. The event on the target page will contain this data object as "backData" property.
@@ -1813,7 +1813,7 @@ sap.ui.define([
 		}
 	};
 
-	// documentation of the pseudo events (beforeShow, afterShow, beforeHide etc.)
+	// documentation of the pseudo events (BeforeShow, AfterShow, BeforeHide etc.)
 
 	/**
 	 * sap.m.NavContainerChild is an artificial interface with the only purpose to bear the documentation of
