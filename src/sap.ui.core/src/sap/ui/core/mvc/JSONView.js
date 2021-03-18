@@ -75,7 +75,7 @@ sap.ui.define([
 		for (var sOption in mParameters) {
 			if (sOption === 'preprocessors') {
 				delete mParameters['preprocessors'];
-				Log.warning("JSView.create does not support the option preprocessors!");
+				Log.warning("JSONView.create does not support the option preprocessors!");
 			}
 		}
 		mParameters.type = ViewType.JSON;

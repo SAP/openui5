@@ -8,7 +8,7 @@ sap.ui.define([
 	"./View",
 	"./XMLViewRenderer",
 	"./ViewType",
-	"sap/base/util/deepExtend",
+	"sap/base/util/merge",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/Control",
@@ -27,7 +27,7 @@ sap.ui.define([
 		View,
 		XMLViewRenderer,
 		ViewType,
-		deepExtend,
+		merge,
 		ManagedObject,
 		XMLTemplateProcessor,
 		Control,
@@ -240,7 +240,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.core.mvc.XMLView>} A Promise that resolves with the view instance or rejects with any thrown error.
 	 */
 	XMLView.create = function (oOptions) {
-		var mParameters = deepExtend({}, oOptions);
+		var mParameters = merge({}, oOptions);
 
 		// mapping renamed parameters
 		mParameters.viewContent = mParameters.definition;
@@ -482,7 +482,7 @@ sap.ui.define([
 				mCacheOutput.xml = XMLHelper.parse(mCacheOutput.xml, "application/xml").documentElement;
 				if (mCacheOutput.additionalData) {
 					// extend the additionalData which was passed into cache configuration dynamically
-					deepExtend(mCacheInput.additionalData, mCacheOutput.additionalData);
+					merge(mCacheInput.additionalData, mCacheOutput.additionalData);
 				}
 				return mCacheOutput;
 			}
@@ -502,7 +502,7 @@ sap.ui.define([
 			that._xContent = xContent;
 
 			if (View._supportInfo) {
-				View._supportInfo({context: that._xContent, env: {caller:"view", viewinfo: deepExtend({}, that), settings: deepExtend({}, mSettings || {}), type: "xmlview"}});
+				View._supportInfo({context: that._xContent, env: {caller:"view", viewinfo: merge({}, that), settings: merge({}, mSettings || {}), type: "xmlview"}});
 			}
 
 			// extract the properties of the view from the XML element
@@ -577,8 +577,8 @@ sap.ui.define([
 			}).catch(function(error) {
 				if (error.name === sXMLViewCacheError) {
 					// no sufficient cache keys, processing can continue
-					Log.debug(error.message, error.name, "sap.ui.core.mvc.XMLView");
-					Log.debug("Processing the View without caching.", "sap.ui.core.mvc.XMLView");
+					Log.error(error.message, error.name, "sap.ui.core.mvc.XMLView");
+					Log.error("Processing the View without caching.", "sap.ui.core.mvc.XMLView");
 					return processResource(sResourceName);
 				} else {
 					// an unknown error occured and should be exposed

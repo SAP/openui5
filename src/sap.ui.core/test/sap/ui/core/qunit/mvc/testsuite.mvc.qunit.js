@@ -13,7 +13,8 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			ui5: {
 				libs: ["sap.ui.core", "sap.ui.layout", "sap.m"],
-				theme: "sap_fiori_3"
+				theme: "sap_fiori_3",
+				language: "en"
 			}
 		},
 		tests: {
