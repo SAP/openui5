@@ -220,6 +220,7 @@ sap.ui.define([
 	Factory.prototype.getMenuButton = function () {
 		if (!this._oControls.oMenuButton) {
 			this._oControls.oMenuButton = new OverflowToolbarButton({
+				ariaHasPopup: Accessibility.AriaHasPopup.MENU,
 				icon: "sap-icon://menu2",
 				type: ButtonType.Transparent,
 				tooltip: this._oAcc.getEntityTooltip("MENU"),
@@ -235,6 +236,7 @@ sap.ui.define([
 		var oAcc = this._oAcc;
 		if (!this._oControls.oNotifications) {
 			this._oControls.oNotifications = new OverflowToolbarButton({
+				ariaHasPopup: Accessibility.AriaHasPopup.NOTIFICATIONS,
 				text: "Notifications",
 				icon: "sap-icon://bell",
 				type: ButtonType.Transparent,
@@ -259,6 +261,7 @@ sap.ui.define([
 	Factory.prototype.getProductSwitcher = function () {
 		if (!this._oControls.oProductSwitcher) {
 			this._oControls.oProductSwitcher = new OverflowToolbarButton({
+				ariaHasPopup: Accessibility.AriaHasPopup.PRODUCTS,
 				text: "My products",
 				icon: "sap-icon://grid",
 				type: ButtonType.Transparent,

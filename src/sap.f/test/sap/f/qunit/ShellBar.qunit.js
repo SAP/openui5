@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MenuItem"
+	"sap/m/MenuItem",
+	"sap/ui/core/library"
 ],
 function (
 	SearchManager,
@@ -30,9 +31,13 @@ function (
 	Log,
 	jQuery,
 	JSONModel,
-	MenuItem
+	MenuItem,
+	coreLibrary
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -750,7 +755,7 @@ function (
 			sTooltip = this.oRb.getText("SHELLBAR_MENU_TOOLTIP");
 
 		// Assert
-		assert.strictEqual($oMenuButton.attr("aria-haspopup"), "menu", "Menu button aria-haspopup is correct");
+		assert.strictEqual(oMenuButton.getAriaHasPopup(), AriaHasPopup.Menu, "Menu button aria-haspopup is correct");
 		assert.strictEqual($oMenuButton.attr("aria-label"), sTooltip, "Menu button aria-label is correct");
 		assert.strictEqual(oMenuButton.getTooltip(), sTooltip, "Menu button tooltip is correct");
 	});
@@ -761,7 +766,7 @@ function (
 			sTooltip = this.oRb.getText("SHELLBAR_NOTIFICATIONS_TOOLTIP");
 
 		// Assert
-		assert.strictEqual($oNotifications.attr("aria-haspopup"), "dialog", "Notifications aria-haspopup is correct");
+		assert.strictEqual(oNotifications.getAriaHasPopup(), AriaHasPopup.Dialog, "Notifications aria-haspopup is correct");
 		assert.strictEqual($oNotifications.attr("aria-label"), sTooltip, "Notifications invisibleText is correct");
 		assert.strictEqual(oNotifications.getTooltip(), sTooltip, "Notifications tooltip is correct");
 
@@ -787,7 +792,7 @@ function (
 			sTooltip = this.oRb.getText("SHELLBAR_PRODUCTS_TOOLTIP");
 
 		// Assert
-		assert.strictEqual($oProducts.attr("aria-haspopup"), "menu", "Products aria-haspopup is correct");
+		assert.strictEqual(oProducts.getAriaHasPopup(), AriaHasPopup.Menu, "Products aria-haspopup is correct");
 		assert.strictEqual($oProducts.attr("aria-label"), sTooltip, "Products aria-label is correct");
 		assert.strictEqual(oProducts.getTooltip(), sTooltip, "Products tooltip is correct");
 	});
