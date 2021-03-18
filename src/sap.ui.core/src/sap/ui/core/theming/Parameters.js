@@ -593,9 +593,8 @@ sap.ui.define([
 				return undefined;
 			}
 
-			if (typeof vName === "string") {
-				aNames = [vName];
-			} else if (vName instanceof Object && !Array.isArray(vName)) {
+			if (vName instanceof Object && !Array.isArray(vName)) {
+				// async variant of Parameters.get
 				if (!vName.name) {
 					return undefined;
 				}
@@ -603,8 +602,20 @@ sap.ui.define([
 				fnAsyncCallback = vName.callback;
 				aNames = typeof vName.name === "string" ? [vName.name] : vName.name;
 				bAsync = true;
-			} else { // vName is Array
-				aNames = vName;
+			} else {
+				// legacy variant
+				if (typeof vName === "string") {
+					aNames = [vName];
+				} else { // vName is Array
+					aNames = vName;
+				}
+
+				Log.warning(
+					"Legacy variant usage of sap.ui.core.theming.Parameters.get API detected for parameter(s): '" + aNames.join(", ") + "'. Use asynchronous variant instead.",
+					"LegacyParametersGet",
+					"sap.ui.support",
+					function() { return { type: "LegacyParametersGet" }; }
+				);
 			}
 
 			var resolveWithParameter, vResult;

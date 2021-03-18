@@ -10,9 +10,10 @@ sap.ui.define([
 	"./rules/Model.support",
 	"./rules/View.support",
 	"./rules/App.support",
-	"./rules/Rendering.support"
+	"./rules/Rendering.support",
+	"./rules/Theming.support"
 ],
-	function(MiscSupport, ConfigSupport, ModelSupport, ViewSupport, AppSupport, RenderingSupport) {
+	function(MiscSupport, ConfigSupport, ModelSupport, ViewSupport, AppSupport, RenderingSupport, ThemingSupport) {
 	"use strict";
 
 	return {
@@ -24,7 +25,8 @@ sap.ui.define([
 			ModelSupport,
 			ViewSupport,
 			AppSupport,
-			RenderingSupport
+			RenderingSupport,
+			ThemingSupport
 		]
 	};
 }, true);
