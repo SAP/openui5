@@ -57,6 +57,46 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[
+	undefined,
+	{},
+	{preserveDecimals : true},
+	{preserveDecimals : "yes"}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: oFormatOptions.preserveDecimals; no warnings " + i, function (assert) {
+		// code under test
+		var oType = new Decimal(oFormatOptions);
+
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.getFormatOptions(), oFormatOptions || {});
+	});
+});
+
+	//*********************************************************************************************
+[
+	{preserveDecimals : undefined},
+	{preserveDecimals : null},
+	{preserveDecimals : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		var oType;
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Format option 'preserveDecimals' with value "
+				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
+				+ " defaulted to true",
+				null, "sap.ui.model.odata.type.Decimal");
+
+		// code under test
+		oType = new Decimal(oFormatOptions);
+
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, {});
+		assert.deepEqual(oType.getFormatOptions(), {});
+	});
+});
+
+	//*********************************************************************************************
 	[
 		{i : {precision : 8, scale : 3}, o : {precision : 8, scale : 3}},
 		{i : {nullable : false, scale : 3}, o : {nullable : false, scale : 3}},
@@ -116,7 +156,8 @@ sap.ui.define([
 		assert.strictEqual(oType.formatValue("1234.1", "int"), 1234, "target type int");
 		assert.strictEqual(oType.formatValue("1234", "string"), "1,234.000",
 			"target type string");
-		assert.strictEqual(oType.formatValue("1234.1234", "string"), "1,234.123", "rounding");
+		assert.strictEqual(oType.formatValue("1234.1234", "string"), "1,234.1234",
+			"decimals preserved");
 		assert.strictEqual(oType.formatValue("123456", "string"), "123,456.000",
 			"surpassing precision");
 		try {
@@ -416,27 +457,29 @@ sap.ui.define([
 	[{
 		set : {foo : "bar"},
 		expect : {foo : "bar", groupingEnabled : true, maxIntegerDigits : Infinity,
-			parseAsString : true}
+			parseAsString : true, preserveDecimals : true}
 	}, {
 		set : {decimalSeparator : ".", maxIntegerDigits : 20}, scale : 13,
 		expect : {decimalSeparator : ".", groupingEnabled : true, maxFractionDigits : 13,
-			maxIntegerDigits : 20, minFractionDigits : 13, parseAsString : true}
+			maxIntegerDigits : 20, minFractionDigits : 13, parseAsString : true,
+			preserveDecimals : true}
 	}, {
 		set : {groupingEnabled : false}, scale : 13,
 		expect : {groupingEnabled : false, maxFractionDigits : 13, maxIntegerDigits : Infinity,
-			minFractionDigits : 13, parseAsString : true}
+			minFractionDigits : 13, parseAsString : true, preserveDecimals : true}
 	}, {
 		set : {decimals : 20}, scale : 13,
 		expect : {decimals : 20, groupingEnabled : true, maxFractionDigits : 13,
-			maxIntegerDigits : Infinity, minFractionDigits : 13, parseAsString : true}
+			maxIntegerDigits : Infinity, minFractionDigits : 13, parseAsString : true,
+			preserveDecimals : true}
 	}, {
 		set : {maxFractionDigits : 20}, scale : 13,
 		expect : {groupingEnabled : true, maxFractionDigits : 20, maxIntegerDigits : Infinity,
-			minFractionDigits : 13, parseAsString : true}
+			minFractionDigits : 13, parseAsString : true, preserveDecimals : true}
 	}, {
 		set : {minFractionDigits : 10}, scale : 13,
 		expect : {groupingEnabled : true, maxFractionDigits : 13, maxIntegerDigits : Infinity,
-			minFractionDigits : 10, parseAsString : true}
+			minFractionDigits : 10, parseAsString : true, preserveDecimals : true}
 	}].forEach(function (oFixture) {
 		QUnit.test("formatOptions: " + JSON.stringify(oFixture.set), function (assert) {
 			var oSpy,
