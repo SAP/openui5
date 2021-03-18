@@ -423,8 +423,6 @@ function(
 			}
 		}).addStyleClass("sapMSelectDialog");
 
-		this._oDialog.addAriaLabelledBy(this._oList.getInfoToolbar());
-
 		// for downward compatibility reasons
 		this._dialog = this._oDialog;
 		this.setAggregation("_dialog", this._oDialog);
@@ -1206,9 +1204,13 @@ function(
 			oInfoBar.setVisible(bVisible);
 
 			if (bVisible) {
+				this._oDialog.addAriaLabelledBy(oInfoBar);
+
 				// force immediate rerendering, so JAWS can read the text inside,
 				// when it become visible
 				oInfoBar.rerender();
+			} else {
+				this._oDialog.removeAriaLabelledBy(oInfoBar);
 			}
 		}
 

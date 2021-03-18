@@ -378,6 +378,7 @@ sap.ui.define([
 			this.oSelectDialog.open();
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().getVisible(), false, "The should be no toolbar shown");
+			assert.strictEqual(that.oSelectDialog.$().attr("aria-labelledby").indexOf(that.oSelectDialog._oList.getInfoToolbar().getId()),  -1, "the info toolbar id is not added to the dialog aria-labelledby");
 		});
 
 		QUnit.test("ClearSelection selection should clear the selection from the SelectDialog and the list", function (assert) {
