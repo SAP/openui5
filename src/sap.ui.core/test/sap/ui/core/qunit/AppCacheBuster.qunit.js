@@ -5,10 +5,11 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/AppCacheBuster',
 	'sap/ui/core/Control',
-	"sap/base/Log",
+	'sap/ui/core/IconPool',
+	'sap/base/Log',
 	'jquery.sap.dom',
 	'jquery.sap.sjax'
-	], function(jQuery, ManagedObject, AppCacheBuster, Control, Log) {
+	], function(jQuery, ManagedObject, AppCacheBuster, Control, IconPool, Log) {
 		"use strict";
 
 	// create a control with an URI property to validate URI replacement
@@ -31,12 +32,13 @@ sap.ui.define([
 	QUnit.module("intercept");
 
 	QUnit.test("check method interception", function(assert) {
-		assert.expect(8);
+		assert.expect(10);
 
 		var fnXhrOpenOrig = window.XMLHttpRequest.prototype.open,
 			fnValidateProperty = ManagedObject.prototype.validateProperty,
 			descScriptSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src'),
-			descLinkHref = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href');
+			descLinkHref = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href'),
+			fnIconPoolConvertUrl = IconPool._convertUrl;
 
 		AppCacheBuster.init();
 
@@ -44,6 +46,7 @@ sap.ui.define([
 		assert.notEqual(fnValidateProperty, ManagedObject.prototype.validateProperty, "ManagedObject.prototype.validateProperty is intercepted");
 		assert.notDeepEqual(Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src'), descScriptSrc, "Property 'src' of HTMLScriptElement is intercepted");
 		assert.notDeepEqual(Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href'), descLinkHref, "Property 'href' of HTMLLinkElement is intercepted");
+		assert.notEqual(fnIconPoolConvertUrl, IconPool._convertUrl, "IconPool._convertUrl is created");
 
 		AppCacheBuster.exit();
 
@@ -51,6 +54,7 @@ sap.ui.define([
 		assert.equal(fnValidateProperty, ManagedObject.prototype.validateProperty, "ManagedObject.prototype.validateProperty is restored");
 		assert.deepEqual(Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src'), descScriptSrc, "Property 'src' of HTMLScriptElement is restored");
 		assert.deepEqual(Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href'), descLinkHref, "Property 'href' of HTMLLinkElement is restored");
+		assert.notOk(IconPool.hasOwnProperty("_convertUrl"), "The Icon._convertUrl function is deleted");
 
 	});
 
@@ -96,7 +100,8 @@ sap.ui.define([
 							"js/script.js": sTimestamp,
 							"css/style.css": sTimestamp,
 							"img/image.png": sTimestamp,
-							"manifest.json": sTimestamp
+							"manifest.json": sTimestamp,
+							"fonts/font.woff2": sTimestamp
 						};
 					}
 					xhr.respond(200, { "Content-Type": "application/json" }, JSON.stringify(index));
@@ -280,6 +285,12 @@ sap.ui.define([
 			assert.ok(oReq.url.indexOf("/~" + sTimestamp + "~/") == -1, "URL \"" + oReq.url + "\" should not be prefixed!");
 		});
 
+		QUnit.test("check IconPool._convertUrl handling", function(assert) {
+			var sUrl = IconPool._convertUrl("fonts/font.woff2");
+
+			assert.ok(sUrl.indexOf("/~" + sTimestamp + "~/") != -1, "URL \"" + sUrl + "\" is correctly prefixed!");
+		});
+
 	});
 
 
@@ -301,7 +312,8 @@ sap.ui.define([
 					'"my/view/MyView.controller.js": "' + sTimestamp + '", ' +
 					'"js/script.js": "' + sTimestamp + '", ' +
 					'"css/style.css": "' + sTimestamp + '", ' +
-					'"img/image.png": "' + sTimestamp + '"}');
+					'"img/image.png": "' + sTimestamp + '", ' +
+					'"fonts/font.woff2": "' + sTimestamp + '"}');
 			});
 
 
@@ -437,6 +449,12 @@ sap.ui.define([
 		oReq = new XMLHttpRequest();
 		oReq.open("GET", document.baseURI + "anyapp/js/script1.js");
 		assert.ok(oReq.url.indexOf("/~" + sTimestamp + "~/") == -1, "URL \"" + oReq.url + "\" should not be prefixed!");
+	});
+
+	QUnit.test("check IconPool._convertUrl handling", function(assert) {
+		var sUrl = IconPool._convertUrl("anyapp/fonts/font.woff2");
+
+		assert.ok(sUrl.indexOf("/~" + sTimestamp + "~/") != -1, "URL \"" + sUrl + "\" is correctly prefixed!");
 	});
 
 
