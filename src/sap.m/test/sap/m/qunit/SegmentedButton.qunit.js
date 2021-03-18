@@ -2839,7 +2839,7 @@ sap.ui.define([
 
 		oItemWithTooltipDomRef = oItemWithTooltip.getDomRef();
 		assert.strictEqual(oItemWithTooltipDomRef.getAttribute("title"), "Something", "User-provided tooltip is prioritized over icon's name ");
-		assert.strictEqual(oItemWithTooltipDomRef.getAttribute("aria-label"), "list", "Icon's name is added in aria-label");
+		assert.strictEqual(oItemWithTooltipDomRef.getAttribute("aria-label"), "Something", "This tooltip is added in aria-label as well");
 
 		oSegmentedButton.destroy();
 	});
