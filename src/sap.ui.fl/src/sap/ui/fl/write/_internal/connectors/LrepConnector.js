@@ -374,6 +374,7 @@ sap.ui.define([
 			return InitialUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
 				// ensure that even an enabled back end is not consumed in this version
 				oResult.response.isVersioningEnabled = false;
+				oResult.response.isVariantAdaptationEnabled = !!oResult.response.isPublicLayerAvailable;
 				return oResult.response;
 			});
 		},

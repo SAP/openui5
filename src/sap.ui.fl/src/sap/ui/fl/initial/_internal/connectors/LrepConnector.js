@@ -109,6 +109,7 @@ sap.ui.define([
 				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
 				if (oResponse.settings) {
 					this.settings = oResponse.settings;
+					this.settings.isVariantAdaptationEnabled = !!this.settings.isPublicLayerAvailable;
 				}
 				if (!oResponse.loadModules) {
 					return oResponse;

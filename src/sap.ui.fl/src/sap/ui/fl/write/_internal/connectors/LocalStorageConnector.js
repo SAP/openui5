@@ -26,8 +26,10 @@ sap.ui.define([
 
 	LocalStorageConnector.loadFeatures = function() {
 		return ObjectStorageConnector.loadFeatures.apply(this, arguments).then(function(oFeatures) {
-			oFeatures.isPublicLayerAvailable = true;
-			return oFeatures;
+			return merge({
+				isPublicLayerAvailable: true,
+				isVariantAdaptationEnabled: true
+			}, oFeatures);
 		});
 	};
 

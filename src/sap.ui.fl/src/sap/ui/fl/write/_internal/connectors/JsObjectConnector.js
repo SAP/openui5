@@ -44,5 +44,14 @@ sap.ui.define([
 		storage: oMyStorage
 	});
 
+	JsObjectConnector.loadFeatures = function() {
+		return ObjectStorageConnector.loadFeatures.apply(this, arguments).then(function(oFeatures) {
+			return merge({
+				isPublicLayerAvailable: true,
+				isVariantAdaptationEnabled: true
+			}, oFeatures);
+		});
+	};
+
 	return JsObjectConnector;
 }, true);
