@@ -147,7 +147,7 @@
 					path: "/superheros",
 					filters: fnCreatePrefilter(),
 					template: oItemTemplateSelection
-				}),
+				});
 
 				oButton2 = new sap.m.Button("Button4", {
 					text: "SelectDialog in multi selection mode",
@@ -159,7 +159,7 @@
 						// open dialog
 						oSelectDialog2.open();
 					}
-				}),
+				});
 
 				oCompactMode = new sap.m.CheckBox("compactMode", {
 					text: "Compact Mode",
@@ -185,7 +185,7 @@
 							oCompactMode
 						]
 					})
-				}),
+				});
 
 				oApp = new sap.m.App("myApp", { initialPage: "page" });
 
