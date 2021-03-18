@@ -241,8 +241,8 @@ sap.ui.define([
 			var oPage = this._oNavContainer.getCurrentPage();
 			if (oPage) {
 				var oHeader = oPage.getCustomHeader();
-				if (oHeader) {
-					this._oPopover.addAriaDescribedBy(oHeader.getId());
+				if (oHeader && oHeader.getContentMiddle()[0]) {
+					this._oPopover.addAriaLabelledBy(oHeader.getContentMiddle()[0].getId());
 				}
 			}
 
