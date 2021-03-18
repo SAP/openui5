@@ -1091,6 +1091,12 @@ sap.ui.define([
 		IconPool.insertFontFaceStyle = function (sFontFace, sPath, sCollectionName) {
 			sFontFace = sFontFace || SAP_ICON_FONT_FAMILY;
 
+			function convertUrl(sUrl) {
+				// AppCacheBuster createds the '_covnertUrl' function when it's active. Call the function to include the
+				// CacheBuster token into the url.
+				return IconPool._convertUrl ? IconPool._convertUrl(sUrl) : sUrl;
+			}
+
 			if (sCollectionName === undefined && sFontFace !== SAP_ICON_FONT_FAMILY) {
 				// when the collection name isn't given
 				// set the collection name with sFontFace only when the icon font
@@ -1125,9 +1131,9 @@ sap.ui.define([
 			// load the font asynchronously via CSS
 			var sFontFaceCSS = "@font-face {" +
 					"font-family: '" + sFontFace + "';" +
-					"src: url('" + sFontPath + sFontFace + ".woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
-					"url('" + sFontPath + sFontFace + ".woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
-					"url('" + sFontPath + sFontFace + ".ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
+					"src: url('" + convertUrl(sFontPath + sFontFace + ".woff2") + "') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
+					"url('" + convertUrl(sFontPath + sFontFace + ".woff") + "') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
+					"url('" + convertUrl(sFontPath + sFontFace + ".ttf") + "') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
 					"local('" + sFontFace + "');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
 					"font-weight: normal;" +
 					"font-style: normal;" +
