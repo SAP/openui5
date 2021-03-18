@@ -88,69 +88,84 @@ sap.ui.define([
 
             this.addEnd(this._oChartSelectionDetails);
 
-            this._oDrillDownBtn = new OverflowButton(oMDCChart.getId() + "-drillDown", {
-                icon: "sap-icon://drill-down",
-                press: function (oEvent) {
-                    oMDCChart._showDrillDown(this._oDrillDownBtn);
-                }.bind(this),
-                enabled: false
-            });
-            this.addEnd(this._oDrillDownBtn);
+            if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.DrillDownUp) < 0) {
+                this._oDrillDownBtn = new OverflowButton(oMDCChart.getId() + "-drillDown", {
+                    icon: "sap-icon://drill-down",
+                    press: function (oEvent) {
+                        oMDCChart._showDrillDown(this._oDrillDownBtn);
+                    }.bind(this),
+                    enabled: false
+                });
+                this.addEnd(this._oDrillDownBtn);
+            }
 
-            this._oLegendBtn = new OverflowToggleButton({
-                type: "Transparent",
-                text: MDCRb.getText("chart.LEGENDBTN_TEXT"),
-                tooltip: MDCRb.getText("chart.LEGENDBTN_TOOLTIP"),
-                icon: "sap-icon://legend",
-                pressed: "{$mdcChart>/legendVisible}",
-                enabled: false //gets enabled by updateToolbar function once inner chart is ready
-            });
-            this.addEnd(this._oLegendBtn);
+            if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.Legend) < 0) {
+                this._oLegendBtn = new OverflowToggleButton({
+                    type: "Transparent",
+                    text: MDCRb.getText("chart.LEGENDBTN_TEXT"),
+                    tooltip: MDCRb.getText("chart.LEGENDBTN_TOOLTIP"),
+                    icon: "sap-icon://legend",
+                    pressed: "{$mdcChart>/legendVisible}",
+                    enabled: false //gets enabled by updateToolbar function once inner chart is ready
 
-            this.oZoomInButton = new OverflowButton({
-                icon: "sap-icon://zoom-in",
-                enabled: false,
-                press: function onZoomOutButtonPressed(oControlEvent) {
-                    oMDCChart.zoomIn();
-                    this.toggleZoomButtons(oMDCChart);
-                }.bind(this)
-            });
+                });
+                this.addEnd(this._oLegendBtn);
+            }
 
-            this.oZoomOutButton = new OverflowButton({
-                icon: "sap-icon://zoom-out",
-                enabled: false,
-                press: function onZoomOutButtonPressed(oControlEvent) {
-                    oMDCChart.zoomOut();
-                    this.toggleZoomButtons(oMDCChart);
-                }.bind(this)
-            });
-            this.addEnd(this.oZoomInButton);
-            this.addEnd(this.oZoomOutButton);
+            if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.ZoomInOut)) {
+                this.oZoomInButton = new OverflowButton({
+                    icon: "sap-icon://zoom-in",
+                    enabled: false,
+                    press: function onZoomOutButtonPressed(oControlEvent) {
+                        oMDCChart.zoomIn();
+                        this.toggleZoomButtons(oMDCChart);
+                    }.bind(this)
+                });
 
-            this._oSettingsBtn = new OverflowButton(oMDCChart.getId() + "-chart_settings", {
-                icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
-                enabled: false,
-                press: function (oEvent) {
-                    var oSource = oEvent.getSource();
-                    ChartSettings.showPanel(oMDCChart, "Chart", oSource);
-                }
-            });
-            this.addEnd(this._oSettingsBtn);
+                this.oZoomOutButton = new OverflowButton({
+                    icon: "sap-icon://zoom-out",
+                    enabled: false,
+                    press: function onZoomOutButtonPressed(oControlEvent) {
+                        oMDCChart.zoomOut();
+                        this.toggleZoomButtons(oMDCChart);
+                    }.bind(this)
+                });
+                this.addEnd(this.oZoomInButton);
+                this.addEnd(this.oZoomOutButton);
+            }
 
-            this._oSortBtn = new OverflowButton(oMDCChart.getId() + "-sort_settings", {
-                icon: "sap-icon://sort",
-                press: function (oEvent) {
-                    var oSource = oEvent.getSource();
-                    ChartSettings.showPanel(oMDCChart, "Sort", oSource, oMDCChart._getPropertyData());
-                },
-                enabled: false
-            });
+			//Check p13n mode property on the chart and enable only desired buttons
+			var aP13nMode = oMDCChart.getP13nMode() || [];
 
-            this.addEnd(this._oSortBtn);
+            if (aP13nMode.indexOf("Item") > -1) {
+                this._oSettingsBtn = new OverflowButton(oMDCChart.getId() + "-chart_settings", {
+                    icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
+                    enabled: false,
+                    press: function (oEvent) {
+                        var oSource = oEvent.getSource();
+                        ChartSettings.showPanel(oMDCChart, "Chart", oSource);
+                    }
+                });
+                this.addEnd(this._oSettingsBtn);
+            }
 
-            this._oChartTypeBtn = new ChartTypeButton(oMDCChart);
-            this._oChartTypeBtn.setEnabled(false);
-            this.addEnd(this._oChartTypeBtn);
+            if (aP13nMode.indexOf("Sort") > -1) {
+                this._oSortBtn = new OverflowButton(oMDCChart.getId() + "-sort_settings", {
+                    icon: "sap-icon://sort",
+                    press: function (oEvent) {
+                        var oSource = oEvent.getSource();
+                        ChartSettings.showPanel(oMDCChart, "Sort", oSource, oMDCChart._getPropertyData());
+                    },
+                    enabled: false
+                });
+                this.addEnd(this._oSortBtn);
+            }
+
+            if (aP13nMode.indexOf("Type") > -1) {
+                this._oChartTypeBtn = new ChartTypeButton(oMDCChart);
+                this._oChartTypeBtn.setEnabled(false);
+                this.addEnd(this._oChartTypeBtn);
+            }
         };
 
         ChartToolbar.prototype.toggleZoomButtons = function (oMDCChart) {
@@ -168,16 +183,37 @@ sap.ui.define([
 
         ChartToolbar.prototype.updateToolbar = function (oMDCChart) {
             this.toggleZoomButtons(oMDCChart);
-            //TODO: Check enablement for buttons
-            //TODO: Sort & P13n & DrillDown Buttons should not be enabled in ever scenario!
-            this._oLegendBtn.setEnabled(true);
-            this._oChartTypeBtn.setEnabled(true);
-            this._oSettingsBtn.setEnabled(true);
-            this._oSortBtn.setEnabled(true);
-            this._oDrillDownBtn.setEnabled(true);
+
+            if (!this._toolbarInitialUpdated) {
+                this._enableToolbarButtons();
+                this._toolbarInitialUpdated = true;
+            }
 
             var oSelectionHandler = oMDCChart.getSelectionHandler();
             this._oChartSelectionDetails.attachSelectionHandler(oSelectionHandler.eventId, oSelectionHandler.listener);
+        };
+
+        ChartToolbar.prototype._enableToolbarButtons = function () {
+            if (this._oLegendBtn) {
+                this._oLegendBtn.setEnabled(true);
+            }
+
+            if (this._oChartTypeBtn) {
+                this._oChartTypeBtn.setEnabled(true);
+            }
+
+            if (this._oSettingsBtn) {
+                this._oSettingsBtn.setEnabled(true);
+            }
+
+            if (this._oSortBtn) {
+                this._oSortBtn.setEnabled(true);
+            }
+
+            if (this._oDrillDownBtn) {
+                this._oDrillDownBtn.setEnabled(true);
+            }
+
         };
 
         ChartToolbar.prototype._getZoomEnablement = function (oMDCChart) {
