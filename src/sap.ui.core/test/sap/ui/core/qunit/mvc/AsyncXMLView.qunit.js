@@ -237,7 +237,7 @@ sap.ui.define([
 			QUnit.test("no cache key - async part", function(assert) {
 				var error = new Error("Provided cache keys may not be empty or undefined."),
 					oSpy = this.oSpy,
-					oLogSpy = sinon.spy(Log, "debug");
+					oLogSpy = sinon.spy(Log, "error");
 
 				assert.expect(3);
 				return viewFactory({keys: [Promise.resolve()]}).loaded().then(function(oView) {
@@ -245,6 +245,7 @@ sap.ui.define([
 					sinon.assert.calledWith(oLogSpy, "Processing the View without caching.", "sap.ui.core.mvc.XMLView");
 					sinon.assert.notCalled(oSpy);
 					oView.destroy();
+					oLogSpy.restore();
 				});
 			});
 
