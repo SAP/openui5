@@ -253,11 +253,13 @@
     </jscoverage>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-        <lib name="jquery-3" displayName="jQuery 3" version="3.5.1" homepage="https://jquery.com">
+        <lib name="jquery-3" displayName="jQuery 3" version="3.6.0" homepage="https://jquery.com">
             <license url="http://jQuery.org/license" type="MIT"/>
-            <copyright>JS Foundation and other contributors</copyright>
+            <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery.js</pattern>
             <pattern partial="true" otherContent="SAP" explanation="isPlainObject.js is overall written by SAP, but contains a modified implementation of jQuery.isPlainObject taken from jQuery 3.5.1">sap/base/util/isPlainObject.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="_merge.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery 3.5.1">sap/base/util/_merge.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="jquery.sap.script.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery 3.5.1">jquery.sap.script.js</pattern>
         </lib>
         <lib name="jquery-1" displayName="jQuery 1" version="1.7.1" homepage="https://jquery.com">
             <license url="http://jQuery.org/license" type="MIT"/>
