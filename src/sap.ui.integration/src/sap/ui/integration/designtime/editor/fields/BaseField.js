@@ -538,10 +538,12 @@ sap.ui.define([
 
 		var oField = this.getAggregation("_field"),
 			bFocusInField = oField.getDomRef().contains(window.document.activeElement);
-		if (!bFocusInField && oMessageStrip.getDomRef()) {
-			oMessageStrip.getDomRef().style.opacity = "0";
+		if (oMessageStrip) {
+			if (!bFocusInField && oMessageStrip.getDomRef()) {
+				oMessageStrip.getDomRef().style.opacity = "0";
+			}
+			oMessageStrip.onAfterRendering = null;
 		}
-		oMessageStrip.onAfterRendering = null;
 	};
 
 	BaseField.prototype.initEditor = function (oConfig) {
