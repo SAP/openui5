@@ -233,9 +233,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Resize column", function(assert) {
-		var oCurrentColumn = this.oTable.getColumns()[1],
-			oCurrentColumnDom = oCurrentColumn.getDomRef(),
-			oNextColumn = this.oTable.getColumns()[2];
+		var oCurrentColumn = this.oTable.getColumns()[1];
+		oCurrentColumn.setWidth("100px");
+		var oNextColumn = this.oTable.getColumns()[2];
+		oNextColumn.setWidth("100px");
+		Core.applyChanges();
+		var oCurrentColumnDom = oCurrentColumn.getDomRef();
 
 		this.oColumnResizer.attachColumnResize(function(oEvent) {
 			assert.ok(oEvent.getParameter("column"), "columnResize event fired for: " + oEvent.getParameter("column").getId());
@@ -261,8 +264,10 @@ sap.ui.define([
 		var oNextColumnUpdatedWidth = oNextColumn.getWidth();
 		assert.ok(oCurrentColumnOriginalWidth !== oCurrentColumnUpdatedWidth, "CurrentColumn original width !== CurrentColumn updated width");
 		assert.ok(oCurrentColumnUpdatedWidth.indexOf("px") > -1, "px width applied to the CurrentColumn");
+		assert.strictEqual(oCurrentColumnUpdatedWidth, "120px", "CurrentColumn width=120px");
 		assert.ok(oNextColumnOriginalWidth !== oNextColumnUpdatedWidth, "NextColumn original width !== NextColumn updated width");
 		assert.ok(oNextColumnUpdatedWidth.indexOf("px") > -1, "px width applied to the NextColumn");
+		assert.strictEqual(oNextColumnUpdatedWidth, "80px", "NextColumn width=80px");
 
 		this.oTable.getColumns().forEach(function(oColumn) {
 			assert.ok(oColumn.getWidth().indexOf("px") > -1, "All columns should have static width once a column is resized");

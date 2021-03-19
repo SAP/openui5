@@ -2313,7 +2313,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
 			this.iPopinChangedEventCounter = 0;
-			this.sut = createSUT("idPopinChangedTest", true, false);
+			this.sut = createSUT("idPopinChangedTest", true, true);
 			this.sut.attachPopinChanged(function() {
 				this.iPopinChangedEventCounter++;
 			}, this);
@@ -2344,5 +2344,44 @@ sap.ui.define([
 		this.sut.getBinding("items").filter();
 		this.clock.tick(1);
 		assert.strictEqual(this.iPopinChangedEventCounter, 0, "popinChanged event not fired");
+	});
+
+	QUnit.test("parameters", function(assert) {
+		var oColumn = this.sut.getColumns()[1];
+		var oColumn1 = this.sut.getColumns()[2];
+		oColumn.setDemandPopin(true);
+		oColumn.setMinScreenWidth("1000px");
+		oColumn.setImportance("Low");
+		oColumn1.setDemandPopin(true);
+		oColumn1.setMinScreenWidth("1000px");
+		this.sut.setHiddenInPopin(["Low"]);
+
+		this.sut.attachEventOnce("popinChanged", function(oEvent) {
+			var aVisibleInPopin = oEvent.getParameter("visibleInPopin");
+			var aHiddenInPopin = oEvent.getParameter("hiddenInPopin");
+			var bHasPopin = oEvent.getParameter("hasPopin");
+			assert.ok(bHasPopin, "Table has popins");
+			assert.strictEqual(aHiddenInPopin.length, 1, "1 column is hidden in popin");
+			assert.strictEqual(aHiddenInPopin[0], oColumn, "Correct column is provided the 'hiddenInPopin' parameter");
+			assert.strictEqual(aVisibleInPopin.length, 1, "There is 1 column visible in popin");
+			assert.ok(aVisibleInPopin.indexOf(oColumn1) > -1, "Correct column is provided by the 'visibleInPopin' parameter");
+
+			this.sut.attachEventOnce("popinChanged", function(oEvent) {
+				var aVisibleInPopin = oEvent.getParameter("visibleInPopin");
+				var aHiddenInPopin = oEvent.getParameter("hiddenInPopin");
+				var bHasPopin = oEvent.getParameter("hasPopin");
+				assert.notOk(bHasPopin, "No popins");
+				assert.notOk(aHiddenInPopin.length, "No hidden in popin");
+				assert.notOk(aVisibleInPopin.length, "No popins");
+			});
+
+			this.sut.setContextualWidth("1200px");
+			Core.applyChanges();
+			this.clock.tick(1);
+		}, this);
+
+		this.sut.setContextualWidth("800px");
+		Core.applyChanges();
+		this.clock.tick(1);
 	});
 });

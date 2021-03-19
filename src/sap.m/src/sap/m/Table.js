@@ -223,6 +223,10 @@ sap.ui.define([
 					 */
 					hasPopin: {type: "boolean"},
 					/**
+					 * Returns array of all visible columns in the pop-in area.
+					 */
+					visibleInPopin: {type: "sap.m.Column[]"},
+					/**
 					 * Returns array of columns that are hidden in the pop-in based on their importance.
 					 * See {@link sap.m.Column#getImportance}
 					 */
@@ -313,6 +317,14 @@ sap.ui.define([
 
 	Table.prototype._applyContextualWidth = function(iWidth) {
 		iWidth = parseFloat(iWidth) || 0;
+
+		// when hiddenInPopin is configured, the table size increases due to popins and later decreases as popins are removed due to hiddenInPopin
+		// this can cause scrollbar to appear and disappear causing popin and popout jumping
+		// hence, the table does not change the contextual width if it is less than or equal to 16 (approx. scrollbar size)
+		if (Math.abs(this._oContextualSettings.contextualWidth - iWidth) <= 16) {
+			return;
+		}
+
 		if (iWidth && this._oContextualSettings.contextualWidth != iWidth) {
 			this._applyContextualSettings({
 				contextualWidth : iWidth
@@ -399,16 +411,16 @@ sap.ui.define([
 			this._firePopinChangedEvent();
 			this._bFirePopinChanged = false;
 		} else {
-			var aHiddenInPopin = this._getHiddenInPopin();
-			if (this._aHiddenInPopin && this.getVisibleItems().length) {
-				if (aHiddenInPopin.length !== this._aHiddenInPopin.length || !aHiddenInPopin.every(function(oPopinCol) {
-					return this._aHiddenInPopin.indexOf(oPopinCol) > -1;
+			var aPopins = this._getPopins();
+			if (this._aPopins && this.getVisibleItems().length) {
+				if (this._aPopins.length != aPopins.length || !aPopins.every(function(oPopinCol) {
+					return this._aPopins.indexOf(oPopinCol) > -1;
 				}, this)) {
-					this._aHiddenInPopin = aHiddenInPopin;
+					this._aPopins = aPopins;
 					this._firePopinChangedEvent();
 				}
-			} else if (this._aHiddenInPopin == null) {
-				this._aHiddenInPopin = aHiddenInPopin;
+			} else if (this._aPopins == null) {
+				this._aPopins = aPopins;
 			}
 		}
 	};
@@ -1091,12 +1103,12 @@ sap.ui.define([
 		};
 
 		aVisibleColumns.forEach(function(oColumn) {
-				var sImportance = oColumn.getImportance();
-				if (sImportance === "None") {
-					sImportance = "Medium";
-				}
-				mPrioColumns[sImportance].push(oColumn);
-			});
+			var sImportance = oColumn.getImportance();
+			if (sImportance === "None") {
+				sImportance = "Medium";
+			}
+			mPrioColumns[sImportance].push(oColumn);
+		});
 
 		var aPrioColumns = Object.keys(mPrioColumns).map(function(sPriority) {
 			return mPrioColumns[sPriority];
@@ -1120,7 +1132,21 @@ sap.ui.define([
 		// check if table has inset
 		var iInset = this.getInset() ? 4 : 0;
 
-		var iThemeDensityWidth = this.$().closest(".sapUiSizeCompact").length ? 2 : 3;
+		var $this = this.$(),
+			iThemeDensityWidth = 3;
+
+		if ($this.closest(".sapUiSizeCompact").length) {
+			iThemeDensityWidth = 2;
+		} else {
+			var bThemeDensityWidthFound = false;
+			$this.find(".sapMTableTH[aria-hidden=true]:not(.sapMListTblHighlightCol):not(.sapMListTblDummyCell):not(.sapMListTblNavigatedCol)").get().forEach(function(oTH) {
+				var iWidth = jQuery(oTH).width();
+				if (!bThemeDensityWidthFound && iWidth > 0) {
+					iThemeDensityWidth = iWidth / parseFloat(library.BaseFontSize);
+					bThemeDensityWidthFound = true;
+				}
+			});
+		}
 
 		// check if selection control is available
 		var iSelectionWidth = ListBaseRenderer.ModeOrder[this.getMode()] ? iThemeDensityWidth : 0;
@@ -1170,20 +1196,31 @@ sap.ui.define([
 	};
 
 	Table.prototype._getHiddenInPopin = function() {
-		var aVisiblePopinColumns = this.getColumns().filter(function(oColumn) {
+		return this._getPopins().filter(function(oPopin) {
+			return !oPopin.isPopin();
+		});
+	};
+
+	Table.prototype._getVisiblePopin = function() {
+		return this._getPopins().filter(function(oPopin) {
+			return oPopin.isPopin();
+		});
+	};
+
+	Table.prototype._getPopins = function() {
+		var aVisiblePopinColumns =  this.getColumns().filter(function(oColumn) {
 			return oColumn.getVisible() && oColumn.getDemandPopin();
 		});
 
-		var aHiddenPopinColumns = aVisiblePopinColumns.filter(function(oVisibleColumn) {
-			return oVisibleColumn._media && !oVisibleColumn._media.matches && !oVisibleColumn.isPopin();
+		return aVisiblePopinColumns.filter(function(oVisibleColumn) {
+			return oVisibleColumn._media && !oVisibleColumn._media.matches;
 		});
-
-		return aHiddenPopinColumns;
 	};
 
 	Table.prototype._firePopinChangedEvent = function() {
 		this.fireEvent("popinChanged", {
 			hasPopin: this.hasPopin(),
+			visibleInPopin: this._getVisiblePopin(),
 			hiddenInPopin: this._getHiddenInPopin()
 		});
 	};
