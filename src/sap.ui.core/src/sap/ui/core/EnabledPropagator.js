@@ -39,13 +39,43 @@ sap.ui.define(['./Control'],
 			bDefault = true;
 		}
 
-		// helper to find a parent that has a getEnabled() method
-		function findParentWithEnabled(/**sap.ui.core.Control*/oControl) {
+		/**
+		 * Finds the nearest parent that has the getEnabled() method implemented
+		 *
+		 * @param {sap.ui.core.Control} oControl the control itself
+		 * @return {sap.ui.core.Control} The nearest parent control that has getEnabled() method implemented
+		 * @private
+		 */
+		function findParentWithEnabled(oControl) {
 			var oParent = oControl.getParent();
 			while (oParent && !oParent.getEnabled && oParent.getParent) {
 				oParent = oParent.getParent();
 			}
 			return oParent;
+		}
+
+		/**
+		 * Moves the focus to the nearest parent that is focusable when the control that is going to be disabled
+		 * (bEnabled === false) currently has the focus. This is done to prevent the focus from being set to the body
+		 * tag
+		 *
+		 * @param {sap.ui.core.Control} oControl the control that is going to be enabled/disalbed
+		 * @param {boolean} bEnabled whether the control is going to be enabled
+		 * @private
+		 */
+		function checkAndMoveFocus(oControl, bEnabled) {
+			var oDomRef = oControl.getDomRef(),
+				oFocusableParent;
+
+			if (!bEnabled && oDomRef && oDomRef.contains(document.activeElement)) {
+				oFocusableParent = oControl.$().parent().closest(":focusable")[0];
+
+				if (oFocusableParent) {
+					oFocusableParent.focus({
+						preventScroll: true
+					});
+				}
+			}
 		}
 
 		// Ensure not to overwrite existing implementations.
@@ -64,23 +94,29 @@ sap.ui.define(['./Control'],
 			this.getMetadata().addPublicMethods('getEnabled');
 
 		} else {
-			//
-			var fnOld = this.getEnabled;
+			var fnOrigGet = this.getEnabled;
 			this.getEnabled = function() {
 				var oParent = findParentWithEnabled(this);
-				return (oParent && oParent.getEnabled && !oParent.getEnabled()) ? false : fnOld.apply(this);
+				return (oParent && oParent.getEnabled && !oParent.getEnabled()) ? false : fnOrigGet.apply(this);
 			};
 		}
 
 		if (this.setEnabled === undefined) {
 			this.setEnabled = function(bEnabled) {
+				checkAndMoveFocus(this, bEnabled);
 				return this.setProperty("enabled", bEnabled);
 			};
 
 			this.getMetadata().addPublicMethods('setEnabled');
+		} else {
+			var fnOrigSet = this.setEnabled;
+
+			this.setEnabled = function(bEnabled) {
+				checkAndMoveFocus(this, bEnabled);
+				return fnOrigSet.apply(this, arguments);
+			};
 		}
 	};
-
 
 	return EnabledPropagator;
 
