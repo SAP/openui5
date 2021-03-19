@@ -337,6 +337,18 @@ sap.ui.define([
 		assert.strictEqual(obj.getNoTypeNoDefault(), null, "a property with invalid type and without default should default to null");
 	});
 
+	QUnit.test("Default value of dynamically created property", function(assert) {
+		var obj = new (this.clazz)();
+
+		this.metadata.addProperty("dynamicProperty", {type: "boolean", defaultValue: true});
+		assert.strictEqual(obj.getProperty("dynamicProperty"), true, "The default value should be returned");
+
+		obj.setProperty("dynamicProperty", false);
+		assert.strictEqual(obj.getProperty("dynamicProperty"), false, "The value given in the setter should be returned");
+
+		obj.destroy();
+	});
+
 
 	QUnit.module("Properties", {
 		beforeEach: function() {
