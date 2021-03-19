@@ -99,10 +99,6 @@
 			var config = {
 				"form": {
 					"items": {
-						"groupheader1": {
-							"label": "General Settings",
-							"type": "group"
-						},
 						"title": {
 							"manifestpath": "/sap.card/header/title",
 							"type": "string",
@@ -321,36 +317,6 @@
 					oCodeEditor._oEditor.completers = [];
 					oCodeEditor.placeAt("code");
 
-					var oButton = new Button({
-						text: "Insert Item",
-						press: function () {
-							try {
-								var oJson = JSON.parse(oCodeEditor.getValue()),
-									oNew = JSON.parse(oCodeEditor.getValue());
-								oNew.form.items = {};
-								var sKey = oSelect.getSelectedKey();
-								if (sKey) {
-									var sOriginalKey = sKey;
-									var i = 1;
-									while (oJson.form.items[sKey]) {
-										sKey = sOriginalKey + "" + (i++);
-									}
-									var oCode = mSamples[sOriginalKey].code;
-									oNew.form.items = {
-									}
-									oNew.form.items[sKey] = oCode;
-									for (var n in oJson.form.items) {
-										oNew.form.items[n] = oJson.form.items[n];
-									}
-									oCodeEditor.setValue(JSON.stringify(oNew, null, "\t"));
-									oCodeEditor._oEditor.find('"' + sKey + '"');
-								}
-							} catch {
-
-							}
-						}
-					});
-
 					var mSamples = {
 						simplestringfield: {
 							text: "Simple String Field",
@@ -390,6 +356,36 @@
 					}
 					oSelect._showSampleCode();
 					oSelect.placeAt("sampleselect");
+
+					var oButton = new Button({
+						text: "Insert Item",
+						press: function () {
+							try {
+								var oJson = JSON.parse(oCodeEditor.getValue()),
+									oNew = JSON.parse(oCodeEditor.getValue());
+								oNew.form.items = {};
+								var sKey = oSelect.getSelectedKey();
+								if (sKey) {
+									var sOriginalKey = sKey;
+									var i = 1;
+									while (oJson.form.items[sKey]) {
+										sKey = sOriginalKey + "" + (i++);
+									}
+									var oCode = mSamples[sOriginalKey].code;
+									oNew.form.items = {
+									}
+									oNew.form.items[sKey] = oCode;
+									for (var n in oJson.form.items) {
+										oNew.form.items[n] = oJson.form.items[n];
+									}
+									oCodeEditor.setValue(JSON.stringify(oNew, null, "\t"));
+									oCodeEditor._oEditor.find('"' + sKey + '"');
+								}
+							} catch {
+
+							}
+						}
+					});
 					oButton.setWidth("8rem");
 					oButton.placeAt("sampleselect");
 
@@ -406,8 +402,8 @@
 
 					function createEditor(sMode, sDTJSON) {
 						return new CardEditor({
-							card: { manifest: sampleManifest, baseurl: sBaseUrl, host: "host" },
-							designtime: JSON.parse(sDTJSON) || JSON.parse(oCodeEditor.getValue()),
+							card: { manifest: sampleManifest, baseUrl: sBaseUrl, host: "host" },
+							designtime: sDTJSON !== undefined ? JSON.parse(sDTJSON) : JSON.parse(oCodeEditor.getValue()),
 							mode: sMode,
 							language: sMode === "translation" ? "fr" : "",
 							allowSettings: true,
@@ -439,9 +435,9 @@
 			<div id="code" style="display:inline-block; width:800px;height:230px;box-sizing:border-box">
 			</div>
 			<div id="samples"
-				style="display:inline-block; width:400px;height:180px;padding:1rem 1rem 0 0;box-sizing:border-box">
+				style="display:inline-block; width:400px; height:175px; box-sizing:border-box">
 				<div>
-					<pre id="codesample" class="prettyprint lang-js linenums" style="max-width: 450px; height:130px">
+					<pre id="codesample" class="prettyprint lang-js linenums" style="max-width: 450px; height:auto">
 
 					</pre>
 				</div>
@@ -450,7 +446,7 @@
 				</div>
 			</div>
 			<div>
-				<h3>Configuration Editor in Admin Mode</h3>
+				<h3 style="margin-top: 0.5rem;">Configuration Editor in Admin Mode</h3>
 				<div id="adminsample" class="samplecontainer">
 				</div>
 				<h3>Configuration Editor in Content Mode</h3>
