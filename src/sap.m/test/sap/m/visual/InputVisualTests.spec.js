@@ -105,7 +105,6 @@ describe("sap.m.InputVisualTests", function() {
 		var oInput = element(by.id("inputWithSuggestions"));
 		browser.executeScript("document.getElementById('inputWithSuggestions').scrollIntoView()").then(function() {
 			var index;
-			element(by.id("customCssButton")).click();
 			oInput.click();
 
 			for (index = 0; index < 10; index++) {
