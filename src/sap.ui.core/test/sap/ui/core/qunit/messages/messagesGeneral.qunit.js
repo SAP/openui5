@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/ui/model/odata/ODataMessageParser",
-	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(coreLibrary, ControlMessageProcessor, Message, MessageManager, FormatException, Model, JSONModel, MessageModel, TypeInteger, TypeString, Input, Label, ODataMessageParser, createAndAppendDiv) {
+	'sap/ui/qunit/utils/createAndAppendDiv',
+	"sap/ui/test/TestUtils"
+], function(coreLibrary, ControlMessageProcessor, Message, MessageManager, FormatException, Model, JSONModel, MessageModel, TypeInteger, TypeString, Input, Label, ODataMessageParser, createAndAppendDiv, TestUtils) {
 	"use strict";
 
 	// create content div
@@ -247,12 +248,14 @@ sap.ui.define([
 
 	QUnit.test("parseError", function(assert) {
 		var done = assert.async();
-		spyDataState(oZip, function(sName, oDataState) {
-			assert.ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
-			assert.ok(oZip.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-			assert.ok(oZip.getValueStateText() === 'Enter a number with no decimal places', 'Input: ValueStateText set correctly');
+		TestUtils.withNormalizedMessages(function() {
+			spyDataState(oZip, function(sName, oDataState) {
+				assert.ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
+				assert.ok(oZip.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+				assert.equal(oZip.getValueStateText(), "EnterInt", 'Input: ValueStateText set correctly');
+			});
+			oZip.setValue('bbb');
 		});
-		oZip.setValue('bbb');
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oZip, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
