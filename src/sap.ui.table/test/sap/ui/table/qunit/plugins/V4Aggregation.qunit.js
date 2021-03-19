@@ -1,74 +1,78 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/table/plugins/V4Aggregation"
-], function(V4Aggregation) {
+	"sap/ui/table/plugins/V4Aggregation",
+	"sap/ui/table/utils/TableUtils"
+], function(V4Aggregation, TableUtils) {
 	"use strict";
+
+	TableUtils.getResourceBundle();
 
 	QUnit.module("Tests on AggregateInfo", {
 		beforeEach: function() {
 			this.oPlugin = new V4Aggregation();
 
 			this.oPlugin.setPropertyInfos([{
-				name: "Info1",
+				name: "Property1",
 				path: "prop1",
 				key: true
 			}, {
-				name: "Info2",
+				name: "Property2",
 				path: "prop2",
 				key: true,
 				groupable: true
 			}, {
-				name: "Info3",
+				name: "Property3",
 				path: "prop3",
-				groupable: true
+				groupable: true,
+				text: "Property4"
 			}, {
-				name: "Info4",
+				name: "Property4",
 				path: "prop4",
 				groupable: true
 			}, {
-				name: "Info5",
+				name: "Property5",
 				path: "prop5",
 				extension: {
 					defaultAggregate: {}
 				}
 			}, {
-				name: "Info6",
+				name: "Property6",
 				path: "prop6",
 				extension: {
 					defaultAggregate: {}
 				},
-				unit: "Info3"
+				unit: "Property4"
 			}, {
-				name: "Info7",
+				name: "Property7",
 				path: "prop7",
 				extension: {
 					defaultAggregate: {}
 				},
 				groupable: true
 			}, {
-				name: "Info8",
+				name: "Property8",
 				path: "prop8",
 				extension: {
 					defaultAggregate: {
-						contextDefiningProperties: ["Info1", "Info3", "Info4"]
+						contextDefiningProperties: ["Property1", "Property3", "Property4"]
 					}
 				}
 			}, {
-				name: "Info9",
+				name: "Property9",
 				path: "prop9",
-				unit: "Info3",
+				unit: "Property3",
 				extension: {
 					defaultAggregate: {
 						contextDefiningProperties: []
 					}
 				}
 			}, {
-				name: "Info10",
+				name: "Property10",
 				path: "prop10",
 				extension: {
 					defaultAggregate: {
-						contextDefiningProperties: ["Info4", "Info5"]
+						contextDefiningProperties: ["Property4", "Property5"]
 					}
 				}
 			}]);
@@ -90,23 +94,23 @@ sap.ui.define([
 	}, {
 		label: "1 grouped property",
 		aggregationInfo: {
-			visible: ["Info3"]
+			visible: ["Property3"]
 		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {}},
+		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: ["prop4"]}},
 		expectedAggregate: {},
 		expectedGroupLevels: []
 	}, {
 		label: "2 grouped properties",
 		aggregationInfo: {
-			visible: ["Info3", "Info4"]
+			visible: ["Property3", "Property4"]
 		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {}, prop4: {}},
+		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: ["prop4"]}},
 		expectedAggregate: {},
 		expectedGroupLevels: []
 	}, {
 		label: "Only grouped keys",
 		aggregationInfo: {
-			visible: ["Info2"]
+			visible: ["Property2"]
 		},
 		expectedGroup: {prop1: {}, prop2: {}},
 		expectedAggregate: {},
@@ -114,7 +118,7 @@ sap.ui.define([
 	}, {
 		label: "1 aggregated property",
 		aggregationInfo: {
-			visible: ["Info5"]
+			visible: ["Property5"]
 		},
 		expectedGroup: {prop1: {}, prop2: {}},
 		expectedAggregate: {prop5: {}},
@@ -122,25 +126,25 @@ sap.ui.define([
 	}, {
 		label: "2 aggregated property",
 		aggregationInfo: {
-			visible: ["Info5", "Info6"]
+			visible: ["Property5", "Property6"]
 		},
 		expectedGroup: {prop1: {}, prop2: {}},
-		expectedAggregate: {prop5: {}, prop6: {unit: "prop3"}},
+		expectedAggregate: {prop5: {}, prop6: {unit: "prop4"}},
 		expectedGroupLevels: []
 	}, {
 		label: "2 aggregated property with totals",
 		aggregationInfo: {
-			visible: ["Info5", "Info6"],
-			subtotals: ["Info5", "Info6"],
-			grandTotal: ["Info6"]
+			visible: ["Property3", "Property5", "Property6"],
+			subtotals: ["Property5", "Property6"],
+			grandTotal: ["Property6"]
 		},
-		expectedGroup: {prop1: {}, prop2: {}},
-		expectedAggregate: {prop5: {grandTotal: false, subtotals: true}, prop6: {grandTotal: true, subtotals: true, unit: "prop3"}},
+		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: []}},
+		expectedAggregate: {prop5: {grandTotal: false, subtotals: true}, prop6: {grandTotal: true, subtotals: true, unit: "prop4"}},
 		expectedGroupLevels: []
 	}, {
 		label: "1 property aggregated and grouped",
 		aggregationInfo: {
-			visible: ["Info7"]
+			visible: ["Property7"]
 		},
 		expectedGroup: {prop1: {}, prop2: {}, prop7: {}},
 		expectedAggregate: {},
@@ -148,47 +152,49 @@ sap.ui.define([
 	}, {
 		label: "Aggregated property with context-defining properties",
 		aggregationInfo: {
-			visible: ["Info8"],
+			visible: ["Property8", "Property10"],
 			groupLevels: []
 		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {}, prop4: {}},
-		expectedAggregate: {prop8: {}},
+		expectedGroup: {prop1: {}, prop2: {}, prop3: {}, prop4: {}, prop5: {}},
+		expectedAggregate: {prop8: {}, prop10: {}},
 		expectedGroupLevels: []
 	}, {
 		label: "Aggregated property with unit and empty context-defining properties",
 		aggregationInfo: {
-			visible: ["Info9"],
+			visible: ["Property9"],
 			groupLevels: []
 		},
 		expectedGroup: {prop1: {}, prop2: {}},
 		expectedAggregate: {prop9: {unit: "prop3"}},
 		expectedGroupLevels: []
 	}, {
-		label: "Aggregated property - non-groupable context-defining proporties are not kept",
-		aggregationInfo: {
-			visible: ["Info10"],
-			groupLevels: []
-		},
-		expectedGroup: {prop1: {}, prop2: {}, prop4: {}},
-		expectedAggregate: {prop10: {}},
-		expectedGroupLevels: []
-	}, {
 		label: "Group levels",
 		aggregationInfo: {
-			visible: ["Info3", "Info7"],
-			groupLevels: ["Info7", "Info3"]
+			visible: ["Property3", "Property7"],
+			groupLevels: ["Property7", "Property3"]
 		},
-		expectedGroup: {prop1: {}, prop2: {}, prop3: {}, prop7: {}},
+		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: ["prop4"]}, prop7: {}},
 		expectedAggregate: {},
 		expectedGroupLevels: ["prop7", "prop3"]
+	}, {
+		label: "Totals for an aggregatable property that is also groupable",
+		aggregationInfo: {
+			visible: ["Property2", "Property7"],
+			subtotals: ["Property7"],
+			grandTotal: ["Property7"]
+		},
+		expectedGroup: {prop1: {}, prop2: {}},
+		expectedAggregate: {prop7: {grandTotal: true, subtotals: true}},
+		expectedGroupLevels: []
 	}];
 
 	aTestData.forEach(function(oData) {
 		QUnit.test(oData.label, function(assert) {
 			this.oPlugin.setAggregationInfo(oData.aggregationInfo);
-			assert.equal(JSON.stringify(this.oPlugin._mGroup), JSON.stringify(oData.expectedGroup), "check grouped properties");
-			assert.equal(JSON.stringify(this.oPlugin._mAggregate), JSON.stringify(oData.expectedAggregate), "check aggregated properties");
-			assert.equal(JSON.stringify(this.oPlugin._aGroupLevels), JSON.stringify(oData.expectedGroupLevels), "check group levels");
+			var mAggregationInfo = this.oPlugin.getAggregationInfo();
+			assert.equal(JSON.stringify(mAggregationInfo.group), JSON.stringify(oData.expectedGroup), "check grouped properties");
+			assert.equal(JSON.stringify(mAggregationInfo.aggregate), JSON.stringify(oData.expectedAggregate), "check aggregated properties");
+			assert.equal(JSON.stringify(mAggregationInfo.groupLevels), JSON.stringify(oData.expectedGroupLevels), "check group levels");
 		});
 	});
 
@@ -210,9 +216,9 @@ sap.ui.define([
 			var bFixedBottomEnabled = this.oPlugin.getTotalSummaryOnBottom() === "Fixed";
 
 			this.oPlugin.setAggregationInfo({
-				visible: ["Info5"],
-				subtotals: ["Info5"],
-				grandTotal: ["Info5"]
+				visible: ["Property5"],
+				subtotals: ["Property5"],
+				grandTotal: ["Property5"]
 			});
 			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
 				fixedTop: bFixedTopEnabled,
@@ -221,8 +227,8 @@ sap.ui.define([
 
 			oSetRowCountConstraints.reset();
 			this.oPlugin.setAggregationInfo({
-				visible: ["Info5"],
-				grandTotal: ["Info5"]
+				visible: ["Property5"],
+				grandTotal: ["Property5"]
 			});
 			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
 				fixedTop: bFixedTopEnabled,
@@ -231,8 +237,8 @@ sap.ui.define([
 
 			oSetRowCountConstraints.reset();
 			this.oPlugin.setAggregationInfo({
-				visible: ["Info5"],
-				subtotals: ["Info5"]
+				visible: ["Property5"],
+				subtotals: ["Property5"]
 			});
 			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
 				fixedTop: false,
@@ -241,7 +247,7 @@ sap.ui.define([
 
 			oSetRowCountConstraints.reset();
 			this.oPlugin.setAggregationInfo({
-				visible: ["Info5"]
+				visible: ["Property5"]
 			});
 			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
 				fixedTop: false,
@@ -254,31 +260,35 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oPlugin = new V4Aggregation();
 
-			this.oPlugin.setPropertyInfos([
-				{
-					name: "Info1",
-					path: "prop1",
-					key: true
-				},
-				{
-					name: "Info2",
-					path: "prop2",
-					groupable: true
-				},
-				{
-					name: "Info3",
-					path: "prop3",
-					groupable: true,
-					groupingDetails: {
-						formatter: function(oContext, sPropertyName) {return "Info3 > " +  sPropertyName;}
-					}
+			this.oPlugin.setPropertyInfos([{
+				name: "Property1",
+				path: "prop1",
+				label: "Property 1",
+				text: "Property2"
+			}, {
+				name: "Property2",
+				path: "prop2",
+				label: "Property 2"
+			}, {
+				name: "Property3",
+				path: "prop3",
+				label: "Property 3",
+				groupingDetails: {
+					formatter: function(oContext, sPropertyName) {return "Property3 > " + sPropertyName;}
 				}
-			]);
+			}]);
 
 			this.oPlugin.setAggregationInfo({
-				visible: ["Info1", "Info2", "Info3"],
-				groupLevels: ["Info2", "Info3"]
+				visible: ["Property1", "Property2", "Property3"],
+				groupLevels: ["Property1", "Property2", "Property3"]
 			});
+
+			this.oGroupHeaderFormatter = this.stub().callsFake(function(oContext, sProperty) {
+				if (sProperty === "Property3") {
+					return "Property 3 > prop3_value";
+				}
+			});
+			this.oPlugin.setGroupHeaderFormatter(this.oGroupHeaderFormatter);
 		}
 	});
 
@@ -287,7 +297,6 @@ sap.ui.define([
 		context: {},
 		expectedType: undefined,
 		expectedLevel: undefined,
-		expectedTitle: undefined,
 		expectedExpandable: false,
 		expectedExpanded: false
 	}, {
@@ -295,7 +304,6 @@ sap.ui.define([
 		context: {"@$ui5.node.isTotal": true, "@$ui5.node.level": 0},
 		expectedType: "Summary",
 		expectedLevel: 0,
-		expectedTitle: undefined,
 		expectedExpandable: false,
 		expectedExpanded: false
 	}, {
@@ -303,39 +311,51 @@ sap.ui.define([
 		context: {"@$ui5.node.isTotal": true, "@$ui5.node.level": 1},
 		expectedType: "Summary",
 		expectedLevel: 1,
-		expectedTitle: undefined,
 		expectedExpandable: false,
 		expectedExpanded: false
 	}, {
-		label: "Group header row - default format",
-		context: {"@$ui5.node.level": 1, "@$ui5.node.isExpanded": false, "@$ui5.node.isTotal": true},
+		label: "Group header row - default format for a property with a text property",
+		context: {"@$ui5.node.level": 1, "@$ui5.node.isExpanded": false},
 		expectedType: "GroupHeader",
 		expectedLevel: 1,
-		expectedTitle: "XXX",
+		expectedTitle: TableUtils.getResourceText("TBL_ROW_GROUP_TITLE_FULL", ["Property 1", "prop1_value", "prop2_value"]),
+		expectedTitleProperty: "Property1",
 		expectedExpandable: true,
 		expectedExpanded: false
 	}, {
-		label: "Group header row (expanded) - default format",
-		context: {"@$ui5.node.level": 1, "@$ui5.node.isExpanded": true},
+		label: "Group header row - default format for a property without a text property",
+		context: {"@$ui5.node.level": 2, "@$ui5.node.isExpanded": false, "@$ui5.node.isTotal": true},
 		expectedType: "GroupHeader",
-		expectedLevel: 1,
-		expectedTitle: "XXX",
+		expectedLevel: 2,
+		expectedTitle: TableUtils.getResourceText("TBL_ROW_GROUP_TITLE", ["Property 2", "prop2_value"]),
+		expectedTitleProperty: "Property2",
+		expectedExpandable: true,
+		expectedExpanded: false
+	}, {
+		label: "Group header row (expanded) - default format for a property without a text property",
+		context: {"@$ui5.node.level": 2, "@$ui5.node.isExpanded": true},
+		expectedType: "GroupHeader",
+		expectedLevel: 2,
+		expectedTitle: TableUtils.getResourceText("TBL_ROW_GROUP_TITLE", ["Property 2", "prop2_value"]),
+		expectedTitleProperty: "Property2",
 		expectedExpandable: true,
 		expectedExpanded: true
 	}, {
 		label: "Group header row - custom format",
-		context: {"@$ui5.node.level": 2, "@$ui5.node.isExpanded": false},
+		context: {"@$ui5.node.level": 3, "@$ui5.node.isExpanded": false},
 		expectedType: "GroupHeader",
-		expectedLevel: 2,
-		expectedTitle: "Info3 > prop3",
+		expectedLevel: 3,
+		expectedTitle: "Property 3 > prop3_value",
+		expectedTitleProperty: "Property3",
 		expectedExpandable: true,
 		expectedExpanded: false
 	}, {
 		label: "Group header row (expanded) - custom format",
-		context: {"@$ui5.node.level": 2, "@$ui5.node.isExpanded": true},
+		context: {"@$ui5.node.level": 3, "@$ui5.node.isExpanded": true},
 		expectedType: "GroupHeader",
-		expectedLevel: 2,
-		expectedTitle: "Info3 > prop3",
+		expectedLevel: 3,
+		expectedTitle: "Property 3 > prop3_value",
+		expectedTitleProperty: "Property3",
 		expectedExpandable: true,
 		expectedExpanded: true
 	}];
@@ -346,25 +366,8 @@ sap.ui.define([
 				getValue: function(sKey) {
 					return oData.context[sKey];
 				},
-				getProperty: function() {
-					return "XXX";
-				},
-				getPath: function() {
-					return "";
-				},
-				getModel: function() {
-					return {
-						getMetaModel: function() {
-							return {
-								getMetaPath: function() {
-									return "";
-								},
-								getUI5Type: function() {
-									return new sap.ui.model.odata.type.String();
-								}
-							};
-						}
-					};
+				getProperty: function(sPath) {
+					return sPath + "_value";
 				}
 			};
 
@@ -372,9 +375,49 @@ sap.ui.define([
 			this.oPlugin.updateRowState(oState);
 			assert.equal(oState.type, oData.expectedType, "check row type: " + oData.expectedType);
 			assert.equal(oState.level, oData.expectedLevel, "check row level: " + oData.expectedLevel);
-			assert.equal(oState.title, oData.expectedTitle, "check row title: " + oData.expectedTitle);
 			assert.equal(oState.expandable, oData.expectedExpandable, "check row expandable: " + oData.expectedExpandable);
 			assert.equal(oState.expanded, oData.expectedExpanded, "check row expanded: " + oData.expectedExpanded);
+
+			assert.equal(oState.title, oData.expectedTitle, "check row title: '" + oData.expectedTitle + "'");
+			if (oData.expectedTitle !== undefined) {
+				assert.ok(this.oGroupHeaderFormatter.calledOnceWithExactly(oContext, oData.expectedTitleProperty), "Calling the groupHeaderFormatter");
+			} else {
+				assert.equal(this.oGroupHeaderFormatter.callCount, 0, "Calling the groupHeaderFormatter");
+			}
 		});
+	});
+
+	QUnit.test("Invalid return value of the group header formatter", function(assert) {
+		var oContextData = {"@$ui5.node.level": 1, "@$ui5.node.isExpanded": false};
+		var oContext = {
+			getValue: function(sKey) {
+				return oContextData[sKey];
+			},
+			getProperty: function(sPath) {}
+		};
+		var oState = {context: oContext, Type: {Summary: "Summary", GroupHeader: "GroupHeader"}};
+		var oExpectedError = new Error("The group header title must be a string or undefined");
+		var that = this;
+
+		this.oPlugin.setGroupHeaderFormatter(function() {
+			return null;
+		});
+		assert.throws(function() {
+			that.oPlugin.updateRowState(oState);
+		}, oExpectedError, "'null'");
+
+		this.oPlugin.setGroupHeaderFormatter(function() {
+			return {};
+		});
+		assert.throws(function() {
+			that.oPlugin.updateRowState(oState);
+		}, oExpectedError, "object");
+
+		this.oPlugin.setGroupHeaderFormatter(function() {
+			return true;
+		});
+		assert.throws(function() {
+			that.oPlugin.updateRowState(oState);
+		}, oExpectedError, "boolean");
 	});
 });

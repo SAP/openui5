@@ -14,13 +14,16 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function defaultGroupHeaderFormatter(oContext, sPropertyPath) {
-		var vValue = oContext.getProperty(sPropertyPath),
-			oMetaModel = oContext.getModel().getMetaModel(),
-			sMetaPath = oMetaModel.getMetaPath(oContext.getPath() + "/" + sPropertyPath),
-			oValueType = oMetaModel.getUI5Type(sMetaPath);
+	function defaultGroupHeaderFormatter(oContext, mGroupLevelInfo) {
+		var sResourceKey = "TBL_ROW_GROUP_TITLE";
+		var aValues = [mGroupLevelInfo.property.label, oContext.getProperty(mGroupLevelInfo.property.path, true)];
 
-		return oValueType.formatValue(vValue, "string");
+		if (mGroupLevelInfo.textProperty) {
+			sResourceKey = "TBL_ROW_GROUP_TITLE_FULL";
+			aValues.push(oContext.getProperty(mGroupLevelInfo.textProperty.path, true));
+		}
+
+		return TableUtils.getResourceText(sResourceKey, aValues);
 	}
 
 	/**
@@ -44,9 +47,17 @@ sap.ui.define([
 				//totalSummary: {type: "string", defaultValue: "FixedBottom"},
 				totalSummaryOnTop: {type: "string", defaultValue: "Off"}, // On, Off, Fixed
 				totalSummaryOnBottom: {type: "string", defaultValue: "Fixed"}, // On, Off, Fixed
-				groupSummary: {type: "string", defaultValue: "Bottom"} // None, Top, Bottom, TopAndBottom
+				groupSummary: {type: "string", defaultValue: "Bottom"}, // None, Top, Bottom, TopAndBottom
 				//groupSummaryOnTop: {type: "string", defaultValue: "On"}, // On, Off
 				//groupSummaryOnBottom: {type: "string", defaultValue: "Off"}, // On, Off
+
+				/**
+				 * If the formatter returns undefined, the default group header title is set.
+				 *
+				 * Parameters: Binding context (sap.ui.model.Context), Name of the grouped property (string)
+				 * Returns: The group header title or undefined
+				 */
+				groupHeaderFormatter: {type: "function"}
 			}
 		}
 	});
@@ -141,7 +152,17 @@ sap.ui.define([
 		oState.level = iLevel;
 
 		if (bIsGroupHeader) {
-			oState.title = this._aGroupLevelFormatters[iLevel - 1](oState.context, this._aGroupLevels[iLevel - 1]);
+			var mGroupLevelInfo = this._aGroupLevels[iLevel - 1];
+			var fnGroupHeaderFormatter = this.getGroupHeaderFormatter();
+			var sCustomGroupHeaderTitle = fnGroupHeaderFormatter ? fnGroupHeaderFormatter(oState.context, mGroupLevelInfo.property.name) : undefined;
+
+			if (sCustomGroupHeaderTitle === undefined) {
+				oState.title = defaultGroupHeaderFormatter(oState.context, mGroupLevelInfo);
+			} else if (typeof sCustomGroupHeaderTitle !== "string") {
+				throw new Error("The group header title must be a string or undefined");
+			} else {
+				oState.title = sCustomGroupHeaderTitle;
+			}
 		}
 	};
 
@@ -168,7 +189,7 @@ sap.ui.define([
 	/**
 	 * Checks if a propertyInfo corresponds to an aggregatable property.
 	 *
-	 * @param {object} oPropertyInfo the propoerty info
+	 * @param {object} oPropertyInfo the property info
 	 * @returns {boolean} true if the propertyInfo corresponds to an aggregatable property, false otherwise
 	 */
 	V4Aggregation.prototype.isPropertyAggregatable = function(oPropertyInfo) {
@@ -185,18 +206,27 @@ sap.ui.define([
 	 * @param {Array} oAggregateInfo.grandTotal  An array of aggregatable property info names for which the grand total is displayed
 	 */
 	V4Aggregation.prototype.setAggregationInfo = function(oAggregateInfo) {
-		if (!oAggregateInfo || !oAggregateInfo.visible) {
+		if (!oAggregateInfo || !Array.isArray(oAggregateInfo.visible)) {
 			this._mGroup = undefined;
 			this._mAggregate = undefined;
 			this._aGroupLevels = undefined;
 		} else {
+			var aAllUnitProperties = [];
+			var aAllAdditionalProperties = [];
+			var aAdditionalProperties;
+
 			// Always use keys in the properties to be grouped
 			this._mGroup = this.getPropertyInfos().reduce(function(mGroup, oPropertyInfo) {
 				if (oPropertyInfo.key) {
 					mGroup[oPropertyInfo.path] = {};
+					aAdditionalProperties = getAdditionalPropertyPaths(this, oPropertyInfo);
+					if (aAdditionalProperties) {
+						mGroup[oPropertyInfo.path].additionally = aAdditionalProperties;
+						aAllAdditionalProperties.concat(aAdditionalProperties);
+					}
 				}
 				return mGroup;
-			}, {});
+			}.bind(this), {});
 
 			this._mAggregate = {};
 
@@ -205,6 +235,11 @@ sap.ui.define([
 				var oPropertyInfo = this.findPropertyInfo(sVisiblePropertyName);
 				if (oPropertyInfo && oPropertyInfo.groupable) {
 					this._mGroup[oPropertyInfo.path] = {};
+					aAdditionalProperties = getAdditionalPropertyPaths(this, oPropertyInfo);
+					if (aAdditionalProperties) {
+						this._mGroup[oPropertyInfo.path].additionally = aAdditionalProperties;
+						aAllAdditionalProperties = aAllAdditionalProperties.concat(aAdditionalProperties);
+					}
 				}
 
 				if (oPropertyInfo && this.isPropertyAggregatable(oPropertyInfo)) {
@@ -217,14 +252,20 @@ sap.ui.define([
 						var oUnitPropertyInfo = this.findPropertyInfo(oPropertyInfo.unit);
 						if (oUnitPropertyInfo) {
 							this._mAggregate[oPropertyInfo.path].unit = oUnitPropertyInfo.path;
+							aAllUnitProperties.push(oUnitPropertyInfo.path);
 						}
 					}
 
 					if (oPropertyInfo.extension.defaultAggregate.contextDefiningProperties) {
 						oPropertyInfo.extension.defaultAggregate.contextDefiningProperties.forEach(function(sContextDefiningPropertyName) {
 							var oDefiningPropertyInfo = this.findPropertyInfo(sContextDefiningPropertyName);
-							if (oDefiningPropertyInfo && (oDefiningPropertyInfo.groupable || oDefiningPropertyInfo.key)) {
+							if (oDefiningPropertyInfo) {
 								this._mGroup[oDefiningPropertyInfo.path] = {};
+								aAdditionalProperties = getAdditionalPropertyPaths(this, oPropertyInfo);
+								if (aAdditionalProperties) {
+									this._mGroup[oDefiningPropertyInfo.path].additionally = aAdditionalProperties;
+									aAllAdditionalProperties = aAllAdditionalProperties.concat(aAdditionalProperties);
+								}
 							}
 						}.bind(this));
 					}
@@ -233,32 +274,72 @@ sap.ui.define([
 
 			// Handle group levels
 			this._aGroupLevels = [];
-			this._aGroupLevelFormatters = [];
 			if (oAggregateInfo.groupLevels) {
 				oAggregateInfo.groupLevels.forEach(function(sGroupLevelName) {
-					var oPropertyInfo = this.findPropertyInfo(sGroupLevelName);
-					if (oPropertyInfo && oPropertyInfo.groupable) {
-						this._aGroupLevels.push(oPropertyInfo.path);
-						var fnFormatter = (oPropertyInfo.groupingDetails && oPropertyInfo.groupingDetails.formatter) || defaultGroupHeaderFormatter;
-						this._aGroupLevelFormatters.push(fnFormatter);
-					}
+					var oProperty = this.findPropertyInfo(sGroupLevelName);
+					this._aGroupLevels.push({
+						property: oProperty,
+						textProperty: this.findPropertyInfo(oProperty.text)
+					});
 				}.bind(this));
 			}
 
-			// Make sure that a property is not in both "group" and "aggregate".
+			// Sanitize the aggregation info
 			Object.keys(this._mGroup).forEach(function(sKey) {
+				// A property may not be in both "group" and "aggregate".
 				if (this._mAggregate.hasOwnProperty(sKey)) {
 					if (this._mAggregate[sKey].grandTotal || this._mAggregate[sKey].subtotals) {
 						delete this._mGroup[sKey];
+						return;
 					} else {
 						delete this._mAggregate[sKey];
 					}
+				}
+
+				// A property may not be in "group.additionally" if it is in "aggregation.unit".
+				if (this._mGroup[sKey].additionally) {
+					this._mGroup[sKey].additionally = this._mGroup[sKey].additionally.filter(function(sAdditionalProperty) {
+						return aAllUnitProperties.indexOf(sAdditionalProperty) === -1;
+					});
+				}
+
+				// A property may not be in "group" if it is in "group.additionally".
+				if (aAllAdditionalProperties.indexOf(sKey) > -1) {
+					delete this._mGroup[sKey];
 				}
 			}.bind(this));
 		}
 
 		this.updateAggregation();
 	};
+
+	V4Aggregation.prototype.getAggregationInfo = function() {
+		var mAggregation = {
+			aggregate: deepClone(this._mAggregate),
+			group: deepClone(this._mGroup),
+			groupLevels: this._aGroupLevels ? this._aGroupLevels.map(function(mGroupLevelInfo) {
+				return mGroupLevelInfo.property.path;
+			}) : undefined
+		};
+
+		if (mAggregation.aggregate) {
+			handleGrandTotals(this, mAggregation);
+			handleGroupTotals(this, mAggregation);
+		}
+
+		return mAggregation;
+	};
+
+	function getAdditionalPropertyPaths(oPlugin, oPropertyInfo) {
+		if (oPropertyInfo.text) {
+			var oTextPropertyInfo = oPlugin.findPropertyInfo(oPropertyInfo.text);
+			if (oTextPropertyInfo) {
+				return [oTextPropertyInfo.path];
+			}
+		}
+
+		return null;
+	}
 
 	function expandRow(oRow) {
 		var oBindingContext = oRow.getRowBindingContext();
@@ -303,19 +384,9 @@ sap.ui.define([
 	V4Aggregation.prototype.updateAggregation = function() {
 		var oBinding = this.getTableBinding();
 
-		if (!oBinding) {
-			return;
+		if (oBinding) {
+			oBinding.setAggregation(this.getAggregationInfo());
 		}
-
-		var mAggregation = {
-			aggregate: deepClone(this._mAggregate),
-			group: deepClone(this._mGroup),
-			groupLevels: this._aGroupLevels ? this._aGroupLevels.slice() : undefined
-		};
-		handleGrandTotals(this, mAggregation);
-		handleGroupTotals(this, mAggregation);
-
-		oBinding.setAggregation(mAggregation);
 	};
 
 	function handleGrandTotals(oPlugin, mAggregation) {

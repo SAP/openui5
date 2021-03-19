@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(Engine, ItemBaseFlex) {
 	"use strict";
 
-	var oColumnFlex = Object.assign({}, ItemBaseFlex);
+	var ColumnFlex = Object.assign({}, ItemBaseFlex);
 
 	// Rebind triggered on the Control only during runtime JS change
 	var fRebindControl = function(oControl) {
@@ -23,23 +23,34 @@ sap.ui.define([
 		}
 	};
 
-	oColumnFlex.findItem = function(oModifier, aColumns, sName) {
+	function isRebindRequired(sChangeType, bIsRevert) {
+		return sChangeType === "addColumn" && !bIsRevert || (sChangeType === "removeColumn" && bIsRevert);
+	}
+
+	ColumnFlex.findItem = function(oModifier, aColumns, sName) {
 		return aColumns.find(function(oColumn) {
 			var sDataProperty = oModifier.getProperty(oColumn, "dataProperty");
 			return sDataProperty === sName;
 		});
 	};
 
-	oColumnFlex.afterApply = function(sChangeType, oTable, bIsRevert) {
-		if (sChangeType === "addColumn" && !bIsRevert || (sChangeType === "removeColumn" && bIsRevert)) {
+	ColumnFlex.beforeApply = function(sChangeType, oTable, bIsRevert) {
+		if (isRebindRequired(sChangeType, bIsRevert)) {
+			oTable._bColumnFlexActive = true;
+		}
+	};
+
+	ColumnFlex.afterApply = function(sChangeType, oTable, bIsRevert) {
+		if (isRebindRequired(sChangeType, bIsRevert)) {
+			delete oTable._bColumnFlexActive;
 			fRebindControl(oTable);
 		}
 	};
 
-	oColumnFlex.addColumn = oColumnFlex.createAddChangeHandler();
-	oColumnFlex.removeColumn = oColumnFlex.createRemoveChangeHandler();
-	oColumnFlex.moveColumn = oColumnFlex.createMoveChangeHandler();
+	ColumnFlex.addColumn = ColumnFlex.createAddChangeHandler();
+	ColumnFlex.removeColumn = ColumnFlex.createRemoveChangeHandler();
+	ColumnFlex.moveColumn = ColumnFlex.createMoveChangeHandler();
 
-	return oColumnFlex;
+	return ColumnFlex;
 
 });

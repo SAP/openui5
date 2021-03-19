@@ -1,26 +1,32 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/mdc/Table",
+	"sap/ui/mdc/odata/v4/TableDelegate",
+	"sap/ui/mdc/library",
 	"../../../delegates/odata/v4/TableDelegate",
 	"../../QUnitUtils",
 	"../../util/createAppEnvironment",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/core/mvc/XMLView"
+	"sap/ui/core/Core"
 ], function(
 	Table,
+	TableDelegate,
+	Library,
 	TestDelegate,
 	MDCQUnitUtils,
 	createAppEnvironment,
 	UIComponent,
 	ComponentContainer,
 	ControlPersonalizationWriteAPI,
-	XMLView
+	Core
 ) {
 	"use strict";
 
-	sap.ui.getCore().loadLibrary("sap.ui.fl");
+	var TableType = Library.TableType;
+
+	Core.loadLibrary("sap.ui.fl");
 
 	var sTableView1 =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
@@ -40,6 +46,47 @@ sap.ui.define([
 		'<mdcTable:Column header="column 2" dataProperty="name_country"> ' +
 		'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
 		'</Table></mvc:View>';
+
+	QUnit.module("Initialization");
+
+	QUnit.test("GridTable", function(assert) {
+		var oTable = new Table({
+			delegate: {
+				name: "sap/ui/mdc/odata/v4/TableDelegate"
+			}
+		});
+
+		return oTable._fullyInitialized().then(function() {
+			var oPlugin = oTable._oTable.getDependents()[0];
+			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+
+			var oGroupHeaderFormatter = sinon.spy(TableDelegate, "formatGroupHeader");
+			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
+			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
+
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("ResponsiveTable", function(assert) {
+		var oTable = new Table({
+			type: TableType.ResponsiveTable,
+			delegate: {
+				name: "sap/ui/mdc/odata/v4/TableDelegate"
+			}
+		});
+		var bInitializationFailed = false;
+
+		return oTable.initialized().catch(function() {
+			bInitializationFailed = true;
+		}).finally(function() {
+			assert.ok(bInitializationFailed, "Initialization failed");
+			assert.throws(function() {
+				TableDelegate.preInit(oTable);
+			}, new Error("This delegate does not support the table type 'ResponsiveTable'."), "Delegate.preInit throws error");
+			oTable.destroy();
+		});
+	});
 
 	QUnit.module("Basic functionality with JsControlTreeModifier", {
 		before: function() {
@@ -86,7 +133,7 @@ sap.ui.define([
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 
 				this.oTable = this.oView.byId('myTable');
 
@@ -102,7 +149,7 @@ sap.ui.define([
 
 	QUnit.test("Allowed analytics in the columns", function(assert) {
 		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		var oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
@@ -272,25 +319,36 @@ sap.ui.define([
 
 	QUnit.test("Grouping and forced aggregation", function(assert) {
 		var oTable = this.oTable;
-		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
-		var done = assert.async();
+		var oDelegate;
+		var oPlugin;
+		var fSetAggregationSpy;
+		var fnRebindTable;
 
-		oTable._fullyInitialized().then(function() {
-			var oInnerColumn = oTable._oTable.getColumns()[0];
-
+		function openColumnMenu(oColumn) {
 			oTable._oTable.fireEvent("columnSelect", {
-				column: oInnerColumn
+				column: oColumn
 			});
-			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
 
-			oTable._fullyInitialized().then(function() {
-				var oDelegate = oTable.getControlDelegate();
-				var oPlugin = oTable._oTable.getDependents()[0];
-				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-				var fnRebindTable = oDelegate.rebindTable;
+			// The popover is created async.
+			return oTable._fullyInitialized().then(function() {
+				return new Promise(function(resolve) {
+					oTable._oPopover.getAggregation("_popover").attachEventOnce("afterOpen", resolve);
+				});
+			});
+		}
 
-				oDelegate.rebindTable = function () {
+		return oTable._fullyInitialized().then(function() {
+			oDelegate = oTable.getControlDelegate();
+			oPlugin = oTable._oTable.getDependents()[0];
+			fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+			fnRebindTable = oDelegate.rebindTable;
+
+			return openColumnMenu(oTable._oTable.getColumns()[0]);
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oDelegate.rebindTable = function() {
 					fnRebindTable.apply(this, arguments);
+
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: ["Name"],
@@ -298,29 +356,41 @@ sap.ui.define([
 						subtotals: []
 					}), "Plugin#setAggregationInfo call");
 
-					fColumnPressSpy.restore();
-					fSetAggregationSpy.restore();
+					fSetAggregationSpy.reset();
 					oDelegate.rebindTable = fnRebindTable;
-
-					oDelegate.rebindTable = function () {
-						fnRebindTable.apply(this, arguments);
-						assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-							visible: oDelegate._getVisibleProperties(oTable, oPlugin),
-							groupLevels: [],
-							grandTotal: ["Name"],
-							subtotals: ["Name"]
-						}), "Plugin#setAggregationInfo call");
-						fSetAggregationSpy.restore();
-						oDelegate.rebindTable = fnRebindTable;
-						fSetAggregationSpy.reset();
-						done();
-					};
-					sinon.stub(sap.m.MessageBox, "warning");
-					oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[1].firePress();
-					oDelegate._forceAnalytics("Aggregate", oTable, "Name");
-					fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+					resolve();
 				};
 				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
+			});
+		}).then(function() {
+			return openColumnMenu(oTable._oTable.getColumns()[0]);
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oDelegate.rebindTable = function() {
+					fnRebindTable.apply(this, arguments);
+
+					// TODO: We need to get rid of the first call
+					assert.ok(fSetAggregationSpy.calledTwice);
+					assert.ok(fSetAggregationSpy.firstCall.calledWithExactly({
+						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+						groupLevels: [],
+						grandTotal: [],
+						subtotals: []
+					}), "Plugin#setAggregationInfo call");
+
+					assert.ok(fSetAggregationSpy.secondCall.calledWithExactly({
+						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+						groupLevels: [],
+						grandTotal: ["Name"],
+						subtotals: ["Name"]
+					}), "Plugin#setAggregationInfo call");
+
+					fSetAggregationSpy.reset();
+					oDelegate.rebindTable = fnRebindTable;
+					resolve();
+				};
+				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[1].firePress();
+				Core.byId(oTable.getId() + "-messageBox").getButtons()[0].firePress();
 			});
 		});
 	});
@@ -391,7 +461,7 @@ sap.ui.define([
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 
 				this.oTable = this.oView.byId('myTable');
 
@@ -407,7 +477,7 @@ sap.ui.define([
 
 	QUnit.test("Check column header for analytics buttons", function(assert) {
 		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		var oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
@@ -453,11 +523,6 @@ sap.ui.define([
 						grandTotal: [],
 						subtotals: []
 					}), "Plugin#setAggregationInfo call");
-					assert.equal(Object.keys(oPlugin._mGroup).length, 2, "Plugin#_mGroup 2 visible properties are groupable");
-					assert.notEqual(oPlugin._mGroup["Name"], undefined, "Name is part of the query (group)");
-					assert.notEqual(oPlugin._mGroup["Country"], undefined, "Country is part of the query (group)");
-					assert.equal(Object.keys(oPlugin._mAggregate).length, 1, "Plugin#_mAggregate 1 visible property is aggregatable");
-					assert.notEqual(oPlugin._mAggregate["Value"], undefined, "Value is part of the query (aggregate)");
 					fSetAggregationSpy.restore();
 					oDelegate.rebindTable = fnRebindTable;
 					done();

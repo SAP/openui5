@@ -50,8 +50,8 @@ sap.ui.define([
 				sCollectionName = this.byId("collectionName").getValue().trim(),
 				sInitiallyVisibleProperties = this.byId("initiallyVisibleProperties").getValue().trim();
 
-			if (!sServiceUrl || !sCollectionName || !sInitiallyVisibleProperties) {
-				MessageBox.error("Please provide the required Service URL, Collection name & Initially visible properties");
+			if (!sServiceUrl || !sCollectionName) {
+				MessageBox.error("Please provide the required service URL and collection name");
 				return;
 			}
 
@@ -66,7 +66,7 @@ sap.ui.define([
 			var sProxyServiceUrl = "./proxy/" + sServiceUrl.replace("://", "/");
 			var aInitiallyVisibleProperties = sInitiallyVisibleProperties.split(",").map(function(sProperty) {
 				return sProperty.trim();
-			});
+			}).filter(Boolean);
 
 			var sUsername = this.byId("username").getValue();
 			var sPassword = this.byId("password").getValue();

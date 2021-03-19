@@ -1128,6 +1128,8 @@ sap.ui.define([
 				this._createContent();
 				this._bTableExists = true;
 			}
+		}.bind(this)).catch(function() {
+			this._onAfterTableCreated();
 		}.bind(this));
 	};
 
@@ -1190,6 +1192,8 @@ sap.ui.define([
 			delete this._pDelegatePreInit;
 			this._bFullyInitialized = true;
 			this._onAfterFullInitialization(true);
+		}.bind(this)).catch(function() {
+			this._onAfterFullInitialization();
 		}.bind(this));
 	};
 
@@ -1802,8 +1806,14 @@ sap.ui.define([
 
 		var oColumn = this._createColumn(oMDCColumn);
 		setColumnTemplate(this, oMDCColumn, oColumn, iIndex);
-		var oDelegate = this.getControlDelegate();
-		oDelegate && oDelegate._onColumnChange && oDelegate._onColumnChange(this);
+
+		if (!this._bColumnFlexActive) {
+			// If the column was not added via flex, the table needs to inform the delegate about the column change, because there is no rebind.
+			// TODO: Once the GridTable has a concept for property infos and knows the relation between properties and its columns, the V4Aggregation
+			//  plugin can update the binding directly and this code can be removed.
+			var oDelegate = this.getControlDelegate();
+			oDelegate && oDelegate._onColumnChange && oDelegate._onColumnChange(this);
+		}
 
 		if (iIndex === undefined) {
 			this._oTable.addColumn(oColumn);
@@ -1931,8 +1941,15 @@ sap.ui.define([
 		if (this._oTable) {
 			var oColumn = this._oTable.removeColumn(oMDCColumn.getId() + "-innerColumn");
 			oColumn.destroy(); // TODO: avoid destroy
-			var oDelegate = this.getControlDelegate();
-			oDelegate && oDelegate._onColumnChange && oDelegate._onColumnChange(this);
+
+			if (!this._bColumnFlexActive) {
+				// If the column was not removed via flex, the table needs to inform the delegate about the column change, because there is no rebind.
+				// TODO: Once the GridTable has a concept for property infos and knows the relation between properties and its columns, the
+				//  V4Aggregation plugin can update the binding directly and this code can be removed.
+				var oDelegate = this.getControlDelegate();
+				oDelegate && oDelegate._onColumnChange && oDelegate._onColumnChange(this);
+			}
+
 			// update template for ResponsiveTable
 			if (this._bMobileTable) {
 				this._updateColumnTemplate(oMDCColumn, -1);
