@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/Change",
-	"sap/ui/fl/apply/_internal/flexObjects/CompVariant"
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger"
 ], function(
 	Change,
-	CompVariant
+	CompVariant,
+	CompVariantMerger
 ) {
 	"use strict";
 
@@ -33,11 +35,12 @@ sap.ui.define([
 		});
 
 		mMapOfKey.nonPersistedVariants = aVariants.map(function (oVariant) {
-			var oVariantInstance = new CompVariant(Object.assign({
-				fileName: oVariant.id,
+			var oVariantInstance = Object.assign({
+				id: oVariant.id,
 				persisted: false
-			}, oVariant));
-			mById[oVariantInstance.getId()] = oVariantInstance;
+			}, oVariant);
+			oVariantInstance = CompVariantMerger.createVariant(sKey, oVariantInstance);
+			mById[oVariant.id] = oVariantInstance;
 			return oVariantInstance;
 		});
 

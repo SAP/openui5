@@ -405,6 +405,7 @@ sap.ui.define([
 		if (!oVariant.getPersisted()) {
 			throw new Error("Variant to be modified is not persisted via sap.ui.fl.");
 		}
+
 		if (!mPropertyBag.revert) {
 			storeRevertDataInVariant(mPropertyBag, oVariant);
 		}
