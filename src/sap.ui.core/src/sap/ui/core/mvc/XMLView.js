@@ -127,11 +127,15 @@ sap.ui.define([
 
 				/**
 				 * The processing mode of the XMLView.
-				 * The processing mode "sequential" is implicitly activated for the following type of async views:
-				 *      a) root views in the manifest
+				 * The processing mode "sequential" is implicitly activated for the following type of views:
+				 *      a) async root views in the manifest
 				 *      b) XMLViews created with the (XML)View.create factory
-				 *      c) XMLViews used via routing
+				 *      c) XMLViews used via async routing
+				 *      d) synchronous nested views created by a asynchronous view
+				 * The processing mode "sequential_legacy" is implicitly activated for the following type of views:
+				 *      a) XMLViews created with sap.ui.view/sap.ui.xmlview with async <code>true</code>
 				 * Additionally, all declarative nested async subviews are also processed asynchronously.
+				 * In all other cases the processingMode is <code>undefined</code>
 				 */
 				processingMode: { type: "string", visibility: "hidden" }
 			},
@@ -248,9 +252,6 @@ sap.ui.define([
 		// defaults for the async API
 		mParameters.async = true;
 		mParameters.type = ViewType.XML;
-
-		// for now the processing mode is always set to default, might be changeable later, e.g. "parallel"
-		mParameters.processingMode = mParameters.processingMode || "sequential";
 
 		return View.create(mParameters);
 	};

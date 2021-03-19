@@ -1231,8 +1231,7 @@ sap.ui.define([
 		});
 	});
 
-	// skipped until processingMode sequential_legacy is introduced
-	QUnit.skip("Component with createContent returning view created with asynchronous view processing", function(assert) {
+	QUnit.test("Component with createContent returning view created with asynchronous view processing", function(assert) {
 		assert.expect(6);
 		var oManifest = {
 			"sap.app" : {

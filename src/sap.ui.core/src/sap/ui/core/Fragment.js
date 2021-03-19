@@ -493,7 +493,7 @@ function(
 
 		mParameters.type = mParameters.type || "XML";
 		mParameters.async = true;
-		mParameters.processingMode = "sequential";
+		mParameters.processingMode = mParameters.processingMode || "sequential";
 
 		// map new parameter names to classic API, delete new names to avoid assertion failures
 		mParameters.fragmentName = mParameters.fragmentName || mParameters.name;
