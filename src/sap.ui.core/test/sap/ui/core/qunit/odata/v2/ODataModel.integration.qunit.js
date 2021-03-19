@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/uid",
 	"sap/ui/Device",
+	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
@@ -23,9 +24,9 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Device, SyncPromise, coreLibrary, Message, Controller, View, BindingMode,
-		Filter, FilterOperator, Sorter, JSONModel, CountMode, MessageScope, ODataModel, TestUtils,
-		datajs, XMLHelper) {
+], function (Log, uid, Device, ManagedObjectObserver, SyncPromise, coreLibrary, Message, Controller,
+		View, BindingMode, Filter, FilterOperator, Sorter, JSONModel, CountMode, MessageScope,
+		ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -665,7 +666,7 @@ sap.ui.define([
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {string} sViewXML The view content as XML
-		 * @param {sap.ui.model.odata.v2.ODataModel|Object<string,object>} [oModel] The model resp.
+		 * @param {sap.ui.model.odata.v2.ODataModel|Object<string,object>} [vModel] The model resp.
 		 *   a map of named models (default model is undefined); the models are attached to the view
 		 *   and to the test instance.
 		 *   If no model is given, <code>createSalesOrdersModel</code> is used.
@@ -957,14 +958,14 @@ sap.ui.define([
 					var oControl = oView.byId(sControlId);
 
 					if (oControl) {
-						that.setFormatter(assert, oControl, sControlId);
+						that.observe(assert, oControl, sControlId);
 					}
 				});
 				Object.keys(that.mListChanges).forEach(function (sControlId) {
 					var oControl = oView.byId(sControlId);
 
 					if (oControl) {
-						that.setFormatter(assert, oControl, sControlId, true);
+						that.observe(assert, oControl, sControlId, true);
 					}
 				});
 
@@ -1026,8 +1027,48 @@ sap.ui.define([
 		 *   context (for the metamodel), in case that a change is expected for a single row of a
 		 *   list (in this case <code>vValue</code> must be a string).
 		 * @returns {object} The test instance for chaining
+		 * @throws {Error} If {@link #expectValue} is used in the same test
 		 */
 		expectChange : function (sControlId, vValue, vRow) {
+			if (this.bCheckValue === true) {
+				throw Error("Must not call expectChange after using expectValue in a test");
+			}
+
+			this.bCheckValue = false;
+			return this.expectChangeInternal.apply(this, arguments);
+		},
+
+		/**
+		 * Expects the code following a call to this method to set a value on the given control just
+		 * like {@link #expectChange} with the difference that values given in the
+		 * <code>vValue</code> parameter must be provided in <em>external</em> format as the
+		 * corresponding change is checked by attaching a {@link sap.ui.base.ManagedObjectObserver}
+		 * to the control's text or value property.
+		 *
+		 * @param {string} sControlId The control ID
+		 * @param {string|string[]|boolean|null} [vValue] The expected value, a list of expected
+		 *   values, <code>false</code> to enforce listening to a template control or
+		 *   <code>null</code> to initialize a control for a later change.
+		 * @param {number|string} [vRow] The row index (for the model) or the path of its parent
+		 *   context (for the metamodel), in case that a change is expected for a single row of a
+		 *   list (in this case <code>vValue</code> must be a string).
+		 * @returns {object} The test instance for chaining
+		 * @throws {Error} If {@link #expectChange} is used in the same test
+		 */
+		expectValue : function (sControlId, vValue, vRow) {
+			if (this.bCheckValue === false) {
+				throw Error("Must not call expectValue after using expectChange in a test");
+			}
+
+			this.bCheckValue = true;
+			return this.expectChangeInternal.apply(this, arguments);
+		},
+
+		/**
+		 * Implementation of methods {@link #expectChange} and {@link #expectValue}; see
+		 * documentation of these for a description.
+		 */
+		expectChangeInternal : function (sControlId, vValue, vRow) {
 			var aExpectations, i;
 
 			// Ensures that oObject[vProperty] is an array and returns it
@@ -1286,21 +1327,62 @@ sap.ui.define([
 		},
 
 		/**
-		 * Sets the formatter function which calls {@link #checkValue} for the given control.
+		 * Observes and checks value changes for a control. In case the test uses {#expectChange},
+		 * checks the model internal value by attaching a formatter; if the test uses
+		 * {#expectValue}, checks the control value in its external representation using a managed
+		 * object observer. In both cases, {#checkValue} is called for the actual value check each
+		 * time the value changes.
 		 * Note that you may only use controls that have a 'text' or a 'value' property.
+		 * Note that the managed object observer for list changes only supports sap.ui.table.Table
+		 * with one column currently; this can be enhanced as needed.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {sap.ui.base.ManagedObject} oControl The control
 		 * @param {string} sControlId The (symbolic) control ID for which changes are expected
 		 * @param {boolean} [bInList] Whether the control resides in a list item
 		 */
-		setFormatter : function (assert, oControl, sControlId, bInList) {
-			var oBindingInfo = oControl.getBindingInfo("text") || oControl.getBindingInfo("value"),
-				fnOriginalFormatter = oBindingInfo.formatter,
-				oType = oBindingInfo.type,
-				bIsCompositeType = oType && oType.getMetadata().isA("sap.ui.model.CompositeType"),
+		observe : function (assert, oControl, sControlId, bInList) {
+			var oBindingInfo,
+				fnOriginalFormatter,
+				sProperty = oControl.getBindingInfo("text") ? "text" : "value",
+				oType,
+				bIsCompositeType,
 				that = this;
 
+			if (this.bCheckValue) { // ManagedObjectObserver checks value changes on the control
+				this.oObserver = this.oObserver || new ManagedObjectObserver(function (oChange) {
+					that.checkValue(assert, oChange.current, sControlId,
+						/*TODO only for sap.ui.table.Row*/ oChange.object.getParent().getIndex());
+				});
+				if (bInList) {
+					this.oTemplateObserver = this.oTemplateObserver
+						|| new ManagedObjectObserver(function (oChange) {
+						var oCellControl;
+
+						if (oChange.mutation === "remove") {
+							that.oObserver.unobserve(oChange.child);
+						} else if (oChange.mutation === "insert") {
+							//TODO find cell with observed control, currently assume 0
+							//TODO aggregation "cells" is only valid for sap.ui.table.Table
+							oCellControl = oChange.child.getAggregation("cells")[0];
+							that.checkValue(assert, oCellControl.getProperty(sProperty), sControlId,
+								oChange.child.getIndex());
+							that.oObserver.observe(oCellControl, {properties : [sProperty]});
+						}
+					});
+					//TODO aggregation "rows" is only valid for sap.ui.table.Table
+					this.oTemplateObserver.observe(oControl.getParent().getParent(),
+						{aggregations : ["rows"]});
+				} else {
+					this.oObserver.observe(oControl, {properties : [sProperty]});
+				}
+				return;
+			}
+			// formatter checks changes of values in model representation
+			oBindingInfo = oControl.getBindingInfo(sProperty);
+			fnOriginalFormatter = oBindingInfo.formatter;
+			oType = oBindingInfo.type;
+			bIsCompositeType = oType && oType.getMetadata().isA("sap.ui.model.CompositeType");
 			oBindingInfo.formatter = function (sValue) {
 				var oContext = bInList && this.getBindingContext();
 
@@ -7877,6 +7959,120 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oControl.setValue("");
 
 			assert.strictEqual(oControl.getValue(), "0\u00a0JPY");
+		});
+	});
+
+
+	//*********************************************************************************************
+	// Scenario: TreeTable#collapseAll for a table using ODataTreeBindingAdapter resets the number
+	// of levels expanded automatically in subsequent read requests to 0.
+	// BCP: 66039 / 2021
+	QUnit.test("ODataTreeBindingAdapter: collapseToLevel prevents auto expand of child nodes with"
+			+ " higher level", function (assert) {
+		var oModel = createSpecialCasesModel(),
+			oTable,
+			sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters : {\
+				countMode : \'Inline\',\
+				numberOfExpandedLevels : 1,\
+				treeAnnotationProperties : {\
+					hierarchyDrillStateFor : \'OrderOperationIsExpanded\',\
+					hierarchyLevelFor : \'OrderOperationRowLevel\',\
+					hierarchyNodeFor : \'OrderOperationRowID\',\
+					hierarchyParentNodeFor : \'OrderOperationParentRowID\'\
+				}\
+			},\
+			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
+		}"\
+		threshold="0"\
+		visibleRowCount="2"\
+		visibleRowCountMode="Fixed" \>\
+	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
+</t:TreeTable>',
+			that = this;
+
+		this.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel%20eq%200"
+				+ "&$skip=0&$top=2&$inlinecount=allpages",
+				{
+					__count : "273",
+					results : [{
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-0')"},
+						MaintenanceOrder : "0",
+						OrderOperationIsExpanded : "collapsed",
+						OrderOperationRowID : "id-0",
+						OrderOperationRowLevel : 0
+					}, {
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-1')"},
+						MaintenanceOrder : "1",
+						OrderOperationIsExpanded : "leaf",
+						OrderOperationRowID : "id-1",
+						OrderOperationRowLevel : 0
+					}]
+				})
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?"
+				+ "$filter=OrderOperationParentRowID%20eq%20%27id-0%27&$skip=0&$top=2"
+				+ "&$inlinecount=allpages",
+				{
+					__count : "5",
+					results : [{
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-0.0')"},
+						MaintenanceOrder : "0.0",
+						OrderOperationIsExpanded : "leaf",
+						OrderOperationParentRowID : "id-0",
+						OrderOperationRowID : "id-0.0",
+						OrderOperationRowLevel : 1
+					}, {
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-0.1')"},
+						MaintenanceOrder : "0.1",
+						OrderOperationIsExpanded : "leaf",
+						OrderOperationParentRowID : "id-0",
+						OrderOperationRowID : "id-0.1",
+						OrderOperationRowLevel : 1
+					}]
+				})
+			.expectValue("maintenanceOrder", ["0", "1"])
+			.expectValue("maintenanceOrder", "0.0", 1);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("maintenanceOrder", "1", 1);
+
+			// code under test
+			oTable.collapseAll();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			//TODO expect $top=2 instead of $top=4, check TreeBindingAdapter#_getContextsOrNodes?
+			that.expectRequest("C_RSHMaintSchedSmltdOrdAndOp"
+				+ "?$filter=OrderOperationRowLevel%20eq%200&$skip=2&$top=4",
+				{
+					results : [{
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
+						MaintenanceOrder : "2",
+						OrderOperationIsExpanded : "collapsed",
+						OrderOperationRowID : "id-2",
+						OrderOperationRowLevel : 0
+					}, {
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-3')"},
+						MaintenanceOrder : "3",
+						OrderOperationIsExpanded : "leaf",
+						OrderOperationRowID : "id-3",
+						OrderOperationRowLevel : 0
+					}]
+				})
+				.expectValue("maintenanceOrder", "", 2)
+				.expectValue("maintenanceOrder", "", 3)
+				.expectValue("maintenanceOrder", "2", 2)
+				.expectValue("maintenanceOrder", "3", 3);
+
+			// code under test
+			// scroll down shows additional level 0 nodes, but must NOT load or show their children
+			oTable.setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert);
 		});
 	});
 });
