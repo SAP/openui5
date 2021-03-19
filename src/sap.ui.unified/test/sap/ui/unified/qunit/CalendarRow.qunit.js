@@ -217,6 +217,12 @@ sap.ui.define([
 				endDate: new Date("2015", "01", "01", "23", "59"),
 				title: "Education",
 				type: "Type03"
+			},
+			{
+				startDate: new Date("2015", "01", "1", "15", "0"),
+				endDate: new Date("2015", "01", "1", "15", "0"),
+				title: "Education",
+				type: "Type03"
 			}
 		]
 	}).placeAt("content");
@@ -1037,18 +1043,21 @@ sap.ui.define([
 		//arrange
 		var aAppointments = oRow2.getAppointments(),
 			oApp = aAppointments[0],
-			oApp2 = aAppointments[1];
+			oApp2 = aAppointments[1],
+			oApp3 = aAppointments[2];
 
 		//assert
-		assert.ok(!oApp.$().is(":visible"), "The first appointment is visible");
+		assert.notOk(oApp.$().is(":visible"), "The first appointment is visible");
 		assert.notOk(oApp2.$().is(":visible"), "The second appointment is not visible");
+		assert.ok(oApp3.$().is(":visible"), "The third appointment is visible");
 		//arrange
 		oRow2.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
 		sap.ui.getCore().applyChanges();
 		//assert
 		assert.ok(oApp.$().is(":visible"), "The first appointment is visible");
 		assert.notOk(oApp2.$().is(":visible"), "The second appointment not is visible");
-		assert.equal(oRow2._getVisibleAppointments().length, 1, "The number of visible appointments is as expected");
+		assert.notOk(oApp3.$().is(":visible"), "The third appointment is visible");
+		assert.equal(oRow2._getVisibleAppointments().length, 2, "The number of visible appointments is as expected");
 	});
 
 	QUnit.test("_setCustomAppointmentsSorterCallback after initial rendering", function (assert) {
