@@ -239,6 +239,10 @@ sap.ui.define([
 				this.sServiceUrl = vServiceUrl;
 			}
 
+			// Creates a parameters map to be used for the instantiation of the code list model,
+			// based on this OData model's parameters
+			this.mCodeListModelParams = this.createCodeListModelParameters(mParameters);
+
 			if (mParameters) {
 				sUser = mParameters.user;
 				sPassword = mParameters.password;
@@ -379,18 +383,18 @@ sap.ui.define([
 			// Get/create shared data containers
 			var sServerUrl = this._getServerUrl();
 			//use warmup url if provided
-			var sMetadataUrl = this.sWarmupUrl || this._createMetadataUrl("/$metadata");
+			this.sMetadataUrl = this.sWarmupUrl || this._createMetadataUrl("/$metadata");
 			this.oSharedServerData = ODataModel._getSharedData("server", sServerUrl);
 			this.oSharedServiceData = ODataModel._getSharedData("service", this.sServiceUrl);
-			this.oSharedMetaData = ODataModel._getSharedData("meta", sMetadataUrl);
+			this.oSharedMetaData = ODataModel._getSharedData("meta", this.sMetadataUrl);
 
-			this.bUseCache = this._cacheSupported(sMetadataUrl);
+			this.bUseCache = this._cacheSupported(this.sMetadataUrl);
 
 			if (!this.oSharedMetaData.oMetadata || this.oSharedMetaData.oMetadata.bFailed) {
 				//create Metadata object
-				this.oMetadata = new ODataMetadata(sMetadataUrl,{
+				this.oMetadata = new ODataMetadata(this.sMetadataUrl, {
 					async: true,
-					cacheKey: this.bUseCache ? sMetadataUrl : undefined,
+					cacheKey: this.bUseCache ? this.sMetadataUrl : undefined,
 					user: this.sUser,
 					password: this.sPassword,
 					headers: this.mCustomHeaders,
@@ -410,7 +414,7 @@ sap.ui.define([
 				skipMetadata: this.bSkipMetadataAnnotationParsing,
 				headers: this.mCustomHeaders,
 				combineEvents: true,
-				cacheKey: this._getAnnotationCacheKey(sMetadataUrl),
+				cacheKey: this._getAnnotationCacheKey(this.sMetadataUrl),
 				useCache: this.bUseCache
 			});
 			if (!this.bDisableSoftStateHeader) {
@@ -7733,6 +7737,64 @@ sap.ui.define([
 		if (this.oMessageParser) {
 			this.oMessageParser._setPersistTechnicalMessages(bPersistTechnicalMessages);
 		}
+	};
+
+	/**
+	 * Creates the parameters map to be used for the instantiation of the code list model, based on
+	 * the parameters of this OData model.
+	 *
+	 * @param {Object<string,any>} [mParameters]
+	 *   The original <code>mParameters</code> map which was passed into the constructor of this
+	 *   OData model instance
+	 * @returns {Object<string,any>}
+	 *   The parameters that can be used to instantiate the related code list model to this OData
+	 *   model instance
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.createCodeListModelParameters = function (mParameters) {
+		mParameters = mParameters || {};
+
+		return {
+			defaultCountMode : CountMode.None,
+			disableSoftStateHeader : true,
+			headers : mParameters.headers && Object.assign({}, mParameters.headers),
+			json : mParameters.json,
+			metadataUrlParams : mParameters.metadataUrlParams
+				&& Object.assign({}, mParameters.metadataUrlParams),
+			persistTechnicalMessages : mParameters.persistTechnicalMessages,
+			serviceUrl : this.sServiceUrl,
+			serviceUrlParams : mParameters.serviceUrlParams
+				&& Object.assign({}, mParameters.serviceUrlParams),
+			tokenHandling : false,
+			useBatch : false,
+			warmupUrl : mParameters.warmupUrl
+		};
+	};
+
+	/**
+	 * Gets the map of parameters that are required to instantiate a code list model for this OData
+	 * model.
+	 *
+	 * @returns {Object<string,any>} The parameter map used to instantiate the code list model
+	 *
+	 * @private
+	 * @see #createCodeListModelParameters
+	 */
+	ODataModel.prototype.getCodeListModelParameters = function () {
+		return this.mCodeListModelParams;
+	};
+
+	/**
+	 * Gets the URL to this OData service's metadata document as created by
+	 * {@link #_createMetadataUrl} in the constructor.
+	 *
+	 * @returns {string} The metadata URL
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.getMetadataUrl = function () {
+		return this.sMetadataUrl;
 	};
 
 	return ODataModel;
