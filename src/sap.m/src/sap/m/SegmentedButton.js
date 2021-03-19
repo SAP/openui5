@@ -997,8 +997,8 @@ function(
 	SegmentedButton.prototype._getIconAriaLabel = function (oIcon) {
 		var oIconInfo = IconPool.getIconInfo(oIcon.getSrc()),
 			sResult = "";
-		if (oIconInfo && oIconInfo.name) {
-			sResult = oIconInfo.name;
+		if (oIconInfo) {
+			sResult = oIconInfo.text ? oIconInfo.text : oIconInfo.name;
 		}
 		return sResult;
 	};
