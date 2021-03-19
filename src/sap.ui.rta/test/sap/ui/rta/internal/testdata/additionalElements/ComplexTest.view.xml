@@ -109,6 +109,9 @@
 									<smartForm:GroupElement id="EntityType02.CommonProperty" visible="false">
 										<smartField:SmartField value="{CommonPropertyName}" />
 									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType02.Property04.DynamicallyInvisibleByFieldControl" visible="false">
+										<smartField:SmartField value="{EntityType02_Property04_Dynamically_Invisible_By_FieldControl}" />
+									</smartForm:GroupElement>
 									<smartForm:GroupElement label="NavigationLabel01" id="EntityType02.NavigationProperty" visible="false">
 										<smartField:SmartField value="{to_EntityType02Nav/NavProperty}"/>
 									</smartForm:GroupElement>
