@@ -28,8 +28,16 @@ sap.ui.define([
 			},
 			assertions:{
 				iShouldSeeTheForm: function () {
+					var bFormHasFinishedLayouting = false;
 					return this.waitFor({
 						controlType: "sap.ui.layout.form.SimpleForm",
+						check: function () {
+							if (bFormHasFinishedLayouting) {
+								return true;
+							}
+							bFormHasFinishedLayouting = true;
+							return false;
+						},
 						success: function () {
 							Opa5.assert.ok(true, "Form was found");
 						},
@@ -80,8 +88,17 @@ sap.ui.define([
 			},
 			assertions: {
 				iShouldSeeTheForm: function () {
+					var bFormHasFinishedLayouting = false;
+
 					return this.waitFor({
 						controlType: "sap.ui.layout.form.SimpleForm",
+						check: function () {
+							if (bFormHasFinishedLayouting) {
+								return true;
+							}
+							bFormHasFinishedLayouting = true;
+							return false;
+						},
 						success: function () {
 							Opa5.assert.ok(true, "Form was found");
 						},
