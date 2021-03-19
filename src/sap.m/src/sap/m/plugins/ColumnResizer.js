@@ -317,7 +317,7 @@ sap.ui.define([
 
 		oSession.oCurrentColumn.setWidth(sWidth);
 
-		if (oSession.oNextColumn && (oSession.iEmptySpace < 1 || oSession.iDistanceX > oSession.iEmptySpace)) {
+		if (oSession.oNextColumn && (oSession.iEmptySpace < 3 || oSession.iDistanceX > oSession.iEmptySpace)) {
 			sWidth = oSession.fNextColumnWidth - oSession.iDistanceX + oSession.iEmptySpace + "px";
 			if (this._fireColumnResize(oSession.oNextColumn, sWidth)) {
 				oSession.oNextColumn.setWidth(sWidth);
