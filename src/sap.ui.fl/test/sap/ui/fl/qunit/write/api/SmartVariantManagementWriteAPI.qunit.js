@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
 	"sap/ui/core/Control",
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/Utils",
@@ -20,14 +18,12 @@ sap.ui.define([
 	SmartVariantManagementApplyAPI,
 	SmartVariantManagementWriteAPI,
 	Control,
-	UriParameters,
 	CompVariantState,
 	FlexState,
 	InitialStorage,
 	WriteStorage,
 	Settings,
 	Change,
-	Layer,
 	ManifestUtils,
 	UIComponent,
 	Utils,
@@ -36,85 +32,6 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-
-	QUnit.module("SmartVariantManagementWriteAPI determines the layer", {
-		afterEach: function() {
-			delete Settings._instance;
-			delete Settings._oLoadSettingsPromise;
-			sandbox.restore();
-		}
-	}, function() {
-		[{
-			testName: "with a user dependent file",
-			propertyBag: {
-				changeSpecificData: {
-					isUserDependent: true
-				}
-			},
-			isPublicLayerAvailable: true,
-			expectedLayer: Layer.USER
-		}, {
-			testName: "with a user independent file and a public layer available",
-			propertyBag: {
-				changeSpecificData: {
-					isUserDependent: false
-				}
-			},
-			isPublicLayerAvailable: true,
-			expectedLayer: Layer.PUBLIC
-		}, {
-			testName: "with a user independent file and a public layer unavailable",
-			propertyBag: {
-				changeSpecificData: {
-					isUserDependent: false
-				}
-			},
-			isPublicLayerAvailable: false,
-			expectedLayer: Layer.CUSTOMER
-		}, {
-			testName: "with a layer parameter set to VENDOR",
-			propertyBag: {
-				changeSpecificData: {
-					isUserDependent: false
-				}
-			},
-			isPublicLayerAvailable: false,
-			expectedLayer: Layer.VENDOR,
-			urlLayerParameter: Layer.VENDOR
-		}, {
-			testName: "with a layer parameter set to VENDOR, but the written entity is user dependent",
-			propertyBag: {
-				changeSpecificData: {
-					isUserDependent: true
-				}
-			},
-			isPublicLayerAvailable: false,
-			expectedLayer: Layer.USER,
-			urlLayerParameter: Layer.VENDOR
-		}].forEach(function (testData) {
-			QUnit.test("When addVariant is called with " + testData.testName, function (assert) {
-				var oSetting = {
-					isPublicLayerAvailable: function () {
-						return testData.isPublicLayerAvailable;
-					}
-				};
-				sandbox.stub(Settings, "getInstanceOrUndef").returns(oSetting);
-
-				var oAddStub = sandbox.stub(CompVariantState, "add");
-				var sReference = "the.app.id";
-				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-
-				sandbox.stub(UriParameters, "fromQuery").returns({
-					get: function () {
-						return testData.urlLayerParameter;
-					}
-				});
-
-				SmartVariantManagementWriteAPI.addVariant(testData.propertyBag);
-				assert.equal(oAddStub.getCall(0).args[0].changeSpecificData.layer, testData.expectedLayer, "the layer is set to " + testData.expectedLayer);
-			});
-		});
-	});
 
 	QUnit.module("SmartVariantManagementWriteAPI", {
 		afterEach: function() {
@@ -147,8 +64,7 @@ sap.ui.define([
 			apiFunctionName: "addVariant",
 			compVariantStateFunctionName: "add",
 			expectedSpecificData: {
-				isVariant: true,
-				layer: Layer.CUSTOMER
+				isVariant: true
 			}
 		}, {
 			apiFunctionName: "save",
@@ -181,12 +97,6 @@ sap.ui.define([
 					changeSpecificData: {},
 					command: "myCommand"
 				};
-
-				var oSetting = {
-					isPublicLayerAvailable: function () {}
-				};
-
-				sandbox.stub(Settings, "getInstanceOrUndef").returns(oSetting);
 
 				var oMockResponse = testData.mockedResponse || {};
 				var oCompVariantStateStub = sandbox.stub(CompVariantState, testData.compVariantStateFunctionName).returns(oMockResponse);

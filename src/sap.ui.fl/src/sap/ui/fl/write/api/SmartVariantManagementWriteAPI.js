@@ -5,20 +5,15 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
+	"sap/ui/fl/registry/Settings"
 ], function(
 	CompVariantUtils,
 	ManifestUtils,
-	UriParameters,
 	CompVariantState,
 	TransportSelection,
-	Settings,
-	Layer
+	Settings
 ) {
 	"use strict";
 
@@ -28,32 +23,6 @@ sap.ui.define([
 			mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
 		}
 		return fnFunction(mPropertyBag);
-	}
-
-	function determineLayer(mPropertyBag) {
-		// the SmartVariantManagementWriteAPI.add-caller cannot determine the layer on its own, but provides a isUserDependent flag
-		if (mPropertyBag.isUserDependent) {
-			return Layer.USER;
-		}
-
-		var sLayer = UriParameters.fromQuery(window.location.search).get("sap-ui-layer") || "";
-		sLayer = sLayer.toUpperCase();
-		if (sLayer) {
-			return sLayer;
-		}
-
-		// the SmartVariantManagementWriteAPI.addVariant-caller within sap.ui.rta provides a layer ...
-		if (mPropertyBag.layer) {
-			return mPropertyBag.layer;
-		}
-
-		// PUBLIC is only used for "public" variants
-		if (!mPropertyBag.isVariant) {
-			return Layer.CUSTOMER;
-		}
-
-		var bPublicLayerAvailable = Settings.getInstanceOrUndef().isPublicLayerAvailable();
-		return bPublicLayerAvailable ? Layer.PUBLIC : Layer.CUSTOMER;
 	}
 
 	/**
@@ -89,19 +58,16 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.comp
 		 */
 		add: function(mPropertyBag) {
-			mPropertyBag.changeSpecificData.layer = determineLayer(mPropertyBag.changeSpecificData);
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.add).getId();
 		},
 
 		/**
 		 * Adds a new variant and returns it.
-		 * Either the <code>Layer</code> or the <code>isUserDependent</code> should be provided for a proper layer determination.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
-		 * @param {string} [mPropertyBag.changeSpecificData.id] - Id that should be used for the variant
 		 * @param {sap.ui.fl.Layer} [mPropertyBag.changeSpecificData.layer] - Layer to which the variant should be written
-		 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Flag if the variant is personalization only
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.changeSpecificData.id] - Id that should be used for the variant
 		 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
 		 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
 		 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
@@ -114,36 +80,33 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.support] - Information for support analysis
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.Variant} Created variant object instance
 		 * @private
-		 * @ui5-restricted sap.ui.rta.command, sap.ui.comp.smartvariants.SmartVariantManagement
+		 * @ui5-restricted sap.ui.rta.command
 		 */
 		addVariant: function (mPropertyBag) {
 			mPropertyBag.changeSpecificData.isVariant = true;
-			mPropertyBag.changeSpecificData.layer = determineLayer(mPropertyBag.changeSpecificData);
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.add);
 		},
 
 		/**
 		 * Updates a variant; this may result in an update of the variant or the creation of a change.
-		 * Either the <code>Layer</code> or the <code>isUserDependent</code> should be provided for a proper layer determination.
-		 * In case updates for different layers are done, the update must be called for each layer separately.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.reference - Flex reference of the application
 		 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
 		 * @param {string} mPropertyBag.id - ID of the variant
-		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the variant removal takes place
-		 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Flag if the adjustments of teh variant is personalization only
 		 * @param {object} [mPropertyBag.name] - Title of the variant
 		 * @param {object} [mPropertyBag.content] - Content of the new change
 		 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
 		 * @param {object} [mPropertyBag.executeOnSelection] - Flag if the variant should be executed on selection
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place
 		 * this either updates the variant from the layer or writes a change to that layer.
 		 * @private
-		 * @ui5-restricted sap.ui.rta.command, sap.ui.comp.smartvariants.SmartVariantManagement
+		 * @ui5-restricted sap.ui.rta.command
 		 */
 		updateVariant: function (mPropertyBag) {
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.updateVariant);
 		},
+
 
 		/**
 		 * Removes a variant; this may result in an deletion of the variant or the creation of a change.
