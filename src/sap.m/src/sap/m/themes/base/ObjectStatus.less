@@ -635,3 +635,17 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 .sapMObjStatus .sapUiPseudoInvisibleText {
 	font-size: 0px;
 }
+
+html.sap-desktop .sapMListTblHasPopin .sapMObjStatusActive:focus {
+	.sapMObjStatusLink::after {
+		pointer-events: none;
+		display: block;
+		content: "";
+		position: absolute;
+		top: 0px;
+		left: 1px;
+		bottom: 1px;
+		right: 1px;
+		outline: 1px dotted @sapUiContentFocusColor;
+	}
+}
