@@ -35,7 +35,7 @@
 			"url": "BusyDialog.html",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
-				"name": "Busy Dialog",
+				"name": "sap.m.BusyDialog",
 				"title": "ACC test for sap.m.BusyDialog",
 				"module": "./busydialog.qunit"
 			}
@@ -105,7 +105,7 @@
 			"url": "Dialog.html",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
-				"name": "Dialog",
+				"name": "sap.m.Dialog",
 				"title": "ACC test for sap.m.Dialog",
 				"module": "./dialog.qunit"
 			}
@@ -185,7 +185,7 @@
 			"url": "LightBox.html",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
-				"name": "Light Box",
+				"name": "sap.m.LightBox",
 				"title": "ACC test for sap.m.LightBox",
 				"module": "./lightbox.qunit"
 			}
@@ -231,7 +231,7 @@
 			"url": "MessageBox.html",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
-				"name": "Message Box",
+				"name": "sap.m.MessageBox",
 				"title": "ACC test for sap.m.MessageBox",
 				"module": "./messagebox.qunit"
 			}
@@ -406,7 +406,7 @@
 			"url": "QuickView.html",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
-				"name": "Quick View",
+				"name": "sap.m.QuickView",
 				"title": "ACC test for sap.m.QuickView",
 				"module": "./quickview.qunit"
 			}
@@ -471,7 +471,7 @@
 			"url": "SelectDialog.html",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
-				"name": "Select Dialog",
+				"name": "sap.m.SelectDialog",
 				"title": "ACC test for sap.m.SelectDialog",
 				"module": "./selectdialog.qunit"
 			}
@@ -499,7 +499,12 @@
 		{
 			"control": "sap.m.SplitApp",
 			"url": "../SplitApp.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "sap.m.SplitApp",
+				"title": "ACC test for sap.m.SplitApp",
+				"module": "./splitapp.qunit"
+			}
 		},
 		{
 			"control": "sap.m.StandardTile",
@@ -517,7 +522,7 @@
 			"desc" : "Suggestions list of the Search Field",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
-				"name": "Search Field Suggestions List",
+				"name": "sap.m.SuggestionsList",
 				"title": "ACC test for sap.m.SuggestionsList",
 				"module": "./suggestionslist.qunit"
 			}
@@ -542,7 +547,7 @@
 			"url": "TableSelectDialog.html",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
-				"name": "Table Select Dialog",
+				"name": "sap.m.TableSelectDialog",
 				"title": "ACC test for sap.m.TableSelectDialog",
 				"module": "./tableselectdialog.qunit"
 			}

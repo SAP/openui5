@@ -218,6 +218,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Pagination and tabing", function (assert) {
+
+		assert.ok(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div")[0].getAttribute("title"), "the button has a title attribute");
+
 		var aPaginationButtons = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div");
 
 		assert.strictEqual(jQuery(aPaginationButtons[0]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), true, "First button should have selected class");
@@ -793,4 +796,91 @@ sap.ui.define([
 		oLogSpy.restore();
 	});
 
+	QUnit.module("Special Cases");
+
+	QUnit.test("Initial rendering - buttons tooltips are set", function (assert) {
+		var oDefaultPane = new SplitPane("defaultPane", {
+			content: new Text({text: "text"}),
+			requiredParentWidth: 900,
+			demandPane: true
+		});
+
+		var oResponsiveSplitter = new ResponsiveSplitter("responsiveSplitter", {
+			width: "200px",
+			defaultPane: "defaultPane",
+			rootPaneContainer: [
+				new PaneContainer({
+					orientation: "Horizontal",
+					panes: [
+						new PaneContainer({
+							orientation: "Vertical",
+							panes: [
+								new SplitPane({
+									demandPane: true,
+									content: new Text({text: "text"}),
+									requiredParentWidth: 900
+								}),
+								new SplitPane({
+									demandPane: true,
+									content:  new Text({text: "text"}),
+									requiredParentWidth: 800
+								}),
+								new SplitPane({
+									demandPane: true,
+									content: new Text({text: "text"}),
+									requiredParentWidth: 950
+								})
+							]
+						}),
+						new SplitPane({
+							demandPane: true,
+							content: new Text({text: "text"}),
+							requiredParentWidth: 400
+						}),
+						new SplitPane({
+							demandPane: true,
+							content: new Text({text: "text"}),
+							requiredParentWidth: 500
+						}),
+						oDefaultPane,
+						new SplitPane({
+							demandPane: true,
+							content: new Text({text: "text"}),
+							requiredParentWidth: 1000,
+							layoutData: new SplitterLayoutData({
+								size: "30%"
+							})
+						}),
+						new PaneContainer({
+							orientation: "Vertical",
+							panes: [
+								new SplitPane({
+									demandPane: true,
+									content: new Text({text: "text"}),
+									requiredParentWidth: 400
+								}),
+								new SplitPane({
+									demandPane: true,
+									content: new Text({text: "text"}),
+									requiredParentWidth: 600
+								}),
+								new SplitPane({
+									demandPane: true,
+									content: new Text({text: "text"}),
+									requiredParentWidth: 600
+								})
+							]
+						})
+					]
+				})
+			]
+		});
+
+		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div")[0].getAttribute("title"), "the button has a title attribute");
+
+		oResponsiveSplitter.destroy();
+	});
 });

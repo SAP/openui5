@@ -5,13 +5,13 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width" />
 	<title>ResponsiveSplitter</title>
-	<script src="shared-config.js"></script>
+	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 	data-sap-ui-trace="false"
-	data-sap-ui-libs="sap.ui.layout,sap.m,sap.ui.ux3"
-	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.ui.layout,sap.m"
+	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-resourceroots='{
-		"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+		"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
 	}'>
 
 	</script>
@@ -28,15 +28,6 @@
 	<script>
 	var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr.";
 
-	var createPanel = function (headerText) {
-		var panel = new sap.m.Panel({
-			headerText: headerText,
-			content: new sap.m.Text({text: lorem + lorem})
-		});
-
-		return panel;
-	};
-
 	var oDefaultPane = new sap.ui.layout.SplitPane("defaultPane", {
 		content: new sap.m.Panel({
 			headerText: "2",
@@ -47,6 +38,7 @@
 	});
 
 	var oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter("responsiveSplitter", {
+		width: "500px",
 		defaultPane: "defaultPane",
 		rootPaneContainer: [
 			new sap.ui.layout.PaneContainer({
@@ -144,47 +136,11 @@
 		]
 	});
 
-	// oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter({
-	// 	defaultPane: "default",
-	// 	rootPaneContainer: new sap.ui.layout.PaneContainer({
-	// 		panes: [
-	// 			// new sap.ui.layout.SplitPane({
-	// 			// 	demandPane: true,
-	// 			// 	requiredParentWidth: 1200,
-	// 			// 	content: new sap.m.Panel({
-	// 			// 		headerText: "Splitter Area 1 1200"
-	// 			// 	})
-	// 			// }), new sap.ui.layout.PaneContainer({
-	// 				// orientation: "Vertical",
-	// 				// panes: [
-	// 					new sap.ui.layout.SplitPane( {
-	// 						demandPane: true,
-	// 						requiredParentWidth: 6000,
-	// 						content: new sap.m.Panel({
-	// 							headerText: "Splitter Area 2 - Default 800"
-	// 						})
-	// 					}),
-	// 					new sap.ui.layout.SplitPane("default",{
-	// 						demandPane: true,
-	// 						requiredParentWidth: 6000,
-	// 						content: new sap.m.Panel({
-	// 							headerText: "Splitter Area 3 400"
-	// 						})
-	// 					}),
-
-	// 				]
-	// 			})
-	// 		// ]
-	// 	// })
-	// });
-
 	oResponsiveSplitter.placeAt("content");
-
-	// oResponsiveSplitter1.placeAt("content");
 
 	</script>
 </head>
 <body class="sapUiBody">
-	<div id = "content"></div>
+	<div id="content"></div>
 </body>
 </html>
