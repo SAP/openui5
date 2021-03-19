@@ -422,7 +422,7 @@ sap.ui.define([
 									_getLink({
 										emphasized: true,
 										text: oData.docuLinkText,
-										href: oData.docuLink
+										href: oData.docuLink.replace(/^#\/?/, "")
 									})
 								]
 							}, true);
