@@ -367,7 +367,11 @@ function(
 			if (mSettings.async) {
 
 				var fnCreateInstance = function () {
-					var oOwnerComponent = Component.get(mSettings.sOwnerId);
+					// owner-id is either available because the async factory was called in a sync block
+					// or: the containing view carries the owner id for us
+					// sap.ui.fl needs the owner-id to determine the app component to load the correct processor
+					var sOwnerId = mSettings.sOwnerId || mSettings.containingView && mSettings.containingView._sOwnerId;
+					var oOwnerComponent = Component.get(sOwnerId);
 					if (oOwnerComponent) {
 						return oOwnerComponent.runAsOwner(function () {
 							return new Fragment(mSettings);
@@ -491,7 +495,7 @@ function(
 
 		mParameters.type = mParameters.type || "XML";
 		mParameters.async = true;
-		mParameters.processingMode = "sequential";
+		mParameters.processingMode = mParameters.processingMode || "sequential";
 
 		// map new parameter names to classic API, delete new names to avoid assertion failures
 		mParameters.fragmentName = mParameters.name;

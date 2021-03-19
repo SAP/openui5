@@ -1096,6 +1096,10 @@ sap.ui.define([
 			oView.type = sType;
 		}
 
+		if (oView.type === ViewType.XML && oView.async) {
+			oView.processingMode = oView.processingMode || "sequential_legacy";
+		}
+
 		// view replacement
 		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
 		if (CustomizingConfiguration) {

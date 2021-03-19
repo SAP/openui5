@@ -504,12 +504,15 @@ function(
 	 * @param {boolean} bEnrichFullIds Flag for running in a mode which only resolves the ids and writes them back
 	 *     to the xml source.
 	 * @param {boolean} bAsync Whether or not to perform the template processing asynchronously.
-	 *     The async processing will only be active in conjunction with the internal XML processing mode set to <code>sequential</code>.
-	 *     The processing mode "sequential" is implicitly activated for the following type of async views:
-	 *      a) root views in the manifest
+	 *     The async processing will only be active in conjunction with the internal XML processing mode set to <code>sequential</code> or <code>sequential_legacy</code>.
+	 *     The processing mode "sequential" is implicitly activated for the following type of views:
+	 *      a) async root views in the manifest
 	 *      b) XMLViews created with the (XML)View.create factory
-	 *      c) XMLViews used via routing
-	 *     Additionally all declarative nested subviews (and in future: fragments) are also processed asynchronously.
+	 *      c) XMLViews used via async routing
+	 *      d) synchronous nested views created by a asynchronous view
+	 *     The processing mode "sequential_legacy" is implicitly activated for the following type of views:
+	 *      a) XMLViews created with sap.ui.view/sap.ui.xmlview with async <code>true</code>
+	 *     Additionally all declarative nested subviews are also processed asynchronously.
 	 * @param {object} oParseConfig parse configuration options, e.g. settings pre-processor
 	 *
 	 * @return {Promise} with an array containing Controls and/or plain HTML element strings
@@ -520,8 +523,9 @@ function(
 		var aResult = [],
 			pResultChain = parseAndLoadRequireContext(xmlNode, bAsync) || SyncPromise.resolve();
 
-		bAsync = bAsync && oView._sProcessingMode === "sequential";
-		Log.debug("XML processing mode is " + (bAsync ? "sequential" : "default"), "", "XMLTemplateProcessor");
+		bAsync = bAsync && !!oView._sProcessingMode;
+		Log.debug("XML processing mode is " + (oView._sProcessingMode || "default") + ".", "", "XMLTemplateProcessor");
+		Log.debug("XML will be processed " + bAsync ? "asynchronously" : "synchronously" + ".", "", "XMLTemplateProcessor");
 
 		var bDesignMode = sap.ui.getCore().getConfiguration().getDesignMode();
 		if (bDesignMode) {
@@ -1145,7 +1149,7 @@ function(
 				// [COMPATIBILITY]
 				// sync: we just log the error and keep on processing
 				// asnyc: throw the error, so the parseTempate Promise will reject
-				if (bAsync) {
+				if (bAsync && oView._sProcessingMode !== "sequential_legacy") {
 					throw oError;
 				}
 			});
@@ -1307,22 +1311,18 @@ function(
 				var vNewControlInstance;
 				var pProvider = SyncPromise.resolve();
 				var pInstanceCreated = SyncPromise.resolve();
+				var sType = node.getAttribute("type");
 
 				if (bEnrichFullIds && node.hasAttribute("id")) {
-						setId(oView, node);
+					setId(oView, node);
 				} else if (!bEnrichFullIds) {
-					// Pass processingMode to Fragments only
-					if (oClass.getMetadata().isA("sap.ui.core.Fragment") && node.getAttribute("type") !== "JS" && oView._sProcessingMode === "sequential") {
-						mSettings.processingMode = "sequential";
-					}
-
-					if (View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
+					if (oClass.getMetadata().isA("sap.ui.core.mvc.View")) {
 						var fnCreateViewInstance = function () {
 							// Pass processingMode to nested XMLViews
-							if (oClass.getMetadata().isA("sap.ui.core.mvc.XMLView") && oView._sProcessingMode === "sequential") {
-								mSettings.processingMode = "sequential";
+							if (oClass.getMetadata().isA("sap.ui.core.mvc.XMLView") && oView._sProcessingMode) {
+								mSettings.processingMode = oView._sProcessingMode;
 							}
-							return View._legacyCreate(mSettings, undefined, oClass._sType);
+							return View._legacyCreate(mSettings, undefined, oClass._sType || sType);
 						};
 
 						// for views having a factory function defined we use the factory function!
@@ -1334,7 +1334,16 @@ function(
 							vNewControlInstance = fnCreateViewInstance();
 						}
 
-					} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync && ["XML", "JS", "HTML"].indexOf(mSettings.type) > -1) {
+					} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync) {
+
+						// Pass processingMode to any fragments except JS
+						// XML / HTML fragments: might include nested views / fragments,
+						//  which are processed asynchronously. Therefore the processingMode is needed
+						// JS fragments: are processed synchronously therefore the processing mode is not needed
+						if (sType !== "JS") {
+							mSettings.processingMode = oView._sProcessingMode;
+						}
+
 						var sFragmentPath = "sap/ui/core/Fragment";
 						var Fragment = sap.ui.require(sFragmentPath);
 

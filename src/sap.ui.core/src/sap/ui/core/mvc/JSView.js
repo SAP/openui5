@@ -53,13 +53,20 @@ sap.ui.define([
 	 */
 	var mRegistry = {};
 
-
 	/**
 	 * Flag for feature detection of asynchronous loading/rendering
 	 * @public
 	 * @since 1.30
 	 */
 	JSView.asyncSupport = true;
+
+	/**
+	 * The type of the view used for the <code>sap.ui.view</code> factory
+	 * function. This property is used by the parsers to define the specific
+	 * view type.
+	 * @private
+	 */
+	JSView._sType = "JS";
 
 	// shortcut for enum(s)
 	var ViewType = library.mvc.ViewType;
