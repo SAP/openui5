@@ -5,17 +5,8 @@
 
 @_sap_m_ListItemBase_Highlight_InformationColor: @sapUiAccent6;
 
-html[data-sap-ui-browser='ie11'] .sapMLIBFocusable:focus {
-	outline-width: 3px;
-}
-
 .sapMLIBFocusable:focus {
 	outline-width: 0.125rem;
-}
-
-/* IE ignores outline-offset. Use an overlay: */
-.sapMLIBLegacyOutline:focus::before {
-	border: 0.125rem dotted @sapUiContentFocusColor;
 }
 
 .sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell:last-child)::before {
