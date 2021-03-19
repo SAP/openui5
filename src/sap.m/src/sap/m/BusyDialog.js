@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.m.BusyDialog.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIndicator', 'sap/m/Label', 'sap/m/Button', "sap/base/Log", 'sap/ui/core/Core'],
-	function (library, Control, Dialog, BusyIndicator, Label, Button, Log, Core) {
+sap.ui.define(['./library',
+		'sap/ui/core/Control',
+		'sap/m/Dialog',
+		'sap/m/BusyIndicator',
+		'sap/m/Label',
+		'sap/m/Button',
+		"sap/base/Log",
+		'sap/ui/core/Core',
+		'sap/ui/core/InvisibleText'],
+	function (library,
+			  Control,
+			  Dialog,
+			  BusyIndicator,
+			  Label,
+			  Button,
+			  Log,
+			  Core,
+			  InvisibleText) {
 		"use strict";
 
 		// shortcut for sap.m.TitleAlignment
@@ -170,7 +186,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 				initialFocus: this._busyIndicator.getId() + '-busyIndicator'
 			}).addStyleClass('sapMBusyDialog');
 
-
 			/**
 			 * Overrides the close method, so the BusyDialog won't get closed by the InstanceManager.closeAllDialogs method.
 			 * @method
@@ -242,18 +257,26 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.open = function () {
+			var aAriaLabelledBy = this.getAriaLabelledBy();
+
 			Log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
 
-			if (this.getAriaLabelledBy() && !this._oDialog._$dialog) {
-				var that = this;
-				this.getAriaLabelledBy().forEach(function(item){
-					that._oDialog.addAriaLabelledBy(item);
-				});
+			if (aAriaLabelledBy && aAriaLabelledBy.length) {
+				if (!this._oDialog._$dialog) {
+					var that = this;
+					aAriaLabelledBy.forEach(function (item) {
+						that._oDialog.addAriaLabelledBy(item);
+					});
+				}
+			} else if (!this._oDialog.getShowHeader()) {
+				this._oDialog.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "BUSYDIALOG_TITLE"));
+			} else {
+				this._oDialog.removeAriaLabelledBy(InvisibleText.getStaticId("sap.m", "BUSYDIALOG_TITLE"));
 			}
 
 			//if the code is not ready yet (new sap.m.BusyDialog().open()) wait 50ms and then try ot open it.
 			if (!document.body || !Core.isInitialized()) {
-				setTimeout(function() {
+				setTimeout(function () {
 					this.open();
 				}.bind(this), 50);
 			} else {

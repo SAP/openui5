@@ -75,6 +75,7 @@ sap.ui.define([
 		//check for close button
 		assert.strictEqual(jQuery(this.sId + '-busyDialogCloseBtn').length, 0, 'BusyDialog should not have cancelButton rendered.');
 
+		assert.strictEqual(this.oBusyDialog._oDialog.$().attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "BUSYDIALOG_TITLE"), "aria-labelledby is correctly set");
 	});
 
 	// =========================================================================================================
@@ -144,6 +145,8 @@ sap.ui.define([
 		} else {
 			assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtnContent').html(), 'Abort', 'BusyDialog should have CancelButton text set properly.');
 		}
+
+		assert.ok(this.oBusyDialog._oDialog.$().attr("aria-labelledby").indexOf(InvisibleText.getStaticId("sap.m", "BUSYDIALOG_TITLE")) === -1, "invisible label id is not added to the aria-labelledby attribue, when there is a title");
 	});
 
 	// =========================================================================================================

@@ -17,10 +17,10 @@
 			var app = new sap.m.App('myApp', {initialPage: 'initialPage'});
 			var _buttonWidth = '300px';
 
-			var invText = new sap.ui.core.InvisibleText("hiddenTxt", {text: "Additional descriptive text added"}).placeAt("content");
+			var invText = new sap.ui.core.InvisibleText("hiddenTxt", {text: "Additional descriptive text added"}).toStatic();
 			var defaultLightBusyDialog = new sap.m.BusyDialog('defaultLightBusyDialog');
 			var defaultLightBusyDialogARIA = new sap.m.BusyDialog('defaultLightBusyDialogARIA', {
-				ariaLabelledBy: "hiddenTxt"
+				ariaLabelledBy: invText
 			});
 
 			var standartBusyDialog = new sap.m.BusyDialog('standaratBusyDialog', {
