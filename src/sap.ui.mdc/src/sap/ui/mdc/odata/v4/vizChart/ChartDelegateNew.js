@@ -293,7 +293,16 @@ sap.ui.define([
 
             this._loadChart().then(function (aModules) {
 
-                this._oInnerStructure = new VBox();
+                this._oInnerStructure = new VBox({
+                    justifyContent: "Center",
+				    alignItems: "Center",
+                    height: "100%",
+                    width: "100%"
+                });
+                var oText = new Text();
+                oText.setText(oMDCChart.getNoDataText());
+
+                this._oInnerStructure.addItem(oText);
 
                 resolve(this._oInnerStructure); //Not applicable in this case
             }.bind(this));
@@ -492,7 +501,10 @@ sap.ui.define([
         this._oInnerChart.attachRenderComplete(function () {
             oMDCChart._updateToolbar();
         });
+
         this._oInnerStructure.removeAllItems();
+        this._oInnerStructure.setJustifyContent(sap.m.FlexJustifyContent.Start);
+        this._oInnerStructure.setAlignItems(sap.m.FlexAlignItems.Stretch);
         this._oInnerStructure.addItem(this._oInnerChart);
 
         this._fnDataLoadedCallback = fnCallbackDataLoaded;
