@@ -1159,7 +1159,7 @@ sap.ui.define([
 
 			if (oAppointmentStartDate && oAppointmentStartDate.getTime() <= iEndTime &&
 				oAppointmentEndDate && oAppointmentEndDate.getTime() >= iStartTime &&
-				oAppointmentStartDateTime < oAppointmentEndDateTime) {
+				oAppointmentStartDateTime <= oAppointmentEndDateTime) {
 
 				if (bGroupsEnabled &&
 					(sIntervalType == CalendarIntervalType.Month) &&
