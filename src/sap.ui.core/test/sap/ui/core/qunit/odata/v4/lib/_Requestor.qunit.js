@@ -484,16 +484,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("sendRequest: fail, unsupported OData service version", function (assert) {
 		var oError = {},
-			oRequestor = _Requestor.create("/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor);
+			oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(jQuery).expects("ajax")
 			.withArgs("/Employees")
 			.returns(createMock(assert, {}, "OK"));
-		oRequestorMock.expects("doCheckVersionHeader")
+		this.mock(oRequestor).expects("doCheckVersionHeader")
 			.withExactArgs(sinon.match.func, "Employees", false)
 			.throws(oError);
-		oRequestorMock.expects("doConvertResponse").never();
+		this.mock(oRequestor).expects("doConvertResponse").never();
 
 		// code under test
 		return oRequestor.sendRequest("GET", "Employees")
@@ -523,8 +522,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("sendRequest(): setSessionContext", function (assert) {
 		var oJQueryMock = this.mock(jQuery),
-			oRequestor = _Requestor.create("/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor);
+			oRequestor = _Requestor.create("/", oModelInterface);
 
 		oJQueryMock.expects("ajax")
 			.withExactArgs("/", sinon.match.object)
@@ -533,7 +531,7 @@ sap.ui.define([
 				"SAP-ContextId" : "abc123",
 				"SAP-Http-Session-Timeout" : "120"
 			}));
-		oRequestorMock.expects("setSessionContext").withExactArgs("abc123", "120");
+		this.mock(oRequestor).expects("setSessionContext").withExactArgs("abc123", "120");
 
 		// code under test
 		return oRequestor.sendRequest("GET", "");
@@ -911,7 +909,6 @@ sap.ui.define([
 				sMetaPath = "~",
 				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, undefined,
 					oFixture.sODataVersion),
-				oRequestorMock = this.mock(oRequestor),
 				oResponsePayload = {};
 
 			this.mock(jQuery).expects("ajax")
@@ -921,9 +918,9 @@ sap.ui.define([
 					headers : sinon.match(oFixture.mExpectedRequestHeaders),
 					method : "GET"
 				}).returns(createMock(assert, oResponsePayload, "OK"));
-			oRequestorMock.expects("doCheckVersionHeader")
+			this.mock(oRequestor).expects("doCheckVersionHeader")
 				.withExactArgs(sinon.match.func, "Employees", false);
-			oRequestorMock.expects("doConvertResponse")
+			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(oResponsePayload, sMetaPath)
 				.returns(oConvertedResponse);
 
@@ -1168,7 +1165,6 @@ sap.ui.define([
 		var oError = {},
 			oGetProductsPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor),
 			oResponse = {
 				headers : {
 					"Content-Length" : "42",
@@ -1177,16 +1173,16 @@ sap.ui.define([
 				responseText : JSON.stringify({d : {foo : "bar"}})
 			};
 
-		oRequestorMock.expects("doConvertResponse").never();
-		oRequestorMock.expects("reportUnboundMessagesAsJSON").never();
+		this.mock(oRequestor).expects("doConvertResponse").never();
+		this.mock(oRequestor).expects("reportUnboundMessagesAsJSON").never();
 		oGetProductsPromise = oRequestor.request("GET", "Products", this.createGroupLock())
 			.then(function () {
 				assert.notOk("Unexpected success");
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
 			});
-		oRequestorMock.expects("sendBatch").resolves([oResponse]); // arguments don't matter
-		oRequestorMock.expects("doCheckVersionHeader")
+		this.mock(oRequestor).expects("sendBatch").resolves([oResponse]); // arguments don't matter
+		this.mock(oRequestor).expects("doCheckVersionHeader")
 			.withExactArgs(sinon.match(function (fnGetResponseHeader) {
 				assert.strictEqual(typeof fnGetResponseHeader, "function");
 				assert.strictEqual(fnGetResponseHeader("OData-Version"), "foo",
@@ -1305,7 +1301,10 @@ sap.ui.define([
 		var oRequestor = _Requestor.create("/Service/", oModelInterface),
 			that = this;
 
+		this.mock(oRequestor).expects("mergeGetRequests").never();
 		this.mock(oRequestor).expects("sendBatch").never();
+		this.mock(oRequestor).expects("batchRequestSent").never();
+		this.mock(oRequestor).expects("batchResponseReceived").never();
 
 		// code under test
 		return oRequestor.processBatch("groupId").then(function (oResult) {
@@ -1317,7 +1316,7 @@ sap.ui.define([
 
 			_Helper.setPrivateAnnotation(oEntity, "postBody", oBody);
 			oPromise = oRequestor.request("POST", "Customers", that.createGroupLock(), {},
-				oBody, undefined, function () {});
+				oBody, /*fnSubmit*/undefined, function () {});
 
 			oRequestor.removePost("groupId", oEntity);
 			oRequestor.addChangeSet("groupId");
@@ -1336,7 +1335,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("processBatch(...): success", function (assert) {
-		var aExpectedRequests = [[{
+		var oBatchRequestSentExpectation,
+			oBatchResponseReceivedExpectation,
+			oCleanUpChangeSetsExpection,
+			aExpectedRequests = [[{
 				method : "POST",
 				url : "~Customers",
 				headers : {
@@ -1417,7 +1419,9 @@ sap.ui.define([
 			],
 			oRequestor = _Requestor.create("/Service/", oModelInterface,
 				{"Accept-Language" : "ab-CD"}),
-			oRequestorMock = this.mock(oRequestor);
+			oRequestorMock = this.mock(oRequestor),
+			oSendBatchExpectation,
+			bWaitingIsOver;
 
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('23')")
 			.returns("~Products('23')");
@@ -1429,6 +1433,7 @@ sap.ui.define([
 					"foo1" : "bar1"
 				});
 				aResults[0] = null;
+				assert.notOk(bWaitingIsOver);
 			}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('4711')")
 			.returns("~Products('4711')");
@@ -1437,6 +1442,7 @@ sap.ui.define([
 			.then(function (oResult) {
 				assert.deepEqual(oResult, null);
 				aResults[0] = null;
+				assert.notOk(bWaitingIsOver);
 			}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Customers")
 			.returns("~Customers");
@@ -1447,6 +1453,7 @@ sap.ui.define([
 		}).then(function (oResult) {
 			assert.deepEqual(oResult, aResults[1]);
 			aResults[1] = null;
+				assert.notOk(bWaitingIsOver);
 		}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders('42')")
 			.returns("~SalesOrders('42')");
@@ -1455,35 +1462,62 @@ sap.ui.define([
 			.then(function (oResult) {
 				assert.deepEqual(oResult, aResults[2]);
 				aResults[2] = null;
+				assert.notOk(bWaitingIsOver);
 			}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders")
 			.returns("~SalesOrders");
 		oRequestor.request("GET", "SalesOrders", this.createGroupLock("group2"));
 		aExpectedRequests.iChangeSet = 0;
-		this.mock(oRequestor).expects("mergeGetRequests")
-			.withExactArgs(aExpectedRequests)
+		aExpectedRequests[0].iSerialNumber = 0; // Note: #cleanUpChangeSets would remove this
+
+		oCleanUpChangeSetsExpection = oRequestorMock.expects("cleanUpChangeSets")
+			.withExactArgs(aExpectedRequests).returns("~bHasChanges~");
+		oRequestorMock.expects("mergeGetRequests").withExactArgs(aExpectedRequests)
 			.callsFake(function (aRequests) {
 				aMergedRequests = aRequests.slice();
 				return aMergedRequests;
 			});
-		this.mock(oRequestor).expects("sendBatch")
+		oBatchRequestSentExpectation = oRequestorMock.expects("batchRequestSent")
+			.withExactArgs(sGroupId, sinon.match(function (aRequests) {
+				return aRequests === aMergedRequests;
+			}), "~bHasChanges~")
+			.callThrough(); // enable #waitForRunningChangeRequests
+		oSendBatchExpectation = oRequestorMock.expects("sendBatch")
 			.withExactArgs(sinon.match(function (aRequests) {
 				return aRequests === aMergedRequests;
 			}), sGroupId)
 			.resolves(aBatchResults);
+		oBatchResponseReceivedExpectation = oRequestorMock.expects("batchResponseReceived")
+			.withExactArgs(sGroupId, sinon.match(function (aRequests) {
+				return aRequests === aMergedRequests;
+			}), "~bHasChanges~")
+			.callThrough(); // enable #waitForRunningChangeRequests
 
 		// code under test
 		aPromises.push(oRequestor.processBatch("group1").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.deepEqual(aResults, [null, null, null], "all batch requests already resolved");
+			assert.ok(oBatchResponseReceivedExpectation.calledAfter(oSendBatchExpectation));
 		}));
-		aPromises.push(oRequestor.processBatch("group1")); // must not call sendBatch again
+
+		assert.ok(oBatchRequestSentExpectation.calledImmediatelyBefore(oSendBatchExpectation));
+		assert.ok(oBatchResponseReceivedExpectation.notCalled);
+		oCleanUpChangeSetsExpection.verify();
+		oRequestorMock.expects("cleanUpChangeSets").withExactArgs([]).returns(false);
+
+		// code under test
+		aPromises.push(oRequestor.processBatch("group1")); // must not call sendBatch etc. again
 
 		assert.strictEqual(oRequestor.mBatchQueue.group1, undefined);
 		TestUtils.deepContains(oRequestor.mBatchQueue.group2, [[/*change set*/], {
 			method : "GET",
 			url : "~SalesOrders"
 		}]);
+
+		// code under test
+		aPromises.push(oRequestor.waitForRunningChangeRequests("group1").then(function () {
+			bWaitingIsOver = true;
+		}));
 
 		return Promise.all(aPromises);
 	});
@@ -1680,10 +1714,9 @@ sap.ui.define([
 				}],
 				oGetProductsPromise,
 				oRequestor = _Requestor.create("/Service/", oModelInterface, undefined, undefined,
-					oFixture.sODataVersion),
-				oRequestorMock = this.mock(oRequestor);
+					oFixture.sODataVersion);
 
-			oRequestorMock.expects("doConvertResponse")
+			this.mock(oRequestor).expects("doConvertResponse")
 			// not same; it is stringified and parsed
 				.withExactArgs(oFixture.mProductsResponse, sMetaPath)
 				.returns(oConvertedPayload);
@@ -1694,7 +1727,7 @@ sap.ui.define([
 				});
 
 			aExpectedRequests.iChangeSet = 0;
-			oRequestorMock.expects("sendBatch")
+			this.mock(oRequestor).expects("sendBatch")
 				.withExactArgs(aExpectedRequests, "groupId")
 				.resolves([createResponse(oFixture.mProductsResponse)]);
 
@@ -1708,10 +1741,9 @@ sap.ui.define([
 			oGetProductsPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined, undefined,
 				"2.0"),
-			oRequestorMock = this.mock(oRequestor),
 			oResponse = {d : {foo : "bar"}};
 
-		oRequestorMock.expects("doConvertResponse")
+		this.mock(oRequestor).expects("doConvertResponse")
 			.withExactArgs(oResponse, undefined)
 			.throws(oError);
 		oGetProductsPromise = oRequestor.request("GET", "Products", this.createGroupLock())
@@ -1720,7 +1752,7 @@ sap.ui.define([
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
 			});
-		oRequestorMock.expects("sendBatch") // arguments don't matter
+		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(oResponse)]);
 
 		return Promise.all([oGetProductsPromise, oRequestor.processBatch("groupId")]);
@@ -1730,12 +1762,11 @@ sap.ui.define([
 	QUnit.test("processBatch: report unbound messages", function (assert) {
 		var mHeaders = {"SAP-Messages" : {}},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor),
 			oRequestPromise = oRequestor.request("GET", "Products(42)", this.createGroupLock());
 
-		oRequestorMock.expects("sendBatch") // arguments don't matter
+		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse({id : 42}, mHeaders)]);
-		oRequestorMock.expects("reportUnboundMessagesAsJSON")
+		this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
 		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")]);
@@ -1745,12 +1776,11 @@ sap.ui.define([
 	QUnit.test("processBatch: support ETag header", function (assert) {
 		var mHeaders = {"SAP-Messages" : {}, ETag : "ETag"},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor),
 			oRequestPromise = oRequestor.request("PATCH", "Products(42)", this.createGroupLock());
 
-		oRequestorMock.expects("sendBatch") // arguments don't matter
+		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(undefined, mHeaders)]);
-		oRequestorMock.expects("reportUnboundMessagesAsJSON")
+		this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
 		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")])
@@ -1763,12 +1793,11 @@ sap.ui.define([
 	QUnit.test("processBatch: missing ETag header", function (assert) {
 		var mHeaders = {"SAP-Messages" : {}},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor),
 			oRequestPromise = oRequestor.request("DELETE", "Products(42)", this.createGroupLock());
 
-		oRequestorMock.expects("sendBatch") // arguments don't matter
+		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(undefined, mHeaders)]);
-		oRequestorMock.expects("reportUnboundMessagesAsJSON")
+		this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
 		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")])
@@ -1781,7 +1810,9 @@ sap.ui.define([
 	QUnit.test("processBatch(...): $batch failure", function (assert) {
 		var oBatchError = new Error("$batch request failed"),
 			aPromises = [],
-			oRequestor = _Requestor.create("/", oModelInterface);
+			oRequestor = _Requestor.create("/", oModelInterface),
+			aRequests,
+			bWaitingIsOver;
 
 		function unexpected() {
 			assert.ok(false);
@@ -1792,6 +1823,11 @@ sap.ui.define([
 			assert.strictEqual(oError.message,
 				"HTTP request was not processed because $batch failed");
 			assert.strictEqual(oError.cause, oBatchError);
+			assert.notOk(bWaitingIsOver);
+		}
+
+		function isRequests(aRequests0) {
+			return aRequests0 === aRequests;
 		}
 
 		aPromises.push(oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
@@ -1805,11 +1841,33 @@ sap.ui.define([
 		aPromises.push(oRequestor.request("GET", "Customers", this.createGroupLock())
 			.then(unexpected, assertError));
 
+		this.mock(oRequestor).expects("cleanUpChangeSets").withExactArgs(sinon.match.array)
+			.callsFake(function (aRequests0) {
+				aRequests = aRequests0;
+				return "~bHasChanges~";
+			});
+		this.mock(oRequestor).expects("mergeGetRequests").withExactArgs(sinon.match(isRequests))
+			.callsFake(function () {
+				aRequests = aRequests.slice();
+				return aRequests;
+			});
+		this.mock(oRequestor).expects("batchRequestSent")
+			.withExactArgs("groupId", sinon.match(isRequests), "~bHasChanges~")
+			.callThrough(); // enable #waitForRunningChangeRequests
 		this.mock(oRequestor).expects("sendBatch").rejects(oBatchError); // arguments don't matter
 		this.mock(_Helper).expects("decomposeError").never();
+		this.mock(oRequestor).expects("batchResponseReceived")
+			.withExactArgs("groupId", sinon.match(isRequests), "~bHasChanges~")
+			.callThrough(); // enable #waitForRunningChangeRequests
 
+		// code under test
 		aPromises.push(oRequestor.processBatch("groupId").then(unexpected, function (oError) {
 			assert.strictEqual(oError, oBatchError);
+		}));
+
+		// code under test
+		aPromises.push(oRequestor.waitForRunningChangeRequests("groupId").then(function () {
+			bWaitingIsOver = true;
 		}));
 
 		return Promise.all(aPromises);
@@ -1925,6 +1983,10 @@ sap.ui.define([
 				aRequests = aRequests0;
 				return aRequests;
 			});
+		this.mock(oRequestor).expects("batchRequestSent")
+			.withExactArgs("groupId", sinon.match(function (aRequests0) {
+				return aRequests0 === aRequests;
+			}), true);
 		this.mock(oRequestor).expects("sendBatch").resolves(aBatchResult); // arguments don't matter
 		this.mock(_Helper).expects("createError")
 			.withExactArgs(aBatchResult[0], "Communication error", undefined, undefined)
@@ -1933,6 +1995,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCause), sinon.match(function (aChangeSetRequests) {
 				return aChangeSetRequests === aRequests[0];
 			})).returns([oError0, oError1]);
+		this.mock(oRequestor).expects("batchResponseReceived")
+			.withExactArgs("groupId", sinon.match(function (aRequests0) {
+				return aRequests0 === aRequests;
+			}), true);
 
 		// code under test
 		aPromises.push(oRequestor.processBatch("groupId").then(function (oResult) {
@@ -1996,14 +2062,16 @@ sap.ui.define([
 });
 
 	//*****************************************************************************************
-	QUnit.test("hasPendingChanges, cancelChanges and running batch requests", function (assert) {
+	QUnit.test("hasPendingChanges, cancelChanges, waitForRunningChangeRequests", function (assert) {
 		var oBatchMock = this.mock(_Batch),
 			oBatchRequest1,
 			oBatchRequest2,
+			oBatchRequest3,
 			oJQueryMock = this.mock(jQuery),
 			aPromises = [],
 			sServiceUrl = "/Service/",
-			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			bWaitingIsOver;
 
 		// expects a jQuery.ajax for a batch request and returns a mock for it to be resolved later
 		function expectBatch() {
@@ -2036,6 +2104,7 @@ sap.ui.define([
 		assert.notOk(oRequestor.hasPendingChanges());
 		assert.notOk(oRequestor.hasPendingChanges("groupId"));
 		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"));
+		oRequestor.checkForOpenRequests();
 
 		// add a GET request and submit the queue
 		oRequestor.request("GET", "Products", this.createGroupLock());
@@ -2044,21 +2113,25 @@ sap.ui.define([
 
 		// code under test
 		assert.notOk(oRequestor.hasPendingChanges(), "running GET request is not a pending change");
+		oRequestor.checkForOpenRequests();
 
 		// add a PATCH request and submit the queue
 		oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
-			{"If-Match" : {/* product 0 */}}, {Name : "foo"});
+				{"If-Match" : {/* product 0 */}}, {Name : "foo"})
+			.then(function () {
+				assert.notOk(bWaitingIsOver);
+			});
 		oBatchRequest2 = expectBatch();
-		aPromises.push(oRequestor.processBatch("groupId").then(function () {
-			// code under test
-			assert.notOk(oRequestor.hasPendingChanges());
-			assert.notOk(oRequestor.hasPendingChanges("groupId"));
-		}));
+		aPromises.push(oRequestor.processBatch("groupId"));
 
 		// code under test
 		assert.ok(oRequestor.hasPendingChanges());
 		assert.ok(oRequestor.hasPendingChanges("groupId"), "one for groupId");
 		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"), "nothing in anotherGroupId");
+		assert.throws(function () {
+			// code under test
+			oRequestor.checkForOpenRequests();
+		}, new Error("Unexpected open requests"));
 
 		assert.throws(function () {
 			// code under test
@@ -2073,17 +2146,143 @@ sap.ui.define([
 
 		// while the batch with the first PATCH is still running, add another PATCH and submit
 		oRequestor.request("PATCH", "Products('1')", this.createGroupLock(),
-			{"If-Match" : {/* product 0 */}}, {Name : "bar"});
-		assert.throws(function () {
-			// code under test
-			oRequestor.processBatch("groupId");
-		}, new Error("Unexpected second $batch")); // CPOUI5UISERVICESV3-1450
+				{"If-Match" : {/* product 0 */}}, {Name : "bar"})
+			.then(function () {
+				assert.notOk(bWaitingIsOver);
+			});
+		oBatchRequest3 = expectBatch();
+		aPromises.push(oRequestor.processBatch("groupId"));
 
+		// code under test
+		aPromises.push(oRequestor.waitForRunningChangeRequests("groupId").then(function () {
+			bWaitingIsOver = true;
+
+			// code under test
+			assert.notOk(oRequestor.hasPendingChanges());
+			assert.notOk(oRequestor.hasPendingChanges("groupId"));
+			oRequestor.checkForOpenRequests();
+		}));
 
 		resolveBatch(oBatchRequest1);
 		resolveBatch(oBatchRequest2);
+		resolveBatch(oBatchRequest3);
 		return Promise.all(aPromises);
 	});
+
+	//*****************************************************************************************
+	QUnit.test("batchRequestSent/-ResponseReceived, waitFor... #1", function (assert) {
+		//********** Part 1: no running change requests
+		var oRequestor = _Requestor.create("/Service/");
+
+		assert.deepEqual(oRequestor.mRunningChangeRequests, {});
+
+		// code under test
+		oRequestor.batchRequestSent("group", [], false);
+
+		assert.deepEqual(oRequestor.mRunningChangeRequests, {});
+
+		// code under test
+		oRequestor.batchResponseReceived("group", [], false);
+
+		assert.deepEqual(oRequestor.mRunningChangeRequests, {});
+
+		// code under test
+		assert.strictEqual(oRequestor.waitForRunningChangeRequests("group"), SyncPromise.resolve());
+	});
+
+	//*****************************************************************************************
+	QUnit.test("batchRequestSent/-ResponseReceived, waitFor... #2", function (assert) {
+		//********** Part 2: one running change request
+		var oRequestor = _Requestor.create("/Service/"),
+			aRequests = [],
+			oSyncPromise,
+			bWaitingIsOver;
+
+		// code under test
+		oRequestor.batchRequestSent("group", aRequests, true);
+
+		assert.deepEqual(Object.keys(oRequestor.mRunningChangeRequests), ["group"]);
+		assert.strictEqual(oRequestor.mRunningChangeRequests["group"].length, 1);
+		oSyncPromise = oRequestor.mRunningChangeRequests["group"][0];
+		assert.strictEqual(oSyncPromise.isPending(), true);
+		oSyncPromise.then(function () {
+			bWaitingIsOver = true;
+		});
+
+		// code under test
+		assert.strictEqual(oRequestor.waitForRunningChangeRequests("group"), oSyncPromise);
+
+		// code under test
+		oRequestor.batchResponseReceived("group", aRequests, true);
+
+		assert.deepEqual(oRequestor.mRunningChangeRequests, {});
+		assert.strictEqual(oSyncPromise.isPending(), false);
+		assert.strictEqual(oSyncPromise.getResult(), undefined);
+		assert.notOk(bWaitingIsOver, "no handler can run synchronously");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("batchRequestSent/-ResponseReceived, waitFor... #3", function (assert) {
+		//********** Part 3: two running change requests for the same group
+		var oFinalPromise,
+			oRequestor = _Requestor.create("/Service/"),
+			aRequests0 = [],
+			aRequests1 = [],
+			oSyncPromise0,
+			oSyncPromise1,
+			bWaitingIsOver;
+
+		// code under test
+		oRequestor.batchRequestSent("group", aRequests0, true);
+
+		assert.deepEqual(Object.keys(oRequestor.mRunningChangeRequests), ["group"]);
+		assert.strictEqual(oRequestor.mRunningChangeRequests["group"].length, 1);
+		oSyncPromise0 = oRequestor.mRunningChangeRequests["group"][0];
+		assert.strictEqual(oSyncPromise0.isPending(), true);
+		oSyncPromise0.then(function () {
+			assert.notOk(bWaitingIsOver);
+		});
+
+		// code under test
+		assert.strictEqual(oRequestor.waitForRunningChangeRequests("group"), oSyncPromise0);
+
+		// code under test
+		oRequestor.batchRequestSent("group", aRequests1, true);
+
+		assert.deepEqual(Object.keys(oRequestor.mRunningChangeRequests), ["group"]);
+		assert.strictEqual(oRequestor.mRunningChangeRequests["group"].length, 2);
+		assert.strictEqual(oRequestor.mRunningChangeRequests["group"][0], oSyncPromise0);
+		oSyncPromise1 = oRequestor.mRunningChangeRequests["group"][1];
+		assert.strictEqual(oSyncPromise1.isPending(), true);
+		oSyncPromise1.then(function () {
+			assert.notOk(bWaitingIsOver);
+		});
+
+		// code under test
+		oFinalPromise = oRequestor.waitForRunningChangeRequests("group").then(function () {
+			bWaitingIsOver = true;
+		});
+
+		// code under test
+		oRequestor.batchResponseReceived("group", aRequests0, true);
+
+		assert.deepEqual(Object.keys(oRequestor.mRunningChangeRequests), ["group"]);
+		assert.strictEqual(oRequestor.mRunningChangeRequests["group"].length, 1);
+		assert.strictEqual(oRequestor.mRunningChangeRequests["group"][0], oSyncPromise1);
+		assert.strictEqual(oSyncPromise0.isPending(), false);
+		assert.strictEqual(oSyncPromise0.getResult(), undefined);
+		assert.strictEqual(oSyncPromise1.isPending(), true);
+
+		// code under test
+		oRequestor.batchResponseReceived("group", aRequests1, true);
+
+		assert.deepEqual(oRequestor.mRunningChangeRequests, {});
+		assert.strictEqual(oSyncPromise1.isPending(), false);
+		assert.strictEqual(oSyncPromise1.getResult(), undefined);
+
+		return oFinalPromise;
+	});
+	//TODO ? //********** Part 4: two running change requests for different groups
 
 	//*****************************************************************************************
 [
@@ -2572,13 +2771,12 @@ sap.ui.define([
 					body : {Name : "bar"}
 				})
 			],
-			oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor);
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
 		oRequestor.request("POST", "Products", this.createGroupLock(), {}, {Name : "bar"});
-		oRequestorMock.expects("isChangeSetOptional").withExactArgs().returns(true);
+		this.mock(oRequestor).expects("isChangeSetOptional").withExactArgs().returns(true);
 		aExpectedRequests.iChangeSet = 0;
-		oRequestorMock.expects("sendBatch")
+		this.mock(oRequestor).expects("sendBatch")
 			.withExactArgs(aExpectedRequests, "groupId").resolves([createResponse()]);
 
 		// code under test
@@ -3789,18 +3987,19 @@ sap.ui.define([
 	//*****************************************************************************************
 	QUnit.test("waitForRunningChangeRequests", function (assert) {
 		var oPromise,
-			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			aRequests = [];
 
 		assert.strictEqual(oRequestor.waitForRunningChangeRequests("groupId"),
 			SyncPromise.resolve());
 
-		oRequestor.batchRequestSent("groupId", /*bHasChanges*/true);
+		oRequestor.batchRequestSent("groupId", aRequests, /*bHasChanges*/true);
 
 		oPromise = oRequestor.waitForRunningChangeRequests("groupId");
 
 		assert.strictEqual(oPromise.isPending(), true);
 
-		oRequestor.batchResponseReceived("groupId", /*bHasChanges*/true);
+		oRequestor.batchResponseReceived("groupId", aRequests, /*bHasChanges*/true);
 
 		assert.strictEqual(oPromise.isFulfilled(), true);
 		assert.strictEqual(oPromise.getResult(), undefined);
@@ -4004,17 +4203,6 @@ sap.ui.define([
 			oGroupLockMock1,
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
-		// code under test
-		oRequestor.checkForOpenRequests();
-
-		oRequestor.mRunningChangeRequests["groupId"] = {};
-
-		assert.throws(function () {
-			// code under test
-			oRequestor.checkForOpenRequests();
-		}, new Error(sErrorMessage));
-
-		oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 		oRequestor.mBatchQueue["groupId"] = []; // empty batch queue: no error
 
 		// code under test

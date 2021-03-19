@@ -85,7 +85,7 @@ sap.ui.define([
 		this.aLockedGroupLocks = [];
 		this.oModelInterface = oModelInterface;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
-		this.mRunningChangeRequests = {}; // map from group ID to a SyncPromise
+		this.mRunningChangeRequests = {}; // map from group ID to a SyncPromise[]
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.iSessionTimer = 0;
 		this.iSerialNumber = 0;
@@ -214,31 +214,31 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {object[]} aRequests
+	 *   The array of requests; only used to identify the batch request.
 	 * @param {boolean} bHasChanges
 	 *   Whether the batch contains change requests; when <code>true</code> this is memorized in an
 	 *   internal map
-	 * @throws {Error}
-	 *   If there is already a batch request containing change requests
 	 *
 	 * @private
 	 * @see #batchResponseReceived
 	 * @see #hasPendingChanges
 	 * @see #waitForRunningChangeRequests
 	 */
-	_Requestor.prototype.batchRequestSent = function (sGroupId, bHasChanges) {
+	_Requestor.prototype.batchRequestSent = function (sGroupId, aRequests, bHasChanges) {
 		var oPromise,
 			fnResolve;
 
 		if (bHasChanges) {
-			if (this.mRunningChangeRequests[sGroupId]) {
-				throw new Error("Unexpected second $batch");
+			if (!(sGroupId in this.mRunningChangeRequests)) {
+				this.mRunningChangeRequests[sGroupId] = [];
 			}
-			// The resolving of this promise is truly async
 			oPromise = new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			});
 			oPromise.$resolve = fnResolve;
-			this.mRunningChangeRequests[sGroupId] = oPromise;
+			oPromise.$requests = aRequests;
+			this.mRunningChangeRequests[sGroupId].push(oPromise);
 		}
 	};
 
@@ -247,6 +247,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {object[]} aRequests
+	 *   The array of requests; only used to identify the batch request.
 	 * @param {boolean} bHasChanges
 	 *   Whether the batch contained change requests; when <code>true</code> the entry memorized in
 	 *   the internal map is deleted
@@ -256,11 +258,25 @@ sap.ui.define([
 	 * @see #hasPendingChanges
 	 * @see #waitForRunningChangeRequests
 	 */
-	_Requestor.prototype.batchResponseReceived = function (sGroupId, bHasChanges) {
+	_Requestor.prototype.batchResponseReceived = function (sGroupId, aRequests, bHasChanges) {
+		var aPromises;
+
 		if (bHasChanges) {
-			// no handler can run synchronously
-			this.mRunningChangeRequests[sGroupId].$resolve();
-			delete this.mRunningChangeRequests[sGroupId];
+			aPromises = this.mRunningChangeRequests[sGroupId].filter(function (oPromise) {
+					if (oPromise.$requests === aRequests) {
+						// Note: no handler can run synchronously
+						oPromise.$resolve();
+
+						return false; // remove (should happen exactly once)
+					}
+
+					return true; // keep
+				});
+			if (aPromises.length) {
+				this.mRunningChangeRequests[sGroupId] = aPromises;
+			} else {
+				delete this.mRunningChangeRequests[sGroupId];
+			}
 		}
 	};
 
@@ -1164,8 +1180,8 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
-		this.batchRequestSent(sGroupId, bHasChanges);
 		aRequests = this.mergeGetRequests(aRequests);
+		this.batchRequestSent(sGroupId, aRequests, bHasChanges);
 		return this.sendBatch(aRequests, sGroupId)
 			.then(function (aResponses) {
 				visit(aRequests, aResponses);
@@ -1177,7 +1193,7 @@ sap.ui.define([
 				reject(oRequestError, aRequests);
 				throw oError;
 			}).finally(function () {
-				that.batchResponseReceived(sGroupId, bHasChanges);
+				that.batchResponseReceived(sGroupId, aRequests, bHasChanges);
 			});
 	};
 
@@ -1772,20 +1788,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Waits for all running change requests for the given group ID.
+	 * Waits for all currently running change requests for the given group ID.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise that resolves when all change requests for the given group ID have been processed
-	 *   completely, no matter if they succeed or fail
+	 *   A promise that resolves without a defined result when all currently running change requests
+	 *   for the given group ID have been processed completely, no matter if they succeed or fail
 	 *
 	 * @public
 	 * @see #batchRequestSent
 	 * @see #batchResponseReceived
 	 */
 	_Requestor.prototype.waitForRunningChangeRequests = function (sGroupId) {
-		return this.mRunningChangeRequests[sGroupId] || SyncPromise.resolve();
+		var aPromises = this.mRunningChangeRequests[sGroupId];
+
+		if (aPromises) {
+			return aPromises.length > 1 ? SyncPromise.all(aPromises) : aPromises[0];
+		}
+
+		return SyncPromise.resolve();
 	};
 
 	/**
