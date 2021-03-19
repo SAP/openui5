@@ -690,6 +690,18 @@ sap.ui.define([
 		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 4");
 		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,3");
 		assert.strictEqual(oInfo.cell.getText(), "D1", "Cell 2,3");
+
+		var MyColumn = Column.extend("My.Column");
+		var oMyColumn = new MyColumn({template: new TestControl({text: "Custom"})});
+		oTable.insertColumn(oMyColumn, 0);
+		oTable.setEnableGrouping(false);
+		sap.ui.getCore().applyChanges();
+
+		oInfo = TableUtils.getRowColCell(oTable, 1, 0, true);
+		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
+		assert.strictEqual(oInfo.column, oMyColumn, "Instance of custom sap.ui.table.Column subclass");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[0], "Cell 1,0");
+		assert.strictEqual(oInfo.cell.getText(), "Custom", "Cell 1,0");
 	});
 
 	QUnit.test("getFirstFixedBottomRowIndex", function(assert) {
