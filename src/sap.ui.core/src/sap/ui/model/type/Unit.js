@@ -4,6 +4,7 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
+	"sap/base/Log",
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/model/CompositeType',
 	'sap/ui/model/FormatException',
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject"
 ],
 	function(
+		Log,
 		NumberFormat,
 		CompositeType,
 		FormatException,
@@ -58,6 +60,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.NumberFormat.getUnitInstance NumberFormat}.
+	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
+	 *   Only truthy values are supported; since 1.89.0
 	 * @param {object} [oFormatOptions.source] Additional set of format options to be used if the property in the model is not of type <code>string</code> and needs formatting as well.
 	 * 										   If an empty object is given, the grouping is disabled and a dot is used as decimal separator.
 	 * @param {object} [oConstraints] Value constraints
@@ -302,6 +306,17 @@ sap.ui.define([
 	};
 
 	Unit.prototype.setFormatOptions = function(oFormatOptions) {
+		var bHasPreserveDecimals = "preserveDecimals" in oFormatOptions;
+
+		if (!bHasPreserveDecimals || !oFormatOptions.preserveDecimals) {
+			if (bHasPreserveDecimals && !oFormatOptions.preserveDecimals) {
+				Log.warning("Format option 'preserveDecimals' with value "
+					+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
+					+ " defaulted to true",
+					null, this.getName());
+			}
+			oFormatOptions = Object.assign({}, oFormatOptions, {preserveDecimals : true});
+		}
 		this.oFormatOptions = oFormatOptions;
 		this._clearInstances();
 		this._createInputFormat();
@@ -340,6 +355,17 @@ sap.ui.define([
 	Unit.prototype._createInvalidUnitParseException = function () {
 		return new ParseException(
 			sap.ui.getCore().getLibraryResourceBundle().getText("Unit.Invalid"));
+	};
+
+	/**
+	 * Returns the type's name.
+	 *
+	 * @returns {string} The type's name
+	 *
+	 * @private
+	 */
+	 Unit.prototype.getName = function () {
+		return "sap.ui.model.type.Unit";
 	};
 
 	return Unit;

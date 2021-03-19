@@ -145,7 +145,7 @@ sap.ui.getCore().attachInit(function () {
 				When.onTheMainPage.changeProductID("H-1001");
 				Then.onTheMainPage.checkProductID("H-1001");
 				Then.onTheMainPage.checkName("Notebook Basic 16");
-				Then.onTheMainPage.checkMeasure("18 KG");
+				Then.onTheMainPage.checkMeasure("18.000 KG");
 				Then.onTheMainPage.checkPrice("700.00\u00a0USD");
 				Then.onTheMainPage.checkProductIDIsEditable(false);
 

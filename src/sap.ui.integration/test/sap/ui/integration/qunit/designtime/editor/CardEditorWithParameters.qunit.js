@@ -336,7 +336,7 @@ sap.ui.define([
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.deepEqual(oField.getConfiguration().formatter, { decimals: 3 }, "formatter is correct");
-					assert.ok(oField.getAggregation("_field").mProperties.value === "21.003", "The value was formatted correctly");
+					assert.ok(oField.getAggregation("_field").mProperties.value === "21.0028", "The value was formatted correctly");
 					resolve();
 				}.bind(this));
 			}.bind(this));

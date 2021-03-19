@@ -55,6 +55,46 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[
+	undefined,
+	{},
+	{preserveDecimals : true},
+	{preserveDecimals : "yes"}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: oFormatOptions.preserveDecimals; no warnings " + i, function (assert) {
+		// code under test
+		var oType = new Unit(oFormatOptions);
+
+		assert.strictEqual(oType.oFormatOptions.preserveDecimals, true);
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{preserveDecimals : undefined},
+	{preserveDecimals : null},
+	{preserveDecimals : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		var oType;
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Format option 'preserveDecimals' with value "
+				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
+				+ " defaulted to true",
+				null, "sap.ui.model.odata.type.Unit");
+
+		// code under test
+		oType = new Unit(oFormatOptions);
+
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions.preserveDecimals, true);
+		assert.deepEqual(oType.getFormatOptions().preserveDecimals, true);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("formatValue and parseValue", function (assert) {
 		var aCurrentValues = [{/*unused*/}, "KG", {/*unused*/}],
 			mCustomizing = {

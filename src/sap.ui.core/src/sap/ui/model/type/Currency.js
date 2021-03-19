@@ -50,6 +50,8 @@ sap.ui.define([
 	 *   code are not propagated to the control if the corresponding binding supports the feature
 	 *   of ignoring model messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and
 	 *   the corresponding binding parameter is not set manually.
+	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
+	 *   Only truthy values are supported; since 1.89.0
 	 * @param {object} [oFormatOptions.source]
 	 *   A set of format options as defined for
 	 *   {@link sap.ui.core.format.NumberFormat.getCurrencyInstance} which describes the format of
@@ -191,6 +193,17 @@ sap.ui.define([
 	};
 
 	Currency.prototype.setFormatOptions = function(oFormatOptions) {
+		var bHasPreserveDecimals = "preserveDecimals" in oFormatOptions;
+
+		if (!bHasPreserveDecimals || !oFormatOptions.preserveDecimals) {
+			if (bHasPreserveDecimals && !oFormatOptions.preserveDecimals) {
+				Log.warning("Format option 'preserveDecimals' with value "
+					+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
+					+ " defaulted to true",
+					null, this.getName());
+			}
+			oFormatOptions = Object.assign({}, oFormatOptions, {preserveDecimals : true});
+		}
 		this.oFormatOptions = oFormatOptions;
 		this._createFormats();
 	};
@@ -256,6 +269,17 @@ sap.ui.define([
 			return [1];
 		}
 		return [];
+	};
+
+	/**
+	 * Returns the type's name.
+	 *
+	 * @returns {string} The type's name
+	 *
+	 * @private
+	 */
+	Currency.prototype.getName = function () {
+		return "sap.ui.model.type.Currency";
 	};
 
 	return Currency;

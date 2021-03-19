@@ -28,6 +28,8 @@ sap.ui.define([
 	 *   Whether the measure is parsed to a string; set to <code>false</code> if the measure's
 	 *   underlying type is represented as a <code>number</code>, for example
 	 *   {@link sap.ui.model.odata.type.Int32}
+	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
+	 *   Only truthy values are supported; since 1.89.0
 	 * @param {boolean} [oFormatOptions.unitOptional=true]
 	 *   Whether the quantity is parsed if no unit is entered.
 	 * @param {any} [oFormatOptions.emptyString=0]

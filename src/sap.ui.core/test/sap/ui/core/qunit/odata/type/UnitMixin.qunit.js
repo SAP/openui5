@@ -37,6 +37,7 @@ sap.ui.define([
 				setFormatOptions : function () {}
 			};
 			UnitMixin.prototype.getCustomUnitForKey = function () {};
+			UnitMixin.prototype.getName = function () { return "~TypeName"; };
 			applyUnitMixin(UnitMixin.prototype, BaseType, "customUnitsOrCurrencies");
 		},
 
@@ -62,7 +63,7 @@ sap.ui.define([
 		assert.ok(oType.hasOwnProperty("mCustomUnits"));
 		assert.strictEqual(oType.mCustomUnits, undefined);
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, parseAsString : true,
-			unitOptional : true});
+			preserveDecimals : true, unitOptional : true});
 
 		assert.throws(function () {
 			// code under test
@@ -78,7 +79,7 @@ sap.ui.define([
 		oType = new UnitMixin(oFormatOptions);
 
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-			parseAsString : true, unitOptional : true});
+			parseAsString : true, preserveDecimals : true, unitOptional : true});
 
 		[false, undefined, ""].forEach(function (bParseAsString) {
 			oFormatOptions.parseAsString = bParseAsString;
@@ -87,7 +88,7 @@ sap.ui.define([
 			oType = new UnitMixin(oFormatOptions);
 
 			assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-				parseAsString : true, unitOptional : true});
+				parseAsString : true, preserveDecimals : true, unitOptional : true});
 			assert.notStrictEqual(oType.oFormatOptions, oFormatOptions,
 				"format options are immutable: clone");
 		});
@@ -99,7 +100,7 @@ sap.ui.define([
 		oType = new UnitMixin(oFormatOptions);
 
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-			parseAsString : true, unitOptional : false});
+			parseAsString : true, preserveDecimals : true, unitOptional : false});
 
 		oFormatOptions.unitOptional = undefined;
 
@@ -107,7 +108,7 @@ sap.ui.define([
 		oType = new UnitMixin(oFormatOptions);
 
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-			parseAsString : true, unitOptional : undefined});
+			parseAsString : true, preserveDecimals : true, unitOptional : undefined});
 
 		assert.throws(function () {
 			oType = new UnitMixin({}, {"minimum" : 42});
@@ -121,6 +122,37 @@ sap.ui.define([
 			oType = new UnitMixin({customUnitsOrCurrencies : {}});
 		}, new Error("Format option customUnitsOrCurrencies is not supported"));
 	});
+
+	//*********************************************************************************************
+[
+	undefined,
+	{},
+	{preserveDecimals : true},
+	{preserveDecimals : "yes"}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: oFormatOptions.preserveDecimals; no warnings " + i, function (assert) {
+		// code under test
+		assert.strictEqual(new UnitMixin(oFormatOptions).oFormatOptions.preserveDecimals, true);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{preserveDecimals : undefined},
+	{preserveDecimals : null},
+	{preserveDecimals : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		this.oLogMock.expects("warning")
+			.withExactArgs("Format option 'preserveDecimals' with value "
+				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
+				+ " defaulted to true",
+				null, "~TypeName");
+
+		// code under test
+		assert.strictEqual(new UnitMixin(oFormatOptions).oFormatOptions.preserveDecimals, true);
+	});
+});
 
 	//*********************************************************************************************
 	[
@@ -241,6 +273,7 @@ sap.ui.define([
 				customUnitsOrCurrencies : mCustomUnits,
 				emptyString : 0,
 				parseAsString : true,
+				preserveDecimals : true,
 				unitOptional : true
 			});
 		oBaseFormatValueCall = oBaseUnitMock.expects("formatValue").on(oType)
@@ -323,6 +356,7 @@ sap.ui.define([
 				customUnitsOrCurrencies : sinon.match.same(oType.mCustomUnits),
 				emptyString : 0,
 				parseAsString : true,
+				preserveDecimals : true,
 				unitOptional : true
 			});
 		oBaseUnitMock.expects("formatValue").on(oType2)
@@ -340,6 +374,7 @@ sap.ui.define([
 				customUnitsOrCurrencies : sinon.match.same(oType.mCustomUnits),
 				emptyString : 0,
 				parseAsString : true,
+				preserveDecimals : true,
 				unitOptional : true
 			});
 		oBaseUnitMock.expects("formatValue").on(oType3)
@@ -626,6 +661,7 @@ sap.ui.define([
 				emptyString: 0,
 				option : "42",
 				parseAsString : true,
+				preserveDecimals : true,
 				unitOptional : true
 			},
 			oFormatOptions = {option : "42", parseAsString : "~parseAsString"},
@@ -638,7 +674,8 @@ sap.ui.define([
 		oResult = oType.getFormatOptions();
 
 		assert.deepEqual(oResult,
-			{emptyString: 0, option : "42", parseAsString : "~parseAsString", unitOptional : true});
+			{emptyString: 0, option : "42", parseAsString : "~parseAsString",
+			preserveDecimals : true, unitOptional : true});
 		assert.strictEqual(oResult, oBaseFormatOptions,
 			"base type getFormatOptions creates a copy, do not copy again");
 	});
@@ -650,6 +687,7 @@ sap.ui.define([
 				customUnitsOrCurrencies : {foo : undefined},
 				emptyString: 0,
 				parseAsString : true,
+				preserveDecimals : true,
 				unitOptional : true
 			},
 			oType = new UnitMixin();
@@ -662,7 +700,7 @@ sap.ui.define([
 
 		// check default format options
 		assert.deepEqual(oType.oFormatOptions,
-			{emptyString: 0, parseAsString : true, unitOptional : true});
+			{emptyString: 0, parseAsString : true, preserveDecimals : true, unitOptional : true});
 
 		// code under test - enhance format options while formatting
 		oType.formatValue([undefined, undefined, {foo : {}}]);
@@ -671,6 +709,6 @@ sap.ui.define([
 
 		// code under test - additional format options are removed
 		assert.deepEqual(oType.getFormatOptions(),
-			{emptyString: 0, parseAsString : true, unitOptional : true});
+			{emptyString: 0, parseAsString : true, preserveDecimals : true, unitOptional : true});
 	});
 });

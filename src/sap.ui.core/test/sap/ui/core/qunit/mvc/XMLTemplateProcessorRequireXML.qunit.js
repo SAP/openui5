@@ -505,7 +505,7 @@ sap.ui.define([
 			assert.strictEqual(oView.byId("formatterGlobal").getText(), "test", "text is set");
 			assert.strictEqual(oView.byId("formatterLocal").getText(), "TEST", "text is set");
 			assert.strictEqual(oView.byId("text").getText(), "text2", "text2 is set");
-			assert.strictEqual(oView.byId("type").getText(), "123.457", "text is formatted with correct type");
+			assert.strictEqual(oView.byId("type").getText(), "123.45678", "text is formatted with correct type");
 		}
 	}].forEach(function (oConfig) {
 		// Run async variant

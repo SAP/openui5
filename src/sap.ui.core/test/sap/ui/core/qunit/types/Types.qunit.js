@@ -87,11 +87,82 @@ sap.ui.define([
 		}
 	});
 
+	//*********************************************************************************************
+[
+	{preserveDecimals : true},
+	{preserveDecimals : "yes"}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("setFormatOptions: truthy oFormatOptions.preserveDecimals; " + i, function (assert) {
+		var oType = {
+				_createFormats : function () {}
+			};
+
+		this.mock(Log).expects("warning").never();
+		this.mock(oType).expects("_createFormats").withExactArgs();
+
+		// code under test
+		CurrencyType.prototype.setFormatOptions.call(oType, oFormatOptions);
+
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals not set", function (assert) {
+		var oFormatOptions = {foo : "bar"},
+			oType = {
+				_createFormats : function () {}
+			};
+
+		this.mock(Log).expects("warning").never();
+		this.mock(oType).expects("_createFormats").withExactArgs();
+
+		// code under test
+		CurrencyType.prototype.setFormatOptions.call(oType, oFormatOptions);
+
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
+	});
+
+	//*********************************************************************************************
+[
+	{foo : "bar", preserveDecimals : undefined},
+	{foo : "bar", preserveDecimals : null},
+	{foo : "bar", preserveDecimals : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("setFormatOptions: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		var oType = {
+				_createFormats : function () {},
+				getName : function () {}
+			};
+
+		this.mock(oType).expects("getName").withExactArgs().returns("~TypeName");
+		this.mock(Log).expects("warning")
+			.withExactArgs("Format option 'preserveDecimals' with value "
+				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
+				+ " defaulted to true",
+				null, "~TypeName");
+		this.mock(oType).expects("_createFormats").withExactArgs();
+
+		// code under test
+		CurrencyType.prototype.setFormatOptions.call(oType, oFormatOptions);
+
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getName", function (assert) {
+		// code under test
+		assert.strictEqual(new CurrencyType().getName(), "sap.ui.model.type.Currency");
+	});
+
 	QUnit.test("currency formatValue", function (assert) {
 		var currencyType = new CurrencyType();
 		assert.equal(currencyType.formatValue([22, "EUR"], "string"), "22.00" + "\xa0" + "EUR", "format test");
 		assert.equal(currencyType.formatValue([22, "JPY"], "string"), "22" + "\xa0" + "JPY", "format test");
-		assert.equal(currencyType.formatValue([-6622.333, "EUR"], "string"), "-6,622.33" + "\xa0" + "EUR", "format test");
+		assert.equal(currencyType.formatValue([-6622.333, "EUR"], "string"), "-6,622.333" + "\xa0" + "EUR", "format test");
 		assert.equal(currencyType.formatValue([1.0, "EUR"], "string"), "1.00" + "\xa0" + "EUR", "format test");
 		assert.equal(currencyType.formatValue([1.0000, "EUR"], "string"), "1.00" + "\xa0" + "EUR", "format test");
 
@@ -150,24 +221,24 @@ sap.ui.define([
 		});
 
 		assert.equal(currencyType.formatValue([22, "USD"], "string"), "22.00", "format test");
-		assert.equal(currencyType.formatValue([-6622.333, "USD"], "string"), "-6,622.33", "format test");
-		assert.equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "-6,622.34", "format test");
+		assert.equal(currencyType.formatValue([-6622.333, "USD"], "string"), "-6,622.333", "format test");
+		assert.equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "-6,622.339", "format test");
 		assert.equal(currencyType.formatValue([1.0, "USD"], "string"), "1.00", "format test");
 		assert.equal(currencyType.formatValue([1.0000, "JPY"], "string"), "1", "format test");
-		assert.equal(currencyType.formatValue([1.009, "EUR"], "string"), "1.01", "format test");
-		assert.equal(currencyType.formatValue([1.00001, "USD"], "string"), "1.00", "format test");
+		assert.equal(currencyType.formatValue([1.009, "EUR"], "string"), "1.009", "format test");
+		assert.equal(currencyType.formatValue([1.00001, "USD"], "string"), "1.00001", "format test");
 
 		currencyType = new CurrencyType({
 			currencyCode: false
 		});
 
 		assert.equal(currencyType.formatValue([22, "USD"], "string"), "$22.00", "format test");
-		assert.equal(currencyType.formatValue([-6622.333, "USD"], "string"), "$" + "\ufeff" + "-6,622.33", "format test");
-		assert.equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "€" + "\ufeff" + "-6,622.34", "format test");
+		assert.equal(currencyType.formatValue([-6622.333, "USD"], "string"), "$" + "\ufeff" + "-6,622.333", "format test");
+		assert.equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "€" + "\ufeff" + "-6,622.339", "format test");
 		assert.equal(currencyType.formatValue([1.0, "USD"], "string"), "$1.00", "format test");
 		assert.equal(currencyType.formatValue([1.0000, "JPY"], "string"), "¥1", "format test");
-		assert.equal(currencyType.formatValue([1.009, "EUR"], "string"), "€1.01", "format test");
-		assert.equal(currencyType.formatValue([1.00001, "USD"], "string"), "$1.00", "format test");
+		assert.equal(currencyType.formatValue([1.009, "EUR"], "string"), "€1.009", "format test");
+		assert.equal(currencyType.formatValue([1.00001, "USD"], "string"), "$1.00001", "format test");
 	});
 
 	QUnit.test("currency formatOptions.source", function (assert) {
@@ -181,8 +252,8 @@ sap.ui.define([
 		assert.equal(currencyType.parseValue("JPY-3.555", "string"), "-4" + "\xa0" + "JPY", "parse test");
 
 		assert.equal(currencyType.formatValue("EUR22", "string"), "22.00" + "\xa0" + "EUR", "format test");
-		assert.equal(currencyType.formatValue("USD-6622.333", "string"), "-6,622.33" + "\xa0" + "USD", "format test");
-		assert.equal(currencyType.formatValue("JPY-6622.339", "string"), "-6,622" + "\xa0" + "JPY", "format test");
+		assert.equal(currencyType.formatValue("USD-6622.333", "string"), "-6,622.333" + "\xa0" + "USD", "format test");
+		assert.equal(currencyType.formatValue("JPY-6622.339", "string"), "-6,622.339" + "\xa0" + "JPY", "format test");
 	});
 
 	QUnit.test("currency formatOptions.source and validateValue", function (assert) {
@@ -1188,6 +1259,69 @@ sap.ui.define([
 		}
 	});
 
+	//*********************************************************************************************
+[
+	{preserveDecimals : true},
+	{preserveDecimals : "yes"}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("setFormatOptions: truthy oFormatOptions.preserveDecimals; " + i, function (assert) {
+		var oType = {
+				_createFormats : function () {}
+			};
+
+		this.mock(Log).expects("warning").never();
+		this.mock(oType).expects("_createFormats").withExactArgs();
+
+		// code under test
+		FloatType.prototype.setFormatOptions.call(oType, oFormatOptions);
+
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals not set", function (assert) {
+		var oFormatOptions = {foo : "bar"},
+			oType = {
+				_createFormats : function () {}
+			};
+
+		this.mock(Log).expects("warning").never();
+		this.mock(oType).expects("_createFormats").withExactArgs();
+
+		// code under test
+		FloatType.prototype.setFormatOptions.call(oType, oFormatOptions);
+
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
+	});
+
+	//*********************************************************************************************
+[
+	{foo : "bar", preserveDecimals : undefined},
+	{foo : "bar", preserveDecimals : null},
+	{foo : "bar", preserveDecimals : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("setFormatOptions: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		var oType = {
+				_createFormats : function () {}
+			};
+
+		this.mock(Log).expects("warning")
+			.withExactArgs("Format option 'preserveDecimals' with value "
+				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
+				+ " defaulted to true",
+				null, "sap.ui.model.type.Float");
+		this.mock(oType).expects("_createFormats").withExactArgs();
+
+		// code under test
+		FloatType.prototype.setFormatOptions.call(oType, oFormatOptions);
+
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
+	});
+});
+
 	QUnit.test("float formatValue", function (assert) {
 		var floatType = new FloatType();
 		assert.equal(floatType.formatValue(22, "string"), "22", "format test");
@@ -1268,12 +1402,12 @@ sap.ui.define([
 		});
 
 		assert.equal(floatType.formatValue(22, "string"), "22.00", "format test");
-		assert.equal(floatType.formatValue(-6622.333, "string"), "-6,622.33", "format test");
-		assert.equal(floatType.formatValue(-6622.339, "string"), "-6,622.34", "format test");
+		assert.equal(floatType.formatValue(-6622.333, "string"), "-6,622.333", "format test");
+		assert.equal(floatType.formatValue(-6622.339, "string"), "-6,622.339", "format test");
 		assert.equal(floatType.formatValue(1.0, "string"), "1.00", "format test");
 		assert.equal(floatType.formatValue(1.0000, "string"), "1.00", "format test");
-		assert.equal(floatType.formatValue(1.009, "string"), "1.01", "format test");
-		assert.equal(floatType.formatValue(1.00001, "string"), "1.00", "format test");
+		assert.equal(floatType.formatValue(1.009, "string"), "1.009", "format test");
+		assert.equal(floatType.formatValue(1.00001, "string"), "1.00001", "format test");
 
 		// TODO is this right?! no formatting for floats?
 		// see numberformat.qunit for more formatting tests
@@ -1762,6 +1896,83 @@ sap.ui.define([
 		}
 	});
 
+	//*********************************************************************************************
+[
+	{preserveDecimals : true},
+	{preserveDecimals : "yes"}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("setFormatOptions: truthy oFormatOptions.preserveDecimals; " + i, function (assert) {
+		var oType = {
+				_clearInstances : function () {},
+				_createInputFormat : function () {}
+			};
+
+		this.mock(Log).expects("warning").never();
+		this.mock(oType).expects("_clearInstances").withExactArgs();
+		this.mock(oType).expects("_createInputFormat").withExactArgs();
+
+		// code under test
+		UnitType.prototype.setFormatOptions.call(oType, oFormatOptions);
+
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals not set", function (assert) {
+		var oFormatOptions = {foo : "bar"},
+			oType = {
+				_clearInstances : function () {},
+				_createInputFormat : function () {}
+			};
+
+		this.mock(Log).expects("warning").never();
+		this.mock(oType).expects("_clearInstances").withExactArgs();
+		this.mock(oType).expects("_createInputFormat").withExactArgs();
+
+		// code under test
+		UnitType.prototype.setFormatOptions.call(oType, oFormatOptions);
+
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
+	});
+
+	//*********************************************************************************************
+[
+	{foo : "bar", preserveDecimals : undefined},
+	{foo : "bar", preserveDecimals : null},
+	{foo : "bar", preserveDecimals : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("setFormatOptions: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		var oType = {
+				_clearInstances : function () {},
+				_createInputFormat : function () {},
+				getName : function () {}
+			};
+
+		this.mock(oType).expects("getName").withExactArgs().returns("~TypeName");
+		this.mock(Log).expects("warning")
+			.withExactArgs("Format option 'preserveDecimals' with value "
+				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
+				+ " defaulted to true",
+				null, "~TypeName");
+		this.mock(oType).expects("_clearInstances").withExactArgs();
+		this.mock(oType).expects("_createInputFormat").withExactArgs();
+
+		// code under test
+		UnitType.prototype.setFormatOptions.call(oType, oFormatOptions);
+
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getName", function (assert) {
+		// code under test
+		assert.strictEqual(new UnitType().getName(), "sap.ui.model.type.Unit");
+	});
+
 	QUnit.test("unit formatValue", function (assert) {
 		var unitType = new UnitType();
 		assert.equal(unitType.formatValue([22, "duration-hour"], "string"), "22 hr", "format test");
@@ -1832,7 +2043,7 @@ sap.ui.define([
 			"ParseException is thrown for wrong unit");
 
 		// format and parse valid unit
-		assert.equal(oType.formatValue([200.535, "electric-inductance"], "string"), "200.54 H", "precision 5 is respected (rounded)");
+		assert.equal(oType.formatValue([200.535, "electric-inductance"], "string"), "200.535 H", "precision 5 is respected (rounded)");
 		assert.deepEqual(oType.parseValue("200.5123 H", "string"), [200.5123, "electric-inductance"], "parsing is valid");
 	});
 
@@ -1903,7 +2114,7 @@ sap.ui.define([
 		"ParseException is thrown for wrong unit");
 
 		// format and parse valid unit
-		assert.equal(oType.formatValue([200.575, "electric-inductance"], "string"), "200.6 H", "precision 4 is respected (rounded)");
+		assert.equal(oType.formatValue([200.575, "electric-inductance"], "string"), "200.575 H", "precision 4 is respected (rounded)");
 		assert.deepEqual(oType.parseValue("200.5123 H", "string"), [200.5123, "electric-inductance"], "parsing is valid");
 	});
 
@@ -1947,12 +2158,12 @@ sap.ui.define([
 		});
 
 		assert.equal(unitType.formatValue([22, "electric-ohm"], "string"), "22 Ω", "format test");
-		assert.equal(unitType.formatValue([-6622.333, "electric-ohm"], "string"), "-6,622.33 Ω", "format test");
-		assert.equal(unitType.formatValue([-6622.339, "duration-hour"], "string"), "-6,622.34 hr", "format test");
+		assert.equal(unitType.formatValue([-6622.333, "electric-ohm"], "string"), "-6,622.333 Ω", "format test");
+		assert.equal(unitType.formatValue([-6622.339, "duration-hour"], "string"), "-6,622.339 hr", "format test");
 		assert.equal(unitType.formatValue([1.0, "electric-ohm"], "string"), "1 Ω", "format test");
 		assert.equal(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1 mph", "format test");
-		assert.equal(unitType.formatValue([1.009, "duration-hour"], "string"), "1.01 hr", "format test");
-		assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1 Ω", "format test");
+		assert.equal(unitType.formatValue([1.009, "duration-hour"], "string"), "1.009 hr", "format test");
+		assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1.00001 Ω", "format test");
 	});
 
 	QUnit.test("unit formatOptions.source", function (assert) {
@@ -2029,13 +2240,13 @@ sap.ui.define([
 		var oMeterType = new MeterType();
 		var oMeterTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
 		//4 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.1231 m", "format 4 digits meters expected");
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.123123 m", "format 4 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse 4 digits meters expected");
 		oMeterType.validateValue([123.1231, "length-meter"]);
 		assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal option is provided (4)");
 
 		// 5 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.12312 m", "format 5 digits meters expected");
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.123123 m", "format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.12312 m", "string"), [123.12312, "length-meter"], "parse 5 digits meters expected");
 		oMeterType.validateValue([123.12312, "length-meter"]);
 
@@ -2092,22 +2303,22 @@ sap.ui.define([
 		var oMeterTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
 
 		// zero
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 0], "string"), "123 m", "format with decimals 3 expected");
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 0], "string"), "123.123123 m", "format with decimals 3 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
 		assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal value is used");
 
 		// empty
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", undefined], "string"), "123.123 m", "format with decimals 3 expected");
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", undefined], "string"), "123.123123 m", "format with decimals 3 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
 		assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instance because 4 decimal value is used");
 
 		//4 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.1231 m", "format 4 digits meters expected");
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.123123 m", "format 4 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse 4 digits meters expected");
 		assert.equal(oMeterTypeInstanceSpy.callCount, 6, "6 instance because 6 decimal option is provided (4)");
 
 		// 5 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.12312 m", "format 5 digits meters expected");
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.123123 m", "format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.12312 m", "string"), [123.12312, "length-meter"], "parse 5 digits meters expected");
 
 		assert.equal(oMeterType.formatValue([123.1, "length-meter", 5], "string"), "123.10000 m", "small number format 5 digits meters expected");
@@ -2117,7 +2328,7 @@ sap.ui.define([
 		assert.equal(oMeterTypeInstanceSpy.callCount, 8, "8 instances because 8 different decimal options are provided");
 
 		// 6 digits
-		assert.equal(oMeterType.formatValue([123.1231236, "length-meter", 6], "string"), "123.123124 m", "format 6 digits meters expected");
+		assert.equal(oMeterType.formatValue([123.1231236, "length-meter", 6], "string"), "123.1231236 m", "format 6 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.12312345 m", "string"), [123.12312345, "length-meter"], "parse 6 digits meters expected");
 
 		assert.equal(oMeterType.formatValue([123.1, "length-meter", 6], "string"), "123.100000 m", "small number format 6 digits meters expected");
@@ -2151,35 +2362,35 @@ sap.ui.define([
 		var oMeterTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
 
 		// empty
-		assert.equal(oMeterType.formatValue([123.163123, "length-meter", 0], "string"), "123 m", "format with precision 4 expected");
+		assert.equal(oMeterType.formatValue([123.163123, "length-meter", 0], "string"), "123.163123 m", "format with precision 4 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
 		assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 precision value is used");
 
 		// empty
-		assert.equal(oMeterType.formatValue([123.163123, "length-meter", undefined], "string"), "123.2 m", "format with precision 4 expected");
+		assert.equal(oMeterType.formatValue([123.163123, "length-meter", undefined], "string"), "123.163123 m", "format with precision 4 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
 		assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instance because 4 precision value is used");
 
 		//4 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 3], "string"), "123 m", "format with precision 3 expected");
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 3], "string"), "123.123123 m", "format with precision 3 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
 		assert.equal(oMeterTypeInstanceSpy.callCount, 6, "6 instances because 6 different precision values are used");
 
 		// 5 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 2], "string"), "123 m", "format 5 digits meters expected");
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 2], "string"), "123.123123 m", "format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.12312 m", "string"), [123.12312, "length-meter"], "parse 5 digits meters expected");
 
-		assert.equal(oMeterType.formatValue([123.1, "length-meter", 2], "string"), "123 m", "small number format 5 digits meters expected");
+		assert.equal(oMeterType.formatValue([123.1, "length-meter", 2], "string"), "123.1 m", "small number format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.10000 m", "string"), [123.1, "length-meter"], "small number parse 5 digits meters expected");
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
 		assert.equal(oMeterTypeInstanceSpy.callCount, 8, "8 instances because 8 different precision options are provided");
 
 		// 6 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 1], "string"), "123 m", "format 6 digits meters expected");
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 1], "string"), "123.123123 m", "format 6 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.123123 m", "string"), [123.123123, "length-meter"], "parse 6 digits meters expected");
 
-		assert.equal(oMeterType.formatValue([123.1, "length-meter", 1], "string"), "123 m", "small number format 6 digits meters expected");
+		assert.equal(oMeterType.formatValue([123.1, "length-meter", 1], "string"), "123.1 m", "small number format 6 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.100000 m", "string"), [123.1, "length-meter"], "small number parse 6 digits meters expected");
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
@@ -2210,14 +2421,14 @@ sap.ui.define([
 		var oCustomUnitType3 = new CustomUnitType({showMeasure: false});
 
 		// straight forward case
-		assert.equal(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568 m");
+		assert.equal(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789 m");
 		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
 
 		// additional format options
-		assert.equal(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+		assert.equal(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789", "formatted value respects the 'decimals' of custom unit");
 		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
 
-		assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+		assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789", "formatted value respects the 'decimals' of custom unit");
 		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
 	});
 
@@ -2297,14 +2508,14 @@ sap.ui.define([
 		var oCustomUnitType3 = new CustomUnitType({showMeasure: false});
 
 		// straight forward case
-		assert.equal(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568 m");
+		assert.equal(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789 m");
 		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
 
 		// additional format options
-		assert.equal(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+		assert.equal(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789", "formatted value respects the 'decimals' of custom unit");
 		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
 
-		assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
+		assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789", "formatted value respects the 'decimals' of custom unit");
 		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
 	});
 
