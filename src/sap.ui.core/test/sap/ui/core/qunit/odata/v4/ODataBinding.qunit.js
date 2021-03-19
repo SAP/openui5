@@ -364,6 +364,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refresh: unsupported parameter bForceUpdate", function (assert) {
+		var oBinding = new ODataBinding({});
+
+		this.mock(oBinding).expects("requestRefresh").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.refresh(true);
+		}, new Error("Unsupported parameter bForceUpdate"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestRefresh: not refreshable", function (assert) {
 		var oBinding = new ODataBinding({
 				oModel : {}

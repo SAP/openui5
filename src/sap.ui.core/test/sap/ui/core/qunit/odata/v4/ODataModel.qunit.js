@@ -623,6 +623,14 @@ sap.ui.define([
 		// code under test
 		oModel.refresh("myGroup");
 
+		oModelMock.expects("checkGroupId").never();
+		oModelMock.expects("getBindings").never();
+
+		// code under test
+		assert.throws(function () {
+			oModel.refresh(true);
+		}, new Error("Unsupported parameter bForceUpdate"));
+
 		oModelMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
 
 		// code under test
@@ -631,6 +639,8 @@ sap.ui.define([
 		}, oError);
 
 		oModelMock.expects("checkGroupId").withExactArgs("myGroup2");
+		oModelMock.expects("getBindings").withExactArgs().returns([oListBinding, oListBinding3,
+			oPropertyBinding, oPropertyBinding2, oRelativeContextBinding]);
 		oPropertyBinding2Mock.expects("refresh").withExactArgs("myGroup2");
 
 		oListBinding.suspend();

@@ -753,12 +753,18 @@ sap.ui.define([
 	/**
 	 * See {@link sap.ui.base.EventProvider#attachEvent}
 	 *
+	 * @param {string} sEventId The identifier of the event to listen for
+	 * @param {object} [_oData]
+	 * @param {function} [_fnFunction]
+	 * @param {object} [_oListener]
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @see sap.ui.base.EventProvider#attachEvent
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.base.EventProvider#attachEvent
-	ODataMetaModel.prototype.attachEvent = function (sEventId) {
+	ODataMetaModel.prototype.attachEvent = function (sEventId, _oData, _fnFunction, _oListener) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
 				+ "': v4.ODataMetaModel#attachEvent");
@@ -768,6 +774,11 @@ sap.ui.define([
 
 	/**
 	 * See <code>sap.ui.model.Model#bindContext</code>
+	 *
+	 * @param {string} sPath
+	 * @param {sap.ui.model.Context} [oContext]
+	 *
+	 * @returns {sap.ui.model.ContextBinding}
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindContext
@@ -844,6 +855,12 @@ sap.ui.define([
 	/**
 	 * Method not supported
 	 *
+	 * @param {string} _sPath
+	 * @param {sap.ui.model.Context} [_oContext]
+	 * @param {sap.ui.model.Filter[]} [_aFilters]
+	 * @param {object} [_mParameters]
+	 * @param {sap.ui.model.Sorter[]} [_aSorters]
+	 * @returns {sap.ui.model.TreeBinding}
 	 * @throws {Error}
 	 *
 	 * @public
@@ -851,7 +868,8 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Model#bindTree
-	ODataMetaModel.prototype.bindTree = function () {
+	ODataMetaModel.prototype.bindTree = function (_sPath, _oContext, _aFilters, _mParameters,
+			_aSorters) {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#bindTree");
 	};
 

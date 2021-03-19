@@ -563,12 +563,18 @@ sap.ui.define([
 	/**
 	 * See {@link sap.ui.base.EventProvider#attachEvent}
 	 *
+	 * @param {string} sEventId The identifier of the event to listen for
+	 * @param {object} [_oData]
+	 * @param {function} [_fnFunction]
+	 * @param {object} [_oListener]
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @see sap.ui.base.EventProvider#attachEvent
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.base.EventProvider#attachEvent
-	ODataListBinding.prototype.attachEvent = function (sEventId) {
+	ODataListBinding.prototype.attachEvent = function (sEventId, _oData, _fnFunction, _oListener) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
 				+ "': v4.ODataListBinding#attachEvent");
@@ -1799,6 +1805,8 @@ sap.ui.define([
 	/**
 	 * Method not supported
 	 *
+	 * @param {string} [_sPath]
+	 * @returns {Array}
 	 * @throws {Error}
 	 *
 	 * @public
@@ -1806,7 +1814,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.ListBinding#getDistinctValues
-	ODataListBinding.prototype.getDistinctValues = function () {
+	ODataListBinding.prototype.getDistinctValues = function (_sPath) {
 		throw new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues");
 	};
 

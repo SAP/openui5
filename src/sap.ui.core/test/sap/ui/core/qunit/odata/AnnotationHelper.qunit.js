@@ -1610,8 +1610,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 //			sPath2Product + "/navigationProperty/1/some.annotation.for.Navigation.Property"
 	}, {
 		// many navigation properties, ToLineItems has multiplicity "*" but is not last!
-		AnnotationPath
-			: "ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
+		AnnotationPath :
+			"ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
 		metaPath : sPath2SalesOrder + "/com.sap.vocabularies.UI.v1.Facets/0/Target",
 		entitySet : "ContactSet",
 		isMultiple : Error,

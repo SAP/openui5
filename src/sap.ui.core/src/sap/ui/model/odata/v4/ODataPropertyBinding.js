@@ -179,12 +179,19 @@ sap.ui.define([
 	/**
 	 * See {@link sap.ui.base.EventProvider#attachEvent}
 	 *
+	 * @param {string} sEventId The identifier of the event to listen for
+	 * @param {object} [_oData]
+	 * @param {function} [_fnFunction]
+	 * @param {object} [_oListener]
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @see sap.ui.base.EventProvider#attachEvent
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.base.EventProvider#attachEvent
-	ODataPropertyBinding.prototype.attachEvent = function (sEventId) {
+	ODataPropertyBinding.prototype.attachEvent = function (sEventId, _oData, _fnFunction,
+			_oListener) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
 				+ "': v4.ODataPropertyBinding#attachEvent");

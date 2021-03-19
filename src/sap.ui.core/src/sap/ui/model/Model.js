@@ -695,9 +695,8 @@ sap.ui.define([
 	 *
 	 * @name sap.ui.model.Model.prototype.bindContext
 	 * @function
-	 * @param {string | object}
-	 *         sPath the path pointing to the property that should be bound or an object
-	 *         which contains the following parameter properties: path, context, parameters
+	 * @param {string}
+	 *         sPath the path pointing to the property that should be bound
 	 * @param {sap.ui.model.Context}
 	 *         [oContext=null] the context object for this databinding (optional)
 	 * @param {object}

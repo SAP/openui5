@@ -800,6 +800,7 @@ sap.ui.define([
 	/**
 	 * Method not supported
 	 *
+	 * @returns {boolean}
 	 * @throws {Error}
 	 *
 	 * @public
@@ -814,7 +815,6 @@ sap.ui.define([
 	 * Returns whether the binding points to metadata.
 	 *
 	 * @returns {boolean} - Whether the binding points to metadata
-	 *
 	 *
 	 * @abstract
 	 * @function
@@ -887,17 +887,18 @@ sap.ui.define([
 	 *
 	 * Use {@link #requestRefresh} if you want to wait for the refresh.
 	 *
-	 * @param {string} [sGroupId]
+	 * @param {string|boolean} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the binding's group ID is used, see
 	 *   {@link #getGroupId}. For suspended bindings, only the binding's group ID is supported
-	 *   because {@link #resume} uses the binding's group ID.
+	 *   because {@link #resume} uses the binding's group ID. A value of type boolean is not
+	 *   accepted and an error will be thrown (a forced refresh is not supported).
 	 *
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @throws {Error}
 	 *   If the given group ID is invalid, the binding has pending changes, refresh on this
-	 *   binding is not supported, or a group ID different from the binding's group ID is specified
-	 *   for a suspended binding.
+	 *   binding is not supported, a group ID different from the binding's group ID is specified
+	 *   for a suspended binding, or a value of type boolean is given.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
@@ -907,6 +908,9 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#refresh
 	ODataBinding.prototype.refresh = function (sGroupId) {
+		if (typeof sGroupId === "boolean") {
+			throw new Error("Unsupported parameter bForceUpdate");
+		}
 		this.requestRefresh(sGroupId).catch(this.oModel.getReporter());
 	};
 

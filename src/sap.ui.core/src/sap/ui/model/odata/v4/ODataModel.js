@@ -458,12 +458,18 @@ sap.ui.define([
 	/**
 	 * See {@link sap.ui.base.EventProvider#attachEvent}
 	 *
+	 * @param {string} sEventId The identifier of the event to listen for
+	 * @param {object} [_oData]
+	 * @param {function} [_fnFunction]
+	 * @param {object} [_oListener]
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @see sap.ui.base.EventProvider#attachEvent
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.base.EventProvider#attachEvent
-	ODataModel.prototype.attachEvent = function (sEventId) {
+	ODataModel.prototype.attachEvent = function (sEventId, _oData, _fnFunction, _oListener) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
 				+ "': v4.ODataModel#attachEvent");
@@ -771,13 +777,21 @@ sap.ui.define([
 	/**
 	 * Method not supported
 	 *
+	 * @param {string} _sPath
+	 * @param {sap.ui.model.Context} [_oContext]
+	 * @param {sap.ui.model.Filter[]} [_aFilters]
+	 * @param {object} [_mParameters]
+	 * @param {sap.ui.model.Sorter[]} [_aSorters]
+	 * @returns {sap.ui.model.TreeBinding}
 	 * @throws {Error}
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindTree
 	 * @since 1.37.0
 	 */
-	ODataModel.prototype.bindTree = function () {
+	// @override sap.ui.model.Model#bindTree
+	ODataModel.prototype.bindTree = function (_sPath, _oContext, _aFilters, _mParameters,
+			_aSorters) {
 		throw new Error("Unsupported operation: v4.ODataModel#bindTree");
 	};
 
@@ -1530,14 +1544,16 @@ sap.ui.define([
 	 * there are pending changes. If there are changes, call {@link #submitBatch} to submit the
 	 * changes or {@link #resetChanges} to reset the changes before calling {@link #refresh}.
 	 *
-	 * @param {string} [sGroupId]
+	 * @param {string|boolean} [sGroupId]
 	 *   The group ID to be used for refresh; valid values are <code>undefined</code>, '$auto',
 	 *   '$auto.*', '$direct' or application group IDs as specified in
 	 *   {@link sap.ui.model.odata.v4.ODataModel}. It is ignored for suspended bindings, because
-	 *   resume uses the binding's group ID.
+	 *   resume uses the binding's group ID. A value of type boolean is not
+	 *   accepted and an error will be thrown (a forced refresh is not supported).
 	 * @throws {Error}
 	 *   If the given group ID is invalid or if there are pending changes, see
-	 *   {@link #hasPendingChanges}
+	 *   {@link #hasPendingChanges}.
+	 *   If a value of type boolean is given.
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#refresh
@@ -1548,6 +1564,9 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Model#refresh
 	ODataModel.prototype.refresh = function (sGroupId) {
+		if (typeof sGroupId === "boolean") {
+			throw new Error("Unsupported parameter bForceUpdate");
+		}
 		this.checkGroupId(sGroupId);
 
 		// Note: getBindings() returns an array that contains all bindings with change listeners (owned by Model)
