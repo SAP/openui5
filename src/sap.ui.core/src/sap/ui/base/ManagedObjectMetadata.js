@@ -932,6 +932,12 @@ function(
 		if (!this._mAllProperties[sName]) {// ensure extended AllProperties meta-data is also enriched
 			this._mAllProperties[sName] = oProp;
 		}
+
+		if (this._fnPropertyBagFactory) {
+			// after the property bag class is already created that has the default values of the properties, the
+			// default value of the added property needs to be added to the property bag class as well
+			this._fnPropertyBagFactory.prototype[sName] = oProp.getDefaultValue();
+		}
 		// TODO notify listeners (subclasses) about change
 	};
 
