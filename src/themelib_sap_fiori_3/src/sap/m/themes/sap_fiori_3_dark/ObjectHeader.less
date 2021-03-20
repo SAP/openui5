@@ -39,33 +39,6 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 	outline-offset: -1px;
 }
 
-html[data-sap-ui-browser ^= "ie"] {
-	.sapMOH {
-		.sapMOHTitleActive, .sapMOHTitle {
-			border: 1px solid transparent;
-			margin-top: 0.125rem;
-			padding-top: 0.125rem;
-			padding-left: 0.125rem;
-		}
-
-		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h1 > span {
-			outline: none;
-			border: 1px dotted @sapUiContentFocusColor;
-		}
-
-		.sapMOHIntro {
-			padding: 0.125rem 0.125rem 0.125rem 0.25rem;
-		}
-
-		.sapMObjectAttributeDiv {
-			padding: 0.125rem 0.125rem 0.125rem 0.125rem;
-		}
-		.sapMObjStatusMarker .sapUiIcon:focus {
-			outline: none;
-		}
-	}
-}
-
 /*** styles for responsive object header ***/
 .sapMOHR:not(.sapMOHRNoBorder) {
 	box-shadow: @sapUiShadowHeader;
@@ -98,57 +71,4 @@ html[data-sap-ui-browser ^= "ie"] {
 .sapMOHRTitleActive .sapMOHRTitleText:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
-}
-
-html[data-sap-ui-browser ^= "ie"] {
-	.sapMOHR {
-		.sapMOHRTitleDiv {
-			padding-bottom: 0.125rem;
-		}
-
-		.sapMOHRTitleText {
-			border: 1px solid transparent;
-			margin-top: 0.125rem;
-			padding-top: 0.125rem;
-			padding-left: 0.125rem;
-		}
-
-		.sapMOHRTitleActive .sapMOHRTitleText:focus {
-			outline: none;
-			border: 1px dotted @sapUiContentFocusColor;
-		}
-
-		.sapMOHRIcon.sapMPointer {
-			border: 1px solid transparent;
-		}
-
-		.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus {
-			&:before {
-				outline: none;
-			}
-		}
-
-		.sapMOHRIntro, .sapMOHRIntroActive {
-			padding: 0.125rem;
-			span, a {
-				margin: 0.125rem;
-			}
-		}
-
-		.sapMOHRStates {
-			padding-left: 0.125rem;
-		}
-
-		.sapMObjStatusMarker .sapUiIcon:focus {
-			outline: none;
-		}
-
-		.sapMObjectAttributeDiv {
-			padding: 0.125rem 0.125rem 0.125rem 0.125rem;
-		}
-
-		.sapMOHRStatus {
-			padding: 0.125rem 0.125rem 0.5rem 0.125rem;
-		}
-	}
 }
