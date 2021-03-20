@@ -97,29 +97,6 @@
 	}
 }
 
-/* IE mobile and desctop ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ed"].sap-desktop .sapMSegB,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMSegB {
-	.sapMSegBBtn:focus .sapMSegBBtnInner {
-		outline: none;
-		position: relative;
-	}
-	.sapMSegBBtn:not(.sapMSegBBtnDis):focus .sapMSegBBtnInner:before {
-		content: " ";
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: -1px;
-		top: -1px;
-		border: 2px dashed @sapUiContentFocusColor;
-		pointer-events: none;
-	}
-	.sapMSegBBtn.sapMSegBtnLastVisibleButton:focus .sapMSegBBtnInner {
-		margin-right: 0;
-	}
-}
-
 /* Android 4.1 to 4.3 focus fix */
 html[data-sap-ui-os^="Android4.1"][data-sap-ui-browser^="an"],
 html[data-sap-ui-os^="Android4.2"][data-sap-ui-browser^="an"],
