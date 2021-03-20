@@ -84,15 +84,6 @@
 	background: @sapUiFieldReadOnlyBackground;
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMFocus .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
-		&::before {
-			border: 2px dashed @sapUiContentFocusColor;
-		}
-	}
-}
-
 .sapMInputBaseDisabled {
 	opacity: 1;
 }
@@ -121,11 +112,6 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	opacity: 1;
 }
 
-.sapMInputBaseInner:-ms-input-placeholder {
-	font-style: normal;
-	font-weight: normal;
-}
-
 .sapMInputBasePlaceholder {
 	font-style: normal;
 	font-weight: normal;
@@ -147,12 +133,6 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	opacity: 1;
 }
 
-.sapMInputBaseContentWrapperWarning .sapMInputBaseInner:-ms-input-placeholder {
-	color: @sapUiFieldTextColor;
-	font-style: italic;
-	font-weight: normal;
-}
-
 .sapMInputBaseContentWrapperWarning .sapMInputBaseInner::-moz-placeholder {
 	color: @sapUiFieldTextColor;
 	font-style: italic;
@@ -171,8 +151,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	font-weight: bold;
 }
 
-.sapMInputBaseError>.sapMInputBasePlaceholder,
-.sapMInputBaseContentWrapperError .sapMInputBaseInner:-ms-input-placeholder {
+.sapMInputBaseError>.sapMInputBasePlaceholder {
 	color: @sapUiFieldTextColor;
 	font-style: italic;
 	font-weight: bold;
