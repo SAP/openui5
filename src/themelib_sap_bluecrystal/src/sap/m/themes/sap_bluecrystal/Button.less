@@ -5,7 +5,6 @@
 
 .sapMBtnGradient(@color) {
 	background-color: @color;
-	background: -ms-linear-gradient(top, @color 0%, darken(@color, 2) 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0, @color), color-stop(1, darken(@color, 2)));
 	background: -webkit-linear-gradient(top, @color 0%, darken(@color, 2) 100%);
 	background: linear-gradient(top, @color 0%, darken(@color, 2) 100%);
@@ -99,39 +98,6 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 
 .sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive) {
 	border-color: @sapUiButtonLiteBorderColor;
-}
-
-/* ---------------------------------------------------------------------*/
-/* Custom focus outline for IE and Edge:                                */
-/* ---------------------------------------------------------------------*/
-
-.sapMBtn:focus > .sapMBtnInner.sapMFocusable.sapMIE {
-	outline:          none;
-	position:         relative;
-}
-
-.sapMBtnFocusDiv {
-	box-sizing:       border-box;
-	position:         absolute;
-	left:             0.0625rem;
-	top:              0.0625rem;
-	right:            0.0625rem;
-	bottom:           0.0625rem;
-	border-radius:    0;
-}
-
-.sapMBtn:focus .sapMBtnFocusDiv {
-	border:           0.0625rem dashed @sapUiContentFocusColor;
-}
-
-html.sap-desktop .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusDiv,
-html.sap-desktop .sapMBtn.sapMBtnInverted:focus .sapMBtnFocusDiv,
-html.sap-desktop .sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv {
-	border-color:    @sapUiContentContrastFocusColor;
-}
-
-.sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
-	border-color:    @sapUiContentFocusColor;
 }
 
 /* ---------------------------------------------------------------------*/

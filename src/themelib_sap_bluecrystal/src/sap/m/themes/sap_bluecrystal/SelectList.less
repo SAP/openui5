@@ -24,16 +24,3 @@ html.sap-desktop .sapMSelectListItemBase:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -2px;
 }
-
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected::before {
-		border: 1px dotted @sapUiContentFocusColor;
-	}
-	.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected::before {
-		border: 1px dotted @sapUiContentFocusColor;
-	}
-	.sapMSelectListItemBase:focus::before {
-		border: 1px dotted @sapUiContentFocusColor;
-	}
-}

@@ -70,28 +70,3 @@ html.sap-desktop .sapMCrslHud .sapMCrslNext:focus {
 		border: 1px dotted @sapUiContentFocusColor;
 	}
 }
-
-html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev:focus .sapUiIcon,// TODO remove after the end of support for Internet Explorer
-html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext:focus .sapUiIcon,// TODO remove after the end of support for Internet Explorer
-html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslPrev .sapUiIcon:focus,// TODO remove after the end of support for Internet Explorer
-html[data-sap-ui-browser^='ie'].sap-desktop .sapMCrslNext .sapUiIcon:focus {// TODO remove after the end of support for Internet Explorer
-  	&::before {
-		position: absolute;
-		padding-top: 0.425rem;
-		top: -0.125rem;
-		right: -0.125rem;
-		bottom: -0.125rem;
-		left: -0.125rem;
-		border: 1px solid @sapUiContentContrastFocusColor;
-	}
-
-  	&::after {
-		content: "";
-		position: absolute;
-		top: -0.125rem;
-		right: -0.125rem;
-		bottom: -0.125rem;
-		left: -0.125rem;
-		border: 1px dotted @sapUiContentFocusColor;
-	}
-}
