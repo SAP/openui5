@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.20#isEqualWith}
+ * See {@link https://lodash.com/docs/4.17.21#isEqualWith}
  *
  * @function
  * @alias module:sap/base/util/restricted/_isEqualWith

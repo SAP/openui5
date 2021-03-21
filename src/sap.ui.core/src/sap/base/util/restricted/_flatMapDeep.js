@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.20#flatMapDeep}
+ * See {@link https://lodash.com/docs/4.17.21#flatMapDeep}
  *
  * @function
  * @alias module:sap/base/util/restricted/_flatMapDeep
