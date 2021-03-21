@@ -74,30 +74,6 @@ html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabl
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled) {
-	  	outline: none;
-
-		&:before {
-			content: "";
-			position: absolute;
-			border: 1px dashed @sapUiContentFocusColor;
-			top: 1px;
-			right: 1px;
-			bottom: 1px;
-			left: 1px;
-			pointer-events: none;
-			outline: none;
-		}
-
-		&.sapMSltIconOnly.sapMSltPressed:before {
-			border: 1px dashed @sapUiContentContrastFocusColor;
-		}
-	}
-}
-
 .sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
 	border-color: @sapUiFieldHoverBorderColor;
 	background: @sapUiFieldHoverBackground;
