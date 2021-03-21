@@ -616,7 +616,7 @@ License: MIT License
 <year> = 2018
 <copyright holders> = Michael Mclaughlin
 
-Component: lodash 4.17.15
+Component: lodash 4.17.21
 Licensor: JS Foundation and other contributors
 Website: https://github.com/lodash/lodash
 License: MIT License
