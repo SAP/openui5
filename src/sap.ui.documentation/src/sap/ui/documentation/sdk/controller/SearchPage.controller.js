@@ -76,7 +76,9 @@ sap.ui.define([
 				this.getModel("searchData").setProperty("/query", sQuery);
 
 				oList.setBusy(true);
-				SearchUtil.search(sQuery).then(function(result) {
+				SearchUtil.search(sQuery, {
+					includeDeprecated: this.getModel("searchData").getProperty("/includeDeprecated")
+				}).then(function(result) {
 					this.getModel("searchView").setProperty("/lastProcessedQuery", sQuery);
 					this.getModel("searchData").setProperty("/matches", result.matches);
 					this.getView().byId("searchPage").setSelectedSection(sSectionId);
@@ -95,6 +97,17 @@ sap.ui.define([
 				var sVisibleItemsString = iItemsCount > 0 ? "1 - " + iVisibleItemsCount : "0";
 
 				return this.formatMessage(sPattern, sVisibleItemsString, iItemsCount);
+			},
+
+			onDeprecatedFlagChange: function(oEvent) {
+				var bIncludeDeprecated = oEvent.getParameter("selected"),
+					sQuery = this.getModel("searchData").getProperty("/query");
+
+					SearchUtil.search(sQuery, {
+						includeDeprecated: bIncludeDeprecated
+					}).then(function(result) {
+						this.getModel("searchData").setProperty("/matches", result.matches);
+					}.bind(this));
 			},
 
 			_findSectionForCategory: function(sCategory) {

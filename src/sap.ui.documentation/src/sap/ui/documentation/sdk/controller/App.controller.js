@@ -1317,7 +1317,8 @@ sap.ui.define([
 			onSearchLiveChange: function(oEvent) {
 				var oModel = this.getModel("searchData"),
 				sQuery = oEvent.getParameter("newValue"),
-				sPreferencedCategory = oModel.getProperty("/preferencedCategory");
+				sPreferencedCategory = oModel.getProperty("/preferencedCategory"),
+				bIncludeDeprecated = oModel.getProperty("/includeDeprecated");
 
 				if (!this.oPicker) {
 					this.oPicker = this.createSearchPicker();
@@ -1333,7 +1334,8 @@ sap.ui.define([
 
 				oModel.setProperty("/query",sQuery);
 				SearchUtil.search(sQuery, {
-					preferencedCategory: sPreferencedCategory
+					preferencedCategory: sPreferencedCategory,
+					includeDeprecated: bIncludeDeprecated
 				}).then(function(result) {
 					oModel.setProperty("/matches", result.matches);
 				});

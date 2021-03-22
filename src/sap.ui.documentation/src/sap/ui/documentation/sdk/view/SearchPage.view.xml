@@ -44,6 +44,7 @@
 									formatter: '.formatTableTitle'
 								}"/>
 							</OverflowToolbar>
+							<CheckBox text="{i18n>API_MASTER_DEPRECATED_CB}" class="sapUiNoMarginBegin" selected="{searchData>/includeDeprecated}" select="onDeprecatedFlagChange"/>
 							<List
 								id="allList"
 								growing="true"
@@ -87,6 +88,9 @@
 										formatter: '.formatTableTitle'
 									}"/>
 								</OverflowToolbar>
+
+								<CheckBox text="{i18n>API_MASTER_DEPRECATED_CB}" class="sapUiNoMarginBegin" selected="{searchData>/includeDeprecated}" select="onDeprecatedFlagChange"/>
+
 								<List
 									id="apiList"
 									growing="true"
@@ -173,6 +177,7 @@
 										formatter: '.formatTableTitle'
 									}"/>
 								</OverflowToolbar>
+								<CheckBox text="{i18n>API_MASTER_DEPRECATED_CB}" class="sapUiNoMarginBegin" selected="{searchData>/includeDeprecated}" select="onDeprecatedFlagChange"/>
 								<List
 									id="samplesList"
 									growing="true"
