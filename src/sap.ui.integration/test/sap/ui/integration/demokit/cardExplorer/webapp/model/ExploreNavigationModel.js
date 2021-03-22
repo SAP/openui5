@@ -1237,6 +1237,11 @@ sap.ui.define([
 								url: '/samples/translation/i18n/i18n.properties',
 								name: 'i18n/i18n.properties',
 								key: 'i18n/i18n.properties'
+							},
+							{
+								url: '/samples/translation/i18n/i18n_en.properties',
+								name: 'i18n/i18n_en.properties',
+								key: 'i18n/i18n_en.properties'
 							}
 						]
 					}

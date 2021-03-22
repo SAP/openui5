@@ -18,6 +18,7 @@
 				designtime="{config>/designtime}"
 				allowSettings="true"
 				allowDynamicValues="true"
+				language="{config>/language}"
 			></editor:CardEditor>
 			<endButton>
 				<Button text="Close" press=".onEditorDialogClose"></Button>
