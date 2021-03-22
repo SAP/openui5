@@ -1583,6 +1583,8 @@ sap.ui.define([
 	 *   {string} target
 	 *     The target for the message; if relative the reported target path is a concatenation of
 	 *     the resource path, the cache-relative path and this property
+	 *   {string[]} [additionalTargets]
+	 *     Array of additional targets with the same meaning as <code>target</code>
 	 *   {boolean} [technical]
 	 *     Whether the message is reported as <code>technical</code> (supplied by #reportError)
 	 *   {boolean} [transition]
@@ -1606,9 +1608,20 @@ sap.ui.define([
 
 		Object.keys(mPathToODataMessages).forEach(function (sCachePath) {
 			mPathToODataMessages[sCachePath].forEach(function (oRawMessage) {
-				var sTarget = oRawMessage.target[0] === "/"
-						? oRawMessage.target
-						: _Helper.buildPath(sDataBindingPath, sCachePath, oRawMessage.target);
+				var aTargets;
+
+				function resolveTarget(sTarget) {
+					return sTarget[0] === "/"
+						? sTarget
+						: _Helper.buildPath(sDataBindingPath, sCachePath, sTarget);
+				}
+
+				aTargets = [resolveTarget(oRawMessage.target)];
+				if (oRawMessage.additionalTargets) {
+					oRawMessage.additionalTargets.forEach(function (sTarget) {
+						aTargets.push(resolveTarget(sTarget));
+					});
+				}
 
 				aNewMessages.push(new Message({
 					code : oRawMessage.code,
@@ -1616,7 +1629,7 @@ sap.ui.define([
 					message : oRawMessage.message,
 					persistent : oRawMessage.transition,
 					processor : that,
-					target : sTarget,
+					target : aTargets,
 					technical : oRawMessage.technical,
 					technicalDetails : _Helper.createTechnicalDetails(oRawMessage),
 					type : aMessageTypes[oRawMessage.numericSeverity] || MessageType.None
@@ -1690,7 +1703,8 @@ sap.ui.define([
 		 * @param {boolean} [bTechnical] Whether the message is reported as technical
 		 */
 		function addMessage(oMessage, iNumericSeverity, bTechnical) {
-			var oReportMessage = {
+			var sAdditionalTargets =  _Helper.getAdditionalTargets(oMessage),
+				oReportMessage = {
 					code : oMessage.code,
 					message : oMessage.message,
 					numericSeverity : iNumericSeverity,
@@ -1701,6 +1715,9 @@ sap.ui.define([
 					"@$ui5.originalMessage" : oMessage
 				};
 
+			if (sAdditionalTargets) {
+				oReportMessage.additionalTargets = sAdditionalTargets;
+			}
 			Object.keys(oMessage).forEach(function (sProperty) {
 				if (sProperty[0] === '@') {
 					if (sProperty.endsWith(".numericSeverity")) {

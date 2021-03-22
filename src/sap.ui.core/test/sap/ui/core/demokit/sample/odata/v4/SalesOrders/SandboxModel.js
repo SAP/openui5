@@ -216,9 +216,30 @@ sap.ui.define([
 				"SalesOrderList('NEW1')/SO_2_SOITEM(SalesOrderID='NEW1',ItemPosition='10')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
 					source : "SalesOrderList('NEW1')-SO_2_SOITEM('10').json"
 				},
-				"POST SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value" : {
-					source : "POST-SalesOrderList('NEW1')-SO_2_SOITEM.json"
+				"SalesOrderList('NEW1')/SO_2_SOITEM(SalesOrderID='NEW1',ItemPosition='11')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
+					source : "SalesOrderList('NEW1')-SO_2_SOITEM('11').json"
 				},
+				"POST SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value" : [{
+					code : 400,
+					ifMatch : /"ProductID":"HT-1003","Quantity":"1",/,
+					message : {
+						error : {
+							code : "OO/000",
+							message : "Quantity for Product HT-1003 has to be a multiple of 3",
+							"@SAP__common.numericSeverity" : 4,
+							"@SAP__Common.longtextUrl" : "",
+							target : "Quantity",
+							"@SAP__Common.additionalTargets" : ["ProductID"],
+							details : []
+						}
+					}
+				}, {
+					code : 200,
+					ifMatch : /"ProductID":"HT-1003","Quantity":"3",/,
+					source : "POST-SalesOrderList('NEW1')-SO_2_SOITEM_11.json"
+				}, {
+					source : "POST-SalesOrderList('NEW1')-SO_2_SOITEM.json"
+				}],
 				"SalesOrderList('NEW2')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber)" : {
 					source : "SalesOrderList('NEW2').json"
 				},

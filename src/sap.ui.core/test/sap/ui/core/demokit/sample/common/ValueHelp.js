@@ -63,6 +63,14 @@ sap.ui.define([
 			}
 		},
 
+		getValueState : function () {
+			return this.getAggregation("field").getValueState();
+		},
+
+		getValueStateText : function () {
+			return this.getAggregation("field").getValueStateText();
+		},
+
 		init : function () {
 			// Note: Do not pass "this"! Template control vs. clone!
 			this.attachModelContextChange(this.onModelContextChange);
@@ -249,6 +257,20 @@ sap.ui.define([
 			}).catch(function (oError) {
 				Log.error(oError, undefined, "sap.ui.core.sample.common.ValueHelp");
 			});
+		},
+
+		refreshDataState : function (sName, oDataState) {
+			var oField = this.getAggregation("field"),
+				fnOriginalGetBinding = this.getBinding, //TODO: improve with CPOUI5ODATAV4-868
+				that = this;
+
+			if (oField) {
+				oField.getBinding = function(sName) {
+					return that.getBinding(sName);
+				};
+				oField.refreshDataState.call(oField, sName, oDataState);
+				oField.getBinding = fnOriginalGetBinding;
+			}
 		},
 
 		setEnabled : function (bEnabled) {

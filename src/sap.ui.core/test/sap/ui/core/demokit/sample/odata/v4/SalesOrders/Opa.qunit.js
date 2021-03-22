@@ -10,6 +10,7 @@ sap.ui.getCore().attachInit(function () {
 	sap.ui.require([
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/SalesOrders/pages/Main",
+		"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderAdditionalTargets.qunit",
 		"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderMessageHandling.qunit",
 		"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderTypeDeterminationAndDelete.qunit",
 		"sap/ui/core/sample/odata/v4/SalesOrders/Opa.SalesOrderChangeContext.qunit",

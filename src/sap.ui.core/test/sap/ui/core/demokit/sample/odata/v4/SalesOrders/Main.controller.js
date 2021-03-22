@@ -131,7 +131,7 @@ sap.ui.define([
 				DeliveryDate : oDeliveryDate.toJSON(),
 				GrossAmount : "1137.64",
 				ProductID : "HT-1000",
-				Quantity : "1.000",
+				Quantity : "1",
 				QuantityUnit : "EA"
 			}, false, true);
 			// select the newly created one
