@@ -553,17 +553,25 @@ sap.ui.define([
 			if (!this._pInitCardSample) {
 				this._pInitCardSample = Core.loadLibrary("sap.ui.integration", { async: true })
 					.then(function () {
-						return Fragment.load({
-							name: "sap.ui.demo.cardExplorer.view.CardSample",
-							controller: this
-						});
+						return Promise.all([
+							Fragment.load({
+								name: "sap.ui.demo.cardExplorer.view.CardSample",
+								controller: this
+							}),
+							new Promise(function (res, rej) {
+								sap.ui.require(["sap/ui/demo/cardExplorer/util/CardGenericHost"], res, rej);
+							})
+						]);
 					}.bind(this))
-					.then(function (oCard) {
+					.then(function (aArgs) {
+						var oCard = aArgs[0],
+							oHost = aArgs[1];
+
 						this.byId("cardContainer").addItem(oCard);
 
 						//This catches any error that was produced by the card
 						oCard.attachEvent("_error", this._onCardError, this);
-
+						oCard.setHost(oHost);
 						this._oCardSample = oCard;
 					}.bind(this));
 			}

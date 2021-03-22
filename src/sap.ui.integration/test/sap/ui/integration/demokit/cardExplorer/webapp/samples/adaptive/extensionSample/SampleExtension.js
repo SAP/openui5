@@ -58,7 +58,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	// Fetches a product using destinations property from manifest.json.
 	SampleExtension.prototype._getProduct = function (iProductId) {
 		return this.getCard().request({
-			"url": "{{destinations.northwind}}/Products",
+			"url": "{{destinations.Northwind_V3}}/Products",
 			"parameters": {
 				"$format": "json",
 				"$filter": "ProductID eq " + iProductId
@@ -78,7 +78,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	// Fetches a supplier via the card API from the destionation defined in the manifest file.
 	SampleExtension.prototype._getSupplier = function (iSupplierId) {
 		return this.getCard().request({
-			"url": "{{destinations.northwind}}/Suppliers",
+			"url": "{{destinations.Northwind_V3}}/Suppliers",
 			"parameters": {
 				"$format": "json",
 				"$filter": "SupplierID eq " + iSupplierId
@@ -91,7 +91,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	// Fetches a list of all product categories in Northwind.
 	SampleExtension.prototype._getCategories = function () {
 		return this.getCard().request({
-			"url": "{{destinations.northwind}}/Categories",
+			"url": "{{destinations.Northwind_V3}}/Categories",
 			"parameters": {
 				"$format": "json"
 			}

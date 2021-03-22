@@ -7,9 +7,9 @@
 		"extension": "./BatchRequestExtension",
 		"configuration": {
 			"destinations": {
-				"NorthwindDestination": {
-					"name": "Northwind",
-					"label": "Northwind Service URL",
+				"Northwind_V2": {
+					"name": "Northwind_V2",
+					"label": "Northwind V2 Service URL",
 					"defaultUrl": "https://services.odata.org/V2/Northwind/Northwind.svc"
 				}
 			}
