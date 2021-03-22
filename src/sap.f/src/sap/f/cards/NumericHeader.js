@@ -405,15 +405,17 @@ sap.ui.define([
 	 * @returns {string} IDs of controls
 	 */
 	NumericHeader.prototype._getHeaderAccessibility = function () {
-		var sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
+		var sSubtitleId = this.getSubtitle() ? this._getSubtitle().getId() : "",
 			sStatusTextId = this.getStatusText() ? this.getId() + "-status" : "",
 			sUnitOfMeasureId = this._getUnitOfMeasurement() ? this._getUnitOfMeasurement().getId() : "",
-			sSideIndicatorsId = this.getSideIndicators() ? this._getSideIndicatorIds() : "",
-			sDetailsId = this._getDetails() ? this._getDetails().getId() : "",
-			sMainIndicatorId = this._getMainIndicator() ? this._getMainIndicator().getId() : "",
-			sIds = sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + sSideIndicatorsId + " " + sDetailsId;
+			sSideIndicatorsIds = this.getSideIndicators() ? this._getSideIndicatorIds() : "",
+			sDetailsId = this.getDetails() ? this._getDetails().getId() : "",
+			sMainIndicatorId = this.getNumber() || this.getScale() ? this._getMainIndicator().getId() : "",
+			sIds = sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + sSideIndicatorsIds + " " + sDetailsId;
 
-			return sIds.trim();
+		// remove whitespace from both sides
+		// and merge the consecutive whitespaces into one
+		return sIds.replace(/ {2,}/g, ' ').trim();
 	};
 
 	/**

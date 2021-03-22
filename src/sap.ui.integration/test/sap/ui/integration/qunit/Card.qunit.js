@@ -1425,8 +1425,8 @@ sap.ui.define([
 				Core.applyChanges();
 
 				// Assert
-				assert.equal((oHeader.getAggregation("_details").getText()).length, "", "Card header should have no Details.");
-				assert.equal(oHeader.getAggregation("_mainIndicator").getValue(), "", "Card header should have no Main indicators.");
+				assert.notOk(oHeader.getAggregation("_details"), "Card header should have no Details.");
+				assert.notOk(oHeader.getAggregation("_mainIndicator"), "Card header should have no Main indicators.");
 				assert.equal(oHeader.getAggregation("sideIndicators").length, 0, "Card header should have no Side indicators.");
 
 				assert.equal(document.getElementsByClassName("sapFCardHeaderDetails").length, 0, "Card header Details are not rendered.");
