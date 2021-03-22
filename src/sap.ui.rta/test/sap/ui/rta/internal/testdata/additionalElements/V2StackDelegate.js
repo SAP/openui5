@@ -66,14 +66,14 @@ sap.ui.define([
 
 		//CDS UI.Hidden new way also for sap:visible = false
 		var mHiddenAnnotation = mProperty["com.sap.vocabularies.UI.v1.Hidden"];
-		mProp.unsupported = !!mHiddenAnnotation && mHiddenAnnotation.Bool === "true";
+		mProp.hideFromReveal = !!mHiddenAnnotation && mHiddenAnnotation.Bool === "true";
 
 		var mFieldControlAnnotation;
-		if (!mProp.unsupported) {
+		if (!mProp.hideFromReveal) {
 			// Old hidden annotation
 			mFieldControlAnnotation = mProperty["com.sap.vocabularies.Common.v1.FieldControl"];
 			if (mFieldControlAnnotation && mFieldControlAnnotation.EnumMember) {
-				mProp.unsupported = mFieldControlAnnotation.EnumMember === "com.sap.vocabularies.Common.v1.FieldControlType/Hidden";
+				mProp.hideFromReveal = mFieldControlAnnotation.EnumMember === "com.sap.vocabularies.Common.v1.FieldControlType/Hidden";
 			} else {
 				//@runtime hidden by field control value = 0
 				var sFieldControlPath = mFieldControlAnnotation && mFieldControlAnnotation.Path;
@@ -82,7 +82,7 @@ sap.ui.define([
 					var bListBinding = oElement.getBinding(sAggregationName) instanceof sap.ui.model.ListBinding;
 					if (!bListBinding) {
 						var iFieldControlValue = oElement.getBindingContext().getProperty(sFieldControlPath);
-						mProp.unsupported = iFieldControlValue === 0;
+						mProp.hideFromReveal = iFieldControlValue === 0;
 					}
 				}
 			}
