@@ -170,16 +170,30 @@ sap.ui.define([
 			var sName = oType.getMetadata().getName();
 			var oFormatOptions = oType.getFormatOptions();
 			var oConstraints = isEmptyObject(oType.getConstraints()) ? undefined : oType.getConstraints();
+			var bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
+			var bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
 
-			// if type is used from binding (Field) or format options are not set correctly -> create new type
-			if (!oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure) {
+			// if measure and number needs to be shown -> create new type
+			if (bShowMeasure && bShowNumber) {
+				// Type for number
 				oFormatOptions = merge({}, oFormatOptions); // do not manipulate original object
 				oFormatOptions.showMeasure = false;
+				oFormatOptions.showNumber = true;
 				oFormatOptions.strictParsing = true; // do not allow to enter unit in number field
 				var TypeClass = ObjectPath.get(sName);
 				oContentFactory.setUnitOriginalType(oContentFactory.getDataType());
 				oContentFactory.setDataType(new TypeClass(oFormatOptions, oConstraints));
 				oField.getControlDelegate().initializeInternalUnitType(oField.getPayload(), oContentFactory.getDataType(), oContentFactory.getFieldTypeInitialization());
+
+				// type for unit
+				oFormatOptions = merge({}, oFormatOptions); // do not manipulate original object
+				oFormatOptions.showMeasure = true;
+				oFormatOptions.showNumber = false;
+				oFormatOptions.strictParsing = true; // do not allow to enter number in unit field
+				TypeClass = ObjectPath.get(sName);
+				oContentFactory.setUnitType(new TypeClass(oFormatOptions, oConstraints));
+				oField.getControlDelegate().initializeInternalUnitType(oField.getPayload(), oContentFactory.getUnitType(), oContentFactory.getFieldTypeInitialization());
+
 				oContentFactory.updateConditionType();
 			}
 		}

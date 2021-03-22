@@ -362,8 +362,8 @@
 						fieldHelp="FVH-WeightUnit">
 						<mdc:dependents>
 							<mdcField:ListFieldHelp id="FVH-WeightUnit"
-									items="{view>/weightUnits}" >
-								<c:ListItem key="{view>id}" text="{view>unit}" additionalText="{view>text}"/>
+									items="{/weightUnits}" >
+								<c:ListItem key="{id}" text="{unit}" additionalText="{text}"/>
 							</mdcField:ListFieldHelp>
 						</mdc:dependents>
 					</mdc:FilterField>

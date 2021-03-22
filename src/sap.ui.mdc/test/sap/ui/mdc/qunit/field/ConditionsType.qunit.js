@@ -496,15 +496,17 @@ sap.ui.define([
 	});
 
 	var oUnitConditionsType;
+	var oUnitType;
 
 	QUnit.module("currency type", {
 		beforeEach: function() {
 			var oCondition1 = Condition.createCondition("EQ", [[1.23, "EUR"]]);
 			var oCondition2 = Condition.createCondition("BT", [[1, "EUR"], [2, "EUR"]]);
 			oValueType = new CurrencyType({showMeasure: false});
+			oUnitType = new CurrencyType({showNumber: false});
 			oConditionsType = new ConditionsType({valueType: oValueType, maxConditions: -1});
 			oUnitConditionsType = new ConditionsType({
-				isUnit: true,
+				valueType: oUnitType,
 				operators: ["EQ"],
 				hideOperator: true,
 				originalDateType: oValueType,
@@ -519,6 +521,8 @@ sap.ui.define([
 			oUnitConditionsType = undefined;
 			oValueType.destroy();
 			oValueType = undefined;
+			oUnitType.destroy();
+			oUnitType = undefined;
 		}
 	});
 
@@ -550,12 +554,26 @@ sap.ui.define([
 		assert.equal(aConditions[1].values[1][0], 2, "Condition 1: Values entry 1 number");
 		assert.equal(aConditions[1].values[1][1], "USD", "Condition 1: Values entry 1 unit");
 
+//		aConditions = oUnitConditionsType.parseValue("");
+//		assert.equal(aConditions.length, 2, "two conditions");
+//		assert.equal(aConditions[0].values.length, 1, "Condition 0: Values length");
+//		assert.equal(aConditions[0].operator, "EQ", "Condition 0: Operator");
+//		assert.ok(isNaN(aConditions[0].values[0][0]), "Condition 0: Values entry 0 number"); // as number is cleared by type if unit is cleared
+//		assert.equal(aConditions[0].values[0][1], null, "Condition 0: Values entry 0 unit");
+//		assert.equal(aConditions[1].operator, "BT", "Condition 1: Operator");
+//		assert.ok(isNaN(aConditions[1].values[0][0]), "Condition 0: Values entry 0 number"); // as number is cleared by type if unit is cleared
+//		assert.equal(aConditions[1].values[0][1], null, "Condition 1: Values entry 0 unit");
+//		assert.ok(isNaN(aConditions[1].values[1][0]), "Condition 0: Values entry 0 number"); // as number is cleared by type if unit is cleared
+//		assert.equal(aConditions[1].values[1][1], null, "Condition 1: Values entry 1 unit");
+
+		oUnitType._aCurrentValue = [1, "USD"]; // fake existing value
+		oValueType._aCurrentValue = [1, "USD"]; // fake existing value
 		oUnitConditionsType.oFormatOptions.getConditions = function() {return [];};
 		aConditions = oUnitConditionsType.parseValue("EUR");
 		assert.equal(aConditions.length, 1, "one conditions");
 		assert.equal(aConditions[0].values.length, 1, "Condition 0: Values length");
 		assert.equal(aConditions[0].operator, "EQ", "Condition 0: Operator");
-		assert.equal(aConditions[0].values[0][0], undefined, "Condition 0: Values entry 0 number");
+		assert.equal(aConditions[0].values[0][0], 1, "Condition 0: Values entry 0 number");
 		assert.equal(aConditions[0].values[0][1], "EUR", "Condition 0: Values entry 0 unit");
 
 	});

@@ -39,28 +39,6 @@ sap.ui.define([
 
 			var oViewModel = new JSONModel({
 				editMode: false,
-				weightUnits: [
-					{
-						id: "g",
-						unit: "g",
-						text: "gram"
-					},
-					{
-						id: "kg",
-						unit: "kg",
-						text: "kilogram"
-					},
-					{
-						id: "mg",
-						unit: "mg",
-						text: "milligram"
-					},
-					{
-						id: "t",
-						unit: "t",
-						text: "ton"
-					}
-				],
 				info: ""
 			});
 			oView.setModel(oViewModel, "view");
@@ -231,7 +209,9 @@ sap.ui.define([
 			//			}
 		},
 		clearFilters: function(oEvent) {
-			var oCM = this.getView().getModel("cm");
+			var oView = this.getView();
+			var oForm = oView.byId("Form1");
+			var oCM = oForm.getModel("cm");
 			oCM.removeAllConditions();
 		}
 	});
