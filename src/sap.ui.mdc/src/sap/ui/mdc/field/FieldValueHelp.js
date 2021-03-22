@@ -980,7 +980,10 @@ sap.ui.define([
 				return _checkBindingsPending.call(this, aInBindings);
 			}.bind(this)).then(function() {
 				return SyncPromise.resolve().then(function() {
-					if (bKey) {
+					if (oBindingContext && !oBindingContext.getModel()) {
+						// BindingContext without model cannot bring any data and might be destroyed -> ignore as request is probably outdated
+						return null;
+					} else if (bKey) {
 						return oWrapper.getTextForKey(vValue, _mapParametersToHelp.call(this, oInParameters, aInParameters, false, aInBindings, oBindingContext, true), _mapParametersToHelp.call(this, oOutParameters, this.getOutParameters(), true, undefined, undefined, true), bNoRequest);
 					} else {
 						// use default in-parameters for check

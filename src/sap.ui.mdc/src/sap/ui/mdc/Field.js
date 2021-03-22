@@ -183,7 +183,8 @@ sap.ui.define([
 			if (Context.hasChanged(this._oBindingContext, oBindingContext)) {
 				// BindingContextChanged -> if parsing error trigger update to remove valueState and wrong input
 				this._oBindingContext = oBindingContext;
-				if (this._bParseError) {
+				this._oContentFactory.updateConditionType();
+				if (this._bParseError || this.getFieldHelp()) { // In FieldHelp case InParameters might need an update
 					this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates
 					this._bParseError = false;
 				}
