@@ -943,6 +943,20 @@ function (
 		assert.equal(oDynamicPageTitle.getAreaShrinkRatio(), "0:0:0", "shrink factors are correct");
 	});
 
+	QUnit.test("test areaShrinkRatio applied from renderer", function (assert) {
+		var oDynamicPageTitle = this.oDynamicPageTitle;
+
+		// Act
+		oDynamicPageTitle.setAreaShrinkRatio("0:0:0");
+		oDynamicPageTitle.invalidate();
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oDynamicPageTitle.$("left-inner").css("flex-shrink"), "0", "left area shrink factor is correct");
+		assert.strictEqual(oDynamicPageTitle.$("content").css("flex-shrink"), "0", "midle area shrink factor is correct");
+		assert.strictEqual(oDynamicPageTitle.$("mainActions").css("flex-shrink"), "0", "actions area shrink factor is correct");
+	});
+
 	QUnit.test("Adding an OverflowToolbar to the content sets flex-basis and removing it resets it", function (assert) {
 		var oToolbar = oFactory.getOverflowToolbar();
 
