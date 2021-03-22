@@ -211,6 +211,10 @@ sap.ui.define([
 			if (this._itemNavigation) {
 				this._itemNavigation.destroy();
 			}
+
+			if (this._popover) {
+				this._popover.destroy();
+			}
 		};
 
 		/**
