@@ -166,7 +166,7 @@ sap.ui.define([
 
 			assert.strictEqual(oTable._oPopover.getItems()[0].getLabel(), oResourceBundle.getText("table.SETTINGS_GROUP"),
 				"The first column has group menu item");
-			assert.strictEqual(oTable._oPopover.getItems()[1].getLabel(), oResourceBundle.getText("table.SETTINGS_AGGREGATE"),
+			assert.strictEqual(oTable._oPopover.getItems()[1].getLabel(), oResourceBundle.getText("table.SETTINGS_TOTALS"),
 				"The first column has aggregate menu item");
 
 			oTable._oTable.fireEvent("columnSelect", {
