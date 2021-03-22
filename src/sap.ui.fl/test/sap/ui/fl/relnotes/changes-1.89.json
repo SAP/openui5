@@ -3,6 +3,17 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "9ea49028f45a7c9ef59e8a6eae0043d24680249a",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl...Loader does not use the cache key while reInitialize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170012946"
+          }
+        ]
+      },
+      {
         "id": "8453edf84c97d02936f3525bd18e6dbf0c3506b3",
         "type": "FIX",
         "text": "[INTERNAL] sap.ui.fl SmartVariantManagementWriteAPI.add handles executeOnSelection correct",

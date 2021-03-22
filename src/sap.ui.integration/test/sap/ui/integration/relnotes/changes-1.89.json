@@ -3,6 +3,17 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "5c62cee5cc4235e14e3bdd6613eed985d1a2db9b",
+        "type": "FIX",
+        "text": " Integration Cards: No error is thrown when no data is available for some filter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170019001"
+          }
+        ]
+      },
+      {
         "id": "f27a4a6e762429b045d5c3db91b42cd97e89e042",
         "type": "FEATURE",
         "text": " sap.ui.integration.widgets.Card: Introducing new value to dataMode property"
