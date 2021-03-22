@@ -79,6 +79,7 @@ sap.ui.define([
 			SimpleType.apply(this, arguments);
 			this.sName = "Condition";
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			this._oCalls = {active: 0, last: 0, condition: undefined, exception: undefined}; // if Multiple async. calls, just use the last result
 		}
 
 	});
@@ -141,6 +142,9 @@ sap.ui.define([
 				var sDisplay = _getDisplay.call(this);
 				var aOperators = _getOperators.call(this);
 				var oEQOperator = FilterOperatorUtil.getEQOperator(aOperators);
+				this._oCalls.active++;
+				this._oCalls.last++;
+				var iCallCount = this._oCalls.last;
 
 				if (!bPreventGetDescription && oCondition.operator === oEQOperator.name && sDisplay !== FieldDisplay.Value &&
 						oCondition.validated === ConditionValidated.Validated && !oCondition.values[1]) {
@@ -162,18 +166,19 @@ sap.ui.define([
 								oCondition.values[1] = vDescription;
 							}
 						}
-						return _formatToString.call(this, oCondition);
+						return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType);
 					}.bind(this)).catch(function(oException) {
-						if (oException instanceof FormatException && _isInvalidInputAllowed.call(this)) {
+						var oMyException;
+						if (!(oException instanceof FormatException) || !_isInvalidInputAllowed.call(this)) {
 							// if "invalid" input is allowed don't fire an exception
-							return _formatToString.call(this, oCondition);
-						} else {
-							throw oException;
+							oMyException = oException;
 						}
+
+						return _returnResult.call(this, oCondition, oMyException, iCallCount, true, oType);
 					}.bind(this)).unwrap();
 				}
 
-				return _formatToString.call(this, oCondition);
+				return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType);
 			default:
 				// operators can only be formatted to string. But other controls (like Slider) might just use the value
 				if (oType && oCondition.values.length >= 1) {
@@ -201,6 +206,38 @@ sap.ui.define([
 		}
 
 		return oOperator.format(oCondition, oType, sDisplay);
+
+	}
+
+	function _returnResult(oCondition, oException, iCallCount, bFormat, oType) {
+
+		this._oCalls.active--;
+		if (iCallCount < this._oCalls.last && (this._oCalls.condition !== undefined || this._oCalls.exception !== undefined)) {
+			// there is already a newer result
+			oCondition = this._oCalls.condition;
+			oException = this._oCalls.exception;
+		}
+
+		if (iCallCount === this._oCalls.last && this._oCalls.active > 0) {
+			this._oCalls.condition = merge({}, oCondition); // don't use same object
+			this._oCalls.exception = oException;
+		} else if (this._oCalls.active === 0 && this._oCalls.last > 0) { // no pending calls -> clean up
+			this._oCalls = {active: 0, last: 0, condition: undefined, exception: undefined};
+		}
+
+		if (oException) {
+			throw oException; // just throw exception
+		}
+
+		// finalize condition. If Exception occurs here just throw it
+		var vResult;
+		if (bFormat) {
+			vResult = _formatToString.call(this, oCondition);
+		} else {
+			vResult = _finishParseFromString.call(this, oCondition, oType);
+		}
+
+		return vResult;
 
 	}
 
@@ -277,6 +314,9 @@ sap.ui.define([
 				if (oOperator) {
 					var oCondition;
 					var bCompositeType = _isCompositeType.call(this, oType);
+					this._oCalls.active++;
+					this._oCalls.last++;
+					var iCallCount = this._oCalls.last;
 
 					if (!bCompositeType && oOperator.validateInput && bInputValidationEnabled) {
 						// use FieldHelp to determine condition
@@ -288,7 +328,7 @@ sap.ui.define([
 						}
 					} else if (vValue === "" && !bCompositeType) {
 						// nothing entered -> no condition ; but in unit case update existing condition
-						return _finishParseFromString.call(this, null, oType);
+						return _returnResult.call(this, null, undefined, iCallCount, false, oType);
 					} else {
 						// just normal operator parsing
 						try {
@@ -299,18 +339,23 @@ sap.ui.define([
 								oCondition = oOperator.getCondition(vValue, oType, sDisplay, bUseDefaultOperator);
 							}
 						} catch (oException) {
-							if (oException instanceof ParseException && oOriginalDateType) {
+							var oMyException = oException;
+							if (oMyException instanceof ParseException && oOriginalDateType) {
 								// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
 								// parse exception might contain this as pattern. The user should see the pattern thats shown
 								// So try to parse date with the original type to get parseException with right pattern.
-								oOriginalDateType.parseValue(vValue, "string", oOriginalDateType._aCurrentValue);
+								try {
+									oOriginalDateType.parseValue(vValue, "string", oOriginalDateType._aCurrentValue);
+								} catch (oOriginalException) {
+									oMyException = oOriginalException;
+								}
 							}
-							throw oException;
+							return _returnResult.call(this, undefined, oMyException, iCallCount, false, oType); // to reuse it for pending calls
 						}
 					}
 
 					if (oCondition) {
-						return _finishParseFromString.call(this, oCondition, oType);
+						return _returnResult.call(this, oCondition, undefined, iCallCount, false, oType);
 					}
 				}
 
@@ -459,6 +504,19 @@ sap.ui.define([
 			}
 		};
 
+		var iCallCount = this._oCalls.last;
+
+		var fnGetResult = function(vResult, fnCheck) {
+			var oCondition;
+			var oMyException;
+			try {
+				oCondition = fnCheck.call(this, vResult);
+			} catch (oException) {
+				oMyException = oException; // to store for pending async calls
+			}
+			return _returnResult.call(this, oCondition, oMyException, iCallCount, false, oType);
+		};
+
 		try {
 			vCheckParsedValue = oType.parseValue(vCheckValue, "string");
 			oType.validateValue(vCheckParsedValue);
@@ -475,11 +533,9 @@ sap.ui.define([
 		return SyncPromise.resolve().then(function() {
 			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
 		}.bind(this)).then(function(oResult) {
-			var oCondition = fnSuccess.call(this, oResult);
-			return _finishParseFromString.call(this, oCondition, oType);
+			return fnGetResult.call(this, oResult, fnSuccess);
 		}.bind(this)).catch(function(oException) {
-			var oCondition = fnError.call(this, oException);
-			return _finishParseFromString.call(this, oCondition, oType);
+			return fnGetResult.call(this, oException, fnError);
 		}.bind(this)).unwrap();
 
 	}
