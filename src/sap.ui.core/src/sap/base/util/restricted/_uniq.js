@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.15#uniq}
+ * See {@link https://lodash.com/docs/4.17.21#uniq}
  *
  * @function
  * @alias sap/base/util/restricted/_uniq

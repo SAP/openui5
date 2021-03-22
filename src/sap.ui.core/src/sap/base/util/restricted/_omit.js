@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.15#omit}
+ * See {@link https://lodash.com/docs/4.17.21#omit}
  *
  * @function
  * @alias sap/base/util/restricted/_omit
