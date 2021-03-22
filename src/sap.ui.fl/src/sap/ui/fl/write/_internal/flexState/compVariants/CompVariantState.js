@@ -364,13 +364,16 @@ sap.ui.define([
 			command: mPropertyBag.command,
 			generator: mPropertyBag.generator
 		};
-		if (oChangeSpecificData.isVariant) {
+
+		if (oChangeSpecificData.favorite !== undefined) {
 			oInfo.favorite = oChangeSpecificData.favorite;
-			// executeOnSelection has to be persisted within the content for variants
-			oInfo.content.executeOnSelection = oChangeSpecificData.content.executeOnSelection || !!oChangeSpecificData.executeOnSelection;
+		}
+		if (oChangeSpecificData.executeOnSelection !== undefined) {
+			oInfo.executeOnSelection = oChangeSpecificData.executeOnSelection;
+		}
+		if (oChangeSpecificData.contexts !== undefined) {
 			oInfo.contexts = oChangeSpecificData.contexts;
 		}
-
 
 		var FlexObjectClass = oChangeSpecificData.isVariant ? CompVariant : Change;
 		var oFile = FlexObjectClass.createInitialFileContent(oInfo);
@@ -395,6 +398,7 @@ sap.ui.define([
 		if (mPropertyBag.executeOnSelection === undefined) {
 			aUnchangedValues.push("executeOnSelection");
 		}
+		// TODO: check if this is also sufficient in case of a changed favorite & executeOnSelection property
 		var oRevertData = {
 			type: CompVariantState.operationType.ContentUpdate,
 			content: {
@@ -439,6 +443,20 @@ sap.ui.define([
 
 		if (!mPropertyBag.revert) {
 			storeRevertDataInVariant(mPropertyBag, oVariant);
+
+			if (mPropertyBag.executeOnSelection !== undefined) {
+				oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
+			}
+			if (mPropertyBag.favorite !== undefined) {
+				oVariant.storeFavorite(mPropertyBag.favorite);
+			}
+			if (mPropertyBag.contexts) {
+				oVariant.storeContexts(mPropertyBag.contexts);
+			}
+		} else {
+			oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
+			oVariant.storeFavorite(mPropertyBag.favorite);
+			oVariant.storeContexts(mPropertyBag.contexts);
 		}
 
 		// TODO: check if it is an update or create corresponding changes
@@ -446,26 +464,8 @@ sap.ui.define([
 			oVariant.setText("variantName", mPropertyBag.name);
 		}
 
-		if (mPropertyBag.favorite !== undefined) {
-			oVariant.storeFavorite(mPropertyBag.favorite);
-		}
-		var oContent = oVariant.getContent();
-		var oContentToBeWritten = mPropertyBag.content || oContent;
+		oVariant.setContent(mPropertyBag.content || oVariant.getContent());
 
-		if (mPropertyBag.executeOnSelection !== undefined) {
-			oContentToBeWritten.executeOnSelection = mPropertyBag.executeOnSelection;
-		} else if (!(mPropertyBag.revert && oContentToBeWritten.executeOnSelection !== undefined) && oContent.executeOnSelection !== undefined) {
-			// in case of revert triggered by undo
-			oContentToBeWritten.executeOnSelection = oContent.executeOnSelection;
-		}
-
-		oVariant.setContent(oContentToBeWritten);
-		// also update the runtime instance
-		oVariant.setExecuteOnSelection(!!oContentToBeWritten.executeOnSelection);
-
-		if (mPropertyBag.contexts) {
-			oVariant.storeContexts(mPropertyBag.contexts);
-		}
 
 		return oVariant;
 	};

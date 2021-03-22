@@ -257,8 +257,7 @@ sap.ui.define([
 			expected: {
 				name: "",
 				content: {
-					someOld: "content",
-					executeOnSelection: true
+					someOld: "content"
 				},
 				executeOnSelection: true,
 				favorite: false
@@ -315,8 +314,7 @@ sap.ui.define([
 			expected: {
 				name: "",
 				content: {
-					someOld: "content",
-					executeOnSelection: true
+					someOld: "content"
 				},
 				executeOnSelection: true,
 				favorite: false
@@ -375,8 +373,7 @@ sap.ui.define([
 			expected: {
 				name: "",
 				content: {
-					someProperty: "someValue",
-					executeOnSelection: true
+					someProperty: "someValue"
 				},
 				executeOnSelection: true,
 				favorite: false

@@ -201,9 +201,7 @@ sap.ui.define([
 			var oExpectedVariant = {
 				fileName: "someFileName",
 				changeType: "filterVariant",
-				content: {
-					executeOnSelection: false
-				},
+				content: {},
 				fileType: "variant",
 				layer: Layer.CUSTOMER,
 				namespace: "apps/the.app.component/changes/",
@@ -257,9 +255,8 @@ sap.ui.define([
 			var oExpectedVariant = {
 				fileName: "someFileName",
 				changeType: "filterVariant",
-				content: {
-					executeOnSelection: true
-				},
+				content: {},
+				executeOnSelection: true,
 				favorite: true,
 				contexts: {
 					role: ["someValue"]
@@ -674,9 +671,7 @@ sap.ui.define([
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
 				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
 				assert.equal(oVariant._oDefinition.favorite, true, "the favorite flag was set correct in the definition");
-				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: true
-				}, "1: after an update... is the content is correct");
+				assert.equal(oVariant._oDefinition.executeOnSelection, true, "the executeOnSelect flag was set correct in the definition");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 
 				// (update, <<UPDATE>>, revert, update, revert, revert)
@@ -698,7 +693,6 @@ sap.ui.define([
 				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
 				assert.equal(oVariant._oDefinition.favorite, false, "the favorite flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: true,
 					someKey: "someValue"
 				}, "2: after an update... is the content is correct");
 				assert.equal(oVariant.getText("variantName"), "myNewName", "and the name is updated");
@@ -714,9 +708,8 @@ sap.ui.define([
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
 				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
 				assert.equal(oVariant._oDefinition.favorite, true, "the favorite flag was set correct in the definition");
-				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: true
-				}, "3: after a revert... is the content is correct");
+				assert.equal(oVariant._oDefinition.executeOnSelection, true, "the executeOnSelect flag was set correct in the definition");
+				assert.deepEqual(oVariant.getContent(), {}, "3: after a revert... is the content is correct");
 				assert.equal(oVariant.getText("variantName"), "initialName", "and the name is also reverted");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 
@@ -736,7 +729,6 @@ sap.ui.define([
 				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
 				assert.equal(oVariant._oDefinition.favorite, false, "the favorite flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: true,
 					someKey: "someValue"
 				}, "4: after an update... is the content is correct");
 				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
@@ -754,9 +746,8 @@ sap.ui.define([
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
 				assert.equal(oVariant._oDefinition.favorite, true, "the favorite flag was set correct in the definition");
-				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: true
-				}, "5: after a revert... is the content is correct");
+				assert.equal(oVariant._oDefinition.executeOnSelection, true, "the executeOnSelect flag was set correct in the definition");
+				assert.deepEqual(oVariant.getContent(), {}, "5: after a revert... is the content is correct");
 
 				// (update, update, revert, update, revert, <<REVERT>>)
 				CompVariantState.revert({
@@ -765,10 +756,6 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				});
 				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
-				assert.equal(oVariant._oDefinition.favorite, false, "the favorite flag was set correct in the definition");
-				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelection: false
-				}, "6: after a revert... is the content is correct");
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data entries are present");
 				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");

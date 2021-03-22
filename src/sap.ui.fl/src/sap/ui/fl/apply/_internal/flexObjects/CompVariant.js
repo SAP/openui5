@@ -127,34 +127,27 @@ sap.ui.define([
 
 		constructor: function(oFile) {
 			Change.apply(this, arguments);
-			// TODO: align the executeOnSelection on the API level
-			// persisted variants
-			if (oFile.content && oFile.content.executeOnSelect) {
-				this.setExecuteOnSelection(oFile.content.executeOnSelect);
+
+			var bExecuteOnSelect = oFile.content && (oFile.content.executeOnSelect || oFile.content.executeOnSelection);
+
+			// new property always overrules older content
+			if (oFile.executeOnSelection !== undefined) {
+				bExecuteOnSelect = oFile.executeOnSelection;
 			}
-			// SmartVariantManagementAPI.add provided variants
-			if (oFile.content && oFile.content.executeOnSelection) {
-				this.setExecuteOnSelection(oFile.content.executeOnSelection);
-			}
-			// RTA API provided variants
-			if (oFile.executeOnSelection) {
-				this.setExecuteOnSelection(oFile.executeOnSelection);
-			}
-			if (oFile.contexts) {
-				//setting through property and not setter to not change state to dirty
-				this.setProperty("contexts", oFile.contexts);
-			}
+			this.setExecuteOnSelection(bExecuteOnSelect);
+
+			this.setContexts(oFile.contexts || {});
 
 			if (oFile.layer === Layer.VENDOR || oFile.layer === Layer.CUSTOMER_BASE) {
 				this.setFavorite(true);
 			}
 
 			if (oFile.favorite !== undefined) {
-				this.setFavorite(oFile.favorite);
+				this.setFavorite(!!oFile.favorite);
 			}
 
 			if (oFile.persisted !== undefined) {
-				this.setPersisted(oFile.persisted);
+				this.setPersisted(!!oFile.persisted);
 			}
 		}
 	});
@@ -190,9 +183,32 @@ sap.ui.define([
 	 * @public
 	 */
 	CompVariant.prototype.storeFavorite = function (bFavorite) {
-		this._oDefinition.favorite = bFavorite;
+		if (bFavorite !== undefined) {
+			this._oDefinition.favorite = bFavorite;
+		} else {
+			delete this._oDefinition.favorite;
+		}
 		this.setState(Change.states.DIRTY);
 		this.setFavorite(bFavorite);
+	};
+
+	/**
+	 * Sets the e'Apply Automatically' flag of the runtime instance as well as the persistent representation.
+	 * This results in setting the definition as well as flagging the entity as 'dirty'.
+	 *
+	 * @param {boolean} bExecuteOnSelection - Boolean to which the 'Apply Automatically' flag should be set
+	 *
+	 * @public
+	 */
+	CompVariant.prototype.storeExecuteOnSelection = function (bExecuteOnSelection) {
+		if (bExecuteOnSelection !== undefined) {
+			this._oDefinition.executeOnSelection = bExecuteOnSelection;
+		} else {
+			delete this._oDefinition.executeOnSelection;
+		}
+		delete this._oDefinition.content.executeOnSelection;
+		this.setState(Change.states.DIRTY);
+		this.setExecuteOnSelection(bExecuteOnSelection);
 	};
 
 	CompVariant.createInitialFileContent = function (oPropertyBag) {
@@ -202,6 +218,9 @@ sap.ui.define([
 		}
 		if (oPropertyBag.favorite !== undefined) {
 			oNewFile.favorite = oPropertyBag.favorite;
+		}
+		if (oPropertyBag.executeOnSelection !== undefined) {
+			oNewFile.executeOnSelection = oPropertyBag.executeOnSelection;
 		}
 
 		// TODO: clean up the createInitialFileContent within the Change class plus create a base class FlexObject
@@ -232,8 +251,12 @@ sap.ui.define([
 	 * @public
 	 */
 	CompVariant.prototype.storeContexts = function (mContexts) {
-		this.setProperty("contexts", mContexts);
-		this._oDefinition.contexts = mContexts;
+		if (mContexts !== undefined) {
+			this._oDefinition.contexts = mContexts;
+		} else {
+			delete this._oDefinition.contexts;
+		}
+		this.setContexts(mContexts);
 		this.setState(Change.states.DIRTY);
 	};
 
