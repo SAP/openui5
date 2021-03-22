@@ -1,16 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:f="sap.f" xmlns:core="sap.ui.core">
-	<Dialog title="Sample Title" contentWidth="20rem">
+	<Dialog title="Error" contentWidth="20rem" verticalScrolling="false" state="Error">
 		<buttons>
-			<Button text="Save" type="Accept" />
-			<Button text="Close" type="Reject" press="onDialogClose"/>
+			<Button text="Close" press="onDialogClose"/>
 		</buttons>
-
-		<f:IllustratedMessage>
-
-			<f:additionalContent>
-				<Button text="Compose" />
-			</f:additionalContent>
-
-		</f:IllustratedMessage>
+		<f:IllustratedMessage illustrationType="sapIllus-UnableToLoad" />
 	</Dialog>
 </core:FragmentDefinition>

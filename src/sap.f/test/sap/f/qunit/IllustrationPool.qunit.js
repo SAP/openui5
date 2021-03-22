@@ -275,7 +275,7 @@ function (
 		assert.expect(1);
 
 		// Act
-		oRequireSVGPromise = IllustrationPool._requireSVG(SAP_ILLUSTRATION_SET_NAME, "sapIllus-Scene-NoEmail", "dummyInstance");
+		oRequireSVGPromise = IllustrationPool._requireSVG(SAP_ILLUSTRATION_SET_NAME, "sapIllus-Scene-NoMail", "dummyInstance");
 		oRequireSVGPromise.then(function() {
 			// Assert
 			assert.ok(fnUpdateDOMPoolSpy.calledOnce, "_updateDOMPool is called once in the success of the oRequireSVGPromise");

@@ -1,0 +1,19 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m"
+	xmlns="sap.f"
+	xmlns:card="sap.f.cards"
+	height="100%">
+	<Card width="300px" class="sapUiSmallMarginBegin sapUiSmallMarginTop">
+		<header>
+			<card:Header title="Upcoming Avtivities" subtitle="For Today" />
+		</header>
+		<content>
+			<IllustratedMessage illustrationType="sapIllus-NoActivities">
+				<additionalContent>
+					<m:Button text="Add Activity" />
+				</additionalContent>
+			</IllustratedMessage>
+		</content>
+	</Card>
+</mvc:View>

@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/f/Illustration",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
+	'sap/ui/core/library',
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/thirdparty/jquery",
 	"./IllustratedMessageRenderer"
 ], function(
 	library,
@@ -21,7 +23,9 @@ sap.ui.define([
 	Illustration,
 	Control,
 	Core,
+	coreLibrary,
 	ResizeHandler,
+	jQuery,
 	IllustratedMessageRenderer
 ) {
 	"use strict";
@@ -31,6 +35,10 @@ sap.ui.define([
 
 	// shortcut for sap.f.IllustratedMessageType
 	var IllustratedMessageType = library.IllustratedMessageType;
+
+	// shortcut for sap.ui.core.IllustratedMessageType
+	var TextAlign = coreLibrary.TextAlign;
+
 
 	/**
 	 * Constructor for a new <code>IllustratedMessage</code>.
@@ -230,6 +238,8 @@ sap.ui.define([
 	IllustratedMessage.prototype.onAfterRendering = function () {
 		this._updateDomSize();
 		this._attachResizeHandlers();
+		this._preventWidowWords(this._getTitle().getDomRef());
+		this._preventWidowWords(this._getDescription().getDomRef());
 	};
 
 	IllustratedMessage.prototype.exit = function () {
@@ -280,7 +290,7 @@ sap.ui.define([
 			oFormattedText = this.getAggregation("_formattedText");
 
 		if (!oFormattedText) {
-			oFormattedText = new FormattedText();
+			oFormattedText = new FormattedText({textAlign: TextAlign.Center});
 			this.setAggregation("_formattedText", oFormattedText);
 		}
 
@@ -325,7 +335,7 @@ sap.ui.define([
 			oText = this.getAggregation("_text");
 
 		if (!oText) {
-			oText = new Text();
+			oText = new Text({textAlign: TextAlign.Center});
 			this.setAggregation("_text", oText);
 		}
 
@@ -349,7 +359,7 @@ sap.ui.define([
 			oTitle = this.getAggregation("_title");
 
 		if (!oTitle) {
-			oTitle = new Title();
+			oTitle = new Title({wrapping: true});
 			this.setAggregation("_title", oTitle);
 		}
 
@@ -366,6 +376,28 @@ sap.ui.define([
 	/**
 	 * PRIVATE METHODS
 	 */
+
+	/**
+	 * Helper function which ensures that there is non-breaking space between the last two words
+	 * of a given DOM content. By adding it, we prevent one word (widow) on the last row of a text node.
+	 * @param {DOMRef} oDomRef - the DOM object which will be checked against
+	 * @private
+	 */
+	IllustratedMessage.prototype._preventWidowWords = function(oDomRef) {
+		var $DomRef,
+			sDomRefContent,
+			oHTMLElement = window.HTMLElement;
+
+		if (!(oHTMLElement && oDomRef instanceof oHTMLElement)) {
+			return;
+		}
+
+		$DomRef = jQuery(oDomRef);
+		sDomRefContent = $DomRef.html();
+
+		sDomRefContent = sDomRefContent.replace(/ ([^ ]*)$/,'&nbsp;$1');
+		$DomRef.html(sDomRefContent);
+	};
 
 	/**
 	 * Updates the <code>IllustratedMessage</code> DOM elements according to its <code>illustrationSize</code> property.

@@ -596,7 +596,7 @@ sap.ui.define(["sap/ui/base/DataType",
 		 * "No Email" illustration type.
 		 * @public
 		 */
-		NoEmail: "sapIllus-NoEmail",
+		NoMail: "sapIllus-NoMail",
 
 		/**
 		 * "No Entries" illustration type.

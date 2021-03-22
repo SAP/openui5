@@ -12,13 +12,6 @@ function (UIComponent, IllustrationPool) {
 
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
-			var oTntSet = {
-				setFamily: "tnt",
-				setURI: sap.ui.require.toUrl("sap/tnt/themes/base/illustrations")
-			};
-
-			// register tnt illustration set
-			IllustrationPool.registerIllustrationSet(oTntSet, false);
 		}
 	});
 });

@@ -23,7 +23,7 @@
 
 		<f:IllustratedMessage illustrationSize="{/sSelectedSize}" illustrationType="{/sSelectedType}">
 			<f:additionalContent>
-				<Button text="Compose" />
+				<Button text="Action (optional)" />
 			</f:additionalContent>
 		</f:IllustratedMessage>
 	</Page>

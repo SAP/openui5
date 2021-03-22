@@ -47,7 +47,8 @@
 			"category": "Display",
 			"since": "1.88",
 			"samples": [
-			"sap.f.sample.IllustratedMessageInCard",
+			"sap.f.sample.IllustratedMessageInCardNoActivities",
+			"sap.f.sample.IllustratedMessageInCardNoEmail",
 			"sap.f.sample.IllustratedMessageInDialog",
 			"sap.f.sample.IllustratedMessageInPage"
 			]
@@ -180,10 +181,15 @@
 		  "description": "Dynamic Page containing a sap.m.Wizard and WizardProgressNavigator in the content area."
 		},
 		{
-		  "id": "sap.f.sample.IllustratedMessageInCard",
-		  "name": "Illustrated Message in a Card",
-		  "description": "IllustratedMessage as content of sap.f.Card."
+			"id": "sap.f.sample.IllustratedMessageInCardNoActivities",
+			"name": "'NoActivities' Illustrated Message in a Card",
+			"description": "IllustratedMessage as content of sap.f.Card. 'NoActivities' illustration type is being used for the Illustrated Message."
 		},
+		{
+			"id": "sap.f.sample.IllustratedMessageInCardNoEmail",
+			"name": "'NoEmail' Illustrated Message in a Card",
+			"description": "IllustratedMessage as content of sap.f.Card. 'NoEmail' illustration type is being used for the Illustrated Message."
+			},
 		{
 		  "id": "sap.f.sample.IllustratedMessageInDialog",
 		  "name": "Illustrated Message in a Dialog",
