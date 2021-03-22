@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/p13n/FlexUtil", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/FilterBar"
-], function (FlexUtil, Table, Chart, FilterBar) {
+	"sap/ui/mdc/p13n/FlexUtil", "sap/ui/mdc/Table", "sap/ui/mdc/Chart", "sap/ui/mdc/FilterBar", "sap/ui/mdc/Control"
+], function (FlexUtil, Table, Chart, FilterBar, MDCControl) {
 	"use strict";
 
 		var aExistingItems = [
@@ -442,5 +442,56 @@ sap.ui.define([
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oFilterBar.getId(), "the correct selectorElement has been set");
 		assert.strictEqual(aChanges[0].changeSpecificData.changeType, "removeCondition", "Correct change type has been set");
 		assert.strictEqual(aChanges[0].changeSpecificData.content.name, "Test", "Correct property has been added");
+	});
+
+	//----------------------- property 'set' changes ------------------------------
+	QUnit.module("FlexUtil API 'getPropertySetterchanges' tests");
+
+	QUnit.test("Check 'getPropertySetterChanges' delta determination (no changes for same value)", function(assert){
+		var aSetChanges = FlexUtil.getPropertySetterChanges({
+			operation: "setSomeProperty",
+			control: new MDCControl(),
+			deltaAttribute: "someProperty",
+			existingState: [
+				{name: "a", someProperty: "foo"}
+			],
+			changedState: [
+				{name: "a", someProperty: "foo"}
+			]
+		});
+
+		assert.equal(aSetChanges.length, 0, "No changes created as the value is the same");
+	});
+
+	QUnit.test("Check 'getPropertySetterChanges' (changes for new values)", function(assert){
+		var aSetChanges = FlexUtil.getPropertySetterChanges({
+			operation: "setSomeProperty",
+			control: new MDCControl(),
+			deltaAttribute: "someProperty",
+			existingState: [
+				{name: "a"}
+			],
+			changedState: [
+				{name: "a", someProperty: "foo"}
+			]
+		});
+
+		assert.equal(aSetChanges.length, 1, "One change created as the value is added");
+	});
+
+	QUnit.test("Check 'getPropertySetterChanges' (changes for different values)", function(assert){
+		var aSetChanges = FlexUtil.getPropertySetterChanges({
+			operation: "setSomeProperty",
+			control: new MDCControl(),
+			deltaAttribute: "someProperty",
+			existingState: [
+				{name: "a", someProperty: "foo"}
+			],
+			changedState: [
+				{name: "a", someProperty: "bar"}
+			]
+		});
+
+		assert.equal(aSetChanges.length, 1, "One change created as the value is changed");
 	});
 });

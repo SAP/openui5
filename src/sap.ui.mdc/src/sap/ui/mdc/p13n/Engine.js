@@ -338,6 +338,54 @@ sap.ui.define([
 	};
 
 	/**
+	 * Enhances the xConfig object by using the <code>ModificationHandler</code>
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 *
+	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
+	 * @param {object} mEnhanceConfig An object providing the information about the xConfig enhancement
+	 * @param {object} mEnhanceConfig.name The affected property name
+	 * @param {object} mEnhanceConfig.controlMeta Object describing which config is affected
+	 * @param {object} mEnhanceConfig.controlMeta.aggregation The affected aggregation name (such as <code>columns</code> or <code>filterItems</code>)
+	 * @param {object} mEnhanceConfig.controlMeta.property The affected property name (such as <code>width</code> or <code>lable</code>)
+	 * @param {object} mEnhanceConfig.value The value that should be written in the xConfig
+	 * @param {object} [mEnhanceConfig.propertyBag] Optional propertybag for the <code>ModificationHandler</code>
+	 */
+	Engine.prototype.enhanceXConfig = function(vControl, mEnhanceConfig) {
+
+		var oControl = Engine.getControlInstance(vControl);
+		var oRegistryEntry = this._getRegistryEntry(vControl);
+
+		if (oRegistryEntry) {
+			var oModificationHandler = this.getModificationHandler(vControl);
+			var oConfig = oModificationHandler.enhanceConfig(oControl, mEnhanceConfig);
+
+			oRegistryEntry.xConfig = oConfig;
+		} else {
+			throw new Error("The control instance needs to be registered to use xConfig!");
+		}
+
+	};
+
+	/**
+	 * Returns a copy of the xConfig object
+	 *
+	 * @param {sap.ui.core.Element} oControl The according element which should be checked
+	 * @param {object} [oModificationPayload] An object providing a modification handler specific payload
+	 * @param {object} [oModificationPayload.propertyBag] Optional propertybag for different modification handler derivations
+	 *
+	 * @returns {object} The adapted xConfig object
+	 */
+	Engine.prototype.readXConfig = function(vControl, mEnhanceConfig) {
+
+		var oControl = Engine.getControlInstance(vControl);
+		var oModificationHandler = this.getModificationHandler(vControl);
+		return oModificationHandler.readConfig(oControl, mEnhanceConfig);
+
+	};
+
+	/**
 	 * Apply a State on a control by passing an object that contains the
 	 * registered controller key and an object matching the innter subcontroller housekeeping.
 	 *
@@ -640,7 +688,8 @@ sap.ui.define([
 				modification: oPreConfiguration && oPreConfiguration.modification ? oPreConfiguration.modification : null,
 				controller: {},
 				activeP13n: null,
-				helper: null
+				helper: null,
+				xConfig: null
 			});
 
 		}
