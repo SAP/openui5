@@ -99,7 +99,7 @@ sap.ui.define([
 		* <li>The {@link sap.m.QuickView QuickView} is more appropriate for your use case.</li>
 		* </ul>
 		* <h3>Responsive Behavior</h3>
-		* The popover is closed when the user clicks or taps outside the popover or selects an action within the popover. You can prevent this with the <code>modal</code> property.
+		* The popover is closed when the user clicks or taps outside the popover or selects an action within the popover, which calls the popover's <code>close()</code> method. You can prevent this with the <code>modal</code> property.
 		* The popover can be resized when the <code>resizable</code> property is enabled.
 		*
 		* When using the sap.m.Popover in Sap Quartz theme, the breakpoints and layout paddings could be determined by the container's width. To enable this concept and add responsive paddings to an element of the Popover control, you may add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>.
