@@ -267,27 +267,27 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusD
 			color: @sapUiNeutralText;
 		}
 	}
-	
+
 		// backgrounds
 		.sapUiIcon{
 			&.sapUiIconBGColorContrast {
 				color: @sapUiShellTextColor;
-				background: transparent; 
+				background: transparent;
 			}
-	
+
 			&.sapUiIconBGColorCritical {
 				color: @sapUiContentContrastTextColor;
 				background: @sapUiCriticalElement;
 			}
-	
+
 			&.sapUiIconBGColorNegative  {
 				color: @sapUiContentContrastTextColor;
 				background: @sapUiNegativeElement;
 			}
-	
+
 			&.sapUiIconBGColorNeutral {
 				color: @sapUiContentContrastTextColor;
-				background: @sapUiNeutralElement; 
+				background: @sapUiNeutralElement;
 			}
 
 			&.sapUiIconBGColorPositive {
@@ -295,7 +295,7 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusD
 				background: @sapUiPositiveElement;
 			}
 		}
-	
+
 }
 
 // ==========================================================================
@@ -649,4 +649,19 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapTntToolHeader .sapMITBItem:focus
 
 html.sap-desktop .sapTntToolHeader .sapMObjStatusActive:focus .sapMObjStatusLink::after {
 	outline-color: @_sap_tnt_ToolHeader_BorderColor;
+}
+
+// ==========================================================================
+// sap.f.Breadcrumbs overriding
+// ==========================================================================
+.sapTntToolHeader .sapMBreadcrumbs {
+	.sapMBreadcrumbsItem,
+	.sapMLnk,
+	.sapMSltIcon:before{
+		color: @sapUiShellInteractiveTextColor;
+	}
+
+	.sapMBreadcrumbsSeparator {
+		color: @sapUiShellTextColor;
+	}
 }
