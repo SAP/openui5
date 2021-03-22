@@ -264,11 +264,6 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			var oFirstMessage = aMessages[0];
 			var oBinding = oControl.getBinding(this._getBindingName());
 			var sBindingPath = oBinding.getPath();
-			var getMessageTarget = function(oMessage) {
-				return oMessage.getTargets().find(function(sTarget) {
-					return sTarget.startsWith(sBindingPath);
-				}) || "";
-			};
 
 			aMessages.forEach(function(oMessage) {
 				if (oMessage.getControlIds().indexOf(oControl.getId()) == -1) {
@@ -278,7 +273,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			});
 
 			this._sCombinedType = this._getCombinedType(aMessages);
-			if (aMessages.length == 1 && getMessageTarget(oFirstMessage).endsWith(sBindingPath)) {
+			if (aMessages.length == 1 && oFirstMessage.getTarget() && oFirstMessage.getTarget().endsWith(sBindingPath)) {
 				sMessage = oFirstMessage.getMessage();
 			} else {
 				sMessage = this._translate(this._sCombinedType.toUpperCase());
@@ -286,10 +281,14 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 
 			this.showMessage(sMessage, oFirstMessage.getType());
 			if (!this._bFiltering && oBinding.requestFilterForMessages && this.getEnableFiltering()) {
-				aMessages.some(function(oMessage) {
-					var sMessageTarget = getMessageTarget(oMessage);
-					return sMessageTarget && !sMessageTarget.endsWith(sBindingPath);
-				}) && this._setLinkText(this._translate("FILTER_ITEMS"));
+				var fnFilter = this.getFilter();
+				var fnMessageFilter = fnFilter && function(oMessage) {
+					return fnFilter(oMessage, oControl);
+				};
+
+				oBinding.requestFilterForMessages(fnMessageFilter).then(function(oFilter) {
+					oFilter && this._setLinkText(this._translate("FILTER_ITEMS"));
+				}.bind(this));
 			}
 
 			if (bUpdateMessageModel) {
@@ -458,21 +457,21 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			useInfoToolbar: function(oParent) {
 				return oParent && oParent.getUseInfoToolbar && oParent.getUseInfoToolbar() == "Off" ? false : true;
 			},
-			showInfoToolbar: function(oTable, oInfoToolbar) {
-				if (this.useInfoToolbar(oTable.getParent())) {
-					this._oOldInfoToolbar = oTable.getInfoToolbar();
+			showInfoToolbar: function(oControl, oInfoToolbar) {
+				if (this.useInfoToolbar(oControl.getParent())) {
+					this._oOldInfoToolbar = oControl.getInfoToolbar();
 					this._oNewInfoToolbar = oInfoToolbar;
-					oTable.setInfoToolbar(oInfoToolbar);
+					oControl.setInfoToolbar(oInfoToolbar);
 				}
 			},
-			hideInfoToolbar: function(oTable) {
+			hideInfoToolbar: function(oControl) {
 				if (this._oNewInfoToolbar) {
-					oTable.setInfoToolbar(this._oOldInfoToolbar);
+					oControl.setInfoToolbar(this._oOldInfoToolbar);
 					this._oNewInfoToolbar = this._oOldInfoToolbar = null;
 				}
 			},
-			onDeactivate: function(oTable) {
-				this.hideInfoToolbar(oTable);
+			onDeactivate: function(oControl) {
+				this.hideInfoToolbar(oControl);
 			}
 		},
 		"sap.ui.table.Table": {
@@ -480,20 +479,20 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			useInfoToolbar: function(oParent) {
 				return oParent && oParent.getUseInfoToolbar && oParent.getUseInfoToolbar() == "Off" ? false : true;
 			},
-			showInfoToolbar: function(oTable, oInfoToolbar) {
-				if (this.useInfoToolbar(oTable.getParent())) {
+			showInfoToolbar: function(oControl, oInfoToolbar) {
+				if (this.useInfoToolbar(oControl.getParent())) {
 					this._oInfoToolbar = oInfoToolbar;
-					oTable.addExtension(oInfoToolbar);
+					oControl.addExtension(oInfoToolbar);
 				}
 			},
-			hideInfoToolbar: function(oTable) {
+			hideInfoToolbar: function(oControl) {
 				if (this._oInfoToolbar) {
-					oTable.removeExtension(this._oInfoToolbar);
+					oControl.removeExtension(this._oInfoToolbar);
 					this._oInfoToolbar = null;
 				}
 			},
-			onDeactivate: function(oTable) {
-				this.hideInfoToolbar(oTable);
+			onDeactivate: function(oControl) {
+				this.hideInfoToolbar(oControl);
 			}
 		}
 	}, DataStateIndicator);

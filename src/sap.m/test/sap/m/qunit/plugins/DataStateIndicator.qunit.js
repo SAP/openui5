@@ -290,7 +290,7 @@ sap.ui.define([
 				var oFilter = null;
 				if (this.aFiltersForMessages.length == 1) {
 					oFilter = this.aFiltersForMessages[0];
-				} else {
+				} else if (this.aFiltersForMessages.length > 1) {
 					oFilter = new Filter({filters : this.aFiltersForMessages});
 				}
 				return Promise.resolve(oFilter);
