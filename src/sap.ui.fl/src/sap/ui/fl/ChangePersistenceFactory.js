@@ -6,14 +6,19 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/ChangePersistence",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
+	"sap/ui/fl/apply/_internal/changes/descriptor/Applier"
 ], function(
 	Component,
 	FlexState,
 	ChangePersistence,
-	Utils
+	Utils,
+	ApplyStrategyFactory,
+	Applier
 ) {
 	"use strict";
+
 
 	/**
 	 * Factory to get or create a new instances of {sap.ui.fl.ChangePersistence}
@@ -79,13 +84,14 @@ sap.ui.define([
 	 * @param {object} oConfig - Copy of the configuration of loaded component
 	 * @param {object} oConfig.asyncHints - Async hints passed from the app index to the core Component processing
 	 * @param {object} oManifest - Copy of the manifest of loaded component
+	 * @returns {Promise} Promise
 	 * @since 1.38
 	 * @private
 	 */
 	ChangePersistenceFactory._onLoadComponent = function (oConfig, oManifest) {
 		// stop processing if the component is not of the type application or component ID is missing
 		if (!Utils.isApplication(oManifest) || !oConfig.id) {
-			return;
+			return Promise.resolve();
 		}
 
 		FlexState.initialize({
@@ -93,6 +99,12 @@ sap.ui.define([
 			asyncHints: oConfig.asyncHints,
 			manifest: oManifest,
 			componentId: oConfig.id
+		});
+
+		// manifest descriptor changes for ABAP mixed mode can only be applied in this hook,
+		// because at this point all libs have been loaded (in contrast to the first Component._fnPreprocessManifest hook), but the manifest is still adaptable
+		return ApplyStrategyFactory.getRuntimeStrategy().then(function(RuntimeStrategy) {
+			return Applier.applyChangesIncludedInManifest(oManifest, RuntimeStrategy);
 		});
 	};
 
