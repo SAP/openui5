@@ -3,6 +3,8 @@
 /* Base theme                   */
 /* ============================ */
 
+@_sap_m_Label_AsteriskWidth: 6px;
+
 .sapMLabel {
 	color: @sapUiContentLabelColor;
 	font-size: @sapMFontMediumSize;
@@ -24,6 +26,10 @@
 	display: inline-block;
 	vertical-align: top;
 	max-width: 100%;
+}
+
+.sapMLabel.sapMLabelRequired:not(.sapMLabelWrapped) .sapMLabelTextWrapper {
+	max-width: calc(~"100% - 0.125rem - @{_sap_m_Label_AsteriskWidth}");
 }
 
 .sapMLabelBold,
@@ -136,6 +142,10 @@ td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
 	// Label alone on row, truncating. Don't let ":" and "*" truncate by using flex
 	.sapUiFormElementLbl > .sapMLabel:not(.sapMLabelWrapped) {
 		display: inline-flex;
+
+		&.sapMLabelRequired .sapMLabelTextWrapper {
+			max-width: 100%;
+		}
 	}
 
 	// Label side by side with a field
