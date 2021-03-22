@@ -205,8 +205,8 @@ sap.ui.define([
 		var oViewPromise = XMLView.create({
 			id: "asyncView3",
 			definition:
-			'<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns:html=\"http://www.w3.org/1999/xhtml\">' +
-			'<Dialog id="dialog" xmlns="sap.m" title="XML Fragment Dialog" escapeHandler="closeDialog">' +
+			'<mvc:View xmlns="sap.m" xmlns:mvc=\"sap.ui.core.mvc\" xmlns:html=\"http://www.w3.org/1999/xhtml\">' +
+			'<Dialog id="dialog" title="XML Fragment Dialog" escapeHandler="closeDialog">' +
 			'   <Text text="title" />                         ' +
 			'   <Text text="nope" />                         ' +
 			'   <buttons>                                              ' +
@@ -290,8 +290,8 @@ sap.ui.define([
 		var oView = sap.ui.xmlview({
 			id: "syncView3",
 			viewContent:
-			'<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns:html=\"http://www.w3.org/1999/xhtml\">' +
-			'<Dialog id="dialog" xmlns="sap.m" title="XML Fragment Dialog" escapeHandler="closeDialog">' +
+			'<mvc:View xmlns="sap.m" xmlns:mvc=\"sap.ui.core.mvc\" xmlns:html=\"http://www.w3.org/1999/xhtml\">' +
+			'<Dialog id="dialog" title="XML Fragment Dialog" escapeHandler="closeDialog">' +
 			'   <Text text="title" />                         ' +
 			'   <buttons>                                              ' +
 			'      <Button text="action!" press="doSomething" /> ' +

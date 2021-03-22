@@ -1156,7 +1156,7 @@ function(
 				// we enrich the error message with XML information, e.g. the node causing the issue
 				if (!oError.isEnriched) {
 					var sType = oView.getMetadata().isA("sap.ui.core.mvc.View") ? "View" : "Fragment";
-					var sNodeSerialization = node && node.cloneNode().outerHTML;
+					var sNodeSerialization = node && node.cloneNode(false).outerHTML;
 					// Logging the error like this cuts away the stack trace,
 					// but provides better information for applications.
 					// For Framework debugging, we would have to look at the error object anyway.
