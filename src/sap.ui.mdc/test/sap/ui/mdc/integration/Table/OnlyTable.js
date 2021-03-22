@@ -1,12 +1,12 @@
 // Music AllJourneys
-jQuery.sap.require("sap.ui.qunit.qunit-css");
-jQuery.sap.require("sap.ui.thirdparty.qunit");
-jQuery.sap.require("sap.ui.qunit.qunit-junit");
-jQuery.sap.require("sap.ui.test.opaQunit");
-jQuery.sap.require("sap.ui.test.Opa5");
+sap.ui.requireSync("sap.ui.qunit.qunit-css");
+sap.ui.requireSync("sap.ui.thirdparty.qunit");
+sap.ui.requireSync("sap.ui.qunit.qunit-junit");
+sap.ui.requireSync("sap.ui.test.opaQunit");
+sap.ui.requireSync("sap.ui.test.Opa5");
 
-jQuery.sap.require("sap.ui.mdc.integrations.pages.Common");
-jQuery.sap.require("sap.ui.mdc.integrations.pages.Main");
+sap.ui.requireSync("sap.ui.mdc.integrations.pages.Common");
+sap.ui.requireSync("sap.ui.mdc.integrations.pages.Main");
 
 sap.ui.test.Opa5.extendConfig({
 	arrangements: new sap.ui.mdc.integrations.pages.Common(),
@@ -15,8 +15,8 @@ sap.ui.test.Opa5.extendConfig({
 });
 
 
-jQuery.sap.require("sap.ui.mdc.integrations.Table.ResponsiveTableMainJourney");
-jQuery.sap.require("sap.ui.mdc.integrations.Table.ResponsiveTableViewSettingsJourney");
+sap.ui.requireSync("sap.ui.mdc.integrations.Table.ResponsiveTableMainJourney");
+sap.ui.requireSync("sap.ui.mdc.integrations.Table.ResponsiveTableViewSettingsJourney");
 
-jQuery.sap.require("sap.ui.mdc.integrations.Table.GridTableMainJourney");
-jQuery.sap.require("sap.ui.mdc.integrations.Table.GridTableViewSettingsJourney");
+sap.ui.requireSync("sap.ui.mdc.integrations.Table.GridTableMainJourney");
+sap.ui.requireSync("sap.ui.mdc.integrations.Table.GridTableViewSettingsJourney");
