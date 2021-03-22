@@ -286,8 +286,7 @@ sap.ui.define([
 			expected: {
 				name: "",
 				content: {
-					someOld: "content",
-					favorite: true
+					someOld: "content"
 				},
 				executeOnSelection: false,
 				favorite: true
@@ -334,8 +333,7 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				},
 				content: {
-					someOld: "content",
-					favorite: false
+					someOld: "content"
 				},
 				texts: {
 					variantName: {
@@ -346,8 +344,7 @@ sap.ui.define([
 			expected: {
 				name: "",
 				content: {
-					someOld: "content",
-					favorite: true
+					someOld: "content"
 				},
 				executeOnSelection: false,
 				favorite: true
@@ -366,9 +363,9 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				},
 				content: {
-					executeOnSelection: true,
-					favorite: false
+					executeOnSelection: true
 				},
+				favorite: false,
 				texts: {
 					variantName: {
 						value: ""
@@ -379,8 +376,7 @@ sap.ui.define([
 				name: "",
 				content: {
 					someProperty: "someValue",
-					executeOnSelection: true,
-					favorite: false
+					executeOnSelection: true
 				},
 				executeOnSelection: true,
 				favorite: false
