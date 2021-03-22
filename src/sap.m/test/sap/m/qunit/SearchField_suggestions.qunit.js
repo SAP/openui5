@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/SuggestionItem",
 	"sap/m/SearchField",
 	"sap/ui/Device",
+	"sap/ui/core/InvisibleText",
 	"jquery.sap.keycodes",
 	"jquery.sap.global"
 ], function(
@@ -16,6 +17,7 @@ sap.ui.define([
 	SuggestionItem,
 	SearchField,
 	Device,
+	InvisibleText,
 	jQuery
 ) {
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
@@ -95,6 +97,8 @@ sap.ui.define([
 		if (!popup) {
 			return;
 		}
+
+		assert.strictEqual(popup.$().attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"), "aria-labelledby is correctly set");
 
 		var fnPopupSpy = this.spy(popup, "close");
 
