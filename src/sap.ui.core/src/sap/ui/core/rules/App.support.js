@@ -229,7 +229,6 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mv
 				"sap.ui.extensionpoint",
 				"sap.ui.component",
 				"sap.ui.view",
-				"sap.ui.jsview",
 				"sap.ui.template"
 			];
 
@@ -243,6 +242,36 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mv
 							id: "WEBPAGE"
 						}
 					});
+				});
+			});
+		}
+	};
+
+	/**
+	 * Check if deprecated sap.ui.core.mvc.JSView is used.
+	 */
+	 var oJSViewRule = {
+		id: "deprecatedJSViewUsage",
+		audiences: [Audiences.Internal],
+		categories: [Categories.Modularization],
+		enabled: true,
+		minversion: "1.90",
+		title: "Usage of deprecated JSView",
+		description: "Usage of deprecated JSView",
+		resolution: "Avoid using sap.ui.core.mvc.JSView. Instead use Typed Views by defining the view class with 'sap.ui.core.mvc.View.extend' and creating the view instances with 'sap.ui.core.mvc.View.create'.",
+		resolutionurls: [{
+			text: 'Documentation: Typed Views',
+			href: 'https://openui5.hana.ondemand.com/#/topic/e6bb33d076dc4f23be50c082c271b9f0'
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var oLoggedObjects = oScope.getLoggedObjects("sap.ui.core.mvc.JSView");
+			oLoggedObjects.forEach(function(oLoggedObject) {
+				oIssueManager.addIssue({
+					severity: Severity.High,
+					details: oLoggedObject.message,
+					context: {
+						id: "WEBPAGE"
+					}
 				});
 			});
 		}
@@ -408,5 +437,5 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mv
 		}
 	};
 
-	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule, oControllerExtensionRule, oJQueryThreeDeprecationRule, oMissingSuperInitRule];
+	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule, oControllerExtensionRule, oJQueryThreeDeprecationRule, oMissingSuperInitRule, oJSViewRule];
 }, true);

@@ -66,6 +66,9 @@ sap.ui.define(function () {
 					}
 				}
 			},
+			"app/deprecatedJSViewUsage": {
+				title: "QUnit Tests for 'deprecated JSView usage' rule"
+			},
 			"misc/silentEventBus": {
 				title: "QUnit Tests for 'silent event bus usage' rules"
 			},

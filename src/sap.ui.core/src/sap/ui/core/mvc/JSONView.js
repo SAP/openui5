@@ -113,7 +113,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.mvc.Controller} [vView.controller] controller to be used for this view instance
 	 * @public
 	 * @static
-	 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.JSONView.create JSONView.create} instead.
+	 * @deprecated Since 1.56. Use {@link sap.ui.core.mvc.JSONView.create JSONView.create} to create view instances
 	 * @return {sap.ui.core.mvc.JSONView} the created JSONView instance
 	 * @ui5-global-only
 	 */

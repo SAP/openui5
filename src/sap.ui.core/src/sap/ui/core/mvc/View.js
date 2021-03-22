@@ -63,7 +63,7 @@ sap.ui.define([
 	 * rendered as content of the view.
 	 *
 	 * Views that are defined that way are referred to as <b>typed views</b>, as each view definition is
-	 * represented by its own class (type).
+	 * represented by its own class (type). See {@link topic:e6bb33d076dc4f23be50c082c271b9f0 Typed Views} for further information.
 	 *
 	 * <b>Example:</b> Defining a typed view (module 'myapp/views/MainView.js')
 	 * <pre>
@@ -99,7 +99,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * <h3>View Instantiation</h3>
-	 * The preferred way of instantiating a typed View is via the generic factory {@link sap.ui.core.mvc.View.create
+	 * The preferred way of instantiating a typed view is via the generic factory {@link sap.ui.core.mvc.View.create
 	 * View.create}.
 	 *
 	 * When the <code>viewName</code> starts with prefix <code>"module:"</code>, the remainder of the name
@@ -960,12 +960,12 @@ sap.ui.define([
 	 * The module name must use the same syntax as for <code>sap.ui.define/sap.ui.require</code>
 	 * (slash-separated name).
 	 *
-	 * @example <caption>Create an Instance of a typed View</caption>
+	 * @example <caption>Create an Instance of a typed view</caption>
 	 *   View.create({
 	 *      viewName:'module:myapp/views/Main'
 	 *   });
 	 *
-	 * @example <caption>Create an Instance of a non-typed View</caption>
+	 * @example <caption>Create an Instance of a non-typed view</caption>
 	 *   View.create({
 	 *      type: 'JS',
 	 *      viewName:'myapp.views.Detail'
@@ -974,7 +974,6 @@ sap.ui.define([
 	 * See also the API references for the specific view factories:
 	 * <ul>
 	 * <li>{@link sap.ui.core.mvc.XMLView.create}</li>
-	 * <li>{@link sap.ui.core.mvc.JSView.create}</li>
 	 * <li>{@link sap.ui.core.mvc.JSONView.create}</li>
 	 * <li>{@link sap.ui.core.mvc.HTMLView.create}</li>
 	 * </ul>
@@ -1108,11 +1107,12 @@ sap.ui.define([
 	 * @param {string} sId id of the newly created view, only allowed for instance creation
 	 * @param {string|object} [vView] the view name or view configuration object
 	 * @param {sap.ui.core.mvc.ViewType} sType Specifies what kind of view will be instantiated. All valid
-	 * view types are listed in the enumeration {@link sap.ui.core.mvc.ViewType}
-	 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
+	 * view types are listed in the enumeration  {@link sap.ui.core.mvc.ViewType}.
+	 * @param {boolean} [vView.async] whether the view source is loaded asynchronously
 	 * @public
 	 * @static
-	 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.View.create View.create} instead
+	 * @deprecated Since 1.56. Use {@link sap.ui.core.mvc.View.extend View.extend} to define the view class
+	 * and {@link sap.ui.core.mvc.View.create View.create} to create view instances
 	 * @return {sap.ui.core.mvc.View} the created View instance
 	 * @ui5-global-only
 	 */
@@ -1122,7 +1122,7 @@ sap.ui.define([
 
 		Log.warning(
 			"Do not use deprecated view factory functions (View: " + sViewName + "). " +
-			"Use the static create function on the view module instead: [XML|HTML|JSON|]View.create().",
+			"Use the static create function on the view module instead: [XML|HTML|JSON]View.create().",
 			"sap.ui.view",
 			null,
 			function () {
@@ -1321,7 +1321,7 @@ sap.ui.define([
 	 * to be passed which resolves with the according cache key increment.
 	 *
 	 * <strong>Note:</strong> Caching is only available for XMLViews! Some parts of the feature are still experimental,
-	 * For further information see {@link sap.ui.xmlview}
+	 * For further information see {@link sap.ui.core.mvc.XMLView.create XMLView.create}
 	 *
 	 * @name sap.ui.core.mvc.View.Preprocessor.getCacheKey
 	 * @function

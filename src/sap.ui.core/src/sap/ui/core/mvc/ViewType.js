@@ -36,12 +36,14 @@ sap.ui.define([], function () {
 
 		/**
 		 * JS View
+		 * @deprecated Since 1.90
 		 * @public
 		 */
 		JS: "JS",
 
 		/**
 		 * Template View
+		 * @deprecated Since 1.56
 		 * @public
 		 */
 		Template: "Template"

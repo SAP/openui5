@@ -42,9 +42,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("asynchronous resource loading", function(assert) {
-		assert.expect(3);
-		this.oLogMock = this.mock(Log);
-		this.oLogMock.expects("warning").never();
+		assert.expect(2);
 
 		return JSView.create({
 			viewName : "testdata.mvc.Async"
