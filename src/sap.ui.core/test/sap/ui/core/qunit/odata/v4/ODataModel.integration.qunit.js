@@ -41,6 +41,24 @@ sap.ui.define([
 		rTransientPredicate = /\(\$uid=[-\w]+\)/g;
 
 	/**
+	 * Asserts that the given contexts have the expected indices, both internally and from a view
+	 * perspective.
+	 *
+	 * @param {object} assert
+	 *   The QUnit assert object
+	 * @param {sap.ui.model.odata.v4.Context[]} aContexts
+	 *   Some contexts
+	 * @param {number[]} aExpectedIndices
+	 *   Expected internal <code>iIndex</code> values per context
+	 */
+	function assertIndices(assert, aContexts, aExpectedIndices) {
+		aContexts.forEach(function (oContext, i) {
+			assert.strictEqual(oContext.getIndex(), i);
+			assert.strictEqual(oContext.iIndex, aExpectedIndices[i]);
+		});
+	}
+
+	/**
 	 * Creates a V4 OData model for data aggregation tests.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
@@ -6185,9 +6203,11 @@ sap.ui.define([
 					message : sCreateError
 				});
 
+			assertIndices(assert, oBinding.getCurrentContexts(), [-2, -1, 0]);
+
 			// Note: changes have to be expected with the current iIndex of the contexts because
 			// ODLB#refreshInternal is called before changes are checked but at this point in time
-			// oBinding.iCreated is not yet restored
+			// oBinding.iCreatedContexts is not yet restored
 			that.expectChange("note", "new5", -5)
 				.expectChange("note", "new4", -4)
 				.expectChange("note", "new3", -3)
@@ -6246,6 +6266,8 @@ sap.ui.define([
 		}).then(function () {
 			var aCurrentContexts = oBinding.getCurrentContexts();
 
+			assertIndices(assert, aCurrentContexts, [-5, -4, -3, -2, -1, 0]);
+
 			// 3. the list binding is properly restored
 			// still 3x transient
 			assert.ok(aCurrentContexts[0].isTransient());
@@ -6275,6 +6297,8 @@ sap.ui.define([
 				}),
 				that.waitForChanges(assert, "4. deletion of second transient context")
 			]);
+		}).then(function () {
+			assertIndices(assert, oBinding.getCurrentContexts(), [-4, -3, -2, -1, 0]);
 		});
 	});
 
@@ -10446,14 +10470,9 @@ sap.ui.define([
 
 				return Promise.all([
 					oPromise,
+					that.checkCanceled(assert, oNewContext.created()),
 					that.waitForChanges(assert)
 				]);
-			}).then(function () {
-				return oNewContext.created().then(function () {
-					assert.notOk("unexpected success");
-				}, function (oError) {
-					assert.strictEqual(oError.canceled, true, "Create canceled");
-				});
 			});
 		});
 	});
@@ -14516,7 +14535,8 @@ sap.ui.define([
 	// Scenario: call filter, sort, changeParameters on a suspended ODLB
 	// JIRA: CPOUI5ODATAV4-102: call ODLB#create on a just resumed binding
 	QUnit.test("suspend/resume: call read APIs on a suspended ODLB", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var oBinding,
+			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "doNotSubmit"
 			}),
@@ -14532,8 +14552,7 @@ sap.ui.define([
 			// avoid that the metadata request disturbs the timing
 			return oModel.getMetaModel().requestObject("/");
 		}).then(function () {
-			var oBinding = that.oView.byId("table").getBinding("items");
-
+			oBinding = that.oView.byId("table").getBinding("items");
 			oBinding.filter(new Filter("BusinessPartnerRole", FilterOperator.EQ, "01"))
 				.sort(new Sorter("CompanyName"))
 				.changeParameters({$filter : "BusinessPartnerID gt '0100000001'"});
@@ -14565,6 +14584,8 @@ sap.ui.define([
 			oBinding.create();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assertIndices(assert, oBinding.getCurrentContexts(), [-1, 0, 1]); // BCP: 2170049510
 		});
 	});
 
@@ -18730,10 +18751,8 @@ sap.ui.define([
 
 			return Promise.all([
 				oCreationRowContext.delete(),
-				oCreationRowContext.created().catch(function (oError) {
-					// handle cancellation caused by .delete()
-					assert.ok(oError.canceled);
-				}),
+				// handle cancellation caused by .delete()
+				that.checkCanceled(assert, oCreationRowContext.created()),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -26157,6 +26176,15 @@ sap.ui.define([
 			})
 			.expectRequest({
 				batchNo : 3,
+				method : "POST",
+				payload : {Note : "Created as well"},
+				url : "BusinessPartnerList('4711')/BP_2_SO"
+			}, {
+				Note : "Created as well",
+				SalesOrderID : "44"
+			})
+			.expectRequest({
+				batchNo : 3,
 				method : "GET",
 				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
 					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
@@ -26164,14 +26192,17 @@ sap.ui.define([
 				BusinessPartnerID : "4711",
 				BP_2_SO : [{
 					Note : "Unrealistic",
+					SalesOrderID : "44"
+				}, {
+					Note : "Side",
 					SalesOrderID : "43"
 				}, {
-					Note : "Side Effect",
+					Note : "Effect",
 					SalesOrderID : "0500000001"
 				}]
 			})
-			.expectChange("id", ["43"])
-			.expectChange("note", ["Unrealistic", "Side Effect"]);
+			.expectChange("id", ["44", "43"])
+			.expectChange("note", ["Unrealistic", "Side", "Effect"]);
 	},
 	text : "Repeated POST succeeds"
 }, {
@@ -26179,7 +26210,7 @@ sap.ui.define([
 		var oCausingError = createError(); // a technical error -> let the $batch itself fail
 
 		this.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
-			+ " failed; will be repeated automatically");
+			+ " failed; will be repeated automatically").twice();
 		this.oLogMock.expects("error").withArgs("$batch failed");
 		this.oLogMock.expects("error").withArgs("Failed to request side effects");
 
@@ -26189,6 +26220,12 @@ sap.ui.define([
 				payload : {Note : "Created"},
 				url : "BusinessPartnerList('4711')/BP_2_SO"
 			}, oCausingError)
+			.expectRequest({
+				batchNo : 3,
+				method : "POST",
+				payload : {Note : "Created as well"},
+				url : "BusinessPartnerList('4711')/BP_2_SO"
+			}) // no response required
 			.expectRequest({
 				batchNo : 3,
 				method : "GET",
@@ -26221,7 +26258,7 @@ sap.ui.define([
 	},
 	text : "Repeated POST fails"
 }].forEach(function (oFixture) {
-	QUnit.test("requestSideEffects repeats failed POST -" + oFixture.text, function (assert) {
+	QUnit.test("requestSideEffects repeats failed POST - " + oFixture.text, function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			oTableBinding,
 			sView = '\
@@ -26246,14 +26283,23 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
-				+ " failed; will be repeated automatically");
+				+ " failed; will be repeated automatically").twice();
 			that.oLogMock.expects("error").withArgs("$batch failed");
 
-			that.expectRequest({
+			that.expectChange("id", ["", "", "0500000001"])
+				.expectChange("note", ["Created as well", "Created", "Test"])
+				.expectRequest({
+					batchNo : 2,
 					method : "POST",
 					payload : {Note : "Created"},
 					url : "BusinessPartnerList('4711')/BP_2_SO"
 				}, createError()) // a technical error -> let the $batch itself fail
+				.expectRequest({
+					batchNo : 2,
+					method : "POST",
+					payload : {Note : "Created as well"},
+					url : "BusinessPartnerList('4711')/BP_2_SO"
+				}) // no response required
 				.expectMessages([{
 					code : undefined,
 					message : "Communication error: 500 ",
@@ -26268,18 +26314,17 @@ sap.ui.define([
 					target : "",
 					technical : true,
 					type : "Error"
-				}])
-				.expectChange("id", ["", "0500000001"])
-				.expectChange("note", ["Created", "Test"]);
+				}]);
 
 			oTableBinding = that.oView.byId("table").getBinding("items");
 			oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
+			oTableBinding.create({Note : "Created as well"}, /*bSkipRefresh*/true);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "2 POSTs fail initially");
 		}).then(function () {
 			var oCausingError;
 
-			assert.equal(oTableBinding.getLength(), 2);
+			assert.equal(oTableBinding.getLength(), 3);
 
 			// remove persistent, technical messages from above
 			sap.ui.getCore().getMessageManager().removeAllMessages();
@@ -26296,10 +26341,30 @@ sap.ui.define([
 						throw oError;
 					}
 				}),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "different expectations")
 			]);
 		}).then(function () {
-			assert.equal(oTableBinding.getLength(), 2);
+			var aContexts = oTableBinding.getCurrentContexts();
+
+			assert.equal(oTableBinding.getLength(), 3);
+			assert.strictEqual(aContexts[0].getIndex(), 0);
+			assert.strictEqual(aContexts[1].getIndex(), 1);
+			assert.strictEqual(aContexts[2].getIndex(), 2);
+
+			if (aContexts[0].isTransient()) {
+				assertIndices(assert, aContexts, [-2, -1, 0]);
+
+				that.expectRequest({
+						method : "DELETE",
+						url : "SalesOrderList('0500000001')"
+					});
+
+				return Promise.all([
+					// code under test (BCP: 2170049510)
+					aContexts[2].delete(),
+					that.waitForChanges(assert, "BCP: 2170049510")
+				]);
+			}
 		});
 	});
 });
@@ -27968,6 +28033,7 @@ sap.ui.define([
 			oNewContext = oListBinding.create({Name : "Team 00", Team_Id : "Team_00"}, true);
 
 			assert.strictEqual(oNewContext.getIndex(), 0);
+			assertIndices(assert, oListBinding.getCurrentContexts(), [-1, 0, 1]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -28004,6 +28070,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			assert.strictEqual(oNewContext.getIndex(), 0);
+			assertIndices(assert, oListBinding.getCurrentContexts(), [-1, 0, 1]);
 
 			that.expectRequest({
 					method : "POST",

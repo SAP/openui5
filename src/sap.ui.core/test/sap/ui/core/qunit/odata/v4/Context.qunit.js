@@ -57,7 +57,7 @@ sap.ui.define([
 
 		// code under test
 		oContext = Context.create(oModel, oBinding, sPath, 42,
-			new Promise(function (resolve, reject) {
+			new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			}));
 
@@ -227,7 +227,7 @@ sap.ui.define([
 			"/Employees");
 		assert.strictEqual(Context.create({}, {}, "/Employees", 5).toString(), "/Employees[5]");
 		oContext = Context.create({}, {}, "/Employees", -1,
-			new Promise(function (resolve) {
+			new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			}));
 		assert.strictEqual(oContext.toString(), "/Employees[-1|transient]");
@@ -388,7 +388,7 @@ sap.ui.define([
 		assert.notOk(oContext.isTransient(), "no created Promise -> not transient");
 
 		oContext = Context.create(null, oBinding, "/foo", 42,
-			new Promise(function (resolve, reject) {
+			new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			}));
 
@@ -1067,7 +1067,7 @@ sap.ui.define([
 			oGroupLock = {},
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-				new Promise(function () {}));
+				new SyncPromise(function () {}));
 
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "n/a", sinon.match.same(oContext))

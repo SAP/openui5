@@ -803,7 +803,7 @@ sap.ui.define([
 	QUnit.test("reset", function (assert) {
 		var oBinding,
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-				Promise.resolve()),
+				SyncPromise.resolve(Promise.resolve())),
 			aPreviousContexts;
 
 		// code under test: reset called from ODLB constructor
@@ -2017,11 +2017,11 @@ sap.ui.define([
 	QUnit.test("setContext: relative path with transient entities", function (assert) {
 		var oBinding = this.bindList("Bar", Context.create(this.oModel, {}, "/Foo('42')")),
 			oContext0 = Context.create(this.oModel, oBinding, "/Foo('42')/Bar($uid=id-1-23)", -1,
-				Promise.resolve()),
+				SyncPromise.resolve(Promise.resolve())),
 			oContext1 = Context.create(this.oModel, oBinding, "/Foo('42')/Bar($uid=id-1-24)", -2,
-				Promise.resolve()),
+				SyncPromise.resolve(Promise.resolve())),
 			oContext2 = Context.create(this.oModel, oBinding, "/Foo('42')/Bar($uid=id-1-25)", -3,
-				Promise.resolve());
+				SyncPromise.resolve(Promise.resolve()));
 
 		// simulate multi create, some contexts are still transient
 		oBinding.aContexts.unshift(oContext2, oContext1, oContext0);
@@ -2882,14 +2882,14 @@ sap.ui.define([
 	QUnit.test("destroyCreated: " + JSON.stringify(oFixture), function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext0 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-				Promise.resolve()),
+				SyncPromise.resolve(Promise.resolve())),
 			oContext0FromServer,
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
-				Promise.resolve()),
+				SyncPromise.resolve(Promise.resolve())),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-25)", -3,
-				Promise.resolve()),
+				SyncPromise.resolve(Promise.resolve())),
 			oContext3 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-26)", -4,
-				Promise.resolve()),
+				SyncPromise.resolve(Promise.resolve())),
 			aData = [{}];
 
 		if (oFixture.bHasRead) {
@@ -3197,71 +3197,68 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bCreated) {
-		var sTitle = "createContexts w/ keyPredicates, reuse previous contexts, bCreated="
-				+ bCreated;
+	QUnit.test("createContexts w/ keyPredicates, reuse previous contexts", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
+			oContext0 = {
+				destroy : function () {},
+				isKeepAlive : function () {}
+			},
+			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('B')", 99),
+			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES('C')", 1),
+			oContextMinus1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
+				SyncPromise.resolve(Promise.resolve())), // transient context
+			oContextMinus2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-42)", -2,
+				SyncPromise.resolve(Promise.resolve())), // transient context
+			oContextMock = this.mock(Context);
 
-		QUnit.test(sTitle, function (assert) {
-			var oBinding,
-				oContext1,
-				oContext2,
-				oContext3,
-				oContextMock = this.mock(Context),
-				mPreviousContextsByPath,
-				iStart = bCreated ? 2 : 1;
+		assert.deepEqual(oBinding.aContexts, [], "binding is reset");
+		assert.strictEqual(oBinding.iCreatedContexts, 0, "binding is reset");
+		oBinding.mPreviousContextsByPath = {
+			"/EMPLOYEES('A')" : oContext0,
+			"/EMPLOYEES('B')" : oContext1,
+			"/EMPLOYEES($uid=id-1-23)" : oContextMinus1,
+			"/EMPLOYEES($uid=id-1-42)" : oContextMinus2
+		};
+		this.mock(oContext1).expects("destroy").never();
+		this.mock(oContext1).expects("checkUpdate").withExactArgs();
+		this.mock(oContextMinus1).expects("destroy").never();
+		this.mock(oContextMinus1).expects("checkUpdate").withExactArgs();
+		this.mock(oContextMinus2).expects("destroy").never();
+		this.mock(oContextMinus2).expects("checkUpdate").withExactArgs();
+		oContextMock.expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+				"/EMPLOYEES('C')", 1)
+			.returns(oContext2);
+		this.mock(this.oModel).expects("addPrerenderingTask")
+			.withExactArgs(sinon.match.func).callsArg(0);
+		this.mock(oContext0).expects("isKeepAlive").returns(false);
+		this.mock(oContext0).expects("destroy").withExactArgs();
 
-			oBinding = this.bindList("/EMPLOYEES", {/*oContext*/});
-			if (bCreated) {
-				oBinding.aContexts.unshift({/*created*/});
-				oBinding.iCreatedContexts += 1;
-			}
-			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", 1);
-			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-				{/*oPromise*/}); // transient context
-			oContext3 = Context.create(this.oModel, oBinding, "/EMPLOYEES('3')", 3);
-			mPreviousContextsByPath = {
-				"/EMPLOYEES('0')" : {
-					destroy : function () {},
-					isKeepAlive : function () {}
-				},
-				"/EMPLOYEES('1')" : oContext1,
-				"/EMPLOYEES($uid=id-1-23)" : oContext2
-			};
+		// code under test
+		oBinding.createContexts(0, 4, [{
+			"@$ui5._" : {"transientPredicate" : "($uid=id-1-42)"}
+		}, {
+			"@$ui5._" : {"transientPredicate" : "($uid=id-1-23)"}
+		}, {
+			"@$ui5._" : {"predicate" : "('B')"}
+		}, {
+			"@$ui5._" : {"predicate" : "('C')"}
+		}]);
 
-			oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
-			this.mock(oContext1).expects("destroy").never();
-			this.mock(oContext2).expects("destroy").never();
-			this.mock(oContext2).expects("isTransient").withExactArgs().returns(true);
-			this.mock(oContext1).expects("checkUpdate").withExactArgs();
-			this.mock(oContext2).expects("checkUpdate").withExactArgs();
-			oContextMock.expects("create")
-				.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
-					"/EMPLOYEES('3')", 3)
-				.returns(oContext3);
-			this.mock(this.oModel).expects("addPrerenderingTask")
-				.withExactArgs(sinon.match.func).callsArg(0);
-			this.mock(mPreviousContextsByPath["/EMPLOYEES('0')"]).expects("isKeepAlive")
-				.returns(false);
-			this.mock(mPreviousContextsByPath["/EMPLOYEES('0')"]).expects("destroy")
-				.withExactArgs();
-
-			// code under test
-			oBinding.createContexts(iStart, 3, [{
-				"@$ui5._" : {"predicate" : "('1')"}
-			}, {
-				"@$ui5._" : {"transientPredicate" : "($uid=id-1-23)"}
-			}, {
-				"@$ui5._" : {"predicate" : "('3')"}
-			}]);
-
-			assert.strictEqual(oBinding.aContexts[iStart], oContext1);
-			assert.strictEqual(oBinding.aContexts[iStart + 1], oContext2);
-			assert.strictEqual(oBinding.aContexts[iStart + 2], oContext3);
-			assert.strictEqual(oBinding.aContexts[iStart].getModelIndex(), iStart);
-			assert.strictEqual(oBinding.aContexts[iStart + 1].getModelIndex(), iStart + 1);
-			assert.strictEqual(oBinding.aContexts[iStart + 2].getModelIndex(), iStart + 2);
-			assert.deepEqual(oBinding.mPreviousContextsByPath, {});
-		});
+		assert.strictEqual(oBinding.aContexts[0], oContextMinus2);
+		assert.strictEqual(oBinding.aContexts[1], oContextMinus1);
+		assert.strictEqual(oBinding.aContexts[2], oContext1);
+		assert.strictEqual(oBinding.aContexts[3], oContext2);
+		assert.strictEqual(oBinding.iCreatedContexts, 2, "lost + found ;-)");
+		assert.strictEqual(oContextMinus2.getModelIndex(), 0);
+		assert.strictEqual(oContextMinus1.getModelIndex(), 1);
+		assert.strictEqual(oContext1.getModelIndex(), 2);
+		assert.strictEqual(oContext2.getModelIndex(), 3);
+		assert.strictEqual(oContextMinus2.iIndex, -2);
+		assert.strictEqual(oContextMinus1.iIndex, -1);
+		assert.strictEqual(oContext1.iIndex, 0);
+		assert.strictEqual(oContext2.iIndex, 1);
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 	});
 
 	//*********************************************************************************************
@@ -3299,7 +3296,7 @@ sap.ui.define([
 	QUnit.test("createContexts: do not reuse a created context", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
-				{/*createdPromise*/}),
+				SyncPromise.resolve()),
 			oNewContext = {};
 
 		oBinding.mPreviousContextsByPath = {
@@ -3417,9 +3414,9 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oContext0 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-				Promise.resolve()),
+				SyncPromise.resolve(Promise.resolve())),
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
-				Promise.resolve()),
+				SyncPromise.resolve(Promise.resolve())),
 			oETagEntity = {};
 
 		// simulate created entities which are already persisted
@@ -5467,9 +5464,9 @@ sap.ui.define([
 				// simulate create
 				oBinding.aContexts.unshift(
 					Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
-						Promise.resolve()),
+						SyncPromise.resolve(Promise.resolve())),
 					Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-						Promise.resolve()));
+						SyncPromise.resolve(Promise.resolve())));
 				oBinding.iCreatedContexts = 2;
 
 				oContext = oBinding.aContexts[iIndex];
