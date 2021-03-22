@@ -653,16 +653,6 @@ sap.ui.define([
 		assert.equal($toolbar.css("border-bottom-width"), "0px", "toolbar border should be 0px");
 	});
 
-	QUnit.test("Expandable panel with headerToolbar - toolbar should have padding-left", function(assert) {
-		this.oPanel.setExpandable(true);
-		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
-		sap.ui.getCore().applyChanges();
-
-		var $toolbar = this.oPanel.$().find(".sapMTB");
-
-		assert.equal($toolbar.css("padding-left"), "8px", "toolbar padding-left should be 8px");
-	});
-
 	QUnit.test("Expandable panel with headerToolbar - toolbar child should have margin-left: 2.5rem", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
@@ -683,15 +673,6 @@ sap.ui.define([
 		var $firstToolbarChild = $toolbar.children().eq(0);
 
 		assert.equal($firstToolbarChild.css("margin-left"), "0px", "first toolbar child margin-left should be 0px");
-	});
-
-	QUnit.test("Expandable panel with headerText - headerText should have padding-left", function(assert) {
-		this.oPanel.setExpandable(true);
-		sap.ui.getCore().applyChanges();
-
-		var $header = this.oPanel.$().find(".sapMPanelHdr");
-
-		assert.equal($header.css("padding-left"), "8px", "headerText padding-left should be 8px");
 	});
 
 	QUnit.test("Container Padding Classes", function (assert) {
