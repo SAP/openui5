@@ -411,16 +411,16 @@ sap.ui.define([
 			this._firePopinChangedEvent();
 			this._bFirePopinChanged = false;
 		} else {
-			var aVisiblePopins = this._getVisiblePopin();
-			if (this._aVisiblePopins && this.getVisibleItems().length) {
-				if (this._aVisiblePopins.length != aVisiblePopins.length || !aVisiblePopins.every(function(oPopinCol) {
-					return this._aVisiblePopins.indexOf(oPopinCol) > -1;
+			var aPopins = this._getPopins();
+			if (this._aPopins && this.getVisibleItems().length) {
+				if (this._aPopins.length != aPopins.length || !aPopins.every(function(oPopinCol) {
+					return this._aPopins.indexOf(oPopinCol) > -1;
 				}, this)) {
-					this._aVisiblePopins = aVisiblePopins;
+					this._aPopins = aPopins;
 					this._firePopinChangedEvent();
 				}
-			} else if (this._aVisiblePopins == null) {
-				this._aVisiblePopins = aVisiblePopins;
+			} else if (this._aPopins == null) {
+				this._aPopins = aPopins;
 			}
 		}
 	};
