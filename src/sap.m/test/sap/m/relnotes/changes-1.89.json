@@ -3,6 +3,105 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "475e4618c163d473e64b8f4576649fdcb7d283f3",
+        "type": "FIX",
+        "text": " sap.m.Panel: Remove redundant spacing when expandable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180130652"
+          }
+        ]
+      },
+      {
+        "id": "a22bbad71c0f0ff884aa3be31426be1e93407e8a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: focus is now correct in table popin",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170038926"
+          }
+        ]
+      },
+      {
+        "id": "577e548248018a3891f961b645dbfe5ca978e2a4",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Items' accessibility enhanced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170017803"
+          }
+        ]
+      },
+      {
+        "id": "6a495be46f402c9e5b18506a3f1a2bcfa4e91812",
+        "type": "FIX",
+        "text": " sap.m.Input: Change event fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170050017"
+          }
+        ]
+      },
+      {
+        "id": "3392c62cae6d54aa71b03d2e6d0a06fa47144db5",
+        "type": "FIX",
+        "text": " sap.m.Input: Accessibility sample improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180113750"
+          }
+        ]
+      },
+      {
+        "id": "6f1334a4d372b5858ed889058967b0fac6d49a55",
+        "type": "FIX",
+        "text": " sap.m.Link: getAccessibilityInfo method enhanced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170048514"
+          }
+        ]
+      },
+      {
+        "id": "b59d2d130a004d1bebb62a9f4e7c2ef6af224340",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus, sap.m.ObjectNumber: vertical alignment fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180090916"
+          }
+        ]
+      },
+      {
+        "id": "b90792bc7a0ae15188671a00c0871437febb4917",
+        "type": "FIX",
+        "text": " sap.m.Popover: Nexted popovers KH close fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180132292"
+          }
+        ]
+      },
+      {
+        "id": "a26890ad7e4d6b4b69527a198e7f895669ec20b2",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Scroll is no longer jumping when content grows automatically",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000948762021"
+          }
+        ]
+      },
+      {
         "id": "90c068cff51c7fdbaaeecc9091664009a583681e",
         "type": "FIX",
         "text": " valuehelpdialog.P13nConditionPanel: fix tokens with not operators",
@@ -65,6 +164,17 @@
           {
             "type": "BCP",
             "reference": "002075129500001313592021"
+          }
+        ]
+      },
+      {
+        "id": "ecd1f9f9f60b0ab22af2dcd04c39a47e9f4677ac",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Adjust padding of placeholder",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180041206"
           }
         ]
       },

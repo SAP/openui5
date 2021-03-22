@@ -3,6 +3,37 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "069c54a0d0b8ac3da8e5c890124d7815bdaf11a6",
+        "type": "FIX",
+        "text": " mvc.XMLView: Provide better logging for processing errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080425463"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080321485"
+          }
+        ]
+      },
+      {
+        "id": "9e56d9c08c8561be588ce0767f299268a49cc1da",
+        "type": "FIX",
+        "text": " core.EnabledPropagator: move the focus to parent when focused control is disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180025505"
+          }
+        ]
+      },
+      {
+        "id": "e134aaf3eb3ff9c86223e0b901d3a3fcb2d8e113",
+        "type": "FIX",
+        "text": " IntervalTrigger: call clearTimeout only once per timer"
+      },
+      {
         "id": "6c0d97858507e698e30eaa1f2d666a595610eb29",
         "type": "FEATURE",
         "text": " sap.ui.core.Popup: enables the setting of a 'within' area for popups"

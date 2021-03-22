@@ -3,6 +3,32 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "4c43e7f2bef66e7949edbf818c34221b700fc86a",
+        "type": "FIX",
+        "text": " sap.f.GridList: The 'updateFinished' event is fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170034759"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170039540"
+          }
+        ]
+      },
+      {
+        "id": "1c6bcf308dfea17cbefbb39cb6223adb690a8c15",
+        "type": "FIX",
+        "text": " sap.f.ProductSwitchItem: Documentation for 'src' property is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170022736"
+          }
+        ]
+      },
+      {
         "id": "452a83bc0a947889a4ccd0784d0bff718c131d80",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Ghost type Button appearance fixed in the footer",

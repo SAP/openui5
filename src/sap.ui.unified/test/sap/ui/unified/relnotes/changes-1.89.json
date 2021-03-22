@@ -3,6 +3,28 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "b872fe28334ce49bf7cb85dff99dc30e85a7dc7c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments are properly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001398012021"
+          }
+        ]
+      },
+      {
+        "id": "4a80930e724af826083d85434bb536203e3ce56d",
+        "type": "FIX",
+        "text": " sap.ui.unified.YearPicker: We now render correct years in all timezones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001447892021"
+          }
+        ]
+      },
+      {
         "id": "e1895193ca5d61e56f4f1a3b34d553c05a4f1ce4",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Arrows in navigation are now disabled when border reached",
