@@ -264,6 +264,104 @@ sap.ui.define([
 		assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is set");
 	});
 
+	QUnit.test("Tooltips when expanded", function (assert) {
+		// Arrange
+		var oNestedItem = new NavigationListItem({
+				text: "nestedItem",
+				tooltip: "nestedItemTooltip"
+			}),
+			oItem = new NavigationListItem({
+				text: "item1",
+				tooltip: "item1tooltip",
+				items: [
+					oNestedItem
+				]
+			}),
+			oNL = new NavigationList({
+				items: [
+					oItem
+				]
+			});
+		oNL.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oItem.$().find(".sapTntNavLIGroup").get(0).title, oItem.getTooltip());
+		assert.strictEqual(oNestedItem.getDomRef().title, oNestedItem.getTooltip());
+
+		// Clean up
+		oNL.destroy();
+	});
+
+	QUnit.test("Tooltips when collapsed", function (assert) {
+		// Arrange
+		var oNestedItem = new NavigationListItem({
+				text: "nestedItem",
+				tooltip: "nestedItemTooltip"
+			}),
+			oItem = new NavigationListItem({
+				text: "item1",
+				tooltip: "item1tooltip",
+				items: [
+					oNestedItem
+				]
+			}),
+			oNL = new NavigationList({
+				expanded: false,
+				items: [
+					oItem
+				]
+			});
+		oNL.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Act
+		oItem.$().trigger("tap");
+		var oItemInPopover = oNL._popover.getContent()[0].getItems()[0],
+			oNestedItemInPopover = oNL._popover.getContent()[0].getItems()[0].getItems()[0];
+
+		// Assert
+		assert.strictEqual(oItemInPopover.$().find(".sapTntNavLIGroup").get(0).title, oItem.getTooltip(), "Tooltip of item in popover is set correctly");
+		assert.strictEqual(oNestedItemInPopover.getDomRef().title, oNestedItem.getTooltip(), "Tooltip of nested item in popover is set correctly");
+
+		// Clean up
+		oNL.destroy();
+	});
+
+	QUnit.module("Lifecycle");
+
+	QUnit.test("Popover is destroyed when NavigationList is destroyed", function (assert) {
+		// Arrange
+		var oItem = new NavigationListItem({
+				text: "item",
+				items: [
+					new NavigationListItem({
+						text: "nestedItem",
+						tooltip: "nestedItemTooltip"
+					})
+				]
+			}),
+			oNL = new NavigationList({
+				expanded: false,
+				items: [
+					oItem
+				]
+			});
+		oNL.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Act
+		oItem.$().trigger("tap");
+		var oSpy = sinon.spy(oNL._popover, "destroy");
+		oNL.destroy();
+
+		// Assert
+		assert.ok(oSpy.called);
+
+		// Clean up
+		oSpy.restore();
+	});
+
 	QUnit.module("Tab navigation and ARIA settings", {
 		beforeEach: function () {
 			this.navigationList = getNavigationList();

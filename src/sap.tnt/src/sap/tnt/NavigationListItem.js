@@ -194,6 +194,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 		/**
 		 * Creates a popup list.
+		 * @returns {sap.tnt.NavigationList} The list for popup
 		 * @private
 		 */
 		NavigationListItem.prototype.createPopupList = function () {
@@ -215,7 +216,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 						key: subItem.getId(),
 						text: subItem.getText(),
 						textDirection: subItem.getTextDirection(),
-						enabled: subItem.getEnabled()
+						enabled: subItem.getEnabled(),
+						tooltip: subItem.getTooltip()
 					});
 
 					newSubItems.push(popupSubItem);
@@ -234,6 +236,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				text: this.getText(),
 				enabled: this.getEnabled(),
 				textDirection: this.getTextDirection(),
+				tooltip: this.getTooltip(),
 				items: newSubItems
 			});
 
