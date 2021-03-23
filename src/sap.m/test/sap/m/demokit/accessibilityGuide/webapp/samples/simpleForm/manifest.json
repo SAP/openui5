@@ -1,0 +1,27 @@
+{
+	"_version": "1.9.0",
+
+	"sap.app": {
+		"id": "sap.m.sample.simpleForm",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.simpleForm.View",
+			"type": "XML",
+			"async": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.m.sample.simpleForm.i18n"
+				}
+			}
+		}
+	}
+}

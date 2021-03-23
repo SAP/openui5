@@ -1,0 +1,18 @@
+<mvc:View
+	controllerName="sap.ui.demo.accessibilityGuide.controller.ExploreOverview"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	height="100%">
+	<Page  class="topicPage" showHeader="true" title="{/pageTitle}">
+		<content>
+			<core:HTML
+				id="topicFrame"
+				preferDOM="false"
+				content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;&lt;iframe {/iframeAttribute} style="height:100%;" class="sapUiTopicsIframe" name="content" src="{/topicURL}" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;'
+				afterRendering=".onFrameSourceChange">
+			</core:HTML>
+		</content>
+	</Page>
+
+</mvc:View>

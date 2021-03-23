@@ -1,0 +1,18 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m"
+		  height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<content>
+					<Panel headerText="This is an expandable Panel with landmark role region" expanded="true" expandable="true" accessibleRole="Region">
+						<content>
+							<Text text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s."/>
+						</content>
+					</Panel>
+				</content>
+			</Page>
+		</App>
+</mvc:View>

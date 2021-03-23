@@ -10,6 +10,19 @@
 					  showEditHeaderButton="true"
 					  editHeaderButtonPress="handleEditBtnPress"
 					  upperCaseAnchorBar="false">
+		<landmarkInfo>
+			<ObjectPageAccessibleLandmarkInfo
+					rootRole="Region"
+					rootLabel="Order Information"
+					contentRole="Main"
+					contentLabel="Order Details"
+					headerRole="Region"
+					headerLabel="Order Header"
+					footerRole="Region"
+					footerLabel="Order Footer"
+					navigationRole="Navigation"
+					navigationLabel="Order navigation"/>
+		</landmarkInfo>
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  objectTitle="Denise Smith"
