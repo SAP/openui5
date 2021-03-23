@@ -404,6 +404,7 @@ sap.ui.define([
 	 * @static
 	 * @deprecated As of 1.44, use the more flexible {@link sap.ui.base.ManagedObject.create}.
 	 * @function
+	 * @ts-skip
 	 */
 	Element.create = ManagedObject.create;
 

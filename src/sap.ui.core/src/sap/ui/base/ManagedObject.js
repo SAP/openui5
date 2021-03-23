@@ -933,6 +933,7 @@ sap.ui.define([
 	 *   When there's not enough type information to create an instance from the given data
 	 * @public
 	 * @static
+	 * @ts-skip
 	 */
 	ManagedObject.create = function(vData, oKeyInfo, oScope) {
 		if ( !vData || vData instanceof ManagedObject || typeof vData !== "object" || vData instanceof String) {
