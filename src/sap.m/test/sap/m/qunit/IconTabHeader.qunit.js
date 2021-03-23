@@ -544,9 +544,6 @@ sap.ui.define([
 						text: "Tab1",
 						key: "tab1"
 					})
-				],
-				content: [
-					new Text()
 				]
 			});
 			this.oITH.placeAt(DOM_RENDER_LOCATION);
@@ -841,6 +838,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oITH.destroy();
+			Core.applyChanges();
 		}
 	});
 
