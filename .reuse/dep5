@@ -239,7 +239,7 @@ Copyright: 2010-2013, Acid Media
 License: MIT
 Comment: these files belong to: MobiScroll
 
-Files: src/sap.ui.core/src/sap/ui/thirdparty/sinon.js src/sap.ui.core/src/sap/ui/thirdparty/sinon-ie.js src/sap.ui.core/src/sap/ui/thirdparty/sinon-server.js
+Files: src/sap.ui.core/src/sap/ui/thirdparty/sinon.js src/sap.ui.core/src/sap/ui/thirdparty/sinon-server.js
 Copyright: 2010-2014, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause
 Comment: these files belong to: SinonJS
@@ -263,11 +263,6 @@ Files: src/sap.ui.core/src/sap/ui/thirdparty/punycode.js
 Copyright: Mathias Bynens
 License: MIT
 Comment: these files belong to: punycode.js
-
-Files: src/sap.ui.core/src/sap/ui/thirdparty/flexie.js
-Copyright: 2010 Richard Herrera
-License: MIT
-Comment: these files belong to: Flexie.js
 
 Files: src/sap.ui.core/src/sap/ui/thirdparty/handlebars.js
 Copyright: 2011-2019 by Yehuda Katz
@@ -299,16 +294,6 @@ Copyright: 2013 Alex Seville
 License: MIT
 Comment: these files belong to: blanket.js
 
-Files: src/sap.ui.core/src/sap/ui/thirdparty/es6-object-assign.js
-Copyright: Mozilla Developer Network
-License: CC0-1.0
-Comment: these files belong to: Object.assign Polyfill
-
-Files: src/sap.ui.core/src/sap/ui/thirdparty/unorm*
-Copyright: 2008-2013 Matsuza <matsuza@gmail.com>, Bjarke Walling <bwp@bwp.dk>
-License: MIT
-Comment: these files belong to: unorm.js
-
 Files: src/sap.ui.core/src/sap/base/util/JSTokenizer.js
 Copyright:
     2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
@@ -322,18 +307,6 @@ Copyright:
     2010 Douglas Crockford
 License: Apache-2.0
 Comment: these files contain content from SAP and Top Down Operator Precedence: ExpressionParser.js is overall written by SAP, but contains code taken from or inspired by TDOP by Douglas Crockford (see the respective comment)
-
-Files: src/sap.ui.core/src/sap/ui/thirdparty/es6-promise.js
-Copyright: 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
-License: MIT
-Comment: these files belong to: es6-promise
-
-Files: src/sap.ui.core/src/sap/ui/thirdparty/es6-string-methods.js
-Copyright:
-    Mathias Bynens
-    2017 Behnam Mohammadi (بهنام محمدی)
-License: MIT
-Comment: these files contain content from String.prototype Polyfill (startsWith) and String.prototype Polyfill (endsWith) and String.prototype Polyfill (includes) and String.prototype Polyfill (repeat) and String.prototype Polyfills (padStart/padEnd): es6-string-methods.js contains String polyfills from different third-party libraries
 
 Files: src/sap.ui.core/src/sap/ui/thirdparty/klay.js
 Copyright: Ulf Rueegg
@@ -354,11 +327,6 @@ Files: src/sap.ui.core/src/sap/ui/thirdparty/hyphenopoly/*
 Copyright: 2018 Mathias Nater
 License: MIT
 Comment: these files belong to: Hyphenopoly
-
-Files: src/sap.ui.core/src/sap/ui/thirdparty/es6-shim-nopromise.js
-Copyright: 2013-2016 Paul Miller (http://paulmillr.com) and contributors
-License: MIT
-Comment: these files belong to: ECMAScript 6 compatibility shims for legacy JavaScript engines
 
 Files: src/sap.ui.core/src/sap/ui/base/util/restricted/_CancelablePromise.js
 Copyright:

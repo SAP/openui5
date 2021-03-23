@@ -137,10 +137,6 @@ sap.ui.define([
 				ODataModel.mServiceData = {};
 			},
 			afterEach : function(assert) {
-				if (window.Flexie) {
-					oLog.info("destroy flexie instances");
-					window.Flexie.destroyInstance();
-				}
 				// empty the page after each test, even in case of failures
 				oPage.setTitle("---");
 				oPage.destroyContent();

@@ -5,7 +5,6 @@
 
 sap.ui.define([
 	"sap/m/Bar",
-	"sap/ui/thirdparty/flexie",
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/Image",
@@ -17,7 +16,6 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText"
 ], function(
 	Bar,
-	flexie,
 	Button,
 	Label,
 	Image,
