@@ -1329,6 +1329,14 @@ sap.ui.define(["jquery.sap.script"], function(jQuery) {
 
 	});
 
+	QUnit.test("extend first level with __proto__", function(assert) {
+		var myObject = JSON.parse('{ "y": 20, "__proto__": { "x": 42} }');
+		var oClone = jQuery.sap.extend({}, myObject);
+		assert.equal(oClone.y, 20, "y should be set");
+		assert.equal(oClone.x, undefined, "x should not be set");
+		assert.equal(Object.getPrototypeOf(oClone).x, undefined, "x should not be set");
+	});
+
 	QUnit.test("extend deep", function(assert) {
 		var oClone = jQuery.sap.extend(true, {}, myObject);
 		assert.ok(typeof (oClone) == "object", "object clone created");
