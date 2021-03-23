@@ -11,7 +11,7 @@
  * might break in future releases.
  */
 
-/*global sap:true, console, document, Promise, XMLHttpRequest */
+/*global sap:true, console, document, Promise, URL, XMLHttpRequest */
 
 (function(__global) {
 	"use strict";
@@ -25,7 +25,7 @@
 			msg + '<a href="' + href + '" style="color:#4076b4;">' + hrefText + '</a>.</div></body>';
 		pageStyle.margin = pageStyle.padding = "0";
 		pageStyle.width = pageStyle.height = "100%";
-		if (__global.stop) { // Check for __global.stop first because safari 11 has __global.stop and document.execCommand but document.execCommand('Stop') does not work in safari 11
+		if (__global.stop) { // Check for __global.stop first because Safari 11 has __global.stop and document.execCommand but document.execCommand('Stop') does not work in Safari 11
 			__global.stop();
 		} else {
 			document.execCommand('Stop');
@@ -48,20 +48,6 @@
 		return p < 0 ? href : href.slice(0, p);
 	}
 
-	/*
-	 * Helper function that returns the document base URL without search parameters and hash.
-	 *
-	 * @returns {string}
-	 */
-	function docBase() {
-		return pathOnly(document.baseURI);
-	}
-
-	/*
-	 * Whether the current browser is IE11, derived from the compatibility check for the URL Web API.
-	 */
-	var isIE11 = false;
-
 	/**
 	 * Resolve a given URL, either against the base URL of the current document or against a given base URL.
 	 *
@@ -69,51 +55,16 @@
 	 * If a base URL is given, that base will first be resolved relative to the document's baseURI,
 	 * then the URL will be resolved relative to the resolved base.
 	 *
+	 * Search parameters or a hash of the chosen base will be ignored.
+	 *
 	 * @param {string} sURI Relative or absolute URL that should be resolved
 	 * @param {string} [sBase=document.baseURI] Base URL relative to which the URL should be resolved
 	 * @returns {string} Resolved URL
 	 */
-	var resolveURL = (function(_URL) {
-
-		// feature check: URI support
-		// Can URL be used as a constructor (fails in IE 11)?
-		try {
-			new _URL('index.html', 'http://localhost:8080/');
-		} catch (e) {
-			isIE11 = true;
-			_URL = null;
-		}
-
-		if ( _URL ) {
-			return function(sURI, sBase) {
-				// For a spec see https://url.spec.whatwg.org/
-				// For browser support see https://developer.mozilla.org/en/docs/Web/API/URL
-				return new _URL(sURI, sBase ? new _URL(sBase, docBase()) : docBase()).toString();
-			};
-		}
-
-		// fallback for IE11: use a shadow document with <base> and <a>nchor tag
-		var doc = document.implementation.createHTMLDocument("Dummy doc for resolveURI");
-		var base = doc.createElement('base');
-		base.href = docBase();
-		doc.head.appendChild(base);
-		var anchor = doc.createElement("A");
-		doc.body.appendChild(anchor);
-
-		return function (sURI, sBase) {
-			base.href = docBase();
-			if ( sBase != null ) {
-				// first resolve sBase relative to location
-				anchor.href = sBase;
-				// then use it as base
-				base.href = anchor.href;
-			}
-			anchor.href = sURI;
-			// console.log("(" + sURI + "," + sBase + ") => (" + base.href + "," + anchor.href + ")");
-			return anchor.href;
-		};
-
-	}(__global.URL || __global.webkitURL));
+	function resolveURL(sURI, sBase) {
+		sBase = pathOnly(sBase ? resolveURL(sBase) : document.baseURI);
+		return new URL(sURI, sBase).href;
+	}
 
 	// ---- helpers -------------------------------------------------------------------------------
 
@@ -158,7 +109,7 @@
 	/**
 	 * Basic assert functionality.
 	 *
-	 * Can be set to a function that gets a value (the expression t be asserted) as first
+	 * Can be set to a function that gets a value (the expression to be asserted) as first
 	 * parameter and a message as second parameter. When the expression coerces to false,
 	 * the assertion is violated and the message should be emitted (logged, thrown, whatever).
 	 *
@@ -266,7 +217,7 @@
 	var mUrlPrefixes = Object.create(null);
 	mUrlPrefixes[''] = {
 		url: DEFAULT_BASE_URL,
-		absoluteUrl: resolveURL(DEFAULT_BASE_URL, document.baseURI)
+		absoluteUrl: resolveURL(DEFAULT_BASE_URL)
 	};
 
 	/**
@@ -381,15 +332,7 @@
 	 * @type {int}
 	 * @private
 	 */
-		iAnonymousModuleCount = 0,
-
-	/**
-	 * IE only: max size a script should have when executing it with execScript, otherwise fallback to eval.
-	 * @type {int}
-	 * @const
-	 * @private
-	 */
-		MAX_EXEC_SCRIPT_LENGTH = 512 * 1024;
+		iAnonymousModuleCount = 0;
 
 
 	// ---- Names and Paths -----------------------------------------------------------------------
@@ -1033,23 +976,10 @@
 
 	// --------------------------------------------------------------------------------------------
 
-	function ensureStacktrace(oError) {
-		if (!oError.stack) {
-			try {
-				throw oError;
-			} catch (ex) {
-				return ex;
-			}
-		}
-		return oError;
-	}
-
 	function makeNestedError(msg, cause) {
 		var oError = new Error(msg + ": " + cause.message);
 		oError.cause = cause;
 		oError.loadError = cause.loadError;
-		ensureStacktrace(oError);
-		ensureStacktrace(cause);
 		// concat the error stack for better traceability of loading issues
 		if ( oError.stack && cause.stack ) {
 			oError.stack = oError.stack + "\nCaused by: " + cause.stack;
@@ -1266,7 +1196,7 @@
 		var xhr = new XMLHttpRequest();
 
 		function enrichXHRError(error) {
-			error = error || ensureStacktrace(new Error(xhr.status + " - " + xhr.statusText));
+			error = error || new Error(xhr.status + " - " + xhr.statusText);
 			error.status = xhr.status;
 			error.statusText = xhr.statusText;
 			error.loadError = true;
@@ -1297,26 +1227,23 @@
 
 	/**
 	 * Global event handler to detect script execution errors.
-	 * Only works for browsers that support <code>document.currentScript</code>.
 	 * @private
 	 */
-	if ( 'currentScript' in document ) {
-		window.addEventListener('error', function onUncaughtError(errorEvent) {
-			var sModuleName = document.currentScript && document.currentScript.getAttribute('data-sap-ui-module');
-			var oModule = sModuleName && Module.get(sModuleName);
-			if ( oModule && oModule.execError == null ) {
-				// if a currently executing module can be identified, attach the error to it and suppress reporting
-				if ( log.isLoggable() ) {
-					log.debug("unhandled exception occurred while executing " + sModuleName + ": " + errorEvent.message);
-				}
-				oModule.execError = errorEvent.error || {
-					name: 'Error',
-					message: errorEvent.message
-				};
-				return false;
+	window.addEventListener('error', function onUncaughtError(errorEvent) {
+		var sModuleName = document.currentScript && document.currentScript.getAttribute('data-sap-ui-module');
+		var oModule = sModuleName && Module.get(sModuleName);
+		if ( oModule && oModule.execError == null ) {
+			// if a currently executing module can be identified, attach the error to it and suppress reporting
+			if ( log.isLoggable() ) {
+				log.debug("unhandled exception occurred while executing " + sModuleName + ": " + errorEvent.message);
 			}
-		});
-	}
+			oModule.execError = errorEvent.error || {
+				name: 'Error',
+				message: errorEvent.message
+			};
+			return false;
+		}
+	});
 
 	function loadScript(oModule, sAlternativeURL) {
 
@@ -1346,7 +1273,7 @@
 
 			log.error("failed to load JavaScript resource: " + oModule.name);
 			oModule.fail(
-				ensureStacktrace(new Error("failed to load '" + oModule.name +  "' from " + oModule.url + ": script load error")));
+				new Error("failed to load '" + oModule.name +  "' from " + oModule.url + ": script load error"));
 		}
 
 		oScript = document.createElement('SCRIPT');
@@ -1524,12 +1451,6 @@
 			}
 		}
 
-		if ( isIE11 && bAsync && oShim && oShim.amd ) {
-			// in IE11, we force AMD/UMD modules into sync loading to apply the define.amd workaround
-			// in other browsers, we intercept read access to window.define, see ensureDefineInterceptor
-			bAsync = false;
-		}
-
 		measure && measure.start(sModuleName, "Require module " + sModuleName, ["require"]);
 
 		// set marker for loading modules (to break cycles)
@@ -1646,8 +1567,7 @@
 
 					sScript = oModule.data;
 
-					// sourceURL: Firebug, Chrome, Safari and IE11 debugging help, appending the string seems to cost ZERO performance
-					// Note: IE11 supports sourceURL even when running in IE9 or IE10 mode
+					// sourceURL: Firebug, Chrome and Safari debugging help, appending the string seems to cost ZERO performance
 					// Note: make URL absolute so Chrome displays the file tree correctly
 					// Note: do not append if there is already a sourceURL / sourceMappingURL
 					// Note: Safari fails, if sourceURL is the same as an existing XHR URL
@@ -1672,20 +1592,8 @@
 						sScript = translate(sScript, sModuleName);
 					}
 
-					if (__global.execScript && (!oModule.data || oModule.data.length < MAX_EXEC_SCRIPT_LENGTH) ) {
-						try {
-							oModule.data && __global.execScript(sScript); // execScript fails if data is empty
-						} catch (e) {
-							_execStack.pop();
-							// eval again with different approach - should fail with a more informative exception
-							/* eslint-disable no-eval */
-							eval(oModule.data);
-							/* eslint-enable no-eval */
-							throw e; // rethrow err in case globalEval succeeded unexpectedly
-						}
-					} else {
-						__global.eval(sScript);
-					}
+					// eval the source in the global context (preventing access to the closure of this function)
+					__global.eval(sScript);
 				}
 				queue.process(oModule, "after eval");
 
