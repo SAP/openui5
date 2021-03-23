@@ -18801,20 +18801,21 @@ sap.ui.define([
 			that.expectMessages([{
 				code : undefined,
 				descriptionUrl : undefined,
-				message : "Enter a number with no decimal places",
+				message : "EnterInt",
 				persistent : false,
 				target : oControl.getId() + "/value",
 				technical : false,
 				type : "Error"
 			}]);
 
-			// code under test
-			oControl.setValue("12.1");
+			TestUtils.withNormalizedMessages(function () {
+				// code under test
+				oControl.setValue("12.1");
+			});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			return that.checkValueState(assert, oControl, "Error",
-				"Enter a number with no decimal places");
+			return that.checkValueState(assert, oControl, "Error", "EnterInt");
 		});
 	});
 	//TODO With updateGroupId $direct, changing *both* parts of a composite binding (amount and
