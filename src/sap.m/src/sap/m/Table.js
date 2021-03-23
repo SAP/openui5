@@ -892,15 +892,16 @@ sap.ui.define([
 			sAnnouncement += oBundle.getText("LIST_ALL_SELECTED");
 		}
 
+		var aHiddenInPopin = this._getHiddenInPopin();
 		this.getColumns(true).forEach(function(oColumn, i) {
 			// only set the header announcement for visible columns
-			if (!oColumn.getVisible()) {
+			if (!oColumn.getVisible() || aHiddenInPopin.indexOf(oColumn) > -1) {
 				return;
 			}
 
 			var oHeader = oColumn.getHeader();
 			if (oHeader && oHeader.getVisible()) {
-				sAnnouncement += ListItemBase.getAccessibilityText(oHeader) + " ";
+				sAnnouncement += ListItemBase.getAccessibilityText(oHeader) + " . ";
 			}
 		});
 

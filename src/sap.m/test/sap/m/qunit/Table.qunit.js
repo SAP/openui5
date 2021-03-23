@@ -806,7 +806,7 @@ sap.ui.define([
 		// _setHeaderAnnouncement() test
 		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		var oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
-		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name Color Number", "Text correctly assigned for screen reader announcement");
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name . Color . Number .", "Text correctly assigned for screen reader announcement");
 
 		// _setFooterAnnouncment() test
 		var $tblFooter = sut.$("tblFooter").trigger("focus");
@@ -818,6 +818,24 @@ sap.ui.define([
 		Core.applyChanges();
 		sut.$("nodata").trigger("focus");
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
+
+		sut.destroy();
+	});
+
+	QUnit.test("_setHeaderAnnouncement with visible columns but hidden in popin", function(assert) {
+		var sut = createSUT("idTableHeaderAcc", true, true);
+		var oColumn = sut.getColumns()[0];
+		oColumn.setDemandPopin(true);
+		oColumn.setImportance("Low");
+		sut.setHiddenInPopin(["Low"]);
+		oColumn.setMinScreenWidth("480000px");
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var $tblHeader = sut.$("tblHeader").trigger("focus");
+		var oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
+
+		assert.ok(oInvisibleText.innerHTML.indexOf("Name") == -1, "Name column header is not part of the header annoucement");
 
 		sut.destroy();
 	});
