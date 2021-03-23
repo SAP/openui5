@@ -320,6 +320,57 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Create filter fields and check their order", function(assert) {
+
+		var done = assert.async();
+		this.prepareTestSetup(false);
+
+		//the order (key1, key2) should be maintained in the AdaptationFilterBar
+		oAdaptationFilterBar.setP13nModel(new JSONModel({
+			items: [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				}
+			]
+		}));
+
+		//introduce custom filter delegate 'addItem' to mock a delay in FF creation
+		AggregationBaseDelegate.getFilterDelegate = function() {
+			return {
+				addItem: function(sProperty, oControl) {
+					if (sProperty == "key1") {
+
+						//mock a delay in FF creation
+						return new Promise(function(resolve){
+							setTimeout(function(){
+								resolve(new FilterField({
+									label: "key1"
+								}));
+							}, 500);
+						});
+					}
+					return Promise.resolve(new FilterField({
+						label: "key2"
+					}));
+				}
+			};
+		};
+
+		this.oParent.initControlDelegate().then(function(){
+
+			oAdaptationFilterBar.createFilterFields().then(function(){
+				//key1 takes longer to create but should still be the first item to be displayed, as the order is reiterated after all promises have been resolved
+				assert.equal(oAdaptationFilterBar.getFilterItems()[0].getLabel(), "key1", "The order of filter items is similar to the provided p13n model");
+				assert.equal(oAdaptationFilterBar.getFilterItems()[1].getLabel(), "key2", "The order of filter items is similar to the provided p13n model");
+				done();
+			});
+
+		});
+	});
+
 	QUnit.test("Test '_checkFunctionality' - check 'remove' hook executions", function(assert){
 		var done = assert.async();
 		this.prepareTestSetup(true);

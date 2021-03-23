@@ -193,7 +193,7 @@ sap.ui.define([
 						oFieldForDialog = oFilterField;
 					}
 
-					this.addAggregation("filterItems", oFieldForDialog);
+					oItem.filterfield = oFieldForDialog;
 
 				}.bind(this));
 
@@ -202,10 +202,16 @@ sap.ui.define([
 			}.bind(this));
 
 			return Promise.all(aFieldPromises).then(function(){
+				this.oAdaptationModel.getProperty("/items").forEach(function(oItem){
+					this.addAggregation("filterItems", oItem.filterfield);
+					delete oItem.filterfield;
+				}.bind(this));
+
 				if (this._oFilterBarLayout.getInner().setP13nModel){
 					this._oFilterBarLayout.getInner().setP13nModel(this.oAdaptationModel);
 				}
 				this._bFilterFieldsCreated = true;
+
 				return this;
 			}.bind(this));
 
