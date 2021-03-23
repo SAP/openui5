@@ -306,25 +306,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given updateState is called with a new variant", function(assert) {
-			var oChange = new Change({
-				reference: sComponentId,
-				fileName: "id_123_pageVariant",
-				fileType: "variant"
-			});
-			var oFlexObjectsFromStorageResponse = {
-				changes: []
-			};
-			sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oFlexObjectsFromStorageResponse);
-
-			CompVariantState.updateState({
-				reference: sComponentId,
-				changeToBeAddedOrDeleted: oChange
-			});
-			assert.equal(oFlexObjectsFromStorageResponse.changes.length, 1, "then one change is in the changes response");
-			assert.equal(oFlexObjectsFromStorageResponse.changes[0], oChange.getDefinition(), "which is the 'NEW' variant");
-		});
-
 		QUnit.test("Given updateState is called with a deleted variant", function(assert) {
 			var oChange1 = new Change({
 				reference: sComponentId,
@@ -356,26 +337,6 @@ sap.ui.define([
 			assert.equal(oFlexObjectsFromStorageResponse.changes.length, 2, "then two changes are in the changes response");
 			assert.equal(oFlexObjectsFromStorageResponse.changes[0], oChange1.getDefinition(), "which is the first variant");
 			assert.equal(oFlexObjectsFromStorageResponse.changes[1], oChange3.getDefinition(), "which is the third variant");
-		});
-
-
-		QUnit.test("Given updateState is called with a new change", function(assert) {
-			var oChange = new Change({
-				reference: sComponentId,
-				fileName: "id_123_addFavorite",
-				fileType: "change"
-			});
-			var oFlexObjectsFromStorageResponse = {
-				changes: []
-			};
-			sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oFlexObjectsFromStorageResponse);
-
-			CompVariantState.updateState({
-				reference: sComponentId,
-				changeToBeAddedOrDeleted: oChange
-			});
-			assert.equal(oFlexObjectsFromStorageResponse.changes.length, 1, "then one change is in the changes response");
-			assert.equal(oFlexObjectsFromStorageResponse.changes[0], oChange.getDefinition(), "which is the 'NEW' change");
 		});
 
 		QUnit.test("Given updateState is called with a deleted change", function(assert) {

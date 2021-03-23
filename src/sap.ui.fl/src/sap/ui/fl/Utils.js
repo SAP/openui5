@@ -291,10 +291,6 @@ function(
 				|| oChange.getVariantReference();
 		},
 
-		isChangeRelatedToCompVariant: function (vFlexObject) {
-			return vFlexObject.getFileType() === "variant" || !!vFlexObject.getSelector().persistencyKey;
-		},
-
 		/**
 		 * Determines the content for a given startUpParameter name
 		 *

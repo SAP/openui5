@@ -18,10 +18,16 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 	var sComponentName = "testComponent";
 
-	function _createEntryMap(mChangesObject) {
+	function _createEntryMap(mChangesObject, mVariantObject, mVariantChangeObject) {
 		return {
 			changes: {
 				changes: [mChangesObject],
+				comp: {
+					changes: mVariantChangeObject ? [mVariantChangeObject] : [],
+					standardVariant: [],
+					defaultVariant: [],
+					variants: mVariantObject ? [mVariantObject] : []
+				},
 				variantSection: {},
 				ui2personalization: {}
 			}
@@ -39,7 +45,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("addChange", function(assert) {
-			var oAddedEntry = {something: "2"};
+			var oAddedEntry = {
+				something: "3",
+				content: {},
+				selector: {}
+			};
 			var oChangesFromFirstCall;
 
 			return Cache.getChangesFillingCache({name: sComponentName}).then(function(oFirstChanges) {
@@ -53,36 +63,249 @@ sap.ui.define([
 		});
 
 		QUnit.test("updateChange", function(assert) {
-			var oEntry = _createEntryMap({something: "1", fileName: "A"});
-			var oUpdatedEntry = {something: "2", fileName: "A"};
+			var oEntry = _createEntryMap({
+				something: "1",
+				fileName: "A",
+				content: {},
+				selector: {}
+			});
+			var oUpdatedEntry = {
+				something: "3",
+				fileName: "A",
+				content: {},
+				selector: {}
+			};
 			this.oGetStorageResponseStub.resolves(oEntry);
 			this.oGetFlexObjectsStub.returns(oEntry.changes);
 
-			return Cache.getChangesFillingCache({name: sComponentName}).then(function(oFirstChanges) {
-				assert.strictEqual(oFirstChanges.changes.changes.length, 1);
-				assert.strictEqual(oFirstChanges.changes.changes[0].something, "1");
-
+			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
 				Cache.updateChange({name: sComponentName}, oUpdatedEntry);
 				return Cache.getChangesFillingCache({name: sComponentName});
-			}).then(function(oSecondChanges) {
-				assert.strictEqual(oSecondChanges.changes.changes.length, 1);
-				assert.strictEqual(oSecondChanges.changes.changes[0].something, "2");
+			}).then(function(mFlexData) {
+				assert.equal(mFlexData.changes.changes.length, 1);
+				assert.equal(mFlexData.changes.changes[0].something, "3");
 			});
 		});
 
 		QUnit.test("deleteChange", function(assert) {
-			var oEntry = _createEntryMap({something: "1", fileName: "A"});
-			var oAddedEntry = {something: "1", fileName: "A"};
+			var oEntry = _createEntryMap({
+				something: "1",
+				fileName: "A",
+				content: {},
+				selector: {}
+			});
+			var oDeleteEntry = {
+				something: "3",
+				fileName: "A",
+				content: {},
+				selector: {}
+			};
 			this.oGetStorageResponseStub.resolves(oEntry);
 			this.oGetFlexObjectsStub.returns(oEntry.changes);
 
-			return Cache.getChangesFillingCache({name: sComponentName}).then(function(oFirstChanges) {
-				assert.strictEqual(oFirstChanges.changes.changes.length, 1);
-
-				Cache.deleteChange({name: sComponentName}, oAddedEntry);
+			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
+				Cache.deleteChange({name: sComponentName}, oDeleteEntry);
 				return Cache.getChangesFillingCache({name: sComponentName});
-			}).then(function(changes) {
-				assert.strictEqual(changes.changes.changes.length, 0);
+			}).then(function(mFlexData) {
+				assert.strictEqual(mFlexData.changes.changes.length, 0);
+			});
+		});
+
+		QUnit.test("addChange of an comp variant related change", function(assert) {
+			var oAddedEntry = {
+				something: "3",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			};
+
+			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
+				Cache.addChange({name: sComponentName}, oAddedEntry);
+				return Cache.getChangesFillingCache({name: sComponentName});
+			}).then(function(oSecondChanges) {
+				assert.equal(oSecondChanges.changes.comp.changes.length, 1);
+			});
+		});
+
+		QUnit.test("updateChange of an comp variant related change", function(assert) {
+			var oEntry = _createEntryMap({
+				something: "1",
+				fileName: "A",
+				content: {},
+				selector: {}
+			}, {
+				fileName: "V",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			}, {
+				something: "2",
+				fileName: "B",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			});
+			var oUpdatedEntry = {
+				something: "3",
+				fileName: "B",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			};
+			this.oGetStorageResponseStub.resolves(oEntry);
+			this.oGetFlexObjectsStub.returns(oEntry.changes);
+
+			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
+				Cache.updateChange({name: sComponentName}, oUpdatedEntry);
+				return Cache.getChangesFillingCache({name: sComponentName});
+			}).then(function(mFlexData) {
+				assert.equal(mFlexData.changes.comp.changes.length, 1);
+				assert.equal(mFlexData.changes.comp.changes[0].something, "3");
+			});
+		});
+
+		QUnit.test("deleteChange of an comp variant related change", function(assert) {
+			var oEntry = _createEntryMap({
+				something: "1",
+				fileName: "A",
+				content: {},
+				selector: {}
+			}, {
+				fileName: "V",
+				fileType: "variant",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			}, {
+				something: "2",
+				fileName: "B",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			});
+			var oDeleteEntry = {
+				something: "3",
+				fileName: "B",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			};
+			this.oGetStorageResponseStub.resolves(oEntry);
+			this.oGetFlexObjectsStub.returns(oEntry.changes);
+
+			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
+				Cache.deleteChange({name: sComponentName}, oDeleteEntry);
+				return Cache.getChangesFillingCache({name: sComponentName});
+			}).then(function(mFlexData) {
+				assert.strictEqual(mFlexData.changes.comp.changes.length, 0);
+			});
+		});
+
+		QUnit.test("addChange of an comp variant", function(assert) {
+			var oAddedEntry = {
+				something: "3",
+				fileType: "variant",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			};
+
+			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
+				Cache.addChange({name: sComponentName}, oAddedEntry);
+				return Cache.getChangesFillingCache({name: sComponentName});
+			}).then(function(oSecondChanges) {
+				assert.equal(oSecondChanges.changes.comp.variants.length, 1);
+			});
+		});
+
+		QUnit.test("updateChange of an comp variant", function(assert) {
+			var oEntry = _createEntryMap({
+				something: "1",
+				fileName: "A",
+				content: {},
+				selector: {}
+			}, {
+				fileName: "V",
+				fileType: "variant",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			}, {
+				something: "2",
+				fileName: "B",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			});
+			var oUpdatedEntry = {
+				something: "3",
+				fileName: "V",
+				fileType: "variant",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			};
+			this.oGetStorageResponseStub.resolves(oEntry);
+			this.oGetFlexObjectsStub.returns(oEntry.changes);
+
+			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
+				Cache.updateChange({name: sComponentName}, oUpdatedEntry);
+				return Cache.getChangesFillingCache({name: sComponentName});
+			}).then(function(mFlexData) {
+				assert.equal(mFlexData.changes.comp.variants.length, 1);
+				assert.equal(mFlexData.changes.comp.variants[0].something, "3");
+			});
+		});
+
+		QUnit.test("deleteChange of an comp variant", function(assert) {
+			var oEntry = _createEntryMap({
+				something: "1",
+				fileName: "A",
+				content: {},
+				selector: {}
+			}, {
+				fileName: "V",
+				fileType: "variant",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			}, {
+				something: "2",
+				fileName: "B",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			});
+			var oDeleteEntry = {
+				something: "3",
+				fileName: "V",
+				fileType: "variant",
+				content: {},
+				selector: {
+					persistencyKey: "something"
+				}
+			};
+			this.oGetStorageResponseStub.resolves(oEntry);
+			this.oGetFlexObjectsStub.returns(oEntry.changes);
+
+			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
+				Cache.deleteChange({name: sComponentName}, oDeleteEntry);
+				return Cache.getChangesFillingCache({name: sComponentName});
+			}).then(function(mFlexData) {
+				assert.strictEqual(mFlexData.changes.comp.variants.length, 0);
 			});
 		});
 	});

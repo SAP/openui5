@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/condenser/Condenser"
 ], function(
 	DependencyHandler,
@@ -50,7 +49,6 @@ sap.ui.define([
 	Log,
 	VariantManagementState,
 	FlexState,
-	CompVariantState,
 	Condenser
 ) {
 	"use strict";
@@ -737,11 +735,6 @@ sap.ui.define([
 		if (!bSkipUpdateCache) {
 			if (Utils.isChangeRelatedToVariants(oDirtyChange)) {
 				VariantManagementState.updateVariantsState({
-					reference: this._mComponent.name,
-					changeToBeAddedOrDeleted: oDirtyChange
-				});
-			} else if (Utils.isChangeRelatedToCompVariant(oDirtyChange)) {
-				CompVariantState.updateState({
 					reference: this._mComponent.name,
 					changeToBeAddedOrDeleted: oDirtyChange
 				});

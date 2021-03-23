@@ -26,8 +26,16 @@ function(
 	 */
 	var Cache = function() {};
 
-	function _getChangeArray(sComponentName) {
-		return FlexState.getFlexObjectsFromStorageResponse(sComponentName).changes;
+	function _getArray(sComponentName, oChange) {
+		var mStorageResponse = FlexState.getFlexObjectsFromStorageResponse(sComponentName);
+
+		if (oChange.fileType === "variant") {
+			return mStorageResponse.comp.variants;
+		}
+		if (oChange.selector.persistencyKey) {
+			return mStorageResponse.comp.changes;
+		}
+		return mStorageResponse.changes;
 	}
 
 	function _concatControlVariantIdWithCacheKey(sCacheKey, sControlVariantIds) {
@@ -125,7 +133,7 @@ function(
 	 * @public
 	 */
 	Cache.addChange = function(oComponent, oChange) {
-		var aChanges = _getChangeArray(oComponent.name);
+		var aChanges = _getArray(oComponent.name, oChange);
 
 		if (!aChanges) {
 			return;
@@ -142,7 +150,7 @@ function(
 	 * @public
 	 */
 	Cache.updateChange = function(oComponent, oChange) {
-		var aChanges = _getChangeArray(oComponent.name);
+		var aChanges = _getArray(oComponent.name, oChange);
 
 		if (!aChanges) {
 			return;
@@ -161,18 +169,18 @@ function(
 	 *
 	 * @param {object} oComponent - Contains component data needed for adding change
 	 * @param {string} oComponent.name - Name of the component
-	 * @param {object} oChangeDefinition - The change in JSON format
+	 * @param {object} oChange - The change in JSON format
 	 * @public
 	 */
-	Cache.deleteChange = function(oComponent, oChangeDefinition) {
-		var aChanges = _getChangeArray(oComponent.name);
+	Cache.deleteChange = function(oComponent, oChange) {
+		var aChanges = _getArray(oComponent.name, oChange);
 
 		if (!aChanges) {
 			return;
 		}
 
 		for (var i = 0; i < aChanges.length; i++) {
-			if (aChanges[i].fileName === oChangeDefinition.fileName) {
+			if (aChanges[i].fileName === oChange.fileName) {
 				aChanges.splice(i, 1);
 				break;
 			}
