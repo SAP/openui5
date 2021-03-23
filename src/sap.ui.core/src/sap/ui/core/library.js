@@ -1679,7 +1679,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Marker interface for subclasses of <code>sap.ui.core.UICompoment</code>.
+	 * Marker interface for subclasses of <code>sap.ui.core.UIComponent</code>.
 	 *
 	 * Implementing this interface allows a {@link sap.ui.core.UIComponent} to be created fully asynchronously.
 	 * This interface will implicitily set the component's rootView and router configuration to async.
@@ -1699,7 +1699,7 @@ sap.ui.define([
 	 *
 	 * @since 1.89.0
 	 * @name sap.ui.core.IAsyncContentCreation
-	 * @extends sap.ui.core.UICompoment
+	 * @extends sap.ui.core.UIComponent
 	 * @interface
 	 * @public
 	 */
