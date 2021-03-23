@@ -456,7 +456,7 @@ sap.ui.define([
 		} else if (oNode.nodeState.sum) {
 			oState.type = oState.Type.Summary;
 		}
-		oState.level = oNode.level;
+		oState.level = oNode.level + (oState.type === oState.Type.Summary ? 1 : 0);
 		oState.expanded = oNode.nodeState.expanded;
 		oState.contentHidden = oState.expanded && !oBindingInfo.parameters.sumOnTop;
 		oState.title = oState.type === oState.Type.GroupHeader ? oBinding.getGroupName(oNode.context, oNode.level) : "";

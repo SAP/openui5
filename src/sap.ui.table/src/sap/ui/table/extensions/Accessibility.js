@@ -443,13 +443,11 @@ sap.ui.define([
 			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [];
 			var aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"]);
 
-			if (!oRow.isSummary() && !oRow.isGroupHeader()) {
-				if (!oRow.isContentHidden()) {
-					aLabels.push(sRowId + "-rowselecttext");
+			if (!oRow.isSummary() && !oRow.isGroupHeader() && !oRow.isContentHidden()) {
+				aLabels.push(sRowId + "-rowselecttext");
 
-					if (TableUtils.hasRowHighlights(oTable)) {
-						aLabels.push(sRowId + "-highlighttext");
-					}
+				if (TableUtils.hasRowHighlights(oTable)) {
+					aLabels.push(sRowId + "-highlighttext");
 				}
 			}
 

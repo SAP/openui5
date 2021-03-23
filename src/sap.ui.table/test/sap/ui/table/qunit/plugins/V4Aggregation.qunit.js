@@ -303,14 +303,14 @@ sap.ui.define([
 		label: "Summary row (Grand total)",
 		context: {"@$ui5.node.isTotal": true, "@$ui5.node.level": 0},
 		expectedType: "Summary",
-		expectedLevel: 0,
+		expectedLevel: 1,
 		expectedExpandable: false,
 		expectedExpanded: false
 	}, {
 		label: "Summary row (Subtotal)",
 		context: {"@$ui5.node.isTotal": true, "@$ui5.node.level": 1},
 		expectedType: "Summary",
-		expectedLevel: 1,
+		expectedLevel: 2,
 		expectedExpandable: false,
 		expectedExpanded: false
 	}, {

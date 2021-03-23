@@ -141,15 +141,16 @@ sap.ui.define([
 		var bIsGroupHeader = iLevel > 0 && !bIsLeaf;
 		var bIsGroupTotal = !bIsGroupHeader && bContainsTotals;
 
+		oState.level = iLevel;
+		oState.expandable = bIsGroupHeader;
+		oState.expanded = oState.context.getValue("@$ui5.node.isExpanded") === true;
+
 		if (bIsGrandTotal || bIsGroupTotal) {
 			oState.type = oState.Type.Summary;
+			oState.level++;
 		} else if (bIsGroupHeader) {
 			oState.type = oState.Type.GroupHeader;
 		}
-
-		oState.expandable = bIsGroupHeader;
-		oState.expanded = oState.context.getValue("@$ui5.node.isExpanded") === true;
-		oState.level = iLevel;
 
 		if (bIsGroupHeader) {
 			var mGroupLevelInfo = this._aGroupLevels[iLevel - 1];

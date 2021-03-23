@@ -141,7 +141,7 @@ sap.ui.define([
 		 */
 		calcGroupIndent: function(oRow) {
 			var bIsTreeTable = GroupingUtils.TableUtils.isA(oRow.getTable(), "sap.ui.table.TreeTable"); // temporary, until spec is clarified
-			var iLevel = oRow.getLevel() - (!oRow.isGroupHeader() && !oRow.isSummary() && !bIsTreeTable ? 1 : 0);
+			var iLevel = oRow.getLevel() - (!oRow.isGroupHeader() && !oRow.isTotalSummary() && !bIsTreeTable ? 1 : 0);
 			var iIndent = 0;
 
 			for (var i = 1; i < iLevel; i++) {
