@@ -269,9 +269,11 @@ sap.ui.define([
 	_AggregationCache.prototype.expand = function (oGroupLock, vGroupNodeOrPath) {
 		var oCache,
 			iCount,
+			aElements = this.aElements,
 			oGroupNode = typeof vGroupNodeOrPath === "string"
 				? this.fetchValue(_GroupLock.$cached, vGroupNodeOrPath).getResult()
 				: vGroupNodeOrPath,
+			iIndex,
 			aSpliced = _Helper.getPrivateAnnotation(oGroupNode, "spliced"),
 			that = this;
 
@@ -283,11 +285,14 @@ sap.ui.define([
 
 		if (aSpliced) {
 			_Helper.deletePrivateAnnotation(oGroupNode, "spliced");
-			// Note: Array#splice uses varargs syntax for inserted items!
-			this.aElements.splice.apply(this.aElements,
-				[this.aElements.indexOf(oGroupNode) + 1, 0].concat(aSpliced));
+
+			iIndex = aElements.indexOf(oGroupNode) + 1;
+			// insert aSpliced at iIndex
+			this.aElements = aElements.concat(aSpliced,	aElements.splice(iIndex));
+			this.aElements.$byPredicate = aElements.$byPredicate;
+
 			iCount = aSpliced.length;
-			this.aElements.$count += iCount;
+			this.aElements.$count = aElements.$count + iCount;
 			aSpliced.forEach(function (oElement) {
 				var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
