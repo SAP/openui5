@@ -959,6 +959,41 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("enter invalid value and remove condition", function(assert) {
+
+		_initType(new IntegerType(), Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
+
+		var fnDone = assert.async();
+		setTimeout(function () { // to wait for retemplating
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			// sap.ui.getCore().getMessageManager().registerObject(oGrid, true); // to activate message manager
+
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
+			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+			aContent = oField.getAggregation("_content");
+			var oControl = aContent && aContent.length > 0 && aContent[0];
+
+			oControl.setValue("foo");
+			oControl.fireChange({value: "foo"}); //fake invalide input
+			setTimeout(function () { // as model update is async
+				assert.equal( oControl.getValueState(), "Error", "Error shown on the value field");
+
+				var oRemoveBtn = sap.ui.getCore().byId("DCP1--0--removeBtnLarge");
+				oRemoveBtn.firePress();
+				setTimeout(function () { // as condition rendering is triggered async.
+					sap.ui.getCore().applyChanges();
+
+					assert.equal(oControl.getValueState(), "None", "No Error shown on the value field");
+					assert.equal(oControl.getValue(), "", "value of the field is empty");
+
+					fnDone();
+				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
 	QUnit.test("use float type", function(assert) {
 
 		_initType(new FloatType(), Condition.createCondition("EQ", [1.1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
