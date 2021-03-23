@@ -4,7 +4,6 @@
 		"id": "card.explorer.extension.batchRequest"
 	},
 	"sap.card": {
-		"extension": "./BatchRequestExtension",
 		"configuration": {
 			"parameters": {
 				"supplierId": {
@@ -20,15 +19,32 @@
 			}
 		},
 		"data": {
-			"extension": {
-				"method": "getData"
+			"request": {
+				"url": "{{destinations.ProductsMockServer}}/$batch",
+				"method": "POST",
+				"batch": {
+					"supplier": {
+						"method": "GET",
+						"url": "SEPMRA_C_PD_Supplier('{{parameters.supplierId}}')",
+						"headers": {
+							"Accept": "application/json"
+						}
+					},
+					"products": {
+						"method": "GET",
+						"url": "SEPMRA_C_PD_Product?$top=2&$filter=Supplier eq '{{parameters.supplierId}}'",
+						"headers": {
+							"Accept": "application/json"
+						}
+					}
+				}
 			}
 		},
 		"type": "List",
 		"designtime": "dt/Configuration",
 		"header": {
 			"data": {
-				"path": "/supplier"
+				"path": "/supplier/d"
 			},
 			"icon": {
 				"src": "sap-icon://cargo-train"
@@ -38,7 +54,7 @@
 		},
 		"content": {
 			"data": {
-				"path": "/products/results"
+				"path": "/products/d/results"
 			},
 			"item": {
 				"title": "{Name}",

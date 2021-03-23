@@ -4,9 +4,11 @@
 sap.ui.define([
 	"sap/ui/integration/util/DataProvider",
 	"jquery.sap.global",
-	"sap/base/Log"
-], function (DataProvider, jQuery, Log) {
+	"sap/base/Log",
+	"sap/ui/model/odata/v4/ODataUtils"
+], function (DataProvider, jQuery, Log, ODataUtils) {
 	"use strict";
+	/*global Response*/
 
 	var aModes = ["no-cors", "same-origin", "cors"];
 	var aMethods = ["GET", "POST"];
@@ -84,55 +86,84 @@ sap.ui.define([
 	RequestDataProvider.prototype._fetch = function (oRequestConfig) {
 		var sMessage = "Invalid request";
 
-		return new Promise(function (resolve, reject) {
+		if (!oRequestConfig || !oRequestConfig.url) {
+			Log.error(sMessage);
+			return Promise.reject(sMessage);
+		}
 
-			if (!oRequestConfig || !oRequestConfig.url) {
-				Log.error(sMessage);
-				reject(sMessage);
-				return;
+		if (!this.getAllowCustomDataType() && oRequestConfig.dataType) {
+			Log.error("To specify dataType property in the Request Configuration, first set allowCustomDataType to 'true'.");
+		}
+
+		var vData = oRequestConfig.parameters,
+			oCard = this.getCardInstance(),
+			sUrl = oRequestConfig.url,
+			sDataType = (this.getAllowCustomDataType() && oRequestConfig.dataType) || "json",
+			mHeaders = oRequestConfig.headers,
+			mBatchRequests = oRequestConfig.batch,
+			oBatchSerialized,
+			oRequest;
+
+		if (oCard && !sUrl.startsWith("/")) {
+			sUrl = oCard.getRuntimeUrl(oRequestConfig.url);
+		}
+
+		// if not 'application/x-www-form-urlencoded', data has to be serialized manually
+		if (this._hasHeader(oRequestConfig, "Content-Type", "application/json")) {
+			vData = JSON.stringify(oRequestConfig.parameters);
+		}
+
+		if (mBatchRequests) {
+			oBatchSerialized = ODataUtils.serializeBatchRequest(Object.values(mBatchRequests));
+			sDataType = "text";
+			vData = oBatchSerialized.body;
+			mHeaders = Object.assign({}, mHeaders, oBatchSerialized.headers);
+		}
+
+		oRequest = {
+			"mode": oRequestConfig.mode || "cors",
+			"url": sUrl,
+			"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
+			"dataType": sDataType,
+			"data": vData,
+			"headers": mHeaders,
+			"timeout": 15000,
+			"xhrFields": {
+				"withCredentials": !!oRequestConfig.withCredentials
 			}
+		};
 
-			if (!this.getAllowCustomDataType() && oRequestConfig.dataType) {
-				Log.error("To specify dataType property in the Request Configuration, first set allowCustomDataType to 'true'.");
-			}
+		if (!this._isValidRequest(oRequest)) {
+			Log.error(sMessage);
+			return Promise.reject(sMessage);
+		}
 
-			var vData = oRequestConfig.parameters,
-				oCard = this.getCardInstance(),
-				sUrl = oRequestConfig.url;
+		return this._request(oRequest)
+			.then(function (vResult) {
+				var vData = vResult[0],
+					jqXHR = vResult[1];
 
-			if (oCard && !sUrl.startsWith("/")) {
-				sUrl = oCard.getRuntimeUrl(oRequestConfig.url);
-			}
-
-			// if not 'application/x-www-form-urlencoded', data has to be serialized manually
-			if (this._hasHeader(oRequestConfig, "Content-Type", "application/json")) {
-				vData = JSON.stringify(oRequestConfig.parameters);
-			}
-
-			var oRequest = {
-				"mode": oRequestConfig.mode || "cors",
-				"url": sUrl,
-				"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
-				"dataType": (this.getAllowCustomDataType() && oRequestConfig.dataType) || "json",
-				"data": vData,
-				"headers": oRequestConfig.headers,
-				"timeout": 15000,
-				"xhrFields": {
-					"withCredentials": !!oRequestConfig.withCredentials
+				if (mBatchRequests) {
+					return this._deserializeBatchResponse(mBatchRequests, vData, jqXHR);
 				}
-			};
 
-			if (this._isValidRequest(oRequest)) {
-				jQuery.ajax(oRequest).done(function (oData) {
-					resolve(oData);
-				}).fail(function (jqXHR, sTextStatus, sError) {
-					reject([sError, jqXHR]);
-				});
-			} else {
-				Log.error(sMessage);
-				reject(sMessage);
-			}
-		}.bind(this));
+				return vData;
+			}.bind(this));
+	};
+
+	/**
+	 * Sends a request with jQuery.ajax(). Wrapped in a Promise.
+	 * @param {Object} oRequest The request to be sent with jQuery.ajax().
+	 * @returns {Promise} A Promise which is resolved when request is done and rejected when it fails.
+	 */
+	RequestDataProvider.prototype._request = function (oRequest) {
+		return new Promise(function (resolve, reject) {
+			jQuery.ajax(oRequest).done(function (vData, sTextStatus, jqXHR) {
+				resolve([vData, jqXHR]);
+			}).fail(function (jqXHR, sTextStatus, sError) {
+				reject([sError, jqXHR]);
+			});
+		});
 	};
 
 	/**
@@ -157,6 +188,44 @@ sap.ui.define([
 		}
 
 		return false;
+	};
+
+	/**
+	 * Deserializes the result of a batch (multipart/mixed) request.
+	 * @private
+	 * @param {map} mBatchRequests The requests which were send in batch. Order in the response must match.
+	 * @param {Object} sResponseBody The response to be deserialized.
+	 * @param {jqXHR} jqXHR The jQuery XHR which goes with the response.
+	 * @returns {Object} The deserialized response. Each object in the result will have a key matching the one in the request.
+	 */
+	RequestDataProvider.prototype._deserializeBatchResponse = function (mBatchRequests, sResponseBody, jqXHR) {
+		return new Promise(function(resolve, reject) {
+			var sContentType = jqXHR.getResponseHeader("Content-Type"),
+				aBatchResponses = ODataUtils.deserializeBatchResponse(sContentType, sResponseBody, false),
+				aKeys = Object.keys(mBatchRequests),
+				mResult = {};
+
+			aKeys.forEach(function(sKey, iInd) {
+				var mResponse = aBatchResponses[iInd],
+					oResponse;
+
+				if (!mResponse) {
+					reject("Batch responses do not match the batch requests.");
+					return;
+				}
+
+				oResponse = new Response(mResponse.responseText, mResponse);
+
+				if (!oResponse.ok) {
+					reject("One of batch requests fails with '" + oResponse.status + " " + oResponse.statusText + "'");
+					return;
+				}
+
+				mResult[sKey] = mResponse.responseText ? JSON.parse(mResponse.responseText) : {};
+			});
+
+			resolve(mResult);
+		});
 	};
 
 	return RequestDataProvider;
