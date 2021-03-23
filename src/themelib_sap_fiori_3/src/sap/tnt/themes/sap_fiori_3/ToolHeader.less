@@ -71,7 +71,7 @@
 		}
 	}
 
-	.sapMBtn:not(.sapMBtnDisabled) .sapMBtnEmphasized.sapMBtnActive, 
+	.sapMBtn:not(.sapMBtnDisabled) .sapMBtnEmphasized.sapMBtnActive,
 	.sapMBtn:not(.sapMBtnDisabled) .sapMToggleBtnPressed {
 		background: @sapUiShellActiveBackground;
 		color: @sapUiShellActiveTextColor;
@@ -255,24 +255,24 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus > .sapMBtnEmph
 			color: lighten(saturate(spin(@sapUiNeutralText, 350), 4), 41);
 		}
 	}
-	
+
 		// backgrounds
 		.sapUiIcon {
 			&.sapUiIconBGColorContrast {
 				color: @sapUiShellTextColor;
-				background: transparent; 
+				background: transparent;
 			}
-	
+
 			&.sapUiIconBGColorCritical {
 				color: @sapUiBaseText;
 				background: lighten(saturate(spin(@sapUiCriticalElement, 8), 4), 21);
 			}
-	
+
 			&.sapUiIconBGColorNegative  {
 				color: @sapUiBaseText;
 				background: lighten(@sapUiNegativeElement, 40);
 			}
-	
+
 			&.sapUiIconBGColorNeutral {
 				color: @sapUiBaseText;
 				background: lighten(saturate(spin(@sapUiNeutralElement, 350), 4), 41);
@@ -283,7 +283,7 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus > .sapMBtnEmph
 				background: lighten(desaturate(spin(@sapUiPositiveElement, 335), 28), 50);
 			}
 		}
-	
+
 }
 
 // ==========================================================================
@@ -662,4 +662,19 @@ html.sap-desktop .sapTntToolHeader .sapMObjStatusActive:focus .sapMObjStatusLink
 // ==========================================================================
 .sapTntToolHeader .sapMImgFocusable:focus {
 	outline-color: @sapUiContentContrastFocusColor;
+}
+
+// ==========================================================================
+// sap.f.Breadcrumbs overriding
+// ==========================================================================
+.sapTntToolHeader .sapMBreadcrumbs {
+	.sapMBreadcrumbsItem,
+	.sapMLnk,
+	.sapMSltIcon:before{
+		color: @sapUiShellInteractiveTextColor;
+	}
+
+	.sapMBreadcrumbsSeparator {
+		color: @sapUiShellTextColor;
+	}
 }
