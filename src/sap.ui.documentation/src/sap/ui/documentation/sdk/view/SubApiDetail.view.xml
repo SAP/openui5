@@ -193,7 +193,8 @@
 															enableFormattedText="true"
 															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
-													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
+													<m:ObjectStatus text="Visibility: {parts : [{path : 'visibility'}, {path : 'allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+															state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 													<m:ObjectStatus visible="{=${since} !== undefined}" text="Since: {since}" />
 												</layout:VerticalLayout>
 											</custom:Row>
@@ -279,7 +280,8 @@
 												<m:Text text="{defaultValue}"/>
 												<layout:VerticalLayout width="100%">
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
-													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
+													<m:ObjectStatus text="Visibility: {parts : [{path : 'visibility'}, {path : 'allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+														state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 													<m:MessageStrip
 														visible="{=${deprecatedText} !== undefined}"
 														text="{deprecatedText}"
@@ -477,7 +479,8 @@
 
 												<custom:JSDocText sanitizeContent="false" text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
-												<m:ObjectStatus text="Visibility: {event>visibility}" state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
+												<m:ObjectStatus text="Visibility: {parts : [{path : 'event>visibility'}, {path : 'event>allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+													state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 
 												<template:if test="{=${event>deprecated} !== undefined}">
 													<m:MessageStrip
@@ -590,10 +593,11 @@
 														</template:repeat>
 													</layout:VerticalLayout>
 
-													<layout:HorizontalLayout class="sapUiTinyMarginBottom">
-														<m:ObjectStatus text="Visibility: {method>visibility}" state="{= ${method>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiTinyMarginEnd"/>
-														<m:ObjectStatus visible="{=${method>since} !== undefined}" text="Since: {method>since}" />
-													</layout:HorizontalLayout>
+													<m:FlexBox class="sapUiTinyMarginBottom">
+														<m:ObjectStatus text="Visibility: {parts : [{path : 'method>visibility'}, {path : 'method>allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+														state="{= ${method>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiTinyMarginEnd"/>
+														<m:ObjectStatus visible="{=${method>since} !== undefined}" text="Since: {method>since}"/>
+													</m:FlexBox>
 													<template:if test="{=${method>deprecated} !== undefined}">
 														<m:MessageStrip
 															text="{method>deprecatedText}"
