@@ -2200,16 +2200,14 @@ sap.ui.define([
 			Log.warning("Do not use synchronous component creation (" + vConfig["name"] + ")! " +
 				"Use the new asynchronous factory 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
 		}
-		// flag config as legacy factory call
-		vConfig.legacy = true;
 
-		return componentFactory(vConfig);
+		return componentFactory(vConfig, /*bLegacy=*/true);
 	};
 
 	/*
 	 * Part of the old sap.ui.component implementation than can be re-used by the new factory
 	 */
-	function componentFactory(vConfig) {
+	function componentFactory(vConfig, bLegacy) {
 		var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
 		// get terminologies information: API -> Owner Component -> Configuration
 		var aActiveTerminologies = vConfig.activeTerminologies || (oOwnerComponent && oOwnerComponent.getActiveTerminologies()) || sap.ui.getCore().getConfiguration().getActiveTerminologies();
@@ -2241,18 +2239,10 @@ sap.ui.define([
 		}
 
 		function createInstance(oClass) {
-			var fnLogProperties = function(name) {
-				return {
-					type: "sap.ui.component",
-					name: name
-				};
-			};
-
-			if (vConfig.legacy && oClass.getMetadata().isA("sap.ui.core.IAsyncContentCreation")) {
+			if (bLegacy && oClass.getMetadata().isA("sap.ui.core.IAsyncContentCreation")) {
 				throw new Error("Do not use deprecated factory function 'sap.ui.component' in combination with IAsyncContentCreation (" + vConfig["name"] + "). " +
-				"Use 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
+				"Use 'Component.create' instead");
 			}
-			delete vConfig.legacy;
 
 			// retrieve the required properties
 			var sName = vConfig.name,

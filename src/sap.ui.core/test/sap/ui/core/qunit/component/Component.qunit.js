@@ -309,7 +309,6 @@ sap.ui.define([
 				async: true
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
-				this.oComponent.init();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -356,7 +355,6 @@ sap.ui.define([
 					async: true
 				}).then(function(oComponent) {
 					that.oComponent = oComponent;
-					that.oComponent.init();
 					done();
 				});
 			});
