@@ -32,6 +32,13 @@ sap.ui.define(['./library'],
                 oRm.openStart("div", oMDCChart);
                 //TODO: Clarify why writeControlData doesn't work on rerender
                 oRm.attr("id", oMDCChart.getId());
+                //oRm.class(ChartRenderer.CSS_CLASS);
+                //oRm.class("sapUiFixFlex");
+                //oRm.style("overflow", "hidden");
+                oRm.style("height", oMDCChart.getHeight());
+                oRm.style("width", oMDCChart.getWidth());
+                oRm.style("min-height", oMDCChart.getMinHeight());
+                oRm.style("min-width", oMDCChart.getMinWidth());
                 oRm.openEnd();
                 this.renderToolbar(oRm, oMDCChart.getAggregation("_toolbar"));
                 this.renderBreadcrumbs(oRm, oMDCChart.getAggregation("_breadcrumbs"));

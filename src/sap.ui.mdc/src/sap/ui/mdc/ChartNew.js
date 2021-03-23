@@ -72,6 +72,24 @@ sap.ui.define([
                 defaultAggregation: "items",
                 properties: {
                     /**
+					 * Defines the width of the chart.
+					 */
+					width: {
+						type: "sap.ui.core.CSSSize",
+						group: "Dimension",
+						defaultValue: "100%",
+						invalidate: true
+					},
+					/**
+					 * Defines the height of the chart.
+					 */
+					height: {
+						type: "sap.ui.core.CSSSize",
+						group: "Dimension",
+						defaultValue: "100%",
+						invalidate: true
+					},
+                    /**
                      * Defines the module path of the metadata delegate.
                      */
                     delegate: {

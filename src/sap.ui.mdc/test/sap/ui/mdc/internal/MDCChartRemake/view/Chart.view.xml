@@ -467,7 +467,7 @@
 			<f2:content>
 				<VBox id="idContainer" height="100%">
 
-					<mdc:Chart id="bookChart" filter="booksFilterBar" noDataText="This is a test noData text" data="{path: '/Books'}" p13nMode="Item,Sort,Type" delegate="{
+					<mdc:Chart id="bookChart" filter="booksFilterBar"  autoBindOnInit="false" noDataText="This is a test noData text" data="{path: '/Books'}" p13nMode="Item,Sort,Type" delegate="{
 							'name': 'sap/ui/mdc/odata/v4/ChartDelegate',
 							'payload': {
 								collectionName: 'Books'
