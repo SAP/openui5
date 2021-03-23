@@ -366,6 +366,9 @@ sap.ui.define([
             this.getControlDelegate().initializeInnerChart(this).then(function (oInnerChart) {
 
                 this.setBusyIndicatorDelay(0);
+
+                this.getControlDelegate().createInitialChartContent(this);
+
                 if (this.getAutoBindOnInit()) {
                     this.setBusy(true);
                     this._createContentfromPropertyInfos();

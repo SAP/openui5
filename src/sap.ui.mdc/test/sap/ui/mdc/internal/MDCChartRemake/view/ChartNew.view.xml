@@ -495,7 +495,7 @@
 
 						<mdc:items>
 							<mdcc:ItemNew id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
-							<mdcc:ItemNew id="meas1" type="aggregatable" name="metricsWords" role="axis1" label="Words (avg)"/>
+							<mdcc:ItemNew id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (average)"/>
 						</mdc:items>
 					</mdc:ChartNew>
 				</f2:content>
