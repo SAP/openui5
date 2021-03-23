@@ -860,14 +860,10 @@ sap.ui.define([
 		}
 	}
 
-	function onDemandPreprocessorExists(oView, sViewType, sType) {
-		 View._mPreprocessors[sViewType][sType].forEach(function(oPreprocessor) {
-			if (oPreprocessor._onDemand) {
-				Log.error("Registration for \"" + sType + "\" failed, only one on-demand-preprocessor allowed", oView.getMetadata().getName());
-				return false;
-			}
+	function onDemandPreprocessorExists(sViewType, sType) {
+		return View._mPreprocessors[sViewType][sType].some(function(oPreprocessor) {
+			return !!oPreprocessor._onDemand;
 		});
-		return true;
 	}
 
 	/**
@@ -913,7 +909,8 @@ sap.ui.define([
 		}
 		if (vPreprocessor) {
 			initGlobalPreprocessorsRegistry(sType, sViewType);
-			if (bOnDemand && !onDemandPreprocessorExists(this, sViewType, sType)) {
+			if (bOnDemand && onDemandPreprocessorExists(sViewType, sType)) {
+				Log.error("Registration for \"" + sType + "\" failed, only one on-demand-preprocessor allowed", this.getMetadata().getName());
 				return;
 			}
 			View._mPreprocessors[sViewType][sType].push({

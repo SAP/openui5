@@ -738,41 +738,56 @@ sap.ui.define([
 	};
 
 	/**
-	* Register a preprocessor for all views of a specific type.
-	*
-	* The preprocessor can be registered for several stages of view initialization, for xml views these are
-	* either the plain "xml" or the already initialized "controls" , see {@link sap.ui.core.mvc.XMLView.PreprocessorType}.
-	* For each type one preprocessor is executed. If there is a preprocessor passed to or activated at the
-	* view instance already, that one is used. When several preprocessors are registered for one hook, it has to be made
-	* sure, that they do not conflict when being processed serially.
-	*
-	* It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
-	* function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.
-	*
-	* <strong>Note</strong>: Preprocessors work only in async views and will be ignored when the view is instantiated
-	* in sync mode by default, as this could have unexpected side effects. You may override this behaviour by setting the
-	* bSyncSupport flag to true.
-	*
-	* @public
-	* @static
-	* @param {string|sap.ui.core.mvc.XMLView.PreprocessorType} sType
-	* 		the type of content to be processed
-	* @param {string|function} vPreprocessor
-	* 		module path of the preprocessor implementation or a preprocessor function
-	* @param {boolean} bSyncSupport
-	* 		declares if the vPreprocessor ensures safe sync processing. This means the preprocessor will be executed
-	* 		also for sync views. Please be aware that any kind of async processing (like Promises, XHR, etc) may
-	* 		break the view initialization and lead to unexpected results.
-	* @param {boolean} [bOnDemand]
-	* 		ondemand preprocessor which enables developers to quickly activate the preprocessor for a view,
-	* 		by setting <code>preprocessors : { xml }</code>, for example.
-	* @param {object} [mSettings]
-	* 		optional configuration for preprocessor
-	*/
-	XMLView.registerPreprocessor = function(sType, vPreprocessor, bSyncSupport, bOnDemand, mSettings) {
+	 * Register a preprocessor for all views of a specific type.
+	 *
+	 * The preprocessor can be registered for several stages of view initialization, for xml views these are
+	 * either the plain "xml" or the already initialized "controls" , see {@link sap.ui.core.mvc.XMLView.PreprocessorType}.
+	 * For each type one preprocessor is executed. If there is a preprocessor passed to or activated at the
+	 * view instance already, that one is used. When several preprocessors are registered for one hook, it has to be made
+	 * sure, that they do not conflict when being processed serially.
+	 *
+	 * It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
+	 * function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.
+	 *
+	 * <strong>Note</strong>: Preprocessors work only in async views and will be ignored when the view is instantiated
+	 * in sync mode by default, as this could have unexpected side effects. You may override this behaviour by setting the
+	 * bSyncSupport flag to true.
+	 *
+	 * @public
+	 * @static
+	 * @param {string|sap.ui.core.mvc.XMLView.PreprocessorType} sType
+	 *      the type of content to be processed
+	 * @param {string|function} vPreprocessor
+	 *      module path of the preprocessor implementation or a preprocessor function
+	 * @param {string} [sViewType="XML"]
+	 *      Since 1.89, added for signature compatibility with {@link sap.ui.core.mvc.View#registerPreprocessor
+	 *      View#registerPreprocessor}. Only supported value is "XML".
+	 * @param {boolean} bSyncSupport
+	 *      declares if the vPreprocessor ensures safe sync processing. This means the preprocessor will be executed
+	 *      also for sync views. Please be aware that any kind of async processing (like Promises, XHR, etc) may
+	 *      break the view initialization and lead to unexpected results.
+	 * @param {boolean} [bOnDemand]
+	 *      ondemand preprocessor which enables developers to quickly activate the preprocessor for a view,
+	 *      by setting <code>preprocessors : { xml }</code>, for example.
+	 * @param {object} [mSettings]
+	 *      optional configuration for preprocessor
+	 */
+	XMLView.registerPreprocessor = function(sType, vPreprocessor, sViewType, bSyncSupport, bOnDemand, mSettings) {
+		var sOwnViewType = this.getMetadata().getClass()._sType;
+		if (typeof sViewType === "string") {
+			if (sViewType !== sOwnViewType) {
+				throw new TypeError("View types other than " + sOwnViewType
+					+ " are not supported by XMLView.registerPreprocessor,"
+					+ " check View.registerPreprocessor instead");
+			}
+		} else {
+			mSettings = bOnDemand;
+			bOnDemand = bSyncSupport;
+			bSyncSupport = sViewType;
+		}
 		sType = sType.toUpperCase();
 		if (XMLView.PreprocessorType[sType]) {
-			View.registerPreprocessor(XMLView.PreprocessorType[sType], vPreprocessor, this.getMetadata().getClass()._sType, bSyncSupport, bOnDemand, mSettings);
+			View.registerPreprocessor(XMLView.PreprocessorType[sType], vPreprocessor, sOwnViewType, bSyncSupport, bOnDemand, mSettings);
 		} else {
 			Log.error("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
 		}
