@@ -128,8 +128,9 @@ var sSingleLangTest = "de",
         oTestDiv.lang = sCurrentLang;
         oTestDiv.innerText = HyphenationTestingWords[sCurrentLang];
 
+        // Chrome on macOS partially supported native hyphenation. It didn't hyphenate one word more than once.
         if (Device.os.macintosh && Device.browser.chrome) {
-            return oTestDiv.offsetHeight > 24; // currently chrome on macOS partially supports native hyphenation, but it doesn't hyphenate one word more than once
+            return oTestDiv.offsetHeight > 24; // check if word is hyphenated more than once
         }
 
         return oTestDiv.offsetHeight > 12;
