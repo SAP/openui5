@@ -547,10 +547,10 @@ sap.ui.define([
 			oInput._$input.trigger("focus").val("abc").trigger("input");
 			this.clock.tick(300);
 
-			assert.ok(oInput._isSuggestionsPopoverInitiated() && oInput._getSuggestionsPopover().getPopover().isOpen && oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup is open now");
+			assert.ok(oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getPopover().isOpen && oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup is open now");
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
 			checkSubmit("Enter pressed on open Suggestions", true, true, "abcTom");
-			assert.ok(oInput._isSuggestionsPopoverInitiated() && oInput._getSuggestionsPopover().getPopover().isOpen && !oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup should be closed");
+			assert.ok(oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getPopover().isOpen && !oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup should be closed");
 		}
 
 		oInput.destroy();
@@ -867,7 +867,8 @@ sap.ui.define([
 	QUnit.test("Suggestions deactivated and aggregations are not filled - list and popup should not be initialized", function(assert){
 		var oInput = new Input({
 				showSuggestion: false
-			});
+			}),
+			oSpy = this.spy(oInput, "_openSuggestionPopup");
 
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -877,9 +878,120 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// suggestions are not active, list and popup should not be initialized
-		// assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer(), undefined, "The internal list is not initialzed when suggestions are set to false");
-		assert.strictEqual(oInput._oSuggPopover, undefined, "The internal popup is not initialzed when suggestions are set to false");
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer(), undefined, "The internal list is not initialzed when suggestions are set to false");
+		assert.notOk(oSpy.callCount, "The internal popup is not triggered when suggestions are set to false");
 
+		oInput.destroy();
+	});
+
+	QUnit.test("setShowSuggestions switching of the items container", function (assert) {
+		var oModel = new JSONModel({
+				items: [
+					{key: "key1 {{}}{}", value: "test1 {{}}", group: "1 {{{}}"},
+					{key: "key2", value: "test2", group: "1 {{{}}"},
+					{key: "key3", value: "test3", group: "2 {{{}}"},
+					{key: "key4", value: "test4", group: "2 {{{}}"}
+				],
+				columns: [
+					{columnLabel: "Text"},
+					{columnLabel: "Key"}
+				]
+			}),
+			oInput = new Input({
+				value: "tes",
+				showSuggestion: true,
+				suggestionItems: {
+					path: "/items",
+					template: new Item({key: "{key}", text: "{value}"}),
+					sorter: [new Sorter('group', false, true)]
+				}
+			}).setModel(oModel).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().isA("sap.m.List"), "The container is a sap.m.List");
+
+		// Act
+		oInput.bindSuggestionRows({
+			path: "/items",
+			template: new ColumnListItem({
+				cells: [
+					new Text({text:"{value}"}),
+					new Text({text:"{key}"})
+				]
+			}),
+			sorter: [new Sorter('group', false, true)]
+		});
+		oInput.bindSuggestionColumns({
+			path: "/columns",
+			template: new Column({
+				header: new Label({text: "{columnLabel}"})
+			})
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().isA("sap.m.Table"), "The container is a sap.m.Table");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("setShowSuggestions openning the popover", function (assert) {
+		var oModel = new JSONModel({
+				items: [
+					{key: "key1 {{}}{}", value: "test1 {{}}", group: "1 {{{}}"},
+					{key: "key2", value: "test2", group: "1 {{{}}"},
+					{key: "key3", value: "test3", group: "2 {{{}}"},
+					{key: "key4", value: "test4", group: "2 {{{}}"}
+				],
+				columns: [
+					{columnLabel: "Text"},
+					{columnLabel: "Key"}
+				]
+			}),
+			oInput = new Input({
+				value: "tes",
+				showSuggestion: true,
+				suggestionItems: {
+					path: "/items",
+					template: new Item({key: "{key}", text: "{value}"}),
+					sorter: [new Sorter('group', false, true)]
+				}
+			}).setModel(oModel).placeAt("content"),
+			oOpenerSpy = this.spy(oInput, "_openSuggestionsPopover");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._openSuggestionPopup();
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(oOpenerSpy.calledOnce, "The suggestionsPopover has been opened");
+
+		// Cleanup
+		oOpenerSpy.reset();
+		oInput._hideSuggestionPopup();
+		this.clock.tick(300);
+
+		// Act
+		oInput.setShowSuggestion(false);
+		oInput._openSuggestionPopup();
+		this.clock.tick(300);
+
+		// Assert
+		assert.notOk(oOpenerSpy.calledOnce, "The suggestionsPopover opener has been prevented");
+
+		// Act
+		oInput.setShowSuggestion(true);
+		oInput._openSuggestionPopup();
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(oOpenerSpy.calledOnce, "The suggestionsPopover has been opened");
+
+		// Cleanup
+		oInput._hideSuggestionPopup();
+		this.clock.tick(300);
 		oInput.destroy();
 	});
 
@@ -3058,8 +3170,6 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(fnTriggerSuggestSpy.called, "Should have NOT triggered suggest.");
-		assert.notOk(oInput._getSuggestionsPopover().getPopover(), "Should NOT have suggestions popover.");
-		assert.notOk(oInput._getSuggestionsPopover().getItemsContainer(), "Should have NOT created a list with suggestions.");
 
 		// Act
 		oInput._$input.val("");
@@ -5041,16 +5151,18 @@ sap.ui.define([
 	});
 
 	QUnit.test('show/hide suggestions', function (assert) {
-
+		// Act
 		this.inputWithSuggestions.setValueState("Error");
 		this.inputWithSuggestions.setShowValueStateMessage(true);
 
+		// Assert
 		assert.ok(this.inputWithSuggestions._getSuggestionsPopover().getPopover(), 'suggestions popover is initialized');
-		this.inputWithSuggestions.setShowSuggestion(false);
-		assert.notOk(this.inputWithSuggestions._getSuggestionsPopover().getPopover(), 'suggestions popover is not initialized');
 
+		// Act
+		this.inputWithSuggestions.setShowSuggestion(false);
 		this.inputWithSuggestions.openValueStateMessage();
 
+		// Assert
 		assert.ok(true, 'exception is not thrown');
 	});
 

@@ -33,8 +33,7 @@ sap.ui.define([
 
 	QUnit.module("Highlighting", {
 		before: function () {
-			var oInput = new Input();
-			this.oSuggestionsPopover = new SuggestionsPopover(oInput);
+			this.oSuggestionsPopover = new SuggestionsPopover();
 			sap.ui.getCore().applyChanges();
 		},
 		after: function () {
@@ -46,10 +45,9 @@ sap.ui.define([
 	QUnit.test("ValueStateHeader is destroyed when the SuggestionsPopover is destroyed", function (assert) {
 		var oSpy;
 		var oInput = new Input();
-		var oSuggestionsPopover = new SuggestionsPopover(oInput);
+		var oSuggestionsPopover = oInput._getSuggestionsPopover();
 
 		// Arrange
-		oSuggestionsPopover.createSuggestionPopup(oInput);
 		oSuggestionsPopover._getValueStateHeader();
 
 		// Assert
@@ -67,12 +65,12 @@ sap.ui.define([
 
 		// Clean
 		oSpy.restore();
+		oInput.destroy();
 	});
 
 	QUnit.module("initContent", {
 		beforeEach: function () {
-			var oInput = new Input();
-			this.oSuggestionsPopover = new SuggestionsPopover(oInput);
+			this.oSuggestionsPopover = new SuggestionsPopover();
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
@@ -124,7 +122,7 @@ sap.ui.define([
 
 		oComboBox = new ComboBox();
 
-		oSuggestionsPopover = new SuggestionsPopover(oComboBox);
+		oSuggestionsPopover = new SuggestionsPopover();
 		oSuggestionsPopover._bUseDialog = true;
 
 		sap.ui.getCore().applyChanges();
