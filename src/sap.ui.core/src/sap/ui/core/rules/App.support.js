@@ -229,6 +229,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mv
 				"sap.ui.extensionpoint",
 				"sap.ui.component",
 				"sap.ui.view",
+				"sap.ui.jsview",
 				"sap.ui.template"
 			];
 
