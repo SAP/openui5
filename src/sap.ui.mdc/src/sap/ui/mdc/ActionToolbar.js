@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/m/OverflowToolbar", "sap/m/OverflowToolbarRenderer", "sap/m/ToolbarSpacer", "sap/m/ToolbarSeparator"
-], function(OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator) {
+	"sap/m/OverflowToolbar", "sap/m/OverflowToolbarRenderer", "sap/m/ToolbarSpacer", "sap/m/ToolbarSeparator", "sap/ui/mdc/enum/ActionToolbarActionAlignment", "sap/ui/mdc/actiontoolbar/ActionToolbarAction"
+], function(OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, ActionToolbarActionAlignment, ActionToolbarAction) {
 	"use strict";
 
 	/**
@@ -80,13 +80,13 @@ sap.ui.define([
 	});
 
 	var _aAggregations = [
-		"begin", "between", "actions", "end"
+		"begin", "between", "end"
 	];
 
 	function _getAggregationIndex(oToolbar, sAggregationName) {
-		var iAggIdx = _aAggregations.indexOf(sAggregationName);
-		if (iAggIdx >= 0 && oToolbar._oSpacer /* Only return an index if the toolbar is not yet destroyed */) {
-			return iAggIdx;
+		var iAggregationIndex = _aAggregations.indexOf(sAggregationName);
+		if (iAggregationIndex >= 0 && oToolbar._oSpacer /* Only return an index if the toolbar is not yet destroyed */) {
+			return iAggregationIndex;
 		}
 		return -1;
 	}
@@ -132,10 +132,6 @@ sap.ui.define([
 		});
 		// Spacer added to right align actions and end aggregation of the toolbar.
 		this._oSpacer = new ToolbarSpacer();
-		// Separator between actions and end content of the toolbar.
-		this._oActionSeparator = new ToolbarSeparator({
-			visible: false
-		});
 
 		if (OverflowToolbar.prototype.init) {
 			OverflowToolbar.prototype.init.apply(this, arguments);
@@ -143,15 +139,15 @@ sap.ui.define([
 		// Add TitleSeparator, Spacer and ActionSeparator(not yet used) to the content of the toolbar (ordered)
 		_add(this, this._oTitleSeparator);
 		_add(this, this._oSpacer);
-		_add(this, this._oActionSeparator);
 
 		this.setUseAsHeader(true);
+		this._aActions = [];
 	};
 
 	ActionToolbar.prototype.exit = function() {
 		this._oSpacer = null;
 		this._oTitleSeparator = null;
-		this._oActionSeparator = null;
+		this._aActions = undefined;
 		_destroy(this);
 
 		if (OverflowToolbar.prototype.exit) {
@@ -160,12 +156,12 @@ sap.ui.define([
 	};
 
 	ActionToolbar.prototype._getState = function(sAggregationName) {
-		var iAggIdx = _getAggregationIndex(this, sAggregationName);
-		if (iAggIdx >= 0) {
+		var iAggregationIndex = _getAggregationIndex(this, sAggregationName);
+		if (iAggregationIndex >= 0) {
 			return {
-				aggIdx: iAggIdx,
-				sepIdcs: [
-					this.indexOfContent(this._oTitleSeparator), this.indexOfContent(this._oSpacer), this.indexOfContent(this._oActionSeparator)
+				aggregationIndex: iAggregationIndex,
+				separatorIndex: [
+					this.indexOfContent(this._oTitleSeparator), this.indexOfContent(this._oSpacer)
 				]
 			};
 		}
@@ -212,14 +208,17 @@ sap.ui.define([
 	};
 
 	ActionToolbar.prototype.indexOfAggregation = function(sAggregationName, oObject) {
+		if (sAggregationName === "action" && oObject) {
+			return this._aActions.indexOf(oObject);
+		}
 		var oInfo = this._getState(sAggregationName);
 		if (oInfo) {
 			var iIdx = this.indexOfContent(oObject);
 			if (iIdx < 0) {
 				return -1;
 			}
-			var iPrevSepIdx = oInfo.aggIdx == 0 ? -1 : oInfo.sepIdcs[oInfo.aggIdx - 1];
-			var iNextSepIdx = oInfo.aggIdx == 3 ? this.getContent().length : oInfo.sepIdcs[oInfo.aggIdx];
+			var iPrevSepIdx = oInfo.aggregationIndex == 0 ? -1 : oInfo.separatorIndex[oInfo.aggregationIndex - 1];
+			var iNextSepIdx = oInfo.aggregationIndex == 2 ? this.getContent().length : oInfo.separatorIndex[oInfo.aggregationIndex];
 			if (iIdx < iPrevSepIdx || iIdx > iNextSepIdx) {
 				return -1;
 			}
@@ -228,16 +227,32 @@ sap.ui.define([
 		return OverflowToolbar.prototype.indexOfAggregation.apply(this, arguments);
 	};
 
+	ActionToolbar.prototype.indexOfAction = function(oObject) {
+		return this._aActions.indexOf(oObject);
+	};
+
 	ActionToolbar.prototype.getAggregation = function(sAggregationName) {
 		var oInfo = this._getState(sAggregationName);
 		if (oInfo) {
 			var aContent = this.getContent();
-			return aContent.slice(oInfo.aggIdx === 0 ? 0 : (oInfo.sepIdcs[oInfo.aggIdx - 1] + 1), oInfo.aggIdx >= oInfo.sepIdcs.length ? aContent.length : oInfo.sepIdcs[oInfo.aggIdx]);
+			return aContent.slice(oInfo.aggregationIndex === 0 ? 0 : (oInfo.separatorIndex[oInfo.aggregationIndex - 1] + 1), oInfo.aggregationIndex >= oInfo.separatorIndex.length ? aContent.length : oInfo.separatorIndex[oInfo.aggregationIndex]);
 		}
 		return OverflowToolbar.prototype.getAggregation.apply(this, arguments);
 	};
 
+	ActionToolbar.prototype.getActions = function() {
+		return this._aActions;
+	};
+
 	ActionToolbar.prototype.addAggregation = function(sAggregationName, oObject) {
+		if (sAggregationName === "actions" && oObject) {
+			if (oObject.getMetadata().getName() === "sap.ui.mdc.actiontoolbar.ActionToolbarAction") {
+				return this._addAction(oObject);
+			}
+			return this._addAction(new ActionToolbarAction({
+				action: oObject
+			}));
+		}
 		var oInfo = this._getState(sAggregationName);
 		if (oInfo) {
 			if (!oObject) {
@@ -248,7 +263,7 @@ sap.ui.define([
 				_remove(this, oObject);
 				this.addAggregation(sAggregationName, oObject);
 			} else {
-				_insert(this, oObject, oInfo.aggIdx >= oInfo.sepIdcs.length ? this.getContent().length : oInfo.sepIdcs[oInfo.aggIdx]);
+				_insert(this, oObject, oInfo.aggregationIndex >= oInfo.separatorIndex.length ? this.getContent().length : oInfo.separatorIndex[oInfo.aggregationIndex]);
 			}
 			this._updateSeparator();
 			return this;
@@ -258,6 +273,14 @@ sap.ui.define([
 	};
 
 	ActionToolbar.prototype.insertAggregation = function(sAggregationName, oObject, iIndex) {
+		if (sAggregationName === "actions" && oObject) {
+			if (oObject.getMetadata().getName() === "sap.ui.mdc.actiontoolbar.ActionToolbarAction") {
+				return this._addAction(oObject);
+			}
+			return this._addAction(new ActionToolbarAction({
+				action: oObject
+			}));
+		}
 		var oInfo = this._getState(sAggregationName);
 		if (oInfo) {
 			if (!oObject) {
@@ -280,7 +303,7 @@ sap.ui.define([
 				} else {
 					iIdx = iIndex;
 				}
-				var iPrevSepIdx = oInfo.aggIdx == 0 ? -1 : oInfo.sepIdcs[oInfo.aggIdx - 1];
+				var iPrevSepIdx = oInfo.aggregationIndex == 0 ? -1 : oInfo.separatorIndex[oInfo.aggregationIndex - 1];
 				_insert(this, oObject, iIdx + iPrevSepIdx + 1);
 			}
 			this._updateSeparator();
@@ -290,7 +313,58 @@ sap.ui.define([
 		return OverflowToolbar.prototype.insertAggregation.apply(this, arguments);
 	};
 
+	ActionToolbar.prototype._addAction = function(oActionToolbarAction) {
+		var sAggregationName = oActionToolbarAction.getLayoutInformation().aggregationName;
+		var sAlignment = oActionToolbarAction.getLayoutInformation().alignment;
+		var aAggregation = this.getAggregation(sAggregationName);
+		if (!this._aActions.includes(oActionToolbarAction)) {
+			this._aActions.push(oActionToolbarAction);
+		}
+		if (sAlignment === ActionToolbarActionAlignment.End) {
+			if (!this._aggregationContainsActionSeparatorBefore(sAggregationName)) {
+				this.addAggregation(sAggregationName, oActionToolbarAction.getSeparatorBefore());
+			}
+			this.addAggregation(sAggregationName, oActionToolbarAction);
+		} else if (sAlignment === ActionToolbarActionAlignment.Begin && aAggregation[0] !== oActionToolbarAction) {
+			this.insertAggregation(sAggregationName, oActionToolbarAction, 0);
+			if (!this._aggregationContainsActionSeparatorAfter(sAggregationName)) {
+				this.insertAggregation(sAggregationName, oActionToolbarAction.getSeparatorAfter(), 1);
+			}
+		}
+		oActionToolbarAction.updateSeparators();
+		return this;
+	};
+
+	ActionToolbar.prototype._aggregationContainsActionSeparator = function (sAggregationName, sAlignment) {
+		var aActionsInAggregation =  this._getActionsInAggregation(sAggregationName);
+
+		return aActionsInAggregation.some(function(oActionInAggregation) {
+			return oActionInAggregation['getSeparator' + sAlignment]().getVisible() && !oActionInAggregation.bIsDestroyed;
+		});
+	};
+
+	ActionToolbar.prototype._aggregationContainsActionSeparatorBefore = function (sAggregationName) {
+		return this._aggregationContainsActionSeparator(sAggregationName, "Before");
+	};
+
+	ActionToolbar.prototype._aggregationContainsActionSeparatorAfter = function (sAggregationName) {
+		return this._aggregationContainsActionSeparator(sAggregationName, "After");
+	};
+
+	ActionToolbar.prototype._getActionsInAggregation = function (sAggregationName) {
+		return this._aActions.filter(function(oAction) {
+			return oAction.getLayoutInformation().aggregationName === sAggregationName && !oAction.bIsDestroyed;
+		});
+	};
+
 	ActionToolbar.prototype.removeAggregation = function(sAggregationName, vObject) {
+		if (sAggregationName !== "content" && vObject && vObject.getMetadata().getName() === "sap.ui.mdc.actiontoolbar.ActionToolbarAction" ) {
+			return this._removeAction(vObject);
+		}
+		return this._removeAggregation(sAggregationName, vObject);
+	};
+
+	ActionToolbar.prototype._removeAggregation = function(sAggregationName, vObject) {
 		if (_getAggregationIndex(this, sAggregationName) >= 0) {
 			var oRemoved = _remove(this, vObject);
 			this._updateSeparator();
@@ -300,7 +374,43 @@ sap.ui.define([
 		return OverflowToolbar.prototype.removeAggregation.apply(this, arguments);
 	};
 
+	ActionToolbar.prototype._removeAction = function(oActionToolbarAction) {
+		var sAggregationName = oActionToolbarAction.getLayoutInformation().aggregationName;
+		var sAlignment = oActionToolbarAction.getLayoutInformation().alignment;
+		var aActionsInAggregation;
+		var oActionInAggregation;
+		var oRemoved;
+		var iSeparatorIndex;
+
+		var iIndex = this._aActions.indexOf(oActionToolbarAction);
+		if (iIndex > -1) {
+			this._aActions.splice(iIndex, 1);
+		}
+
+		oRemoved = this._removeAggregation(sAggregationName, oActionToolbarAction);
+
+		aActionsInAggregation =  this._getActionsInAggregation(sAggregationName).filter(function(oActionInAggregation) {
+			return oActionInAggregation.getLayoutInformation().alignment === sAlignment;
+		});
+		if (aActionsInAggregation.length > 0) {
+			oActionInAggregation = aActionsInAggregation[0];
+			iSeparatorIndex = this.indexOfAggregation(sAggregationName, oActionInAggregation);
+			if (sAlignment === ActionToolbarActionAlignment.Begin && !this._aggregationContainsActionSeparatorAfter(sAggregationName)) {
+				iSeparatorIndex = iSeparatorIndex + 1;
+				this.insertAggregation(sAggregationName, oActionInAggregation.getSeparatorAfter(), iSeparatorIndex);
+			} else if (sAlignment === ActionToolbarActionAlignment.End && !this._aggregationContainsActionSeparatorBefore(sAggregationName)) {
+				this.insertAggregation(sAggregationName, oActionInAggregation.getSeparatorBefore(), iSeparatorIndex);
+			}
+			oActionInAggregation.updateSeparators();
+		}
+
+		return oRemoved;
+	};
+
 	ActionToolbar.prototype.removeAllAggregation = function(sAggregationName) {
+		if (sAggregationName === "actions") {
+			return this._removeAllActions();
+		}
 		if (_getAggregationIndex(this, sAggregationName) >= 0) {
 			var aContentToRemove = this.getAggregation(sAggregationName);
 			for (var i = 0; i < aContentToRemove.length; i++) {
@@ -313,8 +423,16 @@ sap.ui.define([
 		return OverflowToolbar.prototype.removeAllAggregation.apply(this, arguments);
 	};
 
+	ActionToolbar.prototype._removeAllActions = function() {
+		var aRemovedContent = [];
+		while (this._aActions && this._aActions.length > 0) {
+			aRemovedContent.push(this._removeAction(this._aActions[0]));
+		}
+		return aRemovedContent;
+	};
+
 	ActionToolbar.prototype.destroyAggregation = function(sAggregationName) {
-		if (_getAggregationIndex(this, sAggregationName) >= 0) {
+		if (_getAggregationIndex(this, sAggregationName) >= 0 || sAggregationName === "actions") {
 			var aContentToDelete = this.removeAllAggregation(sAggregationName);
 			for (var i = 0; i < aContentToDelete.length; i++) {
 				aContentToDelete[i].destroy();
@@ -330,17 +448,18 @@ sap.ui.define([
 		// TODO: When the toolbar is used with aggregation forwarding (see aggregation actions of MDCTable) the propagation does not happen
 		// because the actions are finally stored in the content aggregation and access to mAggregations["actions"] does not have any effect.
 		var aContent = this.getContent();
-		for (var i = 0; i < aContent.length; i++) {
-			if (aContent[i].aAPIParentInfos) {
-				aContent[i].__aAPIParentInfos = aContent[i].aAPIParentInfos;
-				aContent[i].aAPIParentInfos = null;
+		var iIndex;
+		for (iIndex = 0; iIndex < aContent.length; iIndex++) {
+			if (aContent[iIndex].aAPIParentInfos) {
+				aContent[iIndex].__aAPIParentInfos = aContent[iIndex].aAPIParentInfos;
+				aContent[iIndex].aAPIParentInfos = null;
 			}
 		}
 		var res = OverflowToolbar.prototype.propagateProperties.apply(this, arguments);
-		for (var i = 0; i < aContent.length; i++) {
-			if (aContent[i].__aAPIParentInfos) {
-				aContent[i].aAPIParentInfos = aContent[i].__aAPIParentInfos;
-				aContent[i].__aAPIParentInfos = null;
+		for (iIndex = 0; iIndex < aContent.length; iIndex++) {
+			if (aContent[iIndex].__aAPIParentInfos) {
+				aContent[iIndex].aAPIParentInfos = aContent[iIndex].__aAPIParentInfos;
+				aContent[iIndex].__aAPIParentInfos = null;
 			}
 		}
 		return res;

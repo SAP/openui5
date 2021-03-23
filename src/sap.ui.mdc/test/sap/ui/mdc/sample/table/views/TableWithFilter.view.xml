@@ -4,6 +4,7 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:variants="sap.ui.fl.variants"
+	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	controllerName="sap.ui.mdc.sample.table.controller.Test">
 	<Page title="MDC Table &amp; Filter for Products" enableScrolling="true">
 		<VBox renderType="Bare" fitContainer="true">
@@ -44,17 +45,39 @@
 					<mdcTable:GridTableType rowCountMode="Fixed" rowCount="20"/>
 				</mdc:type>
 				<mdc:actions>
-					<Button text= "Responsive table"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType('ResponsiveTable')"/>
-					<Button text= "   Grid Table   "  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType('Table')"/>
-					<Button text= "Single Selection"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setSelectionMode('Single')"/>
-					<Button text= " Multi Selection"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setSelectionMode('Multi')"/>
-					<Button text= "  No Selection  "  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setSelectionMode('None')"/>
-					<Button text= "  Navigation on  " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setRowAction(['Navigation'])"/>
-					<Button text= "  Navigation off " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setRowAction()"/>
-					<Button text= "   Enable P13n   " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setP13nMode(['Column','Sort'])"/>
-					<Button text= "   Disable P13n  " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setP13nMode()"/>
-					<ToggleButton text= "Toggle navigated" press=".toggleNavigated"/>
-					<ToggleButton text= "Toggle highlight" press=".toggleHighlight"/>
+					<mdcat:ActionToolbarAction>
+						<Button text= "Responsive table"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType('ResponsiveTable')"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<Button text= "   Grid Table   "  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType('Table')"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<Button text= "Single Selection"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setSelectionMode('Single')"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<Button text= " Multi Selection"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setSelectionMode('Multi')"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<Button text= "  No Selection  "  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setSelectionMode('None')"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<Button text= "  Navigation on  " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setRowAction(['Navigation'])"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<Button text= "  Navigation off " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setRowAction()"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<Button text= "   Enable P13n   " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setP13nMode(['Column','Sort'])"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<Button text= "   Disable P13n  " press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setP13nMode()"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<ToggleButton text= "Toggle navigated" press=".toggleNavigated"/>
+					</mdcat:ActionToolbarAction>
+					<mdcat:ActionToolbarAction>
+						<ToggleButton text= "Toggle highlight" press=".toggleHighlight"/>
+					</mdcat:ActionToolbarAction>
 				</mdc:actions>
 				<mdc:columns>
 					<mdcTable:Column id="create" header="Created On" initialIndex="3" dataProperty="CreatedAt">

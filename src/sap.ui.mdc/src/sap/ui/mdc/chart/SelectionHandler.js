@@ -105,7 +105,7 @@ sap.ui.define(["sap/m/SelectionDetails", "sap/m/SelectionDetailsItem", "sap/m/Se
 
 		// Add to MDC charts toolbar
 		var oToolbar = oChart.getAggregation("_toolbar");
-		oToolbar.addAction(oSelectionDetails);
+		oToolbar.insertEnd(oSelectionDetails,0);
 	};
 
 	SelectionHandler.formatValue = function(oValue) {
