@@ -21,8 +21,12 @@ sap.ui.define([
 					return this.mdcTestLibrary.iClickOnColumnHeader(sColumn);
 				},
 
-				iClickOnColumnHeaderMenuSortButton: function(sColumn) {
-					return this.mdcTestLibrary.iClickOnAColumnHeaderMenuButtonWithIcon(sColumn, "sap-icon://sort");
+				iClickOnColumnHeaderMenuSortAscendingButton: function(sColumn) {
+					return this.mdcTestLibrary.iClickOnAColumnHeaderMenuButtonWithIcon(sColumn, "sap-icon://sort-ascending");
+				},
+
+				iClickOnColumnHeaderMenuSortDescendingButton: function(sColumn) {
+					return this.mdcTestLibrary.iClickOnAColumnHeaderMenuButtonWithIcon(sColumn, "sap-icon://sort-descending");
 				},
 
 				iClickOnColumnHeaderMenuCloseButton: function(sColumn) {
@@ -338,22 +342,22 @@ sap.ui.define([
 				],
 				3340
 			],
-			"The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two, Project Gutenberg editions (12 volumes)": [
-				"The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two, Project Gutenberg editions (12 volumes)",
-				"Rome History Empire, 30 B.C.-476 A.D., Byzantine Empire History To 527, Indexes",
+			"The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two,  Project Gutenberg editions (12 volumes)": [
+				"The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two,  Project Gutenberg editions (12 volumes)",
+				"Rome  History  Empire, 30 B.C.-476 A.D., Byzantine Empire  History  To 527, Indexes",
 				"Gibbon, Edward",
 				[
-					"46113.00",
+					"46113",
 					"XCD"
 				],
 				9996
 			],
 			"The Voyage Out": [
 				"The Voyage Out",
-				"Ocean travel Fiction, Women travelers Fiction, Bildungsromans,Love stories, Young women Fiction, British South America Fiction",
+				"Ocean travel  Fiction, Women travelers  Fiction, Bildungsromans,Love stories, Young women  Fiction, British  South America  Fiction",
 				"Woolf, Virginia",
 				[
-					"47209.00",
+					"47209",
 					"TJS"
 				],
 				2090

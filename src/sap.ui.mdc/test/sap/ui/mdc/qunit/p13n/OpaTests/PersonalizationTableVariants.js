@@ -411,8 +411,8 @@ sap.ui.define([
 
 		When.iLookAtTheScreen();
 		When.iClickOnColumn("Name");
-		When.iSortCurrentOpenColumnContextMenu();
 
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		Then.thePersonalizationDialogOpens();
@@ -478,8 +478,8 @@ sap.ui.define([
 
 		When.iLookAtTheScreen();
 		When.iClickOnColumn("Name");
-		When.iSortCurrentOpenColumnContextMenu();
 
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		Then.thePersonalizationDialogOpens();

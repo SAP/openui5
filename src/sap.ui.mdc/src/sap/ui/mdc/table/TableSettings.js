@@ -156,18 +156,28 @@ sap.ui.define([
 			oControl.getEngine().showUI(oControl, "Group", oSource);
 		},
 
-		createSort: function(oControl, sProperty, bRemoveAllExisting) {
+
+		/**
+		 * Adds sorting to a column by calling <code>createChanges</code> in the <code>Engine</code>.
+		 *
+		 * @param {object} oControl The control for which the sorting is used
+		 * @param {string} sProperty The property for which the sorting is used
+		 * @param {boolean} bDescending Whether to sort in descending or ascending order
+		 * @param {boolean} [bRemoveAllExisting=true] Set to remove the previous sorters
+		 */
+		createSort: function(oControl, sProperty, bDescending, bRemoveAllExisting) {
 
 			var oSorter = {
 				selected: true,
 				name: sProperty,
-				descending: false
+				descending: bDescending,
+				sorted: true
 			};
 
-			//check to revert 'descending' in case the sorter already exists
+			//check to revert sorting in case the sorter and its type already exists
 			oControl.getCurrentState().sorters.forEach(function(oProp) {
-				if (oProp.name == sProperty) {
-					oSorter.descending = !oProp.descending;
+				if (oProp.name == sProperty && oProp.descending === bDescending) {
+					oSorter.sorted = false;
 				}
 			});
 

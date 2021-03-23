@@ -33,7 +33,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/SortController",
 	"sap/ui/mdc/p13n/subcontroller/FilterController",
 	"sap/ui/mdc/p13n/subcontroller/GroupController",
-	"sap/ui/mdc/p13n/subcontroller/AggregateController"
+	"sap/ui/mdc/p13n/subcontroller/AggregateController",
+	"sap/m/ColumnPopoverSelectListItem"
 ], function(
 	Control,
 	ActionToolbar,
@@ -65,7 +66,8 @@ sap.ui.define([
 	SortController,
 	FilterController,
 	GroupController,
-	AggregateController
+	AggregateController,
+	ColumnPopoverSelectListItem
 ) {
 	"use strict";
 
@@ -1728,46 +1730,63 @@ sap.ui.define([
 		var iIndex,
 			oParent = oColumn.getParent(),
 			oMDCColumn;
-
 		iIndex = oParent.indexOfColumn(oColumn);
 
 		oMDCColumn = this.getColumns()[iIndex];
 
 		this._fullyInitialized().then(function() {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			if (this._oPopover) {
+				this._oPopover.destroy();
+				this._oPopover = null;
+			}
 			if (this.isSortingEnabled()) {
-				var aSortItems = this.getPropertyHelper().getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
-					return new Item({
+				var aAscendItems = [] , aDescendItems = [];
+				this.getPropertyHelper().getSortableProperties(oMDCColumn.getDataProperty()).forEach(function(oProperty) {
+					aAscendItems.push(new Item({
 						text: oProperty.getLabel(),
 						key: oProperty.getName()
-					});
+					}));
+					aDescendItems.push(new Item({
+						text: oProperty.getLabel(),
+						key: oProperty.getName()
+					}));
 				});
 
 				// create ColumnHeaderPopover
-				if (aSortItems.length > 0) {
-					// TODO: introduce a WeakMap and save reference to ColumnHeaderPopover there to enable re-use
-					if (this._oPopover) {
-						// currently the inner popover can not be accessed from outside
-						// there should be only one CHP instance for all MDC Table instances
-						this._oPopover.destroy();
-					}
+				if (aAscendItems.length > 0) {
 					this._oPopover = new ColumnHeaderPopover({
 						items: [
-							new ColumnPopoverSortItem({
-								items: aSortItems,
-								sort: [
-									this._onCustomSort, this
-								]
+							new ColumnPopoverSelectListItem({
+								items: aAscendItems,
+								label: oResourceBundle.getText("table.SETTINGS_ASCENDING"),
+								icon: "sap-icon://sort-ascending",
+								action: [false, this._onCustomSort, this]
+							}),
+							new ColumnPopoverSelectListItem({
+								items: aDescendItems,
+								label: oResourceBundle.getText("table.SETTINGS_DESCENDING"),
+								icon: "sap-icon://sort-descending",
+								action: [true, this._onCustomSort, this]
 							})
 						]
 					});
 					oColumn.addDependent(this._oPopover);
-				} else if (this._oPopover) {
-					this._oPopover.destroy();
 				}
 			}
+			var aHeaderItems = [];
 			var oDelegate = this.getControlDelegate();
-			var aResult = oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oMDCColumn);
-			aResult && aResult.forEach(function(item) {
+			aHeaderItems = (oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oMDCColumn)) || [];
+			if (this.isFilteringEnabled()) {
+				var oFilter = new ColumnPopoverSelectListItem({
+					label: oResourceBundle.getText("table.SETTINGS_FILTER"),
+					icon: "sap-icon://filter",
+					action: [this._showFilter, this]
+				});
+				aHeaderItems.unshift(oFilter);
+			}
+
+			aHeaderItems && aHeaderItems.forEach(function(item) {
 				item && this._createPopover(item, oColumn);
 			}.bind(this));
 			this._oPopover && this._oPopover.openBy(oColumn);
@@ -1785,10 +1804,10 @@ sap.ui.define([
 		}
 	};
 
-	Table.prototype._onCustomSort = function(oEvent) {
+	Table.prototype._onCustomSort = function(oEvent, bDescending) {
 		var sSortProperty = oEvent.getParameter("property");
 
-		TableSettings.createSort(this, sSortProperty, true);
+		TableSettings.createSort(this, sSortProperty, bDescending, true);
 	};
 
 	Table.prototype._onCustomGroup = function (sSortProperty) {

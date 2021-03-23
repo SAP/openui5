@@ -74,7 +74,9 @@ sap.ui.define([
 			Back: "sap-icon://decline",
 			MoveToTop: "sap-icon://collapse-group",
 			MoveUp: "sap-icon://slim-arrow-up",
-			MoveDown: "sap-icon://slim-arrow-down"
+			MoveDown: "sap-icon://slim-arrow-down",
+			Ascending: "sap-icon://sort-ascending",
+			Descending: "sap-icon://sort-descending"
 		},
 		Filter:{
 			Icon: "sap-icon://filter",
