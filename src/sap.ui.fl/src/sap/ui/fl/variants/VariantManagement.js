@@ -1416,6 +1416,7 @@ sap.ui.define([
 		if (!this.oManagementDialog || this.oManagementDialog.bIsDestroyed) {
 			this.oManagementTable = new Table(this.getId() + "-managementTable", {
 				contextualWidth: "Auto",
+				fixedLayout: false,
 				growing: true,
 				columns: [
 					new Column({
@@ -1447,7 +1448,7 @@ sap.ui.define([
 							text: this._oRb.getText("VARIANT_MANAGEMENT_EXECUTEONSELECT"),
 							wrappingType: "Hyphenated"
 						}),
-						hAlign: TextAlign.Center,
+						hAlign: this.getDisplayTextForExecuteOnSelectionForStandardVariant() ? TextAlign.Begin : TextAlign.Center,
 						demandPopin: true,
 						popinDisplay: PopinDisplay.Block,
 						minScreenWidth: ScreenSize.Tablet,
@@ -1642,13 +1643,15 @@ sap.ui.define([
 		oFavoriteIcon.addStyleClass("sapUiFlVarMngmtFavColor");
 
 		if (this.getDisplayTextForExecuteOnSelectionForStandardVariant() && (this.getStandardVariantKey() === oItem.key)) {
-			oExecuteOnSelectCtrl = new Text({
+			oExecuteOnSelectCtrl = new CheckBox({
+				wrapping: true,
 				text: this.getDisplayTextForExecuteOnSelectionForStandardVariant(),
-				textAlign: "Center"
+				select: fSelectCB,
+				selected: '{' + this._sModelName + ">executeOnSelect}"
 			});
 		} else {
 			oExecuteOnSelectCtrl = new CheckBox({
-				// enabled: oItem.rename,
+				text: "",
 				select: fSelectCB,
 				selected: '{' + this._sModelName + ">executeOnSelect}"
 			});
