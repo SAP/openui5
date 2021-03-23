@@ -793,6 +793,12 @@ sap.ui.define([
 
 		var vResult = oFieldHelp._getTextOrKey("I1", true, undefined, undefined, undefined, false, undefined, undefined, "I1", true, false);
 		assert.deepEqual(vResult, {key: "I1", description: "Item 1"}, "returned item");
+		assert.ok(oWrapper.getKeyAndText.calledWith("I1", "I1", undefined, undefined, true), "getKeyAndText of Wrapper called");
+		oWrapper.getKeyAndText.resetHistory();
+
+		oFieldHelp.setCaseSensitive(false);
+		vResult = oFieldHelp._getTextOrKey("I1", true, undefined, undefined, undefined, false, undefined, undefined, "I1", true, false);
+		assert.deepEqual(vResult, {key: "I1", description: "Item 1"}, "returned item");
 		assert.ok(oWrapper.getKeyAndText.calledWith("I1", "I1", undefined, undefined, false), "getKeyAndText of Wrapper called");
 		oWrapper.getKeyAndText.resetHistory();
 

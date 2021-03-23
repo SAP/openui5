@@ -345,6 +345,10 @@ sap.ui.define([
 			var oValue = this._getDataFromItem(aFilteredItems[0]);
 			return {key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters};
 		} else if (aFilteredItems.length > 1) {
+			if (!bCaseSensitive) {
+				// try with case sensitive search
+				return _filterItems.call(this, aValues, aItems, aGetFieldPath, oInFilters, oOutFilters, Exception, true);
+			}
 			throw _createException.call(this, Exception, true, aValues[0]);
 		}
 

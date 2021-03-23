@@ -268,8 +268,8 @@ sap.ui.define([
 	 * @param {any} vKey Key
 	 * @param {sap.ui.model.Filter} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {sap.ui.model.Filter} oOutParameters Out parameters for the key (as a key must not be unique.)
-	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
-	 * @param {boolean} bCaseSensitive If <code>true</code> the filtering is done case sensitive
+	 * @param {boolean} bNoRequest If <code>true</code>, the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
+	 * @param {boolean} bCaseSensitive If <code>true</code>, the filtering is case-sensitive
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if entry is not found or not unique
 	 *
@@ -290,8 +290,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sText Description
 	 * @param {sap.ui.model.Filter} oInParameters In parameters for the key (as a key must not be unique.)
-	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
-	 * @param {boolean} bCaseSensitive If <code>true</code> the filtering is done case sensitive
+	 * @param {boolean} bNoRequest If <code>true</code>, the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
+	 * @param {boolean} bCaseSensitive If <code>true</code>, the filtering is case-sensitive
 	 * @returns {any|sap.ui.mdc.field.FieldHelpItem|Promise} Key for description or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if entry is not found or not unique
 	 *
@@ -306,15 +306,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the key for an given description.
+	 * Determines the key for a given description.
 	 *
 	 * As the description might change (uppercase), an object with key and description can be returned.
 	 *
-	 * @param {any} vKey parsed value used for key determination
+	 * @param {any} vKey Parsed value used for key determination
 	 * @param {string} sText Description
-	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
-	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
-	 * @param {boolean} bCaseSensitive If <code>true</code> the filtering is done case sensitive
+	 * @param {object} oInParameters In parameters for the key (as a key does not have to be unique.)
+	 * @param {object} oOutParameters Out parameters for the key (as a key does not have to be unique.)
+	 * @param {boolean} bCaseSensitive If <code>true</code>, the filtering is case-sensitive
 	 * @returns {sap.ui.mdc.field.FieldHelpItem|Promise<sap.ui.mdc.field.FieldHelpItem>} Object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 *
 	 * @private
