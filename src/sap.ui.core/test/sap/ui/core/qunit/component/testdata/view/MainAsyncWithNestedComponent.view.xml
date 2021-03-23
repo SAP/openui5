@@ -1,0 +1,8 @@
+<mvc:View controllerName="asyncCreation.MainAsyncWithNestedComponent" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">
+	<Label id="sample" text="Lalalal" />
+	<core:ComponentContainer
+		name="manifestModules.scenario9child"
+		id="childComponent"
+		componentCreated="onComponentCreated"
+	/>
+</mvc:View>

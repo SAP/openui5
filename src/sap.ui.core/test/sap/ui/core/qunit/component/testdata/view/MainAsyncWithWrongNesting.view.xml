@@ -1,0 +1,4 @@
+<mvc:View controllerName="sap.ui.test.view.Main" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<Label id="HelloWorld" text="HelloWorld" />
+	<mvc:XMLView async="false" viewName="testdata.view.Nested" />
+</mvc:View>

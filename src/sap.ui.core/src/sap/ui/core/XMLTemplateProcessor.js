@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/base/DataType',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/CustomData',
+	'sap/ui/core/Component',
 	'./mvc/View',
 	'./mvc/EventHandlerResolver',
 	'./ExtensionPoint',
@@ -28,6 +29,7 @@ function(
 	DataType,
 	ManagedObject,
 	CustomData,
+	Component,
 	View,
 	EventHandlerResolver,
 	ExtensionPoint,
@@ -1338,6 +1340,9 @@ function(
 				var pInstanceCreated = SyncPromise.resolve();
 				var sViewType = node.getAttribute("type");
 
+				var oOwnerComponent = Component.getOwnerComponentFor(oView);
+				var bIsAsyncComponent = oOwnerComponent && oOwnerComponent.isA("sap.ui.core.IAsyncContentCreation");
+
 				if (bEnrichFullIds && node.hasAttribute("id")) {
 					setId(oView, node);
 				} else if (!bEnrichFullIds) {
@@ -1348,17 +1353,30 @@ function(
 
 					if (oClass.getMetadata().isA("sap.ui.core.mvc.View")) {
 						var fnCreateViewInstance = function () {
-
 							if (!oClass._sType && !mSettings.viewName) {
 								// Add module view name
 								mSettings.viewName = "module:" + oClass.getMetadata().getName().replace(/\./g, "/");
 							}
 
-							// Pass processingMode to nested XMLViews
-							if (oClass.getMetadata().isA("sap.ui.core.mvc.XMLView") && oView._sProcessingMode === "sequential") {
-								mSettings.processingMode = "sequential";
+							// If the view is owned by an async-component we can propagate the asynchronous creation behavior to the nested views
+							if (bIsAsyncComponent) {
+								// legacy check: async=false is not supported with an async-component
+								if (mSettings.async === false) {
+									throw new Error(
+										"A nested view contained in a Component implementing 'sap.ui.core.IAsyncContentCreation' is processed asynchronously by default and cannot be processed synchronously.\n" +
+										"Affected Component '" + oOwnerComponent.getMetadata().getComponentName() + "' and View '" + mSettings.viewName + "'."
+									);
+								}
+
+								mSettings.type = oClass._sType || sViewType;
+								pInstanceCreated = View.create(mSettings);
+							} else {
+								// Pass processingMode to nested XMLViews
+								if (oClass.getMetadata().isA("sap.ui.core.mvc.XMLView") && oView._sProcessingMode === "sequential") {
+									mSettings.processingMode = "sequential";
+								}
+								return View._legacyCreate(mSettings, undefined, oClass._sType || sViewType);
 							}
-							return View._legacyCreate(mSettings, undefined, oClass._sType || sViewType);
 						};
 
 						// for views having a factory function defined we use the factory function!
@@ -1395,6 +1413,7 @@ function(
 
 							// the scoped runWithOwner function is only during ASYNC processing!
 							if (oView.fnScopedRunWithOwner) {
+
 								oInstance = oView.fnScopedRunWithOwner(function () {
 									var oInstance = new oClass(mSettings);
 									return oInstance;
@@ -1416,8 +1435,8 @@ function(
 						}
 					}
 				}
-				return pInstanceCreated.then(function (aFragmentContent) {
-					return aFragmentContent || vNewControlInstance;
+				return pInstanceCreated.then(function (vContent) {
+					return vContent || vNewControlInstance;
 				}).then(function (vFinalInstance) {
 					if (sStyleClasses && vFinalInstance.addStyleClass) {
 						// Elements do not have a style class!

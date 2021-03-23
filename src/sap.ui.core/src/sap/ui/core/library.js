@@ -82,7 +82,8 @@ sap.ui.define([
 			"sap.ui.core.dnd.IDragInfo",
 			"sap.ui.core.dnd.IDropInfo",
 			"sap.ui.core.IDScope",
-			"sap.ui.core.ITitleContent"
+			"sap.ui.core.ITitleContent",
+			"sap.ui.core.IAsyncContentCreation"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
@@ -1678,6 +1679,33 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Marker interface for subclasses of <code>sap.ui.core.UICompoment</code>.
+	 *
+	 * Implementing this interface allows a {@link sap.ui.core.UIComponent} to be created fully asynchronously.
+	 * This interface will implicitily set the component's rootView and router configuration to async.
+	 * Nested views will also be handled asynchronously.
+	 * Additionally the error handling during the processing of views is stricter and will fail if a view definition contains
+	 * errors, e.g. broken binding strings.
+	 *
+	 * <b>Note:</b> Nested components (via {@link sap.ui.core.ComponentContainer}) are not handled asynchronously by default.
+	 *
+	 * When implementing this interface the {@link sap.ui.core.Component.create Component.create} factory's result Promise
+	 * will resolve once the defined <code>rootView</code> is fully processed.
+	 *
+	 * An asynchronous component can also return a Promise in its {@link sap.ui.core.UIComponent#createContent createContent} function.
+	 * This Promise will also be chained into the {@link sap.ui.core.Component.create Component.create} factory's result Promise.
+	 *
+	 * See {@link sap.ui.core.UIComponent#createContent} for more details and usage samples.
+	 *
+	 * @since 1.89.0
+	 * @name sap.ui.core.IAsyncContentCreation
+	 * @extends sap.ui.core.UICompoment
+	 * @interface
+	 * @public
+	 */
+
+	/**
+
 	 * Marker interface for controls that can serve as a context menu.
 	 *
 	 * Implementation of this interface should implement the <code>openAsContextMenu</code> method.
