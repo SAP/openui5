@@ -1,0 +1,8 @@
+{"messages": [
+	{
+	  	"id": "IM1",
+		"type": "Information",
+		"text": "Starting with version 1.88, {0} no longer supports Microsoft Internet Explorer 11.",
+		"expire": "2021-04-30"
+	}
+]}

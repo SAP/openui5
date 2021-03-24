@@ -115,6 +115,29 @@ sap.ui.define([
 				return VersionInfo.load();
 			},
 
+			loadMessagesInfo: function () {
+				var oComponent = this;
+
+				if (this.oMessagesInfo) {
+					return this.oMessagesInfo;
+				}
+
+				return new Promise(function (resolve, reject) {
+					jQuery.ajax({
+						async: true,
+						url : sap.ui.require.toUrl('sap/ui/documentation/sdk/model/messagesData.json'),
+						dataType : 'json',
+						success : function(oResponse) {
+							resolve(oResponse);
+							oComponent.oMessagesInfo = oResponse;
+						},
+						error : function (err) {
+							Log(err);
+						}
+					});
+				});
+			},
+
 			_bindVersionModel : function (oVersionInfo) {
 				var oVersion,
 					bSnapshot,

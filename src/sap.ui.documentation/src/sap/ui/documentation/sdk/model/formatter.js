@@ -2,7 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/base/Object", "sap/base/util/merge", "sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (BaseObject, merge, JSDocUtil) {
+
+sap.ui.define([
+	"sap/ui/base/Object",
+	"sap/base/util/merge",
+	"sap/ui/documentation/sdk/controller/util/JSDocUtil",
+	"sap/base/strings/formatMessage"
+], function (BaseObject, merge, JSDocUtil,  formatMessage) {
 	"use strict";
 
 	// regexp for an extra route parameter in the format: a single 'p' letter followed by a digit
@@ -276,6 +282,11 @@ sap.ui.define(["sap/ui/base/Object", "sap/base/util/merge", "sap/ui/documentatio
 				return false;
 			}
 			return sValue;
+		},
+
+		formatImportantMessage: function (sMsg, sParam) {
+			var sParam = this._getUI5Distribution();
+			return formatMessage(sMsg, sParam);
 		}
 	};
 	return merge(oFormatter, oStaticAPI);
