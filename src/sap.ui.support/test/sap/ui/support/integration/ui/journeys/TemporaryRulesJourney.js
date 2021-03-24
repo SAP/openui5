@@ -148,16 +148,8 @@ sap.ui.define([
 		Then.iTeardownSupportAssistantFrame();
 	});
 
-	opaTest("Should see the Tree Table of the Support Assistant with 45 rules selected ", function (Given, When, Then) {
-
-		Given.iStartMyApp();
-
-		Then.onTheMainPage.iShouldSeeRulesButton(45);
-
-		Then.onTheRulesPage.iShouldSeeRulesSelectedCountColumnHeader(45);
-	});
-
 	opaTest("Should see temporary rules selection persisted", function (Given, When, Then) {
+		Given.iStartMyApp();
 
 		//temporary- library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(0);
@@ -231,16 +223,8 @@ sap.ui.define([
 		Then.iTeardownSupportAssistantFrame();
 	});
 
-	opaTest("Should see the Tree Table of the Support Assistant with 45 rules selected ", function (Given, When, Then) {
-
-		Given.iStartMyApp();
-
-		Then.onTheMainPage.iShouldSeeRulesButton(45);
-
-		Then.onTheRulesPage.iShouldSeeRulesSelectedCountColumnHeader(45);
-	});
-
 	opaTest("Should see storage settings popover", function (Given, When, Then) {
+		Given.iStartMyApp();
 
 		When.onTheRulesPage.iPressSettingsButton();
 
