@@ -1075,7 +1075,7 @@ sap.ui.define([
 				var sPath = oBinding.getPath();
 				var oParameterBindingContext = oBinding.getContext();
 
-				if (bNewBinding && (oParameterBindingContext === oMyBindingContext || (!oParameterBindingContext && oMyBindingContext))) {
+				if (bNewBinding && oBinding.isRelative() && (oParameterBindingContext === oMyBindingContext || (!oParameterBindingContext && oMyBindingContext))) {
 					// InParameter is bound and uses the same BindingContext like the FieldHelp or has no BindingContext right now.
 					// If InParameter is bound to a different BindingContext just use this one.
 					if (oBindingContext.getProperty(sPath) === undefined) {
@@ -1084,10 +1084,10 @@ sap.ui.define([
 						aBindings.push(oModel.bindProperty(sPath, oBindingContext));
 					}
 				} else {
-					if (!oParameterBindingContext // we don't have a BindingContext -> need to wait for one
-							|| oParameterBindingContext.getProperty(sPath) === undefined // the BindingContext has no data right now -> need to wait for update
+					if ((!oParameterBindingContext && oBinding.isRelative()) // we don't have a BindingContext but need one -> need to wait for one
+							|| (oParameterBindingContext && oParameterBindingContext.getProperty(sPath) === undefined) // the BindingContext has no data right now -> need to wait for update
 							|| oBinding.getValue() === undefined // the Binding has no data right now, need to wait for update
-							|| !deepEqual(oParameter.validateProperty("value", oParameterBindingContext.getProperty(sPath)), oParameter.getValue())) { // value not alreday set
+							|| (oParameterBindingContext && !deepEqual(oParameter.validateProperty("value", oParameterBindingContext.getProperty(sPath)), oParameter.getValue()))) { // value not alreday set
 						// Property not already known on BindingContext or not already updated in Parameter value
 						// use validateProperty as null might be converted to undefined, if invalid value don't run into a check
 						// use deepEqual as, depending on type, the value could be complex (same logic as in setProperty)
@@ -1738,7 +1738,7 @@ sap.ui.define([
 										break;
 									}
 								}
-								if (!bFound && !bUseConditions && oBindingContext && oBinding && (!oBinding.getContext() || (oBinding.getContext() !== oBindingContext && oBinding.getContext() === oMyBindingContext))) {
+								if (!bFound && !bUseConditions && oBindingContext && oBinding && oBinding.isRelative() && (!oBinding.getContext() || (oBinding.getContext() !== oBindingContext && oBinding.getContext() === oMyBindingContext))) {
 									// no new binding created and different BindingContext -> use propery from BindingConext (was already read before)
 									vValue = oBindingContext.getProperty(oBinding.getPath());
 								}

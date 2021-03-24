@@ -1267,6 +1267,9 @@ sap.ui.define([
 				additionalText: [{operator: "StartsWith", value: "It", value2: undefined}],
 				filter: [{operator: "EQ", value: "Hello", value2: undefined}]};
 
+		var oBinding = oInParameter.getBinding("value");
+		sinon.stub(oBinding, "getValue").returns(undefined);
+
 		oFieldHelp.open(true);
 		oClock.tick(iPopoverDuration); // fake opening time
 		assert.notOk(oFilters, "no Filter request right now");
@@ -1275,6 +1278,7 @@ sap.ui.define([
 		oClock.tick(1); // fake model update time
 
 		FieldValueHelpDelegate.checkBindingsPending.restore();
+		oBinding.getValue.restore();
 		fnResolve();
 		var fnDone = assert.async();
 
