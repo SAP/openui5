@@ -339,6 +339,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Hook method for {@link #fetchQueryOptionsForOwnCache} to determine the query options for this
+	 * binding.
+	 *
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context instance to be used
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving with the binding's query options
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
+	 * @private
+	 */
+
+	/**
 	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]

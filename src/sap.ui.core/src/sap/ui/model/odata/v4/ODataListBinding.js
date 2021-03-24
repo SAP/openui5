@@ -992,15 +992,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache} to
-	 * determine the query options for this binding.
-	 *
-	 * @param {sap.ui.model.Context} oContext
-	 *   The context instance to be used
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving with the binding's query options
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
 	 */
 	ODataListBinding.prototype.doFetchQueryOptions = function (oContext) {
 		var that = this;

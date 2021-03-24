@@ -390,13 +390,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache} to
-	 * determine the query options for this binding.
-	 *
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving with an empty map as a property binding has no query options
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#doFetchQueryOptions
 	 */
 	ODataPropertyBinding.prototype.doFetchQueryOptions = function () {
 		return this.isRoot() ? SyncPromise.resolve(this.mQueryOptions) : SyncPromise.resolve({});
