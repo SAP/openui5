@@ -15,6 +15,7 @@
 					<Label text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" labelFor="LanguageSelect" />
 					<Select id="LanguageSelect"
 							width="100%"
+							busy="{supportedLanguages>/selectBusy}"
 							class="sapUiSmallMarginBottom"
 							items="{
 								path: 'supportedLanguages>/langs'

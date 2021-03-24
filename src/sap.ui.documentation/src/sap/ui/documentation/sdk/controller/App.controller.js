@@ -14,8 +14,6 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Locale",
-	"sap/ui/core/LocaleData",
 	"sap/base/util/UriParameters",
 	"sap/ui/documentation/library",
 	"sap/ui/core/IconPool",
@@ -30,7 +28,8 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/controller/util/Highlighter",
 	"sap/m/Button",
 	"sap/m/Toolbar",
-	"sap/ui/documentation/sdk/util/Resources"
+	"sap/ui/documentation/sdk/util/Resources",
+	'sap/base/util/LoaderExtensions'
 ], function(
 	KeyCodes,
 	jQuery,
@@ -43,8 +42,6 @@ sap.ui.define([
 	ResizeHandler,
 	Device,
 	Fragment,
-	Locale,
-	LocaleData,
 	UriParameters,
 	library,
 	IconPool,
@@ -59,7 +56,8 @@ sap.ui.define([
 	Highlighter,
 	Button,
 	Toolbar,
-	ResourcesUtil
+	ResourcesUtil,
+	LoaderExtensions
 ) {
 		"use strict";
 
@@ -156,9 +154,7 @@ sap.ui.define([
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
 
 				// Cache view reference
-				this._oSupportedLangModel = new JSONModel({
-					"langs": this._prepareSupportedLangModelData()
-				});
+				this._oSupportedLangModel = new JSONModel();
 
 				this.setModel(this._oSupportedLangModel, "supportedLanguages");
 
@@ -697,30 +693,45 @@ sap.ui.define([
 			 */
 			_prepareSupportedLangModelData: function () {
 				return Core.getConfiguration().getLanguagesDeliveredWithCore().reduce(function(result, sLangAbbreviation) {
-					var langName;
+					var langName,
+							sLang = sLangAbbreviation,
+							sLangRegion = sLangAbbreviation;
+
 					if (typeof sLangAbbreviation === "string" && sLangAbbreviation.length > 0) {
 
 						switch (sLangAbbreviation) {
+							case "sh": //Serbian
+								sLang = "sr_Latn";
+								break;
+							case "no": //Norwegian
+								sLang = "nb";	// Bokmål
+								break;
 							case "iw": // Israel
 								// Hebrew
-								langName = new LocaleData(new Locale("he")).getLanguages()["he"];
+								sLang  = "he";
+								sLangRegion = "he";
 								break;
 							case "zh_TW": // Taiwan
 								// Chinese Traditional
-								langName = new LocaleData(new Locale(sLangAbbreviation)).getLanguages()["zh_Hant"];
+								sLangRegion = "zh_Hant";
 								break;
 							case "zh_CN": // People's Republic of China
 								// Chinese Simplified
-								langName = new LocaleData(new Locale(sLangAbbreviation)).getLanguages()["zh_Hans"];
+								sLangRegion = "zh_Hans";
 								break;
-							default:
-								langName = new LocaleData(new Locale(sLangAbbreviation)).getLanguages()[sLangAbbreviation];
 						}
 
-						result.push({
-							"text": typeof langName === 'string' ? langName.charAt(0).toUpperCase() + langName.substring(1) : "Unknown",
-							"key": sLangAbbreviation
-						});
+						result.push(new Promise(function (resolve, reject) {
+							LoaderExtensions.loadResource("sap/ui/core/cldr/" + sLang + ".json",  {async: true})
+								.then(function(locale) {
+									langName = locale.languages[sLangRegion];
+
+									resolve({
+										"text": typeof langName === 'string' ? langName.charAt(0).toUpperCase() + langName.substring(1) : "Unknown",
+										"key": sLangAbbreviation
+									});
+								});
+						}));
 					}
 
 					return result;
@@ -754,6 +765,8 @@ sap.ui.define([
 			 * @public
 			 */
 			settingsDialogOpen: function () {
+				var oModel;
+
 				if (!this._oSettingsDialog) {
 					Fragment.load({
 						name: "sap.ui.documentation.sdk.view.globalSettingsDialog",
@@ -767,6 +780,15 @@ sap.ui.define([
 					}.bind(this));
 				} else {
 					this._oSettingsDialog.open();
+				}
+
+				if (!this._oSupportedLangModel.getProperty("/langs")) {
+					oModel = this._oSupportedLangModel;
+					oModel.setProperty("/selectBusy", true);
+					Promise.all(this._prepareSupportedLangModelData()).then(function (result) {
+						oModel.setProperty("/selectBusy", false);
+						oModel.setProperty("/langs", result);
+					});
 				}
 			},
 
