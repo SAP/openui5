@@ -330,11 +330,7 @@ sap.ui.define([
 			});
 
 			// The popover is created async.
-			return oTable._fullyInitialized().then(function() {
-				return new Promise(function(resolve) {
-					oTable._oPopover.getAggregation("_popover").attachEventOnce("afterOpen", resolve);
-				});
-			});
+			return oTable._fullyInitialized();
 		}
 
 		return oTable._fullyInitialized().then(function() {
