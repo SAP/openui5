@@ -93,21 +93,21 @@ Copyright:
     2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
     OpenJS Foundation and other contributors
 License: Apache-2.0 and MIT
-Comment: these files contain content from SAP and jQuery 3: isPlainObject.js is overall written by SAP, but contains a modified implementation of jQuery.isPlainObject taken from jQuery 3.5.1
+Comment: these files contain content from SAP and jQuery 3: isPlainObject.js is overall written by SAP, but contains a modified implementation of jQuery.isPlainObject taken from jQuery
 
 Files: src/sap.ui.core/src/sap/base/util/_merge.js
 Copyright:
     2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
     OpenJS Foundation and other contributors
 License: Apache-2.0 and MIT
-Comment: these files contain content from SAP and jQuery 3: _merge.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery 3.5.1
+Comment: these files contain content from SAP and jQuery 3: _merge.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery
 
 Files: src/sap.ui.core/src/jquery.sap.script.js
 Copyright:
     2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
     OpenJS Foundation and other contributors
 License: Apache-2.0 and MIT
-Comment: these files contain content from SAP and jQuery 3: jquery.sap.script.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery 3.5.1
+Comment: these files contain content from SAP and jQuery 3: jquery.sap.script.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery
 
 Files: src/sap.ui.core/src/sap/ui/Device.js
 Copyright:
