@@ -2908,7 +2908,7 @@ sap.ui.define([
 // }
 //TODO can we make use of @odata.context in response data?
 //TODO etag handling
-//TODO use 'sap/ui/thirdparty/URI' for URL handling?
+//TODO use standard APIs like URL/URLSearchParams for URL handling?
 
 //TODO support "/#" syntax, e.g. "/EMPLOYEES(ID='1')/ENTRYDATE/#Type/QualifiedName"
 //     do it for bindings, not as a JS API (getMetaModel().getMetaContext() etc. is already there)

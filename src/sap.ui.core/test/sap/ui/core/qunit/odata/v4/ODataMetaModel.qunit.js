@@ -6490,8 +6490,6 @@ sap.ui.define([
 						Label : "from second value list service"
 					}
 				});
-			}, function (oError) {
-				assert.Ok(false, "Unexpected error");
 			});
 
 		fnResolve2({"bar" : oValueListMapping2});
@@ -6778,12 +6776,12 @@ sap.ui.define([
 				Name : {$PropertyPath : "ExternalCode"}
 			}]
 		}, {}, {}],
-		oError : new Error("Single alternative expected: "
-			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+		sErrorMessage : "Single alternative expected: "
+			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys"
 	}, {
 		aAlternateKeys : [],
-		oError : new Error("Single alternative expected: "
-			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
+		sErrorMessage : "Single alternative expected: "
+			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys"
 	}, {
 		aAlternateKeys : [{
 			Key : [{
@@ -6794,14 +6792,14 @@ sap.ui.define([
 				Name : {$PropertyPath : "foo"}
 			}]
 		}],
-		oError : new Error("Single key expected: "
-			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys/0/Key")
+		sErrorMessage : "Single key expected: "
+			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys/0/Key"
 	}, {
 		aAlternateKeys : [{
 			Key : []
 		}],
-		oError : new Error("Single key expected: "
-			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys/0/Key")
+		sErrorMessage : "Single key expected: "
+			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys/0/Key"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("requestCodeList, alternate key error case #" + i, function (assert) {
 			var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
@@ -6851,9 +6849,7 @@ sap.ui.define([
 				.then(function () {
 					assert.ok(false);
 				}, function (oError) {
-					assert.throws(function () {
-						throw oError; // Note: assert.deepEqual() does not work in IE11 here
-					}, oFixture.oError);
+					TestUtils.checkError(assert, oError, Error, oFixture.sErrorMessage);
 
 					// code under test
 					return that.oMetaModel.requestCodeList("T€RM")
@@ -6879,7 +6875,6 @@ sap.ui.define([
 					bindList : function () {},
 					getMetaModel : function () {}
 				},
-				oError = new Error("Single key expected: /UnitsOfMeasure/"),
 				sUrl = "../../../../default/iwbep/common/0001/$metadata",
 				that = this;
 
@@ -6914,9 +6909,8 @@ sap.ui.define([
 				.then(function () {
 					assert.ok(false);
 				}, function (oError0) {
-					assert.throws(function () {
-						throw oError0; // Note: assert.deepEqual() does not work in IE11 here
-					}, oError);
+					TestUtils.checkError(assert, oError0, Error,
+						"Single key expected: /UnitsOfMeasure/");
 
 					// code under test
 					return that.oMetaModel.requestCodeList("T€RM")

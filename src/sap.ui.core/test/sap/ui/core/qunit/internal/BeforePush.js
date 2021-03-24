@@ -27,9 +27,9 @@
   With "realOData=false" all tests are run with "realOData=true" stripped off.
 
   With "frames=n" you can run several tests in parallel to speed it up. When running only the
-  verification "frames=4" seems a valid option in Chrome and Firefox. In IE and Edge you should not
-  use this option. When testing with multiple browsers at once, it is better to run only one frame
-  in each browser. When "frames=n" is given, all tests are run invisible.
+  verification, "frames=4" seems a valid option in Chrome, Edge, and Firefox. When testing with
+  multiple browsers at once, it is better to run only one frame in each browser. When "frames=n" is
+  given, all tests are run invisible.
 
   With "keepResults" the results for successful QUnit tests are NOT destroyed.
 

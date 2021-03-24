@@ -13076,7 +13076,7 @@ sap.ui.define([
 	// Scenario: some custom control wants to read all data, and it gets quite a lot
 	QUnit.test("read all data", function (assert) {
 		var i,
-			n = 2500, //TODO once IE is dropped, increase this again to 5000
+			n = 5000,
 			aIDs = new Array(n),
 			aValues = new Array(n),
 			sView = '\
@@ -13102,8 +13102,8 @@ sap.ui.define([
 				template : new CustomListItem({content : [oText]})
 			});
 
-			// Increase the timeout for this test to 12 seconds to run also in IE
-			return that.waitForChanges(assert, "", undefined, 12000);
+			// Increase the timeout for this test to run also in FF
+			return that.waitForChanges(assert, "", undefined, 25000/*ms*/);
 		});
 	});
 
@@ -13146,8 +13146,7 @@ sap.ui.define([
 				new Promise(function (resolve) {
 					fnDone = resolve;
 				}),
-				// Increase the timeout for this test to 12 seconds to run also in IE
-				that.waitForChanges(assert, "", undefined, 12000)
+				that.waitForChanges(assert)
 			]);
 		});
 	});
