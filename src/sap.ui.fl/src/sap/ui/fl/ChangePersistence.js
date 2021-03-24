@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
-	"sap/ui/thirdparty/jquery",
 	"sap/base/util/includes",
 	"sap/base/util/merge",
 	"sap/base/util/UriParameters",
@@ -43,7 +42,6 @@ sap.ui.define([
 	Component,
 	JSONModel,
 	Measurement,
-	jQuery,
 	includes,
 	merge,
 	UriParameters,
@@ -105,7 +103,7 @@ sap.ui.define([
 				this._mChangesEntries[oChangeOrChangeContent.fileName] = new Change(oChangeOrChangeContent);
 			}
 			oChange = this._mChangesEntries[oChangeOrChangeContent.fileName];
-			oChange.setState(Change.states.PERSISTED); // persisted change
+			oChange.setState(Change.states.PERSISTED);
 
 			// if change instance was passed, it will be already present in the variant
 			// if change content was passed, then replace the newly created change instance in the variant
@@ -746,10 +744,12 @@ sap.ui.define([
 					changeToBeAddedOrDeleted: oDirtyChange
 				});
 			} else if (oDirtyChange.getPendingAction() === Change.states.NEW) {
+				oDirtyChange.setState(Change.states.PERSISTED);
 				Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
 			} else if (oDirtyChange.getPendingAction() === Change.states.DELETED) {
 				Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
 			} else if (oDirtyChange.getPendingAction() === Change.states.DIRTY) {
+				oDirtyChange.setState(Change.states.PERSISTED);
 				Cache.updateChange(this._mComponent, oDirtyChange.getDefinition());
 			}
 		}
