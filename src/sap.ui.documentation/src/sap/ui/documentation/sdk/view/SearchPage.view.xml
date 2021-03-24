@@ -13,7 +13,7 @@
 			<op:ObjectPageHeader id="searchTitle" objectTitle="{
 				parts: [
 					'i18n>SEARCH_PAGE_TITLE',
-					'/searchTerm'
+					'searchView>/lastProcessedQuery'
 				],
 				formatter: '.formatMessage'
 			}">
@@ -26,7 +26,7 @@
 			<op:ObjectPageSection id="allSummaryTitle" title="{
 				parts: [
 					'i18n>SEARCH_PAGE_ALL_SECTION_TITLE',
-					'/AllLength'
+					'searchData>/matches/AllLength'
 				],
 				formatter: '.formatMessage'
 			}">
@@ -38,8 +38,8 @@
 								<Title text="{
 									parts: [
 										'i18n>SEARCH_PAGE_ALL_SECTION_TABLE_TITLE',
-										'/visibleAllLength',
-										'/AllLength'
+										'searchView>/visibleAllLength',
+										'searchData>/matches/AllLength'
 									],
 									formatter: '.formatTableTitle'
 								}"/>
@@ -50,14 +50,14 @@
 								growingThreshold="25"
 								updateFinished="onAllLoadMore"
 								items="{
-									path: '/data',
+									path: 'searchData>/matches/data',
 									groupHeaderFactory: '.getGroupHeader'
 								}">
 								<FeedListItem
-									sender="{title}"
-									text="{summary}"
+									sender="{searchData>title}"
+									text="{searchData>summary}"
 									showIcon="false"
-									app:path="{path}"/>
+									app:path="{searchData>path}"/>
 							</List>
 						</VBox>
 					</op:blocks>
@@ -67,11 +67,11 @@
  			<op:ObjectPageSection id="apiref" title="{
 					parts: [
 						'i18n>SEARCH_PAGE_API_SECTION_TITLE',
-						'/APILength'
+						'searchData>/matches/APILength'
 					],
 					formatter: '.formatMessage'
 				}"
-				visible="{=!!${/APILength}}"
+				visible="{=!!${searchData>/matches/APILength}}"
 				app:category="apiref">
 				<op:subSections>
 					<op:ObjectPageSubSection>
@@ -81,8 +81,8 @@
 									<Title text="{
 										parts: [
 											'i18n>SEARCH_PAGE_API_SECTION_TABLE_TITLE',
-											'/visibleAPILength',
-											'/APILength'
+											'searchView>/visibleAPILength',
+											'searchData>/matches/APILength'
 										],
 										formatter: '.formatTableTitle'
 									}"/>
@@ -93,14 +93,14 @@
 									growingThreshold="25"
 									updateFinished="onAPILoadMore"
 									items="{
-										path: '/aDataAPI'
+										path: 'searchData>/matches/aDataAPI'
 									}">
 									<FeedListItem
-										visible="{path:'category', formatter:'.categoryAPIFormatter'}"
-										sender="{title}"
-										text="{summary}"
+										visible="{path:'searchData>category', formatter:'.categoryAPIFormatter'}"
+										sender="{searchData>title}"
+										text="{searchData>summary}"
 										showIcon="false"
-										app:path="{path}"/>
+										app:path="{searchData>path}"/>
 								</List>
 							</VBox>
 						</op:blocks>
@@ -110,11 +110,11 @@
 			<op:ObjectPageSection id="topics" title="{
 					parts: [
 						'i18n>SEARCH_PAGE_DOCUMENTATION_SECTION_TITLE',
-						'/DocLength'
+						'searchData>/matches/DocLength'
 					],
 					formatter: '.formatMessage'
 				}"
-				visible="{=!!${/DocLength}}"
+				visible="{=!!${searchData>/matches/DocLength}}"
 				app:category="topics">
 				<op:subSections>
 					<op:ObjectPageSubSection>
@@ -124,8 +124,8 @@
 									<Title text="{
 										parts: [
 											'i18n>SEARCH_PAGE_DOCUMENTATION_SECTION_TABLE_TITLE',
-											'/visibleDocLength',
-											'/DocLength'
+											'searchView>/visibleDocLength',
+											'searchData>/matches/DocLength'
 										],
 										formatter: '.formatTableTitle'
 									}"/>
@@ -136,14 +136,14 @@
 									growingThreshold="25"
 									updateFinished="onDocLoadMore"
 									items="{
-										path: '/aDataDoc'
+										path: 'searchData>/matches/aDataDoc'
 									}">
 									<FeedListItem
-										visible="{path:'category', formatter:'.categoryDocFormatter'}"
-										sender="{title}"
-										text="{summary}"
+										visible="{path:'searchData>category', formatter:'.categoryDocFormatter'}"
+										sender="{searchData>title}"
+										text="{searchData>summary}"
 										showIcon="false"
-										app:path="{path}"/>
+										app:path="{searchData>path}"/>
 								</List>
 							</VBox>
 						</op:blocks>
@@ -153,11 +153,11 @@
 			<op:ObjectPageSection id="samples" title="{
 					parts: [
 						'i18n>SEARCH_PAGE_SAMPLES_SECTION_TITLE',
-						'/ExploredLength'
+						'searchData>/matches/ExploredLength'
 					],
 					formatter: '.formatMessage'
 				}"
-				visible="{=!!${/ExploredLength}}"
+				visible="{=!!${searchData>/matches/ExploredLength}}"
 				app:category="entity">
 				<op:subSections>
 					<op:ObjectPageSubSection>
@@ -167,8 +167,8 @@
 									<Title text="{
 										parts: [
 											'i18n>SEARCH_PAGE_SAMPLES_SECTION_TABLE_TITLE',
-											'/visibleExploredLength',
-											'/ExploredLength'
+											'searchView>/visibleExploredLength',
+											'searchData>/matches/ExploredLength'
 										],
 										formatter: '.formatTableTitle'
 									}"/>
@@ -179,14 +179,14 @@
 									growingThreshold="25"
 									updateFinished="onExploredLoadMore"
 									items="{
-										path: '/aDataExplored'
+										path: 'searchData>/matches/aDataExplored'
 									}">
 									<FeedListItem
-										visible="{path:'category', formatter:'.categoryExploredFormatter'}"
-										sender="{title}"
-										text="{summary}"
+										visible="{path:'searchData>category', formatter:'.categoryExploredFormatter'}"
+										sender="{searchData>title}"
+										text="{searchData>summary}"
 										showIcon="false"
-										app:path="{path}"/>
+										app:path="{searchData>path}"/>
 								</List>
 							</VBox>
 						</op:blocks>

@@ -531,24 +531,22 @@ sap.ui.define([
 
 			initSearch: function() {
 				// set the search data to custom search`s suggestions
-				var oModel = new JSONModel(),
+				var oModel = this.getModel("searchData"),
 				oSectionToRoutesMap = {
 					"topics": ["topic", "topicId", "subTopicId"],
 					"entity": ["sample", "controlsMaster", "controls", "code", "entity"],
 					"apiref": ["api", "apiSpecialRoute", "apiId"]
 				};
 
-				this.setModel(oModel, "searchData");
-
 				// update current section on navigate
 				this.oRouter.attachRouteMatched(function() {
-					oModel.setProperty("/routeSection", null);
+					oModel.setProperty("/preferencedCategory", null);
 				});
 				Object.keys(oSectionToRoutesMap).forEach(function(sSectionKey) {
 					var aRoutes = oSectionToRoutesMap[sSectionKey];
 					aRoutes.forEach(function(sRoute) {
 						this.oRouter.getRoute(sRoute).attachPatternMatched(function() {
-							oModel.setProperty("/routeSection", sSectionKey);
+							oModel.setProperty("/preferencedCategory", sSectionKey);
 						});
 					}.bind(this));
 				}.bind(this));
@@ -558,7 +556,7 @@ sap.ui.define([
 				var getMessageBundle = Core.getLibraryResourceBundle("sap.ui.documentation"),
 				sTitle;
 
-				switch (this.getModel("searchData").getProperty("/routeSection")) {
+				switch (this.getModel("searchData").getProperty("/preferencedCategory")) {
 					case "topics":
 						sTitle =  getMessageBundle.getText("SEARCH_SUGGESTIONS_TITLE_DOCUMENTATION");
 						break;
@@ -1319,7 +1317,7 @@ sap.ui.define([
 			onSearchLiveChange: function(oEvent) {
 				var oModel = this.getModel("searchData"),
 				sQuery = oEvent.getParameter("newValue"),
-				sPreferencedCategory = this.getModel("searchData").getProperty("/routeSection");
+				sPreferencedCategory = oModel.getProperty("/preferencedCategory");
 
 				if (!this.oPicker) {
 					this.oPicker = this.createSearchPicker();
@@ -1334,7 +1332,9 @@ sap.ui.define([
 				}
 
 				oModel.setProperty("/query",sQuery);
-				SearchUtil.search(sQuery, sPreferencedCategory).then(function(result) {
+				SearchUtil.search(sQuery, {
+					preferencedCategory: sPreferencedCategory
+				}).then(function(result) {
 					oModel.setProperty("/matches", result.matches);
 				});
 			},
