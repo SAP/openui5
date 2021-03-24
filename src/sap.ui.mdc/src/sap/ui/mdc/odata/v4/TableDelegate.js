@@ -111,6 +111,14 @@ sap.ui.define([
 			throw new Error("This delegate does not support the table type '" + TableType.ResponsiveTable + "'.");
 		}
 
+		// disable temporary count in toolbar -> CPOUIFTEAMB-1769
+		// TODO: remove this once a solution has been found
+		oTable.setShowRowCount(false);
+		oTable.setShowRowCount = function() {
+			return this;
+		};
+		/************************************/
+
 		return enrichGridTable(oTable);
 	};
 

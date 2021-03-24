@@ -395,6 +395,20 @@ sap.ui.define([
 		});
 	});
 
+	// This QUnit test is temporary and should be removed once the row count in toolbar has been re-enabled
+	QUnit.test("Disable rowCount in table toolbar", function(assert) {
+		var oTable = this.oTable;
+
+		return oTable._fullyInitialized().then(function() {
+			var sHeader = oTable.getHeader();
+			assert.notOk(oTable.getShowRowCount(), "showRowCount=false");
+			assert.ok(sHeader.indexOf("(") === -1 && sHeader.indexOf(")") === -1, "In the table header text there are no '()' that would contain the row count value ");
+			oTable.setShowRowCount(true);
+			Core.applyChanges();
+			assert.notOk(oTable.getShowRowCount(), "showRowCount=false also after trying to set it to true");
+		});
+	});
+
 	QUnit.module("Tests with specific propertyInfos and extensions for binding", {
 		before: function() {
 			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
