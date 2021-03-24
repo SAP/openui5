@@ -1093,6 +1093,12 @@ sap.ui.define([
 		IconPool.insertFontFaceStyle = function (sFontFace, sPath, sCollectionName) {
 			var oElement;
 
+			function convertUrl(sUrl) {
+				// AppCacheBuster createds the '_covnertUrl' function when it's active. Call the function to include the
+				// CacheBuster token into the url.
+				return IconPool._convertUrl ? IconPool._convertUrl(sUrl) : sUrl;
+			}
+
 			if (arguments.length === 0 || sFontFace === SAP_ICON_FONT_FAMILY) {
 				// The font-face declaration for the predefined icon font is done in SAP-icons.css which is imported to the
 				// library.source.less. Therefore it's not needed to use inline css to declare it.
@@ -1128,9 +1134,9 @@ sap.ui.define([
 			oElement.type = "text/css";
 			oElement.textContent = "@font-face {" +
 				"font-family: '" + sFontFace + "';" +
-				"src: url('" + sPath + sFontFace + ".woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android */
-				"url('" + sPath + sFontFace + ".woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
-				"url('" + sPath + sFontFace + ".ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
+				"src: url('" + convertUrl(sPath + sFontFace + ".woff2") + "') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android */
+				"url('" + convertUrl(sPath + sFontFace + ".woff") + "') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
+				"url('" + convertUrl(sPath + sFontFace + ".ttf") + "') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
 				"local('" + sFontFace + "');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
 				"font-weight: normal;" +
 				"font-style: normal;" +
