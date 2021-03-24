@@ -26,7 +26,7 @@ sap.ui.define([], function () {
 			sBackgroundDesign = oDynamicPageHeader.getBackgroundDesign();
 
 		// Dynamic Page Layout Header Root DOM Element.
-		oRm.openStart("header", oDynamicPageHeader);
+		oRm.openStart("section", oDynamicPageHeader);
 		oRm.accessibilityState({
 			role: "region"
 		});
@@ -56,7 +56,7 @@ sap.ui.define([], function () {
 			oRm.renderControl(oDynamicPageHeaderState.pinButton);
 		}
 
-		oRm.close("header");
+		oRm.close("section");
 	};
 
 	DynamicPageHeaderRenderer._renderHeaderContent = function (oRm, oDynamicPageHeaderState) {

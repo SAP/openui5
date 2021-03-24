@@ -27,6 +27,12 @@ function (
 		}
 	});
 
+	QUnit.test("DynamicPage Header root tag", function (assert) {
+		var oHeader = this.oDynamicPage.getHeader();
+
+		assert.strictEqual(oHeader.getDomRef().tagName, "SECTION", "The root tag is 'section'");
+	});
+
 	QUnit.test("DynamicPage Header default aggregation", function (assert) {
 		var oHeader = this.oDynamicPage.getHeader(),
 				sHeaderDefaultAggregation = oHeader.getMetadata().getDefaultAggregationName();
