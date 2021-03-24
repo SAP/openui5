@@ -1841,7 +1841,12 @@ sap.ui.define([
 				dependencies = dependenciesFromManifest(lib);
 			} catch (e) {
 				Log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + ")");
-				if ( e && e.loadError && fileType !== 'js' ) {
+				// fall back to JSON, but only if the root cause was an XHRLoadError
+				var root = e;
+				while ( root && root.cause ) {
+					root = root.cause;
+				}
+				if ( root && root.name === "XHRLoadError" && fileType !== 'js' ) {
 					dependencies = loadJSONSync(lib);
 				} // ignore other errors (preload shouldn't fail)
 			}

@@ -11,7 +11,7 @@
  * might break in future releases.
  */
 
-/*global sap:true, console, document, Promise, URL, XMLHttpRequest */
+/*global sap:true, Blob, console, document, Promise, URL, XMLHttpRequest */
 
 (function(__global) {
 	"use strict";
@@ -794,6 +794,12 @@
 		}
 	};
 
+	Module.prototype.failWith = function(msg, cause) {
+		var err = makeModuleError(msg, this, cause);
+		this.fail(err);
+		return err;
+	};
+
 	Module.prototype.fail = function(err) {
 		// should throw, but some tests and apps would fail
 		assert(!this.settled, "Module " + this.name + " is already settled");
@@ -976,22 +982,54 @@
 
 	// --------------------------------------------------------------------------------------------
 
-	function makeNestedError(msg, cause) {
-		var oError = new Error(msg + ": " + cause.message);
-		oError.cause = cause;
-		oError.loadError = cause.loadError;
-		// concat the error stack for better traceability of loading issues
-		if ( oError.stack && cause.stack ) {
-			oError.stack = oError.stack + "\nCaused by: " + cause.stack;
+	function isModuleError(err) {
+		return err && err.name === "ModuleError";
+	}
+
+	/**
+	 * Wraps the given 'cause' in a new error with the given message and with name 'ModuleError'.
+	 *
+	 * The new message and the message of the cause are combined. The stacktrace of the
+	 * new error and of the cause are combined (with a separating 'Caused by').
+	 *
+	 * Instead of the final message string, a template is provided which can contain placeholders
+	 * for the module ID ({id}) and module URL ({url}). Providing a template without concrete
+	 * values allows to detect the repeated nesting of the same error. In such a case, only
+	 * the innermost cause will be kept (affects both, stack trace as well as the cause property).
+	 * The message, however, will contain the full chain of module IDs.
+	 *
+	 * @param {string} template Message string template with placeholders
+	 * @param {Module} module Module for which the error occurred
+	 * @param {Error} cause original error
+	 * @returns {Error} New module error
+	 */
+	function makeModuleError(template, module, cause) {
+		var modules = "'" + module.name + "'";
+
+		if (isModuleError(cause)) {
+			// update the chain of modules (increasing the indent)
+			modules = modules + "\n -> " + cause._modules.replace(/ -> /g, "  -> ");
+			// omit repeated occurrences of the same kind of error
+			if ( template === cause._template ) {
+				cause = cause.cause;
+			}
 		}
-		// @evo-todo
-		// for non Chrome browsers we log the caused by stack manually in the console
-		// if (__global.console && !Device.browser.chrome) {
-		// 	/*eslint-disable no-console */
-		// 	console.error(oError.message + "\nCaused by: " + oCausedByStack);
-		// 	/*eslint-enable no-console */
-		// }
-		return oError;
+
+		// create the message string from the template and the cause's message
+		var message =
+			template.replace(/\{id\}/, modules).replace(/\{url\}/, module.url)
+			+ (cause ? ": " + cause.message : "");
+
+		var error = new Error(message);
+		error.name = "ModuleError";
+		error.cause = cause;
+		if ( cause && cause.stack ) {
+			error.stack = error.stack + "\nCaused by: " + cause.stack;
+		}
+		// the following properties are only for internal usage
+		error._template = template;
+		error._modules = modules;
+		return error;
 	}
 
 	function declareModule(sModuleName) {
@@ -1195,11 +1233,11 @@
 	function loadSyncXHR(oModule) {
 		var xhr = new XMLHttpRequest();
 
-		function enrichXHRError(error) {
-			error = error || new Error(xhr.status + " - " + xhr.statusText);
+		function createXHRLoadError(error) {
+			error = new Error(xhr.statusText ? xhr.status + " - " + xhr.statusText : xhr.status);
+			error.name = "XHRLoadError";
 			error.status = xhr.status;
 			error.statusText = xhr.statusText;
-			error.loadError = true;
 			return error;
 		}
 
@@ -1209,19 +1247,19 @@
 				oModule.state = LOADED;
 				oModule.data = xhr.responseText;
 			} else {
-				oModule.error = enrichXHRError();
+				oModule.error = createXHRLoadError();
 			}
 		});
 		// Note: according to whatwg spec, error event doesn't fire for sync send(), instead an error is thrown
 		// we register a handler, in case a browser doesn't follow the spec
 		xhr.addEventListener('error', function(e) {
-			oModule.error = enrichXHRError();
+			oModule.error = createXHRLoadError();
 		});
 		xhr.open('GET', oModule.url, false);
 		try {
 			xhr.send();
 		} catch (error) {
-			oModule.error = enrichXHRError(error);
+			oModule.error = error;
 		}
 	}
 
@@ -1272,8 +1310,7 @@
 			}
 
 			log.error("failed to load JavaScript resource: " + oModule.name);
-			oModule.fail(
-				new Error("failed to load '" + oModule.name +  "' from " + oModule.url + ": script load error"));
+			oModule.failWith("failed to load {id} from {url}", new Error("script load error"));
 		}
 
 		oScript = document.createElement('SCRIPT');
@@ -1356,11 +1393,8 @@
 				// set bSkipShimDeps to true to prevent endless recursion
 				return requireModule(oRequestingModule, sModuleName, bAsync, /* bSkipShimDeps = */ true, bSkipBundle);
 			}, function(oErr) {
-				oModule.fail(oErr);
-				if ( bAsync ) {
-					return;
-				}
-				throw oErr;
+				// Note: in async mode, this 'throw' will reject the promise returned by requireAll
+				throw oModule.failWith("Failed to resolve dependencies of {id}", oErr);
 			}, bAsync);
 		}
 
@@ -1421,9 +1455,7 @@
 				if ( bAsync ) {
 					return oModule.deferred().promise;
 				} else {
-					throw (bExecutedNow
-						? oModule.error
-						: makeNestedError("found in negative cache: '" + sModuleName + "' from " + oModule.url, oModule.error));
+					throw oModule.error;
 				}
 			} else {
 				// currently loading or executing
@@ -1485,8 +1517,7 @@
 
 			if ( oModule.state === LOADING ) {
 				// transition to FAILED
-				oModule.fail(
-					makeNestedError("failed to load '" + sModuleName +  "' from " + oModule.url, oModule.error));
+				oModule.failWith("failed to load {id} from {url}", oModule.error);
 			} else if ( oModule.state === LOADED ) {
 				// execute module __after__ loading it, this reduces the required stack space!
 				execModule(sModuleName, bAsync);
@@ -1495,11 +1526,6 @@
 			measure && measure.end(sModuleName);
 
 			if ( oModule.state !== READY ) {
-				// loading or executing failed for some reason, load again as script for better error reporting
-				// (but without further eventing)
-				if ( fnIgnorePreload ) {
-					loadScript(oModule);
-				}
 				throw oModule.error;
 			}
 
@@ -1599,7 +1625,24 @@
 
 			} catch (err) {
 				oModule.data = undefined;
-				oModule.fail(err);
+				if (isModuleError(err)) {
+					// don't wrap a ModuleError again
+					oModule.fail(err);
+				} else {
+					if (err instanceof SyntaxError && sScript) {
+						// Module execution failed with a syntax error.
+						// If in debug mode, load the script code again via script tag for better error reporting
+						// (but without reacting to load/error events)
+						if (fnIgnorePreload) {
+							oModule.url = URL.createObjectURL(new Blob([sScript], {type: 'text/javascript'}));
+							loadScript(oModule);
+						} else {
+							log.error("A syntax error occurred while evaluating '" + sModuleName + "'"
+								+ ", restarting the app with sap-ui-debug=x might reveal the error location");
+						}
+					}
+					oModule.failWith("Failed to execute {id}", err);
+				}
 			} finally {
 
 				_execStack.pop();
@@ -1761,11 +1804,12 @@
 					}
 					oModule.content = exports;
 				} catch (error) {
-					oModule.fail(error);
+					var wrappedError = oModule.failWith("failed to execute module factory for '{id}'", error);
 					if ( bAsync ) {
+						// Note: in async mode, the error is reported via the oModule's promise
 						return;
 					}
-					throw error;
+					throw wrappedError;
 				}
 			} else {
 				oModule.content = vFactory;
@@ -1788,11 +1832,11 @@
 			oModule.ready();
 
 		}, function(oErr) {
-			// @evo-todo wrap error with current module?
-			oModule.fail(oErr);
+			var oWrappedError = oModule.failWith("Failed to resolve dependencies of {id}", oErr);
 			if ( !bAsync ) {
-				throw oErr;
+				throw oWrappedError;
 			}
+			// Note: in async mode, the error is reported via the oModule's promise
 		}, /* bAsync = */ bAsync);
 
 	}

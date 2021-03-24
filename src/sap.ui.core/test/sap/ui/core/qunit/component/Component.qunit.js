@@ -224,7 +224,8 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			assert.notOk(true, "Component should not be created");
 		}, function(oError) {
-			assert.equal(oError.message, "Error from test/inline/errorHandling1/Component", "Error from Component.js should be propagated");
+			assert.ok(/Error from test\/inline\/errorHandling1\/Component/.test(oError.message),
+				"Error from Component.js should be propagated");
 		});
 
 	});
@@ -242,7 +243,8 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			assert.notOk(true, "Component should not be created");
 		}, function(oError) {
-			assert.equal(oError.message, "Error from test/inline/errorHandling2/Component", "Error from Component.js should be propagated");
+			assert.ok(/Error from test\/inline\/errorHandling2\/Component/.test(oError.message),
+				"Error from Component.js should be propagated");
 		});
 
 	});
