@@ -381,7 +381,7 @@ sap.ui.define([
 			assert.equal(oVariant.getExecuteOnSelection(), false, "then by default it is NOT executed on selection");
 		});
 
-		QUnit.test("when executeOnSelect is set to false", function(assert) {
+		QUnit.test("when content.executeOnSelect is set to false", function(assert) {
 			var oVariant = new CompVariant({
 				content: {
 					executeOnSelect: false
@@ -390,7 +390,7 @@ sap.ui.define([
 			assert.equal(oVariant.getExecuteOnSelection(), false, "then it is NOT executed on selection");
 		});
 
-		QUnit.test("when executeOnSelect is set to true", function(assert) {
+		QUnit.test("when content.executeOnSelect is set to true", function(assert) {
 			var oVariant = new CompVariant({
 				content: {
 					executeOnSelect: true
@@ -399,7 +399,7 @@ sap.ui.define([
 			assert.equal(oVariant.getExecuteOnSelection(), true, "then it is NOT executed on selection");
 		});
 
-		QUnit.test("when executeOnSelection is set to false", function(assert) {
+		QUnit.test("when content.executeOnSelection is set to false", function(assert) {
 			var oVariant = new CompVariant({
 				content: {
 					executeOnSelection: false
@@ -408,11 +408,25 @@ sap.ui.define([
 			assert.equal(oVariant.getExecuteOnSelection(), false, "then it is NOT executed on selection");
 		});
 
-		QUnit.test("when executeOnSelection is set to true", function(assert) {
+		QUnit.test("when content.executeOnSelection is set to true", function(assert) {
 			var oVariant = new CompVariant({
 				content: {
 					executeOnSelection: true
 				}
+			});
+			assert.equal(oVariant.getExecuteOnSelection(), true, "then it is NOT executed on selection");
+		});
+
+		QUnit.test("when executeOnSelection is set to false", function(assert) {
+			var oVariant = new CompVariant({
+				executeOnSelection: false
+			});
+			assert.equal(oVariant.getExecuteOnSelection(), false, "then it is NOT executed on selection");
+		});
+
+		QUnit.test("when executeOnSelection is set to true", function(assert) {
+			var oVariant = new CompVariant({
+				executeOnSelection: true
 			});
 			assert.equal(oVariant.getExecuteOnSelection(), true, "then it is NOT executed on selection");
 		});
