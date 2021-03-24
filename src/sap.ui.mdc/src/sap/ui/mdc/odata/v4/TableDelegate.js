@@ -121,7 +121,7 @@ sap.ui.define([
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		var oPopover = oTable._oPopover;
 		oPopover && oPopover.getItems().forEach(function(item, index, aItems) {
-			if (item.getLabel() === oResourceBundle.getText("table.SETTINGS_GROUP") || item.getLabel() === oResourceBundle.getText("table.SETTINGS_AGGREGATE")) {
+			if (item.getLabel() === oResourceBundle.getText("table.SETTINGS_GROUP") || item.getLabel() === oResourceBundle.getText("table.SETTINGS_TOTALS")) {
 				aItems[index].destroy();
 			}
 			if (aItems.length == 0 ) {
@@ -178,7 +178,7 @@ sap.ui.define([
 		if (aAggregateChildren.length > 0) {
 			var oAggregatePopover = new ColumnPopoverSelectListItem({
 				items: aAggregateChildren,
-				label: oResourceBundle.getText("table.SETTINGS_AGGREGATE"),
+				label: oResourceBundle.getText("table.SETTINGS_TOTALS"),
 				icon: "sap-icon://sum",
 				action: [{
 					sName: "Aggregate",
@@ -192,6 +192,8 @@ sap.ui.define([
 	Delegate._checkForPreviousAnalytics = function(oEvent, oData) {
 		var sName = oData.sName,
 			sTitle,
+			sMessage,
+			sActionText,
 			oMDCColumn = oData.oMDCColumn,
 			oTable = oMDCColumn.getParent(),
 			aGroupLevels = oTable.getCurrentState().groupLevels || [],
@@ -207,14 +209,22 @@ sap.ui.define([
 
 		if (bForce) {
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			sTitle = sName == "Aggregate" ? oResourceBundle.getText("table.SETTINGS_AGGREGATE") : oResourceBundle.getText("table.SETTINGS_GROUP");
+			if (sName === "Aggregate") {
+				sTitle = oResourceBundle.getText("table.SETTINGS_WARNING_TITLE_TOTALS");
+				sMessage = oResourceBundle.getText("table.SETTINGS_MESSAGE2");
+				sActionText = oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_TOTALS");
+			} else {
+				sTitle = oResourceBundle.getText("table.SETTINGS_WARNING_TITLE_GROUPS");
+				sMessage = oResourceBundle.getText("table.SETTINGS_MESSAGE1");
+				sActionText = oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_GROUP");
+			}
 			bForcedAnalytics = true;
-			MessageBox.warning(oResourceBundle.getText("table.SETTINGS_MESSAGE"), {
+			MessageBox.warning(sMessage, {
 				id: oTable.getId() + "-messageBox",
-				title: oResourceBundle.getText("table.SETTINGS_WARNING_TITLE") + " " + sTitle,
-				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+				title: sTitle,
+				actions: [sActionText, oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_CANCEL")],
 				onClose: function (oAction) {
-					if (oAction === sap.m.MessageBox.Action.YES) {
+					if (oAction === sActionText) {
 						this._forceAnalytics(sName, oTable, sPath);
 					}
 					Core.byId(oTable.getId() + "-messageBox").destroy();
