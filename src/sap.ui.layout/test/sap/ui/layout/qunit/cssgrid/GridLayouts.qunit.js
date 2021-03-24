@@ -96,14 +96,14 @@ sap.ui.define([
 		assert.throws(this.oGridLayoutBase.getActiveGridSettings, "Should throw an error when getActiveGridSettings function is not implemented");
 	});
 
-	QUnit.test("renderSingleGridLayout - with non-responsive GridLayout", function (assert) {
+	QUnit.test("addGridStyles - with non-responsive GridLayout", function (assert) {
 
 		// Arrange
 		var oGridLayout = new GridBasicLayout(getGridSettings());
 		var oExpectedStyles = getExpectedStyles();
 
 		// Act
-		oGridLayout.renderSingleGridLayout(this.oRenderManagerMock);
+		oGridLayout.addGridStyles(this.oRenderManagerMock);
 
 		// Assert
 		for (var sProp in oExpectedStyles) {
@@ -111,7 +111,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("renderSingleGridLayout - with responsive GridLayout", function (assert) {
+	QUnit.test("addGridStyles - with responsive GridLayout", function (assert) {
 
 		// Arrange
 		var oGridLayout = new GridResponsiveLayout({
@@ -124,7 +124,7 @@ sap.ui.define([
 		});
 
 		// Act
-		oGridLayout.renderSingleGridLayout(this.oRenderManagerMock);
+		oGridLayout.addGridStyles(this.oRenderManagerMock);
 
 		// Assert
 		assert.equal(Object.keys(this.oRenderManagerMock.styles).length, 1, "Should have only one property set when the GridLayout is responsive");
@@ -144,7 +144,6 @@ sap.ui.define([
 			this.oHTMLElementMock = {
 				style: {
 					_styles: {
-						"display": "grid",
 						"grid-auto-columns": "",
 						"grid-auto-flow": "column dense",
 						"grid-auto-rows": "1fr",
@@ -154,7 +153,7 @@ sap.ui.define([
 						"grid-template-columns": "repeat(auto-fit, 10rem)",
 						"grid-template-rows": "3rem"
 					},
-					getProperty: function (sKey) {
+					getPropertyValue: function (sKey) {
 						return this._styles[sKey];
 					},
 					setProperty: function (sKey, sValue) {
@@ -240,6 +239,21 @@ sap.ui.define([
 			}
 			assert.equal(this.oHTMLElementMock.style._styles[sProp], oExpectedStyles[sProp], "Should have set value '" + oExpectedStyles[sProp] + "' for property " + sProp);
 		}
+	});
+
+	QUnit.test("addGridStyles - when 'display:grid' is already added", function (assert) {
+		// Arrange
+		this.oHTMLElementMock.style._styles.display = "grid";
+		this.oGridLayoutBase.getActiveGridSettings = function () {
+			return new GridSettings(getGridSettings());
+		};
+		var oSpy = sinon.spy(this.oHTMLElementMock.style, "setProperty");
+
+		// Act
+		this.oGridLayoutBase.applyGridLayout([this.oControlMock]);
+
+		// Assert
+		assert.notOk(oSpy.calledWith("display", "grid"), "Should NOT add 'display:grid' if it's already added by something else");
 	});
 
 	QUnit.module("GridResponsiveLayout", {
@@ -715,6 +729,20 @@ sap.ui.define([
 			this.fnLayoutChangeHandler.reset();
 			this.oGridLayout._applyLayout.reset();
 		}.bind(this));
+	});
+
+	QUnit.test("Styles added with RenderManager", function (assert) {
+		// Arrange
+		var oRenderManagerMock = {
+			style: sinon.stub(),
+			"class": sinon.stub()
+		};
+
+		// Act
+		this.oGridLayout.addGridStyles(oRenderManagerMock);
+
+		// Assert
+		assert.ok(oRenderManagerMock.style.calledWith("display", "grid"), "display:grid is added during rendering");
 	});
 
 	QUnit.module("ResponsiveColumnItemLayoutData", {

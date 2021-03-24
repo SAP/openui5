@@ -117,29 +117,38 @@ sap.ui.define([
 	};
 
 	/**
-	 * Apply display:grid styles to the provided array of HTML elements or controls based on the currently active GridSettings
+	 * Apply styles to the provided array of HTML elements or controls based on the currently active GridSettings
 	 *
 	 * @public
 	 * @param {sap.ui.core.Control[]|HTMLElement[]} aElements The elements or controls on which to apply the display:grid styles
 	 */
 	GridLayoutBase.prototype.applyGridLayout = function (aElements) {
-		if (!aElements) { return; }
+		if (!aElements) {
+			return;
+		}
+
 		aElements.forEach(this._applySingleGridLayout, this);
 	};
 
 	/**
-	 * Apply display:grid styles to the provided HTML element or control based on the currently active GridSettings
+	 * Apply styles to the provided HTML element or control based on the currently active GridSettings
 	 *
-	 * @protected
+	 * @private
 	 * @param {sap.ui.core.Control|HTMLElement} oElement The element or control on which to apply the display:grid styles
 	 */
 	GridLayoutBase.prototype._applySingleGridLayout = function (oElement) {
-		if (!oElement) { return; }
+		if (!oElement) {
+			return;
+		}
+
 		oElement = oElement instanceof window.HTMLElement ? oElement : oElement.getDomRef();
 
 		var oGridSettings = this.getActiveGridSettings();
 
-		oElement.style.setProperty("display", "grid");
+		// check if the style is not already added by RenderManager or something else
+		if (oElement.style.getPropertyValue("display") !== "grid") {
+			oElement.style.setProperty("display", "grid");
+		}
 
 		if (oGridSettings) {
 			this._setGridLayout(oElement, oGridSettings);
@@ -205,18 +214,7 @@ sap.ui.define([
 	 * @virtual
 	 * @param {sap.ui.layout.cssgrid.IGridConfigurable} oGrid The grid
 	 */
-	GridLayoutBase.prototype.onGridAfterRendering = function (oGrid) {
-		// Loops over each element's dom and adds the grid item class
-		oGrid.getGridDomRefs().forEach(function (oDomRef) {
-			if (oDomRef.children){
-				for (var i = 0; i < oDomRef.children.length; i++) {
-					if (!oDomRef.children[i].classList.contains("sapMGHLI") && !oDomRef.children[i].classList.contains("sapUiBlockLayerTabbable")) { // the item is not group header or a block layer tabbable
-						oDomRef.children[i].classList.add("sapUiLayoutCSSGridItem");
-					}
-				}
-			}
-		});
-	};
+	GridLayoutBase.prototype.onGridAfterRendering = function (oGrid) { };
 
 	/**
 	 * Hook function for the Grid's resize. Will be called if the grid layout is responsive.
@@ -252,12 +250,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Render display:grid styles. Used for non-responsive grid layouts.
+	 * Add "display:grid" and configuration styles with RenderManager.
+	 * If the layout is responsive, the configuration styles are not added, as they are added by "applyGridLayout" later.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRM The render manager of the Control which wants to render display:grid styles
-	 * @param {sap.ui.layout.cssgrid.GridLayoutBase} oGridLayout The grid layout to use to apply display:grid styles
+	 * @param {sap.ui.core.RenderManager} oRM The render manager of the Grid which wants to add the styles
+	 * @private
+	 * @ui5-restricted
 	 */
-	GridLayoutBase.prototype.renderSingleGridLayout = function (oRM) {
+	GridLayoutBase.prototype.addGridStyles = function (oRM) {
 		var oGridSettings = this.getActiveGridSettings();
 
 		oRM.style("display", "grid");
