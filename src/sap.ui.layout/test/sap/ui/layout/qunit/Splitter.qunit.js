@@ -504,6 +504,39 @@ sap.ui.define([
 		}, 200);
 	});
 
+	QUnit.test("resetContentAreasSizes when there is only 1 area with 'minSize'", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oArea = new Button({
+				layoutData: new SplitterLayoutData({
+					size: "100%",
+					minSize: 200
+				})
+			}),
+			oSplitter = new Splitter({
+				width: "500px",
+				contentAreas: [oArea]
+			});
+		oSplitter.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oSplitter.triggerResize(true);
+		var iOldWidth = oSplitter.$("content-0").width();
+
+		// Act
+		oSplitter.resetContentAreasSizes();
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			var iNewContentSize = oSplitter.$("content-0").width();
+			// Assert
+			assert.strictEqual(iNewContentSize, iOldWidth, "Area didn't shrink to 'minSize'");
+
+			// Clean-up
+			oSplitter.destroy();
+			done();
+		}, 200);
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oSplitter = new Splitter("splitter", {
