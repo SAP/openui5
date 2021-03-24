@@ -147,19 +147,34 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Allowed analytics in the columns", function(assert) {
+	QUnit.test("Allowed analytics on column header and tableDelegate API's", function(assert) {
 		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		var oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
 			var oFirstInnerColumn = oTable._oTable.getColumns()[0];
+			var oPlugin = oTable._oTable.getDependents()[0];
+			var oDelegate = oTable.getControlDelegate();
+			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+
+			oDelegate._setAggregation(oTable, {}, {});
+			assert.strictEqual(fSetAggregationSpy.callCount, 0, "V4Aggregation#setAggregation is called only with right parameter type");
+
+			oDelegate._setAggregation(oTable, [], ["Country"]);
+			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
+				visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+				groupLevels: [],
+				grandTotal: ["Country"],
+				subtotals: ["Country"]
+			}), "Plugin#setAggregationInfo call");
+			fSetAggregationSpy.restore();
 
 			oTable._oTable.fireEvent("columnSelect", {
 				column: oFirstInnerColumn
 			});
 			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
-
+			fSetAggregationSpy.restore();
 			return oTable._fullyInitialized();
 		}).then(function() {
 			var oThirdInnerColumn = oTable._oTable.getColumns()[2];
@@ -174,8 +189,32 @@ sap.ui.define([
 			});
 			return oTable._fullyInitialized();
 		}).then(function() {
+			var oPlugin = oTable._oTable.getDependents()[0];
+			var oDelegate = oTable.getControlDelegate();
+			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+
 			assert.strictEqual(fColumnPressSpy.callCount, 2, "Third Column pressed");
 			assert.strictEqual(oTable._oPopover.getItems()[0].getItems().length,2, "The last column has complex property with list of two items");
+
+			var oNewCol = new sap.ui.mdc.table.Column({
+				id:"cl"
+			});
+			oTable.insertColumn(oNewCol, 2);
+			oTable.setGroupConditions({
+				groupLevels: [
+					{
+						"name": "Name"
+					}
+				]
+			});
+			oTable.rebind();
+			assert.ok(fSetAggregationSpy.secondCall.calledWithExactly({
+				visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+				groupLevels: ["Name"],
+				grandTotal: [],
+				subtotals: []
+			}), "Plugin#setAggregationInfo call");
+			fSetAggregationSpy.restore();
 		});
 	});
 
@@ -365,16 +404,7 @@ sap.ui.define([
 				oDelegate.rebindTable = function() {
 					fnRebindTable.apply(this, arguments);
 
-					// TODO: We need to get rid of the first call
-					assert.ok(fSetAggregationSpy.calledTwice);
-					assert.ok(fSetAggregationSpy.firstCall.calledWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
-						groupLevels: [],
-						grandTotal: [],
-						subtotals: []
-					}), "Plugin#setAggregationInfo call");
-
-					assert.ok(fSetAggregationSpy.secondCall.calledWithExactly({
+					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: [],
 						grandTotal: ["Name"],

@@ -255,43 +255,11 @@ sap.ui.define([
 	};
 
 	Delegate._forceAnalytics = function(sName, oTable, sPath) {
-		var that = this;
-
-		// TODO: We should get rid of the Delegate._setAggregation call
-		// FIXME: A flex change needs to be created for the removed grouping/aggregation
 		if (sName === "Aggregate") {
-			oTable.getCurrentState().groupLevels.forEach(function (item, index, object) {
-				if (item.name == sPath) {
-					var aGroupLevel = oTable.getCurrentState().groupLevels || [];
-					var oAggregate = oTable.getCurrentState().aggregations || {};
-					var aAggregate = Object.keys(oAggregate);
-					aGroupLevel.splice(index, 1);
-
-					// TODO: There should be a test that fails if Delegate._setAggregation is called with invalid arguments
-					aGroupLevel = aGroupLevel.map(function (item) {
-						return item.name;
-					});
-
-					that._setAggregation(oTable, aGroupLevel, aAggregate);
-				}
-			});
+			oTable._onCustomGroup(sPath);
 			oTable._onCustomAggregate(sPath);
 		} else if (sName === "Group") {
-			var oAggregate = oTable.getCurrentState().aggregations || {};
-			Object.keys(oAggregate).forEach(function (item, index, object) {
-				if (item == sPath) {
-					delete oAggregate[sPath];
-					var aAggregate = Object.keys(oAggregate);
-					var aGroupLevel = oTable.getCurrentState().groupLevels || [];
-
-					// TODO: There should be a test that fails if Delegate._setAggregation is called with invalid arguments
-					aGroupLevel = aGroupLevel.map(function (item) {
-						return item.name;
-					});
-
-					that._setAggregation(oTable, aGroupLevel, aAggregate);
-				}
-			});
+			oTable._onCustomAggregate(sPath);
 			oTable._onCustomGroup(sPath);
 		}
 	};
@@ -313,6 +281,9 @@ sap.ui.define([
 	};
 
 	Delegate._setAggregation = function(oTable, aGroupLevel, aAggregate) {
+		if (!(aGroupLevel && aAggregate instanceof Array)) {
+			return;
+		}
 		var mTableMap = TableMap.get(oTable);
 		var oPlugin = mTableMap["plugin"];
 
@@ -361,7 +332,6 @@ sap.ui.define([
 		var oAggregate  = oTable.getCurrentState().aggregations || {};
 		var aAggregate = Object.keys(oAggregate);
 
-		// TODO: There should be a test that fails if Delegate._setAggregation is called with invalid arguments
 		aGroupLevel = aGroupLevel.map(function (item) {
 			return item.name;
 		});
