@@ -349,5 +349,21 @@
         ]
       }
     ]
+  },
+  "1.71.31": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "04e2bf98a3052e557dccc36b22546a344f663a47",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments are properly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001398012021"
+          }
+        ]
+      }
+    ]
   }
 }

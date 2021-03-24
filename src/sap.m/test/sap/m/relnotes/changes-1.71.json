@@ -2478,5 +2478,43 @@
         ]
       }
     ]
+  },
+  "1.71.31": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "cc6b4126affe5104396fb229957f1ff6d9ae3143",
+        "type": "FIX",
+        "text": " sap.m.Button: Accessibility name ensured",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180086711"
+          }
+        ]
+      },
+      {
+        "id": "2ce7927e20c524c32ad5f73ab34396a5377a9404",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: State element moved out of control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001313592021"
+          }
+        ]
+      },
+      {
+        "id": "ee7a4031b9ce1d0264056be5cfcc36543cd1d5ee",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: missing title of header fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000237602021"
+          }
+        ]
+      }
+    ]
   }
 }
