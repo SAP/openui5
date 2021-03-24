@@ -1697,9 +1697,13 @@ sap.ui.define([
 				"@$ui5.node.level" : 0
 			},
 			oPromise,
-			aSpliced = oGroupNode["@$ui5._" ].spliced.slice(),
+			aSpliced,
 			oUpdateAllExpectation;
 
+		oGroupNode["@$ui5._"].spliced[200000] = {
+			"@$ui5._" : {predicate : "('D')"}
+		};
+		aSpliced = oGroupNode["@$ui5._" ].spliced.slice();
 		aElements = [{}, oGroupNode, {}, {}];
 		oCache.aElements = aElements.slice();
 		oCache.aElements.$byPredicate = {};
@@ -1723,10 +1727,10 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oCache.expand(oGroupLock, "~path~").then(function (iResult) {
-			assert.strictEqual(iResult, 100 + 3);
+			assert.strictEqual(iResult, 100 + 200001);
 
-			assert.strictEqual(oCache.aElements.length, 7, ".length");
-			assert.strictEqual(oCache.aElements.$count, 7, ".$count");
+			assert.strictEqual(oCache.aElements.length, 200005, ".length");
+			assert.strictEqual(oCache.aElements.$count, 200005, ".$count");
 			assert.strictEqual(oCache.aElements[0], aElements[0]);
 			// check parent node
 			assert.strictEqual(oCache.aElements[1], oGroupNode);
@@ -1734,18 +1738,22 @@ sap.ui.define([
 			assert.notOk(_Helper.hasPrivateAnnotation(oGroupNode, "spliced"));
 
 			// check expanded nodes
+			assert.deepEqual(Object.keys(oCache.aElements),
+				["0", "1", "2", "3", "4", "200002", "200003", "200004", "$byPredicate", "$count"]);
 			assert.strictEqual(oCache.aElements[2], aSpliced[0]);
 			assert.strictEqual(oCache.aElements[3], aSpliced[1]);
 			assert.strictEqual(oCache.aElements[4], aSpliced[2]);
 			assert.notOk(_Helper.hasPrivateAnnotation(aSpliced[2], "expanding"));
+			assert.strictEqual(oCache.aElements[200002], aSpliced[200000]);
 
 			// check moved nodes
-			assert.strictEqual(oCache.aElements[5], aElements[2]);
-			assert.strictEqual(oCache.aElements[6], aElements[3]);
+			assert.strictEqual(oCache.aElements[200003], aElements[2]);
+			assert.strictEqual(oCache.aElements[200004], aElements[3]);
 
 			assert.deepEqual(oCache.aElements.$byPredicate, {
 				"('A')" : aSpliced[0],
-				"('C')" : aSpliced[2]
+				"('C')" : aSpliced[2],
+				"('D')" : aSpliced[200000]
 			});
 		});
 
