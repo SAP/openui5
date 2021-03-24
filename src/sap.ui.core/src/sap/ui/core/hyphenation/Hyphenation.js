@@ -7,15 +7,13 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
-	"sap/ui/core/Locale",
-	"sap/ui/Device"
+	"sap/ui/core/Locale"
 ], function (
 	HyphenationTestingWords,
 	ManagedObject,
 	Log,
 	deepEqual,
-	Locale,
-	Device
+	Locale
 ) {
 	"use strict";
 
@@ -411,16 +409,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Checks OS and browser as native hyphenation support on Google Chrome on macOS is not working as expected
-	 *
-	 * @private
-	 * @return {boolean} Returns whether the device is on macOS and the browser is Google Chrome
-	 */
-	function nativeHyphenationWorksProperly () {
-		return !(Device.os.macintosh && Device.browser.chrome);
-	}
-
-	/**
 	 * @class
 	 * This class provides methods for evaluating the possibility of using browser-native hyphenation or initializing and using a third-party hyphenation module.
 	 *
@@ -515,7 +503,7 @@ sap.ui.define([
 			var testContainer = appendTests(document.documentElement);
 			if (testContainer !== null) {
 				var el = document.getElementById(sLanguageOnThePage);
-				if (nativeHyphenationWorksProperly() && checkCSSHyphensSupport(el) && el.offsetHeight > 12) {
+				if (checkCSSHyphensSupport(el) && el.offsetHeight > 12) {
 					bCanUseNativeHyphenation = true;
 				} else {
 					bCanUseNativeHyphenation = false;
