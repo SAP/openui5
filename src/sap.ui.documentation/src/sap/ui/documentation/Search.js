@@ -119,6 +119,13 @@ sap.ui.define([
             }
         };
 
+        Search.prototype.onsapescape = function() {
+            // close global search when esc key is pressed.
+            if (this.getIsOpen()) {
+                this._toggleOpen(false);
+            }
+        };
+
 		Search.prototype.getValue = function() {
 			return this._lazyLoadSearchField().getValue();
 		};
