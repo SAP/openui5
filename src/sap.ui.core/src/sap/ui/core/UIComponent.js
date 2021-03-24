@@ -318,7 +318,7 @@ sap.ui.define([
 			oRoutingConfig = oRoutingManifestEntry.config || {},
 			vRoutes = oRoutingManifestEntry.routes;
 
-		// If IAsyncContentCreation interface is implemented we default router view creation to async
+		// If IAsyncContentCreation interface is implemented we enforce router view creation to async
 		if (this.isA("sap.ui.core.IAsyncContentCreation")) {
 			oRoutingConfig.async = true;
 		}
@@ -350,19 +350,23 @@ sap.ui.define([
 				vRootControl = that.createContent();
 			}, oPreprocessors);
 		});
+
 		if (vRootControl instanceof Promise) {
-			this.pRootControlLoaded = vRootControl.then(function(oRootControl) {
+			this.pRootControlLoaded = vRootControl;
+		} else if (this.isA("sap.ui.core.IAsyncContentCreation") && vRootControl && vRootControl.isA("sap.ui.core.mvc.View")) {
+			// if rootControl is a view created with the legacy factory we chain the loaded promise
+			this.pRootControlLoaded = vRootControl.loaded();
+		}
+
+		if (this.pRootControlLoaded) {
+			this.pRootControlLoaded = this.pRootControlLoaded.then(function(oRootControl) {
 				afterRootControlCreated(oRootControl, oRoutingConfig);
 				return oRootControl;
 			});
 		} else {
+			// sync path
 			afterRootControlCreated(vRootControl, oRoutingConfig);
-			if (this.isA("sap.ui.core.IAsyncContentCreation") && vRootControl && vRootControl.isA("sap.ui.core.mvc.View")) {
-				// if rootControl is a view created with the legacy factory we chain the loaded promise
-				this.pRootControlLoaded = vRootControl.loaded();
-			} else {
-				this.pRootControlLoaded = Promise.resolve(vRootControl);
-			}
+			this.pRootControlLoaded = Promise.resolve(vRootControl);
 		}
 	};
 
