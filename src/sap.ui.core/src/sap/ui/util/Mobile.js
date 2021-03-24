@@ -16,25 +16,6 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 	 */
 	var Mobile = {};
 
-	// Windows Phone specific handling
-	if (Device.os.windows_phone) {
-		var oTag;
-		// Disable grey highlights over tapped areas.
-		// This meta tag works since Windows 8.1.
-		// Write in-place, otherwise IE ignores it:
-		oTag = document.createElement("meta");
-		oTag.setAttribute("name", "msapplication-tap-highlight");
-		oTag.setAttribute("content", "no");
-		document.head.appendChild(oTag);
-
-		// Style for correct viewport size and scale definition.
-		// It works correctly since Windows 8.1.
-		// Older 8.0 patches return wrong device-width:
-		oTag = document.createElement("style");
-		oTag.appendChild(document.createTextNode('@-ms-viewport{width:device-width;}'));
-		document.head.appendChild(oTag);
-	}
-
 	var _bInitTriggered = false;
 
 	/**
@@ -108,12 +89,9 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			// en-/disable automatic link generation for phone numbers
 			if (Device.os.ios && options.preventPhoneNumberDetection) {
 				$head.append(jQuery('<meta name="format-detection" content="telephone=no">')); // this only works
-			                                                                                   // for all DOM
-			                                                                                   // created
-			                                                                                   // afterwards
-			} else if (Device.browser.msie) {
-				$head.append(jQuery('<meta http-equiv="cleartype" content="on">'));
-				$head.append(jQuery('<meta name="msapplication-tap-highlight" content="no">'));
+																							   // for all DOM
+																							   // created
+																							   // afterwards
 			}
 
 			var bIsIOS7Safari = Device.os.ios && Device.os.version >= 7 && Device.os.version < 8 && Device.browser.name === "sf";
@@ -155,7 +133,7 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 					// keep the old behavior for compatibility
 					// enable fullscreen mode only when runs on iOS devices
 					$head.append(jQuery('<meta name="apple-mobile-web-app-capable" content="yes">')); // since iOS
-				                                                                                      // 2.1
+																									  // 2.1
 				}
 			}
 
@@ -272,7 +250,6 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 
 		// desktop icon
 		if (oIcons["favicon"]) {
-
 			// remove any other favicons
 			var $fav = $head.find("[rel^=shortcut]"); // cannot search for "shortcut icon"
 
@@ -282,18 +259,8 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 				}
 			});
 
-			// for IE two DOM updates are necessary to render the favicon properly
-			if (Device.browser.msie) {
-				// create favicon w/o an href attribute for a first DOM update
-				var $link = jQuery('<link rel="shortcut icon">');
-				$head.append($link);
-
-				// add href attribute to force a second DOM
-				$link.attr("href", oIcons["favicon"]);
-			} else {
-				// create favicon
-				$head.append(jQuery('<link rel="shortcut icon" href="' + oIcons["favicon"] + '">'));
-			}
+			// create favicon
+			$head.append(jQuery('<link rel="shortcut icon" href="' + oIcons["favicon"] + '">'));
 		}
 
 		// mobile home screen icons

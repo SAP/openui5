@@ -291,9 +291,9 @@
 		}
 	});
 
-	// skip all tests in IE11 that require handling of global errors (IE11 doesn't support document.currentScript)
+	// skip all tests in FF that require handling of global errors because document.currentScript is not supported during the window.error event
 	var Device = sap.ui.requireSync("sap/ui/Device");
-	var SKIP_ASYNC_ERROR_HANDLING = Device.browser.msie || Device.browser.firefox ? "execution errors for asynchronoulsy executed legacy modules can't be associated with the executing module in IE11 " : false;
+	var SKIP_ASYNC_ERROR_HANDLING = Device.browser.firefox ? "execution errors for asynchronoulsy executed legacy modules can't be associated with the executing module" : false;
 
 	[
 		{

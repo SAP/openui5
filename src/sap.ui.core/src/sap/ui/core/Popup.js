@@ -500,7 +500,7 @@ sap.ui.define([
 
 	/**
 	* Initializes the popup layer by adding z-index and visibility to the popup layer
-    * and insert the popup directly after the given <code>oRef</code> element
+	* and insert the popup directly after the given <code>oRef</code> element
 	*
 	* @param {jQuery} oRef The element as a jQuery object
 	* @param {int} iZIndex The z-index value
@@ -1058,11 +1058,6 @@ sap.ui.define([
 				this._iTopShieldRemoveTimer = null;
 			}.bind(this), 500);
 		}
-
-		// get (and 'show' i.e. activate) the BlindLayer in IE (not Edge)
-		if (!!Device.browser.msie && !Device.os.windows_phone && Popup._activateBlindLayer) {
-			this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
-		} // -1 = BlindLayer, -2 = BlockLayer
 
 		if (this._bModal) {
 			this._showBlockLayer();
@@ -2174,22 +2169,13 @@ sap.ui.define([
 				onBeforeRendering: function() {
 					var oDomRef = oElement.getDomRef();
 					if (oDomRef && this.isOpen()) {
-						if (Device.browser.msie) {
-							jQuery(oDomRef).off("deactivate." + this._popupUID, this.fEventHandler);
-						} else {
-							oDomRef.removeEventListener("blur", this.fEventHandler, true);
-						}
+						oDomRef.removeEventListener("blur", this.fEventHandler, true);
 					}
 				},
 				onAfterRendering: function() {
 					var oDomRef = oElement.getDomRef();
 					if (oDomRef && this.isOpen()) {
-						if (Device.browser.msie) {
-							// 'deactivate' needs to be used for msie to achieve event handling in capturing phase
-							jQuery(oDomRef).on("deactivate." + this._popupUID, this.fEventHandler);
-						} else {
-							oDomRef.addEventListener("blur", this.fEventHandler, true);
-						}
+						oDomRef.addEventListener("blur", this.fEventHandler, true);
 					}
 				}
 			};
@@ -2299,7 +2285,7 @@ sap.ui.define([
 	 * @param {object} oEventParameters The event parameters
 	 * @param {object} oEventParameters.lastPosition The last position value
 	 * @param {object} oEventParameters.lastOfRect The last rect value
- 	 * @param {object} oEventParameters.currentOfRect The current rect value
+	 * @param {object} oEventParameters.currentOfRect The current rect value
 	 * @private
 	 */
 	Popup.prototype._fnCloseOnScroll = function(oEventParameters) {
@@ -2479,7 +2465,7 @@ sap.ui.define([
 		var i = 0, l = 0;
 
 		if ($PopupRoot.length) {
-			if (document.addEventListener && !Device.browser.msie) { //FF, Safari
+			if (document.addEventListener) { //FF, Safari
 				document.addEventListener("focus", this.fEventHandler, true);
 				$PopupRoot.get(0).addEventListener("blur", this.fEventHandler, true);
 
@@ -2520,7 +2506,7 @@ sap.ui.define([
 		var oDomRef = {};
 		var i = 0, l = 0;
 
-		if (document.removeEventListener && !Device.browser.msie) { //FF, Safari
+		if (document.removeEventListener) { //FF, Safari
 			document.removeEventListener("focus", this.fEventHandler, true);
 			$PopupRoot.get(0).removeEventListener("blur", this.fEventHandler, true);
 
@@ -3440,12 +3426,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup._markAsUserSelectable = function($Ref, bForce){
-		/* In IE11 and EdgeHTML-based Edge the user-select feature does not work as expected, so in IE11 and EdgeHTML-based Edge the whole screen is user selectable */
-		if (!(Device.browser.msie || Device.browser.edge)){
-			$Ref.removeClass("sapUiNotUserSelectable");
-			if (bForce){
-				$Ref.addClass("sapUiUserSelectable");
-			}
+		$Ref.removeClass("sapUiNotUserSelectable");
+		if (bForce){
+			$Ref.addClass("sapUiUserSelectable");
 		}
 	};
 
@@ -3457,12 +3440,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup._markAsNotUserSelectable = function($Ref, bForce){
-		/* In IE11 and EdgeHTML-based Edge the user-select feature does not work as expected, so in IE11 and EdgeHTML-based Edge the whole screen is user selectable */
-		if (!(Device.browser.msie || Device.browser.edge)){
-			$Ref.removeClass("sapUiUserSelectable");
-			if (bForce){
-				$Ref.addClass("sapUiNotUserSelectable");
-			}
+		$Ref.removeClass("sapUiUserSelectable");
+		if (bForce){
+			$Ref.addClass("sapUiNotUserSelectable");
 		}
 	};
 

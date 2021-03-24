@@ -1,4 +1,4 @@
-/*global sinon, QUnit */
+/*global QUnit */
 sap.ui.define(["sap/ui/util/XMLHelper"], function(XMLHelper) {
 	"use strict";
 
@@ -46,16 +46,6 @@ sap.ui.define(["sap/ui/util/XMLHelper"], function(XMLHelper) {
 			assert.equal(oXMLDocument.getElementsByTagName("teamMembers").length, 0, "check length");
 			assert.equal(oXMLDocument.getElementsByTagName("member").length, 0, "check length");
 		}
-	});
-
-	QUnit.test("parse XML string parse exception", function(assert) {
-		var oExpectedError = new Error('Could be thrown in IE if XML is invalid.');
-		var oDOMParserStub = sinon.stub(DOMParser.prototype, 'parseFromString').throws(oExpectedError);
-		var oXMLDocument = XMLHelper.parse("<<");
-
-		assert.equal(oXMLDocument.parseError.errorCode, -1, "parse error");
-		assert.equal(oXMLDocument.parseError.reason, oExpectedError.message, "Check parse error message");
-		oDOMParserStub.restore();
 	});
 
 	QUnit.test("get parse error", function(assert) {

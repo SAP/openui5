@@ -310,16 +310,6 @@ sap.ui.define([
 					});
 					aSupportedEnv.push({
 						system: Device.system.SYSTEMTYPE.DESKTOP,
-						browserName: Device.browser.BROWSER.INTERNET_EXPLORER,
-						browserVersion: 11
-					});
-					aSupportedEnv.push({
-						system: Device.system.SYSTEMTYPE.DESKTOP,
-						browserName: Device.browser.BROWSER.EDGE,
-						browserVersion: 80
-					});
-					aSupportedEnv.push({
-						system: Device.system.SYSTEMTYPE.DESKTOP,
 						browserName: Device.browser.BROWSER.SAFARI,
 						browserVersion: 13
 					});

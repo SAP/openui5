@@ -53,10 +53,6 @@ sap.ui.define(function() {
 				title: "QUnit Page for jquery.sap.strings",
 				group: "jQuery plugins"
 			},
-			"util/jquery.sap.unicode": {
-				title: "QUnit Page for jquery.sap.unicode",
-				group: "jQuery plugins"
-			},
 			"util/LibraryInfo": {
 				title: "QUnit Page for LibraryInfo",
 				ui5: {

@@ -75,7 +75,7 @@ function(Device, UIArea, jQuery) {
 	}
 
 	function setDragGhost(oDragControl, oEvent) {
-		if (Device.browser.msie || !oDragControl || !oDragControl.getDragGhost) {
+		if (!oDragControl || !oDragControl.getDragGhost) {
 			return;
 		}
 
@@ -101,10 +101,7 @@ function(Device, UIArea, jQuery) {
 			mIndicatorConfig,
 			oDataTransfer = oEvent.originalEvent.dataTransfer,
 			setTransferData = function(sType, sData) {
-				// set to original dataTransfer object if type is supported by the current browser (non-text causes error in IE+Edge)
-				if (oDataTransfer && sType == "text" || (!Device.browser.msie && !Device.browser.edge )) {
-					oDataTransfer.setData(sType, sData);
-				}
+				oDataTransfer.setData(sType, sData);
 			};
 
 		/**
@@ -510,7 +507,7 @@ function(Device, UIArea, jQuery) {
 		// text selection workaround since preventDefault on dragstart does not help
 		// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/10375756/
 		// https://bugzilla.mozilla.org/show_bug.cgi?id=800050
-		if ((Device.browser.msie || Device.browser.firefox || Device.browser.edge) && isSelectableElement(oEvent.target)) {
+		if ((Device.browser.firefox) && isSelectableElement(oEvent.target)) {
 			oDraggableAncestorNode = jQuery(oEvent.target).closest("[data-sap-ui-draggable=true]").prop("draggable", false)[0];
 		}
 	};

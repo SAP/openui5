@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global ActiveXObject, XMLHttpRequest, localStorage, alert, confirm, console, document, Promise */
+/*global XMLHttpRequest, localStorage, alert, confirm, console, document, Promise */
 
 /**
  * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -48,7 +48,6 @@ sap.ui.define([
 	Device,
 
 	jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs, URI, PasteEventFix */) {
-
 	"use strict";
 
 	if ( !jQuery ) {
@@ -86,7 +85,7 @@ sap.ui.define([
 		 * @name jQuery.support
 		 * @namespace
 		 * @private
-	 	 * @deprecated since 1.58 use {@link sap.ui.Device} instead
+		 * @deprecated since 1.58 use {@link sap.ui.Device} instead
 		 */
 		jQuery.support = jQuery.support || {};
 
@@ -182,52 +181,9 @@ sap.ui.define([
 		jQuery.support.hasFlexBoxSupport = true;
 	}());
 
-	// XHR overrides for IE
-	if ( Device.browser.msie ) {
-
-		// Fixes the CORS issue (introduced by jQuery 1.7) when loading resources
-		// (e.g. SAPUI5 script) from other domains for IE browsers.
-		// The CORS check in jQuery filters out such browsers who do not have the
-		// property "withCredentials" which is the IE and Opera and prevents those
-		// browsers to request data from other domains with jQuery.ajax. The CORS
-		// requests are simply forbidden nevertheless if it works. In our case we
-		// simply load our script resources from another domain when using the CDN
-		// variant of SAPUI5. The following fix is also recommended by jQuery:
-
-		jQuery.support.cors = true;
-
-		// Fixes XHR factory issue (introduced by jQuery 1.11). In case of IE
-		// it uses by mistake the ActiveXObject XHR. In the list of XHR supported
-		// HTTP methods PATCH and MERGE are missing which are required for OData.
-		// The related ticket is: #2068 (no downported to jQuery 1.x planned)
-		// the fix will only be applied to jQuery >= 1.11.0 (only for jQuery 1.x)
-		if ( window.ActiveXObject !== undefined && oJQVersion.inRange("1.11", "2") ) {
-			var fnCreateStandardXHR = function() {
-				try {
-					return new XMLHttpRequest();
-				} catch (e) { /* ignore */ }
-			};
-			var fnCreateActiveXHR = function() {
-				try {
-					return new ActiveXObject("Microsoft.XMLHTTP");
-				} catch (e) { /* ignore */ }
-			};
-			jQuery.ajaxSettings = jQuery.ajaxSettings || {};
-			jQuery.ajaxSettings.xhr = function() {
-				return !this.isLocal ? fnCreateStandardXHR() : fnCreateActiveXHR();
-			};
-		}
-
-	}
-
 	// getComputedStyle polyfill for firefox
 	if ( Device.browser.firefox ) {
 		getComputedStyleFix();
-	}
-
-	// document.activeElement iframe fix
-	if (Device.browser.msie || Device.browser.edge) {
-		activeElementFix();
 	}
 
 	// XHR proxy for Firefox
@@ -1758,7 +1714,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.core, sap.ui.export, sap.ui.vk
-	  	 * @deprecated Since 1.58, use {@link sap.ui.loader.config} instead
+		 * @deprecated Since 1.58, use {@link sap.ui.loader.config} instead
 		 */
 		jQuery.sap.registerModuleShims = function(mShims) {
 			jQuery.sap.assert( typeof mShims === 'object', "mShims must be an object");
@@ -1964,7 +1920,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.core,preloadfiles
-	  	 * @deprecated since 1.58
+		 * @deprecated since 1.58
 		 */
 		jQuery.sap.registerPreloadedModules = function(oData) {
 
@@ -1989,7 +1945,7 @@ sap.ui.define([
 		 * @experimental Since 1.16.3 API might change completely, apps must not develop against it.
 		 * @private
 		 * @function
-	  	 * @deprecated since 1.58
+		 * @deprecated since 1.58
 		 */
 		jQuery.sap.unloadResources = _ui5loader.unloadResources;
 
@@ -2006,7 +1962,7 @@ sap.ui.define([
 		 * @param {string} [sSuffix='.js'] Suffix to add to the final resource name
 		 * @private
 		 * @ui5-restricted sap.ui.core
-	  	 * @deprecated since 1.58
+		 * @deprecated since 1.58
 		 */
 		jQuery.sap.getResourceName = function(sModuleName, sSuffix) {
 			return ui5ToRJS(sModuleName) + (sSuffix == null ? ".js" : sSuffix);
@@ -2053,7 +2009,7 @@ sap.ui.define([
 		 * @private
 		 * @experimental API is not yet fully mature and may change in future.
 		 * @since 1.15.1
-	  	 * @deprecated since 1.58
+		 * @deprecated since 1.58
 		 */
 		jQuery.sap.loadResource = LoaderExtensions.loadResource;
 
@@ -2090,7 +2046,7 @@ sap.ui.define([
 		 * @experimental
 		 * @private
 		 * @ui5-restricted sap.ui.core,sap.ushell
-	  	 * @deprecated since 1.58
+		 * @deprecated since 1.58
 		 */
 		jQuery.sap._loadJSResourceAsync = _ui5loader.loadJSResourceAsync;
 
@@ -2229,12 +2185,10 @@ sap.ui.define([
 
 				var rwebkit = /(webkit)[ \/]([\w.]+)/,
 					ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
-					rmsie = /(msie) ([\w.]+)/,
 					rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/,
 					ua = ua.toLowerCase(),
 					match = rwebkit.exec(ua) ||
 						ropera.exec(ua) ||
-						rmsie.exec(ua) ||
 						ua.indexOf("compatible") < 0 && rmozilla.exec(ua) ||
 						[],
 					browser = {};
@@ -2268,5 +2222,4 @@ sap.ui.define([
 	}());
 
 	return jQuery;
-
 });

@@ -1,5 +1,5 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/qunit/utils/createAndAppendDiv", "sap/ui/Device"], function(createAndAppendDiv, Device) {
+sap.ui.define(["sap/ui/qunit/utils/createAndAppendDiv"], function(createAndAppendDiv) {
 	"use strict";
 
 	QUnit.module("jQuery.fn.width/height/...");
@@ -298,12 +298,10 @@ sap.ui.define(["sap/ui/qunit/utils/createAndAppendDiv", "sap/ui/Device"], functi
 		this.checkWarnMessage("jQuery.nodeName is deprecated");
 	});
 
-	if (!sap.ui.Device.browser.msie) {
-		QUnit.test("jQuery.cssProps", function(assert) {
-			jQuery.cssProps.float = "cssFloat";
-			this.checkWarnMessage("jQuery.cssProps is deprecated");
-		});
-	}
+	QUnit.test("jQuery.cssProps", function(assert) {
+		jQuery.cssProps.float = "cssFloat";
+		this.checkWarnMessage("jQuery.cssProps is deprecated");
+	});
 
 	QUnit.test("jQuery.isArray", function(assert) {
 		jQuery.isArray([]);

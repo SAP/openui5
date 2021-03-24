@@ -244,10 +244,6 @@ sap.ui.require([
 			} else if (browser.safari) {
 				assert.ok(value.indexOf("sf") === 0, "Browser is Safari and data attribute is set right");
 			}
-		} else if (browser.msie) {
-			assert.ok(value.indexOf("ie") === 0, "Browser is IE and data attribute is set right");
-		} else if (browser.edge) {
-			assert.ok(value.indexOf("ed") === 0, "Browser is Edge and data attribute is set right");
 		}
 
 		if (!browser.safari || (!browser.fullscreen && !browser.webview)) {

@@ -1855,24 +1855,10 @@ sap.ui.define([
 		function _normalizeXml(sXml) {
 			/*jslint regexp: true*/
 			sXml = sXml
-			// Note: IE > 8 does not add all namespaces at root level, but deeper inside the tree!
-			// Note: Chrome adds all namespaces at root level, but before other attributes!
 				.replace(/ xmlns.*?=".*?"/g, "")
-				// Note: browsers differ in whitespace for empty HTML(!) tags
 				.replace(/ \/>/g, '/>')
 				// Replace all tabulators
 				.replace(/\t/g, "");
-			if (Device.browser.msie || Device.browser.edge) {
-				// Microsoft shuffles attribute order; sort multiple attributes alphabetically:
-				// - no escaped quotes in attribute values!
-				// - e.g. <In a="..." b="..."/> or <template:repeat a="..." t:b="...">
-				sXml = sXml.replace(/<[\w:]+( [\w:]+="[^"]*"){2,}(?=\/?>)/g, function (sMatch) {
-					var aParts = sMatch.split(" ");
-					// aParts[0] e.g. "<In" or "<template:repeat"
-					// sMatch does not contain "/>" or ">" at end!
-					return aParts[0] + " " + aParts.slice(1).sort().join(" ");
-				});
-			}
 			return sXml;
 		}
 

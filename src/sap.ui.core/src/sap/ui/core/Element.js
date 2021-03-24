@@ -851,7 +851,7 @@ sap.ui.define([
 		if (oFocusDomRef) {
 			// save the scroll position of all ancestor DOM elements
 			// before the focus is set, because preventScroll is not supported by the following browsers
-			if (Device.browser.safari || Device.browser.msie || Device.browser.edge) {
+			if (Device.browser.safari) {
 				if (oFocusInfo.preventScroll === true) {
 					aScrollHierarchy = getAncestorScrollPositions(oFocusDomRef);
 				}

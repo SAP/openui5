@@ -3,14 +3,12 @@
 sap.ui.define([
 	"sap/ui/core/postmessage/Bus",
 	"sap/base/Log",
-	"sap/base/util/includes",
-	"sap/ui/Device"
+	"sap/base/util/includes"
 ],
 function (
 	PostMessageBus,
 	Log,
-	includes,
-	Device
+	includes
 ) {
 	"use strict";
 
@@ -259,7 +257,7 @@ function (
 		});
 	});
 
-	QUnit[Device.browser.msie ? 'skip' : 'test']("when READY message is sent, origin and target are optional (window.opener use case)", function (assert) {
+	QUnit.test("when READY message is sent, origin and target are optional (window.opener use case)", function (assert) {
 		var fnDone = assert.async();
 		sinon.sandbox.stub(window, 'parent').value(window);
 		sinon.sandbox.stub(window, 'opener').value(this.oIframeWindow);
@@ -275,7 +273,7 @@ function (
 		});
 	});
 
-	QUnit[Device.browser.msie ? 'skip' : 'test']("when READY message is sent, origin and target are optional (window.parent use case)", function (assert) {
+	QUnit.test("when READY message is sent, origin and target are optional (window.parent use case)", function (assert) {
 		var fnDone = assert.async();
 		sinon.sandbox.stub(window, 'opener').value(null);
 		sinon.sandbox.stub(window, 'parent').value(this.oIframeWindow);

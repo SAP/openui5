@@ -444,15 +444,6 @@ sap.ui.define([
 		if (this._bLargeDataScrolling && eAction === ScrollBarAction.Drag) {
 			this._eAction = eAction;
 			this._bForward = bForward;
-			if (Device.browser.msie) {
-				if (this._scrollTimeout) {
-					window.clearTimeout(this._scrollTimeout);
-				}
-				this._scrollTimeout = window.setTimeout(
-					this._onScrollTimeout.bind(this),
-					300
-				);
-			}
 		} else {
 			this._doScroll(eAction, bForward);
 		}
@@ -462,6 +453,7 @@ sap.ui.define([
 		return false;
 	};
 
+	// TODO: IE removal ==> check if still needed
 	ScrollBar.prototype._onScrollTimeout = function(){
 		this._scrollTimeout = undefined;
 		this._doScroll(this._eAction, this._bForward);
@@ -471,7 +463,7 @@ sap.ui.define([
 	};
 
 	ScrollBar.prototype.onmouseup = function() {
-		if (this._bLargeDataScrolling && (this._eAction || this._bForward || this._bTouchScroll) && !Device.browser.msie) {
+		if (this._bLargeDataScrolling && (this._eAction || this._bForward || this._bTouchScroll)) {
 			this._doScroll(this._eAction, this._bForward);
 			this._eAction = undefined;
 			this._bForward = undefined;
@@ -694,7 +686,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ScrollBar.prototype._doScroll = function(sAction, bForward) {
-
 		// Get new scroll position
 		var iScrollPos = null;
 		if (this._$ScrollDomRef) {
@@ -736,10 +727,7 @@ sap.ui.define([
 			Log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
 			this.fireScroll({ action: sAction, forward: bForward, newScrollPos: iScrollPos, oldScrollPos: this._iOldScrollPos});
 		}
-		// rounding errors in IE lead to infinite scrolling
-		if (Math.round(this._iFactor) == this._iFactor || !Device.browser.msie) {
-			this._bSuppressScroll = false;
-		}
+		this._bSuppressScroll = false;
 		this._iOldScrollPos = iScrollPos;
 		this._bMouseWheel = false;
 

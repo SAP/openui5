@@ -336,7 +336,7 @@ sap.ui.define([
 	// I don't have a proper explanation for this.
 	var executionDelayDefault = 0;
 
-	if (Device.browser.msie || Device.browser.edge || Device.browser.safari) {
+	if (Device.browser.safari) {
 		executionDelayDefault = 50;
 	}
 

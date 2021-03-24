@@ -6,7 +6,6 @@
 sap.ui.define([], function() {
 	"use strict";
 
-
 	/**
 	 * Provides custom mutators for attributes.
 	 * Custom mutators ensure that the attribute value is aligned with the property value.
@@ -125,8 +124,8 @@ sap.ui.define([], function() {
 	 *.
 	 * If this hook method returns an HTML element, then patching continues on this element and its subtree,
 	 * otherwise new elements to be inserted into the document are created from scratch.
- 	 *
- 	 * @param {string} sId ID of the element defined by <code>openStart</code> or <code>voidStart</code>
+	 *
+	 * @param {string} sId ID of the element defined by <code>openStart</code> or <code>voidStart</code>
 	 * @param {string} sTagName Tag name of the element defined by <code>openStart</code> or <code>voidStart</code>
 	 * @param {HTMLElement} oParent HTML element where the returned element is to be inserted
 	 * @returns {HTMLElement|null} Clone of the corresponding HTML element to be patched or null to create elements from scratch
@@ -285,7 +284,7 @@ sap.ui.define([], function() {
 	 * This must be followed by <code>openEnd</code> and concluded with <code>close</code>.
 	 *
 	 * @param {string} sTagName Tag name of the HTML element; all lowercase
- 	 * @param {sap.ui.core.ID} [sId] ID to identify the element
+	 * @param {sap.ui.core.ID} [sId] ID to identify the element
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.openStart = function(sTagName, sId) {
@@ -315,7 +314,7 @@ sap.ui.define([], function() {
 	 * This must be followed by <code>voidEnd</code>.
 	 *
 	 * @param {string} sTagName Tag name of the HTML element; all lowercase
- 	 * @param {sap.ui.core.ID} [sId] ID to identify the element
+	 * @param {sap.ui.core.ID} [sId] ID to identify the element
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.voidStart = Patcher.openStart;
@@ -490,7 +489,7 @@ sap.ui.define([], function() {
 	 * Replaces the given HTML of the current element being patched.
 	 *
 	 * @param {string} sHtml HTML markup
-  	 * @param {sap.ui.core.ID} [sId] ID to identify the element
+	 * @param {sap.ui.core.ID} [sId] ID to identify the element
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @SecSink {*|XSS}
 	 */

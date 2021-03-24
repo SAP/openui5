@@ -148,7 +148,6 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 					"fesr",
 					"passport"
 				],
-				"jquery.sap.unicode": ["isStringNFC"],
 				"jquery.sap.xml": [
 					"parseXML",
 					"serializeXML",

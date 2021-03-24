@@ -42,15 +42,11 @@ sap.ui.define([
 								"mouseup", "select", "selectstart", "dragstart", "dragenter", "dragover", "dragleave", "dragend", "drop", "paste", "cut", "input",
 								"tap", "swipe", "swipeleft", "swiperight", "scrollstart", "scrollstop", "compositionstart", "compositionend", "change"];
 
-	var bEmulationNeeded = !(Device.os.windows_phone && Device.os.version < 10);
-
-	if (bEmulationNeeded) {
-		aBasicBrowserEvents.push("saptouchstart", "saptouchmove", "saptouchend");
-	}
+	aBasicBrowserEvents.push("saptouchstart", "saptouchmove", "saptouchend");
 
 	var aMobileBrowserEvents = ["touchstart", "touchend", "touchmove", "touchcancel"];
 
-	if (Device.support.touch && bEmulationNeeded) {
+	if (Device.support.touch) {
 		aMobileBrowserEvents.push("sapmousedown", "sapmousemove", "sapmouseup");
 		if (Device.os.ios){
 			aMobileBrowserEvents.push("sapcontextmenu");

@@ -206,57 +206,47 @@ sap.ui.define([
 		assert.ok(oLogCollector.getAndClearLog().match("Finished:\nXHR: URL: 'actions.js' Method: 'GET' Async: 'false'"));
 	});
 
-	/*
-	On IE11 we use native promises polyfill that (seems) not to use microtasks. With native promises the then blocks are
-	scheduled in the microtask queue that has higher priority than the task queue.
-	So with properly working native promises, the first then block will be executed before the second response and so the code inside will
-	correctly detect there are pending requests.
-	But with pormise polyfill and if the responses are received in a very short interval and are scheduled in sequential ticks,
-	the promise then's are executed in sequential tickes, AFTER both responses are processed and there are no more pengind requests.
-	*/
-	if (!Device.browser.msie) {
-		QUnit.test("Should return that there is an open xhr when 1 of 2 request are done", function (assert) {
-			var done = assert.async();
+	QUnit.test("Should return that there is an open xhr when 1 of 2 request are done", function (assert) {
+		var done = assert.async();
 
-			assert.ok(!_XHRWaiter.hasPending(), "there are no pending xhrs at test start");
+		assert.ok(!_XHRWaiter.hasPending(), "there are no pending xhrs at test start");
 
-			var oXHR1 = createAndSendXHR("/foo");
-			var oXHR2 = createAndSendXHR("/bar");
+		var oXHR1 = createAndSendXHR("/foo");
+		var oXHR2 = createAndSendXHR("/bar");
 
-			assert.ok(_XHRWaiter.hasPending(), "there are pending xhrs");
-			var sLog = oLogCollector.getAndClearLog();
-			assert.ok(sLog.match("There are 2 open XHRs and 0 open FakeXHRs." +
-				"\nXHR: URL: '/foo' Method: 'GET' Async: 'true'\nStack: "));
-			assert.ok(sLog.match("\nXHR: URL: '/bar' Method: 'GET' Async: 'true'\nStack:"));
+		assert.ok(_XHRWaiter.hasPending(), "there are pending xhrs");
+		var sLog = oLogCollector.getAndClearLog();
+		assert.ok(sLog.match("There are 2 open XHRs and 0 open FakeXHRs." +
+			"\nXHR: URL: '/foo' Method: 'GET' Async: 'true'\nStack: "));
+		assert.ok(sLog.match("\nXHR: URL: '/bar' Method: 'GET' Async: 'true'\nStack:"));
 
-			var oFirstRequestPromise = whenRequestDone(oXHR1);
-			var oSecondRequestPromise = whenRequestDone(oXHR2);
+		var oFirstRequestPromise = whenRequestDone(oXHR1);
+		var oSecondRequestPromise = whenRequestDone(oXHR2);
 
-			var bFirstRequestPassed = false;
-			var bSecondRequestPassed = false;
-			var bhasPending = false;
+		var bFirstRequestPassed = false;
+		var bSecondRequestPassed = false;
+		var bhasPending = false;
 
-			oFirstRequestPromise.then(function () {
-				bFirstRequestPassed = true;
-				bhasPending = bhasPending || _XHRWaiter.hasPending();
-				assertPassedConditions();
-			});
-
-			oSecondRequestPromise.then(function () {
-				bSecondRequestPassed = true;
-				bhasPending = bhasPending || _XHRWaiter.hasPending();
-				assertPassedConditions();
-			});
-
-			function assertPassedConditions() {
-				if (bFirstRequestPassed && bSecondRequestPassed) {
-					assert.ok(!_XHRWaiter.hasPending(), "there are no pending xhrs at test end");
-					assert.ok(bhasPending, "After the first request passed there were still pending requests");
-					done();
-				}
-			}
+		oFirstRequestPromise.then(function () {
+			bFirstRequestPassed = true;
+			bhasPending = bhasPending || _XHRWaiter.hasPending();
+			assertPassedConditions();
 		});
-	}
+
+		oSecondRequestPromise.then(function () {
+			bSecondRequestPassed = true;
+			bhasPending = bhasPending || _XHRWaiter.hasPending();
+			assertPassedConditions();
+		});
+
+		function assertPassedConditions() {
+			if (bFirstRequestPassed && bSecondRequestPassed) {
+				assert.ok(!_XHRWaiter.hasPending(), "there are no pending xhrs at test end");
+				assert.ok(bhasPending, "After the first request passed there were still pending requests");
+				done();
+			}
+		}
+	});
 
 	QUnit.test("Should return that there is no open xhr when the request has been aborted", function (assert) {
 		var oXHR = createAndSendXHR("actions.js");

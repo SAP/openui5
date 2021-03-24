@@ -5,9 +5,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./HashChanger',
 	"sap/base/Log",
-	"sap/ui/Device",
 	"sap/base/util/ObjectPath"
-], function(library, HashChanger, Log, Device, ObjectPath) {
+], function(library, HashChanger, Log, ObjectPath) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -81,7 +80,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	History._bUsePushState = !Device.browser.msie && (window.self === window.top);
+	History._bUsePushState = window.self === window.top;
 
 	/**
 	 * Returns the length difference between the history state stored in browser's
