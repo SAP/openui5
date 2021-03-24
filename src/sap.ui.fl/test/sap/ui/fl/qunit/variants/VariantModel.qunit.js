@@ -2692,9 +2692,9 @@ sap.ui.define([
 				})
 			]).then(function() {
 				assert.equal(fnCallback1.callCount, 1, "the callback was called");
-				assert.equal(fnCallback1.lastCall.args[0].executeOnSelect, false, "the flag to apply automatically is set");
-				assert.equal(fnCallback1.lastCall.args[0].originalExecuteOnSelect, false, "the flag to apply automatically is set");
-				assert.equal(fnCallback2.callCount, 0, "the callback was called");
+				assert.equal(fnCallback1.lastCall.args[0].executeOnSelect, false, "the flag to apply automatically is not set");
+				assert.equal(fnCallback1.lastCall.args[0].originalExecuteOnSelect, false, "the flag to apply automatically is not set");
+				assert.equal(fnCallback2.callCount, 0, "the callback was not called");
 			});
 		});
 

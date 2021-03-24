@@ -3,33 +3,37 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Variant",
-	"sap/ui/fl/Change",
-	"sap/ui/fl/Utils",
-	"sap/base/util/ObjectPath",
-	"sap/base/util/includes",
 	"sap/base/util/restricted/_omit",
-	"sap/base/Log",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/base/util/restricted/_pick",
+	"sap/base/util/includes",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/merge",
+	"sap/base/util/ObjectPath",
+	"sap/base/util/each",
+	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
-	"sap/base/util/isEmptyObject"
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Variant"
 ], function(
-	JsControlTreeModifier,
-	Variant,
-	Change,
-	Utils,
-	ObjectPath,
-	includes,
 	_omit,
-	Log,
-	LayerUtils,
-	FlexState,
 	_pick,
+	includes,
+	isEmptyObject,
+	merge,
+	ObjectPath,
+	each,
+	Log,
+	JsControlTreeModifier,
 	VariantsApplyUtil,
-	isEmptyObject
+	FlexState,
+	Change,
+	LayerUtils,
+	Utils,
+	Variant
 ) {
 	"use strict";
 
@@ -45,7 +49,9 @@ sap.ui.define([
 	 */
 	var VariantManagementState = {};
 
-	function _getReferencedChanges(mPropertyBag) {
+	var _mFakedStandardVariants = {};
+
+	function getReferencedChanges(mPropertyBag) {
 		var aReferencedVariantChanges = [];
 		if (mPropertyBag.variantData.content.variantReference) {
 			aReferencedVariantChanges = VariantManagementState.getControlChangesForVariant(Object.assign(
@@ -60,13 +66,13 @@ sap.ui.define([
 		return aReferencedVariantChanges;
 	}
 
-	function _getVariants(mPropertyBag) {
+	function getVariants(mPropertyBag) {
 		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
 		var aVariants = ObjectPath.get([mPropertyBag.vmReference, "variants"], oVariantsMap);
 		return aVariants || [];
 	}
 
-	function _addChangeContentToVariantMap(oVariantObject, oChangeContent, bAdd) {
+	function addChangeContentToVariantMap(oVariantObject, oChangeContent, bAdd) {
 		var sChangeType = oChangeContent.changeType;
 		if (!oVariantObject) {
 			oVariantObject = {};
@@ -86,13 +92,13 @@ sap.ui.define([
 		});
 	}
 
-	function _addChange(oChangeContent, oFlexObjects) {
-		var sChangeCategory = _getVariantChangeCategory(oChangeContent);
+	function addChange(oChangeContent, oFlexObjects) {
+		var sChangeCategory = getVariantChangeCategory(oChangeContent);
 		oFlexObjects[sChangeCategory].push(oChangeContent);
 	}
 
-	function _deleteChange(oChangeContent, oFlexObjects) {
-		var sChangeCategory = _getVariantChangeCategory(oChangeContent);
+	function deleteChange(oChangeContent, oFlexObjects) {
+		var sChangeCategory = getVariantChangeCategory(oChangeContent);
 		var iChangeContentIndex = -1;
 		oFlexObjects[sChangeCategory].some(function(oExistingChangeContent, iIndex) {
 			if (oExistingChangeContent.fileName === oChangeContent.fileName) {
@@ -105,7 +111,7 @@ sap.ui.define([
 		}
 	}
 
-	function _getVariantChangeCategory(oChangeContent) {
+	function getVariantChangeCategory(oChangeContent) {
 		switch (oChangeContent.fileType) {
 			case "change":
 				return "variantDependentControlChanges";
@@ -129,7 +135,29 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	VariantManagementState.getContent = function(sReference) {
-		return FlexState.getVariantsState(sReference);
+		var oVariantsState = FlexState.getVariantsState(sReference);
+		each(_mFakedStandardVariants[sReference], function(sVariantManagementReference, oContent) {
+			if (!oVariantsState[sVariantManagementReference]) {
+				oVariantsState[sVariantManagementReference] = oContent;
+			}
+		});
+		return oVariantsState;
+	};
+
+	VariantManagementState.addFakeStandardVariant = function(sReference, oStandardVariant) {
+		var oVariantsMap = VariantManagementState.getContent(sReference);
+		if (!oVariantsMap[Object.keys(oStandardVariant)[0]]) {
+			merge(oVariantsMap, oStandardVariant);
+
+			_mFakedStandardVariants[sReference] = _mFakedStandardVariants[sReference] || {};
+			merge(_mFakedStandardVariants[sReference], oStandardVariant);
+		} else {
+			Log.error("Error in VariantManagementState.addFakeStandardVariant: Variant already in map");
+		}
+	};
+
+	VariantManagementState.clearFakedStandardVariants = function(sReference) {
+		delete _mFakedStandardVariants[sReference];
 	};
 
 	/**
@@ -210,7 +238,7 @@ sap.ui.define([
 		var oVariant;
 		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
 		mPropertyBag.vReference = mPropertyBag.vReference || oVariantsMap[mPropertyBag.vmReference].defaultVariant;
-		var aVariants = _getVariants(mPropertyBag);
+		var aVariants = getVariants(mPropertyBag);
 		aVariants.some(function(oCurrentVariant) {
 			if (oCurrentVariant.content.fileName === mPropertyBag.vReference) {
 				oVariant = oCurrentVariant;
@@ -264,7 +292,7 @@ sap.ui.define([
 
 		//Set the whole list of changes to the variant
 		if (mPropertyBag.variantData.content.variantReference) {
-			var aReferencedVariantChanges = _getReferencedChanges(mPropertyBag);
+			var aReferencedVariantChanges = getReferencedChanges(mPropertyBag);
 			mPropertyBag.variantData.controlChanges = aReferencedVariantChanges.concat(mPropertyBag.variantData.controlChanges);
 		}
 
@@ -460,7 +488,7 @@ sap.ui.define([
 				if (oVariantsMap[sVMReference].currentVariant) {
 					oVariantData[sVMReference].currentVariant = oVariantsMap[sVMReference].currentVariant;
 				}
-				_getVariants(Object.assign(mPropertyBag, {vmReference: sVMReference}))
+				getVariants(Object.assign(mPropertyBag, {vmReference: sVMReference}))
 					.forEach(function(oVariant, index) {
 						oVariantData[sVMReference].variants[index] =
 							//JSON.parse(JSON.stringify()) used to remove undefined properties e.g. standard variant layer
@@ -498,11 +526,11 @@ sap.ui.define([
 		if (mPropertyBag.changeContent.fileType === "ctrl_variant_change") {
 			oVariantManagement.variants.some(function(oVariant) {
 				if (oVariant.content.fileName === mPropertyBag.changeContent.selector.id) {
-					_addChangeContentToVariantMap(oVariant.variantChanges, mPropertyBag.changeContent, mPropertyBag.add);
+					addChangeContentToVariantMap(oVariant.variantChanges, mPropertyBag.changeContent, mPropertyBag.add);
 				}
 			});
 		} else if (mPropertyBag.changeContent.fileType === "ctrl_variant_management_change") {
-			_addChangeContentToVariantMap(oVariantManagement.variantManagementChanges, mPropertyBag.changeContent, mPropertyBag.add);
+			addChangeContentToVariantMap(oVariantManagement.variantManagementChanges, mPropertyBag.changeContent, mPropertyBag.add);
 		}
 	};
 
@@ -551,10 +579,10 @@ sap.ui.define([
 		if (mPropertyBag.changeToBeAddedOrDeleted) {
 			switch (mPropertyBag.changeToBeAddedOrDeleted.getPendingAction()) {
 				case "NEW":
-					_addChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
+					addChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
 					break;
 				case "DELETE":
-					_deleteChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
+					deleteChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
 					break;
 				default:
 			}
