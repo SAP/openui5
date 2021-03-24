@@ -1081,7 +1081,8 @@ sap.ui.define([
 				oMutationObserver = new MutationObserver(function(aMutations) {
 					aMutations.forEach(function(oMutation) {
 						if (oMutation.attributeName == "style") {
-							assert.strictEqual(oList.getDomRef("busyIndicator").firstChild.style.top, "20%", "Style top 20% was applied correctly");
+							// safari returns top: "20.000000298023224%", hence the parseInt to remove the floating point values
+							assert.strictEqual(parseInt(oList.getDomRef("busyIndicator").firstChild.style.top) + "%", "20%", "Style top 20% was applied correctly");
 
 							oList.setBusy(false);
 							oMutationObserver.disconnect();
