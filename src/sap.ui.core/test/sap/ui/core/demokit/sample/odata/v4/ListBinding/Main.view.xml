@@ -116,7 +116,7 @@
 		<columns>
 			<Column>
 				<Button app:sorterPath="Name" app:sorterControlId="Employees"
-					enabled="{ui>/bRealOData}" icon="{sort>/Employees/Name/icon}" iconFirst="false"
+					enabled="{ui>/bRealOData}" icon="{ui>/Employees/Name/icon}" iconFirst="false"
 					press="onSort" text="Employee Name" />
 			</Column>
 			<Column minScreenWidth="Medium" demandPopin="true">
@@ -127,7 +127,7 @@
 			</Column>
 			<Column minScreenWidth="Small" demandPopin="true">
 				<Button app:sorterPath="AGE" app:sorterControlId="Employees"
-					enabled="{ui>/bRealOData}" icon="{sort>/Employees/AGE/icon}" iconFirst="false"
+					enabled="{ui>/bRealOData}" icon="{ui>/Employees/AGE/icon}" iconFirst="false"
 					press="onSort" text="Age" />
 			</Column>
 			<Column minScreenWidth="Medium" demandPopin="true">
@@ -163,7 +163,7 @@
 			<Column>
 				<Text text="Equipment ID"/>
 			</Column>
-			<Column visible="{ui>/bRealOData}">
+			<Column>
 				<Text text="Product Image"/>
 			</Column>
 			<Column>
@@ -218,7 +218,7 @@
 							<ToolbarLayoutData shrinkable="false" />
 						</layoutData>
 					</Label>
-					<Input enabled="{ui>/bRealOData}" id="EmployeeId" value="{search>/EmployeeID}"
+					<Input enabled="{ui>/bRealOData}" id="EmployeeId" value="{ui>/EmployeeID}"
 						width="4em" />
 					<Button text="Search" enabled="{ui>/bRealOData}" press="getEmployeeByID"/>
 				</Toolbar>
@@ -264,22 +264,22 @@
 			<columns>
 				<Column>
 					<Button app:sorterPath="Category" app:sorterControlId="Equipments"
-						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/Category/icon}"
+						enabled="{ui>/bRealOData}" icon="{ui>/Equipments/Category/icon}"
 						iconFirst="false" press="onSort" text="Category" />
 				</Column>
 				<Column>
 					<Button app:sorterPath="ID" app:sorterControlId="Equipments"
-						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/ID/icon}"
+						enabled="{ui>/bRealOData}" icon="{ui>/Equipments/ID/icon}"
 						iconFirst="false" press="onSort" text="ID" />
 				</Column>
 				<Column>
 					<Button app:sorterPath="Name" app:sorterControlId="Equipments"
-						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/Name/icon}"
+						enabled="{ui>/bRealOData}" icon="{ui>/Equipments/Name/icon}"
 						iconFirst="false" press="onSort" text="Name" />
 				</Column>
 				<Column>
 					<Button app:sorterPath="EmployeeId" app:sorterControlId="Equipments"
-						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/EmployeeId/icon}"
+						enabled="{ui>/bRealOData}" icon="{ui>/Equipments/EmployeeId/icon}"
 						iconFirst="false" press="onSort" text="EmployeeId" />
 				</Column>
 			</columns>

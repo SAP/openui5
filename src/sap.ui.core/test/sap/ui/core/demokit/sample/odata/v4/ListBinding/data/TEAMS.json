@@ -41,7 +41,9 @@
 					"ID" : 1,
 					"Name" : "Office PC",
 					"SupplierIdentifier" : 1,
-					"ProductPicture" : {},
+					"ProductPicture" : {
+						"Picture@odata.mediaReadLink" : "/favicon.ico"
+					},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 1,
 						"CategoryName" : "Computer device"
@@ -60,7 +62,9 @@
 					"ID" : 2,
 					"Name" : "Tablet X",
 					"SupplierIdentifier" : 1,
-					"ProductPicture" : {},
+					"ProductPicture" : {
+						"Picture@odata.mediaReadLink" : "/favicon.ico"
+					},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 1,
 						"CategoryName" : "Computer device"

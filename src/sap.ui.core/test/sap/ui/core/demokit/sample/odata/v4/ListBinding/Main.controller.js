@@ -3,12 +3,12 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/m/Dialog",
 	"sap/m/MessageBox",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Sorter",
-	"sap/ui/model/json/JSONModel"
-], function (Log, Dialog, MessageBox, Controller, Sorter, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/test/TestUtils"
+], function (Log, MessageBox, Controller, Sorter, JSONModel, TestUtils) {
 	"use strict";
 
 //	function onRejected(oError) {
@@ -67,7 +67,7 @@ sap.ui.define([
 			var oOperation = this.byId("GetEmployeeByID").getObjectBinding();
 
 			oOperation.setParameter("EmployeeID",
-					this.getView().getModel("search").getProperty("/EmployeeID"))
+					this.getView().getModel("ui").getProperty("/EmployeeID"))
 				.execute()
 				.catch(function (oError) {
 					MessageBox.alert(oError.message, {
@@ -115,9 +115,7 @@ sap.ui.define([
 			var oView = this.getView();
 
 			oView.setModel(new JSONModel({
-				EmployeeID: null
-			}), "search");
-			oView.setModel(new JSONModel({
+				EmployeeID: null,
 				Employees : {
 					AGE : { icon : "sap-icon://sort-ascending", desc : false },
 					Name : { icon : "", desc : undefined }
@@ -127,8 +125,9 @@ sap.ui.define([
 					ID : { icon : "", desc : undefined },
 					Name : { icon : "", desc : undefined },
 					EmployeeId : { icon : "", desc : undefined }
-				}
-			}), "sort");
+				},
+				bRealOData : TestUtils.isRealOData()
+			}), "ui");
 			this.mSorters = {
 				Employees : [new Sorter("AGE", /*bDescending*/false)],
 				Equipments : [new Sorter("Category", /*bDescending*/false, /*bGroup*/true)]
@@ -254,7 +253,7 @@ sap.ui.define([
 				sSelectedId,
 				bSortDesc,
 				oTable,
-				oSortModel = this.getView().getModel('sort');
+				oUiModel = this.getView().getModel('ui');
 
 			oEvent.getSource().getCustomData().forEach(function (oCustomData) {
 				mCustomData[oCustomData.getKey()] = oCustomData.getValue();
@@ -263,7 +262,7 @@ sap.ui.define([
 			sProperty = mCustomData.sorterPath;
 
 			// update sort model state
-			bSortDesc = oSortModel.getProperty("/" + sId + "/" + sProperty + "/desc");
+			bSortDesc = oUiModel.getProperty("/" + sId + "/" + sProperty + "/desc");
 			// choose next sort order: no sort -> ascending -> descending -> no sort
 			if (bSortDesc === undefined) {
 				sNewIcon = "sap-icon://sort-ascending";
@@ -275,8 +274,8 @@ sap.ui.define([
 				sNewIcon = "";
 				bSortDesc = undefined;
 			}
-			oSortModel.setProperty("/" + sId + "/" + sProperty + "/desc", bSortDesc);
-			oSortModel.setProperty("/" + sId + "/" + sProperty + "/icon", sNewIcon);
+			oUiModel.setProperty("/" + sId + "/" + sProperty + "/desc", bSortDesc);
+			oUiModel.setProperty("/" + sId + "/" + sProperty + "/icon", sNewIcon);
 
 			// remove sorter for same path
 			this.mSorters[sId] = this.mSorters[sId].filter(function (oSorter) {
