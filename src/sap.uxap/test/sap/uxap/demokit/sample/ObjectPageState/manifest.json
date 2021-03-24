@@ -11,9 +11,15 @@
 			"type": "XML",
 			"async": true
 		},
+		"resourceRoots": {
+			"sap.uxap.sample.SharedBlocks": "../SharedBlocks",
+			"sap.uxap.sample.SharedJSONData": "../SharedJSONData"
+		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.uxap": {},
+				"sap.ui.table": {}
 			}
 		},
 		"config": {

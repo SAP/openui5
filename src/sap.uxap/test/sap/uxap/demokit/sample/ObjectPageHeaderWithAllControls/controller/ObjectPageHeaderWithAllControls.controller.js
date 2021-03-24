@@ -7,7 +7,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.uxap.sample.ObjectPageHeaderWithAllControls.controller.ObjectPageHeaderWithAllControls", {
 		onAfterRendering: function () {
-			var oJsonModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/SharedJSONData/employee.json");
+			var oJsonModel = new JSONModel(sap.ui.require.toUrl("sap/uxap/sample/SharedJSONData/employee.json"));
 
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
 
@@ -19,7 +19,7 @@ sap.ui.define([
 			this.getView().setModel(oSampleModel, "buttons");
 
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/SharedJSONData/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/uxap/sample/SharedJSONData/products.json"));
 			oModel.setDefaultBindingMode("OneWay");
 			this.getView().setModel(oModel);
 		},

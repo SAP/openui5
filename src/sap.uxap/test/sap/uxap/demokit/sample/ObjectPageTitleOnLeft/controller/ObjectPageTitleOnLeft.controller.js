@@ -7,7 +7,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.uxap.sample.ObjectPageTitleOnLeft.controller.ObjectPageTitleOnLeft", {
 		onInit: function () {
-			var oJsonModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/SharedJSONData/HRData.json");
+			var oJsonModel = new JSONModel(sap.ui.require.toUrl("sap/uxap/sample/SharedJSONData/HRData.json"));
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
 		},
 		handleLink1Press: function () {

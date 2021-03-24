@@ -9,7 +9,8 @@
 		"rootView": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign.view.ObjectPageHeaderBackgroundDesign",
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.uxap": {}
 			}
 		},
 		"config": {

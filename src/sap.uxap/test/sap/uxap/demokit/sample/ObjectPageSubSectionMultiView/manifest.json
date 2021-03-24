@@ -11,9 +11,13 @@
 			"type": "XML",
 			"async": true
 		},
+		"resourceRoots": {
+			"sap.uxap.sample.ObjectPageSubSection": "../ObjectPageSubSection"
+		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.uxap": {}
 			}
 		},
 		"config": {
@@ -24,6 +28,7 @@
 					"view/blocks/BlockEmpty.view.xml",
                     "controller/ObjectPageSubSectionMultiView.controller.js",
                     "view/ObjectPageSubSectionMultiView.view.xml",
+                    "../ObjectPageSubSection/controller/MultiViewBlockCommon.controller.js",
 					"manifest.json"
 				]
 			}

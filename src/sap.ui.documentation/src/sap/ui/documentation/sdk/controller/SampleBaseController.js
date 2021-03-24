@@ -14,6 +14,16 @@ sap.ui.define([
 		var TMPL_REF = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
 			MOCK_DATA_REF = sap.ui.require.toUrl("sap/ui/demo/mock");
 
+		var OPENUI5_LIBS = ["sap.ui.core", "sap.ui.dt", "sap.m", "sap.ui.fl", "sap.ui.layout", "sap.ui.mdc", "sap.ui.unified",
+			"sap.f", "sap.ui.rta", "sap.ui.commons", "sap.ui.codeeditor", "sap.ui.table", "sap.uxap", "sap.ui.integration",
+			"sap.tnt", "sap.ui.ux3", "sap.ui.suite"];
+		var SAPUI5_LIBS = ["sap.ushell", "sap.fe", "sap.viz", "sap.suite.ui.microchart", "sap.chart", "sap.ui.comp", "sap.ui.generic.app",
+			"sap.fe.navigation", "sap.suite.ui.generic.template", "sap.ui.richtexteditor", "sap.suite.ui.commons", "sap.ui.export",
+			"sap.ndc", "sap.me", "sap.fe.core", "sap.fe.macros", "sap.collaboration", "sap.fe.templates", "sap.ui.generic.template",
+			"sap.zen.dsh", "sap.ovp", "sap.zen.crosstab", "sap.zen.commons", "sap.gantt", "sap.ui.mdc", "sap.fe.plugins", "sap.ui.vbm",
+			"sap.apf", "sap.rules.ui", "sap.ui.vk", "sap.ui.vtm", "sap.ushell_abap", "sap.fe.placeholder", "sap.feedback.ui",
+			"sap.fileviewer", "sap.ca.ui", "sap.landvisz"];
+
 	return BaseController.extend("sap.ui.documentation.sdk.controller.SampleBaseController", {
 		_aMockFiles: ["products.json", "supplier.json", "img.json"],
 
@@ -32,6 +42,7 @@ sap.ui.define([
 					sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/")),
 					oData = this.oModel.getData(),
 					aExtraFiles = oData.includeInDownload || [],
+					oManifestFile,
 					bHasManifest,
 					aPromises = [],
 					fnAddMockFileToZip = function(sRawFile) {
@@ -55,8 +66,19 @@ sap.ui.define([
 						sUrl = sRef + "/" + oFile.name,
 					// change the bootstrap URL to the current server for all HTML files of the sample
 					bChangeBootstrap = oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html");
+
+					if (oFile.name === "manifest.json") {
+						oManifestFile = oFile;
+						aPromises.push(this._addFileToZip({
+						   name: oFile.name,
+						   url: sUrl,
+						   formatter: this._formatManifestJsFile
+						}, oZipFile));
+						continue;
+					 }
+
 					aPromises.push(this._addFileToZip({
-						name: oFile.name,
+						name: oFile.name.replace(new RegExp(/(\.\.\/)+/g), "./"),
 						url: sUrl,
 						formatter:  bChangeBootstrap ? this._changeIframeBootstrapToCloud : undefined
 					}, oZipFile));
@@ -113,6 +135,21 @@ sap.ui.define([
 					url: "LICENSE.txt" // fetch from root level of UI5
 				}, oZipFile));
 
+				aPromises.push(this._addFileToZip({
+					name: "ui5.yaml",
+					url: TMPL_REF + "/ui5.yaml.tmpl",
+					formatter: function(sYamlFile) {
+						return this._formatYamlFile(sYamlFile, oData);
+					}.bind(this)
+				}, oZipFile, true));
+
+				aPromises.push(this._addFileToZip({
+					name: "package.json",
+					url: TMPL_REF + "/package.json.tmpl",
+					formatter: function(sPackageFile) {
+						return this._formatPackageJson(sPackageFile, oManifestFile, oData);
+					}.bind(this)
+				}, oZipFile, true));
 
 				Promise.all(aPromises).then(function() {
 					var oContent = oZipFile.generate({ type: "blob" });
@@ -148,8 +185,44 @@ sap.ui.define([
 				});
 		},
 
-		_formatIndexHtmlFile: function (sFile, oData) {
+		_formatPackageJson: function (sPackageFile, sManifestFile, oData) {
+			var sFormattedPackageFile = sPackageFile.replace(/{{TITLE}}/g, oData.title)
+				.replace(/{{SAMPLE_ID}}/g, oData.id),
+				oPackageFile = JSON.parse(sFormattedPackageFile),
+				oPackageDependencies = oPackageFile.dependencies,
+				oManifestFile,
+				oUi5Config,
+				oDependencies;
 
+			if (sManifestFile) {
+				oManifestFile = JSON.parse(sManifestFile.raw);
+				oUi5Config = oManifestFile["sap.ui5"];
+				oDependencies = oUi5Config && oUi5Config.dependencies;
+
+				if (oDependencies && oDependencies.libs) {
+					Object.keys(oDependencies.libs).forEach(function(sKey) {
+						if (OPENUI5_LIBS.indexOf(sKey) > -1) {
+							oPackageDependencies["@openui5/" + sKey] = "^1";
+						}
+						if (SAPUI5_LIBS.indexOf(sKey) > -1) {
+							oPackageDependencies["@sapui5/" + sKey] = "^1";
+						}
+					});
+				}
+			}
+
+			return JSON.stringify(oPackageFile, null, 2);
+		},
+
+		_formatYamlFile: function(sFile, oData) {
+			return sFile.replace(/{{SAMPLE_ID}}/g, oData.id);
+		},
+
+		_formatManifestJsFile: function (sRawManifestFileJs) {
+			return sRawManifestFileJs.replace(new RegExp(/(\.\.\/)+/g), "./");
+		 },
+
+		_formatIndexHtmlFile: function (sFile, oData) {
 			return sFile.replace(/{{TITLE}}/g, oData.name)
 				.replace(/{{SAMPLE_ID}}/g, oData.id);
 		},
@@ -171,12 +244,10 @@ sap.ui.define([
 
 		_changeIframeBootstrapToCloud: function (sRawIndexFileHtml) {
 			var rReplaceIndex = /src=(?:"[^"]*\/sap-ui-core\.js"|'[^']*\/sap-ui-core\.js')/,
-				oCurrentURI = new URI(document.baseURI).search(""),
 				oRelativeBootstrapURI = new URI(sap.ui.require.toUrl("") + "/sap-ui-core.js"),
-				sBootstrapURI = oRelativeBootstrapURI.absoluteTo(oCurrentURI).toString();
+				sBootstrapURI = oRelativeBootstrapURI.toString();
 
-			// replace the bootstrap path of the sample with the current to the core
-			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="' + sBootstrapURI + '"');
+			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="./' + sBootstrapURI + '"');
 		}
 	});
 }

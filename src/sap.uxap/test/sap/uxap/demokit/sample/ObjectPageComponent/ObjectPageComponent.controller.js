@@ -7,7 +7,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.uxap.sample.ObjectPageComponent.ObjectPageComponent", {
 		onInit: function () {
-			this.oDataModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/ObjectPageComponent/HRData.json");
+			this.oDataModel = new JSONModel("./test-resources/sap/uxap/sample/ObjectPageComponent/HRData.json");
 			this.getView().setModel(this.oDataModel, "objectPageData");
 		}
 	});

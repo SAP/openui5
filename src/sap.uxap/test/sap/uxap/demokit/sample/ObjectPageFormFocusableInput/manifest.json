@@ -11,9 +11,13 @@
 			"type": "XML",
 			"async": true
 		},
+		"resourceRoots": {
+			"sap.uxap.sample.ObjectPageFormLayout": "../ObjectPageFormLayout"
+		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.uxap": {}
 			}
 		},
 		"config": {
@@ -22,6 +26,8 @@
 				"files": [
 					"view/ObjectPageFormFocusableInput.view.xml",
 					"view/blocks/BlockBlue.view.xml",
+					"../ObjectPageFormLayout/controller/blocks/BlockBlue.js",
+					"../ObjectPageFormLayout/view/blocks/BlockBlue.view.xml",
 					"controller/ObjectPageFormFocusableInput.controller.js",
 					"manifest.json"
 				]
