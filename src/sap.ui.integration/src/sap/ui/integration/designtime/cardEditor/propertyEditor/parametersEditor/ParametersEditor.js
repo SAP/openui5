@@ -93,6 +93,7 @@ sap.ui.define([
 		var sPlaceholder = oConfigValue.value.placeholder || vItemMetadata.placeholder || "";
 		var oValidations = oConfigValue.value.validations || vItemMetadata.validations;
 		var sHint = oConfigValue.value.hint || vItemMetadata.hint || "";
+		var sFormattor = oConfigValue.value.formatter || vItemMetadata.formatter;
 		//var oTemplate = oConfigValue.value.template || vItemMetadata.template || {};
 /*
 		if (sType === "array") {
@@ -140,6 +141,16 @@ sap.ui.define([
 				allowBindings: true,
 				enabled: true,
 				type: "string",
+				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.FORMATTER"),
+				path: "formatter",
+				value: sFormattor,
+				allowBindings: true,
+				enabled: true,
+				visible: sType === "date" || sType === "datetime" || sType === "number" || sType === "integer",
+				type: "textArea",
 				itemKey: sKey
 			},
 			{
