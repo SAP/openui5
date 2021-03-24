@@ -288,7 +288,7 @@ sap.ui.define([
 
 			iIndex = aElements.indexOf(oGroupNode) + 1;
 			// insert aSpliced at iIndex
-			this.aElements = aElements.concat(aSpliced,	aElements.splice(iIndex));
+			this.aElements = aElements.concat(aSpliced, aElements.splice(iIndex));
 			this.aElements.$byPredicate = aElements.$byPredicate;
 
 			iCount = aSpliced.length;
