@@ -430,7 +430,6 @@ sap.ui.define([
 				if (oMetaItem.manifestpath && (!oMetaItem.manifestpath.startsWith("/sap.card/configuration/parameters/") || !ObjectPath.get(aPath, this._oInitialJson))) {
 					ObjectPath.set(aPath, oMetaItem, this._oInitialJson);
 				}
-				ObjectPath.set(aPath, oMetaItem, this._oInitialJson);
 
 				if (!oMetaItem.hasOwnProperty("type")) {
 					this.fireError({
