@@ -377,5 +377,35 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mv
 		}
 	};
 
-	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule, oControllerExtensionRule, oJQueryThreeDeprecationRule];
+	/**
+	 * Checks for missing super init() calls on sap.ui.core.UIComponents.
+	 */
+	 var oMissingSuperInitRule = {
+		id: "missingInitInUIComponent",
+		audiences: [Audiences.Application, Audiences.Control, Audiences.Internal],
+		categories: [Categories.Functionality],
+		enabled: true,
+		minversion: "1.89",
+		title: "Missing super init() call in sap.ui.core.UIComponent",
+		description: "A sub-class of sap.ui.core.UIComponent which overrides the init() function must apply the super init() function as well.",
+		resolution: "A bound call to sap.ui.core.UIComponent.prototype.init must be introduced in the sub-class.",
+		resolutionurls: [{
+			text: "API Documentation: sap.ui.core.UIComponent#init",
+			href: "https://openui5.hana.ondemand.com/api/sap.ui.core.UIComponent#methods/init"
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var oLoggedObjects = oScope.getLoggedObjects("missingInitInUIComponent");
+			oLoggedObjects.forEach(function(oLoggedObject) {
+				oIssueManager.addIssue({
+					severity: Severity.High,
+					details: oLoggedObject.message,
+					context: {
+						id: "WEBPAGE"
+					}
+				});
+			});
+		}
+	};
+
+	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule, oControllerExtensionRule, oJQueryThreeDeprecationRule, oMissingSuperInitRule];
 }, true);

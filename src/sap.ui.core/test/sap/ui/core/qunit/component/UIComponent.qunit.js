@@ -1230,4 +1230,47 @@ sap.ui.define([
 			assert.ok(false, "Modules could not be loaded and an error occured.");
 		});
 	});
+
+	QUnit.test("Component with missing Init super call", function(assert) {
+		assert.expect(3);
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			},
+			"sap.ui5": {
+				"rootView" : {
+					"viewName" : "testdata.view.MainAsync",
+					"type" : "XML"
+				}
+			}
+		};
+		this.setRespondedManifest(oManifest, "scenario10");
+
+		sap.ui.predefine("manifestModules/scenario10/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
+			return UIComponent.extend("manifestModules.scenario10.Component", {
+				metadata: {
+					manifest: "json"
+				},
+				constructor: function() {
+					UIComponent.apply(this, arguments);
+				},
+				init: function() {
+					assert.ok(true, "own init impl called");
+				}
+			});
+		});
+
+		var oErrorLogSpy = sinon.spy(Log, "error");
+		return Component.create({
+			name: "manifestModules.scenario10",
+			manifest: true
+		}).then(function(oComponent){
+			assert.equal(oErrorLogSpy.callCount, 1, "error logged");
+			assert.equal(oErrorLogSpy.args[0][0], "Mandatory init() not called for UIComponent: 'manifestModules.scenario10'. This is likely caused by a missing super call in the component's init implementation.", "missing init super error logged");
+		}).catch(function() {
+			assert.ok(false, "Modules could not be loaded and an error occured.");
+		});
+	});
 });
+
+
