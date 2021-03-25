@@ -445,8 +445,8 @@ sap.ui.define([
 		var sLayer = determineLayer(mPropertyBag);
 
 		if (!oVariant.getPersisted() || oVariant.getLayer() !== sLayer) {
-			if (mPropertyBag.content || mPropertyBag.name) {
-				throw new Error("'content' and 'name' updating of variants via changes is not yet enabled");
+			if (mPropertyBag.content) {
+				throw new Error("'content' updating of variants via changes is not yet enabled");
 			}
 
 			var oChangeDefinition = Change.createInitialFileContent({
@@ -466,6 +466,13 @@ sap.ui.define([
 					oChangeDefinition.content[sPropertyName] = mPropertyBag[sPropertyName];
 				}
 			});
+			if (mPropertyBag.name) {
+				oChangeDefinition.texts.variantName = {
+					value: mPropertyBag.name,
+					type: "XFLD"
+				};
+			}
+
 			var oChange = new Change(oChangeDefinition);
 			addChange(mPropertyBag.reference, oChange);
 
@@ -483,7 +490,7 @@ sap.ui.define([
 				oVariant.storeContexts(mPropertyBag.contexts);
 			}
 			if (mPropertyBag.name) {
-				oVariant.setText("variantName", mPropertyBag.name);
+				oVariant.storeName(mPropertyBag.name);
 			}
 			oVariant.setContent(mPropertyBag.content || oVariant.getContent());
 		}

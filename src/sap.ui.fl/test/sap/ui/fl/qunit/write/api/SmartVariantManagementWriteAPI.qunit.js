@@ -304,6 +304,25 @@ sap.ui.define([
 				}
 			}
 		}, {
+			details: "the variantName is set user dependent, but the variant does not belong to to the same layer",
+			updateVariantPropertyBag: {
+				isUserDependent: true,
+				id: "flex_variant_1",
+				name: "a new name"
+			},
+			expected: {
+				layer: Layer.USER,
+				favorite: true,
+				executeOnSelection: false,
+				name: "a new name",
+				contexts: {},
+				definition: {
+					favorite: true
+				},
+				changeContent: {},
+				changeTextsVariantName: "a new name"
+			}
+		}, {
 			details: "contexts are set user dependent, but the variant does not belong to to the same layer",
 			updateVariantPropertyBag: {
 				isUserDependent: true,
@@ -361,6 +380,11 @@ sap.ui.define([
 							favorite: true,
 							selector: {
 								persistencyKey: sPersistencyKey
+							},
+							texts: {
+								variantName: {
+									value: "A variant"
+								}
 							}
 						}],
 						changes: [],
@@ -395,7 +419,13 @@ sap.ui.define([
 					assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is set correct");
 					assert.equal(oVariantDefinition.executeOnSelection, testData.expected.definition.executeOnSelection, "and the definition.executeOnSelection flag is correct");
 					assert.deepEqual(oVariant.getContexts(), testData.expected.contexts, "the contexts section is set correct");
-					assert.deepEqual(oVariantDefinition.contexts, testData.expected.definition.contexts, "and the definition.contexts section is correct");
+					assert.deepEqual(oVariantDefinition.contexts, testData.expected.definition.contexts, "the definition.contexts section is correct");
+					// also test the name in case it is part of the update
+					if (testData.updateVariantPropertyBag.name) {
+						assert.equal(oVariant.getName(), testData.expected.name, "the name is set correct");
+						assert.deepEqual(oChange.getText("variantName"), testData.expected.changeTextsVariantName, "the change has the name set correct in the texts section");
+					}
+					assert.equal(oVariantDefinition.texts.variantName.value, "A variant", "the name in the definition is unchanged");
 				});
 			});
 		});
