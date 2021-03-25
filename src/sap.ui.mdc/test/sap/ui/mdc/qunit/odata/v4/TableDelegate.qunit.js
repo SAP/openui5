@@ -231,7 +231,7 @@ sap.ui.define([
 			assert.ok(fColumnPressSpy.calledOnce, "First column pressed");
 			fColumnPressSpy.restore();
 
-			setTimeout(function(){
+			 oTable._fullyInitialized().then(function() {
 				var oPlugin = oTable._oTable.getDependents()[0];
 				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 				var oDelegate = oTable.getControlDelegate();
@@ -250,9 +250,7 @@ sap.ui.define([
 					done();
 				};
 				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
-			},0);
-
-			//});
+			});
 		});
 	});
 
@@ -549,7 +547,7 @@ sap.ui.define([
 			assert.ok(fColumnPressSpy.calledOnce, "First column pressed");
 			fColumnPressSpy.restore();
 
-			setTimeout(function(){
+			oTable._fullyInitialized().then(function() {
 				var oPlugin = oTable._oTable.getDependents()[0];
 				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 				var oDelegate = oTable.getControlDelegate();
@@ -573,7 +571,7 @@ sap.ui.define([
 				if (!fTableGroupSpy.calledOnce) {
 					done();	// rebindTable won't be called in this case, so we need to end the test here
 				}
-			},0);
+			});
 		});
 	});
 });
