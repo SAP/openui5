@@ -632,7 +632,7 @@ function (
 
 		oDynamicPage.setHeaderExpanded(false);
 
-		assert.ok(oScrollSpy.alwaysCalledWithMatch(0), "No scroll to snap empty header");
+		assert.ok(oScrollSpy.notCalled || oScrollSpy.alwaysCalledWithMatch(0), "No scroll to snap empty header");
 	});
 
 	QUnit.module("DynamicPage - Rendering - No Title and No Header", {

@@ -975,6 +975,47 @@ function (
 		assert.strictEqual(sAriaLabelledBy, sTextId, "MessagesIndicator button aria-labelledby is set correctly.");
 	});
 
+
+	QUnit.test("test SemanticPage snapping and expanding of header", function (assert) {
+		//Arrange
+		var oSnappedTitle = oFactory.getTitle(),
+			oExpandedTitle = oFactory.getDynamicPageTitle(),
+			oPage = this.oSemanticPage._getPage(),
+			done = assert.async(),
+			assert = assert;
+
+		this.oSemanticPage.setHeaderExpanded(false);
+		this.oSemanticPage.addTitleSnappedContent(oSnappedTitle);
+		this.oSemanticPage.addTitleExpandedContent(oExpandedTitle);
+
+		this.oSemanticPage.setContent(new sap.m.VBox({
+			height: "2000px",
+			// width: "1000px",
+			items: [new sap.m.Text({text: "ELEMENTE DEFINITORII Aspecte generale Magazinul online www"})]
+		}));
+		Core.applyChanges();
+
+		//Act
+			oPage.getScrollDelegate().scrollTo(0, 2000);
+
+			//Assert
+			assert.equal(oPage.getTitle().$expandWrapper.hasClass("sapUiHidden"), true, "Header is snapped on scroll bottom");
+			assert.equal(oPage.getTitle()._bExpandedState, false, "Header is in snapped state on scroll bottom");
+			//Act
+			oPage.getScrollDelegate().scrollTo(0, 0);
+			setTimeout(function () {
+				//Assert
+				assert.equal(oPage.getTitle().$expandWrapper.hasClass("sapUiHidden"), false, "Header is expanded on scroll top");
+				assert.equal(oPage.getTitle()._bExpandedState, true, "Header is in expanded state on scroll top");
+				done();
+			});
+
+
+		//Clean
+		this.oSemanticPage.setHeaderExpanded(true);
+
+	});
+
 	/* --------------------------- SemanticPage Rendering ---------------------------------- */
 	QUnit.module("SemanticPage - Rendering", {
 		beforeEach: function () {
@@ -1081,6 +1122,7 @@ function (
 		assert.equal(oSemanticConfiguration.shouldBePreprocessed(sSemanticAddType), false,
 			sSemanticAddType + " should not be preprocessed");
 	});
+
 
 	/* --------------------------- Accessibility -------------------------------------- */
 	QUnit.module("Accessibility");

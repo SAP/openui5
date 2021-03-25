@@ -1151,7 +1151,18 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getSnappingHeight = function () {
-		var iSnappingHeight = Math.ceil(this._getHeaderHeight()) - this._iHeaderContentPaddingBottom;
+		var oTitle = this.getTitle(),
+			$expandWrapper = oTitle && oTitle.$expandWrapper,
+			$snappedWrapper = oTitle && oTitle.$snappedWrapper,
+			$expandWrapperHeading = oTitle && oTitle.$expandHeadingWrapper,
+			$snappedWrapperHeading = oTitle && oTitle.$snappedHeadingWrapper,
+			//we should make sure all the snap/expand elements is taken is consideration if they exist.
+			iExpandedHeaderHeight = $expandWrapper && $expandWrapper.length ? $expandWrapper.height() : 0,
+			iSnappedHeaderHeadingHeight =  $snappedWrapperHeading && $snappedWrapperHeading.length ? $snappedWrapperHeading.height() : 0,
+			iExpandedHeaderHeadingHeight = $expandWrapperHeading && $expandWrapperHeading.length ? $expandWrapperHeading.height() : 0,
+			iSnappedHeaderHeight =  $snappedWrapper && $snappedWrapper.length ? $snappedWrapper.height() : 0,
+			iSnappingHeight = Math.ceil(this._getHeaderHeight() ||
+			iExpandedHeaderHeight + iSnappedHeaderHeight + iSnappedHeaderHeadingHeight + iExpandedHeaderHeadingHeight) - this._iHeaderContentPaddingBottom;
 
 		return iSnappingHeight > 0 ? iSnappingHeight : 0;
 	};
