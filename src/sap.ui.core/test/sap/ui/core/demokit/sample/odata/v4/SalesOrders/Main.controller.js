@@ -128,10 +128,11 @@ sap.ui.define([
 			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
 			oDeliveryDate.setMilliseconds(0);
 			oContext = this.byId("SO_2_SOITEM").getBinding("items").create({
+				CurrencyCode : "EUR",
 				DeliveryDate : oDeliveryDate.toJSON(),
 				GrossAmount : "1137.64",
 				ProductID : "HT-1000",
-				Quantity : "1.000",
+				Quantity : "1",
 				QuantityUnit : "EA"
 			}, false, true);
 			// select the newly created one
@@ -389,6 +390,7 @@ sap.ui.define([
 					"com.sap.gateway.default.zui5_epm_sample.v0002."
 					+ "SalesOrderSimulateDiscount(...)");
 				this.oSimulateDiscount.setParameter("Discount", 0);
+				this.oSimulateDiscount.setParameter("Approver", "");
 			}
 
 			this.oSimulateDiscount.setContext(oSalesOrderContext);

@@ -958,6 +958,7 @@ sap.ui.define([
 			this.mock(oModel).expects("reportUnboundMessages")
 				.once()// add each error only once to the MessageManager
 				.withExactArgs(undefined, [{
+					additionalTargets : undefined,
 					code : undefined,
 					message : oError.message,
 					technical : true,
@@ -996,6 +997,7 @@ sap.ui.define([
 						"code" : "unbound",
 						"message" : "some unbound message"
 					}, {
+						"@Common.additionalTargets" : ["ProductID", "Name"],
 						"@Common.numericSeverity" : 2,
 						"@foo" : "bar",
 						"code" : "bound",
@@ -1012,6 +1014,7 @@ sap.ui.define([
 			sLogMessage = "Failed to read path /Product('1')/Unknown",
 			oModel = this.createModel(),
 			aUnboundMessages = [{
+				additionalTargets : undefined,
 				code : oError.error.code,
 				longtextUrl : "/service/Product/top/longtext",
 				message : oError.error.message,
@@ -1020,6 +1023,7 @@ sap.ui.define([
 				"@$ui5.error" : sinon.match.same(oError),
 				"@$ui5.originalMessage" : sinon.match.same(oError.error)
 			}, {
+				additionalTargets : undefined,
 				code : "unbound",
 				message : "some unbound message",
 				numericSeverity : 3,
@@ -1029,6 +1033,18 @@ sap.ui.define([
 			}];
 
 		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		oHelperMock.expects("getAdditionalTargets").exactly(bIgnoreTopLevel ? 0 : 1)
+			.withExactArgs(sinon.match.same(oError.error))
+			.returns(undefined);
+		oHelperMock.expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oError.error.details[0]))
+			.returns(undefined);
+		oHelperMock.expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oError.error.details[1]))
+			.returns(undefined);
+		oHelperMock.expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oError.error.details[2]))
+			.returns("~additionalTargets~");
 		oHelperMock.expects("makeAbsolute")
 			.withExactArgs("top/longtext", oError.requestUrl)
 			.exactly(bIgnoreTopLevel ? 0 : 1)
@@ -1043,6 +1059,7 @@ sap.ui.define([
 		this.mock(oModel).expects("reportBoundMessages")
 			.withExactArgs(sResourcePath, {
 				"" : [{
+					additionalTargets : undefined,
 					code : "bound",
 					longtextUrl : "/service/Product/bound/longtext",
 					message : "Value must be greater than 0",
@@ -1053,6 +1070,7 @@ sap.ui.define([
 					"@$ui5.error" : sinon.match.same(oError),
 					"@$ui5.originalMessage" : sinon.match.same(oError.error.details[0])
 				}, {
+					additionalTargets : "~additionalTargets~",
 					code : "bound",
 					message : "some other Quantity message",
 					numericSeverity : 2,
@@ -1075,11 +1093,13 @@ sap.ui.define([
 		resourcePath : undefined,
 		boundMessages : undefined,
 		unboundMessages : [{
+			additionalTargets : undefined,
 			code :  "top",
 			message : "Error occurred while processing the request",
 			numericSeverity : 4,
 			technical : true
 		}, {
+			additionalTargets : undefined,
 			code : "bound",
 			message : "Quantity: Value must be greater than 0",
 			numericSeverity : 3,
@@ -1089,6 +1109,7 @@ sap.ui.define([
 		requestUrl : undefined,
 		resourcePath : "/Product('1')",
 		boundMessages : [{
+			additionalTargets : undefined,
 			code : "bound",
 			message : "Value must be greater than 0",
 			numericSeverity : 3,
@@ -1097,6 +1118,7 @@ sap.ui.define([
 			transition : true
 		}],
 		unboundMessages : [{
+			additionalTargets : undefined,
 			code :  "top",
 			message : "Error occurred while processing the request",
 			numericSeverity : 4,
@@ -1158,6 +1180,7 @@ sap.ui.define([
 	QUnit.test("reportError: invoked by an action", function (assert) {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			aBoundMessages = [{
+				additionalTargets : undefined,
 				code :  "param",
 				message : "TeamID is wrong",
 				numericSeverity : 3,
@@ -1165,6 +1188,7 @@ sap.ui.define([
 				technical : undefined,
 				transition : true
 			}, {
+				additionalTargets : undefined,
 				code :  "bindingParam",
 				message : "Status is not there",
 				numericSeverity : 3,
@@ -1216,7 +1240,8 @@ sap.ui.define([
 				"error" : {
 					"code" : "top",
 					"message" : "Value must be greater than 0",
-					"target" : "Quantity"
+					"target" : "Quantity",
+					"@foo.additionalTargets" : ["ProductID"]
 				},
 				"message" : "Failure",
 				"resourcePath" : "/Product('1')"
@@ -1225,10 +1250,13 @@ sap.ui.define([
 			oModel = this.createModel();
 
 		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.mock(_Helper).expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oError.error)).returns("~additionalTargets~");
 		this.mock(oModel).expects("reportUnboundMessages")
 			.withExactArgs(oError.resourcePath, []);
 		this.mock(oModel).expects("reportBoundMessages")
 			.withExactArgs(oError.resourcePath, {"" : [{
+				additionalTargets : "~additionalTargets~",
 				code : "top",
 				message : "Value must be greater than 0",
 				numericSeverity : 4, // Error
@@ -1264,6 +1292,7 @@ sap.ui.define([
 		this.mock(oModel).expects("reportBoundMessages").never();
 		this.mock(oModel).expects("reportUnboundMessages")
 			.withExactArgs(oError.resourcePath, [{
+				additionalTargets : undefined,
 				code : "top",
 				message : "$filter: Invalid token 'name' at position '1'",
 				longtextUrl : "/long/text",
@@ -2064,6 +2093,7 @@ sap.ui.define([
 		QUnit.test("reportBoundMessages #" + i, function (assert) {
 			var oHelperlMock = this.mock(_Helper),
 				aMessages = [{
+					"additionalTargets" : ["additionalTarget1", "additionalTarget2", ""],
 					"code" : "F42",
 					"longtextUrl" : "/service/Messages(3)/LongText/$value",
 					"message" : "foo0",
@@ -2102,12 +2132,21 @@ sap.ui.define([
 						assert.strictEqual(oMessage.getMessage(), aMessages[j].message);
 						assert.strictEqual(oMessage.getMessageProcessor(), oModel);
 						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transition);
-						assert.strictEqual(oMessage.getTarget(), "/Team('42')/foo/bar"
-							+ (aMessages[j].target ? "/" + aMessages[j].target : ""));
 						assert.strictEqual(oMessage.getTechnicalDetails(), aTechnicalDetails[j]);
 						assert.strictEqual(oMessage.getTechnical(), j === 0);
 						assert.strictEqual(oMessage.getType(), oFixture.type);
 					});
+					// Tests for targets
+					assert.strictEqual(aNewMessages[0].getTarget(), "/Team('42')/foo/bar/Name");
+					assert.deepEqual(aNewMessages[0].getTargets(), [
+						"/Team('42')/foo/bar/Name",
+						"/Team('42')/foo/bar/additionalTarget1",
+						"/Team('42')/foo/bar/additionalTarget2",
+						"/Team('42')/foo/bar"
+					]);
+
+					assert.strictEqual(aNewMessages[1].getTarget(), "/Team('42')/foo/bar");
+					assert.deepEqual(aNewMessages[1].getTargets(), ["/Team('42')/foo/bar"]);
 				});
 
 			// code under test
@@ -2127,33 +2166,60 @@ sap.ui.define([
 		this.mock(oModel).expects("fireMessageChange").withExactArgs(sinon.match.object)
 			.callsFake(function (mArguments) {
 				assert.strictEqual(mArguments.newMessages[0].getTarget(), "/Team('42')/Name");
+				assert.deepEqual(mArguments.newMessages[0].getTargets(), [
+					"/Team('42')/Name",
+					"/Team('43')/Name",
+					"/Team('44')/Name"
+				]);
 			});
 
 		// code under test
 		oModel.reportBoundMessages(undefined, {
 			"~any~" : [{
-				target : "/Team('42')/Name"
+				target : "/Team('42')/Name",
+				additionalTargets : ["/Team('43')/Name", "/Team('44')/Name"]
 			}]
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("reportBoundMessages: special targets", function (assert) {
-		var oModel = this.createModel();
+		var oModel = this.createModel(),
+			oModelMock = this.mock(oModel);
 
-		this.mock(oModel).expects("fireMessageChange").twice().withExactArgs(sinon.match.object)
+		oModelMock.expects("fireMessageChange").withExactArgs(sinon.match.object)
 			.callsFake(function (mArguments) {
 				assert.strictEqual(mArguments.newMessages[0].getTarget(), "/Team('42')/Name");
+				assert.deepEqual(mArguments.newMessages[0].getTargets(), [
+					"/Team('42')/Name",
+					"/Team('43')/Name",
+					"/Team('44')/Name"
+				]);
 			});
+
 		// code under test
 		oModel.reportBoundMessages("Team", {
 			"" : [{
-				target : "('42')/Name"
+				target : "('42')/Name",
+				additionalTargets : ["('43')/Name", "('44')/Name"]
 			}]
 		});
+
+		oModelMock.expects("fireMessageChange").withExactArgs(sinon.match.object)
+			.callsFake(function (mArguments) {
+				assert.strictEqual(mArguments.newMessages[0].getTarget(), "/Team('42')/Name");
+				assert.deepEqual(mArguments.newMessages[0].getTargets(), [
+					"/Team('42')/Name",
+					"/Team('42')/Name1",
+					"/Team('42')/Name2"
+				]);
+			});
+
+		// code under test
 		oModel.reportBoundMessages("Team", {
 			"('42')" : [{
-				target : "Name"
+				target : "Name",
+				additionalTargets : ["Name1", "Name2"]
 			}]
 		});
 	});

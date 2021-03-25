@@ -328,72 +328,10 @@ sap.ui.define([
 					}
 				});
 			}, function (oError) {
-				/*
-				 * Adjusts the target of a given message according to the operation metadata of this
-				 * binding.
-				 *
-				 * For a bound operation:
-				 * In case the original target is '_it/Property' with '_it' as the name of the
-				 * binding parameter, the result is '/Set(key)/Property' where '/Set(key)' is the
-				 * current context the operation is called on.
-				 * In case the target points to a certain parameter like 'Param' the result is
-				 * '/Set(key)/name.space.Action(...)/$Parameter/Param' with 'name.space.Action' as
-				 * the full-qualified operation name.
-				 *
-				 * For an unbound operation:
-				 * In case the target points to a certain parameter like 'Param' the result is
-				 * '/ActionImport/$Parameter/Param' with 'ActionImport' as the name of the operation
-				 * import.
-				 *
-				 * All other targets are deleted because they can not be associated to operation
-				 * parameters or the binding parameter and the message is reported as unbound.
-				 *
-				 * @param {object} oMessage
-				 *   The message which target should be adjusted.
-				 */
-				function adjustTarget(oMessage) {
-					var sParameterName,
-						aSegments;
-
-					/*
-					 * Checks whether sParameterName exists in the metadata as operation parameter.
-					 */
-					function hasParameterName() {
-						return oOperationMetadata.$Parameter.some(function (oParameter) {
-							return sParameterName === oParameter.$Name;
-						});
-					}
-
-					if (oMessage.target) {
-						aSegments = oMessage.target.split("/");
-						sParameterName = aSegments.shift();
-						if (sParameterName === "$Parameter") {
-							oMessage.target = aSegments.join("/");
-							sParameterName = aSegments.shift();
-						}
-
-						if (oOperationMetadata.$IsBound
-							&& sParameterName === oOperationMetadata.$Parameter[0].$Name) {
-							oMessage.target = _Helper.buildPath(that.oContext.getPath(),
-								aSegments.join("/"));
-							return;
-						} else if (hasParameterName()) {
-							oMessage.target = that.oParameterContext.getPath() + "/"
-								+ oMessage.target;
-							return;
-						}
-					}
-					// parameter unknown, or target is falsy -> delete target
-					delete oMessage.target;
-				}
-
 				if (oOperationMetadata) {
-					if (oError.error) {
-						adjustTarget(oError.error);
-						if (oError.error.details) {
-							oError.error.details.forEach(adjustTarget);
-						}
-					}
+					_Helper.adjustTargetsInError(oError, oOperationMetadata,
+						that.oParameterContext.getPath(),
+						that.bRelative ? that.oContext.getPath() : undefined);
 				}
 
 				// Note: this must be done after the targets have been normalized, because otherwise
