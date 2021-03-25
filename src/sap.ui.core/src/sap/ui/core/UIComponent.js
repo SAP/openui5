@@ -396,7 +396,17 @@ sap.ui.define([
 	* @ui5-restricted sap.ui.core.Component
 	*/
 	UIComponent.prototype.rootControlLoaded = function() {
-		return this.pRootControlLoaded;
+		if (!this.pRootControlLoaded) {
+			Log.error(
+				"Mandatory init() not called for UIComponent: '" + this.getManifestObject().getComponentName() + "'. This is likely caused by a missing super call in the component's init implementation.",
+				null,
+				"sap.ui.support",
+				function() {
+					return { type: "missingInitInUIComponent" };
+				}
+			);
+		}
+		return this.pRootControlLoaded || Promise.resolve(this.getRootControl());
 	};
 
 	/*
