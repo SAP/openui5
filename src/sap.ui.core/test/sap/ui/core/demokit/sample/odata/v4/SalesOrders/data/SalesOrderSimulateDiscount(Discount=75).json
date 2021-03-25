@@ -1,7 +1,9 @@
 {
 	"error" : {
 		"code" : "OO/000",
-		"message" : "User John Doe is not authorized to approve more than 50% discount",
-		"target" : "Discount"
+		"message" :
+			"User John Doe is not authorized to approve more than 50% discount w/o approver",
+		"target" : "Discount",
+		"@SAP__Common.additionalTargets" : ["Approver"]
 	}
 }
