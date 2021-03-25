@@ -1,9 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/mdc/Table",
-	"sap/ui/mdc/odata/v4/TableDelegate",
 	"sap/ui/mdc/library",
-	"../../../delegates/odata/v4/TableDelegate",
 	"../../QUnitUtils",
 	"../../util/createAppEnvironment",
 	"sap/ui/core/UIComponent",
@@ -12,9 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	Table,
-	TableDelegate,
 	Library,
-	TestDelegate,
 	MDCQUnitUtils,
 	createAppEnvironment,
 	UIComponent,
@@ -26,11 +22,24 @@ sap.ui.define([
 
 	var TableType = Library.TableType;
 
+	sap.ui.define("odata.v4.TestDelegate", [
+		"sap/ui/mdc/odata/v4/TableDelegate"
+	], function(TableDelegate) {
+		var TestDelegate = Object.assign({}, TableDelegate);
+
+		TestDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
+			oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
+			oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
+		};
+
+		return TestDelegate;
+	});
+
 	Core.loadLibrary("sap.ui.fl");
 
 	var sTableView1 =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
-		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "sap/ui/mdc/odata/v4/TableDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
+		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
 		'<columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="Name">' +
 		'<m:Text text="{Name}" id="myTable--text0" /></mdcTable:Column>' +
 		'<mdcTable:Column id="myTable--column1" header="column 1" dataProperty="Country">' +
@@ -41,7 +50,7 @@ sap.ui.define([
 
 	var sTableView2 =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
-		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "sap/ui/mdc/odata/v4/TableDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
+		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
 		'<columns>' +
 		'<mdcTable:Column header="column 2" dataProperty="name_country"> ' +
 		'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
@@ -52,7 +61,7 @@ sap.ui.define([
 	QUnit.test("GridTable", function(assert) {
 		var oTable = new Table({
 			delegate: {
-				name: "sap/ui/mdc/odata/v4/TableDelegate"
+				name: "odata.v4.TestDelegate"
 			}
 		});
 
@@ -60,7 +69,7 @@ sap.ui.define([
 			var oPlugin = oTable._oTable.getDependents()[0];
 			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
 
-			var oGroupHeaderFormatter = sinon.spy(TableDelegate, "formatGroupHeader");
+			var oGroupHeaderFormatter = sinon.spy(oTable.getControlDelegate(), "formatGroupHeader");
 			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 
@@ -72,7 +81,7 @@ sap.ui.define([
 		var oTable = new Table({
 			type: TableType.ResponsiveTable,
 			delegate: {
-				name: "sap/ui/mdc/odata/v4/TableDelegate"
+				name: "odata.v4.TestDelegate"
 			}
 		});
 		var bInitializationFailed = false;
@@ -82,7 +91,7 @@ sap.ui.define([
 		}).finally(function() {
 			assert.ok(bInitializationFailed, "Initialization failed");
 			assert.throws(function() {
-				TableDelegate.preInit(oTable);
+				oTable.getControlDelegate().preInit(oTable);
 			}, new Error("This delegate does not support the table type 'ResponsiveTable'."), "Delegate.preInit throws error");
 			oTable.destroy();
 		});
