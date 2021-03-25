@@ -583,6 +583,30 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, true, 1, false, false, 1, false, true);
 	});
 
+	QUnit.test("Five containers - set columns (XL 6 columns)", function(assert) {
+		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(6);
+		addContainer("FC2");
+		addContainer("FC3");
+		addContainer("FC4");
+		addContainer("FC5");
+
+		var $Container = jQuery("#FC1");
+		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
+		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 2, true, false);
+
+		$Container = jQuery("#FC2");
+		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, true, false, 1, true, false, 1, true, false);
+
+		$Container = jQuery("#FC3");
+		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, true, 1, true, false, 1, true, false);
+
+		$Container = jQuery("#FC4");
+		checkContainerClasses(assert, $Container, 4, 1, false, false, 1, false, false, 1, false, true, 1, true, false);
+
+		$Container = jQuery("#FC5");
+		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, true, 1, false, false, 1, true, false);
+	});
+
 	QUnit.test("ColumnContainerData - One container", function(assert) {
 		var oLayoutData = new ColumnContainerData({columnsM: 1, columnsL: 1, columnsXL: 1});
 		oFormContainer1.setLayoutData(oLayoutData);
@@ -620,6 +644,15 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 4, true, false);
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, true, 1, false, true, 1, false, true);
+
+		oColumnLayout.setColumnsXL(6);
+		oLayoutData.setColumnsM(2).setColumnsL(3).setColumnsXL(6);
+		sap.ui.getCore().applyChanges();
+		$Container = jQuery("#FC1");
+		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 6, true, false);
+		$Container = jQuery("#FC2");
+		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, true, 1, false, true, 1, false, true);
+
 	});
 
 	QUnit.test("ColumnContainerData - invalid cells", function(assert) {
