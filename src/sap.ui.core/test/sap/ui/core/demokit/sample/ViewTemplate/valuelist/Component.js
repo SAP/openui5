@@ -11,12 +11,14 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/library",
-	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/View", // sap.ui.view()
+	"sap/ui/core/mvc/XMLView", // type : ViewType.XML
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (UriParameters, Log, library, View, BaseComponent, MockServer, JSONModel, ODataModel) {
+], function (UriParameters, Log, library, _View, _XMLView, BaseComponent, MockServer, JSONModel,
+		ODataModel) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
