@@ -357,18 +357,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("mixin", function (assert) {
 		var oBinding = this.bindContext("/EMPLOYEES('42')"),
-			oMixin = {};
+			oMixin = {},
+			aOverriddenFunctions = ["adjustPredicate", "destroy", "doDeregisterChangeListener",
+				"doSetProperty"];
 
 		asODataParentBinding(oMixin);
 
-		assert.notStrictEqual(oBinding["destroy"], oMixin["destroy"], "overwrite destroy");
-		assert.notStrictEqual(oBinding["doDeregisterChangeListener"],
-			oMixin["doDeregisterChangeListener"], "overwrite doDeregisterChangeListener");
-		assert.notStrictEqual(oBinding["doSetProperty"],
-			oMixin["doSetProperty"], "overwrite doSetProperty");
+		aOverriddenFunctions.forEach(function (sFunction) {
+			assert.notStrictEqual(oBinding[sFunction], oMixin[sFunction], "overwrite " + sFunction);
+		});
 		Object.keys(oMixin).forEach(function (sKey) {
-			if (sKey !== "destroy" && sKey !== "doDeregisterChangeListener"
-					&& sKey !== "doSetProperty") {
+			if (aOverriddenFunctions.indexOf(sKey) < 0) {
 				assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
 			}
 		});
@@ -4031,9 +4030,16 @@ sap.ui.define([
 	Context.create({/*oModel*/}, {/*oBinding*/}, "/SalesOrderList($uid=1)"),
 	null
 ].forEach(function (oContext, i) {
-	QUnit.test("adjustPredicate: " + i, function () {
+	[undefined, {}].forEach(function (mCacheQueryOptions, j) {
+
+	QUnit.test("adjustPredicate: " + i + ", " + j, function () {
 		var oBinding = this.bindContext("SO_2_BP", oContext);
 
+		oBinding.mCacheQueryOptions = mCacheQueryOptions;
+		this.mock(asODataParentBinding.prototype).expects("adjustPredicate")
+			.on(oBinding).withExactArgs("($uid=1)", "('42')");
+		this.mock(oBinding).expects("fetchCache").exactly(mCacheQueryOptions ? 1 : 0)
+			.withExactArgs(sinon.match.same(oContext), true);
 		if (oContext) {
 			this.mock(oBinding.oElementContext).expects("adjustPredicate")
 				.withExactArgs("($uid=1)", "('42')");
@@ -4041,6 +4047,8 @@ sap.ui.define([
 
 		// code under test
 		oBinding.adjustPredicate("($uid=1)", "('42')");
+	});
+
 	});
 });
 

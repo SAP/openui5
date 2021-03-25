@@ -2210,14 +2210,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("adjustPredicate", function () {
-		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
-
-		// code under test
-		oBinding.adjustPredicate("($uid=1)", "('42')");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("requestValue", function (assert) {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
 			oPromise;

@@ -171,12 +171,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#adjustPredicate
-	 */
-	ODataPropertyBinding.prototype.adjustPredicate = function () {};
-
-	/**
 	 * See {@link sap.ui.base.EventProvider#attachEvent}
 	 *
 	 * @param {string} sEventId The identifier of the event to listen for

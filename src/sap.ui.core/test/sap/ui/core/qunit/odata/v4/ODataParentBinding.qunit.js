@@ -3745,13 +3745,16 @@ sap.ui.define([
 	QUnit.test("allow for super calls", function (assert) {
 		var oBinding = new ODataParentBinding();
 
-		assert.strictEqual(asODataParentBinding.prototype.doDeregisterChangeListener,
-			oBinding.doDeregisterChangeListener);
-		assert.strictEqual(asODataParentBinding.prototype.destroy, oBinding.destroy);
-		assert.strictEqual(asODataParentBinding.prototype.fetchCache, oBinding.fetchCache);
-		assert.strictEqual(asODataParentBinding.prototype.getGeneration, oBinding.getGeneration);
-		assert.strictEqual(asODataParentBinding.prototype.hasPendingChangesForPath,
-			oBinding.hasPendingChangesForPath);
+		[
+			"adjustPredicate",
+			"destroy",
+			"doDeregisterChangeListener",
+			"fetchCache",
+			"getGeneration",
+			"hasPendingChangesForPath"
+		].forEach(function (sMethod) {
+			assert.strictEqual(asODataParentBinding.prototype[sMethod], oBinding[sMethod]);
+		});
 	});
 
 	//*********************************************************************************************

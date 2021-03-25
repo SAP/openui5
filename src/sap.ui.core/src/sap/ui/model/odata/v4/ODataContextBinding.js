@@ -360,11 +360,16 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#adjustPredicate
 	 */
 	ODataContextBinding.prototype.adjustPredicate = function (sTransientPredicate, sPredicate) {
+		asODataParentBinding.prototype.adjustPredicate.apply(this, arguments);
+		if (this.mCacheQueryOptions) {
+			// Note: this.oCache === null because of special case in #createAndSetCache
+			this.fetchCache(this.oContext, true);
+		}
 		if (this.oElementContext) {
 			this.oElementContext.adjustPredicate(sTransientPredicate, sPredicate);
 		}
-		// this.oReturnValueContext cannot have the transient predicate; it results from execute,
-		// but execute is not possible with a transient predicate
+		// this.oReturnValueContext cannot have the transient predicate; it results from #execute
+		// which is not possible with a transient predicate
 	};
 
 	/**

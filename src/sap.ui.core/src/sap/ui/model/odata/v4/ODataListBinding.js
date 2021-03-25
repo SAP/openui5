@@ -304,7 +304,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adjusts the paths of all contexts of this binding by replacing the given transient predicate
+	 * with the given predicate. Recursively adjusts all child bindings.
+	 *
+	 * @param {string} sTransientPredicate - The transient predicate to be replaced
+	 * @param {string} sPredicate - The new predicate
+	 * @param {sap.ui.model.odata.v4.Context} [oContext] - The only context that changed
+	 *
 	 * @override
+	 * @private
 	 * @see sap.ui.model.odata.v4.ODataBinding#adjustPredicate
 	 */
 	ODataListBinding.prototype.adjustPredicate = function (sTransientPredicate, sPredicate,
@@ -325,14 +333,19 @@ sap.ui.define([
 			}
 		}
 
-		if (oContext) {
+		if (oContext) { // "root call" by #create: we KNOW oContext is affected
 			oContext.adjustPredicate(sTransientPredicate, sPredicate, adjustPreviousData);
-		} else {
+		} else { // recursive call: we KNOW some parent context was affected
+			// => reduced path may, but need not, be affected; other contexts for sure are!
+			asODataParentBinding.prototype.adjustPredicate.apply(this, arguments);
+			if (this.mCacheQueryOptions) {
+				// Note: this.oCache === null because of special case in #createAndSetCache
+				this.fetchCache(this.oContext, /*bIgnoreParentCache*/true);
+			}
 			this.oHeaderContext.adjustPredicate(sTransientPredicate, sPredicate);
 			this.aContexts.forEach(function (oContext) {
 				oContext.adjustPredicate(sTransientPredicate, sPredicate, adjustPreviousData);
 			});
-			this.fetchCache(this.oContext);
 		}
 	};
 
@@ -767,14 +780,16 @@ sap.ui.define([
 				}
 			}
 			that.fireEvent("createCompleted", {context : oContext, success : true});
-			if (!bSkipRefresh) {
-				sGroupId = that.getGroupId();
-				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
-					sGroupId = "$auto";
-				}
-
-				return that.refreshSingle(oContext, that.lockGroup(sGroupId));
+			sGroupId = that.getGroupId();
+			if (bSkipRefresh) {
+				return oContext.refreshDependentBindings(oContext.getPath().slice(1), sGroupId,
+					/*bCheckUpdate*/true);
 			}
+			if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
+				sGroupId = "$auto";
+			}
+
+			return that.refreshSingle(oContext, that.lockGroup(sGroupId));
 		}, function (oError) {
 			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
 			throw oError;

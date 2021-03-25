@@ -6833,7 +6833,7 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("note", ["foo"])
-				// companyName is embedded in a context binding; index not considered in test
+				//TODO companyName is embedded in a context binding; index not considered in test
 				// framework
 				.expectChange("companyName", "SAP");
 
@@ -6859,7 +6859,15 @@ sap.ui.define([
 						SalesOrderID : "43"
 					})
 					.expectChange("note", ["from server"]);
-				if (!bSkipRefresh) {
+				if (bSkipRefresh) {
+					that.oLogMock.expects("error").withExactArgs("Failed to drill-down into"
+						+ " ('43')/SO_2_BP/CompanyName, invalid segment: SO_2_BP",
+						"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002"
+						+ "/SalesOrderList?$select=Note,SalesOrderID"
+						+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)",
+						"sap.ui.model.odata.v4.lib._Cache");
+
+				} else {
 					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID"
 							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 							Note : "fresh from server",
@@ -28026,7 +28034,16 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("id", ["44", "43"])
-			.expectChange("note", ["Unrealistic", "Side", "Effect"]);
+			//TODO Wrong index is caused by ODPaB#refreshDependentListBindingsWithoutCache which
+			// again resets the BP_2_SO list binding and thus sets this.iCreatedContexts = 0;
+			// => Context#getIndex returns a negative number
+			// This is later healed by ODLB#createContexts, but we have a timing issue, with the
+			// response for #create and #rSE being handled in an interleaved fashion
+			// JIRA: CPOUI5ODATAV4-288
+			.expectChange("note", "Side", -1)
+			.expectChange("note", "Unrealistic", -2)
+			.expectChange("note", [,, "Effect"]);
+			//.expectChange("note", ["Unrealistic", "Side", "Effect"]);
 	},
 	text : "Repeated POST succeeds"
 }, {
@@ -32246,9 +32263,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Context binding with nested list binding having another nested list binding with
-	// own cache. A new entry in the outer list binding is created (with bSkipRefresh=false). There
-	// are no requests for the inner list binding as long the new entity is not persisted. Once the
-	// entity is persisted, the data for the inner list binding is fetched.
+	// own cache. A new entry in the outer list binding is created. There are no requests for the
+	// inner list binding as long the new entity is not persisted. Once the entity is persisted, the
+	// data for the inner list binding is fetched.
 	// BCP: 2070459149
 	QUnit.test("BCP: 2070459149: transient context + nested ODLB w/ own cache", function (assert) {
 		var oContext,
@@ -32279,25 +32296,74 @@ sap.ui.define([
 
 			// code under test
 			oContext = that.oView.byId("employees").getBinding("items")
-				// bSkipRefresh=false to request EMPLOYEE_2_EQUIPMENTS once employee is created
-				.create({Name : "John Doe"}, false);
+				.create({Name : "John Doe"}, true);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
 					method : "POST",
 					url : "TEAMS('1')/TEAM_2_EMPLOYEES",
-					payload : {Name : "John Doe"}}
-				, {ID : "2", Name : "John Doe"})
-				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=ID,Name", {
-					ID : "2",
-					Name : "John Doe"
-				})
+					payload : {Name : "John Doe"}
+				}, {ID : "2", Name : "John Doe"})
 				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_EQUIPMENTS"
 					+ "?$select=Category,ID&$skip=0&$top=100", {
 					value : [{Category : "Electronics", ID : "1"}]
 				})
 				.expectChange("category", ["Electronics"]);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				oContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Context binding with nested list binding having a nested context binding with own
+	// cache. A new entry in the list binding is created. There are no requests for the inner
+	// context binding as long the new entity is not persisted. Once the entity is persisted, the
+	// data for the inner context binding is fetched.
+	// BCP: 2070459149
+	QUnit.test("BCP: 2070459149: transient context + nested ODCB w/ own cache", function (assert) {
+		var oContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'1\')}">\
+	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
+		<Text id="name" text="{Name}"/>\
+		<FlexBox binding="{path : \'EMPLOYEE_2_MANAGER\', parameters : {$$ownRequest : true}}">\
+			<Text id="teamId" text="{TEAM_ID}"/>\
+		</FlexBox>\
+	</Table>\
+</FlexBox>',
+		that = this;
+
+		this.expectRequest("TEAMS('1')?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+				Team_Id : "1",
+				TEAM_2_EMPLOYEES : []
+			})
+			.expectChange("name", [])
+			.expectChange("teamId");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("name", ["John Doe"])
+				.expectChange("teamId", null);
+
+			// code under test
+			oContext = that.oView.byId("employees").getBinding("items")
+				.create({Name : "John Doe"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS('1')/TEAM_2_EMPLOYEES",
+					payload : {Name : "John Doe"}
+				}, {ID : "2", Name : "John Doe"})
+				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_MANAGER"
+					+ "?$select=ID,TEAM_ID", {ID : "23", TEAM_ID : "1"})
+				.expectChange("teamId", "1");
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),

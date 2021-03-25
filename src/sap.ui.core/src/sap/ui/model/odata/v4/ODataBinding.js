@@ -45,17 +45,16 @@ sap.ui.define([
 
 	/**
 	 * Adjusts the paths of all contexts of this binding by replacing the given transient predicate
-	 * with the given predicate and adjusts all contexts of child bindings.
+	 * with the given predicate. Recursively adjusts all child bindings.
 	 *
 	 * @param {string} sTransientPredicate - The transient predicate to be replaced
 	 * @param {string} sPredicate - The new predicate
-	 * @param {sap.ui.model.odata.v4.Context} [oContext] - The only context that changed
 	 *
-	 * @abstract
-	 * @function
-	 * @name sap.ui.model.odata.v4.ODataBinding#adjustPredicate
 	 * @private
 	 */
+	ODataBinding.prototype.adjustPredicate = function (sTransientPredicate, sPredicate) {
+		this.sReducedPath = this.sReducedPath.replace(sTransientPredicate, sPredicate);
+	};
 
 	/**
 	 * Throws an Error that the response is discarded if the current cache not the expected one.
@@ -252,6 +251,7 @@ sap.ui.define([
 			// entity is resolved too - but the entity's key predicates are already available.
 			if (oContext.isTransient && oContext.isTransient()
 				&& oContext.getProperty("@$ui5.context.isTransient")) {
+				// Note: sResourcePath is kind of preliminary here, no use to remember it!
 				this.oCache = null;
 				return null;
 			}
@@ -367,6 +367,7 @@ sap.ui.define([
 	 *   binding has not (see {@link sap.ui.model.odata.v4.ODataListBinding#resumeInternal})
 	 * @param {boolean} [bKeepQueryOptions]
 	 *   Whether to keep existing (late) query options and not to run auto-$expand/$select again
+	 *   (cannot be combined with <code>bIgnoreParentCache</code>!)
 	 * @throws {Error}
 	 *   If auto-$expand/$select is still running and query options shall be kept (this case is just
 	 *   not yet implemented and should not be needed)
@@ -1213,6 +1214,7 @@ sap.ui.define([
 	}
 
 	[
+		"adjustPredicate",
 		"destroy",
 		"doDeregisterChangeListener",
 		"fetchCache",

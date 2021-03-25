@@ -1441,6 +1441,7 @@ sap.ui.define([
 	}
 
 	[
+		"adjustPredicate",
 		"destroy",
 		"doDeregisterChangeListener",
 		"fetchCache",

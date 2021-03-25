@@ -2723,12 +2723,15 @@ sap.ui.define([
 	QUnit.test("allow for super calls", function (assert) {
 		var oBinding = new ODataBinding();
 
-		assert.strictEqual(asODataBinding.prototype.doDeregisterChangeListener,
-			oBinding.doDeregisterChangeListener);
-		assert.strictEqual(asODataBinding.prototype.destroy, oBinding.destroy);
-		assert.strictEqual(asODataBinding.prototype.fetchCache, oBinding.fetchCache);
-		assert.strictEqual(asODataBinding.prototype.hasPendingChangesForPath,
-			oBinding.hasPendingChangesForPath);
+		[
+			"adjustPredicate",
+			"destroy",
+			"doDeregisterChangeListener",
+			"fetchCache",
+			"hasPendingChangesForPath"
+		].forEach(function (sMethod) {
+			assert.strictEqual(asODataBinding.prototype[sMethod], oBinding[sMethod]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -2746,5 +2749,22 @@ sap.ui.define([
 			assert.strictEqual(oError.message, "Response discarded: cache is inactive");
 			assert.strictEqual(oError.canceled, true);
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("adjustPredicate", function (assert) {
+		var oBinding = new ODataBinding({
+				sReducedPath : "/A($uid=id-1-23)/A_2_B(id=42)"
+			});
+
+		// code under test
+		oBinding.adjustPredicate("($uid=id-1-23)", "('foo')");
+
+		assert.strictEqual(oBinding.sReducedPath, "/A('foo')/A_2_B(id=42)");
+
+		// code under test (missing predicate not harmful)
+		oBinding.adjustPredicate("('n/a')", "('bar')");
+
+		assert.strictEqual(oBinding.sReducedPath, "/A('foo')/A_2_B(id=42)");
 	});
 });

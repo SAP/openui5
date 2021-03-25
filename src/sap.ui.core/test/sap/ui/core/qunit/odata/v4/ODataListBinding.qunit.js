@@ -140,8 +140,8 @@ sap.ui.define([
 	QUnit.test("mixin", function (assert) {
 		var oBinding = this.bindList("EMPLOYEES"),
 			oMixin = {},
-			aOverriddenFunctions = ["destroy", "fetchCache", "getDependentBindings",
-				"getGeneration", "hasPendingChangesForPath"];
+			aOverriddenFunctions = ["adjustPredicate", "destroy", "fetchCache",
+				"getDependentBindings", "getGeneration", "hasPendingChangesForPath"];
 
 		asODataParentBinding(oMixin);
 
@@ -845,6 +845,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iMaxLength, Infinity);
 		assert.strictEqual(oBinding.iCreatedContexts, 0);
 		assert.strictEqual(oBinding.bCreatedAtEnd, undefined);
+
+		return oCreatedContext.created();
 	});
 
 	//*********************************************************************************************
@@ -2085,6 +2087,12 @@ sap.ui.define([
 			+ "exists: sap.ui.model.odata.v4.ODataListBinding: /Foo('42')|Bar"));
 
 		assert.strictEqual(oBinding.sChangeReason, "sChangeReason");
+
+		return Promise.all([
+			oContext0.created(),
+			oContext1.created(),
+			oContext2.created()
+		]);
 	});
 
 	//*********************************************************************************************
@@ -3066,6 +3074,13 @@ sap.ui.define([
 		}
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-24)"],
 			oFixture.bDestroyLater && oFixture.bHasRead ? oContext1 : undefined);
+
+		return Promise.all([
+			oContext0.created(),
+			oContext1.created(),
+			oContext2.created(),
+			oContext3.created()
+		]);
 	});
 });
 
@@ -3392,6 +3407,11 @@ sap.ui.define([
 		assert.strictEqual(oContext1.iIndex, 0);
 		assert.strictEqual(oContext2.iIndex, 1);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+
+		return Promise.all([
+			oContextMinus1.created(),
+			oContextMinus2.created()
+		]);
 	});
 
 	//*********************************************************************************************
@@ -3653,6 +3673,8 @@ sap.ui.define([
 			oContext0,
 			oContext1,
 			oCreateInCacheExpectation,
+			oCreateInCachePromise0 = Promise.resolve({}),
+			oCreateInCachePromise1 = Promise.resolve({}),
 			oCreatePathPromise = SyncPromise.resolve("~"),
 			oError = {},
 			oInitialData0 = {},
@@ -3660,7 +3682,8 @@ sap.ui.define([
 			oGroupLock0 = {},
 			oGroupLock1 = {},
 			oLockGroupExpectation,
-			oPromise;
+			oPromise,
+			that = this;
 
 		oLockGroupExpectation = oBindingMock.expects("lockGroup")
 			.withExactArgs(undefined, true, true, sinon.match.func)
@@ -3671,7 +3694,11 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock0), sinon.match.same(oCreatePathPromise),
 				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData0),
 				sinon.match.func, sinon.match.func)
-			.returns(SyncPromise.resolve(Promise.resolve({})));
+			.returns(SyncPromise.resolve(oCreateInCachePromise0));
+		oCreateInCachePromise0.then(function () {
+			that.mock(oContext0).expects("refreshDependentBindings")
+				.withExactArgs(sinon.match(/EMPLOYEES\(\$uid=.+\)/), "$auto", true);
+		});
 
 		// code under test (create first entity, skip refresh)
 		oContext0 = oBinding.create(oInitialData0, true);
@@ -3690,7 +3717,11 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock1), sinon.match.same(oCreatePathPromise),
 				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData1),
 				sinon.match.func, sinon.match.func)
-			.returns(SyncPromise.resolve(Promise.resolve({})));
+			.returns(SyncPromise.resolve(oCreateInCachePromise1));
+		oCreateInCachePromise1.then(function () {
+			that.mock(oContext1).expects("refreshDependentBindings")
+				.withExactArgs(sinon.match(/EMPLOYEES\(\$uid=.+\)/), "$auto", true);
+		});
 
 		// code under test (create second entity, skip refresh)
 		oContext1 = oBinding.create(oInitialData1, true);
@@ -4120,6 +4151,7 @@ sap.ui.define([
 	].forEach(function (aAtEnd, i) {
 		QUnit.test("create: bAtEnd #" + i, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES"),
+				oContext,
 				oGroupLock = {};
 
 			oBinding.bLengthFinal = true;
@@ -4132,79 +4164,94 @@ sap.ui.define([
 						return oPromise.getResult() === "EMPLOYEES";
 					}), "", sinon.match(rTransientPredicate), undefined, sinon.match.func,
 					sinon.match.func)
-				.returns(SyncPromise.resolve({}));
+				.returns(SyncPromise.resolve(Promise.resolve({})));
 
 			// code under test
-			oBinding.create(undefined, true, aAtEnd[0]);
+			oContext = oBinding.create(undefined, true, aAtEnd[0]);
 
 			assert.strictEqual(oBinding.bCreatedAtEnd, !!aAtEnd[0]);
 
 			assert.throws(function () {
 				oBinding.create(undefined, true, aAtEnd[1]);
 			}, new Error("Creating entities at the start and at the end is not supported."));
+
+			return oContext.created();
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("create: bAtEnd without $count", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext,
 			sError = "Must know the final length to create at the end. Consider setting $count";
 
 		this.mock(oBinding).expects("checkSuspended").thrice().withExactArgs();
 
-		// code under test
 		assert.throws(function () {
+			// code under test
 			oBinding.create(undefined, true, true);
 		}, new Error(sError));
 
 		oBinding.createContexts(3, createData(3, 0, true)); // simulate a read
 
-		// code under test
 		assert.throws(function () {
+			// code under test
 			oBinding.create(undefined, true, true);
 		}, new Error(sError));
 
 		oBinding.createContexts(6, createData(1, 3, true, 1)); // simulate a short read
-		this.mock(oBinding).expects("createInCache").returns(SyncPromise.resolve({}));
+		this.mock(oBinding).expects("createInCache")
+			.returns(SyncPromise.resolve(Promise.resolve({})));
 
-		oBinding.create(undefined, true, true);
+		// code under test
+		oContext = oBinding.create(undefined, true, true);
 
 		oBinding = this.bindList("TEAM_2_EMPLOYEES",
 			Context.create(this.oModel, {/*oBinding*/}, "/TEAMS('42')"));
-
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 
-		// code under test
 		assert.throws(function () {
+			// code under test
 			oBinding.create(undefined, true, true);
 		}, new Error(sError));
 
 		oBinding = this.bindList("TEAM_2_EMPLOYEES",
 			this.oModel.createBindingContext("/TEAMS('42')"));
-
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 
-		// code under test
 		assert.throws(function () {
+			// code under test
 			oBinding.create(undefined, true, true);
 		}, new Error(sError));
+
+		return oContext.created();
 	});
 
 	//*********************************************************************************************
 	QUnit.test("create: bAtEnd with $count, but before read", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$count : true});
+		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$count : true}),
+			oContext0,
+			oContext1,
+			oContext2;
 
 		this.mock(oBinding).expects("checkSuspended").thrice().withExactArgs();
-		this.mock(oBinding).expects("createInCache").thrice().returns(SyncPromise.resolve({}));
+		this.mock(oBinding).expects("createInCache").thrice()
+			.returns(SyncPromise.resolve(Promise.resolve({})));
 
 		// code under test
-		oBinding.create(undefined, true, true);
-		oBinding.create(undefined, true, true);
-		oBinding.create(undefined, true, true);
+		oContext0 = oBinding.create(undefined, true, true);
+		oContext1 = oBinding.create(undefined, true, true);
+		oContext2 = oBinding.create(undefined, true, true);
 
 		assert.strictEqual(oBinding.getModelIndex(0), 2);
 		assert.strictEqual(oBinding.getModelIndex(1), 1);
 		assert.strictEqual(oBinding.getModelIndex(2), 0);
+
+		return Promise.all([
+			oContext0.created(),
+			oContext1.created(),
+			oContext2.created()
+		]);
 	});
 
 	//*********************************************************************************************
@@ -4219,9 +4266,10 @@ sap.ui.define([
 		oBinding.iMaxLength = 0;
 		oExpectation = oBindingMock.expects("lockGroup").atLeast(1).returns({});
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
+		oBindingMock.expects("refreshSingle").atLeast(1).returns(SyncPromise.resolve());
 
 		// code under test
-		oBinding.create(undefined, true, true);
+		oBinding.create(undefined, false, true);
 
 		// code under test - cancel the creation (via the group lock from the create)
 		oExpectation.args[0][3]();
@@ -4229,12 +4277,12 @@ sap.ui.define([
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
 
 		// code under test
-		oContext1 = oBinding.create(undefined, true, false);
+		oContext1 = oBinding.create(undefined, false, false);
 
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
 
 		// code under test - create a second entity without bAtEnd
-		oContext2 = oBinding.create(undefined, true);
+		oContext2 = oBinding.create(undefined);
 
 		oBindingMock.expects("deleteFromCache")
 			.callsArgWith(4, 0) // the cancel callback
@@ -4245,7 +4293,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding.create(undefined, true, true);
+			oBinding.create(undefined, false, true);
 		}, new Error("Creating entities at the start and at the end is not supported."));
 
 		oBindingMock.expects("deleteFromCache")
@@ -4258,14 +4306,14 @@ sap.ui.define([
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
 
 		// code under test
-		oBinding.create(undefined, true, true);
+		oBinding.create(undefined, false, true);
 
 		oBinding.reset();
 
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
 
 		// code under test
-		oBinding.create(undefined, true);
+		oBinding.create(undefined);
 	});
 
 	//*********************************************************************************************
@@ -6556,25 +6604,28 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("adjustPredicate", function (assert) {
+[undefined, {}].forEach(function (mCacheQueryOptions, i) {
+	QUnit.test("adjustPredicate # " + i, function (assert) {
 		var oBinding = this.bindList("SO_2_SOITEM",
 				Context.create({/*oModel*/}, {/*oBinding*/}, "/SalesOrderList($uid=1)")),
 			oContext1 = {adjustPredicate : function () {}},
 			oContext2 = {adjustPredicate : function () {}},
 			oExpectation1,
-			oExpectation2,
-			oExpectation3;
+			oExpectation2;
 
 		oBinding.aPreviousData = ["/SalesOrderList($uid=1)/SO_2_SOITEM($uid=2)"];
 		oBinding.aContexts = [,, oContext1, oContext2]; // sparse array
+		oBinding.mCacheQueryOptions = mCacheQueryOptions;
+		this.mock(asODataParentBinding.prototype).expects("adjustPredicate").on(oBinding)
+			.withExactArgs("($uid=1)", "('42')");
+		this.mock(oBinding).expects("fetchCache").exactly(mCacheQueryOptions ? 1 : 0)
+			.withExactArgs(sinon.match.same(oBinding.oContext), true);
 		this.mock(oBinding.oHeaderContext).expects("adjustPredicate")
 			.withExactArgs("($uid=1)", "('42')");
 		oExpectation1 = this.mock(oContext1).expects("adjustPredicate")
 			.withExactArgs("($uid=1)", "('42')", sinon.match.func);
 		oExpectation2 = this.mock(oContext2).expects("adjustPredicate")
 			.withExactArgs("($uid=1)", "('42')", sinon.match.func);
-		oExpectation3 = this.mock(oBinding).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oBinding.oContext));
 
 		// code under test
 		oBinding.adjustPredicate("($uid=1)", "('42')");
@@ -6583,10 +6634,10 @@ sap.ui.define([
 		oExpectation2.args[0][2]("/SalesOrderList($uid=1)/SO_2_SOITEM($uid=3)",
 			"/SalesOrderList('42')/SO_2_SOITEM($uid=3)");
 
-		assert.ok(oExpectation3.calledAfter(oExpectation2));
 		assert.deepEqual(oBinding.aPreviousData, ["/SalesOrderList('42')/SO_2_SOITEM($uid=2)"]);
 		assert.notOk(oBinding.aPreviousData.hasOwnProperty("-1"));
 	});
+});
 
 	//*********************************************************************************************
 [{}, null].forEach(function (oCache, i) {
@@ -6702,14 +6753,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getDownloadUrl: result pending", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oPromise = SyncPromise.resolve(Promise.resolve("/service/resource?query"));
 
 		this.mock(oBinding).expects("fetchDownloadUrl").withExactArgs()
-			.returns(SyncPromise.resolve(Promise.resolve("/service/resource?query")));
+			.returns(oPromise);
 
 		assert.throws(function () {
-			return oBinding.getDownloadUrl();
+			// code under test
+			oBinding.getDownloadUrl();
 		}, new Error("Result pending"));
+
+		return oPromise;
 	});
 
 	//*********************************************************************************************
@@ -6721,7 +6776,8 @@ sap.ui.define([
 			.returns(SyncPromise.reject(oError));
 
 		assert.throws(function () {
-			return oBinding.getDownloadUrl();
+			// code under test
+			oBinding.getDownloadUrl();
 		}, oError);
 	});
 
