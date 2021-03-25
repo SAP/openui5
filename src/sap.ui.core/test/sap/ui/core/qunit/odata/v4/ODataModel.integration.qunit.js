@@ -4918,6 +4918,7 @@ sap.ui.define([
 	// - parameters change because of change in property binding
 	// JIRA: CPOUI5UISERVICESV3-2010
 	// JIRA: CPOUI5ODATAV4-29, check message target for unbound action
+	// JIRA: CPOUI5ODATAV4-852, support multiple targets in messages
 	QUnit.test("Allow binding of operation parameters: Changing with controls", function (assert) {
 		var oModel = createTeaBusiModel({groupId : "$direct"}),
 			oOperation,
@@ -4983,7 +4984,8 @@ sap.ui.define([
 			// JIRA: CPOUI5ODATAV4-29
 			var oError = createError({
 					message : "Invalid Budget",
-					target : "Budget"
+					target : "Foo",
+					"@Common.additionalTargets" : ["Budget", "Bar", "TeamID"]
 				});
 
 			that.oLogMock.expects("error")
@@ -5000,7 +5002,10 @@ sap.ui.define([
 				.expectMessages([{
 					message : "Invalid Budget",
 					persistent : true,
-					target : "/ChangeTeamBudgetByID(...)/$Parameter/Budget",
+					targets : [
+						"/ChangeTeamBudgetByID(...)/$Parameter/Budget",
+						"/ChangeTeamBudgetByID(...)/$Parameter/TeamID"
+					],
 					technical : true,
 					type : "Error"
 				}])

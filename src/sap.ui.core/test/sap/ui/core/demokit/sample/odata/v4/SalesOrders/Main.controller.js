@@ -390,6 +390,7 @@ sap.ui.define([
 					"com.sap.gateway.default.zui5_epm_sample.v0002."
 					+ "SalesOrderSimulateDiscount(...)");
 				this.oSimulateDiscount.setParameter("Discount", 0);
+				this.oSimulateDiscount.setParameter("Approver", "");
 			}
 
 			this.oSimulateDiscount.setContext(oSalesOrderContext);

@@ -1722,8 +1722,8 @@ sap.ui.define([
 		 * @param {boolean} [bTechnical] Whether the message is reported as technical
 		 */
 		function addMessage(oMessage, iNumericSeverity, bTechnical) {
-			var sAdditionalTargets =  _Helper.getAdditionalTargets(oMessage),
-				oReportMessage = {
+			var oReportMessage = {
+					additionalTargets : _Helper.getAdditionalTargets(oMessage),
 					code : oMessage.code,
 					message : oMessage.message,
 					numericSeverity : iNumericSeverity,
@@ -1734,9 +1734,6 @@ sap.ui.define([
 					"@$ui5.originalMessage" : oMessage
 				};
 
-			if (sAdditionalTargets) {
-				oReportMessage.additionalTargets = sAdditionalTargets;
-			}
 			Object.keys(oMessage).forEach(function (sProperty) {
 				if (sProperty[0] === '@') {
 					if (sProperty.endsWith(".numericSeverity")) {

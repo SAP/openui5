@@ -101,6 +101,71 @@ sap.ui.define([
 		},
 
 		/**
+		 * Adjusts the target and all additional targets of the given message according to the
+		 * operation metadata.
+		 *
+		 * @param {object} oMessage
+		 *   The message whose targets should be adjusted
+		 * @param {object} oOperationMetadata
+		 *   The operation metadata to determine whether a given message target is a parameter
+		 *   of the operation
+		 * @param {string} sParameterContextPath
+		 *   The parameter context path
+		 * @param {string} [sContextPath]
+		 *   The context path for a bound operation
+		 */
+		adjustTargets : function (oMessage, oOperationMetadata, sParameterContextPath,
+				sContextPath) {
+			var sAdditionalTargetsKey = _Helper.getAnnotationKey(oMessage, ".additionalTargets"),
+				aTargets;
+
+			aTargets = [oMessage.target].concat(oMessage[sAdditionalTargetsKey])
+				.map(function (sTarget) {
+					return sTarget && _Helper.getAdjustedTarget(sTarget, oOperationMetadata,
+						sParameterContextPath, sContextPath);
+				}).filter(function (sTarget) {
+					return sTarget;
+				});
+
+			// Note: If oMessage.target is unknown, we use the first valid additional target!
+			oMessage.target = aTargets[0];
+			if (sAdditionalTargetsKey) {
+				oMessage[sAdditionalTargetsKey] = aTargets.slice(1);
+			}
+		},
+
+		/**
+		 * Adjusts all targets and additional targets of the given error instance according to the
+		 * operation metadata.
+		 *
+		 * @param {Error} oError
+		 *   The error instance containing the error messages to adjust
+		 * @param {object} oOperationMetadata
+		 *   The operation metadata to determine whether a given message target is a parameter
+		 *   of the operation
+		 * @param {string} sParameterContextPath
+		 *   The parameter context path
+		 * @param {string} [sContextPath]
+		 *   The context path for a bound operation
+		 */
+		adjustTargetsInError : function (oError, oOperationMetadata, sParameterContextPath,
+				sContextPath) {
+			if (!oError.error) {
+				return;
+			}
+
+			_Helper.adjustTargets(oError.error, oOperationMetadata, sParameterContextPath,
+				sContextPath);
+
+			if (oError.error.details) {
+				oError.error.details.forEach(function (oMessage) {
+					_Helper.adjustTargets(oMessage, oOperationMetadata, sParameterContextPath,
+						sContextPath);
+				});
+			}
+		},
+
+		/**
 		 * Recursively merges $select and $expand from mQueryOptions into mAggregatedQueryOptions.
 		 * All other query options in mAggregatedQueryOptions remain untouched.
 		 *
@@ -740,6 +805,63 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the adjusted target according to the given operation metadata.
+		 *
+		 * For a bound operation:
+		 * In case the original target is '_it/Property' with '_it' as the name of the
+		 * binding parameter, the result is '/Set(key)/Property' where '/Set(key)' is
+		 * the current context the operation is called on.
+		 * In case the target points to a certain parameter like 'Param' the result is
+		 * '/Set(key)/name.space.Operation(...)/$Parameter/Param' with
+		 * 'name.space.Operation' as the fully-qualified operation name.
+		 *
+		 * For an unbound operation:
+		 * In case the target points to a certain parameter like 'Param' the result is
+		 * '/OperationImport/$Parameter/Param' with 'OperationImport' as the name of the
+		 * operation import.
+		 *
+		 * All other targets are deleted because they can not be associated to operation
+		 * parameters or the binding parameter and the message is reported as unbound.
+		 *
+		 * @param {string} sTarget
+		 *   The message target
+		 * @param {object} oOperationMetadata
+		 *   The operation metadata to determine whether a given message target is a parameter
+		 *   of the operation
+		 * @param {string} sParameterContextPath
+		 *   The parameter context path
+		 * @param {string} [sContextPath]
+		 *   The context path for a bound operation
+		 * @returns {string|undefined} The adjusted target, or <code>undefined</code> if the target
+		 *   is unknown
+		 */
+		getAdjustedTarget : function (sTarget, oOperationMetadata, sParameterContextPath,
+					sContextPath) {
+			var bIsParameterName,
+				sParameterName,
+				aSegments;
+
+			aSegments = sTarget.split("/");
+			sParameterName = aSegments.shift();
+			if (sParameterName === "$Parameter") {
+				sTarget = aSegments.join("/");
+				sParameterName = aSegments.shift();
+			}
+			if (oOperationMetadata.$IsBound
+					&& sParameterName === oOperationMetadata.$Parameter[0].$Name) {
+				sTarget = _Helper.buildPath(sContextPath, aSegments.join("/"));
+				return sTarget;
+			}
+			bIsParameterName = oOperationMetadata.$Parameter.some(function (oParameter) {
+				return sParameterName === oParameter.$Name;
+			});
+			if (bIsParameterName) {
+				sTarget = sParameterContextPath + "/" + sTarget;
+				return sTarget;
+			}
+		},
+
+		/**
 		 * Returns the instance annotation with a given name for the given message, ignoring the
 		 * alias. Logs a warning if duplicates are found.
 		 *
@@ -753,21 +875,39 @@ sap.ui.define([
 		 *   such annotation (ignoring the alias)
 		 */
 		getAnnotation : function (oMessage, sName) {
-			var sAnnotation, sAnnotationKey, bDuplicate;
+			var sAnnotationKey = _Helper.getAnnotationKey(oMessage, sName);
+
+			return sAnnotationKey && oMessage[sAnnotationKey];
+		},
+
+		/**
+		 * Returns the instance annotation key with a given name for the given message, ignoring the
+		 * alias. Logs a warning if duplicates are found.
+		 *
+		 * @param {object} oMessage
+		 *   A single message from an OData error response
+		 * @param {object} sName
+		 *   The name of the annotation without prefix "@" and namespace, e.g. ".ContentID" for a
+		 *   annotation "@Org.OData.Core.V1.ContentID"
+		 * @returns {string|undefined}
+		 *   The key of the annotation, or <code>undefined</code> in case there is not exactly one
+		 *   such annotation (ignoring the alias)
+		 */
+		getAnnotationKey : function (oMessage, sName) {
+			var sAnnotationKey, bDuplicate;
 
 			Object.keys(oMessage).forEach(function (sKey) {
 				if (sKey[0] === "@" && sKey.endsWith(sName)) {
-					if (sAnnotation) {
+					if (sAnnotationKey) {
 						Log.warning("Cannot distinguish " + sAnnotationKey + " from " + sKey,
 							undefined, sClassName);
 						bDuplicate = true;
 					}
-					sAnnotation = oMessage[sKey];
 					sAnnotationKey = sKey;
 				}
 			});
 
-			return bDuplicate ? undefined : sAnnotation;
+			return bDuplicate ? undefined : sAnnotationKey;
 		},
 
 		/**

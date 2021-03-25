@@ -968,6 +968,7 @@ sap.ui.define([
 			this.mock(oModel).expects("reportUnboundMessages")
 				.once()// add each error only once to the MessageManager
 				.withExactArgs(undefined, [{
+					additionalTargets : undefined,
 					code : undefined,
 					message : oError.message,
 					technical : true,
@@ -1023,6 +1024,7 @@ sap.ui.define([
 			sLogMessage = "Failed to read path /Product('1')/Unknown",
 			oModel = this.createModel(),
 			aUnboundMessages = [{
+				additionalTargets : undefined,
 				code : oError.error.code,
 				longtextUrl : "/service/Product/top/longtext",
 				message : oError.error.message,
@@ -1031,6 +1033,7 @@ sap.ui.define([
 				"@$ui5.error" : sinon.match.same(oError),
 				"@$ui5.originalMessage" : sinon.match.same(oError.error)
 			}, {
+				additionalTargets : undefined,
 				code : "unbound",
 				message : "some unbound message",
 				numericSeverity : 3,
@@ -1066,6 +1069,7 @@ sap.ui.define([
 		this.mock(oModel).expects("reportBoundMessages")
 			.withExactArgs(sResourcePath, {
 				"" : [{
+					additionalTargets : undefined,
 					code : "bound",
 					longtextUrl : "/service/Product/bound/longtext",
 					message : "Value must be greater than 0",
@@ -1099,11 +1103,13 @@ sap.ui.define([
 		resourcePath : undefined,
 		boundMessages : undefined,
 		unboundMessages : [{
+			additionalTargets : undefined,
 			code :  "top",
 			message : "Error occurred while processing the request",
 			numericSeverity : 4,
 			technical : true
 		}, {
+			additionalTargets : undefined,
 			code : "bound",
 			message : "Quantity: Value must be greater than 0",
 			numericSeverity : 3,
@@ -1113,6 +1119,7 @@ sap.ui.define([
 		requestUrl : undefined,
 		resourcePath : "/Product('1')",
 		boundMessages : [{
+			additionalTargets : undefined,
 			code : "bound",
 			message : "Value must be greater than 0",
 			numericSeverity : 3,
@@ -1121,6 +1128,7 @@ sap.ui.define([
 			transition : true
 		}],
 		unboundMessages : [{
+			additionalTargets : undefined,
 			code :  "top",
 			message : "Error occurred while processing the request",
 			numericSeverity : 4,
@@ -1182,6 +1190,7 @@ sap.ui.define([
 	QUnit.test("reportError: invoked by an action", function (assert) {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			aBoundMessages = [{
+				additionalTargets : undefined,
 				code :  "param",
 				message : "TeamID is wrong",
 				numericSeverity : 3,
@@ -1189,6 +1198,7 @@ sap.ui.define([
 				technical : undefined,
 				transition : true
 			}, {
+				additionalTargets : undefined,
 				code :  "bindingParam",
 				message : "Status is not there",
 				numericSeverity : 3,
@@ -1292,6 +1302,7 @@ sap.ui.define([
 		this.mock(oModel).expects("reportBoundMessages").never();
 		this.mock(oModel).expects("reportUnboundMessages")
 			.withExactArgs(oError.resourcePath, [{
+				additionalTargets : undefined,
 				code : "top",
 				message : "$filter: Invalid token 'name' at position '1'",
 				longtextUrl : "/long/text",

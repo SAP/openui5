@@ -1333,6 +1333,7 @@ sap.ui.define([
 			this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 			this.mock(this.oModel).expects("reportError").withExactArgs(
 				"Failed to execute " + oFixture.path, sClassName, sinon.match.instanceOf(Error));
+			this.mock(_Helper).expects("adjustTargetsInError").never();
 
 			return this.bindContext(oFixture.path)
 				._execute(oGroupLock) // code under test
@@ -1695,6 +1696,11 @@ sap.ui.define([
 				oBindingMock.expects("refreshDependentBindings").withExactArgs("", "groupId", true)
 					.returns(SyncPromise.resolve(Promise.resolve()));
 				that.mock(oReturnValueContextSecondExecute).expects("destroy").withExactArgs();
+				that.mock(_Helper).expects("adjustTargetsInError")
+					.withExactArgs({}, {}, (bOnCollection
+							? "/TEAMS"
+							: "/TEAMS('42')") + "/name.space.Operation(...)/$Parameter",
+						bOnCollection ? "/TEAMS" : "/TEAMS('42')");
 				oModelMock.expects("reportError");
 
 				// code under test
@@ -1853,6 +1859,9 @@ sap.ui.define([
 		oModelMock.expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, sinon.match.same(oError));
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+		this.mock(_Helper).expects("adjustTargetsInError")
+			.withExactArgs(sinon.match.same(oError), sinon.match.same(oOperationMetadata),
+				"/OperationImport(...)/$Parameter", undefined);
 
 		// code under test
 		return oBinding._execute(oGroupLock, mParameters).then(function () {
@@ -1901,48 +1910,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	error : {
-		details : [
-			{target : "_it"},
-			{target : "$Parameter/_it"},
-			{target : "_it/Name"},
-			{target : "$Parameter/_it/Name"},
-			{target : "unknown"}, // unknown operation parameter
-			{target : null},
-			{target : ""},
-			{target : "$filter"}, // starting with $ (e.g. system query option)
-			{target : "Param"},
-			{target : "$Parameter/Param"},
-			{target : "Complex/Param"},
-			{target : "$Parameter/Complex/Param"}
-		],
-		target : "foo"
-	},
-	reported : {
-		details : [
-			{target : "/TEAMS('42')"},
-			{target : "/TEAMS('42')"},
-			{target : "/TEAMS('42')/Name"},
-			{target : "/TEAMS('42')/Name"},
-			{},
-			{},
-			{},
-			{},
-			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Param"},
-			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Param"},
-			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Complex/Param"},
-			{target : "/TEAMS('42')/name.space.Operation(...)/$Parameter/Complex/Param"}
-		]
-	}
-}, {
-	error : {target : "_it"},
-	reported : {target : "/TEAMS('42')"}
-}, {
-	error : {target : "_it/Name"},
-	reported : {target : "/TEAMS('42')/Name"}
-}, {
-	error : {},
-	reported : {}
+	error : {}
 }, {
 	// no error -> nothing reported
 }].forEach(function (oFixture, i) {
@@ -1981,12 +1949,14 @@ sap.ui.define([
 			.rejects(oError);
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+		this.mock(_Helper).expects("adjustTargetsInError")
+			.withExactArgs(sinon.match.same(oError), sinon.match.same(oOperationMetadata),
+				"/TEAMS('42')/name.space.Operation(...)/$Parameter", "/TEAMS('42')");
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to execute /TEAMS('42')/name.space.Operation(...)",
 				sClassName, sinon.match.same(oError))
 			.callsFake(function (_sLogMessage, _sReportingClassName, oError) {
 				assert.strictEqual(oError.resourcePath, "~"); // unchanged
-				assert.deepEqual(oError.error, oFixture.reported);
 			});
 
 		// code under test
@@ -2000,30 +1970,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	error : {
-		details : [
-			{target : "bar"},
-			{target : null},
-			{target : "Param"},
-			{target : "$Parameter/Param"},
-			{target : "Complex/Param"},
-			{target : "$Parameter/Complex/Param"}
-		],
-		target : "foo"
-	},
-	reported : {
-		details : [
-			{},
-			{},
-			{target : "/ActionImport(...)/$Parameter/Param"},
-			{target : "/ActionImport(...)/$Parameter/Param"},
-			{target : "/ActionImport(...)/$Parameter/Complex/Param"},
-			{target : "/ActionImport(...)/$Parameter/Complex/Param"}
-		]
-	}
-}, {
-	error : {},
-	reported : {}
+	error : {}
 }, {
 	// no error -> nothing reported
 }].forEach(function (oFixture, i) {
@@ -2057,12 +2004,14 @@ sap.ui.define([
 			.rejects(oError);
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+		this.mock(_Helper).expects("adjustTargetsInError")
+			.withExactArgs(sinon.match.same(oError), sinon.match.same(oOperationMetadata),
+			"/ActionImport(...)/$Parameter", undefined);
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to execute /ActionImport(...)",
 				sClassName, sinon.match.same(oError))
 			.callsFake(function (_sLogMessage, _sReportingClassName, oError) {
 				assert.strictEqual(oError.resourcePath, "~"); // unchanged
-				assert.deepEqual(oError.error, oFixture.reported);
 			});
 
 		// code under test

@@ -1215,6 +1215,24 @@ sap.ui.define([
 				}
 			},
 			assertions : {
+				//TODO: factor out with checkDiscountValueState
+				checkApproverValueState : function (sState, sMessage) {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "SimulateDiscountForm::Approver",
+						searchOpenDialogs : true,
+						success : function (oInput) {
+							Opa5.assert.strictEqual(oInput.getValueState(), sState,
+								"checkApproverValueState('" + oInput.getId() + "', '"
+									+ sState + "')");
+							if (sMessage) {
+								Opa5.assert.strictEqual(oInput.getValueStateText(), sMessage,
+									"ValueStateText: " + sMessage);
+							}
+						},
+						viewName : sViewName
+					});
+				},
 				checkControlValue : function (sID, sValue) {
 					return Helper.checkControlValue(this, sViewName, sID, sValue, true);
 				},

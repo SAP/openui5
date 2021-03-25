@@ -349,11 +349,11 @@ sap.ui.define([
 				"SalesOrderList('0500000001')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$filter=ItemPosition%20gt%20'0000000000'&$select=DeliveryDate,GrossAmount,ItemPosition,Note,NoteLanguage,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=100" : {
 					source : "SalesOrderItemsList_1.json"
 				},
-				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=75)?custom-option=value" : {
+				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=75,Approver='')?custom-option=value" : {
 					code : 400,
 					source : "SalesOrderSimulateDiscount(Discount=75).json"
 				},
-				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=25)?custom-option=value" : {
+				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=25,Approver='')?custom-option=value" : {
 					source : "SalesOrderSimulateDiscount(Discount=25).json"
 				},
 				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000000'%20or%20SalesOrderID%20eq%20'0500000001'%20or%20SalesOrderID%20eq%20'0500000002'%20or%20SalesOrderID%20eq%20'0500000003'%20or%20SalesOrderID%20eq%20'0500000004'%20or%20SalesOrderID%20eq%20'0500000005'%20or%20SalesOrderID%20eq%20'0500000006'%20or%20SalesOrderID%20eq%20'0500000007'%20or%20SalesOrderID%20eq%20'0500000008'%20or%20SalesOrderID%20eq%20'0500000009'&$select=SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$top=10" : {
