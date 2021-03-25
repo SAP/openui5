@@ -1,15 +1,41 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/util/merge", "sap/ui/model/json/JSONModel"], function (merge, JSONModel) {
+sap.ui.define([
+	"sap/base/util/merge",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core",
+	"sap/base/util/deepClone"
+], function (
+	merge,
+	JSONModel,
+	Core,
+	deepClone
+) {
 	"use strict";
 
 	var CardMerger = {
 		layers: { "admin": 0, "content": 5, "translation": 10, "all": 20 },
 		mergeManifestPathChanges: function (oModel, oChange) {
+			var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('-', '_');
 			Object.keys(oChange).forEach(function (s) {
 				if (s.charAt(0) === "/") {
-					oModel.setProperty(s, oChange[s]);
+					var value = oChange[s];
+					if (s.endsWith("/valueTranslations")) {
+						//merge the valueTranslations with existing one
+						var aValueTranslations = oModel.getProperty(s);
+						if (aValueTranslations) {
+							//clone the exist value translations list since sometimes it is readonly
+							var aValueTranslationsUpdated = deepClone(aValueTranslations);
+							value = merge(aValueTranslationsUpdated, value);
+						}
+						//update the value property via current language in Core
+						if (sLanguage in value) {
+							var sPath = s.substring(0, s.lastIndexOf("/")) + "/value";
+							oModel.setProperty(sPath, value[sLanguage]);
+						}
+					}
+					oModel.setProperty(s, value);
 				}
 			});
 		},

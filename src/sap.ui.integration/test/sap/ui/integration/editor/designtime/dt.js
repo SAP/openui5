@@ -14,6 +14,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "General",
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
+					"cardTitle": {
+						"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
+						"type": "string",
+						"translatable": true,
+						"required": true
+					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"defaultValue": "StringValue",
@@ -21,7 +27,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"translatable": true,
 						"required": true
 					},
-
 					"stringLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
 						"defaultValue": "StringValue",
@@ -40,15 +45,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/stringWithDescription/value",
 						"type": "string",
 						"label": "String with description",
-						"description": "Description",
-						"translatable": true
+						"description": "Description"
 					},
 					"stringWithLongDescription": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithLongDescription/value",
 						"type": "string",
 						"label": "String with long description",
-						"description": "A very long description text that should wrap into the next line",
-						"translatable": true
+						"description": "A very long description text that should wrap into the next line"
 					},
 					"stringWithTranslatedValue": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValue/value",

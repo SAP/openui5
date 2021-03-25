@@ -8,14 +8,12 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"string1": {
 						"manifestpath": "/sap.card/configuration/parameters/string1/value",
 						"type": "string",
-						"translatable": true,
 						"label": "{i18n>string1label}",
 						"description": "{i18n>string1desc}"
 					},
 					"string2": {
 						"manifestpath": "/sap.card/configuration/parameters/string2/value",
 						"type": "string",
-						"translatable": true,
 						"label": "{i18n>string2label}",
 						"description": "{i18n>string2desc}"
 					},
@@ -26,12 +24,21 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"label": "{i18n>string3label}",
 						"description": "{i18n>string3desc}"
 					},
-					"stringNoTrans": {
-						"manifestpath": "/sap.card/configuration/parameters/stringNoTrans/value",
+					"string4": {
+						"manifestpath": "/sap.card/configuration/parameters/string4/value",
 						"type": "string",
-						"translatable": true,
-						"label": "{i18n>stringNoTransLabel}",
-						"description": "{i18n>stringNoTransDesc}"
+						"label": "{i18n>string4label}",
+						"defaultValue": "{i18n>string4}"
+					},
+					"integer": {
+						"manifestpath": "/sap.card/configuration/parameters/integer/value",
+						"defaultValue": 1,
+						"type": "integer"
+					},
+					"number": {
+						"manifestpath": "/sap.card/configuration/parameters/number/value",
+						"defaultValue": 1.5,
+						"type": "number"
 					}
 				}
 			},
