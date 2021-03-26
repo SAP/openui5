@@ -108,6 +108,7 @@ sap.ui.define([
 
     /**
      * Gets the current zooming information for the inner chart
+     * @returns {integer} Current zoom level on the inner chart
      */
     ChartDelegate.getZoomState = function () {
 
@@ -1041,7 +1042,7 @@ sap.ui.define([
     /**
      * Initializes a new table property helper for V4 analytics with the property extensions merged into the property infos.
      *
-     * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
+     * @param {sap.ui.mdc.ChartNew} oMDCChart reference to the MDC Chart
      * @returns {Promise<sap.ui.mdc.table.V4AnalyticsPropertyHelper>} A promise that resolves with the property helper.
      * @private
      * @ui5-restricted sap.ui.mdc
@@ -1077,7 +1078,12 @@ sap.ui.define([
             return new PropertyHelper(aPropertiesWithExtension, oMDCChart);
         });
     };
-
+    /**
+     * Returns the relevant propery infos based on the metadata used with the MDC Chart instance.
+     *
+     * @param {sap.ui.mdc.ChartNew} oMDCChart reference to the MDC Chart
+     * @returns {array} Array of the property infos to be used within MDC Chart
+     */
     ChartDelegate.fetchProperties = function (oMDCChart) {
         var oModel = this._getModel(oMDCChart);
         var pCreatePropertyInfos;
