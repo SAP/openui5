@@ -21,7 +21,6 @@
 		},
 		"config": {
 			"sample": {
-				"stretch": true,
 				"files": [
 					"View.view.xml",
 					"View.controller.js",
