@@ -727,7 +727,7 @@ sap.ui.define([
 					viewName: sViewName,
 					type: sViewType,
 					id: sViewId
-				});
+				}, true);
 
 				this.fireViewCreated({
 					view: oView,

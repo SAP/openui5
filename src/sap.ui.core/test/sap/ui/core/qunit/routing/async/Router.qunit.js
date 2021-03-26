@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/RouterHashChanger",
 	"sap/ui/core/routing/Router",
@@ -20,7 +21,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/m/VBox"
-], function (Log, UIComponent, Controller, JSView, View, HashChanger, RouterHashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Component, ComponentContainer, VBox) {
+], function (Log, UIComponent, Controller, JSView, View, ViewType, HashChanger, RouterHashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Component, ComponentContainer, VBox) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
@@ -1258,7 +1259,8 @@ sap.ui.define([
 			}
 		]);
 
-		var oSpy = sinon.spy(View, "_legacyCreate");
+		var fnCreateViewSpy = sinon.spy(View, "create");
+		var fnLegacyCreateViewSpy = sinon.spy(View, "_legacyCreate");
 		var oRouteMatchedSpy = sinon.spy(router.getRoute("name"), "_routeMatched");
 
 		router.initialize();
@@ -1271,10 +1273,12 @@ sap.ui.define([
 		return oRouteMatchedSpy.returnValues[0].then(function(oResult) {
 			//Assert
 			assert.strictEqual(oShell.getContent()[0].getId(), oResult.view.getId(), "View is first content element");
-			assert.strictEqual(oSpy.callCount, 1, "Only one view is created");
+			assert.strictEqual(fnCreateViewSpy.callCount, 1, "Only one view is created. The 'View.create' factory is called");
+			assert.strictEqual(fnLegacyCreateViewSpy.callCount, 0, "The 'View._legacyCreate' factory is not called");
 
 			//Cleanup
-			oSpy.restore();
+			fnCreateViewSpy.restore();
+			fnLegacyCreateViewSpy.restore();
 			oRouteMatchedSpy.restore();
 			router.destroy();
 			oShell.destroy();
@@ -1614,16 +1618,16 @@ sap.ui.define([
 
 	function createXmlView () {
 		var sXmlViewContent = [
-			'<View xmlns="sap.ui.core">',
+			'<View xmlns="sap.ui.core.mvc">',
 			'</View>'
 		].join('');
 
 		var oViewOptions = {
-			viewContent: sXmlViewContent,
+			definition: sXmlViewContent,
 			type: "XML"
 		};
 
-		return sap.ui.view(oViewOptions);
+		return View.create(oViewOptions);
 	}
 
 	QUnit.module("views - creation and caching", {
@@ -1631,7 +1635,13 @@ sap.ui.define([
 			// System under test + Arrange
 			this.oRouter = fnCreateRouter();
 
-			this.oView = createXmlView();
+			return createXmlView().then(function(oView){
+				this.oView = oView;
+				this.fnLegayCreateViewStub = this.stub(View, "_legacyCreate").callsFake(function (oViewOptions) {
+					return oView;
+				});
+
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oRouter.destroy();
@@ -1639,38 +1649,28 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should create a view", function (assert) {
-		var that = this,
-			fnStub = this.stub(View, "_legacyCreate").callsFake(function (oViewOptions) {
-				assert.strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
-				assert.strictEqual(oViewOptions.type, "bar", "DId pass the type");
-				assert.strictEqual(oViewOptions.id, "baz", "DId pass the id");
+		// Act
+		var oExpectedView = this.oRouter.getView("foo", ViewType.XML, "baz");
 
-				return that.oView;
-			});
-
-		//Act
-		var oReturnValue = this.oRouter.getView("foo", "bar", "baz");
-
-		//Assert
-		assert.strictEqual(oReturnValue, this.oView, "the view was created");
-		assert.strictEqual(fnStub.callCount, 1, "the stub was invoked");
+		// Assert
+		assert.deepEqual(oExpectedView.getContent(), this.oView.getContent(), "the view was created");
+		assert.strictEqual(this.fnLegayCreateViewStub.callCount, 1, "the stub was invoked");
+		var oCallArguments = this.fnLegayCreateViewStub.getCall(0).args[0];
+		assert.strictEqual(oCallArguments.viewName, "foo", "Did pass the viewname");
+		assert.strictEqual(oCallArguments.type, ViewType.XML, "Did pass the type");
+		assert.strictEqual(oCallArguments.id, "baz", "Did pass the id");
 	});
 
 
 	QUnit.test("Should set a view to the cache", function (assert) {
-		var oReturnValue,
-			fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
-				return this.oView;
-			});
-
-		//Act
-		oReturnValue = this.oRouter.setView("foo.bar", this.oView);
+		// Act
+		var oExpectedRouter = this.oRouter.setView("foo.bar", this.oView);
 		var oRetrievedView = this.oRouter.getView("foo.bar", "bar");
 
-		//Assert
+		// Assert
 		assert.strictEqual(oRetrievedView, this.oView, "the view was returned");
-		assert.strictEqual(oReturnValue, this.oRouter, "able to chain this function");
-		assert.strictEqual(fnStub.callCount, 0, "the stub not invoked - view was loaded from the cache");
+		assert.strictEqual(oExpectedRouter, this.oRouter, "able to chain this function");
+		assert.strictEqual(this.fnLegayCreateViewStub.callCount, 0, "the stub not invoked - view was loaded from the cache");
 	});
 
 
@@ -1712,28 +1712,29 @@ sap.ui.define([
 
 	QUnit.test("Should fire the view created event if a view is created", function (assert) {
 		// Arrange
-		var oView = createXmlView(),
-			sViewType = "XML",
+		var sViewType = ViewType.XML,
 			sViewName = "foo",
 			oParameters,
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 			});
 
-		this.stub(View, "_legacyCreate").callsFake(function () {
-			return oView;
-		});
+		return createXmlView().then(function (oView) {
+			this.stub(View, "_legacyCreate").callsFake(function () {
+				return oView;
+			});
 
-		this.oRouter.attachViewCreated(fnEventSpy);
+			this.oRouter.attachViewCreated(fnEventSpy);
 
-		// Act
-		/*var oReturnValue = */ this.oRouter.getView(sViewName, sViewType);
+			// Act
+			this.oRouter.getView(sViewName, sViewType);
 
-		// Assert
-		assert.strictEqual(fnEventSpy.callCount, 1, "The view created event was fired");
-		assert.strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
-		assert.strictEqual(oParameters.viewName, sViewName, "Did pass the viewName to the event parameters");
-		assert.strictEqual(oParameters.type, sViewType, "Did pass the viewType to the event parameters");
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "The view created event was fired");
+			assert.strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
+			assert.strictEqual(oParameters.viewName, sViewName, "Did pass the viewName to the event parameters");
+			assert.strictEqual(oParameters.type, sViewType, "Did pass the viewType to the event parameters");
+		}.bind(this));
 	});
 
 	QUnit.module("titleChanged event", {
@@ -1743,12 +1744,6 @@ sap.ui.define([
 			this.oApp = new App();
 			this.sPattern = "anything";
 			this.sTitle = "myTitle";
-
-			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
-				return oView;
-			});
-
 			this.oDefaults = {
 				// only shells will be used
 				controlAggregation: "pages",
@@ -1756,10 +1751,13 @@ sap.ui.define([
 				controlId: this.oApp.getId(),
 				async: true
 			};
-
+			return createXmlView().then(function(oView){
+				this.fnCreateViewStub = this.stub(View, "create").callsFake(function () {
+					return Promise.resolve(oView);
+				});
+			}.bind(this));
 		},
 		afterEach: function() {
-			this.fnStub.restore();
 			this.oRouter.destroy();
 			this.oEventProviderStub.restore();
 		}
@@ -2179,24 +2177,29 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("component");
+	QUnit.module("component", {
+		beforeEach: function () {
+			return createXmlView().then(function (oView) {
+				this.oView = oView;
+				this.fnLegacyCreateViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
+					return oView;
+				});
+			}.bind(this));
+		}
+	});
 
 	QUnit.test("Should create a view with an component", function (assert) {
 		// Arrange
 		var oUIComponent = new UIComponent({}),
 			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
-			oView = createXmlView(),
-			oRouter = fnCreateRouter({}, {}, oUIComponent),
-			fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
-				return oView;
-			});
+			oRouter = fnCreateRouter({}, {}, oUIComponent);
 
 		// Act
-		oRouter.getView("XML", "foo");
+		oRouter.getView("foo", ViewType.XML);
 
 		// Assert
 		assert.strictEqual(fnOwnerSpy.callCount, 1, "Did run with owner");
-		assert.ok(fnOwnerSpy.calledBefore(fnViewStub), "Did invoke the owner function before creating the view");
+		assert.ok(fnOwnerSpy.calledBefore(this.fnLegacyCreateViewStub), "Did invoke the owner function before creating the view");
 
 		// Cleanup
 		oRouter.destroy();
@@ -2224,6 +2227,10 @@ sap.ui.define([
 					pattern : this.sPattern
 				}
 			};
+
+			return createXmlView().then(function(oView){
+				this.oView = oView;
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oEventProviderStub.restore();
@@ -2237,8 +2244,8 @@ sap.ui.define([
 	QUnit.test("Should display a target referenced by a route", function (assert) {
 		// Arrange
 		this.stub(Views.prototype, "_getView").callsFake(function () {
-			return createXmlView();
-		});
+			return Promise.resolve(this.oView);
+		}.bind(this));
 
 		var oTargetConfig = {
 			myTarget : {
@@ -2372,8 +2379,8 @@ sap.ui.define([
 		var that = this;
 		// Arrange
 		this.stub(Views.prototype, "_getView").callsFake(function () {
-			return createXmlView();
-		});
+			return Promise.resolve(this.oView);
+		}.bind(this));
 
 		var oTargetConfig = {
 			myTarget : {
