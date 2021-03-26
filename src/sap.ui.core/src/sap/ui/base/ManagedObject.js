@@ -3225,7 +3225,7 @@ sap.ui.define([
 	 *            corresponding model; when the path contains a '&gt;' sign, the string preceding it will override
 	 *            the <code>model</code> property and the remainder after the '&gt;' will be used as binding path
 	 * @param {string} [oBindingInfo.value]
-	 *            Defines a static binding with the given value.
+	 *            Since 1.61, defines a static binding with the given value.
 	 * @param {string} [oBindingInfo.model]
 	 *            Name of the model to bind against; when <code>undefined</code> or omitted, the default model is used
 	 * @param {boolean} [oBindingInfo.suspended]
