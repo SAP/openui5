@@ -19,14 +19,6 @@ sap.ui.define([
 			"DEMOKIT_IMPORTANT_MESSAGES_READ": "IMR"
 		},
 
-		SWA_CONFIG: {
-			pubToken: 'd5a5359b-0b55-415c-acc8-314511b613ca',
-			baseUrl: 'https://webanalytics2.cfapps.eu10.hana.ondemand.com/tracker/',
-			owner: null
-		},
-
-		SWA_TRACKER_URL: "sap/webanalytics/core/tracker/js/track.js",
-
 		constructor : function (oComponent) {
 			this._oComponent = oComponent;
 		},
@@ -72,44 +64,6 @@ sap.ui.define([
 			}
 
 			return "";
-		},
-
-		enableUsageTracking: function() {
-			this._loadSWA().then(function(swa) {
-				if (swa && typeof swa.enable === "function") {
-					swa.enable();
-				}
-			});
-		},
-
-		disableUsageTracking: function() {
-			var swa = window['swa'];
-			if (swa && typeof swa.disable === "function") {
-				swa.disable();
-			}
-		},
-
-		_loadSWA: function() {
-			if (!this._oPromiseLoadSWA) {
-				this._oPromiseLoadSWA = new Promise(function(resolve, reject) {
-					var oSWAConfig = merge({}, this.SWA_CONFIG),
-						oDoc = document,
-						oNewScriptEl = oDoc.createElement('script'),
-						oFirstScriptEl = oDoc.getElementsByTagName('script')[0];
-
-					oNewScriptEl.type = 'text/javascript';
-					oNewScriptEl.defer = true;
-					oNewScriptEl.async = true;
-					oNewScriptEl.src = sap.ui.require.toUrl(this.SWA_TRACKER_URL);
-					window.addEventListener("swaLoadSuccess", function(){
-						resolve(window["swa"]);
-					});
-
-					oFirstScriptEl.parentNode.insertBefore(oNewScriptEl, oFirstScriptEl);
-					window["swa"] = oSWAConfig;
-				}.bind(this));
-			}
-			return this._oPromiseLoadSWA;
 		},
 
 		_getMasterTargetName: function(sRouteName) {

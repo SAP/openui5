@@ -1,0 +1,25 @@
+{
+	"sap.app": {
+		"id": "sap.ui.documentation.sdk.cookieSettingsDialog",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"config": {
+
+		}
+	}
+}

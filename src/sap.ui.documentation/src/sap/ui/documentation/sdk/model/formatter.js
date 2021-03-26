@@ -274,16 +274,6 @@ sap.ui.define([
 			return sHref;
 		},
 
-		formatCookieValue: function (sValue) {
-			if (sValue === "1") {
-				return true;
-			}
-			if (sValue === "0") {
-				return false;
-			}
-			return sValue;
-		},
-
 		formatImportantMessage: function (sMsg, sParam) {
 			var sParam = this._getUI5Distribution();
 			return formatMessage(sMsg, sParam);

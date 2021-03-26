@@ -123,8 +123,9 @@ sap.ui.define([
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
 					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>"
-				}),
-					bSupportsSWA, bHasConsentUseSWA;
+				});
+
+				var oComponent = this.getOwnerComponent();
 
 				this.MENU_LINKS_MAP = {
 					"legal": "https://www.sap.com/corporate/en/legal/impressum.html",
@@ -194,16 +195,6 @@ sap.ui.define([
 
 				this._createConfigurationBasedOnURIInput();
 
-				this.getOwnerComponent().loadVersionInfo().then(function () {
-					bSupportsSWA = this.getModel("versionData").getProperty("/supportsSWA");
-					bHasConsentUseSWA = this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING) === "1";
-
-					if (bSupportsSWA && bHasConsentUseSWA) {
-						this._oConfigUtil.enableUsageTracking();
-					}
-
-				}.bind(this));
-
 				this.getOwnerComponent().loadMessagesInfo().then(function (data) {
 					if (data) {
 						this._updateMessagesModel(data);
@@ -225,6 +216,8 @@ sap.ui.define([
 						this.byId("searchControl")._toggleOpen(true);
 					}
 				}.bind(this));
+
+			oComponent.getCookiesManagement().enable(oComponent.getRootControl());
 
 			},
 
@@ -249,21 +242,12 @@ sap.ui.define([
 			},
 
 			onAfterRendering: function() {
-				var bSupportsSWA;
 				// apply content density mode to the body tag
 				// in order to get the controls in the static area styled correctly,
 				// such as Dialog and Popover.
 				jQuery(document.body).addClass(this.getOwnerComponent().getContentDensityClass());
 
 				Device.orientation.attachHandler(this._onOrientationChange, this);
-
-				if (this._oConfigUtil.getCookieValue(this._oCookieNames.APPROVAL_REQUESTED) !== "1") {
-					bSupportsSWA = this.getModel("versionData").getProperty("/supportsSWA");
-					this.cookieSettingsDialogOpen({
-						showCookieDetails: false,
-						supportsUsageTracking: bSupportsSWA
-					});
-				}
 			},
 
 			onExit: function() {
@@ -366,7 +350,7 @@ sap.ui.define([
 				} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 					this.settingsDialogOpen();
 				} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
-					this.cookieSettingsDialogOpen({ showCookieDetails: true });
+					this.getOwnerComponent().getCookiesManagement().cookieSettingsDialogOpen({ showCookieDetails: true }, this.getView());
 				} else if (sTargetText === CHANGE_VERSION_TEXT) {
 					this.onChangeVersionButtonPress();
 				} else if (DEMOKIT_APPEARANCE[sTargetText]) {
@@ -812,31 +796,6 @@ sap.ui.define([
 						oModel.setProperty("/langs", result);
 					});
 				}
-			},
-
-			/**
-			 * Opens the cookie settings dialog
-			 * @public
-			 */
-			cookieSettingsDialogOpen: function (oOptions) {
-				this.getCookieSettingsController().then(function(oController) {
-					oController.openCookieSettingsDialog(this._oConfigUtil, this.getView(), oOptions);
-				}.bind(this));
-			},
-
-			/**
-			 * Obtains the controller and creates it if no instance created yet
-			 * @returns {Promise<any>}
-			 */
-			getCookieSettingsController: function() {
-				if (!this.oCookieSettingsControllerPromise) {
-					this.oCookieSettingsControllerPromise = new Promise(function(resolve, reject) {
-						Controller.create({name: "sap.ui.documentation.sdk.controller.CookieSettingsDialog"}).then(function(oController) {
-							resolve(oController);
-						});
-					});
-				}
-				return this.oCookieSettingsControllerPromise;
 			},
 
 			/**
