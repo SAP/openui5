@@ -35,7 +35,7 @@ sap.ui.define([
 						type: 'sap.ui.model.type.Integer',
 						formatOptions: oFormatter
 					},
-					editable: { path: 'currentSettings>editable' }
+					editable: oConfig.editable
 				}
 			};
 		}

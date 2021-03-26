@@ -31,7 +31,7 @@ sap.ui.define([
 				type: CheckBox,
 				settings: {
 					selected: { path: 'currentSettings>value' },
-					editable: { path: 'currentSettings>editable' }
+					editable: oConfig.editable
 				}
 			};
 			oConfig.withLabel = true;

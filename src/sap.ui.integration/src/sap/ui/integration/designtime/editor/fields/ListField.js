@@ -49,7 +49,7 @@ sap.ui.define([
 							selectedKeys: {
 								path: 'currentSettings>value'
 							},
-							editable: { path: 'currentSettings>editable' },
+							editable: oConfig.editable,
 							showSecondaryValues: true,
 							width: "100%",
 							items: {

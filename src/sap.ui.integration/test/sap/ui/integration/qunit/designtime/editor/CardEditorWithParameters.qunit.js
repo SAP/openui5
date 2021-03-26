@@ -399,6 +399,64 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
+
+		QUnit.test("Editable value binding to expression (return value: false)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/editable", "type": "List", "configuration": { "parameters": { "editableValue": { "value": false },  "boolean": { "value": true }} } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field");
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[4].getAggregation("_field");
+					var oField3 = this.oCardEditor.getAggregation("_formContent")[6].getAggregation("_field");
+					var oField4 = this.oCardEditor.getAggregation("_formContent")[8].getAggregation("_field");
+					var oField5 = this.oCardEditor.getAggregation("_formContent")[10].getAggregation("_field");
+					var oField6 = this.oCardEditor.getAggregation("_formContent")[12].getAggregation("_field");
+					var oField7 = this.oCardEditor.getAggregation("_formContent")[14].getAggregation("_field");
+					var oField8 = this.oCardEditor.getAggregation("_formContent")[16].getAggregation("_field");
+					var oField9 = this.oCardEditor.getAggregation("_formContent")[18].getAggregation("_field");
+					assert.ok(oField1.getEditable(), "The field is editable.");
+					assert.ok(!oField1.getSelected(), "The field is not selected.");
+					assert.ok(!oField2.getEditable(), "The field is uneditable.");
+					assert.ok(!oField3.getEditable(), "The field is uneditable.");
+					assert.ok(!oField4.getEditable(), "The field is uneditable.");
+					assert.ok(!oField5.getEditable(), "The field is uneditable.");
+					assert.ok(!oField6.getEnabled(), "The field is uneditable.");
+					assert.ok(!oField7.getEditable(), "The field is uneditable.");
+					assert.ok(!oField8.getEditable(), "The field is uneditable.");
+					assert.ok(!oField9.getEditable(), "The field is uneditable.");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Editable value binding to expression (return value: true)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/editable", "type": "List", "configuration": { "parameters": { "editableValue": { "value": true },  "boolean": { "value": false }} } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field");
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[4].getAggregation("_field");
+					var oField3 = this.oCardEditor.getAggregation("_formContent")[6].getAggregation("_field");
+					var oField4 = this.oCardEditor.getAggregation("_formContent")[8].getAggregation("_field");
+					var oField5 = this.oCardEditor.getAggregation("_formContent")[10].getAggregation("_field");
+					var oField6 = this.oCardEditor.getAggregation("_formContent")[12].getAggregation("_field");
+					var oField7 = this.oCardEditor.getAggregation("_formContent")[14].getAggregation("_field");
+					var oField8 = this.oCardEditor.getAggregation("_formContent")[16].getAggregation("_field");
+					var oField9 = this.oCardEditor.getAggregation("_formContent")[18].getAggregation("_field");
+					assert.ok(oField1.getEditable(), "The field is editable.");
+					assert.ok(oField1.getSelected(), "The field is selected.");
+					assert.ok(oField2.getEditable(), "The field is editable.");
+					assert.ok(oField3.getEditable(), "The field is editable.");
+					assert.ok(oField4.getEditable(), "The field is editable.");
+					assert.ok(oField5.getEditable(), "The field is editable.");
+					assert.ok(oField6.getEnabled(), "The field is editable.");
+					assert.ok(oField7.getEditable(), "The field is editable.");
+					assert.ok(oField8.getEditable(), "The field is editable.");
+					assert.ok(oField9.getEditable(), "The field is editable.");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
 	});
 
 	QUnit.done(function () {

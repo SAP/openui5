@@ -39,7 +39,7 @@ sap.ui.define([
 						type: 'sap.ui.model.type.Date',
 						formatOptions: oformatter
 					},
-					editable: { path: 'currentSettings>editable' },
+					editable: oConfig.editable,
 					width: "16rem",
 					change: function (oEvent) {
 						if (oEvent.getParameters().valid) {

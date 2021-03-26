@@ -557,7 +557,7 @@ sap.ui.define([
 					this._visualization.type = sBuildInViz + "/" + this._visualization.type;
 					this._visualization.settings = this._visualization.settings || {
 						value: "{currentSettings>value}",
-						editable: "{currentSettings>editable}"
+						editable: oConfig.editable
 					};
 				}
 				sap.ui.require([this._visualization.type], function (f) {
