@@ -148,7 +148,7 @@ sap.ui.define([
 					return sTopicId;
 				}
 
-				return sTopicId.replace(/\.html$/, "");
+				return sTopicId.replace(/\.html[#]?[0-9a-z_]*$/, "");
 			}
 
 		});
