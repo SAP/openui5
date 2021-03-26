@@ -205,6 +205,13 @@ sap.ui.require([
 		}
 	};
 
+	var toggleXLColumns = function(oEvent) {
+		var oLayout = sap.ui.getCore().byId("L5");
+		var oItem = oEvent.getParameter("item");
+		var iColumns = parseInt(oItem.getKey());
+		oLayout.setColumnsXL(iColumns);
+	};
+
 	var toggleLayoutData2 = function(oEvent){
 		var oLayoutData;
 		var oContainer = sap.ui.getCore().byId("C3");
@@ -666,33 +673,44 @@ sap.ui.require([
 					new FormElement({
 						fields: [new ToggleButton({text: 'Field LayoutData',
 															press: toggleLayoutData,
-															layoutData: new ColumnElementData({cellsSmall: 4, cellsLarge: 4})}),
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})}),
 										 new Button("B1", {text: 'Change LayoutData',
 															press: changeLayoutData,
 															enabled: false,
-															layoutData: new ColumnElementData({cellsSmall: 4, cellsLarge: 4})}),
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})}),
 										 new ToggleButton({text: "special columns",
 															press: specialColumns,
-															layoutData: new ColumnElementData({cellsSmall: 4, cellsLarge: 4})}),
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})}),
 										 new ToggleButton({text: "move Container",
 															press: moveContainer,
-															layoutData: new ColumnElementData({cellsSmall: 4, cellsLarge: 4})}),
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})}),
 										 new ToggleButton({text: "visibility Container",
 															press: visibilityContainer,
-															layoutData: new ColumnElementData({cellsSmall: 4, cellsLarge: 4})}),
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})}),
 										 new ToggleButton({text: "new Container",
 															press: newContainer,
-															layoutData: new ColumnElementData({cellsSmall: 4, cellsLarge: 4})}),
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})}),
 										 new ToggleButton({text: "Label size",
 															press: toggleLabelSize,
-															layoutData: new ColumnElementData({cellsSmall: 4, cellsLarge: 4})}),
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})}),
 										 new ToggleButton({text: "emty cells",
 															press: toggleEmptyCells,
-															layoutData: new ColumnElementData({cellsSmall: 4, cellsLarge: 4})}),
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})}),
 										 new ToggleButton({text: "Default container size",
 															pressed: true,
 															press: toggleContainerData,
-															layoutData: new ColumnElementData({cellsSmall: 4, cellsLarge: 4})})]
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})}),
+										new SegmentedButton({
+															width: "100%",
+															selectedKey: "2",
+															tooltip: "XL columns",
+															items: [
+																new SegmentedButtonItem({key: "2", text: "2"}),
+																new SegmentedButtonItem({key: "4", text: "4"}),
+																new SegmentedButtonItem({key: "6", text: "6"})
+															],
+															selectionChange: toggleXLColumns,
+															layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 4})})]
 					}),
 					new FormElement({
 						fields: [new Button({text: 'OK', type: MLib.ButtonType.Accept}),
