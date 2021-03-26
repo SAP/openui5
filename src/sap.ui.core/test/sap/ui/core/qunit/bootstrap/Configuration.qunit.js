@@ -161,6 +161,14 @@ sap.ui.define([
 		assert.equal(this.eventsReceived, 0, "one localizationChange event should have been fired");
 	});
 
+	QUnit.test("setLanguage(fr, FR) - simple", function(assert) {
+		this.oConfig.setLanguage("fr", "fr");
+		assert.equal(this.oConfig.getLanguage(), "fr", "language still should be 'fr'");
+		assert.equal(this.oConfig.getSAPLogonLanguage(), "FR", "SAP Logon language should be 'FR'");
+		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+		assert.deepEqual(Object.keys(this.changes[0]), ['language'], "event should have reported 'language' as changed");
+	});
+
 	QUnit.test("setLanguage(de) - simple", function(assert) {
 		this.oConfig.setLanguage("de");
 		assert.equal(this.oConfig.getLanguage(), "de", "language should have changed to 'de'");
@@ -386,6 +394,7 @@ sap.ui.define([
 
 	[
 		/* URL parameter							language			languageTag 		SAP-L	Caption */
+		[ "?sap-language=en",						"en",				"en",				"EN",	"sap-language is the valid ISO language EN"],
 		[ "?sap-language=EN",						"EN",				"en",				"EN",	"sap-language is the valid ISO language EN"],
 		[ "?sap-language=ZH",						"zh-Hans",			"zh-Hans",			"ZH",	"sap-language is the known SAP language ZN"],
 		[ "?sap-language=ZF",						"zh-Hant",			"zh-Hant",			"ZF",	"sap-language is the known SAP language ZF"],
@@ -618,7 +627,7 @@ sap.ui.define([
 		assert.equal(oConfig.getSAPParam('sap-client'), 'foo', 'SAP parameter sap-client=foo');
 		assert.equal(oConfig.getSAPParam('sap-server'), 'bar', 'SAP parameter sap-server=bar');
 		assert.equal(oConfig.getSAPParam('sap-system'), 'abc', 'SAP parameter sap-system=abc');
-		assert.equal(oConfig.getSAPParam('sap-language'), 'en', 'SAP parameter sap-language=en');
+		assert.equal(oConfig.getSAPParam('sap-language'), 'EN', 'SAP parameter sap-language=en');
 
 		oConfig.destroy();
 

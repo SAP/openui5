@@ -670,11 +670,14 @@ sap.ui.define([
 		/**
 		 * Returns an SAP logon language for the current language.
 		 *
+		 * It will be returned in uppercase.
+		 * e.g. "EN", "DE"
+		 *
 		 * @return {string} The SAP logon language code for the current language
 		 * @public
 		 */
 		getSAPLogonLanguage : function () {
-			return this.sapLogonLanguage || this.language.getSAPLogonLanguage();
+			return (this.sapLogonLanguage && this.sapLogonLanguage.toUpperCase()) || this.language.getSAPLogonLanguage();
 		},
 
 		/**
