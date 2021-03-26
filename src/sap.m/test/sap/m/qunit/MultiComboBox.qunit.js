@@ -3020,6 +3020,51 @@ sap.ui.define([
 		assert.ok(oHandleTypeAheadSpy.called, "Type ahead should be called while pasting value");
 	});
 
+	QUnit.test("Paste and select behaviour", function (assert) {
+		if (Device.browser.internet_explorer) {
+			assert.ok(true, "Skip this test for IE as window.clipboardData cannot be mocked there");
+			return;
+		}
+
+		var oMultiComboBox = new MultiComboBox({
+			items: [new Item({
+				key: "DZ",
+				text: "Algeria"
+			})]
+		}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.syncPickerContent();
+		sap.ui.getCore().applyChanges();
+
+		var oEventStub = this.stub({
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			},
+			originalEvent: {
+				clipboardData: {
+					getData: function () {
+						return "Algeria\n";
+					}
+				}
+			}
+		});
+
+		// Act
+		window.clipboardData = null;
+		oMultiComboBox.onpaste(oEventStub);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Should have one selected item");
+		assert.strictEqual(oMultiComboBox.getValue(), "", "Input's value should be empty");
+		assert.ok(oEventStub.stopPropagation.calledOnce, "Value paste should have been prevented");
+
+		// Cleanup
+		oMultiComboBox.destroy();
+	});
+
 
 	QUnit.test("Focus out cleanup", function (assert) {
 		// Arrange
