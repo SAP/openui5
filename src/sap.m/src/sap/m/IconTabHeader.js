@@ -127,9 +127,8 @@ sap.ui.define([
 			/**
 			 * Specifies the background color of the header.
 			 *
-			 * Depending on the theme, you can change the state of
-			 * the background color to "Solid", "Translucent", or "Transparent".
-			 * Default is "Solid".
+			 * Depending on the theme, you can change the state of the background color to "Solid", "Translucent", or "Transparent".
+			 * <b>Note:</b> In SAP Belize Deep (sap_belize_plus) theme this property should be set to "Solid".
 			 * @since 1.44
 			 */
 			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
