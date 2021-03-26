@@ -2198,6 +2198,8 @@ function(
 	 */
 	MultiComboBox.prototype.onpaste = function (oEvent) {
 		var sOriginalText;
+		var bItemSelected = false;
+		var aSelectedItems = this.getSelectedItems();
 
 		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
 		if (window.clipboardData) {
@@ -2207,26 +2209,36 @@ function(
 		} else {
 
 			// Chrome, Firefox, Safari
-			sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
+			sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 		}
 
 		var aSeparatedText = this._oTokenizer._parseString(sOriginalText);
 
 		if (aSeparatedText && aSeparatedText.length > 0) {
-			this.getSelectableItems().forEach(function(oItem) {
+			this.getSelectableItems()
+				.filter(function (oItem) {
+					return aSelectedItems.indexOf(oItem) === -1;
+				})
+				.forEach(function (oItem) {
+					if (aSeparatedText.indexOf(oItem.getText()) > -1) {
+						bItemSelected = true;
 
-				if (aSeparatedText.indexOf(oItem.getText()) > -1) {
-					this.setSelection({
-						item: oItem,
-						id: oItem.getId(),
-						key: oItem.getKey(),
-						fireChangeEvent: true,
-						fireFinishEvent: true,
-						suppressInvalidate: true,
-						listItemUpdated: false
-					});
-				}
-			}, this);
+						this.setSelection({
+							item: oItem,
+							id: oItem.getId(),
+							key: oItem.getKey(),
+							fireChangeEvent: true,
+							fireFinishEvent: true,
+							suppressInvalidate: true,
+							listItemUpdated: false
+						});
+					}
+				}, this);
+		}
+
+		if (bItemSelected) {
+			oEvent.stopPropagation();
+			oEvent.preventDefault();
 		}
 	};
 
