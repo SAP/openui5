@@ -674,6 +674,8 @@ sap.ui.define([
 		this.addAggregation("items", oItem);
 
 		this._invalidateParentIconTabBar();
+
+		return this;
 	};
 
 	IconTabHeader.prototype.insertItem = function (oItem, iIndex) {

@@ -60,6 +60,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.IconColor
 	var IconColor = coreLibrary.IconColor;
 
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
 	createAndAppendDiv("content");
 
 
@@ -4156,6 +4159,39 @@ sap.ui.define([
 		oFireSelectionChangeSpy.restore();
 		oSetSelectedItemSpy.restore();
 		oITB.destroy();
+	});
+
+	QUnit.module("Text Direction", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader();
+			this.oITH.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Text direction of tabs in the strip", function (assert) {
+		// Arrange
+		var oFilter1 = new IconTabFilter({
+				text: "filter1",
+				textDirection: TextDirection.LTR
+			}),
+			oFilter2 = new IconTabFilter({
+				text: "filter1",
+				textDirection: TextDirection.RTL
+			}),
+			oFilter3 = new IconTabFilter({
+				text: "filter1",
+				textDirection: TextDirection.Inherit
+			});
+		this.oITH.addItem(oFilter1).addItem(oFilter2).addItem(oFilter3);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oFilter1.$().find(".sapMITHTextContent").attr("dir"), "ltr", "'dir' attribute is correctly set");
+		assert.strictEqual(oFilter2.$().find(".sapMITHTextContent").attr("dir"), "rtl", "'dir' attribute is correctly set");
+		assert.strictEqual(oFilter3.$().find(".sapMITHTextContent").attr("dir"), "auto", "'dir' attribute is correctly set");
 	});
 
 });
