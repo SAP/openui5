@@ -272,9 +272,9 @@ sap.ui.define([
 				}
 			break;
 
-			case "sapnext": {
+			case "sapnext":
 				if (oItem.isA("sap.ui.table.Column") && this._getMaxConditions() === 1) {
-					var oItem = this._getTableItems(false, true)[0];
+					oItem = this._getTableItems(false, true)[0];
 					if (oItem) {
 						var oValue = this._getDataFromItem(oItem);
 						if (oValue) {
@@ -285,7 +285,7 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			break;
 
 		default:
 			break;
