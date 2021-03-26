@@ -317,18 +317,31 @@ sap.ui.define([
 		var sAggregationName = oActionToolbarAction.getLayoutInformation().aggregationName;
 		var sAlignment = oActionToolbarAction.getLayoutInformation().alignment;
 		var aAggregation = this.getAggregation(sAggregationName);
-		if (!this._aActions.includes(oActionToolbarAction)) {
-			this._aActions.push(oActionToolbarAction);
-		}
+		var aActionsInAggregation;
+		var oLastAddedAction;
+		var iActionIndex = 0;
+
 		if (sAlignment === ActionToolbarActionAlignment.End) {
 			if (!this._aggregationContainsActionSeparatorBefore(sAggregationName)) {
 				this.addAggregation(sAggregationName, oActionToolbarAction.getSeparatorBefore());
 			}
 			this.addAggregation(sAggregationName, oActionToolbarAction);
+			if (!this._aActions.includes(oActionToolbarAction)) {
+				this._aActions.push(oActionToolbarAction);
+			}
 		} else if (sAlignment === ActionToolbarActionAlignment.Begin && aAggregation[0] !== oActionToolbarAction) {
-			this.insertAggregation(sAggregationName, oActionToolbarAction, 0);
+			aActionsInAggregation = this._getActionsInAggregationWithAlignment(sAggregationName, sAlignment);
+			if (aActionsInAggregation.length) {
+				oLastAddedAction = aActionsInAggregation[aActionsInAggregation.length - 1];
+				iActionIndex = this.indexOfAggregation(sAggregationName, oLastAddedAction) + 1;
+			}
+			this.insertAggregation(sAggregationName, oActionToolbarAction, iActionIndex);
+
 			if (!this._aggregationContainsActionSeparatorAfter(sAggregationName)) {
-				this.insertAggregation(sAggregationName, oActionToolbarAction.getSeparatorAfter(), 1);
+				this.insertAggregation(sAggregationName, oActionToolbarAction.getSeparatorAfter(), iActionIndex + 1);
+			}
+			if (!this._aActions.includes(oActionToolbarAction)) {
+				this._aActions.push(oActionToolbarAction);
 			}
 		}
 		oActionToolbarAction.updateSeparators();
@@ -354,6 +367,12 @@ sap.ui.define([
 	ActionToolbar.prototype._getActionsInAggregation = function (sAggregationName) {
 		return this._aActions.filter(function(oAction) {
 			return oAction.getLayoutInformation().aggregationName === sAggregationName && !oAction.bIsDestroyed;
+		});
+	};
+
+	ActionToolbar.prototype._getActionsInAggregationWithAlignment = function(sAggregationName, sAlignment) {
+		return this._getActionsInAggregation(sAggregationName).filter(function(oAction) {
+			return oAction.getLayoutInformation().alignment === sAlignment;
 		});
 	};
 
