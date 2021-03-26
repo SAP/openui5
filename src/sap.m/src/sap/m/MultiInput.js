@@ -9,6 +9,7 @@ sap.ui.define([
 	'./Token',
 	'./library',
 	'sap/ui/core/EnabledPropagator',
+	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/Device',
 	'./Popover',
@@ -35,6 +36,7 @@ function(
 	Token,
 	library,
 	EnabledPropagator,
+	ManagedObject,
 	ManagedObjectMetadata,
 	Device,
 	Popover,
@@ -451,7 +453,7 @@ function(
 			item = eventArgs.getParameter("selectedItem");
 			if (item) {
 				token = new Token({
-					text: item.getText(),
+					text: ManagedObject.escapeSettingsValue(item.getText()),
 					key: item.getKey()
 				});
 			}
@@ -881,7 +883,7 @@ function(
 
 		if (item && item.getText && item.getKey) {
 			token = new Token({
-				text : item.getText(),
+				text : ManagedObject.escapeSettingsValue(item.getText()),
 				key : item.getKey()
 			});
 		}
@@ -1188,7 +1190,7 @@ function(
 		var token = null;
 		if (item && item.getText && item.getKey) {
 			token = new Token({
-				text: item.getText(),
+				text: ManagedObject.escapeSettingsValue(item.getText()),
 				key: item.getKey()
 			});
 
