@@ -8,7 +8,7 @@
 			<pages>
 				<Page title="{i18n>homePageTitle}">
 					<content>
-						<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.HelloPanel"/>
+						<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.HelloPanel" async="true"/>
 					</content>
 				</Page>
 			</pages>
