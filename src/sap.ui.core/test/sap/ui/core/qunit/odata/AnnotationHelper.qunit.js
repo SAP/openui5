@@ -309,6 +309,16 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 						</If>\
 					</PropertyValue>\
 				</Record>\
+				<!-- odata.concat w/ strings and single path -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+					<PropertyValue Property="Value">\
+						<Apply Function="odata.concat">\
+							<String>Business Partner(ID=</String>\
+							<Path>BusinessPartnerID</Path>\
+							<String>)</String>\
+						</Apply>\
+					</PropertyValue>\
+				</Record>\
 			</Collection>\
 		</Annotation>\
 	</Annotations>\
@@ -1985,19 +1995,31 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	QUnit.test("createPropertySetting: some basics", function (assert) {
 		// see sap.ui.base.BindingParser: makeSimpleBindingInfo
 		assert.deepEqual(AnnotationHelper.createPropertySetting(["{/foo/bar}"]), {
-			path : "/foo/bar"
+			formatter : undefined,
+			parts : [{
+				path : "/foo/bar"
+			}]
 		}, "{/foo/bar}");
 		assert.deepEqual(AnnotationHelper.createPropertySetting(["{meta>foo/bar}"]), {
-			model : "meta",
-			path : "foo/bar"
+			formatter : undefined,
+			parts : [{
+				model : "meta",
+				path : "foo/bar"
+			}]
 		}, "{meta>foo/bar}");
 
 		// complex binding syntax
 		assert.deepEqual(AnnotationHelper.createPropertySetting(["{path:'foo/bar'}"]), {
-			path : "foo/bar"
+			formatter : undefined,
+			parts : [{
+				path : "foo/bar"
+			}]
 		}, "{path:'foo/bar'}");
 		assert.deepEqual(AnnotationHelper.createPropertySetting(["{path:'meta>/foo/bar'}"]), {
-			path : "meta>/foo/bar"
+			formatter : undefined,
+			parts : [{
+				path : "meta>/foo/bar"
+			}]
 		}, "{path:'meta>/foo/bar'}");
 	});
 
@@ -2012,10 +2034,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		this.checkSingle(assert, "{path : 'model>/foo', formatter : 'foo.Helper.help'}", "_hello_");
 		this.checkSingle(assert, "{model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
 			"_world_");
-
-		// Note: formatters inside parts are not supported!
-//		this.checkSingle(assert, "{parts : [{path : '/foo', formatter : 'foo.Helper.help'}]}",
-//			"_hello_");
+		this.checkSingle(assert, "{parts : [{path : '/foo', formatter : 'foo.Helper.help'}]}",
+			"_hello_");
 	});
 
 	//*********************************************************************************************
@@ -2166,5 +2186,98 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		}, new Error("Function name(s) foo, bar not found"), "Function name(s) not found");
 	});
 
-	//TODO implement (and document?) "ui5object" as marker property for constant objects?
+	//*********************************************************************************************
+	QUnit.test("createPropertySetting: odata.concat w/ strings and single path", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
+			var oModel = new JSONModel({BusinessPartnerID : "0815"}),
+				oControl = new TestControl({
+					models : oModel,
+					bindingContexts : oModel.createBindingContext("/")
+				}),
+				sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/9/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath),
+				sBinding = format(oRawValue, oCurrentContext),
+				oBindingInfo;
+
+			assert.strictEqual(sBinding, "Business Partner(ID="
+				+ "{path:'BusinessPartnerID',type:'sap.ui.model.odata.type.String'"
+				+ ",constraints:{'maxLength':'10','nullable':'false'}})");
+
+			// code under test
+			oBindingInfo = AnnotationHelper.createPropertySetting([sBinding]);
+
+			assert.deepEqual(Object.keys(oBindingInfo), ["formatter", "parts"]);
+			assert.strictEqual(oBindingInfo.parts.length, 1);
+			assert.deepEqual(Object.keys(oBindingInfo.parts[0]), ["path", "type"]);
+			oControl.applySettings({"text" : oBindingInfo});
+			assert.strictEqual(oControl.getText(), "Business Partner(ID=0815)");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createPropertySetting: single part, but two formatters", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
+			var oModel = new JSONModel({BusinessPartnerID : "0815"}),
+				oControl = new TestControl({
+					models : oModel,
+					bindingContexts : oModel.createBindingContext("/")
+				}),
+				sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/9/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath),
+				sBinding = format(oRawValue, oCurrentContext),
+				oBindingInfo;
+
+			function help(oRawValue) {
+				assert.strictEqual(this, oControl, "'this' is kept");
+				return "_" + oRawValue + "_";
+			}
+
+			assert.strictEqual(sBinding, "Business Partner(ID="
+				+ "{path:'BusinessPartnerID',type:'sap.ui.model.odata.type.String'"
+				+ ",constraints:{'maxLength':'10','nullable':'false'}})");
+
+			// code under test
+			oBindingInfo = AnnotationHelper.createPropertySetting([sBinding], help);
+
+			assert.deepEqual(Object.keys(oBindingInfo), ["formatter", "parts"]);
+			assert.strictEqual(oBindingInfo.parts.length, 1);
+			assert.deepEqual(Object.keys(oBindingInfo.parts[0]), ["path", "type"]);
+			oControl.applySettings({"text" : oBindingInfo});
+			assert.strictEqual(oControl.getText(), "_Business Partner(ID=0815)_");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createPropertySetting: two formatters reduced to one", function (assert) {
+		var oBindingInfo,
+			oControl = this.oControl,
+			aParts = [{
+				formatter : window.foo.Helper.help,
+				model : "model",
+				path : "/foo"
+			}];
+
+		// code under test
+		oBindingInfo = AnnotationHelper.createPropertySetting(aParts, this.formatter);
+
+		assert.deepEqual(aParts[0], {
+			formatter : window.foo.Helper.help,
+			model : "model",
+			path : "/foo"
+		}, "array argument unchanged");
+		assert.deepEqual(Object.keys(oBindingInfo), ["formatter", "parts"]);
+		assert.strictEqual(oBindingInfo.parts.length, 1);
+		assert.deepEqual(Object.keys(oBindingInfo.parts[0]), ["model", "path"]);
+
+		// (code under test)
+		oControl.applySettings({"text" : oBindingInfo});
+
+		assert.strictEqual(oControl.getText(), JSON.stringify(["_hello_"]));
+		assert.strictEqual(oBindingInfo.parts[0].mode, "OneWay", "determined by #applySettings");
+	});
 });
+//TODO implement (and document?) "ui5object" as marker property for constant objects?
