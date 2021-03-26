@@ -87,15 +87,18 @@ sap.ui.define([
 
 		_createOverlay: function (oGridControl, oRoot, bIsMain) {
 			var oInstance = {};
-			var oGridDomRef = this._findGridWithinElement(oGridControl.getDomRef());
+			var oGridDomRef = this._findGridWithinElement(oGridControl.getDomRef()),
+				oGridRect = oGridDomRef.getBoundingClientRect(),
+				oRootDomRef = oRoot.getDomRef(),
+				oRootRect = oRootDomRef.getBoundingClientRect();
 
 			oInstance.oGridControl = oGridControl;
 			oInstance.oWrapper = document.createElement("div");
 			oInstance.oWrapper.classList.add("sapSampleRevealGridWrapper");
-			oInstance.oWrapper.style.top = oGridControl.getDomRef().offsetTop + oGridControl.getDomRef().parentNode.offsetTop + "px";
-			oInstance.oWrapper.style.left = oGridControl.getDomRef().offsetLeft + oGridControl.getDomRef().parentNode.offsetLeft + "px";
+			oInstance.oWrapper.style.top = oGridRect.top - oRootRect.top + "px";
+			oInstance.oWrapper.style.left = oGridRect.left - oRootRect.left + "px";
 
-			oRoot.getDomRef().prepend(oInstance.oWrapper);
+			oRootDomRef.prepend(oInstance.oWrapper);
 
 			oInstance.oOverlay = oGridDomRef.cloneNode();
 			oInstance.oOverlay.id += "-overlay";
@@ -114,16 +117,18 @@ sap.ui.define([
 				},
 
 				onAfterRendering: function () {
-					var oGridDomRef = this._findGridWithinElement(oInstance.oGridControl.getDomRef());
+					var oGridDomRef = this._findGridWithinElement(oInstance.oGridControl.getDomRef()),
+						oGridRect = oGridDomRef.getBoundingClientRect(),
+						oRootDomRef = oRoot.getDomRef(),
+						oRootRect = oRootDomRef.getBoundingClientRect();
+
 					this._fillOverlayGrid(oInstance.oOverlay, oGridDomRef, bIsMain);
 					this._cloneGridStyle(oInstance.oOverlay, oGridDomRef);
 					// reattach overlay on newly rendered grid control
 
-					var oGridControl = oInstance.oGridControl;
-
-					oRoot.getDomRef().prepend(oInstance.oWrapper);
-					oInstance.oWrapper.style.top = oGridControl.getDomRef().offsetTop + oGridControl.getDomRef().parentNode.offsetTop + "px";
-					oInstance.oWrapper.style.left = oGridControl.getDomRef().offsetLeft + oGridControl.getDomRef().parentNode.offsetLeft + "px";
+					oRootDomRef.prepend(oInstance.oWrapper);
+					oInstance.oWrapper.style.top = oGridRect.top - oRootRect.top + "px";
+					oInstance.oWrapper.style.left = oGridRect.left - oRootRect.left + "px";
 				}
 			};
 			oGridControl.addDelegate(oInstance.oDelegate, false, this);
