@@ -913,6 +913,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("registration", function(assert) {
+		var logSpyError = this.spy(Log, "error");
+
 		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, jQuery.noop, false);
 		XMLView.registerPreprocessor(XMLView.PreprocessorType.VIEWXML, jQuery.noop, false);
 		XMLView.registerPreprocessor(XMLView.PreprocessorType.CONTROLS, jQuery.noop, false);
@@ -920,9 +922,33 @@ sap.ui.define([
 		assert.strictEqual(View._mPreprocessors["XML"]["xml"][1].preprocessor, jQuery.noop, "Registration for xml successful");
 		assert.strictEqual(View._mPreprocessors["XML"]["viewxml"][0].preprocessor, jQuery.noop, "Registration for viewxml successful");
 		assert.strictEqual(View._mPreprocessors["XML"]["controls"][0].preprocessor, jQuery.noop, "Registration for content successful");
-		assert.throws(XMLView.registerPreprocessor("unknown", jQuery.noop, false, {type: "unknown"}), "Error thrown when registering invalid type");
-		assert.throws(XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, jQuery.noop, false, true), "Error thrown when registering more than one ondemand pp");
+
+		logSpyError.resetHistory();
+		XMLView.registerPreprocessor("unknown", jQuery.noop, false, {type: "unknown"});
+		assert.ok(
+			logSpyError.calledWith(sinon.match(/could not be registered due to unknown/)),
+			"Error logged when registering invalid type");
 		assert.strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
+
+		logSpyError.resetHistory();
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, jQuery.noop, false, true);
+		assert.ok(
+			logSpyError.calledWith(sinon.match(/only one on-demand-preprocessor allowed/)),
+			"Error logged when registering more than one ondemand pp");
+		assert.strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
+
+		// explicitly providing view type "XML" does not fail
+		var fnUniquePP = function() {};
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, fnUniquePP, "XML", false);
+		assert.ok(Array.isArray(View._mPreprocessors["XML"]["xml"]) &&
+			View._mPreprocessors["XML"]["xml"].some(function(entry) {
+				return entry.preprocessor === fnUniquePP;
+			}), "Preprocessor call passed through to View");
+
+		// explicitly providing an unsupported type fails
+		assert.throws(function() {
+			XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, fnUniquePP, "YAML", false);
+		}, TypeError, "TypeError thrown when registering for a view type other than XML");
 	});
 
 	QUnit.test("sync / no execution", function(assert) {
