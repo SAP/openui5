@@ -14,6 +14,12 @@ sap.ui.define([
 			library: "sap.ui.mdc"
 		},
 		constructor: function(oMDCChart) {
+
+			if (!oMDCChart) {
+				OverflowToolbarButton.apply(this);
+				return;
+			}
+
 			this.oMDCChartModel = oMDCChart.getManagedObjectModel();
 			var mSettings = {
 				type: "Transparent",
