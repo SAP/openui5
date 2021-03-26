@@ -811,7 +811,7 @@ function(
 
 		if (item && item.getText && item.getKey) {
 			token = new Token({
-				text : item.getText(),
+				text : ManagedObject.escapeSettingsValue(item.getText()),
 				key : item.getKey()
 			});
 		}
@@ -1125,7 +1125,7 @@ function(
 		var token = null;
 		if (item && item.getText && item.getKey) {
 			token = new Token({
-				text: item.getText(),
+				text: ManagedObject.escapeSettingsValue(item.getText()),
 				key: item.getKey()
 			});
 		}
