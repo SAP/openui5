@@ -109,11 +109,14 @@
 				"stringWithRequestList": {
 					"value": "key1"
 				},
-				"stringWithRequestExtentionList": {
+				"stringWithRequestExtensionList": {
 					"value": "Quality Management"
 				},
+				"stringWithDataFromExtensionList": {
+					"value": ""
+				},
 				"stringWithRequestDestinationList": {
-					"value": "key1"
+					"value": ""
 				},
 				"stringArray": {
 					"value": [
@@ -227,13 +230,13 @@
 				"backgroundColor": ""
 			}
 		},
-		"data1": {
+		"data": {
 			"extension": {
 				"method": "getData"
 			},
 			"path": "/values"
 		},
-		"data": {
+		"data1": {
 			"request": {
 				"url": "{{destinations.northwind}}/Customers",
 				"parameters": {
@@ -243,14 +246,14 @@
 			"path": "/value"
 		},
 		"content": {
-			"item": {
+			"item1": {
 				"title": "{CustomerID}",
 				"description": "Trainer: {CompanyName}",
 				"info": {
 					"value": "Location: {Country} - {City} - {Address}"
 				}
 			},
-			"item1": {
+			"item": {
 				"title": "{title}",
 				"description": "Trainer: {trainer}",
 				"info": {

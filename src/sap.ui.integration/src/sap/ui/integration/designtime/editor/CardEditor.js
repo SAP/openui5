@@ -1094,78 +1094,92 @@ sap.ui.define([
 	 * @param {BaseField} oField
 	 */
 	CardEditor.prototype._addValueListModel = function (oConfig, oField, bIgnore) {
-		if (oConfig.values && oConfig.values.data && this._oProviderCard && this._oProviderCard._oDataProviderFactory) {
-			var oValueModel = oField.getModel();
-			if (!oValueModel) {
-				oValueModel = new JSONModel({});
-				oField.setModel(oValueModel, undefined);
-			}
-			var oDataProvider = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data);
-			oDataProvider.bindObject({
-				path: "items>/form/items"
-			});
-			oDataProvider.bindObject({
-				path: "currentSettings>" + oConfig._settingspath
-			});
-			var oPromise = oDataProvider.getData();
-			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
-			oPromise.then(function (oData) {
-				if (oConfig._cancel) {
-					oConfig._values = [];
-					return;
-				}
-				//add group property "Selected" to each record for MultiComboBox in ListField
-				if (oConfig.type === "string[]") {
-					var sPath = oConfig.values.data.path;
-					if (sPath && sPath !== "/") {
-						if (sPath.startsWith("/")) {
-							sPath = sPath.substring(1);
+		if (oConfig.values) {
+			var oValueModel;
+			if (oConfig.values.data) {
+				if (this._oProviderCard && this._oProviderCard._oDataProviderFactory) {
+					oValueModel = oField.getModel();
+					if (!oValueModel) {
+						oValueModel = new JSONModel({});
+						oField.setModel(oValueModel, undefined);
+					}
+					var oDataProvider = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data);
+					oDataProvider.bindObject({
+						path: "items>/form/items"
+					});
+					oDataProvider.bindObject({
+						path: "currentSettings>" + oConfig._settingspath
+					});
+					var oPromise = oDataProvider.getData();
+					this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
+					oPromise.then(function (oData) {
+						if (oConfig._cancel) {
+							oConfig._values = [];
+							return;
 						}
-						if (sPath.endsWith("/")) {
-							sPath = sPath.substring(0, sPath.length - 1);
-						}
-						var aPath = sPath.split("/");
-						var oResult = ObjectPath.get(aPath, oData);
-						if (Array.isArray(oResult)) {
-							for (var n in oResult) {
-								var sKey = oField.getKeyFromItem(oResult[n]);
-								if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
-									oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
-								} else {
-									oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+						//add group property "Selected" to each record for MultiComboBox in ListField
+						if (oConfig.type === "string[]") {
+							var sPath = oConfig.values.data.path;
+							if (sPath && sPath !== "/") {
+								if (sPath.startsWith("/")) {
+									sPath = sPath.substring(1);
+								}
+								if (sPath.endsWith("/")) {
+									sPath = sPath.substring(0, sPath.length - 1);
+								}
+								var aPath = sPath.split("/");
+								var oResult = ObjectPath.get(aPath, oData);
+								if (Array.isArray(oResult)) {
+									for (var n in oResult) {
+										var sKey = oField.getKeyFromItem(oResult[n]);
+										if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
+											oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+										} else {
+											oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+										}
+									}
+									ObjectPath.set(aPath, oResult, oData);
+								}
+							} else if (Array.isArray(oData)) {
+								for (var n in oData) {
+									var sKey = oField.getKeyFromItem(oData[n]);
+									if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
+										oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+									} else {
+										oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+									}
 								}
 							}
-							ObjectPath.set(aPath, oResult, oData);
 						}
-					} else if (Array.isArray(oData)) {
-						for (var n in oData) {
-							var sKey = oField.getKeyFromItem(oData[n]);
-							if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
-								oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
-							} else {
-								oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
-							}
-						}
-					}
+						oConfig._values = oData;
+						oValueModel.setData(oData);
+						oValueModel.checkUpdate(true);
+						oValueModel.firePropertyChange();
+						this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
+					}.bind(this)).catch(function () {
+						oConfig._values = {};
+						oValueModel.setData({});
+						oValueModel.checkUpdate(true);
+						this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
+					}.bind(this));
 				}
-				oConfig._values = oData;
-				oValueModel.setData(oData);
-				oValueModel.checkUpdate(true);
-				oValueModel.firePropertyChange();
-				this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-			}.bind(this)).catch(function () {
-				oConfig._values = {};
-				oValueModel.setData({});
-				oValueModel.checkUpdate(true);
-				this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-			}.bind(this));
-
-			//in the designtime the item bindings will not use a named model, therefore we add a unnamed model for the field
-			//to carry the values, also we use the binding context to connect the given path from oConfig.values.data.path
-			//with that the result of the data request can be have also other structures.
-			oField.bindObject({
-				path: oConfig.values.data.path || "/"
-			});
+				//we use the binding context to connect the given path from oConfig.values.data.path
+				//with that the result of the data request can be have also other structures.
+				oField.bindObject({
+					path: oConfig.values.data.path || "/"
+				});
+			} else if (this._oProviderCard && this._oProviderCard.getAggregation("_extension")) {
+				//get extension data model of the current card
+				oValueModel = this._oProviderCard.getAggregation("_extension").getModel();
+				//we use the binding context to connect the given path from oConfig.values.path
+				//with that the result of the data request can be have also other structures.
+				oField.bindObject({
+					path: oConfig.values.path || "/"
+				});
+				//in the designtime the item bindings will not use a named model, therefore we add a unnamed model for the field
+				//to carry the values.
+				oField.setModel(oValueModel, undefined);
+			}
 			if (!bIgnore) {
 				var sData = JSON.stringify(oConfig.values.data);
 				if (sData) {
