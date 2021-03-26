@@ -264,6 +264,25 @@ sap.ui.define([
 		return Promise.all(aLoadLibraryPromises);
 	}
 
+	function handleExtensibility(oControl, oDialog) {
+		return FieldExtensibility.onControlSelected(oControl)
+
+		.then(function() {
+			return Promise.all([
+				Utils.isServiceUpToDate(oControl),
+				FieldExtensibility.isExtensibilityEnabled(oControl)
+			]);
+		})
+
+		.then(function(aResult) {
+			var bExtensibilityEnabled = !!aResult[1];
+			oDialog._oCustomFieldButton.setVisible(bExtensibilityEnabled);
+			if (bExtensibilityEnabled) {
+				return FieldExtensibility.getExtensionData(oControl);
+			}
+		});
+	}
+
 	/**
 	 * Constructor for a new Additional Elements Plugin.
 	 *
@@ -1039,60 +1058,45 @@ sap.ui.define([
 			}
 
 			return this._getActions(bOverlayIsSibling, oElementOverlay)
-				.then(function(mAllActions) {
-					mActions = mAllActions;
-					aPromises.push(
-						mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
-						mActions.addViaDelegate ? this.getAnalyzer().getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([]),
-						mActions.addViaCustom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.addViaCustom, mActions.aggregation) : Promise.resolve([])
-					);
 
-					if (mActions.aggregation || sControlName) {
-						this._setDialogTitle(mActions, mParents.parent, sControlName);
-					}
-				}.bind(this))
+			.then(function(mAllActions) {
+				mActions = mAllActions;
+				aPromises.push(
+					mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
+					mActions.addViaDelegate ? this.getAnalyzer().getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([]),
+					mActions.addViaCustom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.addViaCustom, mActions.aggregation) : Promise.resolve([])
+				);
 
-				.then(function() {
-					if (mActions.addViaDelegate) {
-						return Utils.isServiceUpToDate(mParents.parent);
-					}
-				})
+				if (mActions.aggregation || sControlName) {
+					this._setDialogTitle(mActions, mParents.parent, sControlName);
+				}
 
-				.then(function() {
-					if (mActions.addViaDelegate) {
-						return FieldExtensibility.isExtensibilityEnabled(mParents.parent);
-					}
-					this.getDialog()._oCustomFieldButton.setVisible(false);
-				}.bind(this))
+				if (mActions.addViaDelegate) {
+					return handleExtensibility(mParents.parent, this.getDialog());
+				}
+			}.bind(this))
 
-				.then(function(bExtensibilityEnabled) {
-					if (mActions.addViaDelegate) {
-						this.getDialog()._oCustomFieldButton.setVisible(bExtensibilityEnabled);
-						this.getDialog().setCustomFieldEnabled(false);
-						return FieldExtensibility.getExtensionData(mParents.parent);
-					}
-				}.bind(this))
+			.then(function(oExtensibilityInfo) {
+				this.getDialog().setCustomFieldEnabled(!!oExtensibilityInfo);
+				if (oExtensibilityInfo) {
+					this._oCurrentFieldExtInfo = oExtensibilityInfo;
+					this.getDialog().detachEvent("openCustomField", this._onOpenCustomField, this);
+					this.getDialog().attachEvent("openCustomField", null, this._onOpenCustomField, this);
+					return this.getDialog().addExtensionData(this._oCurrentFieldExtInfo.extensionData);
+				}
+				this.getDialog()._oCustomFieldButton.setVisible(false);
+			}.bind(this))
 
-				.then(function(oCurrentFieldExtInfo) {
-					if (oCurrentFieldExtInfo) {
-						this._oCurrentFieldExtInfo = oCurrentFieldExtInfo;
-						this.getDialog().setCustomFieldEnabled(true);
-						this.getDialog().addExtensionData(this._oCurrentFieldExtInfo.extensionData);
-						this.getDialog().detachEvent("openCustomField", this._onOpenCustomField, this);
-						this.getDialog().attachEvent("openCustomField", null, this._onOpenCustomField, this);
-					}
-				}.bind(this))
+			.then(this._combineAnalyzerResults.bind(this, aPromises))
 
-				.then(this._combineAnalyzerResults.bind(this, aPromises))
+			.then(function(aAllElements) {
+				this.setCachedElements(aAllElements, bOverlayIsSibling);
+				return aAllElements;
+			}.bind(this))
 
-				.then(function(aAllElements) {
-					this.setCachedElements(aAllElements, bOverlayIsSibling);
-					return aAllElements;
-				}.bind(this))
-
-				.catch(function(oError) {
-					throw oError;
-				});
+			.catch(function(oError) {
+				throw oError;
+			});
 		},
 
 		/**

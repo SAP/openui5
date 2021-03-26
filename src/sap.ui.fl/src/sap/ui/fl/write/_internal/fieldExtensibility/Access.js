@@ -85,6 +85,9 @@ sap.ui.define([
 		};
 	}
 
+	Access.onControlSelected = function(/* oControl */) {
+	};
+
 	/**
 	 * @inheritDoc
 	 */

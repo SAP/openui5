@@ -143,6 +143,7 @@ sap.ui.define([
 				oGroupElementOverlay.focus();
 				oGroupElementOverlay.setSelected(true);
 				// Fake Custom Fields Creation available
+				sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 				sandbox.stub(FieldExtensibility, "getExtensionData").resolves("foo");
 				// fake no Elements available
 				var oAdditionalElementsPlugin = this.oRta.getPlugins()["additionalElements"];

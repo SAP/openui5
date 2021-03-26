@@ -112,18 +112,15 @@ sap.ui.define([
 			elements: []
 		}));
 
-		this._oInitPromise = FieldExtensibility.getTexts().then(function(oFieldExtensibilityTexts) {
-			var aContent = this._createContent(oFieldExtensibilityTexts);
-			var aButtons = this._createButtons();
-			aContent.forEach(function(oContent) {
-				this._oDialog.addContent(oContent);
-			}, this);
-			aButtons.forEach(function(oButton) {
-				this._oDialog.addButton(oButton);
-			}, this);
-			this._oDialog.setInitialFocus(this._oInput);
-		}.bind(this));
-		return this._oInitPromise;
+		var aContent = this._createContent();
+		var aButtons = this._createButtons();
+		aContent.forEach(function(oContent) {
+			this._oDialog.addContent(oContent);
+		}, this);
+		aButtons.forEach(function(oButton) {
+			this._oDialog.addButton(oButton);
+		}, this);
+		this._oDialog.setInitialFocus(this._oInput);
 	};
 
 	AddElementsDialog.prototype.exit = function() {
@@ -136,7 +133,7 @@ sap.ui.define([
 	 * @returns {object} list containes inputList and oScrollContainer objects
 	 * @private
 	 */
-	AddElementsDialog.prototype._createContent = function(oFieldExtensibilityTexts) {
+	AddElementsDialog.prototype._createContent = function() {
 		// SearchField
 		this._oInput = new SearchField({
 			width: "100%",
@@ -154,7 +151,7 @@ sap.ui.define([
 		this._oCustomFieldButton = new Button({
 			text: "",
 			icon: "sap-icon://add",
-			tooltip: oFieldExtensibilityTexts.tooltip,
+			tooltip: "",
 			enabled: this.getCustomFieldEnabled(),
 			press: [this._redirectToCustomFieldCreation, this]
 		});
@@ -168,9 +165,10 @@ sap.ui.define([
 		//Business Context Display
 		this._oBCContainer = new VerticalLayout({
 			visible: this.getBusinessContextVisible(),
-			content: [new Text({
-				text: oFieldExtensibilityTexts.headerText
-			})
+			content: [
+				new Text({
+					text: ""
+				})
 			]
 		}).addStyleClass("sapUIRtaBusinessContextContainer");
 
@@ -442,6 +440,11 @@ sap.ui.define([
 		}
 		// set the container visible
 		this._setBusinessContextVisible(true);
+
+		return FieldExtensibility.getTexts().then(function(oFieldExtensibilityTexts) {
+			this._oCustomFieldButton.setTooltip(oFieldExtensibilityTexts.tooltip);
+			this._oBCContainer.getContent()[0].setText(oFieldExtensibilityTexts.headerText);
+		}.bind(this));
 	};
 
 	/**

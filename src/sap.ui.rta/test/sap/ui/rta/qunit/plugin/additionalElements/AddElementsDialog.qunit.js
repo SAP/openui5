@@ -70,10 +70,8 @@ sap.ui.define([
 			title: "hugo"
 		});
 
-		return oAddElementsDialog._oInitPromise.then(function() {
-			oAddElementsDialog.setElements(aElements);
-			return oAddElementsDialog;
-		});
+		oAddElementsDialog.setElements(aElements);
+		return oAddElementsDialog;
 	}
 
 	QUnit.module("Given that a AddElementsDialog is available...", {
@@ -82,9 +80,7 @@ sap.ui.define([
 				headerText: "extensibilityHeaderText",
 				tooltip: "extensibilityTooltip"
 			});
-			return createDialog().then(function(oAddElementsDialog) {
-				this.oAddElementsDialog = oAddElementsDialog;
-			}.bind(this));
+			this.oAddElementsDialog = createDialog();
 		},
 		afterEach: function () {
 			this.oAddElementsDialog.destroy();
