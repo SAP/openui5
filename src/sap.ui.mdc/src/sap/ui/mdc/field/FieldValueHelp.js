@@ -164,6 +164,20 @@ sap.ui.define([
 				},
 
 				/**
+				 * If this property is set to <code>true</code>, the filtering for user input is always case-sensitive.
+				 * Otherwise user input is checked case-insensitively.
+				 * If <code>$search</code> is used, this property has no effect on the <code>$search</code> request.
+				 *
+				 * If the used back-end service supports a case-insensitive search, set this property to <code>false</code>.
+				 *
+				 * @since 1.89.0
+				 */
+				caseSensitive: {
+					type: "boolean",
+					defaultValue: true
+				},
+
+				/**
 				 * Internal property to bind the OK button to enable or disable it.
 				 */
 				_enableOK: {
@@ -1005,6 +1019,9 @@ sap.ui.define([
 				// BindingContext without model cannot bring any data and might be destroyed -> ignore as request is probably outdated
 				return null;
 			}
+
+			// if backend don't support case insensitive filtering, filter case sensitive
+			bCaseSensitive = bCaseSensitive || this.getCaseSensitive();
 
 			/*
 			 * If the description should be displayed inside a Field this description will be determined using this function.
@@ -1884,7 +1901,7 @@ sap.ui.define([
 			}
 
 			var oConditionTypes = _getTypesForConditions.call(this, oConditions);
-			var oFilter = FilterConverter.createFilters( oConditions, oConditionTypes);
+			var oFilter = FilterConverter.createFilters( oConditions, oConditionTypes, undefined, this.getCaseSensitive());
 			var aFilters = [];
 			var aSearchConditions = oConditions["$search"];
 			var sSearch;

@@ -76,12 +76,13 @@ function(
 			 * @param {object} oConditions map of {@link sap.ui.mdc.condition.ConditionObject conditions}
 			 * @param {object} oConditionTypes map containing the types of the condition. Will be used to convert the values of a condition.
 			 * @param {function} [fConvert2FilterCallback] callback function
+			 * @param {boolean} [bCaseSensitive] If <code>true</code>, the filtering for search strings is case-sensitive
 			 * @returns {sap.ui.model.Filter} Filter object for filtering a {@link sap.ui.model.ListBinding ListBinding}
 			 *
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
 			 */
-			createFilters: function (oConditions, oConditionTypes, fConvert2FilterCallback) {
+			createFilters: function (oConditions, oConditionTypes, fConvert2FilterCallback, bCaseSensitive) {
 				var i, aLocalIncludeFilters, aLocalExcludeFilters, aOverallFilters = [],
 					oOperator, oFilter, oNewFilter, oCondition,	oAnyOrAllFilterParam;
 
@@ -179,7 +180,7 @@ function(
 								// $search mapping
 								var aFieldPath = $searchfilters[1].split(',');
 								for (var j = 0; j < aFieldPath.length; j++) {
-									aLocalIncludeFilters.push(new Filter({path: aFieldPath[j], operator: oFilter.sOperator, value1: oFilter.oValue1, caseSensitive: false}));
+									aLocalIncludeFilters.push(new Filter({path: aFieldPath[j], operator: oFilter.sOperator, value1: oFilter.oValue1, caseSensitive: bCaseSensitive}));
 								}
 								continue;
 							}

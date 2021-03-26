@@ -998,9 +998,9 @@ sap.ui.define([
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
-	 * @param {any} vParsedValue parsed value to be used as key
-	 * @param {boolean} bKeyAndDescription If <code>true</code> key and description are determined with one call
-	 * @param {boolean} bCaseSensitive If <code>true</code> the filtering is done case sensitive
+	 * @param {any} vParsedValue Parsed value to be used as key
+	 * @param {boolean} bKeyAndDescription If <code>true</code>, key and description are determined with one call
+	 * @param {boolean} bCaseSensitive If <code>true</code>, the filtering is case-sensitive
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key, key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *

@@ -43,7 +43,7 @@
 						<mdc:FilterBar id="booksFilterBar"  filtersChanged="onFiltersChanged" filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}' liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
 						<mdc:dependents>
 
-							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH4" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH4" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" caseSensitive="false">
 								<mdcf:filterBar>
 									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: 'Books'}}" >
 									<vhfb:filterItems>
@@ -106,7 +106,8 @@
 							<mdcf:FieldValueHelp title="Author ID" id="FH1" noDialog="false"
 								keyPath="ID" descriptionPath="name"
 								filterFields="$search"
-								showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}">
+								showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}"
+								caseSensitive="false">
 								<mdcf:collectiveSearchItems>
 									<core:Item text="Default Search Template" key="default"/>
 									<core:Item text="Search Template 1" key="template1"/>

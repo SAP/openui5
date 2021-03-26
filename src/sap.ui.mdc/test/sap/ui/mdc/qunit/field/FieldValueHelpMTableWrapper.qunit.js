@@ -1073,8 +1073,10 @@ sap.ui.define([
 			assert.ok(oResult2 instanceof Promise, "Promise returned as model is asked");
 			var oData = oModel.getData();
 			oModel.setData({
-				items:[{text: "YY", key: "Y", additionalText: "XX"},
-				       {text: "ZZ", key: "Z", additionalText: "YY"}]
+				items:[{text: "XX", key: "X", additionalText: "XXX"},
+				       {text: "xx", key: "x", additionalText: "xxx"},
+				       {text: "YY", key: "Y", additionalText: "YYY"},
+				       {text: "ZZ", key: "Z", additionalText: "ZZZ"}]
 			});
 
 			oResult.then(function(oResult) {
@@ -1082,8 +1084,8 @@ sap.ui.define([
 				assert.ok(typeof oResult === "object", "Object returned");
 				assert.equal(oResult.description, "YY", "description");
 				assert.equal(oResult.key, "Y", "key");
-				assert.deepEqual(oResult.inParameters, {additionalText: "XX"} , "in-parameters returned");
-				assert.deepEqual(oResult.outParameters, {additionalText: "XX"} , "out-parameters returned");
+				assert.deepEqual(oResult.inParameters, {additionalText: "YYY"} , "in-parameters returned");
+				assert.deepEqual(oResult.outParameters, {additionalText: "YYY"} , "out-parameters returned");
 				oFilter.destroy();
 
 				oResult2.then(function(oResult) {
@@ -1095,6 +1097,13 @@ sap.ui.define([
 					sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["zz"]);
 					assert.equal(oError.message, sError, "Error message");
 
+					// check if in case-insensitive search only one case-sensitive result exist
+					oResult = oWrapper.getKeyAndText("x", "x", undefined, undefined, false);
+					assert.ok(typeof oResult === "object", "Object returned");
+					assert.equal(oResult.description, "xx", "description");
+					assert.equal(oResult.key, "x", "key");
+					assert.deepEqual(oResult.inParameters, {additionalText: "xxx"} , "in-parameters returned");
+					assert.deepEqual(oResult.outParameters, {additionalText: "xxx"} , "out-parameters returned");
 					oModel.setData(oData);
 					fnDone();
 				});
