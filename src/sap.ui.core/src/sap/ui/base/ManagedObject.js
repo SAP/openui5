@@ -3171,7 +3171,6 @@ sap.ui.define([
 	 * object may flag any property in its metadata with <code>bindable: "bindable"</code> to additionally
 	 * provide named methods to bind and unbind the corresponding property.
 	 *
-	 *
 	 * <b>Composite Binding</b><br>
 	 * A composite property binding which combines data from multiple model paths can be declared using
 	 * the <code>parts</code> parameter instead of <code>path</code>. The <code>formatter</code> function
@@ -3191,6 +3190,15 @@ sap.ui.define([
 	 * Note that a composite binding will be forced into mode <code>OneWay</code> when one of the
 	 * binding parts is not in mode <code>TwoWay</code>.
 	 *
+	 * <b>Static Binding</b><br>
+	 * A StaticBinding allows to define static values within a <code>sap.ui.model.CompositeBinding</code>.
+	 * It behaves like a property binding but always returns the value that is stored in the binding itself.
+	 * The binding does not have a <code>sap.ui.model.Context</code>, a <code>sap.ui.model.Model</code> or
+	 * a <code>oBindingInfo.path</code>.
+	 * A StaticBinding is created when a <code>oBindingInfo.value</code> is passed instead
+	 * of a <code>oBindingInfo.path</code> or <code>oBindingInfo.parts[i].path</code>.
+	 *
+	 * Also see {@link sap.ui.model.StaticBinding StaticBinding} in the documentation.
 	 *
 	 * <b>Formatter Functions</b><br>
 	 * When a formatter function is specified for the binding or for a binding part, it will be
@@ -3212,10 +3220,12 @@ sap.ui.define([
 	 *            simple type (e.g. "string" or "int") can also be bound with this method
 	 * @param {object} oBindingInfo
 	 *            Binding information
-	 * @param {string} oBindingInfo.path
+	 * @param {string} [oBindingInfo.path]
 	 *            Path in the model to bind to, either an absolute path or relative to the binding context for the
 	 *            corresponding model; when the path contains a '&gt;' sign, the string preceding it will override
 	 *            the <code>model</code> property and the remainder after the '&gt;' will be used as binding path
+	 * @param {string} [oBindingInfo.value]
+	 *            Defines a static binding with the given value.
 	 * @param {string} [oBindingInfo.model]
 	 *            Name of the model to bind against; when <code>undefined</code> or omitted, the default model is used
 	 * @param {boolean} [oBindingInfo.suspended]
