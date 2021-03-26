@@ -186,6 +186,15 @@ sap.ui.define([
 		expectedGroup: {prop1: {}, prop2: {}},
 		expectedAggregate: {prop7: {grandTotal: true, subtotals: true}},
 		expectedGroupLevels: []
+	}, {
+		label: "Group level that isn't visible",
+		aggregationInfo: {
+			visible: ["Property7"],
+			groupLevels: ["Property3"]
+		},
+		expectedGroup: {prop1: {}, prop2: {}, prop7: {}, prop3: {additionally: ["prop4"]}},
+		expectedAggregate: {},
+		expectedGroupLevels: ["prop3"]
 	}];
 
 	aTestData.forEach(function(oData) {

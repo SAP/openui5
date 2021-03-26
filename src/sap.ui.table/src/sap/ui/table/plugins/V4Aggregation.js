@@ -231,7 +231,16 @@ sap.ui.define([
 			this._mAggregate = {};
 
 			// Find grouped and aggregated properties
-			oAggregateInfo.visible.forEach(function(sVisiblePropertyName) {
+			var aVisible = oAggregateInfo.visible.concat();	// Copy
+			if (oAggregateInfo.groupLevels) {
+				// We need to consider groupLevels as visible properties, to add them in the query properly if they have an 'additionally' property
+				oAggregateInfo.groupLevels.forEach(function(sGroupLevelName) {
+					if (aVisible.indexOf(sGroupLevelName) < 0) {
+						aVisible.push(sGroupLevelName);
+					}
+				});
+			}
+			aVisible.forEach(function(sVisiblePropertyName) {
 				var oPropertyInfo = this.findPropertyInfo(sVisiblePropertyName);
 				if (oPropertyInfo && oPropertyInfo.groupable) {
 					this._mGroup[oPropertyInfo.path] = {};
