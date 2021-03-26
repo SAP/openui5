@@ -45,11 +45,12 @@ sap.ui.define([
 	 * @public
 	 * @param {object} [oFormatOptions]
 	 *   Format options; for a list of all available options, see
-	 *   {@link sap.ui.core.format.NumberFormat.getCurrencyInstance}. If the format option
-	 *   <code>showMeasure</code> is set to <code>false</code>, model messages for the currency
-	 *   code are not propagated to the control if the corresponding binding supports the feature
-	 *   of ignoring model messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and
-	 *   the corresponding binding parameter is not set manually.
+	 *   {@link sap.ui.core.format.NumberFormat.getCurrencyInstance}. If the format options
+	 *   <code>showMeasure</code> or since 1.89.0 <code>showNumber</code> are set to
+	 *   <code>false</code>, model messages for the respective parts are not propagated to the
+	 *   control, provided the corresponding binding supports the feature of ignoring model
+	 *   messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding
+	 *   binding parameter is not set manually.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
 	 *   Only truthy values are supported; since 1.89.0
 	 * @param {object} [oFormatOptions.source]
@@ -143,7 +144,8 @@ sap.ui.define([
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
 				vResult = this.oOutputFormat.parse(sValue);
-				if (!Array.isArray(vResult) || isNaN(vResult[0])) {
+				if (!Array.isArray(vResult)
+						|| this.oFormatOptions.showNumber !== false && isNaN(vResult[0])) {
 					throw this._createInvalidUnitParseException();
 				}
 				break;
@@ -253,7 +255,9 @@ sap.ui.define([
 	 * supports this feature, see {@link sap.ui.model.Binding#supportsIgnoreMessages}. If the format
 	 * option <code>showMeasure</code> is set to <code>false</code> and the currency value is not
 	 * shown in the control, the part for the currency code shall not propagate model messages to
-	 * the control.
+	 * the control. Analogously, since 1.89.0, if the format option <code>showNumber</code> is set
+	 * to <code>false</code>, the amount is not shown in the control and the part for the amount
+	 * shall not propagate model messages to the control.
 	 *
 	 * @return {number[]}
 	 *   An array of indices that determine which parts of this type shall not propagate their model
@@ -267,6 +271,8 @@ sap.ui.define([
 	Currency.prototype.getPartsIgnoringMessages = function () {
 		if (this.oFormatOptions.showMeasure === false) {
 			return [1];
+		} else if (this.oFormatOptions.showNumber === false) {
+			return [0];
 		}
 		return [];
 	};

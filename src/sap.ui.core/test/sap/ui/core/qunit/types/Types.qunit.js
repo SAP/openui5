@@ -188,6 +188,24 @@ sap.ui.define([
 		assert.throws(function () { currencyType.parseValue("test", "string"); }, checkParseException, "parse test");
 	});
 
+	QUnit.test("parseValue: format option 'showNumber'; only enter the currency", function (assert) {
+		TestUtils.withNormalizedMessages(function () {
+			assert.throws(function () {
+				// code under test
+				new CurrencyType().parseValue("USD", "string");
+			}, new ParseException("Currency.Invalid"));
+
+			assert.throws(function () {
+				// code under test
+				new CurrencyType({showNumber : true}).parseValue("USD", "string");
+			}, new ParseException("Currency.Invalid"));
+		});
+
+		// code under test
+		assert.deepEqual(new CurrencyType({showNumber : false}).parseValue("USD", "string"),
+			[undefined, "USD"]);
+	});
+
 	QUnit.test("currency validateValue", function (assert) {
 		var currencyType,
 			oLogMock = this.mock(Log);
@@ -584,12 +602,13 @@ sap.ui.define([
 		assert.deepEqual(currencyType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
 	});
 
-	//*********************************************************************************************
 [
 	{oFormatOptions : undefined, aResult : []},
 	{oFormatOptions : {}, aResult : []},
 	{oFormatOptions : {showMeasure : true}, aResult : []},
-	{oFormatOptions : {showMeasure : false}, aResult : [1]}
+	{oFormatOptions : {showMeasure : false}, aResult : [1]},
+	{oFormatOptions : {showNumber : true}, aResult : []},
+	{oFormatOptions : {showNumber : false}, aResult : [0]}
 ].forEach(function (oFixture, i) {
 	QUnit.test("Currency: getPartsIgnoringMessages, #" + i, function (assert) {
 		var oCurrencyType = new CurrencyType(oFixture.oFormatOptions);
@@ -2006,6 +2025,40 @@ sap.ui.define([
 		assert.throws(function () { unitType.parseValue(true, "untype"); }, ParseException, "parse test");
 		assert.throws(function () { unitType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { unitType.parseValue("test", "string"); }, ParseException, "parse test");
+	});
+
+[
+	{oFormatOptions : undefined, aResult : []},
+	{oFormatOptions : {}, aResult : []},
+	{oFormatOptions : {showMeasure : true}, aResult : []},
+	{oFormatOptions : {showMeasure : false}, aResult : [1]},
+	{oFormatOptions : {showNumber : true}, aResult : []},
+	{oFormatOptions : {showNumber : false}, aResult : [0]}
+].forEach(function (oFixture, i) {
+	QUnit.test("Unit: getPartsIgnoringMessages, #" + i, function (assert) {
+		var oUnitType = new UnitType(oFixture.oFormatOptions);
+
+		// code under test
+		assert.deepEqual(oUnitType.getPartsIgnoringMessages(), oFixture.aResult);
+	});
+});
+
+	QUnit.test("parseValue: format option 'showNumber'; only enter the unit", function (assert) {
+		TestUtils.withNormalizedMessages(function () {
+			assert.throws(function () {
+				// code under test
+				new UnitType().parseValue("mph", "string");
+			}, new ParseException("Unit.Invalid"));
+
+			assert.throws(function () {
+				// code under test
+				new UnitType({showNumber : true}).parseValue("mph", "string");
+			}, new ParseException("Unit.Invalid"));
+		});
+
+		// code under test
+		assert.deepEqual(new UnitType({showNumber : false}).parseValue("mph", "string"),
+			[undefined, "speed-mile-per-hour"]);
 	});
 
 	QUnit.test("unit format and parse - simple", function (assert) {

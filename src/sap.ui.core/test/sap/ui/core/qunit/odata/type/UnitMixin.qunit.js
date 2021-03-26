@@ -644,7 +644,9 @@ sap.ui.define([
 	{oFormatOptions : undefined, aResult : [2]},
 	{oFormatOptions : {}, aResult : [2]},
 	{oFormatOptions : {showMeasure : true}, aResult : [2]},
-	{oFormatOptions : {showMeasure : false}, aResult : [1, 2]}
+	{oFormatOptions : {showMeasure : false}, aResult : [1, 2]},
+	{oFormatOptions : {showNumber : true}, aResult : [2]},
+	{oFormatOptions : {showNumber : false}, aResult : [0, 2]}
 ].forEach(function (oFixture, i) {
 	QUnit.test("getPartsIgnoringMessages, #" + i, function (assert) {
 		var oUnitType = new UnitMixin(oFixture.oFormatOptions);

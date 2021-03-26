@@ -154,7 +154,10 @@ sap.ui.define([
 		 * binding supports this feature, see {@link sap.ui.model.Binding#supportsIgnoreMessages}.
 		 * If the format option <code>showMeasure</code> is set to <code>false</code> and the unit
 		 * or currency is not shown in the control, the part for the unit or currency shall not
-		 * propagate model messages to the control.
+		 * propagate model messages to the control. Analogously, since 1.89.0, if the format option
+		 * <code>showNumber</code> is set to <code>false</code>, the amount or measure is not shown
+		 * in the control and the part for the amount or measure shall not propagate model messages
+		 * to the control.
 		 *
 		 * @return {number[]}
 		 *   An array of indices that determine which parts of this type shall not propagate their
@@ -168,6 +171,8 @@ sap.ui.define([
 		function getPartsIgnoringMessages() {
 			if (this.oFormatOptions.showMeasure === false) {
 				return [1, 2];
+			} else if (this.oFormatOptions.showNumber === false) {
+				return [0, 2];
 			}
 			return [2];
 		}
