@@ -86,7 +86,8 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 			// No Footer
 			var noToolbarAndNobuttons = !oControl._oToolbar && !oLeftButton && !oRightButton;
 			var emptyToolbarAndNoButtons = oControl._oToolbar && oControl._isToolbarEmpty() && !oLeftButton && !oRightButton;
-			if (noToolbarAndNobuttons || emptyToolbarAndNoButtons) {
+			var bHiddenFooter = oControl._oToolbar && !oControl._oToolbar.getVisible();
+			if (noToolbarAndNobuttons || emptyToolbarAndNoButtons || bHiddenFooter) {
 				oRm.addClass("sapMDialog-NoFooter");
 			}
 
@@ -210,7 +211,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 			oRm.write("</div>");
 			oRm.write("</section>");
 
-			if (!(noToolbarAndNobuttons || emptyToolbarAndNoButtons)) {
+			if (!noToolbarAndNobuttons && !emptyToolbarAndNoButtons && !bHiddenFooter) {
 				oRm.write("<footer");
 				oRm.addClass("sapMDialogFooter");
 				oRm.writeClasses();
