@@ -155,11 +155,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Render display:grid styles. Used for non-responsive grid layouts.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRM The render manager of the Control which wants to render display:grid styles
+	 * @override
 	 */
-	ResponsiveColumnLayout.prototype.renderSingleGridLayout = function (oRM) {
+	ResponsiveColumnLayout.prototype.addGridStyles = function (oRM) {
+		GridLayoutBase.prototype.addGridStyles.apply(this, arguments);
+
 		if (this.isGridSupportedByBrowser()) {
 			oRM.class("sapUiLayoutCSSGridRCL");
 		} else {

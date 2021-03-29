@@ -136,23 +136,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Apply display:grid styles to the provided HTML element or control based on the currently active GridSettings
-	 *
-	 * @protected
-	 * @param {sap.ui.core.Control|HTMLElement} oElement The element or control on which to apply the display:grid styles
+	 * @override
 	 */
 	GridBoxLayout.prototype._applySingleGridLayout = function (oElement) {
 		if (this.isGridSupportedByBrowser()) {
+
 			GridLayoutBase.prototype._applySingleGridLayout.call(this, oElement);
+
+			var oGridList = sap.ui.getCore().byId(oElement.parentElement.id);
+
+			if (oGridList && oGridList.isA("sap.f.GridList") && oGridList.isGrouped()) {
+				this._flattenHeight(oGridList);
+			}
 		}
 	};
 
 	/**
-	 * Render display:grid styles. Used for non-responsive grid layouts.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRM The render manager of the Control which wants to render display:grid styles
+	 * @override
 	 */
-	GridBoxLayout.prototype.renderSingleGridLayout = function (oRM) {
+	GridBoxLayout.prototype.addGridStyles = function (oRM) {
+		GridLayoutBase.prototype.addGridStyles.apply(this, arguments);
 		this._addSpanClasses(oRM);
 
 		if (this.isGridSupportedByBrowser()) {
@@ -168,7 +171,16 @@ sap.ui.define([
 	 */
 	GridBoxLayout.prototype.onGridAfterRendering = function (oGrid) {
 		// Add a specific class to each grid item
-		GridLayoutBase.prototype.onGridAfterRendering.call(this, oGrid);
+		// Loops over each element's dom and adds the grid item class
+		oGrid.getGridDomRefs().forEach(function (oDomRef) {
+			if (oDomRef.children){
+				for (var i = 0; i < oDomRef.children.length; i++) {
+					if (!oDomRef.children[i].classList.contains("sapMGHLI") && !oDomRef.children[i].classList.contains("sapUiBlockLayerTabbable")) { // the item is not group header or a block layer tabbable
+						oDomRef.children[i].classList.add("sapUiLayoutCSSGridItem");
+					}
+				}
+			}
+		});
 
 		if (!this._hasBoxWidth()) {
 			this._applySizeClass(oGrid);
@@ -213,24 +225,6 @@ sap.ui.define([
 			oGrid.attachEvent("_gridPolyfillAfterDragEnd", oGrid, this._polyfillAfterDragEnd, this);
 			this._dndPolyfillAttached = true;
 			// todo: detach
-		}
-	};
-
-	/**
-	 * Sets all display:grid styles to the provided HTML element
-	 *
-	 * @protected
-	 * @param {HTMLElement} oElement The element to which to apply the grid styles
-	 * @param {sap.ui.layout.cssgrid.GridSettings} oGridSettings The grid settings to apply
-	 */
-	GridBoxLayout.prototype._setGridLayout = function (oElement, oGridSettings) {
-		var oGridList = sap.ui.getCore().byId(oElement.parentElement.id);
-
-		// we need to overwrite this function since after it the GridListItems are with final dimensions and further calculation cold be done.
-		GridLayoutBase.prototype._setGridLayout.call(this, oElement, oGridSettings);
-
-		if (this.isGridSupportedByBrowser() && (oGridList && oGridList.isA("sap.f.GridList") && oGridList.isGrouped())) {
-			this._flattenHeight(oGridList);
 		}
 	};
 
