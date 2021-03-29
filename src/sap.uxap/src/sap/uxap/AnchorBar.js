@@ -340,39 +340,10 @@ sap.ui.define([
 		}
 	};
 
-	AnchorBar.prototype._handleDirectScroll = function (oEvent) {
-		this._requestScrollToSection(oEvent.getSource().data("sectionId"));
-	};
-
-	AnchorBar.prototype._requestScrollToSection = function (sRequestedSectionId) {
-
-		var oRequestedSection = sap.ui.getCore().byId(sRequestedSectionId),
-			oRequestedSectionParent = oRequestedSection.getParent(),
-			oObjectPage = this.getParent();
-
-		if (oObjectPage instanceof library.ObjectPageLayout) {
-
-			// determine the next section that will appear selected in the anchorBar after the scroll
-			var sNextSelectedSection = sRequestedSectionId;
-
-			// if the requestedSection is a subsection, the nextSelectedSection will be its parent (since anchorBar contains only first-level sections)
-			if (oRequestedSection instanceof library.ObjectPageSubSection &&
-				oRequestedSectionParent instanceof library.ObjectPageSection) {
-				sNextSelectedSection = oRequestedSectionParent.getId();
-			}
-			// we set *direct* scrolling by which we instruct the page to *skip* processing of intermediate sections (sections between current and requested)
-			oObjectPage.setDirectScrollingToSection(sNextSelectedSection);
-			// update the association to match the new section
-			oObjectPage.setSelectedSection(sNextSelectedSection);
-
-			// finally request the page to scroll to the requested section base
-			oObjectPage.scrollToSection(oRequestedSection.getId(), null, 0, true /* bIsTabClicked */);
-		}
-
-		if (oRequestedSection instanceof library.ObjectPageSubSection &&
-			oRequestedSectionParent instanceof library.ObjectPageSection) {
-			oRequestedSectionParent.setAssociation("selectedSubSection", oRequestedSection, true);
-		}
+	AnchorBar.prototype.onButtonPress = function (oEvent) {
+		this.fireEvent("_anchorPress", {
+			sectionBaseId: oEvent.getSource().data("sectionId")
+		});
 	};
 
 	/**
@@ -393,7 +364,7 @@ sap.ui.define([
 
 		if (oSelectedSection) {
 
-			this._requestScrollToSection(oSelectedSection.getId());
+			this.fireEvent("_anchorPress", { sectionBaseId: oSelectedSection.getId() });
 		} else {
 			Log.error("AnchorBar :: cannot find corresponding section", oSelectedItem.getKey());
 		}

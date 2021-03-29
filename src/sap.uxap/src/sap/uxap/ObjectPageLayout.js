@@ -2212,6 +2212,28 @@ sap.ui.define([
 		}
 	};
 
+	ObjectPageLayout.prototype.onAnchorBarTabPress = function (oEvent) {
+		var oSectionBase = sap.ui.getCore().byId(oEvent.getParameter("sectionBaseId")),
+			bIsSubSection = oSectionBase instanceof library.ObjectPageSubSection,
+			oSection,
+			oSubSection;
+
+		if (!oSectionBase) {
+			return;
+		}
+
+		oSection = bIsSubSection ? oSectionBase.getParent() : oSectionBase;
+		oSubSection = bIsSubSection ? oSectionBase : this._getFirstVisibleSubSection(oSectionBase);
+
+		// we set *direct* scrolling by which we instruct the page to *skip* processing of intermediate sections (sections between current and requested)
+		this.setDirectScrollingToSection(oSection.getId());
+		// finally request the page to scroll to the requested section
+		this.scrollToSection(oSectionBase.getId(), null, 0, true);
+
+		oSection.setAssociation("selectedSubSection", oSubSection, true);
+		this.setAssociation("selectedSection", oSection, true);
+	};
+
 	ObjectPageLayout.prototype._hasSingleVisibleFullscreenSubSection = function (oSection) {
 		var aVisibleSubSections = oSection.getSubSections().filter(function (oSubSection) {
 			return oSubSection.getVisible() && oSubSection._getInternalVisible() && (oSubSection.getBlocks().length > 0);

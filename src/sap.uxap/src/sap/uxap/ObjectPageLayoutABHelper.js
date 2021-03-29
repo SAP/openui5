@@ -98,6 +98,8 @@ sap.ui.define([
 				backgroundDesign: oObjectPageLayout.getBackgroundDesignAnchorBar()
 			});
 
+			oAnchorBar.attachEvent("_anchorPress", oObjectPageLayout.onAnchorBarTabPress, oObjectPageLayout);
+
 			this.getObjectPageLayout().setAggregation("_anchorBar", oAnchorBar, true);
 		}
 
@@ -137,7 +139,7 @@ sap.ui.define([
 		var oObjectPageLayout = this.getObjectPageLayout(),
 			aSections = oObjectPageLayout.getSections() || [],
 			oAnchorBar = this._getAnchorBar(),
-			fnPressHandler = jQuery.proxy(oAnchorBar._handleDirectScroll, oAnchorBar),
+			fnPressHandler = jQuery.proxy(oAnchorBar.onButtonPress, oAnchorBar),
 			sButtonTitle,
 			sButtonIcon,
 			oMenuItem,
@@ -302,7 +304,7 @@ sap.ui.define([
 			bHasSubMenu,
 			iVisibleSubSections,
 			aSubSections = oSectionBase.getAggregation("subSections"),
-			fnPressHandler = jQuery.proxy(oAnchorBar._handleDirectScroll, oAnchorBar);
+			fnPressHandler = jQuery.proxy(oAnchorBar.onButtonPress, oAnchorBar);
 
 		if (oSectionBase.getVisible() && oSectionBase._getInternalVisible()) {
 			oButton = oSectionBase.getCustomAnchorBarButton();

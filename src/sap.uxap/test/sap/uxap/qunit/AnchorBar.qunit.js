@@ -149,11 +149,12 @@ sap.ui.define([
 			oCustomButton = this.oObjectPage.getSections()[0].getCustomAnchorBarButton(),
 			aAnchorBarContent = oAnchorBar.getContent(),
 			oFirstSectionButton = aAnchorBarContent[0],
-			pressSpy = this.spy(oAnchorBar, "_requestScrollToSection");
+			pressSpy = this.spy(oAnchorBar, "fireEvent");
 
 		oFirstSectionButton.firePress();
 
 		assert.ok(pressSpy.calledOnce, "firePress of custom AnchorBar button calls the scroll to section function");
+		assert.ok(pressSpy.calledWithMatch("_anchorPress"), "firePress of custom AnchorBar button fires the correct event");
 
 		oCustomButton.setEnabled(false);
 
