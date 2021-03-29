@@ -41,6 +41,9 @@ sap.ui.define([
 		return values(mVariantsMap).reduce(function(aChanges, oVMData) {
 			oVMData.variants.some(function(oVariant) {
 				if (oVariant.content.fileName === sVReference) {
+					oVariant.controlChanges = oVariant.controlChanges.map(function(oChange) {
+						return oChange.getDefinition();
+					});
 					aChanges = aChanges.concat(oVariant.controlChanges);
 					return true;
 				}
@@ -295,8 +298,12 @@ sap.ui.define([
 		QUnit.test("when 'getControlChangesForVariant' is called with changeInstance parameter not set", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
-			var aExpectedDefaultVariantChanges = this.oVariantsMap["vmReference2"].variants[1].controlChanges;
-			var aExpectedNonDefaultVariantChanges = this.oVariantsMap["vmReference1"].variants[2].controlChanges;
+			var aExpectedDefaultVariantChanges = this.oVariantsMap["vmReference2"].variants[1].controlChanges.map(function(oChange) {
+				return oChange.getDefinition();
+			});
+			var aExpectedNonDefaultVariantChanges = this.oVariantsMap["vmReference1"].variants[2].controlChanges.map(function(oChange) {
+				return oChange.getDefinition();
+			});
 			var aDefaultVariantChanges = VariantManagementState.getControlChangesForVariant({vmReference: "vmReference2", reference: this.sReference});
 			var aNonDefaultVariantChanges = VariantManagementState.getControlChangesForVariant({vmReference: "vmReference1", vReference: "variant2", reference: this.sReference});
 
@@ -436,16 +443,18 @@ sap.ui.define([
 								]
 							},
 							controlChanges: [
-								{
+								new Change({
 									fileName: "controlChange1",
 									layer: Layer.VENDOR
-								}, {
+								}),
+								new Change({
 									fileName: "controlChange2",
 									layer: Layer.VENDOR
-								}, {
+								}),
+								new Change({
 									fileName: "controlChange3",
 									layer: Layer.CUSTOMER
-								}
+								})
 							]
 						}
 					],
@@ -557,7 +566,7 @@ sap.ui.define([
 			assert.ok(bSuccess1, "then adding a change was successful");
 			assert.notOk(bSuccess2, "then adding an already existing change was unsuccessful");
 
-			var aChanges = VariantManagementState.getControlChangesForVariant({vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference});
+			var aChanges = VariantManagementState.getControlChangesForVariant({vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference, changeInstance: true});
 			assert.equal(aChanges.length, 4, "then the number of changes in the variant is correct");
 			assert.equal(aChanges[3], oChangeToBeAdded1, "then the newly added change is at the end of the array");
 		});
@@ -571,7 +580,7 @@ sap.ui.define([
 			assert.ok(bSuccess1, "then removing an existing change was successful");
 			assert.notOk(bSuccess2, "then removing a non existent change was unsuccessful");
 
-			var aChanges = VariantManagementState.getControlChangesForVariant({vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference});
+			var aChanges = VariantManagementState.getControlChangesForVariant({vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference, changeInstance: true});
 			assert.equal(aChanges.length, 2, "then the number of changes in the variant is correct");
 			assert.notEqual(aChanges[0].getId(), oChangeToBeRemoved1.getId(), "then the removed change does not exist");
 			assert.notEqual(aChanges[1].getId(), oChangeToBeRemoved1.getId(), "then the removed change does not exist");

@@ -82,15 +82,6 @@ sap.ui.define([
 		this.HIGHER_LAYER_CHANGES_EXIST = "higher_layer_changes_exist";
 	};
 
-	function replaceChangeContentWithInstance(oVariant, oChange) {
-		return oVariant.controlChanges.some(function(oChangeContent, index) {
-			if (oChangeContent.fileName === oChange.getDefinition().fileName) {
-				oVariant.controlChanges.splice(index, 1, oChange);
-				return true;
-			}
-		});
-	}
-
 	function getChangeInstance(oFileContent, oChangeOrChangeContent) {
 		var oChange;
 		if (oChangeOrChangeContent instanceof Change) {
@@ -102,25 +93,6 @@ sap.ui.define([
 			}
 			oChange = this._mChangesEntries[oChangeOrChangeContent.fileName];
 			oChange.setState(Change.states.PERSISTED);
-
-			// if change instance was passed, it will be already present in the variant
-			// if change content was passed, then replace the newly created change instance in the variant
-			var sVariantReference = oChange.getVariantReference();
-			if (sVariantReference) {
-				var aVariantManagementReferences = VariantManagementState.getVariantManagementReferences(this._mComponent.name);
-				aVariantManagementReferences.some(function(sVariantManagementReference) {
-					var oVariant = VariantManagementState.getVariant({
-						vReference: sVariantReference,
-						vmReference: sVariantManagementReference,
-						reference: this._mComponent.name
-					});
-					if (oVariant) {
-						replaceChangeContentWithInstance(oVariant, oChange);
-						return true;
-					}
-					return false;
-				}.bind(this));
-			}
 		}
 		return oChange;
 	}

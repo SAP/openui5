@@ -431,14 +431,14 @@ sap.ui.define([
 					layer: Layer.USER
 				}
 			);
-			oResponse.variantDependentControlChanges.push(
+			oResponse.variantDependentControlChanges.push(new Change(
 				{
 					fileName: "variantDependentControlChange",
 					fileType: "change",
 					layer: Layer.CUSTOMER,
 					variantReference: "variantManagementId"
 				}
-			);
+			));
 			oResponse.variantChanges.push(
 				{
 					fileName: "variantChange",
