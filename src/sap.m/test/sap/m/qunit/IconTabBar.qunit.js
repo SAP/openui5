@@ -2216,6 +2216,7 @@ sap.ui.define([
 		oIconTabBar.setModel(oModel);
 		oIconTabBar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
 
 		var oSelectedItem = oIconTabBar._getIconTabHeader().oSelectedItem;
 		var oContext = oSelectedItem.getBindingContext();
@@ -2225,6 +2226,7 @@ sap.ui.define([
 		// Act
 		oModel.setProperty(oContext.getPath(), oItemCopy); // update the first tab content through binding
 		oIconTabBar.setSelectedItem(oIconTabBar.getItems()[1]); // select the second tab
+		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
 		// Assert
@@ -2233,6 +2235,8 @@ sap.ui.define([
 
 		// Clean up
 		oIconTabBar.destroy();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
 	});
 
 	QUnit.test("keep the current content when change IconTabFilter count property", function(assert) {
@@ -2610,6 +2614,8 @@ sap.ui.define([
 		afterEach: function () {
 			this.oIconTabBar.destroy();
 			this.oIconTabBar = null;
+
+			sap.ui.getCore().applyChanges();
 		}
 	});
 
@@ -2648,6 +2654,9 @@ sap.ui.define([
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
+
 		// Assert
 		assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
 		assert.strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
@@ -2658,6 +2667,9 @@ sap.ui.define([
 		oContainer.removeStyleClass("sapUiNoContentPadding");
 		oContainer.addStyleClass("sapUiContentPadding");
 
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
+
 		// Assert
 		assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
 		assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
@@ -2667,6 +2679,9 @@ sap.ui.define([
 		// Act
 		oContainer.removeStyleClass("sapUiContentPadding");
 		oContainer.addStyleClass("sapUiResponsiveContentPadding");
+
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
 
 		// Assert
 		assert.strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
@@ -2855,21 +2870,25 @@ sap.ui.define([
 		// System under Test
 		oIconTabHeader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
 
 		// Assert
 		assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header is in Cozy mode by default");
 
 		oIconTabHeader.setTabDensityMode(IconTabDensityMode.Compact);
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
 		assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header is in Compact mode");
 
 		oIconTabHeader.setTabDensityMode(IconTabDensityMode.Inherit);
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
 		assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the global mode which is Cozy");
 
 		jQuery('body').addClass("sapUiSizeCompact");
 		sap.ui.getCore().notifyContentDensityChanged();
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
 		assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the Compact mode from global scope");
 
 		jQuery('body').removeClass("sapUiSizeCompact");
@@ -2877,14 +2896,18 @@ sap.ui.define([
 		jQuery('body').addClass("sapUiSizeCozy");
 		sap.ui.getCore().notifyContentDensityChanged();
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
 		assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the Cozy mode from global scope");
 
 		oIconTabHeader.setTabDensityMode(IconTabDensityMode.Compact);
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
 		assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has forced Compact density mode independent of global scope");
 
 		// Clean up
 		oIconTabHeader.destroy();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
 	});
 
 	QUnit.module("Drag&Drop", {
