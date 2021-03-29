@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/base/util/LoaderExtensions",
-	"sap/base/i18n/ResourceBundle"
-], function (LoaderExtensions, ResourceBundle) {
+	"sap/base/i18n/ResourceBundle",
+	"sap/base/util/includes"
+], function (LoaderExtensions, ResourceBundle, includes) {
 	"use strict";
 
 	/**
@@ -36,12 +37,16 @@ sap.ui.define([
 				if (p.indexOf("_") > -1) {
 					aFallbacks.push(p.substring(0, p.indexOf("_")));
 				}
+				//add en into fallbacks
+				if (!includes(aFallbacks, "en")) {
+					aFallbacks.push("en");
+				}
 				var oResourceBundleTemp = ResourceBundle.create({
 					url: sResourceBundleURL,
 					async: false,
 					locale: p,
 					supportedLocales: aFallbacks,
-					fallbackLocale: ""
+					fallbackLocale: "en"
 				});
 				aCardResourceBundles[p] = {"language": aLanguageList[p], "resourceBundle": oResourceBundleTemp};
 			}

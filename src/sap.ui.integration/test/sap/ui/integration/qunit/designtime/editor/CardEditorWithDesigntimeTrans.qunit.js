@@ -1176,12 +1176,12 @@ sap.ui.define([
 						assert.ok(oLabel2.getText() === "string2", "Label2: string2");
 						assert.ok(oField2Ori.getAggregation("_field").getText() === "stringParameter Value Admin2", "Field2Ori: stringParameter Value Admin2");
 						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
-						assert.ok(oField2Trans.getAggregation("_field").getValue() === "", "Field2Trans: No Value");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "string2", "Field2Trans: Value string2");
 					}).then(function () {
 						assert.ok(oLabel3.getText() === "string3", "Label3: string3");
 						assert.ok(oField3Ori.getAggregation("_field").getText() === "string3", "Field3Ori: string3");
 						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
-						assert.ok(oField3Trans.getAggregation("_field").getValue() === "", "Field3Trans: No value");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "string3", "Field3Trans: value string3");
 					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();

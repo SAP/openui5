@@ -3203,7 +3203,7 @@ sap.ui.define([
 
 					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
+					assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value in Translate input");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3266,7 +3266,7 @@ sap.ui.define([
 
 					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
+					assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value in Translate input");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3332,7 +3332,7 @@ sap.ui.define([
 
 					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
+					assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value in Translate input");
 					resolve();
 				}.bind(this));
 			}.bind(this));

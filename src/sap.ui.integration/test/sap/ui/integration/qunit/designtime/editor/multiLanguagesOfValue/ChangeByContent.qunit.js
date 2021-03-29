@@ -116,6 +116,7 @@ sap.ui.define([
 	};
 	var _oExpectedValues = {
 		"string1": {
+			"default_in_en": "String 1 English",
 			"en": "String1 EN Content",
 			"en_GB": "String 1 English",
 			"es_MX": "String 1 Spanish MX",
@@ -125,6 +126,7 @@ sap.ui.define([
 			"zh_CN": "String1 简体 Content"
 		},
 		"string3": {
+			"default_in_en": "String 3",
 			"en": "String3 EN Content",
 			"ru": "String3 RU Content",
 			"zh_TW": "String3 繁體 Content"
@@ -134,6 +136,7 @@ sap.ui.define([
 			"zh_CN": "String4 简体 Content"
 		},
 		"string4": {
+			"default_in_en": "String 4 English",
 			"en": "String 4 English",
 			"en_GB": "String 4 English",
 			"fr": "String4 FR Content",
@@ -236,7 +239,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -262,7 +265,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -285,7 +288,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -361,7 +364,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -387,7 +390,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -410,7 +413,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -486,7 +489,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -512,7 +515,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -535,7 +538,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -611,7 +614,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -637,7 +640,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -660,7 +663,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -736,7 +739,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -762,7 +765,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -785,7 +788,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -861,7 +864,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -887,7 +890,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -910,7 +913,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -986,7 +989,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -1012,7 +1015,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -1035,7 +1038,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -1066,15 +1069,15 @@ sap.ui.define([
 	}, function () {
 		_aCheckedLanguages.forEach(function(oCoreLanguage) {
 			var sCoreLanguageKey = oCoreLanguage.key;
-			var sString1OriValue = _oExpectedValues["string1"][sCoreLanguageKey] ? _oExpectedValues["string1"][sCoreLanguageKey] : "String 1 English";
-			var sString3OriValue = _oExpectedValues["string3"][sCoreLanguageKey] ? _oExpectedValues["string3"][sCoreLanguageKey] : "String 3";
-			var sString4OriValue = _oExpectedValues["string4Ori"][sCoreLanguageKey] ? _oExpectedValues["string4Ori"][sCoreLanguageKey] : "-";
+			var sString1OriValue = _oExpectedValues["string1"][sCoreLanguageKey] || _oExpectedValues["string1"]["default_in_en"];
+			var sString3OriValue = _oExpectedValues["string3"][sCoreLanguageKey] || _oExpectedValues["string3"]["default_in_en"];
+			var sString4OriValue = _oExpectedValues["string4Ori"][sCoreLanguageKey] || "-";
 			_aCheckedLanguages.forEach(function(oCardLanguage) {
 				var sCardLanguageKey = oCardLanguage.key;
 				var sCaseTitle = "Core: " + sCoreLanguageKey + ", Card: " + sCardLanguageKey;
-				var sString1TransValue = _oExpectedValues["string1"][sCardLanguageKey] ? _oExpectedValues["string1"][sCardLanguageKey] : "";
-				var sString3TransValue = _oExpectedValues["string3"][sCardLanguageKey] ? _oExpectedValues["string3"][sCardLanguageKey] : "";
-				var sString4TransValue = _oExpectedValues["string4"][sCardLanguageKey] ? _oExpectedValues["string4"][sCardLanguageKey] : "";
+				var sString1TransValue = _oExpectedValues["string1"][sCardLanguageKey] || _oExpectedValues["string1"]["default_in_en"];
+				var sString3TransValue = _oExpectedValues["string3"][sCardLanguageKey] || _oExpectedValues["string3"]["default_in_en"];
+				var sString4TransValue = _oExpectedValues["string4"][sCardLanguageKey] || _oExpectedValues["string4"]["default_in_en"];
 				QUnit.test(sCaseTitle, function (assert) {
 					var that = this;
 					//Fallback language
@@ -1194,7 +1197,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -1220,7 +1223,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -1243,7 +1246,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -1319,7 +1322,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -1345,7 +1348,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -1368,7 +1371,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -1444,7 +1447,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -1470,7 +1473,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -1493,7 +1496,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -1569,7 +1572,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -1595,7 +1598,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -1618,7 +1621,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -1694,7 +1697,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -1720,7 +1723,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -1743,7 +1746,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -1819,7 +1822,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -1845,7 +1848,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -1868,7 +1871,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -1944,7 +1947,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -1970,7 +1973,7 @@ sap.ui.define([
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
-									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || "";
+									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
@@ -1993,7 +1996,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
