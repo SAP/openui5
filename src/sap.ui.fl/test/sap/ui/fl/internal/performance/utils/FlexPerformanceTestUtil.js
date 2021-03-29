@@ -141,10 +141,6 @@ sap.ui.define([
 		// wait for the initial changes to be applied
 		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
 		.then(function() {
-			var oComponent = FlUtils.getAppComponentForControl(oControlToBeChanged);
-			var oVariantModel = oComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
-			// enable CUSTOMER changes
-			oVariantModel.setModelPropertiesForControl("idMain1--variantManagementOrdersTable", true, oVMControl);
 			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
 			oVMControl.fireSave({
 				def: false,
