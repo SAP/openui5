@@ -435,7 +435,8 @@ sap.ui.define([
 			bHorizontalDesign = this.getDesign() === IconTabFilterDesign.Horizontal,
 			bTextOnly = oIconTabHeader._bTextOnly,
 			bInLine = oIconTabHeader._bInLine || oIconTabHeader.isInlineMode(),
-			bShowAll = this.getShowAll();
+			bShowAll = this.getShowAll(),
+			sTextDir = this.getTextDirection();
 
 		if (bHasIconTabBar) {
 			mAriaParams.controls = oIconTabBar.getId() + "-content";
@@ -594,25 +595,19 @@ sap.ui.define([
 				oRM.class("sapMITBTextUpperCase");
 			}
 
-			if (bInLine) {
-				oRM.attr("dir", "ltr");
-			}
-
 			oRM.openEnd();
 
-
 			oRM.openStart("span")
-				.class("sapMITHTextContent");
+				.class("sapMITHTextContent")
+				.attr("dir", sTextDir !== TextDirection.Inherit ? sTextDir.toLowerCase() : "auto");
 
 			if (!oIcon && !bShowAll) {
 				oRM.class("sapMITBBadgeHolder");
 			}
 
-			oRM.openEnd();
-
-			oRM.text(oIconTabHeader._getDisplayText(this));
-
-			oRM.close("span");
+			oRM.openEnd()
+				.text(oIconTabHeader._getDisplayText(this))
+				.close("span");
 
 			if (this._bIsOverflow || this.getItems().length && oIconTabHeader._isUnselectable(this)) {
 				oRM.openStart("span", this.getId() + "-expandButton").class("sapMITHShowSubItemsIcon").openEnd();
@@ -792,7 +787,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Renders a text.
+	 * Renders text in SelectList.
 	 * @private
 	 */
 	IconTabFilter.prototype._renderText =  function (oRM) {
@@ -802,15 +797,12 @@ sap.ui.define([
 			sTextDir = this.getTextDirection();
 
 		oRM.openStart("span", this.getId() + "-text")
-			.attr("dir", "ltr")
+			.attr("dir", sTextDir !== TextDirection.Inherit ? sTextDir.toLowerCase() : "auto")
 			.class("sapMText")
 			.class("sapMTextNoWrap")
 			.class("sapMITBText")
 			.class("sapMITBBadgeHolder");
 
-		if (sTextDir !== TextDirection.Inherit){
-			oRM.attr('dir', sTextDir.toLowerCase());
-		}
 
 		var sTextAlign = Renderer.getTextAlign(TextAlign.Begin, sTextDir);
 		if (sTextAlign) {

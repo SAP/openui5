@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/IconTabBarSelectList",
 	"sap/m/Text",
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 	IconTabHeader,
@@ -15,9 +16,12 @@ sap.ui.define([
 	IconTabBarSelectList,
 	Text,
 	Core,
+	coreLibrary,
 	createAndAppendDiv
 ) {
 	"use strict";
+
+	var TextDirection = coreLibrary.TextDirection;
 
 	var DOM_RENDER_LOCATION = "content";
 
@@ -37,9 +41,7 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Rendering");
-
-	QUnit.module("Select list");
+	QUnit.module("Select List Rendering");
 
 	QUnit.test("overflowing separators are rendered in the overflow list", function (assert) {
 		// Arrange
@@ -124,5 +126,40 @@ sap.ui.define([
 		oSelectListStub._oIconTabHeader.destroy();
 	});
 
+	QUnit.module("Text Direction", {
+		beforeEach: function () {
+			this.oSL = new IconTabBarSelectList();
+			// Fake ITH
+			this.oSL._oIconTabHeader = new IconTabHeader();
+			this.oSL.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oSL._oIconTabHeader.destroy();
+			this.oSL.destroy();
+		}
+	});
+
+	QUnit.test("Text direction of tabs in the SelectList", function (assert) {
+		// Arrange
+		var oFilter1 = new IconTabFilter({
+				text: "filter1",
+				textDirection: TextDirection.LTR
+			}),
+			oFilter2 = new IconTabFilter({
+				text: "filter1",
+				textDirection: TextDirection.RTL
+			}),
+			oFilter3 = new IconTabFilter({
+				text: "filter1",
+				textDirection: TextDirection.Inherit
+			});
+		this.oSL.addItem(oFilter1).addItem(oFilter2).addItem(oFilter3);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oFilter1.$().find(".sapMITBText").attr("dir"), "ltr", "'dir' attribute is correctly set");
+		assert.strictEqual(oFilter2.$().find(".sapMITBText").attr("dir"), "rtl", "'dir' attribute is correctly set");
+		assert.strictEqual(oFilter3.$().find(".sapMITBText").attr("dir"), "auto", "'dir' attribute is correctly set");
+	});
 
 });
