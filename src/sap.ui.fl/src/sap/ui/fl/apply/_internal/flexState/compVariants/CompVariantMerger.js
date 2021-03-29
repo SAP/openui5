@@ -17,6 +17,19 @@ sap.ui.define([
 		},
 		removeFavorite: function (oVariant) {
 			oVariant.setFavorite(false);
+		},
+		updateVariant: function (oVariant, oChange) {
+			var oChangeContent = oChange.getContent();
+			if (oChangeContent.executeOnSelection !== undefined) {
+				oVariant.setExecuteOnSelection(oChangeContent.executeOnSelection);
+			}
+			if (oChangeContent.favorite !== undefined) {
+				oVariant.setFavorite(oChangeContent.favorite);
+			}
+			if (oChangeContent.contexts) {
+				oVariant.setContexts(oChangeContent.contexts);
+			}
+			// TODO add content and name. For this the change setters have to change to not update the state / definition
 		}
 	};
 
@@ -24,7 +37,7 @@ sap.ui.define([
 		var mChanges = {};
 
 		mCompVariants.changes.forEach(function (oChange) {
-			var sVariantId = oChange.getContent().key;
+			var sVariantId = oChange.getSelector().variantId || oChange.getContent().key;
 			if (!mChanges[sVariantId]) {
 				mChanges[sVariantId] = [];
 			}
@@ -67,12 +80,17 @@ sap.ui.define([
 		return new CompVariant(oVariantData);
 	}
 
+	function applyChangeOnVariant(oVariant, oChange) {
+		var oChangeHandler = mChangeHandlers[oChange.getChangeType()] || logNoChangeHandler;
+		oChangeHandler(oVariant, oChange);
+		oVariant.addChange(oChange);
+	}
+
 	function applyChangesOnVariant(mChanges, oVariant) {
 		var sVariantId = oVariant.getId();
 		if (mChanges[sVariantId]) {
 			mChanges[sVariantId].forEach(function (oChange) {
-				var oChangeHandler = mChangeHandlers[oChange.getChangeType()] || logNoChangeHandler;
-				oChangeHandler(oVariant, oChange);
+				applyChangeOnVariant(oVariant, oChange);
 			});
 		}
 	}
@@ -143,6 +161,7 @@ sap.ui.define([
 		 */
 		createVariant: function(sPersistencyKey, oVariantInput) {
 			return createVariant(sPersistencyKey, oVariantInput);
-		}
+		},
+		applyChangeOnVariant: applyChangeOnVariant
 	};
 });

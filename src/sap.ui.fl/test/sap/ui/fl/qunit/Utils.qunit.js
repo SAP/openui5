@@ -826,49 +826,6 @@ function(
 				assert.ok(Utils.isChangeRelatedToVariants(oChange), "then for change type " + oChange.getFileType() + " true was returned");
 			});
 		});
-
-		QUnit.test("when isChangeRelatedToCompVariants is called with objects containing a persistencyKey", function(assert) {
-			[
-				new Variant({
-					content: {
-						fileType: "variant",
-						fileName: "variant0",
-						selector: {
-							persistencyKey: "someId"
-						}
-					}
-				}),
-				new Change({
-					fileType: "change",
-					fileName: "change0",
-					selector: {
-						persistencyKey: "someId"
-					}
-				})
-			].forEach(function(oChange) {
-				assert.equal(Utils.isChangeRelatedToCompVariant(oChange), true, "then true was returned");
-			});
-		});
-
-		QUnit.test("when isChangeRelatedToCompVariants is called with objects containing NO persistencyKey", function(assert) {
-			[
-				new Change({
-					fileType: "change",
-					fileName: "change1",
-					selector: {
-						id: "some.id",
-						idIsLocal: true
-					}
-				}),
-				new Change({
-					fileType: "change",
-					fileName: "change2",
-					selector: "some.id" // old selector format
-				})
-			].forEach(function(oChange) {
-				assert.equal(Utils.isChangeRelatedToCompVariant(oChange), false, "then true was returned");
-			});
-		});
 	});
 
 	QUnit.module("Utils.isApplicationVariant", {

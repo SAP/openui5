@@ -121,6 +121,11 @@ sap.ui.define([
 					multiple: true,
 					singularName: "revertInfo",
 					defaultValue: []
+				},
+				changes: {
+					type: "sap.ui.fl.Change",
+					multiple: true,
+					defaultValue: []
 				}
 			}
 		},

@@ -8,10 +8,12 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariantRevertData",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage"
 ], function(
@@ -20,10 +22,12 @@ sap.ui.define([
 	UriParameters,
 	Layer,
 	Change,
+	ChangePersistenceFactory,
 	CompVariant,
 	CompVariantRevertData,
 	Utils,
 	FlexState,
+	CompVariantMerger,
 	Settings,
 	Storage
 ) {
@@ -40,30 +44,16 @@ sap.ui.define([
 		}
 	}
 
-	function addChange(mPropertyBag, oFlexObjects) {
-		var oChangeContent = mPropertyBag.changeToBeAddedOrDeleted.getDefinition();
-		var sChangeCategory = getCategory(oChangeContent);
-		oFlexObjects[sChangeCategory].push(oChangeContent);
-		var sId = oChangeContent.fileName;
-		var mCompVariantsMapById = FlexState.getCompEntitiesByIdMap(mPropertyBag.reference);
-		mCompVariantsMapById[sId] = oChangeContent;
+	function addChange(sReference, oChange) {
+		var oChangeContent = oChange.getDefinition();
+		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+		mCompVariantsMap[oChange.getSelector().persistencyKey].changes.push(oChange);
+		return oChangeContent;
 	}
 
-	function deleteChange(mPropertyBag, oFlexObjects) {
-		var oChangeContent = mPropertyBag.changeToBeAddedOrDeleted.getDefinition();
-		var sChangeCategory = getCategory(oChangeContent);
-		var iChangeContentIndex = -1;
-		oFlexObjects[sChangeCategory].some(function(oExistingChangeContent, iIndex) {
-			if (oExistingChangeContent.fileName === oChangeContent.fileName) {
-				iChangeContentIndex = iIndex;
-				return true;
-			}
-		});
-		if (iChangeContentIndex > -1) {
-			oFlexObjects[sChangeCategory].splice(iChangeContentIndex, 1);
-		}
-
-		var mCompVariantsMapById = FlexState.getCompEntitiesByIdMap(mPropertyBag.reference);
+	function deleteChange(sReference, oChange) {
+		var oChangeContent = oChange.getDefinition();
+		var mCompVariantsMapById = FlexState.getCompEntitiesByIdMap(sReference);
 		delete mCompVariantsMapById[oChangeContent.fileName];
 	}
 
@@ -265,6 +255,17 @@ sap.ui.define([
 		}
 	}
 
+	function revertVariant(oVariant, mPropertyBag) {
+		oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
+		oVariant.storeFavorite(mPropertyBag.favorite);
+		oVariant.storeContexts(mPropertyBag.contexts);
+		if (mPropertyBag.name) {
+			oVariant.setText("variantName", mPropertyBag.name);
+		}
+		oVariant.setContent(mPropertyBag.content || oVariant.getContent());
+		return oVariant;
+	}
+
 	/**
 	 * CompVariant state class to handle the state of the compVariants and its changes.
 	 * This class is in charge of updating the maps stored in the <code>sap.ui.fl.apply._internal.flexState.FlexState</code>.
@@ -436,12 +437,40 @@ sap.ui.define([
 	CompVariantState.updateVariant = function (mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
 
-		// TODO: update non-fl variants and remove limitation
-		if (!oVariant.getPersisted()) {
-			throw new Error("Variant to be modified is not persisted via sap.ui.fl.");
+		// revert handling
+		if (mPropertyBag.revert) {
+			return revertVariant(oVariant, mPropertyBag);
 		}
 
-		if (!mPropertyBag.revert) {
+		var sLayer = determineLayer(mPropertyBag);
+
+		if (!oVariant.getPersisted() || oVariant.getLayer() !== sLayer) {
+			if (mPropertyBag.content || mPropertyBag.name) {
+				throw new Error("'content' and 'name' updating of variants via changes is not yet enabled");
+			}
+
+			var oChangeDefinition = Change.createInitialFileContent({
+				changeType: "updateVariant",
+				layer: sLayer,
+				fileType: "change",
+				reference: mPropertyBag.reference,
+				content: {},
+				selector: {
+					persistencyKey: mPropertyBag.persistencyKey,
+					variantId: oVariant.getId()
+				}
+			});
+
+			["favorite", "executeOnSelection", "contexts"].forEach(function (sPropertyName) {
+				if (mPropertyBag[sPropertyName] !== undefined) {
+					oChangeDefinition.content[sPropertyName] = mPropertyBag[sPropertyName];
+				}
+			});
+			var oChange = new Change(oChangeDefinition);
+			addChange(mPropertyBag.reference, oChange);
+
+			CompVariantMerger.applyChangeOnVariant(oVariant, oChange);
+		} else {
 			storeRevertDataInVariant(mPropertyBag, oVariant);
 
 			if (mPropertyBag.executeOnSelection !== undefined) {
@@ -453,20 +482,11 @@ sap.ui.define([
 			if (mPropertyBag.contexts) {
 				oVariant.storeContexts(mPropertyBag.contexts);
 			}
-		} else {
-			oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
-			oVariant.storeFavorite(mPropertyBag.favorite);
-			oVariant.storeContexts(mPropertyBag.contexts);
+			if (mPropertyBag.name) {
+				oVariant.setText("variantName", mPropertyBag.name);
+			}
+			oVariant.setContent(mPropertyBag.content || oVariant.getContent());
 		}
-
-		// TODO: check if it is an update or create corresponding changes
-		if (mPropertyBag.name) {
-			oVariant.setText("variantName", mPropertyBag.name);
-		}
-
-		oVariant.setContent(mPropertyBag.content || oVariant.getContent());
-
-
 		return oVariant;
 	};
 
@@ -562,15 +582,27 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change} mPropertyBag.changeToBeAddedOrDeleted - Change object which should be modified
 	 */
 	CompVariantState.updateState = function(mPropertyBag) {
-		var oFlexObjects = FlexState.getFlexObjectsFromStorageResponse(mPropertyBag.reference);
-
 		if (mPropertyBag.changeToBeAddedOrDeleted) {
 			switch (mPropertyBag.changeToBeAddedOrDeleted.getPendingAction()) {
 				case Change.states.NEW:
-					addChange(mPropertyBag, oFlexObjects);
 					break;
 				case Change.states.DELETED:
-					deleteChange(mPropertyBag, oFlexObjects);
+					var oChange = mPropertyBag.changeToBeAddedOrDeleted;
+					deleteChange(mPropertyBag.reference, oChange);
+					// update persistence
+					var oChangeDefinition = oChange.getDefinition();
+					var oFlexObjects = FlexState.getFlexObjectsFromStorageResponse(mPropertyBag.reference);
+					var sChangeCategory = getCategory(oChangeDefinition);
+					var iChangeContentIndex = -1;
+					oFlexObjects[sChangeCategory].some(function(oExistingChangeContent, iIndex) {
+						if (oExistingChangeContent.fileName === oChangeDefinition.fileName) {
+							iChangeContentIndex = iIndex;
+							return true;
+						}
+					});
+					if (iChangeContentIndex > -1) {
+						oFlexObjects[sChangeCategory].splice(iChangeContentIndex, 1);
+					}
 					break;
 				default:
 					break;

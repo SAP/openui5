@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/Utils",
@@ -24,6 +25,7 @@ sap.ui.define([
 	WriteStorage,
 	Settings,
 	Change,
+	Layer,
 	ManifestUtils,
 	UIComponent,
 	Utils,
@@ -33,11 +35,16 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
+	var oControl;
+
 	QUnit.module("SmartVariantManagementWriteAPI", {
 		afterEach: function() {
+			sandbox.restore();
+			if (oControl) {
+				oControl.destroy();
+			}
 			delete Settings._instance;
 			delete Settings._oLoadSettingsPromise;
-			sandbox.restore();
 		}
 	}, function() {
 		[{
@@ -117,6 +124,8 @@ sap.ui.define([
 			});
 		});
 
+		var sPersistencyKey = "someKey";
+
 		QUnit.test("when removeVariant is called", function (assert) {
 			var mPropertyBag = {};
 			var sReference = "the.app.id";
@@ -130,55 +139,266 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When updateVariant is called, but the variant does not belong to sap.ui.fl", function (assert) {
-			sandbox.stub(InitialStorage, "loadFlexData").resolves({
-				changes: [],
-				comp: {
-					variants: [],
-					changes: [],
-					standardVariants: [],
-					defaultVariants: []
-				}
-			});
-
-			var oControl = new Control("controlId1");
-			var sPersistencyKey = "variantManagement1";
-			oControl.getPersistencyKey = function() {
-				return sPersistencyKey;
-			};
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("an.app");
-
-			var oAppComponent = new UIComponent("AppComponent21");
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-
-			return FlexState.clearAndInitialize({
-				reference: "an.app",
-				componentId: "__component0",
-				manifest: {},
-				componentData: {}
-			}).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
-				control: oControl,
-				standardVariant: {
-					name: "sStandardVariantTitle"
+		[{
+			details: "and favorite is set, but the variant does not belong to sap.ui.fl",
+			updateVariantPropertyBag: {
+				layer: Layer.CUSTOMER,
+				id: "oData_variant_1",
+				favorite: true
+			},
+			expected: {
+				layer: Layer.CUSTOMER,
+				favorite: true,
+				executeOnSelection: true,
+				contexts: {},
+				definition: {
+					executeOnSelection: true
 				},
-				variants: [{
-					id: "someId",
-					name: "some name",
+				changeContent: {
+					favorite: true
+				}
+			}
+		}, {
+			details: "a executeOnSelection is set, but the variant does not belong to sap.ui.fl",
+			updateVariantPropertyBag: {
+				layer: Layer.CUSTOMER,
+				id: "oData_variant_1",
+				executeOnSelection: false
+			},
+			expected: {
+				layer: Layer.CUSTOMER,
+				favorite: false,
+				executeOnSelection: false,
+				contexts: {},
+				definition: {
+					executeOnSelection: true
+				},
+				changeContent: {
+					executeOnSelection: false
+				}
+			}
+		}, {
+			details: "contexts are set, but the variant does not belong to sap.ui.fl",
+			updateVariantPropertyBag: {
+				layer: Layer.CUSTOMER,
+				id: "oData_variant_1",
+				contexts: {
+					ROLE: ["SOME_ROLE", "AND_ANOTHER_ROLE"]
+				}
+			},
+			expected: {
+				layer: Layer.CUSTOMER,
+				favorite: false,
+				executeOnSelection: true,
+				contexts: {
+					ROLE: ["SOME_ROLE", "AND_ANOTHER_ROLE"]
+				},
+				definition: {
+					executeOnSelection: true
+				},
+				changeContent: {
+					contexts: {
+						ROLE: ["SOME_ROLE", "AND_ANOTHER_ROLE"]
+					}
+				}
+			}
+		}, {
+			details: "and favorite is set, but the variant does not belong to the same layer",
+			updateVariantPropertyBag: {
+				layer: Layer.CUSTOMER,
+				id: "flex_variant_1",
+				favorite: false
+			},
+			expected: {
+				layer: Layer.CUSTOMER,
+				favorite: false,
+				executeOnSelection: false,
+				contexts: {},
+				definition: {
+					favorite: true
+				},
+				changeContent: {
+					favorite: false
+				}
+			}
+		}, {
+			details: "a executeOnSelection is set, but the variant does not belong to the same layer",
+			updateVariantPropertyBag: {
+				layer: Layer.CUSTOMER,
+				id: "flex_variant_1",
+				executeOnSelection: true
+			},
+			expected: {
+				layer: Layer.CUSTOMER,
+				favorite: true,
+				executeOnSelection: true,
+				contexts: {},
+				definition: {
+					favorite: true
+				},
+				changeContent: {
+					executeOnSelection: true
+				}
+			}
+		}, {
+			details: "contexts are set, but the variant does not belong to to the same layer",
+			updateVariantPropertyBag: {
+				layer: Layer.CUSTOMER,
+				id: "flex_variant_1",
+				contexts: {
+					ROLE: ["SOME_ROLE", "AND_ANOTHER_ROLE"]
+				}
+			},
+			expected: {
+				layer: Layer.CUSTOMER,
+				favorite: true,
+				executeOnSelection: false,
+				contexts: {
+					ROLE: ["SOME_ROLE", "AND_ANOTHER_ROLE"]
+				},
+				definition: {
+					favorite: true
+				},
+				changeContent: {
+					contexts: {
+						ROLE: ["SOME_ROLE", "AND_ANOTHER_ROLE"]
+					}
+				}
+			}
+		}, {
+			details: "and favorite is set user dependent, but the variant does not belong to the same layer",
+			updateVariantPropertyBag: {
+				isUserDependent: true,
+				id: "flex_variant_1",
+				favorite: false
+			},
+			expected: {
+				layer: Layer.USER,
+				favorite: false,
+				executeOnSelection: false,
+				contexts: {},
+				definition: {
+					favorite: true
+				},
+				changeContent: {
+					favorite: false
+				}
+			}
+		}, {
+			details: "a executeOnSelection is set user dependent, but the variant does not belong to the same layer",
+			updateVariantPropertyBag: {
+				isUserDependent: true,
+				id: "flex_variant_1",
+				executeOnSelection: true
+			},
+			expected: {
+				layer: Layer.USER,
+				favorite: true,
+				executeOnSelection: true,
+				contexts: {},
+				definition: {
+					favorite: true
+				},
+				changeContent: {
+					executeOnSelection: true
+				}
+			}
+		}, {
+			details: "contexts are set user dependent, but the variant does not belong to to the same layer",
+			updateVariantPropertyBag: {
+				isUserDependent: true,
+				id: "flex_variant_1",
+				contexts: {
+					ROLE: ["SOME_ROLE", "AND_ANOTHER_ROLE"]
+				}
+			},
+			expected: {
+				layer: Layer.USER,
+				favorite: true,
+				executeOnSelection: false,
+				contexts: {
+					ROLE: ["SOME_ROLE", "AND_ANOTHER_ROLE"]
+				},
+				definition: {
+					favorite: true
+				},
+				changeContent: {
+					contexts: {
+						ROLE: ["SOME_ROLE", "AND_ANOTHER_ROLE"]
+					}
+				}
+			}
+		}].forEach(function (testData) {
+			QUnit.test("When updateVariant is called, " + testData.details, function (assert) {
+				var sReference = "odata.app";
+				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+				var oAppComponent = new UIComponent();
+				oControl = new Control("controlId1");
+				oControl.getPersistencyKey = function() {
+					return sPersistencyKey;
+				};
+
+				var aVariants = [{
+					id: "oData_variant_1",
+					executeOnSelection: true,
+					name: "A variant",
 					content: {}
-				}]
-			})).then(function () {
-				assert.throws(SmartVariantManagementWriteAPI.updateVariant.bind(undefined, {
-					id: "someId",
-					favorite: true,
-					reference: "an.app",
-					control: oControl
-				}),
-				/Variant to be modified is not persisted via sap.ui.fl./,
-				"then it throws an error");
+				}, {
+					id: "oData_variant_2",
+					name: "A Variant",
+					content: {}
+				}];
+				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+					changes: [],
+					comp: {
+						compVariants: [],
+						variants: [{
+							fileName: "flex_variant_1",
+							name: "F Variant",
+							layer: Layer.VENDOR,
+							content: {},
+							favorite: true,
+							selector: {
+								persistencyKey: sPersistencyKey
+							}
+						}],
+						changes: [],
+						standardVariants: [],
+						defaultVariants: []
+					}
+				});
+
+				return FlexState.clearAndInitialize({
+					reference: sReference,
+					componentId: oAppComponent.getId(),
+					manifest: {},
+					componentData: {}
+				}).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
+					control: oControl,
+					standardVariant: {
+						name: "sStandardVariantTitle"
+					},
+					variants: aVariants
+				})).then(function () {
+					testData.updateVariantPropertyBag.control = oControl;
+					return SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
+				}).then(function (oVariant) {
+					assert.equal(oVariant.getChanges().length, 1, "one change was added");
+					var oChange = oVariant.getChanges()[0];
+					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
+					assert.equal(oChange.getDefinition().changeType, "updateVariant", "changeType ist updateVariant");
+					assert.deepEqual(oChange.getDefinition().content, testData.expected.changeContent, "change content ist updateVariant");
+					var oVariantDefinition = oVariant.getDefinition();
+					assert.equal(oVariant.getFavorite(), testData.expected.favorite, "the favorite flag flag is set correct");
+					assert.equal(oVariantDefinition.favorite, testData.expected.definition.favorite, "and the definition.favorite flag is correct");
+					assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is set correct");
+					assert.equal(oVariantDefinition.executeOnSelection, testData.expected.definition.executeOnSelection, "and the definition.executeOnSelection flag is correct");
+					assert.deepEqual(oVariant.getContexts(), testData.expected.contexts, "the contexts section is set correct");
+					assert.deepEqual(oVariantDefinition.contexts, testData.expected.definition.contexts, "and the definition.contexts section is correct");
+				});
 			});
 		});
-
-		var sPersistencyKey = "someKey";
 
 		[{
 			details: "a new name for a variant",
@@ -188,6 +408,7 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				layer: Layer.CUSTOMER,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -214,6 +435,7 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				layer: Layer.CUSTOMER,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -242,6 +464,7 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				layer: Layer.CUSTOMER,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -270,6 +493,7 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				layer: Layer.CUSTOMER,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -298,6 +522,7 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				layer: Layer.CUSTOMER,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -327,6 +552,7 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				layer: Layer.CUSTOMER,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -357,6 +583,7 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				layer: Layer.CUSTOMER,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},

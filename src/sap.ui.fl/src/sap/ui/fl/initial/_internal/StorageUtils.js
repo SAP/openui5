@@ -260,6 +260,7 @@ sap.ui.define([
 						switch (oFlexObject.changeType) {
 							case "addFavorite":
 							case "removeFavorite":
+							case "updateVariant":
 								mGroupedFlexObjects[sLayer].comp.changes.push(oFlexObject);
 								break;
 							case "defaultVariant":
