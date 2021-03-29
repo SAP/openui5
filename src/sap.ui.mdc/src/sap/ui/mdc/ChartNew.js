@@ -805,26 +805,6 @@ sap.ui.define([
         };
 
         /**
-         * shows the Breadcrumbs for current drill-path and drilling up.
-         *
-         * @experimental
-         * @private
-         * @ui5-restricted Fiori Elements
-         */
-        Chart.prototype._createDrillBreadcrumbs = function () {
-
-            if (this.getControlDelegate()) {
-
-                if (!this._oDrillBreadcrumbs) {
-                    return this.getControlDelegate().createDrillBreadcrumbs(this);
-                }
-
-                return Promise.resolve(this._oDrillBreadcrumbs);
-            }
-
-        };
-
-        /**
          * This is a callback function which is called from the delegate once the inner chart finished loading data
          * Updates the Toolbar
          * Fires the innerChartLoadedData event

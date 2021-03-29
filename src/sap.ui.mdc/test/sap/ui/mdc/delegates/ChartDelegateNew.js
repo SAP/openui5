@@ -4,26 +4,10 @@
 
 sap.ui.define([
     "sap/ui/mdc/AggregationBaseDelegate",
-    "sap/ui/mdc/util/loadModules",
-    "sap/ui/mdc/library",
-    "sap/ui/core/Core",
-    "sap/m/text",
-    "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
-    "sap/ui/mdc/library",
-    "sap/base/util/merge",
-    'sap/ui/mdc/odata/v4/TypeUtil',
     "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
     "sap/ui/mdc/odata/v4/ChartPropertyHelperNew"
 ], function (
     V4ChartDelegate,
-    loadModules,
-    library,
-    Core,
-    Text,
-    MetaModelUtil,
-    MDCLib,
-    merge,
-    TypeUtil,
     ODataMetaModelUtil,
     PropertyHelper
 ) {
@@ -33,10 +17,10 @@ sap.ui.define([
 
     //var ChartLibrary;
     var Chart;
-    var Dimension;
+    //var Dimension;
     //var HierarchyDimension;
     //var TimeDimension;
-    var Measure;
+    //var Measure;
     //var VizPopover;
     //var VizTooltip;
 
@@ -109,6 +93,14 @@ sap.ui.define([
 
     };
 
+    ChartDelegate.getAvailableChartTypes = function(){
+        return [];
+    };
+
+    ChartDelegate.setChartType = function(){
+
+    };
+
     /**
      * Chart relevant API (WIP)
      */
@@ -132,7 +124,7 @@ sap.ui.define([
     };
 
     ChartDelegate.getChartTypeInfo = function () {
-
+        return {};
     };
 
     //TODO: Check for setDrillStackInfo
@@ -153,30 +145,11 @@ sap.ui.define([
     };
 
     ChartDelegate.createInnerDimensions = function (aGroupableProperties) {
-        //TODO: Check for Hierachy and Time
-        //TODO: Check for role annotation
-        aGroupableProperties.forEach(function (oProperty) {
-            var oDimension = new Dimension({name: oProperty.getName(), role: "category", label: oProperty.getLabel()});
-            this._oInnerChart.addDimension(oDimension);
-        }.bind(this));
+
     };
 
     ChartDelegate.createInnerMeasures = function (aAggregatableProperties, oPropertyHelper) {
-        //TODO: Check for Criticality, Coloring and so on
-        //TODO: Check for role annotation
-        //TODO: Where to get analyticalInfo from?
-        aAggregatableProperties.forEach(function (oProperty) {
-            var oRawProperty = oPropertyHelper.getRawProperty(oProperty.getName());
-            var oMeasure = new Measure({
-                name: oRawProperty.recAggrMethod + oProperty.getName(),
-                role: "axis1", label: oProperty.getLabel(),
-                analyticalInfo: {
-                    propertyPath: oProperty.getName(),
-                    "with": oRawProperty.recAggrMethod
-                }
-            });
-            this._oInnerChart.addMeasure(oMeasure);
-        }.bind(this));
+
     };
     /**
      * Checks the binding of the table and rebinds it if required.
@@ -261,16 +234,11 @@ sap.ui.define([
     ChartDelegate._loadChart = function () {
 
         return new Promise(function (resolve) {
-            var aNotLoadedModulePaths = ['sap/chart/library', 'sap/chart/Chart', 'sap/chart/data/Dimension', 'sap/chart/data/HierarchyDimension', 'sap/chart/data/TimeDimension', 'sap/chart/data/Measure', 'sap/viz/ui5/controls/VizTooltip'];
+            var aNotLoadedModulePaths = ['sap/chart/Chart'];
 
-            function onModulesLoadedSuccess(fnChartLibrary, fnChart, fnDimension, fnHierarchyDimension, fnTimeDimension, fnMeasure, fnVizTooltip) {
-                //ChartLibrary = fnChartLibrary;
+            function onModulesLoadedSuccess(fnChart) {
+
                 Chart = fnChart;
-                Dimension = fnDimension;
-                //HierarchyDimension = fnHierarchyDimension;
-                //TimeDimension = fnTimeDimension;
-                Measure = fnMeasure;
-                //VizTooltip = fnVizTooltip;
 
                 resolve();
             }
@@ -323,50 +291,7 @@ sap.ui.define([
     }
 
     ChartDelegate._createPropertyInfos = function (oMDCChart, oModel) {
-        var oMetadataInfo = oMDCChart.getDelegate().payload;
-        var aProperties = [];
-        var sEntitySetPath = "/" + oMetadataInfo.collectionName;
-        var oMetaModel = oModel.getMetaModel();
-
-        return Promise.all([
-            oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
-        ]).then(function (aResults) {
-            var oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
-            var oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
-            var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
-            var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
-            var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
-
-            for (var sKey in oEntityType) {
-                var oObj = oEntityType[sKey];
-
-                if (oObj && oObj.$kind === "Property") {
-                    // ignore (as for now) all complex properties
-                    // not clear if they might be nesting (complex in complex)
-                    // not clear how they are represented in non-filterable annotation
-                    // etc.
-                    if (oObj.$isCollection) {
-                        //Log.warning("Complex property with type " + oObj.$Type + " has been ignored");
-                        continue;
-                    }
-
-                    var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
-
-                    aProperties.push({
-                        name: sKey,
-                        label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
-                        sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
-                        filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
-                        groupable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] || false,
-                        aggregatable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"] || false,
-                        recAggrMethod: oPropertyAnnotations["@Org.OData.Aggregation.V1.RecommendedAggregationMethod"],
-                        supAggrMethods: oPropertyAnnotations["@Org.OData.Aggregation.V1.SupportedAggregationMethods"],
-                        maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1
-                    });
-                }
-            }
-            return aProperties;
-        });
+        return Promise.resolve();
     };
 
     ChartDelegate.getInnerChartSelectionHandler = function() {
@@ -393,6 +318,10 @@ sap.ui.define([
         return new Promise(function(resolve){
             resolve(new PropertyHelper([]));
         });
+    };
+
+    ChartDelegate.createInitialChartContent = function() {
+        //Nothing to do here
     };
 
     return ChartDelegate;
