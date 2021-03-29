@@ -1277,10 +1277,11 @@ sap.ui.define([
 
 	QUnit.test("Backspace should not delete token and fire tokenUpdate when not editable", function (assert) {
 		// Arrange
+		var oFirstToken = new Token({ text: "Token 1"});
 		var oMI = new MultiInput({
 			editable: false,
 			tokens: [
-				new Token({ text: "Token 1"}),
+				oFirstToken,
 				new Token({ text: "Token 2"}),
 				new Token({ text: "Token 3"})
 			]
@@ -1289,16 +1290,13 @@ sap.ui.define([
 
 		var oSpy = this.spy(oMI, "fireTokenUpdate");
 
-		// Act
-		oMI.focus();
+		// focus first token
+		oFirstToken.focus();
 
-		// focus last token
-		qutils.triggerKeydown(oMI.getDomRef(), KeyCodes.BACKSPACE);
+		// delete first token
+		qutils.triggerKeydown(oFirstToken.getDomRef(), KeyCodes.BACKSPACE);
 		Core.applyChanges();
 
-		// delete last token
-		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
-		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMI.getTokens().length, 3, "None tokens should be deleted.");
