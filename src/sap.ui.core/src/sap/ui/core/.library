@@ -26,7 +26,7 @@
         <raw-module name="sap/ui/core/support/trace/E2eTraceLib.js" depends="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/Device.js" />
         <raw-module name="sap/ui/thirdparty/baseuri.js" />
-        <raw-module name="sap/ui/thirdparty/blanket.js" />
+        <raw-module name="sap/ui/thirdparty/blanket.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/bignumber.js" />
         <raw-module name="sap/ui/thirdparty/caja-html-sanitizer.js" />
         <raw-module name="sap/ui/thirdparty/crossroads.js" depends="sap/ui/thirdparty/signals.js" />
@@ -36,7 +36,7 @@
         <raw-module name="sap/ui/thirdparty/es6-promise.js" />
         <raw-module name="sap/ui/thirdparty/es6-shim-nopromise.js" />
         <raw-module name="sap/ui/thirdparty/es6-string-methods.js" />
-        <raw-module name="sap/ui/thirdparty/flexie.js" />
+        <raw-module name="sap/ui/thirdparty/flexie.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
         <raw-module name="sap/ui/thirdparty/hasher.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/IPv6.js" />
@@ -85,7 +85,7 @@
         <raw-module name="sap/ui/thirdparty/jszip.js" />
         <raw-module name="sap/ui/thirdparty/klay.js" />
         <raw-module name="sap/ui/thirdparty/less.js" />
-        <raw-module name="sap/ui/thirdparty/mobify-carousel.js" />
+        <raw-module name="sap/ui/thirdparty/mobify-carousel.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
@@ -95,23 +95,23 @@
         <raw-module name="sap/ui/thirdparty/qunit-reporter-junit.js" depends="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/RequestRecorder.js" depends="sap/ui/thirdparty/URI.js,sap/ui/thirdparty/sinon.js"/>
-        <raw-module name="sap/ui/thirdparty/require.js" />
+        <raw-module name="sap/ui/thirdparty/require.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/SecondLevelDomains.js" />
         <raw-module name="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/sinon-ie.js" depends="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-qunit.js" depends="sap/ui/thirdparty/qunit.js,sap/ui/thirdparty/sinon.js,sap/ui/thirdparty/sinon-ie.js" />
-        <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" />
+        <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-4.js" />
-        <raw-module name="sap/ui/thirdparty/swipe-view.js" />
+        <raw-module name="sap/ui/thirdparty/swipe-view.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/unorm.js" />
         <raw-module name="sap/ui/thirdparty/unormdata.js" depends="sap/ui/thirdparty/unorm.js" />
         <raw-module name="sap/ui/thirdparty/URI.js" />
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
-        <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
+        <raw-module name="sap/ui/thirdparty/zyngascroll.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenopoly.bundle.js" depends="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
-        <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" />
+        <raw-module name="sap/ui/thirdparty/hyphenopoly/hyphenEngine.asm.js" requiresTopLevelScope="false" />
         <raw-module name="ui5loader.js" />
         <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
         <raw-module name="sap/ui/test/starter/_configureLoader.js" depends="ui5loader.js" />
