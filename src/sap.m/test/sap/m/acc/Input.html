@@ -8,7 +8,7 @@
 		<script src="../shared-config.js"></script>
 		<script src="../../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
 			data-sap-ui-resourceroots='{
 				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
 			}'>
@@ -115,47 +115,51 @@
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile Input",
 			content : [
-				new sap.m.Label({text: "Name", labelFor: "I1"}),
-				new sap.m.Input("I1", {type: sap.m.InputType.Text, change: handleChange }),
-				new sap.m.Label({text: "email address", labelFor: "I2"}),
-				new sap.m.Input("I2", {type: sap.m.InputType.Email, change: handleChange}),
-				new sap.m.Label({text: "Amount", labelFor: "I3"}),
-				new sap.m.Input("I3", {type: sap.m.InputType.Number, change: handleChange}),
-				new sap.m.Label({text: "phone", labelFor: "I4"}),
-				new sap.m.Input("I4", {type: sap.m.InputType.Tel, change: handleChange}),
-				new sap.m.Label({text: "link", labelFor: "I5"}),
-				new sap.m.Input("I5", {type: sap.m.InputType.Url, change: handleChange}),
-				new sap.m.Label({text: "password is required", labelFor: "I6"}),
-				new sap.m.Input("I6", {type: sap.m.InputType.Password, change: handleChange}),
-				new sap.m.Label({text: "Name", labelFor: "I7"}),
-				new sap.m.Input("I7", { placeholder: "choose name", showValueHelp: true, valueHelpRequest: handleValueHelp, change: handleChange}),
-				new sap.m.Label({text: "User", labelFor: "I8"}),
-				new sap.m.Input("I8", { showSuggestion: true, change: handleChange}).setModel(oModel1).bindAggregation("suggestionItems", "/", new sap.ui.core.Item({text: "{name}"})),
-				new sap.m.Label({text: "Hardware (try with C)", labelFor: "I9"}),
-				new sap.m.Input("I9", { showSuggestion: true, suggestionColumns: mySuggestionColumns, showValueHelp: true, valueHelpRequest: handleValueHelp, change: handleChange}).setModel(oModel2).bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate),
-				new sap.m.Label({text: "Price", labelFor: "I10"}),
-				new sap.m.Input("I10", { value: "220", description: "EUR", fieldWidth: "30%", change: handleChange}),
-				new sap.m.Label({text: "only \"hello\" is valid", labelFor: "I11"}),
-				new sap.m.Input("I11", {type: sap.m.InputType.Text, value: "Hello", valueStateText: "Valid Value is Hello", change: handleChange2 }),
-				new sap.m.Label({text: "Input with value state Error", labelFor: "I12"}),
-				new sap.m.Input("I12", {
-					showSuggestion: true,
-					valueState: "Error",
-					formattedValueStateText: new sap.m.FormattedText({
-						htmlText: "Error value state message with formatted text containing %%0",
-						controls: [
-							new sap.m.Link({
-								text: "link",
-								href: "#"
+				new sap.ui.layout.VerticalLayout("oVL", {
+					width: "100%",
+					content:[
+						new sap.m.Label({text: "Name", labelFor: "I1"}),
+						new sap.m.Input("I1", {type: sap.m.InputType.Text, change: handleChange }),
+						new sap.m.Label({text: "email address", labelFor: "I2"}),
+						new sap.m.Input("I2", {type: sap.m.InputType.Email, change: handleChange}),
+						new sap.m.Label({text: "Amount", labelFor: "I3"}),
+						new sap.m.Input("I3", {type: sap.m.InputType.Number, change: handleChange}),
+						new sap.m.Label({text: "phone", labelFor: "I4"}),
+						new sap.m.Input("I4", {type: sap.m.InputType.Tel, change: handleChange}),
+						new sap.m.Label({text: "link", labelFor: "I5"}),
+						new sap.m.Input("I5", {type: sap.m.InputType.Url, change: handleChange}),
+						new sap.m.Label({text: "password is required", labelFor: "I6"}),
+						new sap.m.Input("I6", {type: sap.m.InputType.Password, change: handleChange}),
+						new sap.m.Label({text: "Name", labelFor: "I7"}),
+						new sap.m.Input("I7", { placeholder: "choose name", showValueHelp: true, valueHelpRequest: handleValueHelp, change: handleChange}),
+						new sap.m.Label({text: "User", labelFor: "I8"}),
+						new sap.m.Input("I8", { showSuggestion: true, change: handleChange}).setModel(oModel1).bindAggregation("suggestionItems", "/", new sap.ui.core.Item({text: "{name}"})),
+						new sap.m.Label({text: "Hardware (try with C)", labelFor: "I9"}),
+						new sap.m.Input("I9", { showSuggestion: true, suggestionColumns: mySuggestionColumns, showValueHelp: true, valueHelpRequest: handleValueHelp, change: handleChange}).setModel(oModel2).bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate),
+						new sap.m.Label({text: "Price", labelFor: "I10"}),
+						new sap.m.Input("I10", { value: "220", description: "EUR", fieldWidth: "30%", change: handleChange}),
+						new sap.m.Label({text: "only \"hello\" is valid", labelFor: "I11"}),
+						new sap.m.Input("I11", {type: sap.m.InputType.Text, value: "Hello", valueStateText: "Valid Value is Hello", change: handleChange2 }),
+						new sap.m.Label({text: "Input with value state Error", labelFor: "I12"}),
+						new sap.m.Input("I12", {
+							showSuggestion: true,
+							valueState: "Error",
+							formattedValueStateText: new sap.m.FormattedText({
+								htmlText: "Error value state message with formatted text containing %%0",
+								controls: [
+									new sap.m.Link({
+										text: "link",
+										href: "#"
+									})
+								]
 							})
-						]
-					})
-				}).setModel(oModel1).bindAggregation("suggestionItems", "/", new sap.ui.core.Item({text: "{name}"}))
+						}).setModel(oModel1).bindAggregation("suggestionItems", "/", new sap.ui.core.Item({text: "{name}"}))
+					]
+				}).addStyleClass("sapUiContentPadding")
 			]
 		});
 		app.addPage(page1);
 		app.placeAt("body");
-
 	</script>
 	<style>
 		body {

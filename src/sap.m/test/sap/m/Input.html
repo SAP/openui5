@@ -8,13 +8,9 @@
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
-		<style>
-			.inputRight {
-				float: right;
-			}
-		</style>
+
 		<script>
 
 		jQuery.sap.require("sap.m.MessageBox");
@@ -576,7 +572,7 @@
 					demandPopin : true
 				})
 			]
-		}).addStyleClass("inputRight");
+		});
 
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(oSuggestionData);
@@ -641,7 +637,7 @@
 					demandPopin : true
 				})
 			]
-		}).addStyleClass("inputRight");
+		});
 
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(oSuggestionData);
@@ -871,177 +867,182 @@
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile Input Control",
 			content : [
-					new sap.m.Input({placeholder : "Prompt Text"}).addStyleClass('myInput'),
-					new sap.m.Input({value: "Dummy Text"}).addStyleClass('myInput'),
-					new sap.m.Input({value: "Disabled", enabled: false}).addStyleClass('myInput'),
-					new sap.m.Input({value: "Read-Only", editable: false}).addStyleClass('myInput'),
-					new sap.m.Input({value: "Warning", valueState : "Warning"}).addStyleClass('myInput'),
-					new sap.m.Input({value: "Error", valueState : "Error"}).addStyleClass('myInput'),
-					new sap.m.Input({value: "Success", valueState : "Success"}).addStyleClass('myInput'),
-					new sap.m.Input({value: "ValueHelp", showValueHelp: true, valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}).addStyleClass('myInput'),
-					new sap.m.Input({value: "ValueHelp + Status", showValueHelp: true, valueState : "Error", valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}).addStyleClass('myInput'),
-					new sap.m.Input({
-						value: "ValueHelpOnly",
-						showValueHelp: true,
-						valueHelpOnly: true,
-						valueHelpRequest: function(evt) {
-							sap.m.MessageBox.alert("Value help requested");
-						}
-					}),
-					new sap.m.Input({
-						value: "ValueHelpOnly + Status",
-						showValueHelp: true,
-						valueHelpOnly: true,
-						valueState : "Warning",
-						valueHelpRequest: function(evt) {
-							sap.m.MessageBox.alert("Value help requested");
-						}
-					}),
-					new sap.m.Input({
-						value: "Custom value help icon",
-						showValueHelp: true,
-						valueHelpIconSrc: "sap-icon://arrow-left",
-						valueHelpRequest: function(evt) {
-							sap.m.MessageBox.alert("Value help requested via custom defined value help icon with URI 'sap-icon://arrow-left'");
-						}
-					}),
-					oSuggestInput1,
-					oSuggestInput5, // same as 1 but two value
-					oSuggestInput2,
-					oSuggestInput6, // same as 2 but two value
-					oSuggestInput3,
-					oSuggestInput4,
-					oSuggestTableInput1,
-					oSuggestTableInput2,
-					oSuggestTableInput3,
-					oSuggestTableInput4,
-					oSuggestTableInput5,
-					oSuggestTableInput6,
-					oSuggestTableInput7,
-					oValueStateInput1,
-					oValueStateInput2,
-					oValueStateInput3,
-					oValueStateInput4,
-					oFormattedValueStateInput,
-					oFormattedValueStateInput2,
-					oLongValueStateInput,
-					new sap.m.Input({
-						value: "10",
-						description: "PC",
-						width:"100px",
-						fieldWidth:"60%"
-					}),
-					new sap.m.Input({
-						value: "EDP_LAPTOP",
-						description: "IT Laptops",
-						width:"200px",
-						fieldWidth:"50%"
-					}),
-					new sap.m.Input({
-						value: "long input long input long input long input",
-						description: "long description long description long description long description long description long description long description long description long description long description long description long description "
-					}),
-					new sap.m.Input({
-						value: "220",
-						description: "EUR / 5 pieses",
-						fieldWidth: "30%"
-					}),
-					new sap.m.Input({
-						value: "220",
-						description: "EUR",
-						fieldWidth: "30%"
-					}),
-					new sap.m.Input({
-						value: "220",
-						description: "Trinidad and Tobago Dollar",
-						fieldWidth: "30%"
-					}),
-					new sap.m.Input({
-						value: "220",
-						description: "East Caribbean Dollar",
-						fieldWidth: "30%"
-					}),
-					new sap.m.Input({
-						value: "220.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000",
-						description: "EUR",
-						fieldWidth: "85%"
-					}),
-					new sap.m.Input({
-						value: "007",
-						description: "Bastian Schweinsteigerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
-						fieldWidth: "20%"
-					}),
-					new sap.m.Input({
-						value: "This is the end",
-						placeholder: "placeholder",
-						textAlign: sap.ui.core.TextAlign.End
-					}),
-					new sap.m.Input({
-						placeholder: "placeholder",
-						description: "Test",
-						fieldWidth: "30%",
-						showValueHelp: true,
-						valueHelpRequest: function(oEvent) {
-							sap.m.MessageBox.alert("Value help requested");
-						}
-					}),
-					new sap.m.Input({
-						placeholder: "Input Search Without Suggestions",
-						showValueHelp: true,
-						valueHelpRequest: function(oEvent){
-							sap.m.MessageBox.alert("Value help requested with valueForSearch: '" + oEvent.getParameter("_userInputValue") + "'");
-						}
-					}),
-					new sap.m.Input({
-						placeholder: "Input Search With Suggestions - type 'text'",
-						showValueHelp: true,
-						showSuggestion: true,
-						suggestionItems: [
-							new sap.ui.core.Item({text: "text 1"}),
-							new sap.ui.core.Item({text: "text 2"}),
-							new sap.ui.core.Item({text: "text 3"}),
-							new sap.ui.core.Item({text: "text 4"}),
-							new sap.ui.core.Item({text: "text 15"})
-						],
-						valueHelpRequest: function(oEvent){
-							console.log("Zzz: " + oEvent.getParameter("userInputValue"));
-							sap.m.MessageBox.alert("Value help requested with valueForSearch: '" + oEvent.getParameter("_userInputValue") + "'");
-						}
-					}),
-					new sap.m.Input("vsinput-sugg", {
-						placeholder: "Input Search With Suggestions and value state changing while you are typing - type 'text'",
-						valueState: "Information",
-						valueStateText: "Keep typing to change the value states",
-						showSuggestion: true,
-						suggestionItems: [
-							new sap.ui.core.Item({text: "text 1"}),
-							new sap.ui.core.Item({text: "text 2"}),
-							new sap.ui.core.Item({text: "text 3"}),
-							new sap.ui.core.Item({text: "text 4"}),
-							new sap.ui.core.Item({text: "text 15"})
-						],
-						liveChange: function (oEvent) {
-							var i = this.getValue().length;
-							switch(i % 5){
-								case 0:
-									this.setValueState("Warning");
-									break;
-								case 1:
-									this.setValueState("Error");
-									break;
-								case 2:
-									this.setValueState("Success");
-									break;
-								case 3:
-									this.setValueState("Information");
-									break;
-								case 4:
-									this.setValueState("None");
-									break;
-							}
-						}
-					})
-			],
+					new sap.ui.layout.VerticalLayout("oVL", {
+						width: "100%",
+						content:[
+							new sap.m.Input({placeholder : "Prompt Text"}).addStyleClass('myInput'),
+							new sap.m.Input({value: "Dummy Text"}).addStyleClass('myInput'),
+							new sap.m.Input({value: "Disabled", enabled: false}).addStyleClass('myInput'),
+							new sap.m.Input({value: "Read-Only", editable: false}).addStyleClass('myInput'),
+							new sap.m.Input({value: "Warning", valueState : "Warning"}).addStyleClass('myInput'),
+							new sap.m.Input({value: "Error", valueState : "Error"}).addStyleClass('myInput'),
+							new sap.m.Input({value: "Success", valueState : "Success"}).addStyleClass('myInput'),
+							new sap.m.Input({value: "ValueHelp", showValueHelp: true, valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}).addStyleClass('myInput'),
+							new sap.m.Input({value: "ValueHelp + Status", showValueHelp: true, valueState : "Error", valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}).addStyleClass('myInput'),
+							new sap.m.Input({
+								value: "ValueHelpOnly",
+								showValueHelp: true,
+								valueHelpOnly: true,
+								valueHelpRequest: function(evt) {
+									sap.m.MessageBox.alert("Value help requested");
+								}
+							}),
+							new sap.m.Input({
+								value: "ValueHelpOnly + Status",
+								showValueHelp: true,
+								valueHelpOnly: true,
+								valueState : "Warning",
+								valueHelpRequest: function(evt) {
+									sap.m.MessageBox.alert("Value help requested");
+								}
+							}),
+							new sap.m.Input({
+								value: "Custom value help icon",
+								showValueHelp: true,
+								valueHelpIconSrc: "sap-icon://arrow-left",
+								valueHelpRequest: function(evt) {
+									sap.m.MessageBox.alert("Value help requested via custom defined value help icon with URI 'sap-icon://arrow-left'");
+								}
+							}),
+							oSuggestInput1,
+							oSuggestInput5, // same as 1 but two value
+							oSuggestInput2,
+							oSuggestInput6, // same as 2 but two value
+							oSuggestInput3,
+							oSuggestInput4,
+							oSuggestTableInput1,
+							oSuggestTableInput2,
+							oSuggestTableInput3,
+							oSuggestTableInput4,
+							oSuggestTableInput5,
+							oSuggestTableInput6,
+							oSuggestTableInput7,
+							oValueStateInput1,
+							oValueStateInput2,
+							oValueStateInput3,
+							oValueStateInput4,
+							oFormattedValueStateInput,
+							oFormattedValueStateInput2,
+							oLongValueStateInput,
+							new sap.m.Input({
+								value: "10",
+								description: "PC",
+								width:"100px",
+								fieldWidth:"60%"
+							}),
+							new sap.m.Input({
+								value: "EDP_LAPTOP",
+								description: "IT Laptops",
+								width:"200px",
+								fieldWidth:"50%"
+							}),
+							new sap.m.Input({
+								value: "long input long input long input long input",
+								description: "long description long description long description long description long description long description long description long description long description long description long description long description "
+							}),
+							new sap.m.Input({
+								value: "220",
+								description: "EUR / 5 pieses",
+								fieldWidth: "30%"
+							}),
+							new sap.m.Input({
+								value: "220",
+								description: "EUR",
+								fieldWidth: "30%"
+							}),
+							new sap.m.Input({
+								value: "220",
+								description: "Trinidad and Tobago Dollar",
+								fieldWidth: "30%"
+							}),
+							new sap.m.Input({
+								value: "220",
+								description: "East Caribbean Dollar",
+								fieldWidth: "30%"
+							}),
+							new sap.m.Input({
+								value: "220.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000",
+								description: "EUR",
+								fieldWidth: "85%"
+							}),
+							new sap.m.Input({
+								value: "007",
+								description: "Bastian Schweinsteigerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+								fieldWidth: "20%"
+							}),
+							new sap.m.Input({
+								value: "This is the end",
+								placeholder: "placeholder",
+								textAlign: sap.ui.core.TextAlign.End
+							}),
+							new sap.m.Input({
+								placeholder: "placeholder",
+								description: "Test",
+								fieldWidth: "30%",
+								showValueHelp: true,
+								valueHelpRequest: function(oEvent) {
+									sap.m.MessageBox.alert("Value help requested");
+								}
+							}),
+							new sap.m.Input({
+								placeholder: "Input Search Without Suggestions",
+								showValueHelp: true,
+								valueHelpRequest: function(oEvent){
+									sap.m.MessageBox.alert("Value help requested with valueForSearch: '" + oEvent.getParameter("_userInputValue") + "'");
+								}
+							}),
+							new sap.m.Input({
+								placeholder: "Input Search With Suggestions - type 'text'",
+								showValueHelp: true,
+								showSuggestion: true,
+								suggestionItems: [
+									new sap.ui.core.Item({text: "text 1"}),
+									new sap.ui.core.Item({text: "text 2"}),
+									new sap.ui.core.Item({text: "text 3"}),
+									new sap.ui.core.Item({text: "text 4"}),
+									new sap.ui.core.Item({text: "text 15"})
+								],
+								valueHelpRequest: function(oEvent){
+									console.log("Zzz: " + oEvent.getParameter("userInputValue"));
+									sap.m.MessageBox.alert("Value help requested with valueForSearch: '" + oEvent.getParameter("_userInputValue") + "'");
+								}
+							}),
+							new sap.m.Input("vsinput-sugg", {
+								placeholder: "Input Search With Suggestions and value state changing while you are typing - type 'text'",
+								valueState: "Information",
+								valueStateText: "Keep typing to change the value states",
+								showSuggestion: true,
+								suggestionItems: [
+									new sap.ui.core.Item({text: "text 1"}),
+									new sap.ui.core.Item({text: "text 2"}),
+									new sap.ui.core.Item({text: "text 3"}),
+									new sap.ui.core.Item({text: "text 4"}),
+									new sap.ui.core.Item({text: "text 15"})
+								],
+								liveChange: function (oEvent) {
+									var i = this.getValue().length;
+									switch(i % 5){
+										case 0:
+											this.setValueState("Warning");
+											break;
+										case 1:
+											this.setValueState("Error");
+											break;
+										case 2:
+											this.setValueState("Success");
+											break;
+										case 3:
+											this.setValueState("Information");
+											break;
+										case 4:
+											this.setValueState("None");
+											break;
+									}
+								}
+							})
+						]
+					}).addStyleClass("sapUiContentPadding")
+				],
 			footer: createFooter()
 		});
 
@@ -1122,7 +1123,6 @@
 		page4.addContent(b4i);
 		app.addPage(page1).addPage(page2).addPage(page3).addPage(page4);
 		app.placeAt("body");
-
 </script>
 	<style>
 	body {
