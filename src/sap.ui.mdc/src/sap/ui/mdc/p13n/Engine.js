@@ -330,8 +330,12 @@ sap.ui.define([
 	 * @returns {Promise} The change appliance promise.
 	 */
 	Engine.prototype._processChanges = function(vControl, aChanges) {
-		var oModificationSetting = this._determineModification(vControl);
-		return oModificationSetting.handler.processChanges(aChanges, oModificationSetting.payload);
+		if (aChanges instanceof Array && aChanges.length > 0) {
+			var oModificationSetting = this._determineModification(vControl);
+			return oModificationSetting.handler.processChanges(aChanges, oModificationSetting.payload);
+		}else {
+			return Promise.resolve([]);
+		}
 	};
 
 	/**
@@ -924,10 +928,7 @@ sap.ui.define([
 		}).then(function(aItemChanges){
 
 			var aComulatedChanges = aAdditionalChanges ? aAdditionalChanges.concat(aItemChanges) : aItemChanges;
-
-			if (aComulatedChanges.length > 0) {
-				this._processChanges(oControl, aComulatedChanges);
-			}
+			this._processChanges(oControl, aComulatedChanges);
 
 		}.bind(this));
 	};

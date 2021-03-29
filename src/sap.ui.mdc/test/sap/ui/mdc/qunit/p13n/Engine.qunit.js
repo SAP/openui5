@@ -56,13 +56,21 @@ sap.ui.define([
 
         var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
 
-        this.oEngine._processChanges(this.oControl, []);
+        this.oEngine._processChanges(this.oControl, [{
+            selectorElement: this.oControl,
+            changeSpecificData: {
+                changeType: "someTestChange",
+                content: {}
+            }
+        }]);
 
+        var aProvidedEngineChanges = oFMHStub.getCall(0).args[0];
         var oModificationPayload = oFMHStub.getCall(0).args[1];
 
         assert.notOk(oModificationPayload.hasVM, "No VM reference provided");
         assert.ok(oModificationPayload.hasPP, "PersistenceProvider reference provided");
         assert.equal(oModificationPayload.mode, PersistenceMode.Auto, "Auto mode provided");
+        assert.equal(aProvidedEngineChanges.length, 1, "One Change Provided by Engine");
         FlexModificationHandler.getInstance().processChanges.restore();
         oPP.destroy();
     });
@@ -84,18 +92,36 @@ sap.ui.define([
 
         var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
 
-        this.oEngine._processChanges(this.oControl, []);
+        this.oEngine._processChanges(this.oControl, [{
+            selectorElement: this.oControl,
+            changeSpecificData: {
+                changeType: "someTestChange",
+                content: {}
+            }
+        }]);
 
+        var aProvidedEngineChanges = oFMHStub.getCall(0).args[0];
         var oModificationPayload = oFMHStub.getCall(0).args[1];
 
         assert.ok(oModificationPayload.hasVM, "VM reference provided");
         assert.ok(oModificationPayload.hasPP, "PersistenceProvider reference provided");
         assert.equal(oModificationPayload.mode, PersistenceMode.Auto, "Auto mode provided");
+        assert.equal(aProvidedEngineChanges.length, 1, "One Change Provided by Engine");
         FlexModificationHandler.getInstance().processChanges.restore();
         oPP.destroy();
         oVM.destroy();
     });
 
+    QUnit.test("Change processing (_processChanges) only considered for calculated deltas, ignore non array types and empty arrays", function(assert){
+        var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
+
+        this.oEngine._processChanges(this.oControl, {});
+        this.oEngine._processChanges(this.oControl, undefined);
+        this.oEngine._processChanges(this.oControl, []);
+
+        assert.notOk(oFMHStub.called, "The calls with fale values will be ignored/filtered by the Engine");
+        FlexModificationHandler.getInstance().processChanges.restore();
+    });
 
     /* QUnit.test("Check registration with a different modification handler", function(assert){
 
