@@ -1,18 +1,20 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/Popup",
 	"sap/m/Dialog",
 	"sap/m/Bar",
 	"sap/m/SearchField",
 	"sap/ui/core/HTML",
 	"sap/m/Button",
 	"sap/m/library",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/Page",
 	"sap/m/App",
 	"sap/m/ScrollContainer",
@@ -31,11 +33,13 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/Title"
 ], function(
+	Log,
 	qutils,
 	createAndAppendDiv,
 	Device,
 	Core,
 	IconPool,
+	Popup,
 	Dialog,
 	Bar,
 	SearchField,
@@ -112,6 +116,28 @@ sap.ui.define([
 		// Assert
 		assert.ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
 		assert.equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
+	QUnit.module("Rendering");
+
+	QUnit.test("Rendering of invisible footer", function (assert) {
+		// Arrange
+		var oDialog = new Dialog({
+			beginButton: new Button({
+				text: "Hello"
+			})
+		});
+		oDialog._getToolbar().setVisible(false);
+
+		// Act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(oDialog.$().find("footer").length, 0, "Footer is not rendered when not visible");
 
 		// Clean up
 		oDialog.destroy();
@@ -913,7 +939,7 @@ sap.ui.define([
 			oButton.destroy();
 		});
 
-		jQuery("html").addClass("sap-phone");
+		jQuery("html").removeClass("sap-phone");
 	});
 
 	QUnit.test("Setting starting and ending buttons", function (assert) {
@@ -1850,6 +1876,74 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.module("Drag and resize in custom Within Area", {
+		beforeEach: function () {
+			this.oDialog = new Dialog({
+				title: "Some title",
+				content: [
+					new Text({
+						text: "Some text"
+					})
+				]
+			});
+			this.oWithinArea = createAndAppendDiv("withinArea");
+			var mStyles = {
+				position: "absolute",
+				backgroundColor: "black",
+				top: "3rem",
+				left: "3rem",
+				width: "500px",
+				height: "500px"
+			};
+
+			for (var sProp in mStyles) {
+				this.oWithinArea.style[sProp] = mStyles[sProp];
+			}
+
+			Popup.setWithinArea(this.oWithinArea);
+		},
+		afterEach: function () {
+			this.oDialog.destroy();
+			this.oWithinArea.remove();
+			Popup.setWithinArea(null);
+		}
+	});
+
+	QUnit.test("Check if the dialog doesn't go outside the Within Area when dragged with mouse", function (assert) {
+		// arrange
+		this.oDialog.setDraggable(true).open();
+		this.clock.tick(500);
+
+		var $withinArea = jQuery(this.oWithinArea),
+			oMouseDownMockEvent = {
+				pageX: 608,
+				pageY: 646,
+				offsetX: 177,
+				offsetY: 35,
+				preventDefault: function () {
+				},
+				stopPropagation: function () {
+				},
+				target: this.oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
+			},
+			oMouseMoveMockEvent = {
+				pageX: -2000,
+				pageY: -2000
+			};
+
+		// Act
+		this.oDialog.onmousedown(oMouseDownMockEvent);
+		$withinArea.trigger(new jQuery.Event("mousemove", oMouseMoveMockEvent));
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(this.oDialog.$().offset().left >= $withinArea.offset().left, "Dialog didn't go outside Within Area");
+		assert.ok(this.oDialog.$().offset().top >= $withinArea.offset().top, "Dialog didn't go outside Within Area");
+
+		// clean up
+		$withinArea.trigger(new jQuery.Event("mouseup", oMouseMoveMockEvent));
+	});
+
 	QUnit.module("PopUp Position",{
 		beforeEach: function() {
 			this.scrollY = window.scrollY;
@@ -2539,5 +2633,260 @@ sap.ui.define([
 			// Assert
 			assert.notOk(this.oDialog.isOpen(), "Dialog is closed after releasing SPACE/ENTER and than pressing ESC");
 		}.bind(this));
+	});
+
+	QUnit.module("Within Area", {
+		beforeEach: function () {
+			this.oDialog = new Dialog();
+			this.oWithinArea = createAndAppendDiv("withinArea");
+		},
+		afterEach: function () {
+			this.oDialog.destroy();
+			this.oWithinArea.remove();
+			Popup.setWithinArea(null);
+		},
+		styleWithinArea: function (mStyles) {
+			var _mStyles = Object.assign({
+				position: "absolute",
+				backgroundColor: "black"
+			}, mStyles);
+
+			for (var sProp in _mStyles) {
+				this.oWithinArea.style[sProp] = _mStyles[sProp];
+			}
+		},
+		assertIsCenteredInWithinArea: function (assert) {
+			var oStyles = this.oDialog.getDomRef().style,
+				fTop = parseFloat(oStyles.getPropertyValue("top")),
+				fLeft = parseFloat(oStyles.getPropertyValue("left")),
+				$withinArea = jQuery(this.oWithinArea),
+				oWithinAreaPos = $withinArea.offset();
+
+			// Assert
+			assert.ok(fTop >= oWithinAreaPos.top + parseInt($withinArea.css("border-top-width")), "Dialog is inside Within Area");
+			assert.ok(fLeft >= oWithinAreaPos.left + parseInt($withinArea.css("border-left-width")), "Dialog is inside Within Area");
+			assert.ok(this.oDialog.$().outerHeight(true) <= $withinArea.innerHeight(), "Dialog isn't higher than Within Area");
+			assert.ok(this.oDialog.$().outerWidth(true) <= $withinArea.innerWidth(), "Dialog isn't wider than Within Area");
+		}
+	});
+
+	QUnit.test("Centering based on Window", function (assert) {
+		// Arrange
+		Popup.setWithinArea(null);
+		this.oDialog.open();
+		this.clock.tick(500);
+		var $dialog = this.oDialog.$(),
+			iExpectedTop = Math.round((window.innerHeight - $dialog.outerHeight()) / 2),
+			iExpectedLeft = Math.round((window.innerWidth - $dialog.outerWidth()) / 2);
+
+		// Assert
+		assert.strictEqual($dialog.offset().top, iExpectedTop, "Top coordinate is correctly calculated based on Window");
+		assert.strictEqual($dialog.offset().left, iExpectedLeft, "Left coordinate is correctly calculated based on Window");
+	});
+
+	QUnit.test("Custom Within Area. 'top' and 'left' of Within Area should be included", function (assert) {
+		// Arrange
+		Popup.setWithinArea(this.oWithinArea);
+		this.styleWithinArea({
+			top: "5rem",
+			left: "1rem",
+			bottom: "5rem",
+			right: "5rem"
+		});
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		this.assertIsCenteredInWithinArea(assert);
+	});
+
+	QUnit.test("Custom Within Area. 'width' and 'height' of Within Area should be included", function (assert) {
+		// Arrange
+		Popup.setWithinArea(this.oWithinArea);
+		this.styleWithinArea({
+			width: "500px",
+			height: "500px"
+		});
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		this.assertIsCenteredInWithinArea(assert);
+	});
+
+	QUnit.test("Custom Within Area. Dialog bigger than available space", function (assert) {
+		// Arrange
+		this.oDialog.setContentHeight("1000px").setContentWidth("1000px");
+		Popup.setWithinArea(this.oWithinArea);
+		this.styleWithinArea({
+			width: "500px",
+			height: "500px"
+		});
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		this.assertIsCenteredInWithinArea(assert);
+	});
+
+	QUnit.test("Custom Within Area. Stretched dialog", function (assert) {
+		// Arrange
+		this.oDialog.setStretch(true);
+		Popup.setWithinArea(this.oWithinArea);
+		this.styleWithinArea({
+			top: "2rem",
+			left: "2rem",
+			width: "500px",
+			height: "500px"
+		});
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var $dialog = this.oDialog.$(),
+			$withinArea = jQuery(this.oWithinArea),
+			iExpectedMargin = 10;
+
+		// Assert
+		this.assertIsCenteredInWithinArea(assert);
+		assert.ok(Math.abs($dialog.outerWidth() - $withinArea.width()) > iExpectedMargin, "There is margin around the dialog");
+		assert.ok(Math.abs($dialog.outerHeight() - $withinArea.height()) > iExpectedMargin, "There is margin around the dialog");
+	});
+
+	QUnit.test("Custom Within Area. Stretched dialog on mobile", function (assert) {
+		// Arrange
+		this.oDialog.setStretch(true);
+		Popup.setWithinArea(this.oWithinArea);
+		this.styleWithinArea({
+			top: "2rem",
+			left: "2rem",
+			width: "200px",
+			height: "200px"
+		});
+		var oSystem = {
+			desktop: false,
+			tablet: false,
+			phone: true
+		};
+		this.stub(Device, "system", oSystem);
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var $dialog = this.oDialog.$(),
+			oDialogPos = $dialog.offset(),
+			$withinArea = jQuery(this.oWithinArea),
+			oWithinAreaPos = $withinArea.offset();
+
+		// Assert
+		this.assertIsCenteredInWithinArea(assert);
+		assert.strictEqual(oDialogPos.top, oWithinAreaPos.top, "Positions of dialog and Within Area are the same");
+		assert.strictEqual(oDialogPos.left, oWithinAreaPos.left, "Positions of dialog and Within Area are the same");
+		assert.strictEqual($dialog.outerWidth(), $withinArea.width(), "Dialog takes full width");
+		assert.strictEqual($dialog.outerHeight(), $withinArea.height(), "Dialog takes full height");
+	});
+
+	QUnit.test("Custom Within Area. Dialog when there is no enough space", function (assert) {
+		// Arrange
+		var oLogSpy = this.spy(Log, "error");
+		Popup.setWithinArea(this.oWithinArea);
+		this.styleWithinArea({
+			top: "2rem",
+			left: "2rem",
+			width: "100px",
+			height: "100px"
+		});
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(oLogSpy.called, "Error is logged when Within Area is small");
+	});
+
+	QUnit.test("Custom Within Area. Borders of Within Area should be included", function (assert) {
+		// Arrange
+		this.oDialog.setStretch(true);
+		Popup.setWithinArea(this.oWithinArea);
+		this.styleWithinArea({
+			border: "2rem solid red",
+			top: "2rem",
+			left: "2rem",
+			width: "500px",
+			height: "500px"
+		});
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		this.assertIsCenteredInWithinArea(assert);
+	});
+
+	QUnit.module("Resize of Within Area", {
+		beforeEach: function () {
+			this.oDialog = new Dialog();
+		},
+		afterEach: function () {
+			this.oDialog.destroy();
+		}
+	});
+
+	QUnit.test("Stretched dialog on Desktop, max width is recalculated when window is resized", function (assert) {
+		// Arrange
+		var oWindowDimensions = this.oDialog._getAreaDimensions(),
+			iNewWindowWidth = oWindowDimensions.width - 200;
+		this.oDialog.setStretch(true).open();
+		this.clock.tick(500);
+		this.stub(this.oDialog, "_getAreaDimensions").returns(
+			Object.assign(
+				oWindowDimensions,
+				{ width: iNewWindowWidth }
+			)
+		);
+
+		// Act
+		this.oDialog._onResize();
+
+		// Assert
+		assert.ok(this.oDialog.$().width() < iNewWindowWidth, "max-width of the dialog wasn't recalculated on resize of window");
+	});
+
+	QUnit.test("Resize of custom Within Area. Dialog should be repositioned", function (assert) {
+		// Arrange
+		this.clock.restore();
+		var done = assert.async();
+		var oWithinArea = createAndAppendDiv("withinArea");
+		var mStyles = {
+			position: "absolute",
+			backgroundColor: "black",
+			top: "3rem",
+			left: "3rem",
+			width: "500px",
+			height: "500px"
+		};
+
+		for (var sProp in mStyles) {
+			oWithinArea.style[sProp] = mStyles[sProp];
+		}
+
+		Popup.setWithinArea(oWithinArea);
+		this.oDialog.attachAfterOpen(function() {
+			var sCurrLeft = this.oDialog.getDomRef().style.left;
+			var oStyleObserver = new MutationObserver(function(aMutations, oObserver) {
+				// Assert
+				assert.notStrictEqual(this.oDialog.getDomRef().style.left, sCurrLeft, "Dialog wasn't repositioned when Within Area was resized");
+
+				// Clean up
+				oObserver.disconnect();
+				oWithinArea.remove();
+				Popup.setWithinArea(null);
+				done();
+			}.bind(this));
+
+			oStyleObserver.observe(this.oDialog.getDomRef(), { attributes: true, attributeFilter: ["style"] });
+
+			// Act - increase Within Area size
+			oWithinArea.style.width = "600px";
+		}.bind(this));
+
+		// Act - open the dialog
+		this.oDialog.open();
 	});
 });
