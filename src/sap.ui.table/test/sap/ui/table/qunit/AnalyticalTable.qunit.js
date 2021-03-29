@@ -746,6 +746,55 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Row state", function(assert) {
+		var done = assert.async();
+
+		this.oModel.metadataLoaded().then(function() {
+			this.oTable = createTable.call(this);
+
+			var fnHandler1 = function() {
+				attachEventHandler(this.oTable, 1, fnHandler2, this);
+				this.oTable.getRows()[0].expand();
+			};
+
+			var fnHandler2 = function() {
+				var oExpandedGroupRow = this.oTable.getRows()[0];
+				assert.strictEqual(oExpandedGroupRow.isGroupHeader(), true, "Group row (expanded): Is group header");
+				assert.strictEqual(oExpandedGroupRow.getLevel(), 1, "Group row (expanded): Level");
+				assert.strictEqual(oExpandedGroupRow.isExpandable(), true, "Group row (expanded): Expandable");
+				assert.strictEqual(oExpandedGroupRow.isExpanded(), true, "Group row (expanded): Expanded");
+				assert.strictEqual(
+					oExpandedGroupRow.getTitle(),
+					this.oTable.getBinding().getGroupName(oExpandedGroupRow.getBindingContext(), oExpandedGroupRow.getLevel()),
+					"Group row (expanded): Title"
+				);
+
+				var oCollapsedGroupRow = this.oTable.getRows()[1];
+				assert.strictEqual(oCollapsedGroupRow.isGroupHeader(), true, "Group row (collapsed): Is group header");
+				assert.strictEqual(oCollapsedGroupRow.getLevel(), 2, "Group row (collapsed): Level");
+				assert.strictEqual(oCollapsedGroupRow.isExpandable(), true, "Group row (collapsed): Expandable");
+				assert.strictEqual(oCollapsedGroupRow.isExpanded(), false, "Group row (collapsed): Expanded");
+				assert.strictEqual(
+					oCollapsedGroupRow.getTitle(),
+					this.oTable.getBinding().getGroupName(oCollapsedGroupRow.getBindingContext(), oCollapsedGroupRow.getLevel()),
+					"Group row (collapsed): Title"
+				);
+
+				var oGroupSummaryRow = this.oTable.getRows()[13];
+				assert.strictEqual(oGroupSummaryRow.isGroupSummary(), true, "Group summary row: Is group summary");
+				assert.strictEqual(oGroupSummaryRow.getLevel(), 2, "Group summary row: Level");
+
+				var oTotalSummaryRow = this.oTable.getRows()[19];
+				assert.strictEqual(oTotalSummaryRow.isTotalSummary(), true, "Total summary row: Is total summary");
+				assert.strictEqual(oTotalSummaryRow.getLevel(), 1, "Total summary row: Level");
+
+				done();
+			};
+
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
+			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
+		}.bind(this));
+	});
 
 	QUnit.module("AnalyticalColumn", {
 		beforeEach: function() {

@@ -6227,6 +6227,9 @@ sap.ui.define([
 			type: oRow.Type.GroupHeader,
 			level: 1
 		}, {
+			type: oRow.Type.Standard,
+			level: 2
+		}, {
 			type: oRow.Type.GroupHeader,
 			level: 2
 		}, {
@@ -6234,27 +6237,24 @@ sap.ui.define([
 			level: 3
 		}, {
 			type: oRow.Type.Summary,
-			level: 2
-		}, {
-			type: oRow.Type.GroupHeader,
-			level: 1
-		}, {
-			type: oRow.Type.Standard,
-			level: 2
-		}, {
-			type: oRow.Type.Standard,
-			level: 4
-		}, {
-			type: oRow.Type.GroupHeader,
-			level: 4
+			level: 3
 		}, {
 			type: oRow.Type.Summary,
+			level: 2
+		}, {
+			type: oRow.Type.Standard,
+			level: 4
+		}, {
+			type: oRow.Type.Standard,
 			level: 5
+		}, {
+			type: oRow.Type.Standard,
+			level: 6
 		}, {
 			type: oRow.Type.Summary,
 			level: 1
 		}];
-		var aExpectedIndentations = [0, 24, 24, 24, 0, 0, 36, 44, 52, 0];
+		var aExpectedIndentations = [0, 0, 24, 24, 24, 0, 36, 44, 52, 0];
 		var that = this;
 
 		TableUtils.Grouping.setGroupMode(this.oTable);
