@@ -29,12 +29,14 @@ sap.ui.define([
 			if (oChangeContent.contexts) {
 				oVariant.setContexts(oChangeContent.contexts);
 			}
+			if (oChangeContent.content) {
+				oVariant.setContent(oChangeContent.content);
+			}
 
 			var sVariantName = oChange.getText("variantName");
 			if (sVariantName) {
 				oVariant.setName(sVariantName);
 			}
-			// TODO add content. For this the change setters have to change to not update the state / definition
 		}
 	};
 
@@ -126,7 +128,6 @@ sap.ui.define([
 
 			if (!oStandardVariant) {
 				// create a new standard variant with the passed input
-				oStandardVariantInput.content = oStandardVariantInput.content || {};
 				oStandardVariant = createVariant(sPersistencyKey, oStandardVariantInput);
 				applyChangesOnVariant(mChanges, oStandardVariant);
 			} else {

@@ -638,6 +638,8 @@ sap.ui.define([
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data entries are present");
 				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
+				assert.deepEqual(oVariant.getContent(), {}, "the content was set correct");
+				assert.deepEqual(oVariant._oDefinition.content, {}, "the content was set correct in the definition");
 			});
 		});
 

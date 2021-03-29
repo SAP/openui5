@@ -116,6 +116,10 @@ sap.ui.define([
 				name: {
 					type: "string",
 					defaultValue: ""
+				},
+				content: {
+					type: "object",
+					defaultValue: {}
 				}
 			},
 			aggregations: {
@@ -146,6 +150,7 @@ sap.ui.define([
 			this.setExecuteOnSelection(bExecuteOnSelect);
 
 			this.setContexts(oFile.contexts || {});
+			this.setContent(oFile.content || {});
 
 			this.setName(this.getText("variantName"));
 
@@ -191,7 +196,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bFavorite - Boolean to which the favorite flag should be set
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 	CompVariant.prototype.storeFavorite = function (bFavorite) {
 		if (bFavorite !== undefined) {
@@ -204,12 +210,54 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the content of the runtime instance.
+	 *
+	 * @param {object} [oContent={}] - Content object to be set
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+	CompVariant.prototype.setContent = function (oContent) {
+		// TODO: remove after the extended Change.js does not overwrite the default setContent
+		this.setProperty("content", oContent || {});
+	};
+
+	/**
+	 * Sets the content of the runtime instance.
+	 *
+	 * @retruns {object} Content object of the variant
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+	CompVariant.prototype.getContent = function () {
+		// TODO: remove after the extended Change.js does not overwrite the default getContent
+		return this.getProperty("content");
+	};
+
+	/**
+	 * Sets the content of the runtime instance as well as the persistent representation.
+	 * This results in setting the definition as well as flagging the entity as 'dirty'.
+	 *
+	 * @param {object} [oContent={}] - Content object to be stored
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+	CompVariant.prototype.storeContent = function (oContent) {
+		this._oDefinition.content = oContent || {};
+		this.setState(Change.states.DIRTY);
+		this.setContent(oContent);
+	};
+
+	/**
 	 * Sets the e'Apply Automatically' flag of the runtime instance as well as the persistent representation.
 	 * This results in setting the definition as well as flagging the entity as 'dirty'.
 	 *
 	 * @param {boolean} bExecuteOnSelection - Boolean to which the 'Apply Automatically' flag should be set
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 	CompVariant.prototype.storeExecuteOnSelection = function (bExecuteOnSelection) {
 		if (bExecuteOnSelection !== undefined) {
@@ -228,13 +276,32 @@ sap.ui.define([
 	 *
 	 * @param {string} sName - Name to be set
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 	CompVariant.prototype.storeName = function (sName) {
 		this._oDefinition.texts.variantName.value = sName;
 
 		this.setState(Change.states.DIRTY);
 		this.setName(sName);
+	};
+
+	/**
+	 * Sets the object of the contexts attribute.
+	 *
+	 * @param {object} mContexts - Contexts of the variant file
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+	CompVariant.prototype.storeContexts = function (mContexts) {
+		if (mContexts !== undefined) {
+			this._oDefinition.contexts = mContexts;
+		} else {
+			delete this._oDefinition.contexts;
+		}
+		this.setContexts(mContexts);
+		this.setState(Change.states.DIRTY);
 	};
 
 	CompVariant.createInitialFileContent = function (oPropertyBag) {
@@ -267,23 +334,6 @@ sap.ui.define([
 			"support",
 			"contexts"
 		]);
-	};
-
-	/**
-	 * Sets the object of the contexts attribute.
-	 *
-	 * @param {object} mContexts - Contexts of the variant file
-	 *
-	 * @public
-	 */
-	CompVariant.prototype.storeContexts = function (mContexts) {
-		if (mContexts !== undefined) {
-			this._oDefinition.contexts = mContexts;
-		} else {
-			delete this._oDefinition.contexts;
-		}
-		this.setContexts(mContexts);
-		this.setState(Change.states.DIRTY);
 	};
 
 	return CompVariant;
