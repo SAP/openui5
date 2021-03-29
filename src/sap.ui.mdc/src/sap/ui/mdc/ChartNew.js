@@ -834,6 +834,7 @@ sap.ui.define([
         //TODO: Pass this as an callback function to the delegate instead of calling it form the delegate directly
         Chart.prototype._innerChartDataLoadComplete = function () {
             this.setBusy(false);
+            this._renderOverlay(false);
 
             this._updateToolbar();
 
@@ -954,6 +955,45 @@ sap.ui.define([
             }
 
         };
+
+
+        /**
+		 * Callback for when fuilters changed
+		 * Activates the overlay on the MDC Chart
+		 *
+		 * @param oEvent filter changed event
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
+		 */
+		Chart.prototype._onFiltersChanged = function(oEvent) {
+			if (this.getControlDelegate().getInnerChartBound() && oEvent.getParameter("conditionsBased")) {
+				this._renderOverlay(true);
+			}
+		};
+
+        /**
+		 * Adds/Removes the overlay shown above the inner chart
+		 * @param {boolean} bShow true to show overlay, false to hide
+		 *
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements, sap.ui.mdc
+		 */
+		Chart.prototype._renderOverlay = function(bShow) {
+
+			if (this.getControlDelegate().getInnerChart()) {
+
+				var $this = this.getControlDelegate().getInnerChart().$(), $overlay = $this.find(".sapUiMdcChartOverlay");
+				if (bShow && $overlay.length === 0) {
+					$overlay = jQuery("<div>").addClass("sapUiOverlay sapUiMdcChartOverlay").css("z-index", "1");
+					$this.append($overlay);
+				} else if (!bShow) {
+					$overlay.remove();
+				}
+			}
+		};
 
         return Chart;
     }, true);
