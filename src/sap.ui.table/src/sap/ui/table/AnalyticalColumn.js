@@ -105,7 +105,7 @@ sap.ui.define([
 		return new AnalyticalColumnMenu(this.getId() + "-menu");
 	};
 
-	AnalyticalColumn.prototype.setGrouped = function(bGrouped, bSuppressInvalidate) {
+	AnalyticalColumn.prototype.setGrouped = function(bGrouped) {
 		var oParent = this.getParent();
 
 		if (isInstanceOfAnalyticalTable(oParent)) {
@@ -116,7 +116,7 @@ sap.ui.define([
 			}
 		}
 
-		var bReturn = this.setProperty("grouped", bGrouped, bSuppressInvalidate);
+		var bReturn = this.setProperty("grouped", bGrouped);
 		this._updateColumns();
 
 		return bReturn;
@@ -380,8 +380,6 @@ sap.ui.define([
 
 		return false;
 	};
-
-	AnalyticalColumn.ofCell = Column.ofCell;
 
 	return AnalyticalColumn;
 

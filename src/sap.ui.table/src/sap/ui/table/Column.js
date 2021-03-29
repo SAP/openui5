@@ -18,8 +18,7 @@ sap.ui.define([
 	'./ColumnMenu',
 	'sap/base/util/ObjectPath',
 	"sap/base/util/JSTokenizer",
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/Log"
 ],
 function(
 	Element,
@@ -36,8 +35,7 @@ function(
 	ColumnMenu,
 	ObjectPath,
 	JSTokenizer,
-	Log,
-	jQuery
+	Log
 ) {
 	"use strict";
 
@@ -380,7 +378,7 @@ function(
 	/**
 	 * called when the column's parent is set
 	 */
-	Column.prototype.setParent = function(oParent, sAggregationName, bSuppressRerendering) {
+	Column.prototype.setParent = function() {
 		var vReturn = Element.prototype.setParent.apply(this, arguments);
 		var oMenu = this.getAggregation("menu");
 		if (oMenu && typeof oMenu._updateReferences === "function") {

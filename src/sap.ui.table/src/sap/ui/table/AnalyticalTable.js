@@ -5,6 +5,7 @@
 // Provides control sap.ui.table.AnalyticalTable.
 sap.ui.define([
 	'./AnalyticalColumn',
+	'./Column',
 	'./Table',
 	'./TreeTable',
 	"./TableRenderer",
@@ -23,6 +24,7 @@ sap.ui.define([
 ],
 	function(
 		AnalyticalColumn,
+		Column,
 		Table,
 		TreeTable,
 		TableRenderer,
@@ -487,7 +489,7 @@ sap.ui.define([
 			var iCellCount = aCells.length;
 
 			for (var iCellIndex = 0; iCellIndex < iCellCount; iCellIndex++) {
-				var oAnalyticalColumn = AnalyticalColumn.ofCell(aCells[iCellIndex]);
+				var oAnalyticalColumn = Column.ofCell(aCells[iCellIndex]);
 				var bIsMeasureCell = oBinding ? oBinding.isMeasure(oAnalyticalColumn.getLeadingProperty()) : false;
 				var $td = jQuery(aCells[iCellIndex].$().closest("td"));
 				var bHideCellContent = false;
