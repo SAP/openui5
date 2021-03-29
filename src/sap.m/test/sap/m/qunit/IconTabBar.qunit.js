@@ -3850,7 +3850,6 @@ sap.ui.define([
 		beforeEach: function() {
 		this.oIconTabBar = new IconTabBar({
 			enableTabReordering: true,
-			tabNestingViaInteraction: true,
 			items: [
 				new IconTabFilter({
 					id: 'tabReorder1',
