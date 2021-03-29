@@ -116,31 +116,30 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 				$head.append(jQuery('<meta name="msapplication-tap-highlight" content="no">'));
 			}
 
-			var bIsIOS7Safari = Device.os.ios && Device.os.version >= 7 && Device.os.version < 8 && Device.browser.name === "sf";
 			// initialize viewport
 			if (options.viewport) {
 				var sMeta;
 				var iInnerHeightBefore = Device.resize.height;
 				var iInnerWidthBefore = Device.resize.width;
-				if (bIsIOS7Safari && Device.system.phone) {
-					//if the softkeyboard is open in orientation change, we have to do this to solve the zoom bug
-					// on the phone - the phone zooms into the view although it shouldn't so these two lines will
-					// zoom out again see orientation change below the important part seems to be removing the
-					// device width
-					sMeta = 'minimal-ui, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
-				} else if (bIsIOS7Safari && Device.system.tablet) {
-					//remove the width = device width since it will not work correctly if the webside is embedded
-					// in a webview
-					sMeta = 'initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-				} else if ((Device.os.ios && Device.system.phone) && (Math.max(window.screen.height, window.screen.width) === 568)) {
-					// iPhone 5
-					sMeta = "user-scalable=0, initial-scale=1.0";
-				} else if (Device.os.android && Device.os.version < 3) {
-					sMeta = "width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
-				} else {
-					// all other devices
-					sMeta = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+
+				sMeta = "width=device-width, initial-scale=1.0";
+
+				// Setting maximum-scale=1.0 and user-scalable=no has effect to the manual zoom (user can pinch zoom the
+				// UI) and auto zoom (browser zooms in the UI automatically under some circumtances, for example when an
+				// input gets the focus and the font-size of the input is less than 16px on iOS) functionalities on the
+				// mobile platform, but there's some difference between the mobile platforms:
+				//  * iOS: This does not disable manual zoom in Safari and it only disables the auto zoom function. In
+				//  Chrome browser on iOS, it does disable the manual zoom but since Chrome on iOS isn't in the support
+				//  matrix, we can ignore this.
+				//  * other mobile platform: it does disable the manual zoom option but there's no auto zoom function.
+				//  So we need to remove the maximum-scale=1.0:
+				//
+				//  Therefore we need to add the additional settings (maximum-scale and user-scalable) only for iOS
+				//  platform
+				if (Device.os.ios) {
+					sMeta += ", maximum-scale=1.0, user-scalable=no";
 				}
+
 				$head.append(jQuery('<meta name="viewport" content="' + sMeta + '">'));
 
 				// Update Device API resize info, which is necessary in some scenarios after setting the viewport info
