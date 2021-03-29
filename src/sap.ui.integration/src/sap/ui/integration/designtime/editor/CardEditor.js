@@ -216,14 +216,17 @@ sap.ui.define([
 					var oLayoutForNotWrapping = function () {
 						return new sap.m.FlexItemData({
 							growFactor: 1,
-							baseSize: "0"
+							baseSize: "0",
+							maxWidth: "50%"
 						});
 					};
 					var addColFields = function () {
 						if (oColFields.length > 0) {
 							var iLess = iColSize - oColFields.length;
 							for (var n = 0; n < iLess; n++) {
-								oColFields.push(new VBox().setLayoutData(oLayoutForNotWrapping()));
+								oColFields.push(new VBox({
+
+								}));
 							}
 							oPanel.addContent(new HBox({
 								items: oColFields
@@ -288,6 +291,7 @@ sap.ui.define([
 										}));
 										oColFields = [];
 									}
+									oLabelWithDependentHBox.addStyleClass("col1box");
 									olabelItemForCol = oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem;
 									continue;
 								}
@@ -300,12 +304,15 @@ sap.ui.define([
 									oPanel.addContent(oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem);
 								}
 							} else if (oItem._cols === 1) {
-								oColFields.push(new VBox({
+								var oColVBox = new VBox({
 									items: [
 										olabelItemForCol,
 										oItem
 									]
-								}).setLayoutData(oLayoutForNotWrapping()));
+								});
+								oColVBox.addStyleClass("col1");
+
+								oColFields.push(oColVBox);
 								olabelItemForCol = null;
 							} else if (oLabelItemForNotWrapping) {
 								//render lable and field for NotWrapping parameter
@@ -359,6 +366,7 @@ sap.ui.define([
 							}
 							//bind originalField and translation field together
 							oOriginalField.setLayoutData(oLayoutForNotWrapping());
+							oOriginalField.addStyleClass("sapUiIntegrationFieldTranslationText");
 							oItem.setLayoutData(oLayoutForNotWrapping());
 							var oHBox = new HBox({
 								items: [
@@ -944,6 +952,7 @@ sap.ui.define([
 	CardEditor.prototype._createLabel = function (oConfig) {
 		var oLabel = new Label({
 			text: oConfig.label,
+			tooltip: oConfig.tooltip || oConfig.label,
 			//mark only fields that are required and editable,
 			//otherwise this is confusing because user will not be able to correct it
 			required: oConfig.required && oConfig.editable || false,
@@ -1741,7 +1750,7 @@ sap.ui.define([
 				};
 			}
 			var oItems = oSettings.form.items,
-			    oHost = this._oEditorCard.getHostInstance();
+				oHost = this._oEditorCard.getHostInstance();
 			Object.keys(oConfiguration.destinations).forEach(function (n) {
 				oItems[n + ".destinaton"] = merge({
 					manifestpath: sBasePath + n + "/name", //destination points to name not value
@@ -1767,25 +1776,25 @@ sap.ui.define([
 			if (oHost) {
 				this._oEditorCard.getHostInstance().getDestinations().then(function (a) {
 					getDestinationsDone = true;
-					Object.keys(oConfiguration.destinations).forEach(function(n) {
+					Object.keys(oConfiguration.destinations).forEach(function (n) {
 						oItems[n + ".destinaton"]._values = a;
 						oItems[n + ".destinaton"]._loading = false;
 						this._settingsModel.checkUpdate(true);
 					}.bind(this));
-				}.bind(this)).catch(function() {
+				}.bind(this)).catch(function () {
 					//Fix DIGITALWORKPLACE-4359, retry once for the timeout issue
 					return this._oEditorCard.getHostInstance().getDestinations();
-				}.bind(this)).then(function(b) {
+				}.bind(this)).then(function (b) {
 					if (getDestinationsDone) {
 						return;
 					}
-					Object.keys(oConfiguration.destinations).forEach(function(n) {
+					Object.keys(oConfiguration.destinations).forEach(function (n) {
 						oItems[n + ".destinaton"]._values = b;
 						oItems[n + ".destinaton"]._loading = false;
 						this._settingsModel.checkUpdate(true);
 					}.bind(this));
-				}.bind(this)).catch(function(e) {
-					Object.keys(oConfiguration.destinations).forEach(function(n) {
+				}.bind(this)).catch(function (e) {
+					Object.keys(oConfiguration.destinations).forEach(function (n) {
 						oItems[n + ".destinaton"]._loading = false;
 						this._settingsModel.checkUpdate(true);
 					}.bind(this));

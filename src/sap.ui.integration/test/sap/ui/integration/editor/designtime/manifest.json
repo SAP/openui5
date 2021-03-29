@@ -43,7 +43,19 @@
 				"stringWithTranslatedValue": {
 					"value": "{{TRANSLATED_STRING_VALUE}}"
 				},
+				"stringWithTranslatedValue1": {
+					"value": "{i18n>TRANSLATED_STRING_VALUE}"
+				},
+				"stringWithTranslatedValue2": {
+					"value": "{i18n>TRANSLATED_STRING_VALUE2}"
+				},
 				"stringWithTranslatedDTDefaultValue": {
+					"value": ""
+				},
+				"stringInCols1": {
+					"value": "stringInCols1 long long long long long long long long long long long long value"
+				},
+				"stringInCols2": {
 					"value": ""
 				},
 				"integer": {

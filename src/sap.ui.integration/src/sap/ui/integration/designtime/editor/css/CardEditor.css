@@ -137,16 +137,34 @@
 	width:1px;
 }
 
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .col1 {
+	width: 50%;
+
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .col1 .col1box {
+	width: 100%;
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .col1 .col1box .sapMFlexItem {
+	width: 84%;
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .col1 .col1box .sapMFlexItem .sapUiIntegrationCardEditorDescriptionIcon {
+	margin-left: -0.5rem;
+}
+
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemLabel {
 	display: block;
 	white-space: nowrap;
 	padding-top: 7px;
+	padding-right: 10px;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemLabel.description .sapMLabel {
 	max-width: calc(100% - 1.2rem);
 }
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemLabel .sapMLabel {
-	max-width: 100% - 1.2rem;
+	width: calc(100% - 1.2rem);
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorDescriptionIcon {
@@ -213,6 +231,10 @@
 .sapUiIntegrationFieldTranslation .sapMHeaderTitle {
 	font-size: 1rem;
 	padding: 0.5rem 0 0.5rem 0.5rem;
+}
+
+.sapUiIntegrationFieldTranslationText {
+	padding: 0.4rem 1rem 0.5rem 0;
 }
 
 .sapUiIntegrationFieldSettings .description {

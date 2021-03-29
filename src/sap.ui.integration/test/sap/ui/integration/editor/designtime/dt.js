@@ -66,6 +66,22 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"defaultValue": "{i18n>TRANSLATED_STRING_DEFAULT_VALUE}",
 						"translatable": true
 					},
+					"stringInCols1": {
+						"manifestpath": "/sap.card/configuration/parameters/stringInCols1/value",
+						"label": "stringInCols1 long long long long long long long long long long long long label",
+						"description": "aa",
+						"type": "string",
+						"cols": 1,
+						"allowSettings": false,
+						"translatable": true
+					},
+					"stringInCols2": {
+						"manifestpath": "/sap.card/configuration/parameters/stringInCols2/value",
+						"label": "URL",
+						"type": "string",
+						"cols": 1,
+						"allowSettings": false
+					},
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"defaultValue": 1,
