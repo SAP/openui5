@@ -385,22 +385,24 @@ sap.ui.define([
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
-			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", {
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core", {
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
-					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
+					: {source : "qunit/model/GWSAMPLE_BASIC.metadata.xml"},
+				"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$metadata?foo=bar&customMeta=custom%2Fmeta"
+					: {source : "internal/samples/odata/v2/Products/data/metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
-					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
+					: {source : "qunit/model/GWSAMPLE_BASIC.annotations.xml"},
 				// GWSAMPLE_BASIC service with sap:message-scope-supported="true"
 				"/SalesOrderSrv/$metadata"
-					: {source : "testdata/SalesOrder/metadata.xml"},
+					: {source : "qunit/testdata/SalesOrder/metadata.xml"},
 				"/sap/opu/odata/sap/PP_WORKCENTER_GROUP_SRV/$metadata"
-					: {source : "model/PP_WORKCENTER_GROUP_SRV.metadata.xml"},
+					: {source : "qunit/model/PP_WORKCENTER_GROUP_SRV.metadata.xml"},
 				"/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT/$metadata"
-					: {source : "model/RMTSAMPLEFLIGHT.withMessageScope.metadata.xml"},
+					: {source : "qunit/model/RMTSAMPLEFLIGHT.withMessageScope.metadata.xml"},
 				"/sap/opu/odata/sap/UI_C_DFS_ALLWNCREQ/$metadata"
-					: {source : "odata/v2/data/UI_C_DFS_ALLWNCREQ.metadata.xml"},
+					: {source : "qunit/odata/v2/data/UI_C_DFS_ALLWNCREQ.metadata.xml"},
 				"/special/cases/$metadata"
-					: {source : "odata/v2/data/metadata_special_cases.xml"}
+					: {source : "qunit/odata/v2/data/metadata_special_cases.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -5372,7 +5374,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					ProductID : "HT-1500",
 					ToSupplier : {
 						__metadata : {
-							uri : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/BusinessPartnerSet('0100000069')"
+							uri : "/sap/opu/odata/sap/GWSAMPLE_BASIC"
+								+ "/BusinessPartnerSet('0100000069')"
 						},
 						BusinessPartnerID : "0100000069"
 					}
@@ -7962,7 +7965,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 
-
 	//*********************************************************************************************
 	// Scenario: TreeTable#collapseAll for a table using ODataTreeBindingAdapter resets the number
 	// of levels expanded automatically in subsequent read requests to 0.
@@ -8073,6 +8075,181 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oTable.setFirstVisibleRow(2);
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If the OData service works with code list for units, the OData Unit type uses this
+	// information for formatting and parsing.
+	// JIRA: CPOUI5MODELS-437
+	QUnit.test("OData Unit type with code list for units", function (assert) {
+		var oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=bar", {
+				defaultBindingMode : "TwoWay",
+				metadataUrlParams : {"customMeta" : "custom/meta"},
+				serviceUrlParams : {"customService" : "custom/service"},
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox binding="{/ProductSet(\'P1\')}">\
+	<Input id="weight" value="{\
+		parts : [{\
+			constraints : { scale : \'variable\' },\
+			path : \'WeightMeasure\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'WeightUnit\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestUnitsOfMeasure\',\
+			targetType : \'any\'\
+		}],\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Unit\'\
+	}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductSet('P1')?foo=bar&customService=custom%2Fservice", {
+				ProductID : "P1",
+				WeightMeasure : "12.34",
+				WeightUnit : "KG"
+			})
+			.expectRequest(
+				"SAP__UnitsOfMeasure?foo=bar&customService=custom%2Fservice&$skip=0&$top=5000", {
+				results : [{
+					DecimalPlaces : 3,
+					ExternalCode : "KG",
+					ISOCode : "KGM",
+					Text : "Kilogramm",
+					UnitCode : "KG"
+				}]
+			})
+			.expectChange("weight", "12.340 KG");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oControl = that.oView.byId("weight");
+
+			// remove the formatter so that we can call setValue at the control
+			oControl.getBinding("value").setFormatter(null);
+
+			// code under test
+			oControl.setValue("23.4 KG");
+
+			assert.strictEqual(oControl.getValue(), "23.400 KG");
+
+			// code under test
+			oControl.setValue("");
+
+			assert.strictEqual(oControl.getValue(), "0.000 KG");
+
+			that.expectMessages([{
+				descriptionUrl: undefined,
+				message : "EnterNumberFraction 3",
+				target : oControl.getId() + "/value",
+				type : "Error"
+			}]);
+
+			TestUtils.withNormalizedMessages(function () {
+				// code under test
+				oControl.setValue("12.3456 KG");
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, that.oView.byId("weight"), "Error",
+				"EnterNumberFraction 3");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If the OData service works with code list for currencies, the OData Currency type
+	// uses this information for formatting and parsing.
+	// JIRA: CPOUI5MODELS-437
+	QUnit.test("OData Currency type with code list for currencies", function (assert) {
+		var oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=bar", {
+				defaultBindingMode : "TwoWay",
+				metadataUrlParams : {"customMeta" : "custom/meta"},
+				serviceUrlParams : {"customService" : "custom/service"},
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox binding="{/ProductSet(\'P1\')}">\
+	<Input id="price" value="{\
+		parts : [{\
+			constraints : { scale : \'variable\' },\
+			path : \'Price\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'CurrencyCode\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestCurrencyCodes\',\
+			targetType : \'any\'\
+		}],\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Currency\'\
+	}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductSet('P1')?foo=bar&customService=custom%2Fservice", {
+				ProductID : "P1",
+				Price : "12.3",
+				CurrencyCode : "EUR"
+			})
+			.expectRequest(
+				"SAP__Currencies?foo=bar&customService=custom%2Fservice&$skip=0&$top=5000", {
+				results : [{
+					CurrencyCode : "EUR",
+					DecimalPlaces : 2,
+					ISOCode : "EUR",
+					Text : "Euro"
+				}, {
+					CurrencyCode : "USDN",
+					DecimalPlaces : 5,
+					ISOCode : "",
+					Text : "US Dollar"
+				}]
+			})
+			// "\u00a0" is a non-breaking space
+			.expectChange("price", "12.30\u00a0EUR");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oControl = that.oView.byId("price");
+
+			// remove the formatter so that we can call setValue at the control
+			oControl.getBinding("value").setFormatter(null);
+
+			// code under test
+			oControl.setValue("42.12345 USDN");
+
+			assert.strictEqual(oControl.getValue(), "42.12345\u00a0USDN");
+
+			// code under test
+			oControl.setValue("");
+
+			assert.strictEqual(oControl.getValue(), "0.00000\u00a0USDN");
+
+			that.expectMessages([{
+				descriptionUrl: undefined,
+				message : "EnterNumberFraction 2",
+				target : oControl.getId() + "/value",
+				type : "Error"
+			}]);
+
+			TestUtils.withNormalizedMessages(function () {
+				// code under test
+				oControl.setValue("1.234 EUR");
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, that.oView.byId("price"), "Error",
+				"EnterNumberFraction 2");
 		});
 	});
 });
