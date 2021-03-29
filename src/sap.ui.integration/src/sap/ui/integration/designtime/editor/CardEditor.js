@@ -1378,13 +1378,17 @@ sap.ui.define([
 			if (sLanguage.indexOf("_") > -1) {
 				aFallbacks.push(sLanguage.substring(0, sLanguage.indexOf("_")));
 			}
+			//add en into fallbacks
+			if (!includes(aFallbacks, "en")) {
+				aFallbacks.push("en");
+			}
 			// load the ResourceBundle relative to the manifest
 			this._oTranslationBundle = ResourceBundle.create({
 				url: this._getBaseUrl() + vI18n,
 				async: false,
 				locale: sLanguage,
 				supportedLocales: aFallbacks,
-				fallbackLocale: ""
+				fallbackLocale: "en"
 			});
 
 			return this._getCurrentLanguageSpecificText(sKey);
@@ -1509,6 +1513,10 @@ sap.ui.define([
 									//get the translated default value for the language we want to translate this.getLanguage()
 									oItem._translatedDefaultValue = this._getCurrentLanguageSpecificText(sTranslationTextKey);
 								}
+							} else if (oItem.translatable  && this.getMode() === "translation") {
+								//if no translation key which means item defined as string value directly.
+								//set the _translatedDefaultValue with item manifest value or default value.
+								oItem._translatedDefaultValue  = oItem._translatedDefaultPlaceholder;
 							}
 						}
 						if (this.getMode() === "translation") {

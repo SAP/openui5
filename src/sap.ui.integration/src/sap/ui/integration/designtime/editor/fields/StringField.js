@@ -238,19 +238,24 @@ sap.ui.define([
 			var oResourceBundleTemp = aCardResourceBundles[p];
 			//get translation key of the value
 			var sKey;
-			if (oConfig._translatedDefaultPlaceholder.startsWith("{i18n>")) {
+			if (oConfig._translatedDefaultPlaceholder.startsWith("{i18n>") && oConfig._translatedDefaultPlaceholder.endsWith("}")) {
 				sKey = oConfig._translatedDefaultPlaceholder.substring(6, oConfig._translatedDefaultPlaceholder.length - 1);
-			} else {
+			} else if (oConfig._translatedDefaultPlaceholder.startsWith("{{") && oConfig._translatedDefaultPlaceholder.endsWith("}}")) {
 				sKey = oConfig._translatedDefaultPlaceholder.substring(2, oConfig._translatedDefaultPlaceholder.length - 2);
 			}
 			var sTranslatedValue = "";
 			var sOriginValue = "";
-			if (oResourceBundleTemp) {
+			if (sKey && oResourceBundleTemp) {
 				var sText = oResourceBundleTemp.resourceBundle.getText(sKey, [], true);
 				if (sText !== undefined) {
 					sTranslatedValue = sText;
 					sOriginValue = sText;
 				}
+			} else {
+				//if no translation key which means item defined as string value directly.
+				//set the sTranslatedValue and sOriginValue for each language with item manifest value or default value.
+				sTranslatedValue = oConfig._translatedDefaultPlaceholder;
+				sOriginValue = oConfig._translatedDefaultPlaceholder;
 			}
 			var oLanguage = {
 				"key": p,

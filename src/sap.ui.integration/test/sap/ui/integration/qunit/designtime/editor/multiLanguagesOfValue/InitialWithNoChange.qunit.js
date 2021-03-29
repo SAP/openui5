@@ -103,6 +103,7 @@ sap.ui.define([
 	};
 	var _oExpectedValues = {
 		"string1": {
+			"default_in_en": "String 1 English",
 			"en": "String 1 English",
 			"en_GB": "String 1 English",
 			"en_US": "String 1 US English",
@@ -110,7 +111,13 @@ sap.ui.define([
 			"fr": "String 1 French",
 			"fr_CA": "String 1 French CA"
 		},
+		"string3": {
+			"default_in_en": "String 3"
+		},
+		"string4Ori": {
+		},
 		"string4": {
+			"default_in_en": "String 4 English",
 			"en": "String 4 English",
 			"en_GB": "String 4 English",
 			"en_US": "String 4 US English",
@@ -225,7 +232,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -252,7 +259,7 @@ sap.ui.define([
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-									assert.ok(sCurrentValue === "", "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: ");
+									assert.ok(sCurrentValue === "String 3", "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: ");
 								}
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
@@ -273,7 +280,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -361,7 +368,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -388,7 +395,7 @@ sap.ui.define([
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-									assert.ok(sCurrentValue === "", "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: ");
+									assert.ok(sCurrentValue === "String 3", "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: ");
 								}
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
@@ -409,7 +416,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -496,7 +503,7 @@ sap.ui.define([
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
-								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || "";
+								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 								assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 							}
@@ -523,7 +530,7 @@ sap.ui.define([
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-									assert.ok(sCurrentValue === "", "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: ");
+									assert.ok(sCurrentValue === "String 3", "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: ");
 								}
 								var oCancelButton3 = oTranslationPopover3.getFooter().getContent()[2];
 								oCancelButton3.firePress();
@@ -544,7 +551,7 @@ sap.ui.define([
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
-										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || "";
+										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
 										var sCurrentValue = oLanguageItems4[i].getContent()[0].getItems()[1].getValue();
 										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover4 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
@@ -575,12 +582,15 @@ sap.ui.define([
 	}, function () {
 		_aCheckedLanguages.forEach(function(oCoreLanguage) {
 			var sCoreLanguageKey = oCoreLanguage.key;
-			var sString1OriValue = _oExpectedValues["string1"][sCoreLanguageKey] ? _oExpectedValues["string1"][sCoreLanguageKey] : "String 1 English";
+			var sString1OriValue = _oExpectedValues["string1"][sCoreLanguageKey] || _oExpectedValues["string1"]["default_in_en"];
+			var sString3OriValue = _oExpectedValues["string3"][sCoreLanguageKey] || _oExpectedValues["string3"]["default_in_en"];
+			var sString4OriValue = _oExpectedValues["string4Ori"][sCoreLanguageKey] || "-";
 			_aCheckedLanguages.forEach(function(oCardLanguage) {
 				var sCardLanguageKey = oCardLanguage.key;
 				var sCaseTitle = "Core: " + sCoreLanguageKey + ", Card: " + sCardLanguageKey;
-				var sString1TransValue = _oExpectedValues["string1"][sCardLanguageKey] ? _oExpectedValues["string1"][sCardLanguageKey] : "";
-				var sString4TransValue = _oExpectedValues["string4"][sCardLanguageKey] ? _oExpectedValues["string4"][sCardLanguageKey] : "";
+				var sString1TransValue = _oExpectedValues["string1"][sCardLanguageKey] || _oExpectedValues["string1"]["default_in_en"];
+				var sString3TransValue = _oExpectedValues["string3"][sCardLanguageKey] || _oExpectedValues["string3"]["default_in_en"];
+				var sString4TransValue = _oExpectedValues["string4"][sCardLanguageKey] || _oExpectedValues["string4"]["default_in_en"];
 				QUnit.test(sCaseTitle, function (assert) {
 					var that = this;
 					//Fallback language
@@ -610,12 +620,12 @@ sap.ui.define([
 								assert.ok(oField1Trans.getAggregation("_field").getValue() === sString1TransValue, "Field1Trans: " + sString1TransValue);
 								assert.ok(oField1Trans.getAggregation("_field").isA("sap.m.Input"), "Field1Trans: Input control");
 								assert.ok(oField1Trans.getAggregation("_field").getAggregation("_endIcon") === null, "Field1Trans: No Input value help icon");
-								assert.ok(oField3Ori.getAggregation("_field").getText() === "String 3", "Field3Ori: String 3");
+								assert.ok(oField3Ori.getAggregation("_field").getText() === sString3OriValue, "Field3Ori: " + sString3OriValue);
 								assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
-								assert.ok(oField3Trans.getAggregation("_field").getValue() === "", "Field3Trans: no trans");
+								assert.ok(oField3Trans.getAggregation("_field").getValue() === sString3TransValue, "Field3Trans: " + sString3TransValue);
 								assert.ok(oField3Trans.getAggregation("_field").isA("sap.m.Input"), "Field3Trans: Input control");
 								assert.ok(oField3Trans.getAggregation("_field").getAggregation("_endIcon") === null, "Field3Trans: No Input value help icon");
-								assert.ok(oField4Ori.getAggregation("_field").getText() === "-", "Field4Ori: -");
+								assert.ok(oField4Ori.getAggregation("_field").getText() === sString4OriValue, "Field4Ori: " + sString4OriValue);
 								assert.ok(oField4Trans.getAggregation("_field").getEditable() === true, "Field4Trans: Editable");
 								assert.ok(oField4Trans.getAggregation("_field").getValue() === sString4TransValue, "Field4Trans: " + sString4TransValue);
 								assert.ok(oField4Trans.getAggregation("_field").isA("sap.m.Input"), "Field4Trans: Input control");
