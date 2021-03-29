@@ -729,7 +729,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Carousel.prototype.getFocusDomRef = function() {
-		return this.$("scrolllist");
+		return this.$("scrolllist")[0];
 	};
 
 	/**
