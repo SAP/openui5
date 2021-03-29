@@ -74,7 +74,7 @@ sap.ui.define([
         ChartSelectionDetails.prototype.init = function() {
             SelectionDetails.prototype.init.apply(this, arguments);
             this._registerTemplate();
-            //this._attachEvents();
+            this._attachEvents();
         };
 
         ChartSelectionDetails.prototype._registerTemplate = function (){
@@ -109,35 +109,37 @@ sap.ui.define([
             return false;
         };
         //TODO: Consider implementation and handling within ChartToolbarNew like the update of actions as well
-        ChartSelectionDetails.prototype._attachEvents = function(oMDCChart) {
+        ChartSelectionDetails.prototype._attachEvents = function() {
             // Attach to navigation event of selectionDetails
             // for semantic object navigation
-           /* this.attachNavigate(function(oEvent) {
+           /*
+            this.attachNavigate(function(oEvent) {
                 // Destroy content on navBack of selectionDetails
                 // This either is the semanticNavContainer or the semanticNavItemList
                 if (oEvent.getParameter("direction") === "back") {
                     oEvent.getParameter("content").destroy();
                 } else {
                     // Forward navigation to semantic objects
-                    oChart._navigateToSemanticObjectDetails(oEvent);
+                    oMDCChart._navigateToSemanticObjectDetails(oEvent);
                 }
 
-            });
+            });*/
 
             this.attachActionPress(function(oEvent) {
+                var oMDCChart = this.getParent().getParent();
                 // extract binding information of each item
                 var aItemContexts = [];
                 oEvent.getParameter("items").forEach(function(oItem) {
                     aItemContexts.push(oItem.getBindingContext());
                 });
                 // Re-arrange event object and navigate to outer press handler
-                Chart.fireSelectionDetailsActionPressed({
+                oMDCChart.fireSelectionDetailsActionPressed({
                     id: oEvent.getParameter("id"),
                     action: oEvent.getParameter("action"),
                     itemContexts: aItemContexts,
                     level: oEvent.getParameter("level")
                 });
-            });*/
+            });
         };
 
         return ChartSelectionDetails;

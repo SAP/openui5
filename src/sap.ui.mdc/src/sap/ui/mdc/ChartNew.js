@@ -463,10 +463,8 @@ sap.ui.define([
             switch (oChange.mutation) {
 
                 case "insert":
-                    //TODO: Check whether findIndex is allowed
-                    var iIndex = this.getItems().findIndex(function (oProp) {
-                        return oProp.getId() === oChange.child.getId();
-                    });
+                    var iIndex = this.getItems().indexOf(oChange.child);
+
                     this.getControlDelegate().insertItemToInnerChart(oChange.child, iIndex);
                     break;
                 case "remove":

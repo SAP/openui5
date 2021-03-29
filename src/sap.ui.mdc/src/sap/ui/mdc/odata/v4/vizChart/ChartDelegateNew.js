@@ -60,6 +60,9 @@ sap.ui.define([
     var Measure;
     //var VizPopover;
     var VizTooltip;
+    var oColorings;
+    var aInSettings = [];
+    var aColMeasures = [];
 
 
     /**
@@ -203,6 +206,13 @@ sap.ui.define([
             aVisibleMeasures.splice(iIndex, 0, this._getAggregatedMeasureNameForMDCItem(oMDCChartItem));
             this._oInnerChart.setVisibleMeasures(aVisibleMeasures);
         }
+
+        //Update coloring and semantical patterns on Item change
+        this._prepareColoringForItem(oMDCChartItem);
+        this._updateColoring(this._oInnerChart.getVisibleDimensions(), this._oInnerChart.getVisibleMeasures());
+        this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
+            this._updateSemanticalPattern(aProperties);
+        }.bind(this));
     };
 
     /**
@@ -226,6 +236,12 @@ sap.ui.define([
 
             this._oInnerChart.removeMeasure(this._oInnerChart.getMeasureByName(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem)));
         }
+
+        //Update coloring and semantical patterns on Item change
+        this._updateColoring(this._oInnerChart.getVisibleDimensions(), this._oInnerChart.getVisibleMeasures());
+        this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
+            this._updateSemanticalPattern(aProperties);
+        }.bind(this));
     };
 
     /**
@@ -257,8 +273,6 @@ sap.ui.define([
                 return null;
             }
 
-            var oPayload = {};
-            oPayload.propertyPath = oPropertyInfo.propertyPath;
 
             //TODO: Check for case: both aggegatable and groupable
             if (oPropertyInfo.groupable) {
@@ -266,22 +280,17 @@ sap.ui.define([
                     name: oPropertyInfo.name,
                     label: oPropertyInfo.label,
                     type: "groupable",
-                    role: sRole ? sRole : "category",
-                    payload: oPayload
+                    role: sRole ? sRole : "category"
                 });
             }
 
             if (oPropertyInfo.aggregatable) {
 
-                oPayload.aggregationMethod = oPropertyInfo.recAggrMethod;
-
                 return new MDCChartItem(oMDCChart.getId() + "--AggregatableItem--" + oPropertyInfo.name, {
                     name: oPropertyInfo.name,
                     label: oPropertyInfo.label,
                     type: "aggregatable",
-                    aggregationMethod: oPropertyInfo.recAggrMethod,
-                    role: sRole ? sRole : "axis1",
-                    payload: oPayload
+                    role: sRole ? sRole : "axis1"
                 });
             }
         });
@@ -328,6 +337,7 @@ sap.ui.define([
     ChartDelegate._createContentFromItems = function (oMDCChart) {
         //This is done so the user doesn't have to specify property path & aggregation method in the XML
         this.fetchProperties(oMDCChart).then(function (aProperties) {
+            var aColorPromises = [];
 
             var aVisibleDimensions = [];
             var aVisibleMeasures = [];
@@ -345,7 +355,7 @@ sap.ui.define([
                             return oCurrentPropertyInfo.name === oItem.getName();
                         });
 
-                        var aggregationMethod = oPropertyInfo.recAggrMethod;
+                        var aggregationMethod = oPropertyInfo.aggregationMethod;
                         var propertyPath = oPropertyInfo.propertyPath;
 
                         //TODO: Alias might be changing after backend request
@@ -362,10 +372,41 @@ sap.ui.define([
                         this._oInnerChart.addMeasure(oMeasure);
                         break;
                 }
+
+                aColorPromises.push(this._prepareColoringForItem(oItem));
             }.bind(this));
 
-            this._oInnerChart.setVisibleDimensions(aVisibleDimensions);
-            this._oInnerChart.setVisibleMeasures(aVisibleMeasures);
+            aColMeasures.forEach(function(sKey) {
+
+                if (aInSettings.indexOf(sKey) == -1) {
+
+                    var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
+                        return oCurrentPropertyInfo.name === sKey;
+                    });
+
+                    var oMeasure = new Measure({
+                        name: this._getAggregatedMeasureNameForMDCItem(oPropertyInfo),//"average" + oItem.getName(),
+                        label: oPropertyInfo.label,
+                        role: "axis1",
+                        analyticalInfo: {
+                            propertyPath: oPropertyInfo.name, //TODO: What to fill here without PropertyInfos? Consider property at MDC Item level
+                            "with": oPropertyInfo.aggregationMethod
+                        }
+                    });
+
+                    aVisibleMeasures.push();
+                    this._oInnerChart.addMeasure(oMeasure);
+                }
+
+            }.bind(this));
+
+            Promise.all(aColorPromises).then(function(){
+                this._oInnerChart.setVisibleDimensions(aVisibleDimensions);
+                this._oInnerChart.setVisibleMeasures(aVisibleMeasures);
+
+                this._updateColoring(aVisibleDimensions, aVisibleMeasures);
+                this._updateSemanticalPattern(aProperties);
+            }.bind(this));
 
         }.bind(this));
 
@@ -373,6 +414,211 @@ sap.ui.define([
 
     ChartDelegate.getInnerChart = function () {
         return this._oInnerChart;
+    };
+
+
+    ChartDelegate._prepareColoringForItem = function(oItem) {
+        //COLORING
+        return this._addCriticality(oItem).then(function(){
+            aInSettings.push(oItem.getName());
+
+            if (oItem.getType === "aggregatable") {
+
+                this._getPropertyInfosByName(oItem.getName(), oItem.getParent()).then(function (oPropertyInfo) {
+                    for (var j = 0; j < this._getAdditionalColoringMeasuresForItem(oPropertyInfo); j++) {
+
+                        if (aColMeasures.indexOf(this._getAdditionalColoringMeasuresForItem(oPropertyInfo)[j]) == -1) {
+                            aColMeasures.push(this._getAdditionalColoringMeasuresForItem(oPropertyInfo)[j]);
+                        }
+                    }
+                }.bind(this));
+            }
+        });
+
+    };
+
+    ChartDelegate._getAdditionalColoringMeasuresForItem = function(oPropertyInfo) {
+
+		var aAdditional = [];
+
+		var oCriticality = oPropertyInfo.datapoint ? oPropertyInfo.datapoint.criticality : null;
+
+		if (oCriticality && oCriticality.DynamicThresholds) {
+			aAdditional = oCriticality.DynamicThresholds.usedMeasures;
+		}
+
+		return aAdditional;
+	};
+
+    /**
+     * Adds criticality to an item
+     *
+     * @param oItem item to add criticality to
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate._addCriticality = function (oItem) {
+
+        return this._getPropertyInfosByName(oItem.getName(), oItem.getParent()).then(function (oPropertyInfo) {
+
+            if (oPropertyInfo.criticality || (oPropertyInfo.datapoint && oPropertyInfo.datapoint.criticality)){
+                oColorings = oColorings || {
+                    Criticality: {
+                        DimensionValues: {},
+                        MeasureValues: {}
+                    }
+                };
+
+                var mChartCrit = {};
+
+                if (oItem.getType() == "groupable") {
+
+                    var mCrit = oPropertyInfo.criticality ? oPropertyInfo.criticality : [];
+
+                    for (var sKey in mCrit) {
+
+                        mChartCrit[sKey] = {
+                            Values: mCrit[sKey]
+                        };
+                    }
+
+                    oColorings.Criticality.DimensionValues[oItem.getName()] = mChartCrit;
+                } else {
+                    var mCrit = oPropertyInfo.datapoint  && oPropertyInfo.datapoint.criticality ? oPropertyInfo.datapoint.criticality : [];
+
+                    for (var sKey in mCrit) {
+                        mChartCrit[sKey] = mCrit[sKey];
+                    }
+
+                    oColorings.Criticality.MeasureValues[oItem.getName()] = mChartCrit;
+                }
+            }
+
+        });
+
+    };
+
+    /**
+     * Updates the coloring on the inner chart
+     * @param {sap.chart.Chart} oChart inner chart
+     * @param {array} aVisibleDimensions visible dimensions for inner chart
+     * @param {array} aVisibleMeasures visible measures for inner chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted Fiori Elements
+     */
+    ChartDelegate._updateColoring = function (aVisibleDimensions, aVisibleMeasures) {
+        var oTempColorings = jQuery.extend(true, {}, oColorings), k;
+
+        if (oTempColorings && oTempColorings.Criticality) {
+            var oActiveColoring;
+
+            //dimensions overrule
+            for (k = 0; k < aVisibleDimensions.length; k++) {
+
+                if (oColorings.Criticality.DimensionValues[aVisibleDimensions[k]]) {
+                    oActiveColoring = {
+                        coloring: "Criticality",
+                        parameters: {
+                            dimension: aVisibleDimensions[k]
+                        }
+                    };
+
+                    delete oTempColorings.Criticality.MeasureValues;
+                    break;
+                }
+            }
+
+            if (!oActiveColoring) {
+                delete oTempColorings.Criticality.DimensionValues;
+
+                for (var sMeasure in oTempColorings.Criticality.MeasureValues) {
+
+                    if (aVisibleMeasures.indexOf(sMeasure) == -1) {
+                        delete oTempColorings.Criticality.MeasureValues[sMeasure];
+                    }
+                }
+
+                oActiveColoring = {
+                    coloring: "Criticality",
+                    parameters: {
+                        measure: aVisibleMeasures
+                    }
+                };
+            }
+
+            if (oActiveColoring) {
+                this._oInnerChart.setColorings(oTempColorings);
+                this._oInnerChart.setActiveColoring(oActiveColoring);
+            }
+        }
+    };
+
+    /**
+     * Updates the semantical pattern for given measures
+     *
+     * @param {sap.chart.Chart} oChart the inner chart
+     * @param {array} aVisibleMeasures array containing the visible measures on the inner chart
+     * @param {*} mDataPoints data points of the inner chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     */
+    ChartDelegate._updateSemanticalPattern = function (aProperties) {
+
+        var aVisibleMeasures = this._oInnerChart.getVisibleMeasures();
+
+        aVisibleMeasures.forEach(function(sVisibleMeasureName){
+            //first draft only with semantic pattern
+            var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
+                return oCurrentPropertyInfo.name === sVisibleMeasureName;
+            });
+
+            if (!oPropertyInfo){
+                return;
+            }
+
+            var oDataPoint = oPropertyInfo.datapoint;
+
+            if (oDataPoint) {
+
+                if (oDataPoint.targetValue || oDataPoint.foreCastValue) {
+                    var oActualMeasure = this._oInnerChart.getMeasureByName(sVisibleMeasureName);
+
+                    oActualMeasure.setSemantics("actual");
+
+                    if (oDataPoint.targetValue != null) {
+                        var oReferenceMeasure = this._oInnerChart.getMeasureByName(oDataPoint.targetValue);
+
+                        if (oReferenceMeasure) {
+                            oReferenceMeasure.setSemantics("reference");
+                        } else {
+                            Log.error("sap.ui.mdc.Chart: " + oDataPoint.targetValue + " is not a valid measure");
+                        }
+                    }
+
+                    if (oDataPoint.foreCastValue) {
+                        var oProjectionMeasure = this._oInnerChart.getMeasureByName(oDataPoint.foreCastValue);
+
+                        if (oProjectionMeasure) {
+                            oProjectionMeasure.setSemantics("projected");
+                        } else {
+                            Log.error("sap.ui.comp.SmartChart: " + oDataPoint.ForecastValue.Path + " is not a valid measure");
+                        }
+                    }
+
+                    oActualMeasure.setSemanticallyRelatedMeasures({
+                        referenceValueMeasure: oDataPoint.targetValue,
+                        projectedValueMeasure: oDataPoint.foreCastValue
+                    });
+                }
+            }
+        }.bind(this));
+
     };
 
     /**
@@ -573,7 +819,7 @@ sap.ui.define([
                 return oCurrentPropertyInfo.name === oMDChartItem.getName();
             });
 
-            var aggregationMethod = oPropertyInfo.recAggrMethod;
+            var aggregationMethod = oPropertyInfo.aggregationMethod;
             var propertyPath = oPropertyInfo.propertyPath;
 
             //TODO: Check for Criticality, Coloring and so on
@@ -589,6 +835,10 @@ sap.ui.define([
             this._oInnerChart.addMeasure(oMeasure);
         }.bind(this));
 
+    };
+
+    ChartDelegate._getAggregatedMeasureNameForProperty = function(oPoperty){
+        return oPoperty.aggregationMethod + oPoperty.name;
     };
 
     /**
@@ -927,13 +1177,12 @@ sap.ui.define([
                             filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
                             groupable: true,
                             aggregatable: false,
-                            recAggrMethod: oPropertyAnnotations["@Org.OData.Aggregation.V1.RecommendedAggregationMethod"],
-                            supAggrMethods: oPropertyAnnotations["@Org.OData.Aggregation.V1.SupportedAggregationMethods"],
                             maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
                             sortKey: sKey,
                             kind:  "Groupable", //TODO: Rename in type; Only needed for P13n Item Panel
                             availableRoles: this._getLayoutOptionsForType("groupable"), //for p13n
-                            role: MDCLib.ChartItemRoleType.category //standard, normally this should be interpreted from UI.Chart annotation
+                            role: MDCLib.ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
+                            criticality: null //To be implemented by FE
                         });
                     }
                 }
@@ -955,18 +1204,30 @@ sap.ui.define([
                     filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
                     groupable: false,
                     aggregatable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"],
-                    recAggrMethod: sAggregationMethod,
-                    supAggrMethods: oPropertyAnnotations["@Org.OData.Aggregation.V1.SupportedAggregationMethods"],
+                    aggregationMethod: sAggregationMethod,
                     maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
                     sortKey: oPropertyAnnotations["@Org.OData.Aggregation.V1.RecommendedAggregationMethod"] + sKey,
                     kind: "Aggregatable",//Only needed for P13n Item Panel
                     availableRoles: this._getLayoutOptionsForType("aggregatable"), //for p13n
-                    role: MDCLib.ChartItemRoleType.axis1
+                    role: MDCLib.ChartItemRoleType.axis1,
+                    datapoint: null //To be implemented by FE
                 });
             }.bind(this));
         }
 
         return aProperties;
+    };
+
+    ChartDelegate._getPropertyInfosByName = function(sName, oMDCChart){
+        return new Promise(function(resolve){
+            this.fetchProperties(oMDCChart).then(function(aProperties){
+                var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
+                    return oCurrentPropertyInfo.name === sName;
+                });
+
+                resolve(oPropertyInfo);
+            });
+        }.bind(this));
     };
 
 
