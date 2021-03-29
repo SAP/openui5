@@ -30,6 +30,7 @@ sap.ui.define([
 			}
 
 			Given.iStartMyUIComponent({
+				autoWait : true,
 				componentConfig : {
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
 				}

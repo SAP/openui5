@@ -51,6 +51,7 @@ sap.ui.define([
 			When.onAnyPage.applySupportAssistant();
 
 			Given.iStartMyUIComponent({
+				autoWait : true,
 				componentConfig : {
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
 				}
