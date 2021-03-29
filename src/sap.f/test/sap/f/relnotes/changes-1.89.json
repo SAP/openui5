@@ -3,6 +3,28 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "c8293cadcc61da52d07abd47eaf19e277ea4203f",
+        "type": "FIX",
+        "text": " sap.f.SemanticPage: No expanding of expandedHeader content is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170035448"
+          }
+        ]
+      },
+      {
+        "id": "212072ad3a9e8718fe657a07250d3c6d6faff736",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Corrected areaShrinkRatio rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170055301"
+          }
+        ]
+      },
+      {
         "id": "4c43e7f2bef66e7949edbf818c34221b700fc86a",
         "type": "FIX",
         "text": " sap.f.GridList: The 'updateFinished' event is fired",
@@ -60,64 +82,6 @@
             "reference": ""
           }
         ]
-      },
-      {
-        "id": "c238d80a39da314875219cba74382a112391aeaf",
-        "type": "FIX",
-        "text": " sap.f.DynamicPage: Wizard sample now uses page scrollbar"
-      },
-      {
-        "id": "c8c1177c3c9ef4c6988aac7063c1750bf34bafa5",
-        "type": "FIX",
-        "text": " sap.f.DynamicPageTitle: Cutting of buttons is fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180085793"
-          }
-        ]
-      },
-      {
-        "id": "f629d3d5509832815953b8bc7fff183deb9949ed",
-        "type": "FIX",
-        "text": " sap.f.DynamicPage: Revert sample change"
-      },
-      {
-        "id": "f27a4a6e762429b045d5c3db91b42cd97e89e042",
-        "type": "FEATURE",
-        "text": " sap.ui.integration.widgets.Card: Introducing new value to dataMode property"
-      },
-      {
-        "id": "b9790083ede97ad0b3ec494d902fb7fb14a661cd",
-        "type": "FEATURE",
-        "text": " CalendarCard: deep link action on appointments"
-      },
-      {
-        "id": "4358d17d605a2d4f9fdd89aed43e17ffe87e7f63",
-        "type": "FIX",
-        "text": " sap.f.GridContainer: The layout is now correct after invalidating",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180043408"
-          }
-        ]
-      },
-      {
-        "id": "8dfb371cb0cd158868527d9b884978c90cc01f16",
-        "type": "FIX",
-        "text": " sap.f.DynamicPage: Workaround table flickering",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070413091"
-          }
-        ]
-      },
-      {
-        "id": "699fda4f59c104210cf74c86e16075e8faa95cd5",
-        "type": "FEATURE",
-        "text": " sap.f.IllustratedMessage: New control implementation"
       }
     ]
   }

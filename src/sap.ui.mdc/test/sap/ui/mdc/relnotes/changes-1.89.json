@@ -3,6 +3,28 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "4fb0f89abe7b255561df62afd285625379fe2572",
+        "type": "FIX",
+        "text": " ConditionType: use result of last call in case of pending requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170030563"
+          }
+        ]
+      },
+      {
+        "id": "44f1525e02ef77acc4efa12f604f9023df0880ff",
+        "type": "FIX",
+        "text": " Field: update formatting if BindingContext changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170030563"
+          }
+        ]
+      },
+      {
         "id": "0dd6fb74253fdb9efc683f56a7e1b9572917f6c9",
         "type": "FIX",
         "text": " FilterField: Filter only for InParameters in ConditionModel",
@@ -10,39 +32,6 @@
           {
             "type": "BCP",
             "reference": "2180101445"
-          }
-        ]
-      },
-      {
-        "id": "9798e9cce4c83854c9f78069725ac05472a8936a",
-        "type": "FIX",
-        "text": " FieldValueHelp: support complex InParameters for check",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180108029"
-          }
-        ]
-      },
-      {
-        "id": "d447cc992d444f909231ed7518b8035f9421c677",
-        "type": "FIX",
-        "text": " mdc.FilterBarBase: correction for the Save As scenario",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180097837"
-          }
-        ]
-      },
-      {
-        "id": "718a70f29cc46e9004101e9ab40d97990a1e988e",
-        "type": "FIX",
-        "text": " Field: on FieldHelp selection remove only own valueState",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180075729"
           }
         ]
       }
