@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/model/ClientContextBinding",
 	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/MetaModel",
 	"sap/ui/model/Model",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/json/JSONModel",
@@ -23,7 +24,7 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/ui/test/TestUtils"
 ], function (Log, BindingParser, SyncPromise, InvisibleText, BindingMode, ClientContextBinding,
-		Context, FilterProcessor, Model, JSONListBinding, JSONModel, JSONPropertyBinding,
+		Context, FilterProcessor, MetaModel, Model, JSONListBinding, JSONModel, JSONPropertyBinding,
 		JSONTreeBinding, CountMode, ODataMetaModel, ODataModel1, Utils, ODataModel, Measurement,
 		TestUtils) {
 	/*global QUnit, sinon */
@@ -3309,6 +3310,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[true, false].forEach(function (bWithSharedModel) {
+	[true, false].forEach(function (bWithInternalModel) {
+	var sTitle = "destroy: " + (bWithSharedModel ? "with" : "without") + " shared model; "
+			+ (bWithInternalModel ? "with" : "without") + " internal model";
+
+	QUnit.test(sTitle, function (assert) {
+		var oODataMetaModel = {};
+
+		this.mock(MetaModel.prototype).expects("destroy")
+			.withExactArgs("parameters", "passed", "through");
+		if (bWithSharedModel) {
+			oODataMetaModel.oSharedModelCache = {
+				bFirstCodeListRequested : false,
+				oModel : {
+					destroy : function () {}
+				}
+			};
+			this.mock(oODataMetaModel.oSharedModelCache.oModel).expects("destroy");
+		}
+		if (bWithInternalModel) {
+			oODataMetaModel.oModel = {
+				destroy : function () {}
+			};
+			this.mock(oODataMetaModel.oModel).expects("destroy").returns("~destroyed");
+		}
+
+		// code under test
+		assert.strictEqual(
+			ODataMetaModel.prototype.destroy.call(oODataMetaModel, "parameters", "passed",
+				"through"),
+			bWithInternalModel ? "~destroyed" : undefined);
+
+		assert.notOk("oSharedModelCache" in oODataMetaModel);
+	});
+	});
+});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("Get sap:semantics for sap:unit via a path, warn=" + bWarn, function (assert) {
 			var oDataModel, oMetaModel;
@@ -3437,7 +3476,7 @@ sap.ui.define([
 
 				return undefined;
 			});
-		oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs("~sMetadataUrl")
+		oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs()
 			.returns(oCodeListModelCache);
 		oCodeListModelMock.expects("read").withExactArgs("/~Currencies", sinon.match.object)
 			.callsFake(function (sPath, mParams) {
@@ -3593,8 +3632,7 @@ sap.ui.define([
 
 				return undefined;
 			});
-		this.mock(oMetaModel).expects("_getOrCreateSharedModelCache")
-			.withExactArgs("/fake/emptySchema/$metadata")
+		this.mock(oMetaModel).expects("_getOrCreateSharedModelCache").withExactArgs()
 			.returns({/* bFirstCodeListRequested : false, */oModel : oCodeListModel});
 		this.mock(oCodeListModel).expects("read")
 			.withExactArgs("/~CollectionPath", sinon.match.object)
@@ -3671,8 +3709,7 @@ sap.ui.define([
 			oMetaModelMock = this.mock(oMetaModel);
 
 		oMetaModelMock.expects("getODataEntityContainer").withExactArgs().returns(oEntityContainer);
-		this.mock(oMetaModel).expects("_getOrCreateSharedModelCache")
-			.withExactArgs("/fake/emptySchema/$metadata")
+		this.mock(oMetaModel).expects("_getOrCreateSharedModelCache").withExactArgs()
 			.returns({/* bFirstCodeListRequested : false, */oModel : oCodeListModel});
 		this.mock(oCodeListModel).expects("read")
 			.withExactArgs("/~CollectionPath", sinon.match.object)
@@ -3710,7 +3747,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// TODO: Delete global "mSharedModelCacheByUrl" an add it to "this".
 [true, false].forEach(function (bFirstCodeListRequestSuccess) {
 	[true, false].forEach(function (bSecondCodeListRequestSuccess) {
 		[true, false].forEach(function (bCurrencyBeforeUnit) {
@@ -3720,7 +3756,7 @@ sap.ui.define([
 			+ "; request Currencies before Units: " + bCurrencyBeforeUnit;
 
 	QUnit.test(sTitle, function (assert) {
-		var mCodeListUrl2Promise, mSharedModelCacheByUrl,
+		var mCodeListUrl2Promise,
 			oCodeListModel = {
 				destroy : function () {},
 				getMetaModel : function () {},
@@ -3761,18 +3797,13 @@ sap.ui.define([
 				mCodeListUrl2Promise = this;
 				Map.prototype.get.restore();
 
-				// next get is for mSharedModelCacheByUrl
-				that.mock(Map.prototype).expects("get")
-					.withExactArgs("~sMetadataUrl")
-					.callsFake(function (sKey) {
-						mSharedModelCacheByUrl = this;
-						Map.prototype.get.restore();
-
-						// simulate code in _getOrCreateSharedModelCache for new code list model
-						mSharedModelCacheByUrl.set(sKey, oCodeListModelCache);
-						return oCodeListModelCache;
-					});
 				return undefined;
+			});
+		oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs()
+			.callsFake(function () {
+				this.oSharedModelCache = oCodeListModelCache;
+
+				return oCodeListModelCache;
 			});
 		oCodeListModelMock.expects("read").withExactArgs("/~" + sFirstCodeList, sinon.match.object)
 			.callsFake(function (sPath, mParams) {
@@ -3804,6 +3835,13 @@ sap.ui.define([
 				oMetaModelMock.expects("getODataEntityContainer").withExactArgs()
 					.returns(oEntityContainer);
 				oDataModelMock.expects("getMetadataUrl").withExactArgs().returns("~sMetadataUrl");
+				oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs()
+					.callsFake(function () {
+						assert.strictEqual(this.oSharedModelCache, oCodeListModelCache,
+							"not yet deleted");
+
+						return oCodeListModelCache;
+					});
 				oCodeListModelMock.expects("read")
 					.withExactArgs("/~" + sSecondCodeList, sinon.match.object)
 					.callsFake(function (sPath, mParams) {
@@ -3828,20 +3866,106 @@ sap.ui.define([
 							"Couldn't load code list: ~" + sSecondCodeList + " for ~serviceUrl",
 							"~error1", sClassName);
 				}
-				oCodeListModelMock.expects("destroy").withExactArgs();
-				that.mock(mSharedModelCacheByUrl).expects("delete").withExactArgs("~sMetadataUrl");
+				oCodeListModelMock.expects("destroy").withExactArgs()
+					.callsFake(function () {
+						this.bDestroyed = true;
+					});
 
 				// code under test
 				return oMetaModel.fetchCodeList(sSecondCodeList)
 					.catch(function () {/*avoid uncaught in Promise*/});
 			}).finally(function () {
-				mCodeListUrl2Promise.clear();
-				mSharedModelCacheByUrl.clear();
+				assert.strictEqual(oMetaModel.oSharedModelCache, undefined);
+				mCodeListUrl2Promise.clear(); // clear promise cache
 			});
 	});
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("fetchCodeList: destroy ODataMetaModel before read is completed", function (assert) {
+		var mCodeListUrl2Promise, oFetchCodeListPromise, fnReadCallResolve,
+			oCodeListModel = {
+				destroy : function () {},
+				getMetaModel : function () {},
+				read : function () {}
+			},
+			oCodeListModelMock = this.mock(oCodeListModel),
+			oDataModel = new ODataModel("/fake/emptySchema"),
+			oEntityContainer = {
+				"com.sap.vocabularies.CodeList.v1.~term" : {
+					CollectionPath : {String : "~CollectionPath"},
+					Url : {String : "./$metadata"}
+				}
+			},
+			oMetaModel = oDataModel.getMetaModel(),
+			oMetaModelMock = this.mock(oMetaModel),
+			fnReadCallbackPromise = new Promise(function (resolve, reject) {
+				fnReadCallResolve = resolve;
+			}),
+			oSharedModelMetaModel = {
+				loaded : function () {}
+			};
+
+		oMetaModelMock.expects("getODataEntityContainer").withExactArgs().returns(oEntityContainer);
+		this.mock(oDataModel).expects("getMetadataUrl").withExactArgs().returns("~sMetadataUrl");
+		// A workaround to get the global cache instances as they are not visible to the test, don't
+		// mock Map.prototype as test framework uses also Map i.e. for storing uncaught promises
+		this.mock(Map.prototype).expects("get")
+			.withExactArgs("~sMetadataUrl#~CollectionPath")
+			.callsFake(function (sKey) {
+				mCodeListUrl2Promise = this;
+				Map.prototype.get.restore();
+
+				return undefined;
+			});
+		oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs()
+			.callsFake(function () {
+				this.oSharedModelCache = {
+					// simulate a read for a the second code list; destroy of the meta data model
+					// must not lead to a duplicate destroy of the code list model
+					bFirstCodeListRequested : true,
+					oModel : oCodeListModel
+				};
+
+				return this.oSharedModelCache;
+			});
+		oCodeListModelMock.expects("read").withExactArgs("/~CollectionPath", sinon.match.object)
+			.callsFake(function (sPath, mParams) {
+				oCodeListModelMock.expects("destroy").withExactArgs()
+					.callsFake(function () {
+						this.bDestroyed = true;
+
+						fnReadCallResolve(mParams.error);
+					});
+
+				// code under test - destroy data model before read resolves
+				// data model destroys meta model, meta model destroys code list model
+				oDataModel.destroy();
+			});
+		oCodeListModelMock.expects("getMetaModel").withExactArgs().returns(oSharedModelMetaModel);
+		this.mock(oSharedModelMetaModel).expects("loaded").withExactArgs()
+			.returns({/*not relevant*/});
+
+		// code under test
+		oFetchCodeListPromise = oMetaModel.fetchCodeList("~term");
+
+		return fnReadCallbackPromise.then(function (fnCallback) {
+			assert.ok(mCodeListUrl2Promise.get("~sMetadataUrl#~CollectionPath"), "cached");
+
+			// reject read - no error log and cache entry removed
+			fnCallback("aborted");
+
+			return oFetchCodeListPromise
+				.catch(function () {/*avoid uncaught in Promise*/})
+				.finally(function () {
+					assert.strictEqual(oMetaModel.oSharedModelCache, undefined);
+					assert.notOk(mCodeListUrl2Promise.get("~sMetadataUrl#~CollectionPath"),
+						"removed from cache");
+				});
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("requestCurrencyCodes", function (assert) {
@@ -3921,39 +4045,38 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_getOrCreateSharedModelCache: shared model exists", function(assert) {
-		var oMetaModel = new ODataModel("/fake/emptySchema", {}).getMetaModel();
+		var oDataModel = new ODataModel("/fake/emptySchema", {}),
+			oMetaModel = oDataModel.getMetaModel();
 
-		this.mock(Map.prototype).expects("get").withExactArgs("~sMetaDataUrl")
-			.returns("~oSharedModelCache");
+		oMetaModel.oSharedModelCache = "~oSharedModelCache";
+		this.mock(oDataModel).expects("getCodeListModelParameters").never();
+		this.spy(oDataModel, "constructor");
 
 		// code under test
-		assert.strictEqual(oMetaModel._getOrCreateSharedModelCache("~sMetaDataUrl"),
-			"~oSharedModelCache");
+		assert.strictEqual(oMetaModel._getOrCreateSharedModelCache(), "~oSharedModelCache");
+
+		assert.strictEqual(oDataModel.constructor.callCount, 0);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_getOrCreateSharedModelCache: shared model does not exist", function(assert) {
-		var oResult, oSharedModelCache,
-			oMetaModel = new ODataModel("/fake/emptySchema", {}).getMetaModel();
+		var oDataModel = new ODataModel("/fake/emptySchema", {}),
+			oDataModelParameters = {serviceUrl : "/fake/emptySchema"},
+			oMetaModel = oDataModel.getMetaModel(),
+			oResult;
 
-		this.mock(Map.prototype).expects("get").withExactArgs("~sMetaDataUrl").returns(undefined);
-		this.mock(oMetaModel.oDataModel).expects("getCodeListModelParameters").withExactArgs()
-			.returns({serviceUrl : "/fake/emptySchema"});
-		this.mock(Map.prototype).expects("set")
-			.callsFake(function (sMetadataUrl, oSharedModelCache0) {
-				oSharedModelCache = oSharedModelCache0;
-
-				assert.strictEqual(sMetadataUrl, "~sMetaDataUrl");
-				assert.strictEqual(oSharedModelCache0.bFirstCodeListRequested, false);
-				assert.ok(oSharedModelCache0.oModel instanceof ODataModel);
-			});
+		this.mock(oDataModel).expects("getCodeListModelParameters").withExactArgs()
+			.returns(oDataModelParameters);
+		this.spy(oDataModel, "constructor");
 
 		// code under test
-		oResult = oMetaModel._getOrCreateSharedModelCache("~sMetaDataUrl");
+		oResult = oMetaModel._getOrCreateSharedModelCache();
 
-		assert.strictEqual(oResult, oSharedModelCache);
+		assert.strictEqual(oMetaModel.oSharedModelCache, oResult);
 		assert.strictEqual(oResult.bFirstCodeListRequested, false);
-		assert.ok(oResult.oModel instanceof ODataModel);
+		assert.ok(
+			oDataModel.constructor.calledOnceWithExactly(sinon.match.same(oDataModelParameters)));
+		assert.strictEqual(oDataModel.constructor.returnValues[0], oResult.oModel);
 	});
 
 	//*********************************************************************************************
@@ -4038,6 +4161,7 @@ sap.ui.define([
 		}, oFixture.error);
 	});
 });
+
 	//TODO support getODataValueLists with reference to complex type property via entity type
 	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?
 
