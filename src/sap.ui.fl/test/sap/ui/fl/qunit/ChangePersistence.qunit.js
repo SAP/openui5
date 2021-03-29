@@ -24,8 +24,7 @@ sap.ui.define([
 	"sap/ui/fl/Variant",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	merge,
 	UriParameters,
 	Log,
@@ -646,7 +645,7 @@ function(
 				id: "mockAppComponent"
 
 			};
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([new Change("a"), new Change("b"), new Change("c")]);
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([new Change({}), new Change({}), new Change({})]);
 
 			var mExpectedChangesMap = {changesStub: true};
 			var oAddChangeStub = sandbox.stub(DependencyHandler, "addChangeAndUpdateDependencies");
@@ -1244,8 +1243,15 @@ function(
 
 		QUnit.test("when calling removeDirtyChanges without generator, selector IDs and change types specified", function(assert) {
 			sandbox.stub(Log, "error");
-			this.oChangePersistence.removeDirtyChanges(Layer.VENDOR);
-			assert.ok(Log.error.calledWith("The selectorId must be provided"), "then Log.error() is called with an error");
+			return this.oChangePersistence.removeDirtyChanges(Layer.VENDOR)
+			.then(function() {
+				assert.ok(false, "should never go here");
+			})
+			.catch(function(vError) {
+				var sError = "The selectorId must be provided";
+				assert.equal(vError, sError, "the correct error is thrown");
+				assert.ok(Log.error.calledWith(sError), "then Log.error() is called with an error");
+			});
 		});
 
 		QUnit.test("when calling removeDirtyChanges with a generator and a change is in a different layer", function(assert) {
@@ -1936,10 +1942,11 @@ function(
 				originalLanguage: "DE"
 			};
 
-			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+			var oChange = this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1);
+				assert.strictEqual(oChange.getState(), Change.states.PERSISTED, "the state was changed to persisted");
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called with only one change");
 			}.bind(this));
 		});
@@ -1951,11 +1958,13 @@ function(
 				}
 			});
 			setURLParameterForCondensing("true");
-			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR);
+			var aChanges = addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oStorageCondenseStub.callCount, 1, "the condense route of the storage is called");
+				assert.strictEqual(aChanges[0].getState(), Change.states.PERSISTED, "the state was changed to persisted");
+				assert.strictEqual(aChanges[1].getState(), Change.states.PERSISTED, "the state was changed to persisted");
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 			}.bind(this));
 		});
@@ -2698,16 +2707,19 @@ function(
 				content: {},
 				originalLanguage: "DE"
 			};
-			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
-			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
-			this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance);
+			var oDirtyChange1 = this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+			var oDirtyChange2 = this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
+			var oDirtyChange3 = this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance);
 
-			var aDirtyChanges = [this.oChangePersistence._aDirtyChanges[0], this.oChangePersistence._aDirtyChanges[2]];
+			var aDirtyChanges = [oDirtyChange1, oDirtyChange3];
 
 			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges).then(function() {
 				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
 				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
 				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0], oChangeContent3, "the second change was processed afterwards");
+				assert.strictEqual(oDirtyChange2.getState(), Change.states.NEW, "the state was not changed");
+				assert.strictEqual(oDirtyChange1.getState(), Change.states.PERSISTED, "the state was changed to persisted");
+				assert.strictEqual(oDirtyChange3.getState(), Change.states.PERSISTED, "the state was changed to persisted");
 			}.bind(this));
 		});
 
