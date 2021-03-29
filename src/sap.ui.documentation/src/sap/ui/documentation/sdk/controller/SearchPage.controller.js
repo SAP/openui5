@@ -21,14 +21,8 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				this.setModel(new JSONModel());
-				this.bindListResults();
+				this.setModel(new JSONModel(), "searchView");
 				this.getRouter().getRoute("search").attachPatternMatched(this._onTopicMatched, this);
-			},
-
-			bindListResults: function () {
-				this.dataObject = {data:[]};
-				this.getModel().setData(this.dataObject);
 			},
 
 			onAfterRendering: function () {
@@ -64,7 +58,7 @@ sap.ui.define([
 					oList = this.byId("allList"),
 					oSection = this._findSectionForCategory(sCategory),
 					sSectionId = oSection ? oSection.getId() : null,
-					sOldQuery = this.getModel().getProperty("/searchTerm"),
+					sOldQuery = this.getModel("searchView").getProperty("/lastProcessedQuery"),
 					sPageTitle = '';
 
 				try {
@@ -79,14 +73,12 @@ sap.ui.define([
 					return;
 				}
 
-				this.getModel().setProperty("/searchTerm", sQuery);
-				this._modelRefresh();
+				this.getModel("searchData").setProperty("/query", sQuery);
 
 				oList.setBusy(true);
 				SearchUtil.search(sQuery).then(function(result) {
-					this.dataObject = result.matches;
-					this.dataObject.searchTerm = sQuery;
-					this.getModel().setData(this.dataObject);
+					this.getModel("searchView").setProperty("/lastProcessedQuery", sQuery);
+					this.getModel("searchData").setProperty("/matches", result.matches);
 					this.getView().byId("searchPage").setSelectedSection(sSectionId);
 					oList.setBusy(false);
 				}.bind(this));
@@ -138,15 +130,6 @@ sap.ui.define([
 				}
 			},
 
-			/**
-			 * Refresh model and modify links
-			 * @private
-			 */
-			_modelRefresh: function () {
-				this.getModel().refresh();
-				this._modifyLinks();
-			},
-
 			getGroupHeader : function (oGroup) {
 				return new GroupHeaderListItem( {
 					title: oGroup.key,
@@ -167,28 +150,28 @@ sap.ui.define([
 			},
 
 			onAllLoadMore : function (oEvent) {
-				this.dataObject.visibleAllLength = oEvent.getParameter("actual");
-				this._modelRefresh();
+				this.getModel("searchView").setProperty("/visibleAllLength", oEvent.getParameter("actual"));
+				this._modifyLinks();
 			},
 
 			onAPILoadMore : function (oEvent) {
-				this.dataObject.visibleAPILength = oEvent.getParameter("actual");
-				this._modelRefresh();
+				this.getModel("searchView").setProperty("/visibleAPILength", oEvent.getParameter("actual"));
+				this._modifyLinks();
 			},
 
 			onDocLoadMore : function (oEvent) {
-				this.dataObject.visibleDocLength = oEvent.getParameter("actual");
-				this._modelRefresh();
+				this.getModel("searchView").setProperty("/visibleDocLength", oEvent.getParameter("actual"));
+				this._modifyLinks();
 			},
 
 			onExploredLoadMore : function (oEvent) {
-				this.dataObject.visibleExploredLength = oEvent.getParameter("actual");
-				this._modelRefresh();
+				this.getModel("searchView").setProperty("/visibleExploredLength", oEvent.getParameter("actual"));
+				this._modifyLinks();
 			},
 
 			onSwitchTab: function(oEvent) {
 				var sCategory = oEvent.getParameter("section").data("category"),
-					oRouterParams = {searchParam: this.getModel().getProperty("/searchTerm")};
+					oRouterParams = {searchParam: this.getModel("searchView").getProperty("/lastProcessedQuery")};
 
 				if (sCategory) {
 					oRouterParams["?options"] = {category: sCategory};

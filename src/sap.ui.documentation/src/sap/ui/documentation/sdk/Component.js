@@ -61,6 +61,9 @@ sap.ui.define([
 				// set the global version data
 				this.setModel(new JSONModel(), "versionData");
 
+				// set the data for the global search
+				this.setModel(new JSONModel({ includeDeprecated: false }), "searchData");
+
 				// call the base component's init function and create the App view
 				UIComponent.prototype.init.apply(this, arguments);
 

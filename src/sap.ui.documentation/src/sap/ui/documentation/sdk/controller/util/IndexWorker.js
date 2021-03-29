@@ -110,6 +110,7 @@
 			"add",
 			"insert",
 			"remove",
+			"removeAll",
 			"destroy",
 			"indexOf",
 			"attach",
@@ -146,7 +147,7 @@
 
 
 		} else if (sCmd === WORKER.COMMANDS.SEARCH) {
-			searchIndex(oEvent.data.sQuery, oEvent.data.preferencedCategory).then(function(oSearchResult) {
+			searchIndex(oEvent.data.query, oEvent.data.options).then(function(oSearchResult) {
 				var oResponse = {};
 				oResponse[WORKER.RESPONSE_FIELDS.SEARCH_RESULT] = oSearchResult;
 				self.postMessage(oResponse);
@@ -217,7 +218,9 @@
 	 * @param sQuery, the search string
 	 * @returns {Promise<any>}
 	 */
-	function searchIndex(sQuery, sPreferencedCategory) {
+	function searchIndex(sQuery, oOptions) {
+
+		oOptions || (oOptions = {});
 
 		sQuery = preprocessQuery(sQuery);
 
@@ -250,7 +253,7 @@
 
 				// collect all results
 				aSearchResults = oSearchResultsCollector.getAll();
-				aSearchResults = formatResult(aSearchResults, sQuery, sPreferencedCategory);
+				aSearchResults = formatResult(aSearchResults, sQuery, oOptions);
 
 				resolve({
 					success: aSearchResults.data && !!(aSearchResults.data.length),
@@ -538,7 +541,7 @@
 	}
 
 
-	function formatResult(aMatches, sQuery, sPreferencedCategory) {
+	function formatResult(aMatches, sQuery, oOptions) {
 		var oNext,
 		iNext = 0,
 		aData = [],
@@ -549,7 +552,8 @@
 		iAllLength = 0,
 		iAPILength = 0,
 		iDocLength = 0,
-		iExploredLength = 0;
+		iExploredLength = 0,
+		sPreferencedCategory = oOptions.sPreferencedCategory;
 
 		if ( aMatches ) {
 
