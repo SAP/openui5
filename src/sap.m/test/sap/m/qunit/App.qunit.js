@@ -61,10 +61,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Viewport Meta Tag", function(assert) {
-		// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		var $v = jQuery("meta").filter("[name=viewport]");
 		assert.equal($v.length, 1, "There should be a viewport meta tag");
-		assert.equal($v.attr("content"), "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no", "The viewport meta tag content should be correct");
+		assert.equal($v.attr("content"), "width=device-width, initial-scale=1.0", "The viewport meta tag content should be correct");
 	});
 
 	QUnit.test("orientationChange event", function(assert) {
