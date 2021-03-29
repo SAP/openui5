@@ -25,6 +25,17 @@ sap.ui.define([
 				return "sapUiSizeCompact";
 			};
 
+			this.oComponentStub.getCookiesManagement = function() {
+				return {
+					enable: function () {
+						return true;
+					}
+				};
+			};
+			this.oComponentStub.getRootControl = function() {
+				return true;
+			};
+
 			sinon.config.useFakeTimers = false;
 
 			sinon.stub(Controller.prototype, "getOwnerComponent").returns(this.oComponentStub);
