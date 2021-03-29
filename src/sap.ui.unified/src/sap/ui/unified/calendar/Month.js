@@ -2093,17 +2093,13 @@ sap.ui.define([
 		var bFocusable = true; // if date not changed it is still focusable
 		if (!this.getDate() || !oDate.isSame(CalendarDate.fromLocalJSDate(this.getDate(), oDate.getCalendarType()))) {
 			var oCalDate = new CalendarDate(oDate);
-			bFocusable = this.checkDateFocusable(oDate.toLocalJSDate());
 			this.setProperty("date", oDate.toLocalJSDate());
+			bFocusable = this.checkDateFocusable(oDate.toLocalJSDate());
 			this._oDate = oCalDate;
 		}
 
 		if (this.getDomRef()) {
-			if (bFocusable) {
-				this._focusDate(this._oDate, true, bNoFocus);
-			} else {
-				this.setDate(oDate.toLocalJSDate());
-			}
+			this._focusDate(this._oDate, true, bFocusable ? bNoFocus : true);
 		}
 
 	}

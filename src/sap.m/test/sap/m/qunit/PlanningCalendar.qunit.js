@@ -2967,6 +2967,7 @@ sap.ui.define([
 		// the view is switched to October
 		qutils.triggerEvent("mousedown", $30Sep); //focus should be done via mouse events, since this is the way Month.js handles focusing
 		qutils.triggerEvent("mouseup", $30Sep);
+		sap.ui.getCore().applyChanges();
 		_navFocusNext.call(this, $1stOct);
 
 		// Assert

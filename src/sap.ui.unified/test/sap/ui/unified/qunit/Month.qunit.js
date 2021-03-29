@@ -489,6 +489,26 @@ sap.ui.define([
 			oMonthSelectSpy.reset();
 		});
 
+		QUnit.test("setting startDate doesn't apply focus", function (assert) {
+			// Arrange
+			var oMonthFocusDateSpy = this.spy(this.oM, "setDate"),
+				oLastMonthDate = new Date();
+
+			oLastMonthDate.setMonth(oLastMonthDate.getMonth() - 1);
+			this.oM.displayDate(oLastMonthDate);
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			this.oM.displayDate(new Date());
+
+			// Assert
+			assert.equal(oMonthFocusDateSpy.callCount, 0, "select was fired");
+
+			// Cleanup
+			oMonthFocusDateSpy.reset();
+		});
+
 		QUnit.module("Aria", {
 			beforeEach: function() {
 				//Prepare

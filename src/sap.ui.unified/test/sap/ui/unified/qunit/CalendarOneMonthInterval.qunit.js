@@ -55,7 +55,7 @@ sap.ui.define([
 		assert.equal(oSpySetFocusedDate.getCall(0).args[0].toUTCJSDate().toString(), new Date(Date.UTC(2015, 0, 31)).toString(),
 				"_setFocusedDate should be called with certain date parameter");
 
-		assert.equal(oSpyDatesRowSetDate.callCount, 2, "When this._oFocusedDateOneMonth present, it is set to " +
+		assert.equal(oSpyDatesRowSetDate.callCount, 1, "When this._oFocusedDateOneMonth present, it is set to " +
 		"datesrow(call to DatesRow#.setDate)");
 		assert.equal(oSpyDatesRowSetDate.getCall(0).args[0].toString(), new Date(2015, 0, 31).toString(),
 				"DatesRow#setDate should be called with certain date parameter");
