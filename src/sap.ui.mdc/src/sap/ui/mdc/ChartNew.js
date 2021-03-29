@@ -342,6 +342,11 @@ sap.ui.define([
                 this._fnRejectInitialized = reject;
             }.bind(this));
 
+            this.innerChartBoundPromise = new Promise(function (resolve, reject) {
+                this._fnResolveInnerChartBound = resolve;
+                this._fnRejectInnerChartBound = reject;
+            }.bind(this));
+
             //load required modules before init of inner controls
             this._loadDelegate().then(function (oDelegate) {
                 this.initControlDelegate(oDelegate).then(function () {
@@ -413,6 +418,8 @@ sap.ui.define([
                         "items"
                     ]
                 });
+
+                this._fnResolveInnerChartBound();
 
             }.bind(this));
 
@@ -586,6 +593,7 @@ sap.ui.define([
         /**
          * Can be used to check whether the chart is initialized
          * After initialization the delegate should be loaded and (in case of autoBindOnInit=true) the inner chart has been created
+         * This does not include the inner chart to be bound. Use <code>innerChartBound</code> for it.
          * @returns {Promise} Promise that resolves once MDC Chart is initialized. Contains reference to MDC Chart
          *
          * @experimental
@@ -594,6 +602,18 @@ sap.ui.define([
          */
         Chart.prototype.initialized = function () {
             return this.initializedPromise;
+        };
+
+        /**
+         * Can be used to check whether the inner chart is initialized and bound
+         * @returns {Promise} Promise that resolves once MDC Chart is bound
+         *
+         * @experimental
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.fe
+         */
+        Chart.prototype.innerChartBound = function () {
+            return this.innerChartBoundPromise;
         };
 
         /**
