@@ -295,4 +295,33 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		});
 	});
 
+	QUnit.test("clean up after destroy view", function (assert) {
+
+		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
+			oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
+			oBlock = oTargetSubSection.getBlocks()[0],
+			done = assert.async();
+
+		assert.expect(2);
+
+		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
+
+			// verify init state
+			var sCollapsedViewId = oBlock.getSelectedView();
+			assert.ok(oBlock._oPromisedViews[sCollapsedViewId], "the view promise is created");
+
+			oBlock._selectView("Expanded");
+			oBlock.attachEvent("viewInit", function(oEvent) {
+
+				// Act
+				sap.ui.getCore().byId(sCollapsedViewId).destroy();
+
+				// Check
+				assert.strictEqual(oBlock._oPromisedViews[sCollapsedViewId], undefined, "the view promise is cleaned up");
+				done();
+			});
+		});
+
+	});
+
 });
