@@ -112,6 +112,10 @@ sap.ui.define([
 				persisted: {
 					type: "boolean",
 					defaultValue: true
+				},
+				name: {
+					type: "string",
+					defaultValue: ""
 				}
 			},
 			aggregations: {
@@ -142,6 +146,8 @@ sap.ui.define([
 			this.setExecuteOnSelection(bExecuteOnSelect);
 
 			this.setContexts(oFile.contexts || {});
+
+			this.setName(this.getText("variantName"));
 
 			if (oFile.layer === Layer.VENDOR || oFile.layer === Layer.CUSTOMER_BASE) {
 				this.setFavorite(true);
@@ -214,6 +220,21 @@ sap.ui.define([
 		delete this._oDefinition.content.executeOnSelection;
 		this.setState(Change.states.DIRTY);
 		this.setExecuteOnSelection(bExecuteOnSelection);
+	};
+
+	/**
+	 * Sets the name of the runtime instance as well as the persistent representation.
+	 * This results in a entity within the texts section flagged as a field for translation.
+	 *
+	 * @param {string} sName - Name to be set
+	 *
+	 * @public
+	 */
+	CompVariant.prototype.storeName = function (sName) {
+		this._oDefinition.texts.variantName.value = sName;
+
+		this.setState(Change.states.DIRTY);
+		this.setName(sName);
 	};
 
 	CompVariant.createInitialFileContent = function (oPropertyBag) {

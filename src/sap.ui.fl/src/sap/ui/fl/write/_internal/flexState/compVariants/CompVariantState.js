@@ -33,28 +33,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function getCategory(oChangeContent) {
-		switch (oChangeContent.fileType) {
-			case "change":
-			case "variant":
-				return "changes";
-			case "comp_variant_change":
-				return "compVariantChanges";
-			default:
-		}
-	}
-
 	function addChange(sReference, oChange) {
 		var oChangeContent = oChange.getDefinition();
 		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
 		mCompVariantsMap[oChange.getSelector().persistencyKey].changes.push(oChange);
 		return oChangeContent;
-	}
-
-	function deleteChange(sReference, oChange) {
-		var oChangeContent = oChange.getDefinition();
-		var mCompVariantsMapById = FlexState.getCompEntitiesByIdMap(sReference);
-		delete mCompVariantsMapById[oChangeContent.fileName];
 	}
 
 	function createOrUpdateChange(mPropertyBag, oContent, sChangeType) {
@@ -445,8 +428,8 @@ sap.ui.define([
 		var sLayer = determineLayer(mPropertyBag);
 
 		if (!oVariant.getPersisted() || oVariant.getLayer() !== sLayer) {
-			if (mPropertyBag.content || mPropertyBag.name) {
-				throw new Error("'content' and 'name' updating of variants via changes is not yet enabled");
+			if (mPropertyBag.content) {
+				throw new Error("'content' updating of variants via changes is not yet enabled");
 			}
 
 			var oChangeDefinition = Change.createInitialFileContent({
@@ -466,6 +449,13 @@ sap.ui.define([
 					oChangeDefinition.content[sPropertyName] = mPropertyBag[sPropertyName];
 				}
 			});
+			if (mPropertyBag.name) {
+				oChangeDefinition.texts.variantName = {
+					value: mPropertyBag.name,
+					type: "XFLD"
+				};
+			}
+
 			var oChange = new Change(oChangeDefinition);
 			addChange(mPropertyBag.reference, oChange);
 
@@ -483,7 +473,7 @@ sap.ui.define([
 				oVariant.storeContexts(mPropertyBag.contexts);
 			}
 			if (mPropertyBag.name) {
-				oVariant.setText("variantName", mPropertyBag.name);
+				oVariant.storeName(mPropertyBag.name);
 			}
 			oVariant.setContent(mPropertyBag.content || oVariant.getContent());
 		}
@@ -570,44 +560,6 @@ sap.ui.define([
 		oVariant.removeRevertInfo(oRevertData);
 
 		return oVariant;
-	};
-
-
-	/**
-	 * Adds the definitions of flex objects to the FlexState in their current state (dirty with NEW or DELETE).
-	 * This function must be called after the CompVariantsMap for the given application was created.
-	 *
-	 * @param {object} mPropertyBag - Map of parameters, see below
-	 * @param {string} mPropertyBag.reference - Flex reference of the app
-	 * @param {sap.ui.fl.Change} mPropertyBag.changeToBeAddedOrDeleted - Change object which should be modified
-	 */
-	CompVariantState.updateState = function(mPropertyBag) {
-		if (mPropertyBag.changeToBeAddedOrDeleted) {
-			switch (mPropertyBag.changeToBeAddedOrDeleted.getPendingAction()) {
-				case Change.states.NEW:
-					break;
-				case Change.states.DELETED:
-					var oChange = mPropertyBag.changeToBeAddedOrDeleted;
-					deleteChange(mPropertyBag.reference, oChange);
-					// update persistence
-					var oChangeDefinition = oChange.getDefinition();
-					var oFlexObjects = FlexState.getFlexObjectsFromStorageResponse(mPropertyBag.reference);
-					var sChangeCategory = getCategory(oChangeDefinition);
-					var iChangeContentIndex = -1;
-					oFlexObjects[sChangeCategory].some(function(oExistingChangeContent, iIndex) {
-						if (oExistingChangeContent.fileName === oChangeDefinition.fileName) {
-							iChangeContentIndex = iIndex;
-							return true;
-						}
-					});
-					if (iChangeContentIndex > -1) {
-						oFlexObjects[sChangeCategory].splice(iChangeContentIndex, 1);
-					}
-					break;
-				default:
-					break;
-			}
-		}
 	};
 
 	/**

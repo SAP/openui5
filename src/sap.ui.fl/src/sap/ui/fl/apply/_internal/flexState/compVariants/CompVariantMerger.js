@@ -29,7 +29,12 @@ sap.ui.define([
 			if (oChangeContent.contexts) {
 				oVariant.setContexts(oChangeContent.contexts);
 			}
-			// TODO add content and name. For this the change setters have to change to not update the state / definition
+
+			var sVariantName = oChange.getText("variantName");
+			if (sVariantName) {
+				oVariant.setName(sVariantName);
+			}
+			// TODO add content. For this the change setters have to change to not update the state / definition
 		}
 	};
 

@@ -95,27 +95,33 @@ sap.ui.define([
 				assert.equal(oStandardVariant.getFavorite(), true, "which is by default a favorite");
 
 				var aVariants = oResponse.variants;
-				assert.equal(aVariants.length, 5, "then five entities are returned");
+				assert.equal(aVariants.length, 6, "then six entities are returned");
 				assert.equal(aVariants[0].getId(), "variant_3", "the six is the variant provided from the loadFlexData");
 				assert.equal(aVariants[0].getFavorite(), true, "which was changed to be a favorite");
 				assert.equal(aVariants[0].getExecuteOnSelection(), false, "and is not executed on selection by default");
-				assert.equal(aVariants[0].getText("variantName"), "C Variant", "and the oData variant has the correct title");
+				assert.equal(aVariants[0].getName(), "C Variant", "and the oData variant has the correct title");
 				assert.equal(aVariants[1].getId(), "variant_4", "the third is the variant provided from the loadFlexData");
 				assert.equal(aVariants[1].getFavorite(), false, "which is NOT a favorite");
 				assert.equal(aVariants[1].getExecuteOnSelection(), true, "and is executed on selection, because it is flagged within the object");
-				assert.equal(aVariants[1].getText("variantName"), "B Variant", "and the oData variant has the correct title");
+				assert.equal(aVariants[1].getName(), "B Variant", "and the oData variant has the correct title");
 				assert.equal(aVariants[2].getId(), "variant_5", "the second is the variant provided from the loadFlexData");
 				assert.equal(aVariants[2].getFavorite(), false, "which is NOT a favorite");
 				assert.equal(aVariants[2].getExecuteOnSelection(), false, "and is not executed on selection by default");
-				assert.equal(aVariants[2].getText("variantName"), "A Variant", "and the oData variant has the correct title");
+				assert.equal(aVariants[2].getName(), "A Variant", "and the oData variant has the correct title");
 				assert.equal(aVariants[3].getId(), "variant_1", "the fourth is the variant provided from the loadFlexData");
 				assert.equal(aVariants[3].getFavorite(), false, "which is NOT a favorite, because it was added as a favorite and afterwards removed");
 				assert.equal(aVariants[3].getExecuteOnSelection(), false, "and is not executed on selection by default");
-				assert.equal(aVariants[3].getText("variantName"), "B Variant", "and the variant has the correct title");
+				assert.equal(aVariants[3].getName(), "B Variant", "and the variant has the correct title");
 				assert.equal(aVariants[4].getId(), "variant_2", "the fifth is the variant provided from the loadFlexData");
 				assert.equal(aVariants[4].getFavorite(), true, "which is a favorite, because it is flagged as one within the content");
 				assert.equal(aVariants[4].getExecuteOnSelection(), true, "and is executed on selection, because it is flagged within the content");
-				assert.equal(aVariants[4].getText("variantName"), "B Variant2", "and the variant has the correct title");
+				assert.equal(aVariants[4].getName(), "B Variant2", "and the variant has the correct title");
+				assert.equal(aVariants[5].getFavorite(), false, "which is a favorite, because it is flagged as one within the content");
+				assert.equal(aVariants[5].getExecuteOnSelection(), false, "and is executed on selection, because it is flagged within the content");
+				assert.equal(aVariants[5].getName(), "a new name", "and the variant has the correct title");
+				assert.deepEqual(aVariants[5].getContexts(), {
+					ROLE: ["SOME_ROLE"]
+				}, "and the variant has roles because of the update");
 			});
 		});
 
