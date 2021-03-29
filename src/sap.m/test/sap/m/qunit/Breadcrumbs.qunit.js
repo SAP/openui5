@@ -627,4 +627,25 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 
 		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("tabindex"), undefined, "Tabindex should not be set for empty breadcrumbs");
 	});
+
+	QUnit.test("Current location focus restored", function (assert) {
+		// Arrange
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
+			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation();
+
+		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		// Act
+		oCurrentLocation.focus();
+		// Assert
+		assert.equal(document.activeElement, oCurrentLocation.getDomRef(), "Focus on the current location element");
+		// Act
+		oStandardBreadCrumbsControl.addLink(new sap.m.Link({text: "New Test Link"}));
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.equal(document.activeElement, oCurrentLocation.getDomRef(), "Focus is correctly restored");
+
+	});
+
+
 });

@@ -200,6 +200,7 @@ sap.ui.define([
 			oCurrentLocation.addEventDelegate({
 				onAfterRendering: function () {
 					oCurrentLocation.$().attr("aria-current", "page");
+					oCurrentLocation.$().attr("tabindex", 0);
 				}
 			});
 
