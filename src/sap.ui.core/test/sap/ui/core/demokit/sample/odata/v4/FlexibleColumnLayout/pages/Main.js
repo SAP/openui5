@@ -5,10 +5,11 @@ sap.ui.define([
 	"sap/f/library",
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/TestUtils",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties"
-], function (library, Helper, Opa5, EnterText, Press, Properties) {
+], function (library, Helper, Opa5, TestUtils, EnterText, Press, Properties) {
 	"use strict";
 	var LayoutType = library.LayoutType,
 		sViewName = "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main";
@@ -83,7 +84,11 @@ sap.ui.define([
 					});
 				},
 				refresh : function () {
-					return Helper.pressButton(this, sViewName, "refreshSalesOrderList");
+					return Helper.pressButton(this, sViewName, "refreshSalesOrderList")
+						.then(function () {
+							TestUtils.setData(
+								"SalesOrderList_Refresh_with_GrossAmount_GT_1000.json", true);
+						});
 				},
 				selectSalesOrder : function (iRow) {
 					return this.waitFor({

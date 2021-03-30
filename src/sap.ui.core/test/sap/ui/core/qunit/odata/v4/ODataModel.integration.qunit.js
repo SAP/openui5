@@ -764,7 +764,7 @@ sap.ui.define([
 	<Text id="objectPageGrossAmount" text="{GrossAmount}"/>\
 	<Text id="objectPageNote" text="{Note}"/>\
 	<Table items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
-		<Text text="{ItemPosition}"/>\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
 				that = this;
@@ -785,22 +785,28 @@ sap.ui.define([
 				.expectChange("id", ["1", "2"])
 				.expectChange("grossAmount", ["123.00", "149.00"])
 				.expectChange("objectPageGrossAmount")
-				.expectChange("objectPageNote");
+				.expectChange("objectPageNote")
+				.expectChange("itemPosition", []);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				oTable = that.oView.byId("listReport");
 				oContext = oTable.getItems()[0].getBindingContext();
 
-				that.expectChange("objectPageGrossAmount", "123.00");
-				that.expectRequest("SalesOrderList('1')?$select=Note", {
+				that.expectChange("objectPageGrossAmount", "123.00")
+					.expectRequest("SalesOrderList('1')?$select=Note", {
 						"@odata.etag" : "etag1",
 						Note : "Before refresh"
 					})
 					.expectChange("objectPageNote", "Before refresh")
 					.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
-						value : [/*does not matter*/]
-					});
+						value : [{
+							ItemPosition : "0010",
+							SalesOrderID : "1"
+						}]
+					})
+					// Note: it is important to wait for the table to get its data!
+					.expectChange("itemPosition", ["0010"]);
 
 				// code under test
 				that.oView.byId("objectPage").setBindingContext(oContext);
@@ -2728,19 +2734,23 @@ sap.ui.define([
 				that.oView.byId("inner").getBindingContext().getProperty("LegalForm"),
 				"Ltd"
 			);
+			assert.strictEqual(
+				that.oView.byId("outer").getObjectBinding().getBoundContext()
+					.getProperty("SO_2_BP/LegalForm"),
+				"Ltd"
+			);
 
 			that.expectChange("legalForm", null);
 
-			// TODO this should remove the property from the query options again
+			// this removes the property from the query options again
 			that.oView.byId("legalForm").setBindingContext(null);
 
 			that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
-					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 					SalesOrderID : "1",
 					SO_2_BP : {
 						BusinessPartnerID : "2",
-						CompanyName : "TECUM (refreshed)",
-						LegalForm : "Ltd"
+						CompanyName : "TECUM (refreshed)"
 					}
 				})
 				.expectChange("companyName", "TECUM (refreshed)");
@@ -7891,7 +7901,7 @@ sap.ui.define([
 				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
-				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
+				oCreatedContext1.requestRefresh("$auto", true/*bAllowRemoval*/),
 				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
@@ -8730,7 +8740,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
+				oCreatedContext1.requestRefresh("$auto", true/*bAllowRemoval*/),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -9000,7 +9010,7 @@ sap.ui.define([
 					+ "&$filter=SalesOrderID eq '44'", {value : []});
 
 			return Promise.all([
-				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
+				oCreatedContext1.requestRefresh("$auto", true/*bAllowRemoval*/),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -11304,9 +11314,9 @@ sap.ui.define([
 
 			// code under test
 			oExecutionPromise = oAction.setParameter("TeamID", "42").execute();
-			oContext.refresh(undefined, true);
 
 			return Promise.all([
+				oContext.requestRefresh(undefined, true),
 				oExecutionPromise,
 				that.waitForChanges(assert)
 			]);
@@ -11660,16 +11670,21 @@ sap.ui.define([
 	// invalid value shall be removed and the model value shall be visible (esp. also if this value
 	// is the previous binding value).
 	// JIRA: CPOUI5ODATAV4-459
+	//
+	// Afterwards, refresh the list and see that no late properties from the context binding are
+	// requested for all rows.
+	// JIRA: CPOUI5ODATAV4-544
 	QUnit.test("Auto-$expand/$select: list/detail with separate requests", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <Table id="list" items="{/TEAMS}">\
 	<Text id="currency" text="{BudgetCurrency}"/>\
-	<Text id="text0" text="{Team_Id}"/>\
+	<Text id="id" text="{Team_Id}"/>\
 </Table>\
 <FlexBox id="detail" binding="{}">\
-	<Text id="text1" text="{Name}"/>\
-	<Text id="text2" text="{Budget}"/>\
+	<Text id="name" text="{Name}"/>\
+	<Text id="budget" text="{Budget}"/>\
 	<Input id="budgetCurrency" value="{BudgetCurrency}"/>\
 </FlexBox>',
 			that = this;
@@ -11680,18 +11695,21 @@ sap.ui.define([
 					{BudgetCurrency : "EUR", Team_Id : "TEAM_02"}]
 			})
 			.expectChange("currency", ["EUR", "EUR"])
-			.expectChange("text0", ["TEAM_01", "TEAM_02"])
-			.expectChange("text1") // expect a later change
-			.expectChange("text2");
+			.expectChange("id", ["TEAM_01", "TEAM_02"])
+			.expectChange("name") // expect a later change
+			.expectChange("budget");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("list").getItems()[0].getBindingContext();
+			var oContext;
+
+			oTable = that.oView.byId("list");
+			oContext = oTable.getItems()[0].getBindingContext();
 
 			// 'Budget' and 'Name' are added to the table row
 			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,Name",
 					{Budget : "456", Name : "Team #1"})
-				.expectChange("text1", "Team #1")
-				.expectChange("text2", "456");
+				.expectChange("name", "Team #1")
+				.expectChange("budget", "456");
 
 			that.oView.byId("detail").setBindingContext(oContext);
 
@@ -11702,20 +11720,36 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("TEAMS('TEAM_02')?$select=Budget,Name",
 					{Budget : "789", Name : "Team #2"})
-				.expectChange("text1", "Team #2")
-				.expectChange("text2", "789");
+				.expectChange("name", "Team #2")
+				.expectChange("budget", "789");
 
 			that.expectMessages([]); // validation error has gone
 
 			// 2. Change the context of the control but let the data be same as the binding value
-			that.oView.byId("detail").setBindingContext(
-				that.oView.byId("list").getItems()[1].getBindingContext());
+			that.oView.byId("detail").setBindingContext(oTable.getItems()[1].getBindingContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(that.oView.byId("budgetCurrency").getValue(), "EUR");
 
 			return that.checkValueState(assert, "budgetCurrency", "None", "");
+		}).then(function () {
+			that.expectRequest("TEAMS?$select=BudgetCurrency,Team_Id&$skip=0&$top=100", {
+					value : [
+						{BudgetCurrency : "RBL", Team_Id : "TEAM_01"},
+						{BudgetCurrency : "RBL", Team_Id : "TEAM_02"}]
+				})
+				.expectChange("currency", ["RBL", "RBL"])
+				.expectRequest("TEAMS('TEAM_02')?$select=Budget,Name",
+					{Budget : "123", Name : "Gzprm"})
+				.expectChange("name", "Gzprm")
+				.expectChange("budget", "123");
+
+			return Promise.all([
+				// code under test (JIRA: CPOUI5ODATAV4-544)
+				oTable.getBinding("items").requestRefresh(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -14318,9 +14352,8 @@ sap.ui.define([
 				.expectChange(sIdEmployeeId, "0002")
 				.expectChange(sIdAge, "32");
 
-			oOuterForm.getObjectBinding().refresh();
-
 			return Promise.all([
+				oOuterForm.getObjectBinding().requestRefresh(),
 				oOuterForm.getObjectBinding().resumeAsync(),
 				that.waitForChanges(assert)
 			]);
@@ -26609,7 +26642,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oCreatedContext.refresh("$auto", false),
+				oCreatedContext.requestRefresh("$auto", false),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -26646,7 +26679,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oCreatedContext.refresh("$auto", true),
+				oCreatedContext.requestRefresh("$auto", true),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -26668,7 +26701,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oCreatedContext.refresh("$auto", true),
+				oCreatedContext.requestRefresh("$auto", true),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -29205,7 +29238,7 @@ sap.ui.define([
 	// PATCH. This must not fail, even though there is (of course) no key predicate for that related
 	// entity known (yet).
 	// BCP: 2070199671
-	QUnit.test("BCP: 2070199671", function (assert) {
+	QUnit.test("BCP: 2070199671", function () {
 		var oModel = createTeaBusiModel({updateGroupId : "doNotSubmit"}),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oTransientContext = oListBinding.create({TEAM_2_MANAGER : {}});
@@ -31926,6 +31959,9 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-488
 	// JIRA: CPOUI5ODATAV4-579
 	// JIRA: CPOUI5ODATAV4-411
+	//
+	// See that the list refresh does not include late properties.
+	// JIRA: CPOUI5ODATAV4-544
 	QUnit.test("CPOUI5ODATAV4-488: Refresh w/ kept-alive context", function (assert) {
 		var oKeptContext,
 			oListBinding,
@@ -31963,16 +31999,14 @@ sap.ui.define([
 					batchNo : 4,
 					method : "GET",
 					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123"
-						+ "&$select=GrossAmount,Note,SalesOrderID&$skip=0&$top=2"
+						+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2"
 				}, {
 					"@odata.count" : "27",
 					value : [{
 						GrossAmount : "149.1",
-						Note : "Note 2",
 						SalesOrderID : "2"
 					}, {
 						GrossAmount : "789.1",
-						Note : "Note 3",
 						SalesOrderID : "3"
 					}]
 				})
@@ -31983,8 +32017,12 @@ sap.ui.define([
 					url : "SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
 				}, {
-					value : [/*does not matter*/]
-				});
+					value : [{
+						ItemPosition : "0020",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition", ["0020"]);
 
 			oListBinding.refresh();
 
@@ -32015,16 +32053,14 @@ sap.ui.define([
 					batchNo : 5,
 					method : "GET",
 					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123"
-						+ "&$select=GrossAmount,Note,SalesOrderID&$skip=0&$top=2"
+						+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2"
 				}, {
 					"@odata.count" : "26",
 					value : [{
 						GrossAmount : "149.2",
-						Note : "Note 2",
 						SalesOrderID : "2"
 					}, {
 						GrossAmount : "789.2",
-						Note : "Note 4",
 						SalesOrderID : "4"
 					}]
 				})
@@ -32036,8 +32072,12 @@ sap.ui.define([
 					url : "SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
 				}, {
-					value : [/*does not matter*/]
-				});
+					value : [{
+						ItemPosition : "0030",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition", ["0030"]);
 
 			oListBinding.refresh();
 
@@ -32342,6 +32382,9 @@ sap.ui.define([
 	// Refresh list with a kept-alive context that is part of the collection; after refresh the
 	// entity is deleted.
 	// JIRA: CPOUI5ODATAV4-578
+	//
+	// See that the list refresh does not include late properties.
+	// JIRA: CPOUI5ODATAV4-544
 	QUnit.test("CPOUI5ODATAV4-578: kept-alive entity of object page deleted", function (assert) {
 		var oError = createError({message : "Not found"}),
 			fnOnBeforeDestroy = sinon.stub(),
@@ -32369,16 +32412,14 @@ sap.ui.define([
 						batchNo : 3,
 						method : "GET",
 						url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
-							+ "&$select=GrossAmount,Note,SalesOrderID&$skip=0&$top=2"
+							+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2"
 					}, {
 						"@odata.count" : "41",
 						value : [{
 							GrossAmount : 149.1,
-							Note : "Note 2",
 							SalesOrderID : "2"
 						}, {
 							GrossAmount : 99,
-							Note : "Note 3",
 							SalesOrderID : "3"
 						}]
 					})
@@ -32397,10 +32438,13 @@ sap.ui.define([
 						type : "Error"
 					}]);
 
-				// code under test
-				oKeptContext.getBinding().refresh();
-
-				return that.waitForChanges(assert, "(3) refresh the list");
+				return Promise.all([
+					// code under test
+					oKeptContext.getBinding().requestRefresh().catch(function (oError0) {
+						assert.strictEqual(oError0.message, "Not found");
+					}),
+					that.waitForChanges(assert, "(3) refresh the list")
+				]);
 		}).then(function () {
 			sinon.assert.called(fnOnBeforeDestroy);
 		});

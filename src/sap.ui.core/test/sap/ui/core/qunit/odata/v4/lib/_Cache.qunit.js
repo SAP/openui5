@@ -9742,6 +9742,7 @@ sap.ui.define([
 			oCacheMock = this.mock(oCache),
 			oGroupLock = {},
 			oHelperMock = this.mock(_Helper),
+			mLateQueryOptions = {},
 			mQueryOptionsCopy = {
 				$count : true,
 				$orderby : "~orderby~",
@@ -9753,6 +9754,7 @@ sap.ui.define([
 			},
 			mTypes = {};
 
+		oCache.mLateQueryOptions = mLateQueryOptions;
 		Object.keys(oFixture.mKeptAliveElementsByPredicate).forEach(function (sPredicate) {
 			var oElement = oFixture.mKeptAliveElementsByPredicate[sPredicate];
 
@@ -9774,11 +9776,12 @@ sap.ui.define([
 			}
 		});
 
-		// calculateKeptElementQuerry
-		this.mock(Object).expects("assign")
-			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
+		// calculateKeptElementQuery
+		oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
 			.returns(mQueryOptionsCopy);
-
+		oHelperMock.expects("aggregateQueryOptions")
+			.withExactArgs(sinon.match.same(mQueryOptionsCopy),
+				sinon.match.same(oCache.mLateQueryOptions));
 		this.mock(oCache.oRequestor).expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match(function (oValue) {
 				return oValue === mQueryOptionsCopy
@@ -9788,7 +9791,7 @@ sap.ui.define([
 					&& !("$count" in oValue)
 					&& !("$orderby" in oValue)
 					&& !("$search" in oValue);
-			}))
+			}), /*bDropSystemQueryOptions*/ false, /*bSortExpandSelect*/ true)
 			.returns("?$filter=" + oFixture.sFilter);
 
 		// refreshKeptElements

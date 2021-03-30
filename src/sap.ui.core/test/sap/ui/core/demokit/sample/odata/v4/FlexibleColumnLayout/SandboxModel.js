@@ -7,8 +7,9 @@
 // For the "non-realOData" case, a mock server for the back-end requests is set up.
 sap.ui.define([
 	"sap/ui/core/sample/common/SandboxModelHelper",
-	"sap/ui/model/odata/v4/ODataModel"
-], function (SandboxModelHelper, ODataModel) {
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/test/TestUtils"
+], function (SandboxModelHelper, ODataModel, TestUtils) {
 	"use strict";
 
 	var oMockData = {
@@ -55,9 +56,15 @@ sap.ui.define([
 				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000009'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('0500000009')-Refresh.json"
 				},
-				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
+				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : [{
+					ifMatch : function (_oRequest) {
+						return TestUtils.retrieveData(
+							"SalesOrderList_Refresh_with_GrossAmount_GT_1000.json");
+					},
+					source : "SalesOrderList_Refresh_with_GrossAmount_GT_1000.json"
+				}, {
 					source : "SalesOrderList_GrossAmount_GT_1000.json"
-				},
+				}],
 				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=4&$top=1" : {
 					source : "SalesOrderList_GrossAmount_GT_1000_skip4_top1.json"
 				},
@@ -88,12 +95,6 @@ sap.ui.define([
 				},
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$select=GrossAmount,ItemPosition,Quantity,SalesOrderID&$filter=SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000080'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000090'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000050'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000030'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000100'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000010'&$top=6" : {
 					source : "SalesOrderList('0500000000')-requestSideEffects.json"
-				},
-				//TODO The following request contains unnecessary properties, should look like:
-				// "SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5"
-				// CPOUI5ODATAV4-544
-				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
-					source : "SalesOrderList_Refresh_with_GrossAmount_GT_1000.json"
 				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",

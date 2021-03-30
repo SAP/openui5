@@ -121,7 +121,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate: success", function (assert) {
+	QUnit.test("checkUpdate: success", function () {
 		var oBinding = new ODataBinding({
 				checkUpdateInternal : function () {},
 				oModel : {
@@ -147,7 +147,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate: checkUpdateInternal rejects", function (assert) {
+	QUnit.test("checkUpdate: checkUpdateInternal rejects", function () {
 		var oBinding = new ODataBinding({
 				checkUpdateInternal : function () {},
 				oModel : {
@@ -343,7 +343,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh: reject", function (assert) {
+	QUnit.test("refresh: reject", function () {
 		var oBinding = new ODataBinding({
 				oModel : {getReporter : function () {}}
 			}),
@@ -1290,10 +1290,10 @@ sap.ui.define([
 				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
 				oModel : {
+					reportError : function () {},
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
 					},
-					reportError : function () {},
 					mUriParameters : {}
 				},
 				sPath : "relative",
@@ -1367,10 +1367,10 @@ sap.ui.define([
 				oCachePromise : SyncPromise.resolve(null),
 				mCacheQueryOptions : {},
 				oModel : {
+					reportError : function () {},
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
 					},
-					reportError : function () {},
 					mUriParameters : {}
 				},
 				bRelative : true,
@@ -1407,15 +1407,146 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createAndSetCache: absolute", function (assert) {
-		var oBinding = new ODataBinding({
+	QUnit.test("fetchCache: bKeepQueryOptions and own cache", function (assert) {
+		var oCache = {
+				getResourcePath : function () {},
+				setActive : function () {}
+			},
+			mCacheQueryOptions = {},
+			mLateQueryOptions = {},
+			oBinding = new ODataBinding({
+				oCache : oCache,
+				oCachePromise : SyncPromise.resolve(oCache),
+				mCacheQueryOptions : mCacheQueryOptions,
+				oFetchCacheCallToken : {},
+				mLateQueryOptions : mLateQueryOptions,
+				oModel : {
+					reportError : function () {},
+					oRequestor : {
+						ready : function () {}
+					}
+				},
+				bRelative : true
+			}),
+			oContext = {},
+			oNewCache = {};
+
+		this.mock(oCache).expects("setActive").withExactArgs(false);
+		this.mock(oCache).expects("getResourcePath").withExactArgs().returns("~resourcePath~");
+		this.mock(oBinding).expects("createAndSetCache")
+			.withExactArgs(sinon.match.same(oBinding.mCacheQueryOptions), "~resourcePath~",
+				sinon.match.same(oContext))
+			.returns(oNewCache);
+		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache").never();
+		this.mock(oBinding.oModel.oRequestor).expects("ready").never();
+		this.mock(oBinding.oModel).expects("reportError").never();
+		this.mock(oBinding).expects("fetchResourcePath").never();
+
+		// code under test
+		oBinding.fetchCache(oContext, undefined, true);
+
+		assert.strictEqual(oBinding.oCache, undefined);
+		assert.ok(oBinding.oCachePromise.isPending());
+		assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
+
+		return oBinding.oCachePromise.then(function (oCache0) {
+			assert.strictEqual(oCache0, oNewCache);
+			assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
+			assert.strictEqual(oBinding.mCacheQueryOptions, mCacheQueryOptions);
+			assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: bKeepQueryOptions and no cache", function (assert) {
+		var oCachePromise = SyncPromise.resolve(null),
+			mCacheQueryOptions = {},
+			mLateQueryOptions = {},
+			oBinding = new ODataBinding({
+				oCache : null,
+				oCachePromise : oCachePromise,
+				mCacheQueryOptions : mCacheQueryOptions,
+				oFetchCacheCallToken : {},
+				mLateQueryOptions : mLateQueryOptions,
+				oModel : {
+					reportError : function () {},
+					oRequestor : {
+						ready : function () {}
+					}
+				}
+			});
+
+		this.mock(oBinding).expects("createAndSetCache").never();
+		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache").never();
+		this.mock(oBinding.oModel.oRequestor).expects("ready").never();
+		this.mock(oBinding.oModel).expects("reportError").never();
+		this.mock(oBinding).expects("fetchResourcePath").never();
+
+		// code under test
+		oBinding.fetchCache(undefined, undefined, true);
+
+		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.oCachePromise, oCachePromise);
+		assert.strictEqual(oBinding.mCacheQueryOptions, mCacheQueryOptions);
+		assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
+		assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: bKeepQueryOptions while oCachePromise is pending", function (assert) {
+		var oCachePromise = SyncPromise.resolve(Promise.resolve()),
+			mCacheQueryOptions = {},
+			oCallToken = {},
+			mLateQueryOptions = {},
+			oBinding = new ODataBinding({
+				oCache : undefined,
+				oCachePromise : oCachePromise,
+				mCacheQueryOptions : mCacheQueryOptions,
+				oFetchCacheCallToken : oCallToken,
+				mLateQueryOptions : mLateQueryOptions,
+				oModel : {
+					reportError : function () {},
+					oRequestor : {
+						ready : function () {}
+					}
+				}
+			});
+
+		this.mock(oBinding).expects("createAndSetCache").never();
+		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache").never();
+		this.mock(oBinding.oModel.oRequestor).expects("ready").never();
+		this.mock(oBinding.oModel).expects("reportError").never();
+		this.mock(oBinding).expects("fetchResourcePath").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.fetchCache(undefined, undefined, true);
+		}, new Error("Unsupported bKeepQueryOptions while oCachePromise is pending"));
+
+		assert.strictEqual(oBinding.oCache, undefined);
+		assert.strictEqual(oBinding.oCachePromise, oCachePromise);
+		assert.strictEqual(oBinding.mCacheQueryOptions, mCacheQueryOptions);
+		assert.strictEqual(oBinding.oFetchCacheCallToken, oCallToken);
+		assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bHasLateQueryOptions) {
+	var sTitle = "createAndSetCache: absolute, bHasLateQueryOptions = " + bHasLateQueryOptions;
+
+	QUnit.test(sTitle, function (assert) {
+		var mLateQueryOptions = {},
+			oBinding = new ODataBinding({
 				doCreateCache : function () {},
+				mLateQueryOptions : bHasLateQueryOptions ? mLateQueryOptions : undefined,
 				oModel : {
 					mUriParameters : {}
 				},
 				bRelative : false
 			}),
-			oCache = {},
+			oCache = {
+				setLateQueryOptions : function () {}
+			},
 			mMergedQueryOptions = {},
 			mQueryOptions = {};
 
@@ -1426,6 +1557,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("doCreateCache")
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions))
 			.returns(oCache);
+		this.mock(oCache).expects("setLateQueryOptions").exactly(bHasLateQueryOptions ? 1 : 0)
+			.withExactArgs(sinon.match.same(mLateQueryOptions));
 
 		assert.strictEqual(
 			// code under test
@@ -1436,24 +1569,31 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mCacheQueryOptions, mMergedQueryOptions);
 		assert.strictEqual(oBinding.oCache, oCache);
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSharedRequest) {
 	[false, true].forEach(function (bV4Context) {
 		[false, true].forEach(function (bHasCaches) {
+			[false, true].forEach(function (bHasLateQueryOptions) {
 			var sTitle = "createAndSetCache: relative, create, V4Context=" + bV4Context
-					+ ", shared=" + bSharedRequest + ", hasCaches=" + bHasCaches;
+					+ ", shared=" + bSharedRequest + ", hasCaches=" + bHasCaches
+					+ ", hasLateQueryOptions = " + bHasLateQueryOptions;
 
 	QUnit.test(sTitle, function (assert) {
-		var oBinding = new ODataBinding({
+		var mLateQueryOptions = {},
+			oBinding = new ODataBinding({
 				doCreateCache : function () {},
+				mLateQueryOptions : bHasLateQueryOptions ? mLateQueryOptions : undefined,
 				oModel : {
 					mUriParameters : {}
 				},
 				sPath : "relative",
 				bRelative : true
 			}),
-			oCache = {},
+			oCache = {
+				setLateQueryOptions : function () {}
+			},
 			oContext = {
 				getPath : function () {}
 			},
@@ -1483,6 +1623,8 @@ sap.ui.define([
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions),
 				sinon.match.same(oContext), "deep/resource/path")
 			.returns(oCache);
+		this.mock(oCache).expects("setLateQueryOptions").exactly(bHasLateQueryOptions ? 1 : 0)
+			.withExactArgs(sinon.match.same(mLateQueryOptions));
 
 		assert.strictEqual(
 			// code under test
@@ -1505,6 +1647,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.$generation, bV4Context ? iGeneration : 0);
 	});
 
+			});
 		});
 	});
 });
@@ -2016,7 +2159,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkSuspended: resumed", function (assert) {
+	QUnit.test("checkSuspended: resumed", function () {
 		var oBinding = new ODataBinding(),
 			oRootBinding = new ODataBinding();
 
@@ -2028,7 +2171,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkSuspended: unresolved", function (assert) {
+	QUnit.test("checkSuspended: unresolved", function () {
 		var oBinding = new ODataBinding();
 
 		this.mock(oBinding).expects("getRootBinding").returns(undefined);
@@ -2083,7 +2226,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("checkBindingParameters, $$aggregation", function (assert) {
+	QUnit.test("checkBindingParameters, $$aggregation", function () {
 		// code under test
 		new ODataBinding().checkBindingParameters({$$aggregation : []}, ["$$aggregation"]);
 	});
@@ -2292,7 +2435,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("removeCachesAndMessages: w/o mCacheByResourcePath", function (assert) {
+	QUnit.test("removeCachesAndMessages: w/o mCacheByResourcePath", function () {
 		var oBinding = new ODataBinding({
 				oCache : {removeMessages : function () {}}
 			});
@@ -2548,7 +2691,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doDeregisterChangeListener", function (assert) {
+	QUnit.test("doDeregisterChangeListener", function () {
 		var oBinding = new ODataBinding(),
 			oCache = {
 				deregisterChange : function () {}

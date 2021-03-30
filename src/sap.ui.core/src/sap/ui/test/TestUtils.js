@@ -468,7 +468,8 @@ sap.ui.define([
 			 * @param {string} [sContentId] The content ID
 			 */
 			function getResponseFromFixture(oRequest, sContentId) {
-				var oMatch = getMatchingResponse(oRequest.method, oRequest.url),
+				var iAlternative,
+					oMatch = getMatchingResponse(oRequest.method, oRequest.url),
 					oResponse,
 					aResponses = oMatch && oMatch.responses;
 
@@ -483,6 +484,9 @@ sap.ui.define([
 					if (typeof oResponse.buildResponse === "function") {
 						oResponse = merge({}, oResponse);
 						oResponse.buildResponse(oMatch.match, oResponse);
+					}
+					if (oMatch.responses.length > 1) {
+						iAlternative = oMatch.responses.indexOf(oResponse);
 					}
 				} else {
 					switch (oRequest.method) {
@@ -507,7 +511,10 @@ sap.ui.define([
 					}
 				}
 				if (oResponse) {
-					Log.info(oRequest.method + " " + oRequest.url,
+					Log.info(oRequest.method + " " + oRequest.url
+						+ (iAlternative !== undefined
+							? ", alternative (ifMatch) #" + iAlternative
+							: ""),
 						// Note: JSON.stringify(oRequest.requestHeaders) outputs too much for now
 						'{"If-Match":' + JSON.stringify(oRequest.requestHeaders["If-Match"]) + '}',
 						"sap.ui.test.TestUtils");

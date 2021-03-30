@@ -505,7 +505,7 @@ sap.ui.define([
 			this.sResumeChangeReason = ChangeReason.Refresh;
 			return SyncPromise.resolve();
 		}
-		this.fetchCache(this.oContext);
+		this.fetchCache(this.oContext, false, /*bKeepQueryOptions*/true);
 		return bCheckUpdate
 			? this.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId)
 			: SyncPromise.resolve();
