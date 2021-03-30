@@ -347,9 +347,10 @@ sap.ui.define([
 	AnchorBar.prototype._requestScrollToSection = function (sRequestedSectionId) {
 
 		var oRequestedSection = sap.ui.getCore().byId(sRequestedSectionId),
-			oRequestedSectionParent = oRequestedSection.getParent();
+			oRequestedSectionParent = oRequestedSection.getParent(),
+			oObjectPage = this.getParent();
 
-		if (this.getParent() instanceof library.ObjectPageLayout) {
+		if (oObjectPage instanceof library.ObjectPageLayout) {
 
 			// determine the next section that will appear selected in the anchorBar after the scroll
 			var sNextSelectedSection = sRequestedSectionId;
@@ -360,9 +361,12 @@ sap.ui.define([
 				sNextSelectedSection = oRequestedSectionParent.getId();
 			}
 			// we set *direct* scrolling by which we instruct the page to *skip* processing of intermediate sections (sections between current and requested)
-			this.getParent().setDirectScrollingToSection(sNextSelectedSection);
-			// finally request the page to scroll to the requested section
-			this.getParent().scrollToSection(oRequestedSection.getId(), null, 0, true);
+			oObjectPage.setDirectScrollingToSection(sNextSelectedSection);
+			// update the association to match the new section
+			oObjectPage.setSelectedSection(sNextSelectedSection);
+
+			// finally request the page to scroll to the requested section base
+			oObjectPage.scrollToSection(oRequestedSection.getId(), null, 0, true /* bIsTabClicked */);
 		}
 
 		if (oRequestedSection instanceof library.ObjectPageSubSection &&
