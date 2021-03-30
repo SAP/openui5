@@ -144,7 +144,8 @@ sap.ui.define([
 
 	ObjectPageSection.prototype._updateImportance = function (oCurrentMedia) {
 		var oObjectPage = this._getObjectPageLayout(),
-			sImportanceLevelToHide = this._getImportanceLevelToHide(oCurrentMedia);
+			sImportanceLevelToHide = this._getImportanceLevelToHide(oCurrentMedia),
+			oHeaderDOM = this.bOutput && document.getElementById(this.getId() + "-header");
 
 		this.getSubSections().forEach(function (oSubSection) {
 			oSubSection._applyImportanceRules(sImportanceLevelToHide);
@@ -152,6 +153,8 @@ sap.ui.define([
 
 		this._applyImportanceRules(sImportanceLevelToHide);
 		this._updateShowHideAllButton(false);
+
+		oHeaderDOM && oHeaderDOM.classList.toggle("sapUxAPObjectPageSectionHeaderHidden", !this._isTitleVisible());
 
 		if (oObjectPage && this.getDomRef()) {
 			oObjectPage._requestAdjustLayout();
@@ -199,7 +202,9 @@ sap.ui.define([
 	 * @returns {Boolean}
 	 */
 	ObjectPageSection.prototype._isTitleVisible = function () {
-		return this.getShowTitle() && this._getInternalTitleVisible();
+		return (this.getShowTitle() && this._getInternalTitleVisible())
+		|| this._getShouldDisplayExpandCollapseButton()
+		|| this._getShouldDisplayShowHideAllButton();
 	};
 
 	/**
@@ -267,6 +272,10 @@ sap.ui.define([
 		return this.getSubSections().some(function (oSubSection) {
 			return oSubSection._shouldBeHidden();
 		});
+	};
+
+	ObjectPageSection.prototype._getShouldDisplayExpandCollapseButton = function () {
+		return this._getIsHidden();
 	};
 
 	ObjectPageSection.prototype._showHideContentAllContent = function () {
