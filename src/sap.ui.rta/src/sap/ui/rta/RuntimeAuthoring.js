@@ -912,19 +912,18 @@ function(
 
 	RuntimeAuthoring.prototype._handleDiscard = function() {
 		var sLayer = this.getLayer();
+		var oReloadInfo = {
+			isDraftAvailable: false, // draft was just discarded
+			layer: sLayer
+		};
 		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
-
 		if (!FlexUtils.getUshellContainer()) {
-			var oReloadInfo = {
-				isDraftAvailable: false, // draft was just discarded
-				layer: sLayer
-			};
 			this.getCommandStack().removeAllCommands();
 			return this._triggerHardReload(oReloadInfo);
 		}
 		var bTriggerReload = true;
 		this.getCommandStack().removeAllCommands();
-		var mParsedHash = this._removeVersionParameterForFLP(FlexUtils.getParsedURLHash(), bTriggerReload);
+		var mParsedHash = this._removeVersionParameterForFLP(oReloadInfo, FlexUtils.getParsedURLHash(), bTriggerReload);
 		this._triggerCrossAppNavigation(mParsedHash);
 		return this.stop(true, true);
 	};
@@ -1447,7 +1446,7 @@ function(
 		}
 	};
 
-	RuntimeAuthoring.prototype._removeVersionParameterForFLP = function(mParsedHash, bTriggerReload) {
+	RuntimeAuthoring.prototype._removeVersionParameterForFLP = function(oReloadInfo, mParsedHash, bTriggerReload) {
 		var sLayer = this.getLayer();
 		if (sLayer === Layer.USER) {
 			return mParsedHash;
@@ -1456,7 +1455,9 @@ function(
 		var sVersionParameter = FlexUtils.getParameter(flexLibrary.Versions.UrlParameter);
 		if (sVersionParameter) {
 			delete mParsedHash.params[flexLibrary.Versions.UrlParameter];
-		} else if (this._isDraftAvailable() || bTriggerReload /* for discard of dirty changes */) {
+		} else if ((this._isDraftAvailable() || bTriggerReload /* for discarding of dirty changes */)
+			&& !oReloadInfo.hasHigherLayerChanges) {
+			// reloading this way only works when we dont have to remove max-layer parameter, see _removeMaxLayerParameterForFLP
 			FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
 		}
 		return mParsedHash;
@@ -1491,7 +1492,7 @@ function(
 		}
 
 		mParsedHash = this._removeMaxLayerParameterForFLP(oReloadInfo, mParsedHash);
-		mParsedHash = this._removeVersionParameterForFLP(mParsedHash);
+		mParsedHash = this._removeVersionParameterForFLP(oReloadInfo, mParsedHash, false);
 		this._triggerCrossAppNavigation(mParsedHash);
 
 		// In FLP scenario we need to remove all parameters and also trigger an hard reload on reset

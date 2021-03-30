@@ -455,8 +455,29 @@ sap.ui.define([
 
 		QUnit.test("when no draft was present and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			var fnTriggerRealodStub = sandbox.stub();
-			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealodStub);
+			var fnTriggerRealoadStub = sandbox.stub();
+			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealoadStub);
+			var oReloadInfo = {
+				reloadMethod: this.oRta._RELOAD.VIA_HASH,
+				hasHigherLayerChanges: false
+			};
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);
+			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+
+			return this.oRta.stop().then(function() {
+				assert.equal(this.fnHandleParametersOnExitStub.callCount,
+					1,
+					"then handleParametersOnExit was called");
+				assert.equal(fnTriggerRealoadStub.callCount,
+					1, "then crossAppNavigation was triggered without changing the url");
+			}.bind(this));
+		});
+
+		QUnit.test("when no draft was present and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+			var fnTriggerRealoadStub = sandbox.stub();
+			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealoadStub);
 			var oReloadInfo = {
 				reloadMethod: this.oRta._RELOAD.VIA_HASH,
 				hasHigherLayerChanges: true
@@ -469,8 +490,8 @@ sap.ui.define([
 				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					1,
 					"then handleParametersOnExit was called");
-				assert.equal(fnTriggerRealodStub.callCount,
-					1, "then crossAppNavigation was triggered without changing the url");
+				assert.equal(fnTriggerRealoadStub.callCount,
+					0, "then reloadCurrentApp was not triggered because the max layer parameter gets removed");
 			}.bind(this));
 		});
 
