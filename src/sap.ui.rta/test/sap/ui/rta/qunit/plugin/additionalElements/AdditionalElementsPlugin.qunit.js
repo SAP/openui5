@@ -1789,7 +1789,8 @@ sap.ui.define([
 
 		QUnit.test("when the service is up to date and addViaDelegate action is available and extensibility is enabled in the system", function (assert) {
 			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
-			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves();
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
+			sandbox.stub(FieldExtensibility, "getExtensionData").resolves({foo: "bar"});
 
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
@@ -1850,6 +1851,7 @@ sap.ui.define([
 			var done = assert.async();
 
 			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			sandbox.stub(FieldExtensibility, "getExtensionData").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 
 			sandbox.stub(FieldExtensibility, "onTriggerCreateExtensionData").callsFake(function (oExtensionData) {
@@ -1858,7 +1860,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			return createOverlayWithAggregationActions.call(this, {
+			createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
 						changeType: "addFields"
@@ -1885,6 +1887,7 @@ sap.ui.define([
 			var done = assert.async();
 
 			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			sandbox.stub(FieldExtensibility, "getExtensionData").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 			var showAvailableElementsSpy = sandbox.spy(this.oPlugin, "showAvailableElements");
 
@@ -1895,7 +1898,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			return createOverlayWithAggregationActions.call(this, {
+			createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
 						changeType: "addFields"

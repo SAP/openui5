@@ -363,10 +363,22 @@ sap.ui.define([
 					]
 				}
 			},
+			"write/api/AppVariantWriteAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/AppVariantWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
+				}
+			},
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
+				}
+			},
+			"write/api/ContextSharingAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/ContextSharingAPI"]
 				}
 			},
 			"write/api/ControlPersonalizationWriteAPI": {
@@ -375,22 +387,10 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
-			"write/api/PersistenceWriteAPI": {
+			"write/api/ExtensionPointRegistryAPI": {
 				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
-				}
-			},
-			"write/api/AppVariantWriteAPI": {
-				group: "Write API",
-				coverage: {
-					only: ["sap/ui/fl/write/api/AppVariantWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
-				}
-			},
-			"write/api/SmartBusinessWriteAPI": {
-				group: "Write API",
-				coverage: {
-					only: ["sap/ui/fl/write/api/SmartBusinessWriteAPI"]
+					only: ["sap/ui/fl/write/api/ExtensionPointRegistryAPI"]
 				}
 			},
 			"write/api/FeaturesAPI": {
@@ -399,10 +399,16 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/FeaturesAPI"]
 				}
 			},
-			"write/api/VersionsAPI": {
+			"write/api/FieldExtensibility": {
 				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/VersionsAPI"]
+					only: ["sap/ui/fl/write/api/FieldExtensibility"]
+				}
+			},
+			"write/api/PersistenceWriteAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
 				}
 			},
 			"write/api/ReloadInfoAPI": {
@@ -411,10 +417,10 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/ReloadInfoAPI"]
 				}
 			},
-			"write/api/UI2PersonalizationWriteAPI": {
+			"write/api/SmartBusinessWriteAPI": {
 				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/UI2PersonalizationWriteAPI"]
+					only: ["sap/ui/fl/write/api/SmartBusinessWriteAPI"]
 				}
 			},
 			"write/api/SmartVariantManagementWriteAPI": {
@@ -423,16 +429,16 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/SmartVariantManagementWriteAPI"]
 				}
 			},
-			"write/api/ExtensionPointRegistryAPI": {
+			"write/api/UI2PersonalizationWriteAPI": {
 				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/ExtensionPointRegistryAPI"]
+					only: ["sap/ui/fl/write/api/UI2PersonalizationWriteAPI"]
 				}
 			},
-			"write/api/ContextSharingAPI": {
+			"write/api/VersionsAPI": {
 				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/ContextSharingAPI"]
+					only: ["sap/ui/fl/write/api/VersionsAPI"]
 				}
 			},
 			"write/_internal/Storage": {

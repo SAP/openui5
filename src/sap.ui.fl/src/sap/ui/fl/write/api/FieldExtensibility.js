@@ -37,6 +37,16 @@ sap.ui.define([
 	}
 
 	/**
+	 * This function will be called as soon as a control was selected via the UI.
+	 * Until this function is called again the control does not change and information can be cached.
+	 *
+	 * @param {sap.ui.base.ManagedObject} oControl - Control instance that was selected
+	 */
+	FieldExtensibility.onControlSelected = function(oControl) {
+		return callFunctionInImplementation("onControlSelected", oControl);
+	};
+
+	/**
 	 * Checks if extensibility is enabled for the current app.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oControl - Control to get the component from
@@ -62,7 +72,7 @@ sap.ui.define([
 	 * @param {string} sServiceUrl - Service URL
 	 */
 	FieldExtensibility.setServiceValid = function(sServiceUrl) {
-		callFunctionInImplementation("setServiceValid", sServiceUrl);
+		return callFunctionInImplementation("setServiceValid", sServiceUrl);
 	};
 
 	/**
@@ -92,7 +102,7 @@ sap.ui.define([
 	 * @param {object} oExtensibilityInfo - Information about the extension data. Should be the return value of <code>FieldExtensibility.getExtensionData</code>
 	 */
 	FieldExtensibility.onTriggerCreateExtensionData = function(oExtensibilityInfo) {
-		callFunctionInImplementation("onTriggerCreateExtensionData", oExtensibilityInfo);
+		return callFunctionInImplementation("onTriggerCreateExtensionData", oExtensibilityInfo);
 	};
 
 	return FieldExtensibility;
