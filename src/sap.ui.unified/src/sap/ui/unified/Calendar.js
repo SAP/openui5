@@ -1803,9 +1803,9 @@ sap.ui.define([
 	 * @param {boolean} bSkipFocus if set no focus is set to the date
 	 * @param {boolean} bInLastMont if more than one month is used, date is rendered in last month
 	 * @param {boolean} bNoEvent if set, no startDateChange event is fired
-	 * @param {boolean} bArrowNavigation if true is passed, the rendering is triggered because of arrow navigation
+	 * @param {boolean} bNavigation if true is passed, the rendering is triggered because of navigation
 	 */
-	Calendar.prototype._renderMonth = function (bSkipFocus, bInLastMonth, bNoEvent, bArrowNavigation){
+	Calendar.prototype._renderMonth = function (bSkipFocus, bInLastMonth, bNoEvent, bNavigation){
 
 		var oDate = this._getFocusedDate(),
 			aMonths = this.getAggregation("month"),
@@ -1817,7 +1817,7 @@ sap.ui.define([
 			iI;
 
 		for (i = 0; i < aMonths.length; i++) {
-			iI = bArrowNavigation ? 0 : i;
+			iI = bNavigation ? 0 : i;
 			oMonth = aMonths[i];
 			if (oMonth.checkDateFocusable(oDate.toLocalJSDate()) && aMonths[iI].getDate() && oDate.getMonth() === aMonths[iI].getDate().getMonth()) {
 				bIsDateInFirstMonth = true;
@@ -2745,7 +2745,7 @@ sap.ui.define([
 		this._setFocusedDate(oCalDate);
 
 		if (this.getDomRef() && this._iMode == 0) {
-			this._renderMonth(bSkipFocus, false, true); // fire no startDateChange event on programmatical change
+			this._renderMonth(bSkipFocus, false, true, true); // fire no startDateChange event on programmatical change
 		}
 
 	}

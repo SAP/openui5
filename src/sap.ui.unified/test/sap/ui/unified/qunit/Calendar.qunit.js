@@ -2534,6 +2534,27 @@ sap.ui.define([
 		oShowMonthPickerSpy.restore();
 	});
 
+	QUnit.test("displayDate shows the given date always in the first rendered month", function(assert) {
+		// prepare
+		var oCalendar = new Calendar("cal", {months: 2}).placeAt("content"),
+			aMonths, aDays;
+
+		oCalendar.displayDate(new Date(2021, 4, 1));
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oCalendar.displayDate(new Date(2021, 5, 30));
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		aMonths = jQuery("#cal-content").children(".sapUiCalMonthView");
+		aDays = jQuery(aMonths[0]).find(".sapUiCalItem");
+		assert.strictEqual(jQuery(aDays[0]).attr("data-sap-day"), "20210530", "The first rendered date is correct");
+
+		// clean
+		oCalendar.destroy();
+	});
+
 	//================================================================================
 	// Month Button Label
 	//================================================================================
