@@ -197,17 +197,22 @@ sap.ui.define([
 	// ------ >
 
 	FieldValueHelpMdcTableWrapper.prototype._handleTableChanged = function (sMutation, oTable) {
+		var oInnerTable;
 		if (sMutation === "insert") {
 			this._updateInnerWrapperClass();
 			_handleOuterDelegate.call(this, oTable, true);
 
-			var oInnerTable = this._getWrappedTable();
+			oInnerTable = this._getWrappedTable();
 			if (oInnerTable) {
 				this._handleInnerTableChanged("insert", oInnerTable);
 			}
 			this._oObserver.observe(oTable, {aggregations: ["_content"]});
 		} else {
 			_handleOuterDelegate.call(this, oTable);
+			oInnerTable = oTable._oTable; // as _getWrappedTable will not return a table right now
+			if (oInnerTable) {
+				this._handleInnerTableChanged(sMutation, oInnerTable);
+			}
 			this._oObserver.unobserve(oTable);
 		}
 	};
