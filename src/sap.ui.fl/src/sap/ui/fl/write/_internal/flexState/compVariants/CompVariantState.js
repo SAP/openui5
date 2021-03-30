@@ -440,11 +440,14 @@ sap.ui.define([
 				}
 			});
 
-			["favorite", "executeOnSelection", "contexts", "content"].forEach(function (sPropertyName) {
+			["favorite", "executeOnSelection", "contexts"].forEach(function (sPropertyName) {
 				if (mPropertyBag[sPropertyName] !== undefined) {
 					oChangeDefinition.content[sPropertyName] = mPropertyBag[sPropertyName];
 				}
 			});
+			if (mPropertyBag.content !== undefined) {
+				oChangeDefinition.content.variantContent = mPropertyBag.content;
+			}
 			if (mPropertyBag.name) {
 				oChangeDefinition.texts.variantName = {
 					value: mPropertyBag.name,
