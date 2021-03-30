@@ -215,10 +215,7 @@ sap.ui.define([
 		if (this._isInIframe) {
 			var frameWindow = this._iframe && this._iframe.contentWindow;
 			if (frameWindow) {
-				// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
-				frameWindow.onerror = jQuery.noop;
 				this._iframe.src = "about:blank";
-				frameWindow.document.write('');
 				frameWindow.close();
 				/*global CollectGarbage */
 				if (typeof CollectGarbage == "function") {
