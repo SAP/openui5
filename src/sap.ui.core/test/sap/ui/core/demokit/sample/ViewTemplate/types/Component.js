@@ -11,14 +11,15 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/mvc/View", // sap.ui.view()
+	"sap/ui/core/mvc/XMLView", // type : ViewType.XML
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (FlexItemData, MessageBox, library, LocaleData, View, BaseComponent, BindingMode,
-		JSONModel, ODataModelV2, ODataModelV4, TestUtils) {
+], function (FlexItemData, MessageBox, library, LocaleData, View, _XMLView, BaseComponent,
+		BindingMode, JSONModel, ODataModelV2, ODataModelV4, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
