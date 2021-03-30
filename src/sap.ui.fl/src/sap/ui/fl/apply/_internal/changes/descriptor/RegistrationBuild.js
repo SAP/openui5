@@ -4,25 +4,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/changes/descriptor/Registration",
-	"sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource",
-	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith",
-	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetMinUI5Version",
-	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages",
-	"sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetRegistrationIds",
-	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled",
-	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel",
-	"sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData"
+	"sap/ui/fl/requireAsync",
+	"sap/ui/fl/apply/_internal/changes/descriptor/Registration"
 ], function(
-	Registration,
-	ChangeDataSource,
-	AddNewModelEnhanceWith,
-	SetMinUI5Version,
-	AddComponentUsages,
-	SetRegistrationIds,
-	SetFlexExtensionPointEnabled,
-	AddNewModel,
-	AddAnnotationsToOData
+	requireAsync,
+	Registration
 ) {
 	"use strict";
 
@@ -38,14 +24,14 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.apply._internal
 	 */
 	var RegistrationBuild = {
-		appdescr_app_changeDataSource: ChangeDataSource,
-		appdescr_ui5_addNewModelEnhanceWith: AddNewModelEnhanceWith,
-		appdescr_ui5_addComponentUsages: AddComponentUsages,
-		appdescr_ui5_setMinUI5Version: SetMinUI5Version,
-		appdescr_fiori_setRegistrationIds: SetRegistrationIds,
-		appdescr_ui5_setFlexExtensionPointEnabled: SetFlexExtensionPointEnabled,
-		appdescr_ui5_addNewModel: AddNewModel,
-		appdescr_app_addAnnotationsToOData: AddAnnotationsToOData
+		appdescr_app_changeDataSource: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource"),
+		appdescr_ui5_addNewModelEnhanceWith: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith"),
+		appdescr_ui5_addComponentUsages: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages"),
+		appdescr_ui5_setMinUI5Version: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetMinUI5Version"),
+		appdescr_fiori_setRegistrationIds: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetRegistrationIds"),
+		appdescr_ui5_setFlexExtensionPointEnabled: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled"),
+		appdescr_ui5_addNewModel: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel"),
+		appdescr_app_addAnnotationsToOData: requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData")
 	};
 
 	var RegistrationCopy = Object.assign({}, Registration);
