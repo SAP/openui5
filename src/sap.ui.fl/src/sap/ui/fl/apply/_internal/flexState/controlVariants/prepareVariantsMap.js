@@ -46,8 +46,10 @@ sap.ui.define([
 	function addVariantDependentControlChanges(oVariantsMap, aVariantDependentChanges) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
 		aVariantDependentChanges.forEach(function(oChange) {
+			var oChangeInstance = new Change(oChange);
+			oChangeInstance.setState(Change.states.PERSISTED);
 			oVariantsMapClone[oChange.variantReference] = oVariantsMapClone[oChange.variantReference] || createStandardVariant(oChange.variantReference);
-			oVariantsMapClone[oChange.variantReference].controlChanges.push(oChange);
+			oVariantsMapClone[oChange.variantReference].controlChanges.push(oChangeInstance);
 		});
 		return oVariantsMapClone;
 	}
@@ -98,7 +100,7 @@ sap.ui.define([
 			return [];
 		}
 		return values(merge({}, oReferencedVariant.controlChanges)).filter(function(oReferencedChange) {
-			return LayerUtils.compareAgainstCurrentLayer(oReferencedChange.layer, sVariantLayer) === -1;
+			return LayerUtils.compareAgainstCurrentLayer(oReferencedChange.getLayer(), sVariantLayer) === -1;
 		});
 	}
 

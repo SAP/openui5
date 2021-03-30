@@ -192,16 +192,9 @@ sap.ui.define([
 		var oVariant = VariantManagementState.getVariant(mPropertyBag);
 		if (oVariant) {
 			aResult = oVariant.controlChanges;
-			if (mPropertyBag.changeInstance) {
-				aResult = aResult.map(function(oChange, index) {
-					var oChangeInstance;
-					if (!oChange.getDefinition) {
-						oChangeInstance = new Change(oChange);
-						oVariant.controlChanges.splice(index, 1, oChangeInstance);
-					} else {
-						oChangeInstance = oChange;
-					}
-					return oChangeInstance;
+			if (!mPropertyBag.changeInstance) {
+				aResult = aResult.map(function(oChange) {
+					return oChange.getDefinition();
 				});
 			}
 		}
