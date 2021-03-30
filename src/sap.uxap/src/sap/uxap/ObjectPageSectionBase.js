@@ -411,6 +411,16 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Determines if the <code>ObjectPageSection</code> content is visible.
+	 *
+	 * The content is not visible if the <code>ObjectPageSection</code> is
+	 * given a lower <code>importance</code> than allowed to be rendered
+	 * for the current screen size.
+	 *
+	 * @private
+	 * @returns {Boolean}
+	 */
 	ObjectPageSectionBase.prototype._getIsHidden = function () {
 		return this._isHidden;
 	};
