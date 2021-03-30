@@ -139,6 +139,7 @@ sap.ui.define([
 
 			// the standard must always be visible
 			oStandardVariant.setFavorite(true);
+			oStandardVariant.setStandardVariant(true);
 			if (mCompData.standardVariant) {
 				var bExecuteOnSelection = mCompData.standardVariant.getContent().executeOnSelect;
 				oStandardVariant.setExecuteOnSelection(bExecuteOnSelection);

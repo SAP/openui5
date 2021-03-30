@@ -33,7 +33,10 @@ sap.ui.define([
 		settings: {
 			isPublicLayerAvailable: true
 		},
-		expectedReadOnly: false
+		expectedReadOnly: false,
+		expectedEditEnabled: true,
+		expectedDeleteEnabled: true,
+		expectedRenameEnabled: true
 	}, {
 		testName: ", a variant in the PUBLIC layer and the user is its author",
 		variant: {
@@ -45,7 +48,10 @@ sap.ui.define([
 			isPublicLayerAvailable: true // testing the = false option is not a real case since the variant was written into it
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: false
+		expectedReadOnly: false,
+		expectedEditEnabled: true,
+		expectedDeleteEnabled: true,
+		expectedRenameEnabled: true
 	}, {
 		testName: ", a variant in the PUBLIC layer and the user is NOT its author",
 		variant: {
@@ -57,7 +63,10 @@ sap.ui.define([
 			isPublicLayerAvailable: true // testing the = false option is not a real case since the variant was written into it
 		},
 		currentUser: "PAUL",
-		expectedReadOnly: true
+		expectedReadOnly: true,
+		expectedEditEnabled: false,
+		expectedDeleteEnabled: false,
+		expectedRenameEnabled: false
 	}, {
 		testName: ", a variant in the PUBLIC layer and the current user could not be determined",
 		variant: {
@@ -68,7 +77,10 @@ sap.ui.define([
 		settings: {
 			isPublicLayerAvailable: true // testing the = false option is not a real case since the variant was written into it
 		},
-		expectedReadOnly: false
+		expectedReadOnly: false,
+		expectedEditEnabled: true,
+		expectedDeleteEnabled: true,
+		expectedRenameEnabled: true
 	}, {
 		testName: ", a variant in the PUBLIC layer and the user is NOT its author but a key user",
 		variant: {
@@ -81,7 +93,10 @@ sap.ui.define([
 			isPublicLayerAvailable: true // testing the = false option is not a real case since the variant was written into it
 		},
 		currentUser: "PAUL",
-		expectedReadOnly: false
+		expectedReadOnly: false,
+		expectedEditEnabled: true,
+		expectedDeleteEnabled: true,
+		expectedRenameEnabled: true
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an available PUBLIC layer",
 		variant: {
@@ -96,7 +111,10 @@ sap.ui.define([
 			system: "ABC",
 			client: "123"
 		},
-		expectedReadOnly: true
+		expectedReadOnly: true,
+		expectedEditEnabled: false,
+		expectedDeleteEnabled: false,
+		expectedRenameEnabled: false
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an unavailable PUBLIC layer",
 		variant: {
@@ -113,7 +131,10 @@ sap.ui.define([
 			client: "123"
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: false
+		expectedReadOnly: false,
+		expectedEditEnabled: true,
+		expectedDeleteEnabled: true,
+		expectedRenameEnabled: true
 	}, {
 		testName: "and a variant from another system",
 		variant: {
@@ -130,7 +151,10 @@ sap.ui.define([
 			client: "123"
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: true
+		expectedReadOnly: true,
+		expectedEditEnabled: false,
+		expectedDeleteEnabled: false,
+		expectedRenameEnabled: false
 	}, {
 		testName: "and a variant from another client",
 		variant: {
@@ -147,7 +171,10 @@ sap.ui.define([
 			client: "123"
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: true
+		expectedReadOnly: true,
+		expectedEditEnabled: false,
+		expectedDeleteEnabled: false,
+		expectedRenameEnabled: false
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an unavailable PUBLIC layer where the user is the author",
 		variant: {
@@ -159,7 +186,10 @@ sap.ui.define([
 			isPublicLayerAvailable: false
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: false
+		expectedReadOnly: false,
+		expectedEditEnabled: true,
+		expectedDeleteEnabled: true,
+		expectedRenameEnabled: true
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an unavailable PUBLIC layer where the user is NOT the author",
 		variant: {
@@ -171,7 +201,10 @@ sap.ui.define([
 			isPublicLayerAvailable: false
 		},
 		currentUser: "PAUL",
-		expectedReadOnly: true
+		expectedReadOnly: true,
+		expectedEditEnabled: false,
+		expectedDeleteEnabled: false,
+		expectedRenameEnabled: false
 	}, {
 		testName: "and a variant in the CUSTOMER layer and an unavailable PUBLIC layer where the user is a key user",
 		variant: {
@@ -184,7 +217,10 @@ sap.ui.define([
 			isPublicLayerAvailable: false
 		},
 		currentUser: "PAUL",
-		expectedReadOnly: false
+		expectedReadOnly: false,
+		expectedEditEnabled: true,
+		expectedDeleteEnabled: true,
+		expectedRenameEnabled: true
 	}, {
 		testName: "Given a VENDOR variant with a set sap-ui-layer=VENDOR parameter when isReadOnly is called",
 		variant: {
@@ -198,20 +234,9 @@ sap.ui.define([
 		},
 		currentUser: "PAUL",
 		expectedReadOnly: false,
-		sapUiLayerUrlParameter: Layer.VENDOR
-	}, {
-		testName: "Given a CUSTOMER variant with a set sap-ui-layer=VENDOR parameter when isReadOnly is called",
-		variant: {
-			layer: Layer.CUSTOMER,
-			user: "FRANK",
-			originalLanguage: "EN"
-		},
-		settings: {
-			isKeyUser: true,
-			isPublicLayerAvailable: false
-		},
-		currentUser: "PAUL",
-		expectedReadOnly: true,
+		expectedEditEnabled: true,
+		expectedDeleteEnabled: true,
+		expectedRenameEnabled: true,
 		sapUiLayerUrlParameter: Layer.VENDOR
 	}];
 
@@ -242,13 +267,41 @@ sap.ui.define([
 		return oVariant;
 	}
 
-	QUnit.module("Given isReadOnly is called", {
+	QUnit.module("Given isReadOnly/isEditEnabled/isRenameEnabled/isDeleteEnabled is called", {
 		beforeEach: function () {
 		},
 		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
+		QUnit.test("Given a standard variant", function(assert) {
+			// mocked settings
+			Settings._instance = new Settings({
+				isPublicLayerAvailable: false
+			});
+
+			var oVariant = createVariant({});
+			oVariant.setStandardVariant(true);
+
+			assert.equal(false, oVariant.isRenameEnabled(), "then the boolean for renameEnabled was determined correct");
+			assert.equal(true, oVariant.isEditEnabled(), "then the boolean for editEnabled was determined correct");
+			assert.equal(false, oVariant.isDeleteEnabled(Layer.CUSTOMER), "then the boolean for deleteEnabled was determined correct");
+		});
+
+		QUnit.test("Given a standard variant and the active layer is CUSTOMER", function(assert) {
+			// mocked settings
+			Settings._instance = new Settings({
+				isPublicLayerAvailable: false
+			});
+
+			var oVariant = createVariant({});
+			oVariant.setStandardVariant(true);
+
+			assert.equal(false, oVariant.isRenameEnabled(Layer.CUSTOMER), "then the boolean for renameEnabled was determined correct");
+			assert.equal(true, oVariant.isEditEnabled(Layer.CUSTOMER), "then the boolean for editEnabled was determined correct");
+			assert.equal(false, oVariant.isDeleteEnabled(Layer.CUSTOMER), "then the boolean for deleteEnabled was determined correct");
+		});
+
 		aScenarios.forEach(function (mTestSetup) {
 			QUnit.test(mTestSetup.testName + " when isReadOnly is called", function(assert) {
 				// mocked settings
@@ -264,7 +317,9 @@ sap.ui.define([
 
 				var oVariant = createVariant(mTestSetup.variant);
 
-				assert.equal(mTestSetup.expectedReadOnly, oVariant.isReadOnly(), "then the boolean was determined correct");
+				assert.equal(mTestSetup.expectedReadOnly, oVariant.isReadOnly(), "then the boolean for ReadOnly was determined correct");
+				assert.equal(mTestSetup.expectedEditEnabled, oVariant.isEditEnabled(), "then the boolean for editEnabled was determined correct");
+				assert.equal(mTestSetup.expectedDeleteEnabled, oVariant.isDeleteEnabled(), "then the boolean for deleteEnabled was determined correct");
 			});
 		});
 	});
@@ -279,12 +334,13 @@ sap.ui.define([
 		aScenarios.forEach(function (mTestSetup) {
 			[{
 				language: "DE",
-				expectedLabelReadOnly: true
+				matchingLanguage: false
 			}, {
 				language: "EN",
-				expectedLabelReadOnly: false
+				matchingLanguage: true
 			}].forEach(function (mLanguageScenario) {
-				QUnit.test(mTestSetup.testName + " when isLabelReadOnly is called", function(assert) {
+				QUnit.test(mTestSetup.testName + " when isLabelReadOnly is called and the languages do "
+						+ (mLanguageScenario.matchingLanguage ? "" : "not ") + "matches", function(assert) {
 					// mocked settings
 					Settings._instance = new Settings(mTestSetup.settings);
 					stubCurrentUser(mTestSetup.currentUser);
@@ -299,7 +355,7 @@ sap.ui.define([
 
 					sandbox.stub(Utils, "getCurrentLanguage").returns(mLanguageScenario.language);
 
-					assert.equal(mLanguageScenario.expectedLabelReadOnly || mTestSetup.expectedReadOnly, oVariant.isLabelReadOnly(), "then the boolean was determined correct");
+					assert.equal(!mLanguageScenario.matchingLanguage || !mTestSetup.expectedRenameEnabled, oVariant.isLabelReadOnly(), "then the boolean was determined correct");
 				});
 			});
 		});
