@@ -1818,12 +1818,21 @@ if ( eventCaptureSupported ) {
 						// SAP MODIFICATION
 						// The event is suppressed only when its target is different than the touchend event's target.
 						// This ensures that only the unnecessary events are suppressed.
-						if ( target === o.target ) {
-							return;
+						if ( target !== o.target ) {
+							e.preventDefault();
+							e.stopPropagation();
 						}
 
-						e.preventDefault();
-						e.stopPropagation();
+						// MODIFIED BY SAP
+						// Clear the block list after processing the click event
+						// When an 'input[type=checkbox]' is placed within a 'label' tag, the browser fires 2 click
+						// events, one on the 'label' element and the other on the 'input' element. The block list
+						// should be cleared after processing the first click event to allow the second click event to
+						// come through.
+						if ( e.type === "click" ) {
+							clickBlockList.length = 0;
+						}
+
 						return;
 					}
 				}
