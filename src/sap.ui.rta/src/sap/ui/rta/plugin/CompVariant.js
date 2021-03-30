@@ -152,7 +152,7 @@
 				createCommandAndFireEvent.call(this, aOverlays[0], "compVariantSaveAs", {
 					newVariantProperties: {
 						"default": oReturn.default,
-						executeOnSelect: oReturn.executeOnSelect,
+						executeOnSelection: oReturn.executeOnSelection,
 						content: oReturn.content,
 						type: oReturn.type,
 						text: oReturn.text,

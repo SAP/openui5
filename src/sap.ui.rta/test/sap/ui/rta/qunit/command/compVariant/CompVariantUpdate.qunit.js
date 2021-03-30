@@ -125,7 +125,7 @@ sap.ui.define([
 					generator: "sap.ui.rta.command",
 					command: "compVariantUpdate",
 					layer: Layer.CUSTOMER,
-					executeOnSelect: true,
+					executeOnSelection: true,
 					name: "newName",
 					oldName: "oldName",
 					favorite: true
@@ -152,14 +152,14 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oControl, "compVariantUpdate", {
 				newVariantProperties: {
 					variant1: {
-						executeOnSelect: false,
+						executeOnSelection: false,
 						deleted: true
 					},
 					variant2: {
 						favorite: false
 					},
 					variant3: {
-						executeOnSelect: true,
+						executeOnSelection: true,
 						name: "newName",
 						oldName: "oldName",
 						favorite: true
