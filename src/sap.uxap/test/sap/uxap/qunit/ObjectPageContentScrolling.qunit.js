@@ -79,6 +79,13 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oSapUiObject.placeAt("qunit-fixture");
 			Core.applyChanges();
 			return oSapUiObject;
+		},
+		getSectionAnchor: function(oSection) {
+			var oObjectPage = oSection.getParent(),
+				aResult = oObjectPage._oABHelper._getAnchorBar().getContent().filter(function(oButton) {
+				return oButton.data("sectionId") === oSection.getId();
+			});
+			return aResult.length && aResult[0];
 		}
 	};
 
@@ -634,6 +641,48 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			assert.ok($Section2TTitle.get(0).offsetTop >= oObjectPage._$opWrapper.scrollTop(), "element is visible");
 			done();
 		});
+
+	});
+
+	QUnit.test("Modify structure during scroll", function (assert) {
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oSection2 = oObjectPage.getSections()[1],
+			oSection3 = oObjectPage.getSections()[2],
+			oScrollToSectionSpy = sinon.spy(oObjectPage, "scrollToSection"),
+			oStub,
+			oSection2Anchor,
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			oSection2Anchor = helpers.getSectionAnchor(oSection2);
+
+			// simulate user press on the anchorBar button
+			oSection2Anchor.fireDefaultAction();
+			// simulate change in structure during scroll
+			oSection3.setVisible(false);
+
+			// ensure we test the scrolling from this point on
+			oScrollToSectionSpy.reset();
+			oStub = sinon.stub(oObjectPage._oScroller._$Container, "is", function(sState) {
+				if (sState === ":animated") {
+					return true;
+				}
+			});
+
+			// subscribe for end of adjustment
+			oObjectPage._requestAdjustLayoutAndUxRules().then(function() {
+				// Check
+				assert.ok(oScrollToSectionSpy.called, "scrolling is adjusted");
+				assert.ok(oScrollToSectionSpy.alwaysCalledWithMatch(oSection2.getId()), "scrolling is adjusted to the correct section");
+
+				oStub.reset();
+				oScrollToSectionSpy.reset();
+				done();
+			});
+		}, this);
 
 	});
 
