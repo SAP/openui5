@@ -640,7 +640,7 @@ sap.ui.define([
 			// check after the component was loaded
 			var fnCheckForModification = function (oComponent) {
 				var oOriginalManifest = oComponent.getManifest();
-				assert.notDeepEqual(oOriginalManifest, this.manifestInCallback.getRawJson(), "the manifest was passed as a copy");
+				assert.deepEqual(oOriginalManifest, this.manifestInCallback.getJson(), "the manifest was passed as a copy");
 				done();
 			};
 
@@ -657,8 +657,11 @@ sap.ui.define([
 				assert.deepEqual(oConfig, oPassedConfig, "the config was passed");
 				assert.notEqual(oConfig, oPassedConfig, "the passed config is a copy");
 				assert.deepEqual(oManifest, oPassedManifest.getRawJson(), "the manifest was passed");
-				oPassedManifest.getRawJson().modification = "someModification";
-				this.manifestInCallback = oPassedManifest;
+				return Promise.resolve().then(function() {
+					oPassedManifest.getJson().modification = "someModification";
+					this.manifestInCallback = oPassedManifest;
+				}.bind(this));
+
 			}.bind(oStorage, oConfig, oLoadedManifest);
 
 			// start test

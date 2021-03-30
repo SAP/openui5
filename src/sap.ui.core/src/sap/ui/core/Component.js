@@ -3020,13 +3020,12 @@ sap.ui.define([
 				fnCallLoadComponentCallback = function(oLoadedManifest) {
 					// if a callback is registered to the component load, call it with the configuration
 					if (typeof Component._fnLoadComponentCallback === "function") {
-						// secure configuration and manifest from manipulation
+						// secure configuration from manipulation, manifest can be adjusted by late changes
 						var oConfigCopy = deepExtend({}, oConfig);
-						var oManifestCopy = merge({}, oLoadedManifest);
 						// trigger the callback with a copy of its required data
 						// do not await any result from the callback nor stop component loading on an occurring error
 						try {
-							Component._fnLoadComponentCallback(oConfigCopy, oManifestCopy);
+							return Component._fnLoadComponentCallback(oConfigCopy, oLoadedManifest);
 						} catch (oError) {
 							Log.error("Callback for loading the component \"" + oLoadedManifest.getComponentName() +
 								"\" run into an error. The callback was skipped and the component loading resumed.",
@@ -3060,7 +3059,9 @@ sap.ui.define([
 				// after all promises including the loading of dependent libs have been resolved
 				// pass the manifest to the callback function in case the manifest is present and a callback was set
 				if (oManifest && fnCallLoadComponentCallback) {
-					oManifest.then(fnCallLoadComponentCallback);
+					return oManifest.then(fnCallLoadComponentCallback).then(function() {
+						return v;
+					});
 				}
 				return v;
 			}).then(function(v) {
