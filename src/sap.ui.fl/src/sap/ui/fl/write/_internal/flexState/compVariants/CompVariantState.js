@@ -245,7 +245,7 @@ sap.ui.define([
 		if (mPropertyBag.name) {
 			oVariant.setText("variantName", mPropertyBag.name);
 		}
-		oVariant.setContent(mPropertyBag.content || oVariant.getContent());
+		oVariant.storeContent(mPropertyBag.content || oVariant.getContent());
 		return oVariant;
 	}
 
@@ -428,10 +428,6 @@ sap.ui.define([
 		var sLayer = determineLayer(mPropertyBag);
 
 		if (!oVariant.getPersisted() || oVariant.getLayer() !== sLayer) {
-			if (mPropertyBag.content) {
-				throw new Error("'content' updating of variants via changes is not yet enabled");
-			}
-
 			var oChangeDefinition = Change.createInitialFileContent({
 				changeType: "updateVariant",
 				layer: sLayer,
@@ -444,7 +440,7 @@ sap.ui.define([
 				}
 			});
 
-			["favorite", "executeOnSelection", "contexts"].forEach(function (sPropertyName) {
+			["favorite", "executeOnSelection", "contexts", "content"].forEach(function (sPropertyName) {
 				if (mPropertyBag[sPropertyName] !== undefined) {
 					oChangeDefinition.content[sPropertyName] = mPropertyBag[sPropertyName];
 				}
@@ -475,7 +471,7 @@ sap.ui.define([
 			if (mPropertyBag.name) {
 				oVariant.storeName(mPropertyBag.name);
 			}
-			oVariant.setContent(mPropertyBag.content || oVariant.getContent());
+			oVariant.storeContent(mPropertyBag.content || oVariant.getContent());
 		}
 		return oVariant;
 	};

@@ -121,7 +121,11 @@ sap.ui.define([
 				assert.equal(aVariants[5].getName(), "a new name", "and the variant has the correct title");
 				assert.deepEqual(aVariants[5].getContexts(), {
 					ROLE: ["SOME_ROLE"]
-				}, "and the variant has roles because of the update");
+				}, "the variant has roles because of the update");
+				assert.deepEqual(aVariants[5].getContent(), {
+					some: "property",
+					another: "value"
+				}, "and the variants content was updated");
 			});
 		});
 

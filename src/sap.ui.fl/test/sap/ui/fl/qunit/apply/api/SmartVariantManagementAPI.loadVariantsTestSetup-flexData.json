@@ -61,7 +61,7 @@
       "favorite": true,
       "texts": {
         "variantName": {
-          "value": "B Variant6"
+          "value": "B Variant"
         }
       }
     }],
@@ -164,22 +164,49 @@
       "jsOnly": false,
       "variantReference": "",
       "appDescriptorChange": false
-    }, {
-      "fileName": "id_1606828544793_205_updateVariant",
+    },
+      {
+        "fileName": "id_1606828544793_205_updateVariant",
+        "fileType": "change",
+        "changeType": "updateVariant",
+        "moduleName": "",
+        "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+        "packageName": "",
+        "content": {
+          "key": "variant_6",
+          "favorite": false,
+          "executeOnSelection": false,
+          "contexts": {
+            "ROLE": [
+              "SOME_ROLE"
+            ]
+          }
+        },
+        "selector": {
+          "persistencyKey": "variantManagement1"
+        },
+        "layer": "USER",
+        "texts": {
+          "variantName": {
+            "value": "a new name",
+            "type": "XFLD"
+          }
+        }
+      }, {
+      "fileName": "id_1606828544794_205_updateVariant",
       "fileType": "change",
       "changeType": "updateVariant",
       "moduleName": "",
       "reference": "sap.ui.demoapps.rta.fiorielements.Component",
       "packageName": "",
       "content": {
-        "key": "variant_6",
-        "favorite": false,
-        "executeOnSelection": false,
-        "contexts": {
-          "ROLE": ["SOME_ROLE"]
+        "content": {
+          "some": "property",
+          "another": "value"
         }
       },
       "selector": {
+        "variantId": "variant_6",
         "persistencyKey": "variantManagement1"
       },
       "layer": "USER",
