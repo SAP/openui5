@@ -16,8 +16,8 @@ sap.ui.define([
     "sap/base/Log",
     'sap/ui/mdc/util/FilterUtil',
     'sap/ui/mdc/odata/v4/util/DelegateUtil',
-    "sap/ui/mdc/ChartNew/ChartTypeButtonNew",
-    "sap/ui/mdc/ChartNew/ItemNew",
+    "sap/ui/mdc/chartNew/ChartTypeButtonNew",
+    "sap/ui/mdc/chartNew/ItemNew",
     "sap/ui/model/Sorter",
     "sap/m/VBox"
 ], function (
