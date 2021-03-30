@@ -2030,6 +2030,35 @@ sap.ui.define([
 								key: 'i18n.properties'
 							}
 						]
+					},
+					{
+						key: 'designtimeFormatter',
+						target: 'exploreSamples',
+						title: 'Formatters',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/designtimeFormatter/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/designtimeFormatter/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/designtimeFormatter/manifest.json',
+								name: 'manifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/designtimeFormatter/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n.properties'
+							}
+						]
 					}
 				]
 			}
