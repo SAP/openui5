@@ -711,6 +711,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/editor/CardEditorWithDesigntimeValidation": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/editor/multiLanguagesOfValue/InitialWithNoChange": {
 				group: "Runtime Card Editor",
 				coverage: {
@@ -792,7 +801,61 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/CardEditorWithDesigntimeValidation": {
+			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminForAdminAndContentModes": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminForTranslationAndAllModes": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/BCChangeByContent": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminAndContent": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslation": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminAndTranslation": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/BCChangeByContentAndTranslation": {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
