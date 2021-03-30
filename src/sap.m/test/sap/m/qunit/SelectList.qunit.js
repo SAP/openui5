@@ -40,6 +40,18 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 
+	var fnTestControlHiddenProperty = function(mOptions) {
+		var sProperty = mOptions.property,
+			oControl = mOptions.control,
+			vValue = mOptions.value;
+
+		QUnit.test("getProperty(" + sProperty + ")", function(assert) {
+			oControl.setProperty(sProperty, vValue);
+			vValue = oControl.getProperty(sProperty);
+
+			assert.strictEqual(vValue, mOptions.output, mOptions.description);
+		});
+	};
 
 	var fnTestControlProperty = function(mOptions) {
 		var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
@@ -85,6 +97,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
+		assert.strictEqual(oSelectList.getProperty("_tabIndex"), "", "By default the Select tabindex property is empty string");
 		assert.strictEqual(oSelectList.getVisible(), true, "By default the Select control is visible");
 		assert.strictEqual(oSelectList.getEnabled(), true, "By default the SelectList control is enabled");
 		assert.strictEqual(oSelectList.getWidth(), "auto", 'By default the "width" of the SelectList control is "auto"');
@@ -169,6 +182,24 @@ sap.ui.define([
 
 		// cleanup
 		oSelectList.destroy();
+	});
+
+	QUnit.module("_tabIndex");
+
+	fnTestControlHiddenProperty({
+		control: new SelectList(),
+		property: "_tabIndex",
+		value: "0",
+		output: "0",
+		description: "The control has tabindex='0'"
+	});
+
+	fnTestControlHiddenProperty({
+		control: new SelectList(),
+		property: "_tabIndex",
+		value: "-1",
+		output: "-1",
+		description: "The control has tabindex='-1'"
 	});
 
 	QUnit.module("getVisible");

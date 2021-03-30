@@ -2140,6 +2140,7 @@ function(
 			}, this)
 			.attachSelectionChange(this.onSelectionChange, this);
 
+			 this._oList.setProperty("_tabIndex", "-1");
 			 this._oList.toggleStyleClass("sapMSelectListWrappedItems", this.getWrapItemsText());
 
 			return this._oList;

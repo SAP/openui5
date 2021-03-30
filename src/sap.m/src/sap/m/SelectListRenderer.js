@@ -38,7 +38,8 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 		};
 
 		SelectListRenderer.writeOpenListTag = function(oRm, oList, mStates) {
-			var CSS_CLASS = SelectListRenderer.CSS_CLASS;
+			var CSS_CLASS = SelectListRenderer.CSS_CLASS,
+				tabIndex = oList.getProperty("_tabIndex");
 
 			if (mStates.elementData) {
 				oRm.openStart("ul", oList);
@@ -54,6 +55,10 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 
 			if (!oList.getEnabled()) {
 				oRm.class(CSS_CLASS + "Disabled");
+			}
+
+			if (tabIndex) {
+				oRm.attr("tabindex", tabIndex);
 			}
 
 			oRm.style("width", oList.getWidth());
