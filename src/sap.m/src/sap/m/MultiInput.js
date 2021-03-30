@@ -391,6 +391,9 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._tokenDelete = function (oEvent) {
+		if (!this.getEditable() || !this.getEnabled()) {
+			return;
+		}
 		this._deleteTokens(oEvent.getParameter("tokens"), oEvent.getParameters());
 	};
 
