@@ -1359,7 +1359,7 @@ function(
 							}
 
 							// If the view is owned by an async-component we can propagate the asynchronous creation behavior to the nested views
-							if (bIsAsyncComponent) {
+							if (bIsAsyncComponent && bAsync) {
 								// legacy check: async=false is not supported with an async-component
 								if (mSettings.async === false) {
 									throw new Error(

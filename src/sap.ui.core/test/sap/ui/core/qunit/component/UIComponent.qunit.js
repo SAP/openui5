@@ -1225,7 +1225,53 @@ sap.ui.define([
 			assert.ok(oComponent.getRootControl(), "root control created");
 			assert.ok(oView, "view created");
 			assert.ok(oView.getContent().length > 0, "view content created");
-			assert.equal(this.oViewCreateSpy.callCount, 1, "async view factory called once");
+			assert.equal(this.oViewCreateSpy.callCount, 0, "async view factory is not called");
+		}.bind(this)).catch(function() {
+			assert.ok(false, "Modules could not be loaded and an error occured.");
+		});
+	});
+
+	// skipped until processingMode sequential_legacy is introduced
+	QUnit.skip("Component with createContent returning view created with asynchronous view processing", function(assert) {
+		assert.expect(6);
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			}
+		};
+		this.setRespondedManifest(oManifest, "scenario10");
+
+		sap.ui.predefine("manifestModules/scenario10/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
+			return UIComponent.extend("manifestModules.scenario10.Component", {
+				metadata: {
+					manifest: "json",
+					interfaces: [
+						"sap.ui.core.IAsyncContentCreation"
+					]
+				},
+				constructor: function() {
+					UIComponent.apply(this, arguments);
+				},
+				createContent: function() {
+					return sap.ui.view({
+						"viewName" : "testdata.view.MainAsync",
+						"type" : "XML",
+						"async": true
+					});
+				}
+			});
+		});
+
+		return Component.create({
+			name: "manifestModules.scenario10",
+			manifest: true
+		}).then(function(oComponent){
+			var oView = oComponent.getRootControl();
+
+			assert.ok(oComponent.getRootControl(), "root control created");
+			assert.ok(oView, "view created");
+			assert.ok(oView.getContent().length > 0, "view content created");
+			assert.equal(this.oViewCreateSpy.callCount, 1, "async view factory is called once");
 		}.bind(this)).catch(function() {
 			assert.ok(false, "Modules could not be loaded and an error occured.");
 		});
@@ -1244,10 +1290,10 @@ sap.ui.define([
 				}
 			}
 		};
-		this.setRespondedManifest(oManifest, "scenario10");
+		this.setRespondedManifest(oManifest, "scenario11");
 
-		sap.ui.predefine("manifestModules/scenario10/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
-			return UIComponent.extend("manifestModules.scenario10.Component", {
+		sap.ui.predefine("manifestModules/scenario11/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
+			return UIComponent.extend("manifestModules.scenario11.Component", {
 				metadata: {
 					manifest: "json"
 				},
@@ -1262,11 +1308,11 @@ sap.ui.define([
 
 		var oErrorLogSpy = sinon.spy(Log, "error");
 		return Component.create({
-			name: "manifestModules.scenario10",
+			name: "manifestModules.scenario11",
 			manifest: true
 		}).then(function(oComponent){
 			assert.equal(oErrorLogSpy.callCount, 1, "error logged");
-			assert.equal(oErrorLogSpy.args[0][0], "Mandatory init() not called for UIComponent: 'manifestModules.scenario10'. This is likely caused by a missing super call in the component's init implementation.", "missing init super error logged");
+			assert.equal(oErrorLogSpy.args[0][0], "Mandatory init() not called for UIComponent: 'manifestModules.scenario11'. This is likely caused by a missing super call in the component's init implementation.", "missing init super error logged");
 		}).catch(function() {
 			assert.ok(false, "Modules could not be loaded and an error occured.");
 		});
