@@ -222,5 +222,58 @@
         ]
       }
     ]
+  },
+  "1.84.9": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "c4b058fbee691b9595abaf7e90f2c8509adce533",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clear the block list after processing click event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170064743"
+          }
+        ]
+      },
+      {
+        "id": "b6d273f0d9b0beeb5c83e6d4291d488e43c7c076",
+        "type": "FIX",
+        "text": " IconPool: involve AppCacheBuster to resolve the font url",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180065336"
+          }
+        ]
+      },
+      {
+        "id": "9d8fc4c81b5db3f8c61286a34acecbcb61b57a0e",
+        "type": "FIX",
+        "text": " IntervalTrigger: call clearTimeout only once per timer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "9803fec0fd62c5a817062a22f59ba3b0b65a3707",
+        "type": "FIX",
+        "text": " mvc.XMLView: Provide better logging for processing errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080425463"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080321485"
+          }
+        ]
+      }
+    ]
   }
 }

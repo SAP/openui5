@@ -525,5 +525,21 @@
         ]
       }
     ]
+  },
+  "1.84.9": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "374ff16dc270006497996be359a4653fa4cabbe1",
+        "type": "FIX",
+        "text": " valuehelpdialog.P13nConditionPanel: fix tokens with not operators",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001653462021"
+          }
+        ]
+      }
+    ]
   }
 }
