@@ -29,8 +29,8 @@ sap.ui.define([
 			if (oChangeContent.contexts) {
 				oVariant.setContexts(oChangeContent.contexts);
 			}
-			if (oChangeContent.content) {
-				oVariant.setContent(oChangeContent.content);
+			if (oChangeContent.variantContent) {
+				oVariant.setContent(oChangeContent.variantContent);
 			}
 
 			var sVariantName = oChange.getText("variantName");

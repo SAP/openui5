@@ -200,7 +200,7 @@
       "reference": "sap.ui.demoapps.rta.fiorielements.Component",
       "packageName": "",
       "content": {
-        "content": {
+        "variantContent": {
           "some": "property",
           "another": "value"
         }
