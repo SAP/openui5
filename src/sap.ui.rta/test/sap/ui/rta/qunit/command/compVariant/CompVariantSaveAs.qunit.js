@@ -87,7 +87,7 @@ sap.ui.define([
 						type: "myType",
 						text: "myText",
 						content: {foo: "bar"},
-						executeOnSelect: false,
+						executeOnSelection: false,
 						contexts: {
 							role: ["someRole"]
 						},

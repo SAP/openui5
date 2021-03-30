@@ -249,7 +249,7 @@ sap.ui.define([
 				assert.notEqual(oCompCont, undefined, "the component container is set");
 				fCallback({
 					"default": true,
-					executeOnSelect: false,
+					executeOnSelection: false,
 					content: oContent,
 					type: sType,
 					text: sName,
@@ -261,7 +261,7 @@ sap.ui.define([
 				var oCommand = oParameters.command;
 				var mExpectedNewVariantProps = {
 					"default": true,
-					executeOnSelect: false,
+					executeOnSelection: false,
 					content: oContent,
 					type: sType,
 					text: sName,
