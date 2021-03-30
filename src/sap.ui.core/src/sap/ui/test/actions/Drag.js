@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/test/actions/Action"
-], function (Action) {
+	"sap/ui/test/actions/Action",
+	"sap/ui/thirdparty/jquery"
+], function (Action, $) {
 	"use strict";
 
 	/**
@@ -40,6 +41,8 @@ sap.ui.define([
 		executeOn: function (oControl) {
 			var oActionDomRef = this.$(oControl)[0];
 			if (oActionDomRef) {
+				this._tryOrSimulateFocusin($(oActionDomRef), oControl);
+				this._createAndDispatchMouseEvent("mousedown", oActionDomRef);
 				this._createAndDispatchDragEvent("dragstart", oActionDomRef);
 				this._createAndDispatchDragEvent("drag", oActionDomRef);
 			} else {
