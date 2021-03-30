@@ -123,6 +123,9 @@ sap.ui.define([
 							value: {
 								path: 'currentSettings>value'
 							},
+							tooltip: {
+								path: 'currentSettings>value'
+							},
 							editable: oConfig.editable,
 							placeholder: oConfig.placeholder,
 							valueHelpIconSrc: "sap-icon://translate",
@@ -149,6 +152,9 @@ sap.ui.define([
 							value: {
 								path: 'currentSettings>value'
 							},
+							tooltip: {
+								path: 'currentSettings>value'
+							},
 							editable: oConfig.editable,
 							placeholder: oConfig.placeholder
 						}
@@ -161,6 +167,9 @@ sap.ui.define([
 						text: {
 							path: 'currentSettings>value'
 						},
+						tooltip: {
+							path: 'currentSettings>value'
+						},
 						wrapping: false
 					}
 				};
@@ -169,6 +178,9 @@ sap.ui.define([
 					type: Input,
 					settings: {
 						value: {
+							path: 'currentSettings>value'
+						},
+						tooltip: {
 							path: 'currentSettings>value'
 						},
 						editable: false
