@@ -385,7 +385,7 @@ sap.ui.define([
 			var sCloseBtnId = this.getId() + "-close";
 			if (oEvent.target.id === sCloseBtnId) {
 				this.close();
-				oEvent.preventDefault(); // avoid onbeforeunload event which happens at least in IE9 because of the "#" link target// TODO remove after the end of support for Internet Explorer
+				oEvent.preventDefault(); // avoid changing the URL fragment which happens because of the "#" link target on the close button
 			}
 			return false;
 		};
@@ -636,7 +636,6 @@ sap.ui.define([
 			this.sLastRelevantNavigation = null;
 
 			if (!this._bInitialFocusSet) {
-				// since IE9 calls first "onfocusin" it has to be checked if the initial focus was set already// TODO remove after the end of support for Internet Explorer
 				return;
 			}
 

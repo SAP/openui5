@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Accordion
-sap.ui.define(['./AccordionSection', 'sap/ui/Device'],
-	function(AccordionSection, Device) {
+sap.ui.define(['./AccordionSection'],
+	function(AccordionSection) {
 	"use strict";
 
 
@@ -149,14 +149,10 @@ sap.ui.define(['./AccordionSection', 'sap/ui/Device'],
 			//Disabled --> Unavailable annoucement
 			if (oControl.getEnabled()) {
 				rm.writeAttribute("aria-disabled", "false");
-				if (!Device.browser.msie) {// TODO remove after the end of support for Internet Explorer
-					rm.writeAttribute("aria-grabbed", "false");
-				}
+				rm.writeAttribute("aria-grabbed", "false");
 			} else {
 				rm.writeAttribute("aria-disabled", "true");
-				if (!Device.browser.msie) {// TODO remove after the end of support for Internet Explorer
-					rm.writeAttribute("aria-grabbed", "");
-				}
+				rm.writeAttribute("aria-grabbed", "");
 			}
 
 		}
@@ -202,7 +198,7 @@ sap.ui.define(['./AccordionSection', 'sap/ui/Device'],
 			if (heightSet && widthSet) {
 				rm.write(" style='position:absolute;'");
 			} else {
-				rm.write(" style='position:relative;top:0px;'"); // for IE7, when Panel contains relatively positioned elements// TODO remove after the end of support for Internet Explorer
+				rm.write(" style='position:relative;top:0px;'");
 			}
 
 			if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
