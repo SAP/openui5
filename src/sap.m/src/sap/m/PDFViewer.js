@@ -264,7 +264,9 @@ sap.ui.define([
 				if (iCrossPosition > -1) {
 					sParametrizedSource = sParametrizedSource.substr(0, iCrossPosition);
 				}
-				sParametrizedSource += "#view=FitH";
+				if (!(Device.browser.safari && sParametrizedSource.startsWith("blob:"))) {
+					sParametrizedSource += "#view=FitH";
+				}
 				if (!URLWhitelist.validate(sParametrizedSource)) {
 					sParametrizedSource = encodeURI(sParametrizedSource);
 				}
@@ -280,6 +282,7 @@ sap.ui.define([
 				this.setBusy(true);
 				fnInitIframeElement();
 			} catch (error) {
+				Log.error(error);
 				this.setBusy(false);
 			}
 		};
@@ -319,8 +322,8 @@ sap.ui.define([
 			try {
 				this._getIframeDOMElement().removeClass("sapMPDFViewerLoading");
 			} catch (err) {
-				jQuery.log.fatal("Iframe not founded in loaded event");
-				jQuery.log.fatal(err);
+				Log.fatal("Iframe not founded in loaded event");
+				Log.fatal(err);
 			}
 			this.fireEvent("loaded");
 		};
