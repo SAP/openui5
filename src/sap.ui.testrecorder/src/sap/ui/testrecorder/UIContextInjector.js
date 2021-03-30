@@ -343,12 +343,12 @@ sap.ui.define([
 
 	function _setLanguageFromParentWindow() {
 		var appBootstrapScript = window.document.getElementById("sap-ui-bootstrap");
-		if (appBootstrapScript.dataset.sapUiLanguage) {
+		if (appBootstrapScript && appBootstrapScript.dataset.sapUiLanguage) {
 			_pollForRecorderBootstrap(function (recorderBootstrapScript) {
 				recorderBootstrapScript.dataset.sapUiLanguage = appBootstrapScript.dataset.sapUiLanguage;
 			});
 		}
-		if (appBootstrapScript.dataset.sapUiConfig) {
+		if (appBootstrapScript && appBootstrapScript.dataset.sapUiConfig) {
 			appBootstrapScript.dataset.sapUiConfig.split(",").forEach(function (sConfig) {
 				if (sConfig.startsWith("language:")) {
 					_pollForRecorderBootstrap(function (recorderBootstrapScript) {
