@@ -23,14 +23,14 @@
 							class="sapUiNoContentPadding sapUiDemokitLandingImageCell toolsImageCell">
 						<Image
 							id="phoneImage"
-							src="./resources/sap/ui/documentation/sdk/images/Tools_S_cropped.png"
+							src="./resources/sap/ui/documentation/sdk/images/Tools_S_cropped.jpg"
 							width="100%"
 							densityAware="false"
 							class="landingImage"
 							load="handleLandingImageLoad"
 							visible="{device>/system/phone}"/>
 						<Image
-							src="./resources/sap/ui/documentation/sdk/images/Tools_M_and_L_cropped.png"
+							src="./resources/sap/ui/documentation/sdk/images/Tools_M_and_L_cropped.jpg"
 							width="100%"
 							class="landingImage"
 							densityAware="false"
@@ -86,7 +86,7 @@
 								</html:div>
 							</HBox>
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeDesigner.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_2_IMG_ALT}"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeDesigner.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_2_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
@@ -174,7 +174,7 @@
 								</html:div>
 							</HBox>
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5EvoTooling.png" class="toolsPageImage"  alt="{i18n>TOOLS_CARD_3_IMG_ALT}"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5EvoTooling.jpg" class="toolsPageImage"  alt="{i18n>TOOLS_CARD_3_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
@@ -217,7 +217,7 @@
 								</html:div>
 							</HBox>
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5Inspector.png" class="toolsPageImage"  alt="{i18n>TOOLS_CARD_4_IMG_ALT}"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5Inspector.jpg" class="toolsPageImage"  alt="{i18n>TOOLS_CARD_4_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
@@ -244,7 +244,7 @@
 									href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/list"/>
 							</HBox>
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.png" class="toolsPageImage"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.jpg" class="toolsPageImage"/>
 					</VBox>
 				</f:content>
 			</f:Card>
@@ -276,7 +276,7 @@
 									}"/>
 							</HBox>
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/SupportAssistant.png" class="toolsPageImage"  alt="{i18n>TOOLS_CARD_6_IMG_ALT}"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/SupportAssistant.jpg" class="toolsPageImage"  alt="{i18n>TOOLS_CARD_6_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
@@ -313,7 +313,7 @@
 									href="test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"/>
 							</HBox>
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/IconExplorer.png" class="toolsPageImage"  alt="{i18n>TOOLS_CARD_7_IMG_ALT}"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/IconExplorer.jpg" class="toolsPageImage"  alt="{i18n>TOOLS_CARD_7_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
@@ -362,7 +362,7 @@
 								</html:div>
 							</HBox>
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/WebIDE.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_1_IMG_ALT}"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/WebIDE.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_1_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
@@ -383,7 +383,7 @@
 									target="_blank"/>
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_8_TEXT}" />
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeParameterToolbox.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_8_IMG_ALT}"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeParameterToolbox.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_8_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>
@@ -432,7 +432,7 @@
 								</html:div>
 							</HBox>
 						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5WebComponents.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_10_IMG_ALT}"/>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/UI5WebComponents.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_10_IMG_ALT}"/>
 					</VBox>
 				</f:content>
 			</f:Card>

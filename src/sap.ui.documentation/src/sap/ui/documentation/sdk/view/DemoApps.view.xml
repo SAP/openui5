@@ -31,7 +31,7 @@
 								class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
 								<Image
 									id="phoneImage"
-									src="./resources/sap/ui/documentation/sdk/images/DemoApps_S_cropped.png"
+									src="./resources/sap/ui/documentation/sdk/images/DemoApps_S_cropped.jpg"
 									alt="{i18n>DEMO_APPS_IMAGE_PHONE}"
 									width="100%"
 									class="welcomeImage"
@@ -41,7 +41,7 @@
 								<Image
 									id="desktopImage"
 									class="desktopImage welcomeImage"
-									src="./resources/sap/ui/documentation/sdk/images/DemoApps_M_and_L_cropped.png"
+									src="./resources/sap/ui/documentation/sdk/images/DemoApps_M_and_L_cropped.jpg"
 									alt="{i18n>DEMO_APPS_IMAGE_DESKTOP}"
 									densityAware="false"
 									load=".handleLandingImageLoad"
