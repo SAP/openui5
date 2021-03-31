@@ -3,12 +3,13 @@
 /* Base theme                     */
 /* ============================== */
 
-.sapMIBar.sapMTB .sapMBarChild {
-	margin: 0 0 0 0.5rem;
+//we want the first visible element on the row to have specific padding-left value
+.sapMIBar.sapMTB .sapMBarChild{
+	margin-left: 0.25rem;
 }
 
-.sapMIBar.sapMTB .sapMBarChild:first-child {
-	margin-left: 0.25rem;
+.sapMIBar.sapMTB .sapMBarChild ~ .sapMBarChild {
+	margin: 0 0 0 0.5rem;
 }
 
 .sapMIBar.sapMTB .sapMBarChild:first-child[style*="width: 100%"] {
