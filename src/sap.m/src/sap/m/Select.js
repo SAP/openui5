@@ -981,6 +981,25 @@ function(
 			return this.createPicker(this.getPickerType());
 		};
 
+		/**
+		 * Gets the InvisibleText instance for the <code>valueStateText</code> property.
+		 *
+		 * @returns {sap.ui.core.InvisibleText | null} The <code>InvisibleText</code> instance, used to reference the text in aria-labelledby of interested controls.
+		 * @private
+		 */
+		Select.prototype.getValueStateTextInvisibleText = function() {
+			if (this.bIsDestroyed) {
+				return null;
+			}
+
+			if (!this._oValueStateTextInvisibleText) {
+				this._oValueStateTextInvisibleText = new InvisibleText({ id: this.getId() + "-valueStateText-InvisibleText" });
+				this._oValueStateTextInvisibleText.toStatic();
+			}
+
+			return this._oValueStateTextInvisibleText;
+		};
+
 		Select.prototype.getSimpleFixFlex = function() {
 			if (this.bIsDestroyed) {
 				return null;
@@ -1372,6 +1391,11 @@ function(
 			var oValueStateMessage = this.getValueStateMessage(),
 				oValueIcon = this._getValueIcon();
 			this._oSelectionOnFocus = null;
+
+			if (this._oValueStateTextInvisibleText) {
+				this._oValueStateTextInvisibleText.destroy();
+				this._oValueStateTextInvisibleText = null;
+			}
 
 			if (oValueStateMessage) {
 				this.closeValueStateMessage();
@@ -2456,7 +2480,9 @@ function(
 
 		Select.prototype._updatePickerAriaLabelledBy = function (sValueState) {
 			var oPicker = this.getPicker(),
-				sPickerValueStateContentId = this.getPickerValueStateContentId();
+				// to avoid double speech output, referenced element should not be nested inside picker
+				// so we set aria-labelledby to element which is in the static area
+				sPickerValueStateContentId = this.getValueStateTextInvisibleText().getId();
 
 			if (sValueState === ValueState.None) {
 				oPicker.removeAriaLabelledBy(sPickerValueStateContentId);
@@ -2805,8 +2831,11 @@ function(
 		};
 
 		Select.prototype.setValueStateText = function(sValueStateText) {
+			var oInvisibleText = this.getValueStateTextInvisibleText();
 
 			this.setProperty("valueStateText", sValueStateText);
+
+			oInvisibleText.setText(sValueStateText);
 
 			if (this.getDomRefForValueState()) {
 				this._updatePickerValueStateContentText();
