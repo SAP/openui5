@@ -557,6 +557,9 @@ sap.ui.define([
 					group: "Plugin",
 					coverage: {
 						only: ["sap/ui/rta/plugin/CompVariant"]
+					},
+					ui5: {
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					}
 				},
 				"plugin/RTAElementMover": {

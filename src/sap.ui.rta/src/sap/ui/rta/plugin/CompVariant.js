@@ -38,10 +38,6 @@
 		return oOverlay.getElement().getMetadata().getName() === "sap.ui.comp.smartvariants.SmartVariantManagement";
 	}
 
-	function isCurrentVariantReadOnly(oVariantManagementControl) {
-		return oVariantManagementControl.isSpecialVariant(oVariantManagementControl.getPresentVariantId());
-	}
-
 	function createCommandAndFireEvent(oOverlay, sName, mProperties) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var oTargetElement = oOverlay.getElement();
@@ -180,9 +176,14 @@
 		var aMenuItems = [];
 
 		if (this._isEditable(oElementOverlay)) {
+			var sLayer = this.getCommandFactory().getFlexSettings().layer;
 			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var aVariants = getAllVariants(oElementOverlay);
+			var oCurrentVariant = aVariants.find(function(oVariant) {
+				return oVariant.getId() === oVariantManagementControl.getPresentVariantId();
+			});
 
-			if (!isCurrentVariantReadOnly(oVariantManagementControl)) {
+			if (oCurrentVariant.isRenameEnabled(sLayer)) {
 				aMenuItems.push({
 					id: "CTX_COMP_VARIANT_RENAME",
 					text: oLibraryBundle.getText("CTX_RENAME"),
@@ -191,7 +192,9 @@
 					rank: 210,
 					icon: "sap-icon://edit"
 				});
+			}
 
+			if (oCurrentVariant.isEditEnabled(sLayer)) {
 				aMenuItems.push({
 					id: "CTX_COMP_VARIANT_SAVE",
 					text: oLibraryBundle.getText("CTX_VARIANT_SAVE"),
@@ -220,7 +223,6 @@
 				icon: "sap-icon://action-settings"
 			});
 
-			var aVariants = getAllVariants(oElementOverlay);
 			var aSubmenuItems = aVariants.map(function(oVariant) {
 				var bCurrentItem = oVariantManagementControl.getPresentVariantId() === oVariant.getId();
 				var oItem = {
