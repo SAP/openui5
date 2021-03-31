@@ -7,7 +7,9 @@ sap.ui.define([
 	"sap/m/BadgeCustomData",
 	"sap/m/library",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/date/UniversalDate"
 ],
 function (
 	Card,
@@ -16,7 +18,9 @@ function (
 	BadgeCustomData,
 	mLibrary,
 	Core,
-	jQuery
+	jQuery,
+	DateFormat,
+	UniversalDate
 ) {
 	"use strict";
 
@@ -161,6 +165,51 @@ function (
 
 		// Clean up
 		oHeader.destroy();
+	});
+
+	QUnit.test("Header and NumericHeader dataTimestamp", function (assert) {
+		// Arrange
+		var oNow = new Date(),
+			oNowUniversalDate = new UniversalDate(oNow),
+			oDateFormat = DateFormat.getDateTimeInstance({relative: true}),
+			sTextNow = oDateFormat.format(oNowUniversalDate),
+			sText1Minute,
+			oHeader = new CardHeader({
+				dataTimestamp: oNow.toISOString()
+			}),
+			oNumericHeader = new CardNumericHeader({
+				dataTimestamp: oNow.toISOString()
+			});
+
+		// Act
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		oNumericHeader.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oHeader.getAggregation("_dataTimestamp").getText(), sTextNow, "DataTimestamp for 'now' is correct for Header");
+		assert.strictEqual(oNumericHeader.getAggregation("_dataTimestamp").getText(), sTextNow, "DataTimestamp for 'now' is correct for NumericHeader");
+
+		// Act - wait 1 minute
+		this.clock.tick(60100);
+
+		sText1Minute = oDateFormat.format(oNowUniversalDate);
+
+		// Assert
+		assert.strictEqual(oHeader.getAggregation("_dataTimestamp").getText(), sText1Minute, "DataTimestamp is updated after 1m for Header");
+		assert.strictEqual(oNumericHeader.getAggregation("_dataTimestamp").getText(), sText1Minute, "DataTimestamp is updated after 1m for NumericHeader");
+
+		// Act - set empty timestamp
+		oHeader.setDataTimestamp(null);
+		oNumericHeader.setDataTimestamp(null);
+
+		// Assert
+		assert.notOk(oHeader.getAggregation("_dataTimestamp"), "DataTimestamp is removed for Header");
+		assert.notOk(oNumericHeader.getAggregation("_dataTimestamp"), "DataTimestamp is removed for NumericHeader");
+
+		// Clean up
+		oHeader.destroy();
+		oNumericHeader.destroy();
 	});
 
 	QUnit.module("Headers ACC roles");

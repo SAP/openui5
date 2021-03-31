@@ -8,7 +8,8 @@
 					"subTitle": "Card subtitle",
 					"status": {
 						"text": "Count"
-					}
+					},
+					"dataTimestamp": "{{parameters.NOW_ISO}}"
 				},
 				"type": "List",
 				"content": {}
@@ -98,6 +99,16 @@
 						"src": "sap-icon://activity-items"
 					}
 				},
+				"content": {}
+			}
+		},
+		"card8": {
+			"sap.card": {
+				"header": {
+					"title": "Card Title with dataTimestamp",
+					"dataTimestamp": "{{parameters.NOW_ISO}}"
+				},
+				"type": "List",
 				"content": {}
 			}
 		},
@@ -641,6 +652,7 @@
 						"state": "{state}"
 					},
 					"details": "{details}",
+					"dataTimestamp": "{{parameters.NOW_ISO}}",
 					"sideIndicators": [
 						{
 							"title": "Target",
@@ -760,6 +772,15 @@
 							"value": "{Description}"
 						}
 					}
+				}
+			}
+		},
+		"kpicard5": {
+			"sap.card": {
+				"type": "Numeric",
+				"header": {
+					"title": "Numeric card with data timestamp",
+					"dataTimestamp": "{{parameters.NOW_ISO}}"
 				}
 			}
 		},

@@ -3,7 +3,7 @@
 		"title": "Title",
 		"subTitle": "Subtitle",
         "count": 15,
-        "src": "sap-icon://newspaper"
+		"src": "sap-icon://newspaper"
 	},
 	"content": [{
 			"Name": "Notebook Basic 15",

@@ -196,15 +196,40 @@ sap.ui.define([], function () {
 	 * @param {sap.f.cards.NumericHeader} oNumericHeader An object representation of the control that should be rendered
 	 */
 	NumericHeaderRenderer.renderDetails = function(oRm, oNumericHeader) {
-		var oDetails = oNumericHeader.getAggregation("_details"),
-			oBindingInfos = oNumericHeader.mBindingInfos;
+		var oBindingInfos = oNumericHeader.mBindingInfos,
+			oDetails = oNumericHeader.getAggregation("_details"),
+			bHasDetails = oNumericHeader.getDetails() || oBindingInfos.details,
+			oDataTimestamp = oNumericHeader.getAggregation("_dataTimestamp"),
+			bHasDataTimestamp = oNumericHeader.getDataTimestamp() || oBindingInfos.dataTimestamp;
+
+		if (!bHasDetails && !bHasDataTimestamp) {
+			return;
+		}
+
+		oRm.openStart("div")
+			.class("sapFCardHeaderDetailsWrapper");
+
+		if (bHasDataTimestamp) {
+			oRm.class("sapFCardHeaderLineIncludesDataTimestamp");
+		}
+
+		oRm.openEnd();
 
 		//show placeholder when there is binded value also
-		if ((oDetails && oDetails.getText()) || oBindingInfos.details) {
-					oDetails.addStyleClass("sapFCardHeaderItemBinded");
-					oDetails.addStyleClass("sapFCardHeaderDetails");
-					oRm.renderControl(oDetails);
+		if (bHasDetails) {
+			if (oBindingInfos.details) {
+				oDetails.addStyleClass("sapFCardHeaderItemBinded");
+			}
+
+			oDetails.addStyleClass("sapFCardHeaderDetails");
+			oRm.renderControl(oDetails);
 		}
+
+		if (bHasDataTimestamp) {
+			oRm.renderControl(oDataTimestamp);
+		}
+
+		oRm.close("div");
 	};
 
 	return NumericHeaderRenderer;
