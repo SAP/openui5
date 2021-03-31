@@ -1075,30 +1075,6 @@ function(
 		};
 
 		/**
-		 *
-		 * @private
-		 */
-		Dialog.prototype._reposition = function () {
-		};
-
-		/**
-		 *
-		 * @private
-		 */
-		Dialog.prototype._repositionAfterOpen = function () {
-		};
-
-		/**\
-		 *
-		 * @private
-		 */
-		Dialog.prototype._reapplyPosition = function () {
-			this._adjustScrollingPane();
-		};
-
-		/**
-		 *
-		 *
 		 * @private
 		 */
 		Dialog.prototype._onResize = function () {

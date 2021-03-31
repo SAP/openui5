@@ -1405,7 +1405,7 @@ sap.ui.define([
 		this.stub(oDialog, "_adjustScrollingPane", function () {
 			assert.equal(oDialog.$("scroll").css("display"), "inline-block", "display: block is cleared before size calculation");
 		});
-		oDialog._reapplyPosition();
+		oDialog._adjustScrollingPane();
 		oDialog.destroy();
 	});
 
