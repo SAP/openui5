@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/InvisibleText",
 	"sap/m/ColumnListItem",
 	"sap/m/Label",
 	"sap/m/TableSelectDialog",
@@ -23,6 +24,7 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	JSONModel,
+	InvisibleText,
 	ColumnListItem,
 	Label,
 	TableSelectDialog,
@@ -979,6 +981,12 @@ sap.ui.define([
 	QUnit.test("Aria-live attribute of the InfoToolBar should be set to 'polite'", function(assert) {
 		oButton1.firePress();
 		assert.equal(oTableSelectDialog1._oTable.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
+		oTableSelectDialog1._oCancelButton.firePress();
+	});
+
+	QUnit.test("SearchField aria-labelledby attribute", function(assert) {
+		oButton1.firePress();
+		assert.strictEqual(oTableSelectDialog1._oSearchField.$("I").attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "SELECTDIALOG_SEARCH"), "aria-labelledby is correctly set");
 		oTableSelectDialog1._oCancelButton.firePress();
 	});
 

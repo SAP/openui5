@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/StandardListItemRenderer",
 	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
@@ -35,7 +36,8 @@ sap.ui.define([
 		KeyCodes,
 		Device,
 		StandardListItemRenderer,
-		Core
+		Core,
+		InvisibleText
 	) {
 		"use strict";
 
@@ -340,6 +342,7 @@ sap.ui.define([
 				assert.ok(document.getElementById("selectDialog-dialog"), "Dialog is opened");
 				assert.ok(that.oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
 				assert.strictEqual(that.oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
+				assert.strictEqual(that.oSelectDialog._oSearchField.$("I").attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "SELECTDIALOG_SEARCH"), "aria-labelledby is correctly set");
 			});
 		});
 

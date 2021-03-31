@@ -11,6 +11,7 @@ sap.ui.define([
 	'./SearchField',
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/core/InvisibleText',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
 	'sap/m/Label',
@@ -28,6 +29,7 @@ function(
 	SearchField,
 	library,
 	Control,
+	InvisibleText,
 	Device,
 	Toolbar,
 	Label,
@@ -363,6 +365,7 @@ function(
 		// store a reference to the searchField for filtering
 		this._oSearchField = new SearchField(this.getId() + "-searchField", {
 			width: "100%",
+			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "SELECTDIALOG_SEARCH"),
 			liveChange: function (oEvent) {
 				var sValue = oEvent.getSource().getValue(),
 				iDelay = (sValue ? 300 : 0); // no delay if value is empty
