@@ -1,0 +1,45 @@
+<mvc:View
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:mdcTable="sap.ui.mdc.table"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		controllerName="sap.ui.mdc.sample.Table.Controller">
+	<OverflowToolbar>
+		<Title text="Table"></Title>
+		<ToolbarSpacer/>
+	</OverflowToolbar>
+
+	<ScrollContainer
+		height="100%"
+		width="100%"
+		vertical="true"
+	>
+	<!-- TODO Table does not scroll -->
+	<mdc:Table
+			id="mdcTable"
+			type="ResponsiveTable"
+			header="Books"
+			showRowCount="false"
+			delegate="{ name: 'sap/ui/mdc/sample/Table/Books.Table.delegate', payload: {collectionName: 'Books'}}"
+			p13nMode="Column,Sort,Filter"
+			selectionMode="Multi"
+			height="100%"
+			threshold="50">
+		<mdc:columns>
+			<mdcTable:Column id="ID" header="ID" dataProperty="ID" >  <!-- TODO what is the dataProperty doing? -->
+				<Text text="{ID}"/>  <!-- TODO Shall we use Text or Field? -->
+			</mdcTable:Column>
+			<mdcTable:Column id="title" header="Title" dataProperty="title">
+				<Text text="{title}"/>
+			</mdcTable:Column>
+			<mdcTable:Column id="descr" header="Description" dataProperty="foodescr">
+				<Text text="{descr}"/>
+			</mdcTable:Column>
+			<mdcTable:Column id="price" header="Price" dataProperty="price">
+				<Text text="{price}"/>
+			</mdcTable:Column>
+		</mdc:columns>
+	</mdc:Table>
+	</ScrollContainer>
+</mvc:View>
