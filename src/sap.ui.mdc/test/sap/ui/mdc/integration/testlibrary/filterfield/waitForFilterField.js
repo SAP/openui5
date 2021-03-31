@@ -15,11 +15,11 @@ sap.ui.define([
 		return this.waitFor({
 			controlType: "sap.ui.mdc.FilterField",
 			properties: oSettings.properties,
-			matchers: {
-				ancestor: {
-					controlType: "sap.ui.mdc.FilterBar"
-				}
-			},
+			// matchers: {
+			// 	ancestor: {
+			// 		controlType: "sap.ui.mdc.FilterBar"
+			// 	}
+			// },
 			actions: oSettings.actions,
 			check: oSettings.check,
 			success: function(aFilterFields) {

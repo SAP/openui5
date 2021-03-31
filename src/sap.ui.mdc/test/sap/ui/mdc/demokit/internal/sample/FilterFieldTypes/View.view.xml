@@ -17,6 +17,7 @@
 		<Label text="FilterField (String)"></Label>
 		<mdc:FilterField
 			id="FF1"
+			label="myFF1"
 			conditions="{cm>/conditions/title}"
 			display="ValueDescription"
 			maxConditions="-1"
