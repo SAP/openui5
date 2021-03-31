@@ -300,9 +300,7 @@ sap.ui.define([
 					};
 				}.bind(this)
 			};
-			this.oStretchPlugin.isBusy = function() {
-				return true;
-			};
+			sandbox.stub(this.oStretchPlugin, "isBusy").returns(true);
 			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
 				this.oStretchPlugin._onElementOverlayChanged(oEvent);
 				assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
@@ -313,19 +311,17 @@ sap.ui.define([
 
 		QUnit.test("When the inner vbox gets destroyed", function(assert) {
 			var done = assert.async();
-			var fnDebounced = _debounce(function() {
-				assert.ok(true, "the style class was removed");
-				done();
+			sandbox.stub(this.oVBox1, "removeStyleClass").callsFake(function(sStyleClassName) {
+				if (sStyleClassName === sStretchStyleClass) {
+					assert.ok(true, "the style class was removed");
+					done();
+				}
 			});
-			sandbox.stub(this.oVBox1, "removeStyleClass").callsFake(fnDebounced);
 			this.oVBox2.destroy();
-			sap.ui.getCore().applyChanges();
 		});
 
 		QUnit.test("When the inner vbox gets destroyed while a plugin is busy", function(assert) {
-			this.oStretchPlugin.isBusy = function() {
-				return true;
-			};
+			sandbox.stub(this.oStretchPlugin, "isBusy").returns(true);
 
 			this.oVBox2.destroy();
 			assert.ok(isStretched(this.oVBoxOverlay1), "the style class was not removed");
@@ -333,9 +329,7 @@ sap.ui.define([
 
 		QUnit.test("When element gets modified while a plugin is busy", function(assert) {
 			var done = assert.async();
-			this.oStretchPlugin.isBusy = function() {
-				return true;
-			};
+			sandbox.stub(this.oStretchPlugin, "isBusy").returns(true);
 			this.oStretchPlugin.removeStretchCandidate(this.oVBoxOverlay1);
 			assert.notOk(isStretched(this.oVBoxOverlay1), "the style class removed before element gets modified");
 			this.oVBoxOverlay1.fireEvent("elementModified", {type: "afterRendering"});
@@ -601,9 +595,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When the hbox becomes editable but a plugin is busy", function(assert) {
-			this.oStretchPlugin.isBusy = function() {
-				return true;
-			};
+			sandbox.stub(this.oStretchPlugin, "isBusy").returns(true);
 
 			this.oHBoxOverlay.setEditable(true);
 			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
@@ -629,9 +621,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When the invisible hbox becomes visible while the plugin is busy", function(assert) {
-			this.oStretchPlugin.isBusy = function() {
-				return true;
-			};
+			sandbox.stub(this.oStretchPlugin, "isBusy").returns(true);
 			this.oHBox2.setVisible(true);
 			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not added");
 		});
