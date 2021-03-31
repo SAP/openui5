@@ -104,11 +104,12 @@ sap.ui.define(
          * Triggers a validation of the control by calling <code>validateState</code>, which is implemented in the control delegate.
          *
          * @param {Object} oTheoreticalState The theoretical state to be validated; see also {@link sap.ui.mdc.p13n.StateUtil StateUtil}
+         * @param {String} [sKey] The name of the control to be validated
          *
          * @returns {object} The value returned by {@link sap.ui.mdc.AggregationBaseDelegate#validateState validateState}
          */
-        AdaptationMixin.validateState = function(oTheoreticalState) {
-            return this.getControlDelegate().validateState(this, oTheoreticalState);
+        AdaptationMixin.validateState = function(oTheoreticalState, sKey) {
+            return this.getControlDelegate().validateState(this, oTheoreticalState, sKey);
         };
 
         AdaptationMixin.getInbuiltFilter = function() {

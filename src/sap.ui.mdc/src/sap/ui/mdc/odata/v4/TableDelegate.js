@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+	"sap/ui/core/format/ListFormat"
 ], function(
 	TableDelegate,
 	loadModules,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Item,
 	Core,
 	coreLibrary,
-	MessageBox
+	MessageBox,
+	ListFormat
 ) {
 	"use strict";
 
@@ -122,46 +124,51 @@ sap.ui.define([
 		return enrichGridTable(oTable);
 	};
 
-	Delegate.validateState = function(oTable, oState) {
-		var bIsValidState;
+	Delegate.validateState = function(oControl, oState, sKey) {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
-		if (!oState.sorters) {
-			bIsValidState = true;
-		} else if (!oState.items) {
-			bIsValidState = false;
-		} else {
-			var aProperties = [];
-			var oPropertyHelper = oTable.getPropertyHelper();
-
-			oState.items.forEach(function(oItem) {
-				var oProperty = oPropertyHelper.getProperty(oItem.name);
-
-				if (!oProperty.isComplex()) {
-					aProperties.push(oProperty.name);
-				} else {
-					oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
-						if (aProperties.indexOf(oReferencedProperty.name) === -1) {
-							aProperties.push(oReferencedProperty.name);
-						}
-					});
+		if (sKey == "Sort" && oState.sorters) {
+			if (!checkForValidity(oControl, oState.items, oState.sorters)) {
+				return {
+					validation: coreLibrary.MessageType.Information,
+					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+				};
+			}
+		} else if (sKey == "Group" && oState.aggregations) {
+			var aAggregateProperties = Object.keys(oState.aggregations);
+			var aAggregateGroupableProperties = [];
+			var oListFormat = ListFormat.getInstance();
+			aAggregateProperties.forEach(function(oItem) {
+				if (oControl.getPropertyHelper().isGroupable(oItem)) {
+					aAggregateGroupableProperties.push(oItem);
 				}
 			});
 
-			bIsValidState = oState.sorters.every(function(oSort) {
-				return aProperties.find(function(sPropertyName) {
-					return oSort.name === sPropertyName;
-				});
-			});
-		}
+			if (aAggregateGroupableProperties.length) {
+				return {
+					validation: coreLibrary.MessageType.Information,
+					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION", [oListFormat.format(aAggregateGroupableProperties)])
+				};
+			}
+		} else if (sKey == "Column" ) {
+			var sMessage;
+			var aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
 
-		if (!bIsValidState) {
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-			return {
-				validation: coreLibrary.MessageType.Warning,
-				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
-			};
-		}
+			if (!checkForValidity(oControl, oState.items, aAggregateProperties)) {
+				sMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION");
+			}
 
+			if (!checkForValidity(oControl, oState.items, oState.sorters)) {
+				sMessage = sMessage ? sMessage + "\n" + oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+					: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
+			}
+			if (sMessage) {
+				return {
+					validation: coreLibrary.MessageType.Information,
+					message: sMessage
+				};
+			}
+		}
 		return {
 			validation: coreLibrary.MessageType.None
 		};
@@ -506,6 +513,28 @@ sap.ui.define([
 				return aUnitProperties.includes(oProperty);
 			});
 		});
+	}
+
+	function checkForValidity(oControl, aItems, aStates) {
+		var oProperty, aProperties = [];
+
+		aItems && aItems.forEach(function(oItem) {
+			oProperty = oControl.getPropertyHelper().getProperty(oItem.name);
+			if (!oProperty.isComplex()) {
+				aProperties.push(oProperty.name);
+			} else {
+				oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
+					aProperties.push(oReferencedProperty.name);
+				});
+			}
+		});
+		var bOnlyVisibleColumns = aStates ? aStates.every(function(oState) {
+			return aProperties.find(function(sPropertyName) {
+				return oState.name ? oState.name === sPropertyName : oState === sPropertyName;
+			});
+		}) : true;
+
+		return bOnlyVisibleColumns;
 	}
 
 	function enrichGridTable(oTable) {

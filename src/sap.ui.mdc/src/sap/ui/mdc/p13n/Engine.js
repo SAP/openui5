@@ -867,7 +867,7 @@ sap.ui.define([
 		if (oController.model2State instanceof Function) {
 			oTheoreticalState[sKey] = oController.model2State();
 
-			var mInfoState = oControl.validateState(StateUtil._externalizeKeys(oTheoreticalState));
+			var mInfoState = oControl.validateState(StateUtil._externalizeKeys(oTheoreticalState), sKey);
 
 			var oMessageStrip;
 

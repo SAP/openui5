@@ -33,6 +33,18 @@ sap.ui.define([
         return Promise.resolve(oGroupPanel);
     };
 
+    GroupController.prototype.model2State = function() {
+        var aItems = [];
+        this._oAdaptationModel.getProperty("/items").forEach(function(oItem){
+            if (oItem.grouped){
+                aItems.push({
+                    name: oItem.name
+                });
+            }
+        });
+        return aItems;
+    };
+
     GroupController.prototype.getChangeOperations = function () {
         return {
             add: "addGroup",
@@ -54,12 +66,14 @@ sap.ui.define([
 
         var aItemState = this.getCurrentState();
         var mItemState = P13nBuilder.arrayToMap(aItemState);
+        var oController = this.getAdaptationControl();
+        var oAggregations = oController.getAggregateConditions ? oController.getAggregateConditions() || {} : {};
 
         var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
             var oExisting = mItemState[oProperty.name];
             mItem.grouped = !!oExisting;
             mItem.position =  oExisting ? oExisting.position : -1;
-            return !(oProperty.groupable === false);
+            return !(oProperty.groupable === false || !!oAggregations[oProperty.name]);
         });
 
         P13nBuilder.sortP13nData({

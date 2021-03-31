@@ -1898,9 +1898,18 @@ sap.ui.define([
 				}
 			}
 			var aHeaderItems = [];
+			var aFilterable = [];
 			var oDelegate = this.getControlDelegate();
 			aHeaderItems = (oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oMDCColumn)) || [];
-			if (this.isFilteringEnabled()) {
+
+			this.getPropertyHelper().getFilterableProperties(oMDCColumn.getDataProperty()).forEach(function(oProperty) {
+				aFilterable.push(new Item({
+					text: oProperty.getLabel(),
+					key: oProperty.getName()
+				}));
+			});
+
+			if (this.isFilteringEnabled() && aFilterable.length) {
 				var oFilter = new ColumnPopoverSelectListItem({
 					label: oResourceBundle.getText("table.SETTINGS_FILTER"),
 					icon: "sap-icon://filter",
