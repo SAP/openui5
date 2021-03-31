@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/Device",
 	"sap/f/GridList",
 	"sap/ui/layout/cssgrid/GridBoxLayout",
 	"sap/m/CustomListItem",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 function (
+	Device,
 	GridList,
 	GridBoxLayout,
 	CustomListItem,
@@ -334,6 +336,33 @@ function (
 
 		// Assert
 		checkHeights(this.oGrid, assert);
+	});
+
+	QUnit.test("Add/Remove sorters", function (assert) {
+		var oGroupHeaderDomRef;
+
+		assert.ok(this.oGrid.$().find("ul").hasClass("sapFGridListGroup"), "sapFGridListGroup is set");
+
+		if (!Device.browser.msie) {
+			oGroupHeaderDomRef = this.oGrid.$().find(".sapMGHLI")[0];
+			assert.ok(window.getComputedStyle(oGroupHeaderDomRef).gridColumnEnd.indexOf("-1") > -1, "grid column is correctly set");
+		}
+
+		// remove the sorters
+		this.oGrid.getBinding("items").sort([]);
+		this.oGrid.invalidate();
+		Core.applyChanges();
+
+		// add sorter
+		this.oGrid.getBinding("items").sort([new Sorter("Category", false, true)]);
+		Core.applyChanges();
+
+		assert.ok(this.oGrid.$().find("ul").hasClass("sapFGridListGroup"), "sapFGridListGroup is set");
+
+		if (!Device.browser.msie) {
+			oGroupHeaderDomRef = this.oGrid.$().find(".sapMGHLI")[0];
+			assert.ok(window.getComputedStyle(oGroupHeaderDomRef).gridColumnEnd.indexOf("-1") > -1, "grid column is correctly  set");
+		}
 	});
 
 	function checkHeights (oGrid, assert) {

@@ -206,6 +206,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Called when binding is updated
+	 *
+	 * @private
+	 */
+	GridList.prototype.updateItems = function() {
+		ListBase.prototype.updateItems.apply(this, arguments);
+
+		this.invalidate();
+	};
+
+	/**
 	 * Handler for layout data change events.
 	 * Updates the styles of the item that were changed by the layoutData.
 	 *
