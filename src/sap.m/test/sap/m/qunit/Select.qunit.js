@@ -10021,7 +10021,7 @@ sap.ui.define([
 		QUnit.test("Picker aria-labelledby attribute", function (assert) {
 			// arrange
 			var oSelect = new Select(),
-				sPickerValueStateId = oSelect.getPickerValueStateContentId(),
+				sPickerValueStateId = oSelect.getValueStateTextInvisibleText().getId(),
 				oPicker = oSelect.getPicker();
 			oSelect.placeAt("content");
 			Core.applyChanges();
@@ -10044,7 +10044,7 @@ sap.ui.define([
 		QUnit.test("Picker aria-labelledby attribute initial", function (assert) {
 			// arrange
 			var oSelect = new Select({valueState: ValueState.Success}),
-				sPickerValueStateId = oSelect.getPickerValueStateContentId(),
+				sPickerValueStateId = oSelect.getValueStateTextInvisibleText().getId(),
 				oPicker = oSelect.getPicker();
 			oSelect.placeAt("content");
 			Core.applyChanges();
