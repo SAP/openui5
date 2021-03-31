@@ -3274,6 +3274,15 @@ function (
 		assert.strictEqual(oObjectPage._getHeaderContentDomRef(), oObjectPage._getHeaderContent().getDomRef(),
 			"The new '_getHeaderContentDomRef' method is returning the Dom Ref of headerContent as expected.");
 
+
+		// Act - scroll to snap the header
+		oObjectPage._onScroll({ target: { scrollTop: oObjectPage._getSnapPosition() + 1} });
+		// Assert
+		assert.strictEqual(oObjectPage._getHeaderContentDomRef(),
+			oObjectPage.$().find(".sapUxAPObjectPageHeaderTitle .sapUxAPObjectPageHeaderDetails").get(0),
+			"return an empty placeholder if the header is hidden in the scroll overflow.");
+
+
 		// Act - remove header content
 		oObjectPage.setAggregation("_headerContent", null);
 

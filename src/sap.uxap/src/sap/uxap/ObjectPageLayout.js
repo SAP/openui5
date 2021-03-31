@@ -679,7 +679,7 @@ sap.ui.define([
 			this._bFirstRendering = false;
 		}
 
-		this._bStickyAnchorBar = false; //reset default state in case of re-rendering
+		this._bStickyAnchorBar = this._shouldPreserveHeaderInTitleArea(); //reset default state in case of re-rendering
 
 		// Detach expand button press event
 		this._handleExpandButtonPressEventLifeCycle(false);
@@ -4033,13 +4033,26 @@ sap.ui.define([
 	 * Helper function needed for configuring the ObjectPageLayout's designtime.
 	 * The function returns the Dom Ref of the ObjectPageLayout's headerContent
 	 * aggregation and ensures that a safe-check for its existence is made.
-	 * If headerContent doesn't exist, null is returned.
 	 *
+	 * If no DOM element or if the DOM element is in the scroll overflow,
+	 * an empty placeholder is returned.
+	 * If headerContent doesn't exist, null is returned.
 	 * @private
+	 * @returns {Element | null}
 	 */
 	ObjectPageLayout.prototype._getHeaderContentDomRef = function () {
 		var oHeaderContent = this._getHeaderContent();
-		return oHeaderContent && oHeaderContent.getDomRef();
+
+		if (!oHeaderContent || !this.getShowHeaderContent()) {
+			return null;
+		}
+
+		if (this._bStickyAnchorBar && !this._bHeaderInTitleArea) {
+			// return an empty placeholder if the header is hidden in the scroll overflow
+			return this.$().find(".sapUxAPObjectPageHeaderTitle .sapUxAPObjectPageHeaderDetails").get(0);
+		}
+
+		return oHeaderContent.getDomRef();
 	};
 
 	ObjectPageLayout.prototype._connectModelsForSections = function (aSections) {
