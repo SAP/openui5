@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
-	"sap/ui/core/util/PasteHelper",
 	"sap/ui/core/InvisibleText",
+	"sap/m/ListBase",
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/Label",
@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/library",
 	"sap/ui/layout/VerticalLayout"
-], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, InvisibleText, Table, Column,
+], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, ListBase, Table, Column,
 	 Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout) {
 	"use strict";
 
@@ -352,6 +352,7 @@ sap.ui.define([
 		assert.strictEqual(aVisibleColumns.length, 2, "There are 2 visible columns");
 		assert.strictEqual(parseInt(sut.getVisibleItems()[0].$Popin().find(".sapMListTblSubRowCell").attr("colspan")), 2, "colspan=2, attribute updated correctly");
 
+		clock.restore();
 		sut.destroy();
 	});
 
@@ -480,6 +481,7 @@ sap.ui.define([
 		Core.applyChanges();
 		assert.notOk(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is disabled, only when explicitly enabled=false is set");
 
+		clock.restore();
 		sut.destroy();
 	});
 
@@ -775,6 +777,7 @@ sap.ui.define([
 
 		assert.ok(tableResizeSpy.called, "Table resize called, if media is different");
 
+		this.clock.restore();
 		sut.destroy();
 	});
 
@@ -939,12 +942,10 @@ sap.ui.define([
 
 		// shift-tab on from the trigger button
 		qutils.triggerKeyboardEvent($trigger, KeyCodes.TAB, true, false, false);
-		window.setTimeout(function() {
-			assert.ok(sut.bAnnounceDetails, "Focus in back in the table");
-			assert.equal(document.activeElement, $tblHeader[0]);
+		assert.ok(ListBase.getInvisibleText().getText().includes("Header Row"));
+		assert.equal(document.activeElement, $tblHeader[0]);
 
-			sut.destroy();
-		}, 0);
+		sut.destroy();
 	});
 
 	QUnit.test("Test for checkGrowingFromScratch", function(assert) {
@@ -1264,6 +1265,7 @@ sap.ui.define([
 			oScrollContainer.destroy();
 			// reset stub
 			this.stub().reset();
+			this.clock.restore();
 		}
 	});
 
@@ -1334,6 +1336,7 @@ sap.ui.define([
 			oScrollContainer.destroy();
 			// reset stub
 			this.stub().reset();
+			this.clock.restore();
 		}
 	});
 
@@ -1419,6 +1422,7 @@ sap.ui.define([
 			oScrollContainer.destroy();
 			// reset stub
 			this.stub().reset();
+			this.clock.restore();
 		}
 	});
 
@@ -1543,6 +1547,7 @@ sap.ui.define([
 			oScrollContainer.destroy();
 			// reset stub
 			this.stub().reset();
+			this.clock.restore();
 		}
 	});
 
@@ -1559,15 +1564,17 @@ sap.ui.define([
 		assert.equal(oColumn1.getDomRef().firstChild.style.justifyContent, "flex-start", "Column header content is aligned to the left");
 		assert.equal(oColumn2.getDomRef().firstChild.style.justifyContent, "center", "Center text alignment style class applied");
 
-		// column alignment in RTL mode
-		Core.getConfiguration().setRTL(true);
+		var fnGetRTLStub = sinon.stub(Core.getConfiguration(), "getRTL").returns(true);
+		oTable.rerender();
 		Core.applyChanges();
+
+		// column alignment in RTL mode
 		assert.equal(oColumn1.getDomRef().firstChild.style.justifyContent, "flex-end", "Column header content is aligned to the right");
 		assert.equal(oColumn2.getDomRef().firstChild.style.justifyContent, "center", "Center text alignment style class applied");
 
 		// clean up
+		fnGetRTLStub.restore();
 		oTable.destroy();
-		Core.getConfiguration().setRTL(false);
 	});
 
 	QUnit.test("Active Headers", function(assert) {
@@ -2010,27 +2017,24 @@ sap.ui.define([
 		oTable.setAutoPopinMode(true);
 		Core.applyChanges();
 
-		// set random property 'importance' on table columns
-		var aImportance = [ "None", "Low", "Medium", "High" ];
-		aColumns.forEach(function (oColumn) {
-			var sImportance = aImportance[Math.floor(Math.random() * aImportance.length)];
-			oColumn.setImportance(sImportance);
-		});
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		var fnConfigureAutoPopin = sinon.spy(oTable, "_configureAutoPopin");
 		aColumns[0].setWidth("8rem");
-		aColumns[1].setVisible(false);
-		aColumns[2].setImportance("High");
-		aColumns[3].setAutoPopinWidth(10);
+		Core.applyChanges();
+		assert.strictEqual(fnConfigureAutoPopin.callCount, 1, "_configureAutoPopin called since column width property changed");
 
-		assert.ok(aColumns[0].getWidth() === "8rem", "Width for column[0] is set to 8rem");
-		assert.notOk(aColumns[1].getVisible(), "Visibility for column[1] is set to false");
-		assert.ok(aColumns[2].getImportance() === "High", "Importance of column[2] is 'High'");
-		assert.ok(aColumns[3].getAutoPopinWidth() === 10, "AutPopinWidth of column[3] is set to 10");
-		window.setTimeout(function() {
-			assert.strictEqual(fnConfigureAutoPopin.callCount, 4, "Function _configureAutoPopin has been called 4 times");
-		}, 0);
+		aColumns[1].setVisible(false);
+		Core.applyChanges();
+		assert.strictEqual(fnConfigureAutoPopin.callCount, 2, "_configureAutoPopin called since column visible property changed");
+
+		aColumns[2].setImportance("High");
+		Core.applyChanges();
+		assert.strictEqual(fnConfigureAutoPopin.callCount, 3, "_configureAutoPopin called since column importance property changed");
+
+		aColumns[3].setAutoPopinWidth(10);
+		Core.applyChanges();
+		assert.strictEqual(fnConfigureAutoPopin.callCount, 4, "_configureAutoPopin called since column autoPopinWidth property changed");
 	});
 
 	QUnit.test("Spy on _configureAutoPopin - autoPopinMode=false", function (assert) {
@@ -2039,12 +2043,6 @@ sap.ui.define([
 		oTable.setContextualWidth("Desktop");
 		Core.applyChanges();
 
-		// set random property 'importance' on table columns
-		var aImportance = [ "None", "Low", "Medium", "High" ];
-		aColumns.forEach(function (oColumn) {
-			var sImportance = aImportance[Math.floor(Math.random() * aImportance.length)];
-			oColumn.setImportance(sImportance);
-		});
 		assert.strictEqual(oTable.getAutoPopinMode(), false, "autoPopinMode is set to false");
 
 		var fnConfigureAutoPopin = sinon.spy(oTable, "_configureAutoPopin");
@@ -2124,9 +2122,11 @@ sap.ui.define([
 		clock.tick(10);
 		assert.ok(fnOnBeforeRendering.calledOnce, "Table rerendered to update popin-area");
 		assert.ok(fnGetInitialAccumulatedWidth.notCalled, "autoPopinMode recalculation prevent, since only the popin-area needs to be updated");
+		clock.restore();
 	});
 
 	QUnit.test("Hide columns based on their importance", function(assert) {
+		var clock = sinon.useFakeTimers();
 		var aColumns = oTable.getColumns();
 		var fnPopinChangedEvent = sinon.spy(oTable, "_firePopinChangedEvent");
 
@@ -2140,26 +2140,28 @@ sap.ui.define([
 
 		oTable.setAutoPopinMode(true);
 		oTable.setContextualWidth("Desktop");
-		assert.ok(true, "ContextualWidth is set to Desktop");
+		Core.applyChanges();
+		clock.tick(1);
+
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 		assert.strictEqual(oTable._getHiddenInPopin().length, 0, "All columns are rendered as regular columns");
 
 		oTable.setContextualWidth("Tablet");
 		Core.applyChanges();
+		clock.tick(1);
 
-		assert.ok(true, "ContextualWidth is set to Tablet");
 		assert.strictEqual(oTable.hasPopin(), true, "Call oTable.hasPopin(): Table has Columns in the pop-in area");
+		assert.strictEqual(fnPopinChangedEvent.callCount, 1, "popinChange event fired");
 
 		oTable.setHiddenInPopin(["None", "Low", "Medium"]);
 		Core.applyChanges();
+		clock.tick(1);
 
-		assert.ok(true, "Hide Columns with importance None, Low and Medium from the pop-in area");
 		assert.strictEqual(oTable.hasPopin(), false, "Call oTable.hasPopin(): Table has no Columns in the pop-in area");
 		assert.ok(oTable._getHiddenInPopin().length > 0, "Some Columns are hidden from the pop-in area by their importance");
+		assert.strictEqual(fnPopinChangedEvent.callCount, 2, "popinChange event fired");
 
-		window.setTimeout(function() {
-			assert.strictEqual(fnPopinChangedEvent.getCalls().length, 3, "Event popinChange has been fired 3 times: 1 onInit, 1 after setContextualWidth(\"Tablet\") and 1 after setColumnImportanceToHide([\"None\", \"Low\", \"Medium\"])");
-		}, 0);
+		clock.restore();
 	});
 
 	QUnit.test("Added Scope attribute to TH elements", function(assert) {
@@ -2309,6 +2311,101 @@ sap.ui.define([
 		assert[Device.browser.msie ? "notOk" : "ok"](oGHLI.getDomRef().classList.contains("sapMTableRowCustomFocus"), "GroupHeaderListItem contains sapMTableRowCustomFocus class");
 	});
 
+	QUnit.test("Column width should not be larger than table", function(assert) {
+		this.sut.destroy();
+		var done = assert.async();
+
+		var oColumn = new Column({
+			width: "48000px",
+			header: new Text({
+				text: "Column1"
+			})
+		});
+
+		this.sut = new Table({
+			fixedLayout: "Strict",
+			columns: [
+				oColumn
+			],
+			items: [
+				new ColumnListItem({
+					cells: [
+						new Text({
+							text: "Cell1"
+						})
+					]
+				})
+			]
+		});
+
+		window.setTimeout(function() {
+			assert.ok(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableLastColumn"), "sapMTableLastColumn class added");
+			assert.strictEqual(oColumn.getDomRef().style.width, "", "column occupies the available width and not bigger than the table");
+			assert.notOk(this.sut._bCheckLastColumnWidth, "_bCheckLastColumnWidth=false, since _checkLastColumnWidth has been processed");
+
+			oColumn.setWidth("10px");
+			Core.applyChanges();
+			assert.ok(this.sut._bCheckLastColumnWidth, "_bCheckLastColumnWidth=true");
+			assert.notOk(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableLastColumn"), "sapMTableLastColumn class not added since column is smaller than table");
+
+			done();
+		}.bind(this), 1);
+
+		this.sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.ok(this.sut._bCheckLastColumnWidth, "_bCheckLastColumnWidth=true");
+	});
+
+	QUnit.test("Column width should not be larger than table - test setTableHeaderVisibility", function(assert) {
+		this.sut.destroy();
+		var done = assert.async();
+
+		var oBigColumn = new Column({
+			width: "48000px",
+			header: new Text({
+				text: "Column1"
+			})
+		});
+
+		var oSmallColumn = new Column({
+			width: "10rem",
+			header: new Text({
+				text: "Column2"
+			})
+		});
+
+		this.sut = new Table({
+			fixedLayout: "Strict",
+			columns: [
+				oSmallColumn, oBigColumn
+			],
+			items: [
+				new ColumnListItem({
+					cells: [
+						new Text({
+							text: "Cell1"
+						}),
+						new Text({
+							text: "Cell2"
+						})
+					]
+				})
+			]
+		});
+
+		this.sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oSmallColumn.setVisible(false);
+
+		window.setTimeout(function() {
+			assert.ok(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableLastColumn"), "sapMTableLastColumn class added to the table");
+			assert.strictEqual(oBigColumn.getDomRef().style.width, "", "column occupies the available width and not bigger than the table");
+			done();
+		}.bind(this), 1);
+	});
+
 	QUnit.module("popinChanged event", {
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
@@ -2321,8 +2418,8 @@ sap.ui.define([
 			Core.applyChanges();
 		},
 		afterEach: function() {
-			this.sut.destroy();
 			this.clock.restore();
+			this.sut.destroy();
 		}
 	});
 

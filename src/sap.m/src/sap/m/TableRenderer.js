@@ -161,9 +161,12 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			}
 
 			var control = oColumn["get" + type + "er"](),
-				width = (iHeaderLength == 1 && oTable.getFixedLayout() != "Strict") ? "" : oColumn.getWidth(),
+				vFixedLayout = oTable.getFixedLayout(),
+				width = (iHeaderLength == 1 && vFixedLayout != "Strict") ? "" : oColumn.getWidth(),
 				aStyleClass = oColumn.getStyleClass(true).split(" "),
 				align = oColumn.getCssAlign();
+
+			oTable._bCheckLastColumnWidth = vFixedLayout == "Strict" && iHeaderLength == 1;
 
 			if (type == "Head") {
 				rm.openStart(cellTag, oColumn);
