@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/model/odata/type/ODataType"
 ], function (Log, NumberFormat, FormatException, ParseException, ValidateException, BaseODataUtils,
-		ODataType, jQuery) {
+		ODataType) {
 	"use strict";
 
 	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/,
@@ -37,8 +36,9 @@ sap.ui.define([
 			if (iScale !== Infinity) {
 				oFormatOptions.minFractionDigits = oFormatOptions.maxFractionDigits = iScale;
 			}
-			oFormatOptions = jQuery.extend(oFormatOptions, oType.oFormatOptions);
+			Object.assign(oFormatOptions, oType.oFormatOptions);
 			oFormatOptions.parseAsString = true;
+			oFormatOptions.preserveDecimals = true;
 			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
 		return oType.oFormat;
@@ -201,6 +201,8 @@ sap.ui.define([
 	 *   Note that <code>maxFractionDigits</code> and <code>minFractionDigits</code> are set to
 	 *   the value of the constraint <code>scale</code> unless it is "variable". They can however
 	 *   be overwritten.
+	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
+	 *   only truthy values are supported; since 1.89.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -232,6 +234,15 @@ sap.ui.define([
 	var Decimal = ODataType.extend("sap.ui.model.odata.type.Decimal", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
+					if (oFormatOptions && "preserveDecimals" in oFormatOptions
+							&& !oFormatOptions.preserveDecimals) {
+						Log.warning("Format option 'preserveDecimals' with value "
+							+ oFormatOptions.preserveDecimals + " is not supported;"
+							+ " 'preserveDecimals' is defaulted to true",
+							null, this.getName());
+						oFormatOptions = Object.assign({}, oFormatOptions);
+						delete oFormatOptions.preserveDecimals;
+					}
 					this.oFormatOptions = oFormatOptions;
 					setConstraints(this, oConstraints);
 				}
