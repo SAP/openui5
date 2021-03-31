@@ -112,6 +112,7 @@ sap.ui.define([
 			"zh_CN": "String4 简体 Admin"
 		},
 		":layer": 0,
+		":multipleLanguage": true,
 		":errors": false
 	};
 	var _oExpectedValues = {
@@ -148,10 +149,6 @@ sap.ui.define([
 		{
 			"key": "en",
 			"description": "English"
-		},
-		{
-			"key": "en_GB",
-			"description": "English UK"
 		},
 		{
 			"key": "es_MX",

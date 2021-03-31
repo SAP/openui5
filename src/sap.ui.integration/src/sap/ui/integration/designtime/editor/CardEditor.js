@@ -93,7 +93,12 @@ sap.ui.define([
 	}
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
 		CONTEXT_TIMEOUT = 5000,
-		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+		aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/designtime/editor/languages.json", {
+			dataType: "json",
+			failOnError: false,
+			async: false
+		});
 
 	/**
 	 * Constructor for a new <code>Card Editor</code>.
@@ -455,8 +460,7 @@ sap.ui.define([
 		var aChanges = [],
 			oCurrentLayerChanges = { ":layer": CardMerger.layers[that.getMode()] },
 			iCurrentModeIndex = CardMerger.layers[this.getMode()];
-		var sCoreLanguage = Core.getConfiguration().getLanguage().replaceAll('-', '_');
-		var sEditorLanguage = that._language || that.getLanguage() || sCoreLanguage;
+		var sEditorLanguage = that._language || that.getLanguage() || Core.getConfiguration().getLanguage().replaceAll('-', '_');
 		oManifestSettings.manifestChanges.forEach(function (oChange) {
 			//filter manifest changes. only the changes before the current layer are needed
 			//card editor will merge the last layer locally to allow "reset" or properties
@@ -475,7 +479,9 @@ sap.ui.define([
 							if (iLayer === CardMerger.layers["translation"]) {
 								oValueTranslation[sEditorLanguage] = oChange[aKeys[j]];
 							} else {
-								oValueTranslation[sCoreLanguage] = oChange[aKeys[j]];
+								for (var p in aLanguageList) {
+									oValueTranslation[p] = oChange[aKeys[j]];
+								}
 							}
 							oChangeTransfered[sValueTranslationsPath] = oValueTranslation;
 							continue;
@@ -741,16 +747,8 @@ sap.ui.define([
 							}
 						}
 					} else if (oItem.translatable && oItem.value) {
-						//in translation mode create an entry if the parameter is translatable and has a value
-						//create or merge valueTranslations property of it, set the current change to current language in valueTranslations.
-						if (!oItem.valueTranslations) {
-							oValueTranslations = {};
-						} else {
-							oValueTranslations = deepClone(oItem.valueTranslations);
-						}
-						oValueTranslations[sLanguage] = oItem.value;
-						oItem.valueTranslations = oValueTranslations;
-						mResult[sValueTranslationsPath] = oItem.valueTranslations;
+						//in translation mode create an entry if there is a value
+						mResult[oItem.manifestpath] = oItem.value;
 					}
 					if (oItem._next && (this.getAllowSettings())) {
 						if (oItem._next.editable === false) {
@@ -770,7 +768,9 @@ sap.ui.define([
 			}
 		}
 		//add a property ":multipleLanguage" for backward compatibility of multiple language feature
-		mResult[":multipleLanguage"] = true;
+		if (this.getMode() !== "translation") {
+			mResult[":multipleLanguage"] = true;
+		}
 		mResult[":layer"] = CardMerger.layers[this.getMode()];
 		mResult[":errors"] = this.checkCurrentSettings()[":errors"];
 		if (mNext) {
@@ -1298,8 +1298,17 @@ sap.ui.define([
 			//if has valueTransaltions, get value via language setting in core
 			if (origLangField.valueTranslations) {
 				var sLanguage = Core.getConfiguration().getLanguage().replaceAll('-', '_');
-				if (origLangField.valueTranslations[sLanguage]) {
-					origLangField.value = origLangField.valueTranslations[sLanguage];
+				if (aLanguageList[sLanguage]) {
+					if (origLangField.valueTranslations[sLanguage]) {
+						origLangField.value = origLangField.valueTranslations[sLanguage];
+					}
+				} else if (sLanguage.indexOf("_") > -1) {
+					sLanguage = sLanguage.substring(0, sLanguage.indexOf("_"));
+					if (aLanguageList[sLanguage]) {
+						if (origLangField.valueTranslations[sLanguage]) {
+							origLangField.value = origLangField.valueTranslations[sLanguage];
+						}
+					}
 				}
 			}
 			if (!origLangField.value) {

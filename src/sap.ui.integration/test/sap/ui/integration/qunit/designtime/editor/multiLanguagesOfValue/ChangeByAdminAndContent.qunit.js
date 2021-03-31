@@ -112,6 +112,7 @@ sap.ui.define([
 			"zh_CN": "String4 简体 Admin"
 		},
 		":layer": 0,
+		":multipleLanguage": true,
 		":errors": false
 	};
 	var _oContentChanges = {
@@ -129,6 +130,7 @@ sap.ui.define([
 			"zh_CN": "String4 简体 Content"
 		},
 		":layer": 5,
+		":multipleLanguage": true,
 		":errors": false
 	};
 	var _oExpectedValues = {

@@ -510,9 +510,9 @@ sap.ui.define([
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 						assert.ok(oPanel2.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_PARAMETERS_GENERALSETTINGS"), "Panel2: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
-						assert.ok(oField1Ori.getAggregation("_field").getText() === "stringParameter Value Admin1", "Field1Ori: String 1 English");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "stringParameter Value Admin1", "Field1Ori: stringParameter Value Admin1");
 						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
-						assert.ok(oField1Trans.getAggregation("_field").getValue() === "String 1 French", "Field1Trans: String 1 French");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "stringParameter Value Admin1", "Field1Trans: stringParameter Value Admin1");
 					}.bind(this)).then(function () {
 						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
 						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
@@ -520,9 +520,9 @@ sap.ui.define([
 						assert.ok(oField2Trans.getAggregation("_field").getValue() === "String 2 French", "Field2Trans: String 2 French");
 					}).then(function () {
 						assert.ok(oLabel3.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField3Ori.getAggregation("_field").getText() === "stringParameter Value Admin3", "Field3Ori: String 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "stringParameter Value Admin3", "Field3Ori: stringParameter Value Admin3");
 						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
-						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 French", "Field3Trans: String 3 French");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "stringParameter Value Admin3", "Field3Trans: stringParameter Value Admin3");
 					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
@@ -598,7 +598,7 @@ sap.ui.define([
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1Ori.getAggregation("_field").getText() === "stringParameter Value Content1", "Field1Ori: stringParameter Value Content1");
 						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
-						assert.ok(oField1Trans.getAggregation("_field").getValue() === "String 1 French", "Field1Trans: String 1 French");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "stringParameter Value Content1", "Field1Trans: stringParameter Value Content1");
 					}.bind(this)).then(function () {
 						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
 						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
@@ -608,7 +608,7 @@ sap.ui.define([
 						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
 						assert.ok(oField3Ori.getAggregation("_field").getText() === "stringParameter Value Content3", "Field3Ori: stringParameter Value Content3");
 						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
-						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 French", "Field3Trans: String 3 French");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "stringParameter Value Content3", "Field3Trans: stringParameter Value Content3");
 					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
@@ -690,7 +690,7 @@ sap.ui.define([
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1Ori.getAggregation("_field").getText() === "stringParameter Value Admin1", "Field1Ori: stringParameter Value Admin1");
 						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
-						assert.ok(oField1Trans.getAggregation("_field").getValue() === "String 1 French", "Field1Trans: String 1 French");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "stringParameter Value Admin1", "Field1Trans: stringParameter Value Admin1");
 					}.bind(this)).then(function () {
 						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
 						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
@@ -700,7 +700,7 @@ sap.ui.define([
 						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
 						assert.ok(oField3Ori.getAggregation("_field").getText() === "stringParameter Value Content3", "Field3Ori: stringParameter Value Content3");
 						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
-						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 French", "Field3Trans: String 3 French");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "stringParameter Value Content3", "Field3Trans: stringParameter Value Content3");
 					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
@@ -798,7 +798,7 @@ sap.ui.define([
 						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
 						assert.ok(oField3Ori.getAggregation("_field").getText() === "stringParameter Value Content3", "Field3Ori: stringParameter Value Content3");
 						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
-						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 French", "Field3Trans: String 3 French");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "stringParameter Value Content3", "Field3Trans: stringParameter Value Content3");
 					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
@@ -1176,7 +1176,7 @@ sap.ui.define([
 						assert.ok(oLabel2.getText() === "string2", "Label2: string2");
 						assert.ok(oField2Ori.getAggregation("_field").getText() === "stringParameter Value Admin2", "Field2Ori: stringParameter Value Admin2");
 						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
-						assert.ok(oField2Trans.getAggregation("_field").getValue() === "string2", "Field2Trans: Value string2");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "stringParameter Value Admin2", "Field2Trans: stringParameter Value Admin2");
 					}).then(function () {
 						assert.ok(oLabel3.getText() === "string3", "Label3: string3");
 						assert.ok(oField3Ori.getAggregation("_field").getText() === "string3", "Field3Ori: string3");
