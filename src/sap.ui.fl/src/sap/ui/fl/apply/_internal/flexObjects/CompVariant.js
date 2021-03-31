@@ -28,22 +28,24 @@ sap.ui.define([
 	/**
 	 * Checks if the the variant can be modified due to its layer and the user's authorization.
 	 * @param {sap.ui.fl.Layer} sLayer - Layer of the variant
+	 * @param {sap.ui.fl.Layer} [sActiveLayer] - Layer in which the operation may take place
 	 * @param {string} sUserId - ID of the variants creator
+	 * @param {boolean} bAllowedForAnyLayer - Flag if the operation is also allowed on objects from any layers
 	 * @returns {boolean} <code>true</code> if the variant is read only
 	 *
 	 * @private
 	 */
-	 function isLayerWritableAndUserAuthorized(sLayer, sUserId) {
-		if (sLayer === Layer.USER) {
+	 function checkLayerAndUserAuthorization(sLayer, sActiveLayer, sUserId, bAllowedForAnyLayer) {
+		if (sActiveLayer) {
+			return bAllowedForAnyLayer || sLayer === sActiveLayer;
+		} else if (sLayer === Layer.USER) {
 			return true;
 		}
-
 		var oSettings = Settings.getInstanceOrUndef();
-		var sActiveLayer;
 
 		if (LayerUtils.isSapUiLayerParameterProvided()) {
 			sActiveLayer = LayerUtils.getCurrentLayer();
-		} else {
+		} else if (!sActiveLayer) {
 			sActiveLayer = oSettings.isPublicLayerAvailable() ? Layer.PUBLIC : Layer.CUSTOMER;
 		}
 		var bLayerWritable = sLayer === sActiveLayer;
@@ -57,16 +59,14 @@ sap.ui.define([
 	 * Returns <code>false</code> if the current language does not equal the original language of the variant file.
 	 * Returns <code>false</code> if the original language is initial.
 	 *
+	 * @param {string} sOriginalLanguage - Language code of the language used on the variant creation
+	 *
 	 * @returns {boolean} <code>true</code> if the current logon language equals the original language of the variant file
 	 *
 	 * @private
 	 */
-	function isReadOnlyDueToOriginalLanguage(sOriginalLanguage) {
-		if (!sOriginalLanguage) {
-			return false;
-		}
-
-		return Utils.getCurrentLanguage() !== sOriginalLanguage;
+	function isRenameEnableDueToOriginalLanguage(sOriginalLanguage) {
+		return !sOriginalLanguage || Utils.getCurrentLanguage() === sOriginalLanguage;
 	}
 
 	function isOriginSystem(sSystem, sClient) {
@@ -102,6 +102,10 @@ sap.ui.define([
 					defaultValue: false
 				},
 				executeOnSelection: {
+					type: "boolean",
+					defaultValue: false
+				},
+				standardVariant: {
 					type: "boolean",
 					defaultValue: false
 				},
@@ -169,14 +173,55 @@ sap.ui.define([
 	});
 
 	/**
-	 * Returns <code>true</code> if the current layer is the same as the layer in which the variant was created, or if the variant is from the end-user layer and was created for this user.
-	 * @returns {boolean} <code>true</code> if the variant file is read only
+	 * Checks whenever the variant can be renamed updating the entity or crating an <code>updateChange</code>.
+	 *
+	 * @param {sap.ui.fl.Layer} sLayer - Layer in which the edition may take place
+	 *
+	 * @returns {boolean} <code>true</code> if the variant can be updated
 	 *
 	 * @public
 	 */
+	CompVariant.prototype.isRenameEnabled = function (sLayer) {
+		return this.isEditEnabled(sLayer) && isRenameEnableDueToOriginalLanguage(this.getOriginalLanguage()) && !this.getStandardVariant();
+	};
+
+	/**
+	 * Checks whenever the variant can be edited (a save operation) updating the entity or crating an <code>updateChange</code>.
+	 *
+	 * @param {sap.ui.fl.Layer} [sActiveLayer] - Layer in which the edition may take place
+	 *
+	 * @returns {boolean} <code>true</code> if the variant can be updated
+	 *
+	 * @public
+	 */
+	CompVariant.prototype.isEditEnabled = function (sActiveLayer) {
+		return isOriginSystem(this.getSourceSystem(), this.getSourceClient())
+			&& checkLayerAndUserAuthorization(this.getLayer(), sActiveLayer, this.getOwnerId(), true);
+	};
+
+	/**
+	 * Checks whenever the variant can be deleted.
+	 *
+	 * @param {sap.ui.fl.Layer} sLayer - Layer in which the deletion may take place
+	 *
+	 * @returns {boolean} <code>true</code> if the variant file can be deleted
+	 *
+	 * @public
+	 */
+	CompVariant.prototype.isDeleteEnabled = function (sLayer) {
+		return isOriginSystem(this.getSourceSystem(), this.getSourceClient())
+			&& checkLayerAndUserAuthorization(this.getLayer(), sLayer, this.getOwnerId())
+			&& !this.getStandardVariant();
+	};
+
+	/**
+	 * Returns <code>true</code> if the current layer is the same as the layer in which the variant was created, or if the variant is from the end-user layer and was created for this user.
+	 * @returns {boolean} <code>true</code> if the variant file is read only
+	 *
+	 * @deprecated
+	 */
 	CompVariant.prototype.isReadOnly = function () {
-		return !isOriginSystem(this.getSourceSystem(), this.getSourceClient())
-			|| !isLayerWritableAndUserAuthorized(this.getLayer(), this.getOwnerId());
+		return !this.isDeleteEnabled();
 	};
 
 	/**
@@ -184,10 +229,10 @@ sap.ui.define([
 	 * the original language of the variant.
 	 * @returns {boolean} <code>true</code> if the label name is read only
 	 *
-	 * @public
+	 * @deprecated
 	 */
 	CompVariant.prototype.isLabelReadOnly = function () {
-		return this.isReadOnly() || isReadOnlyDueToOriginalLanguage(this.getOriginalLanguage());
+		return !this.isRenameEnabled();
 	};
 
 	/**
@@ -225,7 +270,7 @@ sap.ui.define([
 	/**
 	 * Sets the content of the runtime instance.
 	 *
-	 * @retruns {object} Content object of the variant
+	 * @returns {object} Content object of the variant
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.fl
