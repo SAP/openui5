@@ -2987,7 +2987,7 @@ sap.ui.define([
 					visitChildNodes : sinon.match.func,
 					visitNode : sinon.match.func,
 					"with" : sinon.match.func
-				})); // does not work in IE: fnVisitor.printf("%C")
+				}), fnVisitor.printf("%C"));
 		});
 	});
 

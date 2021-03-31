@@ -156,6 +156,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks that the given error is as expected.
+		 *
+		 * @param {object} assert - The QUnit "assert" object
+		 * @param {object} oError - The actual error instance
+		 * @param {function} fnConstructor - The expected error constructor
+		 * @param {string} sMessage - The expected error message
+		 * @throws {Error} - in case the given error is not as expected
+		 */
+		checkError : function (assert, oError, fnConstructor, sMessage) {
+			assert.strictEqual(oError.constructor, fnConstructor);
+			assert.strictEqual(oError.message, sMessage);
+			assert.strictEqual(oError.name, fnConstructor.name);
+		},
+
+		/**
 		 * Companion to <code>QUnit.deepEqual</code> which only tests for the existence of expected
 		 * properties, not the absence of others.
 		 *

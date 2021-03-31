@@ -633,8 +633,8 @@ sap.ui.define([
 		return oSyncPromise.catch(function (vReason) {
 			assert.ok(vReason instanceof TypeError);
 			// behavior for Promise varies:
-			// - Chrome: "Chaining cycle detected for promise #<Promise>"
-			// - Edge, IE: "You cannot resolve a promise with itself"
+			// - Chrome, Edge: "Chaining cycle detected for promise #<Promise>"
+			// - IE: "You cannot resolve a promise with itself"
 			// - FF: "A promise cannot be resolved with itself."
 			assert.strictEqual(vReason.message, "A promise cannot be resolved with itself.");
 		});

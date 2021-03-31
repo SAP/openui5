@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
-	"sap/ui/model/odata/v4/lib/_Requestor"
-], function (Log, isEmptyObject, SyncPromise, _Cache, _GroupLock, _Helper, _Parser, _Requestor) {
+	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/test/TestUtils"
+], function (Log, isEmptyObject, SyncPromise, _Cache, _GroupLock, _Helper, _Parser, _Requestor,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -54,33 +56,6 @@ sap.ui.define([
 			return "Auto";
 		}
 		return "API";
-	}
-
-	/**
-	 * Replacement for Array#fill which IE does not support.
-	 *
-	 * @param {any[]} a
-	 *   Some array
-	 * @param {any} v
-	 *   Some value
-	 * @param {number} i
-	 *   Start index
-	 * @param {number} [n=a.length]
-	 *   End index (exclusive)
-	 * @returns {any[]}
-	 *   <code>a</code>
-	 */
-	function fill(a, v, i, n) {
-		if (n === undefined) {
-			n = a.length;
-		}
-
-		while (i < n) {
-			a[i] = v;
-			i += 1;
-		}
-
-		return a;
 	}
 
 	//*********************************************************************************************
@@ -4996,7 +4971,7 @@ sap.ui.define([
 		// code under test
 		oCache.fill(undefined, 0, Infinity);
 
-		fill(aExpected, undefined, 0);
+		aExpected.fill(undefined, 0);
 		assert.deepEqual(oCache.aElements, aExpected);
 		assert.strictEqual(oCache.aElements.$tail, undefined);
 	});
@@ -5012,7 +4987,7 @@ sap.ui.define([
 		//TODO 20000 is too much for Chrome?!
 		oCache.fill(oPromise, 0, 1024);
 
-		assert.deepEqual(oCache.aElements, fill(new Array(1024), oPromise, 0));
+		assert.deepEqual(oCache.aElements, new Array(1024).fill(oPromise, 0));
 		assert.strictEqual(oCache.aElements.$tail, undefined);
 	});
 
@@ -5038,16 +5013,16 @@ sap.ui.define([
 			oPromiseOld = {};
 
 		oCache.aElements.length = 4096;
-		fill(oCache.aElements, oPromiseOld, 2048); // many existing rows
+		oCache.aElements.fill(oPromiseOld, 2048); // many existing rows
 		oCache.aElements.$tail = oPromiseOld;
 
 		// code under test
 		oCache.fill(oPromiseNew, 0, 1025);
 
 		aExpected = new Array(4096);
-		fill(aExpected, oPromiseNew, 0, 1025);
+		aExpected.fill(oPromiseNew, 0, 1025);
 		// gap from 1025..2048
-		fill(aExpected, oPromiseOld, 2048, 4096);
+		aExpected.fill(oPromiseOld, 2048, 4096);
 		assert.deepEqual(oCache.aElements, aExpected);
 		assert.strictEqual(oCache.aElements.$tail, oPromiseOld);
 	});
@@ -5060,13 +5035,13 @@ sap.ui.define([
 			oPromiseOld = {};
 
 		oCache.aElements.length = 4096;
-		fill(oCache.aElements, oPromiseOld, 2048); // many existing rows
+		oCache.aElements.fill(oPromiseOld, 2048); // many existing rows
 
 		// code under test
 		oCache.fill(oPromiseNew, 0, Infinity);
 
 		aExpected = new Array(4096);
-		fill(aExpected, oPromiseNew, 0, 4096);
+		aExpected.fill(oPromiseNew, 0, 4096);
 		assert.deepEqual(oCache.aElements, aExpected);
 		assert.strictEqual(oCache.aElements.$tail, oPromiseNew);
 	});
@@ -5528,8 +5503,8 @@ sap.ui.define([
 			};
 
 		oCache.mChangeListeners = {};
-		oCache.aElements = [];
-		fill(oCache.aElements, oReadPromise, 5, 10);
+		oCache.aElements = new Array(10);
+		oCache.aElements.fill(oReadPromise, 5, 10);
 		oCache.aElements.$count = undefined;
 
 		oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult),
@@ -5568,7 +5543,7 @@ sap.ui.define([
 		oCache.mChangeListeners = {};
 		oCache.aElements = [];
 		oCache.aElements[10] = oElement10;
-		fill(oCache.aElements, oReadPromise, 5, 10);
+		oCache.aElements.fill(oReadPromise, 5, 10);
 		oCache.aElements.$count = undefined;
 
 		oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult),
@@ -8175,9 +8150,8 @@ sap.ui.define([
 						.then(function () {
 							assert.ok(false);
 						}, function (oError) {
-							assert.throws(function () {
-								throw oError; // Note: assert.deepEqual() does not work in IE11 here
-							}, new Error("Expected 1 row(s), but instead saw " + aData.length));
+							TestUtils.checkError(assert, oError, Error,
+								"Expected 1 row(s), but instead saw " + aData.length);
 						});
 				});
 		});

@@ -484,7 +484,7 @@
 			}
 			mUncaughtById = {};
 
-			//TODO once IE is gone: for (let vReason of mUncaughtPromise2Reason.values()) {...}
+			//TODO for (let vReason of mUncaughtPromise2Reason.values()) {...}
 			if (mUncaughtPromise2Reason && mUncaughtPromise2Reason.size) {
 				itValues = mUncaughtPromise2Reason.values();
 				for (;;) {
