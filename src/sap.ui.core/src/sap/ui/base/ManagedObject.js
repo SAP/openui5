@@ -4894,7 +4894,7 @@ sap.ui.define([
 		// if no local ID array has been passed, collect IDs of all aggregated objects to
 		// be able to properly adapt associations, which are within the cloned object hierarchy
 		if (!aLocalIds && bCloneChildren) {
-			aLocalIds = this.findAggregatedObjects(true).map(function(oObject) {
+			aLocalIds = this.findAggregatedObjects(true, null, true).map(function(oObject) {
 				return oObject.getId();
 			});
 		}
@@ -5134,17 +5134,22 @@ sap.ui.define([
 	 * If no check function is given, all aggregated objects will pass the check and be added
 	 * to the result array.
 	 *
-	 * <b>Take care: this operation might be expensive.</b>
+	 * When setting <code>bIncludeBindingTemplates</code> to <code>true</code>, binding templates will be included
+	 * in the search.
 	 *
-	 * @param {boolean}
-	 *          bRecursive Whether the whole aggregation tree should be searched
-	 * @param {boolean}
-	 *          [fnCondition] Objects for which this function returns a falsy value will not be added
-	 *          to the result array
-	 * @returns {sap.ui.base.ManagedObject[]} Array of aggregated objects that passed the check
+	 * <b>Take care:</b> this operation might be expensive.
+	 *
+	 * @param {boolean} [bRecursive=false]
+	 *   Whether the whole aggregation tree should be searched
+	 * @param {function(sap.ui.base.ManagedObject):boolean} [fnCondition]
+	 *   Objects for which this function returns a falsy value will not be added to the result array
+	 * @param {boolean} [bIncludeBindingTemplates=false]
+	 *   Whether binding templates should be included
+	 * @returns {sap.ui.base.ManagedObject[]}
+	 *   Array of aggregated objects that passed the check
 	 * @public
 	 */
-	ManagedObject.prototype.findAggregatedObjects = function(bRecursive, fnCondition) {
+	ManagedObject.prototype.findAggregatedObjects = function(bRecursive, fnCondition, bIncludeBindingTemplates) {
 
 		var aAggregatedObjects = [];
 
@@ -5155,6 +5160,19 @@ sap.ui.define([
 		function fnFindObjects(oObject) {
 			var a, i, n;
 
+			if (bIncludeBindingTemplates) {
+				for ( n in oObject.mBindingInfos) {
+					a = oObject.mBindingInfos[n].template;
+					if (a) {
+						if ( !fnCondition || fnCondition(a) ) {
+							aAggregatedObjects.push(a);
+						}
+						if ( bRecursive ) {
+							fnFindObjects(a);
+						}
+					}
+				}
+			}
 			for ( n in oObject.mAggregations ) {
 				a = oObject.mAggregations[n];
 				if ( Array.isArray(a) ) {
