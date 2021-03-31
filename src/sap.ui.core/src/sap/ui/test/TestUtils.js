@@ -387,7 +387,9 @@ sap.ui.define([
 						? "\r\nContent-Type: multipart/mixed;boundary=" + oPart.boundary
 							+ "\r\n\r\n" + formatMultipart(oPart, mODataHeaders)
 						: formatResponse(oPart, mODataHeaders));
-					return !oPart.code || oPart.code < 400; // change set or success response
+					// change set, success response or V2 request (continue on error by default)
+					return !oPart.code || oPart.code < 400
+						|| mODataHeaders.DataServiceVersion === "2.0";
 				});
 				aResponseParts.push("--\r\n");
 				return aResponseParts.join("--" + oMultipart.boundary);
