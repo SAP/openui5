@@ -148,7 +148,7 @@ sap.ui.define([
 		 *
 		 * @abstract
 		 * @public
-		 * @deprecated As of version 1.88
+		 * @deprecated As of version 1.88, use {@link topic:c1512f6ce1454ff1913e3857bad56392 Standard Composite Controls}
 		 * @experimental Since 1.56.0
 		 */
 		var XMLComposite = Control.extend("sap.ui.core.XMLComposite", {
