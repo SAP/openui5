@@ -1702,7 +1702,7 @@ sap.ui.define([
 	//     annotation, but an "etag(?)" header which is not supported by _Cache so far
 	//TODO for PATCH we need the edit URL (for single property we can't determine the canonical URL
 	//     because the path need not contain the key properties e.g.
-	//     /EMPLOYEES('2')/EMPLOYEE_2_MANAGER/TEAM_ID) --> accept limitation for now
+	//     /EMPLOYEES('2')/EMPLOYEE_2_MANAGER/TEAM_ID) --> accept restriction for now
 	//TODO if the back end returns a different value we should take care
 	//TODO PUT of primitive property versus PATCH of entity (with select *), what is better?
 	//     --> PATCH with header "Prefer: return=minimal" followed by
