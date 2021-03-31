@@ -4093,12 +4093,24 @@ sap.ui.define([
 				oWarningSelect = new Select({ valueState: ValueState.Warning }),
 				oErrorSelect = new Select({ valueState: ValueState.Error }),
 				oInformationSelect = new Select({ valueState: ValueState.Information }),
+				oRb = Core.getLibraryResourceBundle("sap.m"),
+				oTexts = {},
 				fnCheckValueStateText = function (oSelect) {
-					var oValueStateTextDomRef = document.getElementById(oSelect.getValueStateMessageId() + "-sr"),
-						sExpectedValueStateText = ValueStateSupport.getAdditionalText(oSelect);
+					oSelect.openValueStateMessage();
+					var oValueStateTextDomRef = document.getElementById(oSelect.getValueStateMessageId()),
+						sExpectedValueStateText = oTexts[oSelect.getValueState()] || '',
+						sActualValueStateText = oValueStateTextDomRef && oValueStateTextDomRef.textContent,
+						bIncludes = sActualValueStateText.includes(sExpectedValueStateText),
+						bEquals = sActualValueStateText === sExpectedValueStateText;
 
-					return oValueStateTextDomRef && (oValueStateTextDomRef.textContent.indexOf(sExpectedValueStateText) > -1);
+					oSelect.closeValueStateMessage();
+					return bIncludes || bEquals;
 				};
+
+			oTexts[ValueState.Error] = oRb.getText("INPUTBASE_VALUE_STATE_ERROR");
+			oTexts[ValueState.Warning] = oRb.getText("INPUTBASE_VALUE_STATE_WARNING");
+			oTexts[ValueState.Success] = oRb.getText("INPUTBASE_VALUE_STATE_SUCCESS");
+			oTexts[ValueState.Information] = oRb.getText("INPUTBASE_VALUE_STATE_INFORMATION");
 
 			// arrange
 			oSuccessSelect.placeAt("content");
@@ -4118,7 +4130,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// assert
-			assert.notOk(fnCheckValueStateText(oSuccessSelect), "success select is no longer labelled by success invisible text");
+			assert.ok(fnCheckValueStateText(oSuccessSelect), "success select is no longer labelled by success invisible text");
 
 			// act
 			oErrorSelect.setValueState("Success");
@@ -9582,7 +9594,7 @@ sap.ui.define([
 		QUnit.test("Picker aria-labelledby attribute", function (assert) {
 			// arrange
 			var oSelect = new Select(),
-				sPickerValueStateId = oSelect.getPickerValueStateContentId(),
+				sPickerValueStateId = oSelect.getValueStateTextInvisibleText().getId(),
 				oPicker = oSelect.getPicker();
 			oSelect.placeAt("content");
 			Core.applyChanges();
@@ -9605,7 +9617,7 @@ sap.ui.define([
 		QUnit.test("Picker aria-labelledby attribute initial", function (assert) {
 			// arrange
 			var oSelect = new Select({valueState: ValueState.Success}),
-				sPickerValueStateId = oSelect.getPickerValueStateContentId(),
+				sPickerValueStateId = oSelect.getValueStateTextInvisibleText().getId(),
 				oPicker = oSelect.getPicker();
 			oSelect.placeAt("content");
 			Core.applyChanges();
