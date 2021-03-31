@@ -12,7 +12,6 @@ sap.ui.define([
 	"use strict";
 
 	var mTests = {
-			'qunit/internal/AnnotationParser.qunit.html?hidepassed&coverage' : 'full',
 			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
 			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true&module=sap.ui.model.odata.v4.ODataModel.integration' : 'integration'
 		};
