@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/integration/testlibrary/p13n/p13n",
 	"sap/ui/mdc/integration/testlibrary/variant/Variant",
 	"sap/ui/mdc/integration/testlibrary/filterfield/FilterField",
+	"sap/ui/mdc/integration/testlibrary/field/Field",
 	"sap/ui/mdc/integration/testlibrary/valuehelpdialog/ValueHelpDialog"
 ], function() {
 	"use strict";
