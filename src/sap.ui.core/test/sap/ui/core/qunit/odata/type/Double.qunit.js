@@ -2,7 +2,6 @@
  *{copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
@@ -12,8 +11,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Double",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, Control, NumberFormat, FormatException, ParseException, ValidateException,
-		Double, ODataType, TestUtils) {
+], function (Log, Control, NumberFormat, FormatException, ParseException, ValidateException, Double,
+		ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 	/*eslint no-warning-comments: 0 */
@@ -54,6 +53,46 @@ sap.ui.define([
 			assert.deepEqual(oType.oFormatOptions, null, "no format options");
 			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
+
+	//*********************************************************************************************
+[
+	undefined,
+	{},
+	{preserveDecimals : true},
+	{preserveDecimals : "yes"}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: oFormatOptions.preserveDecimals; no warnings " + i, function (assert) {
+		// code under test
+		var oType = new Double(oFormatOptions);
+
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.getFormatOptions(), oFormatOptions || {});
+	});
+});
+
+	//*********************************************************************************************
+[
+	{preserveDecimals : undefined},
+	{preserveDecimals : null},
+	{preserveDecimals : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		var oType;
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Format option 'preserveDecimals' with value "
+				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
+				+ " defaulted to true",
+				null, "sap.ui.model.odata.type.Double");
+
+		// code under test
+		oType = new Double(oFormatOptions);
+
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, {});
+		assert.deepEqual(oType.getFormatOptions(), {});
+	});
+});
 
 	//*********************************************************************************************
 	[
@@ -229,10 +268,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		set : {foo : "bar"},
-		expect : {foo : "bar", groupingEnabled : true}
+		expect : {foo : "bar", groupingEnabled : true, preserveDecimals : true}
 	}, {
 		set : {decimals : 7, groupingEnabled : false},
-		expect : {decimals : 7, groupingEnabled : false}
+		expect : {decimals : 7, groupingEnabled : false, preserveDecimals : true}
 	}].forEach(function (oFixture) {
 		QUnit.test("formatOptions: " + JSON.stringify(oFixture.set), function (assert) {
 			var oSpy,
