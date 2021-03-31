@@ -82,6 +82,17 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 			oRm.renderControl(oButton._getArrowButton());
 
 			oRm.write("</div>");
+
+			if (sTitleAttribute) {
+				oRm.write("<span");
+				oRm.writeAttributeEscaped("id", oButton.getId() + "-tooltip");
+				oRm.addClass("sapUiInvisibleText");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.text(sTitleAttribute);
+				oRm.write("</span>");
+			}
+
 			oRm.write("</div>");
 		};
 
@@ -100,7 +111,8 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 
 		SplitButtonRenderer.writeAriaLabelledBy = function(oButton, mAccProperties) {
 			var sAriaLabelledByValue = "",
-				oButtonTypeAriaLabelId = oButton.getButtonTypeAriaLabelId();
+				oButtonTypeAriaLabelId = oButton.getButtonTypeAriaLabelId(),
+				sTitleAttribute = oButton.getTitleAttributeValue();
 
 			if (oButton.getText()) {
 				sAriaLabelledByValue += oButton._getTextButton().getId() + "-content";
@@ -110,6 +122,10 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 			if (oButtonTypeAriaLabelId) {
 				sAriaLabelledByValue += oButtonTypeAriaLabelId;
 				sAriaLabelledByValue += " ";
+			}
+
+			if (sTitleAttribute) {
+				sAriaLabelledByValue += oButton.getId() + "-tooltip ";
 			}
 
 			sAriaLabelledByValue += InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_DESCRIPTION");
