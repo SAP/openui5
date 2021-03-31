@@ -1,0 +1,134 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:mdcField="sap.ui.mdc.field"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.ui.mdc.sample.FilterFieldTypes.Controller">
+	<OverflowToolbar>
+		<Title text="FilterFields with different Types"></Title>
+		<ToolbarSpacer/>
+	</OverflowToolbar>
+
+	<form:SimpleForm id="Form1" layout="ColumnLayout" editable="true" labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1" singleContainerFullSize="false" adjustLabelSpan="false">
+		<core:Title text="FilterField"></core:Title>
+
+		<Label text="FilterField (String)"></Label>
+		<mdc:FilterField
+			id="FF1"
+			conditions="{cm>/conditions/title}"
+			display="ValueDescription"
+			maxConditions="-1"
+			fieldHelp="FVH1"
+			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}">
+			<mdc:dependents>
+				<mdcField:FieldValueHelp
+					id="FVH1"
+					title="Book Title"
+					filterFields="*ProductId,Name*"
+					keyPath="ProductId"
+					descriptionPath="Name"
+					showConditionPanel="true">
+					<mdcField:FieldValueHelpMTableWrapper id="FVH1-W">
+						<Table items='{path : "/Books"}' width="20rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+							<columns>
+								<Column>
+									<header>
+										<Text text="Title" />
+									</header>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Active">
+									<cells>
+										<Text text="{title}" />
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+						<!-- <Table items="{path: '/Books'}" width="26rem">
+							<columns>
+								<Column>
+									<Label text="{/#Product/ProductId/@sap:label}"></Label>
+								</Column>
+								<Column width="10rem">
+									<Label text="{/#Product/Name/@sap:label}"></Label>
+								</Column>
+								<Column width="2rem">
+									<Label text="Icon"></Label>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Active">
+									<Text text="{ProductId}"></Text>
+									<Text text="{Name}"></Text>
+									<Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"></Image>
+								</ColumnListItem>
+							</items>
+						</Table> -->
+					</mdcField:FieldValueHelpMTableWrapper>
+				</mdcField:FieldValueHelp>
+			</mdc:dependents>
+		</mdc:FilterField>
+
+		<Label text="FilterField (Date)"></Label>
+		<mdc:FilterField
+			id="FF2"
+			conditions="{cm>/conditions/published}"
+			dataType="sap.ui.model.odata.type.Date"
+			dataTypeFormatOptions="{style: 'long'}"
+			dataTypeConstraints="{V4: true}"
+			maxConditions="-1"
+			fieldHelp="FVH2"
+			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" >
+			<mdc:dependents>
+				<mdcField:FieldValueHelp
+					id="FVH2"
+					title="Dates"
+					showConditionPanel="true">
+				</mdcField:FieldValueHelp>
+			</mdc:dependents>
+		</mdc:FilterField>
+
+		<Label text="FilterField (Double)"></Label>
+		<mdc:FilterField
+			id="FF3"
+			conditions="{cm>/conditions/price}"
+			dataType="sap.ui.model.odata.type.Double"
+			dataTypeFormatOptions=""
+			dataTypeConstraints=""
+			maxConditions="-1"
+			fieldHelp="FVH3"
+			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" >
+			<mdc:dependents>
+				<mdcField:FieldValueHelp
+					id="FVH3"
+					title="double Values"
+					showConditionPanel="true">
+				</mdcField:FieldValueHelp>
+			</mdc:dependents>
+		</mdc:FilterField>
+
+		<Label text="FilterField (Dynamic Date Range)"></Label>
+		<mdc:FilterField
+			id="FF4"
+			conditions="{cm>/conditions/published}"
+			dataType="sap.ui.model.odata.type.Date"
+			dataTypeFormatOptions="{style: 'long'}"
+			dataTypeConstraints="{V4: true}"
+			maxConditions="1"
+			fieldHelp="FVH4"
+			operators="TODAY,YESTERDAY,TOMORROW,TODAYFROMTO,LASTDAYS,NEXTDAYS"
+			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" >
+			<mdc:dependents>
+				<mdcField:ConditionFieldHelp
+					id="FVH4"
+					title="Dates">
+				</mdcField:ConditionFieldHelp>
+			</mdc:dependents>
+		</mdc:FilterField>
+
+
+	</form:SimpleForm>
+</mvc:View>

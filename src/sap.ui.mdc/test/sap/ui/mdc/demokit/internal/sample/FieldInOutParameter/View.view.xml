@@ -1,0 +1,137 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:mdcf="sap.ui.mdc.field"
+		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.ui.mdc.sample.FieldInOutParameter.Controller">
+	<OverflowToolbar>
+		<Title text="in/out parameters"></Title>
+		<ToolbarSpacer/>
+	</OverflowToolbar>
+
+	<form:SimpleForm layout="ColumnLayout" editable="true" labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1" singleContainerFullSize="false" adjustLabelSpan="false">
+		<core:Title text="Fields with Genre as In-Parameter for Subgenre and Genre as out-parameter back to genre"></core:Title>
+
+		<Label text="Genre" />
+		<mdc:Field id="fGenre" value="{genre_code}" fieldHelp="FHGenre" display="Description" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"/>
+		<Label text="SubGenre" />
+		<mdc:Field id="fSubGenre" value="{subgenre_code}" fieldHelp="FHSubGenre" display="Description" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"/>
+
+		<form:dependents>
+			<mdcf:FieldValueHelp
+				id="FHGenre"
+				title="Genre"
+				filterFields="$search"
+				keyPath="code"
+				descriptionPath="title"
+				delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+				<mdcf:inParameters>
+					<mdcf:InParameter id="IOFFVHGenre-In-Class" value="{classification_code}" helpPath="classification_code" />
+				</mdcf:inParameters>
+				<mdcf:outParameters>
+					<mdcf:OutParameter id="IOFFVHGenre-Out-Class" value="{classification_code}" helpPath="classification_code" />
+				</mdcf:outParameters>
+				<mdcf:filterBar>
+					<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+						<vhfb:filterItems>
+							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" conditions="{$filters>/conditions/code}" />
+							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
+						</vhfb:filterItems>
+					</vhfb:FilterBar>
+				</mdcf:filterBar>
+				<mdcf:content>
+					<mdcf:FieldValueHelpMTableWrapper>
+						<mdcf:table>
+							<Table items='{path : "/Genres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+								<columns>
+									<Column>
+										<header>
+											<Text text="Code" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{code}" />
+											<Text text="{title}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcf:table>
+					</mdcf:FieldValueHelpMTableWrapper>
+				</mdcf:content>
+			</mdcf:FieldValueHelp>
+			<mdcf:FieldValueHelp
+				id="FHSubGenre"
+				title="Sub Genre"
+				filterFields="$search"
+				keyPath="code"
+				descriptionPath="title"
+				delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+				<mdcf:inParameters>
+					<mdcf:InParameter id="IOFFVHSub-In-Class" value="{classification_code}" helpPath="classification_code" />
+					<mdcf:InParameter id="IOFFVHSub-In-Genre" value="{genre_code}" helpPath="genre_code" />
+				</mdcf:inParameters>
+				<mdcf:outParameters>
+					<mdcf:OutParameter id="IOFFVHSub-Out-Class" value="{classification_code}" helpPath="classification_code" />
+					<mdcf:OutParameter id="IOFFVHSub-Out-Genre" value="{genre_code}" helpPath="genre_code" />
+				</mdcf:outParameters>
+				<mdcf:filterBar>
+					<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+						<vhfb:filterItems>
+							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" conditions="{$filters>/conditions/code}" />
+							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
+							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Genre" conditions= "{$filters>/conditions/genre_code}" />
+						</vhfb:filterItems>
+					</vhfb:FilterBar>
+				</mdcf:filterBar>
+				<mdcf:content>
+					<mdcf:FieldValueHelpMTableWrapper>
+						<mdcf:table>
+							<Table items='{path : "/SubGenres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+								<columns>
+									<Column>
+										<header>
+											<Text text="Code" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Genre" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{code}" />
+											<Text text="{title}" />
+											<Text text="{genre_code}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcf:table>
+					</mdcf:FieldValueHelpMTableWrapper>
+				</mdcf:content>
+			</mdcf:FieldValueHelp>
+		</form:dependents>
+
+
+	</form:SimpleForm>
+</mvc:View>

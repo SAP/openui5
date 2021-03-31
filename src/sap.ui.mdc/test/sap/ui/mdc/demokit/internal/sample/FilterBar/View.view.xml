@@ -1,0 +1,181 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:mdcf="sap.ui.mdc.field"
+		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.ui.mdc.sample.FilterBar.Controller">
+	<OverflowToolbar>
+		<Title text="FilterBar"></Title>
+		<ToolbarSpacer/>
+	</OverflowToolbar>
+
+	<mdc:FilterBar
+		id="FilterBar"
+		liveMode="false"
+		delegate="{name: 'sap/ui/mdc/sample/FilterBar/FilterBar.delegate', payload: {collectionName: 'Books'}}"
+	>
+	<mdc:dependents>
+		<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH2" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+			<mdcf:filterBar>
+				<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: 'Books'}}" >
+				<vhfb:filterItems>
+					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
+				</vhfb:filterItems>
+				</vhfb:FilterBar>
+			</mdcf:filterBar>
+			<mdcf:suggestContent>
+				<mdcf:FieldValueHelpMTableWrapper>
+					<mdcf:table>
+						<Table items='{path : "/Books"}' width="20rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+							<columns>
+								<Column>
+									<header>
+										<Text text="Title" />
+									</header>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Active">
+									<cells>
+										<Text text="{title}" />
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</mdcf:table>
+				</mdcf:FieldValueHelpMTableWrapper>
+			</mdcf:suggestContent>
+			<mdcf:dialogContent>
+				<mdcf:FieldValueHelpMdcTableWrapper>
+					<mdcf:table>
+						<!-- TODO Warum brauchen wir den komplexen Table delegate und nicht einen generischen delegate wir für die Filterbar im VH? -->
+						<mdc:Table autoBindOnInit="true" id="FH4-mdc-gridtable"
+							width="30rem"
+							selectionMode="Multi"
+							delegate="{name: 'sap/ui/mdc/sample/FilterBar/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
+							<mdc:columns>
+								<mdc:table.Column id="id" header="ID" dataProperty="ID" initialIndex="1">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+								</mdc:table.Column>
+								<mdc:table.Column id="title" header="Title" dataProperty="title" initialIndex="2">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display"/>
+								</mdc:table.Column>
+								<mdc:table.Column id="descr" header="Description" dataProperty="descr" initialIndex="2">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" editMode="Display"/>
+								</mdc:table.Column>
+								<mdc:table.Column id="pub" header="Published" dataProperty="published" initialIndex="2">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{published}" editMode="Display"/>
+								</mdc:table.Column>
+								<mdc:table.Column id="genre" header="Genre" dataProperty="genre_code" initialIndex="2">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{genre_code}" additionalValue="{genre/label}" editMode="Display"/>
+								</mdc:table.Column>
+							</mdc:columns>
+							<mdc:type>
+								<mdc:table.GridTableType rowCountMode="Auto"/>
+							</mdc:type>
+						</mdc:Table>
+					</mdcf:table>
+				</mdcf:FieldValueHelpMdcTableWrapper>
+			</mdcf:dialogContent>
+		</mdcf:FieldValueHelp>
+
+		<mdcf:FieldValueHelp
+			title="Author ID"
+			id="FH1"
+			noDialog="false"
+			keyPath="ID"
+			descriptionPath="name"
+			filterFields="$search"
+			showConditionPanel="true"
+			delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+			<mdcf:filterBar>
+				<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+					<vhfb:basicSearchField>
+						<mdc:FilterField
+							delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+							dataType= "Edm.String"
+							conditions= "{$filters>/conditions/$search}"
+							width="50%"
+							maxConditions="1"
+							placeholder="Search" />
+					</vhfb:basicSearchField>
+					<vhfb:filterItems>
+						<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+						<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
+					</vhfb:filterItems>
+				</vhfb:FilterBar>
+			</mdcf:filterBar>
+			<mdcf:content>
+				<mdcf:FieldValueHelpMTableWrapper>
+					<mdcf:table>
+						<Table items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+							<columns>
+								<Column width="5rem">
+									<header>
+										<Text text="ID" />
+									</header>
+								</Column>
+								<Column>
+									<header>
+										<Text text="Name" />
+									</header>
+								</Column>
+								<Column width="8rem">
+									<header>
+										<Text text="Date of Birth" />
+									</header>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Active">
+									<cells>
+										<Text text="{ID}" />
+										<Text text="{name}" />
+										<Text text="{dateOfBirth}" />
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</mdcf:table>
+				</mdcf:FieldValueHelpMTableWrapper>
+			</mdcf:content>
+		</mdcf:FieldValueHelp>
+
+	</mdc:dependents>
+
+	<mdc:basicSearchField>
+		<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+		dataType="Edm.String"
+		placeholder= "Search"
+		conditions="{$filters>/conditions/$search}"
+		maxConditions="1"
+		width="100%"/>
+	</mdc:basicSearchField>
+
+	<mdc:filterItems>
+		<mdc:FilterField
+			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			id="ff1"
+			label="Author ID"
+			conditions="{$filters>/conditions/author_ID}"
+			dataType="Edm.Int32"
+			required="false"
+			fieldHelp="FH1"
+			display="DescriptionValue"
+			width="100%"/>
+
+		<mdc:FilterField
+			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			id="ff2"
+			label="Title"
+			conditions="{$filters>/conditions/title}"
+			fieldHelp="FH2"
+			width="100%"/>
+
+	</mdc:filterItems>
+	</mdc:FilterBar>
+
+</mvc:View>
