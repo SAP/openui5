@@ -553,7 +553,8 @@
 		iAPILength = 0,
 		iDocLength = 0,
 		iExploredLength = 0,
-		sPreferencedCategory = oOptions.sPreferencedCategory;
+		sPreferencedCategory = oOptions.sPreferencedCategory,
+		bIncludeDeprecated = oOptions.includeDeprecated;
 
 		if ( aMatches ) {
 
@@ -568,7 +569,8 @@
 					sNavURL = oDoc.path,
 					bShouldAddToSearchResults = false,
 					sCategory,
-					oObject;
+					oObject,
+					sDeprecatedMarker;
 				if (oDoc.category === DOC_CATEGORY.documentation) {
 					sNavURL = sNavURL.substring(0, sNavURL.lastIndexOf(".html"));
 					bShouldAddToSearchResults = true;
@@ -585,9 +587,13 @@
 					iDocLength++;
 				} else if (oDoc.category === DOC_CATEGORY.samples) {
 					bShouldAddToSearchResults = true;
+					if (oDoc.deprecated && !bIncludeDeprecated) {
+						continue;
+					}
 					sCategory = "Samples";
+					sDeprecatedMarker = oDoc.deprecated ? "deprecated " : "";
 					oObject = {
-						title: sTitle ? sTitle + " (samples)" : "Untitled",
+						title: sTitle ? sTitle + " (" + sDeprecatedMarker + "samples)" : "Untitled",
 						path: sNavURL,
 						summary: sSummary || "",
 						score: oDoc.score,
@@ -601,6 +607,9 @@
 					sTitle = _formatApiRefTitle(oMatch);
 					sSummary = _formatApiRefSummary(oMatch);
 					bShouldAddToSearchResults = true;
+					if (!bIncludeDeprecated && oDoc.deprecated) {
+						continue;
+					}
 					sCategory = "API Reference";
 					oObject = {
 						title: sTitle,
@@ -668,6 +677,7 @@
 
 	function _formatApiRefTitle (oMatch) {
 		var oDoc = oMatch.doc,
+			sKind = oDoc.kind.toLowerCase(),
 			sMetadataFieldType = APIREF_SECTION_TITLE[oMatch.matchedDocField],
 			sMetadataFieldName = oMatch.matchedDocWord;
 
@@ -676,8 +686,9 @@
 			return sMetadataFieldName + " (" + sMetadataFieldType + ")";
 		}
 
-		if (oDoc.kind) {
-			return oDoc.title + " (" + oDoc.kind + ")";
+		if (sKind) {
+			var sFormattedKind = oDoc.deprecated ? ("deprecated " + sKind) : sKind;
+			return oDoc.title + " (" + sFormattedKind + ")";
 		}
 		//default case
 		return oDoc.title;
