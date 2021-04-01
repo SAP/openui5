@@ -59,16 +59,31 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.NumberFormat.getUnitInstance NumberFormat}.
+	 * @param {object} [oFormatOptions]
+	 *   Formatting options. For a list of all available options, see
+	 *   {@link sap.ui.core.format.NumberFormat.getUnitInstance NumberFormat}. If the format options
+	 *   <code>showMeasure</code> or since 1.89.0 <code>showNumber</code> are set to
+	 *   <code>false</code>, model messages for the respective parts are not propagated to the
+	 *   control, provided the corresponding binding supports the feature of ignoring model
+	 *   messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding
+	 *   binding parameter is not set manually.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
 	 *   Only truthy values are supported; since 1.89.0
-	 * @param {object} [oFormatOptions.source] Additional set of format options to be used if the property in the model is not of type <code>string</code> and needs formatting as well.
-	 * 										   If an empty object is given, the grouping is disabled and a dot is used as decimal separator.
-	 * @param {object} [oConstraints] Value constraints
-	 * @param {float} [oConstraints.minimum] Smallest value allowed for this type
-	 * @param {float} [oConstraints.maximum] Largest value allowed for this type
-	 * @param {float} [oConstraints.decimals] Largest number of decimals allowed for this type
-	 * @param {array} [aDynamicFormatOptionNames] keys for dynamic format options which are used to map additional binding values, e.g. <code>["decimals"]</code>
+	 * @param {object} [oFormatOptions.source]
+	 *   Additional set of format options to be used if the property in the model is not of type
+	 *   <code>string</code> and needs formatting as well. If an empty object is given, the grouping
+	 *   is disabled and a dot is used as decimal separator.
+	 * @param {object} [oConstraints]
+	 *   Value constraints
+	 * @param {float} [oConstraints.minimum]
+	 *   Smallest value allowed for this type
+	 * @param {float} [oConstraints.maximum]
+	 *   Largest value allowed for this type
+	 * @param {float} [oConstraints.decimals]
+	 *   Largest number of decimals allowed for this type
+	 * @param {array} [aDynamicFormatOptionNames]
+	 *   keys for dynamic format options which are used to map additional binding values, e.g.
+	 *   <code>["decimals"]</code>
 	 * @alias sap.ui.model.type.Unit
 	 */
 	var Unit = CompositeType.extend("sap.ui.model.type.Unit", /** @lends sap.ui.model.type.Unit.prototype  */ {
@@ -178,7 +193,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Format the given array containing amount and Unit code to an output value of type string.
+	 * Format the given array containing measure and unit code to an output value of type string.
 	 * Other internal types than 'string' are not supported by the Unit type.
 	 * If a source format has been defined for this type, the formatValue does also accept
 	 * a string value as input, which will be parsed into an array using the source format.
@@ -224,7 +239,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Parse a string value to an array containing amount and Unit. Parsing of other
+	 * Parse a string value to an array containing measure and unit. Parsing of other
 	 * internal types than 'string' is not supported by the Unit type.
 	 * In case a source format has been defined, after parsing the Unit is formatted
 	 * using the source format and a string value is returned instead.
@@ -250,7 +265,8 @@ sap.ui.define([
 				// current default error
 				// more specific errors describing the actual issue during parse()
 				// will be introduced with later work on the NumberFormat
-				if (!Array.isArray(vResult) || isNaN(vResult[0])) {
+				if (!Array.isArray(vResult)
+						|| this.oFormatOptions.showNumber !== false && isNaN(vResult[0])) {
 					throw this._createInvalidUnitParseException();
 				}
 				break;
@@ -366,6 +382,34 @@ sap.ui.define([
 	 */
 	 Unit.prototype.getName = function () {
 		return "sap.ui.model.type.Unit";
+	 };
+
+	 /**
+	 * Gets an array of indices that determine which parts of this type shall not propagate their
+	 * model messages to the attached control. Prerequisite is that the corresponding binding
+	 * supports this feature, see {@link sap.ui.model.Binding#supportsIgnoreMessages}. If the format
+	 * option <code>showMeasure</code> is set to <code>false</code> and the unit value is not shown
+	 * in the control, the part for the unit code shall not propagate model messages to the control.
+	 * Analogously, if the format option <code>showNumber</code> is set to <code>false</code>, the
+	 * measure is not shown in the control and the part for the measure shall not propagate model
+	 * messages to the control.
+	 *
+	 * @return {number[]}
+	 *   An array of indices that determine which parts of this type shall not propagate their model
+	 *   messages to the attached control
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#supportsIgnoreMessages
+	 * @since 1.89.0
+	 */
+	// @override sap.ui.model.Binding#supportsIgnoreMessages
+	Unit.prototype.getPartsIgnoringMessages = function () {
+		if (this.oFormatOptions.showMeasure === false) {
+			return [1];
+		} else if (this.oFormatOptions.showNumber === false) {
+			return [0];
+		}
+		return [];
 	};
 
 	return Unit;
