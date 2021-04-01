@@ -405,11 +405,6 @@ Copyright: 2014 Vitaly Puzrin, Alex Kocharin
 License: MIT
 Comment: these files belong to: Markdown-it
 
-Files: src/sap.ui.integration/src/sap/ui/integration/designtime/thirdparty/ajv.js
-Copyright: 2015-2017 Evgeny Poberezkin
-License: MIT
-Comment: these files belong to: ajv
-
 
 # Library: sap.ui.mdc:
 
@@ -427,4 +422,9 @@ Files: src/testsuite-utils/src/main/resources/META-INF/less/less.js
 Copyright: 2009-2014, Alexis Sellier <self@cloudhead.net>
 License: Apache-2.0
 Comment: these files belong to: LESS
+
+Files: ../test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/ajv/ajv.min.js
+Copyright: 2015-2017 Evgeny Poberezkin
+License: MIT
+Comment: these files belong to: ajv
 

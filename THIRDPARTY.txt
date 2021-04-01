@@ -397,12 +397,6 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/markdown-it.js
 
-Component: ajv, version: 6.10.2
-Copyright: 2015-2017 Evgeny Poberezkin
-License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.integration/src/sap/ui/integration/designtime/thirdparty/ajv.js
-
 
 Library: sap.ui.mdc:
 
@@ -420,6 +414,12 @@ Copyright: 2009-2014, Alexis Sellier <self@cloudhead.net>
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/testsuite-utils/src/main/resources/META-INF/less/less.js
+
+Component: ajv, version: 6.12.3
+Copyright: 2015-2017 Evgeny Poberezkin
+License: MIT
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+Contained in: ../test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/ajv/ajv.min.js
 
 
 ALL LICENSE TEXTS:

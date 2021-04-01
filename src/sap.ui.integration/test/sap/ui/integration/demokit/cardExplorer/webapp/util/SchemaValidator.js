@@ -1,6 +1,6 @@
 sap.ui.loader.config({
 	shim: {
-		"sap/ui/integration/designtime/thirdparty/ajv": {
+		"sap/ui/demo/cardExplorer/thirdparty/ajv/ajv.min": {
 			amd: true,
 			exports: "Ajv"
 		}
@@ -61,7 +61,7 @@ sap.ui.define([
 	SchemaValidator._requireAjv = function () {
 		return new Promise(function (resolve) {
 			sap.ui.require([
-				"sap/ui/integration/designtime/thirdparty/ajv"
+				"sap/ui/demo/cardExplorer/thirdparty/ajv/ajv.min"
 			], function (Ajv) {
 				resolve(Ajv);
 			});
