@@ -63,6 +63,7 @@ sap.ui.define([
 		 * @param {float} fStep - The step walking from start to end.
 		 * @param {int} iTickmarksThreshold - Limits the number of tickmarks.
 		 *
+		 * @public
 		 * @returns {number} The max number of possible tickmarks
 		 */
 		Scale.prototype.calcNumberOfTickmarks = function (fSize, fStep, iTickmarksThreshold) {

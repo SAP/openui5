@@ -1927,7 +1927,9 @@ sap.ui.define([
 	 * regardless of the value this method returns. The start and the end tickmark are taken into account
 	 * for the later calculations.
 	 *
-	 * @param {object} mOptions The option array
+	 * @param {float} fSize - Size of the scale. This is the distance between the start and end point i.e. 0..100
+	 * @param {float} fStep - The step walking from start to end.
+	 * @param {int} iTickmarksThreshold - Limits the number of tickmarks.
 	 * @returns {int} The number of tickmarks
 	 *
 	 * @function
