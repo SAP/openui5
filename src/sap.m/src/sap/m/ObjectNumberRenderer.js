@@ -36,7 +36,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 		var sTooltip = oON.getTooltip_AsString(),
 			sTextDir = oON.getTextDirection(),
 			sTextAlign = oON.getTextAlign(),
-			oAccAttributes = {};
+			oAccAttributes = {
+				role: "group",
+				roledescription: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_NAME")
+			};
 
 		oRm.openStart("div", oON);
 		oRm.class("sapMObjectNumber");

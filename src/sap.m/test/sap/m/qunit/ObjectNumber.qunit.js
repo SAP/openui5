@@ -252,24 +252,32 @@ sap.ui.define([
 
 	QUnit.test("Default ObjectNumber", function (assert) {
 		var oStateElement = document.getElementById(this.oONStateId),
-			oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId);
+			oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId),
+			sControlName = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_NAME"),
+			oControlRef = this.oON.getDomRef();
 
 		assert.notOk(oEmphasizedInfoElement, "Additional SPAN for emphasized information isn't created");
 		assert.notOk(oStateElement, "Additional SPAN for the state isn't created");
+		assert.strictEqual(oControlRef.getAttribute("role"), "group", "Inactive ObjectNumbers have 'group' role");
+		assert.strictEqual(oControlRef.getAttribute("aria-roledescription"), sControlName,
+			"Control's name is added in aria-roledescription");
 	});
 
 	QUnit.test("Active ObjectNumber", function (assert) {
 		var oLabel = new sap.m.Label("label", {
-			text: "Label",
-			labelFor: "ON"
-		});
+				text: "Label",
+				labelFor: "ON"
+			}),
+			oControlRef;
 
 		this.oON.setActive(true);
 
 		oLabel.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(this.oON.getDomRef().getAttribute("aria-labelledby"), "label ON-number ON-unit",
+		oControlRef = this.oON.getDomRef();
+		assert.strictEqual(oControlRef.getAttribute("role"), "button", "ObjectNumber indicates it's active state");
+		assert.strictEqual(oControlRef.getAttribute("aria-labelledby"), "label ON-number ON-unit",
 			"ObjectNumber's content information is added in aria-labelledby alongside the label");
 		oLabel.destroy();
 	});
