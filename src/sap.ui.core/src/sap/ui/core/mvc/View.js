@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"./ViewType",
 	"./ViewRenderer",
+	"./XMLProcessingMode",
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/extend",
@@ -22,6 +23,7 @@ sap.ui.define([
 		merge,
 		ViewType,
 		ViewRenderer,
+		XMLProcessingMode,
 		assert,
 		Log,
 		extend
@@ -1044,7 +1046,7 @@ sap.ui.define([
 		.then(function(ViewClass) {
 			// Activate the asynchronous processing for XMLViews
 			if (ViewClass.getMetadata().isA("sap.ui.core.mvc.XMLView")) {
-				mParameters.processingMode = "sequential";
+				mParameters.processingMode = XMLProcessingMode.Sequential;
 			}
 
 			if (oOwnerComponent) {
@@ -1184,7 +1186,9 @@ sap.ui.define([
 		}
 
 		if (oView.type === ViewType.XML && oView.async) {
-			oView.processingMode = oView.processingMode || "sequential_legacy";
+			// the processingMode might be already set by the asnychronous View.create factory
+			// "SequentialLegacy" is only used if the sap.ui.view factory with async=true was called
+			oView.processingMode = oView.processingMode || XMLProcessingMode.SequentialLegacy;
 		}
 
 		// view replacement
