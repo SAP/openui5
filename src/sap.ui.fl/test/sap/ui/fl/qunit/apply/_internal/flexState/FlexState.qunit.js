@@ -43,10 +43,7 @@ sap.ui.define([
 		} else if (sMapName === "variants") {
 			oReturn.variantsMap = sMapName;
 		} else if (sMapName === "compVariants") {
-			oReturn = {
-				map: sMapName + ".map",
-				byId: sMapName + ".byId"
-			};
+			oReturn = sMapName;
 		}
 		return oReturn;
 	}
@@ -202,11 +199,9 @@ sap.ui.define([
 				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variants"}, "the correct map is returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was not called again");
 
-				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariants.map", "the correct map is returned");
+				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was called once");
-				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariants.map", "the correct map is returned");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was not called again");
-				assert.equal(FlexState.getCompEntitiesByIdMap(sReference), "compVariants.byId", "the correct map is returned");
+				assert.equal(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was not called again");
 			}.bind(this));
 		});

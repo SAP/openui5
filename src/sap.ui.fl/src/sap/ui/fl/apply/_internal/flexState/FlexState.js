@@ -360,12 +360,7 @@ sap.ui.define([
 	};
 
 	FlexState.getCompVariantsMap = function(sReference) {
-		return getCompVariantsMap(sReference).map;
-	};
-
-
-	FlexState.getCompEntitiesByIdMap = function(sReference) {
-		return getCompVariantsMap(sReference).byId;
+		return getCompVariantsMap(sReference);
 	};
 
 	FlexState.callPrepareFunction = function(sMapName, mPropertyBag) {

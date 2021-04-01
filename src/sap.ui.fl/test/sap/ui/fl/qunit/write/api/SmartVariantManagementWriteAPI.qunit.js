@@ -640,6 +640,11 @@ sap.ui.define([
 				var sReference = "an.app";
 				testData.propertyBag.reference = sReference;
 				testData.propertyBag.persistencyKey = sPersistencyKey;
+				oControl = new Control("controlId1");
+				oControl.getPersistencyKey = function() {
+					return sPersistencyKey;
+				};
+				testData.propertyBag.control = oControl;
 				sandbox.stub(InitialStorage, "loadFlexData").resolves({
 					changes: [],
 					comp: {
@@ -658,7 +663,7 @@ sap.ui.define([
 				}).then(function () {
 					SmartVariantManagementWriteAPI.updateVariant(testData.propertyBag);
 
-					var oVariant = FlexState.getCompEntitiesByIdMap(sReference)[testData.propertyBag.id];
+					var oVariant = FlexState.getCompVariantsMap(sReference)[testData.propertyBag.persistencyKey].byId[testData.propertyBag.id];
 
 					assert.equal(oVariant.getText("variantName"), testData.expected.name, "the name is correct");
 					assert.deepEqual(oVariant.getContent(), testData.expected.content, "the content is correct");
@@ -741,6 +746,10 @@ sap.ui.define([
 		QUnit.test("Given a variant was removed", function(assert) {
 			var sReference = "an.app";
 			var sPersistencyKey = "persistency.key";
+			oControl = new Control("controlId1");
+			oControl.getPersistencyKey = function() {
+				return sPersistencyKey;
+			};
 			sandbox.stub(InitialStorage, "loadFlexData").resolves({
 				changes: [],
 				comp: {
@@ -774,7 +783,8 @@ sap.ui.define([
 				return SmartVariantManagementWriteAPI.removeVariant({
 					reference: sReference,
 					persistencyKey: sPersistencyKey,
-					id: "test_variant"
+					id: "test_variant",
+					control: oControl
 				});
 			}).then(function (oRemovedVariant) {
 				assert.equal(oRemovedVariant.getState(), Change.states.DELETED, "the variant is flagged for deletion");
@@ -787,7 +797,8 @@ sap.ui.define([
 				SmartVariantManagementWriteAPI.revert({
 					reference: sReference,
 					persistencyKey: sPersistencyKey,
-					id: "test_variant"
+					id: "test_variant",
+					control: oControl
 				});
 
 				aRevertData = oRemovedVariant.getRevertInfo();

@@ -1216,11 +1216,15 @@ sap.ui.define([
 
 			var fnPublishStub = sandbox.stub(WriteStorage, "publish").resolves();
 			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oMockNewChange]);
-			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompEntitiesByIdMap").resolves({
-				id1: oMockCompVariant1,
-				id2: oMockCompVariant2,
-				id3: oMockCompVariant3,
-				id4: oMockCompVariant4
+			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").resolves({
+				somePersistencyKey: {
+					byId: {
+						id1: oMockCompVariant1,
+						id2: oMockCompVariant2,
+						id3: oMockCompVariant3,
+						id4: oMockCompVariant4
+					}
+				}
 			});
 
 

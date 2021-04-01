@@ -41,9 +41,10 @@ sap.ui.define([
 	}
 
 	function createOrUpdateChange(mPropertyBag, oContent, sChangeType) {
-		var mCompVariantsByIdMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
+		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
+		var sCategory = sChangeType === "standardVariant" ? "standardVariantChange" : sChangeType;
 		// only create a new entity in case none exists
-		if (!mCompVariantsByIdMap[sChangeType]) {
+		if (!mCompVariantsMap[sCategory]) {
 			var oChangeParameter = {
 				fileName: Utils.createDefaultFileName(sChangeType),
 				fileType: "change",
@@ -60,14 +61,13 @@ sap.ui.define([
 			oChangeParameter.support.sapui5Version = sap.ui.version;
 
 			var oChange = new Change(oChangeParameter);
-			mCompVariantsByIdMap[sChangeType] = oChange;
-			FlexState.getCompEntitiesByIdMap(mPropertyBag.reference)[oChange.getId()] = oChange;
+			mCompVariantsMap[sCategory] = oChange;
+			mCompVariantsMap.byId[oChange.getId()] = oChange;
 		}
-
 		//TODO: react accordingly on layering as soon as an update is not possible (versioning / different layer)
-		mCompVariantsByIdMap[sChangeType].setContent(oContent);
+		mCompVariantsMap[sCategory].setContent(oContent);
 
-		return mCompVariantsByIdMap[sChangeType];
+		return mCompVariantsMap[sCategory];
 	}
 
 	function removeFromArrayByName(aObjectArray, oFlexObject) {
@@ -151,16 +151,16 @@ sap.ui.define([
 		});
 	}
 
-	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompEntitiesById, mCompVariantsMapByPersistencyKey, oStoredResponse) {
+	function deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse) {
 		return Storage.remove({
 			flexObject: oFlexObject.getDefinition(),
 			layer: oFlexObject.getLayer(),
 			transport: oFlexObject.getRequest()
 		}).then(function () {
 			// update compVariantsMap
-			delete mCompEntitiesById[oFlexObject.getId()];
+			delete mCompVariantsMapByPersistencyKey.byId[oFlexObject.getId()];
 			if (oFlexObject.getChangeType() === "standardVariant") {
-				mCompVariantsMapByPersistencyKey.standardVariant = undefined;
+				mCompVariantsMapByPersistencyKey.standardVariantChange = undefined;
 			} else if (oFlexObject.getChangeType() === "defaultVariant") {
 				mCompVariantsMapByPersistencyKey.defaultVariant = undefined;
 			} else {
@@ -185,7 +185,7 @@ sap.ui.define([
 		return mCompVariantsMapByPersistencyKey.variants
 			.concat(mCompVariantsMapByPersistencyKey.changes)
 			.concat(mCompVariantsMapByPersistencyKey.defaultVariant)
-			.concat(mCompVariantsMapByPersistencyKey.standardVariant);
+			.concat(mCompVariantsMapByPersistencyKey.standardVariantChange);
 	}
 
 	function getTexts(mPropertyBag) {
@@ -228,8 +228,8 @@ sap.ui.define([
 	}
 
 	function getVariantById(mPropertyBag) {
-		var mCompVariantsByIdMap = FlexState.getCompEntitiesByIdMap(mPropertyBag.reference);
-		return mCompVariantsByIdMap[mPropertyBag.id];
+		var mCompVariantsByIdMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
+		return mCompVariantsByIdMap.byId[mPropertyBag.id];
 	}
 
 	function ifVariantClearRevertData(oFlexObject) {
@@ -366,11 +366,8 @@ sap.ui.define([
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
-
 		getSubSection(oMapOfPersistencyKey, oFlexObject).push(oFlexObject);
-		var sId = oFlexObject.getId();
-		var mCompVariantsMapById = FlexState.getCompEntitiesByIdMap(mPropertyBag.reference);
-		mCompVariantsMapById[sId] = oFlexObject;
+		oMapOfPersistencyKey.byId[oFlexObject.getId()] = oFlexObject;
 		return oFlexObject;
 	};
 
@@ -428,6 +425,7 @@ sap.ui.define([
 		var sLayer = determineLayer(mPropertyBag);
 
 		if (!oVariant.getPersisted() || oVariant.getLayer() !== sLayer) {
+			storeRevertDataInVariant(mPropertyBag, oVariant);
 			var oChangeDefinition = Change.createInitialFileContent({
 				changeType: "updateVariant",
 				layer: sLayer,
@@ -575,7 +573,6 @@ sap.ui.define([
 		var sPersistencyKey = mPropertyBag.persistencyKey;
 		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
 		var mCompVariantsMapByPersistencyKey = mCompVariantsMap._getOrCreate(sPersistencyKey);
-		var mCompEntitiesById = FlexState.getCompEntitiesByIdMap(sReference);
 		var oStoredResponse = FlexState.getStorageResponse(sReference);
 
 		var aPromises = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey)
@@ -590,7 +587,7 @@ sap.ui.define([
 						return updateObjectAndStorage(oFlexObject, oStoredResponse);
 					case Change.states.DELETED:
 						ifVariantClearRevertData(oFlexObject);
-						return deleteObjectAndRemoveFromStorage(oFlexObject, mCompEntitiesById, mCompVariantsMapByPersistencyKey, oStoredResponse);
+						return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse);
 					default:
 						break;
 				}

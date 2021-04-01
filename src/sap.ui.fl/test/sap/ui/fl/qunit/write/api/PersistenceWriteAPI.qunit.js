@@ -135,9 +135,13 @@ sap.ui.define([
 			testName: "when hasHigherLayerChanges is called and the CompVariantState has changes present, but not in a higher layer",
 			persistencyChanges: [],
 			compEntities: {
-				changeId: {
-					getLayer: function () {
-						return Layer.CUSTOMER;
+				persistencyKey: {
+					byId: {
+						changeId: {
+							getLayer: function () {
+								return Layer.CUSTOMER;
+							}
+						}
 					}
 				}
 			},
@@ -150,9 +154,13 @@ sap.ui.define([
 				}
 			}],
 			compEntities: {
-				changeId: {
-					getLayer: function () {
-						return Layer.CUSTOMER_BASE;
+				persistencyKey: {
+					byId: {
+						changeId: {
+							getLayer: function () {
+								return Layer.CUSTOMER_BASE;
+							}
+						}
 					}
 				}
 			},
@@ -170,9 +178,13 @@ sap.ui.define([
 			testName: "when hasHigherLayerChanges is called and the CompVariantState has changes present in a higher layer",
 			persistencyChanges: [],
 			compEntities: {
-				changeId: {
-					getLayer: function () {
-						return Layer.USER;
+				persistencyKey: {
+					byId: {
+						changeId: {
+							getLayer: function () {
+								return Layer.USER;
+							}
+						}
 					}
 				}
 			},
@@ -185,9 +197,13 @@ sap.ui.define([
 				}
 			}],
 			compEntities: {
-				changeId: {
-					getLayer: function () {
-						return Layer.USER;
+				persistencyKey: {
+					byId: {
+						changeId: {
+							getLayer: function () {
+								return Layer.USER;
+							}
+						}
 					}
 				}
 			},
@@ -200,9 +216,13 @@ sap.ui.define([
 				}
 			}],
 			compEntities: {
-				changeId: {
-					getLayer: function () {
-						return Layer.USER;
+				persistencyKey: {
+					byId: {
+						changeId: {
+							getLayer: function () {
+								return Layer.USER;
+							}
+						}
 					}
 				}
 			},
@@ -218,7 +238,7 @@ sap.ui.define([
 				sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 
 				mockChangePersistence(testSetup.persistencyChanges);
-				sandbox.stub(FlexState, "getCompEntitiesByIdMap").returns(testSetup.compEntities);
+				sandbox.stub(FlexState, "getCompVariantsMap").returns(testSetup.compEntities);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
 
 				return PersistenceWriteAPI.hasHigherLayerChanges(mPropertyBag)
