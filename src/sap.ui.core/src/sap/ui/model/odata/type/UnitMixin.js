@@ -254,7 +254,7 @@ sap.ui.define([
 		 *   underlying type is represented as a <code>number</code>, for example
 		 *   {@link sap.ui.model.odata.type.Int32}
 		 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-		 *   Only truthy values are supported; since 1.89.0
+		 *   By default decimals are preserved; since 1.89.0
 		 * @param {boolean} [oFormatOptions.unitOptional=true]
 		 *   Whether the amount or measure is parsed if no currency or unit is entered.
 		 * @param {any} [oFormatOptions.emptyString=0]
@@ -278,20 +278,15 @@ sap.ui.define([
 			if (arguments.length > 2) {
 				throw new Error("Only the parameter oFormatOptions is supported");
 			}
-			if (oFormatOptions && "preserveDecimals" in oFormatOptions &&
-					!oFormatOptions.preserveDecimals) {
-				Log.warning("Format option 'preserveDecimals' with value "
-					+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
-					+ " defaulted to true",
-					null, this.getName());
-			}
 
 			// Note: The format option 'parseAsString' is always set to true, so that the base type
 			// always parses to a string and we can check the result.
 			this.bParseAsString = !oFormatOptions || !("parseAsString" in oFormatOptions)
 				|| oFormatOptions.parseAsString;
-			oFormatOptions = Object.assign({unitOptional : true, emptyString: 0}, oFormatOptions,
-				{parseAsString : true, preserveDecimals : true});
+			oFormatOptions = Object.assign(
+				{unitOptional : true, emptyString: 0, preserveDecimals : true},
+				oFormatOptions,
+				{parseAsString : true});
 
 			fnBaseType.call(this, oFormatOptions, oConstraints);
 			// initialize mixin members after super c'tor as it overrides several members!

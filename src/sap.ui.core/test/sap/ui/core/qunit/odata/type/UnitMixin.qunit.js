@@ -125,32 +125,19 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	undefined,
-	{},
-	{preserveDecimals : true},
-	{preserveDecimals : "yes"}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("constructor: oFormatOptions.preserveDecimals; no warnings " + i, function (assert) {
-		// code under test
-		assert.strictEqual(new UnitMixin(oFormatOptions).oFormatOptions.preserveDecimals, true);
-	});
-});
-
-	//*********************************************************************************************
-[
-	{preserveDecimals : undefined},
-	{preserveDecimals : null},
-	{preserveDecimals : false}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("constructor: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
-		this.oLogMock.expects("warning")
-			.withExactArgs("Format option 'preserveDecimals' with value "
-				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
-				+ " defaulted to true",
-				null, "~TypeName");
+	{formatOptions : undefined, result : true},
+	{formatOptions : {}, result : true},
+	{formatOptions : {preserveDecimals : true}, result : true},
+	{formatOptions : {preserveDecimals : "yes"}, result : "yes"},
+	{formatOptions : {preserveDecimals : undefined}, result : undefined},
+	{formatOptions : {preserveDecimals : null}, result : null},
+	{formatOptions : {preserveDecimals : false}, result : false}
+].forEach(function (oFixture, i) {
+	QUnit.test("constructor: oFormatOptions.preserveDecimals; #" + i, function (assert) {
+		var oType = new UnitMixin(oFixture.formatOptions);
 
 		// code under test
-		assert.strictEqual(new UnitMixin(oFormatOptions).oFormatOptions.preserveDecimals, true);
+		assert.strictEqual(oType.oFormatOptions.preserveDecimals, oFixture.result);
 	});
 });
 

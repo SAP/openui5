@@ -30,7 +30,8 @@ sap.ui.define([
 		if (!oType.oFormat) {
 			oFormatOptions = {
 				groupingEnabled : true,
-				maxIntegerDigits : Infinity
+				maxIntegerDigits : Infinity,
+				preserveDecimals : true
 			};
 			iScale = getScale(oType);
 			if (iScale !== Infinity) {
@@ -38,7 +39,6 @@ sap.ui.define([
 			}
 			Object.assign(oFormatOptions, oType.oFormatOptions);
 			oFormatOptions.parseAsString = true;
-			oFormatOptions.preserveDecimals = true;
 			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
 		return oType.oFormat;
@@ -202,7 +202,7 @@ sap.ui.define([
 	 *   the value of the constraint <code>scale</code> unless it is "variable". They can however
 	 *   be overwritten.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   only truthy values are supported; since 1.89.0
+	 *   by default decimals are preserved; since 1.89.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -234,15 +234,6 @@ sap.ui.define([
 	var Decimal = ODataType.extend("sap.ui.model.odata.type.Decimal", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
-					if (oFormatOptions && "preserveDecimals" in oFormatOptions
-							&& !oFormatOptions.preserveDecimals) {
-						Log.warning("Format option 'preserveDecimals' with value "
-							+ oFormatOptions.preserveDecimals + " is not supported;"
-							+ " 'preserveDecimals' is defaulted to true",
-							null, this.getName());
-						oFormatOptions = Object.assign({}, oFormatOptions);
-						delete oFormatOptions.preserveDecimals;
-					}
 					this.oFormatOptions = oFormatOptions;
 					setConstraints(this, oConstraints);
 				}

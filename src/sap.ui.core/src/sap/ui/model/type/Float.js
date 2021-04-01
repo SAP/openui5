@@ -40,7 +40,7 @@ sap.ui.define([
 	 * @public
 	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.NumberFormat NumberFormat}.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   Only truthy values are supported; since 1.89.0
+	 *   By default decimals are preserved; since 1.89.0
 	 * @param {object} [oFormatOptions.source] Additional set of format options to be used if the property in the model is not of type string and needs formatting as well.
 	 * 										   If an empty object is given, the grouping is disabled and a dot is used as decimal separator.
 	 * @param {object} [oConstraints] Value constraints
@@ -138,18 +138,7 @@ sap.ui.define([
 	};
 
 	Float.prototype.setFormatOptions = function(oFormatOptions) {
-		var bHasPreserveDecimals = "preserveDecimals" in oFormatOptions;
-
-		if (!bHasPreserveDecimals || !oFormatOptions.preserveDecimals) {
-			if (bHasPreserveDecimals && !oFormatOptions.preserveDecimals) {
-				Log.warning("Format option 'preserveDecimals' with value "
-					+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
-					+ " defaulted to true",
-					null, "sap.ui.model.type.Float");
-			}
-			oFormatOptions = Object.assign({}, oFormatOptions, {preserveDecimals : true});
-		}
-		this.oFormatOptions = oFormatOptions;
+		this.oFormatOptions = Object.assign({preserveDecimals : true}, oFormatOptions);
 		this._createFormats();
 	};
 

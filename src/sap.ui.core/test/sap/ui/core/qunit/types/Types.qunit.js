@@ -90,9 +90,12 @@ sap.ui.define([
 	//*********************************************************************************************
 [
 	{preserveDecimals : true},
-	{preserveDecimals : "yes"}
+	{preserveDecimals : "yes"},
+	{preserveDecimals : undefined},
+	{preserveDecimals : null},
+	{preserveDecimals : false}
 ].forEach(function (oFormatOptions, i) {
-	QUnit.test("setFormatOptions: truthy oFormatOptions.preserveDecimals; " + i, function (assert) {
+	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals given; #" + i, function (assert) {
 		var oType = {
 				_createFormats : function () {}
 			};
@@ -103,12 +106,13 @@ sap.ui.define([
 		// code under test
 		CurrencyType.prototype.setFormatOptions.call(oType, oFormatOptions);
 
-		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, oFormatOptions);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals not set", function (assert) {
+	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals not given", function (assert) {
 		var oFormatOptions = {foo : "bar"},
 			oType = {
 				_createFormats : function () {}
@@ -123,34 +127,6 @@ sap.ui.define([
 		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
 		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
 	});
-
-	//*********************************************************************************************
-[
-	{foo : "bar", preserveDecimals : undefined},
-	{foo : "bar", preserveDecimals : null},
-	{foo : "bar", preserveDecimals : false}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("setFormatOptions: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
-		var oType = {
-				_createFormats : function () {},
-				getName : function () {}
-			};
-
-		this.mock(oType).expects("getName").withExactArgs().returns("~TypeName");
-		this.mock(Log).expects("warning")
-			.withExactArgs("Format option 'preserveDecimals' with value "
-				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
-				+ " defaulted to true",
-				null, "~TypeName");
-		this.mock(oType).expects("_createFormats").withExactArgs();
-
-		// code under test
-		CurrencyType.prototype.setFormatOptions.call(oType, oFormatOptions);
-
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getName", function (assert) {
@@ -1281,9 +1257,12 @@ sap.ui.define([
 	//*********************************************************************************************
 [
 	{preserveDecimals : true},
-	{preserveDecimals : "yes"}
+	{preserveDecimals : "yes"},
+	{preserveDecimals : undefined},
+	{preserveDecimals : null},
+	{preserveDecimals : false}
 ].forEach(function (oFormatOptions, i) {
-	QUnit.test("setFormatOptions: truthy oFormatOptions.preserveDecimals; " + i, function (assert) {
+	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals given; #" + i, function (assert) {
 		var oType = {
 				_createFormats : function () {}
 			};
@@ -1294,12 +1273,13 @@ sap.ui.define([
 		// code under test
 		FloatType.prototype.setFormatOptions.call(oType, oFormatOptions);
 
-		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, oFormatOptions);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals not set", function (assert) {
+	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals not given", function (assert) {
 		var oFormatOptions = {foo : "bar"},
 			oType = {
 				_createFormats : function () {}
@@ -1314,32 +1294,6 @@ sap.ui.define([
 		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
 		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
 	});
-
-	//*********************************************************************************************
-[
-	{foo : "bar", preserveDecimals : undefined},
-	{foo : "bar", preserveDecimals : null},
-	{foo : "bar", preserveDecimals : false}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("setFormatOptions: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
-		var oType = {
-				_createFormats : function () {}
-			};
-
-		this.mock(Log).expects("warning")
-			.withExactArgs("Format option 'preserveDecimals' with value "
-				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
-				+ " defaulted to true",
-				null, "sap.ui.model.type.Float");
-		this.mock(oType).expects("_createFormats").withExactArgs();
-
-		// code under test
-		FloatType.prototype.setFormatOptions.call(oType, oFormatOptions);
-
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
-	});
-});
 
 	QUnit.test("float formatValue", function (assert) {
 		var floatType = new FloatType();
@@ -1918,9 +1872,12 @@ sap.ui.define([
 	//*********************************************************************************************
 [
 	{preserveDecimals : true},
-	{preserveDecimals : "yes"}
+	{preserveDecimals : "yes"},
+	{preserveDecimals : undefined},
+	{preserveDecimals : null},
+	{preserveDecimals : false}
 ].forEach(function (oFormatOptions, i) {
-	QUnit.test("setFormatOptions: truthy oFormatOptions.preserveDecimals; " + i, function (assert) {
+	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals given; #" + i, function (assert) {
 		var oType = {
 				_clearInstances : function () {},
 				_createInputFormat : function () {}
@@ -1933,12 +1890,13 @@ sap.ui.define([
 		// code under test
 		UnitType.prototype.setFormatOptions.call(oType, oFormatOptions);
 
-		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oType.oFormatOptions, oFormatOptions);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals not set", function (assert) {
+	QUnit.test("setFormatOptions: oFormatOptions.preserveDecimals not given", function (assert) {
 		var oFormatOptions = {foo : "bar"},
 			oType = {
 				_clearInstances : function () {},
@@ -1955,36 +1913,6 @@ sap.ui.define([
 		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
 		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
 	});
-
-	//*********************************************************************************************
-[
-	{foo : "bar", preserveDecimals : undefined},
-	{foo : "bar", preserveDecimals : null},
-	{foo : "bar", preserveDecimals : false}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("setFormatOptions: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
-		var oType = {
-				_clearInstances : function () {},
-				_createInputFormat : function () {},
-				getName : function () {}
-			};
-
-		this.mock(oType).expects("getName").withExactArgs().returns("~TypeName");
-		this.mock(Log).expects("warning")
-			.withExactArgs("Format option 'preserveDecimals' with value "
-				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
-				+ " defaulted to true",
-				null, "~TypeName");
-		this.mock(oType).expects("_clearInstances").withExactArgs();
-		this.mock(oType).expects("_createInputFormat").withExactArgs();
-
-		// code under test
-		UnitType.prototype.setFormatOptions.call(oType, oFormatOptions);
-
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getName", function (assert) {
