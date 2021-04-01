@@ -774,4 +774,83 @@ sap.ui.define([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("useFakeServer: change set - failure - continue on error (V2)", function (assert) {
+		var mFixture = {
+				"POST /Foo/Any" : {
+					code : 400,
+					message : '{"error" : {"code" : "010","message" : {"value" : "Error 0"}}}'
+				},
+				"GET /Foo/Any?$skip=0&$top=4" : {
+					code : 200,
+					message : '{"d":{"results":[]}}'
+				}
+			};
+		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mFixture);
+		this.oLogMock.expects("info")
+			.withExactArgs("POST /Foo/Any", '{"If-Match":undefined}', "sap.ui.test.TestUtils");
+		this.oLogMock.expects("info")
+			.withExactArgs("GET /Foo/Any?$skip=0&$top=4",'{"If-Match":undefined}',
+				"sap.ui.test.TestUtils");
+
+		TestUtils.resetRequestCount();
+
+		return request("POST", "/Foo/$batch", {"DataServiceVersion" : "2.0"}, [
+			"--batch_c35a-0361-5112",
+			"Content-Type: multipart/mixed; boundary=changeset_ab4e-9114-8adf",
+			"",
+			"--changeset_ab4e-9114-8adf",
+			"Content-Type: application/http",
+			"Content-Transfer-Encoding: binary",
+			"",
+			"POST Any HTTP/1.1",
+			"Content-ID: id-1",
+			"Content-Type: application/json",
+			"Accept: application/json",
+			"Accept-Language: en-US",
+			"DataServiceVersion: 2.0",
+			"MaxDataServiceVersion: 2.0",
+			"Content-Length: 47",
+			"",
+			'{"Note":"Foo","__metadata":{"type":"Foo.Any"}}',
+			"--changeset_ab4e-9114-8adf--",
+			"",
+			"--batch_c35a-0361-5112",
+			"Content-Type: application/http",
+			"Content-Transfer-Encoding: binary",
+			"",
+			"GET Any?$skip=0&$top=4 HTTP/1.1",
+			"sap-contextid-accept: header",
+			"Accept: application/json",
+			"Accept-Language: en-US",
+			"DataServiceVersion: 2.0",
+			"MaxDataServiceVersion: 2.0",
+			"",
+			"",
+			"--batch_c35a-0361-5112--"
+	].join("\r\n")).then(function (oXHR) {
+			assert.strictEqual(oXHR.responseText, [
+				"--batch_c35a-0361-5112",
+				"Content-Type: application/http",
+				"Content-Transfer-Encoding: binary",
+				"",
+				"HTTP/1.1 400 ",
+				"DataServiceVersion: 2.0",
+				"",
+				'{"error" : {"code" : "010","message" : {"value" : "Error 0"}}}',
+				"--batch_c35a-0361-5112",
+				"Content-Type: application/http",
+				"Content-Transfer-Encoding: binary",
+				"",
+				"HTTP/1.1 200 ",
+				"DataServiceVersion: 2.0",
+				"",
+				'{"d":{"results":[]}}',
+				"--batch_c35a-0361-5112--",
+				""
+			].join("\r\n"));
+			assert.strictEqual(TestUtils.getRequestCount(), 1);
+		});
+	});
 });
