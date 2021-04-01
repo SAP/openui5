@@ -35,10 +35,7 @@ sap.ui.define([
 		sPerformanceLoad = sODataMetaModel + "/load",
 		// path to a type's property e.g. ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
 		rPropertyPath =
-			/^((\/dataServices\/schema\/\d+)\/(?:complexType|entityType)\/\d+)\/property\/\d+$/,
-		// maps the metadata URL with query parameters to a shared model cache object containing an
-		// ODataModel and a <code>bFirstCodeListRequested</code> property
-		mSharedModelCacheByUrl = new Map();
+			/^((\/dataServices\/schema\/\d+)\/(?:complexType|entityType)\/\d+)\/property\/\d+$/;
 
 	/**
 	 * @class List binding implementation for the OData meta model which supports filtering on
@@ -377,33 +374,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets an object containing a {@link sap.ui.model.odata.v2.ODataModel} instance and
-	 * <code>bFirstCodeListRequested</code>, which is used to clear the cache at the right time, for
-	 * the given code list metadata URL. The returned object is cached and returned for other calls
-	 * with the same code list metadata URL.
+	 * Gets an object containing a shared {@link sap.ui.model.odata.v2.ODataModel} instance and
+	 * <code>bFirstCodeListRequested</code>, which is used to destroy the shared model at the right
+	 * time.
 	 *
-	 * @param {string} sMetadataUrl
-	 *   The metadata URL, e.g. "/foo/bar/$metadata?sap-ui-language=de-DE"
 	 * @returns {object}
-	 *   An object for the given code list metadata URL containing an OData model and
-	 *   <code>bFirstCodeListRequested</code>
+	 *   An object containing an OData model and <code>bFirstCodeListRequested</code>
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype._getOrCreateSharedModelCache = function (sMetadataUrl) {
-		var oDataModel = this.oDataModel,
-			oSharedModelCache;
+	ODataMetaModel.prototype._getOrCreateSharedModelCache = function () {
+		var oDataModel = this.oDataModel;
 
-		oSharedModelCache = mSharedModelCacheByUrl.get(sMetadataUrl);
-		if (!oSharedModelCache) {
-			oSharedModelCache = {
+		if (!this.oSharedModelCache) {
+			this.oSharedModelCache = {
 				bFirstCodeListRequested : false,
 				oModel : new oDataModel.constructor(oDataModel.getCodeListModelParameters())
 			};
-			mSharedModelCacheByUrl.set(sMetadataUrl, oSharedModelCache);
 		}
 
-		return oSharedModelCache;
+		return this.oSharedModelCache;
 	};
 
 	/**
@@ -516,6 +506,10 @@ sap.ui.define([
 
 	ODataMetaModel.prototype.destroy = function () {
 		MetaModel.prototype.destroy.apply(this, arguments);
+		if (this.oSharedModelCache) {
+			this.oSharedModelCache.oModel.destroy();
+			delete this.oSharedModelCache;
+		}
 		return this.oModel && this.oModel.destroy.apply(this.oModel, arguments);
 	};
 
@@ -580,7 +574,7 @@ sap.ui.define([
 				return oPromise;
 			}
 
-			oCodeListModelCache = that._getOrCreateSharedModelCache(sMetaDataUrl);
+			oCodeListModelCache = that._getOrCreateSharedModelCache();
 			oCodeListModel = oCodeListModelCache.oModel;
 
 			oReadPromise = new Promise(function (fnResolve, fnReject) {
@@ -621,18 +615,25 @@ sap.ui.define([
 
 					return mCode2Customizing;
 				}, {});
+			}).catch(function (oError) {
+				if (oCodeListModel.bDestroyed) {
+					// do not cache rejected Promise caused by a destroyed code list model
+					mCodeListUrl2Promise.delete(sCacheKey);
+				} else {
+					Log.error("Couldn't load code list: " + sCollectionPath + " for "
+							+ that.oDataModel.getCodeListModelParameters().serviceUrl,
+						oError, sODataMetaModel);
+				}
+				throw oError;
 			}).finally(function () {
 				if (oCodeListModelCache.bFirstCodeListRequested) {
-					oCodeListModel.destroy();
-					mSharedModelCacheByUrl.delete(sMetaDataUrl);
+					if (!oCodeListModel.bDestroyed) {
+						oCodeListModel.destroy();
+					}
+					delete that.oSharedModelCache;
 				} else {
 					oCodeListModelCache.bFirstCodeListRequested = true;
 				}
-			}).catch(function (oError) {
-				Log.error("Couldn't load code list: " + sCollectionPath + " for "
-						+ that.oDataModel.getCodeListModelParameters().serviceUrl,
-					oError, sODataMetaModel);
-				throw oError;
 			});
 			mCodeListUrl2Promise.set(sCacheKey, oPromise);
 
