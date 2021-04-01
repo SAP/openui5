@@ -724,9 +724,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the focused DOM element
-	 * @returns {jQuery} The focused DOM element
-	 * @public
+	 * Returns the DOM Element that should get the focus.
+	 *
+	 * To be overwritten by the specific control method.
+	 *
+	 * @return {Element} Returns the DOM Element that should get the focus
+	 * @protected
 	 */
 	Carousel.prototype.getFocusDomRef = function() {
 		return this.$("scrolllist")[0];
