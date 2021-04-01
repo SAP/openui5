@@ -30,7 +30,7 @@
 		{text: "ABCD"     , description: "cat 06",  key: "006", icon: ""},
 		{text: "ABC"      , description: "cat 07",  key: "007", icon: ""},
 		{text: "AB"       , description: "cat 08",  key: "008", icon: ""},
-		{text: "A"        , description: "cat 09",  key: "009", icon: ""},
+		{text: "A"        , description: "cat 09",  key: "009", icon: ""}
 	];
 
 	function createSuggestionModel() {
@@ -85,7 +85,7 @@
 		}
 	}
 	var barSearchFieldLabel = new sap.m.Label({
-		text: "SFB1"
+		text: "Search"
 	}).addStyleClass("sapUiTinyMarginEnd");
 	var barSearchField = new sap.m.SearchField("SFB1", {
 		placeholder: "search for...",
@@ -105,6 +105,7 @@
 	var dialogBarSearchField = barSearchField.clone("dialogBar");
 	var dialogSearchField = new sap.m.SearchField("SFDialog", {
 			placeholder: "search for...",
+			ariaLabelledBy: barSearchFieldLabel,
 			enableSuggestions: true,
 			search:onSearch,
 			suggest: doSuggest
@@ -141,7 +142,7 @@
 			})
 	});
 
-	var searchField1Label = new sap.m.Label({ text: "SF1" });
+	var searchField1Label = new sap.m.Label({ text: "Search" });
 
 	var searchField = new sap.m.SearchField("SF1", {
 			placeholder: "search for...",
