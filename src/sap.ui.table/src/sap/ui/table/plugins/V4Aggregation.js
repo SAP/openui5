@@ -104,7 +104,13 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	V4Aggregation.prototype.onDeactivate = function(oTable) {
+		this._mGroup = undefined;
+		this._mAggregate = undefined;
+		this._aGroupLevels = undefined;
+		this._mColumnState = undefined;
 		this.setRowCountConstraints();
+		resetCellContentVisibilitySettings(this);
+
 		TableUtils.Grouping.clearMode(oTable);
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
@@ -115,6 +121,54 @@ sap.ui.define([
 			oBinding.setAggregation();
 		}
 	};
+
+	/**
+	 * Resets the cell content visibility settings of the columns in the table to the defaults.
+	 *
+	 * @param {sap.ui.table.plugins.V4Aggregation} oPlugin The instance of the plugin.
+	 */
+	function resetCellContentVisibilitySettings(oPlugin) {
+		var oTable = oPlugin.getTable();
+
+		if (oTable) {
+			oTable.getColumns().forEach(function(oColumn) {
+				oColumn._setCellContentVisibilitySettings();
+			});
+		}
+	}
+
+	/**
+	 * Updates the cell content visibility settings of the columns in the table.
+	 *
+	 * @param {sap.ui.table.plugins.V4Aggregation} oPlugin The instance of the plugin.
+	 */
+	function updateCellContentVisibilitySettings(oPlugin) {
+		var oTable = oPlugin.getTable();
+		var sGroupSummary = oPlugin.getGroupSummary();
+
+		if (!oTable || !oPlugin._mColumnState) {
+			return;
+		}
+
+		oTable.getColumns().forEach(function(oColumn) {
+			var mColumnState = oPlugin._mColumnState[oColumn.getId()];
+
+			if (mColumnState) {
+				oColumn._setCellContentVisibilitySettings({
+					groupHeader: {
+						expanded: !!mColumnState.subtotals && (sGroupSummary === "Top" || sGroupSummary === "TopAndBottom"),
+						collapsed: !!mColumnState.subtotals && (sGroupSummary === "Bottom" || sGroupSummary === "TopAndBottom")
+					},
+					summary: {
+						group: !!mColumnState.subtotals,
+						total: !!mColumnState.grandTotal
+					}
+				});
+			} else {
+				oColumn._setCellContentVisibilitySettings();
+			}
+		});
+	}
 
 	/**
 	 * @override
@@ -201,13 +255,22 @@ sap.ui.define([
 	 * Sets aggregation info and derives the query options to be passed to the table list binding.
 	 *
 	 * @param {object} oAggregateInfo An object holding the information needed for data aggregation
-	 * @param {Array} oAggregateInfo.visible An array of property info names, containing the list of visible properties
-	 * @param {Array} oAggregateInfo.groupLevels An array of groupable property info names used to determine group levels (visual grouping).
-	 * @param {Array} oAggregateInfo.subtotals  An array of aggregatable property info names for which the subtotals are displayed
-	 * @param {Array} oAggregateInfo.grandTotal  An array of aggregatable property info names for which the grand total is displayed
+	 * @param {string[]} oAggregateInfo.visible An array of property info names, containing the list of visible properties
+	 * @param {string[]} oAggregateInfo.groupLevels An array of groupable property info names used to determine group levels (visual grouping).
+	 * @param {string[]} oAggregateInfo.subtotals An array of aggregatable property info names for which the subtotals are displayed
+	 * @param {string[]} oAggregateInfo.grandTotal An array of aggregatable property info names for which the grand total is displayed
+	 * @param {object} [oAggregateInfo.columnState]
+	 *     A key-value map, where the key is the column id, and the value is the column's state information.
+	 *     The state is an object with the following keys:
+	 *     - subtotals: boolean - Whether the cell content should be visible in subtotal rows
+	 *     - grandTotal: boolean - Whether the cell content should be visible in grand total rows
 	 */
 	V4Aggregation.prototype.setAggregationInfo = function(oAggregateInfo) {
-		if (!oAggregateInfo || !Array.isArray(oAggregateInfo.visible)) {
+		oAggregateInfo = Object.assign({
+			columnState: {}
+		}, oAggregateInfo);
+
+		if (!Array.isArray(oAggregateInfo.visible)) {
 			this._mGroup = undefined;
 			this._mAggregate = undefined;
 			this._aGroupLevels = undefined;
@@ -253,10 +316,15 @@ sap.ui.define([
 				}
 
 				if (oPropertyInfo && this.isPropertyAggregatable(oPropertyInfo)) {
-					this._mAggregate[oPropertyInfo.path] = {
-						grandTotal: oAggregateInfo.grandTotal && (oAggregateInfo.grandTotal.indexOf(sVisiblePropertyName) >= 0),
-						subtotals: oAggregateInfo.subtotals && (oAggregateInfo.subtotals.indexOf(sVisiblePropertyName) >= 0)
-					};
+					this._mAggregate[oPropertyInfo.path] = {};
+
+					if (oAggregateInfo.grandTotal && (oAggregateInfo.grandTotal.indexOf(sVisiblePropertyName) >= 0)) {
+						this._mAggregate[oPropertyInfo.path].grandTotal = true;
+					}
+
+					if (oAggregateInfo.subtotals && (oAggregateInfo.subtotals.indexOf(sVisiblePropertyName) >= 0)) {
+						this._mAggregate[oPropertyInfo.path].subtotals = true;
+					}
 
 					if (oPropertyInfo.unit) {
 						var oUnitPropertyInfo = this.findPropertyInfo(oPropertyInfo.unit);
@@ -319,6 +387,9 @@ sap.ui.define([
 				}
 			}.bind(this));
 		}
+
+		this._mColumnState = oAggregateInfo.columnState;
+		updateCellContentVisibilitySettings(this);
 
 		this.updateAggregation();
 	};
@@ -388,6 +459,7 @@ sap.ui.define([
 	 */
 	V4Aggregation.prototype.setGroupSummary = function(sValue) {
 		this.setProperty("groupSummary", sValue, true);
+		updateCellContentVisibilitySettings(this);
 		this.updateAggregation();
 	};
 

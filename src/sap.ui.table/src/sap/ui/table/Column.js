@@ -4,37 +4,38 @@
 
 // Provides control sap.ui.table.Column.
 sap.ui.define([
-	'sap/ui/core/Element',
-	'sap/ui/core/library',
-	'sap/ui/core/Popup',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/ui/model/FilterType',
-	'sap/ui/model/Sorter',
-	'sap/ui/model/Type',
-	'sap/ui/model/type/String',
-	'./utils/TableUtils',
-	'./library',
-	'./ColumnMenu',
-	'sap/base/util/ObjectPath',
+	"./ColumnMenu",
+	"./utils/TableUtils",
+	"./library",
+	"sap/ui/core/Element",
+	"sap/ui/core/Popup",
+	"sap/ui/core/library",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Type",
+	"sap/ui/model/type/String",
+	"sap/base/util/ObjectPath",
 	"sap/base/util/JSTokenizer",
+	"sap/base/util/deepClone",
 	"sap/base/Log"
-],
-function(
+], function(
+	ColumnMenu,
+	TableUtils,
+	library,
 	Element,
-	coreLibrary,
 	Popup,
+	coreLibrary,
 	Filter,
 	FilterOperator,
 	FilterType,
 	Sorter,
 	Type,
 	StringType,
-	TableUtils,
-	library,
-	ColumnMenu,
 	ObjectPath,
 	JSTokenizer,
+	deepClone,
 	Log
 ) {
 	"use strict";
@@ -48,6 +49,8 @@ function(
 		Standard: "Standard",
 		Creation: "Creation"
 	};
+
+	var _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Map from cell to column.
@@ -350,7 +353,8 @@ function(
 			creationTemplate: true
 		};
 
-		this._oSorter = null;
+		_private(this).oSorter = null;
+		_private(this).mCellContentVisibilitySettings = normalizeCellContentVisibilitySettings(this);
 
 		// for performance reasons, the cloned column templates shall be stored for later reuse
 		this._initTemplateClonePool();
@@ -803,20 +807,20 @@ function(
 						aColumns[i].setProperty("sorted", false, true);
 						aColumns[i].setProperty("sortOrder", SortOrder.Ascending, true);
 						aColumns[i]._updateIcons(true);
-						delete aColumns[i]._oSorter;
+						delete _private(aColumns[i]).oSorter;
 					}
 				}
 
 				// update properties of current column
 				this.setProperty("sorted", true, true);
 				this.setProperty("sortOrder", sNewSortOrder, true);
-				this._oSorter = new Sorter(this.getSortProperty(), this.getSortOrder() === SortOrder.Descending);
+				_private(this).oSorter = new Sorter(this.getSortProperty(), this.getSortOrder() === SortOrder.Descending);
 
 				// add sorters of all sorted columns to one sorter-array and update sort icon rendering for sorted columns
 				var aSorters = [];
 				for (var i = 0, l = aSortedCols.length; i < l; i++) {
 					aSortedCols[i]._updateIcons(true);
-					aSorters.push(aSortedCols[i]._oSorter);
+					aSorters.push(_private(aSortedCols[i]).oSorter);
 				}
 
 				oTable._resetColumnHeaderHeights();
@@ -1228,6 +1232,94 @@ function(
 		var oParent = this.getParent();
 		return TableUtils.isA(oParent, "sap.ui.table.Table") ? oParent : null;
 	};
+
+	/**
+	 * Sets the cell content visibility settings.
+	 *
+	 * @param {object} [mSettings] The cell content visibility settings. If not defined, the settings are reset.
+	 * @param {boolean} [mSettings.standard=true] Whether cell content in standard rows is visible.
+	 * @param {object | boolean} [mSettings.groupHeader=true] Whether cell content in group header rows is visible.
+	 * @param {boolean} [mSettings.groupHeader.nonExpandable=true] Whether cell content in non-expandable group header rows is visible.
+	 * @param {boolean} [mSettings.groupHeader.expanded=true] Whether cell content in expanded group header rows is visible.
+	 * @param {boolean} [mSettings.groupHeader.collapsed=true] Whether cell content in collapsed group header rows is visible.
+	 * @param {object | boolean} [mSettings.summary=true] Whether cell content in summary rows is visible.
+	 * @param {boolean} [mSettings.summary.group=true] Whether cell content in group summary rows is visible.
+	 * @param {boolean} [mSettings.summary.total=true] Whether cell content in total summary rows is visible.
+	 * @private
+	 */
+	Column.prototype._setCellContentVisibilitySettings = function(mSettings) {
+		validateCellContentVisibilitySettings(mSettings);
+		_private(this).mCellContentVisibilitySettings = normalizeCellContentVisibilitySettings(this, mSettings);
+	};
+
+	/**
+	 * Gets the cell content visibility settings.
+	 *
+	 * @returns {{standard: boolean,
+	 *            summary: {total: boolean, group: boolean},
+	 *            groupHeader: {expanded: boolean, collapsed: boolean, nonExpandable: boolean}}}
+	 *     The cell content visibility settings.
+	 * @private
+	 */
+	Column.prototype._getCellContentVisibilitySettings = function() {
+		return _private(this).mCellContentVisibilitySettings;
+	};
+
+	function validateCellContentVisibilitySettings(mSettings) {
+		if (mSettings == null) {
+			return;
+		}
+
+		validateCellContentVisibilitySetting(mSettings, null, false, ["standard", "groupHeader", "summary"]);
+		validateCellContentVisibilitySetting(mSettings.standard, "standard", true);
+		validateCellContentVisibilitySetting(mSettings.groupHeader, "groupHeader", true, ["nonExpandable", "expanded", "collapsed"]);
+		validateCellContentVisibilitySetting(mSettings.summary, "summary", true, ["group", "total"]);
+	}
+
+	function validateCellContentVisibilitySetting(vValue, sSettingName, bAllowBoolean, aAllowedObjectKeys) {
+		if (vValue != null && !(bAllowBoolean && typeof vValue === "boolean" || aAllowedObjectKeys && typeof vValue === "object")) {
+			throw new Error("Invalid value" + (sSettingName ? " for '" + sSettingName + "'" : ""));
+		}
+
+		if (aAllowedObjectKeys && vValue != null && typeof vValue === "object") {
+			Object.keys(vValue).forEach(function(sSetting) {
+				if (aAllowedObjectKeys.includes(sSetting)) {
+					if (sSettingName != null) {
+						validateCellContentVisibilitySetting(vValue[sSetting],sSettingName + "." + sSetting, true);
+					}
+				} else {
+					throw new Error("Unsupported setting '" + (sSettingName ? sSettingName + "." : "") + sSetting + "'");
+				}
+			});
+		}
+	}
+
+	function normalizeCellContentVisibilitySettings(oColumn, mSettings) {
+		mSettings = mSettings ? mSettings : {};
+
+		return {
+			standard: normalizeCellContentVisibilitySetting(mSettings.standard),
+			groupHeader: {
+				nonExpandable: normalizeCellContentVisibilitySetting(mSettings.groupHeader, "nonExpandable"),
+				expanded: normalizeCellContentVisibilitySetting(mSettings.groupHeader, "expanded"),
+				collapsed: normalizeCellContentVisibilitySetting(mSettings.groupHeader, "collapsed")
+			},
+			summary: {
+				group: normalizeCellContentVisibilitySetting(mSettings.summary, "group"),
+				total: normalizeCellContentVisibilitySetting(mSettings.summary, "total")
+			}
+		};
+	}
+
+	function normalizeCellContentVisibilitySetting(mSetting, sKey) {
+		if (typeof mSetting === "boolean") {
+			return mSetting;
+		} else if (sKey && mSetting) {
+			return mSetting[sKey] !== false;
+		} else {
+			return true;
+		}
+	}
 
 	/**
 	 * Returns the corresponding column of a table cell.

@@ -1,14 +1,15 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/V4Aggregation",
 	"sap/ui/table/utils/TableUtils"
-], function(V4Aggregation, TableUtils) {
+], function(TableQUnitUtils, V4Aggregation, TableUtils) {
 	"use strict";
 
 	TableUtils.getResourceBundle();
 
-	QUnit.module("Tests on AggregateInfo", {
+	QUnit.module("Aggregation info", {
 		beforeEach: function() {
 			this.oPlugin = new V4Aggregation();
 
@@ -76,6 +77,9 @@ sap.ui.define([
 					}
 				}
 			}]);
+		},
+		afterEach: function() {
+			this.oPlugin.destroy();
 		}
 	});
 
@@ -139,7 +143,7 @@ sap.ui.define([
 			grandTotal: ["Property6"]
 		},
 		expectedGroup: {prop1: {}, prop2: {}, prop3: {additionally: []}},
-		expectedAggregate: {prop5: {grandTotal: false, subtotals: true}, prop6: {grandTotal: true, subtotals: true, unit: "prop4"}},
+		expectedAggregate: {prop5: {subtotals: true}, prop6: {grandTotal: true, subtotals: true, unit: "prop4"}},
 		expectedGroupLevels: []
 	}, {
 		label: "1 property aggregated and grouped",
@@ -199,12 +203,115 @@ sap.ui.define([
 
 	aTestData.forEach(function(oData) {
 		QUnit.test(oData.label, function(assert) {
+			var mAggregationInfo;
+			var bEmptyAggregationInfo = oData.aggregationInfo == null || Object.keys(oData.aggregationInfo).length === 0;
+			var bExpectedTotalsSetting = bEmptyAggregationInfo ? undefined : true;
+
 			this.oPlugin.setAggregationInfo(oData.aggregationInfo);
-			var mAggregationInfo = this.oPlugin.getAggregationInfo();
-			assert.equal(JSON.stringify(mAggregationInfo.group), JSON.stringify(oData.expectedGroup), "check grouped properties");
-			assert.equal(JSON.stringify(mAggregationInfo.aggregate), JSON.stringify(oData.expectedAggregate), "check aggregated properties");
-			assert.equal(JSON.stringify(mAggregationInfo.groupLevels), JSON.stringify(oData.expectedGroupLevels), "check group levels");
+
+			mAggregationInfo = this.oPlugin.getAggregationInfo();
+			assert.deepEqual(mAggregationInfo.group, oData.expectedGroup, "grouped properties");
+			assert.deepEqual(mAggregationInfo.aggregate, oData.expectedAggregate, "aggregated properties");
+			assert.deepEqual(mAggregationInfo.groupLevels, oData.expectedGroupLevels, "group levels");
+			assert.strictEqual(mAggregationInfo.grandTotalAtBottomOnly, bExpectedTotalsSetting, "grandTotalAtBottomOnly");
+			assert.strictEqual(mAggregationInfo.subtotalsAtBottomOnly, bExpectedTotalsSetting, "subtotalsAtBottomOnly");
 		});
+	});
+
+	QUnit.test("Property 'groupSummary'", function(assert) {
+		var mExpectedAggregationInfo = {
+			group: {prop1: {}, prop2: {}},
+			groupLevels: [],
+			aggregate: {prop5: {grandTotal: true}},
+			grandTotalAtBottomOnly: true
+		};
+
+		this.oPlugin.setGroupSummary("None");
+		this.oPlugin.setAggregationInfo({
+			visible: ["Property5"],
+			subtotals: ["Property5"],
+			grandTotal: ["Property5"]
+		});
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change to 'None' before setting aggregation info");
+
+		this.oPlugin.setGroupSummary("Top");
+		mExpectedAggregationInfo.aggregate.prop5.subtotals = true;
+		mExpectedAggregationInfo.subtotalsAtBottomOnly = undefined;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change to 'Top'");
+
+		this.oPlugin.setGroupSummary("Bottom");
+		mExpectedAggregationInfo.subtotalsAtBottomOnly = true;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change to 'Bottom'");
+
+		this.oPlugin.setGroupSummary("TopAndBottom");
+		mExpectedAggregationInfo.subtotalsAtBottomOnly = false;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change to 'TopAndBottom'");
+	});
+
+	QUnit.test("Properties 'totalSummaryOnTop' and 'totalSummaryOnBottom'", function(assert) {
+		var mExpectedAggregationInfo = {
+			group: {prop1: {}, prop2: {}},
+			groupLevels: [],
+			aggregate: {prop5: {subtotals: true}},
+			subtotalsAtBottomOnly: true
+		};
+
+		this.oPlugin.setTotalSummaryOnTop("Off");
+		this.oPlugin.setTotalSummaryOnBottom("Off");
+		this.oPlugin.setAggregationInfo({
+			visible: ["Property5"],
+			subtotals: ["Property5"],
+			grandTotal: ["Property5"]
+		});
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change both to 'Off' before setting aggregation info");
+
+		this.oPlugin.setTotalSummaryOnTop("On");
+		mExpectedAggregationInfo.aggregate.prop5.grandTotal = true;
+		mExpectedAggregationInfo.grandTotalAtBottomOnly = undefined;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnTop' to 'On'");
+
+		this.oPlugin.setTotalSummaryOnBottom("On");
+		mExpectedAggregationInfo.grandTotalAtBottomOnly = false;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnBottom' to 'On'");
+
+		this.oPlugin.setTotalSummaryOnTop("Off");
+		mExpectedAggregationInfo.grandTotalAtBottomOnly = true;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnTop' to 'Off'");
+
+		this.oPlugin.setTotalSummaryOnBottom("Off");
+		delete mExpectedAggregationInfo.aggregate.prop5.grandTotal;
+		delete mExpectedAggregationInfo.grandTotalAtBottomOnly;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnBottom' to 'Off'");
+
+		this.oPlugin.setTotalSummaryOnTop("Fixed");
+		mExpectedAggregationInfo.aggregate.prop5.grandTotal = true;
+		mExpectedAggregationInfo.grandTotalAtBottomOnly = undefined;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnTop' to 'Fixed'");
+
+		this.oPlugin.setTotalSummaryOnBottom("Fixed");
+		mExpectedAggregationInfo.grandTotalAtBottomOnly = false;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnBottom' to 'Fixed'");
+
+		this.oPlugin.setTotalSummaryOnTop("Off");
+		mExpectedAggregationInfo.grandTotalAtBottomOnly = true;
+		assert.deepEqual(this.oPlugin.getAggregationInfo(), mExpectedAggregationInfo, "Change 'totalSummaryOnTop' to 'Off'");
+	});
+
+	QUnit.module("Row count constraints", {
+		beforeEach: function() {
+			this.oPlugin = new V4Aggregation();
+
+			this.oPlugin.setPropertyInfos([{
+				name: "Property1",
+				path: "prop1",
+				extension: {
+					defaultAggregate: {}
+				}
+			}]);
+		},
+		afterEach: function() {
+			this.oPlugin.destroy();
+		}
 	});
 
 	["Defaults", {
@@ -213,8 +320,14 @@ sap.ui.define([
 	}, {
 		totalSummaryOnTop: "Fixed",
 		totalSummaryOnBottom: "Off"
+	}, {
+		totalSummaryOnTop: "Off",
+		totalSummaryOnBottom: "Fixed"
+	}, {
+		totalSummaryOnTop: "Fixed",
+		totalSummaryOnBottom: "Fixed"
 	}].forEach(function(mTestData) {
-		QUnit.test("Row count constraints - " + JSON.stringify(mTestData), function(assert) {
+		QUnit.test(JSON.stringify(mTestData), function(assert) {
 			var oSetRowCountConstraints = this.spy(this.oPlugin, "setRowCountConstraints");
 
 			this.oPlugin.setTotalSummaryOnTop(mTestData.totalSummaryOnTop);
@@ -225,9 +338,9 @@ sap.ui.define([
 			var bFixedBottomEnabled = this.oPlugin.getTotalSummaryOnBottom() === "Fixed";
 
 			this.oPlugin.setAggregationInfo({
-				visible: ["Property5"],
-				subtotals: ["Property5"],
-				grandTotal: ["Property5"]
+				visible: ["Property1"],
+				subtotals: ["Property1"],
+				grandTotal: ["Property1"]
 			});
 			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
 				fixedTop: bFixedTopEnabled,
@@ -236,8 +349,8 @@ sap.ui.define([
 
 			oSetRowCountConstraints.reset();
 			this.oPlugin.setAggregationInfo({
-				visible: ["Property5"],
-				grandTotal: ["Property5"]
+				visible: ["Property1"],
+				grandTotal: ["Property1"]
 			});
 			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
 				fixedTop: bFixedTopEnabled,
@@ -246,8 +359,8 @@ sap.ui.define([
 
 			oSetRowCountConstraints.reset();
 			this.oPlugin.setAggregationInfo({
-				visible: ["Property5"],
-				subtotals: ["Property5"]
+				visible: ["Property1"],
+				subtotals: ["Property1"]
 			});
 			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
 				fixedTop: false,
@@ -256,7 +369,7 @@ sap.ui.define([
 
 			oSetRowCountConstraints.reset();
 			this.oPlugin.setAggregationInfo({
-				visible: ["Property5"]
+				visible: ["Property1"]
 			});
 			assert.ok(oSetRowCountConstraints.calledOnceWithExactly({
 				fixedTop: false,
@@ -265,7 +378,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Tests on row state calculation", {
+	QUnit.module("Row state calculation", {
 		beforeEach: function() {
 			this.oPlugin = new V4Aggregation();
 
@@ -298,6 +411,9 @@ sap.ui.define([
 				}
 			});
 			this.oPlugin.setGroupHeaderFormatter(this.oGroupHeaderFormatter);
+		},
+		afterEach: function() {
+			this.oPlugin.destroy();
 		}
 	});
 
@@ -428,5 +544,142 @@ sap.ui.define([
 		assert.throws(function() {
 			that.oPlugin.updateRowState(oState);
 		}, oExpectedError, "boolean");
+	});
+
+	QUnit.module("Cell content visibility", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				columns: (function() {
+					var aColumns = [];
+					for (var i = 0; i < 7; i++) {
+						var oColumn = TableQUnitUtils.createTextColumn({id: "col" + i});
+						this.spy(oColumn, "_setCellContentVisibilitySettings");
+						aColumns.push(oColumn);
+					}
+					return aColumns;
+				}.bind(this))()
+			});
+
+			this.oPlugin = new V4Aggregation();
+			this.oTable.addDependent(this.oPlugin);
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		assertColumnCellVisibilitySettings: function(assert, mExpectedSettings, sTitle, bSkipReset) {
+			this.oPlugin.getTable().getColumns().forEach(function(oColumn) {
+				var sColumnId = oColumn.getId();
+				var oSpy = oColumn._setCellContentVisibilitySettings;
+				var sMessagePrefix = sTitle ? sTitle + ": " : "";
+
+				sMessagePrefix += sColumnId + " - ";
+
+				if (mExpectedSettings && mExpectedSettings[sColumnId]) {
+					assert.ok(oSpy.calledOnceWithExactly(mExpectedSettings[sColumnId]), sMessagePrefix + "set settings");
+					assert.deepEqual(oSpy.firstCall.args[0], mExpectedSettings[sColumnId], sMessagePrefix + "settings");
+				} else if (!bSkipReset) {
+					assert.ok(oSpy.calledOnceWithExactly(), sMessagePrefix + "reset settings");
+				}
+
+				oSpy.reset();
+			});
+		}
+	});
+
+	QUnit.test("No column state", function(assert) {
+		this.oPlugin.setAggregationInfo({
+			visible: []
+		});
+		this.assertColumnCellVisibilitySettings(assert);
+	});
+
+	QUnit.test("Set column state", function(assert) {
+		this.oPlugin.setAggregationInfo({
+			visible: [],
+			columnState: {
+				col0: {},
+				col1: {subtotals: true, grandTotal: false},
+				col2: {subtotals: false, grandTotal: true},
+				col4: {subtotals: true},
+				col5: {grandTotal: true}
+			}
+		});
+
+		this.assertColumnCellVisibilitySettings(assert, {
+			col0: {
+				groupHeader: {expanded: false, collapsed: false},
+				summary: {group: false, total: false}
+			},
+			col1: {
+				groupHeader: {expanded: false, collapsed: true},
+				summary: {group: true, total: false}
+			},
+			col2: {
+				groupHeader: {expanded: false, collapsed: false},
+				summary: {group: false, total: true}
+			},
+			col4: {
+				groupHeader: {expanded: false, collapsed: true},
+				summary: {group: true, total: false}
+			},
+			col5: {
+				groupHeader: {expanded: false, collapsed: false},
+				summary: {group: false, total: true}
+			}
+		});
+	});
+
+	QUnit.test("Property 'groupSummary'", function(assert) {
+		var mExpectedSettings = {
+			col0: {
+				groupHeader: {expanded: false, collapsed: false},
+				summary: {group: false, total: false}
+			},
+			col1: {
+				groupHeader: {expanded: false, collapsed: false},
+				summary: {group: true, total: true}
+			}
+		};
+
+		this.oPlugin.setGroupSummary("None");
+		this.oPlugin.setAggregationInfo({
+			visible: [],
+			columnState: {
+				col0: {subtotals: false, grandTotal: false},
+				col1: {subtotals: true, grandTotal: true}
+			}
+		});
+		this.assertColumnCellVisibilitySettings(assert, mExpectedSettings, "Change to 'None' before setting aggregation info", true);
+
+		this.oPlugin.setGroupSummary("Top");
+		mExpectedSettings.col1.groupHeader.expanded = true;
+		this.assertColumnCellVisibilitySettings(assert, mExpectedSettings, "Change to 'Top'", true);
+
+		this.oPlugin.setGroupSummary("Bottom");
+		mExpectedSettings.col1.groupHeader.collapsed = true;
+		mExpectedSettings.col1.groupHeader.expanded = false;
+		this.assertColumnCellVisibilitySettings(assert, mExpectedSettings, "Change to 'Bottom'", true);
+
+		this.oPlugin.setGroupSummary("TopAndBottom");
+		mExpectedSettings.col1.groupHeader.expanded = true;
+		this.assertColumnCellVisibilitySettings(assert, mExpectedSettings, "Change to 'TopAndBottom'", true);
+	});
+
+	QUnit.skip("Plugin deactivation", function(assert) { // Can't be tested, because the plugin cannot be activated (needs a table with V4 binding).
+		this.oPlugin.setAggregationInfo({
+			visible: [],
+			columnState: {
+				col0: {type: "groupable"}
+			}
+		});
+		this.assertColumnCellVisibilitySettings(assert, {
+			col0: {
+				groupHeader: {expanded: false, collapsed: false},
+				summary: {group: false, total: false}
+			}
+		}, "Before destruction");
+
+		this.oPlugin.deactivate();
+		this.assertColumnCellVisibilitySettings(assert, "After destruction");
 	});
 });

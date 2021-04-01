@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/mdc/Table",
+	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/library",
 	"../../QUnitUtils",
 	"../../util/createAppEnvironment",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	Table,
+	Column,
 	Library,
 	MDCQUnitUtils,
 	createAppEnvironment,
@@ -55,6 +57,16 @@ sap.ui.define([
 		'<mdcTable:Column header="column 2" dataProperty="name_country"> ' +
 		'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
 		'</Table></mvc:View>';
+
+	function createColumnStateIdMap(oTable, aStates) {
+		var mState = {};
+
+		oTable.getColumns().forEach(function(oColumn, iIndex) {
+			mState[oColumn.getId() + "-innerColumn"] = aStates[iIndex];
+		});
+
+		return mState;
+	}
 
 	QUnit.module("Initialization");
 
@@ -175,7 +187,12 @@ sap.ui.define([
 				visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 				groupLevels: [],
 				grandTotal: ["Country"],
-				subtotals: ["Country"]
+				subtotals: ["Country"],
+				columnState: createColumnStateIdMap(oTable, [
+					{subtotals: false, grandTotal: false},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true}
+				])
 			}), "Plugin#setAggregationInfo call");
 			fSetAggregationSpy.restore();
 
@@ -221,7 +238,13 @@ sap.ui.define([
 				visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 				groupLevels: ["Name"],
 				grandTotal: [],
-				subtotals: []
+				subtotals: [],
+				columnState: createColumnStateIdMap(oTable, [
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false}
+				])
 			}), "Plugin#setAggregationInfo call");
 			fSetAggregationSpy.restore();
 		});
@@ -252,7 +275,12 @@ sap.ui.define([
 						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: ["Name"],
 						grandTotal: [],
-						subtotals: []
+						subtotals: [],
+						columnState: createColumnStateIdMap(oTable, [
+							{subtotals: false, grandTotal: false},
+							{subtotals: false, grandTotal: false},
+							{subtotals: false, grandTotal: false}
+						])
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
 					oDelegate.rebindTable = fnRebindTable;
@@ -289,7 +317,12 @@ sap.ui.define([
 						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: [],
 						grandTotal: ["Country"],
-						subtotals: ["Country"]
+						subtotals: ["Country"],
+						columnState: createColumnStateIdMap(oTable, [
+							{subtotals: false, grandTotal: false},
+							{subtotals: true, grandTotal: true},
+							{subtotals: true, grandTotal: true}
+						])
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
 					oDelegate.rebindTable = fnRebindTable;
@@ -325,7 +358,12 @@ sap.ui.define([
 						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: ["Name"],
 						grandTotal: [],
-						subtotals: []
+						subtotals: [],
+						columnState: createColumnStateIdMap(oTable, [
+							{subtotals: false, grandTotal: false},
+							{subtotals: false, grandTotal: false},
+							{subtotals: false, grandTotal: false}
+						])
 					}), "Plugin#setAggregationInfo call");
 
 					fColumnPressSpy.restore();
@@ -347,7 +385,12 @@ sap.ui.define([
 								visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 								groupLevels: ["Name"],
 								grandTotal: ["Country"],
-								subtotals: ["Country"]
+								subtotals: ["Country"],
+								columnState: createColumnStateIdMap(oTable, [
+									{subtotals: false, grandTotal: false},
+									{subtotals: true, grandTotal: true},
+									{subtotals: true, grandTotal: true}
+								])
 							}), "Plugin#setAggregationInfo call");
 
 							fColumnPressSpy.restore();
@@ -395,7 +438,12 @@ sap.ui.define([
 						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: ["Name"],
 						grandTotal: [],
-						subtotals: []
+						subtotals: [],
+						columnState: createColumnStateIdMap(oTable, [
+							{subtotals: false, grandTotal: false},
+							{subtotals: false, grandTotal: false},
+							{subtotals: false, grandTotal: false}
+						])
 					}), "Plugin#setAggregationInfo call");
 
 					fSetAggregationSpy.reset();
@@ -415,7 +463,12 @@ sap.ui.define([
 						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: [],
 						grandTotal: ["Name"],
-						subtotals: ["Name"]
+						subtotals: ["Name"],
+						columnState: createColumnStateIdMap(oTable, [
+							{subtotals: true, grandTotal: true},
+							{subtotals: false, grandTotal: false},
+							{subtotals: true, grandTotal: true}
+						])
 					}), "Plugin#setAggregationInfo call");
 
 					fSetAggregationSpy.reset();
@@ -568,7 +621,11 @@ sap.ui.define([
 						visible: ["Name", "Country","Value"],
 						groupLevels: ["Name"],
 						grandTotal: [],
-						subtotals: []
+						subtotals: [],
+						columnState: createColumnStateIdMap(oTable, [
+							{subtotals: false, grandTotal: false},
+							{subtotals: true, grandTotal: true}
+						])
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
 					oDelegate.rebindTable = fnRebindTable;
@@ -581,6 +638,222 @@ sap.ui.define([
 					done();	// rebindTable won't be called in this case, so we need to end the test here
 				}
 			});
+		});
+	});
+
+	QUnit.module("Column state to plugin", {
+		before: function() {
+			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [
+				{name: "CountryKey", path: "Country", label: "CountryKey", groupable: true, text: "CountryText"},
+				{name: "CountryText", path: "CountryText", label: "CountryText", groupable: true},
+				{name: "CountryKeyAndText", label: "CountryKey+CountryText", propertyInfos: ["CountryKey", "CountryText"]},
+				{name: "SalesAmount", path: "SalesAmount", label: "SalesAmount", unit: "Currency"},
+				{name: "Currency", path: "Currency", label: "Currency", groupable: true},
+				{name: "SalesAmountAndCurrency", label: "SalesAmount+Currency", propertyInfos: ["SalesAmount", "Currency"]},
+				{name: "SalesAmountAndRegion", label: "SalesAmount+Region", propertyInfos: ["SalesAmount", "Region"]},
+				{name: "CurrencyAndRegion", label: "Currency+Region", propertyInfos: ["Currency", "Region"]},
+				{name: "Region", path: "Region", label: "Region", groupable: true},
+				{name: "RegionText", path: "RegionText", label: "RegionText", groupable: true},
+				{name: "SalesAmountInLocalCurrency", path: "SalesAmountInLocalCurrency", label: "SalesAmountInLocalCurrency"},
+				{
+					name: "SalesAmountAndSalesAmountInLocalCurrency",
+					label: "SalesAmountAndSalesAmountInLocalCurrency",
+					propertyInfos: ["SalesAmount", "SalesAmountInLocalCurrency"]
+				},
+				{name: "RegionAndRegionText", label: "Region+RegionText", propertyInfos: ["Region", "RegionText"]}
+			]);
+			MDCQUnitUtils.stubPropertyExtension(Table.prototype, {
+				SalesAmount: {defaultAggregate: {}},
+				Currency: {defaultAggregate: {}}
+			});
+		},
+		beforeEach: function() {
+			return this.createTestObjects().then(function() {
+				this.oTable.destroyColumns();
+				this.oTable.addColumn(new Column({
+					header: "CountryKey",
+					dataProperty: "CountryKey",
+					template: new Text({text: "CountryKey"})
+				}));
+				this.oTable.addColumn(new Column({
+					header: "CountryText",
+					dataProperty: "CountryText",
+					template: new Text({text: "CountryText"})
+				}));
+				this.oTable.addColumn(new Column({
+					header: "CountryKey+CountryText",
+					dataProperty: "CountryKeyAndText",
+					template: new Text({text: "CountryKey CountryText"})
+				}));
+				this.oTable.addColumn(new Column({
+					header: "SalesAmount",
+					dataProperty: "SalesAmount",
+					template: new Text({text: "SalesAmount"})
+				}));
+				this.oTable.addColumn(new Column({
+					header: "Currency",
+					dataProperty: "Currency",
+					template: new Text({text: "Currency"})
+				}));
+				this.oTable.addColumn(new Column({
+					header: "SalesAmount+Currency",
+					dataProperty: "SalesAmountAndCurrency",
+					template: new Text({text: "SalesAmount Currency"})
+				}));
+				this.oTable.addColumn(new Column({
+					header: "SalesAmount+Region",
+					dataProperty: "SalesAmountAndRegion",
+					template: new Text({text: "SalesAmount Region"})
+				}));
+				this.oTable.addColumn(new Column({
+					header: "Currency+Region",
+					dataProperty: "CurrencyAndRegion",
+					template: new Text({text: "Currency Region"})
+				}));
+				this.oTable.addColumn(new Column({
+					header: "SalesAmount+SalesAmountInLocalCurrency",
+					dataProperty: "SalesAmountAndSalesAmountInLocalCurrency",
+					template: new Text({text: "SalesAmount SalesAmountInLocalCurrency"})
+				}));
+				this.oTable.addColumn(new Column({
+					header: "Region+RegionText",
+					dataProperty: "RegionAndRegionText",
+					template: new Text({text: "Region RegionText"})
+				}));
+				return this.oTable.getEngine().getModificationHandler().waitForChanges({
+					element: this.oTable
+				});
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.destroyTestObjects();
+		},
+		after: function() {
+			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			MDCQUnitUtils.restorePropertyExtension(Table.prototype);
+		},
+		createTestObjects: function() {
+			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				Core.applyChanges();
+
+				this.oTable = this.oView.byId('myTable');
+
+				ControlPersonalizationWriteAPI.restore({
+					selector: this.oTable
+				});
+			}.bind(this));
+		},
+		destroyTestObjects: function() {
+			this.oUiComponentContainer.destroy();
+		}
+	});
+
+	QUnit.test("Aggregate", function(assert) {
+		var oTable = this.oTable;
+
+		return oTable._fullyInitialized().then(function() {
+			var oPlugin = oTable._oTable.getDependents()[0];
+			var oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+
+			oTable.setAggregateConditions({
+				SalesAmount: {}
+			});
+			oTable.rebind();
+
+			assert.ok(oSetAggregation.calledOnceWithExactly({
+				visible: ["CountryKey", "CountryText", "SalesAmount", "Currency", "Region", "SalesAmountInLocalCurrency", "RegionText"],
+				groupLevels: [],
+				grandTotal: ["SalesAmount"],
+				subtotals: ["SalesAmount"],
+				columnState: createColumnStateIdMap(oTable, [
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: false, grandTotal: false}
+				])
+			}), "Plugin#setAggregationInfo call");
+		});
+	});
+
+	QUnit.test("Group", function(assert) {
+		var oTable = this.oTable;
+
+		return oTable._fullyInitialized().then(function() {
+			var oPlugin = oTable._oTable.getDependents()[0];
+			var oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+
+			oTable.setGroupConditions({
+				groupLevels: [{
+					name: "CountryKey"
+				}]
+			});
+			oTable.rebind();
+
+			assert.ok(oSetAggregation.calledOnceWithExactly({
+				visible: ["CountryKey", "CountryText", "SalesAmount", "Currency", "Region", "SalesAmountInLocalCurrency", "RegionText"],
+				groupLevels: ["CountryKey"],
+				grandTotal: [],
+				subtotals: [],
+				columnState: createColumnStateIdMap(oTable, [
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false}
+				])
+			}), "Plugin#setAggregationInfo call");
+		});
+	});
+
+	QUnit.test("Group and aggregate", function(assert) {
+		var oTable = this.oTable;
+
+		return oTable._fullyInitialized().then(function() {
+			var oPlugin = oTable._oTable.getDependents()[0];
+			var oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+
+			oTable.setGroupConditions({
+				groupLevels: [{
+					name: "CountryKey"
+				}]
+			});
+			oTable.setAggregateConditions({
+				SalesAmount: {}
+			});
+			oTable.rebind();
+
+			assert.ok(oSetAggregation.calledOnceWithExactly({
+				visible: ["CountryKey", "CountryText", "SalesAmount", "Currency", "Region", "SalesAmountInLocalCurrency", "RegionText"],
+				groupLevels: ["CountryKey"],
+				grandTotal: ["SalesAmount"],
+				subtotals: ["SalesAmount"],
+				columnState: createColumnStateIdMap(oTable, [
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: false, grandTotal: false},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true},
+					{subtotals: false, grandTotal: false}
+				])
+			}), "Plugin#setAggregationInfo call");
 		});
 	});
 });
