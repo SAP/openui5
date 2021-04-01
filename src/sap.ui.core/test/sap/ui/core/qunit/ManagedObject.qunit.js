@@ -2174,6 +2174,34 @@ sap.ui.define([
 		assert.notOk("_hiddenObjects" in oSpy.args[0][1], "hideen association _hiddenObjects must not have been added to the settings for the clone");
 	});
 
+	QUnit.test("Clone Object: associations in nested binding template", function(assert) {
+		assert.expect(3);
+		var oModel = new JSONModel();
+		oModel.setData({
+			list: [{
+				test: "test1",
+				nestedList: [{
+					test:"testNested"
+				}]
+			}]
+		});
+		this.obj.setModel(oModel);
+		var oTemplate = new TestManagedObject("myOBJ");
+		var oTemplateNested = new TestManagedObject("myOBJNested");
+		oTemplateNested.setAssociation("selectedObject", "myOBJNested");
+		oTemplate.bindAggregation("subObjects", {path:"nestedList", template: oTemplateNested, templateShareable:false});
+		this.obj.bindAggregation("subObjects", {path:"/list", template: oTemplate, templateShareable:false});
+
+		var oClone = this.obj.clone("-cl0ne", null, {
+			cloneChildren: true
+		});
+		assert.ok(oClone, "Clone created");
+		var oNestedClone = oClone.getAggregation("subObjects")[0].getAggregation("subObjects")[0];
+		assert.ok(oNestedClone, "Nested binding clone created");
+		assert.equal(oNestedClone.getAssociation("selectedObject"), "myOBJNested-__object0-0--cl0ne", "Association cloned correctly");
+		oModel.destroy();
+	});
+
 	QUnit.test("Clone Object: cloneBinding:true/false", function(assert) {
 		var oModel = new JSONModel();
 		oModel.setData({
