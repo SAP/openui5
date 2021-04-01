@@ -123,12 +123,6 @@ sap.ui.define([
 				sapnext: ["alt", "meta"],
 				sapprevious: ["alt", "meta"]
 			});
-
-			if (sap.ui.getCore().getConfiguration().getAccessibility() && !NavigationList._sAriaPopupLabelId) {
-				NavigationList._sAriaPopupLabelId = new InvisibleText({
-					text: '' // add empty string in order to prevent the redundant speech output
-				}).toStatic().getId();
-			}
 		};
 
 		/**
@@ -358,7 +352,7 @@ sap.ui.define([
 					}
 				},
 				content: list,
-				ariaLabelledBy: [NavigationList._sAriaPopupLabelId]
+				ariaLabelledBy: InvisibleText.getStaticId("sap.tnt", "NAVIGATION_LIST_DIALOG_TITLE")
 			}).addStyleClass('sapContrast sapContrastPlus');
 
 			popover._adaptPositionParams = this._adaptPopoverPositionParams;

@@ -29,9 +29,13 @@
 	  },
 	  {
 		"control": "sap.ui.layout.ResponsiveSplitter",
-		"url": "../ResponsiveSplitter.html",
-		"desc": "To see the paginator in the bottom, please reduce the size of the browser window.",
-		"appComponent": "CA-UI5-CTR-ROD"
+		"url": "ResponsiveSplitter.html",
+		"appComponent": "CA-UI5-CTR-ROD",
+		  "accTest": {
+			  "name": "sap.ui.layout.ResponsiveSplitter",
+			  "title": "ACC test for sap.ui.layout.ResponsiveSplitter",
+			  "module": "./responsivesplitter.qunit"
+		  }
 	  },
 	  {
 		"control": "sap.ui.layout.Splitter",

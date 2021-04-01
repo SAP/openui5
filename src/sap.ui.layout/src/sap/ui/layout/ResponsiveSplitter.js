@@ -155,6 +155,7 @@ sap.ui.define([
 		var oRootContainer = this.getRootPaneContainer();
 		if (oRootContainer) {
 			this._onParentResize();
+			this._updatePaginatorButtonsTooltips();
 		}
 
 		this._setItemNavigation();
