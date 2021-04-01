@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
+	"sap/ui/core/Manifest",
+	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -14,6 +16,8 @@ sap.ui.define([
 	ChangePersistence,
 	Utils,
 	Control,
+	Manifest,
+	Applier,
 	jQuery,
 	sinon
 ) {
@@ -166,15 +170,12 @@ sap.ui.define([
 				},
 				id: "id"
 			};
-			var oManifest = {
+			var oManifest = new Manifest({
 				"sap.app": {
 					type: "application"
 				},
-				"sap.ui5": null,
-				getEntry: function (key) {
-					return this[key];
-				}
-			};
+				"sap.ui5": null
+			});
 			var oExpectedParameter = {
 				componentData: oConfig.componentData,
 				asyncHints: oConfig.asyncHints,
@@ -185,6 +186,121 @@ sap.ui.define([
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
 			assert.equal(oInitializeStub.callCount, 1, "the FlexState was initialized");
 			assert.deepEqual(oInitializeStub.firstCall.args[0], oExpectedParameter, "the FlexState was initialized with the correct parameter");
+		});
+	});
+
+	QUnit.module("Given onLoadComponent is called ", {
+		beforeEach: function() {
+			this.oInitializeStub = sandbox.stub(FlexState, "initialize");
+			this.oConfig = {
+				id: "id",
+				name: "componentName",
+				asyncHints: {
+					requests: [
+						{
+							name: "sap.ui.fl.changes",
+							reference: "componentName"
+						}
+					]
+				}
+			};
+		},
+		afterEach: function() {
+			sandbox.restore();
+			sap.ui.core.Component._fnManifestLoadCallback = null;
+		}
+	}, function() {
+		QUnit.test("with client side app descriptor changes", function (assert) {
+			var oManifestContent = {
+				"sap.app": {
+					type: "application"
+				},
+				"sap.ui5": {
+					dependencies: {}
+				},
+				"sap.ovp": {
+					cards: {}
+				},
+				"$sap.ui.fl.changes": {
+					descriptor: [
+						{
+							changeType: "appdescr_ui5_addLibraries",
+							content: {
+								libraries: {
+									myCustomLib: {
+										minVersion: "1.88"
+									}
+								}
+							}
+						}, {
+							changeType: "appdescr_ovp_addNewCard",
+							content: {
+								card: {
+									customercard: {
+										model: "modelX"
+									}
+								}
+							}
+						}, {
+							changeType: "appdescr_app_addNewInbound",
+							content: {}
+						}
+					]
+				}
+			};
+			var oManifest = new Manifest(oManifestContent);
+
+			var fnApplyChangesStub = sandbox.spy(Applier, "applyChanges");
+
+			return ChangePersistenceFactory._onLoadComponent(this.oConfig, oManifest).then(function() {
+				assert.equal(this.oInitializeStub.callCount, 1, "the FlexState was initialized");
+				assert.equal(fnApplyChangesStub.callCount, 1, "Applier.applyChanges is called once");
+				var oManifestJSON = oManifest.getJson();
+				assert.equal(oManifestJSON["$sap.ui.fl.descriptor.changes"], undefined, "descriptor change section is removed");
+				assert.equal(oManifestJSON["sap.ui5"].dependencies.libs.myCustomLib.minVersion, "1.88", "addLibraries change is applied correctly");
+				assert.equal(oManifestJSON["sap.ovp"].cards.customercard.model, "modelX", "addNewCard change is applied correctly");
+			}.bind(this));
+		});
+
+		QUnit.test("without client side app descriptor changes", function (assert) {
+			var oManifestContent = {
+				"sap.app": {
+					type: "application"
+				},
+				"sap.ui5": {
+					dependencies: {}
+				}
+			};
+			var oManifest = new Manifest(oManifestContent);
+
+			var fnApplyChangesStub = sandbox.spy(Applier, "applyChanges");
+
+			return ChangePersistenceFactory._onLoadComponent(this.oConfig, oManifest).then(function() {
+				assert.equal(this.oInitializeStub.callCount, 1, "the FlexState was initialized");
+				assert.equal(fnApplyChangesStub.callCount, 0, "Applier.applyChanges is never called");
+				assert.deepEqual(oManifestContent, oManifest.getJson(), "manifest is not changed");
+			}.bind(this));
+		});
+
+		QUnit.test("with client side app descriptor changes in wrong section", function (assert) {
+			var oManifestContent = {
+				"sap.app": {
+					type: "application"
+				},
+				"sap.ui5": {
+					dependencies: {}
+				},
+				"$sap.ui.fl.descriptor.changes": []
+			};
+			var oManifest = new Manifest(oManifestContent);
+
+			var fnApplyChangesStub = sandbox.spy(Applier, "applyChanges");
+
+			return ChangePersistenceFactory._onLoadComponent(this.oConfig, oManifest).then(function() {
+				assert.equal(this.oInitializeStub.callCount, 1, "the FlexState was initialized");
+				assert.equal(fnApplyChangesStub.callCount, 0, "Applier.applyChanges is never called");
+				assert.deepEqual(oManifestContent, oManifest.getJson(), "manifest is not changed");
+			}.bind(this));
 		});
 	});
 
