@@ -4,19 +4,16 @@
  */
 
 sap.ui.define([
-	"sap/base/util/ObjectPath"
+	"sap/ui/fl/util/changePropertyValueByPath",
+	"sap/ui/fl/util/checkChangesConsistency"
 ], function(
-	ObjectPath
+	changePropertyValueByPath,
+	checkChangesConsistency
 ) {
 	"use strict";
 
-	function _processEntityProp(oEntityProp, oDataSource) {
-		if (oEntityProp.operation !== "UPDATE" && oEntityProp.operation !== "UPSERT") {
-			throw new Error("Only operation == 'UPDATE' and operation == 'UPSERT' are supported.");
-		}
-		var aPath = oEntityProp.propertyPath.split("/");
-		ObjectPath.set(aPath, oEntityProp.propertyValue, oDataSource);
-	}
+	var SUPPORTED_OPERATIONS = ["UPDATE", "UPSERT"];
+	var SUPPORTED_PROPERTIES = ["uri", "settings/maxAge"];
 
 	/**
 	 * Descriptor change merger for change type <code>appdescr_app_changeDataSource</code>.
@@ -49,18 +46,15 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
 		applyChange: function(oManifest, oChange) {
-			if (oManifest["sap.app"].dataSources) {
-				var oContent = oChange.getContent();
-				var oDataSource = oManifest["sap.app"].dataSources[oContent.dataSourceId];
+			var oDataSources = oManifest["sap.app"].dataSources;
+			var oChangeContent = oChange.getContent();
+			checkChangesConsistency(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS);
+			if (oDataSources) {
+				var oDataSource = oDataSources[oChangeContent.dataSourceId];
 				if (oDataSource) {
-					var oEntityProps = oContent.entityPropertyChange;
-					if (Array.isArray(oEntityProps)) {
-						oEntityProps.forEach(function(oEntityProp) {
-							_processEntityProp(oEntityProp, oDataSource);
-						});
-					} else {
-						_processEntityProp(oEntityProps, oDataSource);
-					}
+					changePropertyValueByPath(oChangeContent.entityPropertyChange, oDataSource);
+				} else {
+					throw new Error("Nothing to update. DataSource with ID \"" + oChangeContent.dataSourceId + "\" does not exist.");
 				}
 			} else {
 				throw Error("No sap.app/dataSource found in manifest.json");
@@ -71,4 +65,4 @@ sap.ui.define([
 	};
 
 	return ChangeDataSouce;
-}, true);
+});
