@@ -1697,11 +1697,10 @@ sap.ui.define([
 	 *
 	 * See {@link sap.ui.core.UIComponent#createContent} for more details and usage samples.
 	 *
-	 * @since 1.89.0
 	 * @name sap.ui.core.IAsyncContentCreation
-	 * @extends sap.ui.core.UIComponent
 	 * @interface
 	 * @public
+	 * @since 1.89.0
 	 */
 
 	/**
@@ -1779,7 +1778,6 @@ sap.ui.define([
 	 * @since 1.48.0
 	 * @name sap.ui.core.IFormContent
 	 * @interface
-	 * @extends sap.ui.core.Control
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1825,7 +1823,6 @@ sap.ui.define([
 	 * @since 1.86.0
 	 * @name sap.ui.core.ISemanticFormContent
 	 * @interface
-	 * @extends sap.ui.core.Control
 	 * @public
 	 * @experimental As of version 1.86
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
