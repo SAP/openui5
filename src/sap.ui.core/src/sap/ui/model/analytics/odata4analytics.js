@@ -203,7 +203,7 @@ sap.ui.define([
 	/**
 	 * Create a reference to an OData model having certain workarounds activated. A
 	 * workaround is an implementation that changes the standard behavior of the API
-	 * to overcome some gap or limitation in the OData provider. The workaround
+	 * to overcome some gap or restriction in the OData provider. The workaround
 	 * implementation can be conditionally activated by passing the identifier in
 	 * the constructor.
 	 *
@@ -522,7 +522,7 @@ sap.ui.define([
 							if (oParameterization3 != null) {
 								// TODO: extend this implementation to support more
 								// than one related parameter entity type
-								throw "LIMITATION: Unable to handle multiple parameter entity types of query entity "
+								throw "Unable to handle multiple parameter entity types of query entity "
 										+ oEntityType3.name;
 							} else {
 								oParameterization3 = oMatchingParameterization;
@@ -5194,7 +5194,7 @@ sap.ui.define([
 			this._oSortExpression = null;
 
 			if (this._oParameterizationRequest != null && this._bUseMasterData == true) {
-				throw "LIMITATION: parameterized master data entity sets are not yet implemented";
+				throw "Parameterized master data entity sets are not yet implemented";
 			}
 			if (this._bUseMasterData) {
 				this._oEntitySet = this._oDimension.getMasterDataEntitySet();
