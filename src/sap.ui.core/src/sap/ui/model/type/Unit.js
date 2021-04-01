@@ -68,7 +68,7 @@ sap.ui.define([
 	 *   messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding
 	 *   binding parameter is not set manually.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   Only truthy values are supported; since 1.89.0
+	 *   By default decimals are preserved; since 1.89.0
 	 * @param {object} [oFormatOptions.source]
 	 *   Additional set of format options to be used if the property in the model is not of type
 	 *   <code>string</code> and needs formatting as well. If an empty object is given, the grouping
@@ -322,18 +322,7 @@ sap.ui.define([
 	};
 
 	Unit.prototype.setFormatOptions = function(oFormatOptions) {
-		var bHasPreserveDecimals = "preserveDecimals" in oFormatOptions;
-
-		if (!bHasPreserveDecimals || !oFormatOptions.preserveDecimals) {
-			if (bHasPreserveDecimals && !oFormatOptions.preserveDecimals) {
-				Log.warning("Format option 'preserveDecimals' with value "
-					+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
-					+ " defaulted to true",
-					null, this.getName());
-			}
-			oFormatOptions = Object.assign({}, oFormatOptions, {preserveDecimals : true});
-		}
-		this.oFormatOptions = oFormatOptions;
+		this.oFormatOptions = Object.assign({preserveDecimals : true}, oFormatOptions);
 		this._clearInstances();
 		this._createInputFormat();
 	};

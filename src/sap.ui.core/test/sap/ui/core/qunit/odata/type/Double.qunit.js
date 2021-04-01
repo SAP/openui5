@@ -59,38 +59,18 @@ sap.ui.define([
 	undefined,
 	{},
 	{preserveDecimals : true},
-	{preserveDecimals : "yes"}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("constructor: oFormatOptions.preserveDecimals; no warnings " + i, function (assert) {
-		// code under test
-		var oType = new Double(oFormatOptions);
-
-		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.getFormatOptions(), oFormatOptions || {});
-	});
-});
-
-	//*********************************************************************************************
-[
+	{preserveDecimals : "yes"},
 	{preserveDecimals : undefined},
 	{preserveDecimals : null},
 	{preserveDecimals : false}
 ].forEach(function (oFormatOptions, i) {
-	QUnit.test("constructor: falsy oFormatOptions.preserveDecimals; #" + i, function (assert) {
-		var oType;
-
-		this.oLogMock.expects("warning")
-			.withExactArgs("Format option 'preserveDecimals' with value "
-				+ oFormatOptions.preserveDecimals + " is not supported; 'preserveDecimals' is"
-				+ " defaulted to true",
-				null, "sap.ui.model.odata.type.Double");
-
+	QUnit.test("constructor: oFormatOptions.preserveDecimals; #" + i, function (assert) {
 		// code under test
-		oType = new Double(oFormatOptions);
+		var oType = new Double(oFormatOptions);
 
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
-		assert.deepEqual(oType.oFormatOptions, {});
-		assert.deepEqual(oType.getFormatOptions(), {});
+		// format options are taken as they are - preserveDecimals is considered when creating the
+		// formatter instance
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
 	});
 });
 
@@ -267,6 +247,27 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
+		set : undefined,
+		expect : {groupingEnabled : true, preserveDecimals : true}
+	}, {
+		set : {},
+		expect : {groupingEnabled : true, preserveDecimals : true}
+	}, {
+		set : {preserveDecimals : true},
+		expect : {groupingEnabled : true, preserveDecimals : true}
+	}, {
+		set : {preserveDecimals : "yes"},
+		expect : {groupingEnabled : true, preserveDecimals : "yes"}
+	}, {
+		set : {preserveDecimals : undefined},
+		expect : {groupingEnabled : true, preserveDecimals : undefined}
+	}, {
+		set : {preserveDecimals : null},
+		expect : {groupingEnabled : true, preserveDecimals : null}
+	}, {
+		set : {preserveDecimals : false},
+		expect : {groupingEnabled : true, preserveDecimals : false}
+	}, {
 		set : {foo : "bar"},
 		expect : {foo : "bar", groupingEnabled : true, preserveDecimals : true}
 	}, {
