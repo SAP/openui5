@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/merge',
-	'sap/ui/core/Component'
+	'sap/ui/core/Component',
+	'sap/ui/core/mvc/XMLProcessingMode'
 ],
 function(
 	jQuery,
@@ -22,7 +23,8 @@ function(
 	Log,
 	LoaderExtensions,
 	merge,
-	Component
+	Component,
+	XMLProcessingMode
 ) {
 	"use strict";
 
@@ -110,7 +112,7 @@ function(
 				 * The processing mode is not used by the Fragment itself.
 				 * It is only relevant for XMLViews nested within the Fragment.
 				 */
-				processingMode: { type: 'string', visibility: 'hidden' }
+				processingMode: { type: 'sap.ui.core.mvc.XMLProcessingMode', visibility: 'hidden' }
 			}
 		},
 
@@ -495,7 +497,7 @@ function(
 
 		mParameters.type = mParameters.type || "XML";
 		mParameters.async = true;
-		mParameters.processingMode = mParameters.processingMode || "sequential";
+		mParameters.processingMode = mParameters.processingMode || XMLProcessingMode.Sequential;
 
 		// map new parameter names to classic API, delete new names to avoid assertion failures
 		mParameters.fragmentName = mParameters.name;

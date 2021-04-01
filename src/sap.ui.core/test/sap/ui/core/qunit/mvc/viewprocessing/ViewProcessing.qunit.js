@@ -13,8 +13,9 @@ sap.ui.define([
 	'sap/ui/core/qunit/mvc/viewprocessing/MyGlobal',
 	'sap/ui/base/SyncPromise',
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/XMLProcessingMode",
 	"sap/ui/core/StashedControlSupport"
-], function(jQuery, JSONModel, View, UIArea, UIComponent, Component, ComponentContainer, Label, Panel, HBox, MyGlobal, SyncPromise, XMLView, StashedControlSupport) {
+], function(jQuery, JSONModel, View, UIArea, UIComponent, Component, ComponentContainer, Label, Panel, HBox, MyGlobal, SyncPromise, XMLView, XMLProcessingMode, StashedControlSupport) {
 
 	"use strict";
 
@@ -629,13 +630,17 @@ sap.ui.define([
 	/**
 	 * test execution
 	 */
-	//asynchronous
+	// asynchronous -> processingMode is set to "SequentialLegacy"
 	viewProcessingTests(true);
-	viewProcessingTests(true, "sequential");
+	// per default async=true leads to processingMode "SequentialLegacy".
+	// Overriding the processingMode to "Sequential" leads to the same behaviour as using the new (XML)View.create factory
+	viewProcessingTests(true, XMLProcessingMode.Sequential);
 
-	//synchronous
+	// synchronous -> processingMode is set to <code>undefined</code>
 	viewProcessingTests(false);
-	//should not change behaviour as "sequential" only works in conjunction with async true
-	viewProcessingTests(false, "sequential");
+	// should not change behaviour as "Sequential" only works in conjunction with async true
+	viewProcessingTests(false, XMLProcessingMode.Sequential);
+	// should not change behaviour as "SequentialLegacy" only works in conjunction with async true
+	viewProcessingTests(false, XMLProcessingMode.SequentialLegacy);
 
 });

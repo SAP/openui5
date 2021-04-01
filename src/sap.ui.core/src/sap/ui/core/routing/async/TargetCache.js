@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Component",
 	"sap/ui/core/routing/HashChanger",
-	"sap/ui/core/library"
-], function(View, Component, HashChanger, library) {
+	"sap/ui/core/library",
+	"sap/ui/core/mvc/XMLProcessingMode"
+], function(View, Component, HashChanger, library, XMLProcessingMode) {
 	"use strict";
 
 	var ViewType = library.mvc.ViewType;
@@ -47,7 +48,7 @@ sap.ui.define([
 						if (oOptions.type === ViewType.XML && !oOptions.processingMode) {
 							// when async is set to false, the processingMode will be ignored
 							// therefore it's not checked whether async is set to true
-							oOptions.processingMode = "sequential";
+							oOptions.processingMode = XMLProcessingMode.Sequential;
 						}
 
 						return View._legacyCreate(oOptions);
