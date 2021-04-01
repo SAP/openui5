@@ -147,26 +147,24 @@ sap.ui.define([
 		Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["Pride and Prejudice"]);
 
 		var fnSortByColumnTitle = function(sColumnTitle, sBookKeyAscending, sBookKeyDescending) {
-			// Sort Ascending (first click)
+			//Sort Ascending (first click)
 			When.onTheBooksListReportPage.iClickOnColumnHeader(sColumnTitle);
 			Then.onTheBooksListReportPage.iShouldSeeAColumnHeaderMenu(sColumnTitle);
-			When.onTheBooksListReportPage.iClickOnColumnHeaderMenuSortButton(sColumnTitle);
+			When.onTheBooksListReportPage.iClickOnColumnHeaderMenuSortAscendingButton(sColumnTitle);
 			Then.onTheBooksListReportPage.iShouldSeeAAscendingSortedColumn(sColumnTitle);
 			Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books[sBookKeyAscending]);
-			// Sort Descending (second click)
-			// TODO: ENABLE THIS AS SOON AS THIS FEATURE IS ENABLED BY THE TABLE
-			/*
+			//Sort Descending (second click)
+			//TODO: Need to check for the inconsistency with the actual value and the value in the model itself.
 			When.onTheBooksListReportPage.iClickOnColumnHeader(sColumnTitle);
 			Then.onTheBooksListReportPage.iShouldSeeAColumnHeaderMenu(sColumnTitle);
-			When.onTheBooksListReportPage.iClickOnColumnHeaderMenuSortButton(sColumnTitle);
+			When.onTheBooksListReportPage.iClickOnColumnHeaderMenuSortDescendingButton(sColumnTitle);
 			Then.onTheBooksListReportPage.iShouldSeeADescendingSortedColumn(sColumnTitle);
 			Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books[sBookKeyDescending]);
-			*/
 		};
 
 		// Sort 3 differnt times
 		fnSortByColumnTitle("Title", "...So They Baked a Cake", "Youth");
-		fnSortByColumnTitle("Stock", "Utopia", "The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two, Project Gutenberg editions (12 volumes)");
+		fnSortByColumnTitle("Stock", "Utopia", "The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two,  Project Gutenberg editions (12 volumes)");
 		fnSortByColumnTitle("Price", "The Coral Island: A Tale of the Pacific Ocean", "The Voyage Out");
 
 		Then.iTeardownMyUIComponent();

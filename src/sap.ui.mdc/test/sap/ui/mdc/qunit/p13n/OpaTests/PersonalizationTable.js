@@ -341,8 +341,8 @@ sap.ui.define([
 		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		When.iClickOnColumn("Founding Year");
-		When.iSortCurrentOpenColumnContextMenu();
 
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		Then.thePersonalizationDialogOpens();
@@ -369,8 +369,8 @@ sap.ui.define([
 		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		When.iClickOnColumn("Name");
-		When.iSortCurrentOpenColumnContextMenu();
 
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Descending);
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		Then.thePersonalizationDialogOpens();
@@ -399,6 +399,21 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
 
 		Then.thePersonalizationDialogOpens();
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
+
+		Then.iShouldSeeP13nFilterItems(aFilterItems);
+	});
+
+	opaTest("Open the filter personalization dialog using column header", function (Given, When, Then) {
+		//close popover
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
+
+		When.iClickOnColumn("Founding Year");
+
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+
+		Then.thePersonalizationDialogOpens();
+
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
 
 		Then.iShouldSeeP13nFilterItems(aFilterItems);

@@ -1121,7 +1121,7 @@ sap.ui.define([
 				};
 				this.oTable.getEngine()._setModificationHandler(this.oTable, oTestModificationHandler);
 
-				TableSettings.createSort(oTable, "name", true);
+				TableSettings.createSort(oTable, "name", false, true);
 
 			}.bind(this));
 
@@ -1688,11 +1688,11 @@ sap.ui.define([
 			assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
 
 			var oSortItem = this.oTable._oPopover.getItems()[0];
-			assert.ok(oSortItem.isA("sap.m.ColumnPopoverSortItem"));
+			assert.ok(oSortItem.isA("sap.m.ColumnPopoverSelectListItem"));
 
 			assert.ok(fSortSpy.notCalled);
 			// Simulate Sort Icon press on ColumHeaderPopover
-			oSortItem.fireSort({
+			oSortItem.fireAction({
 				property: "foo"
 			});
 			// Event handler triggered
@@ -1776,11 +1776,11 @@ sap.ui.define([
 			assert.ok(this.oTable._oPopover.isA("sap.m.ColumnHeaderPopover"));
 
 			var oSortItem = this.oTable._oPopover.getItems()[0];
-			assert.ok(oSortItem.isA("sap.m.ColumnPopoverSortItem"));
+			assert.ok(oSortItem.isA("sap.m.ColumnPopoverSelectListItem"));
 
 			assert.ok(fSortSpy.notCalled);
 			// Simulate Sort Icon press on ColumHeaderPopover
-			oSortItem.fireSort({
+			oSortItem.fireAction({
 				property: "foo"
 			});
 			// Event handler triggered
@@ -1894,10 +1894,16 @@ sap.ui.define([
 			return wait(0);
 		}.bind(this)).then(function() {
 			assert.ok(this.oTable._oPopover);
-			assert.strictEqual(this.oTable._oPopover.getItems().length, 1, "Sort item button created");
-			var aSortItem = this.oTable._oPopover.getItems()[0].getItems();
-			assert.strictEqual(aSortItem.length, 1, "Sort item button created");
-			assert.strictEqual(aSortItem[0].getText(), "Test 2", "Sortable dataProperty added as sort item");
+			assert.strictEqual(this.oTable._oPopover.getItems().length, 2, "Sort item button created");
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var aSortAscendingItem = this.oTable._oPopover.getItems()[0].getItems();
+			var aSortDescendingItem = this.oTable._oPopover.getItems()[1].getItems();
+			assert.strictEqual(aSortAscendingItem.length, 1, "Sort Ascending item button created");
+			assert.strictEqual(aSortDescendingItem.length, 1, "Sort Descending item button created");
+			assert.strictEqual(aSortAscendingItem[0].getParent().getLabel(), oResourceBundle.getText("table.SETTINGS_ASCENDING"), "Sort Ascending button added");
+			assert.strictEqual(aSortDescendingItem[0].getParent().getLabel(), oResourceBundle.getText("table.SETTINGS_DESCENDING"), "Sort Descending button added");
+			assert.strictEqual(aSortAscendingItem[0].getText(), "Test 2", "Sortable dataProperty added as sort item");
+			assert.strictEqual(aSortDescendingItem[0].getText(), "Test 2", "Sortable dataProperty added as sort item");
 			fColumnPressSpy.restore();
 		}.bind(this));
 	});
