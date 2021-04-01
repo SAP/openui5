@@ -272,20 +272,20 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
 				autostart: false
 			},
-			"ExploredSamples": {
-				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
-				sinon: {
-					version: 4
-				// MockServer dependencies are overrules by loader config above
-				},
-				ui5: {
-					libs: [
-						"sap.ui.mdc", "sap.ui.documentation", "sap.ui.layout", "sap.m"
-					],
-					"xx-componentPreload": "off"
-				},
-				autostart: false
-			},
+			// "ExploredSamples": {
+			// 	runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
+			// 	sinon: {
+			// 		version: 4
+			// 	// MockServer dependencies are overrules by loader config above
+			// 	},
+			// 	ui5: {
+			// 		libs: [
+			// 			"sap.ui.mdc", "sap.ui.documentation", "sap.ui.layout", "sap.m"
+			// 		],
+			// 		"xx-componentPreload": "off"
+			// 	},
+			// 	autostart: false
+			// },
 
 			"V4ServerTest": {
 				skip: EnvHelper.isOpenUI5,
