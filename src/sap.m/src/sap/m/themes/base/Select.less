@@ -21,7 +21,7 @@
 				text-overflow: ellipsis;
 				white-space: nowrap;
 				display: block;
-				box-sizing: border-box
+				box-sizing: border-box;
 			}
 
 			.sapMSelectListLastCell {
@@ -33,6 +33,9 @@
 			.sapMSelectListLastCell {
 				padding-top: 0.75rem;
 				padding-bottom: 0.75rem;
+				&:empty {
+					height: 2.5rem;
+				}
 			}
 		}
 
@@ -53,6 +56,9 @@
 				padding-bottom: 0.75rem;
 				line-height: 1rem;
 				height: auto;
+				&:empty {
+					height: 2.5rem;
+				}
 			}
 
 			.sapMSelectListRow {
@@ -111,11 +117,17 @@
 		.sapMSelectListLastCell {
 			padding-top: 0.5rem;
 			padding-bottom: 0.5rem;
+			&:empty {
+				height: 2rem;
+			}
 		}
 	}
 	&.sapMSelectListWrappedItems .sapMSelectListItem {
 		padding-top: 0.5rem;
 		padding-bottom: 0.5rem;
+		&:empty {
+			height: 2rem;
+		}
 	}
 }
 
