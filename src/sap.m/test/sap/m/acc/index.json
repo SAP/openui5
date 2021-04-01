@@ -111,6 +111,11 @@
 			}
 		},
 		{
+			"control": "sap.m.ExpandableText",
+			"url": "../ExpandableText.html",
+			"appComponent": "CA-UI5-CTR-ROD"
+		},
+		{
 			"control": "sap.m.FacetFilter",
 			"url": "../FacetFilter.html",
 			"appComponent": "CA-UI5-CTR-BAL"
