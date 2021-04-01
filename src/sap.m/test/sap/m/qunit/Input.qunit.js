@@ -3782,7 +3782,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oInputWithDes.$('descr').text(), "EUR", "Description ID is set to the correct span");
-		assert.equal(oInputWithDes.getDomRef('descr').id, oInputWithDes.$('inner').attr('aria-labelledby'), "Inner input aria-labbeledby attribute is correct");
+		assert.equal(oInputWithDes.getDomRef('descr').id, oInputWithDes.$('inner').attr('aria-describedby'), "Inner input aria-describedby attribute is correct");
 
 		oInputWithDes.destroy();
 	});
