@@ -13,24 +13,25 @@ sap.ui.define([
 		var oCard = this.getCard();
 
 		return oCard
-			.resolveDestination("Northwind_V2")
+			.resolveDestination("ProductsMockServer")
 			.then(this.getEmployeeAndOrders.bind(this));
 	};
 
 	BatchRequestExtension.prototype.getEmployeeAndOrders = function (sServiceUrl) {
-		var oModel = new ODataModel({
+		var sSupplier = this.getCard().getCombinedParameters().supplierId,
+			oModel = new ODataModel({
 				serviceUrl: sServiceUrl
 			});
 		oModel.setDeferredGroups(["group1"]);
 
-		oModel.read("/Employees(2)", { groupId: "group1" });
-		oModel.read("/Orders", { groupId: "group1", urlParameters: {$top: 5, $filter: "EmployeeID eq 2"} });
+		oModel.read("/SEPMRA_C_PD_Supplier('" + sSupplier + "')", { groupId: "group1" });
+		oModel.read("/SEPMRA_C_PD_Product", { groupId: "group1", urlParameters: {$top: 2, $filter: "Supplier eq '" + sSupplier + "'"} });
 
 		return new Promise(function (resolve, reject) {
 			oModel.submitChanges({
 				success: function (oData) {
 					var aData = oData.__batchResponses;
-					resolve({ "employee": aData[0].data, "orders": aData[1].data });
+					resolve({ "supplier": aData[0].data, "products": aData[1].data });
 				},
 				error: function (sMessage, sResponseText) {
 					reject(sResponseText);

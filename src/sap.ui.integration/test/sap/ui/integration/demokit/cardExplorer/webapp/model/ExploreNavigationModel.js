@@ -918,6 +918,7 @@ sap.ui.define([
 							{
 								title: 'OData Batch Request',
 								key: 'batchRequest',
+								mockServer: true,
 								files: [
 									{
 										url: '/samples/data/batchRequest/manifest.json',
