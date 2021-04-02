@@ -3025,6 +3025,16 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.module("SelectList _tabIndex");
+
+		QUnit.test("SelectList should have tabidnex='-1'", function (assert) {
+			// system under test
+			var oSelect = new Select(),
+				oList = oSelect.getList();
+
+			assert.strictEqual(oList.getProperty("_tabIndex"), "-1", "SelectList _tabIndex property is set to -1");
+		});
+
 		QUnit.module("setSelectedItem()");
 
 		QUnit.test("setSelectedItem() should give a warning when called with faulty parameter", function (assert) {

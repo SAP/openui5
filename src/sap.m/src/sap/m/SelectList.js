@@ -117,7 +117,17 @@ sap.ui.define([
 						group: "Appearance",
 						visibility: "hidden"
 					},
-
+					/**
+					 * Determines the tabindex value of the [role="listbox"] element.
+					 *
+					 * @private
+					 */
+					_tabIndex: {
+						type: "string",
+						group: "Misc",
+						visibility: "hidden",
+						defaultValue: ""
+					},
 					/**
 					 * Defines the keyboard navigation mode.
 					 *
