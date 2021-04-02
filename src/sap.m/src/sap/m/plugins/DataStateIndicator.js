@@ -195,6 +195,17 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	};
 
 	/**
+	 * Return whether message filtering is active or not.
+	 *
+	 * @public
+	 * @since 1.89
+	 * @returns {boolean} Whether message filtering is active or not
+	 */
+	DataStateIndicator.prototype.isFiltering = function() {
+		return !!this._bFiltering;
+	};
+
+	/**
 	 * Refreshes the messages displayed for the current data state.
 	 * The current data state is evaluated again, and the filters are applied.
 	 *
@@ -204,7 +215,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 		if (this.isActive()) {
 			var oBinding = this.getControl().getBinding(this._getBindingName());
 			if (oBinding) {
-				this._processDataState(oBinding.getDataState());
+				this._processDataState(oBinding.getDataState(), true);
 				if (oBinding.requestFilterForMessages && this._bFiltering) {
 					this._applyFilter();
 				}
@@ -240,13 +251,22 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 		return this.getControlPluginConfig("defaultBindingName");
 	};
 
-	DataStateIndicator.prototype._processDataState = function(oDataState) {
-		if (!oDataState || !oDataState.getChanges().messages) {
+	DataStateIndicator.prototype._processDataState = function(oDataState, bIgnoreChanges) {
+		if (!oDataState) {
+			return;
+		}
+
+		if (!bIgnoreChanges && !oDataState.getChanges().messages) {
+			return;
+		}
+
+		var oControl = this.getControl();
+		var oBinding = oControl && oControl.getBinding(this._getBindingName());
+		if (oBinding && oBinding.bIsBeingDestroyed) {
 			return;
 		}
 
 		var aMessages = oDataState.getMessages();
-		var oControl = this.getControl();
 		var fnFilter = this.getFilter();
 		if (fnFilter) {
 			aMessages = aMessages.filter(function(oMessage) {
@@ -262,8 +282,6 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			var sMessage = "";
 			var bUpdateMessageModel = false;
 			var oFirstMessage = aMessages[0];
-			var oBinding = oControl.getBinding(this._getBindingName());
-			var sBindingPath = oBinding.getPath();
 
 			aMessages.forEach(function(oMessage) {
 				if (oMessage.getControlIds().indexOf(oControl.getId()) == -1) {
@@ -273,7 +291,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			});
 
 			this._sCombinedType = this._getCombinedType(aMessages);
-			if (aMessages.length == 1 && oFirstMessage.getTarget() && oFirstMessage.getTarget().endsWith(sBindingPath)) {
+			if (aMessages.length == 1 && oFirstMessage.getTarget() && oFirstMessage.getTarget().endsWith(oBinding.getPath())) {
 				sMessage = oFirstMessage.getMessage();
 			} else {
 				sMessage = this._translate(this._sCombinedType.toUpperCase());
