@@ -111,21 +111,16 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 		oRm.style("width", oControl.getDescription() ? oControl.getFieldWidth() : "100%");
 	};
 
-	InputRenderer.getAriaLabelledBy = function (oControl) {
-		var ariaLabels = InputBaseRenderer.getAriaLabelledBy.call(this, oControl) || "";
-
-		if (oControl.getDescription()) {
-			ariaLabels = ariaLabels + " " + oControl.getId() + "-descr";
-		}
-		return ariaLabels;
-	};
-
 	InputRenderer.getAriaDescribedBy = function (oControl) {
 
 		var sAriaDescribedBy = InputBaseRenderer.getAriaDescribedBy.apply(this, arguments);
 
 		function append(s) {
 			sAriaDescribedBy = sAriaDescribedBy ? sAriaDescribedBy + " " + s : s;
+		}
+
+		if (oControl.getDescription()) {
+			append(oControl.getId() + "-descr");
 		}
 
 		if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
