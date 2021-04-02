@@ -101,7 +101,6 @@ sap.ui.define([
 			};
 
 			// If the theme is already applied themeChanged event won't be fired.
-			// In IE11 the theme is already applied.
 			if (sap.ui.getCore().isThemeApplied()) {
 				CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
 			} else {
