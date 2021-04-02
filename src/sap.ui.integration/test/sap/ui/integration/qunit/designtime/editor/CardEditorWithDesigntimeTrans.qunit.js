@@ -366,6 +366,94 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("Check translation for values in translation mode, language from en (as original) fr(existing)", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18ntrans/i18n.properties"
+				},
+				"sap.card": {
+					"designtime": "designtime/translation",
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"string1": {
+								"value": "{{string1}}"
+							},
+							"string2": {
+								"value": "{{string2}}"
+							},
+							"string3": {
+								"value": "{{string3}}"
+							},
+							"string4": {
+								"value": "{i18n>string4}"
+							}
+						}
+					}
+				}
+			};
+			//Fallback language
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor();
+				Core.getConfiguration().setLanguage("en");
+				this.oCardEditor.setMode("translation");
+				this.oCardEditor.setLanguage("fr");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[3];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[4];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[6];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[7];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[9];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[10];
+					var oLabel4 = this.oCardEditor.getAggregation("_formContent")[11];
+					var oField4Ori = this.oCardEditor.getAggregation("_formContent")[12];
+					var oField4Trans = this.oCardEditor.getAggregation("_formContent")[13];
+					wait().then(function () {
+						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel1: has the correct text CARDEDITOR_ORIGINALLANG");
+						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
+						assert.ok(oPanel2.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_PARAMETERS_GENERALSETTINGS"), "Panel2: has the correct text CARDEDITOR_ORIGINALLANG");
+						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "String 1 English", "Field1Ori: String 1 English");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "oField1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "String 1 French", "Field1Trans: String 1 French");
+					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "String 2 French", "Field2Trans: String 2 French");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "String 3 English", "Field3Ori: String 3 English");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 French", "Field3Trans: String 3 French");
+					}).then(function () {
+						assert.ok(oLabel4.getText() === "Label 4 English", "Label4: Label 4 English");
+						assert.ok(oField4Ori.getAggregation("_field").getText() === "String 4 English", "Field4Ori: String 4 English");
+						assert.ok(oField4Trans.getAggregation("_field").getEditable() === true, "Field4Trans: Editable");
+						assert.ok(oField4Trans.getAggregation("_field").getValue() === "String 4 French", "Field4Trans: String 4 French");
+					}).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("Check translation for values in translation mode, language from de-DE (not existing as original) fr(existing)", function (assert) {
 			var oManifest = {
 				"sap.app": {
@@ -617,7 +705,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-
 		QUnit.test("Check translation value in translation mode, with 2 change by admin,  with 1 change on top of admin change, language from de-DE (not existing) fr(existing)", function (assert) {
 			var oManifest = {
 				"sap.app": {
@@ -708,7 +795,6 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
-
 
 		QUnit.test("Check translation value in translation mode, with 2 change by admin,  with 1 change by content on top of admin change, 2 translation changed on top of admin and default, language from de-DE (not existing) fr(existing)", function (assert) {
 			var oManifest = {
@@ -1043,9 +1129,9 @@ sap.ui.define([
 					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[10];
-					var oLabel4 = this.oCardEditor.getAggregation("_formContent")[11];
-					var oField4Ori = this.oCardEditor.getAggregation("_formContent")[12];
-					var oField4Trans = this.oCardEditor.getAggregation("_formContent")[13];
+					var oLabelForStringNoTrans = this.oCardEditor.getAggregation("_formContent")[14];
+					var oFieldOriForStringNoTrans = this.oCardEditor.getAggregation("_formContent")[15];
+					var oFieldTransForStringNoTrans = this.oCardEditor.getAggregation("_formContent")[16];
 					wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel1: has the correct text CARDEDITOR_ORIGINALLANG");
@@ -1066,10 +1152,10 @@ sap.ui.define([
 						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
 						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 Spanish", "Field3Trans: String 3 Spanish");
 					}).then(function () {
-						assert.ok(oLabel4.getText() === "stringNoTransLabel", "Label4: Label 4 English");
-						assert.ok(oField4Ori.getAggregation("_field").getText() === "stringNoTrans", "Field4Ori: stringNoTrans");
-						assert.ok(oField4Trans.getAggregation("_field").getEditable() === true, "Field4Trans: Editable");
-						assert.ok(oField4Trans.getAggregation("_field").getValue() === "", "Field4Trans: Empty");
+						assert.ok(oLabelForStringNoTrans.getText() === "stringNoTransLabel", "LabelForStringNoTrans: Label stringNoTransLabel English");
+						assert.ok(oFieldOriForStringNoTrans.getAggregation("_field").getText() === "stringNoTrans", "FieldOriForStringNoTrans: stringNoTrans");
+						assert.ok(oFieldTransForStringNoTrans.getAggregation("_field").getEditable() === true, "FieldTransForStringNoTrans: Editable");
+						assert.ok(oFieldTransForStringNoTrans.getAggregation("_field").getValue() === "", "FieldTransForStringNoTrans: Empty");
 					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();

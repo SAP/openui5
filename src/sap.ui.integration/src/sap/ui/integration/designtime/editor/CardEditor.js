@@ -1294,7 +1294,11 @@ sap.ui.define([
 			origLangField._settingspath += "/_language";
 			origLangField.editable = false;
 			origLangField.required = false;
-			origLangField.value = origLangField._beforeValue;
+			//fix issue SMPADMSH4-3282 about i18n not translated issue in translation mode
+			//if the _beforeValue is in pattern "{i18n>KEY}", do not replace the current value using it.
+			if (typeof (origLangField._beforeValue) !== "undefined" && !(origLangField._beforeValue.startsWith("{i18n>") && origLangField._beforeValue.endsWith("}"))) {
+				origLangField.value = origLangField._beforeValue;
+			}
 			//if has valueTransaltions, get value via language setting in core
 			if (origLangField.valueTranslations) {
 				var sLanguage = Core.getConfiguration().getLanguage().replaceAll('-', '_');

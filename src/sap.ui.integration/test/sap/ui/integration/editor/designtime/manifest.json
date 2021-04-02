@@ -43,11 +43,8 @@
 				"stringWithTranslatedValue": {
 					"value": "{{TRANSLATED_STRING_VALUE}}"
 				},
-				"stringWithTranslatedValue1": {
+				"stringWithTranslatedValueIni18nFormat": {
 					"value": "{i18n>TRANSLATED_STRING_VALUE}"
-				},
-				"stringWithTranslatedValue2": {
-					"value": "{i18n>TRANSLATED_STRING_VALUE2}"
 				},
 				"stringWithTranslatedDTDefaultValue": {
 					"value": ""

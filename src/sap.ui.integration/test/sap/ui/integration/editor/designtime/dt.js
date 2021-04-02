@@ -59,12 +59,16 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "String with translated value",
 						"translatable": true
 					},
+					"stringWithTranslatedValueIni18nFormat": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValueIni18nFormat/value",
+						"type": "string",
+						"label": "String with translated value in i18n format"
+					},
 					"stringWithTranslatedDTDefaultValue": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedDTDefaultValue/value",
 						"type": "string",
 						"label": "String with translated default value",
-						"defaultValue": "{i18n>TRANSLATED_STRING_DEFAULT_VALUE}",
-						"translatable": true
+						"defaultValue": "{i18n>TRANSLATED_STRING_DEFAULT_VALUE}"
 					},
 					"stringInCols1": {
 						"manifestpath": "/sap.card/configuration/parameters/stringInCols1/value",

@@ -1063,6 +1063,41 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("1 string parameter and value trans in i18n format (as json)", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1string",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "{i18n>STRINGPARAMETERVALUE}"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value from Translate change");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("1 string parameter and label trans (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
