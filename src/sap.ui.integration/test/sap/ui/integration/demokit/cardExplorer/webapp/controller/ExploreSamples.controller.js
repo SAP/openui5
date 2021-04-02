@@ -158,7 +158,9 @@ sap.ui.define([
 		},
 
 		onRunPressed: function (oEvent) {
-			this._oFileEditor.getManifestContent().then(this._updateSample.bind(this));
+			this._oFileEditor.getManifestContent().then(function (sManifest) {
+				this._updateSample(sManifest, true);
+			}.bind(this));
 		},
 
 		/**
@@ -615,8 +617,9 @@ sap.ui.define([
 		/**
 		 * Reflects changes in the code editor to the card.
 		 * @param {string} sValue The value of the manifest.json file.
+		 * @param {boolean} bRefresh Force card refresh.
 		 */
-		_updateSample: function (sValue) {
+		_updateSample: function (sValue, bRefresh) {
 			var oValue = JSON.parse(sValue);
 
 			if (!sValue) {
@@ -642,6 +645,10 @@ sap.ui.define([
 						.setBaseUrl(sBaseUrl)
 						.setManifest(oValue)
 						.setParameters(null);
+
+					if (bRefresh) {
+						this._oCardSample.refresh();
+					}
 				} catch (oException) {
 					this._oCardSample.setManifest(null);
 				}
