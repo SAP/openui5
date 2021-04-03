@@ -2143,6 +2143,7 @@ sap.ui.define([
 		this.obj.addAssociatedObj(this.subObj);
 		this.obj.addAssociatedObj(this.associated2);
 		this.obj.addAssociatedObj(this.subSubObj);
+		this.obj.addAssociatedObj(this.obj);
 		this.obj.setAssociation("_hiddenObject", this.associated1);
 		this.obj.addAssociation("_hiddenObjects", this.subObj);
 		this.obj.addAssociation("_hiddenObjects", this.associated2);
@@ -2156,7 +2157,7 @@ sap.ui.define([
 		var oClonedSubSubObj = oClone.getAggregation("subObjects")[0].getAggregation("subObjects")[0];
 		assert.strictEqual(oClone.getSelectedObject(), this.associated1.getId(),
 				"an association to an 'external' object should remain the same in the clone");
-		assert.strictEqual(oClone.getAssociatedObjects().length, 3,
+		assert.strictEqual(oClone.getAssociatedObjects().length, 4,
 				"the cloned association should have the expected cardinality");
 		assert.strictEqual(oClone.getAssociatedObjects()[0], oClonedSubObj.getId(),
 				"an association to a descendant should point to the cloned descendant");
@@ -2164,6 +2165,8 @@ sap.ui.define([
 				"an association to an external object should remain the same in the clone");
 		assert.strictEqual(oClone.getAssociatedObjects()[2], oClonedSubSubObj.getId(),
 				"an association to a 2nd level descendant should point to the cloned descendant");
+		assert.strictEqual(oClone.getAssociatedObjects()[3], oClone.getId(),
+				"an association to the cloned object should point to the clone");
 		assert.equal(oClone.getAssociation("_hiddenObject", null), null, "hidden 0..1 association must not be cloned");
 		assert.deepEqual(oClone.getAssociation("_hiddenObjects", []), [], "hidden 0..n association must not be cloned");
 
@@ -2175,7 +2178,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Clone Object: associations in nested binding template", function(assert) {
-		assert.expect(3);
+		assert.expect(5);
 		var oModel = new JSONModel();
 		oModel.setData({
 			list: [{
@@ -2186,19 +2189,34 @@ sap.ui.define([
 			}]
 		});
 		this.obj.setModel(oModel);
-		var oTemplate = new TestManagedObject("myOBJ");
-		var oTemplateNested = new TestManagedObject("myOBJNested");
-		oTemplateNested.setAssociation("selectedObject", "myOBJNested");
-		oTemplate.bindAggregation("subObjects", {path:"nestedList", template: oTemplateNested, templateShareable:false});
-		this.obj.bindAggregation("subObjects", {path:"/list", template: oTemplate, templateShareable:false});
+		this.obj.bindAggregation("subObjects", {
+			path:"/list",
+			templateShareable:false,
+			template: new TestManagedObject({
+				id: "myOBJ",
+				subObjects: {
+					path: "nestedList",
+					templateShareable:false,
+					template: new TestManagedObject({
+						id: "myOBJNested",
+						selectedObject: "myOBJNested"
+					})
+				}
+			})
+		});
 
 		var oClone = this.obj.clone("-cl0ne", null, {
 			cloneChildren: true
 		});
 		assert.ok(oClone, "Clone created");
-		var oNestedClone = oClone.getAggregation("subObjects")[0].getAggregation("subObjects")[0];
+		var oFirstAggregatedChild = oClone.getAggregation("subObjects")[0];
+		var oNestedTemplate = oFirstAggregatedChild.getBindingInfo("subObjects").template;
+		assert.ok(oNestedTemplate, "Nested template exists");
+		assert.equal(oNestedTemplate.getAssociation("selectedObject"), oNestedTemplate.getId(), "Association cloned correctly");
+
+		var oNestedClone = oFirstAggregatedChild.getAggregation("subObjects")[0];
 		assert.ok(oNestedClone, "Nested binding clone created");
-		assert.equal(oNestedClone.getAssociation("selectedObject"), "myOBJNested-__object0-0--cl0ne", "Association cloned correctly");
+		assert.equal(oNestedClone.getAssociation("selectedObject"), oNestedClone.getId(), "Association cloned correctly");
 		oModel.destroy();
 	});
 
