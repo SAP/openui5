@@ -394,7 +394,6 @@ sap.ui.define([
 		// remove event delegates before rendering
 		this.$().off('beforeSlide', this._onBeforePageChangedRef);
 		this.$().off('afterSlide', this._onAfterPageChangedRef);
-		this.$().find(".sapMCrslItemTableCell").off("focus"); // Fixes wrong focusing in IE// TODO remove after the end of support for Internet Explorer
 
 		return this;
 	};
@@ -494,17 +493,6 @@ sap.ui.define([
 		this._$InnerDiv = this.$().find(Carousel._INNER_SELECTOR)[0];
 
 		this._sResizeListenerId = ResizeHandler.register(this._$InnerDiv, this._fnAdjustAfterResize);
-
-		// Fixes wrong focusing in IE// TODO remove after the end of support for Internet Explorer
-		// BCP: 1670008915
-		this.$().find(".sapMCrslItemTableCell").on("focus", function(e) {
-
-			e.preventDefault();
-
-			jQuery(e.target).parents('.sapMCrsl').trigger("focus");
-
-			return false;
-		});
 
 		// Fixes displaying correct page after carousel become visible in an IconTabBar
 		// BCP: 1680019792
@@ -1272,12 +1260,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Carousel.prototype._handleF7Key = function (oEvent) {
-		var oActivePageLastFocusedElement;
-
-		// Needed for IE// TODO remove after the end of support for Internet Explorer
-		oEvent.preventDefault();
-
-		oActivePageLastFocusedElement = this._getActivePageLastFocusedElement();
+		var oActivePageLastFocusedElement = this._getActivePageLastFocusedElement();
 
 		// If focus is on an interactive element inside a page, move focus to the Carousel.
 		// As long as the focus remains on the Carousel, a consecutive press on [F7]

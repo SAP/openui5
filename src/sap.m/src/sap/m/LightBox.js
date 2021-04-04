@@ -608,20 +608,9 @@ sap.ui.define([
 	LightBox.prototype._setImageSize = function (oImage, iWidth, iHeight) {
 		var iFooterHeight = this._calculateFooterHeightInPx(),
 			oDimensions = this._getDimensions(iWidth, iHeight, iFooterHeight);
-			// width = oDimensions.width + "px",
-			// height = oDimensions.height + "px",
-			// oImgDomRef = oImage.getDomRef();
 
 		oImage.setWidth(oDimensions.width + "px");
 		oImage.setHeight(oDimensions.height + "px");
-		// oImage.setProperty("width", width, true);
-		// oImage.setProperty("height", height, true);
-
-		// prob causes blinking
-		// if (oImgDomRef) {
-		// 	oImgDomRef.style.width = width;
-		// 	oImgDomRef.style.height = height;
-		// }
 	};
 
 	/**
