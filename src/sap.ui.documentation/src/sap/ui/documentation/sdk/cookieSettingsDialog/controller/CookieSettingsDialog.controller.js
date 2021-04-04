@@ -4,36 +4,34 @@
 
 /*global history */
 sap.ui.define([
-		"sap/ui/documentation/sdk/controller/BaseController",
-	"	sap/ui/documentation/sdk/model/formatter",
+		"sap/ui/core/mvc/Controller",
 		"sap/m/library",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/Fragment",
+		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/core/Core"
-	], function (BaseController, globalFormatter, mobileLibrary, JSONModel, Fragment, Core) {
+	], function (Controller, mobileLibrary, JSONModel, Fragment, ResourceModel, Core) {
 		"use strict";
 
-		return BaseController.extend("sap.ui.documentation.sdk.controller.CookieSettingsDialog", {
-
-			formatter: globalFormatter,
+		return Controller.extend("sap.ui.documentation.sdk.cookieSettingsDialog.controller.CookieSettingsDialog", {
 
 			constructor: function() {
-				this._oConfigUtil = null;
+				this._oCookiesUtil = null;
 				this._oRootView = null;
 				this._oInitOptions = null;
 				this._oModel = new JSONModel();
 			},
 
-			openCookieSettingsDialog: function(oConfigUtil, oRootView, oOptions) {
+			openCookieSettingsDialog: function(oOptions, oRootView, oCookiesUtil) {
 				this._oInitOptions = oOptions;
 				this._oModel.setData(oOptions, true /* merge */);
 
 				if (this._oCookieSettingsDialog) {
 					this._oCookieSettingsDialog.open();
 				} else {
-					this._initData(oConfigUtil, oRootView);
+					this._initData(oRootView, oCookiesUtil);
 					Fragment.load({
-						name: "sap.ui.documentation.sdk.view.CookieSettingsDialog",
+						name: "sap.ui.documentation.sdk.cookieSettingsDialog.view.CookieSettingsDialog",
 						controller: this
 					}).then(this._initDialog.bind(this))
 						.then(function(oDialog) {
@@ -44,7 +42,11 @@ sap.ui.define([
 			},
 
 			_initDialog: function(oDialog) {
+				var oMessageBundle = new ResourceModel({
+					bundleName: "sap.ui.documentation.sdk.cookieSettingsDialog.i18n.i18n"
+				});
 				oDialog.setModel(this._oModel, "cookieData");
+				oDialog.setModel(oMessageBundle, "i18n");
 
 				// connect dialog to the root view of this component (models, lifecycle)
 				this._oRootView.addDependent(oDialog);
@@ -64,11 +66,15 @@ sap.ui.define([
 				if (!this._bAlreadyRequestedCookiesApproval) {
 					oDialog.attachEventOnce("afterClose", function() {
 						this._bAlreadyRequestedCookiesApproval = true;
-						this._oConfigUtil.setCookie(this._oConfigUtil.COOKIE_NAMES.APPROVAL_REQUESTED, "1");
+						this._oCookiesUtil.setCookie(this._oCookiesUtil.COOKIE_NAMES.APPROVAL_REQUESTED, "1");
 					}, this);
 				}
 
 				return oDialog;
+			},
+
+			formatCookieValue: function (sValue) {
+				return Boolean(Number(sValue));
 			},
 
 			onAcceptAllCookies: function () {
@@ -123,8 +129,8 @@ sap.ui.define([
 
 			onCancelEditCookies: function() {
 				this._oCookieSettingsDialog.close();
-				Core.byId("requiredCookiesSwitch").setState(this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1");
-				Core.byId("functionalCookiesSwitch").setState(this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING) === "1");
+				Core.byId("requiredCookiesSwitch").setState(this._oCookiesUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1");
+				Core.byId("functionalCookiesSwitch").setState(this._oCookiesUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING) === "1");
 			},
 
 			_saveCookiePreference: function(sCookieName, bEnable) {
@@ -132,24 +138,24 @@ sap.ui.define([
 					sOldValue;
 
 				if (sCookieName === this._oCookieNames.ALLOW_USAGE_TRACKING) {
-					sOldValue = this._oConfigUtil.getCookieValue(sCookieName);
+					sOldValue = this._oCookiesUtil.getCookieValue(sCookieName);
 
 					if (sOldValue !== sValue) {
-						bEnable && this._oConfigUtil.enableUsageTracking();
-						!bEnable && this._oConfigUtil.disableUsageTracking();
+						bEnable && this._oCookiesUtil.enableUsageTracking();
+						!bEnable && this._oCookiesUtil.disableUsageTracking();
 					}
 				}
 
-				this._oConfigUtil.setCookie(sCookieName, sValue);
+				this._oCookiesUtil.setCookie(sCookieName, sValue);
 				this._oModel.setProperty("/" + sCookieName, sValue);
 			},
 
-			_initData: function (oConfigUtil, oRootView) {
+			_initData: function (oRootView, oCookiesUtil) {
 
-				this._oConfigUtil = oConfigUtil;
+				this._oCookiesUtil = oCookiesUtil;
 				this._oRootView = oRootView;
-				this._oCookieNames = this._oConfigUtil.COOKIE_NAMES;
-				this._bAlreadyRequestedCookiesApproval = this._oConfigUtil.getCookieValue(this._oCookieNames.APPROVAL_REQUESTED) === "1";
+				this._oCookieNames = this._oCookiesUtil.COOKIE_NAMES;
+				this._bAlreadyRequestedCookiesApproval = this._oCookiesUtil.getCookieValue(this._oCookieNames.APPROVAL_REQUESTED) === "1";
 
 				this._setInitialCookieValues();
 			},
@@ -162,8 +168,8 @@ sap.ui.define([
 					oData[this._oCookieNames.ALLOW_REQUIRED_COOKIES] = "1";
 					oData[this._oCookieNames.ALLOW_USAGE_TRACKING] = "1";
 				} else {
-					oData[this._oCookieNames.ALLOW_REQUIRED_COOKIES] = this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES);
-					oData[this._oCookieNames.ALLOW_USAGE_TRACKING] = this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING);
+					oData[this._oCookieNames.ALLOW_REQUIRED_COOKIES] = this._oCookiesUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES);
+					oData[this._oCookieNames.ALLOW_USAGE_TRACKING] = this._oCookiesUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING);
 				}
 
 				this._oModel.setData(oData, true /* merge */);
