@@ -3628,6 +3628,7 @@ sap.ui.define([
 		if (this._iAfterRenderingDomReadyTimeout) {
 			// cancel the existing onAfterRenderingDOMReady task as its calculation will not be valid (or necessary)
 			clearTimeout(this._iAfterRenderingDomReadyTimeout);
+			this._iAfterRenderingDomReadyTimeout = null;
 		}
 
 		Control.prototype.invalidate.apply(this, arguments);
