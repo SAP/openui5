@@ -364,19 +364,12 @@ Copyright: 2015 The Polymer Authors
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/*
-	src/sap.ui.integration/src/sap/ui/integration/thirdparty/customElements.js
 
 Component: Unicode Common Locale Data Repository
 Copyright: 1991-2014 Unicode, Inc.
 License: Unicode-DFS-2015
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Unicode-DFS-2015.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/Unicode-Data-Files-LICENSE.txt
-
-Component: CustomEvent Polyfill, version: 20190614
-Copyright: Mozilla Developer Network
-License: CC0-1.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/CC0-1.0.txt
-Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/customEvent.js
 
 Component: Adaptive Cards, version: 1.2.3
 Copyright: 2017 Microsoft
