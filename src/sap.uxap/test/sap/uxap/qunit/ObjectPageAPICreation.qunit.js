@@ -740,6 +740,14 @@ function (
 			oHhtmBlock,
 			oFirstSection = oObjectPage.getSections()[0],
 			oSecondSection = oObjectPage.getSections()[1],
+			oBlockDomElement,
+			iScrollTopBefore,
+			iScrollTopAfter,
+			iBlockHeightBefore,
+			iBlockHeightAfter,
+			iHeightDiff = 40,
+			oAdjustLayoutSpy = sinon.spy(oObjectPage, "_requestAdjustLayout"),
+			oUpdateSelectionSpy = sinon.spy(oObjectPage, "_updateSelectionOnScroll"),
 			done = assert.async();
 
 		// setup step1: add content with defined height
@@ -751,15 +759,38 @@ function (
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 
-			// Act: change height without invalidating any control => on the the resize handler will be responsible for re-adjusting the selection
-			Core.byId("b1").getDomRef().style.height = "250px";
+			oBlockDomElement = oHhtmBlock.getDomRef();
 
-			setTimeout(function() {
+			iBlockHeightBefore = oBlockDomElement.offsetHeight;
+			iScrollTopBefore = oObjectPage._$opWrapper.scrollTop();
+
+			iBlockHeightAfter = iBlockHeightBefore - iHeightDiff;
+			iScrollTopAfter = iScrollTopBefore - iHeightDiff;
+
+			oAdjustLayoutSpy.reset();
+			oUpdateSelectionSpy.reset();
+
+
+			// Act: change height without invalidating any control => on the the resize handler will be responsible for re-adjusting the selection
+			oBlockDomElement.style.height = iBlockHeightAfter + "px";
+
+			// mock the (1) scroll and (2) resize listeners that will be fired
+			// as a result of the resize of the content:
+			// (1) call the scroll listener synchronously to speed-up the test
+			oObjectPage._onScroll({target: { scrollTop:  iScrollTopAfter }});
+			// (2) call the resize listener synchronously to speed up the test
+			oObjectPage._onUpdateContentSize({ size: {}});
+
+
+			// Check
+			assert.equal(oAdjustLayoutSpy.callCount, 1, "layout adjustment is called");
+			oObjectPage._requestAdjustLayout().then(function() {
+				assert.ok(oUpdateSelectionSpy.called, "update selection is called");
 				assert.equal(oObjectPage.getSelectedSection(), oSecondSection.getId(), "selected section is correct");
 				done();
-			}, this.iLoadingDelay);
+			});
 
-		}.bind(this));
+		});
 
 		helpers.renderObject(oObjectPage);
 	});
@@ -1836,41 +1867,30 @@ function (
 				})
 			]
 		}),
-		iAfterRenderingDOMReadyDelay = ObjectPageLayout.HEADER_CALC_DELAY,
-		bAfterRenderingDomReadyCalled = false,
-		done = assert.async();
+		done = assert.async(),
+		oSpy = sinon.spy(window, "clearTimeout");
 
-
-		// proxy the "_onAfterRenderingDomReady" function (problem using a spy)
-		var fnOrig = oObjectPage._onAfterRenderingDomReady;
-		oObjectPage._onAfterRenderingDomReady = function() {
-			bAfterRenderingDomReadyCalled = true;
-			fnOrig.apply(oObjectPage, arguments);
-		};
-
+		assert.expect(3);
 
 		// hook to onAfterRendering to *make a change that caused invalidation* before _onAfterRenderingDomReady is called
 		var oDelegate = {"onAfterRendering": function() {
 
-				// at this point, the _onAfterRenderingDomReady is scheduled but not executed yet
-				// Act: scheduled a task to execute shortly before _onAfterRenderingDomReady
-				setTimeout(function() {
+			// clean up to avoid calling the same hook again
+			oObjectPage.removeDelegate(oDelegate);
+			oSpy.reset();
 
-					// we are just before _onAfterRenderingDomReady will be called
-					// Act: make a change that invalidates the object page => the page will rerender
-					oObjectPage.removeSection(0);
+			assert.ok(oObjectPage._iAfterRenderingDomReadyTimeout > 0, "the task is scheduled");
 
-					// clean up to avoid calling the same hook again
-					oObjectPage.removeDelegate(oDelegate);
+			// Act
+			oObjectPage.invalidate();
 
-					// Check : the _onAfterRenderingDomReady that was scheduled before the invalidation is not called
-					setTimeout(function() {
-						assert.equal(bAfterRenderingDomReadyCalled, false, "_onAfterRenderingDomReady is not called");
-						done();
-						oObjectPage.destroy();
-					}, iAfterRenderingDOMReadyDelay - 10);
+			// Check
+			assert.ok(oSpy.called, "the task is cancelled");
+			assert.strictEqual(oObjectPage._iAfterRenderingDomReadyTimeout, null, "the field is cleared");
 
-				}, iAfterRenderingDOMReadyDelay - 10);
+			oObjectPage.destroy();
+			oSpy.restore();
+			done();
 			}};
 
 		oObjectPage.addEventDelegate(oDelegate);
