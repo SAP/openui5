@@ -219,11 +219,7 @@ sap.ui.define([
 	Splitter.prototype.resetContentAreasSizes = function () {
 		var aContentAreas = this._getContentAreas();
 		for (var i = 0; i < aContentAreas.length; i++) {
-			var oLD = aContentAreas[i].getLayoutData();
-			var bHasMinSize = oLD.getMinSize() != 0;
-			var sSize = bHasMinSize ? oLD.getMinSize() + "px" : "auto";
-			oLD.setSize(sSize);
-			this.$("content-" + i).css(this._sizeType, sSize);
+			aContentAreas[i].getLayoutData().setSize("auto");
 		}
 	};
 
