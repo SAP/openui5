@@ -6,8 +6,27 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:plugins="sap.m.plugins"
 		xmlns:variants="sap.ui.fl.variants"
-		controllerName="sap.ui.mdc.sample.controller.Controller">
+		controllerName="sap.ui.mdc.sample.ResponsiveTable.Controller">
 	<OverflowToolbar>
+		<Label text="Messages: " design="Bold" />
+		<Button icon="sap-icon://paper-plane" tooltip="Show Random Message" press=".showRandomMessage" />
+		<Button type="Reject" icon="sap-icon://message-error" tooltip="Add error" press=".addTableMessage('Error')" />
+		<Button icon="sap-icon://message-warning" tooltip="Add warning" press=".addTableMessage('Warning')" />
+		<Button type="Accept" icon="sap-icon://message-success" tooltip="Add success" press=".addTableMessage('Success')" />
+		<Button icon="sap-icon://message-information" tooltip="Add information" press=".addTableMessage('Information')" />
+		<ToolbarSeparator />
+		<ToggleButton text="Plugin Enabled" pressed="true" press="onPluginEnablePress" />
+		<ComboBox placeholder="Show message strip for" change=".onPluginFilterChange">
+			<core:Item text="All messages" key="" />
+			<core:Item text="Error messages" key="Error" />
+			<core:Item text="Warning messages" key="Warning" />
+			<core:Item text="Success messages" key="Success" />
+			<core:Item text="Information messages" key="Information" />
+		</ComboBox>
+		<Button id="msgBtn" icon="sap-icon://alert" type="Emphasized" press="onMessagePopoverPress"
+                visible="{=${message>/}.length > 0}"
+                text="{=${message>/}.length}" />
+        <Button icon="sap-icon://delete" tooltip="Clear all messages" type="Emphasized" visible="{=${message>/}.length > 0}" press=".clearMessages" />
 		<ToolbarSpacer/>
 		<Button text="Table Settings" press="onResponsiveTableSettingsPress"/>
 	</OverflowToolbar>
@@ -20,9 +39,9 @@
 			selectionMode="Multi"
 			height="100%"
 			paste="onPaste">
-		<mdc:dependents>
-			<plugins:DataStateIndicator enableFiltering="true" />
-		</mdc:dependents>
+		<mdc:dataStateIndicator>
+			<plugins:DataStateIndicator id="dataStatePlugin" filter=".dataStateFilter" />
+		</mdc:dataStateIndicator>
 		<mdc:columns>
 			<mdcTable:Column id="create" header="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
 				<Text text="{CreatedAt}"/>

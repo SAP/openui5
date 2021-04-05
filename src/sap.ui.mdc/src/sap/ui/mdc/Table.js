@@ -394,7 +394,18 @@ sap.ui.define([
 				 * <code>setRowSettings</code> for the changes to take effect.
 				 *
 				 */
-				rowSettings: {type: "sap.ui.mdc.table.RowSettings", multiple: false}
+				rowSettings: {type: "sap.ui.mdc.table.RowSettings", multiple: false},
+
+				/**
+				 * Defines an aggregation for the <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
+				 * The message filtering is not yet supported for this control therefore {@link sap.m.plugins.DataStateIndicator#getEnableFiltering enableFiltering} property of the <code>DataStateIndicator</code> must not be set to <code>true</code>.
+				 *
+				 * @since 1.89
+				 */
+				dataStateIndicator: {
+					type: "sap.m.plugins.DataStateIndicator",
+					multiple: false
+				}
 			},
 			associations: {
 				/**
@@ -588,7 +599,8 @@ sap.ui.define([
 		this._fnRejectFullInit = reject;
 	};
 
-	Table.prototype.getDataStateIndicatorPluginOwner = function() {
+	Table.prototype.getDataStateIndicatorPluginOwner = function(oDataStateIndicator) {
+		oDataStateIndicator.setEnableFiltering(false);
 		return this._oTable || this._pFullInitialize;
 	};
 
