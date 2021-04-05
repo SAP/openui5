@@ -19,6 +19,7 @@
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
 	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -31,8 +32,15 @@
 			QUnit.module("jQuery.sap.openWindow");
 
 			QUnit.test("Noopener noreferrer", function(assert) {
-				var oRes = jQuery.sap.openWindow("https://www.sap.com", "newWindow");
-				assert.ok(oRes === null, "Reference to the newly open window object is broken");
+				//Arrange
+				var oStubWindowOpen = sinon.sandbox.stub(window, 'open');
+
+				//Actopen
+				jQuery.sap.openWindow("about:blank", "newWindow");
+
+				//Assert
+				assert.ok(oStubWindowOpen.calledWith("about:blank", "newWindow", "noopener,noreferrer"),
+						"window.open is called with predefined windowFeatures");
 			});
 		});
 	</script>
