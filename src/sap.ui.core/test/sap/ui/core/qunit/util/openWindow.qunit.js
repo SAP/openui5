@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/util/openWindow", "jquery.sap.script", "sap/ui/util/isCrossOriginURL", "sap/ui/util/defaultLinkTypes"
 ], function(openWindow, jQuery, isCrossOriginURL, defaultLinkTypes) {
@@ -6,14 +6,28 @@ sap.ui.define([
 
 	QUnit.module("sap/ui/util/openWindow");
 	QUnit.test("Noopener noreferrer", function(assert) {
-		assert.equal(openWindow("https://www.sap.com", "newWindow"), null, "Reference to the newly open window object is" +
-			"broken");
+		//Arrange
+		var oStubWindowOpen = sinon.sandbox.stub(window, 'open');
+
+		//Act
+		openWindow("about:blank", "newWindow");
+
+		//Assert
+		assert.ok(oStubWindowOpen.calledWith("about:blank", "newWindow", "noopener,noreferrer"),
+			"window.open is called with predefined windowFeatures");
 	});
 
 	QUnit.module("jquery.sap.script");
 	QUnit.test("Noopener noreferrer", function(assert) {
-		assert.equal(jQuery.sap.openWindow("https://www.sap.com", "newWindow"), null, "Reference to the newly open window object is" +
-			"broken");
+		//Arrange
+		var oStubWindowOpen = sinon.sandbox.stub(window, 'open');
+
+		//Act
+		jQuery.sap.openWindow("about:blank", "newWindow");
+
+		//Assert
+		assert.ok(oStubWindowOpen.calledWith("about:blank", "newWindow", "noopener,noreferrer"),
+			"window.open is called with predefined windowFeatures");
 	});
 
 	QUnit.module("Compatibility");
