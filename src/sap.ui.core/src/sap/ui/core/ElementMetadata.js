@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/*global Promise */
-
 // Provides class sap.ui.core.ElementMetadata
 sap.ui.define([
 	'sap/base/Log',

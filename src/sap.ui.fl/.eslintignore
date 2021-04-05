@@ -3,3 +3,4 @@ dist
 target
 
 test/sap/ui/fl/qunit/testResources/TestChangeHandlersBROKEN.flexibility.js
+test/sap/ui/fl/testApps/controlPersonalizationAPI/test/testsuite.qunit.js

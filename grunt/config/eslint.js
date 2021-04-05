@@ -10,7 +10,8 @@ module.exports = function(grunt, config) {
 
 	var eslint = {
 		options: {
-			quiet: quiet
+			quiet: quiet,
+			errorOnUnmatchedPattern: false
 		}
 	};
 

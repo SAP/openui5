@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- /**
+/**
   * @typedef {Object} sap.m.Title
   * @typedef {Object} sap.ui.core.Title
   */

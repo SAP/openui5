@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/* global console */
 sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/thirdparty/jquery"],
 	function(Log, defineLazyProperty, jQuery) {
 	"use strict";

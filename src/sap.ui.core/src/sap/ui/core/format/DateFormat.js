@@ -2396,7 +2396,7 @@ sap.ui.define([
 						sAllowedCharacters += "0123456789";
 						bNumbers = true;
 					}
-				}else {
+				} else {
 					bAll = true;
 				}
 				break;

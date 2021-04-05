@@ -1,5 +1,4 @@
 /*global esprima, JSZip, URI */
-/*eslint-env es6*/
 /*eslint no-cond-assign: 1, max-nested-callbacks: [2,4] */
 sap.ui.define([
 	"sap/base/Log",

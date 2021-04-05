@@ -185,7 +185,7 @@ sap.ui.define([
 				// normal word
 				rm.writeEscaped(sWord + sSpace, true);
 			}
-		}while (iPos >= 0);
+		} while (iPos >= 0);
 
 	};
 

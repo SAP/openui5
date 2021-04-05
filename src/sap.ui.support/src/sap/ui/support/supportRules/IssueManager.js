@@ -205,7 +205,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/librar
 			 */
 			getTreeTableViewModel: function(oRules) {
 				var index = 0,
-					innerIndex = 0,
 					treeTableModel = {},
 					rulesViewModel,
 					rule,
@@ -235,7 +234,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/librar
 							libName: libraryName,
 							selected: true
 						});
-						innerIndex++;
 					}
 					rules = [];
 					index++;

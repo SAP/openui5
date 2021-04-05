@@ -2699,7 +2699,7 @@ sap.ui.define([
 				if (this.iModelVersion === AnalyticalVersionInfo.V1) {
 					//V1 - use createBatchOperation
 					aBatchQueryRequest.push(this.oModel.createBatchOperation(sPath.replace(/\ /g, "%20"), "GET"));
-				}else if (this.iModelVersion === AnalyticalVersionInfo.V2) {
+				} else if (this.iModelVersion === AnalyticalVersionInfo.V2) {
 					var aUrlParameters = this._getQueryODataRequestOptions(oAnalyticalQueryRequest,
 							oRequestDetails.bIsLeafGroupsRequest,  {encode: true});
 					if (this.sCustomParams) {

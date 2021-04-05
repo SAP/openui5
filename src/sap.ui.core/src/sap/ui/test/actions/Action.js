@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global FocusEvent, DragEvent, FileList, DataTransfer, DataTransferItemList, MouseEvent, document */
+/*global FocusEvent, DragEvent, DataTransfer, MouseEvent, document */
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/qunit/QUnitUtils',

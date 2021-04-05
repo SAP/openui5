@@ -7,6 +7,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	/**
 	 * RegExp and escape function for CSS escaping
 	 */
+	// eslint-disable-next-line no-control-regex -- special characters are really needed here!
 	var rCSS = /[\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xff\u2028\u2029][0-9A-Fa-f]?/g;
 
 	var fnCSS = function(sChar) {

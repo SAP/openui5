@@ -33,7 +33,6 @@ sap.ui.define(function () {
 			default:
 				return ("");
 			}
-			return ("");
 		}
 	};
 

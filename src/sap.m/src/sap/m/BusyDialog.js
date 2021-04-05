@@ -546,6 +546,7 @@ sap.ui.define(['./library',
 			var cancelButtonText = this.getCancelButtonText();
 			cancelButtonText = cancelButtonText ? cancelButtonText : Core.getLibraryResourceBundle("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
 
+			// eslint-disable-next-line no-return-assign
 			return this._cancelButton ? this._cancelButton : this._cancelButton = new Button(this.getId() + 'busyCancelBtn', {
 				text: cancelButtonText,
 				press: function () {

@@ -1,5 +1,5 @@
 /* eslint-disable default-case */
-/*global QUnit, jQuery, sinon */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",

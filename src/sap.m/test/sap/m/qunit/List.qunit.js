@@ -1,4 +1,4 @@
-/*global QUnit, sinon, jQuery */
+/*global QUnit, sinon */
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/Core",

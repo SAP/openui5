@@ -212,7 +212,7 @@ sap.ui.define(["sap/m/library", "./SemanticContainer"], function(mobileLibrary, 
 		this._aSemanticTextActions.push(oSemanticControl);
 
 		if (bIsMainAction) {
-			this._iMainActionCount ++;
+			this._iMainActionCount++;
 			iInsertIndex = this._getSemanticTextMainActionInsertIndex();
 		} else {
 			iInsertIndex = this._getSemanticTextActionInsertIndex(oSemanticControl);
@@ -235,7 +235,7 @@ sap.ui.define(["sap/m/library", "./SemanticContainer"], function(mobileLibrary, 
 			bIsMainAction = this._isMainAction(oSemanticControl);
 
 		if (bIsMainAction) {
-			this._iMainActionCount --;
+			this._iMainActionCount--;
 		}
 
 		this._aSemanticTextActions.splice(iControlIndex, 1);

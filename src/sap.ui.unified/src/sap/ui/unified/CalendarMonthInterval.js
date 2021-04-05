@@ -568,7 +568,7 @@ sap.ui.define([
 		if (this.getDomRef()) {
 			if (this._getShowItemHeader()) {
 				this.$().addClass("sapUiCalIntHead");
-			}else {
+			} else  {
 				this.$().removeClass("sapUiCalIntHead");
 			}
 		}
@@ -988,7 +988,7 @@ sap.ui.define([
 		var iMonths = this.getMonths();
 		if (iMonths > this._iDaysMonthsHead) {
 			return true;
-		}else {
+		} else  {
 			return false;
 		}
 
@@ -1013,7 +1013,7 @@ sap.ui.define([
 		}
 		if (oStartDate.isBefore(this._oMinDate)) {
 			oStartDate = new CalendarDate(this._oMinDate);
-		}else if (oStartDate.isAfter(oMaxDate)){
+		} else if (oStartDate.isAfter(oMaxDate)){
 			oStartDate = oMaxDate;
 		}
 
@@ -1033,7 +1033,7 @@ sap.ui.define([
 				//focused date not longer visible -> focus start date
 				this._setFocusedDate(oStartDate);
 				oMonthsRow.setDate(oLocaleDate);
-			}else {
+			} else  {
 				oMonthsRow.setDate(oDateTime);
 			}
 		}
@@ -1095,7 +1095,7 @@ sap.ui.define([
 
 		if (this._oFocusedDate.isBefore(this._oMinDate)) {
 			this._oFocusedDate = new CalendarDate(this._oMinDate);
-		}else if (this._oFocusedDate.isAfter(this._oMaxDate)){
+		} else if (this._oFocusedDate.isAfter(this._oMaxDate)){
 			this._oFocusedDate = new CalendarDate(this._oMaxDate);
 		}
 
@@ -1167,7 +1167,7 @@ sap.ui.define([
 
 		if (iYear < iYearMin || (iYear == iYearMin && iMonth <= iMonthMin )) {
 			oHeader.setEnabledPrevious(false);
-		}else {
+		} else  {
 			oHeader.setEnabledPrevious(true);
 		}
 
@@ -1176,7 +1176,7 @@ sap.ui.define([
 		iMonth = oDate.getMonth();
 		if (iYear > iYearMax || (iYear == iYearMax && iMonth >= iMonthMax)) {
 			oHeader.setEnabledNext(false);
-		}else {
+		} else  {
 			oHeader.setEnabledNext(true);
 		}
 
@@ -1237,10 +1237,10 @@ sap.ui.define([
 		if (oDate.isBefore(this._oMinDate)) {
 			oFocusedDate = this._oMinDate;
 			bChanged = true;
-		}else if (oDate.isAfter(this._oMaxDate)){
+		} else if (oDate.isAfter(this._oMaxDate)){
 			oFocusedDate = this._oMaxDate;
 			bChanged = true;
-		}else {
+		} else  {
 			oFocusedDate = oDate;
 		}
 

@@ -163,7 +163,7 @@ sap.ui.define([
 			done();
 		};
 		var chain = Promise.resolve();
-		chain = chain.then(function boostrapPromise() {
+		chain.then(function boostrapPromise() {
 			return createPromise(0);
 		});
 		assert.ok(!_promiseWaiter.hasPending(), "Has no pending promises yet - one will be started in microtask");

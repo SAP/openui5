@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global location, XMLHttpRequest, Uint8Array */
+/*global XMLHttpRequest, Uint8Array */
 sap.ui.define([], function() {
 		"use strict";
 

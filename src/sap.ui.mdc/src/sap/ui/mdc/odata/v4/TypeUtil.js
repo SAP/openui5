@@ -34,7 +34,6 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType'], functio
 				} else {
 					return BaseType.Numeric;
 				}
-				break;
 			default:
 				return ODataTypeUtil.getBaseType(sType, oFormatOptions, oConstraints);
 		}

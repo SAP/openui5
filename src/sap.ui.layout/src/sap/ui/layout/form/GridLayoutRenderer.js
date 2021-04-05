@@ -563,7 +563,7 @@ sap.ui.define([
 
 		if (aFields.length == 1 && this.getElementData(oLayout, aFields[0]) && this.getElementData(oLayout, aFields[0]).getHCells() == "full") {
 			return true;
-		}else {
+		} else  {
 			return false;
 		}
 

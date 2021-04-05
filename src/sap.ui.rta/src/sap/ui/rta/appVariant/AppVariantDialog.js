@@ -169,7 +169,7 @@ function(
 			liveChange: function() {
 				var oSaveButton = sap.ui.getCore().byId("saveButton");
 				if (this.getValue() === "") {
-					this.setValueState(ValueState.Error);  // if the field is empty after change, it will go red
+					this.setValueState(ValueState.Error); // if the field is empty after change, it will go red
 					oSaveButton.setEnabled(false);
 				} else {
 					this.setValueState(ValueState.None); // if the field is not empty after change, the value state (if any) is removed

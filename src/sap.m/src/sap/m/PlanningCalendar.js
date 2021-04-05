@@ -684,10 +684,10 @@ sap.ui.define([
 		if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 			this._iSize = 0;
 			this._iSizeScreen = 0;
-		}else if ((Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) && !(Device.system.desktop || jQuery('html').hasClass("sapUiMedia-Std-Desktop"))){
+		} else if ((Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) && !(Device.system.desktop || jQuery('html').hasClass("sapUiMedia-Std-Desktop"))){
 			this._iSize = 1;
 			this._iSizeScreen = 1;
-		}else {
+		} else  {
 			this._iSize = 2;
 			this._iSizeScreen = 2;
 		}
@@ -2541,7 +2541,7 @@ sap.ui.define([
 			oView = aViews[i];
 			if (oView.getKey() != sKey) {
 				oView = undefined;
-			}else {
+			} else  {
 				break;
 			}
 		}
@@ -2910,7 +2910,7 @@ sap.ui.define([
 
 			positionSelectAllCheckBox.call(this);
 			this._updatePickerSelection();
-		}else if (!bNoRowResize) {
+		} else if (!bNoRowResize) {
 			for (i = 0; i < aRows.length; i++) {
 				oRow = aRows[i];
 				getRowTimeline(oRow).handleResize();
@@ -4520,7 +4520,7 @@ sap.ui.define([
 		if (this.getSingleSelection()) {
 			if (this._oCalendarHeader.getAllCheckBox()) {
 				this._oCalendarHeader.setAllCheckBox();
-			}else if (this._oInfoToolbar.getContent().length > 2) {
+			} else if (this._oInfoToolbar.getContent().length > 2) {
 				this._oInfoToolbar.removeContent(this._oSelectAllCheckBox);
 			}
 		} else {

@@ -89,7 +89,7 @@ sap.ui.define([
 					DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 				}.bind(this), /is already defined!/, "then an exception is thrown");
 			});
-		}.bind(this));
+		});
 	});
 	//ensure a default delegate exists for a model not used anywhere else
 	var SomeModel = JSONModel.extend("sap.ui.fl.qunit.test.Model");

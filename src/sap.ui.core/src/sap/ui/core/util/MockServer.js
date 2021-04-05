@@ -2005,7 +2005,8 @@ sap.ui
 									break;
 								case "Edm.Int16":
 								case "Edm.Int32":
-									//case "Edm.Int64": In ODataModel this type is represented as a string. (https://openui5.hana.ondemand.com/docs/api/symbols/sap.ui.model.odata.type.Int64.html)
+								//case "Edm.Int64": In ODataModel this type is represented as a string. (https://openui5.hana.ondemand.com/docs/api/symbols/sap.ui.model.odata.type.Int64.html)
+								// eslint-ignore-next-line no-fallthrough
 								case "Edm.Decimal":
 								case "Edm.Byte":
 								case "Edm.Double":

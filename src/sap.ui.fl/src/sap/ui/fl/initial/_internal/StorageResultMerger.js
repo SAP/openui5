@@ -69,6 +69,7 @@ sap.ui.define([
 	 */
 	function _concatEtag(aResponses) {
 		return aResponses.reduce(function (sCacheKey, oResponse) {
+			// eslint-disable-next-line no-return-assign
 			return oResponse.cacheKey ? sCacheKey += oResponse.cacheKey : sCacheKey;
 		}, "") || null;
 	}

@@ -163,7 +163,7 @@ sap.ui.define([
 		oSubmitPromise = oEvent.getParameter("promise");
 	};
 
-	var iParseError = 0;
+	var iParseError = 0; // eslint-disable-line no-unused-vars
 	var _myParseErrorHandler = function(oEvent) {
 		iParseError++;
 	};
@@ -1712,7 +1712,7 @@ sap.ui.define([
 			iSubmitCount = 0;
 			sSubmitId = "";
 			oSubmitPromise = null;
-			iParseError = 0;
+			iParseError = 0; // eslint-disable-line
 			iValidationError = 0;
 			FieldBase._init();
 		}

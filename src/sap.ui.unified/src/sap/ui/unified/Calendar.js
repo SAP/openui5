@@ -507,9 +507,9 @@ sap.ui.define([
 		if (aMonths.length > 1 && oMonthDate) {
 			// for more than one month - re-render same months (if already rendered once)
 			oCalDate = CalendarDate.fromLocalJSDate(oMonthDate, this.getPrimaryCalendarType());
-		}else if (aMonths.length > 1) {
+		} else if (aMonths.length > 1) {
 			oCalDate = _determineFirstMonthDate.call(this, this._getFocusedDate());
-		}else {
+		} else  {
 			oCalDate = oFocusedDate;
 		}
 
@@ -798,7 +798,7 @@ sap.ui.define([
 				oMonth._bNoThemeChange = true;
 				this.addAggregation("month",oMonth);
 			}
-		}else if (aMonths.length > iMonths){
+		} else if (aMonths.length > iMonths){
 			for (i = aMonths.length; i > iMonths; i--) {
 				oMonth = this.removeAggregation("month", i - 1);
 				oMonth.destroy();
@@ -1058,7 +1058,7 @@ sap.ui.define([
 		var iMonths = _getMonths.call(this);
 		if (iMonths > 2) {
 			return true;
-		}else {
+		} else  {
 			return false;
 		}
 
@@ -1512,7 +1512,7 @@ sap.ui.define([
 		if (iYear < iYearMin || (iYear == iYearMin && ( !bCheckMonth || iMonth <= iMonthMin ))
 				|| (this._iMode == 1 && this._getSucessorsPickerPopup())) {
 			oHeader.setEnabledPrevious(false);
-		}else {
+		} else  {
 			oHeader.setEnabledPrevious(true);
 		}
 
@@ -1582,7 +1582,7 @@ sap.ui.define([
 				oFirstMonthDate.setDate(1);
 				this._setFocusedDate(oFirstMonthDate);
 				oFocusedDate = this._getFocusedDate();
-			}else {
+			} else  {
 				oFocusedDate.setDate(1);
 			}
 
@@ -1715,7 +1715,7 @@ sap.ui.define([
 			for (var i = 0; i < iMonths; i++) {
 				aMonths.push((iMonth + i) % 12);
 			}
-		}else {
+		} else  {
 			aMonths.push(iMonth);
 		}
 
@@ -2555,7 +2555,7 @@ sap.ui.define([
 
 		if (this._oFocusedDate.isBefore(this._oMinDate)) {
 			this._oFocusedDate = new CalendarDate(this._oMinDate, sCalendarType);
-		}else if (this._oFocusedDate.isAfter(this._oMaxDate)){
+		} else if (this._oFocusedDate.isAfter(this._oMaxDate)){
 			this._oFocusedDate = new CalendarDate(this._oMaxDate, sCalendarType);
 		}
 

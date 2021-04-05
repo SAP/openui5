@@ -158,7 +158,7 @@ sap.ui.define([
 			iIndexToInsert = this._getSemanticLeftContentInsertIndex(iControlOrder);
 
 		this._callContainerAggregationMethod("insertContent", oControl, iIndexToInsert);
-		this._iSemanticLeftContentCount ++;
+		this._iSemanticLeftContentCount++;
 		this._aSemanticLeftContent.push(oSemanticControl);
 
 		return this;
@@ -192,7 +192,7 @@ sap.ui.define([
 		var oControl = this._getControl(oSemanticControl);
 
 		this._callContainerAggregationMethod("removeContent", oControl);
-		this._iSemanticLeftContentCount --;
+		this._iSemanticLeftContentCount--;
 		this._aSemanticLeftContent.splice(this._aSemanticLeftContent.indexOf(oControl), 1);
 		return oSemanticControl;
 	};

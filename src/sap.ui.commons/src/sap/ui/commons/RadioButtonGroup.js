@@ -518,9 +518,9 @@ sap.ui.define([
 		if (iSelectedIndex === undefined && aItems.length > 0) {
 			// if not defined -> select first one
 			this.setSelectedIndex(0);
-		}else if (iSelectedIndex >= 0 && aItems.length == 0) {
+		} else if (iSelectedIndex >= 0 && aItems.length == 0) {
 			this.setSelectedIndex(undefined);
-		}else if (iSelectedIndex >= aItems.length) {
+		} else if (iSelectedIndex >= aItems.length) {
 			// if less items than before -> select last one
 			this.setSelectedIndex(aItems.length - 1);
 		}

@@ -67,13 +67,13 @@ function(
 		//		verticalLayout
 		//		button
 			oPage.addContent(
-			this.oLayout = new VerticalLayout("layout1", {
-				content: [
-					// FIXME: don't create an instance of an abstract class!
-					this.oControl = new Control("mockControl")
-				]
-			})
-		);
+				this.oLayout = new VerticalLayout("layout1", {
+					content: [
+						// FIXME: don't create an instance of an abstract class!
+						this.oControl = new Control("mockControl")
+					]
+				})
+			);
 
 			this.oComponentContainer = new ComponentContainer("CompCont", {
 				component: this.oComp

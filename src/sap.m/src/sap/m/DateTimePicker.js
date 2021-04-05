@@ -669,7 +669,7 @@ sap.ui.define([
 
 			if (oDate.getTime() < this._oMinDate.getTime()) {
 				oDate = new Date(this._oMinDate.getTime());
-			}else if (oDate.getTime() > this._oMaxDate.getTime()){
+			} else if (oDate.getTime() > this._oMaxDate.getTime()){
 				oDate = new Date(this._oMaxDate.getTime());
 			}
 		}

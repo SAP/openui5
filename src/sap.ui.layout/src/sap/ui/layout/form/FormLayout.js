@@ -885,7 +885,7 @@ sap.ui.define([
 
 		if (this.getDomRef()) {
 			return (oContainer.getId() ? window.document.getElementById(oContainer.getId()) : null);
-		}else {
+		} else  {
 			return null;
 		}
 
@@ -902,7 +902,7 @@ sap.ui.define([
 
 		if (this.getDomRef()) {
 			return (oElement.getId() ? window.document.getElementById(oElement.getId()) : null);
-		}else {
+		} else  {
 			return null;
 		}
 

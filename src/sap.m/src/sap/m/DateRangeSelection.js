@@ -853,7 +853,7 @@ sap.ui.define([
 						this._curpos = sValue.length;
 						this._$input.cursorPos(this._curpos);
 					}
-				}else if (!this._bValid){
+				} else if (!this._bValid){
 					// wrong input before open calendar
 					sValue = this._formatValue( oDate1, oDate2 );
 					if (sValue != this._$input.val()) {
@@ -985,7 +985,7 @@ sap.ui.define([
 		if ((oDate && ( iFirstTimestamp < this._oMinDate.getTime() || iFirstTimestamp > this._oMaxDate.getTime())) ||
 				(oSecondDate && ( iSecondTimestamp < this._oMinDate.getTime() || iSecondTimestamp > this._oMaxDate.getTime()))) {
 			return [undefined, undefined];
-		}else {
+		} else  {
 			return [oDate, oSecondDate];
 		}
 

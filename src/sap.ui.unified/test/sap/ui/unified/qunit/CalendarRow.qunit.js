@@ -1,4 +1,4 @@
-/*global QUnit, window */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarLegend",
@@ -26,7 +26,7 @@ sap.ui.define([
 		var oAppointment = oEvent.getParameter("appointment");
 		if (oAppointment) {
 			sSelectedAppointmentId = oAppointment.getId();
-		}else {
+		} else  {
 			var aAppointments = oEvent.getParameter("appointments");
 			iSelectedGroupAppointments = aAppointments.length;
 		}

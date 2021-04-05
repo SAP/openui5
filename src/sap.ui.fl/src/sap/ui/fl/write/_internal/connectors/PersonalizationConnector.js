@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
-	var PersonalizationConnector = merge({}, BackendConnector, {  /** @lends sap.ui.fl.write._internal.connectors.PersonalizationConnector */
+	var PersonalizationConnector = merge({}, BackendConnector, { /** @lends sap.ui.fl.write._internal.connectors.PersonalizationConnector */
 		layers: InitialConnector.layers,
 
 		ROUTES: {

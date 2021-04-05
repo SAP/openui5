@@ -871,6 +871,7 @@ sap.ui.define([
 
 		assert.deepEqual(oRangeSlider.getRange(), aRange, "Range should equal to the initial set value: " + aRange);
 		assert.deepEqual(oRangeSlider.getRange(), oRangeSlider.getRange(), "Ranges should be equal");
+		// eslint-disable-next-line no-self-compare
 		assert.ok(oRangeSlider.getRange() !== oRangeSlider.getRange(), "Ranges should not be the same instance");
 
 		oRangeSlider.destroy();

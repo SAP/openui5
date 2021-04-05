@@ -1,4 +1,4 @@
-/*global QUnit, window */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",

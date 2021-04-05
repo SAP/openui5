@@ -1207,6 +1207,7 @@ sap.ui.define([
 					break;
 				case -1: // SPECIAL_SETTING
 					// No assert
+					break;
 				default:
 					break;
 				}

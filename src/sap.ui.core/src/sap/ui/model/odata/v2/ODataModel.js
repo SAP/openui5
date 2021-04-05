@@ -4594,7 +4594,7 @@ sap.ui.define([
 			return OData.batchHandler;
 		} else if (sUrl.indexOf("$count") > -1) {
 			return undefined;
-		}else if (this.bJSON) {
+		} else if (this.bJSON) {
 			return OData.jsonHandler;
 		} else {
 			return OData.atomHandler;

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- /* global XMLHttpRequest */
+/* global XMLHttpRequest */
 
 sap.ui.define([
 	"sap/ui/fl/Utils",

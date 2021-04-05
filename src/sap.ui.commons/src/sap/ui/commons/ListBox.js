@@ -670,7 +670,7 @@ sap.ui.define([
 					// Take care of selection and select event
 					if (oEvent.ctrlKey || oEvent.metaKey) { // = CTRL
 							this._handleUserActivationCtrl(iIndex, oItem);
-					} else  if (oEvent.shiftKey) {
+					} else if (oEvent.shiftKey) {
 						this.setSelectedIndices(this._getUserSelectionRange(iIndex));
 						this.fireSelect({
 							id:this.getId(),

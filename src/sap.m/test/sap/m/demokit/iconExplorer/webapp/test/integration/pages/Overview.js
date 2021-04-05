@@ -49,7 +49,7 @@ sap.ui.define([
 			var sText;
 			if (oItem.getCells) {
 				sText = oItem.getCells()[1].getText();
-			}else {
+			} else  {
 				sText = oItem.getContent()[0].getContent()[1].getText();
 			}
 			return sText.indexOf(sName) !== -1;

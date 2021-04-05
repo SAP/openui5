@@ -420,7 +420,7 @@ sap.ui.define([
 				if (this.mContainers[sContainerId][0]) {
 					var oPanel = this.mContainers[sContainerId][0];
 					return oPanel.getDomRef();
-				}else if (this.mContainers[sContainerId][1]){
+				} else if (this.mContainers[sContainerId][1]){
 					// no panel used -> return Grid
 					var oGrid = this.mContainers[sContainerId][1];
 					return oGrid.getDomRef();
@@ -902,7 +902,6 @@ sap.ui.define([
 					return oLayout.oDummyLayoutData;
 				}
 
-				return oLD;
 			}
 		};
 

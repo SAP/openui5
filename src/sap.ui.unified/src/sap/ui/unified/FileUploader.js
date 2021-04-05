@@ -597,7 +597,7 @@ sap.ui.define([
 		//retrieving the default browse button text from the resource bundle
 		if (!this.getIconOnly()) {
 			this.oBrowse.setText(this.getBrowseText());
-		}else {
+		} else  {
 			this.oBrowse.setTooltip(this.getBrowseText());
 		}
 
@@ -622,7 +622,7 @@ sap.ui.define([
 		this.setProperty("buttonText", sText, false);
 		if (!this.getIconOnly()) {
 			this.oBrowse.setText(sText || this.getBrowseText());
-		}else {
+		} else  {
 			this.oBrowse.setTooltip(this.getBrowseText());
 		}
 		return this;
@@ -663,7 +663,7 @@ sap.ui.define([
 		if (bIconOnly) {
 			this.oBrowse.setText("");
 			this.oBrowse.setTooltip(this.getBrowseText());
-		}else {
+		} else  {
 			this.oBrowse.setText(this.getButtonText() || this.getBrowseText());
 			this.oBrowse.setTooltip("");
 		}
@@ -1069,7 +1069,7 @@ sap.ui.define([
 		if (this.oBrowse.getDomRef()) {
 			if (sValueState === ValueState.Error && this.getEnabled()) {
 				this.oBrowse.$().attr("aria-invalid", "true");
-			}else {
+			} else  {
 				this.oBrowse.$().removeAttr("aria-invalid");
 			}
 		}

@@ -1162,7 +1162,7 @@ sap.ui.define([
 				if (oDate.getUTCDate() <= iDays) {
 					// stay in month
 					oDate.setUTCDate(1);
-				}else {
+				} else  {
 					oDate.setUTCDate(oDate.getUTCDate() - iDays);
 				}
 				_setDateInDatesRow.call(this, oDate);
@@ -1226,7 +1226,7 @@ sap.ui.define([
 				if (oDate.getUTCDate() + iDays > oLastDayOfMonth.getUTCDate()) {
 					// stay in month
 					oDate.setUTCDate(oLastDayOfMonth.getUTCDate());
-				}else {
+				} else  {
 					oDate.setUTCDate(oDate.getUTCDate() + iDays);
 				}
 				_setDateInDatesRow.call(this, oDate);
@@ -1269,7 +1269,7 @@ sap.ui.define([
 		var iItems = this.getItems();
 		if (iItems > this._iItemsHead) {
 			return true;
-		}else {
+		} else  {
 			return false;
 		}
 
@@ -1286,7 +1286,7 @@ sap.ui.define([
 		}
 		if (oStartDate.getTime() < this._oMinDate.getTime()) {
 			oStartDate = new UniversalDate(this._oMinDate.getTime());
-		}else if (oStartDate.getTime() > oMaxDate.getTime()){
+		} else if (oStartDate.getTime() > oMaxDate.getTime()){
 			oStartDate = oMaxDate;
 		}
 
@@ -1306,7 +1306,7 @@ sap.ui.define([
 				//focused date not longer visible -> focus start date
 				this._setFocusedDate(oStartDate);
 				oTimesRow.setDate(oLocalDate);
-			}else {
+			} else  {
 				oTimesRow.setDate(oDate);
 			}
 		}
@@ -1366,7 +1366,7 @@ sap.ui.define([
 
 		if (this._oFocusedDate.getTime() < this._oMinDate.getTime()) {
 			this._oFocusedDate = new UniversalDate(this._oMinDate.getTime());
-		}else if (this._oFocusedDate.getTime() > this._oMaxDate.getTime()){
+		} else if (this._oFocusedDate.getTime() > this._oMaxDate.getTime()){
 			this._oFocusedDate = new UniversalDate(this._oMaxDate.getTime());
 		}
 
@@ -1586,7 +1586,7 @@ sap.ui.define([
 										(iHours == iHoursMin && iMinutes <= iMinutesMin)))))))))
 				|| ((this._iMode == 1 || this._iMode == 2) && this.getPickerPopup())) {
 			oHeader.setEnabledPrevious(false);
-		}else {
+		} else  {
 			oHeader.setEnabledPrevious(true);
 		}
 
@@ -1603,7 +1603,7 @@ sap.ui.define([
 										(iHours == iHoursMax && iMinutes >= iMinutesMax)))))))))
 				|| ((this._iMode == 1 || this._iMode == 2) && this.getPickerPopup())) {
 			oHeader.setEnabledNext(false);
-		}else {
+		} else  {
 			oHeader.setEnabledNext(true);
 		}
 
@@ -1726,10 +1726,10 @@ sap.ui.define([
 		if (oDate.getTime() < this._oMinDate.getTime()) {
 			oFocusedDate = this._oMinDate;
 			bChanged = true;
-		}else if (oDate.getTime() > this._oMaxDate.getTime()){
+		} else if (oDate.getTime() > this._oMaxDate.getTime()){
 			oFocusedDate = this._oMaxDate;
 			bChanged = true;
-		}else {
+		} else  {
 			oFocusedDate = oDate;
 		}
 

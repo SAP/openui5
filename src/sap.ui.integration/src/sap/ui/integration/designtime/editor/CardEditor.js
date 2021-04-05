@@ -328,7 +328,7 @@ sap.ui.define([
 									]
 								}).addStyleClass("notWrappingRow"));
 								oLabelItemForNotWrapping = null;
-							}else if (oItem.isA("sap.m.ToolbarSpacer")) {
+							} else if (oItem.isA("sap.m.ToolbarSpacer")) {
 								addColFields();
 								if (oItem._hasLine) {
 									oItem.addStyleClass("sapUiIntegrationCardEditorSpacerWithLine");

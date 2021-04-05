@@ -149,7 +149,7 @@ sap.ui.define([
 
 		if (!vMessages) {
 			return;
-		}else if (Array.isArray(vMessages)) {
+		} else if (Array.isArray(vMessages)) {
 			for (var i = 0; i < vMessages.length; i++) {
 				oMessage = vMessages[i];
 				this._importMessage(oMessage);

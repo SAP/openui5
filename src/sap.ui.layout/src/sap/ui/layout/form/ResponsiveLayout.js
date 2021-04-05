@@ -316,7 +316,7 @@ sap.ui.define([
 				if (this.mContainers[sContainerId][0]) {
 					var oPanel = this.mContainers[sContainerId][0];
 					return oPanel.getDomRef();
-				}else if (this.mContainers[sContainerId][1]){
+				} else if (this.mContainers[sContainerId][1]){
 					// no panel used -> return RFLayout
 					var oRFLayout = this.mContainers[sContainerId][1];
 					return oRFLayout.getDomRef();
@@ -622,7 +622,7 @@ sap.ui.define([
 					}
 				};
 			}
-		}else if (oContainer) {
+		} else if (oContainer) {
 			oRFLayout._getAccessibleRole = function() {
 
 				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);

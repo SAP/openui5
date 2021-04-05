@@ -7,7 +7,6 @@
  * Code other than the Core tests must not yet introduce dependencies to this module.
  */
 
-/*eslint-env es6*/
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"

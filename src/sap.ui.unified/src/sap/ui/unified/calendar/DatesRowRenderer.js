@@ -140,7 +140,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 			iMonth = oDay.getMonth();
 			if (aMonthDays.length > 0 && aMonthDays[aMonthDays.length - 1].iMonth == iMonth) {
 				aMonthDays[aMonthDays.length - 1].iDays++;
-			}else {
+			} else  {
 				aMonthDays.push({iMonth: iMonth, iDays: 1});
 			}
 			oDay.setDate(oDay.getDate() + 1);

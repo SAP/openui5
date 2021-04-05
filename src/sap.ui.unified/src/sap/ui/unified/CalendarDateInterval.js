@@ -551,7 +551,7 @@ sap.ui.define([
 		var iDays = this._getDays();
 		if (iDays > this._iDaysMonthHead) {
 			return true;
-		}else {
+		} else  {
 			return false;
 		}
 
@@ -573,7 +573,7 @@ sap.ui.define([
 			if (!oStartDate) {
 				// use focused date as start date
 				this._setStartDate(this._oFocusedDate, false, true);
-			}else if (!oDatesRow.checkDateFocusable(this._oFocusedDate.toLocalJSDate())) {
+			} else if (!oDatesRow.checkDateFocusable(this._oFocusedDate.toLocalJSDate())) {
 				this._oFocusedDate = CalendarDate.fromLocalJSDate(oStartDate, this.getPrimaryCalendarType());
 			}
 		}
@@ -821,7 +821,7 @@ sap.ui.define([
 				(iYear == iYearMin &&
 						(!bCheckMonth || iMonth < iMonthMin || (iMonth == iMonthMin && iDate <= iDateMin)))) {
 			oHeader.setEnabledPrevious(false);
-		}else {
+		} else  {
 			oHeader.setEnabledPrevious(true);
 		}
 
@@ -1138,7 +1138,7 @@ sap.ui.define([
 				//focused date not longer visible -> focus start date
 				this._setFocusedDate(oStartDate);
 				oDatesRow.setDate(oLocaleDate);
-			}else {
+			} else  {
 				oDatesRow.setDate(oDate);
 			}
 		}

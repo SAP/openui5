@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- /*global Promise*/
+/*global Promise*/
 sap.ui.define(['sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/base/Object', 'sap/ui/core/routing/History', "sap/base/Log"],
 	function(InstanceManager, FlexibleColumnLayout, BaseObject, History, Log) {
 		"use strict";

@@ -327,6 +327,7 @@ sap.ui.define([
 		}
 
 		function _getUID() {
+			// eslint-disable-next-line no-return-assign
 			return 'uID-' + (_getUID.id !== undefined ? ++_getUID.id : _getUID.id = 0);
 		}
 

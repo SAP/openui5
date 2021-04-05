@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- /* global QUnit */
+/* global QUnit */
 
  sap.ui.define([
 	"sap/ui/mdc/util/loadModules"

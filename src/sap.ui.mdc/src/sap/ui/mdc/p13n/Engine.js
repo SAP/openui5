@@ -282,7 +282,7 @@ sap.ui.define([
 		if (aChanges instanceof Array && aChanges.length > 0) {
 			var oModificationSetting = this._determineModification(vControl);
 			return oModificationSetting.handler.processChanges(aChanges, oModificationSetting.payload);
-		}else {
+		} else {
 			return Promise.resolve([]);
 		}
 	};

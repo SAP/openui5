@@ -173,7 +173,7 @@ sap.ui.define([
 			if (mPropertyBag.silent) {
 				hasher.changed.active = false; // disable changed signal
 				hasher.replaceHash(oUShellContainer.getService("URLParsing").constructShellHash(oParsedHash));
-				hasher.changed.active = true;  // re-enable changed signal
+				hasher.changed.active = true; // re-enable changed signal
 			} else {
 				var oCrossAppNav = oUShellContainer.getService("CrossApplicationNavigation");
 				oCrossAppNav.toExternal({

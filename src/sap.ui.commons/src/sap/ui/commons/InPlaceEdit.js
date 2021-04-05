@@ -880,7 +880,7 @@ sap.ui.define([
 					// to be sure that text is updated in edit mode (e.g. Link case) - update edit control
 					oInPlaceEdit._oEditControl.setValue(oInPlaceEdit._sOldText);
 					oInPlaceEdit._oEditControl.fireChange({newValue:oInPlaceEdit._sOldText});
-				}else if (oContent.fireChange) {
+				} else if (oContent.fireChange) {
 					// fire change event
 					oContent.fireChange({newValue:oInPlaceEdit._sOldText});
 				} else {

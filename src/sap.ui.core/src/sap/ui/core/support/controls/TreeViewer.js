@@ -248,7 +248,6 @@ function(ManagedObject, encodeXML) {
 			var aAll = this._oRootObject.querySelectorAll("*");
 			return aAll[iIndex];
 		}
-		return null;
 	};
 
 	TreeViewer.prototype._getIndexOfNode = function(oDataNode) {

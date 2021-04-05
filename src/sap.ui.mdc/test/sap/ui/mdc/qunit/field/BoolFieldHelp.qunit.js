@@ -40,7 +40,7 @@ sap.ui.define([
 	var oFieldHelp;
 	var oField;
 	var oField2;
-	var iDisconnect = 0;
+	var iDisconnect = 0; // eslint-disable-line no-unused-vars
 	var iSelect = 0;
 	var aSelectConditions;
 	var bSelectAdd;
@@ -104,7 +104,7 @@ sap.ui.define([
 		oField = undefined;
 		oField2.destroy();
 		oField2 = undefined;
-		iDisconnect = 0;
+		iDisconnect = 0; // eslint-disable-line
 		iSelect = 0;
 		aSelectConditions = undefined;
 		bSelectAdd = undefined;

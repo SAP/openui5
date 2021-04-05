@@ -1424,7 +1424,7 @@ sap.ui.define([
 				var bUseConditions = oInParameter.getUseConditions();
 				var bInitialValueFilterEmpty = oInParameter.getInitialValueFilterEmpty();
 				bUpdate = _removeInFilter.call(this, sFilterPath); // if exist, remove old filter
-				bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate;
+				bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate; // eslint-disable-line
 				_updateSelectedItems.call(this); // as mapping of in-parameters could change
 			}
 		}
@@ -1509,7 +1509,7 @@ sap.ui.define([
 		var bUpdate = false;
 
 		bUpdate = _removeInFilter.call(this, sFilterPath); // if exist, remove old filter
-		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate;
+		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate; // eslint-disable-line
 		_updateSelectedItems.call(this); // as default in-parameters could change
 
 		_applyFilters.call(this, true); // call async to handle more inParamers at one time
@@ -1525,7 +1525,7 @@ sap.ui.define([
 		var bUpdate = false;
 
 		bUpdate = _removeInFilter.call(this, sOldFilterPath); // if exist, remove old filter
-		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate;
+		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions, bInitialValueFilterEmpty) || bUpdate; // eslint-disable-line
 
 		_applyFilters.call(this, true); // call async to handle more inParamers at one time
 

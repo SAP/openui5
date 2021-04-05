@@ -37,13 +37,13 @@ sap.ui.define([
 
 	var oFieldHelp;
 	var oField;
-	var iDisconnect = 0;
+	var iDisconnect = 0; // eslint-disable-line no-unused-vars
 	var iSelect = 0;
 	var aSelectConditions;
 	var bSelectAdd;
 	var bSelectClose;
-	var iDataUpdate = 0;
-	var iOpen = 0;
+	var iDataUpdate = 0; // eslint-disable-line no-unused-vars
+	var iOpen = 0; // eslint-disable-line no-unused-vars
 
 	var _myDisconnectHandler = function(oEvent) {
 		iDisconnect++;
@@ -93,13 +93,13 @@ sap.ui.define([
 		oFieldHelp = undefined;
 		oField.destroy();
 		oField = undefined;
-		iDisconnect = 0;
+		iDisconnect = 0; // eslint-disable-line
 		iSelect = 0;
 		aSelectConditions = undefined;
 		bSelectAdd = undefined;
 		bSelectClose = undefined;
-		iDataUpdate = 0;
-		iOpen = 0;
+		iDataUpdate = 0; // eslint-disable-line
+		iOpen = 0; // eslint-disable-line
 		ConditionFieldHelp._init();
 	};
 

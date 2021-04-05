@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- //Provides basic utils for the DT tool
+//Provides basic utils for the DT tool
 sap.ui.define([
 	"sap/ui/core/UIComponent"
 ],

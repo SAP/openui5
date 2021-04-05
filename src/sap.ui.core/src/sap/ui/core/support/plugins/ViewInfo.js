@@ -13,8 +13,6 @@ sap.ui.define([
 ], function(Plugin, TreeViewer, ObjectViewer, Device, Log, encodeXML) {
 	"use strict";
 
-	/*global Blob, Uint8Array, alert */
-
 		var $ = jQuery;
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.ViewInfo.

@@ -702,7 +702,7 @@ function (
 
 	Overlay.prototype.attachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
-			if (typeof fnHandler === "function") {   // also do nothing if the second parameter is not a function
+			if (typeof fnHandler === "function") { // also do nothing if the second parameter is not a function
 				// store the parameters for on()
 				if (!this._aBindParameters) {
 					this._aBindParameters = [];
@@ -740,7 +740,7 @@ function (
 	 */
 	Overlay.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
-			if (typeof (fnHandler) === "function") {   // also do nothing if the second parameter is not a function
+			if (typeof (fnHandler) === "function") { // also do nothing if the second parameter is not a function
 				oListener = oListener || this;
 
 				// remove the bind parameters from the stored array

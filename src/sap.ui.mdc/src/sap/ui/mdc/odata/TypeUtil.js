@@ -94,7 +94,6 @@ sap.ui.define([
 					} else {
 						return BaseType.DateTime;
 					}
-					break;
 
 				case "sap.ui.model.odata.type.DateTimeOffset":
 					return BaseType.DateTime;

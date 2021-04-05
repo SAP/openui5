@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- /* global QUnit, sinon */
+/* global QUnit, sinon */
 
  sap.ui.define([
 	"sap/ui/core/Core",

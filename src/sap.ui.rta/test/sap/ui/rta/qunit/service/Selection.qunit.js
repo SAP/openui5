@@ -36,6 +36,7 @@ function (
 					}
 				},
 				createContent: function() {
+					// eslint-disable-next-line no-return-assign
 					return new Page('page', {
 						content: [
 							this.oButton1 = new Button('button1'),

@@ -711,7 +711,7 @@ sap.ui.define([
 					this._sUpdateCurrentTime = setTimeout(this.updateCurrentTimeVisualization.bind(this), iTime);
 				}
 			}
-		}else {
+		} else  {
 			$Now.css("display", "none");
 		}
 
@@ -771,7 +771,7 @@ sap.ui.define([
 		var sId = oAppointment.getId();
 		if (this._sFocusedAppointmentId != sId) {
 			_focusAppointment.call(this, sId);
-		}else {
+		} else  {
 			oAppointment.focus();
 		}
 
@@ -850,7 +850,7 @@ sap.ui.define([
 					aNonWorkingDays.push(i);
 				}
 			}
-		}else if (!Array.isArray(aNonWorkingDays)) {
+		} else if (!Array.isArray(aNonWorkingDays)) {
 			aNonWorkingDays = [];
 		}
 
@@ -1255,7 +1255,7 @@ sap.ui.define([
 			// focused appointment not visible or no focus set
 			if (aVisibleAppointments.length > 0) {
 				this._sFocusedAppointmentId = aVisibleAppointments[0].appointment.getId();
-			}else {
+			} else  {
 				this._sFocusedAppointmentId = undefined;
 			}
 		}
@@ -1538,7 +1538,7 @@ sap.ui.define([
 				oAppointment.level = -1; // level must be new calculated
 				bChanged = true;
 				$Appointment.addClass("sapUiCalendarAppSmall");
-			}else if ($Appointment.hasClass("sapUiCalendarAppSmall")){
+			} else if ($Appointment.hasClass("sapUiCalendarAppSmall")){
 				// not longer too small
 				oAppointment.end = oAppointment.calculatedEnd;
 				bChanged = true;
@@ -1892,7 +1892,7 @@ sap.ui.define([
 				$OldAppointment.attr("tabindex", "-1");
 				$Appointment.attr("tabindex", "0");
 				$Appointment.trigger("focus");
-			}else {
+			} else  {
 				// appointment not visible -> find it and show it
 				for (i = 0; i < aAppointments.length; i++) {
 					if (aAppointments[i].getId() == sId) {
@@ -2018,7 +2018,7 @@ sap.ui.define([
 				if (oEvent.type == "saphome") {
 					break;
 				}
-			}else if (aAppointments[i].getStartDate() > oLocalEndDate) {
+			} else if (aAppointments[i].getStartDate() > oLocalEndDate) {
 				break;
 			}
 		}

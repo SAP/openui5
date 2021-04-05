@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/*global location */
 sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/library"

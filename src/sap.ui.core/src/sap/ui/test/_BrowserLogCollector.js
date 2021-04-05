@@ -132,6 +132,7 @@ sap.ui.define([
 		if (aArgs[0].match(oSubstituteRegexp)) {
 			var iReplaceIndex = 0;
 			sMessage = aArgs[0].replace(oSubstituteRegexp, function (sMatch) {
+				// eslint-disable-next-line no-return-assign
 				return aArgs.length > iReplaceIndex ? aArgs[iReplaceIndex += 1] : sMatch;
 			});
 		} else if (aArgs.length > 1) {

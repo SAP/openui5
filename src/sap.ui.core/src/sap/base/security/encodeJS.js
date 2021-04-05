@@ -7,6 +7,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	/**
 	 * RegExp and escape function for JS escaping
 	 */
+	// eslint-disable-next-line no-control-regex -- special characters are really needed here!
 	var rJS = /[\x00-\x2b\x2d\x2f\x3a-\x40\x5b-\x5e\x60\x7b-\xff\u2028\u2029]/g,
 		mJSLookup = {};
 

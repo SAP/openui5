@@ -26,6 +26,7 @@ function (
 		}
 		args[2].async = true;
 
+		// eslint-disable-next-line new-parens
 		return new (Function.prototype.bind.apply(Router, args));
 	};
 

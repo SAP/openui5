@@ -240,7 +240,7 @@ sap.ui.define([
 
 		if (mExistingFilterItems[oItem.name]){
 			oFilterFieldPromise = Promise.resolve(mExistingFilterItems[oItem.name]);
-		}else {
+		} else  {
 
 			oFilterFieldPromise = oFilterDelegate.addItem(oItem.name, this.getAdaptationControl());
 

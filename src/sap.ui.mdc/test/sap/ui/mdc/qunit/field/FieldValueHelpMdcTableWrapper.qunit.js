@@ -32,9 +32,9 @@ sap.ui.define([
 	var oWrapper;
 	var oTable;
 	var oFilterBar;
-	var iSelect = 0;
-	var iNavigate = 0;
-	var iDataUpdate = 0;
+	var iSelect = 0; // eslint-disable-line no-unused-vars
+	var iNavigate = 0; // eslint-disable-line no-unused-vars
+	var iDataUpdate = 0; // eslint-disable-line no-unused-vars
 
 	var _mySelectionChangeHandler = function(oEvent) {
 		iSelect++;
@@ -181,9 +181,9 @@ sap.ui.define([
 		oTable = undefined;
 		oWrapper.destroy();
 		oWrapper = undefined;
-		iSelect = 0;
-		iNavigate = 0;
-		iDataUpdate = 0;
+		iSelect = 0; // eslint-disable-line
+		iNavigate = 0; // eslint-disable-line
+		iDataUpdate = 0; // eslint-disable-line
 		sKeyPath = "key";
 		sDescriptionPath = "text";
 		iMaxConditions = -1;

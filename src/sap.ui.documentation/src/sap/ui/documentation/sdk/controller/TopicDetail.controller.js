@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/*global location */
 sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/core/ResizeHandler",

@@ -83,7 +83,7 @@ function(
 			}.bind(this));
 
 			sandbox.stub(PersistenceWriteAPI, "add").callsFake(function() {
-				this.iAddChangeCounter ++;
+				this.iAddChangeCounter++;
 			}.bind(this));
 			sandbox.stub(FlexUtils, "getComponentClassName").returns("sap.ui.rta.service.controllerExtension.Component");
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({

@@ -170,6 +170,7 @@ sap.ui.define([
 
 		oSomeInstance = new TestClassWithFetchProperties();
 
+		// eslint-disable-next-line no-return-assign
 		return Promise.race([
 			pInitPropertyHelper = oSomeInstance.initPropertyHelper(),
 			new Promise(function(resolve) {

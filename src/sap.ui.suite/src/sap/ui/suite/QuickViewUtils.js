@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- // Provides
+// Provides
 sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/Element'],
 	function(jQuery, Control, Element) {
 	"use strict";

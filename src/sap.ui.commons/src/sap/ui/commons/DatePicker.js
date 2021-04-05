@@ -441,7 +441,7 @@ sap.ui.define([
 						if (!this._oDate || this._oDate.getTime() < this._oMinDate.getTime() || this._oDate.getTime() > this._oMaxDate.getTime()) {
 							this._oDate = undefined;
 							bWrong = true;
-						}else {
+						} else  {
 							// just format date to right pattern, because maybe a fallback pattern is used in the parsing
 							sNewValue = this._formatValue(this._oDate);
 							oInput.value = sNewValue;
@@ -781,7 +781,7 @@ sap.ui.define([
 
 				if (oDate.getTime() < oThis._oMinDate.getTime()) {
 					oDate = new UniversalDate(oThis._oMinDate.getTime());
-				}else if (oDate.getTime() > oThis._oMaxDate.getTime()){
+				} else if (oDate.getTime() > oThis._oMaxDate.getTime()){
 					oDate = new UniversalDate(oThis._oMaxDate.getTime());
 				}
 

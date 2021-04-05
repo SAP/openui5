@@ -249,7 +249,7 @@ sap.ui.define([
 
 		if (oForm && oForm.getContainerRenderedDomRef) {
 			return oForm.getContainerRenderedDomRef(that);
-		}else {
+		} else  {
 			return null;
 		}
 
@@ -269,7 +269,7 @@ sap.ui.define([
 
 		if (oForm && oForm.getElementRenderedDomRef) {
 			return oForm.getElementRenderedDomRef(oElement);
-		}else {
+		} else  {
 			return null;
 		}
 

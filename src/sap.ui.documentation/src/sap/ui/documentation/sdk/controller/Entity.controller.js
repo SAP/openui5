@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/*global location */
 sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/BaseController",

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global XMLHttpRequest, localStorage, alert, confirm, console, document, Promise */
+/*global XMLHttpRequest, localStorage, alert, document */
 
 /**
  * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>

@@ -1442,7 +1442,7 @@ sap.ui.define([
 			this._unbindMousemove(true);
 			this._bMoveChange = false;
 			this._oMoveSelectedDate = undefined;
-		}else if (bSelected && this.getIntervalSelection() && this.$().is(":visible")) {
+		} else if (bSelected && this.getIntervalSelection() && this.$().is(":visible")) {
 			// if calendar was closed in select event, do not add mousemove handler
 			this._bindMousemove(true);
 			this._oMoveSelectedDate = new CalendarDate(oFocusedDate, this.getPrimaryCalendarType());
@@ -2019,7 +2019,7 @@ sap.ui.define([
 			if (jQuery(oEvent.target).hasClass("sapUiCalWeekNum")) {
 				// click on week number - focus old date
 				this._focusDate(oFocusedDate);
-			}else {
+			} else  {
 				// not if clicked on week number
 				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day")), this.getPrimaryCalendarType());
 				this._oDate = oFocusedDate;

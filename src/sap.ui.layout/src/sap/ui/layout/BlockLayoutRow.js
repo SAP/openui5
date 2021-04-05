@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- /**
+/**
   * @typedef {Object} sap.ui.layout.BlockRowColorSets
   * @typedef {Object} sap.ui.layout.BlockLayoutRow
   */

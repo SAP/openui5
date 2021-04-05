@@ -212,11 +212,11 @@ sap.ui.define([
 			// it's the FormElement
 			if (oChanges.name === "fields") {
 				_fieldChanged.call(this, oChanges.child, oChanges.mutation);
-			}else if (oChanges.name === "_editable") {
+			} else if (oChanges.name === "_editable") {
 				_editableChanged.call(this, oChanges.current);
-			}else if (oChanges.name === "delimiter") {
+			} else if (oChanges.name === "delimiter") {
 				_delimiterChanged.call(this, oChanges.current);
-			}else if (oChanges.name === "fieldLabels") {
+			} else if (oChanges.name === "fieldLabels") {
 				_fieldLabelsChanged.call(this, oChanges.mutation, oChanges.child);
 			}
 		} else {

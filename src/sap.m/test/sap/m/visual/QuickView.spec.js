@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser,document*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe('sap.m.QuickView', function() {
 	"use strict";

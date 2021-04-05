@@ -577,7 +577,7 @@ sap.ui.define([
 
 					URLHelper.redirect(href);
 				}
-			} else  if (that.getTitleUrl()) {
+			} else if (that.getTitleUrl()) {
 				URLHelper.redirect(that.getTitleUrl(), true);
 			}
 		};

@@ -961,7 +961,7 @@ sap.ui.define([
 			if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 				this._bValid = false;
 				oDate = undefined;
-			}else {
+			} else  {
 				// check if Formatter changed the value (it correct some wrong inputs or known patterns)
 				sValue = this._formatValue(oDate);
 			}
@@ -1312,7 +1312,7 @@ sap.ui.define([
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
 			this._focusInput();
-		}else if (!this._bValid){
+		} else if (!this._bValid){
 			// wrong input before open calendar
 			sValue = this._formatValue(oDate);
 			if (sValue != this._$input.val()) {
@@ -1460,7 +1460,7 @@ sap.ui.define([
 
 			if (oDate.getTime() < this._oMinDate.getTime()) {
 				oDate = new UniversalDate(this._oMinDate.getTime());
-			}else if (oDate.getTime() > this._oMaxDate.getTime()){
+			} else if (oDate.getTime() > this._oMaxDate.getTime()){
 				oDate = new UniversalDate(this._oMaxDate.getTime());
 			}
 

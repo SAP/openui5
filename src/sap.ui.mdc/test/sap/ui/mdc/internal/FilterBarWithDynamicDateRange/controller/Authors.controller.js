@@ -119,7 +119,8 @@ sap.ui.define([
 						);
 					} else {
 						this.destroyFiscalPeriodRangeOperator("US");
-					}				}
+					}
+				}
 			} else {
 				// Remove new RangeOperator
 				this.destroyFiscalPeriodRangeOperator("DE");

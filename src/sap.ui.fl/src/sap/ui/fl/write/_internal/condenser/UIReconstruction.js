@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/* global Map */
 sap.ui.define([
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/each",

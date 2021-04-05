@@ -300,7 +300,7 @@ sap.ui.define([
 
 		if (oContainer && oContainer.getElementRenderedDomRef) {
 			return oContainer.getElementRenderedDomRef(that);
-		}else {
+		} else  {
 			return null;
 		}
 

@@ -138,7 +138,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			iYear = oMonthDate.getYear();
 			if (aYearMonths.length > 0 && aYearMonths[aYearMonths.length - 1].iYear == iYear) {
 				aYearMonths[aYearMonths.length - 1].iMonths++;
-			}else {
+			} else  {
 				aYearMonths.push({iYear: iYear, iMonths: 1});
 			}
 			oMonthDate.setMonth(oMonthDate.getMonth() + 1);

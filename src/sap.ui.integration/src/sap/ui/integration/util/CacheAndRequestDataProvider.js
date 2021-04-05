@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/base/Log"
 ], function (RequestDataProvider, Log) {
 	"use strict";
-	/*global Response, URL*/
+	/*global URL*/
 
 	function getFullUrl(oRequest) {
 		var sUrl = oRequest.url,

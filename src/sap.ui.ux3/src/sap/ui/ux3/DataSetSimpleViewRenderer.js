@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- // Provides default renderer for the sap.ui.ux3.DataSetSimpleView
+// Provides default renderer for the sap.ui.ux3.DataSetSimpleView
 sap.ui.define([],
 	function() {
 	"use strict";

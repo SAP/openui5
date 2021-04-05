@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/* global Map */
 sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/isPlainObject",

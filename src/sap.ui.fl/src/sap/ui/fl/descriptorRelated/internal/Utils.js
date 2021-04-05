@@ -25,7 +25,7 @@ sap.ui.define([
 				var oChange = mParameters.entityPropertyChange[i];
 				this.checkEntityPropertyChangeContent(oChange);
 			}
-		}else if (mParameters.entityPropertyChange instanceof Object) {
+		} else if (mParameters.entityPropertyChange instanceof Object) {
 			this.checkEntityPropertyChangeContent(mParameters.entityPropertyChange);
 		}
 	};

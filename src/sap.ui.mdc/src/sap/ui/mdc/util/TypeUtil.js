@@ -86,7 +86,6 @@ sap.ui.define([
 					} else {
 						return BaseType.Numeric;
 					}
-					break;
 
 				case "sap.ui.model.type.Integer":
 				case "sap.ui.model.type.Float":

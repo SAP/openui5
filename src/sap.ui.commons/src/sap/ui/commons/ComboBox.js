@@ -497,7 +497,7 @@ sap.ui.define([
 		oValue = jQuery(oDomRef).val();
 
 		var i = this._prepareUpDown(aItems, oValue);
-		i = this._updateIdx(aItems, oDomRef, i - 1, i, oEvent);
+		i = this._updateIdx(aItems, oDomRef, i - 1, i, oEvent); // eslint-disable-line
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation(); // prevent itemNavigation if ComboBox is in toolbar
@@ -533,7 +533,7 @@ sap.ui.define([
 			oValue = jQuery(oDomRef).val();
 
 		var i = this._prepareUpDown(aItems, oValue);
-		i = this._updateIdx(aItems, oDomRef, i + 1, i, oEvent);
+		i = this._updateIdx(aItems, oDomRef, i + 1, i, oEvent); // eslint-disable-line
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation(); // prevent itemNavigation if ComboBox is in toolbar
@@ -596,7 +596,7 @@ sap.ui.define([
 			oDomRef = this.getInputDomRef();
 
 		var i = aItems.length - 1;
-		i = this._updateIdx(aItems, oDomRef, i, undefined, oEvent);
+		i = this._updateIdx(aItems, oDomRef, i, undefined, oEvent); // eslint-disable-line
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();

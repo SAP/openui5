@@ -9,6 +9,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	 *
 	 * The first term describes Unicode surrogate pairs, the second term all other chars that require encoding.
 	 */
+	// eslint-disable-next-line no-control-regex -- special characters are really needed here!
 	var rURL = /[\ud800-\udbff][\udc00-\udfff]|[\x00-\x2c\x2f\x3a-\x40\x5b-\x5e\x60\x7b-\uffff]/g,
 		mURLLookup = {};
 

@@ -408,7 +408,7 @@ sap.ui.define([
 			var oSimpleForm = this.getParent();
 			if (oSimpleForm) {
 				return oSimpleForm.getAriaLabelledBy();
-			}else {
+			} else  {
 				return null;
 			}
 		};

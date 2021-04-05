@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
- /* global Map */
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Core"

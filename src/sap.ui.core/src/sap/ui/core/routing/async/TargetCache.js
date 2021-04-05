@@ -61,7 +61,6 @@ sap.ui.define([
 						} else {
 							return Component.create(oOptions);
 						}
-						break;
 					default:
 						// do nothing
 				}

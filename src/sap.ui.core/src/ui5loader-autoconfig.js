@@ -17,7 +17,7 @@
 	 *  - ui5loader-autoconfig.js
 	 */
 
-	/*global console, document, jQuery, sap, window */
+	/*global document, jQuery, sap, window */
 	"use strict";
 
 	var ui5loader = window.sap && window.sap.ui && window.sap.ui.loader,

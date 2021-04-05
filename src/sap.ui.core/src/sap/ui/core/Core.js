@@ -1302,6 +1302,7 @@ sap.ui.define([
 						 * in the global context, without closure variables.
 						 * See http://www.ecma-international.org/ecma-262/5.1/#sec-10.4.2
 						 */
+						// eslint-disable-next-line no-eval
 						window.eval(vOnInit);  // csp-ignore-legacy-api
 					}
 				}

@@ -124,7 +124,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 			sDay = oFormatDate.format(oItemDate, true);
 			if (aDayIntervals.length > 0 && aDayIntervals[aDayIntervals.length - 1].sDay == sDay) {
 				aDayIntervals[aDayIntervals.length - 1].iItems++;
-			}else {
+			} else  {
 				aDayIntervals.push({sDay: sDay, iItems: 1});
 			}
 			oItemDate.setUTCMinutes(oItemDate.getUTCMinutes() + iMinutes);

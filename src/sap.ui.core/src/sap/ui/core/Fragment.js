@@ -142,7 +142,7 @@ function(
 	 * @public
 	 */
 	Fragment.registerType = function(sType, oFragmentImpl) {
-		if (!typeof (sType) === "string") {
+		if (typeof (sType) !== "string") {
 			Log.error("Ignoring non-string Fragment type: " + sType);
 			return;
 		}

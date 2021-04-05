@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- /*global Promise*/
+/*global Promise*/
 sap.ui.define(['sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device', "sap/base/Log"],
 	function(InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device, Log) {
 		"use strict";

@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/*global location */
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/documentation/sdk/controller/BaseController"

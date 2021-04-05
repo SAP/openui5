@@ -39,7 +39,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	/*global Blob, Uint8Array, alert */
+	/*global alert */
 
 		var $ = jQuery;
 		/**

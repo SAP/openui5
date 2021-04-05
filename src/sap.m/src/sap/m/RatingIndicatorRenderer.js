@@ -251,7 +251,6 @@ sap.ui.define(
 					} else {
 						return oControl.getIconUnselected() || IconPool.getIconURI("favorite");
 					}
-					break;
 				case "HOVERED":
 					return oControl.getIconHovered() || IconPool.getIconURI("favorite");
 			}

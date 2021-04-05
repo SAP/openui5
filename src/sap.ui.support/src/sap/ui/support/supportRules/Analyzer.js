@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/*global performance */
-
 /**
  * Creates an Analyzer that asynchronously runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.
  * runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.

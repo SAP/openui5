@@ -5,6 +5,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 	"use strict";
 
 
+	/* eslint-disable no-control-regex -- special characters are really needed here! */
 	/**
 	 * RegExp and escape function for HTML escaping
 	 */
@@ -16,6 +17,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 			"&": "&amp;",
 			"\"": "&quot;"
 		};
+	/* eslint-enable no-control-regex */
 
 	var fnHtml = function(sChar) {
 		var sEncoded = mHtmlLookup[sChar];

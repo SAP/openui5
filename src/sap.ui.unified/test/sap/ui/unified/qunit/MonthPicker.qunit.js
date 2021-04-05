@@ -1,5 +1,5 @@
 
-/*global QUnit, window, sinon */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/unified/calendar/MonthPicker",

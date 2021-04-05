@@ -253,7 +253,7 @@ sap.ui.define([
 
 		oConditions = oConditionModel.getAllConditions("X");
 		iNumber = 0;
-		for (var sFieldPath in oConditions) {
+		for (var sFieldPath in oConditions) { // eslint-disable-line
 			iNumber++;
 		}
 		assert.equal(iNumber, 0, "FieldPaths returned");
