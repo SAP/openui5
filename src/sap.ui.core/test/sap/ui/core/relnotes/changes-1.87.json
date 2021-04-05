@@ -46,5 +46,21 @@
         ]
       }
     ]
+  },
+  "1.87.4": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "a412a129b7dc60d4bf6f38772ecf2b0549af1c3c",
+        "type": "FIX",
+        "text": " IntervalTrigger: call clearTimeout only once per timer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

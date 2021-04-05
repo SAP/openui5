@@ -25,5 +25,21 @@
         ]
       }
     ]
+  },
+  "1.87.4": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "2ca422f3a35939ec87b4b183b465da897305c031",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Correct scrollToSection issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170051076"
+          }
+        ]
+      }
+    ]
   }
 }

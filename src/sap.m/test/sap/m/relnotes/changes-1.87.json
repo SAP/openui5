@@ -92,5 +92,32 @@
         ]
       }
     ]
+  },
+  "1.87.4": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "124f7c2240adfeea01eed6d5ac72e7adf19c5f2a",
+        "type": "FIX",
+        "text": " sap.m.Input: Change event fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170050017"
+          }
+        ]
+      },
+      {
+        "id": "13492df9b46df3092a0a3b8dc728d88bf449ca17",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Flag position alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170038837"
+          }
+        ]
+      }
+    ]
   }
 }

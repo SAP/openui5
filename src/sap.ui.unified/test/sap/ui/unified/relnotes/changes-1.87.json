@@ -74,5 +74,36 @@
         ]
       }
     ]
+  },
+  "1.87.4": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "a5dada28eba240b94203c09f2fdceceafcba9b0c",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: displayDate shows the given date always in the first rendered month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170072313"
+          }
+        ]
+      },
+      {
+        "id": "3f13811f7ed686e574b3fd9afecc94569375a133",
+        "type": "FIX",
+        "text": " sap.ui.unified.YearPicker: We now render correct years in all timezones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001447892021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001409692021"
+          }
+        ]
+      }
+    ]
   }
 }

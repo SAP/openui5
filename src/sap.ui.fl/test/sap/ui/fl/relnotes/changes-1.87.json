@@ -125,5 +125,32 @@
         ]
       }
     ]
+  },
+  "1.87.4": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "777135fd5bf246331fc7e31216a0d51b309a5d6d",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl CompVariants set VENDOR as favorite by default",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170022654"
+          }
+        ]
+      },
+      {
+        "id": "1084e4bb4801e1353caaba247fe8c01735aab5fe",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl...Loader does not use the cache key while reInitialize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170012946"
+          }
+        ]
+      }
+    ]
   }
 }

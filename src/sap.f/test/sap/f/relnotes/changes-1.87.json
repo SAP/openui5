@@ -87,5 +87,25 @@
         ]
       }
     ]
+  },
+  "1.87.4": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "0223923f40e69c8bad47eaed9554db7cf27f5f03",
+        "type": "FIX",
+        "text": " sap.f.GridList: The 'updateFinished' event is fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170034759"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170039540"
+          }
+        ]
+      }
+    ]
   }
 }

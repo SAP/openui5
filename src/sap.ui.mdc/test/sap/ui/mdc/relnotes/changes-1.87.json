@@ -56,5 +56,32 @@
         ]
       }
     ]
+  },
+  "1.87.4": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "3b416e152443937b0bf28744dd8438efe3d881fe",
+        "type": "FIX",
+        "text": " ConditionType: use result of last call in case of pending requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170030563"
+          }
+        ]
+      },
+      {
+        "id": "bc2ea8d40aabe1bb7297e391702f681577e54ac6",
+        "type": "FIX",
+        "text": " Field: update formatting if BindingContext changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170030563"
+          }
+        ]
+      }
+    ]
   }
 }
