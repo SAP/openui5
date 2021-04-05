@@ -7937,6 +7937,25 @@ sap.ui.define([
 		assert.ok(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().$().hasClass("sapMFocusable"), "sapMFocusable class is applied to the value state header");
 	});
 
+	QUnit.test("when the suggestions popover is opened CTRL+A should select/deselect all items and create tokens", function(assert) {
+		// Arrange
+		var oEventMock = {
+			isMarked: function () { },
+			setMarked: function () { },
+			preventDefault: function() {return false; }
+		};
+		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"});
+
+		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		this.oMultiComboBox.onsapshow(oEventMock);
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.A, false, false, true);
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectedItems().length, 4, "All items are selected");
+	});
 
 	QUnit.module("Composition characters handling", {
 		beforeEach: function () {
