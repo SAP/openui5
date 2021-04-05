@@ -1975,6 +1975,11 @@ sap.ui.define([
 		assert.ok(oAccInfo.editable, "Control is editable");
 	});
 
+	QUnit.test("Increment/Decrement button", function (assert) {
+		assert.strictEqual(this.stepInput._getDecrementButton().getDecorative(), false, "Decrement icon isn't decorative");
+		assert.strictEqual(this.stepInput._getIncrementButton().getDecorative(), false, "Increment icon isn't decorative");
+	});
+
 	QUnit.module("binding", {
 		beforeEach: function () {
 			this.stepInput = new StepInput({
