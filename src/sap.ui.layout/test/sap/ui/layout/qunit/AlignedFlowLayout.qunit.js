@@ -457,6 +457,10 @@ sap.ui.require([
 		QUnit.test("it should not trigger unnecessary function calls to the .reflow() method to" +
 					" (prevent cyclic dependencies (test case 1))", function(assert) {
 
+			// temp. prevent scrollbars caused by QUnit output as they would disturb the width measurement
+			var oldBodyOverflow = document.body.style.overflow;
+			document.body.style.overflow = "hidden";
+
 			var done = assert.async();
 
 			// system under test
@@ -508,16 +512,12 @@ sap.ui.require([
 					var sMessage = "a function call to the .reflow() method should not be" +
 					" triggered when the height of the layout control changes";
 
-					if (oReflowSpy.callCount) {
-						assert.strictEqual(window.devicePixelRatio, 1, "Test will fail because of unexpected devicePixelRatio");
-					}
-
-
 					assert.strictEqual(oReflowSpy.callCount, 0, sMessage);
 
 					// cleanup
 					oReflowSpy.restore();
 					oAlignedFlowLayout.destroy();
+					document.body.overflow = oldBodyOverflow;
 					done();
 				}
 			});
