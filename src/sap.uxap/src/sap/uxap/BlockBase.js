@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/mvc/View",
+	"sap/ui/base/ManagedObjectObserver",
 	"./BlockBaseMetadata",
 	"sap/ui/model/Context",
 	"sap/ui/Device",
@@ -21,6 +22,7 @@ sap.ui.define([
 	Control,
 	CustomData,
 	CoreView,
+	ManagedObjectObserver,
 	BlockBaseMetadata,
 	Context,
 	Device,
@@ -202,6 +204,7 @@ sap.ui.define([
 			this._oUpdatedModels = {};
 			this._oParentObjectPageSubSection = null; // the parent ObjectPageSubSection
 			this._oPromisedViews = {};
+			this._oViewDestroyObserver = new ManagedObjectObserver(this._onViewDestroy.bind(this));
 		};
 
 		BlockBase.prototype.onBeforeRendering = function () {
@@ -519,6 +522,8 @@ sap.ui.define([
 				}));
 
 				this.addAggregation("_views", oView);
+
+				this._oViewDestroyObserver.observe(oView, {destroy: true});
 				this.fireEvent("viewInit", {view: oView});
 			} else {
 				throw new Error("BlockBase :: no view defined in metadata.views for mode " + sMode);
@@ -812,6 +817,12 @@ sap.ui.define([
 			}
 		};
 
+		BlockBase.prototype.exit = function () {
+			if (this._oViewDestroyObserver) {
+				this._oViewDestroyObserver.disconnect();
+			}
+		};
+
 		/**
 		 * Determines whether the <code>sap.uxap.BlockBase</code> should be loaded lazily.
 		 * There are 3 prerequisites - lazy loading sould be enabled, the block should not be connected
@@ -821,6 +832,14 @@ sap.ui.define([
 		 */
 		BlockBase.prototype._shouldLazyLoad = function () {
 			return !!this._oParentObjectPageSubSection && this._bLazyLoading && !this._bConnected;
+		};
+
+		/**
+		 * Called when a view is destroyed.
+		 * @param {object} oEvent
+		 */
+		BlockBase.prototype._onViewDestroy = function (oEvent) {
+			delete this._oPromisedViews[oEvent.object.getId()];
 		};
 
 		return BlockBase;
