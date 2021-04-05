@@ -1,7 +1,34 @@
 {
   "1.89.0": {
-    "date": "March 2021",
+    "date": "April 2021",
     "notes": [
+      {
+        "id": "03d0f4b114ba63a85b7b2758e0f24ec9b500f945",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Not clickable area of title is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070272080"
+          }
+        ]
+      },
+      {
+        "id": "bac202cac86ed3bfcc303f4aa5778596c90821df",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: A dataTimestamp property is introduced"
+      },
+      {
+        "id": "6f22cd6b889aac3c9c58d1a469bc2ca0b0c79af5",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Avatar focus is clearly visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180128629"
+          }
+        ]
+      },
       {
         "id": "c8293cadcc61da52d07abd47eaf19e277ea4203f",
         "type": "FIX",
@@ -21,6 +48,17 @@
           {
             "type": "BCP",
             "reference": "2170055301"
+          }
+        ]
+      },
+      {
+        "id": "bc6c8778107667621369e2fe5e9ca8f2a24dff4f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Paddings are now correct inside DynamicPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180001233"
           }
         ]
       },

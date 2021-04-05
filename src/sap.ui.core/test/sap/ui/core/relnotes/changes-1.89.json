@@ -1,7 +1,45 @@
 {
   "1.89.0": {
-    "date": "March 2021",
+    "date": "April 2021",
     "notes": [
+      {
+        "id": "6e26ef18d94e546128e3714887c40b5f19c09c30",
+        "type": "FIX",
+        "text": " ManagedObject.findAggregatedObjects: add possibility to include binding templates into the search",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170077221"
+          }
+        ]
+      },
+      {
+        "id": "5fabdc3e510d670545f88e8c83c092dc830b35fc",
+        "type": "FIX",
+        "text": " sap.ui.core.XMLTemplateProcessor: in case of synchronous view creation also nested views are created synchrounously"
+      },
+      {
+        "id": "d899c6d3bc38a3f8f958ef01d350ff25136d80ec",
+        "type": "FIX",
+        "text": " Configuration: getSAPLogonLanguage uppercase",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001602922021"
+          }
+        ]
+      },
+      {
+        "id": "5810feee263ecd239534edf4903e44bcb08c56b8",
+        "type": "FIX",
+        "text": " ItemNavigation: prevent scrolling when setting focus in mousedown handler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880360586"
+          }
+        ]
+      },
       {
         "id": "758a85a5072b5ff1657a69e356f92b5273fbefc9",
         "type": "FIX",

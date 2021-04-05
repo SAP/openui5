@@ -1,7 +1,95 @@
 {
   "1.89.0": {
-    "date": "March 2021",
+    "date": "April 2021",
     "notes": [
+      {
+        "id": "ca9262bf4bb5e240fa14cecf63b96d7c6fe2fdc2",
+        "type": "FIX",
+        "text": " DataStateIndicator: During rebind do not process messages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170039226"
+          }
+        ]
+      },
+      {
+        "id": "a949db833fe66c9eee2c968e6cc45f548345723e",
+        "type": "FIX",
+        "text": " sap.m.Input: Description is now correctly read out",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180113748"
+          }
+        ]
+      },
+      {
+        "id": "f1a6d1e40c4cecbce4e13aced336506895645b8a",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: Default role and roledescription added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180115276"
+          }
+        ]
+      },
+      {
+        "id": "b585cd81ce8a5784457696387cd0e8ecca914aab",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: fixed space after the colon sign",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "dba0cbf2ed24738c31666d89a0f749a1ee729b88",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: ObjectNumber vertical alignment fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "064920a2bbf9bfd0d184f896225df8dbb39d8ccb",
+        "type": "FIX",
+        "text": " sap.m.MultiiInput: Prevent firing tokenUpdate when not editable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170018545"
+          }
+        ]
+      },
+      {
+        "id": "3129a0fe73b1e6f218a19774211052204f6b4144",
+        "type": "FIX",
+        "text": " sap.m.IconTabFilter: 'textDirection' is now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180103958"
+          }
+        ]
+      },
+      {
+        "id": "05ef97a362aea69443e54aa5ecba4a71312ce4c4",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Focus on current element is restored",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180103235"
+          }
+        ]
+      },
       {
         "id": "f183a0f48c2079157970aef1f1ad3dccc7313d8d",
         "type": "FIX",
@@ -14,6 +102,28 @@
         ]
       },
       {
+        "id": "054a1ee92b6f126b3d3d39a9b1dac2b475aedf13",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: does not apply focus when start date is chosen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002126972021"
+          }
+        ]
+      },
+      {
+        "id": "3a3d21c5447489faaad0f92f5e2e02b76759a0a8",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Misaligment of text and unit is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "de2ece7c8f1856476ed1f43683435fae3a7008fd",
         "type": "FIX",
         "text": " sap.m.OverflowToolbar: Missing buttons with bound LayoutData",
@@ -21,6 +131,17 @@
           {
             "type": "BCP",
             "reference": "2080179140"
+          }
+        ]
+      },
+      {
+        "id": "f9e5bc381a9b16409160bf3b0512755e56945fe1",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Link aligned correctly when no description",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170057257"
           }
         ]
       },
@@ -54,6 +175,17 @@
           {
             "type": "BCP",
             "reference": "2170017803"
+          }
+        ]
+      },
+      {
+        "id": "bc6c8778107667621369e2fe5e9ca8f2a24dff4f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Paddings are now correct inside DynamicPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180001233"
           }
         ]
       },

@@ -1,22 +1,11 @@
 {
   "1.89.0": {
-    "date": "March 2021",
+    "date": "April 2021",
     "notes": [
       {
         "id": "6697f3d033b874a6dd41fe00c7e6ca6a6f050af4",
         "type": "FEATURE",
         "text": " ColumnLayout: 6 columns in XL size supported"
-      },
-      {
-        "id": "967087a67ed388dbc4cac68fa72bc5d0b9190e7c",
-        "type": "FIX",
-        "text": " sap.ui.layout.ResponsiveSplitter: No truncation of last area",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180118515"
-          }
-        ]
       }
     ]
   }

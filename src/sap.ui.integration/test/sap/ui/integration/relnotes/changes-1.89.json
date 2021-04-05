@@ -1,7 +1,12 @@
 {
   "1.89.0": {
-    "date": "March 2021",
+    "date": "April 2021",
     "notes": [
+      {
+        "id": "bac202cac86ed3bfcc303f4aa5778596c90821df",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: A dataTimestamp property is introduced"
+      },
       {
         "id": "2b0f318ab427539bb11d4597af53e403138d5ec8",
         "type": "FIX",
