@@ -611,6 +611,7 @@ function(
 					src: IconPool.getIconURI("add"),
 					id: this.getId() + "-incrementBtn",
 					noTabStop: true,
+					decorative: false,
 					press: this._handleButtonPress.bind(this, 1),
 					tooltip: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP
 				});
@@ -643,6 +644,7 @@ function(
 					src: IconPool.getIconURI("less"),
 					id: this.getId() + "-decrementBtn",
 					noTabStop: true,
+					decorative: false,
 					press: this._handleButtonPress.bind(this, -1),
 					tooltip: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP
 				});
