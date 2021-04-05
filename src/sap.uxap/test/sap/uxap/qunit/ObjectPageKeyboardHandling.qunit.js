@@ -623,7 +623,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 			}).then(function (oView) {
 				this.anchorBarView = oView;
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
-				this.oScrollSpy = sinon.spy(sap.uxap.AnchorBar.prototype, "_handleDirectScroll");
+				this.oScrollSpy = sinon.spy(sap.uxap.AnchorBar.prototype, "onButtonPress");
 				this.oFocusSpy = sinon.spy(this.oObjectPage._oABHelper, "_moveFocusOnSection");
 				this.anchorBarView.placeAt("qunit-fixture");
 				Core.applyChanges();
