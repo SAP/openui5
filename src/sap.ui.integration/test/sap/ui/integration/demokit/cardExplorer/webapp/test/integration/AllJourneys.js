@@ -8,6 +8,10 @@ sap.ui.define([
 ], function (Opa5, Startup) {
 	"use strict";
 
+	// set the cookie that states the user already set cookie preferences,
+	// to prevent the cookie settings dialog interfere the test
+	document.cookie = "dk_approval_requested=1";
+
 	Opa5.extendConfig({
 		arrangements: new Startup(),
 		viewNamespace: "sap.ui.demo.cardExplorer.view.",

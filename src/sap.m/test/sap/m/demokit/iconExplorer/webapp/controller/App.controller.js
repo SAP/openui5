@@ -13,7 +13,8 @@ sap.ui.define([
 			onInit : function () {
 				var oViewModel,
 					fnSetAppNotBusy,
-					iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
+					iOriginalBusyDelay = this.getView().getBusyIndicatorDelay(),
+					oComponent = this.getOwnerComponent();
 
 				oViewModel = new JSONModel({
 					busy : true,
@@ -34,6 +35,8 @@ sap.ui.define([
 
 				// apply content density mode to root view
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+
+				oComponent.getCookiesManagement().enable(oComponent.getRootControl());
 			}
 		});
 

@@ -33,6 +33,8 @@ sap.ui.define([
 		 * Called when the app is started.
 		 */
 		onInit: function () {
+			var oComponent = this.getOwnerComponent();
+
 			this._setToggleButtonTooltip(!sap.ui.Device.system.desktop);
 
 			// apply content density mode to root view
@@ -48,6 +50,8 @@ sap.ui.define([
 
 			Device.media.attachHandler(this.onDeviceSizeChange, this);
 			this.onDeviceSizeChange();
+
+			oComponent.getCookiesManagement().enable(oComponent.getRootControl());
 		},
 
 		onExit: function () {
