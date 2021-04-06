@@ -115,6 +115,7 @@ sap.ui.define([
 							}
 						};
 					}
+				/* hide multi language function since there has a translation issue in Portal
 				} else if (this.getMode() !== "translation" && oConfig.translatable) {
 					//use value help function of input to show the multi language popup
 					oVisualization = {
@@ -144,7 +145,7 @@ sap.ui.define([
 								oConfig.valueTranslations = oValueTranslations;
 							}
 						}
-					};
+					};*/
 				} else {
 					oVisualization = {
 						type: Input,

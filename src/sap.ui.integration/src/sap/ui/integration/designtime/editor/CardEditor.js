@@ -93,12 +93,13 @@ sap.ui.define([
 	}
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
 		CONTEXT_TIMEOUT = 5000,
-		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		/* hide multi language function since there has a translation issue in Portal
 		aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/designtime/editor/languages.json", {
 			dataType: "json",
 			failOnError: false,
 			async: false
-		});
+		});*/
 
 	/**
 	 * Constructor for a new <code>Card Editor</code>.
@@ -460,12 +461,15 @@ sap.ui.define([
 		var aChanges = [],
 			oCurrentLayerChanges = { ":layer": CardMerger.layers[that.getMode()] },
 			iCurrentModeIndex = CardMerger.layers[this.getMode()];
+		/* hide multi language function since there has a translation issue in Portal
 		var sEditorLanguage = that._language || that.getLanguage() || Core.getConfiguration().getLanguage().replaceAll('-', '_');
+		*/
 		oManifestSettings.manifestChanges.forEach(function (oChange) {
 			//filter manifest changes. only the changes before the current layer are needed
 			//card editor will merge the last layer locally to allow "reset" or properties
 			//also for translation layer, the "original" value is needed
 			var iLayer = oChange.hasOwnProperty(":layer") ? oChange[":layer"] : 1000;
+			/* hide multi language function since there has a translation issue in Portal
 			//backward compatibility for old changes which not have property "multipleLanguage"
 			//replace the value property by valueTranslation property
 			if (!oChange.hasOwnProperty(":multipleLanguage")) {
@@ -490,7 +494,7 @@ sap.ui.define([
 					oChangeTransfered[aKeys[j]] = oChange[aKeys[j]];
 				}
 				oChange = oChangeTransfered;
-			}
+			}*/
 			if (iLayer < iCurrentModeIndex) {
 				aChanges.push(oChange);
 			} else if (iLayer === iCurrentModeIndex) {
@@ -564,7 +568,11 @@ sap.ui.define([
 	 */
 	CardEditor.prototype._getOriginalManifestJson = function () {
 		try {
+			/* hide multi language function since there has a translation issue in Portal
 			return this._oEditorCard.getManifestRawJson();
+			* remove below line if release multi language function again
+			*/
+			return this._oEditorCard._oCardManifest._oManifest.getRawJson();
 		} catch (ex) {
 			return {};
 		}
@@ -715,8 +723,10 @@ sap.ui.define([
 			for (var n in oSettings.form.items) {
 				var oItem = oSettings.form.items[n];
 				if (oItem.editable && oItem.visible) {
+					/* hide multi language function since there has a translation issue in Portal
 					var oValueTranslations;
 					var sLanguage = this.getMode() !== "translation" ? Core.getConfiguration().getLanguage().replaceAll('-', '_') : this._language || this.getLanguage();
+					*/
 					var sValueTranslationsPath = "";
 					if (oItem.manifestpath) {
 						sValueTranslationsPath = oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTranslations";
@@ -728,9 +738,14 @@ sap.ui.define([
 							//if we would save it
 							continue;
 						} else {
+							/* hide multi language function since there has a translation issue in Portal
+							* need to remove below line later if we want release multi language function again
+							*/
+							mResult[oItem.manifestpath] = oItem.value;
 							if (oItem.valueItems) {
 								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems"] = oItem.valueItems;
 							}
+							/* hide multi language function since there has a translation issue in Portal
 							//if current parameter is string and translatable, create or merge valueTranslations property of it.
 							//set the current change to current language in valueTranslations.
 							if (oItem.type === "string" && oItem.translatable) {
@@ -744,7 +759,7 @@ sap.ui.define([
 								mResult[sValueTranslationsPath] = oItem.valueTranslations;
 							} else {
 								mResult[oItem.manifestpath] = oItem.value;
-							}
+							}*/
 						}
 					} else if (oItem.translatable && oItem.value) {
 						//in translation mode create an entry if there is a value
@@ -1299,6 +1314,7 @@ sap.ui.define([
 			if (typeof (origLangField._beforeValue) !== "undefined" && !(origLangField._beforeValue.startsWith("{i18n>") && origLangField._beforeValue.endsWith("}"))) {
 				origLangField.value = origLangField._beforeValue;
 			}
+			/* hide multi language function since there has a translation issue in Portal
 			//if has valueTransaltions, get value via language setting in core
 			if (origLangField.valueTranslations) {
 				var sLanguage = Core.getConfiguration().getLanguage().replaceAll('-', '_');
@@ -1314,7 +1330,7 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			}*/
 			if (!origLangField.value) {
 				//the original language field shows only a text control. If empty we show a dash to avoid empty text.
 				origLangField.value = "-";
@@ -1469,9 +1485,14 @@ sap.ui.define([
 					//force a label setting, set it to the name of the item
 					oItem.label = oItem.label || n;
 					//what is the current value from the change?
+					/* hide multi language function since there has a translation issue in Portal
 					var sCurrentLayerValue, sValueTranslationsPath, aTranslationLayerValueChanges;
+					* remove below line if release this feature again
+					*/
+					var sCurrentLayerValue;
 					if (oItem.manifestpath) {
 						this._mItemsByPaths[oItem.manifestpath] = oItem;
+						/* hide multi language function since there has a translation issue in Portal
 						sValueTranslationsPath = oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueTranslations";
 						if (this.getMode() === "translation") {
 							if (this._currentLayerManifestChanges
@@ -1481,7 +1502,11 @@ sap.ui.define([
 							}
 						} else {
 							sCurrentLayerValue = this._currentLayerManifestChanges[oItem.manifestpath];
-						}
+						}*/
+						/* hide multi language function since there has a translation issue in Portal
+						* need to remove below line later if release multi language function again
+						*/
+						sCurrentLayerValue = this._currentLayerManifestChanges[oItem.manifestpath];
 					}
 					//if not changed it should be undefined
 					oItem._changed = sCurrentLayerValue !== undefined;
@@ -1493,6 +1518,7 @@ sap.ui.define([
 					//check if the provided value from the parameter or designtime default value is a translated value
 					//restrict this to string types for now
 					if (oItem.type === "string") {
+						/* hide multi language function since there has a translation issue in Portal
 						//get i18n path of the card, and set it to item for initializing CardResourceBundles
 						var vI18n = this._oEditorCard.getManifestEntry("/sap.app/i18n");
 						if (!vI18n) {
@@ -1504,7 +1530,7 @@ sap.ui.define([
 							var oValueTranslationsInManifest = this._manifestModel.getProperty(sValueTranslationsPath);
 							oItem.valueTranslations = merge(oValueTranslationsInManifest, aTranslationLayerValueChanges);
 							aTranslationLayerValueChanges = undefined;
-						}
+						}*/
 						oItem._translatedDefaultPlaceholder = this._getManifestDefaultValue(oItem.manifestpath) || oItem.defaultValue;
 						var sTranslationTextKey = null,
 							sPlaceholder = oItem._translatedDefaultPlaceholder;
