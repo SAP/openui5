@@ -110,6 +110,7 @@ sap.ui.define([
 			"en": "String 1 English",
 			"es_MX": "String 1 Spanish MX",
 			"fr": "String 1 French",
+			"fr_FR": "String 1 French",
 			"fr_CA": "String 1 French CA"
 		},
 		"string3": {
@@ -120,14 +121,16 @@ sap.ui.define([
 			"defaultOri_in_trans": "-",
 			"default_in_transpopup": "String 4 English",
 			"fr": "String 4 French",
-			"fr_CA": "String 4 French CA"
+			"fr_CA": "String 4 French CA",
+			"fr_FR": "String 4 French"
 		},
 		"string5": {
 			"default": "String 5 English",
 			"en": "String 5 English",
 			"en_US": "String 5 US English",
 			"fr_CA": "String 5 French CA",
-			"fr": "String 5 French"
+			"fr": "String 5 French",
+			"fr_FR": "String 5 French"
 		}
 	};
 	var _aCheckedLanguages = [
@@ -303,7 +306,7 @@ sap.ui.define([
 							assert.ok(aHeaderItems1[3].getText() === "Other Languages", "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.ok(oLanguageItems1.length === 42, "oTranslationPopover1 Content: length");
+							assert.ok(oLanguageItems1.length === 49, "oTranslationPopover1 Content: length");
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
@@ -329,7 +332,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.ok(oLanguageItems3.length === 42, "oTranslationPopover3 Content: length");
+								assert.ok(oLanguageItems3.length === 49, "oTranslationPopover3 Content: length");
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
@@ -352,7 +355,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.ok(oLanguageItems4.length === 42, "oTranslationPopover4 Content: length");
+									assert.ok(oLanguageItems4.length === 49, "oTranslationPopover4 Content: length");
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
@@ -375,7 +378,7 @@ sap.ui.define([
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
 										assert.ok(oTranslationPopover5.getContent()[0].isA("sap.m.List"), "oTranslationPopover5 Content: List");
 										var oLanguageItems5 = oTranslationPopover5.getContent()[0].getItems();
-										assert.ok(oLanguageItems5.length === 42, "oTranslationPopover5 Content: length");
+										assert.ok(oLanguageItems5.length === 49, "oTranslationPopover5 Content: length");
 										assert.ok(oLanguageItems5[0].getTitle() === "Not Updated", "oTranslationPopover5 Content: item 0");
 										for (var i = 1; i < oLanguageItems5.length; i++) {
 											var sLanguage = oLanguageItems5[i].getCustomData()[0].getKey();
@@ -457,7 +460,7 @@ sap.ui.define([
 							assert.ok(aHeaderItems1[3].getText() === "Other Languages", "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.ok(oLanguageItems1.length === 42, "oTranslationPopover1 Content: length");
+							assert.ok(oLanguageItems1.length === 49, "oTranslationPopover1 Content: length");
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
@@ -483,7 +486,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.ok(oLanguageItems3.length === 42, "oTranslationPopover3 Content: length");
+								assert.ok(oLanguageItems3.length === 49, "oTranslationPopover3 Content: length");
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
@@ -506,7 +509,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.ok(oLanguageItems4.length === 42, "oTranslationPopover4 Content: length");
+									assert.ok(oLanguageItems4.length === 49, "oTranslationPopover4 Content: length");
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
@@ -529,7 +532,7 @@ sap.ui.define([
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
 										assert.ok(oTranslationPopover5.getContent()[0].isA("sap.m.List"), "oTranslationPopover5 Content: List");
 										var oLanguageItems5 = oTranslationPopover5.getContent()[0].getItems();
-										assert.ok(oLanguageItems5.length === 42, "oTranslationPopover5 Content: length");
+										assert.ok(oLanguageItems5.length === 49, "oTranslationPopover5 Content: length");
 										assert.ok(oLanguageItems5[0].getTitle() === "Not Updated", "oTranslationPopover5 Content: item 0");
 										for (var i = 1; i < oLanguageItems5.length; i++) {
 											var sLanguage = oLanguageItems5[i].getCustomData()[0].getKey();
@@ -611,7 +614,7 @@ sap.ui.define([
 							assert.ok(aHeaderItems1[3].getText() === "Other Languages", "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.ok(oLanguageItems1.length === 42, "oTranslationPopover1 Content: length");
+							assert.ok(oLanguageItems1.length === 49, "oTranslationPopover1 Content: length");
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
@@ -637,7 +640,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.ok(oLanguageItems3.length === 42, "oTranslationPopover3 Content: length");
+								assert.ok(oLanguageItems3.length === 49, "oTranslationPopover3 Content: length");
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
@@ -660,7 +663,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.ok(oLanguageItems4.length === 42, "oTranslationPopover4 Content: length");
+									assert.ok(oLanguageItems4.length === 49, "oTranslationPopover4 Content: length");
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
@@ -683,7 +686,7 @@ sap.ui.define([
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
 										assert.ok(oTranslationPopover5.getContent()[0].isA("sap.m.List"), "oTranslationPopover5 Content: List");
 										var oLanguageItems5 = oTranslationPopover5.getContent()[0].getItems();
-										assert.ok(oLanguageItems5.length === 42, "oTranslationPopover5 Content: length");
+										assert.ok(oLanguageItems5.length === 49, "oTranslationPopover5 Content: length");
 										assert.ok(oLanguageItems5[0].getTitle() === "Not Updated", "oTranslationPopover5 Content: item 0");
 										for (var i = 1; i < oLanguageItems5.length; i++) {
 											var sLanguage = oLanguageItems5[i].getCustomData()[0].getKey();
@@ -765,7 +768,7 @@ sap.ui.define([
 							assert.ok(aHeaderItems1[3].getText() === "Other Languages", "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.ok(oLanguageItems1.length === 42, "oTranslationPopover1 Content: length");
+							assert.ok(oLanguageItems1.length === 49, "oTranslationPopover1 Content: length");
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
@@ -791,7 +794,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.ok(oLanguageItems3.length === 42, "oTranslationPopover3 Content: length");
+								assert.ok(oLanguageItems3.length === 49, "oTranslationPopover3 Content: length");
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
@@ -814,7 +817,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.ok(oLanguageItems4.length === 42, "oTranslationPopover4 Content: length");
+									assert.ok(oLanguageItems4.length === 49, "oTranslationPopover4 Content: length");
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
@@ -837,7 +840,7 @@ sap.ui.define([
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
 										assert.ok(oTranslationPopover5.getContent()[0].isA("sap.m.List"), "oTranslationPopover5 Content: List");
 										var oLanguageItems5 = oTranslationPopover5.getContent()[0].getItems();
-										assert.ok(oLanguageItems5.length === 42, "oTranslationPopover5 Content: length");
+										assert.ok(oLanguageItems5.length === 49, "oTranslationPopover5 Content: length");
 										assert.ok(oLanguageItems5[0].getTitle() === "Not Updated", "oTranslationPopover5 Content: item 0");
 										for (var i = 1; i < oLanguageItems5.length; i++) {
 											var sLanguage = oLanguageItems5[i].getCustomData()[0].getKey();
@@ -919,7 +922,7 @@ sap.ui.define([
 							assert.ok(aHeaderItems1[3].getText() === "Other Languages", "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.ok(oLanguageItems1.length === 42, "oTranslationPopover1 Content: length");
+							assert.ok(oLanguageItems1.length === 49, "oTranslationPopover1 Content: length");
 							assert.ok(oLanguageItems1[0].getTitle() === "Not Updated", "oTranslationPopover1 Content: item 0");
 							for (var i = 1; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
@@ -945,7 +948,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.ok(oLanguageItems3.length === 42, "oTranslationPopover3 Content: length");
+								assert.ok(oLanguageItems3.length === 49, "oTranslationPopover3 Content: length");
 								assert.ok(oLanguageItems3[0].getTitle() === "Not Updated", "oTranslationPopover3 Content: item 0");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
@@ -968,7 +971,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.ok(oLanguageItems4.length === 42, "oTranslationPopover4 Content: length");
+									assert.ok(oLanguageItems4.length === 49, "oTranslationPopover4 Content: length");
 									assert.ok(oLanguageItems4[0].getTitle() === "Not Updated", "oTranslationPopover4 Content: item 0");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
@@ -991,7 +994,7 @@ sap.ui.define([
 										assert.ok(aHeaderItems5[2].getItems()[1].getEditable() === false, "oTranslationPopover5 Header: Editable false");
 										assert.ok(oTranslationPopover5.getContent()[0].isA("sap.m.List"), "oTranslationPopover5 Content: List");
 										var oLanguageItems5 = oTranslationPopover5.getContent()[0].getItems();
-										assert.ok(oLanguageItems5.length === 42, "oTranslationPopover5 Content: length");
+										assert.ok(oLanguageItems5.length === 49, "oTranslationPopover5 Content: length");
 										assert.ok(oLanguageItems5[0].getTitle() === "Not Updated", "oTranslationPopover5 Content: item 0");
 										for (var i = 1; i < oLanguageItems5.length; i++) {
 											var sLanguage = oLanguageItems5[i].getCustomData()[0].getKey();
