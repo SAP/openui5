@@ -65,8 +65,10 @@ sap.ui.define([
 	 * @param {number} [iIndex]
 	 *   Index of item (within the collection addressed by <code>sPath</code>) represented
 	 *   by this context; used by list bindings, not context bindings
-	 * @param {Promise} [oCreatePromise]
-	 *   Promise returned by {@link #created}
+	 * @param {sap.ui.base.SyncPromise} [oCreatePromise]
+	 *   A promise which is resolved with the created entity when the POST request has been
+	 *   successfully sent and the entity has been marked as non-transient; used as base for
+	 *   {@link #created}
 	 * @param {number} [iGeneration=0]
 	 *   The unique number for this context's generation, which can be retrieved via
 	 *   {@link #getGeneration}.
@@ -106,10 +108,10 @@ sap.ui.define([
 				}
 				BaseContext.call(this, oModel, sPath);
 				this.oBinding = oBinding;
-				this.oCreatePromise = oCreatePromise
+				this.oCreatedPromise = oCreatePromise
 					// ensure to return a promise that is resolved w/o data
 					&& Promise.resolve(oCreatePromise).then(function () {});
-				this.oSyncCreatePromise = oCreatePromise && SyncPromise.resolve(oCreatePromise);
+				this.oSyncCreatePromise = oCreatePromise;
 				this.iGeneration = iGeneration || 0;
 				this.iIndex = iIndex;
 				this.bKeepAlive = false;
@@ -243,7 +245,7 @@ sap.ui.define([
 	 * @since 1.43.0
 	 */
 	Context.prototype.created = function () {
-		return this.oCreatePromise;
+		return this.oCreatedPromise;
 	};
 
 	/**
@@ -1453,8 +1455,10 @@ sap.ui.define([
 		 *   An absolute path without trailing slash
 		 * @param {number} [iIndex]
 		 *   Index of item represented by this context, used by list bindings, not context bindings
-		 * @param {Promise} [oCreatePromise]
-		 *   Promise returned by {@link #created}
+		 * @param {sap.ui.base.SyncPromise} [oCreatePromise]
+		 *   A promise which is resolved with the created entity when the POST request has been
+		 *   successfully sent and the entity has been marked as non-transient; used as base for
+		 *   {@link #created}
 		 * @returns {sap.ui.model.odata.v4.Context}
 		 *   A context for an OData V4 model
 		 * @throws {Error}

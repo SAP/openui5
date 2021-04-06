@@ -841,23 +841,27 @@ sap.ui.define([
 			bChanged = true;
 		}
 
-		for (i = iStart; i < iStart + aResults.length; i += 1) {
-			if (this.aContexts[i] === undefined && aResults[i - iStart]) {
+		for (i = 0; i < aResults.length; i += 1) {
+			if (this.aContexts[iStart + i] === undefined && aResults[i]) {
 				bChanged = true;
-				i$skipIndex = i - this.iCreatedContexts; // index on server ($skip)
-				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate")
-					|| _Helper.getPrivateAnnotation(aResults[i - iStart], "transientPredicate");
+				i$skipIndex = iStart + i - this.iCreatedContexts; // index on server ($skip)
+				sPredicate = _Helper.getPrivateAnnotation(aResults[i], "predicate")
+					|| _Helper.getPrivateAnnotation(aResults[i], "transientPredicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				oContext = this.mPreviousContextsByPath[sContextPath];
 				if (oContext && (!oContext.created() || oContext.isTransient())) {
 					// reuse the previous context, unless it is created and persisted
 					delete this.mPreviousContextsByPath[sContextPath];
-					oContext.iIndex = i$skipIndex;
+					if (oContext.isTransient() && !this.iCreatedContexts) {
+						this.iCreatedContexts = -oContext.iIndex;
+					} else {
+						oContext.iIndex = i$skipIndex;
+					}
 					oContext.checkUpdate();
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
 				}
-				this.aContexts[i] = oContext;
+				this.aContexts[iStart + i] = oContext;
 			}
 		}
 		// destroy previous contexts which are not reused or kept-alive
