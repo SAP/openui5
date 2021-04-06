@@ -107,7 +107,8 @@ sap.ui.define([
 		if (!Array.isArray(aValues)) {
 			throw new FormatException("Cannot format currency: " + vValue + " has the wrong format");
 		}
-		if (aValues[0] == undefined || aValues[0] == null) {
+		if ((aValues[0] == undefined || aValues[0] == null)
+				&& this.oFormatOptions.showNumber !== false) {
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
