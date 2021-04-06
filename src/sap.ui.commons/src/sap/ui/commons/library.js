@@ -203,9 +203,9 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * This enum is an alias for {@link sap.ui.unified.ColorPickerMode} and was only kept
 	 * for compatibility reasons. Please switch to the {@link sap.ui.unified.ColorPicker} API.
 	 *
-	 * @enum {string}
+	 * @typedef {sap.ui.unified.ColorPickerMode}
 	 * @public
-	 * @deprecated Since version 1.48.0. Moved to sap.ui.unified library. Please use that one.
+	 * @deprecated Since version 1.48.0. Use {@link sap.ui.unified.ColorPickerMode} instead.
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.commons.ColorPickerMode = sap.ui.unified.ColorPickerMode;
@@ -612,9 +612,13 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 
 	/**
 	 * Level of a title.
+	 *
+	 * This is an alias for {@link sap.ui.core.TitleLevel} and only kept for compatibility reasons.
+	 *
 	 * @since 1.9.1
-	 * @deprecated Since version 1.16.0. Moved to sap.ui.core library. Please use this one.
+	 * @deprecated Since version 1.16.0. Use {@link sap.ui.core.TitleLevel} instead.
 	 * @public
+	 * @typedef {sap.ui.core.TitleLevel}
 	 */
 	sap.ui.commons.TitleLevel = sap.ui.core.TitleLevel;
 
@@ -857,17 +861,24 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	sap.ui.commons.form = sap.ui.commons.form || {};
 
 	/**
-	 * A string that defines the number of used cells in a GridLayout. This can be a number from 1 to 16, "auto" or "full".
-	 * @deprecated Since version 1.16.0. Moved to sap.ui.layout library. Please use this one.
+	 * A string that defines the number of used cells in a GridLayout.
+	 *
+	 * This is an alias for {@link sap.ui.layout.form.GridElementCells} and only kept for compatibility reasons.
+	 *
+	 * @deprecated Since version 1.16.0. Use {@link sap.ui.layout.form.GridElementCells} instead.
+	 * @typedef {sap.ui.layout.form.GridElementCells}
 	 */
 	sap.ui.commons.form.GridElementCells = sap.ui.layout.form.GridElementCells;
 
 
 	/**
 	 * Available FormLayouts used for the SimpleForm.
-	 * @deprecated Since version 1.16.0. Moved to sap.ui.layout library. Please use this one.
+	 *
+	 * This is an alias for {@link sap.ui.layout.form.SimpleFormLayout} and only kept for compatibility reasons.
+	 *
+	 * @deprecated Since version 1.16.0. Use {@link sap.ui.layout.form.SimpleFormLayout} instead.
 	 * @public
-	 * @enum {string}
+	 * @typedef {sap.ui.layout.form.SimpleFormLayout}
 	 */
 	sap.ui.commons.form.SimpleFormLayout = sap.ui.layout.form.SimpleFormLayout;
 
