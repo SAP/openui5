@@ -25,7 +25,7 @@
 			<Panel headerText="Tiles Group 1">
 				<f:GridContainer id="grid1" items="{
 						path: '/',
-						key: 'uniqueId',
+						key: 'uniqueKey',
 						factory: '.createItem'
 					}">
 				</f:GridContainer>
@@ -34,6 +34,7 @@
 			<Panel headerText="Tiles Group 2 (Empty)">
 				<f:GridContainer id="gridEmpty" items="{
 					path: '/',
+					key: 'uniqueKey',
 					factory: '.createItem'
 				}">
 				</f:GridContainer>
@@ -42,7 +43,7 @@
 			<Panel headerText="Tiles Group 3 (Different Drop Group)">
 				<f:GridContainer id="gridDifferentGroup" items="{
 						path: '/',
-						key: 'uniqueId',
+						key: 'uniqueKey',
 						factory: '.createItem'
 					}">
 					<f:dragDropConfig>
@@ -55,6 +56,7 @@
 				<Panel headerText="Tiles Group 4 (Prevents Drop)">
 					<f:GridContainer id="grid4" items="{
 							path: '/',
+							key: 'uniqueKey',
 							factory: '.createItem'
 						}">
 					</f:GridContainer>
@@ -66,6 +68,7 @@
 				<Panel headerText="Tiles Group 5">
 					<f:GridContainer id="grid5" items="{
 							path: '/',
+							key: 'uniqueKey',
 							factory: '.createItem'
 						}">
 					</f:GridContainer>
@@ -78,6 +81,7 @@
 			<Panel headerText="Card Group 1">
 				<f:GridContainer id="grid6" snapToRow="true" items="{
 						path: '/',
+						key: 'uniqueKey',
 						factory: '.createItem'
 					}">
 				</f:GridContainer>
@@ -86,6 +90,7 @@
 			<Panel headerText="Card Group 2">
 				<f:GridContainer id="grid7" snapToRow="true" items="{
 						path: '/',
+						key: 'uniqueKey',
 						factory: '.createItem'
 					}">
 				</f:GridContainer>

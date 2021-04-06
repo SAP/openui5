@@ -12,6 +12,8 @@ sap.ui.define([
 ], function (GenericTile, MessageToast, NumericContent, TileContent, Controller, JSONModel, DragInfo, GridContainerItemLayoutData, GridDropInfo, Card) {
 	"use strict";
 
+	var _i = 0;
+
 	return Controller.extend("sap.f.cardsdemo.controller.Dnd3", {
 		onInit: function () {
 			this.initData();
@@ -53,39 +55,30 @@ sap.ui.define([
 					drop: function (oInfo) {
 						var oDragged = oInfo.getParameter("draggedControl"),
 							oDropped = oInfo.getParameter("droppedControl"),
-							sInsertPosition = oInfo.getParameter("dropPosition"),
 
 							oDraggedParent = oDragged.getParent(),
 							oDroppedParent = oInfo.getSource().getParent(),
 
 							oDragModel = oDraggedParent.getModel(),
 							oDropModel = oDroppedParent.getModel(),
-							oDragModelData = oDragModel.getData(),
-							oDropModelData = oDropModel.getData(),
+							aDragModelData = oDragModel.getData().slice(),
+							aDropModelData = oDropModel.getData().slice(),
 
 							iDragPosition = oDraggedParent.indexOfItem(oDragged),
 							iDropPosition = oDroppedParent.indexOfItem(oDropped);
 
 						// remove the item
-						var oItem = oDragModelData[iDragPosition];
-						oDragModelData.splice(iDragPosition, 1);
-
-						if (oDragModel === oDropModel && iDragPosition < iDropPosition) {
-							iDropPosition--;
-						}
-
-						if (sInsertPosition === "After") {
-							iDropPosition++;
-						}
+						var oItem = aDragModelData[iDragPosition];
+						aDragModelData.splice(iDragPosition, 1);
 
 						// insert the control in target aggregation
-						oDropModelData.splice(iDropPosition, 0, oItem);
-
-						if (oDragModel !== oDropModel) {
-							oDragModel.setData(oDragModelData);
-							oDropModel.setData(oDropModelData);
+						if (oDropModel === oDragModel) {
+							aDragModelData.splice(iDropPosition, 0, oItem);
+							oDragModel.setData(aDragModelData);
 						} else {
-							oDropModel.setData(oDropModelData);
+							aDropModelData.splice(iDropPosition, 0, oItem);
+							oDragModel.setData(aDragModelData);
+							oDropModel.setData(aDropModelData);
 						}
 
 						// this is needed for both keyboard and mouse dnd
@@ -103,58 +96,66 @@ sap.ui.define([
 			}.bind(this));
 		},
 
+		addUniqueKey: function (aData) {
+			aData.forEach(function (oItem) {
+				oItem.uniqueKey = "item-" + (_i++);
+			});
+
+			return aData;
+		},
+
 		initData: function () {
-			this.byId("grid1").setModel(new JSONModel([
-				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
-				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
-				{ uniqueId: "item3", header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
-				{ uniqueId: "item4", header: "Leave requests", subheader: "Create or edit a leave request", footer: "paid, unpaid, sick leave", numberValue: "30", valueColor: "Error", icon: "sap-icon://general-leave-request" },
-				{ uniqueId: "item5", header: "Work from home", subheader: "Make a request for home office", footer: "", numberValue: "17", valueColor: "Good", icon: "sap-icon://addresses" },
-				{ uniqueId: "item6", header: "Collaboration", subheader: "Connect with colleagues", footer: "", numberValue: "240", icon: "sap-icon://collaborate" },
-				{ uniqueId: "item7", header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
-				{ uniqueId: "item8", header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
-				{ uniqueId: "item10", header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
-				{ uniqueId: "item11", header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "", numberValue: "2", icon: "sap-icon://cart-5" },
-				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
-			]));
+			this.byId("grid1").setModel(new JSONModel(this.addUniqueKey([
+				{ header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
+				{ header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
+				{ header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
+				{ header: "Leave requests", subheader: "Create or edit a leave request", footer: "paid, unpaid, sick leave", numberValue: "30", valueColor: "Error", icon: "sap-icon://general-leave-request" },
+				{ header: "Work from home", subheader: "Make a request for home office", footer: "", numberValue: "17", valueColor: "Good", icon: "sap-icon://addresses" },
+				{ header: "Collaboration", subheader: "Connect with colleagues", footer: "", numberValue: "240", icon: "sap-icon://collaborate" },
+				{ header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
+				{ header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
+				{ header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
+				{ header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "", numberValue: "2", icon: "sap-icon://cart-5" },
+				{ header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
+			])));
 
 			this.byId("gridEmpty").setModel(new JSONModel([]));
 
-			this.byId("gridDifferentGroup").setModel(new JSONModel([
-				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
-				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
-				{ uniqueId: "item3", header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" }
-			]));
+			this.byId("gridDifferentGroup").setModel(new JSONModel(this.addUniqueKey([
+				{ header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
+				{ header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
+				{ header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" }
+			])));
 
-			this.byId("grid4").setModel(new JSONModel([
-				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
-				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
-				{ uniqueId: "item3", header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
-				{ uniqueId: "item4", header: "Leave requests", subheader: "Create or edit a leave request", footer: "paid, unpaid, sick leave", numberValue: "30", valueColor: "Error", icon: "sap-icon://general-leave-request" },
-				{ uniqueId: "item5", header: "Work from home", subheader: "Make a request for home office", footer: "", numberValue: "17", valueColor: "Good", icon: "sap-icon://addresses" },
-				{ uniqueId: "item6", header: "Collaboration", subheader: "Connect with colleagues", footer: "", numberValue: "240", icon: "sap-icon://collaborate" },
-				{ uniqueId: "item7", header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
-				{ uniqueId: "item8", header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
-				{ uniqueId: "item10", header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
-				{ uniqueId: "item11", header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "", numberValue: "2", icon: "sap-icon://cart-5" },
-				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
-			]));
+			this.byId("grid4").setModel(new JSONModel(this.addUniqueKey([
+				{ header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
+				{ header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
+				{ header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
+				{ header: "Leave requests", subheader: "Create or edit a leave request", footer: "paid, unpaid, sick leave", numberValue: "30", valueColor: "Error", icon: "sap-icon://general-leave-request" },
+				{ header: "Work from home", subheader: "Make a request for home office", footer: "", numberValue: "17", valueColor: "Good", icon: "sap-icon://addresses" },
+				{ header: "Collaboration", subheader: "Connect with colleagues", footer: "", numberValue: "240", icon: "sap-icon://collaborate" },
+				{ header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
+				{ header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
+				{ header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
+				{ header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "", numberValue: "2", icon: "sap-icon://cart-5" },
+				{ header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
+			])));
 
-			this.byId("grid5").setModel(new JSONModel([
-				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
-				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
-				{ uniqueId: "item3", header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
-				{ uniqueId: "item4", header: "Leave requests", subheader: "Create or edit a leave request", footer: "paid, unpaid, sick leave", numberValue: "30", valueColor: "Error", icon: "sap-icon://general-leave-request" },
-				{ uniqueId: "item5", header: "Work from home", subheader: "Make a request for home office", footer: "", numberValue: "17", valueColor: "Good", icon: "sap-icon://addresses" },
-				{ uniqueId: "item6", header: "Collaboration", subheader: "Connect with colleagues", footer: "", numberValue: "240", icon: "sap-icon://collaborate" },
-				{ uniqueId: "item7", header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
-				{ uniqueId: "item8", header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
-				{ uniqueId: "item10", header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
-				{ uniqueId: "item11", header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "",  numberValue: "2", icon: "sap-icon://cart-5" },
-				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
-			]));
+			this.byId("grid5").setModel(new JSONModel(this.addUniqueKey([
+				{ header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
+				{ header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
+				{ header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
+				{ header: "Leave requests", subheader: "Create or edit a leave request", footer: "paid, unpaid, sick leave", numberValue: "30", valueColor: "Error", icon: "sap-icon://general-leave-request" },
+				{ header: "Work from home", subheader: "Make a request for home office", footer: "", numberValue: "17", valueColor: "Good", icon: "sap-icon://addresses" },
+				{ header: "Collaboration", subheader: "Connect with colleagues", footer: "", numberValue: "240", icon: "sap-icon://collaborate" },
+				{ header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
+				{ header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
+				{ header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
+				{ header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "",  numberValue: "2", icon: "sap-icon://cart-5" },
+				{ header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
+			])));
 
-			this.byId("grid6").setModel(new JSONModel([
+			this.byId("grid6").setModel(new JSONModel(this.addUniqueKey([
 				{ header: "Sales Fulfillment Application Title", subheader: "Subtitle", footer: "", numberValue: "3", icon: "sap-icon://home-share" },
 				{ header: "Manage Activity Master Data Type", subheader: "", footer: "", numberValue: "15", valueColor: "Critical", icon: "sap-icon://activities" },
 				{ type: "card", rows: 2, columns: 2, manifest: "manifests>/listContent/smallList" },
@@ -165,15 +166,15 @@ sap.ui.define([
 				{ header: "Appointments management", subheader: "", footer: "Current Quarter", numberValue: "240", icon: "sap-icon://appointment" },
 				{ header: "Jessica D. Prince Senior Consultant", subheader: "Department", footer: "Current Quarter", numberValue: "1", icon: "sap-icon://activity-individual" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/stackedBar" }
-			]));
+			])));
 
-			this.byId("grid7").setModel(new JSONModel([
+			this.byId("grid7").setModel(new JSONModel(this.addUniqueKey([
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/smallList" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/mediumList" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/largeList" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/stackedBar" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/line" }
-			]));
+			])));
 
 			this.byId("links1").setModel(new JSONModel([
 				{ header: "Open SAP Homepage", href: "http://www.sap.com" },
