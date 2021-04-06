@@ -84,18 +84,28 @@ sap.ui.define(['sap/ui/core/Fragment'],
                 });
             } else {
                 pLoaded = new Promise(function(resolve, reject) {
-                    // NOTE:
-                    // createDefault() can also return an array of controls synchronously!
-                    oExtensionPoint.createDefault().then(function(aControls) {
-                        return checkForExtensionPoint(aControls);
-                    }).then(function(aControls) {
-                        //insert and move indices only once at first level EP
-                        if (bInsert) {
-                            fnInsert(aControls);
-                            oExtensionPoint.ready(aControls);
-                        }
-                        resolve(aControls);
-                    });
+
+                    var fnProcess = function() {
+                        // NOTE: createDefault() can also return an array of controls synchronously!
+                        oExtensionPoint.createDefault().then(function(aControls) {
+                            return checkForExtensionPoint(aControls);
+                        }).then(function(aControls) {
+                            // insert and move indices only once at first level EP
+                            if (bInsert) {
+                                fnInsert(aControls);
+                                oExtensionPoint.ready(aControls);
+                            }
+                            resolve(aControls);
+                        });
+                    };
+
+                    if (oExtensionPoint.name == "EPDelayed") {
+                        // setTimeout(fnProcess, 100);
+                        fnProcess();
+                    } else {
+                        fnProcess();
+                    }
+
                 });
             }
             return pLoaded;
