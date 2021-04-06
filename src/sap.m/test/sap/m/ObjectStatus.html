@@ -193,9 +193,7 @@
 					new sap.m.MessageToast.show("you click me");
 				}
 			}), new sap.m.ObjectStatus({
-				text : "Large status",
-				state: "Error",
-				icon: "sap-icon://alert",
+				emptyIndicator: "Auto",
 				active : true,
 				press : function() {
 					new sap.m.MessageToast.show("you click me");
@@ -274,6 +272,10 @@
 								title: "Created by",
 								text : "John Doe Ñagçyfox",
 								state: "Error"
+							}), new sap.m.ObjectStatus({
+								title: "Credits",
+								text : "",
+								emptyIndicatorMode: "On"
 							})
 						]
 					}),

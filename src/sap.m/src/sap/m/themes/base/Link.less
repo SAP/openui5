@@ -127,6 +127,19 @@ html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	font-weight: bold;
 }
 
+.sapMLnk .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: none;
+}
+
+.sapMShowEmpty-CTX .sapMLnk .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: inline-block;
+}
+
+.sapMShowEmpty-CTX .sapMLnk .sapMEmptyIndicator.sapMEmptyIndicatorAuto,
+.sapMLnk .sapMEmptyIndicator {
+	color: @sapUiBaseText;
+}
+
 /* Compact size */
 .sapUiSizeCompact .sapUiFormEdit .sapMLnk {
 	margin-top: 0.5rem;

@@ -40,6 +40,9 @@ function(
 	// shortcut for sap.ui.core.aria.HasPopup
 	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = library.EmptyIndicatorMode;
+
 	/**
 	 * Constructor for a new <code>Link</code>.
 	 *
@@ -182,7 +185,14 @@ function(
 			 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered according to the selected value.
 			 * @since 1.86.0
 			 */
-			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
+			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None},
+
+			/**
+			 * Specifies if an empty indicator should be displayed when there is no text.
+			 *
+			 * @since 1.89
+			 */
+			emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
 		},
 		associations : {
 

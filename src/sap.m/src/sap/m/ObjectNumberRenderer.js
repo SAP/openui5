@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
-	function(Renderer, coreLibrary) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', './library', 'sap/ui/core/Core'],
+	function(Renderer, coreLibrary, library, Core) {
 	"use strict";
 
 
@@ -17,6 +17,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 	 * String to prefix CSS class for number status.
 	 */
 	var _sCSSPrefixObjNumberStatus = 'sapMObjectNumberStatus';
+
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = library.EmptyIndicatorMode;
+
+	// shortcut for library resource bundle
+	var oRb = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * ObjectNumber renderer.
@@ -89,8 +95,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 		oRm.class("sapMObjectNumberInner");
 		oRm.openEnd();
 
-		this.renderText(oRm, oON);
-		this.renderUnit(oRm, oON);
+		if (oON.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off && !oON.getNumber()) {
+			this.renderEmptyIndicator(oRm, oON);
+		} else {
+			this.renderText(oRm, oON);
+			this.renderUnit(oRm, oON);
+		}
 
 		oRm.close("span");
 
@@ -146,6 +156,33 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 		oRm.class("sapUiPseudoInvisibleText");
 		oRm.openEnd();
 		oRm.text(oON._getStateText());
+		oRm.close("span");
+	};
+
+	/**
+	 * Renders the empty text indicator.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.ObjectNumberRenderer} oON An object representation of the control that should be rendered.
+	 */
+	ObjectNumberRenderer.renderEmptyIndicator = function(oRm, oON) {
+		oRm.openStart("span");
+			oRm.class("sapMEmptyIndicator");
+			if (oON.getEmptyIndicatorMode() === EmptyIndicatorMode.Auto) {
+				oRm.class("sapMEmptyIndicatorAuto");
+			}
+			oRm.openEnd();
+			oRm.openStart("span");
+			oRm.attr("aria-hidden", true);
+			oRm.openEnd();
+				oRm.text(oRb.getText("EMPTY_INDICATOR"));
+			oRm.close("span");
+			//Empty space text to be announced by screen readers
+			oRm.openStart("span");
+			oRm.class("sapUiPseudoInvisibleText");
+			oRm.openEnd();
+				oRm.text(oRb.getText("EMPTY_INDICATOR_TEXT"));
+			oRm.close("span");
 		oRm.close("span");
 	};
 

@@ -3,9 +3,18 @@
 sap.ui.define([
 	"sap/ui/unified/Currency",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/VBox"
-], function(Currency, JSONModel, VBox) {
+	"sap/m/VBox",
+	"sap/ui/core/Core",
+	"sap/m/Panel",
+	"sap/m/library"
+], function(Currency, JSONModel, VBox, Core, Panel, mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
+
+	// shortcut for library resource bundle
+	var oRb = Core.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("Control API", {
 		beforeEach : function () {
@@ -39,9 +48,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Control default state/visibility with no parameters", function (assert) {
-		// Assert
-		assert.strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
-				"sapUiUfdCurrencyNoVal applied");
 		assert.strictEqual(this.fnGetRenderedValue(), "0.00", "Default value rendered");
 		assert.strictEqual(this.fnGetRenderedCurrency(), "", "No currency rendered");
 	});
@@ -52,8 +58,6 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.sut._bRenderNoValClass, undefined, "_bRenderNoValClass should be undefined");
-		assert.strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
-				"sapUiUfdCurrencyNoVal applied when value set to undefined and value is not bound to a model");
 	});
 
 	QUnit.test("Testing setters", function (assert) {
@@ -299,105 +303,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("Visibility with undefined value", {
-		beforeEach: function () {
-			var oData = {
-				currencyCollection: [
-					{
-						value: undefined,
-						currency: "EUR",
-						maxPrecision: 4,
-						useSymbol: true
-					},
-					{
-						value: 1021,
-						currency: "GBP",
-						maxPrecision: 1,
-						useSymbol: true
-					},
-					{
-						currency: "JPY",
-						maxPrecision: 5,
-						useSymbol: true
-					},
-					{
-						value: null
-					}
-				]
-			},
-			oCurrencyTemplate = new Currency({
-				value: "{value}",
-				currency: "{currency}",
-				maxPrecision: "{maxPrecision}",
-				useSymbol: "{useSymbol}"
-			});
-			sap.ui.getCore().setModel(new JSONModel(oData));
-			this.oVbox = new VBox({});
-			this.oVbox.bindAggregation("items", "/currencyCollection", oCurrencyTemplate);
-			this.oVbox.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-			this.aItems = this.oVbox.getItems();
-		},
-		afterEach: function () {
-			this.oVbox.destroy();
-			this.aItems = null;
-		}
-	});
-
-	QUnit.test("Internal _bHasBoundValue value set correct on model bound", function (assert) {
-		assert.strictEqual(this.aItems[0]._bRenderNoValClass, true, "Value should be true");
-		assert.strictEqual(this.aItems[1]._bRenderNoValClass, false, "Value should be false");
-		assert.strictEqual(this.aItems[2]._bRenderNoValClass, true, "Value should be true");
-		assert.strictEqual(this.aItems[3]._bRenderNoValClass, true, "Value should be true");
-	});
-
-	QUnit.test("Undefined value from model", function (assert) {
-		assert.strictEqual(this.aItems[0].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
-		assert.strictEqual(this.aItems[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
-		assert.strictEqual(this.aItems[2].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
-		assert.strictEqual(this.aItems[3].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
-	});
-
-	QUnit.test("Setting value from undefined to number and back", function (assert) {
-		var $Item = this.aItems[0].$();
-
-		// Act
-		this.aItems[0].setValue(120);
-		// Assert
-		assert.strictEqual($Item.hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
-
-		// Act
-		this.aItems[0].setValue(undefined);
-		// Assert
-		assert.ok($Item.hasClass("sapUiUfdCurrencyNoVal"), "Class sapUiUfdCurrencyNoVal is applied to control");
-	});
-
-	QUnit.test("Setting model value to null, unbindValue and set value", function (assert) {
-		// SUT
-		var oCurrency = new Currency({
-			value: '{/value}',
-			currency:'USD'
-
-		});
-		oCurrency.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		var oModel = new JSONModel({value: null});
-		oCurrency.setModel(oModel);
-		// Assert
-		assert.strictEqual(oCurrency.$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
-
-		// Act
-		oCurrency.unbindProperty('value');
-		oCurrency.setValue(200);
-		// Assert
-		assert.strictEqual(oCurrency.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
-
-		// Cleanup
-		oCurrency.destroy();
-	});
-
 	QUnit.module("Control live update", {
 		beforeEach : function () {
 			this.sandbox = sinon.sandbox;
@@ -543,12 +448,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Currency control is rendered correctly", function (assert) {
-		// Assert
-		assert.strictEqual(this.aControls[0].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
-		assert.strictEqual(this.aControls[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
-	});
-
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
@@ -598,4 +497,99 @@ sap.ui.define([
 		sap.ui.getCore().getConfiguration().setRTL(bRTL);
 		oCurrency.destroy();
 	});
+
+	QUnit.module("EmptyIndicator", {
+		beforeEach : function() {
+			this.oCurrency = new Currency({
+				emptyIndicatorMode: EmptyIndicatorMode.On
+			});
+
+			this.oCurrencyWithValue = new Currency({
+				emptyIndicatorMode: EmptyIndicatorMode.On,
+				value: 12,
+				currency: "EUR"
+			});
+
+			this.oCurrencyEmptyAuto = new Currency({
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
+			});
+
+			this.oCurrencyEmptyAutoNoClass = new Currency({
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
+			});
+
+			this.oPanel = new Panel({
+				content: this.oCurrencyEmptyAuto
+			}).addStyleClass("sapMShowEmpty-CTX");
+
+			this.oCurrency.placeAt("content");
+			this.oCurrencyWithValue.placeAt("content");
+			this.oPanel.placeAt("content");
+			Core.applyChanges();
+		},
+		afterEach : function() {
+			this.oCurrency.destroy();
+			this.oCurrencyEmptyAuto.destroy();
+			this.oCurrencyEmptyAutoNoClass.destroy();
+			this.oPanel.destroy();
+		}
+	});
+
+	QUnit.test("Indicator should be rendered", function(assert) {
+		var oSpan = this.oCurrency.getDomRef().children[0];
+		assert.strictEqual(oSpan.firstChild.textContent, "-", "Empty indicator is rendered");
+		assert.strictEqual(oSpan.firstChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
+		assert.strictEqual(oSpan.lastChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
+	});
+
+	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
+		//Arrange
+		this.oCurrency.setValue(12);
+		this.oCurrency.setCurrency("EUR");
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oCurrencyWithValue.getDomRef().childNodes[0].firstChild.textContent, "12.00", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
+		//Arrange
+		this.oCurrency.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oCurrency.getDomRef().childNodes[0].textContent, "0.00", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should be rendered, when sapMShowEmpty-CTX is added to parent", function(assert) {
+		//Assert
+		var oSpan = this.oCurrencyEmptyAuto.getDomRef().childNodes[0];
+		assert.strictEqual(oSpan.firstChild.textContent, "-", "Empty indicator is rendered");
+		assert.strictEqual(oSpan.firstChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
+		assert.strictEqual(oSpan.lastChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
+	});
+
+	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
+		//Arrange
+		this.oCurrencyEmptyAuto.setValue(12);
+		this.oCurrencyEmptyAuto.setCurrency("EUR");
+		this.oCurrencyEmptyAuto.invalidate();
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oCurrencyEmptyAuto.getDomRef().childNodes[0].firstChild.textContent, "12.00", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", function(assert) {
+		//Arrange
+		this.oCurrency.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
+		this.oCurrency.setValue(12);
+		this.oCurrency.setCurrency("EUR");
+		this.oCurrencyEmptyAuto.invalidate();
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oCurrency.getDomRef().childNodes[0].firstChild.textContent, "12.00", "Empty indicator is not rendered");
+	});
+
 });

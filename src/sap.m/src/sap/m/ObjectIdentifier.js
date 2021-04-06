@@ -34,7 +34,8 @@ function(
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
 	/**
 	 * Constructor for a new ObjectIdentifier.
@@ -105,7 +106,14 @@ function(
 			 * Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+
+			/**
+			 * Specifies if an empty indicator should be displayed when there is no text.
+			 *
+			 * @since 1.89
+			 */
+			emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
 		},
 		aggregations : {
 
@@ -445,7 +453,9 @@ function(
 			oType = (ObjectIdentifier.OI_ARIA_ROLE + " " + (oTitleInfo.type || "")).trim();
 
 		// add ObjectIdentifier type to the title type
-		oTitleInfo.type = oType;
+		if (this.getTitle() || this.getText()) {
+			oTitleInfo.type = oType;
+		}
 		// add ObjectIdentifier text to the description of the title
 		oTitleInfo.description = oTitleInfo.description + " " + this.getText();
 
