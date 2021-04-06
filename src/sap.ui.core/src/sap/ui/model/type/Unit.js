@@ -62,11 +62,11 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions]
 	 *   Formatting options. For a list of all available options, see
 	 *   {@link sap.ui.core.format.NumberFormat.getUnitInstance NumberFormat}. If the format options
-	 *   <code>showMeasure</code> or since 1.89.0 <code>showNumber</code> are set to
-	 *   <code>false</code>, model messages for the respective parts are not propagated to the
-	 *   control, provided the corresponding binding supports the feature of ignoring model
-	 *   messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding
-	 *   binding parameter is not set manually.
+	 *   <code>showMeasure</code> or <code>showNumber</code> are set to <code>false</code>, model
+	 *   messages for the respective parts are not propagated to the control, provided the
+	 *   corresponding binding supports the feature of ignoring model messages, see
+	 *   {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding binding
+	 *   parameter is not set manually.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
 	 *   By default decimals are preserved; since 1.89.0
 	 * @param {object} [oFormatOptions.source]
