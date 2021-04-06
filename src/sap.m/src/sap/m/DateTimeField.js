@@ -252,6 +252,9 @@ sap.ui.define([
 	DateTimeField.prototype._parseValue = function (sValue, bDisplayFormat) {
 		var oBinding = this.getBinding("value"),
 			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
+			// The internal "_getFormatter" method gets called now if there is a binding to the "value" property with
+			// a supported binding type. As a result all needed internal control variables are created.
+			oFormatter = this._getFormatter(bDisplayFormat),
 			oFormatOptions,
 			oDateLocal,
 			oDate;
@@ -286,7 +289,7 @@ sap.ui.define([
 			return oDate;
 		}
 
-		return this._getFormatter(bDisplayFormat).parse(sValue);
+		return oFormatter.parse(sValue);
 	};
 
 	/* The bValueFormat variable defines whether the result is in valueFormat(true) or displayFormat(false) */
