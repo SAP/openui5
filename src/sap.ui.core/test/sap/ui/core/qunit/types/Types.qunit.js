@@ -128,12 +128,6 @@ sap.ui.define([
 		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("getName", function (assert) {
-		// code under test
-		assert.strictEqual(new CurrencyType().getName(), "sap.ui.model.type.Currency");
-	});
-
 	QUnit.test("currency formatValue", function (assert) {
 		var currencyType = new CurrencyType();
 		assert.equal(currencyType.formatValue([22, "EUR"], "string"), "22.00" + "\xa0" + "EUR", "format test");
@@ -1912,12 +1906,6 @@ sap.ui.define([
 
 		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions);
 		assert.deepEqual(oType.oFormatOptions, {foo : "bar", preserveDecimals : true});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getName", function (assert) {
-		// code under test
-		assert.strictEqual(new UnitType().getName(), "sap.ui.model.type.Unit");
 	});
 
 	QUnit.test("unit formatValue", function (assert) {

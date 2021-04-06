@@ -3,12 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/UnitMixin",
 	"sap/ui/test/TestUtils"
-], function (Log, NumberFormat, ParseException, ValidateException, applyUnitMixin, TestUtils) {
+], function (Log, ParseException, ValidateException, applyUnitMixin, TestUtils) {
 	/*global QUnit, sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -37,7 +36,6 @@ sap.ui.define([
 				setFormatOptions : function () {}
 			};
 			UnitMixin.prototype.getCustomUnitForKey = function () {};
-			UnitMixin.prototype.getName = function () { return "~TypeName"; };
 			applyUnitMixin(UnitMixin.prototype, BaseType, "customUnitsOrCurrencies");
 		},
 
@@ -63,7 +61,7 @@ sap.ui.define([
 		assert.ok(oType.hasOwnProperty("mCustomUnits"));
 		assert.strictEqual(oType.mCustomUnits, undefined);
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, parseAsString : true,
-			preserveDecimals : true, unitOptional : true});
+			unitOptional : true});
 
 		assert.throws(function () {
 			// code under test
@@ -79,7 +77,7 @@ sap.ui.define([
 		oType = new UnitMixin(oFormatOptions);
 
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-			parseAsString : true, preserveDecimals : true, unitOptional : true});
+			parseAsString : true, unitOptional : true});
 
 		[false, undefined, ""].forEach(function (bParseAsString) {
 			oFormatOptions.parseAsString = bParseAsString;
@@ -88,7 +86,7 @@ sap.ui.define([
 			oType = new UnitMixin(oFormatOptions);
 
 			assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-				parseAsString : true, preserveDecimals : true, unitOptional : true});
+				parseAsString : true, unitOptional : true});
 			assert.notStrictEqual(oType.oFormatOptions, oFormatOptions,
 				"format options are immutable: clone");
 		});
@@ -100,7 +98,7 @@ sap.ui.define([
 		oType = new UnitMixin(oFormatOptions);
 
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-			parseAsString : true, preserveDecimals : true, unitOptional : false});
+			parseAsString : true, unitOptional : false});
 
 		oFormatOptions.unitOptional = undefined;
 
@@ -108,7 +106,7 @@ sap.ui.define([
 		oType = new UnitMixin(oFormatOptions);
 
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-			parseAsString : true, preserveDecimals : true, unitOptional : undefined});
+			parseAsString : true, unitOptional : undefined});
 
 		assert.throws(function () {
 			oType = new UnitMixin({}, {"minimum" : 42});
@@ -122,24 +120,6 @@ sap.ui.define([
 			oType = new UnitMixin({customUnitsOrCurrencies : {}});
 		}, new Error("Format option customUnitsOrCurrencies is not supported"));
 	});
-
-	//*********************************************************************************************
-[
-	{formatOptions : undefined, result : true},
-	{formatOptions : {}, result : true},
-	{formatOptions : {preserveDecimals : true}, result : true},
-	{formatOptions : {preserveDecimals : "yes"}, result : "yes"},
-	{formatOptions : {preserveDecimals : undefined}, result : undefined},
-	{formatOptions : {preserveDecimals : null}, result : null},
-	{formatOptions : {preserveDecimals : false}, result : false}
-].forEach(function (oFixture, i) {
-	QUnit.test("constructor: oFormatOptions.preserveDecimals; #" + i, function (assert) {
-		var oType = new UnitMixin(oFixture.formatOptions);
-
-		// code under test
-		assert.strictEqual(oType.oFormatOptions.preserveDecimals, oFixture.result);
-	});
-});
 
 	//*********************************************************************************************
 	[
@@ -260,7 +240,6 @@ sap.ui.define([
 				customUnitsOrCurrencies : mCustomUnits,
 				emptyString : 0,
 				parseAsString : true,
-				preserveDecimals : true,
 				unitOptional : true
 			});
 		oBaseFormatValueCall = oBaseUnitMock.expects("formatValue").on(oType)
@@ -343,7 +322,6 @@ sap.ui.define([
 				customUnitsOrCurrencies : sinon.match.same(oType.mCustomUnits),
 				emptyString : 0,
 				parseAsString : true,
-				preserveDecimals : true,
 				unitOptional : true
 			});
 		oBaseUnitMock.expects("formatValue").on(oType2)
@@ -361,7 +339,6 @@ sap.ui.define([
 				customUnitsOrCurrencies : sinon.match.same(oType.mCustomUnits),
 				emptyString : 0,
 				parseAsString : true,
-				preserveDecimals : true,
 				unitOptional : true
 			});
 		oBaseUnitMock.expects("formatValue").on(oType3)
@@ -650,7 +627,6 @@ sap.ui.define([
 				emptyString: 0,
 				option : "42",
 				parseAsString : true,
-				preserveDecimals : true,
 				unitOptional : true
 			},
 			oFormatOptions = {option : "42", parseAsString : "~parseAsString"},
@@ -663,8 +639,7 @@ sap.ui.define([
 		oResult = oType.getFormatOptions();
 
 		assert.deepEqual(oResult,
-			{emptyString: 0, option : "42", parseAsString : "~parseAsString",
-			preserveDecimals : true, unitOptional : true});
+			{emptyString: 0, option : "42", parseAsString : "~parseAsString", unitOptional : true});
 		assert.strictEqual(oResult, oBaseFormatOptions,
 			"base type getFormatOptions creates a copy, do not copy again");
 	});
@@ -676,7 +651,6 @@ sap.ui.define([
 				customUnitsOrCurrencies : {foo : undefined},
 				emptyString: 0,
 				parseAsString : true,
-				preserveDecimals : true,
 				unitOptional : true
 			},
 			oType = new UnitMixin();
@@ -689,7 +663,7 @@ sap.ui.define([
 
 		// check default format options
 		assert.deepEqual(oType.oFormatOptions,
-			{emptyString: 0, parseAsString : true, preserveDecimals : true, unitOptional : true});
+			{emptyString: 0, parseAsString : true, unitOptional : true});
 
 		// code under test - enhance format options while formatting
 		oType.formatValue([undefined, undefined, {foo : {}}]);
@@ -698,6 +672,6 @@ sap.ui.define([
 
 		// code under test - additional format options are removed
 		assert.deepEqual(oType.getFormatOptions(),
-			{emptyString: 0, parseAsString : true, preserveDecimals : true, unitOptional : true});
+			{emptyString: 0, parseAsString : true, unitOptional : true});
 	});
 });

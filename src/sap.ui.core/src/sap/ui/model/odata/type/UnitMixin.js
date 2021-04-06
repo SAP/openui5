@@ -5,10 +5,9 @@
 // Provides mixin sap.ui.model.odata.type.UnitMixin supporting unit customizing for types like
 // sap.ui.model.odata.type.Currency or sap.ui.model.odata.type.Unit
 sap.ui.define([
-	"sap/base/Log",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
-], function (Log, ParseException, ValidateException) {
+], function (ParseException, ValidateException) {
 	"use strict";
 	/*global Map */
 
@@ -283,9 +282,8 @@ sap.ui.define([
 			// always parses to a string and we can check the result.
 			this.bParseAsString = !oFormatOptions || !("parseAsString" in oFormatOptions)
 				|| oFormatOptions.parseAsString;
-			oFormatOptions = Object.assign(
-				{unitOptional : true, emptyString: 0, preserveDecimals : true},
-				oFormatOptions,
+			// format option preserveDecimals will be defaulted to true in base type
+			oFormatOptions = Object.assign({unitOptional : true, emptyString: 0}, oFormatOptions,
 				{parseAsString : true});
 
 			fnBaseType.call(this, oFormatOptions, oConstraints);
