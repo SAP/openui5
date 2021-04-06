@@ -38,8 +38,7 @@
 
 	var URL = {
 		SEARCH_INDEX: "../../../../../../../searchindex.json",
-		SEARCH_LIB: "../../thirdparty/elasticlunr.js",
-		PROMISE_POLYFIL_LIB: "../../../../../../sap/ui/thirdparty/es6-promise.js"
+		SEARCH_LIB: "../../thirdparty/elasticlunr.js"
 	};
 
 	var APIREF_URL_PATHS = {
@@ -69,10 +68,6 @@
 			"samples": "entity",
 			"apiref": "apiref"
 		};
-
-	if (!self.Promise) {
-		importScripts(URL.PROMISE_POLYFIL_LIB);
-	}
 
 	importScripts(URL.SEARCH_LIB);
 
