@@ -21,12 +21,12 @@ function (
 		}
 	}, function() {
 		QUnit.test("when getting runtime strategy", function (assert) {
-			return ApplyStrategyFactory.getRuntimeStrategy().then(function(RuntimeStrategy) {
-				assert.ok(RuntimeStrategy.registry);
-				assert.ok(RuntimeStrategy.handleError);
-				assert.ok(RuntimeStrategy.processTexts);
-				return RuntimeStrategy.registry();
-			}).then(function(Registry) {
+			var RuntimeStrategy = ApplyStrategyFactory.getRuntimeStrategy();
+
+			assert.ok(RuntimeStrategy.registry);
+			assert.ok(RuntimeStrategy.handleError);
+			assert.ok(RuntimeStrategy.processTexts);
+			return RuntimeStrategy.registry().then(function(Registry) {
 				assert.ok(Registry["appdescr_ui5_addLibraries"], "runtime registry contains runtime mergers");
 				assert.notOk(Registry["appdescr_app_changeDataSource"], "runtime registry does not contain build merger");
 			});

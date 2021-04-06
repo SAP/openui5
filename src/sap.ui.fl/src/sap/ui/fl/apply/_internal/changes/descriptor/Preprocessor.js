@@ -79,11 +79,9 @@ sap.ui.define([
 			}).then(function() {
 				Measurement.end("flexStateInitialize");
 				Measurement.start("flexAppDescriptorMerger", "Client side app descriptor merger", ["sap.ui.fl"]);
-				return ApplyStrategyFactory.getRuntimeStrategy();
-			}).then(function(RuntimeStrategy) {
 				var oUpdatedManifest = Object.assign({}, oManifest);
 				var aAppDescriptorChanges = FlexState.getAppDescriptorChanges(sReference);
-				return Applier.applyChanges(oUpdatedManifest, aAppDescriptorChanges, RuntimeStrategy);
+				return Applier.applyChanges(oUpdatedManifest, aAppDescriptorChanges, ApplyStrategyFactory.getRuntimeStrategy());
 			}).then(function(oManifest) {
 				Measurement.end("flexAppDescriptorMerger");
 				return oManifest;
