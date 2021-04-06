@@ -9,18 +9,18 @@ sap.ui.define([
 ], function (Log, View, HashChanger, Router, JSONModel, App) {
 	"use strict";
 
-    function createXmlView () {
+	function createXmlView () {
 		var sXmlViewContent = [
-			'<View xmlns="sap.ui.core">',
+			'<View xmlns="sap.ui.core.mvc">',
 			'</View>'
 		].join('');
 
 		var oViewOptions = {
-			viewContent: sXmlViewContent,
+			definition: sXmlViewContent,
 			type: "XML"
 		};
 
-		return sap.ui.view(oViewOptions);
+		return View.create(oViewOptions);
 	}
 
     QUnit.module("title history", {
@@ -29,11 +29,6 @@ sap.ui.define([
 			HashChanger.getInstance().setHash("");
 
 			this.oApp = new App();
-
-			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
-				return oView;
-			});
 
 			this.getRouteMatchedSpy = function (oRouteMatchedSpies, sRouteName) {
 				oRouteMatchedSpies[sRouteName] = sinon.spy(this.oRouter.getRoute(sRouteName), "_routeMatched");
@@ -48,9 +43,14 @@ sap.ui.define([
 				async: true
 			};
 
+			return createXmlView().then(function(oView) {
+				this.fnCreateViewStub = sinon.stub(View, "create").callsFake(function () {
+					return oView;
+				});
+			}.bind(this));
 		},
 		afterEach: function () {
-			this.fnStub.restore();
+			this.fnCreateViewStub.restore();
 			this.oRouter.destroy();
 			for (var sKey in this.oRouteMatchedSpies) {
 				this.oRouteMatchedSpies[sKey].restore();
