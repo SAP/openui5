@@ -112,6 +112,7 @@ sap.ui.define([
 						url: './docs/api/' + this._oEntityData.lib.replace(/\./g, '/') +
 						'/demokit/faq/' + this._oEntityData.displayName + '.html',
 						success: function (data) {
+							this._startMonitorFAQSection();
 							this._oModel.setProperty("/faqContent", data);
 						}.bind(this)
 					});
@@ -255,6 +256,23 @@ sap.ui.define([
 				}
 
 				this._scrollToEntity(sEntityType, sLinkTarget);
+			},
+
+			_startMonitorFAQSection: function() {
+				var oPage = this.getView().byId("apiDetailObjectPage"),
+					oSection = this.getView().byId("faq"),
+					oDetailEl,
+					iNewSpacerHeight;
+
+				oSection.addEventDelegate({
+					ontap: function(oEvent) {
+						if (oEvent.target.nodeName === "SUMMARY" && (oDetailEl = oEvent.target.parentElement).open) {
+							// early adjust the layout to prevent a visual jump
+							iNewSpacerHeight = oPage._$spacer.height() + oDetailEl.offsetHeight;
+							oPage._$spacer.height(iNewSpacerHeight + "px");
+						}
+					}
+				});
 			},
 
 			/* =========================================================== */
