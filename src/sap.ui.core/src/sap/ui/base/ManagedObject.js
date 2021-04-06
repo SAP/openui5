@@ -4955,6 +4955,7 @@ sap.ui.define([
 			aLocalIds = this.findAggregatedObjects(true, null, true).map(function(oObject) {
 				return oObject.getId();
 			});
+			aLocalIds.push(this.getId());
 		}
 
 		var oMetadata = this.getMetadata(),
