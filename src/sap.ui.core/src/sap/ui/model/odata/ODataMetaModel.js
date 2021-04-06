@@ -374,9 +374,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets an object containing a shared {@link sap.ui.model.odata.v2.ODataModel} instance and
-	 * <code>bFirstCodeListRequested</code>, which is used to destroy the shared model at the right
-	 * time.
+	 * Gets an object containing a shared {@link sap.ui.model.odata.v2.ODataModel} instance, which
+	 * is used to load code lists for currencies and units, and
+	 * <code>bFirstCodeListRequested</code>, which is initially <code>false</code> and is used to
+	 * destroy the shared model at the right time. The <code>ODataMetaModel</code> is able to handle
+	 * two code lists, one for currencies and one for units. As soon as the first code list is
+	 * processed, whether successfully or not, <code>bFirstCodeListRequested</code> is set to
+	 * <code>true</code>. Once a second code list has been processed, the shared model is not needed
+	 * any more and is destroyed. The shared model is also destroyed when this instance of the
+	 * <code>ODataMetaModel</code> gets destroyed.
 	 *
 	 * @returns {object}
 	 *   An object containing an OData model and <code>bFirstCodeListRequested</code>
