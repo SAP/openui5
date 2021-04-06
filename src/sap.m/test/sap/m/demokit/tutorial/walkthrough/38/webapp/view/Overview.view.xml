@@ -18,8 +18,8 @@
 				press=".onOpenDialog"/>
 		</headerContent>
 		<content>
-			<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.HelloPanel"/>
-			<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.InvoiceList"/>
+			<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.HelloPanel" async="true"/>
+			<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.InvoiceList" async="true"/>
 		</content>
 	</Page>
 </mvc:View>
