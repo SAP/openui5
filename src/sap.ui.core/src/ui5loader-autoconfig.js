@@ -311,14 +311,6 @@
 				amd: true,
 				exports: 'OData' // 'datajs'
 			},
-			'sap/ui/thirdparty/es6-promise': {
-				amd: true,
-				exports: 'ES6Promise'
-			},
-			'sap/ui/thirdparty/flexie': {
-				amd: false,
-				exports: 'Flexie'
-			},
 			'sap/ui/thirdparty/handlebars': {
 				amd: true,
 				exports: 'Handlebars'
@@ -437,14 +429,6 @@
 			'sap/ui/thirdparty/sinon-server': {
 				amd: true,
 				exports: 'sinon' // really sinon! sinon-server is a subset of server and uses the same global for export
-			},
-			'sap/ui/thirdparty/unorm': {
-				amd: false,
-				exports: 'UNorm'
-			},
-			'sap/ui/thirdparty/unormdata': {
-				exports: 'UNorm', // really 'UNorm'! module extends UNorm
-				deps: ['sap/ui/thirdparty/unorm']
 			},
 			'sap/ui/thirdparty/URI': {
 				amd: true,
