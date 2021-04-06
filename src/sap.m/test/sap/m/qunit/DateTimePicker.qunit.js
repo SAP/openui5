@@ -859,4 +859,34 @@ sap.ui.define([
 		//clean
 		oDTP.destroy();
 	});
+
+	// BCP: 2170086834
+	QUnit.test("DateTimePicker.prototype._parseValue", function(assert) {
+		// prepare
+		var oModel = new JSONModel({
+				myDate: new Date()
+			}),
+			oDTP = new DateTimePicker({
+				value: {
+					path: "/myDate",
+					type: 'sap.ui.model.type.DateTime',
+					formatOptions: {
+						source: {
+							pattern:'test'
+						}
+					}
+				}
+			}).setModel(oModel),
+			oGetFormatterSpy = sinon.spy(oDTP, "_getFormatter");
+
+		// act
+		oDTP._parseValue("test", true);
+
+		// assert
+		assert.ok(oGetFormatterSpy.calledOnce, "Internal Dateformat isntance is created");
+
+		// clean
+		oDTP.destroy();
+		oGetFormatterSpy.restore();
+	});
 });
