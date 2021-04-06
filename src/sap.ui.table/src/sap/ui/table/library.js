@@ -367,7 +367,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * This is an alias for {@link sap.ui.model.TreeAutoExpandMode} and kept for compatibility reasons.
 	 *
 	 * @version ${version}
-	 * @enum {string}
+	 * @typedef {sap.ui.model.TreeAutoExpandMode}
 	 * @public
 	 */
 	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;

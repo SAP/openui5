@@ -326,7 +326,9 @@ sap.ui.define(["sap/ui/base/DataType",
 	/**
 	 * Types of shape for the {@link sap.f.Avatar} control.
 	 *
-	 * @enum {string}
+	 * This is an alias for {@link sap.m.AvatarShape} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarShape}
 	 * @public
 	 * @since 1.46
 	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarShape} instead.
@@ -337,7 +339,9 @@ sap.ui.define(["sap/ui/base/DataType",
 	/**
 	 * Predefined sizes for the {@link sap.f.Avatar} control.
 	 *
-	 * @enum {string}
+	 * This is an alias for {@link sap.m.AvatarSize} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarSize}
 	 * @public
 	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarSize} instead.
 	 * @since 1.46
@@ -372,7 +376,9 @@ sap.ui.define(["sap/ui/base/DataType",
 	/**
 	 * Types of {@link sap.f.Avatar} based on the displayed content.
 	 *
-	 * @enum {string}
+	 * This is an alias for {@link sap.m.AvatarType} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarType}
 	 * @public
 	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarType} instead.
 	 * @since 1.46
@@ -391,7 +397,9 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * chosen from the accent options (Accent1 to Accent10).</li>
 	 * </ul>
 	 *
-	 * @enum {string}
+	 * This is an alias for {@link sap.m.AvatarColor} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarColor}
 	 * @public
 	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarColor} instead.
 	 * @since 1.69
@@ -402,7 +410,9 @@ sap.ui.define(["sap/ui/base/DataType",
 	/**
 	 * Types of image size and position that determine how an image fits in the {@link sap.f.Avatar} control area.
 	 *
-	 * @enum {string}
+	 * This is an alias for {@link sap.m.AvatarImageFitType} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.AvatarImageFitType}
 	 * @public
 	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarImageFitType} instead.
 	 * @since 1.46
