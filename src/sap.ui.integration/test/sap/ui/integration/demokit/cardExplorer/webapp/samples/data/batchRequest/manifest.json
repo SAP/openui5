@@ -6,11 +6,16 @@
 	"sap.card": {
 		"extension": "./BatchRequestExtension",
 		"configuration": {
+			"parameters": {
+				"supplierId": {
+					"value": "100000038"
+				}
+			},
 			"destinations": {
-				"Northwind_V2": {
-					"name": "Northwind_V2",
-					"label": "Northwind V2 Service URL",
-					"defaultUrl": "https://services.odata.org/V2/Northwind/Northwind.svc"
+				"ProductsMockServer": {
+					"name": "ProductsMockServer",
+					"label": "Products Mock",
+					"defaultUrl": "/SEPMRA_PROD_MAN/"
 				}
 			}
 		},
@@ -23,21 +28,21 @@
 		"designtime": "dt/Configuration",
 		"header": {
 			"data": {
-				"path": "/employee"
+				"path": "/supplier"
 			},
 			"icon": {
 				"src": "sap-icon://cargo-train"
 			},
-			"title": "Orders handled by {TitleOfCourtesy} {FirstName} {LastName}",
-			"subTitle": "{Title}"
+			"title": "Supplied by {CompanyName}",
+			"subTitle": "Contact {EmailAddress}"
 		},
 		"content": {
 			"data": {
-				"path": "/orders/results"
+				"path": "/products/results"
 			},
 			"item": {
-				"title": "{ShipName}",
-				"description": "{ShipAddress}, {ShipCity}, {ShipCountry}"
+				"title": "{Name}",
+				"description": "{ProductCategory}"
 			}
 		}
 	}
