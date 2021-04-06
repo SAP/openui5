@@ -4,7 +4,6 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
-	"sap/base/Log",
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/model/CompositeType',
 	'sap/ui/model/FormatException',
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject"
 ],
 	function(
-		Log,
 		NumberFormat,
 		CompositeType,
 		FormatException,
@@ -361,17 +359,6 @@ sap.ui.define([
 		return new ParseException(
 			sap.ui.getCore().getLibraryResourceBundle().getText("Unit.Invalid"));
 	};
-
-	/**
-	 * Returns the type's name.
-	 *
-	 * @returns {string} The type's name
-	 *
-	 * @private
-	 */
-	 Unit.prototype.getName = function () {
-		return "sap.ui.model.type.Unit";
-	 };
 
 	 /**
 	 * Gets an array of indices that determine which parts of this type shall not propagate their

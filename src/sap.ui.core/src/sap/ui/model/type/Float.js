@@ -4,7 +4,6 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
-	"sap/base/Log",
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject"
 ],
 	function(
-		Log,
 		NumberFormat,
 		SimpleType,
 		FormatException,

@@ -266,17 +266,6 @@ sap.ui.define([
 		return [];
 	};
 
-	/**
-	 * Returns the type's name.
-	 *
-	 * @returns {string} The type's name
-	 *
-	 * @private
-	 */
-	Currency.prototype.getName = function () {
-		return "sap.ui.model.type.Currency";
-	};
-
 	return Currency;
 
 });
