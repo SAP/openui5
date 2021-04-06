@@ -1260,7 +1260,7 @@ sap.ui.define([
 		]);
 
 		var fnCreateViewSpy = sinon.spy(View, "create");
-		var fnLegacyCreateViewSpy = sinon.spy(View, "_legacyCreate");
+		var fnGenericCreateViewSpy = sinon.spy(View, "_create");
 		var oRouteMatchedSpy = sinon.spy(router.getRoute("name"), "_routeMatched");
 
 		router.initialize();
@@ -1274,11 +1274,11 @@ sap.ui.define([
 			//Assert
 			assert.strictEqual(oShell.getContent()[0].getId(), oResult.view.getId(), "View is first content element");
 			assert.strictEqual(fnCreateViewSpy.callCount, 1, "Only one view is created. The 'View.create' factory is called");
-			assert.strictEqual(fnLegacyCreateViewSpy.callCount, 0, "The 'View._legacyCreate' factory is not called");
+			assert.strictEqual(fnGenericCreateViewSpy.callCount, 0, "The 'View._create' factory is not called");
 
 			//Cleanup
 			fnCreateViewSpy.restore();
-			fnLegacyCreateViewSpy.restore();
+			fnGenericCreateViewSpy.restore();
 			oRouteMatchedSpy.restore();
 			router.destroy();
 			oShell.destroy();
@@ -1637,7 +1637,7 @@ sap.ui.define([
 
 			return createXmlView().then(function(oView){
 				this.oView = oView;
-				this.fnLegayCreateViewStub = this.stub(View, "_legacyCreate").callsFake(function (oViewOptions) {
+				this.fnLegayCreateViewStub = this.stub(View, "_create").callsFake(function (oViewOptions) {
 					return oView;
 				});
 
@@ -1720,7 +1720,7 @@ sap.ui.define([
 			});
 
 		return createXmlView().then(function (oView) {
-			this.stub(View, "_legacyCreate").callsFake(function () {
+			this.stub(View, "_create").callsFake(function () {
 				return oView;
 			});
 
@@ -2181,7 +2181,7 @@ sap.ui.define([
 		beforeEach: function () {
 			return createXmlView().then(function (oView) {
 				this.oView = oView;
-				this.fnLegacyCreateViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
+				this.fnGenericCreateViewStub = this.stub(View, "_create").callsFake(function () {
 					return oView;
 				});
 			}.bind(this));
@@ -2199,7 +2199,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(fnOwnerSpy.callCount, 1, "Did run with owner");
-		assert.ok(fnOwnerSpy.calledBefore(this.fnLegacyCreateViewStub), "Did invoke the owner function before creating the view");
+		assert.ok(fnOwnerSpy.calledBefore(this.fnGenericCreateViewStub), "Did invoke the owner function before creating the view");
 
 		// Cleanup
 		oRouter.destroy();

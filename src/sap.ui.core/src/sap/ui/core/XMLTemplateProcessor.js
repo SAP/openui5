@@ -1371,7 +1371,7 @@ function(
 								if (oClass.getMetadata().isA("sap.ui.core.mvc.XMLView") && oView._sProcessingMode) {
 									mSettings.processingMode = oView._sProcessingMode;
 								}
-								return View._legacyCreate(mSettings, undefined, oClass._sType || sType);
+								return View._create(mSettings, undefined, oClass._sType || sType);
 							}
 						};
 

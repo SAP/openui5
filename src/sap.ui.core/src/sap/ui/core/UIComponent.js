@@ -674,7 +674,7 @@ sap.ui.define([
 			// to convert the string into a configuration object for the view factory in
 			// case of the manifest first approach.
 			// !This should be kept in sync with the UIComponentMetadata functionality!
-			return View._legacyCreate({
+			return View._create({
 				viewName: oRootView,
 				type: ViewType.XML
 			});
@@ -691,7 +691,7 @@ sap.ui.define([
 				return View.create(oRootView);
 			}
 
-			return View._legacyCreate(oRootView);
+			return View._create(oRootView);
 		} else if (oRootView) {
 			throw new Error("Configuration option 'rootView' of component '" + this.getMetadata().getName() + "' is invalid! 'rootView' must be type of string or object!");
 		}

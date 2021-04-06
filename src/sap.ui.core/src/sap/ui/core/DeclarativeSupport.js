@@ -201,7 +201,7 @@ sap.ui.define([
 			var oControl;
 			if (View.prototype.isPrototypeOf(fnClass.prototype) && typeof fnClass._sType === "string") {
 				// for views having a factory function defined we use the factory function!
-				oControl = View._legacyCreate(mSettings, undefined, fnClass._sType);
+				oControl = View._create(mSettings, undefined, fnClass._sType);
 			} else {
 				oControl = new fnClass(mSettings);
 			}

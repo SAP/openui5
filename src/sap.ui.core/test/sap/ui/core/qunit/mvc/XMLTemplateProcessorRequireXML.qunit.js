@@ -379,24 +379,24 @@ sap.ui.define([
 			async: {
 				create: createAsyncView,
 				spies: {
-					legacyCreate: [View, "_legacyCreate"],
+					_create: [View, "_create"],
 					warning: [Log, "warning"]
 				}
 			},
 			sync: {
 				create: createSyncView,
 				spies: {
-					legacyCreate: [View, "_legacyCreate"],
+					_create: [View, "_create"],
 					warning: [Log, "warning"]
 				}
 			}
 		},
 		runAssertions: function (oView, mSpies, assert, bAsync) {
-			var oLegacyCreateSpy = mSpies.legacyCreate;
+			var oCreateSpy = mSpies._create;
 			var oWarningSpy = mSpies.warning;
-			assert.ok(oLegacyCreateSpy.calledOnce, "legacy create is called for the nested view");
+			assert.ok(oCreateSpy.calledOnce, "generic create is called for the nested view");
 
-			return oLegacyCreateSpy.getCall(0).returnValue.loaded().then(function() {
+			return oCreateSpy.getCall(0).returnValue.loaded().then(function() {
 				return sinon.assert.calledWith(oWarningSpy, "Event handler name 'Box.show('MessageBox')' could not be resolved to an event handler function");
 			});
 		}
