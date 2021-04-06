@@ -832,6 +832,22 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Cell content visibility settings", function(assert) {
+		this.oTable = createTable.call(this);
+		var oColumn = this.oTable.getColumns()[1];
+
+		oColumn._setCellContentVisibilitySettings({
+			standard: false,
+			groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
+			summary: {group: false, total: false}
+		});
+
+		assert.deepEqual(oColumn._getCellContentVisibilitySettings(), {
+			standard: true,
+			groupHeader: {nonExpandable: true, expanded: true, collapsed: true},
+			summary: {group: true, total: true}
+		}, "Settings cannot be changed from outside");
+	});
 
 	QUnit.module("AnalyticalColumn - Column Menu", {
 		beforeEach: function() {

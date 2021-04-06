@@ -805,6 +805,7 @@ sap.ui.define([
 		 *
 		 * @param {string|Object} [mConfig] A string that is set as the text of the template, or a config object. If no config is provided, the label
 		 *                                  and template have empty texts.
+		 * @param {string} [mConfig.id] Id for the new column.
 		 * @param {string} [mConfig.text=undefined] The text of the template.
 		 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
 		 *                                      The corresponding entry in the default test data is created if it does not yet exist.
@@ -826,6 +827,7 @@ sap.ui.define([
 		 *
 		 * @param {string|Object} [mConfig] A string that is set as the text of the template, or a config object. If no config is provided, the label
 		 *                                  and template have empty texts.
+		 * @param {string} [mConfig.id] Id for the new column.
 		 * @param {string} [mConfig.text=undefined] The text of the template.
 		 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
 		 *                                      The corresponding entry in the default test data is created if it does not yet exist.
@@ -844,6 +846,7 @@ sap.ui.define([
 		 *
 		 * @param {string|Object} [mConfig] A string that is set as the text of the template, or a config object. If no config is provided, the label
 		 *                                  and template have empty texts.
+		 * @param {string} [mConfig.id] Id for the new column.
 		 * @param {string} [mConfig.text=undefined] The text of the template.
 		 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
 		 *                                      The corresponding entry in the default test data is created if it does not yet exist.
@@ -979,6 +982,7 @@ sap.ui.define([
 	 *
 	 * @param {string|Object} [mConfig] A string that is set as the text of the template, or a config object. If no config is provided, the label
 	 *                                  and template have empty texts.
+	 * @param {string} [mConfig.id] Id for the new column.
 	 * @param {string} [mConfig.text=undefined] The text of the template.
 	 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
 	 *                                      The corresponding entry in the default test data is created if it does not yet exist.
@@ -989,13 +993,9 @@ sap.ui.define([
 	 * @returns {sap.ui.table.Column} The column.
 	 */
 	TableQUnitUtils.createTextColumn = function(mConfig) {
-		if (typeof mSettings === "string") {
-			mConfig = {text: mConfig};
-		}
+		mConfig = typeof mConfig === "string" ? {text: mConfig} : Object.assign({}, mConfig);
 
-		mConfig = Object.assign({}, mConfig);
-
-		var oColumn = new Column({
+		var oColumn = new Column(mConfig.id, {
 			label: new TestControl({
 				text: mConfig.label,
 				focusable: mConfig.interactiveLabel === true,
@@ -1021,6 +1021,7 @@ sap.ui.define([
 	 *
 	 * @param {string|Object} [mConfig] A string that is set as the text of the template, or a config object. If no config is provided, the label
 	 *                                  and template have empty texts.
+	 * @param {string} [mConfig.id] Id for the new column.
 	 * @param {string} [mConfig.text=undefined] The text of the template.
 	 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
 	 *                                      The corresponding entry in the default test data is created if it does not yet exist.
@@ -1028,15 +1029,13 @@ sap.ui.define([
 	 * @returns {sap.ui.table.Column} The column.
 	 */
 	TableQUnitUtils.createInteractiveTextColumn = function(mConfig) {
-		mConfig = Object.assign({}, mConfig);
-		return TableQUnitUtils.createTextColumn({
-			text: mConfig.text,
-			bind: mConfig.bind,
+		mConfig = typeof mConfig === "string" ? {text: mConfig} : Object.assign({
 			focusable: true,
 			tabbable: true,
-			label: mConfig.label,
 			interactiveLabel: true
-		});
+		}, mConfig);
+
+		return TableQUnitUtils.createTextColumn(mConfig);
 	};
 
 	/**
@@ -1044,6 +1043,7 @@ sap.ui.define([
 	 *
 	 * @param {string|Object} [mConfig] A string that is set as the text of the template, or a config object. If no config is provided, the label
 	 *                                  and template have empty texts.
+	 * @param {string} [mConfig.id] Id for the new column.
 	 * @param {string} [mConfig.text=undefined] The text of the template.
 	 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
 	 *                                      The corresponding entry in the default test data is created if it does not yet exist.
@@ -1054,13 +1054,9 @@ sap.ui.define([
 	 * @returns {sap.ui.table.Column} The column.
 	 */
 	TableQUnitUtils.createInputColumn = function(mConfig) {
-		if (typeof mSettings === "string") {
-			mConfig = {text: mConfig};
-		}
+		mConfig = typeof mConfig === "string" ? {text: mConfig} : Object.assign({}, mConfig);
 
-		mConfig = Object.assign({}, mConfig);
-
-		var oColumn = new Column({
+		var oColumn = new Column(mConfig.id, {
 			label: new TestControl({
 				text: mConfig.label,
 				focusable: mConfig.interactiveLabel === true,

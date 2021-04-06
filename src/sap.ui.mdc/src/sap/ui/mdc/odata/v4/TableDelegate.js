@@ -292,12 +292,90 @@ sap.ui.define([
 				visible: this._getVisibleProperties(oTable, oPlugin),
 				groupLevels: aGroupLevel,
 				grandTotal: aAggregate,
-				subtotals: aAggregate
+				subtotals: aAggregate,
+				columnState: getColumnState(oTable, aAggregate)
 			};
 
 			oPlugin.setAggregationInfo(oAggregationInfo);
 		}
 	};
+
+	function getColumnState(oTable, aAggregatedPropertyNames) {
+		var mColumnState = {};
+
+		oTable.getColumns().forEach(function(oColumn) {
+			var sInnerColumnId = oColumn.getId() + "-innerColumn";
+			var aAggregatedProperties = getAggregatedColumnProperties(oTable, oColumn, aAggregatedPropertyNames);
+			var bColumnIsAggregated = aAggregatedProperties.length > 0;
+
+			if (sInnerColumnId in mColumnState) {
+				// If there already is a state for this column, it is a unit column that inherited the state from the amount column.
+				// The values in the state may be overridden from false to true, but not the other way around.
+				mColumnState[sInnerColumnId].subtotals = bColumnIsAggregated || mColumnState[sInnerColumnId].subtotals;
+				mColumnState[sInnerColumnId].grandTotal = bColumnIsAggregated || mColumnState[sInnerColumnId].grandTotal;
+				return;
+			}
+
+			mColumnState[sInnerColumnId] = {
+				subtotals: bColumnIsAggregated,
+				grandTotal: bColumnIsAggregated
+			};
+
+			findUnitColumns(oTable, aAggregatedProperties).forEach(function(oUnitColumn) {
+				sInnerColumnId = oUnitColumn.getId() + "-innerColumn";
+
+				if (sInnerColumnId in mColumnState) {
+					// If there already is a state for this column, it is a unit column that inherited the state from the amount column.
+					// The values in the state may be overridden from false to true, but not the other way around.
+					mColumnState[sInnerColumnId].subtotals = bColumnIsAggregated || mColumnState[sInnerColumnId].subtotals;
+					mColumnState[sInnerColumnId].grandTotal = bColumnIsAggregated || mColumnState[sInnerColumnId].grandTotal;
+				} else {
+					mColumnState[sInnerColumnId] = {
+						subtotals: bColumnIsAggregated,
+						grandTotal: bColumnIsAggregated
+					};
+				}
+			});
+		});
+
+		return mColumnState;
+	}
+
+	function getColumnProperties(oTable, oColumn) {
+		var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getDataProperty());
+
+		if (!oProperty) {
+			return [];
+		} else if (oProperty.isComplex()) {
+			return oProperty.getReferencedProperties();
+		} else {
+			return [oProperty];
+		}
+	}
+
+	function getAggregatedColumnProperties(oTable, oColumn, aAggregatedProperties) {
+		return getColumnProperties(oTable, oColumn).filter(function(oProperty) {
+			return aAggregatedProperties.includes(oProperty.name);
+		});
+	}
+
+	function findUnitColumns(oTable, aProperties) {
+		var aUnitProperties = [];
+
+		aProperties.forEach(function(oProperty) {
+			var oUnitProperty = oProperty ? oProperty.getUnitProperty() : null;
+
+			if (oUnitProperty) {
+				aUnitProperties.push(oUnitProperty);
+			}
+		});
+
+		return oTable.getColumns().filter(function(oColumn) {
+			return getColumnProperties(oTable, oColumn).some(function(oProperty) {
+				return aUnitProperties.includes(oProperty);
+			});
+		});
+	}
 
 	Delegate._getVisibleProperties = function(oTable, oPlugin) {
 		var aVisibleProperties = [];

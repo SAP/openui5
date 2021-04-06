@@ -381,6 +381,9 @@ sap.ui.define([
 		return false;
 	};
 
+	// This column sets its own cell content visibility settings.
+	AnalyticalColumn.prototype._setCellContentVisibilitySettings = function() {};
+
 	return AnalyticalColumn;
 
 });

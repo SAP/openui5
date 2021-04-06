@@ -326,13 +326,20 @@ sap.ui.define([
 					.add(mDomRefs[sKey].rowFixedPart)
 					.add(mDomRefs[sKey].rowScrollPart)
 					.add(mDomRefs[sKey].rowActionPart);
+			} else {
+				mDomRefs[sKey].row = [
+					mDomRefs[sKey].rowHeaderPart,
+					mDomRefs[sKey].rowFixedPart,
+					mDomRefs[sKey].rowScrollPart,
+					mDomRefs[sKey].rowActionPart
+				].filter(Boolean);
 			}
 		}
 
 		var mKeyDomRefs = mDomRefs[sKey];
 		if (bCollection) {
 			return Object.keys(mKeyDomRefs).map(function(sKey) {
-				return mKeyDomRefs[sKey];
+				return sKey === "row" ? null : mKeyDomRefs[sKey];
 			}).filter(Boolean);
 		}
 

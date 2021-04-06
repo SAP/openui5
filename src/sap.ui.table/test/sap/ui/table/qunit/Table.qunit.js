@@ -6155,7 +6155,7 @@ sap.ui.define([
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10),
 				columns: [
-					new Column({template: new TableQUnitUtils.TestControl()})
+					TableQUnitUtils.createTextColumn()
 				]
 			});
 
@@ -6221,7 +6221,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Group indentation", function(assert) {
+	QUnit.skip("Group indentation", function(assert) {
 		var oRow = this.oTable.getRows()[0];
 		var aRowStates = [{
 			type: oRow.Type.GroupHeader,
@@ -6271,7 +6271,7 @@ sap.ui.define([
 		}).then(TableQUnitUtils.$changeTextDirection(false));
 	});
 
-	QUnit.test("Tree indentation", function(assert) {
+	QUnit.skip("Tree indentation", function(assert) {
 		var aRowStates = [
 			{level: 1, expandable: true},
 			{level: 2},
@@ -6297,7 +6297,7 @@ sap.ui.define([
 		}).then(TableQUnitUtils.$changeTextDirection(false));
 	});
 
-	QUnit.test("Indentation without group or tree mode", function(assert) {
+	QUnit.skip("Indentation without group or tree mode", function(assert) {
 		var oRow = this.oTable.getRows()[0];
 		var aRowStates = [{
 			type: oRow.Type.GroupHeader,
@@ -6316,5 +6316,144 @@ sap.ui.define([
 		return this.setRowStates(aRowStates).then(function() {
 			this.assertIndentation(assert, [0, 0, 0, 0]);
 		}.bind(this));
+	});
+
+	QUnit.test("Hidden row content", function(assert) {
+		var oTable = this.oTable;
+		var oRow = oTable.getRows()[0];
+		var aRowInfo = [{
+			title: "Standard row",
+			state: {type: oRow.Type.Standard},
+			expectContentHidden: false
+		}, {
+			title: "Standard row with hidden content",
+			state: {type: oRow.Type.Standard, contentHidden: true},
+			expectContentHidden: true
+		}, {
+			title: "Group header row with hidden content",
+			state: {type: oRow.Type.GroupHeader, contentHidden: true},
+			expectContentHidden: true
+		}, {
+			title: "Summary row with hidden content",
+			state: {type: oRow.Type.Summary, contentHidden: true},
+			expectContentHidden: true
+		}, {
+			title: "Standard row without binding context",
+			state: {type: oRow.Type.Standard, context: undefined},
+			expectContentHidden: true
+		}];
+
+		function isRowContentHidden(oRow) {
+			return oRow.getDomRefs().row.every(function(oRowElement) {
+				return oRowElement.classList.contains("sapUiTableRowHidden") === true;
+			});
+		}
+
+		oTable.qunit.addTextColumn();
+		oTable.setFixedColumnCount(1);
+		oTable.setRowActionCount(1);
+		oTable.setRowActionTemplate(new RowAction({items: [new RowActionItem()]}));
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			aRowInfo.forEach(function(mRowInfo, iIndex) {
+				assert.ok(!isRowContentHidden(oTable.getRows()[iIndex]), "Default: " + mRowInfo.title);
+			});
+
+			return this.setRowStates(aRowInfo.map(function(mTestConfig) {
+				return mTestConfig.state;
+			}));
+		}.bind(this)).then(function() {
+			aRowInfo.forEach(function(mRowInfo, iIndex) {
+				assert.equal(isRowContentHidden(oTable.getRows()[iIndex]), mRowInfo.expectContentHidden, mRowInfo.title);
+			});
+		});
+	});
+
+	QUnit.test("Hidden cell content", function(assert) {
+		var oTable = this.oTable;
+		var oRow = oTable.getRows()[0];
+		var aRowInfo = [{
+			title: "Standard row",
+			state: {type: oRow.Type.Standard}
+		}, {
+			title: "Non-expandable group header row",
+			state: {type: oRow.Type.GroupHeader}
+		}, {
+			title: "Expanded group header row",
+			state: {type: oRow.Type.GroupHeader, expandable: true, expanded: true}
+		}, {
+			title: "Collapsed group header row",
+			state: {type: oRow.Type.GroupHeader, expandable: true}
+		}, {
+			title: "Summary row",
+			state: {type: oRow.Type.Summary}
+		}];
+		var aColumnInfo = [{
+			title: "All hidden",
+			cellContentVisibilitySettings: {
+				standard: false,
+				groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
+				summary: {group: false, total: false}
+			}
+		}, {
+			title: "Mixed visibility",
+			cellContentVisibilitySettings: {
+				standard: true,
+				groupHeader: {nonExpandable: false, expanded: true, collapsed: false},
+				summary: {group: false, total: true}
+			}
+		}];
+
+		function assertCellContentVisibility(sTitle) {
+			aRowInfo.forEach(function(mRowInfo, iIndex) {
+				var oColumn = oTable.getColumns()[0];
+				var oRow = oTable.getRows()[iIndex];
+				var oCell = oRow.getCells()[0];
+				var oCellElement = TableUtils.getCell(oTable, oCell.getDomRef())[0];
+				var bCellContentHidden = oCellElement.classList.contains("sapUiTableCellHidden");
+				var bExpectCellContentVisible;
+				var mCellContentVisibilitySettings = oColumn._getCellContentVisibilitySettings();
+
+				if (oRow.isGroupHeader()) {
+					if (oRow.isExpandable()) {
+						if (oRow.isExpanded()) {
+							bExpectCellContentVisible = mCellContentVisibilitySettings.groupHeader.expanded;
+						} else {
+							bExpectCellContentVisible = mCellContentVisibilitySettings.groupHeader.collapsed;
+						}
+					} else {
+						bExpectCellContentVisible = mCellContentVisibilitySettings.groupHeader.nonExpandable;
+					}
+				} else if (oRow.isTotalSummary()) {
+					bExpectCellContentVisible = mCellContentVisibilitySettings.summary.total;
+				} else if (oRow.isGroupSummary()) {
+					bExpectCellContentVisible = mCellContentVisibilitySettings.summary.group;
+				} else {
+					bExpectCellContentVisible = mCellContentVisibilitySettings.standard;
+				}
+
+				assert.equal(bCellContentHidden, !bExpectCellContentVisible, sTitle + ": " + mRowInfo.title);
+			});
+		}
+
+		return this.setRowStates(aRowInfo.map(function(mTestConfig) {
+			return mTestConfig.state;
+		})).then(function() {
+			var pSequence = Promise.resolve();
+
+			assertCellContentVisibility("Default");
+
+			aColumnInfo.forEach(function(mColumnInfo) {
+				pSequence = pSequence.then(function() {
+					oTable.getColumns()[0]._setCellContentVisibilitySettings(mColumnInfo.cellContentVisibilitySettings);
+					oTable.invalidate();
+					return oTable.qunit.whenRenderingFinished();
+				}).then(function() {
+					assertCellContentVisibility(mColumnInfo.title);
+				});
+			});
+
+			return pSequence;
+		});
 	});
 });

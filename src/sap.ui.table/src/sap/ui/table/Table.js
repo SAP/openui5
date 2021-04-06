@@ -4382,6 +4382,38 @@ sap.ui.define([
 		TableUtils.Grouping.updateGroups(this);
 		this._getAccExtension()._updateAriaRowIndices();
 		this._updateSelection();
+
+		// TODO: Move somewhere else. Row or GroupingUtils
+		this.getRows().forEach(function(oRow) {
+			oRow.getCells().forEach(function(oCell) {
+				var oColumn = Column.ofCell(oCell);
+				var oCellContentVisibilitySettings = oColumn._getCellContentVisibilitySettings();
+				var $Cell = TableUtils.getCell(this, oCell.getDomRef());
+				var bShowCellContent = true;
+
+				if (!$Cell) {
+					return;
+				}
+
+				if (oRow.isGroupHeader()) {
+					if (!oRow.isExpandable()) {
+						bShowCellContent = oCellContentVisibilitySettings.groupHeader.nonExpandable;
+					} else if (oRow.isExpanded()) {
+						bShowCellContent = oCellContentVisibilitySettings.groupHeader.expanded;
+					} else {
+						bShowCellContent = oCellContentVisibilitySettings.groupHeader.collapsed;
+					}
+				} else if (oRow.isTotalSummary()) {
+					bShowCellContent = oCellContentVisibilitySettings.summary.total;
+				} else if (oRow.isGroupSummary()) {
+					bShowCellContent = oCellContentVisibilitySettings.summary.group;
+				} else {
+					bShowCellContent = oCellContentVisibilitySettings.standard;
+				}
+
+				$Cell.toggleClass("sapUiTableCellHidden", !bShowCellContent);
+			}.bind(this));
+		}.bind(this));
 	};
 
 	Table.prototype.onRowsContentUpdated = function(mParameters) {

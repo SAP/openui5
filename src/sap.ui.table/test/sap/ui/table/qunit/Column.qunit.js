@@ -57,6 +57,105 @@ sap.ui.define([
 		test(false, false, true, null);
 	});
 
+	QUnit.test("Cell content visibility settings", function(assert) {
+		assert.deepEqual(this._oColumn._getCellContentVisibilitySettings(), {
+			standard: true,
+			groupHeader: {nonExpandable: true, expanded: true, collapsed: true},
+			summary: {group: true, total: true}
+		}, "Initial");
+
+		this._oColumn._setCellContentVisibilitySettings({
+			standard: false,
+			groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
+			summary: {group: false, total: false}
+		});
+		assert.deepEqual(this._oColumn._getCellContentVisibilitySettings(), {
+			standard: false,
+			groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
+			summary: {group: false, total: false}
+		}, "Make all cell content invisible");
+
+		this._oColumn._setCellContentVisibilitySettings({
+			groupHeader: {nonExpandable: false, collapsed: false},
+			summary: null
+		});
+		assert.deepEqual(this._oColumn._getCellContentVisibilitySettings(), {
+			standard: true,
+			groupHeader: {nonExpandable: false, expanded: true, collapsed: false},
+			summary: {group: true, total: true}
+		}, "Not making all settings");
+
+		this._oColumn._setCellContentVisibilitySettings({
+			groupHeader: false,
+			summary: true
+		});
+		assert.deepEqual(this._oColumn._getCellContentVisibilitySettings(), {
+			standard: true,
+			groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
+			summary: {group: true, total: true}
+		}, "Shorthand notation");
+
+		var mCellContentVisibilitySettings = {
+			standard: false,
+			groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
+			summary: false
+		};
+		this._oColumn._setCellContentVisibilitySettings(mCellContentVisibilitySettings);
+		mCellContentVisibilitySettings.standard = true;
+		assert.deepEqual(this._oColumn._getCellContentVisibilitySettings(), {
+			standard: false,
+			groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
+			summary: {group: false, total: false}
+		}, "Changes to the passed settings object should not change the column settings");
+		assert.deepEqual(mCellContentVisibilitySettings, {
+			standard: true,
+			groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
+			summary: false
+		}, "Passed settings object should not be changed by the column");
+
+		this._oColumn._setCellContentVisibilitySettings();
+		assert.deepEqual(this._oColumn._getCellContentVisibilitySettings(), {
+			standard: true,
+			groupHeader: {nonExpandable: true, expanded: true, collapsed: true},
+			summary: {group: true, total: true}
+		}, "Reset settings");
+
+		assert.throws(function() {
+			this._oColumn._setCellContentVisibilitySettings("notAnObject");
+		}.bind(this), new Error("Invalid value"), "Settings is not an object");
+
+		assert.throws(function() {
+			this._oColumn._setCellContentVisibilitySettings({
+				standard: false,
+				iAmNotAllowed: false
+			});
+		}.bind(this), new Error("Unsupported setting 'iAmNotAllowed'"), "Settings contain invalid keys on first level");
+
+		assert.throws(function() {
+			this._oColumn._setCellContentVisibilitySettings({
+				standard: false,
+				groupHeader: {expanded: false, iAmNotAllowed: false}
+			});
+		}.bind(this), new Error("Unsupported setting 'groupHeader.iAmNotAllowed'"), "Settings contain invalid keys on second level");
+
+		assert.throws(function() {
+			this._oColumn._setCellContentVisibilitySettings({
+				standard: 0
+			});
+		}.bind(this), new Error("Invalid value for 'standard'"), "Settings contain invalid value for boolean setting");
+
+		assert.throws(function() {
+			this._oColumn._setCellContentVisibilitySettings({
+				groupHeader: "true"
+			});
+		}.bind(this), new Error("Invalid value for 'groupHeader'"), "Settings contain invalid value for boolean|object setting");
+
+		var oInvalidate = this.spy(this._oColumn, "invalidate");
+		this._oColumn._setCellContentVisibilitySettings({standard: false});
+		this._oColumn._setCellContentVisibilitySettings();
+		assert.ok(oInvalidate.notCalled, "Column is not invalidated");
+	});
+
 	QUnit.module("Lazy Aggregations", {
 		beforeEach: function() {
 			this._oColumn = new Column();
