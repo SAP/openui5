@@ -13,8 +13,7 @@
 		"rootView": {
 			"viewName": "view.Main",
 			"type": "XML",
-			"async": true,
-			"processingMode": "sequential"
+			"async": true
 		},
 		"dependencies": {
 			"minUI5Version": "1.60.0",
