@@ -14,8 +14,8 @@ sap.ui.define([
 
 	/**
 	 * Gets the <code>$sap.ui.fl.changes</code> section from the Manifest and returns it converted into <code>sap.ui.fl.Change</code>
-	 * @param {sap.ui.core.Manifest} oManifest
-	 * @returns Array<sap.ui.fl.Change> array of <code>sap.ui.fl.Change</code>
+	 * @param {sap.ui.core.Manifest} oManifest - Manifest provided by sap.ui.core.Component
+	 * @returns {sap.ui.fl.Change[]} Array of <code>sap.ui.fl.Change</code>
 	 */
 	function getDescriptorChanges(oManifest) {
 		var aAppDescriptorChangesRaw = oManifest && oManifest.getEntry && oManifest.getEntry(CHANGES_NAMESPACE) && oManifest.getEntry(CHANGES_NAMESPACE).descriptor || [];
@@ -62,7 +62,7 @@ sap.ui.define([
 
 		/**
 		 * Applies descriptor changes that can be found in the manifest under the section <code>$sap.ui.fl.changes</code>.
-		 * @param {sap.ui.core.Manifest} oManifest
+		 * @param {sap.ui.core.Manifest} oManifest - Manifest provided by sap.ui.core.Component
 		 * @param {object} mStrategy - Strategy for runtime or for buildtime merging
 		 * @param {object} mStrategy.registry - Change handler registry
 		 * @param {function} mStrategy.handleError - Error handling strategy
