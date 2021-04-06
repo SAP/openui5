@@ -1180,22 +1180,28 @@ sap.ui.define([
 				content: [oBox, oImage]
 		}),
 			done = assert.async(),
-			oLoadSpy = sinon.spy(oImage, "fireLoad");
+			oLoadSpy;
 
-		// System under test
 		oPage.placeAt("content");
+		Core.applyChanges();
+
+		oLoadSpy = sinon.spy(oImage, "fireLoad");
 		document.getElementById("content").style.height = "500px";
 
+		// Assert
 		assert.strictEqual(oLoadSpy.callCount, 0, "load event isn`t fired");
 
+		// Act
 		oPage.scrollToElement(oImage);
+
 		oImage.attachLoad(function(){
+			//Assert
 			assert.strictEqual(oLoadSpy.callCount, 1, "load event is fired");
 			done();
 
 		// Clean up
 		oPage.destroy();
-		});
+	});
 
 
 	});
