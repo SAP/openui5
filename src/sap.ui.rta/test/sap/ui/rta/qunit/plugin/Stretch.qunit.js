@@ -314,9 +314,10 @@ sap.ui.define([
 			sandbox.stub(this.oVBox1, "removeStyleClass").callsFake(function(sStyleClassName) {
 				if (sStyleClassName === sStretchStyleClass) {
 					assert.ok(true, "the style class was removed");
+					this.oVBox1.removeStyleClass.restore();
 					done();
 				}
-			});
+			}.bind(this));
 			this.oVBox2.destroy();
 		});
 
