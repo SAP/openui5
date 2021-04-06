@@ -377,7 +377,10 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata_Price.xml"}
 			});
 			this.oLogMock = this.mock(Log);
-			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("warning")
+				.withExactArgs(sinon.match.string, "LegacyParametersGet", "sap.ui.support",
+					sinon.match.func)
+				.atLeast(0);
 			this.oLogMock.expects("error").never();
 
 			// Counter for batch requests

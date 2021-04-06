@@ -405,7 +405,10 @@ sap.ui.define([
 					: {source : "qunit/odata/v2/data/metadata_special_cases.xml"}
 			});
 			this.oLogMock = this.mock(Log);
-			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("warning")
+				.withExactArgs(sinon.match.string, "LegacyParametersGet", "sap.ui.support",
+					sinon.match.func)
+				.atLeast(0);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("fatal").never();
 
