@@ -5,8 +5,9 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/UIComponent',
 	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/mvc/XMLProcessingMode",
 	"sap/ui/thirdparty/jquery"
-], function(Button, coreLibrary, Component, UIComponent, XMLTemplateProcessor, jQuery) {
+], function(Button, coreLibrary, Component, UIComponent, XMLTemplateProcessor, XMLProcessingMode, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -243,7 +244,7 @@ sap.ui.define([
 		assert.ok(sError,"Not ending with binding in {model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}huhuhuh is detected");
 	});
 
-	QUnit.module("Propagation of processingMode: 'sequential'", {
+	QUnit.module("Propagation of processingMode: 'Sequential'", {
 		beforeEach: function() {
 			this.loadTemplatePromiseSpy = sinon.spy(XMLTemplateProcessor, "loadTemplatePromise");
 		},
@@ -275,11 +276,11 @@ sap.ui.define([
 
 			oRootView.loaded().then(function(oView) {
 				assert.ok(oView, "View is loaded.");
-				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+				assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oView.getViewName());
 
 				oView.getContent()[0].loaded().then(function(oView) {
 					assert.ok(oView, "View is loaded.");
-					assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+					assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oView.getViewName());
 					done();
 				});
 			});
@@ -310,17 +311,17 @@ sap.ui.define([
 			oRootView.loaded().then(function(oView) {
 				assert.ok(oView, "View is loaded.");
 				assert.ok(oView.oAsyncState, "View is an async view.");
-				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+				assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oView.getViewName());
 
 				oView.getContent()[0].loaded().then(function(oChildView1) {
 					assert.ok(oChildView1, "View is loaded.");
 					assert.notOk(oChildView1.oAsyncState, "View is a sync view.");
-					assert.equal(oChildView1._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oChildView1.getViewName());
+					assert.equal(oChildView1._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oChildView1.getViewName());
 
 					oChildView1.getContent()[0].loaded().then(function(oChildView2) {
 						assert.ok(oChildView2, "View is loaded.");
 						assert.ok(oChildView2.oAsyncState, "View is an async view.");
-						assert.equal(oChildView2._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oChildView2.getViewName());
+						assert.equal(oChildView2._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oChildView2.getViewName());
 						done();
 					});
 				});
@@ -352,13 +353,13 @@ sap.ui.define([
 			oRootView.loaded().then(function(oView) {
 				assert.ok(oView, "View is loaded.");
 				assert.ok(oView.oAsyncState, "View is an async view.");
-				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+				assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oView.getViewName());
 				assert.equal(this.loadTemplatePromiseSpy.callCount, 1, "loadTemplatePromiseSpy should be called once");
 
 				var oXMLView = oView.byId("xmlViewInsideFragment");
 				assert.ok(oXMLView, "View is loaded.");
 				assert.notOk(oXMLView.oAsyncState, "View is a sync view.");
-				assert.equal(oXMLView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oXMLView.getViewName());
+				assert.equal(oXMLView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oXMLView.getViewName());
 
 				assert.deepEqual(Component.getOwnerComponentFor(oXMLView), oComponent, "Should be the same owner component.");
 
@@ -399,12 +400,12 @@ sap.ui.define([
 			oRootView.loaded().then(function(oView) {
 				assert.ok(oView, "View is loaded.");
 				assert.ok(oView.oAsyncState, "View is an async view.");
-				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+				assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oView.getViewName());
 
 				var xmlViewInHtml = oView.byId("xmlViewInHTML");
 				xmlViewInHtml.loaded().then(function(oView) {
 					assert.ok(oView, "View is loaded.");
-					assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+					assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oView.getViewName());
 
 					done();
 				});
@@ -436,12 +437,12 @@ sap.ui.define([
 			oRootView.loaded().then(function(oView) {
 				assert.ok(oView, "View is loaded.");
 				assert.ok(oView.oAsyncState, "View is an async view.");
-				assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+				assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oView.getViewName());
 
 				var xmlView = oView.byId("XVwithFrags");
 				xmlView.loaded().then(function(oView) {
 					assert.ok(oView, "View is loaded.");
-					assert.equal(oView._sProcessingMode, "sequential", "ProcessingMode 'sequential' is set on " + "View:" + oView.getViewName());
+					assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oView.getViewName());
 
 					done();
 				});

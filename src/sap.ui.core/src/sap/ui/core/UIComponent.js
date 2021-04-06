@@ -7,6 +7,7 @@ sap.ui.define([
 	'../base/ManagedObject',
 	'./Component',
 	'sap/ui/core/mvc/ViewType',
+	'sap/ui/core/mvc/XMLProcessingMode',
 	'./UIComponentMetadata',
 	'./mvc/Controller',
 	'./mvc/View',
@@ -18,6 +19,7 @@ sap.ui.define([
 		ManagedObject,
 		Component,
 		ViewType,
+		XMLProcessingMode,
 		UIComponentMetadata,
 		Controller,
 		View,
@@ -681,9 +683,9 @@ sap.ui.define([
 			if (oRootView.id) {
 				oRootView.id = this.createId(oRootView.id);
 			}
-			// for now the processing mode is always set to "sequential" for XMLViews
+			// for now the processing mode is always set to <code>XMLProcessingMode.Sequential</code> for XMLViews
 			if (oRootView.async && oRootView.type === ViewType.XML) {
-				oRootView.processingMode = "sequential";
+				oRootView.processingMode = XMLProcessingMode.Sequential;
 			}
 			if (this.isA("sap.ui.core.IAsyncContentCreation")) {
 				return View.create(oRootView);

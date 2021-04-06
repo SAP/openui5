@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'./mvc/View',
 	'./mvc/ViewType',
+	'./mvc/XMLProcessingMode',
 	'./mvc/EventHandlerResolver',
 	'./ExtensionPoint',
 	'./StashedControlSupport',
@@ -33,6 +34,7 @@ function(
 	Component,
 	View,
 	ViewType,
+	XMLProcessingMode,
 	EventHandlerResolver,
 	ExtensionPoint,
 	StashedControlSupport,
@@ -527,15 +529,8 @@ function(
 	 * @param {boolean} bEnrichFullIds Flag for running in a mode which only resolves the ids and writes them back
 	 *     to the xml source.
 	 * @param {boolean} bAsync Whether or not to perform the template processing asynchronously.
-	 *     The async processing will only be active in conjunction with the internal XML processing mode set to <code>sequential</code> or <code>sequential_legacy</code>.
-	 *     The processing mode "sequential" is implicitly activated for the following type of views:
-	 *      a) async root views in the manifest
-	 *      b) XMLViews created with the (XML)View.create factory
-	 *      c) XMLViews used via async routing
-	 *      d) synchronous nested views created by a asynchronous view
-	 *     The processing mode "sequential_legacy" is implicitly activated for the following type of views:
-	 *      a) XMLViews created with sap.ui.view/sap.ui.xmlview with async <code>true</code>
-	 *     Additionally all declarative nested subviews are also processed asynchronously.
+	 *     The async processing will only be active in conjunction with the internal XML processing mode set
+	 *     to <code>XMLProcessingMode.Sequential</code> or <code>XMLProcessingMode.SequentialLegacy</code>.
 	 * @param {object} oParseConfig parse configuration options, e.g. settings pre-processor
 	 *
 	 * @return {Promise} with an array containing Controls and/or plain HTML element strings
@@ -1181,7 +1176,7 @@ function(
 				// [COMPATIBILITY]
 				// sync: we just log the error and keep on processing
 				// asnyc: throw the error, so the parseTempate Promise will reject
-				if (bAsync && oView._sProcessingMode !== "sequential_legacy") {
+				if (bAsync && oView._sProcessingMode !== XMLProcessingMode.SequentialLegacy) {
 					throw oError;
 				}
 			});
@@ -1394,7 +1389,8 @@ function(
 						// Pass processingMode to any fragments except JS
 						// XML / HTML fragments: might include nested views / fragments,
 						//  which are processed asynchronously. Therefore the processingMode is needed
-						// JS fragments: are processed synchronously therefore the processing mode is not needed
+						// JS fragments: might include synchronously or asynchronously created content. Nevertheless, the execution of the
+						//  content creation is not in the scope of the xml template processor, therefore the processing mode is not needed
 						if (sType !== ViewType.JS) {
 							mSettings.processingMode = oView._sProcessingMode;
 						}

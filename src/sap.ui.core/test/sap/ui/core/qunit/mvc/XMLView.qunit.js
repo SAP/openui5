@@ -350,7 +350,9 @@ sap.ui.define([
 
 			// sync cases can be cleaned up
 			oView.destroy();
-		}.bind(this));
+		}.bind(this)).catch(function(){
+			assert.ok(false, "The error shouldn't be thrown, only logged.");
+		});
 	});
 
 	QUnit.test("[sap.ui.xmlview=async] broken binding string, error in nested Fragment", function(assert) {
@@ -379,7 +381,9 @@ sap.ui.define([
 
 			// sync cases can be cleaned up
 			oView.destroy();
-		}.bind(this));
+		}.bind(this)).catch(function(){
+			assert.ok(false, "The error shouldn't be thrown, only logged.");
+		});
 	});
 
 	QUnit.test("[sap.ui.xmlview=async] error caused by missing function reference (property-type 'function')", function(assert) {
@@ -418,7 +422,9 @@ sap.ui.define([
 
 			// sync cases can be cleaned up
 			oView.destroy();
-		}.bind(this));
+		}.bind(this)).catch(function(){
+			assert.ok(false, "The error shouldn't be thrown, only logged.");
+		});
 	});
 
 	QUnit.module("Preserve DOM");
