@@ -17,10 +17,13 @@ sap.ui.define([
 	var CardMerger = {
 		layers: { "admin": 0, "content": 5, "translation": 10, "all": 20 },
 		mergeManifestPathChanges: function (oModel, oChange) {
+			/* hide multi language function since there has a translation issue in Portal
 			var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('-', '_');
+			*/
 			Object.keys(oChange).forEach(function (s) {
 				if (s.charAt(0) === "/") {
 					var value = oChange[s];
+					/* hide multi language function since there has a translation issue in Portal
 					if (s.endsWith("/valueTranslations")) {
 						//merge the valueTranslations with existing one
 						var aValueTranslations = oModel.getProperty(s);
@@ -34,7 +37,7 @@ sap.ui.define([
 							var sPath = s.substring(0, s.lastIndexOf("/")) + "/value";
 							oModel.setProperty(sPath, value[sLanguage]);
 						}
-					}
+					}*/
 					oModel.setProperty(s, value);
 				}
 			});

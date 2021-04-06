@@ -719,7 +719,9 @@ sap.ui.define(function () {
 					]
 				},
 				sinon: false
-			},
+			}
+			/* hide multi language function since there has a translation issue in Portal
+			,
 			"designtime/editor/multiLanguagesOfValue/InitialWithNoChange": {
 				group: "Runtime Card Editor",
 				coverage: {
@@ -863,7 +865,7 @@ sap.ui.define(function () {
 					]
 				},
 				sinon: false
-			}
+			}*/
 		}
 	};
 });
