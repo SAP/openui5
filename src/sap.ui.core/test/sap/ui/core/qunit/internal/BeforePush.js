@@ -180,7 +180,7 @@
 					if (oDetails.status === "failed") {
 						oTest.element.firstChild.classList.add("failed");
 						oFirstFailedTest = oFirstFailedTest || oTest;
-					} else if (mParameters.keepResults) {
+					} else if (!mParameters.keepResults) {
 						// remove iframe in order to free memory
 						document.body.removeChild(oTest.frame);
 						oTest.frame = undefined;
