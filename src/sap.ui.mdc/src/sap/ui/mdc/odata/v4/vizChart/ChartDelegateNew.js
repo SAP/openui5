@@ -153,14 +153,6 @@ sap.ui.define([
         }
     };
 
-    ChartDelegate.getLegendState = function () {
-
-    };
-
-    ChartDelegate.getSortInfo = function () {
-
-    };
-
     /**
      * Creates a Sorter for given Property
      * @param {sap.ui.mdc.ChartNew.ItemNew} oMDCItem the MDC Item to create a Sorter for

@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/core/Core",
@@ -20,10 +20,10 @@ function(
 ) {
     "use strict";
 
-    //var sDelegatePath = "test-resources/sap/ui/mdc/delegates/ChartDelegateNew";
+    var sDelegatePath = "test-resources/sap/ui/mdc/delegates/ChartDelegateNew";
 
 	QUnit.module("sap.ui.mdc.Chart: Simple Properties", {
-		/*
+
 		beforeEach: function() {
 			var TestComponent = UIComponent.extend("test", {
 				metadata: {
@@ -57,14 +57,14 @@ function(
 			this.oUiComponentContainer.destroy();
 			this.oUiComponent.destroy();
 		}
-		*/
+
     });
 
 	QUnit.test("Test exists", function(assert) {
 		assert.ok(true);
 	});
 
-	/*
+
 	QUnit.test("Instantiate", function(assert) {
 		assert.ok(this.oMDCChart);
 		assert.ok(this.oMDCChart.isA("sap.ui.mdc.IxState"));
@@ -132,7 +132,35 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("zoomIn", function(assert){
+	QUnit.test("MDC Chart _updateToolbar", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var toolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "updateToolbar");
+
+			this.oMDCChart._updateToolbar();
+			assert.ok(toolbarSpy.calledOnce, "_updateToolbar was called on toolbar");
+
+			done();
+
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart _getInnerChart", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getInnerChart");
+
+			this.oMDCChart._getInnerChart();
+			assert.ok(delegateSpy.calledOnce, "getInnerChart was called on innerChart");
+
+			done();
+
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart zoomIn", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -144,7 +172,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("zoomOut", function(assert){
+	QUnit.test("MDC Chart zoomOut", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -156,7 +184,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("zoomStatus", function(assert){
+	QUnit.test("MDC Chart getZoomState", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -168,12 +196,12 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("legend Visibility state", function(assert){
+	QUnit.test("MDC Chart setLegendVisible", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
 			var legendSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setLegendVisible");
-			assert.ok(this.oMDCChart.getLegendVisible() == true, "Property is in iunitial state");
+			assert.ok(this.oMDCChart.getLegendVisible() == true, "Property is in initial state");
 
 			this.oMDCChart.setLegendVisible(false);
 			assert.ok(legendSpy.calledOnce, "setLegendVisible was called on delegate");
@@ -183,7 +211,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("showChartTooltip property", function(assert){
+	QUnit.test("MDC Chart showChartTooltip", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -197,6 +225,128 @@ function(
 			done();
 		}.bind(this));
 	});
-	*/
+
+	QUnit.test("MDC Chart _propagatePropertiesToInnerChart", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var legendSpy = sinon.spy(this.oMDCChart, "setLegendVisible");
+			var tooltipSpy = sinon.spy(this.oMDCChart, "setShowChartTooltip");
+			var typeSpy = sinon.spy(this.oMDCChart, "setChartType");
+
+			this.oMDCChart._propagatePropertiesToInnerChart();
+			assert.ok(legendSpy.calledOnce, "setLegendVisible was called");
+			assert.ok(tooltipSpy.calledOnce, "setShowChartTooltip was called");
+			assert.ok(typeSpy.calledOnce, "setChartType was called");
+
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart getChartTypeInfo", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getChartTypeInfo");
+
+			var info = this.oMDCChart.getChartTypeInfo();
+			assert.ok(delegateSpy.calledOnce, "getChartTypeInfo was called on delegate");
+			assert.ok(info, "charttypeinfo is present");
+
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart getAvailableChartTypes", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getAvailableChartTypes");
+
+			this.oMDCChart.getAvailableChartTypes();
+			assert.ok(delegateSpy.calledOnce, "getAvailableChartTypes was called on delegate");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart setChartType", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setChartType");
+
+			this.oMDCChart.setChartType();
+			assert.ok(delegateSpy.calledOnce, "setChartType was called on delegate");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart getCurrentState", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var oState = this.oMDCChart.getCurrentState();
+			assert.ok(oState, "p13n state object was returned");
+			assert.ok(!oState.items, "p13n state contains no items");
+			assert.ok(!oState.sorters, "p13n state contains no sorters");
+
+			this.oMDCChart.setP13nMode(["Sort"]);
+			oState = this.oMDCChart.getCurrentState();
+			assert.ok(oState.sorters, "p13n state contains sorters");
+
+			this.oMDCChart.setP13nMode(["Item"]);
+			oState = this.oMDCChart.getCurrentState();
+			assert.ok(oState.items, "p13n state contains items");
+
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart _getVisibleProperties", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var oMDCItem = new Item("testItem1", {name: "testName", role: "testRole"});
+			this.oMDCChart.insertItem(oMDCItem, 0);
+
+			var aVisibleItems = this.oMDCChart._getVisibleProperties();
+			assert.ok(aVisibleItems.length === 1, "Visible Properties contain 1 item");
+			assert.ok(aVisibleItems[0].name === "testName", "Item has correct name");
+			assert.ok(aVisibleItems[0].role === "testRole", "Item has correct role");
+
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart _getPropertyData", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "fetchProperties");
+
+			this.oMDCChart._getPropertyData();
+			assert.ok(delegateSpy.calledOnce, "fetchProperties was called on delegate");
+
+			this.oMDCChart._getPropertyData();
+			assert.ok(delegateSpy.calledOnce, "fetchProperties was not called again on delegate");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart _renderOverlay", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+
+			this.oMDCChart._renderOverlay(true);
+			var oOverlay = this.oMDCChart.getControlDelegate().getInnerChart().$().find(".sapUiMdcChartOverlay");
+			assert.ok(oOverlay, "Overlay was added to inner chart");
+
+			this.oMDCChart._renderOverlay(false);
+			oOverlay = this.oMDCChart.getControlDelegate().getInnerChart().$().find(".sapUiMdcChartOverlay");
+			assert.ok(oOverlay, "Overlay was removed from inner chart");
+			done();
+		}.bind(this));
+	});
 
 });

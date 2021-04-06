@@ -77,14 +77,6 @@ sap.ui.define([
 
     };
 
-    ChartDelegate.getPersonalizationInfo = function(){
-
-    };
-
-    ChartDelegate.getSortInfo = function(){
-
-    };
-
     /**
      * Chart relevant API (WIP)
      */
