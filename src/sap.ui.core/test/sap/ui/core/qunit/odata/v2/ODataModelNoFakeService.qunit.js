@@ -616,6 +616,7 @@ sap.ui.define([
 		var mEntityTypes = {},
 			aRequests = [],
 			oModel = {
+				mChangedEntities : {},
 				_createEventInfo : function () {},
 				_decreaseDeferredRequestCount : function () {},
 				decreaseLaundering : function () {},
@@ -650,6 +651,9 @@ sap.ui.define([
 			},
 			bSuccess;
 
+		if (sRequestKey) {
+			oModel.mChangedEntities[sRequestKey] = "~functionParameterObject";
+		}
 		oModelMock.expects("_normalizePath").withExactArgs("/path").returns("normalizedPath");
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("normalizedPath")
 			.returns(oEntityType);
@@ -671,7 +675,7 @@ sap.ui.define([
 			/*sDeepPath*/"functionTarget", /*sKey*/ undefined, oEntityType && "isFunction");
 		}
 		oModelMock.expects("_getEntity").withExactArgs(sRequestKey). returns({__metadata : {}});
-		oModelMock.expects("_removeEntity").withExactArgs(sRequestKey).exactly(sRequestKey ? 1 : 0);
+		oModelMock.expects("_removeEntity").withExactArgs(sRequestKey).never();
 		oModelMock.expects("_parseResponse").withExactArgs(oResponse, oRequest,
 			/*mLocalGetEntities*/ {}, /*mLocalChangeEntities*/ {});
 		oModelMock.expects("_updateETag").withExactArgs(oRequest, oResponse);
@@ -686,6 +690,7 @@ sap.ui.define([
 
 		assert.strictEqual(bSuccess, true);
 		assert.deepEqual(mEntityTypes, oEntityType ? {entityType : true} : {});
+		assert.strictEqual(oModel.mChangedEntities[sRequestKey], undefined);
 	});
 		});
 	});
