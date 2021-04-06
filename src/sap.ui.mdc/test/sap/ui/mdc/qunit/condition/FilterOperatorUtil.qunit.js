@@ -1724,7 +1724,7 @@ sap.ui.define([
 		assert.notOk(oOperator, "Operator should NOT exist");
 
 		// Set one or multiple Operators
-		FilterOperatorUtil.setOperators([oMyOperator, oMyOperator2]);
+		FilterOperatorUtil.addOperators([oMyOperator, oMyOperator2]);
 
 		oOperator = FilterOperatorUtil.getOperator("MyEqual");
 		assert.ok(oOperator, "Operator exist");

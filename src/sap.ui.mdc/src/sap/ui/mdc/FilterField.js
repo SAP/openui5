@@ -60,7 +60,7 @@ sap.ui.define([
 				 * Default operator name for conditions.
 				 * If empty, the relevant default operator depending on the data type used is taken.
 				 *
-				 * <b>Note</b>: The <code>defaultOperator</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator} or the instance itself.
+				 * <b>Note</b>: <code>defaultOperator</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator} or the instance itself.
 				 *
 				 * @since 1.88.0
 				 */
@@ -162,7 +162,7 @@ sap.ui.define([
 		var aOperatorNames = [];
 
 		aOperators.forEach(function(oOperator) {
-			if (typeof oOperator  === "string") {
+			if (typeof oOperator === "string") {
 				aOperatorNames.push(oOperator);
 			} else {
 				aOperatorNames.push(oOperator.name);
@@ -173,17 +173,46 @@ sap.ui.define([
 		return this;
 	};
 
-	FilterField.prototype.addOperator = function(oOperator) {
+
+	/**
+	 * Adds an operator to the list of known operators.
+	 *
+	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
+	 *
+ 	 * <b>Note</b>: If no operator is set, the used type of the <code>FilterField</code> defines the set of default operators.
+	 *
+	 * @since: 1.88.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	FilterField.prototype.addOperator = function(vOperator) {
 		var aOperators = this._getOperators();
-		if (typeof oOperator  === "string") {
-			aOperators.push(oOperator);
+		if (typeof vOperator === "string") {
+			aOperators.push(vOperator);
 		} else {
-			aOperators.push(oOperator.name);
+			aOperators.push(vOperator.name);
 		}
 		this.setOperators(aOperators);
 	};
 
-	FilterField.prototype.addOperators = function(aOperators) { // aOperators can be an array of operators or names
+	/**
+	 * Adds an array of operators to the list of known operators.
+	 *
+	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
+	 *
+	 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+	 *
+	 * @since: 1.88.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	FilterField.prototype.addOperators = function(aOperators) {
+		if (!Array.isArray(aOperators)) {
+			aOperators = [aOperators];
+		}
+
 		aOperators.forEach(function(oOperator) {
 			this.addOperator(oOperator);
 		}.bind(this));
@@ -191,11 +220,21 @@ sap.ui.define([
 		return this;
 	};
 
-	FilterField.prototype.removeOperator = function(oOperator) {
+	/**
+	 * Removes an operator from the list of known operators.
+	 *
+	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
+	 *
+	 * @since: 1.88.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	FilterField.prototype.removeOperator = function(vOperator) {
 		var aOperators = this.getOperators();
-		var sName = oOperator;
-		if (typeof oOperator !== "string") {
-			sName = oOperator.name;
+		var sName = vOperator;
+		if (typeof vOperator !== "string") {
+			sName = vOperator.name;
 		}
 
 		if (aOperators.indexOf(sName)) {
@@ -204,13 +243,37 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Removes all given operators from the list of known operators.
+	 *
+	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
+	 *
+	 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+	 *
+	 * @since: 1.88.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	*/
 	FilterField.prototype.removeOperators = function(aOperators) {
+		if (!Array.isArray(aOperators)) {
+			aOperators = [aOperators];
+		}
+
 		aOperators.forEach(function(oOperator) {
 			this.removeOperator(oOperator);
 		}.bind(this));
 
 	};
 
+	/**
+	 * Removes all operators from the list of known operators.
+	 *
+	 * @since: 1.88.0
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	*/
 	FilterField.prototype.removeAllOperators = function() {
 		this.setOperators([]);
 	};

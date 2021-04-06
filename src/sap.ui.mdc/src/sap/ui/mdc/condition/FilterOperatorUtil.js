@@ -787,7 +787,17 @@ function(
 
 				},
 
-				setOperators: function(aOperators) { // aOperators must be an array of operator instances
+				/**
+				 * Adds an array of operators to the list of known operators.
+				 *
+				 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
+				 *
+				 * @since: 1.88.0
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * @MDC_PUBLIC_CANDIDATE
+				 */
+				addOperators: function(aOperators) {
 					if (!Array.isArray(aOperators)) {
 						aOperators = [aOperators];
 					}
@@ -797,7 +807,19 @@ function(
 					});
 				},
 
-				removeOperators: function(aOperators) {  // array of Operators or names
+				/**
+				 * Removes all given operators from the list of known operators.
+				 *
+				 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
+				 *
+ 				 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+				 *
+				 * @since: 1.88.0
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * @MDC_PUBLIC_CANDIDATE
+				 */
+				removeOperators: function(aOperators) {
 					if (!Array.isArray(aOperators)) {
 						aOperators = [aOperators];
 					}
@@ -807,11 +829,21 @@ function(
 					});
 				},
 
-				removeOperator: function(oOperator) { // instance or name
-					if (typeof oOperator  === "string") {
-						delete FilterOperatorUtil._mOperators[oOperator];
+				/**
+				 * Removes an operator from the list of known operators.
+				 *
+				 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
+				 *
+				 * @since: 1.88.0
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * @MDC_PUBLIC_CANDIDATE
+				 */
+				 removeOperator: function(vOperator) {
+					if (typeof vOperator  === "string") {
+						delete FilterOperatorUtil._mOperators[vOperator];
 					} else {
-						delete FilterOperatorUtil._mOperators[oOperator.name];
+						delete FilterOperatorUtil._mOperators[vOperator.name];
 					}
 
 					// check if the removed Operator is still used and remove it
@@ -821,17 +853,20 @@ function(
 				},
 
 				/**
-				 * Adds an operator to the list of valid operators for a type.
+				 * Adds operators to the list of valid operators for a type.
 				 *
 				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
 				 * @param {sap.ui.mdc.condition.Operator[]} aOperators Operators
-				 * @param {sap.ui.mdc.condition.Operator} oDefaultOperator Default operator
+				 * @param {sap.ui.mdc.condition.Operator|string} vDefaultOperator The default operator instance or default operator name
+				 *
+ 				 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+ 				 * <b>Note</b>: <code>vDefaultOperator</code> must exist as a valid operator for the type.
 				 *
 				 * @private
 				 * @ui5-restricted sap.fe
 				 * @MDC_PUBLIC_CANDIDATE
 				 */
-				setOperatorsForType: function(sType, aOperators, oDefaultOperator) {
+				setOperatorsForType: function(sType, aOperators, vDefaultOperator) {
 					if (!Array.isArray(aOperators)) {
 						aOperators = [aOperators];
 					}
@@ -845,47 +880,94 @@ function(
 						FilterOperatorUtil.addOperatorForType(sType, oOperator);
 					});
 
-					if (oDefaultOperator) {
-						FilterOperatorUtil.setDefaultOperatorForType(sType, oDefaultOperator);
+					if (vDefaultOperator) {
+						FilterOperatorUtil.setDefaultOperatorForType(sType, vDefaultOperator);
 					}
 
 				},
 
-				setDefaultOperatorForType: function(sType, oDefaultOperator) {
+				/**
+				 * Sets the default operator for the list of operators for a type.
+				 *
+				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.condition.Operator|string} vDefaultOperator The default operator instance or default operator name
+				 *
+ 				 * <b>Note</b>: <code>vDefaultOperator</code> must exist as a valid operator for the type.
+				 *
+				 * @since: 1.88.0
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * @MDC_PUBLIC_CANDIDATE
+				 */
+				setDefaultOperatorForType: function(sType, vDefaultOperator) {
 					if (!FilterOperatorUtil._mDefaultOpsForType[sType]) {
 						FilterOperatorUtil._mDefaultOpsForType[sType] = { };
 					}
 
-					if (typeof oDefaultOperator  === "string") {
-						oDefaultOperator = FilterOperatorUtil.getOperator(oDefaultOperator);
+					if (typeof vDefaultOperator  === "string") {
+						vDefaultOperator = FilterOperatorUtil.getOperator(vDefaultOperator);
 					}
 
-					FilterOperatorUtil._mDefaultOpsForType[sType].defaultOperator = oDefaultOperator;
+					FilterOperatorUtil._mDefaultOpsForType[sType].defaultOperator = vDefaultOperator;
 
 				},
 
-				addOperatorForType: function(sType, oOperator) {
-					FilterOperatorUtil.insertOperatorForType(sType, oOperator);
+				/**
+				 * Adds an operator to the list of valid operators for a type.
+				 *
+				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
+				 *
+				 * @since: 1.88.0
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * @MDC_PUBLIC_CANDIDATE
+				 */
+				addOperatorForType: function(sType, vOperator) {
+					FilterOperatorUtil.insertOperatorForType(sType, vOperator);
 				},
 
-				insertOperatorForType: function(sType, oOperator, idx) {
+				/**
+				 * Inserts an operator into the list of valid operators for a type.
+				 *
+				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
+				 * @param {int} idx Index of the operator in the list of operators for this type
+				 *
+				 * @since: 1.88.0
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * @MDC_PUBLIC_CANDIDATE
+				 */
+				insertOperatorForType: function(sType, vOperator, idx) {
 					if (!FilterOperatorUtil._mDefaultOpsForType[sType]) {
 						FilterOperatorUtil._mDefaultOpsForType[sType] = { operators : [] };
 					}
 
 					idx = idx === undefined ? FilterOperatorUtil._mDefaultOpsForType[sType].operators.length : idx;
-					if (typeof oOperator  === "string") {
-						oOperator = FilterOperatorUtil.getOperator(oOperator);
+					if (typeof vOperator  === "string") {
+						vOperator = FilterOperatorUtil.getOperator(vOperator);
 					}
-					FilterOperatorUtil._mDefaultOpsForType[sType].operators.splice(idx, 0, oOperator);
+					FilterOperatorUtil._mDefaultOpsForType[sType].operators.splice(idx, 0, vOperator);
 				},
 
-				removeOperatorForType: function(sType, oOperator) {
+				/**
+				 * Removes an operator from the list of valid operators for a type.
+				 *
+				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
+				 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
+				 *
+				 * @since: 1.88.0
+				 * @private
+				 * @ui5-restricted sap.fe
+				 * @MDC_PUBLIC_CANDIDATE
+				 */
+				removeOperatorForType: function(sType, vOperator) {
 					var sName;
-					if (typeof oOperator  === "string") {
-						sName = oOperator;
+					if (typeof vOperator  === "string") {
+						sName = vOperator;
 					} else {
-						sName = oOperator.name;
+						sName = vOperator.name;
 					}
 					for (var i = 0; i < FilterOperatorUtil._mDefaultOpsForType[sType].operators.length; i++) {
 						if (FilterOperatorUtil._mDefaultOpsForType[sType].operators[i].name === sName) {
