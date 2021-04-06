@@ -5,11 +5,9 @@
 
 sap.ui.define([
 	"sap/ui/fl/requireAsync",
-	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyUtil",
 	"sap/base/Log"
 ], function (
 	requireAsync,
-	ApplyUtil,
 	Log
 ) {
 	"use strict";
@@ -39,10 +37,10 @@ sap.ui.define([
 	var ApplyStrategyFactory = {
 		/**
 		 * Strategy to apply descriptor changes during runtime.
-		 * @returns {Promise<object>} Runtime strategy
+		 * @returns {object} Runtime strategy
 		 */
 		getRuntimeStrategy: function() {
-			return Promise.resolve(RuntimeStrategy);
+			return RuntimeStrategy;
 		}
 	};
 

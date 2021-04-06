@@ -38,18 +38,14 @@ function (
 
 	QUnit.module("Runtime: applyChange", {
 		beforeEach: function (assert) {
-			var done1 = assert.async();
+			var done = assert.async();
 			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
 				.done(function(oTestApplierManifestResponse) {
 					this.oManifest = oTestApplierManifestResponse;
-					done1();
+					done();
 				}.bind(this));
 
-			var done2 = assert.async();
-			ApplyStrategyFactory.getRuntimeStrategy().then(function(Strategy) {
-				this.RuntimeStrategy = Strategy;
-				done2();
-			}.bind(this));
+			this.RuntimeStrategy = ApplyStrategyFactory.getRuntimeStrategy();
 
 			this.fnAddLibrarySpy = sandbox.spy(AddLibrary, "applyChange");
 			this.fnAddComponentUsageSpy = sandbox.spy(AddComponentUsages, "applyChange");
