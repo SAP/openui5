@@ -4149,8 +4149,14 @@ sap.ui.define([
 						if (oEntity) {
 							delete oEntity.__metadata.created;
 						}
+						this._removeEntity(oRequest.key);
+					} else {
+						// do not call _removeEntity after successful function import call as
+						// _removeEntity would delete also the cached object which would cause that
+						// the path to $result cannot be resolved any more; delete only the entry in
+						// changed entities to avoid pending changes
+						delete this.mChangedEntities[oRequest.key];
 					}
-					this._removeEntity(oRequest.key);
 				}
 			}
 
