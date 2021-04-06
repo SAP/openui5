@@ -828,4 +828,68 @@ sap.ui.define([
 		assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
 	});
 
+	QUnit.module("Delayed Extension Point", {
+		before: function () {
+			ExtensionPoint.registerExtensionProvider(function () {
+				return "testdata/customizing/customer/ext/ExtensionPointProvider";
+			});
+		},
+		after: function () {
+			ExtensionPoint.registerExtensionProvider(null);
+		}
+	});
+
+	QUnit.test("Delayed Extension Point with async factory", function(assert){
+		return XMLView.create({
+			viewName: "testdata.customizing.customer.ext.DelayedEP",
+			id: "myDelayedView"
+		}).then(function (oView) {
+			assert.strictEqual(oView.getContent().length, 1, "The view content has length 1.");
+			var oPanel = oView.getContent()[0];
+			assert.strictEqual(oPanel.getContent().length, 3, "The panel content has length 3.");
+			assert.strictEqual(oPanel.getContent()[0].getId(), oView.createId("mybuttonA"), "The 'mybuttonA' button is placed at index '0'.");
+			assert.strictEqual(oPanel.getContent()[1].getId(), oView.createId("mybuttonB"), "The 'mybuttonB' button is placed at index '1'.");
+			assert.strictEqual(oPanel.getContent()[2].getId(), oView.createId("mybuttonC"), "The 'mybuttonC' button is placed at index '2'.");
+
+			oView.destroy();
+		});
+	});
+
+	QUnit.test("Delayed Extension Point with generic factory (async=true)", function(assert){
+		var oView  = sap.ui.xmlview({
+			viewName: "testdata.customizing.customer.ext.DelayedEP",
+			id: "myDelayedView",
+			async: true
+		});
+
+		return oView.loaded().then(function (oView) {
+			assert.strictEqual(oView.getContent().length, 1, "The view content has length 1.");
+			var oPanel = oView.getContent()[0];
+			assert.strictEqual(oPanel.getContent().length, 3, "The panel content has length 3.");
+			assert.strictEqual(oPanel.getContent()[0].getId(), oView.createId("mybuttonA"), "The 'mybuttonA' button is placed at index '0'.");
+			assert.strictEqual(oPanel.getContent()[1].getId(), oView.createId("mybuttonB"), "The 'mybuttonB' button is placed at index '1'.");
+			assert.strictEqual(oPanel.getContent()[2].getId(), oView.createId("mybuttonC"), "The 'mybuttonC' button is placed at index '2'.");
+
+			oView.destroy();
+		});
+	});
+
+	QUnit.test("Delayed Extension Point with generic factory (async=false)", function(assert){
+		var oView  = sap.ui.xmlview({
+			viewName: "testdata.customizing.customer.ext.DelayedEP",
+			id: "myDelayedView",
+			async: false
+		});
+
+		assert.strictEqual(oView.getContent().length, 1, "The view content has length 1.");
+		var oPanel = oView.getContent()[0];
+		assert.strictEqual(oPanel.getContent().length, 2, "The panel content has length 2.");
+		assert.strictEqual(oPanel.getContent()[0].getId(), oView.createId("mybuttonA"), "The 'mybuttonA' button is placed at index '0'.");
+		assert.strictEqual(oPanel.getContent()[1].getId(), oView.createId("mybuttonC"), "The 'mybuttonC' button is placed at index '1'.");
+		// 'mybuttonC' will be added asynchronously at a later point in time.
+		// Using the synchronous factory the application has no way to capture this point in time
+
+		oView.destroy();
+	});
+
 });
