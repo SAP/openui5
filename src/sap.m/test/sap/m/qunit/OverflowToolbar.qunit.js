@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/ToolbarRenderer",
 	"sap/m/ButtonRenderer",
 	"sap/m/library",
+	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
 	"sap/ui/core/Item",
@@ -38,6 +39,7 @@ sap.ui.define([
 	ToolbarRenderer,
 	ButtonRenderer,
 	mobileLibrary,
+	coreLibrary,
 	JSONModel,
 	Select,
 	Item,
@@ -55,6 +57,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	createAndAppendDiv("qunit-fixture-visible");
 
@@ -3294,8 +3299,8 @@ sap.ui.define([
 				new Button({width: "150px"})
 			],
 			oOverflowTB = createOverflowToolbar({width: '200px'}, aDefaultContent),
-			sExpectedAriaHasPopup = "menu",
-			sActualAriaHasPopup = oOverflowTB._getOverflowButton().$().attr("aria-haspopup");
+			sExpectedAriaHasPopup = AriaHasPopup.Menu,
+			sActualAriaHasPopup = oOverflowTB._getOverflowButton().getAriaHasPopup();
 
 		// assert
 		assert.strictEqual(sActualAriaHasPopup, sExpectedAriaHasPopup, "aria-haspopup value is as expected");

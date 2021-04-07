@@ -4,6 +4,7 @@
 
 // Provides control sap.m.OverflowToolbar.
 sap.ui.define([
+	"sap/ui/core/library",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/m/ToggleButton",
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "lastFocusableDomRef"
 ], function(
+	coreLibrary,
 	library,
 	Control,
 	ToggleButton,
@@ -47,6 +49,8 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = library.OverflowToolbarPriority;
@@ -263,8 +267,6 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype.onAfterRendering = function () {
 		this._bInvalidatedAndNotRendered = false;
-		// TODO: refactor with addEventDelegate for onAfterRendering for both overflow button and its label
-		this._getOverflowButton().$().attr("aria-haspopup", "menu");
 
 		if (this._bContentVisibilityChanged) {
 			this._bControlsInfoCached = false;
@@ -941,6 +943,7 @@ sap.ui.define([
 
 	OverflowToolbar.prototype._getToggleButton = function (sIdPrefix) {
 		return new ToggleButton({
+				ariaHasPopup: AriaHasPopup.Menu,
 				id: this.getId() + sIdPrefix,
 				icon: IconPool.getIconURI("overflow"),
 				press: this._overflowButtonPressed.bind(this),
