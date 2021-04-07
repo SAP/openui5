@@ -41,7 +41,7 @@ describe("sap.m.IconTabBarBadges", function() {
 
 			expect(takeScreenshot(oSelectList)).toLookAs(sContentDensity + "_2_selectListMenu");
 
-			oMore.sendKeys(protractor.Key.ESCAPE);
+			oSelectList.sendKeys(protractor.Key.ESCAPE);
 		});
 
 		it("should show badges aligned in text and count IconTabBar", function() {
