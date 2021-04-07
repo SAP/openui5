@@ -139,4 +139,14 @@ describe("sap.m.InputVisualTests", function() {
 			expect(takeScreenshot()).toLookAs("sticky_suggestions_visible");
 		});
 	});
+
+	it("Should visualize input with tabular suggestions with popin mode enabled", function () {
+		var oInput = element(by.id("inputWithTabularSuggestions"));
+		browser.executeScript("document.getElementById('inputWithTabularSuggestions').scrollIntoView()").then(function() {
+			oInput.click();
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot()).toLookAs("tabular_suggestions_text_inserted");
+		});
+	});
 });

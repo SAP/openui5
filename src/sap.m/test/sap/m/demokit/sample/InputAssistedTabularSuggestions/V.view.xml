@@ -4,7 +4,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
 	<l:VerticalLayout class="sapUiContentPadding" width="100%">
-		<Label text="Product" labelFor="productInput" />
+		<Label text="Tabular suggestions with default configuration." labelFor="productInput" />
 		<Input
 			id="productInput"
 			placeholder="Enter product"
@@ -12,28 +12,63 @@
 			showTableSuggestionValueHelp="false"
 			suggestionRows="{/ProductCollection}">
 			<suggestionColumns>
-				<Column
-					popinDisplay="Inline"
-					demandPopin="true">
+				<Column>
 					<Label text="Name" />
 				</Column>
 				<Column
-					hAlign="Center"
-					popinDisplay="Inline"
-					demandPopin="true"
-					minScreenWidth="Tablet">
+					hAlign="Center">
 					<Label text="Product ID" />
 				</Column>
 				<Column
-					hAlign="Center"
-					popinDisplay="Inline"
-					minScreenWidth="Tablet">
+					hAlign="Center">
 					<Label text="Supplier Name" />
 				</Column>
 				<Column
-					hAlign="End"
-					popinDisplay="Inline"
-					demandPopin="true">
+					hAlign="End">
+					<Label text="Price" />
+				</Column>
+			</suggestionColumns>
+
+			<suggestionRows>
+				<ColumnListItem>
+					<Label text="{Name}" />
+					<Label text="{ProductId}" />
+					<Label text="{SupplierName}" />
+					<Label text="{
+						parts:[{path:'Price'}, {path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: true}
+					}" />
+				</ColumnListItem>
+			</suggestionRows>
+		</Input>
+
+		<Label text="Tabular suggestions with popin mode enabled." labelFor="popinTableInput" />
+		<Input
+			id="popinTableInput"
+			placeholder="Enter product"
+			enableTableAutoPopinMode="true"
+			showSuggestion="true"
+			showTableSuggestionValueHelp="false"
+			suggestionRows="{/ProductCollection}">
+			<suggestionColumns>
+				<Column
+					width="20rem">
+					<Label text="Name" />
+				</Column>
+				<Column
+					width="10rem"
+					hAlign="Center">
+					<Label text="Product ID" />
+				</Column>
+				<Column
+					width="10rem"
+					hAlign="Center">
+					<Label text="Supplier Name" />
+				</Column>
+				<Column
+					width="10rem"
+					hAlign="End">
 					<Label text="Price" />
 				</Column>
 			</suggestionColumns>

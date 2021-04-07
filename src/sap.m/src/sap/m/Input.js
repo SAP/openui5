@@ -297,6 +297,17 @@ function(
 			enableSuggestionsHighlighting: {type: "boolean", group: "Behavior", defaultValue: true},
 
 			/**
+			 * Enables the <code>autoPopinMode</code> of <code>sap.m.Table</code>, when the input has tabular suggestions.
+			 * <b>Note:</b> The <code>autoPopinMode</code> overwrites the <code>demandPopin</code> and the
+			 * <code>minScreenWidth</code> properties of the <code>sap.m.Column</code>.
+			 * When setting, <code>enableTableAutoPopinMode</code>, from true to false,
+			 * the application must reconfigure the <code>demandPopin</code> and
+			 * <code>minScreenWidth</code> properties of the <code>sap.m.Column</code> control by itself.
+			 * @since 1.89
+			 */
+			 enableTableAutoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
+
+			/**
 			 * Specifies whether autocomplete is enabled.
 			 * Works only if "showSuggestion" property is set to true.
 			 * <b>Note:</b> The autocomplete feature is disabled on Android devices due to a OS specific issue.
@@ -635,6 +646,11 @@ function(
 		}
 
 		this._resetTypeAhead();
+
+		if (this._hasTabularSuggestions()) {
+			this._getSuggestionsTable().setAutoPopinMode(this.getEnableTableAutoPopinMode());
+			this._getSuggestionsTable().setContextualWidth(this.getEnableTableAutoPopinMode() ? "Auto" : "Inherit");
+		}
 
 		if (bSuggestionsPopoverIsOpen && ((this.getValueStateText() && sValueStateHeaderText !== this.getValueStateText()) ||
 			(this.getValueState() !== sValueStateHeaderValueState) ||
