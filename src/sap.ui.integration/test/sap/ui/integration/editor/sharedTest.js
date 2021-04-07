@@ -87,7 +87,7 @@ function createCardEditorTag(id, changes, mode, language, designtime) {
 		card.manifest = manifest;
 	}
 	return '<ui-integration-card-editor id="' + id +
-		'" card=\'' + JSON.stringify(card) +
+		'" card=\'' + JSON.stringify(card).replaceAll("'", "&apos;") +
 		'\' mode="' + mode +
 		'" language="' + language +
 		'" allow-dynamic-values="true" allow-settings="true"></ui-integration-card-editor>';
