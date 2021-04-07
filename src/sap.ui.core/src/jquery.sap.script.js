@@ -245,7 +245,7 @@ sap.ui.define([
 					copy = options[name];
 
 					// Prevent never-ending loop
-					if (target === copy) {
+					if (name === "__proto__" || target === copy) {
 						continue;
 					}
 
