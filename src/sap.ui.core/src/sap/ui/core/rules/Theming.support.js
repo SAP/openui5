@@ -145,7 +145,7 @@ sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/ui/thirdpa
 	 */
 	var oCheckForLegacyParametersGet = {
 		id: "checkForLegacyParametersGet",
-		audiences: [Audiences.Control, Audiences.Application],
+		audiences: [Audiences.Control],
 		categories: [Categories.Performance],
 		enabled: true,
 		minversion: "1.87",
@@ -160,7 +160,7 @@ sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/ui/thirdpa
 			var oLoggedObjects = oScope.getLoggedObjects("LegacyParametersGet");
 			oLoggedObjects.forEach(function(oLoggedObject) {
 				issueManager.addIssue({
-					severity: Severity.High,
+					severity: Severity.Medium,
 					details: oLoggedObject.message,
 					context: {
 						id: "WEBPAGE"
