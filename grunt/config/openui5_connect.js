@@ -4,6 +4,14 @@ module.exports = function(grunt, config) {
 	// libraries are sorted alphabetically
 	var aLibraries = config.allLibraries.slice();
 	aLibraries.sort(function(a, b) {
+		// ensure that the wrapper is handled before the
+		// original library to allow an overlay
+		if (b.name == `${a.name}-wrapper`) {
+			return 1;
+		}
+		if (a.name == `${b.name}-wrapper`) {
+			return -1;
+		}
 		return a.name.localeCompare(b.name);
 	});
 
