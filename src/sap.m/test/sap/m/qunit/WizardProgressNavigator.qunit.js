@@ -498,17 +498,12 @@ sap.ui.define([
 		var sOptionalText;
 		var sWizardAriaLabelText;
 
-		for (var i = 0; i < $steps.length; i++){
+		for (var i = 0; i < $steps.length; i++) {
 			sOptionalText = this.oProgressNavigator._aStepOptionalIndication[i] ? "Optional " : "";
 			sWizardAriaLabelText = this.oResourceBundle.getText("WIZARD_STEP_LABEL", [i + 1, this.oProgressNavigator.getStepTitles()[i], sOptionalText]);
 
-			if (i === 0) {
-				sWizardAriaLabelText = this.oResourceBundle.getText("WIZARD_STEP_LABEL_CURRENT", [i + 1, this.oProgressNavigator.getStepTitles()[i], sOptionalText]);
-				assert.strictEqual($steps.eq(i).attr("aria-label"), sWizardAriaLabelText, "'aria-label' attribute of the list item No" + (i + 1) + " should be set to '" + sWizardAriaLabelText + "'");
-			} else {
-				assert.strictEqual($steps.eq(i).attr("aria-label"), sWizardAriaLabelText, "'aria-label' attribute of the list item No" + (i + 1) + " should be set to '" + sWizardAriaLabelText + "'");
-				assert.strictEqual($steps.eq(i).attr("role"), "listitem", "'role' attribute of the list item No" + (i + 1) + " should be set to 'listitem'");
-			}
+			assert.strictEqual($steps.eq(i).attr("aria-label"), sWizardAriaLabelText, "'aria-label' attribute of the list item No" + (i + 1) + " should be set to '" + sWizardAriaLabelText + "'");
+			assert.strictEqual($steps.eq(i).attr("role"), "listitem", "'role' attribute of the list item No" + (i + 1) + " should be set to 'listitem'");
 		}
 	});
 

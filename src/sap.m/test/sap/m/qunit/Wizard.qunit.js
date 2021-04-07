@@ -846,7 +846,7 @@ sap.ui.define([
 		var sRole = jQuery(this.oWizard.getDomRef()).attr("role");
 		var sAriaLabel = jQuery(this.oWizard.getDomRef()).attr("aria-label");
 		var sWizardLabel = this.oResourceBundle.getText("WIZARD_LABEL");
-		assert.strictEqual(sRole, "region", "Aria-roledescription attribute of the wizard should be set to 'region'");
+		assert.strictEqual(sRole, "region", "role attribute of the wizard should be set to 'region'");
 		assert.strictEqual(sAriaLabel, sWizardLabel, "Aria-label attribute of the wizard should be set to '" + sWizardLabel + "'");
 	});
 

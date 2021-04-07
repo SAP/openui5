@@ -439,23 +439,16 @@ function(
 	 */
 	WizardProgressNavigator.prototype._updateStepAriaLabelAttribute = function (iNewIndex, iOldIndex) {
 		var oStepNew = this._aCachedSteps[iNewIndex];
-		var sOptionalText = this._aStepOptionalIndication[iNewIndex] ? "Optional " : "";
-		var sValueText = this._oResourceBundle.getText("WIZARD_STEP_LABEL_CURRENT", [iNewIndex + 1, this.getStepTitles()[iNewIndex], sOptionalText]);
 
 		if (iOldIndex !== undefined && this._aCachedSteps[iOldIndex]) {
 			this._aCachedSteps[iOldIndex]
 				.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT);
-			this._aCachedSteps[iOldIndex]
-				.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_LABEL);
 		}
 
 		if (oStepNew) {
 			oStepNew
 				.setAttribute(
 					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT, true);
-			oStepNew
-				.setAttribute(
-					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_LABEL, sValueText);
 		}
 	};
 
