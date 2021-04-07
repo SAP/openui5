@@ -40,7 +40,7 @@ sap.ui.define([
 				layers: []
 			}, {
 				connector: "LocalStorageConnector",
-				layers: [Layer.CUSTOMER, Layer.USER]
+				layers: [Layer.CUSTOMER, Layer.PUBLIC, Layer.USER]
 			}];
 
 			return new Promise(function(resolve) {
