@@ -68,10 +68,10 @@
                     <mdcf:FieldValueHelpMdcTableWrapper>
                         <mdc:Table autoBindOnInit="false" id="FB1-FH1--mdc--gridtable" width="30rem" selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}" p13nMode="Column,Sort" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITable.delegate', payload: {collectionName: 'Authors'}}" threshold="50">
                             <mdc:columns>
-                                <mdc:table.Column id="FB1-FH1--mdc--gridtable--id" header="ID" dataProperty="ID" initialIndex="1">
+                                <mdc:table.Column id="FB1-FH1--mdc--gridtable--id" header="ID" dataProperty="ID" >
                                     <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" />
                                 </mdc:table.Column>
-                                <mdc:table.Column id="FB1-FH1--mdc--gridtable--name" header="Name" dataProperty="name" initialIndex="2">
+                                <mdc:table.Column id="FB1-FH1--mdc--gridtable--name" header="Name" dataProperty="name" >
                                     <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display" />
                                 </mdc:table.Column>
                             </mdc:columns>
@@ -158,10 +158,10 @@
                     <mdcf:FieldValueHelpMdcTableWrapper>
                         <mdc:Table autoBindOnInit="false" id="FB3-FH1--mdc--gridtable" width="30rem" selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}" p13nMode="Column,Sort" delegate="{name: 'sap/ui/v4demo/delegate/MDCMTable.delegate', payload: {collectionName: 'Authors'}}" threshold="50">
                             <mdc:columns>
-                                <mdc:table.Column id="FB3-FH1--mdc--gridtable--id" header="ID" dataProperty="ID" initialIndex="1">
+                                <mdc:table.Column id="FB3-FH1--mdc--gridtable--id" header="ID" dataProperty="ID" >
                                     <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" />
                                 </mdc:table.Column>
-                                <mdc:table.Column id="FB3-FH1--mdc--gridtable--name" header="Name" dataProperty="name" initialIndex="2">
+                                <mdc:table.Column id="FB3-FH1--mdc--gridtable--name" header="Name" dataProperty="name" >
                                     <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display" />
                                 </mdc:table.Column>
                             </mdc:columns>
