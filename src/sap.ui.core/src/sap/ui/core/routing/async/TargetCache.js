@@ -27,7 +27,7 @@ sap.ui.define([
 		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
 		 * @private
 		 */
-		_getObjectWithGlobalId : function (oOptions, sType, oTargetCreateInfo, bSynchronousCreate) {
+		_getObjectWithGlobalId : function (oOptions, sType, oTargetCreateInfo, bSynchronousCreate, bNoCreate) {
 			var that = this,
 				vPromiseOrObject,
 				sName,
@@ -55,6 +55,8 @@ sap.ui.define([
 							// put the RouterHashChanger as a private property to the Component constructor
 							oOptions.settings._routerHashChanger = oRouterHashChanger;
 						}
+
+						oOptions.id = oOptions.id || oTargetCreateInfo.componentId;
 
 						if (oOptions.usage) {
 							return oOwnerComponent.createComponent(oOptions);
@@ -95,9 +97,10 @@ sap.ui.define([
 			this._checkName(sName, sType);
 
 			oInstanceCache = this._oCache[sType.toLowerCase()][sName];
+
 			vPromiseOrObject = oInstanceCache && oInstanceCache[oOptions.id];
 
-			if (vPromiseOrObject) {
+			if (bNoCreate || vPromiseOrObject) {
 				return vPromiseOrObject;
 			}
 
@@ -137,11 +140,11 @@ sap.ui.define([
 		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
 		 * @private
 		 */
-		_getViewWithGlobalId : function (oOptions, bSynchronousCreate) {
+		_getViewWithGlobalId : function (oOptions, bSynchronousCreate, bNoCreate) {
 			if (oOptions && !oOptions.name) {
 				oOptions.name = oOptions.viewName;
 			}
-			return this._getObjectWithGlobalId(oOptions, "View", undefined, bSynchronousCreate);
+			return this._getObjectWithGlobalId(oOptions, "View", undefined, bSynchronousCreate, bNoCreate);
 		},
 
 		/**
@@ -152,8 +155,8 @@ sap.ui.define([
 		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
 		 * @private
 		 */
-		_getComponentWithGlobalId : function(oOptions, oTargetCreateInfo) {
-			return this._getObjectWithGlobalId(oOptions, "Component", oTargetCreateInfo);
+		_getComponentWithGlobalId : function(oOptions, oTargetCreateInfo, bNoCreate) {
+			return this._getObjectWithGlobalId(oOptions, "Component", oTargetCreateInfo, bNoCreate);
 		},
 
 		/**

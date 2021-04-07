@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/base/EventProvider",
 	"sap/base/Log",
 	"sap/base/strings/formatMessage",
 	"sap/ui/core/mvc/View",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/thirdparty/hasher"
-], function(Log, formatMessage, View, Target, Views, JSONModel, App, Panel, Component, UIComponent, ComponentContainer, hasher) {
+], function(EventProvider, Log, formatMessage, View, Target, Views, JSONModel, App, Panel, Component, UIComponent, ComponentContainer, hasher) {
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
@@ -26,11 +27,12 @@ sap.ui.define([
 				type: "XML",
 				async: !!bAsync
 			};
+		var oView = sap.ui.view(oViewOptions);
 
 		if (bAsync instanceof Promise) {
 			var pLoaded = bAsync;
 			pLoaded = pLoaded.then(function() {
-				return sap.ui.view(oViewOptions);
+				return oView;
 			});
 
 			return {
@@ -39,7 +41,7 @@ sap.ui.define([
 				}
 			};
 		} else {
-			return sap.ui.view(oViewOptions);
+			return oView;
 		}
 	}
 
@@ -495,23 +497,30 @@ sap.ui.define([
 
 	QUnit.test("pass settings to component container", function(assert) {
 		this.oContainerOptions = undefined;
+		var oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 		var oComponentContainerSettingsSpy = this.spy(ComponentContainer.prototype, "applySettings");
 		var oComponent = new this.Component("rootComponent");
 		var oRouter = oComponent.getRouter();
+
 		assert.ok(oRouter);
+
 		return new Promise(function(resolve) {
 			oRouter.getRoute("home").attachMatched(resolve);
 			oRouter.navTo("home");
-		}).then(function() {
+		}).then(function(oEvent) {
 			sinon.assert.calledWithMatch(oComponentContainerSettingsSpy, sinon.match({
-				component: sinon.match(function(oComponent) {
-					return oComponent.getId() === "rootComponent---nestedComponent";
-				}),
 				height: "100%",
 				width: "90%",
 				lifecycle: "Application",
 				option: true
 			}));
+
+			var oComponentContainer = oEvent.getParameter("view");
+			var oNestedComponent = oComponentContainer.getComponentInstance();
+
+			assert.equal(oNestedComponent.getId(), "rootComponent---nestedComponent", "Nested component should have the correct id");
+
+			oEventProviderStub.restore();
 			oComponent.destroy();
 		});
 	});
