@@ -197,9 +197,14 @@ sap.ui.define([
 			oRm.writeElementData(oControl);
 			oRm.openEnd();
 			if (oControl.isReady()) {
+				var oPreview = oControl.getAggregation("_preview");
+				var bPreviewNotExist = false;
+				if (oPreview && oPreview.getSettings() && oPreview.getSettings().preview && oPreview.getSettings().preview.modes === "None") {
+					bPreviewNotExist = true;
+				}
 				//surrounding div tag for form <div class="sapUiIntegrationCardEditorForm"
 				oRm.openStart("div");
-				oControl.getMode() === "translation" ? oRm.addClass("sapUiIntegrationCardEditorTranslationForm") : oRm.addClass("sapUiIntegrationCardEditorForm");
+				oControl.getMode() === "translation" || bPreviewNotExist ? oRm.addClass("sapUiIntegrationCardEditorFormWithNoPreview") : oRm.addClass("sapUiIntegrationCardEditorForm");
 				if (oControl.getMode() !== "translation") {
 					oRm.addClass("settingsButtonSpace");
 				}
@@ -389,7 +394,6 @@ sap.ui.define([
 				}
 				oRm.close("div");
 				//render the preview
-				var oPreview = oControl.getAggregation("_preview");
 				oPreview && oRm.renderControl(oPreview);
 			}
 			oRm.close("div");
