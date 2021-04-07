@@ -79,7 +79,7 @@ sap.ui.define([
 		assert.strictEqual(oMode.getRowContentHeight(), 14, "The row content height is taken from the table");
 	});
 
-	QUnit[Device.browser.msie ? "skip" : "test"]("After rendering", function(assert) {
+	QUnit.test("After rendering", function(assert) {
 		this.oTable.setRowHeight();
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			assert.equal(this.oTable.getRows().length, 19, "Row count");
@@ -112,11 +112,6 @@ sap.ui.define([
 		var oBody = document.body;
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var pSequence = Promise.resolve();
-
-		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-		if (Device.browser.msie || Device.browser.edge) {
-			document.getElementById("qunit-fixture").classList.remove("visible");
-		}
 
 		function test(mTestSettings) {
 			pSequence = pSequence.then(function() {
@@ -203,11 +198,6 @@ sap.ui.define([
 			oTable.destroy();
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
-
-			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-			if (Device.browser.msie || Device.browser.edge) {
-				document.getElementById("qunit-fixture").classList.add("visible");
-			}
 		});
 	});
 
@@ -217,11 +207,6 @@ sap.ui.define([
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var pSequence = Promise.resolve();
 		var iPadding = 14;
-
-		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-		if (Device.browser.msie || Device.browser.edge) {
-			document.getElementById("qunit-fixture").classList.remove("visible");
-		}
 
 		function test(mTestSettings) {
 			pSequence = pSequence.then(function() {
@@ -287,11 +272,6 @@ sap.ui.define([
 			oTable.destroy();
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
-
-			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-			if (Device.browser.msie || Device.browser.edge) {
-				document.getElementById("qunit-fixture").classList.add("visible");
-			}
 		});
 	});
 
@@ -318,11 +298,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit[Device.browser.msie ? "skip" : "test"]("After rendering", function(assert) {
+	QUnit.test("After rendering", function(assert) {
 		assert.equal(this.oTable.getRows().length, 13, "Row count");
 	});
 
-	QUnit[Device.browser.msie ? "skip" : "test"]("Resize", function(assert) {
+	QUnit.test("Resize", function(assert) {
 		var that = this;
 
 		return this.oTable.qunit.resize({height: "765px"}).then(function() {
@@ -332,7 +312,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit[Device.browser.msie ? "skip" : "test"]("Changing visibility of an extension", function(assert) {
+	QUnit.test("Changing visibility of an extension", function(assert) {
 		var that = this;
 
 		this.oTable.getExtension()[0].setVisible(false);
@@ -345,7 +325,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit[Device.browser.msie ? "skip" : "test"]("Changing visibility of the footer", function(assert) {
+	QUnit.test("Changing visibility of the footer", function(assert) {
 		var that = this;
 
 		this.oTable.getFooter().setVisible(false);
@@ -358,7 +338,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit[Device.browser.msie ? "skip" : "test"]("Changing visibility of the creation row", function(assert) {
+	QUnit.test("Changing visibility of the creation row", function(assert) {
 		var that = this;
 
 		this.oTable.getCreationRow().setVisible(false);

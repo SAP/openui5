@@ -12,11 +12,6 @@
 	table-layout: fixed;
 }
 
-html[data-sap-ui-browser='ie11'] .sapMListTbl,
-html[data-sap-ui-browser^='ed'] .sapMListTbl {
-	padding: 1px; /* outline must be visible */
-}
-
 .sapMListTbl .sapMLIB {
 	display: table-row;
 }
@@ -140,13 +135,6 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	overflow: hidden;
 }
 
-html[data-sap-ui-browser^="ed"] .sapMListTblHighlightCell > .sapMLIBHighlight,
-html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight,
-html[data-sap-ui-browser^="ed"] .sapMListTblNavigatedCell > .sapMLIBNavigated,
-html[data-sap-ui-browser='ie11'] .sapMListTblNavigatedCell > .sapMLIBNavigated {
-	height: 40rem; /* IE11 and Edge cannot stretch the height of the cell content */
-}
-
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMListTbl");
 
@@ -222,7 +210,6 @@ html[data-sap-ui-browser='ie11'] .sapMListTblNavigatedCell > .sapMLIBNavigated {
 
 /* background-clip is required for Edge browser, so the focus outline of the first item is visible on all sides */
 /* backgound-clip is required in other browsers, so that focus outline is visible on all sides of the header row */
-html[data-sap-ui-browser^='ed'] .sapMTableTH,
 .sapMSticky .sapMListTblHeader:focus > .sapMTableTH {
 	background-clip: padding-box;
 }

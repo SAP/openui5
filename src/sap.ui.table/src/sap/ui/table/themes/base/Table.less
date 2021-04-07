@@ -41,10 +41,6 @@
 		flex: 1 1 auto;
 	}
 
-	html[data-sap-ui-browser^="ie"] & {
-		height: @_sap_ui_table_Table_HeaderHeight;
-	}
-
 	._sap_ui_table_Table_Header();
 }
 
@@ -86,10 +82,6 @@
 
 	> * {
 		flex: 1 1 auto;
-	}
-
-	html[data-sap-ui-browser^="ie"] & {
-		height: @_sap_ui_table_Table_FooterHeight;
 	}
 }
 
@@ -196,31 +188,6 @@
 	outline-color: @sapUiContentFocusColor;
 }
 
-html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
-
-	.sapUiTableOverlayArea:focus,
-	.sapUiTableCtrlEmpty:focus,
-	.sapUiTableCnt > .sapUiLocalBusyIndicator:focus {
-		outline-width: 0;
-	}
-
-	.sapUiTableOverlayArea:focus::before,
-	.sapUiTableCtrlEmpty:focus::before,
-	.sapUiTableCnt > .sapUiLocalBusyIndicator:focus::before {
-		position: absolute;
-		top: 2px;
-		left: 2px;
-		right: 2px;
-		bottom: 2px;
-		border-width: @_sap_ui_table_FocusOutlineWidth;
-		border-style: dotted;
-		border-color: @sapUiContentFocusColor;
-		content: "";
-		pointer-events: none;
-	}
-
-}
-
 .sapUiTable.sapUiTableOverlay {
 
 	/* Since in visibleRowCountMode=Auto, the table has no height, the overlay must be applied to every child div
@@ -281,11 +248,6 @@ html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
 	min-height: @_sap_ui_table_ColumnHeaderHeight;
 	border-bottom: @_sap_ui_table_Table_TableHeaderBorderWidth solid @_sap_ui_table_Table_TableHeaderBorderColor;
 	color: @sapUiListTextColor;
-}
-
-/* FIX for IE fixed columns */
-html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
-	width: 100%;
 }
 
 .sapUiTableCHdr .sapUiTableColHdrCnt {

@@ -49,25 +49,6 @@ sap.ui.define([
 			oWheelEvent.deltaMode = iDeltaMode;
 			oWheelEvent.shiftKey = bShift;
 			oWheelEvent.initEvent("wheel", true, true);
-
-			if (Device.browser.msie) {
-				var fnOriginalPreventDefault = oWheelEvent.preventDefault;
-				var bDefaultPrevented = false;
-
-				Object.defineProperty(oWheelEvent, "defaultPrevented", {
-					get: function() {
-						return bDefaultPrevented;
-					},
-					set: function(value) {
-						bDefaultPrevented = value;
-					}
-				});
-
-				oWheelEvent.preventDefault = function() {
-					fnOriginalPreventDefault.apply(this, arguments);
-					oWheelEvent.defaultPrevented = true;
-				};
-			}
 		}
 
 		return oWheelEvent;
@@ -141,25 +122,6 @@ sap.ui.define([
 				}
 			];
 			oTouchEvent.initEvent("touchmove", true, true);
-
-			if (Device.browser.msie) {
-				var fnOriginalPreventDefault = oTouchEvent.preventDefault;
-				var bDefaultPrevented = false;
-
-				Object.defineProperty(oTouchEvent, "defaultPrevented", {
-					get: function() {
-						return bDefaultPrevented;
-					},
-					set: function(value) {
-						bDefaultPrevented = value;
-					}
-				});
-
-				oTouchEvent.preventDefault = function() {
-					fnOriginalPreventDefault.apply(this, arguments);
-					oTouchEvent.defaultPrevented = true;
-				};
-			}
 		}
 
 		oTouchTargetElement.dispatchEvent(oTouchEvent);
@@ -590,11 +552,7 @@ sap.ui.define([
 		var iInitialVSbHeight = getHeight(oVSb);
 
 		function getHeight(oElement) {
-			if (Device.browser.msie || Device.browser.edge) {
-				return parseInt(window.getComputedStyle(oElement).height);
-			} else {
-				return oElement.getBoundingClientRect().height;
-			}
+			return oElement.getBoundingClientRect().height;
 		}
 
 		oGetVerticalScrollbarHeightStub.returns(15);
@@ -1127,11 +1085,6 @@ sap.ui.define([
 					return oTable.qunit.whenHSbScrolled().then(function() {
 						assert.notStrictEqual(getScrollLeft(bRTL), iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did change");
 						assert.ok(isScrolledIntoView(oDomElementToFocus, bRTL), sTestTitle + ": The focused cell is fully visible");
-
-						if (Device.browser.msie) {
-							// For some reason there are a couple of scroll events in IE. We need to wait until they are all processed.
-							return TableQUnitUtils.wait(0);
-						}
 					});
 				} else {
 					return TableQUnitUtils.wait(50).then(function() {
@@ -1169,9 +1122,6 @@ sap.ui.define([
 		}).then(function() {
 			return test("Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 200, true);
 		}).then(function() {
-			if (Device.browser.msie) {
-				return Promise.reject("Skipped in IE");
-			}
 			oTable.getColumns()[1].setWidth("1000px");
 			oTable.getColumns()[2].setWidth("100px");
 			oTable.getColumns()[3].setWidth("1000px");
@@ -3503,10 +3453,6 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.qunit.preventFocusOnTouch();
 			initTouchScrolling(oTable.qunit.getDataCell(0, 0));
-
-			if (Device.browser.msie) {
-				return TableQUnitUtils.wait(0);
-			}
 		}).then(scrollWithTouch(20)).then(function() {
 			that.assertPosition(assert, 0, 20, 20, "Scrolled 20 pixels down");
 		}).then(scrollWithTouch(30)).then(function() {

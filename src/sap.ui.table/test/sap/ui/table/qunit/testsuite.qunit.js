@@ -1,6 +1,5 @@
 sap.ui.define([
-	"sap/ui/Device"
-], function(Device) {
+], function() {
 	"use strict";
 
 	return {
@@ -68,9 +67,6 @@ sap.ui.define([
 
 			/* Control */
 			"Table": {
-				qunit: {
-					testTimeout: Device.browser.msie ? 90000 : undefined /*default*/ // BCP: 1880602291
-				},
 				sinon: false, /*uses Mockserver*/
 				ui5: {
 					// Test has dependencies to sap.ui.unified and sap.m modules

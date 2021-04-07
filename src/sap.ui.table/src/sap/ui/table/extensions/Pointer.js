@@ -96,12 +96,6 @@ sap.ui.define([
 		_handleClickSelection: function(oEvent, $Cell, oTable) {
 			TableUtils.toggleRowSelection(oTable, $Cell, null, function(iRowIndex) {
 				var oSelectionPlugin = oTable._getSelectionPlugin();
-
-				// IE and Edge perform a text selection if holding shift while clicking. This is not desired for range selection of rows.
-				if ((Device.browser.msie || Device.browser.edge) && oEvent.shiftKey) {
-					oTable._clearTextSelection();
-				}
-
 				var oSelMode = oTable.getSelectionMode();
 
 				// Single selection

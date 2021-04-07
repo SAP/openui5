@@ -271,9 +271,6 @@ sap.ui.define([
 
 		// resizer should be way out of screen when the table gets rendered
 		var nLeft = oTable.$("rsz").position().left;
-		if (Device.browser.msie || Device.browser.edge) {
-			nLeft = Math.round(nLeft);
-		}
 		assert.equal(nLeft, "-5", "Resizer is at the correct initial position");
 
 		var iWidth = oColumn.$().width();

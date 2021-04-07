@@ -1009,12 +1009,6 @@ sap.ui.define([
 		var sSelectionMode = this.getSelectionMode();
 		var oSelectionPlugin = this._getSelectionPlugin();
 
-		// IE fires the paste event only on editable DOM elements, but we need it on any element, e.g. cells.
-		if (Device.browser.msie && KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.V, ModKey.CTRL)) {
-			this.onpaste(oEvent);
-			return;
-		}
-
 		// Toggle the action mode by changing the focus between a data cell and its interactive controls.
 		if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F2)) {
 			var bIsInActionMode = oKeyboardExtension.isInActionMode();

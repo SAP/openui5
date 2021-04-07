@@ -626,11 +626,6 @@ sap.ui.define([
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var sequence = Promise.resolve();
 
-		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-		if (Device.browser.msie || Device.browser.edge) {
-			document.getElementById("qunit-fixture").classList.remove("visible");
-		}
-
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
@@ -748,19 +743,10 @@ sap.ui.define([
 		return sequence.then(function() {
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
-			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-			if (Device.browser.msie || Device.browser.edge) {
-				document.getElementById("qunit-fixture").classList.add("visible");
-			}
 		});
 	});
 
 	QUnit.test("Row height; After binding context update", function(assert) {
-		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-		if (Device.browser.msie || Device.browser.edge) {
-			document.getElementById("qunit-fixture").classList.remove("visible");
-		}
-
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
 		oTable.addColumn(new Column({template: new HeightTestControl({height: "{height}"})}));
@@ -784,11 +770,6 @@ sap.ui.define([
 			assert.strictEqual(aRowDomRefs.rowFixedPart.getBoundingClientRect().height, 89, "Fixed part height is ok");
 			assert.strictEqual(aRowDomRefs.rowScrollPart.getBoundingClientRect().height, 89, "Scrollable part height is ok");
 			assert.strictEqual(aRowDomRefs.rowAction.getBoundingClientRect().height, 89, "Action height is ok");
-		}).then(function() {
-			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-			if (Device.browser.msie || Device.browser.edge) {
-				document.getElementById("qunit-fixture").classList.add("visible");
-			}
 		});
 	});
 
@@ -797,11 +778,6 @@ sap.ui.define([
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var sequence = Promise.resolve();
 		var iPadding = 14;
-
-		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-		if (Device.browser.msie || Device.browser.edge) {
-			document.getElementById("qunit-fixture").classList.remove("visible");
-		}
 
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
@@ -1038,30 +1014,26 @@ sap.ui.define([
 			});
 		}).then(function() {
 			var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
-			var iHeightWithoutIcons = Device.browser.msie ? aRowDomRefs[0].offsetHeight : aRowDomRefs[0].getBoundingClientRect().height;
+			var iHeightWithoutIcons = aRowDomRefs[0].getBoundingClientRect().height;
 			var iFixedPartHeight;
 			var iScrollablePartHeight;
 
 			oTable.getColumns()[1].setSorted(true);
 			oTable.getColumns()[1].setFiltered(true);
-			iFixedPartHeight = Device.browser.msie ? aRowDomRefs[0].offsetHeight : aRowDomRefs[0].getBoundingClientRect().height;
-			iScrollablePartHeight = Device.browser.msie ? aRowDomRefs[1].offsetHeight : aRowDomRefs[1].getBoundingClientRect().height;
+			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
+			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
 			assert.ok(iFixedPartHeight > iHeightWithoutIcons, "Height increased after adding icons");
 			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after adding icons");
 
 			oTable.getColumns()[1].setSorted(false);
 			oTable.getColumns()[1].setFiltered(false);
-			iFixedPartHeight = Device.browser.msie ? aRowDomRefs[0].offsetHeight : aRowDomRefs[0].getBoundingClientRect().height;
-			iScrollablePartHeight = Device.browser.msie ? aRowDomRefs[1].offsetHeight : aRowDomRefs[1].getBoundingClientRect().height;
+			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
+			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
 			assert.strictEqual(iFixedPartHeight, iHeightWithoutIcons, "After removing the icons, the height is the same as before");
 			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after removing icons");
 		}).then(function() {
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
-			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-			if (Device.browser.msie || Device.browser.edge) {
-				document.getElementById("qunit-fixture").classList.add("visible");
-			}
 		});
 
 		return sequence;
@@ -4353,15 +4325,7 @@ sap.ui.define([
 		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Auto);
 
 		function fireTransitionEndEvent() {
-			var oEvent;
-
-			if (Device.browser.msie) {
-				oEvent = document.createEvent("CustomEvent");
-				oEvent.initCustomEvent("transitionend", true, true, true);
-			} else {
-				oEvent = new Event("transitionend");
-			}
-
+			var oEvent = new Event("transitionend");
 			document.body.dispatchEvent(oEvent);
 		}
 
@@ -5008,15 +4972,7 @@ sap.ui.define([
 
 		function fireResizeEvent() {
 			return new Promise(function(resolve) {
-				var oEvent;
-
-				if (Device.browser.msie) {
-					oEvent = document.createEvent("CustomEvent");
-					oEvent.initCustomEvent("resize", true, true, true);
-				} else {
-					oEvent = new Event("resize");
-				}
-
+				var oEvent = new Event("resize");
 				window.dispatchEvent(oEvent);
 
 				setTimeout(function() {

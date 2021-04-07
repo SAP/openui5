@@ -421,16 +421,8 @@ sap.ui.define([
 				};
 
 				function onRowsUpdated() {
-					if (Device.browser.msie) {
-						/* BCP: 1780405070 */
-						window.setTimeout(function() {
-							mTestConfig.test();
-							resolve();
-						}, 1000);
-					} else {
-						mTestConfig.test();
-						resolve();
-					}
+					mTestConfig.test();
+					resolve();
 				}
 
 				function onAfterRendering() {

@@ -310,10 +310,6 @@
 	z-index: 4; /* Ensure Action Area before Resize/Reorder bars */
 	width: @_sap_ui_table_RowActionColumnWidth;
 
-	html[data-sap-ui-browser^="ie"] & {
-		width: calc(@_sap_ui_table_RowActionColumnWidthForIECalc);
-	}
-
 	.sapUiTableRAct &,
 	.sapUiTableRActS & {
 		display: block;
@@ -321,44 +317,24 @@
 
 	.sapUiTableRActS & {
 		width: @_sap_ui_table_RowActionColumnSmallWidth;
-
-		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnSmallWidthForIECalc);
-		}
 	}
 
 	.sapUiSizeCozy & {
 		width: @_sap_ui_table_RowActionColumnWidthCozy;
-
-		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnWidthCozyForIECalc);
-		}
 	}
 
 	.sapUiSizeCozy .sapUiTableRActS &,
 	.sapUiSizeCozy.sapUiTableRActS & {
 		width: @_sap_ui_table_RowActionColumnSmallWidthCozy;
-
-		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnSmallWidthCozyForIECalc);
-		}
 	}
 
 	.sapUiSizeCondensed & {
 		width: @_sap_ui_table_RowActionColumnWidthCondensed;
-
-		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnWidthCondensedForIECalc);
-		}
 	}
 
 	.sapUiSizeCondensed .sapUiTableRActS &,
 	.sapUiSizeCondensed.sapUiTableRActS & {
 		width: @_sap_ui_table_RowActionColumnSmallWidthCondensed;
-
-		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnSmallWidthCondensedForIECalc);
-		}
 	}
 
 	> span {
@@ -397,50 +373,26 @@
 	align-items: center;
 	min-width: @_sap_ui_table_RowActionColumnWidth;
 
-	html[data-sap-ui-browser^="ie"] & {
-		min-width: calc(@_sap_ui_table_RowActionColumnWidthForIECalc);
-	}
-
 	.sapUiTableRActS & {
 		min-width: @_sap_ui_table_RowActionColumnSmallWidth;
-
-		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnSmallWidthForIECalc);
-		}
 	}
 
 	.sapUiSizeCozy & {
 		min-width: @_sap_ui_table_RowActionColumnWidthCozy;
-
-		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnWidthCozyForIECalc);
-		}
 	}
 
 	.sapUiSizeCozy .sapUiTableRActS &,
 	.sapUiSizeCozy.sapUiTableRActS & {
 		min-width: @_sap_ui_table_RowActionColumnSmallWidthCozy;
-
-		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnSmallWidthCozyForIECalc);
-		}
 	}
 
 	.sapUiSizeCondensed & {
 		min-width: @_sap_ui_table_RowActionColumnWidthCondensed;
-
-		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnWidthCondensedForIECalc);
-		}
 	}
 
 	.sapUiSizeCondensed .sapUiTableRActS &,
 	.sapUiSizeCondensed.sapUiTableRActS & {
 		min-width: @_sap_ui_table_RowActionColumnSmallWidthCondensed;
-
-		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnSmallWidthCondensedForIECalc);
-		}
 	}
 
 	.sapUiTableRowNavIndicator & {

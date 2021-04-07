@@ -7,21 +7,12 @@
 @_sap_m_ListItemBase_Navigated: @sapUiListSelectionBorderColor;
 @_sap_m_ListItemBase_Detail_Delete_MarginLeft: 0.25rem;
 
-html[data-sap-ui-browser='ie11'] .sapMLIBFocusable:focus {
-	outline-width: 3px;
-}
-
 .sapMLIB.sapMLIBSelected {
 	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
 }
 
 .sapMLIBFocusable:focus {
 	outline-width: 0.125rem;
-}
-
-/* IE ignores outline-offset. Use an overlay: */
-.sapMLIBLegacyOutline:focus::before {
-	border: 0.125rem dotted @sapUiContentFocusColor;
 }
 
 .sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell:last-child)::before {

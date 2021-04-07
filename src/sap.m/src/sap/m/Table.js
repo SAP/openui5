@@ -401,10 +401,6 @@ sap.ui.define([
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 		this.updateSelectAllCheckbox();
-		// force IE repaint in fixed layout mode
-		if (this.getFixedLayout()) {
-			this._forceStyleChange();
-		}
 		this._renderOverlay();
 
 		if (this._bFirePopinChanged) {
@@ -721,11 +717,6 @@ sap.ui.define([
 			this.$("tblBody").find(".sapMListTblSubRowCell").attr("colspan", this.getColSpan());
 		}
 
-		// force IE to repaint in fixed layout mode
-		if (this.getFixedLayout()) {
-			this._forceStyleChange();
-		}
-
 		// remove or show column header row(thead) according to column visibility value
 		if (!bColVisible && bHeaderVisible) {
 			$headRow[0].className = "sapMListTblRow sapMLIBFocusable sapMListTblHeader";
@@ -733,15 +724,6 @@ sap.ui.define([
 		} else if (bColVisible && !bHeaderVisible && !aVisibleColumns.length) {
 			$headRow[0].className = "sapMListTblHeaderNone";
 			this._headerHidden = true;
-		}
-	};
-
-	// force IE to repaint
-	Table.prototype._forceStyleChange = function() {
-		if (Device.browser.msie || Device.browser.edge) {
-			var oTableStyle = this.getTableDomRef().style;
-			oTableStyle.listStyleType = "circle";
-			window.setTimeout(function() { oTableStyle.listStyleType = "none"; }, 0);
 		}
 	};
 
@@ -1003,19 +985,7 @@ sap.ui.define([
 			this._setFirstLastVisibleCells(oTarget);
 		}
 
-		if (this._bThemeChanged) {
-			// force IE/Edge to repaint if theme changed
-			this._bThemeChanged = false;
-			this._forceStyleChange();
-		}
-
 		ListBase.prototype.onfocusin.call(this, oEvent);
-	};
-
-	// event listener for theme changed
-	Table.prototype.onThemeChanged = function() {
-		ListBase.prototype.onThemeChanged.call(this);
-		this._bThemeChanged = true;
 	};
 
 	// returns the class that should be added to tbody element
@@ -1051,19 +1021,6 @@ sap.ui.define([
 
 		//var oRow = sap.ui.getCore().byId(jQuery(oEvent.target).closest(".sapMLIB").attr("id"));
 		this.firePaste({data: aData});
-	};
-
-	/**
-	 * Handles key down CTRL+v event and calls onpaste event that fires Paste event of the Table.
-	 * It is a workaround for IE browser as it allows browser paste event on input controls only
-	 * @private
-	 * @param oEvent - browser key down event
-	 */
-	Table.prototype.onkeydown = function(oEvent) {
-		ListBase.prototype.onkeydown.apply(this, arguments);
-		if (Device.browser.msie && oEvent.ctrlKey && oEvent.which === KeyCodes.V) {
-			this.onpaste(oEvent);
-		}
 	};
 
 	Table.prototype.ondragenter = function(oEvent) {
@@ -1111,9 +1068,7 @@ sap.ui.define([
 			mPrioColumns[sImportance].push(oColumn);
 		});
 
-		var aPrioColumns = Object.keys(mPrioColumns).map(function(sPriority) {
-			return mPrioColumns[sPriority];
-		});
+		var aPrioColumns = Object.values(mPrioColumns);
 		var oMostImportantColumn = aPrioColumns.find(String)[0];
 
 		aPrioColumns.reduce(function(fTotalWidth, aColumns) {
