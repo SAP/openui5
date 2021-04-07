@@ -33,11 +33,19 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function addChange(sReference, oChange) {
+	function addChange(oChange) {
 		var oChangeContent = oChange.getDefinition();
-		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+		var mCompVariantsMap = FlexState.getCompVariantsMap(oChange.getComponent());
 		mCompVariantsMap[oChange.getSelector().persistencyKey].changes.push(oChange);
 		return oChangeContent;
+	}
+
+	function removeChange(oChange) {
+		var sPersistencyKey = oChange.getSelector().persistencyKey;
+		var mCompVariantsMap = FlexState.getCompVariantsMap(oChange.getComponent());
+		mCompVariantsMap[sPersistencyKey].changes = mCompVariantsMap[sPersistencyKey].changes.filter(function (oChangeInMap) {
+			return oChangeInMap !== oChange;
+		});
 	}
 
 	function createOrUpdateChange(mPropertyBag, oContent, sChangeType) {
@@ -238,7 +246,7 @@ sap.ui.define([
 		}
 	}
 
-	function revertVariant(oVariant, mPropertyBag) {
+	function revertVariantUpdate(oVariant, mPropertyBag) {
 		oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
 		oVariant.storeFavorite(mPropertyBag.favorite);
 		oVariant.storeContexts(mPropertyBag.contexts);
@@ -246,6 +254,17 @@ sap.ui.define([
 			oVariant.setText("variantName", mPropertyBag.name);
 		}
 		oVariant.storeContent(mPropertyBag.content || oVariant.getContent());
+		return oVariant;
+	}
+
+	function revertVariantChange(oVariant, mPropertyBag) {
+		oVariant.setExecuteOnSelection(mPropertyBag.executeOnSelection);
+		oVariant.setFavorite(mPropertyBag.favorite);
+		oVariant.setContexts(mPropertyBag.contexts);
+		if (mPropertyBag.name) {
+			oVariant.setName(mPropertyBag.name);
+		}
+		oVariant.setContent(mPropertyBag.content || oVariant.getContent());
 		return oVariant;
 	}
 
@@ -371,17 +390,10 @@ sap.ui.define([
 		return oFlexObject;
 	};
 
-	function storeRevertDataInVariant(mPropertyBag, oVariant) {
-		var aUnchangedValues = [];
-		if (mPropertyBag.favorite === undefined) {
-			aUnchangedValues.push("favorite");
-		}
-		if (mPropertyBag.executeOnSelection === undefined) {
-			aUnchangedValues.push("executeOnSelection");
-		}
-		// TODO: check if this is also sufficient in case of a changed favorite & executeOnSelection property
+	function storeRevertDataInVariant(mPropertyBag, oVariant, sOperationType, oChange) {
 		var oRevertData = {
-			type: CompVariantState.operationType.ContentUpdate,
+			type: sOperationType,
+			change: oChange,
 			content: {
 				previousState: oVariant.getState(),
 				previousContent: oVariant.getContent(),
@@ -417,15 +429,9 @@ sap.ui.define([
 	CompVariantState.updateVariant = function (mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
 
-		// revert handling
-		if (mPropertyBag.revert) {
-			return revertVariant(oVariant, mPropertyBag);
-		}
-
 		var sLayer = determineLayer(mPropertyBag);
 
 		if (!oVariant.getPersisted() || oVariant.getLayer() !== sLayer) {
-			storeRevertDataInVariant(mPropertyBag, oVariant);
 			var oChangeDefinition = Change.createInitialFileContent({
 				changeType: "updateVariant",
 				layer: sLayer,
@@ -454,11 +460,11 @@ sap.ui.define([
 			}
 
 			var oChange = new Change(oChangeDefinition);
-			addChange(mPropertyBag.reference, oChange);
-
+			addChange(oChange);
+			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.UpdateVariantChange, oChange);
 			CompVariantMerger.applyChangeOnVariant(oVariant, oChange);
 		} else {
-			storeRevertDataInVariant(mPropertyBag, oVariant);
+			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.ContentUpdate);
 
 			if (mPropertyBag.executeOnSelection !== undefined) {
 				oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
@@ -486,7 +492,8 @@ sap.ui.define([
 	 */
 	CompVariantState.operationType = {
 		StateUpdate: "StateUpdate",
-		ContentUpdate: "ContentUpdate"
+		ContentUpdate: "ContentUpdate",
+		UpdateVariantChange: "UpdateVariantChange"
 	};
 
 	/**
@@ -535,10 +542,26 @@ sap.ui.define([
 		var oRevertDataContent = oRevertData.getContent();
 
 		switch (oRevertData.getType()) {
-			case CompVariantState.operationType.ContentUpdate:
-				CompVariantState.updateVariant(
+			case CompVariantState.operationType.UpdateVariantChange:
+				var oChange = oRevertData.getChange();
+				oVariant.removeChange(oChange);
+				removeChange(oChange);
+				revertVariantChange(
+					oVariant,
 					Object.assign({
-						revert: true,
+						name: oRevertDataContent.previousName,
+						content: oRevertDataContent.previousContent,
+						favorite: oRevertDataContent.previousFavorite,
+						executeOnSelection: oRevertDataContent.previousExecuteOnSelection,
+						contexts: oRevertDataContent.previousContexts
+					},
+					_pick(mPropertyBag, ["reference", "persistencyKey", "id"])
+				));
+				break;
+			case CompVariantState.operationType.ContentUpdate:
+				revertVariantUpdate(
+					oVariant,
+					Object.assign({
 						name: oRevertDataContent.previousName,
 						content: oRevertDataContent.previousContent,
 						favorite: oRevertDataContent.previousFavorite,
@@ -564,6 +587,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Map of parameters, see below
 	 * @param {string} mPropertyBag.reference - Flex reference of the app
+	 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
 	 *
 	 * @returns {Promise} Promise resolving with an array of responses or rejecting with the first error
 	 * @private

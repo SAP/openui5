@@ -641,6 +641,147 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Given a variant in another layer was updated and reverted multiple times (update, update, revert, update, revert, revert)", function (assert) {
+			var oWriteStub = sandbox.stub(Storage, "write").resolves();
+			function assertTheVariantDefinitionIsTheSame(assert, oVariant, oInitialVariantData) {
+				var oDefinition = oVariant.getDefinition();
+				assert.equal(oDefinition.reference, oInitialVariantData.reference, "DEFINITION: the reference is untouched");
+				assert.equal(oDefinition.selector.persistencyKey, oInitialVariantData.persistencyKey, "DEFINITION: the persistencyKey is untouched");
+				assert.equal(oDefinition.changeType, oInitialVariantData.changeSpecificData.type, "DEFINITION: the type is untouched");
+				assert.equal(oDefinition.content, oInitialVariantData.changeSpecificData.content, "DEFINITION: the content is untouched");
+				assert.equal(oDefinition.layer, oInitialVariantData.changeSpecificData.layer, "DEFINITION: the layer is untouched");
+				assert.equal(oDefinition.texts.variantName.value, oInitialVariantData.changeSpecificData.texts.variantName, "DEFINITION: the name is untouched");
+			}
+
+			var oVariant = CompVariantState.add(oVariantData);
+			var sVariantId = oVariant.getId();
+
+			// ensure a persisted state and empty revertData aggregation
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			}).then(function () {
+				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data is present");
+				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+
+				assert.ok(true, "STEP: <<UPDATE>>, update, revert, update, revert, revert)");
+				CompVariantState.updateVariant({
+					isUserDependent: true,
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey,
+					favorite: true,
+					executeOnSelection: true
+				});
+				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
+				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
+				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
+				assert.equal(oVariant.getChanges().length, 1, "the changes list contains one entry");
+				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
+
+				assert.ok(true, "STEP: update, <<UPDATE>>, revert, update, revert, revert");
+				CompVariantState.updateVariant({
+					isUserDependent: true,
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey,
+					favorite: false,
+					content: {
+						someKey: "someValue"
+					},
+					contexts: {
+						role: ["someRole"]
+					},
+					name: "myNewName"
+				});
+				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
+				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
+				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
+				assert.equal(oVariant.getChanges().length, 2, "the changes list contains two entries");
+				assert.deepEqual(oVariant.getContent(), {
+					someKey: "someValue"
+				}, "the content is correct");
+				assert.equal(oVariant.getName(), "myNewName", "and the name is updated");
+				assert.equal(oVariant.getContexts().role[0], "someRole", "the variant has the correct contexts");
+
+				assert.ok(true, "STEP: update, update, <<REVERT>>, update, revert, revert");
+				CompVariantState.revert({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
+				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
+				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
+				assert.equal(oVariant.getChanges().length, 1, "the changes list contains one entry");
+				assert.deepEqual(oVariant.getContent(), {}, "the content is correct");
+				assert.equal(oVariant.getName(), "initialName", "and the name is also reverted");
+				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
+
+				assert.ok(true, "STEP: update, update, revert, <<UPDATE>>, revert, revert)");
+				CompVariantState.updateVariant({
+					isUserDependent: true,
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey,
+					favorite: false,
+					content: {
+						someKey: "someValue"
+					},
+					contexts: {
+						role: ["someOtherRole"]
+					}
+				});
+				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
+				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
+				assert.equal(oVariant.getChanges().length, 2, "the changes list contains two entries");
+				assert.deepEqual(oVariant.getContent(), {
+					someKey: "someValue"
+				}, "the content is correct");
+				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
+				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getContexts().role[0], "someOtherRole", "the variant has the correct contexts");
+
+				assert.ok(true, "STEP: update, update, revert, update, <<REVERT>>, revert");
+				CompVariantState.revert({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
+				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
+				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
+				assert.equal(oVariant.getFavorite(), true, "the favorite flag was set correct");
+				assert.equal(oVariant.getChanges().length, 1, "the changes list contains one entry");
+				assert.deepEqual(oVariant.getContent(), {}, "the content is correct");
+
+				assert.ok(true, "STEP: update, update, revert, update, revert, <<REVERT>>");
+				CompVariantState.revert({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+				assertTheVariantDefinitionIsTheSame(assert, oVariant, oVariantData);
+				assert.equal(oVariant.getFavorite(), false, "the favorite flag was set correct");
+				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data entries are present");
+				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(oVariant.getChanges().length, 0, "the changes list contains no entries");
+				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
+				assert.deepEqual(oVariant.getContent(), {}, "the content was set correct");
+			}).then(function () {
+				CompVariantState.persist({
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+			}).then(function () {
+				assert.equal(oWriteStub.callCount, 1, "only the initial variant was written");
+			});
+		});
+
 		QUnit.test("Given a variant was was added and a persist was called", function(assert) {
 			var oVariant = CompVariantState.add(oVariantData);
 			sandbox.stub(Storage, "write").resolves();
