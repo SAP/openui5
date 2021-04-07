@@ -69,6 +69,8 @@ sap.ui.define([
 				oComponentContainer.placeAt("content");
 				return oComponent.getRootControl().loaded();
 			}).then(function() {
+				return oComponent.getRootControl().getContent()[1].loaded();
+			}).then(function() {
 				sap.ui.getCore().applyChanges();
 			});
 		}

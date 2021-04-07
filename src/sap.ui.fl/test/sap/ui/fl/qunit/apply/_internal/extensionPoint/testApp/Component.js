@@ -1,8 +1,8 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
-function(jQuery, Component1) {
+sap.ui.define(["sap/ui/core/UIComponent"],
+function(Component) {
 	"use strict";
 
-	var Component = Component1.extend("sap.ui.fl.qunit.extensionPoint.testApp.Component", {
+	return Component.extend("sap.ui.fl.qunit.extensionPoint.testApp.Component", {
 
 		metadata: {
 			version: "1.0",
@@ -15,5 +15,4 @@ function(jQuery, Component1) {
 			manifest: "json"
 		}
 	});
-	return Component;
 });
