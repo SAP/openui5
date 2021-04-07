@@ -95,7 +95,7 @@ sap.ui.define([
 
 			for (var i = 0; i < 2; i++) {
 				//the calcRange result must be converted from local time to UTC and into the correct type format.
-				if (oType instanceof sap.ui.model.odata.type.Date || oType instanceof sap.ui.model.type.Date) {
+				if (oType.isA("sap.ui.model.odata.type.Date") || oType.isA("sap.ui.model.type.Date") || oType.isA("sap.ui.model.type.DateTime")) {
 					//TODO only for a Date type we have to convert the values into UTC - because it's type specific we should move this into a delegate
 					aRange[i].oDate = DateUtil.localToUtc(aRange[i].oDate);
 				}

@@ -280,7 +280,7 @@ function(
 						sRes = oFilter.sPath + " " + oFilter.sOperator + " " + FilterConverter.prettyPrintFilters(oFilter.oCondition);
 					} else {
 						sRes = oFilter.sPath + " " + oFilter.sOperator + " '" + oFilter.oValue1 + "'";
-						if (oFilter.sOperator === FilterOperator.BT) {
+						if ([FilterOperator.BT, FilterOperator.NB].indexOf(oFilter.sOperator) >= 0) {
 							sRes += "...'" + oFilter.oValue2 + "'";
 						}
 					}
