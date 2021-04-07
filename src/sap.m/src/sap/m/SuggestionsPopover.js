@@ -942,7 +942,7 @@ sap.ui.define([
 			i;
 
 		aItems = aItems.filter(function(oItem){
-			return !(oItem.isA("sap.ui.core.SeparatorItem") || oItem.isA("sap.m.GroupHeaderListItem"));
+			return !(oItem.isA("sap.ui.core.SeparatorItem") || oItem.isA("sap.m.GroupHeaderListItem") || oItem.isA("sap.m.ColumnListItem") && !oItem.getVisible());
 		});
 
 		iLength = aItems.length;
