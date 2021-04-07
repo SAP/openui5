@@ -6,8 +6,6 @@
 
 sap.ui.define([
 	"sap/ui/mdc/field/FieldValueHelpMdcTableWrapper",
-	"sap/ui/mdc/field/FieldValueHelpUITableWrapper",
-	"sap/ui/mdc/field/FieldValueHelpMTableWrapper",
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
 	"sap/ui/mdc/field/InParameter",
 	"sap/ui/mdc/field/OutParameter",
@@ -17,8 +15,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel"
 ], function (
 		FieldValueHelpMdcTableWrapper,
-		FieldValueHelpUITableWrapper,
-		FieldValueHelpMTableWrapper,
 		FieldValueHelpDelegate,
 		InParameter,
 		OutParameter,
@@ -193,7 +189,6 @@ sap.ui.define([
 		iMaxConditions = -1;
 		bUseInParameters = false;
 		bUseOutParameters = false;
-		//FieldValueHelpMdcTableWrapper._init();
 		oModel.destroy();
 		oModel = undefined;
 
@@ -203,13 +198,19 @@ sap.ui.define([
 		}
 	};
 
-	QUnit.module("API", {
+	QUnit.module("Basics", {
 		beforeEach: function() {
 			_initWrapper(false);
 			},
 		afterEach: _teardown
 	});
 
+	QUnit.test("Instantly cloning wrapper", function(assert) {
+		_initTable(false, new sap.ui.mdc.table.GridTableType({rowCountMode: "Fixed"}));
+		var oClone = oWrapper.clone();
+		assert.notOk(oWrapper.OInnerWrapperClass, "OInnerWrapperClass not yet available.");
+		assert.ok(oClone, "oWrapper was cloned successfully");
+	});
 
 	QUnit.test("initialize grid table", function(assert) {
 		var fnDone = assert.async();
@@ -222,7 +223,7 @@ sap.ui.define([
 		assert.equal(oContent, oTable, "oWrapper content");
 
 		oWrapper._oInnerWrapperClassPromise.then(function () {
-			assert.ok(oWrapper.OInnerWrapperClass === FieldValueHelpUITableWrapper, "oWrapper inner class");
+			assert.ok(oWrapper.OInnerWrapperClass.getMetadata().getName() === "sap.ui.mdc.field.FieldValueHelpUITableWrapper", "oWrapper inner class");
 			fnDone();
 		});
 	});
@@ -238,7 +239,7 @@ sap.ui.define([
 		assert.equal(oContent, oTable, "oWrapper content");
 
 		oWrapper._oInnerWrapperClassPromise.then(function () {
-			assert.ok(oWrapper.OInnerWrapperClass === FieldValueHelpMTableWrapper, "oWrapper inner class");
+			assert.ok(oWrapper.OInnerWrapperClass.getMetadata().getName() === "sap.ui.mdc.field.FieldValueHelpMTableWrapper", "oWrapper inner class");
 			fnDone();
 		});
 	});
