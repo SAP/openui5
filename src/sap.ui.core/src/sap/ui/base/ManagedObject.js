@@ -3213,7 +3213,7 @@ sap.ui.define([
 	 *   subclass of <code>sap.ui.model.PropertyBinding</code>
 	 * @property {object} [events=null]
 	 *   Map of event handler functions keyed by the name of the binding events that they should be attached to
-	 * @property {sap.ui.core.PropertyBindingInfo[]} [parts]
+	 * @property {sap.ui.base.ManagedObject.PropertyBindingInfo[]} [parts]
 	 *   Array of binding info objects for the parts of a composite binding; the structure of
 	 *   each binding info is the same as described for the <code>oBindingInfo</code> as a whole.
 	 *
