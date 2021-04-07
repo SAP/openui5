@@ -1356,8 +1356,18 @@ sap.ui.define([
 
 			if (this.bCheckValue) { // ManagedObjectObserver checks value changes on the control
 				this.oObserver = this.oObserver || new ManagedObjectObserver(function (oChange) {
-					that.checkValue(assert, oChange.current, sControlId,
-						/*TODO only for sap.ui.table.Row*/ oChange.object.getParent().getIndex());
+					var i,
+						sId = oChange.object.getId(),
+						oParent = oChange.object.getParent();
+
+					sId = sId.slice(sId.indexOf("--") + 2); // strip view ID
+					i = sId.indexOf("-");
+					if (i > 0) {
+						sId = sId.slice(0, i); // strip clone ID if available
+					}
+
+					that.checkValue(assert, oChange.current, sId,
+						/*TODO only for sap.ui.table.Row*/oParent.getIndex && oParent.getIndex());
 				});
 				if (bInList) {
 					this.oTemplateObserver = this.oTemplateObserver
@@ -8253,6 +8263,288 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(function () {
 			return that.checkValueState(assert, that.oView.byId("price"), "Error",
 				"EnterNumberFraction 2");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Currency values with showNumber and showMeasure.
+	// BCP: 2170063390
+	//TODO: activate the test if NumberFormat considers showNumber===false (do not format the
+	// currency to empty string if the amount is cleared and vice versa
+	QUnit.skip("OData Currency type with showNumber and showMeasure", function (assert) {
+		var oAmountControl, oCurrencyControl,
+			oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=baz", {
+				defaultBindingMode : "TwoWay",
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox binding="{/ProductSet(\'P1\')}">\
+	<Input id="amount" value="{\
+		parts : [{\
+			constraints : {scale : \'variable\'},\
+			path : \'Price\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'CurrencyCode\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestCurrencyCodes\',\
+			targetType : \'any\'\
+		}],\
+		formatOptions : {emptyString : null, showMeasure : false},\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Currency\'\
+	}" />\
+	<Input id="currency" value="{\
+		parts : [{\
+			constraints : {scale : \'variable\'},\
+			path : \'Price\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'CurrencyCode\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestCurrencyCodes\',\
+			targetType : \'any\'\
+		}],\
+		formatOptions : {emptyString : null, showNumber : false},\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Currency\'\
+	}" />\
+	<Text id="price" text="{\
+		parts : [{\
+			constraints : {scale : \'variable\'},\
+			path : \'Price\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'CurrencyCode\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestCurrencyCodes\',\
+			targetType : \'any\'\
+		}],\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Currency\'\
+	}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductSet('P1')?foo=baz", {
+				ProductID : "P1",
+				Price : "12.3",
+				CurrencyCode : "EUR"
+			})
+			.expectRequest("SAP__Currencies?foo=baz&$skip=0&$top=5000", {
+				results : [{
+					CurrencyCode : "EUR",
+					DecimalPlaces : 2,
+					ISOCode : "EUR",
+					Text : "Euro"
+				}]
+			})
+			.expectValue("amount", "12.30")
+			.expectValue("currency", "EUR")
+			// "\u00a0" is a non-breaking space
+			.expectValue("price", "12.30\u00a0EUR");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oAmountControl = that.oView.byId("amount");
+			oCurrencyControl = that.oView.byId("currency");
+
+			that.expectValue("amount", "")
+				.expectValue("price", "");
+
+			// code under test
+			oAmountControl.setValue("");
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				that.checkValueState(assert, oAmountControl, "None", ""),
+				that.checkValueState(assert, oCurrencyControl, "None", "")
+			]);
+		}).then(function () {
+			that.expectValue("amount", "12.00")
+				.expectValue("amount", "12.00") //TODO why twice?
+				.expectValue("price", "12.00\u00a0EUR");
+
+			// code under test
+			oAmountControl.setValue("12");
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				that.checkValueState(assert, oAmountControl, "None", ""),
+				that.checkValueState(assert, oCurrencyControl, "None", "")
+			]);
+		}).then(function () {
+			that.expectValue("currency", "")
+				.expectValue("price", "12.00");
+
+			// code under test
+			oCurrencyControl.setValue("");
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				that.checkValueState(assert, oAmountControl, "None", ""),
+				that.checkValueState(assert, oCurrencyControl, "None", "")
+			]);
+		}).then(function () {
+			that.expectValue("amount", "98.70")
+				.expectValue("amount", "98.70") //TODO why twice?
+				.expectValue("price", "98.70");
+
+			// code under test - as currency code is still missing no value should be displayed
+			oAmountControl.setValue("98.7");
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				that.checkValueState(assert, oAmountControl, "None", ""),
+				that.checkValueState(assert, oCurrencyControl, "None", "")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Unit values with showNumber and showMeasure.
+	// BCP: 2170063390
+	//TODO: activate the test if NumberFormat considers showNumber===false (do not format the
+	// unit to empty string if the measure is cleared and vice versa
+	QUnit.skip("OData Unit type with showNumber and showMeasure", function (assert) {
+		var oMeasureControl, oUnitControl,
+			oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=baz", {
+				defaultBindingMode : "TwoWay",
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox binding="{/ProductSet(\'P1\')}">\
+	<Input id="measure" value="{\
+		parts : [{\
+			constraints : {scale : \'variable\'},\
+			path : \'WeightMeasure\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'WeightUnit\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestUnitsOfMeasure\',\
+			targetType : \'any\'\
+		}],\
+		formatOptions : {emptyString : null, showMeasure : false},\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Unit\'\
+	}" />\
+	<Input id="unit" value="{\
+		parts : [{\
+			constraints : {scale : \'variable\'},\
+			path : \'WeightMeasure\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'WeightUnit\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestUnitsOfMeasure\',\
+			targetType : \'any\'\
+		}],\
+		formatOptions : {emptyString : null, showNumber : false},\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Unit\'\
+	}" />\
+	<Text id="weight" text="{\
+		parts : [{\
+			constraints : {scale : \'variable\'},\
+			path : \'WeightMeasure\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'WeightUnit\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestUnitsOfMeasure\',\
+			targetType : \'any\'\
+		}],\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Unit\'\
+	}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductSet('P1')?foo=baz", {
+				ProductID : "P1",
+				WeightMeasure : "12.34",
+				WeightUnit : "KG"
+			})
+			.expectRequest("SAP__UnitsOfMeasure?foo=baz&$skip=0&$top=5000", {
+				results : [{
+					DecimalPlaces : 3,
+					ExternalCode : "KG",
+					ISOCode : "KGM",
+					Text : "Kilogramm",
+					UnitCode : "KG"
+				}]
+			})
+			.expectValue("measure", "12.340")
+			.expectValue("unit", "KG")
+			.expectValue("weight", "12.340 KG");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oMeasureControl = that.oView.byId("measure");
+			oUnitControl = that.oView.byId("unit");
+
+			that.expectValue("measure", "")
+				.expectValue("weight", "");
+
+			// code under test - empty measure leads to 0??
+			oMeasureControl.setValue("");
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				that.checkValueState(assert, oMeasureControl, "None", ""),
+				that.checkValueState(assert, oUnitControl, "None", "")
+			]);
+		}).then(function () {
+			that.expectValue("measure", "12.000")
+				.expectValue("measure", "12.000") //TODO why twice?
+				.expectValue("weight", "12.000 KG");
+
+			// code under test
+			oMeasureControl.setValue("12");
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				that.checkValueState(assert, oMeasureControl, "None", ""),
+				that.checkValueState(assert, oUnitControl, "None", "")
+			]);
+		}).then(function () {
+			that.expectValue("measure", "12")
+				.expectValue("unit", "")
+				.expectValue("weight", "12");
+
+			// code under test
+			oUnitControl.setValue("");
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				that.checkValueState(assert, oMeasureControl, "None", ""),
+				that.checkValueState(assert, oUnitControl, "None", "")
+			]);
+		}).then(function () {
+			that.expectValue("measure", "98.7")
+				.expectValue("weight", "98.7");
+
+			// code under test
+			oMeasureControl.setValue("98.7");
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				that.checkValueState(assert, oMeasureControl, "None", ""),
+				that.checkValueState(assert, oUnitControl, "None", "")
+			]);
 		});
 	});
 });

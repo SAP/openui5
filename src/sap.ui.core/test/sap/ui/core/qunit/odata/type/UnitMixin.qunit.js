@@ -557,6 +557,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("parseValue: falsy amount/measure and showNumber=false", function (assert) {
+		var aCurrentValues = ["5", "KG", {/*unused*/}],
+			oType = new UnitMixin({emptyString : null, parseAsString : false, showNumber : false});
+
+		oType.mCustomUnits = {
+			"KG" : {/*not relevant*/}
+		};
+		this.mock(this.oBasePrototype).expects("parseValue")
+			.withExactArgs("", "string", sinon.match.same(aCurrentValues))
+			.on(oType)
+			.returns([undefined, null]); // as base type would return if showNumber=false
+
+		// code under test
+		assert.deepEqual(oType.parseValue("", "string", aCurrentValues), [undefined, null]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("parseValue: no customizing", function (assert) {
 		var oType = new UnitMixin({parseAsString : true});
 
