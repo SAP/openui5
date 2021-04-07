@@ -96,7 +96,6 @@ sap.ui.define([
 		if (sGrandTotalAtBottomOnly === "false") {
 			TestUtils.setData(
 				"sap.ui.core.sample.odata.v4.DataAggregation.visibleRowCount", "6");
-			When.onAnyPage.applySupportAssistant();
 		}
 		TestUtils.setData(
 			"sap.ui.core.sample.odata.v4.DataAggregation.subtotalsAtBottomOnly",
@@ -370,9 +369,6 @@ sap.ui.define([
 		checkSubtotalsAtBottom(16, oBwSmall, true);
 
 		Then.onAnyPage.checkLog();
-		if (sGrandTotalAtBottomOnly === "false") {
-			Then.onAnyPage.analyzeSupportAssistant();
-		}
 		Then.iTeardownMyUIComponent();
 	};
 });
