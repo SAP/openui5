@@ -94,6 +94,9 @@ function(
 	var SplitContainer = Control.extend("sap.m.SplitContainer", /** @lends sap.m.SplitContainer.prototype */ { metadata : {
 
 		library : "sap.m",
+		interfaces: [
+			"sap.ui.core.IPlaceholderSupport"
+		],
 		properties : {
 
 			/**
@@ -492,7 +495,6 @@ function(
 
 		designtime: "sap/m/designtime/SplitContainer.designtime"
 	}});
-
 
 	/**************************************************************
 	* START - Life Cycle Methods
@@ -2132,6 +2134,69 @@ function(
 		});
 	};
 
+		/**
+	 * Shows the placeholder on the corresponding column for the provided aggregation name.
+	 *
+	 * @param {object} mSettings Object containing the aggregation name
+	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be shown
+	 *
+	 * @public
+	 * @since 1.91
+	 */
+	SplitContainer.prototype.showPlaceholder = function(mSettings) {
+		switch (mSettings.aggregation) {
+			case "masterPages":
+				this.getAggregation("_navMaster").showPlaceholder(mSettings);
+				break;
+			default:
+				this.getAggregation("_navDetail").showPlaceholder(mSettings);
+		}
+	};
+
+	/**
+	 * Hides the placeholder on the corresponding column for the provided aggregation name.
+	 *
+	 * @param {object} mSettings Object containing the aggregation name
+	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be hidden
+	 *
+	 * @public
+	 * @since 1.91
+	 */
+	SplitContainer.prototype.hidePlaceholder = function(mSettings) {
+		switch (mSettings.aggregation) {
+			case "masterPages":
+				this.getAggregation("_navMaster").hidePlaceholder(mSettings);
+				break;
+			default:
+				this.getAggregation("_navDetail").hidePlaceholder(mSettings);
+		}
+	};
+
+	/**
+	 * Checks whether a placeholder is needed by comparing the currently displayed page with
+	 * the page object that is going to be displayed. If they are the same, no placeholder needs
+	 * to be shown.
+	 *
+	 * @param {string} sAggregationName The aggregation name for the corresponding column
+	 * @param {sap.ui.core.Control} oObject The page object to be displayed
+	 * @returns {boolean} Whether placeholder is needed or not
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core.routing
+	 */
+	SplitContainer.prototype.needPlaceholder = function(sAggregationName, oObject) {
+		var oContainer;
+
+		switch (sAggregationName) {
+			case "masterPages":
+				oContainer = this.getAggregation("_navMaster");
+				break;
+			default:
+				oContainer = this.getAggregation("_navDetail");
+		}
+
+		return oContainer.getCurrentPage() !== oObject;
+	};
 	/**************************************************************
 	* END - Private methods
 	**************************************************************/

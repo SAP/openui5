@@ -25,6 +25,7 @@ sap.ui.define([], function() {
 					transitionParameters: this._oOptions.transitionParameters,
 					eventData: vData,
 					targetControl: oReturnValue.oTargetControl,
+					aggregationName: this._oOptions.controlAggregation,
 					view: oReturnValue.oTargetParent,
 					preservePageInSplitContainer: this._oOptions.preservePageInSplitContainer
 				});

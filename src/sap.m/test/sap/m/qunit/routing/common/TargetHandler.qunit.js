@@ -159,8 +159,8 @@ sap.ui.define([
 		var oTargetHandler = new TargetHandler();
 
 		//Act
-		oTargetHandler.addNavigation(jQuery.extend({ view : oMasterToPage }, oNavigationParameters));
-		oTargetHandler.addNavigation(jQuery.extend({ view : oDetailToPage }, oNavigationParameters));
+		oTargetHandler.addNavigation(jQuery.extend({ view : oMasterToPage, aggregationName : "masterPages" }, oNavigationParameters));
+		oTargetHandler.addNavigation(jQuery.extend({ view : oDetailToPage, aggregationName : "detailPages" }, oNavigationParameters));
 
 		oTargetHandler.navigate({
 			direction: HistoryDirection.Forwards

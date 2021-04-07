@@ -83,7 +83,8 @@ sap.ui.define([
 			"sap.ui.core.dnd.IDropInfo",
 			"sap.ui.core.IDScope",
 			"sap.ui.core.ITitleContent",
-			"sap.ui.core.IAsyncContentCreation"
+			"sap.ui.core.IAsyncContentCreation",
+			"sap.ui.core.IPlaceholderSupport"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
@@ -1701,6 +1702,23 @@ sap.ui.define([
 	 * @interface
 	 * @public
 	 * @since 1.89.0
+	 */
+
+	/**
+	 * Marker interface for container controls.
+	 *
+	 * Implementing this interface allows a container control to display a {@link sap.ui.core.Placeholder}.
+	 * This requires the container control to implement the <code>showPlaceholder</code> and <code>hidePlaceholder</code>
+	 * methods.
+	 *
+	 * Optionally, the <code>needPlaceholder</code> method can be implemented to defined, whether a placeholder is needed or not.
+	 * If implemented, this method must return a <code>boolean</code>. Depending on the return value, <code>showPlaceholder</code>
+	 * will be called or not.
+	 *
+	 * @name sap.ui.core.IPlaceholderSupport
+	 * @interface
+	 * @public
+	 * @since 1.91.0
 	 */
 
 	/**

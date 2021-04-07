@@ -67,7 +67,9 @@ sap.ui.define([
 	 */
 	var ComponentContainer = Control.extend("sap.ui.core.ComponentContainer", /** @lends sap.ui.core.ComponentContainer.prototype */ {
 		metadata : {
-
+			interfaces: [
+				"sap.ui.core.IPlaceholderSupport"
+			],
 			library : "sap.ui.core",
 			properties : {
 
@@ -251,6 +253,53 @@ sap.ui.define([
 		return sComponentId && Core.getComponent(sComponentId);
 	};
 
+	// Delegate registered by the ComponentContainer#showPlaceholder function
+	var oPlaceholderDelegate = {
+		"onAfterRendering": function() {
+			// check whether the placeholder is still active. If yes, show the placeholder again
+			if (this._placeholder) {
+				this._placeholder.show(this);
+			}
+		}
+	};
+
+	/**
+	 * Shows the provided placeholder on the component container.
+	 *
+	 * @param {object} mSettings Object containing the placeholder object
+	 * @param {sap.ui.core.Placeholder} mSettings.placeholder The placeholder instance
+	 * @public
+	 * @since 1.91
+	 */
+	ComponentContainer.prototype.showPlaceholder = function(mSettings) {
+		if (this._placeholder) {
+			this.hidePlaceholder();
+		}
+
+		if (this.getDomRef() && mSettings.placeholder) {
+			this._placeholder = mSettings.placeholder;
+			this._placeholder.show(this);
+		}
+
+		// Add an event delegate to reinsert the placeholder after it's removed after a rerendering
+		this.addEventDelegate(oPlaceholderDelegate, this);
+	};
+
+	/**
+	 * Hides the placeholder that is shown on the component container.
+	 *
+	 * @public
+	 * @since 1.91
+	 */
+	ComponentContainer.prototype.hidePlaceholder = function() {
+		if (this._placeholder) {
+			this._placeholder.hide();
+
+			// remove the delegate because the placeholder is hidden
+			this.removeEventDelegate(oPlaceholderDelegate);
+			this._placeholder = undefined;
+		}
+	};
 
 	/**
 	 * Sets the component of the container. Depending on the ComponentContainer's

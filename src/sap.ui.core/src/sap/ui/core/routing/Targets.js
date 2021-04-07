@@ -774,10 +774,10 @@ sap.ui.define([
 			/**
 			 * Called by the UIComponent since the rootView id is not known in the constructor
 			 *
-			 * @param {string} sId The id of the root view
+			 * @param {string|Promise} vId The id of the root view or a promise which resolves with the id of the root view
 			 * @private
 			 */
-			_setRootViewId: function (sId) {
+			_setRootViewId: function (vId) {
 				var sTargetName,
 					oTargetOptions;
 
@@ -785,7 +785,7 @@ sap.ui.define([
 					if (this._mTargets.hasOwnProperty(sTargetName)) {
 						oTargetOptions = this._mTargets[sTargetName]._oOptions;
 						if (oTargetOptions.rootView === undefined) {
-							oTargetOptions.rootView = sId;
+							oTargetOptions.rootView = vId;
 						}
 					}
 				}

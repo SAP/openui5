@@ -295,22 +295,22 @@ sap.ui.define([
 			};
 		}
 
-		function afterRootControlCreated(oRootControl, oRoutingConfig) {
+		function afterRootControlCreated(oRootControl) {
 			that.setAggregation("rootControl", oRootControl);
-
-			// only for root "views" we automatically define the target parent
-			if (oRootControl instanceof View) {
-				if (oRoutingConfig.targetParent === undefined) {
-					oRoutingConfig.targetParent = oRootControl.getId();
-				}
-				if (that._oTargets) {
-					that._oTargets._setRootViewId(oRootControl.getId());
-				}
-			}
 
 			// notify Component initialization callback handler
 			if (typeof UIComponent._fnOnInstanceInitialized === "function") {
 				UIComponent._fnOnInstanceInitialized(that);
+			}
+		}
+
+		//routingConfig must be set synchronous. Id could be a promise that must be handled in Target impl
+		function setRootViewId(vId, oRoutingConfig) {
+			if (oRoutingConfig.targetParent === undefined) {
+				oRoutingConfig.targetParent = vId;
+			}
+			if (that._oTargets) {
+				that._oTargets._setRootViewId(vId);
 			}
 		}
 
@@ -365,12 +365,21 @@ sap.ui.define([
 		}
 
 		if (this.pRootControlLoaded) {
+			var pIdPromise = this.pRootControlLoaded.then(function(oRootControl) {
+				// only for root "views" we automatically define the target parent
+				return (oRootControl instanceof View) ? oRootControl.getId() : undefined;
+			});
+			setRootViewId(pIdPromise, oRoutingConfig);
 			this.pRootControlLoaded = this.pRootControlLoaded.then(function(oRootControl) {
 				afterRootControlCreated(oRootControl, oRoutingConfig);
 				return oRootControl;
 			});
 		} else {
 			// sync path
+			// only for root "views" we automatically define the target parent
+			if (vRootControl instanceof View) {
+				setRootViewId(vRootControl.getId(), oRoutingConfig);
+			}
 			afterRootControlCreated(vRootControl, oRoutingConfig);
 			this.pRootControlLoaded = Promise.resolve(vRootControl);
 		}

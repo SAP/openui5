@@ -157,6 +157,7 @@ sap.ui.define(['sap/ui/base/Object', './TargetHandler', './Router', "sap/base/Lo
 
 		this._oTargetHandler.addNavigation({
 			targetControl : oParameters.targetControl,
+			aggregationName : oParameters.config.targetAggregation,
 			eventData : oParameters.arguments,
 			view : oParameters.view,
 			navigationIdentifier : oParameters.name,
@@ -177,6 +178,7 @@ sap.ui.define(['sap/ui/base/Object', './TargetHandler', './Router', "sap/base/Lo
 
 		this._oTargetHandler.addNavigation({
 			targetControl : oParameters.control,
+			aggregationName : oConfig.controlAggregation,
 			eventData : oParameters.data,
 			view : oParameters.view,
 			navigationIdentifier : oParameters.name,
