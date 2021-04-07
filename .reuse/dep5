@@ -36,21 +36,6 @@ License: Apache-2.0
 # THIRDPARTY MODULES
 #
 
-# Dummy license to make all thirdparty modules unlicensed by default
-# Uncomment only for testing!
-# NPL is used as an unlikely-to-be-really-used license and applied to all easily detectable thirdparty resources.
-# If the result of "reuse spdx" shows any resource with NPL, then this resource has apparently been forgotten.
-#
-#Files: *thirdparty*
-#Copyright: NONE - ERROR!
-#License: NPL-1.0
-
-# this is an SAP-created resource in thirdparty folder
-Files: src/sap.ui.core/src/sap/ui/thirdparty/baseuri.js
-Copyright: 2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
-License: Apache-2.0
-
-
 #
 # GENERATED CONTENT BELOW - DO NOT EDIT
 # Generator version: 1
