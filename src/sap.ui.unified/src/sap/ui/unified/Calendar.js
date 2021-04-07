@@ -1117,6 +1117,7 @@ sap.ui.define([
 
 		this.fireCancel();
 		this._closePickers();
+		this._addMonthFocusDelegate();
 
 		if (!this._getSucessorsPickerPopup()) {
 			this._setHeaderText(this._getFocusedDate());
@@ -1128,6 +1129,7 @@ sap.ui.define([
 
 		if (this._bPoupupMode && iKC !== KeyCodes.F4) {
 			this._closePickers();
+			this._addMonthFocusDelegate();
 			this.fireCancel();
 
 			oEvent.preventDefault(); // otherwise IE opens the address bar history
@@ -1740,7 +1742,6 @@ sap.ui.define([
 
 	Calendar.prototype._closePickers = function () {
 		this.setProperty("_currentPicker", CURRENT_PICKERS.MONTH);
-		this._addMonthFocusDelegate();
 		// show again hidden month button
 		this._togglePrevNext(this._getFocusedDate(), true);
 	};
@@ -2193,6 +2194,7 @@ sap.ui.define([
 
 		this._focusDate(oFocusedDate, true);
 		this._closePickers();
+		this._addMonthFocusDelegate();
 
 	};
 

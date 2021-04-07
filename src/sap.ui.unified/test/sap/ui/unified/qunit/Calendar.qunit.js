@@ -742,6 +742,25 @@ sap.ui.define([
 		oCal.destroy();
 	});
 
+	QUnit.test("there should be no focus on initialisation", function(assert) {
+		// Prepare
+		var oCal = new Calendar().placeAt("qunit-fixture"),
+			oMonthFocusDelegateSpy = this.spy(oCal, "_addMonthFocusDelegate");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal.onThemeChanged();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMonthFocusDelegateSpy.callCount, 0, "the delegate for adding a focus to the month is not used");
+
+		// Clean
+		oMonthFocusDelegateSpy.restore();
+		oCal.destroy();
+	});
+
 	QUnit.module("Interaction", {
 		beforeEach: function () {
 			this.oCal1 = new Calendar("Cal1",{
