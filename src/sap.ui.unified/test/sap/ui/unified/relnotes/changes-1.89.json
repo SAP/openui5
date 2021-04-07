@@ -3,6 +3,11 @@
     "date": "April 2021",
     "notes": [
       {
+        "id": "c9c3fa93474688dea473fb09668a8d211f2c899b",
+        "type": "FEATURE",
+        "text": " Implementation of empty-field indicator behavior"
+      },
+      {
         "id": "f8f0de363d5c0fcaf3331faad37def633627c790",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: displayDate shows the given date always in the first rendered month",

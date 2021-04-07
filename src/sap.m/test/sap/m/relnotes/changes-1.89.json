@@ -3,6 +3,44 @@
     "date": "April 2021",
     "notes": [
       {
+        "id": "ae8b0158af677a9f38a6c45f7630d80543fe78e0",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: console error not thrown now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170086834"
+          }
+        ]
+      },
+      {
+        "id": "c9c3fa93474688dea473fb09668a8d211f2c899b",
+        "type": "FEATURE",
+        "text": " Implementation of empty-field indicator behavior"
+      },
+      {
+        "id": "aa380e62ec6e2fb59c99e04b52ac0499ba34d0d5",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: vertically aligned in a from now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170070737"
+          }
+        ]
+      },
+      {
+        "id": "4810a5cbc56bc439ec7a9c1ae4b3ff5c68684464",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Buttons accessing with VoiceOver fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002174902021"
+          }
+        ]
+      },
+      {
         "id": "ca9262bf4bb5e240fa14cecf63b96d7c6fe2fdc2",
         "type": "FIX",
         "text": " DataStateIndicator: During rebind do not process messages",
@@ -10,6 +48,17 @@
           {
             "type": "BCP",
             "reference": "2170039226"
+          }
+        ]
+      },
+      {
+        "id": "3361721b5b022890c117322a3d030ba33f3dc2ef",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: 'Select all items' keyboard handling fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002104052021"
           }
         ]
       },
@@ -98,6 +147,17 @@
           {
             "type": "BCP",
             "reference": "2180113811"
+          }
+        ]
+      },
+      {
+        "id": "6218493d9fc17b3e379b7f37de380093922fb1e3",
+        "type": "FIX",
+        "text": " tutorial.walkthrough: add 'async=\"true\"' to nested XMLView",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080458541"
           }
         ]
       },

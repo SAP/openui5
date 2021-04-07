@@ -3,6 +3,11 @@
     "date": "April 2021",
     "notes": [
       {
+        "id": "c7a2c5edd3b1e98693bd0ed91190d6b8528dae8c",
+        "type": "FEATURE",
+        "text": " mdc/Table: dataStateIndicator aggregation added"
+      },
+      {
         "id": "4fb0f89abe7b255561df62afd285625379fe2572",
         "type": "FIX",
         "text": " ConditionType: use result of last call in case of pending requests",
