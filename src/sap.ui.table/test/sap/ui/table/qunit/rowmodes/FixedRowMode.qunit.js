@@ -8,10 +8,9 @@ sap.ui.define([
 	"sap/ui/table/RowAction",
 	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/table/library",
-	"sap/ui/Device"
+	"sap/ui/table/library"
 ], function(
-	TableQUnitUtils, FixedRowMode, Table, Column, RowAction, PluginBase, TableUtils, library, Device
+	TableQUnitUtils, FixedRowMode, Table, Column, RowAction, PluginBase, TableUtils, library
 ) {
 	"use strict";
 
@@ -104,11 +103,6 @@ sap.ui.define([
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var pSequence = Promise.resolve();
 
-		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-		if (Device.browser.msie || Device.browser.edge) {
-			document.getElementById("qunit-fixture").classList.remove("visible");
-		}
-
 		function test(mTestSettings) {
 			pSequence = pSequence.then(function() {
 				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
@@ -194,11 +188,6 @@ sap.ui.define([
 			oTable.destroy();
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
-
-			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-			if (Device.browser.msie || Device.browser.edge) {
-				document.getElementById("qunit-fixture").classList.add("visible");
-			}
 		});
 	});
 
@@ -208,11 +197,6 @@ sap.ui.define([
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var pSequence = Promise.resolve();
 		var iPadding = 14;
-
-		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-		if (Device.browser.msie || Device.browser.edge) {
-			document.getElementById("qunit-fixture").classList.remove("visible");
-		}
 
 		function test(mTestSettings) {
 			pSequence = pSequence.then(function() {
@@ -278,11 +262,6 @@ sap.ui.define([
 			oTable.destroy();
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
-
-			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-			if (Device.browser.msie || Device.browser.edge) {
-				document.getElementById("qunit-fixture").classList.add("visible");
-			}
 		});
 	});
 

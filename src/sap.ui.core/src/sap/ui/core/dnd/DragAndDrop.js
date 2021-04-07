@@ -122,8 +122,7 @@ function(Device, UIArea, jQuery) {
 		return /** @lends sap.ui.core.dnd.DragSession */ {
 			/**
 			 * Sets string data with any MIME type.
-			 * <b>Note:</b> This works in all browsers, apart from Internet Explorer and Microsoft Edge. It also works if you navigate between
-			 * different windows.
+			 * <b>Note:</b> This works if you navigate between different windows.
 			 *
 			 * @param {string} sKey The key of the data
 			 * @param {string} sData Data
@@ -148,8 +147,7 @@ function(Device, UIArea, jQuery) {
 
 			/**
 			 * Sets string data with plain text MIME type.
-			 * <b>Note:</b> This works in all browsers, including Internet Explorer and Microsoft Edge. It also works if you navigate between
-			 * different windows.
+			 * <b>Note:</b> This works if you navigate between different windows.
 			 *
 			 * @param {string} sData Data
 			 * @public
@@ -174,8 +172,7 @@ function(Device, UIArea, jQuery) {
 
 			/**
 			 * Sets any type of data (even functions, pointers, anything non-serializable) with any MIME type.
-			 * This works in all browsers, including Internet Explorer and Microsoft Edge, but only within a UI5 application within the same
-			 * window/frame.
+			 * <b>Note:</b> This works only within a UI5 application within the same window/frame.
 			 *
 			 * @param {string} sKey The key of the data
 			 * @param {any} vData Data

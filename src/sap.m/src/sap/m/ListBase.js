@@ -230,15 +230,7 @@ function(
 			 *
 			 * <b>Note:</b> Enabling sticky column headers in List controls will not have any effect.
 			 *
-			 * There is limited browser support.
-			 * Browsers that do not support this feature are listed below:
-			 * <ul>
-			 * <li>IE</li>
-			 * <li>Edge lower than version 41 (EdgeHTML 16)</li>
-			 * <li>Firefox lower than version 59</li>
-			 * </ul>
-			 *
-			 * There are also some known restrictions. A few are given below:
+			 * There are some known restrictions. A few are given below:
 			 * <ul>
 			 * <li>If the control is placed in layout containers that have the <code>overflow: hidden</code> or <code>overflow: auto</code> style definition, this can
 			 * prevent the sticky elements of the control from becoming fixed at the top of the viewport.</li>
@@ -1983,14 +1975,6 @@ function(
 		var oItemDomRef = oItem.getDomRef(),
 			mPosition = this.getAccessbilityPosition(oItem);
 
-		// force IE to repaint so the focus border a visible
-		if (Device.browser.msie && this._oItemNavigation && this._oItemNavigation.getFocusedDomRef() === oItemDomRef) {
-			oItemDomRef.classList.remove("sapMLIBFocusable");
-			setTimeout(function() {
-				oItemDomRef.classList.add("sapMLIBFocusable");
-			}, 0);
-		}
-
 		if (!oItem.getContentAnnouncement) {
 			// let the screen reader announce the whole content
 			this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
@@ -2511,14 +2495,6 @@ function(
 		return this;
 	};
 
-	// check if browser supports css sticky
-	ListBase.getStickyBrowserSupport = function() {
-		var oBrowser = Device.browser;
-		return (oBrowser.safari || oBrowser.chrome
-			|| (oBrowser.firefox && oBrowser.version >= 59)
-			|| (oBrowser.edge && oBrowser.version >= 16));
-	};
-
 	// Returns the sticky value to be added to the sticky table container.
 	// sapMSticky7 is the result of sticky headerToolbar, infoToolbar and column headers.
 	// sapMSticky6 is the result of sticky infoToolbar and column headers.
@@ -2529,7 +2505,7 @@ function(
 	// sapMSticky1 is the result of sticky headerToolbar.
 	ListBase.prototype.getStickyStyleValue = function() {
 		var aSticky = this.getSticky();
-		if (!aSticky || !aSticky.length || !ListBase.getStickyBrowserSupport()) {
+		if (!aSticky || !aSticky.length) {
 			return (this._iStickyValue = 0);
 		}
 

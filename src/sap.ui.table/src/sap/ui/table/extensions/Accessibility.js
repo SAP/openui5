@@ -493,19 +493,8 @@ sap.ui.define([
 				aLabels.push(oTable.getId() + "-cellacc");
 			}
 
-			if (Device.browser.msie) {
-				if (iSpan <= 1 && oColumn && oColumn.getSorted()) {
-					aLabels.push(oTable.getId() + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
-				}
-			}
 			if (iSpan <= 1 && oColumn && oColumn.getFiltered()) {
 				aLabels.push(oTable.getId() + "-ariacolfiltered");
-			}
-
-			if (Device.browser.msie) {
-				if (iSpan <= 1 && $Cell.attr("aria-haspopup") === "menu") {
-					aLabels.push(oTable.getId() + "-ariacolmenu");
-				}
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
@@ -1073,7 +1062,6 @@ sap.ui.define([
 			ExtensionHelper.cleanupCellModifications(this);
 		}
 
-		var oTable = this.getTable();
 		var oInfo = ExtensionHelper.getInfoOfFocusedCell(this);
 		var sCellType;
 
@@ -1101,25 +1089,8 @@ sap.ui.define([
 			// when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
 			// to force screenreader announcements
 			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER | CellType.ROWACTION)) {
-				if (Device.browser.msie) {
-					if (oTable._mTimeouts._cleanupACCCellBusy) {
-						clearTimeout(oTable._mTimeouts._cleanupACCCellBusy);
-						oTable._mTimeouts._cleanupACCCellBusy = null;
-					}
-					oTable._mTimeouts._cleanupACCCellBusy = setTimeout(function() {
-						for (var i = 0; i < this._busyCells.length; i++) {
-							this._busyCells[i].removeAttr("aria-hidden");
-							this._busyCells[i].removeAttr("aria-busy");
-						}
-						oTable._mTimeouts._cleanupACCCellBusy = null;
-						this._busyCells = [];
-					}.bind(this), 100);
-					oInfo.cell.attr("aria-busy", "true");
-					this._busyCells.push(oInfo.cell);
-				} else {
-					oInfo.cell.attr("role", "status");
-					oInfo.cell.attr("role", "gridcell");
-				}
+				oInfo.cell.attr("role", "status");
+				oInfo.cell.attr("role", "gridcell");
 			} else {
 				return;
 			}

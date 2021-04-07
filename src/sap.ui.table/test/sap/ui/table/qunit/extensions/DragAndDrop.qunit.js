@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/library",
-	"sap/ui/Device",
 	"sap/ui/core/Control"
-], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Device, Control) {
+], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Control) {
 	"use strict";
 
 	// mapping of globals
@@ -100,10 +99,8 @@ sap.ui.define([
 			persistent: "i should still exist after dragenter"
 		});
 
-		if (!Device.browser.msie) {
-			window.pageYOffset = 123;
-			window.pageXOffset = 321;
-		}
+		window.pageYOffset = 123;
+		window.pageXOffset = 321;
 
 		// Test without a drop control in the drag session.
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter.call(oTable, oFakeEvent);
@@ -138,10 +135,8 @@ sap.ui.define([
 			"Other session data was not manipulated");
 
 		// Restore
-		if (!Device.browser.msie) {
-			window.pageXOffset = iOriginalPageXOffset;
-			window.pageYOffset = iOriginalPageYOffset;
-		}
+		window.pageXOffset = iOriginalPageXOffset;
+		window.pageYOffset = iOriginalPageYOffset;
 	});
 
 	QUnit.test("Scrolling & Indicator size - dragover", function(assert) {

@@ -595,18 +595,11 @@ sap.ui.define([
 		}
 
 		if (bFocus && iCol == 1) {
-			if (Device.browser.msie) {
-				aLabels.push(sTableId + "-ariacolsortedasc");
-			}
 			aLabels.push(sTableId + "-ariacolfiltered");
 		}
 
 		if (bFocus && iCol == 2) {
 			aLabels.push(sTableId + "-cellacc"); // Column 2 has tooltip see TableQUnitUtils.js
-		}
-
-		if (Device.browser.msie && bFocus && iCol == 1) {
-			aLabels.push(sTableId + "-ariacolmenu");
 		}
 
 		assert.strictEqual(
@@ -1773,15 +1766,6 @@ sap.ui.define([
 		oTable.addEventDelegate(oDelegate);
 		oTable.setFirstVisibleRow(1); // Simulate scrolling by one row
 		assert.ok(!bFocusTriggered, "No sync refocus of cell done");
-
-		if (Device.browser.msie) {
-			setTimeout(function() {
-				assert.ok(!!$Cell.attr("aria-busy"), "Cell is temporarily set in busy mode");
-				if (Device.browser.chrome) {
-					assert.ok(!!$Cell.attr("aria-hidden"), "Cell is temporarily hidden");
-				}
-			}, 60);
-		}
 
 		setTimeout(function() {
 			oTable.removeEventDelegate(oDelegate);

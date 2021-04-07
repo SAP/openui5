@@ -1951,8 +1951,7 @@ sap.ui.define([
 
 	QUnit.module("ListItemBase");
 
-	QUnit.test("ListItemBase RenderOulineClass", function(assert) {
-		var oMsieStub = this.stub(Device, "browser", {"msie": true});
+	QUnit.test("ListItemBase RenderOutlineClass", function(assert) {
 		this.stub(Device.system, "desktop", true);
 
 		// SUT
@@ -1967,17 +1966,13 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(sut1.$().hasClass("sapMLIBFocusable"), "Outline class is added");
-		assert.ok(sut1.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is added");
 
 		// Act
-		oMsieStub.restore();
-		this.stub(Device, "browser", {"msie": false });
 		list.addItem(sut2);
 		Core.applyChanges();
 
 		// Assert
 		assert.ok(sut2.$().hasClass("sapMLIBFocusable"), "Outline class is added");
-		assert.ok(!sut2.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
 
 		//Cleanup
 		list.destroy();
