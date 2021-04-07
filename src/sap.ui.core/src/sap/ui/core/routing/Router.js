@@ -168,7 +168,8 @@ sap.ui.define([
 		 *          }
 		 *     });
 		 * </pre>
-		 * @param {boolean} [oConfig.async=false] Since 1.34. Whether the views which are loaded within this router instance asyncly
+		 * @param {boolean} [oConfig.async=false] Since 1.34. Whether views are loaded asynchronously within this router instance.
+		 * As of 1.90 synchronous routing is deprecated. Therefore, you should explicitly set <code>oConfig.async</code> to <code>true</code>.
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,<br/>
 		 * will get forwarded to the {@link sap.ui.core.routing.Views#constructor}.<br/>
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.
