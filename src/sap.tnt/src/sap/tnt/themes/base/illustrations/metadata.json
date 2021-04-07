@@ -9,6 +9,11 @@
 		"NoApplications",
 		"NoFlows",
 		"NoUsers",
+		"Radar",
+		"Services",
+		"SessionExpired",
+		"SessionExpiring",
+		"Success",
 		"SuccessfulAuth",
 		"Unlock",
 		"UnsuccessfulAuth"

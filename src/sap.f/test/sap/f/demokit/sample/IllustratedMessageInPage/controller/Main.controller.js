@@ -9,23 +9,23 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 
 			onInit: function () {
 
-				var aFMISizeData = [],
-					aFMITypeData = [];
+				var aIMISizeData = [],
+					aIMITypeData = [];
 
 				Object.keys(oIllustratedMessageSize).forEach(function (sKey) {
-					aFMISizeData.push({key: oIllustratedMessageSize[sKey], text: sKey});
+					aIMISizeData.push({key: oIllustratedMessageSize[sKey], text: sKey});
 				});
 				Object.keys(oIllustratedMessageType).forEach(function (sKey) {
-					aFMITypeData.push({key: oIllustratedMessageType[sKey], text: "IllustratedMessageType." + sKey});
+					aIMITypeData.push({key: oIllustratedMessageType[sKey], text: "IllustratedMessageType." + sKey});
 				});
 
 				this.oModel = new JSONModel({
-					sizeTypes: aFMISizeData,
-					typeTypes: aFMITypeData
+					sizeTypes: aIMISizeData,
+					typeTypes: aIMITypeData
 				});
 
-				this.oModel.setProperty("/sSelectedSize", aFMISizeData[0].key);
-				this.oModel.setProperty("/sSelectedType", aFMITypeData[0].key);
+				this.oModel.setProperty("/sSelectedSize", aIMISizeData[0].key);
+				this.oModel.setProperty("/sSelectedType", aIMITypeData[0].key);
 
 				this.getView().setModel(this.oModel);
 			},

@@ -50,7 +50,8 @@
 			"sap.f.sample.IllustratedMessageInCardNoActivities",
 			"sap.f.sample.IllustratedMessageInCardNoEmail",
 			"sap.f.sample.IllustratedMessageInDialog",
-			"sap.f.sample.IllustratedMessageInPage"
+			"sap.f.sample.IllustratedMessageInPage",
+			"sap.f.sample.IllustratedMessageInPageTNT"
 			]
 		},
 		{
@@ -197,9 +198,14 @@
 		},
 		{
 		  "id": "sap.f.sample.IllustratedMessageInPage",
-		  "name": "Illustrated Message in a Page with Configurable Properties",
-		  "description": "IllustratedMessage as content of sap.m.Page. The available properties of the IllustratedMessage are configurable in this sample."
+		  "name": "Illustrated Message in a Page with Configurable Properties (Default Illustration Set)",
+		  "description": "The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the default ('sapIllus') illustration set."
 		},
+		{
+			"id": "sap.f.sample.IllustratedMessageInPageTNT",
+			"name": "Illustrated Message in a Page with Configurable Properties (TNT Illustration Set)",
+			"description": "The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'tnt' illustration set."
+		  },
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 		  "name": "Flexible Column Layout with Routing and One Initial Column",
