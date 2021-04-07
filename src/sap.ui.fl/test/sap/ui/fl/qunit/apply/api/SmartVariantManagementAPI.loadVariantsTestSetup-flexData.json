@@ -26,6 +26,7 @@
     "variants": [{
       "fileName": "variant_1",
       "fileType": "variant",
+      "layer": "USER",
       "selector": {
         "persistencyKey": "variantManagement1"
       },

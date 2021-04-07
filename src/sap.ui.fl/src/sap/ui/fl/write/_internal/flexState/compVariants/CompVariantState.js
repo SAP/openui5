@@ -428,10 +428,13 @@ sap.ui.define([
 	 */
 	CompVariantState.updateVariant = function (mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
-
 		var sLayer = determineLayer(mPropertyBag);
+		// in case changes were already done within the layer, no update of the variant can be done to safeguard the execution order
+		var bIsChangedOnLayer = oVariant.getChanges().some(function (oChange) {
+			return oChange.getLayer() === sLayer;
+		});
 
-		if (!oVariant.getPersisted() || oVariant.getLayer() !== sLayer) {
+		if (!oVariant.getPersisted() || oVariant.getLayer() !== sLayer || bIsChangedOnLayer) {
 			var oChangeDefinition = Change.createInitialFileContent({
 				changeType: "updateVariant",
 				layer: sLayer,
