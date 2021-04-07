@@ -78,19 +78,19 @@
 										<mdcf:table>
 											<mdc:Table autoBindOnInit="true" id="FH4--mdc--gridtable" width="30rem" selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}" p13nMode="Column,Sort" delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
 												<mdc:columns>
-													<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID" initialIndex="1">
+													<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID">
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title" initialIndex="2">
+													<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4--mdc--gridtable--descr" header="Description" dataProperty="descr" initialIndex="2">
+													<mdc:table.Column id="FH4--mdc--gridtable--descr" header="Description" dataProperty="descr">
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" editMode="Display"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4--mdc--gridtable--pub" header="Published" dataProperty="published" initialIndex="2">
+													<mdc:table.Column id="FH4--mdc--gridtable--pub" header="Published" dataProperty="published">
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{published}" editMode="Display"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4--mdc--gridtable--genre" header="Genre" dataProperty="genre_code" initialIndex="2">
+													<mdc:table.Column id="FH4--mdc--gridtable--genre" header="Genre" dataProperty="genre_code">
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{genre_code}" additionalValue="{genre/label}" editMode="Display"/>
 													</mdc:table.Column>
 												</mdc:columns>
