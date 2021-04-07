@@ -3,6 +3,17 @@
     "date": "April 2021",
     "notes": [
       {
+        "id": "49580c917f8d5e6cbb430b39eb76c623b66c3e83",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Stablized qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      },
+      {
         "id": "290c9a844595956c686b8b41266ba3169a747cea",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Correcter RTA headerContent domRef",
@@ -54,17 +65,6 @@
           {
             "type": "BCP",
             "reference": "2180035341"
-          }
-        ]
-      },
-      {
-        "id": "16333552192568f43bd14648bf70041bf666e4de",
-        "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: Unset selected section of hidden page",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180046524"
           }
         ]
       }

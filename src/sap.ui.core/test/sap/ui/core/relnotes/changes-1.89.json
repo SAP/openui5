@@ -3,6 +3,11 @@
     "date": "April 2021",
     "notes": [
       {
+        "id": "fcd5b2ab384e4ffdcb228f245a752b6b78cefd38",
+        "type": "FIX",
+        "text": " ManagedObject: fix cloning of associations to root object"
+      },
+      {
         "id": "6e26ef18d94e546128e3714887c40b5f19c09c30",
         "type": "FIX",
         "text": " ManagedObject.findAggregatedObjects: add possibility to include binding templates into the search",
