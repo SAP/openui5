@@ -13,7 +13,7 @@
 		<Toolbar design="Transparent">
 			<Label design="Bold" labelFor="favoriteProduct" text="Favorite product:">
 				<layoutData>
-					<ToolbarLayoutData shrinkable="false" />
+					<ToolbarLayoutData shrinkable="false"/>
 				</layoutData>
 			</Label>
 			<Input enabled="false" id="favoriteProduct" width="auto"
@@ -26,7 +26,7 @@
 					parameters : {$$groupId : 'FavoriteProductGroup'}
 				}">
 				<layoutData>
-					<ToolbarLayoutData shrinkable="false" />
+					<ToolbarLayoutData shrinkable="false"/>
 				</layoutData>
 			</Input>
 			<Button icon="sap-icon://refresh"
@@ -35,22 +35,22 @@
 				press="onUpdateFavoriteProduct" tooltip="Update with current time as HH:mm"/>
 			<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
 				press="produceTechnicalError" tooltip="Provoke read error"/>
-			<ToolbarSpacer />
+			<ToolbarSpacer/>
 			<Label design="Bold" id="favoriteProductId::Label" labelFor="favoriteProductId"
 				text="Favorite product ID:">
 				<layoutData>
-					<ToolbarLayoutData shrinkable="false" />
+					<ToolbarLayoutData shrinkable="false"/>
 				</layoutData>
 			</Label>
 			<Input editable="false" id="favoriteProductId" width="6em">
 				<layoutData>
-					<ToolbarLayoutData shrinkable="false" />
+					<ToolbarLayoutData shrinkable="false"/>
 				</layoutData>
 			</Input>
 			<Button ariaDescribedBy="favoriteProductId::Label" icon="sap-icon://accept"
 				id="setBindingContext" press="onSetBindingContext"
 				tooltip="Get favorite product ID"/>
-			<ToolbarSpacer />
+			<ToolbarSpacer/>
 			<Button press="onRefreshAll" id="refreshAll" text="Refresh all"/>
 			<Button enabled="false"
 				icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
@@ -120,7 +120,7 @@
 					<Title id="salesOrderListTitle" text="{$count} New Sales Orders"
 						level="H2">
 						<layoutData>
-							<ToolbarLayoutData shrinkable="false" />
+							<ToolbarLayoutData shrinkable="false"/>
 						</layoutData>
 					</Title>
 					<Button enabled="{!${ui>/bCreateItemPending}"
@@ -144,7 +144,7 @@
 							&amp;&amp; !${ui>/bCreateItemPending}}"
 						id="confirmSalesOrder"
 						icon="sap-icon://accept"
-						press="onConfirmSalesOrder" tooltip="Confirm selected sales order" />
+						press="onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
 					<Button
 							enabled="{= ${ui>/bSalesOrderSelected}
 								&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
@@ -167,15 +167,15 @@
 								<form:SimpleForm ariaLabelledBy="SimulateDiscountDialog"
 										id="SimulateDiscountForm" layout="ResponsiveGridLayout"
 										editable="true">
-									<Label text="Sales Order" />
+									<Label text="Sales Order"/>
 									<Text id="SimulateDiscountForm::SalesOrderID"
 										  text="{parameterContext>SalesOrder/SalesOrderID}"
 										  tooltip="SalesOrderID (via parameter context)"/>
-									<Label text="Gross Amount" />
+									<Label text="Gross Amount"/>
 									<Text id="SimulateDiscountForm::GrossAmount"
 										text="{GrossAmount}"
 										tooltip="GrossAmount (via parent context)"/>
-									<Label text="Reduction in %" />
+									<Label text="Reduction in %"/>
 									<StepInput id="SimulateDiscountForm::Discount" min="0" max="100"
 										step="5" value="{parameterContext>Discount}"/>
 									<Label text="Approver"/>
@@ -187,14 +187,14 @@
 								<form:SimpleForm ariaLabelledBy="SimulateDiscountDialog"
 										editable="true" id="SimulateDiscountResult"
 										layout="ResponsiveGridLayout">
-									<Label text="Calculated Gross Amount" />
+									<Label text="Calculated Gross Amount"/>
 									<Input id="SimulateDiscountResult::Result" value="{value}"
 										editable="false"/>
 								</form:SimpleForm>
 							</Dialog>
 						</dependents>
 					</Button>
-					<ToolbarSeparator />
+					<ToolbarSeparator/>
 					<Button icon="sap-icon://refresh" id="refreshSalesOrders"
 						press="onRefreshSalesOrdersList" tooltip="Refresh sales orders"/>
 					<Button icon="sap-icon://save" id="saveSalesOrders"
@@ -202,13 +202,13 @@
 					<Button id="cancelSalesOrderListChanges" icon="sap-icon://sys-cancel-2"
 						press="onCancelSalesOrderListChanges"
 						tooltip="Cancel sales order list changes"/>
-					<ToolbarSpacer />
+					<ToolbarSpacer/>
 					<SearchField id="filterGrossAmount"
 						placeholder="Filter by gross amount greater than"
 						value="{path : 'ui>/filterValue'}"
 						visible="{ui>/bRealOData}" width="50%" search="onFilter">
 						<layoutData>
-							<ToolbarLayoutData shrinkable="false" />
+							<ToolbarLayoutData shrinkable="false"/>
 						</layoutData>
 					</SearchField>
 				</Toolbar>
@@ -217,7 +217,7 @@
 				<Column hAlign="Right" width="9em">
 					<Button enabled="{ui>/bRealOData}" id="sortBySalesOrderId"
 						icon="{ui>/sSortSalesOrderIDIcon}" iconFirst="false"
-						press="onSortBySalesOrderID" text="Sales Order ID" />
+						press="onSortBySalesOrderID" text="Sales Order ID"/>
 				</Column>
 				<Column width="8em">
 					<Text text="Buyer Name"/>
@@ -225,7 +225,7 @@
 				<Column hAlign="Right" width="8em">
 					<Button enabled="{ui>/bRealOData}" id="sortByGrossAmount"
 						icon="{ui>/sSortGrossAmountIcon}" iconFirst="false"
-						press="onSortByGrossAmount" text="Gross Amount" />
+						press="onSortByGrossAmount" text="Gross Amount"/>
 				</Column>
 				<Column width="5em">
 					<Text text="Currency"/>
@@ -284,7 +284,7 @@
 									<Title id="salesOrderSchedulesTitle"
 											text="{headerContext>$count} Schedules" level="H2">
 										<layoutData>
-											<ToolbarLayoutData shrinkable="false" />
+											<ToolbarLayoutData shrinkable="false"/>
 										</layoutData>
 									</Title>
 									<Button enabled="{ui>/bScheduleSelected}"
@@ -322,15 +322,15 @@
 				<Toolbar design="Transparent" id="salesOrderDetailsToolbar">
 					<Title text="Sales Order" level="H2"/>
 				</Toolbar>
-				<Label text="Sales Order ID" />
-				<Input id="SalesOrderID::detail" value="{SalesOrderID}" editable="false" />
-				<Label text="Created At" />
-				<Input value="{CreatedAt}" editable="false" />
-				<Label text="Changed At" />
-				<Input value="{ChangedAt}" editable="false" />
-				<Label text="Lifecycle Status" />
-				<Input value="{LifecycleStatusDesc}" editable="false" />
-				<Label text="Note" />
+				<Label text="Sales Order ID"/>
+				<Input id="SalesOrderID::detail" value="{SalesOrderID}" editable="false"/>
+				<Label text="Created At"/>
+				<Input value="{CreatedAt}" editable="false"/>
+				<Label text="Changed At"/>
+				<Input value="{ChangedAt}" editable="false"/>
+				<Label text="Lifecycle Status"/>
+				<Input value="{LifecycleStatusDesc}" editable="false"/>
+				<Label text="Note"/>
 				<Input id="Note::detail" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
 				<Toolbar design="Transparent" id="SO_2_BP::detail" binding="{SO_2_BP}">
 					<Title text="Business Partner" level="H2"/>
@@ -338,16 +338,16 @@
 						id="deleteBusinessPartner" press="onDeleteBusinessPartner"
 						tooltip="Delete business partner"/>
 				</Toolbar>
-				<Label text="Business Partner ID" />
-				<Input value="{SO_2_BP/BusinessPartnerID}" editable="false" />
-				<Label text="Company Name" />
+				<Label text="Business Partner ID"/>
+				<Input value="{SO_2_BP/BusinessPartnerID}" editable="false"/>
+				<Label text="Company Name"/>
 				<Input id="CompanyName::detail" value="{SO_2_BP/CompanyName}"
 					change="onCompanyNameChanged"/>
-				<Label text="Phone Number" />
-				<Input id="PhoneNumber::detail" value="{SO_2_BP/PhoneNumber}" />
-				<Label text="City" />
+				<Label text="Phone Number"/>
+				<Input id="PhoneNumber::detail" value="{SO_2_BP/PhoneNumber}"/>
+				<Label text="City"/>
 				<Input id="City::detail" value="{SO_2_BP/Address/City}"/>
-				<Label text="Postal Code" />
+				<Label text="Postal Code"/>
 				<Input id="PostalCode::detail" value="{SO_2_BP/Address/PostalCode}"/>
 			</form:SimpleForm>
 			<Table id="SO_2_SOITEM"
@@ -398,7 +398,7 @@
 							enabled="{ui>/bLineItemSelected}" icon="sap-icon://delete"
 							id="deleteSalesOrderLineItem" press="onDeleteSalesOrderLineItem"
 							tooltip="Delete sales order line item"/>
-						<ToolbarSpacer />
+						<ToolbarSpacer/>
 						<Label labelFor="itemFilter" text="Filter"/>
 						<Select change="onFilterMessages" id="itemFilter"
 							items="{ui>/itemFilter}" selectedKey="Show all">
@@ -475,9 +475,9 @@
 				<Toolbar>
 					<Title text="Supplier" level="H2"/>
 				</Toolbar>
-				<Label text="Company Name" />
-				<Input value="{CompanyName} {LegalForm}" editable="false" />
-				<Label text="Phone Number" />
+				<Label text="Company Name"/>
+				<Input value="{CompanyName} {LegalForm}" editable="false"/>
+				<Label text="Phone Number"/>
 				<Input id="PRODUCT_2_BP:PhoneNumber" value="{PhoneNumber}"
 					enabled="{= !!%{CompanyName}}"/>
 			</form:SimpleForm>
