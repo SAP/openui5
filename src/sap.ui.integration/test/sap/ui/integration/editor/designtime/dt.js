@@ -849,7 +849,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"text": "{CompanyName}",
 								"key": "{CustomerID}/{CompanyName}",
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							}
+							},
+							"keySeparator": "/"
 						}
 					},
 					"CustomersWithMultiKeysAndSeperator": {
@@ -870,8 +871,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"text": "{CompanyName}",
 								"key": "{CustomerID}#{CompanyName}",
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							},
-							"keySeparator": "#"
+							}
 						}
 					},
 					"CustomersWithFilterParameter": {

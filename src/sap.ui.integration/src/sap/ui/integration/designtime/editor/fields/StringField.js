@@ -108,7 +108,7 @@ sap.ui.define([
 							],
 							formatter: function(sValue, sSuggestValue) {
 								if ((!sValue || sValue === "") && sSuggestValue) {
-									return sSuggestValue;
+									return sSuggestValue.replaceAll('\'\'', "'");
 								} else {
 									return sValue;
 								}
@@ -222,7 +222,7 @@ sap.ui.define([
 		var sSettingspath = this.getBindingContext("currentSettings").sPath;
 		var oSettingsModel = this.getModel("currentSettings");
 		//set the suggestion value into data model property "suggestValue" for filter backend
-		oSettingsModel.setProperty(sSettingspath + "/suggestValue", sTerm);
+		oSettingsModel.setProperty(sSettingspath + "/suggestValue", sTerm.replaceAll("'", "\'\'"));
 		oSettingsModel.setProperty(sSettingspath + "/_loading", true);
 		//clean the value in data model
 		oSettingsModel.setProperty(sSettingspath + "/value", "");
