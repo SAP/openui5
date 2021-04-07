@@ -85,7 +85,8 @@ sap.ui.define([
 		this.getModel("currentSettings").checkUpdate(true, true);
 		applyVariableDescription(oResourceBundle.getText("CARDEDITOR_SELECT_FROM_LIST"), []);
 		if (oReferrer) {
-			oPopover.setContentWidth((oPreview.getDomRef().offsetWidth + 30) + "px");
+			var iOffsetWidth = oPreview.getDomRef().offsetWidth === 0 ? 270 : oPreview.getDomRef().offsetWidth;
+			oPopover.setContentWidth(iOffsetWidth + "px");
 			oPopover.setContentHeight((oPreview.getDomRef().offsetHeight - 80) + "px");
 			oPopover.setPlacement("Right");
 			oDynamicValueField.setValue(oField._label);

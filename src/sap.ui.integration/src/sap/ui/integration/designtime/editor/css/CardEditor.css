@@ -24,7 +24,7 @@
 	position: relative;
 }
 
-.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorTranslationForm {
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorFormWithNoPreview {
 	height: 350px;
 	min-width: 680px;
 	box-sizing: border-box;
@@ -110,22 +110,24 @@
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemField .sapUiIntegrationCardEditorEditor {
-	width: 100%;
+	width: calc(100% - 2.5rem);
 }
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm.settingsButtonSpace .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemField .sapUiIntegrationCardEditorEditor,
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm.settingsButtonSpace .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemField .sapUiIntegrationCardEditorHint{
 	width: calc(100% - 2.5rem);
+	white-space: normal;
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemField {
 	width: 100%;
 	max-width: 100%;
 	display: inline-block;
+	white-space: nowrap;
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorSettingsButton {
 	max-width: 1.6rem;
-	margin-left: 0.5rem;
+	margin-left: 0.3rem;
 	display: inline-block;
 }
 
@@ -466,7 +468,7 @@
     */
 }
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorHint {
-	padding: 0.1rem 0.1rem 0.2rem
+	padding: 0.1rem 0.1rem 0.2rem;
 }
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorHint *{
 	font-size: 0.75rem;

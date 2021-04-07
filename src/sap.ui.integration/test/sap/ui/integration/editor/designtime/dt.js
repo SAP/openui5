@@ -18,7 +18,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
 						"type": "string",
 						"translatable": true,
-						"required": true
+						"required": true,
+						"allowDynamicValues": true
 					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
