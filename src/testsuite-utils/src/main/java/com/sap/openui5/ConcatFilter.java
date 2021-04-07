@@ -210,7 +210,7 @@ public class ConcatFilter implements Filter {
       content = IOUtils.toString(is, "UTF-8");
       IOUtils.closeQuietly(is);
     }
-    return content;
+    return content + "\n";
   } // method: loadResource
 
 
