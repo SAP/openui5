@@ -91,6 +91,26 @@ sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/library', "sap/base/Log"],
 		return ToolbarLayoutData.prototype.invalidate.call(this);
 	};
 
-	return OverflowToolbarLayoutData;
+	/**
+	 * @override
+	 */
+	OverflowToolbarLayoutData.prototype.setPriority = function (sPriority) {
+		var vResult;
 
+		if (this.getPriority() === sPriority) {
+			return this;
+		}
+
+		if (this.isInvalidateSuppressed()) {
+			// Guarantee that OverflowLayoutData will always be invalidated and will fire event to its parent control
+			vResult = this.setProperty("priority", sPriority, true);
+			this.invalidate();
+		} else {
+			vResult = this.setProperty("priority", sPriority);
+		}
+
+		return vResult;
+	};
+
+	return OverflowToolbarLayoutData;
 });
