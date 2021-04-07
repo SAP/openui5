@@ -1,0 +1,15 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.delayedLoading.webPage1",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "WebPage",
+		"header": {
+			"title": "WebPage Card "
+		},
+		"content": {
+			"src": "https://openui5.org/events/"
+		}
+	}
+}

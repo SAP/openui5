@@ -136,7 +136,7 @@ sap.ui.define([
 
 		// is Highcharts library available
 		if (!window.Highcharts) {
-			this._handleError("There was a problem with loading Highcharts library. Could not initialize AnalyticsCloud card content.");
+			this.handleError("There was a problem with loading Highcharts library. Could not initialize AnalyticsCloud card content.");
 			return;
 		}
 

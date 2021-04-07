@@ -76,6 +76,12 @@ sap.ui.define([
 						title: 'Timeline',
 						target: 'learnDetail',
 						key: 'timeline'
+					},
+					{
+						title: 'WebPage',
+						target: 'learnDetail',
+						key: 'webPage',
+						experimental: true
 					}
 				]
 			},

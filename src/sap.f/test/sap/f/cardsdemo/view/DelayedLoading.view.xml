@@ -28,7 +28,7 @@
 				<Label text="Preload manifests" />
 				<CheckBox id="preloadManifests" selected="true" />
 				<Label text="Number of cards" />
-				<Input id="numberOfCards" width="4rem" type="Number" value="11" />
+				<Input id="numberOfCards" width="4rem" type="Number" value="{/numberOfCards}" />
 				<Label text="dataMode to 'Auto'"/>
 				<CheckBox id="dataMode"></CheckBox>
 				<Button text="Start loading" type="Emphasized" press=".onFormSubmit" />

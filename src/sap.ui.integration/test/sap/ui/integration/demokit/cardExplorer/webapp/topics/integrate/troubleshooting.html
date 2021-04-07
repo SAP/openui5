@@ -53,11 +53,33 @@
 			</ul>
 			</p>
 
+			<h2 id="webPageCardErrors">WebPage Card Fails to Load</h2>
+			<p>
+				<b>Description:</b>
+				The content of a WebPage card doesn't show up. Instead, there is an error message, saying that the origin you have
+				pointed to refused to connect.
+			</p>
+			<p>
+				<b>Root Cause:</b>
+				The <code>src</code> of the WebPage card is subject to the same-origin policy, which means that cross-origin request
+				are restricted, in order to prevent security vulnerabilities.
+			</p>
+			<p>
+				<b>Resolution: </b>
+				In case <b>it does not violate security policies</b>, the server can enable Cross-Origin Resource Sharing for the origin
+				where the card resides.
+			</p>
+			<ul>
+				<li><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy" target="_blank">Same-origin policy</a></li>
+				<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP" target="_blank">CSP</a></li>
+			</ul>
+
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
 			<div><a href="../../index.html#/integrate/troubleshooting/cors" target="_parent">Card Fails to Load Data due
 					to CORS Issues</a></div>
+			<div><a href="../../index.html#/integrate/troubleshooting/webPageCardErrors" target="_parent">WebPage Card Fails to Load</a></div>
 		</div>
 	</div>
 

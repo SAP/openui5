@@ -81,15 +81,16 @@
       "description": "Represents the type of the card's content",
       "type": "string",
       "enum": [
-        "List",
+        "AdaptiveCard",
         "Analytical",
         "AnalyticsCloud",
-        "Table",
-        "Object",
-        "Timeline",
-        "Component",
         "Calendar",
-        "AdaptiveCard"
+        "Component",
+        "List",
+        "Object",
+        "Table",
+        "Timeline",
+        "WebPage"
       ]
     },
     "data": {
@@ -299,6 +300,26 @@
           "properties": {
             "content": {
               "$ref": "#/definitions/ContentType.AdaptiveCard"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "allOf": [
+        {
+          "properties": {
+            "type": {
+              "enum": [
+                "WebPage"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/ContentType.WebPage"
             }
           }
         }
@@ -1390,6 +1411,27 @@
     "ContentType.AdaptiveCard": {
       "description": "Represents AdaptiveCard content",
       "$ref": "https://adaptivecards.io/schemas/adaptive-card.json#/definitions/AdaptiveCard"
+    },
+    "ContentType.WebPage": {
+      "description": "WebPage content is used to embed HTML page",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/data"
+        },
+        "minHeight": {
+          "$ref": "#/definitions/minHeight"
+        },
+        "src": {
+          "description": "URL of the web page to be embedded",
+          "type": "string"
+        },
+        "sandbox": {
+          "description": "Sandbox attribute of the iframe",
+          "type": "string"
+        }
+      }
     },
     "progressIndicator": {
       "description": "Represents progress indicator attributes",
