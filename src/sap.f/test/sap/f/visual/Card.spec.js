@@ -33,7 +33,7 @@ describe("sap.f.Card", function () {
 		oCompactBtn.click();
 	}
 
-	function takePictureOfElement(oConfig, sPictureId) {
+	function getElement(oConfig) {
 		var oElement;
 
 		if (oConfig.control) {
@@ -48,9 +48,20 @@ describe("sap.f.Card", function () {
 			oElement = element(by.css(oConfig.css));
 		}
 
+		return oElement;
+	}
+
+	function takePictureOfElement(oConfig, sPictureId) {
+		var oElement = getElement(oConfig);
+
 		browser.executeScript("arguments[0].scrollIntoView()", oElement.getWebElement());
 
 		expect(takeScreenshot(oElement)).toLookAs(sPictureId);
+	}
+
+	function focusElement(oConfig) {
+		var oElement = getElement(oConfig);
+		browser.executeScript("arguments[0].focus()", oElement.getWebElement());
 	}
 
 	it("Test page loaded", function () {
@@ -353,7 +364,16 @@ describe("sap.f.Card", function () {
 
 	it("No Header / No Content", function () {
 		navigateTo("No Header / No Content");
-		var aCardIds = ["i1", "i2"];
+		var aCardIds = ["i1", "i2", "f3"];
+
+		focusElement({
+			control: {
+				viewNamespace: "sap.f.cardsdemo.view.",
+				viewName: "NoHeaderNoContent",
+				interaction: "root",
+				id: aCardIds[2]
+			}
+		});
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
