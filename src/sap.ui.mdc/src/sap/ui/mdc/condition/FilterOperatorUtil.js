@@ -687,7 +687,7 @@ function(
 						format: function(oCondition, oType, sDisplayFormat) {
 							var iValue = oCondition.values[0];
 							var sTokenText = this.tokenFormat;
-							var sReplace = this._oListFieldHelp.getTextForKey(iValue);
+							var sReplace = _getMonths.apply(this)[iValue];
 
 							return sReplace == null ? null : sTokenText.replace(new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g"), sReplace);
 						},
@@ -705,29 +705,24 @@ function(
 								}
 							}
 
-							return [this._oListFieldHelp.getKeyForText(aValues[0])];
+							return [_getMonths.apply(this).indexOf(aValues[0])];
 						},
 						createControl: function(oType, sPath, iIndex, sId)  {
-
 							var getMonthItems = function() {
-								var oDate = new UniversalDate(),
-									oFormatter = DateFormat.getDateInstance({
-										pattern: "LLLL"
-									});
-								oDate.setDate(15);
-								oDate.setMonth(0);
+								if (!this._aMonthsItems) {
+									var aMonths = _getMonths.apply(this);
+									this._aMonthsItems = [];
 
-								var aMonthsItems = [];
-
-								for (var i = 0; i < 12; i++) {
-									aMonthsItems.push({
-										text: oFormatter.format(oDate),
-										key: i
-									});
-									oDate.setMonth(oDate.getMonth() + 1);
+									for (var i = 0; i < 12; i++) {
+										this._aMonthsItems.push({
+											text: aMonths[i],
+											key: i
+										});
+									}
 								}
-								return aMonthsItems;
-							};
+
+								return this._aMonthsItems;
+							}.bind(this);
 
 							if (!this._oListFieldHelp) {
 								var ListFieldHelp = sap.ui.requireSync("sap/ui/mdc/field/ListFieldHelp");
@@ -1492,6 +1487,28 @@ function(
 			// TODO: is type specific check needed?
 			return vValue === null || vValue === undefined || vValue === "";
 
+		}
+
+		function _getMonths() {
+			if (!this._aMonths) {
+				var oDate = new UniversalDate(),
+					oFormatter = DateFormat.getDateInstance({
+						pattern: "LLLL"
+					});
+				oDate.setDate(15);
+				oDate.setMonth(0);
+
+				var aMonths = [];
+
+				for (var i = 0; i < 12; i++) {
+					aMonths.push(oFormatter.format(oDate));
+					oDate.setMonth(oDate.getMonth() + 1);
+				}
+
+				this._aMonths = aMonths;
+			}
+
+			return this._aMonths;
 		}
 
 		return FilterOperatorUtil;
