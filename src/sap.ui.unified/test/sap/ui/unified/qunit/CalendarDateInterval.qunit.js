@@ -385,6 +385,23 @@ sap.ui.define([
 		oTogglePrevNexYearPicker.restore();
 	});
 
+	QUnit.test("Header previous button handler works correct for YearRangePicker", function (assert) {
+		// Prepare
+		var oDeviceStub = this.stub(sap.ui.Device.system, "phone", true),
+			oFocusSpy = this.spy(this.oCal, "focus");
+
+		// Act
+		this.oCal._handleNext();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oFocusSpy.callCount, 0, "focus is not called");
+
+		// Clean
+		oDeviceStub.restore();
+		oFocusSpy.restore();
+	});
+
 
 	QUnit.module("MonthPicker", {
 		beforeEach: function () {

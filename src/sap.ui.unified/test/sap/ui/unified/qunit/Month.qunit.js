@@ -281,6 +281,21 @@ sap.ui.define([
 			oAssert.strictEqual(this.oM.$().hasClass("sapUiCalNoWeekNum"), true, "When showWeekNumbers property is 'false', the class that hides the week numbers should be 'visible'");
 		});
 
+		QUnit.test("There is no focus on mobile", function (oAssert) {
+			// Prepare
+			var oDeviceStub = this.stub(sap.ui.Device.system, "phone", true),
+				oItemNavSpy = this.spy(this.oM._oItemNavigation, "focusItem");
+
+			// Act
+			this.oM._focusDate(CalendarDate.fromLocalJSDate(new Date()));
+
+			// Assert
+			oAssert.strictEqual(oItemNavSpy.callCount, 0, "item navigation is not applying a focus");
+
+			// Clean
+			oDeviceStub.restore();
+			oItemNavSpy.restore();
+		});
 
 		QUnit.module("Internals", {
 			beforeEach: function () {
