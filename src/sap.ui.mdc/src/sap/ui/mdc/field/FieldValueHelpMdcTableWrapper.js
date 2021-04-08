@@ -302,7 +302,9 @@ sap.ui.define([
 	};
 
 	FieldValueHelpMdcTableWrapper.prototype._handleEvents = function (oEvent) {
-		return this.OInnerWrapperClass.prototype._handleEvents.apply(this, arguments);
+		if (this.OInnerWrapperClass) {
+			return this.OInnerWrapperClass.prototype._handleEvents.apply(this, arguments);
+		}
 	};
 
 	FieldValueHelpMdcTableWrapper.prototype._handleItemPress = function (oEvent) {
