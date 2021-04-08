@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/plugin/Split",
-	"sap/ui/rta/plugin/Stretch"
+	"sap/ui/rta/plugin/Stretch",
+	"sap/ui/rta/plugin/LocalReset"
 ], function(
 	isEmptyObject,
 	values,
@@ -52,7 +53,8 @@ sap.ui.define([
 	SelectionPlugin,
 	SettingsPlugin,
 	SplitPlugin,
-	StretchPlugin
+	StretchPlugin,
+	LocalResetPlugin
 ) {
 	"use strict";
 
@@ -199,6 +201,12 @@ sap.ui.define([
 			});
 
 			this._mDefaultPlugins["toolHooks"] = new ToolHooksPlugin();
+
+			if (oSettings && !oSettings.isVersioningEnabled(oFlexSettings.layer)) {
+				this._mDefaultPlugins["localReset"] = new LocalResetPlugin({
+					commandFactory: this._oCommandFactory
+				});
+			}
 		}
 
 		return Object.assign({}, this._mDefaultPlugins);

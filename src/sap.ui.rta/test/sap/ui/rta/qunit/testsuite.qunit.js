@@ -198,6 +198,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/EasyRemove"]
 				}
 			},
+			"plugin/LocalReset": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/LocalReset"]
+				}
+			},
 			"plugin/Plugin": {
 				group: "Plugin",
 				coverage: {
@@ -351,6 +357,12 @@ sap.ui.define([
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/CreateContainer"]
+				}
+			},
+			"command/LocalReset": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/LocalReset"]
 				}
 			},
 			"command/LREPSerializer": {

@@ -118,6 +118,9 @@ sap.ui.define([
 				}
 			}
 		},
+		actions: {
+			localReset: "resetSimpleForm"
+		},
 		getStableElements: getStableElements
 	};
 

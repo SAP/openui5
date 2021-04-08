@@ -401,8 +401,9 @@ sap.ui.define([
 				return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormOverlay).then(function() {
 					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 					assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
-					assert.equal(oContextMenuControl.getButtons().length, 1, "1 Menu Button is available");
+					assert.equal(oContextMenuControl.getButtons().length, 2, "2 Menu Buttons are available");
 					assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_CREATE_CHILD_CONTAINER", "create group is available");
+					assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_LOCAL_RESET", "local reset is available");
 				}.bind(this));
 			});
 

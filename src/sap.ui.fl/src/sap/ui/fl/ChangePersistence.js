@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/util/includes",
 	"sap/base/util/merge",
+	"sap/base/util/restricted/_union",
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
@@ -43,6 +44,7 @@ sap.ui.define([
 	Measurement,
 	includes,
 	merge,
+	union,
 	UriParameters,
 	Log,
 	VariantManagementState,
@@ -364,6 +366,27 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getChangesMapForComponent = function() {
 		return this._mChanges;
+	};
+
+	/**
+	 * Returns all changes that are currently loaded for the component.
+	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
+	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading changes
+	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included
+	 * @returns {Promise} Promise resolving with an array of changes
+	 * @public
+	 */
+	ChangePersistence.prototype.getAllUIChanges = function(mPropertyBag) {
+		var aChanges = union(
+			this.getChangesMapForComponent().aChanges,
+			mPropertyBag.includeDirtyChanges && this.getDirtyChanges()
+		).filter(function (oChange) {
+			return (
+				Boolean(oChange)
+				&& LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), mPropertyBag.layer) === 0
+			);
+		});
+		return aChanges;
 	};
 
 	/**
