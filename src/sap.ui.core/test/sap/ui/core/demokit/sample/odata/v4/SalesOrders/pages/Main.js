@@ -29,33 +29,6 @@ sap.ui.define([
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 	/*
-	 * Checks the value state and value state text for a sap.m.Input or
-	 * sap.ui.core.sample.common.ValueHelp control within a given table row <code>iRow</code> and
-	 * control ID <code>rID</code>.
-	 */
-	function checkControlValueState(oOpa, iRow, rId, sExpectedValueState, sExpectedValueStateText) {
-		return oOpa.waitFor({
-			id : rId,
-			matchers : function (oControl) {
-				return (oControl instanceof sap.m.Input ||
-					oControl instanceof sap.ui.core.sample.common.ValueHelp ) &&
-					oControl.getBindingContext().getIndex() === iRow;
-			},
-			success : function (aControls) {
-				var oControl = aControls[0];
-
-				Opa5.assert.strictEqual(oControl.getValueState(), sExpectedValueState,
-					"ValueState of " + oControl.getId() + " in row " + iRow + " as expected: "
-					+ sExpectedValueState);
-				Opa5.assert.strictEqual(oControl.getValueStateText(), sExpectedValueStateText,
-					"ValueState " + "of " + oControl.getId() + " in row " + iRow + " as expected: "
-					+ sExpectedValueStateText);
-			},
-			viewName : sViewName
-		});
-	}
-
-	/*
 	 * Search for the control with the given ID, extract the number and compare with the expected
 	 * count.
 	 */
@@ -884,7 +857,7 @@ sap.ui.define([
 					return Helper.checkInputValue(this, sViewName, sID, sValue);
 				},
 				checkInputValueState : function (sID, sState, sMessage) {
-					return Helper.checkInputValueState(this, sViewName, sID, sState, sMessage);
+					Helper.checkValueState(this, sViewName, sID, sState, sMessage);
 				},
 				checkMessagesButtonCount : function (iExpectedCount) {
 					return this.waitFor({
@@ -939,23 +912,9 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				checkNoteValueState : function (iRow, sExpectedState, sExpectedStateText) {
-					return this.waitFor({
-						controlType : "sap.m.Table",
-						id : "SalesOrderList",
-						success : function (oSalesOrderTable) {
-							var oInput = oSalesOrderTable.getItems()[iRow]
-									.getCells()[NOTE_COLUMN_INDEX];
-
-							Opa5.assert.strictEqual(oInput.getValueState(), sExpectedState,
-								"ValueState of note in row " + iRow + " as expected: "
-									+ sExpectedState);
-							Opa5.assert.strictEqual(oInput.getValueStateText(), sExpectedStateText,
-								"ValueStateText of note in row " + iRow + " as expected: "
-									+ sExpectedStateText);
-						},
-						viewName : sViewName
-					});
+				checkNoteValueState : function (iRow, sValueState, sValueStateText) {
+					Helper.checkValueState(this, sViewName, /Note-__clone/, sValueState,
+						sValueStateText, false, iRow);
 				},
 				checkSalesOrderIdInDetails : function (bChanged) {
 					return this.waitFor({
@@ -1037,15 +996,15 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				checkSalesOrderLineItemQuantityValueState : function (iRow, sExpectedValueState,
-						sExpectedValueStateText) {
-					return checkControlValueState(this, iRow, /SO_2_SOITEM:Quantity/,
-						sExpectedValueState, sExpectedValueStateText);
+				checkSalesOrderLineItemQuantityValueState : function (iRow, sValueState,
+						sValueStateText) {
+					Helper.checkValueState(this, sViewName, /SO_2_SOITEM:Quantity/, sValueState,
+						sValueStateText, false, iRow);
 				},
-				checkSalesOrderLineItemProductIDValueState : function (iRow, sExpectedValueState,
-						sExpectedValueStateText) {
-					return checkControlValueState(this, iRow, /SO_2_SOITEM:ProductID/,
-						sExpectedValueState, sExpectedValueStateText);
+				checkSalesOrderLineItemProductIDValueState : function (iRow, sValueState,
+						sValueStateText) {
+					Helper.checkValueState(this, sViewName, /SO_2_SOITEM:ProductID.*\d$/,
+						sValueState, sValueStateText, false, iRow);
 				},
 				checkSalesOrdersCount : function (iExpectedCount) {
 					return checkCount(this, iExpectedCount, "salesOrderListTitle");
@@ -1206,52 +1165,25 @@ sap.ui.define([
 				close : function () {
 					return pressButton(this, "closeSimulateDiscountDialog", true);
 				},
-				enterDiscount : function (fDiscount) {
+				enterDiscount : function (sDiscount) {
 					return Helper.changeStepInputValue(this, sViewName,
-						"SimulateDiscountForm::Discount", fDiscount, true);
+						"SimulateDiscountForm::Discount", sDiscount, sDiscount, true);
 				},
 				executeSimulateDiscount : function () {
 					return pressButton(this, "executeSimulateDiscount", true);
 				}
 			},
 			assertions : {
-				//TODO: factor out with checkDiscountValueState
-				checkApproverValueState : function (sState, sMessage) {
-					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : "SimulateDiscountForm::Approver",
-						searchOpenDialogs : true,
-						success : function (oInput) {
-							Opa5.assert.strictEqual(oInput.getValueState(), sState,
-								"checkApproverValueState('" + oInput.getId() + "', '"
-									+ sState + "')");
-							if (sMessage) {
-								Opa5.assert.strictEqual(oInput.getValueStateText(), sMessage,
-									"ValueStateText: " + sMessage);
-							}
-						},
-						viewName : sViewName
-					});
+				checkApproverValueState : function (sValueState, sValueStateText) {
+					Helper.checkValueState(this, sViewName, "SimulateDiscountForm::Approver",
+						sValueState, sValueStateText, true);
 				},
 				checkControlValue : function (sID, sValue) {
 					return Helper.checkControlValue(this, sViewName, sID, sValue, true);
 				},
-				checkDiscountValueState : function (sState, sMessage) {
-					return this.waitFor({
-						controlType : "sap.m.StepInput",
-						id : "SimulateDiscountForm::Discount",
-						searchOpenDialogs : true,
-						success : function (oStepInput) {
-							Opa5.assert.strictEqual(oStepInput.getValueState(), sState,
-								"checkStepInputValueState('" + oStepInput.getId() + "', '"
-									+ sState + "')");
-							if (sMessage) {
-								Opa5.assert.strictEqual(oStepInput.getValueStateText(), sMessage,
-									"ValueStateText: " + sMessage);
-							}
-						},
-						viewName : sViewName
-					});
+				checkDiscountValueState : function (sValueState, sValueStateText) {
+					Helper.checkValueState(this, sViewName, "SimulateDiscountForm::Discount",
+						sValueState, sValueStateText, true);
 				}
 			}
 		},
