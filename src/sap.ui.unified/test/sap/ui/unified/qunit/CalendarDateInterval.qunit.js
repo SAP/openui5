@@ -385,7 +385,7 @@ sap.ui.define([
 		oTogglePrevNexYearPicker.restore();
 	});
 
-	QUnit.test("Header previous button handler works correct for YearRangePicker", function (assert) {
+	QUnit.test("There is no focus on mobile", function (assert) {
 		// Prepare
 		var oDeviceStub = this.stub(sap.ui.Device.system, "phone", true),
 			oFocusSpy = this.spy(this.oCal, "focus");
