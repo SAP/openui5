@@ -210,6 +210,7 @@ sap.ui.define([
 		var oClone = oWrapper.clone();
 		assert.notOk(oWrapper.OInnerWrapperClass, "OInnerWrapperClass not yet available.");
 		assert.ok(oClone, "oWrapper was cloned successfully");
+		oClone.destroy();
 	});
 
 	QUnit.test("initialize grid table", function(assert) {
