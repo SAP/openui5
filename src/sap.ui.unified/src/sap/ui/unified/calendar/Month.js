@@ -2122,7 +2122,7 @@ sap.ui.define([
 			$DomRefDay = jQuery(aDomRefs[i]);
 			if ($DomRefDay.attr("data-sap-day") == sYyyymmdd) {
 				if (document.activeElement != aDomRefs[i]) {
-					if (bSkipFocus) {
+					if (bSkipFocus || Device.system.phone) {
 						this._oItemNavigation.setFocusedIndex(i);
 					} else {
 						this._oItemNavigation.focusItem(i);
