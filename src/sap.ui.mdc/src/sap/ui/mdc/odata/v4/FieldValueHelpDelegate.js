@@ -37,7 +37,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @class Delegate class for sap.ui.mdc.base.FieldValueHelp.<br>
+	 * @class Delegate class for sap.ui.mdc.field.FieldValueHelp.<br>
 	 * <h3><b>Note:</b></h3>
 	 * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
 	 *
