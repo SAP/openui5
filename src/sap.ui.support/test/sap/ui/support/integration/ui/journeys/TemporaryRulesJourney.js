@@ -96,20 +96,6 @@ sap.ui.define([
 		Then.onTheRulesPage.iShouldSeeARuleWithSpecificTitle(INDEX_OF_TEMPORARY_LIBRARY, 1, sRuleTitle);
 	});
 
-	opaTest("Should enable storage presistency setting", function (Given, When, Then) {
-
-		When.onTheRulesPage.iPressSettingsButton();
-
-		Then.onTheRulesPage.iShouldSeeStorageSettingsPopOver();
-
-		When.onTheRulesPage.iPressCheckBoxButton(true);
-
-		Then.onTheRulesPage.iShouldSeeStorageSettingsCheckBoxSelected(true);
-
-		Then.onTheMainPage.iShouldPersistingDataInStorageLabelOnToolbar();
-
-	});
-
 	opaTest("Should deselect first temporary rule", function (Given, When, Then) {
 
 		//first temporary rule
@@ -145,39 +131,6 @@ sap.ui.define([
 
 		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(45, "45 Rules are selected", "Was not able to deselect rule");
 
-		Then.iTeardownSupportAssistantFrame();
-	});
-
-	opaTest("Should see temporary rules selection persisted", function (Given, When, Then) {
-		Given.iStartMyApp();
-
-		//temporary- library
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(0);
-
-		// first temp rule
-		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(1);
-
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInModel(INDEX_OF_TEMPORARY_LIBRARY);
-
-		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(INDEX_OF_TEMPORARY_LIBRARY, 0);
-
-		// second temp rule
-		Then.onTheRulesPage.iShouldSeeRuleSelectedInView(2);
-
-		Then.onTheRulesPage.iShouldSeeRuleSelectedInModel(0, 1);
-
-		//sap.ui.core - library
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(3);
-
-		// Error logs - rule
-		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(5);
-
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInModel(1);
-
-		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(1, 1);
-
-		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(45, "45 Rules are selected", "Was not able to deselect rule");
-
 	});
 
 	opaTest("Should load additional rule and deselect sap.ui.table rules", function (Given, When, Then) {
@@ -202,66 +155,6 @@ sap.ui.define([
 		Then.onTheRulesPage.iShouldSeeRuleSelectedInView(2);
 
 		Then.onTheRulesPage.iShouldSeeRuleSelectedInModel(0, 1);
-
-		//sap.ui.core - library
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(3);
-
-		// Error logs - rule
-		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(5);
-
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInModel(1);
-
-		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(1, 1);
-
-		// sap.ui.table
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInModel(6);
-
-		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(6, 0);
-
-		Then.onTheRulesPage.iShouldSeeRulesSelectionStateChanged(45, "45 Rules are selected", "Was not able to deselect rule");
-
-		Then.iTeardownSupportAssistantFrame();
-	});
-
-	opaTest("Should see storage settings popover", function (Given, When, Then) {
-		Given.iStartMyApp();
-
-		When.onTheRulesPage.iPressSettingsButton();
-
-		Then.onTheRulesPage.iShouldSeeStorageSettingsPopOver();
-
-	});
-
-	opaTest("Should remove local storage persistency", function (Given, When, Then) {
-
-		When.onTheRulesPage.iPressCheckBoxButton(false);
-
-		Then.onTheRulesPage.iShouldSeeStorageSettingsCheckBoxSelected(false);
-
-	});
-
-	opaTest("Should load additional rule and deselect sap.ui.table rules", function (Given, When, Then) {
-		Then.onTheRulesPage.iShouldSeeRuleInTable(TEMP_RULE_TITLE_AFTER_UPDATE, "Temporary rule " + TEMP_RULE_TITLE_AFTER_UPDATE + " disappeared")
-			.and.iShouldSeeLibraryDeselectedInView(INDEX_OF_TEMPORARY_LIBRARY);
-
-		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets")
-			.and.iSelectAdditionalRuleSet("sap.ui.table")
-			.and.iPressLoadAdditionalRuleSetButton();
-
-		Then.onTheRulesPage.iShouldSeeRuleInTable(TEMP_RULE_TITLE_AFTER_UPDATE, "Temporary rule '" + TEMP_RULE_TITLE_AFTER_UPDATE + "' disappeared after loading additional rulesets")
-			.and.iShouldSeeLibraryDeselectedInView(INDEX_OF_TEMPORARY_LIBRARY);
-
-		// first temp rule
-		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(1);
-
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInModel(INDEX_OF_TEMPORARY_LIBRARY);
-
-		Then.onTheRulesPage.iShouldSeeRuleDeselectedInModel(INDEX_OF_TEMPORARY_LIBRARY, 0);
-
-		// second temp rule
-		Then.onTheRulesPage.iShouldSeeRuleSelectedInView(2);
-
-		Then.onTheRulesPage.iShouldSeeRuleSelectedInModel(INDEX_OF_TEMPORARY_LIBRARY, 1);
 
 		//sap.ui.core - library
 		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(3);
@@ -285,8 +178,7 @@ sap.ui.define([
 
 	opaTest("Should select duplicated rules together", function (Given, When, Then) {
 
-		Given.iDeletePersistedData()
-			.and.iStartMyApp();
+		Given.iStartMyApp();
 
 		When.onTheRulesPage.iPressButtonWithText(CREATE_RULE_BUTTON);
 
@@ -312,8 +204,7 @@ sap.ui.define([
 
 	opaTest("Should run analyze and see issues", function (Given, When, Then) {
 
-		Given.iDeletePersistedData()
-			.and.iStartMyApp();
+		Given.iStartMyApp();
 
 		When.onTheRulesPage.iPressAnalyze();
 
