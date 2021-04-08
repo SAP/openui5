@@ -52,7 +52,8 @@ sap.ui.define([
 	 *   messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding
 	 *   binding parameter is not set manually.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   By default decimals are preserved; since 1.89.0
+	 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
+	 *   "short" or "long"; since 1.89.0
 	 * @param {object} [oFormatOptions.source]
 	 *   A set of format options as defined for
 	 *   {@link sap.ui.core.format.NumberFormat.getCurrencyInstance} which describes the format of
@@ -195,7 +196,11 @@ sap.ui.define([
 	};
 
 	Currency.prototype.setFormatOptions = function(oFormatOptions) {
-		this.oFormatOptions = Object.assign({preserveDecimals : true}, oFormatOptions);
+		this.oFormatOptions = Object.assign(
+			oFormatOptions.style !== "short" && oFormatOptions.style !== "long"
+				? {preserveDecimals : true}
+				: {},
+			oFormatOptions);
 		this._createFormats();
 	};
 

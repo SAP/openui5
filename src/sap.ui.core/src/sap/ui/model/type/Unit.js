@@ -66,7 +66,8 @@ sap.ui.define([
 	 *   {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding binding
 	 *   parameter is not set manually.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   By default decimals are preserved; since 1.89.0
+	 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
+	 *   "short" or "long"; since 1.89.0
 	 * @param {object} [oFormatOptions.source]
 	 *   Additional set of format options to be used if the property in the model is not of type
 	 *   <code>string</code> and needs formatting as well. If an empty object is given, the grouping
@@ -320,7 +321,11 @@ sap.ui.define([
 	};
 
 	Unit.prototype.setFormatOptions = function(oFormatOptions) {
-		this.oFormatOptions = Object.assign({preserveDecimals : true}, oFormatOptions);
+		this.oFormatOptions = Object.assign(
+			oFormatOptions.style !== "short" && oFormatOptions.style !== "long"
+				? {preserveDecimals : true}
+				: {},
+			oFormatOptions);
 		this._clearInstances();
 		this._createInputFormat();
 	};

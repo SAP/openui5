@@ -25,17 +25,20 @@ sap.ui.define([
 	 *   the formatter
 	 */
 	function getFormatter(oType) {
-		var oFormatOptions, iScale;
+		var oFormatOptions, iScale, oTypeFormatOptions;
 
 		if (!oType.oFormat) {
 			oFormatOptions = {
 				groupingEnabled : true,
-				maxIntegerDigits : Infinity,
-				preserveDecimals : true
+				maxIntegerDigits : Infinity
 			};
 			iScale = getScale(oType);
 			if (iScale !== Infinity) {
 				oFormatOptions.minFractionDigits = oFormatOptions.maxFractionDigits = iScale;
+			}
+			oTypeFormatOptions = oType.oFormatOptions || {};
+			if (oTypeFormatOptions.style !== "short" && oTypeFormatOptions.style !== "long") {
+				oFormatOptions.preserveDecimals = true;
 			}
 			Object.assign(oFormatOptions, oType.oFormatOptions);
 			oFormatOptions.parseAsString = true;
@@ -202,7 +205,8 @@ sap.ui.define([
 	 *   the value of the constraint <code>scale</code> unless it is "variable". They can however
 	 *   be overwritten.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   by default decimals are preserved; since 1.89.0
+	 *   by default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
+	 *   "short" or "long"; since 1.89.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated

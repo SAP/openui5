@@ -258,6 +258,21 @@ sap.ui.define([
 		set : {preserveDecimals : false},
 		expect : {groupingEnabled : true, preserveDecimals : false}
 	}, {
+		set : {style : "short"},
+		expect : {groupingEnabled : true, style : "short"}
+	}, {
+		set : {style : "long"},
+		expect : {groupingEnabled : true, style : "long"}
+	}, {
+		set : {style : "standard"},
+		expect : {groupingEnabled : true, preserveDecimals : true, style : "standard"}
+	}, {
+		set : {preserveDecimals : true, style : "short"},
+		expect : {groupingEnabled : true, preserveDecimals : true, style : "short"}
+	}, {
+		set : {preserveDecimals : true, style : "long"},
+		expect : {groupingEnabled : true, preserveDecimals : true, style : "long"}
+	}, {
 		set : {foo : "bar"},
 		expect : {foo : "bar", groupingEnabled : true, preserveDecimals : true}
 	}, {

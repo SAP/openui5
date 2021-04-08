@@ -30,11 +30,15 @@ sap.ui.define([
 	 *   the formatter
 	 */
 	function getFormatter(oType) {
-		var oFormatOptions;
+		var oFormatOptions, oTypeFormatOptions;
 
 		if (!oType.oFormat) {
-			oFormatOptions = Object.assign({groupingEnabled : true, preserveDecimals : true},
-				oType.oFormatOptions);
+			oFormatOptions = {groupingEnabled : true};
+			oTypeFormatOptions = oType.oFormatOptions || {};
+			if (oTypeFormatOptions.style !== "short" && oTypeFormatOptions.style !== "long") {
+				oFormatOptions.preserveDecimals = true;
+			}
+			Object.assign(oFormatOptions, oType.oFormatOptions);
 			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
 		return oType.oFormat;
@@ -96,7 +100,8 @@ sap.ui.define([
 	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to
 	 *   NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   by default decimals are preserved; since 1.89.0
+	 *   by default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
+	 *   "short" or "long"; since 1.89.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
