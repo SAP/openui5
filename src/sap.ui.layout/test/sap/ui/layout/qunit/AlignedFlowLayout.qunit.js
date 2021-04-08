@@ -517,7 +517,7 @@ sap.ui.require([
 					// cleanup
 					oReflowSpy.restore();
 					oAlignedFlowLayout.destroy();
-					document.body.overflow = oldBodyOverflow;
+					document.body.style.overflow = oldBodyOverflow;
 					done();
 				}
 			});
@@ -525,6 +525,10 @@ sap.ui.require([
 
 		QUnit.test("it should not trigger unnecessary function calls to the .reflow() method to" +
 					" (prevent cyclic dependencies (test case 2))", function(assert) {
+
+			// temp. prevent scrollbars caused by QUnit output as they would disturb the width measurement
+			var oldBodyOverflow = document.body.style.overflow;
+			document.body.style.overflow = "hidden";
 
 			var done = assert.async();
 
@@ -590,6 +594,7 @@ sap.ui.require([
 					// cleanup
 					oReflowSpy.restore();
 					oAlignedFlowLayout.destroy();
+					document.body.style.overflow = oldBodyOverflow;
 					done();
 				}
 			});
