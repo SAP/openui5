@@ -39,7 +39,7 @@ sap.ui.define([], function() {
 
 					return oViewInfo;
 				});
-			});
+			}, this._oOptions._name);
 		}
 	};
 }, /* bExport= */ true);

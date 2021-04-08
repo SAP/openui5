@@ -85,6 +85,44 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Should do navigation after the previous navigation fails", function(assert) {
+		//Arrange
+		var that = this,
+			oToSpy = sinon.spy(this.oNavContainer, "to"),
+			oNavigateSpy = sinon.spy(this.oTargets._oTargetHandler, "navigate");
+
+		this.oTargets.addTarget("targetCantBeLoaded", {
+			controlId: this.oNavContainer.getId(),
+			viewName: "viewCantBeLoaded"
+		});
+
+		this.stub(Views.prototype, "_getView").callsFake(function (oOptions) {
+			if (oOptions.name === "viewCantBeLoaded") {
+				return {
+					loaded: function() {
+						return Promise.reject();
+					},
+					isA: function(sClass) {
+						return sClass === "sap.ui.core.mvc.View";
+					}
+				};
+			} else {
+				return that.oViewMock;
+			}
+		});
+
+		return this.oTargets.display("targetCantBeLoaded").then(function() {
+			assert.ok(false, "The display of first target shouldn't resolve");
+		}, function() {
+			return that.oTargets.display("myTarget").then(function() {
+				assert.strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
+				assert.strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
+				oToSpy.restore();
+				oNavigateSpy.restore();
+			});
+		});
+	});
+
 	///////////////////////////////////////////////////////
 	/// Integation test
 	///////////////////////////////////////////////////////
