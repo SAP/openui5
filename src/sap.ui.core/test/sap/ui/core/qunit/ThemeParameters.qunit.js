@@ -129,8 +129,15 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		}
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib1");
-		assert.equal(Parameters.get("sapUiThemeParamForLib1"), "#fafafa", "parameter for newly loaded library should be known now");
 
+		// In Chrome the library.css for testlibs.themeParameters.lib1 is still pending, so the library-parameters.json needs to be loaded.
+		// In Firefox however, the library.css is available when fetching the theme-parameter.
+		// To unify the behaviour, prevent inline data-uri parameter usage and force a json request to test the request params
+		// BCP: 2170097761
+		var oLink = document.getElementById("sap-ui-theme-testlibs\.themeParameters\.lib1");
+		oLink.setAttribute("style", "background-image: none !important;");
+
+		assert.equal(Parameters.get("sapUiThemeParamForLib1"), "#fafafa", "parameter for newly loaded library should be known now");
 		assert.strictEqual(checkLibraryParametersJsonRequestForLib("1").length, 1, "library-parameters.json requested once for testlibs.themeParameters.lib1");
 	});
 
