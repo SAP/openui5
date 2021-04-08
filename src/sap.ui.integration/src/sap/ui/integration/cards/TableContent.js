@@ -325,12 +325,12 @@ sap.ui.define([
 		}
 
 		if (oColumn.icon) {
-			var vSrc = BindingHelper.formattedProperty(oColumn.icon.src, function (sValue) {
+			var oSrc = BindingHelper.formattedProperty(oColumn.icon.src, function (sValue) {
 				return this._oIconFormatter.formatSrc(sValue);
 			}.bind(this));
 
 			return new Avatar({
-				src: vSrc,
+				src: oSrc,
 				displayShape: oColumn.icon.shape,
 				displaySize: oColumn.icon.size || AvatarSize.XS,
 				tooltip: oColumn.icon.alt,

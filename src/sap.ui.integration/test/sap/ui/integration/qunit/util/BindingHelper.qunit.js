@@ -115,10 +115,12 @@ function (
 			fnFormatter = function (sValue) {
 				return sValue.toUpperCase();
 			},
-			vFormattedValue = BindingHelper.formattedProperty(sValue, fnFormatter);
+			oBindingInfo = BindingHelper.formattedProperty(sValue, fnFormatter);
 
 		// assert
-		assert.strictEqual(vFormattedValue, sValue.toUpperCase(), "Should have properly formatted the value if it is plain string.");
+		assert.strictEqual(typeof oBindingInfo,"object", "Should have created binding info object");
+		assert.strictEqual(oBindingInfo.value, sValue, "Binding info is static");
+		assert.strictEqual(oBindingInfo.formatter, fnFormatter, "Formatter is attached to the static binding info");
 	});
 
 	QUnit.test("Call #formattedProperty with binding info 'object'", function (assert) {
@@ -127,12 +129,12 @@ function (
 			fnFormatter = function (sValue) {
 				return sValue.toUpperCase();
 			},
-			vFormattedValue = BindingHelper.formattedProperty(oValue, fnFormatter);
+			oBindingInfo = BindingHelper.formattedProperty(oValue, fnFormatter);
 
 		// assert
-		assert.notStrictEqual(vFormattedValue, oValue, "Should return new object - binding info.");
-		assert.ok(vFormattedValue.hasOwnProperty("formatter"), "The new binding info should have attached formatter.");
-		assert.strictEqual(vFormattedValue.formatter, fnFormatter,"The formatter should be the passed formatter.");
+		assert.notStrictEqual(oBindingInfo, oValue, "Should return new object - binding info.");
+		assert.ok(oBindingInfo.hasOwnProperty("formatter"), "The new binding info should have attached formatter.");
+		assert.strictEqual(oBindingInfo.formatter, fnFormatter,"The formatter should be the passed formatter.");
 	});
 
 	QUnit.test("Call #formattedProperty with multiple arguments - parts, given as 'array'", function (assert) {
@@ -146,20 +148,19 @@ function (
 			fnFormatter = function (sFirstValue, sSecondValue, sThirdValue) {
 				return sFirstValue + sSecondValue + sThirdValue;
 			},
-			vFormattedValue = BindingHelper.formattedProperty(aParts, fnFormatter);
+			oBindingInfo = BindingHelper.formattedProperty(aParts, fnFormatter);
 		// assert
-		assert.strictEqual(typeof vFormattedValue, "object", "Should return new object - binding info.");
-		assert.ok(vFormattedValue.hasOwnProperty("parts"), "The new binding info should have 'parts'.");
-		assert.deepEqual(aParts[0], vFormattedValue.parts[0], "Objects in the new binding info 'parts' should be as given.");
-		assert.deepEqual(typeof vFormattedValue.parts[0], "object", "Strings in the new binding info 'parts' should be returned as objects.");
-		assert.ok(vFormattedValue.hasOwnProperty("formatter"), "The new binding info should have attached formatter.");
-		assert.strictEqual(vFormattedValue.formatter, fnFormatter,"The formatter should be the passed formatter.");
-		assert.strictEqual(vFormattedValue.parts[1].value, "second text with no binding", "Plain strings should return always with key 'value' and value the string itself.");
+		assert.strictEqual(typeof oBindingInfo, "object", "Should return new object - binding info.");
+		assert.ok(oBindingInfo.hasOwnProperty("parts"), "The new binding info should have 'parts'.");
+		assert.deepEqual(aParts[0], oBindingInfo.parts[0], "Objects in the new binding info 'parts' should be as given.");
+		assert.deepEqual(typeof oBindingInfo.parts[0], "object", "Strings in the new binding info 'parts' should be returned as objects.");
+		assert.ok(oBindingInfo.hasOwnProperty("formatter"), "The new binding info should have attached formatter.");
+		assert.strictEqual(oBindingInfo.formatter, fnFormatter,"The formatter should be the passed formatter.");
+		assert.strictEqual(oBindingInfo.parts[1].value, "second text with no binding", "Plain strings should return always with key 'value' and value the string itself.");
 	});
 
 	QUnit.test("Call #formattedProperty with binding info 'object' and complex binding", function (assert) {
 		// arrange
-
 		var oValue = BindingHelper.createBindingInfos("{./images/}"),
 			fnFormatter = function (sValue) {
 				return sValue.toLowerCase() + ".jpg";
@@ -168,14 +169,27 @@ function (
 				return sValue.toUpperCase() + "IMAGE";
 			};
 		oValue.formatter = fnOtherFormatter;
-		var vFormattedValue = BindingHelper.formattedProperty(oValue, fnFormatter);
+		var oBindingInfo = BindingHelper.formattedProperty(oValue, fnFormatter);
 
 		//Act
 		var formattedProperty = fnFormatter(fnOtherFormatter(oValue.path));
-		var bindingHelperFormattedProperty = vFormattedValue.formatter(oValue.path);
+		var bindingHelperFormattedProperty = oBindingInfo.formatter(oValue.path);
 
 		// assert
 		assert.strictEqual(formattedProperty, bindingHelperFormattedProperty,"The formatter should be the passed formatter.");
+	});
+
+	QUnit.test("#formattedProperty should NOT return Promise", function (assert) {
+		// arrange
+		var fnFormatter = function () {
+			return Promise.resolve();
+		};
+
+		// act
+		var oBindingInfo = BindingHelper.formattedProperty("primitiveValue", fnFormatter);
+
+		// assert
+		assert.notOk(oBindingInfo instanceof Promise, "Returned value shouldn't be Promise");
 	});
 
 	QUnit.module("Static method #escapeCardSyntax");

@@ -120,42 +120,47 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a binding info with formatter or applies formatter directly if the value is string.
+	 * Creates binding info with formatter
 	 *
-	 * @param {array|object|string} vValue Can be array with parts, object that represents a binding info or a string.
-	 * @param {function} fnFormatter Formatter function.
-	 * @returns {object|string} New binding info object with the formatter, or a formatted string.
+	 * @param {array|object|string|undefined} vValue Array of parts, existing binding info, or primitive value
+	 * @param {function} fnFormatter Formatter function
+	 * @returns {object|undefined} New binding info object with the formatter or undefined
 	 */
 	BindingHelper.formattedProperty = function(vValue, fnFormatter) {
+		if (vValue === undefined) {
+			return vValue;
+		}
 
-		var vBindingInfo = {};
+		var oBindingInfo = {};
 
 		if (Array.isArray(vValue)) { // multiple values - create binding info with 'parts' and 'formatter'
-			vBindingInfo.parts = vValue.map(function (vInfo) {
+			oBindingInfo.parts = vValue.map(function (vInfo) {
 				return typeof vInfo === "object" ? extend({} , vInfo) : {value: vInfo};
 			});
 
-			vBindingInfo.formatter = fnFormatter;
+			oBindingInfo.formatter = fnFormatter;
 		} else if (typeof vValue === "object") { // create binding info with a 'formatter'
-			vBindingInfo = extend({}, vValue);
+			oBindingInfo = extend({}, vValue);
 
 			if (vValue.formatter) {
+				var fnInitialFormatter = oBindingInfo.formatter;
 
-				var fnInitialFormatter = vBindingInfo.formatter;
-
-				vBindingInfo.formatter = function () {
+				oBindingInfo.formatter = function () {
 					var sInitialFormatterResult = fnInitialFormatter.apply(this, arguments);
 					return fnFormatter(sInitialFormatterResult);
 				};
 			} else {
-				vBindingInfo.formatter = fnFormatter;
+				oBindingInfo.formatter = fnFormatter;
 			}
 
-		} else { // single string value - just apply the formatter on it
-			vBindingInfo = fnFormatter(vValue);
+		} else { // return static binding
+			oBindingInfo = {
+				value: vValue,
+				formatter: fnFormatter
+			};
 		}
 
-		return vBindingInfo;
+		return oBindingInfo;
 	};
 
 	/**
