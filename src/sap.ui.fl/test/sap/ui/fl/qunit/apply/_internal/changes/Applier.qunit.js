@@ -122,13 +122,20 @@ sap.ui.define([
 			};
 			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
 
-			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl)
+			var fnResolve;
+			Applier.addPreConditionForInitialChangeApplying(new Promise(function(resolve) {
+				fnResolve = resolve;
+			}));
 
-			.then(function() {
-				assert.equal(this.oApplyChangeOnControlStub.callCount, 2, "all four changes for the control were applied");
+			var oReturnPromise = Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl);
+
+			assert.equal(this.oApplyChangeOnControlStub.callCount, 0, "no change for the control was applied yet");
+			assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 2, "and update dependencies was called twice");
+			fnResolve();
+			return oReturnPromise.then(function() {
+				assert.equal(this.oApplyChangeOnControlStub.callCount, 2, "all two changes for the control were applied");
 				assert.equal(this.oApplyChangeOnControlStub.getCall(0).args[0], oChange0, "the first change was applied first");
 				assert.equal(this.oApplyChangeOnControlStub.getCall(1).args[0], oChange1, "the second change was applied second");
-				assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 2, "and update dependencies was called twice");
 			}.bind(this));
 		});
 
