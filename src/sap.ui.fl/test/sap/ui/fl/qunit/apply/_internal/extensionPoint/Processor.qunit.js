@@ -71,6 +71,8 @@ sap.ui.define([
 				oComponentContainer.placeAt("content");
 				return oComponent.getRootControl().loaded();
 			}).then(function() {
+				return oComponent.getRootControl().getContent()[1].loaded();
+			}).then(function() {
 				sap.ui.getCore().applyChanges();
 			});
 		}
@@ -158,7 +160,7 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[25].getId(), sReference + "---mainView--" + sView + "--button7", "EP6_outer and EP7_innner content is in correct order"); // EP6_outer EP7_inner_VENDOR
 			assert.strictEqual(aPanelContent[26].getId(), sReference + "---mainView--" + sView + "--button8", "EP6-outer content is in correct order"); // EP6-outer EP7-inner_VENDOR
 
-			var aTableItems = oView.byId(sView).byId('fragmentWithExtensionPoint3--customTable').getItems();
+			var aTableItems = oView.byId(sView).byId("fragmentWithExtensionPoint3--customTable").getItems();
 			var aTableCells = aTableItems[0].getCells();
 			assert.strictEqual(aTableCells.length, 2, "ExtensionPoint default content added to" + sView + " view into aggregation binding template");
 			var sCellPrefix = sReference + "---mainView--" + sView + "--testProject.fragmentWithExtensionPoint3.";
@@ -166,7 +168,7 @@ sap.ui.define([
 			assert.strictEqual(aTableCells[0].getId(), sTemplatePrefix + "customListCellContent-" + sTemplatePrefix + "customTable-0", "table item is in correct order"); // Main
 			assert.strictEqual(aTableCells[1].getId(), sCellPrefix + "EP5_FRAGMENT_TEXT_ID-" + sTemplatePrefix + "customTable-0", "table item is in correct order"); // Main
 
-			// var aTableItems = oView.byId(sView).byId('fragmentWithExtensionPoint3--customTable').getItems();
+			// var aTableItems = oView.byId(sView).byId("fragmentWithExtensionPoint3--customTable").getItems();
 			// assert.strictEqual(aTableItems.length, 2, "ExtensionPoint content added to" + sView + " view into aggregation binding template");
 			// var sTemplatePrefix = sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint3--customListItemTemplate-";
 			// assert.strictEqual(aTableItems[0].getId(), sTemplatePrefix + sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint3--customTable-0", "table item is in correct order"); // Main
@@ -262,19 +264,20 @@ sap.ui.define([
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync", {
 		before: createComponentAndContainer.bind(null, SYNC),
 		after: destroyComponentAndContainer.bind(null, SYNC)
+	}, function() {
+		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
+			check(SYNC, assert);
+		});
 	});
 
-	QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
-		check(SYNC, assert);
-	});
 
 	QUnit.module("ExtensionPoints with sync and async view when component is created async", {
 		before: createComponentAndContainer.bind(null, ASYNC),
 		after: destroyComponentAndContainer.bind(null, ASYNC)
-	});
-
-	QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
-		check(ASYNC, assert);
+	}, function() {
+		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
+			check(ASYNC, assert);
+		});
 	});
 
 	QUnit.done(function () {
