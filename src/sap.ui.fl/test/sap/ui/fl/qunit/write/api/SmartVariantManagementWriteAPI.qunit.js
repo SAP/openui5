@@ -14,6 +14,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	SmartVariantManagementApplyAPI,
@@ -29,6 +31,8 @@ sap.ui.define([
 	ManifestUtils,
 	UIComponent,
 	Utils,
+	LrepConnector,
+	LoaderExtensions,
 	sinon
 ) {
 	"use strict";
@@ -731,6 +735,52 @@ sap.ui.define([
 			return SmartVariantManagementWriteAPI.isVariantPersonalizationEnabled().then(function (bFlag) {
 				assert.equal(bFlag, false, "the false flag is returned");
 				assert.equal(isVariantPersonalizationEnabledSpy.callCount, 1, "called once");
+			});
+		});
+	});
+
+	QUnit.module("loadVariants with legacy content", {
+		beforeEach: function () {
+			this.oAppComponent = new UIComponent("AppComponent21");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			FlexState.clearState();
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oControl && this.oControl.destroy();
+		}
+	}, function () {
+		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", function (assert) {
+			this.oControl = new Control();
+			var sPersistencyKey = "variantManagement1";
+			this.oControl.getPersonalizableControlPersistencyKey = function () {
+				return sPersistencyKey;
+			};
+
+			var mFlexData = LoaderExtensions.loadResource({
+				dataType: "json",
+				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData.json")
+			});
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
+			var oVariant;
+
+			return SmartVariantManagementApplyAPI.loadVariants({
+				control: this.oControl,
+				standardVariant: {}
+			}).then(function (oResponse) {
+				oVariant = oResponse.variants[0]; // user variant with 2 legacy changes (addFavorite & removeFavorite)
+			}).then(function () {
+				SmartVariantManagementWriteAPI.updateVariant({
+					isUserDependent: true,
+					id: oVariant.getId(),
+					control: this.oControl,
+					favorite: true
+				});
+			}.bind(this)).then(function () {
+				var aVariantChanges = oVariant.getChanges();
+				assert.equal(aVariantChanges.length, 3, "a new change was created");
+				assert.equal(aVariantChanges[2].getChangeType(), "updateVariant", "a new update was written");
 			});
 		});
 	});
