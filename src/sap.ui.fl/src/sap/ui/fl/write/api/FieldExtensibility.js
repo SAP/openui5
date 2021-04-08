@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/fieldExtensibility/Access"
+	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess"
 ], function(
-	Access
+	ABAPAccess
 ) {
 	"use strict";
 
@@ -26,7 +26,7 @@ sap.ui.define([
 	function getImplementationForCurrentScenario() {
 		if (!_oCurrentScenario) {
 			// currently there is only one case, but here would be the differentiation between the scenarios (CAP, ABAP, ...)
-			_oCurrentScenario = Access;
+			_oCurrentScenario = ABAPAccess;
 		}
 		return _oCurrentScenario;
 	}
@@ -59,20 +59,20 @@ sap.ui.define([
 	/**
 	 * Checks if the service is up to date with the service in the back end.
 	 *
-	 * @param {string} sServiceUrl - Service URL
+	 * @param  {string|map} vServiceInfo - service uri or service info map containing <code>serviceName</code>, <code>serviceVersion</code> and <code>serviceType</code>
 	 * @returns {Promise<boolean>} Resolves with <code>true</code> if the service is outdated, <code>false</code> otherwise
 	 */
-	FieldExtensibility.isServiceOutdated = function(sServiceUrl) {
-		return callFunctionInImplementation("isServiceOutdated", sServiceUrl);
+	FieldExtensibility.isServiceOutdated = function(vServiceInfo) {
+		return callFunctionInImplementation("isServiceOutdated", vServiceInfo);
 	};
 
 	/**
 	 * Removes the flag that identifies the service as outdated.
 	 *
-	 * @param {string} sServiceUrl - Service URL
+	 * @param  {string|map} vServiceInfo - service uri or service info map containing <code>serviceName</code>, <code>serviceVersion</code> and <code>serviceType</code>
 	 */
-	FieldExtensibility.setServiceValid = function(sServiceUrl) {
-		return callFunctionInImplementation("setServiceValid", sServiceUrl);
+	FieldExtensibility.setServiceValid = function(vServiceInfo) {
+		return callFunctionInImplementation("setServiceValid", vServiceInfo);
 	};
 
 	/**
@@ -85,15 +85,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the extension data for a given control.
+	 * Retrieves the extension data.
 	 *
-	 * @param {sap.ui.base.ManagedObject} oControl - Control to get the extension data from
 	 * @returns {Object} All necessary information about the extension data. This will be passed to <code>FieldExtensibility.onTriggerCreateExtensionData</code>
 	 */
-	FieldExtensibility.getExtensionData = function(oControl) {
+	FieldExtensibility.getExtensionData = function() {
 		// TODO: currently the return value must be an object that includes .BusinessContexts in order to be shown in the Dialog.
 		// Will be changed in a follow up
-		return callFunctionInImplementation("getExtensionData", oControl);
+		return callFunctionInImplementation("getExtensionData");
 	};
 
 	/**

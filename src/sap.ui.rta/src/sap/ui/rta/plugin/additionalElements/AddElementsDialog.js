@@ -442,8 +442,10 @@ sap.ui.define([
 		this._setBusinessContextVisible(true);
 
 		return FieldExtensibility.getTexts().then(function(oFieldExtensibilityTexts) {
-			this._oCustomFieldButton.setTooltip(oFieldExtensibilityTexts.tooltip);
-			this._oBCContainer.getContent()[0].setText(oFieldExtensibilityTexts.headerText);
+			if (oFieldExtensibilityTexts) {
+				this._oCustomFieldButton.setTooltip(oFieldExtensibilityTexts.tooltip);
+				this._oBCContainer.getContent()[0].setText(oFieldExtensibilityTexts.headerText);
+			}
 		}.bind(this));
 	};
 
