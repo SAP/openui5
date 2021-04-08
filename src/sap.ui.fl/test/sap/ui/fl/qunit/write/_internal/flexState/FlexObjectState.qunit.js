@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/Control",
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	UIComponent,
+	Control,
 	UriParameters,
 	FlexState,
 	ManifestUtils,
@@ -109,11 +111,15 @@ sap.ui.define([
 
 		QUnit.test("Get - Given flex objects are present in the CompVariantState", function(assert) {
 			var sPersistencyKey = "persistency.key";
-
+			var oControl = new Control();
+			oControl.getPersistencyKey = function() {
+				return sPersistencyKey;
+			};
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "addFavorite"
 				},
+				control: oControl,
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});

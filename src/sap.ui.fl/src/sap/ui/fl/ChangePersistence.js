@@ -842,13 +842,15 @@ sap.ui.define([
 	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors) {
 		return Promise.all([
 			this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true}),
-			FlexState.getCompEntitiesByIdMap(this.getComponentName())// FIXME: also transport comp changes via compState
+			FlexState.getCompVariantsMap(this.getComponentName())// FIXME: also transport comp changes via compState
 		]).then(function(aResponses) {
 			var aLocalChanges = aResponses[0];
-			var mCompVariantEntities = aResponses[1];
+			var mCompVariantsMap = aResponses[1];
 			var aCompVariantEntities = [];
-			for (var key in mCompVariantEntities) {
-				aCompVariantEntities.push(mCompVariantEntities[key]);
+			for (var sPersistencyKey in mCompVariantsMap) {
+				for (var sId in mCompVariantsMap[sPersistencyKey].byId) {
+					aCompVariantEntities.push(mCompVariantsMap[sPersistencyKey].byId[sId]);
+				}
 			}
 
 			aLocalChanges = aLocalChanges.concat(

@@ -20,7 +20,8 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				type: {type: "string"},
-				content: {type: "object"}
+				content: {type: "object"},
+				change: {type: "object"}
 			}
 		}
 	});

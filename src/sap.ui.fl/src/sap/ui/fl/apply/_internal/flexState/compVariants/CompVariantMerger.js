@@ -129,23 +129,26 @@ sap.ui.define([
 			if (!oStandardVariant) {
 				// create a new standard variant with the passed input
 				oStandardVariant = createVariant(sPersistencyKey, oStandardVariantInput);
-				applyChangesOnVariant(mChanges, oStandardVariant);
 			} else {
 				// remove all standard variant entries
 				aVariants = aVariants.filter(function (oVariant) {
 					return !oVariant.getContent() || !oVariant.getContent().standardvariant;
 				});
 			}
-
+			applyChangesOnVariant(mChanges, oStandardVariant);
 			// the standard must always be visible
 			oStandardVariant.setFavorite(true);
 			oStandardVariant.setStandardVariant(true);
-			if (mCompData.standardVariant) {
-				var bExecuteOnSelection = mCompData.standardVariant.getContent().executeOnSelect;
+			mCompData.byId[oStandardVariant.getId()] = oStandardVariant;
+
+			if (mCompData.standardVariantChange) {
+				var bExecuteOnSelection = mCompData.standardVariantChange.getContent().executeOnSelect;
 				oStandardVariant.setExecuteOnSelection(bExecuteOnSelection);
 				// TODO remove as soon as the consumer uses the API
 				oStandardVariant.getContent().executeOnSelect = bExecuteOnSelection;
 			}
+
+			mCompData.standardVariant = oStandardVariant;
 
 			return {
 				standardVariant: oStandardVariant,

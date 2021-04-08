@@ -34,24 +34,21 @@ sap.ui.define([
 		return mCompVariantsMap._getOrCreate(sPersistencyKey);
 	}
 
-	function initialize(oControl, aVariants) {
-		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
-		var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
-		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
-		return mCompVariantsMap._initialize(sPersistencyKey, aVariants);
-	}
-
 	function getCompEntities(mPropertyBag) {
-		var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
+		var oControl = mPropertyBag.control;
+		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
 
 		// TODO clarify why in a test we come here without an initialized FlexState (1980546095)
 		return FlexState.initialize({
 			reference: sReference,
 			componentData: {},
-			manifest: Utils.getAppDescriptor(mPropertyBag.control),
-			componentId: Utils.getAppComponentForControl(mPropertyBag.control).getId()
-		})
-			.then(initialize.bind(undefined, mPropertyBag.control, mPropertyBag.variants));
+			manifest: Utils.getAppDescriptor(oControl),
+			componentId: Utils.getAppComponentForControl(oControl).getId()
+		}).then(function () {
+			var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
+			var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+			return mCompVariantsMap._initialize(sPersistencyKey, mPropertyBag.variants);
+		});
 	}
 
 	/**
@@ -107,9 +104,9 @@ sap.ui.define([
 		 */
 		loadVariants: function(mPropertyBag) {
 			return getCompEntities(mPropertyBag)
-				.then(function(mCompVariants) {
+				.then(function(mCompMaps) {
 					var sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
-					return CompVariantMerger.merge(sPersistencyKey, mCompVariants, mPropertyBag.standardVariant);
+					return CompVariantMerger.merge(sPersistencyKey, mCompMaps, mPropertyBag.standardVariant);
 				});
 		},
 
@@ -120,7 +117,12 @@ sap.ui.define([
 		 */
 		getEntityById: function (mPropertyBag) {
 			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
-			return FlexState.getCompEntitiesByIdMap(sReference)[mPropertyBag.id];
+			var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+			for (var sPersistencyKey in mCompVariantsMap) {
+				if (mCompVariantsMap[sPersistencyKey].byId[mPropertyBag.id]) {
+					return mCompVariantsMap[sPersistencyKey].byId[mPropertyBag.id];
+				}
+			}
 		},
 
 		/**
@@ -205,7 +207,7 @@ sap.ui.define([
 		 * @deprecated
 		 */
 		getExecuteOnSelect: function(mPropertyBag) {
-			var oChange = getVariantsMapForKey(mPropertyBag.control).standardVariant;
+			var oChange = getVariantsMapForKey(mPropertyBag.control).standardVariantChange;
 			return oChange ? oChange.getContent().executeOnSelect : null;
 		},
 
@@ -228,17 +230,13 @@ sap.ui.define([
 		_getChangeMap: function(oControl) {
 			var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
 			var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
-			var mCompVariantsMap = FlexState.getCompEntitiesByIdMap(sReference);
+			var mCompVariantsByIdMap = FlexState.getCompVariantsMap(sReference)._getOrCreate(sPersistencyKey).byId;
 			var mChangesForVariantManagement = {};
-			Object.keys(mCompVariantsMap).forEach(function (sId) {
-				if (
-					mCompVariantsMap[sId].getSelector &&
-					mCompVariantsMap[sId].getSelector().persistencyKey === sPersistencyKey &&
-					mCompVariantsMap[sId].getFileType() === "change"
-				) {
-					mChangesForVariantManagement[sId] = mCompVariantsMap[sId];
+			for (var sId in mCompVariantsByIdMap) {
+				if (mCompVariantsByIdMap[sId].getFileType() === "change") {
+					mChangesForVariantManagement[sId] = mCompVariantsByIdMap[sId];
 				}
-			});
+			}
 
 			return mChangesForVariantManagement;
 		}

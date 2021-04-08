@@ -13,25 +13,27 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function getOrCreate(mMap, sKey) {
-		mMap[sKey] = mMap[sKey] || {
+	function getOrCreate(mMap, sPersistencyKey) {
+		mMap[sPersistencyKey] = mMap[sPersistencyKey] || {
+			byId: {},
 			variants: [],
 			nonPersistedVariants: [],
 			changes: [],
 			defaultVariant: undefined,
+			standardVariantChange: undefined,
 			standardVariant: undefined
 		};
 
-		return mMap[sKey];
+		return mMap[sPersistencyKey];
 	}
 
-	function initialize(mMap, mById, sKey, aVariants) {
+	function initialize(mMap, sPersistencyKey, aVariants) {
 		aVariants = aVariants || [];
-		var mMapOfKey = getOrCreate(mMap, sKey);
+		var mMapOfKey = getOrCreate(mMap, sPersistencyKey);
 
 		// clear all non-persisted variants in case of a reinitialization
 		mMapOfKey.nonPersistedVariants.forEach(function (oVariant) {
-			delete mById[oVariant.getId()];
+			delete mMapOfKey.byId[oVariant.getId()];
 		});
 
 		mMapOfKey.nonPersistedVariants = aVariants.map(function (oVariant) {
@@ -39,15 +41,15 @@ sap.ui.define([
 				id: oVariant.id,
 				persisted: false
 			}, oVariant);
-			oVariantInstance = CompVariantMerger.createVariant(sKey, oVariantInstance);
-			mById[oVariant.id] = oVariantInstance;
+			oVariantInstance = CompVariantMerger.createVariant(sPersistencyKey, oVariantInstance);
+			mMapOfKey.byId[oVariant.id] = oVariantInstance;
 			return oVariantInstance;
 		});
 
 		return mMapOfKey;
 	}
 
-	function buildSectionMap(mCompSection, sSubSection, mById, mCompVariants) {
+	function buildSectionMap(mCompSection, sSubSection, mCompVariants) {
 		var oClass = sSubSection === "variants" ? CompVariant : Change;
 		var aFlexObjects = mCompSection[sSubSection].map(function (oCompVariantChangeDefinition) {
 			var oFlexObject = new oClass(oCompVariantChangeDefinition);
@@ -56,15 +58,15 @@ sap.ui.define([
 		});
 
 		aFlexObjects.forEach(function (oFlexObject) {
-			mById[oFlexObject.getId()] = oFlexObject;
 			var sPersistencyKey = oFlexObject.getSelector().persistencyKey;
+			getOrCreate(mCompVariants, sPersistencyKey).byId[oFlexObject.getId()] = oFlexObject;
 
 			switch (sSubSection) {
 				case "defaultVariants":
-					getOrCreate(mCompVariants, sPersistencyKey)["defaultVariant"] = oFlexObject;
+					getOrCreate(mCompVariants, sPersistencyKey).defaultVariant = oFlexObject;
 					break;
 				case "standardVariants":
-					getOrCreate(mCompVariants, sPersistencyKey)["standardVariant"] = oFlexObject;
+					getOrCreate(mCompVariants, sPersistencyKey).standardVariantChange = oFlexObject;
 					break;
 				default:
 					getOrCreate(mCompVariants, sPersistencyKey)[sSubSection].push(oFlexObject);
@@ -86,23 +88,19 @@ sap.ui.define([
 	 * @returns {object} The prepared map for compVariants
 	 */
 	return function(mPropertyBag) {
-		var mById = {};
 		var mCompVariants = {};
 
 		// provide the function for fl-internal consumers reuse
 		mCompVariants._getOrCreate = getOrCreate.bind(undefined, mCompVariants);
-		mCompVariants._initialize = initialize.bind(undefined, mCompVariants, mById);
+		mCompVariants._initialize = initialize.bind(undefined, mCompVariants);
 
 		// check for the existence due to test mocks
 		if (mPropertyBag.storageResponse.changes.comp) {
 			["variants", "changes", "defaultVariants", "standardVariants"].forEach(function (sSection) {
-				buildSectionMap(mPropertyBag.storageResponse.changes.comp, sSection, mById, mCompVariants);
+				buildSectionMap(mPropertyBag.storageResponse.changes.comp, sSection, mCompVariants);
 			});
 		}
 
-		return {
-			map: mCompVariants,
-			byId: mById
-		};
+		return mCompVariants;
 	};
 });
