@@ -78,14 +78,25 @@
 										<mdc:dependents>
 											<mdcf:FieldValueHelp id="IOFFVHRegion" title="Regions" showConditionPanel="false" filterFields="*code,country_code,text*" keyPath="code" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
 												<mdcf:inParameters>
-													<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
+													<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
 												</mdcf:inParameters>
 												<mdcf:outParameters>
-													<mdcf:OutParameter id="IOFFVHRegion-Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
+													<mdcf:OutParameter id="IOFFVHRegion-Out-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
+													<mdcf:OutParameter id="IOFFVHRegion-Out-CountryDesc" value="{countryOfOrigin/descr}" fixedValue=""/>
 												</mdcf:outParameters>
 												<mdcf:filterBar>
-													<vhfb:FilterBar liveMode= "true" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
-														<mdc:FilterField id="VHFFBTextFFCountry" label= "Country" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/countryOfOrigin_code}" operators="EQ,NE" valueState="{ path: '$filters>/fieldPath/countryOfOrigin_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/countryOfOrigin_code/valueStateText'}">
+													<vhfb:FilterBar liveMode= "false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
+														<mdc:FilterField id="VHFFBTextFFCountry"
+															label= "Country"
+															editMode= "Editable"
+															display= "ValueDescription"
+															dataType="sap.ui.model.type.String"
+															width="100%"
+															conditions="{$filters>/conditions/country_code}"
+															operators="EQ,NE"
+															valueState="{ path: '$filters>/fieldPath/country_code/valueState'}"
+															valueStateText="{ path:'$filters>/fieldPath/country_code/valueStateText'}"
+															fieldHelp="IOFFVHCountry">
 														</mdc:FilterField>
 													</vhfb:FilterBar>
 												</mdcf:filterBar>
@@ -120,12 +131,14 @@
 										<mdc:dependents>
 											<mdcf:FieldValueHelp id="IOFFVHCity" title="Cities" showConditionPanel="false" filterFields="*country_code,region_code,city,text*" keyPath="city" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
 												<mdcf:inParameters>
-													<mdcf:InParameter id="IOFFVHCity_In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
-													<mdcf:InParameter id="IOFFVHCity_In-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" />
+													<mdcf:InParameter id="IOFFVHCity_In-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
+													<mdcf:InParameter id="IOFFVHCity_In-Region" value="{regionOfOrigin_code}" helpPath="region_code" />
 												</mdcf:inParameters>
 												<mdcf:outParameters>
-													<mdcf:OutParameter id="IOFFVHCity_Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" mode="Always" />
-													<mdcf:OutParameter id="IOFFVHCity_Out-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" mode="Always" />
+													<mdcf:OutParameter id="IOFFVHCity_Out-Country" value="{countryOfOrigin_code}" helpPath="country_code" mode="Always" />
+													<mdcf:OutParameter id="IOFFVHCity-Out-CountryDesc" value="{countryOfOrigin/descr}" fixedValue=""/>
+													<mdcf:OutParameter id="IOFFVHCity_Out-Region" value="{regionOfOrigin_code}" helpPath="region_code" mode="Always" />
+													<mdcf:OutParameter id="IOFFVHCity-Out-RegionDesc" value="{regionOfOrigin/text}" fixedValue=""/>
 												</mdcf:outParameters>
 												<mdcf:filterBar>
 													<vhfb:FilterBar liveMode= "false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
