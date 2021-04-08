@@ -408,6 +408,20 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("a higher layer changes exist with dirty draft changes", function (assert) {
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+			var mParsedHash = {
+				params: {
+					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft]
+				}
+			};
+			var oReloadCurrentAppStub = sandbox.stub(FlexUtils.getUshellContainer().getService("AppLifeCycle"), "reloadCurrentApp").returns(true);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_VIEWS_PERSONALIZATION_AND_WITHOUT_DRAFT", assert);
+			var mParsedHash = this.oRta._removeVersionParameterForFLP({deleteMaxLayer: true, hasHigherLayerChanges: true}, mParsedHash);
+			assert.equal(mParsedHash, mParsedHash, "hash didnt change");
+			assert.equal(oReloadCurrentAppStub.calledOnce, false, "no hash reload");
+		});
+
 		QUnit.test("and the initial draft got activated", function (assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_ACTIVATED_DRAFT", assert);
@@ -735,7 +749,7 @@ sap.ui.define([
 					assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
 					assert.equal(oRemoveAllCommandsStub.callCount, 1, "and all commands were removed");
 					assert.equal(oRemoveVersionParameterStub.callCount, 1, "then _removeVersionParameterForFLP was called");
-					assert.equal(oRemoveVersionParameterStub.getCall(0).args[0], mParsedHash, "then _removeVersionParameterForFLP was called with the correct parameters");
+					assert.equal(oRemoveVersionParameterStub.getCall(0).args[1], mParsedHash, "then _removeVersionParameterForFLP was called with the correct parameters");
 					var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
 					assert.equal(oDiscardCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 					assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
