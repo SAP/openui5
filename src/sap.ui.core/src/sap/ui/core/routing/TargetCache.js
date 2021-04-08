@@ -169,7 +169,7 @@ sap.ui.define([
 				}
 
 				function destroyObject(oObject) {
-					if (oObject && oObject.destroy) {
+					if (oObject && oObject.destroy && !oObject._bIsBeingDestroyed) {
 						oObject.destroy();
 					}
 				}

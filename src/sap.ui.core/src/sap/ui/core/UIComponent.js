@@ -381,7 +381,15 @@ sap.ui.define([
 				setRootViewId(vRootControl.getId(), oRoutingConfig);
 			}
 			afterRootControlCreated(vRootControl, oRoutingConfig);
+			/* is this compatible? we could cactch up the async loading here, but it starts breaking tests
+			if (vRootControl && vRootControl.isA("sap.ui.core.mvc.View")) {
+				this.pRootControlLoaded = vRootControl.loaded(); */
 			this.pRootControlLoaded = Promise.resolve(vRootControl);
+		}
+
+		//rootControl could be null/undefined no registration needed
+		if (vRootControl) {
+			this.registerForDestroy(this.pRootControlLoaded);
 		}
 	};
 
@@ -443,7 +451,7 @@ sap.ui.define([
 		// destroy the router
 		this._destroyCreatedInstances();
 		// make sure that the component is destroyed properly
-		Component.prototype.destroy.apply(this, arguments);
+		return Component.prototype.destroy.apply(this, arguments);
 	};
 
 	UIComponent.prototype._destroyCreatedInstances = function () {

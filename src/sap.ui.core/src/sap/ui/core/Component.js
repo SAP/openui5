@@ -300,6 +300,7 @@ sap.ui.define([
 			}
 
 			this._bIsActive = true;
+			this._aDestroyables = [];
 
 			ManagedObject.apply(this, args);
 		},
@@ -726,6 +727,17 @@ sap.ui.define([
 			delete this._oEventBus;
 		}
 
+		function fnDestroy(oInstance) {
+			if (oInstance && !oInstance._bIsBeingDestroyed) {
+				oInstance.destroy();
+			}
+		}
+
+		// trigger an async destroy for all registered commponent promises
+		for (var i = 0; i < this._aDestroyables.length; i++ ) {
+			this._aDestroyables[i] = this._aDestroyables[i].then(fnDestroy);
+		}
+
 		// destroy the object
 		ManagedObject.prototype.destroy.apply(this, arguments);
 
@@ -740,7 +752,7 @@ sap.ui.define([
 			this._oManifest.exit(this);
 			delete this._oManifest;
 		}
-
+		return Promise.all(this._aDestroyables);
 	};
 
 
@@ -1110,7 +1122,11 @@ sap.ui.define([
 		}
 
 		// create the component in the owner context of the current component
-		return Component._createComponent(mConfig, this);
+		var oComponent = Component._createComponent(mConfig, this);
+		if (oComponent instanceof Promise) {
+			this.registerForDestroy(oComponent);
+		}
+		return oComponent;
 	};
 
 	/**
@@ -1881,8 +1897,6 @@ sap.ui.define([
 	function registerModulePath(sModuleNamePrefix, vUrlPrefix) {
 		LoaderExtensions.registerResourcePath(sModuleNamePrefix.replace(/\./g, "/"), vUrlPrefix);
 	}
-
-
 
 	function loadManifests(oRootMetadata) {
 		var aManifestsToLoad = [];
@@ -3578,6 +3592,21 @@ sap.ui.define([
 		}
 
 		return !!bIsKeepAliveSupported;
+	};
+
+	/**
+	 * Register a <code>Promise</code> to handle asynchronous destroy
+	 *
+	 * @param {Promise} pInstance Promise to handle asynchronous destroy
+	 * @private
+	 */
+	Component.prototype.registerForDestroy = function(pInstance) {
+		pInstance = pInstance.then(function(oInstance) {
+			// if already resolved, destroy must be done by the application
+			this._aDestroyables.splice(this._aDestroyables.indexOf(pInstance),1);
+			return oInstance;
+		}.bind(this));
+		this._aDestroyables.push(pInstance);
 	};
 
 	/**

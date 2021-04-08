@@ -82,6 +82,7 @@ sap.ui.define([
 				this["_sapui_Extensions"] = {};
 				Controller.extendByMember(this, false);
 				this._sapui_isExtended = false;
+				this._aDestroyables = [];
 			},
 			/**
 			 * Wether a controller is extended or not
@@ -594,15 +595,37 @@ sap.ui.define([
 		};
 
 		/**
+		 * Takes care of async destruction of fragments created with {@link sap.ui.core.Controller.loadFragment loadFragment}
+		 *
+		 * @private
+		 */
+		Controller.prototype.destroyFragments = function() {
+			function fnDestroy(vContent) {
+				vContent = Array.isArray(vContent) ? vContent : [vContent];
+				for (var i = 0; i < vContent.length; i++) {
+					if (!vContent[i].isDestroyed()) {
+						vContent[i].destroy();
+					}
+				}
+			}
+			// chain each cancelable to trigger an async destroy
+			for (var i = 0; i < this._aDestroyables.length; i++ ) {
+				this._aDestroyables[i] = this._aDestroyables[i].then(fnDestroy);
+			}
+		};
+
+		/**
 		 * Fire event when destroying a controller to cleanup extensions
 		 * @private
 		 */
 		Controller.prototype.destroy = function() {
-			Object.keys(this["_sapui_Extensions"]).forEach(function(oExtensionInfo) {
-				ObjectPath.set(oExtensionInfo.location, null, this);
-			}.bind(this));
-			delete this["_sapui_Extensions"];
-			delete this["_sapui_Interface"];
+			if (this["_sapui_Extensions"]) {
+				Object.keys(this["_sapui_Extensions"]).forEach(function(sKey) {
+					var oExtensionInfo = this["_sapui_Extensions"][sKey];
+					ObjectPath.set(oExtensionInfo.location, null, this);
+				}.bind(this));
+				delete this["_sapui_Extensions"];
+			}
 			EventProvider.prototype.destroy.apply(this, arguments);
 		};
 
@@ -659,8 +682,12 @@ sap.ui.define([
 		 * @public
 		 */
 		Controller.prototype.getOwnerComponent = function () {
-			var Component = sap.ui.requireSync("sap/ui/core/Component");
-			return Component.getOwnerComponentFor(this.getView());
+			var Component = sap.ui.require("sap/ui/core/Component");
+			if (Component) {
+				return Component.getOwnerComponentFor(this.getView());
+			} else {
+				return undefined;
+			}
 		};
 
 
@@ -672,6 +699,9 @@ sap.ui.define([
 			}
 			if (this.onExit) {
 				oView.attachBeforeExit(this.onExit, this);
+				if (oView.bControllerIsViewManaged) {
+					oView.attachBeforeExit(this.destroyFragments, this);
+				}
 			}
 			if (this.onAfterRendering) {
 				oView.attachAfterRendering(this.onAfterRendering, this);
@@ -679,9 +709,81 @@ sap.ui.define([
 			if (this.onBeforeRendering) {
 				oView.attachBeforeRendering(this.onBeforeRendering, this);
 			}
-			//oView.addDelegate(this);
 		};
 
+		/**
+		 * Loads a Fragment by {@link sap.ui.core.Fragment.load}. If the controller will be destroyed before
+		 * the fragment content creation is done, the controller takes care of an asynchronous destroy of the
+		 * fragment content.
+		 * Otherwise the content must be destroyed by the caller as usual.
+		 * If the controller has an owner component, it is passed to the fragment content.
+		 * The fragment content will be prefixed with the view ID to avoid duplicate ID issues, even when a prefix ID
+		 * is given. The fragment content can be accessed by calling {@link sap.ui.core.mvc.Controller.byId}.
+		 *
+		 * Example (no prefix ID given):
+		 * var myCOntrol = this.byId("myControl");
+		 *
+		 * Example (prefix ID given):
+		 * var myCOntrol = this.byId("prefix--myControl");
+		 *
+		 * The fragment content will be added to the <code>dependents</code> aggregation of the view per default.
+		 *
+		 * Note: If the fragment content is not aggregated within a control, it must be destroyed manually in
+		 * the exit hook of the controller.
+		 *
+		 * @param {object} mSettings Settings for fragment creation {@link sap.ui.core.Fragment.load}
+		 * @param {object} [oOptions] Additional settings regarding fragment loading
+		 * @param {object} [oOptions.addToDependents=true] Whether the fragment content should be added to the <code>dependents</code> aggregation of the view
+		 * @param {object} [oOptions.autoPrefixId=true] Whether the IDs of the fragment content will be prefixed by the view ID
+		 * @return {Promise} A Promise that resolves with the fragment content
+		 *
+		 * @since 1.93
+		 * @public
+		 */
+		Controller.prototype.loadFragment = function(mSettings, oOptions) {
+			var oOwnerComponent = this.getOwnerComponent();
+
+			oOptions = oOptions || {};
+
+			if (oOptions.addToDependents === undefined) {
+				oOptions.addToDependents = true;
+			}
+			if (oOptions.autoPrefixId === undefined) {
+				oOptions.autoPrefixId = true;
+			}
+
+			var pRequire = new Promise(function(resolve, reject) {
+				sap.ui.require(["sap/ui/core/Fragment"], function(Fragment) {
+					resolve(Fragment);
+				}, reject);
+			}).then(function(Fragment) {
+				if (!mSettings.id && oOptions.autoPrefixId) {
+					mSettings.id = this.getView().getId();
+				} else if (oOptions.autoPrefixId) {
+					mSettings.id = this.createId(mSettings.id);
+				}
+				if (oOwnerComponent) {
+					return oOwnerComponent.runAsOwner(function() {
+						return Fragment.load(mSettings);
+					});
+				} else {
+					return Fragment.load(mSettings);
+				}
+			}.bind(this)).then(function(vContent) {
+				if (oOptions.addToDependents) {
+					vContent = Array.isArray(vContent) ? vContent : [vContent];
+					for (var i = 0; i < vContent.length; i++) {
+						this.getView().addDependent(vContent[i]);
+					}
+				}
+				/* if already resolved remove from bookkeeping. App needs to destroy or it is
+				implicitly destroyed via the dependents (or other) aggregation */
+				this._aDestroyables.splice(this._aDestroyables.indexOf(pRequire),1);
+				return vContent;
+			}.bind(this));
+			this._aDestroyables.push(pRequire);
+			return pRequire;
+		};
 
 		/**
 		 * Global extension provider name which will be used to create the
