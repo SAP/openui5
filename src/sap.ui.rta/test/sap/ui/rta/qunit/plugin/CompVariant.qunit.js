@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CompVariant",
 	"sap/ui/rta/Utils",
@@ -14,6 +15,7 @@ sap.ui.define([
 	DesignTime,
 	OverlayRegistry,
 	KeyCodes,
+	Layer,
 	CommandFactory,
 	CompVariant,
 	Utils,
@@ -283,9 +285,10 @@ sap.ui.define([
 			var sNewDefaultVarId = "newDefaultVar";
 			sandbox.stub(this.oVariantManagementControl, "getDefaultVariantId").returns(sPreviousDefaultVarId);
 			var oNewVariantProperties = {foo: "bar"};
-			sandbox.stub(this.oVariantManagementControl, "openManageViewsDialogForKeyUser").callsFake(function(sStyleClass, fCallback, oCompCont) {
-				assert.equal(sStyleClass, Utils.getRtaStyleClassName(), "the style class is set");
-				assert.notEqual(oCompCont, undefined, "the component container is set");
+			sandbox.stub(this.oVariantManagementControl, "openManageViewsDialogForKeyUser").callsFake(function(mPropertyBag, fCallback) {
+				assert.equal(mPropertyBag.rtaStyleClass, Utils.getRtaStyleClassName(), "the style class is set");
+				assert.notEqual(mPropertyBag.contextSharingComponentContainer, undefined, "the component container is set");
+				assert.equal(mPropertyBag.layer, Layer.CUSTOMER, "the layer is passed");
 				fCallback(Object.assign({}, oNewVariantProperties, {"default": sNewDefaultVarId}));
 			});
 
