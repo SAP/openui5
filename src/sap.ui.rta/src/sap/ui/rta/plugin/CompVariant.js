@@ -97,8 +97,12 @@
 	// ------ configure ------
 	function configureVariants(aOverlays) {
 		var oVariantManagementControl = aOverlays[0].getElement();
-		var oContextSharingComponentContainer = ContextSharingAPI.createComponent(this.getCommandFactory().getFlexSettings());
-		oVariantManagementControl.openManageViewsDialogForKeyUser(Utils.getRtaStyleClassName(), function(oData) {
+		var mPropertyBag = {
+			layer: this.getCommandFactory().getFlexSettings().layer,
+			contextSharingComponentContainer: ContextSharingAPI.createComponent(this.getCommandFactory().getFlexSettings()),
+			rtaStyleClass: Utils.getRtaStyleClassName()
+		};
+		oVariantManagementControl.openManageViewsDialogForKeyUser(mPropertyBag, function(oData) {
 			if (!isEmptyObject(oData)) {
 				createCommandAndFireEvent.call(this, aOverlays[0], "compVariantUpdate", {
 					newVariantProperties: _omit(oData, ["default"]),
@@ -106,7 +110,7 @@
 					oldDefaultVariantId: oVariantManagementControl.getDefaultVariantId()
 				});
 			}
-		}.bind(this), oContextSharingComponentContainer);
+		}.bind(this));
 	}
 
 	// ------ switch ------
