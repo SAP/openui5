@@ -51,8 +51,7 @@ function (
 	// shortcut for sap.f.NavigationDirection
 	var NavigationDirection = library.NavigationDirection;
 
-	var DOM_RENDER_LOCATION = "qunit-fixture",
-		bIsGridSupported = GridContainerUtils.isGridSupportedByBrowser();
+	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	var oIntegrationCardManifest = {
 		"sap.card": {
@@ -138,12 +137,6 @@ function (
 			sMaxColumnSize = oSettings.getMaxColumnSize(),
 			bColumnsDoMatch;
 
-		if (!bIsGridSupported) {
-			// simplified test for IE
-			assert.strictEqual(oGrid.getActiveLayoutSettings(), oSettings, "Grid has expected settings for '" + sLayout + "'");
-			return;
-		}
-
 		// compare columns template
 		sColumnsTemplate = oGridStyle.getPropertyValue("grid-template-columns");
 
@@ -167,43 +160,6 @@ function (
 		// test row-gap and column-gap, because grid-gap can not be tested directly
 		assert.strictEqual(oGridStyle.getPropertyValue("grid-row-gap") || oGridStyle.getPropertyValue("row-gap"), oSettings.getGap(), "Grid has expected row gap for '" + sLayout + "'");
 		assert.strictEqual(oGridStyle.getPropertyValue("grid-column-gap") || oGridStyle.getPropertyValue("column-gap"), oSettings.getGap(), "Grid has expected column gap for '" + sLayout + "'");
-	}
-
-	/**
-	 * Calculates expected top and left for the given item, relative to the previous item.
-	 * To be used for IE and Edge tests
-	 *
-	 * @param {jQuery} $grid The grid
-	 * @param {jQuery} $item The item to be tested
-	 * @param {jQuery} $previousItem The previous item. Null if there is no previous item.
-	 * @param {Number} iGapSize Gap size
-	 * @returns {Object} Object containing expected top and left position
-	 */
-	function calcExpectedPosition($grid, $item, $previousItem, iGapSize) {
-		// tests for ie and edge
-		var iPrevBottom = 0,
-			iPrevRight = 0,
-			iExpectedTop = 0,
-			iExpectedLeft = 0;
-
-		// assert that the current grid item is positioned well relative to the last grid item
-		if ($previousItem) {
-			iPrevBottom = parseInt($previousItem.css("top")) + $previousItem.height();
-			iPrevRight = parseInt($previousItem.css("left")) + $previousItem.width();
-
-			if (iPrevRight + iGapSize + $item.width() > $grid.width()) {
-				iExpectedTop = iPrevBottom + iGapSize;
-				iExpectedLeft = 0;
-			} else {
-				iExpectedTop = parseInt($previousItem.css("top"));
-				iExpectedLeft = iPrevRight + iGapSize;
-			}
-		}
-
-		return {
-			"top": iExpectedTop,
-			"left": iExpectedLeft
-		};
 	}
 
 	QUnit.module("Init");
@@ -296,11 +252,8 @@ function (
 		Core.applyChanges();
 
 		// Assert
-		if (bIsGridSupported) {
-			assert.ok(this.oGrid.$().hasClass("sapFGridContainerDenseFill"), "The grid has class 'sapFGridContainerDenseFill' when allowDenseFill is true");
-		} else {
-			assert.expect(0);
-		}
+		assert.ok(this.oGrid.$().hasClass("sapFGridContainerDenseFill"), "The grid has class 'sapFGridContainerDenseFill' when allowDenseFill is true");
+
 	});
 
 	QUnit.test("Inline block layout", function (assert) {
@@ -315,12 +268,9 @@ function (
 		Core.applyChanges();
 
 		// Assert
-		if (bIsGridSupported) {
-			assert.strictEqual(this.oGrid.$().css("grid-auto-rows"), "min-content", "The grid has 'grid-auto-rows:min-content', when inlineBlockLayout is true");
-			assert.strictEqual(oTile.$().parent().css("grid-row-start"), "span 1", "The grid items have row span 1");
-		} else {
-			assert.expect(0);
-		}
+		assert.strictEqual(this.oGrid.$().css("grid-auto-rows"), "min-content", "The grid has 'grid-auto-rows:min-content', when inlineBlockLayout is true");
+		assert.strictEqual(oTile.$().parent().css("grid-row-start"), "span 1", "The grid items have row span 1");
+
 	});
 
 	QUnit.module("Items", {
@@ -459,28 +409,12 @@ function (
 		Core.applyChanges();
 
 		// Assert
-		var $previousGridItem;
 		aExamples.forEach(function (oExample, iInd) {
 			var $gridItem = oExample.item.$().parent();
 
-			if (bIsGridSupported) {
-				assert.strictEqual($gridItem.css("grid-row-start"), "span " + oExample.expectedRows, "Item " + iInd + " rows are as expected");
-				assert.strictEqual($gridItem.css("grid-column-start"), "span " + oExample.expectedColumns, "Item " + iInd + " columns are as expected");
-			} else {
-				// tests for ie and edge
-				var iCellSize = 80,
-					iGapSize = 16;
-
-				var mExpected = calcExpectedPosition(this.oGrid.$(), $gridItem, $previousGridItem, iGapSize);
-				assert.strictEqual($gridItem.css("top"), mExpected.top + "px", "Item " + iInd + " top position is as expected");
-				assert.strictEqual($gridItem.css("left"), mExpected.left + "px", "Item " + iInd + " left position is as expected");
-
-				assert.strictEqual($gridItem.height(), oExample.expectedRows * (iCellSize + iGapSize) - iGapSize, "Item " + iInd + " height is as expected");
-				assert.strictEqual($gridItem.width(), oExample.expectedColumns * (iCellSize + iGapSize) - iGapSize, "Item " + iInd + " width is as expected");
-			}
-
-			$previousGridItem = $gridItem;
-		}.bind(this));
+			assert.strictEqual($gridItem.css("grid-row-start"), "span " + oExample.expectedRows, "Item " + iInd + " rows are as expected");
+			assert.strictEqual($gridItem.css("grid-column-start"), "span " + oExample.expectedColumns, "Item " + iInd + " columns are as expected");
+		});
 	});
 
 	QUnit.test("Visible/Invisible items", function (assert) {
@@ -570,51 +504,50 @@ function (
 		this.oGrid.unbindAggregation("items");
 	});
 
-	if (bIsGridSupported) {
-		QUnit.test("Item with more columns than the grid with columns auto-fill", function (assert) {
-			// Arrange
-			var oItem = new Card({
-				layoutData: new GridContainerItemLayoutData({ columns: 6 })
-			});
-			this.oGrid.addItem(oItem);
-
-			// Act
-			this.oGrid.setWidth("370px"); // place for 4 columns
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oItem.$().parent().css("grid-column-start"), "span 4", "Item has 4 columns as expected");
+	QUnit.test("Item with more columns than the grid with columns auto-fill", function (assert) {
+		// Arrange
+		var oItem = new Card({
+			layoutData: new GridContainerItemLayoutData({ columns: 6 })
 		});
+		this.oGrid.addItem(oItem);
 
-		QUnit.test("Item with more columns than the grid with defined columns count", function (assert) {
-			// Arrange
-			var oItem = new Card({
-				layoutData: new GridContainerItemLayoutData({ columns: 6 })
-			});
-			this.oGrid.addItem(oItem);
+		// Act
+		this.oGrid.setWidth("370px"); // place for 4 columns
+		Core.applyChanges();
 
-			// Act
-			this.oGrid.setLayout(new GridContainerSettings({ columns: 4 })); // explicitly set 4 columns
-			Core.applyChanges();
+		// Assert
+		assert.strictEqual(oItem.$().parent().css("grid-column-start"), "span 4", "Item has 4 columns as expected");
+	});
 
-			// Assert
-			assert.strictEqual(oItem.$().parent().css("grid-column-start"), "span 4", "Item has 4 columns as expected");
+	QUnit.test("Item with more columns than the grid with defined columns count", function (assert) {
+		// Arrange
+		var oItem = new Card({
+			layoutData: new GridContainerItemLayoutData({ columns: 6 })
 		});
+		this.oGrid.addItem(oItem);
 
-		QUnit.test("Item resize", function (assert) {
-			// Arrange
-			var oItem = new Card();
-			this.oGrid.addItem(oItem);
-			Core.applyChanges();
+		// Act
+		this.oGrid.setLayout(new GridContainerSettings({ columns: 4 })); // explicitly set 4 columns
+		Core.applyChanges();
 
-			// Act
-			oItem.setHeight("400px");
-			Core.applyChanges();
+		// Assert
+		assert.strictEqual(oItem.$().parent().css("grid-column-start"), "span 4", "Item has 4 columns as expected");
+	});
 
-			// Assert
-			assert.strictEqual(oItem.$().parent().css("grid-row-start"), "span 5", "Item has 5 rows after resize");
-		});
-	}
+	QUnit.test("Item resize", function (assert) {
+		// Arrange
+		var oItem = new Card();
+		this.oGrid.addItem(oItem);
+		Core.applyChanges();
+
+		// Act
+		oItem.setHeight("400px");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oItem.$().parent().css("grid-row-start"), "span 5", "Item has 5 rows after resize");
+	});
+
 
 	QUnit.test("Item height should be no less than the minRows", function (assert) {
 		// Arrange
@@ -724,14 +657,9 @@ function (
 		// Assert
 		var $itemWrapper = oItem.$().parent();
 
-		if (bIsGridSupported) {
-			assert.strictEqual($itemWrapper.width(), 150, "Item width is stretched to max column size when there is space.");
-			this.oGrid.$().width("80px");
-			assert.strictEqual($itemWrapper.width(), 80, "Item width is equal to min column size when there is not enough space.");
-		} else {
-			// on IE we fallback to min column size for now
-			assert.strictEqual($itemWrapper.width(), 80, "Item width is equal to min column size for IE.");
-		}
+		assert.strictEqual($itemWrapper.width(), 150, "Item width is stretched to max column size when there is space.");
+		this.oGrid.$().width("80px");
+		assert.strictEqual($itemWrapper.width(), 80, "Item width is equal to min column size when there is not enough space.");
 	});
 
 	QUnit.test("If breakpoint XS is not defined, fallback to S", function (assert) {
@@ -814,13 +742,6 @@ function (
 		// Arrange
 		this.oGrid.setContainerQuery(true);
 
-		// Using an actual control here as the IE polyfill
-		// does its calculations based on actual existing elements
-		var oTile = new GenericTile({
-			header: "tile"
-		});
-		this.oGrid.addItem(oTile);
-
 		var oContainer = new Panel({content: this.oGrid});
 		oContainer.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
@@ -868,22 +789,6 @@ function (
 		// Clean up
 		oContainer.destroy();
 	});
-
-	if (!bIsGridSupported) {
-		QUnit.test("Should not throw error if destroyed when polyfill is scheduled", function (assert) {
-			// Arrange
-			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			// Act
-			this.oGrid._scheduleIEPolyfill();
-			this.oGrid.destroy();
-			this.clock.tick(500);
-
-			// Assert
-			assert.ok(true, "There is no error when grid is destroyed after scheduled IE polyfill.");
-		});
-	}
 
 	QUnit.module("Resizing", {
 		beforeEach: function () {
@@ -938,13 +843,8 @@ function (
 		// Assert
 		// 2*80px + 1*16px = 176
 		assert.strictEqual(this.oGrid.$().height(), 176, "Grid height is correct. Equal to two rows and one gap.");
+		assert.strictEqual(this.oGrid.$().width(), this.oGrid.$().parent().width(), "Grid width is 100%.");
 
-		if (bIsGridSupported) {
-			assert.strictEqual(this.oGrid.$().width(), this.oGrid.$().parent().width(), "Grid width is 100%.");
-		} else {
-			// the width on IE depends on number of columns
-			assert.strictEqual(this.oGrid.$().width(), 176, "Grid width is correct. Equal to two columns and one gap for IE.");
-		}
 	});
 
 	QUnit.test("columnsChange Event", function (assert) {
@@ -1810,7 +1710,7 @@ function (
 		var aMatrix = this.oGrid.getNavigationMatrix();
 
 		// Assert
-		assert.strictEqual(aMatrix.length, bIsGridSupported ? 6 : 8, "Matrix created with the expected number of rows");
+		assert.strictEqual(aMatrix.length, 6, "Matrix created with the expected number of rows");
 		assert.strictEqual(aMatrix[0].length, 6, "Matrix created with the expected number of columns");
 	});
 
@@ -1821,7 +1721,7 @@ function (
 		var aMatrix = this.oGrid.getNavigationMatrix();
 
 		// Assert
-		assert.strictEqual(aMatrix.length, bIsGridSupported ? 2 : 8, "Matrix created with the expected number of rows");
+		assert.strictEqual(aMatrix.length, 2, "Matrix created with the expected number of rows");
 		assert.strictEqual(aMatrix[0].length, 6, "Matrix created with the expected number of columns");
 	});
 

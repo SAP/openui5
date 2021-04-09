@@ -143,7 +143,6 @@ sap.ui.define([
 		assert.ok(oSpy.notCalled, "Should NOT end the drag when current position is within the container");
 
 		// Arrange
-		this.oGrid._scheduleIEPolyfill(true /* bImmediately */);
 		mTargetRect = oText.getDomRef().getBoundingClientRect();
 		oFakeEvent.pageX = Math.ceil(mTargetRect.left); // use Math.ceil because on Microsoft Edge sometimes the coordinates are fractions
 		oFakeEvent.pageY = Math.ceil(mTargetRect.top);
@@ -319,28 +318,6 @@ sap.ui.define([
 
 		assert.strictEqual(jQuery("#dragContainer").outerHeight(), 80, "The drag container has the expected height.");
 		assert.strictEqual(jQuery("#dragContainer .sapMText")[0].style.display, "none", "The drag element is hidden.");
-	});
-
-	QUnit.test("Check if the dragged keeps its original place when polyfill is used", function(assert) {
-		// Arrange
-		var oTargetControl = this.oGrid2.getItems()[0],
-			oFakeEvent = createFakeDragOverEvent(oTargetControl);
-
-		// Act
-		this.oGridDragOver.handleDragOver(oFakeEvent);
-		var oSecondItemWrapper = jQuery("#dragContainer_item2").parent(),
-			sSecondItemLeftPosition = oSecondItemWrapper.css("left");
-
-		// wait 250ms and handle drag over again on same place
-		this.clock.tick(250);
-		this.oGridDragOver.handleDragOver(oFakeEvent);
-
-		Core.applyChanges();
-		this.clock.tick(500);
-
-		var sSecondItemLeftPositionAfterDrag = oSecondItemWrapper.css("left");
-
-		assert.strictEqual(sSecondItemLeftPositionAfterDrag, sSecondItemLeftPosition, "The second item wrapper didn't shrink while dragging the item to the other container.");
 	});
 
 	QUnit.test("Drag over an empty grid", function(assert) {

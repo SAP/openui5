@@ -85,8 +85,7 @@ sap.ui.define([
 
 				/**
 				 * The width of the columns.
-				 *
-				 * <b>Note:</b> Values different than single size in 'px' or 'rem' are not supported for the polyfill for IE.
+				 * <b>Note:</b> Use only 'px' or 'rem'. Some features may not work as expected otherwise.
 				 */
 				columnSize: { type: "sap.ui.core.CSSSize", defaultValue: "80px" },
 
@@ -94,8 +93,6 @@ sap.ui.define([
 				 * Sets the minimum width of the columns. Setting this together with <code>maxColumnSize</code> will allow the columns to breath between those two values.
 				 *
 				 * <b>Note:</b> Will not work in combination with <code>columnSize</code>.
-				 *
-				 * <b>Note:</b> Not supported for the polyfill for IE.
 				 */
 				minColumnSize: { type: "sap.ui.core.CSSSize" },
 
@@ -103,8 +100,6 @@ sap.ui.define([
 				 * Sets the maximum width of the columns. Setting this together with <code>minColumnSize</code> will allow the columns to breath between those two values.
 				 *
 				 * <b>Note:</b> Will not work in combination with <code>columnSize</code>.
-				 *
-				 * <b>Note:</b> Not supported for the polyfill for IE.
 				 */
 				maxColumnSize: { type: "sap.ui.core.CSSSize" },
 
@@ -131,14 +126,6 @@ sap.ui.define([
 	 */
 	GridContainerSettings.prototype.getColumnSizeInPx = function () {
 		return cssSizeToPx(this.getColumnSize());
-	};
-
-	/**
-	 * Gets the minimum column size, converted to its 'px' value.
-	 * @returns {int} The 'px' value. NaN if 'px' value can not be calculated.
-	 */
-	GridContainerSettings.prototype.getMinColumnSizeInPx = function () {
-		return cssSizeToPx(this.getMinColumnSize());
 	};
 
 	/**
@@ -186,18 +173,6 @@ sap.ui.define([
 			iRowSize = this.getRowSizeInPx();
 
 		return Math.ceil((iItemHeight + iGapSize) / (iRowSize + iGapSize));
-	};
-
-	/**
-	 * Calculates how many columns would an item need to fit, based on its width.
-	 * @param {int} iItemWidth The width of the item.
-	 * @returns {int} The calculated columns for the given width. NaN if it can not be calculated.
-	 */
-	GridContainerSettings.prototype.calculateColumnsForItem = function (iItemWidth) {
-		var iGapSize = this.getGapInPx(),
-			iColumnSize = this.getColumnSizeInPx();
-
-		return Math.ceil((iItemWidth + iGapSize) / (iColumnSize + iGapSize));
 	};
 
 	return GridContainerSettings;
