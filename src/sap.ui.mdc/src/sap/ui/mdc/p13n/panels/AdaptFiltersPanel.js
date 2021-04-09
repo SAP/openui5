@@ -16,9 +16,13 @@ sap.ui.define([
     "sap/m/SearchField",
     "sap/m/OverflowToolbarLayoutData",
     "sap/ui/core/Item",
-    "sap/base/util/UriParameters"
-], function(Container, ContainerItem, ListView, GroupView, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, SearchField, OverflowToolbarLayoutData, Item, SAPUriParameters) {
+    "sap/base/util/UriParameters",
+    "sap/m/library"
+], function(Container, ContainerItem, ListView, GroupView, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, SearchField, OverflowToolbarLayoutData, Item, SAPUriParameters, mLibrary) {
     "use strict";
+
+    // shortcut for sap.m.BarDesign
+    var BarDesign = mLibrary.BarDesign;
 
     /**
 	 * Constructor for a new AdaptFiltersPanel
@@ -83,21 +87,27 @@ sap.ui.define([
 
         var oHeader = new Bar({
             contentMiddle: [
-                new ToolbarSpacer(),
                 oQuickFilter,
+                new ToolbarSpacer(),
                 oShowHideBtn,
                 oViewSwitch
             ]
         });
 
+        oHeader.setDesign(BarDesign.SubHeader);
         this.setHeader(oHeader);
 
 
-        this.setSubHeader(new Bar({
+        var oSubHeader = new Bar({
             contentMiddle: [
                 this._getSearchField()
             ]
-        }));
+        });
+
+        oSubHeader.addStyleClass("sapUiMDCAdaptFiltersSearchBar");
+
+        oSubHeader.setDesign(BarDesign.SubHeader);
+        this.setSubHeader(oSubHeader);
 
         this.addStyleClass("sapUiMDCAdaptFiltersPanel");
     };
@@ -306,6 +316,7 @@ sap.ui.define([
                 tooltip: this._getResourceText("p13nDialog.QUICK_FILTER"),
 				change: this._onGroupModeChange.bind(this)
 			});
+
         }
 
         return this._oGroupModeSelect;
@@ -384,9 +395,22 @@ sap.ui.define([
         return aFilters;
     };
 
+    //TODO: Renable with refactoring
+    /*
+    function matchTermToSearchRegex(term){
+
+        if (!term){
+            return false;
+        }
+
+        return term.match(this._oSearchRegex);
+    }*/
+
     AdaptFiltersPanel.prototype._createFilterQuery = function() {
 		var aFiltersSearch = [], oFilterMode, aFilters;
 		if (this._sSearchString){
+            //Match "Any term starting with"
+            //this._oSearchRegex = new RegExp("(?<=^|\\s)" + this._sSearchString + "\\w*", "i");
 			aFiltersSearch = [
 				new Filter("label", "Contains", this._sSearchString),
 				new Filter("tooltip", "Contains", this._sSearchString)
