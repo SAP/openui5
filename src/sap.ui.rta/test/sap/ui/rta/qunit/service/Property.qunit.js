@@ -54,7 +54,8 @@ function(
 
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
-				isPublishEnabled: true
+				isPublishEnabled: true,
+				allContextsProvided: true
 			});
 
 			this.oComp = new MockComponent("testComponent");
@@ -492,7 +493,8 @@ function(
 
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
-				isPublishEnabled: false
+				isPublishEnabled: false,
+				allContextsProvided: true
 			});
 
 			var oRta = new RuntimeAuthoring({

@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils"
@@ -25,6 +26,7 @@ sap.ui.define([
 	DescriptorChangeTypes,
 	Condenser,
 	FlexObjectState,
+	ManifestUtils,
 	FeaturesAPI,
 	Layer,
 	LayerUtils
@@ -138,15 +140,18 @@ sap.ui.define([
 			// By default:
 			// Reset is enabled if there is change
 			// Publish is enabled if there is change + layer is transportable + system is enabled for publish
+			// All contexts provided is true to not trigger a reload and add additional parameter to flex/data request
 			var oFlexInfo = {
 				isResetEnabled: bHasChanges,
-				isPublishEnabled: bHasChanges && bIsLayerTransportable && bIsPublishAvailable
+				isPublishEnabled: bHasChanges && bIsLayerTransportable && bIsPublishAvailable,
+				allContextsProvided: true
 			};
 			// If there is change and the layer is transportable , the request to back end is always necessary
 			// because of control variant reset logic through setVisible change
 			if (bIsLayerTransportable) {
 				return ChangesController.getFlexControllerInstance(mPropertyBag.selector).getResetAndPublishInfo(mPropertyBag)
 					.then(function(oResponse) {
+						oFlexInfo.allContextsProvided = oResponse.allContextsProvided === undefined || oResponse.allContextsProvided;
 						oFlexInfo.isResetEnabled = oResponse.isResetEnabled;
 						// Together with publish info from back end,
 						// system setting info for publish availability also need to be checked
@@ -160,6 +165,20 @@ sap.ui.define([
 			}
 			return oFlexInfo;
 		});
+	};
+
+	/**
+	 * Provides information from session storage if content from an application can be published/reset.
+	 *
+	 * @param {object} oControl Control
+	 *
+	 * @returns {object} Information if the application has content that can be published/reset
+	 * @private
+	 * @ui5-restricted
+	 */
+	PersistenceWriteAPI.getResetAndPublishInfoFromSession = function(oControl) {
+		var sParameter = ManifestUtils.getFlexReferenceForControl(oControl) || "true";
+		return JSON.parse(window.sessionStorage.getItem("sap.ui.fl.info." + sParameter));
 	};
 
 	/**

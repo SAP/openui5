@@ -166,6 +166,10 @@ sap.ui.define([
 		);
 	}
 
+	function cleanUpFlexSession(sSelector) {
+		window.sessionStorage.removeItem("sap.ui.fl.info." + sSelector);
+	}
+
 	QUnit.module("Given that RuntimeAuthoring is created without a root control...", {
 		before: function () {
 			return oComponentPromise;
@@ -252,8 +256,9 @@ sap.ui.define([
 			});
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 			this.fnFLPToExternalStub = sandbox.spy();
+			this.fnTriggerRealoadStub = sandbox.stub();
 
-			givenAnFLP.call(this, this.fnFLPToExternalStub);
+			givenAnFLP.call(this, this.fnFLPToExternalStub, this.fnTriggerRealoadStub);
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -373,6 +378,48 @@ sap.ui.define([
 				assert.equal(oError, "DesignTime failed", "with the correct Error");
 				assert.equal(oFireFailedStub.callCount, 1, "and fireFailed was called");
 			});
+		});
+
+		QUnit.test("when not all context is provided and no personalized changes are available and _determineReload() is called", function(assert) {
+			var sFlexReference = FlexUtils.getComponentClassName(this.oRta.getRootControlInstance());
+			cleanUpFlexSession(sFlexReference);
+			whenNoHigherLayerChangesExist();
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true,
+				allContextsProvided: false
+			});
+			whenUserConfirmsMessage.call(this, "MSG_RESTRICTED_CONTEXT_EXIST", assert);
+
+			return this.oRta._determineReload().then(function() {
+				assert.equal(this.fnTriggerRealoadStub.callCount,
+					1,
+					"then RTA restart will not be enabled");
+				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
+					false,
+					"then the reload inside FLP is not triggered via url parameter");
+			}.bind(this));
+		});
+
+		QUnit.test("when not all context is provided and personalized changes are available and _determineReload() is called", function(assert) {
+			var sFlexReference = FlexUtils.getComponentClassName(this.oRta.getRootControlInstance());
+			cleanUpFlexSession(sFlexReference);
+			whenHigherLayerChangesExist();
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true,
+				allContextsProvided: false
+			});
+			whenUserConfirmsMessage.call(this, "MSG_RESTRICTED_CONTEXT_EXIST_AND_PERSONALIZATION", assert);
+
+			return this.oRta._determineReload().then(function() {
+				assert.equal(this.fnTriggerRealoadStub.callCount,
+					0,
+					"then RTA restart will not be enabled");
+				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
+					true,
+					"then the reload inside FLP is not triggered via url parameter");
+			}.bind(this));
 		});
 	});
 
@@ -508,6 +555,52 @@ sap.ui.define([
 				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					1,
 					"then handleParametersOnExit was called");
+				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
+					1, "then crossAppNavigation was triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when all context is loaded without higher layer changes after entering RTA and user exits RTA...", function(assert) {
+			var fnTriggerRealoadStub = sandbox.stub();
+			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealoadStub);
+			var oReloadInfo = {
+				reloadMethod: this.oRta._RELOAD.VIA_HASH,
+				hasHigherLayerChanges: false,
+				allContexts: true
+			};
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);
+			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+
+			return this.oRta.stop().then(function() {
+				assert.equal(this.fnHandleParametersOnExitStub.callCount,
+					1,
+					"then handleParametersOnExit was called");
+				assert.equal(fnTriggerRealoadStub.callCount,
+					1,
+					"then reloadCurrentApp was trigger");
+				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
+					1, "then crossAppNavigation was triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when all context is loaded without higher layer changes after entering RTA and user exits RTA...", function(assert) {
+			var fnTriggerRealoadStub = sandbox.stub();
+			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub, fnTriggerRealoadStub);
+			var oReloadInfo = {
+				reloadMethod: this.oRta._RELOAD.VIA_HASH,
+				hasHigherLayerChanges: true,
+				allContexts: true
+			};
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);
+			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+
+			return this.oRta.stop().then(function() {
+				assert.equal(this.fnHandleParametersOnExitStub.callCount,
+					1,
+					"then handleParametersOnExit was called");
+				assert.equal(fnTriggerRealoadStub.callCount,
+					0,
+					"then reloadCurrentApp was not trigger");
 				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
 					1, "then crossAppNavigation was triggered");
 			}.bind(this));

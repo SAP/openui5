@@ -95,7 +95,8 @@ sap.ui.define([
 		if (bPersistenceAPI) {
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
-				isPublishEnabled: true
+				isPublishEnabled: true,
+				allContextsProvided: true
 			});
 		}
 		if (bAppComponentForControl) {

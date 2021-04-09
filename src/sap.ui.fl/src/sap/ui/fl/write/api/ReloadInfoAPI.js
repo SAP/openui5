@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -14,6 +15,7 @@ sap.ui.define([
 	LayerUtils,
 	Layer,
 	Utils,
+	ManifestUtils,
 	VersionsAPI,
 	FeaturesAPI,
 	PersistenceWriteAPI
@@ -50,6 +52,41 @@ sap.ui.define([
 		});
 	}
 
+	function isAllContextsAvailable(oReloadInfo) {
+		var sContextsFromSession = getInfoContextsSession(oReloadInfo.selector);
+		if (sContextsFromSession !== null) {
+			return false; //already call flex/info and do not retrigger reload again
+		}
+		var mPropertyBag = {
+			selector: oReloadInfo.selector,
+			layer: oReloadInfo.layer
+		};
+		return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
+			.then(function (oResult) {
+				setInfoSessionStorage(oResult, oReloadInfo.selector);
+				return !oResult.allContextsProvided;
+			});
+	}
+
+	function getInfoContextsSession(oControl) {
+		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oControl);
+		var sParameter = sFlexReference || "true";
+		var oFlexInfoSession = JSON.parse(window.sessionStorage.getItem("sap.ui.fl.info." + sParameter));
+		return oFlexInfoSession && !oFlexInfoSession.allContextsProvided;
+	}
+
+	function setInfoSessionStorage(oInfo, oControl) {
+		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oControl);
+		var sParameter = sFlexReference || "true";
+		window.sessionStorage.setItem("sap.ui.fl.info." + sParameter, JSON.stringify(oInfo));
+	}
+
+	function removeInfoSessionStorage(oControl) {
+		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oControl);
+		var sParameter = sFlexReference || "true";
+		window.sessionStorage.removeItem("sap.ui.fl.info." + sParameter);
+	}
+
 	/**
 	 * Provides an API to get information about reload behavior in case of a draft and/or personalization changes.
 	 *
@@ -61,7 +98,7 @@ sap.ui.define([
 	var ReloadInfoAPI = /** @lends sap.ui.fl.write.api.ReloadInfoAPI */{
 
 		/**
-		 * Checks if personalization or drafts changes exist for controls.
+		 * Checks if all contexts, personalization or drafts changes exist for controls.
 		 *
 		 * @param  {object} oReloadInfo - Contains the information needed to find a reason to reload
 		 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
@@ -74,10 +111,12 @@ sap.ui.define([
 		getReloadReasonsForStart: function(oReloadInfo) {
 			return Promise.all([
 				areHigherLayerChangesAvailable.call(this, oReloadInfo),
-				isDraftAvailable(oReloadInfo)
+				isDraftAvailable(oReloadInfo),
+				isAllContextsAvailable(oReloadInfo)
 			]).then(function(aReasons) {
 				oReloadInfo.hasHigherLayerChanges = aReasons[0];
 				oReloadInfo.isDraftAvailable = aReasons[1];
+				oReloadInfo.allContexts = aReasons[2];
 				return oReloadInfo;
 			});
 		},
@@ -222,11 +261,13 @@ sap.ui.define([
 			if (oReloadInfo.initialDraftGotActivated) {
 				oReloadInfo.isDraftAvailable = false;
 			}
+			oReloadInfo.allContexts = getInfoContextsSession(oReloadInfo.selector);
 			if (oReloadInfo.changesNeedReload
 				|| oReloadInfo.isDraftAvailable
 				|| oReloadInfo.hasHigherLayerChanges
 				|| oReloadInfo.initialDraftGotActivated
 				|| oReloadInfo.activeVersionNotSelected
+				|| oReloadInfo.allContexts
 			) {
 				oReloadInfo.reloadMethod = oRELOAD.RELOAD_PAGE;
 				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes (changesNeedReload = true)
@@ -234,6 +275,7 @@ sap.ui.define([
 					oReloadInfo.reloadMethod = oRELOAD.VIA_HASH;
 				}
 			}
+			removeInfoSessionStorage(oReloadInfo.selector);
 			return oReloadInfo;
 		}
 	};
