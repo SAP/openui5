@@ -3,57 +3,18 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/layout/cssgrid/GridLayoutBase",
-	"sap/ui/layout/cssgrid/VirtualGrid",
-	"sap/ui/dom/units/Rem",
 	"sap/ui/Device",
 	"sap/ui/layout/library"
 ], function (
-	Core,
 	GridLayoutBase,
-	VirtualGrid,
-	Rem,
 	Device
 ) {
 	"use strict";
 
-	var iGridGap = Rem.toPx(1);
-	var bRtl = Core.getConfiguration().getRTL();
-	var mSizeColumns = {
-		S: 4,
-		M: 8,
-		ML: 12,
-		L: 12,
-		XL: 16,
-		XXL: 20,
-		XXXL: 20
-	};
 	var RCL_RANGE_SET = "RCLRangeSet";
 
 	Device.media.initRangeSet(RCL_RANGE_SET, [600, 1024, 1280, 1440, 1620, 1920], "px", ["S", "M", "ML", "L", "XL", "XXL", "XXXL"], true);
-
-	/**
-	 * Gets the columns property from the item's layout data.
-	 * @private
-	 * @param {sap.ui.core.Control} oItem The item
-	 * @returns {number} The number of columns
-	 */
-	function getItemColumnCount(oItem) {
-		var oLayoutData = oItem.getLayoutData();
-		return (oLayoutData && oLayoutData.isA("sap.ui.layout.cssgrid.ResponsiveColumnItemLayoutData")) ? oLayoutData.getColumns() : 1;
-	}
-
-	/**
-	 * Gets the rows property from the item's layout data.
-	 * @private
-	 * @param {sap.ui.core.Control} oItem The item
-	 * @returns {number} The number of rows
-	 */
-	function getItemRowCount(oItem) {
-		var oLayoutData = oItem.getLayoutData();
-		return (oLayoutData && oLayoutData.isA("sap.ui.layout.cssgrid.ResponsiveColumnItemLayoutData")) ? oLayoutData.getRows() : 1;
-	}
 
 	/**
 	 * Constructor for a new <code>ResponsiveColumnLayout</code>.
@@ -160,37 +121,8 @@ sap.ui.define([
 	ResponsiveColumnLayout.prototype.addGridStyles = function (oRM) {
 		GridLayoutBase.prototype.addGridStyles.apply(this, arguments);
 
-		if (this.isGridSupportedByBrowser()) {
-			oRM.class("sapUiLayoutCSSGridRCL");
-		} else {
-			oRM.class("sapUiLayoutCSSGridRCLPolyfill");
-		}
-	};
+		oRM.class("sapUiLayoutCSSGridRCL");
 
-	/**
-	 * @override
-	 */
-	ResponsiveColumnLayout.prototype.hasGridPolyfill = function () {
-		return true;
-	};
-
-	/**
-	 * @private
-	 * @ui5-restricted
-	 */
-	ResponsiveColumnLayout.prototype.getPolyfillSizes = function (oGrid) {
-		var $grid = oGrid.$(),
-			iWidth = oGrid.getDomRef().parentElement.clientWidth,
-			oRange = Device.media.getCurrentRange(RCL_RANGE_SET, iWidth),
-			iColumnsCount = mSizeColumns[oRange.name],
-			iInnerWidth = $grid.innerWidth(),
-			iColumnSize = Math.floor((iInnerWidth - iGridGap * (iColumnsCount - 1) ) / iColumnsCount);
-
-		return {
-			gap: iGridGap,
-			rows: this._oVirtualGrid.rowsHeights.map(function (iHeight) { return iHeight + "px"; }),
-			columns: new Array(iColumnsCount).fill(iColumnSize + "px")
-		};
 	};
 
 	/**
@@ -202,137 +134,20 @@ sap.ui.define([
 	ResponsiveColumnLayout.prototype._applyLayout = function (oGrid) {
 		var iWidth = oGrid.getDomRef().parentElement.clientWidth,
 			oRange = Device.media.getCurrentRange(RCL_RANGE_SET, iWidth),
-			sClassName = "sapUiLayoutCSSGridRCL-Layout" + oRange.name,
-			bGridSupportedByBrowser = this.isGridSupportedByBrowser();
-
-		if (!bGridSupportedByBrowser) {
-			this._scheduleIEPolyfill(oGrid, oRange);
-		}
+			sClassName = "sapUiLayoutCSSGridRCL-Layout" + oRange.name;
 
 		if (this._sCurrentLayoutClassName === sClassName) {
 			return;
 		}
 
-		if (bGridSupportedByBrowser) {
-			oGrid.removeStyleClass(this._sCurrentLayoutClassName);
-			oGrid.addStyleClass(sClassName);
-		}
+
+		oGrid.removeStyleClass(this._sCurrentLayoutClassName);
+		oGrid.addStyleClass(sClassName);
 
 		this._sCurrentLayoutClassName = sClassName;
 		this.fireLayoutChange({
 			layout: oRange.name
 		});
-	};
-
-	/**
-	 * Schedules the application of the IE polyfill for the next tick.
-	 *
-	 * @param {sap.ui.layout.cssgrid.IGridConfigurable} oGrid The grid
-	 * @param {object} oRange The information about the current active range set
-	 * @private
-	 */
-	ResponsiveColumnLayout.prototype._scheduleIEPolyfill = function (oGrid, oRange) {
-		if (this._iPolyfillCallId) {
-			clearTimeout(this._iPolyfillCallId);
-		}
-
-		this._iPolyfillCallId = setTimeout(function () {
-			var sGridSuffix = oGrid.isA("sap.f.GridList") ? "listUl" : "",
-				$grid = oGrid.$(sGridSuffix);
-
-			this._applyIEPolyfillLayout(oGrid, $grid, oRange);
-		}.bind(this), 0);
-	};
-
-	/**
-	 * Calculates absolute positions for items, so it mimics a css grid.
-	 *
-	 * @param {sap.ui.layout.cssgrid.IGridConfigurable} oGrid The grid
-	 * @param {jQuery} $grid The grid on which to add the polyfill
-	 * @param {object} oRange The information about the current active range set
-	 * @private
-	 */
-	ResponsiveColumnLayout.prototype._applyIEPolyfillLayout = function (oGrid, $grid, oRange) {
-
-		if (oGrid.bIsDestroyed) {
-			return;
-		}
-
-		var iColumnsCount = mSizeColumns[oRange.name],
-			iInnerWidth = $grid.innerWidth(),
-			aItems = oGrid.getItems(),
-			iColumnSize = Math.floor((iInnerWidth - iGridGap * (iColumnsCount - 1) ) / iColumnsCount),
-			iColumns,
-			iRows,
-			oItem,
-			$item,
-			mVirtualGridItems,
-			mVirtualGridItem,
-			i;
-
-		// set the width and reset the height
-		for (i = 0; i < aItems.length; i++) {
-			oItem = aItems[i];
-			$item = oItem.$();
-
-			iColumns = getItemColumnCount(oItem);
-
-			$item.css({
-				position: 'absolute',
-				height: 'auto',
-				width: iColumnSize * iColumns + iGridGap * (iColumns - 1)
-			});
-		}
-
-		var oVirtualGrid = new VirtualGrid();
-		this._oVirtualGrid = oVirtualGrid;
-		oVirtualGrid.init({
-			numberOfCols: iColumnsCount,
-			cellWidth: iColumnSize,
-			unitOfMeasure: "px",
-			gapSize: iGridGap,
-			topOffset: 0,
-			leftOffset: 0,
-			allowDenseFill: false,
-			rtl: bRtl,
-			width: iInnerWidth,
-			rowsAutoHeight: true
-		});
-
-		for (i = 0; i < aItems.length; i++) {
-
-			oItem = aItems[i];
-
-			if (!oItem.getVisible()) {
-				continue;
-			}
-
-			$item = oItem.$();
-
-			iColumns = getItemColumnCount(oItem);
-			iRows = getItemRowCount(oItem);
-
-			oVirtualGrid.fitElement(i + '', iColumns, iRows, $item.outerHeight(true));
-		}
-
-		oVirtualGrid.calculatePositions();
-
-		mVirtualGridItems = oVirtualGrid.getItems();
-
-		for (i = 0; i < aItems.length; i++) {
-			oItem = aItems[i];
-			$item = oItem.$();
-			mVirtualGridItem = mVirtualGridItems[i];
-
-			$item.css({
-				position: 'absolute',
-				top: mVirtualGridItem.top,
-				left: mVirtualGridItem.left,
-				height: mVirtualGridItem.height
-			});
-		}
-
-		$grid.height(oVirtualGrid.getHeight());
 	};
 
 	return ResponsiveColumnLayout;

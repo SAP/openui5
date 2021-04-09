@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridResponsiveLayout",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
-	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/qunit/utils/waitForThemeApplied"
@@ -19,7 +18,6 @@ function (
 	GridLayoutBase,
 	GridResponsiveLayout,
 	GridLayoutDelegate,
-	Device,
 	Core,
 	ResizeHandler,
 	waitForThemeApplied
@@ -27,9 +25,6 @@ function (
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
-
-	var EDGE_VERSION_WITH_GRID_SUPPORT = 16;
-	var bBrowserSupportGrid = !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
 
 	QUnit.module("Init");
 
@@ -337,11 +332,9 @@ function (
 		// Assert
 		assert.ok(GridLayoutBase.setItemStyles.calledOnce, "Should update item styles on layout data change");
 		assert.ok(this.oGrid.onLayoutDataChange.calledOnce, "Should call layoutDataChange handler");
+		assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-row"), "Should have grid-row property");
+		assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-column"), "Should have grid-column property");
 
-		if (bBrowserSupportGrid) {
-			assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-row"), "Should have grid-row property");
-			assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-column"), "Should have grid-column property");
-		}
 
 		// Cleanup
 		GridLayoutBase.setItemStyles.restore();
@@ -398,10 +391,8 @@ function (
 		// Assert
 		assert.ok(oClone, "Should have successfully cloned the Grid");
 		assert.equal(oClone.getItems().length, 3, "Should have 3 items");
+		assert.ok(sGridRow && sGridRow.indexOf("span 4") > -1, "Should have applied the grid-row property");
 
-		if (bBrowserSupportGrid) {
-			assert.ok(sGridRow && sGridRow.indexOf("span 4") > -1, "Should have applied the grid-row property");
-		}
 	});
 
 	QUnit.module("_getLayoutDataForControl");

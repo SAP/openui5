@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/dom/units/Rem",
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridSettings",
 	"sap/ui/layout/cssgrid/GridBoxLayoutStyleHelper",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
 ], function (
-	Rem,
 	GridLayoutBase,
 	GridSettings,
 	GridBoxLayoutStyleHelper,
@@ -98,57 +96,16 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	GridBoxLayout.prototype.hasGridPolyfill = function () {
-		return true;
-	};
-
-	/**
-	 * @private
-	 * @ui5-restricted
-	 */
-	GridBoxLayout.prototype.getPolyfillSizes = function (oGrid) {
-		var aItems = oGrid.getItems(),
-			oBox = aItems.find(function (oItem) {
-				return !oItem.isA("sap.m.GroupHeaderListItem");
-			}),
-			iGridWith = oGrid.$().width(),
-			iBoxWidth = oBox.$().outerWidth(),
-			iCols = Math.floor(iGridWith / iBoxWidth),
-			aCssRows = [],
-			i = 0;
-
-		while (i < aItems.length) {
-			aCssRows.push(aItems[i].$().outerHeight() + "px");
-
-			// jump to the next row
-			if (aItems[i].isA("sap.m.GroupHeaderListItem")) {
-				i += 1; // header list items take entire row
-			} else {
-				i += iCols;
-			}
-		}
-
-		return {
-			gap: Rem.toPx(GRID_GAP),
-			rows: aCssRows,
-			columns: new Array(iCols).fill(iBoxWidth + "px")
-		};
-	};
-
-	/**
-	 * @override
-	 */
 	GridBoxLayout.prototype._applySingleGridLayout = function (oElement) {
-		if (this.isGridSupportedByBrowser()) {
 
-			GridLayoutBase.prototype._applySingleGridLayout.call(this, oElement);
+		GridLayoutBase.prototype._applySingleGridLayout.call(this, oElement);
 
-			var oGridList = sap.ui.getCore().byId(oElement.parentElement.id);
+		var oGridList = sap.ui.getCore().byId(oElement.parentElement.id);
 
-			if (oGridList && oGridList.isA("sap.f.GridList") && oGridList.isGrouped()) {
-				this._flattenHeight(oGridList);
-			}
+		if (oGridList && oGridList.isA("sap.f.GridList") && oGridList.isGrouped()) {
+			this._flattenHeight(oGridList);
 		}
+
 	};
 
 	/**
@@ -158,11 +115,8 @@ sap.ui.define([
 		GridLayoutBase.prototype.addGridStyles.apply(this, arguments);
 		this._addSpanClasses(oRM);
 
-		if (this.isGridSupportedByBrowser()) {
-			oRM.class("sapUiLayoutCSSGridBoxLayoutContainer");
-		} else {
-			oRM.class("sapUiLayoutCSSGridBoxLayoutPolyfill");
-		}
+		oRM.class("sapUiLayoutCSSGridBoxLayoutContainer");
+
 	};
 
 	/**
@@ -186,45 +140,16 @@ sap.ui.define([
 			this._applySizeClass(oGrid);
 		}
 
-		if (!this.isGridSupportedByBrowser()) {
-			this._calcWidth(oGrid);
-			this._flattenHeight(oGrid);
-
-			if (!this._hasBoxWidth()) {
-				this._applyClassForLastItem(oGrid);
-			}
-		}
-
 		if (oGrid.isA("sap.f.GridList") && oGrid.getGrowing()) { // if there is growing of the list new GridListItems are loaded and there could be changes in all GridListItems dimensions
 			var fnCopyOfOnAfterPageLoaded = oGrid._oGrowingDelegate._onAfterPageLoaded;
 
 			oGrid._oGrowingDelegate._onAfterPageLoaded = function () {
 				fnCopyOfOnAfterPageLoaded.call(oGrid._oGrowingDelegate);
 
-				if (!this.isGridSupportedByBrowser()) {
-					this._flattenHeight(oGrid);
-					this._calcWidth(oGrid);
-					this._loopOverGridItems(oGrid, function (oGridItem) {
-						if (!oGridItem.classList.contains("sapMGHLI") && !oGridItem.classList.contains("sapUiBlockLayerTabbable")) { // the item is not group header or a block layer tabbable
-							oGridItem.classList.add("sapUiLayoutCSSGridItem"); // newly loaded items don't have this class
-						}
-					});
-
-					if (!this._hasBoxWidth()) {
-						this._applyClassForLastItem(oGrid);
-					}
-
-				} else if (oGrid.isA("sap.f.GridList") && oGrid.isGrouped()) {
-					this._flattenHeight(oGrid);
+				if (oGrid.isA("sap.f.GridList") && oGrid.isGrouped()) {
+						this._flattenHeight(oGrid);
 				}
 			}.bind(this);
-		}
-
-		if (!this.isGridSupportedByBrowser() && !this._dndPolyfillAttached) {
-			oGrid.attachEvent("_gridPolyfillAfterDragOver", oGrid, this._polyfillAfterDragOver, this);
-			oGrid.attachEvent("_gridPolyfillAfterDragEnd", oGrid, this._polyfillAfterDragEnd, this);
-			this._dndPolyfillAttached = true;
-			// todo: detach
 		}
 	};
 
@@ -245,12 +170,8 @@ sap.ui.define([
 	 * @private
 	 */
 	GridBoxLayout.prototype.onGridResize = function (oEvent) {
-		if (!this.isGridSupportedByBrowser() || (oEvent.control && oEvent.control.isA("sap.f.GridList") && oEvent.control.isGrouped())) {
+		if (oEvent.control && oEvent.control.isA("sap.f.GridList") && oEvent.control.isGrouped()) {
 			this._flattenHeight(oEvent.control);
-		}
-
-		if (!this.isGridSupportedByBrowser() && !this._hasBoxWidth()){
-			this._applyClassForLastItem(oEvent.control);
 		}
 
 		if (oEvent) {
@@ -259,26 +180,6 @@ sap.ui.define([
 				this._applySizeClass(oEvent.control);
 			}
 		}
-	};
-
-	/**
-	 * Make all Elements inside the GridBoxLayout with equal widths specified by one of
-	 * boxMinWidth or boxWidth properties.
-	 * Note: Only needed for IE11.
-	 *
-	 * @param {sap.ui.layout.cssgrid.IGridConfigurable} oControl The grid
-	 * @private
-	 */
-	GridBoxLayout.prototype._calcWidth = function (oControl) {
-		var sWidth;
-		if (this._hasBoxWidth()) {
-			sWidth = this.getBoxWidth() || this.getBoxMinWidth();
-		}
-		this._loopOverGridItems(oControl, function (oGridItem) {
-			if (!oGridItem.classList.contains("sapMGHLI")) { // the item is not group header
-				oGridItem.style.width = sWidth;
-			}
-		});
 	};
 
 	/**
@@ -485,30 +386,6 @@ sap.ui.define([
 				}
 			}
 		});
-	};
-
-	/**
-	 * Implements polyfill for IE after drag over.
-	 * @param {Object} oEvent After drag over event
-	 * @protected
-	 */
-	GridBoxLayout.prototype._polyfillAfterDragOver = function (oEvent, oGrid) {
-		oEvent.getParameter("indicator").addClass("sapUiLayoutCSSGridItem");
-
-		this._calcWidth(oGrid);
-		this._flattenHeight(oGrid);
-		this._applyClassForLastItem(oGrid);
-	};
-
-	/**
-	 * Implements polyfill for IE after drag end.
-	 * @param {Object} oEvent After drag end event
-	 * @protected
-	 */
-	GridBoxLayout.prototype._polyfillAfterDragEnd = function (oEvent, oGrid) {
-		oEvent.getParameter("indicator").removeClass("sapUiLayoutCSSGridItem");
-
-		this._applyClassForLastItem(oGrid);
 	};
 
 	return GridBoxLayout;
