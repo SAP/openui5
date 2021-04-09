@@ -757,6 +757,45 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("ESC should reset the value to the user's input when suggestions are shown.", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({key: "key1", text: "Text 1"}),
+				new Item({key: "key2", text: "Text 2"}),
+				new Item({key: "key3", text: "Text 3"})
+			]
+		});
+		var oSetSpy = sinon.spy(oInput, "setValue");
+		var oGetSpy = sinon.spy(oInput, "_getTypedInValue");
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._bDoTypeAhead = true;
+		qutils.triggerEvent("focus", oInput.getFocusDomRef());
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "Te");
+		qutils.triggerEvent("input", oInput.getFocusDomRef());
+		oInput._getSuggestionsPopover().getPopover().open();
+		this.clock.tick(300);
+
+		// Act
+		oSetSpy.reset();
+		oGetSpy.reset();
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ESCAPE);
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oGetSpy.called, true, "_getTypedInValue was called.");
+		assert.strictEqual(oGetSpy.firstCall.returnValue, "Te", "_getTypedInValue returnd the correct result.");
+		assert.strictEqual(oSetSpy.callCount, 1, "Input's value was set once.");
+		assert.strictEqual(oSetSpy.firstCall.args[0], "Te", "The input's value was reset to the initially typed by the user input.");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
 	QUnit.test("Check _DEFAULTRESULT_TABULAR function.", function(assert) {
 		assert.strictEqual(Input._DEFAULTRESULT_TABULAR({ isA: function() {
 			return true;
@@ -5919,7 +5958,6 @@ sap.ui.define([
 		});
 
 		// Act
-		// debugger;
 		this.oInput.showItems();
 
 		// Assert
