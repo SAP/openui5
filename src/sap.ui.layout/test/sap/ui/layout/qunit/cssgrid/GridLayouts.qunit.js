@@ -635,12 +635,35 @@ sap.ui.define([
 				layoutChange: this.fnLayoutChangeHandler
 			});
 			sinon.spy(this.oGridLayout, "_applyLayout");
+
+			var $GridParent = jQuery("<div><div id='cssGrid'></div></div>");
+			this.$GridParent = $GridParent;
+
+			this.oGridMock = {
+				$: function () {
+					return $GridParent.find("#cssGrid");
+				},
+				getDomRef: function () {
+					return this.$()[0];
+				},
+				isA: function () {
+					return false;
+				},
+				getItems: function () {
+					return [];
+				},
+				removeStyleClass: function () { },
+				addStyleClass: function () { }
+			};
+
+			jQuery("#" + DOM_RENDER_LOCATION).append($GridParent);
 		},
 		afterEach: function () {
 			this.oGridLayout._applyLayout.restore();
 			this.oGridLayout.destroy();
 			this.oGridLayout = null;
 			this.fnLayoutChangeHandler = null;
+			this.$GridParent.remove();
 		}
 	});
 
@@ -651,20 +674,9 @@ sap.ui.define([
 
 	QUnit.test("'layoutChange' event is fired once initially", function (assert) {
 		// Arrange
-		var $GridMock = jQuery("<div></div>", { width: 500 });
-		var oGridMock = {
-			$: function () {
-				return $GridMock;
-			},
-			isA: function () {
-				return false;
-			},
-			getItems: function () {
-				return [];
-			},
-			removeStyleClass: function () { },
-			addStyleClass: function () { }
-		};
+		var oGridMock = this.oGridMock;
+
+		oGridMock.$().width(500);
 
 		// Act
 		this.oGridLayout.onGridAfterRendering(oGridMock);
@@ -682,21 +694,8 @@ sap.ui.define([
 
 	QUnit.test("Resize", function (assert) {
 		// Arrange
-		var $GridMock = jQuery("<div><div id='cssGrid'></div></div>");
-
-		var oGridMock = {
-			$: function () {
-				return $GridMock.find("#cssGrid");
-			},
-			isA: function () {
-				return false;
-			},
-			getItems: function () {
-				return [];
-			},
-			removeStyleClass: function () { },
-			addStyleClass: function () { }
-		};
+		var oGridMock = this.oGridMock,
+			$GridParent = this.$GridParent;
 
 		var oResizeEventMock = {
 			size: {
@@ -705,7 +704,7 @@ sap.ui.define([
 			control: oGridMock
 		};
 
-		$GridMock.css({padding: 100});
+		$GridParent.css({padding: 100});
 
 		[
 			{ width: 2500, expectedClass: "XXXL"},
@@ -717,7 +716,7 @@ sap.ui.define([
 			{ width: 300, expectedClass: "S"}
 		].forEach(function (oCfg) {
 			// Act
-			$GridMock.width(oCfg.width);
+			$GridParent.width(oCfg.width);
 			this.oGridLayout.onGridResize(oResizeEventMock);
 
 			// Assert
@@ -743,6 +742,44 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oRenderManagerMock.style.calledWith("display", "grid"), "display:grid is added during rendering");
+	});
+
+	QUnit.test("Scrollbar and margins of the parent are not calculated", function (assert) {
+		// Arrange
+		var iWidth = 650,
+			$Root = jQuery("<div></div>"),
+			$GridParent = this.$GridParent,
+			oGridMock = this.oGridMock,
+			oResizeEventMock = {
+				size: {
+					width: iWidth
+				},
+				control: oGridMock
+			};
+
+		jQuery("#" + DOM_RENDER_LOCATION).append($Root);
+
+		$Root
+			.width(iWidth)
+			.height(100)
+			.append($GridParent);
+
+		$GridParent
+			.height(100)
+			.css({
+				"overflow-y": "scroll",
+				"margin": "20px"
+			})
+			.append(oGridMock.$());
+
+		// Act
+		this.oGridLayout.onGridResize(oResizeEventMock);
+
+		// Assert
+		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSGridRCL-LayoutS", "Grid has expected layout, when parent has vertical scroll.");
+
+		// Clean up
+		$Root.remove();
 	});
 
 	QUnit.module("ResponsiveColumnItemLayoutData", {
