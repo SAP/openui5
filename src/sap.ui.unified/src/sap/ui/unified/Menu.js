@@ -828,7 +828,7 @@ sap.ui.define([
 
 		if (checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			this.setHoveredItem(null);
-		} else {
+		} else if (oEvent.srcControl.isA("sap.ui.unified.MenuItemBase")) {
 			this.setHoveredItem(this.oHoveredItem);
 		}
 

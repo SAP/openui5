@@ -733,6 +733,30 @@ sap.ui.define([
 		});
 	}
 
+	QUnit.test("Hovered item", function(assert) {
+		// prepare
+		var oMenuItem = new MenuItem({
+			text:"WSL"
+		});
+		var oMenu = new Menu({
+			items:[oMenuItem]
+		});
+		var oFakeEvent = {
+			srcControl: oMenuItem
+		};
+
+		// act
+		var oSpy = this.spy(oMenu, "setHoveredItem");
+		oMenu.setHoveredItem(oMenuItem);
+		oMenu.onmouseout(oFakeEvent);
+
+		// assert
+		assert.ok(oSpy.calledWith(oMenuItem), "Proper hovered item is set");
+
+		// cleanup
+		oSpy.restore();
+	});
+
 	QUnit.test("Disabled Item", function(assert) {
 		openRootMenu(true, assert);
 		lastSelectedItemId = null;
