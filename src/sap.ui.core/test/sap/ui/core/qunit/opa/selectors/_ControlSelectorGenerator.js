@@ -12,6 +12,11 @@ sap.ui.define([
     "sap/m/CustomListItem",
     "sap/m/HBox",
     "sap/m/Link",
+    "sap/m/Button",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/StandardListItem",
+	"sap/m/Toolbar",
     "sap/ui/test/_ControlFinder",
     // only selector generators below; import in priority order
     "sap/ui/test/selectors/_GlobalID",
@@ -21,7 +26,7 @@ sap.ui.define([
     "sap/ui/test/selectors/_Properties",
     "sap/ui/test/selectors/_DropdownItem"
 ], function (_ControlSelectorGenerator, _ControlSelectorValidator, Text, App, ToggleButton, Bar, Page,
-        JSONModel, List, CustomListItem, HBox, Link, _ControlFinder) {
+        JSONModel, List, CustomListItem, HBox, Link, Button, HorizontalLayout, VerticalLayout, StandardListItem, Toolbar, _ControlFinder) {
     "use strict";
 
     var aSelectorGenerators = Array.prototype.slice.call(arguments, arguments.length - 6);
@@ -150,7 +155,7 @@ sap.ui.define([
         _ControlSelectorGenerator._generateUniqueAncestorSelector(this.oButtonHeader1)
             .catch(function (oError) {
                 assert.ok(oError instanceof Error, "Should not find ancestor");
-                return _ControlSelectorGenerator._generateHierarchicalUp(this.oButtonHeader1);
+                return _ControlSelectorGenerator._generateHierarchicalUp({control: this.oButtonHeader1});
             }.bind(this)).catch(function (oError) {
                 assert.ok(oError.message.match(/Could not generate unique selector for ancestor/), "Should not find ancestor");
             }).finally(fnDone);
@@ -158,7 +163,7 @@ sap.ui.define([
 
     QUnit.test("Should generate selector with ancestors - hierarchical", function (assert) {
         var fnDone = assert.async();
-        _ControlSelectorGenerator._generateHierarchicalUp(this.oButtonContent)
+        _ControlSelectorGenerator._generateHierarchicalUp({control: this.oButtonContent})
             .then(function (mResult) {
                 assert.strictEqual(mResult.ancestor.id, "myPage", "Should find ancestor");
                 assert.strictEqual(mResult.properties.icon, "sap-icon://avatar", "Should find unique selector for control in subree");
@@ -167,7 +172,7 @@ sap.ui.define([
 
     QUnit.test("Should not generate selector when unique selector in subtree is not found - hierarchical", function (assert) {
         var fnDone = assert.async();
-        _ControlSelectorGenerator._generateHierarchicalUp(this.oButtonHeader1)
+        _ControlSelectorGenerator._generateHierarchicalUp({control: this.oButtonHeader1})
             .catch(function (oError) {
                 assert.ok(oError.message.match(/Could not generate a selector for control/), "Should not find control");
             }).finally(fnDone);
@@ -219,7 +224,7 @@ sap.ui.define([
 
     QUnit.test("Should generate selector with desendant - hierarchical", function (assert) {
         var fnDone = assert.async();
-        _ControlSelectorGenerator._generateHierarchicalDown(this.oList.getItems()[0])
+        _ControlSelectorGenerator._generateHierarchicalDown({control: this.oList.getItems()[0]})
             .then(function (mResult) {
                 assert.strictEqual(mResult.controlType, "sap.m.CustomListItem", "Should generate selector");
                 assert.strictEqual(mResult.properties.type, "Inactive");
@@ -241,9 +246,74 @@ sap.ui.define([
     QUnit.test("Should not generate selector with desendant when none has a unique selector - hierarchical", function (assert) {
         var fnDone = assert.async();
         _ControlSelectorGenerator.setParams({maxWidth: 1, maxDepth: 2}); // the non-unique text is the first child => limit to it
-        _ControlSelectorGenerator._generateHierarchicalDown(this.oList.getItems()[0])
+        _ControlSelectorGenerator._generateHierarchicalDown({control: this.oList.getItems()[0]})
             .catch(function (oError) {
                 assert.ok(oError.message.match(/Could not generate unique selector for descendant/), "Should not find unique descendant");
+            }).finally(fnDone);
+    });
+
+    QUnit.module("_ControlSelectorGenerator - sibling", {
+        beforeEach: function () {
+            this.oButton = new Button();
+            this.oText = new Text({text: "duplicate"});
+            this.oItem1 = new CustomListItem({
+                content: [
+                    new HBox({
+                        items: [
+                            new HBox({
+                                items: [
+                                    this.oText,
+                                    new Text({text: "item1"})
+                                ]
+                            }),
+                            new HBox({
+                                items: [
+                                    new Text({text: "duplicate"}),
+                                    new Text({text: "item2"})
+                                ]
+                            })
+                        ]
+                    })
+                ]
+            });
+            this.oToolbar = new Toolbar("myToolbarSibling");
+            this.oLayout = new HorizontalLayout({
+                content: [
+                    this.oButton,
+                    new List("list", {
+                        items: [
+                            this.oItem1
+                        ],
+                        headerToolbar: this.oToolbar
+                    })
+                ]
+            });
+
+            this.oLayout.placeAt("qunit-fixture");
+            sap.ui.getCore().applyChanges();
+        },
+        afterEach: function () {
+            this.oLayout.destroy();
+        }
+    });
+
+    QUnit.test("Should generate selector with sibling", function (assert) {
+        var fnDone = assert.async();
+        _ControlSelectorGenerator._generateWithSibling({control: this.oText})
+            .then(function (mResult) {
+                assert.strictEqual(mResult.controlType, "sap.m.Text", "Should generate selector");
+                assert.strictEqual(mResult.properties.text, "duplicate");
+                assert.strictEqual(mResult.sibling[0].controlType, "sap.m.Text", "Should find the sibling");
+                assert.strictEqual(mResult.sibling[0].properties.text, "item1", "Should find the sibling");
+                assert.strictEqual(mResult.sibling[1].level, 1);
+            }).finally(fnDone);
+    });
+
+    QUnit.test("Should not generate selector with sibling when none has a unique selector", function (assert) {
+        var fnDone = assert.async();
+        _ControlSelectorGenerator.setParams({maxWidth: 1, maxDepth: 1});
+        _ControlSelectorGenerator._generateWithSibling({control: this.oButton}).catch(function (oError) {
+                assert.ok(oError.message.match(/Could not generate unique sibling selector.*/), "Should not find unique sibling");
             }).finally(fnDone);
     });
 

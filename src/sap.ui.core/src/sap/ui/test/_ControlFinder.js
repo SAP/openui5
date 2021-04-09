@@ -26,6 +26,7 @@ sap.ui.define([
      * For details on the recognized object properties, see {@link sap.ui.test.matchers} and control selector types of {@link sap.ui.test.RecordReplay}
      * If oOptions.ancestor is given, it should be a control selector object. The ancestor control will be located and then used for {@link sap.ui.test.matchers.Ancestor}
      * If oOptions.descendant is given, it should be a control selector object. The descendant control will be located and then used for {@link sap.ui.test.matchers.Descendant}
+     * If oOptions.sibling is given, it should be a control selector object. The sibling control will be located and then used for {@link sap.ui.test.matchers.Sibling}
      * @returns {Array} An array of the matching controls. If no controls match, the returned array is empty.
      * @private
      */
@@ -181,10 +182,23 @@ sap.ui.define([
         return $.contains(oStaticArea, oControl.getDomRef());
     };
 
+    /**
+     * check if a selector contains "expansion" values, meaning values that are nested selector objects
+     * @param {object} oOptions An Object containing conditions for control search similar to {@link sap.ui.test.Opa5#waitFor}
+     * @return {boolean} true if the selector has "expansion" values
+     * @private
+     */
     function _hasExpansions(oOptions) {
-        return oOptions.ancestor || oOptions.descendant;
+        return oOptions.ancestor || oOptions.descendant || oOptions.sibling;
     }
 
+    /**
+     * expand "expansion" values (values that are nested selector objects) for a given selector.
+     * expansion means: replace each nested selector (1 level deep) with the matching control
+     * @param {object} oOptions An Object containing conditions for control search similar to {@link sap.ui.test.Opa5#waitFor}
+     * @return {object} "expanded" oOptions, in which nested selectors are replaced with controls
+     * @private
+     */
     function _getExpandedOptions(oOptions) {
         var oOptionsExpansion = {};
         if (oOptions.ancestor) {
@@ -204,6 +218,24 @@ sap.ui.define([
                 delete oOptions.descendant;
             } else {
                 throw new Error("Descendant not found using selector: " + JSON.stringify(oOptions.descendant));
+            }
+        }
+        if (oOptions.sibling) {
+            if (Array.isArray(oOptions.sibling)) {
+                var oSibling = _ControlFinder._findControls(oOptions.sibling[0])[0];
+                if (oSibling) {
+                    // format for declarative selector with additional args: [[matcher1Arg1, matcher1Arg2,...], [matcher2Arg1, matcher2Arg2,...], ...]
+                    oOptionsExpansion.sibling = [[oSibling, oOptions.sibling[1]]];
+                    delete oOptions.sibling;
+                }
+            } else {
+                var oSibling = _ControlFinder._findControls(oOptions.sibling)[0];
+                if (oSibling) {
+                    oOptionsExpansion.sibling = oSibling;
+                    delete oOptions.sibling;
+                } else {
+                    throw new Error("Sibling not found using selector: " + JSON.stringify(oOptions.sibling));
+                }
             }
         }
 

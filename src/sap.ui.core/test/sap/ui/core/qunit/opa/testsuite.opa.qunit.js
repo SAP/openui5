@@ -235,6 +235,10 @@ sap.ui.define([
 			title: "QUnit Page for sap.ui.test.matchers.Descendant",
 			module: "./matchers/Descendant.qunit"
 		},
+		"matchers/Sibling": {
+			title: "QUnit Page for sap.ui.test.matchers.Sibling",
+			module: "./matchers/Sibling.qunit"
+		},
 		"matchers/BindingPath": {
 			title: "QUnit Page for sap.ui.test.matchers.BindingPath",
 			module: "./matchers/BindingPath.qunit"

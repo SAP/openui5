@@ -1382,22 +1382,19 @@ sap.ui.define([
 			return oDeferred.promise();
 		};
 
-		// in the declarative matcher syntax, there can be two types of expanded declaration: for an ancestor and for a descendant
+		// in the declarative matcher syntax, there can be 3 types of expanded declaration: ancestor, descendant, sibling.
 		// they can be found on the root level of "options" or under the "matchers" key
 		// return the path to one such expanded declaration, if it exists
 		function _getPathToExpansion(options) {
-			var sMatchers = "matchers";
-			var sAncestor = "ancestor";
-			var sDescendant = "descendant";
-			if (options[sAncestor] && jQuery.isPlainObject(options[sAncestor])) {
-				return [sAncestor];
-			} else if (options[sMatchers] && options[sMatchers][sAncestor] && jQuery.isPlainObject(options[sMatchers][sAncestor])) {
-				return [sMatchers, sAncestor];
-			} else if (options[sDescendant] && jQuery.isPlainObject(options[sDescendant])) {
-				return [sDescendant];
-			} else if (options[sMatchers] && options[sMatchers][sDescendant] && jQuery.isPlainObject(options[sMatchers][sDescendant])) {
-				return [sMatchers, sDescendant];
-			}
+			var aPath;
+			["ancestor", "descendant", "sibling"].forEach(function (sMatcher) {
+				if (options[sMatcher] && jQuery.isPlainObject(options[sMatcher])) {
+					aPath = [sMatcher];
+				} else if (options.matchers && options.matchers[sMatcher] && jQuery.isPlainObject(options.matchers[sMatcher])) {
+					aPath = ["matchers", sMatcher];
+				}
+			});
+			return aPath;
 		}
 
 		// gets the value in path "aPath" of object "options"
