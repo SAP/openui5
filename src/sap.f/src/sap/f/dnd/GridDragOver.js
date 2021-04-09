@@ -210,11 +210,6 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 
 		this._resetCoreDefaultIndicator();
 
-		// fire private event for handling IE specific layout fixes
-		this._oDropContainer.fireEvent("_gridPolyfillAfterDragEnd", {
-			indicator: this._$indicator
-		});
-
 		this._mDropIndicatorSize = null;
 		this._oDragControl = null;
 		this._oDropContainer = null;
@@ -254,11 +249,6 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 			$insertTarget = $targetGridItem || oTargetControl.$();
 		}
 
-		if ($insertTarget && oDropContainer.isA("sap.f.GridContainer")) {
-			// todo: find better way to find the item wrapper when it is not grid item, needed for IE
-			$insertTarget = $insertTarget.closest(".sapFGridContainerItemWrapper");
-		}
-
 		if (this._mDropIndicatorSize) {
 			mStyles = {
 				"grid-row-start": "span " + this._mDropIndicatorSize.rows,
@@ -289,25 +279,6 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 
 		// when drop indicator is shown, it becomes the new "drag from"
 		this._iDragFromIndex = iTargetIndex;
-
-		/* IE Polyfill */
-
-		// Let the container decide the dimensions of the indicator.
-		var oEventData = {
-			indicator: this._$indicator,
-			indicatorIndex: this._iDragFromIndex
-		};
-
-		if (this._mDropIndicatorSize) {
-			oEventData.rows = this._mDropIndicatorSize.rows;
-			oEventData.columns = this._mDropIndicatorSize.columns;
-		} else {
-			oEventData.width = this._mDragItemDimensions.rect.width;
-			oEventData.height = this._mDragItemDimensions.rect.height;
-		}
-
-		// fire private event for handling IE specific layout fixes
-		this._oDropContainer.fireEvent("_gridPolyfillAfterDragOver", oEventData);
 	};
 
 	/**
@@ -316,7 +287,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 	GridDragOver.prototype._hideIndicator = function() {
 		this._$indicator.detach();
 
-		this._$indicator.attr("style", ""); // VirtualGrid sets position 'absolute' to the indicator, which breaks calculations in other containers, such as GridList
+		this._$indicator.attr("style", ""); // Clear styles of the indicator that are set by containers, like position "absolute"
 	};
 
 	/**
@@ -331,8 +302,6 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 
 		if ($gridItem && this._bIsInSameContainer) {
 			$gridItem.hide();
-		} else {
-			this._oDragContainer.fireEvent("_gridPolyfillDraggingInAnotherContainer");
 		}
 	};
 
