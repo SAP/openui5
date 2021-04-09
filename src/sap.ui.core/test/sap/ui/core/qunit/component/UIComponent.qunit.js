@@ -1316,6 +1316,39 @@ sap.ui.define([
 			assert.ok(false, "Modules could not be loaded and an error occured.");
 		});
 	});
+
+	QUnit.test("Component with async content crestion and missing Interface", function(assert) {
+		assert.expect(1);
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			}
+		};
+		this.setRespondedManifest(oManifest, "scenario12");
+
+		sap.ui.predefine("manifestModules/scenario12/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
+			return UIComponent.extend("manifestModules.scenario12.Component", {
+				metadata: {
+					manifest: "json"
+				},
+				constructor: function() {
+					UIComponent.apply(this, arguments);
+				},
+				createContent: function() {
+					return Promise.resolve();
+				}
+			});
+		});
+
+		return Component.create({
+			name: "manifestModules.scenario12",
+			manifest: true
+		}).then(function(oComponent){
+			assert.ok(false, "Creation should rejected. Must not be ok!");
+		}).catch(function(oErr) {
+			assert.equal(oErr.message, "Interface 'sap.ui.core.IAsyncContentCreation' must be implemented for component 'manifestModules.scenario12' when 'createContent' is implemented asynchronously", "Creation rejected");
+		});
+	});
 });
 
 

@@ -354,7 +354,11 @@ sap.ui.define([
 		});
 
 		if (vRootControl instanceof Promise) {
-			this.pRootControlLoaded = vRootControl;
+			if (this.isA("sap.ui.core.IAsyncContentCreation")) {
+				this.pRootControlLoaded = vRootControl;
+			} else {
+				throw new Error("Interface 'sap.ui.core.IAsyncContentCreation' must be implemented for component '" + this.getMetadata().getComponentName() + "' when 'createContent' is implemented asynchronously");
+			}
 		} else if (this.isA("sap.ui.core.IAsyncContentCreation") && vRootControl && vRootControl.isA("sap.ui.core.mvc.View")) {
 			// if rootControl is a view created with the legacy factory we chain the loaded promise
 			this.pRootControlLoaded = vRootControl.loaded();
