@@ -401,13 +401,7 @@ sap.ui.define([
 				semanticObject: "CustomLogic",
 				action: "maintain"
 			}];
-			var aExpectedResults = [{
-				supported: false
-			}, {
-				supported: false
-			}, {
-				supported: false
-			}];
+			var aExpectedResults = [false, false, false];
 
 			Utils.isNavigationSupportedForIntents(aNavigationIntents).then(function(aActualResults) {
 				assert.deepEqual(aActualResults, aExpectedResults, "Unexpected results");
@@ -436,11 +430,7 @@ sap.ui.define([
 				semanticObject: "CustomLogic",
 				action: "maintain"
 			}];
-			var aExpectedResults = [{
-				supported: true
-			}, {
-				supported: false
-			}];
+			var aExpectedResults = [true, false];
 
 			Utils.isNavigationSupportedForIntents(aNavigationIntents).then(function(aActualResults) {
 				assert.deepEqual(aActualResults, aExpectedResults, "Unexpected results");

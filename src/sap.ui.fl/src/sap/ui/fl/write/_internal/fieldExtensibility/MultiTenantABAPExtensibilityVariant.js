@@ -103,8 +103,8 @@ sap.ui.define([
 		_determineExtensionData: function() {
 			return new Promise(function (fResolve, fReject) {
 				Utils.isNavigationSupportedForIntents([mNavigationIntent]).then(function(aNavigationSupportedForIntents) {
-					var bIsSupported = aNavigationSupportedForIntents.some(function(oResult) {
-						return oResult.supported === true;
+					var bIsSupported = aNavigationSupportedForIntents.some(function(bResult) {
+						return bResult === true;
 					});
 
 					if (bIsSupported) {
