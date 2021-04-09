@@ -565,17 +565,6 @@ sap.ui.define([
 					}
 				}
 			},
-			"write/_internal/fieldExtensibility/ABAPAccess": {
-				group: "Write Internal",
-				coverage: {
-					only: ["sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
-					}
-				}
-			},
 			"write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory": {
 				group: "Write Internal",
 				coverage: {
