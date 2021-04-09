@@ -76,7 +76,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.getShowMoreButton = function() {
-			return this.getPopover().getFooter() && this.getPopover().getFooter().getContent()[1];
+			return this.getPopover() && this.getPopover().getFooter() && this.getPopover().getFooter().getContent()[1];
 		};
 
 		/**
