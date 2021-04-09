@@ -357,7 +357,7 @@ sap.ui.define([
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
-				oControl.getPersistencyKey = function() {
+				oControl.getPersistencyKey = function () {
 					return sPersistencyKey;
 				};
 
@@ -430,6 +430,83 @@ sap.ui.define([
 						assert.deepEqual(oChange.getText("variantName"), testData.expected.changeTextsVariantName, "the change has the name set correct in the texts section");
 					}
 					assert.equal(oVariantDefinition.texts.variantName.value, "A variant", "the name in the definition is unchanged");
+				});
+			});
+		});
+
+		[{
+			testDetails: "on a variant with an empty request entry",
+			packageName: "",
+			expectedChange: false
+		}, {
+			testDetails: "on a variant with an '$TMP' request entry",
+			packageName: "$TMP",
+			expectedChange: false
+		}, {
+			testDetails: "on a variant with a set request entry",
+			packageName: "SOME_TRANSPORT_REQUEST",
+			expectedChange: true
+		}].forEach(function (oTestData) {
+			QUnit.test("When updateVariant is called " + oTestData.testDetails, function (assert) {
+				var sReference = "odata.app";
+				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+				var oAppComponent = new UIComponent();
+				oControl = new Control("controlId1");
+				oControl.getPersistencyKey = function() {
+					return sPersistencyKey;
+				};
+
+				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+					changes: [],
+					comp: {
+						compVariants: [],
+						variants: [{
+							fileName: "flex_variant_1",
+							name: "F Variant",
+							layer: Layer.VENDOR,
+							packageName: oTestData.packageName,
+							content: {},
+							favorite: true,
+							selector: {
+								persistencyKey: sPersistencyKey
+							},
+							texts: {
+								variantName: {
+									value: "A variant"
+								}
+							}
+						}],
+						changes: [],
+						standardVariants: [],
+						defaultVariants: []
+					}
+				});
+
+				return FlexState.clearAndInitialize({
+					reference: sReference,
+					componentId: oAppComponent.getId(),
+					manifest: {},
+					componentData: {}
+				}).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
+					control: oControl,
+					standardVariant: {},
+					variants: []
+				})).then(function () {
+					return SmartVariantManagementWriteAPI.updateVariant({
+						control: oControl,
+						layer: Layer.VENDOR,
+						id: "flex_variant_1",
+						name: "a new name"
+					});
+				}).then(function (oVariant) {
+					if (oTestData.expectedChange) {
+						assert.equal(oVariant.getChanges().length, 1, "one change was added");
+						assert.equal(oVariant.getState(), Change.states.PERSISTED, "the change is not flagged as dirty");
+					} else {
+						assert.equal(oVariant.getChanges().length, 0, "no change was added");
+						assert.equal(oVariant.getState(), Change.states.DIRTY, "the change is not flagged as dirty");
+					}
 				});
 			});
 		});
