@@ -427,14 +427,38 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
 	 */
 	CompVariantState.updateVariant = function (mPropertyBag) {
+		function variantCanBeUpdated(oVariant, sLayer) {
+			var bSameLayer = oVariant.getLayer() === sLayer;
+			var sPackageName = oVariant.getDefinition().packageName;
+			var bNotTransported = !sPackageName || sPackageName === "$TMP";
+			// in case changes were already done within the layer, no update of the variant can be done to safeguard the execution order
+			var bIsChangedOnLayer = oVariant.getChanges().some(function (oChange) {
+				return oChange.getLayer() === sLayer;
+			});
+
+			return oVariant.getPersisted() && bSameLayer && bNotTransported && !bIsChangedOnLayer;
+		}
+
 		var oVariant = getVariantById(mPropertyBag);
 		var sLayer = determineLayer(mPropertyBag);
-		// in case changes were already done within the layer, no update of the variant can be done to safeguard the execution order
-		var bIsChangedOnLayer = oVariant.getChanges().some(function (oChange) {
-			return oChange.getLayer() === sLayer;
-		});
 
-		if (!oVariant.getPersisted() || oVariant.getLayer() !== sLayer || bIsChangedOnLayer) {
+		if (variantCanBeUpdated(oVariant, sLayer)) {
+			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.ContentUpdate);
+
+			if (mPropertyBag.executeOnSelection !== undefined) {
+				oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
+			}
+			if (mPropertyBag.favorite !== undefined) {
+				oVariant.storeFavorite(mPropertyBag.favorite);
+			}
+			if (mPropertyBag.contexts) {
+				oVariant.storeContexts(mPropertyBag.contexts);
+			}
+			if (mPropertyBag.name) {
+				oVariant.storeName(mPropertyBag.name);
+			}
+			oVariant.storeContent(mPropertyBag.content || oVariant.getContent());
+		} else {
 			var oChangeDefinition = Change.createInitialFileContent({
 				changeType: "updateVariant",
 				layer: sLayer,
@@ -466,22 +490,6 @@ sap.ui.define([
 			addChange(oChange);
 			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.UpdateVariantChange, oChange);
 			CompVariantMerger.applyChangeOnVariant(oVariant, oChange);
-		} else {
-			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.ContentUpdate);
-
-			if (mPropertyBag.executeOnSelection !== undefined) {
-				oVariant.storeExecuteOnSelection(mPropertyBag.executeOnSelection);
-			}
-			if (mPropertyBag.favorite !== undefined) {
-				oVariant.storeFavorite(mPropertyBag.favorite);
-			}
-			if (mPropertyBag.contexts) {
-				oVariant.storeContexts(mPropertyBag.contexts);
-			}
-			if (mPropertyBag.name) {
-				oVariant.storeName(mPropertyBag.name);
-			}
-			oVariant.storeContent(mPropertyBag.content || oVariant.getContent());
 		}
 		return oVariant;
 	};
