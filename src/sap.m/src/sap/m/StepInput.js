@@ -1574,22 +1574,17 @@ function(
 					}.bind(this),
 					onmouseup: function (oEvent) {
 						// check if the left mouse button is up
-						if (oEvent.button === 0) {
+						// handled in touchend for mobile
+						if (!Device.system.phone && !Device.system.tablet && oEvent.button === 0) {
 							this._bDelayedEventFire = undefined;
 							this._btndown = false;
-							this._resetSpinValues();
-							if (this._bSpinStarted) {
-								this._changeValue();
-							}
+							this._stopSpin();
 						}
 					}.bind(this),
 					onmouseout: function (oEvent) {
 						if (this._btndown) {
 							this._bDelayedEventFire = undefined;
-							this._resetSpinValues();
-							if (this._bSpinStarted) {
-								this._changeValue();
-							}
+							this._stopSpin();
 						}
 					}.bind(this),
 					oncontextmenu: function (oEvent) {
@@ -1604,6 +1599,12 @@ function(
 						}
 					},
 					ontouchend: function(oEvent) {
+						if (Device.system.phone || Device.system.tablet) {
+							this._bDelayedEventFire = undefined;
+							this._btndown = false;
+							this._stopSpin();
+						}
+
 						if (oEvent.originalEvent && oEvent.originalEvent.cancelable) {
 							oEvent.preventDefault();
 						}
@@ -1617,6 +1618,17 @@ function(
 
 				oBtn.addDelegate(oEvents, true);
 
+		};
+
+		/**
+		 * Stops an initiated spin and applies changes to the value.
+		 * @private
+		 */
+		StepInput.prototype._stopSpin = function() {
+			this._resetSpinValues();
+			if (this._bSpinStarted) {
+				this._changeValue();
+			}
 		};
 
 		StepInput.prototype._getMin = function() {

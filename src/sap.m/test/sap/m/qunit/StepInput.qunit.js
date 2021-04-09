@@ -1652,7 +1652,7 @@ sap.ui.define([
 		this.clock.tick(t);
 
 		// Act - mouse up on increment button
-		callIconDelegate("onmouseup", incBtn);
+		callIconDelegate("ontouchend", incBtn);
 
 		// assert that the value get to 9
 		assert.equal(this.stepInput.getValue(), 9, "Input has value of 9");
@@ -1669,7 +1669,7 @@ sap.ui.define([
 		this.clock.tick(t);
 
 		// Act - mouse up on decrement button
-		callIconDelegate("onmouseup", decBtn);
+		callIconDelegate("ontouchend", decBtn);
 
 		// assert that the value get to -1
 		assert.equal(this.stepInput.getValue(), -1, "Input has value of -1");
@@ -1692,7 +1692,7 @@ sap.ui.define([
 		this.clock.tick(2000);
 
 		// Act - mouse up on increment button
-		callIconDelegate("onmouseup", incBtn);
+		callIconDelegate("ontouchend", incBtn);
 
 		// assert that the value is 10 and that the change event is fired
 		assert.ok(this.stepInput._getInput().getValue() === "10", "Input has reached the max value of 10");
@@ -1716,7 +1716,7 @@ sap.ui.define([
 		this.clock.tick(2000);
 
 		// Act - mouse up on decrement button
-		callIconDelegate("onmouseup", decBtn);
+		callIconDelegate("ontouchend", decBtn);
 
 		// assert that the value is 10 and that the change event is fired
 		assert.ok(this.stepInput._getInput().getValue() === "-4", "Input has reached the min value of -4");
