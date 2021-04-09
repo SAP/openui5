@@ -214,7 +214,7 @@ sap.ui.define([
 			aValues = fnBaseType.prototype.parseValue.apply(this, arguments);
 			sUnit = aValues[1] || aCurrentValues[1];
 			// remove trailing decimal zeroes and separator
-			if (aValues[0].includes(".")) {
+			if (aValues[0] && aValues[0].includes(".")) {
 				aValues[0] = aValues[0].replace(rTrailingZeros, "").replace(rSeparator, "");
 			}
 			if (sUnit && this.mCustomUnits) {
@@ -230,7 +230,7 @@ sap.ui.define([
 						: getText("EnterInt"));
 				}
 			}
-			if (!this.bParseAsString) {
+			if (aValues[0] !== undefined && !this.bParseAsString) {
 				aValues[0] = Number(aValues[0]);
 			}
 
