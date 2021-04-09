@@ -253,7 +253,7 @@ sap.ui.define([
 		 *   underlying type is represented as a <code>number</code>, for example
 		 *   {@link sap.ui.model.odata.type.Int32}
 		 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-		 *   By default decimals are preserved, except <code>oFormatOptions.style</code> is given as
+		 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 		 *   "short" or "long"; since 1.89.0
 		 * @param {boolean} [oFormatOptions.unitOptional=true]
 		 *   Whether the amount or measure is parsed if no currency or unit is entered.
