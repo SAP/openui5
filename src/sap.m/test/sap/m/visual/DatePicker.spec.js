@@ -26,4 +26,13 @@ describe("sap.m.DatePicker", function() {
 		oCalendar = element(by.css("#DP14-RP-popover"));
 		expect(takeScreenshot(oCalendar)).toLookAs("year_range_correctly_rendered");
 	});
+
+	it("changes the month via picker, when the selected date has maximum year in Gregorian calendar", function() {
+		var oCalendar;
+		element(by.id("DP15-icon")).click();
+		element(by.id("DP15-cal--Head-B1")).click();
+		element(by.id("DP15-cal--MP-m11")).click();
+		oCalendar = element(by.css("#DP15-RP-popover"));
+		expect(takeScreenshot(oCalendar)).toLookAs("month_properly_selected");
+	});
 });
