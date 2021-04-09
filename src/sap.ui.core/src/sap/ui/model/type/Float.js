@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @public
 	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.NumberFormat NumberFormat}.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   By default decimals are preserved, except <code>oFormatOptions.style</code> is given as
+	 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 	 *   "short" or "long"; since 1.89.0
 	 * @param {object} [oFormatOptions.source] Additional set of format options to be used if the property in the model is not of type string and needs formatting as well.
 	 * 										   If an empty object is given, the grouping is disabled and a dot is used as decimal separator.

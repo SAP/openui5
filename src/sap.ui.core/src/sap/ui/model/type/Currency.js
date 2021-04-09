@@ -52,7 +52,7 @@ sap.ui.define([
 	 *   messages, see {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding
 	 *   binding parameter is not set manually.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   By default decimals are preserved, except <code>oFormatOptions.style</code> is given as
+	 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 	 *   "short" or "long"; since 1.89.0
 	 * @param {object} [oFormatOptions.source]
 	 *   A set of format options as defined for

@@ -33,7 +33,7 @@ sap.ui.define([
 	 *   Defines how an empty string is parsed into the amount. With the default value
 	 *   <code>0</code> the amount becomes <code>0</code> when an empty string is parsed.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   By default decimals are preserved, except <code>oFormatOptions.style</code> is given as
+	 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 	 *   "short" or "long"; since 1.89.0
 	 * @param {object} [oConstraints] Not supported
 	 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the

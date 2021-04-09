@@ -205,7 +205,7 @@ sap.ui.define([
 	 *   the value of the constraint <code>scale</code> unless it is "variable". They can however
 	 *   be overwritten.
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
-	 *   by default decimals are preserved, except <code>oFormatOptions.style</code> is given as
+	 *   by default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 	 *   "short" or "long"; since 1.89.0
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
