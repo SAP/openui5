@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/format/NumberFormat",
@@ -167,6 +167,34 @@ sap.ui.define([
 		assert.throws(function () { currencyType.formatValue(22.0, "float"); }, FormatException, "format test");
 		assert.throws(function () { currencyType.formatValue(22.0, "untype"); }, FormatException, "format test");
 	});
+
+	//*********************************************************************************************
+[
+	{formatOptions : {}, result : null},
+	{formatOptions : {showNumber : true}, result : null},
+	{formatOptions : {showNumber : false}, result : "~formatted"}
+].forEach(function (oFixture, i) {
+	[null, undefined].forEach(function (vInputValue) {
+	var sTitle = "formatValue: showNumber=false skips invalid number check; " + i + ", "
+			+ vInputValue;
+
+	QUnit.test(sTitle, function (assert) {
+		var bSkipFormat = oFixture.result === null,
+			oType = new CurrencyType(oFixture.formatOptions),
+			aValues = [vInputValue, "EUR"];
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("string")
+			.exactly(bSkipFormat ? 0 : 1)
+			.returns("string");
+		this.mock(oType.oOutputFormat).expects("format").withExactArgs(sinon.match.same(aValues))
+			.exactly(bSkipFormat ? 0 : 1)
+			.returns("~formatted");
+
+		// code under test
+		assert.strictEqual(oType.formatValue(aValues, "string"), oFixture.result);
+	});
+	});
+});
 
 	QUnit.test("currency parseValue", function (assert) {
 		var currencyType = new CurrencyType();
@@ -1994,6 +2022,41 @@ sap.ui.define([
 		assert.throws(function () { unitType.formatValue(22.0, "float"); }, FormatException, "format test");
 		assert.throws(function () { unitType.formatValue(22.0, "untype"); }, FormatException, "format test");
 	});
+
+	//*********************************************************************************************
+[
+	{formatOptions : {}, result : null},
+	{formatOptions : {showNumber : true}, result : null},
+	{formatOptions : {showNumber : false}, result : "~formatted"}
+].forEach(function (oFixture, i) {
+	[null, undefined].forEach(function (vInputValue) {
+	var sTitle = "formatValue: showNumber=false skips invalid number check; " + i + ", "
+			+ vInputValue;
+
+	QUnit.test(sTitle, function (assert) {
+		var oOutputFormat = {format : function () {}},
+			bSkipFormat = oFixture.result === null,
+			oType = new UnitType(oFixture.formatOptions),
+			aValues = [vInputValue, "duration-hour"];
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("string")
+			.exactly(bSkipFormat ? 0 : 1)
+			.returns("string");
+		this.mock(oType).expects("extractArguments").withExactArgs(sinon.match.same(aValues))
+			.exactly(bSkipFormat ? 0 : 1)
+			.returns("~aDynamicValues");
+		this.mock(oType).expects("_getInstance").withExactArgs("~aDynamicValues", "duration-hour")
+			.exactly(bSkipFormat ? 0 : 1)
+			.returns(oOutputFormat);
+		this.mock(oOutputFormat).expects("format").withExactArgs(sinon.match.same(aValues))
+			.exactly(bSkipFormat ? 0 : 1)
+			.returns("~formatted");
+
+		// code under test
+		assert.strictEqual(oType.formatValue(aValues, "string"), oFixture.result);
+	});
+	});
+});
 
 	QUnit.test("unit parseValue", function (assert) {
 		var unitType = new UnitType();
