@@ -112,7 +112,20 @@ sap.ui.define([
 			};
 			this.oVariantUser = {
 				fileType: "variant",
-				layer: Layer.USER
+				layer: Layer.USER,
+				creation: "2021-01-01T12:00:00.000Z"
+			};
+			this.oVariantChangeUser1 = {
+				fileType: "change",
+				changeType: "updateVariant",
+				layer: Layer.USER,
+				creation: "2021-01-01T12:00:00.000Z"
+			};
+			this.oVariantChangeUser2 = {
+				fileType: "change",
+				changeType: "updateVariant",
+				layer: Layer.USER,
+				creation: "2021-01-02T12:00:00.000Z"
 			};
 			this.oVariantCustomer = {
 				fileType: "variant",
@@ -137,13 +150,15 @@ sap.ui.define([
 		QUnit.test("with all kinds of changes", function (assert) {
 			var aTestData = [
 				this.oCtrlVariantUser, this.oCtrlVariantCustomer, this.oCtrlVariantUserWithVMR, this.oCtrlVariantCustomerWithVMR,
-				this.oCtrlVariantManagUser, this.oCtrlVariantManagCustomer, this.oChangeUser, this.oChangeCustomer,
-				this.oChangeUserWithVMR, this.oChangeCustomerWithVMR, this.oVariantUser, this.oVariantCustomer,
-				this.oCtrlVariantChangeUser, this.oCtrlVariantChangeCustomer, this.oOtherType
+				// oVariantChangeUser2 & oVariantChangeUser1 are set in this order to check the sort functionality
+				this.oCtrlVariantManagUser, this.oCtrlVariantManagCustomer, this.oVariantChangeUser2, this.oVariantChangeUser1,
+				this.oChangeUser, this.oChangeCustomer,	this.oChangeUserWithVMR, this.oChangeCustomerWithVMR, this.oVariantUser,
+				this.oVariantCustomer, this.oCtrlVariantChangeUser, this.oCtrlVariantChangeCustomer, this.oOtherType
 			];
 
 			this.oEmptyResponse.USER.changes = [this.oChangeUser];
 			this.oEmptyResponse.USER.comp.variants = [this.oVariantUser];
+			this.oEmptyResponse.USER.comp.changes = [this.oVariantChangeUser1, this.oVariantChangeUser2];
 			this.oEmptyResponse.USER.variants = [this.oCtrlVariantUserWithVMR];
 			this.oEmptyResponse.USER.variantChanges = [this.oCtrlVariantChangeUser];
 			this.oEmptyResponse.USER.variantDependentControlChanges = [this.oChangeUserWithVMR];

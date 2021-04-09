@@ -92,6 +92,15 @@ sap.ui.define([
 		].forEach(function (sSectionName) {
 			mResult[sSectionName] = mResult[sSectionName].sort(byCreation);
 		});
+		if (mResult.comp) {
+			[
+				"changes",
+				"defaultVariants",
+				"standardVariants"
+			].forEach(function (sSectionName) {
+				mResult.comp[sSectionName] = mResult.comp[sSectionName].sort(byCreation);
+			});
+		}
 
 		return mResult;
 	}
