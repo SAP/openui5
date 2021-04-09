@@ -328,11 +328,11 @@ sap.ui.define([
 					}
 				});
 			}, function (oError) {
-				if (oOperationMetadata) {
-					_Helper.adjustTargetsInError(oError, oOperationMetadata,
-						that.oParameterContext.getPath(),
-						that.bRelative ? that.oContext.getPath() : undefined);
-				}
+				// Note: operation metadata is only needed to handle server messages, it is
+				// available if oError.error exists! If not nothing to do here.
+				_Helper.adjustTargetsInError(oError, oOperationMetadata,
+					that.oParameterContext.getPath(),
+					that.bRelative ? that.oContext.getPath() : undefined);
 
 				// Note: this must be done after the targets have been normalized, because otherwise
 				// a child reports the messages from the error response with wrong targets
