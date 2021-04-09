@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/BaseCreate",
 	"sap/ui/fl/Utils",
-	"sap/ui/rta/Utils",
 	"sap/ui/dt/Util",
 	"sap/base/util/uid",
 	"sap/ui/core/IconPool",
@@ -13,7 +12,6 @@ sap.ui.define([
 ], function(
 	BaseCreate,
 	FlexUtils,
-	RtaUtils,
 	DtUtil,
 	uid,
 	IconPool,
@@ -21,13 +19,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function getCreateMenuItemText(sAggregationName, sTextKey, oOverlay) {
+	function getCreateMenuItemText(sAggregationName, sTextKey, oTextResources, oOverlay) {
 		var bSibling = !sAggregationName;
-		var vAction = this.getCreateAction(bSibling, oOverlay, sAggregationName);
-		var oParentOverlay = this._getParentOverlay(bSibling, oOverlay);
-		var oDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
-		var oElement = oParentOverlay.getElement();
-		return this._getText(vAction, oElement, oDesignTimeMetadata, sTextKey);
+		var oAction = this.getCreateAction(bSibling, oOverlay, sAggregationName);
+		return oTextResources.getText(sTextKey, oAction.text);
 	}
 
 	function getAddIFrameCommand(oModifiedElement, mSettings, oDesignTimeMetadata, sVariantManagementKey) {
@@ -151,7 +146,7 @@ sap.ui.define([
 			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var sIFrameGroupText = oTextResources.getText("CTX_ADDIFRAME_GROUP");
 			return {
-				text: getCreateMenuItemText.bind(this, sAggregationName, "CTX_ADDIFRAME"),
+				text: getCreateMenuItemText.bind(this, sAggregationName, "CTX_ADDIFRAME", oTextResources),
 				handler: handleCreate.bind(this, sAggregationName),
 				enabled: this.isEnabled.bind(this, sAggregationName),
 				isSibling: !sAggregationName,
