@@ -43,6 +43,7 @@ sap.ui.define([
 		oSpyAddXMLAtExtensionPointApply = sandbox.spy(AddXMLAtExtensionPoint, "applyChange");
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
 		sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+
 		if (bSync) {
 			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp")}});
 			oComponent = sap.ui.component({
@@ -54,28 +55,26 @@ sap.ui.define([
 				component: oComponent
 			});
 			oComponentContainer.placeAt("content");
-			sap.ui.getCore().applyChanges();
-		} else {
-			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp.async")}});
-			return Component.create({
-				name: "sap.ui.fl.qunit.extensionPoint.testApp",
-				id: "sap.ui.fl.qunit.extensionPoint.testApp.async",
-				componentData: {}
-			}).then(function(_oComp) {
-				oComponent = _oComp;
-				oComponentContainer = oComponent.runAsOwner(function() {
-					return new ComponentContainer({
-						component: oComponent
-					});
-				});
-				oComponentContainer.placeAt("content");
-				return oComponent.getRootControl().loaded();
-			}).then(function() {
-				return oComponent.getRootControl().getContent()[1].loaded();
-			}).then(function() {
-				sap.ui.getCore().applyChanges();
-			});
+			return oComponent.getRootControl().byId("async").loaded();
 		}
+
+		sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp.async")}});
+		return Component.create({
+			name: "sap.ui.fl.qunit.extensionPoint.testApp",
+			id: "sap.ui.fl.qunit.extensionPoint.testApp.async",
+			componentData: {}
+		}).then(function(_oComp) {
+			oComponent = _oComp;
+			oComponentContainer = oComponent.runAsOwner(function() {
+				return new ComponentContainer({
+					component: oComponent
+				});
+			});
+			oComponentContainer.placeAt("content");
+			return oComponent.getRootControl().loaded();
+		}).then(function() {
+			return oComponent.getRootControl().byId("async").loaded();
+		});
 	}
 
 	function createChanges(sReference) {

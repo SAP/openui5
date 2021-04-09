@@ -41,8 +41,9 @@ sap.ui.define([
 		oSpyApplyProcessorExtensionPoint = sandbox.spy(ExtensionPointApplyProcessor, "applyExtensionPoint");
 		oSpyWriteProcessorExtensionPoint = sandbox.spy(ExtensionPointWriteProcessor, "applyExtensionPoint");
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
+		sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: []}});
+
 		if (bSync) {
-			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: []}});
 			oComponent = sap.ui.component({
 				name: "sap.ui.fl.qunit.extensionPoint.testApp",
 				id: "sap.ui.fl.qunit.extensionPoint.testApp",
@@ -52,28 +53,25 @@ sap.ui.define([
 				component: oComponent
 			});
 			oComponentContainer.placeAt("content");
-			sap.ui.getCore().applyChanges();
-		} else {
-			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: []}});
-			return Component.create({
-				name: "sap.ui.fl.qunit.extensionPoint.testApp",
-				id: "sap.ui.fl.qunit.extensionPoint.testApp.async",
-				componentData: {}
-			}).then(function(_oComp) {
-				oComponent = _oComp;
-				oComponentContainer = oComponent.runAsOwner(function() {
-					return new ComponentContainer({
-						component: oComponent
-					});
-				});
-				oComponentContainer.placeAt("content");
-				return oComponent.getRootControl().loaded();
-			}).then(function() {
-				return oComponent.getRootControl().getContent()[1].loaded();
-			}).then(function() {
-				sap.ui.getCore().applyChanges();
-			});
+			return oComponent.getRootControl().byId("async").loaded();
 		}
+
+		return Component.create({
+			name: "sap.ui.fl.qunit.extensionPoint.testApp",
+			id: "sap.ui.fl.qunit.extensionPoint.testApp.async",
+			componentData: {}
+		}).then(function(_oComp) {
+			oComponent = _oComp;
+			oComponentContainer = oComponent.runAsOwner(function() {
+				return new ComponentContainer({
+					component: oComponent
+				});
+			});
+			oComponentContainer.placeAt("content");
+			return oComponent.getRootControl().loaded();
+		}).then(function() {
+			return oComponent.getRootControl().byId("async").loaded();
+		});
 	}
 
 	function destroyComponentAndContainer() {
