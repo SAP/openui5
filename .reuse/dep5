@@ -375,7 +375,7 @@ Copyright: SAP
 License: Apache-2.0
 Comment: these files belong to: UI5 Web Components
 
-Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/* src/sap.ui.integration/src/sap/ui/integration/thirdparty/customElements.js
+Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/*
 Copyright: 2015 The Polymer Authors
 License: BSD-3-Clause
 Comment: these files belong to: Webcomponentsjs
@@ -384,11 +384,6 @@ Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/Un
 Copyright: 1991-2014 Unicode, Inc.
 License: Unicode-DFS-2015
 Comment: these files belong to: Unicode Common Locale Data Repository
-
-Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/customEvent.js
-Copyright: Mozilla Developer Network
-License: CC0-1.0
-Comment: these files belong to: CustomEvent Polyfill
 
 Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptivecards.js src/sap.ui.integration/src/sap/ui/integration/schemas/adaptive-card.json
 Copyright: 2017 Microsoft

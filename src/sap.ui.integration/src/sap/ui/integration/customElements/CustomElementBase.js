@@ -8,18 +8,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/integration/util/Utils",
 	"sap/base/strings/hyphenate",
-	"sap/base/strings/camelize",
-	// polyfills
-	"sap/ui/integration/thirdparty/customElements",
-	"sap/ui/integration/thirdparty/customEvent"
+	"sap/base/strings/camelize"
 ], function (
 	Log,
 	Utils,
 	hyphenate,
-	camelize,
-	// polyfills
-	customElements,
-	customEvent
+	camelize
 ) {
 	"use strict";
 
@@ -163,7 +157,7 @@ sap.ui.define([
 	 *
 	 * @static
 	 * @param {Object} oPrototype The prototype on which setters and getters will be added.
-	 * @param {string[]} aProperties Array of properties for will setters and getter will be defined.
+	 * @param {string[]} aProperties Array of properties for which setters and getters will be defined.
 	 */
 	CustomElementBase.generateAccessors = function (oPrototype, aProperties) {
 

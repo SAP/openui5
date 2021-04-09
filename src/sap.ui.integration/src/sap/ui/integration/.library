@@ -57,18 +57,11 @@
             <license url="https://github.com/webcomponents/webcomponentsjs/blob/master/LICENSE.md" type="BSD-3-Clause"></license>
             <copyright>2015 The Polymer Authors</copyright>
             <pattern>sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/*</pattern>
-            <pattern>sap/ui/integration/thirdparty/customElements.js</pattern>
         </lib>
         <lib name="cldr" displayName="Unicode Common Locale Data Repository" version="unknown" homepage="http://cldr.unicode.org/">
             <license url="http://www.unicode.org/copyright.html" type="Unicode-DFS-2015" />
             <copyright>1991-2014 Unicode, Inc.</copyright>
             <pattern>sap/ui/integration/thirdparty/webcomponents/Unicode-Data-Files-LICENSE.txt</pattern>
-        </lib>
-        <lib name="custom-event-polyfill" displayName="CustomEvent Polyfill" version="20190614" homepage="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill">
-            <!-- Added in revision https://wiki.developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent$revision/1557457 of the page -->
-            <license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0-1.0"></license>
-            <copyright>Mozilla Developer Network</copyright>
-            <pattern>sap/ui/integration/thirdparty/customEvent.js</pattern>
         </lib>
         <lib name="adaptive-cards" displayName="Adaptive Cards" version="1.2.3" homepage="https://adaptivecards.io/">
             <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>

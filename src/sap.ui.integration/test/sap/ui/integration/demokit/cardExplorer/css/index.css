@@ -250,7 +250,7 @@ b {
 	background: -webkit-linear-gradient(top, #1e5799 0%, #2989d8 50%, #207cca 100%, #7db9e8 100%);
 	/* Chrome10-25,Safari5.1-6 */
 	background: linear-gradient(to bottom, #1e5799 0%, #2989d8 50%, #207cca 100%, #7db9e8 100%);
-	/* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	/* W3C, FF16+, Chrome26+, Opera12+, Safari7+ */
 }
 
 .button {
@@ -681,10 +681,6 @@ b {
 
 /*Phone*/
 @media only screen and (max-width: 900px)  {
-
-	html[data-sap-ui-browser^="ie"] .cards-content {
-		margin-top: -25rem;
-	}
 
 	.cards-content {
 		margin-top: -10rem;
