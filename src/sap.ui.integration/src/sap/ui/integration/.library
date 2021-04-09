@@ -79,11 +79,6 @@
             <copyright>2014 Vitaly Puzrin, Alex Kocharin</copyright>
             <pattern>sap/ui/integration/thirdparty/markdown-it.js</pattern>
         </lib>
-        <lib name="ajv" displayName="ajv" version="6.10.2" homepage="https://ajv.js.org/">
-            <license url="https://ajv.js.org/license.html" type="MIT"></license>
-            <copyright>2015-2017 Evgeny Poberezkin</copyright>
-            <pattern>sap/ui/integration/designtime/thirdparty/ajv.js</pattern>
-        </lib>
     </thirdparty>
 
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
