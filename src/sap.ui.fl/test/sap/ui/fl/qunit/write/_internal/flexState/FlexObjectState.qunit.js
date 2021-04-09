@@ -115,20 +115,21 @@ sap.ui.define([
 			oControl.getPersistencyKey = function() {
 				return sPersistencyKey;
 			};
-			CompVariantState.add({
-				changeSpecificData: {
-					type: "addFavorite"
-				},
-				control: oControl,
-				reference: sReference,
-				persistencyKey: sPersistencyKey
-			});
-			CompVariantState.add({
+			CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
-					content: {}
+					content: {},
+					id: "1"
 				},
+				reference: sReference,
+				persistencyKey: sPersistencyKey
+			});
+			CompVariantState.updateVariant({
+				favorite: true,
+				id: "1",
+				layer: Layer.USER,
+				control: oControl,
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
@@ -138,28 +139,31 @@ sap.ui.define([
 			})
 			.then(function (aFlexObjects) {
 				assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
-				assert.equal(aFlexObjects[0].getChangeType(), "addFavorite", "the change from the compVariantState is present");
-				assert.equal(aFlexObjects[1].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
+				assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
+				assert.equal(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
 			});
 		});
 
 		QUnit.test("Get - Given flex objects of different layers are present in the CompVariantState and currentLayer set", function(assert) {
 			var sPersistencyKey = "persistency.key";
+			var sVariantId = "variantId1";
 
-			CompVariantState.add({
-				changeSpecificData: {
-					type: "addFavorite"
-				},
-				reference: sReference,
-				persistencyKey: sPersistencyKey
-			});
-			CompVariantState.add({
+			CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
 					isUserDependent: true,
 					isVariant: true,
-					content: {}
+					layer: Layer.VENDOR,
+					content: {},
+					id: sVariantId
 				},
+				reference: sReference,
+				persistencyKey: sPersistencyKey
+			});
+			CompVariantState.updateVariant({
+				favorite: true,
+				id: sVariantId,
+				layer: Layer.CUSTOMER,
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
@@ -168,7 +172,7 @@ sap.ui.define([
 					return Layer.VENDOR;
 				}
 			});
-			CompVariantState.add({
+			CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
@@ -184,31 +188,32 @@ sap.ui.define([
 			})
 			.then(function (aFlexObjects) {
 				assert.equal(aFlexObjects.length, 1, "an array with one entry is returned");
-				assert.equal(aFlexObjects[0].getChangeType(), "addFavorite", "the change from the compVariantState is present");
+				assert.equal(aFlexObjects[0].getChangeType(), "updateVariant", "the change from the compVariantState is present");
 			});
 		});
 
 		QUnit.test("Get - Given flex objects of different layers are present in the CompVariantState and currentLayer not set", function(assert) {
 			var sPersistencyKey = "persistency.key";
+			var sVariantId = "variantId1";
 
-			CompVariantState.add({
-				changeSpecificData: {
-					type: "addFavorite"
-				},
-				reference: sReference,
-				persistencyKey: sPersistencyKey
-			});
-			CompVariantState.add({
+			CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
 					isUserDependent: true,
 					isVariant: true,
-					content: {}
+					content: {},
+					id: sVariantId
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
-			CompVariantState.add({
+			CompVariantState.updateVariant({
+				favorite: true,
+				id: sVariantId,
+				reference: sReference,
+				persistencyKey: sPersistencyKey
+			});
+			CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
@@ -280,19 +285,22 @@ sap.ui.define([
 			sText += bIncludeDirtyChanges ? "set" : "not set";
 			QUnit.test(sText, function(assert) {
 				var sPersistencyKey = "persistency.key";
-				CompVariantState.add({
+				var sVariantId = "variantId1";
+
+				CompVariantState.addVariant({
 					changeSpecificData: {
-						type: "addFavorite"
+						type: "pageVariant",
+						id: sVariantId,
+						isVariant: true,
+						content: {},
+						packageName: "someId" // mark as non-updatable
 					},
 					reference: sReference,
 					persistencyKey: sPersistencyKey
 				});
-				CompVariantState.add({
-					changeSpecificData: {
-						type: "pageVariant",
-						isVariant: true,
-						content: {}
-					},
+				CompVariantState.updateVariant({
+					favorite: true,
+					id: sVariantId,
 					reference: sReference,
 					persistencyKey: sPersistencyKey
 				});
@@ -309,8 +317,8 @@ sap.ui.define([
 					includeDirtyChanges: bIncludeDirtyChanges
 				}))
 				.then(function (aFlexObjects) {
-					assert.equal(aFlexObjects[0].getChangeType(), "addFavorite", "the change from the compVariantState is present");
-					assert.equal(aFlexObjects[1].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
+					assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
+					assert.equal(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
 					assert.equal(aFlexObjects[2].getChangeType(), "renameField", "the first change from the persistence is present");
 					assert.equal(aFlexObjects[3].getChangeType(), "addGroup", "the second change from the persistence is present");
 					if (bIncludeDirtyChanges) {
