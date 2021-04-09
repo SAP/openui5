@@ -258,6 +258,20 @@ sap.ui.define([
 		},
 
 		/**
+		 * Overrides the standard variant and reapplies all changes.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variants should be loaded
+		 * @param {boolean} mPropertyBag.executeOnSelection - Flag if 'apply automatically' should be set
+		 */
+		overrideStandardVariant: function (mPropertyBag) {
+			setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.overrideStandardVariant);
+		},
+
+		/**
 		 * Opens Transport Dialog for transport selection.
 		 * @private
 		 * @experimental

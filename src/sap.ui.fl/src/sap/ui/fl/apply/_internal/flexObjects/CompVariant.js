@@ -172,6 +172,8 @@ sap.ui.define([
 		}
 	});
 
+	CompVariant.STANDARD_VARIANT_ID = "*standard*";
+
 	/**
 	 * Checks whenever the variant can be renamed updating the entity or crating an <code>updateChange</code>.
 	 *

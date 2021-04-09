@@ -586,6 +586,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Overrides the standard variant as well as reapplies the changes on it.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+	 * @param {boolean} mPropertyBag.executeOnSelection - Flag if 'apply automatically' should be set
+	 */
+	CompVariantState.overrideStandardVariant = function(mPropertyBag) {
+		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)[mPropertyBag.persistencyKey];
+		var oStandardVariant = mCompVariantsMap.byId[mCompVariantsMap.standardVariant.getId()];
+
+		oStandardVariant.setExecuteOnSelection(!!mPropertyBag.executeOnSelection);
+		var aChanges = oStandardVariant.getChanges();
+		oStandardVariant.removeAllChanges();
+		aChanges.forEach(function (oChange) {
+			CompVariantMerger.applyChangeOnVariant(oStandardVariant, oChange);
+		});
+	};
+
+	/**
 	 * Saves/flushes all current changes and variants of a smart variant.
 	 *
 	 * @param {object} mPropertyBag - Map of parameters, see below
