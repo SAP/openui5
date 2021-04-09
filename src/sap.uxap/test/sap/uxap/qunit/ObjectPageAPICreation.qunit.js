@@ -2973,7 +2973,6 @@ function (
 			oSecondPage = new Page(),
 			oNavContainer = new App(),
 			oSecondSection = oObjectPage.getSections()[1],
-			iCompleteScrollTimeout = oObjectPage._iScrollToSectionDuration + 100,
 			iCompleteResizeCalculationTimeout = ObjectPageLayout.HEADER_CALC_DELAY + 100,
 			oExpected,
 			done = assert.async(),
@@ -2984,9 +2983,8 @@ function (
 			fnOnHideObjectPage = function() {
 				// act: change selectedSection while page is HIDDEN
 				oObjectPage.setSelectedSection(oSecondSection);
-				setTimeout(fnOnChangedSelection, iCompleteScrollTimeout);
-			},
-			fnOnChangedSelection = function() {
+				// call the listener to the <code>scroll</code> event synchonously to avoid waiting a timeout
+				oObjectPage._onScroll({ target: {scrollTop: oObjectPage._computeScrollPosition(oSecondSection)}});
 				oNavContainer.attachEventOnce("afterNavigate", fnOnShowBackObjectPage);
 				oNavContainer.to(oObjectPage.getId()); // nav back to the object page
 			},
