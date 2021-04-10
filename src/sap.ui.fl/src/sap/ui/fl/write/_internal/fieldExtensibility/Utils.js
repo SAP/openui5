@@ -173,7 +173,7 @@ sap.ui.define([
 	 * Get the model of a control
 	 *
 	 * @private
-	 * @param {object} oModel - oData model
+	 * @param {sap.ui.base.ManagedObject} oControl - Control to add extensions
 	 * @returns {string} <code>mProtocolType.v2</code>, <code>mProtocolType.v4</code> or <code>null</code>
 	 */
 	function _getModel(oControl) {
@@ -381,14 +381,16 @@ sap.ui.define([
 	Utils.isNavigationSupportedForIntents = function(aIntents) {
 		return Utils.getCrossAppNavigationService().then(function(oCrossAppNavigationService) {
 			if (oCrossAppNavigationService && oCrossAppNavigationService.isNavigationSupported) {
-				return oCrossAppNavigationService.isNavigationSupported(aIntents);
+				return oCrossAppNavigationService.isNavigationSupported(aIntents).then(function(aResults) {
+					return aResults.map(function(oResult) {
+						return oResult && oResult.supported === true;
+					});
+				});
 			}
 
 			// we assume no navigation support
 			return Promise.resolve(aIntents.map(function() {
-				return {
-					supported: false
-				};
+				return false;
 			}));
 		});
 	};

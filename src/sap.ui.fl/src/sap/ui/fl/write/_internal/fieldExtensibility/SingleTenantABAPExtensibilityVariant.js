@@ -15,6 +15,7 @@ sap.ui.define([
 
 	var sExtensionDataServiceUri = "/sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/";
 	var mExtensibilityType = {
+		None: -1,
 		Both: 0,
 		Fields: 1,
 		Logic: 2
@@ -45,7 +46,7 @@ sap.ui.define([
 	 */
 
 	var SingleTenantABAPExtensibilityVariant = ABAPExtensibilityVariant.extend("sap.ui.fl.write._internal.fieldExtensibility.SingleTenantABAPExtensibilityVariant", {
-		_sExtensibilityType: null,
+		_iExtensibilityType: mExtensibilityType.None,
 
 		/**
 		 * @inheritDoc
@@ -65,9 +66,9 @@ sap.ui.define([
 		 */
 		getNavigationUri: function() {
 			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
-				if (this._containsData(aBusinessContexts)) {
+				if (this._containsData(aBusinessContexts) && this._iExtensibilityType !== mExtensibilityType.None) {
 					return Utils.getNavigationUriForIntent({
-						target: aNavigationIntents[this._sExtensibilityType],
+						target: aNavigationIntents[this._iExtensibilityType],
 						params: {
 							businessContexts: aBusinessContexts.map(function(oBusinessContext) {
 								return oBusinessContext.BusinessContext;
@@ -90,7 +91,7 @@ sap.ui.define([
 			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
 				if (this._containsData(aBusinessContexts)) {
 					return {
-						tooltip: Utils.getText(aTextKeys[this._sExtensibilityType]),
+						tooltip: Utils.getText(aTextKeys[this._iExtensibilityType]),
 						headerText: Utils.getText("BUSINESS_CONTEXT_TITLE")
 					};
 				}
@@ -106,6 +107,22 @@ sap.ui.define([
 			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
 				return this._containsData(aBusinessContexts);
 			}.bind(this));
+		},
+
+		_adjustExtensibilityTypeByAuthorizations: function(aNavigationSupportedForIntents, iExtensibilityType) {
+			if (aNavigationSupportedForIntents[iExtensibilityType]) {
+				return iExtensibilityType; // authorization matches Business Context features
+			} else if (aNavigationSupportedForIntents[mExtensibilityType.Both]) {
+				return mExtensibilityType.Both; // user has authorization for CFL app
+			} else if (iExtensibilityType === mExtensibilityType.Both) {
+				if (aNavigationSupportedForIntents[mExtensibilityType.Fields]) {
+					return mExtensibilityType.Fields; // user has authorization for CF app only
+				} else if (aNavigationSupportedForIntents[mExtensibilityType.Logic]) {
+					return mExtensibilityType.Logic; // user has authorization for CL app only
+				}
+			}
+
+			return mExtensibilityType.None; // authorizations contradict Business Context features
 		},
 
 		_containsData: function(aBusinessContexts) {
@@ -128,16 +145,16 @@ sap.ui.define([
 		_determineExtensionData: function() {
 			return new Promise(function (fResolve, fReject) {
 				Utils.isNavigationSupportedForIntents(aNavigationIntents).then(function(aNavigationSupportedForIntents) {
-					var bIsSupported = aNavigationSupportedForIntents.some(function(oResult) {
-						return oResult.supported === true;
+					var bIsSupported = aNavigationSupportedForIntents.some(function(bResult) {
+						return bResult === true;
 					});
 
 					if (bIsSupported) {
 						Utils.executeRequest(this._getExtensionDataServiceUri(), this._getExtensionDataServiceParameters()).then(function(oResponse) {
 							if (oResponse.errorOccurred === false) {
 								var aBusinessContexts = this._extractBusinessContextsFromResponse(oResponse.result);
-								this._sExtensibilityType = this._determineExtensibilityType(aNavigationSupportedForIntents, aBusinessContexts);
-								if (this._sExtensibilityType !== null) {
+								this._iExtensibilityType = this._determineExtensibilityType(aNavigationSupportedForIntents, aBusinessContexts);
+								if (this._iExtensibilityType !== mExtensibilityType.None) {
 									fResolve(aBusinessContexts);
 								} else {
 									fResolve(null);
@@ -157,15 +174,12 @@ sap.ui.define([
 		},
 
 		_determineExtensibilityType: function(aNavigationSupportedForIntents, aBusinessContexts) {
-			var sExtensibilityType = this._determineExtensibilityTypeFromBusinessContexts(aBusinessContexts);
-
-			if (aNavigationSupportedForIntents[sExtensibilityType]) {
-				return sExtensibilityType;
-			} else if (aNavigationSupportedForIntents[mExtensibilityType.Both]) {
-				return mExtensibilityType.Both;
+			var iExtensibilityType = this._determineExtensibilityTypeFromBusinessContexts(aBusinessContexts);
+			if (iExtensibilityType !== mExtensibilityType.None) {
+				return this._adjustExtensibilityTypeByAuthorizations(aNavigationSupportedForIntents, iExtensibilityType);
 			}
 
-			return null; // authorizations contradict Business Context features
+			return iExtensibilityType;
 		},
 
 		_determineExtensibilityTypeFromBusinessContexts: function(aBusinessContexts) {
