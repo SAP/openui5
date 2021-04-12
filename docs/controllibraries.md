@@ -246,7 +246,13 @@ Note that the relative paths, which are going up four levels and then descending
 
 `shared.less` is by convention the name of a CSS file for library-level styles. It is handled and imported just like normal control CSS files, the separation is purely for better maintainability.
 
-The `img` folder contains any image resources and the same-name images are automatically loaded from the `img-RTL` folder when UI5 runs in right-to-left mode, so images can be either just copied, or mirrored, or otherwise modified to fit the desired RTL visuals and then put into this folder.
+The `img` folder contains any image resources required by your control.
+If an image should be displayed differently (e.g. mirrored) in right-to-left mode, it additionally needs to be stored in the `img-RTL` folder under the same path and name.
+When UI5 runs in right-to-left mode, both the mirrored images from `img-RTL` and the non-mirrored images from `img` are loaded.
+Whether your image is displayed differently in right-to-left mode depends on the presence of an image with the same name and path in the `img-RTL` folder.
+- Image resources which **should not** be mirrored **must not** have a same-name image inside the `img-RTL` folder.
+- Image resources which **should** be mirrored **must** have a same-name image inside the `img-RTL` folder.
+  To achieve this, simply modify your image resources to fit the desired RTL visuals, and then put them into the `img-RTL` folder using the same name and path..
 
 Developing a Control inside a Library
 -------------------------------------
