@@ -541,5 +541,32 @@
         ]
       }
     ]
+  },
+  "1.84.10": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "38cde34949375a5cc7155b5d82978da9997fe147",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: all day events are now properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080419463"
+          }
+        ]
+      },
+      {
+        "id": "85f9d0ccbb0f4633cd4c00fd953305c0b8515ae8",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Missing buttons with bound LayoutData",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080179140"
+          }
+        ]
+      }
+    ]
   }
 }

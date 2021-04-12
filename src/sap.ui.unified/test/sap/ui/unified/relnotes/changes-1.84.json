@@ -204,5 +204,32 @@
         ]
       }
     ]
+  },
+  "1.84.10": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "38cde34949375a5cc7155b5d82978da9997fe147",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: all day events are now properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080419463"
+          }
+        ]
+      },
+      {
+        "id": "d8753bc0c8711cbd4edb7b1dcdc0d99c284519dc",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: displayDate shows the given date always in the first rendered month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170072313"
+          }
+        ]
+      }
+    ]
   }
 }

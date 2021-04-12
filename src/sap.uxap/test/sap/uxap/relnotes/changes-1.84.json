@@ -83,5 +83,21 @@
         ]
       }
     ]
+  },
+  "1.84.10": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "36d23ca9e554bca892aea73c7dc4e0fd8decaafa",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Clean up obsolete promise",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170045500"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -100,5 +100,36 @@
         ]
       }
     ]
+  },
+  "1.84.10": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "a7b7c5bf93781a6b2fdd3b5530b990b7708ac9d0",
+        "type": "FIX",
+        "text": " sap.f.GridList: Headers are now correct when grouping is added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080458832"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170076535"
+          }
+        ]
+      },
+      {
+        "id": "cdf78496c5be13b2a915fa7506933faa479dc956",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Corrected areaShrinkRatio rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170055301"
+          }
+        ]
+      }
+    ]
   }
 }
