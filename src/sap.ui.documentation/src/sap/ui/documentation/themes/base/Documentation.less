@@ -1,3 +1,24 @@
+/*!********************************************* Demo Kit styles *********************************************!*/
+html.sap-phone,
+html.sap-tablet:not(.sap-desktop) {
+    .sapUiDemokit {
+        * {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        .sapUiDocumentationSamplePage {
+            * {
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+        }
+    }
+}
+
 /*!********************************************* Documentation page styles *********************************************!*/
 .topicWrapper,
 .topicWrapper .sapUiHLayoutChildWrapper {

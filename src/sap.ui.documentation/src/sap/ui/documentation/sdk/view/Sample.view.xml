@@ -10,7 +10,8 @@
 			showHeader="false"
 			showNavButton="true"
 			navButtonPress="onNavBack"
-			busyIndicatorDelay="0">
+			busyIndicatorDelay="0"
+			class="sapUiDocumentationSamplePage">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
 		</landmarkInfo>
