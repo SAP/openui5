@@ -858,6 +858,7 @@ sap.ui.define([
 				delete oActualRequest["contentID"];
 				if (oExpectedRequest) {
 					oExpectedResponse = oExpectedRequest.response;
+
 					if (oExpectedResponse === NO_CONTENT) {
 						oResponse = {
 							statusCode : 204
@@ -868,6 +869,8 @@ sap.ui.define([
 						oResponse = {
 							response : oExpectedResponse
 						};
+					} else if (oExpectedResponse && typeof oExpectedResponse.then === "function") {
+						oResponse = oExpectedResponse;
 					} else {
 						oResponse = oExpectedResponse && oExpectedResponse.data
 							? oExpectedResponse
@@ -5747,6 +5750,80 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// The result of a FunctionImport returning a collection can be accessed via $result relative
+	// to the returned context.
+	// BCP: 2170085431, 2170084065
+[
+	{functionName : "allUserAssignmentsGET", method : "GET"},
+	{functionName : "allUserAssignmentsPOST", method : "POST"}
+].forEach(function (oFixture) {
+	var sTitle = "ODataModel#callFunction: bind result ($result) to a list, using method "
+			+ oFixture.method + " " + oFixture.functionName;
+
+	QUnit.test(sTitle, function (assert) {
+		var oFunctionHandle, fnResolve,
+			oModel = createSpecialCasesModel({tokenHandling : false, useBatch : true}),
+			oRequestPromise = new Promise(function (resolve) {
+				fnResolve = resolve;
+			}),
+			sView = '\
+<t:Table id="table" rows="{path : \'$result\', templateShareable : true}" visibleRowCount="2">\
+	<Text id="userId" text="{UserId}" />\
+</t:Table>',
+			that = this;
+
+		this.expectValue("userId", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					"deepPath": "/" + oFixture.functionName,
+					"headers": {},
+					"method": oFixture.method,
+					"requestUri": oFixture.functionName
+				}, oRequestPromise);
+
+			// code under test
+			oFunctionHandle = oModel.callFunction("/" + oFixture.functionName,
+				{method : oFixture.method});
+
+			return oFunctionHandle.contextCreated();
+		}).then(function (oContext) {
+			var oTable = that.oView.byId("table"),
+				oResponse = {
+					statusCode : 200,
+					data : {
+						results : [{
+							__metadata : {uri : "UserAssignments('User1')"},
+							UserId : "User1"
+						}, {
+							__metadata : {uri : "UserAssignments('User2')"},
+							UserId : "User2"
+						}]
+					}
+				};
+
+			that.oLogMock.expects("error").withExactArgs(sinon.match(function (sError) {
+				return sError.startsWith("List Binding is not bound against a list for "
+						+ "/allUserAssignments");
+			}));
+
+			// code under test
+			oTable.setBindingContext(oContext);
+
+			that.expectValue("userId", ["User1", "User2"]);
+
+			// code under test - server data processed
+			fnResolve(oResponse);
+
+			return Promise.all([
+				oRequestPromise,
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Messages returned by a function import for an entity contained in a relative

@@ -35,6 +35,12 @@
 				</Key>
 				<Property Name="ContactCardID" Type="Edm.String" Nullable="false" MaxLength="12"/>
 			</EntityType>
+			<EntityType Name="UserAssignment">
+				<Key>
+					<PropertyRef Name="UserId"/>
+				</Key>
+				<Property Name="UserId" Type="Edm.String" Nullable="false" MaxLength="255"/>
+			</EntityType>
 			<Association Name="assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE">
 				<End Type="special.cases.C_SubscrpnProductChargeTPType" Multiplicity="1"
 					Role="FromRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
@@ -55,6 +61,7 @@
 				<EntitySet Name="I_UserContactCard"
 					EntityType="special.cases.I_UserContactCardType"
 					sap:addressable="false"/>
+				<EntitySet Name="UserAssignments" EntityType="special.cases.UserAssignment"/>
 				<AssociationSet Name="assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"
 					Association="special.cases.assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE">
 					<End EntitySet="C_SubscrpnProductChargeTP"
@@ -68,6 +75,14 @@
 						Role="FromRole_assoc_AllUserContactCards"/>
 					<End EntitySet="I_UserContactCard" Role="ToRole_assoc_AllUserContactCards"/>
 				</AssociationSet>
+				<!-- BCP: 2170085431: function import returning a collection; result is bound to a
+					table -->
+				<FunctionImport Name="allUserAssignmentsGET"
+					ReturnType="Collection(special.cases.UserAssignment)"
+					EntitySet="UserAssignments" m:HttpMethod="GET"/>
+				<FunctionImport Name="allUserAssignmentsPOST"
+					ReturnType="Collection(special.cases.UserAssignment)"
+					EntitySet="UserAssignments" m:HttpMethod="POST"/>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>
