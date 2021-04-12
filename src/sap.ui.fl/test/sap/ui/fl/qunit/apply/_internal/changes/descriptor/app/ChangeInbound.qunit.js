@@ -25,7 +25,7 @@ sap.ui.define([
 								propertyValue: "{{new.title}}"
 							},
 							{
-								propertyPath: "subtitle",
+								propertyPath: "subTitle",
 								operation: "UPSERT",
 								propertyValue: "{{new.subtitle}}"
 							}
@@ -130,7 +130,7 @@ sap.ui.define([
 									semanticObject: "Risk",
 									action: "configure",
 									title: "some",
-									subtitle: "some"
+									subTitle: "some"
 								}
 							}
 						}
@@ -138,7 +138,7 @@ sap.ui.define([
 				};
 				var oNewManifest = ChangeInbound.applyChange(oManifest, this.oChangeArray);
 				assert.equal(oNewManifest["sap.app"]["crossNavigation"]["inbounds"]["Risk-configure"].title, "{{new.title}}", "inbound is updated correctly");
-				assert.equal(oNewManifest["sap.app"]["crossNavigation"]["inbounds"]["Risk-configure"].subtitle, "{{new.subtitle}}", "inbound is updated correctly");
+				assert.equal(oNewManifest["sap.app"]["crossNavigation"]["inbounds"]["Risk-configure"].subTitle, "{{new.subtitle}}", "inbound is updated correctly");
 			});
 
 			QUnit.test("when calling '_applyChange' with single change", function (assert) {
@@ -150,7 +150,7 @@ sap.ui.define([
 									semanticObject: "Risk",
 									action: "configure",
 									title: "some",
-									subtitle: "some",
+									subTitle: "some",
 									icon: "icon"
 								}
 							}
@@ -183,7 +183,7 @@ sap.ui.define([
 									semanticObject: "Risk",
 									action: "configure",
 									title: "some",
-									subtitle: "some"
+									subTitle: "some"
 								}
 							}
 						}
@@ -191,7 +191,7 @@ sap.ui.define([
 				};
 				assert.throws(function () {
 					ChangeInbound.applyChange(oManifest, this.oChangeUnsupportedChange);
-				}, Error("Changing semanticObject is not supported. The supported 'propertyPath' is: title|subtitle|icon"), "throws an error");
+				}, Error("Changing semanticObject is not supported. The supported 'propertyPath' is: title|subTitle|icon"), "throws an error");
 			});
 
 			QUnit.test("when calling '_applyChange' with an unsupported operation", function (assert) {
@@ -203,7 +203,7 @@ sap.ui.define([
 									semanticObject: "Risk",
 									action: "configure",
 									title: "some",
-									subtitle: "some"
+									subTitle: "some"
 								}
 							}
 						}
@@ -232,7 +232,7 @@ sap.ui.define([
 									semanticObject: "Risk",
 									action: "configure",
 									title: "some",
-									subtitle: "some"
+									subTitle: "some"
 								}
 							}
 						}
@@ -252,7 +252,7 @@ sap.ui.define([
 									semanticObject: "Risk",
 									action: "configure",
 									title: "some",
-									subtitle: "some"
+									subTitle: "some"
 								}
 							}
 						}
@@ -272,7 +272,7 @@ sap.ui.define([
 									semanticObject: "Risk",
 									action: "configure",
 									title: "some",
-									subtitle: "some"
+									subTitle: "some"
 								}
 							}
 						}
@@ -292,7 +292,7 @@ sap.ui.define([
 									semanticObject: "Risk",
 									action: "configure",
 									title: "",
-									subtitle: "some"
+									subTitle: "some"
 								}
 							}
 						}
