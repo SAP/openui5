@@ -180,7 +180,7 @@ sap.ui.define([
 	 */
 	ResponsiveColumnLayout.prototype.getPolyfillSizes = function (oGrid) {
 		var $grid = oGrid.$(),
-			iWidth = $grid.parent().outerWidth(),
+			iWidth = oGrid.getDomRef().parentElement.clientWidth,
 			oRange = Device.media.getCurrentRange(RCL_RANGE_SET, iWidth),
 			iColumnsCount = mSizeColumns[oRange.name],
 			iInnerWidth = $grid.innerWidth(),
@@ -200,7 +200,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveColumnLayout.prototype._applyLayout = function (oGrid) {
-		var iWidth = oGrid.$().parent().outerWidth(),
+		var iWidth = oGrid.getDomRef().parentElement.clientWidth,
 			oRange = Device.media.getCurrentRange(RCL_RANGE_SET, iWidth),
 			sClassName = "sapUiLayoutCSSGridRCL-Layout" + oRange.name,
 			bGridSupportedByBrowser = this.isGridSupportedByBrowser();
