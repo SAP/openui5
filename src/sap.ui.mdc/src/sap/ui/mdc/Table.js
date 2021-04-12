@@ -1555,8 +1555,20 @@ sap.ui.define([
 
 						var oSheet = new Spreadsheet(mExportSettings);
 						oSheet.attachBeforeExport(function(oEvent) {
+							var oExportSettings = oEvent.getParameter("exportSettings");
+							var oState = this.getCurrentState();
+
+							/*
+							 * In case the table uses grouping or totals, the binding length is not suitable for the export,
+							 * so we have to reset the count as a workaround until the binding supports getTotalSize or similar.
+							 * This will show a warning dialog during export but ensures that all line items will be exported.
+							 */
+							if ((Array.isArray(oState.groupLevels) && oState.groupLevels.length > 0) || (oState.aggregations && Object.keys(oState.aggregations).length > 0)) {
+								oExportSettings.dataSource.count = null;
+							}
+
 							this.fireBeforeExport({
-								exportSettings: oEvent.getParameter("exportSettings"),
+								exportSettings: oExportSettings,
 								userExportSettings: mUserSettings
 							});
 						}, this);
