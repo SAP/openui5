@@ -51,7 +51,8 @@
 			"sap.f.sample.IllustratedMessageInCardNoEmail",
 			"sap.f.sample.IllustratedMessageInDialog",
 			"sap.f.sample.IllustratedMessageInPage",
-			"sap.f.sample.IllustratedMessageInPageTNT"
+			"sap.f.sample.IllustratedMessageInPageTNT",
+			"sap.f.sample.IllustratedMessageSessionTimeout"
 			]
 		},
 		{
@@ -205,7 +206,12 @@
 			"id": "sap.f.sample.IllustratedMessageInPageTNT",
 			"name": "Illustrated Message in a Page with Configurable Properties (TNT Illustration Set)",
 			"description": "The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'tnt' illustration set."
-		  },
+		},
+		{
+			"id": "sap.f.sample.IllustratedMessageSessionTimeout",
+			"name": "Illustrated Message Session Timeout",
+			"description": "All applications that require user sign-in should employ a mechanism for automating user sign-out. When the inactivity is about to reach that threshold, a session timeout dialog appears automatically to inform the user."
+		},
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 		  "name": "Flexible Column Layout with Routing and One Initial Column",
