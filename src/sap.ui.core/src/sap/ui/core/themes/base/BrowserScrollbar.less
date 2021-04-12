@@ -12,6 +12,12 @@ html[data-sap-ui-browser*="ie"]:not(.sapUiNativeScrollbars) .sapUiBody {
 	scrollbar-track-color: @sapUiScrollBarTrackColor;
 }
 
+/****** Firefox ******/
+
+html.sap-desktop:not(.sapUiNativeScrollbars) {
+	scrollbar-color: @sapUiScrollBarFaceColor @sapUiScrollBarTrackColor;
+}
+
 /****** Safari + Chrome on Desktop ******/
 
 html.sap-desktop:not(.sapUiNativeScrollbars) ::-webkit-scrollbar:horizontal {
