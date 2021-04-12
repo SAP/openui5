@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"./GridItemLayoutData",
-	"sap/ui/Device"
-], function (ManagedObject, GridItemLayoutData, Device) {
+	"./GridItemLayoutData"
+], function (ManagedObject, GridItemLayoutData) {
 	"use strict";
 
 	var mGridProperties = {
@@ -229,23 +228,6 @@ sap.ui.define([
 	 * @returns {boolean} If the Grid Layout is responsive.
 	 */
 	GridLayoutBase.prototype.isResponsive = function () {
-		return false;
-	};
-
-	/**
-	 * @public
-	 * @returns {boolean} If native grid is supported by the browser
-	 */
-	GridLayoutBase.prototype.isGridSupportedByBrowser = function () {
-		return !Device.browser.msie;
-	};
-
-	/**
-	 * @returns {boolean} If the layout provides grid support for browsers that don't have native support
-	 * @private
-	 * @ui5-restricted
-	 */
-	GridLayoutBase.prototype.hasGridPolyfill = function () {
 		return false;
 	};
 

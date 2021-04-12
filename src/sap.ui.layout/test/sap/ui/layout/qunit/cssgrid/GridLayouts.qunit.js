@@ -18,8 +18,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/Device"
+	"sap/ui/events/KeyCodes"
 ], function (
 	jQuery,
 	Core,
@@ -38,14 +37,11 @@ sap.ui.define([
 	JSONModel,
 	Sorter,
 	qutils,
-	KeyCodes,
-	Device
+	KeyCodes
 ) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
-
-	var bBrowserSupportGrid = !Device.browser.msie;
 
 	function getGridSettings() {
 		return {
@@ -449,13 +445,10 @@ sap.ui.define([
 
 		var id = "#" + oGridList.sId + "-listUl";
 		var sGridAutoRows = getComputedStyle(document.querySelector(id)).gridAutoRows;
-		var isCSSGridSupported = oGridBoxLayout.isGridSupportedByBrowser();
+
 		assert.equal(oGridList.getCustomLayout().getMetadata()._sClassName, "sap.ui.layout.cssgrid.GridBoxLayout", "GridBoxLayout is applied");
-		if (isCSSGridSupported) {
-			assert.equal(sGridAutoRows, "auto",  "Height of the rows are calculated and CSS Grid property 'grid-auto-rows' is not set.");
-		} else {
-			assert.equal(sGridAutoRows, undefined,  "CSS Grid is not supported for this browser version. Height of the rows are calculated");
-		}
+		assert.equal(sGridAutoRows, "auto",  "Height of the rows are calculated and CSS Grid property 'grid-auto-rows' is not set.");
+
 	});
 
 	QUnit.test("When (GridList control) is without Grouping", function (assert) {
@@ -483,13 +476,9 @@ sap.ui.define([
 
 		var id = "#" + oGridList.sId + "-listUl";
 		var sGridAutoRows = getComputedStyle(document.querySelector(id)).gridAutoRows;
-		var isCSSGridSupported = oGridBoxLayout.isGridSupportedByBrowser();
+
 		assert.equal(oGridList.getCustomLayout().getMetadata()._sClassName, "sap.ui.layout.cssgrid.GridBoxLayout", "GridBoxLayout is applied");
-		if (isCSSGridSupported) {
-			assert.equal(sGridAutoRows, "1fr",  "Height of the rows comes from CSS Grid property 'grid-auto-rows'");
-		} else {
-			assert.equal(sGridAutoRows, undefined,  "CSS Grid is not supported for this browser version. Height of the rows are calculated");
-		}
+		assert.equal(sGridAutoRows, "1fr",  "Height of the rows comes from CSS Grid property 'grid-auto-rows'");
 	});
 
 	QUnit.test("Is class correct depending on CSS Grid support", function (assert) {
@@ -502,15 +491,9 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var id = "#" + oGridList.sId + "-listUl";
-		var isCSSGridSupported = oGridBoxLayout.isGridSupportedByBrowser();
 
-		if (isCSSGridSupported) {
-			assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutContainer"), true,  "'sapUiLayoutCSSGridBoxLayoutContainer' class is applied'");
-			assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutPolyfill"), false,  "'sapUiLayoutCSSGridBoxLayoutPolyfill' class is not applied");
-		} else {
-			assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutPolyfill"), true,  "'sapUiLayoutCSSGridBoxLayoutPolyfill' class is applied'");
-			assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutContainer"), false,  "'sapUiLayoutCSSGridBoxLayoutContainer' class is not applied'");
-		}
+		assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutContainer"), true,  "'sapUiLayoutCSSGridBoxLayoutContainer' class is applied'");
+		assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutPolyfill"), false,  "'sapUiLayoutCSSGridBoxLayoutPolyfill' class is not applied");
 	});
 
 	QUnit.test("Is growing works correct", function (assert) {
@@ -573,60 +556,6 @@ sap.ui.define([
 
 		assert.equal(oGridList.getItems()[0].getDomRef().clientWidth, 100, "boxWidth is set correctly to the GridBoxLayout");
 	});
-
-	if (!bBrowserSupportGrid) {
-		QUnit.test("Rows and cols with 'boxWidth'", function (assert) {
-			// Arrange
-			var oLayout = new GridBoxLayout({boxWidth: "80px"}),
-				oGridList = new GridList({
-					customLayout: oLayout,
-					width: "200px",
-					items: [
-						new CustomListItem(),
-						new CustomListItem(),
-						new CustomListItem(),
-						new CustomListItem()
-					]
-				});
-			oGridList.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			var oSizes = oLayout.getPolyfillSizes(oGridList);
-
-			// Assert
-			assert.strictEqual(oSizes.rows.length, 2, "There are 2 rows");
-			assert.strictEqual(oSizes.columns.length, 2, "There are 2 columns");
-
-			// Clean up
-			oGridList.destroy();
-		});
-
-		QUnit.test("Rows and cols with 'boxesPerRowConfig'", function (assert) {
-			// Arrange
-			var oLayout = new GridBoxLayout({boxesPerRowConfig: "XL3 L3 M3 S3"}),
-				oGridList = new GridList({
-					customLayout: oLayout,
-					width: "100px",
-					items: [
-						new CustomListItem(),
-						new CustomListItem(),
-						new CustomListItem(),
-						new CustomListItem()
-					]
-				});
-			oGridList.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			var oSizes = oLayout.getPolyfillSizes(oGridList);
-
-			// Assert
-			assert.strictEqual(oSizes.rows.length, 2, "There are 2 rows");
-			assert.strictEqual(oSizes.columns.length, 3, "There are 3 columns");
-
-			// Clean up
-			oGridList.destroy();
-		});
-	}
 
 	QUnit.module("ResponsiveColumnLayout", {
 		beforeEach: function () {
@@ -820,11 +749,8 @@ sap.ui.define([
 		// Assert
 		assert.ok(GridLayoutBase.setItemStyles.calledOnce, "Should update item styles on layout data change");
 		assert.ok(this.oGrid.onLayoutDataChange.calledOnce, "Should call layoutDataChange handler");
-
-		if (bBrowserSupportGrid) {
-			assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-row").indexOf("span 4") > -1,"grid-row property is correct");
-			assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-column").indexOf("span 2") > -1, "grid-column property is correct");
-		}
+		assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-row").indexOf("span 4") > -1,"grid-row property is correct");
+		assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-column").indexOf("span 2") > -1, "grid-column property is correct");
 
 		// Cleanup
 		GridLayoutBase.setItemStyles.restore();
@@ -847,21 +773,20 @@ sap.ui.define([
 		assert.notOk(this.oItem.getDomRef().style.getPropertyValue("grid-column"), "Should NOT have grid-column property");
 	});
 
-	if (bBrowserSupportGrid) {
-		QUnit.test("Change item layoutData", function (assert) {
+	QUnit.test("Change item layoutData", function (assert) {
 
-			// Arrange
-			this.oItem.setLayoutData(this.oLayoutData);
-			Core.applyChanges();
+		// Arrange
+		this.oItem.setLayoutData(this.oLayoutData);
+		Core.applyChanges();
 
-			// Act
-			this.oLayoutData.setRows(5);
+		// Act
+		this.oLayoutData.setRows(5);
 
-			// Assert
-			var sGridRow = this.oItem.getDomRef().style.getPropertyValue("grid-row");
+		// Assert
+		var sGridRow = this.oItem.getDomRef().style.getPropertyValue("grid-row");
 
-			// Check with indexOf as the browser normalizes the property value.
-			assert.ok(sGridRow && sGridRow.indexOf("span 5") > -1, "Should have updated the grid-row property");
-		});
-	}
+		// Check with indexOf as the browser normalizes the property value.
+		assert.ok(sGridRow && sGridRow.indexOf("span 5") > -1, "Should have updated the grid-row property");
+	});
+
 });
