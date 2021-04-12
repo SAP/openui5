@@ -49,6 +49,7 @@ sap.ui.define([
 							selectedKeys: {
 								path: 'currentSettings>value'
 							},
+							busy: { path: 'currentSettings>_loading' },
 							editable: oConfig.editable,
 							showSecondaryValues: true,
 							width: "100%",
@@ -250,7 +251,7 @@ sap.ui.define([
 		var sSuggestValue = oSettingsModel.getProperty(sSettingspath + "/suggestValue");
 		if (sSuggestValue && sSuggestValue !== "") {
 			//set the input field value to the suggest value of the MultiComboBox
-			oControl.setValue(sSuggestValue);
+			oControl.setValue(sSuggestValue.replaceAll("\'\'", "'"));
 		}
 	};
 
@@ -411,7 +412,7 @@ sap.ui.define([
 		var sSettingspath = this.getBindingContext("currentSettings").sPath;
 		var oSettingsModel = this.getModel("currentSettings");
 		//set the suggestion value into data model property "suggestValue" for filter backend
-		oSettingsModel.setProperty(sSettingspath + "/suggestValue", sTerm);
+		oSettingsModel.setProperty(sSettingspath + "/suggestValue", sTerm.replaceAll("'", "\'\'"));
 		oSettingsModel.setProperty(sSettingspath + "/_loading", true);
 		//update the dependent fields via bindings
 		var aBindings = oSettingsModel.getBindings();
