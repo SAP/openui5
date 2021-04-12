@@ -38,7 +38,12 @@
         <raw-module name="sap/ui/documentation/sdk/thirdparty/elasticlunr.js" />
       </module-infos>
       <all-in-one>
-        <exclude name="sap/ui/documentation/sdk/thirdparty/google-code-prettify/run_prettify.js" />
+        <!-- ===========================================================================
+             !! ATTENTION !!
+             The following excludes must be kept in sync with those configured for the
+             'preload-and-merge' plugin execution in the pom.xml of the wrapper library.
+             =========================================================================== -->
+        <exclude name="sap/ui/documentation/sdk/thirdparty/" />
       </all-in-one>
     </packaging>
     <!-- Thirdparty references -->
