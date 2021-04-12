@@ -45,7 +45,7 @@ function(
 		});
 
 		QUnit.test("when 'getDefaultPlugins' function is called correctly", function(assert) {
-			var defaultPlugins = this.oPluginManager.getDefaultPlugins([]);
+			var defaultPlugins = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER});
 
 			var pluginsToCheck = [
 				"addIFrame",
@@ -145,6 +145,11 @@ function(
 
 		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with enabled versioning", function(assert) {
 			var oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.USER})["localReset"];
+			assert.notOk(oDefaultLocalResetPlugin, "then the localReset plugin is not available");
+		});
+
+		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but on developer layer", function(assert) {
+			var oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER_BASE})["localReset"];
 			assert.notOk(oDefaultLocalResetPlugin, "then the localReset plugin is not available");
 		});
 

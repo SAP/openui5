@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/plugin/ToolHooks",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
@@ -35,6 +36,7 @@ sap.ui.define([
 	ContextMenuPlugin,
 	TabHandlingPlugin,
 	ToolHooksPlugin,
+	Layer,
 	Settings,
 	CommandFactory,
 	AdditionalElementsPlugin,
@@ -202,7 +204,11 @@ sap.ui.define([
 
 			this._mDefaultPlugins["toolHooks"] = new ToolHooksPlugin();
 
-			if (oSettings && !oSettings.isVersioningEnabled(oFlexSettings.layer)) {
+			if (
+				oFlexSettings.layer === Layer.CUSTOMER
+				&& oSettings
+				&& !oSettings.isVersioningEnabled(oFlexSettings.layer)
+			) {
 				this._mDefaultPlugins["localReset"] = new LocalResetPlugin({
 					commandFactory: this._oCommandFactory
 				});
