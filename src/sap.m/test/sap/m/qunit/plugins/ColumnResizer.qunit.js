@@ -27,14 +27,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function createResponsiveTable() {
+	function createResponsiveTable(bActiveHeaders) {
 		var oTable = new Table({
 			autoPopinMode: true,
 			contextualWidth: "Auto",
 			columns: [
 				new Column({
 					header: new Text({
-						text: "Column1"
+						text: "Column1 has a very very long text"
 					})
 				}),
 				new Column({
@@ -73,7 +73,7 @@ sap.ui.define([
 			]
 		});
 
-		oTable.bActiveHeaders = true;
+		oTable.bActiveHeaders = bActiveHeaders;
 
 		return oTable;
 	}
@@ -137,7 +137,7 @@ sap.ui.define([
 		assert.notOk(oTableDomRef.children[oTableDomRef.children.length - 1].classList.contains("sapMPluginsColumnResizerHandle"), "ColumnResizer handle created");
 
 		// get resizable <th> elements
-		var aResizableColumns = Array.from(jQuery(oColumnResizer.getControlPluginConfig("resizable")));
+		var aResizableColumns = jQuery(oColumnResizer.getControlPluginConfig("resizable")).get();
 		aResizableColumns.forEach(function(TH) {
 			assert.ok(TH.classList.contains("sapMPluginsColumnResizerResizable"), "Resizable column have the correct style added");
 			assert.strictEqual(document.getElementById(TH.firstChild.getAttribute("aria-describedby")).innerText, Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZABLE"), "The column is resizable, announcement added");
@@ -145,10 +145,64 @@ sap.ui.define([
 
 		oColumnResizer.setEnabled(false);
 		Core.applyChanges();
-		aResizableColumns = Array.from(jQuery(oColumnResizer.getControlPluginConfig("resizable")));
+		aResizableColumns = jQuery(oColumnResizer.getControlPluginConfig("resizable")).get();
 		aResizableColumns.forEach(function(TH) {
 			assert.notOk(TH.classList.contains("sapMPluginsColumnResizerResizable"), "Resizable column styleClass removed");
 			assert.notOk(TH.firstChild.hasAttribute("aria-describedby"), "announcement removed");
+		});
+	});
+
+	QUnit.test("Plugin behavior - Standalone sap.m.Table (Desktop)", function(assert) {
+		var oMatchMediaStub = sinon.stub(window, "matchMedia");
+
+		oMatchMediaStub.withArgs("(hover:none)").returns({
+			matches: false
+		});
+
+		var oColumnResizer = new ColumnResizer();
+		this.oTable.addDependent(oColumnResizer);
+		Core.applyChanges();
+
+		assert.ok(this.oTable.bFocusableHeaders, "bFocusableHeaders=true on the Table");
+		assert.notOk(oColumnResizer.getControlPluginConfig("allowTouchResizing"), "allowTouchResizing=false, since its Desktop device");
+
+		oColumnResizer.setEnabled(false);
+		Core.applyChanges();
+
+		assert.notOk(this.oTable.bFocusableHeaders, "bFocusableHeaders=false on the Table");
+
+		oMatchMediaStub.restore();
+	});
+
+	QUnit.test("Plugin behavior - Standalone sap.m.Table (Mobile)", function(assert) {
+		var oMatchMediaStub = sinon.stub(window, "matchMedia");
+
+		oMatchMediaStub.withArgs("(hover:none)").returns({
+			matches: true
+		});
+
+		var oColumnResizer = new ColumnResizer();
+		this.oTable.addDependent(oColumnResizer);
+		Core.applyChanges();
+
+		assert.ok(this.oTable.bFocusableHeaders, "bFocusableHeaders=true on the Table");
+		assert.ok(oColumnResizer.getControlPluginConfig("allowTouchResizing"), "allowTouchResizing=true, since its Mobile device");
+
+		oMatchMediaStub.restore();
+	});
+
+	QUnit.test("Plugin behavior when sap.m.Table with bActivHeaders=true", function(assert) {
+		this.oTable.bActiveHeaders = true;
+		var oColumnResizer = new ColumnResizer();
+		this.oTable.addDependent(oColumnResizer);
+		Core.applyChanges();
+
+		assert.notOk(oColumnResizer.getControlPluginConfig("enableColumnHeaderFocus"), "enableColumnHeaderFocus not set, since bActiveHeaders=true");
+
+		var aFocusable = jQuery(oColumnResizer.getControlPluginConfig("focusable")).get();
+		aFocusable.forEach(function(oFocusable) {
+			assert.notOk(oFocusable.classList.contains("sapMPluginsColumnResizerFocusable"), "focusable style class not added by the plugin");
+			assert.ok(oFocusable.getAttribute("tabindex"), "Column headers are focusable, since bActiveHeaders=true");
 		});
 	});
 
@@ -201,9 +255,9 @@ sap.ui.define([
 
 	QUnit.test("Resize handle should have a circle in mobile device", function(assert) {
 		var oColumnDomRef = this.oTable.getColumns()[0].getDomRef();
-		var fnMatchMediaOriginal = window.matchMedia;
-		window.matchMedia = sinon.stub();
-		window.matchMedia.returns({
+		var oMatchMediaStub = sinon.stub(window, "matchMedia");
+
+		oMatchMediaStub.withArgs("(hover:none)").returns({
 			matches: true
 		});
 
@@ -212,7 +266,7 @@ sap.ui.define([
 		assert.strictEqual(this.oColumnResizer._oHandle.childElementCount, 1, "Resize handle circle child element is visible since its a tablet/phone device");
 		assert.ok(this.oColumnResizer._oHandle.firstChild.classList.contains("sapMPluginsColumnResizerHandleCircle"), "Correct style class added to the resize handle circle");
 
-		window.matchMedia = fnMatchMediaOriginal;
+		oMatchMediaStub.restore();
 	});
 
 	QUnit.test("Resizing style class", function(assert) {
@@ -359,6 +413,54 @@ sap.ui.define([
 		assert.strictEqual(oCurrentColumn.getWidth(), sColumnWidth, "Column width did not change due to preventDefault()");
 	});
 
+	QUnit.test("Mouse event double click to auto resize column (small column)", function(assert) {
+		var oColumn = this.oTable.getColumns()[0],
+			oColumnDomRef = oColumn.getDomRef();
+
+		oColumn.setWidth("100px");
+		Core.applyChanges();
+		this.clock.tick(1);
+
+		assert.strictEqual(oColumn.getWidth(), "100px", "Column width is set to 100px initially");
+		var iClientX = oColumnDomRef.getBoundingClientRect()[this.sEndDirection],
+			oEvent = {
+				clientX: iClientX
+			};
+
+		QUtils.triggerEvent("mousemove", oColumnDomRef, {
+			clientX: iClientX
+		});
+
+		this.oColumnResizer.ondblclick(oEvent);
+		Core.applyChanges();
+		assert.ok(oColumn.getWidth() !== "100px", "Column width changed due to auto column resize");
+		assert.ok(parseInt(oColumn.getWidth()) > 100, "Column is made bigger");
+	});
+
+	QUnit.test("Mouse event double click to auto resize column (large column)", function(assert) {
+		var oColumn = this.oTable.getColumns()[2];
+
+		oColumn.setWidth("300px");
+		Core.applyChanges();
+		this.clock.tick(1);
+		var oColumnDomRef = oColumn.getDomRef();
+		assert.strictEqual(oColumn.getWidth(), "300px", "Column width is set to 100px initially (bigger than necessary");
+
+		var iClientX = oColumnDomRef.getBoundingClientRect()[this.sEndDirection],
+			oEvent = {
+				clientX: iClientX
+			};
+
+		QUtils.triggerEvent("mousemove", oColumnDomRef, {
+			clientX: iClientX
+		});
+
+		this.oColumnResizer.ondblclick(oEvent);
+		Core.applyChanges();
+		assert.ok(oColumn.getWidth() !== "300px", "Column width changed due to auto column resize");
+		assert.ok(parseInt(oColumn.getWidth()) < 300, "Column is made bigger");
+	});
+
 	QUnit.module("Keyboard events", {
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
@@ -433,7 +535,7 @@ sap.ui.define([
 	QUnit.module("API", {
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
-			this.oTable = createResponsiveTable();
+			this.oTable = createResponsiveTable(true);
 			this.oColumnResizer = new ColumnResizer();
 			this.oTable.addDependent(this.oColumnResizer);
 			this.oTable.placeAt("qunit-fixture");

@@ -387,6 +387,11 @@ html[data-sap-ui-browser^="sf"] .sapMSticky > .sapMListTbl {
 	cursor: default;
 }
 
+.sapMColumnHeaderFocusable:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
+}
+
 /* sort icons */
 [aria-sort=ascending] > .sapMColumnHeader::after,
 [aria-sort=descending] > .sapMColumnHeader::after {

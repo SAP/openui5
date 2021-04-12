@@ -1600,6 +1600,19 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
+	QUnit.test("Focusable headers", function(assert) {
+		var sut = createSUT("idFocusableHeaders", true);
+		sut.bFocusableHeaders = true;
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var $ColumnHeaderDiv = sut.$().find(".sapMColumnHeader");
+		assert.ok($ColumnHeaderDiv.hasClass("sapMColumnHeaderFocusable"), "sapMColumnHeaderFocusable class added");
+		assert.strictEqual($ColumnHeaderDiv.attr("tabindex"), "0", "column header div is focusable");
+
+		sut.destroy();
+	});
+
 	QUnit.test("Test for ContextualWidth", function(assert) {
 		var sut = createSUT("idPopinLayoutGrid", true);
 		sut.setPopinLayout(library.PopinLayout.GridSmall);
