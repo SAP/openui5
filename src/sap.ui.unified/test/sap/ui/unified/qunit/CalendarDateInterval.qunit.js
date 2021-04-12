@@ -402,6 +402,20 @@ sap.ui.define([
 		oFocusSpy.restore();
 	});
 
+	QUnit.test("next/prev actions on apply focus in the day grid", function(assert) {
+		// Prepare
+		var oFocusSpy = this.spy(this.oCal, "_addMonthFocusDelegate");
+
+		// Act
+		this.oCal._handleNext();
+		this.oCal._handlePrevious();
+
+		// Assert
+		assert.ok(oFocusSpy.calledTwice, "Focus is properly applied");
+
+		// Clean
+		oFocusSpy.restore();
+	});
 
 	QUnit.module("MonthPicker", {
 		beforeEach: function () {
