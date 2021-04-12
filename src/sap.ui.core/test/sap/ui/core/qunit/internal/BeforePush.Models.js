@@ -12,6 +12,7 @@ sap.ui.define(function () {
 
 	var sPathName = window.location.pathname,
 		mTests = {
+			'internal/samples/odata/twoFields/Opa.qunit.html' : 'both',
 			'internal/samples/odata/v2/SalesOrders/Opa.qunit.html' : 'both',
 			'../../../sap/m/demokit/cart/webapp/test/integration/opaTestsComponent.qunit.html' : 'both',
 			'../../../sap/m/demokit/cart/webapp/test/integration/opaTestsGherkinComponent.qunit.html' : 'both',
