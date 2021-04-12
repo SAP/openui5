@@ -2167,25 +2167,23 @@ sap.ui.define([
 	Calendar.prototype._selectMonth = function () {
 		var oFocusedDate = new CalendarDate(this._getFocusedDate(), this.getPrimaryCalendarType()),
 			oMonthPicker = this._getMonthPicker(),
-			iMonth = oMonthPicker._focusedMonth || oMonthPicker._focusedMonth === 0 ? oMonthPicker._focusedMonth : oMonthPicker.getMonth(),
-			oSecondDate;
+			iMonth = oMonthPicker._focusedMonth || oMonthPicker._focusedMonth === 0 ?
+				oMonthPicker._focusedMonth :
+				oMonthPicker.getMonth(),
+			oSecondDate = Boolean(oMonthPicker._iYear) ?
+				new CalendarDate(oMonthPicker._iYear, iMonth - 1, 1) :
+				new CalendarDate(this._getFocusedDate().getYear(), iMonth - 1, 1);
 
-			if (!!oMonthPicker._iYear) {
-				oSecondDate = new CalendarDate(oMonthPicker._iYear, iMonth - 1, 1);
-			} else {
-				oSecondDate = new CalendarDate(this._getFocusedDate()._oUDate.getFullYear(),iMonth - 1,1);
-			}
-
+		if (_getMonths.call(this) > 1) {
 			if (this._bActionTriggeredFromSecondHeader && oSecondDate.getYear() >= CalendarUtils._minDate().getYear()) {
 				oFocusedDate.setYear(oSecondDate.getYear());
-				oFocusedDate.setMonth(oSecondDate.getMonth());
-				iMonth = oFocusedDate.getMonth();
+				iMonth = oSecondDate.getMonth();
 			} else if (oFocusedDate.getYear() === CalendarUtils._maxDate().getYear() && iMonth === 11) {
 				iMonth -= 1;
-				oFocusedDate.setMonth(iMonth);
-			} else {
-				oFocusedDate.setMonth(iMonth);
 			}
+		}
+
+		oFocusedDate.setMonth(iMonth);
 
 		if (iMonth != oFocusedDate.getMonth()){
 			// day did not exist in this month (e.g. 31) -> go to last day of month
