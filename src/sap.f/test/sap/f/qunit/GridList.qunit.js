@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/Device",
 	"sap/f/GridList",
 	"sap/f/library",
 	"sap/ui/layout/cssgrid/GridBoxLayout",
@@ -18,7 +17,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 function (
-	Device,
 	GridList,
 	fLibrary,
 	GridBoxLayout,
@@ -350,10 +348,8 @@ function (
 
 		assert.ok(this.oGrid.$().find("ul").hasClass("sapFGridListGroup"), "sapFGridListGroup is set");
 
-		if (!Device.browser.msie) {
-			oGroupHeaderDomRef = this.oGrid.$().find(".sapMGHLI")[0];
-			assert.ok(window.getComputedStyle(oGroupHeaderDomRef).gridColumnEnd.indexOf("-1") > -1, "grid column is correctly set");
-		}
+		oGroupHeaderDomRef = this.oGrid.$().find(".sapMGHLI")[0];
+		assert.ok(window.getComputedStyle(oGroupHeaderDomRef).gridColumnEnd.indexOf("-1") > -1, "grid column is correctly set");
 
 		// remove the sorters
 		this.oGrid.getBinding("items").sort([]);
@@ -366,10 +362,9 @@ function (
 
 		assert.ok(this.oGrid.$().find("ul").hasClass("sapFGridListGroup"), "sapFGridListGroup is set");
 
-		if (!Device.browser.msie) {
-			oGroupHeaderDomRef = this.oGrid.$().find(".sapMGHLI")[0];
-			assert.ok(window.getComputedStyle(oGroupHeaderDomRef).gridColumnEnd.indexOf("-1") > -1, "grid column is correctly  set");
-		}
+		oGroupHeaderDomRef = this.oGrid.$().find(".sapMGHLI")[0];
+		assert.ok(window.getComputedStyle(oGroupHeaderDomRef).gridColumnEnd.indexOf("-1") > -1, "grid column is correctly  set");
+
 	});
 
 	QUnit.test("Focus position is reset after pressing on 'More' button", function (assert) {
