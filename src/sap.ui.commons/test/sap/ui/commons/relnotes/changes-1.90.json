@@ -1,0 +1,17 @@
+{
+  "1.90.0": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "b54a1fa49cc2379be26701b49b13e5e24f8ec7e9",
+        "type": "FIX",
+        "text": " commons.Carousel: also adapt wrong JSDoc for getFocusDomRef"
+      },
+      {
+        "id": "ce8c162d58c809c99f47a5a584798acd0afe1af9",
+        "type": "FIX",
+        "text": " sap.ui.commons.Carousel.getFocusDomRef(): return actual DOM ref"
+      }
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "1.90.0": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "8b2963f4aec5d66affc6f29d08f4817586115c69",
+        "type": "FIX",
+        "text": " sap.ui.fl StorageUtils orders comp changes by time"
+      },
+      {
+        "id": "b3a1db937f7170b736bd7991ec69fe74768a46c1",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl SmartVariantManagementWriteAPI.updateVariant only stores the favorite flag in the root"
+      },
+      {
+        "id": "9ea49028f45a7c9ef59e8a6eae0043d24680249a",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl...Loader does not use the cache key while reInitialize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170012946"
+          }
+        ]
+      },
+      {
+        "id": "8453edf84c97d02936f3525bd18e6dbf0c3506b3",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl SmartVariantManagementWriteAPI.add handles executeOnSelection correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170040033"
+          }
+        ]
+      },
+      {
+        "id": "bfe96e2e162433571fb90ef8607ac1c613e638de",
+        "type": "FIX",
+        "text": " sap.ui.fl: Disabled reset button although changes are present",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170024079"
+          }
+        ]
+      },
+      {
+        "id": "5858621adcf9c2c5cb870f56ea1d7e6c5b2d9f09",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl invalidates cache of sap-app-id variants correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170011312"
+          }
+        ]
+      }
+    ]
+  }
+}
