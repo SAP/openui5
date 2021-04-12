@@ -175,8 +175,12 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/core/Core"],
 				this.fireDataChanged({data: oData});
 				this.onDataRequestComplete();
 			}.bind(this))
-			.catch(function (sError) {
-				this.fireError({message: sError});
+			.catch(function (oResult) {
+				if (Array.isArray(oResult) && oResult.length > 0) {
+					this.fireError({message: oResult[0], jqXHR: oResult[1]});
+				} else {
+					this.fireError({message: oResult});
+				}
 				this.onDataRequestComplete();
 			}.bind(this));
 	};

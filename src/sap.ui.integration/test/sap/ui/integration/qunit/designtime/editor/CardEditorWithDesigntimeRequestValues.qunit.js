@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
+	"sap/ui/core/Core",
 	"sap/ui/core/util/MockServer",
 	"./cards/withDesigntime/DataExtensionImpl"
 ], function (
@@ -13,6 +14,7 @@ sap.ui.define([
 	Host,
 	sinon,
 	ContextHost,
+	Core,
 	MockServer,
 	DataExtensionImpl
 ) {
@@ -286,6 +288,10 @@ sap.ui.define([
 									}
 								});
 							});
+							if (sCustomerID === "_" || sEmployeeID  === "_") {
+								xhr.respondJSON(400, null, {"error":{"errorCode":400,"message":"Please select a cutomer and an employee first"}});
+								return;
+							}
 							sKey = sKey + sCustomerID + sEmployeeID;
 						}
 						oValue = {"value": oResponseData[sKey]};
@@ -308,6 +314,10 @@ sap.ui.define([
 									sOrderID += sValue.substr(15);
 								}
 							});
+							if (sOrderID  === "_") {
+								xhr.respondJSON(400, null, {"error":{"errorCode":400,"message":"Please select an order first"}});
+								return;
+							}
 							sKey = sKey + sOrderID;
 						}
 						oValue = {"value": oResponseData[sKey]};
@@ -388,10 +398,19 @@ sap.ui.define([
 						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
 						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
 						assert.ok(oOrderField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
+						oOrderField.getAggregation("_field").focus();
+						var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+						assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+						assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+						assert.ok(oMsgStrip.getText() === "400: Please select a cutomer and an employee first", "Order Error Text");
 						assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+						oProductField.getAggregation("_field").focus();
+						assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+						assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+						assert.ok(oMsgStrip.getText() === "400: Please select an order first", "Product Error Text");
 						assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 						resolve();
-					}, iWaitTimeout);
+					}.bind(this), iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});
@@ -443,11 +462,20 @@ sap.ui.define([
 							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
 							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
 							assert.ok(oOrderField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
+							oOrderField.getAggregation("_field").focus();
+							var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+							assert.ok(oMsgStrip.getText() === "400: Please select a cutomer and an employee first", "Order Error Text");
 							assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+							oProductField.getAggregation("_field").focus();
+							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+							assert.ok(oMsgStrip.getText() === "400: Please select an order first", "Product Error Text");
 							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+						}.bind(this), iWaitTimeout);
+					}.bind(this), iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});
@@ -500,11 +528,20 @@ sap.ui.define([
 							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
 							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
 							assert.ok(oOrderField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
+							oOrderField.getAggregation("_field").focus();
+							var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+							assert.ok(oMsgStrip.getText() === "400: Please select a cutomer and an employee first", "Order Error Text");
 							assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+							oProductField.getAggregation("_field").focus();
+							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+							assert.ok(oMsgStrip.getText() === "400: Please select an order first", "Product Error Text");
 							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+						}.bind(this), iWaitTimeout);
+					}.bind(this), iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});
@@ -561,11 +598,21 @@ sap.ui.define([
 							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
 							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
 							assert.ok(oOrderField.getAggregation("_field").getItems().length === 1, "Field: Order lenght is OK");
+							oOrderField.getAggregation("_field").focus();
+							var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+							var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+							assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_TEXTREQ") === oMsgStrip.getText(), "Order Error Text : required");
 							assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+							oProductField.getAggregation("_field").focus();
+							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+							assert.ok(oMsgStrip.getText() === "400: Please select an order first", "Product Error Text");
 							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+						}.bind(this), iWaitTimeout);
+					}.bind(this), iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});
@@ -627,12 +674,17 @@ sap.ui.define([
 								assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
 								assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
 								assert.ok(oOrderField.getAggregation("_field").getItems().length === 1, "Field: Order lenght is OK");
+								oOrderField.getAggregation("_field").focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 								assert.ok(oProductField.getAggregation("_field").getItems().length === 2, "Field: Product lenght is OK");
+								oProductField.getAggregation("_field").focus();
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 								assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
-							}, iWaitTimeout);
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+							}.bind(this), iWaitTimeout);
+						}.bind(this), iWaitTimeout);
+					}.bind(this), iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});
@@ -694,12 +746,17 @@ sap.ui.define([
 								assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
 								assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
 								assert.ok(oOrderField.getAggregation("_field").getItems().length === 2, "Field: Order lenght is OK");
+								oOrderField.getAggregation("_field").focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 								assert.ok(oProductField.getAggregation("_field").getItems().length === 1, "Field: Product lenght is OK");
+								oProductField.getAggregation("_field").focus();
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 								assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
-							}, iWaitTimeout);
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+							}.bind(this), iWaitTimeout);
+						}.bind(this), iWaitTimeout);
+					}.bind(this), iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});

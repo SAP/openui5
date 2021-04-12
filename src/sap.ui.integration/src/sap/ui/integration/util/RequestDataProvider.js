@@ -126,7 +126,7 @@ sap.ui.define([
 				jQuery.ajax(oRequest).done(function (oData) {
 					resolve(oData);
 				}).fail(function (jqXHR, sTextStatus, sError) {
-					reject(sError);
+					reject([sError, jqXHR]);
 				});
 			} else {
 				Log.error(sMessage);

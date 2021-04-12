@@ -45,6 +45,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"Order": {
 						"manifestpath": "/sap.card/configuration/parameters/Order/value",
 						"type": "string",
+						"required": true,
 						"values": {
 							"data": {
 								"request": {
