@@ -866,6 +866,7 @@ sap.ui.define([
 			oStartDate =  new CalendarDate(this._getStartDate(),  this.getPrimaryCalendarType());
 			iDays = this._getDays();
 			this._shiftStartFocusDates(oStartDate, oFocusedDate, (iDays * -1));
+			this._addMonthFocusDelegate();
 			break;
 
 		case 1: // month picker
@@ -918,6 +919,7 @@ sap.ui.define([
 			oStartDate = new CalendarDate(this._getStartDate(), this.getPrimaryCalendarType());
 			iDays = this._getDays();
 			this._shiftStartFocusDates(oStartDate, oFocusedDate, iDays);
+			this._addMonthFocusDelegate();
 			break;
 
 		case 1: // month picker
