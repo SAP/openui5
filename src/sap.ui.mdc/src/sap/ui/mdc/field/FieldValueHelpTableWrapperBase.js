@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-  	 * @experimental
+	 * @experimental As of version 1.88
 	 * @since 1.88.0
 	 * @alias sap.ui.mdc.field.FieldValueHelpTableWrapperBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -309,12 +309,7 @@ sap.ui.define([
 
 		var _getFilterValue = function(oItem, sPath) {
 			var oBindingContext = oItem.isA("sap.ui.model.Context") ? oItem : oItem.getBindingContext();
-			var oDataModelRow = oBindingContext.getObject();
-			if (oDataModelRow.hasOwnProperty(sPath)) {
-				return oDataModelRow[sPath];
-			} else {
-				return undefined;
-			}
+			return oBindingContext.getProperty(sPath);
 		};
 
 		var oFilter;
@@ -817,7 +812,6 @@ sap.ui.define([
 
 		var sKeyPath = this._getKeyPath();
 		var sDescriptionPath = this._getDescriptionPath();
-		var oDataModelRow = oBindingContext.getObject();
 		var vKey;
 		var sDescription;
 
@@ -835,27 +829,17 @@ sap.ui.define([
 		var oOutParameters = aOutParameters.length > 0 ? {} : null;
 		var sPath;
 
-		if (oDataModelRow) {
-			if (oDataModelRow.hasOwnProperty(sKeyPath)) {
-				vKey = oDataModelRow[sKeyPath];
-			}
-			if (sDescriptionPath && oDataModelRow.hasOwnProperty(sDescriptionPath)) {
-				sDescription = oDataModelRow[sDescriptionPath];
-			}
+		if (oBindingContext) {
+			vKey = sKeyPath ? oBindingContext.getProperty(sKeyPath) : undefined;
+			sDescription = sDescriptionPath ? oBindingContext.getProperty(sDescriptionPath) : undefined;
 			var i = 0;
 			for (i = 0; i < aInParameters.length; i++) {
 				sPath = aInParameters[i];
-				if (oDataModelRow.hasOwnProperty(sPath)) {
-					oInParameters[sPath] = oDataModelRow[sPath];
-				}
+				oInParameters[sPath] = oBindingContext.getProperty(sPath);
 			}
 			for (i = 0; i < aOutParameters.length; i++) {
 				sPath = aOutParameters[i];
-				if (oDataModelRow.hasOwnProperty(sPath)) {
-					oOutParameters[sPath] = oDataModelRow[sPath];
-				} else {
-					// TODO: Log.error("FieldValueHelpTableWrapperBase", "cannot find out-parameter '" + sPath + "' in item data!");
-				}
+				oOutParameters[sPath] = oBindingContext.getProperty(sPath);
 			}
 		}
 
