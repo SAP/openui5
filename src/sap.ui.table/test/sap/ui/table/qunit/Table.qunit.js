@@ -6389,30 +6389,52 @@ sap.ui.define([
 			state: {type: oRow.Type.Summary}
 		}];
 		var aColumnInfo = [{
+			title: "Default",
+			template: new TableQUnitUtils.TestControl({text: "content"})
+		}, {
 			title: "All hidden",
+			cellContentVisibilitySettings: {
+				standard: false,
+				groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
+				summary: {group: false, total: false}
+			},
+			template: new TableQUnitUtils.TestControl({text: "content"})
+		}, {
+			title: "No template",
 			cellContentVisibilitySettings: {
 				standard: false,
 				groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
 				summary: {group: false, total: false}
 			}
 		}, {
+			title: "Template invisible",
+			cellContentVisibilitySettings: {
+				standard: true,
+				groupHeader: {nonExpandable: false, expanded: true, collapsed: false},
+				summary: {group: false, total: true}
+			},
+			template: new TableQUnitUtils.TestControl({text: "content", visible: false})
+		}, {
 			title: "Mixed visibility",
 			cellContentVisibilitySettings: {
 				standard: true,
 				groupHeader: {nonExpandable: false, expanded: true, collapsed: false},
 				summary: {group: false, total: true}
-			}
+			},
+			template: new TableQUnitUtils.TestControl({text: "content"})
 		}];
 
-		function assertCellContentVisibility(sTitle) {
+		function assertCellContentVisibility(oColumn, sTitle) {
 			aRowInfo.forEach(function(mRowInfo, iIndex) {
-				var oColumn = oTable.getColumns()[0];
 				var oRow = oTable.getRows()[iIndex];
-				var oCell = oRow.getCells()[0];
-				var oCellElement = TableUtils.getCell(oTable, oCell.getDomRef())[0];
-				var bCellContentHidden = oCellElement.classList.contains("sapUiTableCellHidden");
+				var oCellElement = oRow.getDomRefs(true).row.find("td[data-sap-ui-colid=\"" + oColumn.getId() + "\"]")[0];
+				var bCellContentHidden = oCellElement && oCellElement.classList.contains("sapUiTableCellHidden");
 				var bExpectCellContentVisible;
 				var mCellContentVisibilitySettings = oColumn._getCellContentVisibilitySettings();
+
+				if (!oCellElement) {
+					return;
+				}
 
 				if (oRow.isGroupHeader()) {
 					if (oRow.isExpandable()) {
@@ -6436,24 +6458,25 @@ sap.ui.define([
 			});
 		}
 
-		return this.setRowStates(aRowInfo.map(function(mTestConfig) {
-			return mTestConfig.state;
-		})).then(function() {
-			var pSequence = Promise.resolve();
-
-			assertCellContentVisibility("Default");
-
-			aColumnInfo.forEach(function(mColumnInfo) {
-				pSequence = pSequence.then(function() {
-					oTable.getColumns()[0]._setCellContentVisibilitySettings(mColumnInfo.cellContentVisibilitySettings);
-					oTable.invalidate();
-					return oTable.qunit.whenRenderingFinished();
-				}).then(function() {
-					assertCellContentVisibility(mColumnInfo.title);
-				});
+		oTable.removeAllColumns();
+		aColumnInfo.forEach(function(mColumnInfo) {
+			var oColumn = new Column({
+				label: mColumnInfo.title,
+				template: mColumnInfo.template
 			});
+			oColumn._setCellContentVisibilitySettings(mColumnInfo.cellContentVisibilitySettings);
+			oTable.addColumn(oColumn);
+		});
+		oTable.setFixedColumnCount(2);
 
-			return pSequence;
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			return this.setRowStates(aRowInfo.map(function(mRowInfo) {
+				return mRowInfo.state;
+			}));
+		}.bind(this)).then(function() {
+			aColumnInfo.forEach(function(mColumnInfo, iIndex) {
+				assertCellContentVisibility(oTable.getColumns()[iIndex], mColumnInfo.title);
+			});
 		});
 	});
 });
