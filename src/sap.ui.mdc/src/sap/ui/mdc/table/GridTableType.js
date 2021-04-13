@@ -183,6 +183,20 @@ sap.ui.define([
 		});
 	};
 
+	GridTableType.enableColumnResizer = function(oInnerTable) {
+		oInnerTable.getColumns().forEach(function(oColumn) {
+			oColumn.setResizable(true);
+			oColumn.setAutoResizable(true);
+		});
+	};
+
+	GridTableType.disableColumnResizer = function(oInnerTable) {
+		oInnerTable.getColumns().forEach(function(oColumn) {
+			oColumn.setResizable(false);
+			oColumn.setAutoResizable(false);
+		});
+	};
+
 	GridTableType.updateSelection = function(oTable) {
 		var sSelectionMode = TableTypeBase.getSelectionMode(oTable);
 		oTable._oTable.getPlugins()[0].setSelectionMode(sSelectionMode);

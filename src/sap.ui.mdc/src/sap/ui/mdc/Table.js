@@ -35,7 +35,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/FilterController",
 	"sap/ui/mdc/p13n/subcontroller/GroupController",
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
-	"sap/m/ColumnPopoverSelectListItem"
+	"sap/m/ColumnPopoverSelectListItem",
+	"sap/m/ColumnPopoverActionItem"
 ], function(
 	Control,
 	ActionToolbar,
@@ -69,7 +70,8 @@ sap.ui.define([
 	FilterController,
 	GroupController,
 	AggregateController,
-	ColumnPopoverSelectListItem
+	ColumnPopoverSelectListItem,
+	ColumnPopoverActionItem
 ) {
 	"use strict";
 
@@ -328,6 +330,16 @@ sap.ui.define([
 				busyIndicatorDelay : {
 					type: "int",
 					defaultValue: 100
+				},
+				/**
+				 * Enables column resizing for all supported table types.
+				 *
+				 * @since 1.90
+				 */
+				enableColumnResize: {
+					type: "boolean",
+					group: "Behaviour",
+					defaultValue: true
 				}
 			},
 			aggregations: {
@@ -829,6 +841,17 @@ sap.ui.define([
 		return this;
 	};
 
+	Table.prototype.setEnableColumnResize = function(bEnableColumnResize) {
+		var bOldEnableColumnResize = this.getEnableColumnResize();
+		this.setProperty("enableColumnResize", bEnableColumnResize, true);
+
+		if (bEnableColumnResize !== bOldEnableColumnResize) {
+			this._updateColumnResizer();
+		}
+
+		return this;
+	};
+
 	Table.prototype.setP13nMode = function(aMode) {
 		var aOldP13nMode = this.getP13nMode();
 
@@ -1158,6 +1181,7 @@ sap.ui.define([
 	Table.prototype._createContent = function() {
 		this._createToolbar();
 		this._createTable();
+		this._updateColumnResizer();
 		this._updateRowAction();
 		this.getColumns().forEach(this._insertInnerColumn, this);
 		this.setAggregation("_content", this._oTable);
@@ -1711,6 +1735,26 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Enable/Disable Column resizing on the inner table based on <code>enableColumnResize</code> property of the MDC table
+	 *
+	 * @private
+	 */
+	Table.prototype._updateColumnResizer = function() {
+		if (!this._oTable) {
+			return;
+		}
+
+		var bEnableColumnResizer = this.getEnableColumnResize();
+		var oTableType = this._bMobileTable ? ResponsiveTableType : GridTableType;
+
+		if (bEnableColumnResizer) {
+			oTableType.enableColumnResizer(this._oTable);
+		} else {
+			oTableType.disableColumnResizer(this._oTable);
+		}
+	};
+
 	Table.prototype._updateSelectionBehavior = function() {
 		var oTableType = this._bMobileTable ? ResponsiveTableType : GridTableType;
 		oTableType.updateSelection(this);
@@ -1733,7 +1777,9 @@ sap.ui.define([
 	Table.prototype._onColumnPress = function(oColumn) {
 		var iIndex,
 			oParent = oColumn.getParent(),
-			oMDCColumn;
+			oMDCColumn,
+			bResizeButton = window.matchMedia("(hover:none)").matches && this._bMobileTable && this.getEnableColumnResize();
+
 		iIndex = oParent.indexOfColumn(oColumn);
 
 		oMDCColumn = this.getColumns()[iIndex];
@@ -1790,6 +1836,15 @@ sap.ui.define([
 				aHeaderItems.unshift(oFilter);
 			}
 
+			if (bResizeButton) {
+				var oColumnResize = new ColumnPopoverActionItem({
+					text: oResourceBundle.getText("table.SETTINGS_RP_RESIZE"),
+					icon: "sap-icon://resize-horizontal",
+					press: [oColumn, this._onColumnResize, this]
+				});
+				aHeaderItems.push(oColumnResize);
+			}
+
 			aHeaderItems && aHeaderItems.forEach(function(item) {
 				item && this._createPopover(item, oColumn);
 			}.bind(this));
@@ -1812,6 +1867,10 @@ sap.ui.define([
 		var sSortProperty = oEvent.getParameter("property");
 
 		TableSettings.createSort(this, sSortProperty, bDescending, true);
+	};
+
+	Table.prototype._onColumnResize = function(oEvent, oColumn) {
+		ResponsiveTableType.startColumnResize(this._oTable, oColumn);
 	};
 
 	Table.prototype._onCustomGroup = function (sSortProperty) {
@@ -1913,7 +1972,9 @@ sap.ui.define([
 			width: oMDCColumn.getWidth(),
 			minWidth: Math.round(oMDCColumn.getMinWidth() * parseFloat(MLibrary.BaseFontSize)),
 			hAlign: oMDCColumn.getHAlign(),
-			label: oMDCColumn.getColumnHeaderControl(this._bMobileTable)
+			label: oMDCColumn.getColumnHeaderControl(this._bMobileTable),
+			resizable: this.getEnableColumnResize(),
+			autoResizable: this.getEnableColumnResize()
 		});
 	};
 

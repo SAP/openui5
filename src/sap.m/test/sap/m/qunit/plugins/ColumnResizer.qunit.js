@@ -206,6 +206,36 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Plugin behavior when table has one column and the column is destroyed", function(assert) {
+		this.oTable.destroy();
+		var oColumnResizer = new ColumnResizer();
+		this.oTable = new Table({
+			columns: [
+				new Column({
+					header: new Text({
+						text: "Column1 has a very very long text"
+					})
+				})
+			],
+			items: [
+				new ColumnListItem({
+					cells: [
+						new Text({
+							text: "Cell1"
+						})
+					]
+				})
+			]
+		});
+
+		this.oTable.addDependent(oColumnResizer);
+		this.oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+		this.oTable.getColumns()[0].destroy();
+		Core.applyChanges();
+		assert.notOk(oColumnResizer._aResizables.length, "Resizables updated when column is destroyed");
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();

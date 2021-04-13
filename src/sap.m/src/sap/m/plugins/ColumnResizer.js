@@ -115,7 +115,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnResizer.prototype._updateAriaDescribedBy = function(sAction) {
-		this._aResizables.forEach(function(oResizable) {
+		this._aResizables && this._aResizables.forEach(function(oResizable) {
 			var oResizableControl = jQuery(oResizable).control(0, true);
 			var oFocusDomRef = oResizableControl && oResizableControl.getFocusDomRef();
 			jQuery(oFocusDomRef)[sAction + "AriaDescribedBy"](InvisibleText.getStaticId("sap.m", "COLUMNRESIZER_RESIZABLE"));
