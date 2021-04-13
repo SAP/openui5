@@ -1587,7 +1587,7 @@ sap.ui.define([
 			}
 
 			oFocusedDate.setDate(oFocusedDate.getDate() - 1);
-			this._renderMonth(bSkipFocus, true);
+			this._renderMonth(bSkipFocus, false);
 			this._addMonthFocusDelegate();
 			break;
 
@@ -1649,7 +1649,7 @@ sap.ui.define([
 				oFocusedDate = this._getFocusedDate();
 			}
 			oFocusedDate.setMonth(oFocusedDate.getMonth() + 1, 1);
-			this._renderMonth(false, false, false, true);
+			this._renderMonth(false, false);
 			this._addMonthFocusDelegate();
 			break;
 
@@ -1781,7 +1781,7 @@ sap.ui.define([
 		if (bRestoreOldDate) {
 			// in multimonth mode stay at the last focused date
 			if (!deepEqual(this._getFocusedDate(), oDate)) {
-				this._renderMonth(false, false, true);
+				this._renderMonth(false, true);
 			}
 		} else {
 			this._focusDate(oDate, bOtherMonth);
@@ -1802,66 +1802,39 @@ sap.ui.define([
 	 * sets the date in the used Month controls
 	 * @param {sap.ui.unified.Calendar} this Calendar instance
 	 * @param {boolean} bSkipFocus if set no focus is set to the date
-	 * @param {boolean} bInLastMont if more than one month is used, date is rendered in last month
 	 * @param {boolean} bNoEvent if set, no startDateChange event is fired
-	 * @param {boolean} bNavigation if true is passed, the rendering is triggered because of navigation
 	 */
-	Calendar.prototype._renderMonth = function (bSkipFocus, bInLastMonth, bNoEvent, bNavigation){
-
+	Calendar.prototype._renderMonth = function (bSkipFocus, bNoEvent){
 		var oDate = this._getFocusedDate(),
 			aMonths = this.getAggregation("month"),
-			bIsDateInFirstMonth = false,
 			oMonth,
 			oMonthDate,
-			oFirstDate,
+			oCalMonthDate = aMonths[0].getDate() ?
+				CalendarDate.fromLocalJSDate(aMonths[0].getDate(), this.getPrimaryCalendarType()) :
+				undefined,
+			oFirstDate = _determineFirstMonthDate.call(this, new CalendarDate(oDate, this.getPrimaryCalendarType())),
 			i = 0,
-			iI;
+			bMonthContainsDate = oCalMonthDate ? CalendarUtils._isSameMonthAndYear(oCalMonthDate, oDate) : false,
+			bFireStartDateChange = !bNoEvent && !bMonthContainsDate;
 
 		for (i = 0; i < aMonths.length; i++) {
-			iI = bNavigation ? 0 : i;
 			oMonth = aMonths[i];
-			if (oMonth.checkDateFocusable(oDate.toLocalJSDate()) && aMonths[iI].getDate() && oDate.getMonth() === aMonths[iI].getDate().getMonth()) {
-				bIsDateInFirstMonth = true;
-			}
-			if (bIsDateInFirstMonth || aMonths.length == 1) {
-				// if only 1 month, date must be set in it any way
-				if (!bSkipFocus) {
-					oMonth.setDate(oDate.toLocalJSDate());
-				} else {
-					oMonth.displayDate(oDate.toLocalJSDate());
-				}
-				break;
+			oMonthDate = new CalendarDate(oFirstDate, this.getPrimaryCalendarType());
+			oMonthDate.setMonth(oFirstDate.getMonth() + i);
+			if (!bSkipFocus && CalendarUtils._isSameMonthAndYear(oMonthDate, oDate)) {
+				oMonth.setDate(oDate.toLocalJSDate());
+			} else {
+				oMonth.displayDate(oMonthDate.toLocalJSDate());
 			}
 		}
 
-		if (!bIsDateInFirstMonth) {
-			// date not found in existing months - render new ones
+		// change month and year
+		this._updateHeader(oFirstDate);
+		this._setPrimaryHeaderMonthButtonText();
+		this._toggleTwoMonthsInTwoColumnsCSS();
 
-			oFirstDate = new CalendarDate(oDate, this.getPrimaryCalendarType());
-
-			if (aMonths.length > 1) {
-				oFirstDate = _determineFirstMonthDate.call(this, oFirstDate);
-
-				for (i = 0; i < aMonths.length; i++) {
-					oMonth = aMonths[i];
-					oMonthDate = new CalendarDate(oFirstDate, this.getPrimaryCalendarType());
-					oMonthDate.setMonth(oFirstDate.getMonth() + i);
-					if (!bSkipFocus && CalendarUtils._isSameMonthAndYear(oMonthDate, oDate)) {
-						oMonth.setDate(oDate.toLocalJSDate());
-					}else {
-						oMonth.displayDate(oMonthDate.toLocalJSDate());
-					}
-				}
-			}
-
-			// change month and year
-			this._updateHeader(oFirstDate);
-			this._setPrimaryHeaderMonthButtonText();
-			this._toggleTwoMonthsInTwoColumnsCSS();
-
-			if (!bNoEvent) {
-				this.fireStartDateChange();
-			}
+		if (bFireStartDateChange) {
+			this.fireStartDateChange();
 		}
 
 	};
@@ -1986,12 +1959,11 @@ sap.ui.define([
 			bFireStartDateChange = this._focusDateExtend(oDate, bOtherMonth, bNoEvent);
 		}
 
-		var bInLastMonth = oFocusedDate.isBefore(this._getFocusedDate());
 
 		this._setFocusedDate(oFocusedDate);
 
 		if (bChanged || bOtherMonth) {
-			this._renderMonth(false, bInLastMonth, bNoEvent);
+			this._renderMonth(false, bNoEvent);
 			this._addMonthFocusDelegate();
 		}
 
@@ -2745,7 +2717,7 @@ sap.ui.define([
 		this._setFocusedDate(oCalDate);
 
 		if (this.getDomRef() && this._iMode == 0) {
-			this._renderMonth(bSkipFocus, false, true, true); // fire no startDateChange event on programmatical change
+			this._renderMonth(bSkipFocus, true); // fire no startDateChange event on programmatical change
 		}
 
 	}
