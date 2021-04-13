@@ -868,7 +868,8 @@ sap.ui.define([
 	 * @public
 	 * @since 1.53.0
 	 */
-	Context.prototype.refresh = function (sGroupId, bAllowRemoval) {
+	Context.prototype.refresh
+		= function (sGroupId, bAllowRemoval) { // eslint-disable-line no-unused-vars
 		this.requestRefresh.apply(this, arguments).catch(this.oModel.getReporter());
 	};
 

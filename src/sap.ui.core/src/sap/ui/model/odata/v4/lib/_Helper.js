@@ -800,7 +800,7 @@ sap.ui.define([
 		 *   The value of the additionalTargets annotation, or <code>undefined</code> in case there
 		 *   is not exactly one such annotation (ignoring the alias)
 		 */
-		 getAdditionalTargets : function (oMessage) {
+		getAdditionalTargets : function (oMessage) {
 			return _Helper.getAnnotation(oMessage, ".additionalTargets");
 		},
 
@@ -920,7 +920,7 @@ sap.ui.define([
 		 *   The value of the ContentID annotation, or <code>undefined</code> in case there is not
 		 *   exactly one such annotation (ignoring the alias)
 		 */
-		 getContentID : function (oMessage) {
+		getContentID : function (oMessage) {
 			return _Helper.getAnnotation(oMessage, ".ContentID");
 		},
 
