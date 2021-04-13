@@ -82,7 +82,12 @@ sap.ui.define([
 				/**
 				 * Shows or hides the edit button.
 				 */
-				visibleEdit: {type: "boolean", defaultValue: true}
+				visibleEdit: {type: "boolean", defaultValue: true},
+				/**
+				 * URL where the uploaded files will be stored. If empty, uploadUrl from the uploader is considered.
+				 * @since 1.90
+				 */
+				uploadUrl: {type: "string", defaultValue: null}
 			},
 			defaultAggregation: "attributes",
 			aggregations: {
@@ -109,7 +114,12 @@ sap.ui.define([
 					type: "sap.m.ObjectStatus",
 					multiple: true,
 					singularName: "status"
-				}
+				},
+				/**
+				 * Header fields to be included in the header section of an XMLHttpRequest (XHR) request
+				 * @since 1.90
+				 */
+				headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"}
 			},
 			events: {
 				/**

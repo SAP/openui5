@@ -9,9 +9,12 @@ sap.ui.define([
 	"sap/ui/core/util/File",
 	"sap/ui/Device",
 	"sap/ui/core/Item",
-	"sap/m/upload/UploadSetItem"
-], function (Log, MobileLibrary, Element, FileUtil, Device, HeaderField, UploadSetItem) {
+	"sap/m/upload/UploadSetItem",
+	"sap/m/upload/UploaderHttpRequestMethod"
+], function (Log, MobileLibrary, Element, FileUtil, Device, HeaderField, UploadSetItem, UploaderHttpRequestMethod) {
 	"use strict";
+
+	var HttpRequestMethod = UploaderHttpRequestMethod;
 
 	/**
 	 * Constructor for a new Uploader.
@@ -43,7 +46,12 @@ sap.ui.define([
 				/**
 				 * URL where the next file is going to be download from.
 				 */
-				downloadUrl: {type: "string", defaultValue: null}
+				downloadUrl: {type: "string", defaultValue: null},
+				/**
+				 * HTTP request method chosen for file upload.
+				 * @since 1.90
+				 */
+				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: HttpRequestMethod.Post}
 			},
 			events: {
 				/**
@@ -119,9 +127,10 @@ sap.ui.define([
 	 */
 	Uploader.uploadFile = function (oFile, sUrl, aHeaderFields) {
 		var oXhr = new window.XMLHttpRequest();
+		var sHttpRequestMethod = this.getHttpRequestMethod();
 
 		return new Promise(function(resolve, reject) {
-			oXhr.open("POST", sUrl, true);
+			oXhr.open(sHttpRequestMethod, sUrl, true);
 
 			if ((Device.browser.edge || Device.browser.internet_explorer) && oFile.type && oXhr.readyState === 1) {
 				oXhr.setRequestHeader("Content-Type", oFile.type);
@@ -161,9 +170,11 @@ sap.ui.define([
 			oRequestHandler = {
 				xhr: oXhr,
 				item: oItem
-			};
+			},
+			sHttpRequestMethod = this.getHttpRequestMethod(),
+			sUploadUrl = oItem.getUploadUrl() || this.getUploadUrl();
 
-		oXhr.open("POST", this.getUploadUrl(), true);
+		oXhr.open(sHttpRequestMethod, sUploadUrl, true);
 
 		if ((Device.browser.edge || Device.browser.internet_explorer) && oFile.type && oXhr.readyState === 1) {
 			oXhr.setRequestHeader("Content-Type", oFile.type);

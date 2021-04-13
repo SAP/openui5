@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"sap/m/upload/Uploader"
 ], function (jQuery, KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader) {
 	"use strict";
 
 	function getData() {
@@ -292,6 +293,30 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(IconPool.getIconForMimeType(oItem.getMediaType()), oIcon, "Icon is set based on mimeType");
+
+	});
+
+	QUnit.test("Test for uploadUrl property", function (assert) {
+		//Setup
+		var oItem = this.oUploadSet.getItems()[0];
+		var oUploader = new Uploader();
+		var oXMLHttpRequestOpenSpy = this.spy(window.XMLHttpRequest.prototype, "open");
+
+		oItem.setUploadUrl("testingURL");
+		this.oUploadSet.setAggregation("uploader", oUploader);
+
+		this.oUploadSet.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oUploader.uploadItem(oItem);
+
+		//Assert
+		assert.ok(oXMLHttpRequestOpenSpy.calledWith("POST", "testingURL"), "XML Http request is made with UploadSet item's URL");
+
+		//Clean
+		oUploader.destroy();
+		oXMLHttpRequestOpenSpy.restore();
 	});
 
 });

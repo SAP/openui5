@@ -255,6 +255,29 @@ sap.ui.define([
 		assert.equal(jQuery.sap.byId(this.oUploadSet.getId() + "-no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
 	});
 
+	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", function (assert) {
+		//Setup
+		var oUploader = new Uploader({
+			httpRequestMethod: "PUT"
+		}),
+		oItem = this.oUploadSet.getItems()[0],
+		oXMLHttpRequestOpenSpy = this.spy(window.XMLHttpRequest.prototype, "open");
+
+		this.oUploadSet.setAggregation("uploader", oUploader);
+		this.oUploadSet.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oUploader.uploadItem(oItem);
+
+		//Assert
+		assert.ok(oXMLHttpRequestOpenSpy.calledWith("PUT"), "XML Http put request is made");
+
+		//Clean
+		oUploader.destroy();
+		oXMLHttpRequestOpenSpy.restore();
+	});
+
 	QUnit.module("Drag and drop", {
 		beforeEach: function () {
 			this.$RootNode = jQuery(document.body);

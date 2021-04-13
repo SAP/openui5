@@ -25,10 +25,13 @@ sap.ui.define([
 	"sap/ui/unified/FileUploader",
 	"sap/m/upload/UploadSetItem",
 	"sap/m/upload/Uploader",
-	"sap/m/upload/UploadSetRenderer"
+	"sap/m/upload/UploadSetRenderer",
+	"sap/m/upload/UploaderHttpRequestMethod"
 ], function (Control, Icon, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
-			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer) {
+			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod) {
 	"use strict";
+
+	var HttpRequestMethod = UploaderHttpRequestMethod;
 
 	/**
 	 * Constructor for a new UploadSet.
@@ -101,7 +104,12 @@ sap.ui.define([
 				/**
 				 * URL where the uploaded files will be stored.
 				 */
-				uploadUrl: {type: "string", defaultValue: null}
+				uploadUrl: {type: "string", defaultValue: null},
+				 /**
+				  * HTTP request method chosen for file upload.
+				  * @since 1.90
+				  */
+				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: HttpRequestMethod.Post}
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -1020,7 +1028,9 @@ sap.ui.define([
 
 	UploadSet.prototype._getImplicitUploader = function () {
 		if (!this._oUploader) {
-			this._oUploader = new Uploader();
+			this._oUploader = new Uploader({
+				httpRequestMethod : this.getHttpRequestMethod()
+			});
 			this._oUploader.setUploadUrl(this.getUploadUrl());
 			this.registerUploaderEvents(this._oUploader);
 			this.addDependent(this._oUploader);
@@ -1036,7 +1046,7 @@ sap.ui.define([
 	UploadSet.prototype._uploadItemIfGoodToGo = function (oItem) {
 		if (oItem.getUploadState() === UploadState.Ready && !oItem._isRestricted()) {
 			if (this.fireBeforeUploadStarts({item: oItem})) {
-				this._getActiveUploader().uploadItem(oItem, this.getHeaderFields());
+				this._getActiveUploader().uploadItem(oItem, oItem.getHeaderFields() || this.getHeaderFields());
 			}
 		}
 	};
