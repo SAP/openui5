@@ -98,9 +98,16 @@ sap.ui.define(['sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContai
 		 * This method is used to chain navigations to be triggered in the correct order, only relevant for async
 		 * @private
 		 */
-		TargetHandler.prototype._chainNavigation = function(fnNavigation) {
-			this._oNavigationOrderPromise = this._oNavigationOrderPromise.then(fnNavigation);
-			return this._oNavigationOrderPromise;
+		TargetHandler.prototype._chainNavigation = function(fnNavigation, sNavigationIdentifier) {
+			var oPromiseChain = this._oNavigationOrderPromise.then(fnNavigation);
+
+			// navigation order promise should resolve even when the inner promise rejects to allow further navigation
+			// to be done. Therefore it's needed to catch the rejected inner promise
+			this._oNavigationOrderPromise = oPromiseChain.catch(function(oError) {
+				Log.error("The following error occurred while displaying routing target with name '" + sNavigationIdentifier + "': " + oError);
+			});
+
+			return oPromiseChain;
 		};
 
 		/**
