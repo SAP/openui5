@@ -71,14 +71,12 @@ sap.ui.define([
 	var sEndDirection = bRTL ? "left" : "right";
 	var iDirectionFactor = bRTL ? -1 : 1;
 
+	ColumnResizer.getPlugin = PluginBase.getPlugin;
+
 	ColumnResizer.prototype.init = function() {
 		this._iHoveredColumnIndex = -1;
 		this._aPositions = [];
 		this._oHandle = null;
-	};
-
-	ColumnResizer.prototype.isApplicable = function(oControl) {
-		return oControl.isA(["sap.m.Table"]);
 	};
 
 	ColumnResizer.prototype.onActivate = function(oControl) {
@@ -97,16 +95,16 @@ sap.ui.define([
 	ColumnResizer.prototype.onBeforeRendering = function() {
 		if (this._$Container) {
 			this._$Container.removeClass(CSS_CLASS + "Container").off("." + CSS_CLASS);
-			this._$Container.find(this.getControlPluginConfig("resizable")).removeClass(CSS_CLASS + "Resizable");
+			this._$Container.find(this.getConfig("resizable")).removeClass(CSS_CLASS + "Resizable");
 			this._updateAriaDescribedBy("remove");
 		}
 	};
 
 	ColumnResizer.prototype.onAfterRendering = function() {
-		this._$Container = this.getControl().$(this.getControlPluginConfig("container"));
+		this._$Container = this.getControl().$(this.getConfig("container"));
 		Device.system.desktop && this._$Container.on("mousemove." + CSS_CLASS, this._onmousemove.bind(this));
 		this._$Container.addClass(CSS_CLASS + "Container").on("mouseleave." + CSS_CLASS, this._onmouseleave.bind(this));
-		this._aResizables = this._$Container.find(this.getControlPluginConfig("resizable")).addClass(CSS_CLASS + "Resizable").get();
+		this._aResizables = this._$Container.find(this.getConfig("resizable")).addClass(CSS_CLASS + "Resizable").get();
 		this._updateAriaDescribedBy("add");
 		this._invalidatePositions();
 	};
@@ -119,13 +117,13 @@ sap.ui.define([
 	ColumnResizer.prototype._updateAriaDescribedBy = function(sAction) {
 		this._aResizables.forEach(function(oResizable) {
 			var oResizableControl = jQuery(oResizable).control(0, true);
-			var oFocusDomRef = oResizableControl.getFocusDomRef();
+			var oFocusDomRef = oResizableControl && oResizableControl.getFocusDomRef();
 			jQuery(oFocusDomRef)[sAction + "AriaDescribedBy"](InvisibleText.getStaticId("sap.m", "COLUMNRESIZER_RESIZABLE"));
 		});
 	};
 
 	ColumnResizer.prototype.ontouchstart = function(oEvent) {
-		if (this.getControlPluginConfig("allowTouchResizing") && jQuery(oEvent.target).closest(this._aResizables)[0]) {
+		if (this.getConfig("allowTouchResizing") && jQuery(oEvent.target).closest(this._aResizables)[0]) {
 			this._onmousemove(oEvent);
 		} else if (this._iHoveredColumnIndex == -1 && this._oHandle && this._oHandle.style[sBeginDirection]) {
 			this._onmousemove(oEvent);
@@ -227,13 +225,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnResizer.prototype._calculateAutoColumnDistanceX = function() {
-		var $Cells = this.getControlPluginConfig("columnRelatedCells", null, this._$Container, oSession.oCurrentColumn.getId());
+		var $Cells = this.getConfig("columnRelatedCells", this._$Container, oSession.oCurrentColumn.getId());
 
 		if (!$Cells || !$Cells.length) {
 			return;
 		}
 
-		var $HiddenArea = jQuery("<div></div>").addClass(CSS_CLASS + "SizeDetector").addClass(this.getControlPluginConfig("cellPaddingStyleClass"));
+		var $HiddenArea = jQuery("<div></div>").addClass(CSS_CLASS + "SizeDetector").addClass(this.getConfig("cellPaddingStyleClass"));
 		var $ClonedCells = $Cells.children().clone().removeAttr("id");
 		this._$Container.append($HiddenArea);
 		var iWidth = Math.round($HiddenArea.append($ClonedCells)[0].getBoundingClientRect().width);
@@ -340,7 +338,7 @@ sap.ui.define([
 		oSession.oCurrentColumn = oSession.$CurrentColumn.control(0, true);
 		oSession.fCurrentColumnWidth = oSession.$CurrentColumn.width();
 		oSession.iMaxDecrease = this._getColumnMinWidth(oSession.oCurrentColumn) - oSession.fCurrentColumnWidth;
-		oSession.iEmptySpace = this.getControlPluginConfig("emptySpace", -1, this.getControl());
+		oSession.iEmptySpace = this.getConfig("emptySpace", this.getControl());
 
 		if (oSession.iEmptySpace != -1) {
 			oSession.$NextColumn = jQuery(this._aResizables[iIndex + 1]);
@@ -385,7 +383,7 @@ sap.ui.define([
 		}
 
 		// when any column is resized, then make all visible columns have fixed width
-		this.getControlPluginConfig("fixAutoWidthColumns") && this._aResizables.forEach(function(oResizable) {
+		this.getConfig("fixAutoWidthColumns") && this._aResizables.forEach(function(oResizable) {
 			var $Resizable = jQuery(oResizable),
 				oColumn = $Resizable.control(0, true),
 				sWidth = oColumn.getWidth();
@@ -478,7 +476,7 @@ sap.ui.define([
 	/**
 	 * Plugin-specific control configurations.
 	 */
-	PluginBase.setConfig({
+	PluginBase.setConfigs({
 		"sap.m.Table": {
 			container: "listUl",
 			resizable: ".sapMListTblHeaderCell:not([aria-hidden=true])",
