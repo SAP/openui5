@@ -31,6 +31,27 @@
 					</uxap:ObjectPageHeader>
 				</uxap:headerTitle>
 				<uxap:sections>
+					<uxap:ObjectPageSection id="ObjectPageSectionWithBar" title="Object Page section with bar">
+						<uxap:ObjectPageSubSection>
+							<layout:VerticalLayout class="sapUiContentPadding" width="100%" id="BarsVerticalLayout">
+								<Bar id="bar1">
+									<contentLeft>
+										<Button text="Left button1" id="lb11" />
+										<Button text="Left button2" id="lb12" visible="false"/>
+									</contentLeft>
+									<contentMiddle>
+										<Button text="Middle button1" id="mb11" />
+										<Button text="Middle button2" id="mb12" visible="false"/>
+									</contentMiddle>
+									<contentRight>
+										<Button text="Right button1" id="rb11" />
+										<Button text="Right button2" id="rb12" />
+									</contentRight>
+								</Bar>
+								<Button text="Below the Bar" id="bntb" />
+							</layout:VerticalLayout>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
 					<uxap:ObjectPageSection id="ObjectPageSectionWithForm" title="Objectpage section with form">
 						<uxap:ObjectPageSubSection>
 							<!--This SmartForm is bound to EntityType02 in the controller -->

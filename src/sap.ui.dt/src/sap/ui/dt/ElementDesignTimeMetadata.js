@@ -190,6 +190,26 @@ function(
 		}
 	};
 
+	/**
+	 * Returns the display names for an aggregation.
+	 * @param {string} sAggregationName - Technical name of the aggregation
+	 * @param {Object} oElement - Element for which the aggregation display name is being returned
+	 * @return {map} Display names of the aggregation (singular and plural)
+	 * @public
+	 */
+	ElementDesignTimeMetadata.prototype.getAggregationDisplayName = function(sAggregationName, oElement) {
+		var vDisplayNames = this.getAggregation(sAggregationName).displayName;
+		if (typeof vDisplayNames === "function") {
+			vDisplayNames = vDisplayNames(oElement);
+		}
+		if (vDisplayNames) {
+			return {
+				singular: this._getText(oElement, vDisplayNames.singular),
+				plural: this._getText(oElement, vDisplayNames.plural)
+			};
+		}
+	};
+
 	ElementDesignTimeMetadata.prototype.getName = function(oElement) {
 		var vName = this.getData().name;
 		if (typeof vName === "function") {

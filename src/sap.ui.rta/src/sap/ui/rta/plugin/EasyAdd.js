@@ -57,15 +57,16 @@ sap.ui.define([
 
 		var onAddPressed = function(bOverlayIsSibling, oOverlay, iIndex) {
 			var sControlName;
+			var sAggregationName = "sections";
 			if (bOverlayIsSibling) {
 				sControlName = oOverlay.getDesignTimeMetadata().getName().plural;
 			} else {
-				sControlName = oOverlay.getDesignTimeMetadata().getAggregation("sections").childNames.plural();
+				sControlName = oOverlay.getDesignTimeMetadata().getAggregation(sAggregationName).childNames.plural();
 			}
 			// This is needed to trigger the selection of available elements in the showAvailableElements method
 			// Normally, getAllElements is called before showAvailableElements, here this is not the case
 			this.clearCachedElements();
-			this.showAvailableElements(bOverlayIsSibling, [oOverlay], iIndex, sControlName);
+			this.showAvailableElements(bOverlayIsSibling, sAggregationName, [oOverlay], iIndex, sControlName);
 		}.bind(this);
 
 		var fnAddButton = function(oOverlay, oOverlayDom, bSibling, vControlName, iIndex) {

@@ -642,6 +642,12 @@ sap.ui.define([
 						}
 					}
 				},
+				"plugin/additionalElements/AdditionalElementsPluginContextMenu": {
+					group: "Plugin",
+					coverage: {
+						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin"]
+					}
+				},
 				"plugin/CompVariant": {
 					group: "Plugin",
 					coverage: {

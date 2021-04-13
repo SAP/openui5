@@ -683,7 +683,9 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._addSubMenu = function (mMenuItem, mPosition, oOverlay) {
 		mMenuItem.submenu.forEach(function (oSubMenuItem) {
-			oSubMenuItem.handler = mMenuItem.handler;
+			if (!oSubMenuItem.handler) {
+				oSubMenuItem.handler = mMenuItem.handler;
+			}
 		});
 
 		mMenuItem.handler = function (sMenuItemId, mPosition, oOverlay) {
