@@ -61,9 +61,6 @@ sap.ui.define([
 		}, {
 			apiFunctionName: "setDefaultVariantId",
 			compVariantStateFunctionName: "setDefault"
-		}, {
-			apiFunctionName: "setExecuteOnSelection",
-			compVariantStateFunctionName: "setExecuteOnSelection"
 		}].forEach(function(testData) {
 			QUnit.test("When " + testData.apiFunctionName + " is called", function (assert) {
 				// mock control

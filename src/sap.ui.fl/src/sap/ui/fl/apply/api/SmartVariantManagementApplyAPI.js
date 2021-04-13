@@ -177,23 +177,6 @@ sap.ui.define([
 		getDefaultVariantId: function(mPropertyBag) {
 			var oChange = getVariantsMapForKey(mPropertyBag.control).defaultVariant;
 			return oChange ? oChange.getContent().defaultVariantName : "";
-		},
-
-		/**
-		 * Synchronously retrieves the <code>ExecuteOnSelection</code> for the standard variant for the current control. WARNING: The consumer has to make sure that the
-		 * changes have already been retrieved with <code>getChanges</code>. It's recommended to use the async API <code>getExecuteOnSelection</code>, which works regardless of any
-		 * preconditions.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @returns {boolean} <code>ExecuteOnSelection</code> flag
-		 * @private
-		 * @ui5-restricted
-		 * @deprecated
-		 */
-		getExecuteOnSelect: function(mPropertyBag) {
-			var oChange = getVariantsMapForKey(mPropertyBag.control).standardVariantChange;
-			return oChange ? oChange.getContent().executeOnSelect : null;
 		}
 	};
 

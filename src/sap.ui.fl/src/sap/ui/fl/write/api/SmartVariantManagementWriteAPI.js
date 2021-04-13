@@ -168,24 +168,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Retrieves the <code>ExecuteOnSelection</code> for the standard variant for the current control synchronously.
-		 * WARNING: Tthe consumer has to make sure that the changes have already been retrieved with <code>getChanges</code>.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
-		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
-		 * 			sap.ui.comp.smarttable.SmartTable|
-		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be set to 'Apply Automatically'
-		 * @param {boolean} mPropertyBag.executeOnSelection - New <code>ExecuteOnSelection</code> flag for standard variant
-		 * @private
-		 * @ui5-restricted
-		 * @returns {object} Default variant change
-		 */
-		setExecuteOnSelection: function(mPropertyBag) {
-			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.setExecuteOnSelection);
-		},
-
-		/**
 		 * Checks whether sharing of variants is enabled.
 		 *
 		 * @private
