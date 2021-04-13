@@ -1776,6 +1776,47 @@ function(
 	 */
 	MultiComboBox.prototype._decorateListItem = function(oListItem) {
 		oListItem.addDelegate({
+			onkeydown: function(oEvent) {
+				if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which == KeyCodes.A) {
+					oEvent.setMarked();
+					oEvent.preventDefault();
+
+					var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
+					var aSelectedItems = this._getSelectedItemsOf(aVisibleItems);
+
+					if (aSelectedItems.length !== aVisibleItems.length) {
+						aVisibleItems.forEach(function(oItem) {
+							this.setSelection({
+								item: oItem,
+								id: oItem.getId(),
+								key: oItem.getKey(),
+								fireChangeEvent: true,
+								suppressInvalidate: true,
+								listItemUpdated: false
+							});
+						}, this);
+
+					} else {
+						aVisibleItems.forEach(function(oItem) {
+							this.removeSelection({
+								item: oItem,
+								id: oItem.getId(),
+								key: oItem.getKey(),
+								fireChangeEvent: true,
+								suppressInvalidate: true,
+								listItemUpdated: false
+							});
+						}, this);
+					}
+				}
+			}
+		}, this);
+
+		if (oListItem.isA("sap.m.GroupHeaderListItem")) {
+			return;
+		}
+
+		oListItem.addDelegate({
 			onkeyup: function(oEvent) {
 				var oItem = null;
 
@@ -1840,44 +1881,6 @@ function(
 				}
 
 				this._resetCurrentItem();
-
-				// Handle when CTRL + A is pressed to select all
-				// Note: at first this function should be called and
-				// not the
-				// ListItemBase
-				if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which == KeyCodes.A) {
-					oEvent.setMarked();
-					oEvent.preventDefault();
-
-					var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
-					var aSelectedItems = this._getSelectedItemsOf(aVisibleItems);
-
-					if (aSelectedItems.length !== aVisibleItems.length) {
-						aVisibleItems.forEach(function(oItem) {
-							this.setSelection({
-								item: oItem,
-								id: oItem.getId(),
-								key: oItem.getKey(),
-								fireChangeEvent: true,
-								suppressInvalidate: true,
-								listItemUpdated: false
-							});
-						}, this);
-
-					} else {
-
-						aVisibleItems.forEach(function(oItem) {
-							this.removeSelection({
-								item: oItem,
-								id: oItem.getId(),
-								key: oItem.getKey(),
-								fireChangeEvent: true,
-								suppressInvalidate: true,
-								listItemUpdated: false
-							});
-						}, this);
-					}
-				}
 			}
 		}, true, this);
 
@@ -3036,6 +3039,7 @@ function(
 		}
 
 		oListItem = ListHelpers.createListItemFromCoreItem(oItem, this.getShowSecondaryValues());
+		this._decorateListItem(oListItem);
 
 		if (oItem.isA("sap.ui.core.SeparatorItem")) {
 			return oListItem;
@@ -3058,7 +3062,6 @@ function(
 		}
 
 		this.setSelectable(oItem, oItem.getEnabled());
-		this._decorateListItem(oListItem);
 		return oListItem;
 	};
 
