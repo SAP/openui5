@@ -1892,7 +1892,7 @@ function(
 		 */
 		Input.prototype._refreshListItems = function () {
 			var bShowSuggestion = this.getShowSuggestion(),
-				sTypedChars = this._oSuggPopover._sTypedInValue || this.getDOMValue() || "",
+				sTypedChars = this._oSuggPopover._bDoTypeAhead ? this._oSuggPopover._sTypedInValue : (this.getDOMValue() || ""),
 				oFilterResults,
 				iSuggestionsLength;
 
