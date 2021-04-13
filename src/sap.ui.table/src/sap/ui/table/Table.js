@@ -4388,7 +4388,7 @@ sap.ui.define([
 			oRow.getCells().forEach(function(oCell) {
 				var oColumn = Column.ofCell(oCell);
 				var oCellContentVisibilitySettings = oColumn._getCellContentVisibilitySettings();
-				var $Cell = TableUtils.getCell(this, oCell.getDomRef());
+				var $Cell = oRow.getDomRefs(true).row.find("td[data-sap-ui-colid=\"" + oColumn.getId() + "\"]");
 				var bShowCellContent = true;
 
 				if (!$Cell) {
@@ -4412,8 +4412,8 @@ sap.ui.define([
 				}
 
 				$Cell.toggleClass("sapUiTableCellHidden", !bShowCellContent);
-			}.bind(this));
-		}.bind(this));
+			});
+		});
 	};
 
 	Table.prototype.onRowsContentUpdated = function(mParameters) {
