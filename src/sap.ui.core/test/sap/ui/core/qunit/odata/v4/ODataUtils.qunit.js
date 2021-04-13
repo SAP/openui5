@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/ODataUtils",
+	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (Log, CalendarType, DateFormat, BaseODataUtils, ODataUtils, _Helper) {
+], function (Log, CalendarType, DateFormat, BaseODataUtils, ODataUtils, _Batch, _Helper) {
 	"use strict";
 
 	//*********************************************************************************************
@@ -219,6 +220,56 @@ sap.ui.define([
 
 		// code under test
 		ODataUtils._setDateTimeFormatter();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deserializeBatchResponse: success", function (assert) {
+		var aResponses = [];
+
+		this.mock(_Batch).expects("deserializeBatchResponse").withExactArgs("foo", "bar")
+			.returns(aResponses);
+
+		// code under test
+		assert.strictEqual(ODataUtils.deserializeBatchResponse("foo", "bar"), aResponses);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deserializeBatchResponse: failure", function (assert) {
+		var oError = new Error();
+
+		this.mock(_Batch).expects("deserializeBatchResponse").withExactArgs("foo", "bar")
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			ODataUtils.deserializeBatchResponse("foo", "bar");
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("serializeBatchRequest: success", function (assert) {
+		var aRequests = [],
+			oResult = {};
+
+		this.mock(_Batch).expects("serializeBatchRequest")
+			.withExactArgs(sinon.match.same(aRequests), "foo").returns(oResult);
+
+		// code under test
+		assert.strictEqual(ODataUtils.serializeBatchRequest(aRequests, "foo"), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("serializeBatchRequest: failure", function (assert) {
+		var oError = new Error(),
+			aRequests = [];
+
+		this.mock(_Batch).expects("serializeBatchRequest")
+			.withExactArgs(sinon.match.same(aRequests), "foo").throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			ODataUtils.serializeBatchRequest(aRequests, "foo");
+		}, oError);
 	});
 });
 //TODO from https://www.w3.org/TR/xmlschema11-2/#vp-dt-timezone:
