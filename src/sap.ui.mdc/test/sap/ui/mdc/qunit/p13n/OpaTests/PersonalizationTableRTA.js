@@ -51,7 +51,6 @@ sap.ui.define([
 
 		//check icons
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
@@ -78,7 +77,7 @@ sap.ui.define([
 		Then.iShouldSeeRTAPopoverWithActions(2);
 		When.iClickOnRtaSetting("sap-icon://key-user-settings");
 
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
 		Then.iShouldSeeP13nItems(aTableItems);
 	});
@@ -112,11 +111,10 @@ sap.ui.define([
 		Then.iShouldSeeRTAPopoverWithActions(2);
 		When.iClickOnRtaSetting("sap-icon://key-user-settings");
 
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("Country", undefined, aTableItems);
 
-		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
 		Then.iShouldSeeP13nItem("Country", 0);
@@ -132,7 +130,7 @@ sap.ui.define([
 	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
 
 		//close dialog
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("OK");
+		Given.closeModalDialog("OK");
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrderInTable("sap.ui.mdc.Table", "sap.ui.mdc.table.Column", [
@@ -151,12 +149,11 @@ sap.ui.define([
 		Then.iShouldSeeRTAPopoverWithActions(2);
 		When.iClickOnRtaSetting("sap-icon://key-user-settings");
 
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
-		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.settings, aTableItems);
+		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.settings, aTableItems);
 
-		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 		When.iClickOnTableItem("regionOfOrigin_code").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
@@ -168,8 +165,8 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Changed By", 5);
 		Then.iShouldSeeP13nItem("Created On", 6);
 
-		//close dialog
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("Cancel");
+		//cancel dialog
+		Given.closeModalDialog("Cancel");
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrderInTable("sap.ui.mdc.Table", "sap.ui.mdc.table.Column", [
@@ -189,12 +186,11 @@ sap.ui.define([
 		Then.iShouldSeeRTAPopoverWithActions(2);
 		When.iClickOnRtaSetting("sap-icon://key-user-settings");
 
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
-		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.settings, aTableItems);
+		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.settings, aTableItems);
 
-		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 		When.iClickOnTableItem("regionOfOrigin_code").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
@@ -214,7 +210,7 @@ sap.ui.define([
 	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
 
 		//close dialog
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("OK");
+		Given.closeModalDialog("OK");
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrderInTable("sap.ui.mdc.Table", "sap.ui.mdc.table.Column", [
@@ -248,18 +244,17 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.iShouldSeeRTAPopoverWithActions(2);
 		When.iClickOnRtaSetting("sap-icon://key-user-settings");
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
 		Then.iShouldSeeP13nItems(aTableItems);
 
 	});
 
 	// ----------------------------------------------------------------
-	// Check the 'Reorder' / 'Select' functionality
+	// Assert the order of columns
 	// ----------------------------------------------------------------
-	opaTest("check 'Reorder' mode", function (Given, When, Then) {
+	opaTest("check 'order' of columns", function (Given, When, Then) {
 		//Reorder table items
-		When.iPressButtonWithText("Reorder");
 		Then.iShouldSeeP13nItem("regionOfOrigin_code", 0);
 		Then.iShouldSeeP13nItem("Breakout Year", 1);
 		Then.iShouldSeeP13nItem("Country", 2);
@@ -269,9 +264,8 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Created On", 6);
 	});
 
-	opaTest("check 'Select' mode", function (Given, When, Then) {
+	opaTest("check column items", function (Given, When, Then) {
 		//Select table items
-		When.iPressButtonWithText("Select");
 		Then.iShouldSeeP13nItem("regionOfOrigin_code", 0, true);
 		Then.iShouldSeeP13nItem("Breakout Year", 1, true);
 		Then.iShouldSeeP13nItem("Country", 2, true);

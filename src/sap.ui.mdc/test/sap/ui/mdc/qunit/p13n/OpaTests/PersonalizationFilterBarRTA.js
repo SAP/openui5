@@ -26,7 +26,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// initialize application
 	// ----------------------------------------------------------------
-	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
+	opaTest("When I start the 'appUnderTestTable' app, the FilterBar should appear and contain some items", function (Given, When, Then) {
 		//insert application
 		Given.iStartMyAppInAFrame({
 			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
@@ -34,10 +34,6 @@ sap.ui.define([
 		});
 		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
-
-		//check icons
-		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		Then.theVariantManagementIsDirty(false);
 	});
@@ -77,7 +73,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// open Personalization dialog
 	// ----------------------------------------------------------------
-	opaTest("When I select rows and change values in the personalization dialog, the changes are reflected after confirmation", function (Given, When, Then) {
+	opaTest("When I select items and change values in the personalization dialog, the changes are reflected after confirmation", function (Given, When, Then) {
 		When.iSelectColumn("Country", null, undefined, true, true);
 		When.iSelectColumn("cityOfOrigin_city",null, undefined, true, true);
 		When.iEnterTextInFilterDialog("Founding Year", "1989");

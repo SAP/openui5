@@ -11,8 +11,11 @@ sap.ui.define([
     "sap/m/Text",
     "sap/m/Column",
     "sap/m/Table",
-    "sap/m/library"
-], function(BasePanel, Label, ColumnListItem, HBox, VBox, Icon, Text, Column, Table, mLibrary) {
+    "sap/m/library",
+    "sap/m/ToolbarSpacer",
+    "sap/m/Button",
+    "sap/m/OverflowToolbar"
+], function(BasePanel, Label, ColumnListItem, HBox, VBox, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar) {
 	"use strict";
 
     // shortcut for sap.m.ListKeyboardMode
@@ -43,12 +46,9 @@ sap.ui.define([
 		metadata: {
             library: "sap.ui.mdc",
             properties: {
-                /**
-				 * Determines whether the reordering of items should be enabled
-				 */
-				enableReorder: {
-					type: "boolean",
-					defaultValue: true
+                showHeader: {
+                    type: "boolean",
+                    defaultValue: false
                 }
             }
         },
@@ -56,15 +56,18 @@ sap.ui.define([
     });
 
     ListView.prototype.applySettings = function(){
+        this.setTemplate(this._getListTemplate());
         BasePanel.prototype.applySettings.apply(this, arguments);
         this.addStyleClass("sapUiMDCListView");
 
         this._aInitializedFields = [];
 
+        //Do not show the factory by default
         this._bShowFactory = false;
-        this.displayColumns();
+        this.addStyleClass("listViewHover");
 
-        this.setTemplate(this._getListTemplate());
+        this.displayColumns();
+        this.setEnableReorder(true);
     };
 
     ListView.prototype._getListTemplate = function() {
@@ -107,41 +110,29 @@ sap.ui.define([
         });
     };
 
-    ListView.prototype.setEnableReorder = function(bEnableReorder) {
-        var oListViewTemplate = this.getTemplate();
-
-        if (bEnableReorder) {
-            oListViewTemplate.addEventDelegate({
-                onmouseover: this._hoverHandler.bind(this),
-                onfocusin: this._focusHandler.bind(this)
-            });
-        } else {
-            oListViewTemplate = this._getListTemplate();
+    ListView.prototype.setShowHeader = function(bShowHeader) {
+        if (bShowHeader){
+            var sShowSelected = this.getResourceText("p13nDialog.SHOW_SELECTED");
+            var sShowAll = this.getResourceText("p13nDialog.SHOW_ALL");
+            this._oListControl.setHeaderToolbar(new OverflowToolbar({
+				content: [
+					this._getSearchField(),
+					new ToolbarSpacer(),
+                    new Button({
+                        press: function(oEvt){
+                            var bShowSelected = oEvt.getSource().getText() == sShowSelected;
+                            this._filterBySelected(bShowSelected, this._oListControl);
+                            oEvt.getSource().setText(bShowSelected ? sShowAll : sShowSelected);
+                        }.bind(this),
+                        text: sShowSelected
+                    })
+				]
+			}));
         }
 
-        this._setMoveButtonVisibility(true);
-        this.setTemplate(oListViewTemplate);
-
-        this.setProperty("enableReorder", bEnableReorder);
+        this.setProperty("showHeader", bShowHeader);
 
         return this;
-    };
-
-    ListView.prototype._focusHandler = function(oEvt) {
-        //(new) hovered item
-        var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
-        this._handleActivated(oHoveredItem);
-    };
-
-    ListView.prototype._hoverHandler = function(oEvt) {
-        //Only use hover if no item has been selected yet (only for hovering)
-        if (this._oSelectedItem && !this._oSelectedItem.bIsDestroyed) {
-            return;
-        }
-
-        //(new) hovered item
-        var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
-        this._handleActivated(oHoveredItem);
     };
 
     ListView.prototype._handleActivated = function(oHoveredItem) {
@@ -220,26 +211,9 @@ sap.ui.define([
 
     };
 
-    ListView.prototype._onItemPressed = function(oEvent){
-        var oTableItem = oEvent.getParameter('listItem');
-
-        //Ignore unselected items --> BasePanel move mode only expects selected items
-        if (oTableItem.getBindingContext(this.P13N_MODEL).getProperty("visible")){
-            BasePanel.prototype._onItemPressed.apply(this, arguments);
-            if (this.getEnableReorder()){
-                this._handleActivated(oTableItem);
-            }
-        }
-    };
-
     ListView.prototype._moveSelectedItem = function(){
         this._oSelectedItem = this._getMoveButtonContainer().getParent();
         BasePanel.prototype._moveSelectedItem.apply(this, arguments);
-    };
-
-    ListView.prototype._moveTableItem = function(){
-        BasePanel.prototype._moveTableItem.apply(this, arguments);
-        this._handleActivated(this._oSelectedItem);
     };
 
 	ListView.prototype.getShowFactory = function() {

@@ -32,17 +32,17 @@ sap.ui.define([
 	];
 
 	var aSortItems = [
-		{p13nItem: "artistUUID", selected: false},
-		{p13nItem: "Breakout Year", selected: false},
-		{p13nItem: "Changed By", selected: false},
-		{p13nItem: "Changed On", selected: false},
-		{p13nItem: "cityOfOrigin_city", selected: false},
-		{p13nItem: "Country", selected: false},
-		{p13nItem: "Created By", selected: false},
-		{p13nItem: "Created On", selected: false},
-		{p13nItem: "Founding Year", selected: false},
-		{p13nItem: "Name", selected: false},
-		{p13nItem: "regionOfOrigin_code", selected: false}
+		{p13nItem: "artistUUID", descending: false},
+		{p13nItem: "Breakout Year", descending: false},
+		{p13nItem: "Changed By", descending: false},
+		{p13nItem: "Changed On", descending: false},
+		{p13nItem: "cityOfOrigin_city", descending: false},
+		{p13nItem: "Country", descending: false},
+		{p13nItem: "Created By", descending: false},
+		{p13nItem: "Created On", descending: false},
+		{p13nItem: "Founding Year", descending: false},
+		{p13nItem: "Name", descending: false},
+		{p13nItem: "regionOfOrigin_code", descending: false}
 	];
 
 	var aFilterItems = [
@@ -73,7 +73,6 @@ sap.ui.define([
 
 		//check icons
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
@@ -87,17 +86,13 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
 		Then.iShouldSeeP13nItems(aTableItems);
 	});
 
 	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
-		if (sap.ui.Device.system.phone) {
-			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back);
-		} else {
-			When.iPressDialogOk();
-		}
+		When.iPressDialogOk();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -111,21 +106,24 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(false);
 	});
 
-	opaTest("When I press on 'Define Sort Properties' button, sort dialog should open", function (Given, When, Then) {
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+	opaTest("When I press on 'Sort' tab, sort dialog should open", function (Given, When, Then) {
+
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Sort");
 
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.sort);
 
-		Then.iShouldSeeP13nItems(aSortItems);
+		//open the select control in the sort tab
+		When.iClickOnP13nSelect("$_none");
+
+		//check that the expected keys are visible in the sort dialog
+		Then.iShouldSeeP13nMenuItems(aSortItems);
 	});
 
-	opaTest("When I close the 'Define Sort Properties' button, the table has not been changed", function (Given, When, Then) {
-		if (sap.ui.Device.system.phone) {
-			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back);
-		} else {
-			When.iPressDialogOk();
-		}
+	opaTest("When I close the 'Sort' tab, the table has not been changed", function (Given, When, Then) {
+		When.iPressDialogOk();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -147,17 +145,13 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
-		When.iSelectColumn("cityOfOrigin_city", Arrangement.P13nDialog.Titles.columns, aTableItems);
-		When.iSelectColumn("Founding Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("Breakout Year", undefined, aTableItems);
+		When.iSelectColumn("cityOfOrigin_city", undefined, aTableItems);
+		When.iSelectColumn("Founding Year", undefined, aTableItems);
 
 		checkTestVariantColumnsDialog(Then);
 
-		if (sap.ui.Device.system.phone) {
-			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back);
-		} else {
-			When.iPressDialogOk();
-		}
+		When.iPressDialogOk();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -220,11 +214,7 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Created By", 10, false);
 		Then.iShouldSeeP13nItem("regionOfOrigin_code", 11, false);
 
-		if (sap.ui.Device.system.phone) {
-			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back);
-		} else {
-			When.iPressDialogOk();
-		}
+		When.iPressDialogOk();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -247,7 +237,10 @@ sap.ui.define([
 	};
 
 	opaTest("Open the filter personalization dialog and save some conditions as variant 'FilterVariantTest'", function (Given, When, Then) {
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
 
 		Then.thePersonalizationDialogOpens();
 
@@ -293,7 +286,7 @@ sap.ui.define([
 
 		When.iSelectVariant("Standard");
 
-		Then.iShouldSeeVisibleItemsInTable(20);
+		Then.iShouldSeeVisibleItemsInTable(100);
 	});
 
 	opaTest("Close 'FilterVariantTest' appliance after restart", function (Given, When, Then) {
@@ -304,13 +297,19 @@ sap.ui.define([
 
 		Then.iShouldSeeVisibleItemsInTable(2);
 
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
 
 		When.iPressDialogOk();
 	});
 
 	opaTest("Reopen the filter personalization dialog to validate 'FilterVariantTest'", function (Given, When, Then) {
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
 
 		Then.thePersonalizationDialogOpens();
 
@@ -348,7 +347,10 @@ sap.ui.define([
 		//no filters on standard
 		Then.iShouldSeeTableConditions({filter: {}});
 
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
 
 		//check values from variant
 
@@ -365,7 +367,7 @@ sap.ui.define([
 
 		When.iPressDialogOk();
 
-		Then.iShouldSeeVisibleItemsInTable(20);
+		Then.iShouldSeeVisibleItemsInTable(100);
 
 		Then.theVariantManagementIsDirty(false);
 	});
@@ -375,8 +377,10 @@ sap.ui.define([
 		//Switch back to check condition appliance in filter dialog
 		When.iSelectVariant("FilterVariantTest");
 
-		//open dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
 
 		Then.thePersonalizationDialogOpens();
 
@@ -413,25 +417,18 @@ sap.ui.define([
 		When.iClickOnColumn("Name");
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Sort");
 
 		Then.thePersonalizationDialogOpens();
 
 		aSortItems = [
-			{p13nItem: "Name", selected: true},
-			{p13nItem: "artistUUID", selected: false},
-			{p13nItem: "Breakout Year", selected: false},
-			{p13nItem: "Changed By", selected: false},
-			{p13nItem: "Changed On", selected: false},
-			{p13nItem: "cityOfOrigin_city", selected: false},
-			{p13nItem: "Country", selected: false},
-			{p13nItem: "Created By", selected: false},
-			{p13nItem: "Created On", selected: false},
-			{p13nItem: "Founding Year", selected: false},
-			{p13nItem: "regionOfOrigin_code", selected: false}
+			{p13nItem: "Name", sorted: true, descending: false}
 		];
 
-		Then.iShouldSeeP13nItems(aSortItems);
+		Then.iShouldSeeP13nSortItems(aSortItems);
 
 		When.iPressDialogOk();
 
@@ -444,25 +441,18 @@ sap.ui.define([
 			autoWait: true
 		});
 		When.iLookAtTheScreen();
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Sort");
 
 		Then.thePersonalizationDialogOpens();
 
 		aSortItems = [
-			{p13nItem: "Name", selected: true},
-			{p13nItem: "artistUUID", selected: false},
-			{p13nItem: "Breakout Year", selected: false},
-			{p13nItem: "Changed By", selected: false},
-			{p13nItem: "Changed On", selected: false},
-			{p13nItem: "cityOfOrigin_city", selected: false},
-			{p13nItem: "Country", selected: false},
-			{p13nItem: "Created By", selected: false},
-			{p13nItem: "Created On", selected: false},
-			{p13nItem: "Founding Year", selected: false},
-			{p13nItem: "regionOfOrigin_code", selected: false}
+			{p13nItem: "Name", sorted: true, descending: false}
 		];
 
-		Then.iShouldSeeP13nItems(aSortItems);
+		Then.iShouldSeeP13nSortItems(aSortItems);
 		When.iPressDialogOk();
 		Then.iTeardownMyAppFrame();
 
@@ -480,25 +470,19 @@ sap.ui.define([
 		When.iClickOnColumn("Name");
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Sort");
 
 		Then.thePersonalizationDialogOpens();
 
 		aSortItems = [
-			{p13nItem: "Name", selected: true},
-			{p13nItem: "artistUUID", selected: false},
-			{p13nItem: "Breakout Year", selected: false},
-			{p13nItem: "Changed By", selected: false},
-			{p13nItem: "Changed On", selected: false},
-			{p13nItem: "cityOfOrigin_city", selected: false},
-			{p13nItem: "Country", selected: false},
-			{p13nItem: "Created By", selected: false},
-			{p13nItem: "Created On", selected: false},
-			{p13nItem: "Founding Year", selected: false},
-			{p13nItem: "regionOfOrigin_code", selected: false}
+			{p13nItem: "Name", sorted: true, descending: false}
 		];
 
-		Then.iShouldSeeP13nItems(aSortItems);
+		Then.iShouldSeeP13nSortItems(aSortItems);
 		When.iPressDialogOk();
 
 		Then.theVariantManagementIsDirty(false);
@@ -513,25 +497,15 @@ sap.ui.define([
 			autoWait: true
 		});
 		When.iLookAtTheScreen();
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Sort");
 
 		Then.thePersonalizationDialogOpens();
 
-		var aSortItems = [
-			{p13nItem: "artistUUID", selected: false},
-			{p13nItem: "Breakout Year", selected: false},
-			{p13nItem: "Changed By", selected: false},
-			{p13nItem: "Changed On", selected: false},
-			{p13nItem: "cityOfOrigin_city", selected: false},
-			{p13nItem: "Country", selected: false},
-			{p13nItem: "Created By", selected: false},
-			{p13nItem: "Created On", selected: false},
-			{p13nItem: "Founding Year", selected: false},
-			{p13nItem: "Name", selected: false},
-			{p13nItem: "regionOfOrigin_code", selected: false}
-		];
-
-		Then.iShouldSeeP13nItems(aSortItems);
+		Then.iShouldSeeP13nSortItems([]);
 		When.iPressDialogOk();
 		Then.iTeardownMyAppFrame();
 

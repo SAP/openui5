@@ -14,7 +14,7 @@ sap.ui.define([
 				//RTA expects the settings to be returned as function
 				return {
 					handler: function (oControl, mPropertyBag) {
-						return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Column");
+						return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, oControl.getP13nMode());
 					}
 				};
 			}

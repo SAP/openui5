@@ -5,10 +5,11 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/mdc/p13n/P13nBuilder",
-	"sap/ui/mdc/p13n/panels/P13nWrapper",
+	"sap/ui/mdc/p13n/panels/Wrapper",
 	"sap/base/util/UriParameters",
-	"sap/base/Log"
-], function (BaseObject, P13nBuilder, P13nWrapper, SAPUriParameters, Log) {
+	"sap/base/Log",
+	"sap/ui/core/format/ListFormat"
+], function (BaseObject, P13nBuilder, Wrapper, SAPUriParameters, Log, ListFormat) {
 	"use strict";
 
 	var ERROR_INSTANCING = "UIManager: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.ui.mdc.p13n.Engine.getInstance().uimanager' instead";
@@ -169,18 +170,26 @@ sap.ui.define([
 		var oUISettings = this.oAdaptationProvider.getUISettings(oControl, aKeys);
 
 		aKeys.forEach(function(sRelevantKey){
+			//Ignore unknown keys for now..
+			if (!oUISettings[sRelevantKey]) {
+				aKeys.splice(aKeys.indexOf(sRelevantKey), 1);
+				return;
+			}
+		});
 
+		aKeys.forEach(function(sRelevantKey){
 			var pAdaptationUI = oUISettings[sRelevantKey].adaptationUI;
 			pAdaptationUI._key = sRelevantKey;
 			var pWrapped = pAdaptationUI.then(function(oAdaptationUI){
-				if (this.bLiveMode && oAdaptationUI.attachChange) {
+				if (this.bLiveMode && oAdaptationUI && oAdaptationUI.attachChange) {
 					oAdaptationUI.attachChange(function(){
 						this.oAdaptationProvider.handleP13n(oControl, aKeys);
 					}.bind(this));
 				}
-				if (oAdaptationUI.attachChange) {
+				if (oAdaptationUI && oAdaptationUI.attachChange) {
 					oAdaptationUI.attachChange(function(oEvt){
-						this.oAdaptationProvider.validateP13n(oControl, aKeys[0], oAdaptationUI);
+						var sKey = bUseP13nContainer ? oEvt.getSource().getParent().getParent().getCurrentViewKey() : aKeys[0];
+						this.oAdaptationProvider.validateP13n(oControl, sKey, oAdaptationUI);
 					}.bind(this));
 				}
 				return {
@@ -193,12 +202,14 @@ sap.ui.define([
 		}.bind(this));
 
 		return Promise.all(aPAdaptationUI).then(function(aUIs){
-			var oPopupContent = bUseP13nContainer ? new P13nWrapper() : aUIs[0].panel;
+			var oPopupContent = bUseP13nContainer ? new Wrapper() : aUIs[0].panel;
 			if (bUseP13nContainer) {
 				aUIs.forEach(function(mUI){
 					oPopupContent.addPanel(mUI.panel, mUI.key);
 				});
+				oPopupContent.switchView(aUIs[0].key);
 			}
+
 			return this._createUIContainer(oControl, aKeys, oPopupContent, oUISettings).then(function(oDialog){
 				return oDialog;
 			});
@@ -240,6 +251,13 @@ sap.ui.define([
 			if (this.bLiveMode === false){
 				oContainer.setEscapeHandler(function(oDialogClose){
 					this.setActiveP13n(oControl, null);
+					aKeys.forEach(function(sKey){
+						if (oUISettings[sKey].containerSettings && oUISettings[sKey].containerSettings.afterClose instanceof Function) {
+							//TODO: currently 'afterClose' is only being used for not destroying the control instance,
+							//this assumption might not be correct in the future
+							oContainer.getContent()[0].removeView(sKey);
+						}
+					});
 					oContainer.close();
 					oContainer.destroy();
 					oDialogClose.resolve();
@@ -344,9 +362,7 @@ sap.ui.define([
 		if (mUISettings.resetEnabled){
 			mSettings.reset = {
 				onExecute: function() {
-					aKeys.forEach(function(sKey){
-						this.oAdaptationProvider.reset(oControl, sKey);
-					}.bind(this));
+					this.oAdaptationProvider.reset(oControl, aKeys);
 				}.bind(this)
 			};
 		}
@@ -381,12 +397,14 @@ sap.ui.define([
 	 * @returns {object} The default settings for the container creation
 	 */
 	UIManager.prototype._getDefaultContainerConfig = function(oUISettings) {
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var aKeys = Object.keys(oUISettings);
 		return {
 			containerSettings: {
-				title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.VIEW_SETTINGS"),
-				verticalScrolling: false, //The P13nWrapper already takes care of the scrolling
+				title: oRB.getText("p13nDialog.VIEW_SETTINGS"),
+				verticalScrolling: false, //The Wrapper already takes care of the scrolling
 				afterClose: function(oEvt) {
-					Object.keys(oUISettings).forEach(function(sKey){
+					aKeys.forEach(function(sKey){
 						if (oUISettings[sKey].containerSettings && oUISettings[sKey].containerSettings.afterClose instanceof Function) {
 							//TODO: currently 'afterClose' is only being used for not destroying the control instance,
 							//this assumption might not be correct in the future
@@ -394,9 +412,15 @@ sap.ui.define([
 						}
 					});
 					oEvt.getSource().destroy();
+				},
+
+				reset: {
+					onExecute: function(oControl) {
+						this.oAdaptationProvider.reset(oControl, aKeys);
+					}.bind(this),
+					warningText: oRB.getText("p13nDialog.RESET_WARNING_TEXT", ListFormat.getInstance().format(aKeys))
 				}
-			},
-			resetEnabled: false
+			}
 		};
 	};
 

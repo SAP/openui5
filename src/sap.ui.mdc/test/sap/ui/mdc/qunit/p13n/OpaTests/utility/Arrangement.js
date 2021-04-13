@@ -63,6 +63,7 @@ sap.ui.define([
 
 	Arrangement.P13nDialog = {
 		Settings:{
+			key: "Column",
 			Icon: "sap-icon://action-settings",
 			Back: "sap-icon://decline",
 			MoveToTop: "sap-icon://collapse-group",
@@ -70,6 +71,7 @@ sap.ui.define([
 			MoveDown: "sap-icon://slim-arrow-down"
 		},
 		Sort:{
+			key: "Sort",
 			Icon: "sap-icon://sort",
 			Back: "sap-icon://decline",
 			MoveToTop: "sap-icon://collapse-group",
@@ -79,11 +81,15 @@ sap.ui.define([
 			Descending: "sap-icon://sort-descending"
 		},
 		Filter:{
+			key: "Filter",
 			Icon: "sap-icon://filter",
 			Back: "sap-icon://decline",
 			MoveToTop: "sap-icon://collapse-group",
 			MoveUp: "sap-icon://slim-arrow-up",
 			MoveDown: "sap-icon://slim-arrow-down"
+		},
+		Group:{
+			key: "Group"
 		},
 		AdaptFilter:{
 			MoveToTop: "sap-icon://collapse-group",
@@ -100,7 +106,8 @@ sap.ui.define([
 			columns: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "table.SETTINGS_COLUMN"),
 			chart: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "chart.PERSONALIZATION_DIALOG_TITLE"),
 			filter: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filter.PERSONALIZATION_DIALOG_TITLE"),
-			adaptFilter: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE")
+			adaptFilter: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"),
+			settings: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.VIEW_SETTINGS")
 		}
 	};
 

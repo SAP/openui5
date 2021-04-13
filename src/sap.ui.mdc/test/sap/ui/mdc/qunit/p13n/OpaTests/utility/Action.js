@@ -128,6 +128,26 @@ sap.ui.define([
 			});
 		},
 
+		iSwitchToP13nTab: function(sTab) {
+			return this.waitFor({
+				controlType: "sap.m.IconTabFilter",
+				searchOpenDialogs: true,
+				matchers: {
+					ancestor: {
+						controlType: "sap.ui.mdc.p13n.panels.Wrapper"
+					},
+					properties: {
+						text: sTab
+					}
+				},
+				actions: new Press(),
+				success: function(aTabs) {
+					Opa5.assert.equal(aTabs.length, 1, "Found the correct tab " + sTab);
+				},
+				errorMessage: "Could not find tab" + sTab
+			});
+		},
+
 		waitForP13nItem: function(oSettings){
 			var bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
 			var sItemNameSpace = oSettings.itemNameSpace || "sap.m.ColumnListItem";
@@ -216,7 +236,45 @@ sap.ui.define([
 				actions: new Press()
 			});
 		},
-
+		iClickOnP13nSelect: function (sName) {
+			return this.waitFor({
+				controlType: "sap.m.Select",
+				searchOpenDialogs: true,
+				matchers: {
+					properties: {
+						selectedKey: sName
+					}
+				},
+				success: function(aSelect) {
+					Opa5.assert.equal(aSelect.length, 1, "Found one Select control for key " + sName);
+				},
+				actions: new Press()
+			});
+		},
+		iSelectP13nMenuItem: function (sName) {
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.ui.core.Item",
+				matchers: {
+					properties: {
+						text: sName
+					}
+				},
+				actions: new Press()
+			});
+		},
+		iRemoveSorting: function () {
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.Button",
+				matchers: {
+					properties: {
+						icon: "sap-icon://decline"
+					}
+				},
+				actions: new Press()
+			});
+		},
 		iSelectColumn: function (sColumnName, sPopoverTitle, aP13nItems, bModal, bFilter) {
 			return this.waitForP13nItem({
 				columnName: sColumnName,
@@ -228,7 +286,6 @@ sap.ui.define([
 					var oColumnListItem = aColumnListItems[aColumnListItems.length - 1];
 					var oCheckBox = oColumnListItem.getMultiSelectControl();
 					new Press().executeOn(oCheckBox);
-
 					//optional array update
 					if (aP13nItems){
 						var iIndex = oColumnListItem.getParent().getItems().indexOf(oColumnListItem);
@@ -248,9 +305,9 @@ sap.ui.define([
 				actions: new Press()
 			});
 		},
-		iClickOnColumn: function(sName, bGridTable){
-			var sColumnNameSpace = bGridTable ? "sap.ui.table.Column" : "sap.m.Column";
-			var sTableNameSpace = bGridTable ? "sap.ui.table.Table" : "sap.m.Table";
+		iClickOnColumn: function(sName, bResponsiveTable){
+			var sColumnNameSpace = bResponsiveTable ? "sap.m.Column" : "sap.ui.table.Column";
+			var sTableNameSpace = bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table";
 			return this.waitFor({
 				searchOpenDialogs: false,
 				controlType: sTableNameSpace,

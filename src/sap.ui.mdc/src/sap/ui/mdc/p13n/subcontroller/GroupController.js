@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/util/merge'
-], function (BaseController, P13nBuilder, merge) {
+    './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/util/merge', 'sap/ui/mdc/p13n/panels/QueryPanel', 'sap/ui/mdc/p13n/panels/SelectionPanel'
+], function (BaseController, P13nBuilder, merge, QueryPanel, SelectionPanel) {
     "use strict";
 
     var GroupController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.GroupController");
@@ -22,6 +22,16 @@ sap.ui.define([
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
+    GroupController.prototype.getAdaptationUI = function(oPropertyHelper){
+
+        var oGroupPanel = this.getAdaptationControl()._bNewP13n ? new QueryPanel() : new SelectionPanel();
+        this._oPanel = oGroupPanel;
+        var oAdaptationModel = this._getP13nModel(oPropertyHelper);
+        oGroupPanel.setP13nModel(oAdaptationModel);
+
+        return Promise.resolve(oGroupPanel);
+    };
+
     GroupController.prototype.getChangeOperations = function () {
         return {
             add: "addGroup",
@@ -34,6 +44,11 @@ sap.ui.define([
         return "grouped";
     };
 
+    GroupController.prototype.update = function(){
+        BaseController.prototype.update.apply(this, arguments);
+        this._oPanel.setP13nModel(this._oAdaptationModel);
+    };
+
     GroupController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
         var aItemState = this.getCurrentState();
@@ -42,17 +57,17 @@ sap.ui.define([
         var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
             var oExisting = mItemState[oProperty.name];
             mItem.grouped = !!oExisting;
-            mItem.groupPosition =  oExisting ? oExisting.position : -1;
-
+            mItem.position =  oExisting ? oExisting.position : -1;
             return !(oProperty.groupable === false);
         });
 
         P13nBuilder.sortP13nData({
             visible: "grouped",
-            position: "groupPosition"
+            position: "position"
         }, oP13nData.items);
+
         oP13nData.presenceAttribute = this._getPresenceAttribute();
-        oP13nData.items.forEach(function(oItem){delete oItem.groupPosition;});
+        oP13nData.items.forEach(function(oItem){delete oItem.position;});
 
         return oP13nData;
     };

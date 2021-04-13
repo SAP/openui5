@@ -192,6 +192,33 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"Wrapper": {
+				group: "UI Panels",
+				module: "./panels/Wrapper.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"QueryPanel": {
+				group: "UI Panels",
+				module: "./panels/QueryPanel.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"SortQueryPanel": {
+				group: "UI Panels",
+				module: "./panels/SortQueryPanel.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"SelectionPanel": {
 				group: "UI Panels",
 				module: "./SelectionPanel.qunit",
@@ -267,6 +294,36 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			"PersonalizationChartVariants": {
 				group: "Chart UI Test",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
+			"TableP13nGroupJourney": {
+				group: "Table UI Test",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
+			"TableP13nFilterJourney": {
+				group: "Table UI Test",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
+			"TableP13nSortJourney": {
+				group: "Table UI Test",
 				autostart: false,
 				module: "./OpaTests/P13nOpa.qunit",
 				ui5: {

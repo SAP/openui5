@@ -32,6 +32,13 @@ sap.ui.define([
 			defaultAggregation: "items",
 			properties: {
 				/**
+				 * Determines whether the reordering of items should be enabled
+				 */
+				enableReorder: {
+					type: "Boolean",
+					defaultValue: true
+				},
+				/**
 				 * Factory function which can be used to enhance custom content
 				 */
 				itemFactory: {
@@ -77,15 +84,6 @@ sap.ui.define([
 				}
 			}
 		},
-		init: function() {
-			// list is necessary to set the template + model on
-			this._oListControl = this._createUI();
-
-			// disable 'select all'
-			this._oListControl.bPreventMassSelection = true;
-
-			this._setInnerLayout();
-		},
 		renderer: {
 			apiVersion: 2,
 			render: function(oRm, oControl) {
@@ -100,6 +98,19 @@ sap.ui.define([
 	});
 
 	BasePanel.prototype.P13N_MODEL = "$p13n";
+
+	BasePanel.prototype.init = function() {
+
+		Control.prototype.init.apply(this, arguments);
+
+		// list is necessary to set the template + model on
+		this._oListControl = this._createInnerListControl();
+
+		// disable 'select all'
+		this._oListControl.bPreventMassSelection = true;
+
+		this._setInnerLayout();
+	};
 
 	/**
 	 * Can be overwritten in case a different wrapping Control is required for the inner content
@@ -143,11 +154,6 @@ sap.ui.define([
 			});
 		}
 		return this._oDragDropInfo;
-	};
-
-	BasePanel.prototype._createUI = function(){
-		var oBasePanelUI = this._createInnerListControl();
-		return oBasePanelUI;
 	};
 
 	BasePanel.prototype._getMoveTopButton = function() {
@@ -250,6 +256,52 @@ sap.ui.define([
 		}));
 	};
 
+	BasePanel.prototype.setEnableReorder = function(bEnableReorder) {
+		var oTemplate = this.getTemplate();
+		if (bEnableReorder) {
+			this._addHover(oTemplate);
+		} else if (oTemplate.aDelegates && oTemplate.aDelegates.length > 0) {
+			oTemplate.removeEventDelegate(oTemplate.aDelegates[0].oDelegate);
+		}
+		this._getDragDropConfig().setEnabled(bEnableReorder);
+		this._setMoveButtonVisibility(bEnableReorder);
+		this.setProperty("enableReorder", bEnableReorder);
+
+		return this;
+	};
+
+	BasePanel.prototype._addHover = function(oRow) {
+		if (oRow && oRow.aDelegates.length < 1) {
+            oRow.addEventDelegate({
+                onmouseover: this._hoverHandler.bind(this),
+				onfocusin: this._focusHandler.bind(this)
+            });
+        }
+	};
+
+	BasePanel.prototype._focusHandler = function(oEvt) {
+        //(new) hovered item
+        var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
+        this._handleActivated(oHoveredItem);
+    };
+
+	BasePanel.prototype._hoverHandler = function(oEvt) {
+        //Only use hover if no item has been selected yet
+        if (this._oSelectedItem && !this._oSelectedItem.bIsDestroyed) {
+            return;
+        }
+
+        //(new) hovered item
+        var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
+
+        this._handleActivated(oHoveredItem);
+    };
+
+    BasePanel.prototype._handleActivated = function(oHoveredItem) {
+		this._oHoveredItem = oHoveredItem;
+		//Implement custom hover handling in derivation here..
+    };
+
 	BasePanel.prototype._getReorderButton = function() {
 		if (!this.oReorderButton) {
 			this.oReorderButton = new Button(this.getId() + "-showSelectedBtn",{
@@ -295,6 +347,9 @@ sap.ui.define([
 	BasePanel.prototype.setTemplate = function(oTemplate) {
 		this.setAggregation("template", oTemplate);
 		if (oTemplate) {
+			if (this.getEnableReorder()){
+				this._addHover(oTemplate);
+			}
 			this._oSelectionBindingInfo = oTemplate.getBindingInfo("selected");
 			// Extract the binding info parts
 			if (this._oSelectionBindingInfo && this._oSelectionBindingInfo.parts) {
@@ -331,6 +386,12 @@ sap.ui.define([
 	BasePanel.prototype.getP13nModel = function() {
 		return this.getModel(this.P13N_MODEL);
 	};
+
+	BasePanel.prototype.getP13nState = function () {
+        return this.getP13nModel().getProperty("/items").filter(function(oField){
+			return oField[this._getPresenceAttribute()] === true;
+		}.bind(this));
+    };
 
 	BasePanel.prototype.getResourceText = function(sText, vValue) {
 		this.oResourceBundle = this.oResourceBundle ? this.oResourceBundle : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -414,7 +475,12 @@ sap.ui.define([
 	BasePanel.prototype._onItemPressed = function(oEvent) {
 		var oTableItem = oEvent.getParameter('listItem');
 		this._oSelectedItem = oTableItem;
-		this._updateEnableOfMoveButtons(oTableItem, true);
+
+		var oContext = oTableItem.getBindingContext(this.P13N_MODEL);
+		if (this.getEnableReorder() && oContext && oContext.getProperty(this._getPresenceAttribute())){
+			this._handleActivated(oTableItem);
+			this._updateEnableOfMoveButtons(oTableItem, true);
+		}
 	};
 
 	BasePanel.prototype._onSearchFieldLiveChange = function(oEvent) {
@@ -581,6 +647,8 @@ sap.ui.define([
 
 		this._updateEnableOfMoveButtons(this._oSelectedItem, true);
 
+		this._handleActivated(this._oSelectedItem);
+
 		this.fireChange({
 			reason: "Move",
 			item: this.getP13nModel().getProperty(this._oSelectedItem.getBindingContext(this.P13N_MODEL).sPath)
@@ -619,6 +687,7 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype.exit = function() {
+		Control.prototype.exit.apply(this, arguments);
 		this._oSelectionBindingInfo = null;
 		this._oSelectedItem = null;
 		this._oListControl = null;

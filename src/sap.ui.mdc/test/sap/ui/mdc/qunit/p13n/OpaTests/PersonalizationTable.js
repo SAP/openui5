@@ -38,17 +38,17 @@ sap.ui.define([
 	];
 
 	var aSortItems = [
-		{p13nItem: "artistUUID", selected: false},
-		{p13nItem: "Breakout Year", selected: false},
-		{p13nItem: "Changed By", selected: false},
-		{p13nItem: "Changed On", selected: false},
-		{p13nItem: "cityOfOrigin_city", selected: false},
-		{p13nItem: "Country", selected: false},
-		{p13nItem: "Created By", selected: false},
-		{p13nItem: "Created On", selected: false},
-		{p13nItem: "Founding Year", selected: false},
-		{p13nItem: "Name", selected: false},
-		{p13nItem: "regionOfOrigin_code", selected: false}
+		{p13nItem: "artistUUID", descending: false},
+		{p13nItem: "Breakout Year", descending: false},
+		{p13nItem: "Changed By", descending: false},
+		{p13nItem: "Changed On", descending: false},
+		{p13nItem: "cityOfOrigin_city", descending: false},
+		{p13nItem: "Country", descending: false},
+		{p13nItem: "Created By", descending: false},
+		{p13nItem: "Created On", descending: false},
+		{p13nItem: "Founding Year", descending: false},
+		{p13nItem: "Name", descending: false},
+		{p13nItem: "regionOfOrigin_code", descending: false}
 	];
 
 	var aFilterItems = [
@@ -65,6 +65,8 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", value: null}
 	];
 
+	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
+
 	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
 		//insert application
 		Given.iStartMyAppInAFrame({
@@ -76,7 +78,6 @@ sap.ui.define([
 
 		//check icons
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
@@ -90,25 +91,27 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
+		Then.iShouldSeeDialogTitle(sViewSettings);
 
 		Then.iShouldSeeP13nItems(aTableItems);
+
+		//close dialog
+		When.iPressDialogOk();
 	});
 
 	opaTest("Open the filter personalization dialog", function (Given, When, Then) {
-		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+		When.iSwitchToP13nTab("Filter");
 
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
 		Then.iShouldSeeP13nFilterItems(aFilterItems);
 	});
 
-	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+	opaTest("When I close the 'View Settings' dialog without doing changes, the table has not been changed", function (Given, When, Then) {
+		When.iPressDialogOk();
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
@@ -119,20 +122,27 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(false);
 	});
 
-	opaTest("When I press on 'Define Sort Properties' button, sort dialog should open", function (Given, When, Then) {
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+	opaTest("When I press on 'Sort' tab, sort p13n should show", function (Given, When, Then) {
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
+		//open 'sort' tab
+		When.iSwitchToP13nTab("Sort");
+
+		//check that dialog is open
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.sort);
 
-		Then.iShouldSeeP13nItems(aSortItems);
+		//open the select control in the sort tab
+		When.iClickOnP13nSelect("$_none");
+
+		//check that the expected keys are visible in the sort dialog
+		Then.iShouldSeeP13nMenuItems(aSortItems);
 
 	});
 
-	opaTest("When I close the 'Define Sort Properties' button, the table has not been changed", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+	opaTest("When I close the view settings dialog on 'sort' tab, the table has not been changed", function (Given, When, Then) {
 
-		//close p13n dialog
+		//close dialog
+		When.iPressDialogOk();
 		Then.thePersonalizationDialogShouldBeClosed();
 
 		//check initially visible columns
@@ -147,18 +157,21 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// Define a new sorter
 	// ----------------------------------------------------------------
-	opaTest("When I press on the Checkbox to sort for Country, the table should be changed", function (Given, When, Then) {
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+	opaTest("Add a sorter for 'Country'", function (Given, When, Then) {
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+
+		When.iSwitchToP13nTab("Sort");
 
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.sort);
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.sort, aSortItems);
 
-		Then.iShouldSeeP13nItems(aSortItems);
+		//open select (empty) select control in sort panel and select 'Country'
+		When.iClickOnP13nSelect("$_none");
+		When.iSelectP13nMenuItem("Country");
+
 	});
 
 	opaTest("When I close the 'Selected Columns' button, the table has been changed", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		When.iPressDialogOk();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -180,9 +193,8 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
 
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("Country", undefined, aTableItems);
 
-		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
 		Then.iShouldSeeP13nItem("Country", 0);
@@ -196,14 +208,13 @@ sap.ui.define([
 	// Select two columns and 'Cancel'
 	// ----------------------------------------------------------------
 	opaTest("When I do some changes and press 'Cancel', the changes should be discarded", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		When.iPressDialogOk();
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
-		When.iSelectColumn("Created By", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("Breakout Year", undefined, aTableItems);
+		When.iSelectColumn("Created By", undefined, aTableItems);
 
-		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 		When.iClickOnTableItem("Created By").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
@@ -226,14 +237,13 @@ sap.ui.define([
 	// Select two columns and 'Escape' and reopen to check
 	// ----------------------------------------------------------------
 	opaTest("When I do some changes and press 'Escape', the changes should be discarded + Dialog should open again", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		When.iPressDialogOk();
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
-		When.iSelectColumn("Created By", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("Breakout Year", undefined, aTableItems);
+		When.iSelectColumn("Created By", undefined, aTableItems);
 
-		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 		When.iClickOnTableItem("Created By").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
@@ -256,14 +266,13 @@ sap.ui.define([
 	// Select two columns and 'Confirm'
 	// ----------------------------------------------------------------
 	opaTest("When I select two additional columns and move them one up, the table should be changed", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		When.iPressDialogOk();
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
-		When.iSelectColumn("Created By", Arrangement.P13nDialog.Titles.columns, aTableItems);
+		When.iSelectColumn("Breakout Year", undefined, aTableItems);
+		When.iSelectColumn("Created By", undefined, aTableItems);
 
-		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 		When.iClickOnTableItem("Created By").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
@@ -281,7 +290,7 @@ sap.ui.define([
 	// Close the dialog
 	// ----------------------------------------------------------------
 	opaTest("Close the dialog", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		When.iPressDialogOk();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -294,7 +303,6 @@ sap.ui.define([
 		//Reopen the dialog
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
 
 		aTableItems = [
 			{p13nItem: "Created By", selected: true},
@@ -316,11 +324,10 @@ sap.ui.define([
 	});
 
 	// ----------------------------------------------------------------
-	// Check the 'Reorder' / 'Select' functionality
+	// Assert 'Reorder' functionality
 	// ----------------------------------------------------------------
-	opaTest("check 'Reorder' mode", function (Given, When, Then) {
+	opaTest("check order", function (Given, When, Then) {
 		//Reorder table items
-		When.iPressButtonWithText("Reorder");
 		Then.iShouldSeeP13nItem("Created By", 0);
 		Then.iShouldSeeP13nItem("Breakout Year", 1);
 		Then.iShouldSeeP13nItem("Country", 2);
@@ -330,134 +337,50 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Created On", 6);
 	});
 
-	opaTest("check 'Select' mode", function (Given, When, Then) {
-		//Select table items
-		When.iPressButtonWithText("Select");
-		Then.iShouldSeeP13nItems(aTableItems);
-	});
-
 	opaTest("check column header sort functionality: all previous sorters are deleted", function (Given, When, Then) {
-		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		//close Dialog
+		When.iPressDialogOk();
 
 		When.iClickOnColumn("Founding Year");
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'sort' tab
+		When.iSwitchToP13nTab("Sort");
 
 		Then.thePersonalizationDialogOpens();
 
 		aSortItems = [
-			{p13nItem: "Founding Year", selected: true},
-			{p13nItem: "artistUUID", selected: false},
-			{p13nItem: "Breakout Year", selected: false},
-			{p13nItem: "Changed By", selected: false},
-			{p13nItem: "Changed On", selected: false},
-			{p13nItem: "cityOfOrigin_city", selected: false},
-			{p13nItem: "Country", selected: false},
-			{p13nItem: "Created By", selected: false},
-			{p13nItem: "Created On", selected: false},
-			{p13nItem: "Name", selected: false},
-			{p13nItem: "regionOfOrigin_code", selected: false}
+			{p13nItem: "Founding Year", sorted: true, descending: false}
 		];
 
-		Then.iShouldSeeP13nItems(aSortItems);
+		Then.iShouldSeeP13nSortItems(aSortItems);
 	});
 
 	opaTest("sort another column via context menu: only new column should be sorted", function (Given, When, Then) {
-		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		//close Dialog
+		When.iPressDialogOk();
 
 		When.iClickOnColumn("Name");
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Descending);
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'sort' tab
+		When.iSwitchToP13nTab("Sort");
 
 		Then.thePersonalizationDialogOpens();
 
 		aSortItems = [
-			{p13nItem: "Name", selected: true},
-			{p13nItem: "artistUUID", selected: false},
-			{p13nItem: "Breakout Year", selected: false},
-			{p13nItem: "Changed By", selected: false},
-			{p13nItem: "Changed On", selected: false},
-			{p13nItem: "cityOfOrigin_city", selected: false},
-			{p13nItem: "Country", selected: false},
-			{p13nItem: "Created By", selected: false},
-			{p13nItem: "Created On", selected: false},
-			{p13nItem: "Founding Year", selected: false},
-			{p13nItem: "regionOfOrigin_code", selected: false}
+			{p13nItem: "Name", sorted: true, descending: true}
 		];
 
-		Then.iShouldSeeP13nItems(aSortItems);
-	});
+		Then.iShouldSeeP13nSortItems(aSortItems);
 
-	opaTest("Open the filter personalization dialog", function (Given, When, Then) {
-		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
-
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
-
-		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
-
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
-	});
-
-	opaTest("Open the filter personalization dialog using column header", function (Given, When, Then) {
-		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
-
-		When.iClickOnColumn("Founding Year");
-
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
-
-		Then.thePersonalizationDialogOpens();
-
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
-
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
-	});
-
-	opaTest("Open the filter personalization dialog and enter a value", function (Given, When, Then) {
-		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
-
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
-
-		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
-
-		When.iEnterTextInFilterDialog("Founding Year", "1989");
-		When.iEnterTextInFilterDialog("Country", "DE");
-
-		aFilterItems[5].value = ["DE"];
-		aFilterItems[8].value = ["1989"];
-
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
-	});
-
-	opaTest("Close and open the filter dialog to check if the value is still there", function (Given, When, Then) {
-		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
-
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
-
-		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
-
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Country",
-			index: 5,
-			values: ["DE"]
-		});
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Founding Year",
-			index: 8,
-			values: ["1989"]
-		});
-
-		//shut down app frame for next test
 		Then.iTeardownMyAppFrame();
 	});
+
 });

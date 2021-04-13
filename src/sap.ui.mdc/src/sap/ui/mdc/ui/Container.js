@@ -208,6 +208,20 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Get a plain representation of the current views.
+	 *
+	 * @returns {object} The current view aggeregation as map
+	 */
+	Container.prototype.getViewMap = function() {
+		return this.getViews().map(function(o){
+			return {
+				key: o.getKey(),
+				content: o.getContent()
+			};
+		});
+	};
+
 	Container.prototype._getResourceText = function(sText) {
 		this.oResourceBundle = this.oResourceBundle ? this.oResourceBundle : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		return sText ? this.oResourceBundle.getText(sText) : this.oResourceBundle;
