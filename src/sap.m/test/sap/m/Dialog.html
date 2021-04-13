@@ -9,12 +9,19 @@
 				margin: 0.5em 0 0 0;
 			}
 
-			body {
-				overflow: hidden;
-			}
-
 			#p1 {
 				width: 500px;
+			}
+
+			#within {
+				position: absolute;
+				width: 60%;
+				height: 60%;
+				background-color: rgb(245, 219, 187);
+				border: 2px solid red;
+				z-index: 1;
+				left: 1rem;
+				bottom: 1rem;
 			}
 
 		</style>
@@ -22,7 +29,7 @@
 		<script src="../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.ui.commons,sap.m,sap.ui.layout"
-				data-sap-ui-compatVersion="1.16">
+				data-sap-ui-compatVersion="edge">
 		</script>
 		<script>
 			var app = new sap.m.App("myApp", {initialPage: "page1"});
@@ -1394,8 +1401,8 @@
 				growingThreshold: 5,
 				growingScrollToLoad: true,
 				columns: [
-					new sap.m.Column({header: new Text({text: "Last Name"})}),
-					new sap.m.Column({header: new Text({text: "First Name"})})
+					new sap.m.Column({header: new sap.m.Text({text: "Last Name"})}),
+					new sap.m.Column({header: new sap.m.Text({text: "First Name"})})
 				]
 			});
 
@@ -1426,15 +1433,32 @@
 			//=================================================================
 
 			var page1 = new sap.m.Page("page1", {
-				title: "Mobile Dialog Control",
+				title: "sap.m.Dialog",
+				subHeader: new sap.m.Toolbar({
+					content: [
+						new sap.m.CheckBox("compactMode", {
+							text: "Compact Mode",
+							selected : false,
+							select : function() {
+								$("body").toggleClass("sapUiSizeCompact");
+							}
+						}).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.CheckBox({
+							text: "Custom within area",
+							select : function (event) {
+								var area = document.getElementById("within");
+								if (event.getParameter("selected")) {
+									area.hidden = false;
+									sap.ui.core.Popup.setWithinArea(area);
+								} else {
+									area.hidden = true;
+									sap.ui.core.Popup.setWithinArea(null);
+								}
+							}
+						})
+					]
+				}),
 				content: [
-					new sap.m.CheckBox("compactMode", {
-						text: "Compact Mode",
-						selected : false,
-						select : function() {
-							$("body").toggleClass("sapUiSizeCompact");
-						}
-					}).addStyleClass("sapUiSmallMarginEnd"),
 					oButtonToOpenDialogWithHeaderAndSubHeader,
 					new sap.m.Button('simpleDialogButton', {
 						text: "Simple Dialog",
@@ -1911,6 +1935,7 @@
 
 	</head>
 	<body id="body" class="sapUiBody">
+		<div id="within" hidden></div>
 		<div id="content"></div>
 	</body>
 </html>
