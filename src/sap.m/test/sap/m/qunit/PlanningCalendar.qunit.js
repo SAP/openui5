@@ -1200,6 +1200,34 @@ sap.ui.define([
 		assert.ok(jQuery("#PC1-R1A2").get(0), "Row1: Appointment2 now rendered");
 	});
 
+	QUnit.test("Start date in different views is right", function(assert) {
+		//Arrange
+		var oStartDate = new Date(2020, 3, 1, 7, 0, 0, 0);
+		oPC1.setStartDate(oStartDate);
+		oPC1._iSize = 1;
+		oPC1._iSizeScreen = 1;
+
+		//Act
+		oPC1.setViewKey(CalendarIntervalType.Hours);
+		sap.ui.getCore().applyChanges();
+		var oTempStartDate = oPC1.getStartDate();
+
+		//Assert
+		assert.deepEqual(oTempStartDate, oStartDate, "Start date is right in Hours View");
+
+		//Act
+		oPC1.setViewKey(CalendarIntervalType.OneMonth);
+		sap.ui.getCore().applyChanges();
+		oTempStartDate = oPC1.getStartDate();
+
+		//Assert
+		assert.deepEqual(oTempStartDate, oStartDate, "Start date is right in OneMonth View");
+
+		//Reset
+		oPC1.setViewKey(CalendarIntervalType.Hours);
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.test("viewKey", function(assert) {
 		var sViewKey = oPC1.getViewKey();
 		assert.equal(sViewKey, CalendarIntervalType.Hour, "Default ViewKey");

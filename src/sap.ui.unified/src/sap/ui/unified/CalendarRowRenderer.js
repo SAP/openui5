@@ -645,7 +645,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 			sId = oRow.getId() + "-AppsInt" + iInterval,
 			i,
 			bShowIntervalHeaders = oRow.getShowIntervalHeaders() && (oRow.getShowEmptyIntervalHeaders() || aIntervalHeaders.length > 0),
-			oRowStartDate = oRow.getStartDate(),
+			oRowStartDate = new Date(oRow.getStartDate()),
 			iMonth = oRowStartDate.getMonth(),
 			iDaysLength = new Date(oRowStartDate.getFullYear(), iMonth + 1, 0).getDate(),
 			sNoAppointments,
