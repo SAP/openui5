@@ -8,10 +8,6 @@
 	<App>
 		<Page class="sapUiResponsivePadding--content" showHeader="false">
 			<ToggleButton id="revealGrid" text="Reveal Grids" press=".onRevealGrids" class="sapUiSmallMargin" />
-			<MessageStrip
-				class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
-				type="Information"
-				text="Note: This sample is not supported by Microsoft Internet Explorer." />
 			<Slider value="100" liveChange=".onSliderMoved" />
 
 			<cssgrid:CSSGrid id="container">
