@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/hasher",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
-],
-function(
+], function(
 	UriParameters,
 	hasher,
 	Layer,
@@ -80,6 +79,10 @@ function(
 		 */
 		isCustomerDependentLayer: function(sLayerName) {
 			return ([Layer.PUBLIC, Layer.CUSTOMER, Layer.CUSTOMER_BASE].indexOf(sLayerName) > -1);
+		},
+
+		isDeveloperLayer: function(sLayer) {
+			return LayerUtils.compareAgainstCurrentLayer(sLayer, Layer.CUSTOMER) === -1;
 		},
 
 		/**
@@ -236,4 +239,4 @@ function(
 		}
 	};
 	return LayerUtils;
-}, true);
+});

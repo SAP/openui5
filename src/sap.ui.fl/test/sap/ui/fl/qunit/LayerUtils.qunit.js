@@ -95,6 +95,14 @@ sap.ui.define([
 
 			assert.strictEqual(LayerUtils.doesCurrentLayerRequirePackage(), true);
 		});
+
+		QUnit.test("isDeveloperLayer", function(assert) {
+			assert.strictEqual(LayerUtils.isDeveloperLayer(Layer.USER), false, "the USER Layer is not a developer layer");
+			assert.strictEqual(LayerUtils.isDeveloperLayer(Layer.CUSTOMER), false, "the CUSTOMER Layer is not a developer layer");
+			assert.strictEqual(LayerUtils.isDeveloperLayer(Layer.PUBLIC), false, "the PUBLIC Layer is not a developer layer");
+			assert.strictEqual(LayerUtils.isDeveloperLayer(Layer.CUSTOMER_BASE), true, "the CUSTOMER_BASE is a developer layer");
+			assert.strictEqual(LayerUtils.isDeveloperLayer(Layer.VENDOR), true, "the VENDOR is a developer layer");
+		});
 	});
 
 	QUnit.module("LayerUtils.isValidLayer", function() {
