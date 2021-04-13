@@ -31,6 +31,9 @@ sap.ui.define([
 	 * @experimental Since 1.27.0
 	 * @author SAP SE
 	 * @version ${version}
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 	var FlexControllerFactory = {};
 
@@ -43,7 +46,6 @@ sap.ui.define([
 	/**
 	 * Creates or returns an instance of the FlexController
 	 *
-	 * @public
 	 * @param {String} sComponentName - Name of the component
 	 * @returns {sap.ui.fl.FlexController} instance
 	 *
@@ -65,7 +67,6 @@ sap.ui.define([
 	 * If the component is an embedded component, then the responsible app component is used.
 	 * If one of this prerequisites is not fulfilled, no instance of FlexController will be returned.
 	 *
-	 * @public
 	 * @param {sap.ui.core.Control} oControl The control
 	 * @returns {sap.ui.fl.FlexController} instance
 	 */
@@ -129,7 +130,6 @@ sap.ui.define([
 	 * @param {object} oComponent - Component instance that is currently loading
 	 * @param {object} vConfig - Configuration of loaded component
 	 * @return {Promise} Promise which resolves when all relevant tasks for changes propagation have been processed
-	 * @public
 	 */
 	FlexControllerFactory.getChangesAndPropagate = function (oComponent, vConfig) {
 		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
@@ -177,7 +177,6 @@ sap.ui.define([
 	 * @param {sap.ui.core.Component} oAppComponent - App component instance
 	 * @return {Promise} Promise which resolves to the created variant model,
 	 * after all propagation changes and listeners have been set.
-	 * @private
 	 */
 	function _propagateChangesForAppComponent (oAppComponent) {
 		// only manifest with type = "application" will fetch changes

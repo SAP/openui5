@@ -27,6 +27,8 @@ sap.ui.define([
 	 * @experimental Since 1.27.0
 	 * @author SAP SE
 	 * @version ${version}
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 	var ChangePersistenceFactory = {};
 
@@ -36,8 +38,6 @@ sap.ui.define([
 	 * Creates or returns an instance of the ChangePersistence
 	 * @param {String} sComponentName - Name of the component
 	 * @returns {sap.ui.fl.ChangePersistence} <code>ChangePersistence</code> instance
-	 *
-	 * @public
 	 */
 	ChangePersistenceFactory.getChangePersistenceForComponent = function(sComponentName) {
 		var oChangePersistence = ChangePersistenceFactory._instanceCache[sComponentName];
@@ -57,8 +57,6 @@ sap.ui.define([
 	 * The control needs to be embedded into a component.
 	 * @param {sap.ui.core.Control} oControl The control for example a SmartField, SmartGroup or View
 	 * @returns {sap.ui.fl.ChangePersistence} instance
-	 *
-	 * @public
 	 */
 	ChangePersistenceFactory.getChangePersistenceForControl = function(oControl) {
 		var sComponentId;

@@ -23,6 +23,9 @@ function(
 	 * @experimental Since 1.25.0
 	 * @author SAP SE
 	 * @version ${version}
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 	var Cache = function() {};
 
@@ -74,8 +77,6 @@ function(
 	 * @param {string} [mPropertyBag.componentId] - ID of the current component, needed if bInvalidataCache is set
 	 * @param {boolean} bInvalidateCache - should the cache be invalidated
 	 * @returns {Promise} resolves with the change file for the given component, either from cache or back end
-	 *
-	 * @public
 	 */
 	Cache.getChangesFillingCache = function(mComponent, mPropertyBag, bInvalidateCache) {
 		var oPromise = Promise.resolve();
@@ -130,7 +131,6 @@ function(
 	 * @param {object} oComponent - Contains component data needed for adding change
 	 * @param {string} oComponent.name - Name of the component
 	 * @param {object} oChange - The change in JSON format
-	 * @public
 	 */
 	Cache.addChange = function(oComponent, oChange) {
 		var aChanges = _getArray(oComponent.name, oChange);
@@ -147,7 +147,6 @@ function(
 	 * @param {object} oComponent - Contains component data needed for adding change
 	 * @param {string} oComponent.name - Name of the component
 	 * @param {object} oChange - The change in JSON format
-	 * @public
 	 */
 	Cache.updateChange = function(oComponent, oChange) {
 		var aChanges = _getArray(oComponent.name, oChange);
@@ -170,7 +169,6 @@ function(
 	 * @param {object} oComponent - Contains component data needed for adding change
 	 * @param {string} oComponent.name - Name of the component
 	 * @param {object} oChange - The change in JSON format
-	 * @public
 	 */
 	Cache.deleteChange = function(oComponent, oChange) {
 		var aChanges = _getArray(oComponent.name, oChange);
@@ -193,7 +191,6 @@ function(
 	 * @param {object} oComponent - Component data needed for adding change
 	 * @param {string} oComponent.name - Name of the component
 	 * @param {string[]} aChangeNames - Array of names of the changes to be deleted
-	 * @public
 	 */
 	Cache.removeChanges = function(oComponent, aChangeNames) {
 		var oEntry = FlexState.getFlexObjectsFromStorageResponse(oComponent.name);
