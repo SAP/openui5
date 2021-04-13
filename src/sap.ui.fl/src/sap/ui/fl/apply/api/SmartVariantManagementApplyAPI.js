@@ -111,21 +111,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * @param mPropertyBag
-		 * @return {*}
-		 * @deprecated
-		 */
-		getEntityById: function (mPropertyBag) {
-			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
-			var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
-			for (var sPersistencyKey in mCompVariantsMap) {
-				if (mCompVariantsMap[sPersistencyKey].byId[mPropertyBag.id]) {
-					return mCompVariantsMap[sPersistencyKey].byId[mPropertyBag.id];
-				}
-			}
-		},
-
-		/**
 		 * Indicates if the current application is a variant of an existing one.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
@@ -209,36 +194,6 @@ sap.ui.define([
 		getExecuteOnSelect: function(mPropertyBag) {
 			var oChange = getVariantsMapForKey(mPropertyBag.control).standardVariantChange;
 			return oChange ? oChange.getContent().executeOnSelect : null;
-		},
-
-		/**
-		 * @deprecated
-		 */
-		getChangeById: function (mPropertyBag) {
-			return SmartVariantManagementApplyAPI.getEntityById(mPropertyBag);
-		},
-
-		/**
-		 * Collects all changes related to a smartVariantManagement.
-		 *
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
-		 * @returns {object} A map with all changes related to the SmartVariantManagement by their ID
-		 * @private
-		 *
-		 * @deprecated only being used on a deletion of a variant to also delete changes; this should be handled within the delete call
-		 */
-		_getChangeMap: function(oControl) {
-			var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
-			var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
-			var mCompVariantsByIdMap = FlexState.getCompVariantsMap(sReference)._getOrCreate(sPersistencyKey).byId;
-			var mChangesForVariantManagement = {};
-			for (var sId in mCompVariantsByIdMap) {
-				if (mCompVariantsByIdMap[sId].getFileType() === "change") {
-					mChangesForVariantManagement[sId] = mCompVariantsByIdMap[sId];
-				}
-			}
-
-			return mChangesForVariantManagement;
 		}
 	};
 
