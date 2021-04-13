@@ -1234,10 +1234,13 @@ sap.ui.define([
 							}
 							var oItem = this._mItemsByPaths[sDependentPath];
 							if (oItem) {
+								//DIGITALWORKPLACE-4802
+								//clone the config since the item may dependent to itself in filter backend feature
+								var oDependentFieldConfig = merge({}, oConfig);
 								oItem._dependentFields = oItem._dependentFields || [];
 								oItem._dependentFields.push({
 									field: oField,
-									config: oConfig
+									config: oDependentFieldConfig
 								});
 
 							}
