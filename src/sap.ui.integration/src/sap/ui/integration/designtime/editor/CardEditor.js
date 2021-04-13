@@ -280,8 +280,7 @@ sap.ui.define([
 							if (oItem.isA("sap.m.Label")) {
 								oItem.addStyleClass("sapUiIntegrationCardEditorItemLabel");
 								var oDependent = oItem.getDependents() && oItem.getDependents()[0];
-								var oLabelWithDependentHBox = null;
-								oLabelWithDependentHBox = new HBox({
+								var oLabelWithDependentHBox = new HBox({
 									items: [
 										oItem.addStyleClass("description")
 									]
@@ -334,7 +333,7 @@ sap.ui.define([
 										oLabelItemForNotWrapping,
 										oItem
 									]
-								}));
+								}).addStyleClass("notWrappingBox"));
 								oLabelItemForNotWrapping = null;
 							} else {
 								oPanel.addContent(oItem);

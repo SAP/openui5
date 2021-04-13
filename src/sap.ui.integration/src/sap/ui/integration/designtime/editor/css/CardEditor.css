@@ -141,7 +141,6 @@
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .col1 {
 	width: 50%;
-
 }
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .col1 .col1box {
 	width: 100%;
@@ -151,6 +150,10 @@
 }
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .col1 .col1box .sapMFlexItem .sapUiIntegrationCardEditorDescriptionIcon {
 	margin-left: -0.5rem;
+}
+
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .notWrappingBox {
+	margin: 7px 0 0 0;
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemLabel {
