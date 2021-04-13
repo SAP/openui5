@@ -35,32 +35,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.comp
 	 */
 	var SmartVariantManagementWriteAPI = /** @lends sap.ui.fl.write.api.SmartVariantManagementWriteAPI */{
-
-		/**
-		 * Adds a new change (could also be a variant) and returns the ID of the new change.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
-		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
-		 * 			sap.ui.comp.smarttable.SmartTable|
-		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the flex object should be added
-		 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
-		 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
-		 * @param {string} mPropertyBag.changeSpecificData.ODataService - Name of the OData service --> can be null
-		 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
-		 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
-		 * @param {boolean} mPropertyBag.changeSpecificData.isVariant - Indicates if the change is a variant
-		 * @param {string} [mPropertyBag.changeSpecificData.packageName] - Package name for the new entity; default is <code>$tmp</code>
-		 * @param {boolean} mPropertyBag.changeSpecificData.isUserDependent - Indicates if a change is only valid for the current user
-		 * @param {boolean} [mPropertyBag.support] - Information for support analysis
-		 * @returns {string} ID of the newly created change
-		 * @private
-		 * @ui5-restricted sap.ui.comp
-		 */
-		add: function(mPropertyBag) {
-			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.add).getId();
-		},
-
 		/**
 		 * Adds a new variant and returns it.
 		 * Either the <code>mPropertyBag.changeSpecificData.layer</code> or the
@@ -90,8 +64,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.rta.command, sap.ui.comp.smartvariants.SmartVariantManagement
 		 */
 		addVariant: function (mPropertyBag) {
-			mPropertyBag.changeSpecificData.isVariant = true;
-			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.add);
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.addVariant);
 		},
 
 		/**

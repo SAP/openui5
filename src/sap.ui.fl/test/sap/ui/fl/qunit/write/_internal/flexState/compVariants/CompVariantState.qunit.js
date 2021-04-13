@@ -43,29 +43,14 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given no propertyBag is provided", function(assert) {
-			assert.equal(CompVariantState.add(), undefined, "then undefined is returned");
+			assert.equal(CompVariantState.addVariant(), undefined, "then undefined is returned");
 		});
 
 		[{
-			testName: "Given a change with specified ID is added",
-			propertyBag: {
-				changeSpecificData: {
-					id: "myFancyChangeId",
-					type: "addFavorite",
-					isUserDependent: true,
-					content: {}
-				},
-				reference: sComponentId
-			},
-			targetCategory: "changes",
-			publicLayerAvailable: true,
-			expectedLayer: Layer.USER
-		}, {
 			testName: "Given a non-user dependent variant is added and a public layer is available",
 			propertyBag: {
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true,
 					isUserDependent: false,
 					content: {}
 				},
@@ -79,7 +64,6 @@ sap.ui.define([
 			propertyBag: {
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true,
 					isUserDependent: false,
 					content: {}
 				},
@@ -93,7 +77,6 @@ sap.ui.define([
 			propertyBag: {
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true,
 					isUserDependent: true,
 					content: {}
 				},
@@ -107,7 +90,6 @@ sap.ui.define([
 			propertyBag: {
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true,
 					isUserDependent: false,
 					content: {}
 				},
@@ -121,7 +103,6 @@ sap.ui.define([
 			propertyBag: {
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true,
 					isUserDependent: false,
 					content: {}
 				},
@@ -135,7 +116,6 @@ sap.ui.define([
 			propertyBag: {
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true,
 					isUserDependent: false,
 					content: {}
 				},
@@ -150,7 +130,6 @@ sap.ui.define([
 				changeSpecificData: {
 					id: "myFancyVariantId",
 					type: "pageVariant",
-					isVariant: true,
 					isUserDependent: true,
 					content: {}
 				},
@@ -168,7 +147,7 @@ sap.ui.define([
 
 				sandbox.stub(Settings.getInstanceOrUndef(), "isPublicLayerAvailable").returns(oTestData.publicLayerAvailable);
 
-				var oAddedObject = CompVariantState.add(mPropertyBag);
+				var oAddedObject = CompVariantState.addVariant(mPropertyBag);
 				var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 				var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
 
@@ -219,7 +198,7 @@ sap.ui.define([
 				}
 			};
 
-			var oAddedObject = CompVariantState.add(mPropertyBag);
+			var oAddedObject = CompVariantState.addVariant(mPropertyBag);
 			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 			var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
 
@@ -278,7 +257,7 @@ sap.ui.define([
 				}
 			};
 
-			var oAddedObject = CompVariantState.add(mPropertyBag);
+			var oAddedObject = CompVariantState.addVariant(mPropertyBag);
 			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 			var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
 
@@ -310,20 +289,18 @@ sap.ui.define([
 		QUnit.test("Given persist is called with all kind of objects (variants, changes, defaultVariant and standardVariant) are present", function(assert) {
 			var sPersistencyKey = "persistency.key";
 
-			CompVariantState.add({
+			var oVariant = CompVariantState.addVariant({
 				changeSpecificData: {
-					type: "addFavorite",
+					type: "pageVariant",
 					content: {}
 				},
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			});
-			CompVariantState.add({
-				changeSpecificData: {
-					type: "pageVariant",
-					isVariant: true,
-					content: {}
-				},
+			CompVariantState.updateVariant({
+				id: oVariant.getId(),
+				isUserDependent: true,
+				favorite: true,
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			});
@@ -513,7 +490,6 @@ sap.ui.define([
 			changeSpecificData: {
 				type: "pageVariant",
 				layer: Layer.CUSTOMER,
-				isVariant: true,
 				texts: {
 					variantName: "initialName"
 				},
@@ -525,7 +501,7 @@ sap.ui.define([
 
 		QUnit.test("Given a variant was updated and reverted multiple times (update, update, revert, update, revert, revert)", function (assert) {
 			sandbox.stub(Storage, "write").resolves();
-			var oVariant = CompVariantState.add(oVariantData);
+			var oVariant = CompVariantState.addVariant(oVariantData);
 			var sVariantId = oVariant.getId();
 
 			// ensure a persisted state and empty revertData aggregation
@@ -653,7 +629,7 @@ sap.ui.define([
 				assert.equal(oDefinition.texts.variantName.value, oInitialVariantData.changeSpecificData.texts.variantName, "DEFINITION: the name is untouched");
 			}
 
-			var oVariant = CompVariantState.add(oVariantData);
+			var oVariant = CompVariantState.addVariant(oVariantData);
 			var sVariantId = oVariant.getId();
 
 			// ensure a persisted state and empty revertData aggregation
@@ -783,7 +759,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a variant was was added and a persist was called", function(assert) {
-			var oVariant = CompVariantState.add(oVariantData);
+			var oVariant = CompVariantState.addVariant(oVariantData);
 			sandbox.stub(Storage, "write").resolves();
 
 			// adding a change to test, that the remove-function not existent in changes is not called = the test does not die
@@ -802,7 +778,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a variant was removed", function(assert) {
-			var oVariant = CompVariantState.add(oVariantData);
+			var oVariant = CompVariantState.addVariant(oVariantData);
 
 			// simulate an already persisted state
 			oVariant.setState(Change.states.PERSISTED);

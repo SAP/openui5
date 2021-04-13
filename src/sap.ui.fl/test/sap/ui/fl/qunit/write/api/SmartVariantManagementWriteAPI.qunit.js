@@ -52,31 +52,9 @@ sap.ui.define([
 		}
 	}, function() {
 		[{
-			bIsNoSVM: true,
-			apiFunctionName: "add",
-			compVariantStateFunctionName: "add",
-			mockedResponse: {
-				getId: function () {
-					return "id_123";
-				}
-			},
-			expectedResponse: "id_123"
-		}, {
-			bIsNoSVM: false,
-			apiFunctionName: "add",
-			compVariantStateFunctionName: "add",
-			mockedResponse: {
-				getId: function () {
-					return "id_123";
-				}
-			},
-			expectedResponse: "id_123"
-		}, {
 			apiFunctionName: "addVariant",
-			compVariantStateFunctionName: "add",
-			expectedSpecificData: {
-				isVariant: true
-			}
+			compVariantStateFunctionName: "addVariant",
+			expectedSpecificData: {}
 		}, {
 			apiFunctionName: "save",
 			compVariantStateFunctionName: "persist"
@@ -733,7 +711,8 @@ sap.ui.define([
 						changes: [],
 						standardVariants: [],
 						defaultVariants: []
-					}
+					},
+					settings: {}
 				});
 
 				return FlexState.clearAndInitialize({
@@ -741,7 +720,8 @@ sap.ui.define([
 					componentId: "__component0",
 					manifest: {},
 					componentData: {}
-				}).then(function () {
+				}).then(Settings.getInstance)
+				.then(function () {
 					SmartVariantManagementWriteAPI.updateVariant(testData.propertyBag);
 
 					var oVariant = FlexState.getCompVariantsMap(sReference)[testData.propertyBag.persistencyKey].byId[testData.propertyBag.id];

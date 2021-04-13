@@ -36,13 +36,16 @@ sap.ui.define([
 	function addChange(oChange) {
 		var oChangeContent = oChange.getDefinition();
 		var mCompVariantsMap = FlexState.getCompVariantsMap(oChange.getComponent());
-		mCompVariantsMap[oChange.getSelector().persistencyKey].changes.push(oChange);
+		var sPersistencyKey = oChange.getSelector().persistencyKey;
+		mCompVariantsMap[sPersistencyKey].changes.push(oChange);
+		mCompVariantsMap[sPersistencyKey].byId[oChange.getId()] = oChange;
 		return oChangeContent;
 	}
 
 	function removeChange(oChange) {
 		var sPersistencyKey = oChange.getSelector().persistencyKey;
 		var mCompVariantsMap = FlexState.getCompVariantsMap(oChange.getComponent());
+		delete mCompVariantsMap[sPersistencyKey].byId[oChange.getId()];
 		mCompVariantsMap[sPersistencyKey].changes = mCompVariantsMap[sPersistencyKey].changes.filter(function (oChangeInMap) {
 			return oChangeInMap !== oChange;
 		});
@@ -227,7 +230,7 @@ sap.ui.define([
 		}
 
 		// PUBLIC is only used for "public" variants
-		if (!mPropertyBag.isVariant) {
+		if (!mPropertyBag.fileType === "variant") {
 			return Layer.CUSTOMER;
 		}
 
@@ -320,7 +323,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds a new variant or change (addFavorite & removeFavorite) for a smart variant, such as filter bar or table, and returns the ID of the new change.
+	 * Adds a new variant for a smart variant management, such as filter bar or table, and returns the ID of the new variant.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {string} mPropertyBag.reference - Flex reference of the application
@@ -338,13 +341,12 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.changeSpecificData.contexts] - Map of contexts that restrict the visibility of the variant
 	 * @param {string[]} [mPropertyBag.changeSpecificData.contexts.role] - List of roles which are allowed to see the variant
 	 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
-	 * @param {boolean} [mPropertyBag.changeSpecificData.isVariant] - Indicates if the change is a variant
 	 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Indicates if a change is only valid for the current user
 	 * @param {string} [mPropertyBag.changeSpecificData.packageName] - Package name for the new entity, <default> is $tmp
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} Created variant object instance
 	 * @public
 	 */
-	CompVariantState.add = function(mPropertyBag) {
+	CompVariantState.addVariant = function(mPropertyBag) {
 		if (!mPropertyBag) {
 			return undefined;
 		}
@@ -357,7 +359,7 @@ sap.ui.define([
 			service: oChangeSpecificData.ODataService,
 			content: oChangeSpecificData.content || {},
 			reference: mPropertyBag.reference,
-			fileType: oChangeSpecificData.isVariant ? "variant" : "change",
+			fileType: "variant",
 			packageName: oChangeSpecificData.packageName,
 			layer: determineLayer(oChangeSpecificData),
 			selector: {
@@ -378,10 +380,8 @@ sap.ui.define([
 			oInfo.contexts = oChangeSpecificData.contexts;
 		}
 
-		var FlexObjectClass = oChangeSpecificData.isVariant ? CompVariant : Change;
-		var oFile = FlexObjectClass.createInitialFileContent(oInfo);
-
-		var oFlexObject = new FlexObjectClass(oFile);
+		var oFile = CompVariant.createInitialFileContent(oInfo);
+		var oFlexObject = new CompVariant(oFile);
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
