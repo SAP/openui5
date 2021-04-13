@@ -2193,41 +2193,30 @@ function (
 				})
 			]
 		}),
-		iAfterRenderingDOMReadyDelay = ObjectPageLayout.HEADER_CALC_DELAY,
-		bAfterRenderingDomReadyCalled = false,
-		done = assert.async();
+		done = assert.async(),
+		oSpy = sinon.spy(window, "clearTimeout");
 
-
-		// proxy the "_onAfterRenderingDomReady" function (problem using a spy)
-		var fnOrig = oObjectPage._onAfterRenderingDomReady;
-		oObjectPage._onAfterRenderingDomReady = function() {
-			bAfterRenderingDomReadyCalled = true;
-			fnOrig.apply(oObjectPage, arguments);
-		};
-
+		assert.expect(3);
 
 		// hook to onAfterRendering to *make a change that caused invalidation* before _onAfterRenderingDomReady is called
 		var oDelegate = {"onAfterRendering": function() {
 
-				// at this point, the _onAfterRenderingDomReady is scheduled but not executed yet
-				// Act: scheduled a task to execute shortly before _onAfterRenderingDomReady
-				setTimeout(function() {
+			// clean up to avoid calling the same hook again
+			oObjectPage.removeDelegate(oDelegate);
+			oSpy.reset();
 
-					// we are just before _onAfterRenderingDomReady will be called
-					// Act: make a change that invalidates the object page => the page will rerender
-					oObjectPage.removeSection(0);
+			assert.ok(oObjectPage._iAfterRenderingDomReadyTimeout > 0, "the task is scheduled");
 
-					// clean up to avoid calling the same hook again
-					oObjectPage.removeDelegate(oDelegate);
+			// Act
+			oObjectPage.invalidate();
 
-					// Check : the _onAfterRenderingDomReady that was scheduled before the invalidation is not called
-					setTimeout(function() {
-						assert.equal(bAfterRenderingDomReadyCalled, false, "_onAfterRenderingDomReady is not called");
-						done();
-						oObjectPage.destroy();
-					}, iAfterRenderingDOMReadyDelay - 10);
+			// Check
+			assert.ok(oSpy.called, "the task is cancelled");
+			assert.strictEqual(oObjectPage._iAfterRenderingDomReadyTimeout, null, "the field is cleared");
 
-				}, iAfterRenderingDOMReadyDelay - 10);
+			oObjectPage.destroy();
+			oSpy.restore();
+			done();
 			}};
 
 		oObjectPage.addEventDelegate(oDelegate);
