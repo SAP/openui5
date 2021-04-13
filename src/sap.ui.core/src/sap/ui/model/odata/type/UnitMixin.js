@@ -47,21 +47,41 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Does nothing as the type does not support constraints.
+	 * Validates whether the given value in model representation as returned by {@link #parseValue}
+	 * is valid and meets the conditions of this type's unit/currency customizing.
 	 *
-	 * @param {string|any[]} vValue
-	 *   The value to be validated
+	 * @param {any[]} aValues
+	 *   An array containing measure or amount, and unit or currency in this order, see return value
+	 *   of {@link #parseValue}
 	 * @throws {sap.ui.model.ValidateException}
-	 *   If {@link #formatValue} has not yet been called with a customizing part
+	 *   If {@link #formatValue} has not yet been called with a customizing part or if the entered
+	 *   measure/amount has too many decimals
 	 *
 	 * @function
 	 * @name sap.ui.model.odata.type.UnitMixin#validateValue
 	 * @public
 	 * @since 1.63.0
 	 */
-	 function validateValue(vValue) {
+	function validateValue(aValues) {
+		var iDecimals, iFractionDigits, aMatches,
+			vNumber = aValues[0],
+			sUnit = aValues[1];
+
 		if (this.mCustomUnits === undefined) {
 			throw new ValidateException("Cannot validate value without customizing");
+		}
+
+		if (!vNumber || !sUnit || !this.mCustomUnits) {
+			return;
+		}
+
+		aMatches = rDecimals.exec(vNumber);
+		iFractionDigits = aMatches ? aMatches[1].length : 0;
+		iDecimals = this.mCustomUnits[sUnit].decimals;
+		if (iFractionDigits > iDecimals) {
+			throw new ValidateException(iDecimals
+				? getText("EnterNumberFraction", [iDecimals])
+				: getText("EnterInt"));
 		}
 	}
 
@@ -141,7 +161,6 @@ sap.ui.define([
 		function getFormatOptions() {
 			var oBaseFormatOptions = fnBaseType.prototype.getFormatOptions.call(this);
 
-			oBaseFormatOptions.parseAsString = this.bParseAsString;
 			delete oBaseFormatOptions[sFormatOptionName];
 
 			return oBaseFormatOptions;
@@ -187,8 +206,8 @@ sap.ui.define([
 		 *   with "string" as its
 		 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 		 *   See {@link sap.ui.model.odata.type} for more information.
-		 * @param {any[]} aCurrentValues
-		 *   The current values of all binding parts
+		 * @param {any[]} [aCurrentValues]
+		 *   Not used
 		 * @returns {any[]}
 		 *   An array containing measure or amount, and unit or currency in this order. Measure or
 		 *   amount, and unit or currency, are string values unless the format option
@@ -204,34 +223,17 @@ sap.ui.define([
 		 * @see sap.ui.model.type.Unit#parseValue
 		 * @since 1.63.0
 		 */
-		function parseValue(vValue, sSourceType, aCurrentValues) {
-			var iDecimals, iFractionDigits, aMatches, sUnit, aValues;
+		function parseValue(vValue, sSourceType) {
+			var aValues;
 
 			if (this.mCustomUnits === undefined) {
 				throw new ParseException("Cannot parse value without customizing");
 			}
 
 			aValues = fnBaseType.prototype.parseValue.apply(this, arguments);
-			sUnit = aValues[1] || aCurrentValues[1];
 			// remove trailing decimal zeroes and separator
-			if (aValues[0] && aValues[0].includes(".")) {
+			if (aValues[0] && typeof aValues[0] === "string" && aValues[0].includes(".")) {
 				aValues[0] = aValues[0].replace(rTrailingZeros, "").replace(rSeparator, "");
-			}
-			if (sUnit && this.mCustomUnits) {
-				if (!this.mCustomUnits[sUnit]) {
-					throw new ParseException(fnBaseType.prototype.getInvalidUnitText());
-				}
-				aMatches = rDecimals.exec(aValues[0]);
-				iFractionDigits = aMatches ? aMatches[1].length : 0;
-				iDecimals = this.mCustomUnits[sUnit].decimals;
-				if (iFractionDigits > iDecimals) {
-					throw new ParseException(iDecimals
-						? getText("EnterNumberFraction", [iDecimals])
-						: getText("EnterInt"));
-				}
-			}
-			if (aValues[0] !== undefined && !this.bParseAsString) {
-				aValues[0] = Number(aValues[0]);
 			}
 
 			return aValues;
@@ -279,21 +281,18 @@ sap.ui.define([
 				throw new Error("Only the parameter oFormatOptions is supported");
 			}
 
-			// Note: The format option 'parseAsString' is always set to true, so that the base type
-			// always parses to a string and we can check the result.
-			this.bParseAsString = !oFormatOptions || !("parseAsString" in oFormatOptions)
-				|| oFormatOptions.parseAsString;
 			// format option preserveDecimals is set in the base type
-			oFormatOptions = Object.assign({unitOptional : true, emptyString: 0}, oFormatOptions,
-				{parseAsString : true});
+			oFormatOptions = Object.assign({
+					emptyString: 0,
+					parseAsString : true,
+					unitOptional : true
+				}, oFormatOptions);
 
 			fnBaseType.call(this, oFormatOptions, oConstraints);
 			// initialize mixin members after super c'tor as it overrides several members!
 
 			// map custom units as expected by {@link sap.ui.core.format.NumberFormat}
 			this.mCustomUnits = undefined;
-			// whether the parse method call includes the current binding values as a 3rd parameter
-			this.bParseWithValues = true;
 			// must not overwrite setConstraints and setFormatOptions on prototype as they are
 			// called in SimpleType constructor
 			this.setConstraints = function () {

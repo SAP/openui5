@@ -53,8 +53,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.63.0
 	 * @version ${version}
-	 *
-	 * @borrows sap.ui.model.odata.type.UnitMixin#validateValue as #validateValue
 	 */
 	var Unit = BaseUnit.extend("sap.ui.model.odata.type.Unit", {
 		constructor : function (oFormatOptions, oConstraints, aDynamicFormatOptionNames) {
@@ -124,8 +122,8 @@ sap.ui.define([
 	 *   with "string" as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @param {any[]} aCurrentValues
-	 *   The current values of all binding parts
+	 * @param {any[]} [aCurrentValues]
+	 *   Not used
 	 * @returns {any[]}
 	 *   An array containing measure and unit in this order. Both, measure and unit, are string
 	 *   values unless the format option <code>parseAsString</code> is <code>false</code>; in this
@@ -138,6 +136,22 @@ sap.ui.define([
 	 * @name sap.ui.model.odata.type.Unit#parseValue
 	 * @public
 	 * @see sap.ui.model.type.Unit#parseValue
+	 * @since 1.63.0
+	 */
+
+	/**
+	 * Validates whether the given value in model representation as returned by {@link #parseValue}
+	 * is valid and meets the conditions of this type's unit customizing.
+	 *
+	 * @param {any[]} aValues
+	 *   An array containing measure and unit in this order, see return value of {@link #parseValue}
+	 * @throws {sap.ui.model.ValidateException}
+	 *   If {@link #formatValue} has not yet been called with a customizing part or if the entered
+	 *   measure has too many decimals for its unit
+	 *
+	 * @function
+	 * @name sap.ui.model.odata.type.Unit#validateValue
+	 * @public
 	 * @since 1.63.0
 	 */
 

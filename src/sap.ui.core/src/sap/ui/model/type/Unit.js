@@ -248,7 +248,7 @@ sap.ui.define([
 	 * @name sap.ui.model.type.Unit.prototype.parseValue
 	 * @param {any} vValue the value to be parsed
 	 * @param {string} sInternalType the source type
-	 * @param {array} aCurrentValues the current values of all binding parts
+	 * @param {array} [aCurrentValues] Not used
 	 * @return {any[]|string} the parse result array
 	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sInternalType</code> is unsupported or if the given string cannot be parsed

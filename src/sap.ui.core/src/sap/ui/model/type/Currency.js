@@ -127,8 +127,8 @@ sap.ui.define([
 	 * @param {string} sSourceType
 	 *   The source type (the expected type of <code>sValue</code>); must be "string", or a type
 	 *   with "string" as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
-	 * @param {array} aCurrentValues
-	 *   The current values of all binding parts
+	 * @param {array} [aCurrentValues]
+	 *   Not used
 	 * @returns {any[]|string}
 	 *   If the <code>source</code> format option is not set, the method returns an array
 	 *   containing amount and currency: the amount is a <code>string</code> if the format
