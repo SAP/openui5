@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/StandardListItem",
+	"sap/m/List",
 	"sap/m/RadioButton",
 	"sap/m/RadioButtonGroup",
 	"sap/ui/thirdparty/jquery",
@@ -14,6 +15,7 @@ sap.ui.define([
 	WriteStorage,
 	JSONModel,
 	StandardListItem,
+	List,
 	RadioButton,
 	RadioButtonGroup,
 	jQuery,
@@ -185,6 +187,9 @@ sap.ui.define([
 			var oEvent = {
 				getParameter: function () {
 					return new StandardListItem({title: "ADMIN"});
+				},
+				getSource: function() {
+					return new List();
 				}
 			};
 

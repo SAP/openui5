@@ -183,6 +183,9 @@ function (
 				return oItem.id !== oToBeDeleted.getTitle();
 			});
 			this.oSelectedContextsModel.setProperty("/selected", oNewData);
+			// after deletion put the focus back to the list
+			var oList = oEvent.getSource();
+			oList.attachEventOnce("updateFinished", oList.focus, oList);
 		},
 
 		/**
