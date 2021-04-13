@@ -1968,12 +1968,6 @@ sap.ui.define([
 		oTable.setAutoPopinMode(true);
 		Core.applyChanges();
 
-		// set random property 'importance' on table columns
-		var aImportance = [ "None", "Low", "Medium", "High" ];
-		aColumns.forEach(function (oColumn) {
-			var sImportance = aImportance[Math.floor(Math.random() * aImportance.length)];
-			oColumn.setImportance(sImportance);
-		});
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		var fnConfigureAutoPopin = sinon.spy(oTable, "_configureAutoPopin");
@@ -2000,12 +1994,6 @@ sap.ui.define([
 		oTable.setContextualWidth("Desktop");
 		Core.applyChanges();
 
-		// set random property 'importance' on table columns
-		var aImportance = [ "None", "Low", "Medium", "High" ];
-		aColumns.forEach(function (oColumn) {
-			var sImportance = aImportance[Math.floor(Math.random() * aImportance.length)];
-			oColumn.setImportance(sImportance);
-		});
 		assert.strictEqual(oTable.getAutoPopinMode(), false, "autoPopinMode is set to false");
 
 		var fnConfigureAutoPopin = sinon.spy(oTable, "_configureAutoPopin");
