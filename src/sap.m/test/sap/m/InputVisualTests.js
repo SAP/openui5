@@ -184,6 +184,89 @@ sap.ui.require([
 			})
 		});
 
+		var oSuggestTableInput = new Input("inputWithTabularSuggestions", {
+			width: "300px",
+			showSuggestion: true,
+			enableTableAutoPopinMode: true,
+			suggestionColumns : [
+				new Column({
+					styleClass : "name",
+					header : new Label({
+						text : "Column 1"
+					})
+				}),
+				new Column({
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new Label({
+						text : "Column 2"
+					})
+				}),
+				new Column({
+					styleClass : "limit",
+					width : "30%",
+					header : new Label({
+						text : "Column 3"
+					})
+				}),
+				new Column({
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new Label({
+						text : "Column 4"
+					})
+				})
+			]
+		});
+
+		oModel = new JSONModel();
+
+		aData = {
+			tabularSuggestionItems : [{
+				name : "Auch ein gutes Ding",
+				qty : "3 EA",
+				limit : "99.00 EUR",
+				price : "17.00 EUR"
+			}, {
+				name : "Besser ist das",
+				qty : "1 EA",
+				limit : "20.00 EUR",
+				price : "13.00 EUR"
+			}, {
+				name : "Holter-di-polter",
+				qty : "10 EA",
+				limit : "15.00 EUR",
+				price : "12.00 EUR"
+			}, {
+				name : "Ha so was",
+				qty : "10 EA",
+				limit : "5.00 EUR",
+				price : "3.00 EUR"
+			}]
+		};
+
+		var oSuggestionRowTemplate = new ColumnListItem({
+			type : "Active",
+			vAlign : "Middle",
+			cells : [
+				new Label({
+					text : "{name}"
+				}),
+				new Label({
+					text: "{qty}"
+				}), new Label({
+					text: "{limit}"
+				}), new Label({
+					text : "{price}"
+				})
+			]
+		});
+
+		oModel.setData(aData);
+		oSuggestTableInput.setModel(oModel);
+		oSuggestTableInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oSuggestionRowTemplate);
+
 		var oCustomCssButton = new sap.m.Button("customCssButton",{
 			text: "Toggle custom CSS for visual test",
 			press: function() {
@@ -310,7 +393,9 @@ sap.ui.require([
 						new Label("suggestionsLabel", {text: "Input with suggestions", labelFor: "inputWithSuggestions"}),
 						oSuggestionsInput,
 						new Label({text: "Input with sticky column header suggestions", labelFor: "inputWithStickySuggestions"}),
-						oInputWithStickySuggestions
+						oInputWithStickySuggestions,
+						new Label({text: "Input with table suggetions", labelFor: "oSuggestTableInput"}),
+						oSuggestTableInput
 					]
 				})
 

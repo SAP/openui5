@@ -3876,6 +3876,30 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Tabular Suggestions - Autopopin mode", function(assert) {
+
+		// Arrange
+		var oInput = createInputWithTabularSuggestions();
+		oInput.placeAt("content");
+
+		// Act
+		oInput.setEnableTableAutoPopinMode(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oInput._getSuggestionsTable().getAutoPopinMode(), "The table should have autopopin set to true.");
+
+		// Act
+		oInput.setEnableTableAutoPopinMode(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oInput._getSuggestionsTable().getAutoPopinMode(), "The table should have autopopin set to false.");
+
+		// Clean up
+		oInput.destroy();
+	});
+
 	QUnit.module("Input Description");
 
 	QUnit.test("Input description", function(assert) {
