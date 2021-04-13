@@ -165,6 +165,84 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		oObjectPageLayout.destroy();
 	});
 
+	QUnit.test("First section has expand buttons when hidden", function (assert) {
+
+		var oObjectPageLayout = new ObjectPageLayout("page02", {
+			sections: [
+				new ObjectPageSection({
+					importance: "Low",
+					subSections: [
+						new ObjectPageSubSection({
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				}),
+				new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSection({
+							title: "Title1",
+							blocks: [new Text({text: "test1"})]
+						})
+					]
+				})
+			]
+		}),
+		oSection = oObjectPageLayout.getSections()[0];
+
+		this.stub(oSection, "_getCurrentMediaContainerRange", function() {
+			return {
+				name: "Tablet"
+			};
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		assert.strictEqual(oSection._isTitleVisible(), true, "title is visible");
+
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("First section has showMore button when content hidden", function (assert) {
+
+		var oObjectPageLayout = new ObjectPageLayout("page02", {
+			sections: [
+				new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSection({
+							importance: "Low",
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				}),
+				new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSection({
+							title: "Title1",
+							blocks: [new Text({text: "test1"})]
+						})
+					]
+				})
+			]
+		}),
+		oSection = oObjectPageLayout.getSections()[0];
+
+		this.stub(oSection, "_getCurrentMediaContainerRange", function() {
+			return {
+				name: "Tablet"
+			};
+		});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		assert.strictEqual(oSection._isTitleVisible(), true, "title is visible");
+
+		oObjectPageLayout.destroy();
+	});
+
 	QUnit.test("Section with dynamically added title has button placeholders", function (assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
