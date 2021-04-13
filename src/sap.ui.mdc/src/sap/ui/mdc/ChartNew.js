@@ -373,6 +373,7 @@ sap.ui.define([
                 this.setBusyIndicatorDelay(0);
 
                 this.getControlDelegate().createInitialChartContent(this);
+                this._renderOverlay(true);
 
                 if (this.getAutoBindOnInit()) {
                     this.setBusy(true);
@@ -968,7 +969,7 @@ sap.ui.define([
 		 * @ui5-restricted Fiori Elements, sap.ui.mdc
 		 */
 		Chart.prototype._onFiltersChanged = function(oEvent) {
-			if (this.getControlDelegate().getInnerChartBound() && oEvent.getParameter("conditionsBased")) {
+			if (this.getControlDelegate() && this.getControlDelegate().getInnerChartBound() && oEvent.getParameter("conditionsBased")) {
 				this._renderOverlay(true);
 			}
 		};
