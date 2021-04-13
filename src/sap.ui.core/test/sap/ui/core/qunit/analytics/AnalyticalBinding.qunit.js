@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/Sorter',
+	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	'sap/ui/model/TreeAutoExpandMode',
@@ -24,7 +25,7 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
 ], function (jQuery, Log, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
-		ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter,
+		ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter, CountMode,
 		ODataModelV1, ODataModelV2, TreeAutoExpandMode, o4aFakeService) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -288,12 +289,14 @@ sap.ui.define([
 
 		if (iVersion === 1) {
 			oModel = new ODataModelV1(sServiceURL, {
+				defaultCountMode : CountMode.Inline,
 				json: true,
 				tokenHandling: false
 			});
 
 		} else {
 			oModel = new ODataModelV2(sServiceURL, {
+				defaultCountMode : CountMode.Inline,
 				tokenHandling: false,
 				json: true
 			});
@@ -357,9 +360,7 @@ sap.ui.define([
 				properties : ["mock", "spy", "stub"]
 			});
 			this.oLogMock = this.mock(AnalyticalBinding.Logger);
-			this.oLogMock.expects("warning").atMost(1)
-				.withExactArgs("default count mode is ignored; OData requests will include"
-					+ " $inlinecout options");
+			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			o4aFakeService.fake({
@@ -1169,6 +1170,10 @@ sap.ui.define([
 				that = this;
 
 			ODataModelAdapter.apply(oModel);
+			this.oLogMock.expects("warning")
+				.withExactArgs("default count mode is ignored; OData requests will include"
+					+ " $inlinecout options");
+
 			oBinding = new AnalyticalBinding(oModel, sPath, null, [], [], {
 				analyticalInfo : oFixture.analyticalInfo,
 				useBatchRequests : true,
@@ -1247,6 +1252,7 @@ sap.ui.define([
 			var oBinding,
 				done = assert.async(),
 				oModel = new ODataModelV2(sServiceURL, {
+					defaultCountMode : CountMode.Inline,
 					tokenHandling : false,
 					json : true
 				});
@@ -1322,6 +1328,7 @@ sap.ui.define([
 				done = assert.async(),
 				aExpectedSelects = oFixture.expectedSelects.slice(),
 				oModel = new ODataModelV2(sServiceURL, {
+					defaultCountMode : CountMode.Inline,
 					tokenHandling : false,
 					json : true
 				});
@@ -2132,6 +2139,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor: different IDs", function (assert) {
+		var done = assert.async();
+
+		// code under test
+		setupAnalyticalBinding(2, {}, function (oBinding0) {
+			// code under test
+			setupAnalyticalBinding(2, {}, function (oBinding1) {
+				assert.notStrictEqual(oBinding0._iId, oBinding1._iId, "Different IDs");
+				assert.ok(oBinding0._iId < oBinding1._iId, "ID increases with new instances");
+
+				done();
+			}, [], undefined, true);
+		}, [], undefined, true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("updateAnalyticalInfo: bApplySortersToGroups", function (assert) {
 		var done = assert.async();
 
@@ -2744,7 +2767,8 @@ sap.ui.define([
 						"^~volatile" : true,
 						"__metadata" : {
 							"uri" :
-								",,,,,100%2F1000%252F,,EUR,,,,,,-multiple-units-not-dereferencable"
+								",,,,,100%2F1000%252F,,EUR,,,,,,-multiple-units-not-dereferencable|"
+									+ oBinding._iId
 						}
 					},
 					bIsNewEntry: true,

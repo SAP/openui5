@@ -45,6 +45,7 @@ sap.ui.define([
 	"use strict";
 
 	var sClassName = "sap.ui.model.analytics.AnalyticalBinding",
+		iInstanceCount = 0,
 		oLogger = Log.getLogger(sClassName);
 
 	/**
@@ -304,6 +305,8 @@ sap.ui.define([
 			this.bUseAcceleratedAutoExpand = (mParameters && mParameters.useAcceleratedAutoExpand === false) ? false : true;
 			this.bNoPaging = (mParameters && mParameters.noPaging === true) ? true : false;
 
+			iInstanceCount += 1;
+			this._iId = iInstanceCount;
 			// attribute members for maintaining loaded data; mapping from groupId to related information
 			this.iTotalSize = -1;
 				/* data loaded from OData service */
@@ -4636,7 +4639,10 @@ sap.ui.define([
 			sSaveDimVal = sSaveDimVal === undefined ? "" : sSaveDimVal;
 			sMultiUnitEntryKey += (encodeURIComponent(sSaveDimVal) + ",");
 		}
-		sMultiUnitEntryKey += "-multiple-units-not-dereferencable";
+		// If there are multiple analytical bindings for the same entity (maybe using different
+		// filters), ensure that the keys for the multi unit representatives are unique for this
+		// analytical binding, otherwise data could be overwritten by another binding.
+		sMultiUnitEntryKey += "-multiple-units-not-dereferencable|" + this._iId;
 
 		// check if an entry already exists; if so, dont proceed, but return it
 		var iMultiUnitEntryIndex;
