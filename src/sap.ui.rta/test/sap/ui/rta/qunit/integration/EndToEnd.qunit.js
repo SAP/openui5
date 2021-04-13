@@ -208,17 +208,26 @@ sap.ui.define([
 					var oObserver = new MutationObserver(function () {
 						var oGroupElements = this.oGeneralGroup.getGroupElements();
 						var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
-						assert.equal(oGroupElements[iIndex].getLabelText(), sFieldToAddText, "the added element is at the correct position");
-						assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-						var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-						oObserver.disconnect();
-						this.oRta.stop()
-						.then(RtaQunitUtils.getNumberOfChangesForTestApp)
-						.then(function (iNumberOfChanges) {
-							assert.equal(iNumberOfChanges, 1);
-						})
-						.then(fnDone);
+						var oGroupElement = oGroupElements[iIndex];
+						var oSmartField = oGroupElement && oGroupElement.getElements()[0];
+						var bSmartFieldIsRendered = false;
+						if (oSmartField && oSmartField.getFirstInnerControl()) {
+							bSmartFieldIsRendered = true;
+						}
+
+						if (bSmartFieldIsRendered) {
+							assert.equal(oGroupElement.getLabelText(), sFieldToAddText, "the added element is at the correct position");
+							assert.ok(oGroupElement.getVisible(), "the new field is visible");
+							var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+							assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+							oObserver.disconnect();
+							this.oRta.stop()
+							.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+							.then(function (iNumberOfChanges) {
+								assert.equal(iNumberOfChanges, 1);
+							})
+							.then(fnDone);
+						}
 					}.bind(this));
 
 					var oConfig = {attributes: false, childList: true, characterData: false, subtree: true};
