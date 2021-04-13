@@ -88,10 +88,6 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 		}
 	}});
 
-	DataStateIndicator.prototype.isApplicable = function(oControl) {
-		return (oControl.addAriaLabelledBy && oControl.getMetadata().getAllPrivateAggregations()["_messageStrip"] && this._getBindingName());
-	};
-
 	DataStateIndicator.prototype.onActivate = function(oControl) {
 		this._bFiltering = false;
 		var sBindingName = this._getBindingName();
@@ -248,7 +244,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	};
 
 	DataStateIndicator.prototype._getBindingName = function() {
-		return this.getControlPluginConfig("defaultBindingName");
+		return this.getConfig("defaultBindingName");
 	};
 
 	DataStateIndicator.prototype._processDataState = function(oDataState, bIgnoreChanges) {
@@ -383,7 +379,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	DataStateIndicator.prototype._hideFilterInfo = function(bClearLink) {
 		this._oMessageStrip.setShowCloseButton(true);
 		this._setLinkText(bClearLink ? "" : this._translate("FILTER_ITEMS"));
-		this.getControlPluginConfig("hideInfoToolbar", undefined, this.getControl());
+		this.getConfig("hideInfoToolbar", this.getControl());
 	};
 
 	DataStateIndicator.prototype._showFilterInfo = function() {
@@ -392,7 +388,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			this._setLinkText(this._translate("CLEAR_FILTER"));
 			this._oInfoText.setText(this._translate("FILTERED_BY_" + this._sCombinedType.toUpperCase()));
 			if (!this._oInfoToolbar.getParent()) {
-				this.getControlPluginConfig("showInfoToolbar", undefined, this.getControl(), this._oInfoToolbar);
+				this.getConfig("showInfoToolbar", this.getControl(), this._oInfoToolbar);
 			}
 		} else {
 			sap.ui.require(["sap/m/Text", "sap/m/Toolbar"], function(Text, Toolbar) {
@@ -469,7 +465,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	/**
 	 * Plugin-specific control configurations
 	 */
-	PluginBase.setConfig({
+	PluginBase.setConfigs({
 		"sap.m.ListBase": {
 			defaultBindingName: "items",
 			useInfoToolbar: function(oParent) {

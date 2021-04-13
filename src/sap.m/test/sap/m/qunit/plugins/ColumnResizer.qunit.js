@@ -137,7 +137,7 @@ sap.ui.define([
 		assert.notOk(oTableDomRef.children[oTableDomRef.children.length - 1].classList.contains("sapMPluginsColumnResizerHandle"), "ColumnResizer handle created");
 
 		// get resizable <th> elements
-		var aResizableColumns = jQuery(oColumnResizer.getControlPluginConfig("resizable")).get();
+		var aResizableColumns = jQuery(oColumnResizer.getConfig("resizable")).get();
 		aResizableColumns.forEach(function(TH) {
 			assert.ok(TH.classList.contains("sapMPluginsColumnResizerResizable"), "Resizable column have the correct style added");
 			assert.strictEqual(document.getElementById(TH.firstChild.getAttribute("aria-describedby")).innerText, Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZABLE"), "The column is resizable, announcement added");
@@ -145,7 +145,7 @@ sap.ui.define([
 
 		oColumnResizer.setEnabled(false);
 		Core.applyChanges();
-		aResizableColumns = jQuery(oColumnResizer.getControlPluginConfig("resizable")).get();
+		aResizableColumns = jQuery(oColumnResizer.getConfig("resizable")).get();
 		aResizableColumns.forEach(function(TH) {
 			assert.notOk(TH.classList.contains("sapMPluginsColumnResizerResizable"), "Resizable column styleClass removed");
 			assert.notOk(TH.firstChild.hasAttribute("aria-describedby"), "announcement removed");
@@ -164,7 +164,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.ok(this.oTable.bFocusableHeaders, "bFocusableHeaders=true on the Table");
-		assert.notOk(oColumnResizer.getControlPluginConfig("allowTouchResizing"), "allowTouchResizing=false, since its Desktop device");
+		assert.notOk(oColumnResizer.getConfig("allowTouchResizing"), "allowTouchResizing=false, since its Desktop device");
 
 		oColumnResizer.setEnabled(false);
 		Core.applyChanges();
@@ -186,7 +186,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.ok(this.oTable.bFocusableHeaders, "bFocusableHeaders=true on the Table");
-		assert.ok(oColumnResizer.getControlPluginConfig("allowTouchResizing"), "allowTouchResizing=true, since its Mobile device");
+		assert.ok(oColumnResizer.getConfig("allowTouchResizing"), "allowTouchResizing=true, since its Mobile device");
 
 		oMatchMediaStub.restore();
 	});
@@ -197,9 +197,9 @@ sap.ui.define([
 		this.oTable.addDependent(oColumnResizer);
 		Core.applyChanges();
 
-		assert.notOk(oColumnResizer.getControlPluginConfig("enableColumnHeaderFocus"), "enableColumnHeaderFocus not set, since bActiveHeaders=true");
+		assert.notOk(oColumnResizer.getConfig("enableColumnHeaderFocus"), "enableColumnHeaderFocus not set, since bActiveHeaders=true");
 
-		var aFocusable = jQuery(oColumnResizer.getControlPluginConfig("focusable")).get();
+		var aFocusable = jQuery(oColumnResizer.getConfig("focusable")).get();
 		aFocusable.forEach(function(oFocusable) {
 			assert.notOk(oFocusable.classList.contains("sapMPluginsColumnResizerFocusable"), "focusable style class not added by the plugin");
 			assert.ok(oFocusable.getAttribute("tabindex"), "Column headers are focusable, since bActiveHeaders=true");

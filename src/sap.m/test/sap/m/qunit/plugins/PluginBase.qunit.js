@@ -6,9 +6,16 @@ sap.ui.define([
 	"use strict";
 	/*global QUnit */
 
-	var TestPlugin = PluginBase.extend("sap.m.plugins.test.Plugin");
+	var TestPlugin = PluginBase.extend("sap.m.plugins.test.Test");
 	var TestControl = Control.extend("sap.m.plugins.test.Control");
 	var TestElement = Element.extend("sap.m.plugins.test.Element");
+
+	PluginBase.setControlConfig(TestControl, {
+		key1: "value1",
+		key2: function (p1, p2) {
+			return p1 + p2 + this.key1;
+		}
+	}, TestPlugin);
 
 	QUnit.module("Activation & Deactivation", {
 		beforeEach: function() {
@@ -65,6 +72,7 @@ sap.ui.define([
 		this.oPluginMock.expects("onDeactivate").never();
 
 		this.oControl.addDependent(this.oPlugin);
+		assert.equal(PluginBase.getPlugin(this.oControl, TestPlugin), this.oPlugin, "Plugin found");
 
 		assert.ok(this.oPlugin.isActive(), "Active");
 	});
@@ -76,6 +84,7 @@ sap.ui.define([
 		this.oPluginMock.expects("onDeactivate").never();
 
 		this.oControl.addDependent(this.oPlugin);
+		assert.equal(PluginBase.getPlugin(this.oControl), this.oPlugin, "Plugin found");
 
 		assert.notOk(this.oPlugin.isActive(), "Not active");
 	});
@@ -88,6 +97,7 @@ sap.ui.define([
 		var oOnActivate = this.oPluginMock.expects("onActivate").once().withExactArgs(this.oControl);
 
 		this.oControl.insertDependent(this.oPlugin, 0);
+		assert.equal(PluginBase.getPlugin(this.oControl, TestPlugin), this.oPlugin, "Plugin found");
 
 		assert.ok(this.oPlugin.isActive(), "Active");
 		assert.ok(oOnActivate.calledAfter(oOnDeactivate), "First deactivate, then activate");
@@ -152,5 +162,41 @@ sap.ui.define([
 		this.oPlugin.setEnabled(false);
 
 		assert.notOk(this.oPlugin.isActive(), "Not active");
+	});
+
+	QUnit.test("Config", function(assert) {
+		this.oControl.addDependent(this.oPlugin);
+
+		assert.equal(this.oPlugin.getConfig("key1"), "value1", "Config read correct");
+		assert.equal(this.oPlugin.getConfig("key2", "X", 1), "X1value1", "Config method executed correct");
+
+		this.oControl.removeDependent(this.oPlugin);
+		assert.equal(this.oPlugin.getConfig("key1"), undefined, "Config could not found since plugin is removed");
+
+	});
+
+	QUnit.test("Logical Owner", function(assert) {
+		var done = assert.async();
+		var fnResolve, oPromise = new Promise(function(resolve) {
+			fnResolve = resolve;
+		});
+
+		var oNewTestControl = new TestControl();
+		var oLogicalOwnerStub = this.stub();
+        oLogicalOwnerStub.onCall(0).returns(oPromise);
+        oLogicalOwnerStub.onCall(1).returns(oNewTestControl);
+        oLogicalOwnerStub.returns(oNewTestControl);
+
+		this.oControl.getTestPluginOwner = oLogicalOwnerStub;
+
+		this.oControl.addDependent(this.oPlugin);
+		fnResolve();
+
+		setTimeout(function() {
+			assert.equal(this.oPlugin.getParent(), this.oControl, "Logical paernt is set");
+			assert.equal(this.oPlugin.getControl(), oNewTestControl, "Logical plugin owner is defined");
+			oNewTestControl.destroy();
+			done();
+		}.bind(this));
 	});
 });
