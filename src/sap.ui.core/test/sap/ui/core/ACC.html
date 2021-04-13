@@ -113,7 +113,7 @@
 								aBuffer.push("<td>", oLibInfo.name,"</td>");
 							}
 							aBuffer.push("<td>", oLibInfo.testinfo.tests[i].control,"</td>");
-							aBuffer.push("<td><a href='", oLibInfo.root, addParamsToURL(oLibInfo.testinfo.tests[i].url, mParams), "' target='_blank'>", oLibInfo.testinfo.tests[i].name || "Testpage" ,"</a></td>");
+							aBuffer.push("<td><a href='", oLibInfo.root, addParamsToURL(oLibInfo.testinfo.tests[i].url, mParams), "' target='_blank' rel='noopener noreferrer'>", oLibInfo.testinfo.tests[i].name || "Testpage" ,"</a></td>");
 							aBuffer.push("<td>", oLibInfo.testinfo.tests[i].appComponent || "", "</td>");
 							aBuffer.push("<td>", oLibInfo.testinfo.tests[i].desc || "", "</td></tr>");
 						}
