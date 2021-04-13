@@ -141,7 +141,7 @@ function(
 	 * <b>When not to use:</b>
 	 * Don't use the control for long texts, dates, designated search fields, fields for multiple selection.
 	 *
-	 * <h3>Known Limitations</h3>
+	 * <h3>Known Restrictions</h3>
 	 *
 	 * If <code>showValueHelp</code> or if <code>showSuggestion</code> is <code>true</code>, the native browser autofill will not fire a change event.
 	 *
