@@ -31,27 +31,14 @@ sap.ui.define([
 	};
 
 	function createMouseWheelEvent(iScrollDelta, iDeltaMode, bShift) {
-		var oWheelEvent;
-
-		if (typeof Event === "function") {
-			oWheelEvent = new window.WheelEvent("wheel", {
-				deltaY: bShift ? 0 : iScrollDelta,
-				deltaX: bShift ? iScrollDelta : 0,
-				deltaMode: iDeltaMode,
-				shiftKey: bShift,
-				bubbles: true,
-				cancelable: true
-			});
-		} else { // IE
-			oWheelEvent = document.createEvent("Event");
-			oWheelEvent.deltaY = bShift ? 0 : iScrollDelta;
-			oWheelEvent.deltaX = bShift ? iScrollDelta : 0;
-			oWheelEvent.deltaMode = iDeltaMode;
-			oWheelEvent.shiftKey = bShift;
-			oWheelEvent.initEvent("wheel", true, true);
-		}
-
-		return oWheelEvent;
+		return new window.WheelEvent("wheel", {
+			deltaY: bShift ? 0 : iScrollDelta,
+			deltaX: bShift ? iScrollDelta : 0,
+			deltaMode: iDeltaMode,
+			shiftKey: bShift,
+			bubbles: true,
+			cancelable: true
+		});
 	}
 
 	var iTouchPositionX;
@@ -59,35 +46,22 @@ sap.ui.define([
 	var oTouchTargetElement;
 
 	function initTouchScrolling(oTargetElement, iPageX, iPageY) {
-		var oTouchEvent;
-
 		oTouchTargetElement = oTargetElement;
 		iTouchPositionX = iPageX || 0;
 		iTouchPositionY = iPageY || 0;
 
-		if (typeof Event === "function" && typeof window.Touch === "function") {
-			var oTouchObject = new window.Touch({
-				identifier: Date.now(),
-				target: oTouchTargetElement,
-				pageX: iTouchPositionX,
-				pageY: iTouchPositionY
-			});
-
-			oTouchEvent = new window.TouchEvent("touchstart", {
-				bubbles: true,
-				cancelable: true,
-				touches: [oTouchObject]
-			});
-		} else { // Firefox, Edge, IE
-			oTouchEvent = document.createEvent("Event");
-			oTouchEvent.touches = [
-				{
+		var oTouchEvent = new window.TouchEvent("touchstart", {
+			bubbles: true,
+			cancelable: true,
+			touches: [
+				new window.Touch({
+					identifier: Date.now(),
+					target: oTouchTargetElement,
 					pageX: iTouchPositionX,
 					pageY: iTouchPositionY
-				}
-			];
-			oTouchEvent.initEvent("touchstart", true, true);
-		}
+				})
+			]
+		});
 
 		oTouchTargetElement.dispatchEvent(oTouchEvent);
 
@@ -95,34 +69,21 @@ sap.ui.define([
 	}
 
 	function doTouchScrolling(iScrollDeltaX, iScrollDeltaY) {
-		var oTouchEvent;
-
 		iTouchPositionX -= iScrollDeltaX || 0;
 		iTouchPositionY -= iScrollDeltaY || 0;
 
-		if (typeof Event === "function" && typeof window.Touch === "function") {
-			var oTouchObject = new window.Touch({
-				identifier: Date.now(),
-				target: oTouchTargetElement,
-				pageX: iTouchPositionX,
-				pageY: iTouchPositionY
-			});
-
-			oTouchEvent = new window.TouchEvent("touchmove", {
-				bubbles: true,
-				cancelable: true,
-				touches: [oTouchObject]
-			});
-		} else { // Firefox, Edge, IE
-			oTouchEvent = document.createEvent("Event");
-			oTouchEvent.touches = [
-				{
+		var oTouchEvent = new window.TouchEvent("touchmove", {
+			bubbles: true,
+			cancelable: true,
+			touches: [
+				new window.Touch({
+					identifier: Date.now(),
+					target: oTouchTargetElement,
 					pageX: iTouchPositionX,
 					pageY: iTouchPositionY
-				}
-			];
-			oTouchEvent.initEvent("touchmove", true, true);
-		}
+				})
+			]
+		});
 
 		oTouchTargetElement.dispatchEvent(oTouchEvent);
 
@@ -130,31 +91,18 @@ sap.ui.define([
 	}
 
 	function endTouchScrolling() {
-		var oTouchEvent;
-
-		if (typeof Event === "function" && typeof window.Touch === "function") {
-			var oTouchObject = new window.Touch({
-				identifier: Date.now(),
-				target: oTouchTargetElement,
-				pageX: iTouchPositionX,
-				pageY: iTouchPositionY
-			});
-
-			oTouchEvent = new window.TouchEvent("touchend", {
-				bubbles: true,
-				cancelable: true,
-				changedTouches: [oTouchObject]
-			});
-		} else { // Firefox, Edge, IE
-			oTouchEvent = document.createEvent("Event");
-			oTouchEvent.changedTouches = [
-				{
+		var oTouchEvent = new window.TouchEvent("touchend", {
+			bubbles: true,
+			cancelable: true,
+			changedTouches: [
+				new window.Touch({
+					identifier: Date.now(),
+					target: oTouchTargetElement,
 					pageX: iTouchPositionX,
 					pageY: iTouchPositionY
-				}
-			];
-			oTouchEvent.initEvent("touchend", true, true);
-		}
+				})
+			]
+		});
 
 		oTouchTargetElement.dispatchEvent(oTouchEvent);
 
@@ -162,16 +110,7 @@ sap.ui.define([
 	}
 
 	function createScrollEvent() {
-		var oScrollEvent;
-
-		if (typeof Event === "function") {
-			oScrollEvent = new window.Event("scroll");
-		} else {
-			oScrollEvent = document.createEvent("Event");
-			oScrollEvent.initEvent("scroll", false, false);
-		}
-
-		return oScrollEvent;
+		return new window.Event("scroll");
 	}
 
 	//*******************************************************************
@@ -1185,10 +1124,6 @@ sap.ui.define([
 			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 150, false);
 		}).then(function() {
 			return test("RTL: Focus data cell in column 4, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 3), 150, false);
-		}).catch(function(vError) {
-			if (vError !== "Skipped in IE") {
-				throw vError;
-			}
 		}).finally(TableQUnitUtils.$changeTextDirection(false));
 	});
 

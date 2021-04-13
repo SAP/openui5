@@ -23,31 +23,12 @@ sap.ui.define([
 
 	function createDragEvent(sDragEventType) {
 		var oJQueryDragEvent = jQuery.Event(sDragEventType);
-		var oNativeDragEvent;
 
-		if (typeof Event === "function") {
-			oNativeDragEvent = new Event(sDragEventType, {
-				bubbles: true,
-				cancelable: true
-			});
-		} else { // IE
-			oNativeDragEvent = document.createEvent("Event");
-			oNativeDragEvent.initEvent(sDragEventType, true, true);
-		}
-
-		// Fake the DataTransfer object. This is the only cross-browser solution.
-		oNativeDragEvent.dataTransfer = {
-			dropEffect: "none",
-			effectAllowed: "none",
-			files: [],
-			items: [],
-			types: [],
-			setDragImage: function() {},
-			setData: function() {},
-			getData: function() {}
-		};
-
-		oJQueryDragEvent.originalEvent = oNativeDragEvent;
+		oJQueryDragEvent.originalEvent = new DragEvent(sDragEventType, {
+			bubbles: true,
+			cancelable: true,
+			dataTransfer: new DataTransfer()
+		});
 
 		return oJQueryDragEvent;
 	}

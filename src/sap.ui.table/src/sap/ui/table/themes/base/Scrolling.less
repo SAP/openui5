@@ -10,19 +10,12 @@
  * sapUiTableHScr   - display horizontal scrollbar
  */
 @_sap_ui_table_Scrolling_ScrollbarSize: 16px;
-@_sap_ui_table_Scrolling_ScrollbarSizeIE: 18px; /* scrollbar sizes do not depend on the base font size in IE */
-@_sap_ui_table_Scrolling_ScrollbarSizeEdge: 16px; /* scrollbar sizes do not depend on the base font size in Edge */
 @_sap_ui_table_Scrolling_ScrollbarSizeMobile: 8px;
 
 @_sap_ui_table_Scrolling_HScrollbarHeight: @_sap_ui_table_Scrolling_ScrollbarSize;
-@_sap_ui_table_Scrolling_HScrollbarHeightIE: @_sap_ui_table_Scrolling_ScrollbarSizeIE;
-@_sap_ui_table_Scrolling_HScrollbarHeightEdge: @_sap_ui_table_Scrolling_ScrollbarSizeEdge;
 @_sap_ui_table_Scrolling_HScrollbarHeightMobile: @_sap_ui_table_Scrolling_ScrollbarSizeMobile;
 
 @_sap_ui_table_Scrolling_VScrollbarWidth: calc(@_sap_ui_table_Scrolling_HScrollbarHeight ~"+" @_sap_ui_table_BaseBorderWidth);
-// Internet Explorer does not support nested calc().
-@_sap_ui_table_Scrolling_VScrollbarWidthIE: ~"(" @_sap_ui_table_Scrolling_HScrollbarHeightIE ~"+" @_sap_ui_table_BaseBorderWidth ~")";
-@_sap_ui_table_Scrolling_VScrollbarWidthEdge: calc(@_sap_ui_table_Scrolling_HScrollbarHeightEdge ~"+" @_sap_ui_table_BaseBorderWidth);
 @_sap_ui_table_Scrolling_VScrollbarWidthMobile: calc(@_sap_ui_table_Scrolling_HScrollbarHeightMobile ~"+" @_sap_ui_table_BaseBorderWidth);
 
 @_sap_ui_table_Scrolling_ScrollbarBackground: @sapUiListHeaderBackground;

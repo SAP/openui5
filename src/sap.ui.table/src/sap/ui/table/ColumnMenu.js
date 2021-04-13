@@ -66,7 +66,6 @@ sap.ui.define([
 		this._iPopupClosedTimeoutId = null;
 		this._oColumn = null;
 		this._oTable = null;
-		this._attachPopupClosed();
 	};
 
 
@@ -147,32 +146,6 @@ sap.ui.define([
 	ColumnMenu.prototype._invalidate = function() {
 		this._bInvalidated = true;
 	};
-
-	/**
-	 * Special handling for IE < 9 when the popup is closed.
-	 * The associated column of the menu is focused when the menu is closed.
-	 * @private
-	 */
-	ColumnMenu.prototype._attachPopupClosed = function() {
-		// put the focus back into the column header after the
-		// popup is being closed.
-		var that = this;
-
-		if (!Device.support.touch) {
-			this.getPopup().attachClosed(function() {
-				that._iPopupClosedTimeoutId = window.setTimeout(function() {
-					if (that._oColumn) {
-						if (that._lastFocusedDomRef) {
-							that._lastFocusedDomRef.focus();
-						} else {
-							that._oColumn.focus();
-						}
-					}
-				}, 0);
-			});
-		}
-	};
-
 
 	/**
 	 * Override {@link sap.ui.unified.Menu#open} method.

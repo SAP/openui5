@@ -1001,7 +1001,7 @@ sap.ui.define([
 
 	/*
 	 * Handled keys:
-	 * Shift, Space, F2, F4, Ctrl+A, Ctrl+Shift+A, Ctrl+V (for msie)
+	 * Shift, Space, F2, F4, Ctrl+A, Ctrl+Shift+A
 	 */
 	KeyboardDelegate.prototype.onkeydown = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
@@ -1089,7 +1089,7 @@ sap.ui.define([
 	 * UI5 default:
 	 *  - PLUS = 187 (KeyCodes.PLUS)
 	 *  - MINUS: 219 (KeyCodes.MINUS)
-	 * Chrome, Edge, IE:
+	 * Chrome:
 	 *  - MINUS = 189
 	 * Firefox:
 	 * - PLUS = 171

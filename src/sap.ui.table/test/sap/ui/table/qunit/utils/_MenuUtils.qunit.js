@@ -1046,16 +1046,10 @@ sap.ui.define([
 		var oColumn = oTable.getColumns()[0];
 
 		function createFocusOutEvent() {
-			if (typeof FocusEvent === "function") {
-				return new FocusEvent("focusout", {
-					bubbles: true,
-					cancelable: true
-				});
-			} else {
-				var oFocusEvent = document.createEvent("Event");
-				oFocusEvent.initEvent("focusout", true, true);
-				return oFocusEvent;
-			}
+			return new FocusEvent("focusout", {
+				bubbles: true,
+				cancelable: true
+			});
 		}
 
 		this.assertColumnHeaderCellMenuExists(assert, oColumn, false);

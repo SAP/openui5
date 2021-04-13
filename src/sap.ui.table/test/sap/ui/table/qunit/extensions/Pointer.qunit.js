@@ -25,19 +25,10 @@ sap.ui.define([
 	var fakeSumRow = window.fakeSumRow;
 
 	function createPointerEvent(sEventType) {
-		var oEvent;
-
-		if (typeof window.PointerEvent === "function") {
-			oEvent = new window.PointerEvent(sEventType, {
-				bubbles: true,
-				cancelable: true
-			});
-		} else { // IE
-			oEvent = document.createEvent("Event");
-			oEvent.initEvent(sEventType, true, true);
-		}
-
-		return oEvent;
+		return new window.PointerEvent(sEventType, {
+			bubbles: true,
+			cancelable: true
+		});
 	}
 
 	QUnit.module("Initialization", {

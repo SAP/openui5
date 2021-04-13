@@ -14,11 +14,9 @@
 @_sap_ui_table_Cell_BorderBottomFocus: @sapUiListTableFixedBorder;
 
 /*
- * Focus visualization
- * NOTE: IE and Edge use native outline rendering. It has correct contrast and offset. Any attempt to specify another outline in CSS breaks it.
+ * Focus outline
  */
-
-.outline() {
+.sapUiTableCell:focus {
 	outline-offset: @_sap_ui_table_Cell_FocusOutlineOffset;
 	outline: @_sap_ui_table_FocusOutlineWidth dotted @sapUiContentFocusColor;
 
@@ -29,18 +27,6 @@
 	// To show the bottom focus outline of row selection cells that would otherwise be hidden by the top border of the selection cell below.
 	.sapUiTableGroupMode &.sapUiTableRowSelectionCell:focus {
 		z-index: 1;
-	}
-}
-
-/* WebKit */
-.sapUiTableCell:focus:not(*:root) {
-	.outline();
-}
-
-/* Firefox */
-@supports (-moz-appearance:meterbar) {
-	.sapUiTableCell:focus {
-		.outline();
 	}
 }
 

@@ -4453,40 +4453,15 @@ sap.ui.define([
 			}
 		}),
 		createPasteEvent: function(sData) {
-			var oEvent;
+			var oClipboardData = new DataTransfer();
 
-			function getData() {
-				return sData;
-			}
+			oClipboardData.setData("text/plain", sData);
 
-			var oClipboardData = {getData: getData};
-
-			if (typeof Event === "function") {
-
-				if (Device.browser.chrome) {
-					oClipboardData = new DataTransfer();
-					oClipboardData.setData("text/plain", sData);
-
-					oEvent = new ClipboardEvent("paste", {
-						bubbles: true,
-						cancelable: true,
-						clipboardData: oClipboardData
-					});
-				} else {
-					oEvent = new Event("paste", {
-						bubbles: true,
-						cancelable: true
-					});
-					oEvent.clipboardData = oClipboardData;
-				}
-
-			} else { // IE
-				oEvent = document.createEvent("Event");
-				oEvent.initEvent("paste", true, true);
-				oEvent.clipboardData = oClipboardData;
-			}
-
-			return oEvent;
+			return new ClipboardEvent("paste", {
+				bubbles: true,
+				cancelable: true,
+				clipboardData: oClipboardData
+			});
 		},
 		test: function(assert, sTestTitle, oHTMLElement, bShouldFireOnce) {
 			var sData = "data";
@@ -4619,10 +4594,6 @@ sap.ui.define([
 	QUnit.test("test _enableTextSelection function", function(assert) {
 		oTable._enableTextSelection(oTable.getDomRef());
 		assert.ok(oTable.getDomRef().hasAttribute("unselectable", "off"), "_enableTextSelection is on");
-	});
-
-	QUnit.test("test _clearTextSelection function", function(assert) {
-		assert.equal(oTable._clearTextSelection(), window.getSelection().removeAllRanges(), "Text selection is cleared");
 	});
 
 	QUnit.test("test _toggleSelectAll function", function(assert) {

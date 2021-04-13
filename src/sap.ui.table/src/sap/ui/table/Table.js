@@ -2969,26 +2969,6 @@ sap.ui.define([
 			off("selectstart");
 	};
 
-	/**
-	 * clears the text selection on the document (disabled fro Dnd)
-	 * @private
-	 */
-	Table.prototype._clearTextSelection = function() {
-		if (window.getSelection) {
-			if (window.getSelection().empty) {  // Chrome
-				window.getSelection().empty();
-			} else if (window.getSelection().removeAllRanges) {  // Firefox
-				window.getSelection().removeAllRanges();
-			}
-		} else if (document.selection && document.selection.empty) {  // IE?
-			try {
-				document.selection.empty();
-			} catch (ex) {
-				// ignore error to as a workaround for bug in IE8
-			}
-		}
-	};
-
 	// =============================================================================
 	// CONTROL EVENT HANDLING
 	// =============================================================================
@@ -3610,9 +3590,8 @@ sap.ui.define([
 			}
 		}
 
-		// call collectTableSizes to determine whether the number of fixed columns can be displayed at all
-		// this is required to avoid flickering of the table in IE if the fixedColumnCount must be adjusted
-		this._collectTableSizes();
+		this._collectTableSizes(); // Avoid double rendering if the fixed column count needs to be adjusted.
+
 		if (this.getEnableColumnFreeze()) {
 			this._invalidateColumnMenus();
 		}
