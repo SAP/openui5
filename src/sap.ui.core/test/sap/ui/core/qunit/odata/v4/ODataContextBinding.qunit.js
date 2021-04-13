@@ -18,8 +18,6 @@ sap.ui.define([
 ], function (Log, SyncPromise, Binding, ChangeReason, ContextBinding, Context,
 		ODataContextBinding, ODataModel, asODataParentBinding, _Cache, _GroupLock, _Helper,
 		TestUtils) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$canonicalPath", "$$groupId", "$$inheritExpandSelect",
@@ -69,7 +67,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("bindingCreated", function (assert) {
+	QUnit.test("bindingCreated", function () {
 		var oBinding,
 			oExpectation = this.mock(this.oModel).expects("bindingCreated")
 				.withExactArgs(sinon.match.object);
@@ -84,14 +82,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("constructor: no lock for relative bindings", function (assert) {
+	QUnit.test("constructor: no lock for relative bindings", function () {
 		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 
 		this.bindContext("EMPLOYEE_2_MANAGER", Context.create(this.oModel, {}, "/EMPLOYEES('42')"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("constructor: lock when creating with base context", function (assert) {
+	QUnit.test("constructor: lock when creating with base context", function () {
 		var oContext = this.oModel.createBindingContext("/TEAMS('42')");
 
 		this.mock(ODataContextBinding.prototype).expects("getGroupId").returns("myGroup");
@@ -181,7 +179,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bSuspended) {
-		QUnit.test("initialize: resolved, suspended = " + bSuspended, function (assert) {
+		QUnit.test("initialize: resolved, suspended = " + bSuspended, function () {
 			var oBinding = this.bindContext("/resolved"),
 				oRootBinding = {isSuspended : function () {}};
 
@@ -199,7 +197,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("initialize: unresolved", function (assert) {
+	QUnit.test("initialize: unresolved", function () {
 		var oBinding = this.bindContext("unresolved");
 
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(false);
@@ -1179,7 +1177,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read uses group ID", function (assert) {
+	QUnit.test("read uses group ID", function () {
 		var oBinding = this.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oGroupLock = {};
 
@@ -3084,7 +3082,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshInternal: no cache", function (assert) {
+	QUnit.test("refreshInternal: no cache", function () {
 		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
 			oBinding = this.bindContext("TEAM_2_EMPLOYEE", oContext),
 			oChild0 = {
@@ -3269,7 +3267,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resumeInternal: binding has no sResumeChangeReason", function (assert) {
+	QUnit.test("resumeInternal: binding has no sResumeChangeReason", function () {
 		var bCheckUpdate = {/* true or false */},
 			oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
 			oBinding = this.bindContext("TEAM_2_EMPLOYEE", oContext),
@@ -3334,7 +3332,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[undefined, false, true].forEach(function (bAction) {
-		QUnit.test("resumeInternal: operation binding, bAction=" + bAction, function (assert) {
+		QUnit.test("resumeInternal: operation binding, bAction=" + bAction, function () {
 			var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
 				oBinding = this.bindContext("name.space.Operation(...)", oContext),
 				oBindingMock = this.mock(oBinding);
@@ -3981,7 +3979,7 @@ sap.ui.define([
 	Context.create({/*oModel*/}, {/*oBinding*/}, "/SalesOrderList($uid=1)"),
 	null
 ].forEach(function (oContext, i) {
-	QUnit.test("adjustPredicate: " + i, function (assert) {
+	QUnit.test("adjustPredicate: " + i, function () {
 		var oBinding = this.bindContext("SO_2_BP", oContext);
 
 		if (oContext) {
@@ -4020,7 +4018,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doDeregisterChangeListener: super", function (assert) {
+	QUnit.test("doDeregisterChangeListener: super", function () {
 		var oBinding = this.bindContext("/EMPLOYEES('42')"),
 			oListener = {},
 			sPath = "foo";
@@ -4033,7 +4031,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doDeregisterChangeListener: operation binding", function (assert) {
+	QUnit.test("doDeregisterChangeListener: operation binding", function () {
 		var oBinding = this.bindContext("/Operation(...)"),
 			oHelperMock = this.mock(_Helper),
 			oListener = {};
@@ -4164,7 +4162,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
-		QUnit.test("Action import on navigation property", function (assert) {
+		QUnit.test("Action import on navigation property", function () {
 			var oModel = new ODataModel({
 					serviceUrl :
 						TestUtils.proxy("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"),

@@ -13,8 +13,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, asODataParentBinding,
 	SubmitMode, _Helper) {
-	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
@@ -246,7 +244,7 @@ sap.ui.define([
 			$filter : "OLD gt 1"
 		}
 	}].forEach(function (oFixture) {
-		QUnit.test("changeParameters: " + oFixture.sTestName, function (assert) {
+		QUnit.test("changeParameters: " + oFixture.sTestName, function () {
 			var oBinding = new ODataParentBinding({
 					oModel : {},
 					mParameters : {
@@ -331,7 +329,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("changeParameters: with empty map", function (assert) {
+	QUnit.test("changeParameters: with empty map", function () {
 		var oBinding = new ODataParentBinding({
 				oModel : {},
 				sPath : "/EMPLOYEES",
@@ -366,7 +364,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("changeParameters: try to change existing parameter", function (assert) {
+	QUnit.test("changeParameters: try to change existing parameter", function () {
 		var mParameters = {
 				$apply : "filter(Amount gt 3)"
 			},
@@ -2353,7 +2351,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("selectKeyProperties", function (assert) {
+	QUnit.test("selectKeyProperties", function () {
 		var oMetaModel = {
 				getObject : function () {}
 			},
@@ -2894,7 +2892,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachPatchCompleted/detachPatchCompleted", function (assert) {
+	QUnit.test("attachPatchCompleted/detachPatchCompleted", function () {
 		var oBinding = new ODataParentBinding({
 				attachEvent : function () {},
 				detachEvent : function () {}
@@ -2919,7 +2917,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachPatchSent/detachPatchSent", function (assert) {
+	QUnit.test("attachPatchSent/detachPatchSent", function () {
 		var oBinding = new ODataParentBinding({
 				attachEvent : function () {},
 				detachEvent : function () {}
@@ -3418,7 +3416,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshSuspended", function (assert) {
+	QUnit.test("refreshSuspended", function () {
 		var oBinding = new ODataParentBinding();
 
 		this.mock(oBinding).expects("getGroupId").never();

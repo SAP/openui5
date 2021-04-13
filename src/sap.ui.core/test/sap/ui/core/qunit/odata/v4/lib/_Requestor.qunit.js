@@ -11,8 +11,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Log, SyncPromise,_Batch, _GroupLock, _Helper, _Requestor, TestUtils) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Requestor",
@@ -188,7 +186,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("destroy", function (assert) {
+	QUnit.test("destroy", function () {
 		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 		this.mock(oRequestor).expects("clearSessionContext").withExactArgs();
@@ -838,7 +836,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request, onCreateGroup", function (assert) {
+	QUnit.test("request, onCreateGroup", function () {
 		var oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(oModelInterface).expects("onCreateGroup").withExactArgs("groupId");
@@ -849,7 +847,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request, getGroupProperty", function (assert) {
+	QUnit.test("request, getGroupProperty", function () {
 		var oGroupLock = this.createGroupLock(),
 			oModelInterface = {
 				getGroupProperty : defaultGetGroupProperty,
@@ -992,7 +990,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request: sOriginalPath, $direct", function (assert) {
+	QUnit.test("request: sOriginalPath, $direct", function () {
 		var sOriginalPath = "TEAM('0')/TEAM_2_EMPLOYEES",
 			oRequestor = _Requestor.create("/", oModelInterface);
 
@@ -1007,7 +1005,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request: sOriginalPath, $batch", function (assert) {
+	QUnit.test("request: sOriginalPath, $batch", function () {
 		var sOriginalPath = "TEAM('0')/TEAM_2_EMPLOYEES",
 			oRequestor = _Requestor.create("/", oModelInterface),
 			oResponse = {
@@ -1031,7 +1029,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request(...): batch group id and change sets", function (assert) {
+	QUnit.test("request(...): batch group id and change sets", function () {
 		var oGroupLock,
 			oRequestor = _Requestor.create("/", oModelInterface);
 
@@ -1124,7 +1122,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request(...): mQueryOptions, $batch", function (assert) {
+	QUnit.test("request(...): mQueryOptions, $batch", function () {
 		var mQueryOptions = {$select : ["foo"]},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
@@ -1144,7 +1142,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request(...): mQueryOptions, $direct", function (assert) {
+	QUnit.test("request(...): mQueryOptions, $direct", function () {
 		var mQueryOptions = {},
 			oRequestor = _Requestor.create("/", oModelInterface);
 
@@ -1523,7 +1521,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("processBatch(...): single GET", function (assert) {
+	QUnit.test("processBatch(...): single GET", function () {
 		var aExpectedRequests = [
 				// Note: no empty change set!
 				sinon.match({method : "GET", url : "Products"})
@@ -1759,7 +1757,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("processBatch: report unbound messages", function (assert) {
+	QUnit.test("processBatch: report unbound messages", function () {
 		var mHeaders = {"SAP-Messages" : {}},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestPromise = oRequestor.request("GET", "Products(42)", this.createGroupLock());
@@ -2475,12 +2473,12 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("cancelChanges: unused group", function (assert) {
+	QUnit.test("cancelChanges: unused group", function () {
 		_Requestor.create("/Service/", oModelInterface).cancelChanges("unusedGroupId");
 	});
 
 	//*****************************************************************************************
-	QUnit.test("cancelGroupLocks", function (assert) {
+	QUnit.test("cancelGroupLocks", function () {
 		var oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oGroupLock0 = oRequestor.lockGroup("group0", {/*oOwner*/}, true), // not modifying
 			oGroupLock1 = oRequestor.lockGroup("group1", {/*oOwner*/}, true, true),
@@ -2497,7 +2495,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("cancelGroupLocks with group ID", function (assert) {
+	QUnit.test("cancelGroupLocks with group ID", function () {
 		var oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oGroupLock0 = oRequestor.lockGroup("group0", {/*oOwner*/}, true, true),
 			oGroupLock1 = oRequestor.lockGroup("group1", {/*oOwner*/}, true, true),
@@ -2763,7 +2761,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("processBatch: unwrap single change", function (assert) {
+	QUnit.test("processBatch: unwrap single change", function () {
 		var aExpectedRequests = [
 				sinon.match({
 					method : "POST",
@@ -3365,7 +3363,7 @@ sap.ui.define([
 		});
 
 		//*****************************************************************************************
-		QUnit.test("request(ProductList)/processBatch (realOData) patch", function (assert) {
+		QUnit.test("request(ProductList)/processBatch (realOData) patch", function () {
 			var oBody = {Name : "modified by QUnit test"},
 				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), oModelInterface),
 				sResourcePath = "ProductList('HT-1001')";
@@ -3520,7 +3518,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("reportUnboundMessagesAsJSON", function (assert) {
+	QUnit.test("reportUnboundMessagesAsJSON", function () {
 		var aMessages = [{code : "42", message : "Test"}, {code : "43", type : "Warning"}],
 			sMessages = JSON.stringify(aMessages),
 			oRequestor = _Requestor.create("/", oModelInterface),
@@ -3541,7 +3539,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("reportUnboundMessagesAsJSON without messages", function (assert) {
+	QUnit.test("reportUnboundMessagesAsJSON without messages", function () {
 		var oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(oModelInterface).expects("reportUnboundMessages")
@@ -3826,7 +3824,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("setSessionContext: no SAP-ContextId", function (assert) {
+	QUnit.test("setSessionContext: no SAP-ContextId", function () {
 		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 		this.mock(window).expects("setInterval").never();
@@ -3911,7 +3909,7 @@ sap.ui.define([
 	// been restarted by an application-triggered request. During this time the setInterval function
 	// may have been called several times sending pings. Here we test the first call after the 30
 	// minutes which is expected to terminate the session.
-	QUnit.test("setSessionContext: session termination", function (assert) {
+	QUnit.test("setSessionContext: session termination", function () {
 		var oClock,
 			oExpectation,
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
@@ -4006,7 +4004,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("addChangeToGroup: $direct", function (assert) {
+	QUnit.test("addChangeToGroup: $direct", function () {
 		var oChange = {
 				$cancel : {},
 				$resolve : function () {},

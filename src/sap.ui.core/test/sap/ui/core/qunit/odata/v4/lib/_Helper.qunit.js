@@ -12,8 +12,6 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
 ], function (jQuery, Log, deepEqual, merge, uid, SyncPromise, _Helper, TestUtils, URI) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Helper";
@@ -494,13 +492,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fireChange: no listeners", function (assert) {
+	QUnit.test("fireChange: no listeners", function () {
 		// code under test
 		_Helper.fireChange({}, "path/to/property", {});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fireChange: multiple listeners", function (assert) {
+	QUnit.test("fireChange: multiple listeners", function () {
 		var oChangeListener0 = {onChange : function () {}},
 			oChangeListener1 = {onChange : function () {}},
 			oChangeListener2 = {onChange : function () {}},
@@ -518,7 +516,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRemove) {
-		QUnit.test("fireChanges: null value, bRemove: " + bRemove, function (assert) {
+		QUnit.test("fireChanges: null value, bRemove: " + bRemove, function () {
 			var mChangeListeners = {},
 				oHelperMock = this.mock(_Helper),
 				oValue = {Foo : null};
@@ -1455,7 +1453,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateSelected: update all", function (assert) {
+	QUnit.test("updateSelected: update all", function () {
 		var mChangeListeners = {},
 			oSource = {},
 			oTarget = {};
@@ -2694,7 +2692,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bKeys) {
-		QUnit.test("selectKeyProperties: " + (bKeys ? "w/" : "w/o") + " keys", function (assert) {
+		QUnit.test("selectKeyProperties: " + (bKeys ? "w/" : "w/o") + " keys", function () {
 			var aKeyProperties = ["foo", "path/to/key"],
 				mQueryOptions = {},
 				oType = bKeys ? {$Key : ["foo", {"alias" : "path/to/key"}]} : {};
@@ -2708,7 +2706,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("selectKeyProperties: no type metadata available", function (assert) {
+	QUnit.test("selectKeyProperties: no type metadata available", function () {
 		this.mock(_Helper).expects("addToSelect").never();
 
 		// code under test
@@ -3207,7 +3205,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("aggregateQueryOptions: recursion", function (assert) {
+	QUnit.test("aggregateQueryOptions: recursion", function () {
 		var mAggregatedQueryOptions = {$expand : {foo : {}}},
 			oHelperMock = this.mock(_Helper),
 			mQueryOptions = {$expand : {foo : {}}};
@@ -3747,7 +3745,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("adjustTargetsInError: technical error", function (assert) {
+	QUnit.test("adjustTargetsInError: technical error", function () {
 		var oError = {};
 
 		this.mock(_Helper).expects("adjustTargets").never();
@@ -3758,7 +3756,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("adjustTargetsInError: no details", function (assert) {
+	QUnit.test("adjustTargetsInError: no details", function () {
 		var oError = {error : {}};
 
 		this.mock(_Helper).expects("adjustTargets")
@@ -3771,7 +3769,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("adjustTargetsInError: with details", function (assert) {
+	QUnit.test("adjustTargetsInError: with details", function () {
 		var oDetail0 = {},
 			oDetail1 = {},
 			oError = {

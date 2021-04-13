@@ -9,8 +9,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, CalendarType, DateFormat, BaseODataUtils, ODataUtils, _Helper) {
-	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	//*********************************************************************************************
@@ -192,7 +190,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_setDateTimeFormatter", function (assert) {
+	QUnit.test("_setDateTimeFormatter", function () {
 		var oDateFormatMock = this.mock(DateFormat);
 
 		oDateFormatMock.expects("getDateInstance")

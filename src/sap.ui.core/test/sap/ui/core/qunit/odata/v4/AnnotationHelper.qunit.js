@@ -12,8 +12,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/_AnnotationHelperExpression"
 ], function (Log, SyncPromise, InvisibleText, BaseContext, JSONModel, AnnotationHelper,
 		ODataMetaModel, Expression) {
-	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	var mScope = {
@@ -597,7 +595,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("label - DataField has a label", function (assert) {
+	QUnit.test("label - DataField has a label", function () {
 		var oAnnotationHelperMock = this.mock(AnnotationHelper),
 			oContext = {},
 			oModel = {
@@ -625,7 +623,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("label - follow the path", function (assert) {
+	QUnit.test("label - follow the path", function () {
 		var oAnnotationHelperMock = this.mock(AnnotationHelper),
 			oContext = {
 				getObject : function () {}

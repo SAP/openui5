@@ -8,8 +8,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/util/XMLHelper"
 ], function (Log, _MetadataConverter, _V2MetadataConverter, _V4MetadataConverter, XMLHelper) {
-	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	var sV2Start = '<edmx:Edmx Version="1.0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"'

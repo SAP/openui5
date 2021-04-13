@@ -9,8 +9,6 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/util/XMLHelper"
 ], function (jQuery, Log, _Helper, _V2MetadataConverter, TestUtils, XMLHelper) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",

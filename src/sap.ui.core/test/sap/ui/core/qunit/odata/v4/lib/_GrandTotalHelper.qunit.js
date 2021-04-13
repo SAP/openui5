@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_AggregationHelper",
 	"sap/ui/model/odata/v4/lib/_GrandTotalHelper"
 ], function (Log, _AggregationHelper, _GrandTotalHelper) {
-	/*global QUnit, sinon */
-	/*eslint camelcase: 0, no-warning-comments: 0 */
+	/*eslint camelcase: 0 */
 	"use strict";
 
 	//*********************************************************************************************
