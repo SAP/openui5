@@ -5786,7 +5786,9 @@ sap.ui.define([
 					success: function() {
 						assert.deepEqual("/Products(1000)", oContext.getPath());
 						assert.ok(oContext === that.oModel.getContext(oContext.getPath()), "Context must be the same");
-						assert.ok(oContextCallFunction !== that.oModel.getContext(oContextCallFunction.getPath()), "Context must not be the same, since function import should not modify the original context");
+						// The context for the function import is still the same; it is not deleted
+						assert.strictEqual(oContextCallFunction,
+							that.oModel.getContext(oContextCallFunction.getPath()));
 						assert.ok(oContext !== oContextCallFunction);
 						done();
 					},
