@@ -66,7 +66,13 @@ sap.ui.define([
 
         var aControls = _ControlFinder._findControls(oOptions);
         var fnGetDefaultElement = function (oControl) {
-            return new Press().$(oControl)[0] || oControl.getDomRef();
+            var oActionElem = new Press().$(oControl)[0];
+            // the default element needs to have an ID to ensure that the reverse logic will work ("find control by element")
+            if (oActionElem && oActionElem.id) {
+                return oActionElem;
+            } else {
+                return oControl.getDomRef();
+            }
         };
 
         var aElements = aControls.map(function (oControl) {
