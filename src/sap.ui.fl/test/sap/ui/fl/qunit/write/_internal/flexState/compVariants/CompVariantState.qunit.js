@@ -3,7 +3,9 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Change",
@@ -13,7 +15,9 @@ sap.ui.define([
 ], function(
 	UIComponent,
 	CompVariantState,
+	CompVariantMerger,
 	FlexState,
+	CompVariant,
 	Storage,
 	Settings,
 	Change,
@@ -809,6 +813,155 @@ sap.ui.define([
 			assert.equal(oVariant.getState(), Change.states.PERSISTED, "and the change is flagged as new");
 		});
 	});
+
+
+	QUnit.module("overrideStandardVariant", {
+		before: function() {
+			this.sPersistencyKey = "persistency.key";
+			FlexState.clearState(sComponentId);
+		},
+		beforeEach: function () {
+			return FlexState.initialize({
+				componentId: sComponentId,
+				reference: sComponentId
+			});
+		},
+		afterEach: function() {
+			FlexState.clearState(sComponentId);
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given a standard variant, when the standard variant is overridden", function (assert) {
+			var mCompData = FlexState.getCompVariantsMap(sComponentId);
+			CompVariantMerger.merge(this.sPersistencyKey, mCompData._getOrCreate(this.sPersistencyKey), {});
+
+			CompVariantState.overrideStandardVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER,
+				executeOnSelection: false
+			});
+
+			var oStandardVariant = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).byId[CompVariant.STANDARD_VARIANT_ID];
+			assert.equal(oStandardVariant.getExecuteOnSelection(), false, "then the default executeOnSelection is set to false");
+		});
+
+		QUnit.test("Given a standard variant with an applied change, when the standard variant is overridden", function (assert) {
+			var mCompData = FlexState.getCompVariantsMap(sComponentId);
+			CompVariantMerger.merge(this.sPersistencyKey, mCompData._getOrCreate(this.sPersistencyKey), {});
+
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: CompVariant.STANDARD_VARIANT_ID,
+				executeOnSelection: true
+			});
+
+			CompVariantState.overrideStandardVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER,
+				executeOnSelection: false
+			});
+
+			var oStandardVariant = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).byId[CompVariant.STANDARD_VARIANT_ID];
+			assert.equal(oStandardVariant.getExecuteOnSelection(), true, "then the change is reapplied");
+			assert.equal(oStandardVariant.getChanges().length, 1, "the change is mentioned as applied");
+		});
+
+		QUnit.test("Given a standard variant set by the loadVariants call, when the standard variant is overridden", function (assert) {
+			var mCompData = FlexState.getCompVariantsMap(sComponentId);
+			CompVariantMerger.merge(this.sPersistencyKey, mCompData._getOrCreate(this.sPersistencyKey), {
+				executeOnSelection: true
+			});
+
+			CompVariantState.overrideStandardVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER,
+				executeOnSelection: false
+			});
+
+			var oStandardVariant = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).byId[CompVariant.STANDARD_VARIANT_ID];
+			assert.equal(oStandardVariant.getExecuteOnSelection(), false, "then the executeOnSelection is set to false");
+		});
+
+		QUnit.test("Given a standard variant set by the loadVariants call and an applied change, when the standard variant is overridden", function (assert) {
+			var mCompData = FlexState.getCompVariantsMap(sComponentId);
+			CompVariantMerger.merge(this.sPersistencyKey, mCompData._getOrCreate(this.sPersistencyKey), {
+				executeOnSelection: true
+			});
+
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: CompVariant.STANDARD_VARIANT_ID,
+				executeOnSelection: true
+			});
+
+			CompVariantState.overrideStandardVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER,
+				executeOnSelection: false
+			});
+
+			var oStandardVariant = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).byId[CompVariant.STANDARD_VARIANT_ID];
+			assert.equal(oStandardVariant.getExecuteOnSelection(), true, "then the executeOnSelection is set to true");
+			assert.equal(oStandardVariant.getChanges().length, 1, "the change is mentioned as applied");
+		});
+
+		QUnit.test("Given a standard variant set by a back end variant flagged as standard, when the standard variant is overridden", function (assert) {
+			var mCompData = FlexState.getCompVariantsMap(sComponentId);
+			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
+			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
+			var oMockedStandardVariant = new CompVariant({
+				id: "fileId_123"
+			});
+			mMapForPersistencyKey.standardVariant = oMockedStandardVariant;
+			mMapForPersistencyKey.byId[oMockedStandardVariant.getId()] = oMockedStandardVariant;
+
+			CompVariantState.overrideStandardVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER,
+				executeOnSelection: false
+			});
+
+			var oStandardVariant = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).byId[CompVariant.STANDARD_VARIANT_ID];
+			assert.equal(oStandardVariant.getExecuteOnSelection(), false, "then the executeOnSelection is set to false");
+		});
+
+		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied change, when the standard variant is overridden", function (assert) {
+			var mCompData = FlexState.getCompVariantsMap(sComponentId);
+			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
+			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
+			var oMockedStandardVariant = new CompVariant({
+				id: "fileId_123"
+			});
+			mMapForPersistencyKey.standardVariant = oMockedStandardVariant;
+			mMapForPersistencyKey.byId[oMockedStandardVariant.getId()] = oMockedStandardVariant;
+
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: CompVariant.STANDARD_VARIANT_ID,
+				executeOnSelection: true
+			});
+
+			CompVariantState.overrideStandardVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER,
+				executeOnSelection: false
+			});
+
+			var oStandardVariant = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).byId[CompVariant.STANDARD_VARIANT_ID];
+			assert.equal(oStandardVariant.getExecuteOnSelection(), true, "then the executeOnSelection is set to true");
+			assert.equal(oStandardVariant.getChanges().length, 1, "the change is mentioned as applied");
+		});
+	});
+
 
 	QUnit.done(function() {
 		oComponent.destroy();

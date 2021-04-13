@@ -63,7 +63,7 @@ sap.ui.define([
 
 	function createVariant(sPersistencyKey, oVariantInput) {
 		var oVariantData = {
-			fileName: oVariantInput.id || "*standard*",
+			fileName: oVariantInput.id || CompVariant.STANDARD_VARIANT_ID,
 			persisted: oVariantInput.persisted,
 			content: oVariantInput.content || {},
 			texts: {
@@ -141,10 +141,11 @@ sap.ui.define([
 			oStandardVariant.setStandardVariant(true);
 			mCompData.byId[oStandardVariant.getId()] = oStandardVariant;
 
-			if (mCompData.standardVariantChange) {
-				var bExecuteOnSelection = mCompData.standardVariantChange.getContent().executeOnSelect;
+			var oStandardVariantChange = mCompData.standardVariantChange;
+			if (oStandardVariantChange) {
+				var bExecuteOnSelection = oStandardVariantChange.getContent().executeOnSelect;
+				oStandardVariant.addChange(oStandardVariantChange);
 				oStandardVariant.setExecuteOnSelection(bExecuteOnSelection);
-				// TODO remove as soon as the consumer uses the API
 				oStandardVariant.getContent().executeOnSelect = bExecuteOnSelection;
 			}
 
@@ -166,8 +167,10 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 *
-		 * @param {string} persistencyKey - Key of the variant management
+		 * @param {string} sPersistencyKey - Key of the variant management
 		 * @param {object} oVariantInput - Standard Variant or non-persisted Variants like oData variant
+		 *
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The created variant object
 		 */
 		createVariant: function(sPersistencyKey, oVariantInput) {
 			return createVariant(sPersistencyKey, oVariantInput);
