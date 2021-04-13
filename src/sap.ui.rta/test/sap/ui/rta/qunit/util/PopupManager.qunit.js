@@ -112,7 +112,7 @@ sap.ui.define([
 				isAppVariantSaveAsEnabled: function() {
 					return true;
 				},
-				isPublicLayerAvailable: function() {
+				isVariantAdaptationEnabled: function() {
 					return false;
 				}
 			};

@@ -24,7 +24,7 @@ function(
 		beforeEach: function() {
 			this.oPluginManager = new PluginManager();
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isPublicLayerAvailable: function() {
+				isVariantAdaptationEnabled: function() {
 					return true;
 				},
 				isVersioningEnabled: function(sLayer) {

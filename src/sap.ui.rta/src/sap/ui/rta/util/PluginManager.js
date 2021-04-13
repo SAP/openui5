@@ -188,7 +188,7 @@ sap.ui.define([
 			this._mDefaultPlugins["stretch"] = new StretchPlugin();
 
 			var oSettings = Settings.getInstanceOrUndef();
-			if (oSettings && oSettings.isPublicLayerAvailable()) {
+			if (oSettings && oSettings.isVariantAdaptationEnabled()) {
 				this._mDefaultPlugins["compVariant"] = new CompVariantPlugin({
 					commandFactory: this._oCommandFactory
 				});
