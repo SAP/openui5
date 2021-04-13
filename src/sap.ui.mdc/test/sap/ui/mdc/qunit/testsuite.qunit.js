@@ -1,7 +1,7 @@
-sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper) {
+sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, merge) {
 	"use strict";
 
-	return {
+	var mConfig =  {
 		name: "Library 'sap.ui.mdc'", /* Just for a nice title on the pages */
 		defaults: {
 			group: "Library",
@@ -155,64 +155,7 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 				},
 				module: "./table/V4AnalyticsPropertyHelper.qunit"
 			},
-			"Chart": {
-				skip: EnvHelper.isOpenUI5,
-				group: "Chart",
-				module: "./chart/Chart.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				}
-			},
-			"ChartNew": {
-				skip: EnvHelper.isOpenUI5,
-				group: "ChartNew",
-				module: "./chartNew/ChartNew.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				}
-			},
-			"ChartFlex": {
-				skip: EnvHelper.isOpenUI5,
-				group: "Chart",
-				module: "./chart/ChartFlex.qunit",
-				loader: {
-					paths: {
-						"sap/ui/mdc/qunit/chart/Helper": "test-resources/sap/ui/mdc/qunit/chart/Helper"
-					}
-				},
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				},
-				coverage: {
-					only: "[sap/ui/mdc]",
-					never: "[sap/ui/mdc/qunit]"
-				}
-			},
-			"ChartToolbarHandler": {
-				skip: EnvHelper.isOpenUI5,
-				group: "Chart",
-				module: "./chart/ToolbarHandler.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				},
-				coverage: {
-					only: "[sap/ui/mdc]",
-					never: "[sap/ui/mdc/qunit]"
-				}
-			},
-			"P13n Testsuite": {
-				skip: EnvHelper.isOpenUI5,
-				group: "p13n",
-				page: "test-resources/sap/ui/mdc/qunit/p13n/testsuite.p13n.qunit.html"
-			},
+
 			"FilterBar": {
 				group: "FilterBar Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/filterbar/testsuite.filterbar.qunit.html"
@@ -232,25 +175,6 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 			"PropertyHelper": {
 				group: "Util",
 				module: "./util/{name}.qunit"
-			},
-			"DrillStackHandler": {
-				group: "Chart",
-				module: "./chart/DrillStackHandler.qunit",
-				loader: {
-					paths: {
-						"sap/ui/mdc/qunit/chart/Helper": "test-resources/sap/ui/mdc/qunit/chart/Helper"
-					}
-				},
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				},
-				coverage: {
-					only: "[sap/ui/mdc]",
-					never: "[sap/ui/mdc/qunit]"
-				},
-				sinon: true
 			},
 			"loadModules": {
 				group: "Util",
@@ -286,28 +210,6 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 			// 	},
 			// 	autostart: false
 			// },
-
-			"V4ServerTest": {
-				skip: EnvHelper.isOpenUI5,
-				loader: {
-					paths: {
-						"util": "test-resources/sap/ui/mdc/qunit/util"
-					}
-				},
-				qunit: {
-					reorder: false
-				},
-				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-				module: "./v4server/V4ServerTest.qunit",
-				sinon: false
-			},
-
-			"Integration Testsuite": {
-				skip: EnvHelper.isOpenUI5,
-				title: "Integration Testsuite",
-				group: "Testsuite",
-				page: "test-resources/sap/ui/mdc/integration/testsuite.qunit.html"
-			},
 
 			// Design Time & RTA Enabling
 			"Designtime-Library": {
@@ -362,4 +264,105 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 			}
 		}
 	};
+
+	if (EnvHelper.isSapUI5) {
+		mConfig = merge({}, mConfig, {
+			tests: {
+				"V4ServerTest": {
+					loader: {
+						paths: {
+							"util": "test-resources/sap/ui/mdc/qunit/util"
+						}
+					},
+					qunit: {
+						reorder: false
+					},
+					autostart: false, // tests are added asynchronously because the V4 server needs to be found first
+					module: "./v4server/V4ServerTest.qunit",
+					sinon: false
+				},
+
+				"Integration Testsuite": {
+					title: "Integration Testsuite",
+					group: "Testsuite",
+					page: "test-resources/sap/ui/mdc/integration/testsuite.qunit.html"
+				},
+				"Chart": {
+					group: "Chart",
+					module: "./chart/Chart.qunit",
+					ui5: {
+						libs: [
+							"sap.ui.fl", "sap.ui.mdc"
+						]
+					}
+				},
+				"ChartNew": {
+					group: "ChartNew",
+					module: "./chartNew/ChartNew.qunit",
+					ui5: {
+						libs: [
+							"sap.ui.fl", "sap.ui.mdc"
+						]
+					}
+				},
+				"ChartFlex": {
+					group: "Chart",
+					module: "./chart/ChartFlex.qunit",
+					loader: {
+						paths: {
+							"sap/ui/mdc/qunit/chart/Helper": "test-resources/sap/ui/mdc/qunit/chart/Helper"
+						}
+					},
+					ui5: {
+						libs: [
+							"sap.ui.fl", "sap.ui.mdc"
+						]
+					},
+					coverage: {
+						only: "[sap/ui/mdc]",
+						never: "[sap/ui/mdc/qunit]"
+					}
+				},
+				"ChartToolbarHandler": {
+					group: "Chart",
+					module: "./chart/ToolbarHandler.qunit",
+					ui5: {
+						libs: [
+							"sap.ui.fl", "sap.ui.mdc"
+						]
+					},
+					coverage: {
+						only: "[sap/ui/mdc]",
+						never: "[sap/ui/mdc/qunit]"
+					}
+				},
+				"DrillStackHandler": {
+					group: "Chart",
+					module: "./chart/DrillStackHandler.qunit",
+					loader: {
+						paths: {
+							"sap/ui/mdc/qunit/chart/Helper": "test-resources/sap/ui/mdc/qunit/chart/Helper"
+						}
+					},
+					ui5: {
+						libs: [
+							"sap.ui.fl", "sap.ui.mdc"
+						]
+					},
+					coverage: {
+						only: "[sap/ui/mdc]",
+						never: "[sap/ui/mdc/qunit]"
+					},
+					sinon: true
+				},
+				"P13n Testsuite": {
+					group: "p13n",
+					page: "test-resources/sap/ui/mdc/qunit/p13n/testsuite.p13n.qunit.html"
+				}
+			}
+		});
+	}
+
+	return mConfig;
+
 });
