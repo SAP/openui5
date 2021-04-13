@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (BaseObject, PersistenceProvider) {
 	"use strict";
 
-	var ERROR_INSTANCING = "DefaultProviderRegistry: This class is a singleton. Please use the getInstance() method instead.";
+	var ERROR_INSTANCING = "DefaultProviderRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.ui.mdc.p13n.Engine.getInstance().defaultProviderRegistry' instead";
 
 	//Singleton storage
 	var oDefaultProviderRegistry;

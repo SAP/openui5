@@ -8,7 +8,7 @@ sap.ui.define([
 
 	QUnit.module("Init");
 
-	QUnit.test("Use Engine as Singleton", function(assert){
+	QUnit.test("Use DefaultProviderRegistry as Singleton", function(assert){
 
 		var oFirstDefaultProviderRegistry = DefaultProviderRegistry.getInstance();
 		var oSecondDefaultProviderRegistry = DefaultProviderRegistry.getInstance();
@@ -22,7 +22,7 @@ sap.ui.define([
 			function(oError) {
 				return (
 					oError instanceof Error &&
-					oError.message === "DefaultProviderRegistry: This class is a singleton. Please use the getInstance() method instead."
+					oError.message === "DefaultProviderRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.ui.mdc.p13n.Engine.getInstance().defaultProviderRegistry' instead"
 				);
 			},
 			"calling the constructor subsequently throws an error."

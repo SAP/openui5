@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'./BaseController', 'sap/ui/mdc/p13n/P13nBuilder'
-], function (BaseController, P13nBuilder) {
+	'./BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/panels/SortPanel'
+], function (BaseController, P13nBuilder, SortPanel) {
 	"use strict";
 
     var SortController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.SortController");
@@ -24,8 +24,13 @@ sap.ui.define([
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
-    SortController.prototype.getAdaptationUI = function() {
-        return "sap/ui/mdc/p13n/panels/SortPanel";
+    SortController.prototype.getAdaptationUI = function(oPropertyHelper){
+
+        var oSortPanel = new SortPanel();
+        var oAdaptationModel = this._getP13nModel(oPropertyHelper);
+        oSortPanel.setP13nModel(oAdaptationModel);
+
+        return Promise.resolve(oSortPanel);
     };
 
     SortController.prototype.model2State = function() {
@@ -52,7 +57,7 @@ sap.ui.define([
         return "sorted";
     };
 
-    SortController.prototype.setP13nData = function(oPropertyHelper) {
+    SortController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
         var aItemState = this.getCurrentState();
         var mExistingSorters = P13nBuilder.arrayToMap(aItemState);
@@ -75,7 +80,7 @@ sap.ui.define([
 
         oP13nData.items.forEach(function(oItem){delete oItem.sortPosition;});
 
-        this.oP13nData = oP13nData;
+        return oP13nData;
     };
 
 	return SortController;

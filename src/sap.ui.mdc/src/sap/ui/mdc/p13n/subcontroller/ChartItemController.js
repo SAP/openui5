@@ -4,16 +4,19 @@
 
 sap.ui.define([
     "./BaseController",
-    "sap/ui/mdc/p13n/P13nBuilder"
-], function (BaseController, P13nBuilder) {
+    "sap/ui/mdc/p13n/P13nBuilder",
+    "sap/ui/mdc/p13n/panels/ChartItemPanel"
+], function (BaseController, P13nBuilder, ChartItemPanel) {
     "use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
     var ChartItemController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ChartItemController");
 
-    ChartItemController.prototype.getAdaptationUI = function() {
-        return "sap/ui/mdc/p13n/panels/ChartItemPanel";
+    ChartItemController.prototype.getAdaptationUI = function(oPropertyHelper) {
+        var oChartItemPanel = new ChartItemPanel();
+        oChartItemPanel.setP13nModel(this._getP13nModel(oPropertyHelper));
+        return Promise.resolve(oChartItemPanel);
     };
 
     ChartItemController.prototype.getDelta = function(mPropertyBag) {
@@ -27,7 +30,7 @@ sap.ui.define([
         };
     };
 
-    ChartItemController.prototype.setP13nData = function(oPropertyHelper) {
+    ChartItemController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
         var aItemState = this.getCurrentState();
         var mItemState = P13nBuilder.arrayToMap(aItemState);
@@ -54,7 +57,7 @@ sap.ui.define([
 
         oP13nData.items.forEach(function(oItem){delete oItem.position;});
 
-        this.oP13nData = oP13nData;
+        return oP13nData;
     };
 
     ChartItemController.prototype.getChangeOperations = function() {

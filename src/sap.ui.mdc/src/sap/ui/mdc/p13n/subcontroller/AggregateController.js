@@ -42,7 +42,7 @@ sap.ui.define([
         return "aggregated";
     };
 
-    AggregateController.prototype.setP13nData = function(oPropertyHelper) {
+    AggregateController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
         var mExistingAggregations = this.getCurrentState();
 
@@ -52,11 +52,7 @@ sap.ui.define([
             return oProperty.isAggregatable();
         });
 
-        this.oP13nData = oP13nData;
-    };
-
-    AggregateController.prototype.getP13nData = function () {
-        return this.oP13nData;
+        return oP13nData;
     };
 
     return AggregateController;

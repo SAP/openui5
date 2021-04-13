@@ -217,7 +217,7 @@ sap.ui.define([
 	FilterBar.prototype.onAdaptFilters = function(oEvent) {
 
 		return this._oMetadataAppliedPromise.then(function() {
-			return this.getEngine().showUI(this, "Item", this._btnAdapt);
+			return this.getEngine().uimanager.show(this, "Item", this._btnAdapt);
 		}.bind(this));
 
 	};

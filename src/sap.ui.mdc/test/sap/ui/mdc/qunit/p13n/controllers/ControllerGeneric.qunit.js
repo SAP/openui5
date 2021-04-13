@@ -96,28 +96,10 @@ sap.ui.define([
 
 	QUnit.test("check 'getAdaptationUI' return value", function(assert){
 
-		var done = assert.async();
-		var vAdaptationUI = this.oController.getAdaptationUI();
+		var vAdaptationUI = this.oController.getAdaptationUI(new PropertyHelper(this.aPropertyInfo));
 
 		assert.ok(vAdaptationUI, "'getAdaptationControl' has a return value");
-
-		if (typeof vAdaptationUI == "string" ) {
-			sap.ui.require([vAdaptationUI], function(Class){
-				var oTest = new Class();
-				assert.ok(oTest.isA("sap.ui.mdc.p13n.panels.BasePanel", "A BasePanel derivation has been provided as UI"));
-				done();
-			});
-		}else if (vAdaptationUI instanceof Promise){
-			vAdaptationUI.then(function(oP13nUI){
-				assert.ok(oP13nUI.isA("sap.ui.core.Control"), "A custom control has been provided as UI in a Promise");
-				done();
-			});
-		} else if (vAdaptationUI instanceof Function){
-			var oP13nUI = vAdaptationUI();
-			assert.ok(oP13nUI.isA("sap.ui.core.Control"), "A custom control has been provided as UI in a Callback");
-		} else {
-			assert.ok(false, "Please provide either a 1)String 2)Promise or 3) Callback as adaptationControl");
-		}
+		assert.ok(vAdaptationUI instanceof Promise, "'getAdaptationControl' returns a Promise");
 
 	});
 
@@ -129,11 +111,6 @@ sap.ui.define([
 	QUnit.test("check 'getResetEnabled' ", function(assert){
 		var bResetEnabled = this.oController.getResetEnabled();
 		assert.ok(typeof bResetEnabled == "boolean", "'getResetEnabled' returns a Boolean");
-	});
-
-	QUnit.test("check 'initializeUI' ", function(assert){
-		var pInitializeUI = this.oController.initializeUI();
-		assert.ok(pInitializeUI instanceof Promise, "'initializeUI' returns a Promise");
 	});
 
 	QUnit.test("check 'getBeforeApply' ", function(assert){
@@ -182,14 +159,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("check 'setP13nData'", function(assert){
-		this.oController.setP13nData(new PropertyHelper(this.aPropertyInfo));
-		assert.ok(this.oController.oP13nData, "'setP13nData' returns a value");
+	QUnit.test("check 'mixInfoAndState'", function(assert){
+		var oP13nData = this.oController.mixInfoAndState(new PropertyHelper(this.aPropertyInfo));
+		assert.ok(oP13nData, "'setP13nData' returns a value");
 	});
 
-	QUnit.test("check 'getP13nModel'", function(assert){
-		this.oController.setP13nData(new PropertyHelper(this.aPropertyInfo));
-		assert.ok(this.oController.getP13nModel().isA("sap.ui.model.json.JSONModel"), "'getP13nModel' returns a JSONModel");
+	QUnit.test("check '_getP13nModel'", function(assert){
+		var oAdaptationModel = this.oController._getP13nModel(new PropertyHelper(this.aPropertyInfo));
+		assert.ok(oAdaptationModel.isA("sap.ui.model.json.JSONModel"), "'getP13nModel' returns a JSONModel");
 	});
 
 	QUnit.test("check 'getChangeOperations'", function(assert){
@@ -203,8 +180,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("check 'model2State'", function(assert){
-		this.oController.setP13nData(new PropertyHelper(this.aPropertyInfo));
-		this.oController.getP13nModel();
+		this.oController._getP13nModel(new PropertyHelper(this.aPropertyInfo));
 
 		var fnValidateP13n = this.oController.model2State;
 
