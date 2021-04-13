@@ -113,7 +113,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 					vResult = (Array.isArray(oFragment) ? oFragment : [oFragment]); // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 				} else if (oExtensionConfig.className === "sap.ui.core.mvc.View") {
-					oView = View._legacyCreate({type: oExtensionConfig.type, viewName: oExtensionConfig.viewName, id: sId});
+					oView = View._create({type: oExtensionConfig.type, viewName: oExtensionConfig.viewName, id: sId});
 					vResult = [oView]; // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 				} else {

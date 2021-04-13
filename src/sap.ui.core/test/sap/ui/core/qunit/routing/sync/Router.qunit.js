@@ -809,7 +809,7 @@ sap.ui.define([
 			text: "Test-Button"
 		});
 
-		var oStub = this.stub(View, "_legacyCreate").callsFake(function() {
+		var oStub = this.stub(View, "_create").callsFake(function() {
 			return oButton;
 		});
 
@@ -1164,7 +1164,7 @@ sap.ui.define([
 
 	QUnit.test("Should create a view", function (assert) {
 		var that = this,
-			fnStub = this.stub(View, "_legacyCreate").callsFake(function (oViewOptions) {
+			fnStub = this.stub(View, "_create").callsFake(function (oViewOptions) {
 				assert.strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
 				assert.strictEqual(oViewOptions.type, "bar", "DId pass the type");
 				assert.strictEqual(oViewOptions.id, "baz", "DId pass the id");
@@ -1184,7 +1184,7 @@ sap.ui.define([
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var that = this,
 			oReturnValue,
-			fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
+			fnStub = this.stub(View, "_create").callsFake(function () {
 				return that.oView;
 			});
 
@@ -1246,7 +1246,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		this.stub(View, "_legacyCreate").callsFake(function () {
+		this.stub(View, "_create").callsFake(function () {
 			return oView;
 		});
 
@@ -1271,7 +1271,7 @@ sap.ui.define([
 			this.sTitle = "myTitle";
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
+			this.fnStub = sinon.stub(View, "_create").callsFake(function () {
 				return oView;
 			});
 
@@ -1462,7 +1462,7 @@ sap.ui.define([
 			this.oApp = new App();
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
+			this.fnStub = sinon.stub(View, "_create").callsFake(function () {
 				return oView;
 			});
 
@@ -2124,7 +2124,7 @@ sap.ui.define([
 			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
 			oRouter = new Router({}, {}, oUIComponent),
-				fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
+				fnViewStub = this.stub(View, "_create").callsFake(function () {
 					return oView;
 			});
 

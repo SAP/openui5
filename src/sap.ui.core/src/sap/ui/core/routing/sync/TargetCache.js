@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/core/mvc/View"], function(View) {
 			function fnCreateView() {
 				oOptions.viewName = oOptions.name;
 				delete oOptions.name;
-				return View._legacyCreate(oOptions);
+				return View._create(oOptions);
 			}
 
 			var oView,

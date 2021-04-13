@@ -22,7 +22,7 @@ sap.ui.define([
 		 * @param {object} oOptions The options of the desired object
 		 * @param {string} sType The type of the desired object, e.g. 'View', 'Component', etc.
 		 * @param {object} oTargetCreateInfo The object which contains extra information for the creation of the target
-		 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._legacyCreate</code> is used for creating
+		 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
 		 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
 		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
 		 * @private
@@ -42,7 +42,7 @@ sap.ui.define([
 					case "View":
 						oOptions.viewName = oOptions.name;
 						delete oOptions.name;
-						return (!oOptions.async || bSynchronousCreate) ? View._legacyCreate(oOptions) : View.create(oOptions);
+						return (!oOptions.async || bSynchronousCreate) ? View._create(oOptions) : View.create(oOptions);
 					case "Component":
 						oOptions.settings = oOptions.settings || {};
 
@@ -132,7 +132,7 @@ sap.ui.define([
 		 * Determines the view with the given <code>oOptions</code>
 		 *
 		 * @param {object} oOptions The options of the desired object
-		 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._legacyCreate</code> is used for creating
+		 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
 		 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
 		 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
 		 * @private

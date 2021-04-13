@@ -1066,7 +1066,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.core
 	 * @see {sap.ui.view}
 	 */
-	View._legacyCreate = viewFactory;
+	View._create = viewFactory;
 
 	/**
 	 * Creates a view of the given type, name and with the given ID.
