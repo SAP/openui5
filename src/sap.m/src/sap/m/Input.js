@@ -1092,7 +1092,7 @@ function(
 		var sTypedInValue = "";
 
 		if (this.getShowSuggestion() && !this.isMobileDevice()) {
-			sTypedInValue = this._sTypedInValue || "";
+			sTypedInValue = this._getTypedInValue() || "";
 		} else {
 			sTypedInValue = this.getDOMValue();
 		}
@@ -1289,8 +1289,8 @@ function(
 			this._closeSuggestionPopup();
 
 			// restore the initial value that was there before suggestion dialog
-			if (this.getBeforeSuggestValue() !== this.getValue()) {
-				this.setValue(this.getBeforeSuggestValue());
+			if (this._getTypedInValue() !== this.getValue()) {
+				this.setValue(this._getTypedInValue());
 			}
 			return; // override InputBase.onsapescape()
 		}
@@ -1749,8 +1749,8 @@ function(
 			if (this._isSuggestionsPopoverOpen()) {
 				this._sCloseTimer = setTimeout(function () {
 					this.cancelPendingSuggest();
-					if (this._sTypedInValue) {
-						_setDomValue.call(this, this._sTypedInValue);
+					if (this._getTypedInValue()) {
+						_setDomValue.call(this, this._getTypedInValue());
 					}
 					oPopup.close();
 				}.bind(this), 0);
@@ -1812,7 +1812,7 @@ function(
 	 */
 	Input.prototype._refreshListItems = function () {
 		var bShowSuggestion = this.getShowSuggestion(),
-			sTypedChars = this._bDoTypeAhead ? this._sTypedInValue : (this.getDOMValue() || ""),
+			sTypedChars = this._bDoTypeAhead ? this._getTypedInValue() : (this.getDOMValue() || ""),
 			oFilterResults,
 			iSuggestionsLength;
 
@@ -2032,7 +2032,7 @@ function(
 	Input.prototype._handleTypeAhead = function (oInput) {
 		var sValue = this.getValue();
 
-		this._sTypedInValue = sValue;
+		this._setTypedInValue(sValue);
 		oInput._sProposedItemText = null;
 
 		if (!this._bDoTypeAhead || sValue === "" ||
@@ -2067,7 +2067,7 @@ function(
 		oInput = oInput || this;
 
 		oInput._sProposedItemText = null;
-		this._sTypedInValue = '';
+		this._setTypedInValue('');
 	};
 
 	/**
@@ -2083,8 +2083,8 @@ function(
 			return;
 		}
 
-		if (this._sTypedInValue !== sValue) {
-			this._sTypedInValue = sValue;
+		if (this._getTypedInValue() !== sValue) {
+			this._setTypedInValue(sValue);
 
 			this.fireLiveChange({
 				value: sValue,
@@ -2105,8 +2105,9 @@ function(
 	 * @returns {string} The new formatted value.
 	 */
 	Input.prototype._formatTypedAheadValue = function (sNewValue) {
-		if (sNewValue.toLowerCase().indexOf(this._sTypedInValue.toLowerCase()) === 0) {
-			return this._sTypedInValue.concat(sNewValue.substring(this._sTypedInValue.length, sNewValue.length));
+		var sTypedInValue = this._getTypedInValue();
+		if (sNewValue.toLowerCase().indexOf(sTypedInValue.toLowerCase()) === 0) {
+			return sTypedInValue.concat(sNewValue.substring(sTypedInValue.length, sNewValue.length));
 		} else {
 			return sNewValue;
 		}
@@ -2226,7 +2227,7 @@ function(
 
 				aTableCellsDomRef = oSuggestionsTable.$().find('tbody .sapMLabel');
 
-				highlightDOMElements(aTableCellsDomRef, this._sTypedInValue);
+				highlightDOMElements(aTableCellsDomRef, this._getTypedInValue());
 			}
 		}, this);
 
@@ -2458,18 +2459,19 @@ function(
 	 * @private
 	 */
 	Input.prototype._getShowMoreButtonPress = function() {
-		var sTypedInValue;
+		var sTempTypedInValue,
+			sTypedInValue = this._getTypedInValue();
 
 		if (this.getShowTableSuggestionValueHelp()) {
 
 			// request for value help interrupts autocomplete
-			if (this._sTypedInValue) {
-				sTypedInValue = this._sTypedInValue;
-				this.updateDomValue(sTypedInValue);
+			if (sTypedInValue) {
+				sTempTypedInValue = sTypedInValue;
+				this.updateDomValue(sTempTypedInValue);
 				this._resetTypeAhead();
 				// Resetting the Suggestions popover clears the typed in value.
 				// However, we need to keep it in this case as the fireValueHelpRequest will need to pass this information.
-				this._sTypedInValue =  sTypedInValue;
+				this._setTypedInValue(sTempTypedInValue);
 			}
 
 			this._fireValueHelpRequest(true);
@@ -2574,7 +2576,7 @@ function(
 				}
 
 				aListItemsDomRef = oList.$().find('.sapMSLIInfo, .sapMSLITitleOnly');
-				sInputValue = this._bDoTypeAhead ? this._sTypedInValue : this.getValue();
+				sInputValue = this._bDoTypeAhead ? this._getTypedInValue() : this.getValue();
 				sInputValue = (sInputValue || "").toLowerCase();
 
 				highlightDOMElements(aListItemsDomRef, sInputValue);
@@ -2815,7 +2817,6 @@ function(
 				.attachBeforeOpen(function () {
 					oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
 
-					this.setBeforeSuggestValue(this._sTypedInValue || this.getValue());
 					oSuggPopover.resizePopup(this);
 					this._registerPopupResize();
 				}, this);
@@ -2825,26 +2826,6 @@ function(
 		this.setAggregation("_suggestionPopup", oPopover);
 
 		this._oSuggestionPopup = oPopover; // for backward compatibility (used in some other controls)
-	};
-
-	/**
-	 * Sets the input value before the suggest.
-	 *
-	 * @param {string} sValue The value to be set
-	 * @private
-	 */
-	Input.prototype.setBeforeSuggestValue = function (sValue) {
-		this._sBeforeSuggest = sValue;
-	};
-
-	/**
-	 * Gets the input value before the suggest.
-	 *
-	 * @returns {string} The string value before the sugger
-	 * @private
-	 */
-	Input.prototype.getBeforeSuggestValue = function () {
-		return this._sBeforeSuggest;
 	};
 
 	/**
@@ -3135,6 +3116,28 @@ function(
 					oListItem && oListItem.setVisible(aGroups[iGroupItemIndex].visible);
 				}
 			});
+	};
+
+	/**
+	 * Setter for the _sTypedInValue property representing the user's input.
+	 *
+	 * @private
+	 * @param {string} sValue The new value for the property.
+	 * @returns {this} <code>this</code> to allow method chaining.
+	 */
+	Input.prototype._setTypedInValue = function (sValue) {
+		this._sTypedInValue = sValue;
+		return this;
+	};
+
+	/**
+	 * Getter for the _sTypedInValue property representing the user's input.
+	 *
+	 * @private
+	 * @returns {string} The user's input.
+	 */
+	Input.prototype._getTypedInValue = function () {
+		return this._sTypedInValue;
 	};
 
 	return Input;
