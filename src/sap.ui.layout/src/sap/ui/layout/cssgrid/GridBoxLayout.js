@@ -75,6 +75,8 @@ sap.ui.define([
 
 				/**
 				 * A string type that defines number of Boxes per row for extra large, large, medium and small screens
+				 *
+				 * <b>Note:</b> When the property <code>boxMinWidth</code> or <code>boxWidth</code> is set this property has no effect.
 				 */
 				boxesPerRowConfig: {type: "sap.ui.layout.BoxesPerRowConfig", group: "Behavior", defaultValue: "XL7 L6 M4 S2"}
 			}
