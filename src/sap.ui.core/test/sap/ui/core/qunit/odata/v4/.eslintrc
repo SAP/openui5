@@ -1,8 +1,10 @@
 {
 	"globals": {
 		"QUnit": "readonly",
+		"sap": "readonly",
 		"sinon": "readonly"
 	},
+	"reportUnusedDisableDirectives": true,
 	"rules": {
 		"max-nested-callbacks": 0,
 		"no-unused-vars": [2, {"argsIgnorePattern": "^_","args": "all"}],
