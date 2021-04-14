@@ -10883,7 +10883,7 @@ sap.ui.define([
 		}).then(function () {
 			assert.throws(function () {
 				that.oView.byId("form").bindElement("/TEAMS('43')",
-					{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
+					{$expand : {TEAM_2_EMPLOYEES : {$select : "ID,Name"}}});
 			}, new Error("setContext on relative binding is forbidden if a transient entity exists"
 				+ ": sap.ui.model.odata.v4.ODataListBinding: /TEAMS('42')|TEAM_2_EMPLOYEES"));
 
@@ -14794,7 +14794,7 @@ sap.ui.define([
 				$select : "BudgetCurrency,Name,MEMBER_COUNT"
 			});
 			that.oView.byId("table").getBinding("items")
-				.changeParameters({$select : 'AGE,ID,Name'});
+				.changeParameters({$select : "AGE,ID,Name"});
 
 			that.expectRequest("TEAMS('TEAM_01')?$select=BudgetCurrency,Name,MEMBER_COUNT", {
 					BudgetCurrency : "EUR",
@@ -15805,7 +15805,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			var oListBinding = that.oModel.bindList("/Equipments", undefined, undefined, undefined,
-					{$$groupId : 'api'});
+					{$$groupId : "api"});
 
 			that.expectRequest("Equipments?$skip=0&$top=100", {
 					value : [{Name : "Foo"}]
@@ -16058,7 +16058,7 @@ sap.ui.define([
 				+ "/concat(aggregate($count as UI5__count),top(99)))", {
 				value : [
 					{CurrencyCode : null, GrossAmount : "12345"},
-					{"UI5__count" : "2", "UI5__count@odata.type" : "#Decimal"},
+					{UI5__count : "2", "UI5__count@odata.type" : "#Decimal"},
 					{CurrencyCode : "EUR", GrossAmount : "1", LifecycleStatus : "Z",
 						LifecycleStatusDesc : "<Z>"},
 					{CurrencyCode : "GBP", GrossAmount : "2", LifecycleStatus : "Y",
@@ -16116,7 +16116,7 @@ sap.ui.define([
 				+ "/concat(aggregate($count as UI5__count),top(99)))", {
 				value : [
 					{GrossAmount : "12345"},
-					{"UI5__count" : "2", "UI5__count@odata.type" : "#Decimal"},
+					{UI5__count : "2", "UI5__count@odata.type" : "#Decimal"},
 					{GrossAmount : "1", LifecycleStatus : "Z", SalesOrderID : "26"},
 					{GrossAmount : "2", LifecycleStatus : "Y", SalesOrderID : "25"}
 				]
@@ -18299,8 +18299,8 @@ sap.ui.define([
 			var oListBinding,
 				oModel = createAggregationModel({autoExpandSelect : bAutoExpandSelect}),
 				aResponse = [
-					{SalesNumber : 351, "SalesNumber@odata.type" : "#Decimal"},
-					{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"},
+					{SalesNumber : 351, "SalesNumber@odata.type" : "#Int32"},
+					{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
 					{Country : "b", Region : "Y", SalesNumber : 2},
 					{Country : "c", Region : "X", SalesNumber : 3},
 					{Country : "d", Region : "W", SalesNumber : 4},
@@ -18309,30 +18309,32 @@ sap.ui.define([
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
-<t:Table fixedRowCount="1" firstVisibleRow="1" id="table" rows="{path : \'/BusinessPartners\',\
-		parameters : {\
-			$$aggregation : {\
-				aggregate : {\
-					SalesNumber : {grandTotal : true}\
+<t:Table fixedRowCount="1" firstVisibleRow="1" id="table" rows="{\
+			path : \'/BusinessPartners\',\
+			parameters : {\
+				$$aggregation : {\
+					aggregate : {\
+						SalesNumber : {grandTotal : true}\
+					},\
+					group : {\
+						Country : {},\
+						Region : {}\
+					}\
 				},\
-				group : {\
-					Country : {},\
-					Region : {}\
-				}\
+				$count : ' + bCount + ',\
+				$orderby : \'Region desc\'\
 			},\
-			$count : ' + bCount + ',\
-			$filter : \'SalesNumber gt 0\',\
-			$orderby : \'Region desc\'\
-		}}" threshold="0" visibleRowCount="5">\
+			filters : {path : \'AmountPerSale\', operator : \'GT\', value1 : 99}}"\
+		threshold="0" visibleRowCount="5">\
 	<Text id="country" text="{Country}"/>\
 	<Text id="region" text="{Region}"/>\
 	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 				that = this;
 
-			this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
-					+ ",groupby((Country,Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber gt 0)/orderby(Region desc)"
+			this.expectRequest("BusinessPartners?$apply=filter(AmountPerSale gt 99)"
+					+ "/concat(aggregate(SalesNumber)"
+					+ ",groupby((Country,Region),aggregate(SalesNumber))/orderby(Region desc)"
 					+ "/concat(aggregate($count as UI5__count),skip(1)/top(4)))", {
 					value : aResponse
 				})
@@ -18361,9 +18363,9 @@ sap.ui.define([
 					"/BusinessPartners(Country='e',Region='V')"
 				]);
 
-				that.expectRequest("BusinessPartners?$apply="
-						+ "groupby((Country,Region),aggregate(SalesNumber))"
-						+ "/filter(SalesNumber gt 0)/orderby(Region desc)/top(1)", {
+				that.expectRequest("BusinessPartners?$apply=filter(AmountPerSale gt 99)"
+						+ "/groupby((Country,Region),aggregate(SalesNumber))"
+						+ "/orderby(Region desc)/top(1)", {
 						value : [
 							{Country : "a", Region : "Z", SalesNumber : 1}
 						]
@@ -18404,7 +18406,7 @@ sap.ui.define([
 				oModel = createAggregationModel({autoExpandSelect : true}),
 				oTable,
 				aValues = [
-					{SalesNumber : 351, "SalesNumber@odata.type" : "#Decimal"},
+					{SalesNumber : 351, "SalesNumber@odata.type" : "#Int32"},
 					{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
 					{Country : "a", Region : "Z", SalesNumber : 1},
 					{Country : "b", Region : "Y", SalesNumber : 2},
@@ -18414,29 +18416,32 @@ sap.ui.define([
 				],
 				sView = '\
 <Text id="count" text="{$count}"/>\
-<t:Table fixedRowCount="0" firstVisibleRow="1" id="table" rows="{path : \'/BusinessPartners\',\
-		parameters : {\
-			$$aggregation : {\
-				aggregate : {\
-					SalesNumber : {grandTotal : true}\
+<t:Table fixedRowCount="0" firstVisibleRow="1" id="table" rows="{\
+			path : \'/BusinessPartners\',\
+			parameters : {\
+				$$aggregation : {\
+					aggregate : {\
+						SalesNumber : {grandTotal : true}\
+					},\
+					group : {\
+						Country : {},\
+						Region : {}\
+					}\
 				},\
-				group : {\
-					Country : {},\
-					Region : {}\
-				}\
+				$count : ' + bCount + ',\
+				$orderby : \'Region desc\'\
 			},\
-			$count : ' + bCount + ',\
-			$filter : \'SalesNumber gt 0\',\
-			$orderby : \'Region desc\'\
-		}}" threshold="0" visibleRowCount="5">\
+			filters : {path : \'AmountPerSale\', operator : \'GT\', value1 : 99}}"\
+		threshold="0" visibleRowCount="5">\
 	<Text id="country" text="{Country}"/>\
 	<Text id="region" text="{Region}"/>\
 	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 				that = this;
 
-			this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
-					+ ",groupby((Country,Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
+			this.expectRequest("BusinessPartners?$apply=filter(AmountPerSale gt 99)"
+					+ "/concat(aggregate(SalesNumber)"
+					+ ",groupby((Country,Region),aggregate(SalesNumber))"
 					+ "/orderby(Region desc)/concat(aggregate($count as UI5__count),top(5)))",
 					{value : aValues})
 				.expectChange("count")
@@ -18493,25 +18498,27 @@ sap.ui.define([
 			function (assert) {
 		var oModel = createAggregationModel({autoExpandSelect : true}),
 			sView = '\
-<t:Table id="table" rows="{path : \'/BusinessPartners\',\
-		parameters : {\
-			$$aggregation : {\
-				aggregate : {\
-					SalesAmountSum : {\
-						grandTotal : true,\
-						name : \'SalesAmount\',\
-						unit : \'Currency\',\
-						with : \'sum\'\
+<t:Table id="table" rows="{\
+			path : \'/BusinessPartners\',\
+			parameters : {\
+				$$aggregation : {\
+					aggregate : {\
+						SalesAmountSum : {\
+							grandTotal : true,\
+							name : \'SalesAmount\',\
+							unit : \'Currency\',\
+							with : \'sum\'\
+						},\
+						SalesNumber : {}\
 					},\
-					SalesNumber : {}\
+					group : {\
+						Region : {}\
+					}\
 				},\
-				group : {\
-					Region : {}\
-				}\
+				$orderby : \'SalesAmountSum asc\'\
 			},\
-			$filter : \'SalesAmountSum gt 0\',\
-			$orderby : \'SalesAmountSum asc\'\
-		}}" threshold="0" visibleRowCount="5">\
+			filters : {path : \'AmountPerSale\', operator : \'GT\', value1 : 99}}"\
+		threshold="0" visibleRowCount="5">\
 	<Text id="region" text="{Region}"/>\
 	<Text id="salesNumber" text="{SalesNumber}"/>\
 	<Text id="salesAmountSum" text="{= %{SalesAmountSum} }"/>\
@@ -18519,15 +18526,13 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=concat("
-				+ "aggregate(SalesAmount with sum as SalesAmountSum,Currency)"
-				+ ",groupby((Region)"
+		this.expectRequest("BusinessPartners?$apply=filter(AmountPerSale gt 99)/concat("
+				+ "aggregate(SalesAmount with sum as SalesAmountSum,Currency),groupby((Region)"
 				+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency,SalesNumber))"
-				+ "/filter(SalesAmountSum gt 0)/orderby(SalesAmountSum asc)"
-				+ "/concat(aggregate($count as UI5__count),top(4)))", {
+				+ "/orderby(SalesAmountSum asc)/concat(aggregate($count as UI5__count),top(4)))", {
 				value : [{
 						Currency : "EUR",
-						SalesAmountSum : 351,
+						SalesAmountSum : "351",
 						//TODO this should be used by auto type detection
 						"SalesAmountSum@odata.type" : "#Decimal"
 					}, {
@@ -18537,35 +18542,36 @@ sap.ui.define([
 						Currency : "EUR",
 						Region : "Z",
 						SalesNumber : 1,
-						SalesAmountSum : 1
+						SalesAmountSum : "1"
 					}, {
 						Currency : "EUR",
 						Region : "Y",
 						SalesNumber : 2,
-						SalesAmountSum : 2
+						SalesAmountSum : "2"
 					}, {
 						Currency : "EUR",
 						Region : "X",
 						SalesNumber : 3,
-						SalesAmountSum : 3
+						SalesAmountSum : "3"
 					}, {
 						Currency : "EUR",
 						Region : "W",
 						SalesNumber : 4,
-						SalesAmountSum : 4
+						SalesAmountSum : "4"
 					}
 				]
 			})
 			.expectChange("region", ["", "Z", "Y", "X", "W"])
 			.expectChange("salesNumber", [null, "1", "2", "3", "4"])
-			.expectChange("salesAmountSum", [351, 1, 2, 3, 4])
+			.expectChange("salesAmountSum", ["351", "1", "2", "3", "4"])
 			.expectChange("currency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			assert.strictEqual(that.oView.byId("table").getBinding("rows").getDownloadUrl(),
-				"/aggregation/BusinessPartners?$apply=groupby((Region)"
+				"/aggregation/BusinessPartners?$apply=filter(AmountPerSale%20gt%2099)"
+				+ "/groupby((Region)"
 				+ ",aggregate(SalesAmount%20with%20sum%20as%20SalesAmountSum,Currency,SalesNumber))"
-				+ "/filter(SalesAmountSum%20gt%200)/orderby(SalesAmountSum%20asc)",
+				+ "/orderby(SalesAmountSum%20asc)",
 				"CPOUI5ODATAV4-609");
 		});
 	});
@@ -18594,7 +18600,7 @@ sap.ui.define([
 			// code under test
 			oListBinding.filter([
 				new Filter("Name", FilterOperator.EQ, "Foo"),
-				new Filter("SalesNumber", FilterOperator.GT, 0)
+				new Filter("Region", FilterOperator.NE, "Bar")
 			]);
 
 			// code under test
@@ -18606,13 +18612,13 @@ sap.ui.define([
 			// resolve the binding to see that the API changes work
 			oListBinding.setContext(that.oModel.createBindingContext("/"));
 
-			that.expectRequest("BusinessPartners?custom=foo&$apply=filter(Name eq 'Foo')"
+			that.expectRequest("BusinessPartners?custom=foo"
+					+ "&$apply=filter(Name eq 'Foo' and Region ne 'Bar')"
 					+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber gt 0)/orderby(SalesNumber)"
-					+ "/concat(aggregate($count as UI5__count),top(99)))", {
+					+ "/orderby(SalesNumber)/concat(aggregate($count as UI5__count),top(99)))", {
 					value : [
 						{SalesNumber : 0},
-						{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"}
+						{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"}
 						// ... (don't care)
 					]
 				});
@@ -18629,35 +18635,30 @@ sap.ui.define([
 	// - those filters that can be applied before aggregating
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
-	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache", function (assert) {
+	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _MinMaxHelper", function (assert) {
 		var oModel = createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
-			var oListBinding = that.oModel.bindList("/BusinessPartners");
-
-			oListBinding.setAggregation({
-				aggregate : {
-					SalesNumber : {grandTotal : true}
-				},
-				group : {
-					Region : {}
-				}
-			});
-
-			// code under test - filter should be applied before aggregating
-			oListBinding.filter([
-				new Filter("Name", FilterOperator.EQ, "Foo"),
-				new Filter("SalesNumber", FilterOperator.GT, 0)
-			]);
+			var oListBinding = that.oModel.bindList("/BusinessPartners", null, null, [
+					new Filter("Name", FilterOperator.EQ, "Foo"),
+					new Filter("SalesNumber", FilterOperator.GT, 0)
+				], {
+					$$aggregation : {
+						aggregate : {
+							SalesNumber : {min : true}
+						},
+						group : {
+							Region : {}
+						}
+					}
+				});
 
 			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
-					+ "/concat(aggregate(SalesNumber)"
-					+ ",groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
-					+ "/concat(aggregate($count as UI5__count),top(99)))", {
+					+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
+					+ "/concat(aggregate(SalesNumber with min as UI5min__SalesNumber),top(100))", {
 					value : [
-						{SalesNumber : 0},
-						{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"}
+						{"UI5min__SalesNumber" : 0, "UI5min__SalesNumber@odata.type" : "#Int32"}
 						// ... (don't care)
 					]
 				});
@@ -18668,6 +18669,7 @@ sap.ui.define([
 			]);
 		});
 	});
+	//TODO QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache" --> grandTotal : true
 
 	//*********************************************************************************************
 	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
@@ -18679,30 +18681,205 @@ sap.ui.define([
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
-			var oListBinding = that.oModel.bindList("/BusinessPartners");
-
-			// code under test - filter should be applied before aggregating
-			oListBinding.filter([
-				new Filter("Name", FilterOperator.EQ, "Foo"),
-				new Filter("SalesNumber", FilterOperator.GT, 0)
-			]);
-
-			oListBinding.setAggregation({
-				aggregate : {
-					SalesNumber : {}
-				},
-				group : {
-					Region : {}
-				}
-			});
+			var oListBinding = that.oModel.bindList("/BusinessPartners", null, null, [
+					new Filter("Name", FilterOperator.EQ, "Foo"),
+					new Filter("SalesNumber", FilterOperator.GT, 0)
+				], {
+					$$aggregation : {
+						aggregate : {
+							SalesNumber : {}
+						},
+						group : {
+							Region : {}
+						}
+					}
+				});
 
 			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
 					+ "/groupby((Region),aggregate(SalesNumber))&$filter=SalesNumber gt 0"
-					+ "&$skip=0&$top=100", {value : [{}]});
+					+ "&$skip=0&$top=100", {
+					value : [
+						// ... (don't care)
+					]
+				});
 
 			return Promise.all([
 				oListBinding.requestContexts(),
 				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Filtering by aggregated properties was supported in 1.84.0 even if grand totals
+	// were needed (at least w/o visual grouping).
+	// BCP: 2170032897
+	// JIRA: CPOUI5ODATAV4-119
+	QUnit.test("BCP: 2170032897 with UI5 filters", function (assert) {
+		var oListBinding,
+			oModel = createAggregationModel({autoExpandSelect : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			oListBinding = that.oModel.bindList("/BusinessPartners", null, [
+				new Sorter("Region")
+			], [
+				new Filter("Name", FilterOperator.EQ, "Foo"),
+				new Filter("SalesAmount", FilterOperator.GT, 0)
+			], {
+				$$aggregation : {
+					aggregate : {
+						SalesAmount : {grandTotal : true, unit : "Currency"}
+					},
+					group : {
+						Region : {}
+					},
+					"grandTotal like 1.84" : true // code under test
+				}
+			});
+
+			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
+					+ "/groupby((Region),aggregate(SalesAmount,Currency))"
+					+ "/filter(SalesAmount gt 0)/orderby(Region)"
+					+ "/concat(aggregate(SalesAmount,Currency),aggregate($count as UI5__count)"
+						+ ",top(2))", {
+					value : [
+						{Currency : "DEM",
+							SalesAmount : "0", "SalesAmount@odata.type" : "#Decimal"},
+						{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
+						{Region : "A", SalesAmount : "100"},
+						{Region : "B", SalesAmount : "200"}
+					]
+				});
+
+			return Promise.all([
+				oListBinding.requestContexts(0, 3),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			var aContexts = aResults[0];
+
+			assert.strictEqual(oListBinding.getHeaderContext().getProperty("$count"), 26);
+			assert.deepEqual(aContexts.map(function (oContext) {
+				return oContext.getObject();
+			}), [{
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.isTotal" : true,
+				"@$ui5.node.level" : 0,
+				Currency : "DEM",
+				Region : null,
+				SalesAmount : "0",
+				"SalesAmount@odata.type" : "#Decimal"
+			}, {
+				"@$ui5.node.isTotal" : false,
+				"@$ui5.node.level" : 1,
+				Currency : null,
+				Region : "A",
+				SalesAmount : "100"
+			}, {
+				"@$ui5.node.isTotal" : false,
+				"@$ui5.node.level" : 1,
+				Currency : null,
+				Region : "B",
+				SalesAmount : "200"
+			}]);
+			assert.deepEqual(aContexts.map(getPath), [
+				"/BusinessPartners()",
+				"/BusinessPartners(Region='A')",
+				"/BusinessPartners(Region='B')"
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Filtering by aggregated properties was supported in 1.84.0 even if grand totals
+	// were needed (at least w/o visual grouping).
+	// BCP: 2170032897
+	// JIRA: CPOUI5ODATAV4-119
+	QUnit.test("BCP: 2170032897 with $filter", function (assert) {
+		var oListBinding,
+			oModel = createAggregationModel({autoExpandSelect : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			oListBinding = that.oModel.bindList("/BusinessPartners", null, [], [
+				new Filter("Name", FilterOperator.EQ, "Foo")
+			], {
+				$$aggregation : {
+					aggregate : {
+						SalesAmountSum : {
+							grandTotal : true,
+							name : "SalesAmount",
+							unit : "Currency", // Note: unsupported in 1.84
+							"with" : "sum"
+						}
+					},
+					group : {
+						Region : {}
+					},
+					"grandTotal like 1.84" : true // code under test
+				},
+				$count : true, // Note: not by default in 1.84
+				$filter : "SalesAmountSum gt 0",
+				$orderby : "Region"
+			});
+
+			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')/groupby((Region)"
+						+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency))"
+					+ "/filter(SalesAmountSum gt 0)/orderby(Region)/concat("
+						+ "aggregate(SalesAmountSum with sum as UI5grand__SalesAmountSum,Currency)"
+						+ ",aggregate($count as UI5__count),top(2))", {
+					value : [{
+						Currency : "DEM",
+						UI5grand__SalesAmountSum : "0",
+						"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
+					}, { // Note: in 1.84, this is part of the grand total row
+						UI5__count : "26",
+						"UI5__count@odata.type" : "#Decimal"
+					}, {
+						Region : "A",
+						SalesAmountSum : "100"
+					}, {
+						Region : "B",
+						SalesAmountSum : "200"
+					}]
+				});
+
+			return Promise.all([
+				oListBinding.requestContexts(0, 3),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			var aContexts = aResults[0];
+
+			assert.strictEqual(oListBinding.getHeaderContext().getProperty("$count"), 26);
+			assert.deepEqual(aContexts.map(function (oContext) {
+				return oContext.getObject();
+			}), [{
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.isTotal" : true,
+				"@$ui5.node.level" : 0,
+				Currency : "DEM",
+				Region : null,
+				SalesAmountSum : "0",
+				"SalesAmountSum@odata.type" : "#Decimal"
+			}, {
+				"@$ui5.node.isTotal" : false,
+				"@$ui5.node.level" : 1,
+				Currency : null,
+				Region : "A",
+				SalesAmountSum : "100"
+			}, {
+				"@$ui5.node.isTotal" : false,
+				"@$ui5.node.level" : 1,
+				Currency : null,
+				Region : "B",
+				SalesAmountSum : "200"
+			}]);
+			assert.deepEqual(aContexts.map(getPath), [
+				"/BusinessPartners()",
+				"/BusinessPartners(Region='A')",
+				"/BusinessPartners(Region='B')"
 			]);
 		});
 	});
@@ -27361,7 +27538,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1877
 	// JIRA: CPOUI5UISERVICESV3-1944
 	QUnit.test("Partner attributes in path to collection, other updateGroupId", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : 'update'}),
+		var oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : "update"}),
 			sView = '\
 <FlexBox binding="{/Bs(1)}">\
 	<Text id="bValue" text="{BValue}"/>\
@@ -27852,7 +28029,7 @@ sap.ui.define([
 				BusinessPartnerID : "4711",
 				BP_2_SO : [{
 					Note : "Test",
-					SalesOrderID : '0500000001'
+					SalesOrderID : "0500000001"
 				}]
 			})
 			.expectChange("id", ["0500000001"])
@@ -27960,8 +28137,8 @@ sap.ui.define([
 
 		that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2", {
 				value : [
-					{Note : "Test 1", SalesOrderID : '0500000001'},
-					{Note : "Test 2", SalesOrderID : '0500000002'}
+					{Note : "Test 1", SalesOrderID : "0500000001"},
+					{Note : "Test 2", SalesOrderID : "0500000002"}
 				]
 			})
 			.expectChange("id", ["0500000001", "0500000002"])
@@ -28081,7 +28258,7 @@ sap.ui.define([
 				BusinessPartnerID : "4711",
 				BP_2_SO : [{
 					Note : "Test",
-					SalesOrderID : '0500000001'
+					SalesOrderID : "0500000001"
 				}]
 			})
 			.expectChange("id", ["0500000001"])
@@ -29748,7 +29925,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: An empty $NavigationPropertyPath is annotated as a side effect target. "All
 	// affected entities need to be explicitly listed. An empty path means the annotation target."
-	// --> We expect the caller to map {$NavigationPropertyPath : ""} to {$PropertyPath : '*'} in
+	// --> We expect the caller to map {$NavigationPropertyPath : ""} to {$PropertyPath : "*"} in
 	// order to opt-in to this interpretation.
 	//
 	// Note: Key properties are omitted from response data to improve readability.

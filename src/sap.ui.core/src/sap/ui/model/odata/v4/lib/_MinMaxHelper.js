@@ -27,8 +27,6 @@ sap.ui.define([
 		 *   A map of key-value pairs representing the query string
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
-		 * @throws {Error}
-		 *   If group levels are combined with min/max
 		 */
 		createCache : function (oRequestor, sResourcePath, oAggregation, mQueryOptions) {
 			// A map of the virtual property names to the corresponding measure property names and
@@ -39,11 +37,6 @@ sap.ui.define([
 				bFollowUp = false,
 				oMeasureRangePromise,
 				fnMeasureRangeResolve;
-
-			// Note: ignore existing mQueryOptions.$apply, e.g. from ODLB#updateAnalyticalInfo
-			if (oAggregation.groupLevels.length) {
-				throw new Error("Unsupported group levels together with min/max");
-			}
 
 			oCache = _Cache.create(oRequestor, sResourcePath, mQueryOptions, true);
 			oMeasureRangePromise = new Promise(function (resolve) {
@@ -83,6 +76,7 @@ sap.ui.define([
 			// @override sap.ui.model.odata.v4.lib._CollectionCache#getResourcePathWithQuery
 			// Note: same as in _GrandTotalHelper
 			oCache.getResourcePathWithQuery = function (iStart, iEnd) {
+				// Note: ignore existing mQueryOptions.$apply, e.g. from ODLB#updateAnalyticalInfo
 				var mQueryOptionsWithApply = _AggregationHelper.buildApply(oAggregation,
 						Object.assign({}, this.mQueryOptions, {
 							$skip : iStart,

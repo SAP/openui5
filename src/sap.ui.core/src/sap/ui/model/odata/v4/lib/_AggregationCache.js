@@ -33,32 +33,21 @@ sap.ui.define([
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
 	 *   {@link _AggregationHelper.buildApply}
-	 * @param {boolean} bHasGrandTotal
-	 *   Whether a grand total is needed
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string
-	 * @throws {Error}
-	 *   If the system query options "$count" or "$filter" are used together with group levels
+	 * @param {boolean} bHasGrandTotal
+	 *   Whether a grand total is needed
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._AggregationCache
 	 * @constructor
 	 * @extends sap.ui.model.odata.v4.lib._Cache
 	 * @private
 	 */
-	function _AggregationCache(oRequestor, sResourcePath, oAggregation, bHasGrandTotal,
-			mQueryOptions) {
+	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
+			bHasGrandTotal) {
 		var that = this;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
-
-		if (oAggregation.groupLevels.length) {
-			if (mQueryOptions.$count) {
-				throw new Error("Unsupported system query option: $count");
-			}
-			if (mQueryOptions.$filter) {
-				throw new Error("Unsupported system query option: $filter");
-			}
-		}
 
 		this.oAggregation = oAggregation;
 		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
@@ -74,6 +63,9 @@ sap.ui.define([
 					function (oGrandTotal) {
 						var oGrandTotalCopy;
 
+						if (oAggregation["grandTotal like 1.84"]) { // rename measures
+							_AggregationHelper.removeUI5grand__(oGrandTotal);
+						}
 						_AggregationHelper.setAnnotations(oGrandTotal, true, true, 0,
 							_AggregationHelper.getAllProperties(oAggregation));
 
@@ -724,7 +716,7 @@ sap.ui.define([
 	 *   Example: Products
 	 * @param {string} sDeepResourcePath
 	 *   The deep resource path to be used to build the target path for bound messages
-	 * @param {object} oAggregation
+	 * @param {object} [oAggregation]
 	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
@@ -746,22 +738,43 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 * @throws {Error}
-	 *   If the system query options "$count" or "$filter" are used together with group levels, or
-	 *   if group levels are combined with min/max, or if the system query options "$expand" or
-	 *   "$select" are used at all
+	 *   If the system query options "$count" or "$filter" are combined with group levels, or
+	 *   "$filter" combined with grand totals (unless "grandTotal like 1.84"), or if grand totals or
+	 *   group levels are combined with min/max, or if the system query options "$expand" or
+	 *   "$select" are combined with data aggregation
 	 *
 	 * @public
 	 */
 	_AggregationCache.create = function (oRequestor, sResourcePath, sDeepResourcePath, oAggregation,
 			mQueryOptions, bSortExpandSelect, bSharedRequest) {
-		var bAggregate, bHasGrandTotal, bHasMinOrMax;
+		var bHasGrandTotal, bHasGroupLevels, bHasMinOrMax;
 
 		if (oAggregation) {
 			bHasGrandTotal = _AggregationHelper.hasGrandTotal(oAggregation.aggregate);
+			bHasGroupLevels = !!oAggregation.groupLevels.length;
 			bHasMinOrMax = _AggregationHelper.hasMinOrMax(oAggregation.aggregate);
-			bAggregate = oAggregation.groupLevels.length || bHasGrandTotal || bHasMinOrMax;
 
-			if (bAggregate) {
+			if (bHasGrandTotal && mQueryOptions.$filter && !oAggregation["grandTotal like 1.84"]) {
+				throw new Error("Unsupported system query option: $filter");
+			}
+			if (bHasGroupLevels) {
+				if (mQueryOptions.$count) {
+					throw new Error("Unsupported system query option: $count");
+				}
+				if (mQueryOptions.$filter) {
+					throw new Error("Unsupported system query option: $filter");
+				}
+			}
+			if (bHasMinOrMax) {
+				if (bHasGrandTotal) {
+					throw new Error("Unsupported grand totals together with min/max");
+				}
+				if (bHasGroupLevels) {
+					throw new Error("Unsupported group levels together with min/max");
+				}
+			}
+
+			if (bHasGrandTotal || bHasGroupLevels || bHasMinOrMax) {
 				if ("$expand" in mQueryOptions) {
 					throw new Error("Unsupported system query option: $expand");
 				}
@@ -769,13 +782,11 @@ sap.ui.define([
 					throw new Error("Unsupported system query option: $select");
 				}
 
-				if (bHasMinOrMax) {
-					return _MinMaxHelper.createCache(oRequestor, sResourcePath, oAggregation,
-						mQueryOptions);
-				}
-
-				return new _AggregationCache(oRequestor, sResourcePath, oAggregation,
-					bHasGrandTotal, mQueryOptions);
+				return bHasMinOrMax
+					? _MinMaxHelper.createCache(oRequestor, sResourcePath, oAggregation,
+						mQueryOptions)
+					: new _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
+						bHasGrandTotal);
 			}
 		}
 

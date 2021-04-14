@@ -1496,6 +1496,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
+	 * @see #setAggregation
 	 * @since 1.39.0
 	 */
 	// @override sap.ui.model.ListBinding#filter
@@ -2739,13 +2740,19 @@ sap.ui.define([
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>. Since 1.76.0, <code>undefined</code> can be
 	 *   used to remove the data aggregation object, which allows to set <code>$apply</code>
-	 *   explicitly afterwards. <code>null</code> is not supported.
+	 *   explicitly afterwards. <code>null</code> is not supported.<br>
+	 *   Since 1.89.0, the deprecated property <code>"grandTotal like 1.84" : true</code> can be
+	 *   used to turn on the handling of grand totals like in 1.84.0, using aggregates of aggregates
+	 *   and thus allowing to filter by aggregated properties while grand totals are needed. Beware
+	 *   that methods like "average" or "countdistinct" are not compatible with this approach, and
+	 *   it cannot be combined with group levels.
 	 * @param {object} [oAggregation.aggregate]
 	 *   A map from aggregatable property names or aliases to objects containing the following
 	 *   details:
 	 *   <ul>
 	 *     <li> <code>grandTotal</code>: An optional boolean that tells whether a grand total for
-	 *       this aggregatable property is needed (since 1.59.0)
+	 *       this aggregatable property is needed (since 1.59.0); filtering by any aggregatable
+	 *       property is not supported in this case (since 1.89.0)
 	 *     <li> <code>subtotals</code>: An optional boolean that tells whether subtotals for this
 	 *       aggregatable property are needed
 	 *     <li> <code>with</code>: An optional string that provides the name of the method (for
@@ -2758,7 +2765,7 @@ sap.ui.define([
 	 *       aggregate for a currency or unit of measure corresponding to this aggregatable property
 	 *       (since 1.86.0). The custom aggregate must return the single value of that unit in case
 	 *       there is only one, or <code>null</code> otherwise ("multi-unit situation"). (SQL
-	 *       suggestion: <code>CASE WHEN min(Unit) = max(Unit) THEN min(Unit) END</code>)
+	 *       suggestion: <code>CASE WHEN MIN(Unit) = MAX(Unit) THEN MIN(Unit) END</code>)
 	 *   </ul>
 	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
 	 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only

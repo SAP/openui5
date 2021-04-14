@@ -208,7 +208,7 @@ sap.ui.define([
 					unit : "Currency"
 				}
 			},
-			groupLevels : ['Currency']
+			groupLevels : ["Currency"]
 		},
 		sApply : "concat(aggregate(Amount,Currency),groupby((Currency),aggregate(Amount)))",
 		sFollowUpApply : "groupby((Currency),aggregate(Amount))"
@@ -225,7 +225,7 @@ sap.ui.define([
 					subtotals : true
 				}
 			},
-			groupLevels : ['Country']
+			groupLevels : ["Country"]
 		},
 		sApply : "concat(aggregate(Amount,Currency),groupby((Country),aggregate(Amount,Currency)))",
 		sFollowUpApply : "groupby((Country),aggregate(Amount,Currency))"
@@ -533,6 +533,113 @@ sap.ui.define([
 		},
 		sApply : "groupby((Country,Region,CountryText,Texts/Country,RegionText,Texts/Region)"
 			+ ",aggregate(SalesNumber))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesAmount : {grandTotal : true, unit : "Currency"}
+			},
+			"grandTotal like 1.84" : true,
+			group : {
+				Country : {}
+			}
+		},
+		mQueryOptions : {
+			$$filterBeforeAggregate : "Name eq 'Foo'",
+			$count : true, // @see _AggregationCache#createGroupLevelCache
+			$filter : "SalesAmount gt 0",
+			$orderby : "Country desc",
+			$skip : 42,
+			$top : 99
+		},
+		sApply : "filter(Name eq 'Foo')/groupby((Country),aggregate(SalesAmount,Currency))"
+			+ "/filter(SalesAmount gt 0)/orderby(Country desc)"
+			+ "/concat(aggregate(SalesAmount,Currency),aggregate($count as UI5__count)"
+			+ ",skip(42)/top(99))",
+		sFollowUpApply : "filter(Name eq 'Foo')/groupby((Country),aggregate(SalesAmount,Currency))"
+			+ "/filter(SalesAmount gt 0)/orderby(Country desc)/skip(42)/top(99)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesNumber : {grandTotal : true}
+			},
+			"grandTotal like 1.84" : true,
+			group : {
+				Country : {}
+			}
+		},
+		mQueryOptions : {
+			$$filterBeforeAggregate : "Name eq 'Foo'",
+			$count : true, // @see _AggregationCache#createGroupLevelCache
+			$filter : "SalesNumber gt 0",
+			$orderby : "Country desc"
+			// no $skip/$top here
+		},
+		sApply : "filter(Name eq 'Foo')/groupby((Country),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber gt 0)/orderby(Country desc)"
+			+ "/concat(aggregate(SalesNumber),aggregate($count as UI5__count),identity)",
+		sFollowUpApply : "filter(Name eq 'Foo')/groupby((Country),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber gt 0)/orderby(Country desc)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesAmountSum : {
+					grandTotal : true,
+					name : "SalesAmount",
+					unit : "Currency", // Note: unsupported in 1.84
+					"with" : "sum"
+				}
+			},
+			"grandTotal like 1.84" : true,
+			group : {
+				Country : {}
+			}
+		},
+		mQueryOptions : {
+			$$filterBeforeAggregate : "Name eq 'Foo'",
+			$count : true, // @see _AggregationCache#createGroupLevelCache
+			$filter : "SalesAmountSum gt 0",
+			$orderby : "Country desc"
+			// no $skip/$top here
+		},
+		sApply : "filter(Name eq 'Foo')/groupby((Country)"
+			+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency))"
+			+ "/filter(SalesAmountSum gt 0)/orderby(Country desc)/concat("
+			+ "aggregate(SalesAmountSum with sum as UI5grand__SalesAmountSum,Currency),"
+			+ "aggregate($count as UI5__count),identity)",
+		sFollowUpApply : "filter(Name eq 'Foo')/groupby((Country)"
+			+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency))"
+			+ "/filter(SalesAmountSum gt 0)/orderby(Country desc)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesAmountSum : {
+					grandTotal : true,
+					name : "SalesAmount",
+					unit : "Currency" // Note: unsupported in 1.84
+					// Note: intentionally no "with", although spec requires it
+				}
+			},
+			"grandTotal like 1.84" : true,
+			group : {
+				Country : {}
+			}
+		},
+		mQueryOptions : {
+			$$filterBeforeAggregate : "Name eq 'Foo'",
+			$count : true, // @see _AggregationCache#createGroupLevelCache
+			$filter : "SalesAmountSum gt 0",
+			$orderby : "Country desc",
+			$skip : 42,
+			$top : 99
+		},
+		sApply : "filter(Name eq 'Foo')/groupby((Country)"
+			+ ",aggregate(SalesAmount as SalesAmountSum,Currency))"
+			+ "/filter(SalesAmountSum gt 0)/orderby(Country desc)/concat("
+			+ "aggregate(SalesAmountSum as UI5grand__SalesAmountSum,Currency),"
+			+ "aggregate($count as UI5__count),skip(42)/top(99))",
+		sFollowUpApply : "filter(Name eq 'Foo')/groupby((Country)"
+			+ ",aggregate(SalesAmount as SalesAmountSum,Currency))"
+			+ "/filter(SalesAmountSum gt 0)/orderby(Country desc)/skip(42)/top(99)"
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {},
@@ -618,6 +725,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[{
+		oAggregation : {
+			aggregate : {A : {grandTotal : true}},
+			"grandTotal like 1.84" : true,
+			groupLevels : ["B"]
+		},
+		sError : "Cannot combine visual grouping with grand total"
+	}, {
+		oAggregation : {
+			aggregate : {A : {grandTotal : true, "with" : "average"}},
+			"grandTotal like 1.84" : true
+		},
+		sError : "Cannot aggregate totals with 'average'"
+	}, {
+		oAggregation : {
+			aggregate : {A : {grandTotal : true, "with" : "countdistinct"}},
+			"grandTotal like 1.84" : true
+		},
+		sError : "Cannot aggregate totals with 'countdistinct'"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("buildApply: " + oFixture.sError, function (assert) {
+			assert.throws(function () {
+				// code under test
+				_AggregationHelper.buildApply(oFixture.oAggregation, {}, /*iLevel*/1);
+			}, new Error(oFixture.sError));
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("buildApply: checkTypeof", function (assert) {
 		var oAggregation = {},
 			oError = new Error();
@@ -635,6 +771,7 @@ sap.ui.define([
 						"with" : "string"
 					}
 				},
+				"grandTotal like 1.84" : "boolean",
 				grandTotalAtBottomOnly : "boolean",
 				group : {
 					"*" : {
@@ -714,6 +851,13 @@ sap.ui.define([
 				}
 			});
 		}, new Error("Not a string value for '$$aggregation/aggregate/foo/unit'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				"grandTotal like 1.84" : "1.84"
+			});
+		}, new Error("Not a boolean value for '$$aggregation/grandTotal like 1.84'"));
 	});
 
 	//*********************************************************************************************
@@ -876,7 +1020,7 @@ sap.ui.define([
 	}
 
 	function f(sPath) {
-		return new Filter(sPath, FilterOperator.EQ, 'foo');
+		return new Filter(sPath, FilterOperator.EQ, "foo");
 	}
 
 	function or() {
@@ -1335,4 +1479,22 @@ sap.ui.define([
 				});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("removeUI5grand__", function (assert) {
+		var oGrandTotal = {
+				foo : "bar",
+				UI5grand__SalesAmountSum : 123,
+				"UI5grand__SalesAmountSum@odata.type" : "#Decimal"
+			};
+
+		// code under test
+		_AggregationHelper.removeUI5grand__(oGrandTotal);
+
+		assert.deepEqual(oGrandTotal, {
+			foo : "bar",
+			SalesAmountSum : 123,
+			"SalesAmountSum@odata.type" : "#Decimal"
+		});
+	});
 });
