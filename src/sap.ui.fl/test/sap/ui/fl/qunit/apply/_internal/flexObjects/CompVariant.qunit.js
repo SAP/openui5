@@ -33,7 +33,6 @@ sap.ui.define([
 		settings: {
 			isPublicLayerAvailable: true
 		},
-		expectedReadOnly: false,
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true
@@ -48,7 +47,6 @@ sap.ui.define([
 			isPublicLayerAvailable: true // testing the = false option is not a real case since the variant was written into it
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: false,
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true
@@ -63,7 +61,6 @@ sap.ui.define([
 			isPublicLayerAvailable: true // testing the = false option is not a real case since the variant was written into it
 		},
 		currentUser: "PAUL",
-		expectedReadOnly: true,
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
 		expectedRenameEnabled: false
@@ -77,7 +74,6 @@ sap.ui.define([
 		settings: {
 			isPublicLayerAvailable: true // testing the = false option is not a real case since the variant was written into it
 		},
-		expectedReadOnly: false,
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true
@@ -93,7 +89,6 @@ sap.ui.define([
 			isPublicLayerAvailable: true // testing the = false option is not a real case since the variant was written into it
 		},
 		currentUser: "PAUL",
-		expectedReadOnly: false,
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true
@@ -111,7 +106,6 @@ sap.ui.define([
 			system: "ABC",
 			client: "123"
 		},
-		expectedReadOnly: true,
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
 		expectedRenameEnabled: false
@@ -131,7 +125,6 @@ sap.ui.define([
 			client: "123"
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: false,
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true
@@ -151,7 +144,6 @@ sap.ui.define([
 			client: "123"
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: true,
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
 		expectedRenameEnabled: false
@@ -171,7 +163,6 @@ sap.ui.define([
 			client: "123"
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: true,
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
 		expectedRenameEnabled: false
@@ -186,7 +177,6 @@ sap.ui.define([
 			isPublicLayerAvailable: false
 		},
 		currentUser: "FRANK",
-		expectedReadOnly: false,
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true
@@ -201,7 +191,6 @@ sap.ui.define([
 			isPublicLayerAvailable: false
 		},
 		currentUser: "PAUL",
-		expectedReadOnly: true,
 		expectedEditEnabled: false,
 		expectedDeleteEnabled: false,
 		expectedRenameEnabled: false
@@ -217,7 +206,6 @@ sap.ui.define([
 			isPublicLayerAvailable: false
 		},
 		currentUser: "PAUL",
-		expectedReadOnly: false,
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true
@@ -233,7 +221,6 @@ sap.ui.define([
 			isPublicLayerAvailable: false
 		},
 		currentUser: "PAUL",
-		expectedReadOnly: false,
 		expectedEditEnabled: true,
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true,
@@ -267,7 +254,7 @@ sap.ui.define([
 		return oVariant;
 	}
 
-	QUnit.module("Given isReadOnly/isEditEnabled/isRenameEnabled/isDeleteEnabled is called", {
+	QUnit.module("Given isEditEnabled/isRenameEnabled/isDeleteEnabled is called", {
 		beforeEach: function () {
 		},
 		afterEach: function() {
@@ -317,46 +304,9 @@ sap.ui.define([
 
 				var oVariant = createVariant(mTestSetup.variant);
 
-				assert.equal(mTestSetup.expectedReadOnly, oVariant.isReadOnly(), "then the boolean for ReadOnly was determined correct");
+				assert.equal(mTestSetup.expectedRenameEnabled, oVariant.isRenameEnabled(), "then the boolean for renameEnagbled was determined correct");
 				assert.equal(mTestSetup.expectedEditEnabled, oVariant.isEditEnabled(), "then the boolean for editEnabled was determined correct");
 				assert.equal(mTestSetup.expectedDeleteEnabled, oVariant.isDeleteEnabled(), "then the boolean for deleteEnabled was determined correct");
-			});
-		});
-	});
-
-	QUnit.module("Given isLabelReadOnly is called", {
-		beforeEach: function () {
-		},
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
-		aScenarios.forEach(function (mTestSetup) {
-			[{
-				language: "DE",
-				matchingLanguage: false
-			}, {
-				language: "EN",
-				matchingLanguage: true
-			}].forEach(function (mLanguageScenario) {
-				QUnit.test(mTestSetup.testName + " when isLabelReadOnly is called and the languages do "
-						+ (mLanguageScenario.matchingLanguage ? "" : "not ") + "matches", function(assert) {
-					// mocked settings
-					Settings._instance = new Settings(mTestSetup.settings);
-					stubCurrentUser(mTestSetup.currentUser);
-					var oVariant = createVariant(mTestSetup.variant);
-					if (mTestSetup.sapUiLayerUrlParameter) {
-						sandbox.stub(UriParameters, "fromQuery").returns({
-							get: function () {
-								return mTestSetup.sapUiLayerUrlParameter;
-							}
-						});
-					}
-
-					sandbox.stub(Utils, "getCurrentLanguage").returns(mLanguageScenario.language);
-
-					assert.equal(!mLanguageScenario.matchingLanguage || !mTestSetup.expectedRenameEnabled, oVariant.isLabelReadOnly(), "then the boolean was determined correct");
-				});
 			});
 		});
 	});
