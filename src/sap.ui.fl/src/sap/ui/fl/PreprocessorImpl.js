@@ -33,6 +33,8 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @experimental Since 1.27.0
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.core
 	 */
 	var PreprocessorImpl = function() {};
 
@@ -46,7 +48,6 @@ sap.ui.define([
 	 * @returns {Promise|Array} An empty array in case of a sync processing or a Promise with all successful loaded controller extensions
 	 * @see sap.ui.core.mvc.Controller for an overview of the available functions on controllers.
 	 * @since 1.34.0
-	 * @public
 	 */
 	PreprocessorImpl.prototype.getControllerExtensions = function(sControllerName, sComponentId, bAsync) {
 		if (bAsync) {
