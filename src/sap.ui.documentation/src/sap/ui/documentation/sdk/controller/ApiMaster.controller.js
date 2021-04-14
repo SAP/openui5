@@ -46,6 +46,8 @@ sap.ui.define([
 				this._oRouter.getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
 				this._oRouter.getRoute("since").attachPatternMatched(this._onTopicMatched, this);
 
+				this.bIsInitial = true;
+
 				// Create the model
 				this._oTreeModel = new JSONModel();
 				this._oTreeModel.setSizeLimit(10000);
@@ -157,11 +159,9 @@ sap.ui.define([
 					sTopicId = oSpecialRouteInfo.id;
 				}
 
-				try {
+				if (this.bIsInitial) {
 					this.showMasterSide();
-				} catch (e) {
-					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-					Log.error(e);
+					this.bIsInitial = false;
 				}
 
 				// Expand tree node when the data is loaded

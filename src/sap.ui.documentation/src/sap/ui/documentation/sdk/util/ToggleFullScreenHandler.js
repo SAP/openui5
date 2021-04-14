@@ -17,7 +17,7 @@ sap.ui.define([],
 			} else {
 				this._getSplitApp(oController).setMode('ShowHideMode');
 			}
-			this.updateControl(oEvt.getSource(), oView, bSwitchToFullScreen, oController);
+			this.updateControl(oEvt.getSource(), oView, oController, bSwitchToFullScreen);
 		},
 
 
@@ -28,8 +28,8 @@ sap.ui.define([],
 			return this._oSplitApp;
 		},
 
-		updateControl : function (oButton, oView, bFullScreen, oController) {
-			if (arguments.length === 2) {
+		updateControl : function (oButton, oView, oController, bFullScreen) {
+			if (arguments.length === 3) {
 				bFullScreen = !(this._getSplitApp(oController).getMode() === "ShowHideMode");
 			}
 			if (!bFullScreen) {
