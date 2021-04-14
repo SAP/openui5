@@ -217,27 +217,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if the current layer is the same as the layer in which the variant was created, or if the variant is from the end-user layer and was created for this user.
-	 * @returns {boolean} <code>true</code> if the variant file is read only
-	 *
-	 * @deprecated
-	 */
-	CompVariant.prototype.isReadOnly = function () {
-		return !this.isDeleteEnabled();
-	};
-
-	/**
-	 * Returns <code>true</code> if the variant itself is read only or the user's language does not match
-	 * the original language of the variant.
-	 * @returns {boolean} <code>true</code> if the label name is read only
-	 *
-	 * @deprecated
-	 */
-	CompVariant.prototype.isLabelReadOnly = function () {
-		return !this.isRenameEnabled();
-	};
-
-	/**
 	 * Sets the favorite flag of the runtime instance as well as the persistent representation.
 	 * This results in setting the definition as well as flagging the entity as 'dirty'.
 	 *
