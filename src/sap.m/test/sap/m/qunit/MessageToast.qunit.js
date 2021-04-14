@@ -60,7 +60,6 @@ sap.ui.define([
 		assert.strictEqual($MessageToast[0].style.width, "15em", "Default MessageToast width is 15em");
 		assert.strictEqual($MessageToast.css("visibility"), "visible", "After calling the sap.m.MessageToast.show(): the MessageToast is visible");
 		assert.strictEqual($MessageToast.css("position"), "absolute", "Position absolute");
-		assert.strictEqual($MessageToast.attr("aria-label"), " ", "The aria-labelledby is set");
 		assert.strictEqual($MessageToast.text(), "message toast", "The message toast displays the correct text");
 		assert.strictEqual(getBoxSizing($MessageToast), "border-box", "Is using old box model");
 		assert.strictEqual(typeof $MessageToast.css("box-shadow"), "string", "Is using box shadow");

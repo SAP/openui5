@@ -224,9 +224,6 @@ sap.ui.define([
 
 			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 				oMessageToastDomRef.setAttribute("role", "alert");
-
-				// prevents JAWS from reading the text of the MessageToast twice
-				oMessageToastDomRef.setAttribute("aria-label", " ");
 			}
 
 			oMessageToastDomRef.style.width = mSettings.width;
