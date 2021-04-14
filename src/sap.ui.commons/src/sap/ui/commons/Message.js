@@ -184,7 +184,7 @@ sap.ui.define([
 			return;
 		}
 
-	  // Dialog limitation. Work-around:
+	  // Dialog restriction. Work-around:
 	  if (bWasOpen) {
 			if (iOthersMaxZIndex > jContainer.css('zIndex')) {
 				// zIndex not raised via previous re-open()...
