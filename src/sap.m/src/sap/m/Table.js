@@ -92,13 +92,13 @@ sap.ui.define([
 			 *
 			 * By default, the table is rendered with a fixed layout algorithm (<code>fixedLayout=true</code>). This means the horizontal layout only depends on the table's width and the width of the columns, not the content of the cells. Cells in subsequent rows do not affect column width. This allows a browser to provide a faster table layout since the browser can begin to display the table once the first row has been analyzed.
 			 *
-			 * If this property is set to <code>false</code>, <code>sap.m.Table</code> is rendered with an auto layout algorithm. This means, the width of the table and its cells depends on the content of the cells. The column width is set by the widest unbreakable content inside the cells. This can make the rendering slow, since the browser needs to go through all the content in the table before determining the final layout.
+			 * If this property is set to <code>false</code>, <code>sap.m.Table</code> is rendered with an auto layout algorithm. This means, the width of the table and its cells depends on the content of the cells. The column width is set by the widest unbreakable content inside the cells. This can make the rendering slow, since the browser needs to go through all the content in the table before determining the final layout.<br>
 			 *
-			 * If this property is set to <code>Strict</code> and the <code>width</code> property is defined for all columns (and not the expected "auto" value), then the <code>sap.m.Table</code> control renders a placeholder column which occupies the remaining width of the control to ensure the column width setting is strictly applied.
+			 * If this property is set to <code>Strict</code> and the <code>width</code> property is defined for all columns (and not the expected "auto" value), then the <code>sap.m.Table</code> control renders a placeholder column which occupies the remaining width of the control to ensure the column width setting is strictly applied.<br>
 			 *
-			 * If there is only one remaining column with width larger than the table, then this column gets the maximum width available in the table. If the column width is smaller than the table, then the column width is retained, and the remaining width of the table is occupied by the placeholder column.
+			 * If there is only one remaining column with a width larger than the table, then this column gets the maximum width available in the table. If the column width is smaller than the table, then the column width is retained, and the remaining width of the table is occupied by the placeholder column.<br>
 			 *
-			 * The placeholder column gets rendered only if there are no columns in the pop-in area.
+			 * The placeholder column gets rendered only if there are no columns in the pop-in area.<br>
 			 *
 			 * <b>Note:</b> Since <code>sap.m.Table</code> does not have its own scrollbars, setting <code>fixedLayout</code> to false can force the table to overflow, which may cause visual problems. It is suggested to use this property when a table has a few columns in wide screens or within the horizontal scroll container (e.g <code>sap.m.Dialog</code>) to handle overflow.
 			 * In auto layout mode the <code>width</code> property of <code>sap.m.Column</code> is taken into account as a minimum width.
