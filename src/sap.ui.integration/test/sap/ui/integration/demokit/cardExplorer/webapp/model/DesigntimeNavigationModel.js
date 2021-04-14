@@ -13,7 +13,7 @@ sap.ui.define([
 				key: 'overview'
 			},
 			{
-				title: 'Create a Design-time',
+				title: 'Create a Configuration',
 				icon: 'sap-icon://create-form',
 				target: 'designtime',
 				key: 'create'
@@ -37,7 +37,7 @@ sap.ui.define([
 				]
 			},
 			{
-				title: 'Host Design-time Capabilities',
+				title: 'Host Configuration Capabilities',
 				icon: 'sap-icon://bbyd-dashboard',
 				target: 'designtime',
 				key: 'hostCapabilities'

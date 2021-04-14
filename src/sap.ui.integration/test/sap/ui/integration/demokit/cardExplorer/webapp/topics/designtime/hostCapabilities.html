@@ -15,7 +15,7 @@
 		<div class="content">
 
 			<h1>
-				Host Design-time Capabilities
+				Host Configuration Capabilities
 			</h1>
 
 			<h2 id="overview">
@@ -28,9 +28,9 @@
 				<li>Provide Host implementation providing functionality
 					<ul>
 						<li>to resolve destinations during runtime</li>
-						<li>get a list of destinations during design-time</li>
+						<li>get a list of destinations during configuration</li>
 						<li>to resolve available contexts during runtime</li>
-						<li>get a context information during design-time</li>
+						<li>get a context information during configuration</li>
 					</ul>
 				</li>
 
@@ -40,7 +40,7 @@
 				</li>
 				<li>Allow the translator to use the Card Editor to translate text</li>
 				<li>Store the changes that were made from each persona</li>
-				<li>Apply the changes of each persona during runtime and design-time</li>
+				<li>Apply the changes of each persona during runtime and configuration</li>
 			</ul>
 			</p>
 			<h3>Provide Host implementation</h3>
@@ -55,7 +55,7 @@ sap.ui.require(["sap/ui/integration/Host"], function(Host) {
 		{"name": "destination2"},
 	];
 
-	//define the current context structure with design-time information
+	//define the current context structure with configuration information
 	host.context = {
 		"sap.workzone": {
 			"currentUser": {
@@ -77,7 +77,7 @@ sap.ui.require(["sap/ui/integration/Host"], function(Host) {
 		return destination.realUrl
 	};
 
-	//called by the design-time to show a list of available destinations
+	//called by the configuration to show a list of available destinations
 	host.getDestinations = function(name) {
 		return Promise.resolve(this.destinationList);
 	}
@@ -95,7 +95,7 @@ sap.ui.require(["sap/ui/integration/Host"], function(Host) {
 		});
 	};
 
-	//called by the design-time to show a selection of available contexts
+	//called by the configuration to show a selection of available contexts
 	host.getContext = function() {
 		return Promise.resolve(host.context);
 	};</pre>

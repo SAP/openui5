@@ -29,20 +29,20 @@
 	<div class="topic">
 		<div class="content">
 
-			<h1 id="overview">Design-time Configurations and APIs</h1>
+			<h1 id="overview">Configurations and APIs</h1>
 			<p>
-				The Card Editor will use the design-time module to create the user interface for administrator,
+				The Card Editor will use the configuration module to create the user interface for administrator,
 				page/content administrator and translator.
 				Build in configuration settings allow to easily create an appealing UI for the user.
 			</p>
 			<img src="img/ConfigurationEditorSample.png" style="margin-left:auto;width:400px;border:1px solid #f5f5f5"></td>
-			<h2 id="createfile">Create a Design-time module and register it in the Cards manifest</h2>
+			<h2 id="createfile">Create a configuration module and register it in the Cards manifest</h2>
 			<p>
 				Advanced design-time configuration and implementation should happen outside the manifest of the Card.
 				With that design-time code will not harm or influence the runtime or the Card instance for the end-user.
 
 				<br>
-				Create a folder "dt" besides the manifest.json to store all designt-time related artifacts.
+				Create a folder "dt" besides the manifest.json to store all configuration related artifacts.
 				Create a designtime.js file in this new folder.<br>
 				Add the following inital module setup into the js file.
 			</p>
@@ -65,7 +65,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 	};
 });</pre>
 			<p>
-				Similar to a Card Extension, the design-time module is registered in the manifest. As soon as the Card
+				Similar to a Card Extension, the configuration module is registered in the manifest. As soon as the Card
 				Editor is launched.
 			</p>
 
@@ -667,7 +667,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 			</div>
 			<div class="navigation">
 				<h4>Table of Contents</h4>
-				<div><a href="#overview">Design-time Configurations and APIs</a></div>
+				<div><a href="#overview">Configurations and APIs</a></div>
 				<div><a href="#form">Configure the editor's form</a></div>
 			</div>
 		</div>
