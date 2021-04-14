@@ -3,8 +3,13 @@ sap.ui.define([
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/autowaiter/_resourceWaiter",
-	"sap/m/Image"
-], function (_LogCollector, _OpaLogger, _resourceWaiter, Image) {
+	"sap/m/Image",
+	"sap/m/Text",
+	"sap/m/Panel",
+	"sap/ui/layout/BlockLayout",
+	"sap/ui/layout/BlockLayoutRow",
+	"sap/ui/layout/BlockLayoutCell"
+], function (_LogCollector, _OpaLogger, _resourceWaiter, Image, Text, Panel, BlockLayout, BlockLayoutRow, BlockLayoutCell) {
 	"use strict";
 
 	// before running this test in IE11, clear cached images
@@ -17,6 +22,7 @@ sap.ui.define([
 			_OpaLogger.setLevel("trace");
 			var sBase = "test-resources/sap/ui/core/images/";
 			this.sExistingImageSrc = sBase + "Mobile.png";
+			this.sNestedImageSrc = sBase + "PC.png";
 			this.sReplacerImageSrc = sBase + "Notebook.png";
 			this.sNotFoundSrc = sBase + "noSuchImage.jpg";
 		},
@@ -77,6 +83,55 @@ sap.ui.define([
 
 					// cleanup
 					this.oImageExistingSrc.destroy();
+					sap.ui.getCore().applyChanges();
+					fnDone();
+				}.bind(this), 0);
+			};
+		}
+	});
+
+	QUnit.test("Should wait for image to load - nested image", function (assert) {
+		var fnDone = assert.async();
+		this.oNestedImage = new Image("nestedImage", {
+			src: this.sNestedImageSrc,
+			load: function () {
+				this.oText.setVisible(true);
+			}.bind(this)
+		});
+		this.oText = new Text("headline", {
+			text: "Headline",
+			visible: false
+		});
+		this.oPanel = new Panel({
+			content: [new BlockLayout({
+				content: [new BlockLayoutRow({
+					content: [new BlockLayoutCell({
+						content: [
+							this.oNestedImage,
+							this.oText
+						]
+					})]
+				})]
+			})]
+		});
+		this.oPanel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// wait for the rendering to start
+		setTimeout(function () {
+			assertImagePending(this.sNestedImageSrc, assert);
+
+			this.oNestedImage.attachLoad(fnOnComplete(true).bind(this));
+		}.bind(this), 0);
+
+		function fnOnComplete(bPass) {
+			return function () {
+				// wait for other load handlers
+				setTimeout(function () {
+					assertNoRelevantPending(this.sNestedImageSrc, bPass, assert);
+
+					// cleanup
+					this.oPanel.destroy();
 					sap.ui.getCore().applyChanges();
 					fnDone();
 				}.bind(this), 0);

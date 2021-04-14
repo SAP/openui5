@@ -24,12 +24,15 @@ sap.ui.define([
 					if (mutation.type === "attributes" && mutation.target.tagName === "IMG") {
 						this._trackImage(mutation.target);
 					} else if (mutation.type === "childList") {
-						// NodeList forEach is not supported in IE11
-						for (var i = 0; i < mutation.addedNodes.length; i += 1) {
-							if (mutation.addedNodes[i].tagName === "IMG") {
-								this._trackImage(mutation.addedNodes[i]);
+						mutation.addedNodes.forEach(function (node) {
+							if (node.tagName === "IMG") {
+								this._trackImage(node);
 							}
-						}
+							var aChildImages = node.querySelectorAll && node.querySelectorAll("img") || [];
+							aChildImages.forEach(function (child) {
+								this._trackImage(child);
+							}.bind(this));
+						}.bind(this));
 						if (mutation.nextSibling && mutation.nextSibling.tagName === "IMG") {
 							this._trackImage(mutation.nextSibling);
 						}
