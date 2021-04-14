@@ -410,12 +410,12 @@ sap.ui.define([
 		if (oTable.getShowOverlay()) {
 			if (containsOrEquals(oTable.getDomRef(), oFocusRef) && oTable.$("overlay")[0] !== oFocusRef) {
 				this._oLastFocus = { Ref: oFocusRef, Pos: "overlay" };
-				oTable.$("overlay").focus();
+				oTable.getDomRef("overlay").focus();
 			}
 		} else if (TableUtils.isNoDataVisible(oTable) && oTable.$("noDataCnt")[0] !== oFocusRef) {
 			if (containsOrEquals(oTable.getDomRef("tableCCnt"), oFocusRef)) {
 				this._oLastFocus = {Ref: oFocusRef, Pos: "table content"};
-				oTable.$("noDataCnt").focus();
+				oTable.getDomRef("noDataCnt").focus();
 			} else if (oTable.$("overlay")[0] === oFocusRef) {
 				setFocusFallback(oTable, this);
 			}
@@ -457,7 +457,7 @@ sap.ui.define([
 			TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(oKeyboardExtension));
 			oKeyboardExtension._oLastFocus = null;
 		} else if (TableUtils.isNoDataVisible(oTable)) {
-			oTable.$("noDataCnt").focus();
+			oTable.getDomRef("noDataCnt").focus();
 			oKeyboardExtension._oLastFocus = null;
 		} else if (oTable.getRows()[0] && oTable.getRows()[0].getDomRef("col0")) {
 			oTable.getRows()[0].getDomRef("col0").focus();
