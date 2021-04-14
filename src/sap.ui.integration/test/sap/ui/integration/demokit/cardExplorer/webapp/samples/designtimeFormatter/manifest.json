@@ -48,7 +48,7 @@
 			},
 			"destinations": {
 				"northwind": {
-					"name": "Northwind"
+					"name": "Northwind_V4"
 				}
 			}
 		},

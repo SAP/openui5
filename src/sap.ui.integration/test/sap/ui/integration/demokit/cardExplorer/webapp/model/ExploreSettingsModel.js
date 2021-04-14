@@ -10,6 +10,7 @@ sap.ui.define([
 		splitViewVertically: false,
 		editable: true,
 		editorType: Constants.EDITOR_TYPE.TEXT,
-		internal: window._isinternal
+		internal: window._isinternal,
+		configMode: 'All'
 	});
 });

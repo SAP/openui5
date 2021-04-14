@@ -484,6 +484,10 @@ sap.ui.define([
 				oFrameWrapperEl = this.byId("iframeWrapper"),
 				bUseIFrame = !!oCurrentSample.useIFrame;
 
+				exploreSettingsModel.getData().configMode = "All";
+				if (oCurrentSample.configMode) {
+					exploreSettingsModel.getData().configMode = oCurrentSample.configMode;
+				}
 			this.oModel.setProperty("/currentSampleKey", oCurrentSample.key);
 			this._oCurrSample = oCurrentSample;
 
@@ -717,7 +721,7 @@ sap.ui.define([
 		 * @throws Will throw an error with message, explaining what has failed during parsing
 		 */
 		_extractDesigntimeMetadata: function (sFileContent) {
-			var oRes = /Designtime\(([\s\S]*?)\)/.exec(sFileContent);
+			var oRes = /Designtime\(([\s\S]*?)\)\;/.exec(sFileContent);
 
 			if (!oRes) {
 				throw new Error("Unable to construct 'new Designtime(...)'");
