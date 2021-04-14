@@ -3,19 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/InvisibleRenderer",
-	"sap/ui/Device"
-], function (Log, InvisibleRenderer, Device) {
+	"sap/ui/core/InvisibleRenderer"
+], function (Log, InvisibleRenderer) {
 	"use strict";
 
 	return {
-		/**
-		 * Indicates whether the grid is supported by the browser.
-		 * @returns {boolean} If native grid is supported by the browser
-		 */
-		isGridSupportedByBrowser: function () {
-			return !Device.browser.msie;
-		},
 
 		findDropTargetsAbove: function (oGrid, oItem) {
 			return this._findDropTargets(oGrid, oItem, this._isAbove);

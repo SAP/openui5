@@ -47,7 +47,6 @@ sap.ui.define([
 						}
 
 						// NOTE DnD can be done with dom manipulations so that the grid is not rerendered each time.
-						// But then for IE special logic should take care of it. Or grid can be rerendered for IE only.
 					}
 				}));
 			});
