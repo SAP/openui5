@@ -4252,13 +4252,54 @@ var rtagName = ( /<([\w:-]+)/ );
 
 var rscriptType = ( /^$|\/(?:java|ecma)script/i );
 
+// ##### BEGIN: MODIFIED BY SAP
+// Moved the following "support" module to access it in the after-following code (see pull request #4647).
 
+// Skip the select wrapper for <option> outside of IE9
+( function() {
+	var fragment = document.createDocumentFragment(),
+		div = fragment.appendChild( document.createElement( "div" ) ),
+		input = document.createElement( "input" );
+
+	// Support: Android 4.0-4.3, Safari<=5.1
+	// Check state lost if the name is set (#11217)
+	// Support: Windows Web Apps (WWA)
+	// `name` and `type` must use .setAttribute for WWA (#14901)
+	input.setAttribute( "type", "radio" );
+	input.setAttribute( "checked", "checked" );
+	input.setAttribute( "name", "t" );
+
+	div.appendChild( input );
+
+	// Support: Safari<=5.1, Android<4.2
+	// Older WebKit doesn't clone checked state correctly in fragments
+	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
+
+	// Support: IE<=11+
+	// Make sure textarea (and checkbox) defaultValue is properly cloned
+	div.innerHTML = "<textarea>x</textarea>";
+	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
+
+	// ##### BEGIN: MODIFIED BY SAP
+	// Support: IE <=9 only
+	// IE <=9 replaces <option> tags with their contents when inserted outside of
+	// the select element.
+	div.innerHTML = "<option></option>";
+	support.option = !!div.lastChild;
+	// ##### END: MODIFIED BY SAP
+} )();
+// ##### END: MODIFIED BY SAP
 
 // We have to close these tags to support XHTML (#13200)
 var wrapMap = {
 
+	// ##### BEGIN: MODIFIED BY SAP
+	// Skip the select wrapper for <option> outside of IE9
+	/*
 	// Support: IE9
 	option: [ 1, "<select multiple='multiple'>", "</select>" ],
+	*/
+	// ##### END: MODIFIED BY SAP
 
 	// XHTML parsers do not magically insert elements in the
 	// same way that tag soup parsers do. So we cannot shorten
@@ -4271,12 +4312,22 @@ var wrapMap = {
 	_default: [ 0, "", "" ]
 };
 
+// ##### BEGIN: MODIFIED BY SAP
+// Skip the select wrapper for <option> outside of IE9
 // Support: IE9
-wrapMap.optgroup = wrapMap.option;
+// wrapMap.optgroup = wrapMap.option;
+// ##### END: MODIFIED BY SAP
 
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
 wrapMap.th = wrapMap.td;
 
+// ##### BEGIN: MODIFIED BY SAP
+// Skip the select wrapper for <option> outside of IE9
+// Support: IE <=9 only
+if ( !support.option ) {
+	wrapMap.optgroup = wrapMap.option = [ 1, "<select multiple='multiple'>", "</select>" ];
+}
+// ##### END: MODIFIED BY SAP
 
 function getAll( context, tag ) {
 
@@ -4400,7 +4451,11 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 	return fragment;
 }
 
+// ##### BEGIN: MODIFIED BY SAP
+// Moved the following "support" module to access it earlier (see pull request #4647).
 
+// Skip the select wrapper for <option> outside of IE9
+/*
 ( function() {
 	var fragment = document.createDocumentFragment(),
 		div = fragment.appendChild( document.createElement( "div" ) ),
@@ -4425,7 +4480,8 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 	div.innerHTML = "<textarea>x</textarea>";
 	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
 } )();
-
+*/
+// ##### END: MODIFIED BY SAP
 
 var
 	rkeyEvent = /^key/,

@@ -3424,6 +3424,14 @@ jQuery.support = (function( support ) {
 	input.setAttribute( "type", "radio" );
 	support.radioValue = input.value === "t";
 
+	// ##### BEGIN: MODIFIED BY SAP
+	// Support: IE <=9 only
+	// IE <=9 replaces <option> tags with their contents when inserted outside of
+	// the select element.
+	div.innerHTML = "<option></option>";
+	support.option = !!div.lastChild;
+	// ##### END: MODIFIED BY SAP
+
 	// #11217 - WebKit loses check when the name is after the checked attribute
 	input.setAttribute( "checked", "t" );
 	input.setAttribute( "name", "t" );
@@ -6025,7 +6033,9 @@ var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figca
 
 	// We have to close these tags to support XHTML (#13200)
 	wrapMap = {
-		option: [ 1, "<select multiple='multiple'>", "</select>" ],
+		// ##### BEGIN: MODIFIED BY SAP
+		// option: [ 1, "<select multiple='multiple'>", "</select>" ],
+		// ##### END: MODIFIED BY SAP
 		legend: [ 1, "<fieldset>", "</fieldset>" ],
 		area: [ 1, "<map>", "</map>" ],
 		param: [ 1, "<object>", "</object>" ],
@@ -6041,9 +6051,18 @@ var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figca
 	safeFragment = createSafeFragment( document ),
 	fragmentDiv = safeFragment.appendChild( document.createElement("div") );
 
-wrapMap.optgroup = wrapMap.option;
+// ##### BEGIN: MODIFIED BY SAP
+// wrapMap.optgroup = wrapMap.option;
+// ##### END: MODIFIED BY SAP
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
 wrapMap.th = wrapMap.td;
+
+// ##### BEGIN: MODIFIED BY SAP
+// Support: IE <=9 only
+if ( !jQuery.support.option ) {
+	wrapMap.optgroup = wrapMap.option = [ 1, "<select multiple='multiple'>", "</select>" ];
+}
+// ##### END: MODIFIED BY SAP
 
 jQuery.fn.extend({
 	text: function( value ) {
