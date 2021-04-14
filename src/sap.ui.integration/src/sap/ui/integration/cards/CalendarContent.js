@@ -134,9 +134,6 @@ sap.ui.define([
 
 			BaseContent.prototype.init.apply(this, arguments);
 			this._createCardContent();
-
-			//workaround until actions refactor
-			this.fireEvent("_actionContentReady"); // todo
 		};
 
 		CalendarContent.prototype.exit = function () {
@@ -219,6 +216,8 @@ sap.ui.define([
 		 */
 		CalendarContent.prototype.setConfiguration = function (oConfiguration) {
 			BaseContent.prototype.setConfiguration.apply(this, arguments);
+			//workaround until actions refactor
+			this.fireEvent("_actionContentReady"); // todo
 
 			if (!oConfiguration) {
 				return this;

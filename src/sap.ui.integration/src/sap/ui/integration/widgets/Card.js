@@ -1552,7 +1552,7 @@ sap.ui.define([
 		if (oContent.isReady()) {
 			this.fireEvent("_contentReady");
 		} else {
-			oContent.attachEvent("_ready", function () {
+			oContent.attachReady(function () {
 				this.fireEvent("_contentReady");
 			}.bind(this));
 		}
@@ -1882,8 +1882,17 @@ sap.ui.define([
 	};
 
 	Card.prototype.onDataRequestComplete = function () {
+		var oContent = this.getCardContent();
+
 		this.fireEvent("_cardReady");
-		this.hideLoadingPlaceholders();
+		this.hideLoadingPlaceholders(CardArea.Header);
+		this.hideLoadingPlaceholders(CardArea.Filters);
+
+		if (oContent && oContent.isReady()) {
+			this.hideLoadingPlaceholders(CardArea.Content);
+		}
+
+		this.getAggregation("_loadingProvider").setLoading(false);
 	};
 
 	/**
