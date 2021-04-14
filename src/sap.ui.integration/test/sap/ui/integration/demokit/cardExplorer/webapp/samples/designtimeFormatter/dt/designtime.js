@@ -9,22 +9,22 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"date": {
 						"manifestpath": "/sap.card/configuration/parameters/date/value",
 						"type": "date",
-						"formatter": { format: 'yMMMd' }
+						"formatter": { "format": "yMMMd" }
 					},
 					"datetime": {
 						"manifestpath": "/sap.card/configuration/parameters/datetime/value",
 						"type": "datetime",
-						"formatter": { style: 'long' }
+						"formatter": { "style": "long" }
 					},
 					"float": {
 						"manifestpath": "/sap.card/configuration/parameters/float/value",
 						"type": "number",
-						"formatter": { decimals: 3 }
+						"formatter": { "decimals": 3, "preserveDecimals": false }
 					},
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"type": "integer",
-						"formatter": { minIntegerDigits: 3,  maxIntegerDigits: 6, emptyString: ""}
+						"formatter": { "minIntegerDigits": 3,  "maxIntegerDigits": 6, "emptyString": ""}
 					},
 					"stringArray": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArray/value",

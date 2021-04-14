@@ -1909,14 +1909,8 @@ sap.ui.define([
 						key: 'designtimeAdmin',
 						target: 'exploreSamples',
 						title: 'Administrator Editor',
-						useIFrame: true,
-						isApplication: true,
+						configMode: 'Admin',
 						files: [
-							{
-								url: '/samples/designtimeAdmin/index.html',
-								name: 'index.html',
-								key: 'index.html'
-							},
 							{
 								url: '/samples/designtimeAdmin/dt/designtime.js',
 								name: 'dt/designtime.js',
@@ -1938,14 +1932,8 @@ sap.ui.define([
 						key: 'designtimeContent',
 						target: 'exploreSamples',
 						title: 'Page/Content Administrator Editor',
-						useIFrame: true,
-						isApplication: true,
+						configMode: 'Content',
 						files: [
-							{
-								url: '/samples/designtimeContent/index.html',
-								name: 'index.html',
-								key: 'index.html'
-							},
 							{
 								url: '/samples/designtimeContent/dt/designtime.js',
 								name: 'dt/designtime.js',
@@ -1967,14 +1955,8 @@ sap.ui.define([
 						key: 'designtimeTranslation',
 						target: 'exploreSamples',
 						title: 'Translator Editor',
-						useIFrame: true,
-						isApplication: true,
+						configMode: 'Translation',
 						files: [
-							{
-								url: '/samples/designtimeTranslation/index.html',
-								name: 'index.html',
-								key: 'index.html'
-							},
 							{
 								url: '/samples/designtimeTranslation/dt/designtime.js',
 								name: 'dt/designtime.js',
@@ -2006,14 +1988,7 @@ sap.ui.define([
 						key: 'designtimeFields',
 						target: 'exploreSamples',
 						title: 'Field Playground',
-						useIFrame: true,
-						isApplication: true,
 						files: [
-							{
-								url: '/samples/designtimeFields/index.html',
-								name: 'index.html',
-								key: 'index.html'
-							},
 							{
 								url: '/samples/designtimeFields/dt/designtime.js',
 								name: 'dt/designtime.js',
@@ -2035,14 +2010,7 @@ sap.ui.define([
 						key: 'designtimePreview',
 						target: 'exploreSamples',
 						title: 'Editor Preview Settings ',
-						useIFrame: true,
-						isApplication: true,
 						files: [
-							{
-								url: '/samples/designtimePreview/index.html',
-								name: 'index.html',
-								key: 'index.html'
-							},
 							{
 								url: '/samples/designtimePreview/dt/designtime.js',
 								name: 'dt/designtime.js',
@@ -2064,14 +2032,7 @@ sap.ui.define([
 						key: 'designtimeFormatter',
 						target: 'exploreSamples',
 						title: 'Formatters',
-						useIFrame: true,
-						isApplication: true,
 						files: [
-							{
-								url: '/samples/designtimeFormatter/index.html',
-								name: 'index.html',
-								key: 'index.html'
-							},
 							{
 								url: '/samples/designtimeFormatter/dt/designtime.js',
 								name: 'dt/designtime.js',
