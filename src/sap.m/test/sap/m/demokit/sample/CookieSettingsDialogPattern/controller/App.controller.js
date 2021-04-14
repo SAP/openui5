@@ -68,7 +68,7 @@ sap.ui.define([
 			}, this);
 
 			oDialog.attachAfterOpen(function() {
-				Core.byId("btnSetPreferences").$().focus();
+				Core.byId("actionSetPreferences").$().focus();
 			});
 
 			return oDialog;
@@ -87,9 +87,6 @@ sap.ui.define([
 		},
 
 		onSaveCookies: function() {
-			// var bHasConsentRequiredCookies = Core.byId("requiredCookiesSwitch").getState(),
-			// bHasConsentFunctionalCookies = Core.byId("functionalCookiesSwitch").getState();
-
 			// insert your save cookies logic here according to the user input
 
 			this._oCookieSettingsDialog.close();
@@ -99,7 +96,7 @@ sap.ui.define([
 			this._oModel.setProperty("/showCookieDetails", true);
 			this._oCookieSettingsDialog.addStyleClass("cookiesDetailedView");
 
-			this._focusButton(Core.byId("btnSavePreferences"));
+			this._focusButton(Core.byId("actionSavePreferences"));
 		},
 
 		onCancelPress: function() {
@@ -118,7 +115,7 @@ sap.ui.define([
 			this._oModel.setProperty("/showCookieDetails", false);
 			this._oCookieSettingsDialog.removeStyleClass("cookiesDetailedView");
 
-			this._focusButton(Core.byId("btnSetPreferences"));
+			this._focusButton(Core.byId("actionSetPreferences"));
 		},
 
 		onCancelEditCookies: function() {

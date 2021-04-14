@@ -12,6 +12,13 @@
 				"sap.m": {}
 			}
 		},
+		"resources": {
+		  "css": [
+			{
+			  "uri": "css/style.css"
+			}
+		  ]
+		},
 		"config": {
 			"sample": {
 				"stretch": true,
