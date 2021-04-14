@@ -4760,10 +4760,12 @@ sap.ui.define([
 			 * @param {string} [sBody] Default message text
 			 * @param {string} [sCC] Carbon Copy email address
 			 * @param {string} [sBCC] Blind carbon copy email address
+			 * @param {boolean} [bNewWindow] Opens email template in a new browser window or tab.
 			 * @public
 			 */
-			triggerEmail: function(sEmail, sSubject, sBody, sCC, sBCC) {
-				this.redirect(this.normalizeEmail.apply(0, arguments));
+			triggerEmail: function(sEmail, sSubject, sBody, sCC, sBCC, bNewWindow) {
+				var bNewWindow = bNewWindow || false;
+				this.redirect(this.normalizeEmail.apply(0, [sEmail, sSubject, sBody, sCC, sBCC]), bNewWindow);
 			},
 
 			toString : function() {
