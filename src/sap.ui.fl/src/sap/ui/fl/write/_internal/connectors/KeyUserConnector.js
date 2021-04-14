@@ -99,4 +99,4 @@ sap.ui.define([
 
 	KeyUserConnector.initialConnector = InitialConnector;
 	return KeyUserConnector;
-}, true);
+});

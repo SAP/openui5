@@ -49,4 +49,4 @@ sap.ui.define([
 
 	PersonalizationConnector.initialConnector = InitialConnector;
 	return PersonalizationConnector;
-}, true);
+});

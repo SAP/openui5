@@ -173,4 +173,4 @@ sap.ui.define([
 	};
 
 	return DescriptorChangeFactory;
-}, true);
+});

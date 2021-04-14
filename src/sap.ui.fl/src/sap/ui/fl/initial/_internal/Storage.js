@@ -140,4 +140,4 @@ sap.ui.define([
 	};
 
 	return Storage;
-}, true);
+});

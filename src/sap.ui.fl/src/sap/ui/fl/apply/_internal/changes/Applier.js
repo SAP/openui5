@@ -360,4 +360,4 @@ sap.ui.define([
 		}
 	};
 	return Applier;
-}, true);
+});

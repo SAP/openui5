@@ -885,4 +885,4 @@ sap.ui.define([
 	};
 
 	return DescriptorInlineChangeFactory;
-}, true);
+});

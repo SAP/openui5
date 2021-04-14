@@ -198,4 +198,4 @@ sap.ui.define([
 	};
 
 	return SmartVariantManagementApplyAPI;
-}, true);
+});

@@ -162,4 +162,4 @@ sap.ui.define([
 		}
 	};
 	return AppVariantWriteAPI;
-}, true);
+});

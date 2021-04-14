@@ -925,4 +925,4 @@ sap.ui.define([
 	};
 
 	return AppVariantInlineChangeFactory;
-}, true);
+});

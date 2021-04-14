@@ -256,4 +256,4 @@ sap.ui.define([
 	};
 
 	return SmartVariantManagementWriteAPI;
-}, true);
+});

@@ -3,6 +3,7 @@
 /*eslint max-nested-callbacks: [2, 5]*/
 
 sap.ui.define([
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/mdc/FilterBar",
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/condition/Condition",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"../QUnitUtils",
 	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler"
 ], function (
+	FlexRuntimeInfoAPI,
 	FilterBar,
 	FilterBarBase,
 	Condition,
@@ -901,7 +903,7 @@ sap.ui.define([
 		var oPromise = new Promise(function (resolve) {
 			fResolve = resolve;
 		});
-		sinon.stub(sap.ui.fl.apply.api.FlexRuntimeInfoAPI, "waitForChanges").returns(oPromise);
+		sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").returns(oPromise);
 
 		assert.ok(!oFilterBar._isChangeApplying());
 		oFilterBar.applyConditionsAfterChangesApplied();
@@ -918,7 +920,7 @@ sap.ui.define([
 				sinon.spy(oFilterBar, "_changesApplied");
 
 				setTimeout(function () { // required for condition model....
-					sap.ui.fl.apply.api.FlexRuntimeInfoAPI.waitForChanges.restore();
+					FlexRuntimeInfoAPI.waitForChanges.restore();
 					assert.ok(oFilterBar._changesApplied.calledOnce);
 					done();
 				}, 20);

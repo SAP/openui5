@@ -90,4 +90,4 @@ sap.ui.define([
 	};
 
 	return Preprocessor;
-}, true);
+});

@@ -53,4 +53,4 @@ sap.ui.define([
 			return Promise.reject("getContexts is not implemented");
 		}
 	});
-}, true);
+});

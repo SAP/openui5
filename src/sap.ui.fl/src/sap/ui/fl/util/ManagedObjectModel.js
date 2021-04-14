@@ -92,4 +92,4 @@ sap.ui.define([
 	};
 
 	return ManagedObjectModelFantomas;
-}, true);
+});

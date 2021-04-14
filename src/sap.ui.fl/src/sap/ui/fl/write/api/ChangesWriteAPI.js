@@ -170,4 +170,4 @@ sap.ui.define([
 		}
 	};
 	return ChangesWriteAPI;
-}, true);
+});

@@ -616,4 +616,4 @@ sap.ui.define([
 	};
 
 	return VariantManagementState;
-}, true);
+});

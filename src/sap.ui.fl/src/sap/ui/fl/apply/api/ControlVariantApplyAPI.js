@@ -101,4 +101,4 @@ sap.ui.define([
 	};
 
 	return ControlVariantApplyAPI;
-}, true);
+});

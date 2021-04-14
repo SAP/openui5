@@ -383,4 +383,4 @@ sap.ui.define([
 		}
 	};
 	return SaveAs;
-}, true);
+});

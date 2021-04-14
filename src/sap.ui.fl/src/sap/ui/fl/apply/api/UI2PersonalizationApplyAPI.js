@@ -59,4 +59,4 @@ sap.ui.define([
 	};
 
 	return UI2PersonalizationApplyAPI;
-}, true);
+});

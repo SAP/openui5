@@ -1442,4 +1442,4 @@ sap.ui.define([
 	};
 
 	return VariantModel;
-}, true);
+});

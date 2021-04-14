@@ -54,4 +54,4 @@ sap.ui.define([
 	};
 
 	return ExtensionPointRegistryAPI;
-}, true);
+});
