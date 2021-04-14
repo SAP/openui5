@@ -763,7 +763,7 @@ sap.ui.define([
 	Core.prototype._setupBrowser = function() {
 		var METHOD = "sap.ui.core.Core";
 
-		//set the browser for CSS attribute selectors. do not move this to the onload function because sf and ie do not
+		//set the browser for CSS attribute selectors. do not move this to the onload function because Safari does not
 		//use the classes
 		var html = document.documentElement;
 
@@ -2802,7 +2802,6 @@ sap.ui.define([
 
 			this.runPrerenderingTasks();
 
-			// avoid 'concurrent modifications' as IE8 can't handle them
 			var mUIAreas = this.mUIAreas;
 			for (var sId in mUIAreas) {
 				bUIUpdated = mUIAreas[sId].rerender() || bUIUpdated;

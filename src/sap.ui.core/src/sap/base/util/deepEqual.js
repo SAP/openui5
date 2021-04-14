@@ -40,13 +40,8 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			Log.warning("deepEqual comparison exceeded maximum recursion depth of " + maxDepth + ". Treating values as unequal");
 			return false;
 		}
-		if (a === b) {
-			return true;
-		}
 
-		// Number.isNaN is not supported by IE11, so we need to fall back on the verbose implementation
-		var bIsReallyNaN = (typeof a === "number" && typeof b === "number" && isNaN(a) && isNaN(b));
-		if (bIsReallyNaN) {
+		if (a === b || Number.isNaN(a) && Number.isNaN(b)) {
 			return true;
 		}
 

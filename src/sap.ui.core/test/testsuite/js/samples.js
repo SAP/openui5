@@ -3,8 +3,9 @@ sap.ui.define([
 	"jquery.sap.sjax",
 	"sap/base/strings/escapeRegExp",
 	"sap/ui/core/Core",
-	"sap/ui/util/Storage"
-], function(testfwk, jQuery, escapeRegExp, oCore, Storage) {
+	"sap/ui/util/Storage",
+	"test-resources/sap/ui/core/qunit/test/starter/find/discovery"
+], function(testfwk, jQuery, escapeRegExp, oCore, Storage, discovery) {
 	"use strict";
 
 	oCore.attachInit(function onLoadPage() {
@@ -348,32 +349,23 @@ sap.ui.define([
 
 		if ( forceRefresh || !restoreData() ) {
 
-			whenLoaded = new Promise(function(resolve) {
-				// load discovery lazily as it fails for IE11
-				sap.ui.require(["test-resources/sap/ui/core/qunit/test/starter/find/discovery"], function(discovery) {
-
-					discovery.findTests(sap.ui.require.toUrl(ENTRY_PAGE)).then(function(aTests) {
-
-						/*
-						 * Remove duplicates and sort by fullpage
-						 * Note: the semantic of this step must be kept in sync with the test starter's 'find.html' application
-						 */
-						var uniquePages = new Set();
-						testsFromTestStarterDiscovery = aTests.filter(function(oEntry) {
-							if ( !uniquePages.has(oEntry.fullpage) ) {
-								uniquePages.add(oEntry.fullpage);
-								return true;
-							}
-						}).sort(function(oEntry1, oEntry2) {
-							return compare(oEntry1.fullpage, oEntry2.fullpage);
-						});
-
-						// save the result in the local storage
-						saveData();
-
-						resolve();
-					});
+			whenLoaded = discovery.findTests(sap.ui.require.toUrl(ENTRY_PAGE)).then(function(aTests) {
+				/*
+				 * Remove duplicates and sort by fullpage
+				 * Note: the semantic of this step must be kept in sync with the test starter's 'find.html' application
+				 */
+				var uniquePages = new Set();
+				testsFromTestStarterDiscovery = aTests.filter(function(oEntry) {
+					if ( !uniquePages.has(oEntry.fullpage) ) {
+						uniquePages.add(oEntry.fullpage);
+						return true;
+					}
+				}).sort(function(oEntry1, oEntry2) {
+					return compare(oEntry1.fullpage, oEntry2.fullpage);
 				});
+
+				// save the result in the local storage
+				saveData();
 			});
 		}
 

@@ -55,8 +55,6 @@ sap.ui.define([
 		"compositionend",
 		"paste",
 		"cut",
-		/* input event is fired synchronously on IE9+ when the value of an <input> or <textarea> element is changed */
-		/* for more details please see : https://developer.mozilla.org/en-US/docs/Web/Reference/Events/input */
 		"input",
 		"change"
 	];

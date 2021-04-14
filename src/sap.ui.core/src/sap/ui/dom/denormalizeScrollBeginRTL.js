@@ -7,17 +7,10 @@ sap.ui.define(["sap/ui/util/_FeatureDetection"], function(_FeatureDetection) {
 	var fnDenormalize;
 
 	if (_FeatureDetection.initialScrollPositionIsZero()) {
-		if (_FeatureDetection.canScrollToNegative()) {
-			//actual chrome/safari
-			fnDenormalize = function(iNormalizedScrollBegin, oDomRef) {
-				return -iNormalizedScrollBegin;
-			};
-		} else {
-			//IE
-			fnDenormalize = function(iNormalizedScrollBegin, oDomRef) {
-				return iNormalizedScrollBegin;
-			};
-		}
+		//actual chrome/safari/ff
+		fnDenormalize = function(iNormalizedScrollBegin, oDomRef) {
+			return -iNormalizedScrollBegin;
+		};
 	} else {
 		//legacy chrome
 		fnDenormalize = function(iNormalizedScrollBegin, oDomRef) {

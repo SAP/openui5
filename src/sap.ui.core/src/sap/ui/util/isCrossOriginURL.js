@@ -1,7 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/thirdparty/URI'], function(URI) {
+/*global URL */
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -16,13 +17,10 @@ sap.ui.define(['sap/ui/thirdparty/URI'], function(URI) {
 	 * @since 1.84
 	 */
 	function isCrossOriginURL(sHref) {
-		// Code can be similfied during IE11 cleanup as URL API can handle URNs without errors:
-		// --> new URL("mailto:info.germany@sap.com', document.baseURI).toString()
-		var oURI = new URI(sHref),
-			oURI = oURI.is("relative") ? oURI.absoluteTo(document.baseURI) : oURI,
-			sOrigin = window.location.origin || new URI().origin();
+		var oURL = new URL(sHref, document.baseURI),
+			sOrigin = window.location.origin || new URL(document.baseURI);
 
-		return oURI.origin() !== sOrigin;
+		return oURL.origin !== sOrigin;
 	}
 
 	return isCrossOriginURL;

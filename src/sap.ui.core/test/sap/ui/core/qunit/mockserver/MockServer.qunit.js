@@ -580,7 +580,7 @@ sap.ui.define([
 				assert.ok(true, "Mock server responded");
 				var iNow = new Date().getTime();
 				var iRespondedAfter = iNow - iBefore;
-				// FF and IE seem to have to strange timing behaviour when the browser is started
+				// FF seem to have to strange timing behaviour when the browser is started
 				// This is why we only use 950 ms here -> this is fair enough, as we only want to check hear if the response is delayed
 				// and the real implemention uses browser setTimeout functionality
 				assert.ok(iRespondedAfter > 950, "Response after 1000ms (" + iRespondedAfter + " ms)");

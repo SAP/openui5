@@ -8,17 +8,10 @@ sap.ui.define(["sap/ui/dom/denormalizeScrollLeftRTL", "sap/ui/util/_FeatureDetec
 	var fnScroll;
 
 	if (_FeatureDetection.initialScrollPositionIsZero()) {
-		// actual chrome/safari
-		if (_FeatureDetection.canScrollToNegative()) {
-			fnScroll = function(oDomRef) {
-				return oDomRef.scrollWidth + oDomRef.scrollLeft - oDomRef.clientWidth;
-			};
-		} else {
-			//IE
-			fnScroll = function(oDomRef) {
-				return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
-			};
-		}
+		// actual chrome/safari/ff
+		fnScroll = function(oDomRef) {
+			return oDomRef.scrollWidth + oDomRef.scrollLeft - oDomRef.clientWidth;
+		};
 	} else {
 		//legacy chromium
 		fnScroll = function(oDomRef) {

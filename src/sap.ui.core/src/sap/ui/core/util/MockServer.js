@@ -631,11 +631,6 @@ sap.ui
 
 					// base case
 					if (aParts.length === 1) {
-						// IE8 handling
-						if (sODataQueryValue.match(/ +and | or +/)) {
-							throw new Error("400");
-						}
-
 						return this._getOdataQueryFilter(aDataSet, this._trim(sODataQueryValue));
 					}
 

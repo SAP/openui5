@@ -18,7 +18,7 @@ sap.ui.define([
 
 	function onContentWillChange() {
 		if ( oLogViewer ) {
-			try { // Avoid "Can't execute code from a freed script" in IE
+			try {
 				oLogViewer.onDetachFromLog(null);
 				oLogViewer.lock();
 			} catch (e) {

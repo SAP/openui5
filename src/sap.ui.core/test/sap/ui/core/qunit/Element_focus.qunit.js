@@ -14,7 +14,7 @@ sap.ui.define([
 	/**
 	 * Opens A Dialog, then opens a BusyIndicator (which remembers the last focused element which is in the Dialog).
 	 * Then this closes the Dialog again, which removes the focused element.
-	 * Then closes the BusyIndicator which tries to focus the element in the Dialog again, which is a problem at least in IE8.
+	 * Then closes the BusyIndicator which tries to focus the element in the Dialog again.
 	 * This effectively tests the fix (checking whether the element is still there) for this issue.
 	 */
 	QUnit.test("Focus a missing element (actual incident testcase)", function(assert) {

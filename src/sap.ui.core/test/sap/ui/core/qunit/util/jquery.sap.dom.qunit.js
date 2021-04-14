@@ -16,12 +16,6 @@ sap.ui.define([
 		QUnit.test("domById", function (assert) {
 			assert.ok(jQuery.sap.domById('control1'), "jQuery.sap.domById('control1') may not be null");
 			assert.equal(jQuery.sap.domById('contro10'), null, "jQuery.sap.domById('control10') should be null");
-
-			//this is a test for the weird IE behavior of getElementById that looks case insensitive for name and id attributes
-			assert.equal(jQuery.sap.domById('control5'), null, "jQuery.sap.domById('control5') should be null");
-			assert.equal(jQuery.sap.domById('CoNtRoL5'), null, "jQuery.sap.domById('CoNtRoL5') should be null");
-			assert.equal(jQuery.sap.domById('CoNtRoL1'), null, "jQuery.sap.domById('CoNtRoL1') should be null");
-			assert.equal(jQuery.sap.domById('CONTROL1'), null, "jQuery.sap.domById('CONTROL1') should be null");
 		});
 
 		QUnit.test("byId - escaping", function (assert) {
@@ -107,7 +101,6 @@ sap.ui.define([
 			var invisibleDiv = jQuery.sap.domById("invisibleDiv");
 			jQuery.sap.focus(invisibleDiv);
 
-			// result will be "false" in IE8 and "true" in other browsers, as they have no error
 			assert.ok(true, "jQuery.sap.focus() may not have caused an error for invisible elements"); // would never be reached in case of error
 		});
 
@@ -135,39 +128,23 @@ sap.ui.define([
 		});
 
 		QUnit.test("SelectText", function (assert) {
-			if (window.getSelection) {	// Firefox, Opera, Safari
+			jQuery('#testsel').selectText(2, 5);
+			var start = jQuery('#testsel').get(0).selectionStart;
+			var end = jQuery('#testsel').get(0).selectionEnd;
+			assert.equal(start, 2);
+			assert.equal(end, 5);
 
-				jQuery('#testsel').selectText(2, 5);
-				var start = jQuery('#testsel').get(0).selectionStart;
-				var end = jQuery('#testsel').get(0).selectionEnd;
-				assert.equal(start, 2);
-				assert.equal(end, 5);
+			jQuery('#testsel').selectText(-2, 50);
+			var start = jQuery('#testsel').get(0).selectionStart;
+			var end = jQuery('#testsel').get(0).selectionEnd;
+			assert.equal(start, 0);
+			assert.equal(end, jQuery('#testsel').get(0).value.length);
 
-				jQuery('#testsel').selectText(-2, 50);
-				var start = jQuery('#testsel').get(0).selectionStart;
-				var end = jQuery('#testsel').get(0).selectionEnd;
-				assert.equal(start, 0);
-				assert.equal(end, jQuery('#testsel').get(0).value.length);
-
-				jQuery('#testsel').selectText(2, null);
-				var start = jQuery('#testsel').get(0).selectionStart;
-				var end = jQuery('#testsel').get(0).selectionEnd;
-				assert.equal(start, 0);
-				assert.equal(end, 0);
-			} else if (document.selection.createRange) {	// Internet Explorer
-					var seltext;
-					jQuery('#testsel').selectText(2, 5);
-					seltext = document.selection.createRange().text;
-					assert.equal(seltext, "lec");
-
-					jQuery('#testsel').selectText(-2, 50);
-					seltext = document.selection.createRange().text;
-					assert.equal(seltext, "Selection Test");
-
-					jQuery('#testsel').selectText(2, null);
-					seltext = document.selection.createRange().text;
-					assert.equal(seltext, "");
-				}
+			jQuery('#testsel').selectText(2, null);
+			var start = jQuery('#testsel').get(0).selectionStart;
+			var end = jQuery('#testsel').get(0).selectionEnd;
+			assert.equal(start, 0);
+			assert.equal(end, 0);
 		});
 
 		QUnit.test("selectText()/getSelectedText(): The input element's type 'number' does not support selection", function (assert) {
@@ -289,7 +266,7 @@ sap.ui.define([
 				return sRes;
 			}
 
-			var sOuterHTML = jQuery("#control3").outerHTML().toUpperCase(); //Uppercase needed for cross browser consistency (IE returns uppercase tags, Firefox lowercase)
+			var sOuterHTML = jQuery("#control3").outerHTML().toUpperCase(); //Uppercase needed for cross browser consistency (Firefox returns lowercase tags)
 			assert.ok(sOuterHTML === getExpected(false) || sOuterHTML === getExpected(true), "outerHTML is wrong, Current: '" + sOuterHTML + "'");
 		});
 

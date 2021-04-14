@@ -121,15 +121,6 @@ sap.ui.define(['./BlockLayerUtils'], //require of sap/ui/core/library not possib
 		}
 	};
 
-	/**
-	 * Obsolete IE9 support, kept for some more time to avoid issues with custom controls,
-	 * start/stop now are 'noop's.
-	 */
-	BusyIndicatorUtils.animateIE9 = {
-		start: function () {},
-		stop: function () {}
-	};
-
 	return BusyIndicatorUtils;
 
 }, /* bExport= */ true);

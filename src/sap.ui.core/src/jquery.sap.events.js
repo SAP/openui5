@@ -517,19 +517,15 @@ sap.ui.define([
 			// note: the keypress event should be fired only when a character key is pressed,
 			// unfortunately some browsers fire the keypress event for other keys. e.g.:
 			//
-			// Firefox fire it for:
+			// Firefox < 65 fire it for:
 			// BREAK, ARROW_LEFT, ARROW_RIGHT, INSERT, DELETE,
 			// F1, F2, F3, F5, F6, F7, F8, F9, F10, F11, F12
 			// BACKSPACE, ESCAPE
 			//
-			// Internet Explorer fire it for:
-			// ESCAPE
+			// Safari fire it for:
+			// BACKSPACE, ESCAPE
 			case "keypress":
-
-				// note: in Firefox, almost all noncharacter keys that fire the keypress event have a key code of 0,
-				// with the exception of BACKSPACE (key code of 8).
-				// note: in IE the ESCAPE key is also fired for the keypress event
-				return (iKeyCode === 0 || // in Firefox, almost all noncharacter keys that fire the keypress event have a key code of 0, with the exception of BACKSPACE (key code of 8)
+				return (iKeyCode === 0 || // in Firefox < 65, almost all noncharacter keys that fire the keypress event have a key code of 0, with the exception of BACKSPACE (key code of 8)
 					iKeyCode === KeyCodes.BACKSPACE ||
 					iKeyCode === KeyCodes.ESCAPE ||
 					iKeyCode === KeyCodes.ENTER /* all browsers */) || false;

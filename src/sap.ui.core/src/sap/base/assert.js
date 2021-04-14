@@ -28,12 +28,7 @@ sap.ui.define(["./Log"], function(Log) {
 		if (!bResult) {
 			var sMessage = typeof vMessage === "function" ? vMessage() : vMessage;
 			/*eslint-disable no-console */
-			if (console && console.assert) {
-				console.assert(bResult, sMessage);
-			} else {
-				// console is not always available (IE, FF) and IE doesn't support console.assert
-				Log.debug("[Assertions] " + sMessage);
-			}
+			console.assert(bResult, sMessage);
 			/*eslint-enable no-console */
 		}
 	};

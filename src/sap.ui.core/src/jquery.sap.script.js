@@ -387,8 +387,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Substitute for <code>for(n in o)</code> loops which used to fix the 'Don'tEnum' bug of IE8.
-	 * As IE8 is not supported anymore this function is just a wrapper around the native for-in loop.
+	 * Substitute for <code>for(n in o)</code> loops.
+	 * This function is just a wrapper around the native for-in loop.
 	 *
 	 * Iterates over all enumerable properties of the given object and calls the
 	 * given callback function for each of them. The assumed signature of the
@@ -400,7 +400,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oObject object to enumerate the properties of
 	 * @param {function} fnCallback function to call for each property name
-	 * @deprecated since 1.48.0 IE8 is not supported anymore, thus no special handling is required. Use native for-in loop instead.
+	 * @deprecated since 1.48.0. Use native for-in loop instead.
 	 * @since 1.7.1
 	 */
 	jQuery.sap.forIn = each;

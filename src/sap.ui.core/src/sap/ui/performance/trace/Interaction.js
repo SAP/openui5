@@ -297,8 +297,6 @@ sap.ui.define([
 				this.addEventListener("readystatechange", handleInteraction.bind(this, Interaction.notifyAsyncStep()));
 				// assign the current interaction to the xhr for later response header retrieval.
 				this.pendingInteraction = oPendingInteraction;
-				// forward request url as fallback for compression check as IE11 does not support responseUrl on a XHR
-				this._ui5RequestUrl = arguments[1] || "";
 			}
 		});
 
@@ -326,7 +324,7 @@ sap.ui.define([
 			if (this.pendingInteraction && !this.pendingInteraction.completed && oPendingInteraction.id === sId) {
 				// enrich interaction with information
 				var sContentLength = this.getResponseHeader("content-length"),
-					bCompressed = checkCompression(this.responseURL || this._ui5RequestUrl, this.getResponseHeader("content-encoding"), this.getResponseHeader("content-type"), sContentLength),
+					bCompressed = checkCompression(this.responseURL, this.getResponseHeader("content-encoding"), this.getResponseHeader("content-type"), sContentLength),
 					sFesrec = this.getResponseHeader("sap-perf-fesrec");
 				this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength) : 0;
 				this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length;

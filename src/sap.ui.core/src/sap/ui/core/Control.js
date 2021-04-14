@@ -397,7 +397,7 @@ sap.ui.define([
 	 * Defines whether the user can select text inside this control.
 	 * Defaults to <code>true</code> as long as this method has not been called.
 	 *
-	 * <b>Note:</b>This only works in IE and Safari; for Firefox the element's style must
+	 * <b>Note:</b>This only works in Safari; for Firefox the element's style must
 	 * be set to:
 	 * <pre>
 	 *   -moz-user-select: none;

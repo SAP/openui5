@@ -247,7 +247,6 @@ sap.ui.define([
 			this._animations = { open: null, close: null };
 			this._durations = {	open: "fast", close: "fast" };
 			this._iZIndex = -1;
-			this._oBlindLayer = null;
 			this.setNavigationMode();
 
 			//autoclose handler for mobile or desktop browser in touch mode
@@ -343,8 +342,6 @@ sap.ui.define([
 	Popup.prototype.removeChildPopup = function(vChildPopup) {
 		return this.removeAssociation("childPopups", vChildPopup);
 	};
-
-	Popup._activateBlindLayer = true;
 
 	// stack used for storing z-indices for blocklayer
 	Popup.blStack = [];
@@ -596,35 +593,6 @@ sap.ui.define([
 	// End of Layer
 
 	//****************************************************
-	// BlindLayer et al.
-	//****************************************************
-
-	/**
-	 * Layer to work around an IE issue that existed from IE 8-10 showing embedded
-	 * content (like flash) above the popup content which is not expected.
-	 *
-	 * @class
-	 * @private
-	 */
-	Popup.Layer.extend("sap.ui.core.Popup.BlindLayer", {
-		constructor : function() {
-			Popup.Layer.apply(this);
-		}
-	});
-
-	Popup.BlindLayer.prototype.getDomString = function(){
-		return "<div class=\"sapUiBliLy\" id=\"sap-ui-blindlayer-" + uid() + "\"><iframe scrolling=\"no\" tabIndex=\"-1\"></iframe></div>";
-	};
-
-	/**
-	 * Facility for reuse of created iframes.
-	 * @type sap.ui.base.ObjectPool
-	 * @private
-	 */
-	Popup.prototype.oBlindLayerPool = new ObjectPool(Popup.BlindLayer);
-	// End of BlindLayer
-
-	//****************************************************
 	// ShieldLayer et al.
 	//****************************************************
 
@@ -746,8 +714,7 @@ sap.ui.define([
 		var iHeight = Math.abs(oRectOne.height - oRectTwo.height);
 
 		// check if the of has moved more pixels than set in the puffer
-		// Puffer is needed if the opener changed its position only by 1 pixel:
-		// this happens in IE if a control was clicked (is a reported IE bug)
+		// Puffer is needed if the opener changed its position only by 1 pixel
 		if (iLeft > iPuffer || iTop > iPuffer || iWidth > iPuffer || iHeight > iPuffer) {
 			return false;
 		}
@@ -1015,8 +982,6 @@ sap.ui.define([
 			Popup.DockTrigger.addListener(Popup.checkDocking, this);
 		}
 
-		this._updateBlindLayer();
-
 		// notify that opening has completed
 		this.fireOpened();
 	};
@@ -1073,10 +1038,8 @@ sap.ui.define([
 			// some application or test create the static UIArea div by itself and therefore the first focusable element
 			// is not available
 			&& oFirstFocusableInStaticArea
-			// IE 11 fires a focus event on the HTML body tag when another element blurs. This causes the onfocusevent
-			// function to be called synchronously within the current call stack. Therefore the blur of the previous focused
-			// element should be done at the end of this open method to first show the block layer which changes the top
-			// most displayed popup
+			// Some popup scenarios requires the blur of the previous focused element should be done
+			// at the end of this open method to first show the block layer which changes the top most displayed popup
 			&& this._shouldGetFocusAfterOpen()
 			// when the current active element is in a popup, it's not blurred at this position because the focus isn't
 			// set to the new popup yet and blurring in the previous popup will mess up the modal or autoclose in the
@@ -1091,7 +1054,7 @@ sap.ui.define([
 			/* actively move the focus to the static UI area to blur the previous focused element after popup is open.
 			 The focus will be moved into the popup once the popup opening animation is finished
 			 */
-			/* In safari, internet explorer and edge no scrolling happens when focus() is called on DOM elements with height: 0px.
+			/* In safari no scrolling happens when focus() is called on DOM elements with height: 0px.
 			 In firefox and chrome no scrolling has to be forced with preventScroll: true in this scenario.
 			*/
 			oFirstFocusableInStaticArea.focus({preventScroll: true});
@@ -1107,11 +1070,6 @@ sap.ui.define([
 		this._activateFocusHandle();
 
 		this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
-
-		//  register resize handler for blind layer resizing
-		if (this._oBlindLayer) {
-			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
-		}
 	};
 
 	Popup.prototype._shouldGetFocusAfterOpen = function() {
@@ -1296,20 +1254,6 @@ sap.ui.define([
 		if (this._sTimeoutId) {
 			clearTimeout(this._sTimeoutId);
 			this._sTimeoutId = null;
-
-			if (arguments.length > 1) {
-				// arguments[0] = iDuration
-				var sAutoclose = arguments[1];
-				/*
-				 * If coming from the delayedCall from the autoclose mechanism
-				 * but the active element is still in the Popup -> events messed up somehow.
-				 * This is especially needed for the IE because it messes up focus and blur
-				 * events if using a scroll-bar within a Popup
-				 */
-				if (typeof sAutoclose == "string" && sAutoclose == "autocloseBlur" && this._isFocusInsidePopup()) {
-					return;
-				}
-			}
 		}
 
 		assert(iDuration === undefined || (typeof iDuration === "number" && (iDuration % 1 == 0)), "iDuration must be empty or an integer");
@@ -1367,12 +1311,6 @@ sap.ui.define([
 		if (this._bEventBusEventsRegistered) {
 			this._unregisterEventBusEvents();
 		}
-
-		// get (and 'hide' i.e. remove) the BlindLayer
-		if (this._oBlindLayer) {
-			this.oBlindLayerPool.returnObject(this._oBlindLayer);
-		}
-		this._oBlindLayer = null;
 
 		// shield layer is needed for mobile devices whose browser fires the mouse events with delay after touch events
 		//  to prevent the delayed mouse events from reaching the underneath DOM element.
@@ -1540,29 +1478,14 @@ sap.ui.define([
 			};
 		} else {
 			// not an SAPUI5 control... but if something has focus, save as much information about it as available
-			try {
-				var oElement = document.activeElement;
+			var oElement = document.activeElement;
 
-				// IE returns an empty object in some cases when accessing document.activeElement from <iframe>
-				// Passing the empty object to jQuery.sap.focus causes syntax error because the empty object
-				// doesn't have 'focus' function.
-				// Save the previous focus only when document.activeElement is a valid DOM element by checking the
-				// 'nodeName' property
-				if (oElement && oElement.nodeName) {
-					_oPreviousFocus = {
-						'sFocusId' : oElement.id,
-						'oFocusedElement' : oElement,
-						// add empty oFocusInfo to avoid the need for all recipients to check
-						'oFocusInfo': {}
-					};
-				}
-			} catch (ex) {
-
-				// IE9 throws an Unspecified Error when accessing document.activeElement inside a frame before body.onload
-				// This is not an issue, as there is just no focus yet to restore
-				// Other browsers do not fail here, but even if they would, the worst thing would be a non-restored focus
-				_oPreviousFocus = null;
-			}
+			_oPreviousFocus = {
+				'sFocusId' : oElement.id,
+				'oFocusedElement' : oElement,
+				// add empty oFocusInfo to avoid the need for all recipients to check
+				'oFocusInfo': {}
+			};
 		}
 
 		if (_oPreviousFocus) {
@@ -1660,10 +1583,6 @@ sap.ui.define([
 
 		if (this.eOpenState != OpenState.CLOSED) {
 			this._applyPosition(this._oPosition);
-
-			if (this._oBlindLayer) {
-				this._oBlindLayer.update(this._$());
-			}
 		}
 
 		return this;
@@ -2169,13 +2088,13 @@ sap.ui.define([
 				onBeforeRendering: function() {
 					var oDomRef = oElement.getDomRef();
 					if (oDomRef && this.isOpen()) {
-						oDomRef.removeEventListener("blur", this.fEventHandler, true);
+						oDomRef.removeEventListener("blur", this.fnEventHandler, true);
 					}
 				},
 				onAfterRendering: function() {
 					var oDomRef = oElement.getDomRef();
 					if (oDomRef && this.isOpen()) {
-						oDomRef.addEventListener("blur", this.fEventHandler, true);
+						oDomRef.addEventListener("blur", this.fnEventHandler, true);
 					}
 				}
 			};
@@ -2455,8 +2374,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._addFocusEventListeners = function() {
-		if (!this.fEventHandler) {
-			this.fEventHandler = jQuery.proxy(this.onFocusEvent, this);
+		if (!this.fnEventHandler) {
+			this.fnEventHandler = jQuery.proxy(this.onFocusEvent, this);
 		}
 		// make sure to notice all blur's in the popup
 		var $PopupRoot = this._$();
@@ -2465,25 +2384,13 @@ sap.ui.define([
 		var i = 0, l = 0;
 
 		if ($PopupRoot.length) {
-			if (document.addEventListener) { //FF, Safari
-				document.addEventListener("focus", this.fEventHandler, true);
-				$PopupRoot.get(0).addEventListener("blur", this.fEventHandler, true);
+			document.addEventListener("focus", this.fnEventHandler, true);
+			$PopupRoot.get(0).addEventListener("blur", this.fnEventHandler, true);
 
-				for (i = 0, l = aChildPopups.length; i < l; i++) {
-					oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
-					if (oDomRef) {
-						oDomRef.addEventListener("blur", this.fEventHandler, true);
-					}
-				}
-			} else { // IE8 - TODO this IE8 comment seems to be misleading, check is for IE in general
-				jQuery(document).on("activate." + this._popupUID, this.fEventHandler);
-				$PopupRoot.on("deactivate." + this._popupUID, this.fEventHandler);
-
-				for (i = 0, l = aChildPopups.length; i < l; i++) {
-					oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
-					if (oDomRef) {
-						jQuery(oDomRef).on("deactivate." + this._popupUID, this.fEventHandler);
-					}
+			for (i = 0, l = aChildPopups.length; i < l; i++) {
+				oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
+				if (oDomRef) {
+					oDomRef.addEventListener("blur", this.fnEventHandler, true);
 				}
 			}
 		}
@@ -2506,30 +2413,18 @@ sap.ui.define([
 		var oDomRef = {};
 		var i = 0, l = 0;
 
-		if (document.removeEventListener) { //FF, Safari
-			document.removeEventListener("focus", this.fEventHandler, true);
-			$PopupRoot.get(0).removeEventListener("blur", this.fEventHandler, true);
+		document.removeEventListener("focus", this.fnEventHandler, true);
+		$PopupRoot.get(0).removeEventListener("blur", this.fnEventHandler, true);
 
-			for (i = 0, l = aChildPopups.length; i < l; i++) {
-				oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
-				if (oDomRef) {
-					oDomRef.removeEventListener("blur", this.fEventHandler, true);
-				}
-
-				this.closePopup(aChildPopups[i]);
+		for (i = 0, l = aChildPopups.length; i < l; i++) {
+			oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
+			if (oDomRef) {
+				oDomRef.removeEventListener("blur", this.fnEventHandler, true);
 			}
-		} else { // IE8 - TODO this IE8 comment seems to be misleading, check is for IE in general
-			jQuery(document).off("activate." + this._popupUID, this.fEventHandler);
-			$PopupRoot.off("deactivate." + this._popupUID, this.fEventHandler);
 
-			for (i = 0, l = aChildPopups.length; i < l; i++) {
-				oDomRef = (aChildPopups[i] ? window.document.getElementById(aChildPopups[i]) : null);
-				if (oDomRef) {
-					jQuery(oDomRef).off("deactivate." + this._popupUID, this.fEventHandler);
-				}
-			}
+			this.closePopup(aChildPopups[i]);
 		}
-		this.fEventHandler = null;
+		this.fnEventHandler = null;
 	};
 
 	/**
@@ -2550,7 +2445,7 @@ sap.ui.define([
 	 * Deregisters the focus event listeners for autoclose and modal popup for both mobile and desktop devices.
 	 */
 	Popup.prototype._deactivateFocusHandle = function() {
-		if (this.fEventHandler) { // remove focus handling
+		if (this.fnEventHandler) { // remove focus handling
 			this._removeFocusEventListeners();
 		}
 
@@ -3030,10 +2925,6 @@ sap.ui.define([
 			var $Ref = this._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
 			$Ref.css("z-index", this._iZIndex);
 
-			if (this._oBlindLayer) {
-				this._oBlindLayer.update($Ref, this._iZIndex - 1);
-			}
-
 			// only increase children's z-index if this function called via mousedown
 			if (oEventData && !oEventData.type || oEventData && oEventData.type != "mousedown" || sEvent === "mousedown") {
 				var aChildPopups = this.getChildPopups();
@@ -3087,11 +2978,6 @@ sap.ui.define([
 			"z-index" : this._iZIndex
 		});
 
-		// register resize handler for blind layer resizing
-		if (this._oBlindLayer) {
-			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
-		}
-
 		if (this.isOpen() && (this.getModal() || this.getAutoClose())) {
 			// register the focus event listener again after rendering because the content DOM node is changed
 			this._addFocusEventListeners();
@@ -3117,27 +3003,6 @@ sap.ui.define([
 		}
 
 		this._$(false, true).off("keydown", this._F6NavigationHandler);
-	};
-
-	/**
-	 * Resize handler listening to the popup. If the Popup changes its size the blind layer
-	 * should be updated as well. For example necessary when popup content has absolute positions.
-	 *
-	 * @private
-	 */
-	Popup.prototype.onresize = function() {
-		if (this.eOpenState != OpenState.CLOSED && this._oBlindLayer) {
-			var that = this;
-			setTimeout(function(){
-				that._updateBlindLayer();
-			}, 0);
-		}
-	};
-
-	Popup.prototype._updateBlindLayer = function() {
-		if (this.eOpenState != OpenState.CLOSED && this._oBlindLayer) {
-			this._oBlindLayer.update(this._$(/*forceRerender*/ false, /*getOnly*/ true));
-		}
 	};
 
 	/**

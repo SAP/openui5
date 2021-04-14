@@ -26,13 +26,6 @@ sap.ui.define(function() {
 				page: "test-resources/sap/ui/core/qunit/CustomFastNavigation.qunit.html",
 				autostart: false
 			},
-			ElementFocusWhenMissing: {
-				title: "QUnit Page for sap.ui.core.Element.focus() when called on missing Elements",
-				ui5: {
-					libs: "sap.ui.commons",
-					theme: "sap_bluecrystal"
-				}
-			},
 			EventBus: {
 				title: "Test Page for EventBus Class"
 			},

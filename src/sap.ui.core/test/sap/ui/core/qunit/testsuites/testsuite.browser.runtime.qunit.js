@@ -18,9 +18,6 @@ sap.ui.define(function() {
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
-			"dom/activeElementFix": {
-				title: "sap.ui.dom.activeElementFix"
-			},
 			"dom/getComputedStyleFix": {
 				title: "sap.ui.dom.getComputedStyleFix"
 			},

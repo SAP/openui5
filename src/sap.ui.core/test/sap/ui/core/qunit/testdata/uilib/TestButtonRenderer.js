@@ -33,7 +33,7 @@ sap.ui.testlib.TestButtonRenderer.render = function(oRenderManager, oButton) {
 	rm.addClass("sapUiTstBtn");
 
 	// button is rendered as a "<button>" element
-	rm.write("<button type=\"button\""); // otherwise this turns into a submit button in IE8
+	rm.write("<button");
 	rm.writeControlData(oButton);
 	if (oButton.getTooltip_AsString()) {
 		rm.writeAttributeEscaped("title", oButton.getTooltip_AsString());

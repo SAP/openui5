@@ -7,7 +7,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	/**
 	 * Returns whether <code>oDomRefChild</code> is contained in or equal to <code>oDomRefContainer</code>.
 	 *
-	 * This is a browser-independent version of the <code>.contains</code> method of Internet Explorer.
 	 * For compatibility reasons it returns <code>true</code> if <code>oDomRefContainer</code> and
 	 * <code>oDomRefChild</code> are equal.
 	 *

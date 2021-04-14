@@ -293,23 +293,26 @@ sap.ui.define([
 		stubbedServer.destroy();
 	});
 
-	//TODO check in IE8
-	/*	QUnit.test("mock server w/0 host but request URL path with host", function(assert) {
-			var stubbedServer = new MockServer({
-				rootUri : this.path + "/"
-			});
-			var sMetadataUrl = this.path + this.metaUri;
-			stubbedServer.simulate(simpleXML);
-			stubbedServer.start();
-			assert.ok(stubbedServer.isStarted(), "Mock server is started");
+	// TODO Check if this test is still valid.
+	// Assumption:	The test originally might have wanted to check that a server that is configured without a host name part still
+	//				manages requests that contain a host name part (for the same host, for sure). But it semms, that this does not
+	//				work with MockServer.
+	// QUnit.test("mock server w/0 host but request URL path with host", function(assert) {
+	// 	var stubbedServer = new MockServer({
+	// 		rootUri: this.path + "/"
+	// 	});
+	// 	var sMetadataUrl = this.path + this.metaUri;
+	// 	stubbedServer.simulate(this.simpleXML);
+	// 	stubbedServer.start();
+	// 	assert.ok(stubbedServer.isStarted(), "Mock server is started");
 
-			var oResponse = jQuery.sap.sjax({url: this.localhost + sMetadataUrl});
-			assert.ok(oResponse !== undefined, "response not undefined");
-			assert.equal(oResponse.statusCode, "0", "expected 200 http status <<<<<<<<<<< but BUG");
+	// 	var oResponse = jQuery.sap.sjax({url: this.localhost + sMetadataUrl});
+	// 	assert.ok(oResponse !== undefined, "response not undefined");
+	// 	assert.equal(oResponse.statusCode, "0", "expected 200 http status <<<<<<<<<<< but BUG");
 
-			stubbedServer.destroy();
-		});
-*/
+	// 	stubbedServer.destroy();
+	// });
+
 	QUnit.module('MockServer requests', {
 		beforeEach: function () {
 			this.oMockServer = new MockServer({

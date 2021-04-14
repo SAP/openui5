@@ -807,8 +807,6 @@ sap.ui.define([
 						} else if ( /(?:^|\/)sap\/ui\/thirdparty\/sinon\.js(?:\?|#|$)/.test(src) ) {
 							test.sinon = test.sinon || {};
 							test.sinon.version = 1;
-						} else if ( /(?:^|\/)sap\/ui\/thirdparty\/sinon-ie\.js(?:\?|#|$)/.test(src) ) {
-							// ignore
 						} else if ( /(?:^|\/)sap\/ui\/thirdparty\/sinon-4\.js(?:\?|#|$)/.test(src) ) {
 							test.sinon = test.sinon || {};
 							test.sinon.version = 4;
@@ -1241,7 +1239,6 @@ sap.ui.define([
 		let content = `<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<base href="${testPageInfo.baseRef}">
 		<script src="resources/sap/ui/test/starter/runTest.js"
@@ -1264,7 +1261,6 @@ sap.ui.define([
 		let content = `<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<base href="${suitePageInfo.baseRef}">
 		<title>${suitePageInfo.title}</title>

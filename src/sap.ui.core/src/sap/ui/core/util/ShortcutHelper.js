@@ -17,24 +17,8 @@ sap.ui.define([
 		space: " "
 	};
 
-	// for NumPad Decimal key, find out whether the user has a comma or dot there
-	var decimalTest = 1.1;
-	var sDecimalSeparator = decimalTest.toLocaleString().substring(1, 2);
-
-	// translates key strings from broken browsers (mostly IE11 and older Edge versions) to standard strings
+	// translates key strings from some browsers (currently only Firefox) to standard strings
 	var mEventKeyFix = {
-		Win: "Meta",
-		Scroll: "ScrollLock", // also for Edge
-		Spacebar: " ",
-		Down: "ArrowDown",
-		Left: "ArrowLeft",
-		Right: "ArrowRight",
-		Up: "ArrowUp",
-		Del: "Delete",
-		Apps: "ContextMenu",
-		Esc: "Escape",
-		Multiply: "*",
-		Decimal: sDecimalSeparator, // LOCALE-DEPENDENT!!
 		OS: "Meta" // Firefox only
 	};
 
@@ -71,13 +55,7 @@ sap.ui.define([
 		"ctrl+pageup": "cycling through tabs, cannot be registered in Chrome",
 		"ctrl+pagedown": "cycling through tabs, cannot be registered in Chrome",
 
-		// ArrowUp|ArrowDown|ArrowLeft|ArrowRight
-		"ctrl+alt+left": "cannot be handled in IE",
-		"ctrl+alt+right": "cannot be handled in IE",
-
 		// F1-12
-		"ctrl+f1": "always opens help menu in IE",
-		"ctrl+f4": "always closes tab in IE",
 		"f6": "F6-based group navigation",
 		"f11": "fullscreen, cannot be registered in Chrome",
 		"f12": "browser dev tools"
@@ -288,7 +266,7 @@ sap.ui.define([
 				return;
 			}
 
-			// at least in IE with German and Polish languages, AltGr triggers "Ctrl" and "Alt" flags on events, but we don't want AltGr to do the same as Ctrl+Alt
+			// AltGr triggers "Ctrl" and "Alt" flags on events, but we don't want AltGr to do the same as Ctrl+Alt
 			if (oEvent.altKey && !bLastAltWasLeftAlt) { // Alt is active, but it was actually the AltGr key; we don't support any AltGr shortcuts
 				return;
 			}

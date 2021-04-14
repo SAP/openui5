@@ -114,20 +114,6 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 	});
 
 	QUnit.test("Dynamically Loaded Library", function(assert) {
-
-		function getStyleId(i) {
-			return "style" + (i + 1);
-		}
-
-		// include 40 stylesheets to test IE9 stylesheet limit
-		var iNewStylesheets = 40;
-		var sStyleBaseUrl = "test-resources/sap/ui/core/qunit/testdata/stylesheets/";
-		var i;
-		for (i = 0; i < iNewStylesheets; i++) {
-			var sStyleId = getStyleId(i);
-			jQuery.sap.includeStyleSheet(sStyleBaseUrl + sStyleId + '.css', sStyleId);
-		}
-
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib1");
 
 		// In Chrome the library.css for testlibs.themeParameters.lib1 is still pending, so the library-parameters.json needs to be loaded.

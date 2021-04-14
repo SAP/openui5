@@ -198,7 +198,6 @@ sap.ui.define([
 		oHashChanger.setHash("foo"); // no unknown state
 		oHashChanger.setHash("baz"); // add a new entry that matches the backwards entrie
 		oHashChanger.replaceHash("bar"); //replace to bar
-		//TODO: IE behaves in a different way he will have the history foo - bar - baz we need browser detection for this case
 		oHashChanger.setHash("baz"); // add the same new entry again - browser history now looks like this foo - baz
 
 		//simulate browser back - use replace here so the history plugin will not think it is a new entry because the window.history.length increased
