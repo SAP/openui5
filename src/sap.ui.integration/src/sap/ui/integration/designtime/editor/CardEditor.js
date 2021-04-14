@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/integration/Designtime",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/CardMerger",
+	"sap/ui/integration/util/Utils",
 	"sap/m/Label",
 	"sap/m/Title",
 	"sap/m/Panel",
@@ -42,6 +43,7 @@ sap.ui.define([
 	Designtime,
 	JSONModel,
 	CardMerger,
+	Utils,
 	Label,
 	Title,
 	Panel,
@@ -1183,11 +1185,35 @@ sap.ui.define([
 						oValueModel.checkUpdate(true);
 						oValueModel.firePropertyChange();
 						this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-					}.bind(this)).catch(function () {
+						oField._hideValueState(true);
+					}.bind(this)).catch(function (oError) {
 						oConfig._values = {};
 						oValueModel.setData({});
 						oValueModel.checkUpdate(true);
 						this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
+						var sError = oResourceBundle.getText("CARDEDITOR_BAD_REQUEST");
+						if (Array.isArray(oError) && oError.length > 0) {
+							sError = oError[0];
+							var jqXHR = oError[1];
+							if (jqXHR) {
+								var oErrorInResponse;
+								if (jqXHR.responseJSON) {
+									oErrorInResponse = jqXHR.responseJSON.error;
+								} else if (jqXHR.responseText) {
+									if (Utils.isJson(jqXHR.responseText)) {
+										oErrorInResponse = JSON.parse(jqXHR.responseText).error;
+									} else {
+										sError = jqXHR.responseText;
+									}
+								}
+								if (oErrorInResponse) {
+									sError = (oErrorInResponse.code || oErrorInResponse.errorCode || jqXHR.status) + ": " + oErrorInResponse.message;
+								}
+							}
+						} else if (typeof (oError) === "string") {
+							sError = oError;
+						}
+						oField._showValueState("error", sError, true);
 					}.bind(this));
 				}
 				//we use the binding context to connect the given path from oConfig.values.data.path

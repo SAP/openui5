@@ -438,7 +438,7 @@ sap.ui.define([
 		}
 	};
 
-	BaseField.prototype._showValueState = function (sType, sMessage) {
+	BaseField.prototype._showValueState = function (sType, sMessage, bFromDataRequest) {
 		var oField = this.getAggregation("_field"),
 			sEnumType = sType.substring(0, 1).toUpperCase() + sType.substring(1);
 		this._message = {
@@ -450,6 +450,9 @@ sap.ui.define([
 		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
 		if (oField.setValueState) {
 			this._message.atControl = true;
+			if (bFromDataRequest) {
+				this._message.fromDataRequest = bFromDataRequest;
+			}
 			if (oField.setShowValueStateMessage) {
 				oField.setShowValueStateMessage(false);
 			}
@@ -461,41 +464,46 @@ sap.ui.define([
 		this._applyMessage();
 	};
 
-	BaseField.prototype._hideValueState = function () {
+	BaseField.prototype._hideValueState = function (bFromDataRequest) {
 		if (!this.getParent()) {
 			return;
 		}
 		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
 		if (this._message) {
-			var oField = this.getAggregation("_field");
-			this._message = {
-				"enum": "Success",
-				"type": "success",
-				"message": "Corrected",
-				"atControl": this._message.atControl
-			};
-
-			if (this._messageto) {
-				clearTimeout(this._messageto);
-			}
-			this._messageto = setTimeout(function () {
-				this._messageto = null;
-				this._applyMessage();
-				if (!this._message && oField.setValueState) {
-					oField.setValueState("None");
+			if ((bFromDataRequest && this._message.fromDataRequest)
+				|| (!bFromDataRequest && !this._message.fromDataRequest)) {
+				var oField = this.getAggregation("_field");
+				this._message = {
+					"enum": "Success",
+					"type": "success",
+					"message": "Corrected",
+					"atControl": this._message.atControl
+				};
+				if (this._messageto) {
+					clearTimeout(this._messageto);
 				}
-			}.bind(this), 1500);
-			this._applyMessage();
-			if (oMessageStrip.getDomRef()) {
-				oMessageStrip.getDomRef().style.opacity = "0";
+				this._messageto = setTimeout(function () {
+					this._messageto = null;
+					this._applyMessage();
+					if (!this._message && oField.setValueState) {
+						oField.setValueState("None");
+					}
+				}.bind(this), 1500);
+				this._applyMessage();
+				if (oMessageStrip.getDomRef()) {
+					oMessageStrip.getDomRef().style.opacity = "0";
+				}
+				if (oField.setValueState) {
+					oField.setValueState("Success");
+				}
+				oMessageStrip.onAfterRendering = null;
+				this._message = null;
+				if (bFromDataRequest) {
+					//check validations
+					this._triggerValidation(this.getConfiguration().value);
+				}
 			}
-			if (oField.setValueState) {
-				oField.setValueState("Success");
-			}
-			oMessageStrip.onAfterRendering = null;
-			this._message = null;
 		}
-
 	};
 	BaseField.prototype.onfocusin = function (oEvent) {
 		if (oEvent && oEvent.target.classList.contains("sapMBtn")) {

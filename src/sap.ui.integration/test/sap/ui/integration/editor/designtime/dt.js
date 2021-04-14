@@ -1007,6 +1007,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/Order/value",
 						"type": "string",
 						"translatable": true,
+						"required": true,
+						"validation": {
+							"type": "warning",
+							"maxLength": 4,
+							"minLength": 1
+						},
 						"values": {
 							"data": {
 								"request": {
