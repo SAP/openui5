@@ -11350,6 +11350,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: overloaded bound action
 	// Note: there are 3 binding types for __FAKE__AcOverload, but only Worker has Is_Manager
+	//
+	// If-Match:* is sent (JIRA: CPOUI5ODATAV4-869)
 	QUnit.test("Bound action w/ overloading", function (assert) {
 		var sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
@@ -11372,7 +11374,7 @@ sap.ui.define([
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "ETag"},
+					headers : {"If-Match" : "*"},
 					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 						+ ".__FAKE__AcOverload",
 					payload : {Message : "The quick brown fox jumps over the lazy dog"}
@@ -11383,7 +11385,7 @@ sap.ui.define([
 				// code under test
 				that.oView.byId("action").getObjectBinding()
 					.setParameter("Message", "The quick brown fox jumps over the lazy dog")
-					.execute(),
+					.execute(undefined, true), // CPOUI5ODATAV4-869
 				that.waitForChanges(assert)
 			]);
 		});

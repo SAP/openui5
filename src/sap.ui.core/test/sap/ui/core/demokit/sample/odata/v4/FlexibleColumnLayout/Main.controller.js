@@ -124,6 +124,7 @@ sap.ui.define([
 			}, function (oError) {
 				MessageToast.show(oError.message);
 			});
+
 			oContext.requestSideEffects([
 					"SO_2_SOITEM/GrossAmount",
 					"SO_2_SOITEM/Quantity"

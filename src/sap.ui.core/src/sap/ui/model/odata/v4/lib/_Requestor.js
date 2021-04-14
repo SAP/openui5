@@ -935,7 +935,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Tells whether there are changes for the given group ID and given entity.
+	 * Tells whether there are changes (that is, updates via PATCH or bound actions via POST) for
+	 * the given group ID and given entity.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
