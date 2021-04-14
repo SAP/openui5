@@ -15,7 +15,7 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				pageDownOnGridTable : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.ui.table.Table",
 						id : "businessPartnerTable",
 						success : function (oTable) {
@@ -26,7 +26,7 @@ sap.ui.define([
 					});
 				},
 				pressMoreButton : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.CustomListItem",
 						id : "businessPartnerList-trigger",
 						success : function (oMoreButton) {
@@ -37,7 +37,7 @@ sap.ui.define([
 					});
 				},
 				switchToGridTable : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.IconTabFilter",
 						id : "table",
 						success : function (oTab) {
@@ -50,7 +50,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkGridTableTitle : function (sTitle) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.ui.table.Table",
 						id : "businessPartnerTable",
 						success : function (oTable) {
@@ -61,7 +61,7 @@ sap.ui.define([
 					});
 				},
 				checkLastVisibleItemIndex : function (sValue) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "businessPartnerList",
 						success : function (oTable) {
@@ -74,7 +74,7 @@ sap.ui.define([
 					});
 				},
 				checkLastVisibleRowIndex : function (sValue) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.ui.table.Table",
 						id : "businessPartnerTable",
 						success : function (oTable) {
@@ -87,7 +87,7 @@ sap.ui.define([
 					});
 				},
 				checkTableLength : function (iLength) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "businessPartnerList",
 						success : function (oTable) {
@@ -98,7 +98,7 @@ sap.ui.define([
 					});
 				},
 				checkTableTitle : function (sTitle) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Title",
 						id : "businessPartnerListTitle",
 						success : function (oTitle) {

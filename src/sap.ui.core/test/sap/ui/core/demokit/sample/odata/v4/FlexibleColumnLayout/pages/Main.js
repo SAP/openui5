@@ -18,7 +18,7 @@ sap.ui.define([
 		onTheApplication : {
 			actions : {
 				closeDialog : function (sTitle) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Dialog",
 						matchers : new Properties({title : sTitle}),
 						success : function (aControls) {
@@ -28,15 +28,15 @@ sap.ui.define([
 					});
 				},
 				pressCancel : function () {
-					return Helper.pressButton(this, sViewName, "cancel");
+					Helper.pressButton(this, sViewName, "cancel");
 				},
 				pressSave : function () {
-					return Helper.pressButton(this, sViewName, "save");
+					Helper.pressButton(this, sViewName, "save");
 				}
 			},
 			assertions : {
 				checkMessagesButtonCount : function (iExpectedCount) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Button",
 						id : "showMessages",
 						success : function (oButton) {
@@ -47,7 +47,7 @@ sap.ui.define([
 					});
 				},
 				checkObjectPageNotVisible : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.f.FlexibleColumnLayout",
 						id : "layout",
 						success : function (oLayout) {
@@ -58,7 +58,7 @@ sap.ui.define([
 					});
 				},
 				checkSubObjectPageNotVisible : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.f.FlexibleColumnLayout",
 						id : "layout",
 						success : function (oLayout) {
@@ -73,7 +73,7 @@ sap.ui.define([
 		onTheListReport : {
 			actions : {
 				filterByGrossAmount : function (sGrossAmount) {
-					return this.waitFor({
+					this.waitFor({
 						actions: new EnterText({clearTextFirst: true, text: sGrossAmount}),
 						controlType : "sap.m.SearchField",
 						id : "filterGrossAmount",
@@ -91,7 +91,7 @@ sap.ui.define([
 						});
 				},
 				selectSalesOrder : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Text",
 						id : /salesOrderId/,
@@ -105,7 +105,7 @@ sap.ui.define([
 					});
 				},
 				sortBySalesOrderID  : function () {
-					return Helper.pressButton(this, sViewName, "sortBySalesOrderId");
+					Helper.pressButton(this, sViewName, "sortBySalesOrderId");
 				}
 			},
 			assertions : {
@@ -155,10 +155,10 @@ sap.ui.define([
 		onTheObjectPage : {
 			actions : {
 				changeNote : function (sNote) {
-					return Helper.changeInputValue(this, sViewName, "SalesOrder::note", sNote);
+					Helper.changeInputValue(this, sViewName, "SalesOrder::note", sNote);
 				},
 				createSalesOrderItem : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "createSalesOrderLineItem",
@@ -169,7 +169,7 @@ sap.ui.define([
 					});
 				},
 				deleteSalesOrder : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "deleteSalesOrder",
@@ -180,13 +180,13 @@ sap.ui.define([
 					});
 				},
 				increaseSalesOrderItemsQuantity : function () {
-					return Helper.pressButton(this, sViewName, "increaseSalesOrderItemsQuantity");
+					Helper.pressButton(this, sViewName, "increaseSalesOrderItemsQuantity");
 				},
 				refresh : function () {
-					return Helper.pressButton(this, sViewName, "refreshSalesOrder");
+					Helper.pressButton(this, sViewName, "refreshSalesOrder");
 				},
 				selectSalesOrderItem : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Text",
 						id : /itemPosition/,
@@ -200,7 +200,7 @@ sap.ui.define([
 					});
 				},
 				pressMore : function () {
-					return this.waitFor({
+					this.waitFor({
 						id : "SO_2_SOITEM-trigger",
 						success : function (oTrigger) {
 							new Press().executeOn(oTrigger);
@@ -210,7 +210,7 @@ sap.ui.define([
 					});
 				},
 				sortByGrossAmount : function () {
-					return Helper.pressButton(this, sViewName, "sortByGrossAmount");
+					Helper.pressButton(this, sViewName, "sortByGrossAmount");
 				}
 			},
 			assertions : {
@@ -270,11 +270,10 @@ sap.ui.define([
 		onTheSubObjectPage : {
 			actions : {
 				changeQuantity : function (sQuantity) {
-					return Helper.changeInputValue(this, sViewName, "SO_2_ITEM::quantity",
-						sQuantity);
+					Helper.changeInputValue(this, sViewName, "SO_2_ITEM::quantity", sQuantity);
 				},
 				deleteSalesOrderItem : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "deleteSalesOrderItem",

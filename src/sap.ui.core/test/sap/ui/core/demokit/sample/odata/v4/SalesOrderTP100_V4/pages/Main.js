@@ -12,10 +12,10 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				pressMoreButton : function () {
-					return Helper.pressMoreButton(this, sViewName);
+					Helper.pressMoreButton(this, sViewName);
 				},
 				selectSalesOrder : function (iRow) {
-					return Helper.selectColumnListItem(this, sViewName, iRow);
+					Helper.selectColumnListItem(this, sViewName, iRow);
 				}
 			}
 		}

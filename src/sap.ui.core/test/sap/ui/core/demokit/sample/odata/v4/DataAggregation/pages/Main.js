@@ -67,7 +67,7 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				scrollToRow : function (iRow, sComment) {
-					return this.waitFor({
+					this.waitFor({
 						actions : function (oTable) {
 							oTable.setFirstVisibleRow(iRow);
 						},
@@ -84,7 +84,7 @@ sap.ui.define([
 					});
 				},
 				toggleExpandInRow : function (iRow, sComment) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						errorMessage : "Could not toggle Expand Button in row " + iRow,
@@ -102,7 +102,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkRow : function (oExpected, iRowIndex) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.ui.table.Table",
 						id : "table",
 						success : function (oTable) {
@@ -112,7 +112,7 @@ sap.ui.define([
 					});
 				},
 				checkTable : function (aExpected) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.ui.table.Table",
 						id : "table",
 						success : function (oTable) {

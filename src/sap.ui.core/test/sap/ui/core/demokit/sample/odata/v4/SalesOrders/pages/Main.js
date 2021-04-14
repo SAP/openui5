@@ -33,7 +33,7 @@ sap.ui.define([
 	 * count.
 	 */
 	function checkCount(oOpa, iExpectedCount, sTitleId) {
-		return oOpa.waitFor({
+		oOpa.waitFor({
 			id : sTitleId,
 			success : function (oTitle) {
 				Opa5.assert.strictEqual(
@@ -47,7 +47,7 @@ sap.ui.define([
 	}
 
 	function handleMessageBox(oOpa, sTitle, bConfirm, sLog) {
-		return oOpa.waitFor({
+		oOpa.waitFor({
 			controlType : "sap.m.Dialog",
 			matchers : new Properties({title : sTitle}),
 			success : function (aControls) {
@@ -58,7 +58,7 @@ sap.ui.define([
 	}
 
 	function selectSalesOrder(oOpa, iIndex, bRememberGrossAmount) {
-		return oOpa.waitFor({
+		oOpa.waitFor({
 			controlType : "sap.m.Table",
 			id : "SalesOrderList",
 			success : function (oTable) {
@@ -88,7 +88,7 @@ sap.ui.define([
 		onTheCreateNewSalesOrderDialog : {
 			actions : {
 				changeNote : function (sNewNoteValue) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({ clearTextFirst : true, text : sNewNoteValue }),
 						controlType : "sap.m.Input",
 						id : "Note::new",
@@ -100,10 +100,10 @@ sap.ui.define([
 					});
 				},
 				confirmDialog : function () {
-					return pressButton(this, "confirmCreateSalesOrder", true);
+					pressButton(this, "confirmCreateSalesOrder", true);
 				},
 				pressValueHelpOnCurrencyCode : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.ui.core.sample.common.ValueHelp",
 						id : "CurrencyCode::new",
 						searchOpenDialogs : true,
@@ -117,7 +117,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkCurrencyCodeIsValueHelp : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.ui.core.sample.common.ValueHelp",
 						matchers : new Interactable(),
 						id : "CurrencyCode::new",
@@ -130,7 +130,7 @@ sap.ui.define([
 					});
 				},
 				checkNewBuyerId : function (sExpectedBuyerID) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "BuyerID::new",
 						searchOpenDialogs : true,
@@ -144,7 +144,7 @@ sap.ui.define([
 				// store note value in sLastNewNoteValue and check note value if sExpectedNote is
 				// not empty
 				checkNewNote : function (sExpectedNote) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "Note::new",
 						searchOpenDialogs : true,
@@ -168,7 +168,7 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				changeNoteInDetails : function (sValue) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({ clearTextFirst : true, text : sValue }),
 						controlType : "sap.m.Input",
 						id : "Note::detail",
@@ -179,7 +179,7 @@ sap.ui.define([
 					});
 				},
 				changeNoteInLineItem : function (iRow, sValue) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
 						id : /SO_2_SOITEM:Note/,
@@ -193,7 +193,7 @@ sap.ui.define([
 					});
 				},
 				changeNoteInSalesOrders : function (iRow, sValue) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
 						matchers : function (oControl) {
@@ -209,7 +209,7 @@ sap.ui.define([
 					});
 				},
 				changeProductIDinLineItem : function (iRow, sProductID) {
-					return this.waitFor({
+					this.waitFor({
 						// actions : new EnterText({clearTextFirst : true, text : sProductID}),
 						actions : function (oValueHelp) {
 							oValueHelp.setValue(sProductID);
@@ -227,7 +227,7 @@ sap.ui.define([
 					});
 				},
 				changeQuantityInLineItem : function (iRow, sValue) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
 						id : /SO_2_SOITEM:Quantity/,
@@ -242,7 +242,7 @@ sap.ui.define([
 					});
 				},
 				createInvalidSalesOrderViaAPI : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oTable) {
@@ -270,7 +270,7 @@ sap.ui.define([
 					});
 				},
 				deleteSelectedSalesOrder : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
@@ -291,10 +291,10 @@ sap.ui.define([
 					});
 				},
 				deleteSelectedSalesOrderLineItem : function () {
-					return pressButton(this, "deleteSalesOrderLineItem");
+					pressButton(this, "deleteSalesOrderLineItem");
 				},
 				deleteSelectedSalesOrderViaGroupId : function (sGroupId) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
@@ -313,7 +313,7 @@ sap.ui.define([
 					});
 				},
 				doubleRefresh : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
@@ -327,12 +327,12 @@ sap.ui.define([
 					// no sFilterValue means 'take GrossAmount from OPA context'
 					// but then the constructor of EnterText above has to call delayed
 					// this is why the check is chained here
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.SearchField",
 						id : "filterGrossAmount",
 						success : function () {
 							sFilterValue = sFilterValue || Opa.getContext().GrossAmount;
-							return this.waitFor({
+							this.waitFor({
 								actions: new EnterText({clearTextFirst: true, text: sFilterValue}),
 								controlType : "sap.m.SearchField",
 								id : "filterGrossAmount",
@@ -346,7 +346,7 @@ sap.ui.define([
 					});
 				},
 				filterGrossAmountViaAPI : function (sFilterValue) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oTable) {
@@ -359,7 +359,7 @@ sap.ui.define([
 					});
 				},
 				filterSOItemsByProductIdWithChangeParameters : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SO_2_SOITEM",
 						success : function (oSOItemsTable) {
@@ -394,7 +394,7 @@ sap.ui.define([
 					});
 				},
 				filterSalesOrderItemsByProductID : function (sValue) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SO_2_SOITEM",
 						success : function (oSalesOrderItemsTable) {
@@ -406,7 +406,7 @@ sap.ui.define([
 					});
 				},
 				firstSalesOrderIsVisible : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						check : function (oSalesOrderTable) {
@@ -424,7 +424,7 @@ sap.ui.define([
 					});
 				},
 				firstSalesOrderIsAtPos0 : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						check : function (oSalesOrderTable) {
@@ -439,7 +439,7 @@ sap.ui.define([
 					});
 				},
 				modifyCompanyName : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "CompanyName::detail",
 						success : function (oInput) {
@@ -450,16 +450,16 @@ sap.ui.define([
 					});
 				},
 				pressCancelSalesOrderChangesButton : function () {
-					return pressButton(this, "cancelSalesOrderChanges");
+					pressButton(this, "cancelSalesOrderChanges");
 				},
 				pressCancelSalesOrderListChangesButton : function () {
-					return pressButton(this, "cancelSalesOrderListChanges");
+					pressButton(this, "cancelSalesOrderListChanges");
 				},
 				pressConfirmSalesOrderButton : function () {
-					return pressButton(this, "confirmSalesOrder");
+					pressButton(this, "confirmSalesOrder");
 				},
 				pressCreateSalesOrderItemButton : function () {
-					return pressButton(this, "createSalesOrderLineItem");
+					pressButton(this, "createSalesOrderLineItem");
 				},
 				pressCreateSalesOrdersButton : function () {
 					var oPromise = pressButton(this, "createSalesOrder");
@@ -479,43 +479,42 @@ sap.ui.define([
 							});
 						});
 					}
-					return oPromise;
 				},
 				pressDeleteBusinessPartnerButton : function () {
-					return pressButton(this, "deleteBusinessPartner");
+					pressButton(this, "deleteBusinessPartner");
 				},
 				pressMessagesButton : function () {
-					return pressButton(this, "showMessages");
+					pressButton(this, "showMessages");
 				},
 				pressMoreButton : function () {
-					return Helper.pressMoreButton(this, sViewName);
+					Helper.pressMoreButton(this, sViewName);
 				},
 				pressOpenSimulateDiscountDialog : function () {
-					return pressButton(this, "openSimulateDiscountDialog");
+					pressButton(this, "openSimulateDiscountDialog");
 				},
 				pressRefreshAllButton : function () {
-					return pressButton(this, "refreshAll");
+					pressButton(this, "refreshAll");
 				},
 				pressRefreshSalesOrdersButton : function () {
-					return pressButton(this, "refreshSalesOrders");
+					pressButton(this, "refreshSalesOrders");
 				},
 				pressRefreshSelectedSalesOrdersButton : function () {
-					return pressButton(this, "refreshSelectedSalesOrder");
+					pressButton(this, "refreshSelectedSalesOrder");
 				},
 				pressSaveSalesOrderButton : function () {
-					return pressButton(this, "saveSalesOrder");
+					pressButton(this, "saveSalesOrder");
 				},
 				pressSaveSalesOrdersButton : function () {
-					return pressButton(this, "saveSalesOrders");
+					pressButton(this, "saveSalesOrders");
 				},
 				pressSetBindingContextButton : function () {
-					return pressButton(this, "setBindingContext");
+					pressButton(this, "setBindingContext");
 				},
 				pressShowSalesOrderSchedules : function () {
-					return pressButton(this, "showSalesOrderSchedules");
+					pressButton(this, "showSalesOrderSchedules");
 				},
 				pressValueHelpOnProductCategory : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : function (oControl) {
 							new Press().executeOn(oControl.getAggregation("field"));
 						},
@@ -531,7 +530,7 @@ sap.ui.define([
 					});
 				},
 				pressValueHelpOnProductID : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						actions : function (oControl) {
 							new Press().executeOn(oControl.getAggregation("field"));
 						},
@@ -547,7 +546,7 @@ sap.ui.define([
 					});
 				},
 				pressValueHelpOnProductTypeCode : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : function (oControl) {
 							new Press().executeOn(oControl.getAggregation("field"));
 						},
@@ -563,7 +562,7 @@ sap.ui.define([
 					});
 				},
 				rememberCompanyName : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "CompanyName::detail",
 						success : function (oInput) {
@@ -577,7 +576,7 @@ sap.ui.define([
 					});
 				},
 				resetSalesOrderListChanges : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oTable) {
@@ -588,7 +587,7 @@ sap.ui.define([
 					});
 				},
 				restoreCompanyName : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "CompanyName::detail",
 						success : function (oInput) {
@@ -599,13 +598,13 @@ sap.ui.define([
 					});
 				},
 				selectFirstSalesOrder : function ( bRememberGrossAmount) {
-					return selectSalesOrder(this, 0, bRememberGrossAmount);
+					selectSalesOrder(this, 0, bRememberGrossAmount);
 				},
 				selectSalesOrder : function (iIndex) {
-					return selectSalesOrder(this, iIndex);
+					selectSalesOrder(this, iIndex);
 				},
 				selectSalesOrderItemWithPosition : function (sPosition) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Text",
 						id : /SO_2_SOITEM-/,
@@ -617,7 +616,7 @@ sap.ui.define([
 					});
 				},
 				selectSalesOrderWithId : function (sSalesOrderId) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Text",
 						id : /SalesOrderID-/,
 						matchers : new Properties({text: sSalesOrderId}),
@@ -629,11 +628,11 @@ sap.ui.define([
 					});
 				},
 				setFilter : function (sFilterKey) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						id : "itemFilter",
 						success : function (oFilter) {
-							return this.waitFor({
+							this.waitFor({
 								actions: new Press(),
 								controlType: "sap.ui.core.ListItem",
 								matchers: [
@@ -648,7 +647,7 @@ sap.ui.define([
 					});
 				},
 				setValueHelpQualifier : function (sQualifier) {
-					return this.waitFor({
+					this.waitFor({
 						actions : function (oControl) {
 							oControl.setQualifier(sQualifier);
 						},
@@ -665,10 +664,10 @@ sap.ui.define([
 					});
 				},
 				sortByGrossAmount : function () {
-					return pressButton(this, "sortByGrossAmount");
+					pressButton(this, "sortByGrossAmount");
 				},
 				sortByGrossAmountViaController : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function () {
@@ -679,10 +678,10 @@ sap.ui.define([
 					});
 				},
 				sortBySalesOrderID  : function () {
-					return pressButton(this, "sortBySalesOrderId");
+					pressButton(this, "sortBySalesOrderId");
 				},
 				sortBySalesOrderIDviaController : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function () {
@@ -695,13 +694,13 @@ sap.ui.define([
 			},
 			assertions: {
 				checkButtonDisabled : function (sButtonId) {
-					return Helper.checkButtonDisabled(this, sViewName, sButtonId);
+					Helper.checkButtonDisabled(this, sViewName, sButtonId);
 				},
 				checkButtonEnabled : function (sButtonId) {
-					return Helper.checkButtonEnabled(this, sViewName, sButtonId);
+					Helper.checkButtonEnabled(this, sViewName, sButtonId);
 				},
 				checkCompanyName : function (iRow, sExpectedCompanyName) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
@@ -714,7 +713,7 @@ sap.ui.define([
 					});
 				},
 				checkCompanyNameModified : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "CompanyName::detail",
 						success : function (oInput) {
@@ -755,7 +754,7 @@ sap.ui.define([
 					});
 				},
 				checkContactNameInRow : function (iRow, sExpectedContactName) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.List",
 						id : "BP_2_CONTACT",
 						success : function (oContactList) {
@@ -770,7 +769,7 @@ sap.ui.define([
 					});
 				},
 				checkDifferentID : function (iRow, sExpectedID) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
@@ -784,7 +783,7 @@ sap.ui.define([
 					});
 				},
 				checkFavoriteProductID : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "favoriteProductId",
 						matchers : new Properties({value : "HT-1000"}),
@@ -795,7 +794,7 @@ sap.ui.define([
 					});
 				},
 				checkFirstGrossAmountGreater : function (sExpectedAmount) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
@@ -813,7 +812,7 @@ sap.ui.define([
 					});
 				},
 				checkHighlight : function (iRow, sHighlight) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
@@ -826,14 +825,14 @@ sap.ui.define([
 				},
 				checkID : function (iRow, sExpectedID) {
 					var that = this;
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Button",
 						id : "refreshSalesOrders",
 						// we wait for the refresh button becomes interactable before checking the
 						// Sales Orders list
 						matchers : new Interactable(),
 						success : function () {
-							return that.waitFor({
+							that.waitFor({
 								controlType : "sap.m.Table",
 								id : "SalesOrderList",
 								success : function (oSalesOrderTable) {
@@ -854,13 +853,13 @@ sap.ui.define([
 					});
 				},
 				checkInputValue : function (sID, sValue) {
-					return Helper.checkInputValue(this, sViewName, sID, sValue);
+					Helper.checkInputValue(this, sViewName, sID, sValue);
 				},
 				checkInputValueState : function (sID, sState, sMessage) {
 					Helper.checkValueState(this, sViewName, sID, sState, sMessage);
 				},
 				checkMessagesButtonCount : function (iExpectedCount) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Button",
 						id : "showMessages",
 						success : function (oButton) {
@@ -871,7 +870,7 @@ sap.ui.define([
 					});
 				},
 				checkMessageStrip : function (sExpectedMessageType) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.MessageStrip",
 						success : function (aMatchedControls) {
 							var sMessageType = aMatchedControls[0].getProperty("type");
@@ -884,7 +883,7 @@ sap.ui.define([
 					});
 				},
 				checkNewSalesOrderItemProductName : function (sExpectProductName) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SO_2_SOITEM",
 						success : function (oSalesOrderItemsTable) {
@@ -897,7 +896,7 @@ sap.ui.define([
 					});
 				},
 				checkNote : function (iRow, sExpectedNote, bAutoWait) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						autoWait : !!bAutoWait, // default: false
 						id : "SalesOrderList",
@@ -917,7 +916,7 @@ sap.ui.define([
 						sValueStateText, false, iRow);
 				},
 				checkSalesOrderIdInDetails : function (bChanged) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "SalesOrderID::detail",
 						success : function (oInput) {
@@ -933,7 +932,7 @@ sap.ui.define([
 					});
 				},
 				checkSalesOrderItemInRow : function (iRow, sExpectedSalesOrderID, sExpectedItem) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SO_2_SOITEM",
 						check : function (oSalesOrderItemsTable) {
@@ -966,10 +965,10 @@ sap.ui.define([
 					});
 				},
 				checkSalesOrderItemsCount : function (iExpectedCount) {
-					return checkCount(this, iExpectedCount, "lineItemsTitle");
+					checkCount(this, iExpectedCount, "lineItemsTitle");
 				},
 				checkSalesOrderLineItemNote : function (iRow, sNoteValue) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SO_2_SOITEM",
 						success : function (oSalesOrderTable) {
@@ -983,7 +982,7 @@ sap.ui.define([
 					});
 				},
 				checkProductNameInLineItem : function (iRow, sProductName) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Text",
 						id : /SOITEM_2_PRODUCT:Name/,
 						matchers : function (oControl) {
@@ -1007,10 +1006,10 @@ sap.ui.define([
 						sValueState, sValueStateText, false, iRow);
 				},
 				checkSalesOrdersCount : function (iExpectedCount) {
-					return checkCount(this, iExpectedCount, "salesOrderListTitle");
+					checkCount(this, iExpectedCount, "salesOrderListTitle");
 				},
 				checkSalesOrdersSelectionMode : function (sMode) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						matchers : new PropertyStrictEquals({name : "mode", value : sMode}),
@@ -1021,7 +1020,7 @@ sap.ui.define([
 					});
 				},
 				checkSalesOrderSelected : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
@@ -1036,7 +1035,7 @@ sap.ui.define([
 					});
 				},
 				checkSupplierPhoneNumber : function (sExpectedPhoneNumber) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "PRODUCT_2_BP:PhoneNumber",
 						success : function (oPhoneNumberInput) {
@@ -1048,7 +1047,7 @@ sap.ui.define([
 					});
 				},
 				checkTableLength : function (iExpectedLength, sTableId) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : sTableId,
 						success : function (oTable) {
@@ -1068,10 +1067,10 @@ sap.ui.define([
 		onTheRefreshConfirmation : {
 			actions : {
 				cancel : function () {
-					return handleMessageBox(this, "Refresh", false, "Cancel 'pending changes'");
+					handleMessageBox(this, "Refresh", false, "Cancel 'pending changes'");
 				},
 				confirm : function () {
-					return handleMessageBox(this, "Refresh", true, "Confirm 'pending changes'");
+					handleMessageBox(this, "Refresh", true, "Confirm 'pending changes'");
 				}
 			},
 			assertions : {}
@@ -1082,10 +1081,10 @@ sap.ui.define([
 		onTheSalesOrderDeletionConfirmation : {
 			actions : {
 				cancel : function () {
-					return handleMessageBox(this, "Sales Order Deletion", false);
+					handleMessageBox(this, "Sales Order Deletion", false);
 				},
 				confirm : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Dialog",
 						matchers : new Properties({title : "Sales Order Deletion"}),
 						success : function (aControls) {
@@ -1103,10 +1102,10 @@ sap.ui.define([
 		onTheSalesOrderLineItemDeletionConfirmation : {
 			actions : {
 				cancel : function () {
-					return handleMessageBox(this, "Sales Order Line Item Deletion", false);
+					handleMessageBox(this, "Sales Order Line Item Deletion", false);
 				},
 				confirm : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Dialog",
 						matchers : new Properties({title : "Sales Order Line Item Deletion"}),
 						success : function (aControls) {
@@ -1124,13 +1123,13 @@ sap.ui.define([
 		onTheSalesOrderSchedulesDialog : {
 			actions : {
 				close : function () {
-					return pressButton(this, "closeSalesOrderSchedules", true);
+					pressButton(this, "closeSalesOrderSchedules", true);
 				},
 				deleteSalesOrderSchedules : function () {
-					return pressButton(this, "deleteSalesOrderSchedules", true);
+					pressButton(this, "deleteSalesOrderSchedules", true);
 				},
 				selectAll : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.CheckBox",
 						id : "SO_2_SCHDL-sa",
@@ -1163,14 +1162,14 @@ sap.ui.define([
 		onTheSimulateDiscountDialog : {
 			actions : {
 				close : function () {
-					return pressButton(this, "closeSimulateDiscountDialog", true);
+					pressButton(this, "closeSimulateDiscountDialog", true);
 				},
 				enterDiscount : function (sDiscount) {
-					return Helper.changeStepInputValue(this, sViewName,
+					Helper.changeStepInputValue(this, sViewName,
 						"SimulateDiscountForm::Discount", sDiscount, sDiscount, true);
 				},
 				executeSimulateDiscount : function () {
-					return pressButton(this, "executeSimulateDiscount", true);
+					pressButton(this, "executeSimulateDiscount", true);
 				}
 			},
 			assertions : {
@@ -1179,7 +1178,7 @@ sap.ui.define([
 						sValueState, sValueStateText, true);
 				},
 				checkControlValue : function (sID, sValue) {
-					return Helper.checkControlValue(this, sViewName, sID, sValue, true);
+					Helper.checkControlValue(this, sViewName, sID, sValue, true);
 				},
 				checkDiscountValueState : function (sValueState, sValueStateText) {
 					Helper.checkValueState(this, sViewName, "SimulateDiscountForm::Discount",
@@ -1193,7 +1192,7 @@ sap.ui.define([
 		onTheValueHelpPopover : {
 			actions : {
 				close : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Popover",
 						success : function (aControls) {
 							aControls[0].close();
@@ -1202,7 +1201,7 @@ sap.ui.define([
 					});
 				},
 				selectByKey : function (sKey) {
-					return this.waitFor({
+					this.waitFor({
 						actions : function (oControl) {
 							var oNewItem,
 								oTable = oControl.getAggregation("content")[0];
@@ -1225,7 +1224,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkTitle : function (sTitle) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Title",
 						id : /-popover-title$/,
 						success : function (aTitles) {

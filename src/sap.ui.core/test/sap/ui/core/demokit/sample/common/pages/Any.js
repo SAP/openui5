@@ -114,7 +114,7 @@ sap.ui.define([
 					Opa5.extendConfig(getConfig(Opa.getContext().bSupportAssistant));
 				},
 				cleanUp : function(sControlId) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						autoWait : false,
 						id : sControlId,
@@ -157,14 +157,14 @@ sap.ui.define([
 			},
 			assertions : {
 				checkLog : function (aExpected) {
-					return this.waitFor({
+					this.waitFor({
 						success : function () {
 							checkLog(aExpected);
 						}
 					});
 				},
 				analyzeSupportAssistant: function () {
-					return this.waitFor({
+					this.waitFor({
 						success : function () {
 							var bFinished = false;
 
@@ -205,9 +205,13 @@ sap.ui.define([
 								return;
 							}
 
-							analyse().then(function() { bFinished = true; });
+							analyse().then(function() {
+								bFinished = true;
+							});
 							this.waitFor({
-								check : function () { return bFinished; },
+								check : function () {
+									return bFinished;
+								},
 								timeout : 60
 							});
 						}
@@ -221,7 +225,7 @@ sap.ui.define([
 		onTheErrorInfo : {
 			actions : {
 				confirm : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Dialog",
 						matchers : new Properties({icon : "sap-icon://message-error"}),
 						success : function (aControls) {
@@ -238,7 +242,7 @@ sap.ui.define([
 		onTheMessagePopover : {
 			actions : {
 				back : function (sMessage) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Page",
 						id : /-messageView-detailsPage/,
 						success : function (aPages) {
@@ -251,7 +255,7 @@ sap.ui.define([
 					});
 				},
 				close : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.MessagePopover",
 						success : function (aControls) {
 							var oPopover = aControls[0];
@@ -263,7 +267,7 @@ sap.ui.define([
 					});
 				},
 				selectMessage : function (sMessage) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.MessagePopover",
 						success : function (aMessagePopover) {
 							if (aMessagePopover[0].getItems().length === 1) {
@@ -275,7 +279,7 @@ sap.ui.define([
 								// details are already shown
 								return null;
 							}
-							return this.waitFor({
+							this.waitFor({
 								controlType : "sap.m.StandardListItem",
 								matchers : new Properties({title : sMessage}),
 								success : function (aItems) {
@@ -300,7 +304,7 @@ sap.ui.define([
 				 * @see sap.ui.core.sample.common.Controller#initMessagePopover.
 				 */
 				selectMessageTitle : function (sMessage, sId, iRow) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : sId,
 						matchers : function (oControl) {
@@ -342,7 +346,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkMessages : function (aExpectedMessages) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.MessagePopover",
 						success : function (aMessagePopover) {
 							var iExpectedCount = aExpectedMessages.length,
@@ -366,7 +370,7 @@ sap.ui.define([
 					});
 				},
 				checkMessageDetails : function (sMessage, sExpectedDetails) {
-					return this.waitFor({
+					this.waitFor({
 						id : /-messageViewMarkupDescription/,
 						success : function (aDetailsHtml) {
 							Opa5.assert.strictEqual(aDetailsHtml.length, 1);
@@ -376,7 +380,7 @@ sap.ui.define([
 					});
 				},
 				checkMessageHasTechnicalDetails : function (oExpectedDetails) {
-					return this.waitFor({
+					this.waitFor({
 						id : /technicalDetailsLink-/,
 						controlType : "sap.m.Link",
 						success : function (aLinks) {
@@ -396,7 +400,7 @@ sap.ui.define([
 		onTheSuccessInfo : {
 			actions : {
 				confirm : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Dialog",
 						matchers : new Properties({icon : "sap-icon://message-success"}),
 						success : function (aControls) {
@@ -408,7 +412,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkMessage : function (rMessage) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Dialog",
 						matchers : new Properties({icon : "sap-icon://message-success"}),
 						success : function (aControls) {

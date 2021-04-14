@@ -48,7 +48,7 @@ sap.ui.define([
 		sViewName = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main";
 
 	function pressButton(oOpa5, sId, bSearchOpenDialogs) {
-		return Helper.pressButton(oOpa5, sViewName, sId, bSearchOpenDialogs);
+		Helper.pressButton(oOpa5, sViewName, sId, bSearchOpenDialogs);
 	}
 
 	/*
@@ -62,7 +62,7 @@ sap.ui.define([
 	 *   A function called after looping the rows to check the end result
 	 */
 	function loopTableRows(oOpa5, fnCheckRow, fnCheckResult) {
-		return oOpa5.waitFor({
+		oOpa5.waitFor({
 			id : "ToLineItems",
 			success : function (oTable) {
 				var aCells, i, sItemPosition,
@@ -96,7 +96,7 @@ sap.ui.define([
 				 *   A message shortcut refering to <code>mNoteShort2Note</code>
 				 */
 				changeItemNote : function (iRow, sNewNote) {
-					return this.waitFor({
+					this.waitFor({
 						id : "ToLineItems",
 						matchers : function (oTable) {
 							return oTable.getRows()[iRow].getCells()[mColumn.Note];
@@ -112,7 +112,7 @@ sap.ui.define([
 				 * @param {number} iNewQuantity The new quantity for the item
 				 */
 				changeItemQuantity : function (iRow, iNewQuantity) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({text : iNewQuantity}),
 						id : "ToLineItems",
 						matchers : function (oTable) {
@@ -127,7 +127,7 @@ sap.ui.define([
 				 * @param {string} sNewNote The note for the new item
 				 */
 				changeNoteInDialog : function (sNewNote) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({text : sNewNote}),
 						id : "note::createSalesOrderItemDialog",
 						searchOpenDialogs : true,
@@ -140,7 +140,7 @@ sap.ui.define([
 				 * @param {string} sNewId The product id for the new item
 				 */
 				changeProductIdInDialog : function (sNewId) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({text : sNewId}),
 						id : "productID::createSalesOrderItemDialog",
 						searchOpenDialogs : true,
@@ -153,7 +153,7 @@ sap.ui.define([
 				 * @param {string} sDialogTitle Title of the dialog to match
 				 */
 				closeDialog : function (sDialogTitle) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Dialog",
 						success : function (aDialogs) {
 							var oDialog = aDialogs.find(function(oDialog) {
@@ -168,7 +168,7 @@ sap.ui.define([
 				 * Confirms a confirmation dialog.
 				 */
 				confirmDialog : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						matchers : function (oButton) {
@@ -182,7 +182,7 @@ sap.ui.define([
 				 * open and a message is selected.
 				 */
 				openTechnicalDetails : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Link",
 						success : function (aLinks) {
@@ -198,25 +198,25 @@ sap.ui.define([
 				 * Presses the "clone item" button
 				 */
 				pressCloneItem : function () {
-					return pressButton(this, "cloneItem::ToLineItems");
+					pressButton(this, "cloneItem::ToLineItems");
 				},
 				/*
 				 * Presses the "create item" button
 				 */
 				pressCreateItem : function () {
-					return pressButton(this, "createItem::ToLineItems");
+					pressButton(this, "createItem::ToLineItems");
 				},
 				/*
 				 * Presses the "delete item" button
 				 */
 				pressDeleteItem : function () {
-					return pressButton(this, "deleteItem::ToLineItems");
+					pressButton(this, "deleteItem::ToLineItems");
 				},
 				/*
 				 * Presses the "Fix Quantities" button.
 				 */
 				pressFixAllQuantities : function () {
-					return pressButton(this, "fixAllQuantities::ToLineItems");
+					pressButton(this, "fixAllQuantities::ToLineItems");
 				},
 				/*
 				 * Presses the "Fix Quantity Issues" Button in the specified row.
@@ -224,7 +224,7 @@ sap.ui.define([
 				 * @param {number} iRow The row in which the fix button should be pressed
 				 */
 				pressFixQuantityInRow : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
 							var oFixButton = oTable.getRows()[iRow].getCells()[mColumn.Fix];
@@ -243,7 +243,7 @@ sap.ui.define([
 				 * @param {number} iRow The row in which the button should be pressed
 				 */
 				pressMoreDetails : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						id : rToLineItems,
 						success : function (aElements) {
 							var i, oRow, oMoreDetailsButton;
@@ -271,19 +271,19 @@ sap.ui.define([
 				 * Presses the Discard button in the "Create new item" Dialog.
 				 */
 				pressNewItemDiscardButton : function () {
-					return pressButton(this, "discardCreatedItem::createSalesOrderItemDialog");
+					pressButton(this, "discardCreatedItem::createSalesOrderItemDialog");
 				},
 				/*
 				 * Presses the Save button in the "Create new item" Dialog.
 				 */
 				pressNewItemSaveButton : function () {
-					return pressButton(this, "saveCreatedItem::createSalesOrderItemDialog");
+					pressButton(this, "saveCreatedItem::createSalesOrderItemDialog");
 				},
 				/*
 				 * Presses the Save button at the bottom of the page.
 				 */
 				pressSalesOrderSaveButton : function () {
-					return pressButton(this, "saveSalesOrder");
+					pressButton(this, "saveSalesOrder");
 				},
 				/*
 				 * Stores the current item count.
@@ -291,7 +291,7 @@ sap.ui.define([
 				rememberCurrentItemCount : function () {
 					iCurrentItemCount = 0;
 
-					return loopTableRows(this, function (aCells, sItemPosition) {
+					loopTableRows(this, function (aCells, sItemPosition) {
 						if (sItemPosition !== "") {
 							iCurrentItemCount += 1;
 						}
@@ -302,7 +302,7 @@ sap.ui.define([
 				 * button.
 				 */
 				rememberCurrentMessageCount : function () {
-					return this.waitFor({
+					this.waitFor({
 						id : "messagePopoverButton",
 						success : function (oButton) {
 							iCurrentMessageCount = parseInt(oButton.getText());
@@ -314,7 +314,7 @@ sap.ui.define([
 				 * Reads and stores the sales order details.
 				 */
 				rememberSalesOrderDetails : function () {
-					return this.waitFor({
+					this.waitFor({
 						id : rObjectPage,
 						success : function (aInputFields) {
 							var i;
@@ -338,7 +338,7 @@ sap.ui.define([
 				 * @param {number} iDelta Number of items to scroll.
 				 */
 				scrollTable : function (iDelta) {
-					return this.waitFor({
+					this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
 							var iCurrentFirst = oTable.getFirstVisibleRow();
@@ -355,7 +355,7 @@ sap.ui.define([
 				 * @param {number} iRow The row to select
 				 */
 				selectRow : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
 							oTable.setSelectedIndex(iRow);
@@ -369,7 +369,7 @@ sap.ui.define([
 				 * @param {string} sFilterKey The key for the specific filter
 				 */
 				setFilter : function (sFilterKey) {
-					return this.waitFor({
+					this.waitFor({
 						id : "itemFilter",
 						success : function (oFilter) {
 							var aItems = oFilter.getItems(),
@@ -390,7 +390,7 @@ sap.ui.define([
 				 * @param {string} sSalesOrderId The sales order id
 				 */
 				showSalesOrder : function (sSalesOrderId) {
-					return this.waitFor({
+					this.waitFor({
 						id : "salesOrderID",
 						actions : new EnterText({clearTextFirst : true, text : sSalesOrderId}),
 						success : function () {
@@ -404,13 +404,13 @@ sap.ui.define([
 				 * Opens or closes the Message Popover, respectively.
 				 */
 				toggleMessagePopover : function () {
-					return pressButton(this, "messagePopoverButton");
+					pressButton(this, "messagePopoverButton");
 				},
 				/*
 				 * Presses the "Transition Messages Only" button
 				 */
 				toggleTransitionMessages : function () {
-					return pressButton(this, "transitionMessagesOnly");
+					pressButton(this, "transitionMessagesOnly");
 				}
 			},
 			assertions : {
@@ -420,7 +420,7 @@ sap.ui.define([
 				 * @param {string} sTitleText Part of the title which will be searched for
 				 */
 				checkDialogNotOpen : function (sTitleText) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Dialog",
 						success : function (aDialogs) {
 							var oDialog = aDialogs.find(function (oDialog) {
@@ -440,7 +440,7 @@ sap.ui.define([
 				 * @param {string} [sSubHeader] Part of the sub header which can be searched for
 				 */
 				checkDialogOpen : function (sTitleText, sSubHeader) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Dialog",
 						success : function (aDialogs) {
 							var oDialog = aDialogs.find(function (oDialog) {
@@ -464,7 +464,7 @@ sap.ui.define([
 				 * @param {string} sProductName The product name which should be shown
 				 */
 				checkDialogShowingProductIdAndName : function (sProductId, sProductName) {
-					return this.waitFor({
+					this.waitFor({
 						id : rProductDetailsDialog,
 						success : function (aControls) {
 							var oControl, i;
@@ -488,7 +488,7 @@ sap.ui.define([
 				 * Checks if the filter has been reset to "Show all".
 				 */
 				checkFilterReset : function () {
-					return this.waitFor({
+					this.waitFor({
 						id : "itemFilter",
 						success : function (oFilter) {
 							Opa5.assert.equal(oFilter.getSelectedKey(), "Show all",
@@ -502,7 +502,7 @@ sap.ui.define([
 				 * a quantity of at least two, all other items a quantity of at least one.
 				 */
 				checkItemQuantities : function () {
-					return loopTableRows(this, function (aCells, sItemPosition) {
+					loopTableRows(this, function (aCells, sItemPosition) {
 						var sProductId = aCells[mColumn.ProductID].getValue(),
 							iQuantity = parseInt(aCells[mColumn.Quantity].getValue());
 
@@ -534,7 +534,7 @@ sap.ui.define([
 								"Item count has changed by " + iDelta);
 						};
 
-					return loopTableRows(this, fnCheckRows, fnCheckResult);
+					loopTableRows(this, fnCheckRows, fnCheckResult);
 				},
 				/*
 				 * Checks if all items in the table match the selected filter.
@@ -542,7 +542,7 @@ sap.ui.define([
 				 * @param {string|string[]} vAllowedValueState To the filter matching value state(s)
 				 */
 				checkItemsMatchingFilter : function (vAllowedValueState) {
-					return loopTableRows(this, function (aCells, sItemPosition) {
+					loopTableRows(this, function (aCells, sItemPosition) {
 						var sValueState;
 
 						if (sItemPosition !== "") {
@@ -565,7 +565,7 @@ sap.ui.define([
 				 * @param {number} iCount Amount by which the message count should be changed
 				 */
 				checkMessageCountHasChangedBy : function (iCount) {
-					return this.waitFor({
+					this.waitFor({
 						id : "messagePopoverButton",
 						success : function (oButton) {
 							var iNewMessageCount = parseInt(oButton.getText());
@@ -584,7 +584,7 @@ sap.ui.define([
 				 * @param {string} sExpectedValue The expected value of the field
 				 */
 				checkMessageHasTechnicalDetail : function (sId, sExpectedValue) {
-					return this.waitFor({
+					this.waitFor({
 						id : rMessageDetails,
 						success : function (aControls) {
 							var oControl, i;
@@ -612,7 +612,7 @@ sap.ui.define([
 				 *   The whole message or a part of it, will be searched for
 				 */
 				checkMessageInPopover : function (sItemPosition, sMessageShort) {
-					return this.waitFor({
+					this.waitFor({
 						id : "messagePopover",
 						success : function (oPopover) {
 							var aMessages = oPopover.getItems();
@@ -652,7 +652,7 @@ sap.ui.define([
 				 *   <code>mMessageShort2Message</code> which should not be shown
 				 */
 				checkMessageNotInPopover : function (sItemPosition, sMessageShort) {
-					return this.waitFor({
+					this.waitFor({
 						id : "messagePopover",
 						success : function (oPopover) {
 							var aMessages = oPopover.getItems();
@@ -686,7 +686,7 @@ sap.ui.define([
 				 * Checks if the message popover has been opened.
 				 */
 				checkMessagePopoverOpen : function () {
-					return this.waitFor({
+					this.waitFor({
 						id : "messagePopover",
 						success : function () {
 							Opa5.assert.ok(true, "The message popover is open");
@@ -701,7 +701,7 @@ sap.ui.define([
 				 *   The expected severity shown by the message strip
 				 */
 				checkMessageStrip : function (sExpectedMessageType) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.MessageStrip",
 						success : function (aMatchedControls) {
 							var sMessageType = aMatchedControls[0].getProperty("type");
@@ -717,7 +717,7 @@ sap.ui.define([
 				 * Checks if a message toast is showing.
 				 */
 				checkMessageToast : function () {
-					return this.waitFor({
+					this.waitFor({
 						autoWait : false,
 						check : function () {
 							return !!sap.ui.test.Opa5.getJQuery()(".sapMMessageToast").length;
@@ -734,7 +734,7 @@ sap.ui.define([
 				 * Stores the current details after comparing.
 				 */
 				checkSalesOrderDetailsUpdated : function () {
-					return this.waitFor({
+					this.waitFor({
 						id : rObjectPage,
 						success : function (aInputFields) {
 							var i,
@@ -764,7 +764,7 @@ sap.ui.define([
 				 *   The id of the sales order which is supposed to load
 				 */
 				checkSalesOrderItemsLoaded : function (sSalesOrderId) {
-					return this.waitFor({
+					this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
 							var sValue =
@@ -784,7 +784,7 @@ sap.ui.define([
 				 *   The id of the sales order which is supposed to load
 				 */
 				checkSalesOrderLoaded : function (sSalesOrderId) {
-					return this.waitFor({
+					this.waitFor({
 						id : "salesOrderID::objectPage",
 						success : function (oField) {
 							Opa5.assert.strictEqual(oField.getValue(), sSalesOrderId,
@@ -800,7 +800,7 @@ sap.ui.define([
 				 * @param {string} sExpectedValueState The expected value state of the note field
 				 */
 				checkTableRowHighlight : function (iRow, sExpectedValueState) {
-					return this.waitFor({
+					this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
 							var oRow = oTable.getRows()[iRow],
@@ -822,7 +822,7 @@ sap.ui.define([
 				 * @param {string[]} aColumns The columns that are compared for equality
 				 */
 				checkTableRowsEqualInColumns : function (iRow0, iRow1, aColumns) {
-					return this.waitFor({
+					this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
 							var iColumn,
@@ -857,7 +857,7 @@ sap.ui.define([
 				 */
 				checkValueStateOfField : function (iRow, sField, sExpectedValueState,
 					sMessageShort) {
-					return this.waitFor({
+					this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
 							var oSelectedField = oTable.getRows()[iRow].getCells()[mColumn[sField]];

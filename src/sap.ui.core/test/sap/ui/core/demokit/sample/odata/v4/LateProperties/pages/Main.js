@@ -14,7 +14,7 @@ sap.ui.define([
 		onTheEditDeliveryDialog : {
 			actions : {
 				postponeDeliveryDateByOneDay : function (){
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "DeliveryDate",
 						searchOpenDialogs : true,
@@ -36,15 +36,15 @@ sap.ui.define([
 					});
 				},
 				pressCancel : function () {
-					return Helper.pressButton(this, sViewName, "cancelEditDeliveryDialog", true);
+					Helper.pressButton(this, sViewName, "cancelEditDeliveryDialog", true);
 				},
 				pressConfirm : function () {
-					return Helper.pressButton(this, sViewName, "confirmEditDeliveryDialog", true);
+					Helper.pressButton(this, sViewName, "confirmEditDeliveryDialog", true);
 				}
 			},
 			assertions : {
 				checkThatControlsHaveContent : function () {
-					return this.waitFor({
+					this.waitFor({
 						id :[
 							"SalesOrderID",
 							"Note",
@@ -83,7 +83,7 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				pressEditDeliveryInRow : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Button",
 						errorMessage : "Could not press Edit Delivery Button in row " + iRow,
 						id : /openEditDeliveryDate/,
@@ -98,7 +98,7 @@ sap.ui.define([
 					});
 				},
 				selectSalesOrderRow : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Text",
 						errorMessage : "Could not select sales order in row " + iRow,
 						id : /SalesOrderID/,
