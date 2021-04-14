@@ -2883,9 +2883,11 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onUpdateContentSize = function (oEvent) {
-		var iScrollTop;
+		var iScrollTop,
+			oSize = oEvent.size,
+			oOldSize = oEvent.oldSize;
 
-		if (oEvent.size.height === 0 || oEvent.size.width === 0) {
+		if (oSize.height === 0 || oSize.width === 0) {
 			Log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
 			return;
 		}
@@ -2894,18 +2896,18 @@ sap.ui.define([
 			this._overridePreserveHeaderStateOnScroll();
 		}
 
-		// a special case: if the content that changed its height was *above* the current scroll position =>
-		// then the current scroll position updated respectively and => triggered a scroll event =>
-		// a new section may become selected during that scroll
-
-		// problem if this happened BEFORE _requestAdjustLayout executed => wrong section may have been selected
-
-		// solution [implemented bellow] is to ensure that scroll handler is called with the latest scrollTop => we ensure the correct section is selected
 		this._adjustHeaderHeights();
 		this._requestAdjustLayout() // call adjust layout to calculate the new section sizes
 			.then(function () {
-				iScrollTop = this._$opWrapper.scrollTop();
-				this._updateSelectionOnScroll(iScrollTop);
+				if (oOldSize.height > 0 || oOldSize.width > 0) {
+					// if the content that changed its height was *above* the current scroll position =>
+					// then the current scroll position updated respectively and => triggered a scroll event =>
+					// a new section may become selected during that scroll;
+					// problem if this happened BEFORE _requestAdjustLayout executed => wrong section may have been selected
+					// solution implemented bellow is to ensure that scroll handler is called with the latest scrollTop => we ensure the correct section is selected
+					iScrollTop = this._$opWrapper.scrollTop();
+					this._updateSelectionOnScroll(iScrollTop);
+				}
 			}.bind(this));
 	};
 

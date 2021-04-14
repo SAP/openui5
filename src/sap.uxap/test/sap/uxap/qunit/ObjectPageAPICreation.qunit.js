@@ -680,14 +680,16 @@ function (
 			oSpy.reset();
 			oObjectPage.setSelectedSection(null);
 
-			setTimeout(function() {
-				oObjectPage.getDomRef().style.display = sOrigDisplay;
-				oObjectPage._onUpdateScreenSize({ // mock resize handler call after size restored
+			oObjectPage.getDomRef().style.display = sOrigDisplay;
+			oObjectPage._onUpdateScreenSize({ // mock resize handler call after size restored
 				size: { width: 1000, height: 1000 },
 				oldSize: { width: 0, height: 0 }
 			});
 
 			setTimeout(function() {
+				assert.ok(oSpy.calledWith(0, 0), "page is scrolled to top");
+				// synchronously call the scroll listener to save adding a timeout in the test
+				oObjectPage._onScroll({target: {scrollTop: 0}});
 				// Check: the selection moved to the first visible section
 				oExpected = {
 					oSelectedSection: oFirstSection,
@@ -695,14 +697,11 @@ function (
 				};
 				sectionIsSelected(oObjectPage, assert, oExpected);
 				assert.strictEqual(oObjectPage._bHeaderExpanded, true, "Header is expnded");
-				assert.ok(oSpy.calledWith(0, 0), "page is scrolled to top");
 
 				// cleanup
 				oObjectPage.destroy();
 				done();
 			}, oObjectPage._getDOMCalculationDelay());
-
-		}, 50);
 
 		});
 
@@ -1010,8 +1009,8 @@ function (
 			iExpectedScrollTop = oExpected.iScrollTop;
 
 		assert.ok(oSelectedBtn, "anchorBar has selected button");
-		assert.strictEqual(oExpected.sSelectedTitle, oSelectedBtn.getText(), "section is selected in anchorBar");
-		assert.strictEqual(oExpected.oSelectedSection.getId(), oObjectPage.getSelectedSection(), "section is selected in objectPage");
+		assert.strictEqual(oSelectedBtn.getText(), oExpected.sSelectedTitle, "section is selected in anchorBar");
+		assert.strictEqual(oObjectPage.getSelectedSection(), oExpected.oSelectedSection.getId(), "section is selected in objectPage");
 		assert.ok(oObjectPage.$().find("#" + oExpected.oSelectedSection.getId() + "*").length, "section is rendered");
 
 		if (bExpectedSnapped !== undefined) {
