@@ -140,7 +140,6 @@ sap.ui.define([
 			fnEventAction("rowSelectionChange", this._handleSelectionChange, this);
 			fnEventAction("rowsUpdated", this._handleUpdateFinished, this);
 
-
 			var oRowBinding = this.getListBinding();
 			if (oRowBinding) {
 				var fnEventBindingAction = (bAdd ? oRowBinding.attachEvent : oRowBinding.detachEvent).bind(oRowBinding);
@@ -217,15 +216,19 @@ sap.ui.define([
 		if (bSelectedOnly) {
 			oSelectionHandler = _getSelectionHandler.call(this, oTable);
 			aSelectedIndices = oSelectionHandler.getSelectedIndices();
-			aSelectedContexts = oTable._getContexts().filter(function (oContext, i) {
-				return aSelectedIndices.indexOf(i) >= 0;
-			});
+			aSelectedContexts = aSelectedIndices.reduce(function(aResult, iCurrent) {
+				var oContext = oTable.getContextByIndex(iCurrent);
+				return oContext ? aResult.concat(oContext) : aResult;
+			}, []);
 		}
 
 		if (!bNoVirtual) {
-			aResult = bSelectedOnly ? aSelectedContexts : oTable._getContexts();
+			var oBinding = oTable.getBinding();
+			aResult = bSelectedOnly ? aSelectedContexts : oBinding && (oBinding.aContexts || (oBinding.aIndices && oBinding.aIndices.map(function (iIndex) {
+				return oTable.getContextByIndex(iIndex);
+			})) || oBinding.getContexts());
 		} else {
-			aResult = oTable.getRows().filter(function (oRow) {
+				aResult = oTable.getRows().filter(function (oRow) {
 				var oRowBindingContext = oRow.getBindingContext();
 				return oRowBindingContext && oRowBindingContext.getObject();	// don't return empty rows
 			});
