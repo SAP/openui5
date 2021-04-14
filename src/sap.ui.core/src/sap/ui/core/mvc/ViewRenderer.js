@@ -22,7 +22,7 @@ sap.ui.define(function() {
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	ViewRenderer.renderer = function(rm, oControl) {
+	ViewRenderer.render = function(rm, oControl) {
 		rm.openStart("div", oControl);
 		rm.class("sapUiView");
 		ViewRenderer.addDisplayClass(rm, oControl);
