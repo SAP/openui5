@@ -1073,6 +1073,62 @@ sap.ui.define([
 			}
 		}
 	}, function () {
+		QUnit.test("Check the setting button", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: oManifestForFilterBackendInMultiComboBox
+
+			});
+			this.oCardEditor.setAllowSettings(true);
+			this.oCardEditor.setAllowDynamicValues(true);
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomersLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomersField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersLabel.getText() === "Customers with filter parameter", "Label: Has static label text");
+					assert.ok(oCustomersField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+					var oCustomerComoboBox = oCustomersField.getAggregation("_field");
+					assert.ok(oCustomerComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
+					//settings button
+					var oButton = oCustomersField.getAggregation("_settingsButton");
+					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+					oButton.firePress();
+					oButton.focus();
+					setTimeout(function () {
+						//popup is opened
+						assert.ok(oCustomersField._oSettingsPanel._oOpener === oCustomersField, "Settings: Has correct owner");
+						var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();
+						var testInterface = settingsClass._private();
+						assert.ok(testInterface.oCurrentInstance === oCustomersField._oSettingsPanel, "Settings: Points to right settings panel");
+						assert.ok(testInterface.oPopover.isA("sap.m.ResponsivePopover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
+						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
+						testInterface.oSegmentedButton.getItems()[1].firePress();
+						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
+						testInterface.oSegmentedButton.getItems()[0].firePress();
+						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
+						testInterface.oDynamicValueField.fireValueHelpRequest();
+						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
+						var oItem = testInterface.getMenuItems()[3].getItems()[2];
+						testInterface.getMenu().fireItemSelected({ item: oItem });
+						testInterface.oPopover.getBeginButton().firePress();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("Defined in Filter Parameter", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,

@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/CustomersWithFilterParameter/value",
 						"label": "Customers with filter parameter",
 						"type": "string[]",
-						"translatable": true,
+						"allowDynamicValues": true,
 						"values": {
 							"data": {
 								"request": {
@@ -33,7 +33,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"CustomersWithFilterInURL": {
 						"manifestpath": "/sap.card/configuration/parameters/CustomersWithFilterInURL/value",
 						"type": "string[]",
-						"translatable": true,
 						"values": {
 							"data": {
 								"request": {
