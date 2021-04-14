@@ -178,6 +178,7 @@ sap.ui.define([
 	/**
 	 * Implements IGridConfigurable interface
 	 *
+	 * @protected
 	 * @returns {HTMLElement[]} An array with the DOM elements
 	 */
 	CSSGrid.prototype.getGridDomRefs = function () {
@@ -187,6 +188,7 @@ sap.ui.define([
 	/**
 	 * Returns the layout configuration of the <code>CSSGrid</code>.
 	 *
+ 	 * @protected
 	 * @returns {sap.ui.layout.cssgrid.GridBasicLayout} The grid layout
 	 */
 	CSSGrid.prototype.getGridLayoutConfiguration = function () {
