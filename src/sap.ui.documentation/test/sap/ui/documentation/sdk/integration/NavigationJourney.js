@@ -55,6 +55,7 @@ sap.ui.define([
 		When.onTheAppPage.iPressTheToolsTabButton();
 		// Assertions
 		Then.onTheToolsPage.iShouldSeeTheToolsPage();
+		Then.onTheToolsPage.iShouldSeeTheHeadline();
 	});
 
 	opaTest("Should navigate to Welcome Page", function (Given, When, Then) {
