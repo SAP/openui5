@@ -2,30 +2,34 @@
  * ${copyright}
  */
 
+/*global URLSearchParams*/
+
 sap.ui.getCore().attachInit(function () {
 	"use strict";
 
-	sap.ui.require([
-		"sap/base/util/UriParameters",
-		"sap/ui/core/Component",
-		"sap/ui/core/ComponentContainer"
-	], function (UriParameters, Component, ComponentContainer) {
+	var sComponent = new URLSearchParams(window.location.search).get("component"),
+		aRequire = ["sap/ui/core/Component", "sap/ui/core/ComponentContainer"];
+
+	if (!sComponent) {
 		/* eslint-disable no-alert */
+		alert("Missing URL parameter 'component', e.g. '?component=ViewTemplate.scenario'");
+		return;
+	}
+	document.title = sComponent;
 
-		var sComponentName = UriParameters.fromQuery(window.location.search).get("component");
+	// Early require SandboxModel, because OData demo apps use model preload=true
+	if (sComponent.includes("odata.v4")) {
+		aRequire.push("sap/ui/core/sample/" + sComponent.replaceAll(".", "/") + "/SandboxModel");
+	}
 
-		if (!sComponentName) {
-			alert("Missing URL parameter 'component', e.g. '?component=ViewTemplate.scenario'");
-		} else {
-			document.title = sComponentName;
-			Component.create({
-				name : "sap.ui.core.sample." + sComponentName,
-				settings : {id : sComponentName}
-			}).then(function (oComponent) {
-				new ComponentContainer({component : oComponent}).placeAt('content');
-			}, function (e) {
-				alert("Error while instantiating sap.ui.core.sample." + sComponentName + ":" + e);
-			});
-		}
+	sap.ui.require(aRequire, function (Component, ComponentContainer) {
+		Component.create({
+			name : "sap.ui.core.sample." + sComponent,
+			settings : {id : sComponent}
+		}).then(function (oComponent) {
+			new ComponentContainer({component : oComponent}).placeAt('content');
+		}, function (e) {
+			alert("Error while instantiating sap.ui.core.sample." + sComponent + ":" + e);
+		});
 	});
 });
