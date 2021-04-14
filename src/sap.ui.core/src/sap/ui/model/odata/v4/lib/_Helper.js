@@ -310,7 +310,7 @@ sap.ui.define([
 		 *   The message for the <code>Error</code> instance; code and status text of the HTTP error
 		 *   are appended
 		 * @param {string} [sRequestUrl]
-		 *   The request URL
+		 *   The request URL, must be an absolute path starting with the service URL
 		 * @param {string} [sResourcePath]
 		 *   The path by which this resource has originally been requested
 		 * @returns {Error}
@@ -321,7 +321,7 @@ sap.ui.define([
 		 *     <li> <code>isConcurrentModification</code>: <code>true</code> In case of a
 		 *       concurrent modification detected via ETags (i.e. HTTP status code 412)
 		 *     <li> <code>message</code>: Error message
-		 *     <li> <code>requestUrl</code>: The request URL
+		 *     <li> <code>requestUrl</code>: The absolute request URL
 		 *     <li> <code>resourcePath</code>: The path by which this resource has originally been
 		 *       requested
 		 *     <li> <code>status</code>: HTTP status code
@@ -496,11 +496,13 @@ sap.ui.define([
 		 *   assigned to the corresponding request.
 		 * @param {object[]} aRequests
 		 *   Requests belonging to a single change set
+		 * @param {string} sServiceUrl
+		 *   URL of the service document used to resolve relative request URLs
 		 * @returns {Error[]}
 		 *   One error for each request given, suitable for
 		 *   {@link sap.ui.model.odata.v4.ODataModel#reportError}
 		 */
-		decomposeError : function (oError, aRequests) {
+		decomposeError : function (oError, aRequests, sServiceUrl) {
 			var aDetailContentIDs = oError.error.details
 					&& oError.error.details.map(function (oDetail) {
 						return _Helper.getContentID(oDetail);
@@ -532,7 +534,7 @@ sap.ui.define([
 				}
 
 				oClone.error = _Helper.clone(oError.error);
-				oClone.requestUrl = oRequest.url;
+				oClone.requestUrl = sServiceUrl + oRequest.url;
 				oClone.resourcePath = oRequest.$resourcePath;
 				oClone.status = oError.status;
 				oClone.statusText = oError.statusText;
