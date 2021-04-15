@@ -377,19 +377,20 @@ sap.ui.define([
 		 * Formats a condition.
 		 *
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
-		 * @param {sap.ui.model.Type} oType Data type
-		 * @param {string} sDisplay Display mode
+		 * @param {sap.ui.model.Type} [oType] Data type
+		 * @param {string} [sDisplay] Display mode
+		 * @param {boolean} [bHideOperator=false] If set, only the value output is returned without any visible operator
 		 * @returns {string} formatted text
 		 * @throws {sap.ui.model.FormatException} if the values cannot be formatted
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		Operator.prototype.format = function(oCondition, oType, sDisplay) { // sDisplay needed in EQ formatter
+		Operator.prototype.format = function(oCondition, oType, sDisplay, bHideOperator) { // sDisplay needed in EQ formatter
 
 			var aValues = oCondition.values;
-			var sTokenText = this.tokenFormat;
 			var iCount = this.valueTypes.length;
+			var sTokenText = bHideOperator && iCount === 1 ? "{0}" : this.tokenFormat;
 			for (var i = 0; i < iCount; i++) {
 				if (this.valueTypes[i] !== Operator.ValueType.Static) {
 					if (this.valueTypes[i] !== Operator.ValueType.Self) {
