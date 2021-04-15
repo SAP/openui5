@@ -61,7 +61,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.attr('tabindex', '0');
 
 		rm.accessibilityState(control, {
-			role: "option",
+			role: "listitem",
 			expanded: !control.getCollapsed(),
 			labelledby: {
 				value: sAriaLablledByIds
@@ -152,7 +152,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		rm.openStart('ul')
 			.class('sapMNLGroupChildren')
-			.attr('role', 'listbox')
+			.attr('role', 'list')
 			.openEnd();
 
 		control.getItems().forEach(function (item) {

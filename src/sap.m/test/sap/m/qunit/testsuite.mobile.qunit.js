@@ -780,6 +780,9 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			NotificationList: {
+				title: "QUnit Page for sap.m.NotificationList"
+			},
 			NotificationListGroup: {
 				title: "QUnit Page for sap.m.NotificationListGroup"
 			},

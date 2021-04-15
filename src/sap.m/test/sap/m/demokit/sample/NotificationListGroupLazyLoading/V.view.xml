@@ -4,7 +4,7 @@
 	xmlns="sap.m"
 	class="sapUiBodyBackground sapContrastPlus">
 	<VBox class="sapUiSmallMargin">
-		<List class="sapContrast sapContrastPlus">
+		<NotificationList class="sapContrast sapContrastPlus">
 			<layoutData>
 				<FlexItemData maxWidth="600px" />
 			</layoutData>
@@ -40,6 +40,6 @@
 					<Button text="Get items count" press=".onGetItemsCount" />
 				</buttons>
 			</NotificationListGroup>
-		</List>
+		</NotificationList>
 	</VBox>
 </mvc:View>

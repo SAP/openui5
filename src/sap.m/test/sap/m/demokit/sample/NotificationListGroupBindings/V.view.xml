@@ -4,7 +4,7 @@
 	xmlns="sap.m"
 	class="sapUiBodyBackground sapContrastPlus">
 	<VBox class="sapUiSmallMargin">
-		<List items="{ path: '/NotificationGroups', templateShareable: true }">
+		<NotificationList items="{ path: '/NotificationGroups', templateShareable: true }">
 			<layoutData>
 				<FlexItemData maxWidth="600px" />
 			</layoutData>
@@ -50,6 +50,6 @@
 					</buttons>
 				</NotificationListItem>
 			</NotificationListGroup>
-		</List>
+		</NotificationList>
 	</VBox>
 </mvc:View>
