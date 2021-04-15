@@ -191,7 +191,7 @@ sap.ui.define([
 	hasMinOrMax : false,
 	message : "Unsupported system query option: $filter",
 	queryOptions : {$filter : "answer eq 42"}
-}].forEach(function (oFixture, i) {
+}].forEach(function (oFixture) {
 	QUnit.test("create: " + oFixture.message, function (assert) {
 		var oAggregation = {
 				aggregate : {},
