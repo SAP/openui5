@@ -2952,6 +2952,9 @@ sap.ui.define([
 	 *   HTTP method via a property "X-HTTP-Method" (which is removed)
 	 * @param {object} [oEntity]
 	 *   The entity which contains the ETag to be sent as "If-Match" header with the POST request.
+	 * @param {boolean} [bIgnoreETag]
+	 *   Whether the entity's ETag should be actively ignored (If-Match:*); used only in case an
+	 *   entity is given
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
@@ -2960,7 +2963,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
+	_SingleCache.prototype.post = function (oGroupLock, oData, oEntity, bIgnoreETag) {
 		var sGroupId,
 			sHttpMethod = "POST",
 			that = this;
@@ -2994,7 +2997,7 @@ sap.ui.define([
 		this.bSentRequest = true;
 		this.oPromise = SyncPromise.all([
 			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
-				oEntity && {"If-Match" : oEntity}, oData),
+				oEntity && {"If-Match" : bIgnoreETag ? "*" : oEntity}, oData),
 			this.fetchTypes()
 		]).then(function (aResult) {
 			that.visitResponse(aResult[0], aResult[1]);

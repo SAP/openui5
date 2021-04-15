@@ -8431,9 +8431,9 @@ sap.ui.define([
 				oCache = this.createSingle(sResourcePath, undefined, true);
 
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
-			this.oRequestorMock.expects("isActionBodyOptional").withExactArgs().returns(bOptional);
 			this.oRequestorMock.expects("relocateAll")
 				.withExactArgs("$parked.group", "group", sinon.match.same(oEntity));
+			this.oRequestorMock.expects("isActionBodyOptional").withExactArgs().returns(bOptional);
 			this.oRequestorMock.expects("request")
 				.withExactArgs("PUT", sResourcePath, sinon.match.same(oGroupLock),
 					{"If-Match" : sinon.match.same(oEntity)},
@@ -8461,8 +8461,8 @@ sap.ui.define([
 		assert.strictEqual(oCache.bSharedRequest, false);
 
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
-		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("relocateAll").never();
+		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), undefined,
 				undefined)
@@ -8473,19 +8473,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("SingleCache: bIgnoreETag w/o oEntity", function () {
+		var oCache = this.createSingle("Foo", undefined, true),
+			oGroupLock = {};
+
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+		this.oRequestorMock.expects("relocateAll").never();
+		this.oRequestorMock.expects("isActionBodyOptional").never();
+		this.oRequestorMock.expects("request")
+			.withExactArgs("POST", "Foo", sinon.match.same(oGroupLock), undefined, undefined)
+			.resolves();
+
+		// code under test
+		return oCache.post(oGroupLock, undefined, undefined, true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache: post for bound operation", function () {
-		var oGroupLock = {},
+		var oGroupLock = {getGroupId : function () {}},
 			sMetaPath = "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType/$Type",
 			sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
 			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, false, undefined,
 				true, sMetaPath),
+			oEntity = {},
 			oReturnValue = {},
 			mTypes = {};
 
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
+		this.oRequestorMock.expects("relocateAll")
+			.withExactArgs("$parked.group", "group", sinon.match.same(oEntity));
 		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), undefined,
-				undefined)
+			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), {"If-Match" : "*"},
+				null)
 			.resolves(oReturnValue);
 		this.mock(oCache).expects("fetchTypes")
 			.withExactArgs()
@@ -8494,7 +8514,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes));
 
 		// code under test
-		return oCache.post(oGroupLock);
+		return oCache.post(oGroupLock, /*oData*/null, oEntity, /*bIgnoreETag*/true);
 	});
 	//TODO with an expand on 1..n navigation properties, compute the count of the nested collection
 	//   --> comes with implementation of $$inheritExpandSelect

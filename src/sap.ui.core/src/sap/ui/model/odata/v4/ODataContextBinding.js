@@ -252,6 +252,9 @@ sap.ui.define([
 	 *   A lock for the group ID to be used for the request
 	 * @param {map} mParameters
 	 *   The parameter map at the time of the execute
+	 * @param {boolean} [bIgnoreETag]
+	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
+	 *   actions only
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or a return value context when the operation call
 	 *   succeeded, or rejected with an instance of <code>Error</code> in case of failure. A return
@@ -263,7 +266,7 @@ sap.ui.define([
 	 * @private
 	 * @see #execute for details
 	 */
-	ODataContextBinding.prototype._execute = function (oGroupLock, mParameters) {
+	ODataContextBinding.prototype._execute = function (oGroupLock, mParameters, bIgnoreETag) {
 		var oMetaModel = this.oModel.getMetaModel(),
 			oOperationMetadata,
 			oPromise,
@@ -297,7 +300,7 @@ sap.ui.define([
 				}
 				oOperationMetadata = aOperationMetadata[0];
 				return that.createCacheAndRequest(oGroupLock, sResolvedPath, oOperationMetadata,
-					mParameters, fnGetEntity);
+					mParameters, fnGetEntity, bIgnoreETag);
 			}).then(function (oResponseEntity) {
 				var sContextPredicate, oOldValue, sResponsePredicate;
 
@@ -553,16 +556,20 @@ sap.ui.define([
 	 * @param {function} [fnGetEntity]
 	 *   An optional function which may be called to access the existing entity data (if already
 	 *   loaded) in case of a bound operation
+	 * @param {boolean} [bIgnoreETag]
+	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
+	 *   actions only
 	 * @returns {SyncPromise}
 	 *   The request promise
 	 * @throws {Error}
 	 *   If a collection-valued parameter for an operation other than a V4 action is encountered,
-	 *   or if the given metadata is neither an "Action" nor a "Function"
+	 *   or if the given metadata is neither an "Action" nor a "Function", or if
+	 *   <code>bIgnoreETag</code> is used for an operation other than a bound action
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype.createCacheAndRequest = function (oGroupLock, sPath,
-		oOperationMetadata, mParameters, fnGetEntity) {
+		oOperationMetadata, mParameters, fnGetEntity, bIgnoreETag) {
 		var bAction = oOperationMetadata.$kind === "Action",
 			oCache,
 			vEntity = fnGetEntity,
@@ -596,16 +603,18 @@ sap.ui.define([
 		if (!bAction && oOperationMetadata.$kind !== "Function") {
 			throw new Error("Not an operation: " + sPath);
 		}
-
+		if (bAction && fnGetEntity) {
+			vEntity = fnGetEntity();
+		}
+		if (bIgnoreETag && !(bAction && oOperationMetadata.$IsBound && vEntity)) {
+			throw new Error("Not a bound action: " + sPath);
+		}
 		if (this.bInheritExpandSelect
 			&& !this.isReturnValueLikeBindingParameter(oOperationMetadata)) {
 			throw new Error("Must not set parameter $$inheritExpandSelect on this binding");
 		}
 
 		this.oOperation.bAction = bAction;
-		if (bAction && fnGetEntity) {
-			vEntity = fnGetEntity();
-		}
 		this.oOperation.mRefreshParameters = mParameters;
 		mParameters = Object.assign({}, mParameters);
 		this.mCacheQueryOptions = this.computeOperationQueryOptions();
@@ -621,7 +630,7 @@ sap.ui.define([
 		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		return bAction
-			? oCache.post(oGroupLock, mParameters, vEntity)
+			? oCache.post(oGroupLock, mParameters, vEntity, bIgnoreETag)
 			: oCache.fetchValue(oGroupLock);
 	};
 
@@ -723,11 +732,15 @@ sap.ui.define([
 	 *   be specified explicitly.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
+	 * @param {boolean} [bIgnoreETag]
+	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
+	 *   actions only, since 1.90.0
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or with a return value context when the operation
 	 *   call succeeded, or rejected with an instance of <code>Error</code> in case of failure,
-	 *   for instance if the operation metadata is not found, if overloading is not supported, or if
-	 *   a collection-valued function parameter is encountered.
+	 *   for instance if the operation metadata is not found, if overloading is not supported, if a
+	 *   collection-valued function parameter is encountered, or if <code>bIgnoreETag</code> is used
+	 *   for an operation other than a bound action.
 	 *
 	 *   A return value context is a {@link sap.ui.model.odata.v4.Context} which represents a bound
 	 *   operation response. It is created only if the operation is bound and has a single entity
@@ -750,7 +763,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 */
-	ODataContextBinding.prototype.execute = function (sGroupId) {
+	ODataContextBinding.prototype.execute = function (sGroupId, bIgnoreETag) {
 		var sResolvedPath = this.getResolvedPath();
 
 		this.checkSuspended();
@@ -772,7 +785,7 @@ sap.ui.define([
 		}
 
 		return this._execute(this.lockGroup(sGroupId, true),
-			_Helper.publicClone(this.oOperation.mParameters, true));
+			_Helper.publicClone(this.oOperation.mParameters, true), bIgnoreETag);
 	};
 
 	/**
