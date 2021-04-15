@@ -330,4 +330,4 @@ sap.ui.define([
 	};
 
 	return AppVariant;
-}, true);
+});

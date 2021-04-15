@@ -169,4 +169,4 @@ sap.ui.define([
 	};
 
 	return ExtensionPointRegistry;
-}, true);
+});

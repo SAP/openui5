@@ -113,4 +113,4 @@ function(
 	};
 
 	return ManifestUtils;
-}, true);
+});

@@ -88,4 +88,4 @@ sap.ui.define([
 	};
 
 	return FlexRuntimeInfoAPI;
-}, true);
+});

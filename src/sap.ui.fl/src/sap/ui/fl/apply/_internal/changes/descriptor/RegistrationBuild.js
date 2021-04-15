@@ -37,4 +37,4 @@ sap.ui.define([
 
 	var RegistrationCopy = Object.assign({}, Registration);
 	return Object.assign(RegistrationCopy, RegistrationBuild);
-}, true);
+});

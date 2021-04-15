@@ -193,4 +193,4 @@ sap.ui.define([
 
 	BackendConnector.initialConnector = InitialConnector;
 	return BackendConnector;
-}, true);
+});

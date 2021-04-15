@@ -85,4 +85,4 @@ sap.ui.define([
 	};
 
 	return AddLibrary;
-}, true);
+});

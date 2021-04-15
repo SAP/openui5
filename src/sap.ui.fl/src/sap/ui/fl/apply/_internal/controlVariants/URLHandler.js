@@ -521,4 +521,4 @@ sap.ui.define([
 		}
 	};
 	return URLHandler;
-}, true);
+});
