@@ -14,7 +14,7 @@
 	"sap.ui5": {
 
 		"resourceRoots": {
-			"foo.bar": "../../foo/bar",
+			"foo.bar": "../foo/bar",
 			"absolute": "http://absolute/uri",
 			"server.absolute": "/server/absolute/uri"
 		},

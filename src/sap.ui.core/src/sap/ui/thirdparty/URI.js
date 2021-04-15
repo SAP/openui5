@@ -1,54 +1,78 @@
 /*!
  * URI.js - Mutating URLs
  *
- * Version: 1.11.2
+ * Version: 1.19.6
  *
  * Author: Rodney Rehm
- * Web: http://medialize.github.com/URI.js/
+ * Web: http://medialize.github.io/URI.js/
  *
  * Licensed under
  *   MIT License http://www.opensource.org/licenses/mit-license
- *   GPL v3 http://opensource.org/licenses/GPL-3.0
  *
  */
 (function (root, factory) {
-    // https://github.com/umdjs/umd/blob/master/returnExports.js
-    if (typeof exports === 'object') {
-        // Node
-        module.exports = factory(require('./punycode'), require('./IPv6'), require('./SecondLevelDomains'));
-    } else if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-      // ##### BEGIN: MODIFIED BY SAP
-      // define(['./punycode', './IPv6', './SecondLevelDomains'], factory);
-      // we can't support loading URI.js via AMD define. URI.js is packaged with SAPUI5 code
-      // and define() doesn't execute synchronously. So the UI5 code executed after URI.js
-      // fails as it is missing the URI.js code.
-      // Instead we use the standard init code and only expose the result via define()
-      // The (optional) dependencies are lost or must be loaded in advance
-      root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
-      define('sap/ui/thirdparty/URI', [], function() { return root.URI; });
-      // ##### END: MODIFIED BY SAP
-    } else {
-        // Browser globals (root is window)
-        root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
-    }
+'use strict';
+// https://github.com/umdjs/umd/blob/master/returnExports.js
+if (typeof module === 'object' && module.exports) {
+    // Node
+    module.exports = factory(require('./punycode'), require('./IPv6'), require('./SecondLevelDomains'));
+} else if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    // ##### BEGIN: MODIFIED BY SAP
+    // define(['./punycode', './IPv6', './SecondLevelDomains'], factory);
+    // we can't support loading URI.js via AMD define. URI.js is packaged with SAPUI5 code
+    // and define() doesn't execute synchronously. So the UI5 code executed after URI.js
+    // fails as it is missing the URI.js code.
+    // Instead we use the standard init code and only expose the result via define()
+    // The (optional) dependencies are lost or must be loaded in advance
+    root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
+    define('sap/ui/thirdparty/URI', [], function() { return root.URI; });
+    // ##### END: MODIFIED BY SAP
+} else {
+    // Browser globals (root is window)
+    root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
+}
 }(this, function (punycode, IPv6, SLD, root) {
-"use strict";
+'use strict';
+/*global location, escape, unescape */
+// FIXME: v2.0.0 renamce non-camelCase properties to uppercase
+/*jshint camelcase: false */
 
 // save current URI variable, if any
 var _URI = root && root.URI;
 
 function URI(url, base) {
+    var _urlSupplied = arguments.length >= 1;
+    var _baseSupplied = arguments.length >= 2;
+
     // Allow instantiation without the 'new' keyword
     if (!(this instanceof URI)) {
-        return new URI(url, base);
+        if (_urlSupplied) {
+            if (_baseSupplied) {
+                return new URI(url, base);
+            }
+
+            return new URI(url);
+        }
+
+        return new URI();
     }
 
     if (url === undefined) {
+        if (_urlSupplied) {
+            throw new TypeError('undefined is not a valid argument for URI');
+        }
+
         if (typeof location !== 'undefined') {
-            url = location.href + "";
+            url = location.href + '';
         } else {
-            url = "";
+            url = '';
+        }
+    }
+
+    if (url === null) {
+        if (_urlSupplied) {
+            throw new TypeError('null is not a valid argument for URI');
         }
     }
 
@@ -60,7 +84,13 @@ function URI(url, base) {
     }
 
     return this;
-};
+}
+
+function isInteger(value) {
+    return /^[0-9]+$/.test(value);
+}
+
+URI.version = '1.19.6';
 
 var p = URI.prototype;
 var hasOwn = Object.prototype.hasOwnProperty;
@@ -80,14 +110,16 @@ function getType(value) {
 }
 
 function isArray(obj) {
-    return getType(obj) === "Array";
+    return getType(obj) === 'Array';
 }
 
 function filterArrayValues(data, value) {
     var lookup = {};
     var i, length;
 
-    if (isArray(value)) {
+    if (getType(value) === 'RegExp') {
+        lookup = null;
+    } else if (isArray(value)) {
         for (i = 0, length = value.length; i < length; i++) {
             lookup[value[i]] = true;
         }
@@ -96,7 +128,11 @@ function filterArrayValues(data, value) {
     }
 
     for (i = 0, length = data.length; i < length; i++) {
-        if (lookup[data[i]] !== undefined) {
+        /*jshint laxbreak: true */
+        var _match = lookup && lookup[data[i]] !== undefined
+            || !lookup && value.test(data[i]);
+        /*jshint laxbreak: false */
+        if (_match) {
             data.splice(i, 1);
             length--;
             i--;
@@ -157,6 +193,11 @@ function arraysEqual(one, two) {
     return true;
 }
 
+function trimSlashes(text) {
+    var trim_expression = /^\/+|\/+$/g;
+    return text.replace(trim_expression, '');
+}
+
 URI._parts = function() {
     return {
         protocol: null,
@@ -169,17 +210,22 @@ URI._parts = function() {
         query: null,
         fragment: null,
         // state
+        preventInvalidHostname: URI.preventInvalidHostname,
         duplicateQueryParameters: URI.duplicateQueryParameters,
         escapeQuerySpace: URI.escapeQuerySpace
     };
 };
+// state: throw on invalid hostname
+// see https://github.com/medialize/URI.js/pull/345
+// and https://github.com/medialize/URI.js/issues/354
+URI.preventInvalidHostname = false;
 // state: allow duplicate query parameters (a=1&a=1)
 URI.duplicateQueryParameters = false;
 // state: replaces + with %20 (space in query strings)
 URI.escapeQuerySpace = true;
 // static properties
-URI.protocol_expression = /^[a-z][a-z0-9-+-]*$/i;
-URI.idn_expression = /[^a-z0-9\.-]/i;
+URI.protocol_expression = /^[a-z][a-z0-9.+-]*$/i;
+URI.idn_expression = /[^a-z0-9\._-]/i;
 URI.punycode_expression = /(xn--)/i;
 // well, 333.444.555.666 matches, but it sure ain't no IPv4 - do we care?
 URI.ip4_expression = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
@@ -187,22 +233,41 @@ URI.ip4_expression = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 // source: http://forums.intermapper.com/viewtopic.php?p=1096#1096
 // specification: http://www.ietf.org/rfc/rfc4291.txt
 URI.ip6_expression = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
-// gruber revised expression - http://rodneyrehm.de/t/url-regex.html
+// expression used is "gruber revised" (@gruber v2) determined to be the
+// best solution in a regex-golf we did a couple of ages ago at
+// * http://mathiasbynens.be/demo/url-regex
+// * http://rodneyrehm.de/t/url-regex.html
 URI.find_uri_expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig;
+URI.findUri = {
+    // valid "scheme://" or "www."
+    start: /\b(?:([a-z][a-z0-9.+-]*:\/\/)|www\.)/gi,
+    // everything up to the next whitespace
+    end: /[\s\r\n]|$/,
+    // trim trailing punctuation captured by end RegExp
+    trim: /[`!()\[\]{};:'".,<>?«»“”„‘’]+$/,
+    // balanced parens inclusion (), [], {}, <>
+    parens: /(\([^\)]*\)|\[[^\]]*\]|\{[^}]*\}|<[^>]*>)/g,
+};
 // http://www.iana.org/assignments/uri-schemes.html
 // http://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Well-known_ports
 URI.defaultPorts = {
-    http: "80",
-    https: "443",
-    ftp: "21",
-    gopher: "70",
-    ws: "80",
-    wss: "443"
+    http: '80',
+    https: '443',
+    ftp: '21',
+    gopher: '70',
+    ws: '80',
+    wss: '443'
 };
+// list of protocols which always require a hostname
+URI.hostProtocols = [
+    'http',
+    'https'
+];
+
 // allowed hostname characters according to RFC 3986
 // ALPHA DIGIT "-" "." "_" "~" "!" "$" "&" "'" "(" ")" "*" "+" "," ";" "=" %encoded
-// I've never seen a (non-IDN) hostname other than: ALPHA DIGIT . -
-URI.invalid_hostname_characters = /[^a-zA-Z0-9\.-]/;
+// I've never seen a (non-IDN) hostname other than: ALPHA DIGIT . - _
+URI.invalid_hostname_characters = /[^a-zA-Z0-9\.\-:_]/;
 // map DOM Elements to their URI attribute
 URI.domAttributes = {
     'a': 'href',
@@ -217,7 +282,9 @@ URI.domAttributes = {
     'embed': 'src',
     'source': 'src',
     'track': 'src',
-    'input': 'src' // but only if type="image"
+    'input': 'src', // but only if type="image"
+    'audio': 'src',
+    'video': 'src'
 };
 URI.getDomAttribute = function(node) {
     if (!node || !node.nodeName) {
@@ -243,7 +310,7 @@ function strictEncodeURIComponent(string) {
     // see https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/encodeURIComponent
     return encodeURIComponent(string)
         .replace(/[!'()*]/g, escapeForDumbFirefox36)
-        .replace(/\*/g, "%2A");
+        .replace(/\*/g, '%2A');
 }
 URI.encode = strictEncodeURIComponent;
 URI.decode = decodeURIComponent;
@@ -263,22 +330,22 @@ URI.characters = {
             expression: /%(24|26|2B|2C|3B|3D|3A|40)/ig,
             map: {
                 // -._~!'()*
-                "%24": "$",
-                "%26": "&",
-                "%2B": "+",
-                "%2C": ",",
-                "%3B": ";",
-                "%3D": "=",
-                "%3A": ":",
-                "%40": "@"
+                '%24': '$',
+                '%26': '&',
+                '%2B': '+',
+                '%2C': ',',
+                '%3B': ';',
+                '%3D': '=',
+                '%3A': ':',
+                '%40': '@'
             }
         },
         decode: {
             expression: /[\/\?#]/g,
             map: {
-                "/": "%2F",
-                "?": "%3F",
-                "#": "%23"
+                '/': '%2F',
+                '?': '%3F',
+                '#': '%23'
             }
         }
     },
@@ -289,35 +356,79 @@ URI.characters = {
             expression: /%(21|23|24|26|27|28|29|2A|2B|2C|2F|3A|3B|3D|3F|40|5B|5D)/ig,
             map: {
                 // gen-delims
-                "%3A": ":",
-                "%2F": "/",
-                "%3F": "?",
-                "%23": "#",
-                "%5B": "[",
-                "%5D": "]",
-                "%40": "@",
+                '%3A': ':',
+                '%2F': '/',
+                '%3F': '?',
+                '%23': '#',
+                '%5B': '[',
+                '%5D': ']',
+                '%40': '@',
                 // sub-delims
-                "%21": "!",
-                "%24": "$",
-                "%26": "&",
-                "%27": "'",
-                "%28": "(",
-                "%29": ")",
-                "%2A": "*",
-                "%2B": "+",
-                "%2C": ",",
-                "%3B": ";",
-                "%3D": "="
+                '%21': '!',
+                '%24': '$',
+                '%26': '&',
+                '%27': '\'',
+                '%28': '(',
+                '%29': ')',
+                '%2A': '*',
+                '%2B': '+',
+                '%2C': ',',
+                '%3B': ';',
+                '%3D': '='
+            }
+        }
+    },
+    urnpath: {
+        // The characters under `encode` are the characters called out by RFC 2141 as being acceptable
+        // for usage in a URN. RFC2141 also calls out "-", ".", and "_" as acceptable characters, but
+        // these aren't encoded by encodeURIComponent, so we don't have to call them out here. Also
+        // note that the colon character is not featured in the encoding map; this is because URI.js
+        // gives the colons in URNs semantic meaning as the delimiters of path segements, and so it
+        // should not appear unencoded in a segment itself.
+        // See also the note above about RFC3986 and capitalalized hex digits.
+        encode: {
+            expression: /%(21|24|27|28|29|2A|2B|2C|3B|3D|40)/ig,
+            map: {
+                '%21': '!',
+                '%24': '$',
+                '%27': '\'',
+                '%28': '(',
+                '%29': ')',
+                '%2A': '*',
+                '%2B': '+',
+                '%2C': ',',
+                '%3B': ';',
+                '%3D': '=',
+                '%40': '@'
+            }
+        },
+        // These characters are the characters called out by RFC2141 as "reserved" characters that
+        // should never appear in a URN, plus the colon character (see note above).
+        decode: {
+            expression: /[\/\?#:]/g,
+            map: {
+                '/': '%2F',
+                '?': '%3F',
+                '#': '%23',
+                ':': '%3A'
             }
         }
     }
 };
 URI.encodeQuery = function(string, escapeQuerySpace) {
-    var escaped = URI.encode(string + "");
+    var escaped = URI.encode(string + '');
+    if (escapeQuerySpace === undefined) {
+        escapeQuerySpace = URI.escapeQuerySpace;
+    }
+
     return escapeQuerySpace ? escaped.replace(/%20/g, '+') : escaped;
 };
 URI.decodeQuery = function(string, escapeQuerySpace) {
-    string += "";
+    string += '';
+    if (escapeQuerySpace === undefined) {
+        escapeQuerySpace = URI.escapeQuerySpace;
+    }
+
     try {
         return URI.decode(escapeQuerySpace ? string.replace(/\+/g, '%20') : string);
     } catch(e) {
@@ -328,43 +439,69 @@ URI.decodeQuery = function(string, escapeQuerySpace) {
         return string;
     }
 };
-URI.recodePath = function(string) {
-    var segments = (string + "").split('/');
-    for (var i = 0, length = segments.length; i < length; i++) {
-        segments[i] = URI.encodePathSegment(URI.decode(segments[i]));
-    }
-
-    return segments.join('/');
-};
-URI.decodePath = function(string) {
-    var segments = (string + "").split('/');
-    for (var i = 0, length = segments.length; i < length; i++) {
-        segments[i] = URI.decodePathSegment(segments[i]);
-    }
-
-    return segments.join('/');
-};
 // generate encode/decode path functions
 var _parts = {'encode':'encode', 'decode':'decode'};
 var _part;
 var generateAccessor = function(_group, _part) {
     return function(string) {
-        return URI[_part](string + "").replace(URI.characters[_group][_part].expression, function(c) {
-            return URI.characters[_group][_part].map[c];
-        });
+        try {
+            return URI[_part](string + '').replace(URI.characters[_group][_part].expression, function(c) {
+                return URI.characters[_group][_part].map[c];
+            });
+        } catch (e) {
+            // we're not going to mess with weird encodings,
+            // give up and return the undecoded original string
+            // see https://github.com/medialize/URI.js/issues/87
+            // see https://github.com/medialize/URI.js/issues/92
+            return string;
+        }
     };
 };
 
 for (_part in _parts) {
-    URI[_part + "PathSegment"] = generateAccessor("pathname", _parts[_part]);
+    URI[_part + 'PathSegment'] = generateAccessor('pathname', _parts[_part]);
+    URI[_part + 'UrnPathSegment'] = generateAccessor('urnpath', _parts[_part]);
 }
 
-URI.encodeReserved = generateAccessor("reserved", "encode");
+var generateSegmentedPathFunction = function(_sep, _codingFuncName, _innerCodingFuncName) {
+    return function(string) {
+        // Why pass in names of functions, rather than the function objects themselves? The
+        // definitions of some functions (but in particular, URI.decode) will occasionally change due
+        // to URI.js having ISO8859 and Unicode modes. Passing in the name and getting it will ensure
+        // that the functions we use here are "fresh".
+        var actualCodingFunc;
+        if (!_innerCodingFuncName) {
+            actualCodingFunc = URI[_codingFuncName];
+        } else {
+            actualCodingFunc = function(string) {
+                return URI[_codingFuncName](URI[_innerCodingFuncName](string));
+            };
+        }
+
+        var segments = (string + '').split(_sep);
+
+        for (var i = 0, length = segments.length; i < length; i++) {
+            segments[i] = actualCodingFunc(segments[i]);
+        }
+
+        return segments.join(_sep);
+    };
+};
+
+// This takes place outside the above loop because we don't want, e.g., encodeUrnPath functions.
+URI.decodePath = generateSegmentedPathFunction('/', 'decodePathSegment');
+URI.decodeUrnPath = generateSegmentedPathFunction(':', 'decodeUrnPathSegment');
+URI.recodePath = generateSegmentedPathFunction('/', 'encodePathSegment', 'decode');
+URI.recodeUrnPath = generateSegmentedPathFunction(':', 'encodeUrnPathSegment', 'decode');
+
+URI.encodeReserved = generateAccessor('reserved', 'encode');
 
 URI.parse = function(string, parts) {
     var pos;
     if (!parts) {
-        parts = {};
+        parts = {
+            preventInvalidHostname: URI.preventInvalidHostname
+        };
     }
     // [protocol"://"[username[":"password]"@"]hostname[":"port]"/"?][path]["?"querystring]["#"fragment]
 
@@ -398,10 +535,7 @@ URI.parse = function(string, parts) {
             if (parts.protocol && !parts.protocol.match(URI.protocol_expression)) {
                 // : may be within the path
                 parts.protocol = undefined;
-            } else if (parts.protocol === 'file') {
-                // the file scheme: does not contain an authority
-                string = string.substring(pos + 3);
-            } else if (string.substring(pos + 1, pos + 3) === '//') {
+            } else if (string.substring(pos + 1, pos + 3).replace(/\\/g, '/') === '//') {
                 string = string.substring(pos + 3);
 
                 // extract "user:pass@host:port"
@@ -420,6 +554,17 @@ URI.parse = function(string, parts) {
     return parts;
 };
 URI.parseHost = function(string, parts) {
+    if (!string) {
+        string = '';
+    }
+
+    // Copy chrome, IE, opera backslash-handling behavior.
+    // Back slashes before the query string get converted to forward slashes
+    // See: https://github.com/joyent/node/blob/386fd24f49b0e9d1a8a076592a404168faeecc34/lib/url.js#L115-L124
+    // See: https://code.google.com/p/chromium/issues/detail?id=25916
+    // https://github.com/medialize/URI.js/pull/233
+    string = string.replace(/\\/g, '/');
+
     // extract host:port
     var pos = string.indexOf('/');
     var bracketPos;
@@ -429,27 +574,43 @@ URI.parseHost = function(string, parts) {
         pos = string.length;
     }
 
-    if (string.charAt(0) === "[") {
+    if (string.charAt(0) === '[') {
         // IPv6 host - http://tools.ietf.org/html/draft-ietf-6man-text-addr-representation-04#section-6
         // I claim most client software breaks on IPv6 anyways. To simplify things, URI only accepts
         // IPv6+port in the format [2001:db8::1]:80 (for the time being)
         bracketPos = string.indexOf(']');
         parts.hostname = string.substring(1, bracketPos) || null;
-        parts.port = string.substring(bracketPos+2, pos) || null;
-    } else if (string.indexOf(':') !== string.lastIndexOf(':')) {
-        // IPv6 host contains multiple colons - but no port
-        // this notation is actually not allowed by RFC 3986, but we're a liberal parser
-        parts.hostname = string.substring(0, pos) || null;
-        parts.port = null;
+        parts.port = string.substring(bracketPos + 2, pos) || null;
+        if (parts.port === '/') {
+            parts.port = null;
+        }
     } else {
-        t = string.substring(0, pos).split(':');
-        parts.hostname = t[0] || null;
-        parts.port = t[1] || null;
+        var firstColon = string.indexOf(':');
+        var firstSlash = string.indexOf('/');
+        var nextColon = string.indexOf(':', firstColon + 1);
+        if (nextColon !== -1 && (firstSlash === -1 || nextColon < firstSlash)) {
+            // IPv6 host contains multiple colons - but no port
+            // this notation is actually not allowed by RFC 3986, but we're a liberal parser
+            parts.hostname = string.substring(0, pos) || null;
+            parts.port = null;
+        } else {
+            t = string.substring(0, pos).split(':');
+            parts.hostname = t[0] || null;
+            parts.port = t[1] || null;
+        }
     }
 
     if (parts.hostname && string.substring(pos).charAt(0) !== '/') {
         pos++;
-        string = "/" + string;
+        string = '/' + string;
+    }
+
+    if (parts.preventInvalidHostname) {
+        URI.ensureValidHostname(parts.hostname, parts.protocol);
+    }
+
+    if (parts.port) {
+        URI.ensureValidPort(parts.port);
     }
 
     return string.substring(pos) || '/';
@@ -460,19 +621,22 @@ URI.parseAuthority = function(string, parts) {
 };
 URI.parseUserinfo = function(string, parts) {
     // extract username:password
+    var _string = string
+    var firstBackSlash = string.indexOf('\\');
+    if (firstBackSlash !== -1) {
+        string = string.replace(/\\/g, '/')
+    }
     var firstSlash = string.indexOf('/');
-    var pos = firstSlash > -1
-        ? string.lastIndexOf('@', firstSlash)
-        : string.indexOf('@');
+    var pos = string.lastIndexOf('@', firstSlash > -1 ? firstSlash : string.length - 1);
     var t;
 
-    // authority@ must come before /path
+    // authority@ must come before /path or \path
     if (pos > -1 && (firstSlash === -1 || pos < firstSlash)) {
         t = string.substring(0, pos).split(':');
         parts.username = t[0] ? URI.decode(t[0]) : null;
         t.shift();
         parts.password = t[0] ? URI.decode(t.join(':')) : null;
-        string = string.substring(pos + 1);
+        string = _string.substring(pos + 1);
     } else {
         parts.username = null;
         parts.password = null;
@@ -503,8 +667,8 @@ URI.parseQuery = function(string, escapeQuerySpace) {
         // no "=" is null according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#collect-url-parameters
         value = v.length ? URI.decodeQuery(v.join('='), escapeQuerySpace) : null;
 
-        if (items[name]) {
-            if (typeof items[name] === "string") {
+        if (hasOwn.call(items, name)) {
+            if (typeof items[name] === 'string' || items[name] === null) {
                 items[name] = [items[name]];
             }
 
@@ -518,53 +682,50 @@ URI.parseQuery = function(string, escapeQuerySpace) {
 };
 
 URI.build = function(parts) {
-    var t = "";
+    var t = '';
+    var requireAbsolutePath = false
 
     if (parts.protocol) {
-        t += parts.protocol + ":";
+        t += parts.protocol + ':';
     }
 
     if (!parts.urn && (t || parts.hostname)) {
         t += '//';
+        requireAbsolutePath = true
     }
 
     t += (URI.buildAuthority(parts) || '');
 
-    if (typeof parts.path === "string") {
-        if (parts.path.charAt(0) !== '/' && typeof parts.hostname === "string") {
+    if (typeof parts.path === 'string') {
+        if (parts.path.charAt(0) !== '/' && requireAbsolutePath) {
             t += '/';
         }
 
         t += parts.path;
     }
 
-    if (typeof parts.query === "string" && parts.query) {
+    if (typeof parts.query === 'string' && parts.query) {
         t += '?' + parts.query;
     }
 
-    if (typeof parts.fragment === "string" && parts.fragment) {
+    if (typeof parts.fragment === 'string' && parts.fragment) {
         t += '#' + parts.fragment;
     }
     return t;
 };
 URI.buildHost = function(parts) {
-    var t = "";
+    var t = '';
 
     if (!parts.hostname) {
-        return "";
+        return '';
     } else if (URI.ip6_expression.test(parts.hostname)) {
-        if (parts.port) {
-            t += "[" + parts.hostname + "]:" + parts.port;
-        } else {
-            // don't know if we should always wrap IPv6 in []
-            // the RFC explicitly says SHOULD, not MUST.
-            t += parts.hostname;
-        }
+        t += '[' + parts.hostname + ']';
     } else {
         t += parts.hostname;
-        if (parts.port) {
-            t += ':' + parts.port;
-        }
+    }
+
+    if (parts.port) {
+        t += ':' + parts.port;
     }
 
     return t;
@@ -573,16 +734,18 @@ URI.buildAuthority = function(parts) {
     return URI.buildUserinfo(parts) + URI.buildHost(parts);
 };
 URI.buildUserinfo = function(parts) {
-    var t = "";
+    var t = '';
 
     if (parts.username) {
         t += URI.encode(parts.username);
+    }
 
-        if (parts.password) {
-            t += ':' + URI.encode(parts.password);
-        }
+    if (parts.password) {
+        t += ':' + URI.encode(parts.password);
+    }
 
-        t += "@";
+    if (t) {
+        t += '@';
     }
 
     return t;
@@ -594,17 +757,17 @@ URI.buildQuery = function(data, duplicateQueryParameters, escapeQuerySpace) {
     // URI.js treats the query string as being application/x-www-form-urlencoded
     // see http://www.w3.org/TR/REC-html40/interact/forms.html#form-content-type
 
-    var t = "";
+    var t = '';
     var unique, key, i, length;
     for (key in data) {
-        if (hasOwn.call(data, key) && key) {
+        if (hasOwn.call(data, key)) {
             if (isArray(data[key])) {
                 unique = {};
                 for (i = 0, length = data[key].length; i < length; i++) {
-                    if (data[key][i] !== undefined && unique[data[key][i] + ""] === undefined) {
-                        t += "&" + URI.buildQueryParameter(key, data[key][i], escapeQuerySpace);
+                    if (data[key][i] !== undefined && unique[data[key][i] + ''] === undefined) {
+                        t += '&' + URI.buildQueryParameter(key, data[key][i], escapeQuerySpace);
                         if (duplicateQueryParameters !== true) {
-                            unique[data[key][i] + ""] = true;
+                            unique[data[key][i] + ''] = true;
                         }
                     }
                 }
@@ -619,21 +782,21 @@ URI.buildQuery = function(data, duplicateQueryParameters, escapeQuerySpace) {
 URI.buildQueryParameter = function(name, value, escapeQuerySpace) {
     // http://www.w3.org/TR/REC-html40/interact/forms.html#form-content-type -- application/x-www-form-urlencoded
     // don't append "=" for null values, according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#url-parameter-serialization
-    return URI.encodeQuery(name, escapeQuerySpace) + (value !== null ? "=" + URI.encodeQuery(value, escapeQuerySpace) : "");
+    return URI.encodeQuery(name, escapeQuerySpace) + (value !== null ? '=' + URI.encodeQuery(value, escapeQuerySpace) : '');
 };
 
 URI.addQuery = function(data, name, value) {
-    if (typeof name === "object") {
+    if (typeof name === 'object') {
         for (var key in name) {
             if (hasOwn.call(name, key)) {
                 URI.addQuery(data, key, name[key]);
             }
         }
-    } else if (typeof name === "string") {
+    } else if (typeof name === 'string') {
         if (data[name] === undefined) {
             data[name] = value;
             return;
-        } else if (typeof data[name] === "string") {
+        } else if (typeof data[name] === 'string') {
             data[name] = [data[name]];
         }
 
@@ -641,11 +804,26 @@ URI.addQuery = function(data, name, value) {
             value = [value];
         }
 
-        data[name] = data[name].concat(value);
+        data[name] = (data[name] || []).concat(value);
     } else {
-        throw new TypeError("URI.addQuery() accepts an object, string as the name parameter");
+        throw new TypeError('URI.addQuery() accepts an object, string as the name parameter');
     }
 };
+
+URI.setQuery = function(data, name, value) {
+    if (typeof name === 'object') {
+        for (var key in name) {
+            if (hasOwn.call(name, key)) {
+                URI.setQuery(data, key, name[key]);
+            }
+        }
+    } else if (typeof name === 'string') {
+        data[name] = value === undefined ? null : value;
+    } else {
+        throw new TypeError('URI.setQuery() accepts an object, string as the name parameter');
+    }
+};
+
 URI.removeQuery = function(data, name, value) {
     var i, length, key;
 
@@ -653,15 +831,27 @@ URI.removeQuery = function(data, name, value) {
         for (i = 0, length = name.length; i < length; i++) {
             data[name[i]] = undefined;
         }
-    } else if (typeof name === "object") {
+    } else if (getType(name) === 'RegExp') {
+        for (key in data) {
+            if (name.test(key)) {
+                data[key] = undefined;
+            }
+        }
+    } else if (typeof name === 'object') {
         for (key in name) {
             if (hasOwn.call(name, key)) {
                 URI.removeQuery(data, key, name[key]);
             }
         }
-    } else if (typeof name === "string") {
+    } else if (typeof name === 'string') {
         if (value !== undefined) {
-            if (data[name] === value) {
+            if (getType(value) === 'RegExp') {
+                if (!isArray(data[name]) && value.test(data[name])) {
+                    data[name] = undefined;
+                } else {
+                    data[name] = filterArrayValues(data[name], value);
+                }
+            } else if (data[name] === String(value) && (!isArray(value) || value.length === 1)) {
                 data[name] = undefined;
             } else if (isArray(data[name])) {
                 data[name] = filterArrayValues(data[name], value);
@@ -670,22 +860,39 @@ URI.removeQuery = function(data, name, value) {
             data[name] = undefined;
         }
     } else {
-        throw new TypeError("URI.addQuery() accepts an object, string as the first parameter");
+        throw new TypeError('URI.removeQuery() accepts an object, string, RegExp as the first parameter');
     }
 };
 URI.hasQuery = function(data, name, value, withinArray) {
-    if (typeof name === "object") {
-        for (var key in name) {
-            if (hasOwn.call(name, key)) {
-                if (!URI.hasQuery(data, key, name[key])) {
-                    return false;
+    switch (getType(name)) {
+        case 'String':
+            // Nothing to do here
+            break;
+
+        case 'RegExp':
+            for (var key in data) {
+                if (hasOwn.call(data, key)) {
+                    if (name.test(key) && (value === undefined || URI.hasQuery(data, key, value))) {
+                        return true;
+                    }
                 }
             }
-        }
 
-        return true;
-    } else if (typeof name !== "string") {
-        throw new TypeError("URI.hasQuery() accepts an object, string as the name parameter");
+            return false;
+
+        case 'Object':
+            for (var _key in name) {
+                if (hasOwn.call(name, _key)) {
+                    if (!URI.hasQuery(data, _key, name[_key])) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+
+        default:
+            throw new TypeError('URI.hasQuery() accepts a string, regular expression or object as the name parameter');
     }
 
     switch (getType(value)) {
@@ -723,7 +930,7 @@ URI.hasQuery = function(data, name, value, withinArray) {
 
         case 'Number':
             value = String(value);
-            // omit break;
+        /* falls through */
         case 'String':
             if (!isArray(data[name])) {
                 return data[name] === value;
@@ -736,10 +943,43 @@ URI.hasQuery = function(data, name, value, withinArray) {
             return arrayContains(data[name], value);
 
         default:
-            throw new TypeError("URI.hasQuery() accepts undefined, boolean, string, number, RegExp, Function as the value parameter");
+            throw new TypeError('URI.hasQuery() accepts undefined, boolean, string, number, RegExp, Function as the value parameter');
     }
 };
 
+
+URI.joinPaths = function() {
+    var input = [];
+    var segments = [];
+    var nonEmptySegments = 0;
+
+    for (var i = 0; i < arguments.length; i++) {
+        var url = new URI(arguments[i]);
+        input.push(url);
+        var _segments = url.segment();
+        for (var s = 0; s < _segments.length; s++) {
+            if (typeof _segments[s] === 'string') {
+                segments.push(_segments[s]);
+            }
+
+            if (_segments[s]) {
+                nonEmptySegments++;
+            }
+        }
+    }
+
+    if (!segments.length || !nonEmptySegments) {
+        return new URI('');
+    }
+
+    var uri = new URI('').segment(segments);
+
+    if (input[0].path() === '' || input[0].path().slice(0, 1) === '/') {
+        uri.path('/' + uri.path());
+    }
+
+    return uri.normalize();
+};
 
 URI.commonPath = function(one, two) {
     var length = Math.min(one.length, two.length);
@@ -765,29 +1005,112 @@ URI.commonPath = function(one, two) {
     return one.substring(0, pos + 1);
 };
 
-URI.withinString = function(string, callback) {
-    // expression used is "gruber revised" (@gruber v2) determined to be the best solution in
-    // a regex sprint we did a couple of ages ago at
-    // * http://mathiasbynens.be/demo/url-regex
-    // * http://rodneyrehm.de/t/url-regex.html
+URI.withinString = function(string, callback, options) {
+    options || (options = {});
+    var _start = options.start || URI.findUri.start;
+    var _end = options.end || URI.findUri.end;
+    var _trim = options.trim || URI.findUri.trim;
+    var _parens = options.parens || URI.findUri.parens;
+    var _attributeOpen = /[a-z0-9-]=["']?$/i;
 
-    return string.replace(URI.find_uri_expression, callback);
+    _start.lastIndex = 0;
+    while (true) {
+        var match = _start.exec(string);
+        if (!match) {
+            break;
+        }
+
+        var start = match.index;
+        if (options.ignoreHtml) {
+            // attribut(e=["']?$)
+            var attributeOpen = string.slice(Math.max(start - 3, 0), start);
+            if (attributeOpen && _attributeOpen.test(attributeOpen)) {
+                continue;
+            }
+        }
+
+        var end = start + string.slice(start).search(_end);
+        var slice = string.slice(start, end);
+        // make sure we include well balanced parens
+        var parensEnd = -1;
+        while (true) {
+            var parensMatch = _parens.exec(slice);
+            if (!parensMatch) {
+                break;
+            }
+
+            var parensMatchEnd = parensMatch.index + parensMatch[0].length;
+            parensEnd = Math.max(parensEnd, parensMatchEnd);
+        }
+
+        if (parensEnd > -1) {
+            slice = slice.slice(0, parensEnd) + slice.slice(parensEnd).replace(_trim, '');
+        } else {
+            slice = slice.replace(_trim, '');
+        }
+
+        if (slice.length <= match[0].length) {
+            // the extract only contains the starting marker of a URI,
+            // e.g. "www" or "http://"
+            continue;
+        }
+
+        if (options.ignore && options.ignore.test(slice)) {
+            continue;
+        }
+
+        end = start + slice.length;
+        var result = callback(slice, start, end, string);
+        if (result === undefined) {
+            _start.lastIndex = end;
+            continue;
+        }
+
+        result = String(result);
+        string = string.slice(0, start) + result + string.slice(end);
+        _start.lastIndex = start + result.length;
+    }
+
+    _start.lastIndex = 0;
+    return string;
 };
 
-URI.ensureValidHostname = function(v) {
+URI.ensureValidHostname = function(v, protocol) {
     // Theoretically URIs allow percent-encoding in Hostnames (according to RFC 3986)
     // they are not part of DNS and therefore ignored by URI.js
 
-    if (v.match(URI.invalid_hostname_characters)) {
+    var hasHostname = !!v; // not null and not an empty string
+    var hasProtocol = !!protocol;
+    var rejectEmptyHostname = false;
+
+    if (hasProtocol) {
+        rejectEmptyHostname = arrayContains(URI.hostProtocols, protocol);
+    }
+
+    if (rejectEmptyHostname && !hasHostname) {
+        throw new TypeError('Hostname cannot be empty, if protocol is ' + protocol);
+    } else if (v && v.match(URI.invalid_hostname_characters)) {
         // test punycode
         if (!punycode) {
-            throw new TypeError("Hostname '" + v + "' contains characters other than [A-Z0-9.-] and Punycode.js is not available");
+            throw new TypeError('Hostname "' + v + '" contains characters other than [A-Z0-9.-:_] and Punycode.js is not available');
         }
-
         if (punycode.toASCII(v).match(URI.invalid_hostname_characters)) {
-            throw new TypeError("Hostname '" + v + "' contains characters other than [A-Z0-9.-]");
+            throw new TypeError('Hostname "' + v + '" contains characters other than [A-Z0-9.-:_]');
         }
     }
+};
+
+URI.ensureValidPort = function (v) {
+    if (!v) {
+        return;
+    }
+
+    var port = Number(v);
+    if (isInteger(port) && (port > 0) && (port < 65536)) {
+        return;
+    }
+
+    throw new TypeError('Port "' + v + '" is not a valid port');
 };
 
 // noConflict
@@ -797,16 +1120,16 @@ URI.noConflict = function(removeAll) {
             URI: this.noConflict()
         };
 
-        if (URITemplate && typeof URITemplate.noConflict == "function") {
-            unconflicted.URITemplate = URITemplate.noConflict();
+        if (root.URITemplate && typeof root.URITemplate.noConflict === 'function') {
+            unconflicted.URITemplate = root.URITemplate.noConflict();
         }
 
-        if (IPv6 && typeof IPv6.noConflict == "function") {
-            unconflicted.IPv6 = IPv6.noConflict();
+        if (root.IPv6 && typeof root.IPv6.noConflict === 'function') {
+            unconflicted.IPv6 = root.IPv6.noConflict();
         }
 
-        if (SecondLevelDomains && typeof SecondLevelDomains.noConflict == "function") {
-            unconflicted.SecondLevelDomains = SecondLevelDomains.noConflict();
+        if (root.SecondLevelDomains && typeof root.SecondLevelDomains.noConflict === 'function') {
+            unconflicted.SecondLevelDomains = root.SecondLevelDomains.noConflict();
         }
 
         return unconflicted;
@@ -836,33 +1159,26 @@ p.valueOf = p.toString = function() {
     return this.build(false)._string;
 };
 
-// generate simple accessors
-_parts = {protocol: 'protocol', username: 'username', password: 'password', hostname: 'hostname',  port: 'port'};
-generateAccessor = function(_part){
+
+function generateSimpleAccessor(_part){
     return function(v, build) {
         if (v === undefined) {
-            return this._parts[_part] || "";
+            return this._parts[_part] || '';
         } else {
             this._parts[_part] = v || null;
             this.build(!build);
             return this;
         }
     };
-};
-
-for (_part in _parts) {
-    p[_part] = generateAccessor(_parts[_part]);
 }
 
-// generate accessors with optionally prefixed input
-_parts = {query: '?', fragment: '#'};
-generateAccessor = function(_part, _key){
+function generatePrefixAccessor(_part, _key){
     return function(v, build) {
         if (v === undefined) {
-            return this._parts[_part] || "";
+            return this._parts[_part] || '';
         } else {
             if (v !== null) {
-                v = v + "";
+                v = v + '';
                 if (v.charAt(0) === _key) {
                     v = v.substring(1);
                 }
@@ -873,31 +1189,35 @@ generateAccessor = function(_part, _key){
             return this;
         }
     };
-};
-
-for (_part in _parts) {
-    p[_part] = generateAccessor(_part, _parts[_part]);
 }
 
-// generate accessors with prefixed output
-_parts = {search: ['?', 'query'], hash: ['#', 'fragment']};
-generateAccessor = function(_part, _key){
-    return function(v, build) {
-        var t = this[_part](v, build);
-        return typeof t === "string" && t.length ? (_key + t) : t;
-    };
-};
+p.protocol = generateSimpleAccessor('protocol');
+p.username = generateSimpleAccessor('username');
+p.password = generateSimpleAccessor('password');
+p.hostname = generateSimpleAccessor('hostname');
+p.port = generateSimpleAccessor('port');
+p.query = generatePrefixAccessor('query', '?');
+p.fragment = generatePrefixAccessor('fragment', '#');
 
-for (_part in _parts) {
-    p[_part] = generateAccessor(_parts[_part][1], _parts[_part][0]);
-}
+p.search = function(v, build) {
+    var t = this.query(v, build);
+    return typeof t === 'string' && t.length ? ('?' + t) : t;
+};
+p.hash = function(v, build) {
+    var t = this.fragment(v, build);
+    return typeof t === 'string' && t.length ? ('#' + t) : t;
+};
 
 p.pathname = function(v, build) {
     if (v === undefined || v === true) {
         var res = this._parts.path || (this._parts.hostname ? '/' : '');
-        return v ? URI.decodePath(res) : res;
+        return v ? (this._parts.urn ? URI.decodeUrnPath : URI.decodePath)(res) : res;
     } else {
-        this._parts.path = v ? URI.recodePath(v) : "/";
+        if (this._parts.urn) {
+            this._parts.path = v ? URI.recodeUrnPath(v) : '';
+        } else {
+            this._parts.path = v ? URI.recodePath(v) : '/';
+        }
         this.build(!build);
         return this;
     }
@@ -910,14 +1230,14 @@ p.href = function(href, build) {
         return this.toString();
     }
 
-    this._string = "";
+    this._string = '';
     this._parts = URI._parts();
 
     var _URI = href instanceof URI;
-    var _object = typeof href === "object" && (href.hostname || href.path || href.pathname);
+    var _object = typeof href === 'object' && (href.hostname || href.path || href.pathname);
     if (href.nodeName) {
         var attribute = URI.getDomAttribute(href);
-        href = href[attribute] || "";
+        href = href[attribute] || '';
         _object = false;
     }
 
@@ -932,17 +1252,21 @@ p.href = function(href, build) {
         href = href.toString();
     }
 
-    if (typeof href === "string") {
-        this._parts = URI.parse(href, this._parts);
+    if (typeof href === 'string' || href instanceof String) {
+        this._parts = URI.parse(String(href), this._parts);
     } else if (_URI || _object) {
         var src = _URI ? href._parts : href;
         for (key in src) {
+            if (key === 'query') { continue; }
             if (hasOwn.call(this._parts, key)) {
                 this._parts[key] = src[key];
             }
         }
+        if (src.query) {
+            this.query(src.query, false);
+        }
     } else {
-        throw new TypeError("invalid input");
+        throw new TypeError('invalid input');
     }
 
     this.build(!build);
@@ -1021,16 +1345,15 @@ var _port = p.port;
 var _hostname = p.hostname;
 
 p.protocol = function(v, build) {
-    if (v !== undefined) {
-        if (v) {
-            // accept trailing ://
-            v = v.replace(/:(\/\/)?$/, '');
+    if (v) {
+        // accept trailing ://
+        v = v.replace(/:(\/\/)?$/, '');
 
-            if (v.match(/[^a-zA-z0-9\.+-]/)) {
-                throw new TypeError("Protocol '" + v + "' contains characters other than [A-Z0-9.+-]");
-            }
+        if (!v.match(URI.protocol_expression)) {
+            throw new TypeError('Protocol "' + v + '" contains characters other than [A-Z0-9.+-] or doesn\'t start with [A-Z]');
         }
     }
+
     return _protocol.call(this, v, build);
 };
 p.scheme = p.protocol;
@@ -1045,14 +1368,12 @@ p.port = function(v, build) {
         }
 
         if (v) {
-            v += "";
-            if (v.charAt(0) === ":") {
+            v += '';
+            if (v.charAt(0) === ':') {
                 v = v.substring(1);
             }
 
-            if (v.match(/[^0-9]/)) {
-                throw new TypeError("Port '" + v + "' contains characters other than [0-9]");
-            }
+            URI.ensureValidPort(v);
         }
     }
     return _port.call(this, v, build);
@@ -1063,23 +1384,57 @@ p.hostname = function(v, build) {
     }
 
     if (v !== undefined) {
-        var x = {};
-        URI.parseHost(v, x);
+        var x = { preventInvalidHostname: this._parts.preventInvalidHostname };
+        var res = URI.parseHost(v, x);
+        if (res !== '/') {
+            throw new TypeError('Hostname "' + v + '" contains characters other than [A-Z0-9.-]');
+        }
+
         v = x.hostname;
+        if (this._parts.preventInvalidHostname) {
+            URI.ensureValidHostname(v, this._parts.protocol);
+        }
     }
+
     return _hostname.call(this, v, build);
 };
 
 // compound accessors
+p.origin = function(v, build) {
+    if (this._parts.urn) {
+        return v === undefined ? '' : this;
+    }
+
+    if (v === undefined) {
+        var protocol = this.protocol();
+        var authority = this.authority();
+        if (!authority) {
+            return '';
+        }
+
+        return (protocol ? protocol + '://' : '') + this.authority();
+    } else {
+        var origin = URI(v);
+        this
+        .protocol(origin.protocol())
+        .authority(origin.authority())
+        .build(!build);
+        return this;
+    }
+};
 p.host = function(v, build) {
     if (this._parts.urn) {
         return v === undefined ? '' : this;
     }
 
     if (v === undefined) {
-        return this._parts.hostname ? URI.buildHost(this._parts) : "";
+        return this._parts.hostname ? URI.buildHost(this._parts) : '';
     } else {
-        URI.parseHost(v, this._parts);
+        var res = URI.parseHost(v, this._parts);
+        if (res !== '/') {
+            throw new TypeError('Hostname "' + v + '" contains characters other than [A-Z0-9.-]');
+        }
+
         this.build(!build);
         return this;
     }
@@ -1090,9 +1445,13 @@ p.authority = function(v, build) {
     }
 
     if (v === undefined) {
-        return this._parts.hostname ? URI.buildAuthority(this._parts) : "";
+        return this._parts.hostname ? URI.buildAuthority(this._parts) : '';
     } else {
-        URI.parseAuthority(v, this._parts);
+        var res = URI.parseAuthority(v, this._parts);
+        if (res !== '/') {
+            throw new TypeError('Hostname "' + v + '" contains characters other than [A-Z0-9.-]');
+        }
+
         this.build(!build);
         return this;
     }
@@ -1103,12 +1462,8 @@ p.userinfo = function(v, build) {
     }
 
     if (v === undefined) {
-        if (!this._parts.username) {
-            return "";
-        }
-
         var t = URI.buildUserinfo(this._parts);
-        return t.substring(0, t.length -1);
+        return t ? t.substring(0, t.length -1) : t;
     } else {
         if (v[v.length-1] !== '@') {
             v += '@';
@@ -1143,23 +1498,27 @@ p.subdomain = function(v, build) {
     // convenience, return "www" from "www.example.org"
     if (v === undefined) {
         if (!this._parts.hostname || this.is('IP')) {
-            return "";
+            return '';
         }
 
         // grab domain and add another segment
         var end = this._parts.hostname.length - this.domain().length - 1;
-        return this._parts.hostname.substring(0, end) || "";
+        return this._parts.hostname.substring(0, end) || '';
     } else {
         var e = this._parts.hostname.length - this.domain().length;
         var sub = this._parts.hostname.substring(0, e);
         var replace = new RegExp('^' + escapeRegEx(sub));
 
         if (v && v.charAt(v.length - 1) !== '.') {
-            v += ".";
+            v += '.';
+        }
+
+        if (v.indexOf(':') !== -1) {
+            throw new TypeError('Domains cannot contain colons');
         }
 
         if (v) {
-            URI.ensureValidHostname(v);
+            URI.ensureValidHostname(v, this._parts.protocol);
         }
 
         this._parts.hostname = this._parts.hostname.replace(replace, v);
@@ -1180,7 +1539,7 @@ p.domain = function(v, build) {
     // convenience, return "example.org" from "www.example.org"
     if (v === undefined) {
         if (!this._parts.hostname || this.is('IP')) {
-            return "";
+            return '';
         }
 
         // if hostname consists of 1 or 2 segments, it must be the domain
@@ -1192,18 +1551,22 @@ p.domain = function(v, build) {
         // grab tld and add another segment
         var end = this._parts.hostname.length - this.tld(build).length - 1;
         end = this._parts.hostname.lastIndexOf('.', end -1) + 1;
-        return this._parts.hostname.substring(end) || "";
+        return this._parts.hostname.substring(end) || '';
     } else {
         if (!v) {
-            throw new TypeError("cannot set domain empty");
+            throw new TypeError('cannot set domain empty');
         }
 
-        URI.ensureValidHostname(v);
+        if (v.indexOf(':') !== -1) {
+            throw new TypeError('Domains cannot contain colons');
+        }
+
+        URI.ensureValidHostname(v, this._parts.protocol);
 
         if (!this._parts.hostname || this.is('IP')) {
             this._parts.hostname = v;
         } else {
-            var replace = new RegExp(escapeRegEx(this.domain()) + "$");
+            var replace = new RegExp(escapeRegEx(this.domain()) + '$');
             this._parts.hostname = this._parts.hostname.replace(replace, v);
         }
 
@@ -1224,7 +1587,7 @@ p.tld = function(v, build) {
     // return "org" from "www.example.org"
     if (v === undefined) {
         if (!this._parts.hostname || this.is('IP')) {
-            return "";
+            return '';
         }
 
         var pos = this._parts.hostname.lastIndexOf('.');
@@ -1239,18 +1602,18 @@ p.tld = function(v, build) {
         var replace;
 
         if (!v) {
-            throw new TypeError("cannot set TLD empty");
+            throw new TypeError('cannot set TLD empty');
         } else if (v.match(/[^a-zA-Z0-9-]/)) {
             if (SLD && SLD.is(v)) {
-                replace = new RegExp(escapeRegEx(this.tld()) + "$");
+                replace = new RegExp(escapeRegEx(this.tld()) + '$');
                 this._parts.hostname = this._parts.hostname.replace(replace, v);
             } else {
-                throw new TypeError("TLD '" + v + "' contains characters other than [A-Z0-9]");
+                throw new TypeError('TLD "' + v + '" contains characters other than [A-Z0-9]');
             }
         } else if (!this._parts.hostname || this.is('IP')) {
-            throw new ReferenceError("cannot set TLD on non-domain host");
+            throw new ReferenceError('cannot set TLD on non-domain host');
         } else {
-            replace = new RegExp(escapeRegEx(this.tld()) + "$");
+            replace = new RegExp(escapeRegEx(this.tld()) + '$');
             this._parts.hostname = this._parts.hostname.replace(replace, v);
         }
 
@@ -1273,7 +1636,7 @@ p.directory = function(v, build) {
         }
 
         var end = this._parts.path.length - this.filename().length - 1;
-        var res = this._parts.path.substring(0, end) || (this._parts.hostname ? "/" : "");
+        var res = this._parts.path.substring(0, end) || (this._parts.hostname ? '/' : '');
 
         return v ? URI.decodePath(res) : res;
 
@@ -1289,7 +1652,7 @@ p.directory = function(v, build) {
             }
 
             if (v.charAt(0) !== '/') {
-                v = "/" + v;
+                v = '/' + v;
             }
         }
 
@@ -1309,9 +1672,9 @@ p.filename = function(v, build) {
         return v === undefined ? '' : this;
     }
 
-    if (v === undefined || v === true) {
+    if (typeof v !== 'string') {
         if (!this._parts.path || this._parts.path === '/') {
-            return "";
+            return '';
         }
 
         var pos = this._parts.path.lastIndexOf('/');
@@ -1329,7 +1692,7 @@ p.filename = function(v, build) {
             mutatedDirectory = true;
         }
 
-        var replace = new RegExp(escapeRegEx(this.filename()) + "$");
+        var replace = new RegExp(escapeRegEx(this.filename()) + '$');
         v = URI.recodePath(v);
         this._parts.path = this._parts.path.replace(replace, v);
 
@@ -1349,7 +1712,7 @@ p.suffix = function(v, build) {
 
     if (v === undefined || v === true) {
         if (!this._parts.path || this._parts.path === '/') {
-            return "";
+            return '';
         }
 
         var filename = this.filename();
@@ -1357,12 +1720,12 @@ p.suffix = function(v, build) {
         var s, res;
 
         if (pos === -1) {
-            return "";
+            return '';
         }
 
         // suffix may only contain alnum characters (yup, I made this up.)
         s = filename.substring(pos+1);
-        res = (/^[a-z0-9%]+$/i).test(s) ? s : "";
+        res = (/^[a-z0-9%]+$/i).test(s) ? s : '';
         return v ? URI.decodePathSegment(res) : res;
     } else {
         if (v.charAt(0) === '.') {
@@ -1379,9 +1742,9 @@ p.suffix = function(v, build) {
 
             this._parts.path += '.' + URI.recodePath(v);
         } else if (!v) {
-            replace = new RegExp(escapeRegEx("." + suffix) + "$");
+            replace = new RegExp(escapeRegEx('.' + suffix) + '$');
         } else {
-            replace = new RegExp(escapeRegEx(suffix) + "$");
+            replace = new RegExp(escapeRegEx(suffix) + '$');
         }
 
         if (replace) {
@@ -1406,7 +1769,7 @@ p.segment = function(segment, v, build) {
     }
 
     if (segment !== undefined && typeof segment !== 'number') {
-        throw new Error("Bad segment '" + segment + "', must be 0-based integer");
+        throw new Error('Bad segment "' + segment + '", must be 0-based integer');
     }
 
     if (absolute) {
@@ -1419,9 +1782,11 @@ p.segment = function(segment, v, build) {
     }
 
     if (v === undefined) {
+        /*jshint laxbreak: true */
         return segment === undefined
             ? segments
             : segments[segment];
+        /*jshint laxbreak: false */
     } else if (segment === null || segments[segment] === undefined) {
         if (isArray(v)) {
             segments = [];
@@ -1435,10 +1800,11 @@ p.segment = function(segment, v, build) {
                     segments.pop();
                 }
 
-                segments.push(v[i]);
+                segments.push(trimSlashes(v[i]));
             }
-        } else if (v || (typeof v === "string")) {
-            if (segments[segments.length -1] === "") {
+        } else if (v || typeof v === 'string') {
+            v = trimSlashes(v);
+            if (segments[segments.length -1] === '') {
                 // empty trailing elements have to be overwritten
                 // to prevent results such as /foo//bar
                 segments[segments.length -1] = v;
@@ -1447,15 +1813,15 @@ p.segment = function(segment, v, build) {
             }
         }
     } else {
-        if (v || (typeof v === "string" && v.length)) {
-            segments[segment] = v;
+        if (v) {
+            segments[segment] = trimSlashes(v);
         } else {
             segments.splice(segment, 1);
         }
     }
 
     if (absolute) {
-        segments.unshift("");
+        segments.unshift('');
     }
 
     return this.path(segments.join(separator), build);
@@ -1483,10 +1849,10 @@ p.segmentCoded = function(segment, v, build) {
     }
 
     if (!isArray(v)) {
-        v = typeof v === 'string' ? URI.encode(v) : v;
+        v = (typeof v === 'string' || v instanceof String) ? URI.encode(v) : v;
     } else {
         for (i = 0, l = v.length; i < l; i++) {
-            v[i] = URI.decode(v[i]);
+            v[i] = URI.encode(v[i]);
         }
     }
 
@@ -1498,13 +1864,13 @@ var q = p.query;
 p.query = function(v, build) {
     if (v === true) {
         return URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
-    } else if (typeof v === "function") {
+    } else if (typeof v === 'function') {
         var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
         var result = v.call(this, data);
         this._parts.query = URI.buildQuery(result || data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
         this.build(!build);
         return this;
-    } else if (v !== undefined && typeof v !== "string") {
+    } else if (v !== undefined && typeof v !== 'string') {
         this._parts.query = URI.buildQuery(v, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
         this.build(!build);
         return this;
@@ -1515,20 +1881,20 @@ p.query = function(v, build) {
 p.setQuery = function(name, value, build) {
     var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
 
-    if (typeof name === "object") {
+    if (typeof name === 'string' || name instanceof String) {
+        data[name] = value !== undefined ? value : null;
+    } else if (typeof name === 'object') {
         for (var key in name) {
             if (hasOwn.call(name, key)) {
                 data[key] = name[key];
             }
         }
-    } else if (typeof name === "string") {
-        data[name] = value !== undefined ? value : null;
     } else {
-        throw new TypeError("URI.addQuery() accepts an object, string as the name parameter");
+        throw new TypeError('URI.addQuery() accepts an object, string as the name parameter');
     }
 
     this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
-    if (typeof name !== "string") {
+    if (typeof name !== 'string') {
         build = value;
     }
 
@@ -1539,7 +1905,7 @@ p.addQuery = function(name, value, build) {
     var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
     URI.addQuery(data, name, value === undefined ? null : value);
     this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
-    if (typeof name !== "string") {
+    if (typeof name !== 'string') {
         build = value;
     }
 
@@ -1550,7 +1916,7 @@ p.removeQuery = function(name, value, build) {
     var data = URI.parseQuery(this._parts.query, this._parts.escapeQuerySpace);
     URI.removeQuery(data, name, value);
     this._parts.query = URI.buildQuery(data, this._parts.duplicateQueryParameters, this._parts.escapeQuerySpace);
-    if (typeof name !== "string") {
+    if (typeof name !== 'string') {
         build = value;
     }
 
@@ -1571,6 +1937,7 @@ p.normalize = function() {
     if (this._parts.urn) {
         return this
             .normalizeProtocol(false)
+            .normalizePath(false)
             .normalizeQuery(false)
             .normalizeFragment(false)
             .build();
@@ -1586,7 +1953,7 @@ p.normalize = function() {
         .build();
 };
 p.normalizeProtocol = function(build) {
-    if (typeof this._parts.protocol === "string") {
+    if (typeof this._parts.protocol === 'string') {
         this._parts.protocol = this._parts.protocol.toLowerCase();
         this.build(!build);
     }
@@ -1609,7 +1976,7 @@ p.normalizeHostname = function(build) {
 };
 p.normalizePort = function(build) {
     // remove port of it's the protocol's default
-    if (typeof this._parts.protocol === "string" && this._parts.port === URI.defaultPorts[this._parts.protocol]) {
+    if (typeof this._parts.protocol === 'string' && this._parts.port === URI.defaultPorts[this._parts.protocol]) {
         this._parts.port = null;
         this.build(!build);
     }
@@ -1617,16 +1984,25 @@ p.normalizePort = function(build) {
     return this;
 };
 p.normalizePath = function(build) {
-    if (this._parts.urn) {
+    var _path = this._parts.path;
+    if (!_path) {
         return this;
     }
 
-    if (!this._parts.path || this._parts.path === '/') {
+    if (this._parts.urn) {
+        this._parts.path = URI.recodeUrnPath(this._parts.path);
+        this.build(!build);
         return this;
     }
+
+    if (this._parts.path === '/') {
+        return this;
+    }
+
+    _path = URI.recodePath(_path);
 
     var _was_relative;
-    var _path = this._parts.path;
+    var _leadingParents = '';
     var _parent, _pos;
 
     // handle relative paths
@@ -1635,21 +2011,34 @@ p.normalizePath = function(build) {
         _path = '/' + _path;
     }
 
+    // handle relative files (as opposed to directories)
+    if (_path.slice(-3) === '/..' || _path.slice(-2) === '/.') {
+        _path += '/';
+    }
+
     // resolve simples
     _path = _path
-        .replace(/(\/(\.\/)+)|(\/\.$)/g, '/')
-        .replace(/\/{2,}/g, '/');
+    .replace(/(\/(\.\/)+)|(\/\.$)/g, '/')
+    .replace(/\/{2,}/g, '/');
+
+    // remember leading parents
+    if (_was_relative) {
+        _leadingParents = _path.substring(1).match(/^(\.\.\/)+/) || '';
+        if (_leadingParents) {
+            _leadingParents = _leadingParents[0];
+        }
+    }
 
     // resolve parents
     while (true) {
-        _parent = _path.indexOf('/../');
+        _parent = _path.search(/\/\.\.(\/|$)/);
         if (_parent === -1) {
             // no more ../ to resolve
             break;
         } else if (_parent === 0) {
-            // top level cannot be relative...
+            // top level cannot be relative, skip it
             _path = _path.substring(3);
-            break;
+            continue;
         }
 
         _pos = _path.substring(0, _parent).lastIndexOf('/');
@@ -1661,17 +2050,16 @@ p.normalizePath = function(build) {
 
     // revert to relative
     if (_was_relative && this.is('relative')) {
-        _path = _path.substring(1);
+        _path = _leadingParents + _path.substring(1);
     }
 
-    _path = URI.recodePath(_path);
     this._parts.path = _path;
     this.build(!build);
     return this;
 };
 p.normalizePathname = p.normalizePath;
 p.normalizeQuery = function(build) {
-    if (typeof this._parts.query === "string") {
+    if (typeof this._parts.query === 'string') {
         if (!this._parts.query.length) {
             this._parts.query = null;
         } else {
@@ -1701,9 +2089,12 @@ p.iso8859 = function() {
 
     URI.encode = escape;
     URI.decode = decodeURIComponent;
-    this.normalize();
-    URI.encode = e;
-    URI.decode = d;
+    try {
+        this.normalize();
+    } finally {
+        URI.encode = e;
+        URI.decode = d;
+    }
     return this;
 };
 
@@ -1714,16 +2105,19 @@ p.unicode = function() {
 
     URI.encode = strictEncodeURIComponent;
     URI.decode = unescape;
-    this.normalize();
-    URI.encode = e;
-    URI.decode = d;
+    try {
+        this.normalize();
+    } finally {
+        URI.encode = e;
+        URI.decode = d;
+    }
     return this;
 };
 
 p.readable = function() {
     var uri = this.clone();
     // removing username, password, because they shouldn't be displayed according to RFC 3986
-    uri.username("").password("").normalize();
+    uri.username('').password('').normalize();
     var t = '';
     if (uri._parts.protocol) {
         t += uri._parts.protocol + '://';
@@ -1733,7 +2127,7 @@ p.readable = function() {
         if (uri.is('punycode') && punycode) {
             t += punycode.toUnicode(uri._parts.hostname);
             if (uri._parts.port) {
-                t += ":" + uri._parts.port;
+                t += ':' + uri._parts.port;
             }
         } else {
             t += uri.host();
@@ -1748,13 +2142,13 @@ p.readable = function() {
     if (uri._parts.query) {
         var q = '';
         for (var i = 0, qp = uri._parts.query.split('&'), l = qp.length; i < l; i++) {
-            var kv = (qp[i] || "").split('=');
+            var kv = (qp[i] || '').split('=');
             q += '&' + URI.decodeQuery(kv[0], this._parts.escapeQuerySpace)
-                .replace(/&/g, '%26');
+            .replace(/&/g, '%26');
 
             if (kv[1] !== undefined) {
-                q += "=" + URI.decodeQuery(kv[1], this._parts.escapeQuerySpace)
-                    .replace(/&/g, '%26');
+                q += '=' + URI.decodeQuery(kv[1], this._parts.escapeQuerySpace)
+                .replace(/&/g, '%26');
             }
         }
         t += '?' + q.substring(1);
@@ -1778,7 +2172,10 @@ p.absoluteTo = function(base) {
         base = new URI(base);
     }
 
-    if (!resolved._parts.protocol) {
+    if (resolved._parts.protocol) {
+        // Directly returns even if this._parts.hostname is empty.
+        return resolved;
+    } else {
         resolved._parts.protocol = base._parts.protocol;
     }
 
@@ -1786,71 +2183,31 @@ p.absoluteTo = function(base) {
         return resolved;
     }
 
-    for (i = 0; p = properties[i]; i++) {
+    for (i = 0; (p = properties[i]); i++) {
         resolved._parts[p] = base._parts[p];
     }
 
-    properties = ['query', 'path'];
-    for (i = 0; p = properties[i]; i++) {
-        if (!resolved._parts[p] && base._parts[p]) {
-            resolved._parts[p] = base._parts[p];
+    if (!resolved._parts.path) {
+        resolved._parts.path = base._parts.path;
+        if (!resolved._parts.query) {
+            resolved._parts.query = base._parts.query;
         }
-    }
+    } else {
+        if (resolved._parts.path.substring(-2) === '..') {
+            resolved._parts.path += '/';
+        }
 
-    if (resolved.path().charAt(0) !== '/') {
-        basedir = base.directory();
-        resolved._parts.path = (basedir ? (basedir + '/') : '') + resolved._parts.path;
-        resolved.normalizePath();
+        if (resolved.path().charAt(0) !== '/') {
+            basedir = base.directory();
+            basedir = basedir ? basedir : base.path().indexOf('/') === 0 ? '/' : '';
+            resolved._parts.path = (basedir ? (basedir + '/') : '') + resolved._parts.path;
+            resolved.normalizePath();
+        }
     }
 
     resolved.build();
     return resolved;
 };
-
-// ##### BEGIN: MODIFIED BY SAP
-// for the function isCrossOriginURL in jQuery.sap.script.js we need to extract the origin information
-// from the given URL. The accessor for origin is available in URI 1.19.1 and is borrowed for 1.11.2:
-
-/*!
- * The following function is taken from
- * URI.js - Mutating URLs
- *
- * Version: 1.19.1
- *
- * Author: Rodney Rehm
- * Web: http://medialize.github.io/URI.js/
- *
- * Licensed under
- * MIT License http://www.opensource.org/licenses/mit-license
- *
- */
-
-// compound accessors
-p.origin = function(v, build) {
-	if (this._parts.urn) {
-		return v === undefined ? '' : this;
-	}
-
-	if (v === undefined) {
-		var protocol = this.protocol();
-		var authority = this.authority();
-		if (!authority) {
-			return '';
-		}
-
-		return (protocol ? protocol + '://' : '') + this.authority();
-	} else {
-		var origin = URI(v);
-		this
-			.protocol(origin.protocol())
-			.authority(origin.authority())
-			.build(!build);
-		return this;
-	}
-};
-
-// ##### END: MODIFIED BY SAP
-
 p.relativeTo = function(base) {
     var relative = this.clone().normalize();
     var relativeParts, baseParts, common, relativePath, basePath;
@@ -1898,7 +2255,7 @@ p.relativeTo = function(base) {
     }
 
     // determine common sub path
-    common = URI.commonPath(relative.path(), base.path());
+    common = URI.commonPath(relativePath, basePath);
 
     // If the paths have nothing in common, return a relative URL with the absolute path.
     if (!common) {
@@ -1910,7 +2267,7 @@ p.relativeTo = function(base) {
         .replace(/[^\/]*$/, '')
         .replace(/.*?\//g, '../');
 
-    relativeParts.path = parents + relativeParts.path.substring(common.length);
+    relativeParts.path = (parents + relativeParts.path.substring(common.length)) || './';
 
     return relative.build();
 };
@@ -1935,8 +2292,8 @@ p.equals = function(uri) {
     // extract query string
     one_query = one.query();
     two_query = two.query();
-    one.query("");
-    two.query("");
+    one.query('');
+    two.query('');
 
     // definitely not equal if not even non-query parts match
     if (one.toString() !== two.toString()) {
@@ -1978,6 +2335,11 @@ p.equals = function(uri) {
 };
 
 // state
+p.preventInvalidHostname = function(v) {
+    this._parts.preventInvalidHostname = !!v;
+    return this;
+};
+
 p.duplicateQueryParameters = function(v) {
     this._parts.duplicateQueryParameters = !!v;
     return this;
