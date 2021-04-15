@@ -968,7 +968,7 @@ sap.ui.define([
 				return;
 			}
 
-			var scrollTop = event.target.scrollTop,
+			var scrollTop = Device.browser.msie ? document.documentElement.querySelector(".sapMWizardStepContainer").scrollTop : event.target.scrollTop,
 				progressNavigator = this._getProgressNavigator(),
 				currentStepDOM = this._stepPath[progressNavigator.getCurrentStep() - 1].getDomRef();
 
