@@ -15970,8 +15970,7 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList"
 					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-					+ "/orderby(LifecycleStatus desc)&$count=true&$skip=7&$top=3", {
-					"@odata.count" : "26",
+					+ "/orderby(LifecycleStatus desc)&$skip=7&$top=3", {
 					value : [
 						{GrossAmount : "7", LifecycleStatus : "T"},
 						{GrossAmount : "8", LifecycleStatus : "S"},
@@ -16230,8 +16229,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "/orderby(AccountResponsible)&$count=true&$skip=3&$top=1", {
-					"@odata.count" : "4",
+					+ "/orderby(AccountResponsible)&$skip=3&$top=1", {
 					value : [
 						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
@@ -16265,8 +16263,7 @@ sap.ui.define([
 				oTable.getItems()[1].getBindingContext()); // Z-a
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "/orderby(Region desc)&$count=true&$skip=3&$top=3", {
-					"@odata.count" : "26",
+					+ "/orderby(Region desc)&$skip=3&$top=3", {
 					value : [
 						{Region : "W", SalesAmount : "400"},
 						{Region : "V", SalesAmount : "500"},
@@ -16415,8 +16412,7 @@ sap.ui.define([
 			that.expectRequest("BusinessPartners?$apply="
 					+ "filter(Region eq 'Z' and (AccountResponsible ge 'a'))"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=3&$top=1", {
-					"@odata.count" : "4",
+					+ "&$skip=3&$top=1", {
 					value : [
 						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
@@ -16457,16 +16453,14 @@ sap.ui.define([
 			that.expectRequest("BusinessPartners?$apply="
 					+ "filter(Region eq 'Y' and (AccountResponsible ge 'a'))"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=7&$top=1", {
-					"@odata.count" : "8",
+					+ "&$skip=7&$top=1", {
 					value : [
 						{AccountResponsible : "h", SalesAmount : "80", SalesNumber : 8}
 					]
 				})
 				.expectRequest("BusinessPartners?$apply=filter(AccountResponsible ge 'a')"
 					+ "/groupby((Region),aggregate(SalesAmount))"
-					+ "&$count=true&$skip=3&$top=1", {
-					"@odata.count" : "26",
+					+ "&$skip=3&$top=1", {
 					value : [
 						{Region : "W", SalesAmount : "400"}
 					]
@@ -16489,8 +16483,7 @@ sap.ui.define([
 			that.expectRequest("BusinessPartners?$apply="
 					+ "filter(Region eq 'Y' and (AccountResponsible ge 'a'))"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
-					+ "&$count=true&$skip=3&$top=3", {
-					"@odata.count" : "8",
+					+ "&$skip=3&$top=3", {
 					value : [
 						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4},
 						{AccountResponsible : "e", SalesAmount : "50", SalesNumber : 5},
@@ -16613,9 +16606,8 @@ sap.ui.define([
 		}).then(function () {
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "&$count=true&$skip=3&$top=3", new Promise(function (resolve) {
+					+ "&$skip=3&$top=3", new Promise(function (resolve) {
 					fnRespondScroll1 = resolve.bind(null, {
-						"@odata.count" : "26",
 						value : [
 							{Region : "W", SalesAmount : "400"},
 							{Region : "V", SalesAmount : "500"},
@@ -16631,9 +16623,8 @@ sap.ui.define([
 		}).then(function () {
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "&$count=true&$skip=6&$top=1", new Promise(function (resolve) {
+					+ "&$skip=6&$top=1", new Promise(function (resolve) {
 					fnRespondScroll2 = resolve.bind(null, {
-						"@odata.count" : "26",
 						value : [
 							{Region : "T", SalesAmount : "700"}
 						]
@@ -16855,8 +16846,7 @@ sap.ui.define([
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'X')/groupby((Region)"
 					+ ",aggregate(AmountPerSale,Currency,SalesAmount,SalesAmountLocalCurrency"
 					+ ",LocalCurrency,SalesNumber))/orderby(Region,Currency asc,LocalCurrency desc)"
-					+ "&$count=true&$skip=4&$top=1", {
-					"@odata.count" : "5",
+					+ "&$skip=4&$top=1", {
 					value : [{
 						AmountPerSale : "10",
 						Currency : "DEM",
@@ -17875,8 +17865,7 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Region))"
-				+ "&$count=true&$skip=0&$top=3", {
+		this.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
 				value : [
 					{Region : "Z"},
@@ -17921,9 +17910,8 @@ sap.ui.define([
 			// code under test
 			oTable.getRows()[1].getBindingContext().expand();
 
-			that.expectRequest("BusinessPartners?$apply=groupby((Region))"
-					+ "&$count=true&$skip=3&$top=" + (bSecondScroll ? "3" : "2"), {
-					"@odata.count" : "26",
+			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$skip=3&$top="
+					+ (bSecondScroll ? "3" : "2"), {
 					value : [
 						{Region : "W"},
 						{Region : "V"}
@@ -18213,13 +18201,12 @@ sap.ui.define([
 
 			that.expectResets(oTable, 4, 3)
 				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
-					+ "/groupby((Region),aggregate(SalesAmount))&$count=true&$skip=4&$top=3",
+					+ "/groupby((Region),aggregate(SalesAmount))&$skip=4&$top=3",
 					function () {
 						// code under test
 						oUSContext.collapse();
 
 						return resolveLater({
-							"@odata.count" : "26",
 							value : [
 								{Region : "V", SalesAmount : "50"},
 								{Region : "U", SalesAmount : "60"},

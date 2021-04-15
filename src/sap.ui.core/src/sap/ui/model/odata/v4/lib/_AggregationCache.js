@@ -486,8 +486,14 @@ sap.ui.define([
 		 */
 		function readGap(iGapStart, iGapEnd) {
 			var oCache = oGapParent,
+				mQueryOptions = oGapParent.getQueryOptions(),
 				iStart = _Helper.getPrivateAnnotation(that.aElements[iGapStart], "index"),
 				oStartElement = that.aElements[iGapStart];
+
+			if (mQueryOptions.$count) { // $count not needed anymore, 1st read was done by #expand
+				delete mQueryOptions.$count;
+				oGapParent.setQueryOptions(mQueryOptions, true);
+			}
 
 			aReadPromises.push(
 				oGapParent.read(iStart, iGapEnd - iGapStart, 0, oGroupLock.getUnlockedCopy(),

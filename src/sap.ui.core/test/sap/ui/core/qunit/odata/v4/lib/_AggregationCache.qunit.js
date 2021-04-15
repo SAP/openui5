@@ -894,7 +894,9 @@ sap.ui.define([
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLevelCache = {
-				read : function () {}
+				getQueryOptions : function () {},
+				read : function () {},
+				setQueryOptions : function () {}
 			},
 			oGroupLevelCacheMock = this.mock(oGroupLevelCache),
 			oGroupLock0 = {
@@ -906,6 +908,7 @@ sap.ui.define([
 				unlock : function () {}
 			},
 			oCacheMock = this.mock(oCache),
+			mQueryOptions = {$count : true, foo : "bar"},
 			oReadResult0 = {value : [{}]},
 			oReadResult1 = {value : [{}, {}]},
 			that = this;
@@ -922,6 +925,12 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
+		oGroupLevelCacheMock.expects("getQueryOptions").withExactArgs().returns(mQueryOptions);
+		oGroupLevelCacheMock.expects("setQueryOptions")
+			.withExactArgs(sinon.match(function (mNewQueryOptions) {
+					assert.deepEqual(mNewQueryOptions, {foo : "bar"});
+					return mNewQueryOptions === mQueryOptions;
+				}), true);
 		this.mock(oGroupLock0).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy0~");
 		oGroupLevelCacheMock.expects("read")
@@ -939,6 +948,7 @@ sap.ui.define([
 			assert.strictEqual(oResult1.value[0], oReadResult0.value[0]);
 			assert.strictEqual(oResult1.value.$count, 42);
 
+			oGroupLevelCacheMock.expects("getQueryOptions").withExactArgs().returns({foo : "bar"});
 			that.mock(oGroupLock1).expects("getUnlockedCopy").withExactArgs()
 				.returns("~oGroupLockCopy1~");
 			oGroupLevelCacheMock.expects("read")
@@ -971,7 +981,9 @@ sap.ui.define([
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oFirstLeaf = {},
 			oGroupLevelCache = {
-				read : function () {}
+				getQueryOptions : function () {},
+				read : function () {},
+				setQueryOptions : function () {}
 			},
 			oGroupLock = {
 				getUnlockedCopy : function () {},
@@ -992,6 +1004,7 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
+		this.mock(oGroupLevelCache).expects("getQueryOptions").withExactArgs().returns({});
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy0~");
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy1~");
 		this.mock(oGroupLevelCache).expects("read")
@@ -1037,7 +1050,9 @@ sap.ui.define([
 			oCacheMock = this.mock(oCache),
 			oFirstLeaf = {},
 			oGroupLevelCache = {
-				read : function () {}
+				getQueryOptions : function () {},
+				read : function () {},
+				setQueryOptions : function () {}
 			},
 			oGroupLevelCacheMock = this.mock(oGroupLevelCache),
 			oGroupLock = {
@@ -1062,6 +1077,7 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
+		oGroupLevelCacheMock.expects("getQueryOptions").twice().withExactArgs().returns({});
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy0~");
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy1~");
 		oGroupLockMock.expects("unlock").withExactArgs().twice();
@@ -1119,9 +1135,10 @@ sap.ui.define([
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oFirstLeaf = {},
 			oGroupLevelCache = {
-				read : function () {}
+				getQueryOptions : function () {},
+				read : function () {},
+				setQueryOptions : function () {}
 			},
-			oGroupLevelCacheMock = this.mock(oGroupLevelCache),
 			oGroupLock = {
 				getUnlockedCopy : function () {},
 				unlock : function () {}
@@ -1139,9 +1156,10 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
+		this.mock(oGroupLevelCache).expects("getQueryOptions").withExactArgs().returns({});
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
-		oGroupLevelCacheMock.expects("read")
+		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(1, 2, 0, "~oGroupLockCopy~", "~fnDataRequested~")
 			.callsFake(function () {
 				// while the read request is running - simulate an expand
@@ -1179,9 +1197,10 @@ sap.ui.define([
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oFirstLeaf = {},
 			oGroupLevelCache = {
-				read : function () {}
+				getQueryOptions : function () {},
+				read : function () {},
+				setQueryOptions : function () {}
 			},
-			oGroupLevelCacheMock = this.mock(oGroupLevelCache),
 			oGroupLock = {
 				getUnlockedCopy : function () {},
 				unlock : function () {}
@@ -1200,9 +1219,10 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
+		this.mock(oGroupLevelCache).expects("getQueryOptions").withExactArgs().returns({});
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
-		oGroupLevelCacheMock.expects("read")
+		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(2, 1, 0, "~oGroupLockCopy~", "~fnDataRequested~")
 			.callsFake(function () {
 				// while the read request is running - simulate an expand and a concurrent read
@@ -1239,7 +1259,9 @@ sap.ui.define([
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLevelCache = {
-				read : function () {}
+				getQueryOptions : function () {},
+				read : function () {},
+				setQueryOptions : function () {}
 			},
 			oGroupLock = {
 				getUnlockedCopy : function () {},
@@ -1258,6 +1280,7 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
+		this.mock(oGroupLevelCache).expects("getQueryOptions").withExactArgs().returns({});
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
 		this.mock(oGroupLevelCache).expects("read")
@@ -1292,10 +1315,14 @@ sap.ui.define([
 			oFirstLeaf0 = {},
 			oFirstLeaf1 = {},
 			oGroupLevelCache0 = {
-				read : function () {}
+				getQueryOptions : function () {},
+				read : function () {},
+				setQueryOptions : function () {}
 			},
 			oGroupLevelCache1 = {
-				read : function () {}
+				getQueryOptions : function () {},
+				read : function () {},
+				setQueryOptions : function () {}
 			},
 			oGroupLock = {
 				getUnlockedCopy : function () {},
@@ -1320,6 +1347,8 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
+		this.mock(oGroupLevelCache0).expects("getQueryOptions").withExactArgs().returns({});
+		this.mock(oGroupLevelCache1).expects("getQueryOptions").withExactArgs().returns({});
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy0~");
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy1~");
 		oUnlockExpectation = oGroupLockMock.expects("unlock").withExactArgs();

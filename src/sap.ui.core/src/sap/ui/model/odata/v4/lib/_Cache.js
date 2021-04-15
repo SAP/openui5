@@ -900,12 +900,25 @@ sap.ui.define([
 	 * @returns {object} The late query options
 	 *
 	 * @public
+	 * @see #setLateQueryOptions
 	 */
 	_Cache.prototype.getLateQueryOptions = function () {
 		return this.mLateQueryOptions;
 	};
 
-	/*
+	/**
+	 * Returns this cache's query options.
+	 *
+	 * @returns {object} The query options
+	 *
+	 * @public
+	 * @see #setQueryOptions
+	 */
+	_Cache.prototype.getQueryOptions = function () {
+		return this.mQueryOptions;
+	};
+
+	/**
 	 * Returns the requested data if available synchronously.
 	 *
 	 * @param {string} [_sPath]
@@ -1452,13 +1465,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets query options after the cache has sent a read request to allow adding late properties.
+	 * Sets query options after the cache has sent a request to allow adding late properties.
 	 * Accepts only $expand and $select.
 	 *
 	 * @param {object} mQueryOptions
 	 *   The new late query options or <code>null</code> to reset
 	 *
 	 * @public
+	 * @see #getLateQueryOptions
+	 * @see #hasSentRequest
 	 */
 	_Cache.prototype.setLateQueryOptions = function (mQueryOptions) {
 		if (mQueryOptions) {
@@ -1502,18 +1517,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates query options of the cache which has not yet sent a read request with the given
-	 * options.
+	 * Updates this cache's query options if it has not yet sent a request.
 	 *
 	 * @param {object} [mQueryOptions]
 	 *   The new query options
-	 * @throws {Error} If the cache has already sent a read request or if the cache is shared
+	 * @param {boolean} [bForce]
+	 *   Forces an update even if a request has been already sent
+	 * @throws {Error}
+	 *   If the cache has already sent a request or if the cache is shared
 	 *
 	 * @public
+	 * @see #getQueryOptions
+	 * @see #hasSentRequest
 	 */
-	_Cache.prototype.setQueryOptions = function (mQueryOptions) {
+	_Cache.prototype.setQueryOptions = function (mQueryOptions, bForce) {
 		this.checkSharedRequest();
-		if (this.bSentRequest) {
+		if (this.bSentRequest && !bForce) {
 			throw new Error("Cannot set query options: Cache has already sent a request");
 		}
 
