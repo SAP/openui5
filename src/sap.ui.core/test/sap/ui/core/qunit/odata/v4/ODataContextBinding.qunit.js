@@ -1333,7 +1333,9 @@ sap.ui.define([
 			this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 			this.mock(this.oModel).expects("reportError").withExactArgs(
 				"Failed to execute " + oFixture.path, sClassName, sinon.match.instanceOf(Error));
-			this.mock(_Helper).expects("adjustTargetsInError").never();
+			this.mock(_Helper).expects("adjustTargetsInError")
+				.withExactArgs(sinon.match.instanceOf(Error), undefined,
+					oFixture.path + "/$Parameter", undefined);
 
 			return this.bindContext(oFixture.path)
 				._execute(oGroupLock) // code under test
