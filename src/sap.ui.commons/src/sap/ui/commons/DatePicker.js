@@ -487,11 +487,15 @@ sap.ui.define([
 		 * <li>'invalidValue' of type <code>boolean</code> The new / changed value of the DatePicker is not a valid date. </li>
 		 * </ul>
 		 *
-		 * @param {boolean} bInvalidValue true is value is invalid
+		 * @param {object} [mParameters] Parameters to pass along with the event - do not use: value is ignored
+		 * @param {boolean} [bInvalidValue] true if value is invalid
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @protected
 		 */
-		DatePicker.prototype.fireChange = function(bInvalidValue) {
+		DatePicker.prototype.fireChange = function(mParameters, bInvalidValue) {
+			if (!(typeof mParameters === "object")) {
+				bInvalidValue = mParameters;
+			}
 
 			this.fireEvent("change", {newValue:this.getValue(),
 				newYyyymmdd: this.getYyyymmdd(),
