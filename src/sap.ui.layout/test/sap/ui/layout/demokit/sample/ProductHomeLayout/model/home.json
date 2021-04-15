@@ -11,14 +11,15 @@
 				"S": 4,
 				"ML": 8,
 				"XL": 11,
-				"XXL": 11,
-				"XXXL": 10,
+				"XXL": 12,
+				"XXXL": 9,
 				"current": null
 			}
 		},
 		"group2": {
 			"columns": {
 				"default": 4,
+				"XXL": 5,
 				"current": null
 			}
 		},
