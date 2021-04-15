@@ -18,7 +18,8 @@
 		<Label/>
 		<ProgressIndicator width="10em" percentValue="{/lines/coverage}"
 			displayValue="{path : '/lines/coverage', type : 'sap.ui.model.odata.type.Double',
-				formatOptions : {minFractionDigits : 1, maxFractionDigits : 1}} %"
+				formatOptions : {minFractionDigits : 1, maxFractionDigits : 1,
+					preserveDecimals : false}} %"
 			state="{= %{/lines/coverage} &lt; %{/threshold} ? 'Error' : 'Success'}"/>
 		<core:Title text="{= %{/branchTracking} ? 'Branch Coverage' : ''}"/>
 		<Label text="Branches" visible="{= %{/branchTracking}}"/>
@@ -30,7 +31,8 @@
 		<Label visible="{= %{/branchTracking}}"/>
 		<ProgressIndicator width="10em" percentValue="{/branches/coverage}"
 			displayValue="{path : '/branches/coverage', type : 'sap.ui.model.odata.type.Double',
-				formatOptions : {minFractionDigits : 1, maxFractionDigits : 1}} %"
+				formatOptions : {minFractionDigits : 1, maxFractionDigits : 1,
+					preserveDecimals : false}} %"
 			state="{= %{/branches/coverage} &lt; %{/threshold} ? 'Error' : 'Success'}"
 			visible="{= %{/branchTracking}}"/>
 	</form:SimpleForm>
@@ -67,7 +69,8 @@
 				</table:label>
 				<table:template>
 					<Text text="{path : 'lines/coverage', type : 'sap.ui.model.odata.type.Double',
-						formatOptions : {minFractionDigits : 1, maxFractionDigits : 1}}"/>
+						formatOptions : {minFractionDigits : 1, maxFractionDigits : 1,
+							preserveDecimals : false}}"/>
 				</table:template>
 			</table:Column>
 			<table:Column width="5em" hAlign="Right" visible="{= %{/branchTracking}}">
@@ -97,7 +100,8 @@
 				<table:template>
 					<Text text="{path : 'branches/coverage',
 						type : 'sap.ui.model.odata.type.Double',
-						formatOptions : {minFractionDigits : 1, maxFractionDigits : 1}}"/>
+						formatOptions : {minFractionDigits : 1, maxFractionDigits : 1,
+							preserveDecimals : false}}"/>
 				</table:template>
 			</table:Column>
 			<table:Column filterProperty="name" sortProperty="name" sorted="true">
