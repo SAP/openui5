@@ -64,6 +64,8 @@ sap.ui.define([
 				 *
 				 * If set to <code>true</code>, a navigation indicator is displayed at the end of the row.
 				 * <b>Note:</b> This property must be set for <b>one</b> row only.
+				 *
+				 * @since 1.72
 				 */
 				navigated : {type : "boolean", group : "Appearance", defaultValue : false}
 			}
