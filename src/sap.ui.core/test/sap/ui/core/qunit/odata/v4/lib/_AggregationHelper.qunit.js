@@ -744,7 +744,7 @@ sap.ui.define([
 			"grandTotal like 1.84" : true
 		},
 		sError : "Cannot aggregate totals with 'countdistinct'"
-	}].forEach(function (oFixture, i) {
+	}].forEach(function (oFixture) {
 		QUnit.test("buildApply: " + oFixture.sError, function (assert) {
 			assert.throws(function () {
 				// code under test

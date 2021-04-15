@@ -270,7 +270,7 @@
 			case "ForStatement":
 			case "WhileStatement":
 			case "WithStatement":
-				// Note: we assume block statements only (@see blanket._blockifyIf)
+				// fall through; Note: we assume block statements only (@see blanket._blockifyIf)
 			case "BreakStatement":
 			case "ContinueStatement":
 			case "FunctionDeclaration":

@@ -1028,7 +1028,9 @@ sap.ui.define([
 			+ ",constraints:{'nullable':false},formatOptions:{'parseKeepsEmptyString':true"
 			+ ",'maxLength':10},parameters:{'$$foo':'bar'}}"
 			+ ",{mode:'OneTime',path:'/##@@requestCurrencyCodes',targetType:'any'}]"
-			+ ",type:'sap.ui.model.odata.type.Currency'}");});
+			+ ",type:'sap.ui.model.odata.type.Currency'}"
+		);
+	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bIsBound) {
