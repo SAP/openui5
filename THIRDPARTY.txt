@@ -203,7 +203,6 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/URI.js
 	src/sap.ui.core/src/sap/ui/thirdparty/URITemplate.js
-	src/sap.ui.core/src/sap/ui/thirdparty/RequestRecorder.js
 	src/sap.ui.core/src/sap/ui/thirdparty/SecondLevelDomains.js
 	src/sap.ui.core/src/sap/ui/thirdparty/IPv6.js
 

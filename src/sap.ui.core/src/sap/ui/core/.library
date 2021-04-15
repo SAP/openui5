@@ -401,7 +401,6 @@
             <copyright>Rodney Rehm</copyright>
             <pattern>sap/ui/thirdparty/URI.js</pattern>
             <pattern>sap/ui/thirdparty/URITemplate.js</pattern>
-            <pattern>sap/ui/thirdparty/RequestRecorder.js</pattern>
             <pattern>sap/ui/thirdparty/SecondLevelDomains.js</pattern>
             <pattern>sap/ui/thirdparty/IPv6.js</pattern>
         </lib>
@@ -505,6 +504,7 @@
             <file pattern="sap/ui/thirdparty/es6-promise.js" />
             <file pattern="sap/ui/thirdparty/es6-string-methods.js" />
             <file pattern="sap/ui/thirdparty/flexie.js" />
+            <file pattern="sap/ui/thirdparty/RequestRecorder.js" />
             <file pattern="sap/ui/thirdparty/sinon-ie.js" />
             <file pattern="sap/ui/thirdparty/unorm*" />
         </ignore>
