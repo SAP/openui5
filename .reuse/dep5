@@ -240,7 +240,7 @@ Copyright: 2010-2011, Christian Johansen
 License: BSD-3-Clause
 Comment: these files belong to: Sinon-qunit
 
-Files: src/sap.ui.core/src/sap/ui/thirdparty/URI.js src/sap.ui.core/src/sap/ui/thirdparty/URITemplate.js src/sap.ui.core/src/sap/ui/thirdparty/RequestRecorder.js src/sap.ui.core/src/sap/ui/thirdparty/SecondLevelDomains.js src/sap.ui.core/src/sap/ui/thirdparty/IPv6.js
+Files: src/sap.ui.core/src/sap/ui/thirdparty/URI.js src/sap.ui.core/src/sap/ui/thirdparty/URITemplate.js src/sap.ui.core/src/sap/ui/thirdparty/SecondLevelDomains.js src/sap.ui.core/src/sap/ui/thirdparty/IPv6.js
 Copyright: Rodney Rehm
 License: MIT
 Comment: these files belong to: URI.js
