@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (CalendarType, DateFormat, BaseODataUtils, _Helper) {
+], function (CalendarType, DateFormat, BaseODataUtils, _Batch, _Helper) {
 	"use strict";
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
@@ -94,6 +95,44 @@ sap.ui.define([
 			},
 
 			/**
+			 * Deserializes a batch response body using the batch boundary from the given value of
+			 * the "Content-Type" header.
+			 *
+			 * @param {string} sContentType
+			 *   The value of the "Content-Type" header from the batch response, for example
+			 *  "multipart/mixed; boundary=batch_123456"
+			 * @param {string} sResponseBody
+			 *   A batch response body
+			 * @returns {object[]}
+			 *   An array containing responses from the batch response body, each with the following
+			 *   structure:
+			 *   <ul>
+			 *     <li> <code>status</code>: {number} HTTP status code
+			 *     <li> <code>statusText</code>: {string} (optional) HTTP status text
+			 *     <li> <code>headers</code>: {object} Map of response headers
+			 *     <li> <code>responseText</code>: {string} Response body
+			 *   </ul>
+			 *   If the specified <code>sResponseBody</code> contains responses for change sets,
+			 *   then the corresponding response objects will be returned in a nested array.
+			 * @throws {Error}
+			 *   <ul>
+			 *     <li> If the <code>sContentType</code> parameter does not represent a
+			 *       "multipart/mixed" media type with "boundary" parameter
+			 *     <li> If the "charset" parameter of the "Content-Type" header of a nested response
+			 *       has a value other than "UTF-8"
+			 *     <li> If there is no "Content-ID" header for a change set response or its value is
+			 *       not a number
+			 *   </ul>
+			 *
+			 * @private
+			 * @since 1.90.0
+			 * @ui5-restricted sap.ui.integration
+			 */
+			deserializeBatchResponse : function (sContentType, sResponseBody) {
+				return _Batch.deserializeBatchResponse(sContentType, sResponseBody);
+			},
+
+			/**
 			 * Formats the given OData value into a literal suitable for usage in data binding paths
 			 * and URLs.
 			 *
@@ -101,7 +140,7 @@ sap.ui.define([
 			 *   The value according to "OData JSON Format Version 4.0" section
 			 *   "7.1 Primitive Value"
 			 * @param {string} sType
-			 *   The OData primitive type, e.g. "Edm.String"
+			 *   The OData primitive type, for example "Edm.String"
 			 * @returns {string}
 			 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
 			 *   "5.1.1.6.1 Primitive Literals"
@@ -206,6 +245,90 @@ sap.ui.define([
 					throw new Error("Not a valid Edm.TimeOfDay value: " + sTimeOfDay);
 				}
 				return oTimeOfDay;
+			},
+
+			/**
+			 * Serializes an array of requests to an object containing the batch request body and
+			 * mandatory headers for the batch request.
+			 *
+			 * @param {object[]} aRequests
+			 *   An array consisting of request objects or arrays of request objects, in case
+			 *   requests need to be sent in scope of a change set. See example below. Change set
+			 *   requests are annotated with a property <code>$ContentID</code> containing the
+			 *   corresponding "Content-ID" header from the serialized batch request body.
+			 * @param {string} [sEpilogue]
+			 *   A string that will be included in the epilogue (which acts like a comment)
+			 * @param {string} oRequest.method
+			 *   The HTTP method; only "GET", "POST", "PUT", "PATCH", or "DELETE" are allowed
+			 * @param {string} oRequest.url
+			 *   An absolute or relative URL. If the URL contains a "Content-ID" reference, then the
+			 *   reference has to be specified as the zero-based index of the referenced request
+			 *   inside the change set. See example below.
+			 * @param {object} oRequest.headers
+			 *   A map of request headers. RFC-2047 encoding rules are not supported. Nevertheless
+			 *   non-US-ASCII values can be used. If the value of an "If-Match" header is an object,
+			 *   that object's ETag ("@odata.etag") is used instead.
+			 * @param {object} [oRequest.body]
+			 *   The request body. If specified, the <code>oRequest.headers</code> map must contain
+			 *   a "Content-Type" header either without "charset" parameter or with "charset"
+			 *   parameter having value "UTF-8".
+			 * @returns {object}
+			 *   An object containing the following properties:
+			 *   <ul>
+			 *     <li> <code>body</code>: {string} Batch request body
+			 *     <li> <code>headers</code>: {object} Map of batch-specific request headers:
+			 *       <ul>
+			 *         <li> <code>Content-Type</code>: Value for the "Content-Type" header
+			 *         <li> <code>MIME-Version</code>: Value for the "MIME-Version" header
+			 *       </ul>
+			 *   </ul>
+			 * @throws {Error}
+			 *   If change sets are nested or an invalid HTTP method is used
+			 *
+			 * @example
+			 *   var oBatchRequest = ODataUtils.serializeBatchRequest([
+			 *       {
+			 *           method : "GET",
+			 *           url : "/sap/opu/odata4/IWBEP/TEA_BUSI/0001/Employees('1')",
+			 *           headers : {
+			 *               Accept : "application/json"
+			 *           }
+			 *       },
+			 *       [{
+			 *           method : "POST",
+			 *           url : "TEAMS",
+			 *           headers : {
+			 *               "Content-Type" : "application/json"
+			 *           },
+			 *           body : {"TEAM_ID" : "TEAM_03"}
+			 *       }, {
+			 *           method : "POST",
+			 *           url : "$0/TEAM_2_Employees",
+			 *           headers : {
+			 *               "Content-Type" : "application/json",
+			 *               "If-Match" : "etag0"
+			 *           },
+			 *           body : {"Name" : "John Smith"}
+			 *       }],
+			 *       {
+			 *           method : "PATCH",
+			 *           url : "/sap/opu/odata4/IWBEP/TEA_BUSI/0001/Employees('3')",
+			 *           headers : {
+			 *               "Content-Type" : "application/json",
+			 *               "If-Match" : {
+			 *                   "@odata.etag" : "etag1"
+			 *               }
+			 *           },
+			 *           body : {"TEAM_ID" : "TEAM_01"}
+			 *       }
+			 *   ]);
+			 *
+			 * @private
+			 * @since 1.90.0
+			 * @ui5-restricted sap.ui.integration
+			 */
+			serializeBatchRequest : function (aRequests, sEpilogue) {
+				return _Batch.serializeBatchRequest(aRequests, sEpilogue);
 			}
 		};
 

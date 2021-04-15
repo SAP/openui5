@@ -837,7 +837,7 @@ sap.ui.define([
 			}]
 		],
 		errorMessage : "Invalid HTTP request method: GET. Change set must contain only POST, " +
-		"PUT, PATCH or DELETE requests."
+		"PUT, PATCH, or DELETE requests."
 	}].forEach(function (oFixture) {
 			QUnit.test("validation serializeBatchRequest: " + oFixture.title, function (assert) {
 				assert.throws(
