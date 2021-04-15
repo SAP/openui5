@@ -1,6 +1,7 @@
 /*global QUnit */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/semantic/SemanticPage",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/m/ActionSheet",
 	"sap/m/Button"
 ], function(
+	coreLibrary,
 	qutils,
 	createAndAppendDiv,
 	SemanticPage,
@@ -27,7 +29,8 @@ sap.ui.define([
 ) {
 	createAndAppendDiv("qunit-fixture-visible");
 
-
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	QUnit.module("Accessibility");
 
@@ -45,7 +48,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oShareMenuBtn.$().attr("aria-haspopup"), "menu", "aria-haspopup is as expected");
+		assert.strictEqual(oShareMenuBtn.getAriaHasPopup(), AriaHasPopup.Menu, "aria-haspopup is as expected");
 
 		// Clean
 		oDetail.destroy();

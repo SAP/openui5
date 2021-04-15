@@ -1,15 +1,20 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/library',
 	"qunit/SemanticUtil"
 ],
 function (
 	$,
+	coreLibrary,
 	SemanticUtil
 ) {
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	var oFactory = SemanticUtil.oFactory,
 		oSemanticConfiguration = oFactory.getSemanticConfiguration();
@@ -828,7 +833,7 @@ function (
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.equal(oShareMenuBtn.$().attr("aria-haspopup"), "menu", "aria-haspopup is as expected");
+		assert.equal(oShareMenuBtn.getAriaHasPopup(), AriaHasPopup.Menu, "aria-haspopup is as expected");
 	});
 
 });
