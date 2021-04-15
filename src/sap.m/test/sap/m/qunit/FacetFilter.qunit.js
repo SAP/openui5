@@ -72,6 +72,43 @@ sap.ui.define([
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
 
+	QUnit.test("All lists are available to the FacetFilter control when 'reset' event handler is called", function(assert) {
+		// prepare
+		var done = assert.async(),
+			oFFL = new FacetFilterList(),
+			oFF = new FacetFilter({
+				type: FacetFilterType.Simple,
+				showReset: true,
+				lists: [oFFL]
+			}),
+			oButton,
+			oPopover;
+
+		this.stub(sap.ui.Device.support, "touch", true);
+		oFF.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oPopover = oFF._getPopover();
+		oPopover.attachEventOnce("afterOpen", function() {
+			oFF.attachEvent("reset", function() {
+				// assert
+				assert.strictEqual(oFF.getAggregation("lists").length, 1, "List belong to the FacetFilter lits aggregation");
+
+				// clean
+				destroyFF(oFF);
+				done();
+			});
+
+			// act
+			oPopover.close();
+			oFF.getAggregation("resetButton").firePress();
+		});
+
+
+		// act
+		oButton = oFF._getButtonForList(oFFL);
+		oFF._openPopover(oPopover, oButton);
+	});
 
 	//	if(navigator.userAgent.indexOf("MSIE") === -1) {
 
@@ -133,7 +170,7 @@ sap.ui.define([
 
 			//test
 			assert.equal(oFF.getLists().length, 105, "Expected 105 lists");
-			assert.ok(jQuery("#__item0-__list1-104").length, "There should be element at 105 rendered");
+			assert.ok(jQuery("#__item0-__list2-104").length, "There should be element at 105 rendered");
 
 			destroyFF(oFF);
 
