@@ -27,13 +27,18 @@
 				<mdcField:FieldValueHelp
 					id="FVH1"
 					title="Book Title"
-					filterFields="*ProductId,Name*"
-					keyPath="ProductId"
-					descriptionPath="Name"
+					filterFields="*ID*"
+					keyPath="ID"
+					descriptionPath="title"
 					showConditionPanel="true">
 					<mdcField:FieldValueHelpMTableWrapper id="FVH1-W">
 						<Table items='{path : "/Books"}' width="20rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
 							<columns>
+								<Column>
+									<header>
+										<Text text="ID" />
+									</header>
+								</Column>
 								<Column>
 									<header>
 										<Text text="Title" />
@@ -43,31 +48,12 @@
 							<items>
 								<ColumnListItem type="Active">
 									<cells>
+										<Text text="{ID}" />
 										<Text text="{title}" />
 									</cells>
 								</ColumnListItem>
 							</items>
 						</Table>
-						<!-- <Table items="{path: '/Books'}" width="26rem">
-							<columns>
-								<Column>
-									<Label text="{/#Product/ProductId/@sap:label}"></Label>
-								</Column>
-								<Column width="10rem">
-									<Label text="{/#Product/Name/@sap:label}"></Label>
-								</Column>
-								<Column width="2rem">
-									<Label text="Icon"></Label>
-								</Column>
-							</columns>
-							<items>
-								<ColumnListItem type="Active">
-									<Text text="{ProductId}"></Text>
-									<Text text="{Name}"></Text>
-									<Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"></Image>
-								</ColumnListItem>
-							</items>
-						</Table> -->
 					</mdcField:FieldValueHelpMTableWrapper>
 				</mdcField:FieldValueHelp>
 			</mdc:dependents>
