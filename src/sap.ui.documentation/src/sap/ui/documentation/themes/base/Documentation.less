@@ -121,7 +121,7 @@ html.sap-tablet:not(.sap-desktop) {
             }
 
             &:hover {
-                color: rgba(0,29,134,0.9)
+                color: @sapUiHighlight;
             }
 
             h2, h3, .title, strong {
@@ -178,7 +178,7 @@ html.sap-tablet:not(.sap-desktop) {
             height: 100%;
             top: 0;
             left: 0;
-            background-color: #f7f7f7;
+            background-color: @sapUiBaseBG;
             pointer-events: none;
         }
 
@@ -188,8 +188,8 @@ html.sap-tablet:not(.sap-desktop) {
             right: 0;
             content: "";
             font-family: sap-icons;
-            color: rgb(0, 143, 211);
-            background-color: rgba(255, 255, 255, 0.75);
+            color: @sapUiAccent5;
+            background-color: @sapUiBaseBG;
         }
 
         img {
@@ -249,13 +249,13 @@ html.sap-tablet:not(.sap-desktop) {
 
     .light-overlays .imagemap {
         .shape {
-            fill: rgba(255, 255, 255, 0.5);
+            fill: fade(@sapUiTileHoverBackground, 50);
         }
     }
 
     .dark-overlays .imagemap {
         .shape {
-            fill: rgba(99, 99, 99, 0.5);
+            fill: fade(darken(@sapUiTileHoverBackground, 50), 50);
         }
     }
 
@@ -285,8 +285,8 @@ html.sap-tablet:not(.sap-desktop) {
     blockquote,
     div.syntax {
         border: unset; // remove prettyprint border,
-        border-left: .6rem solid #2fa0e0;
-        background-color: #EEE;
+        border-left: 0.6rem solid @sapAccentColor6;
+        background-color: darken(@sapUiBaseBG, 5);
         padding: .6em .75em .6em .75em;
         margin: 1.5em 0;
     }
@@ -326,7 +326,7 @@ html.sap-tablet:not(.sap-desktop) {
     .caution,
     .restriction,
     .limitations {
-        border-left: 0.6rem solid #e35500;
+        border-left: 0.6rem solid @sapUiNegativeElement;
     }
 
     .note .title,
@@ -404,67 +404,66 @@ html.sap-tablet:not(.sap-desktop) {
     }
 
     .sapUiInvertedElement {
-        color: #ffffff;
+        color: @sapBaseColor;
     }
 
     .sapUiElement {
-        color: #666666;
+        color: @sapInformativeElementColor;
     }
 
     .sapUiNeutralElement {
-        color: #007cc0;
+        color: @sapNeutralElementColor;
     }
 
     .sapUiNegativeElement {
-        color: #cc1919;
+        color: @sapNegativeElementColor;
     }
 
     .sapUiCriticalElement {
-        color: #d14900;
+        color: @sapCriticalElementColor;
     }
 
     .sapUiPositiveElement {
-        color: #007833;
+        color: @sapPositiveElementColor;
     }
 
     .sapContent_IconColor {
-        color: #346187;
+        color: @sapContent_IconColor;
     }
 
     .sapPositiveColor {
-        color: #2B7D2B;
+        color: @sapPositiveColor;
     }
 
     .sapNegativeColor {
-        color: #BB0000;
+        color: @sapNegativeColor;
     }
 
     .sapCriticalColor {
-        color: #E78C07;
+        color: @sapCriticalColor;
     }
 
     .sapUiBrand {
-        background-color: #009de0;
+        background-color: @sapUiBrand;
     }
 
     .sapUiPageFooterBackground {
-        background-color: #363e43;
+        background-color: @sapUiPageFooterBackground;
     }
-
     .sapUiButtonRejectBackground {
-        background-color: #cc1919;
+        background-color: @sapNegativeColor;
     }
 
     .sapUiButtonAcceptBackground {
-        background-color: #007833;
+        background-color: @sapPositiveColor;
     }
 
     .sapUiPageHeaderBackground {
-        background-color: #f2f2f2;
+        background-color: @sapUiPageHeaderBackground;
     }
 
-    .sapUiObjectHeaderBackgroundsapUiObjectHeaderBackground {
-        background-color: #ffffff;
+    .sapUiObjectHeaderBackground {
+        background-color: @sapUiObjectHeaderBackground;
     }
 
     .samplecode .title:before,
@@ -478,7 +477,7 @@ html.sap-tablet:not(.sap-desktop) {
 
     a,
     a:visited {
-        color: #4076b4;
+        color: @sapUiLinkVisited;
         cursor: pointer;
         text-decoration: none;
     }
@@ -509,7 +508,7 @@ html.sap-tablet:not(.sap-desktop) {
 
     span.uicontrol,
     span.uinolabel {
-        color: #486ba7;
+        color: @sapBrandColor;
     }
 
     code, kbd, pre, samp {
@@ -534,7 +533,7 @@ html.sap-tablet:not(.sap-desktop) {
         margin: 0 0 .625rem;
         font-size: .8125rem;
         line-height: 1.125rem;
-        color: #333;
+        color: @sapUiBaseText;
 		white-space: pre;
 		width: 100%;
 		box-sizing: border-box;
@@ -557,12 +556,14 @@ html.sap-tablet:not(.sap-desktop) {
 
     .tableWrapper {
         overflow-x: scroll;
+        display: inline;
     }
 
     table {
         border: 0;
-        border-color: #adadad;
+        border-color: darken(@sapUiListTableGroupHeaderBorderColor, 10);
         border-collapse: collapse;
+        width: auto;
         text-align: left;
         table-layout: fixed;
         border-spacing: 0;
@@ -577,7 +578,7 @@ html.sap-tablet:not(.sap-desktop) {
     }
 
     .tablecap {
-        color: #666;
+        color: @sapTitleColor;
         page-break-after: avoid;
         page-break-inside: avoid;
         white-space: nowrap;
@@ -587,7 +588,7 @@ html.sap-tablet:not(.sap-desktop) {
 
     table:not(.datatable) {
         th {
-            background-color: rgba(0, 0, 0, 0.15);
+            background-color: darken(@sapUiListTableGroupHeaderBackground, 5);
             font-weight: bold;
             border-collapse: collapse;
             padding: 0.6em;
@@ -661,7 +662,7 @@ html.sap-tablet:not(.sap-desktop) {
     .msgph,
     .wintitle {
         font-weight: 600;
-        color: rgba(13, 35, 113, 0.8);
+        color: @sapUiLegend6;
     }
 
     img {
@@ -686,7 +687,7 @@ html.sap-tablet:not(.sap-desktop) {
         content: '\e066';
         font-family: "SAP-icons";
         font-size: .75em;
-        color: rgba(13, 35, 113, 0.65);
+        color: @sapBrandColor;
         padding-left: .15em;
     }
 
@@ -704,7 +705,7 @@ html.sap-tablet:not(.sap-desktop) {
     .uinolabel {
         font-style: normal;
         font-weight: 600;
-        color: rgba(13, 35, 113, 0.8);
+        color: @sapBrandColor;
     }
 
     .dataTables_wrapper {
@@ -723,7 +724,7 @@ html.sap-tablet:not(.sap-desktop) {
             .dt-button {
                 height: 100%;
             }
-        };
+        }
         .pagingWrapper {
             display: inline-block;
             text-align: center;
@@ -758,37 +759,7 @@ html.sap-tablet:not(.sap-desktop) {
                 padding: 0;
             }
         }
-
     }
-}
-
-.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container .note,
-.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container pre.codeblock,
-.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container blockquote,
-.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container div.syntax,
-.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container .apiname,
-.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container code,
-.sapUiTheme-sap_fiori_3_dark #d4h5-main-container .note,
-.sapUiTheme-sap_fiori_3_dark #d4h5-main-container pre.codeblock,
-.sapUiTheme-sap_fiori_3_dark #d4h5-main-container blockquote,
-.sapUiTheme-sap_fiori_3_dark #d4h5-main-container .apiname,
-.sapUiTheme-sap_fiori_3_dark #d4h5-main-container code {
-    background-color: #22364a;
-}
-
-.sapUiTheme-sap_fiori_3_dark #d4h5-main-container .codeblock .emphasis {
-    background-color: #344B5F;
-}
-
-.sapUiTheme-sap_fiori_3_hcb #d4h5-main-container pre,
-.sapUiTheme-sap_fiori_3_dark #d4h5-main-container pre {
-    background-color: unset;
-    color: unset;
-}
-
-html.sap-desktop #d4h5-main-container ::-webkit-scrollbar,
-html.sap-desktop #d4h5-main-container ::-webkit-scrollbar-corner {
-    background-color: #f7f7f7;
 }
 
 html.sapUiMedia-Std-Desktop {
