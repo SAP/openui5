@@ -279,17 +279,6 @@
 			position: absolute;
 			padding-left: calc(3rem + 0.75rem); // Width of the image + right margin
 			width: 100%;
-
-			html[data-sap-ui-browser^="ie"] & {
-				top: .5625rem;
-				left: 0;
-			}
-		}
-
-		.sapMSLIImgIcon + .sapMSLIDiv {
-			html[data-sap-ui-browser^="ie"] & {
-				padding-top: .4375rem;
-			}
 		}
 	}
 
@@ -340,26 +329,6 @@
 .sapMPCSticky {
 	.sapMPCHead {
 		top: 0;
-	}
-}
-
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) .sapUiCalItem > .sapUiCalItemText{
-		text-align: left;
-	}
-
-	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) .sapUiCalItem > .sapUiCalDayName{
-		text-align: right;
-	}
-}
-
-html[dir=rtl][data-sap-ui-browser ^= "ie"], html[dir=rtl][data-sap-ui-browser^="ed"] {
-	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) .sapUiCalItem > .sapUiCalItemText{
-		text-align: right;
-	}
-
-	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) .sapUiCalItem > .sapUiCalDayName{
-		text-align: left;
 	}
 }
 
