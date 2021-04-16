@@ -317,55 +317,6 @@
 					</VBox>
 				</f:content>
 			</f:Card>
-			<!-- WebIDE -->
-			<f:Card class="threeColumnLayoutCard">
-				<f:layoutData>
-					<l:GridData spanXL="4"/>
-				</f:layoutData>
-				<f:content>
-					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin toolspageCardInfo">
-							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
-								<custom:TitleLink
-										level="H1"
-										titleStyle="H1"
-										text="{/sapWebIDE/text}"
-										href="{/sapWebIDE/href}"
-										target="_blank"/>
-								<Image
-									src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-									tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
-									width="1.25rem"
-									press="onDisclaimerLinkPress"/>
-							</html:div>
-							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_1_TEXT}" />
-							<HBox wrap="Wrap">
-								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
-									<Link text="{i18n>TOOLS_VIEW_DOC}"
-											target="_blank"
-											href="https://help.sap.com/viewer/825270ffffe74d9f988a0f0066ad59f0/CF/en-US"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-								<html:div class="sapUIDisclaimerLink">
-									<Link text="{i18n>TOOLS_CARD_1_LINK_1}"
-											target="_blank"
-											href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
-										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-							</HBox>
-						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/WebIDE.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_1_IMG_ALT}"/>
-					</VBox>
-				</f:content>
-			</f:Card>
 			<!-- Theme Parameter Toolbox -->
 			<f:Card class="threeColumnLayoutCard">
 				<f:layoutData>

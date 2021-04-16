@@ -92,7 +92,7 @@ sap.ui.define([
 						success: function () {
 							Opa5.assert.ok(true, "The list has the correct number of items");
 						},
-						errorMessage: "The list does not have the correct number of items.\nHint: This test needs suitable mock data in localService directory which can be generated via SAP Web IDE"
+						errorMessage: "The list does not have the correct number of items.\nHint: This test needs suitable mock data in localService directory which can be generated via SAP Business Application Studio"
 					});
 				},
 

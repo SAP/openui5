@@ -43,11 +43,6 @@ sap.ui.define([],
 				"href": "test-resources/sap/m/demokit/iconExplorer/webapp/index.html"
 			},
 			{
-				"id": "sapWebIDE",
-				"text": "SAP Web IDE",
-				"href": "https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"
-			},
-			{
 				"id": "themeParameterToolbox",
 				"text": "Theme Parameter Toolbox",
 				"href": "test-resources/sap/m/demokit/theming/webapp/index.html"
