@@ -132,14 +132,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveColumnLayout.prototype._applyLayout = function (oGrid) {
-		var iWidth = oGrid.getDomRef().parentElement.clientWidth,
+		var oParent = oGrid.getParent(),
+			iWidth = oParent ? oParent.getDomRef().offsetWidth : oGrid.getDomRef().parentElement.offsetWidth,
 			oRange = Device.media.getCurrentRange(RCL_RANGE_SET, iWidth),
 			sClassName = "sapUiLayoutCSSGridRCL-Layout" + oRange.name;
 
 		if (this._sCurrentLayoutClassName === sClassName) {
 			return;
 		}
-
 
 		oGrid.removeStyleClass(this._sCurrentLayoutClassName);
 		oGrid.addStyleClass(sClassName);

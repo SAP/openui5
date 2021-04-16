@@ -575,6 +575,9 @@ sap.ui.define([
 				getDomRef: function () {
 					return this.$()[0];
 				},
+				getParent: function () {
+					return null;
+				},
 				isA: function () {
 					return false;
 				},
@@ -705,7 +708,7 @@ sap.ui.define([
 		this.oGridLayout.onGridResize(oResizeEventMock);
 
 		// Assert
-		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSGridRCL-LayoutS", "Grid has expected layout, when parent has vertical scroll.");
+		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSGridRCL-LayoutM", "Grid has expected layout, when parent has vertical scroll.");
 
 		// Clean up
 		$Root.remove();
