@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/ColumnHeaderPopover",
-	"sap/m/ColumnPopoverSortItem",
 	"sap/m/OverflowToolbar",
 	"sap/m/library",
 	"sap/ui/core/Core",
@@ -50,7 +49,6 @@ sap.ui.define([
 	Text,
 	Title,
 	ColumnHeaderPopover,
-	ColumnPopoverSortItem,
 	OverflowToolbar,
 	MLibrary,
 	Core,
@@ -575,6 +573,9 @@ sap.ui.define([
 
 		Control.prototype.init.apply(this, arguments);
 
+		// indicates whether binding the table is inevitable or not
+		this._bForceRebind = true;
+
 		// Skip propagation of properties (models and bindingContexts)
 		this.mSkipPropagation = {
 			rowSettings: true
@@ -746,16 +747,19 @@ sap.ui.define([
 
 	Table.prototype.setRowSettings = function(oRowSettings) {
 		var sTableType = this._getStringType();
+
 		this.setAggregation("rowSettings", oRowSettings, true);
 
 		if (this._oTable) {
 			// Apply the new setting to the existing table
 			if (sTableType === "ResponsiveTable") {
 				ResponsiveTableType.updateRowSettings(this._oTemplate, oRowSettings);
-				this.checkAndRebind();
 			} else {
 				GridTableType.updateRowSettings(this._oTable, oRowSettings);
 			}
+
+			this._bForceRebind = true;
+			this.checkAndRebind();
 		}
 
 		return this;
@@ -1922,14 +1926,7 @@ sap.ui.define([
 
 		var oColumn = this._createColumn(oMDCColumn);
 		setColumnTemplate(this, oMDCColumn, oColumn, iIndex);
-
-		if (!this._bColumnFlexActive) {
-			// If the column was not added via flex, the table needs to inform the delegate about the column change, because there is no rebind.
-			// TODO: Once the GridTable has a concept for property infos and knows the relation between properties and its columns, the V4Aggregation
-			//  plugin can update the binding directly and this code can be removed.
-			var oDelegate = this.getControlDelegate();
-			oDelegate && oDelegate._onColumnChange && oDelegate._onColumnChange(this);
-		}
+		this._bForceRebind = true;
 
 		if (iIndex === undefined) {
 			this._oTable.addColumn(oColumn);
@@ -2059,14 +2056,6 @@ sap.ui.define([
 		if (this._oTable) {
 			var oColumn = this._oTable.removeColumn(oMDCColumn.getId() + "-innerColumn");
 			oColumn.destroy(); // TODO: avoid destroy
-
-			if (!this._bColumnFlexActive) {
-				// If the column was not removed via flex, the table needs to inform the delegate about the column change, because there is no rebind.
-				// TODO: Once the GridTable has a concept for property infos and knows the relation between properties and its columns, the
-				//  V4Aggregation plugin can update the binding directly and this code can be removed.
-				var oDelegate = this.getControlDelegate();
-				oDelegate && oDelegate._onColumnChange && oDelegate._onColumnChange(this);
-			}
 
 			// update template for ResponsiveTable
 			if (this._bMobileTable) {
@@ -2255,11 +2244,16 @@ sap.ui.define([
 			return;
 		}
 
-		var oBindingInfo = {};
+		// TODO: Temporary, until the FE delegate calls updateBindingInfo on the the base delegate. See sap.ui.mdc.TableDelegate.updateBindingInfo
+		var oBindingInfo = {
+			parameters: {},
+			filters: [],
+			sorter: this._getSorters()
+		};
 
 		this.getControlDelegate().updateBindingInfo(this, this.getPayload(), oBindingInfo);
 
-		if (oBindingInfo && oBindingInfo.path) {
+		if (oBindingInfo.path) {
 			this._oTable.setShowOverlay(false);
 			if (this._bMobileTable && this._oTemplate) {
 				oBindingInfo.template = this._oTemplate;
@@ -2267,19 +2261,14 @@ sap.ui.define([
 				delete oBindingInfo.template;
 			}
 
-			if (!oBindingInfo.parameters) {
-				oBindingInfo.parameters = {};
-			}
-			// Update sorters
-			oBindingInfo.sorter = this._getSorters();
-
 			Table._addBindingListener(oBindingInfo, "dataRequested", this._onDataRequested.bind(this));
 			Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
 			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
 
 			this._updateColumnsBeforeBinding(oBindingInfo);
-			this.getControlDelegate().rebindTable(this, oBindingInfo);
+			this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding());
 			this._updateInnerTableNoDataText();
+			this._bForceRebind = false;
 		}
 	};
 

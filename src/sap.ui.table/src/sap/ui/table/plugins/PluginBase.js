@@ -118,6 +118,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Called when the <code>rows</code> aggregation of the table is bound.
+	 *
+	 * @protected
+	 * @virtual
+	 */
+	PluginBase.prototype.onTableBindRows = function() {};
+	oHookInstallation[Hook.Table.BindRows] = function(oBindingInfo) {
+		this.onTableBindRows(oBindingInfo);
+	};
+
+	/**
 	 * Called when a new binding for the <code>rows</code> aggregation of the table is created, or the plugin is activated in a table with an
 	 * already existing binding for the <code>rows</code> aggregation.
 	 *

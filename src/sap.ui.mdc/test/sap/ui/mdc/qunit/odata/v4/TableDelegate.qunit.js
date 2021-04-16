@@ -5,22 +5,22 @@ sap.ui.define([
 	"sap/ui/mdc/library",
 	"../../QUnitUtils",
 	"../../util/createAppEnvironment",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/core/Core",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/Filter"
 ], function(
 	Table,
 	Column,
 	Library,
 	MDCQUnitUtils,
 	createAppEnvironment,
-	UIComponent,
-	ComponentContainer,
 	ControlPersonalizationWriteAPI,
 	Core,
-	coreLibrary
+	coreLibrary,
+	ODataModel,
+	Filter
 ) {
 	"use strict";
 
@@ -98,16 +98,9 @@ sap.ui.define([
 				name: "odata.v4.TestDelegate"
 			}
 		});
-		var bInitializationFailed = false;
 
-		return oTable.initialized().catch(function() {
-			bInitializationFailed = true;
-		}).finally(function() {
-			assert.ok(bInitializationFailed, "Initialization failed");
-			assert.throws(function() {
-				oTable.getControlDelegate().preInit(oTable);
-			}, new Error("This delegate does not support the table type 'ResponsiveTable'."), "Delegate.preInit throws error");
-			oTable.destroy();
+		return oTable.initialized().then(function() {
+			assert.ok(true, "Initialization successful for ResponsiveTable");
 		});
 	});
 
@@ -181,10 +174,7 @@ sap.ui.define([
 			var oDelegate = oTable.getControlDelegate();
 			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 
-			oDelegate._setAggregation(oTable, {}, {});
-			assert.strictEqual(fSetAggregationSpy.callCount, 0, "V4Aggregation#setAggregation is called only with right parameter type");
-
-			oDelegate._setAggregation(oTable, [], ["Country"]);
+			oDelegate._setAggregation(oTable, [], {Country: "Country"});
 			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 				visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 				groupLevels: [],
@@ -224,7 +214,7 @@ sap.ui.define([
 			assert.strictEqual(fColumnPressSpy.callCount, 2, "Third Column pressed");
 			assert.strictEqual(oTable._oPopover.getItems()[0].getItems().length,2, "The last column has complex property with list of two items");
 
-			var oNewCol = new sap.ui.mdc.table.Column({
+			var oNewCol = new Column({
 				id:"cl"
 			});
 			oTable.insertColumn(oNewCol, 2);
@@ -236,7 +226,7 @@ sap.ui.define([
 				]
 			});
 			oTable.rebind();
-			assert.ok(fSetAggregationSpy.secondCall.calledWithExactly({
+			assert.ok(fSetAggregationSpy.firstCall.calledWithExactly({
 				visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 				groupLevels: ["Name"],
 				grandTotal: [],
@@ -911,4 +901,144 @@ sap.ui.define([
 			}), "Plugin#setAggregationInfo call");
 		});
 	});
+
+	QUnit.module("v4.TableDelegate#updateBinding", {
+		before: function() {
+			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+				name: "Name",
+				path: "Name",
+				label: "Name",
+				sortable: true,
+				groupable: true,
+				filterable: true
+			}]);
+		},
+		beforeEach: function() {
+			this.oTable = new Table({
+				autoBindOnInit: false,
+				p13nMode: ["Column", "Sort", "Filter", "Group", "Aggregate"],
+				delegate: {
+					name: "odata.v4.TestDelegate",
+					payload: {
+						collectionPath: "ProductList"
+					}
+				}
+			}).setModel(new ODataModel({
+				synchronizationMode: "None",
+				serviceUrl: "serviceUrl/",
+				operationMode: "Server"
+			}));
+
+			return this.oTable._fullyInitialized().then(function() {
+				this.oTable.bindRows();
+				this.oInnerTable = this.oTable._oTable;
+				this.oRowBinding = this.oTable.getRowBinding();
+				this.oSetAggregationSpy = sinon.spy(this.oInnerTable.getDependents()[0], "setAggregationInfo");
+				this.oRebindTableSpy = sinon.spy(this.oTable.getControlDelegate(), "rebindTable");
+				this.oChangeParametersSpy = sinon.spy(this.oRowBinding, "changeParameters");
+				this.oFilterSpy = sinon.spy(this.oRowBinding, "filter");
+				this.oSortSpy = sinon.spy(this.oRowBinding, "sort");
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+			this.oSetAggregationSpy.restore();
+			this.oRebindTableSpy.restore();
+			this.oChangeParametersSpy.restore();
+			this.oFilterSpy.restore();
+			this.oSortSpy.restore();
+		},
+		after: function() {
+			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+		}
+	});
+
+	QUnit.test("Sort", function(assert) {
+		this.oTable.setSortConditions({ sorters: [{ name: "Name", descending: false }] }).rebind();
+		assert.ok(this.oSortSpy.firstCall.calledWithExactly(this.oTable._getSorters()));
+
+		this.oTable.setSortConditions({ sorters: [{ name: "Name", descending: true }] }).rebind();
+		assert.ok(this.oSortSpy.secondCall.calledWithExactly(this.oTable._getSorters()));
+
+		this.oTable.setSortConditions().rebind();
+		assert.equal(this.oSortSpy.callCount, 3);
+		assert.equal(this.oRebindTableSpy.callCount, 0);
+	});
+
+	QUnit.test("Filter", function(assert) {
+		var aFilters = [new Filter("Name", "EQ", "a")];
+		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+        oUpdateBindingInfoStub.callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+			oBindingInfo.path = oMetadataInfo.collectionPath;
+			oBindingInfo.filters = aFilters;
+        });
+
+		this.oTable.rebind();
+		assert.ok(this.oFilterSpy.firstCall.calledWithExactly(aFilters, "Application"));
+
+		oUpdateBindingInfoStub.restore();
+		this.oTable.rebind();
+		assert.ok(this.oFilterSpy.secondCall.calledWithExactly([], "Application"));
+		assert.equal(this.oRebindTableSpy.callCount, 0);
+	});
+
+	QUnit.test("Group", function(assert) {
+		this.oTable.setGroupConditions({ groupLevels: [{ name: "Name" }] }).rebind();
+		assert.ok(this.oSetAggregationSpy.firstCall.calledWithMatch({ groupLevels: [ "Name" ] }));
+
+		this.oTable.setGroupConditions().rebind();
+		assert.ok(this.oSetAggregationSpy.secondCall.calledWithMatch( { groupLevels: [] }));
+		assert.equal(this.oRebindTableSpy.callCount, 0);
+	});
+
+	QUnit.test("Aggregates", function(assert) {
+		this.oTable.setAggregateConditions({ Name: {} }).rebind();
+		assert.ok(this.oSetAggregationSpy.firstCall.calledWithMatch({
+		    grandTotal: [ "Name" ],
+		    subtotals: [ "Name" ]
+		}));
+
+		this.oTable.setAggregateConditions().rebind();
+		assert.ok(this.oSetAggregationSpy.secondCall.calledWithMatch( { grandTotal: [], subtotals: [] }));
+		assert.equal(this.oRebindTableSpy.callCount, 0);
+	});
+
+	QUnit.test("Paramaters", function(assert) {
+		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+        oUpdateBindingInfoStub.onCall(0).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+			oBindingInfo.path = oMetadataInfo.collectionPath;
+            oBindingInfo.parameters.$search = "x";
+        });
+		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+			oBindingInfo.path = oMetadataInfo.collectionPath;
+            oBindingInfo.parameters.$search = undefined;
+        });
+		oUpdateBindingInfoStub.onCall(2).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+			oBindingInfo.path = oMetadataInfo.collectionPath;
+            oBindingInfo.parameters.$$canonicalPath = true;
+        });
+
+		this.oTable.rebind();
+		assert.equal(this.oChangeParametersSpy.callCount, 1);
+		this.oTable.rebind();
+		assert.equal(this.oChangeParametersSpy.callCount, 2);
+		assert.equal(this.oRebindTableSpy.callCount, 0);
+
+		this.oTable.rebind();
+		assert.equal(this.oRebindTableSpy.callCount, 1);
+
+		oUpdateBindingInfoStub.restore();
+	});
+
+	QUnit.test("Add Column", function(assert) {
+		this.oTable.insertColumn(new Column());
+		this.oTable.rebind();
+
+		assert.equal(this.oChangeParametersSpy.callCount, 0);
+		assert.equal(this.oFilterSpy.callCount, 0);
+		assert.equal(this.oSortSpy.callCount, 0);
+		assert.equal(this.oSetAggregationSpy.callCount, 1);
+		assert.equal(this.oRebindTableSpy.callCount, 1);
+	});
+
 });

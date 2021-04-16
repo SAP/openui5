@@ -96,6 +96,12 @@ sap.ui.define([
 		expectedAggregate: undefined,
 		expectedGroupLevels: undefined
 	}, {
+		label: "undefined aggregation info",
+		aggregationInfo: {},
+		expectedGroup: undefined,
+		expectedAggregate: undefined,
+		expectedGroupLevels: undefined
+	}, {
 		label: "1 grouped property",
 		aggregationInfo: {
 			visible: ["Property3"]
@@ -206,15 +212,24 @@ sap.ui.define([
 			var mAggregationInfo;
 			var bEmptyAggregationInfo = oData.aggregationInfo == null || Object.keys(oData.aggregationInfo).length === 0;
 			var bExpectedTotalsSetting = bEmptyAggregationInfo ? undefined : true;
+			var oUpdateAggregationSpy = this.spy(this.oPlugin, "updateAggregation");
 
 			this.oPlugin.setAggregationInfo(oData.aggregationInfo);
 
 			mAggregationInfo = this.oPlugin.getAggregationInfo();
-			assert.deepEqual(mAggregationInfo.group, oData.expectedGroup, "grouped properties");
-			assert.deepEqual(mAggregationInfo.aggregate, oData.expectedAggregate, "aggregated properties");
-			assert.deepEqual(mAggregationInfo.groupLevels, oData.expectedGroupLevels, "group levels");
-			assert.strictEqual(mAggregationInfo.grandTotalAtBottomOnly, bExpectedTotalsSetting, "grandTotalAtBottomOnly");
-			assert.strictEqual(mAggregationInfo.subtotalsAtBottomOnly, bExpectedTotalsSetting, "subtotalsAtBottomOnly");
+			assert.equal(oUpdateAggregationSpy.callCount, 1, "updateAggregation is called only once");
+
+			if (bEmptyAggregationInfo) {
+				assert.equal(mAggregationInfo, undefined, "aggregation info is undefined");
+			} else {
+				assert.deepEqual(mAggregationInfo.group, oData.expectedGroup, "grouped properties");
+				assert.deepEqual(mAggregationInfo.aggregate, oData.expectedAggregate, "aggregated properties");
+				assert.deepEqual(mAggregationInfo.groupLevels, oData.expectedGroupLevels, "group levels");
+				assert.strictEqual(mAggregationInfo.grandTotalAtBottomOnly, bExpectedTotalsSetting, "grandTotalAtBottomOnly");
+				assert.strictEqual(mAggregationInfo.subtotalsAtBottomOnly, bExpectedTotalsSetting, "subtotalsAtBottomOnly");
+			}
+
+			oUpdateAggregationSpy.restore();
 		});
 	});
 

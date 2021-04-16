@@ -25,7 +25,7 @@ sap.ui.define([
 	 * Test delegate for OData V4 with analytical capabilities.
 	 */
 	var AnalyticsTableDelegate = Object.assign({}, TableDelegate, TestDelegate);
-	AnalyticsTableDelegate.rebindTable = TableDelegate.rebindTable;
+	AnalyticsTableDelegate.updateBinding = TableDelegate.updateBinding;
 	AnalyticsTableDelegate.validateState = TableDelegate.validateState;
 
 

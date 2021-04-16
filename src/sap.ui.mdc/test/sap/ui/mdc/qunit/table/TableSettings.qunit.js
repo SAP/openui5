@@ -224,37 +224,35 @@ sap.ui.define([
 			that.oTable = that.oView.byId('myTable');
 
 			assert.ok(that.oTable);
-			that.oTable.initialized().then(function() {
-				that.oTable.initialized().then(function() {
-					that.oTable.awaitPropertyHelper().then(function() {
-						// Check default values for settings
-						assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
-						assert.ok(that.oTable.getRowSettings() != null, "Row settings defined");
+			that.oTable._fullyInitialized().then(function() {
+				that.oTable.awaitPropertyHelper().then(function() {
+					// Check default values for settings
+					assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
+					assert.ok(that.oTable.getRowSettings() != null, "Row settings defined");
 
-						var oItem = that.oTable._oTable.getItems()[0];
-						assert.equal(oItem.getNavigated(), true, "Navigated is true from XML view");
-						assert.equal(oItem.getHighlight(), "Warning", "Highlight is Warning from XML view");
-						assert.equal(oItem.getHighlightText(), "", "No highlight text by default");
+					var oItem = that.oTable._oTable.getItems()[0];
+					assert.equal(oItem.getNavigated(), true, "Navigated is true from XML view");
+					assert.equal(oItem.getHighlight(), "Warning", "Highlight is Warning from XML view");
+					assert.equal(oItem.getHighlightText(), "", "No highlight text by default");
 
-						 // Set calculated values for settings
-						var oTableRowSettings = new RowSettings();
-						oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
-						oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
-						that.oTable.setRowSettings(oTableRowSettings);
-						Core.applyChanges();
+					 // Set calculated values for settings
+					var oTableRowSettings = new RowSettings();
+					oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
+					oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
+					that.oTable.setRowSettings(oTableRowSettings);
+					Core.applyChanges();
 
-						 that.oTable.awaitPropertyHelper().then(function() {
-							oItem = that.oTable._oTable.getItems()[0];
-							assert.equal(oItem.getNavigated(), true, "Calculated value for navigated 1");
-							assert.equal(oItem.getHighlight(), "Warning", "Calculated value for highlight 1");
+					 that.oTable.awaitPropertyHelper().then(function() {
+						oItem = that.oTable._oTable.getItems()[0];
+						assert.equal(oItem.getNavigated(), true, "Calculated value for navigated 1");
+						assert.equal(oItem.getHighlight(), "Warning", "Calculated value for highlight 1");
 
-							oItem = that.oTable._oTable.getItems()[1];
-							assert.equal(oItem.getNavigated(), false, "Calculated value for navigated 2");
-							assert.equal(oItem.getHighlight(), "Information", "Calculated value for highlight 2");
+						oItem = that.oTable._oTable.getItems()[1];
+						assert.equal(oItem.getNavigated(), false, "Calculated value for navigated 2");
+						assert.equal(oItem.getHighlight(), "Information", "Calculated value for highlight 2");
 
-							done();
-						 });
-					});
+						done();
+					 });
 				});
 			});
 		});

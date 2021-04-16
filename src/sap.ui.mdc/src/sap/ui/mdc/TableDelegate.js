@@ -33,23 +33,42 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the binding info with the relevant path and model from the metadata.
+	 * Provides hook to update the binding info object that is used to bind the table to the model.
 	 *
+	 * @abstract
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
-	 * @param {object} oMetadataInfo The metadataInfo set on the table
-	 * @param {object} oBindingInfo The bindingInfo of the table
+	 * @param {object} oDelegatePayload The delegate payload
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
 	 */
-	TableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {};
+	TableDelegate.updateBindingInfo = function(oMDCTable, oDelegatePayload, oBindingInfo) {
+		oBindingInfo.parameters = {};
+		oBindingInfo.filters = [];
+		oBindingInfo.sorter = oMDCTable._getSorters();
+	};
 
 	/**
-	 * Checks the binding of the table and rebinds it if required.
+	 * Updates the rows binding of the table.
+	 *
+	 * The default implementation rebinds the table but model specific subclasses should call dedicated binding methods to update the binding instead of rebind.
+	 *
+	 * @virtual
+	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
+	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instace of the table
+	 */
+	TableDelegate.updateBinding = function(oMDCTable, oBindingInfo, oBinding) {
+		this.rebindTable(oMDCTable, oBindingInfo);
+	};
+
+	/**
+	 * Rebinds the table.
 	 *
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
-	 * @param {object} oRowBindingInfo The row binding info of the table
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
 	 */
-	TableDelegate.rebindTable = function(oMDCTable, oRowBindingInfo) {
-		if (oMDCTable && oMDCTable._oTable && oRowBindingInfo) {
-			oMDCTable._oTable.bindRows(oRowBindingInfo);
+	TableDelegate.rebindTable = function(oMDCTable, oBindingInfo) {
+		if (oMDCTable._oTable) {
+			oMDCTable._oTable.bindRows(oBindingInfo);
 		}
 	};
 

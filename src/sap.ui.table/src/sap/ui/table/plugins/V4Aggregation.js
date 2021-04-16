@@ -4,12 +4,10 @@
 sap.ui.define([
 	"./PluginBase",
 	"../utils/TableUtils",
-	"sap/ui/unified/MenuItem",
 	"sap/base/util/deepClone"
 ], function(
 	PluginBase,
 	TableUtils,
-	MenuItem,
 	deepClone
 ) {
 	"use strict";
@@ -180,11 +178,18 @@ sap.ui.define([
 		//   - if the plugin is not active because there is no ODataV4 model yet, it won't be activated if that model is added later
 		//   - on unbind
 		//  Consider calling binding-related hooks also on inactive plugins for this purpose (check usage in selection plugins).
-		if (oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
-			this.updateAggregation();
-		} else {
+		if (!oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
 			this.deactivate();
 		}
+	};
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	V4Aggregation.prototype.onTableBindRows = function(oBindingInfo) {
+		oBindingInfo.parameters = oBindingInfo.parameters || {};
+		oBindingInfo.parameters.$$aggregation = this.getAggregationInfo();
 	};
 
 	V4Aggregation.prototype.updateRowState = function(oState) {
@@ -395,6 +400,10 @@ sap.ui.define([
 	};
 
 	V4Aggregation.prototype.getAggregationInfo = function() {
+		if (!Object.keys(this._mGroup || {}).length && !Object.keys(this._mAggregate || {}).length) {
+			return;
+		}
+
 		var mAggregation = {
 			aggregate: deepClone(this._mAggregate),
 			group: deepClone(this._mGroup),
@@ -465,7 +474,6 @@ sap.ui.define([
 
 	V4Aggregation.prototype.updateAggregation = function() {
 		var oBinding = this.getTableBinding();
-
 		if (oBinding) {
 			oBinding.setAggregation(this.getAggregationInfo());
 		}

@@ -118,22 +118,12 @@ sap.ui.define([
 	 * @param {Object} oBindingInfo The bindingInfo of the table
 	 */
 	ODataTableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
-		if (!oMDCTable) {
-			return;
-		}
-
-		if (oMetadataInfo && oBindingInfo) {
-			oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
-			oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
-		}
-
-		if (!oBindingInfo) {
-			oBindingInfo = {};
-		}
+		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
+		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 
 		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable.isFilteringEnabled(), mConditions;
 		var oInnerFilterInfo, oOuterFilterInfo;
-		var aFilters = [];
+		var aFilters = oBindingInfo.filters;
 
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
 		if (bFilterEnabled) {
@@ -165,15 +155,9 @@ sap.ui.define([
 
 			// get the basic search
 			var sSearchText = oFilter.getSearch();
-			if (sSearchText) {
 
-				if (!oBindingInfo.parameters) {
-					oBindingInfo.parameters = {};
-				}
-
-				// add basic search parameter as expected by v4.ODataListBinding
-				oBindingInfo.parameters.$search = sSearchText;
-			}
+			// add basic search parameter as expected by v4.ODataListBinding
+			oBindingInfo.parameters.$search = sSearchText || undefined;
 		}
 
 		oBindingInfo.filters = new Filter(aFilters, true);

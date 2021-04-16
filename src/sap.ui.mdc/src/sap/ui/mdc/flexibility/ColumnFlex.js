@@ -23,10 +23,6 @@ sap.ui.define([
 		}
 	};
 
-	function isRebindRequired(sChangeType, bIsRevert) {
-		return sChangeType === "addColumn" && !bIsRevert || (sChangeType === "removeColumn" && bIsRevert);
-	}
-
 	ColumnFlex.findItem = function(oModifier, aColumns, sName) {
 		return aColumns.find(function(oColumn) {
 			var sDataProperty = oModifier.getProperty(oColumn, "dataProperty");
@@ -34,17 +30,8 @@ sap.ui.define([
 		});
 	};
 
-	ColumnFlex.beforeApply = function(sChangeType, oTable, bIsRevert) {
-		if (isRebindRequired(sChangeType, bIsRevert)) {
-			oTable._bColumnFlexActive = true;
-		}
-	};
-
 	ColumnFlex.afterApply = function(sChangeType, oTable, bIsRevert) {
-		if (isRebindRequired(sChangeType, bIsRevert)) {
-			delete oTable._bColumnFlexActive;
-			fRebindControl(oTable);
-		}
+		fRebindControl(oTable);
 	};
 
 	ColumnFlex.addColumn = ColumnFlex.createAddChangeHandler();

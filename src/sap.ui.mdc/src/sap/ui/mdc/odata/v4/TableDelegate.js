@@ -108,7 +108,7 @@ sap.ui.define([
 
 	Delegate.preInit = function(oTable) {
 		if (oTable._getStringType() === TableType.ResponsiveTable) {
-			throw new Error("This delegate does not support the table type '" + TableType.ResponsiveTable + "'.");
+			return;
 		}
 
 		// disable temporary count in toolbar -> CPOUIFTEAMB-1769
@@ -264,36 +264,80 @@ sap.ui.define([
 		}
 	};
 
-	Delegate.rebindTable = function (oTable, oBindingInfo) {
-		var oGroupLevels, aGrouping, oAggregations, aAggregate;
+	/**
+	 * Provides hook to update the binding info object that is used to bind the table to the model.
+	 *
+	 * Delegate objects that implement this method must ensure that at least the <code>path</code> key of the binding info is provided.
+	 * While defining binding info parameters to remove a parameter <code>undefined</code> must be set.
+	 * For more information, see {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
+	 *
+	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
+	 * @param {object} oDelegatePayload The delegate payload
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
+	 * @function
+	 * @name sap.ui.mdc.odata.v4.TableDelegate.updateBindingInfo
+	 * @abstract
+	 */
+	//Delegate.updateBindingInfo = function(oTable, oDelegatePayload, oBindingInfo) { };
 
-		oGroupLevels = oTable._getGroupedProperties();
-		oAggregations = oTable._getAggregatedProperties();
 
-		aGrouping = oGroupLevels.map(function (item) {
-			return item.name;
-		});
+	/**
+	 * Updates the rows binding of the table if possible, rebinds otherwise.
+	 *
+	 * Compares the current and previous state of the table to detect whether rebinding is necessary or not.
+	 * The diffing happens for the sorters, filters, aggregation, parameters, and the path of the binding.
+	 * Other {@link sap.ui.base.ManagedObject.AggregationBindingInfo binding info} keys like <code>events</code>,
+	 * <code>model</code>... must be provided in the {@link #updateBindingInfo updateBindingInfo} method always
+	 * and those keys must not be changed conditionally.
+	 *
+	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
+	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instace of the table
+	 * @protected
+	 * @override
+	 */
+	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding) {
+		var bForceRebind = false;
+		if (!oBinding || oBinding.hasPendingChanges() || oBinding.getPath() != oBindingInfo.path) {
+			bForceRebind = true;
+		} else {
+			try { oBinding.suspend(); } catch (e) { /* empty */ }
+			try {
+				oBinding.changeParameters(oBindingInfo.parameters);
+				oBinding.filter(oBindingInfo.filters, "Application");
+				oBinding.sort(oBindingInfo.sorter);
+				this._setAggregation(oTable);
+			} catch (e) {
+				bForceRebind = true;
+			}
+			try { !bForceRebind && oBinding.resume(); } catch (e) { /* empty */ }
+		}
 
-		aAggregate = Object.keys(oAggregations);
-
-		this._setAggregation(oTable, aGrouping, aAggregate);
-		TableDelegate.rebindTable(oTable, oBindingInfo);
+		if (bForceRebind) {
+			this._setAggregation(oTable);
+			this.rebindTable(oTable, oBindingInfo);
+		}
 	};
 
-	Delegate._setAggregation = function(oTable, aGroupLevel, aAggregate) {
-		if (!(aGroupLevel && aAggregate instanceof Array)) {
-			return;
-		}
-		var mTableMap = TableMap.get(oTable);
-		var oPlugin = mTableMap["plugin"];
+	Delegate._setAggregation = function(oTable, aGroupedProperties, mAggregatedProperties) {
+		var mTableMap = TableMap.get(oTable) || {};
+		var oPlugin = mTableMap.plugin;
 
 		if (oPlugin) {
+			aGroupedProperties = aGroupedProperties || oTable._getGroupedProperties();
+			mAggregatedProperties = mAggregatedProperties || oTable._getAggregatedProperties();
+
+			var aAggregates = Object.keys(mAggregatedProperties);
+			var aGroupLevels = aGroupedProperties.map(function (mGroupLevel) {
+				return mGroupLevel.name;
+			});
+
 			var oAggregationInfo = {
 				visible: this._getVisibleProperties(oTable, oPlugin),
-				groupLevels: aGroupLevel,
-				grandTotal: aAggregate,
-				subtotals: aAggregate,
-				columnState: getColumnState(oTable, aAggregate)
+				groupLevels: aGroupLevels,
+				grandTotal: aAggregates,
+				subtotals: aAggregates,
+				columnState: getColumnState(oTable, aAggregates)
 			};
 
 			oPlugin.setAggregationInfo(oAggregationInfo);
@@ -402,21 +446,6 @@ sap.ui.define([
 		return aVisibleProperties;
 	};
 
-	Delegate._onColumnChange = function(oTable) {
-		if (!TableMap.get(oTable)) {
-			return;
-		}
-		var aGroupLevel = oTable.getCurrentState().groupLevels || [];
-		var oAggregate  = oTable.getCurrentState().aggregations || {};
-		var aAggregate = Object.keys(oAggregate);
-
-		aGroupLevel = aGroupLevel.map(function (item) {
-			return item.name;
-		});
-
-		this._setAggregation(oTable, aGroupLevel, aAggregate);
-	};
-
 	Delegate.validateState = function(oControl, oState) {
 		var bIsValidState;
 
@@ -499,7 +528,7 @@ sap.ui.define([
 		}).then(function(HelperClass) {
 			var oHelper = new HelperClass(aPropertiesForBinding, mExtensionsForBinding, oTable);
 			oPlugin.setPropertyInfos(oHelper.getProperties());
-			oDelegate._setAggregation(oTable, [], []);
+			oDelegate._setAggregation(oTable, [], {});
 			oHelper.destroy();
 		});
 	}
