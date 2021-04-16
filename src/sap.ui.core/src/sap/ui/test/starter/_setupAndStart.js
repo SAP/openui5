@@ -132,7 +132,7 @@ sap.ui.define([
 			}
 			QUnit.config.autostart = false;
 
-			// now load QUnit, its CSS + the reporter bridge
+			// now load qunitPause, QUnit, its CSS + the reporter bridge
 			pQUnit = pAfterLoader.then(function () {
 				return requireP("sap/ui/test/qunitPause");
 			}).then(function () {
@@ -240,6 +240,7 @@ sap.ui.define([
 				return requireP(["sap/ui/qunit/qunit-coverage"]);
 			}
 		}).then(function() {
+			// QUnit option CSP
 			if ( QUnit.urlParams["sap-ui-xx-csp-policy"] ) {
 				document.addEventListener("securitypolicyviolation", onCSPViolation);
 				QUnit.done(function() {
@@ -254,6 +255,22 @@ sap.ui.define([
 					"sap-target-level-2:report-only": "Level 2"
 				},
 				tooltip: "What Content-Security-Policy should the server send"
+			});
+			// QUnit option repeat-to-failure
+			if ( QUnit.urlParams["rtf"] || QUnit.urlParams["repeat-to-failure"]) {
+				QUnit.done(function(results) {
+					if (results.failed === 0) {
+						setTimeout(function() {
+							location.reload();
+						}, 100);
+					}
+				});
+			}
+			QUnit.config.urlConfig.push({
+				id: "repeat-to-failure",
+				label: "Repeat",
+				value: false,
+				tooltip: "Whether this test should auto-repeat until it fails"
 			});
 		});
 
