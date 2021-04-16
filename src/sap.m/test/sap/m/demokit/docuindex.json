@@ -374,7 +374,8 @@
 		  "samples": [
 			"sap.m.sample.Dialog",
 			"sap.m.sample.DialogMessage",
-			"sap.m.sample.DialogConfirm"
+			"sap.m.sample.DialogConfirm",
+			"sap.m.sample.DialogWithinArea"
 		  ]
 		},
 		{
@@ -3009,6 +3010,11 @@
 		  "id": "sap.m.sample.DialogConfirm",
 		  "name": "Dialog With Confirm Options",
 		  "description": "Creating a dialog with confirm and reject options that replaces the confirmDialog functionality."
+		},
+		{
+		  "id": "sap.m.sample.DialogWithinArea",
+		  "name": "Dialog in Custom Within Area",
+		  "description": "Within area of sap.ui.core.Popup determines where all popups (including dialogs) are positioned and where they can be dragged."
 		},
 		{
 		  "id": "sap.m.sample.ViewSettingsDialog",
