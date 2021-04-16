@@ -1220,16 +1220,7 @@ sap.ui.define([
 	 * @returns {FocusEvent} The focus event object.
 	 */
 	TableQUnitUtils.createFocusEvent = function(sFocusEventType) {
-		var oFocusEvent;
-
-		if (typeof FocusEvent === "function") {
-			oFocusEvent = new FocusEvent(sFocusEventType);
-		} else { // IE
-			oFocusEvent = document.createEvent("FocusEvent");
-			oFocusEvent.initFocusEvent(sFocusEventType, true, false);
-		}
-
-		return oFocusEvent;
+		return new FocusEvent(sFocusEventType);
 	};
 
 	/**
@@ -1292,8 +1283,7 @@ sap.ui.define([
 		oOuterElement = document.getElementById(sId);
 		oOuterElement.focus();
 
-		// IE does not support Element.closest
-		if (oOuterElement.closest && oOuterElement.closest(".sapUiTable")) {
+		if (oOuterElement.closest(".sapUiTable")) {
 			throw new Error("Element with id '" + sId + "' is inside a table");
 		}
 

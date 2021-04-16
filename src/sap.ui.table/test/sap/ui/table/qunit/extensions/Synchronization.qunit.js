@@ -433,89 +433,46 @@ sap.ui.define([
 		Device.support.touch = true;
 
 		function createWheelEvent(iScrollDelta, bHorizontal) {
-			var oWheelEvent;
-
-			if (typeof window.WheelEvent === "function") {
-				oWheelEvent = new window.WheelEvent("wheel", {
-					deltaX: bHorizontal ? iScrollDelta : 0,
-					deltaY: bHorizontal ? 0 : iScrollDelta,
-					deltaMode: 0,
-					shiftKey: bHorizontal,
-					bubbles: true,
-					cancelable: true
-				});
-			} else { // IE
-				oWheelEvent = document.createEvent("Event");
-				oWheelEvent.deltaX = bHorizontal ? iScrollDelta : 0;
-				oWheelEvent.deltaY = bHorizontal ? 0 : iScrollDelta;
-				oWheelEvent.deltaMode = 0;
-				oWheelEvent.shiftKey = bHorizontal;
-				oWheelEvent.initEvent("wheel", true, true);
-			}
-
-			return oWheelEvent;
+			return new window.WheelEvent("wheel", {
+				deltaX: bHorizontal ? iScrollDelta : 0,
+				deltaY: bHorizontal ? 0 : iScrollDelta,
+				deltaMode: 0,
+				shiftKey: bHorizontal,
+				bubbles: true,
+				cancelable: true
+			});
 		}
 
 		function createTouchStartEvent(oTargetElement) {
-			var oTouchStartEvent;
-
-			if (typeof window.Touch === "function") {
-				var oTouchObject = new window.Touch({
-					identifier: Date.now(),
-					target: oTargetElement,
-					pageX: 0,
-					pageY: 0
-				});
-
-				oTouchStartEvent = new window.TouchEvent("touchstart", {
-					bubbles: true,
-					cancelable: true,
-					touches: [oTouchObject]
-				});
-			} else { // Firefox, Edge, IE
-				oTouchStartEvent = document.createEvent("Event");
-				oTouchStartEvent.touches = [
-					{
+			return new window.TouchEvent("touchstart", {
+				bubbles: true,
+				cancelable: true,
+				touches: [
+					new window.Touch({
+						identifier: Date.now(),
+						target: oTargetElement,
 						pageX: 0,
 						pageY: 0
-					}
-				];
-				oTouchStartEvent.initEvent("touchstart", true, true);
-			}
-
-			return oTouchStartEvent;
+					})
+				]
+			});
 		}
 
 		function createTouchMoveEvent(oTargetElement, iScrollDelta, bHorizontal) {
-			var oTouchMoveEvent;
-
 			iScrollDelta *= -1;
 
-			if (typeof window.Touch === "function") {
-				var oTouchObject = new window.Touch({
-					identifier: Date.now(),
-					target: oTargetElement,
-					pageX: bHorizontal ? iScrollDelta : 0,
-					pageY: bHorizontal ? 0 : iScrollDelta
-				});
-
-				oTouchMoveEvent = new window.TouchEvent("touchmove", {
-					bubbles: true,
-					cancelable: true,
-					touches: [oTouchObject]
-				});
-			} else { // Firefox, Edge, IE
-				oTouchMoveEvent = document.createEvent("Event");
-				oTouchMoveEvent.touches = [
-					{
+			return new window.TouchEvent("touchmove", {
+				bubbles: true,
+				cancelable: true,
+				touches: [
+					new window.Touch({
+						identifier: Date.now(),
+						target: oTargetElement,
 						pageX: bHorizontal ? iScrollDelta : 0,
 						pageY: bHorizontal ? 0 : iScrollDelta
-					}
-				];
-				oTouchMoveEvent.initEvent("touchmove", true, true);
-			}
-
-			return oTouchMoveEvent;
+					})
+				]
+			});
 		}
 
 		function scrollWithMouseWheel(oTargetElement, iScrollDelta) {

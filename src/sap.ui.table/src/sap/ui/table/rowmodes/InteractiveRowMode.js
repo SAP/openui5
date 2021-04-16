@@ -313,9 +313,6 @@ sap.ui.define([
 		var width = $Splitter.width();
 		var bTouch = oTable._isTouchEvent(oEvent);
 
-		// Fix for IE text selection while dragging
-		$Body.on("selectstart", ResizeHelper.onSelectStartWhileInteractiveResizing);
-
 		$Body.append(
 			"<div id=\"" + oTable.getId() + "-ghost\" class=\"sapUiTableInteractiveResizerGhost\" style =\" height:" + height + "px; width:"
 			+ width + "px; left:" + offset.left + "px; top:" + offset.top + "px\" ></div>");
@@ -340,7 +337,6 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	ResizeHelper.exitInteractiveResizing = function(oMode, oEvent) {
-		var $Body = jQuery(document.body);
 		var $Document = jQuery(document);
 		var $Table = this.$();
 		var $Ghost = this.$("ghost");
@@ -359,25 +355,12 @@ sap.ui.define([
 		$Ghost.remove();
 		this.$("rzoverlay").remove();
 
-		$Body.off("selectstart", ResizeHelper.onSelectStartWhileInteractiveResizing);
 		$Document.off("touchend.sapUiTableInteractiveResize");
 		$Document.off("touchmove.sapUiTableInteractiveResize");
 		$Document.off("mouseup.sapUiTableInteractiveResize");
 		$Document.off("mousemove.sapUiTableInteractiveResize");
 
 		this._enableTextSelection();
-	};
-
-	/**
-	 * Handler for the selectstart event triggered in IE to select the text. Avoid this during resize drag&drop.
-	 *
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @returns {boolean} Always returns false.
-	 */
-	ResizeHelper.onSelectStartWhileInteractiveResizing = function(oEvent) {
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		return false;
 	};
 
 	/**

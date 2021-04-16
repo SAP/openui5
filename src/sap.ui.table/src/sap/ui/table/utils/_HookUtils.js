@@ -7,7 +7,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 	"use strict";
 
 	var Hooks = new window.WeakMap();
-	var MASTER_HOOK_KEY = {}; // Symbol could be used here, but IE does not support it.
+	var MASTER_HOOK_KEY = {};
 	var mKeyMapForExternalUsage = {};
 	var mHookMetadataByKey = {};
 	var aForbiddenTypes = ["function"];

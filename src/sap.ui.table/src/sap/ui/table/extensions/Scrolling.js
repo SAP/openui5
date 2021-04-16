@@ -25,8 +25,6 @@ sap.ui.define([
 	 *                             Width      Height
 	 * Chrome (63.0.3239.84)  33.554.428  33.554.428
 	 * Firefox (57.0.3)       17.895.698  17.895.696
-	 * EdgeHTML (14.14393)     1.533.917   1.533.917
-	 * Internet Explorer 11    1.533.917   1.533.917
 	 */
 
 	/**
@@ -76,16 +74,6 @@ sap.ui.define([
 	 */
 	function log(sMessage, oTable) {
 		Log.debug("sap.ui.table.extensions.Scrolling", sMessage, oTable);
-	}
-
-	/**
-	 * Checks whether an element is connected with the DOM.
-	 *
-	 * @param {HTMLElement} oElement The element to check.
-	 * @returns {boolean} Whether the element is connected with the DOM.
-	 */
-	function isConnected(oElement) {
-		return typeof oElement.isConnected === "boolean" && oElement.isConnected || /* IE */ document.body.contains(oElement);
 	}
 
 	/**
@@ -735,7 +723,7 @@ sap.ui.define([
 
 			delete oEvent.target._scrollTop;
 
-			if (nNewScrollTop === 0 && !isConnected(oEvent.target)) {
+			if (nNewScrollTop === 0 && !oEvent.target.isConnected) {
 				log("VerticalScrollingHelper.onScrollbarScroll: Scrollbar is not connected with the DOM", this);
 			} else if (bScrollWithScrollbar) {
 				log("VerticalScrollingHelper.onScrollbarScroll: Scroll position changed to " + nNewScrollTop + " by interaction", this);
@@ -1944,8 +1932,8 @@ sap.ui.define([
 
 			for (var i = 0; i < aEventListenerTargets.length; i++) {
 				/* Touch events */
-				// IE/Edge and Chrome on desktops and windows tablets - pointer events;
-				// other browsers and tablets - touch events.
+				// Chrome on desktops and windows tablets - pointer events.
+				// Other browsers and tablets - touch events.
 				if (Device.support.pointer && Device.system.desktop) {
 					aEventListenerTargets[i].addEventListener("pointerdown", fnOnTouchStartEventHandler);
 					aEventListenerTargets[i].addEventListener("pointermove", fnOnTouchMoveEventHandler,
@@ -2070,9 +2058,8 @@ sap.ui.define([
 				}
 			}
 
-			// On focus, the browsers scroll elements which are not visible into the viewport (IE also scrolls if elements are partially visible).
-			// This causes scrolling inside table cells, which is not desired.
-			// Flickering of the cell content cannot be avoided, as the browser performs scrolling after the event. This behavior cannot be
+			// On focus, the browsers scroll elements which are not visible into the viewport. This causes scrolling inside table cells, which is not
+			// desired. Flickering of the cell content cannot be avoided, as the browser performs scrolling after the event. This behavior cannot be
 			// prevented, only reverted.
 			var $ParentCell = TableUtils.getParentCell(this, oEvent.target);
 
@@ -2355,7 +2342,7 @@ sap.ui.define([
 
 		var oScrollbar = _private(oTable).oVerticalScrollbar;
 
-		if (oScrollbar && !bIsExternal && !bIgnoreDOMConnection && !isConnected(oScrollbar)) {
+		if (oScrollbar && !bIsExternal && !bIgnoreDOMConnection && !oScrollbar.isConnected) {
 			// The internal scrollbar was removed from DOM without notifying the table.
 			// This can be the case, for example, if the parent of the table was made invisible.
 			return null;
