@@ -1121,12 +1121,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/registry/ChangeRegistryItem"]
 				}
 			},
-			"registry/ChangeTypeMetadata": {
-				group: "registry",
-				coverage: {
-					only: ["sap/ui/fl/registry/ChangeTypeMetadata"]
-				}
-			},
 			"registry/Settings": {
 				group: "registry",
 				coverage: {
