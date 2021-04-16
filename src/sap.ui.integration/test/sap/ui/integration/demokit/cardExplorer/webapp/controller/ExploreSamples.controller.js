@@ -5,6 +5,7 @@ sap.ui.define([
 	"../model/ExploreSettingsModel",
 	"../model/formatter",
 	"../util/FileUtils",
+	"sap/ui/core/util/MockServer",
 	"../localService/SEPMRA_PROD_MAN/mockServer",
 	"../localService/graphql/mockServer",
 	"sap/m/MessageToast",
@@ -27,6 +28,7 @@ sap.ui.define([
 	exploreSettingsModel,
 	formatter,
 	FileUtils,
+	MockServer,
 	SEPMRA_PROD_MAN_mockServer,
 	graphql_mockServer,
 	MessageToast,
@@ -83,6 +85,7 @@ sap.ui.define([
 
 		onExit: function () {
 			this._deregisterResize();
+			this._destroyMockServers();
 		},
 
 		/**
@@ -551,9 +554,24 @@ sap.ui.define([
 					SEPMRA_PROD_MAN_mockServer.init(),
 					graphql_mockServer.init()
 				]);
+				this._bMockServersCreated = true;
+			} else {
+				// Stop all mock servers on samples which don't need it. Else all requests go through sinon.
+				this._destroyMockServers();
 			}
 
 			return pAwait;
+		},
+
+		_destroyMockServers: function (oSample) {
+			if (!this._bMockServersCreated) {
+				return;
+			}
+
+			SEPMRA_PROD_MAN_mockServer.destroy();
+			graphql_mockServer.destroy();
+			MockServer.destroyAll(); // restore sinon fake server
+			this._bMockServersCreated = false;
 		},
 
 		_initCardSample: function () {

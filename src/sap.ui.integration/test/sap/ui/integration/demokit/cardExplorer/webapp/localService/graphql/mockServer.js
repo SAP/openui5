@@ -88,6 +88,16 @@ sap.ui.define([
 		 */
 		getMockServer: function () {
 			return oMockServer;
+		},
+
+		destroy: function () {
+			if (!oMockServer) {
+				return;
+			}
+
+			oMockServer.destroy();
+			oMockServer = null;
+			this._pInit = null;
 		}
 	};
 
