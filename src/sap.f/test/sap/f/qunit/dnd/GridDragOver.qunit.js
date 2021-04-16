@@ -29,8 +29,8 @@ sap.ui.define([
 		var oFakeEvent = new jQuery.Event("dragover"),
 			mTargetRect = oTargetControl.getDomRef().getBoundingClientRect();
 
-		oFakeEvent.pageX = Math.ceil(mTargetRect.left + window.pageXOffset); // use Math.ceil because on Microsoft Edge sometimes the coordinates are fractions
-		oFakeEvent.pageY = Math.ceil(mTargetRect.top + window.pageYOffset);
+		oFakeEvent.pageX = mTargetRect.left + window.pageXOffset;
+		oFakeEvent.pageY = mTargetRect.top + window.pageYOffset;
 		oFakeEvent.target = oTargetControl.getDomRef();
 
 		return oFakeEvent;
@@ -133,8 +133,8 @@ sap.ui.define([
 		oText.placeAt("content");
 		Core.applyChanges();
 
-		oFakeEvent.pageX = Math.ceil(mTargetRect.left + window.pageXOffset); // use Math.ceil because on Microsoft Edge sometimes the coordinates are fractions
-		oFakeEvent.pageY = Math.ceil(mTargetRect.top + window.pageYOffset);
+		oFakeEvent.pageX = mTargetRect.left + window.pageXOffset;
+		oFakeEvent.pageY = mTargetRect.top + window.pageYOffset;
 
 		// Act
 		this.oGridDragOver._onDragLeave(oFakeEvent);
@@ -144,8 +144,8 @@ sap.ui.define([
 
 		// Arrange
 		mTargetRect = oText.getDomRef().getBoundingClientRect();
-		oFakeEvent.pageX = Math.ceil(mTargetRect.left); // use Math.ceil because on Microsoft Edge sometimes the coordinates are fractions
-		oFakeEvent.pageY = Math.ceil(mTargetRect.top);
+		oFakeEvent.pageX = mTargetRect.left;
+		oFakeEvent.pageY = mTargetRect.top;
 
 		// Act
 		this.oGridDragOver._onDragLeave(oFakeEvent);
