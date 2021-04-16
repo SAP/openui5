@@ -31,13 +31,8 @@
 	cursor: pointer;
 }
 
-html:not([data-sap-ui-browser^="ie"]) .navigationExamples .ne-flexbox2 li:hover {
+.navigationExamples .ne-flexbox2 li:hover {
 	flex-basis: 35% !important;
-	background-color: orange;
-}
-
-html[data-sap-ui-browser='ie11'] .navigationExamples .ne-flexbox2 li:hover {
-	width: 35% !important;
 	background-color: orange;
 }
 
