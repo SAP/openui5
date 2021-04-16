@@ -304,25 +304,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a change to set if a given standard variant should be executed automatically or not.
-	 *
-	 * @param {object} mPropertyBag - Map of parameters, see below
-	 * @param {string} mPropertyBag.reference - Flex reference of the application
-	 * @param {boolean} mPropertyBag.persistencyKey - Flag if the variant should be executed
-	 * @param {string} mPropertyBag.executeOnSelection - ID of the variant which should be selected at start-up
-	 * @param {string} [mPropertyBag.generator] - Generator of changes
-	 * @param {string} [mPropertyBag.compositeCommand] - Name of the command calling the API
-	 * @returns {sap.ui.fl.Change} Created or updated change object in charge for setting the <code>executeOnSelection</code> flag in the standard variant
-	 */
-	CompVariantState.setExecuteOnSelection = function (mPropertyBag) {
-		var oContent = {
-			executeOnSelect: mPropertyBag.executeOnSelection
-		};
-
-		return createOrUpdateChange(mPropertyBag, oContent, "standardVariant");
-	};
-
-	/**
 	 * Adds a new variant for a smart variant management, such as filter bar or table, and returns the ID of the new variant.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties

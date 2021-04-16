@@ -290,7 +290,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given persist is called with all kind of objects (variants, changes, defaultVariant and standardVariant) are present", function(assert) {
+		QUnit.test("Given persist is called with all kind of objects (variants, changes, defaultVariant) are present", function(assert) {
 			var sPersistencyKey = "persistency.key";
 
 			var oVariant = CompVariantState.addVariant({
@@ -314,11 +314,6 @@ sap.ui.define([
 				defaultVariantId: "id_123_pageVariant",
 				conntent: {}
 			});
-			CompVariantState.setExecuteOnSelection({
-				reference: sComponentId,
-				persistencyKey: sPersistencyKey,
-				executeOnSelection: true
-			});
 
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
 
@@ -332,29 +327,27 @@ sap.ui.define([
 				persistencyKey: sPersistencyKey
 			})
 			.then(function () {
-				assert.equal(oWriteStub.callCount, 4, "then the write method was called 4 times,");
+				assert.equal(oWriteStub.callCount, 3, "then the write method was called 3 times,");
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
 				assert.equal(oCompVariantStateMapForPersistencyKey.variants[0].getState(), Change.states.PERSISTED, "the variant is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.changes[0].getState(), Change.states.PERSISTED, "the addFavorite change is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant.getState(), Change.states.PERSISTED, "the set default variant is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant.getNamespace(), "apps/the.app.component/changes/", "the set default variant change has namespace in the content");
-				assert.equal(oCompVariantStateMapForPersistencyKey.standardVariantChange.getState(), Change.states.PERSISTED, "the standard variant is persisted");
 			})
 			.then(function () {
 				oCompVariantStateMapForPersistencyKey.changes[0].setState(Change.states.DIRTY);
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(Change.states.DELETED);
 				oCompVariantStateMapForPersistencyKey.defaultVariant.setState(Change.states.DELETED);
-				oCompVariantStateMapForPersistencyKey.standardVariantChange.setState(Change.states.DELETED);
 			})
 			.then(CompVariantState.persist.bind(undefined, {
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			}))
 			.then(function () {
-				assert.equal(oWriteStub.callCount, 4, "AFTER SOME CHANGES; still the write method was called 4 times,");
+				assert.equal(oWriteStub.callCount, 3, "AFTER SOME CHANGES; still the write method was called 3 times,");
 				assert.equal(oUpdateStub.callCount, 1, "one update was called");
-				assert.equal(oRemoveStub.callCount, 3, "and three deletes were called");
+				assert.equal(oRemoveStub.callCount, 2, "and two deletes were called");
 				assert.equal(oCompVariantStateMapForPersistencyKey.variants.length, 0, "the variant is cleared");
 				assert.equal(oCompVariantStateMapForPersistencyKey.changes[0].getState(), Change.states.PERSISTED, "the addFavorite change is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, undefined, "the default variant was cleared");
@@ -428,49 +421,6 @@ sap.ui.define([
 				"the change is set under the persistencyKey");
 			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "still one entity for persistencyKeys is present");
 			assert.equal(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
-		});
-	});
-
-	QUnit.module("setExecuteOnSelection", {
-		before: function() {
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sComponentId
-			});
-		},
-		afterEach: function() {
-			FlexState.clearState(sComponentId);
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("Given setExecuteOnSelection is called twice", function(assert) {
-			var sPersistencyKey = "persistency.key";
-
-			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
-
-			assert.equal(oCompVariantStateMapForPersistencyKey.standardVariantChange, undefined,
-				"no standardVariant change is set under the persistencyKey");
-			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 0, "no entities are present");
-
-			var oChange = CompVariantState.setExecuteOnSelection({
-				reference: sComponentId,
-				executeOnSelection: true,
-				persistencyKey: sPersistencyKey
-			});
-			assert.equal(oCompVariantStateMapForPersistencyKey.standardVariantChange, oChange,
-				"the change is set under the persistencyKey");
-			assert.equal(oChange.getContent().executeOnSelect, true, "the change content is correct");
-			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity is present");
-
-			CompVariantState.setExecuteOnSelection({
-				reference: sComponentId,
-				executeOnSelection: false,
-				persistencyKey: sPersistencyKey
-			});
-			assert.equal(oChange.getContent().executeOnSelect, false, "the change content was updated");
-			assert.equal(oCompVariantStateMapForPersistencyKey.standardVariantChange, oChange,
-				"the change is set under the persistencyKey");
-			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "still only one entity is present");
 		});
 	});
 
@@ -766,19 +716,24 @@ sap.ui.define([
 			var oVariant = CompVariantState.addVariant(oVariantData);
 			sandbox.stub(Storage, "write").resolves();
 
-			// adding a change to test, that the remove-function not existent in changes is not called = the test does not die
-			CompVariantState.setExecuteOnSelection({
-				reference: sComponentId,
-				executeOnSelection: true,
-				persistencyKey: sPersistencyKey
-			});
+			return Settings.getInstance()
+				.then(function () {
+					// adding a change to test, that the remove-function not existent in changes is not called = the test does not die
+					CompVariantState.updateVariant({
+						reference: sComponentId,
+						executeOnSelection: true,
+						persistencyKey: sPersistencyKey,
+						id: oVariant.getId(),
+						favorite: true
+					});
 
-			return CompVariantState.persist({
-				reference: sComponentId,
-				persistencyKey: sPersistencyKey
-			}).then(function () {
-				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data is present");
-			});
+					return CompVariantState.persist({
+						reference: sComponentId,
+						persistencyKey: sPersistencyKey
+					});
+				}).then(function () {
+					assert.equal(oVariant.getRevertInfo().length, 0, "no revert data is present");
+				});
 		});
 
 		QUnit.test("Given a variant was removed", function(assert) {
