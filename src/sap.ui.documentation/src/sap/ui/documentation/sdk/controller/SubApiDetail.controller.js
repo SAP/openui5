@@ -66,6 +66,7 @@ sap.ui.define([
 				this._oEntityData = oReferences.oEntityData;
 				this._oContainerController = oReferences.oContainerController;
 				this._oContainerView = oReferences.oContainerView;
+				this._oToggleFullScreenBtn = this.byId("toggleFullScreenBtn");
 
 				// Override instance getOwnerComponent so correct component will be used for the controller
 				this.getOwnerComponent = function () {
@@ -191,6 +192,7 @@ sap.ui.define([
 
 			onAfterRendering: function () {
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
+				ToggleFullScreenHandler.updateControl(this._oToggleFullScreenBtn, this._oContainerView, this._oContainerController);
 			},
 
 			onExit: function () {
