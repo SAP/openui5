@@ -247,6 +247,11 @@ sap.ui.define([
 		}
 
 		oAnchorElement = getClosestParentLink(oElement);
+
+		if (!oAnchorElement) {
+			return;
+		}
+
 		// The links from the static documentation are already preprocessed at build-time
 		// to the correct format, so we do not need to adjust them here at run-time
 		if (window['sap-ui-documentation-static'] && oAnchorElement.classList.contains('sap-doc')) {
@@ -646,7 +651,7 @@ sap.ui.define([
 		iMaxDrillUp || (iMaxDrillUp = 3);
 
 		while (!bIsAnchor && iDrillUp++ < iMaxDrillUp) {
-			oAnchorElement = oAnchorElement.parentElement;
+			oAnchorElement = oAnchorElement && oAnchorElement.parentElement;
 			bIsAnchor = isAnchorElement(oAnchorElement);
 		}
 
