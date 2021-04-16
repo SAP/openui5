@@ -46,7 +46,6 @@
 	outline: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 	color: @sapUiListTextColor;
 	font-size: @sapMFontMediumSize;
@@ -101,56 +100,6 @@ li.sapMSelectListItemBaseInvisible {
 html.sap-desktop .sapMSelectListItemBase:focus {
 	outline: dotted 1px;
 	outline-offset: -2px;
-}
-
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-
-	.sapMSelectListItemBase:not(.sapMSelectListRow):focus::before,
-	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before,
-	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before {
-		content: " ";
-		position: absolute;
-		top: 1px;
-		right: 1px;
-		bottom: 1px;
-		left: 1px;
-		pointer-events: none;
-	}
-
-	.sapMSelectListItemBase:focus,
-	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
-		outline: none;
-		position: relative;
-	}
-
-	.sapMSelectListCell {
-		position: relative;
-	}
-
-	.sapMSelectListItemBase:focus,
-	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
-	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
-		.sapMSelectListCell::before {
-			position: absolute;
-			bottom: 1px;
-			top: 1px;
-			left: 0;
-			right: 0;
-			content: " ";
-			pointer-events: none;
-		}
-
-		.sapMSelectListFirstCell.sapMSelectListCell::before {
-			left: 1px;
-		}
-
-		.sapMSelectListLastCell.sapMSelectListCell::before {
-			right: 1px;
-		}
-	}
 }
 
 /* ------------------------------ */
