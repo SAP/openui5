@@ -204,36 +204,6 @@ sap.ui.define([
 		oControl.$().addClass('sapUiLayoutCSSGridBoxLayoutFlattenHeight');
 	};
 
-	GridBoxLayout.prototype._applyClassForLastItem = function (oControl) {
-		var iCurrentNumberPerRow = 0;
-		var aBoxesPerRowConfig = this.getBoxesPerRowConfig().split(" ");
-		var oRange = Device.media.getCurrentRange("StdExt", oControl.$().width());
-		var sSizeClassCode = mSizeClasses[oRange.name].substring("sapUiLayoutCSSGridBoxLayoutSize".length);
-		var iMaxNumberPerRow;
-
-		aBoxesPerRowConfig.forEach(function (element) {
-			// Check if SizeClassCode (for example "XL") is contained inside the element
-			if (element.indexOf(sSizeClassCode) != -1){
-				// This splits the layout size and the maximum number of columns from the string: Example: "XL7" -> 7
-				iMaxNumberPerRow = parseInt(element.substring(sSizeClassCode.length));
-			}
-		});
-
-		this._loopOverGridItems(oControl, function (oGridItem) {
-			if (oGridItem.classList.contains("sapUiLayoutCSSGridItem")) { // the item is not group header or a block layer tabbable, it is an item
-				iCurrentNumberPerRow++;
-				if (iCurrentNumberPerRow == iMaxNumberPerRow) {
-					oGridItem.classList.add("sapUiLayoutCSSGridItemLastOnRow");
-					iCurrentNumberPerRow = 0;
-				} else {
-					oGridItem.classList.remove("sapUiLayoutCSSGridItemLastOnRow");
-				}
-			} else if (oGridItem.classList.contains("sapMGHLI")) { // the item is group header, new row is following
-				iCurrentNumberPerRow = 0;
-			}
-		});
-	};
-
 	/**
 	 * Applies a size class on the list. The class is used for breakpoints.
 	 * Note: The class is needed only when no fixed width is set on the boxes.

@@ -15,11 +15,6 @@ sap.ui.define([
 		 * @param {object} oView The view that the grid-based control is held in
 		 */
 		toggle: function (oId, oView) {
-			if (!this._isGridSupported()) {
-				MessageToast.show("Reveal Grid feature is not supported by your browser.");
-				return;
-			}
-
 			if (typeof oId == "string") {
 				oId = [oView.byId(oId).getId()];
 			}
@@ -150,34 +145,11 @@ sap.ui.define([
 		_getOverlayItemsCount: function (oGridDomRef) {
 			var mGridStyles = window.getComputedStyle(oGridDomRef),
 				sRows = mGridStyles.gridTemplateRows,
-				sColumns = mGridStyles.gridTemplateColumns;
-
-			if (Device.browser.edge) {
-				sRows = this._simplifyTrackList(sRows);
-				sColumns = this._simplifyTrackList(sColumns);
-			}
-
-			var iRows = sRows.split(/\s+/).length,
+				sColumns = mGridStyles.gridTemplateColumns,
+				iRows = sRows.split(/\s+/).length,
 				iColumns = sColumns.split(/\s+/).length;
 
 			return iRows * iColumns;
-		},
-
-		/**
-		 * Repeats a placeholder token X many times that the CSS function <code>repeat(X, Y)</code> has, so the track count can be counted easily.
-		 * @param {string} sTrackList List of all grid tracks for a grid dimension (row or column)
-		 * @returns {string} List with all repeated columns expanded
-		 */
-		_simplifyTrackList: function (sTrackList) {
-			var rRepeat = new RegExp(/repeat\((\d+), [^\)\(]+\)/),
-				aMatch;
-
-			while ((aMatch = rRepeat.exec(sTrackList))) {
-				var iRepeatedTracks = Number.parseInt(aMatch[1]);
-				sTrackList = sTrackList.replace(rRepeat, "a ".repeat(iRepeatedTracks));
-			}
-
-			return sTrackList.trim();
 		},
 
 		_resizeHandler: function (oEvent) {
@@ -197,12 +169,6 @@ sap.ui.define([
 					}
 				}
 			}
-		},
-
-		_isGridSupported: function () {
-			return !Device.browser.msie;
 		}
-
 	};
-
 });
