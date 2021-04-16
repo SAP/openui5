@@ -51,7 +51,6 @@
 	-webkit-appearance: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
 	box-sizing: border-box;
@@ -71,13 +70,6 @@
 	border-radius:    0.2rem;
 	color:            @sapUiButtonTextColor;
 	text-shadow:      @sapUiShadowText;
-}
-
-html[data-sap-ui-browser*='ie'] .sapMBtnInner {
-	/* Buttons without inline content require
-		more vertical space than needed in IE */
-	display: flex;
-	width: 100%;
 }
 
 .sapMBtnInner::-moz-focus-inner {
@@ -138,13 +130,6 @@ html[data-sap-ui-os^="iOS"] .sapMBtnBase:not(.sapMBtn) .sapMBtnContent {
 
 .sapMIBar .sapMBtnInner {
 	vertical-align:   top;
-}
-
-.sapMIBar .sapMBtnInner.sapMIE {
-	/* This is for IE9 - if a button overflows inside of a bar,
-		ellipsis will be shown and it will hide completely
-		if there is no position relative set.*/
-	position: relative;
 }
 
 /* ------------------------------------------------ */
