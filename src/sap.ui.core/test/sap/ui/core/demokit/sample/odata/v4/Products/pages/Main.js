@@ -36,24 +36,11 @@ sap.ui.define([
 
 	/*
 	 * Checks whether the input control which matches the given <code>rId</code> and is in the
-	 * given row <code>iRow</code> of a table has the given value state <code>sState</code>; checks
-	 * the first row if none is given.
+	 * given row <code>iRow</code> of a table has the given value state <code>sValueState</code>;
+	 * checks the first row if none is given.
 	 */
-	function checkValueState(oOpa, rId, sState, iRow) {
-		return oOpa.waitFor({
-			controlType : "sap.m.Input",
-			id : rId,
-			matchers : function (oControl) {
-				return oControl.getBindingContext().getIndex() === (iRow || 0);
-			},
-			success : function (aControls) {
-				var oInput = aControls[0];
-
-				Opa5.assert.strictEqual(oInput.getValueState(), sState,
-					rId + " has valueState:" + sState);
-			},
-			viewName : sViewName
-		});
+	function checkValueState(oOpa, rId, sValueState, iRow) {
+		Helper.checkValueState(oOpa, sViewName, rId, sValueState, undefined, false, iRow || 0);
 	}
 
 	/*

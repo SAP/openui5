@@ -242,11 +242,11 @@ sap.ui.define([
 				.checkControlValue("SimulateDiscountForm::GrossAmount", "250.73");
 			Then.onTheSimulateDiscountDialog
 				.checkControlValue("SimulateDiscountResult::Result", "");
-			When.onTheSimulateDiscountDialog.enterDiscount(25);
+			When.onTheSimulateDiscountDialog.enterDiscount("25");
 			When.onTheSimulateDiscountDialog.executeSimulateDiscount();
 			Then.onTheSimulateDiscountDialog
 				.checkControlValue("SimulateDiscountResult::Result", "188.05");
-			When.onTheSimulateDiscountDialog.enterDiscount(75);
+			When.onTheSimulateDiscountDialog.enterDiscount("75");
 			When.onTheSimulateDiscountDialog.executeSimulateDiscount();
 			Then.onTheSimulateDiscountDialog.checkDiscountValueState(ValueState.Error,
 				sDiscountFailure);

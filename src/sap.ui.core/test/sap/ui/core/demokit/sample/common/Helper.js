@@ -70,13 +70,20 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 * @param {string} sId
 		 *  The ID of a "sap.m.StepInput" control inside the view sViewName
 		 * @param {string} sValue
-		 *  The external value of the control as a string
+		 *  The entered value of the control as a string
+		 * @param {string} [sExpectedValue=sValue]
+		 *  The expected value after entering. E.g. if <code>sValue</code> contains decimals and the
+		 *  control's 'displayValuePrecision' property, or the binding's data type constraint
+		 *  'scale' is 0 then the expected new value is the largest integer less than or equal to
+		 *  <code>sValue<sValue>.
 		 * @param {boolean} bSearchOpenDialogs
 		 *  If set to true, Opa5 will only search in open dialogs
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
-		changeStepInputValue : function (oOpa5, sViewName, sId, sValue, bSearchOpenDialogs) {
+		changeStepInputValue : function (oOpa5, sViewName, sId, sValue, sExpectedValue,
+				bSearchOpenDialogs) {
+			// The StepInput control behaves different than e.g. Input: Changing and checking of the
+			// new value have to be done via separate waitFor(...) promises, e.g. the check for the
+			// value would fail if it is done in the success function of the first waitFor.
 			oOpa5.waitFor({
 				actions : new EnterText({clearTextFirst : true, text : sValue}),
 				controlType : "sap.m.StepInput",
@@ -84,13 +91,14 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 				searchOpenDialogs : bSearchOpenDialogs,
 				viewName : sViewName
 			});
-			return oOpa5.waitFor({
+			oOpa5.waitFor({
 				controlType : "sap.m.StepInput",
 				id : sId,
 				searchOpenDialogs : bSearchOpenDialogs,
 				success : function (oControl) {
-					Opa5.assert.strictEqual(oControl.getValue(), sValue,
-						"Control: " + sId + " Value is: " + oControl.getValue());
+					sExpectedValue = sExpectedValue || sValue;
+					Opa5.assert.strictEqual(oControl.getValue().toString(), sExpectedValue,
+						"Control: " + sId + " Value is: " + sExpectedValue);
 				},
 				viewName : sViewName
 			});
@@ -158,8 +166,6 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The external value of the control as a string
 		 * @param {boolean} bSearchOpenDialogs
 		 *  If set to true, Opa5 will only search in open dialogs
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
 		checkControlValue : function (oOpa5, sViewName, sId, sValue, bSearchOpenDialogs) {
 			oOpa5.waitFor({
@@ -229,38 +235,6 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
-		 * Checks whether a sap.m.Input control has an expected value state and value state message.
-		 *
-		 * @param {sap.ui.test.Opa5} oOpa5
-		 *  An instance of Opa5 to access the current page object
-		 * @param {string} sViewName
-		 *  The name of the view which contains the searched control
-		 * @param {string} sId
-		 *  The ID of a "sap.m.Input" control inside the view sViewName
-		 * @param {sap.ui.core.ValueState} sValueState
-		 *  The expected value state of the control
-		 * @param {string} sMessage
-		 *  The expected value state message of the control
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
-		 */
-		checkInputValueState : function (oOpa5, sViewName, sId, sValueState, sMessage) {
-			return oOpa5.waitFor({
-				controlType : "sap.m.Input",
-				id : sId,
-				success : function (oInput) {
-					Opa5.assert.strictEqual(oInput.getValueState(), sValueState,
-						"checkInputValueState('" + sId + "', '" + sValueState + "')");
-					if (sMessage) {
-						Opa5.assert.strictEqual(oInput.getValueStateText(), sMessage,
-							"ValueStateText: " + sMessage);
-					}
-				},
-				viewName : sViewName
-			});
-		},
-
-		/**
 		 * Checks the text of the 'More' button for a sap.m.Table.
 		 *
 		 * @param {sap.m.Button} oTrigger - The 'More' trigger button
@@ -270,6 +244,49 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		checkMoreButtonCount : function (oTrigger, sExpectedCount) {
 			Opa5.assert.strictEqual(oTrigger.getDomRef().innerText.replace(/\s/g, ""),
 				"More" + sExpectedCount, "'More' button has text " + sExpectedCount);
+		},
+
+		/**
+		 * Checks whether a control has an expected value state and (optional) value state text.
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string|RegExp} sID
+		 *  The ID of a control inside the view sViewName, may be a regular expression
+		 * @param {sap.ui.core.ValueState} sValueState
+		 *  The expected value state of the control
+		 * @param {string} [sValueStateText]
+		 *  The expected value state text of the control, if supplied
+		 * @param {boolean} [bSearchOpenDialogs=false]
+		 *  Whether Opa5 will only search for controls in open dialogs
+		 * @param {number} [iRow=undefined]
+		 *  The row number (zero based) of the control if the control is within a collection
+		 */
+		checkValueState : function (oOpa5, sViewName, sID, sValueState, sValueStateText,
+				bSearchOpenDialogs, iRow) {
+			oOpa5.waitFor({
+				id : sID,
+				matchers : iRow === undefined ? undefined : function (oControl) {
+					return oControl.getBindingContext().getIndex() === iRow;
+				},
+				searchOpenDialogs : bSearchOpenDialogs,
+				success : function (vControls) {
+					// vControl is an array only if iRow is supplied
+					var oControl = iRow === undefined ? vControls : vControls[0];
+
+					Opa5.assert.ok(iRow === undefined || vControls.length === 1);
+					Opa5.assert.strictEqual(oControl.getValueState(), sValueState,
+						"Control: " + oControl.getId() + " has valueState: " + sValueState);
+					if (sValueStateText !== undefined) {
+						Opa5.assert.strictEqual(oControl.getValueStateText(), sValueStateText,
+							"Control: " + oControl.getId() + " has valueStateText: "
+							+ sValueStateText);
+					}
+				},
+				viewName : sViewName
+			});
 		},
 
 		/**
@@ -409,13 +426,13 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 * @param {number} [iTestTimeout]
 		 *  The desired timeout in seconds for one QUnit.test() within the current QUnit module.
 		 */
-		qUnitModule : function (sText, iTestTimeout) {
+		qUnitModule : function (sName, iTestTimeout) {
 			var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 				iTimeoutBefore = QUnit.config.testTimeout;
 
 			iTestTimeout = TestUtils.isRealOData() && iTestTimeout || QUnit.config.testTimeout;
 
-			QUnit.module(sText, {
+			QUnit.module(sName, {
 				before : function () {
 					sap.ui.getCore().getConfiguration().setLanguage("en-US");
 					QUnit.config.testTimeout = iTestTimeout * 1000;

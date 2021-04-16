@@ -50,25 +50,9 @@ sap.ui.define([
 						viewName : sViewName0 || sViewName
 					});
 				},
-				enterStepInputValue : function (sId, sValue) {
-					return Helper.changeStepInputValue(this, sViewName, sId, sValue);
-				},
-				enterStepInputValueInteger : function (sId, fValue) {
-					this.waitFor({
-						actions : new EnterText({clearTextFirst : true, text : fValue}),
-						controlType : "sap.m.StepInput",
-						id : sId,
-						viewName : sViewName
-					});
-					return this.waitFor({
-						controlType : "sap.m.StepInput",
-						id : sId,
-						success : function (oControl) {
-							Opa5.assert.strictEqual(oControl.getValue(), Math.round(fValue),
-								"Control: " + sId + " Value is: " + oControl.getValue());
-						},
-						viewName : sViewName
-					});
+				enterStepInputValue : function (sId, sValue, sExpectedValue) {
+					return Helper.changeStepInputValue(this, sViewName, sId, sValue,
+						sExpectedValue);
 				},
 				pressButton : function (sId) {
 					return Helper.pressButton(this, sViewName, sId);
@@ -93,23 +77,10 @@ sap.ui.define([
 					return Helper.checkInputValue(this, sViewName0 || sViewName, sId, vValue);
 				},
 				checkInputValueState : function (sId, sState, sMessage, sViewName0) {
-					return Helper.checkInputValueState(this, sViewName0 || sViewName, sId, sState,
-						sMessage);
+					Helper.checkValueState(this, sViewName0 || sViewName, sId, sState, sMessage);
 				},
 				checkStepInputValueState : function (sId, sState, sMessage) {
-					return this.waitFor({
-						controlType : "sap.m.StepInput",
-						id : sId,
-						success : function (oStepInput) {
-							Opa5.assert.strictEqual(oStepInput.getValueState(), sState,
-								"checkStepInputValueState('" + sId + "', '" + sState + "')");
-							if (sMessage) {
-								Opa5.assert.strictEqual(oStepInput.getValueStateText(), sMessage,
-									"ValueStateText: " + sMessage);
-							}
-						},
-						viewName : sViewName
-					});
+					Helper.checkValueState(this, sViewName, sId, sState, sMessage);
 				}
 			}
 		}
