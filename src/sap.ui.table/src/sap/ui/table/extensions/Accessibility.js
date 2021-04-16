@@ -8,10 +8,12 @@ sap.ui.define([
 	"./AccessibilityRender",
 	"../utils/TableUtils",
 	"../library",
+	"sap/ui/core/library",
 	"sap/ui/core/Control",
+	"sap/ui/core/InvisibleMessage",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function(ExtensionBase, AccRenderExtension, TableUtils, library, Control, Device, jQuery) {
+], function(ExtensionBase, AccRenderExtension, TableUtils, library, coreLibrary, Control, InvisibleMessage, Device, jQuery) {
 	"use strict";
 
 	// shortcuts
@@ -1084,19 +1086,33 @@ sap.ui.define([
 		if (!ExtensionHelper["modifyAccOf" + sCellType]) {
 			return;
 		}
+		ExtensionHelper["modifyAccOf" + sCellType].apply(this, [oInfo]);
 
-		if (sReason !== "Focus" && sReason !== TableUtils.RowsUpdateReason.Expand && sReason !== TableUtils.RowsUpdateReason.Collapse) {
-			// when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
-			// to force screenreader announcements
-			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER | CellType.ROWACTION)) {
-				oInfo.cell.attr("role", "status");
-				oInfo.cell.attr("role", "gridcell");
-			} else {
-				return;
-			}
+		if (sReason === "Focus" || sReason === TableUtils.RowsUpdateReason.Expand || sReason === TableUtils.RowsUpdateReason.Collapse) {
+			return;
 		}
 
-		ExtensionHelper["modifyAccOf" + sCellType].apply(this, [oInfo]);
+		// This is a workaround for Jaws + Chromium specific misbehavior in order to force screen reader announcements
+		// when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand).
+		// It might cause double announcement in other screen readers
+		if (Device.browser.chrome) {
+			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER | CellType.ROWACTION)) {
+				var sMessage = "";
+				var aLabels = oInfo.cell[0].getAttribute("aria-labelledby").trim().split(' ');
+
+				aLabels.forEach(function (sLabel) {
+					if (document.getElementById(sLabel)) {
+						sMessage = sMessage.concat(" ", document.getElementById(sLabel).innerText);
+					}
+				});
+
+				if (oInfo.cell[0].getAttribute("aria-selected") === "true") {
+					sMessage = sMessage.concat(" ", TableUtils.getResourceText("TBL_ROW_DESC_SELECTED"));
+				}
+
+				InvisibleMessage.getInstance().announce(sMessage, coreLibrary.InvisibleMessageMode.Assertive);
+			}
+		}
 	};
 
 	/**
