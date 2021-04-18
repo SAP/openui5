@@ -519,6 +519,7 @@ sap.ui.define([
 		// Remember the facet button overflow state
 		this._bPreviousScrollForward = false;
 		this._bPreviousScrollBack = false;
+		this._popoverClosing = false;
 
 		this._getAddFacetButton();
 
@@ -1068,9 +1069,14 @@ sap.ui.define([
 					}
 					clearDeleteFacetIconTouchStartFlag(that._displayedList);
 				},
+				beforeClose: function() {
+					that._popoverClosing = true;
+				},
 				afterClose: function(oEvent) {
 
 					that._addDelegateFlag = true;
+
+					this._popoverClosing = false;
 
 					that._handlePopoverAfterClose();
 				},
@@ -1997,7 +2003,15 @@ sap.ui.define([
 			press: function(oEvent) {
 				this._addDelegateFlag = true;
 				this._invalidateFlag = true;
-				this.fireReset();
+
+				if (this._popoverClosing) {
+					// We wait for the closing popover animation to finish before firing "reset" event,
+					// so "listClose" event is fired before "reset" event in all cases.
+					setTimeout(this.fireReset.bind(this), Popover.prototype._getAnimationDuration());
+				} else {
+					this.fireReset();
+				}
+
 				//clear search value when 'reset' button clicked
 				var aLists = this.getLists();
 				for (var i = 0; i < aLists.length; i++) {
