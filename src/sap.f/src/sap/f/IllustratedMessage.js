@@ -128,7 +128,7 @@ sap.ui.define([
 				 * Determines which illustration type is displayed.
 				 *
 				 * <b>Note:</b> The {@link sap.f.IllustratedMessageType} enumeration contains a default illustration set.
-				 * If you want to use another illustration set, yuu have to register it in the {@link sap.f.IllustrationPool}.
+				 * If you want to use another illustration set, you have to register it in the {@link sap.f.IllustrationPool}.
 				 *
 				 * Example input for the <code>illustrationType</code> property is <code>sapIllus-UnableToLoad</code>.
 				 * The logic behind this format is as follows:
