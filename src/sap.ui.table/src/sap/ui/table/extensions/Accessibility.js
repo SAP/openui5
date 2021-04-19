@@ -160,24 +160,28 @@ sap.ui.define([
 		 * Returns the IDs of the column headers which are relevant for the given column (esp. in multi header case).
 		 */
 		getRelevantColumnHeaders: function(oTable, oColumn) {
-			if (!oTable || !oColumn) {
-				return [];
+			var aLabels = [];
+
+			if (!oTable || !oColumn || !oTable.getColumnHeaderVisible()) {
+				return aLabels;
 			}
 
-			var iHeaderRowCount = TableUtils.getHeaderRowCount(oTable),
-				sColumnId = oColumn.getId(),
-				aLabels = [sColumnId];
+			var iHeaderRowCount = TableUtils.getHeaderRowCount(oTable);
 
-			if (iHeaderRowCount > 1) {
+			if (iHeaderRowCount > 0) {
+				var sColumnId = oColumn.getId();
+				aLabels.push(sColumnId);
+
 				for (var i = 1; i < iHeaderRowCount; i++) {
 					aLabels.push(sColumnId + "_" + i);
 				}
 
 				var aSpans = TableUtils.Column.getParentSpannedColumns(oTable, sColumnId);
+
 				if (aSpans && aSpans.length) {
-					for (var i = 0; i < aSpans.length; i++) {
-						var iLevel = aSpans[i].level;
-						var sParentId = aSpans[i].column.getId();
+					for (var j = 0; j < aSpans.length; j++) {
+						var iLevel = aSpans[j].level;
+						var sParentId = aSpans[j].column.getId();
 						aLabels[iLevel] = iLevel === 0 ? sParentId : (sParentId + "_" + iLevel);
 					}
 				}

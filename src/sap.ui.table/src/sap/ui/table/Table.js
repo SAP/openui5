@@ -142,6 +142,9 @@ sap.ui.define([
 
 			/**
 			 * Flag whether the column header is visible or not.
+			 *
+			 * <b>Caution:</b> Please be aware that when setting this property to <code>false</code>,
+			 * a 100% accessibility of the table can't be guaranteed any more.
 			 */
 			columnHeaderVisible : {type : "boolean", group : "Appearance", defaultValue : true},
 
