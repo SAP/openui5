@@ -14,6 +14,15 @@ sap.ui.define([
 						},
 						errorMessage: "The Tools page was not displayed"
 					});
+				},
+				iShouldSeeTheHeadline: function () {
+					return this.waitFor({
+						id: "landingImageHeadline",
+						success: function (oControl) {
+							Opa5.assert.strictEqual(oControl.getText(), "Tools", "Tools headline is visible");
+						},
+						errorMessage: "The Tools page was not displayed"
+					});
 				}
 			}
 		}
