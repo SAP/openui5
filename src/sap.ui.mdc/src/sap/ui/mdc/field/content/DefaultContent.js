@@ -26,6 +26,9 @@ sap.ui.define([
 		getDisplay: function() {
 			return ["sap/m/Text"];
 		},
+		getDisplayMultiLine: function() {
+			return ["sap/m/ExpandableText"];
+		},
 		getEdit: function() {
 			return ["sap/ui/mdc/field/FieldInput"];
 		},
@@ -55,6 +58,9 @@ sap.ui.define([
 			switch (sContentMode) {
 				case "Display":
 					aControlNames = this.getDisplay();
+					break;
+				case "DisplayMultiLine":
+					aControlNames = this.getDisplayMultiLine();
 					break;
 				case "EditMulti":
 					aControlNames = this.getEditMulti();
@@ -90,6 +96,8 @@ sap.ui.define([
 			switch (sContentMode) {
 				case "Display":
 					return this.createDisplay(oContentFactory, aControls, sId);
+				case "DisplayMultiLine":
+					return this.createDisplayMultiLine(oContentFactory, aControls, sId);
 				case "EditMulti":
 					return this.createEditMulti(oContentFactory, aControls, sId);
 				case "EditMultiLine":
@@ -241,6 +249,29 @@ sap.ui.define([
 			oContentFactory.setBoundProperty("text");
 
 			return [oText];
+		},
+		/**
+		 * Creates the suitable controls for content mode "DisplayMultiLine".
+		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
+		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
+		 * @param {String} sId ID of the field control
+		 * @returns {sap.ui.core.Control[]} Array containing the created controls
+		 * @since 1.91
+		 */
+		createDisplayMultiLine: function(oContentFactory, aControlClasses, sId) {
+			var ExpandableText = aControlClasses[0];
+			var oConditionsType = oContentFactory.getConditionsType();
+			var oExpandableText = new ExpandableText(sId, {
+				text: { path: "$field>/conditions", type: oConditionsType },
+				textAlign: "{$field>/textAlign}",
+				textDirection: "{$field>/textDirection}",
+				width: "100%",
+				tooltip: "{$field>/tooltip}"//,
+//				emptyIndicatorMode: EmptyIndicatorMode.Auto
+			});
+			oContentFactory.setBoundProperty("text");
+
+			return [oExpandableText];
 		}
 	};
 

@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/MultiInput",
 	"sap/m/Text",
+	"sap/m/ExpandableText",
 	"sap/m/Slider",
 	"sap/m/Input",
 	"sap/m/ProgressIndicator",
@@ -70,6 +71,7 @@ sap.ui.define([
 	Label,
 	MultiInput,
 	Text,
+	ExpandableText,
 	Slider,
 	Input,
 	ProgressIndicator,
@@ -1067,9 +1069,8 @@ sap.ui.define([
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof Text, "Text rendered");
-			assert.ok(oContent.getWrapping && oContent.getWrapping(), "Text wrapping enabled");
-			assert.equal(oContent.getText && oContent.getText(), "Test", "Text set on Text control");
+			assert.ok(oContent instanceof ExpandableText, "ExpandableText rendered");
+			assert.equal(oContent.getText && oContent.getText(), "Test", "Text set on ExpandableText control");
 			fnDone();
 		}, 0);
 

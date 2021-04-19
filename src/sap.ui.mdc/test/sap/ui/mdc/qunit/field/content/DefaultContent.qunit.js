@@ -4,11 +4,12 @@ sap.ui.define([
 	"sap/ui/mdc/field/content/DefaultContent",
 	"sap/ui/mdc/Field",
 	"sap/m/Text",
+	"sap/m/ExpandableText",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/m/TextArea",
 	"sap/m/Token"
-], function(QUnit, DefaultContent, Field, Text, FieldInput, FieldMultiInput, TextArea, Token) {
+], function(QUnit, DefaultContent, Field, Text, ExpandableText, FieldInput, FieldMultiInput, TextArea, Token) {
 	"use strict";
 
 	var oControlMap = {
@@ -17,6 +18,12 @@ sap.ui.define([
 			paths: ["sap/m/Text"],
 			instances: [Text],
 			createFunction: DefaultContent.createDisplay
+		},
+		"DisplayMultiLine": {
+			getPathsFunction: DefaultContent.getDisplayMultiLine,
+			paths: ["sap/m/ExpandableText"],
+			instances: [ExpandableText],
+			createFunction: DefaultContent.createDisplayMultiLine
 		},
 		"Edit": {
 			getPathsFunction: DefaultContent.getEdit,
