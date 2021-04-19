@@ -271,7 +271,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#setQueryOptions", function (assert) {
+	QUnit.test("_Cache#get-/setQueryOptions", function (assert) {
 		var sMetaPath = "/TEAMS",
 			mNewQueryOptions = {},
 			mQueryOptions = {},
@@ -280,15 +280,18 @@ sap.ui.define([
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(sMetaPath, sinon.match.same(mQueryOptions), false, "bSortExpandSelect")
 			.returns("?foo=bar");
+		oCache = new _Cache(this.oRequestor, "TEAMS('42')", mQueryOptions, "bSortExpandSelect");
+		assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
+		assert.strictEqual(oCache.sQueryString, "?foo=bar");
+
+		// code under test
+		assert.strictEqual(oCache.getQueryOptions(), mQueryOptions);
+
+		this.mock(oCache).expects("checkSharedRequest").thrice().withExactArgs();
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(sMetaPath, sinon.match.same(mNewQueryOptions), false,
 				"bSortExpandSelect")
 			.returns("?baz=boo");
-
-		oCache = new _Cache(this.oRequestor, "TEAMS('42')", mQueryOptions, "bSortExpandSelect");
-		assert.strictEqual(oCache.sQueryString, "?foo=bar");
-
-		this.mock(oCache).expects("checkSharedRequest").twice().withExactArgs();
 
 		// code under test
 		oCache.setQueryOptions(mNewQueryOptions);
@@ -296,12 +299,29 @@ sap.ui.define([
 		assert.strictEqual(oCache.mQueryOptions, mNewQueryOptions);
 		assert.strictEqual(oCache.sQueryString, "?baz=boo");
 
+		// code under test
+		assert.strictEqual(oCache.getQueryOptions(), mNewQueryOptions);
+
 		oCache.bSentRequest = true;
 
 		// code under test
 		assert.throws(function () {
 			oCache.setQueryOptions(mQueryOptions);
 		}, new Error("Cannot set query options: Cache has already sent a request"));
+
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(sMetaPath, sinon.match.same(mQueryOptions), false,
+				"bSortExpandSelect")
+			.returns("?foo=bar");
+
+		// code under test
+		oCache.setQueryOptions(mQueryOptions, true);
+
+		assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
+		assert.strictEqual(oCache.sQueryString, "?foo=bar");
+
+		// code under test
+		assert.strictEqual(oCache.getQueryOptions(), mQueryOptions);
 	});
 
 	//*********************************************************************************************
