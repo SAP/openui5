@@ -3,9 +3,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/XMLProcessingMode",
 	"sap/ui/core/routing/Views",
 	"./AsyncViewModuleHook"
-], function (Log, UIComponent, View, Views, ModuleHook) {
+], function (Log, UIComponent, View, XMLProcessingMode, Views, ModuleHook) {
 	"use strict";
 
 	function createXmlView () {
@@ -53,7 +54,7 @@ sap.ui.define([
 			assert.strictEqual(fnStub.callCount, 1, "the stub was invoked");
 
 			var oCall = fnStub.getCall(0);
-			assert.equal(oCall.args[0].processingMode, "sequential", "The default processing mode is set to sequential");
+			assert.equal(oCall.args[0].processingMode, XMLProcessingMode.Sequential, "The default processing mode is set to 'Sequential'");
 
 			fnStub.restore();
 			done();
