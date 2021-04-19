@@ -375,6 +375,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("setDefault", {
+		before: function() {
+			this.sPersistencyKey = "persistency.key";
+			this.sVariantId1 = "variantId1";
+			this.sVariantId2 = "variantId2";
+		},
 		beforeEach: function () {
 			return FlexState.initialize({
 				componentId: sComponentId,
@@ -387,11 +392,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given setDefault is called twice", function(assert) {
-			var sPersistencyKey = "persistency.key";
-			var sVariantId1 = "variantId1";
-			var sVariantId2 = "variantId2";
-
-			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
+			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
 
 			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, undefined,
 				"no defaultVariant change is set under the persistencyKey");
@@ -399,28 +400,97 @@ sap.ui.define([
 
 			var oChange = CompVariantState.setDefault({
 				reference: sComponentId,
-				defaultVariantId: sVariantId1,
-				persistencyKey: sPersistencyKey,
+				defaultVariantId: this.sVariantId1,
+				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
-			assert.equal(oChange.getContent().defaultVariantName, sVariantId1);
+			assert.equal(oChange.getContent().defaultVariantName, this.sVariantId1);
 			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange,
 				"the change is set under the persistencyKey");
-			assert.equal(oChange.getContent().defaultVariantName, sVariantId1, "the change content is correct");
+			assert.equal(oChange.getContent().defaultVariantName, this.sVariantId1, "the change content is correct");
 			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
 			assert.equal(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is set to CUSTOMER");
 
-			CompVariantState.setDefault({
+			var oChange2 = CompVariantState.setDefault({
 				reference: sComponentId,
-				defaultVariantId: sVariantId2,
-				persistencyKey: sPersistencyKey,
+				defaultVariantId: this.sVariantId2,
+				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
-			assert.equal(oChange.getContent().defaultVariantName, sVariantId2, "the change content was updated");
-			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange,
+			assert.equal(oChange.getContent().defaultVariantName, this.sVariantId2, "the change content was updated");
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange2,
 				"the change is set under the persistencyKey");
 			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "still one entity for persistencyKeys is present");
 			assert.equal(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
+		});
+
+		QUnit.test("Given setDefault is called once for USER layer and once for CUSTOMER layer", function(assert) {
+			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
+			var oChange = CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId1,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER
+			});
+			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
+			assert.equal(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is set to CUSTOMER");
+
+			var oChange2 = CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId2,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.USER
+			});
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange2,
+				"the new CUSTOMER change is now the the defaultVariant");
+			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
+			assert.equal(oChange2.getDefinition().layer, Layer.USER, "The default layer is still set to USER");
+		});
+
+		QUnit.test("Given setDefault is called with a already transported Change", function(assert) {
+			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
+			var oChange = CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId1,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER
+			});
+			oChange.getDefinition().packageName = "TRANSPORTED";
+			assert.equal(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is set to CUSTOMER");
+
+			var oChange2 = CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId2,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER
+			});
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange2,
+				"the new CUSTOMER change is now the the defaultVariant");
+			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
+			assert.equal(oChange2.getDefinition().layer, Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");
+		});
+
+		QUnit.test("Given I have a USER Layer setDefault and create a CUSTOMER setDefault", function(assert) {
+			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
+			var oChange = CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId1,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.USER
+			});
+			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
+			assert.equal(oChange.getDefinition().layer, Layer.USER, "The default layer is set to USER");
+
+			var oChange2 = CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId2,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER
+			});
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange2,
+				"the new CUSTOMER change is now the the defaultVariant");
+			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
+			assert.equal(oChange2.getDefinition().layer, Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");
 		});
 	});
 
