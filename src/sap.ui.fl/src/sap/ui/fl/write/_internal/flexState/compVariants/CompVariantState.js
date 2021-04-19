@@ -52,15 +52,31 @@ sap.ui.define([
 	}
 
 	function createOrUpdateChange(mPropertyBag, oContent, sChangeType) {
+		function isChangeUpdatable() {
+			if (!["defaultVariant"].includes(sChangeType)) {
+				return false;
+			}
+
+			var oChange = mCompVariantsMap[sCategory];
+			var bSameLayer = oChange.getLayer() === mPropertyBag.layer;
+			var sPackageName = oChange.getDefinition().packageName;
+			var bNotTransported = !sPackageName || sPackageName === "$TMP";
+
+			return bSameLayer && bNotTransported;
+		}
+
+		mPropertyBag.layer = mPropertyBag.layer || Layer.USER;
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
 		var sCategory = sChangeType === "standardVariant" ? "standardVariantChange" : sChangeType;
+
 		// only create a new entity in case none exists
-		if (!mCompVariantsMap[sCategory]) {
+		if (!mCompVariantsMap[sCategory] || !isChangeUpdatable()) {
 			var oChangeParameter = {
 				fileName: Utils.createDefaultFileName(sChangeType),
 				fileType: "change",
 				changeType: sChangeType,
-				layer: mPropertyBag.layer || Layer.USER,
+				layer: mPropertyBag.layer,
+				content: oContent,
 				namespace: Utils.createNamespace(mPropertyBag, "changes"),
 				reference: mPropertyBag.reference,
 				selector: {
@@ -71,13 +87,12 @@ sap.ui.define([
 			oChangeParameter.support.generator = oChangeParameter.support.generator || "CompVariantState." + sChangeType;
 			oChangeParameter.support.sapui5Version = sap.ui.version;
 
-			var oChange = new Change(oChangeParameter);
-			mCompVariantsMap[sCategory] = oChange;
-			mCompVariantsMap.byId[oChange.getId()] = oChange;
+			var oNewChange = new Change(oChangeParameter);
+			mCompVariantsMap[sCategory] = oNewChange;
+			mCompVariantsMap.byId[oNewChange.getId()] = oNewChange;
+		} else {
+			mCompVariantsMap[sCategory].setContent(oContent);
 		}
-		//TODO: react accordingly on layering as soon as an update is not possible (versioning / different layer)
-		mCompVariantsMap[sCategory].setContent(oContent);
-
 		return mCompVariantsMap[sCategory];
 	}
 
