@@ -1334,7 +1334,7 @@ function(
 							vNewControlInstance = fnCreateViewInstance();
 						}
 
-					} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync) {
+					} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync && ["XML", "JS", "HTML"].indexOf(mSettings.type) > -1) {
 
 						// Pass processingMode to any fragments except JS
 						// XML / HTML fragments: might include nested views / fragments,
