@@ -159,7 +159,12 @@ sap.ui.define([
 	};
 
 	GridTableType.createColumn = function(sId, mSettings) {
-		return new InnerColumn(sId, mSettings);
+		var oColumn = new InnerColumn(sId, mSettings);
+		/* **** Ensure that the columnSelect event is fired always (esp. mobile) **** */
+		oColumn.attachColumnMenuOpen(function(oEvent){ oEvent.preventDefault(); });
+		oColumn._menuHasItems = function() { return true; };
+		/* **** */
+		return oColumn;
 	};
 
 	GridTableType.createNavigationRowAction = function(sIdPrefix, aEventInfo) {
