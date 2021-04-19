@@ -3,6 +3,28 @@
     "date": "April 2021",
     "notes": [
       {
+        "id": "c1800d069d30a9c97b97b5d279e0b4b37840509a",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Reduce columns and arrows z-index",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170037184"
+          }
+        ]
+      },
+      {
+        "id": "03fb1e9b1fbccb23fc202a8cccdd7a4c31df2425",
+        "type": "FIX",
+        "text": " m/f.routing: handle internal rejected promise to allow further navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "ef2ee10450e9b178dea7b5a1a88613b96ca71e3d",
         "type": "FIX",
         "text": " sap.f.Card: NumericHeader's subtitle now has correct margins",
