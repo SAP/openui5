@@ -267,7 +267,7 @@ sap.ui.define([
 				// will be introduced with later work on the NumberFormat
 				if (!Array.isArray(vResult)
 						|| this.oFormatOptions.showNumber !== false && isNaN(vResult[0])) {
-					throw this._createInvalidUnitParseException();
+					throw new ParseException(this.getInvalidUnitText());
 				}
 				break;
 			case "int":
@@ -355,15 +355,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates and returns a new ParseException instance complaining about an invalid unit.
+	 * Returns the error text to be used for a "Unit.Invalid" error.
 	 *
-	 * @returns {sap.ui.model.ParseException} An exception complaining about an invalid unit
+	 * @returns {string} The error text
 	 *
 	 * @private
 	 */
-	Unit.prototype._createInvalidUnitParseException = function () {
-		return new ParseException(
-			sap.ui.getCore().getLibraryResourceBundle().getText("Unit.Invalid"));
+	Unit.prototype.getInvalidUnitText = function () {
+		return sap.ui.getCore().getLibraryResourceBundle().getText("Unit.Invalid");
 	};
 
 	 /**

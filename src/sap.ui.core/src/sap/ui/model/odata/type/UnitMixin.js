@@ -219,7 +219,7 @@ sap.ui.define([
 			}
 			if (sUnit && this.mCustomUnits) {
 				if (!this.mCustomUnits[sUnit]) {
-					throw fnBaseType.prototype._createInvalidUnitParseException();
+					throw new ParseException(fnBaseType.prototype.getInvalidUnitText());
 				}
 				aMatches = rDecimals.exec(aValues[0]);
 				iFractionDigits = aMatches ? aMatches[1].length : 0;

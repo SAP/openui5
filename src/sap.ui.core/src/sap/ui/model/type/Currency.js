@@ -148,7 +148,7 @@ sap.ui.define([
 				vResult = this.oOutputFormat.parse(sValue);
 				if (!Array.isArray(vResult)
 						|| this.oFormatOptions.showNumber !== false && isNaN(vResult[0])) {
-					throw this._createInvalidUnitParseException();
+					throw new ParseException(this.getInvalidUnitText());
 				}
 				break;
 			default:
@@ -233,15 +233,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates and returns a new ParseException instance complaining about an invalid currency.
+	 * Returns the error text to be used for a "Currency.Invalid" error.
 	 *
-	 * @returns {sap.ui.model.ParseException} An exception complaining about an invalid currency
+	 * @returns {string} The error text
 	 *
 	 * @private
 	 */
-	Currency.prototype._createInvalidUnitParseException = function () {
-		return new ParseException(
-			sap.ui.getCore().getLibraryResourceBundle().getText("Currency.Invalid"));
+	Currency.prototype.getInvalidUnitText = function () {
+		return sap.ui.getCore().getLibraryResourceBundle().getText("Currency.Invalid");
 	};
 
 	/**
