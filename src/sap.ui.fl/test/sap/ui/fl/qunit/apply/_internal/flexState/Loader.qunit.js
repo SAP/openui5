@@ -43,7 +43,8 @@ sap.ui.define([
 				otherValue: "a",
 				reference: "reference",
 				componentData: {},
-				version: sap.ui.fl.Versions.Draft
+				version: sap.ui.fl.Versions.Draft,
+				allContexts: true
 			};
 
 			var oExpectedProperties = {
@@ -52,7 +53,8 @@ sap.ui.define([
 				cacheKey: "cacheKey",
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
-				version: sap.ui.fl.Versions.Draft
+				version: sap.ui.fl.Versions.Draft,
+				allContexts: true
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
@@ -67,7 +69,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when loadFlexData is called without app version ", function (assert) {
+		QUnit.test("when loadFlexData is called without app version and all contexts", function (assert) {
 			var mPropertyBag = {
 				manifest: this.oManifest,
 				otherValue: "a",
@@ -81,7 +83,8 @@ sap.ui.define([
 				siteId: "siteId",
 				appDescriptor: this.oRawManifest,
 				componentName: "baseName",
-				version: undefined
+				version: undefined,
+				allContexts: undefined
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {

@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/base/util/UriParameters",
@@ -15,6 +16,7 @@ sap.ui.define([
 	VersionsAPI,
 	FeaturesAPI,
 	PersistenceWriteAPI,
+	ManifestUtils,
 	LayerUtils,
 	FlexUtils,
 	UriParameters,
@@ -34,7 +36,7 @@ sap.ui.define([
 			var oReloadInfo = {
 				hasHigherLayerChanges: false,
 				isDraftAvailable: true,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
@@ -58,7 +60,7 @@ sap.ui.define([
 			var oReloadInfo = {
 				hasHigherLayerChanges: false,
 				isDraftAvailable: false,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
@@ -81,7 +83,7 @@ sap.ui.define([
 			var oReloadInfo = {
 				hasHigherLayerChanges: true,
 				isDraftAvailable: false,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
@@ -104,7 +106,7 @@ sap.ui.define([
 			var oReloadInfo = {
 				hasHigherLayerChanges: false,
 				isDraftAvailable: false,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
@@ -122,14 +124,49 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a getReloadReasonsForStart is called on RTA start,", {
+		beforeEach: function() {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
+		},
 		afterEach: function() {
 			sandbox.restore();
+			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		}
 	}, function() {
-		QUnit.test("a draft is available and the url parameter for draft is not present in the parsed hash", function(assert) {
+		QUnit.test("allContexts is save in the session storage and do not call flex/info request", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
+				selector: {}
+			};
+			var oFlexInfoResponse = {allContextsProvided: true};
+			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
+				var oExpectedArgs = {
+					selector: oReloadInfo.selector,
+					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
+					upToLayer: oReloadInfo.layer,
+					includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+					includeDirtyChanges: true
+				};
+				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
+				assert.deepEqual(oGetResetAndPublishInfoAPIStub.callCount, 0, "getResetAndPublishInfo was not called");
+				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
+				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
+				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
+			});
+		});
+
+		QUnit.test("allContextsProvided is true and a draft is available and the url parameter for draft is not present in the parsed hash", function(assert) {
+			var oReloadInfo = {
+				ignoreMaxLayerParameter: false,
+				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
@@ -137,6 +174,11 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true,
+				allContextsProvided: true
+			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
@@ -150,13 +192,14 @@ sap.ui.define([
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
+				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
 			});
 		});
 
-		QUnit.test("a draft is available and the url parameter for draft is present in the parsed hash", function(assert) {
+		QUnit.test("allContextsProvided is false and a draft is available and the url parameter for draft is present in the parsed hash", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
@@ -171,18 +214,24 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true,
+				allContextsProvided: false
+			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
 				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false"); //If param is set it will not load the draft
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
+				assert.deepEqual(oReloadInfo.allContexts, true, "allContexts is set to true");
 			});
 		});
 
 		QUnit.test("higher layer changes are available and max-layer parameter is not present in the parsed hash", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
@@ -195,18 +244,24 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").returns(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true,
+				allContextsProvided: true
+			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
 				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, true, "hasHigherLayerChanges is set to true");
+				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
 			});
 		});
 
 		QUnit.test("higher layer changes are available and max-layer parameter is present in the parsed hash", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
-				layer: "CUSTOMER",
+				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
@@ -219,11 +274,17 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").returns(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true,
+				allContextsProvided: true
+			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
 				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false"); // parameter already set;
+				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
 			});
 		});
 	});
@@ -236,6 +297,7 @@ sap.ui.define([
 				VIA_HASH: "CROSS_APP_NAVIGATION"
 			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(true);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -435,6 +497,44 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.RELOAD_PAGE, "then RELOAD_PAGE reloadMethod was set");
+		});
+
+		QUnit.test("and all context was loaded and there is no other reason to reload", function(assert) {
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				selector: {},
+				changesNeedReload: false,
+				isDraftAvailable: false,
+				versioningEnabled: true
+			};
+			var oFlexInfoResponse = {allContextsProvided: false};
+			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+
+			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
+			var oFlexInfoFronSession = JSON.parse(window.sessionStorage.getItem("sap.ui.fl.info.true"));
+			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			assert.equal(oFlexInfoFronSession, null, "then allContexts is null in session storage");
+		});
+
+		QUnit.test("and all context was not loaded and there is no other reason for reload", function(assert) {
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				selector: {},
+				changesNeedReload: false,
+				isDraftAvailable: false,
+				versioningEnabled: true
+			};
+			var oFlexInfoResponse = {allContextsProvided: true};
+			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+
+			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
+			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
 		});
 	});
 

@@ -111,6 +111,8 @@ sap.ui.define([
 			};
 
 			this.oUIChange = new Change(this.oUIChangeSpecificData);
+
+			window.sessionStorage.removeItem("sap.ui.fl.info." + this.oAppComponent.getId());
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -578,10 +580,11 @@ sap.ui.define([
 				assert.ok(oBaseLogStub.calledOnce, "an error was logged");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
+				assert.equal(oResetAndPublishInfo.allContextsProvided, true, "allContextsProvided is true by default");
 			});
 		});
 
-		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is change, layer is transportable and publish is not allowed by system settings", function(assert) {
+		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is change, layer is transportable, publish is not allowed by system settings", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
@@ -596,7 +599,48 @@ sap.ui.define([
 				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
+				assert.equal(oResetAndPublishInfo.allContextsProvided, true, "allContextProvided is true by default");
 			});
+		});
+
+		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is change, layer is transportable and publish is allowed by system settings", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector,
+				layer: Layer.CUSTOMER
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: true, allContextsProvided: false}));
+
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
+				assert.equal(oResetAndPublishInfo.allContextsProvided, false, "allContextProvided is false");
+			});
+		});
+
+		QUnit.test("getResetAndPublishInfoFromSession is null", function(assert) {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
+			var oFlexInfo = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.vSelector);
+			assert.equal(oFlexInfo, null, "oFlexInfo is null");
+		});
+
+		QUnit.test("getResetAndPublishInfoFromSession with content", function(assert) {
+			var sReference = this.oAppComponent.getId();
+			var oFlexInfoResponse = {
+				isResetEnabled: true,
+				isPublishEnabled: false
+			};
+			window.sessionStorage.setItem("sap.ui.fl.info." + sReference, JSON.stringify(oFlexInfoResponse));
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+
+			var oFlexInfo = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.vSelector);
+			assert.equal(oFlexInfo.isResetEnabled, true, "oFlexInfo.isResetEnabled is true");
+			assert.equal(oFlexInfo.isPublishEnabled, false, "oFlexInfo.isPublishEnabled is false");
+			assert.equal(oFlexInfo.allContextsProvided, null, "oFlexInfo.allContextsProvided is null");
 		});
 
 		QUnit.test("when _condense is called", function(assert) {

@@ -147,6 +147,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {number} [mPropertyBag.version] - Version number to be loaded
+	 * @param {boolean} [mPropertyBag.allContexts] - Includes also restricted contexts
 	 *
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
@@ -171,7 +172,8 @@ sap.ui.define([
 			return FlexState.clearAndInitialize({
 				componentId: oAppComponent.getId(),
 				reference: sReference,
-				version: mPropertyBag.version
+				version: mPropertyBag.version,
+				allContexts: mPropertyBag.allContexts
 			});
 		});
 	};

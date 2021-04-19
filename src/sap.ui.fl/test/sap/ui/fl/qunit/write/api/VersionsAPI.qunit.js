@@ -411,6 +411,35 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when a selector, a layer and context parameter were provided and the request returns a list", function (assert) {
+			var sComponentId = "sComponentId";
+			var sLayer = Layer.CUSTOMER;
+			var mPropertyBag = {
+				layer: sLayer,
+				selector: new Control(),
+				allContexts: true
+			};
+			sandbox.stub(Versions, "getVersionsModel").returns({
+				getProperty: function () {
+					return [];
+				}
+			});
+			var sReference = "com.sap.app";
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
+			var aReturnedVersions = [];
+			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves(aReturnedVersions);
+
+			return VersionsAPI.loadVersionForApplication(mPropertyBag)
+				.then(function () {
+					assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
+					var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
+					assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
+					assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
+					assert.equal(oInitializePropertyBag.allContexts, true, "and passing all contexts as true");
+				});
+		});
+
 		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function (assert) {
 			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;

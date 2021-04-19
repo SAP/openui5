@@ -486,17 +486,6 @@ function(
 				window.onbeforeunload = this._onUnload.bind(this);
 			}.bind(this))
 			.then(function () {
-				var mPropertyBag = {
-					selector: this.getRootControlInstance(),
-					layer: this.getLayer()
-				};
-				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
-				.then(function(oPublishAndResetInfo) {
-					this.bInitialResetEnabled = oPublishAndResetInfo.isResetEnabled;
-					this.bInitialPublishEnabled = oPublishAndResetInfo.isPublishEnabled;
-				}.bind(this));
-			}.bind(this))
-			.then(function () {
 				if (this.getShowToolbars()) {
 					// Create ToolsMenu
 					return this._getToolbarButtonsVisibility()
@@ -1491,6 +1480,11 @@ function(
 			return;
 		}
 
+		// allContexts do not change the url parameter to trigger a reload
+		if (oReloadInfo.allContexts && !oReloadInfo.hasHigherLayerChanges) {
+			FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
+		}
+
 		mParsedHash = this._removeMaxLayerParameterForFLP(oReloadInfo, mParsedHash);
 		mParsedHash = this._removeVersionParameterForFLP(oReloadInfo, mParsedHash, false);
 		this._triggerCrossAppNavigation(mParsedHash);
@@ -1507,6 +1501,7 @@ function(
 	 * @param  {object}  oReloadInfo - Contains the information needed to return the correct reload message
 	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 	 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
+	 * @param  {boolean} oReloadInfo.allContexts - Indicates if a all contexts is visible
 	 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 	 *
 	 * @return {string} sReason Reload message
@@ -1517,10 +1512,14 @@ function(
 
 		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.isDraftAvailable) {
 			sReason = bIsCustomerLayer ? "MSG_VIEWS_OR_PERSONALIZATION_AND_DRAFT_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS";
+		} else if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.allContexts) {
+			sReason = "MSG_RESTRICTED_CONTEXT_EXIST_AND_PERSONALIZATION";
 		} else if (oReloadInfo.hasHigherLayerChanges) {
 			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_OR_PUBLIC_VIEWS_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
 		} else if (oReloadInfo.isDraftAvailable) {
 			sReason = "MSG_DRAFT_EXISTS";
+		} else if (oReloadInfo.allContexts) {
+			sReason = "MSG_RESTRICTED_CONTEXT_EXIST";
 		} // TODO add app descr changes case for start?
 		return sReason;
 	};
@@ -1533,7 +1532,7 @@ function(
 	 * @param  {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 	 * @param  {boolean} oReloadInfo.changesNeedReload - Indicates if app descriptor changes need hard reload
 	 * @param  {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when entering UI adaptation
-
+	 * @param  {boolean} oReloadInfo.allContexts - Indicates if restricted contexts is visible
 	 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 	 *
 	 * @returns {string} sReason Reload message
@@ -1548,6 +1547,9 @@ function(
 			if (oReloadInfo.isDraftAvailable) {
 				return "MSG_RELOAD_WITH_VIEWS_PERSONALIZATION_AND_WITHOUT_DRAFT";
 			}
+			if (oReloadInfo.allContexts) {
+				return "MSG_RELOAD_WITH_PERSONALIZATION_AND_RESTRICTED_CONTEXT";
+			}
 			return "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS";
 		}
 
@@ -1561,6 +1563,10 @@ function(
 
 		if (oReloadInfo.changesNeedReload) {
 			return "MSG_RELOAD_NEEDED";
+		}
+
+		if (oReloadInfo.allContexts) {
+			return "MSG_RELOAD_WITHOUT_ALL_CONTEXT";
 		}
 	};
 
@@ -1593,7 +1599,8 @@ function(
 			} else {
 				VersionsAPI.loadVersionForApplication({
 					selector: oReloadInfo.selector,
-					layer: oReloadInfo.layer
+					layer: oReloadInfo.layer,
+					allContexts: oReloadInfo.allContexts
 				});
 			}
 		}, ["CrossApplicationNavigation"]);
@@ -1603,7 +1610,11 @@ function(
 		}
 		return Utils.showMessageBox("information", sReason)
 		.then(function() {
-			RuntimeAuthoring.enableRestart(oReloadInfo.layer);
+			RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance());
+			// allContexts do not change the url parameter to trigger a reload
+			if (oReloadInfo.allContexts && !oReloadInfo.hasHigherLayerChanges) {
+				FlexUtils.getUshellContainer().getService("AppLifeCycle").reloadCurrentApp();
+			}
 			if (FlexUtils.getUshellContainer()) {
 				// clears FlexState and triggers reloading of the flex data without blocking
 				var oParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
@@ -1616,6 +1627,7 @@ function(
 	/**
 	 * Check if there are personalization changes/draft changes and restart the application without/with them;
 	 * Warn the user that the application will be restarted without personalization / with draft changes;
+	 * Check if it is neccessary to load all contexts
 	 * This is only valid when a UShell is present;
 	 *
 	 * @return {Promise<boolean>} Resolving to false means that reload is not necessary
@@ -1631,7 +1643,10 @@ function(
 		};
 		return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo)
 		.then(function (oReloadInfo) {
-			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.isDraftAvailable) {
+			var oFlexInfoSession = PersistenceWriteAPI.getResetAndPublishInfoFromSession(oReloadInfo.selector);
+			this.bInitialResetEnabled = !!oFlexInfoSession.isResetEnabled;
+			this.bInitialPublishEnabled = !!oFlexInfoSession.isPublishEnabled;
+			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.isDraftAvailable || oReloadInfo.allContexts) {
 				return this._triggerReloadOnStart(oReloadInfo);
 			}
 		}.bind(this));

@@ -121,6 +121,15 @@ sap.ui.define([
 				assert.deepEqual(LrepConnector.settings, {isKeyUser: true, isPublicLayerAvailable: true, isVariantAdaptationEnabled: true}, "and the settings value is stored");
 			});
 		});
+
+		QUnit.test("when loading flex data with all contexts parameter", function (assert) {
+			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
+			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", allContexts: true}).then(function () {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?allContexts=true&sap-language=en", "and the URL was correct");
+				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("LrepConnector without fake server", {

@@ -76,6 +76,7 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
 		 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 		 * @param {string} [mPropertyBag.cacheKey] Cache buster token
+		 * @param {boolean} [mPropertyBag.allContexts] Includes also restricted context
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 * or resolves with undefined in case cache bustering determines that no data is present
 		 */
@@ -85,6 +86,9 @@ sap.ui.define([
 			}
 
 			var mParameters = {};
+			if (mPropertyBag.allContexts) {
+				mParameters["allContexts"] = mPropertyBag.allContexts;
+			}
 			this._addClientInfo(mParameters);
 			Utils.addLanguageInfo(mParameters);
 			var sAppDescriptorId;
