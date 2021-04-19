@@ -3,6 +3,17 @@
     "date": "April 2021",
     "notes": [
       {
+        "id": "20cbc302516960ce991e6aa39d3340da94cc5d7a",
+        "type": "FIX",
+        "text": " sap.ui.layout.cssgrid.GridBoxLayout: Updated documentation for the \"boxesPerRowConfig\" property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170109589"
+          }
+        ]
+      },
+      {
         "id": "e9fe10040ebdb3b18373e1569e89c9bdd2bb30bb",
         "type": "FIX",
         "text": " sap.ui.layout.Splitter: Improve #resetContentAreasSizes",

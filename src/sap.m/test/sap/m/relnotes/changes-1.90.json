@@ -3,6 +3,105 @@
     "date": "April 2021",
     "notes": [
       {
+        "id": "7c21d700e849be117c4038445faed98611512f90",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: timing issue with event firing is now resolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180101997"
+          }
+        ]
+      },
+      {
+        "id": "e1f27f81fe2dd166b7dd3eeb1ae0c48cfcf96f37",
+        "type": "FIX",
+        "text": " sap.m.Text: Changed symbol for\"emptyIndicatorMode\" property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170114148"
+          }
+        ]
+      },
+      {
+        "id": "cdc2ae8e1d3347923ad7e7261d7fb9b85ef8b6eb",
+        "type": "FIX",
+        "text": " sap.m.MessageToast: Speech output workaround removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002363882021"
+          }
+        ]
+      },
+      {
+        "id": "691fb5ac5591827e140f3c7b27b8db4e592fcbba",
+        "type": "FIX",
+        "text": " ObjectListItem: Align ObjectNumber by VD specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170087676"
+          }
+        ]
+      },
+      {
+        "id": "0ee4fef6ba1308c7accd3614b8ceb3b6052c929e",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Changing row hours now does not affect the start date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180056805"
+          }
+        ]
+      },
+      {
+        "id": "265092d899ea075e4168e953838fdc43d2eb49a9",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: unit is now vertically aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170068143"
+          }
+        ]
+      },
+      {
+        "id": "66ea2cdc8ffbf1f2480628247ee07df910e3a9b0",
+        "type": "FIX",
+        "text": " ObjectNumber: remove scroll when using Large Design",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170063261"
+          }
+        ]
+      },
+      {
+        "id": "f7482d83f9354bf961d10f1a2a8e1b413358db7b",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Content is rendered properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170104646"
+          }
+        ]
+      },
+      {
+        "id": "a6c7ccec34302bb420dcca7388e5c295f2fd5fa6",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: SelectList items now have consistent paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170097003"
+          }
+        ]
+      },
+      {
         "id": "a182f00f84835b22937d1c2148fc87ee5f21ec20",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: last month of the last available year could be selected",
@@ -21,6 +120,17 @@
           {
             "type": "BCP",
             "reference": "2170076330"
+          }
+        ]
+      },
+      {
+        "id": "03fb1e9b1fbccb23fc202a8cccdd7a4c31df2425",
+        "type": "FIX",
+        "text": " m/f.routing: handle internal rejected promise to allow further navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
           }
         ]
       },
