@@ -10,15 +10,17 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/ui/events/KeyCodes',
 	'./ObjectAttributeRenderer',
-	"sap/base/Log"
+	'sap/base/Log',
+	'sap/ui/core/Core'
 ],
-function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer, Log) {
+function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer, Log, Core) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
 	/**
 	 * Constructor for a new <code>ObjectAttribute</code>.
@@ -129,6 +131,7 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 			oppositeDirectionMarker = '',
 			oCore = sap.ui.getCore(),
 			sResult;
+		this._bEmptyIndicatorMode = this._isEmptyIndicatorMode();
 
 		if (sTextDir === TextDirection.LTR && bPageRTL) {
 			oppositeDirectionMarker = '\u200e';
@@ -136,6 +139,7 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 		if (sTextDir === TextDirection.RTL && !bPageRTL) {
 			oppositeDirectionMarker = '\u200f';
 		}
+
 		sText = oppositeDirectionMarker + sText + oppositeDirectionMarker;
 
 		if (sTitle) {
@@ -146,6 +150,11 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 			sResult += ": " + sText;
 		} else {
 			sResult = sText;
+		}
+
+		if (this._bEmptyIndicatorMode) {
+			//inner text control is used in order to display properly the empty indicator
+			this.getAggregation('_textControl').setProperty("emptyIndicatorMode", EmptyIndicatorMode.On, true);
 		}
 
 		oAttrAggregation.setProperty('text', sResult, true);
@@ -160,6 +169,13 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 		this._setControlWrapping(oAttrAggregation, bWrap, iMaxLines);
 
 		return oAttrAggregation;
+	};
+
+	ObjectAttribute.prototype._isEmptyIndicatorMode = function () {
+		var oCustomContent = this.getAggregation('customContent');
+		return oCustomContent &&
+			oCustomContent.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off &&
+			!oCustomContent.getText();
 	};
 
 	/**
