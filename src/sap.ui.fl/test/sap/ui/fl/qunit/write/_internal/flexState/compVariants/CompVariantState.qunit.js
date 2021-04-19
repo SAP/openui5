@@ -494,15 +494,106 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("revert", {
-		before: function() {
-			FlexState.clearState(sComponentId);
+	QUnit.module("updateVariant", {
+		beforeEach: function() {
+			this.sPersistencyKey = "persistency.key";
+			var oVariantData = {
+				changeSpecificData: {
+					type: "pageVariant",
+					layer: Layer.VENDOR,
+					texts: {
+						variantName: "initialName"
+					},
+					content: {},
+					favorte: false
+				},
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			};
+
+			return FlexState.initialize({
+				componentId: sComponentId,
+				reference: sComponentId
+			}).then(function () {
+				this.oVariant = CompVariantState.addVariant(oVariantData);
+			}.bind(this));
 		},
+		afterEach: function() {
+			FlexState.clearState(sComponentId);
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given updateVariant is called on a updatable variant", function(assert) {
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.VENDOR
+			});
+
+			assert.equal(this.oVariant.getDefinition().favorite, true, "the favorite was set within the variant");
+		});
+
+		QUnit.test("Given updateVariant is called on a non-updatable variant", function(assert) {
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.USER
+			});
+			assert.equal(this.oVariant.getDefinition().favorite, undefined, "the favorite was NOT set within the variant");
+			assert.equal(this.oVariant.getChanges().length, 1, "one change was written");
+		});
+
+		QUnit.test("Given updateVariant is called on a non-updatable variant and a updatable change", function(assert) {
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.USER
+			});
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.USER
+			});
+			assert.equal(this.oVariant.getDefinition().favorite, undefined, "the favorite was NOT set within the variant");
+			assert.equal(this.oVariant.getChanges().length, 1, "one change was written");
+		});
+
+		QUnit.test("Given updateVariant is called on a non-updatable variant and a non-updatable change", function(assert) {
+			// the non-updatable change
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.CUSTOMER
+			});
+			// because of an update within another layer
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				id: this.oVariant.getId(),
+				favorite: true,
+				layer: Layer.USER
+			});
+			assert.equal(this.oVariant.getDefinition().favorite, undefined, "the favorite was NOT set within the variant");
+			assert.equal(this.oVariant.getChanges().length, 2, "two changes were written");
+		});
+	});
+
+	QUnit.module("revert", {
 		beforeEach: function () {
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
-			});
+			}).then(Settings.getInstance);
 		},
 		afterEach: function() {
 			FlexState.clearState(sComponentId);
@@ -523,6 +614,35 @@ sap.ui.define([
 			persistencyKey: sPersistencyKey
 		};
 
+		QUnit.test("Given updateVariant is called on a non-updatable variant and a updatable change which is then reverted", function(assert) {
+			var oVariant = CompVariantState.addVariant(oVariantData);
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				id: oVariant.getId(),
+				executeOnSelection: true,
+				layer: Layer.USER
+			});
+			CompVariantState.updateVariant({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				id: oVariant.getId(),
+				favorite: true,
+				layer: Layer.USER
+			});
+
+			CompVariantState.revert({
+				id: oVariant.getId(),
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+
+			assert.equal(oVariant.getDefinition().favorite, undefined, "the favorite was NOT set within the variant");
+			assert.equal(oVariant.getChanges().length, 1, "one change was written");
+			assert.equal(oVariant.getChanges()[0].getDefinition().content.favorite, undefined, "the favorite flag was reverted correct");
+			assert.equal(oVariant.getChanges()[0].getDefinition().content.executeOnSelection, true, "the executeOnSelection flag is still set");
+		});
+
 		QUnit.test("Given a variant was updated and reverted multiple times (update, update, revert, update, revert, revert)", function (assert) {
 			sandbox.stub(Storage, "write").resolves();
 			var oVariant = CompVariantState.addVariant(oVariantData);
@@ -536,11 +656,12 @@ sap.ui.define([
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data is present");
 				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
 
-				// (<<UPDATE>>, update, revert, update, revert, revert)
+				assert.ok(true, "STEP: <<UPDATE>>, update, revert, update, revert, revert");
 				CompVariantState.updateVariant({
 					id: sVariantId,
 					reference: sComponentId,
 					persistencyKey: sPersistencyKey,
+					layer: Layer.CUSTOMER,
 					favorite: true,
 					executeOnSelection: true
 				});
@@ -551,11 +672,12 @@ sap.ui.define([
 				assert.equal(oVariant._oDefinition.executeOnSelection, true, "the executeOnSelect flag was set correct in the definition");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 
-				// (update, <<UPDATE>>, revert, update, revert, revert)
+				assert.ok(true, "STEP: update, <<UPDATE>>, revert, update, revert, revert");
 				CompVariantState.updateVariant({
 					id: sVariantId,
 					reference: sComponentId,
 					persistencyKey: sPersistencyKey,
+					layer: Layer.CUSTOMER,
 					favorite: false,
 					content: {
 						someKey: "someValue"
@@ -575,7 +697,7 @@ sap.ui.define([
 				assert.equal(oVariant.getText("variantName"), "myNewName", "and the name is updated");
 				assert.equal(oVariant.getContexts().role[0], "someRole", "the variant has the correct contexts");
 
-				// (update, update, <<REVERT>>, update, revert, revert)
+				assert.ok(true, "STEP: update, update, <<REVERT>>, update, revert, revert");
 				CompVariantState.revert({
 					id: sVariantId,
 					reference: sComponentId,
@@ -590,12 +712,13 @@ sap.ui.define([
 				assert.equal(oVariant.getText("variantName"), "initialName", "and the name is also reverted");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 
-				// (update, update, revert, <<UPDATE>>, revert, revert)
+				assert.ok(true, "STEP: update,update, revert, <<UPDATE>>, revert, revert");
 				CompVariantState.updateVariant({
 					id: sVariantId,
 					reference: sComponentId,
 					persistencyKey: sPersistencyKey,
 					favorite: false,
+					layer: Layer.CUSTOMER,
 					content: {
 						someKey: "someValue"
 					},
@@ -612,7 +735,7 @@ sap.ui.define([
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
 				assert.equal(oVariant.getContexts().role[0], "someOtherRole", "the variant has the correct contexts");
 
-				// (update, update, revert, update, <<REVERT>>, revert)
+				assert.ok(true, "STEP: update, update, revert, update, <<REVERT>>, revert");
 				CompVariantState.revert({
 					id: sVariantId,
 					reference: sComponentId,
@@ -626,7 +749,7 @@ sap.ui.define([
 				assert.equal(oVariant._oDefinition.executeOnSelection, true, "the executeOnSelect flag was set correct in the definition");
 				assert.deepEqual(oVariant.getContent(), {}, "the content is correct");
 
-				// (update, update, revert, update, revert, <<REVERT>>)
+				assert.ok(true, "STEP: update, update, revert, update, revert, <<REVERT>>");
 				CompVariantState.revert({
 					id: sVariantId,
 					reference: sComponentId,
@@ -653,6 +776,8 @@ sap.ui.define([
 				assert.equal(oDefinition.texts.variantName.value, oInitialVariantData.changeSpecificData.texts.variantName, "DEFINITION: the name is untouched");
 			}
 
+			oVariantData.changeSpecificData.layer = Layer.CUSTOMER_BASE;
+			oVariantData.changeSpecificData.favorite = false; // override default of the CUSTOMER_BASE
 			var oVariant = CompVariantState.addVariant(oVariantData);
 			var sVariantId = oVariant.getId();
 
@@ -664,11 +789,12 @@ sap.ui.define([
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data is present");
 				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
 
-				assert.ok(true, "STEP: <<UPDATE>>, update, revert, update, revert, revert)");
+				assert.ok(true, "STEP: <<UPDATE>>, update, revert, update, revert, revert");
 				CompVariantState.updateVariant({
 					isUserDependent: true,
 					id: sVariantId,
 					reference: sComponentId,
+					layer: Layer.CUSTOMER,
 					persistencyKey: sPersistencyKey,
 					favorite: true,
 					executeOnSelection: true
@@ -686,6 +812,7 @@ sap.ui.define([
 					id: sVariantId,
 					reference: sComponentId,
 					persistencyKey: sPersistencyKey,
+					layer: Layer.USER,
 					favorite: false,
 					content: {
 						someKey: "someValue"
@@ -721,7 +848,7 @@ sap.ui.define([
 				assert.equal(oVariant.getName(), "initialName", "and the name is also reverted");
 				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 
-				assert.ok(true, "STEP: update, update, revert, <<UPDATE>>, revert, revert)");
+				assert.ok(true, "STEP: update, update, revert, <<UPDATE>>, revert, revert");
 				CompVariantState.updateVariant({
 					isUserDependent: true,
 					id: sVariantId,
