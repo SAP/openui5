@@ -2669,6 +2669,97 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Tabular Suggestions - 'typahead' should consider visibility of suggestion", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({
+					header: new Label({
+						text: "Name"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "Qty"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "Value"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "Price"
+					})
+				})
+			]}),
+			oTableItemTemplate = new ColumnListItem({
+				cells : [
+					new Label({
+						text : "{name}"
+					}),
+					new Label({
+						text: "{qty}"
+					}),
+					new Label({
+						text: "{limit}"
+					}),
+					new Label({
+						text : "{price}"
+					})
+				],
+				visible: "{visible}"
+			}),
+			oSuggestionData = {
+				tabularSuggestionItems : [{
+					name : "Product1",
+					qty : "10 EA",
+					limit : "15.00 Eur",
+					price : "10.00 EUR",
+					visible: false
+				}, {
+					name : "Product2",
+					qty : "9 EA",
+					limit : "25.00 Eur",
+					price : "20.00 EUR",
+					visible: true
+				}, {
+					name : "Photo scan",
+					qty : "8 EA",
+					limit : "35.00 Eur",
+					price : "30.00 EUR",
+					visible: true
+				}]
+			};
+
+		var oModel = new JSONModel(oSuggestionData);
+
+		oInput.setModel(oModel);
+		oInput.bindSuggestionRows({
+			path: "/tabularSuggestionItems",
+			template: oTableItemTemplate
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._$input.trigger("focus").val("P").trigger("input");
+		oInput._openSuggestionsPopover();
+		oInput._bDoTypeAhead = true;
+		oInput._handleTypeAhead(oInput);
+		this.clock.tick(300);
+
+
+		// Assert
+		assert.strictEqual(oInput.getValue(), "Product2", "Typeahead skipped the invisible item and the correct autofilled value is populated in the input.");
+
+		// Destroy
+		oInput.destroy();
+	});
+
 	QUnit.test("Property startSuggestion on Desktop (non Zero)",  function(assert) {
 		var oSystem = {
 				desktop: true,
