@@ -2570,11 +2570,6 @@
 		  "description": "Use a Search Field inside a Dialog."
 		},
 		{
-		  "id": "sap.m.sample.DialogConfirm",
-		  "name": "Dialog With Confirm Options",
-		  "description": "Creating a dialog with confirm and reject options that replaces the confirmDialog functionality."
-		},
-		{
 		  "id": "sap.m.sample.ListSelectionSearch",
 		  "name": "List - Selection & Search",
 		  "description": "When searching a list with multi selection the previously selected items will stay selected. This is managed by the list control for you."
