@@ -1014,10 +1014,13 @@ sap.ui.define([
 					for (var i = 0; i < aContent.length; i++) {
 						var oItem = aContent[i];
 						if (oItem.getItem().getVisible()) {
+							oItem.setVisible(true);
 							oItem.setPosition(iPosition);
 							oItem.setSetSize(iVisibleSize);
 							oItem.setAriaLabelledBy(aAriaLabelledBy[i]);
 							iPosition++;
+						} else {
+							oItem.setVisible(false);
 						}
 					}
 				}
