@@ -1018,5 +1018,32 @@
         ]
       }
     ]
+  },
+  "1.71.32": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "a8a064b3cdb1c5bc172ec88979c68cc28cecbdbf",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clear the block list after processing click event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170064743"
+          }
+        ]
+      },
+      {
+        "id": "623eda3a8d64efa5e56c6ee2d20ba62f5de41bd1",
+        "type": "FIX",
+        "text": " IconPool: involve AppCacheBuster to resolve the font url",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180065336"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -2516,5 +2516,54 @@
         ]
       }
     ]
+  },
+  "1.71.32": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "d44626aa69460989269b976fdfa8397d754c7ce5",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Prevent previousStep to be called twice in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002337192021"
+          }
+        ]
+      },
+      {
+        "id": "73fe555b71649202f9f0ecb3e705b3647e852e82",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Missing buttons with bound LayoutData",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080179140"
+          }
+        ]
+      },
+      {
+        "id": "03a2cb67dd8a5bbcbde755e11a37cfa5d0a585b8",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: Arrow button's accessability name improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070308052"
+          }
+        ]
+      },
+      {
+        "id": "eb3d43c1f4cc9be49fd1c49904190bd11abd27cb",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Include tooltip in accessible name",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008738492020"
+          }
+        ]
+      }
+    ]
   }
 }

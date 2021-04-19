@@ -365,5 +365,43 @@
         ]
       }
     ]
+  },
+  "1.71.32": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "4ed03b7c0cc5ed642fd9a34d5ec9873a47cd397c",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: Weeks are now displayed correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000290252021"
+          }
+        ]
+      },
+      {
+        "id": "f30f989393d7609057b3c2fc743f391a4b63a802",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: does not apply focus on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007687482020"
+          }
+        ]
+      },
+      {
+        "id": "6faa4173967a8b74ccb8e0bb34a78f00566fce07",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Focus lost on filter field fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002372472021"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -343,5 +343,21 @@
         ]
       }
     ]
+  },
+  "1.71.32": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "a1c01a030c68ff8a5f998b69b69e948d3fb6be59",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Fixed incorrect display of focus on contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980435273"
+          }
+        ]
+      }
+    ]
   }
 }

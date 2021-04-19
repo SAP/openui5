@@ -50,5 +50,21 @@
         ]
       }
     ]
+  },
+  "1.71.32": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "a35260a147d3f28292c82064e4536eee9de885ea",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Tooltip is now also shown when item is collapsed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001866032021"
+          }
+        ]
+      }
+    ]
   }
 }
