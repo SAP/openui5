@@ -7,16 +7,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/registry/ChangeRegistryItem",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/changeHandler/HideControl",
-	"sap/ui/fl/changeHandler/MoveElements",
-	"sap/ui/fl/changeHandler/MoveControls",
-	"sap/ui/fl/changeHandler/PropertyChange",
-	"sap/ui/fl/changeHandler/PropertyBindingChange",
-	"sap/ui/fl/changeHandler/UnhideControl",
-	"sap/ui/fl/changeHandler/StashControl",
-	"sap/ui/fl/changeHandler/UnstashControl",
-	"sap/ui/fl/changeHandler/AddXML",
-	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/fl/requireAsync",
 	"sap/base/Log"
 ], function(
@@ -24,16 +14,6 @@ sap.ui.define([
 	jQuery,
 	ChangeRegistryItem,
 	Settings,
-	HideControl,
-	MoveElements,
-	MoveControls,
-	PropertyChange,
-	PropertyBindingChange,
-	UnhideControl,
-	StashControl,
-	UnstashControl,
-	AddXML,
-	AddXMLAtExtensionPoint,
 	requireAsync,
 	Log
 ) {
@@ -52,39 +32,46 @@ sap.ui.define([
 	var ChangeRegistry = function() {
 		this._registeredItems = {};
 		this.initSettings();
-		this.initDeveloperModeChangeHandlers();
 	};
 
 	ChangeRegistry._instance = undefined;
 	ChangeRegistry.prototype._oDefaultActiveChangeHandlers = {};
+	ChangeRegistry.prototype._oDefaultChangeHandlers = {};
+	ChangeRegistry.prototype._mDeveloperModeChangeHandlers = {};
+	var mRegistrationPromises = {};
 
-	ChangeRegistry.prototype._oDefaultChangeHandlers = {
-		hideControl: HideControl,
-		moveElements: MoveElements,
-		moveControls: MoveControls,
-		unhideControl: UnhideControl,
-		stashControl: StashControl,
-		unstashControl: UnstashControl
+	/**
+	 * Registers default change handlers and developer mode change handlers.
+	 * @param {object} mDefaultHandlers - Map of default change handlers
+	 * @param {object} mDeveloperModeHandlers - Map of developer change handlers
+	 */
+	 ChangeRegistry.prototype.registerPredefinedChangeHandlers = function(mDefaultHandlers, mDeveloperModeHandlers) {
+		this._oDefaultChangeHandlers = mDefaultHandlers;
+		this._mDeveloperModeChangeHandlers = mDeveloperModeHandlers;
+		this.initDeveloperModeChangeHandlers();
 	};
 
-	ChangeRegistry.prototype._mDeveloperModeChangeHandlers = {
-		propertyChange: {
-			changeHandler: PropertyChange
-		},
-		propertyBindingChange: {
-			changeHandler: PropertyBindingChange
-		},
-		addXML: {
-			changeHandler: AddXML
-		},
-		addXMLAtExtensionPoint: {
-			changeHandler: AddXMLAtExtensionPoint
+	ChangeRegistry.addRegistrationPromise = function(sKey, oPromise) {
+		mRegistrationPromises[sKey] = oPromise;
+		oPromise.then(function() {
+			delete mRegistrationPromises[sKey];
+		});
+		oPromise.catch(function(oError) {
+			delete mRegistrationPromises[sKey];
+			return Promise.reject(oError);
+		});
+	};
+
+	ChangeRegistry.waitForChangeHandlerRegistration = function(sKey) {
+		if (mRegistrationPromises[sKey]) {
+			return mRegistrationPromises[sKey];
 		}
+		return new Utils.FakePromise();
 	};
 
-	ChangeRegistry.prototype.initDeveloperModeChangeHandlers = function () {
+	ChangeRegistry.prototype.initDeveloperModeChangeHandlers = function() {
 		Object.keys(this._mDeveloperModeChangeHandlers).forEach(function(sChangeType) {
-			var oChangeHandler = this._mDeveloperModeChangeHandlers[sChangeType].changeHandler;
+			var oChangeHandler = this._mDeveloperModeChangeHandlers[sChangeType];
 			var oLayers = this._oSettings.getDeveloperModeLayerPermissions();
 			var oSimpleChangeObject = {
 				changeType: sChangeType,

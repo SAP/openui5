@@ -52,6 +52,7 @@ sap.ui.define([
 
 	function _registerChangeHandlers() {
 		ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
+		ChangeHandlerRegistration.registerPredefinedChangeHandlers();
 	}
 
 	function _registerLoadComponentEventHandler() {

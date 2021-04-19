@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/registry/Settings",
@@ -26,7 +25,6 @@ sap.ui.define([
 	Utils,
 	Layer,
 	ChangeRegistry,
-	ChangeHandlerRegistration,
 	VariantModel,
 	ControlPersonalizationWriteAPI,
 	Settings,
@@ -292,7 +290,7 @@ sap.ui.define([
 					this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
 
 					//registration is triggered by instantiation of XML View above
-					ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
+					ChangeRegistry.waitForChangeHandlerRegistration("sap.uxap").then(done);
 				}.bind(this));
 			}.bind(this));
 		},
@@ -559,7 +557,7 @@ sap.ui.define([
 					this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
 
 					//registration is triggered by instantiation of XML View above
-					ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
+					ChangeRegistry.waitForChangeHandlerRegistration("sap.uxap").then(done);
 				}.bind(this));
 			}.bind(this));
 		},

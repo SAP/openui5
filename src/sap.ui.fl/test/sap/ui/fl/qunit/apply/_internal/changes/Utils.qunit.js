@@ -127,42 +127,9 @@ function (
 			this.oControl.destroy();
 		}
 	}, function() {
-		QUnit.test("when change handler is already loaded", function(assert) {
-			assert.expect(5);
-			sandbox.stub(ChangeHandlerRegistration, "isChangeHandlerRegistrationInProgress")
-				.withArgs("library")
-				.returns(false);
-			sandbox.stub(ChangeRegistry, "getInstance").returns({
-				getChangeHandler: function(sChangeType, sControlType, oControl, oModifier, sLayer) {
-					assert.equal(sChangeType, "type", "the passed property 'sChangeType' is correct");
-					assert.equal(sControlType, "sap.ui.core.Control", "the passed property 'sControlType' is correct");
-					assert.equal(sLayer, "layer", "the passed property 'sLayer' is correct");
-					return "changeHandler";
-				},
-				initSettings: function() {
-					assert.ok(true, "the initSettings function was called");
-				}
-			});
-			var mPropertyBag = {
-				modifier: {
-					getLibraryName: function() {return "library";}
-				}
-			};
-			var mControl = {
-				control: this.oControl,
-				controlType: "sap.ui.core.Control"
-			};
-			return ChangeUtils.getChangeHandler(this.oChange, mControl, mPropertyBag).then(function(oChangeHandler) {
-				assert.equal(oChangeHandler, "changeHandler", "the returned change handler is correct");
-			});
-		});
-
 		QUnit.test("when change handler is not loaded yet and we have to wait for registration", function(assert) {
 			assert.expect(6);
-			sandbox.stub(ChangeHandlerRegistration, "isChangeHandlerRegistrationInProgress")
-				.withArgs("library")
-				.returns(true);
-			sandbox.stub(ChangeHandlerRegistration, "waitForChangeHandlerRegistration")
+			sandbox.stub(ChangeRegistry, "waitForChangeHandlerRegistration")
 				.withArgs("library")
 				.callsFake(function() {
 					assert.ok(true, "the waitForChangeHandlerRegistration function was called");

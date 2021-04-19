@@ -4,35 +4,48 @@
 
 sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/fl/changeHandler/AddXML",
+	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
+	"sap/ui/fl/changeHandler/HideControl",
+	"sap/ui/fl/changeHandler/MoveControls",
+	"sap/ui/fl/changeHandler/MoveElements",
+	"sap/ui/fl/changeHandler/PropertyBindingChange",
+	"sap/ui/fl/changeHandler/PropertyChange",
+	"sap/ui/fl/changeHandler/StashControl",
+	"sap/ui/fl/changeHandler/UnhideControl",
+	"sap/ui/fl/changeHandler/UnstashControl"
 ], function(
 	ChangeRegistry,
-	jQuery
+	AddXML,
+	AddXMLAtExtensionPoint,
+	HideControl,
+	MoveControls,
+	MoveElements,
+	PropertyBindingChange,
+	PropertyChange,
+	StashControl,
+	UnhideControl,
+	UnstashControl
 ) {
 	"use strict";
 
+	var mDefaultHandlers = {
+		hideControl: HideControl,
+		moveElements: MoveElements,
+		moveControls: MoveControls,
+		stashControl: StashControl,
+		unhideControl: UnhideControl,
+		unstashControl: UnstashControl
+	};
+
+	var mDeveloperModeHandlers = {
+		addXML: AddXML,
+		addXMLAtExtensionPoint: AddXMLAtExtensionPoint,
+		propertyBindingChange: PropertyBindingChange,
+		propertyChange: PropertyChange
+	};
+
 	var ChangeHandlerRegistration = {
-		_mRegistrationPromises: {},
-
-		_addRegistrationPromise: function(sKey, oPromise) {
-			this._mRegistrationPromises[sKey] = oPromise;
-			oPromise.then(function() {
-				delete this._mRegistrationPromises[sKey];
-			}.bind(this));
-			oPromise.catch(function(oError) {
-				delete this._mRegistrationPromises[sKey];
-				return Promise.reject(oError);
-			}.bind(this));
-		},
-
-		waitForChangeHandlerRegistration: function(sKey) {
-			return this._mRegistrationPromises[sKey] || Promise.resolve();
-		},
-
-		isChangeHandlerRegistrationInProgress: function(sKey) {
-			return !!this._mRegistrationPromises[sKey];
-		},
-
 		/**
 		 * Detects already loaded libraries and registers defined changeHandlers.
 		 *
@@ -43,7 +56,7 @@ sap.ui.define([
 			var oAlreadyLoadedLibraries = oCore.getLoadedLibraries();
 			var aPromises = [];
 
-			jQuery.each(oAlreadyLoadedLibraries, function (sLibraryName, oLibrary) {
+			Object.values(oAlreadyLoadedLibraries).forEach(function(oLibrary) {
 				if (oLibrary.extensions && oLibrary.extensions.flChangeHandlers) {
 					aPromises.push(this._registerFlexChangeHandlers(oLibrary.extensions.flChangeHandlers));
 				}
@@ -69,13 +82,17 @@ sap.ui.define([
 				if (oLibMetadata && oLibMetadata.extensions && oLibMetadata.extensions.flChangeHandlers) {
 					var oFlChangeHandlers = oLibMetadata.extensions.flChangeHandlers;
 					var oRegistrationPromise = this._registerFlexChangeHandlers(oFlChangeHandlers);
-					this._addRegistrationPromise(oLibName, oRegistrationPromise);
+					ChangeRegistry.addRegistrationPromise(oLibName, oRegistrationPromise);
 					return oRegistrationPromise;
 				}
 			}
 			return Promise.resolve();
+		},
+
+		registerPredefinedChangeHandlers: function() {
+			ChangeRegistry.getInstance().registerPredefinedChangeHandlers(mDefaultHandlers, mDeveloperModeHandlers);
 		}
 	};
 
 	return ChangeHandlerRegistration;
-}, true);
+});
