@@ -228,6 +228,12 @@ sap.ui.define(['./library',
 		 * @private
 		 */
 		BusyDialog.prototype.exit = function () {
+
+			if (this._iOpenTimer) {
+				clearTimeout(this._iOpenTimer);
+				this._iOpenTimer = null;
+			}
+
 			/**
 			 * Destroys the busyIndicator and nullifies it.
 			 */
@@ -276,7 +282,7 @@ sap.ui.define(['./library',
 
 			//if the code is not ready yet (new sap.m.BusyDialog().open()) wait 50ms and then try ot open it.
 			if (!document.body || !Core.isInitialized()) {
-				setTimeout(function () {
+				this._iOpenTimer = setTimeout(function () {
 					this.open();
 				}.bind(this), 50);
 			} else {
@@ -295,6 +301,11 @@ sap.ui.define(['./library',
 		 */
 		BusyDialog.prototype.close = function (isClosedFromUserInteraction) {
 			this._isClosedFromUserInteraction = isClosedFromUserInteraction;
+
+			if (this._iOpenTimer) {
+				clearTimeout(this._iOpenTimer);
+				this._iOpenTimer = null;
+			}
 
 			// the instance "close" method is overridden,
 			// so call the prototype close method
