@@ -194,18 +194,14 @@ sap.ui.define([
 
 		var sDisplay = _getDisplay.call(this);
 		var oType = _getValueType.call(this);
-
-		if (this.oFormatOptions.hideOperator && oCondition.values.length === 1) {
-			return oType.formatValue(oCondition.values[0], "string");
-		}
-
+		var bHideOperator = this.oFormatOptions.hideOperator && oCondition.values.length === 1;
 		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 
 		if (!oOperator) {
 			throw new FormatException("No valid condition provided, Operator wrong.");
 		}
 
-		return oOperator.format(oCondition, oType, sDisplay);
+		return oOperator.format(oCondition, oType, sDisplay, bHideOperator);
 
 	}
 

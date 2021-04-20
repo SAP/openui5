@@ -72,11 +72,11 @@ function(
 							Description: "{1}",
 							Value: "{0}"
 						},
-						format: function(oCondition, oType, sDisplayFormat) {
+						format: function(oCondition, oType, sDisplayFormat, bHideOperator) {
 							sDisplayFormat = sDisplayFormat || FieldDisplay.DescriptionValue;
 							var iCount = this.valueTypes.length;
 							var aValues = oCondition.values;
-							var sTokenPrefix = (oCondition && oCondition.validated === ConditionValidated.Validated) || aValues.length === 2 ? "" : "=";
+							var sTokenPrefix = (oCondition && oCondition.validated === ConditionValidated.Validated) || aValues.length === 2 || bHideOperator ? "" : "=";
 							var sTokenText = sTokenPrefix + this.displayFormats[sDisplayFormat];
 
 							if (!aValues[1]) {
@@ -684,12 +684,16 @@ function(
 							oDate = UniversalDateUtils.getMonthStartDate(oDate);
 							return UniversalDateUtils.getRange(0, "MONTH", oDate);
 						},
-						format: function(oCondition, oType, sDisplayFormat) {
+						format: function(oCondition, oType, sDisplayFormat, bHideOperator) {
 							var iValue = oCondition.values[0];
 							var sTokenText = this.tokenFormat;
 							var sReplace = _getMonths.apply(this)[iValue];
 
-							return sReplace == null ? null : sTokenText.replace(new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g"), sReplace);
+							if (bHideOperator) {
+								return sReplace;
+							} else {
+								return sReplace == null ? null : sTokenText.replace(new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g"), sReplace);
+							}
 						},
 						getValues: function(sText, sDisplayFormat, bDefaultOperator) {
 							var aMatch = sText.match(this.tokenParseRegExp);
@@ -700,6 +704,8 @@ function(
 									var sValue;
 									if (aMatch) {
 										sValue = aMatch[i + 1];
+									} else if ((bDefaultOperator && sText)) { // only month provided
+										sValue = sText;
 									}
 									aValues.push(sValue);
 								}

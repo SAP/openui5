@@ -317,7 +317,7 @@ sap.ui.define([
 						filter: {path: "test", operator: "EQ", value1: "Test"}
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", ["Test"]), undefined, undefined, "Value"],
+						formatArgs: [Condition.createCondition("EQ", ["Test"]), undefined, undefined],
 						formatValue: "=Test",
 						parseArgs: ["Test", undefined, "Value", true],
 						parsedValue: "Test",
@@ -413,8 +413,8 @@ sap.ui.define([
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", ["Test"])],
-						formatValue: "=Test",
+						formatArgs: [Condition.createCondition("EQ", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
 						parseArgs: ["=Test"],
 						parsedValue: "Test",
 						condition: Condition.createCondition("EQ", [undefined, "Test"], undefined, undefined, ConditionValidated.NotValidated),
@@ -448,7 +448,6 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
-
 					},
 					{
 						formatArgs: [Condition.createCondition("NE", ["="])],
@@ -465,6 +464,16 @@ sap.ui.define([
 						condition: Condition.createCondition("NE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition("NE", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
+						parseArgs: ["Test", undefined, undefined, true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("NE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"LT": [{
@@ -491,6 +500,16 @@ sap.ui.define([
 						condition: Condition.createCondition("LT", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition("LT", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
+						parseArgs: ["Test", undefined, undefined, true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("LT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"NOTLT": [{
@@ -520,6 +539,16 @@ sap.ui.define([
 						condition: Condition.createCondition("NOTLT", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition("NOTLT", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
+						parseArgs: ["Test", undefined, undefined, true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("NOTLT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"GT": [{
@@ -545,6 +574,16 @@ sap.ui.define([
 						condition: Condition.createCondition("GT", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition("GT", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
+						parseArgs: ["Test", undefined, undefined, true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("GT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"NOTGT": [{
@@ -574,6 +613,16 @@ sap.ui.define([
 						condition: Condition.createCondition("NOTGT", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition("NOTGT", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
+						parseArgs: ["Test", undefined, undefined, true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("NOTGT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"LE": [{
@@ -599,6 +648,16 @@ sap.ui.define([
 						condition: Condition.createCondition("LE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition("LE", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
+						parseArgs: ["Test", undefined, undefined, true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("LE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"NOTLE": [{
@@ -627,6 +686,16 @@ sap.ui.define([
 						condition: Condition.createCondition("NOTLE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition("NOTLE", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
+						parseArgs: ["Test", undefined, undefined, true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("NOTLE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"GE": [{
@@ -652,6 +721,16 @@ sap.ui.define([
 						condition: Condition.createCondition("GE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition("GE", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
+						parseArgs: ["Test", undefined, undefined, true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("GE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"NOTGE": [{
@@ -680,6 +759,16 @@ sap.ui.define([
 						condition: Condition.createCondition("NOTGE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition("NOTGE", ["Test"]), undefined, undefined, true],
+						formatValue: "Test",
+						parseArgs: ["Test", undefined, undefined, true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("NOTGE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
 					}
 				],
 				"StartsWith": [{
@@ -707,6 +796,17 @@ sap.ui.define([
 						condition: Condition.createCondition("StartsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
+						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition("StartsWith", ["Test"]), oStringType, "Description", true],
+						formatValue: "Test",
+						parseArgs: ["Test", oStringType, "Description", true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("StartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
 						type: oStringType
 					}
 				],
@@ -738,6 +838,17 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition("NotStartsWith", ["Test"]), oStringType, "Description", true],
+						formatValue: "Test",
+						parseArgs: ["Test", oStringType, "Description", true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("NotStartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						type: oStringType
 					}
 				],
 				"EndsWith": [{
@@ -757,6 +868,17 @@ sap.ui.define([
 						condition: Condition.createCondition("EndsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
+						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition("EndsWith", ["Test"]), oStringType, "Description", true],
+						formatValue: "Test",
+						parseArgs: ["Test", oStringType, "Description", true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("EndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
 						type: oStringType
 					}
 				],
@@ -779,6 +901,17 @@ sap.ui.define([
 						condition: Condition.createCondition("NotEndsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
+						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition("NotEndsWith", ["Test"]), oStringType, "Description", true],
+						formatValue: "Test",
+						parseArgs: ["Test", oStringType, "Description", true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("NotEndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
 						type: oStringType
 					}
 				],
@@ -821,6 +954,16 @@ sap.ui.define([
 						parsedValue: undefined, //TODO: parse what can be formatted
 						isEmpty: true,
 						valid: false
+					},
+					{
+						formatArgs: [Condition.createCondition("BT", ["Test1", "Test2"]), undefined, undefined, true],
+						formatValue: "Test1...Test2",
+						parseArgs: ["Test1...Test2", undefined, undefined, true],
+						parsedValue: "Test1Test2",
+						condition: Condition.createCondition("BT", ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: false
 					}
 				],
 				"NOTBT": [{
@@ -867,28 +1010,15 @@ sap.ui.define([
 						parsedValue: undefined, //TODO: parse what can be formatted
 						isEmpty: true,
 						valid: false
-					}
-				],
-				"BTEX": [{
-						formatArgs: [Condition.createCondition("BTEX", ["Test1", "Test2"])],
-						formatValue: "Test1..Test2",
+					},
+					{
+						formatArgs: [Condition.createCondition("NOTBT", ["Test1", "Test2"]), undefined, undefined, true],
+						formatValue: "!(Test1...Test2)",
+						parseArgs: ["!Test1...Test2", undefined, undefined, true],
 						parsedValue: "Test1Test2",
-						condition: Condition.createCondition("BTEX", ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition("NOTBT", ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						//filter: {path: "test", operator: "BT", value1: "Test1", value2: "Test2"}
-						isSingleValue: false
-					}
-				],
-				"NOTBTEX": [{
-						formatArgs: [Condition.createCondition("BTEX", ["Test1", "Test2"])],
-						formatValue: "!(Test1..Test2)",
-						parseArgs: ["!Test1..Test2"],
-						parsedValue: "Test1Test2",
-						condition: Condition.createCondition("NOTBTEX", ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
-						isEmpty: false,
-						valid: true,
-						//filter: {path: "test", operator: "BT", value1: "Test1", value2: "Test2"}
 						isSingleValue: false
 					}
 				],
@@ -933,6 +1063,17 @@ sap.ui.define([
 						isEmpty: false,
 						valid: false,
 						type: oNUMCType
+					},
+					{
+						formatArgs: [Condition.createCondition("Contains", ["Test"]), oStringType, "Description", true],
+						formatValue: "Test",
+						parseArgs: ["Test", oStringType, "Description", true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("Contains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						type: oStringType
 					}
 				],
 				"NotContains": [{
@@ -955,6 +1096,17 @@ sap.ui.define([
 						condition: Condition.createCondition("NotContains", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
+						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition("NotContains", ["Test"]), oStringType, "Description", true],
+						formatValue: "Test",
+						parseArgs: ["Test", oStringType, "Description", true],
+						parsedValue: "Test",
+						condition: Condition.createCondition("NotContains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
 						type: oStringType
 					}
 				],
@@ -979,6 +1131,17 @@ sap.ui.define([
 						filter: {path: undefined, operator: undefined, value1: undefined, value2: undefined},
 						isSingleValue: true,
 						oType: new StringType({}, {nullable: true})
+					},
+					{
+						formatArgs: [Condition.createCondition("Empty", []), undefined, undefined, true],
+						formatValue: "<empty>", // TODO: right result without operator?
+						parseArgs: ["<empty>", undefined, undefined, true],
+						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition("Empty", [], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						oType: new StringType({}, {nullable: false})
 					}
 				],
 				"NotEmpty": [{
@@ -1003,6 +1166,17 @@ sap.ui.define([
 						filter: {path: undefined, operator: undefined, value1: undefined, value2: undefined},
 						isSingleValue: true,
 						oType: new StringType({}, {nullable: true})
+					},
+					{
+						formatArgs: [Condition.createCondition("NotEmpty", []), undefined, undefined, true],
+						formatValue: "!(<empty>)", // TODO: right result without operator?
+						parseArgs: ["!<empty>", undefined, undefined, true],
+						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition("NotEmpty", [], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						oType: new StringType({}, {nullable: false})
 					}
 				],
 				"MyOperator": [{
@@ -1077,6 +1251,16 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Last X days",
 				tokenText: "Last {0} days"
+			},
+			{
+				formatArgs: [Condition.createCondition("LASTDAYS", [4]), undefined, undefined, true],
+				formatValue: "4",
+				parseArgs: ["4", undefined, undefined, true],
+				parsedValue: "4",
+				condition: Condition.createCondition("LASTDAYS", [4], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 			"TODAYFROMTO": [{
 				formatArgs: [Condition.createCondition("TODAYFROMTO", [4, 6])],
@@ -1089,6 +1273,16 @@ sap.ui.define([
 				isSingleValue: false,
 				longText: "Today -X / +Y days",
 				tokenText: "Today -{0} / +{1} days"
+			},
+			{
+				formatArgs: [Condition.createCondition("TODAYFROMTO", [4, 6]), undefined, undefined, true],
+				formatValue: "Today -4 / +6 days",
+				parseArgs: ["Today -4 / +6 days", undefined, undefined, true],
+				parsedValue: "46",
+				condition: Condition.createCondition("TODAYFROMTO", [4, 6], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: false
 			}],
 			"NEXTDAYS": [{
 				formatArgs: [Condition.createCondition("NEXTDAYS", [3])],
@@ -1101,6 +1295,16 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Next X days",
 				tokenText: "Next {0} days"
+			},
+			{
+				formatArgs: [Condition.createCondition("NEXTDAYS", [3]), undefined, undefined, true],
+				formatValue: "3",
+				parseArgs: ["3", undefined, undefined, true],
+				parsedValue: "3",
+				condition: Condition.createCondition("NEXTDAYS", [3], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 
 			"LASTWEEK": [{
@@ -1140,6 +1344,16 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Last X weeks",
 				tokenText: "Last {0} weeks"
+			},
+			{
+				formatArgs: [Condition.createCondition("LASTWEEKS", [2]), undefined, undefined, true],
+				formatValue: "2",
+				parseArgs: ["2", undefined, undefined, true],
+				parsedValue: "2",
+				condition: Condition.createCondition("LASTWEEKS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 			"NEXTWEEKS": [{
 				formatArgs: [Condition.createCondition("NEXTWEEKS", [13])],
@@ -1151,6 +1365,16 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Next X weeks",
 				tokenText: "Next {0} weeks"
+			},
+			{
+				formatArgs: [Condition.createCondition("NEXTWEEKS", [2]), undefined, undefined, true],
+				formatValue: "2",
+				parseArgs: ["2", undefined, undefined, true],
+				parsedValue: "2",
+				condition: Condition.createCondition("NEXTWEEKS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 
 			"LASTMONTH": [{
@@ -1190,6 +1414,16 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Last X months",
 				tokenText: "Last {0} months"
+			},
+			{
+				formatArgs: [Condition.createCondition("LASMONTHS", [2]), undefined, undefined, true],
+				formatValue: "2",
+				parseArgs: ["2", undefined, undefined, true],
+				parsedValue: "2",
+				condition: Condition.createCondition("LASTMONTHS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 			"NEXTMONTHS": [{
 				formatArgs: [Condition.createCondition("NEXTMONTHS", [13])],
@@ -1201,17 +1435,37 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Next X months",
 				tokenText: "Next {0} months"
+			},
+			{
+				formatArgs: [Condition.createCondition("NEXTMONTHS", [2]), undefined, undefined, true],
+				formatValue: "2",
+				parseArgs: ["2", undefined, undefined, true],
+				parsedValue: "2",
+				condition: Condition.createCondition("NEXTMONTHS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
-			"SPECIFICMONTHS": [{
-				formatArgs: [Condition.createCondition("SPECIFICMONTHS", [4])],
+			"SPECIFICMONTH": [{
+				formatArgs: [Condition.createCondition("SPECIFICMONTH", [4])],
 				formatValue: "Month (May)",
 				parsedValue: "4",
-				condition: Condition.createCondition("SPECIFICMONTHS", [4], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition("SPECIFICMONTH", [4], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Month (X)",
+				longText: "Month",
 				tokenText: "Month ({0})"
+			},
+			{
+				formatArgs: [Condition.createCondition("SPECIFICMONTH", [4]), undefined, undefined, true],
+				formatValue: "May",
+				parseArgs: ["May", undefined, undefined, true],
+				parsedValue: "4",
+				condition: Condition.createCondition("SPECIFICMONTH", [4], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 
 			"LASTQUARTER": [{
@@ -1251,6 +1505,16 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Last X quarters",
 				tokenText: "Last {0} quarters"
+			},
+			{
+				formatArgs: [Condition.createCondition("LASTQUARTERS", [2]), undefined, undefined, true],
+				formatValue: "2",
+				parseArgs: ["2", undefined, undefined, true],
+				parsedValue: "2",
+				condition: Condition.createCondition("LASTQUARTERS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 			"NEXTQUARTERS": [{
 				formatArgs: [Condition.createCondition("NEXTQUARTERS", [13])],
@@ -1262,6 +1526,16 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Next X quarters",
 				tokenText: "Next {0} quarters"
+			},
+			{
+				formatArgs: [Condition.createCondition("NEXTQUARTERS", [2]), undefined, undefined, true],
+				formatValue: "2",
+				parseArgs: ["2", undefined, undefined, true],
+				parsedValue: "2",
+				condition: Condition.createCondition("NEXTQUARTERS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 
 			"LASTYEAR": [{
@@ -1301,6 +1575,16 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Last X years",
 				tokenText: "Last {0} years"
+			},
+			{
+				formatArgs: [Condition.createCondition("LASTYEARS", [2]), undefined, undefined, true],
+				formatValue: "2",
+				parseArgs: ["2", undefined, undefined, true],
+				parsedValue: "2",
+				condition: Condition.createCondition("LASTYEARS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 			"NEXTYEARS": [{
 				formatArgs: [Condition.createCondition("NEXTYEARS", [13])],
@@ -1312,6 +1596,16 @@ sap.ui.define([
 				isSingleValue: true,
 				longText: "Next X years",
 				tokenText: "Next {0} years"
+			},
+			{
+				formatArgs: [Condition.createCondition("NEXTYEARS", [2]), undefined, undefined, true],
+				formatValue: "2",
+				parseArgs: ["2", undefined, undefined, true],
+				parsedValue: "2",
+				condition: Condition.createCondition("NEXTYEARS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
 			}],
 
 			"QUARTER1": [{
