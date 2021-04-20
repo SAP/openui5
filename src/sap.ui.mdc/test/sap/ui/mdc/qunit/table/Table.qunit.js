@@ -212,10 +212,13 @@ sap.ui.define([
 			assert.equal(aMDCColumns[0].getHeader(), aInnerColumns[0].getLabel().getText());
 			assert.equal(aInnerColumns[0].getLabel().getText(), "Test", "column0: label is correct");
 			assert.equal(aInnerColumns[0].getMinWidth(), 136, "column0: minWidth is correct");
+			assert.ok(aInnerColumns[0]._menuHasItems(), "columnSelect event enabled always");
 			assert.equal(aInnerColumns[1].getLabel().getText(), "Test1", "column1: label is correct");
 			assert.equal(aInnerColumns[1].getMinWidth(), 134, "column1: minWidth is correct");
+			assert.ok(aInnerColumns[1]._menuHasItems(), "columnSelect event enabled always");
 			assert.equal(aInnerColumns[2].getLabel().getText(), "Test2", "column1: label is correct");
 			assert.equal(aInnerColumns[2].getMinWidth(), 128, "column2: minWidth is correct (default value)");
+			assert.ok(aInnerColumns[2]._menuHasItems(), "columnSelect event enabled always");
 			assert.equal(aInnerColumns[0].getTemplate().getText(), "Test", "column0: template is correct");
 			assert.equal(aInnerColumns[0].getTemplate().getWrapping(), false, "column0: template wrapping is disabled");
 			assert.equal(aInnerColumns[0].getTemplate().getRenderWhitespace(), false, "column0: template renderWhitespace is disabled");
