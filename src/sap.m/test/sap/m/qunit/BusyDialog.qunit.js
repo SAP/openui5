@@ -614,4 +614,45 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.module("Special cases");
+
+	QUnit.test('Open and close before the framework core is initialized', function (assert) {
+
+		var fIsInitialized = Core.isInitialized;
+
+		Core.isInitialized = function () {
+			return false;
+		};
+
+		var oBusyDialog = new BusyDialog();
+		oBusyDialog.open();
+		oBusyDialog.close();
+
+		Core.isInitialized = fIsInitialized;
+
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(oBusyDialog._oDialog.isOpen(), 'the dialog is closed.');
+	});
+
+	QUnit.test('Open and destroy before the framework core is initialized', function (assert) {
+
+		var fIsInitialized = Core.isInitialized;
+
+		Core.isInitialized = function () {
+			return false;
+		};
+
+		var oBusyDialog = new BusyDialog();
+		oBusyDialog.open();
+		oBusyDialog.destroy();
+
+		Core.isInitialized = fIsInitialized;
+
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(true, 'no error is thrown');
+	});
 });
