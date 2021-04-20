@@ -3,105 +3,111 @@
  */
 
 sap.ui.define([
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/requireAsync",
+	"sap/ui/fl/Utils"
 ], function(
-	Log
+	Log,
+	requireAsync,
+	Utils
 ) {
 	"use strict";
 
 	/**
 	 * Object to define a change on a specific control type with it's permissions
 	 * @constructor
-	 * @param {Object} mParam Parameter description below
-	 * @param {sap.ui.fl.registry.ChangeTypeMetadata} mParam.changeTypeMetadata Change type metadata this registry item is describing
-	 * @param {String} mParam.controlType Control type this registry item is assigned to
-	 * @param {Object} [mParam.permittedRoles] Permissions who is allowed to use this kind of change type on the assigned control
+	 * @param {Object} mParam - Parameter description below
+	 * @param {Object} mParam.changeTypeMetadata - Change type metadata this registry item is describing
+	 * @param {String} mParam.changeTypeMetadata.name - Semantic name to identify the change type
+	 * @param {String} mParam.changeTypeMetadata.changeHandler - Full qualified name of the function which is executed when a change for this change type is merged or applied
+	 * @param {sap.ui.fl.Layer[]} mParam.changeTypeMetadata.layers - Layer permissions
+	 * @param {String} mParam.controlType - Control type this registry item is assigned to
 	 * @alias sap.ui.fl.registry.ChangeRegistryItem
 	 *
 	 * @author SAP SE
 	 * @version ${version}
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 * @experimental Since 1.27.0
 	 *
 	 */
 	var ChangeRegistryItem = function(mParam) {
-		if (!mParam.changeTypeMetadata) {
-			Log.error("sap.ui.fl.registry.ChangeRegistryItem: ChangeTypeMetadata required");
+		if (!mParam.changeHandler) {
+			Log.error("sap.ui.fl.registry.ChangeRegistryItem: changeHandler required");
+		}
+		if (!mParam.changeType) {
+			Log.error("sap.ui.fl.registry.ChangeRegistryItem: changeType required");
+		}
+		if (!mParam.layers) {
+			Log.error("sap.ui.fl.registry.ChangeRegistryItem: layers required");
 		}
 		if (!mParam.controlType) {
 			Log.error("sap.ui.fl.registry.ChangeRegistryItem: ControlType required");
 		}
-
-		this._changeTypeMetadata = mParam.changeTypeMetadata;
 		this._controlType = mParam.controlType;
-
-		if (mParam.permittedRoles) {
-			this._permittedRoles = mParam.permittedRoles;
-		}
-
-		if (mParam.dragTargets) {
-			this._dragTargets = mParam.dragTargets;
-		}
-	};
-
-	ChangeRegistryItem.prototype._changeTypeMetadata = undefined;
-	ChangeRegistryItem.prototype._controlType = undefined;
-	ChangeRegistryItem.prototype._permittedRoles = {};
-	ChangeRegistryItem.prototype._dragTargets = [];
-
-	/**
-	 * Get the metadata for a change type
-	 *
-	 * @returns {sap.ui.fl.registry.ChangeTypeMetadata} Returns the change type metadata of the item
-	 *
-	 * @public
-	 */
-	ChangeRegistryItem.prototype.getChangeTypeMetadata = function() {
-		return this._changeTypeMetadata;
+		this._changeType = mParam.changeType;
+		this._changeHandler = mParam.changeHandler;
+		this._layers = mParam.layers;
 	};
 
 	/**
 	 * Get the name of a change type
 	 *
 	 * @returns {String} Returns the name of the change type of the item
-	 *
-	 * @public
 	 */
 	ChangeRegistryItem.prototype.getChangeTypeName = function() {
-		return this._changeTypeMetadata.getName();
+		return this._changeType;
 	};
 
 	/**
 	 * Get the control type
 	 *
 	 * @returns {String} Returns the control type the item is assigned to
-	 *
-	 * @public
 	 */
 	ChangeRegistryItem.prototype.getControlType = function() {
 		return this._controlType;
 	};
 
 	/**
-	 * Get the roles the change type for the control is permitted to
+	 * Get the control type
 	 *
-	 * @returns {String} Returns a list of permitted roles
-	 *
-	 * @public
+	 * @returns {String} Returns the control type the item is assigned to
 	 */
-	ChangeRegistryItem.prototype.getPermittedRoles = function() {
-		return this._permittedRoles;
+	ChangeRegistryItem.prototype.getLayers = function() {
+		return this._layers;
 	};
 
 	/**
-	 * Get the targets the control type can be dragged on
+	 * Get the change handler object.
 	 *
-	 * @returns {String} Returns a list of possible drag targets
-	 *
-	 * @public
+	 * @returns {Promise<object>} Full qualified name of the change handler object wrapped into a Promise/FakePromise
 	 */
-	ChangeRegistryItem.prototype.getDragTargets = function() {
-		return this._dragTargets;
+	ChangeRegistryItem.prototype.getChangeHandler = function() {
+		var oPromise = new Utils.FakePromise();
+		if (typeof this._changeHandler === "string") {
+			// load the module asynchronously
+			oPromise = requireAsync(this._changeHandler.replace(/\./g, "/"))
+				.then(function (oChangeHandlerImpl) {
+					this._changeHandler = oChangeHandlerImpl;
+				}.bind(this));
+		}
+
+		return oPromise.then(function () {
+			if (
+				!this._changeHandler
+				|| typeof this._changeHandler.completeChangeContent !== "function"
+				|| typeof this._changeHandler.applyChange !== "function"
+				|| typeof this._changeHandler.revertChange !== "function"
+			) {
+				// FakePromise catch is not compatible to Promise catch.
+				// When FakePromise is called in a Promise scope then Async reject is required.
+				return Promise.reject(
+					new Error("The ChangeHandler is either not available or does not have all required functions")
+				);
+			}
+			return this._changeHandler;
+		}.bind(this));
 	};
 
 	return ChangeRegistryItem;
-}, true);
+});

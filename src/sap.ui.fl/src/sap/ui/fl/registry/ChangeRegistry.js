@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/registry/ChangeRegistryItem",
-	"sap/ui/fl/registry/ChangeTypeMetadata",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/changeHandler/MoveElements",
@@ -24,7 +23,6 @@ sap.ui.define([
 	Utils,
 	jQuery,
 	ChangeRegistryItem,
-	ChangeTypeMetadata,
 	Settings,
 	HideControl,
 	MoveElements,
@@ -259,7 +257,7 @@ sap.ui.define([
 			if (!this._isRegistryItemValidForLayer(oChangeRegistryItem, sLayer)) {
 				throw Error("Change type " + sChangeType + " not enabled for layer " + sLayer);
 			}
-			return oChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
+			return oChangeRegistryItem.getChangeHandler();
 		}.bind(this));
 	};
 
@@ -295,12 +293,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangeRegistry.prototype._createChangeRegistryItemForSimpleChange = function(sControlType, oSimpleChange) {
-		var mParam;
-		var oChangeTypeMetadata;
-		var oChangeRegistryItem;
-		var mLayerPermissions;
-
-		mLayerPermissions = Object.assign({}, this._oSettings.getDefaultLayerPermissions());
+		var mLayerPermissions = Object.assign({}, this._oSettings.getDefaultLayerPermissions());
 		var oLayers = oSimpleChange.layers;
 
 		if (oLayers) {
@@ -312,22 +305,12 @@ sap.ui.define([
 			});
 		}
 
-		//Create change type metadata
-		mParam = {
-			name: oSimpleChange.changeType,
+		return new ChangeRegistryItem({
+			controlType: sControlType,
 			changeHandler: oSimpleChange.changeHandler,
-			layers: mLayerPermissions
-		};
-		oChangeTypeMetadata = new ChangeTypeMetadata(mParam);
-
-		//Create change registry item
-		mParam = {
-			changeTypeMetadata: oChangeTypeMetadata,
-			controlType: sControlType
-		};
-		oChangeRegistryItem = new ChangeRegistryItem(mParam);
-
-		return oChangeRegistryItem;
+			layers: mLayerPermissions,
+			changeType: oSimpleChange.changeType
+		});
 	};
 
 	/**
@@ -416,7 +399,7 @@ sap.ui.define([
 	};
 
 	ChangeRegistry.prototype._isRegistryItemValidForLayer = function (oRegistryItem, sLayer) {
-		var oLayers = oRegistryItem.getChangeTypeMetadata().getLayers();
+		var oLayers = oRegistryItem.getLayers();
 		return !!oLayers[sLayer];
 	};
 
@@ -429,4 +412,4 @@ sap.ui.define([
 	};
 
 	return ChangeRegistry;
-}, true);
+});
