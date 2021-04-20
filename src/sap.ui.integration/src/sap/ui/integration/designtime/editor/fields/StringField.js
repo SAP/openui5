@@ -52,7 +52,38 @@ sap.ui.define([
 	StringField.prototype.initVisualization = function (oConfig) {
 		var oVisualization = oConfig.visualization;
 		if (!oVisualization) {
-			if (oConfig.editable) {
+			if (this.getMode() === "translation") {
+				if (oConfig.editable) {
+					oVisualization = {
+						type: Input,
+						settings: {
+							value: {
+								path: 'currentSettings>value'
+							},
+							tooltip: {
+								path: 'currentSettings>value'
+							},
+							editable: oConfig.editable,
+							visible: oConfig.visible,
+							placeholder: oConfig.placeholder
+						}
+					};
+				} else {
+					oVisualization = {
+						type: Text,
+						settings: {
+							text: {
+								path: 'currentSettings>value'
+							},
+							tooltip: {
+								path: 'currentSettings>value'
+							},
+							visible: oConfig.visible,
+							wrapping: false
+						}
+					};
+				}
+			} else {
 				if (oConfig.enum) {
 					var oItem = new ListItem({
 						key: {
@@ -70,6 +101,7 @@ sap.ui.define([
 							},
 							forceSelection: false,
 							editable: oConfig.editable,
+							visible: oConfig.visible,
 							showSecondaryValues: false,
 							width: "100%",
 							items: {
@@ -91,6 +123,7 @@ sap.ui.define([
 								path: 'currentSettings>value'
 							},
 							editable: oConfig.editable,
+							visible: oConfig.visible,
 							showSecondaryValues: true,
 							width: "100%",
 							items: {
@@ -128,6 +161,7 @@ sap.ui.define([
 								path: 'currentSettings>value'
 							},
 							editable: oConfig.editable,
+							visible: oConfig.visible,
 							placeholder: oConfig.placeholder,
 							valueHelpIconSrc: "sap-icon://translate",
 							showValueHelp: true,
@@ -157,36 +191,11 @@ sap.ui.define([
 								path: 'currentSettings>value'
 							},
 							editable: oConfig.editable,
+							visible: oConfig.visible,
 							placeholder: oConfig.placeholder
 						}
 					};
 				}
-			} else if (this.getMode() === "translation") {
-				oVisualization = {
-					type: Text,
-					settings: {
-						text: {
-							path: 'currentSettings>value'
-						},
-						tooltip: {
-							path: 'currentSettings>value'
-						},
-						wrapping: false
-					}
-				};
-			} else {
-				oVisualization = {
-					type: Input,
-					settings: {
-						value: {
-							path: 'currentSettings>value'
-						},
-						tooltip: {
-							path: 'currentSettings>value'
-						},
-						editable: false
-					}
-				};
 			}
 		}
 		this._visualization = oVisualization;

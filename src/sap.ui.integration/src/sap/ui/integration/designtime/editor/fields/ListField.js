@@ -40,74 +40,64 @@ sap.ui.define([
 		var that = this;
 		var oVisualization = oConfig.visualization;
 		if (!oVisualization) {
-			if (oConfig.editable) {
-				if (oConfig.values) {
-					var oItem = this.formatListItem(oConfig.values.item);
-					oVisualization = {
-						type: MultiComboBox,
-						settings: {
-							selectedKeys: {
-								path: 'currentSettings>value'
-							},
-							busy: { path: 'currentSettings>_loading' },
-							editable: oConfig.editable,
-							showSecondaryValues: true,
-							width: "100%",
-							items: {
-								path: "", //empty, because the bindingContext for the undefined model already points to the path
-								template: oItem,
-								sorter: [new Sorter({
-									path: 'Selected',
-									descending: false,
-									group: true
-								})],
-								groupHeaderFactory: that.getGroupHeader
-							}
+			if (oConfig.values) {
+				var oItem = this.formatListItem(oConfig.values.item);
+				oVisualization = {
+					type: MultiComboBox,
+					settings: {
+						selectedKeys: {
+							path: 'currentSettings>value'
+						},
+						busy: { path: 'currentSettings>_loading' },
+						editable: oConfig.editable,
+						visible: oConfig.visible,
+						showSecondaryValues: true,
+						width: "100%",
+						items: {
+							path: "", //empty, because the bindingContext for the undefined model already points to the path
+							template: oItem,
+							sorter: [new Sorter({
+								path: 'Selected',
+								descending: false,
+								group: true
+							})],
+							groupHeaderFactory: that.getGroupHeader
 						}
-					};
-					if (this.isFilterBackend(oConfig)) {
-						oVisualization.settings.selectedKeys = {
-							parts: [
-								'currentSettings>value',
-								'currentSettings>suggestValue'
-							],
-							formatter: function(sValue, sSuggestValue) {
-								if (sSuggestValue) {
-									//set suggest value in the input field of the MultiComboBox
-									that.setSuggestValue();
-								}
-								return sValue;
-							}
-						};
 					}
-				} else {
-					oVisualization = {
-						type: Input,
-						settings: {
-							value: {
-								path: 'currentSettings>value',
-								formatter: function (a) {
-									a = a || [];
-									return a.join(",");
-								}
-							},
-							change: function (oEvent) {
-								var oSource = oEvent.getSource();
-								oSource.getBinding("value").setRawValue(oSource.getValue().split(","));
-							},
-							editable: oConfig.editable,
-							placeholder: oConfig.placeholder
+				};
+				if (this.isFilterBackend(oConfig)) {
+					oVisualization.settings.selectedKeys = {
+						parts: [
+							'currentSettings>value',
+							'currentSettings>suggestValue'
+						],
+						formatter: function(sValue, sSuggestValue) {
+							if (sSuggestValue) {
+								//set suggest value in the input field of the MultiComboBox
+								that.setSuggestValue();
+							}
+							return sValue;
 						}
 					};
 				}
 			} else {
 				oVisualization = {
-					type: Text,
+					type: Input,
 					settings: {
-						text: {
-							path: 'currentSettings>value'
+						value: {
+							path: 'currentSettings>value',
+							formatter: function (a) {
+								a = a || [];
+								return a.join(",");
+							}
 						},
-						wrapping: false
+						change: function (oEvent) {
+							var oSource = oEvent.getSource();
+							oSource.getBinding("value").setRawValue(oSource.getValue().split(","));
+						},
+						editable: oConfig.editable,
+						visible: oConfig.visible,
+						placeholder: oConfig.placeholder
 					}
 				};
 			}

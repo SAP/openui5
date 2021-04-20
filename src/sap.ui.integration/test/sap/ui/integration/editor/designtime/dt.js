@@ -827,6 +827,24 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "{= ${items>boolean1/value} === true ? 'dependentBoolean3 True' : 'dependentBoolean3 False' }",
 						"type": "string"
 					},
+					"CustomerWithVisibleDependent": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomerWithVisibleDependent/value",
+						"type": "string",
+						"visible": "{items>boolean1/value}",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.aaa}}/Customers"
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
+					},
 					"filterBackendInStringArray": {
 						"label": "Filter backend by input in MultiComboBox",
 						"type": "group"

@@ -46,6 +46,42 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
 						}
+					},
+					"CustomersWithNotEditable": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithNotEditable/value",
+						"type": "string[]",
+						"editable": false,
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.mock_request}}/Customers?$filter=startswith(CompanyName,'{currentSettings>suggestValue}')"
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
+					},
+					"CustomersWithNotVisible": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithNotVisible/value",
+						"type": "string[]",
+						"visible": false,
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.mock_request}}/Customers?$filter=startswith(CompanyName,'{currentSettings>suggestValue}')"
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
 					}
 				}
 			},
