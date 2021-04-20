@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/* global Set */
+
 sap.ui.define([
 	"./BaseContentRenderer",
 	"sap/ui/core/Core",
@@ -74,7 +76,12 @@ sap.ui.define([
 				/**
 				 * Fires when the user presses the control.
 				 */
-				press: {}
+				press: {},
+
+				/**
+				 * Fires after all internally awaited events are fired.
+				 */
+				ready: {}
 			}
 		},
 		renderer: BaseContentRenderer
@@ -85,13 +92,9 @@ sap.ui.define([
 	 * @private
 	 */
 	BaseContent.prototype.init = function () {
-		this._iWaitingEventsCount = 0;
+		this._oAwaitedEvents = new Set();
 		this._bReady = false;
 		this._mObservers = {};
-
-		// So far the ready event will be fired when the data is ready. But this can change in the future.
-		this._awaitEvent("_dataReady");
-		this._awaitEvent("_actionContentReady");
 
 		this.setAggregation("_loadingProvider", new LoadingProvider());
 	};
@@ -110,7 +113,7 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype.exit = function () {
-		this._iWaitingEventsCount = 0;
+		this._oAwaitedEvents = null;
 
 		if (this._mObservers) {
 			Object.keys(this._mObservers).forEach(function (sKey) {
@@ -160,33 +163,41 @@ sap.ui.define([
 
 	/**
 	 * Await for an event which controls the overall "ready" state of the content.
+	 * When there is at least 1 event awaited, loading placeholders are shown.
+	 * After all awaited events happen loading placeholders are hidden and "ready" event is fired.
 	 *
-	 * @private
+	 * @protected
 	 * @param {string} sEvent The name of the event
 	 */
-	BaseContent.prototype._awaitEvent = function (sEvent) {
-		this._iWaitingEventsCount ++;
-		this.attachEventOnce(sEvent, function () {
-			this._iWaitingEventsCount --;
+	BaseContent.prototype.awaitEvent = function (sEvent) {
+		if (this._oAwaitedEvents.has(sEvent)) {
+			return;
+		}
 
-			if (this._iWaitingEventsCount === 0) {
+		this._bReady = false;
+		this._oAwaitedEvents.add(sEvent);
+		this.showLoadingPlaceholders();
+		this.attachEventOnce(sEvent, function () {
+			this._oAwaitedEvents.delete(sEvent);
+
+			if (this._oAwaitedEvents.size === 0) {
 				this._bReady = true;
-				this.fireEvent("_ready");
+				this.hideLoadingPlaceholders();
+				this.fireReady();
 			}
 		}.bind(this));
 	};
 
-
 	BaseContent.prototype.setConfiguration = function (oConfiguration, sType) {
-
 		this._oConfiguration = oConfiguration;
+		this.awaitEvent("_dataReady");
+		this.awaitEvent("_actionContentReady");
 
 		if (!oConfiguration) {
 			return this;
 		}
 
 		this._oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(oConfiguration, sType);
-
 		this._setDataConfiguration(oConfiguration.data);
 
 		return this;
@@ -218,10 +229,8 @@ sap.ui.define([
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
 		}
-		if (this._oDataProviderFactory) {
-			this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
-		}
 
+		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
 
 		if (oDataSettings.name) {
@@ -238,7 +247,6 @@ sap.ui.define([
 
 		oModel.attachEvent("change", function () {
 			this.onDataChanged();
-
 			this.onDataRequestComplete();
 		}.bind(this));
 
@@ -266,7 +274,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	BaseContent.prototype.onDataRequested = function () {
-		this.showLoadingPlaceholders();
+		this.awaitEvent("_dataReady");
 	};
 
 	/**
@@ -274,8 +282,7 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
-		this.hideLoadingPlaceholders();
-	};
+	 };
 
 	/**
 	 * @private

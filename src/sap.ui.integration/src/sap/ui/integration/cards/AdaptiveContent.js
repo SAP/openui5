@@ -13,11 +13,10 @@ sap.ui.define([
 		"sap/ui/core/Core",
 		"sap/ui/model/json/JSONModel",
 		"sap/base/Log",
-		"sap/ui/integration/util/LoadingProvider",
 		"sap/ui/Device"
 	],
 	function (library, coreLibrary, includeScript, BaseContent, HostConfig,
-			VBox, MessageStrip, HTML, Core, JSONModel, Log, LoadingProvider, Device) {
+			VBox, MessageStrip, HTML, Core, JSONModel, Log, Device) {
 		"use strict";
 
 		// lazy dependencies, loaded on demand
@@ -60,10 +59,11 @@ sap.ui.define([
 		});
 
 		AdaptiveContent.prototype.init = function () {
+			BaseContent.prototype.init.apply(this, arguments);
+
 			this.setComponentsReady(false);
 			this._bAdaptiveCardElementsReady = false;
 			this._setupCardContent();
-			this.setAggregation("_loadingProvider", new LoadingProvider());
 		};
 
 		AdaptiveContent.prototype.onAfterRendering = function () {
@@ -452,7 +452,7 @@ sap.ui.define([
 		AdaptiveContent.prototype._fireCardReadyEvent = function () {
 			if (this._bAdaptiveCardElementsReady && this.getComponentsReady()) {
 				this._bReady = true;
-				this.fireEvent("_ready");
+				this.fireReady();
 			}
 		};
 

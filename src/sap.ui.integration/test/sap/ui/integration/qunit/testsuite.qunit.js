@@ -119,6 +119,7 @@ sap.ui.define(function () {
 				]
 			},
 			"CardHostAndExtension": {},
+			"CardReadyState": {},
 			"CardHost": {
 				coverage: {
 					only: [

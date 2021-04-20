@@ -53,9 +53,6 @@ sap.ui.define([
 			content: "<div id=" + sId + " style='height:100%; width:100%'></div>"
 		});
 		this.setAggregation("_content", this._oHighchartContainer);
-
-		//workaround until actions refactor
-		this.fireEvent("_actionContentReady");
 	};
 
 	/**
@@ -87,6 +84,8 @@ sap.ui.define([
 	 */
 	AnalyticsCloudContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseContent.prototype.setConfiguration.apply(this, arguments);
+		//workaround until actions refactor
+		this.fireEvent("_actionContentReady");
 		this._oActions.attach({
 			area: ActionArea.Content,
 			actions: oConfiguration.actions,

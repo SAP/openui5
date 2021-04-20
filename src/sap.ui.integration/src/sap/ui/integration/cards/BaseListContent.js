@@ -114,7 +114,7 @@ sap.ui.define([
 			return;
 		}
 		var oFilter = new Filter("_card_item_hidden", FilterOperator.EQ, false);
-		this._awaitEvent("_filterNavItemsReady");
+		this.awaitEvent("_filterNavItemsReady");
 		oBindingInfo.filters = [oFilter];
 	};
 
