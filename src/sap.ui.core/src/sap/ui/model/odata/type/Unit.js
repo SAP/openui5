@@ -44,11 +44,13 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.type.Unit
 	 * @author SAP SE
 	 * @class This class represents the <code>Unit</code> composite type with the parts measure,
-	 * unit, and unit customizing. The measure part is formatted according to the customizing for
-	 * the unit. Use the result of the promise returned by
-	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestUnitsOfMeasure} as unit customizing part.
-	 * If no unit customizing is available, UI5's default formatting applies. The type may only be
-	 * used for measure and unit parts from a {@link sap.ui.model.odata.v4.ODataModel}.
+	 * unit, and unit customizing. The type may only be used for measure and unit parts from a
+	 * {@link sap.ui.model.odata.v4.ODataModel} or a {@link sap.ui.model.odata.v2.ODataModel}.
+	 * The measure part is formatted according to the customizing for the unit. Use the result of
+	 * the promise returned by {@link sap.ui.model.odata.v4.ODataMetaModel#requestUnitsOfMeasure}
+	 * for OData V4 or by {@link sap.ui.model.odata.ODataMetaModel#requestUnitsOfMeasure} for OData
+	 * V2 as unit customizing part. If no unit customizing is available, UI5's default formatting
+	 * applies.
 	 * @extends sap.ui.model.type.Unit
 	 * @public
 	 * @since 1.63.0
