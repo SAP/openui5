@@ -26,8 +26,13 @@ sap.ui.define([
 	 * @param {string} [mParameters.expand] For the OData <code>$expand</code> query option parameter which should be included in the request
 	 * @param {string} [mParameters.select] For the OData <code>$select</code> query option parameter which should be included in the request
 	 * @param {Object<string,string>} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>.
-	 * @param {boolean} [mParameters.createPreliminaryContext] Whether a preliminary Context will be created
-	 * @param {boolean} [mParameters.usePreliminaryContext] Whether a preliminary Context will be used
+	 * @param {boolean} [mParameters.createPreliminaryContext]
+	 *   Whether a preliminary context will be created
+	 * @param {boolean} [mParameters.usePreliminaryContext]
+	 *   Whether a preliminary context will be used. When set to <code>true</code>, the model can
+	 *   bundle the OData calls for dependent bindings into fewer $batch requests. For more
+	 *   information, see
+	 *   {@link topic:62149734b5c24507868e722fe87a75db Optimizing Dependent Bindings}
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataContextBinding
