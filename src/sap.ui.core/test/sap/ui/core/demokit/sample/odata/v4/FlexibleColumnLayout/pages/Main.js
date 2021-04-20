@@ -158,26 +158,10 @@ sap.ui.define([
 					Helper.changeInputValue(this, sViewName, "SalesOrder::note", sNote);
 				},
 				createSalesOrderItem : function () {
-					this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : "createSalesOrderLineItem",
-						success : function () {
-							Opa5.assert.ok(true, "Sales order line item created");
-						},
-						viewName : sViewName
-					});
+					Helper.pressButton(this, sViewName, "createSalesOrderLineItem");
 				},
 				deleteSalesOrder : function () {
-					this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : "deleteSalesOrder",
-						success : function () {
-							Opa5.assert.ok(true, "Sales order deleted");
-						},
-						viewName : sViewName
-					});
+					Helper.pressButton(this, sViewName, "deleteSalesOrder");
 				},
 				increaseSalesOrderItemsQuantity : function () {
 					Helper.pressButton(this, sViewName, "increaseSalesOrderItemsQuantity");
@@ -273,15 +257,7 @@ sap.ui.define([
 					Helper.changeInputValue(this, sViewName, "SO_2_ITEM::quantity", sQuantity);
 				},
 				deleteSalesOrderItem : function () {
-					this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : "deleteSalesOrderItem",
-						success : function () {
-							Opa5.assert.ok(true, "Sales order item deleted");
-						},
-						viewName : sViewName
-					});
+					Helper.pressButton(this, sViewName, "deleteSalesOrderItem");
 				}
 			},
 			assertions : {
