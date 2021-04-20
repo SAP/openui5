@@ -391,14 +391,15 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "stringArrayParameterNoValues", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editor is Input");
-					assert.ok(oField.getAggregation("_field").getValue() === "key1", "Field: Select items lenght is OK");
+					assert.ok(oField.getAggregation("_field").getValue() === "key1", "Field: Input value is OK");
 					oLabel = this.oCardEditor.getAggregation("_formContent")[3];
 					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringArrayParameterNoValuesNotEditable", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
-					assert.ok(oField.getAggregation("_field").isA("sap.m.Text"), "Field: Editor is Text");
-					assert.ok(oField.getAggregation("_field").getText() === "key1", "Field: Select items lenght is OK");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editor is Input");
+					assert.ok(oField.getAggregation("_field").getValue() === "key1", "Field: Input value is OK");
+					assert.ok(!oField.getAggregation("_field").getEditable(), "Field: Input editable is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1437,6 +1438,61 @@ sap.ui.define([
 					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check the NotEditable and NotVisible string parameters", function (assert) {
+			this.oCardEditor.setMode("translation");
+
+			//TODO: check the log for the warning
+			this.oCardEditor.setLanguage("badlanguage");
+
+			this.oCardEditor.setLanguage("fr");
+
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/stringsTransWithNotEditableOrNotVisible",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringNotEditableParameter": {
+									"value": ""
+								},
+								"stringNotVisibleParameter": {
+									"value": ""
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
+					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+                    assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringNotEditableParameter", "Label: Has translated label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getEditable(), "Field: String Field editable");
+
+					assert.ok(this.oCardEditor.getAggregation("_formContent").length === 5, "Field: stringNotVisibleParameter Field not exist");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -4235,7 +4291,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("Visualization: default value", function (assert) {
-			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/fieldEnhancemantVisualization", "type": "List", "header": {} } } });
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/fieldEnhancementVisualization", "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
@@ -4279,7 +4335,7 @@ sap.ui.define([
 						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantVisualization",
+						"designtime": "designtime/fieldEnhancementVisualization",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -4338,7 +4394,7 @@ sap.ui.define([
 						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependenceForBoolean",
+						"designtime": "designtime/fieldEnhancementDependenceForBoolean",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -4385,7 +4441,7 @@ sap.ui.define([
 						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependenceForBoolean",
+						"designtime": "designtime/fieldEnhancementDependenceForBoolean",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -4436,7 +4492,7 @@ sap.ui.define([
 						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependenceForString",
+						"designtime": "designtime/fieldEnhancementDependenceForString",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -4483,7 +4539,7 @@ sap.ui.define([
 						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependenceForString",
+						"designtime": "designtime/fieldEnhancementDependenceForString",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -4534,7 +4590,7 @@ sap.ui.define([
 						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependenceForInteger",
+						"designtime": "designtime/fieldEnhancementDependenceForInteger",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -4581,7 +4637,7 @@ sap.ui.define([
 						"i18n": "i18n/i18n.properties"
 					},
 					"sap.card": {
-						"designtime": "designtime/fieldEnhancemantDependenceForInteger",
+						"designtime": "designtime/fieldEnhancementDependenceForInteger",
 						"type": "List",
 						"header": {},
 						"configuration": {
@@ -4760,7 +4816,6 @@ sap.ui.define([
 		});
 	});
 
-
 	QUnit.module("Lazy loading of destinations", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
@@ -4848,7 +4903,6 @@ sap.ui.define([
 		});
 	});
 
-
 	QUnit.module("Get destinations list timeout", {
 		beforeEach: function() {
 			this.oHost = new Host("host");
@@ -4901,7 +4955,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 	});
-
 
 	QUnit.module("Expanded groups", {
 		beforeEach: function () {
