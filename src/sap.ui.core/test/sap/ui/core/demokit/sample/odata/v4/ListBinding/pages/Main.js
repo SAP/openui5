@@ -14,16 +14,16 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				openChangeManagerOfTeamDialog : function () {
-					return Helper.pressButton(this, sViewName, "openChangeManagerOfTeamDialog");
+					Helper.pressButton(this, sViewName, "openChangeManagerOfTeamDialog");
 				},
 				openChangeTeamBudgetDialog : function () {
-					return Helper.pressButton(this, sViewName, "openChangeTeamBudgetDialog");
+					Helper.pressButton(this, sViewName, "openChangeTeamBudgetDialog");
 				},
 				refreshEmployees : function () {
-					return Helper.pressButton(this, sViewName, "refreshEmployees");
+					Helper.pressButton(this, sViewName, "refreshEmployees");
 				},
 				selectFirstEmployee : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Text",
 						id : /Employee_ID/,
 						success : function (aControls) {
@@ -36,7 +36,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkBudgetInForm : function (sBudget) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Text",
 						id : "Budget",
 						matchers : new Properties({text : sBudget}),
@@ -47,8 +47,7 @@ sap.ui.define([
 					});
 				},
 				checkEmployeeEquipmentInRow : function (iRow, sEquipmentName) {
-					var that = this;
-					return that.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "EmployeeEquipments",
 						success : function (oEmployeeEquipments) {
@@ -63,7 +62,7 @@ sap.ui.define([
 					});
 				},
 				checkEmployeeNameInRow : function (iRow, sEmployeeName) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "Employees",
 						success : function (oEmployees) {
@@ -77,7 +76,7 @@ sap.ui.define([
 					});
 				},
 				checkManagerInForm : function (sManager) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Text",
 						id : "ManagerID",
 						matchers : new Properties({text : sManager}),
@@ -88,8 +87,7 @@ sap.ui.define([
 					});
 				},
 				checkProductImageInRow : function (iRow, sUrl) {
-					var that = this;
-					return that.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : "EmployeeEquipments",
 						success : function (oEmployeeEquipments) {
@@ -106,7 +104,7 @@ sap.ui.define([
 					});
 				},
 				checkTeamIDInForm : function (sTeamID) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Text",
 						id : "Team_Id",
 						matchers : new Properties({text : sTeamID}),
@@ -121,38 +119,38 @@ sap.ui.define([
 		onTheChangeManagerOfTeamDialog : {
 			actions : {
 				changeManager : function (sManager) {
-					return Helper.changeInputValue(this, sViewName,
-						"ChangeManagerOfTeamDialog::Manager", sManager);
+					Helper.changeInputValue(this, sViewName, "ChangeManagerOfTeamDialog::Manager",
+						sManager);
 				},
 				pressChange: function () {
-					return Helper.pressButton(this, sViewName, "changeManagerOfTeam");
+					Helper.pressButton(this, sViewName, "changeManagerOfTeam");
 				}
 			},
 			assertions : {
 				checkManager : function (sManager) {
-					return Helper.checkInputValue(this, sViewName,
-						"ChangeManagerOfTeamDialog::Manager", sManager);
+					Helper.checkInputValue(this, sViewName, "ChangeManagerOfTeamDialog::Manager",
+						sManager);
 				}
 			}
 		},
 		onTheChangeTeamBudgetDialog : {
 			actions : {
 				changeBudget : function (sBudget) {
-					return Helper.changeInputValue(this, sViewName,
-						"ChangeTeamBudgetDialog::Budget", sBudget);
+					Helper.changeInputValue(this, sViewName, "ChangeTeamBudgetDialog::Budget",
+						sBudget);
 				},
 				pressChange: function () {
-					return Helper.pressButton(this, sViewName, "changeTeamBudget");
+					Helper.pressButton(this, sViewName, "changeTeamBudget");
 				}
 			},
 			assertions : {
 				checkBudget : function (sBudget) {
-					return Helper.checkInputValue(this, sViewName,
-						"ChangeTeamBudgetDialog::Budget", sBudget);
+					Helper.checkInputValue(this, sViewName, "ChangeTeamBudgetDialog::Budget",
+						sBudget);
 				},
 				checkTeamID : function (sTeamID) {
-					return Helper.checkInputValue(this, sViewName,
-						"ChangeTeamBudgetDialog::TeamID", sTeamID);
+					Helper.checkInputValue(this, sViewName, "ChangeTeamBudgetDialog::TeamID",
+						sTeamID);
 				}
 			}
 		}

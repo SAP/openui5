@@ -26,7 +26,7 @@ sap.ui.define([
 	 * given. After that, sets the focus to a different field to trigger a PATCH for the update.
 	 */
 	function changeValue(oOpa, rId, sValue, iRow) {
-		return oOpa.waitFor({
+		oOpa.waitFor({
 			actions : new EnterText({text : sValue}),
 			controlType : "sap.m.Input",
 			id : rId,
@@ -49,7 +49,7 @@ sap.ui.define([
 	 * the first row if none is given.
 	 */
 	function checkValueState(oOpa, rId, sState, iRow) {
-		return oOpa.waitFor({
+		oOpa.waitFor({
 			controlType : "sap.m.Input",
 			id : rId,
 			matchers : function (oControl) {
@@ -71,7 +71,7 @@ sap.ui.define([
 	 * the first row if none is given.
 	 */
 	function checkValue(oOpa, rId, sValue, iRow) {
-		return oOpa.waitFor({
+		oOpa.waitFor({
 			controlType : "sap.m.Input",
 			id : rId,
 			matchers : function (oControl) {
@@ -98,24 +98,24 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				changeMeasure : function (sValue, iRow) {
-					return changeValue(this, rWeightMeasureClone, sValue, iRow);
+					changeValue(this, rWeightMeasureClone, sValue, iRow);
 				},
 				changePrice : function (sValue, iRow) {
-					return changeValue(this, rPriceClone, sValue, iRow);
+					changeValue(this, rPriceClone, sValue, iRow);
 				}
 			},
 			assertions : {
 				checkMeasure : function (sValue, iRow) {
-					return checkValue(this, rWeightMeasureClone, sValue, iRow);
+					checkValue(this, rWeightMeasureClone, sValue, iRow);
 				},
 				checkMeasureValueState : function (sState, iRow) {
-					return checkValueState(this, rWeightMeasureClone, sState, iRow);
+					checkValueState(this, rWeightMeasureClone, sState, iRow);
 				},
 				checkPrice : function (sValue, iRow) {
-					return checkValue(this, rPriceClone, sValue, iRow);
+					checkValue(this, rPriceClone, sValue, iRow);
 				},
 				checkPriceValueState : function (sState, iRow) {
-					return checkValueState(this, rPriceClone, sState, iRow);
+					checkValueState(this, rPriceClone, sState, iRow);
 				}
 			}
 		}

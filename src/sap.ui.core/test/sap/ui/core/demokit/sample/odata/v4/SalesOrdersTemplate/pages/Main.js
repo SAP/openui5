@@ -12,13 +12,13 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				pressValueHelpOnCurrencyCode : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Input",
 						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
-							return this.waitFor({
+							this.waitFor({
 								controlType : "sap.m.Popover",
 								success : function (aControls) {
 									aControls[0].close();
@@ -30,7 +30,7 @@ sap.ui.define([
 					});
 				},
 				pressValueHelpOnRole : function () {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.ComboBox",
 						id : /-0-field/,

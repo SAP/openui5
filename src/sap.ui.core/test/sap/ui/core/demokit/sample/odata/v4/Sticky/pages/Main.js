@@ -12,14 +12,14 @@ sap.ui.define([
 	var sViewName = "sap.ui.core.sample.odata.v4.Sticky.Main";
 
 	function pressButton(oOpa5, sId) {
-		return Helper.pressButton(oOpa5, sViewName, sId);
+		Helper.pressButton(oOpa5, sViewName, sId);
 	}
 
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
 				changeContent : function (sValue) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({ clearTextFirst : true, text : sValue }),
 						controlType : "sap.m.Input",
 						id : "Content::details",
@@ -27,7 +27,7 @@ sap.ui.define([
 							Opa5.assert.strictEqual(oInput.getValue(), sValue, "Content set to "
 								+ oInput.getValue());
 							// trigger PATCH by leaving field via simple tab on other control
-							return this.waitFor({
+							this.waitFor({
 								actions : new Press(),
 								id : "Id::details",
 								success : function (oControl) {
@@ -40,7 +40,7 @@ sap.ui.define([
 					});
 				},
 				selectStickyType : function (iRow) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Text",
 						id : /Content/,
@@ -54,18 +54,18 @@ sap.ui.define([
 					});
 				},
 				pressDiscard : function () {
-					return pressButton(this, "discard");
+					pressButton(this, "discard");
 				},
 				pressPrepare : function () {
-					return pressButton(this, "prepare");
+					pressButton(this, "prepare");
 				},
 				pressSave : function () {
-					return pressButton(this, "save");
+					pressButton(this, "save");
 				}
 			},
 			assertions : {
 				checkContent : function (sValue) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "Content::details",
 						matchers : new Properties({value : sValue}),

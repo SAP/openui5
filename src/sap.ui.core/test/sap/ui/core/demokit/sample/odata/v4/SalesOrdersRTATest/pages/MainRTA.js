@@ -18,7 +18,7 @@ sap.ui.define([
 		onAdaptUIDialog : {
 			actions : {
 				changeNote : function (sNewNoteValue) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({ clearTextFirst : true, text : sNewNoteValue }),
 						controlType : "sap.m.Input",
 						id : "Note::new",
@@ -29,10 +29,10 @@ sap.ui.define([
 					});
 				},
 				applyDialog : function () {
-					return Helper.pressButton(this, sViewName, "ApplyChangesInFragment");
+					Helper.pressButton(this, sViewName, "ApplyChangesInFragment");
 				},
 				checkCheckBox: function (sCheckBoxText) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.CheckBox",
 						matchers : new Properties({text: sCheckBoxText}),
@@ -42,7 +42,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkCheckBoxIsSelected : function (sCheckBoxText, bSelected) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.CheckBox",
 						matchers : new Properties({text: sCheckBoxText}),
 						success : function (oCheckBox) {
@@ -63,19 +63,19 @@ sap.ui.define([
 		onTheMainPageRTA : {
 			actions : {
 				pressAdaptUIButton : function (sButtonId) {
-					return Helper.pressButton(this, sViewName, sButtonId);
+					Helper.pressButton(this, sViewName, sButtonId);
 				}
 			},
 			assertions : {
 				checkNewPropertyAppears : function (sPropertyId) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Text",
 						id : sPropertyId,
 						viewName : sViewName
 					});
 				},
 				checkNewColumnAppears : function (sTableId, sExpectedText, iExpectedLength) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Table",
 						id : sTableId,
 						check : function (oSalesOrderTable) {

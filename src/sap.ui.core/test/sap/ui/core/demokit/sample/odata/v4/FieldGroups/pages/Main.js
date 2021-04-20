@@ -14,7 +14,7 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				enterValue : function (sId, sValue) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({text : sValue, keepFocus : true}),
 						controlType : "sap.m.Input",
 						id : sId,
@@ -22,7 +22,7 @@ sap.ui.define([
 					});
 				},
 				resetRequestCount : function () {
-					return this.waitFor({
+					this.waitFor({
 						success : function () {
 							TestUtils.resetRequestCount();
 						},
@@ -30,7 +30,7 @@ sap.ui.define([
 					});
 				},
 				selectField : function (sId) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Input",
 						id : sId,
@@ -40,7 +40,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkField : function (sId, sExpectedValue) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : sId,
 						success : function (oInput) {
@@ -51,7 +51,7 @@ sap.ui.define([
 					});
 				},
 				checkRequestCount : function (iRequestCount) {
-					return this.waitFor({
+					this.waitFor({
 						success : function () {
 							Opa5.assert.strictEqual(TestUtils.getRequestCount(), iRequestCount,
 								iRequestCount + " requests");

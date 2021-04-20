@@ -17,7 +17,7 @@ sap.ui.define([
 	 * given. After that, sets the focus to a different field to trigger a PATCH for the update.
 	 */
 	function changeValue(oOpa, rId, sValue, iRow) {
-		return oOpa.waitFor({
+		oOpa.waitFor({
 			actions : new EnterText({text : sValue}),
 			controlType : "sap.m.Input",
 			id : rId,
@@ -49,7 +49,7 @@ sap.ui.define([
 	 * the first row if none is given.
 	 */
 	function checkValue(oOpa, rId, sValue, iRow) {
-		return oOpa.waitFor({
+		oOpa.waitFor({
 			controlType : "sap.m.Input",
 			id : rId,
 			matchers : function (oControl) {
@@ -69,69 +69,69 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				changeMeasure : function (sValue, iRow) {
-					return changeValue(this, /WeightMeasure-__clone/, sValue, iRow);
+					changeValue(this, /WeightMeasure-__clone/, sValue, iRow);
 				},
 				changePrice : function (sValue, iRow) {
-					return changeValue(this, /Price-__clone/, sValue, iRow);
+					changeValue(this, /Price-__clone/, sValue, iRow);
 				},
 				changeProductID : function (sValue, iRow) {
-					return changeValue(this, /ProductID-__clone/, sValue, iRow);
+					changeValue(this, /ProductID-__clone/, sValue, iRow);
 				},
 				changeNewEntryPrice : function (sValue) {
-					return changeValue(this, /Price::newEntry/, sValue);
+					changeValue(this, /Price::newEntry/, sValue);
 				},
 				changeNewEntryProductID : function (sValue) {
-					return changeValue(this, /ProductID::newEntry/, sValue);
+					changeValue(this, /ProductID::newEntry/, sValue);
 				},
 				changeNewEntryProductName : function (sValue) {
-					return changeValue(this, /Name::newEntry/, sValue);
+					changeValue(this, /Name::newEntry/, sValue);
 				},
 				changeNewEntryWeightMeasure : function (sValue) {
-					return changeValue(this, /WeightMeasure::newEntry/, sValue);
+					changeValue(this, /WeightMeasure::newEntry/, sValue);
 				},
 				pressAddButton : function () {
-					return Helper.pressButton(this, sViewName, "addButton");
+					Helper.pressButton(this, sViewName, "addButton");
 				},
 				pressClearRowButton : function () {
-					return Helper.pressButton(this, sViewName, "clearRowButton");
+					Helper.pressButton(this, sViewName, "clearRowButton");
 				}
 			},
 			assertions : {
 				checkButtonDisabled : function (sButtonId) {
-					return Helper.checkButtonDisabled(this, sViewName, sButtonId);
+					Helper.checkButtonDisabled(this, sViewName, sButtonId);
 				},
 				checkButtonEnabled : function (sButtonId) {
-					return Helper.checkButtonEnabled(this, sViewName, sButtonId);
+					Helper.checkButtonEnabled(this, sViewName, sButtonId);
 				},
 				checkMeasure : function (sValue, iRow) {
-					return checkValue(this, /WeightMeasure-__clone/, sValue, iRow);
+					checkValue(this, /WeightMeasure-__clone/, sValue, iRow);
 				},
 				checkMeasureNewEntry : function (sValue){
-					return checkValue(this, /WeightMeasure::newEntry/, sValue);
+					checkValue(this, /WeightMeasure::newEntry/, sValue);
 				},
 				checkMeasureValueState : function (sState, iRow) {
-					return checkValueState(this, /WeightMeasure-__clone/, sState, iRow);
+					checkValueState(this, /WeightMeasure-__clone/, sState, iRow);
 				},
 				checkName : function (sValue){
-					return checkValue(this, /Name-__clone/, sValue);
+					checkValue(this, /Name-__clone/, sValue);
 				},
 				checkNameNewEntry : function (sValue){
-					return checkValue(this, /Name::newEntry/, sValue);
+					checkValue(this, /Name::newEntry/, sValue);
 				},
 				checkPrice : function (sValue, iRow) {
-					return checkValue(this, /Price-__clone/, sValue, iRow);
+					checkValue(this, /Price-__clone/, sValue, iRow);
 				},
 				checkPriceNewEntry : function (sValue){
-					return checkValue(this, /Price::newEntry/, sValue);
+					checkValue(this, /Price::newEntry/, sValue);
 				},
 				checkPriceValueState : function (sState, iRow) {
-					return checkValueState(this, /Price-__clone/, sState, iRow);
+					checkValueState(this, /Price-__clone/, sState, iRow);
 				},
 				checkProductID : function (sValue, iRow) {
-					return checkValue(this, /ProductID-__clone/, sValue, iRow);
+					checkValue(this, /ProductID-__clone/, sValue, iRow);
 				},
 				checkProductIDIsEditable : function (bEditable) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : /ProductID-__clone/,
 						matchers : function (oControl) {

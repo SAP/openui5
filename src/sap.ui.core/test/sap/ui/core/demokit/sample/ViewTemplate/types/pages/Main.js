@@ -14,7 +14,7 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				changeBoolean : function () {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "booleanInput",
 						success : function (oControl) {
@@ -27,7 +27,7 @@ sap.ui.define([
 					});
 				},
 				enterDateTimePickerValue : function (sId, sValue) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.DateTimePicker",
 						id : sId,
 						success : function (oControl) {
@@ -39,7 +39,7 @@ sap.ui.define([
 					});
 				},
 				enterInputValue : function (sId, sValue, sViewName0) {
-					return this.waitFor({
+					this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
 						id : sId,
@@ -51,16 +51,15 @@ sap.ui.define([
 					});
 				},
 				enterStepInputValue : function (sId, sValue, sExpectedValue) {
-					return Helper.changeStepInputValue(this, sViewName, sId, sValue,
-						sExpectedValue);
+					Helper.changeStepInputValue(this, sViewName, sId, sValue, sExpectedValue);
 				},
 				pressButton : function (sId) {
-					return Helper.pressButton(this, sViewName, sId);
+					Helper.pressButton(this, sViewName, sId);
 				}
 			},
 			assertions : {
 				checkDateTimePickerValueState : function (sId, sState) {
-					return this.waitFor({
+					this.waitFor({
 						controlType : "sap.m.DateTimePicker",
 						id : sId,
 						success : function (oInput) {
@@ -71,10 +70,10 @@ sap.ui.define([
 					});
 				},
 				checkInputIsDirty : function (sId, bIsDirty, sViewName0) {
-					return Helper.checkInputIsDirty(this, sViewName0 || sViewName, sId, bIsDirty);
+					Helper.checkInputIsDirty(this, sViewName0 || sViewName, sId, bIsDirty);
 				},
 				checkInputValue : function (sId, vValue, sViewName0) {
-					return Helper.checkInputValue(this, sViewName0 || sViewName, sId, vValue);
+					Helper.checkInputValue(this, sViewName0 || sViewName, sId, vValue);
 				},
 				checkInputValueState : function (sId, sState, sMessage, sViewName0) {
 					Helper.checkValueState(this, sViewName0 || sViewName, sId, sState, sMessage);

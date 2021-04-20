@@ -43,11 +43,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The external value of the control as a string
 		 * @param {boolean} bSearchOpenDialogs
 		 *  If set to true, Opa5 will only search in open dialogs
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
 		changeInputValue : function (oOpa5, sViewName, sId, sValue, bSearchOpenDialogs) {
-			return oOpa5.waitFor({
+			oOpa5.waitFor({
 				actions : new EnterText({clearTextFirst : true, text : sValue}),
 				controlType : "sap.m.Input",
 				id : sId,
@@ -72,10 +70,10 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 * @param {string} sValue
 		 *  The entered value of the control as a string
 		 * @param {string} [sExpectedValue=sValue]
-		 *  The expected value after entering. E.g. if <code>sValue</code> contains decimals and the
-		 *  control's 'displayValuePrecision' property, or the binding's data type constraint
-		 *  'scale' is 0 then the expected new value is the largest integer less than or equal to
-		 *  <code>sValue<sValue>.
+		 *  The expected value after entering, for example if <code>sValue</code> contains decimals
+		 *  and the control's 'displayValuePrecision' property, or the binding's data type constraint
+		 *  'scale' is 0 then the expected new value should be the largest integer less than or
+		 *  equal to <code>sValue<sValue>
 		 * @param {boolean} bSearchOpenDialogs
 		 *  If set to true, Opa5 will only search in open dialogs
 		 */
@@ -113,11 +111,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The name of the view which contains the searched control
 		 * @param {string} sButtonId
 		 *  The ID of a "sap.m.Button" control inside the view sViewName
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
 		checkButtonDisabled : function (oOpa5, sViewName, sButtonId) {
-			return oOpa5.waitFor({
+			oOpa5.waitFor({
 				autoWait : false,
 				controlType : "sap.m.Button",
 				id : sButtonId,
@@ -138,11 +134,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The name of the view which contains the searched control
 		 * @param {string} sButtonId
 		 *  The ID of a "sap.m.Button" control inside the view sViewName
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
 		checkButtonEnabled : function (oOpa5, sViewName, sButtonId) {
-			return oOpa5.waitFor({
+			oOpa5.waitFor({
 				controlType : "sap.m.Button",
 				id : sButtonId,
 				matchers : new Interactable(),
@@ -192,11 +186,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The ID of a "sap.m.Input" control inside the view sViewName
 		 * @param {string} bIsDirty
 		 *  Whether the control is expected dirty or not
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
 		checkInputIsDirty : function (oOpa5, sViewName, sId, bIsDirty) {
-			return oOpa5.waitFor({
+			oOpa5.waitFor({
 				controlType : "sap.m.Input",
 				id : sId,
 				success : function (oControl) {
@@ -219,11 +211,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The ID of a "sap.m.Input" control inside the view sViewName
 		 * @param {string} vValue
 		 *  The expected value of the control
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
 		checkInputValue : function (oOpa5, sViewName, sId, vValue) {
-			return oOpa5.waitFor({
+			oOpa5.waitFor({
 				controlType : "sap.m.Input",
 				id : sId,
 				success : function (oControl) {
@@ -349,11 +339,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  An instance of Opa5 to access the current page object
 		 * @param {string} sViewName
 		 *  The name of the view which contains the more button as a sap.m.CustomListItem
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
 		pressMoreButton : function (oOpa5, sViewName) {
-			return oOpa5.waitFor({
+			oOpa5.waitFor({
 				actions : new Press(),
 				controlType : "sap.m.CustomListItem",
 				success : function (aControls) {
@@ -374,11 +362,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The name of the view containing the collection of column list items
 		 * @param {number} iIndex
 		 *  The zero based index of the column list item within its collection
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
 		selectColumnListItem : function (oOpa5, sViewName, iIndex) {
-			return oOpa5.waitFor({
+			oOpa5.waitFor({
 				actions : new Press(),
 				controlType : "sap.m.ColumnListItem",
 				errorMessage : "Item: " + iIndex + " not found",
@@ -400,8 +386,6 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *   An instance of Opa5 to access the current page object
 		 * @param {object} options
 		 *   The options containing the success callback, see {@link sap.ui.test.Opa5#waitFor}
-		 * @returns {jQuery.promise}
-		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
 		waitForSortedByID : function (oOpa5, options) {
 			var fnSuccess = options.success;
@@ -411,7 +395,7 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 				fnSuccess(aControls);
 			};
 
-			return oOpa5.waitFor(options);
+			oOpa5.waitFor(options);
 		},
 
 		/**
