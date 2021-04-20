@@ -434,7 +434,12 @@
 		{
 			"control": "sap.m.RangeSlider",
 			"url": "RangeSlider.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.RangeSlider",
+				"title": "ACC test for sap.m.RangeSlider",
+				"module": "./rangeslider.qunit"
+			}
 		},
 		{
 			"control": "sap.m.RatingIndicator",
