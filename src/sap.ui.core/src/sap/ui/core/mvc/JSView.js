@@ -140,7 +140,7 @@ sap.ui.define([
 	 * <b>Note:</b> Any other call signature will lead to a runtime error.
 	 *
 	 * @param {string} [sId] ID of the newly created view, only allowed for instance creation
-	 * @param {string | object} vView name or implementation of the view.
+	 * @param {string|object} vView name or implementation of the view.
 	 * @param {boolean} [bAsync=false] Defines how the view source is loaded and rendered later on
 	 *   (only relevant for instantiation, ignored for everything else)
 	 * @public
@@ -152,31 +152,32 @@ sap.ui.define([
 	 * @returns {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
 	 */
 	sap.ui.jsview = function(sId, vView, bAsync) {
-		var fnLogDeprecation = function(sMethod) {
-			Log[sMethod](
-				"Do not use deprecated view factory functions. " +
-				"Use the static create function on the specific view module instead: [XML|JS|HTML|JSON]View.create().",
-				"sap.ui.view",
-				null,
-				function () {
-					return {
-						type: "sap.ui.view",
-						name: sId || (vView && vView.name)
-					};
-				}
-			);
-		};
+		var sViewName = typeof sId === "string" ? sId : vView;
+		sViewName = typeof sViewName === "object" ? sViewName.viewName : sViewName;
 
-		if (vView && vView.async) {
-			fnLogDeprecation("info");
-		} else {
-			fnLogDeprecation("warning");
-		}
+		Log.warning(
+			"Do not use deprecated view factory function (JSView: " + sViewName + "). " +
+			"Use the static create function 'sap.ui.core.mvc.View.create()'.",
+			"sap.ui.jsview",
+			null,
+			function () {
+				return {
+					type: "sap.ui.jsview",
+					name: sViewName
+				};
+			}
+		);
 		return viewFactory.apply(this, arguments);
 	};
 
-	/*
+	/**
 	 * The old view factory implementation
+	 *
+	 * @param {string} [sId] ID of the newly created view, only allowed for instance creation
+	 * @param {string|object} vView name or implementation of the view
+	 * @param {boolean} [bAsync=false] whether the view source is loaded asynchronously
+	 * @returns {sap.ui.core.mvc.JSView} the created view instance
+	 * @private
 	 */
 	function viewFactory(sId, vView, bAsync) {
 		var mSettings = {}, oView;

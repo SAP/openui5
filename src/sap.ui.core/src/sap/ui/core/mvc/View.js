@@ -1108,7 +1108,7 @@ sap.ui.define([
 	 * @param {string} sId id of the newly created view, only allowed for instance creation
 	 * @param {string|object} [vView] the view name or view configuration object
 	 * @param {sap.ui.core.mvc.ViewType} sType Specifies what kind of view will be instantiated. All valid
-	 * view types are listed in the enumeration  {@link sap.ui.core.mvc.ViewType}.
+	 * view types are listed in the enumeration {@link sap.ui.core.mvc.ViewType}
 	 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 	 * @public
 	 * @static
@@ -1117,39 +1117,32 @@ sap.ui.define([
 	 * @ui5-global-only
 	 */
 	sap.ui.view = function(sId, vView, sType /* used by factory functions */) {
-		var fnLogDeprecation = function(sMethod) {
-			// get the viewname for logging
-			var sName = "";
-			if (typeof sId == "object") {
-				sName = sId.viewName;
+		var sViewName = typeof sId === "string" ? sId : vView;
+		sViewName = typeof sViewName === "object" ? sViewName.viewName : sViewName;
+
+		Log.warning(
+			"Do not use deprecated view factory functions (View: " + sViewName + "). " +
+			"Use the static create function on the view module instead: [XML|HTML|JSON|]View.create().",
+			"sap.ui.view",
+			null,
+			function () {
+				return {
+					type: "sap.ui.view",
+					name: sViewName
+				};
 			}
-			sName = sName || (vView && vView.name);
-
-			Log[sMethod](
-				"Do not use deprecated view factory functions (" + sName + "). " +
-				"Use the static create function on the view module instead: [XML|JS|HTML|JSON|]View.create().",
-				"sap.ui.view",
-				null,
-				function () {
-					return {
-						type: "sap.ui.view",
-						name: sName
-					};
-				}
-			);
-		};
-
-		if (vView && vView.async) {
-			fnLogDeprecation("info");
-		} else {
-			fnLogDeprecation("warning");
-		}
+		);
 		return viewFactory(sId, vView, sType);
 	};
 
-	/*
+	/**
 	 * The old sap.ui.view implementation
 	 *
+	 * @param {string} sId id of the newly created view, only allowed for instance creation
+	 * @param {string|object} [vView] the view name or view configuration object
+	 * @param {sap.ui.core.mvc.ViewType} [sType] Specifies what kind of view will be instantiated. All valid
+	 * view types are listed in the enumeration {@link sap.ui.core.mvc.ViewType}
+	 * @returns {sap.ui.core.mvc.View} the created view instance
 	 * @private
 	 */
 	function viewFactory(sId, vView, sType) {
