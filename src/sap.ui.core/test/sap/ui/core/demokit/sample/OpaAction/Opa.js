@@ -13,7 +13,8 @@ sap.ui.require([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Drag",
-	"sap/ui/test/actions/Drop"
+	"sap/ui/test/actions/Drop",
+	"sap/ui/test/actions/Scroll"
 ], function (Opa5,
 			 opaTest,
 			 AggregationLengthEquals,
@@ -24,7 +25,8 @@ sap.ui.require([
 			 Press,
 			 EnterText,
 			 Drag,
-			 Drop) {
+			 Drop,
+			 Scroll) {
 	"use strict";
 
 	Opa5.extendConfig({
@@ -255,6 +257,39 @@ sap.ui.require([
 				Opa5.assert.strictEqual(aItems[0][1].getTitle(), "Notebook Professional 15", "The second item was dropped before the sixth item");
 			}
 		});
+	});
+
+	QUnit.module("Scroll");
+
+	opaTest("Should scroll a page", function (Given, When, Then) {
+		Then.waitFor({
+			controlType: "sap.m.StandardListItem",
+			matchers: new BindingPath({
+				path: "/ProductCollection/21",
+				modelName: "orderedListModel"
+			}),
+			success: function  (aControls) {
+				Opa5.assert.ok(!isInViewport(aControls[0].getDomRef()), "The page is in initial state");
+			}
+		});
+
+		When.waitFor({
+			controlType: "sap.m.Page",
+			actions: new Scroll({
+				y: 2000
+			})
+		});
+
+		Then.waitFor({
+			controlType: "sap.m.StandardListItem",
+			matchers: new BindingPath({
+				path: "/ProductCollection/21",
+				modelName: "orderedListModel"
+			}),
+			success: function  (aControls) {
+				Opa5.assert.ok(isInViewport(aControls[0].getDomRef()), "The page is scrolled");
+			}
+		});
 
 		Then.iTeardownMyApp();
 	});
@@ -348,6 +383,13 @@ sap.ui.require([
 
 		Then.iTeardownMyApp();
 	});
+
+	function isInViewport (element) {
+		var mRect = element.getBoundingClientRect();
+		return mRect.top >= 0 && mRect.left >= 0 &&
+			mRect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+			mRect.right <= (window.innerWidth || document.documentElement.clientWidth);
+	}
 
 	QUnit.start();
 });

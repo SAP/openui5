@@ -275,6 +275,30 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 			oDomRef.dispatchEvent(oDragEvent);
 		},
 
+		_createAndDispatchScrollEvent: function (oDomRef, oOptions) {
+			if (oOptions.x) {
+				oDomRef.scrollLeft = oOptions.x;
+			}
+			if (oOptions.y) {
+				oDomRef.scrollTop = oOptions.y;
+			}
+			var oScrollEvent = new Event("scroll", {
+				bubbles: false,
+				cancelBubble: false,
+				cancelable: false,
+				composed: false,
+				currentTarget: null,
+				defaultPrevented: false,
+				eventPhase: 0,
+				isTrusted: true,
+				returnValue: true,
+				target: oDomRef,
+				srcElement: oDomRef,
+				type: "scroll"
+			});
+			oDomRef.dispatchEvent(oScrollEvent);
+		},
+
 		_getEventCoordinates: function (oDomRef, oOptions) {
 			var $domRef = jQueryDOM(oDomRef);
 			var offset = $domRef.offset();
