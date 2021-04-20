@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/strings/capitalize",
 	"sap/base/util/deepEqual",
+	"sap/base/util/Deferred",
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/mdc/p13n/subcontroller/ColumnController",
@@ -60,6 +61,7 @@ sap.ui.define([
 	containsOrEquals,
 	capitalize,
 	deepEqual,
+	Deferred,
 	InvisibleMessage,
 	InvisibleText,
 	ColumnController,
@@ -488,8 +490,8 @@ sap.ui.define([
 			}
 		},
 		constructor: function() {
-			this._oTableReady = new Promise(this._resolveTable.bind(this));
-			this._pFullInitialize = new Promise(this._resolveFullInitialization.bind(this));
+			this._oTableReady = new Deferred();
+			this._oFullInitialize = new Deferred();
 			Control.apply(this, arguments);
 			this.bCreated = true;
 			this._doOneTimeOperations();
@@ -582,26 +584,16 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.initialized = function() {
-		return this._oTableReady;
-	};
-
-	Table.prototype._resolveTable = function(resolve, reject) {
-		this._fResolve = resolve;
-		this._fReject = reject;
+		return this._oTableReady.promise;
 	};
 
 	Table.prototype._fullyInitialized = function() {
-		return this._pFullInitialize;
-	};
-
-	Table.prototype._resolveFullInitialization = function(resolve, reject) {
-		this._fnResolveFullInit = resolve;
-		this._fnRejectFullInit = reject;
+		return this._oFullInitialize.promise;
 	};
 
 	Table.prototype.getDataStateIndicatorPluginOwner = function(oDataStateIndicator) {
 		oDataStateIndicator.setEnableFiltering(false);
-		return this._oTable || this._pFullInitialize;
+		return this._oTable || this._oFullInitialize.promise;
 	};
 
 	// ----Type----
@@ -724,10 +716,10 @@ sap.ui.define([
 				this._oTemplate.destroy();
 				this._oTemplate = null;
 			}
-			// recreate the promise when switching table
-			this._oTableReady = new Promise(this._resolveTable.bind(this));
+			// recreate the defers when switching table
+			this._oTableReady = new Deferred();
+			this._oFullInitialize = new Deferred();
 			this._bFullyInitialized = false;
-			this._pFullInitialize = new Promise(this._resolveFullInitialization.bind(this));
 			this._initializeContent();
 		}
 		return this;
@@ -1156,23 +1148,11 @@ sap.ui.define([
 	};
 
 	Table.prototype._onAfterTableCreated = function(bResult) {
-		if (bResult && this._fResolve) {
-			this._fResolve(this);
-		} else if (this._fReject) {
-			this._fReject(this);
-		}
-		delete this._fResolve;
-		delete this._fReject;
+		this._oTableReady[bResult ? "resolve" : "reject"](this);
 	};
 
 	Table.prototype._onAfterFullInitialization = function(bResult) {
-		if (bResult && this._fnResolveFullInit) {
-			this._fnResolveFullInit(this);
-		} else if (this._fnRejectFullInit) {
-			this._fnRejectFullInit(this);
-		}
-		delete this._fnResolveFullInit;
-		delete this._fnRejectFullInit;
+		this._oFullInitialize[bResult ? "resolve" : "reject"](this);
 	};
 
 	Table.prototype._createContent = function() {
@@ -2480,11 +2460,7 @@ sap.ui.define([
 		}, this);
 
 		this._oTableReady = null;
-		this._fReject = null;
-		this._fResolve = null;
-		this._pFullInitialize = null;
-		this._fnRejectFullInit = null;
-		this._fnResolveFullInit = null;
+		this._oFullInitialize = null;
 
 		Control.prototype.exit.apply(this, arguments);
 	};

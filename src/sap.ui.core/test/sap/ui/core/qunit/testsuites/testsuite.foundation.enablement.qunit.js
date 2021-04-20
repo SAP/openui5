@@ -49,6 +49,9 @@ sap.ui.define(function() {
 			"base/util/deepExtend": {
 				title: "QUnit Page for deepExtend"
 			},
+			"base/util/Deferred": {
+				title: "QUnit Page for Deferred"
+			},
 			"base/util/defineCoupledProperty": {
 				title: "QUnit Page for defineCoupledProperty"
 			},
