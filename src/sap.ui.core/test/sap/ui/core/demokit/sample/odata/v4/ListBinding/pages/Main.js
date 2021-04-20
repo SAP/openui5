@@ -36,55 +36,17 @@ sap.ui.define([
 			},
 			assertions : {
 				checkBudgetInForm : function (sBudget) {
-					this.waitFor({
-						controlType : "sap.m.Text",
-						id : "Budget",
-						matchers : new Properties({text : sBudget}),
-						success : function (oText) {
-							Opa5.assert.ok(true, "Budget is: " + sBudget);
-						},
-						viewName : sViewName
-					});
+					Helper.checkTextValue(this, sViewName, "Budget", sBudget);
 				},
 				checkEmployeeEquipmentInRow : function (iRow, sEquipmentName) {
-					this.waitFor({
-						controlType : "sap.m.Table",
-						id : "EmployeeEquipments",
-						success : function (oEmployeeEquipments) {
-							var oRow = oEmployeeEquipments.getItems()[iRow];
-							Opa5.assert.strictEqual(
-								oRow.getCells()[2].getValue(),
-								sEquipmentName,
-								"Equipment name of row " + iRow + " as expected: "
-								+ sEquipmentName);
-						},
-						viewName : sViewName
-					});
+					Helper.checkInputValue(this, sViewName, /EQUIPMENT_2_PRODUCT:Name/,
+						sEquipmentName, iRow);
 				},
 				checkEmployeeNameInRow : function (iRow, sEmployeeName) {
-					this.waitFor({
-						controlType : "sap.m.Table",
-						id : "Employees",
-						success : function (oEmployees) {
-							var oRow = oEmployees.getItems()[iRow];
-							Opa5.assert.strictEqual(
-								oRow && oRow.getCells()[0].getValue(),
-								sEmployeeName,
-								"Name of row " + iRow + " as expected: " + sEmployeeName);
-						},
-						viewName : sViewName
-					});
+					Helper.checkInputValue(this, sViewName, /Employee_Name/, sEmployeeName, iRow);
 				},
 				checkManagerInForm : function (sManager) {
-					this.waitFor({
-						controlType : "sap.m.Text",
-						id : "ManagerID",
-						matchers : new Properties({text : sManager}),
-						success : function (oText) {
-							Opa5.assert.ok(true, "Manager is: " + sManager);
-						},
-						viewName : sViewName
-					});
+					Helper.checkTextValue(this, sViewName, "ManagerID", sManager);
 				},
 				checkProductImageInRow : function (iRow, sUrl) {
 					this.waitFor({
@@ -104,15 +66,7 @@ sap.ui.define([
 					});
 				},
 				checkTeamIDInForm : function (sTeamID) {
-					this.waitFor({
-						controlType : "sap.m.Text",
-						id : "Team_Id",
-						matchers : new Properties({text : sTeamID}),
-						success : function (oText) {
-							Opa5.assert.ok(true, "Team ID " + sTeamID + " found");
-						},
-						viewName : sViewName
-					});
+					Helper.checkTextValue(this, sViewName, "Team_Id", sTeamID);
 				}
 			}
 		},

@@ -18,15 +18,7 @@ sap.ui.define([
 		onAdaptUIDialog : {
 			actions : {
 				changeNote : function (sNewNoteValue) {
-					this.waitFor({
-						actions : new EnterText({ clearTextFirst : true, text : sNewNoteValue }),
-						controlType : "sap.m.Input",
-						id : "Note::new",
-						success : function (oNewNoteInput) {
-							Opa5.assert.ok(true, "Note text set to " + sNewNoteValue);
-						},
-						viewName : sViewName
-					});
+					Helper.changeInputValue(this, sViewName, "Note::new", sNewNoteValue);
 				},
 				applyDialog : function () {
 					Helper.pressButton(this, sViewName, "ApplyChangesInFragment");

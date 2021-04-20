@@ -145,7 +145,7 @@
 			</Column>
 		</columns>
 		<ColumnListItem>
-			<Input value="{Name}"/>
+			<Input id="Employee_Name" value="{Name}"/>
 			<Text id="Employee_ID" text="{ID}"/>
 			<CheckBox selected="{Is_Manager}"/>
 			<Input value="{AGE}"/>
@@ -182,7 +182,7 @@
 		<ColumnListItem>
 			<Text text="{ID}"/>
 			<Image densityAware="false" src="{EQUIPMENT_2_PRODUCT/ProductPicture/Picture}"/>
-			<Input value="{EQUIPMENT_2_PRODUCT/Name}"/>
+			<Input id="EQUIPMENT_2_PRODUCT:Name" value="{EQUIPMENT_2_PRODUCT/Name}"/>
 			<Text text="{Category}"/>
 			<SelectList enabled="false"
 				items="{path : 'EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY',

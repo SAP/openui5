@@ -245,7 +245,7 @@
 				<Text binding="{SO_2_BP}" text="{CompanyName}"/>
 				<Text text="{GrossAmount}"/>
 				<Text text="{CurrencyCode}"/>
-				<Input id="Note" enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
+				<Input id="Note::list" enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>
 				<Text text="{LifecycleStatusDesc}"/>
 				<Text text="{ChangedAt}"/>
 			</ColumnListItem>

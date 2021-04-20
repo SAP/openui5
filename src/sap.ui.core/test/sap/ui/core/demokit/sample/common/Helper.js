@@ -15,6 +15,44 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 	var Helper;
 
 	/**
+	 * Checks the value/text of a sap.m.Input/.Text field
+	 *
+	 * @param {sap.ui.test.Opa5} oOpa5
+	 *  An instance of Opa5 to access the current page object
+	 * @param {string} sViewName
+	 *  The name of the view which contains the searched control
+	 * @param {boolean} bText
+	 *  Whether the type of the control is "sap.m.Text", otherwise it is "sap.m.Input"
+	 * @param {string} sId
+	 *  The ID of a "sap.m.Input" or "sap.m.Text"  control inside the view sViewName
+	 * @param {string} sValue
+	 *  The external value of the control as a string
+	 * @param {number} [iRow]
+	 *  The row number (zero based) of the control if the control is within a collection
+	 * @param {boolean} bSearchOpenDialogs
+	 *  If set to true, Opa5 will only search in open dialogs
+	 */
+	function checkControlValue(oOpa5, sViewName, bText, sId, sValue, iRow, bSearchOpenDialogs) {
+		oOpa5.waitFor({
+			controlType : bText ? "sap.m.Text" : "sap.m.Input",
+			id : sId,
+			matchers : iRow === undefined ? undefined : function (oControl) {
+				return oControl.getBindingContext().getIndex() === iRow;
+			},
+			searchOpenDialogs : bSearchOpenDialogs,
+			success : function (vControls) {
+				var oControl =  iRow === undefined ? vControls : vControls[0],
+					sActual = bText ? oControl.getText() : oControl.getValue();
+
+				Opa5.assert.ok(iRow === undefined || vControls.length === 1);
+				Opa5.assert.strictEqual(sActual, sValue, "Control: " + sId + " Value is: "
+					+ sActual);
+			},
+			viewName : sViewName
+		});
+	}
+
+	/**
 	 * Compares the IDs of two different controls lexicographically.
 	 *
 	 * @param {sap.ui.core.Control} oControl1 - The first control
@@ -41,16 +79,24 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The ID of a "sap.m.Input" control inside the view sViewName
 		 * @param {string} sValue
 		 *  The external value of the control as a string
-		 * @param {boolean} bSearchOpenDialogs
+		 * @param {number} [iRow]
+		 *  The row number (zero based) of the control if the control is within a collection
+		 * @param {boolean} [bSearchOpenDialogs]
 		 *  If set to true, Opa5 will only search in open dialogs
 		 */
-		changeInputValue : function (oOpa5, sViewName, sId, sValue, bSearchOpenDialogs) {
+		changeInputValue : function (oOpa5, sViewName, sId, sValue, iRow, bSearchOpenDialogs) {
 			oOpa5.waitFor({
 				actions : new EnterText({clearTextFirst : true, text : sValue}),
 				controlType : "sap.m.Input",
 				id : sId,
+				matchers : iRow === undefined ? undefined : function (oControl) {
+					return oControl.getBindingContext().getIndex() === iRow;
+				},
 				searchOpenDialogs : bSearchOpenDialogs,
-				success : function (oInput) {
+				success : function (vControls) {
+					var oInput =  iRow === undefined ? vControls : vControls[0];
+
+					Opa5.assert.ok(iRow === undefined || vControls.length === 1);
 					Opa5.assert.strictEqual(oInput.getValue(), sValue, sId + ": Input value set to "
 						+ sValue);
 				},
@@ -148,34 +194,6 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
-		 * Checks the value/text of a sap.m.Input/Text field
-		 *
-		 * @param {sap.ui.test.Opa5} oOpa5
-		 *  An instance of Opa5 to access the current page object
-		 * @param {string} sViewName
-		 *  The name of the view which contains the searched control
-		 * @param {string} sId
-		 *  The ID of a "sap.m.Input" or "sap.m.Text"  control inside the view sViewName
-		 * @param {string} sValue
-		 *  The external value of the control as a string
-		 * @param {boolean} bSearchOpenDialogs
-		 *  If set to true, Opa5 will only search in open dialogs
-		 */
-		checkControlValue : function (oOpa5, sViewName, sId, sValue, bSearchOpenDialogs) {
-			oOpa5.waitFor({
-				//controlType : [sap.m.Text, sap.m.Input],
-				id : sId,
-				searchOpenDialogs : bSearchOpenDialogs,
-				success : function (oControl) {
-					var sActual = oControl.getValue ? oControl.getValue() : oControl.getText();
-					Opa5.assert.strictEqual(sActual, sValue,
-						"Control: " + sId + " Value is: " + sActual);
-				},
-				viewName : sViewName
-			});
-		},
-
-		/**
 		 * Checks if a sap.m.Input is dirty or not.
 		 *
 		 * @param {sap.ui.test.Opa5} oOpa5
@@ -211,17 +229,13 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The ID of a "sap.m.Input" control inside the view sViewName
 		 * @param {string} vValue
 		 *  The expected value of the control
+		 * @param {number} [iRow]
+		 *  The row number (zero based) of the control if the control is within a collection
+		 * @param {boolean} [bSearchOpenDialogs]
+		 *  Whether Opa5 will only search for controls in open dialogs
 		 */
-		checkInputValue : function (oOpa5, sViewName, sId, vValue) {
-			oOpa5.waitFor({
-				controlType : "sap.m.Input",
-				id : sId,
-				success : function (oControl) {
-					Opa5.assert.strictEqual(
-						oControl.getValue(), vValue, "Control: " + sId + " Value is: " + vValue);
-				},
-				viewName : sViewName
-			});
+		checkInputValue : function (oOpa5, sViewName, sId, vValue, iRow, bSearchOpenDialogs) {
+			checkControlValue(oOpa5, sViewName, false, sId, vValue, iRow, bSearchOpenDialogs);
 		},
 
 		/**
@@ -237,6 +251,26 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
+		 * Checks whether a sap.m.Text control has an expected text.
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string} sId
+		 *  The ID of a "sap.m.Text" control inside the view sViewName
+		 * @param {string} sText
+		 *  The expected text of the control
+		 * @param {number} [iRow]
+		 *  The row number (zero based) of the control if the control is within a collection
+		 * @param {boolean} [bSearchOpenDialogs]
+		 *  Whether Opa5 will only search for controls in open dialogs
+		 */
+		checkTextValue : function (oOpa5, sViewName, sId, sText, iRow, bSearchOpenDialogs) {
+			checkControlValue(oOpa5, sViewName, true, sId, sText, iRow, bSearchOpenDialogs);
+		},
+
+		/**
 		 * Checks whether a control has an expected value state and (optional) value state text.
 		 *
 		 * @param {sap.ui.test.Opa5} oOpa5
@@ -249,9 +283,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The expected value state of the control
 		 * @param {string} [sValueStateText]
 		 *  The expected value state text of the control, if supplied
-		 * @param {boolean} [bSearchOpenDialogs=false]
+		 * @param {boolean} [bSearchOpenDialogs]
 		 *  Whether Opa5 will only search for controls in open dialogs
-		 * @param {number} [iRow=undefined]
+		 * @param {number} [iRow]
 		 *  The row number (zero based) of the control if the control is within a collection
 		 */
 		checkValueState : function (oOpa5, sViewName, sID, sValueState, sValueStateText,
@@ -321,8 +355,8 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 			return oOpa5.waitFor({
 				actions : new Press(),
 				controlType : "sap.m.Button",
-				searchOpenDialogs : bSearchOpenDialogs,
 				id : sId,
+				searchOpenDialogs : bSearchOpenDialogs,
 				success : function (oButton) {
 					var sText = oButton.getTooltip() || oButton.getText() || sId;
 

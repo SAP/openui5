@@ -65,16 +65,7 @@ sap.ui.define([
 			},
 			assertions : {
 				checkContent : function (sValue) {
-					this.waitFor({
-						controlType : "sap.m.Input",
-						id : "Content::details",
-						matchers : new Properties({value : sValue}),
-						success : function (oInput) {
-							Opa5.assert.strictEqual(oInput.getValue(), sValue,
-								"Content as expected: " + oInput.getValue());
-						},
-						viewName : sViewName
-					});
+					Helper.checkInputValue(this, sViewName, "Content::details", sValue);
 				}
 			}
 		}

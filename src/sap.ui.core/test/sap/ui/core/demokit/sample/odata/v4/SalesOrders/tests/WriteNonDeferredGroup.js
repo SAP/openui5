@@ -50,7 +50,7 @@ sap.ui.define([
 					message : sRaiseErrorMessage
 				}
 			});
-			When.onTheMessagePopover.selectMessageTitle(sRaiseErrorMessage, /-Note-/, 0);
+			When.onTheMessagePopover.selectMessageTitle(sRaiseErrorMessage, /Note::list/, 0);
 			When.onTheMessagePopover.close();
 			When.onTheMainPage.changeNoteInSalesOrders(0, "My patched Note");
 			Then.onTheMainPage.checkNote(0, "My patched Note");
@@ -74,11 +74,11 @@ sap.ui.define([
 			if (sGroupId.includes("auto")) {
 				When.onTheMainPage.pressCreateSalesOrderItemButton();
 				When.onTheSuccessInfo.confirm();
-				When.onTheMainPage.changeQuantityInLineItem(0, 0);
+				When.onTheMainPage.changeQuantityInLineItem(0, "0");
 				When.onTheMessagePopover.close(); // error because invalid quantity
 				When.onTheMainPage.changeNoteInLineItem(0, "patched line item Note");
 				When.onTheMessagePopover.close(); // still got error because invalid quantity
-				When.onTheMainPage.changeQuantityInLineItem(0, 1);
+				When.onTheMainPage.changeQuantityInLineItem(0, "1");
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
 				aExpectedLogs.push(oExpectedPatchLog1);
 				aExpectedLogs.push(oExpectedPatchLog1);
