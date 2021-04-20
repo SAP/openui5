@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/base/util/isPlainObject"
 ],
 function(
 	ElementUtil,
+	OverlayRegistry,
 	isPlainObject
 ) {
 	"use strict";
@@ -17,18 +19,19 @@ function(
 	 *
 	 * @param {sap.ui.core.Control} oElement - Starting point of the search
 	 * @param {sap.ui.model.Model} oModel - Model for filtering irrelevant binding paths
-	 * @returns {{bindingPaths: Array, bindingContextPaths: Array}}} - returns with all relevant bindingPaths and all bindingContextPaths for all properties of the element
+	 * @param {sap.ui.core.Control} [oRelevantContainerElement] - if this element is given then only bindings from element related to the relevant container are considered
+	 * @returns {{bindingPaths: Array, bindingContextPaths: Array}} - returns with all relevant bindingPaths and all bindingContextPaths for all properties of the element
 	 *
 	 * @private
 	 */
-	function collectBindingPaths(oElement, oModel) {
+	function collectBindingPaths(oElement, oModel, oRelevantContainerElement) {
 		var mBindingsCollection = {
 			bindingPaths: [],
 			bindingContextPaths: []
 		};
 		var sAggregationName = oElement.sParentAggregationName;
 		var oParent = oElement.getParent();
-		var aBindings = getBindings(oElement, oModel);
+		var aBindings = getBindings(oElement, oModel, undefined, undefined, oRelevantContainerElement);
 
 		if (oParent) {
 			var oDefaultAggregation = oParent.getMetadata().getAggregation();
@@ -45,7 +48,7 @@ function(
 					if (oTemplateDefaultAggregation) {
 						var sTemplateDefaultAggregationName = oTemplateDefaultAggregation.name;
 						var oTemplateElement = ElementUtil.getAggregation(oTemplate, sTemplateDefaultAggregationName)[iPositionOfInvisibleElement];
-						aBindings = aBindings.concat(getBindings(oTemplateElement, null, true));
+						aBindings = aBindings.concat(getBindings(oTemplateElement, null, true, undefined, oRelevantContainerElement));
 					}
 				}
 			}
@@ -73,6 +76,15 @@ function(
 		return mBindingsCollection;
 	}
 
+	function isElementRelatedToRelevantContainer(oElement, oRelevantContainerElement) {
+		if (oRelevantContainerElement && oElement !== oRelevantContainerElement) {
+			var oOverlay = OverlayRegistry.getOverlay(oElement);
+			var oRelevantContainer = oOverlay && (oOverlay.getRelevantContainer() || oOverlay.getElement());
+			return oRelevantContainer ? oRelevantContainer.getId() === oRelevantContainerElement.getId() : true;
+		}
+		return true;
+	}
+
 	/**
 	 * Gets bindings for the whole hierarchy of children for a specified Element
 	 * and filters out bindings which are not relevant (based on the parent model)
@@ -81,26 +93,30 @@ function(
 	 * @param {sap.ui.model.Model} oParentDefaultModel - Model for filtering irrelevant binding paths
 	 * @param {boolean} [bTemplate] - Whether we should consider provided element as a template
 	 * @param {string} [sAggregationName] - if aggregation name is given then only for this aggregation bindings are returned, if not then all aggregations are considered
+	 * @param {sap.ui.core.Control} [oRelevantContainerElement] - if this element is given then only bindings from element related to the relevant container are considered
 	 * @returns {Array} - returns array with all relevant bindings for all properties of the element
 	 *
 	 * @private
 	 */
-	function getBindings(oElement, oParentDefaultModel, bTemplate, sAggregationName) {
-		var aBindings = (
-			bTemplate
-			? getBindingsFromTemplateProperties(oElement)
-			: getBindingsFromProperties(oElement, oParentDefaultModel)
-		);
+	function getBindings(oElement, oParentDefaultModel, bTemplate, sAggregationName, oRelevantContainerElement) {
+		var aBindings = [];
+		if (isElementRelatedToRelevantContainer(oElement, oRelevantContainerElement)) {
+			aBindings = (
+				bTemplate
+				? getBindingsFromTemplateProperties(oElement)
+				: getBindingsFromProperties(oElement, oParentDefaultModel)
+			);
+		}
 		var aAggregationNames = sAggregationName ? [sAggregationName] : Object.keys(oElement.getMetadata().getAllAggregations());
 
 		aAggregationNames.forEach(function (sAggregationNameInLoop) {
-			aBindings = aBindings.concat(getBindingsForAggregation(oElement, oParentDefaultModel, bTemplate, sAggregationNameInLoop));
+			aBindings = aBindings.concat(getBindingsForAggregation(oElement, oParentDefaultModel, bTemplate, sAggregationNameInLoop, oRelevantContainerElement));
 		});
 
 		return aBindings;
 	}
 
-	function getBindingsForAggregation(oElement, oParentDefaultModel, bTemplate, sAggregationName) {
+	function getBindingsForAggregation(oElement, oParentDefaultModel, bTemplate, sAggregationName, oRelevantContainerElement) {
 		var aBindings = [];
 		// Getting children of the current aggregation and iterating through all of them
 		var oBinding = oElement.getBindingInfo(sAggregationName);
@@ -109,12 +125,14 @@ function(
 
 		aElements.forEach(function (oChildElement) {
 			if (oChildElement.getMetadata) {
-				// Fetching bindings from Element and all children of Element
+				if (isElementRelatedToRelevantContainer(oElement, oRelevantContainerElement)) {
+					// Fetching bindings from Element and all children of Element
+					aBindings = aBindings.concat(oTemplate || bTemplate
+						? getBindingsFromTemplateProperties(oChildElement, oRelevantContainerElement)
+						: getBindingsFromProperties(oChildElement, oParentDefaultModel));
+				}
 				aBindings = aBindings.concat(
-					oTemplate || bTemplate
-					? getBindingsFromTemplateProperties(oChildElement)
-					: getBindingsFromProperties(oChildElement, oParentDefaultModel),
-					getBindings(oChildElement, oParentDefaultModel, oTemplate || bTemplate)
+					getBindings(oChildElement, oParentDefaultModel, oTemplate || bTemplate, undefined, oRelevantContainerElement)
 				);
 			}
 		});

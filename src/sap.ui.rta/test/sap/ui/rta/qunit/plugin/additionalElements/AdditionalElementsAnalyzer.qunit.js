@@ -4,53 +4,117 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/DesignTime",
 	"sap/base/Log",
 	"./TestUtils"
 ], function(
 	AdditionalElementsAnalyzer,
 	BindingsExtractor,
 	ElementUtil,
+	DesignTime,
 	Log,
 	TestUtils
 ) {
 	"use strict";
 
+	function registerTestOverlaysWithRelevantContainer(oElement) {
+		return new Promise(function (resolve) {
+			this.oDesignTime = new DesignTime({
+				rootElements: [oElement]
+			});
+			this.oDesignTime.attachEventOnce("synced", function () {
+				resolve();
+			});
+		}.bind(this));
+	}
+
 	QUnit.module("Given a test view", TestUtils.commonHooks(), function () {
-		QUnit.test("checks if navigation and absolute binding work", function(assert) {
+		QUnit.test("checks if navigation and absolute binding work (form example)", function(assert) {
 			var oGroupElement1 = this.oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = this.oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
 			var oGroupElement3 = this.oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
+			var oGroupElement4 = this.oView.byId("EntityType02.technicalInvisibleProp"); // UI.Hidden Annotation binding
 			sap.ui.getCore().applyChanges();
+			var oGroup = oGroupElement4.getParent();
+			return registerTestOverlaysWithRelevantContainer.call(this,	oGroup)
+				.then(function () {
+					var oActionsObject = {
+						aggregation: "formElements",
+						reveal: {
+							elements: [{
+								element: oGroupElement1,
+								action: {} //nothing relevant for the analyzer tests
+							}, {
+								element: oGroupElement2,
+								action: {} //nothing relevant for the analyzer tests
+							}, {
+								element: oGroupElement3,
+								action: {} //nothing relevant for the analyzer tests
+							}, {
+								element: oGroupElement4,
+								action: {} //nothing relevant for the analyzer tests
+							}]
+						},
+						addViaDelegate: {
+							delegateInfo: {
+								delegate: this.oDelegate
+							}
+						}
+					};
+					return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+						// We expect only one element to be returned with a correct navigation property
+						assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
+						assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabelText(), "the element with correct navigation binding should be in the list");
+						assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabelText(), "the label is used as tooltip for elements with navigation binding");
+						assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabelText(), "the element with absolute binding should be in the list");
+						assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabelText(), "the label is used as tooltip for elements with absolute binding");
+					});
+				}.bind(this))
+				.then(function () {
+					this.oDesignTime.destroy();
+				}.bind(this));
+		});
 
-			var oActionsObject = {
-				aggregation: "formElements",
-				reveal: {
-					elements: [{
-						element: oGroupElement1,
-						action: {} //nothing relevant for the analyzer tests
-					}, {
-						element: oGroupElement2,
-						action: {} //nothing relevant for the analyzer tests
-					}, {
-						element: oGroupElement3,
-						action: {} //nothing relevant for the analyzer tests
-					}]
-				},
-				addViaDelegate: {
-					delegateInfo: {
-						delegate: this.oDelegate
-					}
-				}
-			};
-
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject).then(function(aAdditionalElements) {
-				// We expect only one element to be returned with a correct navigation property
-				assert.equal(aAdditionalElements.length, 2, "then there are 1 additional Elements available");
-				assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabelText(), "the element with correct navigation binding should be in the list");
-				assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabelText(), "the label is used as tooltip for elements with navigation binding");
-				assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabelText(), "the element with absolute binding should be in the list");
-				assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabelText(), "the label is used as tooltip for elements with absolute binding");
-			});
+		QUnit.test("checks if navigation and absolute binding work (object page layout example)", function(assert) {
+			var oSection1 = this.oView.byId("ObjectPageSectionWithForm");
+			var oSection2 = this.oView.byId("DelegateObjectPageSectionWithForm");
+			var oSection3 = this.oView.byId("ObjectPageSectionAbsoluteBindingList");
+			sap.ui.getCore().applyChanges();
+			var oElementWithHideFromRevealProperty = this.oView.byId("EntityType01.technicalInvisibleProp");
+			return registerTestOverlaysWithRelevantContainer.call(this, oElementWithHideFromRevealProperty)
+				.then(function () {
+					var oActionsObject = {
+						aggregation: "sections",
+						reveal: {
+							elements: [{
+								element: oSection1,
+								action: {} //nothing relevant for the analyzer tests
+							}, {
+								element: oSection2,
+								action: {} //nothing relevant for the analyzer tests
+							}, {
+								element: oSection3,
+								action: {} //nothing relevant for the analyzer tests
+							}]
+						},
+						addViaDelegate: {
+							delegateInfo: {
+								delegate: this.oDelegate
+							}
+						}
+					};
+					return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+						// We expect only one element to be returned with a correct navigation property
+						assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
+						assert.equal(aAdditionalElements[0].label, oSection1.getTitle(), "the element with correct navigation binding should be in the list");
+						assert.equal(aAdditionalElements[0].tooltip, oSection1.getTitle(), "the label is used as tooltip for elements with navigation binding");
+						assert.equal(aAdditionalElements[1].label, oSection2.getTitle(), "the element with absolute binding should be in the list");
+						assert.equal(aAdditionalElements[1].tooltip, oSection2.getTitle(), "the label is used as tooltip for elements with absolute binding");
+					});
+				}.bind(this))
+				.then(function () {
+					this.oDesignTime.destroy();
+				}.bind(this));
 		});
 
 		QUnit.test("checks if navigation and absolute binding work with delegate", function(assert) {
