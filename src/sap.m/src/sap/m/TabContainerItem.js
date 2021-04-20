@@ -31,7 +31,6 @@ sap.ui.define(['sap/ui/core/Element',
 		 */
 		var TabContainerItem = Element.extend("sap.m.TabContainerItem", /** @lends sap.m.TabContainerItem.prototype */ { metadata : {
 
-			library : "sap.ui.core",
 			properties : {
 
 				/**
