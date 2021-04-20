@@ -38,7 +38,7 @@ sap.ui.define([
 				iLen,
 				i;
 
-			oRm.openStart("div").openEnd();
+			oRm.openStart("div", oControl).openEnd();
 
 			for (i = 0, iLen = aContent.length; i < iLen; i++) {
 				oRm.renderControl(aContent[i]);
