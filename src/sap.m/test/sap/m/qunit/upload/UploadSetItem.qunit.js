@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
-	"test-resources/sap/m/qunit/upload/UploadSetTestUtils"
+	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
+	"sap/ui/core/IconPool"
 ], function (jQuery, KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool) {
 	"use strict";
 
 	function getData() {
@@ -275,4 +276,22 @@ sap.ui.define([
 		assert.equal(sActualSrc, "./image/test.jpg", "setThumbnailUrl api gets called and creates new icon");
 
 	});
+
+	QUnit.test("Icon for UploadSetItem is set based on mimeType, if mimeType is present", function (assert) {
+
+		//Arrange
+		var oItem = new UploadSetItem({
+			fileName: "fileName.xlsx",
+			mediaType: "application/msexcel"
+		});
+
+		//Act
+		this.oUploadSet.insertItem(oItem);
+		sap.ui.getCore().applyChanges();
+		var oIcon = this.oUploadSet.getItems()[0]._oIcon.getSrc();
+
+		//Assert
+		assert.equal(IconPool.getIconForMimeType(oItem.getMediaType()), oIcon, "Icon is set based on mimeType");
+	});
+
 });
