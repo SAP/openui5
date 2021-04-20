@@ -102,7 +102,7 @@ sap.ui.define([
 				p13nMode: ["Column", "Filter", "Sort", "Group", "Aggregate"],
 				noDataText: "This text is shown when no data is present in the table",
 				delegate: {
-					name: "sap/ui/mdc/sample/TableODataV4Analytics/TableDelegate",
+					name: "delegates/odata/v4/TableDelegate",
 					payload: {
 						collectionName: sCollectionName
 					}

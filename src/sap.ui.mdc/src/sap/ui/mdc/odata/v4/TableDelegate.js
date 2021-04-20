@@ -108,7 +108,7 @@ sap.ui.define([
 
 	Delegate.preInit = function(oTable) {
 		if (oTable._getStringType() === TableType.ResponsiveTable) {
-			return;
+			return Promise.resolve();
 		}
 
 		// disable temporary count in toolbar -> CPOUIFTEAMB-1769
@@ -122,146 +122,49 @@ sap.ui.define([
 		return enrichGridTable(oTable);
 	};
 
-	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
-		var oPropertyHelper = oTable.getPropertyHelper();
-		var aGroupProperties = oPropertyHelper.getGroupableProperties(oMDCColumn.getDataProperty());
-		var aAggregateProperties = oPropertyHelper.getAggregatableProperties(oMDCColumn.getDataProperty());
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-		var oPopover = oTable._oPopover;
-		oPopover && oPopover.getItems().forEach(function(item, index, aItems) {
-			if (item.getLabel() === oResourceBundle.getText("table.SETTINGS_GROUP") || item.getLabel() === oResourceBundle.getText("table.SETTINGS_TOTALS")) {
-				aItems[index].destroy();
-			}
-			if (aItems.length == 0 ) {
-				oPopover.destroy();
-			}
-		});
+	Delegate.validateState = function(oTable, oState) {
+		var bIsValidState;
 
-		var oAggregatePopover, oGroupPopover;
-		if (oTable.isGroupingEnabled() && aGroupProperties && aGroupProperties.length > 0) {
-			oGroupPopover = this._onGroup(aGroupProperties, oMDCColumn);
-		}
-
-		if (oTable.isAggregationEnabled() && aAggregateProperties && aAggregateProperties.length > 0) {
-			oAggregatePopover = this._onAggregate(aAggregateProperties, oMDCColumn);
-		}
-		return [oGroupPopover, oAggregatePopover];
-	};
-
-	Delegate._onGroup = function(aGroupProperties, oMDCColumn) {
-		var oGroupChild, aGroupChildren = [];
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-		aGroupProperties.forEach(function(oGroupProperty) {
-			oGroupChild = new Item({
-				text: oGroupProperty.getLabel(),
-				key: oGroupProperty.getName()
-			});
-			aGroupChildren.push(oGroupChild);
-		});
-		if (aGroupChildren.length > 0) {
-			var oGroupPopover = new ColumnPopoverSelectListItem({
-				items: aGroupChildren,
-				label: oResourceBundle.getText("table.SETTINGS_GROUP"),
-				icon: "sap-icon://group-2",
-				action: [{
-					sName: "Group",
-					oMDCColumn: oMDCColumn
-				}, this._checkForPreviousAnalytics, this]
-			});
-			return oGroupPopover;
-		}
-	};
-
-	Delegate._onAggregate = function(aAggregateProperties, oMDCColumn) {
-		var oAggregateChild, aAggregateChildren = [];
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-		aAggregateProperties.forEach(function(oAggregateProperty) {
-			oAggregateChild = new Item({
-				text: oAggregateProperty.getLabel(),
-				key: oAggregateProperty.getName()
-			});
-			aAggregateChildren.push(oAggregateChild);
-		});
-
-		if (aAggregateChildren.length > 0) {
-			var oAggregatePopover = new ColumnPopoverSelectListItem({
-				items: aAggregateChildren,
-				label: oResourceBundle.getText("table.SETTINGS_TOTALS"),
-				icon: "sap-icon://sum",
-				action: [{
-					sName: "Aggregate",
-					oMDCColumn: oMDCColumn
-				}, this._checkForPreviousAnalytics, this]
-			});
-			return oAggregatePopover;
-		}
-	};
-
-	Delegate._checkForPreviousAnalytics = function(oEvent, oData) {
-		var sName = oData.sName,
-			sTitle,
-			sMessage,
-			sActionText,
-			oMDCColumn = oData.oMDCColumn,
-			oTable = oMDCColumn.getParent(),
-			aGroupLevels = oTable.getCurrentState().groupLevels || [],
-			oAggregate = oTable.getCurrentState().aggregations || {},
-			aAggregate = Object.keys(oAggregate),
-			bForcedAnalytics = false,
-			sPath = oEvent.getParameter("property");
-
-		var aAnalytics = sName == "Aggregate" ? aGroupLevels : aAggregate;
-		var bForce = aAnalytics.filter(function(item) {
-			return sName == "Aggregate" ? item.name === sPath : item === sPath;
-		}).length > 0;
-
-		if (bForce) {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			if (sName === "Aggregate") {
-				sTitle = oResourceBundle.getText("table.SETTINGS_WARNING_TITLE_TOTALS");
-				sMessage = oResourceBundle.getText("table.SETTINGS_MESSAGE2");
-				sActionText = oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_TOTALS");
-			} else {
-				sTitle = oResourceBundle.getText("table.SETTINGS_WARNING_TITLE_GROUPS");
-				sMessage = oResourceBundle.getText("table.SETTINGS_MESSAGE1");
-				sActionText = oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_GROUP");
-			}
-			bForcedAnalytics = true;
-			MessageBox.warning(sMessage, {
-				id: oTable.getId() + "-messageBox",
-				title: sTitle,
-				actions: [sActionText, oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_CANCEL")],
-				onClose: function (oAction) {
-					if (oAction === sActionText) {
-						this._forceAnalytics(sName, oTable, sPath);
-					}
-					Core.byId(oTable.getId() + "-messageBox").destroy();
-				}.bind(this)
-			});
-		}
-		if (sName === "Aggregate" && !bForcedAnalytics) {
-			this._onAction(sName, oTable, sPath);
-		} else if (sName === "Group" && !bForcedAnalytics) {
-			this._onAction(sName, oTable, sPath);
-		}
-	};
-
-	Delegate._onAction = function(sAction, oTable, sPath) {
-		if (sAction === "Group") {
-			oTable._onCustomGroup(sPath);
+		if (!oState.sorters) {
+			bIsValidState = true;
+		} else if (!oState.items) {
+			bIsValidState = false;
 		} else {
-			oTable._onCustomAggregate(sPath);
-		}
-	};
+			var aProperties = [];
+			var oPropertyHelper = oTable.getPropertyHelper();
 
-	Delegate._forceAnalytics = function(sName, oTable, sPath) {
-		if (sName === "Aggregate") {
-			oTable._onCustomGroup(sPath);
-			oTable._onCustomAggregate(sPath);
-		} else if (sName === "Group") {
-			oTable._onCustomAggregate(sPath);
-			oTable._onCustomGroup(sPath);
+			oState.items.forEach(function(oItem) {
+				var oProperty = oPropertyHelper.getProperty(oItem.name);
+
+				if (!oProperty.isComplex()) {
+					aProperties.push(oProperty.name);
+				} else {
+					oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
+						if (aProperties.indexOf(oReferencedProperty.name) === -1) {
+							aProperties.push(oReferencedProperty.name);
+						}
+					});
+				}
+			});
+
+			bIsValidState = oState.sorters.every(function(oSort) {
+				return aProperties.find(function(sPropertyName) {
+					return oSort.name === sPropertyName;
+				});
+			});
 		}
+
+		if (!bIsValidState) {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			return {
+				validation: coreLibrary.MessageType.Warning,
+				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+			};
+		}
+
+		return {
+			validation: coreLibrary.MessageType.None
+		};
 	};
 
 	/**
@@ -279,7 +182,6 @@ sap.ui.define([
 	 * @abstract
 	 */
 	//Delegate.updateBindingInfo = function(oTable, oDelegatePayload, oBindingInfo) { };
-
 
 	/**
 	 * Updates the rows binding of the table if possible, rebinds otherwise.
@@ -306,7 +208,7 @@ sap.ui.define([
 				oBinding.changeParameters(oBindingInfo.parameters);
 				oBinding.filter(oBindingInfo.filters, "Application");
 				oBinding.sort(oBindingInfo.sorter);
-				this._setAggregation(oTable);
+				setAggregation(oTable);
 			} catch (e) {
 				bForceRebind = true;
 			}
@@ -314,12 +216,168 @@ sap.ui.define([
 		}
 
 		if (bForceRebind) {
-			this._setAggregation(oTable);
 			this.rebindTable(oTable, oBindingInfo);
 		}
 	};
 
-	Delegate._setAggregation = function(oTable, aGroupedProperties, mAggregatedProperties) {
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	Delegate.rebindTable = function (oTable, oBindingInfo) {
+		setAggregation(oTable);
+		TableDelegate.rebindTable(oTable, oBindingInfo);
+	};
+
+	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
+		if (!TableMap.get(oTable)) {
+			return [];
+		}
+
+		var oPropertyHelper = oTable.getPropertyHelper();
+		var aGroupProperties = oPropertyHelper.getGroupableProperties(oMDCColumn.getDataProperty());
+		var aAggregateProperties = oPropertyHelper.getAggregatableProperties(oMDCColumn.getDataProperty());
+		var oPopover = oTable._oPopover;
+		var oAggregatePopoverItem;
+		var oGroupPopoverItem;
+
+		if (oPopover) {
+			oPopover.getItems().forEach(function(oItem, iIndex, aItems) {
+				var sLabel = oItem.getLabel();
+				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+
+				if (sLabel === oResourceBundle.getText("table.SETTINGS_GROUP") || sLabel === oResourceBundle.getText("table.SETTINGS_TOTALS")) {
+					aItems[iIndex].destroy();
+				}
+
+				if (aItems.length == 0 ) {
+					oPopover.destroy();
+				}
+			});
+		}
+
+		if (oTable.isGroupingEnabled() && aGroupProperties && aGroupProperties.length > 0) {
+			oGroupPopoverItem = createGroupPopoverItem(aGroupProperties, oMDCColumn);
+		}
+
+		if (oTable.isAggregationEnabled() && aAggregateProperties && aAggregateProperties.length > 0) {
+			oAggregatePopoverItem = createAggregatePopoverItem(aAggregateProperties, oMDCColumn);
+		}
+
+		return [oGroupPopoverItem, oAggregatePopoverItem];
+	};
+
+	function createGroupPopoverItem(aGroupProperties, oMDCColumn) {
+		var aGroupChildren = aGroupProperties.map(function(oGroupProperty) {
+			return new Item({
+				text: oGroupProperty.getLabel(),
+				key: oGroupProperty.getName()
+			});
+		});
+
+		if (aGroupChildren.length > 0) {
+			return new ColumnPopoverSelectListItem({
+				items: aGroupChildren,
+				label: Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_GROUP"),
+				icon: "sap-icon://group-2",
+				action: [{
+					sName: "Group",
+					oMDCColumn: oMDCColumn
+				}, checkForPreviousAnalytics, this]
+			});
+		}
+	}
+
+	function createAggregatePopoverItem(aAggregateProperties, oMDCColumn) {
+		var aAggregateChildren = aAggregateProperties.map(function(oAggregateProperty) {
+			return new Item({
+				text: oAggregateProperty.getLabel(),
+				key: oAggregateProperty.getName()
+			});
+		});
+
+		if (aAggregateChildren.length > 0) {
+			return new ColumnPopoverSelectListItem({
+				items: aAggregateChildren,
+				label: Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_TOTALS"),
+				icon: "sap-icon://sum",
+				action: [{
+					sName: "Aggregate",
+					oMDCColumn: oMDCColumn
+				}, checkForPreviousAnalytics, this]
+			});
+		}
+	}
+
+	function checkForPreviousAnalytics(oEvent, oData) {
+		var sName = oData.sName,
+			oTable = oData.oMDCColumn.getParent(),
+			aGroupLevels = oTable.getCurrentState().groupLevels || [],
+			oAggregate = oTable.getCurrentState().aggregations || {},
+			aAggregate = Object.keys(oAggregate),
+			bForcedAnalytics = false,
+			sPath = oEvent.getParameter("property"),
+			aAnalytics = sName === "Aggregate" ? aGroupLevels : aAggregate,
+			bForce = aAnalytics.filter(function(mItem) {
+				return sName === "Aggregate" ? mItem.name === sPath : mItem === sPath;
+			}).length > 0;
+
+		if (bForce) {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var sTitle;
+			var sMessage;
+			var sActionText;
+
+			if (sName === "Aggregate") {
+				sTitle = oResourceBundle.getText("table.SETTINGS_WARNING_TITLE_TOTALS");
+				sMessage = oResourceBundle.getText("table.SETTINGS_MESSAGE2");
+				sActionText = oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_TOTALS");
+			} else {
+				sTitle = oResourceBundle.getText("table.SETTINGS_WARNING_TITLE_GROUPS");
+				sMessage = oResourceBundle.getText("table.SETTINGS_MESSAGE1");
+				sActionText = oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_GROUP");
+			}
+
+			bForcedAnalytics = true;
+
+			MessageBox.warning(sMessage, {
+				id: oTable.getId() + "-messageBox",
+				title: sTitle,
+				actions: [sActionText, oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_CANCEL")],
+				onClose: function (oAction) {
+					if (oAction === sActionText) {
+						forceAnalytics(sName, oTable, sPath);
+					}
+				}
+			});
+		}
+
+		if (sName === "Aggregate" && !bForcedAnalytics) {
+			onAction(sName, oTable, sPath);
+		} else if (sName === "Group" && !bForcedAnalytics) {
+			onAction(sName, oTable, sPath);
+		}
+	}
+
+	function onAction(sAction, oTable, sPath) {
+		if (sAction === "Group") {
+			oTable._onCustomGroup(sPath);
+		} else {
+			oTable._onCustomAggregate(sPath);
+		}
+	}
+
+	function forceAnalytics(sName, oTable, sPath) {
+		if (sName === "Aggregate") {
+			oTable._onCustomGroup(sPath);
+			oTable._onCustomAggregate(sPath);
+		} else if (sName === "Group") {
+			oTable._onCustomAggregate(sPath);
+			oTable._onCustomGroup(sPath);
+		}
+	}
+
+	function setAggregation(oTable, aGroupedProperties, mAggregatedProperties) {
 		var mTableMap = TableMap.get(oTable) || {};
 		var oPlugin = mTableMap.plugin;
 
@@ -333,7 +391,7 @@ sap.ui.define([
 			});
 
 			var oAggregationInfo = {
-				visible: this._getVisibleProperties(oTable, oPlugin),
+				visible: getVisibleProperties(oTable, oPlugin),
 				groupLevels: aGroupLevels,
 				grandTotal: aAggregates,
 				subtotals: aAggregates,
@@ -342,7 +400,37 @@ sap.ui.define([
 
 			oPlugin.setAggregationInfo(oAggregationInfo);
 		}
-	};
+	}
+
+	function getVisibleProperties(oTable, oPlugin) {
+		var aVisibleProperties = [];
+		var aProperties = oPlugin.getPropertyInfos();
+
+		oTable.getColumns().forEach(function(oColumn) {
+			var sPropertyName = oColumn.getDataProperty();
+			var oPropertyInfo = aProperties.find(function(oProp) {
+				return oProp.name === sPropertyName;
+			});
+
+			if (!oPropertyInfo) {
+				return;
+			}
+
+			if (oPropertyInfo.propertyInfos) {
+				// Complex propertyInfo --> add the names of all related (simple) propertyInfos in the list
+				oPropertyInfo.propertyInfos.forEach(function(sRelatedInfoName) {
+					if (aVisibleProperties.indexOf(sRelatedInfoName) < 0) {
+						aVisibleProperties.push(sRelatedInfoName);
+					}
+				});
+			} else if (aVisibleProperties.indexOf(sPropertyName) < 0) {
+				// Simple propertyInfo --> add its name in the list
+				aVisibleProperties.push(sPropertyName);
+			}
+		});
+
+		return aVisibleProperties;
+	}
 
 	function getColumnState(oTable, aAggregatedPropertyNames) {
 		var mColumnState = {};
@@ -421,76 +509,6 @@ sap.ui.define([
 		});
 	}
 
-	Delegate._getVisibleProperties = function(oTable, oPlugin) {
-		var aVisibleProperties = [];
-		var aProperties = oPlugin.getPropertyInfos();
-		oTable.getColumns().forEach(function(item) {
-			var sPropertyName = item.getDataProperty(),
-				oPropertyInfo = aProperties.find(function(oProp) {
-				return oProp.name === sPropertyName;
-			});
-			if (oPropertyInfo) {
-				if (oPropertyInfo.propertyInfos) {
-					// Complex propertyInfo --> add the names of all related (simple) propertyInfos in the list
-					oPropertyInfo.propertyInfos.forEach(function(sRelatedInfoName) {
-						if (aVisibleProperties.indexOf(sRelatedInfoName) < 0) {
-							aVisibleProperties.push(sRelatedInfoName);
-						}
-					});
-				} else if (aVisibleProperties.indexOf(sPropertyName) < 0) {
-					// Simple propertyInfo --> add its name in the list
-					aVisibleProperties.push(sPropertyName);
-				}
-			}
-		});
-		return aVisibleProperties;
-	};
-
-	Delegate.validateState = function(oControl, oState) {
-		var bIsValidState;
-
-		if (!oState.sorters) {
-			bIsValidState = true;
-
-		} else if (!oState.items) {
-			bIsValidState = false;
-
-		} else {
-			var oProperty, aProperties = [];
-			oState.items.forEach(function(oItem) {
-				oProperty = oControl.getPropertyHelper().getProperty(oItem.name);
-				if (!oProperty.isComplex()) {
-					aProperties.push(oProperty.name);
-				} else {
-					oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
-						if (aProperties.indexOf(oReferencedProperty.name) === -1) {
-							aProperties.push(oReferencedProperty.name);
-						}
-					});
-				}
-			});
-
-			bIsValidState = oState.sorters.every(function(oSort) {
-				return aProperties.find(function(sPropertyName) {
-					return oSort.name === sPropertyName;
-				});
-			});
-		}
-
-		if (!bIsValidState) {
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-			return {
-				validation: coreLibrary.MessageType.Warning,
-				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
-			};
-		}
-
-		return {
-			validation: coreLibrary.MessageType.None
-		};
-	};
-
-
 	function enrichGridTable(oTable) {
 		// The property helper is initialized after the table "initialized" promise resolves. So we can only wait for the property helper.
 		var aPropertiesForBinding;
@@ -502,8 +520,7 @@ sap.ui.define([
 			oTable.awaitPropertyHelper(),
 			loadModules("sap/ui/table/plugins/V4Aggregation")
 		]).then(function(aResult) {
-			var V4AggregationPlugin = aResult[1][0],
-				oInnerTable = oTable._oTable;
+			var V4AggregationPlugin = aResult[1][0];
 
 			oPlugin = new V4AggregationPlugin({
 				groupHeaderFormatter: function(oContext, sProperty) {
@@ -511,7 +528,7 @@ sap.ui.define([
 				}
 			});
 
-			oInnerTable.addDependent(oPlugin);
+			oTable._oTable.addDependent(oPlugin);
 
 			TableMap.set(oTable, {
 				plugin: oPlugin
@@ -528,7 +545,7 @@ sap.ui.define([
 		}).then(function(HelperClass) {
 			var oHelper = new HelperClass(aPropertiesForBinding, mExtensionsForBinding, oTable);
 			oPlugin.setPropertyInfos(oHelper.getProperties());
-			oDelegate._setAggregation(oTable, [], {});
+			setAggregation(oTable, [], {});
 			oHelper.destroy();
 		});
 	}

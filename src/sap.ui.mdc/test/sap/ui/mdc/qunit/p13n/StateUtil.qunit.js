@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "../../delegates/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil"
-], function (createAppEnvironment, TableDelegate, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil"
+], function (createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil) {
 	"use strict";
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl");
@@ -530,6 +530,9 @@ sap.ui.define([
 	QUnit.module("API tests for Table", {
 		before: function(){
 			TableDelegate.fetchProperties = fetchProperties;
+			TableDelegate.addItem = function(sPropertyName) {
+				return Promise.resolve(new Column({dataProperty: sPropertyName}));
+			};
 			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
 
 			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){

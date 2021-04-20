@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
-	"sap/ui/mdc/Field",
-	"sap/m/Column"
-], function (ODataTableDelegate, Field, Column) {
+	"sap/ui/mdc/Field"
+], function (ODataTableDelegate, Field) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -44,17 +43,17 @@ sap.ui.define([
 
 		if (oInfo.name === "language_code") {
 
-			return Promise.resolve(new sap.ui.mdc.Field({
+			return new sap.ui.mdc.Field({
 				id: "tFieldLink",
 				value: "{language/name}",
 				editMode: "Display"
-			}));
+			});
 
 		}
 
 		if (oInfo.name === "title") {
 
-			return Promise.resolve(new sap.ui.mdc.Field({
+			return new sap.ui.mdc.Field({
 				id: "tFieldLinkTitle",
 				value: "{title}",
 				editMode: "Display",
@@ -66,38 +65,38 @@ sap.ui.define([
 						mainSemanticObject: "FakeFlpSemanticObject"
 					}
 				} })
-			}));
+			});
 
 		}
 
 		if (oInfo.name === "author_name") {
 
-			return Promise.resolve(new sap.ui.mdc.Field({
+			return new sap.ui.mdc.Field({
 				id: "tFieldLink",
 				value: "{author/name}",
 				editMode: "Display",
 				multipleLines: true,
 				fieldInfo: new sap.ui.mdc.Link({ delegate: { name: 'sap/ui/v4demo/delegate/Books.Link.delegate' } })
-			}));
+			});
 
 		}
 
-		return Promise.resolve(new Field(oProps));
+		return new Field(oProps);
 	};
 
-	BooksTableDelegate._createColumn = function (sPropertyInfoName, oTable) {
-		return ODataTableDelegate._createColumn.apply(this, arguments).then(function (oColumn) {
+	BooksTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
+		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
+			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
+			var aSmallCols = ["actions", "stock", "ID"];
 
-			var sProp = oColumn.getDataProperty(),
-				aSmallCols = ["actions", "stock", "ID"];
-
-			if (sProp === "title") {
+			if (oProperty.name === "title") {
 				oColumn.setWidth("15rem");
-			} else if (sProp != "descr") {
-				oColumn.setWidth(aSmallCols.indexOf(sProp) != -1 ? "6rem" : "10rem");
+			} else if (oProperty.name != "descr") {
+				oColumn.setWidth(aSmallCols.indexOf(oProperty.name) != -1 ? "6rem" : "10rem");
 			}
 
-
+			oColumn.getTemplate().destroy();
+			oColumn.setTemplate(BooksTableDelegate._createColumnTemplate(oProperty));
 
 			return oColumn;
 		});

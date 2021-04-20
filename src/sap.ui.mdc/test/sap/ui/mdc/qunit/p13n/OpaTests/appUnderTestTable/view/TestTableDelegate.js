@@ -1,13 +1,12 @@
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/TableDelegate",
 	"delegates/odata/v4/TableDelegate"
-], function (TableDelegate, TestTableDelegate) {
+], function (TableDelegate) {
 	"use strict";
 
 	var oCustomDelegate = Object.assign({}, TableDelegate);
 
 	oCustomDelegate.fetchProperties = function(oTable) {
-		return TestTableDelegate.fetchProperties(oTable).then(function(aProperties) {
+		return TableDelegate.fetchProperties(oTable).then(function(aProperties) {
 
 			aProperties.forEach(function(oProperty){
 				oProperty.groupable = true;
@@ -51,15 +50,10 @@ sap.ui.define([
 				return oColumn;
 			});
 		} else {
-			return TestTableDelegate._createColumn(sPropertyInfoName, oTable);
+			return TableDelegate.addItem.apply(this, arguments);
 		}
 	};
-
-	oCustomDelegate.getTypeUtil = TestTableDelegate.getTypeUtil;
-	oCustomDelegate.updateBindingInfo = TestTableDelegate.updateBindingInfo;
-	oCustomDelegate.getFilterDelegate = TestTableDelegate.getFilterDelegate;
 
 	return oCustomDelegate;
 
 });
-
