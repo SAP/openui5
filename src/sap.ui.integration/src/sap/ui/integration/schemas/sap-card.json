@@ -1695,6 +1695,48 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
+        },
+        "batch": {
+          "description": "Map of requests to be batched",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/batchRequest"
+          }
+        }
+      }
+    },
+    "batchRequest": {
+      "description": "Represents a request which is a part of a batch request.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "method"
+      ],
+      "properties": {
+        "url": {
+          "description": "The URL to make the request to",
+          "type": "string"
+        },
+        "method": {
+          "description": "The HTTP method",
+          "type": "string",
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        },
+        "headers": {
+          "description": "Represents HTTP headers",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "body": {
+          "description": "Represents the request body",
+          "additionalProperties": true
         }
       }
     },

@@ -127,6 +127,18 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"CardDataHandlingWithMock": {
+				sinon: {
+					version: "1"
+				},
+				coverage: {
+					only: [
+						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/util/RequestDataProvider",
+						"sap/ui/integration/util/DataProvider"
+					]
+				}
+			},
 			"UI5InputText": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputText"]
