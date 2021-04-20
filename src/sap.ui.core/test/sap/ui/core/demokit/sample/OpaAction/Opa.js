@@ -271,15 +271,12 @@ sap.ui.require([
 					success: function (oToolbar) {
 						this.waitFor({
 							controlType: "sap.m.ToggleButton",
-							visible: false,
-							matchers: new Ancestor(oToolbar),
 							success: function (aToggleButton) {
-								if (aToggleButton[0].$().length) {
-									this.waitFor({
-										controlType: "sap.m.ToggleButton",
-										matchers: new Ancestor(oToolbar),
-										actions: new Press()
-									});
+								// "the toggle button isn't initialized before it's needed".
+								// the button can be seen in the element and control tree, but it doesn't have parents.
+								// so trying to match it by its parent toolbar isn't possible until the toolbar overflows
+								if (aToggleButton[0].$().length && new Ancestor(oToolbar)(aToggleButton[0])) {
+									new Press().executeOn(aToggleButton[0]);
 								} else {
 									Opa5.assert.ok(true, "The toggle button is not present");
 								}
