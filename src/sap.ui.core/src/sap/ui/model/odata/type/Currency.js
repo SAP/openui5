@@ -42,11 +42,13 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.type.Currency
 	 * @author SAP SE
 	 * @class This class represents the <code>Currency</code> composite type with the parts amount,
-	 * currency, and currency customizing. The amount part is formatted according to the customizing
-	 * for the currency. Use the result of the promise returned by
-	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestCurrencyCodes} as currency customizing
-	 * part. If no currency customizing is available, UI5's default formatting applies. The type may
-	 * only be used for amount and currency parts from a {@link sap.ui.model.odata.v4.ODataModel}.
+	 * currency, and currency customizing. The type may only be used for amount and currency parts
+	 * from a {@link sap.ui.model.odata.v4.ODataModel} or a
+	 * {@link sap.ui.model.odata.v2.ODataModel}. The amount part is formatted according to the
+	 * customizing for the currency. Use the result of the promise returned by
+	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestCurrencyCodes} for OData V4 or by
+	 * {@link sap.ui.model.odata.ODataMetaModel#requestCurrencyCodes} for OData V2 as currency
+	 * customizing part. If no currency customizing is available, UI5's default formatting applies.
 	 * @extends sap.ui.model.type.Currency
 	 * @public
 	 * @since 1.63.0
