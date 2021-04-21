@@ -3484,16 +3484,16 @@ sap.ui.define([
 				$ContentID : "1.0",
 				$resourcePath : "~path1~",
 				url: "~url1~"
-			}]);
+			}], "~serviceURL~/");
 
 		assert.strictEqual(aErrors.length, 2);
 		checkClonedError(assert, oError, aErrors[0], {
 				message : "Top level message"
-			}, "~url0~", "~path0~");
+			}, "~serviceURL~/~url0~", "~path0~");
 		checkClonedError(assert, oError, aErrors[1], {
 				message : "Top level message",
 				$ignoreTopLevel : true
-			}, "~url1~", "~path1~");
+			}, "~serviceURL~/~url1~", "~path1~");
 	});
 
 	//*********************************************************************************************
@@ -3546,7 +3546,7 @@ sap.ui.define([
 				$ContentID : "2.0",
 				$resourcePath : "~path2~",
 				url: "~url2~"
-			}]);
+			}], "~serviceURL~/");
 
 		assert.strictEqual(aErrors.length, 3);
 		checkClonedError(assert, oError, aErrors[0], {
@@ -3561,19 +3561,19 @@ sap.ui.define([
 					foo : "barbaz",
 					message : "Yet another Message"
 				}]
-			}, "~url0~", "~path0~");
+			}, "~serviceURL~/~url0~", "~path0~");
 		checkClonedError(assert, oError, aErrors[1], {
 				message : "Top level message",
 				target : sTarget,
 				details : [],
 				$ignoreTopLevel : true
-			}, "~url1~", "~path1~");
+			}, "~serviceURL~/~url1~", "~path1~");
 		checkClonedError(assert, oError, aErrors[2], {
 				message : "Top level message",
 				target : sTarget,
 				details : [],
 				$ignoreTopLevel : true
-			}, "~url2~", "~path2~");
+			}, "~serviceURL~/~url2~", "~path2~");
 	});
 });
 
@@ -3607,7 +3607,7 @@ sap.ui.define([
 				$ContentID : "1.0",
 				$resourcePath : "~path1~",
 				url: "~url1~"
-			}]);
+			}], "~serviceURL~/");
 
 		assert.strictEqual(aErrors.length, 2);
 		checkClonedError(assert, oError, aErrors[0], {
@@ -3615,7 +3615,7 @@ sap.ui.define([
 				"@SAP__core.ContentID" : "1.0",
 				$ignoreTopLevel : true,
 				details : []
-			}, "~url0~", "~path0~");
+			}, "~serviceURL~/~url0~", "~path0~");
 		checkClonedError(assert, oError, aErrors[1], {
 				message : "Top level message",
 				"@SAP__core.ContentID" : "1.0",
@@ -3623,7 +3623,7 @@ sap.ui.define([
 					message : "A message",
 					"@SAP__core.ContentID" : "1.0"
 				}]
-			}, "~url1~", "~path1~");
+			}, "~serviceURL~/~url1~", "~path1~");
 	});
 
 	//*********************************************************************************************

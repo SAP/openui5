@@ -965,7 +965,7 @@ sap.ui.define([
 			this.mock(oModel).expects("reportBoundMessages").never();
 			this.mock(oModel).expects("reportUnboundMessages")
 				.once()// add each error only once to the MessageManager
-				.withExactArgs(undefined, [{
+				.withExactArgs([{
 					additionalTargets : undefined,
 					code : undefined,
 					message : oError.message,
@@ -1061,9 +1061,7 @@ sap.ui.define([
 			.withExactArgs("bound/longtext", oError.requestUrl)
 			.returns("/service/Product/bound/longtext");
 		this.mock(oModel).expects("reportUnboundMessages")
-			.withExactArgs(sResourcePath, bIgnoreTopLevel
-				? aUnboundMessages.slice(1)
-				: aUnboundMessages);
+			.withExactArgs(bIgnoreTopLevel ? aUnboundMessages.slice(1) : aUnboundMessages);
 		this.mock(oModel).expects("reportBoundMessages")
 			.withExactArgs(sResourcePath, {
 				"" : [{
@@ -1094,95 +1092,6 @@ sap.ui.define([
 		oModel.reportError(sLogMessage, sClassName, oError);
 	});
 });
-
-	//*********************************************************************************************
-	[{
-		requestUrl : "/service/Product",
-		resourcePath : undefined,
-		boundMessages : undefined,
-		unboundMessages : [{
-			additionalTargets : undefined,
-			code :  "top",
-			message : "Error occurred while processing the request",
-			numericSeverity : 4,
-			technical : true
-		}, {
-			additionalTargets : undefined,
-			code : "bound",
-			message : "Quantity: Value must be greater than 0",
-			numericSeverity : 3,
-			technical : undefined
-		}]
-	}, {
-		requestUrl : undefined,
-		resourcePath : "/Product('1')",
-		boundMessages : [{
-			additionalTargets : undefined,
-			code : "bound",
-			message : "Value must be greater than 0",
-			numericSeverity : 3,
-			target : "Quantity",
-			technical : undefined,
-			transition : true
-		}],
-		unboundMessages : [{
-			additionalTargets : undefined,
-			code :  "top",
-			message : "Error occurred while processing the request",
-			numericSeverity : 4,
-			technical : true
-		}]
-	}].forEach(function (oFixture, i) {
-		var sTitle = "reportError: JSON response, resourcePath=" + oFixture.resourcePath
-				+ ", requestUrl=" + oFixture.requestUrl;
-
-		QUnit.test(sTitle, function () {
-			var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-				oError = {
-					"error" : {
-						"@Common.longtextUrl" : "top/longtext",
-						"code" : "top",
-						"details" : [{
-							"@com.sap.vocabularies.Common.v1.longtextUrl" : "bound/longtext",
-							"@com.sap.vocabularies.Common.v1.numericSeverity" : 3,
-							"code" : "bound",
-							"message" : "Value must be greater than 0",
-							"target" : "Quantity"
-						}],
-						"message" : "Error occurred while processing the request"
-					},
-					"message" : "Failure",
-					"requestUrl" : oFixture.requestUrl,
-					"resourcePath" : oFixture.resourcePath
-				},
-				oHelperMock = this.mock(_Helper),
-				sLogMessage = "Failed to read path /Product('1')/Unknown",
-				oModel = this.createModel();
-
-			oFixture.unboundMessages[0]["@$ui5.error"] = sinon.match.same(oError);
-			oFixture.unboundMessages[0]["@$ui5.originalMessage"] = sinon.match.same(oError.error);
-			if (i === 0) {
-				oFixture.unboundMessages[1]["@$ui5.error"] = sinon.match.same(oError);
-				oFixture.unboundMessages[1]["@$ui5.originalMessage"]
-					= sinon.match.same(oError.error.details[0]);
-			} else {
-				oFixture.boundMessages[0]["@$ui5.error"] = sinon.match.same(oError);
-				oFixture.boundMessages[0]["@$ui5.originalMessage"]
-					= sinon.match.same(oError.error.details[0]);
-			}
-
-			this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
-			oHelperMock.expects("makeAbsolute").never();
-			this.mock(oModel).expects("reportUnboundMessages")
-				.withExactArgs(oFixture.resourcePath, oFixture.unboundMessages);
-			this.mock(oModel).expects("reportBoundMessages")
-				.exactly(oFixture.boundMessages ? 1 : 0)
-				.withExactArgs(oFixture.resourcePath, {"" : oFixture.boundMessages}, []);
-
-			// code under test
-			oModel.reportError(sLogMessage, sClassName, oError);
-		});
-	});
 
 	//*********************************************************************************************
 	QUnit.test("reportError: invoked by an action", function () {
@@ -1261,7 +1170,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getAdditionalTargets")
 			.withExactArgs(sinon.match.same(oError.error)).returns("~additionalTargets~");
 		this.mock(oModel).expects("reportUnboundMessages")
-			.withExactArgs(oError.resourcePath, []);
+			.withExactArgs([]);
 		this.mock(oModel).expects("reportBoundMessages")
 			.withExactArgs(oError.resourcePath, {"" : [{
 				additionalTargets : "~additionalTargets~",
@@ -1299,7 +1208,7 @@ sap.ui.define([
 		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
 		this.mock(oModel).expects("reportBoundMessages").never();
 		this.mock(oModel).expects("reportUnboundMessages")
-			.withExactArgs(oError.resourcePath, [{
+			.withExactArgs([{
 				additionalTargets : undefined,
 				code : "top",
 				message : "$filter: Invalid token 'name' at position '1'",
@@ -2024,7 +1933,6 @@ sap.ui.define([
 				}, {
 					code : 78,
 					message : "foo2",
-					longtextUrl : "",
 					numericSeverity : oFixture.numericSeverity
 				}, {
 					code : 79,
@@ -2038,7 +1946,7 @@ sap.ui.define([
 
 			oHelperMock.expects("makeAbsolute")
 				.withExactArgs(aMessages[0].longtextUrl, oModel.sServiceUrl + sResourcePath)
-				.returns("URL");
+				.returns("~URL~");
 			oHelperMock.expects("createTechnicalDetails").withExactArgs(aMessages[0]).twice()
 				.returns(aTechnicalDetails[0]);
 			oHelperMock.expects("createTechnicalDetails").withExactArgs(aMessages[1]).twice()
@@ -2051,12 +1959,12 @@ sap.ui.define([
 
 					return aMessages0.length === aMessages.length
 						&& aMessages0.every(function (oMessage, j) {
-							var sExpectedUrl = j === 0 ? "URL" : undefined;
+							var sExpectedUrl = j === 0 ? "~URL~" : aMessages[j].longtextUrl;
 
 							return oMessage instanceof Message
 								&& oMessage.getCode() === aMessages[j].code
 								&& oMessage.getDescriptionUrl() ===
-									(sResourcePath ? sExpectedUrl : undefined)
+									(sResourcePath ? sExpectedUrl : aMessages[j].longtextUrl)
 								&& oMessage.getMessage() === aMessages[j].message
 								&& oMessage.getMessageProcessor() === oModel
 								&& oMessage.getPersistent() === true
@@ -2068,22 +1976,19 @@ sap.ui.define([
 				}));
 
 			// code under test
-			oModel.reportUnboundMessages(sResourcePath, aMessages);
+			oModel.reportUnboundMessages(aMessages, sResourcePath);
 
 			// code under test
-			oModel.reportUnboundMessages(sResourcePath, []);
+			oModel.reportUnboundMessages([], sResourcePath);
 
 			// code under test
-			oModel.reportUnboundMessages(sResourcePath, null);
-
-			// code under test
-			oModel.reportUnboundMessages(sResourcePath);
+			oModel.reportUnboundMessages(null, sResourcePath);
 
 			sResourcePath = undefined;
 
 			// code under test
-			oModel.reportUnboundMessages(sResourcePath, aMessages);
-
+			// w/o sResourcePath the longtext URLs should be absolute and remain unchanged
+			oModel.reportUnboundMessages(aMessages, sResourcePath);
 		});
 	});
 

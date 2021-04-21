@@ -1016,7 +1016,7 @@ sap.ui.define([
 			// do not check parameters
 			.returns(Promise.resolve([oResponse]));
 		this.mock(_Helper).expects("createError")
-			.withExactArgs(sinon.match.same(oResponse), "Communication error", "EMPLOYEES",
+			.withExactArgs(sinon.match.same(oResponse), "Communication error", "/EMPLOYEES",
 				sOriginalPath)
 			.returns(new Error());
 
@@ -1991,8 +1991,9 @@ sap.ui.define([
 			.returns(oCause);
 		this.mock(_Helper).expects("decomposeError")
 			.withExactArgs(sinon.match.same(oCause), sinon.match(function (aChangeSetRequests) {
-				return aChangeSetRequests === aRequests[0];
-			})).returns([oError0, oError1]);
+					return aChangeSetRequests === aRequests[0];
+				}), oRequestor.sServiceUrl)
+			.returns([oError0, oError1]);
 		this.mock(oRequestor).expects("batchResponseReceived")
 			.withExactArgs("groupId", sinon.match(function (aRequests0) {
 				return aRequests0 === aRequests;
@@ -3386,7 +3387,8 @@ sap.ui.define([
 				oEntity = {
 					"@odata.etag" : "*"
 				},
-				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), oModelInterface);
+				sServiceUrl = TestUtils.proxy(sSampleServiceUrl),
+				oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 			function onError(sRequestUrl, oError) {
 				if (sCommonMessage) {
@@ -3401,12 +3403,12 @@ sap.ui.define([
 			return Promise.all([
 				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
 						{"If-Match" : oEntity}, {Name : "foo"})
-					.then(undefined, onError.bind(null, "ProductList('HT-1001')")),
+					.then(undefined, onError.bind(null, sServiceUrl + "ProductList('HT-1001')")),
 				oRequestor.request("POST", "Unknown", this.createGroupLock(), undefined, {})
-					.then(undefined, onError.bind(null, "Unknown")),
+					.then(undefined, onError.bind(null, sServiceUrl + "Unknown")),
 				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
 						{"If-Match" : oEntity}, {Name : "bar"})
-					.then(undefined, onError.bind(null, "ProductList('HT-1001')")),
+					.then(undefined, onError.bind(null, sServiceUrl + "ProductList('HT-1001')")),
 				oRequestor.request("GET", "SalesOrderList?$skip=0&$top=10", this.createGroupLock())
 					.then(undefined, function (oError) {
 						assert.strictEqual(oError.message,
@@ -3525,14 +3527,14 @@ sap.ui.define([
 			sResourcePath = "Procduct(42)/to_bar";
 
 		this.mock(oModelInterface).expects("reportUnboundMessages")
-			.withExactArgs(sResourcePath, [{
+			.withExactArgs([{
 					code : "42",
 					message : "Test"
 				}, {
 					code : "43",
 					type : "Warning"
 				}
-			]);
+			], sResourcePath);
 
 		// code under test
 		oRequestor.reportUnboundMessagesAsJSON(sResourcePath, sMessages);
@@ -3542,8 +3544,7 @@ sap.ui.define([
 	QUnit.test("reportUnboundMessagesAsJSON without messages", function () {
 		var oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oModelInterface).expects("reportUnboundMessages")
-			.withExactArgs("foo(42)/to_bar", null);
+		this.mock(oModelInterface).expects("reportUnboundMessages").never();
 
 		// code under test
 		oRequestor.reportUnboundMessagesAsJSON("foo(42)/to_bar");

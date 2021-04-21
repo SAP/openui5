@@ -1138,12 +1138,14 @@ sap.ui.define([
 					vResponse.getResponseHeader = getResponseHeader;
 					// Note: vRequest is an array in case a change set fails, hence url and
 					// $resourcePath are undefined
-					oCause = _Helper.createError(vResponse, "Communication error", vRequest.url,
+					oCause = _Helper.createError(vResponse, "Communication error",
+						vRequest.url ? that.sServiceUrl + vRequest.url : undefined,
 						vRequest.$resourcePath);
 					if (Array.isArray(vRequest)) {
-						_Helper.decomposeError(oCause, vRequest).forEach(function (oError, i) {
-							vRequest[i].$reject(oError);
-						});
+						_Helper.decomposeError(oCause, vRequest, that.sServiceUrl)
+							.forEach(function (oError, i) {
+								vRequest[i].$reject(oError);
+							});
 					} else {
 						vRequest.$reject(oCause);
 					}
@@ -1423,7 +1425,9 @@ sap.ui.define([
 	 * @private
 	 */
 	_Requestor.prototype.reportUnboundMessagesAsJSON = function (sResourcePath, sMessages) {
-		this.oModelInterface.reportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
+		if (sMessages) {
+			this.oModelInterface.reportUnboundMessages(JSON.parse(sMessages), sResourcePath);
+		}
 	};
 
 	/**

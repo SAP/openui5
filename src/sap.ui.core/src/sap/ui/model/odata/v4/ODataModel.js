@@ -1698,12 +1698,12 @@ sap.ui.define([
 	 *   Whether <code>oError.error</code> itself is not reported, but only the
 	 *   <code>oError.error.details</code>.
 	 * @param {string} [oError.requestUrl]
-	 *   The request URL of the failed OData request, added by the requestor; it is required to
-	 *   resolve a longtextUrl.
+	 *   The absolute request URL of the failed OData request, added by the requestor, always
+	 *   present if there is <code>oError.error</code>; it is required to resolve a long text URL.
 	 * @param {string} [oError.resourcePath]
 	 *   The resource path by which the resource causing the error has originally been requested;
-	 *   since a request can fail before reaching the server this may be set even if there is no
-	 *   error property; it is required to resolve a longtextUrl or a target.
+	 *   always present if there is <code>oError.error</code>; it is required to resolve a
+	 *   long text URL or a target.
 	 *
 	 * @private
 	 */
@@ -1738,8 +1738,7 @@ sap.ui.define([
 				if (sProperty[0] === '@') {
 					if (sProperty.endsWith(".numericSeverity")) {
 						oReportMessage.numericSeverity = oMessage[sProperty];
-					} else if (sProperty.endsWith(".longtextUrl") && oError.requestUrl
-							&& sResourcePath) {
+					} else if (sProperty.endsWith(".longtextUrl") && oError.requestUrl) {
 						oReportMessage.longtextUrl =
 							_Helper.makeAbsolute(oMessage[sProperty], oError.requestUrl);
 					}
@@ -1748,8 +1747,8 @@ sap.ui.define([
 
 			if (typeof oMessage.target !== "string") {
 				aUnboundMessages.push(oReportMessage);
-			} else if (oMessage.target[0] === "$" || !sResourcePath) {
-				// target for the bound message is a system query option or cannot be resolved
+			} else if (oMessage.target[0] === "$") {
+				// target for the bound message is a system query option
 				// -> report as unbound message
 				oReportMessage.message = oMessage.target + ": " + oReportMessage.message;
 				aUnboundMessages.push(oReportMessage);
@@ -1781,7 +1780,7 @@ sap.ui.define([
 		oError.$reported = true;
 
 		if (oError.error) {
-			sResourcePath = oError.resourcePath && oError.resourcePath.split("?")[0];
+			sResourcePath = oError.resourcePath.split("?")[0];
 			if (!oError.error.$ignoreTopLevel) {
 				addMessage(oError.error, 4 /* Error */, true);
 			}
@@ -1796,18 +1795,15 @@ sap.ui.define([
 		} else {
 			addMessage(oError, 4 /* Error */, true);
 		}
-
-		this.reportUnboundMessages(sResourcePath, aUnboundMessages);
+		// The longtextUrls are already absolute, so sResourcePath is not needed here
+		this.reportUnboundMessages(aUnboundMessages);
 	};
 
 	/**
 	 * Reports the given unbound OData messages by firing a <code>messageChange</code> event with
 	 * the new messages.
 	 *
-	 * @param {string} [sResourcePath]
-	 *   The resource path of the request whose response contained the messages. If it is
-	 *   <code>undefined</code> the message's long text URL cannot be determined.
-	 * @param {object[]} [aMessages]
+	 * @param {object[]} aMessages
 	 *   The array of messages as contained in the <code>sap-messages</code> response header with
 	 *   the following properties. Each message is passed to the "technicalDetails" (see
 	 *   _Helper.createTechnicalDetails). Currently the "technicalDetails" only contain an attribute
@@ -1815,7 +1811,8 @@ sap.ui.define([
 	 *   {string} code
 	 *     The error code
 	 *   {string} [longtextUrl]
-	 *     The absolute URL for the message's long text
+	 *     The URL for the message's long text; it must be absolute if <code>sResourcePath</code> is
+	 *     missing
 	 *   {string} message
 	 *     The message text
 	 *   {number} numericSeverity
@@ -1826,10 +1823,11 @@ sap.ui.define([
 	 *   {object} [@$ui5.originalMessage]
 	 *     The original message object supplied by #reportError. In case this is supplied it is used
 	 *     in _Helper.createTechnicalDetails to create the "originalMessage" property
-	 *
+	 * @param {string} [sResourcePath]
+	 *   The resource path of the request whose response contained the messages.
 	 * @private
 	 */
-	ODataModel.prototype.reportUnboundMessages = function (sResourcePath, aMessages) {
+	ODataModel.prototype.reportUnboundMessages = function (aMessages, sResourcePath) {
 		var that = this;
 
 		if (aMessages && aMessages.length) {
@@ -1837,12 +1835,14 @@ sap.ui.define([
 				newMessages : aMessages.map(function (oMessage) {
 					var sMessageLongTextUrl = oMessage.longtextUrl;
 
+					if (sMessageLongTextUrl && sResourcePath) {
+						sMessageLongTextUrl = _Helper.makeAbsolute(sMessageLongTextUrl,
+							that.sServiceUrl + sResourcePath);
+					}
+
 					return new Message({
 						code : oMessage.code,
-						descriptionUrl : sMessageLongTextUrl && sResourcePath
-							? _Helper.makeAbsolute(sMessageLongTextUrl,
-								that.sServiceUrl + sResourcePath)
-							: undefined,
+						descriptionUrl : sMessageLongTextUrl,
 						message : oMessage.message,
 						persistent : true,
 						processor : that,

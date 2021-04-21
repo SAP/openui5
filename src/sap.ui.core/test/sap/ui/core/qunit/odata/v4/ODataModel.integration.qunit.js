@@ -90,6 +90,7 @@ sap.ui.define([
 		oError.statusText = "";
 		oError.error = oErrorResponse;
 		oError.message = "Communication error: " + oError.status + " " + oError.statusText;
+		oError.resourcePath = "~resourcePath~";
 		return oError;
 	}
 
@@ -6678,7 +6679,8 @@ sap.ui.define([
 			var sCreateError = "Entity can not be created",
 				oError = createError({
 					code : "CODE",
-					message : sCreateError
+					message : sCreateError,
+					"@Common.longtextUrl" : "longtext"
 				});
 
 			assertIndices(assert, oBinding.getCurrentContexts(), [-2, -1, 0]);
@@ -6711,6 +6713,7 @@ sap.ui.define([
 					/* response does not matter here */)
 				.expectMessages([{
 					code : "CODE",
+					descriptionUrl : sSalesOrderService + "longtext",
 					message : sCreateError,
 					persistent : true,
 					technical : true,
@@ -9905,7 +9908,7 @@ sap.ui.define([
 				}) // no response required
 				.expectMessages([{
 					code : "CODE",
-					descriptionUrl : /*TODO: sSalesOrderService + */"Messages(1)/LongText",
+					descriptionUrl : sSalesOrderService + "Messages(1)/LongText",
 					message : "Request intentionally failed",
 					persistent : true,
 					target : "/SalesOrderList('41')",
