@@ -290,11 +290,9 @@ sap.ui.define([
 
 		addDummyCondition: function(index) {
 			var aOperators = _getOperators.call(this);
-			var oDefaultOperator = _getDefaultOperator.call(this);
-			var sOperator = aOperators.indexOf(oDefaultOperator.name) >= 0 ? oDefaultOperator.name : aOperators[0];
-			var oOperator = FilterOperatorUtil.getOperator(sOperator);
+			var oOperator = _getDefaultOperator.call(this);
+			var sOperator = oOperator.name;
 			var oCondition = Condition.createCondition(sOperator, oOperator.valueDefaults ? oOperator.valueDefaults : [], undefined, undefined, ConditionValidated.NotValidated);
-
 
 			// mark the condition as initial and not modified by the user
 			oCondition.isInitial = true;
@@ -746,19 +744,35 @@ sap.ui.define([
 
 	}
 
-
 	function _getDefaultOperator() {
-		var oDefaultOperator;
-		var sDefaultOperatorName = this.getFormatOptions().defaultOperatorName;
-		if (sDefaultOperatorName) {
-			oDefaultOperator = FilterOperatorUtil.getOperator(sDefaultOperatorName);
+		var aOperators = _getOperators.call(this);
+		var oOperator;
+		var sOperatorName = this.getFormatOptions().defaultOperatorName;
+		if (sOperatorName) {
+			oOperator = FilterOperatorUtil.getOperator(sOperatorName);
 		} else {
 			var oType = _getType.call(this);
 			var sType = _getBaseType.call(this, oType);
-			oDefaultOperator = FilterOperatorUtil.getDefaultOperator(sType);
+			oOperator = FilterOperatorUtil.getDefaultOperator(sType);
 		}
 
-		return oDefaultOperator;
+		if (oOperator && aOperators.indexOf(oOperator.name) < 0) {
+			// default operator not valid -> cannot use -> use first include-operator which requires some values
+			for (var i = 0; i < aOperators.length; i++) {
+				oOperator = FilterOperatorUtil.getOperator(aOperators[i]);
+				if (oOperator.exclude || !oOperator.hasRequiredValues()) {
+					oOperator = undefined;
+				} else {
+					break;
+				}
+			}
+		}
+
+		if (!oOperator) {
+			// in case no operator was found, use the first operator
+			oOperator = FilterOperatorUtil.getOperator(aOperators[0]);
+		}
+		return oOperator;
 	}
 
 	function _getOperators() {
