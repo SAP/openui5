@@ -63,10 +63,15 @@ sap.ui.define([
 	CardRenderer.renderContainerAttributes = function (oRm, oCard) {
 		var sHeight = oCard.getHeight(),
 			sTooltip = oCard.getTooltip_AsString(),
-			bCardHeaderBottom = oCard.getCardHeader() && oCard.getCardHeaderPosition() === HeaderPosition.Bottom;
+			bHasHeader = !!(oCard.getCardHeader() && oCard.getCardHeader().getVisible()),
+			bCardHeaderBottom = bHasHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom;
 
 		oRm.class("sapFCard")
 			.style("width", oCard.getWidth());
+
+		if (!bHasHeader) {
+			oRm.class("sapFCardNoHeader");
+		}
 
 		if (!oCard.getCardContent()) {
 			oRm.class("sapFCardNoContent");
