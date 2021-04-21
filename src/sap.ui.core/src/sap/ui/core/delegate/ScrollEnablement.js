@@ -211,7 +211,17 @@ sap.ui.define([
 				this._fnScrollStartCallback = jQuery.proxy(fnScrollStartCallback, oIconTabBar);
 				return this;
 			},
-
+			/**
+			 * Scrolls to a specific position in scroll container.
+			 * @param {int} iHorizontalPosition Horizontal position of the scrollbar
+			 * @param {int} iVerticalPosition Vertical position of the scrollbar
+			 * @param {int} [iTime=0]
+			 *           The duration of animated scrolling in milliseconds. To scroll immediately without animation,
+			 *           give 0 as value.
+			 * @param {function} fnCallback
+			 * @returns {this}
+			 * @public
+			 */
 			scrollTo : function(x, y, time, fnScrollEndCallback) {
 				this._scrollX = x; // remember for later rendering
 				this._scrollY = y;
