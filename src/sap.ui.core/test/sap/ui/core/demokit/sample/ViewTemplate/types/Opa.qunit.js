@@ -101,12 +101,12 @@ sap.ui.getCore().attachInit(function () {
 			Then.onTheMainPage.checkInputIsDirty("Identification::Duration", false,
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
 
-			When.onTheMainPage.enterDateTimePickerValue("I54", "Apr 19, 2029");
-			Then.onTheMainPage.checkDateTimePickerValueState("I54", ValueState.None);
+			When.onTheMainPage.enterDatePickerValue("I54", "Apr 19, 2029");
+			Then.onTheMainPage.checkDatePickerValueState("I54", ValueState.None);
 			When.onTheMainPage.enterDateTimePickerValue("I56", "Apr 19, 2029, 8:25:21 AM");
 			Then.onTheMainPage.checkDateTimePickerValueState("I56", ValueState.None);
-			When.onTheMainPage.enterDateTimePickerValue("I58", "8:25:21 AM");
-			Then.onTheMainPage.checkDateTimePickerValueState("I58", ValueState.None);
+			When.onTheMainPage.enterTimePickerValue("I58", "8:25:21 AM");
+			Then.onTheMainPage.checkTimePickerValueState("I58", ValueState.None);
 
 			// parseKeepsEmptyString test
 			When.onTheMainPage.enterInputValue("Identification::String40", "",

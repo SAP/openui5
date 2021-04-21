@@ -26,9 +26,9 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				enterDateTimePickerValue : function (sId, sValue) {
-					this.waitFor({
-						controlType : "sap.m.DateTimePicker",
+				enterDateTimePickerValue : function (sId, sValue, sControlType) {
+					return this.waitFor({
+						controlType : sControlType || "sap.m.DateTimePicker",
 						id : sId,
 						success : function (oControl) {
 							oControl.setValue(sValue);
@@ -37,6 +37,12 @@ sap.ui.define([
 						},
 						viewName : sViewName
 					});
+				},
+				enterDatePickerValue : function (sId, sValue) {
+					return this.enterDateTimePickerValue(sId, sValue, "sap.m.DatePicker");
+				},
+				enterTimePickerValue : function (sId, sValue) {
+					return this.enterDateTimePickerValue(sId, sValue, "sap.m.TimePicker");
 				},
 				enterInputValue : function (sId, sValue, sViewName0) {
 					this.waitFor({
@@ -58,9 +64,9 @@ sap.ui.define([
 				}
 			},
 			assertions : {
-				checkDateTimePickerValueState : function (sId, sState) {
-					this.waitFor({
-						controlType : "sap.m.DateTimePicker",
+				checkDateTimePickerValueState : function (sId, sState, sControlType) {
+					return this.waitFor({
+						controlType : sControlType || "sap.m.DateTimePicker",
 						id : sId,
 						success : function (oInput) {
 							Opa5.assert.strictEqual(oInput.getValueState(), sState,
@@ -68,6 +74,12 @@ sap.ui.define([
 						},
 						viewName : sViewName
 					});
+				},
+				checkDatePickerValueState : function (sId, sValue) {
+					return this.checkDateTimePickerValueState(sId, sValue, "sap.m.DatePicker");
+				},
+				checkTimePickerValueState : function (sId, sValue) {
+					return this.checkDateTimePickerValueState(sId, sValue, "sap.m.TimePicker");
 				},
 				checkInputIsDirty : function (sId, bIsDirty, sViewName0) {
 					Helper.checkInputIsDirty(this, sViewName0 || sViewName, sId, bIsDirty);
