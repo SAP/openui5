@@ -3558,13 +3558,11 @@ sap.ui.define([
 		}
 	};
 
-	// use type 'object' because Metamodel doesn't know ScrollEnablement
 	/**
-	 * Returns an sap.ui.core.delegate.ScrollEnablement object used to handle scrolling
+	 * Returns the <code>sap.ui.core.ScrollEnablement</code> delegate which is used with this control.
 	 *
-	 * @type object
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll delegate instance
 	 */
 	ObjectPageLayout.prototype.getScrollDelegate = function () {
 		return this._oScroller;
