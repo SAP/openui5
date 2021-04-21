@@ -1,19 +1,16 @@
 @font-face {
 	font-family: "72-Bold";
-	src: url(./fonts/72-Bold.woff2) format("woff2"),
-	url(./fonts/72-Bold.woff) format("woff");
+	src: url(./fonts/72-Bold.woff2) format("woff2");
 }
 
 @font-face {
 	font-family: "72-Regular";
-	src: url(./fonts/72-Regular.woff2) format("woff2"),
-	url(./fonts/72-Regular.woff) format("woff");
+	src: url(./fonts/72-Regular.woff2) format("woff2");
 }
 
 @font-face {
 	font-family: "72-Light";
-	src: url(./fonts/72-Light.woff2) format("woff2"),
-	url(./fonts/72-Light.woff) format("woff");
+	src: url(./fonts/72-Light.woff2) format("woff2");
 }
 
 html,

@@ -9,8 +9,7 @@ Font "72"
 	font-style: normal;
 	font-weight: 400;
 	src: local('72'),
-	url('../fonts/72-Regular.woff2') format('woff2'),
-	url('../fonts/72-Regular.woff') format('woff');
+	url('../fonts/72-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -18,8 +17,7 @@ Font "72"
 	font-style: normal;
 	font-weight: 700;
 	src: local('72-Bold'),
-	url('../fonts/72-Bold.woff2') format('woff2'),
-	url('../fonts/72-Bold.woff') format('woff');
+	url('../fonts/72-Bold.woff2') format('woff2');
 }
 
 @font-face {
@@ -27,9 +25,7 @@ Font "72"
 	font-style: normal;
 	font-weight: 400;
 	src: local('SAP-icons'),
-	url('../fonts/SAP-icons.woff') format('woff'),
-	url('../fonts/SAP-icons.woff2') format('woff2'),
-	url('../fonts/SAP-icons.ttf') format('ttf');
+	url('../fonts/SAP-icons.woff2') format('woff2');
 }
 
 * {
