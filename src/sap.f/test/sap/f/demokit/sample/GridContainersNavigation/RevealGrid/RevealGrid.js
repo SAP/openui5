@@ -1,8 +1,6 @@
 sap.ui.define([
-	"sap/ui/Device",
-	"sap/ui/core/ResizeHandler",
-	"sap/m/MessageToast"
-], function (Device, ResizeHandler, MessageToast) {
+	"sap/ui/core/ResizeHandler"
+], function (ResizeHandler) {
 	"use strict";
 
 	return {
