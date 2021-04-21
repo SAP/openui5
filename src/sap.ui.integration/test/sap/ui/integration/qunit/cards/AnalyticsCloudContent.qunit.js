@@ -34,6 +34,9 @@ sap.ui.define([
 					}
 				}
 			},
+			"header": {
+				"title": "My chart"
+			},
 			"content": {
 				"options": "{myChart}"
 			}

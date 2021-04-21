@@ -386,4 +386,64 @@ sap.ui.define([
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
+
+	QUnit.module("Empty header");
+
+	var oManifest_EmptyHeader = {
+		"sap.app": {
+			"id": "sap.card.actionsToolbar"
+		},
+		"sap.card": {
+			"type": "List",
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "Notebook Basic 15"
+						}
+					]
+				},
+				"item": {
+					"title": {
+						"value": "{Name}"
+					}
+				}
+			}
+		}
+	};
+
+	QUnit.test("Actions toolbar disappears and hides the parent header when it's empty", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oCard = new Card({
+				manifest: oManifest_EmptyHeader,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+		oCard.addActionDefinition(new ActionDefinition({
+			type: "Navigation",
+			text: "Text",
+			icon: "sap-icon://learning-assistant"
+		}));
+
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		oCard.attachEventOnce("_ready", function () {
+			// Assert
+			assert.strictEqual(oCard.getDomRef().classList.contains("sapFCardNoHeader"), false, "The card has a header");
+
+			// Act
+			oCard.destroyActionDefinitions();
+			Core.applyChanges();
+
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(oCard.getDomRef().classList.contains("sapFCardNoHeader"), true, "The card does not have a header");
+
+				oCard.destroy();
+				done();
+			}, 300);
+		});
+	});
 });

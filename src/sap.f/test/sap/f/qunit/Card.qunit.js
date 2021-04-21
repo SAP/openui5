@@ -212,6 +212,27 @@ function (
 		oNumericHeader.destroy();
 	});
 
+	QUnit.test("Card has correct class when header is not visible", function (assert) {
+		// Arrange
+		var oCard = createCard(CardHeader);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oCard.getCardHeader().getVisible(), true, "Card's header is visible");
+		assert.strictEqual(oCard.getDomRef().classList.contains("sapFCardNoHeader"), false, "Card does not have class sapFCardNoHeader");
+
+		// Act
+		oCard.getCardHeader().setVisible(false);
+		this.clock.tick(100);
+
+		// Assert
+		assert.strictEqual(oCard.getCardHeader().getVisible(), false, "Card's header is not visible");
+		assert.strictEqual(oCard.getDomRef().classList.contains("sapFCardNoHeader"), true, "Card has class sapFCardNoHeader");
+
+		oCard.destroy();
+		Core.applyChanges();
+	});
+
 	QUnit.module("Headers ACC roles");
 
 	QUnit.test("Header", function (assert) {

@@ -247,9 +247,6 @@ sap.ui.define([
 
 		if (this._bIsEmpty && this.getVisible() !== bToolbarVisible) {
 			this.setVisible(bToolbarVisible);
-			setTimeout(function () {
-				this.invalidate();
-			}.bind(this), 0);
 		}
 	};
 

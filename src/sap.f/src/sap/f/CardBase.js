@@ -102,6 +102,32 @@ sap.ui.define([
 		}
 	};
 
+	CardBase.prototype.setAggregation = function (sAggregationName, oObject) {
+		var oPrevObject;
+
+		if (sAggregationName === "header" || sAggregationName === "_header") {
+			oPrevObject = this.getAggregation(sAggregationName);
+
+			if (oPrevObject) {
+				oPrevObject.detachEvent("_change", this._onHeaderVisibilityChange, this);
+			}
+
+			if (oObject) {
+				oObject.attachEvent("_change", this._onHeaderVisibilityChange, this);
+			}
+		}
+
+		return Control.prototype.setAggregation.apply(this, arguments);
+	};
+
+	CardBase.prototype._onHeaderVisibilityChange = function (oEvent) {
+		if (oEvent.getParameters().name === "visible") {
+			setTimeout(function() {
+				this.invalidate();
+			}.bind(this), 0);
+		}
+	};
+
 	/**
 	 * Implements sap.f.ICard interface.
 	 *
