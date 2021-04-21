@@ -565,6 +565,12 @@ sap.ui.define([
 		return vResult;
 	};
 
+	/**
+	 * Returns the <code>sap.ui.core.ScrollEnablement</code> delegate which is used with this control.
+	 *
+	 * @public
+	 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll delegate instance
+	 */
 	DynamicPage.prototype.getScrollDelegate = function () {
 		return this._oScrollHelper;
 	};
