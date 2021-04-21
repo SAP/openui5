@@ -328,17 +328,23 @@ sap.ui.define([
             var aVisibleMeasures = [];
             oMDCChart.getItems().forEach(function (oItem, iIndex) {
 
+                var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
+                    return oCurrentPropertyInfo.name === oItem.getName();
+                });
+
                 switch (oItem.getType()) {
                     case "groupable":
                         aVisibleDimensions.push(oItem.getName());
                         var oDimension = new Dimension({name: oItem.getName(), label: oItem.getLabel(), role: "category"});
+
+                        if (oPropertyInfo.textProperty){
+                            oDimension.setTextProperty(oPropertyInfo.textProperty);
+                            oDimension.setDisplayText(true);
+                        }
+
                         this._oInnerChart.addDimension(oDimension);
                         break;
                     case "aggregatable":
-
-                        var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
-                            return oCurrentPropertyInfo.name === oItem.getName();
-                        });
 
                         var aggregationMethod = oPropertyInfo.aggregationMethod;
                         var propertyPath = oPropertyInfo.propertyPath;
@@ -780,12 +786,28 @@ sap.ui.define([
         //TODO: Check for role annotation
         //var aVisibleDimensions = [];
 
-        var oDimension = new Dimension({
-            name: oMDCChartItem.getName(),
-            role: oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "category",
-            label: oMDCChartItem.getLabel()
-        });
-        this._oInnerChart.addDimension(oDimension);
+        this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
+
+            var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
+                return oCurrentPropertyInfo.name === oMDCChartItem.getName();
+            });
+
+            var oDimension = new Dimension({
+                name: oMDCChartItem.getName(),
+                role: oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "category",
+                label: oMDCChartItem.getLabel()
+            });
+
+            if (oPropertyInfo.textProperty){
+                oDimension.setTextProperty(oPropertyInfo.textProperty);
+                oDimension.setDisplayText(true);
+            }
+
+            this._oInnerChart.addDimension(oDimension);
+
+        }.bind(this));
+
+
         //add to visibleDimensions
         //TODO: Check this
         /*
@@ -1172,7 +1194,8 @@ sap.ui.define([
                             kind:  "Groupable", //TODO: Rename in type; Only needed for P13n Item Panel
                             availableRoles: this._getLayoutOptionsForType("groupable"), //for p13n
                             role: MDCLib.ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
-                            criticality: null //To be implemented by FE
+                            criticality: null ,//To be implemented by FE
+                            textProperty: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path  : null //To be implemented by FE
                         });
                     }
                 }
