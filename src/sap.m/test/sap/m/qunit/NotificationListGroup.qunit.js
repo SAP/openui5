@@ -83,6 +83,9 @@ sap.ui.define([
 		assert.ok(this.notificationListGroup.$('overflowToolbar'), 'overflow toolbar is rendered');
 
 		assert.strictEqual($item.find('.sapMNLGroupChildren li').length, 2, 'group has 2 items');
+
+		assert.strictEqual($item.attr('role'), 'listitem', 'acc role is correct');
+		assert.strictEqual($item.find("ul").attr('role'), 'list', 'acc group role is correct');
 	});
 
 	QUnit.test('priority', function(assert) {

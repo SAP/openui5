@@ -4,7 +4,7 @@
 	xmlns="sap.m"
 	class="sapUiBodyBackground sapContrastPlus sapContrast">
 	<VBox class="sapUiSmallMargin">
-		<List>
+		<NotificationList>
 			<layoutData>
 				<FlexItemData maxWidth="600px" />
 			</layoutData>
@@ -203,6 +203,6 @@
 					</buttons>
 				</NotificationListItem>
 			</NotificationListGroup>
-		</List>
+		</NotificationList>
 	</VBox>
 </mvc:View>

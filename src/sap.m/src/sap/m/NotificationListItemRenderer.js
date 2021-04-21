@@ -67,7 +67,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 
 		// ARIA
 		rm.accessibilityState(control, {
-			role: "option",
+			role: "listitem",
 			labelledby: {
 				value: sAriaLabelledBy
 			}

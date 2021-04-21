@@ -5,7 +5,7 @@
 	xmlns:l="sap.ui.layout"
 	class="sapUiBodyBackground sapContrastPlus">
 	<VBox class="sapUiSmallMargin">
-		<List>
+		<NotificationList>
 			<layoutData>
 				<FlexItemData maxWidth="600px" />
 			</layoutData>
@@ -143,6 +143,6 @@
 				priority="High"
 				close=".onItemClose"
 				press=".onListItemPress" />
-		</List>
+		</NotificationList>
 	</VBox>
 </mvc:View>

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/NotificationListItem",
 	"sap/m/NotificationListGroup",
 	"sap/m/OverflowToolbar",
-	"sap/m/List",
+	"sap/m/NotificationList",
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/core/Core",
@@ -20,7 +20,7 @@ sap.ui.define([
 	NotificationListItem,
 	NotificationListGroup,
 	OverflowToolbar,
-	List,
+	NotificationList,
 	coreLibrary,
 	mLibrary,
 	Core,
@@ -99,7 +99,7 @@ sap.ui.define([
 	QUnit.module('Rendering', {
 		beforeEach: function() {
 			this.notificationListItem = createNotificatoinListItem();
-			this.list = new List({
+			this.list = new NotificationList({
 				width: '300px',
 				items: [
 					this.notificationListItem
@@ -138,6 +138,8 @@ sap.ui.define([
 		assert.strictEqual($item.find('.sapFAvatar').length > 0, true, 'author avatar is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIDescription').text(), 'Notification List Item Description', 'description is rendered');
+
+		assert.strictEqual($item.attr('role'), 'listitem', 'acc role is correct');
 	});
 
 	QUnit.test('footer', function(assert) {
@@ -163,7 +165,7 @@ sap.ui.define([
 	QUnit.module('Interaction', {
 		beforeEach: function() {
 			this.notificationListItem = createNotificatoinListItem();
-			this.list = new List({
+			this.list = new NotificationList({
 				width: '300px',
 				items: [
 					this.notificationListItem
@@ -219,7 +221,7 @@ sap.ui.define([
 	QUnit.module('Accessibility', {
 		beforeEach: function() {
 			this.notificationListItem = createNotificatoinListItem();
-			this.list = new List({
+			this.list = new NotificationList({
 				width: '300px',
 				items: [
 					this.notificationListItem
@@ -363,7 +365,7 @@ sap.ui.define([
 
 		// act
 		var notificationCloning = notification.clone();
-		var list = new List({
+		var list = new NotificationList({
 			items: [
 				notification,
 				notificationCloning
@@ -400,7 +402,7 @@ sap.ui.define([
 			]
 		});
 
-		var list = new List();
+		var list = new NotificationList();
 
 		list.setModel(model);
 		list.bindObject("/");
