@@ -150,7 +150,7 @@ sap.ui.define([
 			return oPromise[oFixture.reject ? "catch" : "then"](function () {
 				var oFulfillment = {},
 					oNewSyncPromise,
-					oResult = new Promise(function (resolve, reject) {
+					oResult = new Promise(function (resolve) {
 						setTimeout(function () {
 							assertPending(assert, oNewSyncPromise); // not yet
 						}, 0);
@@ -434,7 +434,7 @@ sap.ui.define([
 	QUnit.test("SyncPromise.all: two Promises resolve", function (assert) {
 		var oPromiseAll,
 			oPromise0 = Promise.resolve(42), // timeout 0
-			oPromise1 = new Promise(function (resolve, reject) {
+			oPromise1 = new Promise(function (resolve) {
 				setTimeout(function () {
 					assertPending(assert, oPromiseAll); // not yet
 				}, 5);
@@ -472,7 +472,7 @@ sap.ui.define([
 		var oReason = {},
 			oPromiseAll,
 			oPromise0 = Promise.reject(oReason), // timeout 0
-			oPromise1 = new Promise(function (resolve, reject) {
+			oPromise1 = new Promise(function (_resolve, reject) {
 				setTimeout(function () {
 					assertRejected(assert, oPromiseAll, oReason);
 				}, 5);
@@ -578,7 +578,7 @@ sap.ui.define([
 			oPromise = Promise.resolve(42),
 			vReason = {};
 
-		assertPending(assert, new SyncPromise(function (resolve, reject) {
+		assertPending(assert, new SyncPromise(function () {
 			return "ignored";
 		}));
 
@@ -590,7 +590,7 @@ sap.ui.define([
 		});
 		assertFulfilled(assert, oFulfilledPromise, "OK");
 
-		assertFulfilled(assert, new SyncPromise(function (resolve, reject) {
+		assertFulfilled(assert, new SyncPromise(function (resolve) {
 			resolve(oFulfilledPromise);
 			throw new Error("ignored");
 		}), "OK");
@@ -602,11 +602,11 @@ sap.ui.define([
 			return "ignored";
 		}), vReason);
 
-		assertRejected(assert, new SyncPromise(function (resolve, reject) {
+		assertRejected(assert, new SyncPromise(function () {
 			throw vReason;
 		}), vReason);
 
-		oPendingPromise = new SyncPromise(function (resolve, reject) {
+		oPendingPromise = new SyncPromise(function (resolve) {
 			resolve(oPromise);
 			return "ignored";
 		});
@@ -620,7 +620,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("A promise cannot be resolved with itself.", function (assert) {
 		var fnResolve,
-			oSyncPromise = new SyncPromise(function (resolve, reject) {
+			oSyncPromise = new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			});
 
@@ -643,7 +643,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Pending on native Promise", function (assert) {
 		var oEverPendingPromise = new Promise(function () {}),
-			oSyncPromise = new SyncPromise(function (resolve, reject) {
+			oSyncPromise = new SyncPromise(function (resolve) {
 				// Note: wrapping via resolve() must not make a difference here!
 				resolve(SyncPromise.resolve(oEverPendingPromise));
 			});
@@ -669,7 +669,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("thenables: fulfilled", function (assert) {
 		var oThenable = {
-				then : function (resolve, reject) {
+				then : function (resolve) {
 					resolve(42);
 				}
 			},
@@ -687,7 +687,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("thenables: rejected", function (assert) {
 		var oThenable = {
-				then : function (resolve, reject) {
+				then : function (_resolve, reject) {
 					reject(42);
 				}
 			},
@@ -726,7 +726,7 @@ sap.ui.define([
 		var oSyncPromise,
 			fnThenable = function () {};
 
-		fnThenable.then = function (resolve, reject) {
+		fnThenable.then = function (resolve) {
 			resolve(42);
 		};
 
@@ -746,7 +746,7 @@ sap.ui.define([
 		var oEverPendingThenable = {
 				then : function () {}
 			},
-			oSyncPromise = new SyncPromise(function (resolve, reject) {
+			oSyncPromise = new SyncPromise(function (resolve) {
 				// Note: wrapping via resolve() must not make a difference here!
 				resolve(SyncPromise.resolve(oEverPendingThenable));
 			});
@@ -765,10 +765,10 @@ sap.ui.define([
 //	});
 
 	//*********************************************************************************************
-	QUnit.test("Uncaught (in promise): listener", function (assert) {
+	QUnit.test("Uncaught (in promise): listener", function () {
 		var oMock = this.mock(SyncPromise),
 			fnReject,
-			oSyncPromise = new SyncPromise(function (resolve, reject) {
+			oSyncPromise = new SyncPromise(function (_resolve, reject) {
 				fnReject = reject;
 			});
 
@@ -789,7 +789,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Uncaught (in promise): listen on rejected promises only", function (assert) {
+	QUnit.test("Uncaught (in promise): listen on rejected promises only", function () {
 		var oSyncPromise = new SyncPromise(function () {});
 
 		SyncPromise.listener = function () {};
@@ -803,7 +803,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("caught: a posteriori", function (assert) {
+	QUnit.test("caught: a posteriori", function () {
 		var oSyncPromise;
 
 		SyncPromise.listener = function () {};
@@ -815,9 +815,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("caught: a priori", function (assert) {
+	QUnit.test("caught: a priori", function () {
 		var fnReject,
-			oSyncPromise = new SyncPromise(function (resolve, reject) {
+			oSyncPromise = new SyncPromise(function (_resolve, reject) {
 				fnReject = reject;
 			});
 
@@ -831,7 +831,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Uncaught (in promise): no listener", function (assert) {
+	QUnit.test("Uncaught (in promise): no listener", function () {
 		delete SyncPromise.listener;
 
 		// code under test
@@ -839,7 +839,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Uncaught (in promise)", function (assert) {
+	QUnit.test("Uncaught (in promise)", function () {
 //		// Note: it's as simple as this...
 //		Promise.reject(42); // logs "Uncaught (in promise) 42" and this call's stack
 //
@@ -857,10 +857,10 @@ sap.ui.define([
 			SyncPromise.reject(0).catch(function () {}),
 			SyncPromise.resolve(Promise.reject(1)).catch(function () {}),
 			SyncPromise.resolve(Promise.reject(2)).then().catch(function () {}),
-			new SyncPromise(function (resolve, reject) {
+			new SyncPromise(function (resolve) {
 				resolve(SyncPromise.resolve(Promise.reject(3)));
 			}).catch(function () {}),
-			new SyncPromise(function (resolve, reject) {
+			new SyncPromise(function (resolve) {
 				resolve(SyncPromise.reject(4));
 			}).catch(function () {})
 		]);
@@ -1022,7 +1022,7 @@ sap.ui.define([
 			aResults.push(vResult);
 		}
 
-		oPromise1 = new SyncPromise(function (fnResolve, fnReject) {
+		oPromise1 = new SyncPromise(function (fnResolve) {
 				fnResolve1 = fnResolve;
 			})
 			// code under test
@@ -1030,7 +1030,7 @@ sap.ui.define([
 				return SyncPromise.resolve();
 			})
 			.then(done);
-		oPromise1 = new SyncPromise(function (fnResolve, fnReject) {
+		oPromise1 = new SyncPromise(function (fnResolve) {
 				fnResolve2 = fnResolve;
 			})
 			.then(function (o) { return o; })
@@ -1056,7 +1056,7 @@ sap.ui.define([
 			aResults.push(vResult);
 		}
 
-		oPromise1 = new SyncPromise(function (fnResolve, fnReject) {
+		oPromise1 = new SyncPromise(function (_fnResolve, fnReject) {
 				fnReject1 = fnReject;
 			})
 			// code under test
@@ -1064,7 +1064,7 @@ sap.ui.define([
 				return SyncPromise.resolve();
 			})
 			.catch(done);
-		oPromise2 = new SyncPromise(function (fnResolve, fnReject) {
+		oPromise2 = new SyncPromise(function (_fnResolve, fnReject) {
 				fnReject2 = fnReject;
 			})
 			.catch(function (o) { throw o; })
@@ -1107,11 +1107,11 @@ sap.ui.define([
 ].forEach(function (fnAct, i) {
 	QUnit.test("finally: timing, " + i, function (assert) {
 		var fnResolve1,
-			oPromise1 = new Promise(function (fnResolve, fnReject) {
+			oPromise1 = new Promise(function (fnResolve) {
 				fnResolve1 = fnResolve;
 			}),
 			fnResolve2,
-			oPromise2 = new Promise(function (fnResolve, fnReject) {
+			oPromise2 = new Promise(function (fnResolve) {
 				fnResolve2 = fnResolve;
 			}),
 			aResults = [];
@@ -1137,7 +1137,7 @@ sap.ui.define([
 		fnResolve1("1");
 		fnResolve2("2");
 
-		return new Promise(function (resolve, reject) {
+		return new Promise(function (resolve) {
 			setTimeout(function () {
 				assert.deepEqual(aResults, ["1", "2"]);
 				resolve();
@@ -1175,11 +1175,11 @@ sap.ui.define([
 ].forEach(function (fnAct, i) {
 	QUnit.test("finally: native timing, " + i, function (assert) {
 		var fnResolve1,
-			oPromise1 = new Promise(function (fnResolve, fnReject) {
+			oPromise1 = new Promise(function (fnResolve) {
 				fnResolve1 = fnResolve;
 			}),
 			fnResolve2,
-			oPromise2 = new Promise(function (fnResolve, fnReject) {
+			oPromise2 = new Promise(function (fnResolve) {
 				fnResolve2 = fnResolve;
 			}),
 			aResults = [];
@@ -1194,7 +1194,7 @@ sap.ui.define([
 
 		// Note: #then, #catch: 1 micro task
 		//   Promise.resolve of native promise is "no op": 0
-		//   Promise.all: 1 (IE/es6-promise: 2)
+		//   Promise.all: 1
 		//   #finally: 3(!)
 		fnAct(oPromise1, done);
 		Promise.resolve(oPromise2)
@@ -1208,7 +1208,7 @@ sap.ui.define([
 		fnResolve1("1");
 		fnResolve2("2");
 
-		return new Promise(function (resolve, reject) {
+		return new Promise(function (resolve) {
 			setTimeout(function () {
 				assert.deepEqual(aResults, ["1", "2"]);
 				resolve();
