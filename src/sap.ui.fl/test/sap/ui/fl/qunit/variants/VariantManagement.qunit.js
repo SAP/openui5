@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit Promise */
 
 sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
@@ -213,6 +213,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Check onkeyup", function(assert) {
+			sinon.stub(this.oVariantManagement, "_obtainControl").returns(null);
 			sinon.stub(this.oVariantManagement, "_openVariantList");
 
 			this.oVariantManagement.onkeyup({
@@ -630,8 +631,19 @@ sap.ui.define([
 			sinon.stub(this.oVariantManagement, "setDefaultVariantKey");
 
 			assert.ok(!this.oVariantManagement.setDefaultVariantKey.called);
-			this.oVariantManagement._handleManageDefaultVariantChange(null, "1");
+
+			var oIcon = new Icon();
+			var oParent = {
+				getCells: function() { return [oIcon];}
+			};
+			var oRadioButton = {
+				getParent: function() { return oParent;}
+			};
+
+			this.oVariantManagement._handleManageDefaultVariantChange(oRadioButton, { favorite: false }, true);
 			assert.ok(this.oVariantManagement.setDefaultVariantKey.called);
+
+			oIcon.destroy();
 		});
 
 		QUnit.test("Checking _handleManageDefaultVariantChange, ensure favorites are flagged for default variant", function(assert) {
@@ -643,33 +655,32 @@ sap.ui.define([
 			sinon.stub(this.oVariantManagement, "_anyInErrorState").returns(false);
 
 			this.oVariantManagement.oManagementSave = {
-				setEnabled: function() {
-				}
+				setEnabled: function() {}
 			};
 
 			var oDefaultRadioButton = new RadioButton();
 
+			var oIcon = new Icon();
 			oDefaultRadioButton.getParent = function() {
 				return {
 					getCells: function() {
-						return [
-							"ICON"
-						];
+						return [oIcon];
 					}
 				};
 			};
 
 			assert.ok(oItem.favorite);
-			this.oVariantManagement._handleManageDefaultVariantChange(oDefaultRadioButton, oItem);
+			this.oVariantManagement._handleManageDefaultVariantChange(oDefaultRadioButton, oItem, true);
 			assert.ok(oItem.favorite);
 
 			oItem.favorite = false;
 			assert.ok(!oItem.favorite);
-			this.oVariantManagement._handleManageDefaultVariantChange(oDefaultRadioButton, oItem);
+			this.oVariantManagement._handleManageDefaultVariantChange(oDefaultRadioButton, oItem, true);
 			assert.ok(oItem.favorite);
 
 			this.oVariantManagement.oManagementSave = undefined;
 			oDefaultRadioButton.destroy();
+			oIcon.destroy();
 		});
 
 		QUnit.test("Checking _handleManageCancelPressed", function(assert) {
