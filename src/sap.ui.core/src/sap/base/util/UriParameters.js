@@ -107,9 +107,9 @@ sap.ui.define([
 		 * @example
 		 *
 		 * UriParameters.fromQuery("?foo=bar").has("foo") === true
-		 * UriParameters.fromQuery("?foo").get("foo") === true
-		 * UriParameters.fromQuery("?foo").get("bar") === false
-		 * UriParameters.fromQuery("?foo+bar=ba%7a").get("foo bar") === true
+		 * UriParameters.fromQuery("?foo").has("foo") === true
+		 * UriParameters.fromQuery("?foo").has("bar") === false
+		 * UriParameters.fromQuery("?foo+bar=ba%7a").has("foo bar") === true
 		 *
 		 * @param {string} sName Name of the query parameter to check
 		 * @returns {boolean} Whether the parameter has been defined
