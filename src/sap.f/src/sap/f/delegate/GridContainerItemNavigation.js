@@ -232,7 +232,7 @@ sap.ui.define([
 
 			if (this._lastFocusedElement) {
 				this._lastFocusedElement.focus();
-			} else {
+			} else if (aNavigationDomRefs[lastFocusedIndex]) {
 				aNavigationDomRefs[lastFocusedIndex].focus();
 			}
 		}
