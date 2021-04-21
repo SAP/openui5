@@ -46,23 +46,23 @@
 		"samples": [
 			{
 				"id": "sap.ui.mdc.sample.ResponsiveTable",
-				"name": "Table of type \"ResponsiveTable\"",
+				"name": "0.1 Table of type \"ResponsiveTable\"",
 				"description": "Basic example with table type \"ResponsiveTable\"."
 			}, {
 				"id": "sap.ui.mdc.sample.GridTable",
-				"name": "Table of type \"GridTable\"",
+				"name": "0.2 Table of type \"GridTable\"",
 				"description": "Basic example with table type \"GridTable\"."
 			}, {
 				"id": "sap.ui.mdc.sample.TableStateHandling",
-				"name": "Table state handling",
+				"name": "0.3 Table state handling",
 				"description": "Basic example of state handling."
 			}, {
 				"id": "sap.ui.mdc.sample.TableFilter",
-				"name": "Table with FilterBar",
+				"name": "0.4 Table with FilterBar",
 				"description": "Basic example with a FilterBar."
 			}, {
 				"id": "sap.ui.mdc.sample.TableODataV4Analytics",
-				"name": "Table with OData V4",
+				"name": "0.5 Table with OData V4",
 				"description": "OData V4 with analytical capabilities, e.g. grouping and totals."
 			}, {
 				"id": "sap.ui.mdc.sample.FieldEditMode",
