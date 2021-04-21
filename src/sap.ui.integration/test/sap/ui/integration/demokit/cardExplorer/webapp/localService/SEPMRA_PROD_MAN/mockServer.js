@@ -4,12 +4,6 @@ sap.ui.define([
 ], function (MockServer) {
 	"use strict";
 
-	// configure all mock servers with default delay of 1s
-	MockServer.config({
-		autoRespond: true,
-		autoRespondAfter: 1000
-	});
-
 	var oMockServer;
 
 	var oMockServerInterface = {
@@ -21,6 +15,11 @@ sap.ui.define([
 		 * @param {object} [oOptionsParameter] init parameters for the mock server.
 		 */
 		init: function (oOptionsParameter) {
+			// configure all mock servers with default delay of 1s
+			MockServer.config({
+				autoRespond: true,
+				autoRespondAfter: 1000
+			});
 
 			// avoid reinitialization of mock server
 			if (oMockServer) {
@@ -99,6 +98,15 @@ sap.ui.define([
 		 */
 		getMockServer: function () {
 			return oMockServer;
+		},
+
+		destroy: function () {
+			if (!oMockServer) {
+				return;
+			}
+
+			oMockServer.destroy();
+			oMockServer = null;
 		}
 	};
 
