@@ -110,6 +110,23 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			}
 		});
 
+		QUnit.test("parse using pattern 'SSSSSS' (6 millisecond digits)", function (assert) {
+			var sCustomPattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSX";
+			var oCustomDateFormat = DateFormat.getDateTimeInstance({ pattern: sCustomPattern });
+			var sDateString = "2020-12-14T15:29:04.303118Z";
+			var oParsed = oCustomDateFormat.parse(sDateString);
+			assert.ok(oParsed instanceof Date, "should be a date");
+			assert.equal(oParsed.getTime(), 1607959744303, "should match the first 3 millisecond digits of this date");
+		});
+
+		QUnit.test("parse using pattern 'SSS' (3 millisecond digits) but input has 6 millisecond digits", function (assert) {
+			var sCustomPattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
+			var oCustomDateFormat = DateFormat.getDateTimeInstance({ pattern: sCustomPattern });
+			var sDateString = "2020-12-14T15:29:04.303118Z";
+			var oParsed = oCustomDateFormat.parse(sDateString);
+			assert.ok(!oParsed, "result is not a date");
+		});
+
 		QUnit.test("format custom date UTC", function (assert) {
 			var oDate = new Date("Wed Jul 4 12:08:56 2001 UTC"),
 				oCustomDate;
