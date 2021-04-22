@@ -384,9 +384,6 @@ sap.ui.define([
 
                 this._bInnerChartReady = true;
 
-                //Sync MDC Chart properties with inner chart
-                this._propagatePropertiesToInnerChart();
-
                 this._fnResolveInitialized();
                 // eslint-disable-next-line no-empty
                 this.invalidate();
@@ -419,6 +416,9 @@ sap.ui.define([
                         "items"
                     ]
                 });
+
+                //Sync MDC Chart properties with inner chart
+                this._propagatePropertiesToInnerChart();
 
                 this._fnResolveInnerChartBound();
 
