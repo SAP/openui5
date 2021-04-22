@@ -212,9 +212,10 @@ sap.ui.define([
 	/**
 	 * This property must not be set for the <code>Field</code>
 	 *
-	 * @param {int} iMaxConditions Oonly 1 condition allowed in <code>Field</code>
+	 * @param {int} iMaxConditions Only 1 condition allowed in <code>Field</code>
 	 * @returns {this} <code>this</code> to allow method chaining.
-	 * @private
+	 * @public
+	 * @deprecated As of version 1.54, this property is not supported for the <code>Field</code>.
 	 */
 	Field.prototype.setMaxConditions = function(iMaxConditions) {
 
@@ -520,7 +521,8 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aConditions Conditions to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
+	 * @public
+	 * @deprecated As of version 1.54, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @name sap.ui.mdc.Field#setConditions
 	 * @function
 	 */
@@ -532,7 +534,8 @@ sap.ui.define([
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
 	 * @returns {object[]} conditions of the field
-	 * @private
+	 * @public
+	 * @deprecated As of version 1.54, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @name sap.ui.mdc.Field#getConditions
 	 * @function
 	 */
@@ -545,7 +548,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sDataType DataType to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
+	 * @public
+	 * @deprecated As of version 1.54, the type in the binding to the <code>value</code> property is used.
 	 * @name sap.ui.mdc.Field#setDataType
 	 * @function
 	 */
@@ -558,7 +562,8 @@ sap.ui.define([
 	 *
 	 * @param {string} oDataTypeConstraints Constraints to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
+	 * @public
+	 * @deprecated As of version 1.54, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
 	 * @name sap.ui.mdc.Field#setDataTypeConstraints
 	 * @function
 	 */
@@ -571,7 +576,8 @@ sap.ui.define([
 	 *
 	 * @param {string} oDataTypeFormatOptions Format options to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
+	 * @public
+	 * @deprecated As of version 1.54, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
 	 * @name sap.ui.mdc.Field#setDataTypeFormatOptions
 	 * @function
 	 */
