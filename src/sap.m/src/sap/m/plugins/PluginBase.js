@@ -20,8 +20,9 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @public
-	 * @since 1.90
+	 * @private
+	 * @experimental Since 1.73. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 * @since 1.73
 	 * @alias sap.m.plugins.PluginBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -44,23 +45,19 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	var mPluginControlConfigs = {};
 
 	/**
-	 * Sets a plugin related multiple control configurations.
+	 * Defines a plugin-related multiple control configuration.
 	 *
-	 * Usage:
-	 * <pre>
+	 * @example
+	 * PluginBase.setConfigs({
+	 *     "sap.m.Table": {
+	 *		    defaultAggregationName: "items"
+	 *     },
+	 *     "sap.ui.table.Table": {
+	 *          defaultAggregationName: "rows"
+	 *     }
+	 * }, TablePluginConstructor);
 	 *
-	 *  PluginBase.setConfigs({
-	 *		"sap.m.Table": {
-	 *			defaultAggregationName: "items"
-	 *		},
-	 *		"sap.ui.table.Table": {
-	 *			defaultAggregationName: "rows"
-	 *		}
-	 *	}, TablePluginConstructor);
-	 *
-	 * </pre>
-	 *
-	 * @param {object} mControlConfigs The configuration object for control types where the first-level keys are full control names and values are configuration object
+	 * @param {object} mControlConfigs The configuration object for control types where the first level keys are full control names and values are configuration objects
 	 * @param {string|function} vPlugin The full name or the constructor of the plugin
 	 * @protected
 	 * @static
@@ -73,14 +70,10 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	/**
 	 * Sets a control-related plugin configuration.
 	 *
-	 * Usage:
-	 * <pre>
-	 *
-	 *  PluginBase.setControlConfig("sap.m.Table", {
-	 *		defaultAggregationName: "items"
-	 *	}, "my.table.plugin");
-	 *
-	 * </pre>
+	 * @example
+	 * PluginBase.setControlConfig("sap.m.Table", {
+	 *     defaultAggregationName: "items"
+	 * }, "my.table.plugin");
 	 *
 	 * @param {string|function} vControl The full name or the constructor of the control
 	 * @param {object} mControlConfig The configuration object for a control type
@@ -130,10 +123,10 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	/**
 	 * Returns the parent or the logical owner of the plugin instance.
 	 *
-	 * A composite control can implement <code>get[PluginName]PluginOwner</code> method to define a logical plugin owner which will be responsible for the plugin.
-	 * In this case even though the plugin instance is added to the composite control, the return value of <code>get[PluginName]PluginOwner</code> will be the logical owner of the plugin.
-	 * If a composite control instantiate internal controls asynchronously then <code>get[PluginName]PluginOwner</code> method can return a promise. Afterwards, when the promised is resolved
-	 * <code>get[PluginName]PluginOwner</code> method must return the instance of the internal control always.
+	 * A composite control can implement the <code>get[PluginName]PluginOwner</code> method to define a logical plugin owner that will be responsible for the plugin.
+	 * In this case, even though the plugin instance is added to the composite control, the return value of <code>get[PluginName]PluginOwner</code> will be the logical owner of the plugin.
+	 * If a composite control instantiates internal controls asynchronously, then the <code>get[PluginName]PluginOwner</code> method must return a promise. After the <code>Promise</code> has been resolved,
+	 * the <code>get[PluginName]PluginOwner</code> method must always return the instance of the internal control.<br>
 	 * If such a <code>get[PluginName]PluginOwner</code> method exists in the control where the plugin is inserted then the <code>getControl</code> method return the logical owner of the plugin.
 	 *
 	 * @returns {sap.ui.core.Control|null}
@@ -151,7 +144,7 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 
 	/**
 	 * Returns the plugin configuration of the control.
-	 * If the configuration is a type of function then it gets executed.
+	 * If the configuration is a type of function, then it gets executed.
 	 *
 	 * @param {string} sKey The configuration key
 	 * @param {any} [vParam1] The first parameter if the sKey configuration is a type of function
@@ -191,7 +184,7 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 
 	/**
 	 * This hook method gets called to determine whether the plugin is applicable for the defined control or not.
-	 * By default, plug-ins can be applied if a control configuration has been defined for a particular plug-in type.
+	 * By default, plugins can be applied if a control configuration has been defined for a particular plugin type.
 	 *
 	 * @param {sap.ui.core.Control} oControl The control that is connected to the plugin
 	 * @returns {boolean} Whether applicable or not
