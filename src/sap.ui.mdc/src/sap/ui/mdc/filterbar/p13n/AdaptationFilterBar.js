@@ -248,7 +248,7 @@ sap.ui.define([
 		return oFilterFieldPromise;
 	};
 
-	AdaptationFilterBar.prototype._executeRequestedRemoves = function() {
+	AdaptationFilterBar.prototype.executeRemoves = function() {
 
 		var aExistingItems = this._oFilterBarLayout.getInner().getSelectedFields();
 		var aOriginalsToRemove = [];
@@ -310,8 +310,11 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype.exit = function() {
 		FilterBarBase.prototype.exit.apply(this, arguments);
-		this.oAdaptationModel = null;
+		for (var sKey in this._mOriginalsForClone) {
+			this._mOriginalsForClone[sKey].destroy();
+		}
 		this._mOriginalsForClone = null;
+		this.oAdaptationModel = null;
 	};
 
 	return AdaptationFilterBar;

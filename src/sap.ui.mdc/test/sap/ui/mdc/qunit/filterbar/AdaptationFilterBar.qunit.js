@@ -361,7 +361,7 @@ sap.ui.define([
 
 			oAdaptationFilterBar.createFilterFields().then(function(){
 				assert.ok(oAdaptationFilterBar.getFilterItems().length, 3, "FilterFields have been created");
-				oAdaptationFilterBar._executeRequestedRemoves();
+				oAdaptationFilterBar.executeRemoves();
 				assert.equal(oRemoveSpy.callCount, 2, "Correct amount of removes triggered");
 				AggregationBaseDelegate.removeItem.restore();
 				done();
@@ -411,10 +411,10 @@ sap.ui.define([
 				assert.ok(oAdaptationFilterBar.getFilterItems().length, 3, "FilterFields have been created");
 
 				//manually execute removes
-				oAdaptationFilterBar._executeRequestedRemoves().then(function(){
+				oAdaptationFilterBar.executeRemoves().then(function(){
 
 					//Call it again --> no more hooks should be executed
-					oAdaptationFilterBar._executeRequestedRemoves();
+					oAdaptationFilterBar.executeRemoves();
 					assert.equal(oRemoveSpy.callCount, 1, "Correct amount of removes triggered");
 					AggregationBaseDelegate.removeItem.restore();
 					done();
@@ -586,6 +586,37 @@ sap.ui.define([
 
 				done();
 
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("Always destroy leftovers on exit", function(assert){
+		var done = assert.async();
+
+		this.oParent.getInbuiltFilter().setP13nModel(new JSONModel({
+			items: [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				}
+			]
+		}));
+
+		this.oParent.initControlDelegate().then(function(){
+
+			this.oParent.getInbuiltFilter().createFilterFields().then(function(oAdaptationFilterBar){
+
+				//Only one original from delegate as one is already present in the filteritems aggregation
+				var oFKey2 = oAdaptationFilterBar._mOriginalsForClone["key2"];
+				assert.equal(Object.keys(oAdaptationFilterBar._mOriginalsForClone).length, 1, "1 Original from delegate callback");
+
+				oAdaptationFilterBar.destroy();
+
+				assert.ok(oFKey2.bIsDestroyed, "FF1 has been destroyed");
+
+				done();
 			});
 		}.bind(this));
 	});
