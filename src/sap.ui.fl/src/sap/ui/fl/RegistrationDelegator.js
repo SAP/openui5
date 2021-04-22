@@ -14,6 +14,8 @@ sap.ui.define([
 	"sap/ui/fl/EventHistory",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor",
+	"sap/ui/fl/apply/_internal/DelegateMediator",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	// the lower 2 are set as a callback in the "register...Processors" which are not detected as dependencies from the preload-building
 	"sap/ui/fl/PreprocessorImpl",
 	"sap/ui/fl/XmlPreprocessorImpl"
@@ -27,7 +29,9 @@ sap.ui.define([
 	ExtensionPoint,
 	EventHistory,
 	ManifestUtils,
-	Preprocessor
+	Preprocessor,
+	DelegateMediator,
+	DelegateMadiatorAPI
 ) {
 	"use strict";
 
@@ -91,6 +95,14 @@ sap.ui.define([
 		ExtensionPoint.registerExtensionProvider(getExtensionPointProvider);
 	}
 
+	function _registerDefaultDelegate() {
+		DelegateMadiatorAPI.registerDefaultDelegate({
+			modelType: "sap.ui.model.odata.v4.ODataModel",
+			delegate: "sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate",
+			delegateType: DelegateMediator.types.READONLY
+		});
+	}
+
 	/**
 	 * Registers everything in one call
 	 *
@@ -105,6 +117,7 @@ sap.ui.define([
 		_registerXMLPreprocessor();
 		_registerDescriptorChangeHandler();
 		_registerExtensionPointProvider();
+		_registerDefaultDelegate();
 	};
 
 	return RegistrationDelegator;

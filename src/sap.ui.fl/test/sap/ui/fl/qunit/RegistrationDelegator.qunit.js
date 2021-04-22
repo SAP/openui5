@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/EventHistory",
 	"sap/ui/fl/RegistrationDelegator",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/fl/apply/_internal/DelegateMediator",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -20,6 +22,8 @@ sap.ui.define([
 	ChangeHandlerRegistration,
 	EventHistory,
 	RegistrationDelegator,
+	DelegateMediatorAPI,
+	DelegateMediator,
 	jQuery,
 	sinon
 ) {
@@ -41,6 +45,7 @@ sap.ui.define([
 			var oRegisterXMLPreprocessorStub = sandbox.stub(XMLView, "registerPreprocessor");
 			var oRegisterEventListenerStub = sandbox.stub(EventHistory, "start");
 			var oRegisterExtensionPointProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
+			var oRegisterDefaultDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerDefaultDelegate");
 
 			var fnDone = assert.async();
 			sap.ui.require(["sap/ui/fl/library"], function() {
@@ -54,6 +59,7 @@ sap.ui.define([
 				assert.equal(oRegisterXMLPreprocessorStub.callCount, 1, "XML preprocessor called.");
 				assert.equal(oRegisterEventListenerStub.callCount, 1, "Event Listener called.");
 				assert.equal(oRegisterExtensionPointProviderStub.callCount, 1, "ExtensionPoint called.");
+				assert.equal(oRegisterDefaultDelegateStub.callCount, 1, "DefaultDelegate called.");
 				assert.ok(Component._fnPreprocessManifest);
 				fnDone();
 			});
@@ -66,6 +72,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.fl.RegistrationDelegator getExtensionPointProvider function", {
 		beforeEach: function () {
 			var oRegisterExtensionProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
+			DelegateMediator._mDefaultDelegateItems = [];
 			RegistrationDelegator.registerAll();
 			this.fnExtensionProvider = oRegisterExtensionProviderStub.firstCall.args[0];
 		},
