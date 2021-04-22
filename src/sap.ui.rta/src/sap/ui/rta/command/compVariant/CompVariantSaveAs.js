@@ -54,6 +54,10 @@ sap.ui.define([
 		return true;
 	};
 
+	CompVariantSaveAs.prototype.getPreparedChange = function() {
+		return this._oVariant;
+	};
+
 	/**
 	 * Triggers the configuration of a variant.
 	 * @public
