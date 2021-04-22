@@ -261,29 +261,28 @@ sap.ui.define([
 
 			var oTransportSelection = new TransportSelection();
 			return oTransportSelection.openTransportSelection(null, mPropertyBag.transportDialogSettings.rootControl, mPropertyBag.transportDialogSettings.styleClass)
-				.then(function(oTransportInfo) {
-					if (oTransportSelection.checkTransportInfo(oTransportInfo)) {
-						BusyIndicator.show(0);
-						var oContentParameters = {
-							reference: mPropertyBag.reference,
-							layer: mPropertyBag.layer
-						};
-						return oTransportSelection._prepareChangesForTransport(
-							oTransportInfo,
-							mPropertyBag.localChanges,
-							mPropertyBag.appVariantDescriptors,
-							oContentParameters
-						).then(function() {
-							BusyIndicator.hide();
-							if (oTransportInfo.transport === "ATO_NOTIFICATION") {
-								return oResourceBundle.getText("MSG_ATO_NOTIFICATION");
-							}
-							return oResourceBundle.getText("MSG_TRANSPORT_SUCCESS");
-						});
-					}
-					return "Cancel";
-				})
-				['catch'](fnHandleAllErrors);
+			.then(function(oTransportInfo) {
+				if (oTransportSelection.checkTransportInfo(oTransportInfo)) {
+					BusyIndicator.show(0);
+					var oContentParameters = {
+						reference: mPropertyBag.reference,
+						layer: mPropertyBag.layer
+					};
+					return oTransportSelection._prepareChangesForTransport(
+						oTransportInfo,
+						mPropertyBag.localChanges,
+						mPropertyBag.appVariantDescriptors,
+						oContentParameters
+					).then(function() {
+						BusyIndicator.hide();
+						if (oTransportInfo.transport === "ATO_NOTIFICATION") {
+							return oResourceBundle.getText("MSG_ATO_NOTIFICATION");
+						}
+						return oResourceBundle.getText("MSG_TRANSPORT_SUCCESS");
+					});
+				}
+				return "Cancel";
+			})['catch'](fnHandleAllErrors);
 		},
 
 		/**

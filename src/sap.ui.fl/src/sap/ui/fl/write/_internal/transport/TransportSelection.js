@@ -393,4 +393,4 @@ sap.ui.define([
 	};
 
 	return TransportSelection;
-}, true);
+});
