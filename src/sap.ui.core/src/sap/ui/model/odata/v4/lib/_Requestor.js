@@ -1038,7 +1038,7 @@ sap.ui.define([
 		function merge(oRequest) {
 			return oRequest.$queryOptions && aResultingRequests.some(function (oCandidate) {
 				if (oCandidate.$queryOptions && oRequest.url === oCandidate.url) {
-					_Helper.aggregateQueryOptions(oCandidate.$queryOptions, oRequest.$queryOptions);
+					_Helper.aggregateExpandSelect(oCandidate.$queryOptions, oRequest.$queryOptions);
 					oRequest.$resolve(oCandidate.$promise);
 
 					return true;

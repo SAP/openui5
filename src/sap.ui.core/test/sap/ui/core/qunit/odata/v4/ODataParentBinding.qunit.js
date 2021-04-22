@@ -3628,7 +3628,7 @@ sap.ui.define([
 				oHelperMock.expects("wrapChildQueryOptions")
 					.withExactArgs("/meta/path", "foo", {}, "fnFetchMetadata")
 					.returns(mChildQueryOptions);
-				oHelperMock.expects("aggregateQueryOptions")
+				oHelperMock.expects("aggregateExpandSelect")
 					.withExactArgs(sinon.match.same(mResolvedQueryOptions),
 						sinon.match.same(mChildQueryOptions))
 					.callsFake(function () {
@@ -3643,7 +3643,7 @@ sap.ui.define([
 				oHelperMock.expects("wrapChildQueryOptions")
 					.withExactArgs("/meta/path", "bar", {}, "fnFetchMetadata")
 					.returns(mChildQueryOptions);
-				oHelperMock.expects("aggregateQueryOptions")
+				oHelperMock.expects("aggregateExpandSelect")
 					.withExactArgs(sinon.match.same(mResolvedQueryOptions),
 						sinon.match.same(mChildQueryOptions))
 					.callsFake(function () {

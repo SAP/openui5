@@ -173,7 +173,7 @@ sap.ui.define([
 		 * @param {object} mQueryOptions The query options to merge into the aggregated query
 		 *   options
 		 */
-		aggregateQueryOptions : function (mAggregatedQueryOptions, mQueryOptions) {
+		aggregateExpandSelect : function (mAggregatedQueryOptions, mQueryOptions) {
 			if (mQueryOptions.$select) {
 				_Helper.addToSelect(mAggregatedQueryOptions, mQueryOptions.$select);
 			}
@@ -181,7 +181,7 @@ sap.ui.define([
 				mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
 				Object.keys(mQueryOptions.$expand).forEach(function (sPath) {
 					if (mAggregatedQueryOptions.$expand[sPath]) {
-						_Helper.aggregateQueryOptions(mAggregatedQueryOptions.$expand[sPath],
+						_Helper.aggregateExpandSelect(mAggregatedQueryOptions.$expand[sPath],
 							mQueryOptions.$expand[sPath]);
 					} else {
 						mAggregatedQueryOptions.$expand[sPath] = mQueryOptions.$expand[sPath];

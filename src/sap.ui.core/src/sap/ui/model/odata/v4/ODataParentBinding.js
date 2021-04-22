@@ -838,7 +838,7 @@ sap.ui.define([
 						sMetaPath, sSelectPath, {}, fnFetchMetadata);
 
 				if (mWrappedQueryOptions) {
-					_Helper.aggregateQueryOptions(mConvertedQueryOptions, mWrappedQueryOptions);
+					_Helper.aggregateExpandSelect(mConvertedQueryOptions, mWrappedQueryOptions);
 				} else {
 					_Helper.addToSelect(mConvertedQueryOptions, [sSelectPath]);
 				}

@@ -3180,9 +3180,9 @@ sap.ui.define([
 	result : {$expand : {foo : null, bar : null, baz : null}},
 	title : "added $expand path"
 }].forEach(function (oFixture) {
-	QUnit.test("aggregateQueryOptions: " + oFixture.title, function (assert) {
+	QUnit.test("aggregateExpandSelect: " + oFixture.title, function (assert) {
 		// code under test
-		_Helper.aggregateQueryOptions(oFixture.aggregated, oFixture.additional);
+		_Helper.aggregateExpandSelect(oFixture.aggregated, oFixture.additional);
 
 		assert.deepEqual(oFixture.aggregated, oFixture.result);
 	});
@@ -3205,20 +3205,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("aggregateQueryOptions: recursion", function () {
+	QUnit.test("aggregateExpandSelect: recursion", function () {
 		var mAggregatedQueryOptions = {$expand : {foo : {}}},
 			oHelperMock = this.mock(_Helper),
 			mQueryOptions = {$expand : {foo : {}}};
 
-		oHelperMock.expects("aggregateQueryOptions")
+		oHelperMock.expects("aggregateExpandSelect")
 			.withExactArgs(sinon.match.same(mAggregatedQueryOptions),
 				sinon.match.same(mQueryOptions))
 			.callThrough(); // start the recursion
-		oHelperMock.expects("aggregateQueryOptions")
+		oHelperMock.expects("aggregateExpandSelect")
 			.withExactArgs(sinon.match.same(mAggregatedQueryOptions.$expand.foo),
 				sinon.match.same(mQueryOptions.$expand.foo));
 
-		_Helper.aggregateQueryOptions(mAggregatedQueryOptions, mQueryOptions);
+		_Helper.aggregateExpandSelect(mAggregatedQueryOptions, mQueryOptions);
 	});
 
 	//*********************************************************************************************
