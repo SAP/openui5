@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core", "./TableTypeBase", "../library", "sap/m/Button", "sap/ui/Device"
-], function(Core, TableTypeBase, library, Button, Device) {
+	"sap/ui/core/Core", "./TableTypeBase", "../library", "sap/m/Button", "sap/ui/Device", "sap/m/plugins/ColumnResizer"
+], function(Core, TableTypeBase, library, Button, Device, ColumnResizer) {
 	"use strict";
 
 	var InnerTable, InnerColumn, InnerRow;
@@ -172,6 +172,28 @@ sap.ui.define([
 		oRowTemplate.unbindProperty("highlightText");
 
 		oRowTemplate.applySettings(oRowSettings.getAllSettings());
+	};
+
+	ResponsiveTableType.disableColumnResizer = function(oInnerTable) {
+		var oColumnResize = ColumnResizer.getPlugin(oInnerTable);
+		if (oColumnResize) {
+			oColumnResize.setEnabled(false);
+		}
+	};
+
+	ResponsiveTableType.enableColumnResizer = function(oInnerTable) {
+		oInnerTable.setFixedLayout("Strict");
+		var oColumnResize = ColumnResizer.getPlugin(oInnerTable);
+
+		if (!oColumnResize) {
+			oInnerTable.addDependent(new ColumnResizer());
+		} else {
+			oColumnResize.setEnabled(true);
+		}
+	};
+
+	ResponsiveTableType.startColumnResize = function(oInnerTable, oColumn) {
+		ColumnResizer.getPlugin(oInnerTable).startResizing(oColumn.getDomRef());
 	};
 
 	/**

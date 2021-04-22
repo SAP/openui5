@@ -4077,6 +4077,136 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.module("ColumnResize", {
+		beforeEach: function() {
+			var oModel = new JSONModel();
+			oModel.setData({
+				testPath: [
+					{test: "Test1"}, {test: "Test2"}, {test: "Test3"}, {test: "Test4"}, {test: "Test5"}
+				]
+			});
+			this.oTable = new Table({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				},
+				columns: [
+					new Column({
+						header: "Column A",
+						hAlign: "Begin",
+						importance: "High",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column B",
+						hAlign: "Begin",
+						importance: "High",
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						header: "Column C",
+						hAlign: "Begin",
+						importance: "Medium",
+						template: new Text({
+							text: "{test}"
+						})
+					})
+				]
+			});
+
+			this.oTable.setModel(oModel);
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Activate and deactivate column resize on Responsive inner table", function(assert) {
+		var done = assert.async();
+		this.oTable.setType("ResponsiveTable");
+		Core.applyChanges();
+		assert.strictEqual(this.oTable.getType(), "ResponsiveTable", "Responsive table type");
+
+		return this.oTable._fullyInitialized().then(function() {
+			return waitForBinding(this.oTable);
+		}.bind(this)).then(function() {
+			assert.strictEqual(this.oTable._oTable.getDependents()[0].getMetadata().getName(), "sap.m.plugins.ColumnResizer", "Column Resizer is added to the Responsive inner table by default");
+
+			this.oTable.setEnableColumnResize(false);
+			assert.notOk(this.oTable._oTable.getDependents()[0].getEnabled(), "Column Resizer disabled from Responsive inner table");
+
+			this.oTable.setEnableColumnResize(true);
+			assert.ok(this.oTable._oTable.getDependents()[0].getEnabled(), "Column Resizer is added to the Responsive inner table by oTable#setEnableColumnResize");
+
+			var fnMatchMediaOriginal = window.matchMedia;
+			window.matchMedia = sinon.stub();
+			window.matchMedia.returns({
+				matches: true
+			});
+
+			var oColumn = this.oTable._oTable.getColumns()[0];
+			this.oTable._oTable.fireEvent("columnPress", {
+				column: oColumn
+			});
+			this.oTable._fullyInitialized().then(function() {
+				var oResizer = this.oTable._oTable.getDependents()[0];
+				var oCHP = this.oTable._oPopover;
+				var oResizeItem = oCHP.getItems().pop();
+				var fStartResizingSpy = sinon.spy(oResizer, "startResizing");
+
+				oResizeItem.firePress();
+				assert.ok(fStartResizingSpy.calledOnceWithExactly(oColumn.getDomRef()), "ColumnResizer#startResizing is called");
+				window.matchMedia = fnMatchMediaOriginal;
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("Activate and deactivate column resize on Grid inner table with enableColumnResize set to true", function(assert) {
+		var done = assert.async();
+		this.oTable.setType("Table");
+
+		assert.strictEqual(this.oTable.getType(), "Table", "Grid table type");
+
+		this.oTable.initialized().then(function() {
+			assert.ok(this.oTable._oTable.getColumns()[0].getResizable(), "Resizable property of the inner column is set to true");
+			assert.ok(this.oTable._oTable.getColumns()[0].getAutoResizable(), "AutoResizable property of the inner column is set to true");
+
+			this.oTable.setEnableColumnResize(false);
+			assert.notOk(this.oTable._oTable.getColumns()[0].getAutoResizable(), "AutoResizable property of the inner column is set to false");
+			assert.notOk(this.oTable._oTable.getColumns()[0].getResizable(), "Resizable property of the inner column is set to false");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Activate and deactivate column resize on Grid inner table with enableColumnResize set to false", function(assert) {
+		var done = assert.async();
+		this.oTable.setType("Table");
+		this.oTable.setEnableColumnResize(false);
+		this.oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(this.oTable.getType(), "Table", "Grid table type");
+
+		this.oTable.initialized().then(function() {
+			assert.notOk(this.oTable._oTable.getColumns()[0].getAutoResizable(), "AutoResizable property of the inner column is set to false");
+			assert.notOk(this.oTable._oTable.getColumns()[0].getResizable(), "Resizable property of the inner column is set to false");
+
+			this.oTable.setEnableColumnResize(true);
+			assert.ok(this.oTable._oTable.getColumns()[0].getResizable(), "Resizable property of the inner column is set to true");
+			assert.ok(this.oTable._oTable.getColumns()[0].getAutoResizable(), "AutoResizable property of the inner column is set to true");
+			done();
+		}.bind(this));
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function() {
 			this.oTable = new Table();
