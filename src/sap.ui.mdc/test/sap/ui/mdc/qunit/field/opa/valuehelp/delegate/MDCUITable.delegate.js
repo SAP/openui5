@@ -139,7 +139,7 @@ sap.ui.define([
 		if (bFilterEnabled) {
 			mConditions = oMDCTable.getConditions();
 			var aTableProperties = oMDCTable.data("$tablePropertyInfo");
-			oInnerFilterInfo = FilterUtil.getFilterInfo(oMDCTable, mConditions, aTableProperties);
+			oInnerFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeUtil(), mConditions, aTableProperties);
 			if (oInnerFilterInfo.filters) {
 				aFilters.push(oInnerFilterInfo.filters);
 			}
@@ -151,7 +151,7 @@ sap.ui.define([
 
 				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
 				var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-				oOuterFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
+				oOuterFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeUtil(), mConditions, aPropertiesMetadata, aParameterNames);
 
 				if (oOuterFilterInfo.filters) {
 					aFilters.push(oOuterFilterInfo.filters);
@@ -164,14 +164,17 @@ sap.ui.define([
 			}
 
 			// get the basic search
-			var sSearchText = oFilter.getSearch();
+			var sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
+			if (sSearchText) {
 
-			if (!oBindingInfo.parameters) {
-				oBindingInfo.parameters = {};
+				if (!oBindingInfo.parameters) {
+					oBindingInfo.parameters = {};
+				}
+
+				// add basic search parameter as expected by v4.ODataListBinding
+				oBindingInfo.parameters.$search = sSearchText || undefined;
+
 			}
-
-			// add basic search parameter as expected by v4.ODataListBinding
-			oBindingInfo.parameters.$search = sSearchText || undefined;
 		}
 
 		oBindingInfo.filters = new Filter(aFilters, true);

@@ -137,7 +137,7 @@ sap.ui.define([
 
         oValid.then(function(){
             assert.ok(true, "Valid Promise resolved");
-            assert.equal(oSearchSpy.callCount, 1, "Search executed by default");
+            assert.equal(oSearchSpy.callCount, 0, "Search not executed by default");
             done();
         });
     });
@@ -145,7 +145,7 @@ sap.ui.define([
     QUnit.test("Check 'valid' promise - explicitly fire search", function(assert){
         var done = assert.async();
 
-        var oValid = this.oFilterBarBase.valid(true);
+        var oValid = this.oFilterBarBase.triggerSearch();
 
         var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
 
@@ -159,7 +159,7 @@ sap.ui.define([
     QUnit.test("Check 'valid' promise - do not fire search", function(assert){
         var done = assert.async();
 
-        var oValid = this.oFilterBarBase.valid(false);
+        var oValid = this.oFilterBarBase.valid();
 
         var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
 
@@ -174,7 +174,7 @@ sap.ui.define([
 
         var done = assert.async();
 
-        var oValidPromise = this.oFilterBarBase.valid(false);
+        var oValidPromise = this.oFilterBarBase.valid();
 
         oValidPromise.then(function(){
             assert.ok(!this.oFilterBarBase._fResolvedSearchPromise, "Search resolve has been cleaned up");

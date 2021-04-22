@@ -131,13 +131,32 @@ sap.ui.define([
 
 	/**
 	 *
-	 * Interface for controls or entities which can serve as filters in the <code>sap.ui.mdc.Table</code>.
+	 * Interface for controls or entities which can serve as filters in the <code>sap.ui.mdc.Table</code> & <code>sap.ui.mdc.Chart</code>.
+	 *
+	 * The following methods need to be implemented:
+	 *
+	 * <ul>
+	 * <li><code>getConditions</code> - Part of the {@link sap.ui.mdc.IFilterSource} interface.</li>
+	 * <li><code>valid</code> - The <code>valid</code> method should return a promise which resolves after the IFilter interface has handled its inner validation. The <code>getConditions</code> method will be called subsequently by the filtered control.</li>
+	 * <li><code>getSearch</code> - <b>Note:</b> The <code>getSearch</code> method can optionally be implemented and should return a string for approximate string matching implemented in the backend.</li>
+	 * </ul>
+	 *
+	 * The following events need to be implemented:
+	 *
+	 * <ul>
+	 * <li><code>search</code> - This event should be fired once a filtering should be executed on the IFilter using control.</li>
+	 * <li><code>filtersChanged</code> - <b>Note:</b> The <code>filtersChanged</code> event can optionally be implemented and should be fired whenever a filter value has changed. This event will be used to display an overlay on the IFilter consuming control.</li>
+	 * </ul>
+	 *
 	 * The controls or entities have to implement the following APIs: <code>getSearch</code> & <code>getConditions</code> & <code>triggerSearch</code> methods along with the <code>search</code> & <code>filtersChanged</code> events
 	 *
 	 * @since 1.70
+	 * @extends sap.ui.mdc.IFilterSource
 	 * @name sap.ui.mdc.IFilter
 	 * @interface
 	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 

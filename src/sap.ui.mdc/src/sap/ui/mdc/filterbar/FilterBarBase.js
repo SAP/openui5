@@ -725,29 +725,30 @@ sap.ui.define([
 	/**
 	 * Triggers the search.
 	 * @private
-	 * @ui5-restricted sap.fe
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
-		return this.valid(true);
-	};
-
-	/**
-	 * Used for IFilter interface consuming controls
-	 *
-	 * @param {boolean} bFireSearch Determines whether a search should be fired once the Promise has been resolved
-	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
-	 *
-	 * @ui5-restricted sap.ui.mdc
-	 */
-	FilterBarBase.prototype.valid = function(bFireSearch) {
-
-		bFireSearch = typeof bFireSearch == "boolean" ? bFireSearch : true;
-
-		if (this.getSuspendSelection() && bFireSearch) {
+		if (this.getSuspendSelection()) {
 			this._bSearchTriggered = true;
 			return Promise.resolve();
 		}
+		return this.valid().then(function(){
+			this.fireSearch();
+		}.bind(this));
+	};
+
+	/**
+	 * Returns a promise for the asynchronous validation of filters.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 *
+	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
+	 *
+	 */
+	FilterBarBase.prototype.valid = function() {
 
 		return this.initialized().then(function() {
 			if (!this._oSearchPromise) {
@@ -758,7 +759,7 @@ sap.ui.define([
 				}.bind(this));
 
 				var fDelayedFunction = function() {
-					this._validate(bFireSearch);
+					this._validate();
 					this._oSearchPromise = null;
 				};
 				setTimeout(fDelayedFunction.bind(this), 0);
@@ -897,7 +898,7 @@ sap.ui.define([
 		return oFilterField;
 	};
 
-	FilterBarBase.prototype._handleAsyncValidation = function(bFireSearch) {
+	FilterBarBase.prototype._handleAsyncValidation = function() {
 		if (this._aFIChanges && (this._aFIChanges.length > 0)) {
 
 			var aNamePromisesArray = this._aFIChanges.slice();
@@ -916,31 +917,30 @@ sap.ui.define([
 						oFF.setValueState(ValueState.None); //valid existing value -> clear missing required error
 					}
 				}, this);
-				this._validate(bFireSearch);
+				this._validate();
 			}.bind(this), function(aConditionsArray) {
-				this._validate(bFireSearch);
+				this._validate();
 			}.bind(this));
 		}
 	};
 
-	FilterBarBase.prototype._waitForChangeAppliance = function(bFireSearch) {
+	FilterBarBase.prototype._waitForChangeAppliance = function() {
 
 		var aChangePromises = this._aCollectedChangePromises.slice();
 		this._aCollectedChangePromises = null;
 
 		Promise.all(aChangePromises).then(function(aConditionsArray) {
-			this._validate(bFireSearch);
+			this._validate();
 		}.bind(this), function(aConditionsArray) {
-			this._validate(bFireSearch);
+			this._validate();
 		}.bind(this));
 	};
 
 	/**
 	 * Executes the search.
 	 * @private
-	 * @param {boolean} bFireSearch Determines whether a search event should be fired
 	 */
-	 FilterBarBase.prototype._validate = function(bFireSearch) {
+	 FilterBarBase.prototype._validate = function() {
 		var sErrorMessage, vRetErrorState;
 
 		var fnCleanup = function() {
@@ -957,19 +957,16 @@ sap.ui.define([
 		vRetErrorState = this._checkFilters();
 
 		if (vRetErrorState === ErrorState.AsyncValidation) {
-			this._handleAsyncValidation(bFireSearch);
+			this._handleAsyncValidation();
 			return;
 		}
 
 		if (this._aCollectedChangePromises && (this._aCollectedChangePromises.length > 0)) {
-			this._waitForChangeAppliance(bFireSearch);
+			this._waitForChangeAppliance();
 			return;
 		}
 
 		if (vRetErrorState === ErrorState.NoError) {
-			if (bFireSearch) {
-				this.fireSearch();
-			}
 			this._fResolvedSearchPromise();
 			fnCleanup();
 		} else {

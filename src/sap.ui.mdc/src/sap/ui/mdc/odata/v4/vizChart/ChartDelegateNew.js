@@ -943,7 +943,7 @@ sap.ui.define([
 
                 var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
                 var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-                var oFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
+                var oFilterInfo = FilterUtil.getFilterInfo(ChartDelegate.getTypeUtil(), mConditions, aPropertiesMetadata, aParameterNames);
                 if (oFilterInfo) {
                     oBindingInfo.filters = oFilterInfo.filters;
                 }
@@ -955,7 +955,7 @@ sap.ui.define([
             }
 
             // get the basic search
-            var sSearchText = oFilter.getSearch();
+            var sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
             if (sSearchText) {
 
                 if (!oBindingInfo) {
@@ -1048,11 +1048,9 @@ sap.ui.define([
                 }
                 // Make this dynamic for setter calls
                 this._vizTooltip.connect(this._oInnerChart.getVizUid());
-            } else {
-                if (this._vizTooltip) {
+            } else if (this._vizTooltip) {
                     this._vizTooltip.destroy();
                 }
-            }
         } else {
             Log.error("Trying to set chart tooltip while inner chart was not yet initialized");
         }

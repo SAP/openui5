@@ -95,7 +95,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				/**
 				 * Creates the filter statements based on the externalize conditions.<br>
 				 *
-				 * @param {sap.ui.mdc.Control} oMDCControl the MDC control instance
+				 * @param {sap.ui.mdc.Control|sap.ui.mdc.util.TypeUtil} vTypeProvider the MDC control instance or TypeUtil
 				 * @param {map} mConditions - map with externalized conditions
 				 * @param {array} aPropertiesMetadata - array with all the property metadata
 				 * @param {array} aIgnoreProperties - an array of property names which should be not considered for filtering
@@ -103,18 +103,9 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 				 * @private
 				 * @ui5-restricted sap.ui.mdc
 				 */
-				getFilterInfo: function(oMDCControl, mConditions, aPropertiesMetadata, aIgnoreProperties) {
+				getFilterInfo: function(vTypeProvider, mConditions, aPropertiesMetadata, aIgnoreProperties) {
 
 					var oFilterInfo = {};
-
-					if (!oMDCControl) {
-						Log.error("not an mdc control");
-						return oFilterInfo;
-					}
-					if (!oMDCControl.bDelegateInitialized || !oMDCControl.getTypeUtil()) {
-						Log.error("typeUtil not available");
-						return oFilterInfo;
-					}
 
 					aIgnoreProperties = aIgnoreProperties ? aIgnoreProperties : [];
 
@@ -134,7 +125,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 									//convert from externalized to model-specific value representation
 									for (i = 0; i < mConditions[sFieldPath].length; i++) {
 										oConditionInternal = merge({}, mConditions[sFieldPath][i]);
-										mInternalFilterConditions[sFieldPath].push(ConditionConverter.toType(oConditionInternal, oProperty.typeConfig, oMDCControl.getTypeUtil()));
+										mInternalFilterConditions[sFieldPath].push(ConditionConverter.toType(oConditionInternal, oProperty.typeConfig, vTypeProvider.getTypeUtil ? vTypeProvider.getTypeUtil() : vTypeProvider));
 									}
 
 								} else {
