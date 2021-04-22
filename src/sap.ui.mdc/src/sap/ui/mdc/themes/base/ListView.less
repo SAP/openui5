@@ -1,5 +1,5 @@
 //Display ':' for Labels in the 'list' view
-.sapUiMDCListView.sapUiMDCAFLabelMarkingList tbody .sapMLabel::after {
+.sapUiMDCListView.sapUiMDCAFLabelMarkingList tbody  .sapMLabel > span:first-child::after {
 	content: ":";
 }
 
@@ -17,4 +17,8 @@
 .sapUiMDCListView .sapMPanelContent li {
     align-items: start; //Checkbox should not be centered
     display: flex; //Is the default for Lists - only needs to be set as the parent is a Table
+}
+
+.sapUiMDCListView tbody > tr > td {
+    padding-left: 0.5rem;
 }

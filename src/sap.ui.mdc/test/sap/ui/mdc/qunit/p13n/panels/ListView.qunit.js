@@ -178,7 +178,32 @@ sap.ui.define([
         assert.equal(oIconSecondTableItem.getVisible(), true, "The filtered icon is visible again as the table item does no longer hold the move buttons");
     });
 
-    QUnit.test("Check '_handleHover'", function(assert){
+    QUnit.test("Check focus event handling", function(assert){
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+
+        var nFirstHovered = this.oListView._oListControl.getItems()[1].getDomRef();
+        this.oListView._focusHandler({
+            currentTarget: nFirstHovered
+        });
+
+        assert.ok(this.oListView._oHoveredItem, "Focused item is kept separately");
+
+        //Focused item has the move buttons
+        assert.deepEqual(this.oListView._oListControl.getItems()[1], this.oListView._getMoveButtonContainer().getParent(), "The hovered item holds the move buttons");
+        var oIconSecondTableItem = this.oListView._oListControl.getItems()[1].getCells()[1].getItems()[0];
+        assert.equal(oIconSecondTableItem.getVisible(), false, "The filtered icon is invisible as the table item holds the move buttons");
+
+        var nSecondHovered = this.oListView._oListControl.getItems()[0].getDomRef();
+        this.oListView._focusHandler({
+            currentTarget: nSecondHovered
+        });
+
+        //The prior focused item does no longer contain the move buttons and the active icon is visible again
+        assert.notDeepEqual(this.oListView._oListControl.getItems()[1], this.oListView._getMoveButtonContainer().getParent(), "The hovered item does not hold the move buttons anymore");
+        assert.equal(oIconSecondTableItem.getVisible(), true, "The filtered icon is visible again as the table item does no longer hold the move buttons");
+    });
+
+    QUnit.test("Check '_handleActivated'", function(assert){
         this.oListView.setP13nModel(new JSONModel(this.oP13nData));
 
         var oHoveredItem = this.oListView._oListControl.getItems()[1];
@@ -186,7 +211,7 @@ sap.ui.define([
         oHoveredItem.getCells()[1].getItems()[0].setVisible(true);//Set icon to visible --> check that the handler sets it to visible: false
 
         //execute hover handler
-        this.oListView._handleHover(oHoveredItem);
+        this.oListView._handleActivated(oHoveredItem);
 
         //check that movement buttons have been added
         assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oListView._getMoveTopButton()) > -1, "Move Top Button found");

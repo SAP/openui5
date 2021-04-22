@@ -125,6 +125,7 @@ sap.ui.define([
 				new Toolbar({
 					content: [
 						new Label({
+							wrapping: true,
 							text: "{" + this.P13N_MODEL + ">groupLabel}",
 							design: "Bold"
 						})

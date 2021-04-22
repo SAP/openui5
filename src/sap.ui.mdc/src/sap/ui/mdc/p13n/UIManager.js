@@ -248,6 +248,14 @@ sap.ui.define([
 
 			// Set compact style class if the table is compact too
 			oContainer.toggleStyleClass("sapUiSizeCompact", !!jQuery(oControl).closest(".sapUiSizeCompact").length);
+
+			//TODO: Clarify whether we really want this
+			//If the container has a header itself, don't show any shadows from the dialog
+			//if (oContainer && oContainer.getCustomHeader()){
+			//	oContainer.getCustomHeader().addStyleClass("sapUiMdcContainerBar");
+			//}
+
+
 			return oContainer;
 		}.bind(this));
 

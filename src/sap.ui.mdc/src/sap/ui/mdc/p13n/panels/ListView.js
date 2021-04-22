@@ -112,7 +112,8 @@ sap.ui.define([
 
         if (bEnableReorder) {
             oListViewTemplate.addEventDelegate({
-                onmouseover: this._hoverHandler.bind(this)
+                onmouseover: this._hoverHandler.bind(this),
+                onfocusin: this._focusHandler.bind(this)
             });
         } else {
             oListViewTemplate = this._getListTemplate();
@@ -126,18 +127,24 @@ sap.ui.define([
         return this;
     };
 
+    ListView.prototype._focusHandler = function(oEvt) {
+        //(new) hovered item
+        var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
+        this._handleActivated(oHoveredItem);
+    };
+
     ListView.prototype._hoverHandler = function(oEvt) {
-        //Only use hover if no item has been selected yet
+        //Only use hover if no item has been selected yet (only for hovering)
         if (this._oSelectedItem && !this._oSelectedItem.bIsDestroyed) {
             return;
         }
 
         //(new) hovered item
         var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
-        this._handleHover(oHoveredItem);
+        this._handleActivated(oHoveredItem);
     };
 
-    ListView.prototype._handleHover = function(oHoveredItem) {
+    ListView.prototype._handleActivated = function(oHoveredItem) {
         //remove move buttons if unselected item is hovered (not covered by updateStarted)
         this.removeMoveButtons();
 
@@ -220,7 +227,7 @@ sap.ui.define([
         if (oTableItem.getBindingContext(this.P13N_MODEL).getProperty("visible")){
             BasePanel.prototype._onItemPressed.apply(this, arguments);
             if (this.getEnableReorder()){
-                this._handleHover(oTableItem);
+                this._handleActivated(oTableItem);
             }
         }
     };
@@ -232,7 +239,7 @@ sap.ui.define([
 
     ListView.prototype._moveTableItem = function(){
         BasePanel.prototype._moveTableItem.apply(this, arguments);
-        this._handleHover(this._oSelectedItem);
+        this._handleActivated(this._oSelectedItem);
     };
 
 	ListView.prototype.getShowFactory = function() {
