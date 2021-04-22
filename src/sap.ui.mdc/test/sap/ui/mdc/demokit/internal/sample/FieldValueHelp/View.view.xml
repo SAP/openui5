@@ -12,7 +12,7 @@
 		<ToolbarSpacer/>
 	</OverflowToolbar>
 
-	<form:SimpleForm layout="ColumnLayout" editable="true" labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1" singleContainerFullSize="false" adjustLabelSpan="false">
+	<form:SimpleForm layout="ColumnLayout" editable="true">
 		<core:Title text="Field"></core:Title>
 
 		<Label text="List" />

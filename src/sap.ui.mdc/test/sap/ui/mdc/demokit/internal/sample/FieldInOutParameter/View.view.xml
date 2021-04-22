@@ -12,8 +12,8 @@
 		<ToolbarSpacer/>
 	</OverflowToolbar>
 
-	<form:SimpleForm layout="ColumnLayout" editable="true" labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1" singleContainerFullSize="false" adjustLabelSpan="false">
-		<core:Title text="Fields with Genre as In-Parameter for Subgenre and Genre as out-parameter back to genre"></core:Title>
+	<form:SimpleForm layout="ColumnLayout" editable="true">
+		<core:Title text="Fields with 'Genre' as In-Parameter for 'Subgenre' and 'Subgenre' as out-parameter back to 'Genre'"></core:Title>
 
 		<Label text="Genre" />
 		<mdc:Field id="fGenre" value="{genre_code}" fieldHelp="FHGenre" display="Description" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"/>

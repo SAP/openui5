@@ -1,0 +1,44 @@
+{
+  "sap.app": {
+	"id": "sap.ui.mdc.sample.FieldValueHelp",
+	"type": "application",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	}
+  },
+  "sap.ui5": {
+	"rootView": {
+	  "viewName": "sap.ui.mdc.sample.FieldValueHelp.View",
+	  "type": "XML",
+	  "async": true
+	},
+	"dependencies": {
+	  "libs": {
+		"sap.m": {},
+		"sap.ui.table": {}
+	  }
+	},
+	"config": {
+	  "sample": {
+		"stretch": true,
+		"files": [
+			"View.view.xml",
+			"Controller.controller.js"
+		]
+	  }
+	},
+	"models": {
+		"": {
+			"dataSource": "default",
+			"preload": true,
+			"settings": {
+				"autoExpandSelect": true,
+				"operationMode": "Server",
+				"synchronizationMode": "None",
+				"updateGroupId": "booksGroup"
+			},
+			"type": "sap.ui.model.odata.v4.ODataModel"
+		}
+	}
+  }
+}

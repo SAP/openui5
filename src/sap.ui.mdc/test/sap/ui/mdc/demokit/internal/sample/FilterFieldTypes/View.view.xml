@@ -11,7 +11,7 @@
 		<ToolbarSpacer/>
 	</OverflowToolbar>
 
-	<form:SimpleForm id="Form1" layout="ColumnLayout" editable="true" labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1" singleContainerFullSize="false" adjustLabelSpan="false">
+	<form:SimpleForm id="Form1" layout="ColumnLayout" editable="true">
 		<core:Title text="FilterField"></core:Title>
 
 		<Label text="FilterField (String)"></Label>
