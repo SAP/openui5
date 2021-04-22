@@ -3,13 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/model/ParseException",
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/odata/type/UnitMixin",
-	"sap/ui/model/type/Currency",
-	"sap/ui/test/TestUtils"
-], function (Log, ParseException, Currency, applyUnitMixin, BaseCurrency, TestUtils) {
-	/*global QUnit, sinon*/
+	"sap/ui/model/type/Currency"
+], function (Log, Currency, applyUnitMixin, BaseCurrency) {
+	/*global QUnit*/
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -73,8 +71,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("formatValue and parseValue", function (assert) {
-		var aCurrentValues = [{/*unused*/}, "EUR", {/*unused*/}],
-			mCustomizing = {
+		var mCustomizing = {
 				"BHD" : {StandardCode : "BHD", UnitSpecificScale : 3},
 				"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2}
 			},
@@ -85,18 +82,17 @@ sap.ui.define([
 			"42.00\u00a0EUR");
 
 		this.mock(BaseCurrency.prototype).expects("parseValue")
-			.withExactArgs("42 EUR", "string", sinon.match.same(aCurrentValues))
+			.withExactArgs("42 EUR", "string")
 			.on(oType)
 			.callThrough();
 
 		// code under test
-		assert.deepEqual(oType.parseValue("42 EUR", "string", aCurrentValues), ["42", "EUR"]);
+		assert.deepEqual(oType.parseValue("42 EUR", "string"), ["42", "EUR"]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("formatValue and parseValue: empty field", function (assert) {
-		var aCurrentValues = [null, null, {/*unused*/}],
-			mCustomizing = {
+		var mCustomizing = {
 				"EUR" : {StandardCode : "EUR", UnitSpecificScale : 2}
 			},
 			oType = new Currency();
@@ -106,12 +102,12 @@ sap.ui.define([
 		oType.formatValue([null, null, mCustomizing], "string");
 
 		this.mock(BaseCurrency.prototype).expects("parseValue")
-			.withExactArgs("42", "string", sinon.match.same(aCurrentValues))
+			.withExactArgs("42", "string")
 			.on(oType)
 			.callThrough();
 
 		// code under test
-		assert.deepEqual(oType.parseValue("42", "string", aCurrentValues), ["42", undefined]);
+		assert.deepEqual(oType.parseValue("42", "string"), ["42", undefined]);
 	});
 
 	//*********************************************************************************************

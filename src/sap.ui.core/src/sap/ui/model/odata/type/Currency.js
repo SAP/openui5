@@ -53,8 +53,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.63.0
 	 * @version ${version}
-	 *
-	 * @borrows sap.ui.model.odata.type.UnitMixin#validateValue as #validateValue
 	 */
 	var Currency = BaseCurrency.extend("sap.ui.model.odata.type.Currency", {
 		constructor : function (oFormatOptions, oConstraints) {
@@ -124,8 +122,8 @@ sap.ui.define([
 	 *   with "string" as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @param {any[]} aCurrentValues
-	 *   The current values of all binding parts
+	 * @param {any[]} [aCurrentValues]
+	 *   Not used
 	 * @returns {any[]}
 	 *   An array containing amount and currency in this order. Both, amount and currency, are
 	 *   string values unless the format option <code>parseAsString</code> is <code>false</code>; in
@@ -138,6 +136,23 @@ sap.ui.define([
 	 * @name sap.ui.model.odata.type.Currency#parseValue
 	 * @public
 	 * @see sap.ui.model.type.Currency#parseValue
+	 * @since 1.63.0
+	 */
+
+	/**
+	 * Validates whether the given value in model representation as returned by {@link #parseValue}
+	 * is valid and meets the conditions of this type's currency customizing.
+	 *
+	 * @param {any[]} aValues
+	 *   An array containing amount and currency in this order, see return value of
+	 *   {@link #parseValue}
+	 * @throws {sap.ui.model.ValidateException}
+	 *   If {@link #formatValue} has not yet been called with a customizing part or if the entered
+	 *   amount has too many decimals for its currency
+	 *
+	 * @function
+	 * @name sap.ui.model.odata.type.Currency#validateValue
+	 * @public
 	 * @since 1.63.0
 	 */
 

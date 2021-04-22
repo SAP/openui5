@@ -55,7 +55,6 @@ sap.ui.define([
 		oType = new UnitMixin();
 
 		assert.deepEqual(oType.oConstraints, {});
-		assert.strictEqual(oType.bParseWithValues, true);
 		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions,
 			"format options are immutable: clone");
 		assert.ok(oType.hasOwnProperty("mCustomUnits"));
@@ -79,34 +78,11 @@ sap.ui.define([
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
 			parseAsString : true, unitOptional : true});
 
-		[false, undefined, ""].forEach(function (bParseAsString) {
-			oFormatOptions.parseAsString = bParseAsString;
-
-			// code under test
-			oType = new UnitMixin(oFormatOptions);
-
-			assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-				parseAsString : true, unitOptional : true});
-			assert.notStrictEqual(oType.oFormatOptions, oFormatOptions,
-				"format options are immutable: clone");
-		});
-
-		delete oFormatOptions.parseAsString;
-		oFormatOptions.unitOptional = false;
-
 		// code under test
-		oType = new UnitMixin(oFormatOptions);
+		oType = new UnitMixin({parseAsString : "~parseAsString", unitOptional : "~unitOptional"});
 
-		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-			parseAsString : true, unitOptional : false});
-
-		oFormatOptions.unitOptional = undefined;
-
-		// code under test
-		oType = new UnitMixin(oFormatOptions);
-
-		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
-			parseAsString : true, unitOptional : undefined});
+		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, parseAsString : "~parseAsString",
+			unitOptional : "~unitOptional"});
 
 		assert.throws(function () {
 			oType = new UnitMixin({}, {"minimum" : 42});
@@ -355,7 +331,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("parseValue delegates to base prototype", function (assert) {
 		var oBaseUnitMock = this.mock(this.oBasePrototype),
-			aCurrentValues = [{/*unused*/}, "KG", {/*unused*/}],
 			mCustomizing = {
 				"KG" : {Text : "kilogram", UnitSpecificScale : 2}
 			},
@@ -371,167 +346,65 @@ sap.ui.define([
 		oType.formatValue([42, "KG", mCustomizing], "string");
 
 		oBaseUnitMock.expects("parseValue")
-			.withExactArgs("42 KG", "string", sinon.match.same(aCurrentValues))
+			.withExactArgs("42 KG", "string")
 			.on(oType)
 			.returns(["42", "KG"]);
 
 		// code under test
-		assert.deepEqual(oType.parseValue("42 KG", "string", aCurrentValues),
+		assert.deepEqual(oType.parseValue("42 KG", "string"),
 			["42", "KG"]);
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bParseAsString) {
-		var sTitle = "parseValue: remove trailing zeroes, parseAsString=" + bParseAsString;
-
-		QUnit.test(sTitle, function (assert) {
-			var oBaseUnitMock = this.mock(this.oBasePrototype),
-				aCurrentValues = [{/*unused*/}, null, {/*unused*/}],
-				mCustomizing = {
-					"KG" : {Text : "kilogram", UnitSpecificScale : 2}
-				},
-				oType = new UnitMixin({parseAsString : bParseAsString});
-
-			// make customizing available on type instance so that it can be used in parseValue
-			this.mock(oType).expects("getCustomUnitForKey").withExactArgs(mCustomizing, "KG")
-				.returns({
-					displayName : "kilogram",
-					decimals : 2,
-					"unitPattern-count-other" : "{0} KG"
-				});
-			oType.formatValue([42, "KG", mCustomizing], "string");
-
-			oBaseUnitMock.expects("parseValue")
-				.withExactArgs("12.100", "string", sinon.match.same(aCurrentValues))
-				.on(oType)
-				.returns(["12.100", undefined]);
-
-			// code under test: remove trailing zeroes before decimals check, part 1
-			assert.deepEqual(oType.parseValue("12.100", "string", aCurrentValues),
-				[bParseAsString ? "12.1" : 12.1, undefined]);
-
-			oBaseUnitMock.expects("parseValue")
-				.withExactArgs("12.000", "string", sinon.match.same(aCurrentValues))
-				.on(oType)
-				.returns(["12.000", undefined]);
-
-			// code under test: remove trailing zeroes before decimals check, part 2
-			assert.deepEqual(oType.parseValue("12.000", "string", aCurrentValues),
-				[bParseAsString ? "12" : 12, undefined]);
-		});
-	});
-
-	//*********************************************************************************************
-	[false, true].forEach(function (bParseAsString) {
-		var sTitle = "parseValue: check decimals, parseAsString=" + bParseAsString;
-
-		QUnit.test(sTitle, function (assert) {
-			var oBaseUnitMock = this.mock(this.oBasePrototype),
-				aCurrentValues = [{/*unused*/}, "KG", {/*unused*/}],
-				mCustomizing = {
-					"KG" : {Text : "kilogram", UnitSpecificScale : 2}
-				},
-				oType = new UnitMixin({parseAsString : bParseAsString});
-
-			// make customizing available on type instance so that it can be used in parseValue
-			this.mock(oType).expects("getCustomUnitForKey").withExactArgs(mCustomizing, "KG")
-				.returns({
-					displayName : "kilogram",
-					decimals : 2,
-					"unitPattern-count-other" : "{0} KG"
-				});
-			oType.formatValue([42, "KG", mCustomizing], "string");
-
-			oBaseUnitMock.expects("parseValue")
-				.withExactArgs("12.12 KG", "string", sinon.match.same(aCurrentValues))
-				.on(oType)
-				.returns(["12.12", "KG"]);
-
-			// code under test: measure with unit
-			assert.deepEqual(oType.parseValue("12.12 KG", "string", aCurrentValues),
-				[bParseAsString ? "12.12" : 12.12, "KG"]);
-
-			oBaseUnitMock.expects("parseValue")
-				.withExactArgs("12.12", "string", sinon.match.same(aCurrentValues))
-				.on(oType)
-				.returns(["12.12", undefined]);
-
-			// code under test: measure w/o unit
-			assert.deepEqual(oType.parseValue("12.12", "string", aCurrentValues),
-				[bParseAsString ? "12.12" : 12.12, undefined]);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("parseValue: check decimals, error cases", function (assert) {
+	QUnit.test("parseValue: remove trailing zeroes", function (assert) {
 		var oBaseUnitMock = this.mock(this.oBasePrototype),
-			aCurrentValues = [{/*unused*/}, "KG", {/*unused*/}],
 			mCustomizing = {
-				"KG" : {Text : "kilogram", UnitSpecificScale : 2},
-				"KG0" : {Text : "kilogram", UnitSpecificScale : 0}
+				"KG" : {Text : "kilogram", UnitSpecificScale : 2}
 			},
-			oType = new UnitMixin({parseAsString : true}),
-			oTypeMock = this.mock(oType);
+			oType = new UnitMixin({parseAsString : true});
 
 		// make customizing available on type instance so that it can be used in parseValue
-		oTypeMock.expects("getCustomUnitForKey").withExactArgs(mCustomizing, "KG")
+		this.mock(oType).expects("getCustomUnitForKey").withExactArgs(mCustomizing, "KG")
 			.returns({
 				displayName : "kilogram",
 				decimals : 2,
 				"unitPattern-count-other" : "{0} KG"
 			});
-		oTypeMock.expects("getCustomUnitForKey").withExactArgs(mCustomizing, "KG0")
-			.returns({
-				displayName : "kilogram",
-				decimals : 0,
-				"unitPattern-count-other" : "{0} KG="
-			});
 		oType.formatValue([42, "KG", mCustomizing], "string");
 
 		oBaseUnitMock.expects("parseValue")
-			.withExactArgs("123456789012345678901234567890.123 KG", "string",
-				sinon.match.same(aCurrentValues))
+			.withExactArgs("12.100", "string")
 			.on(oType)
-			.returns(["123456789012345678901234567890.123", "KG"]);
+			.returns(["12.100", undefined]);
 
-		// code under test: parse exception with number of decimals
-		TestUtils.withNormalizedMessages(function () {
-			assert.throws(function () {
-				oType.parseValue("123456789012345678901234567890.123 KG", "string",
-					aCurrentValues);
-			}, new ParseException("EnterNumberFraction 2"));
-		});
+		// code under test
+		assert.deepEqual(oType.parseValue("12.100", "string"), ["12.1", undefined]);
 
-		aCurrentValues[1] = "KG0";
 		oBaseUnitMock.expects("parseValue")
-			.withExactArgs("12.1", "string", sinon.match.same(aCurrentValues))
+			.withExactArgs("12.000", "string")
 			.on(oType)
-			.returns(["12.1", undefined]);
+			.returns(["12.000", undefined]);
 
-		// code under test: parse exception w/o decimals
-		TestUtils.withNormalizedMessages(function () {
-			assert.throws(function () {
-				oType.parseValue("12.1", "string", aCurrentValues);
-			}, new ParseException("EnterInt"));
-		});
+		// code under test
+		assert.deepEqual(oType.parseValue("12.000", "string"), ["12", undefined]);
 
-		aCurrentValues[1] = "foo";
+		oType = new UnitMixin({parseAsString : false});
+		oType.mCustomUnits = {
+			"KG" : {/*not relevant*/}
+		};
+
 		oBaseUnitMock.expects("parseValue")
-			.withExactArgs("12.2", "string", sinon.match.same(aCurrentValues))
+			.withExactArgs("12.000", "string")
 			.on(oType)
-			.returns(["12.2", undefined]);
-		oBaseUnitMock.expects("getInvalidUnitText").withExactArgs().returns("~invalidUnit");
+			.returns([12, undefined]);
 
-		// code under test: parse exception when unit is not in customizing
-		assert.throws(function () {
-			oType.parseValue("12.2", "string", aCurrentValues);
-		}, new ParseException("~invalidUnit"));
+		// code under test: no trailing zero removal required if parseAsString=false
+		assert.deepEqual(oType.parseValue("12.000", "string"), [12, undefined]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("parseValue: empty field", function (assert) {
-		var aCurrentValues = [null, null, {/*unused*/}],
-			mCustomizing = {
+		var mCustomizing = {
 				"KG" : {Text : "kilogram", UnitSpecificScale : 2}
 			},
 			oType = new UnitMixin({parseAsString : true});
@@ -547,29 +420,28 @@ sap.ui.define([
 		oType.formatValue([null, null, mCustomizing], "string");
 
 		this.mock(this.oBasePrototype).expects("parseValue")
-			.withExactArgs("42", "string", sinon.match.same(aCurrentValues))
+			.withExactArgs("42", "string")
 			.on(oType)
 			.returns(["42", undefined]);
 
 		// code under test
-		assert.deepEqual(oType.parseValue("42", "string", aCurrentValues), ["42", undefined]);
+		assert.deepEqual(oType.parseValue("42", "string"), ["42", undefined]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("parseValue: falsy amount/measure and showNumber=false", function (assert) {
-		var aCurrentValues = ["5", "KG", {/*unused*/}],
-			oType = new UnitMixin({emptyString : null, parseAsString : false, showNumber : false});
+		var oType = new UnitMixin({emptyString : null, parseAsString : false, showNumber : false});
 
 		oType.mCustomUnits = {
 			"KG" : {/*not relevant*/}
 		};
 		this.mock(this.oBasePrototype).expects("parseValue")
-			.withExactArgs("", "string", sinon.match.same(aCurrentValues))
+			.withExactArgs("", "string")
 			.on(oType)
 			.returns([undefined, null]); // as base type would return if showNumber=false
 
 		// code under test
-		assert.deepEqual(oType.parseValue("", "string", aCurrentValues), [undefined, null]);
+		assert.deepEqual(oType.parseValue("", "string"), [undefined, null]);
 	});
 
 	//*********************************************************************************************
@@ -579,7 +451,7 @@ sap.ui.define([
 		oType.formatValue([null, null, null], "string");
 
 		this.mock(this.oBasePrototype).expects("parseValue")
-			.withExactArgs("42.123 kg",  "string")
+			.withExactArgs("42.123 kg", "string")
 			.on(oType)
 			.returns(["42.123", "mass-kilogram"]);
 
@@ -600,23 +472,78 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oType.validateValue(["77", "KG"]);
+			oType.validateValue(["77", "G"]);
 		}, new ValidateException("Cannot validate value without customizing"));
 
 		this.mock(oType).expects("getCustomUnitForKey")
 			.withExactArgs({"G" : {Text : "gram", UnitSpecificScale : 1}}, "G")
 			.returns({displayName : "gram", decimals : 1, "unitPattern-count-other" : "{0} G"});
 
-		oType.formatValue(["42", "KG", {"G" : {Text : "gram", UnitSpecificScale : 1}}], "string");
+		oType.formatValue(["42", "G", {"G" : {Text : "gram", UnitSpecificScale : 1}}], "string");
 
 		// code under test
-		oType.validateValue(["77", "KG"]);
+		oType.validateValue(["77", "G"]);
+
+		// code under test: no decimals check for unset number values
+		oType.validateValue([undefined, "KG"]);
+
+		oType = new UnitMixin({showNumber : false});
+		oType.formatValue(["42", "G", {"G" : {Text : "gram", UnitSpecificScale : 1}}], "string");
+
+		// code under test: no decimals check for empty input if showNumber=false
+		oType.validateValue([42, undefined]);
 
 		oType = new UnitMixin();
-		oType.formatValue(["42", "KG", null], "string");
+		oType.formatValue(["42", "G", null], "string");
 
-		// code under test
-		oType.validateValue(["77", "KG"]);
+		// code under test: no custom units check if mCustomUnits=null
+		oType.validateValue(["77", "G"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("validateValue: check decimals, error cases", function (assert) {
+		var mCustomizing = {
+				"KG" : {Text : "kilogram", UnitSpecificScale : 2},
+				"KG0" : {Text : "kilogram", UnitSpecificScale : 0}
+			},
+			oType = new UnitMixin({parseAsString : true}),
+			oTypeMock = this.mock(oType);
+
+		// make customizing available on type instance so that it can be used in validateValue
+		oTypeMock.expects("getCustomUnitForKey").withExactArgs(mCustomizing, "KG")
+			.returns({
+				decimals : 2,
+				displayName : "kilogram",
+				"unitPattern-count-other" : "{0} KG"
+			});
+		oTypeMock.expects("getCustomUnitForKey").withExactArgs(mCustomizing, "KG0")
+			.returns({
+				decimals : 0,
+				displayName : "kilogram",
+				"unitPattern-count-other" : "{0} KG="
+			});
+		oType.formatValue([42, "KG", mCustomizing], "string");
+
+		// code under test: validate exception with number of decimals
+		TestUtils.withNormalizedMessages(function () {
+			assert.throws(function () {
+				oType.validateValue(["123456789012345678901234567890.123", "KG"]);
+			}, new ValidateException("EnterNumberFraction 2"));
+		});
+
+		// code under test: validate exception w/o decimals
+		TestUtils.withNormalizedMessages(function () {
+			assert.throws(function () {
+				oType.validateValue(["12.1", "KG0"]);
+			}, new ValidateException("EnterInt"));
+		});
+
+		// code under test: decimals validate exception also works for bParseAsString=false
+		TestUtils.withNormalizedMessages(function () {
+			assert.throws(function () {
+				oType.validateValue([12.34, "KG0"]);
+			}, new ValidateException("EnterInt"));
+		});
 	});
 
 	//*********************************************************************************************
@@ -635,30 +562,6 @@ sap.ui.define([
 		assert.deepEqual(oUnitType.getPartsIgnoringMessages(), oFixture.aResult);
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("getFormatOptions", function (assert) {
-		var oBaseUnitMock = this.mock(this.oBasePrototype),
-			oBaseFormatOptions = {
-				emptyString: 0,
-				option : "42",
-				parseAsString : true,
-				unitOptional : true
-			},
-			oFormatOptions = {option : "42", parseAsString : "~parseAsString"},
-			oResult,
-			oType = new UnitMixin(oFormatOptions);
-
-		oBaseUnitMock.expects("getFormatOptions").withExactArgs().returns(oBaseFormatOptions);
-
-		// code under test
-		oResult = oType.getFormatOptions();
-
-		assert.deepEqual(oResult,
-			{emptyString: 0, option : "42", parseAsString : "~parseAsString", unitOptional : true});
-		assert.strictEqual(oResult, oBaseFormatOptions,
-			"base type getFormatOptions creates a copy, do not copy again");
-	});
 
 	//*********************************************************************************************
 	QUnit.test("getFormatOptions with format option for custom units", function (assert) {
