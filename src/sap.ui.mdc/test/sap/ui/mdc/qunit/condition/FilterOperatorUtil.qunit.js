@@ -117,7 +117,7 @@ sap.ui.define([
 		assert.ok(FilterOperatorUtil._mOperators, "standard operators created");
 		assert.ok(FilterOperatorUtil._mOperators.equal, "standard EQ operator created");
 		assert.ok(FilterOperatorUtil._mOperators.between, "standard BT operator created");
-		assert.ok(FilterOperatorUtil._mOperators.lowerThan, "standard LT operator created");
+		assert.ok(FilterOperatorUtil._mOperators.lessThan, "standard LT operator created");
 		assert.ok(FilterOperatorUtil._mOperators.greaterThan, "standard GT operator created");
 		assert.ok(FilterOperatorUtil._mOperators.lessEqual, "standard LE operator created");
 		assert.ok(FilterOperatorUtil._mOperators.greaterEqual, "standard GE operator created");
