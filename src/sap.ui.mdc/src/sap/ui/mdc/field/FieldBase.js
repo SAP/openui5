@@ -1375,10 +1375,10 @@ sap.ui.define([
 			oContent.setModel(null, "$field"); // remove binding to Field
 			// let the internal control be created on rendering
 		} else if (sMutation === "insert") {
-			//	if (!oContent.isA("sap.ui.core.IFormContent")) {
-			//		// TODO: allow different content than allowed in Form?
-			//		throw new Error(oContent + " is not a valid content! Only use valid content in " + this);
-			//	}
+			if (!oContent.isA("sap.ui.core.IFormContent")) {
+				// TODO: allow different content than allowed in Form? Prevent Layouts and unsupported controls because of accessibiliy issues (label asignment, focus...)
+				throw new Error(oContent + " is not a valid content! Only use valid content in " + this);
+			}
 			_modifyKeyboardHandler.call(this, oContent, true);
 			_attachContentHandlers.call(this, oContent);
 			_modifyFieldGroupHandler.call(this, oContent, true);

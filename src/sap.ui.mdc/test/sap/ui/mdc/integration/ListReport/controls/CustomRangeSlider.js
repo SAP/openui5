@@ -11,6 +11,7 @@ sap.ui.define([
 
 	var CustomRangeSlider = Control.extend("sap.ui.v4demo.controls.CustomRangeSlider", {
 		metadata: {
+			interfaces : ["sap.ui.core.IFormContent"],
 			properties: {
 				min: { type: "float", group: "Data", defaultValue: 0 },
 				max: { type: "float", group: "Data", defaultValue: 100 },
