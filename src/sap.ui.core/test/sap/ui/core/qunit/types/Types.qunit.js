@@ -24,15 +24,56 @@ sap.ui.define([
 		FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
 	"use strict";
 
-		function checkValidateException(oEx) {
-			// Exception fails, if translation text can not be found (message looks like the translation key)
-			return oEx instanceof ValidateException && !/^\w+\.\w+$/.test(oEx.message);
-		}
+	function checkValidateException(oEx) {
+		// Exception fails, if translation text can not be found (message looks like the translation key)
+		return oEx instanceof ValidateException && !/^\w+\.\w+$/.test(oEx.message);
+	}
 
-		function checkParseException(oEx) {
-			// Exception fails, if translation text can not be found (message looks like the translation key)
-			return oEx instanceof ParseException && !/^\w+\.\w+$/.test(oEx.message);
-		}
+	function checkParseException(oEx) {
+		// Exception fails, if translation text can not be found (message looks like the translation key)
+		return oEx instanceof ParseException && !/^\w+\.\w+$/.test(oEx.message);
+	}
+
+	/**
+	 * Tests the internal format option defaulting of showMeasure and showNumber for Currency and
+	 * Unit instances.
+	 *
+	 * @param {object} assert
+	 *   The QUnit assert object
+	 * @param {sap.ui.model.type.Currency|sap.ui.model.type.Unit} Type
+	 *   The type class
+	 */
+	function checkShowMeasureShowNumberDefaulting(assert, Type) {
+		var oType;
+
+		// code under test: defaulting if oFormatOptions is undefined
+		oType = new Type();
+
+		assert.strictEqual(oType.bShowMeasure, true);
+		assert.strictEqual(oType.bShowNumber, true);
+
+		// code under test: defaulting if showMeasure/showNumber is not set in oFormatOptions
+		oType = new Type({});
+
+		assert.strictEqual(oType.bShowMeasure, true);
+		assert.strictEqual(oType.bShowNumber, true);
+
+		// code under test: falsy showMeasure/showNumber values
+		[false, undefined, null, 0].forEach(function (vFalsy) {
+			oType = new Type({showMeasure : vFalsy, showNumber : vFalsy});
+
+			assert.strictEqual(oType.bShowMeasure, vFalsy);
+			assert.strictEqual(oType.bShowNumber, vFalsy);
+		});
+
+		// code under test: truthy showMeasure/showNumber values
+		[true, "foo", 42].forEach(function (vTruthy) {
+			oType = new Type({showMeasure : vTruthy, showNumber : vTruthy});
+
+			assert.strictEqual(oType.bShowMeasure, vTruthy);
+			assert.strictEqual(oType.bShowNumber, vTruthy);
+		});
+	}
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
@@ -85,6 +126,11 @@ sap.ui.define([
 		afterEach : function() {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor: set bShowNumber and bShowMeasure", function (assert) {
+		checkShowMeasureShowNumberDefaulting(assert, CurrencyType);
 	});
 
 	//*********************************************************************************************
@@ -1932,6 +1978,11 @@ sap.ui.define([
 		afterEach : function() {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor: set bShowNumber and bShowMeasure", function (assert) {
+		checkShowMeasureShowNumberDefaulting(assert, UnitType);
 	});
 
 	//*********************************************************************************************

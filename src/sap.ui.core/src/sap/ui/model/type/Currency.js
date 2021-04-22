@@ -70,9 +70,13 @@ sap.ui.define([
 	 */
 	var Currency = CompositeType.extend("sap.ui.model.type.Currency", /** @lends sap.ui.model.type.Currency.prototype  */ {
 
-		constructor : function () {
+		constructor : function (oFormatOptions) {
 			CompositeType.apply(this, arguments);
 			this.sName = "Currency";
+			this.bShowMeasure = !oFormatOptions || !("showMeasure" in oFormatOptions)
+				|| oFormatOptions.showMeasure;
+			this.bShowNumber = !oFormatOptions || !("showNumber" in oFormatOptions)
+				|| oFormatOptions.showNumber;
 			this.bUseRawValues = true;
 		}
 
@@ -107,8 +111,7 @@ sap.ui.define([
 		if (!Array.isArray(aValues)) {
 			throw new FormatException("Cannot format currency: " + vValue + " has the wrong format");
 		}
-		if ((aValues[0] == undefined || aValues[0] == null)
-				&& this.oFormatOptions.showNumber !== false) {
+		if ((aValues[0] == undefined || aValues[0] == null) && this.bShowNumber) {
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
@@ -146,8 +149,7 @@ sap.ui.define([
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
 				vResult = this.oOutputFormat.parse(sValue);
-				if (!Array.isArray(vResult)
-						|| this.oFormatOptions.showNumber !== false && isNaN(vResult[0])) {
+				if (!Array.isArray(vResult) || this.bShowNumber && isNaN(vResult[0])) {
 					throw new ParseException(this.getInvalidUnitText());
 				}
 				break;
@@ -263,9 +265,9 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#supportsIgnoreMessages
 	Currency.prototype.getPartsIgnoringMessages = function () {
-		if (this.oFormatOptions.showMeasure === false) {
+		if (!this.bShowMeasure) {
 			return [1];
-		} else if (this.oFormatOptions.showNumber === false) {
+		} else if (!this.bShowNumber) {
 			return [0];
 		}
 		return [];
