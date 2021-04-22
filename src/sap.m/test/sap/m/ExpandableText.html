@@ -16,6 +16,7 @@
 			<mvc:View xmlns:mvc="sap.ui.core.mvc"
 						xmlns="sap.m"
 						xmlns:core="sap.ui.core"
+						xmlns:form="sap.ui.layout.form"
 						controllerName="myController"
 						displayBlock="true">
 				<App>
@@ -43,6 +44,22 @@
 						</ScrollContainer>
 						<core:HTML content="&lt;hr/&gt;" />
 						<ExpandableText text="Short text" />
+						<core:HTML content="&lt;hr/&gt;" />
+						<form:SimpleForm editable="false" layout="ColumnLayout" columnsL="1" width="640px">
+							<core:Title text="Form: editable='false'" />
+							<Label text="sap.m.Text" />
+							<Text text="Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text" />
+							<Label text="sap.m.ExpandableText" />
+							<ExpandableText text="Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text" />
+						</form:SimpleForm>
+						<core:HTML content="&lt;hr/&gt;" />
+						<form:SimpleForm editable="true" layout="ColumnLayout" columnsL="1" width="640px">
+							<core:Title text="Form: editable='true'" />
+							<Label text="sap.m.Text" />
+							<Text text="Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text" />
+							<Label text="sap.m.ExpandableText" />
+							<ExpandableText text="Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text" />
+						</form:SimpleForm>
 						<core:HTML content="&lt;hr/&gt;" />
 						<Table>
 							<columns>
