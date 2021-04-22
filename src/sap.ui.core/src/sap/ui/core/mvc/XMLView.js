@@ -175,7 +175,7 @@ sap.ui.define([
 	 * @param {string | object} vView Name of the view or a view configuration object as described above
 	 * @param {string} [vView.viewName] Name of the view resource in module name notation (without suffix)
 	 * @param {string|Document} [vView.viewContent] XML string or XML document that defines the view
-	 * @param {boolean} [vView.async] Defines how the view source is loaded and rendered later on
+	 * @param {boolean} [vView.async] whether the view source is loaded asynchronously
 	 * @param {object} [vView.cache] Cache configuration, only for <code>async</code> views; caching gets active
 	 * when this object is provided with vView.cache.keys array; keys are used to store data in the cache and for
 	 * invalidation of the cache
@@ -184,7 +184,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view
 	 * @public
 	 * @static
-	 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.XMLView.create XMLView.create} instead
+	 * @deprecated Since 1.56. Use {@link sap.ui.core.mvc.XMLView.create XMLView.create} to create view instances
 	 * @returns {sap.ui.core.mvc.XMLView} the created XMLView instance
 	 * @ui5-global-only
 	 */

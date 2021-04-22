@@ -19,19 +19,16 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>JSView</code>.
 	 *
-	 * <strong>Note:</strong> Application code shouldn't call the constructor directly, but rather use the factory
-	 * {@link sap.ui.core.mvc.JSView.create JSView.create} or {@link sap.ui.core.mvc.View.create View.create}
-	 * with type {@link sap.ui.core.mvc.ViewType.JS JS}. The factory simplifies asynchronous loading of a view
-	 * and future features might be added to the factory only.
+	 * @class A View defined/constructed by JavaScript code.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class
-	 * A View defined/constructed by JavaScript code.
-	 *
 	 * @extends sap.ui.core.mvc.View
 	 * @version ${version}
+	 * @deprecated Since 1.90. Instead use {@link topic:e6bb33d076dc4f23be50c082c271b9f0 Typed Views}
+	 * by defining the view class with {@link sap.ui.core.mvc.View.extend View.extend} and
+	 * creating the view instances with {@link sap.ui.core.mvc.View.create View.create}.
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.JSView
@@ -88,6 +85,7 @@ sap.ui.define([
 	 * between multiple views is not supported.
 	 * @public
 	 * @static
+	 * @deprecated Since 1.90. Use {@link sap.ui.core.mvc.View.create View.create} to create view instances
 	 * @since 1.56.0
 	 * @returns {Promise<sap.ui.core.mvc.JSView>} A promise that resolves with the view instance
 	 */
@@ -133,40 +131,19 @@ sap.ui.define([
 	 * When <code>bAsync</code> has a truthy value, the view definition will be read asynchronously, if needed,
 	 * but the (incomplete) view instance will be returned immediately.
 	 *
-	 * <b>Note:</b> Using <code>sap.ui.jsview</code> for creating view instances has been deprecated, use
-	 * {@link sap.ui.core.mvc.JSView.create JSView.create} instead. <code>JSView.create</code> enforces
-	 * asynchronous loading and can be used via an AMD reference, it doesn't rely on a global name.
-	 *
 	 * <b>Note:</b> Any other call signature will lead to a runtime error.
 	 *
 	 * @param {string} [sId] ID of the newly created view, only allowed for instance creation
-	 * @param {string|object} vView name or implementation of the view.
-	 * @param {boolean} [bAsync=false] Defines how the view source is loaded and rendered later on
-	 *   (only relevant for instantiation, ignored for everything else)
+	 * @param {string | object} vView name or implementation of the view.
+	 * @param {boolean} [bAsync=false] whether the view source is loaded asynchronously
 	 * @public
 	 * @static
-	 * @deprecated Since 1.56, use {@link sap.ui.core.mvc.JSView.create JSView.create} to create view instances;
-	 *   for defining JavaScript views, there's no substitute yet and <em>sap.ui.jsview</em> still has to be used
+	 * @deprecated Since 1.56. Use {@link sap.ui.core.mvc.View.extend View.extend} to define the view class
+	 * and {@link sap.ui.core.mvc.View.create View.create} to create view instances
 	 * @ui5-global-only
-	 *   Since 1.88, typed views should be used for defining JavaScript views via {@link sap.ui.core.mvc.View.create View.create}.
 	 * @returns {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
 	 */
 	sap.ui.jsview = function(sId, vView, bAsync) {
-		var sViewName = typeof sId === "string" ? sId : vView;
-		sViewName = typeof sViewName === "object" ? sViewName.viewName : sViewName;
-
-		Log.warning(
-			"Do not use deprecated view factory function (JSView: " + sViewName + "). " +
-			"Use the static create function 'sap.ui.core.mvc.View.create()'.",
-			"sap.ui.jsview",
-			null,
-			function () {
-				return {
-					type: "sap.ui.jsview",
-					name: sViewName
-				};
-			}
-		);
 		return viewFactory.apply(this, arguments);
 	};
 
@@ -201,7 +178,7 @@ sap.ui.define([
 			// sId is not given, but contains the desired value of sViewName
 			mRegistry[sId] = vView;
 			sap.ui.loader._.declareModule(sId.replace(/\./g, "/") + ".view.js");
-			Log.warning("For defining views, use JSView.extend (typed views) instead.");
+			Log.warning("For defining views, use typed views with 'sap.ui.core.mvc.View.extend()'.");
 		} else if (arguments.length == 1 && typeof sId == "string" ||
 			arguments.length == 2 && typeof arguments[0] == "string" && typeof arguments[1] == "boolean") { // instantiation sap.ui.jsview("name", [async])
 			mSettings.viewName = arguments[0];
@@ -221,6 +198,21 @@ sap.ui.define([
 
 	JSView.prototype.initViewSettings = function (mSettings) {
 		var oPromise;
+
+		Log.warning(
+			"Do not use deprecated sap.ui.core.mvc.JSView: (View: " + (mSettings.id || mSettings.viewName) + "). " +
+			"Use typed views defined by 'sap.ui.core.mvc.View.extend()' and created by 'sap.ui.core.mvc.View.create()'. " +
+			"For further information, have a look at https://sapui5.hana.ondemand.com/#/topic/e6bb33d076dc4f23be50c082c271b9f0.",
+			"sap.ui.core.mvc.JSView",
+			null,
+			function () {
+				return {
+					type: "sap.ui.core.mvc.JSView",
+					name: mSettings.viewName
+				};
+			}
+		);
+
 		if (Object.getPrototypeOf(this) === JSView.prototype) {
 			// require view definition if not yet done...
 			if (!mRegistry[mSettings.viewName]) {

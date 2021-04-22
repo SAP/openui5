@@ -90,12 +90,6 @@ sap.ui.define([
 			}
 
 			try {
-				sap.ui.jsview("test");
-			} catch (e) {
-				// Nothing to be done.
-			}
-
-			try {
 				sap.ui.htmlview("test");
 			} catch (e) {
 				// Nothing to be done.
@@ -113,7 +107,7 @@ sap.ui.define([
 		executionScopeType: "global",
 		libName: "sap.ui.core",
 		ruleId: "syncFactoryLoading",
-		expectedNumberOfIssues: fnIncrement(5)
+		expectedNumberOfIssues: fnIncrement(4)
 	});
 
 	QUnit.module("sap.ui.template rule tests", {
