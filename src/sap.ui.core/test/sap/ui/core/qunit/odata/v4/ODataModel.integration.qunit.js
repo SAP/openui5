@@ -14691,7 +14691,9 @@ sap.ui.define([
 					TEAM_ID : "TEAM_01"
 				})
 				.expectRequest("TEAMS('TEAM_01')?custom=bar&$select=MEMBER_COUNT,Team_Id"
-					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)", {
+					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)"
+					// TODO do not request late properties here
+					+ ",TEAM_2_MANAGER($select=ID,TEAM_ID)", {
 					MEMBER_COUNT : 2,
 					Team_Id : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
@@ -32685,6 +32687,132 @@ sap.ui.define([
 				]);
 		}).then(function () {
 			sinon.assert.called(fnOnBeforeDestroy);
+		});
+	});
+	//*********************************************************************************************
+	// Scenario: List report with absolute binding, object page with a late property. Ensure that
+	// the late property is not requested for all rows of the list, but only for the single row that
+	// needs it.
+	// (1) sort
+	// (2) filter
+	// (3) changeParameters
+	// (4) suspend/resume: TODO
+	// JIRA: CPOUI5ODATAV4-874
+	QUnit.test("Absolute ODLB: sort/filter/changeParameters & late properties", function (assert) {
+		var oListBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="list" items="{/SalesOrderList}">\
+	<Text id="listNote" text="{Note}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="note" text="{Note}"/>\
+	<Text id="noteLanguage" text="{NoteLanguage}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					SalesOrderID : "1",
+					Note : "Note 1"
+				}, {
+					SalesOrderID : "2",
+					Note : "Note 2"
+				}]
+			})
+			.expectChange("listNote", ["Note 1", "Note 2"])
+			.expectChange("note")
+			.expectChange("noteLanguage");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "EN"})
+				.expectChange("note", "Note 1")
+				.expectChange("noteLanguage", "EN");
+
+			oListBinding = that.oView.byId("list").getBinding("items");
+			that.oView.byId("objectPage").setBindingContext(
+				oListBinding.getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert, "object page with late property");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$orderby=SalesOrderID desc&$skip=0&$top=100", {
+					value: [{
+						SalesOrderID : "2",
+						Note : "Note 2.1"
+					}, {
+						SalesOrderID : "1",
+						Note : "Note 1.1"
+					}]
+				})
+				.expectChange("listNote", ["Note 2.1", "Note 1.1"])
+				.expectChange("note", "Note 1.1")
+				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "FR"})
+				.expectChange("noteLanguage", "FR");
+
+			// code under test
+			oListBinding.sort(new Sorter("SalesOrderID", /*descending*/true));
+
+			return that.waitForChanges(assert, "(1) sort");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$orderby=SalesOrderID desc&$filter=SalesOrderID eq '1'&$skip=0&$top=100", {
+					value: [{
+						SalesOrderID : "1",
+						Note : "Note 1.2"
+					}]
+				})
+				.expectChange("listNote", ["Note 1.2"])
+				.expectChange("note", "Note 1.2")
+				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "DE"})
+				.expectChange("noteLanguage", "DE");
+
+			// code under test
+			oListBinding.filter(new Filter("SalesOrderID", FilterOperator.EQ, "1"));
+
+			return that.waitForChanges(assert, "(2) filter");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$orderby=SalesOrderID desc&$filter=SalesOrderID eq '1'&foo=bar"
+					+ "&$skip=0&$top=100", {
+					value: [{
+						SalesOrderID : "1",
+						Note : "Note 1.3"
+					}]
+				})
+				.expectChange("listNote", ["Note 1.3"])
+				.expectChange("note", "Note 1.3")
+				.expectRequest("SalesOrderList('1')?foo=bar&$select=NoteLanguage",
+					{NoteLanguage : "IT"})
+				.expectChange("noteLanguage", "IT");
+
+			// code under test
+			oListBinding.changeParameters({foo : 'bar'});
+
+			return that.waitForChanges(assert, "(3) changeParameters");
+		// }).then(function () {
+		// 	that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+		// 			value: [{
+		// 				SalesOrderID : "1",
+		// 				Note : "Note 1.4"
+		// 			}, {
+		// 				SalesOrderID : "2",
+		// 				Note : "Note 2.4"
+		// 			}]
+		// 		})
+		// 		.expectChange("note", ["Note 1.4", "Note 2.4"])
+		// 		.expectChange("objectNote", "Note 1.4")
+		// 		.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "ES"})
+		// 		.expectChange("objectNoteLanguage", "ES");
+		//
+		// 	// code under test
+		// 	oListBinding.suspend();
+		// 	oListBinding.sort();
+		// 	oListBinding.filter();
+		// 	oListBinding.changeParameters({foo: undefined});
+		// 	oListBinding.resume();
+		//
+		// 	return that.waitForChanges(assert, "(4) suspend/resume");
 		});
 	});
 

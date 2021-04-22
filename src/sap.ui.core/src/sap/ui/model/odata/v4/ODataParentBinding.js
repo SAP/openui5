@@ -766,7 +766,7 @@ sap.ui.define([
 			if (that.mLateQueryOptions) {
 				if (that.oCache) {
 					that.oCache.setLateQueryOptions(that.mLateQueryOptions);
-				} else {
+				} else if (that.oCache === null) {
 					return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
 						that.sPath, SyncPromise.resolve(that.mLateQueryOptions))
 						.then(function (sPath) {

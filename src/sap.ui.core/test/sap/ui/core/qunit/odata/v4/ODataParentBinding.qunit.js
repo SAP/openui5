@@ -933,15 +933,29 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	cache : false,
-	rejected : false,
+	cache : null,
+	cacheImmmutable : true,
+	fetchIfChildCanUseCacheCallCount : 1,
 	title : "no cache"
 }, {
-	cache : false,
+	cache : null,
+	cacheImmmutable : true,
+	fetchIfChildCanUseCacheCallCount : 1,
 	rejected : true,
 	title : "no cache, parent rejects"
 }, {
-	cache : true,
+	cache : undefined,
+	cacheImmmutable : undefined,
+	fetchIfChildCanUseCacheCallCount : 0,
+	title : "cache pending"
+}, {
+	cache : {
+		hasSentRequest : function () { return true; },
+		setLateQueryOptions : function () {},
+		setQueryOptions : function () {}
+	},
+	cacheImmmutable : true,
+	fetchIfChildCanUseCacheCallCount : 0,
 	title : "immutable cache"
 }].forEach(function (oFixture) {
 	QUnit.test("fetchIfChildCanUseCache: late query options, " + oFixture.title, function (assert) {
@@ -950,17 +964,12 @@ sap.ui.define([
 				getMetaPath : function () {},
 				getReducedPath : function () {}
 			},
-			oCache = {
-				hasSentRequest : function () { return true; },
-				setLateQueryOptions : function () {},
-				setQueryOptions : function () {}
-			},
-			oCachePromise = SyncPromise.resolve(oFixture.cache ? oCache : null),
+			oCachePromise = SyncPromise.resolve(oFixture.cache),
 			fnFetchMetadata = {/*function*/},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {$select : "foo"},
 				bAggregatedQueryOptionsInitial : false,
-				oCache : oFixture.cache ? oCache : null,
+				oCache : oFixture.cache,
 				oCachePromise : oCachePromise,
 				oContext : {
 					getBinding : function () {}
@@ -1015,16 +1024,20 @@ sap.ui.define([
 				sinon.match.same(mChildLocalQueryOptions), sinon.match.same(fnFetchMetadata))
 			.returns({});
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs({}, "/Set/navigation", /*bIsCacheImmutable*/true)
+			.withExactArgs({}, "/Set/navigation", oFixture.cacheImmmutable)
 			.callsFake(function () {
 				oBinding.mLateQueryOptions = mLateQueryOptions;
 				return true;
 			});
-		this.mock(oCache).expects("setLateQueryOptions").exactly(oFixture.cache ? 1 : 0)
-			.withExactArgs(sinon.match.same(mLateQueryOptions));
-		this.mock(oBinding.oContext).expects("getBinding").exactly(oFixture.cache ? 0 : 1)
+		if (oFixture.cache) {
+			this.mock(oFixture.cache).expects("setLateQueryOptions")
+				.withExactArgs(sinon.match.same(mLateQueryOptions));
+		}
+		this.mock(oBinding.oContext).expects("getBinding")
+			.exactly(oFixture.fetchIfChildCanUseCacheCallCount)
 			.withExactArgs().returns(oParentBinding);
-		this.mock(oParentBinding).expects("fetchIfChildCanUseCache").exactly(oFixture.cache ? 0 : 1)
+		this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
+			.exactly(oFixture.fetchIfChildCanUseCacheCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext), "navigation",
 				sinon.match(function (p) {
 					return p.getResult() === mLateQueryOptions;
@@ -1042,7 +1055,7 @@ sap.ui.define([
 			var bUseCache = oPromise.getResult();
 
 			assert.strictEqual(bUseCache, oFixture.rejected ? undefined : "/reduced/child/path");
-			assert.strictEqual(oCache0, oFixture.cache ? oCache : null);
+			assert.strictEqual(oCache0, oFixture.cache);
 		});
 	});
 });
