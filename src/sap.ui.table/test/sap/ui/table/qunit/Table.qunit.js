@@ -4453,15 +4453,26 @@ sap.ui.define([
 			}
 		}),
 		createPasteEvent: function(sData) {
-			var oClipboardData = new DataTransfer();
+			if (Device.browser.firefox || Device.browser.safari) {
+				var oEvent = new Event("paste", {
+					bubbles: true,
+					cancelable: true
+				});
+				oEvent.clipboardData = {
+					getData: function() {return sData;}
+				};
+				return oEvent;
+			} else {
+				var oClipboardData = new DataTransfer();
 
-			oClipboardData.setData("text/plain", sData);
+				oClipboardData.setData("text/plain", sData);
 
-			return new ClipboardEvent("paste", {
-				bubbles: true,
-				cancelable: true,
-				clipboardData: oClipboardData
-			});
+				return new ClipboardEvent("paste", {
+					bubbles: true,
+					cancelable: true,
+					clipboardData: oClipboardData
+				});
+			}
 		},
 		test: function(assert, sTestTitle, oHTMLElement, bShouldFireOnce) {
 			var sData = "data";
