@@ -15,14 +15,12 @@
 			"sample": {
 				"files": [
 					"Async.view.html",
-					"Async.view.js",
+					"AsyncView.js",
 					"Async.view.json",
 					"Async.view.xml",
 					"Component.js",
-					"Root.view.js",
 					"Sample.view.xml",
 					"Sample.controller.js",
-					"SyncSample.view.xml",
 					"manifest.json"
 				]
 			}
