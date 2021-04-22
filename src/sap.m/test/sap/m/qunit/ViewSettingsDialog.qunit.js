@@ -3632,6 +3632,21 @@ sap.ui.define([
 		oViewSettingsDialog.destroy();
 	});
 
+	QUnit.test("Ensure that the VSD has role=heading and aria-label=2", function (assert) {
+		// Arrange
+		var oViewSettingsDialog = new ViewSettingsDialog({}).placeAt("qunit-fixture");
+
+		// Act
+		oViewSettingsDialog.open();
+
+		// Assert
+		assert.ok(oViewSettingsDialog._getTitleLabel().isA("sap.m.Title"), "The rendered title is of type sap.m.Title, which ensures the correct HTML attributes are present");
+		assert.ok(oViewSettingsDialog._getDetailTitleLabel().isA("sap.m.Title"), "The rendered detail title is of type sap.m.Title, which ensures the correct HTML attributes are present");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach : function () {
 			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
