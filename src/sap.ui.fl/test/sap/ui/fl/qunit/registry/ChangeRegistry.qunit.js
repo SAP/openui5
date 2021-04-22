@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/ChangeRegistryItem",
 	"sap/ui/fl/registry/SimpleChanges",
@@ -11,12 +12,13 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	jQuery,
 	JsControlTreeModifier,
+	ChangeHandlerRegistration,
 	ChangeRegistry,
 	ChangeRegistryItem,
 	SimpleChanges,
@@ -25,6 +27,7 @@ function(
 	UnhideControlChangeHandler,
 	HideControlChangeHandler,
 	Layer,
+	Utils,
 	Log,
 	sinon
 ) {
@@ -32,11 +35,13 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("sap.ui.fl.registry.ChangeRegistry", {
+	QUnit.module("Given a ChangeRegistry instance...", {
 		beforeEach: function () {
-			this.oChangeRegistry = new ChangeRegistry();
+			this.oChangeRegistry = ChangeRegistry.getInstance();
+			ChangeHandlerRegistration.registerPredefinedChangeHandlers();
 		},
 		afterEach: function () {
+			delete ChangeRegistry._instance;
 			sandbox.restore();
 		}
 	}, function() {
@@ -52,13 +57,32 @@ function(
 			assert.ok(changeRegistryInstance._registeredItems, "sap.uxap.ObjectPageSection");
 		});
 
-		QUnit.test("constructor", function (assert) {
-			assert.ok(this.oChangeRegistry);
-			assert.deepEqual(this.oChangeRegistry._registeredItems, {});
+		QUnit.test("waitForChangeHandlerRegistration without adding a promise", function(assert) {
+			var oPromise = ChangeRegistry.waitForChangeHandlerRegistration("key");
+			assert.ok(oPromise instanceof Utils.FakePromise, "the function returns a FakePromise");
+
+			return oPromise.then(function() {
+				assert.ok(true, "the function resolves");
+			});
+		});
+
+		QUnit.test("addRegistrationPromise + waitForChangeHandlerRegistration", function(assert) {
+			var done = assert.async();
+			var sKey = "myFancyKey";
+			var fnResolve;
+			var oPromise = new Promise(function(resolve) {
+				fnResolve = resolve;
+			});
+			ChangeRegistry.addRegistrationPromise(sKey, oPromise);
+			var oWaitPromise = ChangeRegistry.waitForChangeHandlerRegistration(sKey);
+			assert.notOk(oWaitPromise instanceof Utils.FakePromise);
+			oWaitPromise.then(done);
+
+			fnResolve();
 		});
 
 		QUnit.test("addRegistryItem", function (assert) {
-			var registryItem = {
+			var oRegistryItem = {
 				getControlType: function () {
 					return "sap.ui.fl.DummyControl";
 				},
@@ -66,15 +90,16 @@ function(
 					return "myChangeType";
 				}
 			};
+			var iAlreadyRegisteredItems = Object.keys(this.oChangeRegistry._registeredItems).length;
 
-			this.oChangeRegistry.addRegistryItem(registryItem);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem);
 
-			assert.strictEqual(Object.keys(this.oChangeRegistry._registeredItems).length, 1);
-			assert.strictEqual(this.oChangeRegistry._registeredItems["sap.ui.fl.DummyControl"]["myChangeType"], registryItem);
+			assert.strictEqual(Object.keys(this.oChangeRegistry._registeredItems).length, iAlreadyRegisteredItems + 1);
+			assert.strictEqual(this.oChangeRegistry._registeredItems["sap.ui.fl.DummyControl"]["myChangeType"], oRegistryItem);
 		});
 
 		QUnit.test("removeRegistryItem - remove complete item", function (assert) {
-			var registryItem = {
+			var oRegistryItem = {
 				getControlType: function () {
 					return "sap.ui.fl.DummyControl";
 				},
@@ -82,7 +107,7 @@ function(
 					return "myChangeType";
 				}
 			};
-			this.oChangeRegistry.addRegistryItem(registryItem);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem);
 
 			var mParam = {
 				controlType: "sap.ui.fl.DummyControl",
@@ -94,7 +119,7 @@ function(
 		});
 
 		QUnit.test("removeRegistryItem - remove changetypemetadata only", function (assert) {
-			var registryItem1 = {
+			var oRegistryItem1 = {
 				getControlType: function () {
 					return "sap.ui.fl.DummyControl";
 				},
@@ -102,7 +127,7 @@ function(
 					return "myChangeType";
 				}
 			};
-			var registryItem2 = {
+			var oRegistryItem2 = {
 				getControlType: function () {
 					return "sap.ui.fl.DummyControlGroup";
 				},
@@ -110,8 +135,8 @@ function(
 					return "myChangeType";
 				}
 			};
-			this.oChangeRegistry.addRegistryItem(registryItem1);
-			this.oChangeRegistry.addRegistryItem(registryItem2);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem1);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem2);
 			assert.strictEqual(Object.keys(this.oChangeRegistry._registeredItems).length, 2);
 
 			var mParam = {
@@ -125,7 +150,7 @@ function(
 		});
 
 		QUnit.test("removeRegistryItem - remove complete controltype", function (assert) {
-			var registryItem1 = {
+			var oRegistryItem1 = {
 				getControlType: function () {
 					return "sap.ui.fl.DummyControl";
 				},
@@ -133,7 +158,7 @@ function(
 					return "myChangeType1";
 				}
 			};
-			var registryItem2 = {
+			var oRegistryItem2 = {
 				getControlType: function () {
 					return "sap.ui.fl.DummyControlGroup";
 				},
@@ -141,8 +166,8 @@ function(
 					return "myChangeType2";
 				}
 			};
-			this.oChangeRegistry.addRegistryItem(registryItem1);
-			this.oChangeRegistry.addRegistryItem(registryItem2);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem1);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem2);
 			assert.strictEqual(Object.keys(this.oChangeRegistry._registeredItems).length, 2);
 
 			var mParam = {
@@ -152,7 +177,7 @@ function(
 
 			assert.strictEqual(Object.keys(this.oChangeRegistry._registeredItems).length, 1);
 			assert.strictEqual(Object.keys(this.oChangeRegistry._registeredItems["sap.ui.fl.DummyControlGroup"]).length, 1);
-			assert.deepEqual(this.oChangeRegistry._registeredItems["sap.ui.fl.DummyControlGroup"]["myChangeType2"], registryItem2);
+			assert.deepEqual(this.oChangeRegistry._registeredItems["sap.ui.fl.DummyControlGroup"]["myChangeType2"], oRegistryItem2);
 		});
 
 		QUnit.test("_createChangeRegistryItemForSimpleChange - when we register a change with an unsupported layer in change.layers", function(assert) {
@@ -336,7 +361,7 @@ function(
 		QUnit.test("can determine if a given control has registered change handlers", function (assert) {
 			var sControlType = "sap.ui.fl.DummyControl";
 
-			var registryItem = {
+			var oRegistryItem = {
 				getControlType: function () {
 					return sControlType;
 				},
@@ -345,7 +370,7 @@ function(
 				}
 			};
 
-			this.oChangeRegistry.addRegistryItem(registryItem);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem);
 
 			var bHasRegisteredChangeHandlers = this.oChangeRegistry.hasRegisteredChangeHandlersForControl(sControlType);
 
@@ -356,7 +381,7 @@ function(
 			var sControlType = "sap.ui.fl.DummyControl";
 			var sSomeOtherControlType = "sap.ui.fl.DummyControlWithNoHandlers";
 
-			var registryItem = {
+			var oRegistryItem = {
 				getControlType: function () {
 					return sControlType;
 				},
@@ -365,7 +390,7 @@ function(
 				}
 			};
 
-			this.oChangeRegistry.addRegistryItem(registryItem);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem);
 
 			var bHasRegisteredChangeHandlers = this.oChangeRegistry.hasRegisteredChangeHandlersForControl(sSomeOtherControlType);
 
@@ -376,7 +401,7 @@ function(
 			var sControlType = "sap.ui.fl.DummyControl";
 			var sChangeType = "myChangeType";
 
-			var registryItem = {
+			var oRegistryItem = {
 				getControlType: function () {
 					return sControlType;
 				},
@@ -385,7 +410,7 @@ function(
 				}
 			};
 
-			this.oChangeRegistry.addRegistryItem(registryItem);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem);
 
 			var bHasRegisteredChangeHandlers = this.oChangeRegistry.hasChangeHandlerForControlAndChange(sControlType, sChangeType);
 
@@ -397,7 +422,7 @@ function(
 			var sChangeType = "myChangeType";
 			var sSomeOtherControlType = "sap.ui.fl.DummyControlWithNoHandlers";
 
-			var registryItem = {
+			var oRegistryItem = {
 				getControlType: function () {
 					return sControlType;
 				},
@@ -406,7 +431,7 @@ function(
 				}
 			};
 
-			this.oChangeRegistry.addRegistryItem(registryItem);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem);
 
 			var bHasRegisteredChangeHandlers = this.oChangeRegistry.hasChangeHandlerForControlAndChange(sSomeOtherControlType, sChangeType);
 
@@ -418,7 +443,7 @@ function(
 			var sChangeType = "myChangeType";
 			var sSomeOtherChangeType = "myOtherChangeType";
 
-			var registryItem = {
+			var oRegistryItem = {
 				getControlType: function () {
 					return sControlType;
 				},
@@ -427,7 +452,7 @@ function(
 				}
 			};
 
-			this.oChangeRegistry.addRegistryItem(registryItem);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem);
 
 			var bHasRegisteredChangeHandlers = this.oChangeRegistry.hasChangeHandlerForControlAndChange(sControlType, sSomeOtherChangeType);
 
@@ -440,7 +465,7 @@ function(
 			var sSomeOtherControlType = "sap.ui.fl.DummyControlWithNoHandlers";
 			var sSomeOtherChangeType = "myOtherChangeType";
 
-			var registryItem = {
+			var oRegistryItem = {
 				getControlType: function () {
 					return sControlType;
 				},
@@ -449,7 +474,7 @@ function(
 				}
 			};
 
-			this.oChangeRegistry.addRegistryItem(registryItem);
+			this.oChangeRegistry.addRegistryItem(oRegistryItem);
 
 			var bHasRegisteredChangeHandlers = this.oChangeRegistry.hasChangeHandlerForControlAndChange(sSomeOtherControlType, sSomeOtherChangeType);
 

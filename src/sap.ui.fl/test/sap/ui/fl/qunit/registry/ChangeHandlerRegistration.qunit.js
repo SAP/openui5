@@ -17,11 +17,8 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.registry.ChangeHandlerRegistration", {
 		beforeEach: function () {
-			this.stubs = [];
-
-			// create new instance of ChangeRegistry
-			this.changeRegistryInstance = new ChangeRegistry();
-			sandbox.stub(ChangeRegistry, "getInstance").returns(this.changeRegistryInstance);
+			this.oChangeRegistryInstance = new ChangeRegistry();
+			sandbox.stub(ChangeRegistry, "getInstance").returns(this.oChangeRegistryInstance);
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -192,6 +189,25 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(oRegisterChangeHandlersStub.callCount, 0, "the registration was called once");
 			});
+		});
+
+		QUnit.test("registerPredefinedChangeHandlers", function(assert) {
+			var oRegisterStub = sandbox.stub(this.oChangeRegistryInstance, "registerPredefinedChangeHandlers");
+			ChangeHandlerRegistration.registerPredefinedChangeHandlers();
+
+			var mPassedDefaultChangeHandlers = oRegisterStub.firstCall.args[0];
+			assert.ok(mPassedDefaultChangeHandlers.hideControl, "the HideControl ChangeHandler was passed");
+			assert.ok(mPassedDefaultChangeHandlers.moveElements, "the MoveElements ChangeHandler was passed");
+			assert.ok(mPassedDefaultChangeHandlers.moveControls, "the MoveControls ChangeHandler was passed");
+			assert.ok(mPassedDefaultChangeHandlers.unhideControl, "the UnhideControl ChangeHandler was passed");
+			assert.ok(mPassedDefaultChangeHandlers.stashControl, "the StashControl ChangeHandler was passed");
+			assert.ok(mPassedDefaultChangeHandlers.unstashControl, "the UnstashControl ChangeHandler was passed");
+
+			var mPassedDevModeChangeHandlers = oRegisterStub.firstCall.args[1];
+			assert.ok(mPassedDevModeChangeHandlers.propertyChange, "the PropertyChange ChangeHandler was passed");
+			assert.ok(mPassedDevModeChangeHandlers.propertyBindingChange, "the PropertyBindingChange ChangeHandler was passed");
+			assert.ok(mPassedDevModeChangeHandlers.addXML, "the AddXML ChangeHandler was passed");
+			assert.ok(mPassedDevModeChangeHandlers.addXMLAtExtensionPoint, "the AddXMLAtExtensionPoint ChangeHandler was passed");
 		});
 	});
 
