@@ -1724,13 +1724,15 @@ sap.ui.define([
 	/**
 	 * Invalidate the model data.
 	 *
-	 * Mark all entries in the model cache as invalid. Next time a context or list is bound (binding),
-	 * the respective entries will be detected as invalid and will be refreshed from the server.
+	 * Mark all entries in the model cache as invalid. Next time a context or list is bound
+	 * (binding), the respective entries will be detected as invalid and will be refreshed from the
+	 * server.
 	 *
-	 * To refresh all model data use @link sap.ui.model.odata.v2.ODatamModel#refresh
+	 * To refresh all model data use {@link sap.ui.model.odata.v2.ODataModel#refresh}
 	 *
-	 * @param {function} [fnCheckEntry] A function which can be used to restrict invalidation to specific entries,
-	 *     gets the entity key and object as parameters and should return true for entities to invalidate.
+	 * @param {function} [fnCheckEntry]
+	 *   A function which can be used to restrict invalidation to specific entries, gets the entity
+	 *   key and object as parameters and should return true for entities to invalidate.
 	 * @public
 	 * @since 1.52.1
 	 */
