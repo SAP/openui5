@@ -157,6 +157,7 @@
 
 		var oObjectHeaderWithTitleSelector = new sap.m.ObjectHeader({
 			title: "Products",
+			titleLevel: "H2",
 			showTitleSelector: true,
 			titleSelectorPress: handleTitleSelection,
 			titleSelectorTooltip: "Related Options",
@@ -177,6 +178,7 @@
 			introActive: true,
 			introPress: onIntroPressHandler,
 			title: "Google Title",
+			titleLevel: "H2",
 			titleActive: true,
 			titlePress: onTitlePressHandler,
 			attributes: [
@@ -197,6 +199,7 @@
 			iconTooltip: "Building icon",
 			intro: "Our company",
 			title: "SAP",
+			titleLevel: "H2",
 			attributes: oPassiveObjectAttribute,
 			statuses: [
 				oPassiveTitlelessObjectStatusIconOnly,
@@ -209,6 +212,7 @@
 		var oCondensedObjectHeader = new sap.m.ObjectHeader({
 			condensed: true,
 			title: "Banana",
+			titleLevel: "H2",
 			number: "0.75",
 			numberUnit: "LEV",
 			attributes: oActiveObjectAttribute2
@@ -231,7 +235,14 @@
 			]
 		}).addStyleClass("sapUiSmallMarginBegin");
 
-		oLayout.placeAt("content");
+		new sap.m.App({
+			pages: new sap.m.Page({
+				landmarkInfo: new sap.m.PageAccessibleLandmarkInfo(),
+				title: "ObjectHeader Accessibility Test Page",
+				titleLevel: "H1",
+				content: oLayout
+			})
+		}).placeAt("content");
 	</script>
 
 	<style>
