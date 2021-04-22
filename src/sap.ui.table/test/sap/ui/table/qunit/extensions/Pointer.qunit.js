@@ -142,14 +142,14 @@ sap.ui.define([
 		}
 	});
 
-	function moveResizer(oColumn, assert, bExpect, iIndex) {
-		qutils.triggerEvent("mousemove", oColumn.getId(), {
-			clientX: Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10),
-			clientY: Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100)
+	function moveResizer(oDomRef, assert, bExpect, iIndex) {
+		qutils.triggerEvent("mousemove", oDomRef.id, {
+			clientX: Math.floor(oDomRef.getBoundingClientRect().left + 10),
+			clientY: Math.floor(oDomRef.getBoundingClientRect().top + 100)
 		});
 
 		if (assert) {
-			var iDistance = oTable.getDomRef("rsz").getBoundingClientRect().left - oColumn.getDomRef().getBoundingClientRect().right;
+			var iDistance = oTable.getDomRef("rsz").getBoundingClientRect().left - oDomRef.getBoundingClientRect().right;
 			var bCorrect = Math.abs(iDistance) < 5;
 			assert.ok(bExpect && bCorrect || !bExpect && !bCorrect, "Position of Resizer");
 			assert.equal(oTable._iLastHoveredVisibleColumnIndex, iIndex, "Index of last hovered resizable table");
@@ -158,11 +158,11 @@ sap.ui.define([
 
 	QUnit.test("Moving Resizer", function(assert) {
 		var aVisibleColumns = oTable._getVisibleColumns();
-		moveResizer(aVisibleColumns[0], assert, true, 0);
-		moveResizer(aVisibleColumns[1], assert, false, 0);
+		moveResizer(aVisibleColumns[0].getDomRef(), assert, true, 0);
+		moveResizer(aVisibleColumns[1].getDomRef(), assert, false, 0);
 		assert.ok(Math.abs(oTable.getDomRef("rsz").getBoundingClientRect().left - aVisibleColumns[0].getDomRef().getBoundingClientRect().right) < 5,
 			"Position of Resizer still on column 0");
-		moveResizer(aVisibleColumns[2], assert, true, 2);
+		moveResizer(aVisibleColumns[2].getDomRef(), assert, true, 2);
 	});
 
 	QUnit.test("Automatic Column Resize via Double Click", function(assert) {
@@ -172,7 +172,7 @@ sap.ui.define([
 			var oResizer = oTable.getDomRef("rsz");
 
 			// Move resizer to correct column
-			moveResizer(oColumn, assert, bExpect, iIndex);
+			moveResizer(oColumn.getDomRef(), assert, bExpect, iIndex);
 
 			// Simulate double click on resizer
 			return new Promise(function(resolve) {
@@ -268,13 +268,13 @@ sap.ui.define([
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
 
 		// Resizer moved to the correct position when column is resizable
-		moveResizer(oColumn, assert, false, 0);
+		moveResizer(oColumn.getDomRef(), assert, false, 0);
 		oColumn.setAutoResizable(true);
 		sap.ui.getCore().applyChanges();
-		moveResizer(oColumn, assert, false, 0);
+		moveResizer(oColumn.getDomRef(), assert, false, 0);
 		oColumn.setResizable(true);
 		sap.ui.getCore().applyChanges();
-		moveResizer(oColumn, assert, true, 1);
+		moveResizer(oColumn.getDomRef(), assert, true, 1);
 
 		return new Promise(function(resolve) {
 			oTable.attachEventOnce("rowsUpdated", resolve);
@@ -294,6 +294,51 @@ sap.ui.define([
 			});
 		}).then(function() {
 			var iNewWidth = oColumn.getDomRef().offsetWidth;
+			assert.ok(Math.abs(iNewWidth - iWidth - 90 - 40) < 5, "check column width after resize: " + iNewWidth);
+		});
+	});
+
+	QUnit.test("Resize via Drag&Drop when columnHeaderVisible is set to false", function(assert) {
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oTable.getColumnHeaderVisible(), false, "columnHeaderVisible = false");
+		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), false, "No table element .sapUiTableColHdrCnt is visible");
+
+		var oColumn = this.oColumn;
+		var $Resizer = oTable.$("rsz");
+
+		this.oColumn.setResizable(true);
+		sap.ui.getCore().applyChanges();
+
+		// resizer should be way out of screen when the table gets rendered
+		var nLeft = oTable.$("rsz").position().left;
+		assert.equal(nLeft, "-5", "Resizer is at the correct initial position");
+
+		var $RelevantColumnElement = oTable.$("tableCCnt").find("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]"); // Consider span and multi-header
+		var iWidth = $RelevantColumnElement[0].offsetWidth;
+		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
+
+		// move resizer to the correct position
+		moveResizer($RelevantColumnElement[0], assert, true, 1);
+
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("rowsUpdated", resolve);
+		}).then(function() {
+			// drag resizer to resize column
+			$Resizer = oTable.$("rsz");
+			var iResizeHandlerTop = Math.floor($RelevantColumnElement[0].getBoundingClientRect().top + 100);
+			var iResizeHandlerLeft = $Resizer.offset().left;
+
+			qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 90, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 90 + 40, iResizeHandlerTop, 0);
+			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 90 + 40, iResizeHandlerTop, 0);
+
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("rowsUpdated", resolve);
+			});
+		}).then(function() {
+			var iNewWidth = $RelevantColumnElement[0].offsetWidth;
 			assert.ok(Math.abs(iNewWidth - iWidth - 90 - 40) < 5, "check column width after resize: " + iNewWidth);
 		});
 	});
