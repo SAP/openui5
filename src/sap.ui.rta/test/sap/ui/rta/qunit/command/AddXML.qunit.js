@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/changeHandler/AddXML",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
@@ -16,11 +15,9 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	CommandFactory,
 	AddXML,
-	ChangeRegistry,
 	Layer,
 	Utils,
 	LayerUtils,
@@ -229,22 +226,13 @@ function (
 			this.oList.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.removeRegistryItem({controlType: "sap.m.List"});
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.List": {
-					addXML: "default"
-				}
-			})
-			.then(function() {
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oList]
-				});
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oList]
+			});
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
-					done();
-				}.bind(this));
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
+				done();
 			}.bind(this));
 		},
 		afterEach: function() {

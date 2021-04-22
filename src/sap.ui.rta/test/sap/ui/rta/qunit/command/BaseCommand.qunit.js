@@ -32,8 +32,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	Button,
 	Input,
 	Text,
@@ -127,7 +126,6 @@ function (
 		QUnit.test("when getting a property change command for button,", function(assert) {
 			return oCommandFactory.getCommandFor(this.oButton, "property", {
 				propertyName: "visible",
-				oldValue: this.oButton.getVisible(),
 				newValue: false
 			})
 
@@ -143,7 +141,6 @@ function (
 				});
 				return oCommandFactory.getCommandFor(this.oButton, "property", {
 					propertyName: "visible",
-					oldValue: this.oButton.getVisible(),
 					newValue: false
 				});
 			}.bind(this))
@@ -171,7 +168,6 @@ function (
 
 			return CommandFactory.getCommandFor(this.oButton, "property", {
 				propertyName: "visible",
-				oldValue: this.oButton.getVisible(),
 				newValue: false
 			}, null, oFlexSettings)
 
@@ -433,7 +429,6 @@ function (
 			return CommandFactory.getCommandFor(this.oControl, "Property", {
 				propertyName: "width",
 				newValue: this.NEW_VALUE,
-				oldValue: this.OLD_VALUE,
 				semanticMeaning: "resize"
 			}, null, oFlexSettings)
 
@@ -1268,7 +1263,6 @@ function (
 			}.bind(this));
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.removeRegistryItem({controlType: "sap.m.List"});
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox": {
 					moveControls: "default"
@@ -1515,7 +1509,6 @@ function (
 			sap.ui.getCore().applyChanges();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.removeRegistryItem({controlType: "sap.m.List"});
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox": {
 					moveControls: "default"

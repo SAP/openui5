@@ -1,39 +1,41 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Component",
+	"sap/ui/core/Element",
+	"sap/ui/core/Manifest",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
-	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
-	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
-	"sap/ui/core/Element",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/base/Log",
-	"sap/ui/core/Manifest",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Log,
+	JsControlTreeModifier,
+	Component,
+	Element,
+	Manifest,
+	DescriptorChangeTypes,
 	Applier,
 	Reverter,
 	ChangesController,
+	DescriptorChangeFactory,
+	Settings,
+	ChangeRegistry,
+	AppVariantInlineChangeFactory,
 	ChangesWriteAPI,
 	Layer,
 	FlexUtils,
-	Settings,
-	Component,
-	DescriptorChangeTypes,
-	AppVariantInlineChangeFactory,
-	DescriptorChangeFactory,
-	Element,
-	JsControlTreeModifier,
-	Log,
-	Manifest,
 	jQuery,
 	sinon
 ) {
@@ -296,6 +298,20 @@ sap.ui.define([
 				assert.strictEqual(sValue, sReturnValue, "the return value from the revert function was passed");
 			});
 		});
+
+		QUnit.test("when getChangeHandler is called", function(assert) {
+			var oGetControlTypeStub = sandbox.stub().returns("myFancyControlType");
+			var mPropertyBag = {
+				element: "myFancyElement",
+				modifier: {getControlType: oGetControlTypeStub},
+				layer: Layer.CUSTOMER,
+				changeType: "myFancyChangeType"
+			};
+			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns("myFancyChangeHandler");
+			var oReturn = ChangesWriteAPI.getChangeHandler(mPropertyBag);
+
+			assert.strictEqual(oReturn, "myFancyChangeHandler", "the function returns the value of the ChangeRegistry function");
+		});
 	});
 
 	QUnit.module("Given ChangesWriteAPI for smart business", {
@@ -314,7 +330,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				selector: this.vSelector,
 				changeSpecificData: {
-					changeType: 'appdescr_ovp_addNewCard',
+					changeType: "appdescr_ovp_addNewCard",
 					content: {
 						card: {
 							"customer.acard": {
@@ -372,7 +388,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				selector: this.vSelector,
 				changeSpecificData: {
-					changeType: 'appdescr_ovp_addNewCard',
+					changeType: "appdescr_ovp_addNewCard",
 					content: {
 						card: {
 							"customer.acard": {
@@ -428,6 +444,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		jQuery("#qunit-fixture").hide();
 	});
 });

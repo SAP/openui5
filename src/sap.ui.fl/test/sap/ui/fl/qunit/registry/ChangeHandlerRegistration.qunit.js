@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
+	ChangeHandlerStorage,
 	ChangeHandlerRegistration,
 	ChangeRegistry,
 	sinon
@@ -192,7 +194,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("registerPredefinedChangeHandlers", function(assert) {
-			var oRegisterStub = sandbox.stub(this.oChangeRegistryInstance, "registerPredefinedChangeHandlers");
+			var oRegisterStub = sandbox.stub(ChangeHandlerStorage, "registerPredefinedChangeHandlers");
 			ChangeHandlerRegistration.registerPredefinedChangeHandlers();
 
 			var mPassedDefaultChangeHandlers = oRegisterStub.firstCall.args[0];

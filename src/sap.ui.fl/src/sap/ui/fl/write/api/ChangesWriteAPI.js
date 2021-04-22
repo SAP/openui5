@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
+	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
@@ -22,6 +23,7 @@ sap.ui.define([
 	DescriptorChangeTypes,
 	AppVariantInlineChangeFactory,
 	DescriptorChangeFactory,
+	ChangeRegistry,
 	Log,
 	Component,
 	Element,
@@ -167,7 +169,23 @@ sap.ui.define([
 			// if the element is not present we just pass an empty object, so that revert will not throw an error
 			// and the status of the change will be updated
 			return Reverter.revertChangeOnControl(mPropertyBag.change, mPropertyBag.element, mRevertSettings);
+		},
+
+		/**
+		 * Retrieves the change handler for the given control and change type.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance or XML node
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer to be considered when getting the change handlers
+		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
+		 * @param {string} mPropertyBag.changeType - Change type of a <code>sap.ui.fl.Change</code> change
+		 * @returns {Promise.<object>|sap.ui.fl.Utils.FakePromise.<object>} Change handler object wrapped in a Promise or FakePromise
+		 */
+		getChangeHandler: function(mPropertyBag) {
+			var sControlType = mPropertyBag.modifier.getControlType(mPropertyBag.element);
+			return ChangeRegistry.getInstance().getChangeHandler(mPropertyBag.changeType, sControlType, mPropertyBag.element, mPropertyBag.modifier, mPropertyBag.layer);
 		}
 	};
+
 	return ChangesWriteAPI;
 });

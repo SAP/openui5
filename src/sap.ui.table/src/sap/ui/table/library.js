@@ -52,9 +52,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		],
 		extensions: {
 			flChangeHandlers: {
-				"sap.ui.table.Column": {
-					"propertyChange" : "default"
-				},
 				"sap.ui.table.Table" : {
 					"moveElements": "default"
 				},
