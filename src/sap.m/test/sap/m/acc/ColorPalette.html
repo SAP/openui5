@@ -34,7 +34,8 @@
 					new Title({
 						text: "Color Palette samples where the palette is wrapped in a Popover(desktop)/Dialog (mobile)",
 						level: TitleLevel.H1,
-						titleStyle: TitleLevel.H1
+						titleStyle: TitleLevel.H1,
+						wrapping: true
 					}),
 					generateColorPalettePopoverElements()
 				]
@@ -46,7 +47,8 @@
 					new Title({
 						text: "Color Palette in standalone mode with default settings",
 						level: TitleLevel.H1,
-						titleStyle: TitleLevel.H1
+						titleStyle: TitleLevel.H1,
+						wrapping: true
 					}),
 					new Input({placeholder: "An interactive control before Color Palette"}),
 					new ColorPalette({
@@ -93,7 +95,10 @@
 					new HBox({
 						alignItems: sap.m.FlexAlignItems.Center,
 						items: [
-							new Label("lbl1", {text: "Color Palette with default settings"}),
+							new Label("lbl1", {
+								text: "Color Palette with default settings",
+								wrapping: true
+							}),
 							new Button({
 								text: "Open",
 								press: function () {
@@ -107,7 +112,10 @@
 					new HBox({
 						alignItems: sap.m.FlexAlignItems.Center,
 						items: [
-							new Label("lbl2", {text: "Color Palette with 2 colors and 'More Colors' button"}),
+							new Label("lbl2", {
+								text: "Color Palette with 2 colors and 'More Colors' button",
+								wrapping: true
+							}),
 							new Button({
 								text: "Open",
 								press: function () {
@@ -121,7 +129,10 @@
 					new HBox({
 						alignItems: sap.m.FlexAlignItems.Center,
 						items: [
-							new Label("lbl3", {text: "Color Palette with 7 colors without any button"}),
+							new Label("lbl3", {
+								text: "Color Palette with 7 colors without any button",
+								wrapping: true
+							}),
 							new Button({
 								text: "Open",
 								press: function () {
