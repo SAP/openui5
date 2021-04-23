@@ -10,6 +10,18 @@
 			overflow: hidden;
 		}
 
+		#within {
+			display: none;
+			position: absolute;
+			width: 50%;
+			height: 80%;
+			background-color: rgba(255, 0, 0, 0.5);
+			z-index: 1;
+			pointer-events: none;
+			top: 20px;
+			left: 20px;
+		}
+
 		/* bottom */
 		.positioned {
 			position: absolute !important;
@@ -691,6 +703,21 @@
 		});
 		var page1 = new sap.m.Page("page1", {
 			headerContent: [
+				new sap.m.CheckBox("customWithin", {
+					text: "Custom Within",
+					selected : false,
+					select : function(event) {
+						var oWithin = document.getElementById("within");
+
+						if (event.getParameter("selected")) {
+							oWithin.style.display = "block";
+							sap.ui.core.Popup.setWithinArea(oWithin);
+						} else {
+							oWithin.style.display = "none";
+							sap.ui.core.Popup.setWithinArea(null);
+						}
+					}
+				}).addStyleClass("sapUiSmallMarginEnd"),
 				new sap.m.Title({
 					text: "sap.m.Popover"
 				}),
@@ -705,9 +732,11 @@
 		});
 
 		app.addPage(page1);
-		app.placeAt("body");
+		app.placeAt("div");
 	</script>
 </head>
-<body id="body" class="sapUiBody">
+<body class="sapUiBody">
+	<div id="within"></div>
+	<div id="div"></div>
 </body>
 </html>
