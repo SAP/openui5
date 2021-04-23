@@ -14691,9 +14691,7 @@ sap.ui.define([
 					TEAM_ID : "TEAM_01"
 				})
 				.expectRequest("TEAMS('TEAM_01')?custom=bar&$select=MEMBER_COUNT,Team_Id"
-					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)"
-					// TODO do not request late properties here
-					+ ",TEAM_2_MANAGER($select=ID,TEAM_ID)", {
+					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)", {
 					MEMBER_COUNT : 2,
 					Team_Id : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
