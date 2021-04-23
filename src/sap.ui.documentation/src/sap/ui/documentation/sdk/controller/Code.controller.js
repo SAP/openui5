@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 	"sap/ui/documentation/sdk/model/formatter",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/merge"
-], function(jQuery, SampleBaseController, ControlsInfo, formatter, JSONModel, merge) {
+	"sap/base/util/merge",
+	"sap/ui/core/Component"
+], function(jQuery, SampleBaseController, ControlsInfo, formatter, JSONModel, merge, Component) {
 		"use strict";
 
 		return SampleBaseController.extend("sap.ui.documentation.sdk.controller.Code", {
@@ -48,8 +49,7 @@ sap.ui.define([
 
 			_loadCode: function (oData) {
 				var sFileName = this._sFileName,
-					oSample = oData.samples[this._sId], // retrieve sample object
-					aPromises = [];
+					oSample = oData.samples[this._sId]; // retrieve sample object
 
 				// If there is no sample or the context from the URL is for the wrong sample we redirect to not found page
 				// If you modify this expression please check with both class and tutorial which won't have a context.
@@ -60,50 +60,47 @@ sap.ui.define([
 
 				// cache the data to be reused
 				if (!this._oData || oSample.id !== this._oData.id) {
-
 					// get component and data when sample is changed or nothing exists so far
-					var sCompId = 'sampleComp-' + this._sId;
-					var sCompName = this._sId;
-					var oComp = sap.ui.component(sCompId);
-					if (!oComp) {
-						oComp = sap.ui.getCore().createComponent({
-							id : sCompId,
-							name : sCompName
-						});
-					}
+					this._createComponent().then(function (oComponent) {
+						// create data object
+						var oMetadata = oComponent.getMetadata();
+						var aPromises = [];
+						var oConfig = (oMetadata) ? oMetadata.getConfig() : null;
+						this._oData = {
+							id: oSample.id,
+							title: "Code: " + oSample.name,
+							name: oSample.name,
+							stretch: oConfig.sample ? oConfig.sample.stretch : false,
+							files: [],
+							iframe: oConfig.sample.iframe,
+							fileName: sFileName,
+							includeInDownload: oConfig.sample.additionalDownloadFiles
+						};
 
-					// create data object
-					var oMetadata = oComp.getMetadata();
-					var oConfig = (oMetadata) ? oMetadata.getConfig() : null;
-					this._oData = {
-						id : oSample.id,
-						title : "Code: " + oSample.name,
-						name : oSample.name,
-						stretch : oConfig.sample ? oConfig.sample.stretch : false,
-						files : [],
-						iframe : oConfig.sample.iframe,
-						fileName: sFileName,
-						includeInDownload: oConfig.sample.additionalDownloadFiles
-					};
+						// retrieve files
+						// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
+						if (oConfig && oConfig.sample && oConfig.sample.files) {
+							var sRef = sap.ui.require.toUrl((oSample.id).replace(/\./g, "/"));
+							for (var i = 0; i < oConfig.sample.files.length; i++) {
+								var sFile = oConfig.sample.files[i];
+								aPromises.push(this._updateFileContent(sRef, sFile));
 
-					// retrieve files
-					// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
-					if (oConfig && oConfig.sample && oConfig.sample.files) {
-						var sRef = sap.ui.require.toUrl((oSample.id).replace(/\./g, "/"));
-						for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
-							var sFile = oConfig.sample.files[i];
-							aPromises.push(this._updateFileContent(sRef, sFile));
-
-							this._oData.files.push({
-								name : sFile
-							});
-							this._aFilesAvailable.push(sFile);
+								this._oData.files.push({
+									name: sFile
+								});
+								this._aFilesAvailable.push(sFile);
+							}
 						}
-					}
+						return Promise.all(aPromises);
+					}.bind(this)).then(this._showCode.bind(this, sFileName));
 				} else {
 					this._oData.fileName = sFileName;
+					this._showCode(sFileName);
 				}
 
+			},
+
+			_showCode: function(sFileName){
 				this.getAPIReferenceCheckPromise(this._sEntityId).then(function (bHasAPIReference) {
 					this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
 				}.bind(this));
@@ -121,9 +118,7 @@ sap.ui.define([
 				}
 
 				// update <code>CodeEditor</code> content and the selected tab
-				Promise.all(aPromises).then(function() {
-					this._updateCodeEditor(sFileName);
-				}.bind(this));
+				this._updateCodeEditor(sFileName);
 
 				this._getTabHeader().setSelectedKey(sFileName);
 
@@ -246,6 +241,24 @@ sap.ui.define([
 				}
 
 				return this.oTabHeader;
+			},
+
+			_createComponent : function () {
+				// create component only once
+				var sCompId = 'sampleComp-' + this._sId;
+				var sCompName = this._sId;
+
+				var oComp = Component.get(sCompId);
+
+				if (oComp) {
+					oComp.destroy();
+				}
+
+				return Component.create({
+					id: sCompId,
+					name: sCompName,
+					manifest: false
+				});
 			}
 		});
 	}
