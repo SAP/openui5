@@ -16,7 +16,6 @@ sap.ui.define([
 	'./Button',
 	'./ToggleButton',
 	'./Title',
-	'./Label',
 	'./NavContainer',
 	'./Bar',
 	'./SegmentedButton',
@@ -47,7 +46,6 @@ function(
 	Button,
 	ToggleButton,
 	Title,
-	Label,
 	NavContainer,
 	Bar,
 	SegmentedButton,
@@ -1870,12 +1868,12 @@ function(
 
 	/**
 	 * Lazy initialization of the internal title label.
-	 * @returns {sap.m.Label} The created title label
+	 * @returns {sap.m.Title} The created title label
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getTitleLabel = function() {
 		if (this._titleLabel === undefined) {
-			this._titleLabel = new Label(this._sTitleLabelId, {
+			this._titleLabel = new Title(this._sTitleLabelId, {
 				text : this._rb.getText("VIEWSETTINGS_TITLE")
 			}).addStyleClass("sapMVSDTitle");
 		}
@@ -1920,12 +1918,12 @@ function(
 
 	/**
 	 * Lazy initialization of the internal detail title label.
-	 * @returns {sap.m.Label} The created detail title label
+	 * @returns {sap.m.Title} The created detail title label
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getDetailTitleLabel = function() {
 		if (this._detailTitleLabel === undefined) {
-			this._detailTitleLabel = new Label(this.getId() + "-detailtitle",
+			this._detailTitleLabel = new Title(this.getId() + "-detailtitle",
 				{
 					text : this._rb.getText("VIEWSETTINGS_TITLE_FILTERBY")
 				}).addStyleClass("sapMVSDTitle");
