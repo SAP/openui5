@@ -26,7 +26,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"defaultValue": "StringValue",
 						"type": "string",
 						"translatable": true,
-						"hasSubGroup": true,
 						"required": true
 					},
 					"stringLabel": {
@@ -86,14 +85,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "URL",
 						"type": "string",
 						"cols": 1,
-						"subGroupEnd": true,
 						"allowSettings": false
 					},
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"defaultValue": 1,
 						"type": "integer",
-						"hasSubGroup": true,
 						"visualization": {
 							"type": "sap/m/Slider",
 							"settings": {
@@ -162,7 +159,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabelTrans/value",
 						"defaultValue": false,
 						"type": "boolean",
-						"subGroupEnd": true,
 						"label": "{i18n>TRANSLATED_BOOLEAN_LABEL}"
 					},
 					"date": {
@@ -242,7 +238,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"datetimeFormatter": {
 						"manifestpath": "/sap.card/configuration/parameters/datetimeFormatter/value",
 						"type": "datetime",
-						"hasSubGroup": true,
 						"formatter": {
 							style: 'long'
 						}
@@ -757,34 +752,29 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"defaultValue": "editable",
 						"label": "String: editable, visible, label",
 						"type": "string",
-						"hasSubGroup": true,
 						"translatable": true
 					},
 					"dependentString1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentString1/value",
 						"defaultValue": "Editable changes depend on string1",
 						"type": "string",
-						"cols": 1,
 						"editable": "{= ${items>string1/value} === 'editable'}"
 					},
 					"dependentString2": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentString2/value",
 						"defaultValue": "Visible changes depend on string1",
 						"type": "string",
-						"cols": 1,
 						"visible": "{= ${items>string1/value} === 'visible'}"
 					},
 					"dependentString3": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentString3/value",
 						"label": "{= ${items>string1/value} === 'label'? 'dependentString3 True' : 'dependentString3 False' }",
 						"defaultValue": "Label changes depend on string1",
-						"subGroupEnd": true,
 						"type": "string"
 					},
 					"integer1": {
 						"manifestpath": "/sap.card/configuration/parameters/integer1/value",
 						"defaultValue": 1,
-						"hasSubGroup": true,
 						"type": "integer",
 						"label": "Integer: 1, 3, 6, 9"
 					},
@@ -792,20 +782,17 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
 						"defaultValue": "Editable changes depend on integer1",
 						"type": "string",
-						"cols": 1,
 						"editable": "{= ${items>integer1/value} > 2}"
 					},
 					"dependentInteger2": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
 						"defaultValue": "Visible changes depend on integer1",
 						"type": "string",
-						"cols": 1,
 						"visible": "{= ${items>integer1/value} > 5}"
 					},
 					"dependentInteger3": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentInteger3/value",
 						"label": "{= ${items>integer1/value} > 8 ? 'dependentInteger3 True' : 'dependentInteger3 False' }",
-						"subGroupEnd": true,
 						"type": "string"
 					},
 					"boolean1": {
@@ -813,8 +800,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"defaultValue": false,
 						"type": "boolean",
 						"label": "boolean",
-						"hasSubGroup": true,
-						"subGroupVisible": "{currentSettings>value}",
 						"visualization": {
 							"type": "sap/m/Switch",
 							"settings": {
@@ -829,7 +814,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean1/value",
 						"defaultValue": "Editable changes depend on boolean1",
 						"type": "string",
-						"cols": 1,
 						"editable": "{items>boolean1/value}"
 					},
 					"dependentBoolean2": {
@@ -841,24 +825,16 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"dependentBoolean3": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean3/value",
 						"label": "{= ${items>boolean1/value} === true ? 'dependentBoolean3 True' : 'dependentBoolean3 False' }",
-						"type": "string",
-						"cols": 1
-					},
-					"dependentBoolean4": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean4/value",
-						"label": "dependentBoolean4",
-						"type": "boolean",
-						"cols": 1
+						"type": "string"
 					},
 					"CustomerWithVisibleDependent": {
 						"manifestpath": "/sap.card/configuration/parameters/CustomerWithVisibleDependent/value",
 						"type": "string",
 						"visible": "{items>boolean1/value}",
-						"subGroupEnd": true,
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Customers"
+									"url": "{{destinations.aaa}}/Customers"
 								},
 								"path": "/value"
 							},
