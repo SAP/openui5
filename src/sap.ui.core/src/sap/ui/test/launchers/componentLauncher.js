@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/Component'
-], function(ComponentContainer, uid, jQueryDOM/*, Component */) {
+], function(ComponentContainer, uid, jQueryDOM, Component) {
 	"use strict";
 
 	var _loadingStarted = false,
@@ -29,8 +29,10 @@ sap.ui.define([
 				throw new Error("sap.ui.test.launchers.componentLauncher: Start was called twice without teardown. Only one component can be started at a time.");
 			}
 
-			mComponentConfig.async = true;
-			var oPromise = sap.ui.component(mComponentConfig);
+			if ( mComponentConfig.manifest === undefined ) {
+				mComponentConfig.manifest = false;
+			}
+			var oPromise = Component.create(mComponentConfig);
 
 			_loadingStarted = true;
 
