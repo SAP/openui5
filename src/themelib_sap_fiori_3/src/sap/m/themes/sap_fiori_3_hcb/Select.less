@@ -23,27 +23,6 @@ html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltIconOnly):not(.sapMSltDisab
 	border-color: @sapUiFieldHoverBorderColor;
 }
 
-/* FIX: IE and Edge do not support css outline-offset */
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSlt.sapMSltDefault.sapMSltFocused:not(.sapMSltPressed) {
-		outline: none;
-		position: relative;
-	}
-
-	.sapMSlt.sapMSltDefault.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltPressed)::before {
-		content: "";
-		box-sizing: border-box;
-		position: absolute;
-		top: 1px;
-		right: 1px;
-		bottom: 1px;
-		left: 1px;
-		border: 0.125rem dashed @sapUiContentFocusColor;
-	}
-}
-
 /* FIX: In FF bottom outline-offset is not working as expected when Select is in sap.m.Bar and is left-aligned */
 
 html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
@@ -57,28 +36,6 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
 
 	&.sapMSltFocused:not(.sapMSltPressed) {
 		border-color: transparent;
-	}
-}
-
-/* FIX: IconOnly mode - IE and Edge do not support css outline-offset */
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSlt.sapMSltIconOnly.sapMSltFocused:not(.sapMSltExpanded) {
-		outline: none;
-		position: relative;
-		border-color: transparent;
-
-		&:before {
-			content: "";
-			box-sizing: border-box;
-			width: 100%;
-			height: 100%;
-			position: absolute;
-			left: 0;
-			top: 0;
-			border: 0.125rem dashed @sapUiContentFocusColor;
-		}
 	}
 }
 
