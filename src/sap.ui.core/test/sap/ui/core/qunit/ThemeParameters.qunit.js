@@ -1,5 +1,11 @@
 /*global QUnit, URI*/
-sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/core/Element"], function(Parameters, Control, Element) {
+sap.ui.define([
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/Control",
+	"sap/ui/core/Element",
+	"sap/ui/core/Icon",
+	"sap/m/Bar"
+], function(Parameters, Control, Element, Icon, Bar) {
 	"use strict";
 
 	QUnit.module("Parmeters.get");
@@ -445,5 +451,57 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib10");
 
 		sap.ui.getCore().attachThemeChanged(fnAssertThemeChanged);
+	});
+
+	QUnit.test("getActiveScopesFor: Check scope chain for given rendered control", function(assert) {
+		assert.expect(18);
+		var done = assert.async();
+
+		var oInnerIcon1 =  new Icon();
+		var oInnerIcon2 =  new Icon();
+		oInnerIcon2.addStyleClass("TestScope1");
+		var oOuterIcon1 =  new Icon();
+		var oOuterIcon2 =  new Icon();
+		oOuterIcon2.addStyleClass("TestScope1");
+		var oInnerBar = new Bar({ contentLeft: [oInnerIcon1, oInnerIcon2] });
+		oInnerBar.addStyleClass("TestScope1");
+		var oOuterBar = new Bar({ contentLeft: oInnerBar, contentRight: [oOuterIcon1, oOuterIcon2] });
+		oOuterBar.addStyleClass("TestScope2"); // No valid TestScope ==> only checking that this is not part of the ScopeChain
+		oOuterBar.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		var fnAssertThemeChanged = function () {
+			// CSS is loaded and scope 'TestScope1' is defined therefore different scope chains expected
+			assert.deepEqual(Parameters.getActiveScopesFor(oOuterBar, true), [], "OuterBar - no own scope - empty scope chain");
+			assert.deepEqual(Parameters.getActiveScopesFor(oInnerBar, true), [["TestScope1"]], "InnerBar - TestScope1 - [['TestScope1']]");
+			assert.deepEqual(Parameters.getActiveScopesFor(oOuterIcon1, true), [], "InnerIcon1 - no own scope - empty scope chain");
+			assert.deepEqual(Parameters.getActiveScopesFor(oOuterIcon2, true), [["TestScope1"]], "OuterIcon2 - TestScope1 - [['TestScope1']]");
+			assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon1, true), [["TestScope1"]], "InnerIcon1 - no own scope - [['TestScope1']]");
+			assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon2, true), [["TestScope1"], ["TestScope1"]], "InnerIcon2 - TestScope1 - [['TestScope1'], ['TestScope1']]");
+
+			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oOuterBar), "#111213", "OuterBar - no own scope - default scope value #111213");
+			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oInnerBar), "#312111", "InnerBar - TestScope1 - TestScope1 value #312111");
+			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oOuterIcon1), "#111213", "OuterBar - no own scope - default scope value #111213");
+			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oOuterIcon2), "#312111", "OuterIcon2 - TestScope1 - TestScope1 value #312111");
+			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oInnerIcon1), "#312111", "InnerIcon1 - no own scope - TestScope1 value #312111");
+			assert.deepEqual(Parameters.get("sapUiThemeParam1ForLib11", oInnerIcon2), "#312111", "InnerIcon2 - TestScope1 - TestScope1 value #312111");
+
+			oOuterBar.destroy();
+			sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
+			done();
+		};
+
+		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib11");
+
+		sap.ui.getCore().attachThemeChanged(fnAssertThemeChanged);
+
+		// No scope in css defined therefore empty scope chain for all combinations
+		assert.deepEqual(Parameters.getActiveScopesFor(oOuterBar, true), [], "OuterBar - no own scope - no scope defined ==> empty scope chain");
+		assert.deepEqual(Parameters.getActiveScopesFor(oInnerBar, true), [], "InnerBar - TestScope1 - no scope defined ==> empty scope chain");
+		assert.deepEqual(Parameters.getActiveScopesFor(oOuterIcon1, true), [], "InnerIcon1 - no own scope - no scope defined ==> empty scope chain");
+		assert.deepEqual(Parameters.getActiveScopesFor(oOuterIcon2, true), [], "OuterIcon2 - TestScope1 - no scope defined ==> empty scope chain");
+		assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon1, true), [], "InnerIcon1 - no own scope - no scope defined ==> empty scope chain");
+		assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon2, true), [], "InnerIcon2 - TestScope1 - no scope defined ==> empty scope chain");
 	});
 });

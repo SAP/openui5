@@ -1,0 +1,10 @@
+{
+	"default": {
+		"sapUiThemeParam1ForLib3":"#111213"
+	},
+	"scopes": {
+		"TestScope1": {
+			"sapUiThemeParam1ForLib3":"#312111"
+		}
+	}
+}
