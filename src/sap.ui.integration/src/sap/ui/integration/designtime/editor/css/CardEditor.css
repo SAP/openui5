@@ -479,3 +479,11 @@
 .sapUiIntegrationCardEditorItem > .sapMFT {
 	margin-bottom:0.5rem;
 }
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorSubPanel{
+	margin-top: 0.3rem;
+	margin-bottom: 0.3rem;
+	border-style: groove;
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorSubPanel .sapMPanelContent{
+	padding-bottom: 0.5rem;
+}
