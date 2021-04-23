@@ -1716,15 +1716,12 @@ sap.ui.define([
 									}
 								}
 
-								var oCondition = {
-									"index": that._iConditions,
-									"key": that._createConditionKey(),
-									"exclude": that.getExclude() || that._oOperationsHelper.isExcludeType(oOperation.getSelectedKey()),
-									"operation": oOperation.getSelectedKey(),
-									"keyField": oKeyField.key,
-									"value1":  oPastedValue,
-									"value2": null
-								};
+								var oConditionsSettings = {
+									"oOperation" : oOperation.getSelectedKey(),
+									"oKeyField": oKeyField.key,
+									"oPastedValue": oPastedValue
+								},
+								oCondition = that._getConditions(oConditionsSettings);
 								that._addCondition2Map(oCondition);
 
 								that.fireDataChange({
@@ -1757,6 +1754,18 @@ sap.ui.define([
 		}
 
 		return oControl;
+	};
+
+	P13nConditionPanel.prototype._getConditions = function(oConditionsSettings) {
+		return {
+			"index": this._iConditions,
+			"key": this._createConditionKey(),
+			"exclude": this.getExclude(),
+			"operation":oConditionsSettings.oOperation,
+			"keyField": oConditionsSettings.oKeyField,
+			"value1":  oConditionsSettings.oPastedValue,
+			"value2": null
+		};
 	};
 
 	/**
