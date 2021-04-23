@@ -148,7 +148,10 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.persistTechnicalMessages]
 	 *   Whether technical messages should always be treated as persistent, since 1.83.0
 	 * @param {boolean} [mParameters.preliminaryContext=false]
-	 *   Whether a preliminary context will be created/used by a binding
+	 *   Whether a preliminary context will be created/used by a binding. When set to
+	 *   <code>true</code>, the model can bundle the OData calls for dependent bindings into fewer
+	 *   $batch requests. For more information, see
+	 *   {@link topic:62149734b5c24507868e722fe87a75db Optimizing Dependent Bindings}
 	 * @param {boolean} [mParameters.refreshAfterChange=true]
 	 *   Enable/disable automatic refresh after change operations
 	 * @param {boolean} [mParameters.sequentializeRequests=false]
@@ -2112,7 +2115,11 @@ sap.ui.define([
 	 * @param {object} [mParameters] Map which contains additional parameters for the binding
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
-	 * @param {boolean} [mParameters.preliminaryContext] Whether a preliminary Context will be created
+	 * @param {boolean} [mParameters.preliminaryContext]
+	 *   Whether a preliminary context will be created. When set to <code>true</code>, the model
+	 *   can bundle the OData calls for dependent bindings into fewer $batch requests. For more
+	 *   information, see
+	 *   {@link topic:62149734b5c24507868e722fe87a75db Optimizing Dependent Bindings}
 	 * @param {Object<string,string>} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
 	 * @param {function} [fnCallBack] Function to be called when context has been created. The parameter of the callback function is the newly created binding context.
 	 * @param {boolean} [bReload] Whether to reload data

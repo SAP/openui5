@@ -57,7 +57,11 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v2.ODataModel#read} on the parent entity corresponding to this
 	 *   list binding's context with the parameter <code>updateAggregatedMessages</code> set to
 	 *   <code>true</code>.
-	 * @param {boolean} [mParameters.usePreliminaryContext] Whether a preliminary Context will be used
+	 * @param {boolean} [mParameters.usePreliminaryContext]
+	 *   Whether a preliminary context will be used. When set to <code>true</code>, the model can
+	 *   bundle the OData calls for dependent bindings into fewer $batch requests. For more
+	 *   information, see
+	 *   {@link topic:62149734b5c24507868e722fe87a75db Optimizing Dependent Bindings}
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
