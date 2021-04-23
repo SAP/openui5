@@ -76,8 +76,7 @@ sap.ui.define([
 				oChange.assignedToVariant = false;
 			}
 		});
-		this.getModel().oData[this.sVariantManagementReference].modified = true;
-		this.getModel().checkUpdate(true);
+		this.getModel().checkDirtyStateForControlModels([this.sVariantManagementReference]);
 		return Promise.resolve();
 	};
 

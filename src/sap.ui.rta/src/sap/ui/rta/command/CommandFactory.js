@@ -139,6 +139,10 @@ function(
 		evaluateResult(mSettings.target.parent);
 	}
 
+	function configureLocalResetCommand(oElement, mSettings, oDesignTimeMetadata) {
+		return oDesignTimeMetadata.getAction("localReset", oElement);
+	}
+
 	function configureRenameCommand(oElement, mSettings, oDesignTimeMetadata) {
 		var oRenamedElement = mSettings.renamedElement;
 		var oAction = oDesignTimeMetadata.getAction("rename", oRenamedElement);
@@ -285,7 +289,8 @@ function(
 			adjustForBinding: adjustRemoveCommand
 		},
 		localReset: {
-			clazz: "sap.ui.rta.command.LocalReset"
+			clazz: "sap.ui.rta.command.LocalReset",
+			configure: configureLocalResetCommand
 		},
 		rename: {
 			clazz: "sap.ui.rta.command.Rename",

@@ -6,17 +6,24 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/api/LocalResetAPI"
+	"sap/ui/fl/write/api/LocalResetAPI",
+	"sap/ui/rta/command/CompositeCommand",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/m/MessageToast",
+	"sap/ui/dt/OverlayRegistry"
 ], function(
 	Plugin,
 	DtUtil,
 	FlUtils,
-	LocalResetAPI
+	LocalResetAPI,
+	CompositeCommand,
+	JsControlTreeModifier,
+	MessageToast,
+	OverlayRegistry
 ) {
 	"use strict";
 
-	function getCurrentVariant(oAppComponent, sVariantManagement) {
-		var oVariantModel = oAppComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
+	function getCurrentVariant(oVariantModel, sVariantManagement) {
 		return sVariantManagement
 			? oVariantModel.getCurrentVariantReference(sVariantManagement)
 			: "";
@@ -75,12 +82,15 @@ sap.ui.define([
 			}
 		}
 
-		var oAppComponent = FlUtils.getAppComponentForControl(oElement);
-		var sCurrentVariant = getCurrentVariant(oAppComponent, this.getVariantManagementReference(oElementOverlay));
+		var oRelevantElement = oAction.changeOnRelevantContainer ? oElementOverlay.getRelevantContainer() : oElement;
+		var oRelevantOverlay = OverlayRegistry.getOverlay(oRelevantElement);
+		var oAppComponent = FlUtils.getAppComponentForControl(oRelevantElement);
+		var oVariantModel = oAppComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
+		var sCurrentVariant = getCurrentVariant(oVariantModel, this.getVariantManagementReference(oRelevantOverlay));
 		return (
 			bIsActionEnabled
 			&& LocalResetAPI.isResetEnabled(
-				oElement,
+				oRelevantElement,
 				{
 					layer: this.getCommandFactory().getFlexSettings().layer,
 					currentVariant: sCurrentVariant
@@ -112,21 +122,55 @@ sap.ui.define([
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var sVariantManagementReference = this.getVariantManagementReference(oOverlay);
 		var oAppComponent = FlUtils.getAppComponentForControl(oElement);
-		var sCurrentVariant = getCurrentVariant(oAppComponent, sVariantManagementReference);
+		var oVariantModel = oAppComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
+		var sCurrentVariant = getCurrentVariant(oVariantModel, sVariantManagementReference);
+		var bHasVariant = !!sCurrentVariant;
+		var oVariantManagementControl = bHasVariant
+			? JsControlTreeModifier.bySelector(
+				{
+					id: sVariantManagementReference,
+					idIsLocal: true
+				},
+				oAppComponent
+			)
+			: undefined;
+		var oCommandFactory = this.getCommandFactory();
 
-		return this.getCommandFactory().getCommandFor(
-			oElement,
-			"localReset",
-			{
-				currentVariant: sCurrentVariant
-			},
-			oDesignTimeMetadata,
-			sVariantManagementReference
-		)
-			.then(function(oCommand) {
-				this.fireElementModified({
-					command: oCommand
+		var oCompositeCommand = new CompositeCommand();
+
+		return Promise.all([
+			oCommandFactory.getCommandFor(
+				oElement,
+				"localReset",
+				{
+					currentVariant: sCurrentVariant
+				},
+				oDesignTimeMetadata,
+				sVariantManagementReference
+			),
+			bHasVariant && oCommandFactory.getCommandFor(
+				oVariantManagementControl,
+				"save",
+				{
+					model: oVariantModel
+				},
+				oDesignTimeMetadata,
+				sVariantManagementReference
+			)
+		].filter(Boolean))
+			.then(function (aCommands) {
+				aCommands.forEach(function (oCommand) {
+					oCompositeCommand.addCommand(oCommand);
 				});
+				this.fireElementModified({
+					command: oCompositeCommand
+				});
+				if (bHasVariant) {
+					var sMessage = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("MSG_LOCAL_RESET_VARIANT_SAVE");
+					MessageToast.show(sMessage, {
+						duration: 5000
+					});
+				}
 			}.bind(this))
 			.catch(function(vError) {
 				throw DtUtil.propagateError(

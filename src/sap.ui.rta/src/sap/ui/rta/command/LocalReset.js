@@ -30,6 +30,12 @@ sap.ui.define([
 			properties: {
 				currentVariant: {
 					type: "string"
+				},
+				changeType: {
+					type: "string"
+				},
+				jsOnly: {
+					type: "boolean"
 				}
 			},
 			associations: {},

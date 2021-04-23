@@ -111,6 +111,9 @@ sap.ui.define([
 						oChange.assignedToVariant = true;
 					}
 				});
+				// Assigning changes to the variant might have an impact on the modified state
+				// Call the check again to make sure it is up to date
+				this.getModel().checkDirtyStateForControlModels([this.sVariantManagementReference]);
 			}.bind(this));
 	};
 
