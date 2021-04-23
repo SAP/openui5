@@ -2900,6 +2900,36 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test("'_handleDateSelect()' sets a date to the row only if the selected date is new", function (assert) {
+		//prepare
+		var _rowSetDateSpy = this.spy(this.sut._oWeeksRow, 'setDate');
+
+		//act
+		this.sut._handleDateSelect({
+			oSource: {
+				getStartDate: function () {
+					return new Date(Date.UTC(2015, 0, 5));
+				}
+			}
+		});
+		//assert
+		assert.strictEqual(_rowSetDateSpy.callCount, 0, "'_handleDateSelect()' was not called when the date is the same");
+
+		//act
+		this.sut._handleDateSelect({
+			oSource: {
+				getStartDate: function () {
+					return new Date(Date.UTC(2015, 0, 8));
+				}
+			}
+		});
+		//assert
+		assert.strictEqual(_rowSetDateSpy.callCount, 1, "'_handleDateSelect()' was called once when the date is different");
+
+		//clean
+		_rowSetDateSpy.restore();
+	});
+
 	QUnit.module("Interaction", {
 		beforeEach: function() {
 			var oSearchField = new SearchField(),
