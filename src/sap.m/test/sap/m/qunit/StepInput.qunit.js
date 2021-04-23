@@ -935,6 +935,27 @@ sap.ui.define([
 		oSI2.destroy();
 	});
 
+	QUnit.test("entering a dot('.') as a separator does not clear the entry value", function (assert) {
+		// Prepare
+		var oEvent = {
+			getParameter : function () {
+				return "";
+			}
+		}, oUpdateValueSpy;
+		this.stepInput.setValue(1);
+		oUpdateValueSpy = this.spy(this.stepInput._getInput(), "updateDomValue");
+
+		// Act
+		this.stepInput._getInput().$("inner").val("");
+		this.stepInput._inputLiveChangeHandler.call(this.stepInput._getInput(), oEvent);
+
+		// Assert
+		assert.strictEqual(oUpdateValueSpy.callCount, 0, "The value is not updated as only a separator is added");
+
+		// Clean
+		oUpdateValueSpy.restore();
+	});
+
 	QUnit.module("Keyboard Handling", {
 		beforeEach: function () {
 			this.oChangeSpy = sinon.spy();
