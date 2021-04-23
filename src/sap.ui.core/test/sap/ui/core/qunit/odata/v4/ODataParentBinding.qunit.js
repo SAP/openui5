@@ -957,6 +957,16 @@ sap.ui.define([
 	cacheImmmutable : true,
 	fetchIfChildCanUseCacheCallCount : 0,
 	title : "immutable cache"
+}, {
+	cache : {
+		hasSentRequest : function () { return false; },
+		setLateQueryOptions : function () {},
+		setQueryOptions : function () {}
+	},
+	cacheImmmutable : true,
+	fetchIfChildCanUseCacheCallCount : 0,
+	index : 42,
+	title : "non-virtual row context"
 }].forEach(function (oFixture) {
 	QUnit.test("fetchIfChildCanUseCache: late query options, " + oFixture.title, function (assert) {
 		var oMetaModel = {
@@ -987,7 +997,8 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			mChildLocalQueryOptions = {},
-			oContext = Context.create(this.oModel, oBinding, "/Set('1')/navigation('2')"),
+			oContext = Context.create(this.oModel, oBinding, "/Set('1')/navigation('2')",
+				oFixture.index),
 			oHelperMock = this.mock(_Helper),
 			mLateQueryOptions = {},
 			oMetaModelMock = this.mock(oMetaModel),
@@ -1204,7 +1215,7 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			mChildQueryOptions = {},
 			mWrappedChildQueryOptions = {},
-			oContext = Context.create(this.oModel, oBinding, "/Set/0", 0),
+			oContext = Context.create(this.oModel, oBinding, "/Set/~", Context.VIRTUAL),
 			oHelperMock = this.mock(_Helper),
 			mLocalQueryOptions = {},
 			oMetaModelMock = this.mock(oMetaModel),
@@ -1214,7 +1225,7 @@ sap.ui.define([
 		oModelMock.expects("resolve")
 			.withExactArgs("", sinon.match.same(oContext))
 			.returns("/resolved/child/path");
-		oMetaModelMock.expects("getMetaPath").withExactArgs("/Set/0").returns("/Set");
+		oMetaModelMock.expects("getMetaPath").withExactArgs("/Set/~").returns("/Set");
 		oMetaModelMock.expects("getMetaPath").withExactArgs("/resolved/child/path")
 			.returns("/resolved/child/metaPath");
 		oBindingMock.expects("doFetchQueryOptions")
@@ -1472,6 +1483,7 @@ sap.ui.define([
 				sPath : "path"
 			}),
 			oContext = {
+				getIndex : function () {},
 				getPath : function () { return "/foo/bar/path"; }
 			},
 			oModelMock = this.mock(oBinding.oModel);
@@ -1499,6 +1511,7 @@ sap.ui.define([
 				sPath : "path"
 			}),
 			oContext = {
+				getIndex : function () {},
 				getPath : function () { return "/Foo/operation(...)/Bar/path"; }
 			},
 			oModelMock = this.mock(oBinding.oModel);
@@ -1724,6 +1737,7 @@ sap.ui.define([
 				sPath : "/TEAMS"
 			}),
 			oContext = {
+				getIndex : function () {},
 				getPath : function () { return "/TEAMS"; }
 			},
 			oModelMock = this.mock(oBinding.oModel),
