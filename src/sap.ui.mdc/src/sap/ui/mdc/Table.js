@@ -1735,6 +1735,9 @@ sap.ui.define([
 						]
 					});
 					oColumn.addDependent(this._oPopover);
+				} else if (this._oPopover) {
+					this._oPopover.destroy();
+					this._oPopover = null;
 				}
 			}
 			var oDelegate = this.getControlDelegate();
