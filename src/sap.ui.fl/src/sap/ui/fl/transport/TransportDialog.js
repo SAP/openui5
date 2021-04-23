@@ -19,7 +19,7 @@ function(
 	 *
 	 * @class
 	 * The Transport Dialog Control can be used to implement a value help for selecting an ABAP package and transport request. It is not a generic utility, but part of the Variantmanament and therefore cannot be used in any other application.
-	 * @extends sap.ui.fl.write._internal.transport.TransportDialog
+	 * @extends sap.m.Dialog
 	 *
 	 * @constructor
 	 * @public
