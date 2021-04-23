@@ -2689,36 +2689,37 @@ sap.ui.define([
 	 * @private
 	 */
 	PlanningCalendar.prototype._handleDateSelect = function(oEvent){
-		var oStartDate = oEvent.oSource.getStartDate();
+		var oStartDate = oEvent.oSource.getStartDate(),
+			oCurrentStartDate = this.getStartDate();
 
 		// Checking if the current view (custom or not) is of type Hour
 		if (this._getView(this.getViewKey()).getIntervalType() === CalendarIntervalType.Hour) {
-			var oCurrentStartDate = this.getStartDate();
-
 			oStartDate.setHours(oCurrentStartDate.getHours());
 			oStartDate.setMinutes(oCurrentStartDate.getMinutes());
 			oStartDate.setSeconds(oCurrentStartDate.getSeconds());
 		}
 
-		this._changeStartDate(oStartDate);
-		this._dateNav.setCurrent(oStartDate);
+		if (oCurrentStartDate.getTime() !== oStartDate.getTime()){
+			this._changeStartDate(oStartDate);
+			this._dateNav.setCurrent(oStartDate);
 
-		var sViewKey = this.getViewKey(),
-			oCurrentView = this._getView(sViewKey),
-			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
-			sControlRef;
+			var sViewKey = this.getViewKey(),
+				oCurrentView = this._getView(sViewKey),
+				sCurrentViewIntervalType = oCurrentView.getIntervalType(),
+				sControlRef;
 
-		if (sCurrentViewIntervalType === "Hour") {
-			sCurrentViewIntervalType = "Time";
-		} else if (sCurrentViewIntervalType === "Day") {
-			sCurrentViewIntervalType = "Date";
-		} else if (sCurrentViewIntervalType === "One Month") {
-			sCurrentViewIntervalType = "OneMonth";
-		}
-		sControlRef = "_o" + sCurrentViewIntervalType + "sRow";
+			if (sCurrentViewIntervalType === "Hour") {
+				sCurrentViewIntervalType = "Time";
+			} else if (sCurrentViewIntervalType === "Day") {
+				sCurrentViewIntervalType = "Date";
+			} else if (sCurrentViewIntervalType === "One Month") {
+				sCurrentViewIntervalType = "OneMonth";
+			}
+			sControlRef = "_o" + sCurrentViewIntervalType + "sRow";
 
-		if (this[sControlRef]) {
-			this[sControlRef].setDate(oStartDate);
+			if (this[sControlRef]) {
+				this[sControlRef].setDate(oStartDate);
+			}
 		}
 	};
 
