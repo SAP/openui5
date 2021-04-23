@@ -331,10 +331,6 @@ function(
 					return;
 				}
 
-				var oTokensList = oTokenizer._getTokensList();
-				oTokenizer._fillTokensList(oTokensList);
-				this.addContent(oTokensList);
-
 				that._manageListsVisibility(!!oTokenizer.getTokens().length);
 			});
 
