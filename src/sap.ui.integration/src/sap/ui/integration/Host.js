@@ -7,6 +7,7 @@ sap.ui.define([
 ], function (library,
 			 Element) {
 		"use strict";
+		/*global navigator*/
 
 		/**
 		 * Constructor for a new <code>Host</code>.
@@ -107,6 +108,18 @@ sap.ui.define([
 							type: {
 								type: "sap.ui.integration.CardActionType"
 							}
+						}
+					},
+
+					/**
+					 * Fired when a message from channels like navigator.serviceWorker is received.
+					 * @private
+					 * @ui5-restricted
+					 * @experimental since 1.91
+					 */
+					message: {
+						parameters: {
+							data: { type: 'object' }
 						}
 					}
 				}
@@ -225,6 +238,72 @@ sap.ui.define([
 		 */
 		Host.prototype.getContexts = function () {
 			return Promise.resolve({});
+		};
+
+		/**
+		 * Call this method if you want to use the experimental caching for all cards.
+		 * @private
+		 * @ui5-restricted
+		 */
+		Host.prototype.useExperimentalCaching = function () {
+			this.bUseExperimentalCaching = true;
+			this.subscribeForMessages();
+		};
+
+		/**
+		 * Modify request headers before sending a data request.
+		 * Override if you need to change the default cache headers behavior.
+		 * @param {*} mHeaders
+		 * @param {*} oSettings
+		 * @param {*} oCard
+		 * @returns {map}
+		 * @private
+		 * @ui5-restricted
+	 	 * @experimental Since 1.91. The API might change.
+		 */
+		Host.prototype.modifyRequestHeaders = function (mHeaders, oSettings, oCard) {
+			var oCacheSettings = oSettings.cache,
+				aCacheControl = [];
+
+			if (oCacheSettings && !oCacheSettings.noStore) {
+				aCacheControl.push("max-age=" + parseInt(oCacheSettings.maxAge || 0));
+				aCacheControl.push("stale-while-revalidate=" + parseInt(oCacheSettings.staleWhileRevalidate || 0));
+			} else {
+				// cache disabled
+				aCacheControl.push("max-age=0");
+				aCacheControl.push("stale-while-revalidate=0");
+				aCacheControl.push("no-store");
+			}
+
+			if (aCacheControl.length) {
+				mHeaders["Cache-Control"] = aCacheControl.join(", ");
+			}
+
+			if (oSettings.businessData !== undefined) {
+				mHeaders["x-sap-business-data"] = oSettings.businessData ? "true" : "false";
+			}
+
+			mHeaders["x-sap-card"] = "true";
+
+			return mHeaders;
+		};
+
+		/**
+		 * By default subscribes to navigator.serviceWorker messages.
+		 * Override to subscribe to different channels.
+		 * @private
+		 * @ui5-restricted
+		 */
+		Host.prototype.subscribeForMessages = function () {
+			if (!navigator || !navigator.serviceWorker) {
+				return;
+			}
+
+			navigator.serviceWorker.addEventListener('message', function (oEvent) {
+				this.fireMessage({
+					data: oEvent.data
+				});
+			}.bind(this));
 		};
 
 		return Host;

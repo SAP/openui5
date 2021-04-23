@@ -1,0 +1,22 @@
+{
+    "firstName": "Donna",
+    "lastName": "Moore",
+    "position": "Sales Executive",
+    "phone": "+1 202 555 5555",
+    "email": "my@mymail.com",
+    "photo": "./DonnaMoore.png",
+    "agendaUrl": "/agenda",
+    "manager": {
+        "firstName": "Alain",
+        "lastName": "Chevalier",
+        "photo": "./AlainChevalier.png"
+    },
+    "company": {
+        "name": "Robert Brown Entertainment",
+        "address": "481 West Street, Anytown OH 45066, USA",
+        "email": "mail@mycompany.com",
+        "emailSubject": "Subject",
+        "website": "www.company_a.example.com",
+        "url": "https://www.company_a.example.com"
+    }
+}

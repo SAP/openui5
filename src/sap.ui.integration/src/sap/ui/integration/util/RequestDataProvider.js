@@ -84,7 +84,8 @@ sap.ui.define([
 	};
 
 	RequestDataProvider.prototype._fetch = function (oRequestConfig) {
-		var sMessage = "Invalid request";
+		var sMessage = "Invalid request",
+			oSettings = this._oSettings;
 
 		if (!oRequestConfig || !oRequestConfig.url) {
 			Log.error(sMessage);
@@ -99,7 +100,7 @@ sap.ui.define([
 			oCard = this.getCardInstance(),
 			sUrl = oRequestConfig.url,
 			sDataType = (this.getAllowCustomDataType() && oRequestConfig.dataType) || "json",
-			mHeaders = oRequestConfig.headers,
+			mHeaders = oRequestConfig.headers || {},
 			mBatchRequests = oRequestConfig.batch,
 			oBatchSerialized,
 			oRequest;
@@ -119,6 +120,8 @@ sap.ui.define([
 			vData = oBatchSerialized.body;
 			mHeaders = Object.assign({}, mHeaders, oBatchSerialized.headers);
 		}
+
+		mHeaders = this._prepareHeaders(mHeaders, oSettings);
 
 		oRequest = {
 			"mode": oRequestConfig.mode || "cors",
@@ -226,6 +229,17 @@ sap.ui.define([
 
 			resolve(mResult);
 		});
+	};
+
+	/**
+	 * Override if modification to the headers is needed.
+	 * @param {map} mHeaders The current headers
+	 * @param {Object} oSettings The request settings
+	 * @returns {map} The modified headers
+	 */
+	RequestDataProvider.prototype._prepareHeaders = function (mHeaders, oSettings) {
+		// do nothing, use current headers
+		return mHeaders;
 	};
 
 	return RequestDataProvider;
