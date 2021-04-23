@@ -234,14 +234,14 @@ function(
 							FilterOperatorUtil._mOperators.between.validate(aValues, oType);
 						}
 					}),
-					lowerThan: new Operator({
+					lessThan: new Operator({
 						name: "LT",
 						filterOperator: ModelOperator.LT,
 						tokenParse: "^<([^=].*)$",
 						tokenFormat: "<{0}",
 						valueTypes: [Operator.ValueType.Self]
 					}),
-					notLowerThan: new Operator({
+					notLessThan: new Operator({
 						name: "NOTLT",
 						filterOperator: ModelOperator.GE,
 						tokenParse: "^!<([^=].*)$",
@@ -1323,22 +1323,22 @@ function(
 				 FilterOperatorUtil._mOperators.between,
 				 FilterOperatorUtil._mOperators.startsWith,
 				 FilterOperatorUtil._mOperators.endsWith,
-				 FilterOperatorUtil._mOperators.empty,
+				 FilterOperatorUtil._mOperators.lessThan,
 				 FilterOperatorUtil._mOperators.lessEqual,
-				 FilterOperatorUtil._mOperators.lowerThan,
-				 FilterOperatorUtil._mOperators.greaterEqual,
 				 FilterOperatorUtil._mOperators.greaterThan,
+				 FilterOperatorUtil._mOperators.greaterEqual,
+				 FilterOperatorUtil._mOperators.empty,
 
 				 FilterOperatorUtil._mOperators.notContains,
 				 FilterOperatorUtil._mOperators.notEqual,
 				 FilterOperatorUtil._mOperators.notBetween,
 				 FilterOperatorUtil._mOperators.notStartsWith,
 				 FilterOperatorUtil._mOperators.notEndsWith,
-				 FilterOperatorUtil._mOperators.notEmpty,
+				 FilterOperatorUtil._mOperators.notLessThan,
 				 FilterOperatorUtil._mOperators.notLessEqual,
-				 FilterOperatorUtil._mOperators.notLowerThan,
+				 FilterOperatorUtil._mOperators.notGreaterThan,
 				 FilterOperatorUtil._mOperators.notGreaterEqual,
-				 FilterOperatorUtil._mOperators.notGreaterThan
+				 FilterOperatorUtil._mOperators.notEmpty
 				],
 				FilterOperatorUtil._mOperators.equal
 		);
@@ -1346,18 +1346,20 @@ function(
 				BaseType.Date,
 				[
 				 FilterOperatorUtil._mOperators.equal,
-				 FilterOperatorUtil._mOperators.greaterEqual,
-				 FilterOperatorUtil._mOperators.lessEqual,
-				 FilterOperatorUtil._mOperators.lowerThan,
-				 FilterOperatorUtil._mOperators.greaterThan,
 				 FilterOperatorUtil._mOperators.between,
+				 FilterOperatorUtil._mOperators.lessThan,
+				 FilterOperatorUtil._mOperators.lessEqual,
+				 FilterOperatorUtil._mOperators.greaterThan,
+				 FilterOperatorUtil._mOperators.greaterEqual,
+				//  FilterOperatorUtil._mOperators.empty,
 
 				 FilterOperatorUtil._mOperators.notEqual,
 				 FilterOperatorUtil._mOperators.notBetween,
+				 FilterOperatorUtil._mOperators.notLessThan,
 				 FilterOperatorUtil._mOperators.notLessEqual,
-				 FilterOperatorUtil._mOperators.notLowerThan,
-				 FilterOperatorUtil._mOperators.notGreaterEqual,
 				 FilterOperatorUtil._mOperators.notGreaterThan,
+				 FilterOperatorUtil._mOperators.notGreaterEqual,
+				//  FilterOperatorUtil._mOperators.notEmpty,
 
 				 FilterOperatorUtil._mOperators.today,
 				 FilterOperatorUtil._mOperators.yesterday,
@@ -1404,17 +1406,17 @@ function(
 				[
 				 FilterOperatorUtil._mOperators.equal,
 				 FilterOperatorUtil._mOperators.between,
+				 FilterOperatorUtil._mOperators.lessThan,
 				 FilterOperatorUtil._mOperators.lessEqual,
-				 FilterOperatorUtil._mOperators.lowerThan,
-				 FilterOperatorUtil._mOperators.greaterEqual,
 				 FilterOperatorUtil._mOperators.greaterThan,
+				 FilterOperatorUtil._mOperators.greaterEqual,
 
 				 FilterOperatorUtil._mOperators.notEqual,
 				 FilterOperatorUtil._mOperators.notBetween,
+				 FilterOperatorUtil._mOperators.notLessThan,
 				 FilterOperatorUtil._mOperators.notLessEqual,
-				 FilterOperatorUtil._mOperators.notLowerThan,
-				 FilterOperatorUtil._mOperators.notGreaterEqual,
-				 FilterOperatorUtil._mOperators.notGreaterThan
+				 FilterOperatorUtil._mOperators.notGreaterThan,
+				 FilterOperatorUtil._mOperators.notGreaterEqual
 				]
 		);
 		FilterOperatorUtil.setOperatorsForType(
@@ -1422,17 +1424,17 @@ function(
 				[
 				 FilterOperatorUtil._mOperators.equal,
 				 FilterOperatorUtil._mOperators.between,
+				 FilterOperatorUtil._mOperators.lessThan,
 				 FilterOperatorUtil._mOperators.lessEqual,
-				 FilterOperatorUtil._mOperators.lowerThan,
-				 FilterOperatorUtil._mOperators.greaterEqual,
 				 FilterOperatorUtil._mOperators.greaterThan,
+				 FilterOperatorUtil._mOperators.greaterEqual,
 
 				 FilterOperatorUtil._mOperators.notEqual,
 				 FilterOperatorUtil._mOperators.notBetween,
+				 FilterOperatorUtil._mOperators.notLessThan,
 				 FilterOperatorUtil._mOperators.notLessEqual,
-				 FilterOperatorUtil._mOperators.notLowerThan,
-				 FilterOperatorUtil._mOperators.notGreaterEqual,
-				 FilterOperatorUtil._mOperators.notGreaterThan
+				 FilterOperatorUtil._mOperators.notGreaterThan,
+				 FilterOperatorUtil._mOperators.notGreaterEqual
 				]
 		);
 		FilterOperatorUtil.setOperatorsForType(
@@ -1440,17 +1442,17 @@ function(
 				[
 				 FilterOperatorUtil._mOperators.equal,
 				 FilterOperatorUtil._mOperators.between,
+				 FilterOperatorUtil._mOperators.lessThan,
 				 FilterOperatorUtil._mOperators.lessEqual,
-				 FilterOperatorUtil._mOperators.lowerThan,
-				 FilterOperatorUtil._mOperators.greaterEqual,
 				 FilterOperatorUtil._mOperators.greaterThan,
+				 FilterOperatorUtil._mOperators.greaterEqual,
 
 				 FilterOperatorUtil._mOperators.notEqual,
 				 FilterOperatorUtil._mOperators.notBetween,
+				 FilterOperatorUtil._mOperators.notLessThan,
 				 FilterOperatorUtil._mOperators.notLessEqual,
-				 FilterOperatorUtil._mOperators.notLowerThan,
-				 FilterOperatorUtil._mOperators.notGreaterEqual,
-				 FilterOperatorUtil._mOperators.notGreaterThan
+				 FilterOperatorUtil._mOperators.notGreaterThan,
+				 FilterOperatorUtil._mOperators.notGreaterEqual
 				]
 		);
 		FilterOperatorUtil.setOperatorsForType(
