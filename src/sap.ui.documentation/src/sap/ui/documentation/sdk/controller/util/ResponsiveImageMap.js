@@ -5,8 +5,12 @@
 sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
 	"use strict";
 
-	var ResponsiveImageMap = function (oMap, oImg) {
+	var ResponsiveImageMap = function (oData) {
+		var oMap = oData.querySelector('map'),
+			oImg = oData.querySelector('img');
+
 		this.oImg = oImg;
+		this.oMapWrapper = this.oImg.parentNode;
 		this.oOverlay = new Overlay(this.oImg.parentNode);
 		this.oToolTip = new Tooltip();
 		this.fnHandlers = {
@@ -42,27 +46,48 @@ sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
 			oArea.element.coords = aNewCoords.join(',');
 		});
 
+		this.resizeOverlay();
+
 		return true;
 	};
 
+	ResponsiveImageMap.prototype.resizeOverlay = function () {
+		var oRect = this.oMapWrapper.getBoundingClientRect(),
+			fWidth = oRect.width,
+			fHeight = oRect.height;
+
+		this.oOverlay.setSize(fWidth, fHeight);
+	};
+
 	ResponsiveImageMap.prototype.onmouseenter = function (oEvent) {
+		if (this.bAreasDisabled) {
+			return;
+		}
+
 		var sCoords = oEvent.target.coords,
 			sShape = oEvent.target.getAttribute("shape");
-
-		this.sTitle = oEvent.target.getAttribute('title');
-		oEvent.target.setAttribute('title', ''); // prevent browser showing the title as tooltip
 
 		this.oOverlay.setShape(sShape, sCoords);
 		this.oOverlay.show();
 
+		this.sTitle = this.getTooltipText(oEvent);
+
 		if (this.sTitle) {
+			oEvent.target.setAttribute('title', ''); // prevent browser showing the title as tooltip
+
 			this.oToolTip.setText(this.sTitle);
 			this.oToolTip.show(this.oOverlay.getCurrentShape().oContainer);
 		}
 	};
 
+	ResponsiveImageMap.prototype.getTooltipText = function (oEvent) {
+		return oEvent.target.getAttribute('title');
+	};
+
 	ResponsiveImageMap.prototype.onmouseleave = function (oEvent) {
-		oEvent.target.setAttribute('title', this.sTitle); // restore title attribute to be used for next tooltip show
+		if (this.sTitle) {
+			oEvent.target.setAttribute('title', this.sTitle); // restore title attribute to be used for next tooltip show
+		}
 
 		this.oOverlay.hide();
 		this.oToolTip.hide();
