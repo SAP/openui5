@@ -281,7 +281,7 @@ sap.ui.define([
 	};
 
 	Month.prototype.onAfterRendering = function(){
-
+		this.bSpaceButtonPressed = false;
 		_initItemNavigation.call(this);
 
 		// check if day names are too big -> use smaller ones
