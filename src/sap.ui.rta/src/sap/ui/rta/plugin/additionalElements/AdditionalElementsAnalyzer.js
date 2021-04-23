@@ -214,6 +214,12 @@ sap.ui.define([
 		});
 	}
 
+	function _checkHideFromReveal(aModelProperties) {
+		return aModelProperties.some(function (mModelProperty) {
+			return mModelProperty.hideFromReveal;
+		});
+	}
+
 	/**
 	 * Checks if array of paths is not empty
 	 * @param {string[]} aBindingPaths - Array of collected binding paths
@@ -234,7 +240,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	function _findModelProperty(aControlsBindingPaths, aProperties) {
+	function _findModelProperties(aControlsBindingPaths, aProperties) {
 		return aProperties.filter(function (oModelProperty) {
 			return aControlsBindingPaths.some(function(sBindingPath) {
 				//there might be some deeper binding paths available on controls,
@@ -242,7 +248,7 @@ sap.ui.define([
 				//So we only check a properties are part of the controls bindings
 				return sBindingPath.startsWith(oModelProperty.bindingPath);
 			});
-		}).pop();
+		});
 	}
 
 	function _vBindingToPath(vBinding) {
@@ -362,17 +368,15 @@ sap.ui.define([
 	 * @private
 	 */
 	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths) {
-		if (!_hasBindings(aBindingPaths)) {
-			// include it if the field has no bindings (bindings can be added in runtime)
-			return true;
+		if (_hasBindings(aBindingPaths)) {
+			var aModelProperties = _findModelProperties(aBindingPaths, aProperties);
+			if (!aModelProperties.length || _checkHideFromReveal(aModelProperties)) {
+				return false;
+			}
+			_enhanceInvisibleElement(oInvisibleElement, aModelProperties.pop());
 		}
-
-		var mModelProperty = _findModelProperty(aBindingPaths, aProperties);
-		if (mModelProperty && !mModelProperty.hideFromReveal) {
-			_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
-			return true;
-		}
-		return false;
+		// include it if the field has no bindings (bindings can be added in runtime)
+		return true;
 	}
 
 	function _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties) {
@@ -386,7 +390,7 @@ sap.ui.define([
 			aBindingPaths = _getRepresentedBindingPathsOfInvisibleElement(oInvisibleElement, aRepresentedProperties);
 		// BCP: 1880498671
 		} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
-			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
+			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel, oInvisibleElement).bindingPaths;
 		} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
 			bIncludeElement = false;
 		}

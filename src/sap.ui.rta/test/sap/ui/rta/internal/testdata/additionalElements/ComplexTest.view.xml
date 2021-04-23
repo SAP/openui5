@@ -80,6 +80,9 @@
 									<smartForm:GroupElement id="EntityType01.Prop10" visible="false" label="Invisible with binding inside (not revealable)">
 										<TextArea value="{DELETED_CUSTOM_FIELD}"/>
 									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType01.technicalInvisibleProp" visible="false" label="Technical invisible via ui.hidden annotation (not revealable)">
+										<TextArea value="{EntityType01_TechnicalInvisibleProperty}"/>
+									</smartForm:GroupElement>
 								</smartForm:Group>
 								<!--This Group is bound to EntityType02 because the form is bound to EntityType02 -->
 								<smartForm:Group id="GroupEntityType02" label="Group2 bound to EntityType02" >
@@ -123,6 +126,9 @@
 									</smartForm:GroupElement>
 									<smartForm:GroupElement label="Field with binding to non-existent model" id="NonExistentModel" visible="false">
 										<smartField:SmartField value="{NonExistentModel>PropertyName}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType02.technicalInvisibleProp" visible="false" label="Technical invisible via ui.hidden annotation (not revealable)">
+										<TextArea value="{TechnicalInvisibleProperty}"/>
 									</smartForm:GroupElement>
 								</smartForm:Group>
 							</smartForm:SmartForm>
