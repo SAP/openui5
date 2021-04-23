@@ -726,8 +726,8 @@ sap.ui.define([
 				if (oError instanceof TimeoutError) {
 					// If the tab or browser are in the background, or the focus is in the dev tools, the are no focus events. To be able to continue
 					// with the test execution, fake the focus events.
-					oElement.dispatchEvent(TableQUnitUtils.createFocusEvent("focusin"));
-					oElement.dispatchEvent(TableQUnitUtils.createFocusEvent("focus"));
+					oElement.dispatchEvent(new FocusEvent("focusin"));
+					oElement.dispatchEvent(new FocusEvent("focus"));
 					oEventListener.remove();
 					return oHelperPlugin.whenFocusHandlingFinished();
 				}
@@ -1211,16 +1211,6 @@ sap.ui.define([
 		return function() {
 			return TableQUnitUtils.changeTextDirection(bRTL);
 		};
-	};
-
-	/**
-	 * Creates a focus event object.
-	 *
-	 * @param {string} sFocusEventType The focus event type.
-	 * @returns {FocusEvent} The focus event object.
-	 */
-	TableQUnitUtils.createFocusEvent = function(sFocusEventType) {
-		return new FocusEvent(sFocusEventType);
 	};
 
 	/**

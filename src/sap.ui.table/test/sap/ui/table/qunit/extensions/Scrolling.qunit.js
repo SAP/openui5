@@ -41,6 +41,36 @@ sap.ui.define([
 		});
 	}
 
+	function createTouchEvent(sType, mParams) {
+		if (Device.browser.firefox || Device.browser.safari) {
+			return Object.assign(new Event(sType, {
+				bubbles: true,
+				cancelable: true
+			}), mParams);
+		} else {
+			return new window.TouchEvent(sType, Object.assign({
+				bubbles: true,
+				cancelable: true
+			}, mParams));
+		}
+	}
+
+	function createTouch(mParams) {
+		if (Device.browser.firefox || Device.browser.safari) {
+			var oTarget = mParams.target;
+
+			delete mParams.target;
+
+			return Object.assign(new Event({
+				bubbles: true,
+				cancelable: true,
+				target: oTarget
+			}), mParams);
+		} else {
+			return new window.Touch(mParams);
+		}
+	}
+
 	var iTouchPositionX;
 	var iTouchPositionY;
 	var oTouchTargetElement;
@@ -50,13 +80,11 @@ sap.ui.define([
 		iTouchPositionX = iPageX || 0;
 		iTouchPositionY = iPageY || 0;
 
-		var oTouchEvent = new window.TouchEvent("touchstart", {
-			bubbles: true,
-			cancelable: true,
+		var oTouchEvent = createTouchEvent("touchstart", {
 			touches: [
-				new window.Touch({
-					identifier: Date.now(),
+				createTouch({
 					target: oTouchTargetElement,
+					identifier: Date.now(),
 					pageX: iTouchPositionX,
 					pageY: iTouchPositionY
 				})
@@ -72,13 +100,11 @@ sap.ui.define([
 		iTouchPositionX -= iScrollDeltaX || 0;
 		iTouchPositionY -= iScrollDeltaY || 0;
 
-		var oTouchEvent = new window.TouchEvent("touchmove", {
-			bubbles: true,
-			cancelable: true,
+		var oTouchEvent = createTouchEvent("touchmove", {
 			touches: [
-				new window.Touch({
-					identifier: Date.now(),
+				createTouch({
 					target: oTouchTargetElement,
+					identifier: Date.now(),
 					pageX: iTouchPositionX,
 					pageY: iTouchPositionY
 				})
@@ -91,13 +117,11 @@ sap.ui.define([
 	}
 
 	function endTouchScrolling() {
-		var oTouchEvent = new window.TouchEvent("touchend", {
-			bubbles: true,
-			cancelable: true,
+		var oTouchEvent = createTouchEvent("touchend", {
 			changedTouches: [
-				new window.Touch({
-					identifier: Date.now(),
+				createTouch({
 					target: oTouchTargetElement,
+					identifier: Date.now(),
 					pageX: iTouchPositionX,
 					pageY: iTouchPositionY
 				})

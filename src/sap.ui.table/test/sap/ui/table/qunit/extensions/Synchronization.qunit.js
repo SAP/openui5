@@ -443,14 +443,42 @@ sap.ui.define([
 			});
 		}
 
+		function createTouchEvent(sType, mParams) {
+			if (Device.browser.firefox || Device.browser.safari) {
+				return Object.assign(new Event(sType, {
+					bubbles: true,
+					cancelable: true
+				}), mParams);
+			} else {
+				return new window.TouchEvent(sType, Object.assign({
+					bubbles: true,
+					cancelable: true
+				}, mParams));
+			}
+		}
+
+		function createTouch(mParams) {
+			if (Device.browser.firefox || Device.browser.safari) {
+				var oTarget = mParams.target;
+
+				delete mParams.target;
+
+				return Object.assign(new Event({
+					bubbles: true,
+					cancelable: true,
+					target: oTarget
+				}), mParams);
+			} else {
+				return new window.Touch(mParams);
+			}
+		}
+
 		function createTouchStartEvent(oTargetElement) {
-			return new window.TouchEvent("touchstart", {
-				bubbles: true,
-				cancelable: true,
+			return createTouchEvent("touchstart", {
 				touches: [
-					new window.Touch({
-						identifier: Date.now(),
+					createTouch({
 						target: oTargetElement,
+						identifier: Date.now(),
 						pageX: 0,
 						pageY: 0
 					})
@@ -461,13 +489,11 @@ sap.ui.define([
 		function createTouchMoveEvent(oTargetElement, iScrollDelta, bHorizontal) {
 			iScrollDelta *= -1;
 
-			return new window.TouchEvent("touchmove", {
-				bubbles: true,
-				cancelable: true,
+			return createTouchEvent("touchmove", {
 				touches: [
-					new window.Touch({
-						identifier: Date.now(),
+					createTouch({
 						target: oTargetElement,
+						identifier: Date.now(),
 						pageX: bHorizontal ? iScrollDelta : 0,
 						pageY: bHorizontal ? 0 : iScrollDelta
 					})

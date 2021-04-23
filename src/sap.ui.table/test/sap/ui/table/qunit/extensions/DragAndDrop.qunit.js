@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/library",
-	"sap/ui/core/Control"
-], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Control) {
+	"sap/ui/core/Control",
+	"sap/ui/Device"
+], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Control, Device) {
 	"use strict";
 
 	// mapping of globals
@@ -24,11 +25,29 @@ sap.ui.define([
 	function createDragEvent(sDragEventType) {
 		var oJQueryDragEvent = jQuery.Event(sDragEventType);
 
-		oJQueryDragEvent.originalEvent = new DragEvent(sDragEventType, {
-			bubbles: true,
-			cancelable: true,
-			dataTransfer: new DataTransfer()
-		});
+		if (Device.browser.safari) {
+			oJQueryDragEvent.originalEvent = new Event(sDragEventType, {
+				bubbles: true,
+				cancelable: true
+			});
+
+			oJQueryDragEvent.originalEvent.dataTransfer = {
+				dropEffect: "none",
+				effectAllowed: "none",
+				files: [],
+				items: [],
+				types: [],
+				setDragImage: function() {},
+				setData: function() {},
+				getData: function() {}
+			};
+		} else {
+			oJQueryDragEvent.originalEvent = new DragEvent(sDragEventType, {
+				bubbles: true,
+				cancelable: true,
+				dataTransfer: new DataTransfer()
+			});
+		}
 
 		return oJQueryDragEvent;
 	}
