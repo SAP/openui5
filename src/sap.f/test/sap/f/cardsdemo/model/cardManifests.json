@@ -339,69 +339,6 @@
 				}
 			}
 		},
-		"card14": {
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "List Card",
-					"subTitle": "With static list items",
-					"icon": {
-						"src": "sap-icon://business-objects-experience"
-					},
-					"status": {
-						"text": "5 of 17"
-					}
-				},
-				"content": {
-					"items": [
-						{
-							"title": "Laurent Dubois",
-							"icon": "./images/Elena_Petrova.png",
-							"description": "I am Laurent. I put great attention to detail.",
-							"infoState": "Error",
-							"info": "Manager",
-							"highlight": "Success",
-							"action": {
-								"url": "https://www.sap.com"
-							}
-						},
-						{
-							"title": "Alain Chevalier",
-							"icon": "./images/Alain_Chevalier.png",
-							"description": "I am Alain. I put great attention to detail.",
-							"infoState": "Success",
-							"info": "Credit Analyst",
-							"highlight": "Error"
-						},
-						{
-							"title": "Alain Chevalier",
-							"icon": "./images/Monique_Legrand.png",
-							"description": "I am Alain. I put great attention to detail.",
-							"infoState": "Information",
-							"info": "Configuration Expert",
-							"highlight": "Information"
-						},
-						{
-							"title": "Alain Chevalier",
-							"icon": "./images/Alain_Chevalier.png",
-							"description": "I am Alain. I put great attention to detail.",
-							"highlight": "Warning"
-						},
-						{
-							"title": "Laurent Dubois",
-							"icon": "./images/Elena_Petrova.png",
-							"description": "I am Laurent. I put great attention to detail.",
-							"infoState": "Error",
-							"info": "Manager",
-							"highlight": "Success",
-							"action": {
-								"url": "https://www.sap.com"
-							}
-						}
-					]
-				}
-			}
-		},
 		"largeList": {
 			"sap.card": {
 				"type": "List",
@@ -438,72 +375,6 @@
 							"state": "{infoState}"
 						}
 					}
-				}
-			}
-		},
-		"smallList": {
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "Tasks",
-					"subTitle": "Upcoming",
-					"icon": {
-						"src": "sap-icon://activities"
-					}
-				},
-				"content": {
-					"items": [
-						{
-							"title": "Call Simone",
-							"icon": "sap-icon://call",
-							"infoState": "Error"
-						},
-						{
-							"title": "Write to Elena",
-							"icon": "sap-icon://email",
-							"infoState": "Warning"
-						}
-					]
-				}
-			}
-		},
-		"mediumList": {
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "Contacts",
-					"subTitle": "Recent",
-					"icon": {
-						"src": "sap-icon://activities"
-					}
-				},
-				"content": {
-					"items": [
-						{
-							"title": "Alain Chevalier",
-							"icon": "sap-icon://person-placeholder"
-						},
-						{
-							"title": "Monique Legrand",
-							"icon": "sap-icon://account"
-						},
-						{
-							"title": "Elena Petrova",
-							"icon": "sap-icon://business-card"
-						},
-						{
-							"title": "Monique Legrand",
-							"icon": "sap-icon://account"
-						},
-						{
-							"title": "Alain Chevalier",
-							"icon": "sap-icon://account"
-						},
-						{
-							"title": "Elena Petrova",
-							"icon": "sap-icon://business-card"
-						}
-					]
 				}
 			}
 		}
@@ -1308,54 +1179,6 @@
 					}
 				}
 			}
-		},
-		"cardStatic": {
-			"sap.card": {
-				"type": "Timeline",
-				"header": {
-					"title": "New Team Members",
-					"icon": {
-						"src": "sap-icon://group"
-					}
-				},
-				"content": {
-					"maxItems": "7",
-					"items": [
-						{
-							"owner": "Laurent Dubois",
-							"title": "Accounts Payable Manager",
-							"ownerImage": "./images/Laurent_Dubois.png",
-							"icon": "sap-icon://activity-individual",
-							"description": "I am Laurent. I put great attention to detail.",
-							"dateTime": "Date(1371020400000)"
-						},
-						{
-							"owner": "Sabine Mayer",
-							"title": "Configuration Expert",
-							"ownerImage": "./images/Sabine_Mayer.png",
-							"icon": "sap-icon://settings",
-							"description": "I am Sabine. And can't wait to get to know the team.",
-							"dateTime": "Date(1376290800000)"
-						},
-						{
-							"owner": "Alain Chevalier",
-							"title": "Credit Analyst",
-							"ownerImage": "./images/Alain_Chevalier.png",
-							"icon": "sap-icon://manager-insight",
-							"description": "I am Alain. I put great attention to detail.",
-							"dateTime": "Date(1332403200000)"
-						},
-						{
-							"owner": "Monique Legrand",
-							"title": "Accountant Manager",
-							"ownerImage": "./images/Monique_Legrand.png",
-							"description": "I am Monique. And i am the new head of Accounting.",
-							"icon": "sap-icon://account",
-							"dateTime": "Date(1422777600000)"
-						}
-					]
-				}
-			}
 		}
 	},
 	"adaptiveCard": {
@@ -1962,7 +1785,7 @@
 				"type": "List",
 				"header": {
 					"title": "List Card",
-					"subTitle": "With static list items",
+					"subTitle": "Without Content",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
@@ -2008,72 +1831,6 @@
 							"state": "{infoState}"
 						}
 					}
-				}
-			}
-		},
-		"smallList": {
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "Tasks",
-					"subTitle": "Upcoming",
-					"icon": {
-						"src": "sap-icon://activities"
-					}
-				},
-				"content": {
-					"items": [
-						{
-							"title": "Call Simone",
-							"icon": "sap-icon://call",
-							"infoState": "Error"
-						},
-						{
-							"title": "Write to Elena",
-							"icon": "sap-icon://email",
-							"infoState": "Warning"
-						}
-					]
-				}
-			}
-		},
-		"mediumList": {
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "Contacts",
-					"subTitle": "Recent",
-					"icon": {
-						"src": "sap-icon://activities"
-					}
-				},
-				"content": {
-					"items": [
-						{
-							"title": "Alain Chevalier",
-							"icon": "sap-icon://person-placeholder"
-						},
-						{
-							"title": "Monique Legrand",
-							"icon": "sap-icon://account"
-						},
-						{
-							"title": "Elena Petrova",
-							"icon": "sap-icon://business-card"
-						},
-						{
-							"title": "Monique Legrand",
-							"icon": "sap-icon://account"
-						},
-						{
-							"title": "Alain Chevalier",
-							"icon": "sap-icon://account"
-						},
-						{
-							"title": "Elena Petrova",
-							"icon": "sap-icon://business-card"
-						}
-					]
 				}
 			}
 		}
@@ -2393,67 +2150,6 @@
 							"state": "{infoState}"
 						}
 					}
-				}
-			}
-		},
-		"smallList": {
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "NO Height (Content min-height 5rem)",
-					"subTitle": "List Card",
-					"icon": {
-						"src": "sap-icon://activities"
-					}
-				},
-				"content": {
-					"items": [
-						{
-							"title": "Call Simone",
-							"icon": "sap-icon://call",
-							"infoState": "Error"
-						}
-					]
-				}
-			}
-		},
-		"mediumList": {
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "NO Height (Content min-height 5rem)",
-					"subTitle": "List Card",
-					"icon": {
-						"src": "sap-icon://activities"
-					}
-				},
-				"content": {
-					"items": [
-						{
-							"title": "Alain Chevalier",
-							"icon": "sap-icon://person-placeholder"
-						},
-						{
-							"title": "Monique Legrand",
-							"icon": "sap-icon://account"
-						},
-						{
-							"title": "Elena Petrova",
-							"icon": "sap-icon://business-card"
-						},
-						{
-							"title": "Monique Legrand",
-							"icon": "sap-icon://account"
-						},
-						{
-							"title": "Alain Chevalier",
-							"icon": "sap-icon://account"
-						},
-						{
-							"title": "Elena Petrova",
-							"icon": "sap-icon://business-card"
-						}
-					]
 				}
 			}
 		},

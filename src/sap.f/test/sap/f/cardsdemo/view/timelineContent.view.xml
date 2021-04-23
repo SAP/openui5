@@ -20,7 +20,6 @@
 					<HBox>
 						<w:Card id="timeline" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/card0}" width="300px" height="auto"/>
 						<w:Card id="timeline1" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/card1}" width="300px" height="auto"/>
-						<w:Card id="timelineStaticContent" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/cardStatic}" width="300px" height="auto"/>
 					</HBox>
 				</VBox>
 			</Panel>

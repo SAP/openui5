@@ -158,19 +158,15 @@ sap.ui.define([
 			this.byId("grid6").setModel(new JSONModel(this.addUniqueKey([
 				{ header: "Sales Fulfillment Application Title", subheader: "Subtitle", footer: "", numberValue: "3", icon: "sap-icon://home-share" },
 				{ header: "Manage Activity Master Data Type", subheader: "", footer: "", numberValue: "15", valueColor: "Critical", icon: "sap-icon://activities" },
-				{ type: "card", rows: 2, columns: 2, manifest: "manifests>/listContent/smallList" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/line" },
 				{ header: "Account", subheader: "Your personal information", footer: "", numberValue: "1", valueColor: "Good", icon: "sap-icon://account" },
 				{ type: "card", rows: 6, columns: 4, manifest: "manifests>/listContent/largeList" },
-				{ type: "card", rows: 4, columns: 2, manifest: "manifests>/listContent/mediumList" },
 				{ header: "Appointments management", subheader: "", footer: "Current Quarter", numberValue: "240", icon: "sap-icon://appointment" },
 				{ header: "Jessica D. Prince Senior Consultant", subheader: "Department", footer: "Current Quarter", numberValue: "1", icon: "sap-icon://activity-individual" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/stackedBar" }
 			])));
 
 			this.byId("grid7").setModel(new JSONModel(this.addUniqueKey([
-				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/smallList" },
-				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/mediumList" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/largeList" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/stackedBar" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/line" }

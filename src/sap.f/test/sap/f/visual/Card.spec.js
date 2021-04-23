@@ -71,7 +71,7 @@ describe("sap.f.Card", function () {
 	it("List Card", function () {
 		navigateTo("List Card");
 
-		var aCardIds = ["listCountStatic", "listTasks"];
+		var aCardIds = ["listTasks"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
@@ -102,7 +102,7 @@ describe("sap.f.Card", function () {
 
 	it("Table Card", function () {
 		navigateTo("Table Card");
-		var aCardIds = ["tablecard1","tablecard2"];
+		var aCardIds = ["tablecard1"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
@@ -297,7 +297,7 @@ describe("sap.f.Card", function () {
 	it("Min-height", function () {
 		navigateTo("Min-height of the Card Content");
 
-		var aCardIds = ["lineChart", "stackedColumnChart", "stackedBarChart", "donutChart", "smallList", "mediumList", "largeList", "staticData", "noContent", "sapFCardMinHeight"];
+		var aCardIds = ["lineChart", "stackedColumnChart", "stackedBarChart", "donutChart", "largeList", "staticData", "noContent", "sapFCardMinHeight"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({

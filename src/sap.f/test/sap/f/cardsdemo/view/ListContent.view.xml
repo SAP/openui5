@@ -39,11 +39,6 @@
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="listCountStatic" manifest="{manifests>/card14}">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
 			<w:Card manifest="{manifests>/paramsInManifestOnly}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />

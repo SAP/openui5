@@ -14,7 +14,7 @@
 		"type": "List",
 		"header": {
 			"title": "Sales Orders",
-			"subTitle": "Static Data",
+			"subTitle": "RandomSalesOrders service",
 			"icon": {
 				"src": "sap-icon://sales-order"
 			},
