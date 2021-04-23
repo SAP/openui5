@@ -35,7 +35,6 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/GroupController",
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
 	"sap/m/ColumnPopoverSelectListItem",
-	"sap/m/ColumnPopoverActionItem",
 	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController"
 ], function(
 	Control,
@@ -70,7 +69,6 @@ sap.ui.define([
 	GroupController,
 	AggregateController,
 	ColumnPopoverSelectListItem,
-	ColumnPopoverActionItem,
 	ColumnWidthController
 ) {
 	"use strict";
@@ -888,7 +886,7 @@ sap.ui.define([
 		var bOldEnableColumnResize = this.getEnableColumnResize();
 		this.setProperty("enableColumnResize", bEnableColumnResize, true);
 
-		if (bEnableColumnResize !== bOldEnableColumnResize) {
+		if (this.getEnableColumnResize() !== bOldEnableColumnResize) {
 			this._updateColumnResizer();
 			this._updateAdaptation(this.getP13nMode());
 		}
@@ -1896,14 +1894,10 @@ sap.ui.define([
 	};
 
 	Table.prototype._onColumnPress = function(oColumn) {
-		var iIndex,
-			oParent = oColumn.getParent(),
-			oMDCColumn,
-			bResizeButton = window.matchMedia("(hover:none)").matches && this._bMobileTable && this.getEnableColumnResize();
-
-		iIndex = oParent.indexOfColumn(oColumn);
-
-		oMDCColumn = this.getColumns()[iIndex];
+		var oParent = oColumn.getParent(),
+			iIndex = oParent.indexOfColumn(oColumn),
+			oMDCColumn = this.getColumns()[iIndex],
+			bResizeButton = this._bMobileTable && this.getEnableColumnResize();
 
 		this._fullyInitialized().then(function() {
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
@@ -1967,19 +1961,13 @@ sap.ui.define([
 			}
 
 			if (bResizeButton) {
-				var oColumnResize = new ColumnPopoverActionItem({
-					text: oResourceBundle.getText("table.SETTINGS_RP_RESIZE"),
-					icon: "sap-icon://resize-horizontal",
-					press: [function() {
-						ResponsiveTableType.startColumnResize(this._oTable, oColumn);
-					}, this]
-				});
-				aHeaderItems.push(oColumnResize);
+				var oColumnResize = ResponsiveTableType.startColumnResize(this._oTable, oColumn);
+				oColumnResize && aHeaderItems.push(oColumnResize);
 			}
 
-			aHeaderItems && aHeaderItems.forEach(function(item) {
-				item && this._createPopover(item, oColumn);
-			}.bind(this));
+			aHeaderItems.forEach(function(oItem) {
+				this._createPopover(oItem, oColumn);
+			}, this);
 			this._oPopover && this._oPopover.openBy(oColumn);
 		}.bind(this));
 	};

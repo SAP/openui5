@@ -202,7 +202,13 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.startColumnResize = function(oInnerTable, oColumn) {
-		ColumnResizer.getPlugin(oInnerTable).startResizing(oColumn.getDomRef());
+		var oColumnResizer = ColumnResizer.getPlugin(oInnerTable);
+
+		if (!oColumnResizer) {
+			return;
+		}
+
+		return oColumnResizer.getColumnResizeButton(oColumn);
 	};
 
 	/**

@@ -4247,9 +4247,8 @@ sap.ui.define([
 			this.oTable.setEnableColumnResize(true);
 			assert.ok(this.oTable._oTable.getDependents()[0].getEnabled(), "Column Resizer is added to the Responsive inner table by oTable#setEnableColumnResize");
 
-			var fnMatchMediaOriginal = window.matchMedia;
-			window.matchMedia = sinon.stub();
-			window.matchMedia.returns({
+			var oMatchMediaStub = sinon.stub(window, "matchMedia");
+			oMatchMediaStub.withArgs("(hover:none)").returns({
 				matches: true
 			});
 
@@ -4258,14 +4257,12 @@ sap.ui.define([
 				column: oColumn
 			});
 			this.oTable._fullyInitialized().then(function() {
-				var oResizer = this.oTable._oTable.getDependents()[0];
 				var oCHP = this.oTable._oPopover;
-				var oResizeItem = oCHP.getItems().pop();
-				var fStartResizingSpy = sinon.spy(oResizer, "startResizing");
-
-				oResizeItem.firePress();
-				assert.ok(fStartResizingSpy.calledOnceWithExactly(oColumn.getDomRef()), "ColumnResizer#startResizing is called");
-				window.matchMedia = fnMatchMediaOriginal;
+				var oColumnResizerButton = oCHP.getItems().find(function(oItem) {
+					return oItem.getText() == Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON");
+				});
+				assert.ok(oColumnResizerButton, "Column resizer button found");
+				oMatchMediaStub.restore();
 				done();
 			}.bind(this));
 		}.bind(this));

@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/Device",
+	"sap/m/ColumnPopoverActionItem",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
 	"sap/ui/dom/jquery/Aria" // jQuery Plugin "aria"
@@ -14,6 +15,7 @@ sap.ui.define([
 	Core,
 	InvisibleText,
 	Device,
+	ColumnPopoverActionItem,
 	jQuery
 ) {
 	"use strict";
@@ -116,7 +118,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnResizer.prototype._updateAriaDescribedBy = function(sAction) {
-		this._aResizables && this._aResizables.forEach(function(oResizable) {
+		this._aResizables.forEach(function(oResizable) {
 			var oResizableControl = jQuery(oResizable).control(0, true);
 			var oFocusDomRef = oResizableControl && oResizableControl.getFocusDomRef();
 			jQuery(oFocusDomRef)[sAction + "AriaDescribedBy"](InvisibleText.getStaticId("sap.m", "COLUMNRESIZER_RESIZABLE"));
@@ -480,6 +482,25 @@ sap.ui.define([
 		var iColumnIndex = this._aResizables.indexOf(oDomRef);
 		this._setPositions();
 		this._displayHandle(iColumnIndex, true);
+	};
+
+	/**
+	 * Returns resizer button instance which on press calls the <code>startResizing</code> method.
+	 * @param {sap.m.Column} oColumn Column instance
+	 * @returns {sap.m.ColumnPopoverActionItem} column resize action item
+	 * @ui5-restricted
+	 * @private
+	 */
+	ColumnResizer.prototype.getColumnResizeButton = function(oColumn) {
+		if (!oColumn || !window.matchMedia("(hover:none)").matches) {
+			return;
+		}
+
+		return new ColumnPopoverActionItem({
+			text: Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"),
+			icon: "sap-icon://resize-horizontal",
+			press: this.startResizing.bind(this, oColumn.getDomRef())
+		});
 	};
 
 	/**
