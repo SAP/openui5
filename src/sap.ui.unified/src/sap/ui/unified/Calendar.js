@@ -477,7 +477,7 @@ sap.ui.define([
 				weekDays: oWeekDays
 			});
 
-		this._focusDate(CalendarDate.fromLocalJSDate(oWeekDays.getStartDate(), this.getPrimaryCalendarType()), true);
+		this._focusDate(CalendarDate.fromLocalJSDate(oWeekDays.getStartDate(), this.getPrimaryCalendarType()), true, false, false);
 
 		if (!bExecuteDefault) {
 			oEvent.preventDefault();
@@ -1784,7 +1784,7 @@ sap.ui.define([
 				this._renderMonth(false, true);
 			}
 		} else {
-			this._focusDate(oDate, bOtherMonth);
+			this._focusDate(oDate, bOtherMonth, false, true);
 		}
 	};
 
@@ -1809,12 +1809,9 @@ sap.ui.define([
 			aMonths = this.getAggregation("month"),
 			oMonth,
 			oMonthDate,
-			oCalMonthDate = aMonths[0].getDate() ?
-				CalendarDate.fromLocalJSDate(aMonths[0].getDate(), this.getPrimaryCalendarType()) :
-				undefined,
 			oFirstDate = _determineFirstMonthDate.call(this, new CalendarDate(oDate, this.getPrimaryCalendarType())),
 			i = 0,
-			bMonthContainsDate = oCalMonthDate ? CalendarUtils._isSameMonthAndYear(oCalMonthDate, oDate) : false,
+			bMonthContainsDate = aMonths[0].checkDateFocusable(oDate.toLocalJSDate()),
 			bFireStartDateChange = !bNoEvent && !bMonthContainsDate;
 
 		for (i = 0; i < aMonths.length; i++) {
@@ -1936,14 +1933,18 @@ sap.ui.define([
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be focused
 	 * @param {boolean} bOtherMonth Whether the date to be focused is outside the visible date range
 	 * @param {boolean} bNoEvent Whether startDateChange event should be fired
+	 * @param {boolean} bAfterFocus Whether function call is triggered from a focus event
 	 * @private
 	 */
-	Calendar.prototype._focusDate = function (oDate, bOtherMonth, bNoEvent){
+	Calendar.prototype._focusDate = function (oDate, bOtherMonth, bNoEvent, bAfterFocus){
 
 		// if a date should be focused thats out of the borders -> focus the border
-		var oFocusedDate;
-		var bChanged = false;
-		var bFireStartDateChange = false;
+		var oFocusedDate,
+			bChanged = false,
+			bFireStartDateChange = false,
+			aMonths = this.getAggregation("month"),
+			i;
+
 		if (oDate.isBefore(this._oMinDate)) {
 			oFocusedDate = this._oMinDate;
 			bChanged = true;
@@ -1959,8 +1960,16 @@ sap.ui.define([
 			bFireStartDateChange = this._focusDateExtend(oDate, bOtherMonth, bNoEvent);
 		}
 
-
 		this._setFocusedDate(oFocusedDate);
+
+		if (bAfterFocus && !this._focusDateExtend) {
+			for (i = 0; i < aMonths.length; ++i) {
+				if (aMonths[i].checkDateFocusable(oFocusedDate.toLocalJSDate())) {
+					aMonths[i].setDate(oFocusedDate.toLocalJSDate());
+					return;
+				}
+			}
+		}
 
 		if (bChanged || bOtherMonth) {
 			this._renderMonth(false, bNoEvent);
@@ -2162,7 +2171,7 @@ sap.ui.define([
 			oFocusedDate.setDate(0);
 		}
 
-		this._focusDate(oFocusedDate, true);
+		this._focusDate(oFocusedDate, true, false, false);
 		this._closePickers();
 		this._addMonthFocusDelegate();
 
@@ -2198,7 +2207,7 @@ sap.ui.define([
 
 		oFocusedDate = oDate;
 
-		this._focusDate(oFocusedDate, true);
+		this._focusDate(oFocusedDate, true, false, false);
 		this._togglePrevNext(this._getFocusedDate(), true);
 		this.setProperty("_currentPicker", CURRENT_PICKERS.MONTH);
 		this._addMonthFocusDelegate();

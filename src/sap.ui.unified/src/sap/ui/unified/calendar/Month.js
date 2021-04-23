@@ -198,7 +198,7 @@ sap.ui.define([
 					 */
 					date : {type : "object"},
 					/**
-					 * focused date is in an other month that the displayed one
+					 * focused date is in an other month than the displayed one
 					 */
 					otherMonth : {type : "boolean"},
 					/**
