@@ -48,14 +48,21 @@
 	min-height: 2.75rem; /* for empty text */
 	padding-top: 0.6875rem;
 	padding-bottom: 0.6875rem;
-}
 
-.sapUiFormEdit .sapMExText > .sapMLnk  {
-	line-height: 1.375rem;
-	padding: 0;
-	margin: 0;
+	& > a.sapMLnk {
+		line-height: 1.375rem;
+		padding: 0;
+		margin: 0;
+	}
 }
 
 .sapUiForm:not(.sapUiFormEdit) .sapMExText {
 	min-height: 1rem; /* for empty text */
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapUiFormEdit .sapMExText {
+	min-height: 2rem; /* for empty text */
+	padding-top: 0.3125rem;
+	padding-bottom: 0.3125rem;
 }
