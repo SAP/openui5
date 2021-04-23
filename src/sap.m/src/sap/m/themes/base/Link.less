@@ -16,10 +16,6 @@
 	cursor: pointer;
 }
 
-.sapMLnk:active {
-	background-color: transparent; /* required for IE10 */
-}
-
 .sapMLnk:active:not(.sapMLnkDsbl),
 .sapMLnk:focus:not(.sapMLnkDsbl) {
 	color: @sapUiLinkActive;
@@ -75,27 +71,6 @@ html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnk
 }
 .sapUiAnalyticalTable .sapUiAnalyticalTableSum .sapUiTableCell .sapMLnk {
 	font-weight: bold;
-}
-
-/* IE and Edge ignores outline-offset. Use an overlay: */
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMLnk:focus:not(.sapMLnkDsbl) {
-		outline: none;
-		position: relative;
-	}
-	.sapMLnk:focus:not(.sapMLnkDsbl):before {
-		content: " ";
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-		border: 1px dashed @sapUiContentFocusColor;
-		pointer-events: none;
-	}
 }
 
 /* Hover Decoration only for desktop clients*/
