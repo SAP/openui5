@@ -2121,8 +2121,7 @@ sap.ui.define([
 					+ mInheritedQueryOptions.$filter + ")";
 			}
 			mQueryOptions = Object.assign({}, mInheritedQueryOptions, mQueryOptions);
-			// mix-in $select and $expand
-			_Helper.aggregateQueryOptions(mQueryOptions, mInheritedQueryOptions);
+			_Helper.aggregateExpandSelect(mQueryOptions, mInheritedQueryOptions);
 		}
 
 		return mQueryOptions;

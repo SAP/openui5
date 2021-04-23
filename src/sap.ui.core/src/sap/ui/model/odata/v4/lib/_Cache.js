@@ -1064,7 +1064,7 @@ sap.ui.define([
 			if (bKeepAlive && that.mLateQueryOptions) {
 				// bKeepAlive === true -> own cache of the list binding -> sPath === ''
 				// -> no need to apply _Helper.getQueryOptionsForPath
-				_Helper.aggregateQueryOptions(mQueryOptions, that.mLateQueryOptions);
+				_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);
 			}
 			// drop collection related system query options
 			delete mQueryOptions.$apply;
@@ -1163,7 +1163,7 @@ sap.ui.define([
 				if (that.mLateQueryOptions) {
 					// bKeepAlive === true -> own cache of the list binding -> sPath === ''
 					// -> no need to apply _Helper.getQueryOptionsForPath
-					_Helper.aggregateQueryOptions(mQueryOptions, that.mLateQueryOptions);
+					_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);
 				}
 				// clone query options for possible second request to check if entity is in
 				// the collection
@@ -2496,7 +2496,7 @@ sap.ui.define([
 			var aKeyFilters,
 				mQueryOptions = _Helper.merge({}, that.mQueryOptions);
 
-			_Helper.aggregateQueryOptions(mQueryOptions, that.mLateQueryOptions);
+			_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;
 			delete mQueryOptions.$search;

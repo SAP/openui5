@@ -3221,7 +3221,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
 			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
 			.returns(SyncPromise.resolve(oFetchValuePromise));
-		this.mock(_Helper).expects("aggregateQueryOptions")
+		this.mock(_Helper).expects("aggregateExpandSelect")
 			.exactly(oFixture.keepAlive && oFixture.lateQueryOptions ? 1 : 0)
 			.withExactArgs(sinon.match.same(mQueryOptionsCopy),
 				sinon.match.same(mLateQueryOptions));
@@ -3477,7 +3477,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getKeyFilter")
 			.withExactArgs(sinon.match.same(oElement), "/TEAMS", sinon.match.same(mTypeForMetaPath))
 			.returns("~key filter~");
-		this.mock(_Helper).expects("aggregateQueryOptions").never();
+		this.mock(_Helper).expects("aggregateExpandSelect").never();
 		oObjectMock.expects("assign")
 			.withExactArgs({}, mQueryOptionsForPathCopy)
 			.returns(mQueryOptionsForInCollection);
@@ -3565,7 +3565,7 @@ sap.ui.define([
 		oObjectMock.expects("assign")
 			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
 			.returns(mQueryOptionsForPathCopy);
-		this.mock(_Helper).expects("aggregateQueryOptions")
+		this.mock(_Helper).expects("aggregateExpandSelect")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPathCopy),
 				sinon.match.same(oCache.mLateQueryOptions));
 		this.mock(_Helper).expects("buildPath").withExactArgs("TEAMS", "~").returns("~");
@@ -9789,7 +9789,7 @@ sap.ui.define([
 		// calculateKeptElementQuery
 		oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
 			.returns(mQueryOptionsCopy);
-		oHelperMock.expects("aggregateQueryOptions")
+		oHelperMock.expects("aggregateExpandSelect")
 			.withExactArgs(sinon.match.same(mQueryOptionsCopy),
 				sinon.match.same(oCache.mLateQueryOptions));
 		this.mock(oCache.oRequestor).expects("buildQueryString")

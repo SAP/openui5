@@ -4286,13 +4286,13 @@ sap.ui.define([
 			}];
 
 		aRequests.iChangeSet = 1;
-		oHelperMock.expects("aggregateQueryOptions")
+		oHelperMock.expects("aggregateExpandSelect")
 			.withExactArgs(sinon.match.same(aRequests[1].$queryOptions),
 				sinon.match.same(aRequests[3].$queryOptions))
 			.returns(oMergedQueryOptions);
 		this.mock(aRequests[3]).expects("$resolve")
 			.withExactArgs(sinon.match.same(aRequests[1].$promise));
-		oHelperMock.expects("aggregateQueryOptions")
+		oHelperMock.expects("aggregateExpandSelect")
 			.withExactArgs(sinon.match.same(aRequests[6].$queryOptions),
 				sinon.match.same(aRequests[7].$queryOptions))
 			.returns(oMergedQueryOptions);
