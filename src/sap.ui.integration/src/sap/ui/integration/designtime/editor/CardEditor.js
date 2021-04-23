@@ -32,7 +32,8 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/m/FormattedText",
 	"sap/m/MessageStrip",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/ui/core/CustomData"
 ], function (
 	ui5loader,
 	Control,
@@ -63,7 +64,8 @@ sap.ui.define([
 	ObjectPath,
 	FormattedText,
 	MessageStrip,
-	includes
+	includes,
+	CustomData
 ) {
 	"use strict";
 
@@ -220,6 +222,7 @@ sap.ui.define([
 				//render items
 				if (aItems) {
 					var oPanel;
+					var oSubPanel;
 					var oLanguagePanel;
 					var oLabelItemForNotWrapping;
 					var olabelItemForCol;
@@ -233,37 +236,55 @@ sap.ui.define([
 							maxWidth: "50%"
 						});
 					};
-					var addColFields = function () {
+					var addColFields = function (bAddSubPanel) {
 						if (oColFields.length > 0) {
 							var iLess = iColSize - oColFields.length;
 							for (var n = 0; n < iLess; n++) {
-								oColFields.push(new VBox({
-
+								oColFields.push(new VBox({}));
+							}
+							if (oSubPanel) {
+								oSubPanel.addContent(new HBox({
+									items: oColFields
+								}));
+							} else {
+								oPanel.addContent(new HBox({
+									items: oColFields
 								}));
 							}
-							oPanel.addContent(new HBox({
-								items: oColFields
-							}));
 							oColFields = [];
+						}
+						if (oSubPanel && bAddSubPanel) {
+							oPanel.addContent(oSubPanel);
+							oSubPanel = null;
 						}
 					};
 					for (var i = 0; i < aItems.length; i++) {
 						var oItem = aItems[i];
 						if (oControl.getMode() !== "translation") {
 							if (oItem.isA("sap.m.Panel")) {
-								if (oPanel) {
-									//add current col fields to previous panel, then empty the col fields list
-									addColFields();
-									//render previous panel
-									if (oPanel.getContent().length > 0) {
-										oRm.renderControl(oPanel);
+								var aCustomData = oItem.getCustomData();
+								if (aCustomData && aCustomData.length > 1 && aCustomData[1].getValue() === "subGroup") {
+									if (oSubPanel) {
+										oPanel.addContent(oSubPanel);
 									}
+									oSubPanel = oItem;
+									oSubPanel.addStyleClass("sapUiIntegrationCardEditorItem");
+									oSubPanel.addStyleClass("sapUiIntegrationCardEditorSubPanel");
+								} else {
+									if (oPanel) {
+										//add current col fields to previous panel, then empty the col fields list
+										addColFields(true);
+										//render previous panel
+										if (oPanel.getContent().length > 0) {
+											oRm.renderControl(oPanel);
+										}
+									}
+									oPanel = oItem;
+									oPanel.addStyleClass("sapUiIntegrationCardEditorItem");
 								}
-								oPanel = oItem;
-								oPanel.addStyleClass("sapUiIntegrationCardEditorItem");
 								if (i === aItems.length - 1) {
 									//add current col fields to panel, then empty the col fields list
-									addColFields();
+									addColFields(true);
 									if (oPanel.getContent().length > 0) {
 										oRm.renderControl(oPanel);
 									}
@@ -273,9 +294,15 @@ sap.ui.define([
 
 							// add style class for the hint under group and checkbox/toggle
 							if (oItem.isA("sap.m.FormattedText")) {
-								oPanel.addContent(new HBox({
-									items: oItem
-								}).addStyleClass("sapUiIntegrationCardEditorHint"));
+								if (oSubPanel) {
+									oSubPanel.addContent(new HBox({
+										items: oItem
+									}).addStyleClass("sapUiIntegrationCardEditorHint"));
+								} else {
+									oPanel.addContent(new HBox({
+										items: oItem
+									}).addStyleClass("sapUiIntegrationCardEditorHint"));
+								}
 								continue;
 							}
 
@@ -298,9 +325,15 @@ sap.ui.define([
 								if (oItem._cols === 1) {
 									//if reach the col size, add the col fields to panel, then empty the col fields list
 									if (oColFields.length === iColSize) {
-										oPanel.addContent(new HBox({
-											items: oColFields
-										}));
+										if (oSubPanel) {
+											oSubPanel.addContent(new HBox({
+												items: oColFields
+											}));
+										} else {
+											oPanel.addContent(new HBox({
+												items: oColFields
+											}));
+										}
 										oColFields = [];
 									}
 									oLabelWithDependentHBox.addStyleClass("col1box");
@@ -312,6 +345,8 @@ sap.ui.define([
 								//now only Not wrap the label and field of boolean parameters
 								if (oItem._sOriginalType === "boolean") {
 									oLabelItemForNotWrapping = oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem; //store the label of boolean and render it together with the next field
+								} else if (oSubPanel) {
+									oSubPanel.addContent(oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem);
 								} else {
 									oPanel.addContent(oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem);
 								}
@@ -326,23 +361,45 @@ sap.ui.define([
 
 								oColFields.push(oColVBox);
 								olabelItemForCol = null;
+								if (oItem.subGroupEnd === true) {
+									addColFields(true);
+								}
 							} else if (oLabelItemForNotWrapping) {
 								//render lable and field for NotWrapping parameter
 								oItem.setLayoutData(oLayoutForNotWrapping());
 								oLabelItemForNotWrapping.setLayoutData(oLayoutForNotWrapping());
-								oPanel.addContent(new HBox({
-									items: [
-										oLabelItemForNotWrapping,
-										oItem
-									]
-								}).addStyleClass("notWrappingBox"));
+								if (oSubPanel) {
+									oSubPanel.addContent(new HBox({
+										items: [
+											oLabelItemForNotWrapping,
+											oItem
+										]
+									}).addStyleClass("notWrappingBox"));
+									if (oItem.subGroupEnd === true) {
+										oPanel.addContent(oSubPanel);
+										oSubPanel = null;
+									}
+								} else {
+									oPanel.addContent(new HBox({
+										items: [
+											oLabelItemForNotWrapping,
+											oItem
+										]
+									}).addStyleClass("notWrappingBox"));
+								}
 								oLabelItemForNotWrapping = null;
+							} else if (oSubPanel) {
+								oSubPanel.addContent(oItem);
+								if (oItem.subGroupEnd === true) {
+									oPanel.addContent(oSubPanel);
+									oSubPanel = null;
+								}
 							} else {
 								oPanel.addContent(oItem);
 							}
 							if (i === aItems.length - 1) {
 								//add current col fields to panel, then empty the col fields list
-								addColFields();
+								addColFields(true);
 								if (oPanel.getContent().length > 0) {
 									oRm.renderControl(oPanel);
 								}
@@ -1114,6 +1171,7 @@ sap.ui.define([
 			}
 		}.bind(this));
 		this._addValueListModel(oConfig, oField);
+		oField.subGroupEnd = oConfig.subGroupEnd;
 		oField._cols = oConfig.cols || 2; //by default 2 cols
 		return oField;
 	};
@@ -1392,7 +1450,6 @@ sap.ui.define([
 			this.addAggregation("_formContent",
 				oNewLabel
 			);
-
 		}
 		//default for all modes
 		var oField = this._createField(oConfig);
@@ -1400,6 +1457,28 @@ sap.ui.define([
 		this.addAggregation("_formContent",
 			oField
 		);
+		if (sMode !== "translation" && oConfig.hasSubGroup === true) {
+			var oSubPanel = new Panel({
+				visible: oConfig.subGroupVisible || oConfig.visible || true,
+				expandable: false,
+				width: "auto",
+				objectBindings: {
+					currentSettings: {
+						path: "currentSettings>" + oConfig._settingspath
+					},
+					items: {
+						path: "items>/form/items"
+					}
+				},
+				customData: [
+					new CustomData({
+						key: "panelType",
+						value: "subGroup"
+					})
+				]
+			});
+			this.addAggregation("_formContent", oSubPanel);
+		}
 		//add hint in the new row for boolean data type.
 		if (oConfig.hint && oConfig.type === "boolean" && (!oConfig.cols || oConfig.cols === 2)) {
 			this._addHint(oConfig.hint);
