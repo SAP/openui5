@@ -116,7 +116,7 @@
 @_sap_m_IconTabBar_Phone_Compact_TextOnlyContentArrowHeight: @_sap_m_IconTabBar_Phone_TextOnlyContentArrowHeight;
 
 // =========== Shell ===========
-@_sap_m_IconTabBar_ShellHeaderShadow: @_sap_m_IconTabBar_HeaderShadow;
+@_sap_m_IconTabBar_ShellHeaderShadow: @sapUiShellShadow;
 @_sap_m_IconTabBar_ShellContentArrowHeight: 0.1875rem;
 @_sap_m_IconTabBar_ShellTextColor: @sapUiShellNavigationTextColor;
 @_sap_m_IconTabBar_ShellSelectedTextColor: @sapUiShellNavigationSelectedTextColor;
@@ -1296,19 +1296,45 @@ html[dir=rtl] {
 	}
 
 	.sapMBtn:hover:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnHoverable.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
-		background: @sapUiShellHoverBackground;
-		border-color: transparent;
+		background: @sapUiShellNavigationHoverBackground;
+		border-color: @sapUiShellNavigationHoverBackground;
+
 	}
 
 	.sapMBtn:hover:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed) > .sapMBtnIcon {
-		color: @sapUiShellInteractiveTextColor;
-		border-color: transparent;
+		color: @sapUiShellNavigationSelectedColor;
+		border-color: @sapUiShellNavigationSelectedColor;
 	}
 
 	.sapMBtn.sapMBtnDisabled {
 		opacity: @_sap_m_IconTabBar_DisabledOpacity;
 	}
+    .sapMBtn:not(.sapMBtnDisabled) .sapMFocusable.sapMBtnTransparent.sapMBtnActive,.sapUshellShellTabBar.sapMITH .sapMBtn:not(.sapMBtnDisabled) .sapMFocusable.sapMBtnTransparent.sapMBtnActive {
+		outline-color:@sapUiShellNavigationActiveBackground;
+		background: @sapUiShellNavigationActiveBackground;
+		border-color:@sapUiShellNavigationActiveBackground;
+	}
+	.sapMITBSelected .sapMBtn .sapMBtnTransparent .sapUiIcon,.sapUshellShellTabBar.sapMITH .sapMITBSelected .sapMBtn .sapMBtnTransparent .sapUiIcon {
+		color: @sapUiShellNavigationSelectedColor;
+	}
 
+	.sapMBtn .sapMBtnTransparent.sapMBtnActive {
+		.sapUiIcon {
+			color: @sapUiShellNavigationActiveTextColor;
+		}
+	}
+
+	.sapMBtnActive {
+		.sapMITBSelected .sapMBtn .sapMBtnTransparent .sapUiIcon {
+			color: @sapUiShellNavigationActiveTextColor;
+		}
+		.sapMBtn .sapMBtnTransparent .sapUiIcon {
+			color: @sapUiShellNavigationActiveTextColor;
+		}
+	}
+	.sapMBtn:focus>.sapMFocusable.sapMBtnInner.sapMBtnHoverable {
+		outline-color: @sapUiShellNavigationTextColor;
+	}
 	html.sap-desktop & {
 
 		.sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon,
@@ -1319,7 +1345,7 @@ html[dir=rtl] {
 				border-color: @_sap_m_IconTabBar_ShellTextColor;
 			}
 		}
-	}
+ 	}
 }
 
 /* ------------------------------------------------ */
