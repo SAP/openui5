@@ -58,7 +58,6 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 	word-break: break-word;
 	-webkit-hyphens: auto;
 	-moz-hyphens: auto;
-	-ms-hyphens: auto;
 	hyphens: auto;
 }
 
@@ -190,12 +189,6 @@ html[dir=rtl] .sapMObjLStatusDiv {
 	align-items: center;
 }
 
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser="ie11"] .sapMObjLItem > .sapMLIBContent
-{
-	width: 100%;
-}
-
 /* overwrite transform for the markers favorite and flag icon */
 html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	-webkit-transform: none; /* Chrome, Safari, Opera */
@@ -219,13 +212,6 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 
 .sapMObjLItem .sapMObjStatusMarker .sapUiIcon:before {
 	vertical-align: top;
-}
-
-//outline-offset alternative for ObjectAttribute inside ObjectListItem. Otherwise the offset may be cut.
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapMObjLAttrDiv > .sapMObjectAttributeActive.sapMObjectAttributeDiv {
-		padding: 0.125rem;
-	}
 }
 
 .sapMObjLIcon {

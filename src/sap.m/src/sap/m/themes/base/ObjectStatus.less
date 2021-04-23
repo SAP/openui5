@@ -327,7 +327,6 @@
 	display: inline-block;
 	line-height: normal;
 	-webkit-user-select: text;
-	-ms-user-select: text;
 	user-select: text;
 }
 
@@ -623,15 +622,6 @@ html.sap-desktop .sapMObjStatusActive:focus {
 
 	}
 
-}
-
-html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapMObjStatusActive:focus .sapMObjStatusLink::after {
-		outline-style: dashed;
-	}
-	.sapMObjStatusInverted .sapMObjStatusText {
-		margin-left: -1px;
-	}
 }
 
 .sapMObjStatus .sapUiPseudoInvisibleText {
