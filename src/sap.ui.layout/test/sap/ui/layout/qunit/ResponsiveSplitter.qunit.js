@@ -1,7 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	'sap/base/Log',
-	"sap/ui/qunit/QUnitUtils",
+	'sap/ui/core/Core',
+	'sap/ui/qunit/QUnitUtils',
 	'jquery.sap.global',
 	'sap/ui/layout/SplitPane',
 	'sap/ui/layout/PaneContainer',
@@ -13,6 +14,7 @@ sap.ui.define([
 	'sap/ui/core/HTML'
 ], function (
 	Log,
+	Core,
 	QunitUtils,
 	jQuery,
 	SplitPane,
@@ -50,7 +52,7 @@ sap.ui.define([
 		this.oPaneContainer1 = new PaneContainer({panes: [this.oSplitPane1, this.oPaneContainer2]});
 		this.oResponsiveSplitter.setRootPaneContainer(this.oPaneContainer1);
 		this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	}
 
 	QUnit.module("Initial rendering", {
@@ -58,7 +60,7 @@ sap.ui.define([
 			this.oResponsiveSplitter = new ResponsiveSplitter();
 
 			this.oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oResponsiveSplitter.destroy();
@@ -73,7 +75,7 @@ sap.ui.define([
 
 	QUnit.test("Rendering of ResponsiveSplitter with a View and without panes", function (assert) {
 		this.oResponsiveSplitter.setRootPaneContainer(new PaneContainer());
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(!!this.oResponsiveSplitter.getDomRef(), true, "Should be rendered");
 		assert.strictEqual(this.oResponsiveSplitter.$().hasClass("sapUiResponsiveSplitter"), true, "class should be applied");
@@ -86,11 +88,35 @@ sap.ui.define([
 		this.oResponsiveSplitter.setRootPaneContainer(oPaneContainer);
 		this.oResponsiveSplitter.setAssociation("defaultPane", "default");
 
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(!!this.oResponsiveSplitter.getDomRef(), true, "Should be rendered");
-		assert.strictEqual(this.oResponsiveSplitter.$().hasClass("sapUiResponsiveSplitter"), true, "class should be applied");
-		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").length, 1, "paginator should not be rendered when there are no views/panes");
+		Core.applyChanges();
+		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").length, 0, "paginator should not be rendered when there is only one view/pane");
 	});
+
+	QUnit.test("Rendering of ResponsiveSplitter with multiple panes", function (assert) {
+		var oPaneContainer = new PaneContainer();
+		oPaneContainer.addPane(new SplitPane("firstPane", {content: new Button()}));
+		oPaneContainer.addPane(new SplitPane("secondPane", {content: new Button()}));
+		this.oResponsiveSplitter.setRootPaneContainer(oPaneContainer);
+		this.oResponsiveSplitter.setAssociation("defaultPane", "firstPane");
+
+		Core.applyChanges();
+		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").length, 1, "paginator should be rendered when there are multiple panes");
+		assert.strictEqual(this.oResponsiveSplitter.$().hasClass("sapUiRSVisiblePaginator"), false, "class sapUiRSVisiblePaginator is not applied when there are no hidden panes");
+	});
+
+	QUnit.test("Rendering of ResponsiveSplitter with one pane in small width", function (assert) {
+		var oPaneContainer = new PaneContainer();
+		oPaneContainer.addPane(new SplitPane("firstPane", {content: new Button()}));
+		this.oResponsiveSplitter.setWidth("300px");
+		this.oResponsiveSplitter.setRootPaneContainer(oPaneContainer);
+		this.oResponsiveSplitter.setAssociation("defaultPane", "firstPane");
+
+		Core.applyChanges();
+
+		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").length, 0, "paginator not should be rendered when there is only one page");
+		assert.strictEqual(this.oResponsiveSplitter.$().hasClass("sapUiRSVisiblePaginator"), false, "class sapUiRSVisiblePaginator is not applied when there are no hidden panes");
+	});
+
 
 	QUnit.module("Rendering and pagination", {
 		beforeEach: function () {
@@ -112,7 +138,7 @@ sap.ui.define([
 			this.oResponsiveSplitter.setAssociation("defaultPane", "first");
 			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oResponsiveSplitter.destroy();
@@ -138,7 +164,7 @@ sap.ui.define([
 		this.oSplitPane2.setDemandPane(false);
 		this.oScrollContainer.setWidth("450px");
 		this.oSplitPane2.setRequiredParentWidth(600);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		window._setTimeout(function () {
 			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
@@ -152,7 +178,7 @@ sap.ui.define([
 
 		this.oScrollContainer.setWidth("450px");
 		this.oSplitPane2.setRequiredParentWidth(600);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		window._setTimeout(function () {
 			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "40px", "Paginator's height should be 40");
@@ -170,11 +196,11 @@ sap.ui.define([
 		this.oScrollContainer.setWidth("320px");
 
 		this.oSplitPane1.setDemandPane(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
 		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getVisible(), true, "The first page should be visible");
-		assert.strictEqual(sap.ui.getCore().byId(this.oResponsiveSplitter.getAggregation("_pages")[0].getContent()), this.oButton2, "The first page's content should be button from the defaultPane");
+		assert.strictEqual(Core.byId(this.oResponsiveSplitter.getAggregation("_pages")[0].getContent()), this.oButton2, "The first page's content should be button from the defaultPane");
 		assert.ok(this.oButton2.getDomRef(), "Second button should be visible");
 		assert.ok(!this.oButton1.getDomRef(), "First button should be visible");
 	});
@@ -210,7 +236,7 @@ sap.ui.define([
 
 			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oScrollContainer.destroy();
@@ -227,7 +253,7 @@ sap.ui.define([
 		assert.ok(!!this.oButton1.getDomRef(), "Button 1 sould have a dom ref");
 		QunitUtils.triggerEvent("tap", aPaginationButtons[1]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(jQuery(aPaginationButtons[0]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), false, "First button should not have selected class");
 		assert.strictEqual(jQuery(aPaginationButtons[1]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), true, "First button should have selected class");
@@ -377,7 +403,7 @@ sap.ui.define([
 				})]
 			});
 
-			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+			this.oResourceBundle = Core.getLibraryResourceBundle("sap.ui.layout");
 			sinon.stub(this.oResourceBundle, "getText")
 				.withArgs("RESPONSIVE_SPLITTER_RESIZE", [1, 2]).returns("Resize between pane 1 and pane 2")
 				.withArgs("RESPONSIVE_SPLITTER_RESIZE", [2, 3]).returns("Resize between pane 2 and pane 3")
@@ -389,7 +415,7 @@ sap.ui.define([
 
 
 			this.oResponsiveSplitter.getRootPaneContainer().addPane(oPaneContainer);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		}, afterEach: function () {
 			this.oResourceBundle.getText.restore();
 			this.oScrollContainer.destroy();
@@ -421,7 +447,7 @@ sap.ui.define([
 	QUnit.test("Paginator", function (assert) {
 		var oSplitterPaginatorItems = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons"),
 			sContainerId = oSplitterPaginatorItems.attr("aria-controls"),
-			oContainerPages = sap.ui.getCore().byId(sContainerId).getAggregation("_pages") || [],
+			oContainerPages = Core.byId(sContainerId).getAggregation("_pages") || [],
 			sRole = "radiogroup",
 			sLabel = "Pane Switcher";
 
@@ -483,11 +509,11 @@ sap.ui.define([
 		var oResizeSpy = this.spy(oPane._oSplitter, "triggerResize");
 
 		oSplitter.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		oSplitter.getRootPaneContainer().insertPane(oPane, 0);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(oResizeSpy.callCount, 1, "The resizer should be called manually after panel has been inserted");
@@ -535,11 +561,11 @@ sap.ui.define([
 		var oResizeSpy = this.spy(oPane._oSplitter, "triggerResize");
 
 		oSplitter.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		oSplitter.getRootPaneContainer().removePane(defaultPaneContainer);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(oResizeSpy.callCount, 1, "The resizer should be called manually after panel has been removed");
@@ -598,11 +624,11 @@ sap.ui.define([
 		});
 
 		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oResponsiveSplitter.setWidth("1050px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var iActualWidth = jQuery("#righText").width();
 
@@ -643,7 +669,7 @@ sap.ui.define([
 
 		// Act
 		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		var iLeftWidth = jQuery("#leftContent").parent().width(),
@@ -671,7 +697,7 @@ sap.ui.define([
 			})
 		});
 		oSplitter.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oSplitter.$().find("#testSvg").tap();
@@ -697,12 +723,12 @@ sap.ui.define([
 		});
 
 		oSplitter.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oHTMLElement.getDomRef().innerText = "changed content";
 		oSplitter.invalidate();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oHTMLElement.getDomRef().innerText, "changed content", "HTML element content should be preserved.");
@@ -715,7 +741,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oResponsiveSplitter = new ResponsiveSplitter();
 			this.oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oResponsiveSplitter.destroy();
@@ -744,7 +770,7 @@ sap.ui.define([
 				})
 			]
 		}));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(
@@ -781,7 +807,7 @@ sap.ui.define([
 				})
 			]
 		}));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(
@@ -808,76 +834,74 @@ sap.ui.define([
 		var oResponsiveSplitter = new ResponsiveSplitter("responsiveSplitter", {
 			width: "200px",
 			defaultPane: "defaultPane",
-			rootPaneContainer: [
-				new PaneContainer({
-					orientation: "Horizontal",
-					panes: [
-						new PaneContainer({
-							orientation: "Vertical",
-							panes: [
-								new SplitPane({
-									demandPane: true,
-									content: new Text({text: "text"}),
-									requiredParentWidth: 900
-								}),
-								new SplitPane({
-									demandPane: true,
-									content:  new Text({text: "text"}),
-									requiredParentWidth: 800
-								}),
-								new SplitPane({
-									demandPane: true,
-									content: new Text({text: "text"}),
-									requiredParentWidth: 950
-								})
-							]
-						}),
-						new SplitPane({
-							demandPane: true,
-							content: new Text({text: "text"}),
-							requiredParentWidth: 400
-						}),
-						new SplitPane({
-							demandPane: true,
-							content: new Text({text: "text"}),
-							requiredParentWidth: 500
-						}),
-						oDefaultPane,
-						new SplitPane({
-							demandPane: true,
-							content: new Text({text: "text"}),
-							requiredParentWidth: 1000,
-							layoutData: new SplitterLayoutData({
-								size: "30%"
+			rootPaneContainer: new PaneContainer({
+				orientation: "Horizontal",
+				panes: [
+					new PaneContainer({
+						orientation: "Vertical",
+						panes: [
+							new SplitPane({
+								demandPane: true,
+								content: new Text({text: "text"}),
+								requiredParentWidth: 900
+							}),
+							new SplitPane({
+								demandPane: true,
+								content:  new Text({text: "text"}),
+								requiredParentWidth: 800
+							}),
+							new SplitPane({
+								demandPane: true,
+								content: new Text({text: "text"}),
+								requiredParentWidth: 950
 							})
-						}),
-						new PaneContainer({
-							orientation: "Vertical",
-							panes: [
-								new SplitPane({
-									demandPane: true,
-									content: new Text({text: "text"}),
-									requiredParentWidth: 400
-								}),
-								new SplitPane({
-									demandPane: true,
-									content: new Text({text: "text"}),
-									requiredParentWidth: 600
-								}),
-								new SplitPane({
-									demandPane: true,
-									content: new Text({text: "text"}),
-									requiredParentWidth: 600
-								})
-							]
+						]
+					}),
+					new SplitPane({
+						demandPane: true,
+						content: new Text({text: "text"}),
+						requiredParentWidth: 400
+					}),
+					new SplitPane({
+						demandPane: true,
+						content: new Text({text: "text"}),
+						requiredParentWidth: 500
+					}),
+					oDefaultPane,
+					new SplitPane({
+						demandPane: true,
+						content: new Text({text: "text"}),
+						requiredParentWidth: 1000,
+						layoutData: new SplitterLayoutData({
+							size: "30%"
 						})
-					]
-				})
-			]
+					}),
+					new PaneContainer({
+						orientation: "Vertical",
+						panes: [
+							new SplitPane({
+								demandPane: true,
+								content: new Text({text: "text"}),
+								requiredParentWidth: 400
+							}),
+							new SplitPane({
+								demandPane: true,
+								content: new Text({text: "text"}),
+								requiredParentWidth: 600
+							}),
+							new SplitPane({
+								demandPane: true,
+								content: new Text({text: "text"}),
+								requiredParentWidth: 600
+							})
+						]
+					})
+				]
+			})
 		});
 
 		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div")[0].getAttribute("title"), "the button has a title attribute");
 

@@ -41,6 +41,11 @@ sap.ui.define([
 		var iMaxPageCount = oRespSplitter._getMaxPageCount(),
 			aPages = oRespSplitter.getAggregation("_pages") || [];
 
+		// Render paginator when there are more than one pages.
+		if (iMaxPageCount <= 1) {
+			return;
+		}
+
 		oRm.openStart("div")
 			.attr("role", "navigation")
 			.class("sapUiResponsiveSplitterPaginator")
