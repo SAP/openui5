@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/core/UIComponent",
+	"sap/base/util/UriParameters",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/base/util/LoaderExtensions",
@@ -30,6 +31,7 @@ sap.ui.define([
 	Layer,
 	ManifestUtils,
 	UIComponent,
+	UriParameters,
 	Utils,
 	LrepConnector,
 	LoaderExtensions,
@@ -839,14 +841,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("revert", {
-		before: function() {
-		},
-		afterEach: function() {
-		},
-		after: function () {
-		}
-	}, function() {
+	QUnit.module("revert", {}, function() {
 		QUnit.test("Given a variant was removed", function(assert) {
 			var sReference = "an.app";
 			var sPersistencyKey = "persistency.key";
@@ -908,6 +903,42 @@ sap.ui.define([
 				aRevertData = oRemovedVariant.getRevertInfo();
 				assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
 				assert.equal(oRemovedVariant.getState(), Change.states.PERSISTED, "and the change is flagged as new");
+			});
+		});
+	});
+
+	QUnit.module("_getTransportSelection", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given TransportSelection was requested and a PUBLIC layer is available", function (assert) {
+			// Stub to check for the actual call of the TransportSelection function (no direct stubbing due to the .apply usage)
+			var oUtilsStub = sandbox.stub(Utils, "getLrepUrl");
+
+			return new Promise(function (resolve) {
+				var oTransportSelection = SmartVariantManagementWriteAPI._getTransportSelection();
+				oTransportSelection.selectTransport({}, resolve);
+			}).then(function () {
+				assert.equal(oUtilsStub.callCount, 0, "the TransportSelection.selectTransport was not called");
+			});
+		});
+
+		QUnit.test("Given TransportSelection was requested and a PUBLIC layer is available", function (assert) {
+			// Stub to check for the actual call of the TransportSelection function (no direct stubbing due to the .call usage)
+			// returns empty to not trigger further functionality within the selectTransport
+			var oUtilsStub = sandbox.stub(Utils, "getLrepUrl").returns("");
+			sandbox.stub(UriParameters, "fromQuery").returns({
+				get: function () {
+					return Layer.VENDOR;
+				}
+			});
+
+			return new Promise(function (resolve) {
+				var oTransportSelection = SmartVariantManagementWriteAPI._getTransportSelection();
+				oTransportSelection.selectTransport({}, resolve);
+			}).then(function () {
+				assert.equal(oUtilsStub.callCount, 1, "the TransportSelection.selectTransport was called");
 			});
 		});
 	});

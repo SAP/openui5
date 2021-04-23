@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
+	"sap/base/util/UriParameters",
 	"sap/ui/fl/registry/Settings"
 ], function(
 	CompVariantUtils,
 	ManifestUtils,
 	CompVariantState,
 	TransportSelection,
+	UriParameters,
 	Settings
 ) {
 	"use strict";
@@ -233,7 +235,23 @@ sap.ui.define([
 		 * @returns {sap.ui.fl.write._internal.transport.TransportSelection} TransportSelection dialog.
 		 */
 		_getTransportSelection: function() {
-			return new TransportSelection();
+			function transportSelectionRequired() {
+				var sLayer = UriParameters.fromQuery(window.location.search).get("sap-ui-layer") || "";
+				return !!sLayer;
+			}
+
+			var oTransportSelection = new TransportSelection();
+			// A special edge case is the "Public" checkbox within the smart variant. There is no supported combination
+			// of non-PUBLIC enabled back end and UI5 version. Therefore, only a layer parameter set in the url leads to a transport selection
+			oTransportSelection.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass) {
+				if (!transportSelectionRequired()) {
+					fOkay(oTransportSelection._createEventObject(oObjectInfo, {transportId: ""}));
+					return;
+				}
+				TransportSelection.prototype.selectTransport.call(this, oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass);
+			};
+
+			return oTransportSelection;
 		}
 	};
 

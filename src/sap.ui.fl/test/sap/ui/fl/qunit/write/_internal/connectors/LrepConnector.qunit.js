@@ -286,22 +286,24 @@ sap.ui.define([
 					change: []
 				},
 				create: {
-					change: [{change3: {
-						fileType: "change",
-						layer: this.sLayer,
-						fileName: "change3",
-						namespace: "b",
-						packageName: "$TMP",
-						changeType: "labelChange",
-						creation: "",
-						reference: "",
-						selector: {
-							id: "abc123"
-						},
-						content: {
-							something: "change_content"
+					change: [{
+						change3: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "change3",
+							namespace: "b",
+							packageName: "$TMP",
+							changeType: "labelChange",
+							creation: "",
+							reference: "",
+							selector: {
+								id: "abc123"
+							},
+							content: {
+								something: "change_content"
+							}
 						}
-					}}]
+					}]
 				}
 			};
 
