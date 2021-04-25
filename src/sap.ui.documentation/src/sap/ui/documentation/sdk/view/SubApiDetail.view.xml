@@ -767,13 +767,11 @@
 					</template:if>
 
 					<template:if test="{data>/hasFAQ}">
-						<ObjectPageSection id="faq" title="FAQ">
+						<ObjectPageSection id="faq" title="FAQ" class="faqContent">
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<html:div class="sapUiSmallMarginBegin faqContent">
-											<core:HTML id="parserId" content="{/faqContent}"/>
-										</html:div>
+										<core:HTML id="parserId" content="{/faqContent}"/>
 									</custom:blocks>
 								</custom:ObjectPageSubSection>
 							</subSections>
