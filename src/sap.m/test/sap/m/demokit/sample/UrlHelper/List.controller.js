@@ -28,7 +28,7 @@ sap.ui.define([
 		},
 
 		handleEmailPress: function (evt) {
-			URLHelper.triggerEmail(this._getVal(evt), "Info Request");
+			URLHelper.triggerEmail(this._getVal(evt), "Info Request", false, false, false, true);
 		},
 
 		handleUrlPress: function (evt) {
