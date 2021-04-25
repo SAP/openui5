@@ -60,12 +60,17 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/model/formatter"]
 				}
-			}
-			,
+			},
 
 			"Search": {
 				coverage: {
-					only : ["sap/ui/documentation/sdk/model/Search"]
+					only : ["sap/ui/documentation/sdk/Search"]
+				}
+			},
+
+			"ObjectPageSubSection": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/ObjectPageSubSection"]
 				}
 			}
 
