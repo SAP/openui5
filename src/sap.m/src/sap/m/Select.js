@@ -1528,9 +1528,8 @@ function(
 		 */
 		Select.prototype.onkeypress = function(oEvent) {
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1565,9 +1564,8 @@ function(
 		 */
 		Select.prototype.onsapshow = function(oEvent) {
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1614,9 +1612,8 @@ function(
 		 */
 		Select.prototype.onsapescape = function(oEvent) {
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable() || this._bSpaceDown) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable() || this._bSpaceDown) {
 				return;
 			}
 
@@ -1640,9 +1637,8 @@ function(
 			// Prevent the opening of the native select with options
 			oEvent.preventDefault();
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1684,9 +1680,8 @@ function(
 		 * @private
 		 */
 		Select.prototype.onkeyup = function(oEvent) {
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1715,9 +1710,8 @@ function(
 		 */
 		Select.prototype.onsapdown = function(oEvent) {
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1742,9 +1736,8 @@ function(
 		 */
 		Select.prototype.onsapup = function(oEvent) {
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1770,9 +1763,8 @@ function(
 		 */
 		Select.prototype.onsaphome = function(oEvent) {
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1795,9 +1787,8 @@ function(
 		 */
 		Select.prototype.onsapend = function(oEvent) {
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1819,9 +1810,8 @@ function(
 		 */
 		Select.prototype.onsappagedown = function(oEvent) {
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1852,9 +1842,8 @@ function(
 		 */
 		Select.prototype.onsappageup = function(oEvent) {
 
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled() || !this.getEditable()) {
+			// prevents actions from occurring when the control is non-editable
+			if (!this.getEditable()) {
 				return;
 			}
 
@@ -1884,11 +1873,6 @@ function(
 		 * @private
 		 */
 		Select.prototype.onsaptabnext = function (oEvent) {
-			// prevents actions from occurring when the control is non-editable or disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
-				return;
-			}
 
 			if (this.isOpen()) {
 				this.close();
@@ -1924,13 +1908,6 @@ function(
 					this.openValueStateMessage();
 				}
 			}.bind(this), 100);
-
-			// note: in some circumstances IE browsers focus non-focusable elements
-			if (Device.browser.msie && (oEvent.target !== this.getFocusDomRef())) {	// whether an inner element is receiving the focus
-
-				// force the focus to leave the inner element and set it back to the control's root element
-				this.focus();
-			}
 		};
 
 		/**
