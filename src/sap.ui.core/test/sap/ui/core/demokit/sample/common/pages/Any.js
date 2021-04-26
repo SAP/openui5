@@ -113,43 +113,38 @@ sap.ui.define([
 						TestUtils.isSupportAssistant() && !TestUtils.isRealOData();
 					Opa5.extendConfig(getConfig(Opa.getContext().bSupportAssistant));
 				},
+				// deletes all entities remembered in Opa.getContext().aCreatedEntityPaths
 				cleanUp : function(sControlId) {
 					this.waitFor({
 						controlType : "sap.m.Table",
 						autoWait : false,
 						id : sControlId,
-						success : function (oSalesOrderTable) {
-							var oModel = oSalesOrderTable.getModel(),
-								mOrderIDs = Opa.getContext().mOrderIDs || {},
-								aPromises = [],
+						success : function (oTable) {
+							var aCreatedEntityPaths = Opa.getContext().aCreatedEntityPaths || [],
+								oModel = oTable.getModel(),
+								aPromises,
 								// use private requestor to prevent additional read requests(ETag)
 								// which need additional mockdata
 								oRequestor = oModel.oRequestor;
 
-							Object.keys(mOrderIDs).forEach(function (sOrderId) {
-								aPromises.push(
-									oRequestor.request("DELETE",
-										"SalesOrderList('" + sOrderId + "')",
-										oModel.lockGroup("cleanUp", "Any.js"), {"If-Match" : "*"}
-									).then(function () {
-										Opa5.assert.ok(true, "cleanUp: deleted SalesOrder: "
-											+ sOrderId);
-									}, function (oError) {
-										Opa5.assert.ok(false, "cleanUp: deleting SalesOrder: "
-											+ sOrderId + " failed due to " + oError);
-									})
-								);
+							Opa5.assert.ok(true, "cleanUp created entities");
+							aPromises = aCreatedEntityPaths.map(function (sPath) {
+								return oRequestor.request("DELETE", sPath,
+									oModel.lockGroup("$direct", "Any.js"), {"If-Match" : "*"}
+								).then(function () {
+									Opa5.assert.ok(true, "deleted: " + sPath);
+								}, function (oError) {
+									if (oError.status !== 404) {
+										Opa5.assert.ok(false, "cleanUp failed: " + sPath
+											+ " error: " + oError.message);
+									} else {
+										Opa5.assert.ok(true, "already deleted: " + sPath);
+									}
+								});
 							});
-							Opa.getContext().mOrderIDs = undefined;
-							aPromises.push(oRequestor.submitBatch("cleanUp"));
-
-							// Note: $batch fails only for technical reasons, we should also check
-							// the DELETE requests themselves!
-							return Promise.all(aPromises).then(function () {
-								Opa5.assert.ok(true, "cleanUp finished");
-							}, function (oError) {
-								Opa5.assert.ok(false, "cleanUp failed: " + oError.message);
-							});
+							delete Opa.getContext().aCreatedEntityPaths;
+							// wait until all deletions finished
+							this.iWaitForPromise(Promise.all(aPromises));
 						},
 						viewName : Opa.getContext().sViewName
 					});

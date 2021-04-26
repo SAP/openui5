@@ -84,11 +84,13 @@ sap.ui.define([
 					});
 				},
 				refresh : function () {
-					return Helper.pressButton(this, sViewName, "refreshSalesOrderList")
-						.then(function () {
+					this.waitFor({
+						success : function () {
 							TestUtils.setData(
 								"SalesOrderList_Refresh_with_GrossAmount_GT_1000.json", true);
-						});
+						}
+					});
+					Helper.pressButton(this, sViewName, "refreshSalesOrderList");
 				},
 				selectSalesOrder : function (iRow) {
 					this.waitFor({

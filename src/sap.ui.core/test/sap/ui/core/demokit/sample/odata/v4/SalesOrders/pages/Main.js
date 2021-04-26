@@ -78,7 +78,7 @@ sap.ui.define([
 	}
 
 	function pressButton(oOpa5, sId, bSearchOpenDialogs) {
-		return Helper.pressButton(oOpa5, sViewName, sId, bSearchOpenDialogs);
+		Helper.pressButton(oOpa5, sViewName, sId, bSearchOpenDialogs);
 	}
 
 	Opa5.createPageObjects({
@@ -270,25 +270,7 @@ sap.ui.define([
 					});
 				},
 				deleteSelectedSalesOrder : function () {
-					this.waitFor({
-						controlType : "sap.m.Table",
-						id : "SalesOrderList",
-						success : function (oSalesOrderTable) {
-							var sSalesOrderID,
-								oSelected = oSalesOrderTable.getSelectedItem().getBindingContext();
-							if (TestUtils.isRealOData() && oSelected.isTransient() === false) {
-								sSalesOrderID = oSelected.getProperty("SalesOrderID");
-							}
-							return pressButton(this, "deleteSalesOrder").then(function() {
-								if (sSalesOrderID &&
-									!(oSelected in oSalesOrderTable.getBinding("items")
-										.getCurrentContexts())) {
-									delete Opa.getContext().mOrderIDs[sSalesOrderID];
-								}
-							});
-						},
-						viewName : sViewName
-					});
+					pressButton(this, "deleteSalesOrder");
 				},
 				deleteSelectedSalesOrderLineItem : function () {
 					pressButton(this, "deleteSalesOrderLineItem");
@@ -462,22 +444,24 @@ sap.ui.define([
 					pressButton(this, "createSalesOrderLineItem");
 				},
 				pressCreateSalesOrdersButton : function () {
-					var oPromise = pressButton(this, "createSalesOrder");
+					pressButton(this, "createSalesOrder");
 					if (TestUtils.isRealOData()) {
 						// remember created sales order for cleanup
-						return oPromise.then(function() {
+						this.waitFor({
+							success : function() {
 							var oCreated = sap.ui.getCore().byId(sViewName).byId("SalesOrderList")
 									.getItems()[0].getBindingContext();
 							oCreated.created().then(function () {
-								var mOrderIDs = Opa.getContext().mOrderIDs || {},
-									sSalesOrderID = oCreated.getProperty("SalesOrderID");
-								mOrderIDs[oCreated.getProperty("SalesOrderID")] = sSalesOrderID;
-								if (!Opa.getContext().mOrderIDs) {
-									Opa.getContext().mOrderIDs = mOrderIDs;
+								var aCreatedEntityPaths = Opa.getContext().aCreatedEntityPaths,
+									sPath = oCreated.getPath().slice(1);
+
+								if (!aCreatedEntityPaths) {
+									Opa.getContext().aCreatedEntityPaths = aCreatedEntityPaths = [];
 								}
-								Opa5.assert.ok(true, "Remembered SalesOrderID: " + sSalesOrderID);
+								aCreatedEntityPaths.push(oCreated.getPath().slice(1));
+								Opa5.assert.ok(true, "Remembered SalesOrder: " + sPath);
 							});
-						});
+						}});
 					}
 				},
 				pressDeleteBusinessPartnerButton : function () {
