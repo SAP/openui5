@@ -424,5 +424,32 @@
         ]
       }
     ]
+  },
+  "1.60.36": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "984bbed7c825dd3deb8a87db8646a3aa90b2ee9a",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Stablized qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      },
+      {
+        "id": "ad51e989ad9c32c5fd6491adb6fbc8a401fde4a9",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Failing QUnit is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      }
+    ]
   }
 }

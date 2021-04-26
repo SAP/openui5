@@ -1538,5 +1538,21 @@
         ]
       }
     ]
+  },
+  "1.60.36": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "34e1240688a6e875eed5d4c5b2ac2bc7ce2100d8",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clear the block list after processing click event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170064743"
+          }
+        ]
+      }
+    ]
   }
 }
