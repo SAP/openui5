@@ -4,16 +4,15 @@
 
 // Provides the JSON model implementation of a list binding
 sap.ui.define([
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/ClientListBinding',
-	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
-],
-	function(ChangeReason, ClientListBinding, deepEqual, Log, jQuery) {
+	"sap/base/util/deepEqual",
+	"sap/base/util/deepExtend",
+	"sap/base/util/each",
+	"sap/base/util/extend",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ClientListBinding"
+], function(Log, deepEqual, deepExtend, each, extend, ChangeReason, ClientListBinding) {
 	"use strict";
-
-
 
 	/**
 	 * Creates a new JSONListBinding.
@@ -121,12 +120,13 @@ sap.ui.define([
 		if (oList) {
 			if (Array.isArray(oList)) {
 				if (this.bUseExtendedChangeDetection) {
-					this.oList = jQuery.extend(true, [], oList);
+					this.oList = deepExtend([], oList);
 				} else {
 					this.oList = oList.slice(0);
 				}
 			} else {
-				this.oList = jQuery.extend(this.bUseExtendedChangeDetection, {}, oList);
+				this.oList = this.bUseExtendedChangeDetection
+					? deepExtend({}, oList) : extend({}, oList);
 			}
 			this.updateIndices();
 			this.applyFilter();
@@ -177,7 +177,7 @@ sap.ui.define([
 				if (this.aLastContexts.length != aContexts.length) {
 					bChangeDetected = true;
 				} else {
-					jQuery.each(this.aLastContextData, function(iIndex, oLastData) {
+					each(this.aLastContextData, function(iIndex, oLastData) {
 						var oCurrentData = that.getContextData(aContexts[iIndex]);
 						if (oCurrentData !== oLastData) {
 							bChangeDetected = true;

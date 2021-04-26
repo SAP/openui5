@@ -8,40 +8,27 @@
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([
-	'sap/ui/model/TreeBinding',
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/ui/model/FilterProcessor',
-	'sap/ui/model/FilterType',
-	'sap/ui/model/Sorter',
-	'sap/ui/model/odata/CountMode',
-	'sap/ui/model/TreeAutoExpandMode',
-	'./odata4analytics',
-	'./BatchResponseCollector',
-	'./AnalyticalVersionInfo',
-	'sap/base/util/isEmptyObject',
-	'sap/base/util/uid',
-	'sap/ui/thirdparty/jquery',
-	'sap/base/Log'
-], function(
-	TreeBinding,
-	ChangeReason,
-	Filter,
-	FilterOperator,
-	FilterProcessor,
-	FilterType,
-	Sorter,
-	CountMode,
-	TreeAutoExpandMode,
-	odata4analytics,
-	BatchResponseCollector,
-	AnalyticalVersionInfo,
-	isEmptyObject,
-	uid,
-	jQuery,
-	Log
-) {
+	"./AnalyticalVersionInfo",
+	"./BatchResponseCollector",
+	"./odata4analytics",
+	"sap/base/Log",
+	"sap/base/util/deepExtend",
+	"sap/base/util/each",
+	"sap/base/util/extend",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/uid",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/TreeAutoExpandMode",
+	"sap/ui/model/TreeBinding",
+	"sap/ui/model/odata/CountMode"
+], function(AnalyticalVersionInfo, BatchResponseCollector, odata4analytics, Log, deepExtend, each,
+		extend, isEmptyObject, uid, ChangeReason, Filter, FilterOperator, FilterProcessor,
+		FilterType, Sorter, TreeAutoExpandMode, TreeBinding, CountMode) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.analytics.AnalyticalBinding",
@@ -1264,7 +1251,7 @@ sap.ui.define([
 			// copy is necessary because the original analytical info will be changed and used internally, through out the binding "coding"
 			this._aLastChangedAnalyticalInfo = [];
 			for (var j = 0; j < aColumns.length; j++) {
-				this._aLastChangedAnalyticalInfo[j] = jQuery.extend({}, aColumns[j]);
+				this._aLastChangedAnalyticalInfo[j] = extend({}, aColumns[j]);
 			}
 		}
 		if (iDiff < 2) {
@@ -2157,7 +2144,7 @@ sap.ui.define([
 					for (var iLevelCondition = 0; iLevelCondition < iNumberOfLevelConditions; iLevelCondition++) {
 						// create filter condition from template
 						var oFilterCondition = new Filter("x", FilterOperator.EQ, "x");
-						oFilterCondition = jQuery.extend(true, oFilterCondition, aTemplateFilter[iLevelCondition]);
+						oFilterCondition = deepExtend(oFilterCondition, aTemplateFilter[iLevelCondition]);
 
 						if (iNumberOfLevelConditions > 1 && iLevelCondition < iNumberOfLevelConditions - 1) {
 							oFilterCondition.sOperator = FilterOperator.EQ;
@@ -2184,7 +2171,7 @@ sap.ui.define([
 							var aStartIndexFilterCondition = [];
 							for (var j = 0; j < aIntermediateLevelFilterCondition.length; j++) {
 								var oConditionCopy = new Filter("x", FilterOperator.EQ, "x");
-								oConditionCopy = jQuery.extend(true, oConditionCopy, aIntermediateLevelFilterCondition[j]);
+								oConditionCopy = deepExtend(oConditionCopy, aIntermediateLevelFilterCondition[j]);
 								aStartIndexFilterCondition.push(oConditionCopy);
 							}
 							aStartIndexFilterCondition[iGroupIdLevel_Missing - 1].sOperator = FilterOperator.EQ; // (R2.1)
@@ -3372,7 +3359,7 @@ sap.ui.define([
 				oGroupMembersRequestDetails.iLength = aParentGroupODataResult.length;
 			}
 			oGroupMembersRequestDetails.oKeyIndexMapping = that._getKeyIndexMapping(oGroupMembersRequestDetails.sGroupId, oGroupMembersRequestDetails.iStartIndex);
-			var oParentGroupOData = jQuery.extend(true, {}, oData);
+			var oParentGroupOData = deepExtend({}, oData);
 			oParentGroupOData.results = aParentGroupODataResult;
 			that._processGroupMembersQueryResponse(oGroupMembersRequestDetails, oParentGroupOData);
 		};
@@ -4462,7 +4449,7 @@ sap.ui.define([
 	// returns { oEntry, bIsNewEntry) the multi-unit representativ entry and a flag whether it already existed before this call
 	AnalyticalBinding.prototype._createMultiUnitRepresentativeEntry = function(sGroupId, oReferenceEntry, aSelectedUnitPropertyName, aDeviatingUnitPropertyName, bIsFlatListRequest) {
 		// set up properties for measures and units in this new entry
-		var oMultiUnitEntry = jQuery.extend(true, {}, oReferenceEntry);
+		var oMultiUnitEntry = deepExtend({}, oReferenceEntry);
 		var aReloadMeasurePropertyName = [];
 		for ( var sMeasureName in this.oMeasureDetailsSet) {
 			var oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
@@ -4611,8 +4598,8 @@ sap.ui.define([
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				jQuery.each(this.mServiceKey, function(i, aNodeKeys) {
-					jQuery.each(aNodeKeys, function(i, sKey) {
+				each(this.mServiceKey, function(i, aNodeKeys) {
+					each(aNodeKeys, function(i, sKey) {
 						if (sKey in mChangedEntities) {
 							bChangeDetected = true;
 							return false;
@@ -4650,8 +4637,8 @@ sap.ui.define([
 			if (this.bNeedsUpdate || !mChangedEntities) {
 				bChangeDetected = true;
 			} else {
-				jQuery.each(this.mServiceKey, function(i, aNodeKeys) {
-					jQuery.each(aNodeKeys, function(i, sKey) {
+				each(this.mServiceKey, function(i, aNodeKeys) {
+					each(aNodeKeys, function(i, sKey) {
 						if (sKey in mChangedEntities) {
 							bChangeDetected = true;
 							return false;

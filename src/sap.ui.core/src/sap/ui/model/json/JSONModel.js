@@ -12,27 +12,17 @@
 
 // Provides the JSON object based model implementation
 sap.ui.define([
-	'sap/ui/model/ClientModel',
-	'sap/ui/model/Context',
-	'./JSONListBinding',
-	'./JSONPropertyBinding',
-	'./JSONTreeBinding',
+	"./JSONListBinding",
+	"./JSONPropertyBinding",
+	"./JSONTreeBinding",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isPlainObject"
-],
-	function(
-		ClientModel,
-		Context,
-		JSONListBinding,
-		JSONPropertyBinding,
-		JSONTreeBinding,
-		Log,
-		jQuery,
-		isPlainObject
-	) {
+	"sap/base/util/deepExtend",
+	"sap/base/util/isPlainObject",
+	"sap/ui/model/ClientModel",
+	"sap/ui/model/Context"
+], function(JSONListBinding, JSONPropertyBinding, JSONTreeBinding, Log, deepExtend, isPlainObject,
+		ClientModel, Context) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a new JSONModel.
@@ -83,7 +73,7 @@ sap.ui.define([
 	JSONModel.prototype.setData = function(oData, bMerge){
 		if (bMerge) {
 			// do a deep copy
-			this.oData = jQuery.extend(true, Array.isArray(this.oData) ? [] : {}, this.oData, oData);
+			this.oData = deepExtend(Array.isArray(this.oData) ? [] : {}, this.oData, oData);
 		} else {
 			this.oData = oData;
 		}
