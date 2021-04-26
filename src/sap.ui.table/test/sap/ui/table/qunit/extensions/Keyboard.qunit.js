@@ -7,12 +7,13 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
+	"sap/ui/table/CreationRow",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
-], function(TableQUnitUtils, TableUtils, qutils, Table, TreeTable, AnalyticalTable, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device) {
+], function(TableQUnitUtils, TableUtils, qutils, Table, TreeTable, AnalyticalTable, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device) {
 	"use strict";
 
 	// mapping of global function calls
@@ -299,57 +300,67 @@ sap.ui.define([
 			ExtensionBase.TABLETYPES.ANALYTICAL, "ANALYTICAL");
 	});
 
-	function containsOrHasFocus(oTable, sIdSuffix) {
-		return containsOrEquals(oTable.getDomRef(sIdSuffix), document.activeElement);
-	}
+	QUnit.module("Focus handling", {
+		beforeEach: function() {
+			createTables();
+
+			oTable.addColumn(TableQUnitUtils.createInputColumn({text: "test3"}));
+			sap.ui.getCore().applyChanges();
+
+			this.addCreationRow = function(oTable) {
+				oTable.addColumn(TableQUnitUtils.createTextColumn({text: "test"}).setCreationTemplate(
+					new TestControl({text: "test"})
+				));
+
+				oTable.addColumn(TableQUnitUtils.createTextColumn({text: "test2"}).setCreationTemplate(
+					new TableQUnitUtils.TestInputControl({text: "test2"})
+				));
+
+				oTable.setCreationRow(new CreationRow());
+				sap.ui.getCore().applyChanges();
+			};
+		},
+		afterEach: function() {
+			destroyTables();
+		}
+	});
 
 	QUnit.test("Overlay / NoData focus handling", function(assert) {
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			assert.ok(containsOrHasFocus(oTable, "overlay"), "focus is still on overlay after no data is displayed");
+			assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is still on overlay after no data is displayed");
 			oTable.setShowOverlay(false);
 			var oElem = getColumnHeader(0);
 			assert.equal(document.activeElement, oElem.get(0), "focus is on first column header after the overlay disappeared");
 			done();
 		}
 
+		function containsOrHasFocus(oTable, sIdSuffix) {
+			return containsOrEquals(oTable.getDomRef(sIdSuffix), document.activeElement);
+		}
+
 		assert.ok(!containsOrHasFocus(oTable), "focus is not on the table before setShowOverlay");
 		oTable.setShowOverlay(true);
 		assert.ok(!containsOrHasFocus(oTable), "focus is not on the table after setShowOverlay");
 		oTable.focus();
-		assert.ok(containsOrHasFocus(oTable, "overlay"), "focus is on overlay after focus");
+		assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is on overlay after focus");
 		oTable.attachEventOnce("rowsUpdated", doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
-	function addCreationRow(oTable) {
-		oTable.addColumn(new sap.ui.table.Column({
-			id: "column1",
-			template: new TestControl({text: "test"})
-		}).setCreationTemplate(new TestControl({text: "test"})));
-
-		oTable.addColumn(new sap.ui.table.Column({
-			id: "column2",
-			template: new TestControl({text: "test2"})
-		}).setCreationTemplate(new TableQUnitUtils.TestInputControl({text: "test2"})));
-
-		oTable.setCreationRow(new sap.ui.table.CreationRow());
-		sap.ui.getCore().applyChanges();
-	}
-
 	QUnit.test("Restore focus position after overlay", function(assert) {
 		var $Cell = getCell(1, 1, true);
 
-		addCreationRow(oTable);
+		this.addCreationRow(oTable);
 
 		oTable.setShowOverlay(true);
-		assert.ok(containsOrHasFocus(oTable, "overlay"), "focus is on overlay");
+		assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is on overlay");
 		oTable.setShowOverlay(false);
 		assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
 
 		oTable.setShowOverlay(true);
-		assert.ok(containsOrHasFocus(oTable, "overlay"), "focus is on overlay");
+		assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is on overlay");
 		oTable.removeColumn(oTable.getColumns()[1]);
 		oTable.setShowOverlay(false);
 		assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
@@ -357,21 +368,15 @@ sap.ui.define([
 		var $Input = TableUtils.getFirstInteractiveElement(oTable.getCreationRow());
 		oTable.getCreationRow().resetFocus();
 		oTable.setShowOverlay(true);
-		assert.ok(containsOrHasFocus(oTable, "overlay"), "focus is on overlay");
+		assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is on overlay");
 		oTable.setShowOverlay(false);
 		assert.ok(window.checkFocus($Input, assert),
 			"focus is restored on the interactive element in the CreationRow");
 
-		oTable.addColumn(new sap.ui.table.Column({
-			id: "column3",
-			template: new TableQUnitUtils.TestInputControl({text: "test3"})
-		}));
-		sap.ui.getCore().applyChanges();
-
-		$Cell = getCell(1, 6);
+		$Cell = getCell(1, 5);
 		TableUtils.getInteractiveElements($Cell)[0].focus();
 		oTable.setShowOverlay(true);
-		assert.ok(containsOrHasFocus(oTable, "overlay"), "focus is on overlay");
+		assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is on overlay");
 		oTable.setShowOverlay(false);
 		assert.ok(window.checkFocus($Cell, assert),
 			"focus is restored on the data cell");
@@ -384,7 +389,7 @@ sap.ui.define([
 
 		function onRowsUpdated() {
 			if (TableUtils.isNoDataVisible(oTable)) {
-				assert.ok(containsOrHasFocus(oTable,"noDataCnt"), "focus is on no data");
+				assert.strictEqual(document.activeElement, oTable.getDomRef("noDataCnt"), "focus is on no data");
 				oTable.setModel(oModel);
 			} else {
 				assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
@@ -404,7 +409,7 @@ sap.ui.define([
 
 		function onRowsUpdated() {
 			if (TableUtils.isNoDataVisible(oTable)) {
-				assert.ok(containsOrHasFocus(oTable,"noDataCnt"), "focus is on no data");
+				assert.strictEqual(document.activeElement, oTable.getDomRef("noDataCnt"), "focus is on no data");
 				oTable.removeColumn(oTable.getColumns()[0]);
 				oTable.setModel(oModel);
 			} else {
@@ -422,18 +427,12 @@ sap.ui.define([
 		var done = assert.async();
 		var oModel = oTable.getModel();
 
-		oTable.addColumn(new sap.ui.table.Column({
-			id: "column3",
-			template: new TableQUnitUtils.TestInputControl({text: "test3"})
-		}));
-		sap.ui.getCore().applyChanges();
-
 		var $Cell = getCell(1, 5);
 		TableUtils.getInteractiveElements($Cell)[0].focus();
 
 		function onRowsUpdated() {
 			if (TableUtils.isNoDataVisible(oTable)) {
-				assert.ok(containsOrHasFocus(oTable,"noDataCnt"), "focus is on no data");
+				assert.strictEqual(document.activeElement, oTable.getDomRef("noDataCnt"), "focus is on no data");
 				oTable.setModel(oModel);
 			} else {
 				assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
@@ -442,15 +441,17 @@ sap.ui.define([
 			}
 		}
 
-		oTable.attachRowsUpdated(onRowsUpdated);
-		oTable.setModel(new JSONModel());
+		setTimeout(function() {
+			oTable.attachRowsUpdated(onRowsUpdated);
+			oTable.setModel(new JSONModel());
+		}, 200);
 	});
 
 	QUnit.test("NoData focus handling with CreationRow", function(assert) {
 		var done = assert.async();
 		var oModel = oTable.getModel();
 
-		addCreationRow(oTable);
+		this.addCreationRow(oTable);
 
 		function onRowsUpdated() {
 			if (TableUtils.isNoDataVisible(oTable)) {
