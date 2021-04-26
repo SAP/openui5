@@ -88,16 +88,8 @@ sap.ui.define([
 		onTheCreateNewSalesOrderDialog : {
 			actions : {
 				changeNote : function (sNewNoteValue) {
-					this.waitFor({
-						actions : new EnterText({ clearTextFirst : true, text : sNewNoteValue }),
-						controlType : "sap.m.Input",
-						id : "Note::new",
-						searchOpenDialogs : true,
-						success : function (oNewNoteInput) {
-							Opa5.assert.ok(true, "Note text set to " + sNewNoteValue);
-						},
-						viewName : sViewName
-					});
+					Helper.changeInputValue(this, sViewName, "Note::new", sNewNoteValue, undefined,
+						true);
 				},
 				confirmDialog : function () {
 					pressButton(this, "confirmCreateSalesOrder", true);
@@ -130,16 +122,8 @@ sap.ui.define([
 					});
 				},
 				checkNewBuyerId : function (sExpectedBuyerID) {
-					this.waitFor({
-						controlType : "sap.m.Input",
-						id : "BuyerID::new",
-						searchOpenDialogs : true,
-						success : function (oNewBuyerIDInput) {
-							Opa5.assert.strictEqual(oNewBuyerIDInput.getValue(), sExpectedBuyerID,
-								"New Buyer ID");
-						},
-						viewName : sViewName
-					});
+					Helper.checkInputValue(this, sViewName, "BuyerID::new", sExpectedBuyerID,
+						undefined, true);
 				},
 				// store note value in sLastNewNoteValue and check note value if sExpectedNote is
 				// not empty
@@ -168,45 +152,13 @@ sap.ui.define([
 		onTheMainPage : {
 			actions : {
 				changeNoteInDetails : function (sValue) {
-					this.waitFor({
-						actions : new EnterText({ clearTextFirst : true, text : sValue }),
-						controlType : "sap.m.Input",
-						id : "Note::detail",
-						success : function (oInput) {
-							Opa5.assert.ok(true, "Details Note set to " + sValue);
-						},
-						viewName : sViewName
-					});
+					Helper.changeInputValue(this, sViewName, "Note::detail", sValue);
 				},
 				changeNoteInLineItem : function (iRow, sValue) {
-					this.waitFor({
-						actions : new EnterText({clearTextFirst : true, text : sValue}),
-						controlType : "sap.m.Input",
-						id : /SO_2_SOITEM:Note/,
-						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
-						},
-						success : function () {
-							Opa5.assert.ok(true, "SO Item Note of first row set to " + sValue);
-						},
-						viewName : sViewName
-					});
+					Helper.changeInputValue(this, sViewName, /SO_2_SOITEM:Note/, sValue, iRow);
 				},
 				changeNoteInSalesOrders : function (iRow, sValue) {
-					this.waitFor({
-						actions : new EnterText({clearTextFirst : true, text : sValue}),
-						controlType : "sap.m.Input",
-						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
-						},
-						id : /Note-__clone/,
-						success : function (oControls) {
-							Opa5.assert.ok(true,
-								"Note of Sales Order " + oControls[0].getBindingContext().getPath()
-									+ " set to " + sValue);
-						},
-						viewName : sViewName
-					});
+					Helper.changeInputValue(this, sViewName, /Note::list/, sValue, iRow);
 				},
 				changeProductIDinLineItem : function (iRow, sProductID) {
 					this.waitFor({
@@ -227,19 +179,7 @@ sap.ui.define([
 					});
 				},
 				changeQuantityInLineItem : function (iRow, sValue) {
-					this.waitFor({
-						actions : new EnterText({clearTextFirst : true, text : sValue}),
-						controlType : "sap.m.Input",
-						id : /SO_2_SOITEM:Quantity/,
-						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
-						},
-						success : function () {
-							Opa5.assert.ok(true, "SO Item Quantity of row " + iRow + " set to "
-								+ sValue);
-						},
-						viewName : sViewName
-					});
+					Helper.changeInputValue(this, sViewName, /SO_2_SOITEM:Quantity/, sValue, iRow);
 				},
 				createInvalidSalesOrderViaAPI : function () {
 					this.waitFor({
@@ -767,15 +707,7 @@ sap.ui.define([
 					});
 				},
 				checkFavoriteProductID : function () {
-					this.waitFor({
-						controlType : "sap.m.Input",
-						id : "favoriteProductId",
-						matchers : new Properties({value : "HT-1000"}),
-						success : function () {
-							Opa5.assert.ok(true, "Product ID 'HT-1000' found");
-						},
-						viewName : sViewName
-					});
+					Helper.checkInputValue(this, sViewName, "favoriteProductId", "HT-1000");
 				},
 				checkFirstGrossAmountGreater : function (sExpectedAmount) {
 					this.waitFor({
@@ -896,7 +828,7 @@ sap.ui.define([
 					});
 				},
 				checkNoteValueState : function (iRow, sValueState, sValueStateText) {
-					Helper.checkValueState(this, sViewName, /Note-__clone/, sValueState,
+					Helper.checkValueState(this, sViewName, /Note::list/, sValueState,
 						sValueStateText, false, iRow);
 				},
 				checkSalesOrderIdInDetails : function (bChanged) {
@@ -1019,16 +951,8 @@ sap.ui.define([
 					});
 				},
 				checkSupplierPhoneNumber : function (sExpectedPhoneNumber) {
-					this.waitFor({
-						controlType : "sap.m.Input",
-						id : "PRODUCT_2_BP:PhoneNumber",
-						success : function (oPhoneNumberInput) {
-							Opa5.assert.strictEqual(oPhoneNumberInput.getValue(),
-								sExpectedPhoneNumber, "checkSupplierPhoneNumber('"
-								+ sExpectedPhoneNumber + "')");
-						},
-						viewName : sViewName
-					});
+					Helper.checkInputValue(this, sViewName, "PRODUCT_2_BP:PhoneNumber",
+						sExpectedPhoneNumber);
 				},
 				checkTableLength : function (iExpectedLength, sTableId) {
 					this.waitFor({
@@ -1161,8 +1085,11 @@ sap.ui.define([
 					Helper.checkValueState(this, sViewName, "SimulateDiscountForm::Approver",
 						sValueState, sValueStateText, true);
 				},
-				checkControlValue : function (sID, sValue) {
-					Helper.checkControlValue(this, sViewName, sID, sValue, true);
+				checkInputValue : function (sID, sValue) {
+					Helper.checkInputValue(this, sViewName, sID, sValue, undefined, true);
+				},
+				checkTextValue : function (sID, sValue) {
+					Helper.checkTextValue(this, sViewName, sID, sValue, undefined, true);
 				},
 				checkDiscountValueState : function (sValueState, sValueStateText) {
 					Helper.checkValueState(this, sViewName, "SimulateDiscountForm::Discount",

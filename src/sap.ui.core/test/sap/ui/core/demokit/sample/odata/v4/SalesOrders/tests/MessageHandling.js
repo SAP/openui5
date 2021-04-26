@@ -93,7 +93,7 @@ sap.ui.define([
 			});
 
 			When.onTheMessagePopover.back();
-			When.onTheMessagePopover.selectMessageTitle(sNoteWarning, /-Note-/, 1);
+			When.onTheMessagePopover.selectMessageTitle(sNoteWarning, /Note::list/, 1);
 
 			When.onTheMessagePopover.close();
 			Then.onTheMainPage.checkMessagesButtonCount(2);
@@ -237,15 +237,15 @@ sap.ui.define([
 			When.onTheMainPage.selectSalesOrder(2);
 			When.onTheMainPage.pressOpenSimulateDiscountDialog();
 			Then.onTheSimulateDiscountDialog
-				.checkControlValue("SimulateDiscountForm::SalesOrderID", "0500000002");
+				.checkTextValue("SimulateDiscountForm::SalesOrderID", "0500000002");
 			Then.onTheSimulateDiscountDialog
-				.checkControlValue("SimulateDiscountForm::GrossAmount", "250.73");
+				.checkTextValue("SimulateDiscountForm::GrossAmount", "250.73");
 			Then.onTheSimulateDiscountDialog
-				.checkControlValue("SimulateDiscountResult::Result", "");
+				.checkInputValue("SimulateDiscountResult::Result", "");
 			When.onTheSimulateDiscountDialog.enterDiscount("25");
 			When.onTheSimulateDiscountDialog.executeSimulateDiscount();
 			Then.onTheSimulateDiscountDialog
-				.checkControlValue("SimulateDiscountResult::Result", "188.05");
+				.checkInputValue("SimulateDiscountResult::Result", "188.05");
 			When.onTheSimulateDiscountDialog.enterDiscount("75");
 			When.onTheSimulateDiscountDialog.executeSimulateDiscount();
 			Then.onTheSimulateDiscountDialog.checkDiscountValueState(ValueState.Error,

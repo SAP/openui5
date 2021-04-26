@@ -39,16 +39,7 @@ sap.ui.define([
 					});
 				},
 				enterInputValue : function (sId, sValue, sViewName0) {
-					this.waitFor({
-						actions : new EnterText({clearTextFirst : true, text : sValue}),
-						controlType : "sap.m.Input",
-						id : sId,
-						success : function (oControl) {
-							Opa5.assert.strictEqual(oControl.getValue(), sValue,
-								"Control: " + sId + " Value is: " + oControl.getValue());
-						},
-						viewName : sViewName0 || sViewName
-					});
+					Helper.changeInputValue(this, sViewName0 || sViewName, sId, sValue);
 				},
 				enterStepInputValue : function (sId, sValue, sExpectedValue) {
 					Helper.changeStepInputValue(this, sViewName, sId, sValue, sExpectedValue);

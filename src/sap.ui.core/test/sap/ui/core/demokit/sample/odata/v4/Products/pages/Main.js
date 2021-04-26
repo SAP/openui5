@@ -17,21 +17,7 @@ sap.ui.define([
 	 * given. After that, sets the focus to a different field to trigger a PATCH for the update.
 	 */
 	function changeValue(oOpa, rId, sValue, iRow) {
-		oOpa.waitFor({
-			actions : new EnterText({text : sValue}),
-			controlType : "sap.m.Input",
-			id : rId,
-			matchers : function (oControl) {
-				return oControl.getBindingContext().getIndex() === (iRow || 0);
-			},
-			success : function (aControls) {
-				var oInput = aControls[0];
-
-				Opa5.assert.strictEqual(oInput.getValue(), sValue, "Content set to "
-					+ oInput.getValue());
-			},
-			viewName : sViewName
-		});
+		Helper.changeInputValue(oOpa, sViewName, rId, sValue, iRow || 0);
 	}
 
 	/*
@@ -49,20 +35,7 @@ sap.ui.define([
 	 * the first row if none is given.
 	 */
 	function checkValue(oOpa, rId, sValue, iRow) {
-		oOpa.waitFor({
-			controlType : "sap.m.Input",
-			id : rId,
-			matchers : function (oControl) {
-				return oControl.getBindingContext().getIndex() === (iRow || 0);
-			},
-			success : function (aControls) {
-				var oInput = aControls[0];
-
-				Opa5.assert.strictEqual(oInput.getValue(), sValue,
-					rId + " as expected: " + oInput.getValue());
-			},
-			viewName : sViewName
-		});
+		Helper.checkInputValue(oOpa, sViewName, rId, sValue, iRow || 0);
 	}
 
 	Opa5.createPageObjects({
