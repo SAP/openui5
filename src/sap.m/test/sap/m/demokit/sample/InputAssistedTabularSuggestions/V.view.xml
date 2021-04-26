@@ -43,7 +43,7 @@
 			</suggestionRows>
 		</Input>
 
-		<Label text="Tabular suggestions with popin mode enabled." labelFor="popinTableInput" />
+		<Label text='Tabular suggestions with enableTableAutoPopinMode="true"' labelFor="popinTableInput" />
 		<Input
 			id="popinTableInput"
 			placeholder="Enter product"
@@ -69,6 +69,52 @@
 				<Column
 					width="10rem"
 					hAlign="End">
+					<Label text="Price" />
+				</Column>
+			</suggestionColumns>
+
+			<suggestionRows>
+				<ColumnListItem>
+					<Label text="{Name}" />
+					<Label text="{ProductId}" />
+					<Label text="{SupplierName}" />
+					<Label text="{
+						parts:[{path:'Price'}, {path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: true}
+					}" />
+				</ColumnListItem>
+			</suggestionRows>
+		</Input>
+
+		<Label text="Tabular suggestions with custom column popin configuration" labelFor="customPopinTableInput" />
+		<Input
+			id="customPopinTableInput"
+			placeholder="Enter product"
+			showSuggestion="true"
+			showTableSuggestionValueHelp="false"
+			suggestionRows="{/ProductCollection}">
+			<suggestionColumns>
+				<Column
+					width="20rem">
+					<Label text="Name" />
+				</Column>
+				<Column
+					width="10rem">
+					<Label text="Product ID" />
+				</Column>
+				<Column
+					width="10rem"
+					popinDisplay="Inline"
+					minScreenWidth="Large"
+					demandPopin="true">
+					<Label text="Supplier Name" />
+				</Column>
+				<Column
+					width="10rem"
+					popinDisplay="Inline"
+					minScreenWidth="Large"
+					demandPopin="true">
 					<Label text="Price" />
 				</Column>
 			</suggestionColumns>
