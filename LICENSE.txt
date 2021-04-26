@@ -319,7 +319,7 @@ Licensor: Various
 Website: http://code.google.com/p/google-code-prettify/
 License: Apache License 2.0
 
-Component: Handlebars 4.7.6
+Component: Handlebars 4.7.7
 Licensor: Yehuda Katz
 Website: http://handlebarsjs.com/
 License: MIT License
