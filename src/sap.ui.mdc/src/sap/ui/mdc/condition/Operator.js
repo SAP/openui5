@@ -56,6 +56,7 @@ sap.ui.define([
 		 * @param {string[]|object[]} oConfiguration.valueTypes Array of type to be used. The length of the array defines the number of values that
 		 *                 need to be entered with the operator.<br>
 		 *                 If set to <code>Operator.ValueType.Self</code> the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
+		 *                 If set to <code>Operator.ValueType.SelfNoParse</code> same as <code>Operator.ValueType.Self</code>, except that the input value parsing will not be called.<br>
 		 *                 If set to <code>Operator.ValueType.Static</code> a simple string type is used to display static text.<br>
 		 *                 If set to a name of a data type an instance of this data type will be used.<br>
 		 *                 If set to an object with the properties <code>name</code>, <code>formatOptions</code> and <code>constraints</code>
@@ -663,7 +664,7 @@ sap.ui.define([
 		 */
 		Operator.prototype.getCondition = function(sText, oType, sDisplayFormat, bDefaultOperator) {
 
-			if (this.test(sText) || (bDefaultOperator && sText)) {
+			if (this.test(sText) || (bDefaultOperator && sText && this.hasRequiredValues())) {
 				var aValues = this.parse(sText, oType, sDisplayFormat, bDefaultOperator);
 				if (aValues.length == this.valueTypes.length || this.valueTypes[0] === Operator.ValueType.Static
 						|| (aValues.length === 1 && this.valueTypes.length === 2 && !this.valueTypes[1])) { // EQ also valid without description
@@ -713,6 +714,23 @@ sap.ui.define([
 				return {}; // don't check value for static operators (might contain static text)
 			} else {
 				return {values: oCondition.values};
+			}
+
+		};
+
+		/**
+		 * Creates an object containing information to compare conditions.
+		 *
+		 * @returns {boolean} Object with check information
+		 * @private
+		 * @since: 1.90.0
+		 */
+		 Operator.prototype.hasRequiredValues = function() {
+
+			if (this.valueTypes[0] && this.valueTypes[0] !== Operator.ValueType.Static) {
+				return true;
+			} else {
+				return false;
 			}
 
 		};
