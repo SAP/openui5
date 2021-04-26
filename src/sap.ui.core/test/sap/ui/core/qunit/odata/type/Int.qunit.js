@@ -187,13 +187,15 @@ sap.ui.define([
 		});
 
 		QUnit.test("validate w/ decimal", function (assert) {
-			try {
-				oType.validateValue(123.456);
-				assert.ok(false, "Expected ValidateException not thrown");
-			} catch (e) {
-				assert.ok(e instanceof ValidateException);
-				assert.strictEqual(e.message, "Enter a number with no decimal places");
-			}
+			TestUtils.withNormalizedMessages(function () {
+				try {
+					oType.validateValue(123.456);
+					assert.ok(false, "Expected ValidateException not thrown");
+				} catch (e) {
+					assert.ok(e instanceof ValidateException);
+					assert.strictEqual(e.message, "EnterInt");
+				}
+			});
 		});
 
 		QUnit.test("range tests", function (assert) {
