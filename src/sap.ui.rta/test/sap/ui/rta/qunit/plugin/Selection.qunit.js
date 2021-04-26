@@ -1,52 +1,50 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/rta/plugin/Remove",
-	"sap/ui/rta/plugin/Combine",
-	"sap/ui/rta/plugin/Selection",
-	"sap/ui/rta/Utils",
-	"sap/ui/rta/command/CommandFactory",
+	"sap/m/Bar",
+	"sap/m/Button",
+	"sap/m/HBox",
+	"sap/m/Text",
+	"sap/m/VBox",
+	"sap/ui/core/UIComponent",
+	"sap/ui/Device",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/m/Button",
-	"sap/m/VBox",
-	"sap/m/HBox",
-	"sap/m/Bar",
-	"sap/m/Text",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/registry/SimpleChanges",
-	"sap/ui/core/UIComponent",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/Device",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/Combine",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/plugin/Selection",
+	"sap/ui/rta/Utils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
-	jQuery,
-	Remove,
-	Combine,
-	Selection,
-	Utils,
-	CommandFactory,
+	Bar,
+	Button,
+	HBox,
+	Text,
+	VBox,
+	UIComponent,
+	Device,
+	KeyCodes,
 	DesignTime,
-	OverlayRegistry,
 	ElementOverlay,
+	OverlayRegistry,
+	ChangesWriteAPI,
 	Layer,
 	FlUtils,
-	Button,
-	VBox,
-	HBox,
-	Bar,
-	Text,
-	ChangeRegistry,
-	SimpleChanges,
-	UIComponent,
-	KeyCodes,
 	QUnitUtils,
-	Device,
+	CommandFactory,
+	Combine,
+	Remove,
+	Selection,
+	Utils,
+	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -57,145 +55,116 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var done = assert.async();
 
-			var oChangeHandler = {
-				completeChangeContent: function() {},
-				applyChange: function() {},
-				revertChange: function() {}
-			};
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oComponent = new UIComponent();
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
-				"sap.m.VBox": [
-					SimpleChanges.hideControl,
-					{
-						changeType: "combineChange",
-						changeHandler: oChangeHandler
-					}
-				],
-				"sap.m.HBox": [
-					SimpleChanges.hideControl,
-					{
-						changeType: "combineChange",
-						changeHandler: oChangeHandler
-					}
-				],
-				"sap.m.Button": [],
-				"sap.m.Text": [
-					SimpleChanges.hideControl
+			this.oCommandFactory = new CommandFactory({
+				flexSettings: {
+					layer: Layer.CUSTOMER,
+					developerMode: false
+				}
+			});
+			this.oSelectionPlugin = new Selection({
+				commandFactory: this.oCommandFactory,
+				multiSelectionRequiredPlugins: [
+					Combine.getMetadata().getName(),
+					Remove.getMetadata().getName()
 				]
-			})
-			.then(function() {
-				this.oCommandFactory = new CommandFactory(
-					{
-						flexSettings: {
-							layer: Layer.CUSTOMER,
-							developerMode: false
-						}
-					}
-				);
-				this.oSelectionPlugin = new Selection({
-					commandFactory: this.oCommandFactory,
-					multiSelectionRequiredPlugins: [
-						Combine.getMetadata().getName(),
-						Remove.getMetadata().getName()
-					]
-				});
-				this.oVBox = new VBox({
-					id: this.oComponent.createId("root"),
-					items: [
-						new HBox({
-							id: this.oComponent.createId("container1"),
-							items: [
-								new Button(this.oComponent.createId("innerBtn11"), {text: "innerBtn11"}),
-								new Button(this.oComponent.createId("innerBtn12"), {text: "innerBtn12"}),
-								new Text(this.oComponent.createId("innerTxt13"), {text: "innerTxt13"})
-							]
-						}),
-						new Button(this.oComponent.createId("btnOutsideContainer"), {text: "btnOutsideContainer"}),
-						new HBox({
-							id: this.oComponent.createId("container2"),
-							items: [
-								new Button(this.oComponent.createId("innerBtn21"), {text: "innerBtn21"})
-							]
-						}),
-						new Bar(this.oComponent.createId("othercontainer3")),
-						new HBox({
-							id: this.oComponent.createId("container4"),
-							items: [
-								new VBox({
-									id: this.oComponent.createId("innerVBox1"),
-									items: [
-										new Text(this.oComponent.createId("innerVBox1Txt"), {text: "innerVBox1Txt"})
-									]
-								}),
-								new VBox({
-									id: this.oComponent.createId("innerVBox2"),
-									items: [
-										new Text(this.oComponent.createId("innerVBox2Txt"), {text: "innerVBox2Txt"}),
-										new Button(this.oComponent.createId("innerVBox2Btn"), {text: "innerVBox2Btn"})
-									]
-								})
-							]
-						})
-					]
-				});
-				this.oVBox.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+			});
+			this.oVBox = new VBox({
+				id: this.oComponent.createId("root"),
+				items: [
+					new HBox({
+						id: this.oComponent.createId("container1"),
+						items: [
+							new Button(this.oComponent.createId("innerBtn11"), {text: "innerBtn11"}),
+							new Button(this.oComponent.createId("innerBtn12"), {text: "innerBtn12"}),
+							new Text(this.oComponent.createId("innerTxt13"), {text: "innerTxt13"})
+						]
+					}),
+					new Button(this.oComponent.createId("btnOutsideContainer"), {text: "btnOutsideContainer"}),
+					new HBox({
+						id: this.oComponent.createId("container2"),
+						items: [
+							new Button(this.oComponent.createId("innerBtn21"), {text: "innerBtn21"})
+						]
+					}),
+					new Bar(this.oComponent.createId("othercontainer3")),
+					new HBox({
+						id: this.oComponent.createId("container4"),
+						items: [
+							new VBox({
+								id: this.oComponent.createId("innerVBox1"),
+								items: [
+									new Text(this.oComponent.createId("innerVBox1Txt"), {text: "innerVBox1Txt"})
+								]
+							}),
+							new VBox({
+								id: this.oComponent.createId("innerVBox2"),
+								items: [
+									new Text(this.oComponent.createId("innerVBox2Txt"), {text: "innerVBox2Txt"}),
+									new Button(this.oComponent.createId("innerVBox2Btn"), {text: "innerVBox2Btn"})
+								]
+							})
+						]
+					})
+				]
+			});
+			this.oVBox.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-				this.oDesignTime = new DesignTime({
-					plugins: [
-						this.oSelectionPlugin,
-						new Remove({commandFactory: this.oCommandFactory}),
-						new Combine({commandFactory: this.oCommandFactory})
-					],
-					rootElements: [this.oVBox],
-					designTimeMetadata: {
-						"sap.m.VBox": {
-							actions: {
-								remove: {
-									changeType: "hideControl"
-								}
+			this.oDesignTime = new DesignTime({
+				plugins: [
+					this.oSelectionPlugin,
+					new Remove({commandFactory: this.oCommandFactory}),
+					new Combine({commandFactory: this.oCommandFactory})
+				],
+				rootElements: [this.oVBox],
+				designTimeMetadata: {
+					"sap.m.VBox": {
+						actions: {
+							remove: {
+								changeType: "hideControl"
+							}
+						}
+					},
+					"sap.m.HBox": {
+						aggregations: {
+							items: {
+								propagateRelevantContainer: true
 							}
 						},
-						"sap.m.HBox": {
-							aggregations: {
-								items: {
-									propagateRelevantContainer: true
-								}
+						actions: {
+							remove: {
+								changeType: "hideControl"
+							}
+						}
+					},
+					"sap.m.Button": {
+						actions: {
+							combine: {
+								changeType: "combineChange",
+								changeOnRelevantContainer: true
 							},
-							actions: {
-								remove: {
-									changeType: "hideControl"
-								}
-							}
-						},
-						"sap.m.Button": {
-							actions: {
-								combine: {
-									changeType: "combineChange",
-									changeOnRelevantContainer: true
-								},
-								remove: null
-							}
-						},
-						"sap.m.Text": {
-							actions: {
-								remove: {
-									changeType: "hideControl"
-								}
+							remove: null
+						}
+					},
+					"sap.m.Text": {
+						actions: {
+							remove: {
+								changeType: "hideControl"
 							}
 						}
 					}
-				});
-				this.oDesignTime.attachEventOnce("synced", function() {
-					done();
-				});
-				this.oSelectionManager = this.oDesignTime.getSelectionManager();
-				this.oEvent = new Event("keydown");
-				this.oEvent.shiftKey = false;
-				this.oEvent.altKey = false;
-			}.bind(this));
+				}
+			});
+			this.oDesignTime.attachEventOnce("synced", function() {
+				done();
+			});
+			this.oSelectionManager = this.oDesignTime.getSelectionManager();
+			this.oEvent = new Event("keydown");
+			this.oEvent.shiftKey = false;
+			this.oEvent.altKey = false;
 		},
 		afterEach: function() {
 			sandbox.restore();

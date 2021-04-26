@@ -1,47 +1,42 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/OverlayUtil",
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/plugin/Remove",
-	"sap/ui/rta/plugin/Rename",
-	"sap/ui/rta/plugin/ControlVariant",
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/Utils",
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/Input",
+	"sap/ui/core/Title",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/core/Title",
-	"sap/uxap/ObjectPageSection",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/plugin/Rename",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
-	DesignTime,
-	OverlayRegistry,
-	OverlayUtil,
-	Plugin,
-	Remove,
-	Rename,
-	ControlVariant,
-	CommandFactory,
-	ChangeRegistry,
-	FlexUtils,
+], function (
 	Button,
 	Label,
 	Input,
+	Title,
+	DesignTime,
+	OverlayRegistry,
+	OverlayUtil,
+	ChangesWriteAPI,
+	FlexUtils,
 	VerticalLayout,
 	Form,
 	FormContainer,
 	SimpleForm,
-	Title,
-	ObjectPageSection,
+	CommandFactory,
+	Plugin,
+	Remove,
+	Rename,
 	sinon
 ) {
 	"use strict";
@@ -54,43 +49,29 @@ function (
 				commandFactory: new CommandFactory()
 			});
 			this.oButton = new Button();
-			this.oGetChangeHandlerStub = sandbox.stub(ChangeRegistry.prototype, "getChangeHandler");
+			this.oGetChangeHandlerStub = sandbox.stub(ChangesWriteAPI, "getChangeHandler");
 		},
 		afterEach: function() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the change registry resolves with a change handler", function(assert) {
+		QUnit.test("when the ChangesWriteAPI resolves with a change handler", function(assert) {
 			this.oGetChangeHandlerStub.resolves();
-			return this.oPlugin.hasChangeHandler("moveControls", this.oButton).then(function(bHasChangeHandler) {
+			return this.oPlugin.hasChangeHandler("moveControls", this.oButton, "my.ControlType").then(function(bHasChangeHandler) {
 				assert.strictEqual(bHasChangeHandler, true, "then the function returns true");
-				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the change registry was called");
-				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0], "moveControls", "the change type was correctly passed");
-				assert.equal(this.oGetChangeHandlerStub.lastCall.args[1], "sap.m.Button", "the control type was taken from the control");
-				assert.equal(this.oGetChangeHandlerStub.lastCall.args[2], this.oButton, "the control was correctly passed");
+				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the ChangesWriteAPI was called");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0].changeType, "moveControls", "the change type was correctly passed");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0].controlType, "my.ControlType", "the control type was taken from the control");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0].element, this.oButton, "the control was correctly passed");
 			}.bind(this));
 		});
 
-		QUnit.test("when the change registry rejects", function(assert) {
+		QUnit.test("when the ChangesWriteAPI rejects", function(assert) {
 			this.oGetChangeHandlerStub.rejects();
 			return this.oPlugin.hasChangeHandler("moveControls", this.oButton).then(function(bHasChangeHandler) {
 				assert.strictEqual(bHasChangeHandler, false, "then the function returns false");
-				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the change registry was called");
-				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0], "moveControls", "the change type was correctly passed");
-				assert.equal(this.oGetChangeHandlerStub.lastCall.args[1], "sap.m.Button", "the control type was taken from the control");
-				assert.equal(this.oGetChangeHandlerStub.lastCall.args[2], this.oButton, "the control was correctly passed");
-			}.bind(this));
-		});
-
-		QUnit.test("when the change registry resolves and a control type is passed", function(assert) {
-			this.oGetChangeHandlerStub.resolves();
-			return this.oPlugin.hasChangeHandler("moveControls", this.oButton, "anotherType").then(function(bHasChangeHandler) {
-				assert.strictEqual(bHasChangeHandler, true, "then the function returns true");
-				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the change registry was called");
-				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0], "moveControls", "the change type was correctly passed");
-				assert.equal(this.oGetChangeHandlerStub.lastCall.args[1], "anotherType", "the control type was taken from the parameter");
-				assert.equal(this.oGetChangeHandlerStub.lastCall.args[2], this.oButton, "the control was correctly passed");
+				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the ChangesWriteAPI was called");
 			}.bind(this));
 		});
 
@@ -111,39 +92,31 @@ function (
 		beforeEach: function(assert) {
 			var done = assert.async();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
-				VerticalLayout: {
-					moveControls: "default"
-				}
-			})
-			.then(function() {
-				this.oButton = new Button();
-				this.oLayout = new VerticalLayout({
-					content: [
-						this.oButton
-					]
-				}).placeAt("qunit-fixture");
+			this.oButton = new Button();
+			this.oLayout = new VerticalLayout({
+				content: [
+					this.oButton
+				]
+			}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+			sap.ui.getCore().applyChanges();
 
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oLayout]
-				});
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oLayout]
+			});
 
-				this.oPlugin = new Plugin({
-					commandFactory: new CommandFactory()
-				});
-				this.oRemovePlugin = new Remove();
+			this.oPlugin = new Plugin({
+				commandFactory: new CommandFactory()
+			});
+			this.oRemovePlugin = new Remove();
 
-				sandbox.stub(this.oPlugin, "_isEditable").returns(true);
-				sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
+			sandbox.stub(this.oPlugin, "_isEditable").returns(true);
+			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-					done();
-				}.bind(this));
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				done();
 			}.bind(this));
 		},
 		afterEach: function() {

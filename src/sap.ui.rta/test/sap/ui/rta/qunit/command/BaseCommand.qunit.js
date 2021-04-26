@@ -7,8 +7,6 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/List",
 	"sap/m/CustomListItem",
-	"sap/m/ObjectHeader",
-	"sap/m/ObjectAttribute",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/table/Column",
 	"sap/ui/dt/DesignTime",
@@ -23,8 +21,6 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/fl/changeHandler/PropertyChange",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
@@ -39,8 +35,6 @@ sap.ui.define([
 	VBox,
 	List,
 	CustomListItem,
-	ObjectHeader,
-	ObjectAttribute,
 	VerticalLayout,
 	Column,
 	DesignTime,
@@ -55,8 +49,6 @@ sap.ui.define([
 	HideControl,
 	UnhideControl,
 	PropertyChange,
-	ChangeRegistry,
-	SimpleChanges,
 	ChangesWriteAPI,
 	Change,
 	Layer,
@@ -1058,38 +1050,32 @@ sap.ui.define([
 	QUnit.module("Given controls and designTimeMetadata", {
 		beforeEach: function () {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
-			return ChangeRegistry.getInstance().registerControlsForChanges({
-				"sap.m.ObjectHeader": [SimpleChanges.moveControls]
-			})
-			.then(function() {
-				this.oMovable = new ObjectAttribute(oMockedAppComponent.createId("attribute"));
-				this.oSourceParent = new ObjectHeader(oMockedAppComponent.createId("header"), {
-					attributes: [this.oMovable]
-				});
-				this.oTargetParent = new ObjectHeader(oMockedAppComponent.createId("targetHeader"));
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			this.oMovable = new Button(oMockedAppComponent.createId("attribute"));
+			this.oSourceParent = new VBox(oMockedAppComponent.createId("vbox"), {
+				items: [this.oMovable]
+			});
+			this.oTargetParent = new VBox(oMockedAppComponent.createId("targetVbox"));
 
-				this.oRootElement = new VerticalLayout({
-					content: [this.oSourceParent, this.oTargetParent]
-				});
+			this.oRootElement = new VerticalLayout({
+				content: [this.oSourceParent, this.oTargetParent]
+			});
 
-				this.oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
-					data: {
-						actions: {
-							move: "moveControls"
-						},
-						fakeAggreagtionWithoutMove: {
-
-						}
+			this.oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
+				data: {
+					actions: {
+						move: "moveControls"
+					},
+					fakeAggreagtionWithoutMove: {}
+				}
+			});
+			this.oOtherParentDesignTimeMetadata = new ElementDesignTimeMetadata({
+				data: {
+					actions: {
+						move: undefined
 					}
-				});
-				this.oOtherParentDesignTimeMetadata = new ElementDesignTimeMetadata({
-					data: {
-						actions: {
-							move: undefined
-						}
-					}
-				});
-			}.bind(this));
+				}
+			});
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -1107,13 +1093,13 @@ sap.ui.define([
 				}],
 				source: {
 					id: this.oSourceParent.getId(),
-					aggregation: "attributes",
-					publicAggregation: "attributes"
+					aggregation: "items",
+					publicAggregation: "items"
 				},
 				target: {
 					id: this.oTargetParent.getId(),
-					aggregation: "attributes",
-					publicAggregation: "attributes"
+					aggregation: "items",
+					publicAggregation: "items"
 				}
 			}, this.oSourceParentDesignTimeMetadata)
 
@@ -1129,7 +1115,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command stack with a hideControl flex command", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oCommandStack = new Stack();
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
@@ -1142,23 +1128,8 @@ sap.ui.define([
 				changeType: "hideControl"
 			});
 			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
-
-			this.fnChangeHandler = {
-				applyChange: function (oChange) {
-					if (this.revertChange) {
-						oChange.setRevertData({
-							data: "testdata"
-						});
-					}
-					assert.ok(true, "then change handler's applyChange() called");
-				},
-				completeChangeContent: function () {
-					assert.ok(true, "then change handler's completeChangeContent() called");
-				},
-				revertChange: function () {
-					assert.ok(true, "then change handler's revertChange() called instead of undo");
-				}
-			};
+			sandbox.stub(ChangesWriteAPI, "apply").resolves({success: true});
+			this.oWriteAPIRevertStub = sandbox.stub(ChangesWriteAPI, "revert").resolves({success: true});
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -1169,9 +1140,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when command is executed and undo is called", function (assert) {
-			assert.expect(8);
-			var fnRevertChangesOnControlStub = sandbox.spy(ChangesWriteAPI, "revert");
-			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").resolves(this.fnChangeHandler);
+			assert.expect(4);
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves({});
 
 			this.oCommandStack.push(this.oFlexCommand);
 
@@ -1182,14 +1152,11 @@ sap.ui.define([
 					var oChange = this.oFlexCommand.getPreparedChange();
 					assert.ok(true, "then a Promise.resolve() is returned on Stack.execute()");
 					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then Command._applyChange called once");
-					assert.deepEqual(oChange.getRevertData(), {
-						data: "testdata"
-					}, "then revert data set correctly");
 
 					return this.oCommandStack.undo()
 						.then(function () {
 							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
-							assert.ok(fnRevertChangesOnControlStub.calledWithExactly({change: oChange, element: this.oButton}), "then PersistenceWriteAPI.remove called with required parameters");
+							assert.ok(this.oWriteAPIRevertStub.calledWithExactly({change: oChange, element: this.oButton}), "then PersistenceWriteAPI.remove called with required parameters");
 						}.bind(this));
 				}.bind(this))
 				.catch(function(oError) {
@@ -1199,7 +1166,7 @@ sap.ui.define([
 
 		QUnit.test("when change handler is not available", function (assert) {
 			assert.expect(1);
-			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").resolves(undefined);
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves(undefined);
 			this.oCommandStack.push(this.oFlexCommand);
 
 			return this.oCommandStack.execute()
@@ -1261,21 +1228,6 @@ sap.ui.define([
 				this.oText2Overlay = OverlayRegistry.getOverlay(this.oText2);
 				done();
 			}.bind(this));
-
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.VBox": {
-					moveControls: "default"
-				},
-				"sap.m.Text": {
-					hideControl: "default",
-					unhideControl: "default",
-					rename: sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
-						propertyName: "text",
-						translationTextType: "XTXT"
-					})
-				}
-			});
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -1474,6 +1426,7 @@ sap.ui.define([
 	QUnit.module("Given a command factory and a bound control containing multiple template bindings", {
 		beforeEach: function(assert) {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
 			var done = assert.async();
 
@@ -1508,28 +1461,13 @@ sap.ui.define([
 			this.oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.VBox": {
-					moveControls: "default"
-				},
-				"sap.m.Text": {
-					hideControl: "default",
-					rename: sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
-						propertyName: "text",
-						translationTextType: "XTXT"
-					})
-				}
-			})
-			.then(function() {
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oList]
-				});
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oList]
+			});
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
-					done();
-				}.bind(this));
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oListOverlay = OverlayRegistry.getOverlay(this.oList);
+				done();
 			}.bind(this));
 		},
 		afterEach: function() {

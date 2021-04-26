@@ -32,6 +32,7 @@ sap.ui.define([
 	_omit
 ) {
 	"use strict";
+
 	/**
 	 * Provides an API for tools like {@link sap.ui.rta} to create, apply and revert {@link sap.ui.fl.Change}.
 	 *
@@ -179,10 +180,11 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer to be considered when getting the change handlers
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 		 * @param {string} mPropertyBag.changeType - Change type of a <code>sap.ui.fl.Change</code> change
+		 * @param {string} [mPropertyBag.controlType] - Type of the control. If not given will be derived from the element
 		 * @returns {Promise.<object>|sap.ui.fl.Utils.FakePromise.<object>} Change handler object wrapped in a Promise or FakePromise
 		 */
 		getChangeHandler: function(mPropertyBag) {
-			var sControlType = mPropertyBag.modifier.getControlType(mPropertyBag.element);
+			var sControlType = mPropertyBag.controlType || mPropertyBag.modifier.getControlType(mPropertyBag.element);
 			return ChangeRegistry.getInstance().getChangeHandler(mPropertyBag.changeType, sControlType, mPropertyBag.element, mPropertyBag.modifier, mPropertyBag.layer);
 		}
 	};

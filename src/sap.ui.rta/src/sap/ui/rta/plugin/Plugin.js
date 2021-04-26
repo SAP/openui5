@@ -5,7 +5,7 @@
 // Provides class sap.ui.rta.plugin.Plugin.
 sap.ui.define([
 	"sap/ui/dt/Plugin",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
@@ -13,7 +13,7 @@ sap.ui.define([
 ],
 function(
 	Plugin,
-	ChangeRegistry,
+	ChangesWriteAPI,
 	OverlayRegistry,
 	OverlayUtil,
 	JsControlTreeModifier,
@@ -336,10 +336,13 @@ function(
 	};
 
 	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement, sControlType) {
-		sControlType = sControlType || oElement.getMetadata().getName();
-		var sLayer = this.getCommandFactory().getFlexSettings().layer;
-
-		return ChangeRegistry.getInstance().getChangeHandler(sChangeType, sControlType, oElement, JsControlTreeModifier, sLayer)
+		return ChangesWriteAPI.getChangeHandler({
+			changeType: sChangeType,
+			element: oElement,
+			modifier: JsControlTreeModifier,
+			layer: this.getCommandFactory().getFlexSettings().layer,
+			controlType: sControlType
+		})
 		.then(function() {
 			return true;
 		})

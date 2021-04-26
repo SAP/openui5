@@ -1,38 +1,38 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/uid",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/fl/Utils",
-	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/Title",
 	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/Util",
-	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/layout/form/FormContainer",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CreateContainer",
-	"sap/ui/core/Title",
-	"sap/base/util/uid",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	uid,
 	XMLView,
-	Utils,
-	VerticalLayout,
+	Title,
 	DesignTime,
-	DtUtil,
-	CommandFactory,
 	OverlayRegistry,
-	ChangeRegistry,
-	FormContainer,
+	DtUtil,
+	ChangesWriteAPI,
+	Utils,
 	Form,
+	FormContainer,
 	FormLayout,
 	SimpleForm,
+	VerticalLayout,
+	CommandFactory,
 	CreateContainerPlugin,
-	Title,
-	uid,
 	sinon
 ) {
 	"use strict";
@@ -80,56 +80,45 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.layout.form.Form": {
-					addGroup: {
-						completeChangeContent: function() {},
-						applyChange: function() {},
-						revertChange: function() {}
-					}
-				}
-			})
-			.then(function() {
-				this.oCreateContainer = new CreateContainerPlugin({
-					commandFactory: new CommandFactory()
-				});
-				this.oFormContainer = new FormContainer(oMockedViewWithStableId.createId("formContainer"), {
-					title: new Title({
-						text: "title"
-					})
-				});
-				this.oForm = new Form(oMockedViewWithStableId.createId("form"), {
-					formContainers: [this.oFormContainer],
-					layout: new FormLayout({
-					})
-				});
-				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-					content: [this.oForm]
-				}).placeAt("qunit-fixture");
+			this.oCreateContainer = new CreateContainerPlugin({
+				commandFactory: new CommandFactory()
+			});
+			this.oFormContainer = new FormContainer(oMockedViewWithStableId.createId("formContainer"), {
+				title: new Title({
+					text: "title"
+				})
+			});
+			this.oForm = new Form(oMockedViewWithStableId.createId("form"), {
+				formContainers: [this.oFormContainer],
+				layout: new FormLayout({
+				})
+			});
+			this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
+				content: [this.oForm]
+			}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+			sap.ui.getCore().applyChanges();
 
-				this.sNewControlID = oMockedViewWithStableId.createId(uid());
-				this.oNewFormContainerStub = new FormContainer(this.sNewControlID);
-				this.oForm.addFormContainer(this.oNewFormContainerStub);
+			this.sNewControlID = oMockedViewWithStableId.createId(uid());
+			this.oNewFormContainerStub = new FormContainer(this.sNewControlID);
+			this.oForm.addFormContainer(this.oNewFormContainerStub);
 
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oVerticalLayout],
-					plugins: [this.oCreateContainer]
-				});
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oCreateContainer]
+			});
 
-				var done = assert.async();
+			var done = assert.async();
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-					this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
-					this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
-					this.oNewFormContainerOverlay = OverlayRegistry.getOverlay(this.oNewFormContainerStub);
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
+				this.oNewFormContainerOverlay = OverlayRegistry.getOverlay(this.oNewFormContainerStub);
 
-					done();
-				}.bind(this));
+				done();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -294,20 +283,9 @@ sap.ui.define([
 			}.bind(this));
 			sandbox.stub(this.oFormContainerOverlay, "getRelevantContainer").returns(this.oForm);
 
-			// changeOnRelevantContainer means the action has to be registered on the parent
-			return ChangeRegistry.getInstance().registerControlsForChanges({
-				"sap.ui.layout.VerticalLayout": {
-					addGroup: {
-						completeChangeContent: function() {},
-						applyChange: function() {},
-						revertChange: function() {}
-					}
-				}
-			}).then(function() {
-				this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-				this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
-			}.bind(this))
-			.then(DtUtil.waitForSynced(this.oDesignTime)())
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+			return DtUtil.waitForSynced(this.oDesignTime)()
 			.then(function() {
 				return this.oCreateContainer._isEditableCheck(this.oFormContainerOverlay, true);
 			}.bind(this))
@@ -464,41 +442,30 @@ sap.ui.define([
 			var done = assert.async();
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.layout.form.SimpleForm": {
-					addSimpleFormGroup: {
-						completeChangeContent: function() {},
-						applyChange: function() {},
-						revertChange: function() {}
-					}
-				}
-			})
-			.then(function() {
-				this.oCreateContainer = new CreateContainerPlugin({
-					commandFactory: new CommandFactory()
-				});
-				this.oTitle = new Title(oMockedViewWithStableId.createId("title"), { text: "title" });
-				this.oSimpleForm = new SimpleForm(oMockedViewWithStableId.createId("form"), {
-					content: [this.oTitle]
-				});
-				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-					content: [this.oSimpleForm]
-				}).placeAt("qunit-fixture");
+			this.oCreateContainer = new CreateContainerPlugin({
+				commandFactory: new CommandFactory()
+			});
+			this.oTitle = new Title(oMockedViewWithStableId.createId("title"), { text: "title" });
+			this.oSimpleForm = new SimpleForm(oMockedViewWithStableId.createId("form"), {
+				content: [this.oTitle]
+			});
+			this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
+				content: [this.oSimpleForm]
+			}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+			sap.ui.getCore().applyChanges();
 
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oVerticalLayout],
-					plugins: [this.oCreateContainer]
-				});
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oCreateContainer]
+			});
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form"));
-					this.oGroupOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form").getFormContainers()[0]);
-					done();
-				}.bind(this));
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form"));
+				this.oGroupOverlay = OverlayRegistry.getOverlay(this.oSimpleForm.getAggregation("form").getFormContainers()[0]);
+				done();
 			}.bind(this));
 		},
 		afterEach: function () {
