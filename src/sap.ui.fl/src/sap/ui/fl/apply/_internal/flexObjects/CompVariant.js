@@ -198,7 +198,8 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.isEditEnabled = function (sActiveLayer) {
 		return isOriginSystem(this.getSourceSystem(), this.getSourceClient())
-			&& checkLayerAndUserAuthorization(this.getLayer(), sActiveLayer, this.getOwnerId(), true);
+			&& checkLayerAndUserAuthorization(this.getLayer(), sActiveLayer, this.getOwnerId(), true)
+			&& (sActiveLayer && LayerUtils.isDeveloperLayer(sActiveLayer) || !this.getStandardVariant());
 	};
 
 	/**

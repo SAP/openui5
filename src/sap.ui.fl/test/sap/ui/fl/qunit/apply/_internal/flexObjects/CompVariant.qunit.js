@@ -271,8 +271,8 @@ sap.ui.define([
 			oVariant.setStandardVariant(true);
 
 			assert.equal(false, oVariant.isRenameEnabled(), "then the boolean for renameEnabled was determined correct");
-			assert.equal(true, oVariant.isEditEnabled(), "then the boolean for editEnabled was determined correct");
-			assert.equal(false, oVariant.isDeleteEnabled(Layer.CUSTOMER), "then the boolean for deleteEnabled was determined correct");
+			assert.equal(false, oVariant.isEditEnabled(), "then the boolean for editEnabled was determined correct");
+			assert.equal(false, oVariant.isDeleteEnabled(), "then the boolean for deleteEnabled was determined correct");
 		});
 
 		QUnit.test("Given a standard variant and the active layer is CUSTOMER", function(assert) {
@@ -285,8 +285,36 @@ sap.ui.define([
 			oVariant.setStandardVariant(true);
 
 			assert.equal(false, oVariant.isRenameEnabled(Layer.CUSTOMER), "then the boolean for renameEnabled was determined correct");
-			assert.equal(true, oVariant.isEditEnabled(Layer.CUSTOMER), "then the boolean for editEnabled was determined correct");
+			assert.equal(false, oVariant.isEditEnabled(Layer.CUSTOMER), "then the boolean for editEnabled was determined correct");
 			assert.equal(false, oVariant.isDeleteEnabled(Layer.CUSTOMER), "then the boolean for deleteEnabled was determined correct");
+		});
+
+		QUnit.test("Given a standard variant and the active layer is CUSTOMER_BASE", function(assert) {
+			// mocked settings
+			Settings._instance = new Settings({
+				isPublicLayerAvailable: false
+			});
+
+			var oVariant = createVariant({});
+			oVariant.setStandardVariant(true);
+
+			assert.equal(false, oVariant.isRenameEnabled(Layer.CUSTOMER_BASE), "then the boolean for renameEnabled was determined correct");
+			assert.equal(true, oVariant.isEditEnabled(Layer.CUSTOMER_BASE), "then the boolean for editEnabled was determined correct");
+			assert.equal(false, oVariant.isDeleteEnabled(Layer.CUSTOMER_BASE), "then the boolean for deleteEnabled was determined correct");
+		});
+
+		QUnit.test("Given a standard variant and the active layer is VENDOR", function(assert) {
+			// mocked settings
+			Settings._instance = new Settings({
+				isPublicLayerAvailable: false
+			});
+
+			var oVariant = createVariant({});
+			oVariant.setStandardVariant(true);
+
+			assert.equal(false, oVariant.isRenameEnabled(Layer.VENDOR), "then the boolean for renameEnabled was determined correct");
+			assert.equal(true, oVariant.isEditEnabled(Layer.VENDOR), "then the boolean for editEnabled was determined correct");
+			assert.equal(false, oVariant.isDeleteEnabled(Layer.VENDOR), "then the boolean for deleteEnabled was determined correct");
 		});
 
 		aScenarios.forEach(function (mTestSetup) {
