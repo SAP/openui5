@@ -1888,7 +1888,7 @@ sap.ui.define([
 		this.hideLoadingPlaceholders(CardArea.Header);
 		this.hideLoadingPlaceholders(CardArea.Filters);
 
-		if (oContent && oContent.isReady()) {
+		if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent") && oContent.isReady()) {
 			this.hideLoadingPlaceholders(CardArea.Content);
 		}
 
