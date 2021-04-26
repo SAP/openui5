@@ -156,28 +156,3 @@
 .sapUiRtaToolbarSwitcherSection > div {
 	width: 100% !important;
 }
-
-// Special handling for IE and EDGE Browsers
-html[data-sap-ui-browser^="ie"] .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner,
-html[data-sap-ui-browser^="ed"] .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner,
-html[data-sap-ui-browser^="ie"] .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable:focus .sapMSegBBtnInner,
-html[data-sap-ui-browser^="ed"] .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable:focus .sapMSegBBtnInner {
-	outline: 0.0625rem dotted; //1px
-	outline-color: @_sap_ui_rta_Toolbar_Base_TextColor;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiRtaToolbar .sapMBtn:focus .sapMBtnFocusDiv,
-html[data-sap-ui-browser^="ed"] .sapUiRtaToolbar .sapMBtn:focus .sapMBtnFocusDiv {
-	border: none;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner:before,
-html[data-sap-ui-browser^="ed"] .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner:before,
-html[data-sap-ui-browser^="ie"] .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable:focus .sapMSegBBtnInner:before,
-html[data-sap-ui-browser^="ed"] .sapUiRtaToolbar .sapMSegB .sapMSegBBtnFocusable:focus .sapMSegBBtnInner:before {
-	border: none;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiRtaToolbar .sapMSegB .sapMSegBBtn:not(.sapMSegBtnLastVisibleButton).sapMSegBBtnFocusable:focus {
-	margin-right: 0.0625rem; //1px
-}
