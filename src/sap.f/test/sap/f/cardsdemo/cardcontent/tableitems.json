@@ -51,44 +51,6 @@
 			"progressState": "Success"
 		}
 	],
-	"tableCard2": [
-		{
-			"radialPercentage": 88,
-			"radialValueColor": "green",
-			"columnMicroChartContent": [
-				{
-					"columnColor": "red",
-					"columnValue": 5
-				},
-				{
-					"columnColor": "red",
-					"columnValue": 6
-				},
-				{
-					"columnColor": "red",
-					"columnValue": 9
-				}
-			]
-		},
-		{
-			"radialPercentage": 50,
-			"radialValueColor": "red",
-			"columnMicroChartContent": [
-				{
-					"columnColor": "green",
-					"columnValue": 10
-				},
-				{
-					"columnColor": "green",
-					"columnValue": 12
-				},
-				{
-					"columnColor": "green",
-					"columnValue": 14
-				}
-			]
-		}
-	],
 	"tableCard3": [
 		{
 			"orderId": "102223882",

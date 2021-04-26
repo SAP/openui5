@@ -8,7 +8,7 @@
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Title text="Card with Numeric Header"/>
+				<Title text="ManifestReady Event"/>
 				<ToolbarSpacer/>
 			</Toolbar>
 		</subHeader>
@@ -19,11 +19,6 @@
 				manifestReady=".onManifestReady"
 				width="400px"
 				class="sapUiSmallMargin" />
-			<w:Card
-				manifest="{manifests>/card14}"
-				manifestReady=".onManifestReady"
-				width="400px"
-				class="sapUiSmallMargin"/>
 		</Panel>
 	</Page>
 </mvc:View>

@@ -47,16 +47,6 @@
 				width="400px"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="smallList"
-				manifest="{manifests>/minHeight/smallList}"
-				width="400px"
-				class="sapUiTinyMargin" />
-			<w:Card
-				id="mediumList"
-				manifest="{manifests>/minHeight/mediumList}"
-				width="400px"
-				class="sapUiTinyMargin" />
-			<w:Card
 				id="largeList"
 				manifest="{manifests>/minHeight/largeList}"
 				width="400px"

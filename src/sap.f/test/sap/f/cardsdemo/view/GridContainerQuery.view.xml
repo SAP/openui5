@@ -62,16 +62,6 @@
 								<f:GridContainerItemLayoutData rows="5" columns="4" />
 							</w:layoutData>
 						</w:Card>
-						<w:Card manifest="{manifests>/listContent/mediumList}">
-							<w:layoutData>
-								<f:GridContainerItemLayoutData rows="4" columns="2" />
-							</w:layoutData>
-						</w:Card>
-						<w:Card manifest="{manifests>/listContent/smallList}">
-							<w:layoutData>
-								<f:GridContainerItemLayoutData rows="2" columns="2" />
-							</w:layoutData>
-						</w:Card>
 						<w:Card manifest="{manifests>/listContent/card13}">
 							<w:layoutData>
 								<f:GridContainerItemLayoutData columns="5" />
