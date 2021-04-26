@@ -1778,10 +1778,17 @@ sap.ui.define([
 	/**
 	 * Invalidate all entries of the given entity type in the model data.
 	 *
-	 * Mark entries of the provided entity type in the model cache as invalid. Next time a context binding or list binding is done,
-	 * the entry will be detected as invalid and will be refreshed from the server.
+	 * Mark entries of the provided entity type in the model cache as invalid. Next time a context
+	 * binding or list binding is done, the entry will be detected as invalid and will be refreshed
+	 * from the server.
 	 *
-	 * @param {string} sEntityType the qualified name of the entity type
+	 * @param {string} sEntityType
+	 *   The qualified name of the entity type. A qualified name consists of two parts separated by
+	 *   a dot. The first part is the namespace of the schema in which the entity type is defined,
+	 *   such as "NorthwindModel". The second part is the entity type name such as "Customer". This
+	 *   results in a qualified name such as "NorthwindModel.Customer". The qualified name can be
+	 *   found in the data sent from the server in JSON format under <code>__metadata.type</code> or
+	 *   in XML format in the <code>term</code> attribute of the entity's <code>category</code> tag.
 	 * @public
 	 * @since 1.52.1
 	 */
