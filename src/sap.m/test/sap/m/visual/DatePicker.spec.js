@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,browser,protractor,takeScreenshot,expect*/
 
 describe("sap.m.DatePicker", function() {
 	"use strict";
@@ -34,5 +34,24 @@ describe("sap.m.DatePicker", function() {
 		element(by.id("DP15-cal--MP-m11")).click();
 		oCalendar = element(by.css("#DP15-RP-popover"));
 		expect(takeScreenshot(oCalendar)).toLookAs("month_properly_selected");
+		browser.actions().sendKeys(protractor.Key.SPACE).perform();
+	});
+
+	it("select date from the day picker by space and enter", function() {
+		var oCalendar;
+		element(by.id("DP15-icon")).click();
+		oCalendar = element(by.css("#DP15-RP-popover"));
+		browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+		expect(takeScreenshot(oCalendar)).toLookAs("001_keyboard_Arrow_Left");
+		browser.actions().sendKeys(protractor.Key.SPACE).perform();
+		expect(takeScreenshot(oCalendar)).toLookAs("select_date_with_space_for_first_time");
+
+		element(by.id("DP15-icon")).click();
+		oCalendar = element(by.css("#DP15-RP-popover"));
+		browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+		expect(takeScreenshot(oCalendar)).toLookAs("0003_keyboard_Arrow_Left_two_times");
+		browser.actions().sendKeys(protractor.Key.SPACE).perform();
+		expect(takeScreenshot(oCalendar)).toLookAs("select_date_with_space_for_second_time");
 	});
 });
