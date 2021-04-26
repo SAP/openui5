@@ -211,7 +211,7 @@ sap.ui.define([
 							[], [sEntityPath]);
 					}),
 				iIndex === undefined // single element or kept-alive not in list
-					&& that.requestCount(oGroupLock.getUnlockedCopy()),
+					&& that.requestCount(oGroupLock),
 				oGroupLock.unlock() // unlock when all requests have been queued
 			]);
 		}).finally(function () {
@@ -1392,12 +1392,20 @@ sap.ui.define([
 			sReadUrl = this.sResourcePath
 				+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions);
 
-			return this.oRequestor.request("GET", sReadUrl, oGroupLock).then(function (oResult) {
-				var iCount = parseInt(oResult["@odata.count"]) + that.aElements.$created;
+			return this.oRequestor.request("GET", sReadUrl, oGroupLock.getUnlockedCopy())
+				.catch(function (oError) {
+					if (oError.cause && oError.cause.status === 404) {
+						// retry because the deletion in the same $batch was rejected with 404
+						return that.oRequestor.request("GET", sReadUrl,
+							oGroupLock.getUnlockedCopy());
+					}
+					throw oError;
+				}).then(function (oResult) {
+					var iCount = parseInt(oResult["@odata.count"]) + that.aElements.$created;
 
-				setCount(that.mChangeListeners, "", that.aElements, iCount);
-				that.iLimit = iCount;
-			});
+					setCount(that.mChangeListeners, "", that.aElements, iCount);
+					that.iLimit = iCount;
+				});
 		}
 	};
 

@@ -80,13 +80,15 @@ sap.ui.define([
 	 *
 	 * @param {object} [oErrorResponse]
 	 *   The <code>error</code> property of the simulated error response from the server
+	 * @param {number} [iHttpStatus=500]
+	 *   The HTTP status code for the simulated error response from the server
 	 * @returns {Error}
 	 *   The error object for {@link #expectRequest}
 	 */
-	function createError(oErrorResponse) {
+	function createError(oErrorResponse, iHttpStatus) {
 		var oError = new Error();
 
-		oError.status = 500;
+		oError.status = iHttpStatus || 500;
 		oError.statusText = "";
 		oError.error = oErrorResponse;
 		oError.message = "Communication error: " + oError.status + " " + oError.statusText;
@@ -630,6 +632,18 @@ sap.ui.define([
 				assert.deepEqual(aCurrentMessages, aExpectedMessages,
 					this.aMessages.length + " expected messages in message manager");
 			}
+		},
+
+		/**
+		 * Checks the text of the 'More' button for a sap.m.Table with the ID "listReport".
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {string} sExpected The expected count as text w/o "More" without spaces,
+		 *    e.g. "[5/10]"
+		 */
+		checkMoreButton : function (assert, sExpected) {
+			assert.strictEqual(this.oView.byId("listReport-trigger").getDomRef().innerText
+				.replace(/\s/g, ""), "More" + sExpected, "check More button: " + sExpected);
 		},
 
 		/**
@@ -31478,10 +31492,6 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		function checkMoreButton(sExpected) {
-			assert.strictEqual(that.oView.byId("listReport-trigger").getDomRef().innerText
-				.replace(/\s/g, ""), "More" + sExpected, "check More button: " + sExpected);
-		}
 
 		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=2", {
 				"@odata.count" : "102",
@@ -31519,7 +31529,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "(3)");
 		}).then(function () {
-			checkMoreButton(oFixture.bFilter ? "[2/42]" : "[2/102]");
+			that.checkMoreButton(assert, oFixture.bFilter ? "[2/42]" : "[2/102]");
 
 			that.expectChange("id", [""])
 				.expectRequest({
@@ -31536,7 +31546,7 @@ sap.ui.define([
 		}).then(function () {
 			var iBatch = oFixture.bFilter ? 4 : 3;
 
-			checkMoreButton(oFixture.bFilter ? "[2/43]" : "[2/103]");
+			that.checkMoreButton(assert, oFixture.bFilter ? "[2/43]" : "[2/103]");
 
 			that.expectRequest({
 					batchNo : iBatch,
@@ -31571,9 +31581,9 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			if (oFixture.bFilter) {
-				checkMoreButton(oFixture.bCountHasChanged ? "[2/42]" : "[2/43]");
+				that.checkMoreButton(assert, oFixture.bCountHasChanged ? "[2/42]" : "[2/43]");
 			} else {
-				checkMoreButton("[2/102]");
+				that.checkMoreButton(assert, "[2/102]");
 			}
 
 			if (oFixture.bCountHasChanged) {
@@ -31586,6 +31596,52 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario:
+	// List with a kept-alive context that is not part of the collection. Delete the kept-alive
+	// context. The deletion fails with 404 because the entity does not exist any more in back end.
+	// This means that the request for $count within the same $batch also fails and needs to be
+	// repeated.
+	// JIRA: CPOUI5ODATAV4-480
+	QUnit.test("CPOUI5ODATAV4-480", function (assert) {
+		var that = this;
+
+		return this.createKeepAliveScenario(assert, true).then(function (oKeptContext) {
+			that.checkMoreButton(assert, "[2/27]");
+
+			that.expectRequest({
+					batchNo : 4,
+					headers : {
+						"If-Match" : "etag1"
+					},
+					method : "DELETE",
+					url : "SalesOrderList('1')"
+				}, createError({}, 404))
+				.expectRequest({
+					batchNo : 4,
+					method : "GET",
+					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123&$top=0"
+				}, {/*does not matter, fails with DELETE in same $batch*/})
+				.expectChange("objectPageGrossAmount", null)
+				.expectChange("objectPageNote", null)
+				.expectRequest({
+					batchNo : 5,
+					method : "GET",
+					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123&$top=0"
+				}, {
+					"@odata.count" : "38",
+					value : []
+				});
+
+			// code under test
+			oKeptContext.delete();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.checkMoreButton(assert, "[2/38]");
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: A control property is initially not bound, but has a fixed value. Then it becomes

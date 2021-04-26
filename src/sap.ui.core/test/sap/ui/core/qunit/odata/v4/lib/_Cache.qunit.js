@@ -480,9 +480,7 @@ sap.ui.define([
 			},
 			fnCallback = this.spy(),
 			oGroupLock = new _GroupLock("group", "owner", true),
-			oGroupLockMock = this.mock(oGroupLock),
-			oGroupLockCopy1 = {},
-			oGroupLockCopy2 = {},
+			oGroupLockCopy = {},
 			oUpdateData = {},
 			that = this;
 
@@ -490,9 +488,9 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EQUIPMENT_2_EMPLOYEE")
 			.returns(SyncPromise.resolve(oCacheData));
-		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy1);
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "TEAMS('23')", sinon.match.same(oGroupLockCopy1), {
+			.withExactArgs("DELETE", "TEAMS('23')", sinon.match.same(oGroupLockCopy), {
 					"If-Match" : sinon.match.same(oCacheData["EMPLOYEE_2_TEAM"])
 				}, undefined, undefined, undefined, undefined,
 				"Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM")
@@ -501,8 +499,7 @@ sap.ui.define([
 					.withExactArgs(oCache.sResourcePath, [],
 						["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
 			}));
-		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy2);
-		this.mock(oCache).expects("requestCount").withExactArgs(sinon.match.same(oGroupLockCopy2));
+		this.mock(oCache).expects("requestCount").withExactArgs(sinon.match.same(oGroupLock));
 		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
 			.returns(oUpdateData);
 		this.mock(_Helper).expects("updateExisting")
@@ -526,9 +523,7 @@ sap.ui.define([
 			fnCallback = this.spy(),
 			bDeleted = false,
 			oGroupLock = new _GroupLock("group", "owner", true),
-			oGroupLockCopy1 = {},
-			oGroupLockCopy2 = {},
-			oGroupLockMock = this.mock(oGroupLock),
+			oGroupLockCopy = {},
 			that = this;
 
 		aCacheData.$byPredicate = {
@@ -542,9 +537,9 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 			.returns(SyncPromise.resolve(aCacheData));
-		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy1);
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "EMPLOYEES('1')", sinon.match.same(oGroupLockCopy1), {
+			.withExactArgs("DELETE", "EMPLOYEES('1')", sinon.match.same(oGroupLockCopy), {
 					"If-Match" : "etag"
 				}, undefined, undefined, undefined, undefined, "EMPLOYEES('1')")
 			.returns(Promise.resolve().then(function () {
@@ -552,8 +547,7 @@ sap.ui.define([
 					.withExactArgs(oCache.sResourcePath, [], ["('1')"]);
 				bDeleted = true;
 			}));
-		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy2);
-		this.mock(oCache).expects("requestCount").withExactArgs(sinon.match.same(oGroupLockCopy2))
+		this.mock(oCache).expects("requestCount").withExactArgs(sinon.match.same(oGroupLock))
 			.resolves("~count~done~");
 		this.mock(oCache).expects("removeElement").withExactArgs(aCacheData, undefined, "('1')", "")
 			.returns("iIndex");
@@ -4340,7 +4334,8 @@ sap.ui.define([
 				$search : "search",
 				$select : "select"
 			}),
-			oGroupLock = {},
+			oGroupLock = {getUnlockedCopy : function () {}},
+			oGroupLockCopy = {},
 			sQueryOptions = JSON.stringify(oCache.mQueryOptions);
 
 		oCache.aElements.$created = oFixture.created ? 1 : 0;
@@ -4356,8 +4351,9 @@ sap.ui.define([
 				$top : 0
 			})
 			.returns("?~");
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("GET", "Employees?~", sinon.match.same(oGroupLock))
+			.withExactArgs("GET", "Employees?~", sinon.match.same(oGroupLockCopy))
 			.resolves({"@odata.count" : "42"});
 		this.mock(_Helper).expects("updateExisting")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
@@ -4374,7 +4370,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Cache#requestCount: exclusive $filter before $top", function (assert) {
 		var oCache = this.createCache("Employees", {$count : true}),
-			oGroupLock = {};
+			oGroupLock = {getUnlockedCopy : function () {}},
+			oGroupLockCopy = {};
 
 		oCache.aElements.$created = 1;
 		this.mock(oCache).expects("getFilterExcludingCreated").withExactArgs().returns("~filter~");
@@ -4384,12 +4381,81 @@ sap.ui.define([
 				assert.deepEqual(Object.keys(mQueryOptions), ["$count", "$filter", "$top"]);
 				return "?~";
 			});
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("GET", "Employees?~", sinon.match.same(oGroupLock))
+			.withExactArgs("GET", "Employees?~", sinon.match.same(oGroupLockCopy))
 			.resolves({"@odata.count" : "42"});
 
 		// code under test
 		return oCache.requestCount(oGroupLock);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bRetryFailed) {
+	var sTitle = "Cache#requestCount: failed with 404 for DELETE in same $batch, retry failed "
+			+ "also: " + bRetryFailed;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = this.createCache("Employees", {$count : true}),
+			oError = new Error("HTTP request failed because the previous request failed"),
+			oGroupLock = {getUnlockedCopy : function () {}},
+			oGroupLockCopy1 = {},
+			oGroupLockCopy2 = {},
+			oGroupLockMock = this.mock(oGroupLock),
+			oRequestorMock = this.mock(this.oRequestor),
+			oRetryError = new Error("Count failed");
+
+		oError.cause = {status : 404};
+		this.mock(oCache).expects("getFilterExcludingCreated").withExactArgs()
+			.returns(undefined);
+		oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match.object)
+			.returns("?~");
+		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy1);
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees?~", sinon.match.same(oGroupLockCopy1))
+			.rejects(oError);
+		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy2);
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees?~", sinon.match.same(oGroupLockCopy2))
+			.returns(bRetryFailed
+				? Promise.reject(oRetryError)
+				: Promise.resolve({"@odata.count" : "42"}));
+
+		// code under test
+		return oCache.requestCount(oGroupLock).then(function () {
+			assert.notOk(bRetryFailed);
+			assert.strictEqual(oCache.iLimit, 42);
+		}, function (oError) {
+			assert.ok(bRetryFailed);
+			assert.strictEqual(oError, oRetryError);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#requestCount: fails with another error", function (assert) {
+		var oCache = this.createCache("Employees", {$count : true}),
+			oError = new Error("Another Error"), // GET for $count fails, no oError.cause!
+			oGroupLock = {getUnlockedCopy : function () {}},
+			oGroupLockCopy = {};
+
+		this.mock(oCache).expects("getFilterExcludingCreated").withExactArgs()
+			.returns(undefined);
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match.object)
+			.returns("?~");
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("GET", "Employees?~", sinon.match.same(oGroupLockCopy))
+			.rejects(oError);
+
+		// code under test
+		return oCache.requestCount(oGroupLock).then(function () {
+			assert.ok(false, "unexpected");
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
 	});
 
 	//*********************************************************************************************
@@ -8747,24 +8813,20 @@ sap.ui.define([
 		return oCache.fetchValue(oFetchGroupLock).then(function (oEntity) {
 			var fnCallback = that.spy(),
 				oDeleteGroupLock = new _GroupLock("group", "owner", true),
-				oDeleteGroupLockCopy1 = {},
-				oDeleteGroupLockCopy2 = {},
-				oDeleteGroupLockMock = that.mock(oDeleteGroupLock);
+				oDeleteGroupLockCopy = {};
 
-			oDeleteGroupLockMock.expects("getUnlockedCopy").withExactArgs()
-				.returns(oDeleteGroupLockCopy1);
+			that.mock(oDeleteGroupLock).expects("getUnlockedCopy").withExactArgs()
+				.returns(oDeleteGroupLockCopy);
 			that.oRequestorMock.expects("request")
-				.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLockCopy1),
+				.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLockCopy),
 					{"If-Match" : sinon.match.same(oEntity)},
 					undefined, undefined, undefined, undefined, "Employees('42')")
 				.returns(Promise.resolve().then(function () {
 					that.oModelInterfaceMock.expects("reportBoundMessages")
 						.withExactArgs(oCache.sResourcePath, [], [""]);
 				}));
-			oDeleteGroupLockMock.expects("getUnlockedCopy").withExactArgs()
-				.returns(oDeleteGroupLockCopy2);
 			that.mock(oCache).expects("requestCount")
-				.withExactArgs(sinon.match.same(oDeleteGroupLockCopy2));
+				.withExactArgs(sinon.match.same(oDeleteGroupLock));
 
 			// code under test
 			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", undefined, fnCallback)
