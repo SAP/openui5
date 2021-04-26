@@ -1384,7 +1384,9 @@ function(
 				sValue = sEventValue;
 			}
 
-			this._getInput().updateDomValue(sValue);
+			if (this._getInput()._getInputValue() !== sValue) {
+				this._getInput().updateDomValue(sValue);
+			}
 			return sValue;
 		};
 
