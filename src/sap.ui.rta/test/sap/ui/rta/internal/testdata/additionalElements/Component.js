@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
+	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariant",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
 	"sap/ui/core/library",
@@ -10,6 +11,7 @@ sap.ui.define([
 ], function(
 	UIComponent,
 	ABAPAccess,
+	ABAPExtensibilityVariant,
 	JSONModel,
 	App,
 	library,
@@ -57,13 +59,19 @@ sap.ui.define([
 		 * @private
 		 */
 		_enableExtensibility: function () {
+			var aExtensionData;
 			ABAPAccess.getExtensionData = function(sServiceUri, sEntityTypeName, sEntitySetName) {
+				aExtensionData = [{ businessContext: sEntityTypeName + " EntityTypeContext", description: "Other BusinessContext description" }, { businessContext: sEntitySetName + " EntitySetContext", description: "Some BusinessContext description"}];
 				return Promise.resolve({
-					BusinessContexts: [{ BusinessContext: sEntityTypeName + " EntityTypeContext", BusinessContextDescription: "Other BusinessContext description" }, { BusinessContext: sEntitySetName + " EntitySetContext", BusinessContextDescription: "Some BusinessContext description"}],
-					ServiceName: sServiceUri,
-					ServiceVersion: "some dummy ServiceVersion 0.0.1",
-					EntityType: sEntityTypeName
+					extensionData: aExtensionData,
+					entityType: sEntityTypeName,
+					serviceVersion: "some dummy ServiceVersion 0.0.1",
+					serviceName: sServiceUri
 				});
+			};
+
+			ABAPExtensibilityVariant.prototype.getNavigationUri = function() {
+				return Promise.resolve("./testdata/additionalElements/extensibilityTool.html");
 			};
 
 			ABAPAccess.isExtensibilityEnabled = function() {
