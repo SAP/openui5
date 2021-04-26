@@ -862,7 +862,7 @@ function (
 
 	QUnit.test("ResponsiveHandler with open search", function (assert) {
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 10, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 8, "phone mode requirements passed");
 		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
 			"Full width search class list was added to Shell Bar.");
 
@@ -878,7 +878,7 @@ function (
 		this.oSB._oResponsiveHandler._transformToRegularState();
 
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 10, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 8, "phone mode requirements passed");
 		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
 			"Full width search class list was added to Shell Bar.");
 	});
