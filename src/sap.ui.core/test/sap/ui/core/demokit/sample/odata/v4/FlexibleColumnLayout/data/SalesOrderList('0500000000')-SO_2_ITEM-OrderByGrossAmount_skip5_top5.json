@@ -35,6 +35,7 @@
 		"QuantityUnit" : "EA",
 		"ProductID" : "HT-1011"
 	}, {
+		"@odata.etag" : "foo",
 		"SalesOrderID" : "0500000000",
 		"ItemPosition" : "0000000010",
 		"CurrencyCode" : "USD",

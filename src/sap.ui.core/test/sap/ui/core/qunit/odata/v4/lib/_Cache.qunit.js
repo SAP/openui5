@@ -5581,7 +5581,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["old", "new"].forEach(function (sResultETag) {
+["old", "new", undefined].forEach(function (sResultETag) {
 	var sTitle = "CollectionCache#handleResponse: kept-alive element, eTag=" + sResultETag;
 
 	QUnit.test(sTitle, function (assert) {
@@ -5593,7 +5593,7 @@ sap.ui.define([
 			aElements = [],
 			oFetchTypesResult = {},
 			oKeptElement = {
-				"@odata.etag" : "old"
+				"@odata.etag" : sResultETag ? "old" : undefined
 			},
 			oResult = {
 				value : [oElement0, oElement1]
@@ -5611,14 +5611,14 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
 				_Helper.setPrivateAnnotation(oElement1, "predicate", "bar");
 			});
-		this.mock(oCache).expects("hasPendingChangesForPath").exactly(sResultETag === "old" ? 0 : 1)
+		this.mock(oCache).expects("hasPendingChangesForPath").exactly(sResultETag !== "old" ? 1 : 0)
 			.withExactArgs("bar").returns(false);
 
 		// code under test
 		oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
 
 		assert.strictEqual(oCache.aElements[2], oElement0);
-		assert.strictEqual(oCache.aElements[3], sResultETag === "old" ? oKeptElement : oElement1);
+		assert.strictEqual(oCache.aElements[3], sResultETag !== "old" ? oElement1 : oKeptElement);
 		assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
 		assert.strictEqual(oCache.aElements.$byPredicate["bar"], oCache.aElements[3]);
 		assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length, 2);

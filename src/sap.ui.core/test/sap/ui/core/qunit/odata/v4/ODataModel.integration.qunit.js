@@ -32718,6 +32718,9 @@ sap.ui.define([
 <FlexBox id="objectPage">\
 	<Text id="note" text="{Note}"/>\
 	<Text id="noteLanguage" text="{NoteLanguage}"/>\
+</FlexBox>\
+<FlexBox id="keptAlivePage">\
+	<Text id="grossAmount" text="{GrossAmount}"/>\
 </FlexBox>',
 			that = this;
 
@@ -32732,16 +32735,23 @@ sap.ui.define([
 			})
 			.expectChange("listNote", ["Note 1", "Note 2"])
 			.expectChange("note")
-			.expectChange("noteLanguage");
+			.expectChange("noteLanguage")
+			.expectChange("grossAmount");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var aContexts;
+
 			that.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "EN"})
 				.expectChange("note", "Note 1")
-				.expectChange("noteLanguage", "EN");
+				.expectChange("noteLanguage", "EN")
+				.expectRequest("SalesOrderList('2')?$select=GrossAmount", {GrossAmount : "2.00"})
+				.expectChange("grossAmount", "2.00");
 
 			oListBinding = that.oView.byId("list").getBinding("items");
-			that.oView.byId("objectPage").setBindingContext(
-				oListBinding.getCurrentContexts()[0]);
+			aContexts = oListBinding.getCurrentContexts();
+			that.oView.byId("objectPage").setBindingContext(aContexts[0]);
+			aContexts[1].setKeepAlive(true);
+			that.oView.byId("keptAlivePage").setBindingContext(aContexts[1]);
 
 			return that.waitForChanges(assert, "object page with late property");
 		}).then(function () {
@@ -32758,7 +32768,9 @@ sap.ui.define([
 				.expectChange("listNote", ["Note 2.1", "Note 1.1"])
 				.expectChange("note", "Note 1.1")
 				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "FR"})
-				.expectChange("noteLanguage", "FR");
+				.expectChange("noteLanguage", "FR")
+				.expectRequest("SalesOrderList('2')?$select=GrossAmount", {GrossAmount : "2.10"})
+				.expectChange("grossAmount", "2.10");
 
 			// code under test
 			oListBinding.sort(new Sorter("SalesOrderID", /*descending*/true));
@@ -32813,7 +32825,9 @@ sap.ui.define([
 				.expectChange("listNote", ["Note 1.4", "Note 2.4"])
 				.expectChange("note", "Note 1.4")
 				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "ES"})
-				.expectChange("noteLanguage", "ES");
+				.expectChange("noteLanguage", "ES")
+				.expectRequest("SalesOrderList('2')?$select=GrossAmount", {GrossAmount : "2.40"})
+				.expectChange("grossAmount", "2.40");
 
 			// code under test
 			oListBinding.suspend();

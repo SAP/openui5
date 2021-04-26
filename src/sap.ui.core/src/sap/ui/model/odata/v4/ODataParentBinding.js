@@ -684,6 +684,7 @@ sap.ui.define([
 		// become pending again
 		bCacheImmutable = this.oCachePromise.isRejected()
 			|| iIndex !== undefined && iIndex !== Context.VIRTUAL
+			|| oContext.isKeepAlive() // kept-alive contexts have no index when not in aContexts
 			|| this.oCache === null
 			|| this.oCache && this.oCache.hasSentRequest();
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());

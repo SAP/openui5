@@ -969,6 +969,16 @@ sap.ui.define([
 	fetchIfChildCanUseCacheCallCount : 0,
 	index : 42,
 	title : "non-virtual row context"
+}, {
+	cache : {
+		hasSentRequest : function () { return false; },
+		setLateQueryOptions : function () {},
+		setQueryOptions : function () {}
+	},
+	cacheImmmutable : true,
+	fetchIfChildCanUseCacheCallCount : 0,
+	keptAlive : true,
+	title : "kept-alive context"
 }].forEach(function (oFixture) {
 	QUnit.test("fetchIfChildCanUseCache: late query options, " + oFixture.title, function (assert) {
 		var oMetaModel = {
@@ -1008,6 +1018,9 @@ sap.ui.define([
 			oParentBinding = new ODataParentBinding(),
 			oPromise;
 
+		if (oFixture.keptAlive) {
+			oContext.bKeepAlive = true;
+		}
 		oModelMock.expects("resolve")
 			.withExactArgs("childPath", sinon.match.same(oContext))
 			.returns("/resolved/child/path");
