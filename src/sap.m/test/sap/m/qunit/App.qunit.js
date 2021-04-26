@@ -67,17 +67,14 @@ sap.ui.define([
 		assert.equal($v.attr("content"), "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no", "The viewport meta tag content should be correct");
 	});
 
-	// this is deprecated now in favor of sap.ui.Device.orientation... behavior in IE is inconsistent anyway (might fire on startup or not)
-	if (!Device.browser.internet_explorer) {
-		QUnit.test("orientationChange event", function(assert) {
-			assert.equal(landscape, undefined, "handler for orientationChange should not have been called yet");
-			app._handleOrientationChange();
-			assert.ok(landscape !== undefined, "handler for orientationChange should have been called");
+	QUnit.test("orientationChange event", function(assert) {
+		assert.equal(landscape, undefined, "handler for orientationChange should not have been called yet");
+		app._handleOrientationChange();
+		assert.ok(landscape !== undefined, "handler for orientationChange should have been called");
 
-			var isLandscape = jQuery(window).width() > jQuery(window).height();
-			assert.equal(landscape, isLandscape, "'landscape' parameter should contain the current orientation");
-		});
-	}
+		var isLandscape = jQuery(window).width() > jQuery(window).height();
+		assert.equal(landscape, isLandscape, "'landscape' parameter should contain the current orientation");
+	});
 
 	QUnit.test("Dimensions", function(assert) {
 		var appDom = document.getElementById("myFirstApp");
