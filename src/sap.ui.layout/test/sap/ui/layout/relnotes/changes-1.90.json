@@ -3,6 +3,17 @@
     "date": "April 2021",
     "notes": [
       {
+        "id": "20fbeca3115273ea93c0bb64c86337d151aff457",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Pagination is only shown for multiple pages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170093454"
+          }
+        ]
+      },
+      {
         "id": "20cbc302516960ce991e6aa39d3340da94cc5d7a",
         "type": "FIX",
         "text": " sap.ui.layout.cssgrid.GridBoxLayout: Updated documentation for the \"boxesPerRowConfig\" property",
@@ -12,22 +23,6 @@
             "reference": "2170109589"
           }
         ]
-      },
-      {
-        "id": "e9fe10040ebdb3b18373e1569e89c9bdd2bb30bb",
-        "type": "FIX",
-        "text": " sap.ui.layout.Splitter: Improve #resetContentAreasSizes",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2170044836"
-          }
-        ]
-      },
-      {
-        "id": "6697f3d033b874a6dd41fe00c7e6ca6a6f050af4",
-        "type": "FEATURE",
-        "text": " ColumnLayout: 6 columns in XL size supported"
       }
     ]
   }
