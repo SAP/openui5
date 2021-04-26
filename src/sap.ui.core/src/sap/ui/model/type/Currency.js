@@ -5,26 +5,16 @@
 // Provides the base implementation for all model implementations
 sap.ui.define([
 	"sap/base/Log",
-	'sap/ui/core/format/NumberFormat',
-	'sap/ui/model/CompositeType',
-	'sap/ui/model/FormatException',
-	'sap/ui/model/ParseException',
-	'sap/ui/model/ValidateException',
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isEmptyObject"
-],
-	function(
-		Log,
-		NumberFormat,
-		CompositeType,
-		FormatException,
-		ParseException,
-		ValidateException,
-		jQuery,
-		isEmptyObject
-	) {
+	"sap/base/util/each",
+	"sap/base/util/isEmptyObject",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/CompositeType",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException"
+], function(Log, each, isEmptyObject, NumberFormat, CompositeType, FormatException, ParseException,
+		ValidateException) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a <code>Currency</code> type.
@@ -173,7 +163,7 @@ sap.ui.define([
 				aValues = this.oInputFormat.parse(vValue);
 			}
 			iValue = aValues[0];
-			jQuery.each(this.oConstraints, function(sName, oContent) {
+			each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":
 						if (iValue < oContent) {
