@@ -1,4 +1,4 @@
-/*global QUnit, oTable, oTreeTable, sinon */
+/*global QUnit, oTable, oTreeTable */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/library",
-	"sap/ui/core/InvisibleMessage",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function(TableQUnitUtils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary, InvisibleMessage, Filter, FilterOperator) {
+], function(TableQUnitUtils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary, Filter, FilterOperator) {
 	"use strict";
 
 	var SelectionMode = Library.SelectionMode;
@@ -1751,8 +1750,6 @@ sap.ui.define([
 	QUnit.test("Scrolling", function(assert) {
 		var done = assert.async();
 		var $Cell = getCell(2, 0, true, assert);
-		var oInvisibleMessageSpy = sinon.spy(InvisibleMessage.getInstance(), "announce");
-
 		testAriaLabelsForFocusedDataCell($Cell, 2, 0, assert, {firstTime: true});
 
 		var bFocusTriggered = false;
@@ -1774,30 +1771,11 @@ sap.ui.define([
 			oTable.removeEventDelegate(oDelegate);
 			assert.ok(!bFocusTriggered, "No Refocus of cell done after " + (iDelay + 10) + " ms");
 			testAriaLabelsForFocusedDataCell($Cell, 2, 0, assert, {rowChange: true});
+			assert.ok(!$Cell.attr("aria-busy"), "Cell is not in busy mode anymore");
+			assert.ok(!$Cell.attr("aria-hidden"), "Cell is not hidden anymore");
 			assert.ok((oTable.$("cellacc").html() || "").indexOf("A4") >= 0, "Acc Text after scrolling");
-
-			if (Device.browser.chrome) {
-				var sMessage = "";
-				var aLabels = $Cell[0].getAttribute("aria-labelledby").trim().split(' ');
-
-				aLabels.forEach(function (sLabel) {
-					if (document.getElementById(sLabel)) {
-						sMessage = sMessage.concat(" ", document.getElementById(sLabel).innerText);
-					}
-				});
-
-				if ($Cell[0].getAttribute("aria-selected") === "true") {
-					sMessage = sMessage.concat(" ", TableUtils.getResourceText("TBL_ROW_DESC_SELECTED"));
-				}
-
-				assert.ok(oInvisibleMessageSpy.calledOnce, "Invisible Message announced");
-				assert.ok(oInvisibleMessageSpy.calledWithExactly(sMessage, coreLibrary.InvisibleMessageMode.Assertive),
-					"InvisibleMessage.announce has been called with the correct parameters");
-			}
-
 			TableQUnitUtils.setFocusOutsideOfTable(assert);
 			oTable.setFirstVisibleRow(0);
-
 			setTimeout(function() {
 				testAriaLabelsForNonFocusedDataCell($Cell, 2, 0, assert);
 				done();
