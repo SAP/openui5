@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/base/security/encodeURL",
 	"sap/base/util/deepEqual",
 	"sap/base/util/each",
+	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
@@ -43,13 +44,12 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/UpdateMethod",
 	"sap/ui/thirdparty/datajs",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI"
 ], function(ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding, assert, Log,
-		encodeURL, deepEqual, each, isEmptyObject, isPlainObject, merge, uid, UriParameters,
+		encodeURL, deepEqual, each, extend, isEmptyObject, isPlainObject, merge, uid, UriParameters,
 		coreLibrary, Message, MessageParser, BindingMode, Context, FilterProcessor, Model,
 		CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
-		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, jQuery, URI
+		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, URI
 ) {
 
 	"use strict";
@@ -3649,7 +3649,7 @@ sap.ui.define([
 			sUrl += "?" + this.aUrlParams.join("&");
 		}
 
-		jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
+		extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
 
 		// Set Accept header for $batch requests
 		oChangeHeader["Accept"] = "multipart/mixed";
@@ -4223,8 +4223,8 @@ sap.ui.define([
 			this._parseResponse(oResponse, oRequest, mLocalGetEntities, mLocalChangeEntities);
 
 			// Add the Get and Change entities from this request to the main ones (which differ in case of batch requests)
-			jQuery.extend(mGetEntities, mLocalGetEntities);
-			jQuery.extend(mChangeEntities, mLocalChangeEntities);
+			extend(mGetEntities, mLocalGetEntities);
+			extend(mChangeEntities, mLocalChangeEntities);
 
 			this._updateETag(oRequest, oResponse);
 		}
@@ -5345,7 +5345,7 @@ sap.ui.define([
 	};
 
 	ODataModel.prototype._createFunctionImportParameters = function(sFunctionName, sMethod, mParams) {
-		var mUrlParams = jQuery.extend(true, {}, mParams);
+		var mUrlParams = merge({}, mParams);
 		delete mUrlParams.__metadata;
 		delete mUrlParams["$result"];
 		var oFunctionMetadata = this.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
@@ -5905,7 +5905,7 @@ sap.ui.define([
 				} else {
 					that.mChangedEntities[sKey] = oChangedEntry;
 					oChangedEntry.__metadata = {deepPath: sDeepPath};
-					jQuery.extend(oChangedEntry.__metadata, oEntry.__metadata);
+					extend(oChangedEntry.__metadata, oEntry.__metadata);
 				}
 			}
 		});
@@ -6227,7 +6227,7 @@ sap.ui.define([
 			});
 		}
 		//The 'sap-cancel-on-close' header marks the OData request as cancelable. This helps to save resources at the back-end.
-		return jQuery.extend({'sap-cancel-on-close': !!bCancelOnClose}, this.mCustomHeaders, mCheckedHeaders, this.oHeaders);
+		return extend({'sap-cancel-on-close': !!bCancelOnClose}, this.mCustomHeaders, mCheckedHeaders, this.oHeaders);
 	};
 
 	/**
@@ -6237,7 +6237,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.getHeaders = function() {
-		return jQuery.extend({}, this.mCustomHeaders, this.oHeaders);
+		return extend({}, this.mCustomHeaders, this.oHeaders);
 	};
 
 	/**
