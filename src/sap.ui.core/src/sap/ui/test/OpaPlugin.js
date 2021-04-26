@@ -461,7 +461,7 @@ sap.ui.define([
 			},
 
 			/**
-			 * Find a control by its global ID
+			 * Find a control by its global ID.
 			 *
 			 * @param {object} oOptions a map of match conditions. Must contain an id property
 			 * @param {string|string[]} [oOptions.id] required - ID to match. Can be string, regex or array
@@ -471,9 +471,6 @@ sap.ui.define([
 			 *     <li>if a oOptions.id is a string, will return the single matching control or null if no controls match</li>
 			 *     <li>otherwise, will return an array of matching controls, or an empty array, if no controls match</li>
 			 * </ul>
-			 *
-			 * @param oOptions must contain ID property of type string, regex or array of strings; optionally it can contain a controlType property.
-			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|null} all controls matched by the regex or the control matched by the string or null
 			 * @public
 			 */
 			getControlByGlobalId : function (oOptions) {
