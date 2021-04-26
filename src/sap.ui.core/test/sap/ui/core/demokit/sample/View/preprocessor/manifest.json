@@ -15,7 +15,8 @@
 			"sample": {
 				"files": [
 					"Sample.view.xml",
-					"Sample.view.js",
+					"SampleView.js",
+					"Component.js",
 					"manifest.json"
 				]
 			}

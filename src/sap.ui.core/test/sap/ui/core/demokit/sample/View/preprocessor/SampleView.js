@@ -1,13 +1,19 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Text",
-	"sap/ui/core/mvc/XMLView" // sap.ui.xmlview
-], function(Button, Text, XMLView) {
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/XMLView"
+], function(Button, Text, View, XMLView) {
 	"use strict";
 
-	sap.ui.jsview("sap.ui.core.sample.View.preprocessor.Sample", {
+	return View.extend("sap.ui.core.sample.View.preprocessor.SampleView", {
+
+		getAutoPrefixId: function() {
+			return true;
+		},
 
 		createContent: function(oController) {
+			var that = this;
 
 			// Define sample preprocessor functions
 			var fnXmlPreprocessor = function(xml, info, settings) {
@@ -41,12 +47,9 @@ sap.ui.define([
 				});
 			};
 
-			var that = this;
-			// Create a normal view
-			sap.ui.xmlview({
-				viewName: "sap.ui.core.sample.View.preprocessor.Sample",
-				async: true
-			}).loaded()
+			return XMLView.create({
+				viewName: "sap.ui.core.sample.View.preprocessor.Sample"
+			})
 			.then(function(oView) {
 				that.addContent(
 					new Text({
@@ -55,16 +58,15 @@ sap.ui.define([
 				);
 				that.addContent(oView);
 				// Create a view with preprocessor for 'xml'
-				sap.ui.xmlview({
+				return XMLView.create({
 					viewName: "sap.ui.core.sample.View.preprocessor.Sample",
-					async: true,
 					preprocessors: {
 						xml: {
 							preprocessor: fnXmlPreprocessor,
 							message: "'xml' preprocessor running"
 						}
 					}
-				}).loaded()
+				})
 				.then(function(oView) {
 					that.addContent(
 						new Text({
@@ -73,16 +75,15 @@ sap.ui.define([
 					);
 					that.addContent(oView);
 					// Create a view with preprocessor for 'controls'
-					sap.ui.xmlview({
+					return XMLView.create({
 						viewName: "sap.ui.core.sample.View.preprocessor.Sample",
-						async: true,
 						preprocessors: {
 							controls: {
 								preprocessor: fnControlPreprocessor,
 								message: "XML view with 'controls' preprocessor:"
 							}
 						}
-					}).loaded()
+					})
 					.then(function(oView) {
 						that.addContent(
 							new Text({
