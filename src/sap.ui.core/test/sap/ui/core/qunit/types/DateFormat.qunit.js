@@ -715,7 +715,16 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 		});
 
 		QUnit.test("parse time format with variants of am/pm", function (assert) {
-			var aVariants = ["am", "pm", "AM", "PM", "a.m.", "am.", "p.m.", "pm.", "A.M.", "AM.", "P.M.", "PM."];
+			var aVariants = [
+				"am", "pm",
+				"AM", "PM",
+				"a.m.", "p.m.",
+				"am.", "pm.",
+				"A.M.", "P.M.",
+				"AM.", "PM.",
+				"a. m.", "p. m.", // With default space
+				"a." + "\xA0" + "m.", "p." + "\xA0" + "m." // with non-breaking space (nbsp)
+			];
 			var oFormat = DateFormat.getTimeInstance({
 				pattern: "a"
 			});
@@ -732,6 +741,26 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			}, new Locale("vi"));
 
 			assert.equal(oFormat.parse("a.m."), null, "the variant can only be parsed in locale where it's supported");
+		});
+
+		QUnit.test("parse time format with variants of am/pm with year after pattern", function (assert) {
+			var aVariants = [
+				"am", "pm",
+				"AM", "PM",
+				"a.m.", "p.m.",
+				"am.", "pm.",
+				"A.M.", "P.M.",
+				"AM.", "PM.",
+				"a. m.", "p. m.", // With default space
+				"a." + "\xA0" + "m.", "p." + "\xA0" + "m." // with non-breaking space (nbsp)
+			];
+			var oFormat = DateFormat.getTimeInstance({
+				pattern: "ay"
+			});
+			aVariants.forEach(function (sVariant) {
+				var oDate = oFormat.parse(sVariant + "2018");
+				assert.ok(oDate instanceof Date, sVariant + " correctly parsed");
+			});
 		});
 
 		QUnit.test("format and parse time with am/pm in locale pt_PT", function(assert) {
