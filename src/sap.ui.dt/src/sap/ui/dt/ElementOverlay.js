@@ -70,6 +70,15 @@ sap.ui.define([
 					singularName: "editableByPlugin"
 				}
 			},
+			aggregations: {
+				/**
+				 * Stores all aggregation binding template related overlays if available
+				 */
+				aggregationBindingTemplateOverlays: {
+					type: "sap.ui.dt.Overlay",
+					multiple: true
+				}
+			},
 			properties: {
 				/**
 				 * Whether the ElementOverlay is selected

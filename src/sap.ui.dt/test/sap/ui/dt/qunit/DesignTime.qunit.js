@@ -3,6 +3,8 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
+	"sap/m/List",
+	"sap/m/CustomListItem",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
@@ -32,6 +34,8 @@ sap.ui.define([
 function(
 	jQuery,
 	Log,
+	List,
+	CustomListItem,
 	Button,
 	VerticalLayout,
 	HorizontalLayout,
@@ -1152,6 +1156,73 @@ function(
 				fnDone();
 			});
 			this.oDesignTime.addRootElement(this.oLayout2);
+		});
+	});
+
+	QUnit.module("Given that the DesignTime is initialized with control including aggregation bindinding", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			// create list with bound items
+			var oData = [
+				{text: "item1-bound"},
+				{text: "item2-bound"}
+			];
+			var oModel = new JSONModel(oData);
+			this.oCustomListItemTemplate = new CustomListItem("boundListItem", {content: [new Button("boundListItem-btn", {text: '{text}'})]});
+			this.oBoundList = new List("boundlist").setModel(oModel);
+			this.oBoundList.bindAggregation("items", {
+				path: "/",
+				template: this.oCustomListItemTemplate,
+				templateShareable: false
+			});
+
+			//create list with unbound items
+			this.oUnBoundList = new List("unboundlist");
+			this.oUnBoundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text: 'item1-unbound'})]}));
+			this.oUnBoundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text: 'item2-unbound'})]}));
+
+			//create a HorizontalLayout containing the two lists
+			this.oHorizontalLayout = new HorizontalLayout("horLyout", {
+				content: [this.oBoundList, this.oUnBoundList]
+			});
+			this.oHorizontalLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oHorizontalLayout]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", fnDone);
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oHorizontalLayout.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when designtime is created", function (assert) {
+			var aOverlays = OverlayRegistry.getOverlays();
+			assert.strictEqual(aOverlays.length, 26, "then 18 Overlays are created: 12 elements + 13 aggregations + 1 template");
+
+			var oButton1AOverlay = OverlayRegistry.getOverlay(this.oBoundList.getItems()[0].getContent()[0]);
+			var oButton1BOverlay = OverlayRegistry.getOverlay(this.oBoundList.getItems()[1].getContent()[0]);
+			var oButton2AOverlay = OverlayRegistry.getOverlay(this.oUnBoundList.getItems()[0].getContent()[0]);
+			var oButton2BOverlay = OverlayRegistry.getOverlay(this.oUnBoundList.getItems()[1].getContent()[0]);
+			var oButtonTemplateOverlay = OverlayRegistry.getOverlay(this.oCustomListItemTemplate.getContent()[0]);
+
+			assert.ok(OverlayRegistry.getOverlay(this.oBoundList.getItems()[0]), "overlay for first bound item exists");
+			assert.ok(oButton1AOverlay, "overlay for first bound item button exists");
+			assert.ok(OverlayRegistry.getOverlay(this.oBoundList.getItems()[1]), "overlay for second bound item exists");
+			assert.ok(oButton1BOverlay, "overlay for second bound item button exists");
+			assert.ok(OverlayRegistry.getOverlay(this.oUnBoundList.getItems()[0]), "overlay for first unbound item exists");
+			assert.ok(oButton2AOverlay, "overlay for second unbound item button exists");
+			assert.ok(OverlayRegistry.getOverlay(this.oUnBoundList.getItems()[1]), "overlay for second unbound item exists");
+			assert.ok(oButton2BOverlay, "overlay for second unbound item button exists");
+			assert.ok(OverlayRegistry.getOverlay(this.oBoundList).getAggregationBindingTemplateOverlays()[0], "aggregation overlay for the aggregation template exists");
+			assert.ok(OverlayRegistry.getOverlay(this.oCustomListItemTemplate), "overlay for the aggregation template (custom list item) exists");
+			assert.ok(oButtonTemplateOverlay, "overlay for the button inside aggregation template (custom list item) exists");
+			assert.ok(DOMUtil.isVisible(oButton1AOverlay.getDomRef()), "then the first bound button overlay is visible");
+			assert.notOk(DOMUtil.isVisible(oButtonTemplateOverlay.getDomRef()), "then the button overlay inside aggregation template is not visible");
 		});
 	});
 

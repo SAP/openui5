@@ -1254,7 +1254,11 @@ sap.ui.define([
 				parent: oRelevantContainer,
 				aggregation: "items"
 			};
-			var oTarget = oSource;
+			// var oTarget = oSource;
+			var oTarget = {
+				parent: oRelevantContainer,
+				aggregation: "items"
+			};
 			var oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
 				data: {
 					actions: {
