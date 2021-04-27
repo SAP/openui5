@@ -462,9 +462,9 @@ function(
 	 */
 
 	/**
-	 * Returns the element id and the aggregation name of the bound control for an Overlay which is part of an aggregation binding
+	 * Returns the element id and the aggregation name of the bound control for an Element which is part of an aggregation binding
 	 * The check is done recursively
-	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay Overlay being checked
+	 * @param  {sap.ui.core.Element} oElement - Element being checked
 	 * @return {AggregationBindingStack}  Returns the {@link sap.ui.dt.ElementUtil.AggregationBindingStack} object
 	 */
 	ElementUtil.getAggregationInformation = function(oElement) {
@@ -517,6 +517,17 @@ function(
 					aStack
 				)
 			);
+	};
+
+	/**
+	 * Getter for binding template if available.
+	 * @param {sap.ui.base.ManagedObject} oElement - Element to be checked for binding info with template attached
+	 * @param {string} sAggregationName - Aggregation name required to check binding info for this one aggregation
+	 * @returns {sap.ui.base.ManagedObject} Aggregation binding template for the given element and aggregation name
+	 */
+	ElementUtil.getAggregationBindingTemplate = function (oElement, sAggregationName) {
+		var oBinding = oElement && oElement.getBindingInfo(sAggregationName);
+		return oBinding && oBinding.template;
 	};
 
 	/**
