@@ -79,7 +79,11 @@
                                 text: "Label for input",
                                 labelFor: "p1input"
                             }),
-                            new sap.m.Input("p1input")
+                            new sap.m.Input("p1input", {
+                                layoutData: new sap.m.FlexItemData({
+                                    growFactor: 1,
+                                })
+                            }),
                         ]
                     })
                 ]
@@ -121,14 +125,18 @@
                     }),
                     new sap.m.HBox({
                         alignItems: sap.m.FlexAlignItems.Center,
+                        width: "100%",
                         items: [
                             new sap.m.Label({
-                                text : "The following field shows the data passed from page 1:",
+                                text : "Data passed from page 1:",
                                 labelFor: "p2input"
                             }),
                             new sap.m.Input("p2input", {
                                 value : null,
-                                width: "100%"
+                                width: "100%",
+                                layoutData: new sap.m.FlexItemData({
+                                    growFactor: 1,
+                                })
                             }),
                         ]
                     }),
@@ -170,8 +178,11 @@
                                 labelFor: "p3input"
                             }),
                             new sap.m.Input("p3input", {
-                                value : null
-                            })
+                                value : null,
+                                layoutData: new sap.m.FlexItemData({
+                                    growFactor: 1,
+                                })
+                            }),
                         ]
                     }),
                     new sap.m.Text({
