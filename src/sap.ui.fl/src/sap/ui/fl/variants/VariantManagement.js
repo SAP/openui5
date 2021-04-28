@@ -392,8 +392,7 @@ sap.ui.define([
 		this.oVariantPopoverTrigger = new ToggleButton(this.getId() + "-trigger", {
 			icon: "sap-icon://slim-arrow-down",
 			type: ButtonType.Transparent,
-			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT"),
-			press: function(oEvent) { this._oCtrlRef = oEvent.getParameter("pressed") ? this.oVariantPopoverTrigger : null; }.bind(this)
+			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT")
 		});
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
@@ -782,32 +781,26 @@ sap.ui.define([
 				}
 			}
 		}.bind(this));
+	};
 
-//		var oBindingBusy = new PropertyBinding(oModel, this.oContext + "/variantBusy");
-//		oBindingBusy.attachChange(function(oData) {
-//			if (oData && oData.oSource && oData.oSource.oModel && oData.oSource.sPath) {
-//				var bFlag = oData.oSource.oModel.getProperty(oData.oSource.sPath);
-//				this._handleBusy(bFlag);
-//			}
-//		}.bind(this));
+
+	VariantManagement.prototype._obtainControl = function(oEvent) {
+		if (oEvent && oEvent.target && oEvent.target.id) {
+			var sId = oEvent.target.id;
+			var nPos = sId.indexOf("-inner");
+			if (nPos > 0) {
+				sId = sId.substring(0, nPos);
+			}
+			return sap.ui.getCore().byId(sId);
+		}
+
+		return null;
 	};
 
 	// clickable area
-//	VariantManagement.prototype._handleBusy = function(bFlag) {
-//		if (bFlag !== undefined) {
-//			this.getAssociation("for", []).forEach(function(sControlId) {
-//				var oControl = sap.ui.getCore().byId(sControlId);
-//				if (oControl && oControl.setBusy) {
-//					oControl.setBusy(bFlag);
-//				}
-//			});
-//		}
-//	};
-
-
-	// clickable area
-	VariantManagement.prototype.handleOpenCloseVariantPopover = function() {
+	VariantManagement.prototype.handleOpenCloseVariantPopover = function(oEvent) {
 		if (!this.bPopoverOpen) {
+			this._oCtrlRef = this._obtainControl(oEvent);
 			this._openVariantList();
 		} else if (this.oVariantPopOver && this.oVariantPopOver.isOpen()) {
 			this.oVariantPopOver.close();
@@ -822,15 +815,16 @@ sap.ui.define([
 		}
 	};
 
-	VariantManagement.prototype.onclick = function() {
+	VariantManagement.prototype.onclick = function(oEvent) {
 		if (this.oVariantPopoverTrigger && !this.bPopoverOpen) {
 			this.oVariantPopoverTrigger.focus();
 		}
-		this.handleOpenCloseVariantPopover();
+		this.handleOpenCloseVariantPopover(oEvent);
 	};
 
 	VariantManagement.prototype.onkeyup = function(oEvent) {
 		if (oEvent.which === KeyCodes.F4 || oEvent.which === KeyCodes.SPACE || oEvent.altKey === true && oEvent.which === KeyCodes.ARROW_UP || oEvent.altKey === true && oEvent.which === KeyCodes.ARROW_DOWN) {
+			this._oCtrlRef = this._obtainControl(oEvent);
 			this._openVariantList();
 		}
 	};
@@ -1570,9 +1564,7 @@ sap.ui.define([
 		}.bind(this);
 
 		var fSelectRB = function(oEvent) {
-			if (oEvent.getParameters().selected === true) {
-				this._handleManageDefaultVariantChange(oEvent.oSource, oEvent.oSource.getBindingContext(this._sModelName).getObject());
-			}
+			this._handleManageDefaultVariantChange(oEvent.oSource, oEvent.oSource.getBindingContext(this._sModelName).getObject(), oEvent.getParameters().selected);
 		}.bind(this);
 
 		var fSelectCB = function(oEvent) {
@@ -1640,7 +1632,11 @@ sap.ui.define([
 			press: fSelectFav
 		});
 
-		oFavoriteIcon.addStyleClass("sapUiFlVarMngmtFavColor");
+		if (this.getDefaultVariantKey() === oItem.key) {
+			oFavoriteIcon.addStyleClass("sapUiFlVarMngmtFavNonInteractiveColor");
+		} else {
+			oFavoriteIcon.addStyleClass("sapUiFlVarMngmtFavColor");
+		}
 
 		if (this.getDisplayTextForExecuteOnSelectionForStandardVariant() && (this.getStandardVariantKey() === oItem.key)) {
 			oExecuteOnSelectCtrl = new CheckBox({
@@ -1662,7 +1658,6 @@ sap.ui.define([
 				oFavoriteIcon, oNameControl, new RadioButton({
 					groupName: this.getId(),
 					select: fSelectRB,
-					// selected: (oItem.key === sDefaultVariantKey) ? true : false
 					selected: {
 						path: sBindingPath + "/defaultVariant",
 						model: this._sModelName,
@@ -1730,19 +1725,41 @@ sap.ui.define([
 		}
 	};
 
-	VariantManagement.prototype._handleManageDefaultVariantChange = function(oRadioButton, oItem) {
-		var sKey = oItem.key;
-
-//		if (!this._anyInErrorState(this.oManagementTable)) {
-//			this.oManagementSave.setEnabled(true);
-//		}
-
-		if (this.getShowFavorites() && !oItem.favorite && oRadioButton) {
-			oItem.favorite = true;
-			this._setFavoriteIcon(oRadioButton.getParent().getCells()[VariantManagement.COLUMN_FAV_IDX], true);
+	VariantManagement.prototype._toggleIconActivityState = function(oIcon, bToInActive) {
+		if (!oIcon) {
+			return;
 		}
 
-		this.setDefaultVariantKey(sKey);
+		if (bToInActive) {
+			if (oIcon.hasStyleClass("sapUiFlVarMngmtFavColor")) {
+				oIcon.removeStyleClass("sapUiFlVarMngmtFavColor");
+				oIcon.addStyleClass("sapUiFlVarMngmtFavNonInteractiveColor");
+			}
+		} else {
+			if (oIcon.hasStyleClass("sapUiFlVarMngmtFavNonInteractiveColor")) {
+				oIcon.removeStyleClass("sapUiFlVarMngmtFavNonInteractiveColor");
+				oIcon.addStyleClass("sapUiFlVarMngmtFavColor");
+			}
+		}
+	};
+
+	VariantManagement.prototype._handleManageDefaultVariantChange = function(oRadioButton, oItem, bSelected) {
+		var sKey = oItem.key;
+
+		if (oRadioButton) {
+			var oIcon = oRadioButton.getParent().getCells()[VariantManagement.COLUMN_FAV_IDX];
+
+			if (bSelected) {
+				if (this.getShowFavorites() && !oItem.favorite) {
+					oItem.favorite = true;
+					this._setFavoriteIcon(oIcon, true);
+				}
+
+				this.setDefaultVariantKey(sKey);
+			}
+
+			this._toggleIconActivityState(oIcon, bSelected);
+		}
 	};
 
 	VariantManagement.prototype._handleManageCancelPressed = function() {
