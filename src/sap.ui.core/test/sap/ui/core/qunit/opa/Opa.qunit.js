@@ -1,4 +1,5 @@
 /*global QUnit, sinon */
+
 /*eslint max-nested-callbacks: [2,4]*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -7,8 +8,9 @@ sap.ui.define([
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/Opa",
 	"./utils/browser",
-	"./utils/sinon"
-], function ($, URI, _OpaUriParameterParser, _LogCollector, Opa, browser, sinonUtils) {
+	"./utils/sinon",
+	"sap/ui/Device"
+], function ($, URI, _OpaUriParameterParser, _LogCollector, Opa, browser, sinonUtils, Device) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -226,22 +228,23 @@ sap.ui.define([
 
 		Opa.emptyQueue().done(oDoneSpy);
 
-		// 2 wait fors and an empty queue - 3 times initial delay
-		this.clock.tick(iExecutionDelay);
-		this.clock.tick(iExecutionDelay);
-		this.clock.tick(iExecutionDelay);
+		if (Device.browser.safari) {
+			this.clock.tick(200);
+		}
 
-		this.clock.tick(1000);
-		assert.strictEqual(oFirstCheckSpy.callCount, 6, "Did apply the polling of the extendConfig");
+		this.clock.tick(800);
+		assert.strictEqual(oFirstCheckSpy.callCount, 5, "Did apply the polling of the extendConfig");
 
 		bFirstCheck = true;
 
 		//second wait for should start after this one
-		this.clock.tick(200);
+		if (!Device.browser.safari) {
+			this.clock.tick(200);
+		}
 
 		//check for faster polling
-		this.clock.tick(1100);
-		assert.strictEqual(oSecondCheckSpy.callCount, 11, "Did apply the polling of the waitFor");
+		this.clock.tick(1000);
+		assert.strictEqual(oSecondCheckSpy.callCount, 10, "Did apply the polling of the waitFor");
 
 		bSecondCheck = true;
 

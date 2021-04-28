@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/base/util/merge"
-], function(merge) {
+	"sap/base/util/merge",
+	"sap/ui/Device"
+], function(merge, Device) {
 	"use strict";
 
 	var oCommonTests = {
@@ -45,6 +46,9 @@ sap.ui.define([
 					"unitTests" : "test-resources/sap/ui/core/qunit/opa/"
 				}
 			},
+			qunit: {
+				noglobals: !Device.browser.safari
+			},
 			ui5: {
 				libs: "sap.m"
 			},
@@ -67,7 +71,8 @@ sap.ui.define([
 		"autowaiter/autoWaiter": {
 			title: "QUnit Page for sap.ui.test.autoWaiter",
 			qunit: {
-				reorder: false // to ensure that _XHRWaiter tests are executed last
+				reorder: false, // to ensure that _XHRWaiter tests are executed last
+				noglobals: !Device.browser.safari
 			},
 			// in sinon v4, there is a timing issue in autoWaiterAsync tests
 			sinon: {
@@ -398,7 +403,7 @@ sap.ui.define([
 		"_ControlFinder": {
 			title: "QUnit Page for sap.ui.test._ControlFinder",
 			module: "./_ControlFinder.qunit"
-		},
+	},
 		"_LogCollector": {
 			title: "QUnit Page for sap.ui.test._LogCollector",
 			module: "./_LogCollector.qunit"
@@ -413,7 +418,10 @@ sap.ui.define([
 		},
 		"_UsageReport": {
 			title: "QUnit Page for sap.ui.test._UsageReport",
-			module: "./_UsageReport.qunit"
+			module: "./_UsageReport.qunit",
+			qunit: {
+				noglobals: !Device.browser.safari
+			}
 		},
 		"RecordReplay": {
 			title: "QUnit Page for sap.ui.test.RecordReplay",

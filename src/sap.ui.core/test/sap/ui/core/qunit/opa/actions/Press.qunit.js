@@ -171,26 +171,6 @@ function(Press,
 		});
 	});
 
-	QUnit.test("Should follow a link", function (assert) {
-		var sExpectedHash = "expectedHash";
-		var fnDone = assert.async();
-		hasher.init();
-		hasher.setHash("");
-		hasher.changed.addOnce(function () {
-			assert.strictEqual(hasher.getHash(), sExpectedHash);
-			fnDone();
-		});
-		var oLink = new Link({
-			href : "#" + sExpectedHash
-		});
-		oLink.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		aControlsToClean.push(oLink);
-
-		new Press().executeOn(oLink);
-	});
-
 	QUnit.test("Should request focus and trigger a 'press' event on an StandardListItem of type 'active'", function(assert) {
 		var done = assert.async();
 
@@ -418,7 +398,7 @@ function(Press,
 						autoRespondAfter : 0
 					});
 
-					oMockServer.simulate("../../../testdata/annotations/metadata.xml", {
+					oMockServer.simulate(sap.ui.require.toUrl("test-resources/sap/ui/core/testdata/annotations/metadata.xml"), {
 						bGenerateMissingMockData : true
 					});
 

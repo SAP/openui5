@@ -46,10 +46,14 @@ sap.ui.define([
 		changeEventParameter: "value"
 	}, {
 		Control: DatePicker,
-		textInControl: "1",
-		textToEnter: "1/12/15",
+		textInControl: "8/12/2015",
+		textToEnter: "1/12/2015",
 		changeEvent: "change",
-		changeEventParameter: "value"
+		changeEventParameter: "value",
+		props: {
+			displayFormat: "d/mm/y",
+			valueFormat: "d/mm/y"
+		}
 	}, {
 		// something invalid
 		Control: DatePicker,
@@ -71,9 +75,9 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var sTextToEnter = testInfo.textToEnter || "foo";
 			var sTextBeforeAction = testInfo.textInControl || "A";
-			var oControl = new testInfo.Control({
+			var oControl = new testInfo.Control($.extend({
 				value: sTextBeforeAction
-			});
+			}, testInfo.props));
 			this.oControl = oControl; // should be destroyed at end of test
 
 			// if no focus functions are defined - define them to spy on them

@@ -80,7 +80,8 @@ sap.ui.define([
 							Opa5.assert.ok(oRecorderOpaPlugin, "Should load Opa plugin instance in recorder frame");
 							Opa5.getContext().recorderOpaPlugin = oRecorderOpaPlugin;
 							Opa5.getContext()._getRecorderControls = oRecorderOpaPlugin._getFilteredControls.bind(oRecorderOpaPlugin);
-						}
+						},
+						errorMessage: "Cannot setup test recorder iframe"
 					});
 				},
 				errorMessage: "Cannot start test recorder"
