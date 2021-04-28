@@ -1172,11 +1172,13 @@ sap.ui.define([
 			this._aFileUploadersForPendingUpload = null;
 		}
 		// destroy items with status "uploading" because they are not destroyed with "items" aggregation
-		for (i = 0; i < this.aItems.length; i++) {
-			if (this.aItems[i]._status === UploadCollection._uploadingStatus) {
-				oItemToDestroy = this.aItems.splice(i, 1)[0];
-				if (oItemToDestroy.destroy) {
-					oItemToDestroy.destroy();
+		if (this.aItems && this.aItems.length > 0) {
+			for (i = 0; i < this.aItems.length; i++) {
+				if (this.aItems[i]._status === UploadCollection._uploadingStatus) {
+					oItemToDestroy = this.aItems.splice(i, 1)[0];
+					if (oItemToDestroy.destroy) {
+						oItemToDestroy.destroy();
+					}
 				}
 			}
 		}
