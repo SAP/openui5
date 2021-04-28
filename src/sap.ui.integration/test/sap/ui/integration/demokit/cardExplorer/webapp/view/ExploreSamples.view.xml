@@ -75,7 +75,7 @@
 											<customData><core:CustomData key="mode" value="content" /></customData>
 										</MenuItem>
 										<MenuItem text="Translator" press=".onOpenConfigurationEditor" visible="{=  ${settings>/configMode} === 'Translation' || ${settings>/configMode} === 'All'}">
-											<customData><core:CustomData key="mode" value="translator" /></customData>
+											<customData><core:CustomData key="mode" value="translation" /></customData>
 										</MenuItem>
 									</Menu>
 								</menu>

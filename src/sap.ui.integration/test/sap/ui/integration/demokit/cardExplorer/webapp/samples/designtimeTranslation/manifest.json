@@ -20,7 +20,20 @@
 		"designtime": "./dt/designtime",
 		"type": "List",
 		"configuration": {
-			"parameters": {},
+			"parameters": {
+				"translatableLabel": {
+					"value": "{i18n>TRANSLATED_LABEL}"
+				},
+				"translatableText": {
+					"value": "{i18n>TRANSLATED_TEXT}"
+				},
+				"untranslatableLabel": {
+					"value": "Untranslatable Label and Text"
+				},
+				"untranslatableText": {
+					"value": "The untranslatable contents shouldn't be visible in the translation mode."
+				}
+			},
 			"destinations": {
 				"dest": {
 					"name": "Northwind"
@@ -34,8 +47,8 @@
 			}
 		},
 		"header": {
-			"title": "Card Title",
-			"subTitle": "Card Sub Title",
+			"title": "{{CARDTITLE}}",
+			"subTitle": "{{CARDSUBTITLE}}",
 			"icon": {
 				"src": "sap-icon://accept"
 			}
@@ -44,8 +57,12 @@
 			"data": {
 				"json": [
 					{
-						"title": "Edit the Title and Subtitle of the Card",
-						"description": "The translator uses cannot edit destinations and change the icon. He uses French"
+						"title": "{{parameters.translatableLabel}}",
+						"description": "{{parameters.translatableText}}"
+					},
+					{
+						"title": "Untranslatable Label and Text",
+						"description": "The translator cannot edit destinations and change the icon. He uses {{LANGUAGE_VALUE}}"
 					}
 				],
 				"path": "/"

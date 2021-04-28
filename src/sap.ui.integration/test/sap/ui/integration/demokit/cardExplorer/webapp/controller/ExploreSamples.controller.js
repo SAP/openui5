@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
 	"sap/ui/integration/util/loadCardEditor",
-	"sap/base/util/restricted/_debounce"
+	"sap/base/util/restricted/_debounce",
+	"sap/ui/integration/designtime/editor/CardEditor"
 ], function (
 	BaseController,
 	Constants,
@@ -43,7 +44,8 @@ sap.ui.define([
 	BindingMode,
 	Device,
 	loadCardEditor,
-	_debounce
+	_debounce,
+	CardEditor
 ) {
 	"use strict";
 
@@ -222,6 +224,39 @@ sap.ui.define([
 						this._oFileEditor.showError(oErr.name + ": " + oErr.message);
 					}
 				}.bind(this));
+		},
+
+		//In the translation mode, configuration card editor will be reloaded if user update the language
+		onSwitchLanguage: function (oSelect) {
+			var selectedLanguage = oSelect.getParameters().selectedItem.mProperties.key;
+			var oDialog = oSelect.oSource.getParent();
+			var dialogModel = oDialog.oModels.config;
+			var dialogModelData = dialogModel.getData();
+			dialogModelData.language = selectedLanguage;
+			dialogModel.refresh();
+
+			var oContent = oDialog.getContent(),
+			oEditor;
+			for (var i = 0; i < oContent.length; i++) {
+				if (oContent[i].isA("sap.ui.integration.designtime.editor.CardEditor")) {
+					oEditor = oContent[i];
+				}
+			}
+
+			if (oEditor) {
+				oEditor.destroy();
+			}
+
+			var newEditor = new CardEditor({
+				id: "configurationCard11",
+				card: dialogModelData.cardId,
+				mode: dialogModelData.mode,
+				designtime: dialogModelData.designtime,
+				allowSettings: true,
+				allowDynamicValues: true,
+				language: dialogModelData.language
+			});
+			oDialog.addContent(newEditor);
 		},
 
 		onChangeEditor: function (oEvent) {

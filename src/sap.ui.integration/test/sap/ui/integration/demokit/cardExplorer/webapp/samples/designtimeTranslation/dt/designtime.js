@@ -30,6 +30,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "Card Icon",
 						"cols": 1,
 						"allowDynamicValues": false,
+						"translatable": false,
 						"allowSettings": false,
 						"visualization": {
 							"type": "IconSelect",
@@ -39,12 +40,37 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"translatableLabel": {
+						"manifestpath": "/sap.card/configuration/parameters/translatableLabel/value",
+						"type": "string",
+						"label": "Translatable Label",
+						"translatable": true
+					},
+					"translatableText": {
+						"manifestpath": "/sap.card/configuration/parameters/translatableText/value",
+						"type": "string",
+						"label": "Translatable Text",
+						"translatable": true
+					},
+					"untranslatableLabel": {
+						"manifestpath": "/sap.card/configuration/parameters/untranslatableLabel/value",
+						"type": "string",
+						"label": "Untranslatable Label",
+						"translatable": false
+					},
+					"untranslatableText": {
+						"manifestpath": "/sap.card/configuration/parameters/untranslatableText/value",
+						"type": "string",
+						"label": "Untranslatable Text",
+						"translatable": false
+					},
 					"maxItems": {
 						"manifestpath": "/sap.card/content/maxItems",
 						"defaultValue": 1,
 						"type": "integer",
 						"allowDynamicValues": false,
 						"allowSettings": false,
+						"translatable": false,
 						"visualization": {
 							"type": "sap/m/Slider",
 							"settings": {
