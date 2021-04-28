@@ -2974,6 +2974,40 @@ sap.ui.define([
 		oOTB.destroy();
 	});
 
+	QUnit.test("Size of content is reported correctly for content in overflow", function (assert) {
+		var oButton1 = new Button({ text: "Test1", layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow})}),
+				oButton2 = new Button({text: "Test2"}),
+				oButton3 = new Button({text: "Test3"}),
+				oOverflowTB = new OverflowToolbar({width: '50px', content: [oButton1, oButton2, oButton3]}),
+				iContentSizeBeforeOpenOverflow,
+				self = this,
+				done = assert.async();
+
+		oOverflowTB._getPopover().attachAfterOpen(function() {
+			oOverflowTB._getPopover().attachAfterClose(function() {
+				oOverflowTB.$().width("70px");
+				oOverflowTB._fnMediaChange();
+				assert.strictEqual(oOverflowTB._iContentSize, iContentSizeBeforeOpenOverflow, "the content size is preserved");
+				done();
+			});
+			oOverflowTB._getPopover().close();
+		});
+
+		oOverflowTB.addEventDelegate({
+			onAfterRendering: function() {
+				oOverflowTB.removeEventDelegate(this);
+				iContentSizeBeforeOpenOverflow = oOverflowTB._iContentSize;
+
+				// Act: open the overflow
+				oOverflowTB._getOverflowButton().firePress();
+				self.clock.tick(1000);
+			}
+		});
+
+		oOverflowTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.module("Focusing", {
 		beforeEach: function () {
 			this.oButtonUnderTest = new Button({
