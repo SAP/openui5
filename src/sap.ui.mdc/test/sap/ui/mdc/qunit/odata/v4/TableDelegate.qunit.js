@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/library"
 ], function(
 	Table,
 	Column,
@@ -18,7 +19,8 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer,
 	ControlPersonalizationWriteAPI,
-	Core
+	Core,
+	coreLibrary
 ) {
 	"use strict";
 
@@ -492,6 +494,59 @@ sap.ui.define([
 			oTable.setShowRowCount(true);
 			Core.applyChanges();
 			assert.notOk(oTable.getShowRowCount(), "showRowCount=false also after trying to set it to true");
+		});
+	});
+
+	QUnit.test("Sorting restriction", function(assert) {
+		var oTable = this.oTable;
+
+		return oTable._fullyInitialized().then(function() {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var oState, oValidationState;
+
+			oState = {
+				items: [{name: "Name"}, {name: "name_country"}]
+			};
+			oValidationState = oTable.validateState(oState);
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
+				"No message because oState.sorters is undefined");
+			assert.equal(oValidationState.message, undefined, "Message text is undefined");
+
+			oState = {
+				sorters: [{name: "Name"}, {name: "Country"}]
+			};
+			oValidationState = oTable.validateState(oState);
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.Warning,
+				"Warning message, oState.items is undefined");
+			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION"),
+				"Message text is correct");
+
+			oState = {
+				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}],
+				sorters: [{name: "Name"}, {name: "Country"}]
+			};
+			oValidationState = oTable.validateState(oState);
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.None, "No message");
+			assert.equal(oValidationState.message, undefined, "Message text is undefined");
+
+			oState = {
+				items: [{name: "Name"}],
+				sorters: [{name: "Country"}]
+			};
+			oValidationState = oTable.validateState(oState);
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.Warning,
+				"Warning message, sorted a not visible property");
+			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION"),
+				"Message text is correct");
+
+			oState = {
+				items: [{name: "Name"}, {name: "name_country"}],
+				sorters: [{name: "Country"}]
+			};
+			oValidationState = oTable.validateState(oState);
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
+				"No message, the sorted property is not visible but part of a visible complex property");
+			assert.equal(oValidationState.message, undefined, "Message text is undefined");
 		});
 	});
 

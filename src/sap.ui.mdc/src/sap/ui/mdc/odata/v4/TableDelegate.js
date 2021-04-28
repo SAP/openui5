@@ -418,25 +418,37 @@ sap.ui.define([
 	};
 
 	Delegate.validateState = function(oControl, oState) {
-		var oProperty, aProperties = [];
-		oState.items.forEach(function(oItem) {
-			oProperty = oControl.getPropertyHelper().getProperty(oItem.name);
-			if (!oProperty.isComplex()) {
-				aProperties.push(oProperty.name);
-			} else {
-				oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
-					aProperties.push(oReferencedProperty.name);
-				});
-			}
-		});
+		var bIsValidState;
 
-		var bSortedOnlyVisibleColumns = oState.sorters.every(function(oSort) {
-			return aProperties.find(function(sPropertyName) {
-				return oSort.name === sPropertyName;
+		if (!oState.sorters) {
+			bIsValidState = true;
+
+		} else if (!oState.items) {
+			bIsValidState = false;
+
+		} else {
+			var oProperty, aProperties = [];
+			oState.items.forEach(function(oItem) {
+				oProperty = oControl.getPropertyHelper().getProperty(oItem.name);
+				if (!oProperty.isComplex()) {
+					aProperties.push(oProperty.name);
+				} else {
+					oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
+						if (aProperties.indexOf(oReferencedProperty.name) === -1) {
+							aProperties.push(oReferencedProperty.name);
+						}
+					});
+				}
 			});
-		});
 
-		if (!bSortedOnlyVisibleColumns) {
+			bIsValidState = oState.sorters.every(function(oSort) {
+				return aProperties.find(function(sPropertyName) {
+					return oSort.name === sPropertyName;
+				});
+			});
+		}
+
+		if (!bIsValidState) {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 			return {
 				validation: coreLibrary.MessageType.Warning,
