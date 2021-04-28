@@ -10426,47 +10426,6 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	if (Device.browser.internet_explorer) {
-		QUnit.test("AriaDescribedBy", function (assert) {
-			var oComboBox = new ComboBox(),
-				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
-
-			oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			var oInvisibleText = oComboBox.oInvisibleText;
-
-			//Assert
-			assert.ok(oComboBox.$("inner").attr("aria-describedby").length > 0, "Property aria-describedby should exist");
-			assert.strictEqual(oInvisibleText.getText(), oResourceBundle, "'ComboBox' is announced.");
-
-			//Cleanup
-			oComboBox.destroy();
-		});
-	}
-
-	if (Device.browser.internet_explorer) {
-		QUnit.test("setTooltip()", function (assert) {
-			var oComboBox = new ComboBox({
-				value: "Value",
-				tooltip: "Tooltip",
-				placeholder: "Placeholder"
-			});
-
-			oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			oComboBox.setTooltip('');
-			sap.ui.getCore().applyChanges();
-
-			//Assert
-			assert.strictEqual(oComboBox.getTooltip(), null, 'setTooltip() method should not throw an error');
-
-			//Cleanup
-			oComboBox.destroy();
-		});
-	}
-
 	QUnit.module("Integration");
 
 	QUnit.test("Propagate Items to the list", function (assert) {
@@ -12529,11 +12488,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on value state header", function (assert) {
-		// Arrange
-		this.stub(Device, "browser", {
-			msie: false
-		});
-
 		// Act
 		this.oErrorComboBox.focus();
 		this.clock.tick();
@@ -12569,11 +12523,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Arrow down when the visible focus is on the input should move it to the Value State Header", function (assert) {
-		// Arrange
-		this.stub(Device, "browser", {
-			msie: false
-		});
-
 		// Act
 		this.oErrorComboBox.open();
 		this.clock.tick(500);
@@ -12793,10 +12742,6 @@ sap.ui.define([
 	QUnit.test("onsaphome should move the visual focus on the value state header if links exists", function (assert) {
 		// Arrange
 		var	oValueStateHeader;
-
-		this.stub(Device, "browser", {
-			msie: false
-		});
 
 		// Act
 		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);

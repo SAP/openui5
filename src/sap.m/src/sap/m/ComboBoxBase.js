@@ -131,9 +131,9 @@ sap.ui.define([
 		ComboBoxBase.prototype.oncompositionend = function (oEvent) {
 			ComboBoxTextField.prototype.oncompositionend.apply(this, arguments);
 
-			// In Firefox and Edge the events are fired correctly
+			// In Firefox the events are fired correctly
 			// http://blog.evanyou.me/2014/01/03/composition-event/
-			if (!Device.browser.edge && !Device.browser.firefox) {
+			if (!Device.browser.firefox) {
 				this.handleInputValidation(oEvent, this.isComposingCharacter());
 			}
 		};
