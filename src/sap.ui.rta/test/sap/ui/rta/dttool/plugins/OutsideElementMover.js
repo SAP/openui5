@@ -64,26 +64,14 @@ function(
 	};
 
 	OutsideElementMover.prototype.buildAddXMLCommand = function () {
-		var oPromise = Promise.resolve();
 		var oMovedOverlay = this.getMovedOverlay();
 		var oParentInfo = OverlayUtil.getParentInformation(oMovedOverlay);
 		var sFragmentPath = oMovedOverlay.getDesignTimeMetadata().getData().templates.create;
-		var sTargetElementType = oParentInfo.parent.getMetadata().getName();
 
-		if (!ChangeRegistry.getInstance().hasChangeHandlerForControlAndChange(sTargetElementType, "addXML")) {
-			var mRegistryItems = {};
-			mRegistryItems[sTargetElementType] = {
-				AddXML: "default"
-			};
-			oPromise = ChangeRegistry.getInstance().registerControlsForChanges(mRegistryItems);
-		}
 
 		//The fragment is loaded here because the AddXML command currently doesn't support the moduleName property and needs the fragment
 		//TODO: Should be removed once the command was adapted to the new change handler logic
-		return oPromise
-		.then(function() {
-			return LoaderExtensions.loadResource(sFragmentPath, {async: true});
-		})
+		return LoaderExtensions.loadResource(sFragmentPath, {async: true})
 		.then(function(oDocument) {
 			if (oDocument) {
 				var oChangeContent = {
@@ -102,36 +90,21 @@ function(
 	//TODO: Legacy code which properly executes all changes on app reload
 	//Should be removed once the AddXML command works properly
 	OutsideElementMover.prototype.buildAddXMLChange = function () {
-		var oPromise = Promise.resolve();
 		var oMovedOverlay = this.getMovedOverlay();
 		var oParentInfo = OverlayUtil.getParentInformation(oMovedOverlay);
 		var sFragmentPath = oMovedOverlay.getDesignTimeMetadata().getData().templates.create;
-		var sTargetElementType = oParentInfo.parent.getMetadata().getName();
-
-		if (!ChangeRegistry.getInstance().hasChangeHandlerForControlAndChange(sTargetElementType, "addXML")) {
-			var mRegistryItems = {};
-			mRegistryItems[sTargetElementType] = {
-				AddXML: "default"
-			};
-			oPromise = ChangeRegistry.getInstance().registerControlsForChanges(mRegistryItems);
-		}
-
-		return oPromise
-		.then(function() {
-			var oChangeContent = {
-				moduleName: sFragmentPath,
-				fragmentPath: sFragmentPath,
-				targetAggregation: oParentInfo.aggregation,
-				index: oParentInfo.index,
-				changeType: "addXML",
-				layer: Layer.VENDOR
-			};
-
-			var oChange = ChangesWriteAPI.create({changeSpecificData: oChangeContent, selector: oParentInfo.parent});
-			PersistenceWriteAPI.add({change: oChange, selector: oParentInfo.parent});
-			PersistenceWriteAPI.save({selector: oParentInfo.parent, skipUpdateCache: false});
-			return oChange;
-		});
+		var oChangeContent = {
+			moduleName: sFragmentPath,
+			fragmentPath: sFragmentPath,
+			targetAggregation: oParentInfo.aggregation,
+			index: oParentInfo.index,
+			changeType: "addXML",
+			layer: Layer.VENDOR
+		};
+		var oChange = ChangesWriteAPI.create({changeSpecificData: oChangeContent, selector: oParentInfo.parent});
+		PersistenceWriteAPI.add({change: oChange, selector: oParentInfo.parent});
+		PersistenceWriteAPI.save({selector: oParentInfo.parent, skipUpdateCache: false});
+		return oChange;
 	};
 
 	return OutsideElementMover;

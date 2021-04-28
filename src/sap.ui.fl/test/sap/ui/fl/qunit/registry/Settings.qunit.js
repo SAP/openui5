@@ -282,6 +282,27 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("static functions", {}, function() {
+		QUnit.test("LayerPermissions", function(assert) {
+			var mExpectedDefaultPermissions = {
+				VENDOR: true,
+				CUSTOMER_BASE: true,
+				CUSTOMER: true,
+				PUBLIC: false,
+				USER: false
+			};
+			var mExpectedDeveloperPermissions = {
+				VENDOR: true,
+				CUSTOMER_BASE: true,
+				CUSTOMER: false,
+				PUBLIC: false,
+				USER: false
+			};
+			assert.deepEqual(Settings.getDefaultLayerPermissions(), mExpectedDefaultPermissions, "the default layer permissions are correct");
+			assert.deepEqual(Settings.getDeveloperModeLayerPermissions(), mExpectedDeveloperPermissions, "the developer mode layer permissions are correct");
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});

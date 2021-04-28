@@ -128,7 +128,7 @@ function (
 		}
 	}, function() {
 		QUnit.test("when change handler is not loaded yet and we have to wait for registration", function(assert) {
-			assert.expect(6);
+			assert.expect(5);
 			sandbox.stub(ChangeRegistry, "waitForChangeHandlerRegistration")
 				.withArgs("library")
 				.callsFake(function() {
@@ -141,9 +141,6 @@ function (
 					assert.equal(sControlType, "sap.ui.core.Control", "the passed property 'sControlType' is correct");
 					assert.equal(sLayer, "layer", "the passed property 'sLayer' is correct");
 					return "changeHandler";
-				},
-				initSettings: function() {
-					assert.ok(true, "the initSettings function was called");
 				}
 			});
 			var mPropertyBag = {

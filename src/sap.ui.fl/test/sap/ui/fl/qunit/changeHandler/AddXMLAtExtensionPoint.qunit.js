@@ -137,7 +137,6 @@ sap.ui.define([
 			assert.ok(this.oChangeHandler.completeChangeContent, "then completeChangeContent function exists");
 			var oChangeRegistryInstance = ChangeRegistry.getInstance();
 			var sLayer = Layer.VENDOR;
-			oChangeRegistryInstance.initSettings();
 			return oChangeRegistryInstance.getChangeHandler("addXMLAtExtensionPoint", "sap.ui.core.mvc.View", undefined, XmlTreeModifier, sLayer).then(function(oChangeHandler) {
 				assert.deepEqual(oChangeHandler, AddXMLAtExtensionPoint, "then changehandler is registered");
 			});

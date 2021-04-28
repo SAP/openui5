@@ -73,8 +73,6 @@ sap.ui.define([
 				var sChangeType = oChange.getChangeType();
 				var sLayer = oChange.getLayer();
 				var oChangeRegistryInstance = ChangeRegistry.getInstance();
-				// make sure to use the most current flex settings that have been retrieved during processView
-				oChangeRegistryInstance.initSettings();
 				return oChangeRegistryInstance.getChangeHandler(sChangeType, mControl.controlType, mControl.control, mPropertyBag.modifier, sLayer);
 			});
 		},

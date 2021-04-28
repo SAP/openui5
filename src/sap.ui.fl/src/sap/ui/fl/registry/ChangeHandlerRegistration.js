@@ -3,6 +3,7 @@
 */
 
 sap.ui.define([
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/fl/changeHandler/UnstashControl"
 ], function(
+	ChangeHandlerStorage,
 	ChangeRegistry,
 	AddXML,
 	AddXMLAtExtensionPoint,
@@ -69,8 +71,7 @@ sap.ui.define([
 
 		_registerFlexChangeHandlers: function (oFlChangeHandlers) {
 			if (oFlChangeHandlers) {
-				var oChangeRegistryInstance = ChangeRegistry.getInstance();
-				return oChangeRegistryInstance.registerControlsForChanges(oFlChangeHandlers);
+				return ChangeHandlerStorage.registerChangeHandlersForLibrary(oFlChangeHandlers);
 			}
 			return Promise.resolve();
 		},
@@ -89,8 +90,12 @@ sap.ui.define([
 			return Promise.resolve();
 		},
 
+		/**
+		 * Registers the predefined change handlers to the <code>ChangeHandlerStorage</code>.
+		 * This includes both default (e.g. <code>UnhideControl</code> or <code>MoveControls</code>) and <code>DeveloperMode</code> change handlers (e.g. <code>AddXML</code> or <code>propertyChange</code>)
+		 */
 		registerPredefinedChangeHandlers: function() {
-			ChangeRegistry.getInstance().registerPredefinedChangeHandlers(mDefaultHandlers, mDeveloperModeHandlers);
+			ChangeHandlerStorage.registerPredefinedChangeHandlers(mDefaultHandlers, mDeveloperModeHandlers);
 		}
 	};
 

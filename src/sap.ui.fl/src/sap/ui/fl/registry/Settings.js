@@ -25,27 +25,6 @@ sap.ui.define([
 		if (!oSettings) {
 			throw new Error("no flex settings provided");
 		}
-		// Defaults layers used for standard changes, such as 'move' or 'add'
-		if (!oSettings.defaultLayerPermissions) {
-			oSettings.defaultLayerPermissions = {
-				VENDOR: true,
-				CUSTOMER_BASE: true,
-				CUSTOMER: true,
-				PUBLIC: false,
-				USER: false
-			};
-		}
-
-		// These are the permissions for the Developer Mode Changes, e.g. 'propertyChange', 'propertyBindingChange'
-		if (!oSettings.developerModeLayerPermissions) {
-			oSettings.developerModeLayerPermissions = {
-				VENDOR: true,
-				CUSTOMER_BASE: true,
-				CUSTOMER: false,
-				PUBLIC: false,
-				USER: false
-			};
-		}
 
 		// By default, variant sharing is enabled
 		if (oSettings.isVariantSharingEnabled === undefined) {
@@ -145,6 +124,34 @@ sap.ui.define([
 	 */
 	Settings.getInstanceOrUndef = function() {
 		return Settings._instance;
+	};
+
+	/**
+	 * Getter for the default layer permissions
+	 * @returns {object} Map with the default layer permissions
+	 */
+	Settings.getDefaultLayerPermissions = function() {
+		return {
+			VENDOR: true,
+			CUSTOMER_BASE: true,
+			CUSTOMER: true,
+			PUBLIC: false,
+			USER: false
+		};
+	};
+
+	/**
+	 * Getter for the developer mode layer permissions
+	 * @returns {object} Map with the default developer mode layer permissions
+	 */
+	Settings.getDeveloperModeLayerPermissions = function() {
+		return {
+			VENDOR: true,
+			CUSTOMER_BASE: true,
+			CUSTOMER: false,
+			PUBLIC: false,
+			USER: false
+		};
 	};
 
 	/**
@@ -285,20 +292,6 @@ sap.ui.define([
 	 */
 	Settings.prototype.getClient = function() {
 		return this._oSettings.client;
-	};
-
-	/**
-	 * Getter for the default Layer-Permissions
-	 */
-	Settings.prototype.getDefaultLayerPermissions = function() {
-		return this._oSettings.defaultLayerPermissions;
-	};
-
-	/**
-	 * Getter for the Developer Mode Layer-Permissions
-	 */
-	Settings.prototype.getDeveloperModeLayerPermissions = function() {
-		return this._oSettings.developerModeLayerPermissions;
 	};
 
 	return Settings;

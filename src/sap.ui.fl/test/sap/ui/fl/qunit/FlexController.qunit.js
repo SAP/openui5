@@ -28,8 +28,7 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	FlexController,
 	Change,
 	Layer,
@@ -207,12 +206,12 @@ function (
 		QUnit.test("if no instance specific change handler exists, _getChangeHandler shall retrieve the ChangeTypeMetadata and extract the change handler", function(assert) {
 			var sControlType = "sap.ui.core.Control";
 			var fChangeHandler = "dummyChangeHandler";
-			sandbox.stub(this.oFlexController, "_getChangeRegistry").returns({getChangeHandler: sandbox.stub().resolves(fChangeHandler)});
+			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(fChangeHandler);
 			return this.oFlexController._getChangeHandler(this.oChange, sControlType, this.oControl, JsControlTreeModifier)
 
-				.then(function(fChangeHandlerActual) {
-					assert.strictEqual(fChangeHandlerActual, fChangeHandler);
-				});
+			.then(function(fChangeHandlerActual) {
+				assert.strictEqual(fChangeHandlerActual, fChangeHandler);
+			});
 		});
 
 		QUnit.test("addChange shall add a change", function(assert) {
@@ -796,57 +795,47 @@ function (
 				}
 			}).setModel(oModel);
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.removeRegistryItem({controlType: "sap.m.List"});
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Text": {
-					hideControl: "default",
-					unhideControl: "default"
+			var oChangeContent = {
+				fileName: "change4711",
+				selector: {
+					id: this.oList.getId(),
+					local: true
+				},
+				dependentSelector: {
+					originalSelector: {
+						id: this.oText.getId(),
+						local: true
+					}
+				},
+				layer: Layer.CUSTOMER,
+				changeType: "hideControl",
+				content: {
+					boundAggregation: "items",
+					removedElement: this.oText.getId() //original selector
 				}
-			})
-			.then(function() {
-				var oChangeContent = {
-					fileName: "change4711",
-					selector: {
-						id: this.oList.getId(),
-						local: true
-					},
-					dependentSelector: {
-						originalSelector: {
-							id: this.oText.getId(),
-							local: true
-						}
-					},
-					layer: Layer.CUSTOMER,
-					changeType: "hideControl",
-					content: {
-						boundAggregation: "items",
-						removedElement: this.oText.getId() //original selector
-					}
-				};
-				this.oChange = new Change(oChangeContent);
+			};
+			this.oChange = new Change(oChangeContent);
 
-				var oChangeContent0815 = {
-					fileName: "change4712",
-					selector: {
-						id: this.oList.getId(),
+			var oChangeContent0815 = {
+				fileName: "change4712",
+				selector: {
+					id: this.oList.getId(),
+					local: true
+				},
+				dependentSelector: {
+					originalSelector: {
+						id: this.oText.getId(),
 						local: true
-					},
-					dependentSelector: {
-						originalSelector: {
-							id: this.oText.getId(),
-							local: true
-						}
-					},
-					layer: Layer.CUSTOMER,
-					changeType: "unhideControl",
-					content: {
-						boundAggregation: "items",
-						revealedElementId: this.oText.getId() //original selector
 					}
-				};
-				this.oChange2 = new Change(oChangeContent0815);
-			}.bind(this));
+				},
+				layer: Layer.CUSTOMER,
+				changeType: "unhideControl",
+				content: {
+					boundAggregation: "items",
+					revealedElementId: this.oText.getId() //original selector
+				}
+			};
+			this.oChange2 = new Change(oChangeContent0815);
 		},
 		afterEach: function() {
 			sandbox.restore();

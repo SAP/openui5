@@ -507,20 +507,7 @@ sap.ui.define([
 	FlexController.prototype._getChangeHandler = function(oChange, sControlType, oControl, oModifier) {
 		var sChangeType = oChange.getChangeType();
 		var sLayer = oChange.getLayer();
-		return this._getChangeRegistry().getChangeHandler(sChangeType, sControlType, oControl, oModifier, sLayer);
-	};
-
-	/**
-	 * Returns the change registry
-	 *
-	 * @returns {sap.ui.fl.registry.ChangeRegistry} Instance of the change registry
-	 * @private
-	 */
-	FlexController.prototype._getChangeRegistry = function() {
-		var oInstance = ChangeRegistry.getInstance();
-		// make sure to use the most current flex settings that have been retrieved during processView
-		oInstance.initSettings();
-		return oInstance;
+		return ChangeRegistry.getInstance().getChangeHandler(sChangeType, sControlType, oControl, oModifier, sLayer);
 	};
 
 	/**

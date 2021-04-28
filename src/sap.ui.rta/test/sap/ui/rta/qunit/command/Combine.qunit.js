@@ -217,7 +217,6 @@ function (
 			}.bind(this));
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.removeRegistryItem({controlType: "sap.m.Text"});
 
 			this.fnApplyChangeSpy = sinon.spy();
 			this.fnCompleteChangeContentSpy = sinon.spy();

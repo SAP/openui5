@@ -28,6 +28,19 @@ sap.ui.define([
 			autostart: true
 		},
 		tests: {
+			"initial/_internal/changeHandlers/ChangeHandlerStorage": {
+				group: "Initial Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage"
+					]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/test/registry": "test-resources/sap/ui/fl/qunit/registry"
+					}
+				}
+			},
 			"initial/_internal/connectors/StaticFileConnector": {
 				group: "Initial Internal",
 				coverage: {
@@ -49,7 +62,7 @@ sap.ui.define([
 				}
 			},
 			"initial/_internal/connectors/PersonalizationConnector": {
-				group: 'Apply Internal',
+				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/initial/_internal/connectors/PersonalizationConnector"]
 				}

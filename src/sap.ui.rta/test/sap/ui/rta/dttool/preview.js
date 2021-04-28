@@ -169,7 +169,7 @@ sap.ui.define([
 			dragDrop: new OutsideDragDrop({
 				elementMover: oOutsideElementMover,
 				commandFactory: oCommandFactory,
-				dragStarted: this.oRta._handleStopCutPaste.bind(this.oRta)
+				dragStarted: this.oRta.getPluginManager().handleStopCutPaste.bind(this.oRta)
 			})
 		};
 		var mExtendedPlugins = Object.assign({}, mPlugins, mPluginExtension);
