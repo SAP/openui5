@@ -14,7 +14,7 @@ sap.ui.define([
 
 	var RCL_RANGE_SET = "RCLRangeSet";
 
-	Device.media.initRangeSet(RCL_RANGE_SET, [600, 1024, 1280, 1440, 1620, 1920], "px", ["S", "M", "ML", "L", "XL", "XXL", "XXXL"], true);
+	Device.media.initRangeSet(RCL_RANGE_SET, [600, 1024, 1280, 1440, 1680, 1920], "px", ["S", "M", "ML", "L", "XL", "XXL", "XXXL"], true);
 
 	/**
 	 * Constructor for a new <code>ResponsiveColumnLayout</code>.
