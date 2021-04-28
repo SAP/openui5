@@ -100,7 +100,7 @@ sap.ui.define([
             }
 
             if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.Legend) < 0) {
-                this._oLegendBtn = new OverflowToggleButton({
+                this._oLegendBtn = new OverflowToggleButton(oMDCChart.getId() +  "btnLegend", {
                     type: "Transparent",
                     text: MDCRb.getText("chart.LEGENDBTN_TEXT"),
                     tooltip: MDCRb.getText("chart.LEGENDBTN_TOOLTIP"),
@@ -113,7 +113,7 @@ sap.ui.define([
             }
 
             if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.ZoomInOut)) {
-                this.oZoomInButton = new OverflowButton({
+                this.oZoomInButton = new OverflowButton(oMDCChart.getId() + "btnZoomIn", {
                     icon: "sap-icon://zoom-in",
                     enabled: false,
                     press: function onZoomOutButtonPressed(oControlEvent) {
@@ -122,7 +122,7 @@ sap.ui.define([
                     }.bind(this)
                 });
 
-                this.oZoomOutButton = new OverflowButton({
+                this.oZoomOutButton = new OverflowButton(oMDCChart.getId() + "btnZoomOut", {
                     icon: "sap-icon://zoom-out",
                     enabled: false,
                     press: function onZoomOutButtonPressed(oControlEvent) {

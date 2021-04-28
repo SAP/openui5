@@ -203,6 +203,7 @@ sap.ui.define([
 		oSubHeader.addContentRight(oSearchField);
 
 		var oPopover = new ResponsivePopover({
+			id: oMDCChart.getId() + "-btnChartTypePopover",
 			placement: "Bottom",
 			subHeader: oSubHeader,
 			contentWidth: "25rem"
@@ -228,6 +229,11 @@ sap.ui.define([
 		if (oList.getItems().length < 7) {
 			oSubHeader.setVisible(false);
 		}
+
+		/*
+		oPopover.attachAfterClose(function(oEvent) {
+			oPopover.destroy();
+		});*/
 
 		return oPopover;
 	};

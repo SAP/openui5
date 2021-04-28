@@ -105,6 +105,7 @@ sap.ui.define([
 		//}.bind(this));
 
 		var oPopover = new ResponsivePopover({
+			id: oMDCChart.getId() + "-drilldownPopover",
 			contentWidth: "25rem",
 			contentHeight: "20rem",
 			placement: PlacementType.Bottom,

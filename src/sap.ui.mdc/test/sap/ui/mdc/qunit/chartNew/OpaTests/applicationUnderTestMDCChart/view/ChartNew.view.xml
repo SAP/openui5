@@ -1,0 +1,49 @@
+<mvc:View id="chartNewView" displayBlock="true"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:f2="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	xmlns:mdcc="sap.ui.mdc.chartNew"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdcl="sap.ui.mdc.link"
+	xmlns:ui="sap.ui"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns="sap.m"
+	controllerName="applicationUnderTestMDCChart.controller.ChartNew">
+		<mdc:ChartNew id="bookChart" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
+				'name': 'sap/ui/mdc/odata/v4/vizChart/ChartDelegateNew',
+				'payload': {
+					collectionName: 'Books'
+				}
+			}" chartType="column" header="Remake Chart" height="400px" width="100%">
+
+				<mdc:selectionDetailsActions>
+				<mdcc:SelectionDetailsActionsNew>
+					<mdcc:detailsItemActions>
+						<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
+						<core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
+					</mdcc:detailsItemActions>
+
+
+					<mdcc:detailsActions>
+						<core:Item key="Action1" text="Action 1"></core:Item>
+						<core:Item key="Action2" text="Action 2"></core:Item>
+					</mdcc:detailsActions>
+
+
+					<mdcc:actionGroups>
+						<core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
+						<core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
+					</mdcc:actionGroups>
+				</mdcc:SelectionDetailsActionsNew>
+			</mdc:selectionDetailsActions>
+
+			<mdc:items>
+				<mdcc:ItemNew id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
+				<mdcc:ItemNew id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (average)"/>
+			</mdc:items>
+		</mdc:ChartNew>
+</mvc:View>
