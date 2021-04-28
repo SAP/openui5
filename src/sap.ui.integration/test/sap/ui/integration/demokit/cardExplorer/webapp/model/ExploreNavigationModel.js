@@ -864,6 +864,27 @@ sap.ui.define([
 								]
 							}
 						]
+					},
+					{
+						title: 'WebPage',
+						target: 'exploreSamples',
+						key: 'webPage',
+						experimental: true,
+						files: [
+							{
+								url: '/samples/webPage/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/webPage/dt/Configuration.js',
+								name: 'dt/Configuration.js',
+								key: 'designtime.js'
+							}
+						],
+						settings: {
+							columns: 7
+						}
 					}
 				]
 			},

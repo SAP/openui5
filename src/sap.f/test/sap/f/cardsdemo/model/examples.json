@@ -60,6 +60,12 @@
 		"group": "Card Type Examples"
 	},
 	{
+		"title": "WebPage Card",
+		"description": "Example page for Integration Card of type WebPage",
+		"route": "webPageContent",
+		"group": "Card Type Examples"
+	},
+	{
 		"title": "Fit Container",
 		"description": "The cards fit the whole container allowing it to dynamically change their sizes.",
 		"route": "splitter",

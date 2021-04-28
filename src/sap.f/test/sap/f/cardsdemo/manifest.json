@@ -97,6 +97,11 @@
 					"target": "tableContent"
 				},
 				{
+					"pattern": "webPageContent",
+					"name": "webPageContent",
+					"target": "webPageContent"
+				},
+				{
 					"pattern": "defaultHeader",
 					"name": "defaultHeader",
 					"target": "defaultHeader"
@@ -261,6 +266,11 @@
 				"tableContent": {
 					"viewId": "tableContent",
 					"viewName": "TableContent",
+					"viewLevel": 1
+				},
+				"webPageContent": {
+					"viewId": "webPageContent",
+					"viewName": "WebPageContent",
 					"viewLevel": 1
 				},
 				"analyticalContent": {

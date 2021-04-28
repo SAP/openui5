@@ -68,6 +68,11 @@ sap.ui.define([
 			"key": "listError",
 			"columns": 5,
 			"manifest": "./cardsdemo/cardcontent/delayedLoading/listManifestError.json"
+		},
+		{
+			"key": "webPage",
+			"columns": 5,
+			"manifest": "./cardsdemo/cardcontent/delayedLoading/webPage/manifest.json"
 		}
 	];
 
@@ -82,6 +87,10 @@ sap.ui.define([
 				oSample = aSamples[iInd];
 				oView.setModel(new JSONModel(oSample.manifest), oSample.key);
 			}
+
+			oView.setModel(new JSONModel({
+				numberOfCards: aSamples.length
+			}));
 
 			// create delayed get data method
 			this._fnGetDataStub = sinon.stub(RequestDataProvider.prototype, "getData");

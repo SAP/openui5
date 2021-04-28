@@ -705,6 +705,7 @@ sap.ui.define([
 		this._enhanceI18nModel(oResourceBundle);
 
 		this._defaultTranslationsLoaded = true;
+		this._oIntegrationRb = oResourceBundle;
 	};
 
 	/**
@@ -1582,11 +1583,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
-		Log.error(sLogMessage);
+		this._loadDefaultTranslations();
+		Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
 
 		this.fireEvent("_error", { message: sLogMessage });
 
-		var sDefaultDisplayMessage = "Unable to load the data.",
+		var sDefaultDisplayMessage = this._oIntegrationRb.getText("CARD_DATA_LOAD_ERROR"),
 			sErrorMessage = sDisplayMessage || sDefaultDisplayMessage,
 			oPreviousContent = this.getAggregation("_content");
 

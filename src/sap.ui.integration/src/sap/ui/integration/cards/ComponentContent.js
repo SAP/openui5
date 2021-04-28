@@ -63,7 +63,7 @@ sap.ui.define([
 			}.bind(this),
 			componentFailed: function () {
 				this.fireEvent("_actionContentReady");
-				this._handleError("Card content failed to create component");
+				this.handleError("Card content failed to create component");
 			}.bind(this)
 		});
 

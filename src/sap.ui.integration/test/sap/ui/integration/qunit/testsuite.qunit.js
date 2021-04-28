@@ -214,6 +214,7 @@ sap.ui.define(function () {
 			"cards/ListCard": {},
 			"cards/TableCard": {},
 			"cards/ObjectCard": {},
+			"cards/WebPageCard": {},
 			"CardFiltering": {
 				coverage: {
 					only: [

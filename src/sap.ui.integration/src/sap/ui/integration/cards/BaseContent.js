@@ -260,7 +260,7 @@ sap.ui.define([
 			});
 
 			this._oDataProvider.attachError(function (oEvent) {
-				this._handleError(oEvent.getParameter("message"));
+				this.handleError(oEvent.getParameter("message"));
 				this.onDataRequestComplete();
 			}.bind(this));
 
@@ -427,9 +427,15 @@ sap.ui.define([
 		return this._bReady;
 	};
 
-	BaseContent.prototype._handleError = function (sLogMessage) {
+	/**
+	 * @protected
+	 * @param {string} sLogMessage Message that will be logged.
+	 * @param {string} [sDisplayMessage] Message that will be displayed in the card's content. If not provided, a default message is displayed.
+	 */
+	BaseContent.prototype.handleError = function (sLogMessage, sDisplayMessage) {
 		this.fireEvent("_error", {
-			logMessage: sLogMessage
+			logMessage: sLogMessage,
+			displayMessage: sDisplayMessage
 		});
 	};
 

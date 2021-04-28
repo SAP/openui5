@@ -297,7 +297,10 @@ describe("sap.f.Card", function () {
 	it("Min-height", function () {
 		navigateTo("Min-height of the Card Content");
 
-		var aCardIds = ["lineChart", "stackedColumnChart", "stackedBarChart", "donutChart", "largeList", "staticData", "noContent", "sapFCardMinHeight"];
+		var aCardIds = [
+			"lineChart", "stackedColumnChart", "stackedBarChart", "donutChart",
+			"largeList", "staticData", "noContent", "sapFCardMinHeight", "webPageCard"
+		];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
@@ -460,6 +463,24 @@ describe("sap.f.Card", function () {
 					id: sId
 				}
 			}, "19_Analytics_Cloud_Content_" + sId);
+		});
+
+		navigateBack();
+	});
+
+	it("WebPage Card", function () {
+		navigateTo("WebPage Card");
+		var aCardIds = ["webPageCardLocal"];
+
+		aCardIds.forEach(function (sId) {
+			takePictureOfElement({
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "WebPageContent",
+					interaction: "root",
+					id: sId
+				}
+			}, "20_WebPage_Card_" + sId);
 		});
 
 		navigateBack();

@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/cards/ObjectContent",
 	"sap/ui/integration/cards/TableContent",
-	"sap/ui/integration/cards/TimelineContent"
+	"sap/ui/integration/cards/TimelineContent",
+	"sap/ui/integration/cards/WebPageContent"
 ], function (
 	BaseFactory,
 	CardActions,
@@ -24,7 +25,8 @@ sap.ui.define([
 	ListContent,
 	ObjectContent,
 	TableContent,
-	TimelineContent
+	TimelineContent,
+	WebPageContent
 ) {
 	"use strict";
 
@@ -122,6 +124,8 @@ sap.ui.define([
 				return TableContent;
 			case "timeline":
 				return TimelineContent;
+			case "webpage":
+				return WebPageContent;
 			default:
 				return null;
 		}

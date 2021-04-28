@@ -236,7 +236,7 @@ sap.ui.define([
 
 	QUnit.test("AnalyticsCloud card - default min height", function (assert) {
 		var sType = "AnalyticsCloud",
-		sExpectedMinHeight = "14rem",
+			sExpectedMinHeight = "14rem",
 			oConfiguration = {};
 
 		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
@@ -254,14 +254,32 @@ sap.ui.define([
 
 	QUnit.test("Component card - default min height", function (assert) {
 		var sType = "Component",
-		sExpectedMinHeight = "5rem",
+			sExpectedMinHeight = "5rem",
 			oConfiguration = {};
 
 		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
 	});
 
 	QUnit.test("Component card - configuring min height", function (assert) {
-		var sType = "AnalyticsCloud",
+		var sType = "Component",
+			sExpectedMinHeight = "20rem",
+			oConfiguration = {
+				minHeight: sExpectedMinHeight
+			};
+
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+	});
+
+	QUnit.test("WebPage card - default min height", function (assert) {
+		var sType = "WebPage",
+			sExpectedMinHeight = "150px",
+			oConfiguration = {};
+
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, undefined), sExpectedMinHeight, "Min height in cozy must be " + sExpectedMinHeight);
+	});
+
+	QUnit.test("WebPage card - configuring min height", function (assert) {
+		var sType = "WebPage",
 			sExpectedMinHeight = "20rem",
 			oConfiguration = {
 				minHeight: sExpectedMinHeight
