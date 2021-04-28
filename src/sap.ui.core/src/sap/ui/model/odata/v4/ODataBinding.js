@@ -413,7 +413,6 @@ sap.ui.define([
 			this.oModel.oRequestor.ready()
 		];
 		this.mCacheQueryOptions = undefined;
-		this.mLateQueryOptions = undefined;
 		this.oFetchCacheCallToken = oCallToken;
 		this.oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var mQueryOptions = aResult[0].mQueryOptions;

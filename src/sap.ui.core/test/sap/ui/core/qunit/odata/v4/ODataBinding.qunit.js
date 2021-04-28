@@ -952,11 +952,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: no own cache", function (assert) {
-		var oBinding = new ODataBinding({
+		var mLateQueryOptions = {},
+			oBinding = new ODataBinding({
 				oCache : null,
 				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
-				mLateQueryOptions : {},
+				mLateQueryOptions : mLateQueryOptions,
 				oModel : {
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
@@ -980,7 +981,7 @@ sap.ui.define([
 		oBinding.fetchCache(oContext);
 
 		assert.strictEqual(oBinding.oCache, undefined);
-		assert.strictEqual(oBinding.mLateQueryOptions, undefined);
+		assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
 		assert.ok(oBinding.oCachePromise.isPending());
 
 		return oBinding.oCachePromise.then(function () {
@@ -993,11 +994,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: absolute binding", function (assert) {
-		var oBinding = new ODataBinding({
+		var mLateQueryOptions = {},
+			oBinding = new ODataBinding({
 				oCache : null,
 				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
-				mLateQueryOptions : {},
+				mLateQueryOptions : mLateQueryOptions,
 				oModel : {
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
@@ -1028,7 +1030,7 @@ sap.ui.define([
 		// code under test
 		oBinding.fetchCache(oContext, bIgnoreParentCache);
 
-		assert.strictEqual(oBinding.mLateQueryOptions, undefined);
+		assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
 		assert.ok(oBinding.oCachePromise.isPending());
 
 		return oBinding.oCachePromise.then(function () {
@@ -1041,11 +1043,12 @@ sap.ui.define([
 	// fixture is [bQueryOptionsAsync, bResourcePathAsync]
 	[[false, false], [false, true], [true, false], [true, true]].forEach(function (aFixture) {
 		QUnit.test("fetchCache: relative binding with context, " + aFixture, function (assert) {
-			var oBinding = new ODataBinding({
+			var mLateQueryOptions = {},
+				oBinding = new ODataBinding({
 					oCache : null,
 					oCachePromise : SyncPromise.resolve(null),
 					doCreateCache : function () {},
-					mLateQueryOptions : {},
+					mLateQueryOptions : mLateQueryOptions,
 					oModel : {
 						oRequestor : {
 							ready : function () { return SyncPromise.resolve(); }
@@ -1091,7 +1094,7 @@ sap.ui.define([
 
 			assert.strictEqual(oBinding.oCache,
 				!bQueryOptionsAsync && !bResourcePathAsync ? oCache : undefined);
-			assert.strictEqual(oBinding.mLateQueryOptions, undefined);
+			assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
 			assert.strictEqual(oBinding.oCachePromise.isFulfilled(),
 				!bQueryOptionsAsync && !bResourcePathAsync);
 

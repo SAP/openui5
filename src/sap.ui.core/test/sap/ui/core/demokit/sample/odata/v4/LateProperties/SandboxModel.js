@@ -34,6 +34,10 @@ sap.ui.define([
 				"GET SalesOrderList('0500000002')/SO_2_SCHDL('FA163E7AD4F11EE9B3F785A8E1242A14')?custom-option=value&$select=DeliveryDate" : {
 					source : "SalesOrderList(0500000002)-SO_2_SCHDL(FA163E7AD4F11EE9B3F785A8E1242A14)-DeliveryDate.json"
 				},
+				// TODO remove this again, DeliveryDate must actually be a late property
+				"SalesOrderList('0500000003')/SO_2_SCHDL?custom-option=value&$select=DeliveryDate,ItemKey,ScheduleKey&$skip=0&$top=100" : {
+					source : "SalesOrderList(0500000003)-SO_2_SCHDL.json"
+				},
 				"SalesOrderList('0500000003')/SO_2_SCHDL?custom-option=value&$select=ItemKey,ScheduleKey&$skip=0&$top=100" : {
 					source : "SalesOrderList(0500000003)-SO_2_SCHDL.json"
 				},
