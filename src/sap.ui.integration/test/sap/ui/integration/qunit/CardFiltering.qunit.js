@@ -102,7 +102,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
-
+			// Act
 			this.oCard.getModel("filters").setProperty("/shipper/value", "43");
 
 			Core.applyChanges();
@@ -115,7 +115,7 @@ sap.ui.define([
 		}.bind(this));
 
 		// Act
-		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_no_data.json");
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardFilteringNoDataForFilter/manifest.json");
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
