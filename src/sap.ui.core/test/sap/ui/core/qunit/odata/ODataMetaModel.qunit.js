@@ -3637,7 +3637,6 @@ sap.ui.define([
 		this.mock(oCodeListModel).expects("read")
 			.withExactArgs("/~CollectionPath", sinon.match.object)
 			.callsFake(function (sPath, mParams) {
-				assert.deepEqual(mParams.urlParameters, {$skip : 0, $top : 5000});
 				fnResolveReadCalled(mParams.success);
 			});
 		this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
@@ -3715,7 +3714,6 @@ sap.ui.define([
 			.withExactArgs("/~CollectionPath", sinon.match.object)
 			.callsFake(function (sPath, mParams) {
 				mParams.success({results : []});
-				assert.deepEqual(mParams.urlParameters, {$skip : 0, $top : 5000});
 			});
 		this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
 			.returns(oCodeListModelMetaModel);

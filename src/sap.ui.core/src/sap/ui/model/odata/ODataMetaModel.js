@@ -586,8 +586,7 @@ sap.ui.define([
 			oReadPromise = new Promise(function (fnResolve, fnReject) {
 				oCodeListModel.read("/" + sCollectionPath, {
 					error : fnReject,
-					success : fnResolve,
-					urlParameters : {$skip : 0, $top : 5000} // avoid server side paging
+					success : fnResolve
 				});
 			});
 
