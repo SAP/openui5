@@ -12,6 +12,19 @@
 				</Bar>
 			</subHeader>
 			<MessageStrip type="Information" text="Modifications of values in this editor are not saved, neither included in the card bundle zip."></MessageStrip>
+			<Label text="Translation Language" visible="{=  ${config>/mode} === 'translation'}" class="sapMLabel sapUiSmallMarginEnd"></Label>
+			<Select 
+			    autoAdjustWidth="true"
+				visible="{=  ${config>/mode} === 'translation'}"
+				change=".onSwitchLanguage"
+				class="sapMComboBox">
+				<items>
+					<core:Item key="en" text="English" />
+					<core:Item key="fr" text="Français" />
+					<core:Item key="de" text="Deutsch" />
+					<core:Item key="zh_CN" text="简体中文" />
+                </items>
+			</Select>
 			<editor:CardEditor
 				card="{config>/cardId}"
 				mode="{config>/mode}"

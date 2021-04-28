@@ -1468,6 +1468,8 @@ sap.ui.define([
 	CardEditor.prototype._getBaseUrl = function () {
 		if (this._oEditorCard && this._oEditorCard.isReady()) {
 			return this._oEditorCard.getBaseUrl() || this.oCardEditor._oEditorCard._oCardManifest.getUrl();
+		} else if (this._oEditorCard) {
+			return this._oEditorCard.getBaseUrl();
 		}
 		return "";
 	};
