@@ -1774,9 +1774,15 @@ sap.ui.define([
 	*/
 	Calendar.prototype._handleFocus = function (oEvent) {
 
-		var oDate = CalendarDate.fromLocalJSDate(oEvent.getParameter("date"), this.getPrimaryCalendarType());
-		var bOtherMonth = oEvent.getParameter("otherMonth");
-		var bRestoreOldDate = oEvent.getParameter("restoreOldDate");
+		var oDate = CalendarDate.fromLocalJSDate(oEvent.getParameter("date"), this.getPrimaryCalendarType()),
+			bOtherMonth = oEvent.getParameter("otherMonth"),
+			bRestoreOldDate = oEvent.getParameter("restoreOldDate");
+
+		if (this.getIntervalSelection()) {
+			this.getAggregation("month").forEach(function(oMonth) {
+				oMonth.setProperty("_focusedDate", oDate);
+			});
+		}
 
 		if (bRestoreOldDate) {
 			// in multimonth mode stay at the last focused date

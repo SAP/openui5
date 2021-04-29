@@ -705,18 +705,6 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(aItemsMarkedAsBetween.length, 0, "No dates marked yet");
 
-			// Act
-			// Simulate arrow right/down (sapnext) and focusing on the 20th date
-			oMonth._oItemNavigation.focusItem(20, {
-				type: "sapnext"
-			});
-
-			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
-
-			// Assert
-			assert.strictEqual(aItemsMarkedAsBetween.length, 5,
-				"5 dates (15, 16, 17, 18, 19) have been marked as 'between' dates");
-
 			oMonth.destroy();
 		});
 

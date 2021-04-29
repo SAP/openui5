@@ -227,7 +227,12 @@ describe("sap.ui.unified.CalendarVisual", function() {
 				browser.actions().dragAndDrop(element(by.id(sStartDateId)), element(by.id(sEndDateId))).perform(); // old interval unselected, 20-30 selected, 30 focused
 				expect(takeScreenshot(oCal)).toLookAs("073_select_interval_move");
 			}
-		});
+
+			_initCalendar("2");
+			browser.actions().sendKeys(protractor.Key.ENTER).perform();
+			browser.actions().sendKeys(protractor.Key.PAGE_UP).perform();
+			expect(takeScreenshot(oCal)).toLookAs("074_select_interval_unfinished");
+		}, iDefaultTimeout);
 	}
 
 	function multiDaySelection(){
@@ -300,7 +305,7 @@ describe("sap.ui.unified.CalendarVisual", function() {
 				browser.actions().sendKeys(protractor.Key.PAGE_DOWN).perform();  // switch to January-April, focus on January 30
 				expect(takeScreenshot(oCal)).toLookAs("103_multiple_month_keyboard_Page_Down2");
 			}
-		});
+		}, iDefaultTimeout);
 
 		it("sap.ui.unified.calendar.Header looks OK when chinese language is set", function() {
 			_initCalendar("70");
@@ -344,7 +349,7 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			browser.actions().sendKeys(protractor.Key.ENTER).perform(); // Month switch to Jul - Aug
 			element(by.css("[data-sap-day='20150827']")).click(); // Select a day after max date
 			expect(takeScreenshot(oCal)).toLookAs("116_24_august_focused"); // Max date is focused
-		});
+		}, iDefaultTimeout);
 	}
 
 	function _initCalendar(sVersion) {
