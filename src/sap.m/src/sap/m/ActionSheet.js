@@ -302,7 +302,7 @@ sap.ui.define([
 			}
 
 			if (!Device.system.phone) {
-			//create a Popover instance for iPad
+				//create a Popover instance for iPad
 				this._parent = new Popover({
 					placement: this.getPlacement(),
 					showHeader: false,
@@ -328,25 +328,6 @@ sap.ui.define([
 					ariaLabelledBy: this.getPopupHiddenLabelId() || undefined
 				}).addStyleClass("sapMActionSheetPopover");
 				this._parent._setAriaRoleApplication(true);
-
-				/* TODO remove after the end of support for Internet Explorer */
-				if (Device.browser.internet_explorer) {
-					this._parent._fnAdjustPositionAndArrow = jQuery.proxy(function() {
-						Popover.prototype._adjustPositionAndArrow.apply(this);
-
-						var $this = this.$(),
-							fContentWidth = $this.children(".sapMPopoverCont")[0].getBoundingClientRect().width;
-						jQuery.each($this.find(".sapMActionSheet > .sapMBtn"), function(index, oButtonDom){
-							var $button = jQuery(oButtonDom),
-								fButtonWidth;
-							$button.css("width", "");
-							fButtonWidth = oButtonDom.getBoundingClientRect().width;
-							if (fButtonWidth <= fContentWidth) {
-								$button.css("width", "100%");
-							}
-						});
-					}, this._parent);
-				}
 			} else {
 				//create a Dialog instance for the rest
 				this._parent = new Dialog({
