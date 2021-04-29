@@ -2890,23 +2890,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("adjustPredicates: nothing to do", function (assert) {
-		var oModel = {
-				getDependentBindings : function () {}
-			},
-			oContext = Context.create(oModel, {}, "/SalesOrderList('42')/SO_2_BP"),
-			fnPathChanged = sinon.spy();
-
-		this.mock(oModel).expects("getDependentBindings").never();
-
-		// code under test
-		oContext.adjustPredicate("($uid=1)", "('42')", fnPathChanged);
-
-		assert.strictEqual(oContext.sPath, "/SalesOrderList('42')/SO_2_BP");
-		sinon.assert.callCount(fnPathChanged, 0);
-	});
-
-	//*********************************************************************************************
 [false, true].forEach(function (bCallback) {
 	QUnit.test("adjustPredicates: callback=" + bCallback, function (assert) {
 		var oBinding = {},
@@ -2937,23 +2920,6 @@ sap.ui.define([
 		}
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("adjustPredicate: transient predicate as key property value", function (assert) {
-		var oBinding = {},
-			oModel = {
-				getDependentBindings : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/foo(bar='($uid=1)')");
-
-		this.mock(oModel).expects("getDependentBindings").withExactArgs(sinon.match.same(oContext))
-			.returns([]);
-
-		// code under test
-		oContext.adjustPredicate("($uid=1)", "('42')");
-
-		assert.strictEqual(oContext.sPath, "/foo(bar='($uid=1)')");
-	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSuccess) {

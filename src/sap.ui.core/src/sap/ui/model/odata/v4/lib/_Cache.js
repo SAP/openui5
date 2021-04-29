@@ -525,6 +525,7 @@ sap.ui.define([
 								aSegments.slice(iEntityPathLength, iPathLength).join("/"))
 							|| invalidSegment(sSegment);
 					}
+					// inside a transient entity, implicit values are determined as follows
 					if (oProperty.$kind === "NavigationProperty") {
 						return null;
 					}
@@ -568,7 +569,7 @@ sap.ui.define([
 					iEntityPathLength = i;
 				}
 				oParentValue = vValue;
-				bTransient = bTransient || _Helper.getPrivateAnnotation(vValue, "transient");
+				bTransient = bTransient || vValue["@$ui5.context.isTransient"];
 				aMatches = rSegmentWithPredicate.exec(sSegment);
 				if (aMatches) {
 					if (aMatches[1]) { // e.g. "TEAM_2_EMPLOYEES('42')

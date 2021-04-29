@@ -1215,16 +1215,14 @@ sap.ui.define([
 		}
 	}
 
-	// #doDeregisterChangeListener is not final, allow for "super" calls
-	asODataBinding.prototype.doDeregisterChangeListener
-		= ODataBinding.prototype.doDeregisterChangeListener;
-	// #destroy is not final, allow for "super" calls
-	asODataBinding.prototype.destroy = ODataBinding.prototype.destroy;
-	// #fetchCache is not final, allow for "super" calls
-	asODataBinding.prototype.fetchCache = ODataBinding.prototype.fetchCache;
-	// #hasPendingChangesForPath is not final, allow for "super" calls
-	asODataBinding.prototype.hasPendingChangesForPath
-		= ODataBinding.prototype.hasPendingChangesForPath;
+	[
+		"destroy",
+		"doDeregisterChangeListener",
+		"fetchCache",
+		"hasPendingChangesForPath"
+	].forEach(function (sMethod) { // method not final, allow for "super" calls
+		asODataBinding.prototype[sMethod] = ODataBinding.prototype[sMethod];
+	});
 
 	return asODataBinding;
 }, /* bExport= */ false);

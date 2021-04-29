@@ -1109,10 +1109,8 @@ sap.ui.define([
 				that.fetchCache(that.oContext);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
 				// binding hierarchy causing a flood of events.
-				oPromise = bHasChangeListeners
-					? that.createRefreshPromise()
-					: SyncPromise.resolve();
-				if (bKeepCacheOnError) {
+				oPromise = bHasChangeListeners ? that.createRefreshPromise() : undefined;
+				if (bKeepCacheOnError && oPromise) {
 					oPromise = oPromise.catch(function (oError) {
 						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
 							if (!that.bRelative || oCache.$resourcePath === sResourcePath) {
@@ -1166,9 +1164,8 @@ sap.ui.define([
 		if (this.mLateQueryOptions) {
 			_Helper.aggregateExpandSelect(this.mCacheQueryOptions, this.mLateQueryOptions);
 		}
-		oCache = _Cache.createSingle(oModel.oRequestor,
-			this.oReturnValueContext.getPath().slice(1), this.mCacheQueryOptions, true,
-			oModel.bSharedRequests);
+		oCache = _Cache.createSingle(oModel.oRequestor, oContext.getPath().slice(1),
+			this.mCacheQueryOptions, true, oModel.bSharedRequests);
 		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		this.createReadGroupLock(sGroupId, true);

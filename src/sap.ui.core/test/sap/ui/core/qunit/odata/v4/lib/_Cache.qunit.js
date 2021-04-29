@@ -1293,9 +1293,7 @@ sap.ui.define([
 	QUnit.test("_Cache#drillDown: transient entity, missing simple properties", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Products"),
 			oData = [{
-				"@$ui5._" : {
-					"transient" : "update"
-				}
+				"@$ui5.context.isTransient" : true
 			}],
 			oHelperMock = this.mock(_Helper);
 
@@ -1349,11 +1347,7 @@ sap.ui.define([
 				assert.strictEqual(sValue, "");
 			})
 		]).then(function () {
-			assert.deepEqual(oData[0], {
-				"@$ui5._" : {
-					"transient" : "update"
-				}
-			}, "cache unchanged");
+			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
 		});
 	});
 
@@ -1361,9 +1355,7 @@ sap.ui.define([
 	QUnit.test("_Cache#drillDown: transient entity, missing complex properties", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "BusinessPartners"),
 			oData = [{
-				"@$ui5._" : {
-					"transient" : "update"
-				}
+				"@$ui5.context.isTransient" : true
 			}];
 
 		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
@@ -1409,11 +1401,7 @@ sap.ui.define([
 					assert.strictEqual(sValue, "0.0");
 				})
 		]).then(function () {
-			assert.deepEqual(oData[0], {
-				"@$ui5._" : {
-					"transient" : "update"
-				}
-			}, "cache unchanged");
+			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
 		});
 	});
 
@@ -1421,9 +1409,7 @@ sap.ui.define([
 	QUnit.test("_Cache#drillDown: transient entity, navigation property", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrders"),
 			oData = [{
-				"@$ui5._" : {
-					"transient" : "update"
-				}
+				"@$ui5.context.isTransient" : true
 			}];
 
 		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
@@ -1441,11 +1427,7 @@ sap.ui.define([
 		return oCache.drillDown(oData, "($uid=id-1-23)/SO_2_BP/Name").then(function (sValue) {
 			assert.strictEqual(sValue, undefined);
 		}).then(function () {
-			assert.deepEqual(oData[0], {
-				"@$ui5._" : {
-					"transient" : "update"
-				}
-			}, "cache unchanged");
+			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
 		});
 	});
 
