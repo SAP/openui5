@@ -584,7 +584,8 @@
 			"sap.m.sample.IconTabBarTabDensityMode",
 			"sap.m.sample.IconTabBarResponsivePadding",
 			"sap.m.sample.IconTabBarSubTabs",
-			"sap.m.sample.IconTabBarBadges"
+			"sap.m.sample.IconTabBarBadges",
+			"sap.m.sample.IconTabBarStartAndEndOverflow"
 		  ]
 		},
 		{
@@ -2041,6 +2042,11 @@
 		  "id": "sap.m.sample.IconTabBarBadges",
 		  "name": "Icon Tab Bar - Badges",
 		  "description": "This sample illustrates the possibility to add badges to the icon tab filters."
+		},
+		{
+			"id": "sap.m.sample.IconTabBarStartAndEndOverflow",
+			"name": "Icon Tab Bar - Start and End Overflow",
+			"description": "This sample illustrates the start and end overflow mode of the Icon Tab Bar."
 		},
 		{
 		  "id": "sap.m.sample.IconTabHeader",

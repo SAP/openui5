@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/CustomData",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/m/Panel"
+	"sap/m/Panel",
+	"sap/m/library"
 ], function(
 	QUnitUtils,
 	KeyCodes,
@@ -25,9 +26,13 @@ sap.ui.define([
 	InvisibleMessage,
 	CustomData,
 	createAndAppendDiv,
-	Panel
+	Panel,
+	Library
 ) {
 	"use strict";
+
+	// shortcut for sap.m.TabsOverflowMode
+	var TabsOverflowMode = Library.TabsOverflowMode;
 
 	var DOM_RENDER_LOCATION = "content";
 	var oRB = Core.getLibraryResourceBundle("sap.m");
@@ -174,7 +179,6 @@ sap.ui.define([
 	QUnit.test("when first item is truncated, more button is still visible", function(assert) {
 		// arrange
 		var oITH = createHeaderWithItems(2),
-			oFirstItem = oITH.getItems()[0],
 			oContainer = new Panel({
 				width: "50px",
 				content: [oITH]
@@ -184,7 +188,6 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.ok(oFirstItem.$().hasClass("sapMITBFilterTruncated"), "the first item is truncated");
 		assert.ok(oITH._getOverflow().$().hasClass("sapMITHOverflowVisible"), "the more button is visible");
 
 		// clean up
@@ -851,5 +854,44 @@ sap.ui.define([
 		assert.strictEqual(oOverflowTab._oPopover.$().find("li[data-a]").attr('data-a'), "b", "custom data attribute is correctly cloned");
 
 		oOverflowTab._closePopover();
+	});
+
+	QUnit.module("Tabs Overflow Mode", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader({
+				tabsOverflowMode: TabsOverflowMode.StartAndEnd
+			});
+
+			// Arrange
+			fillWithItems(this.oITH, 100);
+
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Tabs go in the startOverflow", function (assert) {
+
+		var oTargetTab = this.oITH.getItems()[0];
+
+		// Assert
+		var aVisibleTabs = this.oITH.$().find(".sapMITBItem:not(.sapMITBFilterHidden)").toArray();
+		assert.notStrictEqual(aVisibleTabs.indexOf(oTargetTab.getDomRef()), -1, "The target tab is in the tab strip");
+		assert.notStrictEqual(this.oITH._getItemsInStrip().indexOf(oTargetTab), -1, "The target tab is in the tab strip");
+		assert.strictEqual(oTargetTab._isInStartOverflow(), false, "The target tab is not in the startOverflow");
+
+		// Act
+		this.oITH.setSelectedKey("50");
+		Core.applyChanges();
+
+		// Assert
+		aVisibleTabs = this.oITH.$().find(".sapMITBItem:not(.sapMITBFilterHidden)").toArray();
+		assert.strictEqual(aVisibleTabs.indexOf(oTargetTab.getDomRef()), -1, "The target tab is not in the tab strip");
+		assert.strictEqual(this.oITH._getItemsInStrip().indexOf(oTargetTab), -1, "The target tab is not in the tab strip");
+		assert.strictEqual(oTargetTab._isInStartOverflow(), true, "The target tab is in the startOverflow");
+
 	});
 });

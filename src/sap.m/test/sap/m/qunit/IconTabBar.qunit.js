@@ -2348,7 +2348,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering", function (assert) {
-		assert.strictEqual(this.oIconTabBar.$().find('.sapMITHOverflow .sapMITHShowSubItemsIcon').length, 1, "Overflow button is rendered");
+		assert.strictEqual(this.oIconTabBar.$().find('.sapMITHEndOverflow .sapMITHShowSubItemsIcon').length, 1, "Overflow button is rendered");
 
 		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 

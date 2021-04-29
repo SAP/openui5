@@ -24,6 +24,9 @@ sap.ui.define([
 	// shortcut for sap.m.IconTabDensityMode
 	var IconTabDensityMode = library.IconTabDensityMode;
 
+	// shortcut for sap.m.TabsOverflowMode
+	var TabsOverflowMode = library.TabsOverflowMode;
+
 	/**
 	 * Constructor for a new IconTabBar.
 	 *
@@ -229,7 +232,17 @@ sap.ui.define([
 			 * <code>headerDescription</code> - text to serve as a description for the header.
 			 * @since 1.78
 			 */
-			ariaTexts : {type : "object", group : "Accessibility", defaultValue : null}
+			ariaTexts : {type : "object", group : "Accessibility", defaultValue : null},
+
+			/**
+			 * Specifies the overflow mode of the header.
+			 *
+			 * The default <code>End</code> mode shows as many tabs that can fit on the screen, then shows one overflow at the end
+			 * containing the remaining items.
+			 * The <code>StartAndEnd</code> is used to keep the order of tabs intact and offers two overflow tabs on both ends of the bar.
+			 * @since 1.90
+			 */
+			tabsOverflowMode: {type : "sap.m.TabsOverflowMode", group : "Behavior", defaultValue : TabsOverflowMode.End}
 		},
 		aggregations : {
 
@@ -606,6 +619,7 @@ sap.ui.define([
 			$ITH = oITH.$();
 
 		oITH.setMaxNestingLevel(this.getMaxNestingLevel());
+		oITH.setTabsOverflowMode(this.getTabsOverflowMode());
 
 		if (this._bStickyContentSticked && $ITH) {
 			delete this._bStickyContentSticked;
