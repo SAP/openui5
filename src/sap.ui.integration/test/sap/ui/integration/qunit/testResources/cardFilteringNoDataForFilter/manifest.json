@@ -1,0 +1,56 @@
+{
+	"sap.app": {
+		"id": "test.filters.noDataForFilterCard",
+		"type": "card",
+		"title": "Sample of a Card with filters"
+	},
+	"sap.card": {
+		"configuration": {
+			"filters": {
+				"shipper": {
+					"value": "3",
+					"type": "string",
+					"label": "Shipper",
+					"description": "Filter the orders by shipper.",
+					"items": [
+						{
+							"title": "empty shipper",
+							"key": "43"
+						},
+						{
+							"title": "3",
+							"key": "3"
+						}
+					]
+				}
+			},
+			"parameters": {
+				"selectedShipperID": {
+					"value": 3,
+					"type": "integer",
+					"label": "The default selected shipper"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "./ShipperId{filters>/shipper/value}.json"
+			},
+			"path": "/value/"
+		},
+		"type": "List",
+		"designtime": "dt/Configuration",
+		"header": {
+			"title": "Orders by shipper {filters>/shipper/selectedItem/title}",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{ShipName}",
+				"description": "{ShipAddress}"
+			}
+		}
+	}
+}

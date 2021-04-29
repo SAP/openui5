@@ -409,7 +409,9 @@ sap.ui.define([
 				return;
 			}
 
-			oAggregation = oControl.getAggregation(sAggregation) || [];
+			// Use high level getter for aggregation - getItems(), getContent(), ...
+			// Some controls like ListBase override the getter and it should be used.
+			oAggregation = oControl.getMetadata().getAggregation(sAggregation).get(oControl);
 			oParamsModel.setProperty("/visibleItems", oAggregation.length);
 		});
 
