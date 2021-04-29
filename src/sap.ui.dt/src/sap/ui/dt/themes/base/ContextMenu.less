@@ -92,13 +92,3 @@
 	}
 
 }
-
-// Special handling for IE and EDGE Browsers
-html[data-sap-ui-browser^="ie"] .sapUiDtContextMenu button.sapMBtn:focus .sapMBtnFocusDiv,
-html[data-sap-ui-browser^="ed"] .sapUiDtContextMenu button.sapMBtn:focus .sapMBtnFocusDiv {
-	border: none;
-}
-// because the Button-Control sets a specific rule for IE, we have to define the display here again
-html[data-sap-ui-browser*='ie'] .sapUiDtContextMenu button .sapMBtnInner {
-	display: block;
-}
