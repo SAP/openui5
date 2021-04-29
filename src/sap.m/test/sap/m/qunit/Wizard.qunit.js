@@ -3,10 +3,11 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core",
+	"sap/ui/Device",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
 	"sap/ui/base/ObjectPool"
-], function(QUnitUtils, Core, Wizard, WizardStep, ObjectPool) {
+], function(QUnitUtils, Core, Device, Wizard, WizardStep, ObjectPool) {
 	var Log = sap.ui.require("sap/base/Log");
 
 
@@ -136,6 +137,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ScrollHandler methods check", function (assert) {
+
 		var oStub,
 			oSpyPreviousStep,
 			oSpyNextStep,
@@ -143,6 +145,11 @@ sap.ui.define([
 			oWizard = new Wizard({
 				steps: [ new WizardStep(), new WizardStep(), new WizardStep() ]
 			});
+
+		// test is failing in IE, because it's too early for the browser to calculate scrollTop position.
+		this.stub(Device, "browser", {
+			internet_explorer : false
+		});
 
 		// Arrange
 		oSpyPreviousStep = sinon.spy(oWizard._getProgressNavigator(), "previousStep");
