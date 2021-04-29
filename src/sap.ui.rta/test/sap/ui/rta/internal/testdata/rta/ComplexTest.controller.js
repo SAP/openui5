@@ -90,6 +90,11 @@ sap.ui.define([
 								enabled: true
 							};
 
+							var sTableDataURL = this._sResourcePath + "/TableData.json";
+							var oTableData = jQuery.sap.syncGetJSON(sTableDataURL).data;
+							var oTableModel = new JSONModel(oTableData.ProductCollection);
+							oView.setModel(oTableModel, "ProductCollection");
+
 							var oStateModel = new JSONModel();
 							oStateModel.setData(data);
 							oView.setModel(oStateModel, "state");

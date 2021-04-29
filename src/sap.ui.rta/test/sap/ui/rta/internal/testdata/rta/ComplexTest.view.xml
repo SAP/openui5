@@ -514,7 +514,45 @@
 
 				</form:Form>
 			</sap.ui.layout:VerticalLayout>
-
+			<sap.ui.layout:VerticalLayout id="tableLayout" width="100%">
+				<Table id="idProductsTable"
+					items="{ path: 'ProductCollection>/'}"
+					inset="false">
+					<columns>
+						<Column
+							width="12em">
+							<Text text="Product" />
+						</Column>
+						<Column>
+							<Text text="Supplier" />
+						</Column>
+						<Column>
+							<Text text="Category" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem id="TableItem">
+							<cells>
+								<ObjectIdentifier
+									title="{ProductCollection>Name}"
+									text="{ProductCollection>ProductId}"/>
+								<Text id="TableText"
+									text="{ProductCollection>SupplierName}" />
+								<sap.ui.layout:VerticalLayout id="columnLayout">
+									<Text id="LayoutText01"
+										text="{ProductCollection>MainCategory}" />
+									<sap.ui.layout:VerticalLayout id="columnLayout02">	
+										<Text id="LayoutText02"
+											text="{ProductCollection>Category}" />
+										<Text id="LayoutText03"
+											text="{ProductCollection>Status}" />
+									</sap.ui.layout:VerticalLayout>
+								</sap.ui.layout:VerticalLayout>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</sap.ui.layout:VerticalLayout>
 		</content>
 	</Page>
 </mvc:View>
