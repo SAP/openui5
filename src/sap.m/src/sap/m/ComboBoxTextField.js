@@ -114,13 +114,6 @@ sap.ui.define([
 					oIcon.addAssociation("ariaLabelledBy", sLabelId, true);
 				}
 			}, this);
-
-			//Creates an invisible aria node for the given message bundle text in the static UIArea for ARIA announcements.
-			if (!this.oInvisibleText && Device.browser.msie) {
-				this.oInvisibleText = new InvisibleText(this.getId() + '-describedby', {
-					text: oRb.getText("ACC_CTR_TYPE_COMBO")
-				}).toStatic();
-			}
 		};
 
 		/**
@@ -204,12 +197,6 @@ sap.ui.define([
 
 		ComboBoxTextField.prototype.exit = function() {
 			InputBase.prototype.exit.apply(this, arguments);
-
-			//destroy the already created invisible text
-			if (this.oInvisibleText) {
-				this.oInvisibleText.destroy();
-				this.oInvisibleText = null;
-			}
 		};
 
 		return ComboBoxTextField;
