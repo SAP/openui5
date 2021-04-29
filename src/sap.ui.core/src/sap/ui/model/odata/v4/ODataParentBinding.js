@@ -189,8 +189,8 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, sBaseMetaPath,
 			bCacheImmutable) {
-		var mAggregatedQueryOptionsClone
-				= _Helper.merge({}, this.mAggregatedQueryOptions, this.mLateQueryOptions),
+		var mAggregatedQueryOptionsClone = _Helper.merge({},
+				bCacheImmutable && this.mLateQueryOptions || this.mAggregatedQueryOptions),
 			bChanged = false,
 			that = this;
 

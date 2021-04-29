@@ -674,13 +674,15 @@ sap.ui.define([
 	}].forEach(function (oFixture, i) {
 		QUnit.test("aggregateQueryOptions returns false: " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
-					mAggregatedQueryOptions : oFixture.aggregatedQueryOptions
+					mAggregatedQueryOptions : oFixture.aggregatedQueryOptions,
+					mLateQueryOptions : {ignore : "me"} // must be ignored for mutable caches
 				}),
 				mOriginalQueryOptions = _Helper.clone(oFixture.aggregatedQueryOptions),
 				bMergeSuccess;
 
 			// code under test
-			bMergeSuccess = oBinding.aggregateQueryOptions(oFixture.childQueryOptions, false);
+			bMergeSuccess = oBinding.aggregateQueryOptions(oFixture.childQueryOptions,
+				"/base/metapath", false);
 
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, mOriginalQueryOptions);
 			assert.strictEqual(bMergeSuccess, false);
@@ -1938,8 +1940,7 @@ sap.ui.define([
 			oMetaModelMock = this.mock(oMetaModel);
 
 		oHelperMock.expects("merge")
-			.withExactArgs({}, sinon.match.same(oBinding.mAggregatedQueryOptions),
-				sinon.match.same(oBinding.mLateQueryOptions))
+			.withExactArgs({}, sinon.match.same(oBinding.mLateQueryOptions))
 			.returns(oFixture.aggregatedQueryOptions);
 		if (oFixture.metadata) {
 			Object.keys(oFixture.metadata).forEach(function (sMetaPath) {
