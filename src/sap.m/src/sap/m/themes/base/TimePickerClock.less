@@ -1,0 +1,230 @@
+/* ====================================== */
+/* CSS for control sap.m/TimePickerClock  */
+/* Base theme                             */
+/* ====================================== */
+
+// clock dial related classes
+
+.sapMTPClock {
+	position: relative;
+	width: auto;
+	padding: 0.5625rem;
+	outline: none;
+	display: none;
+}
+
+.sapMTPClock.sapMTPCActive {
+	display: block;
+}
+
+.sapMTPCDial {
+	position: relative;
+	width: auto;
+	display: block;
+	border-radius: 100%;
+	background-color: @sapUiLegendWorkingBackground;
+	text-align: center;
+	z-index: 1;
+}
+
+.sapMTPCDial::before {
+	content: attr(data-label);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiContentLabelColor;
+	top: 2.75rem;
+	left: 2.75rem;
+	bottom: 2.75rem;
+	right: 2.75rem;
+	border-radius: 100%;
+	z-index: 2;
+}
+
+.sapMTPCInner .sapMTPCDial::before {
+	background-color: @sapUiLegendWorkingBackground;
+}
+
+.sapMTPCDial::after {
+	content: "";
+	display: block;
+	padding-bottom: 100%;
+}
+
+.sapMTPClockCover {
+	position: absolute;
+	top: 0.5625rem;
+	left: 0.5625rem;
+	bottom: 0.5625rem;
+	right: 0.5625rem;
+	border-radius: 100%;
+	z-index: 10;
+	touch-action: none;
+}
+
+// units related classes
+.sapMTPCMidDot {
+	display: block;
+	box-sizing: border-box;
+	width: 0.125rem;
+	height: 0.1875rem;
+	margin: 0 auto 0.375rem auto;
+	border-radius: 100%;
+	background-color: @sapUiFieldBorderColor;
+}
+
+.sapMTPCDot {
+	display: block;
+	box-sizing: border-box;
+	width: 0.25rem;
+	height: 0.3125rem;
+	margin: 0 auto 0.25rem auto;
+	border-radius: 100%;
+	background-color: @sapUiFieldBorderColor;
+}
+
+.sapMTPCMarker {
+	box-sizing: border-box;
+	width: 0.25rem;
+	height: 0.5625rem;
+	margin: 0 auto;
+	border-radius: 100%;
+	background-color: @sapUiButtonSelectedBackground;
+	border: 0.0625rem solid @sapUiButtonSelectedBorderColor;
+}
+
+.sapMTPCItem {
+	position: absolute;
+	top: 0px;
+	left: 50%;
+	display: inline-block;
+	width: 2.75rem;
+	height: 100%;
+	z-index: 3;
+	-webkit-touch-callout: none; // iOS Safari
+	-webkit-user-select: none; // Safari
+	-khtml-user-select: none; // Konqueror HTML
+	-moz-user-select: none; // Old versions of Firefox
+	-ms-user-select: none; // Internet Explorer/Edge
+	user-select: none; // Chrome, Edge, Opera and Firefox
+
+	&.sapMTPCMarker {
+		z-index: 4;
+	}
+}
+
+.sapMTPCNumber {
+	box-sizing: border-box;
+	display: inline-block;
+	width: 2.75rem;
+	height: 2.75rem;
+	border-radius: 100%;
+	line-height: 2.75rem;
+	text-align: center;
+	vertical-align: top;
+	font-family: @sapUiFontFamily;
+	font-size:@sapMFontMediumSize;
+	color: @sapUiBaseText;
+
+	&.sapMTPCNumberHover:not(.sapMTPCSelected) {
+		background-color: @sapUiListHoverBackground;
+	}
+}
+
+.sapMTPCInvisible {
+	visibility: hidden;
+}
+
+.sapMTPCSelected {
+	color: @sapUiButtonSelectedTextColor;
+	background-color: @sapUiButtonSelectedBackground;
+	border: 0.0625rem solid @sapUiButtonSelectedBorderColor;
+}
+
+// Degree related classes
+.degreeMixIn(@class, @angle) {
+	.@{class} {
+		transform: translate(-50%) rotate(@angle);
+		.sapMTPCNumber {
+			transform: rotate(-@angle);
+		}
+	}
+}
+
+.sapUiSizeCompact {
+
+	.sapMTPCItem {
+		width: 2rem;
+	}
+
+	.sapMTPCNumber {
+		width: 2rem;
+		height: 2rem;
+		line-height: 2rem;
+	}
+
+}
+
+.degreeMixIn(sapMTPCDeg6, 6deg);
+.degreeMixIn(sapMTPCDeg12, 12deg);
+.degreeMixIn(sapMTPCDeg18, 18deg);
+.degreeMixIn(sapMTPCDeg24, 24deg);
+.degreeMixIn(sapMTPCDeg30, 30deg);
+.degreeMixIn(sapMTPCDeg36, 36deg);
+.degreeMixIn(sapMTPCDeg42, 42deg);
+.degreeMixIn(sapMTPCDeg48, 48deg);
+.degreeMixIn(sapMTPCDeg54, 54deg);
+.degreeMixIn(sapMTPCDeg60, 60deg);
+.degreeMixIn(sapMTPCDeg66, 66deg);
+.degreeMixIn(sapMTPCDeg72, 72deg);
+.degreeMixIn(sapMTPCDeg78, 78deg);
+.degreeMixIn(sapMTPCDeg84, 84deg);
+.degreeMixIn(sapMTPCDeg90, 90deg);
+.degreeMixIn(sapMTPCDeg96, 96deg);
+.degreeMixIn(sapMTPCDeg102, 102deg);
+.degreeMixIn(sapMTPCDeg108, 108deg);
+.degreeMixIn(sapMTPCDeg114, 114deg);
+.degreeMixIn(sapMTPCDeg120, 120deg);
+.degreeMixIn(sapMTPCDeg126, 126deg);
+.degreeMixIn(sapMTPCDeg132, 132deg);
+.degreeMixIn(sapMTPCDeg138, 138deg);
+.degreeMixIn(sapMTPCDeg144, 144deg);
+.degreeMixIn(sapMTPCDeg150, 150deg);
+.degreeMixIn(sapMTPCDeg156, 156deg);
+.degreeMixIn(sapMTPCDeg162, 162deg);
+.degreeMixIn(sapMTPCDeg168, 168deg);
+.degreeMixIn(sapMTPCDeg174, 174deg);
+.degreeMixIn(sapMTPCDeg180, 180deg);
+.degreeMixIn(sapMTPCDeg186, 186deg);
+.degreeMixIn(sapMTPCDeg192, 192deg);
+.degreeMixIn(sapMTPCDeg198, 198deg);
+.degreeMixIn(sapMTPCDeg204, 204deg);
+.degreeMixIn(sapMTPCDeg210, 210deg);
+.degreeMixIn(sapMTPCDeg216, 216deg);
+.degreeMixIn(sapMTPCDeg222, 222deg);
+.degreeMixIn(sapMTPCDeg228, 228deg);
+.degreeMixIn(sapMTPCDeg234, 234deg);
+.degreeMixIn(sapMTPCDeg240, 240deg);
+.degreeMixIn(sapMTPCDeg246, 246deg);
+.degreeMixIn(sapMTPCDeg252, 252deg);
+.degreeMixIn(sapMTPCDeg258, 258deg);
+.degreeMixIn(sapMTPCDeg264, 264deg);
+.degreeMixIn(sapMTPCDeg270, 270deg);
+.degreeMixIn(sapMTPCDeg276, 276deg);
+.degreeMixIn(sapMTPCDeg282, 282deg);
+.degreeMixIn(sapMTPCDeg288, 288deg);
+.degreeMixIn(sapMTPCDeg294, 294deg);
+.degreeMixIn(sapMTPCDeg300, 300deg);
+.degreeMixIn(sapMTPCDeg306, 306deg);
+.degreeMixIn(sapMTPCDeg312, 312deg);
+.degreeMixIn(sapMTPCDeg318, 318deg);
+.degreeMixIn(sapMTPCDeg324, 324deg);
+.degreeMixIn(sapMTPCDeg330, 330deg);
+.degreeMixIn(sapMTPCDeg336, 336deg);
+.degreeMixIn(sapMTPCDeg342, 342deg);
+.degreeMixIn(sapMTPCDeg348, 348deg);
+.degreeMixIn(sapMTPCDeg354, 354deg);
+.degreeMixIn(sapMTPCDeg360, 360deg);

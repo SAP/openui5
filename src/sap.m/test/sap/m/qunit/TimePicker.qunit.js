@@ -6,8 +6,8 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/test/TestUtils",
-	"sap/m/TimePickerSliders",
-	"sap/m/TimePickerSlider",
+	"sap/m/TimePickerClocks",
+	"sap/m/TimePickerClock",
 	"sap/m/VisibleItem",
 	"sap/m/library",
 	"sap/m/TimePicker",
@@ -31,8 +31,8 @@ sap.ui.define([
 	DateFormat,
 	InvisibleText,
 	TestUtils,
-	TimePickerSliders,
-	TimePickerSlider,
+	TimePickerClocks,
+	TimePickerClock,
 	VisibleItem,
 	mobileLibrary,
 	TimePicker,
@@ -114,41 +114,41 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("sliders initial minutesStep value", function(assert) {
+	QUnit.test("clocks initial minutesStep value", function(assert) {
 		var STEP = 17;
 		this.oTp.setMinutesStep(STEP);
 
 		//Assert
-		assert.ok(!this.oTp._getSliders(), "no picker -> no sliders");
+		assert.ok(!this.oTp._getClocks(), "no picker -> no clocks");
 
 		//Act
 		this.oTp._createPicker(this.oTp.getDisplayFormat());
 
 		//Assert
-		assert.equal(this.oTp._getSliders().getMinutesStep(), STEP, "initial value of the time picker for minutesStep is used");
+		assert.equal(this.oTp._getClocks().getMinutesStep(), STEP, "initial value of the time picker for minutesStep is used");
 	});
 
 	QUnit.test("setMinutesStep", function(assert) {
 		var oSpySetProperty,
-				oSpySlidersSetMinutesStep,
+			oSpyClocksSetMinutesStep,
 				STEP = 23;
 		//arrange
 		this.oTp._createPicker(this.oTp.getDisplayFormat());
 
 		oSpySetProperty = this.spy(this.oTp, "setProperty");
-		oSpySlidersSetMinutesStep = this.spy(this.oTp._getSliders(), "setMinutesStep");
+		oSpyClocksSetMinutesStep = this.spy(this.oTp._getClocks(), "setMinutesStep");
 
 		//Act
 		this.oTp.setMinutesStep(STEP);
 
 		//Assert
-		assert.ok(oSpySlidersSetMinutesStep.calledWith(STEP), "setMinutesStep is propagated to the picker part");
+		assert.ok(oSpyClocksSetMinutesStep.calledWith(STEP), "setMinutesStep is propagated to the picker part");
 		assert.ok(oSpySetProperty.calledWith("minutesStep", STEP, true), "property is updated without re-rendering");
 	});
 
 	QUnit.test("setMinutesStep corrects value 0 to 1", function(assert) {
 		var oSpySetProperty,
-				oSpySlidersSetMinutesStep,
+			oSpyClocksSetMinutesStep,
 				step = 0,
 				expectedStep = 1;
 
@@ -156,22 +156,22 @@ sap.ui.define([
 		this.oTp._createPicker(this.oTp.getDisplayFormat());
 
 		oSpySetProperty = this.spy(this.oTp, "setProperty");
-		oSpySlidersSetMinutesStep = this.spy(this.oTp._getSliders(), "setMinutesStep");
+		oSpyClocksSetMinutesStep = this.spy(this.oTp._getClocks(), "setMinutesStep");
 
 		//Act
 		this.oTp.setMinutesStep(step);
 
 		//Assert
-		assert.ok(oSpySlidersSetMinutesStep.calledWith(expectedStep), "setMinutesStep is propagated to the picker part with corrected value - 0 becomes 1");
+		assert.ok(oSpyClocksSetMinutesStep.calledWith(expectedStep), "setMinutesStep is propagated to the picker part with corrected value - 0 becomes 1");
 		assert.ok(oSpySetProperty.calledWith("minutesStep", expectedStep, true), "property is updated without re-rendering. Setter is called with corrected value - 0 becomes 1");
 
 		oSpySetProperty.restore();
-		oSpySlidersSetMinutesStep.restore();
+		oSpyClocksSetMinutesStep.restore();
 	});
 
 	QUnit.test("setSecondsStep corrects value 0 to 1", function(assert) {
 		var oSpySetProperty,
-				oSpySlidersSetSecondsStep,
+				oSpyClocksSetSecondsStep,
 				step = 0,
 				expectedStep = 1;
 
@@ -179,22 +179,22 @@ sap.ui.define([
 		this.oTp._createPicker(this.oTp.getDisplayFormat());
 
 		oSpySetProperty = this.spy(this.oTp, "setProperty");
-		oSpySlidersSetSecondsStep = this.spy(this.oTp._getSliders(), "setSecondsStep");
+		oSpyClocksSetSecondsStep = this.spy(this.oTp._getClocks(), "setSecondsStep");
 
 		//Act
 		this.oTp.setSecondsStep(step);
 
 		//Assert
-		assert.ok(oSpySlidersSetSecondsStep.calledWith(expectedStep), "setSecondsStep is propagated to the picker part with corrected value - 0 becomes 1");
+		assert.ok(oSpyClocksSetSecondsStep.calledWith(expectedStep), "setSecondsStep is propagated to the picker part with corrected value - 0 becomes 1");
 		assert.ok(oSpySetProperty.calledWith("secondsStep", expectedStep, true), "property is updated without re-rendering. Setter is called with corrected value - 0 becomes 1");
 
 		oSpySetProperty.restore();
-		oSpySlidersSetSecondsStep.restore();
+		oSpyClocksSetSecondsStep.restore();
 	});
 
 	QUnit.test("setMinutesStep corrects negative values to 1", function(assert) {
 		var oSpySetProperty,
-				oSpySlidersSetMinutesStep,
+				oSpyClocksSetMinutesStep,
 				step = -2,
 				expectedStep = 1;
 
@@ -202,22 +202,22 @@ sap.ui.define([
 		this.oTp._createPicker(this.oTp.getDisplayFormat());
 
 		oSpySetProperty = this.spy(this.oTp, "setProperty");
-		oSpySlidersSetMinutesStep = this.spy(this.oTp._getSliders(), "setMinutesStep");
+		oSpyClocksSetMinutesStep = this.spy(this.oTp._getClocks(), "setMinutesStep");
 
 		//Act
 		this.oTp.setMinutesStep(step);
 
 		//Assert
-		assert.ok(oSpySlidersSetMinutesStep.calledWith(expectedStep), "setMinutesStep is propagated to the picker part with corrected value - -2 becomes 1");
+		assert.ok(oSpyClocksSetMinutesStep.calledWith(expectedStep), "setMinutesStep is propagated to the picker part with corrected value - -2 becomes 1");
 		assert.ok(oSpySetProperty.calledWith("minutesStep", expectedStep, true), "property is updated without re-rendering. Setter is called with corrected value - -2 becomes 1");
 
 		oSpySetProperty.restore();
-		oSpySlidersSetMinutesStep.restore();
+		oSpyClocksSetMinutesStep.restore();
 	});
 
 	QUnit.test("setSecondsStep corrects negative values to 1", function(assert) {
 		var oSpySetProperty,
-				oSpySlidersSetSecondsStep,
+				oSpyClocksSetSecondsStep,
 				step = -2,
 				expectedStep = 1;
 
@@ -225,176 +225,44 @@ sap.ui.define([
 		this.oTp._createPicker(this.oTp.getDisplayFormat());
 
 		oSpySetProperty = this.spy(this.oTp, "setProperty");
-		oSpySlidersSetSecondsStep = this.spy(this.oTp._getSliders(), "setSecondsStep");
+		oSpyClocksSetSecondsStep = this.spy(this.oTp._getClocks(), "setSecondsStep");
 
 		//Act
 		this.oTp.setSecondsStep(step);
 
 		//Assert
-		assert.ok(oSpySlidersSetSecondsStep.calledWith(expectedStep), "setSecondsStep is propagated to the picker part with corrected value - -2 becomes 1");
+		assert.ok(oSpyClocksSetSecondsStep.calledWith(expectedStep), "setSecondsStep is propagated to the picker part with corrected value - -2 becomes 1");
 		assert.ok(oSpySetProperty.calledWith("secondsStep", expectedStep, true), "property is updated without re-rendering. Setter is called with corrected value - -2 becomes 1");
 
 		oSpySetProperty.restore();
-		oSpySlidersSetSecondsStep.restore();
+		oSpyClocksSetSecondsStep.restore();
 	});
 
-	QUnit.module("step precision in sliders", {
+	QUnit.module("step precision in clocks", {
 		beforeEach: function() {
-			this.oSliders = new TimePickerSliders({
+			this.oClocks = new TimePickerClocks({
 				labelText: "label",
 				minutesStep: this.STEP
 			});
-			this.oSliders.placeAt("qunit-fixture");
+			this.oClocks.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			this.oSliders.destroy();
-			this.oSliders = null;
+			this.oClocks.destroy();
+			this.oClocks = null;
 		},
 		STEP: 5,
 		ANOTHER_STEP: 14
 	});
 
 	QUnit.test("setMinutesStep", function(assert) {
-		var oSpySetProperty = this.spy(this.oSliders, "setProperty"),
-			oSpySetupLists = this.spy(this.oSliders, "_setupLists");
+		var oSpySetProperty = this.spy(this.oClocks, "setProperty");
 
 		//Act
-		this.oSliders.setMinutesStep(this.ANOTHER_STEP);
+		this.oClocks.setMinutesStep(this.ANOTHER_STEP);
 
 		//Assert
 		assert.ok(oSpySetProperty.calledWith("minutesStep", this.ANOTHER_STEP, true), "property updated without re-rendering");
-		assert.ok(oSpySetupLists.calledOnce, "sliders are re-build");
-	});
-
-	QUnit.module("step precision in a single slider", {
-		beforeEach: function() {
-			this.oSlider = new TimePickerSlider({
-				items: [
-					TimePickerSliders.prototype._generatePickerListValues(0, 59, this.STEP, true)
-				]
-			});
-			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function() {
-			this.oSlider.destroy();
-			this.oSlider = null;
-		},
-		STEP: 11,
-		ANOTHER_STEP: 14
-	});
-
-	QUnit.test("_updateStepAndValue", function(assert) {
-		var $ValuesContainer = this.oSlider.$().find(".sapMTimePickerSlider"),
-			SELECTED_VALUE = 18,
-			STEP = this.ANOTHER_STEP,
-			fnHasValueMultipleOfStepOrEqualToSelectedValue = function(oItem) {
-				var iItemValue = parseInt(oItem.getText());
-				return iItemValue === SELECTED_VALUE
-						|| iItemValue % STEP === 0;
-			};
-
-		//Act
-		this.oSlider._updateStepAndValue(SELECTED_VALUE, STEP);
-
-		//Assert
-		assert.ok($ValuesContainer.hasClass("SliderValues6"), "values container has the right class");
-		assert.ok(this.oSlider._getVisibleItems().every(fnHasValueMultipleOfStepOrEqualToSelectedValue), "all visible items have correct values");
-		assert.equal(this.oSlider.getSelectedValue(), SELECTED_VALUE, "slider has the right selected value");
-	});
-
-	QUnit.test("margins are updated on expand", function(assert) {
-		var oSpyUpdateMargins = this.spy(this.oSlider, "_updateMargins");
-
-		//Act
-		this.oSlider.setIsExpanded(true, true);
-
-		//Assert
-		assert.ok(oSpyUpdateMargins.calledOnce, "margins are updated on expand");
-
-		//Act
-		this.oSlider.setIsExpanded(false, true);
-
-		//Assert
-		assert.ok(oSpyUpdateMargins.calledTwice, "margins are updated on collapse");
-	});
-
-	QUnit.test("setIsCyclic", function(assert) {
-		this.oSlider.setIsCyclic(true);
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(!this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
-		assert.equal(this.oSlider.getProperty("isCyclic"), true, "property is updated");
-
-		this.oSlider.setIsCyclic(false);
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
-		assert.equal(this.oSlider.getProperty("isCyclic"), false, "property is updated");
-	});
-
-	QUnit.module("slider select value by typing", {
-		beforeEach: function() {
-			this.clock = sinon.useFakeTimers();
-			//SUT
-			this.oSlider = new TimePickerSlider({
-				items: [
-					new VisibleItem({key: "1", text: "01"}),
-					new VisibleItem({key: "2", text: "02"}),
-					new VisibleItem({key: "3", text: "03"}),
-					new VisibleItem({key: "11", text: "11"}),
-					new VisibleItem({key: "113", text: "113"})
-				]
-			});
-			this.oSpy = sinon.spy(this.oSlider, "setSelectedValue");
-			this.iNowTimeStamp = 50501234;
-		},
-		afterEach: function() {
-			this.clock.restore();
-			this.oSpy.restore();
-			this.oSlider.destroy();
-			this.oSlider = null;
-		}
-	});
-
-	QUnit.test("_fnHandleTypeValues immediately sets the selected value when a unique key is matched", function(assert) {
-		//Act
-		this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_2);
-
-		//Assert
-		assert.ok(this.oSpy.calledOnce, "setSelectedValue is called once");
-		assert.ok(this.oSpy.calledWith("2"), "setSelectedValue is called with the right item key");
-	});
-
-	QUnit.test("_fnHandleTypeValues stacks calls that do not have exact match within a second", function(assert) {
-		//Act
-		this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_1);
-		this.oSlider._fnHandleTypeValues(this.iNowTimeStamp + 500, jQuery.sap.KeyCodes.DIGIT_1);
-
-		//Assert
-		assert.equal(this.oSpy.callCount, 0, "setSelectedValue is not called yet, because there are 2 matched keys");
-
-		//Wait
-		this.clock.tick(1000);
-
-		//Assert
-		assert.ok(this.oSpy.calledOnce, "setSelectedValue is called only once after 1 second when there are multiple matched keys");
-		assert.ok(this.oSpy.calledWith("11"), "setSelectedValue is called with the right item key");
-	});
-
-	QUnit.test("_fnHandleTypeValues does not change selection when there is no matched item key", function(assert) {
-		//Act
-		this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_5);
-
-		//Assert
-		assert.equal(this.oSpy.callCount, 0, "setSelectedValue is not called after typing non-existent item key");
-
-		//Wait
-		this.clock.tick(1000);
-
-		//Assert
-		assert.equal(this.oSpy.callCount, 0, "setSelectedValue is still not called after waiting 1 second");
 	});
 
 	QUnit.module("API", {
@@ -432,18 +300,6 @@ sap.ui.define([
 		var newFormat = "hh:mm:ss";
 		this.oTimePicker.setDisplayFormat(newFormat);
 		assert.strictEqual(this.oTimePicker.getDisplayFormat(), newFormat, "the format property was changed");
-	});
-
-	QUnit.test("The method generatePickerListValues generates the correct result", function(assert) {
-		var iStart = 2;
-		var iEnd = 5;
-		var aList = TimePickerSliders.prototype._generatePickerListValues(iStart, iEnd, 1, false);
-		assert.strictEqual(Array.isArray(aList), true, "the method returns an array");
-		assert.strictEqual(aList.length, iEnd - iStart + 1, "the method returns an array with the correct number of objects");
-		assert.strictEqual(parseInt(aList[0].getKey()), iStart, "the key property of the first element of the array is correct");
-		assert.strictEqual(parseInt(aList[0].getText()), iStart, "the text property of the first element of the array is correct");
-		assert.strictEqual(parseInt(aList[aList.length - 1].getKey()), iEnd, "the key property of the last element of the array is correct");
-		assert.strictEqual(parseInt(aList[aList.length - 1].getText()), iEnd, "the text property of the last element of the array is correct");
 	});
 
 	QUnit.test("ValueHelp icon is not visible when timepicker is not editable", function (assert) {
@@ -900,257 +756,6 @@ sap.ui.define([
 		oTP.destroy();
 	});
 
-	QUnit.module("Keyboard handling of picker", {
-		beforeEach: function() {
-			this.clock = sinon.useFakeTimers();
-
-		},
-		afterEach: function() {
-			this.clock.restore();
-		}
-	});
-
-	QUnit.test("initial focus", function(assert) {
-		var tp = new TimePicker();
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		tp._openPicker();
-		this.clock.tick(1000);
-
-		var $firstSlider = tp._getSliders().getAggregation("_columns")[0];
-		var oSliderFocusSpy = this.spy($firstSlider, "focus");
-
-		assert.ok(oSliderFocusSpy.callCount >= 0, "picker exists and its first slider is focussed at some point");
-
-		//cleanup
-		tp.destroy();
-		$firstSlider.focus.restore();
-	});
-
-	QUnit.test("arrow left", function(assert) {
-		var tp = new TimePicker();
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		tp._openPicker();
-		this.clock.tick(1000);
-
-		var $oElement = document.activeElement;
-		var sliders = tp._getSliders();
-		var firstSlider = sliders.getAggregation("_columns")[0];
-		var lastSlider = sliders.getAggregation("_columns")[3];
-		var secondLastSlider = sliders.getAggregation("_columns")[2];
-
-		assert.equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
-
-		qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
-		this.clock.tick(100);
-
-		$oElement = document.activeElement;
-		assert.equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
-
-		qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
-		this.clock.tick(100);
-
-		$oElement = document.activeElement;
-		assert.equal($oElement.id, secondLastSlider.getId(), "the second last slider is the focussed element");
-
-		//cleanup
-		tp.destroy();
-	});
-
-
-	QUnit.test("arrow right", function(assert) {
-		var tp = new TimePicker();
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		tp._openPicker();
-		this.clock.tick(1000);
-
-		var $oElement = document.activeElement;
-		var sliders = tp._getSliders();
-		var firstSlider = sliders.getAggregation("_columns")[0];
-		var secondSlider = sliders.getAggregation("_columns")[1];
-
-		assert.equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
-
-		qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		this.clock.tick(100);
-
-		$oElement = document.activeElement;
-		assert.equal($oElement.id, secondSlider.getId(), "the second slider is the focussed element");
-
-		qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		this.clock.tick(100);
-		qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		this.clock.tick(100);
-		qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
-		this.clock.tick(100);
-
-		$oElement = document.activeElement;
-		assert.equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
-
-		//cleanup
-		tp.destroy();
-	});
-
-	QUnit.test("end and home", function(assert) {
-		var tp = new TimePicker();
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		tp._openPicker();
-		this.clock.tick(1000);
-
-		var $oElement = document.activeElement;
-		var sliders = tp._getSliders();
-		var firstSlider = sliders.getAggregation("_columns")[0];
-		var lastSlider = sliders.getAggregation("_columns")[3];
-
-		qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.END);
-		this.clock.tick(100);
-
-		$oElement = document.activeElement;
-		assert.equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
-
-		qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.HOME);
-		this.clock.tick(100);
-
-		$oElement = document.activeElement;
-		assert.equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
-
-		//cleanup
-		tp.destroy();
-	});
-
-	QUnit.test("pageup and pagedown", function(assert) {
-		var tp = new TimePicker();
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		tp._openPicker();
-		this.clock.tick(1000);
-
-		var sliders = tp._getSliders();
-		var firstSlider = sliders.getAggregation("_columns")[0];
-
-		qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
-		this.clock.tick(100);
-
-
-		assert.equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value");
-
-		qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
-		this.clock.tick(100);
-
-		assert.equal(firstSlider.getSelectedValue(), firstSlider.getItems()[firstSlider.getItems().length - 1].getKey(), "the selected value is the last value");
-
-		qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
-		this.clock.tick(100);
-
-		assert.equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value again");
-
-		//cleanup
-		tp.destroy();
-	});
-
-	QUnit.test("up and down", function(assert) {
-		var oDate = new Date();
-		oDate.setHours(4);
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		tp._openPicker();
-		this.clock.tick(1000);
-
-		var sliders = tp._getSliders();
-		var firstSlider = sliders.getAggregation("_columns")[0];
-
-		qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-		this.clock.tick(300);
-
-		assert.equal(firstSlider.getSelectedValue(), "3", "the selected value is one value upwards");
-
-		qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
-		this.clock.tick(300);
-
-		assert.equal(firstSlider.getSelectedValue(), "4", "the selected value is one value downwards");
-
-		//cleanup
-		tp.destroy();
-	});
-
-	QUnit.test("Alt + up", function(assert) {
-		var oDate = new Date();
-		oDate.setHours(4);
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		tp._openPicker();
-		this.clock.tick(100);
-
-		var sliders = tp._getSliders();
-		var firstSlider = sliders.getAggregation("_columns")[0];
-		var picker = tp._getPicker();
-		var oHandleOkSpy = this.spy(tp, "_handleOkPress");
-
-		//slider one up
-		qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-		this.clock.tick(300);
-
-		//close and save
-		qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
-		this.clock.tick(400);
-
-		assert.ok(!picker.isOpen(), "picker is closed");
-		assert.equal(oHandleOkSpy.callCount, 1, "the picker date value is saved");
-
-		//cleanup
-		tp.destroy();
-		tp._handleOkPress.restore();
-	});
-
-	QUnit.test("Alt + down", function(assert) {
-		var oDate = new Date();
-		oDate.setHours(4);
-		var tp = new TimePicker({
-			dateValue: oDate
-		});
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		tp._openPicker();
-		this.clock.tick(100);
-
-		var sliders = tp._getSliders();
-		var firstSlider = sliders.getAggregation("_columns")[0];
-		var picker = tp._getPicker();
-		var oHandleOkSpy = this.spy(tp, "_handleOkPress");
-
-		//slider one up
-		qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
-		this.clock.tick(300);
-
-		//close and save
-		qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
-		this.clock.tick(400);
-
-		assert.ok(!picker.isOpen(), "picker is closed");
-		assert.equal(oHandleOkSpy.callCount, 1, "the picker date value is saved");
-
-		//cleanup
-		tp.destroy();
-		tp._handleOkPress.restore();
-	});
-
 	QUnit.module("Keyboard handling of input");
 
 	QUnit.test("pageup increases the hours", function(assert) {
@@ -1515,7 +1120,7 @@ sap.ui.define([
 		tp._openPicker();
 
 		//assert
-		assert.equal(tp._getSliders().getAggregation("_columns").length, 3, "the picker should display 3 sliders");
+		assert.equal(tp._getClocks().getAggregation("_clocks").length, 2, "the picker should display 3 clocks");
 
 		//cleanup
 		tp.destroy();
@@ -1558,16 +1163,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("slider interactions", {
-		_createMouseWheelEvent: function(iWheelSteps) {
-			var oEvent = {};
-			oEvent.originalEvent = {};
-			oEvent.originalEvent.wheelDelta = iWheelSteps * 120;
-			oEvent.originalEvent.detail = iWheelSteps * -3;
-			oEvent.preventDefault = function() {};
-			oEvent.stopPropagation = function() {};
-
-			return oEvent;
-		},
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
 
@@ -1575,297 +1170,6 @@ sap.ui.define([
 		afterEach: function() {
 			this.clock.restore();
 		}
-	});
-
-	QUnit.test("fireTap expands slider", function(assert) {
-		//sut
-		var tp = new TimePicker();
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp._openPicker();
-		this.clock.tick(100);
-
-		var sliders = tp._getSliders();
-		var sliderMinutes = sliders.getAggregation("_columns")[1];
-
-		assert.ok(!sliderMinutes.getIsExpanded(), "slider is collapsed");
-
-		//act
-		sliderMinutes.fireTap(null);
-
-		//assert
-		assert.ok(sliderMinutes.getIsExpanded(), "slider is expanded");
-
-		//cleanup
-		tp.destroy();
-	});
-
-	QUnit.test("support2400 - property play",function(assert) {
-		//prepare
-		var oTP = new TimePicker({
-			displayFormat: "HH:mm:ss",
-			dateValue: new Date(2000, 1, 2, 23, 35, 54)
-		}),
-			oEvent,
-			oSliders,
-			oSliderHours;
-
-		oTP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//assert
-		assert.strictEqual(oTP.getSupport2400(), false, "'support2400' is false by default");
-
-		//act
-		oTP.setSupport2400(true);
-
-		//assert
-		assert.strictEqual(oTP.getSupport2400(), true, "'support2400' is now set to 'true'");
-
-		//act
-		oTP._openPicker();
-		this.clock.tick(1000);
-		oBtnOK = oTP._getPicker().getBeginButton();
-		oSliders = oTP._getSliders();
-		oSliderHours = oSliders.getAggregation("_columns")[0];
-		oEvent = this._createMouseWheelEvent(-1);
-		oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
-		this.clock.tick(160);
-
-		//assert
-		assert.equal(oSliderHours.getSelectedValue(), "24", "slider's hour value changed to 24");
-
-		//cleanup
-		oTP.destroy();
-
-	});
-
-	QUnit.test("support2400 - minutes and seconds are disabled and set to '0' when hours are '24'", function(assert) {
-		//prepare
-		var oTP = new TimePicker({
-			displayFormat: "HH:mm:ss",
-			valueFormat: "HH:mm:ss",
-			dateValue: new Date(2000, 1, 2, 23, 35, 54)
-		}),
-			oSliders,
-			oSliderHours,
-			oSliderMinutes,
-			oSliderSeconds,
-			oEvent;
-
-		oTP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-
-		//assert
-		assert.strictEqual(oTP.getSupport2400(), false, "support2400 is false by default");
-
-		//act
-		oTP.setSupport2400(true);
-		oTP._openPicker();
-		this.clock.tick(1000); //wait the initial focus of the first slider
-
-		oSliders = oTP._getSliders();
-		oSliderHours = oSliders.getAggregation("_columns")[0];
-		oSliderMinutes = oSliders.getAggregation("_columns")[1];
-		oSliderSeconds = oSliders.getAggregation("_columns")[2];
-
-		//set hours to '24'
-		oEvent = this._createMouseWheelEvent(-1);
-		oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
-		this.clock.tick(300);
-
-		//assert
-		assert.equal(oSliderMinutes.getSelectedValue(), "0", "When hours are set to 24, minutes are set to 0");
-		assert.ok(oSliderMinutes.$().hasClass("sapMTPDisabled"),
-				"When hours are set to 24, minutes have 'sapMTPDisabled' class");
-		assert.equal(oSliderSeconds.getSelectedValue(), "0", "When hours are set to 24, seconds are set to 0");
-		assert.ok(oSliderSeconds.$().hasClass("sapMTPDisabled"),
-				"When hours are set to 24, seconds have 'sapMTPDisabled' class");
-
-		oTP._handleOkPress();
-		assert.equal(oTP.getValue(), "24:00:00", "The value in the input filed is ok");
-
-		oTP._openPicker();
-		this.clock.tick(1000); //wait the initial focus of the first slider
-
-		//act
-		//scroll hours to their previous state
-		oEvent = this._createMouseWheelEvent(-1);
-		oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
-		this.clock.tick(160);
-
-		//assert
-		assert.equal(oSliderHours.getSelectedValue(), "0", "slider's hour value changed to 0");
-		assert.equal(oSliderMinutes.getSelectedValue(), "35",
-				"Minutes are back to their previous value before scrolling though '24' for hours");
-		assert.ok(!oSliderMinutes.$().hasClass("sapMTP2400"),
-				"When minutes are back to their previous value, they don't have 'sapMTP2400' class");
-		assert.equal(oSliderSeconds.getSelectedValue(), "54",
-				"Seconds are back to their previous value before scrolling though '24' for hours");
-		assert.ok(!oSliderSeconds.$().hasClass("sapMTP2400"),
-				"When seconds are back to their previous value, they don't have 'sapMTP2400' class");
-
-		//cleanup
-		oTP.destroy();
-
-	});
-
-	QUnit.test("_getUpdatedCycleScrollTop returns a new top value with the right offset", function(assert) {
-		//sut
-		var tp = new TimePicker();
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp._openPicker();
-		this.clock.tick(100);
-
-		var sliders = tp._getSliders();
-		var sliderHours = sliders.getAggregation("_columns")[0];
-		sliderHours._bIsDrag = true;
-
-		var params = [
-			600, //$ContainerHeight
-			5000, //$ContentHeight,
-			100, //current top position
-			150, //dragMargin
-			5 //contentRepeat value
-		];
-
-		//act
-		var updatedTop = sliderHours._getUpdatedCycleScrollTop.apply(sliderHours, params);
-
-		//assert
-		assert.equal(updatedTop, 1100, "_getUpdatedCycleScrollTop has jumped top by one time the unique content height");
-
-		//cleanup
-		tp.destroy();
-	});
-
-	QUnit.test("_doDrag method updates the top position", function(assert) {
-		//sut
-		var tp = new TimePicker();
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp._openPicker();
-		this.clock.tick(100);
-
-		var sliders = tp._getSliders();
-		var sliderHours = sliders.getAggregation("_columns")[0];
-
-		//act
-		sliderHours._startDrag(200);
-		sliderHours._bIsDrag = true;
-
-		var oJQueryScrollTopSpy = this.spy(jQuery.fn, "scrollTop");
-		sliderHours._doDrag(240, 1435829481235);
-		sliderHours._doDrag(293, 1435829481277);
-
-		//assert
-		assert.equal(oJQueryScrollTopSpy.callCount, 2, "slider's top position has been updated once for every _doDrag");
-
-		//cleanup
-		jQuery.fn.scrollTop.restore();
-		tp.destroy();
-	});
-
-	QUnit.test("_endDrag method initiates an animation on the slider's content", function(assert) {
-		//sut
-		var tp = new TimePicker();
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp._openPicker();
-		this.clock.tick(100);
-
-		var sliders = tp._getSliders();
-		var sliderHours = sliders.getAggregation("_columns")[0];
-		var oAnimateScrollSpy = this.spy(sliderHours, "_animateScroll");
-
-		//act
-		sliderHours._startDrag(200);
-		sliderHours._doDrag(240, 1435829481235); //about 40ms offset each drag
-		sliderHours._doDrag(293, 1435829481277);
-		sliderHours._doDrag(340, 1435829481323);
-		sliderHours._doDrag(382, 1435829481364);
-		sliderHours._endDrag(439, 1435829481402);
-
-		//assert
-		assert.equal(oAnimateScrollSpy.callCount, 1, "animation was started");
-		assert.ok(Math.abs(oAnimateScrollSpy.args[0][0]) < 2, "animation was started with reasonable speed");
-
-		//cleanup
-		sliderHours._animateScroll.restore();
-		tp.destroy();
-	});
-
-	QUnit.test("Drag completed: After animation is completed, _animateScroll method does not call _scrollerSnapped " +
-		"if slider is not visible", function(assert) {
-
-		//sut
-		var tp = new TimePicker(),
-			sliderHours,
-			oScrollerSnappedSpy;
-
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp._openPicker();
-		this.clock.tick(100);
-
-		sliderHours = tp._getSliders().getAggregation("_columns")[0];
-		oScrollerSnappedSpy = this.spy(sliderHours, "_scrollerSnapped");
-
-		//act
-		sliderHours._animateScroll(0.04); //0.04 to make sure snapping logic inside _animateScroll will take place.
-		this.clock.tick(30); //to bypass frameFrequencyMs inside _animateScroll
-		sliderHours.$().find(".sapMTimePickerSlider").css('visibility', 'hidden');
-		this.clock.tick(250);//to make sure the animation in _animateScroll is completed(check SCROLL_ANIMATION_DURATION)
-
-		//assert
-		assert.equal(oScrollerSnappedSpy.callCount, 0, "_scrollerSnapped is not called");
-
-		//cleanup
-		oScrollerSnappedSpy.restore();
-		tp.destroy();
-	});
-
-	QUnit.test("Arrow Up' button pressed: After animation is completed, _offsetValue method does not call " +
-		"_scrollerSnapped if slider is not visible", function(assert) {
-
-		//sut
-		var tp = new TimePicker(),
-			sliderHours,
-			oScrollerSnappedSpy;
-
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp._openPicker();
-		this.clock.tick(100);
-
-		sliderHours = tp._getSliders().getAggregation("_columns")[0];
-		oScrollerSnappedSpy = this.spy(sliderHours, "_scrollerSnapped");
-
-		//act
-		sliderHours.getAggregation("_arrowUp").firePress();
-		sliderHours.$().find(".sapMTimePickerSlider").css('visibility', 'hidden');
-		this.clock.tick(250);//to make sure the animation is completed(check SCROLL_ANIMATION_DURATION)
-
-		//assert
-		assert.equal(oScrollerSnappedSpy.callCount, 0, "_scrollerSnapped is not called");
-
-		//cleanup
-		oScrollerSnappedSpy.restore();
-		tp.destroy();
 	});
 
 	QUnit.test("tap on the input icon open/closes the picker", function(assert) {
@@ -1886,46 +1190,6 @@ sap.ui.define([
 
 		assert.strictEqual(jQuery(".sapMPopover").is(":visible"), false, "the picker is closed");
 
-		tp.destroy();
-	});
-
-	QUnit.test("mouse wheel scrolls the sliders proportionally to the speed", function(assert) {
-		//sut
-		var tp = new TimePicker({
-				displayFormat: "HH:mm",
-				dateValue: new Date(2000, 1, 2, 16, 35, 54)
-			}),
-			oEvent,
-			oSliders,
-			oSliderHours;
-
-		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		//arrange
-		tp._openPicker();
-		this.clock.tick(1000); //wait the initial focus of the first slider
-
-		oSliders = tp._getSliders();
-		oSliderHours = oSliders.getAggregation("_columns")[0];
-
-		//act
-		oEvent = this._createMouseWheelEvent(1);
-		oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
-		this.clock.tick(300);
-
-		//assert
-		assert.equal(oSliderHours.getSelectedValue(), "15", "slider's value changed by 1");
-
-		//act again
-		oEvent = this._createMouseWheelEvent(-2);
-		oSliders._onmousewheel(oEvent);
-		this.clock.tick(160);
-
-		//assert
-		assert.equal(oSliderHours.getSelectedValue(), "17", "slider's value changed by 2 in the other direction");
-
-		//cleanup
 		tp.destroy();
 	});
 
@@ -2089,7 +1353,7 @@ sap.ui.define([
 		// prepare
 		var oTimePicker = new TimePicker(),
 			oSandbox = sinon.createSandbox({}),
-			oLabel = new sap.m.Label({text: "DatePicker Label", labelFor: oTimePicker.getId()}),
+			oLabel = new sap.m.Label({text: "TimePicker Label", labelFor: oTimePicker.getId()}),
 			oDialog;
 
 		oSandbox.stub(Device.system, "phone").value(true);
@@ -2099,15 +1363,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
-		oTimePicker._createPicker();
+		oTimePicker._createPicker("medium");
 		oDialog = oTimePicker.getAggregation("_picker");
 
 		// assert
 		assert.ok(oDialog.getShowHeader(), "Header is shown");
-		assert.ok(oDialog.getShowCloseButton(), "Close button in the header is set");
-		assert.strictEqual(oDialog.getTitle(), "DatePicker Label", "Title is set");
+		assert.notOk(oDialog.getShowCloseButton(), "Close button in the header is set");
+		assert.strictEqual(oDialog.getTitle(), "TimePicker Label", "Title is set");
 		assert.strictEqual(oDialog.getBeginButton().getType(), "Emphasized", "OK button type is set");
-		assert.notOk(oDialog.getEndButton(), "Close button in the footer is not set");
+		assert.ok(oDialog.getEndButton(), "Close button in the footer is set");
 
 		// clean
 		oSandbox.restore();
@@ -2127,14 +1391,6 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oTP.destroy();
-		},
-		fnAriaExpandedTest: function (oSlider, iIndex) {
-			var bHasAriaExpandedAttr = oSlider.$().is("[aria-expanded]"),
-					bAriaExpanded = oSlider.$().attr("aria-expanded"),
-					iNonZeroIndex = iIndex + 1;
-
-			assert.ok(bHasAriaExpandedAttr, "TimePickerSlider " + iNonZeroIndex + " has aria-expanded attribute");
-			assert.strictEqual(bAriaExpanded, iIndex == 0 ? "true" : "false", "TimePickerSlider " + iNonZeroIndex + " aria-expanded='" + bAriaExpanded + "'");
 		},
 		fnAriaRoleTest: function (oSlider, iIndex) {
 			var iNonZeroIndex = iIndex + 1,
@@ -2174,36 +1430,6 @@ sap.ui.define([
 
 			assert.ok(sAriaDescribedById.length, "TimePickerSlider " + iNonZeroIndex + " has aria-describedby association");
 			assert.strictEqual(sAriaDescribedById, $AriaDescribedTarget.attr("id"), "TimePickerSlider " + iNonZeroIndex + " aria-describedby association has a correct value " + sAriaDescribedById);
-		},
-		fnAriaSelectionChangeTest: function (oTP, oSlider, iIndex) {
-			var bIsFormatType = oSlider.getLabel() === this.oRB.getText("TIMEPICKER_LBL_AMPM"),
-					iIterations = 3,
-					iNonZeroIndex = iIndex + 1,
-					sLocaleId = oTP.getLocaleId(),
-					oLocale = new Locale(sLocaleId),
-					sCurrentSelectionValue,
-					sExpectedSelectionValue,
-					sNewSelectedValue,
-					$Target = oSlider.$("valDescription");
-
-			for (var iLoopIndex = 1; iLoopIndex <= iIterations; iLoopIndex++) {
-				//arrange
-				sCurrentSelectionValue = oSlider.getSelectedValue();
-				if (!bIsFormatType) {
-					sNewSelectedValue = sExpectedSelectionValue = parseInt(sCurrentSelectionValue) + iLoopIndex + "";
-				} else {
-					sNewSelectedValue = sCurrentSelectionValue === "am" ? "pm" : "am";
-					if (sLocaleId) {
-						var oAPPMFormatter = DateFormat.getTimeInstance({pattern: "a"}, oLocale);
-						sExpectedSelectionValue = oAPPMFormatter.format(sNewSelectedValue === "am" ? new Date(2017, 0, 1, 1) : new Date(2017, 0, 1, 13));
-					}
-				}
-				oSlider.setSelectedValue(sNewSelectedValue);
-
-				this.clock.tick(2000);
-				//assert
-				assert.strictEqual($Target.text(), sExpectedSelectionValue, "Timepicker " + iNonZeroIndex + " live-region updates and its value is as expected (" + sExpectedSelectionValue + ")");
-			}
 		},
 		fnTestReferencing: function (oSut, fnAssert, oResourceManager, aScenarios) {
 			//prepare
@@ -2311,55 +1537,6 @@ sap.ui.define([
 		this.oTP.setValue("10.32.30");
 		oInfo = this.oTP.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "10-32-30 Placeholder", "Description");
-	});
-
-	QUnit.test("Dynamic selection change announcement", function (assert) {
-		this.clock = sinon.useFakeTimers();
-		//arrange
-		var oSliders, aColumns;
-		this.oTP.setValue("13:15");
-		this.oTP.setDisplayFormat("hh:mm:ss aa");
-		sap.ui.getCore().applyChanges();
-		this.oTP._openPicker();
-		this.clock.tick(2000);
-		oSliders = this.oTP._getSliders();
-		aColumns = oSliders.getAggregation("_columns");
-		//assert
-		if (oSliders && oSliders instanceof TimePickerSliders) {
-			assert.strictEqual(oSliders.$().attr('aria-label'), this.oRB.getText("TIMEPICKER_SCREENREADER_TAG"), "TimePickerSliders aria-label is as expected");
-			aColumns.forEach(function (oColumn, iIndex) {
-				this.fnAriaRoleTest(oColumn, iIndex);
-				this.fnAriaExpandedTest(oColumn, iIndex);
-				this.fnAriaLiveAndHiddenTest(oColumn, iIndex);
-				this.fnAriaLabelledByTest(oColumn, iIndex);
-				this.fnAriaDescribedByTest(oColumn, iIndex);
-				this.fnAriaSelectionChangeTest(this.oTP, oColumn, iIndex);
-			}, this);
-		}
-		this.clock.restore();
-	});
-
-
-	QUnit.test("AM/PM values when TimePicker localeId is different than English ", function (assert) {
-		this.clock = sinon.useFakeTimers();
-		//arrange
-		var oSliders, aColumns;
-		this.oTP.setValue("13:15");
-		this.oTP.setDisplayFormat("hh:mm:ss aa");
-
-		//Act
-		this.oTP.setLocaleId("de_DE");
-		sap.ui.getCore().applyChanges();
-		this.oTP._openPicker();
-		this.clock.tick(2000);
-		oSliders = this.oTP._getSliders();
-		oAPPMColumn = oSliders.getAggregation("_columns")[3];
-
-		//assert
-		this.fnAriaSelectionChangeTest(this.oTP, oAPPMColumn, 3);
-
-		//Cleanup
-		this.clock.restore();
 	});
 
 	/*
@@ -3100,7 +2277,7 @@ sap.ui.define([
 	QUnit.module("maskMode property", {
 		beforeEach: function () {
 			this.oTp = new TimePicker();
-			this.oTp.placeAt("qunit-fixture");
+			this.oTp.placeAt("content");
 			sap.ui.getCore().applyChanges();
 		},
 
@@ -3622,7 +2799,7 @@ sap.ui.define([
 		// prepare
 		var oExpectedDateValue = new Date(2017, 8, 9, 10, 11, 12, 13),
 			oInitialFocusedDateValue = new Date(2017, 2, 3, 4, 5, 6, 7),
-			oTimePickerSliders = new TimePickerSliders(this.oTp.getId() + "-sliders", {
+			oTimePickerClocks = new TimePickerClocks(this.oTp.getId() + "-clocks", {
 				displayFormat: "hh:mm",
 				labelText: "",
 				minutesStep: this.oTp.getMinutesStep(),
@@ -3631,9 +2808,9 @@ sap.ui.define([
 			oGetDateValue = this.stub(this.oTp, "getDateValue").callsFake(function () { return oExpectedDateValue; }),
 			oShouldSetInitialFocusedDateValueStub = this.stub(this.oTp, "_shouldSetInitialFocusedDateValue").callsFake(function () { return false; }),
 			oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue").callsFake(function () { return oInitialFocusedDateValue; }),
-			oGetSlidersStub = this.stub(this.oTp, "_getSliders").callsFake(function () { return oTimePickerSliders; }),
+			oGetSlidersStub = this.stub(this.oTp, "_getClocks").callsFake(function () { return oTimePickerClocks; }),
 			oIsValidValue = this.stub(this.oTp, "_isValidValue").callsFake(function () { return true; }),
-			oSetTimeValuesSpy = this.spy(oTimePickerSliders, "_setTimeValues");
+			oSetTimeValuesSpy = this.spy(oTimePickerClocks, "_setTimeValues");
 
 		// act
 		this.oTp.onBeforeOpen();
@@ -3648,13 +2825,13 @@ sap.ui.define([
 		oGetSlidersStub.restore();
 		oSetTimeValuesSpy.restore();
 		oIsValidValue.restore();
-		oTimePickerSliders.destroy();
+		oTimePickerClocks.destroy();
 	});
 
 	QUnit.test("onBeforeOpen should call _setTimeValues with provided initialFocusedDateValue if there is no value", function (assert) {
 		// prepare
 		var oExpectedDateValue = new Date(2017, 8, 9, 10, 11, 12, 13),
-			oTimePickerSliders = new TimePickerSliders(this.oTp.getId() + "-sliders", {
+			oTimePickerClocks = new TimePickerClocks(this.oTp.getId() + "-clocks", {
 				displayFormat: "hh:mm",
 				labelText: "",
 				minutesStep: this.oTp.getMinutesStep(),
@@ -3662,9 +2839,9 @@ sap.ui.define([
 			}),
 			oGetDateValue = this.stub(this.oTp, "getDateValue").callsFake(function () { return null; }),
 			oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue").callsFake(function () { return oExpectedDateValue; }),
-			oGetSlidersStub = this.stub(this.oTp, "_getSliders").callsFake(function () { return oTimePickerSliders; }),
+			oGetSlidersStub = this.stub(this.oTp, "_getClocks").callsFake(function () { return oTimePickerClocks; }),
 			oIsValidValue = this.stub(this.oTp, "_isValidValue").callsFake(function () { return true; }),
-			oSetTimeValuesSpy = this.spy(oTimePickerSliders, "_setTimeValues");
+			oSetTimeValuesSpy = this.spy(oTimePickerClocks, "_setTimeValues");
 
 		// act
 		this.oTp.onBeforeOpen();
@@ -3678,7 +2855,7 @@ sap.ui.define([
 		oGetSlidersStub.restore();
 		oSetTimeValuesSpy.restore();
 		oIsValidValue.restore();
-		oTimePickerSliders.destroy();
+		oTimePickerClocks.destroy();
 	});
 
 	QUnit.module("events and event handlers", {

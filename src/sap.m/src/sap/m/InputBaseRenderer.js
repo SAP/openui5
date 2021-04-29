@@ -134,7 +134,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 		if (!oControl.getEnabled()) {
 			oRm.attr("disabled", "disabled");
 
-		} else if (!oControl.getEditable() || this.renderReadonly(oRm, oControl)) {
+		} else if (!oControl.getEditable()) {
 			oRm.attr("readonly", "readonly");
 
 		}
@@ -608,14 +608,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	InputBaseRenderer.getInnerSuffix = function() {
 		return "inner";
 	};
-
-	/**
-	 * This method is reserved for derived classes to force rendering of <code>readonly</code> attribute if necessary.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-	 */
-	 InputBaseRenderer.renderReadonly = function(oRm, oControl) {};
 
 	return InputBaseRenderer;
 
