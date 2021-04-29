@@ -510,7 +510,9 @@ sap.ui.define([
 			this.oLink = null;
 		},
 		afterEach: function() {
-			this.oLink.destroy();
+			if (this.oLink){
+				this.oLink.destroy();
+			}
 		}
 	});
 
@@ -550,59 +552,57 @@ sap.ui.define([
 		});
 	});
 
-	var fnClickOnLink = function(assert, oPanel, sText, bVisible) {
-		var aElements = oPanel.$().find("a:visible");
-		var oLink;
-		aElements.each(function(iIndex) {
-			if (aElements[iIndex].text === sText) {
-				oLink = aElements[iIndex];
-			}
-		});
-		if (oLink) {
-			oLink.click();
-		} else {
-			assert.ok(!bVisible, "no visible Link found to click for text " + sText);
-		}
-	};
-
 	QUnit.test("beforeNavigationCallback - open MessageToast before navigation", function(assert) {
 		var done = assert.async();
-		this.oLink = new Link({
+
+		var fnMessageToastSpy = sinon.spy(MessageToast, "show");
+		var sBaseUrl = window.location.href;
+
+		var oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					items: [
 						new LinkItem({
 							text: "Link1",
-							href: "#Action01",
+							href: sBaseUrl + "#Action01",
 							initiallyVisible: true
 						}),
 						new LinkItem({
 							text: "Link2",
-							href: "#Action02"
+							href: sBaseUrl + "#Action02"
 						})
 					],
 					beforeNavigationCallback: function() {
 						return new Promise(function(resolve) {
 							MessageToast.show("test");
-							resolve(false);
+							assert.ok(fnMessageToastSpy.calledOnce);
+							resolve(true);
 						});
 					}
 				}
 			}
 		});
 
-		var fnMessageToastSpy = sinon.spy(MessageToast, "show");
-
-		this.oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-
 			assert.ok(fnMessageToastSpy.notCalled);
-			fnClickOnLink(assert, oPanel, "Link1", true);
-			fnClickOnLink(assert, oPanel, "Link2", false);
-			assert.ok(fnMessageToastSpy.calledOnce);
-			done();
+
+			window.addEventListener('hashchange', function(){
+				var oResultUrl = window.location.href;
+				assert.equal(oResultUrl, sBaseUrl + "#Action01", "Navigation happened");
+				done();
+			});
+
+			oPanel.getAggregation("_content") // VerticalLayout of panel
+				.getContent()[2] // VBox which includes the links
+				.getItems()[0] // First PanelListItem of the panel
+				.getAggregation("_content") // HorizontalLayout inside the PanelListItem
+				.getContent()[0] // HBox
+				.getItems()[1] // VBox containing link, label and a text
+				.getItems()[0] // Actuall sap.m.Link on the Panel
+				.firePress();
 		});
 	});
 
