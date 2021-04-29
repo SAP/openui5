@@ -1547,7 +1547,7 @@ sap.ui.define([
 	OverflowToolbar._getControlWidth = function (oControl) {
 		var oDomRef = oControl && oControl.getDomRef();
 
-		if (oDomRef) {
+		if (oDomRef && oControl.$().is(":visible")) {
 			// Getting the precise width of the control, as sometimes JQuery's .outerWidth() returns different values
 			// for the same element.
 			return Math.round(oDomRef.getBoundingClientRect().width + OverflowToolbar._getControlMargins(oControl));
