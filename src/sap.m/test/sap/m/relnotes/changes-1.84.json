@@ -568,5 +568,85 @@
         ]
       }
     ]
+  },
+  "1.84.11": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "cda8314a55518401e155b683fe323f1b5fb6fb0e",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Include filters issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002751942021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500002727462021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002920282021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500002693142021"
+          }
+        ]
+      },
+      {
+        "id": "e61e57b36b64274f93ee897c974ae6fcd40b8461",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: timing issue with event firing is now resolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180101997"
+          }
+        ]
+      },
+      {
+        "id": "a6c63de26a48b429983f3738915cd9274d869c44",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Arrows in navigation are now disabled when border reached",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170110312"
+          }
+        ]
+      },
+      {
+        "id": "5bebe274fd74cd147a9c305a30d41bda8ac198b2",
+        "type": "FIX",
+        "text": " sap.m.Input: Model update on change behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002232792021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001736212021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170029208"
+          }
+        ]
+      },
+      {
+        "id": "fc7abe79b6e745119a0c4c21d03397436f3f7002",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Typeahead now excludes not visible ColumnListItems",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001411652021"
+          }
+        ]
+      }
+    ]
   }
 }

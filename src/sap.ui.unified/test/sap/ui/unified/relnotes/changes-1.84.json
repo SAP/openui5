@@ -231,5 +231,21 @@
         ]
       }
     ]
+  },
+  "1.84.11": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "a6c63de26a48b429983f3738915cd9274d869c44",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Arrows in navigation are now disabled when border reached",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170110312"
+          }
+        ]
+      }
+    ]
   }
 }

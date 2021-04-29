@@ -79,5 +79,21 @@
         ]
       }
     ]
+  },
+  "1.84.11": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "4dff8962f219f6e4b7047fc43a68b5fb497a857b",
+        "type": "FIX",
+        "text": " Field: use current binding context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170122490"
+          }
+        ]
+      }
+    ]
   }
 }

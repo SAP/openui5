@@ -99,5 +99,54 @@
         ]
       }
     ]
+  },
+  "1.84.11": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "7bdd00ea2e3bf695ff19903acc1e454dde6a41f8",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected unstable qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      },
+      {
+        "id": "d21fe581f38651718d08ab28917d4f59e8dc1fc3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Expand option for all hidden sections",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170061627"
+          }
+        ]
+      },
+      {
+        "id": "dac9fa2a50da849e61dab4540b62dbd170c9b1bc",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Stablized qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      },
+      {
+        "id": "f1dc6b485aefb97e40d9daaeb23e3cdbaec03678",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Unset selected section of hidden page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      }
+    ]
   }
 }
