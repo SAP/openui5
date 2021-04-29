@@ -21,6 +21,78 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 	QUnit.module("NumberFormat#getCurrencyInstance");
 
+	QUnit.test("Currency format default formatting", function (assert) {
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getCurrencyInstance({}, oLocale);
+
+		assert.equal(oFormat.format(0.123, "EUR"), "0.12\xa0EUR", "0.123");
+		assert.equal(oFormat.format(123, "EUR"), "123.00\xa0EUR", "123");
+		assert.equal(oFormat.format(123.23, "EUR"), "123.23\xa0EUR", "123.23");
+		assert.equal(oFormat.format(1234, "EUR"), "1,234.00\xa0EUR", "1234");
+		assert.equal(oFormat.format(12345, "EUR"), "12,345.00\xa0EUR", "12345");
+		assert.equal(oFormat.format(12345.123, "EUR"), "12,345.12\xa0EUR", "12345.123");
+		assert.equal(oFormat.format(12345.12345, "EUR"), "12,345.12\xa0EUR", "12345.12345");
+		assert.equal(oFormat.format(1234567890, "EUR"), "1,234,567,890.00\xa0EUR", "1234567890");
+		assert.equal(oFormat.format(-123.23, "EUR"), "-123.23\xa0EUR", "-123.23");
+		assert.equal(oFormat.format("1.23e+9", "EUR"), "1,230,000,000.00\xa0EUR", "1.23e+9");
+		assert.equal(oFormat.format("1.23e-9", "EUR"), "0.00\xa0EUR", "1.23e-9");
+		assert.equal(oFormat.format("-1.23e+9", "EUR"), "-1,230,000,000.00\xa0EUR", "-1.23e+9");
+		assert.equal(oFormat.format("-1.23e-9", "EUR"), "-0.00\xa0EUR", "-1.23e-9");
+		assert.equal(oFormat.format("1.2345e+2", "EUR"), "123.45\xa0EUR", "1.2345e+2");
+		assert.equal(oFormat.format("12345e-2", "EUR"), "123.45\xa0EUR", "12345e-2");
+		assert.equal(oFormat.format("-1.2345e+2", "EUR"), "-123.45\xa0EUR", "-1.2345e+2");
+		assert.equal(oFormat.format("-12345e-2", "EUR"), "-123.45\xa0EUR", "-12345e-2");
+		assert.equal(oFormat.format("123.45e+2", "EUR"), "12,345.00\xa0EUR", "123.45e+2");
+		assert.equal(oFormat.format("12.345e-2", "EUR"), "0.12\xa0EUR", "12.345e-2");
+		assert.equal(oFormat.format("-123.45e+2", "EUR"), "-12,345.00\xa0EUR", "-123.45e+2");
+		assert.equal(oFormat.format("-12.345e-2", "EUR"), "-0.12\xa0EUR", "-12.345e-2");
+		assert.equal(oFormat.format("123456.789e+2", "EUR"), "12,345,678.90\xa0EUR", "123456.789e+2");
+		assert.equal(oFormat.format("123.456789e-2", "EUR"), "1.23\xa0EUR", "123.456789e-2");
+		assert.equal(oFormat.format("-123456.789e+2", "EUR"), "-12,345,678.90\xa0EUR", "-123456.789e+2");
+		assert.equal(oFormat.format("-123.456789e-2", "EUR"), "-1.23\xa0EUR", "-123.456789e-2");
+		assert.equal(oFormat.format("1000.00", "EUR"), "1,000.00\xa0EUR", "1000.00");
+		assert.equal(oFormat.format("1000.0000", "EUR"), "1,000.00\xa0EUR", "1000.0000");
+		assert.equal(oFormat.format(123456789.123456789, "EUR"), "123,456,789.12\xa0EUR", "123456789.123456789 (number)");
+		assert.equal(oFormat.format("123456789.123456789", "EUR"), "123,456,789.12\xa0EUR", "123456789.123456789 (string)");
+	});
+
+	QUnit.test("Currency format default formatting preserveDecimals=true", function (assert) {
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getCurrencyInstance({preserveDecimals:true}, oLocale);
+
+		assert.equal(oFormat.format(0.123, "EUR"), "0.123\xa0EUR", "0.123");
+		assert.equal(oFormat.format(123, "EUR"), "123.00\xa0EUR", "123");
+		assert.equal(oFormat.format(123.23, "EUR"), "123.23\xa0EUR", "123.23");
+		assert.equal(oFormat.format(1234, "EUR"), "1,234.00\xa0EUR", "1234");
+		assert.equal(oFormat.format(12345, "EUR"), "12,345.00\xa0EUR", "12345");
+		assert.equal(oFormat.format(12345.123, "EUR"), "12,345.123\xa0EUR", "12345.123");
+		assert.equal(oFormat.format(12345.12345, "EUR"), "12,345.12345\xa0EUR", "12345.12345");
+		assert.equal(oFormat.format(1234567890, "EUR"), "1,234,567,890.00\xa0EUR", "1234567890");
+		assert.equal(oFormat.format(-123.23, "EUR"), "-123.23\xa0EUR", "-123.23");
+		assert.equal(oFormat.format("1.23e+9", "EUR"), "1,230,000,000.00\xa0EUR", "1.23e+9");
+		assert.equal(oFormat.format("1.23e-9", "EUR"), "0.00000000123\xa0EUR", "1.23e-9");
+		assert.equal(oFormat.format("-1.23e+9", "EUR"), "-1,230,000,000.00\xa0EUR", "-1.23e+9");
+		assert.equal(oFormat.format("-1.23e-9", "EUR"), "-0.00000000123\xa0EUR", "-1.23e-9");
+		assert.equal(oFormat.format("1.2345e+2", "EUR"), "123.45\xa0EUR", "1.2345e+2");
+		assert.equal(oFormat.format("12345e-2", "EUR"), "123.45\xa0EUR", "12345e-2");
+		assert.equal(oFormat.format("-1.2345e+2", "EUR"), "-123.45\xa0EUR", "-1.2345e+2");
+		assert.equal(oFormat.format("-12345e-2", "EUR"), "-123.45\xa0EUR", "-12345e-2");
+		assert.equal(oFormat.format("123.45e+2", "EUR"), "12,345.00\xa0EUR", "123.45e+2");
+		assert.equal(oFormat.format("12.345e-2", "EUR"), "0.12345\xa0EUR", "12.345e-2");
+		assert.equal(oFormat.format("-123.45e+2", "EUR"), "-12,345.00\xa0EUR", "-123.45e+2");
+		assert.equal(oFormat.format("-12.345e-2", "EUR"), "-0.12345\xa0EUR", "-12.345e-2");
+		assert.equal(oFormat.format("123456.789e+2", "EUR"), "12,345,678.90\xa0EUR", "123456.789e+2");
+		assert.equal(oFormat.format("123.456789e-2", "EUR"), "1.23456789\xa0EUR", "123.456789e-2");
+		assert.equal(oFormat.format("-123456.789e+2", "EUR"), "-12,345,678.90\xa0EUR", "-123456.789e+2");
+		assert.equal(oFormat.format("-123.456789e-2", "EUR"), "-1.23456789\xa0EUR", "-123.456789e-2");
+		assert.equal(oFormat.format("1.20300", "EUR"), "1.203\xa0EUR", "1.20300");
+		assert.equal(oFormat.format("1000.00", "EUR"), "1,000.00\xa0EUR", "1000.00");
+		assert.equal(oFormat.format("1000.0000", "EUR"), "1,000.00\xa0EUR", "1000.0000");
+		assert.equal(oFormat.format("1000.00000000", "EUR"), "1,000.00\xa0EUR", "1000.00000000");
+		assert.equal(oFormat.format(123456789.123456789, "EUR"), "123,456,789.12345679\xa0EUR", "123456789.123456789 (number)");
+		assert.equal(oFormat.format("123456789.123456789", "EUR"), "123,456,789.123456789\xa0EUR", "123456789.123456789 (string)");
+	});
+
 	QUnit.test("Currency format with sMeasure", function (assert) {
 		var oLocale = new Locale("en-US", oLocale);
 		var oFormat = getCurrencyInstance({}, oLocale);

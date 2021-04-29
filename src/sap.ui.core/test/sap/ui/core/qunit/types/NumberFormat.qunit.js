@@ -726,9 +726,50 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oDefaultFloat.format("-123.456789e-2"), "-1.23456789", "-123.456789e-2");
 		assert.equal(oDefaultFloat.format("1000.00"), "1,000.00", "1000.00");
 		assert.equal(oDefaultFloat.format("1000.0000"), "1,000.0000", "1000.0000");
-		assert.equal(oDefaultFloat.format(123456789.123456789), "123,456,789.1234568", "123456789.123456789 (number)");
 		assert.equal(oDefaultFloat.format("123456789.123456789"), "123,456,789.123456789", "123456789.123456789 (string)");
+		assert.equal(oDefaultFloat.format(123456789.123456789), "123,456,789.1234568", "123456789.123456789 (number)");
+	});
 
+	QUnit.test("float default format preserveDecimals=true", function (assert) {
+		var oFloatInstanceWithPreserveDecimals = NumberFormat.getFloatInstance({preserveDecimals: true});
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(.1), "0.1", ".1");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(0.123), "0.123", "0.123");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(123), "123", "123");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(123.23), "123.23", "123.23");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(1234), "1,234", "1234");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(12345), "12,345", "12345");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(12345.123), "12,345.123", "12345.123");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(12345.12345), "12,345.12345", "12345.12345");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(1234567890), "1,234,567,890", "1234567890");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(-123.23), "-123.23", "-123.23");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("1.23e+9"), "1,230,000,000", "1.23e+9");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("1.23e-9"), "0.00000000123", "1.23e-9");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("-1.23e+9"), "-1,230,000,000", "-1.23e+9");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("-1.23e-9"), "-0.00000000123", "-1.23e-9");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("1.2345e+2"), "123.45", "1.2345e+2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("12345e-2"), "123.45", "12345e-2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("-1.2345e+2"), "-123.45", "-1.2345e+2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("-12345e-2"), "-123.45", "-12345e-2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("123.45e+2"), "12,345", "123.45e+2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("12.345e-2"), "0.12345", "12.345e-2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("-123.45e+2"), "-12,345", "-123.45e+2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("-12.345e-2"), "-0.12345", "-12.345e-2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("123456.789e+2"), "12,345,678.9", "123456.789e+2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("123.456789e-2"), "1.23456789", "123.456789e-2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("-123456.789e+2"), "-12,345,678.9", "-123456.789e+2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("-123.456789e-2"), "-1.23456789", "-123.456789e-2");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("1.20300"), "1.20300", "1.20300");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("1000.00"), "1,000.00", "1000.00");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("1000.0000"), "1,000.0000", "1000.0000");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("1000.00000000"), "1,000.00000000", "1000.00000000");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format("123456789.123456789"), "123,456,789.123456789", "123456789.123456789 (string)");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(123456789.123456789), "123,456,789.12345679", "123456789.12345679 (number)");
+	});
+
+	QUnit.test("float with rounding", function (assert) {
+		var oFloatInstanceWithPreserveDecimals = NumberFormat.getFloatInstance({preserveDecimals: true});
+		assert.equal(oDefaultFloat.format(123456789.123456789), "123,456,789.1234568", "123456789.123456789 (number)");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(123456789.123456789), "123,456,789.12345679", "123456789.123456789 (number)");
 	});
 
 	QUnit.test("float with big numbers and maxIntegerDigits", function (assert) {
@@ -1197,6 +1238,80 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		}
 		return getUniqueKey(numberOfPlaces, sChars) + cChar;
 	}
+
+	QUnit.test("Unit format default formatting", function (assert) {
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getUnitInstance({}, oLocale);
+
+		assert.equal(oFormat.format(.1, "mass-kilogram"), "0.1 kg", ".1");
+		assert.equal(oFormat.format(0.123, "mass-kilogram"), "0.123 kg", "0.123");
+		assert.equal(oFormat.format(123, "mass-kilogram"), "123 kg", "123");
+		assert.equal(oFormat.format(123.23, "mass-kilogram"), "123.23 kg", "123.23");
+		assert.equal(oFormat.format(1234, "mass-kilogram"), "1,234 kg", "1234");
+		assert.equal(oFormat.format(12345, "mass-kilogram"), "12,345 kg", "12345");
+		assert.equal(oFormat.format(12345.123, "mass-kilogram"), "12,345.123 kg", "12345.123");
+		assert.equal(oFormat.format(12345.12345, "mass-kilogram"), "12,345.12345 kg", "12345.12345");
+		assert.equal(oFormat.format(1234567890, "mass-kilogram"), "1,234,567,890 kg", "1234567890");
+		assert.equal(oFormat.format(-123.23, "mass-kilogram"), "-123.23 kg", "-123.23");
+		assert.equal(oFormat.format("1.23e+9", "mass-kilogram"), "1,230,000,000 kg", "1.23e+9");
+		assert.equal(oFormat.format("1.23e-9", "mass-kilogram"), "0.00000000123 kg", "1.23e-9");
+		assert.equal(oFormat.format("-1.23e+9", "mass-kilogram"), "-1,230,000,000 kg", "-1.23e+9");
+		assert.equal(oFormat.format("-1.23e-9", "mass-kilogram"), "-0.00000000123 kg", "-1.23e-9");
+		assert.equal(oFormat.format("1.2345e+2", "mass-kilogram"), "123.45 kg", "1.2345e+2");
+		assert.equal(oFormat.format("12345e-2", "mass-kilogram"), "123.45 kg", "12345e-2");
+		assert.equal(oFormat.format("-1.2345e+2", "mass-kilogram"), "-123.45 kg", "-1.2345e+2");
+		assert.equal(oFormat.format("-12345e-2", "mass-kilogram"), "-123.45 kg", "-12345e-2");
+		assert.equal(oFormat.format("123.45e+2", "mass-kilogram"), "12,345 kg", "123.45e+2");
+		assert.equal(oFormat.format("12.345e-2", "mass-kilogram"), "0.12345 kg", "12.345e-2");
+		assert.equal(oFormat.format("-123.45e+2", "mass-kilogram"), "-12,345 kg", "-123.45e+2");
+		assert.equal(oFormat.format("-12.345e-2", "mass-kilogram"), "-0.12345 kg", "-12.345e-2");
+		assert.equal(oFormat.format("123456.789e+2", "mass-kilogram"), "12,345,678.9 kg", "123456.789e+2");
+		assert.equal(oFormat.format("123.456789e-2", "mass-kilogram"), "1.23456789 kg", "123.456789e-2");
+		assert.equal(oFormat.format("-123456.789e+2", "mass-kilogram"), "-12,345,678.9 kg", "-123456.789e+2");
+		assert.equal(oFormat.format("-123.456789e-2", "mass-kilogram"), "-1.23456789 kg", "-123.456789e-2");
+		assert.equal(oFormat.format("1000.00", "mass-kilogram"), "1,000.00 kg", "1000.00");
+		assert.equal(oFormat.format("1000.0000", "mass-kilogram"), "1,000.0000 kg", "1000.0000");
+		assert.equal(oFormat.format(123456789.123456789, "mass-kilogram"), "123,456,789.1234568 kg", "123456789.123456789 (number)");
+		assert.equal(oFormat.format("123456789.123456789", "mass-kilogram"), "123,456,789.123456789 kg", "123456789.123456789 (string)");
+	});
+
+	QUnit.test("Unit format default formatting preserveDecimals=true", function (assert) {
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getUnitInstance({preserveDecimals: true}, oLocale);
+
+		assert.equal(oFormat.format(.1, "mass-kilogram"), "0.1 kg", ".1");
+		assert.equal(oFormat.format(0.123, "mass-kilogram"), "0.123 kg", "0.123");
+		assert.equal(oFormat.format(123, "mass-kilogram"), "123 kg", "123");
+		assert.equal(oFormat.format(123.23, "mass-kilogram"), "123.23 kg", "123.23");
+		assert.equal(oFormat.format(1234, "mass-kilogram"), "1,234 kg", "1234");
+		assert.equal(oFormat.format(12345, "mass-kilogram"), "12,345 kg", "12345");
+		assert.equal(oFormat.format(12345.123, "mass-kilogram"), "12,345.123 kg", "12345.123");
+		assert.equal(oFormat.format(12345.12345, "mass-kilogram"), "12,345.12345 kg", "12345.12345");
+		assert.equal(oFormat.format(1234567890, "mass-kilogram"), "1,234,567,890 kg", "1234567890");
+		assert.equal(oFormat.format(-123.23, "mass-kilogram"), "-123.23 kg", "-123.23");
+		assert.equal(oFormat.format("1.23e+9", "mass-kilogram"), "1,230,000,000 kg", "1.23e+9");
+		assert.equal(oFormat.format("1.23e-9", "mass-kilogram"), "0.00000000123 kg", "1.23e-9");
+		assert.equal(oFormat.format("-1.23e+9", "mass-kilogram"), "-1,230,000,000 kg", "-1.23e+9");
+		assert.equal(oFormat.format("-1.23e-9", "mass-kilogram"), "-0.00000000123 kg", "-1.23e-9");
+		assert.equal(oFormat.format("1.2345e+2", "mass-kilogram"), "123.45 kg", "1.2345e+2");
+		assert.equal(oFormat.format("12345e-2", "mass-kilogram"), "123.45 kg", "12345e-2");
+		assert.equal(oFormat.format("-1.2345e+2", "mass-kilogram"), "-123.45 kg", "-1.2345e+2");
+		assert.equal(oFormat.format("-12345e-2", "mass-kilogram"), "-123.45 kg", "-12345e-2");
+		assert.equal(oFormat.format("123.45e+2", "mass-kilogram"), "12,345 kg", "123.45e+2");
+		assert.equal(oFormat.format("12.345e-2", "mass-kilogram"), "0.12345 kg", "12.345e-2");
+		assert.equal(oFormat.format("-123.45e+2", "mass-kilogram"), "-12,345 kg", "-123.45e+2");
+		assert.equal(oFormat.format("-12.345e-2", "mass-kilogram"), "-0.12345 kg", "-12.345e-2");
+		assert.equal(oFormat.format("123456.789e+2", "mass-kilogram"), "12,345,678.9 kg", "123456.789e+2");
+		assert.equal(oFormat.format("123.456789e-2", "mass-kilogram"), "1.23456789 kg", "123.456789e-2");
+		assert.equal(oFormat.format("-123456.789e+2", "mass-kilogram"), "-12,345,678.9 kg", "-123456.789e+2");
+		assert.equal(oFormat.format("-123.456789e-2", "mass-kilogram"), "-1.23456789 kg", "-123.456789e-2");
+		assert.equal(oFormat.format("1.20300", "mass-kilogram"), "1.20300 kg", "1.20300");
+		assert.equal(oFormat.format("1000.00", "mass-kilogram"), "1,000.00 kg", "1000.00");
+		assert.equal(oFormat.format("1000.0000", "mass-kilogram"), "1,000.0000 kg", "1000.0000");
+		assert.equal(oFormat.format("1000.00000000", "mass-kilogram"), "1,000.00000000 kg", "1000.00000000");
+		assert.equal(oFormat.format(123456789.123456789, "mass-kilogram"), "123,456,789.12345679 kg", "123456789.123456789 (number)");
+		assert.equal(oFormat.format("123456789.123456789", "mass-kilogram"), "123,456,789.123456789 kg", "123456789.123456789 (string)");
+	});
 
 	QUnit.test("NumberFormat.getDefaultUnitPattern() - Default unitPattern-count-other pattern", function(assert) {
 		var sDefaultPattern = NumberFormat.getDefaultUnitPattern("MyOwnUnit");
@@ -2904,11 +3019,12 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format(123).toString(), "123", "precision: Length should not change.");
 	});
 
-	QUnit.test("Float as string with preserveDecimals", function (assert) {
+	QUnit.test("Float as string with preserveDecimals=true", function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, parseAsString: true}, new Locale("en"));
 
 		assert.equal(oFormat.format("123.456").toString(), "123.456", "unchanged");
 		assert.equal(oFormat.format("123.40").toString(), "123.40", "unchanged");
+		assert.equal(oFormat.format("123.0000000").toString(), "123.0000000", "unchanged");
 
 		// decimals 2 (same as minFractionDigits: 2 and maxFractionDigits: 2):
 		oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, decimals: 2, parseAsString: true}, new Locale("en"));
@@ -2918,7 +3034,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format("123.4").toString(), "123.40", "decimals: Length should be filled up.");
 		assert.equal(oFormat.format("123").toString(), "123.00", "decimals: Length should be filled up.");
 		assert.equal(oFormat.format("123.0").toString(), "123.00", "decimals: Length should be filled up.");
-		assert.equal(oFormat.format("123.000").toString(), "123.000", "decimals: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format("123.000").toString(), "123.00", "Length changes because of preserveDecimals and trailing 0 decimals are cut off until maxFractionDigits.");
+		assert.equal(oFormat.format("123.00000").toString(), "123.00", "Length changes because of preserveDecimals and trailing 0 decimals are cut off until maxFractionDigits.");
 
 		// fractionDigits:
 		oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, minFractionDigits: 1, maxFractionDigits: 3, parseAsString: true}, new Locale("en"));
@@ -2928,7 +3045,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format("123.4").toString(), "123.4", "fractionDigits: Length should not change.");
 		assert.equal(oFormat.format("123").toString(), "123.0", "fractionDigits: Length should be filled up.");
 		assert.equal(oFormat.format("123.0").toString(), "123.0", "fractionDigits: Length should not change.");
-		assert.equal(oFormat.format("123.0000").toString(), "123.0000", "fractionDigits: Length should not change because of preserveDecimals .");
+		assert.equal(oFormat.format("123.0000").toString(), "123.000", "fractionDigits: Length changes because of preserveDecimals and trailing 0 decimals are cut off until maxFractionDigits.");
+		assert.equal(oFormat.format("123.000000").toString(), "123.000", "Length changes because of preserveDecimals and trailing 0 decimals are cut off until maxFractionDigits.");
 
 
 		// precision (sets the maximum fraction digits):
@@ -2939,7 +3057,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format("123.4").toString(), "123.4", "precision: Length should not change.");
 		assert.equal(oFormat.format("123").toString(), "123", "precision: Length should not change.");
 		assert.equal(oFormat.format("123.0").toString(), "123.0", "precision: Length should not change.");
-		assert.equal(oFormat.format("123.0000").toString(), "123.0000", "precision: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format("123.0000").toString(), "123.00", "precision: Length changes because of preserveDecimals and trailing 0 decimals are cut off until maxFractionDigits.");
 	});
 
 
