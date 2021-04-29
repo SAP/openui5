@@ -1107,17 +1107,25 @@ sap.ui.define([
 					sPM = oFormat.aDayPeriods[1];
 
 				// check whether the value is one of the ASCII variants for AM/PM
-				// for example: "am", "a.m.", "am." (and their case variants)
-				// if true, remove the '.' and compare with the defined am/pm case
+				// for example: "am", "a.m.", "am.", "a. m." (and their case variants)
+				// if true, remove the '.', the spaces and compare with the defined am/pm case
 				// insensitive
-				var rAMPM = /[aApP](?:\.)?[mM](?:\.)?/;
+				var rAMPM = /[aApP](?:\.)?[\x20\xA0]?[mM](?:\.)?/;
 				var aMatch = sValue.match(rAMPM);
 				var bVariant = (aMatch && aMatch.index === 0);
 
 				if (bVariant) {
-					sValue = aMatch[0].replace(/\./g, "").toLowerCase() + sValue.substring(aMatch[0].length);
+					sValue = aMatch[0];
+
+					// Remove normal and non-breaking spaces
+					sAM = sAM.replace(/[\x20\xA0]/g, "");
+					sPM = sPM.replace(/[\x20\xA0]/g, "");
+					sValue = sValue.replace(/[\x20\xA0]/g, "");
+
+					// Remove dots and make it lowercase
 					sAM = sAM.replace(/\./g, "").toLowerCase();
 					sPM = sPM.replace(/\./g, "").toLowerCase();
+					sValue = sValue.replace(/\./g, "").toLowerCase();
 				}
 				if (sValue.indexOf(sAM) === 0) {
 					bPM = false;
