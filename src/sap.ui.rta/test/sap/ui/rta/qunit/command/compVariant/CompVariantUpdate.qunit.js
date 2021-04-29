@@ -103,6 +103,7 @@ sap.ui.define([
 				return mPropertyBag.id;
 			});
 			var oSetDefaultFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "setDefaultVariantId");
+			var oRevertDefaultFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revertSetDefaultVariantId");
 			var oRemoveVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "removeVariant");
 			var oRevertFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert").callsFake(function(mPropertyBag) {
 				return mPropertyBag.id;
@@ -133,7 +134,7 @@ sap.ui.define([
 				assert.deepEqual(oUpdateFlAPIStub.getCall(1).args[0], mExpectedProperties2, "the FL API was called with the correct properties 3");
 
 				assert.equal(oSetDefaultFlAPIStub.callCount, 1, "the FL API setDefault was called");
-				assert.equal(oSetDefaultFlAPIStub.lastCall.args[0].id, "variant3", "the correct variant id was passed");
+				assert.equal(oSetDefaultFlAPIStub.lastCall.args[0].defaultVariantId, "variant3", "the correct variant id was passed");
 
 				assert.equal(oRemoveVariantFlAPIStub.callCount, 1, "the FL API removeVariant was called");
 				assert.equal(oRemoveVariantFlAPIStub.lastCall.args[0].id, "variant1", "the correct variant id was passed");
@@ -181,6 +182,9 @@ sap.ui.define([
 				assert.equal(oRevertFlAPIStub.getCall(0).args[0].id, "variant1", "the correct variant id was passed 1");
 				assert.equal(oRevertFlAPIStub.getCall(1).args[0].id, "variant2", "the correct variant id was passed 2");
 				assert.equal(oRevertFlAPIStub.getCall(2).args[0].id, "variant3", "the correct variant id was passed 3");
+
+				assert.equal(oRevertDefaultFlAPIStub.callCount, 1, "the revertSetDefaultVariantId function was called once");
+				assert.equal(oAddControlStub.lastCall.args[0], "variant1", "the correct variant was added");
 
 				assert.equal(oAddControlStub.callCount, 1, "the addVariant function on the control was called once");
 				assert.equal(oAddControlStub.lastCall.args[0], "variant1", "the correct variant was added");
