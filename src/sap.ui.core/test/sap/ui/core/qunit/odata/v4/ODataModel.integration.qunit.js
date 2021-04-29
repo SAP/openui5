@@ -20698,10 +20698,14 @@ sap.ui.define([
 	// there even is no such property binding.
 	// JIRA: CPOUI5ODATAV4-848
 	// BCP: 2180125559
+	// Add a sub-object page with a late property. Ensure that the property is still known and late
+	// after the rebind.
+	// JIRA: CPOUI5ODATAV4-936
 	QUnit.test("BCP: 2180125559", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oObjectPage,
 			sView = '\
-<FlexBox>\
+<FlexBox id="objectPage">\
 	<Text id="name" text="{Name}"/>\
 	<Table id="table" growing="true" growingThreshold="5" items="{\
 				path : \'_Publication\',\
@@ -20710,12 +20714,16 @@ sap.ui.define([
 		<Text id="price" text="{Price}"/>\
 		<Text id="channel" text="{_Artist/defaultChannel}"/>\
 	</Table>\
+</FlexBox>\
+<FlexBox id="subObjectPage">\
+	<Text id="currency" text="{CurrencyCode}"/>\
 </FlexBox>',
 			that = this;
 
 		this.expectChange("name")
 			.expectChange("price", [])
-			.expectChange("channel", []);
+			.expectChange("channel", [])
+			.expectChange("currency");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
@@ -20731,7 +20739,8 @@ sap.ui.define([
 				})
 				.expectChange("name", "Hour Frustrated");
 
-			that.oView.setBindingContext(
+			oObjectPage = that.oView.byId("objectPage");
+			oObjectPage.setBindingContext(
 				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
 					.getBoundContext());
 
@@ -20755,7 +20764,44 @@ sap.ui.define([
 				.expectChange("price", ["9.99"])
 				.expectChange("channel", ["Channel 2"]);
 
-			that.oView.setBindingContext(
+			oObjectPage.setBindingContext(
+				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
+					.getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication('42-0')"
+					+ "?$select=CurrencyCode", {CurrencyCode : "EUR"})
+				.expectChange("currency", "EUR");
+
+			that.oView.byId("subObjectPage").setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=5", {
+					value : [{
+						Price : "10.99",
+						PublicationID : "42-0"
+					}]
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel", {
+					ArtistID : "42",
+					IsActiveEntity : true,
+					Name : "Hour Frustrated again and again",
+					defaultChannel : "Channel 3"
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication('42-0')"
+					+ "?$select=CurrencyCode", {CurrencyCode : "USD"})
+				.expectChange("name", "Hour Frustrated again and again")
+				.expectChange("price", ["10.99"])
+				.expectChange("channel", ["Channel 3"])
+				.expectChange("currency", "USD");
+
+			oObjectPage.setBindingContext(
 				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
 					.getBoundContext());
 
