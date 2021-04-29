@@ -1733,24 +1733,13 @@ function(
 			oPopup = oSuggestionsPopover.getPopover(),
 			oList = oSuggestionsPopover.getItemsContainer();
 
-		// The IE moves the cursor position at the beginning when there is a binding and delay from the back-end
-		// The workaround is to save the focus info which includes position and reset it after updating the DOM
-		function _setDomValue(sValue) {
-			var oFocusInfo = this.getFocusInfo();
-			this.setDOMValue(sValue);
-
-			if (Device.browser.internet_explorer) {
-				this.applyFocusInfo(oFocusInfo);
-			}
-		}
-
 		// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 		if (!this.isMobileDevice()) {
 			if (this._isSuggestionsPopoverOpen()) {
 				this._sCloseTimer = setTimeout(function () {
 					this.cancelPendingSuggest();
 					if (this._getTypedInValue()) {
-						_setDomValue.call(this, this._getTypedInValue());
+						this.setDOMValue(this._getTypedInValue());
 					}
 					oPopup.close();
 				}.bind(this), 0);
@@ -2018,7 +2007,7 @@ function(
 	Input.prototype.oncompositionend = function (oEvent) {
 		InputBase.prototype.oncompositionend.apply(this, arguments);
 
-		if (!Device.browser.edge && !Device.browser.firefox) {
+		if (!Device.browser.firefox) {
 			this._handleTypeAhead(this);
 		}
 	};
