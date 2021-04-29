@@ -2138,92 +2138,6 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-
-	QUnit.module("invalid input event");
-	QUnit.test("iE10+ should mark event invalid when an input field with a native placeholder is focused", function(assert) {// TODO remove after the end of support for Internet Explorer
-		this.stub(InputBase.prototype, "bShowLabelAsPlaceholder", false);
-		var fnOnInputSpy = this.spy(InputBase.prototype, "oninput");
-		this.stub(Device, "browser", {
-			msie: true,
-			version: 10
-		});
-
-		var oInput = new InputBase({
-			placeholder : "Test"
-		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		var oInputDomRef = oInput.getFocusDomRef();
-		oInputDomRef.focus();
-		sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
-
-		// This fix should be valid only for input tag elements
-		assert.strictEqual(oInput._getInputElementTagName(), "INPUT", "Input tag element is used");
-		assert.strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
-		assert.ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
-
-		// cleanup
-		oInput.destroy();
-	});
-
-	QUnit.test("iE11 should mark event invalid when an readonly input field fires input event", function(assert) {// TODO remove after the end of support for Internet Explorer
-		var fnOnInputSpy = this.spy(InputBase.prototype, "oninput");
-		this.stub(Device, "browser", {
-			msie: true,
-			version: 11
-		});
-
-		var oInput = new InputBase({
-			editable : false
-		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		var oInputDomRef = oInput.getFocusDomRef();
-		oInputDomRef.focus();
-		sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
-
-		assert.strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
-		assert.ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
-
-		// cleanup
-		oInput.destroy();
-	});
-
-	QUnit.test("IE should mark event invalid when is fired with the same value", function (assert) {// TODO remove after the end of support for Internet Explorer
-		this.stub(Device, "browser", {
-			msie: true,
-			version: 11
-		});
-
-		var done = assert.async();
-		var oninputOverride = function (event) {
-			InputBase.prototype.oninput.call(this, event);
-
-			assert.ok(event.isMarked("invalid"), "input event is marked as invalid");
-
-			this.destroy();
-
-			done();
-		};
-
-		var oInput = new InputBase({
-			value: ''
-		}).placeAt("content");
-
-		oInput.oninput = oninputOverride;
-		sap.ui.getCore().applyChanges();
-
-		oInput.oninput({
-			setMarked: function (vl) {
-				this.invalid = vl === "invalid";
-			},
-			isMarked: function () {
-				return this.invalid;
-			}
-		});
-	});
-
-
 	QUnit.module("invalid input event when rendered with non-ASCII symbols", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
@@ -2366,42 +2280,6 @@ sap.ui.define([
 				}, 100);
 			}, 100);
 		}, 100);
-	});
-
-	QUnit.test("IE should not fire change event when value is selected from IME Popover with Enter", function(assert) {
-
-		// arrange
-		var oInput = new InputBase({
-			value : "Initial value"
-		});
-
-		this.stub(InputBase.prototype, "isComposingCharacter", function() {
-			return true;
-		});
-
-		this.stub(Device, "browser", {
-			msie: true
-		});
-
-		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		var oInputDomRef = oInput.getFocusDomRef(),
-			fnFireChangeSpy = this.spy(oInput, "fireChange"),
-			fnOnEnterSpy = this.spy(oInput, "onsapenter");
-
-		// change dom and cursor pos
-		sap.ui.test.qunit.triggerCharacterInput(oInputDomRef, "a");
-
-		// act
-		sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
-
-		// assertion
-		assert.notOk(fnFireChangeSpy.callCount, "Change event is not fired when the IME Popover is opened.");
-		assert.ok(fnOnEnterSpy.args[0][0].isMarked("invalid"), "Enter is marked as invalid");
-
-		// cleanup
-		oInput.destroy();
 	});
 
 	QUnit.test("Safari should not fire change event when value is selected from IME Popover with Enter", function(assert) {

@@ -242,48 +242,6 @@ function(
 	/* Private methods                                             */
 	/* ----------------------------------------------------------- */
 
-
-	/**
-	 * Handles the input event of the control
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @protected
-	 */
-
-	InputBase.prototype.handleInput = function(oEvent) {
-
-		// IE 10+ fires the input event when an input field with a native placeholder is focused
-		// IE fires the input event when it is put (rendered) in the dom and it has a non-ASCII character
-		if (this._bIgnoreNextInput ||
-			this._bIgnoreNextInputNonASCII) {
-
-			this._bIgnoreNextInput = false;
-			this._bIgnoreNextInputNonASCII = false;
-
-			oEvent.setMarked("invalid");
-
-			return;
-		}
-
-		this._bIgnoreNextInput = false;
-		this._bIgnoreNextInputNonASCII = false;
-
-		// IE fires input event from read-only fields
-		if (!this.getEditable()) {
-			oEvent.setMarked("invalid");
-			return;
-		}
-
-		// IE fires input event whenever placeholder attribute is changed
-		if (document.activeElement !== oEvent.target &&
-			Device.browser.msie && this.getValue() === this.getLastValue()) {
-			oEvent.setMarked("invalid");
-			return;
-		}
-
-		// dom value updated other than value property
-		this._bCheckDomValue = true;
-	};
-
 	/**
 	 * To allow setting of default placeholder e.g. in DatePicker
 	 *
@@ -365,8 +323,9 @@ function(
 
 		// In Firefox and Edge the events are fired correctly
 		// http://blog.evanyou.me/2014/01/03/composition-event/
-		if (!Device.browser.edge && !Device.browser.firefox) {
-			this.handleInput(oEvent);
+		if (!Device.browser.firefox) {
+			// dom value updated other than value property
+			this._bCheckDomValue = true;
 		}
 	};
 
@@ -386,12 +345,6 @@ function(
 		var oFormattedVSTextContent = oFormattedVSText && oFormattedVSText.getHtmlText();
 		var oFormattedVSTextAcc = this.getAggregation("_invisibleFormattedValueStateText");
 		var oFormattedVSTextAccContent = oFormattedVSTextAcc && oFormattedVSTextAcc.getHtmlText();
-
-		// Ignore the input event which is raised by MS Internet Explorer when it has a non-ASCII character
-		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(this.getValue())){// TODO remove after the end of support for Internet Explorer
-			this._bIgnoreNextInputNonASCII = true;
-			this._oDomRefBeforeRendering = this.getDomRef();
-		}
 
 		if (this._bCheckDomValue && !this.bRenderingPhase) {
 
@@ -425,12 +378,6 @@ function(
 		}
 
 		this.$("message").text(this.getValueStateText());
-
-		// IE fires the input event when it is put (rendered) in the dom and it has a non-ASCII character
-		//
-		// If the semantic rendering is used and the input is invalidated, the input DOM element might be kept.
-		// In this case don't make the next oninput event invalid
-		this._bIgnoreNextInputNonASCII = this._bIgnoreNextInputNonASCII && this._oDomRefBeforeRendering !== this.getDomRef();
 
 		// now dom value is up-to-date
 		this._bCheckDomValue = false;
@@ -481,14 +428,6 @@ function(
 	 * @private
 	 */
 	InputBase.prototype.onfocusin = function(oEvent) {
-		// iE10+ fires the input event when an input field with a native placeholder is focused// TODO remove after the end of support for Internet Explorer
-		this._bIgnoreNextInput = !this.bShowLabelAsPlaceholder &&
-			Device.browser.msie &&
-			Device.browser.version > 9 &&
-			!!this.getPlaceholder() &&
-			!this._getInputValue() &&
-			this._getInputElementTagName() === "INPUT"; // Make sure that we are applying this fix only for input html elements
-
 		this.addStyleClass("sapMFocus");
 
 		// open value state message popup when focus is in the input
@@ -657,7 +596,7 @@ function(
 	 */
 	InputBase.prototype.onsapenter = function(oEvent) {
 		// Ignore the change event in IE & Safari when value is selected from IME popover via Enter keypress
-		if ((Device.browser.safari || Device.browser.msie) && this.isComposingCharacter()) {
+		if (Device.browser.safari && this.isComposingCharacter()) {
 			oEvent.setMarked("invalid");
 			return;
 		}
@@ -709,7 +648,8 @@ function(
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	InputBase.prototype.oninput = function(oEvent) {
-		this.handleInput(oEvent);
+		// dom value updated other than value property
+		this._bCheckDomValue = true;
 	};
 
 	/**
