@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/m/BadgeCustomData",
 	"sap/ui/integration/util/DataProviderFactory",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/base/util/LoaderExtensions"
 ],
 	function (
 		Card,
@@ -22,7 +23,8 @@ sap.ui.define([
 		UIComponent,
 		BadgeCustomData,
 		DataProviderFactory,
-		mLibrary
+		mLibrary,
+		LoaderExtensions
 	) {
 		"use strict";
 
@@ -874,6 +876,30 @@ sap.ui.define([
 
 			// Clean up
 			oCard.destroy();
+		});
+
+		QUnit.test("Register module path", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = new Card({
+					manifest: oManifest_ListCard
+				}),
+				fnRegisterSpy = sinon.spy(LoaderExtensions, "registerResourcePath");
+
+			oCard.attachEventOnce("_ready", function () {
+				// Assert
+				assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
+				assert.ok(fnRegisterSpy.calledWith("my/card/qunit/test/ListCard", "resources/my/card/qunit/test/ListCard/"), "LoaderExtensions.registerResourcePath is called with correct params.");
+
+				// Clean up
+				oCard.destroy();
+				fnRegisterSpy.restore();
+				done();
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.module("Methods", {

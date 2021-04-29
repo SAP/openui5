@@ -933,7 +933,7 @@ sap.ui.define([
 
 		this._sAppId = this._oCardManifest.get("/sap.app/id");
 		if (this._sAppId) {
-			LoaderExtensions.registerResourcePath(this._sAppId.replace(/\./g, "/"), this._oCardManifest.getUrl());
+			LoaderExtensions.registerResourcePath(this._sAppId.replace(/\./g, "/"), this._oCardManifest.getUrl() || "/");
 		} else {
 			Log.error("Card sap.app/id entry in the manifest is mandatory");
 		}
