@@ -111,7 +111,7 @@ sap.ui.define([
 			assert.deepEqual(Object.keys(mCompVariants[sPersistencyKey].byId).length, 2, "the specific persistency key map contains two items");
 			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId1].getId(), sId1, "which is the provided defaultVariant1 under its ID");
 			assert.deepEqual(mCompVariants[sPersistencyKey].byId[sId2].getId(), sId2, "which is the provided defaultVariant2 under its ID");
-			assert.equal(mCompVariants[sPersistencyKey].defaultVariant.getId(), sId2, "and with the latest provided defaultVariant change");
+			assert.equal(mCompVariants[sPersistencyKey].defaultVariants[1].getId(), sId2, "and with the latest provided defaultVariant change");
 		});
 
 		QUnit.test("given an response with a standardVariant change", function(assert) {

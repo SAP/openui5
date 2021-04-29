@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger"
 ], function(
 	Change,
+	UpdatableChange,
 	CompVariant,
 	CompVariantMerger
 ) {
@@ -19,7 +21,7 @@ sap.ui.define([
 			variants: [],
 			nonPersistedVariants: [],
 			changes: [],
-			defaultVariant: undefined,
+			defaultVariants: [],
 			standardVariantChange: undefined,
 			standardVariant: undefined
 		};
@@ -50,7 +52,7 @@ sap.ui.define([
 	}
 
 	function buildSectionMap(mCompSection, sSubSection, mCompVariants) {
-		var oClass = sSubSection === "variants" ? CompVariant : Change;
+		var oClass = sSubSection === "variants" ? CompVariant : UpdatableChange;
 		var aFlexObjects = mCompSection[sSubSection].map(function (oCompVariantChangeDefinition) {
 			var oFlexObject = new oClass(oCompVariantChangeDefinition);
 			oFlexObject.setState(Change.states.PERSISTED); // prevent persisting these anew
@@ -62,9 +64,6 @@ sap.ui.define([
 			getOrCreate(mCompVariants, sPersistencyKey).byId[oFlexObject.getId()] = oFlexObject;
 
 			switch (sSubSection) {
-				case "defaultVariants":
-					getOrCreate(mCompVariants, sPersistencyKey).defaultVariant = oFlexObject;
-					break;
 				case "standardVariants":
 					getOrCreate(mCompVariants, sPersistencyKey).standardVariantChange = oFlexObject;
 					break;
