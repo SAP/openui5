@@ -13,11 +13,11 @@ sap.ui.define([
 	var oMockData = {
 			mFixture : {
 				"localAnnotations.xml" : {source : "localAnnotations.xml"},
-				"$metadata" : {source : "metadata.xml"},
-				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata" : {
+				"$metadata?sap-language=EN" : {source : "metadata.xml"},
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-language=EN" : {
 					source : "metadata_product.xml"
 				},
-				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_supplier/0001/$metadata" : {
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_supplier/0001/$metadata?sap-language=EN" : {
 					source : "metadata_supplier.xml"
 				},
 				"Equipments?$select=Category,EmployeeId,ID,Name&$expand=EQUIPMENT_2_PRODUCT($select=ID,Name;$expand=PRODUCT_2_CATEGORY($select=CategoryIdentifier,CategoryName),PRODUCT_2_SUPPLIER($select=SUPPLIER_ID,Supplier_Name))&$skip=0&$top=5" : {

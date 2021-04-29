@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"$metadata" : {source : "metadata.xml"},
+				"$metadata?sap-language=EN" : {source : "metadata.xml"},
 				"BusinessPartnerList?$skip=0&$top=5" : {source : "BusinessPartnerList.json"},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.CURRENCY_CODE%27/$metadata"
 					: {source : "metadata_tcurc.xml"},

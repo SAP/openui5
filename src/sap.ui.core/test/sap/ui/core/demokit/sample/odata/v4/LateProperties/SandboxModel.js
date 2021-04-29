@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"$metadata?custom-option=value" : {
+				"$metadata?custom-option=value&sap-language=EN" : {
 					source : "metadata.xml"
 				},
 				"SalesOrderList?custom-option=value&$select=BuyerID,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {

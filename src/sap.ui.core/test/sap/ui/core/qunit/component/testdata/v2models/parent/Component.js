@@ -337,9 +337,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"type": "sap.ui.test.v2models.parent.ModelNotDefined"
 						},
 						"dataSource-not-found": {
+							"type": "sap.ui.model.odata.v2.ODataModel",
 							"dataSource": "does-not-exist"
 						},
 						"dataSource-invalid": {
+							"type": "sap.ui.model.odata.v2.ODataModel",
 							"dataSource": "invalid"
 						}
 
