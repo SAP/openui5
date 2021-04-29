@@ -5786,15 +5786,19 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oRowContext = that.oView.byId("list").getItems()[1].getBindingContext();
+			var fnResolve,
+				oRowContext = that.oView.byId("list").getItems()[1].getBindingContext();
 
 			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20",
-					resolveLater({ // must not respond before requestSideEffects
-						value : [
-							{ItemPosition : "10", Note : "Note 2", SalesOrderID : "2"}
-						]
-					}))
+					new Promise(function (resolve) {
+						fnResolve = resolve.bind(null, {
+							value : [
+								{ItemPosition : "10", Note : "Note 2", SalesOrderID : "2"}
+							]
+						});
+					})
+				)
 				.expectChange("note", ["Note 2"])
 				.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20", {
@@ -5805,6 +5809,7 @@ sap.ui.define([
 
 			return Promise.all([
 				resolveLater(function () {
+					resolveLater(fnResolve); // must not respond before requestSideEffects
 					return oRowContext.requestSideEffects(["SO_2_SOITEM"]);
 				}, 0),
 				that.oView.byId("detail").setBindingContext(oRowContext),
