@@ -717,13 +717,7 @@ sap.ui.define([
 			iScrollWidth *= -1;
 		}
 
-		if (Device.browser.msie) {
-			setTimeout(function () {
-				domRef.scrollLeft = iScrollWidth;
-			});
-		} else {
-			domRef.scrollLeft = iScrollWidth;
-		}
+		domRef.scrollLeft = iScrollWidth;
 	};
 
 	Tokenizer.prototype._registerResizeHandler = function(){
@@ -1053,14 +1047,10 @@ sap.ui.define([
 			oEvent.preventDefault();
 		};
 
-		if (Device.browser.msie && window.clipboardData) {
-			/* TODO remove after the end of support for Internet Explorer */
-			window.clipboardData.setData("text", sTokensTexts);
-		} else {
-			document.addEventListener(sShortcutName, cutToClipboard);
-			document.execCommand(sShortcutName);
-			document.removeEventListener(sShortcutName, cutToClipboard);
-		}
+		document.addEventListener(sShortcutName, cutToClipboard);
+		document.execCommand(sShortcutName);
+		document.removeEventListener(sShortcutName, cutToClipboard);
+
 	};
 
 	/**
@@ -1135,16 +1125,11 @@ sap.ui.define([
 			oTargetToken = oEvent.getMark("tokenTap"),
 			bDeleteToken = oEvent.getMark("tokenDeletePress"),
 			aTokens = this._getVisibleTokens(),
-			oLastToken = aTokens[aTokens.length - 1],
 			oFocusedToken, iFocusIndex, iIndex, iMinIndex, iMaxIndex;
 
 		if (bDeleteToken || !oTargetToken || (!bShiftKey && bCtrlKey)) { // Ctrl
 			this._oSelectionOrigin = null;
 			return;
-		}
-
-		if (Device.browser.msie && oTargetToken === oLastToken) {
-			this.scrollToEnd();
 		}
 
 		if (!bShiftKey) { // Simple click/tap
