@@ -2,24 +2,30 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
-	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	UIComponent,
-	CompVariantState,
+	SmartVariantManagementApplyAPI,
 	CompVariantMerger,
 	FlexState,
 	CompVariant,
-	Storage,
+	CompVariantUtils,
+	ManifestUtils,
 	Settings,
+	CompVariantState,
+	Storage,
 	Change,
 	Utils,
 	Layer,
@@ -332,13 +338,13 @@ sap.ui.define([
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
 				assert.equal(oCompVariantStateMapForPersistencyKey.variants[0].getState(), Change.states.PERSISTED, "the variant is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.changes[0].getState(), Change.states.PERSISTED, "the addFavorite change is persisted");
-				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant.getState(), Change.states.PERSISTED, "the set default variant is persisted");
-				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant.getNamespace(), "apps/the.app.component/changes/", "the set default variant change has namespace in the content");
+				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants[0].getState(), Change.states.PERSISTED, "the set default variant is persisted");
+				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants[0].getNamespace(), "apps/the.app.component/changes/", "the set default variant change has namespace in the content");
 			})
 			.then(function () {
 				oCompVariantStateMapForPersistencyKey.changes[0].setState(Change.states.DIRTY);
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(Change.states.DELETED);
-				oCompVariantStateMapForPersistencyKey.defaultVariant.setState(Change.states.DELETED);
+				oCompVariantStateMapForPersistencyKey.defaultVariants[0].setState(Change.states.DELETED);
 			})
 			.then(CompVariantState.persist.bind(undefined, {
 				reference: sComponentId,
@@ -350,7 +356,7 @@ sap.ui.define([
 				assert.equal(oRemoveStub.callCount, 2, "and two deletes were called");
 				assert.equal(oCompVariantStateMapForPersistencyKey.variants.length, 0, "the variant is cleared");
 				assert.equal(oCompVariantStateMapForPersistencyKey.changes[0].getState(), Change.states.PERSISTED, "the addFavorite change is persisted");
-				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, undefined, "the default variant was cleared");
+				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants.length, 0, "the default variant was cleared");
 				assert.equal(oCompVariantStateMapForPersistencyKey.standardVariantChange, undefined, "the standard variant was cleared");
 			});
 		});
@@ -405,8 +411,8 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			});
 			assert.equal(oChange.getContent().defaultVariantName, this.sVariantId1);
-			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange,
-				"the change is set under the persistencyKey");
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants.length, 1, "the change was stored into the map");
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange, "the change is set under the persistencyKey");
 			assert.equal(oChange.getContent().defaultVariantName, this.sVariantId1, "the change content is correct");
 			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
 			assert.equal(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is set to CUSTOMER");
@@ -418,8 +424,8 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			});
 			assert.equal(oChange.getContent().defaultVariantName, this.sVariantId2, "the change content was updated");
-			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange2,
-				"the change is set under the persistencyKey");
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange2, "the change is set under the persistencyKey");
+			assert.equal(oChange, oChange2, "it is still the same change object");
 			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "still one entity for persistencyKeys is present");
 			assert.equal(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
 		});
@@ -441,10 +447,61 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.USER
 			});
-			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange2,
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
 			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
 			assert.equal(oChange2.getDefinition().layer, Layer.USER, "The default layer is still set to USER");
+		});
+
+		QUnit.test("Given setDefault is called once for USER layer and twice for CUSTOMER layer and then reverted three times", function(assert) {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sComponentId);
+			sandbox.stub(CompVariantUtils, "getPersistencyKey").returns(this.sPersistencyKey);
+
+			var aDefaultVariants = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).defaultVariants;
+			CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId1,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER
+			});
+
+			CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId2,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.USER
+			});
+
+			CompVariantState.setDefault({
+				reference: sComponentId,
+				defaultVariantId: this.sVariantId1,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.USER
+			});
+
+			CompVariantState.revertSetDefaultVariantId({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
+
+			assert.equal(aDefaultVariants.length, 2, "still 2 changes are present");
+			assert.equal(SmartVariantManagementApplyAPI.getDefaultVariantId({}), this.sVariantId2, "the default variant ID can be determined correct");
+
+			CompVariantState.revertSetDefaultVariantId({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
+
+			assert.equal(aDefaultVariants.length, 1, "1 change is remaining");
+			assert.equal(SmartVariantManagementApplyAPI.getDefaultVariantId({}), this.sVariantId1, "the default variant ID can be determined correct");
+
+			CompVariantState.revertSetDefaultVariantId({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			});
+
+			assert.equal(aDefaultVariants.length, 0, "the last change was removed");
+			assert.equal(SmartVariantManagementApplyAPI.getDefaultVariantId({}), "", "the default variant ID can be determined correct");
 		});
 
 		QUnit.test("Given setDefault is called with a already transported Change", function(assert) {
@@ -464,7 +521,7 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
-			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange2,
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
 			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
 			assert.equal(oChange2.getDefinition().layer, Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");
@@ -487,7 +544,7 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
-			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange2,
+			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
 			assert.equal(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
 			assert.equal(oChange2.getDefinition().layer, Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");

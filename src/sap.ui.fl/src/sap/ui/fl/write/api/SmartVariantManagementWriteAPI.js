@@ -188,7 +188,7 @@ sap.ui.define([
 		 * Checks whether personalization of variants is enabled.
 		 *
 		 * @private
-		 * @ui5-restricted
+		 * @ui5-restricted sap.ui.comp
 		 * @since 1.86.0
 		 *
 		 * @returns {Promise<boolean>} <code>true</code> if personalization of variants is enabled
@@ -203,7 +203,7 @@ sap.ui.define([
 		 * Checks whether adaptation at runtime or designtime should be enabled for comp variants
 		 *
 		 * @private
-		 * @ui5-restricted
+		 * @ui5-restricted sap.ui.rta
 		 * @since 1.87.0
 		 *
 		 * @returns {Promise<boolean>} <code>true</code> if adaptation of variants is enabled
@@ -229,8 +229,29 @@ sap.ui.define([
 		},
 
 		/**
+		 * Reverts the last setDefaultVariantId operation done on a variant management.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Flex reference of the application
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variants should be loaded
+		 *
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The reverted variant
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
+		 * @since 1.90.0
+		 */
+		revertSetDefaultVariantId: function (mPropertyBag) {
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.revertSetDefaultVariantId);
+		},
+
+		/**
 		 * Opens Transport Dialog for transport selection.
 		 * @private
+		 * @ui5-restricted sap.ui.comp
 		 * @experimental
 		 * @returns {sap.ui.fl.write._internal.transport.TransportSelection} TransportSelection dialog.
 		 */

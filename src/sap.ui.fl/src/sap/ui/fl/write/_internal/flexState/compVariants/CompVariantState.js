@@ -8,8 +8,10 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/RevertData",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariantRevertData",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -22,8 +24,10 @@ sap.ui.define([
 	UriParameters,
 	Layer,
 	Change,
+	UpdatableChange,
 	ChangePersistenceFactory,
 	CompVariant,
+	RevertData,
 	CompVariantRevertData,
 	Utils,
 	FlexState,
@@ -61,39 +65,6 @@ sap.ui.define([
 		var bNotTransported = !sPackageName || sPackageName === "$TMP";
 
 		return bSameLayer && bNotTransported;
-	}
-
-	function createOrUpdateChange(mPropertyBag, oContent, sChangeType) {
-		mPropertyBag.layer = mPropertyBag.layer || Layer.USER;
-		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
-		var sCategory = sChangeType === "standardVariant" ? "standardVariantChange" : sChangeType;
-		var oChange = mCompVariantsMap[sCategory];
-
-		// only create a new entity in case none exists
-		if (!oChange || !isChangeUpdatable(oChange, mPropertyBag.layer)) {
-			var oChangeParameter = {
-				fileName: Utils.createDefaultFileName(sChangeType),
-				fileType: "change",
-				changeType: sChangeType,
-				layer: mPropertyBag.layer,
-				content: oContent,
-				namespace: Utils.createNamespace(mPropertyBag, "changes"),
-				reference: mPropertyBag.reference,
-				selector: {
-					persistencyKey: mPropertyBag.persistencyKey
-				},
-				support: mPropertyBag.support || {}
-			};
-			oChangeParameter.support.generator = oChangeParameter.support.generator || "CompVariantState." + sChangeType;
-			oChangeParameter.support.sapui5Version = sap.ui.version;
-
-			var oNewChange = new Change(oChangeParameter);
-			mCompVariantsMap[sCategory] = oNewChange;
-			mCompVariantsMap.byId[oNewChange.getId()] = oNewChange;
-		} else {
-			oChange.setContent(oContent);
-		}
-		return mCompVariantsMap[sCategory];
 	}
 
 	function removeFromArrayByName(aObjectArray, oFlexObject) {
@@ -187,8 +158,6 @@ sap.ui.define([
 			delete mCompVariantsMapByPersistencyKey.byId[oFlexObject.getId()];
 			if (oFlexObject.getChangeType() === "standardVariant") {
 				mCompVariantsMapByPersistencyKey.standardVariantChange = undefined;
-			} else if (oFlexObject.getChangeType() === "defaultVariant") {
-				mCompVariantsMapByPersistencyKey.defaultVariant = undefined;
 			} else {
 				removeFromArrayByName(getSubSection(mCompVariantsMapByPersistencyKey, oFlexObject), oFlexObject.getDefinition());
 			}
@@ -202,15 +171,13 @@ sap.ui.define([
 
 	function needsPersistencyCall(oFlexObject) {
 		return oFlexObject &&
-			(oFlexObject.getPendingAction() === "NEW"
-				|| oFlexObject.getPendingAction() === "UPDATE"
-				|| oFlexObject.getPendingAction() === "DELETE");
+			[Change.states.NEW, Change.states.DIRTY, Change.states.DELETED].includes(oFlexObject.getPendingAction());
 	}
 
 	function getAllCompVariantObjects(mCompVariantsMapByPersistencyKey) {
 		return mCompVariantsMapByPersistencyKey.variants
 			.concat(mCompVariantsMapByPersistencyKey.changes)
-			.concat(mCompVariantsMapByPersistencyKey.defaultVariant)
+			.concat(mCompVariantsMapByPersistencyKey.defaultVariants)
 			.concat(mCompVariantsMapByPersistencyKey.standardVariantChange);
 	}
 
@@ -314,8 +281,69 @@ sap.ui.define([
 		var oContent = {
 			defaultVariantName: mPropertyBag.defaultVariantId
 		};
+		// TODO: remove as soon as the development uses an IDE using rta which passes the correct parameter
+		mPropertyBag.layer = mPropertyBag.layer || UriParameters.fromQuery(window.location.search).get("sap-ui-layer") || Layer.USER;
 
-		return createOrUpdateChange(mPropertyBag, oContent, "defaultVariant");
+		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
+		var sChangeType = "defaultVariant";
+		var aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
+		var oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
+
+		if (!oChange || !isChangeUpdatable(oChange, mPropertyBag.layer)) {
+			var oChangeParameter = {
+				fileName: Utils.createDefaultFileName(sChangeType),
+				fileType: "change",
+				changeType: sChangeType,
+				layer: mPropertyBag.layer,
+				content: oContent,
+				namespace: Utils.createNamespace(mPropertyBag, "changes"),
+				reference: mPropertyBag.reference,
+				selector: {
+					persistencyKey: mPropertyBag.persistencyKey
+				},
+				support: mPropertyBag.support || {}
+			};
+			oChangeParameter.support.generator = oChangeParameter.support.generator || "CompVariantState." + sChangeType;
+			oChangeParameter.support.sapui5Version = sap.ui.version;
+
+			var oChange = new UpdatableChange(oChangeParameter);
+			mCompVariantsMap.defaultVariants.push(oChange);
+			mCompVariantsMap.byId[oChange.getId()] = oChange;
+			oChange.addRevertInfo(new RevertData({
+				type: CompVariantState.operationType.NewChange
+			}));
+		} else {
+			oChange.addRevertInfo(new RevertData({
+				type: CompVariantState.operationType.ContentUpdate,
+				content: {
+					previousState: oChange.getState(),
+					previousContent: oChange.getContent()
+				}
+			}));
+			oChange.setContent(oContent);
+		}
+		return oChange;
+	};
+
+	/**
+	 * Reverts the last setDefaultVariantId operation done on a variant management.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {string} mPropertyBag.persistencyKey - ID of the variant management internal identifier
+	 */
+	CompVariantState.revertSetDefaultVariantId = function (mPropertyBag) {
+		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
+		var aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
+		var oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
+		var oRevertInfo = oChange.popLatestRevertInfo();
+		if (oRevertInfo.getType() === CompVariantState.operationType.ContentUpdate) {
+			oChange.setContent(oRevertInfo.getContent().previousContent);
+			oChange.setState(oRevertInfo.getContent().previousState);
+		} else {
+			oChange.setState(Change.states.DELETED);
+			mCompVariantsMap.defaultVariants.pop();
+		}
 	};
 
 	/**
@@ -529,7 +557,7 @@ sap.ui.define([
 
 			var oChange = new Change(oChangeDefinition);
 			addChange(oChange);
-			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.UpdateVariantViaChange, oChange);
+			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.NewChange, oChange);
 			CompVariantMerger.applyChangeOnVariant(oVariant, oChange);
 		}
 
@@ -559,6 +587,7 @@ sap.ui.define([
 	CompVariantState.operationType = {
 		StateUpdate: "StateUpdate",
 		ContentUpdate: "ContentUpdate",
+		NewChange: "NewChange",
 		UpdateVariantViaChange: "UpdateVariantViaChange",
 		UpdateVariantViaChangeUpdate: "UpdateVariantViaChangeUpdate"
 	};
@@ -623,7 +652,7 @@ sap.ui.define([
 					_pick(mPropertyBag, ["reference", "persistencyKey", "id"])
 				));
 				break;
-			case CompVariantState.operationType.UpdateVariantViaChange:
+			case CompVariantState.operationType.NewChange:
 				var oChange = oVariantRevertData.getChange();
 				oVariant.removeChange(oChange);
 				removeChange(oChange);

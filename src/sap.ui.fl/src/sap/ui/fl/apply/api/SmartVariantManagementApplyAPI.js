@@ -175,7 +175,8 @@ sap.ui.define([
 		 * @deprecated
 		 */
 		getDefaultVariantId: function(mPropertyBag) {
-			var oChange = getVariantsMapForKey(mPropertyBag.control).defaultVariant;
+			var aDefaultVariantChanges = getVariantsMapForKey(mPropertyBag.control).defaultVariants;
+			var oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
 			return oChange ? oChange.getContent().defaultVariantName : "";
 		}
 	};
