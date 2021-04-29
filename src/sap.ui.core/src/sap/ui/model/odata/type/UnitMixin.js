@@ -187,9 +187,9 @@ sap.ui.define([
 		 */
 		// @override sap.ui.model.CompositeType#getPartsIgnoringMessages
 		function getPartsIgnoringMessages() {
-			if (this.oFormatOptions.showMeasure === false) {
+			if (!this.bShowMeasure) {
 				return [1, 2];
-			} else if (this.oFormatOptions.showNumber === false) {
+			} else if (!this.bShowNumber) {
 				return [0, 2];
 			}
 			return [2];
@@ -242,8 +242,6 @@ sap.ui.define([
 		/*
 		 * A mixin for sap.ui.model.odata.type.Currency and sap.ui.model.odata.type.Unit.
 		 *
-		 * Note: the format option <code>unitOptional</code> defaults to true.
-		 *
 		 * @param {object} [oFormatOptions]
 		 *   See parameter <code>oFormatOptions</code> of <code>fnBaseType</code>. Format options
 		 *   are immutable, that is, they can only be set once on construction. Format options
@@ -257,8 +255,10 @@ sap.ui.define([
 		 * @param {boolean} [oFormatOptions.preserveDecimals=true]
 		 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 		 *   "short" or "long"; since 1.89.0
-		 * @param {boolean} [oFormatOptions.unitOptional=true]
-		 *   Whether the amount or measure is parsed if no currency or unit is entered.
+		 * @param {boolean} [oFormatOptions.unitOptional]
+		 *   Whether the amount or measure is parsed if no currency or unit is entered; defaults to
+		 *   <code>true</code> if neither <code>showMeasure</code> nor <code>showNumber</code> is
+		 *   set to a falsy value, otherwise defaults to <code>false</code>
 		 * @param {any} [oFormatOptions.emptyString=0]
 		 *   Defines how an empty string is parsed into the amount/measure. With the default value
 		 *   <code>0</code> the amount/measure becomes <code>0</code> when an empty string is
@@ -285,7 +285,10 @@ sap.ui.define([
 			oFormatOptions = Object.assign({
 					emptyString: 0,
 					parseAsString : true,
-					unitOptional : true
+					unitOptional : !oFormatOptions
+						|| ["showMeasure", "showNumber"].every(function (sOption) {
+							return !(sOption in oFormatOptions) || oFormatOptions[sOption];
+						})
 				}, oFormatOptions);
 
 			fnBaseType.call(this, oFormatOptions, oConstraints);

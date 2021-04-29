@@ -26,6 +26,11 @@ sap.ui.define([
 				// simulate SimpleType
 				this.oConstraints = oConstraints || {};
 				this.oFormatOptions = oFormatOptions || {};
+				// simulate Unit|Currency
+				this.bShowMeasure = !oFormatOptions || !("showMeasure" in oFormatOptions)
+					|| oFormatOptions.showMeasure;
+				this.bShowNumber = !oFormatOptions || !("showNumber" in oFormatOptions)
+					|| oFormatOptions.showNumber;
 			}
 
 			this.oBasePrototype = BaseType.prototype = {
@@ -96,6 +101,34 @@ sap.ui.define([
 			oType = new UnitMixin({customUnitsOrCurrencies : {}});
 		}, new Error("Format option customUnitsOrCurrencies is not supported"));
 	});
+
+	//*********************************************************************************************
+[
+	undefined,
+	{},
+	{showMeasure : true},
+	{showNumber : true},
+	{showMeasure : true, showNumber : true}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: format option unitOptional=true; " + i, function (assert) {
+		// code under test
+		assert.strictEqual(new UnitMixin(oFormatOptions).oFormatOptions.unitOptional, true);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{showMeasure : false},
+	{showNumber : false},
+	{showMeasure : false, showNumber : true},
+	{showMeasure : true, showNumber : false},
+	{showMeasure : false, showNumber : false}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("constructor: format option unitOptional=false; " + i, function (assert) {
+		// code under test
+		assert.strictEqual(new UnitMixin(oFormatOptions).oFormatOptions.unitOptional, false);
+	});
+});
 
 	//*********************************************************************************************
 	[

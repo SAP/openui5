@@ -27,8 +27,10 @@ sap.ui.define([
 	 *   Whether the amount is parsed to a string; set to <code>false</code> if the amount's
 	 *   underlying type is represented as a <code>number</code>, for example
 	 *   {@link sap.ui.model.odata.type.Int32}
-	 * @param {boolean} [oFormatOptions.unitOptional=true]
-	 *   Whether the amount is parsed if no currency is entered.
+	 * @param {boolean} [oFormatOptions.unitOptional]
+	 *   Whether the amount is parsed if no currency is entered; defaults to <code>true</code> if
+	 *   neither <code>showMeasure</code> nor <code>showNumber</code> is set to a falsy value,
+	 *   otherwise defaults to <code>false</code>
 	 * @param {any} [oFormatOptions.emptyString=0]
 	 *   Defines how an empty string is parsed into the amount. With the default value
 	 *   <code>0</code> the amount becomes <code>0</code> when an empty string is parsed.

@@ -90,6 +90,10 @@ sap.ui.define([
 		constructor : function (oFormatOptions, oConstraints, aDynamicFormatOptionNames) {
 			CompositeType.apply(this, arguments);
 			this.sName = "Unit";
+			this.bShowMeasure = !oFormatOptions || !("showMeasure" in oFormatOptions)
+				|| oFormatOptions.showMeasure;
+			this.bShowNumber = !oFormatOptions || !("showNumber" in oFormatOptions)
+				|| oFormatOptions.showNumber;
 			this.bUseRawValues = true;
 			this.aDynamicFormatOptionNames = aDynamicFormatOptionNames;
 		}
@@ -220,8 +224,7 @@ sap.ui.define([
 		if (!Array.isArray(aValues)) {
 			throw new FormatException("Cannot format Unit: " + vValue + " has the wrong format");
 		}
-		if ((aValues[0] == undefined || aValues[0] == null)
-				&& this.oFormatOptions.showNumber !== false) {
+		if ((aValues[0] == undefined || aValues[0] == null) && this.bShowNumber) {
 			return null;
 		}
 		switch (this.getPrimitiveType(sInternalType)) {
@@ -265,8 +268,7 @@ sap.ui.define([
 				// current default error
 				// more specific errors describing the actual issue during parse()
 				// will be introduced with later work on the NumberFormat
-				if (!Array.isArray(vResult)
-						|| this.oFormatOptions.showNumber !== false && isNaN(vResult[0])) {
+				if (!Array.isArray(vResult) || this.bShowNumber && isNaN(vResult[0])) {
 					throw new ParseException(this.getInvalidUnitText());
 				}
 				break;
@@ -385,9 +387,9 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#supportsIgnoreMessages
 	Unit.prototype.getPartsIgnoringMessages = function () {
-		if (this.oFormatOptions.showMeasure === false) {
+		if (!this.bShowMeasure) {
 			return [1];
-		} else if (this.oFormatOptions.showNumber === false) {
+		} else if (!this.bShowNumber) {
 			return [0];
 		}
 		return [];

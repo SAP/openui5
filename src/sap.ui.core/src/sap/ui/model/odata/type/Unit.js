@@ -31,8 +31,10 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
 	 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 	 *   "short" or "long"; since 1.89.0
-	 * @param {boolean} [oFormatOptions.unitOptional=true]
-	 *   Whether the quantity is parsed if no unit is entered.
+	 * @param {boolean} [oFormatOptions.unitOptional]
+	 *   Whether the measure is parsed if no unit is entered; defaults to <code>true</code> if
+	 *   neither <code>showMeasure</code> nor <code>showNumber</code> is set to a falsy value,
+	 *   otherwise defaults to <code>false</code>
 	 * @param {any} [oFormatOptions.emptyString=0]
 	 *   Defines how an empty string is parsed into the measure. With the default value
 	 *   <code>0</code> the measure becomes <code>0</code> when an empty string is parsed.
