@@ -1,0 +1,60 @@
+<mvc:View
+	controllerName="sap.ui.core.internal.samples.odata.twoFields.Main"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+<App>
+	<Page showHeader="false">
+		<content>
+			<Panel expandable="true" expanded="{init>/isPanelExpanded}">
+				<headerToolbar>
+					<Toolbar design="Transparent">
+						<Title level="H2" text="Initial data"/>
+						<Button id="rebind" text="Initialize" press="onRebind"/>
+					</Toolbar>
+				</headerToolbar>
+				<form:SimpleForm editable="true" layout="ColumnLayout">
+					<core:Title text="Value field"/>
+					<Label text="Value"/>
+					<Input id="valueContent" value="{init>/initialValue/content}"/>
+					<Label text="Value editable"/>
+					<CheckBox id="valueEditable" selected="{init>/initialValue/editable}"/>
+					<Label text="Value enabled"/>
+					<CheckBox id="valueEnabled" selected="{init>/initialValue/enabled}"/>
+					<core:Title text="Unit field"/>
+					<Label text="Is currency" tooltip="Whether the Unit is considered as currency"/>
+					<CheckBox id="isCurrency" selected="{init>/isCurrency}"/>
+					<Label text="Unit"/>
+					<Input id="unitContent" value="{init>/initialUnit/content}"
+						tooltip="{= ${init>/isCurrency}
+							? 'EUR(2), EUR3(3), JPY(0), USD(2), USDN(5)'
+							: 'KG(0), DEG(1), M/L(3)' }"/>
+					<Label text="Unit editable"/>
+					<CheckBox id="unitEditable" selected="{init>/initialUnit/editable}"/>
+					<Label text="Unit enabled"/>
+					<CheckBox id="unitEnabled" selected="{init>/initialUnit/enabled}"/>
+				</form:SimpleForm>
+			</Panel>
+			<Toolbar design="Transparent">
+				<Title level="H2" text="Two Fields"/>
+			</Toolbar>
+			<form:SimpleForm editable="true" layout="ColumnLayout">
+				<Label text="Value"/>
+				<Input editable="{/valueEditable}" enabled="{/valueEnabled}" id="value"/>
+				<Label id="unitLabel"/>
+				<Input editable="{/unitEditable}" enabled="{/unitEnabled}" id="unit"/>
+				<Label text="Model contents"/>
+				<Text text="{= 'value=' + ${/value} + ', unit=' + ${/unit} }"/>
+			</form:SimpleForm>
+			<Toolbar design="Transparent">
+				<Title level="H2" text="One Field"/>
+			</Toolbar>
+			<form:SimpleForm editable="true" layout="ColumnLayout">
+				<Label text="Amount"/>
+				<Input editable="true" id="full"/>
+			</form:SimpleForm>
+		</content>
+	</Page>
+</App>
+</mvc:View>

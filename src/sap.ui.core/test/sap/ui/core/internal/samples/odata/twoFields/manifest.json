@@ -1,0 +1,42 @@
+{
+	"_version" : "1.32.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR-MOD",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Example for the two field solution for unit and currency",
+		"id" : "sap.ui.core.internal.samples.odata.twoFields",
+		"title" : "Two Fields for Unit and Currency",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.90",
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.core" : {},
+				"sap.ui.layout" : {}
+			}
+		},
+		"handleValidation" : true,
+		"rootView" : {
+			"async" : true,
+			"id" : "twoFieldsMain",
+			"type" : "XML",
+			"viewName" : "sap.ui.core.internal.samples.odata.twoFields.Main"
+		}
+	}
+}
