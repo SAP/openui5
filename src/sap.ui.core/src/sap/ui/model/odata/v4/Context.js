@@ -867,6 +867,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes all dependent bindings with the given parameters and waits for them to have
+	 * finished.
+	 *
+	 * @param {string} sResourcePathPrefix
+	 *   The resource path prefix which is used to delete the dependent caches and corresponding
+	 *   messages; may be "" but not <code>undefined</code>
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh
+	 * @param {boolean} [bCheckUpdate]
+	 *   If <code>true</code>, a property binding is expected to check for updates
+	 * @param {boolean} [bKeepCacheOnError]
+	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving when all dependent bindings are refreshed; it is rejected if the
+	 *   binding's root binding is suspended and a group ID different from the binding's group ID is
+	 *   given
+	 *
+	 * @private
+	 */
+	Context.prototype.refreshDependentBindings = function (sResourcePathPrefix, sGroupId,
+			bCheckUpdate, bKeepCacheOnError) {
+		return SyncPromise.all(
+			this.oModel.getDependentBindings(this).map(function (oDependentBinding) {
+				return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId,
+					bCheckUpdate, bKeepCacheOnError);
+			})
+		);
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
 	 * Conventions", this is the "name of the entity set associated with the entity followed by the

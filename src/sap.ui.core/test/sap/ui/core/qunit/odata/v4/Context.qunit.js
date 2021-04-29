@@ -3132,4 +3132,41 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.isKeepAlive(), false);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshDependentBindings", function (assert) {
+		var oModel = {
+				getDependentBindings : function () {}
+			},
+			oContext = Context.create(oModel, {/*oBinding*/}, "/path"),
+			aDependentBindings = [{
+				refreshInternal : function () {}
+			}, {
+				refreshInternal : function () {}
+			}],
+			oDependent0Promise = {},
+			oDependent1Promise = {},
+			oResult = {};
+
+		this.mock(oModel).expects("getDependentBindings").withExactArgs(sinon.match.same(oContext))
+			.returns(aDependentBindings);
+		this.mock(aDependentBindings[0]).expects("refreshInternal")
+			.withExactArgs("resource/path/prefix", "group", "~bCheckUpdate~", "~bKeepCacheOnError~")
+			.returns(oDependent0Promise);
+		this.mock(aDependentBindings[1]).expects("refreshInternal")
+			.withExactArgs("resource/path/prefix", "group", "~bCheckUpdate~", "~bKeepCacheOnError~")
+			.returns(oDependent1Promise);
+		this.mock(SyncPromise).expects("all").withExactArgs(sinon.match(function (aValues) {
+			assert.strictEqual(aValues[0], oDependent0Promise);
+			assert.strictEqual(aValues[1], oDependent1Promise);
+			return aValues.length === 2;
+		})).returns(oResult);
+
+		assert.strictEqual(
+			// code under test
+			oContext.refreshDependentBindings("resource/path/prefix", "group", "~bCheckUpdate~",
+				"~bKeepCacheOnError~"),
+			oResult
+		);
+	});
 });

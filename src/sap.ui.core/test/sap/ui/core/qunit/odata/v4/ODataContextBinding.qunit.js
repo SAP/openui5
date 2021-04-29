@@ -3760,7 +3760,8 @@ sap.ui.define([
 			.returns(oCache);
 		this.mock(oBinding).expects("createReadGroupLock")
 			.withExactArgs("group", true);
-		this.mock(oBinding).expects("refreshDependentBindings").withExactArgs("", "group", true)
+		this.mock(oReturnValueContext).expects("refreshDependentBindings")
+			.withExactArgs("", "group", true)
 			.returns(oDependentsPromise);
 
 		// code under test
