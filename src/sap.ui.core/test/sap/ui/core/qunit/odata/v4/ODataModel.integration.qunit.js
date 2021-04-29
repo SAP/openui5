@@ -28854,27 +28854,32 @@ sap.ui.define([
 <FlexBox id="form">\
 	<Text id="note" text="{Note}"/>\
 	<Table id="items" items="{SO_2_SOITEM}">\
-		<Text id="itemNote" text="{Note}"/>\
+		<Text text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
 
-		oListBindingWithoutUI = oModel.bindList("/SalesOrderList");
+		oListBindingWithoutUI = oModel.bindList("/SalesOrderList", null, [], [],
+			{$expand : {SO_2_SOITEM : null}});
 
-		this.expectChange("note")
-			.expectChange("itemNote", []);
+		this.expectChange("note");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
 					method : "POST",
 					url : "SalesOrderList",
-					payload : {SO_2_SOITEM : null}
+					payload : {}
 				}, {
 					Note : "New",
 					SalesOrderID : "43"
+				})
+				.expectRequest("SalesOrderList('43')?$expand=SO_2_SOITEM", {
+					Note : "New",
+					SalesOrderID : "43",
+					SO_2_SOITEM : []
 				});
 
-			oCreatedContext = oListBindingWithoutUI.create({SO_2_SOITEM : null}, true);
+			oCreatedContext = oListBindingWithoutUI.create();
 
 			// code under test
 			assert.ok(oModel.hasPendingChanges());
@@ -32689,6 +32694,7 @@ sap.ui.define([
 			sinon.assert.called(fnOnBeforeDestroy);
 		});
 	});
+
 	//*********************************************************************************************
 	// Scenario: List report with absolute binding, object page with a late property. Ensure that
 	// the late property is not requested for all rows of the list, but only for the single row that
@@ -32696,9 +32702,10 @@ sap.ui.define([
 	// (1) sort
 	// (2) filter
 	// (3) changeParameters
-	// (4) suspend/resume: TODO
+	// (4) suspend/resume
 	// JIRA: CPOUI5ODATAV4-874
-	QUnit.test("Absolute ODLB: sort/filter/changeParameters & late properties", function (assert) {
+	QUnit.test("Absolute ODLB: sort/filter/changeParameters/resume & late properties",
+			function (assert) {
 		var oListBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -32790,29 +32797,29 @@ sap.ui.define([
 			oListBinding.changeParameters({foo : 'bar'});
 
 			return that.waitForChanges(assert, "(3) changeParameters");
-		// }).then(function () {
-		// 	that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
-		// 			value: [{
-		// 				SalesOrderID : "1",
-		// 				Note : "Note 1.4"
-		// 			}, {
-		// 				SalesOrderID : "2",
-		// 				Note : "Note 2.4"
-		// 			}]
-		// 		})
-		// 		.expectChange("note", ["Note 1.4", "Note 2.4"])
-		// 		.expectChange("objectNote", "Note 1.4")
-		// 		.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "ES"})
-		// 		.expectChange("objectNoteLanguage", "ES");
-		//
-		// 	// code under test
-		// 	oListBinding.suspend();
-		// 	oListBinding.sort();
-		// 	oListBinding.filter();
-		// 	oListBinding.changeParameters({foo: undefined});
-		// 	oListBinding.resume();
-		//
-		// 	return that.waitForChanges(assert, "(4) suspend/resume");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+					value: [{
+						SalesOrderID : "1",
+						Note : "Note 1.4"
+					}, {
+						SalesOrderID : "2",
+						Note : "Note 2.4"
+					}]
+				})
+				.expectChange("listNote", ["Note 1.4", "Note 2.4"])
+				.expectChange("note", "Note 1.4")
+				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "ES"})
+				.expectChange("noteLanguage", "ES");
+
+			// code under test
+			oListBinding.suspend();
+			oListBinding.sort();
+			oListBinding.filter();
+			oListBinding.changeParameters({foo: undefined});
+			oListBinding.resume();
+
+			return that.waitForChanges(assert, "(4) suspend/resume");
 		});
 	});
 

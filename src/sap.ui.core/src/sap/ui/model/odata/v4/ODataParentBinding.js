@@ -5,13 +5,14 @@
 //Provides mixin sap.ui.model.odata.v4.ODataParentBinding for classes extending sap.ui.model.Binding
 //with dependent bindings
 sap.ui.define([
+	"./Context",
 	"./ODataBinding",
 	"./SubmitMode",
 	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason"
-], function (asODataBinding, SubmitMode, _Helper, Log, SyncPromise, ChangeReason) {
+], function (Context, asODataBinding, SubmitMode, _Helper, Log, SyncPromise, ChangeReason) {
 	"use strict";
 
 	/**
@@ -642,6 +643,7 @@ sap.ui.define([
 			bCacheImmutable,
 			oCanUseCachePromise,
 			sFullMetaPath,
+			iIndex = oContext.getIndex(),
 			bIsAdvertisement = sChildPath[0] === "#",
 			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
@@ -681,6 +683,7 @@ sap.ui.define([
 		// Note: this.oCachePromise exists for all bindings except operation bindings; it might
 		// become pending again
 		bCacheImmutable = this.oCachePromise.isRejected()
+			|| iIndex !== undefined && iIndex !== Context.VIRTUAL
 			|| this.oCache === null
 			|| this.oCache && this.oCache.hasSentRequest();
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
