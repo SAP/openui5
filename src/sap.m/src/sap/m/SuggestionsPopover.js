@@ -998,7 +998,7 @@ sap.ui.define([
 	SuggestionsPopover.prototype.highlightSuggestionItems = function (aItemsDomRef, sInputValue, bWordMode) {
 		var i;
 
-		if (!this._bEnableHighlighting || (!aItemsDomRef && !aItemsDomRef.length) || (aItemsDomRef.length > 200) || !sInputValue) {
+		if (!this._bEnableHighlighting || (!aItemsDomRef && !aItemsDomRef.length) || aItemsDomRef.length > 200) {
 			return;
 		}
 
