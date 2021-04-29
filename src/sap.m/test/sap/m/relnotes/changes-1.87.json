@@ -119,5 +119,55 @@
         ]
       }
     ]
+  },
+  "1.87.5": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "887189214454f84232280cc042e5b444756b569f",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Include filters issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002751942021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500002727462021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002920282021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500002693142021"
+          }
+        ]
+      },
+      {
+        "id": "a6a514f5d9df9880ec96ff09bf3cd4b7b766ee70",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Typeahead now excludes not visible ColumnListItems",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001411652021"
+          }
+        ]
+      },
+      {
+        "id": "0bf80d44b1a55d5c835ab45bca006d5a70b4c762",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: 'Select all items' keyboard handling fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002104052021"
+          }
+        ]
+      }
+    ]
   }
 }

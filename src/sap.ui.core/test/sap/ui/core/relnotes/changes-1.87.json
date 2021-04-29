@@ -62,5 +62,32 @@
         ]
       }
     ]
+  },
+  "1.87.5": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "0edc9f9168b7660c570804081caa3b1b50033253",
+        "type": "FIX",
+        "text": " CustomStyleClassSupport: IE11 lacks classList support on SVG nodes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070405876"
+          }
+        ]
+      },
+      {
+        "id": "87e20b8b8afbd75ea7b35fd1d92ce02b4e1d840c",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: ensure that keys for multi unit representatives are unique",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002066562021"
+          }
+        ]
+      }
+    ]
   }
 }

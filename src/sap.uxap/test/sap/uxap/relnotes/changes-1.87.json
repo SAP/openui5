@@ -41,5 +41,43 @@
         ]
       }
     ]
+  },
+  "1.87.5": {
+    "date": "April 2021",
+    "notes": [
+      {
+        "id": "4282b5aa8855caa93ec93c769dca4b77a273fc77",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected unstable qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      },
+      {
+        "id": "5a80f72c667a36181916314bc25410a580e86444",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Stablized qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      },
+      {
+        "id": "819509bbb16a0cb703f99a9bc6f75df6069ac7b2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Unset selected section of hidden page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180046524"
+          }
+        ]
+      }
+    ]
   }
 }
