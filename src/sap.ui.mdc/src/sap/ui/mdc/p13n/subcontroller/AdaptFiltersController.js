@@ -16,6 +16,7 @@ sap.ui.define([
             afterClose: function(oEvt) {
                 var oDialog = oEvt.getSource();
                 if (oDialog) {
+                    oDialog.getContent()[0].executeRemoves();
                     oDialog.removeAllContent();
                     oDialog.destroy();
                 }
