@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'./SortFlex', './ColumnFlex', './ConditionFlex', './GroupFlex', './AggregateFlex'
-], function(SortFlex, ColumnFlex, ConditionFlex, GroupFlex, AggregateFlex) {
+	'./SortFlex', './ColumnFlex', './ConditionFlex', './GroupFlex', './AggregateFlex', './AggregationConfigFlex'
+], function(SortFlex, ColumnFlex, ConditionFlex, GroupFlex, AggregateFlex, AggregationConfigFlex) {
 	"use strict";
 
 	return {
@@ -22,7 +22,11 @@ sap.ui.define([
 		addGroup: GroupFlex.addGroup,
 		moveGroup: GroupFlex.moveGroup,
 		removeAggregate: AggregateFlex.removeAggregate,
-		addAggregate: AggregateFlex.addAggregate
+		addAggregate: AggregateFlex.addAggregate,
+		setColumnWidth: AggregationConfigFlex.createSetChangeHandler({
+			aggregation: "columns",
+			property: "width"
+		})
 	};
 
 });

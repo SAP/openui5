@@ -29,7 +29,9 @@ sap.ui.define([
 	"sap/ui/mdc/odata/TypeUtil",
 	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-	"sap/m/plugins/PasteProvider"
+	"sap/m/plugins/PasteProvider",
+	"../util/createAppEnvironment",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -57,7 +59,10 @@ sap.ui.define([
 	CoreLibrary,
 	TypeUtil,
 	TestModificationHandler,
-	ActionToolbarAction
+	ActionToolbarAction,
+	PasteProvider,
+	createAppEnvironment,
+	ControlPersonalizationWriteAPI
 ) {
 	"use strict";
 
@@ -3675,6 +3680,7 @@ sap.ui.define([
 	QUnit.module("p13nMode", {
 		beforeEach: function() {
 			this.oTable = new Table();
+			this.oTable.setEnableColumnResize(false);
 			return this.oTable.initialized();
 		},
 		afterEach: function() {
@@ -4121,6 +4127,7 @@ sap.ui.define([
 					new Column({
 						header: "Column A",
 						hAlign: "Begin",
+						dataProperty: "Test1",
 						importance: "High",
 						template: new Text({
 							text: "{test}"
@@ -4230,6 +4237,135 @@ sap.ui.define([
 			assert.ok(this.oTable._oTable.getColumns()[0].getAutoResizable(), "AutoResizable property of the inner column is set to true");
 			done();
 		}.bind(this));
+	});
+
+	QUnit.module("ColumnResize-Flex", {
+		before: function() {
+			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+				name: "Name",
+				label: "Name",
+				path: "Name",
+				groupable: true
+			}, {
+				name: "Country",
+				label: "Country",
+				path: "Country",
+				groupable: true
+			}, {
+				name: "name_country",
+				label: "Complex Title & Description",
+				propertyInfos: ["Name", "Country"]
+			}]);
+			MDCQUnitUtils.stubPropertyExtension(Table.prototype, {
+				Name: {
+					defaultAggregate: {}
+				},
+				Country: {
+					defaultAggregate: {}
+				}
+			});
+		},
+		beforeEach: function() {
+			var sTableView =
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
+			'<Table type="ResponsiveTable" enableColumnResize="true" id="sTable" delegate=\'\{ name : "sap/ui/mdc/odata/v4/TableDelegate" \}\'>' +
+			'<columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="Name">' +
+			'</mdcTable:Column>' +
+			'<mdcTable:Column id="myTable--column1" header="column 1" dataProperty="Country">' +
+			'</mdcTable:Column>' +
+			'<mdcTable:Column header="column 2" dataProperty="name_country"> ' +
+			'</mdcTable:Column></columns> ' +
+			'</Table></mvc:View>';
+
+			return this.createTestObjects(sTableView).then(function() {
+				return this.oTable.getEngine().getModificationHandler().waitForChanges({
+					element: this.oTable
+				});
+			}.bind(this));
+
+		},
+		after: function() {
+			MDCQUnitUtils.restorePropertyExtension(Table.prototype);
+			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+		},
+		afterEach: function() {
+			this.destroyTestObjects();
+		},
+		createTestObjects: function(sTableView) {
+			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				Core.applyChanges();
+
+				this.oTable = this.oView.byId('sTable');
+
+				ControlPersonalizationWriteAPI.restore({
+					selector: this.oTable
+				});
+			}.bind(this));
+		},
+		destroyTestObjects: function() {
+			this.oUiComponentContainer.destroy();
+		}
+	});
+
+	QUnit.test("Check for flex changes on column resize in responsive table", function(assert) {
+		var done = assert.async();
+		var oTable = this.oTable;
+
+		assert.strictEqual(this.oTable.getType(), "ResponsiveTable", "Responsive table type");
+		oTable._fullyInitialized().then(function() {
+			var fColumnWidthSpy = sinon.spy(TableSettings, "createColumnWidth");
+			var fOnModificationSpy = sinon.spy(oTable, "_onModifications");
+			var oColumn = oTable._oTable.getColumns()[0];
+			var oColumnResizer = oTable._oTable.getDependents()[0];
+			assert.ok(oTable.getEngine().getController(oTable, "ColumnWidth"), "Column Width controller defined");
+			assert.notOk(oTable.getCurrentState().xConfig.aggregations, "Custom Data is empty");
+			oColumnResizer.fireColumnResize({
+				column: oColumn,
+				width: "200px"
+			});
+
+			assert.ok(fColumnWidthSpy.calledOnceWithExactly(oTable, oTable.getColumns()[0].getDataProperty(), "200px"), "fColumnWidthSpy#createColumnWidth is called");
+			return wait(0).then(function() {
+				assert.strictEqual(oTable.getCurrentState().xConfig.aggregations.columns["Name"].width, "200px", "Custom Data added for the column");
+				assert.strictEqual(fOnModificationSpy.callCount, 1, "fOnModificationSpy#_onModifications is called");
+				assert.strictEqual(oTable._oTable.getColumns()[0].getWidth(), "200px", "The column width is modified");
+				fColumnWidthSpy.restore();
+				fOnModificationSpy.restore();
+				done();
+			});
+		});
+	});
+
+	QUnit.test("Check for flex changes on column resize in Grid table", function(assert) {
+		var done = assert.async();
+		var oTable = this.oTable;
+		this.oTable.setType("Table");
+
+		assert.strictEqual(this.oTable.getType(), "Table", "Grid table type");
+		oTable._fullyInitialized().then(function() {
+			var fColumnWidthSpy = sinon.spy(TableSettings, "createColumnWidth");
+			var fOnModificationSpy = sinon.spy(oTable, "_onModifications");
+			var oColumn = oTable._oTable.getColumns()[0];
+
+			assert.notOk(oTable.getCurrentState().xConfig.aggregations.length, "Custom Data is empty");
+			oTable._oTable.fireColumnResize({
+				column: oColumn,
+				width: "200px"
+			});
+
+			assert.ok(fColumnWidthSpy.calledOnceWithExactly(oTable, oTable.getColumns()[0].getDataProperty(), "200px"), "fColumnWidthSpy#createColumnWidth is called");
+			return wait(0).then(function() {
+				assert.strictEqual(oTable.getCurrentState().xConfig.aggregations.columns["Name"].width, "200px", "Custom Data added for the column");
+				assert.strictEqual(fOnModificationSpy.callCount, 1, "fOnModificationSpy#_onModifications is called");
+				assert.strictEqual(oTable._oTable.getColumns()[0].getWidth(), "200px", "The column width is modified");
+				fColumnWidthSpy.restore();
+				fOnModificationSpy.restore();
+				done();
+			});
+		});
 	});
 
 	QUnit.module("Accessibility", {

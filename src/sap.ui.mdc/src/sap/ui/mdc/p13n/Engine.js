@@ -381,7 +381,7 @@ sap.ui.define([
 
 		var oControl = Engine.getControlInstance(vControl);
 		var oModificationHandler = this.getModificationHandler(vControl);
-		return oModificationHandler.readConfig(oControl, mEnhanceConfig);
+		return oModificationHandler.readConfig(oControl, mEnhanceConfig) || {};
 
 	};
 

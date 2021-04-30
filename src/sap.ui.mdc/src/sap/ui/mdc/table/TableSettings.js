@@ -242,6 +242,22 @@ sap.ui.define([
 			});
 		},
 
+		createColumnWidth: function(oControl, sProperty, sWidth) {
+			var oColumnWidth = {
+				name: sProperty,
+				width: sWidth
+			};
+
+			var aColumnWidth = [oColumnWidth];
+
+			oControl.getEngine().createChanges({
+				control: oControl,
+				key: "ColumnWidth",
+				state: aColumnWidth,
+				applyAbsolute: false
+			});
+		},
+
 		moveColumn: function(oControl, iDraggedIndex, iNewIndex) {
 			//in case the user might enable different d&d options, this function should not create a move change with similar index
 			if (iDraggedIndex != iNewIndex){

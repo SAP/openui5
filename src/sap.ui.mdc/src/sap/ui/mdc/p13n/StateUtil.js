@@ -122,7 +122,10 @@ sap.ui.define([
 				var sTransformedKey = sExternalKey || sProvidedEngineKey;//no external key --> provide internal key
 				oTransformedState[sTransformedKey] = oInternalState[sProvidedEngineKey];
 			});
-
+			//TODO: Remove once the stateUtil for columnWidth is introduced
+			if (oTransformedState.ColumnWidth) {
+				delete oTransformedState.ColumnWidth;
+			}
 			return oTransformedState;
 		},
 

@@ -36,7 +36,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
 	"sap/m/ColumnPopoverSelectListItem",
 	"sap/m/ColumnPopoverActionItem",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController"
 ], function(
 	Control,
 	ActionToolbar,
@@ -71,7 +72,8 @@ sap.ui.define([
 	AggregateController,
 	ColumnPopoverSelectListItem,
 	ColumnPopoverActionItem,
-	SAPUriParameters
+	SAPUriParameters,
+	ColumnWidthController
 ) {
 	"use strict";
 
@@ -586,6 +588,7 @@ sap.ui.define([
 
 		// indicates whether binding the table is inevitable or not
 		this._bForceRebind = true;
+		this._updateAdaptation(this.getP13nMode());
 
 		// Skip propagation of properties (models and bindingContexts)
 		this.mSkipPropagation = {
@@ -868,9 +871,28 @@ sap.ui.define([
 
 		if (bEnableColumnResize !== bOldEnableColumnResize) {
 			this._updateColumnResizer();
+			this._updateAdaptation(this.getP13nMode());
 		}
 
 		return this;
+	};
+
+	Table.prototype._onModifications = function() {
+		if (!this._oTable) {
+			return;
+		}
+		var oColumnWidth = this.getCurrentState().xConfig;
+		var oColumnWidthContent = oColumnWidth.aggregations && oColumnWidth.aggregations.columns;
+
+		this.getColumns().forEach(function(oColumn, iIndex) {
+			var sWidth = oColumnWidthContent && oColumnWidthContent[oColumn.getDataProperty()] && oColumnWidthContent[oColumn.getDataProperty()].width;
+			var oInnerColumn = this._oTable.getColumns()[iIndex];
+			if (!sWidth && oInnerColumn.getWidth() !== oColumn.getWidth()) {
+				oInnerColumn.setWidth(oColumn.getWidth());
+			} else if (sWidth && sWidth !== oInnerColumn.getWidth()) {
+				oInnerColumn.setWidth(sWidth);
+			}
+		}, this);
 	};
 
 	Table.prototype.setP13nMode = function(aMode) {
@@ -925,13 +947,18 @@ sap.ui.define([
 			Sort: SortController,
 			Group: GroupController,
 			Filter: FilterController,
-			Aggregate: AggregateController
+			Aggregate: AggregateController,
+			ColumnWidth: ColumnWidthController
 		};
 
 		aMode.forEach(function(sMode){
 			var sKey = sMode;
 			oRegisterConfig.controller[sKey] = mRegistryOptions[sMode];
 		});
+
+		if (this.getEnableColumnResize()) {
+			oRegisterConfig.controller["ColumnWidth"] = mRegistryOptions["ColumnWidth"];
+		}
 
 		this.getEngine().registerAdaptation(this, oRegisterConfig);
 	};
@@ -1372,6 +1399,10 @@ sap.ui.define([
 		return this.getAggregateConditions() ? this.getAggregateConditions() : {};
 	};
 
+	Table.prototype._getXConfig = function () {
+		return this.getEngine().readXConfig(this);
+	};
+
 	function getFilteredProperties(oTable) {
 		var mFilterConditions = oTable.getFilterConditions();
 
@@ -1409,6 +1440,10 @@ sap.ui.define([
 
 		if (this.isAggregationEnabled()) {
 			oState.aggregations = this._getAggregatedProperties();
+		}
+
+		if (this.getEnableColumnResize()) {
+			oState.xConfig = this._getXConfig();
 		}
 
 		return oState;
@@ -1799,7 +1834,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enable/Disable Column resizing on the inner table based on <code>enableColumnResize</code> property of the MDC table
+	 * Enable/Disable column resizing on the inner table based on <code>enableColumnResize</code> property of the MDC table
 	 *
 	 * @private
 	 */
@@ -1812,9 +1847,9 @@ sap.ui.define([
 		var oTableType = this._bMobileTable ? ResponsiveTableType : GridTableType;
 
 		if (bEnableColumnResizer) {
-			oTableType.enableColumnResizer(this._oTable);
+			oTableType.enableColumnResizer(this, this._oTable);
 		} else {
-			oTableType.disableColumnResizer(this._oTable);
+			oTableType.disableColumnResizer(this, this._oTable);
 		}
 	};
 
@@ -1912,7 +1947,9 @@ sap.ui.define([
 				var oColumnResize = new ColumnPopoverActionItem({
 					text: oResourceBundle.getText("table.SETTINGS_RP_RESIZE"),
 					icon: "sap-icon://resize-horizontal",
-					press: [oColumn, this._onColumnResize, this]
+					press: [function() {
+						ResponsiveTableType.startColumnResize(this._oTable, oColumn);
+					}, this]
 				});
 				aHeaderItems.push(oColumnResize);
 			}
@@ -1941,8 +1978,14 @@ sap.ui.define([
 		TableSettings.createSort(this, sSortProperty, bDescending, true);
 	};
 
-	Table.prototype._onColumnResize = function(oEvent, oColumn) {
-		ResponsiveTableType.startColumnResize(this._oTable, oColumn);
+	Table.prototype._onColumnResize = function(oEvent) {
+		var oColumn = oEvent.getParameter("column");
+		var sWidth = oEvent.getParameter("width");
+		var iIndex = this._oTable.indexOfColumn(oColumn);
+		var oMDCColumn = this.getColumns()[iIndex];
+		var sProperty = oMDCColumn.getDataProperty();
+
+		TableSettings.createColumnWidth(this, sProperty, sWidth);
 	};
 
 	Table.prototype._onCustomGroup = function (sSortProperty) {
@@ -2095,6 +2138,7 @@ sap.ui.define([
 			if (this._bMobileTable) {
 				this._updateColumnTemplate(oMDCColumn, -1);
 			}
+			this._onModifications();
 		}
 		return oMDCColumn;
 	};
@@ -2111,7 +2155,7 @@ sap.ui.define([
 		this.insertAggregation("columns", oMDCColumn, iIndex, true);
 
 		this._insertInnerColumn(oMDCColumn, iIndex);
-
+		this._onModifications();
 		return this;
 	};
 

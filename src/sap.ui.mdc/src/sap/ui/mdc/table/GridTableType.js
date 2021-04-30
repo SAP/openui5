@@ -183,18 +183,23 @@ sap.ui.define([
 		});
 	};
 
-	GridTableType.enableColumnResizer = function(oInnerTable) {
+	GridTableType.enableColumnResizer = function(oTable, oInnerTable) {
 		oInnerTable.getColumns().forEach(function(oColumn) {
 			oColumn.setResizable(true);
 			oColumn.setAutoResizable(true);
 		});
+
+		oInnerTable.detachColumnResize(oTable._onColumnResize, oTable);
+		oInnerTable.attachColumnResize(oTable._onColumnResize, oTable);
 	};
 
-	GridTableType.disableColumnResizer = function(oInnerTable) {
+	GridTableType.disableColumnResizer = function(oTable, oInnerTable) {
 		oInnerTable.getColumns().forEach(function(oColumn) {
 			oColumn.setResizable(false);
 			oColumn.setAutoResizable(false);
 		});
+
+		oInnerTable.detachColumnResize(oTable._onColumnResize, oTable);
 	};
 
 	GridTableType.updateSelection = function(oTable) {

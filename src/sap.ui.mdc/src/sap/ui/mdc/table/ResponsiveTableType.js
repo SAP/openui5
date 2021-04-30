@@ -174,21 +174,26 @@ sap.ui.define([
 		oRowTemplate.applySettings(oRowSettings.getAllSettings());
 	};
 
-	ResponsiveTableType.disableColumnResizer = function(oInnerTable) {
+	ResponsiveTableType.disableColumnResizer = function(oTable, oInnerTable) {
 		var oColumnResize = ColumnResizer.getPlugin(oInnerTable);
 		if (oColumnResize) {
 			oColumnResize.setEnabled(false);
+			oColumnResize.detachColumnResize(oTable._onColumnResize, oTable);
 		}
 	};
 
-	ResponsiveTableType.enableColumnResizer = function(oInnerTable) {
+	ResponsiveTableType.enableColumnResizer = function(oTable, oInnerTable) {
 		oInnerTable.setFixedLayout("Strict");
 		var oColumnResize = ColumnResizer.getPlugin(oInnerTable);
 
 		if (!oColumnResize) {
-			oInnerTable.addDependent(new ColumnResizer());
+			var oColumnResizer = new ColumnResizer();
+			oInnerTable.addDependent(oColumnResizer);
+			oColumnResizer.attachColumnResize(oTable._onColumnResize, oTable);
 		} else {
 			oColumnResize.setEnabled(true);
+			oColumnResize.detachColumnResize(oTable._onColumnResize, oTable);
+			oColumnResize.attachColumnResize(oTable._onColumnResize, oTable);
 		}
 	};
 

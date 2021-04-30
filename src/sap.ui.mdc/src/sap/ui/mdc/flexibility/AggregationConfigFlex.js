@@ -20,14 +20,13 @@ sap.ui.define([
     var AggregationConfigFlex = {};
 
     var fConfigModified = function(oControl) {
-        if (!oControl._bWaitForBindChanges) {
-            oControl._bWaitForBindChanges = true;
+        if (!oControl._bWaitForModificationChanges) {
+            oControl._bWaitForModificationChanges = true;
             Engine.getInstance().waitForChanges(oControl).then(function() {
                 if (oControl._onModifications instanceof Function) {
                     oControl._onModifications();
                 }
-                oControl._onModifications();
-                delete oControl._bWaitForBindChanges;
+                delete oControl._bWaitForModificationChanges;
             });
         }
 	};

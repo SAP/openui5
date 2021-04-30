@@ -630,7 +630,6 @@ sap.ui.define([
 			groupLevels: [],
 			aggregations: {},
 			filter: {}
-
 		};
 
 		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
