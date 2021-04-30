@@ -477,7 +477,7 @@ function(
 		.then(function(oResourceBundle) {
 			mPropertyBag = mPropertyBag || {};
 			var sMessage = oResourceBundle.getText(sMessageKey, mPropertyBag.error ? [mPropertyBag.error.userMessage || mPropertyBag.error.message || mPropertyBag.error] : undefined);
-			var sTitle = oResourceBundle.getText(mPropertyBag.titleKey);
+			var sTitle = mPropertyBag.titleKey && oResourceBundle.getText(mPropertyBag.titleKey);
 
 			var mOptions = _omit(mPropertyBag, ["titleKey", "error"]);
 			mOptions.title = sTitle;

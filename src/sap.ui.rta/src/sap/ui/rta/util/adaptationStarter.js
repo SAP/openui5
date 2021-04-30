@@ -77,9 +77,11 @@ sap.ui.define([
 			.then(function() {
 				return oRta;
 			})
-			.catch(function(oError) {
-				Log.error("UI Adaptation could not be started", oError.message);
-				throw oError;
+			.catch(function(vError) {
+				if (vError !== "Reload triggered") {
+					Log.error("UI Adaptation could not be started", vError.message);
+				}
+				throw vError;
 			});
 	}
 	return adaptationStarter;
