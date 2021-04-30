@@ -269,18 +269,15 @@ sap.ui.define([
 					this.mCacheByResourcePath = this.mCacheByResourcePath || {};
 					this.mCacheByResourcePath[sResourcePath] = oCache;
 				}
-				if (this.mLateQueryOptions) {
-					oCache.setLateQueryOptions(this.mLateQueryOptions);
-				}
 				oCache.$deepResourcePath = sDeepResourcePath;
 				oCache.$generation = iGeneration;
 				oCache.$resourcePath = sResourcePath;
 			}
 		} else { // absolute binding
 			oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions);
-			if (this.mLateQueryOptions) {
-				oCache.setLateQueryOptions(this.mLateQueryOptions);
-			}
+		}
+		if (this.mLateQueryOptions) {
+			oCache.setLateQueryOptions(this.mLateQueryOptions);
 		}
 		this.oCache = oCache;
 
