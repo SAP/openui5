@@ -24,8 +24,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/Device"
+	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	SimpleScrollControl,
@@ -51,8 +50,7 @@ function (
 	ObjectPageSection,
 	ObjectPageSubSection,
 	jQuery,
-	sinon,
-	Device
+	sinon
 ) {
 	"use strict";
 
@@ -903,25 +901,18 @@ function (
 				offsetTop: this.oContent1.$().offset().top,
 				controlOffset: this.oContent1.$().offset(),
 				overlayOffset: this.oContent1Overlay.$().offset(),
-				applyStylesSpy: !Device.browser.msie ? sandbox.spy(this.oContent1Overlay, "applyStyles") : undefined
+				applyStylesSpy: sandbox.spy(this.oContent1Overlay, "applyStyles")
 			};
 		}
 
 		function scrollHandler(assert, done, mInitialValues) {
-			var oPromise = Promise.resolve();
-			if (!Device.browser.msie) {
-				assert.equal(mInitialValues.applyStylesSpy.callCount, 0, "then the applyStyles Method is not called");
-			} else {
-				oPromise = this.oContent1Overlay.applyStyles();
-			}
-			return oPromise.then(function () {
-				assert.equal(Math.ceil(this.oContent1.$().offset().top), Math.ceil(mInitialValues.offsetTop) - 100, "Then the top offset is 100px lower");
-				assert.strictEqual(Math.ceil(this.oContent1.$().offset().left), Math.ceil(this.oContent1Overlay.$().offset().left), "Then the offset left is still equal");
-				assert.strictEqual(Math.ceil(this.oContent1.$().offset().top), Math.ceil(this.oContent1Overlay.$().offset().top), "Then the offset top is still equal");
-				assert.strictEqual(Math.ceil(mInitialValues.controlOffset.left), Math.ceil(mInitialValues.overlayOffset.left), "Then the offset left is still equal");
-				assert.strictEqual(Math.ceil(mInitialValues.controlOffset.top), Math.ceil(mInitialValues.overlayOffset.top), "Then the offset top is still equal");
-				done();
-			}.bind(this));
+			assert.equal(mInitialValues.applyStylesSpy.callCount, 0, "then the applyStyles Method is not called");
+			assert.equal(Math.ceil(this.oContent1.$().offset().top), Math.ceil(mInitialValues.offsetTop) - 100, "Then the top offset is 100px lower");
+			assert.strictEqual(Math.ceil(this.oContent1.$().offset().left), Math.ceil(this.oContent1Overlay.$().offset().left), "Then the offset left is still equal");
+			assert.strictEqual(Math.ceil(this.oContent1.$().offset().top), Math.ceil(this.oContent1Overlay.$().offset().top), "Then the offset top is still equal");
+			assert.strictEqual(Math.ceil(mInitialValues.controlOffset.left), Math.ceil(mInitialValues.overlayOffset.left), "Then the offset left is still equal");
+			assert.strictEqual(Math.ceil(mInitialValues.controlOffset.top), Math.ceil(mInitialValues.overlayOffset.top), "Then the offset top is still equal");
+			done();
 		}
 
 		QUnit.test("when the control is scrolled", function(assert) {

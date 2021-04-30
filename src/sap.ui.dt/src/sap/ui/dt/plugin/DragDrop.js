@@ -432,12 +432,7 @@ function(
 	 */
 	DragDrop.prototype.showGhost = function(oOverlay, oEvent) {
 		if (oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer) {
-			// Edge has default effect "copy", so we set it here to "move"
-			oEvent.originalEvent.dataTransfer.effectAllowed = "move";
-			oEvent.originalEvent.dataTransfer.dropEffect = "move";
-			// IE and Edge do no support dataTransfer.setDragImage on D&D event
-			if (!Device.browser.msie && !Device.browser.edge
-				&& !Device.browser.msie && oEvent.originalEvent.dataTransfer.setDragImage) {
+			if (oEvent.originalEvent.dataTransfer.setDragImage) {
 				this._$ghost = this.createGhost(oOverlay, oEvent);
 
 				// ghost should be visible to set it as dragImage
