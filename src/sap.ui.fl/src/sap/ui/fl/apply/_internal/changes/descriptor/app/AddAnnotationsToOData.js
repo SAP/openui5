@@ -4,9 +4,9 @@
  */
 
 sap.ui.define([
-
+	"sap/ui/fl/util/DescriptorChangeCheck"
 ], function(
-
+	DescriptorChangeCheck
 ) {
 	"use strict";
 
@@ -66,13 +66,15 @@ sap.ui.define([
 		}
 	}
 
-	function checkingAnnotationDataSource(oChangeDataSource, aChangeAnnotations) {
+	function checkingAnnotationDataSource(oChangeDataSource, aChangeAnnotations, oChange) {
 		if (oChangeDataSource) {
 			if (Object.keys(oChangeDataSource).length === 0) {
 				throw new Error("The 'dataSource' object is empty");
 			}
 
 			Object.keys(oChangeDataSource).forEach(function(sAnnotation) {
+				DescriptorChangeCheck.checkIdNamespaceCompliance(sAnnotation, oChange);
+
 				if (!isAnnotationTypeOfOdataAnnotation(oChangeDataSource, sAnnotation)) {
 					throw new Error("The dataSource annotation '" + sAnnotation + "' is type of '" + oChangeDataSource[sAnnotation].type + "'. Only dataSource annotations of type 'ODataAnnotation' is supported");
 				}
@@ -164,7 +166,7 @@ sap.ui.define([
 			checkingDataSourceId(oManifest["sap.app"].dataSources, sChangeDataSourceId);
 			checkingAnnotationArray(aChangeAnnotations);
 			checkingAnnotationsInsertPosition(sChangeAnnotationsInsertPosition);
-			checkingAnnotationDataSource(oChangeDataSource, aChangeAnnotations);
+			checkingAnnotationDataSource(oChangeDataSource, aChangeAnnotations, oChange);
 			postChecks(oManifest["sap.app"]["dataSources"], oChangeDataSource, aChangeAnnotations);
 
 			merge(oManifest["sap.app"]["dataSources"], sChangeDataSourceId, aChangeAnnotations, sChangeAnnotationsInsertPosition, oChangeDataSource);

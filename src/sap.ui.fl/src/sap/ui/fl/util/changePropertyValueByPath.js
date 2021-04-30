@@ -28,7 +28,7 @@ sap.ui.define([
 	 *
 	 * @param {Array|Object} oChanges - changes to be merged which includes propertyPath and propertyValue
 	 * @param {String} oRootPath - root context where the propertyPath starts
-	 * @ui5-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
 	return function (oChanges, oRootPath) {
 		if (Array.isArray(oChanges)) {
