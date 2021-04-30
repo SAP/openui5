@@ -149,34 +149,27 @@ sap.ui.define([
 
 	/**
 	 * Adjusts this context's path by replacing the given transient predicate with the given
-	 * predicate and adjusts all contexts of child bindings.
+	 * predicate. Recursively adjusts all child bindings.
 	 *
 	 * @param {string} sTransientPredicate
 	 *   The transient predicate to be replaced
 	 * @param {string} sPredicate
 	 *   The new predicate
 	 * @param {function} [fnPathChanged]
-	 *   A function called with the old and the new path if the path changed
+	 *   A function called with the old and the new path
 	 *
 	 * @private
 	 */
 	Context.prototype.adjustPredicate = function (sTransientPredicate, sPredicate, fnPathChanged) {
 		var sTransientPath = this.sPath;
 
-		if (sTransientPath.includes(sTransientPredicate)) {
-			this.sPath = sTransientPath.split("/").map(function (sSegment) {
-					if (sSegment.endsWith(sTransientPredicate)) {
-						sSegment = sSegment.slice(0, -sTransientPredicate.length) + sPredicate;
-					}
-					return sSegment;
-				}).join("/");
-			if (fnPathChanged) {
-				fnPathChanged(sTransientPath, this.sPath);
-			}
-			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-				oDependentBinding.adjustPredicate(sTransientPredicate, sPredicate);
-			});
+		this.sPath = sTransientPath.replace(sTransientPredicate, sPredicate);
+		if (fnPathChanged) {
+			fnPathChanged(sTransientPath, this.sPath);
 		}
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.adjustPredicate(sTransientPredicate, sPredicate);
+		});
 	};
 
 	/**
