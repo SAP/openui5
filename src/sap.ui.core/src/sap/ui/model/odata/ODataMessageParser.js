@@ -129,7 +129,8 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
 
 /**
  * Parses the given response for messages, calculates the delta and fires the messageChange-event
- * on the MessageProcessor if messages are found.
+ * on the MessageProcessor if messages are found. Messages of responses to GET requests with status
+ * codes 204 or 424 are ignored.
  *
  * @param {object} oResponse
  *   The response from the server containing body and headers
@@ -146,9 +147,11 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
  */
 ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities,
 		bMessageScopeSupported) {
-	var aMessages, mRequestInfo;
+	var aMessages,
+		mRequestInfo,
+		sStatusCode = String(oResponse.statusCode);
 
-	if (oRequest.method === "GET" && String(oResponse.statusCode) === "204") {
+	if (oRequest.method === "GET" && (sStatusCode === "204" || sStatusCode === "424")) {
 		return;
 	}
 
