@@ -95,6 +95,8 @@ sap.ui.define([
 		 * This includes both default (e.g. <code>UnhideControl</code> or <code>MoveControls</code>) and <code>DeveloperMode</code> change handlers (e.g. <code>AddXML</code> or <code>propertyChange</code>)
 		 */
 		registerPredefinedChangeHandlers: function() {
+			// TODO remove; temporarily needed until the instance specific change handlers are migrated
+			ChangeRegistry.getInstance().registerPredefinedChangeHandlers(mDefaultHandlers, mDeveloperModeHandlers);
 			ChangeHandlerStorage.registerPredefinedChangeHandlers(mDefaultHandlers, mDeveloperModeHandlers);
 		}
 	};
