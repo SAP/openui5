@@ -1168,11 +1168,7 @@ sap.ui.define([
 
 			if (mParameters["overwrite"]) {
 				// handle triggered "Save" button
-				return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aSourceVariantChanges), oAppComponent)
-					.then(function(oResponse) {
-						this.checkDirtyStateForControlModels([sVariantManagementReference]);
-						return oResponse;
-					}.bind(this));
+				return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aSourceVariantChanges), oAppComponent);
 			}
 
 			var sLayer = mParameters.layer || Layer.USER;
@@ -1215,8 +1211,6 @@ sap.ui.define([
 						var oSetExecuteChange = this.setVariantProperties(sVariantManagementReference, mPropertyBagSetExecute, true);
 						aCopiedVariantDirtyChanges.push(oSetExecuteChange);
 					}
-					this.oData[sVariantManagementReference].modified = false;
-					this.checkUpdate(true);
 					aNewVariantDirtyChanges = aCopiedVariantDirtyChanges;
 					// unsaved changes on the source variant are removed before copied variant changes are saved
 					return _eraseDirtyChanges({
@@ -1229,8 +1223,10 @@ sap.ui.define([
 				}.bind(this));
 		}.bind(this, sVMReference, oAppComponent, mParameters), this, sVMReference)
 			.then(function() {
+				this.oData[sVMReference].modified = false;
+				this.checkUpdate(true);
 				return aNewVariantDirtyChanges;
-			});
+			}.bind(this));
 	};
 
 	VariantModel.prototype.getLocalId = function(sId, oAppComponent) {
@@ -1353,21 +1349,16 @@ sap.ui.define([
 	VariantModel.prototype.checkDirtyStateForControlModels = function(aVariantManagementReferences) {
 		aVariantManagementReferences.forEach(function(sVariantManagementReference) {
 			var mVariantManagementModelData = this.oData[sVariantManagementReference];
+			var sCurrentVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
+			var aCurrentVariantControlChanges = VariantManagementState.getControlChangesForVariant({
+				reference: this.sFlexReference,
+				vmReference: sVariantManagementReference,
+				vReference: sCurrentVariantReference,
+				changeInstance: true
+			});
+			var aDirtyCurrentVariantChanges = this._getDirtyChangesFromVariantChanges(aCurrentVariantControlChanges);
 
-			if (mVariantManagementModelData.modified === true) {
-				var sCurrentVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
-				var aCurrentVariantControlChanges = VariantManagementState.getControlChangesForVariant({
-					reference: this.sFlexReference,
-					vmReference: sVariantManagementReference,
-					vReference: sCurrentVariantReference,
-					changeInstance: true
-				});
-				var aDirtyCurrentVariantChanges = this._getDirtyChangesFromVariantChanges(aCurrentVariantControlChanges);
-
-				if (aDirtyCurrentVariantChanges.length === 0) {
-					mVariantManagementModelData.modified = false;
-				}
-			}
+			mVariantManagementModelData.modified = aDirtyCurrentVariantChanges.length > 0;
 		}.bind(this));
 		this.checkUpdate(true);
 	};

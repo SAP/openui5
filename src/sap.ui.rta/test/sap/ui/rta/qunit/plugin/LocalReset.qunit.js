@@ -3,37 +3,28 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/LocalReset",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/core/Control",
+	"sap/m/VBox",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/LocalResetAPI",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/m/MessageToast",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	LocalResetPlugin,
 	CommandFactory,
-	Control,
+	VBox,
 	DesignTime,
 	OverlayRegistry,
-	ChangeRegistry,
 	FlUtils,
 	LocalResetAPI,
+	JsControlTreeModifier,
+	MessageToast,
 	sinon
 ) {
 	"use strict";
-
-	var oMockedAppComponent = {
-		getModel: function () {
-			return {
-				getCurrentVariantReference: function() {
-					return undefined;
-				}
-			};
-		}
-	};
-	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	var sandbox = sinon.sandbox.create();
 
@@ -41,26 +32,37 @@ function (
 		beforeEach: function(assert) {
 			var done = assert.async();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.layout.form.SimpleForm": {
-					localReset: "default"
+			this.oVariantModel = {
+				getCurrentVariantReference: function() {
+					return undefined;
 				}
-			})
-			.then(function() {
-				this.oLocalResetPlugin = new LocalResetPlugin({
-					commandFactory: new CommandFactory()
-				});
-				this.oSimpleForm = new Control("fakedSimpleForm", {});
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oSimpleForm],
-					plugins: [this.oLocalResetPlugin]
-				});
+			};
+			var oMockedAppComponent = {
+				getModel: function () {
+					return this.oVariantModel;
+				}.bind(this)
+			};
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oSimpleFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm);
-					done();
-				}.bind(this));
+			this.oLocalResetPlugin = new LocalResetPlugin({
+				commandFactory: new CommandFactory()
+			});
+			this.oNestedForm = new VBox("fakedNestedForm");
+			this.oSimpleForm = new VBox("fakedSimpleForm", {
+				items: [this.oNestedForm]
+			});
+			this.oSimpleForm.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oSimpleForm],
+				plugins: [this.oLocalResetPlugin]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oSimpleFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm);
+				this.oNestedFormOverlay = OverlayRegistry.getOverlay(this.oNestedForm);
+				done();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -115,7 +117,7 @@ function (
 					localReset: {
 						changeType: "localReset",
 						isEnabled: function(oElementInstance) {
-							return oElementInstance.getMetadata().getName() !== "sap.ui.core.Control";
+							return oElementInstance.getMetadata().getName() !== "sap.m.VBox";
 						}
 					}
 				}
@@ -176,10 +178,51 @@ function (
 
 			assert.strictEqual(this.oLocalResetPlugin.getMenuItems([this.oSimpleFormOverlay]).length, 0, "and if the plugin is not enabled, no menu entries are returned");
 		});
+
+		QUnit.test("when the isEnabled check is called with an element where changeOnRelevantContainer is true", function (assert) {
+			this.oNestedFormOverlay.setDesignTimeMetadata({
+				actions: {
+					localReset: {
+						changeType: "localReset",
+						changeOnRelevantContainer: true
+					}
+				}
+			});
+			var oIsEnabledStub = sandbox.stub(LocalResetAPI, "isResetEnabled");
+			this.oLocalResetPlugin.isEnabled([this.oNestedFormOverlay]);
+
+			assert.strictEqual(
+				oIsEnabledStub.args[0][0].getId(),
+				this.oSimpleForm.getId(),
+				"then isEnabled is called with the parent overlay"
+			);
+		});
+
+		QUnit.test("when the plugin handler is called for a local reset on a variant", function (assert) {
+			var oCommandFactoryStub = sandbox.stub(this.oLocalResetPlugin.getCommandFactory(), "getCommandFor");
+			sandbox.stub(this.oLocalResetPlugin, "getVariantManagementReference").returns("variantManagement1");
+			sandbox.stub(this.oVariantModel, "getCurrentVariantReference").returns("variantManagement1");
+			sandbox.stub(JsControlTreeModifier, "bySelector");
+			var oMessageToastSpy = sandbox.spy(MessageToast, "show");
+			return this.oLocalResetPlugin.handler([this.oSimpleFormOverlay]).then(function () {
+				assert.strictEqual(oCommandFactoryStub.firstCall.args[1], "localReset", "then a local reset command is added to the composite command");
+				assert.strictEqual(oCommandFactoryStub.secondCall.args[1], "save", "then a save variant command is added to the composite command");
+				assert.ok(oMessageToastSpy.called, "then a message toast is shown");
+			});
+		});
+
+		QUnit.test("when the plugin handler is called for a local reset without a variant", function (assert) {
+			var oCommandFactoryStub = sandbox.stub(this.oLocalResetPlugin.getCommandFactory(), "getCommandFor");
+			var oMessageToastSpy = sandbox.spy(MessageToast, "show");
+			return this.oLocalResetPlugin.handler([this.oSimpleFormOverlay]).then(function () {
+				assert.strictEqual(oCommandFactoryStub.firstCall.args[1], "localReset", "then a local reset command is added to the composite command");
+				assert.strictEqual(oCommandFactoryStub.callCount, 1, "then no save variant command is added to the composite command");
+				assert.ok(oMessageToastSpy.notCalled, "then no message toast is shown");
+			});
+		});
 	});
 
 	QUnit.done(function () {
-		oGetAppComponentForControlStub.restore();
 		jQuery("#qunit-fixture").hide();
 	});
 });

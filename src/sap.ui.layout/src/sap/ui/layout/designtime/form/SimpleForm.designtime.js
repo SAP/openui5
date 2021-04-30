@@ -119,7 +119,10 @@ sap.ui.define([
 			}
 		},
 		actions: {
-			localReset: "resetSimpleForm"
+			localReset: {
+				changeType: "localReset",
+				changeOnRelevantContainer: true
+			}
 		},
 		getStableElements: getStableElements
 	};

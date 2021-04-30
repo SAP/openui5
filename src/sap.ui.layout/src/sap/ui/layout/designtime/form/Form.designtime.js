@@ -82,7 +82,7 @@ sap.ui.define([
 			}
 		},
 		actions: {
-			localReset: "resetForm"
+			localReset: "localReset"
 		}
 	};
 

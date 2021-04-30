@@ -1518,7 +1518,10 @@ sap.ui.define([
 					changeInstance: true
 				})
 				.returns([oChange1, oChange2, oChange3]);
-			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, oChange1, oChange2, oChange3]);
+			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges")
+				.callThrough()
+				.onFirstCall()
+				.returns([oCopiedVariant, oChange1, oChange2, oChange3]);
 			sandbox.stub(VariantManagementState, "removeChangeFromVariant");
 			sandbox.stub(this.oModel.oFlexController, "deleteChange");
 			sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
@@ -1623,7 +1626,10 @@ sap.ui.define([
 					changeInstance: true
 				})
 				.returns([oChange1, oChange2, oChange3]);
-			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, oChange1, oChange2, oChange3]);
+			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges")
+				.callThrough()
+				.onFirstCall()
+				.returns([oCopiedVariant, oChange1, oChange2, oChange3]);
 			sandbox.stub(VariantManagementState, "removeChangeFromVariant");
 			sandbox.stub(this.oModel.oFlexController, "deleteChange");
 			sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
@@ -1702,7 +1708,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling '_handleSaveEvent' with parameter from Save button, which calls 'checkDirtyStateForControlModels' later, with dirty changes still existing after Save", function(assert) {
+		QUnit.test("when calling the checkDirtyStateForControlModels check with newly added dirty changes", function (assert) {
 			var sVMReference = "variantMgmtId1";
 			var oChange1 = new Change({
 				fileName: "change1",
@@ -1711,44 +1717,16 @@ sap.ui.define([
 				}
 			});
 
-			var oVariantManagement = new VariantManagement(sVMReference);
-			var oEvent = {
-				getParameters: function() {
-					return {
-						overwrite: true,
-						name: "Test"
-					};
-				},
-				getSource: function() {
-					return oVariantManagement;
-				}
-			};
-
-			this.oModel.getData()[sVMReference].modified = true; // dirty changes exist
-
-			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
-				.callThrough()
-				.withArgs({
-					vmReference: sVMReference,
-					vReference: this.oModel.oData[sVMReference].currentVariant,
-					changeInstance: true,
-					reference: this.oModel.sFlexReference
-				})
-				.returns([oChange1]);
-			var fnCopyVariantStub = sandbox.stub(this.oModel, "copyVariant");
-			var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "setVariantProperties");
-			var fnSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves();
-			// dirty changes always present are not saved
+			// Simulate that new dirty changes were added since the last check
+			this.oModel.getData()[sVMReference].modified = false;
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([oChange1]);
 			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([oChange1]);
 
-			return this.oModel._handleSaveEvent(oEvent).then(function() {
-				assert.equal(fnCopyVariantStub.callCount, 0, "CopyVariant is not called");
-				assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
-				assert.ok(fnSaveDirtyChangesStub.calledOnce, "SaveAll is called");
-				assert.ok(this.oModel.getData()[sVMReference].modified, "the model property 'modified' is still set to true");
-				oVariantManagement.destroy();
-			}.bind(this));
+			this.oModel.checkDirtyStateForControlModels([sVMReference]);
+			assert.ok(
+				this.oModel.getData()[sVMReference].modified,
+				"then the modified state is switched to true"
+			);
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' with bDesignTimeMode set to true", function(assert) {

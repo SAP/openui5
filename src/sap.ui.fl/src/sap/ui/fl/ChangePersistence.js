@@ -383,6 +383,7 @@ sap.ui.define([
 		).filter(function (oChange) {
 			return (
 				Boolean(oChange)
+				&& oChange.getFileType() === "change"
 				&& LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), mPropertyBag.layer) === 0
 			);
 		});
