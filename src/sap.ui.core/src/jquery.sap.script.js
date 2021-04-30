@@ -1117,7 +1117,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device',
 				copy = options[ name ];
 
 				// Prevent never-ending loop
-				if ( target === copy ) {
+				if ( name === "__proto__" || target === copy ) {
 					continue;
 				}
 
