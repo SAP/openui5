@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/m/MessageStrip",
-	"sap/ui/core/MessageType"
+	"sap/ui/core/MessageType",
+	"sap/base/util/restricted/_isEqual"
 ],
 function (
 	Controller,
@@ -15,7 +16,8 @@ function (
 	WriteStorage,
 	Layer,
 	MessageStrip,
-	MessageType
+	MessageType,
+	_isEqual
 ) {
 	"use strict";
 
@@ -41,6 +43,7 @@ function (
 		}).then(function(oDialog) {
 			this.getView().addDependent(oDialog);
 			oDialog._oList.attachUpdateStarted(this._updateStartedHandler.bind(this));
+			oDialog._oList.attachSelectionChange(this._onSelectionChange.bind(this));
 			return oDialog;
 		}.bind(this));
 	}
@@ -54,6 +57,11 @@ function (
 			this.oContextsModel.refresh(true);
 		}.bind(this));
 	}
+
+	function itemToJson(oItem) {
+		return {id: oItem.getTitle(), description: oItem.getDescription()};
+	}
+
 
 	return Controller.extend("sap.ui.fl.variants.context.controller.ContextVisibility", {
 		onInit: function() {
@@ -72,6 +80,17 @@ function (
 				return assignDescriptionsToSelectedRoles.call(this, oSelectedContexts);
 			}
 			return Promise.resolve();
+		},
+
+		_onSelectionChange: function(oEvent) {
+			var oSelectedItem = itemToJson(oEvent.getParameter("listItem"));
+			if (oEvent.getParameter("selected") === true) {
+				this.oCurrentSelection.push(oSelectedItem);
+			} else {
+				this.oCurrentSelection = this.oCurrentSelection.filter(function(oItem) {
+					return !_isEqual(oItem, oSelectedItem);
+				});
+			}
 		},
 
 		isSelected: function(oItem, aSelectedItems) {
@@ -134,7 +153,8 @@ function (
 		 * Retrieves contexts from the back end, then opens a new <code>Select Contexts</code> dialog.
 		 */
 		_addContexts: function(oDialog) {
-			oDialog._oList.removeSelections(true);
+			oDialog.clearSelection();
+			this.oCurrentSelection = this.oSelectedContextsModel.getProperty("/selected") || [];
 			return getData.call(this, {}).then(function() {
 				return oDialog.open();
 			});
@@ -156,6 +176,7 @@ function (
 		 * Retrieves filtered data from the back end, then updates the model.
 		 */
 		onSearch: function(oEvent) {
+			oEvent.getSource().clearSelection();
 			var mConfig = {$filter: oEvent.getParameter("value")};
 			return getData.call(this, mConfig);
 		},
@@ -164,12 +185,9 @@ function (
 		 * Triggered if user clicks on <code>Select<code> button in <code>Select Contexts</code> dialog.
 		 * Formats selected items, then updates the model accordingly.
 		 */
-		onSelectContexts: function(oEvent) {
-			var aSelectedRoles = oEvent.getParameter("selectedContexts");
-			var oSelectedItems = aSelectedRoles.map(function(oListItems) {
-				return oListItems.getObject();
-			});
-			this.oSelectedContextsModel.setProperty("/selected", oSelectedItems);
+		onSelectContexts: function() {
+			this.oSelectedContextsModel.setProperty("/selected", this.oCurrentSelection);
+			this.oCurrentSelection = [];
 			this.showErrorMessage(false);
 		},
 

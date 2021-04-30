@@ -194,7 +194,7 @@ sap.ui.define([
 		before: function () {
 			QUnit.config.fixture = null;
 			this.oMockResponse = duplicateRoles(51, oDuplicates);
-			this.oMockSearchResponse = duplicateRoles(51, [{ id: "KPI", description: "KPI Framework"}]);
+			this.oMockSearchResponse = {values: [{ id: "KPI", description: "KPI Framework"}]};
 		},
 		after: function () {
 			QUnit.config.fixture = "";
@@ -243,6 +243,13 @@ sap.ui.define([
 				assert.equal(this.fnGetContextsStub.callCount, 1, "write storage was called once");
 				setTableSelectDialogControls.call(this);
 				assert.equal(this.oList.getItems().length, 50, "list contains mocked entries");
+				var aSelectedItems = this.oList.getSelectedItems();
+				assert.equal(aSelectedItems.length, 2, "list contains mocked entries");
+
+				// unselect first item
+				aSelectedItems[0].setSelected(false);
+				oCore.applyChanges();
+
 				assert.equal(this.oDialog.isOpen(), true, "dialog is opened");
 				assert.equal(this.oSearchField.isActive(), true, "search field is active");
 				this.oSearchField.setValue("KPI");
@@ -250,9 +257,13 @@ sap.ui.define([
 			};
 
 			var fnAsyncAssertions = function() {
-				assert.equal(this.fnGetContextsStub.callCount, 2, "write storage was called twice");
 				oCore.applyChanges();
-				assert.equal(this.oList.getItems().length, 50, "list contains searched entries");
+				assert.equal(this.fnGetContextsStub.callCount, 2, "write storage was called twice");
+				assert.equal(this.oList.getItems().length, 1, "list contains searched entries");
+				this.oList.getItems()[0].setSelected(true);
+				oCore.applyChanges();
+				this.oConfirmBtn.firePress();
+				oCore.applyChanges();
 				fnDone();
 			};
 

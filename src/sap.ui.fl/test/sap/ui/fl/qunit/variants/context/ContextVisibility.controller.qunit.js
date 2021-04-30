@@ -122,6 +122,7 @@ sap.ui.define([
 		QUnit.test("when the 'Add Contexts' button is pressed ", function (assert) {
 			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(this.oRoles);
 			oController.oContextsModel = new JSONModel({});
+			oController.oSelectedContextsModel = new JSONModel({selected: []});
 			sandbox.stub(oController, "getView").returns({
 				addDependent: function() {},
 				getId: function() {}
@@ -174,6 +175,11 @@ sap.ui.define([
 			var oEvent = {
 				getParameter: function () {
 					return "KPI";
+				},
+				getSource: function() {
+					return {
+						clearSelection: function() {}
+					};
 				}
 			};
 
@@ -226,23 +232,42 @@ sap.ui.define([
 
 		QUnit.test("when clicking confirm on select roles list", function (assert) {
 			oController.oSelectedContextsModel = new JSONModel({selected: []});
-			var oEvent = {
-				getParameter: function() {
-					return [oListItem];
-				}
-			};
-			var oListItem = {
-				getObject: function() {
-					return { id: "REMOTE", description: "Role for accessing remote system"};
-				}
-			};
+			oController.oCurrentSelection = [{ id: "REMOTE", description: "Role for accessing remote system"}];
 
 			sandbox.stub(oController, "getView").returns({
 				getId: function() {}
 			});
 
-			oController.onSelectContexts(oEvent);
+			oController.onSelectContexts();
 			assert.equal(oController.oSelectedContextsModel.getProperty("/selected").length, 1, "then one roles is selected");
+		});
+
+		QUnit.test("when adding a new selection in add roles dialog", function (assert) {
+			oController.oCurrentSelection = [];
+
+			var oEvent = {
+				getParameter: function(sId) {
+					return sId === "selected" ? true : new StandardListItem({title: "REMOTE", description: "TEST"});
+				}
+			};
+
+			oController._onSelectionChange(oEvent);
+			assert.equal(oController.oCurrentSelection.length, 1, "one selection was added to current selection closure");
+			assert.equal(oController.oCurrentSelection[0].id, "REMOTE", "selection is as expected");
+		});
+
+		QUnit.test("when removing a new selection in add roles dialog", function (assert) {
+			oController.oCurrentSelection = [{id: "REMOTE", description: "TEST"}, {id: "TEST", description: "TEST"}];
+
+			var oEvent = {
+				getParameter: function(sId) {
+					return sId === "selected" ? false : new StandardListItem({title: "REMOTE", description: "TEST"});
+				}
+			};
+
+			oController._onSelectionChange(oEvent);
+			assert.equal(oController.oCurrentSelection.length, 1, "one selection was removed to current selection closure");
+			assert.equal(oController.oCurrentSelection[0].id, "TEST", "selection is as excpected");
 		});
 	});
 	QUnit.done(function() {
