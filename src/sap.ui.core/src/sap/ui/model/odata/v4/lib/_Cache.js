@@ -3259,7 +3259,7 @@ sap.ui.define([
 	 */
 	_Cache.from$skip = function (sSegment, aCollection) {
 		return rNumber.test(sSegment)
-			? aCollection.$created + Number(sSegment)
+			? (aCollection.$created || 0) + Number(sSegment)
 			: sSegment;
 	};
 
