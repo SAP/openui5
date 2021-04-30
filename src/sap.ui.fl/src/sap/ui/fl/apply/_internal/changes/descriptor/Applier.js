@@ -40,7 +40,7 @@ sap.ui.define([
 			return mStrategy.registry()
 				.then(function (Registry) {
 					var aChangeHandlerPromises = aAppDescriptorChanges.map(function (oChange) {
-						return Registry[oChange.getChangeType()];
+						return Registry[oChange.getChangeType()] && Registry[oChange.getChangeType()]();
 					});
 					return Promise.all(aChangeHandlerPromises);
 				})
