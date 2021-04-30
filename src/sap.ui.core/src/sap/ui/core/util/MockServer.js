@@ -547,12 +547,12 @@ sap.ui
 			 */
 			MockServer.prototype._getBracketIndices = function(sString) {
 				var aStack = [];
-				var bReserved = false;
+				var iReserved = 0;
 				var iStartIndex, iEndIndex = 0;
 				for (var character = 0; character < sString.length; character++) {
 					if (sString[character] === '(') {
 						if (/[substringof|endswith|startswith]$/.test(sString.substring(0, character))) {
-							bReserved = true;
+							++iReserved;
 						} else {
 							aStack.push(sString[character]);
 							if (iStartIndex === undefined) {
@@ -560,7 +560,7 @@ sap.ui
 							}
 						}
 					} else if (sString[character] === ')') {
-						if (!bReserved) {
+						if (!iReserved) {
 							aStack.pop();
 							iEndIndex = character;
 							if (aStack.length === 0) {
@@ -570,7 +570,7 @@ sap.ui
 								};
 							}
 						} else {
-							bReserved = false;
+							--iReserved;
 						}
 					}
 				}
