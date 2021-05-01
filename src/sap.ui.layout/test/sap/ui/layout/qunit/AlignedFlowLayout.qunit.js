@@ -1,9 +1,5 @@
-/* global QUnit */
-
-QUnit.config.autostart = false;
-sap.ui.test.qunit.delayTestStart();
-
-sap.ui.require([
+/* global QUnit, ResizeObserver */
+sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/Device",
@@ -21,8 +17,6 @@ sap.ui.require([
 	ResizeHandler
 ) {
 	"use strict";
-
-	/* global ResizeObserver */
 
 	var CONTENT_ID = "content";
 
@@ -1652,5 +1646,4 @@ sap.ui.require([
 			done();
 		}.bind(this));
 	});
-
 });

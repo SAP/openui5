@@ -36,10 +36,16 @@ sap.ui.define([
 		tests: {
 
 			AlignedFlowLayout: {
-				page: "test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html"
+				page: "test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html",
+				ui5: {
+					compatVersion: "edge",
+					libs: ["sap.m", "sap.ui.layout"],
+					"xx-waitForTheme": "init"
+				}
 			},
 
 			"AlignedFlowLayout (RTL)": {
+				// Note: this test reuses the 'AlignedFlowLayout' configuration above; only the URL parameter differs
 				page: "test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html?sap-ui-rtl=true"
 			},
 
