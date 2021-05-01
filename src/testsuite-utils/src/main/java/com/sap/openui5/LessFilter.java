@@ -346,10 +346,11 @@ public class LessFilter implements Filter {
               Scriptable result = this.compileCSS(input, path, compressCSS, compressJSON, libraryName);
 
               // cache the result
+              String parameterStyleRule = Context.toString(ScriptableObject.getProperty((Scriptable) result, "parameterStyleRule"));
               String css = Context.toString(ScriptableObject.getProperty((Scriptable) result, "css"));
-              this.cache.put(path + "library.css", css);
+              this.cache.put(path + "library.css", css + "\n" + parameterStyleRule);
               String rtlCss = Context.toString(ScriptableObject.getProperty((Scriptable) result, "cssRtl"));
-              this.cache.put(path + "library-RTL.css", rtlCss);
+              this.cache.put(path + "library-RTL.css", rtlCss + "\n" + parameterStyleRule);
               String json = Context.toString(ScriptableObject.getProperty((Scriptable) result, "json"));
               this.cache.put(path + "library-parameters.json", json);
               resources = Context.toString(ScriptableObject.getProperty((Scriptable) result, "resources"));

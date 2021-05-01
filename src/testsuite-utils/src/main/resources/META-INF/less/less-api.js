@@ -114,7 +114,7 @@ var parse = context.parse = function(sData, sPath, bCompress, bCompressJSON, sLi
 			var sParameters = JSON.stringify(mVariables);
 
 			// escape all chars that could cause problems with css parsers using URI-Encoding (% + HEX-Code)
-			var sEscapedChars = "%{}()'\"";
+			var sEscapedChars = "\\%{}()'\"";
 			for (var i = 0; i < sEscapedChars.length; i++) {
 				var sChar = sEscapedChars.charAt(i);
 				var sHex = sChar.charCodeAt(0).toString(16).toUpperCase();
