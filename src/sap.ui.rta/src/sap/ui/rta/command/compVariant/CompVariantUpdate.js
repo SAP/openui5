@@ -87,7 +87,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 			if (this.getNewDefaultVariantId()) {
-				callFlAPIFunction.call(this, "setDefaultVariantId", this.getNewDefaultVariantId());
+				callFlAPIFunction.call(this, "setDefaultVariantId", undefined, {defaultVariantId: this.getNewDefaultVariantId()});
 				this.getElement().setDefaultVariantId(this.getNewDefaultVariantId());
 			}
 		}
@@ -114,7 +114,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 			if (this.getNewDefaultVariantId()) {
-				callFlAPIFunction.call(this, "setDefaultVariantId", this.getOldDefaultVariantId());
+				callFlAPIFunction.call(this, "revertSetDefaultVariantId", this.getOldDefaultVariantId());
 				this.getElement().setDefaultVariantId(this.getOldDefaultVariantId());
 			}
 		}
