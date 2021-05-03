@@ -415,6 +415,9 @@ sap.ui.define([
 		} else if (TableUtils.isNoDataVisible(oTable) && oTable.$("noDataCnt")[0] !== oFocusRef) {
 			if (containsOrEquals(oTable.getDomRef("tableCCnt"), oFocusRef)) {
 				this._oLastFocus = {Ref: oFocusRef, Pos: "table content"};
+				if (Device.browser.safari) {
+					oTable.getDomRef("noDataCnt").getBoundingClientRect();
+				}
 				oTable.getDomRef("noDataCnt").focus();
 			} else if (oTable.$("overlay")[0] === oFocusRef) {
 				setFocusFallback(oTable, this);
