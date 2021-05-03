@@ -358,10 +358,10 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		oParams.location = mapKeyCodeToLocation(sKey);
 
 		oParams.which = oParams.keyCode;
-		oParams.shiftKey = bShiftKey;
-		oParams.altKey = bAltKey;
-		oParams.metaKey = bCtrlKey;
-		oParams.ctrlKey = bCtrlKey;
+		oParams.shiftKey = !!bShiftKey;
+		oParams.altKey = !!bAltKey;
+		oParams.metaKey = !!bCtrlKey;
+		oParams.ctrlKey = !!bCtrlKey;
 		QUtils.triggerEvent(sEventType, oTarget, oParams);
 	};
 

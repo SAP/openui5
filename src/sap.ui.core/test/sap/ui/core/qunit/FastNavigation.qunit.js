@@ -22,9 +22,14 @@ sap.ui.define([
 		F6Navigation.handleF6GroupNavigation_orig(oEvent, oSettings);
 	};
 
-	function triggerTestEvent(sTarget, bForward) {
-		qutils.triggerKeydown(sTarget, KeyCodes.F6, !bForward, false, false);
+	function triggerTestEvent(sTarget, bForward, bUsingArrow) {
+		if (bUsingArrow) {
+			qutils.triggerKeydown(sTarget, bForward ? KeyCodes.ARROW_DOWN : KeyCodes.ARROW_UP, false, true, true);
+		} else {
+			qutils.triggerKeydown(sTarget, KeyCodes.F6, !bForward, false, false);
+		}
 	}
+
 
 
 	sap.ui.getCore().getEventBus().subscribe("fastnav", "screenready", function() {
@@ -63,13 +68,13 @@ sap.ui.define([
 		};
 
 
-		QUnit.module("");
+		QUnit.module("Fast Navigation");
 
 		QUnit.test("Page initialized", function(assert) {
 			assert.ok(jQuery("#content").children().length > 0, "Page initialized");
 		});
 
-		QUnit.test("Forward Navigation", function(assert) {
+		QUnit.test("Forward Navigation using F6", function(assert) {
 			var aFields = [95, 98, 131, 136, 139, 142, 144, 145, 147, 92];
 
 			var mSpies = injectFocusSpies(this, aFields, fnPrefixId);
@@ -80,13 +85,35 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Backward Navigation", function(assert) {
+		QUnit.test("Backward Navigation using F6", function(assert) {
 			var aFields = [95, 147, 145, 144, 142, 139, 136, 131, 98, 92];
 
 			var mSpies = injectFocusSpies(this, aFields, fnPrefixId);
 
 			for (var i = 0; i < aFields.length - 1; i++) {
 				triggerTestEvent("id" + aFields[i], false);
+				assert.equal(mSpies["id" + aFields[i + 1]].firstCall.thisValue.id, "id" + aFields[i + 1], "Step " + (i + 1) + ": " + aFields[i] + "->" + aFields[i + 1]);
+			}
+		});
+
+		QUnit.test("Forward Navigation using 'ctrl' + 'alt' + 'ArrowUp/ArrowDown'", function(assert) {
+			var aFields = [95, 98, 131, 136, 139, 142, 144, 145, 147, 92];
+
+			var mSpies = injectFocusSpies(this, aFields, fnPrefixId);
+
+			for (var i = 0; i < aFields.length - 1; i++) {
+				triggerTestEvent("id" + aFields[i], true, true);
+				assert.equal(mSpies["id" + aFields[i + 1]].firstCall.thisValue.id, "id" + aFields[i + 1], "Step " + (i + 1) + ": " + aFields[i] + "->" + aFields[i + 1]);
+			}
+		});
+
+		QUnit.test("Backward Navigation using 'ctrl' + 'alt' + 'ArrowUp/ArrowDown'", function(assert) {
+			var aFields = [95, 147, 145, 144, 142, 139, 136, 131, 98, 92];
+
+			var mSpies = injectFocusSpies(this, aFields, fnPrefixId);
+
+			for (var i = 0; i < aFields.length - 1; i++) {
+				triggerTestEvent("id" + aFields[i], false, true);
 				assert.equal(mSpies["id" + aFields[i + 1]].firstCall.thisValue.id, "id" + aFields[i + 1], "Step " + (i + 1) + ": " + aFields[i] + "->" + aFields[i + 1]);
 			}
 		});
