@@ -1,7 +1,18 @@
 {
   "1.90.0": {
-    "date": "April 2021",
+    "date": "May 2021",
     "notes": [
+      {
+        "id": "53bd20e0dcc3c8df2595bc31ae0723070eb7cd54",
+        "type": "FIX",
+        "text": " sap.f.delegate.GridContainerItemNavigation: Added check for valid DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170107648"
+          }
+        ]
+      },
       {
         "id": "c1800d069d30a9c97b97b5d279e0b4b37840509a",
         "type": "FIX",

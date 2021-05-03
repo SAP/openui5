@@ -1,7 +1,67 @@
 {
   "1.90.0": {
-    "date": "April 2021",
+    "date": "May 2021",
     "notes": [
+      {
+        "id": "a08548b3cd3c0439f440353f8e8c7d2be95c25d6",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Optimize size calculations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170146397"
+          }
+        ]
+      },
+      {
+        "id": "a376daef075b7516e7af7249563a551b0a42b19e",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: redesign"
+      },
+      {
+        "id": "79f462c275b2192e13409eeee35c33cf37c9f7ab",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: whitespaces correctly rendered in appointments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170133085"
+          }
+        ]
+      },
+      {
+        "id": "dd23c9c2c31b024eb843ea869e29a43ebf70b04a",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Selection via SPACE/ENTER work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170114272"
+          }
+        ]
+      },
+      {
+        "id": "69efffa62104229db0d34f68828e011d988ed94b",
+        "type": "FIX",
+        "text": " sap.m.StepInput: unstable test is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170133532"
+          }
+        ]
+      },
+      {
+        "id": "107d99187633eafbeaa980cb60d824a5a3319956",
+        "type": "FIX",
+        "text": " sap.m.StepInput: doesn't erase value when a dot('.') is added as separator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170122598"
+          }
+        ]
+      },
       {
         "id": "42099e819d17056dd6319e15426af049b7d9b5ff",
         "type": "FIX",
@@ -33,6 +93,17 @@
           {
             "type": "BCP",
             "reference": "2170135569"
+          }
+        ]
+      },
+      {
+        "id": "26662e9f0caa8123a123a279ebd81755f66af7d1",
+        "type": "FIX",
+        "text": " sap.m.ExpandableText: Text is now correctly aligned in a form in Compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170123033"
           }
         ]
       },

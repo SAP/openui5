@@ -1,7 +1,40 @@
 {
   "1.90.0": {
-    "date": "April 2021",
+    "date": "May 2021",
     "notes": [
+      {
+        "id": "670ed410eda255103ac3756b9e3c31c012f520c7",
+        "type": "FIX",
+        "text": " MockServer: issue with parenthesis parsing in ODATA filters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170144784"
+          }
+        ]
+      },
+      {
+        "id": "ce6431fb00e0c46311d6eb6059628cce4cbc75eb",
+        "type": "FIX",
+        "text": " DateFormat: Add \"a. m.\" and \"p. m.\" as possible variant for time",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170136809"
+          }
+        ]
+      },
+      {
+        "id": "ce6172722b168f52b8be2140aae600fc05b0a409",
+        "type": "FIX",
+        "text": " core.format.NumberFormat: format string numbers with trailing zero decimals",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170114546"
+          }
+        ]
+      },
       {
         "id": "e9f644128467445debd72f5478dea5fb59864c95",
         "type": "FEATURE",

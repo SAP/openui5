@@ -1,7 +1,18 @@
 {
   "1.90.0": {
-    "date": "April 2021",
+    "date": "May 2021",
     "notes": [
+      {
+        "id": "dd23c9c2c31b024eb843ea869e29a43ebf70b04a",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Selection via SPACE/ENTER work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170114272"
+          }
+        ]
+      },
       {
         "id": "54fff60ef8a5d0b9a784da35bc163fce56292ba7",
         "type": "FIX",

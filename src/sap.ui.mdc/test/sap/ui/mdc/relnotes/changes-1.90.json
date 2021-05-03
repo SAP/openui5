@@ -1,6 +1,6 @@
 {
   "1.90.0": {
-    "date": "April 2021",
+    "date": "May 2021",
     "notes": [
       {
         "id": "e9f644128467445debd72f5478dea5fb59864c95",
@@ -17,11 +17,6 @@
             "reference": "2170093134"
           }
         ]
-      },
-      {
-        "id": "c7a2c5edd3b1e98693bd0ed91190d6b8528dae8c",
-        "type": "FEATURE",
-        "text": " mdc/Table: dataStateIndicator aggregation added"
       }
     ]
   }
