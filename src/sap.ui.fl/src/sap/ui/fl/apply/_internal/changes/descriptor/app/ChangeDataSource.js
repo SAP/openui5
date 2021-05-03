@@ -5,10 +5,10 @@
 
 sap.ui.define([
 	"sap/ui/fl/util/changePropertyValueByPath",
-	"sap/ui/fl/util/checkChangesConsistency"
+	"sap/ui/fl/util/DescriptorChangeCheck"
 ], function(
 	changePropertyValueByPath,
-	checkChangesConsistency
+	DescriptorChangeCheck
 ) {
 	"use strict";
 
@@ -48,7 +48,7 @@ sap.ui.define([
 		applyChange: function(oManifest, oChange) {
 			var oDataSources = oManifest["sap.app"].dataSources;
 			var oChangeContent = oChange.getContent();
-			checkChangesConsistency(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS);
+			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS);
 			if (oDataSources) {
 				var oDataSource = oDataSources[oChangeContent.dataSourceId];
 				if (oDataSource) {

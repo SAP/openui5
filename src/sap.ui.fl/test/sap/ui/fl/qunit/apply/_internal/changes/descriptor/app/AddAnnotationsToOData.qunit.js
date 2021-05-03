@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData",
 	"sap/ui/fl/Change",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/fl/Layer"
 ],
 function (
 	AddAnnotationsToOData,
 	Change,
-	jQuery
+	jQuery,
+	Layer
 ) {
 	"use strict";
 
@@ -125,6 +127,7 @@ function (
 
 			this.oChangeNotExistingDataSourceId = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "notExistingODataDataSource",
 					annotations: ["customer.notExistingAnnotation"],
@@ -140,6 +143,7 @@ function (
 
 			this.oChangeNoDataSourceOrNotSupported = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotations1", "annotations2", "notExistsInChangeDataSourceAndManifestOrNotSupportedType"],
@@ -159,6 +163,7 @@ function (
 
 			this.oChangeAddTwoAnnotationsBeginning = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotation1", "annotation2"],
@@ -178,6 +183,7 @@ function (
 
 			this.oChangeAddOneAnnotationEnd = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotation1"],
@@ -193,6 +199,7 @@ function (
 
 			this.oChangeAddTwoAnnotationsEnd = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotation1", "annotation2"],
@@ -214,6 +221,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding new annotation to OData with not defined 'dataSourceId' property => ERROR", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.CUSTOMER,
 				content: {
 					annotations: ["customer.notExistingAnnotation"],
 					annotationsInsertPosition: "BEGINNING",
@@ -263,6 +271,7 @@ function (
 
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.CUSTOMER,
 				content: {
 					dataSourceId: "notTypeODataDataSource",
 					annotations: ["customer.annotation"],
@@ -282,9 +291,33 @@ function (
 			"throws error that the dataSourceId exists but is not type of 'OData'");
 		});
 
-		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without 'dataSource' object", function (assert) {
+		QUnit.test("when calling '_applyChange' by adding new annotation to OData with not compliant namespace => ERROR", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.CUSTOMER,
+				content: {
+					annotations: ["annotation1"],
+					annotationsInsertPosition: "BEGINNING",
+					dataSourceId: "equipment",
+					dataSource: {
+						annotation1: {
+							uri: "/sap/bc/bsp/sap/BSCBN_ANF_EAM/BSCBN_EQUIPMENT_SRV.anno.XML",
+							type: "ODataAnnotation"
+						}
+					}
+				}
+			});
+
+			assert.throws(function() {
+				AddAnnotationsToOData.applyChange(this.oManifest1, oChange);
+			}, Error("Id annotation1 must start with customer."),
+			"throws error that namespace prefix is missing");
+		});
+
+		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without 'dataSource' object => ERROR", function (assert) {
+			var oChange = new Change({
+				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotations1", "/notSupportedType", "annotations2"],
@@ -301,6 +334,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with empty 'dataSource' object => ERROR", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotations1", "notSupportedType", "annotations2"],
@@ -317,6 +351,7 @@ function (
 
 		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with dataSource object type not 'ODataAnnotation' => ERROR", function (assert) {
 			var oChange = new Change({
+				layer: Layer.VENDOR,
 				changeType: "appdescr_app_AddAnnotationsToOData",
 				content: {
 					dataSourceId: "equipment",
@@ -348,6 +383,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without 'annotations' array property => ERROR", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.CUSTOMER,
 				content: {
 					dataSourceId: "equipment",
 					annotationsInsertPosition: "BEGINNING",
@@ -391,6 +427,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without having the annotation in the 'annotations' array property => ERROR", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotations1", "annotations2"],
@@ -421,6 +458,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData with not supported 'annotationsInsertPosition' => ERROR", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotations1", "annotations2"],
@@ -492,6 +530,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding a single annotation to an existing OData at the beginning => SUCCESS", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotation1"],
@@ -516,6 +555,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding a single annotation to an existing OData at the beginning without setting 'annotationsInsertPosition' (default: 'BEGINNING') => SUCCESS", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotation1"],
@@ -557,6 +597,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData at the beginning without setting 'annotationsInsertPosition' (default: 'BEGINNING') => SUCCESS", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotation1", "annotation2"],
@@ -593,6 +634,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData and reference to an existing ODataAnnotation in the base desriptor at the end => SUCCESS", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["annotation1", "annotation2", "customer.existingAnnotation"],
@@ -621,6 +663,7 @@ function (
 		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData and reference to an existing ODataAnnotation in the base desriptor at the beginning => SUCCESS", function (assert) {
 			var oChange = new Change({
 				changeType: "appdescr_app_AddAnnotationsToOData",
+				layer: Layer.VENDOR,
 				content: {
 					dataSourceId: "equipment",
 					annotations: ["customer.existingAnnotation", "annotation1", "annotation2"],

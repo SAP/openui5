@@ -167,7 +167,7 @@ sap.ui.define([
 			"apply/_internal/changes/descriptor/app/ChangeInbound": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound"]
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound", "sap/ui/fl/util/DescriptorChangeCheck", "sap/ui/fl/util/changePropertyValueByPath"]
 				}
 			},
 			"apply/_internal/changes/descriptor/ui5/SetMinUI5Version": {
@@ -191,7 +191,7 @@ sap.ui.define([
 			"apply/_internal/changes/descriptor/app/ChangeDataSource": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource"]
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource", "sap/ui/fl/util/DescriptorChangeCheck", "sap/ui/fl/util/changePropertyValueByPath"]
 				}
 			},
 			"apply/_internal/changes/descriptor/app/SetTitle": {
@@ -234,6 +234,12 @@ sap.ui.define([
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ApplyUtil"]
+				}
+			},
+			"util/DescriptorChangeCheck": {
+				group: "Util - DescriptorChangeCheck",
+				coverage: {
+					only: ["sap/ui/fl/util/DescriptorChangeCheck"]
 				}
 			},
 			"apply/_internal/controlVariants/URLHandler": {
