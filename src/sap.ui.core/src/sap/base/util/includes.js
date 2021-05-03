@@ -9,20 +9,6 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Compares 2 values based on SameValueZero comparison
-	 * @param a
-	 * @param b
-	 * @returns {boolean}
-	 * @see http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero
-	 */
-	function equals(a, b) {
-		// self comparison to ensure that NaN and NaN return true
-		/*eslint-disable no-self-compare*/
-		return a === b || (a !== a && b !== b);
-		/*eslint-disable no-self-compare*/
-	}
-
-	/**
 	* Checks if value is included in collection.
 	*
 	* @example
@@ -61,6 +47,7 @@ sap.ui.define([
 	* @param {int} [iFromIndex=0] - optional start index, negative start index will start from the end
 	* @returns {boolean} - true if value is in the collection, false otherwise
 	* @public
+	* @deprecated as of version 1.90. Use the <code>Array.includes</code> or <code>String.includes</code> instead.
 	*/
 	var fnIncludes = function (vCollection, vValue, iFromIndex) {
 		if (typeof iFromIndex !== 'number') {
@@ -68,26 +55,11 @@ sap.ui.define([
 		}
 
 		// Use native (Array.prototype.includes, String.prototype.includes) includes functions if available
-		if (Array.isArray(vCollection)) {
-			if (typeof vCollection.includes === 'function') {
-				return vCollection.includes(vValue, iFromIndex);
+		if (Array.isArray(vCollection) || typeof vCollection === 'string') {
+			if (iFromIndex < 0) {
+				iFromIndex = (vCollection.length + iFromIndex) < 0 ? 0 : vCollection.length + iFromIndex;
 			}
-
-			iFromIndex = iFromIndex < 0 ? iFromIndex + vCollection.length : iFromIndex;
-			iFromIndex = iFromIndex < 0 ? 0 : iFromIndex;
-
-			for (var i = iFromIndex; i < vCollection.length; i++) {
-				if (equals(vCollection[i], vValue)) {
-					return true;
-				}
-			}
-			return false;
-		} else if (typeof vCollection === 'string') {
-			iFromIndex = iFromIndex < 0 ? vCollection.length + iFromIndex : iFromIndex;
-			if (typeof vCollection.includes === 'function') {
-				return vCollection.includes(vValue, iFromIndex);
-			}
-			return vCollection.indexOf(vValue, iFromIndex) !== -1;
+			return vCollection.includes(vValue, iFromIndex);
 		} else {
 			// values(...) always returns an array therefore deep recursion is avoided
 			return fnIncludes(values(vCollection), vValue, iFromIndex);

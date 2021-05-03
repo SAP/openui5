@@ -184,11 +184,8 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdpar
 						&& sLocalName !== "xmlns:support"
 						&& sLocalName !== "mvc"
 						&& sFullName.indexOf("schemas.sap.com") < 0) {
-							var oContent = jQuery(oXMLView._xContent)[0];
 							// get the xml code of the view as a string
-							// The outerHTML doesn't work with IE, so we used
-							// the XMLSerializer instead
-							var sContent = new XMLSerializer().serializeToString(oContent);
+							var sContent = jQuery(oXMLView._xContent)[0].outerHTML;
 
 							// check if there is a reference of this namespace inside the view
 							if (!sContent.match("<" + sLocalName + ":") && !sContent.match(" " + sLocalName + ":")) {

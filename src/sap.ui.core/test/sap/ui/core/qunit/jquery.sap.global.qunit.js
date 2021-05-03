@@ -24,7 +24,7 @@ sap.ui.define([
 
 	var div = createAndAppendDiv("includeStyleSheetTest");
 	div.className = "sap-jsunitIncludeStyleSheetTest";
-	div.setAttribute("style", "width:100px;height:100px"); // IE11 doesn't allow direct assignment div.style = ...
+	div.style.height = div.style.width = "100px";
 
 	a.push(jQuery.sap.includeScript({
 		url: sPath + "testdata/sapjsunittestvalueincrementor.js",

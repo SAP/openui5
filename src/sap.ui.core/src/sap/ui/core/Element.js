@@ -858,7 +858,7 @@ sap.ui.define([
 				oFocusDomRef.focus();
 				if (aScrollHierarchy.length > 0) {
 					// restore the scroll position if it's changed after setting focus
-					// Safari, IE11 and Edge need a little delay to get the scroll position updated
+					// Safari needs a little delay to get the scroll position updated
 					setTimeout(restoreScrollPositions.bind(null, aScrollHierarchy), 0);
 				}
 			} else {

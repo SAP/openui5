@@ -67,8 +67,8 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 			filepos : -1
 		};
 
-		// Firefox or Edge
-		if ((Device.browser.firefox) && oDocument && oDocument.documentElement
+		// Firefox
+		if (Device.browser.firefox && oDocument && oDocument.documentElement
 			&& oDocument.documentElement.tagName == "parsererror") {
 
 			var sErrorText = oDocument.documentElement.firstChild.nodeValue,

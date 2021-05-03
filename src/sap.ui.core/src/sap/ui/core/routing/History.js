@@ -73,7 +73,6 @@ sap.ui.define([
 	 *
 	 * The state information isn't used when at least one of the following points is met:
 	 * <ul>
-	 * <li>Browser is IE: because it doesn't clear the state after new hash is set</li>
 	 * <li>Running in an iFrame: because browser doesn't update the history state correct after forward/backward
 	 * navigation</li>
 	 * </ul>
@@ -91,8 +90,6 @@ sap.ui.define([
 	 *     <li>The current state in browser's history pushState isn't
 	 *         initialized, for example, between a new hash is set or replaced
 	 *         and the "hashChange" event is processed by this class</li>
-	 *     <li>History pushState isn't fully supported, for example,
-	 *         Internet Explorer.</li>
 	 *     <li>History pushState is already used before UI5 History
 	 *         is initialized, and UI5 can't maintain the hash history
 	 *         by using the browser pushState</li>
@@ -110,7 +107,6 @@ sap.ui.define([
 	 *  moment when this function is called
 	 */
 	History.prototype.getHistoryStateOffset = function() {
-		// browser doesn't fully support pushState
 		if (!History._bUsePushState) {
 			return undefined;
 		}
@@ -361,8 +357,6 @@ sap.ui.define([
 		this._bIsInitial = false;
 
 		// Extended direction determination with window.history.state
-		// IE 11 doesn't clear the window.history.state when new hash is set
-		// therefore the state solution can't be used
 		//
 		// The enhancement for direction determination is only done for the global
 		// instance because the window.history.state can only be used once for the

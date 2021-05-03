@@ -306,7 +306,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("bound values with controller method", function(assert) { // CAUTION: this is a map and IE is particularly sensitive to duplicate keys in a map even if they don't look duplicate here (e.g. due to escaped quotes)
+	QUnit.test("bound values with controller method", function(assert) {
 		var spy = sinon.spy(oController, "fnControllerMethod");
 		var fnFromController;
 		var mTestSet = {
@@ -326,8 +326,8 @@ sap.ui.define([
 			// not allowed to use binding expressions inside because the entire string is a binding expression:
 			//".fnControllerMethod({= ${/someModelProperty} + ${/someModelProperty}})": "someModelValuesomeModelValue",   // expression binding
 			".fnControllerMethod({x: 'y', z: {a: ${/someModelProperty}}})": {x: 'y', z: {a: "someModelValue"}},   // binding in object
-			'.fnControllerMethod(${path:\'/someModelProperty\',formatter: \'.myFormatter\'})': "#someModelValue#",   // quotes escaped
-			".fnControllerMethod(${formatter: \".myFormatter\",path:\"/someModelProperty\"})": "#someModelValue#"   // quotes escaped, inverted (swap of arguments needed for test to pass in IE because map may not have duplicate keys!)
+			'.fnControllerMethod(${path:\'/someModelProperty\',formatter: \'.myFormatter\'})': "#someModelValue#",   // single quotes escaped
+			".fnControllerMethod(${path:\"/someModelProperty\",formatter: \".myFormatter\"})": "#someModelValue#"   // double quotes escaped
 		};
 
 		for (var sTestString in mTestSet) {
@@ -339,7 +339,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("bound values with XML-required modules", function(assert) { // CAUTION: this is a map and IE is particularly sensitive to duplicate keys in a map even if they don't look duplicate here (e.g. due to escaped quotes)
+	QUnit.test("bound values with XML-required modules", function(assert) {
 		var methodSpy = this.spy(mLocals, "someMethod");
 		var fnFromModule;
 		var mTestSet = {
@@ -359,8 +359,8 @@ sap.ui.define([
 			// not allowed to use binding expressions inside because the entire string is a binding expression:
 			//"Module.someMethod({= ${/someModelProperty} + ${/someModelProperty}})": "someModelValuesomeModelValue",   // expression binding
 			"Module.someMethod({x: 'y', z: {a: ${/someModelProperty}}})": {x: 'y', z: {a: "someModelValue"}},   // binding in object
-			'Module.someMethod(${path:\'/someModelProperty\',formatter: \'Module.someFormatter\'})': "#someModelValue#",   // quotes escaped
-			"Module.someMethod(${formatter: \"Module.someFormatter\",path:\"/someModelProperty\"})": "#someModelValue#"   // quotes escaped, inverted (swap of arguments needed for test to pass in IE because map may not have duplicate keys!)
+			'Module.someMethod(${path:\'/someModelProperty\',formatter: \'Module.someFormatter\'})': "#someModelValue#",   // single quotes escaped
+			"Module.someMethod(${path:\"/someModelProperty\",formatter: \"Module.someFormatter\"})": "#someModelValue#"   // double quotes escaped
 		};
 
 		for (var sTestString in mTestSet) {

@@ -37,7 +37,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/performance/trace/Passport', 'sap/base/L
 				this.statusCode = xmlHttpReq.status;
 				this.status = xmlHttpReq.statusText;
 				this.startTimestamp = xmlHttpReq.xstartTimestamp;
-				this.firstByteSent = xmlHttpReq.xfirstByteSent ? xmlHttpReq.xfirstByteSent : xmlHttpReq.xstartTimestamp; //not available on IE9
+				this.firstByteSent = xmlHttpReq.xfirstByteSent;
 				this.lastByteSent = this.firstByteSent; //last Byte sent cannot be captured
 				this.firstByteReceived = xmlHttpReq.xfirstByteReceived ? xmlHttpReq.xfirstByteReceived : xmlHttpReq.xlastByteReceived;
 				this.lastByteReceived = xmlHttpReq.xlastByteReceived;

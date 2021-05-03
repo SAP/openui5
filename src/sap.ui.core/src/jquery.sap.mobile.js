@@ -266,8 +266,8 @@ sap.ui.define([
 	 *
 	 * The home icons must be in PNG format and given in different sizes for iPad/iPhone with and without retina
 	 * display. The favicon is used in the browser and for desktop shortcuts and should optimally be in ICO format:
-	 * PNG does not seem to be supported by Internet Explorer and ICO files can contain different image sizes for
-	 * different usage locations. E.g. a 16x16px version is used inside browsers.
+	 * ICO files can contain different image sizes for different usage locations. E.g. a 16x16px version is used
+	 * inside browsers.
 	 *
 	 * All icons are given in an an object holding icon URLs and other settings. The properties of this object are:
 	 * <ul>

@@ -90,10 +90,6 @@ sap.ui.define(["sap/base/assert"],
 	 * @param {string|object} [vId] id that should be used for the link tag or map of attributes
 	 * @param {function} [fnLoadCallback] callback function to get notified once the stylesheet has been loaded
 	 * @param {function} [fnErrorCallback] callback function to get notified once the stylesheet loading failed.
-	 *        In case of usage in IE the error callback will also be executed if an empty stylesheet
-	 *        is loaded. This is the only option how to determine in IE if the load was successful
-	 *        or not since the native onerror callback for link elements doesn't work in IE. The IE
-	 *        always calls the onload callback of the link element.
 	 * @return {void|Promise} When using the configuration object a <code>Promise</code> will be returned. The
 	 *         documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>
 	 *         handler of the <code>Promise</code> and the one for the <code>fnErrorCallback</code>

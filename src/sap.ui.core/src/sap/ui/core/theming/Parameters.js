@@ -134,7 +134,7 @@ sap.ui.define([
 				Log.warning("Parameters have been requested but theme is not applied, yet.", "sap.ui.core.theming.Parameters");
 			}
 
-			// In some browsers (Safari / Edge) it might happen that after switching the theme or adopting the <link>'s href,
+			// In some browsers (e.g. Safari) it might happen that after switching the theme or adopting the <link>'s href,
 			// the parameters from the previous stylesheet are taken. This can be prevented by checking whether the theme is applied.
 			if (bThemeApplied && bUseInlineParameters) {
 				var $link = jQuery(document.getElementById(sId));

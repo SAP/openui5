@@ -19,9 +19,6 @@ sap.ui.define([], function() {
         var definer = div.firstChild;
         //check initial value
         detectedFeatures.initialZero = definer.scrollLeft == 0;
-        //check if scrolling left goes negative
-        definer.scrollLeft = -1;
-        detectedFeatures.canNegative = definer.scrollLeft < 0;
         document.documentElement.removeChild(div);
         /* detect scrolling behavior - End */
     }
@@ -29,9 +26,6 @@ sap.ui.define([], function() {
     detectFeatures();
 
     var _FeatureDetection = {
-        canScrollToNegative: function() {
-            return detectedFeatures.canNegative;
-        },
         initialScrollPositionIsZero: function() {
             return detectedFeatures.initialZero;
         }

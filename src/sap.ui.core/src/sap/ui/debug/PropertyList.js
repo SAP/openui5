@@ -56,7 +56,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 			this.oParentDomRef = oParentDomRef;
 		//	this.oCore = oWindow.sap.ui.getCore();
 			this.oCore = oCore;
-			this.bEmbedded = top.window == oWindow; // check only with ==, not === as the test otherwise fails on IE8
+			this.bEmbedded = top.window === oWindow;
 			this.mProperties = {};
 			this.onclick = PropertyList.prototype.onclick.bind(this);
 			oParentDomRef.addEventListener("click", this.onclick);

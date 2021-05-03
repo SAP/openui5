@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/base/util/now", "sap/base/util/Version", "sap/base/assert", "sap/base/Log",
 
 	// new sap/ui/* modules
-	"sap/ui/dom/getComputedStyleFix", "sap/ui/dom/activeElementFix", "sap/ui/dom/includeScript",
+	"sap/ui/dom/getComputedStyleFix", "sap/ui/dom/includeScript",
 	"sap/ui/dom/includeStylesheet", "sap/ui/core/support/Hotkeys", "sap/ui/test/RecorderHotkeyListener",
 	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/trace/Interaction",
 	"sap/ui/base/syncXHRFix", "sap/base/util/LoaderExtensions",
@@ -40,7 +40,7 @@ sap.ui.define([
 	"sap/ui/events/PasteEventFix" // side effect: activates paste event fix
 ], function(now, Version, assert, Log,
 
-	getComputedStyleFix, activeElementFix, includeScript,
+	getComputedStyleFix, includeScript,
 	includeStylesheet, SupportHotkeys, TestRecorderHotkeyListener,
 	FrameOptions, Measurement, Interaction,
 	syncXHRFix, LoaderExtensions,
@@ -163,14 +163,6 @@ sap.ui.define([
 		 * @name jQuery.support.newFlexBoxLayout
 		 */
 		jQuery.support.newFlexBoxLayout = true;
-
-		/**
-		 * Whether the current browser supports the IE10 CSS3 Flexible Box Layout directly or via vendor prefixes
-		 * @type {boolean}
-		 * @private
-		 * @name jQuery.support.ie10FlexBoxLayout
-		 */
-		jQuery.support.ie10FlexBoxLayout = false;
 
 		/**
 		 * Whether the current browser supports any kind of Flexible Box Layout directly or via vendor prefixes
@@ -2113,10 +2105,6 @@ sap.ui.define([
 	 *          [fnLoadCallback] callback function to get notified once the stylesheet has been loaded
 	 * @param {function}
 	 *          [fnErrorCallback] callback function to get notified once the stylesheet loading failed.
-	 *            In case of usage in IE the error callback will also be executed if an empty stylesheet
-	 *            is loaded. This is the only option how to determine in IE if the load was successful
-	 *            or not since the native onerror callback for link elements doesn't work in IE. The IE
-	 *            always calls the onload callback of the link element.
 	 * @return {void|Promise}
 	 *            When using the configuration object a <code>Promise</code> will be returned. The
 	 *            documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>

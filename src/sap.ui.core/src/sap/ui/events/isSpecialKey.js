@@ -41,7 +41,7 @@ sap.ui.define(function() {
 			var sKey = oEvent.key; // based on KeyBoardEvent.key (https://www.w3.org/TR/uievents/) and (https://www.w3.org/TR/uievents-key/)
 			return (sKey === 'Shift') ||
 				(sKey === 'Control') ||
-				(sKey === 'Alt') || // Chrome uses 'Alt' and 'AltGraph, IE only use 'Alt'
+				(sKey === 'Alt') || // Modern browsers uses 'Alt' for left 'Alt' key and 'AltGraph' for right 'Alt Gr' key
 				(sKey === 'AltGraph') || // see above -^
 				(sKey === 'CapsLock') ||
 				(sKey === 'NumLock');
@@ -60,29 +60,24 @@ sap.ui.define(function() {
 		function isArrowKey(oEvent) {
 			var sKey = oEvent.key; // based on KeyBoardEvent.key (https://www.w3.org/TR/uievents/) and (https://www.w3.org/TR/uievents-key/)
 
-			// MS special case: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/8860571/
 			return (sKey === 'ArrowLeft') ||
 				(sKey === 'ArrowUp') ||
 				(sKey === 'ArrowRight') ||
-				(sKey === 'ArrowDown') ||
-				(sKey === 'Left') || // 'Left' IE compatibility
-				(sKey === 'Up') || // 'Up' IE compatibility
-				(sKey === 'Right') || // 'Right' IE compatibility
-				(sKey === 'Down'); // 'Down' IE compatibility
+				(sKey === 'ArrowDown');
 		}
 
 		var sKey = oEvent.key, // based on KeyBoardEvent.key (https://www.w3.org/TR/uievents/) and (https://www.w3.org/TR/uievents-key/)
 			bSpecialKey = isModifierKey(oEvent) ||
 				isArrowKey(oEvent) ||
 				sKey === 'PageUp' || sKey === 'PageDown' || sKey === 'End' || sKey === 'Home' ||
-				sKey === 'PrintScreen' || sKey === 'Insert' || sKey === 'Del' || sKey === 'Delete' || // 'Del' IE compatibility
+				sKey === 'PrintScreen' || sKey === 'Insert' || sKey === 'Delete' ||
 				sKey === 'F1' || sKey === 'F2' || sKey === 'F3' || sKey === 'F4' || sKey === 'F5' || sKey === 'F6' || sKey === 'F7' || sKey === 'F8' || sKey === 'F9' || sKey === 'F10' || sKey === 'F11' || sKey === 'F12' ||
 				sKey === 'Pause' ||
 				sKey === 'Backspace' ||
 				sKey === 'Tab' ||
 				sKey === 'Enter' ||
-				sKey === 'Escape' || sKey === 'Esc' || // 'Esc' IE compatibility
-				sKey === 'ScrollLock' || sKey === 'Scroll'; // 'Scroll' IE compatibility
+				sKey === 'Escape' ||
+				sKey === 'ScrollLock';
 
 		switch (oEvent.type) {
 			case "keydown":

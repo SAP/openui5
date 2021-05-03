@@ -378,11 +378,8 @@
 
 						if ($qunitBanner.hasClass("qunit-fail") || $qunitBanner.hasClass("qunit-pass")) {
 
-							//IE workaround for the lack of document.baseURI property
-							var baseURI = doc.location.href;
-
 							if (sTestName == " ") {
-								sTestName = "QUnit page for " + baseURI.substring(baseURI.indexOf("test-resources") + 15, baseURI.length);
+								sTestName = "QUnit page for " + doc.baseURI.substring(doc.baseURI.indexOf("test-resources") + 15, doc.baseURI.length);
 							}
 							oContext = oInst.fnGetTestResults(sTestName, $results);
 							this.printTestResultAndRemoveFrame(oInst, $frame, $framediv, oContext);

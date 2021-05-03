@@ -76,8 +76,6 @@ sap.ui.define([], function() {
 	/**
 	 * Registers the given handler to the activity event, which is fired when an activity was detected after a certain period of inactivity.
 	 *
-	 * The Event is not fired for Internet Explorer 8.
-	 *
 	 * @param {function} fnFunction The function to call, when an activity event occurs.
 	 * @param {Object} [oListener] The 'this' context of the handler function.
 	 * @private

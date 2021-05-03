@@ -84,8 +84,8 @@ function(
 	}
 
 	function localName(xmlNode) {
-		// localName for standard browsers, baseName for IE, nodeName in the absence of namespaces
-		return xmlNode.localName || xmlNode.baseName || xmlNode.nodeName;
+		// localName for standard browsers, nodeName in the absence of namespaces
+		return xmlNode.localName || xmlNode.nodeName;
 	}
 
 	/**

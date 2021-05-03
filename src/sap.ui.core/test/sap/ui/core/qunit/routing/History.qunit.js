@@ -103,7 +103,7 @@ sap.ui.define([
 
 		if (!History._bUsePushState) {
 			return pSetup.then(function() {
-				assert.strictEqual(that.oHistory.getHistoryStateOffset(), undefined, "The functionality isn't available in IE");
+				assert.strictEqual(that.oHistory.getHistoryStateOffset(), undefined, "The functionality isn't available within an iFrame");
 			});
 		} else {
 			return pSetup.then(function() {
@@ -201,7 +201,7 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this)).then(function() {
 			if (!History._bUsePushState) {
-				assert.equal(oSpy.callCount, 0, "there's no log written for IE");
+				assert.equal(oSpy.callCount, 0, "there's no log written within an iFrame");
 			} else {
 				assert.ok(oSpy.alwaysCalledWith("Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History"), "The debug log is done correctly");
 			}
@@ -220,7 +220,7 @@ sap.ui.define([
 			}, function(sHash) {
 				if (sHash === "") {
 					if (!History._bUsePushState) {
-						assert.equal(oSpy.callCount, 0, "function is not called in IE");
+						assert.equal(oSpy.callCount, 0, "function is not called within an iFrame");
 					} else {
 						assert.equal(oSpy.callCount, 1, "function is called once");
 					}

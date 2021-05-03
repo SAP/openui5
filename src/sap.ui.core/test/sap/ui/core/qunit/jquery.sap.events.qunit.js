@@ -581,8 +581,8 @@ sap.ui.define([
 	// So we ignore some of these events for the keypress checks.
 	// keydown and keyup events are fired for all keys, keypress only for "characters" (incl. numbers & accents, etc.).
 	// For modifiers/special keys a keypress is not fired.
-	// Yet Firefox (especially) behave differently than Chrome and IE for Keys like BREAK, PAGE_UP, etc.
-	// See the jquery.sap.events module (:621).
+	// Yet Firefox (especially) behave differently than Chrome for Keys like BREAK, PAGE_UP, etc.
+	// See the jquery.sap.events module (see handling of keydown/keyup/keypress in jQuery.sap.isSpecialKey).
 	["keydown", "keyup", "keypress"].forEach(function (sKeyType) {
 		fnIsSpecialKeyTestCase(sKeyType, { which: jQuery.sap.KeyCodes.BREAK }, true, "Event: " + sKeyType + ", Key: BREAK", true);
 		fnIsSpecialKeyTestCase(sKeyType, { which: jQuery.sap.KeyCodes.PAGE_UP }, true, "Event: " + sKeyType + ", Key: PAGE_UP", true);

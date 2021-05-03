@@ -7,17 +7,10 @@ sap.ui.define(["sap/ui/util/_FeatureDetection", "sap/ui/thirdparty/jquery"], fun
 	var fnScroll;
 
 	if (_FeatureDetection.initialScrollPositionIsZero()) {
-		// actual chrome/safari
-		if (_FeatureDetection.canScrollToNegative()) {
-			fnScroll = function(oDomRef) {
-				return (-oDomRef.scrollLeft);
-			};
-		} else {
-			//IE
-			fnScroll = function(oDomRef) {
-				return oDomRef.scrollLeft;
-			};
-		}
+		// actual chrome/safari/ff
+		fnScroll = function(oDomRef) {
+			return (-oDomRef.scrollLeft);
+		};
 	} else {
 		//legacy chromium
 		fnScroll = function(oDomRef) {

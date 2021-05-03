@@ -72,7 +72,7 @@ sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
 			sThemeParameterValue = fontSizeToPx(sThemeParameterValue);
 		} else {
 			if (sCSSProperty === "border-color") {
-				// fix: edge, IE11, firefox do not support shorthand CSS properties, so use one of the border properties instead
+				// fix: firefox does not support reading shorthand CSS properties, so use one of the border properties instead
 				sCSSProperty = "borderTopColor";
 			}
 			sThemeParameterValue = hexToRgb(sThemeParameterValue);
