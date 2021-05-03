@@ -2,21 +2,22 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/extend",
+	"sap/base/util/merge",
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/AnalyticalBinding",
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
 	"sap/ui/model/analytics/ODataModelAdapter",
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/ui/model/FilterProcessor',
-	'sap/ui/model/Sorter',
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
-	'sap/ui/model/TreeAutoExpandMode',
+	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	// following resources add responses to the fake server
 	"sap/ui/core/qunit/analytics/CONTRACTPERFResults_Batch_MeasureWithTextAnnotation",
@@ -26,7 +27,7 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/TBA_Batch_ExpandCollapseToggle",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
-], function (jQuery, Log, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
+], function (Log, extend, merge, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
 		ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter, CountMode,
 		ODataModelV1, ODataModelV2, TreeAutoExpandMode, o4aFakeService) {
 	/*global QUnit, sinon */
@@ -2149,8 +2150,7 @@ sap.ui.define([
 
 		return setupAnalyticalBinding(2, {}, /*fnODataV2Callback*/null, aInitialColumns)
 		.then(function (oBinding) {
-			var mAnalyticalInfoByProperty
-					= jQuery.extend(true, {}, oBinding.mAnalyticalInfoByProperty),
+			var mAnalyticalInfoByProperty = merge({}, oBinding.mAnalyticalInfoByProperty),
 				iAnalyticalInfoVersionNumber = oBinding.iAnalyticalInfoVersionNumber,
 				fnDeepEqualExpectation,
 				aInitialColumnsAfterUpdate = [{
@@ -2286,7 +2286,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.bApplySortersToGroups, true, "true after measure change");
 
 			oBinding.bApplySortersToGroups = bApplySortersToGroups;
-			oColumn = jQuery.extend({}, oPlannedCostsTotal,
+			oColumn = extend({}, oPlannedCostsTotal,
 				{sorted : true, sortOrder : "Descending"});
 
 			// code under test - measure properties sorted and sortOrder changed

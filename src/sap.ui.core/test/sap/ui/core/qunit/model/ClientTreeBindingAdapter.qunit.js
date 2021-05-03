@@ -1,12 +1,13 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/util/merge",
 	"sap/ui/model/ClientTreeBindingAdapter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter"
-], function(ClientTreeBindingAdapter, JSONModel, Filter, FilterOperator, Sorter) {
+], function(merge, ClientTreeBindingAdapter, JSONModel, Filter, FilterOperator, Sorter) {
 	"use strict";
 
 	var oModel, oBinding;
@@ -165,7 +166,7 @@ sap.ui.define([
 	QUnit.module("ClientTreeBindingAdapter", {
 		beforeEach: function() {
 			oModel = new JSONModel();
-			oModel.setData(jQuery.extend({}, oData));
+			oModel.setData(merge({}, oData));
 		},
 		afterEach: function() {
 			oModel = undefined;
@@ -1137,7 +1138,7 @@ sap.ui.define([
 	QUnit.module("ClientTreeBindingAdapter - Model Data 2", {
 		beforeEach: function() {
 			oModel = new JSONModel();
-			oModel.setData(jQuery.extend({}, oData2));
+			oModel.setData(merge({}, oData2));
 		},
 		afterEach: function() {
 			oModel = undefined;
