@@ -1,0 +1,7 @@
+<mvc:View controllerName="applicationUnderTestMDCChart.controller.App"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt">
+	<App id="app">
+	</App>
+</mvc:View>
