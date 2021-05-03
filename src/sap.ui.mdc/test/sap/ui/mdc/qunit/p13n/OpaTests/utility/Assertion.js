@@ -143,21 +143,20 @@ sap.ui.define([
 				}
 			});
 		},
-		iShouldSeeDialogTitle: function (sText) {
+		iShouldSeeDialogTitle: function (sTitle) {
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.Title",
-				matchers: [
-					new sap.ui.test.matchers.PropertyStrictEquals({
-						name: "text",
-						value: sText
-					}), new sap.ui.test.matchers.PropertyStrictEquals({
-						name: "level",
-						value: "H2"
-					})
-				],
-				success: function (aTitle) {
-					Opa5.assert.equal(aTitle.length, 1, "Title found");
+				matchers: {
+					ancestor: {
+						controlType: "sap.m.Dialog"
+					},
+					properties: {
+						text: sTitle
+					}
+				},
+				success: function(aMenuBtn) {
+					Opa5.assert.equal(aMenuBtn[0].getText(), sTitle, "Correct title provided");
 				},
 				errorMessage: "sap.m.Title not found"
 			});
@@ -189,6 +188,111 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeP13nItems: function (vItems) {
+			vItems.forEach(function (oItem, iIndex) {
+				this.waitFor({
+					searchOpenDialogs: true,
+					controlType: "sap.m.Label",
+					matchers: new PropertyStrictEquals({
+						name: "text",
+						value: oItem.p13nItem
+					}),
+					success: function (aLabels) {
+						this.waitFor({
+							controlType: "sap.m.ColumnListItem",
+							matchers: new Descendant(aLabels[0]),
+							success: function (aColumnListItems) {
+								Opa5.assert.equal(aColumnListItems[0].getParent().getItems().indexOf(aColumnListItems[0]), iIndex, "Table item is on the correct index");
+								Opa5.assert.equal(aColumnListItems[0].getSelected(), oItem.selected, "The item is selected: " + oItem.selected);
+								Opa5.assert.equal(aLabels[0].getText(), oItem.p13nItem, "Item does contain the correct text " + oItem.p13nItem + " for the Label");
+							}
+						});
+					}
+				});
+			}.bind(this));
+		},
+
+		iShouldSeeP13nMenuItems: function (vItems) {
+			vItems.forEach(function (oItem) {
+				this.waitFor({
+					searchOpenDialogs: true,
+					controlType: "sap.ui.core.Item",
+					matchers: {
+						ancestor: {
+							controlType: "sap.m.Select"
+						},
+						properties: {
+							text: oItem.p13nItem
+						}
+					},
+					success: function (aItems) {
+						Opa5.assert.equal(aItems.length, 1, "Found one item for key " + oItem.p13nItem);
+					}
+				});
+			}.bind(this));
+		},
+
+		iShouldSeeP13nSortItems: function (vItems) {
+			vItems.forEach(function (oItem, iIndex) {
+				this.waitFor({
+					searchOpenDialogs: true,
+					controlType: "sap.m.Select",
+					matchers: {
+						ancestor: {
+							controlType: "sap.m.CustomListItem"
+						}
+					},
+					success: function (aSelect) {
+						var oSelectedItem = aSelect[iIndex].getSelectedItem();
+						Opa5.assert.equal(vItems.length, aSelect.length, "Correct amount of sorters");
+						Opa5.assert.equal(oSelectedItem.getText(), oItem.p13nItem, "Sorter " + oItem.p13nItem + " is present");
+						var bDesc = aSelect[0].getParent().getItems()[1].getSelectedKey() === "desc";
+						Opa5.assert.equal(bDesc, oItem.descending, "Correct sortorder " + oItem.descending ? "Descending" : "Ascending" + " provided");
+					}
+				});
+			}.bind(this));
+		},
+
+		iShouldSeeColumnSorted: function (sHeader, bSorted, bDescending) {
+			return this.waitFor({
+				controlType: "sap.ui.table.Column",
+				matchers: {
+					properties: {
+						sorted: bSorted
+					}
+				},
+				success: function(aColumns) {
+
+					var oColumn = aColumns.find(function(oSortedCol){
+						return oSortedCol.getLabel().getText() === sHeader;
+					});
+
+					Opa5.assert.ok(oColumn, "Found a sorted column for: " + sHeader);
+					var bColumnSortedDescending = oColumn.getSortOrder() === "Descending";
+					Opa5.assert.equal(bColumnSortedDescending, !!bDescending, "Column is sorted " + bDescending ? "Descending" : "Ascending");
+				}
+			});
+		},
+
+		iShouldSeeGroupConditions: function (oGroupConditions) {
+			return this.waitFor({
+				controlType: "sap.ui.mdc.Table",
+				success: function(aTables) {
+					var oTable = aTables[0];
+					var aTableGroupCondtions = oTable.getGroupConditions().groupLevels;
+
+					if (oGroupConditions.length > 1) {
+						Opa5.assert.equal(aTableGroupCondtions.length, 0, "No Groupings in Table");
+					} else {
+						oGroupConditions.groupLevels.forEach(function(oGrouping, iIndex){
+							Opa5.assert.equal(aTableGroupCondtions[iIndex].name, oGrouping.name, "Correct grouping on correct position in Table");
+						});
+					}
+
+				}
+			});
+		},
+
+		iShouldSeeP13nSelectItems: function (vItems) {
 			vItems.forEach(function (oItem, iIndex) {
 				this.waitFor({
 					searchOpenDialogs: true,
@@ -309,9 +413,9 @@ sap.ui.define([
 			});
 		},
 
-		iShouldSeeVisibleItemsInTable: function(iItems){
+		iShouldSeeVisibleItemsInTable: function(iItems, bResponsiveTable){
 			return this.waitFor({
-				controlType: "sap.m.Table",
+				controlType: bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table",
 				matchers: {
 					ancestor: {
 						controlType: "sap.ui.mdc.Table"
@@ -320,7 +424,7 @@ sap.ui.define([
 				success: function(aTable) {
 					var oTable = aTable[0];
 
-					Opa5.assert.equal(oTable.getItems().length, iItems, "The Table holds the correct amount of items:" + iItems + " items found");
+					Opa5.assert.equal(bResponsiveTable ? oTable.getItems().length : oTable.getPlugins()[0].getSelectableCount() , iItems, "The Table holds the correct amount of items: " + iItems + " items found");
 
 				}
 			});

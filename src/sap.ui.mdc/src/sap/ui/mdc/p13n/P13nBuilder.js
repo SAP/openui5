@@ -167,14 +167,17 @@ sap.ui.define([
                 var sId = mSettings.idResetButton;
                 oBar.addContentRight(new Button( sId, {
                     text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET"),
-                    press: function() {
+                    press: function(oEvt) {
+
+                        var oControl = oEvt.getSource().getParent().getParent().getParent();
+
                         var sResetText = mSettings.warningText ? mSettings.warningText : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
                         MessageBox.warning(sResetText, {
                             actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
                             emphasizedAction: MessageBox.Action.OK,
                             onClose: function (sAction) {
                                 if (sAction === MessageBox.Action.OK) {
-                                    mSettings.reset();
+                                    mSettings.reset(oControl);
                                 }
                             }
                         });

@@ -106,7 +106,7 @@ sap.ui.define([
         var oSelectionPanel = new SelectionPanel();
         var oAdaptationModel = this._getP13nModel(oPropertyHelper);
         oSelectionPanel.setP13nModel(oAdaptationModel);
-
+        this._oPanel = oSelectionPanel;
         return Promise.resolve(oSelectionPanel);
     };
 
@@ -182,7 +182,7 @@ sap.ui.define([
      *
      */
     BaseController.prototype.getP13nData = function() {
-        return this._oAdaptationModel.getProperty("/items");
+        return this._oPanel ? this._oPanel.getP13nState() : this._oAdaptationModel.getProperty("/items");
     };
 
     BaseController.prototype.model2State = false;
@@ -250,6 +250,7 @@ sap.ui.define([
 		BaseObject.prototype.destroy.apply(this, arguments);
         this._oAdaptationControl = null;
         this._bLiveMode = null;
+        this._oPanel = null;
         this._bResetEnabled = null;
         this._oAdaptationModel = null;
     };

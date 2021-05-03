@@ -36,7 +36,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/GroupController",
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
 	"sap/m/ColumnPopoverSelectListItem",
-	"sap/m/ColumnPopoverActionItem"
+	"sap/m/ColumnPopoverActionItem",
+	"sap/base/util/UriParameters"
 ], function(
 	Control,
 	ActionToolbar,
@@ -71,7 +72,8 @@ sap.ui.define([
 	GroupController,
 	AggregateController,
 	ColumnPopoverSelectListItem,
-	ColumnPopoverActionItem
+	ColumnPopoverActionItem,
+	SAPUriParameters
 ) {
 	"use strict";
 
@@ -508,6 +510,10 @@ sap.ui.define([
 			this.bCreated = true;
 			this._doOneTimeOperations();
 			this._initializeContent();
+
+			//Note: parameter should be removed once the new p13n is the default
+			var oURLParams = new SAPUriParameters(window.location.search);
+			this._bNewP13n = oURLParams.getAll("sap-ui-xx-mdcTableP13n").length > 0;
 		},
 		renderer: {
 			apiVersion: 2,
@@ -855,7 +861,35 @@ sap.ui.define([
 	Table.prototype.setP13nMode = function(aMode) {
 		var aOldP13nMode = this.getP13nMode();
 
-		this.setProperty("p13nMode", aMode, true);
+		var aSortedKeys = null;
+		if (aMode && aMode.length > 1){
+			aSortedKeys = [];
+			var mKeys = aMode.reduce(function(mMap, sKey, iIndex){
+				mMap[sKey] = true;
+				return mMap;
+			}, {});
+
+			//as the p13nMode has no strict order we need to ensure the order of tabs here
+			if (mKeys.Column) {
+				aSortedKeys.push("Column");
+			}
+			if (mKeys.Sort) {
+				aSortedKeys.push("Sort");
+			}
+			if (mKeys.Filter) {
+				aSortedKeys.push("Filter");
+			}
+			if (mKeys.Group) {
+				aSortedKeys.push("Group");
+			}
+			if (mKeys.Aggregate) {
+				aSortedKeys.push("Aggregate");
+			}
+		} else {
+			aSortedKeys = aMode;
+		}
+
+		this.setProperty("p13nMode", aSortedKeys, true);
 
 		this._updateAdaptation(this.getP13nMode());
 
@@ -1392,25 +1426,25 @@ sap.ui.define([
 		var aButtons = [];
 
 		// Order should be: Sort, Filter, Group and then Columns as per UX spec
-		if (this.isSortingEnabled()) {
+		if (this.isSortingEnabled() && !this._bNewP13n) {
 			aButtons.push(TableSettings.createSortButton(this.getId(), [
 				this._showSort, this
 			]));
 		}
 
-		if (this.isFilteringEnabled()) {
+		if (this.isFilteringEnabled() && !this._bNewP13n) {
 			aButtons.push(TableSettings.createFilterButton(this.getId(), [
 				this._showFilter, this
 			]));
 		}
 
-		if (aP13nMode.indexOf("Column") > -1) {
+		if (aP13nMode.indexOf("Column") > -1 || (this._bNewP13n && aP13nMode.length > 0)) {
 			aButtons.push(TableSettings.createColumnsButton(this.getId(), [
 				this._showSettings, this
 			]));
 		}
 
-		if (this.isGroupingEnabled()) {
+		if (this.isGroupingEnabled() && !this._bNewP13n) {
 			aButtons.push(TableSettings.createGroupButton(this.getId(), [
 				this._showGroup, this
 			]));
@@ -2503,6 +2537,9 @@ sap.ui.define([
 		if (this._oTemplate) {
 			this._oTemplate.destroy();
 		}
+
+		//TODO: remove once new p13n is the default
+		this._bNewP13n = null;
 
 		this._oTemplate = null;
 		this._oTable = null;

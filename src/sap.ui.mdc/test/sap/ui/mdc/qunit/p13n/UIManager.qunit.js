@@ -150,7 +150,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("call 'create' - check UI creation (only with one key in an array)", function(assert) {
+	QUnit.test("call 'create' - check UI creation (with multiple keys in an array)", function(assert) {
 		var done = assert.async();
 		UIManager.getInstance(this.oAdaptationProvider);
 		var sTestTitle = "Some Test UI Title";
@@ -173,9 +173,9 @@ sap.ui.define([
 		UIManager.getInstance().create(this.oControl, ["TestKey", "TestKey2"], []).then(function(oPopup){
 			assert.ok(oPopup, "Popup created");
 			assert.ok(oPopup.isA("sap.m.Dialog"), "Popup is a modal Dialog");
-			assert.ok(oPopup.getContent()[0].isA("sap.ui.mdc.p13n.panels.P13nWrapper"), "Use an additional wrapper in case multiple keys have been provided");
+			assert.ok(oPopup.getContent()[0].isA("sap.ui.mdc.p13n.panels.Wrapper"), "Use an additional wrapper in case multiple keys have been provided");
 			assert.ok(oPopup.getContent()[0].oLayout.getEnableScrolling(), "The inner wrapper has scrolling enabled");
-			assert.notOk(oPopup.getVerticalScrolling(), "The outer container should not have vertical scrolling enabled, as the P13nWrapper takes care of it");
+			assert.notOk(oPopup.getVerticalScrolling(), "The outer container should not have vertical scrolling enabled, as the Wrapper takes care of it");
 			assert.equal(oPopup.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.VIEW_SETTINGS"), "Multiple keys provided - use the default settings");
 			done();
 		});

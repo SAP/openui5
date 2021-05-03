@@ -44,7 +44,7 @@ sap.ui.define([
 				]
 			});
 			this.oTable.setP13nMode(["Column","Sort","Filter"]);
-
+			this.oTable._bNewP13n = true;
             MDCQUnitUtils.stubPropertyInfos(this.oTable, aPropertyInfos);
 
             sinon.stub(TableDelegate,"getFilterDelegate").callsFake(function() {
@@ -85,10 +85,30 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ListView"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("open multiple keys to use Wrapper approach", function (assert) {
+		var done = assert.async();
+		var oBtn = new Button();
+		Engine.getInstance().uimanager.show(this.oTable, ["Column", "Sort"], oBtn).then(function(oP13nControl){
+
+			//check container
+			assert.ok(oP13nControl, "Container has been created");
+			assert.ok(oP13nControl.isA("sap.m.Dialog"));
+			assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("p13nDialog.VIEW_SETTINGS"), "Correct title has been set");
+			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
+
+			//check inner control (should be a wrapper)
+			var oWrapper = oP13nControl.getContent()[0];
+			assert.ok(oWrapper.isA("sap.ui.mdc.p13n.panels.Wrapper"), "Wrapper created");
+			assert.ok(oWrapper.getView("Column").getContent().isA("sap.ui.mdc.p13n.panels.ListView"), "Correct panel created");
+			assert.ok(oWrapper.getView("Sort").getContent().isA("sap.ui.mdc.p13n.panels.SortQueryPanel"), "Correct panel created");
 			done();
 		}.bind(this));
 	});
@@ -158,7 +178,7 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ListView"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, 1, "only one item has been created (as only one has been passed as parameter)");
 			done();
@@ -213,10 +233,12 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortPanel"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortQueryPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
             var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
-			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
+
+			//we have to remove one from '_getAvailableItems' as it also contains the empty selector ($none)
+			assert.equal(oP13nControl.getContent()[0]._getAvailableItems().length - 1, oPropertyHelper.getProperties().length, "correct amount of items has been set");
 			done();
 		}.bind(this));
 	});
@@ -252,7 +274,7 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortPanel"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortQueryPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 
 			//-1 non sortable property
@@ -295,7 +317,7 @@ sap.ui.define([
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
+			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ListView"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 
 			//-1 non visible property

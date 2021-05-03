@@ -14,6 +14,10 @@ sap.ui.define([
         return oControlState.hasOwnProperty("filter") ? oControlState.filter : {};
     };
 
+    FilterController.prototype.getResetEnabled = function() {
+        return !!this.getAdaptationControl()._bNewP13n;
+    };
+
     FilterController.prototype.getContainerSettings = function() {
         return {
             title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filter.PERSONALIZATION_DIALOG_TITLE"),
@@ -95,6 +99,10 @@ sap.ui.define([
         }.bind(this));
     };
 
+    FilterController.prototype.update = function(){
+        BaseController.prototype.update.apply(this, arguments);
+        this.getAdaptationControl().getInbuiltFilter().createFilterFields();
+    };
 
     FilterController.prototype.getDelta = function(mPropertyBag) {
         return FlexUtil.getConditionDeltaChanges(mPropertyBag);

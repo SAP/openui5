@@ -3,14 +3,18 @@
  */
 
 sap.ui.define([
-	'./BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/panels/SortPanel'
-], function (BaseController, P13nBuilder, SortPanel) {
+	'./BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/panels/SortPanel', 'sap/ui/mdc/p13n/panels/SortQueryPanel'
+], function (BaseController, P13nBuilder, SortPanel, SortQueryPanel) {
 	"use strict";
 
     var SortController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.SortController");
 
     SortController.prototype.getCurrentState = function() {
         return this.getAdaptationControl().getCurrentState().sorters;
+    };
+
+    SortController.prototype.getResetEnabled = function() {
+        return !!this.getAdaptationControl()._bNewP13n;
     };
 
     SortController.prototype.getContainerSettings = function() {
@@ -26,11 +30,17 @@ sap.ui.define([
 
     SortController.prototype.getAdaptationUI = function(oPropertyHelper){
 
-        var oSortPanel = new SortPanel();
+        var oSortPanel = this.getAdaptationControl()._bNewP13n ? new SortQueryPanel() : new SortPanel();
+        this._oPanel = oSortPanel;
         var oAdaptationModel = this._getP13nModel(oPropertyHelper);
         oSortPanel.setP13nModel(oAdaptationModel);
 
         return Promise.resolve(oSortPanel);
+    };
+
+    SortController.prototype.update = function(){
+        BaseController.prototype.update.apply(this, arguments);
+        this._oPanel.setP13nModel(this._oAdaptationModel);
     };
 
     SortController.prototype.model2State = function() {
@@ -77,6 +87,8 @@ sap.ui.define([
             visible: "sorted",
             position: "sortPosition"
         }, oP13nData.items);
+
+        oP13nData.presenceAttribute = this._getPresenceAttribute();
 
         oP13nData.items.forEach(function(oItem){delete oItem.sortPosition;});
 

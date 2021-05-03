@@ -220,26 +220,28 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * @param {sap.ui.mdc.Control} oControl The according control instance.
-	 * @param {string} sKey The key for the affected config.
+	 * @param {string} aKeys The key for the affected config.
 	 *
 	 * @returns {Promise} A Promise resolving once the reset is completed.
 	 */
-	Engine.prototype.reset = function(oControl, sKey) {
-		var oController = this.getController(oControl, sKey);
-		var oModificationSetting = this._determineModification(oControl);
-		if (oController.getResetEnabled()) {
-			return oModificationSetting.handler.reset({
-				selector: oControl
-			}, oModificationSetting.payload).then(function(){
-				//Re-Init housekeeping after update
-				return this.initAdaptation(oControl, sKey).then(function(oPropertyHelper){
-					oController.update(oPropertyHelper);
-				});
-			}.bind(this));
-		} else {
-			return Promise.reject("The controller " + sKey + " has been configured to now allow reset.");
-		}
+	Engine.prototype.reset = function(oControl, aKeys) {
 
+		aKeys = aKeys instanceof Array ? aKeys : [aKeys];
+
+		var oResetConfig = {
+			selector: oControl
+		};
+
+		var oModificationSetting = this._determineModification(oControl);
+		return oModificationSetting.handler.reset(oResetConfig, oModificationSetting.payload).then(function(){
+			//Re-Init housekeeping after update
+			return this.initAdaptation(oControl, aKeys).then(function(oPropertyHelper){
+				aKeys.forEach(function(sKey){
+					var oController = this.getController(oControl, sKey);
+					oController.update(oPropertyHelper);
+				}.bind(this));
+			}.bind(this));
+		}.bind(this));
 	};
 
 	/**
@@ -293,11 +295,11 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Control} oControl The registered control instance.
 	 * @param {object} mPropertyBag The propertybag provided in the settings action.
-	 * @param {string} sKey The string to be used to call the corresponding Controller
+	 * @param {string} aKeys The keys to be used to display in the corresponding Controller
 	 *
 	 * @returns {Promise} A Promise resolving in the set of changes to be created during RTA.
 	 */
-	Engine.prototype.getRTASettingsActionHandler = function (oControl, mPropertyBag, sKey) {
+	Engine.prototype.getRTASettingsActionHandler = function (oControl, mPropertyBag, aKeys) {
 
 		var fResolveRTA;
 
@@ -310,9 +312,6 @@ sap.ui.define([
 
 		var oModificationHandler = this.getModificationHandler(oControl);
 		var fnInitialAppliance = oModificationHandler.processChanges;
-		var oController = this.getController(oControl, sKey);
-		var fResetEnabled = oController.getResetEnabled;
-		oController.getResetEnabled = function(){return false;};
 
 		var oRTAPromise = new Promise(function(resolve, reject){
 			fResolveRTA = resolve;
@@ -322,12 +321,15 @@ sap.ui.define([
 
 		this._setModificationHandler(oControl, oModificationHandler);
 
-		this.uimanager.show(oControl, sKey).then(function(oContainer){
+		this.uimanager.show(oControl, aKeys).then(function(oContainer){
+			var oCustomHeader = oContainer.getCustomHeader();
+			if (oCustomHeader) {
+				oCustomHeader.getContentRight()[0].setVisible(false);
+			}
 			oContainer.addStyleClass(mPropertyBag.styleClass);
 		});
 
 		oRTAPromise.then(function(){
-			oController.getResetEnabled = fResetEnabled;
 			oModificationHandler.processChanges = fnInitialAppliance;
 		});
 
@@ -548,12 +550,16 @@ sap.ui.define([
 
 		aKeys.forEach(function(sKey){
 			var oController = this.getController(vControl, sKey);
-			mUiSettings[sKey] = {};
-			mUiSettings[sKey] = {
-				resetEnabled: oController.getResetEnabled(),
-				containerSettings: oController.getContainerSettings(),
-				adaptationUI: oController.getAdaptationUI(oPropertyHelper)
-			};
+			var pAdaptationUI = oController.getAdaptationUI(oPropertyHelper);
+			//Check faceless controller implementations and skip them
+			if (pAdaptationUI instanceof Promise){
+				mUiSettings[sKey] = {};
+				mUiSettings[sKey] = {
+					resetEnabled: oController.getResetEnabled(),
+					containerSettings: oController.getContainerSettings(),
+					adaptationUI: pAdaptationUI
+				};
+			}
 		}.bind(this));
 
 		return mUiSettings;

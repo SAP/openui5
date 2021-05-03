@@ -141,7 +141,7 @@ sap.ui.define([
 		},
 
 		showUIColumns: function(oControl, oSource) {
-			oControl.getEngine().uimanager.show(oControl, "Column", oSource);
+			oControl.getEngine().uimanager.show(oControl, oControl._bNewP13n ? oControl.getP13nMode() : "Column", oSource);
 		},
 
 		showUISort: function(oControl, oSource) {

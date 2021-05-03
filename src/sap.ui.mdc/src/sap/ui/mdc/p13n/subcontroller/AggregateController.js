@@ -31,6 +31,10 @@ sap.ui.define([
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
+    AggregateController.prototype.getAdaptationUI = function (oPropertyHelper) {
+        return null;
+    };
+
     AggregateController.prototype.getChangeOperations = function () {
         return {
             add: "addAggregate",

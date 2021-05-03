@@ -50,7 +50,11 @@ sap.ui.define([
     });
 
     opaTest("Open Table inbuilt 'Filters' dialog to enter condition values", function(Given, When, Then){
-        When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'Filter' tab
+		When.iSwitchToP13nTab("Filter");
+
         When.iEnterTextInFilterDialog("Founding Year", "*6");
 
         When.iPressDialogOk();
@@ -83,7 +87,7 @@ sap.ui.define([
         Then.iShouldSeeSelectedVariant("Standard");
 
         //Table not filtered
-        Then.iShouldSeeVisibleItemsInTable(20);
+        Then.iShouldSeeVisibleItemsInTable(100);
 
 		Then.theVariantManagementIsDirty(false);
     });
