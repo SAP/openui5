@@ -4,36 +4,23 @@
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/Filter',
-	'sap/ui/model/odata/Filter',
-	'sap/ui/model/FilterType',
-	'sap/ui/model/FilterProcessor',
-	'sap/ui/model/ListBinding',
-	'sap/ui/model/Sorter',
-	'./ODataUtils',
-	'./CountMode',
-	'sap/base/util/deepEqual',
-	'sap/base/util/merge',
-	'sap/base/Log',
-	'sap/base/assert',
-	'sap/ui/thirdparty/jquery'
-], function(
-	ChangeReason,
-	Filter,
-	ODataFilter,
-	FilterType,
-	FilterProcessor,
-	ListBinding,
-	Sorter,
-	ODataUtils,
-	CountMode,
-	deepEqual,
-	merge,
-	Log,
-	assert,
-	jQuery
-) {
+	"./CountMode",
+	"./ODataUtils",
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/deepEqual",
+	"sap/base/util/each",
+	"sap/base/util/merge",
+	"sap/base/util/array/diff",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/FilterType",
+	"sap/ui/model/ListBinding",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/Filter"
+], function(CountMode, ODataUtils, assert, Log, deepEqual, each, merge, arrayDiff, ChangeReason,
+	Filter, FilterProcessor, FilterType, ListBinding, Sorter, ODataFilter) {
 	"use strict";
 
 	/**
@@ -189,13 +176,12 @@ sap.ui.define([
 				//Check diff
 				if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
 					var that = this;
-					//global jQuery call is left in place to be backward compatible for deprecated V1 model
-					var aDiff = jQuery.sap.arrayDiff(this.aLastContexts, aContexts, function(oOldContext, oNewContext) {
+					var aDiff = arrayDiff(this.aLastContexts, aContexts, function(oOldContext, oNewContext) {
 						return deepEqual(
 								oOldContext && that.oLastContextData && that.oLastContextData[oOldContext.getPath()],
 								oNewContext && oContextData && oContextData[oNewContext.getPath()]
 							);
-					}, true);
+					});
 					aContexts.diff = aDiff;
 				}
 			}
@@ -440,7 +426,7 @@ sap.ui.define([
 		function fnSuccess(oData) {
 
 			// Collecting contexts
-			jQuery.each(oData.results, function(i, entry) {
+			each(oData.results, function(i, entry) {
 				that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
 			});
 
@@ -564,7 +550,7 @@ sap.ui.define([
 		// use only custom params for count and not expand,select params
 		if (this.mParameters && this.mParameters.custom) {
 			var oCust = { custom: {}};
-			jQuery.each(this.mParameters.custom, function (sParam, oValue){
+			each(this.mParameters.custom, function (sParam, oValue){
 				oCust.custom[sParam] = oValue;
 			});
 			aParams.push(this.oModel.createCustomParams(oCust));
@@ -620,7 +606,7 @@ sap.ui.define([
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				jQuery.each(this.aKeys, function(i, sKey) {
+				each(this.aKeys, function(i, sKey) {
 					if (sKey in mChangedEntities) {
 						bChangeDetected = true;
 						return false;
@@ -704,7 +690,7 @@ sap.ui.define([
 					bChangeDetected = true;
 				}
 			} else if (mChangedEntities) {
-				jQuery.each(this.aKeys, function(i, sKey) {
+				each(this.aKeys, function(i, sKey) {
 					if (sKey in mChangedEntities) {
 						bChangeDetected = true;
 						return false;
@@ -722,7 +708,7 @@ sap.ui.define([
 				if (this.aLastContexts.length != aContexts.length) {
 					bChangeDetected = true;
 				} else {
-					jQuery.each(this.aLastContexts, function(iIndex, oContext) {
+					each(this.aLastContexts, function(iIndex, oContext) {
 						oLastData = that.oLastContextData[oContext.getPath()];
 						oCurrentData = aContexts[iIndex].getObject();
 						// Compare whether last data is completely contained in current data
