@@ -9,14 +9,14 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/HBox",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/restricted/_merge",
 	"sap/ui/dt/DesignTime"
-],
-function(
+], function(
 	sinon,
 	QUnitUtils,
 	ChangeVisualization,
@@ -25,6 +25,7 @@ function(
 	VBox,
 	HBox,
 	PersistenceWriteAPI,
+	ChangesWriteAPI,
 	ChangesUtils,
 	FlUtils,
 	DesignTimeMetadata,
@@ -77,7 +78,7 @@ function(
 	}
 
 
-	function prepareChanges (aMockChanges, oRootComponent, oChangeHandler) {
+	function prepareChanges(aMockChanges, oRootComponent, oChangeHandler) {
 		// Stub changes, root component and change handler
 		sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aMockChanges || []);
 		var oLoadComponentStub = sandbox.stub(ChangeVisualization.prototype, "_getComponent");
@@ -100,7 +101,7 @@ function(
 			},
 			oChangeHandler
 		);
-		sandbox.stub(ChangesUtils, "getChangeHandler").resolves(oMergedChangeHandler);
+		sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves(oMergedChangeHandler);
 	}
 
 	function createMockChange(sId, sCommandName, sSelectorId, oCustomChange) {
@@ -120,7 +121,9 @@ function(
 			},
 			getCreation: function () {
 				return new Date();
-			}
+			},
+			getChangeType: function() {return "changeType";},
+			getLayer: function() {return "layer";}
 		}, oCustomChange);
 	}
 

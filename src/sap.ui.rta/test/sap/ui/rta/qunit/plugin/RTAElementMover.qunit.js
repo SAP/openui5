@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/plugin/ElementMover",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/comp/smartform/SmartForm",
 	"sap/ui/comp/smartform/Group",
 	"sap/ui/comp/smartform/GroupElement",
@@ -27,7 +27,7 @@ sap.ui.define([
 	DesignTime,
 	ElementDesignTimeMetadata,
 	DtElementMover,
-	ChangeRegistry,
+	ChangesWriteAPI,
 	SmartForm,
 	Group,
 	GroupElement,
@@ -380,8 +380,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when DT is loaded and moving the movedButton inside the layout but without changeHandler...", function(assert) {
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			sandbox.stub(oChangeRegistry, "getChangeHandler").rejects(undefined);
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").rejects();
 			this.oElementMover.setMovedOverlay(this.oMovedButton1Overlay);
 			return this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay)
 				.then(function(bCheckTargetZone) {

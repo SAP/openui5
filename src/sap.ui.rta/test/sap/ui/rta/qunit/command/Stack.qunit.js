@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/m/Input",
@@ -18,7 +18,7 @@ sap.ui.define([
 	DesignTimeMetadata,
 	CommandSerializer,
 	CommandStack,
-	ChangeRegistry,
+	ChangesWriteAPI,
 	FlUtils,
 	Change,
 	Input,
@@ -35,42 +35,31 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oComponent = new UIComponent();
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Input": {
-					hideControl: {
-						completeChangeContent: function() {},
-						applyChange: function() {return Promise.resolve();},
-						revertChange: function() {}
-					}
-				}
-			})
-			.then(function() {
-				// Create command stack with some commands
-				this.oCommandStack = new CommandStack();
-				this.oInput1 = new Input({id: "input1"});
-				this.oInput2 = new Input({id: "input2"});
-				this.oPanel = new Panel({
-					id: "panel",
-					content: [this.oInput1, this.oInput2]});
+			// Create command stack with some commands
+			this.oCommandStack = new CommandStack();
+			this.oInput1 = new Input({id: "input1"});
+			this.oInput2 = new Input({id: "input2"});
+			this.oPanel = new Panel({
+				id: "panel",
+				content: [this.oInput1, this.oInput2]});
 
-				this.oInputDesignTimeMetadata = new DesignTimeMetadata({
-					data: {
-						actions: {
-							remove: {
-								changeType: "hideControl"
-							}
+			this.oInputDesignTimeMetadata = new DesignTimeMetadata({
+				data: {
+					actions: {
+						remove: {
+							changeType: "hideControl"
 						}
 					}
-				});
+				}
+			});
 
-				// Create serializer instance
-				this.oSerializer = new CommandSerializer({
-					commandStack: this.oCommandStack,
-					rootControl: this.oPanel
-				});
-			}.bind(this));
+			// Create serializer instance
+			this.oSerializer = new CommandSerializer({
+				commandStack: this.oCommandStack,
+				rootControl: this.oPanel
+			});
 		},
 		afterEach: function () {
 			this.oCommandStack.destroy();

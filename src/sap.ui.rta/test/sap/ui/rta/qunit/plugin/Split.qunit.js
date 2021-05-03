@@ -5,24 +5,23 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/plugin/Split",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	jQuery,
 	DesignTime,
 	CommandFactory,
 	OverlayRegistry,
-	ChangeRegistry,
+	ChangesWriteAPI,
 	Utils,
 	SplitPlugin,
 	XMLView,
 	sinon
 ) {
-	'use strict';
+	"use strict";
 
 	var DEFAULT_DTM = {
 		actions: {
@@ -76,53 +75,41 @@ function (
 	QUnit.module("Given a designTime and split plugin are instantiated", {
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
-			var oChangeRegistry = ChangeRegistry.getInstance();
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			this.oSplitPlugin = new SplitPlugin({
+				commandFactory: new CommandFactory()
+			});
 
-			oChangeRegistry.registerControlsForChanges({
-				"sap.m.Panel": {
-					splitStuff: {
-						completeChangeContent: function() {},
-						applyChange: function() {},
-						revertChange: function() {}
-					}
-				}
-			})
-			.then(function() {
-				this.oSplitPlugin = new SplitPlugin({
-					commandFactory: new CommandFactory()
-				});
+			this.oView = new XMLView("mockview", {
+				viewContent:
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+						'<Panel id="panel">' +
+							'<Button id="button1" />' +
+							'<Button id="button2" />' +
+							'<Button id="button3" />' +
+						'</Panel>' +
+					'</mvc:View>'
+			});
 
-				this.oView = new XMLView("mockview", {
-					viewContent:
-						'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-							'<Panel id="panel">' +
-								'<Button id="button1" />' +
-								'<Button id="button2" />' +
-								'<Button id="button3" />' +
-							'</Panel>' +
-						'</mvc:View>'
-				});
+			this.oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-				this.oView.placeAt('qunit-fixture');
-				sap.ui.getCore().applyChanges();
+			this.oButton1 = this.oView.byId("button1");
+			this.oButton2 = this.oView.byId("button2");
+			this.oButton3 = this.oView.byId("button3");
+			this.oPanel = this.oView.byId("panel");
 
-				this.oButton1 = this.oView.byId("button1");
-				this.oButton2 = this.oView.byId("button2");
-				this.oButton3 = this.oView.byId("button3");
-				this.oPanel = this.oView.byId("panel");
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oPanel],
+				plugins: [this.oSplitPlugin]
+			});
 
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oPanel],
-					plugins: [this.oSplitPlugin]
-				});
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
-					this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
-					this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);
-					this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
-					fnDone();
-				}.bind(this));
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
+				this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);
+				this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
+				fnDone();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -309,6 +296,7 @@ function (
 		});
 
 		QUnit.test("when handleSplit is called", function(assert) {
+			sandbox.stub(ChangesWriteAPI, "create").resolves({});
 			var oStub1 = sandbox.stub();
 			var oStub2 = oStub1
 				.withArgs(
@@ -330,7 +318,7 @@ function (
 				assert.strictEqual(oStub2.callCount, 1, "fireElementModified is called once with correct arguments");
 			})
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 

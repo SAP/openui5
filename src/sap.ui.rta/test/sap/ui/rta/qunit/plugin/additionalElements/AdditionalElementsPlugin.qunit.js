@@ -16,9 +16,8 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/write/api/FieldExtensibility",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
@@ -45,9 +44,8 @@ sap.ui.define([
 	DtUtil,
 	DelegateMediatorAPI,
 	FieldExtensibility,
-	ChangeRegistry,
+	ChangesWriteAPI,
 	Settings,
-	SimpleChanges,
 	FlexUtils,
 	VerticalLayout,
 	JSONModel,
@@ -66,19 +64,6 @@ sap.ui.define([
 	// 5. avoid creation of many DesignTime instances just for creating one single overlay <=
 	// 6. add comprehensive comments at least to each module - what is going on there
 
-	var oChangeRegistry = ChangeRegistry.getInstance();
-	var oDummyChangeHandler = {
-		applyChange: function () {
-			return true;
-		},
-		completeChangeContent: function () {
-			return true;
-		},
-		revertChange: function () {
-			return true;
-		}
-	};
-
 	var TEST_DELEGATE_PATH = "sap/ui/rta/enablement/TestDelegate";
 	//ensure a default delegate exists for a model not used anywhere else
 	var SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
@@ -95,38 +80,8 @@ sap.ui.define([
 	};
 	DelegateMediatorAPI.registerDefaultDelegate(DEFAULT_DELEGATE_REGISTRATION);
 
-	var fnRegisterControlsForChanges = function () {
-		// asynchronous registration. Returns a promise
-		return oChangeRegistry.registerControlsForChanges({
-			"sap.m.Button": [
-				SimpleChanges.unhideControl,
-				SimpleChanges.unstashControl
-			],
-			"sap.m.Bar": [
-				{
-					changeType: "addFields",
-					changeHandler: oDummyChangeHandler
-				},
-				{
-					changeType: "customAdd",
-					changeHandler: oDummyChangeHandler
-				},
-				SimpleChanges.moveControls
-			],
-			"sap.ui.layout.VerticalLayout": [
-				{
-					changeType: "addFields",
-					changeHandler: oDummyChangeHandler
-				},
-				SimpleChanges.moveControls,
-				SimpleChanges.unhideControl,
-				SimpleChanges.unstashControl
-			]
-		});
-	};
-
-	sinon.stub(Settings, 'getInstance').resolves(new Settings({}));
-	sinon.stub(DelegateMediatorAPI, 'getKnownDefaultDelegateLibraries').returns(["sap.uxap"]);
+	sinon.stub(Settings, "getInstance").resolves(new Settings({}));
+	sinon.stub(DelegateMediatorAPI, "getKnownDefaultDelegateLibraries").returns(["sap.uxap"]);
 
 	var DEFAULT_MANIFEST = {
 		"sap.app": {
@@ -178,16 +133,21 @@ sap.ui.define([
 	};
 	var sandbox = sinon.sandbox.create();
 
+	function registerControlsForChanges() {
+		sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+		sandbox.stub(ChangesWriteAPI, "create").resolves({getDefinition: function() {
+			return {support: {}};
+		}});
+	}
+
 	var ON_SIBLING = "SIBLING";
 	var ON_CHILD = "CHILD";
 	var ON_CONTAINER = "CONTAINER";
 	var ON_IRRELEVANT = "IRRELEVANT";
 
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
-		before: function () {
-			return fnRegisterControlsForChanges();
-		},
 		beforeEach: function (assert) {
+			registerControlsForChanges();
 			this.oRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
 			var oFakeLibBundle = {
@@ -472,10 +432,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with CANCEL", {
-		before: function () {
-			return fnRegisterControlsForChanges();
-		},
 		beforeEach: function (assert) {
+			registerControlsForChanges();
 			givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithCancelClosingDialog.call(this);
@@ -567,10 +525,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with OK", {
-		before: function () {
-			return fnRegisterControlsForChanges();
-		},
 		beforeEach: function (assert) {
+			registerControlsForChanges();
 			givenSomeBoundControls.call(this, assert);
 			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
 
@@ -639,8 +595,6 @@ sap.ui.define([
 				var done = assert.async();
 				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
 				var aCustomItems = getCustomItems(2).reverse();
-				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
-				sandbox.spy(oDummyChangeHandler, "completeChangeContent");
 
 				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");
@@ -649,7 +603,6 @@ sap.ui.define([
 					var sChangeType = "customAdd";
 
 					assert.strictEqual(aCommands.length, 2, "then two commands ware created");
-					assert.ok(oDummyChangeHandler.completeChangeContent.calledTwice, "then customAdd change handler's completeChangeContent was called twice for each command");
 
 					aCommands.forEach(
 						function (oCommand, iIndex) {
@@ -658,16 +611,6 @@ sap.ui.define([
 							assert.deepEqual(oCommand.getAddElementInfo(), aCustomItems[iIndex].changeSpecificData.content, "then the customAdd command has the correct additional element info");
 							assert.strictEqual(oCommand.getAggregationName(), sAggregationName, "then the customAdd command has the correct aggregation");
 
-							var aCompleteChangeContentArgs = oDummyChangeHandler.completeChangeContent.getCall(iIndex).args;
-							assert.deepEqual(aCompleteChangeContentArgs[1].addElementInfo, aCustomItems[iIndex].changeSpecificData.content, "then the correct addElementInfo was passed to changeHandler.completeChangeContent()");
-							assert.deepEqual(aCompleteChangeContentArgs[1].index, oCommand.getIndex(), "then the correct index was passed to changeHandler.completeChangeContent()");
-							assert.deepEqual(aCompleteChangeContentArgs[1].changeType, sChangeType, "then the correct changeType was passed to changeHandler.completeChangeContent()");
-							assert.deepEqual(aCompleteChangeContentArgs[1].aggregationName, sAggregationName, "then the correct aggregationName was passed to changeHandler.completeChangeContent()");
-							if (iIndex === 0) {
-								assert.notEqual(aCompleteChangeContentArgs[1].customItemId.indexOf(oCommand.getElement().getId()), -1, "then the correct customItemId was passed to changeHandler.completeChangeContent() with changeOnRelevantContainer");
-							} else {
-								assert.deepEqual(aCompleteChangeContentArgs[1].customItemId, oCommand.getElement().getParent().getId() + "-" + aCustomItems[iIndex].id, "then the correct customItemId was passed to changeHandler.completeChangeContent() without changeOnRelevantContainer");
-							}
 							if (test.sibling) {
 								assert.equal(oCommand.getIndex(), 1, "then the customAdd command has the right index");
 							} else {
@@ -712,8 +655,6 @@ sap.ui.define([
 				var done = assert.async();
 				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
 				var aCustomItems = getCustomItems(2).reverse();
-
-				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
 
 				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");
@@ -765,9 +706,7 @@ sap.ui.define([
 
 			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action", function (assert) {
 				var done = assert.async();
-				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
 				sandbox.stub(RTAPlugin.prototype, "getVariantManagementReference").returns(sVariantManagementReference);
-				sandbox.spy(oDummyChangeHandler, "completeChangeContent");
 				var sChangeType = "addFields";
 				var oElement;
 
@@ -802,13 +741,9 @@ sap.ui.define([
 					var aCommands = oCompositeCommand.getCommands();
 
 					assert.strictEqual(aCommands.length, 1, "then one command was created");
-					assert.ok(oDummyChangeHandler.completeChangeContent.calledOnce, "then addViaDelegate change handler's completeChangeContent() was called");
 
 					var oCommand = aCommands[0];
 					assert.deepEqual(oCommand.mProperties, oExpectedCommandProperties, "then the command was created correctly");
-
-					var oPreparedChangeDefiniton = oCommand.getPreparedChange().getDefinition();
-					assert.strictEqual(oPreparedChangeDefiniton.variantReference, sVariantManagementReference, "then variant management reference is provided to the change");
 					done();
 				});
 
@@ -842,8 +777,6 @@ sap.ui.define([
 
 			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action and a default delegate is available", function (assert) {
 				var done = assert.async();
-				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
-				sandbox.spy(oDummyChangeHandler, "completeChangeContent");
 				var sChangeType = "addFields";
 				var oElement;
 
@@ -878,7 +811,6 @@ sap.ui.define([
 					var aCommands = oCompositeCommand.getCommands();
 
 					assert.strictEqual(aCommands.length, 1, "then one command is created");
-					assert.ok(oDummyChangeHandler.completeChangeContent.calledOnce, "then addViaDelegate change handler's completeChangeContent() was called");
 
 					var oAddDelegatePropertyCommand = aCommands[0];
 					assert.deepEqual(oAddDelegatePropertyCommand.mProperties, oExpectedCommandProperties, "then the addDelegateProperty command was created correctly");
@@ -1703,10 +1635,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an app that is field extensible enabled...", {
-		before: function () {
-			return fnRegisterControlsForChanges();
-		},
 		beforeEach: function (assert) {
+			registerControlsForChanges();
 			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
 				extensionData: [{BusinessContext: "some context", description: "some description"}], //BusinessContext API returns this structure
 				serviceName: "servive name",
@@ -2145,7 +2075,7 @@ sap.ui.define([
 		//attach a default model used for default delegate determination
 		this.oPseudoPublicParent.setModel(new SomeModel());
 
-		this.oPseudoPublicParent.placeAt('qunit-fixture');
+		this.oPseudoPublicParent.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		//simulate analyzer returning some elements

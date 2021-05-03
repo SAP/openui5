@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/changeHandler/AddXML",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
@@ -18,6 +19,7 @@ sap.ui.define([
 ], function (
 	CommandFactory,
 	AddXML,
+	ChangesWriteAPI,
 	Layer,
 	Utils,
 	LayerUtils,
@@ -56,7 +58,7 @@ sap.ui.define([
 		},
 		getModel: function () {},
 		createId: function(sId) {
-			return 'testcomponent---' + sId;
+			return "testcomponent---" + sId;
 		}
 	};
 	var sandbox = sinon.sandbox.create();
@@ -142,7 +144,7 @@ sap.ui.define([
 			})
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -198,7 +200,7 @@ sap.ui.define([
 			})
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});
@@ -223,9 +225,10 @@ sap.ui.define([
 					template: this.oItemTemplate
 				}
 			}).setModel(oModel);
-			this.oList.placeAt('qunit-fixture');
+			this.oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oList]
 			});

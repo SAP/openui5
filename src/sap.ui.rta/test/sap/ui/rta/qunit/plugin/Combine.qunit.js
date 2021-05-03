@@ -1,36 +1,35 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/m/Button",
+	"sap/m/CheckBox",
+	"sap/m/OverflowToolbar",
+	"sap/m/OverflowToolbarButton",
+	"sap/m/Panel",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/Utils",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/Utils",
-	"sap/m/Button",
-	"sap/m/Panel",
-	"sap/m/OverflowToolbar",
-	"sap/m/OverflowToolbarButton",
-	"sap/m/CheckBox",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
+	Button,
+	CheckBox,
+	OverflowToolbar,
+	OverflowToolbarButton,
+	Panel,
 	DesignTime,
+	OverlayRegistry,
+	ChangesWriteAPI,
+	FlUtils,
 	CommandFactory,
 	CombinePlugin,
 	Utils,
-	OverlayRegistry,
-	ChangeRegistry,
-	FlUtils,
-	Button,
-	Panel,
-	OverflowToolbar,
-	OverflowToolbarButton,
-	CheckBox,
 	sinon
 ) {
-	'use strict';
+	"use strict";
 
 	var DEFAULT_DTM = "default";
 
@@ -146,109 +145,93 @@ function(
 
 	QUnit.module("Given a designTime and combine plugin are instantiated", {
 		beforeEach: function(assert) {
-			var oChangeHandler = {
-				completeChangeContent: function() {},
-				applyChange: function() {},
-				revertChange: function() {}
-			};
 			var done = assert.async();
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Panel": {
-					combineStuff: oChangeHandler
-				},
-				"sap.m.OverflowToolbar": {
-					combineStuff: oChangeHandler,
-					combineOtherStuff: oChangeHandler
-				}
-			})
-			.then(function() {
-				this.oCommandFactory = new CommandFactory();
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			this.oCommandFactory = new CommandFactory();
 
-				this.oCombinePlugin = new CombinePlugin({
-					commandFactory: this.oCommandFactory
-				});
+			this.oCombinePlugin = new CombinePlugin({
+				commandFactory: this.oCommandFactory
+			});
 
-				this.oButton1 = new Button("button1");
-				this.oButton2 = new Button("button2");
-				this.oButton3 = new Button("button3");
-				this.oButton4 = new Button("button4");
-				this.oButton5 = new Button("button5");
-				this.oPanel = new Panel("panel", {
-					content: [
-						this.oButton1,
-						this.oButton2,
-						this.oButton3,
-						this.oButton4
-					]
-				}).placeAt("qunit-fixture");
-				this.oPanel2 = new Panel("panel2", {
-					content: [
-						this.oButton5
-					]
-				}).placeAt("qunit-fixture");
+			this.oButton1 = new Button("button1");
+			this.oButton2 = new Button("button2");
+			this.oButton3 = new Button("button3");
+			this.oButton4 = new Button("button4");
+			this.oButton5 = new Button("button5");
+			this.oPanel = new Panel("panel", {
+				content: [
+					this.oButton1,
+					this.oButton2,
+					this.oButton3,
+					this.oButton4
+				]
+			}).placeAt("qunit-fixture");
+			this.oPanel2 = new Panel("panel2", {
+				content: [
+					this.oButton5
+				]
+			}).placeAt("qunit-fixture");
 
-				this.oOverflowToolbarButton1 = new OverflowToolbarButton("owerflowbutton1");
-				this.oButton6 = new Button("button6");
-				this.oCheckBox1 = new CheckBox("checkbox1");
-				this.OverflowToolbar = new OverflowToolbar("OWFlToolbar", {
-					content: [
-						this.oOverflowToolbarButton1,
-						this.oButton6,
-						this.oCheckBox1
-					]
-				}).placeAt("qunit-fixture");
+			this.oOverflowToolbarButton1 = new OverflowToolbarButton("owerflowbutton1");
+			this.oButton6 = new Button("button6");
+			this.oCheckBox1 = new CheckBox("checkbox1");
+			this.OverflowToolbar = new OverflowToolbar("OWFlToolbar", {
+				content: [
+					this.oOverflowToolbarButton1,
+					this.oButton6,
+					this.oCheckBox1
+				]
+			}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+			sap.ui.getCore().applyChanges();
 
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oPanel, this.oPanel2, this.OverflowToolbar],
-					plugins: [this.oCombinePlugin],
-					designTimeMetadata: {
-						"sap.m.Button": {
-							actions: {
-								combine: {
-									changeType: "combineStuff",
-									changeOnRelevantContainer: true,
-									isEnabled: true
-								}
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oPanel, this.oPanel2, this.OverflowToolbar],
+				plugins: [this.oCombinePlugin],
+				designTimeMetadata: {
+					"sap.m.Button": {
+						actions: {
+							combine: {
+								changeType: "combineStuff",
+								changeOnRelevantContainer: true,
+								isEnabled: true
 							}
-						},
-						"sap.m.OverflowToolbarButton": {
-							actions: {
-								combine: {
-									changeType: "combineStuff",
-									changeOnRelevantContainer: true,
-									isEnabled: true
-								}
+						}
+					},
+					"sap.m.OverflowToolbarButton": {
+						actions: {
+							combine: {
+								changeType: "combineStuff",
+								changeOnRelevantContainer: true,
+								isEnabled: true
 							}
-						},
-						"sap.m.CheckBox": {
-							actions: {
-								combine: {
-									changeType: "combineOtherStuff",
-									changeOnRelevantContainer: true,
-									isEnabled: true
-								}
+						}
+					},
+					"sap.m.CheckBox": {
+						actions: {
+							combine: {
+								changeType: "combineOtherStuff",
+								changeOnRelevantContainer: true,
+								isEnabled: true
 							}
 						}
 					}
-				});
+				}
+			});
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
-					this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
-					this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);
-					this.oButton4Overlay = OverlayRegistry.getOverlay(this.oButton4);
-					this.oButton5Overlay = OverlayRegistry.getOverlay(this.oButton5);
-					this.oButton6Overlay = OverlayRegistry.getOverlay(this.oButton6);
-					this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
-					this.oPanel2Overlay = OverlayRegistry.getOverlay(this.oPanel2);
-					this.oOverflowToolbarButton1Overlay = OverlayRegistry.getOverlay(this.oOverflowToolbarButton1);
-					this.oCheckBox1Overlay = OverlayRegistry.getOverlay(this.oCheckBox1);
-					this.OverflowToolbarOverlay = OverlayRegistry.getOverlay(this.OverflowToolbar);
-					done();
-				}.bind(this));
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
+				this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);
+				this.oButton4Overlay = OverlayRegistry.getOverlay(this.oButton4);
+				this.oButton5Overlay = OverlayRegistry.getOverlay(this.oButton5);
+				this.oButton6Overlay = OverlayRegistry.getOverlay(this.oButton6);
+				this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
+				this.oPanel2Overlay = OverlayRegistry.getOverlay(this.oPanel2);
+				this.oOverflowToolbarButton1Overlay = OverlayRegistry.getOverlay(this.oOverflowToolbarButton1);
+				this.oCheckBox1Overlay = OverlayRegistry.getOverlay(this.oCheckBox1);
+				this.OverflowToolbarOverlay = OverlayRegistry.getOverlay(this.OverflowToolbar);
+				done();
 			}.bind(this));
 		},
 
@@ -401,7 +384,7 @@ function(
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 

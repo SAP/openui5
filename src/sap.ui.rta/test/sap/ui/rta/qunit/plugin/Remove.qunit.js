@@ -1,33 +1,32 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/events/KeyCodes",
-	"sap/ui/rta/plugin/Remove",
-	"sap/ui/rta/Utils",
-	"sap/ui/rta/command/CommandFactory",
+	"sap/base/Log",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/base/Log",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
-	KeyCodes,
-	RemovePlugin,
-	Utils,
-	CommandFactory,
+], function(
+	Log,
 	Button,
-	VerticalLayout,
 	DesignTime,
 	OverlayRegistry,
-	ChangeRegistry,
+	KeyCodes,
+	ChangesWriteAPI,
 	FlUtils,
+	VerticalLayout,
+	CommandFactory,
 	QUnitUtils,
-	Log,
+	RemovePlugin,
+	Utils,
 	sinon
 ) {
 	"use strict";
@@ -64,39 +63,28 @@ function (
 	QUnit.module("Given a designTime and remove plugin are instantiated", {
 		beforeEach: function(assert) {
 			var done = assert.async();
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			this.oRemovePlugin = new RemovePlugin({
+				commandFactory: new CommandFactory()
+			});
+			this.oButton = new Button("button", {text: "Button"});
+			this.oButton1 = new Button("button1", {text: "Button1"});
+			this.oVerticalLayout = new VerticalLayout({
+				content: [this.oButton, this.oButton1]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Button": {
-					hideControl: "default"
-				},
-				"sap.ui.layout.VerticalLayout": {
-					hideControl: "default"
-				}
-			})
-			.then(function() {
-				this.oRemovePlugin = new RemovePlugin({
-					commandFactory: new CommandFactory()
-				});
-				this.oButton = new Button("button", {text: "Button"});
-				this.oButton1 = new Button("button1", {text: "Button1"});
-				this.oVerticalLayout = new VerticalLayout({
-					content: [this.oButton, this.oButton1]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oRemovePlugin]
+			});
 
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oVerticalLayout],
-					plugins: [this.oRemovePlugin]
-				});
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-					this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
-
-					done();
-				}.bind(this));
+				done();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -454,41 +442,31 @@ function (
 	QUnit.module("Given a designTime and a Layout with 3 Buttons in it, when _getElementToFocus is called...", {
 		beforeEach: function(assert) {
 			var done = assert.async();
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			this.oButton1 = new Button("button1", {text: "Button1"});
+			this.oButton2 = new Button("button2", {text: "Button2"});
+			this.oButton3 = new Button("button3", {text: "Button3"});
+			this.oVerticalLayout = new VerticalLayout({
+				content: [this.oButton1, this.oButton2, this.oButton3]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Button": {
-					hideControl: "default"
-				},
-				"sap.ui.layout.VerticalLayout": {
-					hideControl: "default"
-				}
-			})
-			.then(function() {
-				this.oButton1 = new Button("button1", {text: "Button1"});
-				this.oButton2 = new Button("button2", {text: "Button2"});
-				this.oButton3 = new Button("button3", {text: "Button3"});
-				this.oVerticalLayout = new VerticalLayout({
-					content: [this.oButton1, this.oButton2, this.oButton3]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVerticalLayout]
+			});
 
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oVerticalLayout]
-				});
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-					this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
-					this.oButtonOverlay2 = OverlayRegistry.getOverlay(this.oButton2);
-					this.oButtonOverlay3 = OverlayRegistry.getOverlay(this.oButton3);
-					done();
-				}.bind(this));
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
+				this.oButtonOverlay2 = OverlayRegistry.getOverlay(this.oButton2);
+				this.oButtonOverlay3 = OverlayRegistry.getOverlay(this.oButton3);
+				done();
 			}.bind(this));
 		},
 		afterEach: function () {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test(" with the first button", function (assert) {

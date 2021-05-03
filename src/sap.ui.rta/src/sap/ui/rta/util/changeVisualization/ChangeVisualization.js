@@ -3,41 +3,43 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Control",
-	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
-	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry",
+	"sap/base/util/restricted/_difference",
+	"sap/base/util/deepEqual",
+	"sap/m/ButtonType",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Control",
+	"sap/ui/core/Fragment",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/core/Fragment",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/resource/ResourceModel",
-	"sap/base/util/restricted/_difference",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/base/util/deepEqual",
-	"sap/ui/events/KeyCodes",
-	"sap/m/ButtonType",
-	"sap/ui/dt/ElementUtil"
+	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
+	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
 ], function(
-	Control,
-	ChangeIndicator,
-	ChangeIndicatorRegistry,
+	difference,
+	deepEqual,
+	ButtonType,
 	JsControlTreeModifier,
+	Control,
+	Fragment,
+	OverlayRegistry,
+	ElementUtil,
+	KeyCodes,
+	ChangesUtils,
+	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	Layer,
-	Fragment,
-	JSONModel,
-	ResourceModel,
-	difference,
 	FlUtils,
-	ChangesUtils,
-	OverlayRegistry,
-	deepEqual,
-	KeyCodes,
-	ButtonType,
-	ElementUtil
+	ResourceModel,
+	JSONModel,
+	ChangeIndicator,
+	ChangeIndicatorRegistry
 ) {
 	"use strict";
 
@@ -361,12 +363,17 @@ sap.ui.define([
 				view: FlUtils.getViewForControl(oControl)
 			};
 			var mControl = ChangesUtils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-			return ChangesUtils.getChangeHandler(oChange, mControl, mPropertyBag)
-				.then(function (oChangeHandler) {
-					if (oChangeHandler && typeof oChangeHandler.getChangeVisualizationInfo === "function") {
-						return oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent);
-					}
-				});
+			return ChangesWriteAPI.getChangeHandler({
+				changeType: oChange.getChangeType(),
+				element: mControl,
+				modifier: JsControlTreeModifier,
+				layer: oChange.getLayer()
+			})
+			.then(function (oChangeHandler) {
+				if (oChangeHandler && typeof oChangeHandler.getChangeVisualizationInfo === "function") {
+					return oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent);
+				}
+			});
 		}
 
 		return Promise.resolve();

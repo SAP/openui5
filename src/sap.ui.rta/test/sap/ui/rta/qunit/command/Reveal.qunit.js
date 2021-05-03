@@ -8,14 +8,14 @@ sap.ui.define([
 	"use strict";
 
 	basicCommandTest({
-		commandName: "settings",
-		designtimeActionStructure: "settings"
+		commandName: "reveal",
+		designtimeActionStructure: "reveal"
 	}, {
-		changeType: "settings",
-		content: "myFancyContent"
+		changeType: "unhideControl",
+		revealedElementId: "myFancyRevealedElement"
 	}, {
-		changeType: "settings",
-		content: "myFancyContent"
+		changeType: "unhideControl",
+		revealedElementId: "myFancyRevealedElement"
 	});
 
 	QUnit.done(function () {

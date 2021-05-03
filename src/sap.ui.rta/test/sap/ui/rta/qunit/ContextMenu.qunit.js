@@ -1,33 +1,35 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/uxap/ObjectPageSection",
-	"sap/uxap/ObjectPageSubSection",
-	"sap/uxap/ObjectPageLayout",
-	"sap/ui/rta/RuntimeAuthoring",
 	"qunit/RtaQunitUtils",
-	"sap/ui/fl/Utils",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/write/api/FieldExtensibility",
-	"sap/m/Page",
 	"sap/m/Button",
+	"sap/m/Page",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/changeHandler/PropertyChange",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection"
 ], function(
-	ObjectPageSection,
-	ObjectPageSubSection,
-	ObjectPageLayout,
-	RuntimeAuthoring,
 	RtaQunitUtils,
-	FlexUtils,
-	OverlayRegistry,
-	ChangeRegistry,
-	FieldExtensibility,
-	Page,
 	Button,
+	Page,
+	OverlayRegistry,
+	PropertyChange,
+	ChangesWriteAPI,
+	FieldExtensibility,
+	FlexUtils,
+	RuntimeAuthoring,
 	sinon,
-	jQuery
+	jQuery,
+	ObjectPageLayout,
+	ObjectPageSection,
+	ObjectPageSubSection
 ) {
 	"use strict";
 
@@ -308,38 +310,30 @@ sap.ui.define([
 
 		QUnit.test("when context menu (context menu) is opened on a Control with a defined settings action", function(assert) {
 			var oSettings = this.oRta.getPlugins()["settings"];
-
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.comp.smartform.Group": {
-					changeSettings: "sap/ui/fl/changeHandler/PropertyChange"
-				}
-			})
-				.then(function() {
-					var oGroupDesigntime = {
-						settings: function() {
-							return {
-								changeType: "changeSettings",
-								isEnabled: true,
-								handler: function() {}
-							};
-						}
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves(PropertyChange);
+			var oGroupDesigntime = {
+				settings: function() {
+					return {
+						changeType: "changeSettings",
+						isEnabled: true,
+						handler: function() {}
 					};
-					sandbox.stub(oSettings, "getAction").callsFake(function() {
-						return oGroupDesigntime.settings();
-					});
-					var oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
-					oSettings.deregisterElementOverlay(oGroupOverlay);
-					oSettings.registerElementOverlay(oGroupOverlay);
+				}
+			};
+			sandbox.stub(oSettings, "getAction").callsFake(function() {
+				return oGroupDesigntime.settings();
+			});
+			var oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
+			oSettings.deregisterElementOverlay(oGroupOverlay);
+			oSettings.registerElementOverlay(oGroupOverlay);
 
-					oGroupOverlay.focus();
-					oGroupOverlay.setSelected(true);
-					return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupOverlay).then(function() {
-						var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-						assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
-						assert.equal(oContextMenuControl.getButtons()[oContextMenuControl.getButtons().length - 1].data("id"), "CTX_SETTINGS", "Settings is available");
-					}.bind(this));
-				}.bind(this));
+			oGroupOverlay.focus();
+			oGroupOverlay.setSelected(true);
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupOverlay).then(function() {
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
+				assert.equal(oContextMenuControl.getButtons()[oContextMenuControl.getButtons().length - 1].data("id"), "CTX_SETTINGS", "Settings is available");
+			}.bind(this));
 		});
 
 		QUnit.test("when context menu (context menu) is opened (via keyboard) for a sap.m.Page without title", function(assert) {

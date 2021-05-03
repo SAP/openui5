@@ -285,6 +285,22 @@ sap.ui.define([
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/AddProperty"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
+				}
+			},
+			"command/AddIFrame": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/AddIFrame"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
 				}
 			},
 			"command/AddXML": {
@@ -311,16 +327,26 @@ sap.ui.define([
 					only: ["sap/ui/rta/command/AppDescriptorCommand"]
 				}
 			},
-			"command/CustomAdd": {
+			"command/BindProperty": {
 				group: "Command",
 				coverage: {
-					only: ["sap/ui/rta/command/CustomAdd"]
+					only: ["sap/ui/rta/command/BindProperty"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
 				}
 			},
 			"command/Combine": {
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/Combine"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
 				}
 			},
 			"command/ControlVariantConfigure": {
@@ -357,6 +383,22 @@ sap.ui.define([
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/CreateContainer"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
+				}
+			},
+			"command/CustomAdd": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/CustomAdd"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
 				}
 			},
 			"command/LocalReset": {
@@ -383,30 +425,77 @@ sap.ui.define([
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/Move"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
+				}
+			},
+			"command/Property": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/Property"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
 				}
 			},
 			"command/Remove": {
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/Remove"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
 				}
 			},
 			"command/Rename": {
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/Rename"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
+				}
+			},
+			"command/Reveal": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/Reveal"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
 				}
 			},
 			"command/Settings": {
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/Settings"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
 				}
 			},
 			"command/Split": {
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/Split"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
 				}
 			},
 			"command/Stack": {

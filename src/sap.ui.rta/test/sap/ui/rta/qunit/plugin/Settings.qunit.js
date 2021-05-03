@@ -10,13 +10,13 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/AppDescriptorCommand",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/rta/command/Settings",
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/fl/Utils",
-	'sap/ui/base/ManagedObject',
+	"sap/ui/base/ManagedObject",
 	"sap/base/Log"
 ], function(
 	sinon,
@@ -28,7 +28,7 @@ sap.ui.define([
 	CommandFactory,
 	AppDescriptorCommand,
 	OverlayRegistry,
-	ChangeRegistry,
+	ChangesWriteAPI,
 	PropertyChange,
 	SettingsCommand,
 	SettingsPlugin,
@@ -94,24 +94,24 @@ sap.ui.define([
 
 	QUnit.module("Given a designTime and settings plugin are instantiated", {
 		beforeEach: function() {
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Button": {
-					changeSettings: "sap/ui/fl/changeHandler/PropertyChange"
-				}
-			})
-			.then(function() {
-				this.oCommandStack = new Stack();
-				this.oSettingsPlugin = new SettingsPlugin({
-					commandFactory: new CommandFactory(),
-					commandStack: this.oCommandStack
-				});
-				this.oButton = new Button("button", {text: "Button"});
-				this.oVerticalLayout = new VerticalLayout({
-					content: [this.oButton]
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-			}.bind(this));
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			sandbox.stub(ChangesWriteAPI, "create").resolves({getDefinition: function() {
+				return {
+					support: {}
+				};
+			}});
+			sandbox.stub(ChangesWriteAPI, "apply").resolves({success: true});
+
+			this.oCommandStack = new Stack();
+			this.oSettingsPlugin = new SettingsPlugin({
+				commandFactory: new CommandFactory(),
+				commandStack: this.oCommandStack
+			});
+			this.oButton = new Button("button", {text: "Button"});
+			this.oVerticalLayout = new VerticalLayout({
+				content: [this.oButton]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -333,8 +333,8 @@ sap.ui.define([
 			});
 
 			var oCommandFactory = this.oSettingsPlugin.getCommandFactory();
-			var oGetCommandForSpy = sinon.spy(oCommandFactory, 'getCommandFor');
-			var oFireEventSpy = sinon.spy(this.oSettingsPlugin, 'fireElementModified');
+			var oGetCommandForSpy = sinon.spy(oCommandFactory, "getCommandFor");
+			var oFireEventSpy = sinon.spy(this.oSettingsPlugin, "fireElementModified");
 			var aSelectedOverlays = [oButtonOverlay];
 
 			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton })
@@ -444,7 +444,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 

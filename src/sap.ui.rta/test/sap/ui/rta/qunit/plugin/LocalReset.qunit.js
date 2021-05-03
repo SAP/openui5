@@ -7,18 +7,19 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/m/MessageToast",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	LocalResetPlugin,
 	CommandFactory,
 	VBox,
 	DesignTime,
 	OverlayRegistry,
 	FlUtils,
+	ChangesWriteAPI,
 	LocalResetAPI,
 	JsControlTreeModifier,
 	MessageToast,
@@ -31,7 +32,6 @@ function (
 	QUnit.module("Given a designTime and localReset plugin are instantiated", {
 		beforeEach: function(assert) {
 			var done = assert.async();
-
 			this.oVariantModel = {
 				getCurrentVariantReference: function() {
 					return undefined;
@@ -43,6 +43,7 @@ function (
 				}.bind(this)
 			};
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
 			this.oLocalResetPlugin = new LocalResetPlugin({
 				commandFactory: new CommandFactory()

@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -16,6 +15,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -25,7 +25,6 @@ sap.ui.define([
 	DesignTimeMetadata,
 	CommandSerializer,
 	CommandStack,
-	ChangeRegistry,
 	RtaQunitUtils,
 	Layer,
 	flUtils,
@@ -34,6 +33,7 @@ sap.ui.define([
 	Input,
 	Panel,
 	PersistenceWriteAPI,
+	ChangesWriteAPI,
 	VariantManagementState,
 	sinon
 ) {
@@ -130,47 +130,32 @@ sap.ui.define([
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		beforeEach: function() {
-			var oChangeRegistry = ChangeRegistry.getInstance();
 			return RtaQunitUtils.clear(oMockedAppComponent)
-				.then(function() {
-					oChangeRegistry.registerControlsForChanges({
-						"sap.m.Input": {
-							hideControl: {
-								completeChangeContent: function() {
-								},
-								applyChange: function() {
-									return Promise.resolve();
-								},
-								revertChange: function() {
-								}
+			.then(function() {
+				sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+				this.oCommandStack = new CommandStack();
+				this.oInput1 = new Input("input1");
+				this.oInput2 = new Input("input2");
+				this.oPanel = new Panel({
+					id: "panel",
+					content: [this.oInput1, this.oInput2]
+				});
+
+				this.oInputDesignTimeMetadata = new DesignTimeMetadata({
+					data: {
+						actions: {
+							remove: {
+								changeType: "hideControl"
 							}
 						}
-					});
-				})
-				.then(function() {
-					this.oCommandStack = new CommandStack();
-					this.oInput1 = new Input("input1");
-					this.oInput2 = new Input("input2");
-					this.oPanel = new Panel({
-						id: "panel",
-						content: [this.oInput1, this.oInput2]
-					});
+					}
+				});
 
-					this.oInputDesignTimeMetadata = new DesignTimeMetadata({
-						data: {
-							actions: {
-								remove: {
-									changeType: "hideControl"
-								}
-							}
-						}
-					});
-
-					this.oSerializer = new CommandSerializer({
-						commandStack: this.oCommandStack,
-						rootControl: this.oPanel
-					});
-				}.bind(this));
+				this.oSerializer = new CommandSerializer({
+					commandStack: this.oCommandStack,
+					rootControl: this.oPanel
+				});
+			}.bind(this));
 		},
 		afterEach: function() {
 			return this.oSerializer.saveCommands().then(function() {

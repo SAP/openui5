@@ -3,11 +3,11 @@
 sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormLayout",
@@ -19,15 +19,14 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	VerticalLayout,
 	DesignTime,
+	ChangesWriteAPI,
 	FlUtils,
 	Utils,
 	CommandFactory,
 	OverlayRegistry,
-	ChangeRegistry,
 	FormContainer,
 	Form,
 	FormLayout,
@@ -92,51 +91,40 @@ function(
 		beforeEach: function(assert) {
 			var done = assert.async();
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.layout.form.FormContainer": {
-					renameGroup: {
-						completeChangeContent: function() {},
-						applyChange: function() {},
-						revertChange: function() {}
-					}
-				}
-			})
-			.then(function() {
-				this.oRenamePlugin = new RenamePlugin({
-					commandFactory: new CommandFactory()
-				});
-				this.oFormContainer0 = new FormContainer("formContainer0", {});
-				this.oFormContainer = new FormContainer("formContainer", {
-					title: new Title("title", {
-						text: "title"
-					})
-				});
-				this.oForm = new Form("form", {
-					formContainers: [this.oFormContainer0, this.oFormContainer],
-					layout: new FormLayout({
-					})
-				});
-				this.oVerticalLayout = new VerticalLayout({
-					content: [this.oForm]
-				}).placeAt("qunit-fixture");
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			this.oRenamePlugin = new RenamePlugin({
+				commandFactory: new CommandFactory()
+			});
+			this.oFormContainer0 = new FormContainer("formContainer0", {});
+			this.oFormContainer = new FormContainer("formContainer", {
+				title: new Title("title", {
+					text: "title"
+				})
+			});
+			this.oForm = new Form("form", {
+				formContainers: [this.oFormContainer0, this.oFormContainer],
+				layout: new FormLayout({
+				})
+			});
+			this.oVerticalLayout = new VerticalLayout({
+				content: [this.oForm]
+			}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+			sap.ui.getCore().applyChanges();
 
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oForm],
-					plugins: [this.oRenamePlugin]
-				});
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oForm],
+				plugins: [this.oRenamePlugin]
+			});
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
-					this.oFormContainerOverlay0 = OverlayRegistry.getOverlay(this.oFormContainer0);
-					this.oFormContainerOverlay0.setSelectable(true);
-					this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
-					this.oFormContainerOverlay.setSelectable(true);
-					done();
-				}, this);
-			}.bind(this));
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+				this.oFormContainerOverlay0 = OverlayRegistry.getOverlay(this.oFormContainer0);
+				this.oFormContainerOverlay0.setSelectable(true);
+				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
+				this.oFormContainerOverlay.setSelectable(true);
+				done();
+			}, this);
 		},
 		afterEach: function() {
 			sandbox.restore();

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
@@ -26,7 +26,7 @@ sap.ui.define([
 	DtUtil,
 	CommandFactory,
 	OverlayRegistry,
-	ChangeRegistry,
+	ChangesWriteAPI,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
@@ -89,61 +89,50 @@ sap.ui.define([
 				});
 			});
 
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.uxap.ObjectPageLayout": {
-					addIFrame: {
-						completeChangeContent: function() {},
-						applyChange: function() {},
-						revertChange: function() {}
-					}
-				}
-			})
-			.then(function() {
-				this.oAddIFrame = new AddIFramePlugin({
-					commandFactory: new CommandFactory()
-				});
-				this.oObjectPageSection = new ObjectPageSection(oMockedViewWithStableId.createId("section"), {
-					title: "section title",
-					subSections: [
-						new ObjectPageSubSection("subSection", {
-							title: "sub section title",
-							blocks: [new VerticalLayout()]
-						})
-					]
-				});
-				this.oObjectPageLayout = new ObjectPageLayout(oMockedViewWithStableId.createId("opl"), {
-					sections: [this.oObjectPageSection]
-				});
-				this.oButton = new Button(oMockedViewWithStableId.createId("button"), {
-					text: "buttonTitle"
-				});
-				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-					content: [this.oObjectPageLayout, this.oButton]
-				}).placeAt("qunit-fixture");
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			this.oAddIFrame = new AddIFramePlugin({
+				commandFactory: new CommandFactory()
+			});
+			this.oObjectPageSection = new ObjectPageSection(oMockedViewWithStableId.createId("section"), {
+				title: "section title",
+				subSections: [
+					new ObjectPageSubSection("subSection", {
+						title: "sub section title",
+						blocks: [new VerticalLayout()]
+					})
+				]
+			});
+			this.oObjectPageLayout = new ObjectPageLayout(oMockedViewWithStableId.createId("opl"), {
+				sections: [this.oObjectPageSection]
+			});
+			this.oButton = new Button(oMockedViewWithStableId.createId("button"), {
+				text: "buttonTitle"
+			});
+			this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
+				content: [this.oObjectPageLayout, this.oButton]
+			}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+			sap.ui.getCore().applyChanges();
 
-				this.sNewControlID = oMockedViewWithStableId.createId(uid());
-				this.oNewObjectPageSection = new ObjectPageSection(this.sNewControlID);
-				this.oObjectPageLayout.addSection(this.oNewObjectPageSection);
+			this.sNewControlID = oMockedViewWithStableId.createId(uid());
+			this.oNewObjectPageSection = new ObjectPageSection(this.sNewControlID);
+			this.oObjectPageLayout.addSection(this.oNewObjectPageSection);
 
-				this.oDesignTime = new DesignTime({
-					rootElements: [this.oVerticalLayout],
-					plugins: [this.oAddIFrame]
-				});
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oVerticalLayout],
+				plugins: [this.oAddIFrame]
+			});
 
-				var done = assert.async();
+			var done = assert.async();
 
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-					this.oObjectPageLayoutOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
-					this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
-					this.oNewObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oNewObjectPageSection);
-					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oObjectPageLayoutOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
+				this.oObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection);
+				this.oNewObjectPageSectionOverlay = OverlayRegistry.getOverlay(this.oNewObjectPageSection);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
-					done();
-				}.bind(this));
+				done();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -441,20 +430,9 @@ sap.ui.define([
 			}.bind(this));
 			sandbox.stub(this.oObjectPageSectionOverlay, "getRelevantContainer").returns(this.oObjectPageSection);
 
-			// changeOnRelevantContainer means the action has to be registered on the parent
-			return ChangeRegistry.getInstance().registerControlsForChanges({
-				"sap.ui.layout.VerticalLayout": {
-					addIFrame: {
-						completeChangeContent: function() {},
-						applyChange: function() {},
-						revertChange: function() {}
-					}
-				}
-			}).then(function() {
-				this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
-				this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
-			}.bind(this))
-			.then(DtUtil.waitForSynced(this.oDesignTime)())
+			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
+			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
+			return DtUtil.waitForSynced(this.oDesignTime)()
 			.then(function() {
 				return this.oAddIFrame._isEditableCheck(this.oObjectPageSectionOverlay, true);
 			}.bind(this))
