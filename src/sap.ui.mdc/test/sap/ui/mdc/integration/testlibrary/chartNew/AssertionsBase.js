@@ -26,7 +26,7 @@ sap.ui.define([
          * Assertion to check that there is a legend visible on the screen for given mdc chart.
          * @param {string} sId Id of the chart to be checked for a visible legend
          */
-		iShouldSeeALegend: function(sId) {
+		iShouldSeeALegendOnTheChart: function(sId) {
 
 		},
 
@@ -34,7 +34,7 @@ sap.ui.define([
          * Assertion to check that there is no legend visible on the screen for given mdc chart.
          * @param {string} sId Id of the chart to be checked for a visible legend
          */
-		iShouldSeeNoLegend: function(sId) {
+		iShouldSeeNoLegendOnTheChart: function(sId) {
 
 		},
 
@@ -70,7 +70,7 @@ sap.ui.define([
          * @param {array} aCheckDrillStack Drillstack to check for
          * @param {string} sChartId Id of the mdc chart
          */
-		iSeeTheDrillStack: function(aCheckDrillStack, sChartId) {
+		iSeeTheDrillStackOnTheChart: function(aCheckDrillStack, sChartId) {
 
 		},
 

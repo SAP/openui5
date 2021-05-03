@@ -14,7 +14,7 @@ sap.ui.define([
          * Clicks on the "Zoom In" button in the toolbar of a mdc chart.
          * @param {string} sId The id of the mdc chart
          */
-        iClickOnZoomIn : function(sId){
+        iClickOnZoomInOnTheChart : function(sId){
             return this.waitFor({
                 id: sId,
                 success: function(oChart){
@@ -28,7 +28,7 @@ sap.ui.define([
          * Clicks on the "Zoom Out" button in the toolbar of a mdc chart.
          * @param {string} sId The id of the mdc chart
          */
-        iClickOnZoomOut : function(sId){
+        iClickOnZoomOutOnTheChart : function(sId){
             return this.waitFor({
                 id: sId,
                 success: function(oChart){
@@ -42,7 +42,7 @@ sap.ui.define([
          * Clicks on the "Legend" toggle button in the toolbar of a mdc chart.
          * @param {string} sId The id of the mdc chart
          */
-        iClickOnTheLegendToggleButton: function(sId){
+        iClickOnTheLegendToggleButtonOnTheChart: function(sId){
             return this.waitFor({
                 id: sId,
                 success: function(oChart){
@@ -56,7 +56,7 @@ sap.ui.define([
          * Clicks on the "Show Details" button in the toolbar of a mdc chart.
          * @param {*} sId The id of the mdc chart
          */
-        iClickOnTheSelectionDetailsButton: function(sId){
+        iClickOnTheSelectionDetailsButtonOnTheChart: function(sId){
             return this.waitFor({
                 id: sId,
                 success: function(oChart){
@@ -70,7 +70,7 @@ sap.ui.define([
          * Clicks on the "Drilldown" button in the toolbar of a mdc chart.
          * @param {string} sId The id of the mdc chart.
          */
-        iClickOnTheDrillDownButton: function(sId){
+        iClickOnTheDrillDownButtonOnTheChart: function(sId){
             return this.waitFor({
                 id: sId,
                 success: function(oChart){
@@ -84,7 +84,7 @@ sap.ui.define([
          * Clicks on the "Chart Type" button in the toolbar of a mdc chart.
          * @param {string} sId The id of the mdc chart.
          */
-        iClickOnTheChartTypeButton: function(sId){
+        iClickOnTheChartTypeButtonOnTheChart: function(sId){
             return this.waitFor({
                 id: sId,
                 success: function(oChart){
@@ -98,7 +98,7 @@ sap.ui.define([
          * Clicks on the "Sort" button in the toolbar of a mdc chart.
          * @param {string} sId The id of the mdc chart.
          */
-        iClickOnTheSortButton: function(sId){
+        iClickOnTheSortButtonOnTheChart: function(sId){
             return this.waitFor({
                 id: sId,
                 success: function(oChart){
@@ -112,7 +112,7 @@ sap.ui.define([
          * Clicks on the "Personalisation" button in the toolbar of a mdc chart.
          * @param {string} sId The id of the mdc chart.
          */
-        iClickOnThePersonalisationButton: function(sId){
+        iClickOnThePersonalisationButtonOnTheChart: function(sId){
             return this.waitFor({
                 id: sId,
                 success: function(oChart){
@@ -193,6 +193,15 @@ sap.ui.define([
          * @param {string} sId Id of the mdc chart
          */
         iSelectTheDatapointOnTheChart: function (aDataPoints, sId){
+
+        },
+
+        /**
+         * Selectes given categories (dimensions) for the given mdc chart
+         * @param {object} oCategories Categories to select
+         * @param {string} sId Id of the mdc chart
+         */
+        iSelectTheCategoriesOnTheChart: function (oCategories, sId){
 
         }
     };

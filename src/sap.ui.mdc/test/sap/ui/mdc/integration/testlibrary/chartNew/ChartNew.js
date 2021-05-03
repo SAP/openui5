@@ -4,8 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/mdc/integration/testlibrary/chartNew/Actions",
-	"sap/ui/mdc/integration/testlibrary/chartNew/Assertions"
+	"sap/ui/mdc/integration/testlibrary/chartNew/ActionsViz",
+	"sap/ui/mdc/integration/testlibrary/chartNew/AssertionsViz"
 ], function(
 	Opa5,
 	ChartActions,

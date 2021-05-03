@@ -18,6 +18,20 @@ sap.ui.define([
                     oMDCChart._getInnerChart().setSelectedDataPoints(aDataPoints);
                 }
             });
+        },
+
+        /**
+         * Selectes given categories (dimensions) for the given mdc chart
+         * @param {object} oCategories Categories to select (see sap.chart.Chart#setSelectedCategories for more information)
+         * @param {string} sId Id of the mdc chart
+         */
+         iSelectTheCategoriesOnTheChart: function (oCategories, sId){
+            return this.waitFor({
+                id: sId,
+                success: function(oMDCChart){
+                        oMDCChart._getInnerChart().setSelectedCategories(oCategories);
+                }
+            });
         }
     };
 
