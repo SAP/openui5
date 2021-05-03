@@ -50,7 +50,8 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			return this._alignTargetsInfo(vTargets).reduce(function(oPromise, oTargetInfo) {
 				var oTargetCreateInfo = {
 					prefix: oTargetInfo.prefix,
-					propagateTitle: oTargetInfo.propagateTitle || false
+					propagateTitle: oTargetInfo.propagateTitle || false,
+					ignoreInitialHash: oTargetInfo.ignoreInitialHash
 				};
 
 				// gather view infos while processing Promise chain
