@@ -9501,15 +9501,16 @@ sap.ui.define([
 				code : "top",
 				message : "Error occurred while processing the request",
 				details : [{
-					code : "bound",
-					message : "Value must be greater than 0",
 					"@Common.longtextUrl" : "../Messages(1)/LongText",
 					"@Common.numericSeverity" : 4,
+					code : "bound",
+					message : "Value must be greater than 0",
 					target : "Quantity"
 				}, {
+					"@Common.longtextUrl" : "", // must be ignored
+					"@Common.numericSeverity" : 3,
 					code : "unbound",
-					message : "Some unbound warning",
-					"@Common.numericSeverity" : 3
+					message : "Some unbound warning"
 				}]
 			}),
 			oExpectedMessage = {
@@ -9572,15 +9573,16 @@ sap.ui.define([
 							originalMessage : {
 								code : "top",
 								details : [{
-									code : "bound",
-									message : "Value must be greater than 0",
 									"@Common.longtextUrl" : "../Messages(1)/LongText",
 									"@Common.numericSeverity" : 4,
+									code : "bound",
+									message : "Value must be greater than 0",
 									target : "Quantity"
 								}, {
+									"@Common.longtextUrl" : "",
+									"@Common.numericSeverity" : 3,
 									code : "unbound",
-									message : "Some unbound warning",
-									"@Common.numericSeverity" : 3
+									message : "Some unbound warning"
 								}],
 								message : "Error occurred while processing the request"
 							}
@@ -9593,6 +9595,7 @@ sap.ui.define([
 						technicalDetails : {
 							httpStatus : 500, // CPOUI5ODATAV4-428
 							originalMessage : {
+								"@Common.longtextUrl" : "",
 								"@Common.numericSeverity" : 3,
 								code : "unbound",
 								message : "Some unbound warning"

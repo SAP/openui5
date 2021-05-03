@@ -1738,7 +1738,8 @@ sap.ui.define([
 				if (sProperty[0] === '@') {
 					if (sProperty.endsWith(".numericSeverity")) {
 						oReportMessage.numericSeverity = oMessage[sProperty];
-					} else if (sProperty.endsWith(".longtextUrl") && oError.requestUrl) {
+					} else if (sProperty.endsWith(".longtextUrl") && oError.requestUrl
+							&& oMessage[sProperty]) {
 						oReportMessage.longtextUrl =
 							_Helper.makeAbsolute(oMessage[sProperty], oError.requestUrl);
 					}

@@ -1001,6 +1001,7 @@ sap.ui.define([
 						"message" : "Value must be greater than 0",
 						"target" : "Quantity"
 					}, {
+						"@Common.longtextUrl" : "", // must be ignored
 						"@Common.numericSeverity" : 3,
 						"code" : "unbound",
 						"message" : "some unbound message"

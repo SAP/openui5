@@ -205,17 +205,17 @@ sap.ui.define([
 
 		/**
 		 * Activates a sinon fake server in the given sandbox. The fake server responds to those
-		 * requests given in the fixture, and to all DELETE, PATCH and POST requests regardless
-		 * of the path. It is automatically restored when the sandbox is restored.
+		 * requests given in the fixture, and to all DELETE, MERGE, PATCH, and POST requests
+		 * regardless of the path. It is automatically restored when the sandbox is restored.
 		 *
 		 * The function uses <a href="http://sinonjs.org/docs/">Sinon.js</a> and expects that it
 		 * has been loaded.
 		 *
 		 * POST requests ending on "/$batch" are handled automatically. They are expected to be
-		 * multipart-mime requests where each part is a DELETE, GET, PATCH, MERGE or POST request.
+		 * multipart-mime requests where each part is a DELETE, GET, PATCH, MERGE, or POST request.
 		 * The response has a multipart-mime message containing responses to these inner requests.
-		 * If an inner request is not a DELETE, a PATCH or a POST and it is not found in the
-		 * fixture, or its message is not JSON, it is responded with an error code.
+		 * If an inner request is not a DELETE, a MERGE, a PATCH, or a POST and it is not found in
+		 * the fixture, or its message is not JSON, it is responded with an error code.
 		 * The batch itself is always responded with code 200.
 		 *
 		 * "$batch" requests with an OData change set are supported, too. For each request in the
@@ -226,8 +226,8 @@ sap.ui.define([
 		 * All other POST requests with no matching response in the fixture are responded with code
 		 * 200, the body is simply echoed.
 		 *
-		 * DELETE and PATCH requests with no matching response in the fixture are responded with
-		 * code 204 ("No Content").
+		 * DELETE, MERGE, and PATCH requests with no matching response in the fixture are responded
+		 * with code 204 ("No Content").
 		 *
 		 * Direct HEAD requests with no matching response in the fixture are responded with code 200
 		 * and no content.
@@ -268,8 +268,12 @@ sap.ui.define([
 		 *    exactly the same as in the fixture and may additionally contain a method
 		 *    <code>buildResponse(aMatch, oResponse)</code> which gets passed the match object and
 		 *    the response to allow modification before sending.
+		 * @param {string} [sServiceUrl]
+		 *   The service URL which determines a prefix for all requests the fake server responds to;
+		 *   it responds with an error for requests not given in the fixture, except DELETE, MERGE,
+		 *   PATCH, or POST. A missing URL is ignored.
 		 */
-		useFakeServer : function (oSandbox, sBase, mFixture, aRegExps) {
+		useFakeServer : function (oSandbox, sBase, mFixture, aRegExps, sServiceUrl) {
 			// a map from "method path" incl. service URL to a list of response objects with
 			// properties code, headers, ifMatch and message
 			var aRegexpResponses, mUrlToResponses;
@@ -697,10 +701,15 @@ sap.ui.define([
 				sinon.xhr.supportsCORS = jQuery.support.cors;
 				sinon.FakeXMLHttpRequest.useFilters = true;
 				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
+					var bOurs = getMatchingResponse(sMethod, sUrl)
+						|| (sServiceUrl
+							? sUrl.startsWith(sServiceUrl) || rBatch.test(sUrl)
+							: sMethod === "DELETE" || sMethod === "HEAD" || sMethod === "MERGE"
+								|| sMethod === "PATCH" || sMethod === "POST"
+							);
+
 					// must return true if the request is NOT processed by the fake server
-					return sMethod !== "DELETE" && sMethod !== "HEAD" && sMethod !== "MERGE"
-						&& sMethod !== "PATCH"	&& sMethod !== "POST"
-						&& !getMatchingResponse(sMethod, sUrl);
+					return !bOurs;
 				});
 			}
 
@@ -936,7 +945,7 @@ sap.ui.define([
 				mResultingFixture[sMethod + " " + sUrl] = mFixture[sRequest];
 			});
 			TestUtils.useFakeServer(oSandbox, sSourceBase || "sap/ui/core/qunit/odata/v4/data",
-				mResultingFixture, aRegExps);
+				mResultingFixture, aRegExps, sFilterBase !== "/" ? sFilterBase : undefined);
 		}
 	};
 
