@@ -181,7 +181,6 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormOverlay).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
-				assert.equal(oContextMenuControl.getButtons().length, 1, "1 Menu Buttons is available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_CREATE_CHILD_CONTAINER", "we can create group");
 			}.bind(this));
 		});
