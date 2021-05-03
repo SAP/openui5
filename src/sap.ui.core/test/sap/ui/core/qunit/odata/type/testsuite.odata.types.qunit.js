@@ -2,7 +2,8 @@ sap.ui.define(function () {
 	"use strict";
 
 	return {
-		name : "TestSuite for sap.ui.core: GTP testcase CORE/ODATA/TYPES",
+		name : "TestSuite for sap.ui.core: GTP testcase CORE/ODATA/TYPES and"
+			+ " 'Currency and unit amount in two fields'",
 		defaults : {
 			group : "OData Types",
 			qunit : {
@@ -22,6 +23,9 @@ sap.ui.define(function () {
 			}
 		},
 		tests : {
+			// *************************************************************************
+			// Tests for sap.ui.core: GTP testcase CORE/ODATA/TYPES
+			// *************************************************************************
 			"Boolean" : {},
 			"Currency" : {},
 			"Date" : {},
@@ -39,7 +43,26 @@ sap.ui.define(function () {
 			"Time" : {},
 			"TimeOfDay" : {},
 			"Unit" : {},
-			"UnitMixin" : {}
+			"UnitMixin" : {},
+
+			// *************************************************************************
+			// OPA Test for 'Currency and unit amount in two fields'
+			// *************************************************************************
+			"OPA.TwoFields" : {
+				autostart : false,
+				loader : {
+					paths : {
+						"sap/ui/core/sample" : "test-resources/sap/ui/core/demokit/sample",
+						"sap/ui/core/internal/samples" :
+							"test-resources/sap/ui/core/internal/samples"
+					}
+				},
+				module : ["test-resources/sap/ui/core/internal/samples/odata/twoFields/Opa.qunit"],
+				title : "OPA test sap.ui.core.internal.samples.odata.twoFields",
+				ui5 : {
+					language : "en-US"
+				}
+			}
 		}
 	};
 });
