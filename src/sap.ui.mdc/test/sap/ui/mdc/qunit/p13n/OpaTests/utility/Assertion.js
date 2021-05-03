@@ -245,7 +245,7 @@ sap.ui.define([
 						var oSelectedItem = aSelect[iIndex].getSelectedItem();
 						Opa5.assert.equal(vItems.length, aSelect.length, "Correct amount of sorters");
 						Opa5.assert.equal(oSelectedItem.getText(), oItem.p13nItem, "Sorter " + oItem.p13nItem + " is present");
-						var bDesc = aSelect[0].getParent().getItems()[1].getSelectedKey() === "desc";
+						var bDesc = aSelect[0].getParent().getContent()[1].getSelectedKey() === "desc";
 						Opa5.assert.equal(bDesc, oItem.descending, "Correct sortorder " + oItem.descending ? "Descending" : "Ascending" + " provided");
 					}
 				});

@@ -504,14 +504,15 @@ sap.ui.define([
 		constructor: function() {
 			this._oTableReady = new Deferred();
 			this._oFullInitialize = new Deferred();
-			Control.apply(this, arguments);
-			this.bCreated = true;
-			this._doOneTimeOperations();
-			this._initializeContent();
 
 			//Note: parameter should be removed once the new p13n is the default
 			var oURLParams = new SAPUriParameters(window.location.search);
 			this._bNewP13n = oURLParams.getAll("sap-ui-xx-mdcTableP13n").length > 0;
+
+			Control.apply(this, arguments);
+			this.bCreated = true;
+			this._doOneTimeOperations();
+			this._initializeContent();
 		},
 		renderer: {
 			apiVersion: 2,

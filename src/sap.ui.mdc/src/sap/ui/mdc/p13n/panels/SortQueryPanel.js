@@ -2,12 +2,9 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "./QueryPanel", "sap/m/Text", "sap/m/List", "sap/m/SegmentedButton", "sap/m/SegmentedButtonItem", "sap/m/VBox", "sap/m/library"
-], function (QueryPanel, Text, List, SegmentedButton, SegmentedButtonItem, VBox, mLibrary) {
+    "./QueryPanel", "sap/m/Text", "sap/m/SegmentedButton", "sap/m/SegmentedButtonItem", "sap/ui/layout/Grid", "sap/ui/layout/GridData"
+], function (QueryPanel, Text, SegmentedButton, SegmentedButtonItem, Grid, GridData) {
     "use strict";
-
-    // shortcut for sap.m.FlexJustifyContent
-	var FlexJustifyContent = mLibrary.FlexJustifyContent;
 
     /**
      * Constructor for a new SortQueryPanel. The SortQueryPanel can be used
@@ -35,23 +32,18 @@ sap.ui.define([
 
     SortQueryPanel.prototype._createRemoveButton = function () {
         var oRemvoeBtn = QueryPanel.prototype._createRemoveButton.apply(this, arguments);
-        oRemvoeBtn.addStyleClass("sapUiSmallMarginBegin");
+        oRemvoeBtn.setLayoutData(new GridData({
+            span: "XL3 L3 M3 S4"//on "S" the Asc/Desc text is invisible, we need to increase the size the
+        }));
         return oRemvoeBtn;
-    };
-
-    SortQueryPanel.prototype._getAdditionalQueryRowContent = function (oItem) {
-
-        //Enhance row with sort specific controls (Segmented Button + sort order text)
-        var oSortOrderSwitch = this._createOrderSwitch(oItem.name, oItem.descending);
-        var oSortOrderText = this._createSortOrderText(oItem.descending);
-
-        return [oSortOrderSwitch, oSortOrderText];
-
     };
 
     SortQueryPanel.prototype._createOrderSwitch = function (sKey, bDesc) {
         var oSortOrderSwitch = new SegmentedButton({
             enabled: sKey ? true : false,
+            layoutData: new GridData({
+                span: "XL2 L2 M2 S4" //on "S" the Asc/Desc text is invisible, we need to increase the size then
+            }),
             items: [
                 new SegmentedButtonItem({
                     key: "asc",
@@ -64,13 +56,13 @@ sap.ui.define([
             ],
             select: function (oEvt) {
                 var sSortOrder = oEvt.getParameter("key");
-                var oText = oEvt.getSource().getParent().getItems()[2].getItems()[0];
+                var oText = oEvt.getSource().getParent().getContent()[2];
                 oText.setText(this._getSortOrderText(sSortOrder === "desc"));
-                var sKey = oEvt.oSource.getParent().getItems()[0].getSelectedItem().getKey();
+                var sKey = oEvt.oSource.getParent().getContent()[0].getSelectedItem().getKey();
 
                 this._changeOrder(sKey, sSortOrder == "desc");
             }.bind(this)
-        }).addStyleClass("sapUiSmallMarginEnd");
+        });
 
         oSortOrderSwitch.setSelectedItem(bDesc ? oSortOrderSwitch.getItems()[1] : oSortOrderSwitch.getItems()[0]);
 
@@ -78,16 +70,30 @@ sap.ui.define([
     };
 
     SortQueryPanel.prototype._createSortOrderText = function (bDesc) {
-        var oSortOrderText = new VBox({
-            width: "40%",
-            justifyContent: FlexJustifyContent.Center,
-            items: [
-                new Text({
-                    text: this._getSortOrderText(bDesc)
-                })
+        return new Text({
+            layoutData: new GridData({
+                span: "XL3 L3 M3 S3",
+                visibleS: false
+            }),
+            text: this._getSortOrderText(bDesc)
+        }).addStyleClass("sapUiTinyMarginTop");
+    };
+
+    SortQueryPanel.prototype._createQueryRowGrid = function(oItem) {
+        //Enhance row with sort specific controls (Segmented Button + sort order text)
+        var oSelect = this._createKeySelect(oItem.name);
+        var oSortOrderSwitch = this._createOrderSwitch(oItem.name, oItem.descending);
+        var oSortOrderText = this._createSortOrderText(oItem.descending);
+
+        return new Grid({
+            containerQuery: true,
+            defaultSpan: "XL4 L4 M4 S4",
+            content: [
+                oSelect,
+                oSortOrderSwitch,
+                oSortOrderText
             ]
-        });
-        return oSortOrderText;
+        }).addStyleClass("sapUiTinyMargin");
     };
 
     SortQueryPanel.prototype._selectKey = function(oEvt) {
@@ -95,7 +101,7 @@ sap.ui.define([
         //Enable SegmentedButton
         var oListItem = oEvt.getSource().getParent().getParent();
         var sNewKey = oEvt.getParameter("selectedItem").getKey();
-        oListItem.getContent()[0].getItems()[1].setEnabled(sNewKey !== this.NONE_KEY);
+        oListItem.getContent()[0].getContent()[1].setEnabled(sNewKey !== this.NONE_KEY);
     };
 
     SortQueryPanel.prototype._getSortOrderText = function(bDesc) {
@@ -109,7 +115,6 @@ sap.ui.define([
 
         aItems[0].descending = bDesc;
     };
-
 
     return SortQueryPanel;
 

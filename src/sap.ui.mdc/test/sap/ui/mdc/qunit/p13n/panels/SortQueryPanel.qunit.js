@@ -48,16 +48,16 @@ sap.ui.define([
 
     QUnit.test("Check initial sortrow amount", function(assert){
         assert.equal(this.oSortQueryPanel._oListControl.getItems().length, 3, "two initial rows + 1 empty row created");
-        assert.equal(this.oSortQueryPanel._oListControl.getItems()[0].getContent()[0].getItems()[0].getSelectedKey(), "key1", "correct key set");
-        assert.equal(this.oSortQueryPanel._oListControl.getItems()[1].getContent()[0].getItems()[0].getSelectedKey(), "key2", "correct key set");
-        assert.equal(this.oSortQueryPanel._oListControl.getItems()[2].getContent()[0].getItems()[0].getSelectedKey(), "$_none", "correct key set");
+        assert.equal(this.oSortQueryPanel._oListControl.getItems()[0].getContent()[0].getContent()[0].getSelectedKey(), "key1", "correct key set");
+        assert.equal(this.oSortQueryPanel._oListControl.getItems()[1].getContent()[0].getContent()[0].getSelectedKey(), "key2", "correct key set");
+        assert.equal(this.oSortQueryPanel._oListControl.getItems()[2].getContent()[0].getContent()[0].getSelectedKey(), "$_none", "correct key set");
 	});
 
 
     QUnit.test("Check sort switch (ascending <> descending)", function(assert){
         var oFirstSortRow = this.oSortQueryPanel._oListControl.getItems()[0]; //key1
-        var oSegmentedButton = oFirstSortRow.getContent()[0].getItems()[1];
-        var oSortOrderText = oFirstSortRow.getContent()[0].getItems()[2].getItems()[0];
+        var oSegmentedButton = oFirstSortRow.getContent()[0].getContent()[1];
+        var oSortOrderText = oFirstSortRow.getContent()[0].getContent()[2];
 
         //check initial state
         assert.equal(oSortOrderText.getText(), "Ascending", "Correct sort order text");

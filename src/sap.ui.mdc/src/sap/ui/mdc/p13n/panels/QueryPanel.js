@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "./BasePanel", "sap/ui/core/Item", "sap/m/CustomListItem", "sap/m/Select", "sap/m/List", "sap/m/HBox", "sap/m/library", "sap/m/Button"
-], function (BasePanel, Item, CustomListItem, Select, List, HBox, mLibrary, Button) {
+    "sap/ui/layout/Grid", "./BasePanel", "sap/ui/core/Item", "sap/m/CustomListItem", "sap/m/Select", "sap/m/List", "sap/m/HBox", "sap/m/library", "sap/m/Button"
+], function (Grid, BasePanel, Item, CustomListItem, Select, List, HBox, mLibrary, Button) {
     "use strict";
 
     /**
@@ -75,6 +75,15 @@ sap.ui.define([
         });
     };
 
+    QueryPanel.prototype._updateEnableOfMoveButtons = function(oTableItem, bFocus) {
+        BasePanel.prototype._updateEnableOfMoveButtons.apply(this, arguments);
+
+        //The last item is always the "$_none" field, check if its the item before, if yes do not allow to reorder it below
+        if (this._oListControl.getItems().indexOf(oTableItem) === (this._oListControl.getItems().length - 2)) {
+            this._getMoveDownButton().setEnabled(false);
+        }
+    };
+
     QueryPanel.prototype._createInnerListControl = function () {
         return new List(this.getId() + "-innerP13nList", {
             itemPress: [this._onItemPressed, this],
@@ -83,7 +92,7 @@ sap.ui.define([
     };
 
     QueryPanel.prototype._getModelEntryForRow = function(oRow) {
-        var sKey = oRow.getContent()[0].getItems()[0]._key;
+        var sKey = oRow.getContent()[0].getContent()[0]._key;
         var oField = this.getP13nModel().getProperty("/items").find(function (o) {
             return o.name == sKey;
         });
@@ -91,12 +100,12 @@ sap.ui.define([
     };
 
     QueryPanel.prototype._getAvailableItems = function () {
-        var aSortItems = this.getP13nModel().getProperty("/items");
+        var aItems = this.getP13nModel().getProperty("/items");
 
-        var aSortable = [new Item({ key: this.NONE_KEY, text: this.getResourceText("sort.PERSONALIZATION_DIALOG_OPTION_NONE") })];
+        var aAvailableItems = [new Item({ key: this.NONE_KEY, text: this.getResourceText("sort.PERSONALIZATION_DIALOG_OPTION_NONE") })];
 
-        aSortItems.forEach(function (oNonPresent, iIndex) {
-            aSortable.push(new Item({
+        aItems.forEach(function (oNonPresent, iIndex) {
+            aAvailableItems.push(new Item({
                 key: oNonPresent.name,
                 text: oNonPresent.label,
                 enabled: {
@@ -108,7 +117,7 @@ sap.ui.define([
             }));
         }.bind(this));
 
-        return aSortable;
+        return aAvailableItems;
     };
 
     QueryPanel.prototype._getMoveDownButton = function() {
@@ -127,7 +136,7 @@ sap.ui.define([
         var aItems = [];
         this._oListControl.getItems().forEach(function (oItem) {
 
-            var sKey = oItem.getContent()[0].getItems()[0]._key;
+            var sKey = oItem.getContent()[0].getContent()[0]._key;
             if (sKey) {
                 var oField = this.getP13nModel().getProperty("/items").find(function (o) {
                     return o.name == sKey;
@@ -143,16 +152,12 @@ sap.ui.define([
 
         oItem = oItem ? oItem : {name: null, descending: null};
 
-        var oSortSelect = this._createKeySelect(oItem.name);
+        var oQueryRowGrid = this._createQueryRowGrid(oItem);
 
         var oRow = new CustomListItem({
             type: ListItemType.Active,
             content: [
-                new HBox({
-                    items: [
-                        oSortSelect
-                    ]
-                })
+                oQueryRowGrid
             ]
         });
 
@@ -160,25 +165,32 @@ sap.ui.define([
             this._addHover(oRow);
         }
 
-        this._getAdditionalQueryRowContent(oItem).forEach(function(oContent){
-            oRow.getContent()[0].addItem(oContent);
-        });
-
-        oRow.getContent()[0].getItems()[0]._key = oItem.name;
+        oRow.getContent()[0].getContent()[0]._key = oItem.name;
 
         this._oListControl.addItem(oRow);
 
         var bShowRemoveBtn = !!oItem.name;
         var oRemoveButton = this._createRemoveButton(bShowRemoveBtn);
-        oRow.getContent()[0].addItem(oRemoveButton);
+        oRow.getContent()[0].addContent(oRemoveButton);
 
         return oRow;
     };
 
+    QueryPanel.prototype._createQueryRowGrid = function(oItem) {
+        var oSelect = this._createKeySelect(oItem.name);
+        return new Grid({
+            containerQuery: true,
+            defaultSpan: "XL6 L6 M6 S6",
+            content: [
+                oSelect
+            ]
+        }).addStyleClass("sapUiTinyMargin");
+    };
+
     QueryPanel.prototype._handleActivated = function(oHoveredItem) {
         var oQueryRow = oHoveredItem.getContent()[0];
-        var iItemLength = oQueryRow.getItems().length - 1;
-        var oButtonBox = oHoveredItem.getContent()[0].getItems()[iItemLength];
+        var iItemLength = oQueryRow.getContent().length - 1;
+        var oButtonBox = oHoveredItem.getContent()[0].getContent()[iItemLength];
 
         //Only add the buttons if 1) an hovered item is provided 2) the buttons are not already there
         if (oHoveredItem && oButtonBox.getItems().length < 2) {
@@ -188,18 +200,14 @@ sap.ui.define([
         }
     };
 
-    QueryPanel.prototype._getAdditionalQueryRowContent = function() {
-        return [];
-    };
-
     QueryPanel.prototype._createKeySelect = function (sKey) {
-        var oSortSelect = new Select({
+        var oKeySelect = new Select({
             items: this._getAvailableItems(),
             selectedKey: sKey,
             change: this._selectKey.bind(this)
-        }).addStyleClass("sapUiSmallMarginEnd").addStyleClass("sapUiSmallMarginBegin");
+        });
 
-        return oSortSelect;
+        return oKeySelect;
     };
 
     QueryPanel.prototype._selectKey = function(oEvt) {
@@ -210,7 +218,7 @@ sap.ui.define([
         var sNewKey = oEvt.getParameter("selectedItem").getKey();
         var sOldKey = oEvt.getSource()._key;
 
-        var oBtnContainer = oListItem.getContent()[0].getItems()[oListItem.getContent()[0].getItems().length - 1];
+        var oBtnContainer = oListItem.getContent()[0].getContent()[oListItem.getContent()[0].getContent().length - 1];
         //var oRemoveBtn = oBtnContainer.getItems()[oBtnContainer.getItems().length - 1];
 
         oBtnContainer.setVisible(sNewKey !== this.NONE_KEY);
@@ -243,7 +251,7 @@ sap.ui.define([
                     press: function (oEvt) {
                         var oRow = oEvt.getSource().getParent().getParent().getParent();
                         this._oListControl.removeItem(oRow);
-                        this._updatePresence(oRow.getContent()[0].getItems()[0]._key, false);
+                        this._updatePresence(oRow.getContent()[0].getContent()[0]._key, false);
                         if (this._oListControl.getItems().length === 0) {
                             this._addQueryRow();
                         }
@@ -262,8 +270,8 @@ sap.ui.define([
 
 
     QueryPanel.prototype._updatePresence = function (sKey, bAdd) {
-        var aSortItems = this.getP13nModel().getProperty("/items");
-        var aRelevant = aSortItems.filter(function (oItem) {
+        var aItems = this.getP13nModel().getProperty("/items");
+        var aRelevant = aItems.filter(function (oItem) {
             return oItem.name === sKey;
         });
 
@@ -271,7 +279,7 @@ sap.ui.define([
             aRelevant[0][this._getPresenceAttribute()] = bAdd;
         }
 
-        this.getP13nModel().setProperty("/items", aSortItems);
+        this.getP13nModel().setProperty("/items", aItems);
 
         this.fireChange({
             reason: bAdd ? "Add" : "Remove",
