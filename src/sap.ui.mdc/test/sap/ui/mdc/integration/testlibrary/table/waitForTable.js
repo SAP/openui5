@@ -19,7 +19,8 @@ sap.ui.define([
 					oSettings.success.call(this, oTable);
 				}
 			},
-			errorMessage: "The mdc.Table was not found"
+			errorMessage: "The mdc.Table was not found",
+			timeout: 40
 		});
 	};
 });
