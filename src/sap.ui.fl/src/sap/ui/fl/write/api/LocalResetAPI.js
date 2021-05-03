@@ -104,21 +104,22 @@ sap.ui.define([
 
 	LocalResetAPI.restoreChanges = function (aChanges, oAppComponent) {
 		var aApplyQueue = aChanges.map(function (oChange) {
-			oChange.restorePreviousState();
-			var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-			PersistenceWriteAPI.add({
-				change: oChange,
-				selector: oControl
-			});
-			if (oChange.getState() === Change.states.PERSISTED) {
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-				var aDirtyChanges = oChangePersistence.getDirtyChanges();
-				var iIndex = aDirtyChanges.indexOf(oChange);
-				if (iIndex >= 0) {
-					aDirtyChanges.splice(iIndex, 1);
-				}
-			}
 			return function () {
+				oChange.restorePreviousState();
+				var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+				PersistenceWriteAPI.add({
+					change: oChange,
+					selector: oControl
+				});
+				if (oChange.getState() === Change.states.PERSISTED) {
+					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
+					var aDirtyChanges = oChangePersistence.getDirtyChanges();
+					var iIndex = aDirtyChanges.indexOf(oChange);
+					if (iIndex >= 0) {
+						aDirtyChanges.splice(iIndex, 1);
+					}
+				}
+
 				return ChangesWriteAPI.apply({
 					change: oChange,
 					element: oControl,

@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/m/VBox",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	sinon,
 	LocalResetAPI,
@@ -21,7 +22,8 @@ sap.ui.define([
 	ChangePersistence,
 	ChangePersistenceFactory,
 	VBox,
-	FlUtils
+	FlUtils,
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -137,6 +139,36 @@ sap.ui.define([
 					);
 				}.bind(this));
 			}.bind(this));
+		});
+
+		QUnit.test("when a reset containing dependent changes is restored", function (assert) {
+			assert.expect(2);
+
+			var aNestedChanges = [
+				createChange("addControl", "parentId"),
+				createChange("renameAddedControl", "addedControlId")
+			];
+
+			var oBySelectorStub = sandbox.stub(JsControlTreeModifier, "bySelector");
+			sandbox.stub(PersistenceWriteAPI, "add");
+			sandbox.stub(ChangesWriteAPI, "apply").callsFake(function (oPayload) {
+				// Simulate async apply
+				return Promise.resolve().then(function () {
+					if (oPayload.change === aNestedChanges[0]) {
+						assert.ok(
+							oBySelectorStub.neverCalledWith({ id: "addedControlId" }),
+							"then the selector for change2 is not looked up before change 1 is applied"
+						);
+					}
+				});
+			});
+
+			return LocalResetAPI.restoreChanges(aNestedChanges, this.oComponent).then(function () {
+				assert.ok(
+					oBySelectorStub.withArgs({ id: "addedControlId" }).calledOnce,
+					"then the selector for the second change is looked up later"
+				);
+			});
 		});
 	});
 
