@@ -85,7 +85,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Country"]);
 		Then.iShouldSeeConditionValuesInFilterBar(["1989"], "foundingYear");
-
+		When.iPressButtonWithText("Save & Exit");
 		Then.iTeardownMyAppFrame();
 	});
 });

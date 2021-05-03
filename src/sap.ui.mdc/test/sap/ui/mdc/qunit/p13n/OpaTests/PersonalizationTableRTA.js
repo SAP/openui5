@@ -284,7 +284,7 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("cityOfOrigin_city", 9, false);
 		Then.iShouldSeeP13nItem("Created (Complex)", 10, false);
 		Then.iShouldSeeP13nItem("Created By", 11, false);
-
+		When.iPressButtonWithText("Save & Exit");
 		Then.iTeardownMyAppFrame();
 	});
 
