@@ -1693,8 +1693,14 @@ sap.ui.define([
 	//*********************************************************************************************
 // undefined for the quasi-absolute binding (context has no getGeneration())
 [undefined, false, true].forEach(function (bSameGeneration) {
-	QUnit.test("createAndSetCache: reuse cache, " + bSameGeneration, function (assert) {
-		var oBinding = new ODataBinding({
+	[false, true].forEach(function (bHasLateQueryOptions) {
+		var sTitle = "createAndSetCache: reuse cache, bSameGeneration=" + bSameGeneration
+				+ ", bHasLateQueryOptions=" + bHasLateQueryOptions;
+
+	QUnit.test(sTitle, function (assert) {
+		var mLateQueryOptions = {},
+			oBinding = new ODataBinding({
+				mLateQueryOptions : bHasLateQueryOptions ? mLateQueryOptions : undefined,
 				oModel : {
 					mUriParameters : {}
 				},
@@ -1703,7 +1709,8 @@ sap.ui.define([
 			}),
 			oCache = {
 				$generation : bSameGeneration ? 23 : 42,
-				setActive : function () {}
+				setActive : function () {},
+				setLateQueryOptions : function () {}
 			},
 			oContext = {};
 
@@ -1715,6 +1722,8 @@ sap.ui.define([
 			this.mock(oContext).expects("getGeneration").withExactArgs().returns(23);
 		}
 		this.mock(oCache).expects("setActive").withExactArgs(true);
+		this.mock(oCache).expects("setLateQueryOptions").exactly(bHasLateQueryOptions ? 1 : 0)
+			.withExactArgs(sinon.match.same(mLateQueryOptions));
 
 		assert.strictEqual(
 			// code under test
@@ -1722,6 +1731,8 @@ sap.ui.define([
 			oCache
 		);
 		assert.strictEqual(oBinding.oCache, oCache);
+	});
+
 	});
 });
 
