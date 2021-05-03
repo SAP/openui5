@@ -47,7 +47,7 @@ sap.ui.require([
 	});
 
     opaTest("When I click on the  \"ChartType\" button, Chart should open the chart type popover", function(Given, When, Then) {
-		When.iClickOnTheChartTypeButton("__component0---chartNew--bookChart");
+		When.iClickOnTheChartTypeButtonOnTheChart("__component0---chartNew--bookChart");
 
 		Then.iShouldSeeAChartTypePopover();
 
@@ -58,23 +58,23 @@ sap.ui.require([
 	});
 
 	opaTest("When I click on \"Zoom In\", Chart should zoom in", function(Given, When, Then) {
-		When.iClickOnZoomIn("__component0---chartNew--bookChart");
+		When.iClickOnZoomInOnTheChart("__component0---chartNew--bookChart");
 
 		Then.iShouldSeeAChart();
 	});
 
 	opaTest("When I click on \"Legend\", Chart should toggle the legend", function(Given, When, Then) {
-		When.iClickOnTheLegendToggleButton("__component0---chartNew--bookChart");
+		When.iClickOnTheLegendToggleButtonOnTheChart("__component0---chartNew--bookChart");
 
 		Then.iShouldSeeNoLegend("__component0---chartNew--bookChart");
 
-		When.iClickOnTheLegendToggleButton("__component0---chartNew--bookChart");
+		When.iClickOnTheLegendToggleButtonOnTheChart("__component0---chartNew--bookChart");
 
 		Then.iShouldSeeALegend("__component0---chartNew--bookChart");
 	});
 
 	opaTest("When I click on a  \"View By\", Chart should open the drill-down window", function(Given, When, Then) {
-		When.iClickOnTheDrillDownButton("__component0---chartNew--bookChart");
+		When.iClickOnTheDrillDownButtonOnTheChart("__component0---chartNew--bookChart");
 
 		Then.iShouldSeeADrillDownPopover(); //TODO: I should see drilldown popover
 

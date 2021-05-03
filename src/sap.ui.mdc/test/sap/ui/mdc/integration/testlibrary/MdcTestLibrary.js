@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/mdc/integration/testlibrary/variant/Variant",
 	"sap/ui/mdc/integration/testlibrary/filterfield/FilterField",
 	"sap/ui/mdc/integration/testlibrary/field/Field",
-	"sap/ui/mdc/integration/testlibrary/valuehelpdialog/ValueHelpDialog"
+	"sap/ui/mdc/integration/testlibrary/valuehelpdialog/ValueHelpDialog",
+	"sap/ui/mdc/integration/testlibrary/chartNew/ChartNew"
 ], function() {
 	"use strict";
 });
