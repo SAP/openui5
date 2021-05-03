@@ -4,15 +4,15 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/extend",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/thirdparty/jquery"
-], function (Log, CalendarType, DateFormat, FormatException, ParseException, ValidateException,
-	ODataType, jQuery) {
+	"sap/ui/model/odata/type/ODataType"
+], function (Log, extend, CalendarType, DateFormat, FormatException, ParseException,
+		ValidateException, ODataType) {
 	"use strict";
 
 	/*
@@ -40,7 +40,7 @@ sap.ui.define([
 		var oFormatOptions;
 
 		if (!oType.oUiFormat) {
-			oFormatOptions = jQuery.extend({strictParsing : true}, oType.oFormatOptions);
+			oFormatOptions = extend({strictParsing : true}, oType.oFormatOptions);
 			oFormatOptions.UTC = true; // value is always UTC; no overwrite via format options
 			oType.oUiFormat = DateFormat.getTimeInstance(oFormatOptions);
 		}
