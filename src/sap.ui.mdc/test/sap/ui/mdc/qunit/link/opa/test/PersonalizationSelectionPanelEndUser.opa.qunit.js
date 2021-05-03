@@ -1,8 +1,8 @@
 /* globals opaTest */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion', 'sap/ui/Device'
-], function(Opa5, opaQunit, Arrangement, Action, Assertion, Device) {
+	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion'
+], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
 	'use strict';
 
 	if (window.blanket) {
@@ -16,13 +16,6 @@ sap.ui.define([
 		viewNamespace: "view.",
 		autoWait: true
 	});
-
-	//set execution delay for Internet Explorer and Edge
-	if (Device.browser.msie || Device.browser.edge) {
-		Opa5.extendConfig({
-			executionDelay: 50
-		});
-	}
 
 	opaTest("When I look at the screen of appUnderTest, a table with links should appear", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html');
