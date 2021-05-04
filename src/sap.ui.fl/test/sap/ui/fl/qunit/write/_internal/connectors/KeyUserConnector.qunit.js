@@ -211,11 +211,76 @@ sap.ui.define([
 			var mPropertyBag = {
 				url: "/flexKeyuser"
 			};
-			sandbox.stub(InitialUtils, "sendRequest").resolves({response: "something"});
+			sandbox.stub(InitialUtils, "sendRequest").resolves({response: {someFeature: true}});
 			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse, "something", "the settings object is returned correctly");
+				assert.deepEqual(oResponse, {someFeature: true, isPublicLayerAvailable: undefined}, "the settings object is returned correctly");
 			});
 		});
+
+		QUnit.test("receives the flags 'isPublicLayerAvailable' false and 'isVariantAdaptationEnabled' false", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			var oSettingsResponse = {
+				isPublicLayerAvailable: false,
+				isVariantAdaptationEnabled: false
+			};
+
+			sandbox.stub(InitialUtils, "sendRequest").resolves({response: oSettingsResponse});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+				assert.equal(oResponse.isPublicLayerAvailable, false, "the isPublicLayerAvailable is correct");
+				assert.equal(oResponse.isVariantAdaptationEnabled, false, "the isVariantAdaptationEnabled is correct");
+			});
+		});
+
+		QUnit.test("receives the flags 'isPublicLayerAvailable' false and 'isVariantAdaptationEnabled' true", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			var oSettingsResponse = {
+				isPublicLayerAvailable: false,
+				isVariantAdaptationEnabled: true
+			};
+
+			sandbox.stub(InitialUtils, "sendRequest").resolves({response: oSettingsResponse});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+				assert.equal(oResponse.isPublicLayerAvailable, false, "the isPublicLayerAvailable is correct");
+				assert.equal(oResponse.isVariantAdaptationEnabled, true, "the isVariantAdaptationEnabled is correct");
+			});
+		});
+
+		QUnit.test("receives the flags 'isPublicLayerAvailable' true and 'isVariantAdaptationEnabled' false", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			var oSettingsResponse = {
+				isPublicLayerAvailable: true,
+				isVariantAdaptationEnabled: false
+			};
+
+			sandbox.stub(InitialUtils, "sendRequest").resolves({response: oSettingsResponse});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+				assert.equal(oResponse.isPublicLayerAvailable, true, "the isPublicLayerAvailable is correct");
+				assert.equal(oResponse.isVariantAdaptationEnabled, false, "the isVariantAdaptationEnabled is correct");
+			});
+		});
+
+		QUnit.test("receives the flags 'isPublicLayerAvailable' true and 'isVariantAdaptationEnabled' true", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+			var oSettingsResponse = {
+				isPublicLayerAvailable: true,
+				isVariantAdaptationEnabled: true
+			};
+
+			sandbox.stub(InitialUtils, "sendRequest").resolves({response: oSettingsResponse});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+				assert.equal(oResponse.isPublicLayerAvailable, false, "the isPublicLayerAvailable is correct");
+				assert.equal(oResponse.isVariantAdaptationEnabled, true, "the isVariantAdaptationEnabled is correct");
+			});
+		});
+
 		QUnit.test("get Response does not send when the settings already stored in apply connector", function (assert) {
 			var mPropertyBag = {
 				url: "/flexKeyuser"
