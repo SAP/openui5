@@ -954,6 +954,7 @@ sap.ui.define([
 			this.oModel = mNamedModels.undefined;
 			this.mock(datajs).expects("request").atLeast(0).callsFake(checkRequest);
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
+			this.assert = assert;
 
 			return View.create({
 				type : "XML",
@@ -1043,7 +1044,9 @@ sap.ui.define([
 			}
 
 			this.bCheckValue = false;
-			return this.expectChangeInternal.apply(this, arguments);
+			this.expectChangeInternal.apply(this, arguments);
+
+			return this;
 		},
 
 		/**
@@ -1064,17 +1067,27 @@ sap.ui.define([
 		 * @throws {Error} If {@link #expectChange} is used in the same test
 		 */
 		expectValue : function (sControlId, vValue, vRow) {
+			var bInList;
+
 			if (this.bCheckValue === false) {
 				throw Error("Must not call expectValue after using expectChange in a test");
 			}
 
 			this.bCheckValue = true;
-			return this.expectChangeInternal.apply(this, arguments);
+			bInList = this.expectChangeInternal.apply(this, arguments);
+
+			if (this.oView) {
+				this.observe(this.assert, this.oView.byId(sControlId), sControlId, bInList);
+			}
+
+			return this;
 		},
 
 		/**
 		 * Implementation of methods {@link #expectChange} and {@link #expectValue}; see
-		 * documentation of these for a description.
+		 * documentation of these for a description. Only the return statement is overridden.
+		 *
+		 * @returns {boolean} Whether the expected change is for a list element
 		 */
 		expectChangeInternal : function (sControlId, vValue, vRow) {
 			var aExpectations, i;
@@ -1113,9 +1126,11 @@ sap.ui.define([
 				if (arguments.length > 1) {
 					aExpectations.push(vValue);
 				}
+
+				return false;
 			}
 
-			return this;
+			return true;
 		},
 
 		/**
@@ -1351,6 +1366,7 @@ sap.ui.define([
 		 */
 		observe : function (assert, oControl, sControlId, bInList) {
 			var oBindingInfo,
+				oConfiguration,
 				fnOriginalFormatter,
 				sProperty = oControl.getBindingInfo("text") ? "text" : "value",
 				oType,
@@ -1388,11 +1404,17 @@ sap.ui.define([
 							that.oObserver.observe(oCellControl, {properties : [sProperty]});
 						}
 					});
+					oControl = oControl.getParent().getParent();
 					//TODO aggregation "rows" is only valid for sap.ui.table.Table
-					this.oTemplateObserver.observe(oControl.getParent().getParent(),
-						{aggregations : ["rows"]});
+					oConfiguration = {aggregations : ["rows"]};
+					if (!this.oTemplateObserver.isObserved(oControl, oConfiguration)) {
+						this.oTemplateObserver.observe(oControl, oConfiguration);
+					}
 				} else {
-					this.oObserver.observe(oControl, {properties : [sProperty]});
+					oConfiguration = {properties : [sProperty]};
+					if (!this.oObserver.isObserved(oControl, oConfiguration)) {
+						this.oObserver.observe(oControl, oConfiguration);
+					}
 				}
 				return;
 			}
@@ -8708,6 +8730,84 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.waitForChanges(assert),
 				that.checkValueState(assert, oMeasureControl, "None", ""),
 				that.checkValueState(assert, oUnitControl, "None", "")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: After entering an invalid currency into an input field with a valid currency this
+	// invalid currency is displayed with an error value state.
+	// JIRA: CPOUI5MODELS-501
+	QUnit.test("TwoFieldSolution: Invalid currency input is kept in control", function (assert) {
+		var oControl,
+			oModel = new JSONModel({
+				Amount : null,
+				Currency : null,
+				customCurrencies : {
+					EUR : {
+						StandardCode : "EUR",
+						UnitSpecificScale : 2
+					}
+				}
+			}),
+			sView = '\
+<Input id="currency" value="{\
+	parts : [{\
+		constraints : {scale : \'variable\'},\
+		path : \'/Amount\',\
+		type : \'sap.ui.model.odata.type.Decimal\'\
+	}, {\
+		path : \'/Currency\',\
+		type : \'sap.ui.model.odata.type.String\'\
+	}, {\
+		mode : \'OneTime\',\
+		path : \'/customCurrencies\',\
+		targetType : \'any\'\
+	}],\
+	formatOptions : {showNumber : false},\
+	mode : \'TwoWay\',\
+	type : \'sap.ui.model.odata.type.Currency\'\
+}" />',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oControl = that.oView.byId("currency");
+
+			that.expectValue("currency", "EUR");
+
+			oControl.setValue("EUR");
+
+			return Promise.all([
+				that.checkValueState(assert, "currency", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("currency", "foo")
+				.expectMessages([{
+					descriptionUrl: undefined,
+					message : "Currency.Invalid",
+					target : oControl.getId() + "/value",
+					type : "Error"
+				}]);
+
+			TestUtils.withNormalizedMessages(function () {
+				// code under test
+				oControl.setValue("foo");
+			});
+
+			return Promise.all([
+				that.checkValueState(assert, "currency", "Error", "Currency.Invalid"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("currency", "EUR")
+				.expectMessages([]);
+
+			oControl.setValue("EUR");
+
+			return Promise.all([
+				that.checkValueState(assert, "currency", "None", ""),
+				that.waitForChanges(assert)
 			]);
 		});
 	});
