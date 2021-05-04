@@ -99,6 +99,7 @@ function(
 					switch (oFlexObject.changeType) {
 						case "addFavorite":
 						case "removeFavorite":
+						case "updateVariant":
 							oResponse.comp.changes.unshift(oFlexObject);
 							bMoved = true;
 
