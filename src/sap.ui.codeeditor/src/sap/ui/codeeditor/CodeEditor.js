@@ -28,7 +28,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/codeeditor/js/ace/ace",
 	"sap/ui/codeeditor/js/ace/ext-language_tools",
@@ -41,7 +40,6 @@ sap.ui.define([
 	Control,
 	RenderManager,
 	ResizeHandler,
-	Device,
 	jQuery,
 	ace
 ) {
@@ -278,11 +276,6 @@ sap.ui.define([
 
 		// if editor is in dialog with transform applied, the tooltip position has to be adjusted
 		this._oEditor.addEventListener("showGutterTooltip", function (tooltip) {
-			if (Device.browser.internet_explorer) {
-				// the transform property does not effect the position of tooltip in IE
-				return;
-			}
-
 			var $tooltip = jQuery(tooltip.$element),
 				$dialog = $tooltip.parents(".sapMDialog");
 
