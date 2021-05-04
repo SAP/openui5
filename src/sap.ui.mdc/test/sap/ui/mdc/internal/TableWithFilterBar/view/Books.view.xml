@@ -43,7 +43,7 @@
 						<mdc:FilterBar id="booksFilterBar"  filtersChanged="onFiltersChanged" filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}' liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
 						<mdc:dependents>
 
-							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH4" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" caseSensitive="false">
+							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH4" noDialog="false" keyPath="ID" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" caseSensitive="false">
 								<mdcf:filterBar>
 									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: 'Books'}}" >
 									<vhfb:filterItems>
@@ -405,6 +405,7 @@
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
 								id="ff2" label="Title"
 								conditions="{$filters>/conditions/title}"
+								display="ValueDescription"
 								fieldHelp="FH4"/>
 
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"

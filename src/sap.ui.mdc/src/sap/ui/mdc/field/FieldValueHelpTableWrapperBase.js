@@ -674,14 +674,13 @@ sap.ui.define([
 		if (oTable) {
 			// first add all already selected items
 			var aSelectedItems = this.getSelectedItems();
-			var aTableItems = this._getTableItems();
-			var i = 0;
 			var oTableItem;
 			var oValue;
 			// remove all items originating from the table
 			if (aSelectedItems.length > 0) {
-				for (i = 0; i < aTableItems.length; i++) {
-					oTableItem = aTableItems[i];
+				var aTableItems = this._getTableItems();
+				for (var k in aTableItems) {
+					oTableItem = aTableItems[k];
 					oValue = this._getDataFromItem(oTableItem);
 
 					if (!oValue) {
@@ -696,6 +695,10 @@ sap.ui.define([
 							break;
 						}
 					}
+
+					if (!aSelectedItems.length) {
+						break;
+					}
 				}
 			}
 
@@ -705,7 +708,7 @@ sap.ui.define([
 
 			// now add all currently selected table entries
 			aSelectedItems = this._getTableItems(true);
-			for (i = 0; i < aSelectedItems.length; i++) {
+			for (var i = 0; i < aSelectedItems.length; i++) {
 				oTableItem = aSelectedItems[i];
 				oValue = this._getDataFromItem(oTableItem);
 
@@ -736,7 +739,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._updateSelectedItems.call(this);
+		//this._updateSelectedItems.call(this);
 
 		if (this._bNavigate) {
 			this._bNavigate = false;
