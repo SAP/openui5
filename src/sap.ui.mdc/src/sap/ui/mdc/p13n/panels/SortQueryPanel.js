@@ -114,6 +114,11 @@ sap.ui.define([
         });
 
         aItems[0].descending = bDesc;
+
+        this.fireChange({
+            reason: "change",
+            item: aItems[0]
+        });
     };
 
     return SortQueryPanel;

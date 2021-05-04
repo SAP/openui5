@@ -205,7 +205,9 @@ sap.ui.define([
 			var oPopupContent = bUseP13nContainer ? new Wrapper() : aUIs[0].panel;
 			if (bUseP13nContainer) {
 				aUIs.forEach(function(mUI){
-					oPopupContent.addPanel(mUI.panel, mUI.key);
+					var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+					var sTabText = oRB.getText("p13nDialog.TAB_" + mUI.key);
+					oPopupContent.addPanel(mUI.panel, sTabText);
 				});
 				oPopupContent.switchView(aUIs[0].key);
 			}
