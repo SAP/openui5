@@ -81,12 +81,6 @@ sap.ui.define([
 		window.sessionStorage.setItem("sap.ui.fl.info." + sParameter, JSON.stringify(oInfo));
 	}
 
-	function removeInfoSessionStorage(oControl) {
-		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oControl);
-		var sParameter = sFlexReference || "true";
-		window.sessionStorage.removeItem("sap.ui.fl.info." + sParameter);
-	}
-
 	/**
 	 * Provides an API to get information about reload behavior in case of a draft and/or personalization changes.
 	 *
@@ -119,6 +113,17 @@ sap.ui.define([
 				oReloadInfo.allContexts = aReasons[2];
 				return oReloadInfo;
 			});
+		},
+
+		/**
+		 * Remove flex info form session storage.
+		 *
+		 * @param  {object} oControl - Root control instance
+		 */
+		removeInfoSessionStorage: function(oControl) {
+			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oControl);
+			var sParameter = sFlexReference || "true";
+			window.sessionStorage.removeItem("sap.ui.fl.info." + sParameter);
 		},
 
 		/**
@@ -275,7 +280,7 @@ sap.ui.define([
 					oReloadInfo.reloadMethod = oRELOAD.VIA_HASH;
 				}
 			}
-			removeInfoSessionStorage(oReloadInfo.selector);
+			this.removeInfoSessionStorage(oReloadInfo.selector);
 			return oReloadInfo;
 		}
 	};

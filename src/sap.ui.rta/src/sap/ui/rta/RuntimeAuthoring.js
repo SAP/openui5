@@ -1182,10 +1182,12 @@ function(
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
 		var sLayer = this.getLayer();
+		var oSelector = FlexUtils.getAppComponentForControl(this.getRootControlInstance());
 		return PersistenceWriteAPI.reset({
-			selector: FlexUtils.getAppComponentForControl(this.getRootControlInstance()),
+			selector: oSelector,
 			layer: sLayer
 		}).then(function () {
+			ReloadInfoAPI.removeInfoSessionStorage(oSelector);
 			var oReloadInfo = {
 				isDraftAvailable: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}),
 				layer: sLayer,
