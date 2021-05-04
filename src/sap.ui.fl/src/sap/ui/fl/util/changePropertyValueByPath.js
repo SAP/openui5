@@ -26,17 +26,17 @@ sap.ui.define([
 	/**
 	 * Use to update property value for propertyPath which starts in provided root context
 	 *
-	 * @param {Array|Object} oChanges - changes to be merged which includes propertyPath and propertyValue
+	 * @param {sap.ui.fl.Change[]|sap.ui.fl.Change} vChanges - Changes to be merged which includes propertyPath and propertyValue
 	 * @param {String} oRootPath - root context where the propertyPath starts
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
-	return function (oChanges, oRootPath) {
-		if (Array.isArray(oChanges)) {
-			oChanges.forEach(function (oEntityProp) {
+	return function (vChanges, oRootPath) {
+		if (Array.isArray(vChanges)) {
+			vChanges.forEach(function (oEntityProp) {
 				setPropValueByPath(oEntityProp, oRootPath);
 			});
 		} else {
-			setPropValueByPath(oChanges, oRootPath);
+			setPropValueByPath(vChanges, oRootPath);
 		}
 	};
 });

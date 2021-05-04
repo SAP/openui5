@@ -49,6 +49,8 @@ sap.ui.define([
 			var oChange = new Change({});
 			assertNotCompliant("any", oChange, "Mandatory layer parameter is not provided.", "throws error that layer is missing", assert);
 
+			oChange = new Change({layer: Layer.USER});
+			assertNotCompliant("any", oChange, "Layer USER not supported.", "throws error that layer is missing", assert);
 			oChange = new Change({layer: "any"});
 			assertNotCompliant("any", oChange, "Layer any not supported.", "throws error that layer is missing", assert);
 		});
@@ -59,6 +61,10 @@ sap.ui.define([
 			assert.equal(DescriptorChangeCheck.getNamespacePrefixForLayer(Layer.CUSTOMER), "customer.", "Correct prefix for CUSTOMER");
 			assert.equal(DescriptorChangeCheck.getNamespacePrefixForLayer(Layer.CUSTOMER_BASE), "customer.", "Correct prefix for CUSTOMER_BASE");
 			assert.equal(DescriptorChangeCheck.getNamespacePrefixForLayer(Layer.VENDOR), null, "Correct prefix for VENDOR");
+			assert.equal(DescriptorChangeCheck.getNamespacePrefixForLayer(Layer.PARTNER), "partner.", "Correct prefix for PARTNER");
+			assert.throws(function() {
+				DescriptorChangeCheck.getNamespacePrefixForLayer(Layer.USER);
+			}, Error("Layer USER not supported."), "Layer USER is not supported");
 		});
 	});
 });
