@@ -65,7 +65,7 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection titleUppercase="false" title="JS View">
+			<ObjectPageSection titleUppercase="false" title="Typed View">
 				<subSections>
 					<ObjectPageSubSection titleUppercase="false">
 						<blocks>

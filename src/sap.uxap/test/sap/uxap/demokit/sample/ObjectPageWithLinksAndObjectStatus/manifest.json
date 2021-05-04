@@ -29,7 +29,7 @@
 					"../SharedBlocks/employment/EmploymentBlockJobCollapsed.view.xml",
 					"../SharedBlocks/employment/EmploymentBlockJobExpanded.view.xml",
 					"../SharedBlocks/goals/GoalsBlock.view.xml",
-					"../SharedBlocks/goals/GoalsBlock.view.js",
+					"../SharedBlocks/goals/GoalsBlockView.js",
 					"../SharedBlocks/goals/GoalsBlock.js",
 					"../SharedBlocks/goals/GoalsBlockController.controller.js",
 					"../SharedBlocks/personal/BlockAdresses.js",

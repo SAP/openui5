@@ -8,8 +8,7 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.uxap.sample.ObjectPageBlockViewTypes.view.ObjectPageOnJSON",
-			"type": "XML",
-			"async": true
+			"type": "XML"
 		},
 		"resourceRoots": {
 			"sap.uxap.sample.SharedBlocks": "../SharedBlocks"
@@ -30,7 +29,7 @@
 					"../SharedBlocks/goals/GoalsBlockJSON.js",
 					"../SharedBlocks/goals/GoalsBlockHTML.js",
 					"../SharedBlocks/goals/GoalsBlock.view.xml",
-					"../SharedBlocks/goals/GoalsBlock.view.js",
+					"../SharedBlocks/goals/GoalsBlockView.js",
 					"../SharedBlocks/goals/GoalsBlock.view.json",
 					"../SharedBlocks/goals/GoalsBlock.view.html",
 					"manifest.json"
