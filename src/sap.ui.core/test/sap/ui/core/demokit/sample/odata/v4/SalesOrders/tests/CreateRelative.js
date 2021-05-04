@@ -24,12 +24,18 @@ sap.ui.define([
 					message : "Failed to request side effects",
 					details : "HTTP request was not processed because the previous request failed"
 				},
+				oStrictModeFailLog = {
+					component : "sap.ui.model.odata.v4.ODataListBinding",
+					level : Log.Level.ERROR,
+					message : new RegExp("Failed to refresh entity: "
+						+ "\\/SalesOrderList\\('.*'\\)\\[-1\\]"),
+					details : "HTTP request was not processed because the previous request failed"
+				},
 				oReadCountFailLog = {
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 					level : Log.Level.ERROR,
 					message : "Failed to read path /SalesOrderList",
-					details : "HTTP request was not processed because the previous request "
-						+ "failed"
+					details : "HTTP request was not processed because the previous request failed"
 				},
 				oReadSchedulesFailLog = {
 					component : "sap.ui.model.odata.v4.ODataListBinding",
@@ -37,8 +43,7 @@ sap.ui.define([
 					message : new RegExp("Failed to get contexts for"
 						+ " .*/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002"
 						+ "/SalesOrderList\\('.*'\\)/SO_2_SCHDL with start index 0 and length 100"),
-					details : "HTTP request was not processed because the previous request "
-						+ "failed"
+					details : "HTTP request was not processed because the previous request failed"
 				},
 				oUpdateFailLog = {
 					component : "sap.ui.model.odata.v4.Context",
@@ -165,6 +170,12 @@ sap.ui.define([
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheSuccessInfo.confirm();
 				When.onTheMainPage.pressConfirmSalesOrderButton();
+				aExpectedLogs.push(oStrictModeFailLog);
+				When.onTheMainPage.pressCancelStrictModeButton();
+
+				When.onTheMainPage.pressConfirmSalesOrderButton();
+				aExpectedLogs.push(oStrictModeFailLog);
+				When.onTheMainPage.pressConfirmStrictModeButton();
 
 				// test refresh single row
 				// preparation

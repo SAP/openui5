@@ -8403,7 +8403,7 @@ sap.ui.define([
 			);
 
 			that.oRequestorMock.expects("request")
-				.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock1), undefined,
+				.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock1), {},
 					sinon.match.same(oPostData))
 				.resolves(oResult2);
 
@@ -8468,8 +8468,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("relocateAll").never();
 		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), undefined,
-				undefined)
+			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), {}, undefined)
 			.resolves();
 
 		// code under test
@@ -8485,7 +8484,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("relocateAll").never();
 		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", "Foo", sinon.match.same(oGroupLock), undefined, undefined)
+			.withExactArgs("POST", "Foo", sinon.match.same(oGroupLock), {}, undefined)
 			.resolves();
 
 		// code under test
@@ -8534,7 +8533,7 @@ sap.ui.define([
 			that = this;
 
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), undefined,
+			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), {},
 				sinon.match.same(oPostData))
 			.rejects(new Error(sMessage));
 
@@ -8547,7 +8546,7 @@ sap.ui.define([
 			assert.strictEqual(oError.message, sMessage);
 
 			that.oRequestorMock.expects("request")
-				.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock1), undefined,
+				.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock1), {},
 					sinon.match.same(oPostData))
 				.rejects(new Error(sMessage));
 
@@ -8564,6 +8563,89 @@ sap.ui.define([
 		}, /Parallel POST requests not allowed/);
 		return oPromise.catch(function () {});
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bBound) {
+	[false, true].forEach(function (bConfirm) {
+		var sTitle = "SingleCache: post failure: strict handling, bound=" + bBound + ", confirm="
+				+ bConfirm;
+
+	QUnit.test(sTitle, function (assert) {
+		var that = this,
+			sResourcePath = "LeaveRequest('1')/Submit",
+			oCache = this.createSingle(sResourcePath, undefined, true),
+			oError = new Error("strict handling failed"),
+			oEntity = {},
+			mExpectedHeaders0 = {
+				Prefer : "handling=strict"
+			},
+			mExpectedHeaders1 = {},
+			oGroupLock = {
+				getGroupId : function () {},
+				getUnlockedCopy : function () {}
+			},
+			oPostData = {},
+			oResponse = {},
+			fnOnStrictHandlingFailed = sinon.spy(function (oError0) {
+				assert.strictEqual(oError0, oError);
+				assert.strictEqual(oCache.bPosting, false);
+
+				return Promise.resolve().then(function () {
+					if (!bConfirm) {
+						return false;
+					}
+					assert.strictEqual(oCache.bPosting, false);
+					that.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
+						.returns("~GroupLockCopy~");
+					that.oRequestorMock.expects("request")
+						.withExactArgs("POST", sResourcePath, "~GroupLockCopy~", mExpectedHeaders1,
+							sinon.match.same(oPostData))
+						.callsFake(function () {
+							assert.strictEqual(oCache.bPosting, true);
+
+							return Promise.resolve(oResponse);
+						});
+					that.mock(oCache).expects("visitResponse")
+						.withExactArgs(sinon.match.same(oResponse), "~types~");
+
+					return true;
+				});
+			});
+
+		if (bBound) {
+			mExpectedHeaders0["If-Match"] = mExpectedHeaders1["If-Match"] = oEntity;
+		}
+		oError.strictHandlingFailed = true;
+		this.mock(oGroupLock).expects("getGroupId").exactly(bBound ? 1 : 0)
+			.withExactArgs()
+			.returns("groupId");
+		this.mock(this.oRequestor).expects("relocateAll").exactly(bBound ? 1 : 0)
+			.withExactArgs("$parked.groupId", "groupId", sinon.match.same(oEntity));
+		this.oRequestorMock.expects("request")
+			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), mExpectedHeaders0,
+				sinon.match.same(oPostData))
+			.rejects(oError);
+		this.mock(oCache).expects("fetchTypes").exactly(bConfirm ? 2 : 1)
+			.withExactArgs().resolves("~types~");
+
+		// code under test
+		return oCache.post(oGroupLock, oPostData, bBound ? oEntity : undefined, undefined,
+				fnOnStrictHandlingFailed)
+			.then(function (oResult) {
+				assert.ok(bConfirm);
+				assert.strictEqual(oCache.bPosting, false);
+				assert.strictEqual(oResult, oResponse);
+			}, function (oCanceledError) {
+				assert.notOk(bConfirm);
+				assert.strictEqual(oCache.bPosting, false);
+				assert.strictEqual(oCanceledError.message,
+					"Action canceled due to strict handling");
+				assert.strictEqual(oCanceledError.canceled, true);
+			});
+	});
+
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#toString", function (assert) {

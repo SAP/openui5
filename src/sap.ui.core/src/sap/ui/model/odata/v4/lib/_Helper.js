@@ -25,6 +25,7 @@ sap.ui.define([
 		rPlus = /\+/g,
 		rSingleQuote = /'/g,
 		rSingleQuoteTwice = /''/g,
+		rWhitespace = /\s+/g,
 		/**
 		 * @alias sap.ui.model.odata.v4.lib._Helper
 		 */
@@ -320,6 +321,8 @@ sap.ui.define([
 		 *       response JSON object (if available)
 		 *     <li> <code>isConcurrentModification</code>: (optional) <code>true</code> In case of a
 		 *       concurrent modification detected via ETags (i.e. HTTP status code 412)
+		 *     <li> <code>strictHandlingFailed</code>: (optional) <code>true</code> In case of HTTP
+		 *       status code 412 and response header "Preference-Applied:handling=strict"
 		 *     <li> <code>message</code>: Error message
 		 *     <li> <code>requestUrl</code>: (optional) The absolute request URL
 		 *     <li> <code>resourcePath</code>: (optional) The path by which this resource has
@@ -334,6 +337,7 @@ sap.ui.define([
 		createError : function (jqXHR, sMessage, sRequestUrl, sResourcePath) {
 			var sBody = jqXHR.responseText,
 				sContentType = jqXHR.getResponseHeader("Content-Type"),
+				sPreference,
 				oResult = new Error(sMessage + ": " + jqXHR.status + " " + jqXHR.statusText);
 
 			oResult.status = jqXHR.status;
@@ -348,7 +352,13 @@ sap.ui.define([
 				sContentType = sContentType.split(";")[0];
 			}
 			if (jqXHR.status === 412) {
-				oResult.isConcurrentModification = true;
+				sPreference = jqXHR.getResponseHeader("Preference-Applied");
+
+				if (sPreference && sPreference.replace(rWhitespace, '') === "handling=strict") {
+					oResult.strictHandlingFailed = true;
+				} else {
+					oResult.isConcurrentModification = true;
+				}
 			}
 			if (sContentType === "application/json") {
 				try {
@@ -660,7 +670,7 @@ sap.ui.define([
 			 * @param {number} [iNumericSeverity] The numeric severity
 			 * @param {boolean} [bTechnical] Whether the message is reported as technical
 			 */
-			function addMessage (oMessage, iNumericSeverity, bTechnical) {
+			function addMessage(oMessage, iNumericSeverity, bTechnical) {
 				var oRawMessage = {
 						additionalTargets : _Helper.getAdditionalTargets(oMessage),
 						code : oMessage.code,

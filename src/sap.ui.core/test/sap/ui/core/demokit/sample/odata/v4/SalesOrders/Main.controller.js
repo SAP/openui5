@@ -50,21 +50,49 @@ sap.ui.define([
 				sSalesOrderID = oSalesOrderContext.getProperty("SalesOrderID"),
 				oView = this.getView(),
 				oAction = oView.getModel().bindContext(
-					sServiceNamespace + "SalesOrder_Confirm(...)", oSalesOrderContext);
+					sServiceNamespace + "SalesOrder_Confirm(...)", oSalesOrderContext),
+				that = this;
+
+			function onStrictHandlingFailed(aMessages) {
+				oView.getModel("ui").setProperty("/aStrictMessages", aMessages);
+				oView.setBusy(false);
+				oView.byId("onStrictMessagesDialog").open();
+				return new Promise(function (fnResolve) {
+					that.fnStrictResolve = fnResolve;
+				});
+			}
 
 			if (oSalesOrderContext.hasPendingChanges()) {
 				MessageToast.show("Sales order " + oSalesOrderContext.getProperty("SalesOrderID")
 					+ " cannot be confirmed due to pending changes");
 			} else {
 				oView.setBusy(true);
-				oAction.execute().then(function () {
+				oAction.execute("confirm", false, onStrictHandlingFailed).then(function () {
 					oView.setBusy(false);
 					MessageToast.show("Sales order " + sSalesOrderID + " confirmed");
-				}, function (oError) {
+					oView.getModel("ui").setProperty("/bSalesOrderSelected", false);
+				}, function () {
 					oView.setBusy(false);
 				});
-				oSalesOrderContext.refresh(undefined, true);
+				oSalesOrderContext.refresh("confirm", true);
+				oView.getModel().submitBatch("confirm");
 			}
+		},
+
+		onConfirmStrictMessages : function () {
+			var oView = this.oView;
+
+			oView.setBusy(true);
+			this.fnStrictResolve(true);
+			oView.byId("SalesOrderList").getSelectedItem().getBindingContext()
+				.refresh("confirm", true);// in order to filter out the now "confirmed" sales order
+			oView.getModel().submitBatch("confirm");
+			oView.byId("onStrictMessagesDialog").close();
+		},
+
+		onCancelStrictMessages : function () {
+			this.fnStrictResolve(false);
+			this.oView.byId("onStrictMessagesDialog").close();
 		},
 
 		onCloseSalesOrderDialog : function (oEvent) {

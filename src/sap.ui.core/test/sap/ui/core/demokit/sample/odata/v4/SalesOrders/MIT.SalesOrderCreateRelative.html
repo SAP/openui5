@@ -130,13 +130,24 @@
 					check that the table is updated as expected.</li>
 				<li><h3>Confirmation of new created sales order</h3></li>
 				<li>Again create a new sales order line item for the new sales order.</li>
+				<li>Select HT-1000 as Product ID and enter a space in the <code>Note</code> field.
+					</li>
 				<li>Click on <code>Save</code> in the <code>Sales Order Details</code>
 					section.</li>
 				<li>Click on <code>Confirm selected sales order</code> in the <code>New Sales Orders
 					</code> table.</li>
-				<li><b>Check:</b> That you got a popover telling that the selected sales order was
-					confirmed and that it is removed from the <code>New Sales Orders </code> table.
+				<li><b>Check:</b> That you got a dialog telling that one warning exists and asking
+					if you want to continue.</li>
+				<li>Click on <code>No</code>/li>
+				<li><b>Check:</b> The dialog was closed and the Sales Order is not yet confirmed.
 					</li>
+				<li>Click again on <code>Confirm selected sales order</code> in the <code>New Sales
+					Orders</code> table.</li>
+				<li><b>Check:</b> That you got a dialog telling that one warning exists and asking
+					if you want to continue.</li>
+				<li>Click on <code>Yes</code></li>
+				<li><b>Check:</b> The sales order is confirmed and is filtered out from the <code>
+					New Sales Orders</code> table.</li>
 				<li><h3>Test refresh single row</h3></li>
 				<li>Refresh the <code>Sales Order</code> table.</li>
 				<li>Click on <code>Create</code> in the <code>New Sales Orders</code> table. </li>

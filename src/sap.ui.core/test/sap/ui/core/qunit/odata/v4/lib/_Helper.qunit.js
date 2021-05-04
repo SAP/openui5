@@ -236,6 +236,18 @@ sap.ui.define([
 			"statusText" : "Precondition Failed"
 		}
 	}, {
+		strictHandlingFailed : true,
+		message : "message: 412 Precondition Failed",
+		"response" : {
+			"headers" : {
+				// https://datatracker.ietf.org/doc/html/rfc7240#section-3
+				// ABNF: "Preference-Applied" ":" token [ BWS "=" BWS word ]
+				"Preference-Applied" : "handling\t=  strict"
+			},
+			"status" : 412,
+			"statusText" : "Precondition Failed"
+		}
+	}, {
 		message : "message: 999 Invalid JSON",
 		"response" : {
 			"headers" : {
@@ -311,6 +323,7 @@ sap.ui.define([
 			assert.ok(oError instanceof Error);
 			assert.deepEqual(oError.error, oFixture.body && oFixture.body.error);
 			assert.strictEqual(oError.isConcurrentModification, oFixture.isConcurrentModification);
+			assert.strictEqual(oError.strictHandlingFailed, oFixture.strictHandlingFailed);
 			assert.strictEqual(oError.message, oFixture.message);
 			assert.strictEqual(oError.status, oFixture.response.status);
 			assert.strictEqual(oError.statusText, oFixture.response.statusText);

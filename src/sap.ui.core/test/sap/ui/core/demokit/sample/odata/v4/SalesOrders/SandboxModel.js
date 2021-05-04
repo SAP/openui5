@@ -412,6 +412,32 @@ sap.ui.define([
 				}, {
 					source : "POST-SalesOrderList('0500000004')-SO_2_SOITEM.json"
 				}],
+				"POST SalesOrderList('0500000006')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm?custom-option=value" : [{
+					code : 412,
+					headers : {
+						"Preference-Applied" : "handling=strict"
+					},
+					ifMatch : function (oRequest) {
+						return oRequest.requestHeaders["Prefer"] === "handling=strict";
+					},
+					message : {
+						"error" : {
+							"code" : "OO/000",
+							"message" : "n/a",
+							"details" : [{
+								"@SAP__common.numericSeverity" : 3,
+								code : "ZUI5_EPM_SAMPLE/000",
+								message : "Enter a note",
+								target : "SalesOrder/SO_2_SOITEM(SalesOrderID='0500000006',ItemPosition='0000000010')/Note"
+							}, {
+								"@SAP__common.numericSeverity" : 4,
+								code : "ZUI5_EPM_SAMPLE/000",
+								message : "Enter a minimum quantity of 2",
+								target : "SalesOrder/SO_2_SOITEM(SalesOrderID='0500000006',ItemPosition='0000000020')/Quantity"
+							}]
+						}
+					}
+				}],
 				"PATCH SalesOrderList('0500000004')?custom-option=value" : [{
 					code : 400,
 					ifMatch : /{"Note":"RAISE_ERROR"}/g,
@@ -433,6 +459,9 @@ sap.ui.define([
 				},
 				"SalesOrderList('0500000006')?custom-option=value&$select=ChangedAt,Note" : {
 					source : "SalesOrderList_6.json"
+				},
+				"SalesOrderList?custom-option=value&$filter=(SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'%20and%20(SO_2_BP/CompanyName%20ge%20'M'))%20and%20SalesOrderID%20eq%20'0500000006'&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+					source : "SalesOrderList('0500000006')_confirmed.json"
 				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",

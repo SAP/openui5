@@ -2925,6 +2925,13 @@ sap.ui.define([
 	 * @param {boolean} [bIgnoreETag]
 	 *   Whether the entity's ETag should be actively ignored (If-Match:*); used only in case an
 	 *   entity is given
+	 * @param {function} [fnOnStrictHandlingFailed]
+	 *   If this callback is given, then the preference "handling=strict" is applied.
+	 *   If the request fails with an error having <code>oError.strictHandlingFailed</code> set,
+	 *   this error is passed to the callback which returns a promise. If this promise resolves with
+	 *   <code>true</code> the action is repeated w/o the preference, otherwise this function's
+	 *   result promise is rejected with an <code>Error</code> instance <code>oError</code> where
+	 *   <code>oError.canceled === true</code>.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
@@ -2933,10 +2940,45 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_SingleCache.prototype.post = function (oGroupLock, oData, oEntity, bIgnoreETag) {
+	_SingleCache.prototype.post = function (oGroupLock, oData, oEntity, bIgnoreETag,
+			fnOnStrictHandlingFailed) {
 		var sGroupId,
+			mHeaders = oEntity && {"If-Match" : bIgnoreETag ? "*" : oEntity} || {},
 			sHttpMethod = "POST",
 			that = this;
+
+		function post(oGroupLock0) {
+			that.bPosting = true;
+
+			// BEWARE! Avoid finally here! BCP: 2070200175
+			return SyncPromise.all([
+				that.oRequestor.request(sHttpMethod,
+					that.sResourcePath + that.sQueryString, oGroupLock0, mHeaders, oData),
+				that.fetchTypes()
+			]).then(function (aResult) {
+				that.visitResponse(aResult[0], aResult[1]);
+				that.bPosting = false;
+
+				return aResult[0];
+			}, function (oError) {
+				that.bPosting = false;
+				if (fnOnStrictHandlingFailed && oError.strictHandlingFailed) {
+					return fnOnStrictHandlingFailed(oError).then(function (bConfirm) {
+						var oCanceledError;
+
+						if (bConfirm) {
+							delete mHeaders["Prefer"];
+							return post(oGroupLock0.getUnlockedCopy());
+						}
+
+						oCanceledError = Error("Action canceled due to strict handling");
+						oCanceledError.canceled = true;
+						throw oCanceledError;
+					});
+				}
+				throw oError;
+			});
+		}
 
 		this.checkSharedRequest();
 		if (!this.bPost) {
@@ -2963,22 +3005,11 @@ sap.ui.define([
 			}
 		}
 
-		this.bPosting = true;
 		this.bSentRequest = true;
-		this.oPromise = SyncPromise.all([
-			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
-				oEntity && {"If-Match" : bIgnoreETag ? "*" : oEntity}, oData),
-			this.fetchTypes()
-		]).then(function (aResult) {
-			that.visitResponse(aResult[0], aResult[1]);
-			that.bPosting = false;
-
-			return aResult[0];
-		}, function (oError) {
-			// BEWARE! Avoid finally here! BCP: 2070200175
-			that.bPosting = false;
-			throw oError;
-		});
+		if (fnOnStrictHandlingFailed) {
+			mHeaders["Prefer"] = "handling=strict";
+		}
+		this.oPromise = post(oGroupLock);
 
 		return this.oPromise;
 	};

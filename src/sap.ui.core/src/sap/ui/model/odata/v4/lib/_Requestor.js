@@ -428,6 +428,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Throws an error if the new request uses strict handling and there is a change set containing
+	 * a strict handling request except the one at index <code>iChangeSetNo</code>.
+	 *
+	 * @param {object} oRequest
+	 *   The new request
+	 * @param {object[]} aRequests
+	 *   The batch queue
+	 * @param {number} iChangeSetNo
+	 *   The index of the irrelevant change set
+	 * @throws {Error}
+	 *   If there is a conflicting change set
+	 *
+	 * @private
+	 */
+	_Requestor.prototype.checkConflictingStrictRequest = function (oRequest, aRequests,
+		iChangeSetNo) {
+
+		function isOtherChangeSetWithStrictHandling(aChangeSet, i) {
+			return iChangeSetNo !== i && aChangeSet.some(isUsingStrictHandling);
+		}
+
+		function isUsingStrictHandling(oRequest) {
+			return oRequest.headers["Prefer"] === "handling=strict";
+		}
+
+		// do not look past aRequests.iChangeSet because these cannot be change sets
+		if (isUsingStrictHandling(oRequest)
+				&& aRequests.slice(0, aRequests.iChangeSet + 1)
+					.some(isOtherChangeSetWithStrictHandling)) {
+			throw new Error("All requests with strict handling must belong to the same change set");
+		}
+	};
+
+	/**
 	 * Checks if there are open requests. Open requests are announced, pending, or running change
 	 * requests.
 	 *
@@ -1546,6 +1580,8 @@ sap.ui.define([
 					while (aRequests[iChangeSetNo].iSerialNumber > iRequestSerialNumber) {
 						iChangeSetNo -= 1;
 					}
+					that.checkConflictingStrictRequest(oRequest, aRequests, iChangeSetNo);
+
 					aRequests[iChangeSetNo].push(oRequest);
 				}
 			});

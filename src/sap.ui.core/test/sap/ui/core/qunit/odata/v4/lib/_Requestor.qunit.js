@@ -4194,7 +4194,6 @@ sap.ui.define([
 		});
 	});
 
-
 	//*********************************************************************************************
 	QUnit.test("checkForOpenRequests", function (assert) {
 		var sErrorMessage = "Unexpected open requests",
@@ -4386,6 +4385,103 @@ sap.ui.define([
 		assert.strictEqual(
 			oRequestor.addQueryString("EntitySet?$foo=~&$bar=~", "/meta/path", mQueryOptions),
 			"EntitySet?$foo=foo&$bar=bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkConflictingStrictRequest", function (assert) {
+		var oRequestor = _Requestor.create("/~/"),
+			oRequest = {
+				headers : {foo : "bar"}
+			},
+			oStrictRequest = {
+				headers : {Prefer : "handling=strict"}
+			};
+
+		function success(aRequests, iChangeSetNo) {
+			aRequests.iChangeSet = aRequests.length - 1;
+			aRequests.push({});
+			oRequestor.checkConflictingStrictRequest(oRequest, aRequests, iChangeSetNo);
+			oRequestor.checkConflictingStrictRequest(oStrictRequest, aRequests, iChangeSetNo);
+		}
+
+		function fail(aRequests, iChangeSetNo) {
+			aRequests.iChangeSet = aRequests.length - 1;
+			aRequests.push({});
+			oRequestor.checkConflictingStrictRequest(oRequest, aRequests, iChangeSetNo);
+			assert.throws(function () {
+				oRequestor.checkConflictingStrictRequest(oStrictRequest, aRequests, iChangeSetNo);
+			}, new Error("All requests with strict handling must belong to the same change set"));
+		}
+
+		success([[]], 0);
+		success([[oRequest], [oRequest]], 1);
+		success([[oRequest], [oRequest]], 0);
+		success([[oStrictRequest], [oRequest]], 0);
+		success([[oRequest], [oStrictRequest]], 1);
+		success([[oRequest], [oRequest, oStrictRequest]], 1);
+		success([[oRequest], [oRequest, oStrictRequest], [oRequest]], 1);
+
+		fail([[oStrictRequest], [oRequest]], 1);
+		fail([[oRequest], [oStrictRequest], []], 2);
+		fail([[oRequest], [oRequest, oStrictRequest], []], 2);
+		fail([[oRequest], [oRequest, oStrictRequest], [oRequest]], 2);
+		fail([[oRequest], [], [oStrictRequest]], 1);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("request: checkConflictingStrictRequests", function (assert) {
+		var oConflictError = {},
+			oExpectedRequest = {
+				method : "POST",
+				url : "some/url",
+				headers : {
+					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+				},
+				body : undefined,
+				$cancel : undefined,
+				$metaPath : undefined,
+				$queryOptions : undefined,
+				$reject : sinon.match.func,
+				$resolve : sinon.match.func,
+				$resourcePath : "some/url",
+				$submit : undefined
+			},
+			aRequests = [[]],
+			oRequestor = _Requestor.create("/~/"),
+			oGroupLock = oRequestor.lockGroup("groupId", {}),
+			oRequestorMock = this.mock(oRequestor);
+
+		aRequests.iChangeSet = 0;
+		aRequests[0].iSerialNumber = 0;
+
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("groupId").returns("~");
+		oRequestorMock.expects("getOrCreateBatchQueue").withExactArgs("groupId").returns(aRequests);
+		oRequestorMock.expects("checkConflictingStrictRequest")
+			.withExactArgs(sinon.match(oExpectedRequest), sinon.match.same(aRequests), 0);
+
+		// code under test
+		oRequestor.request("POST", "some/url", oGroupLock);
+
+		assert.strictEqual(aRequests[0][0].url, "some/url");
+
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("groupId").returns("~");
+		oRequestorMock.expects("getOrCreateBatchQueue").withExactArgs("groupId")
+			.returns(aRequests);
+		oRequestorMock.expects("checkConflictingStrictRequest")
+			.withExactArgs(sinon.match(oExpectedRequest),sinon.match.same(aRequests), 0)
+			.throws(oConflictError);
+
+		// code under test - conflict case
+		return oRequestor.request("POST", "some/url", oGroupLock.getUnlockedCopy())
+			.then(function () {
+				assert.notOk(true);
+			}, function (oError) {
+				assert.strictEqual(oConflictError, oError);
+				assert.strictEqual(aRequests[0][0].url, "some/url");
+				// no new request should be inserted
+				assert.strictEqual(aRequests[0].length, 1);
+			});
 	});
 });
 // TODO: continue-on-error? -> flag on model

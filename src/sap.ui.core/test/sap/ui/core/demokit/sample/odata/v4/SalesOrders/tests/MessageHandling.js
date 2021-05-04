@@ -18,10 +18,17 @@ sap.ui.define([
 			var sDiscountFailure =
 					"User John Doe is not authorized to approve more than 50% discount w/o approver",
 				sItemNoteWarning = "Enter a Note",
+				aExpectedLogs = [],
 				sNoteWarning = "Enter customer reference if available",
 				sNoteFailure = "Property `Note` value `RAISE_ERROR` not allowed!",
 				sQuantityError = "Minimum order quantity is 2",
 				sQuantityFailure = "Value must be greater than 0",
+				oStrictModeFailLog = {
+					component : "sap.ui.model.odata.v4.ODataListBinding",
+					level : Log.Level.ERROR,
+					message : "Failed to refresh entity: /SalesOrderList('0500000006')[6]",
+					details : "HTTP request was not processed because the previous request failed"
+				},
 				sUnboundInfo = "Example for an unbound message";
 
 			if (TestUtils.isRealOData()) {
@@ -313,7 +320,17 @@ sap.ui.define([
 			}]);
 			When.onTheMessagePopover.close();
 
-			Then.onAnyPage.checkLog([{
+			// "Prefer: handling=strict"
+			When.onTheMainPage.pressConfirmSalesOrderButton();
+			aExpectedLogs.push(oStrictModeFailLog);
+			When.onTheMainPage.pressCancelStrictModeButton();
+
+			When.onTheMainPage.pressConfirmSalesOrderButton();
+			aExpectedLogs.push(oStrictModeFailLog);
+			When.onTheMainPage.pressConfirmStrictModeButton();
+
+			//TODO: push the logs where they expected to occur, same way as for oStrictModeFailLog
+			aExpectedLogs.push({
 				component : "sap.ui.model.odata.v4.Context",
 				level : Log.Level.ERROR,
 				message: "Failed to update path /SalesOrderList('0500000003')/Note",
@@ -375,7 +392,8 @@ sap.ui.define([
 					+ "com.sap.gateway.default.zui5_epm_sample.v0002."
 					+ "SalesOrderSimulateDiscount(...)/value",
 				details : sDiscountFailure
-			}]);
+			});
+			Then.onAnyPage.checkLog(aExpectedLogs);
 
 			Then.iTeardownMyUIComponent();
 		}
