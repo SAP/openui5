@@ -102,6 +102,7 @@ sap.ui.define([
 							rm.openStart("div", PREFIX_DUMMY + fragment.getId());
 							rm.class("sapUiHidden");
 							rm.openEnd();
+							rm.close("div");
 						}
 					}
 				}
