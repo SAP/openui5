@@ -8,7 +8,8 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.walkthrough.Component", {
 
 		metadata : {
-			manifest: "json"
+			manifest: "json",
+			interfaces: ["sap.ui.core.IAsyncContentCreation"]
 		},
 
 		init : function () {
@@ -25,7 +26,9 @@ sap.ui.define([
 			this.setModel(oModel);
 
 			// set dialog
-			this._helloDialog = new HelloDialog(this.getRootControl());
+			this.rootControlLoaded().then(function() {
+				this._helloDialog = new HelloDialog(this.getRootControl());
+			}.bind(this));
 		},
 
 		exit : function () {

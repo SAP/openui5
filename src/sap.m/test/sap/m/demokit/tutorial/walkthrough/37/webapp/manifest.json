@@ -37,11 +37,10 @@
 		"rootView": {
 			"viewName": "sap.ui.demo.walkthrough.view.App",
 			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.60",
+			"minUI5Version": "1.90",
 			"libs": {
 				"sap.m": {}
 			}
@@ -78,8 +77,7 @@
 				"viewType": "XML",
 				"viewPath": "sap.ui.demo.walkthrough.view",
 				"controlId": "app",
-				"controlAggregation": "pages",
-				"async": true
+				"controlAggregation": "pages"
 			},
 			"routes": [
 				{
