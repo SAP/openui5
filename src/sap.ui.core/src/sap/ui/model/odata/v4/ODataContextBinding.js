@@ -1169,7 +1169,7 @@ sap.ui.define([
 		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		this.createReadGroupLock(sGroupId, true);
-		return this.refreshDependentBindings("", sGroupId, true);
+		return oContext.refreshDependentBindings("", sGroupId, true);
 	};
 
 	/**

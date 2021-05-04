@@ -2357,7 +2357,7 @@ sap.ui.define([
 						aUpdatePromises.push(oContext.checkUpdate());
 						if (bAllowRemoval) {
 							aUpdatePromises.push(
-								that.refreshDependentBindings(sResourcePathPrefix,
+								oContext.refreshDependentBindings(sResourcePathPrefix,
 									oGroupLock.getGroupId()));
 						}
 					}
@@ -2378,7 +2378,7 @@ sap.ui.define([
 			if (!bAllowRemoval) {
 				// call refreshInternal on all dependent bindings to ensure that all resulting data
 				// requests are in the same batch request
-				aPromises.push(that.refreshDependentBindings(sResourcePathPrefix,
+				aPromises.push(oContext.refreshDependentBindings(sResourcePathPrefix,
 					oGroupLock.getGroupId()));
 			}
 
