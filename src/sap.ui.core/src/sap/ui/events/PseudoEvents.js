@@ -531,26 +531,28 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 		},
 
 		/**
-		 * Pseudo event for pseudo skip forward (F6 + no modifier)
+		 * Pseudo event for pseudo skip forward (F6 + no modifier or ctrl + alt + ArrowDown)
 		 * @public
 		 */
 		sapskipforward: {
 			sName: "sapskipforward",
 			aTypes: ["keydown"],
 			fnCheck: function(oEvent) {
-				return (oEvent.key ? oEvent.key === "F6" : oEvent.keyCode == KeyCodes.F6) && !hasModifierKeys(oEvent);
+				return (oEvent.key ? oEvent.key === "F6" : oEvent.keyCode == KeyCodes.F6) && !hasModifierKeys(oEvent) ||
+						(oEvent.key ? oEvent.key === "ArrowDown" : oEvent.keyCode == KeyCodes.ARROW_DOWN) && checkModifierKeys(oEvent, /*Ctrl*/ true, /*Alt*/ true, /*Shift*/ false);
 			}
 		},
 
 		/**
-		 * Pseudo event for pseudo skip back (F6 + shift modifier)
+		 * Pseudo event for pseudo skip back (F6 + shift modifier or ctrl + alt + ArrowUp)
 		 * @public
 		 */
 		sapskipback: {
 			sName: "sapskipback",
 			aTypes: ["keydown"],
 			fnCheck: function(oEvent) {
-				return (oEvent.key ? oEvent.key === "F6" : oEvent.keyCode == KeyCodes.F6) && checkModifierKeys(oEvent, /*Ctrl*/ false, /*Alt*/ false, /*Shift*/ true);
+				return (oEvent.key ? oEvent.key === "F6" : oEvent.keyCode == KeyCodes.F6) && checkModifierKeys(oEvent, /*Ctrl*/ false, /*Alt*/ false, /*Shift*/ true) ||
+				(oEvent.key ? oEvent.key === "ArrowUp" : oEvent.keyCode == KeyCodes.ARROW_UP) && checkModifierKeys(oEvent, /*Ctrl*/ true, /*Alt*/ true, /*Shift*/ false);
 			}
 		},
 

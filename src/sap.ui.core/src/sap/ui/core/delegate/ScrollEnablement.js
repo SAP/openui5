@@ -342,7 +342,7 @@ sap.ui.define([
 					}
 				}
 
-				if (oEvent.ctrlKey) {
+				if (oEvent.ctrlKey && !oEvent.altKey) {
 					switch (oEvent.keyCode) {
 						case KeyCodes.ARROW_UP:
 							// [CTRL]+[UP] - 1 page up
