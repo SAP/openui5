@@ -925,6 +925,26 @@ function(
 		QUnit.test("when extractTemplateId() is called without parameters", function(assert) {
 			assert.equal(ElementUtil.extractTemplateId(), undefined, "... then undefined is returned");
 		});
+
+		QUnit.test("when getAggregationBindingTemplate() is called for control with aggregation binding template attached", function(assert) {
+			assert.equal(ElementUtil.getAggregationBindingTemplate(this.oList, "items"), this.oItemTemplate, "then the bound template is returned");
+		});
+
+		QUnit.test("when getAggregationBindingTemplate() is called for control without aggregation binding template attached", function(assert) {
+			assert.equal(ElementUtil.getAggregationBindingTemplate(this.oVBox1, "content"), undefined, "then undefined is returned");
+		});
+
+		QUnit.test("when getAggregationBindingTemplate() is called for control and aggregation name without binding attached", function(assert) {
+			assert.equal(ElementUtil.getAggregationBindingTemplate(this.oList, "infoToolbar"), undefined, "then undefined is returned");
+		});
+
+		QUnit.test("when getAggregationBindingTemplate() is called for control with invalid aggregation paramter", function(assert) {
+			assert.equal(ElementUtil.getAggregationBindingTemplate(this.oList, "invalid"), undefined, "then undefined is returned");
+		});
+
+		QUnit.test("when getAggregationBindingTemplate() is called without parameters", function(assert) {
+			assert.equal(ElementUtil.getAggregationBindingTemplate(), undefined, "then undefined is returned");
+		});
 	});
 
 	QUnit.module("Given a bound list control and a control inside of the list which is not in the template", {
