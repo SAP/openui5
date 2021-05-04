@@ -92,7 +92,9 @@ sap.ui.define([
 		));
 		sandbox.stub(ChangesUtils, "getControlIfTemplateAffected")
 			.callsFake(function (oChange, oControl) {
-				return oControl;
+				return {
+					control: oControl
+				};
 			});
 		sandbox.stub(FlUtils, "getViewForControl").returns();
 		var oMergedChangeHandler = Object.assign(
