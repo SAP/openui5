@@ -5306,11 +5306,15 @@ sap.ui.define([
 	//
 	// Additionally, show that "sap-valid-*" query options are allowed.
 	// JIRA: CPOUI5ODATAV4-461
+	//
+	// Ignore unchanged binding-specific parameters ("$$*").
+	// JIRA: CPOUI5ODATAV4-939
 	QUnit.test("Absolute ODLB changing parameters; sap-valid-*", function (assert) {
 		var sView = '\
 <Table id="table" items="{\
 	path : \'/EMPLOYEES\',\
 	parameters : {\
+		$$ownRequest : true,\
 		$select : \'Name\',\
 		foo : \'bar\',\
 		\'sap-valid-at\' : \'now\'\
@@ -5337,6 +5341,8 @@ sap.ui.define([
 
 			// code under test
 			that.oView.byId("table").getBinding("items").changeParameters({
+				$$ownRequest : true,
+				$$sharedRequest : undefined,
 				$search : "Fall",
 				$select : "ID,Name",
 				// foo : "bar",

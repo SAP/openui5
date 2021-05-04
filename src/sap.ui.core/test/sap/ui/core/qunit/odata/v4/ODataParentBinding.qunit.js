@@ -286,7 +286,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("changeParameters: with binding parameters", function (assert) {
+	QUnit.test("changeParameters: with binding-specific parameters", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oModel : {},
 				mParameters : {},
@@ -306,6 +306,27 @@ sap.ui.define([
 			});
 		}, new Error("Unsupported parameter: $$groupId"));
 		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: ignore unchanged binding-specific parameters", function () {
+		var oBinding = new ODataParentBinding({
+				oModel : {},
+				mParameters : {$$ownRequest : true},
+				sPath : "/ProductList",
+				applyParameters : function () {}
+			});
+
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("applyParameters")
+			.withExactArgs({$$ownRequest : true, $count : true}, ChangeReason.Change);
+
+		// code under test
+		oBinding.changeParameters({
+			$$ownRequest : true,
+			$$sharedRequest : undefined,
+			$count : true
+		});
 	});
 
 	//*********************************************************************************************

@@ -306,6 +306,7 @@ sap.ui.define([
 	 *   If there are pending changes or if <code>mParameters</code> is missing, contains
 	 *   binding-specific or unsupported parameters, contains unsupported values, or contains the
 	 *   property "$expand" or "$select" when the model is in auto-$expand/$select mode.
+	 *   Since 1.90.0, binding-specific parameters are ignored if they are unchanged.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -357,6 +358,9 @@ sap.ui.define([
 
 		for (sKey in mParameters) {
 			if (sKey.startsWith("$$")) {
+				if (mParameters[sKey] === mBindingParameters[sKey]) {
+					continue; // ignore unchanged binding-specific parameters
+				}
 				throw new Error("Unsupported parameter: " + sKey);
 			}
 			if (mParameters[sKey] === undefined && mBindingParameters[sKey] !== undefined) {
