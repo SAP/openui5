@@ -512,7 +512,41 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Rendering", {
+		before: function() {
+			sap.ui.predefine("testdata/mvc/EmptyControl", ["sap/ui/core/Control"], function (Control) {
+				return Control.extend("testdata.mvc.EmptyControl", {
+					metadata: {},
+					renderer: {
+						render: function() { /* empty renderer is intentional */ }
+					}
+				});
+			});
+		}
+	});
 
+	QUnit.test("Empty Control in XMLView", function(assert) {
+		var sXML =
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:test="testdata.mvc">' +
+			'<Button id="Benjamin" text="DJ Ben Jammin"></Button>' +
+			'<test:EmptyControl></test:EmptyControl>' +
+			// If the XMLViewRenderer does not correctly close it's placeholder <div> for the empty control,
+			// the DOM of this button will slide into the DOM of the placeholder
+			'<Button id="Jenson" text="Jenson"></Button>' +
+		'</mvc:View>';
+
+		return XMLView.create({
+			definition: sXML
+		}).then(function (oView) {
+			oView.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oButtonDomRef = oView.byId("Jenson").getDomRef();
+			assert.ok(oButtonDomRef.parentNode === oView.getDomRef(), "Button is a direct DOM child of the View.");
+
+			oView.destroy();
+		});
+	});
 
 	QUnit.module("Additional tests:");
 
