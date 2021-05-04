@@ -36,7 +36,8 @@ sap.ui.define([
 							success: function () {
 								Opa5.assert.ok(true, "The table has 20 items on the first page");
 							},
-							errorMessage: "The table does not contain all books."
+							errorMessage: "The table does not contain all books.",
+							timeout: 40
 						});
 					},
 
