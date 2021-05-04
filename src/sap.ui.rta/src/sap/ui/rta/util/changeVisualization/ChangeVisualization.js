@@ -365,7 +365,7 @@ sap.ui.define([
 			var mControl = ChangesUtils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 			return ChangesWriteAPI.getChangeHandler({
 				changeType: oChange.getChangeType(),
-				element: mControl,
+				element: mControl.control,
 				modifier: JsControlTreeModifier,
 				layer: oChange.getLayer()
 			})
