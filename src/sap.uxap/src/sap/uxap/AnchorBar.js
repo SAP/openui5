@@ -135,13 +135,6 @@ sap.ui.define([
 		this._sSelectedKey = null; // keep track of sap.uxap.HierarchicalSelect selected key
 		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
-		//are we on an rtl scenario?
-		//IE handles rtl in a transparent way (positions positives, scroll starts at the end)
-		//while firefox, safari and chrome have a special management (scroll at the beginning and negative positioning)
-		//therefore we will apply some specific actions only if are in rtl and not in IE.
-		/* TODO remove after the end of support for Internet Explorer */
-		this._bRtlScenario = this._bRtl && !Device.browser.msie;
-
 		//there are 2 different uses cases:
 		//case 1: on a real phone we don't need the scrolling anchorBar, just the hierarchicalSelect
 		//case 2: on a real tablet or a desktop we need both as the size may change
@@ -554,12 +547,12 @@ sap.ui.define([
 			}
 
 			iContainerWidth = $scrollContainer.width();
-			iScrollLeft = this._bRtlScenario ? $scrollContainer.scrollLeftRTL() : $scrollContainer.scrollLeft();
+			iScrollLeft = this._bRtl ? $scrollContainer.scrollLeftRTL() : $scrollContainer.scrollLeft();
 
 			bNeedScrollingBegin = iScrollLeft >= this._iTolerance;
 			bNeedScrollingEnd = iScrollLeft + iContainerWidth < (this._iMaxPosition - this._iTolerance);
 
-			if (this._bRtlScenario) {
+			if (this._bRtl) {
 				fnSwapBeginEnd();
 			}
 
@@ -587,7 +580,7 @@ sap.ui.define([
 		 decrease if:
 		 - ltr and the left arrow was pressed
 		 - rtl and the right arrow was pressed */
-		var iScrollDirection = ((!this._bRtlScenario && bScrollLeft) || (this._bRtlScenario && !bScrollLeft)) ? -1 : 1;
+		var iScrollDirection = ((!this._bRtl && bScrollLeft) || (this._bRtl && !bScrollLeft)) ? -1 : 1;
 
 		this._oScroller.scrollTo(this._iMaxPosition * iScrollDirection, 0, AnchorBar.SCROLL_DURATION * 3); //increase scroll duration when scrolling to the other end of the anchorBar (UX requirement)
 	};
@@ -610,7 +603,7 @@ sap.ui.define([
 			if (!library.Utilities.isPhoneScenario(oMediaRange)
 				&& this._oSectionInfo[sId]) {
 
-				if (this._bRtlScenario && Device.browser.firefox) {
+				if (this._bRtl && Device.browser.firefox) {
 					// in firefox RTL mode we are working with negative numbers and we have to add the offset in order not to hide the selected item
 					iScrollTo = this._oSectionInfo[sId].scrollLeft + this._iOffset;
 				} else {
@@ -918,7 +911,7 @@ sap.ui.define([
 
 		//post processing based on how browsers implement rtl
 		//chrome, safari && Device.browser.webkit && firefox
-		if (this._bRtlScenario && (Device.browser.webkit || Device.browser.firefox)) {
+		if (this._bRtl && (Device.browser.webkit || Device.browser.firefox)) {
 			aContent.forEach(this._adjustNextSectionInfo, this); // adjust positions depending of the browser
 			this._oScroller && this._oScroller.scrollTo(this._iMaxPosition, 0, 0);
 		}
