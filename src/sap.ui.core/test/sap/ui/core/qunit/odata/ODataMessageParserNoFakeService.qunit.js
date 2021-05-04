@@ -1763,15 +1763,18 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bStatusCodeAsString) {
-	QUnit.test("parse: ignore GET with 204 response, " + bStatusCodeAsString, function (assert) {
+[204, 424].forEach(function (iStatusCode) {
+	[false, true].forEach(function (bStatusCodeAsString) {
+	var sTitle = "parse: ignore GET with " + iStatusCode + " response, " + bStatusCodeAsString;
+
+	QUnit.test(sTitle, function (assert) {
 		var oODataMessageParser = {
 				_parseBody : function () {},
 				_parseHeader : function () {},
 				_propagateMessages : function () {}
 			},
 			oRequest = {method : "GET", requestUri : "~requestUri"},
-			oResponse = {statusCode : bStatusCodeAsString ? "204" : 204};
+			oResponse = {statusCode : bStatusCodeAsString ? String(iStatusCode) : iStatusCode};
 
 		this.mock(oODataMessageParser).expects("_parseBody").never();
 		this.mock(oODataMessageParser).expects("_parseHeader").never();
@@ -1780,6 +1783,7 @@ sap.ui.define([
 		// code under test
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
 			"~mGetEntities", "~mChangeEntities", true);
+	});
 	});
 });
 

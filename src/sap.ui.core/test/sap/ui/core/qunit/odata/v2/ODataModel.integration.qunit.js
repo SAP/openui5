@@ -5122,6 +5122,93 @@ usePreliminaryContext : false}}">\
 
 	//*********************************************************************************************
 	// Scenario: The creation (POST) of a new entity leads to an automatic expand of the given
+	// navigation properties (GET) within the same $batch. If the creation fails, the response of
+	// both the POST and the GET request contain error responses. If the response to the GET request
+	// has the status code 424, we do not create a message.
+	QUnit.test("createEntry: ignore status code 424 of GET in batch with POST", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({
+				canonicalRequests : true,
+				useBatch : true
+			}),
+			sView = '\
+<FlexBox id="productDetails"\
+	binding="{path : \'ToProduct\', parameters : {select : \'Name\'}}">\
+	<Text id="productName" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oErrorGET = createErrorResponse({message : "GET failed", statusCode : 424}),
+				oErrorPOST = createErrorResponse({message : "POST failed", statusCode : 400}),
+				oGETRequest = {
+					deepPath : "/$~key~",
+					requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
+				},
+				bHandlerCalled,
+				oPOSTRequest = {
+					created : true,
+					data : {
+						__metadata : {
+							type : "gwsample_basic.SalesOrderLineItem"
+						}
+					},
+					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					headers : {"Content-ID": "~key~", "sap-messages": "transientOnly"},
+					method : "POST",
+					requestUri : "SalesOrderSet('1')/ToLineItems"
+				};
+
+			function fnHandleError (oEvent) {
+				var oResponse = oEvent.getParameter("response");
+
+				if (!bHandlerCalled) {
+					assert.strictEqual(oResponse.expandAfterCreateFailed, undefined);
+					bHandlerCalled = true;
+				} else {
+					assert.strictEqual(oResponse.expandAfterCreateFailed, true);
+					oModel.detachRequestFailed(fnHandleError);
+				}
+			}
+
+			that.expectHeadRequest()
+				.expectRequest(oPOSTRequest, oErrorPOST)
+				.expectRequest(oGETRequest, oErrorGET)
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderLineItemSet('~key~')",
+					technical : true,
+					type : "Error"
+				}]);
+
+			oModel.attachRequestFailed(fnHandleError);
+
+			// code under test
+			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				expand : "ToProduct",
+				properties : {}
+			});
+
+			that.oLogMock.expects("error")
+				.withExactArgs("'HTTP request failed' while processing "
+						+ "POST SalesOrderSet('1')/ToLineItems",
+					JSON.stringify(oErrorPOST), sODataModelClassName);
+			that.oLogMock.expects("error")
+				.withExactArgs(sinon.match(new RegExp("'HTTP request failed' while processing "
+						+ "GET \\$id-\\d*-\\d*\\?\\$expand=ToProduct&\\$select=ToProduct")),
+					JSON.stringify(oErrorGET), sODataModelClassName);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: The creation (POST) of a new entity leads to an automatic expand of the given
 	// navigation properties within the same $batch. Calling resetChanges on the model removes also
 	// the GET request for the automatic expansion of the given navigation properties.
 	// JIRA: CPOUI5MODELS-198
