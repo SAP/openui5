@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
@@ -28,7 +27,6 @@ sap.ui.define([
 	OverlayRegistry,
 	ElementOverlay,
 	VariantManagement,
-	VariantModel,
 	VariantManagementState,
 	FlexTestAPI,
 	sinon
@@ -81,7 +79,10 @@ sap.ui.define([
 			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 			this.oGetComponentClassNameStub = sinon.stub(FlUtils, "getComponentClassName").returns("Dummy.Component");
 
-			this.oModel = new VariantModel(oData, undefined, this.oMockedAppComponent);
+			this.oModel = FlexTestAPI.createVariantModel({
+				data: oData,
+				appComponent: this.oMockedAppComponent
+			});
 			// non-personalization mode
 			this.oModel._bDesignTimeMode = true;
 

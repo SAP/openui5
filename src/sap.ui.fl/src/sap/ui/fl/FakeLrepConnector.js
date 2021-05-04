@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/Cache",
 	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function(
+	Cache,
 	ObjectPathConnector,
 	ObjectStorageUtils
 ) {
@@ -39,7 +41,7 @@ sap.ui.define([
 		}
 		aConnectorConfig.push({connector: sStorageConnectorName});
 		sap.ui.getCore().getConfiguration().setFlexibilityServices(aConnectorConfig);
-		sap.ui.requireSync("sap/ui/fl/Cache").clearEntries();
+		Cache.clearEntries();
 	};
 
 	/**
@@ -47,7 +49,7 @@ sap.ui.define([
 	 */
 	FakeLrepConnector.disableFakeConnector = function() {
 		FakeLrepConnector.prototype = {};
-		sap.ui.requireSync("sap/ui/fl/Cache").clearEntries();
+		Cache.clearEntries();
 
 		// only reset the flexibility Services in case they were changes by the FakeConnector before
 		if (this._oFlexibilityServices) {
@@ -75,7 +77,7 @@ sap.ui.define([
 			};
 		},
 		clear: function(oConnector, mPropertyBag) {
-			sap.ui.requireSync("sap/ui/fl/Cache").clearEntries();
+			Cache.clearEntries();
 			return oConnector.reset(mPropertyBag);
 		},
 		setStorage: function(oConnector, oNewStorage) {
