@@ -588,6 +588,114 @@ sap.ui.define([
 		assert.ok(oTarget3Spy.notCalled, "suspend isn't called on the other target");
 	});
 
+	QUnit.module("Component Target", {
+		beforeEach: function () {
+			this.oShell = new ShellSubstitute();
+
+			// System under test + Arrange
+			this.oViews = new Views({async: true});
+			this.oTargets = new Targets({
+				targets: {
+					myTarget : {
+						path: "test.routing.target",
+						name: "routingConfig",
+						controlAggregation: "content",
+						controlId: this.oShell.getId(),
+						type: "Component",
+						options: {
+							manifest: false
+						}
+					}
+				},
+				config: {
+					async: true
+				},
+				views: this.oViews
+			});
+			this.sandbox = sinon.sandbox.create();
+		},
+		afterEach: function () {
+			this.oTargets.destroy();
+			this.sandbox.restore();
+		}
+	});
+
+	QUnit.test("Display a component target", function(assert) {
+		var oTarget = this.oTargets.getTarget("myTarget"),
+			oTargetDisplaySpy = this.sandbox.spy(oTarget, "_display"),
+			oInitializeSpy = this.sandbox.spy(Router.prototype, "initialize");
+
+		return this.oTargets.display("myTarget")
+			.then(function() {
+				assert.ok(oTargetDisplaySpy.calledOnce, "The target is displayed");
+
+				var oComponentContainer = this.oShell.getContent()[0];
+				assert.ok(oComponentContainer.isA("sap.ui.core.ComponentContainer"), "The parent target is added to the target control");
+
+				var oRouter = oComponentContainer.getComponentInstance().getRouter();
+				assert.equal(oInitializeSpy.callCount, 1, "router is initialized");
+
+				var oCall = oInitializeSpy.getCall(0);
+				assert.ok(oCall.calledOn(oRouter), "the initialize call is called on the correct router");
+				assert.strictEqual(oCall.args[0], undefined, "initialize call is called with the correct parameter");
+			}.bind(this))
+			.then(function() {
+				oTarget.suspend();
+
+				return this.oTargets.display("myTarget");
+			}.bind(this))
+			.then(function() {
+				var oComponentContainer = this.oShell.getContent()[0];
+				assert.ok(oComponentContainer.isA("sap.ui.core.ComponentContainer"), "The parent target is added to the target control");
+
+				var oRouter = oComponentContainer.getComponentInstance().getRouter();
+				assert.equal(oInitializeSpy.callCount, 2, "router is initialized again");
+				var oCall = oInitializeSpy.getCall(1);
+				assert.ok(oCall.calledOn(oRouter), "the initialize call is called on the correct router");
+				assert.strictEqual(oCall.args[0], undefined, "initialize call is called with the correct parameter");
+			}.bind(this));
+	});
+
+	QUnit.test("Display a component target with ignoreInitialHash=true", function(assert) {
+		var oTarget = this.oTargets.getTarget("myTarget"),
+			oTargetDisplaySpy = this.sandbox.spy(oTarget, "_display"),
+			oInitializeSpy = this.sandbox.spy(Router.prototype, "initialize");
+
+		// act
+		return this.oTargets.display("myTarget")
+			.then(function() {
+				assert.ok(oTargetDisplaySpy.calledOnce, "The target is displayed");
+
+				var oComponentContainer = this.oShell.getContent()[0];
+				assert.ok(oComponentContainer.isA("sap.ui.core.ComponentContainer"), "The parent target is added to the target control");
+
+				var oRouter = oComponentContainer.getComponentInstance().getRouter();
+				assert.equal(oInitializeSpy.callCount, 1, "router is initialized");
+
+				var oCall = oInitializeSpy.getCall(0);
+				assert.ok(oCall.calledOn(oRouter), "the initialize call is called on the correct router");
+				assert.strictEqual(oCall.args[0], undefined, "initialize call is called with the correct parameter");
+			}.bind(this))
+			.then(function() {
+				oTarget.suspend();
+
+				return this.oTargets.display({
+					name: "myTarget",
+					ignoreInitialHash: true
+				});
+			}.bind(this))
+			.then(function() {
+				var oComponentContainer = this.oShell.getContent()[0];
+				assert.ok(oComponentContainer.isA("sap.ui.core.ComponentContainer"), "The parent target is added to the target control");
+
+				var oRouter = oComponentContainer.getComponentInstance().getRouter();
+				assert.equal(oInitializeSpy.callCount, 2, "router is initialized again");
+				var oCall = oInitializeSpy.getCall(1);
+				assert.ok(oCall.calledOn(oRouter), "the initialize call is called on the correct router");
+				assert.strictEqual(oCall.args[0], true, "initialize call is called with the correct parameter");
+			}.bind(this));
+	});
+
 	QUnit.module("Component Targets parent/child", {
 		beforeEach: function () {
 			this.oShell = new ShellSubstitute();
