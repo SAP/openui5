@@ -125,6 +125,24 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format([-123456.789, "JPY"]), "JPY", "only currency JPY is displayed");
 	});
 
+	QUnit.test("Currency parse with showNumber=false", function (assert) {
+		var oLocale = new Locale("en-US", oLocale);
+		var oFormat = getCurrencyInstance({showNumber: false}, oLocale);
+
+		assert.deepEqual(oFormat.parse("EUR"), [undefined, "EUR"], "EUR");
+		assert.deepEqual(oFormat.parse("XXX"), [undefined, "XXX"], "XXX");
+
+		// null values
+		assert.equal(oFormat.parse(""), null, "");
+		assert.equal(oFormat.parse("x"), null, "x");
+		assert.equal(oFormat.parse("kg"), null, "kg");
+		assert.equal(oFormat.parse("1"), null, "1");
+		assert.equal(oFormat.parse("1.00"), null, "1.00");
+		assert.equal(oFormat.parse("1.00\x0aEUR"), null, "1.00 EUR");
+		assert.equal(oFormat.parse("1.23\x0aXXX"), null, "1.23 XXX");
+		assert.equal(oFormat.parse("1.23 kg"), null, "1.23 kg");
+	});
+
 	QUnit.test("Currency format with showNumber and currency symbols", function (assert) {
 		var oLocale = new Locale("en-US", oLocale);
 		var oFormat = getCurrencyInstance({showNumber: false, currencyCode: false}, oLocale);
@@ -141,7 +159,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.deepEqual(oFormat.parse("\u20b9"), [undefined, "INR"], "only currency symbol for INR is displayed");
 		assert.deepEqual(oFormat.parse("A$"), [undefined, "AUD"], "only currency symbol for AUD is displayed");
 		assert.deepEqual(oFormat.parse("$"), [undefined, "USD"], "only currency symbol for USD is displayed");
-		assert.deepEqual(oFormat.parse("x"), [undefined, undefined], "unknown unit");
+		assert.deepEqual(oFormat.parse("x"), null, "unknown unit");
 	});
 
 	QUnit.test("Currency parse with showNumber and currency codes", function (assert) {
@@ -214,8 +232,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format([123456.789, undefined]), "123,456.79", "123456.79");
 		assert.equal(oFormat.format(-123456.789, undefined), "-123,456.79", "-123456.79");
 		assert.equal(oFormat.format([-123456.789, "ASDEF"]).toString(), "ASDEF\ufeff-123,456.79", "-123456.789 ASDEF");
-		assert.equal(oFormat.format([-123456.789, false]).toString(), "-123,456.79", "-123456.789 false");
-		assert.equal(oFormat.format([-123456.789, NaN]).toString(), "-123,456.79", "-123456.789 NaN");
+		assert.equal(oFormat.format([-123456.789, false]).toString(), "", "-123456.789 false");
+		assert.equal(oFormat.format([-123456.789, NaN]).toString(), "", "-123456.789 NaN");
 		assert.equal(oFormat.format([-123456.789, undefined]).toString(), "-123,456.79", "-123456.789 undefined");
 		assert.equal(oFormat.format([-123456.789, null]).toString(), "-123,456.79", "-123456.789 null");
 	});
@@ -1400,26 +1418,25 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
+		// showMeasure false
 		oFormat = getCurrencyInstance({
 			showMeasure: false
 		});
 
-		aResult = oFormat.parse("-12,345.67 EUR");
-		assert.equal(aResult, null, "Currency with measure cannot be parsed");
+		assert.deepEqual(oFormat.parse("1"), [1, undefined], "1");
+		assert.deepEqual(oFormat.parse("1.23"), [1.23, undefined], "1.23");
+		assert.deepEqual(oFormat.parse("1234567.89"), [1234567.89, undefined], "1234567.89");
 
-		aResult = oFormat.parse("USD23.4567");
-		assert.equal(aResult, null, "Currency with measure cannot be parsed");
+		// null values
+		assert.deepEqual(oFormat.parse("x"), null, "x");
+		assert.deepEqual(oFormat.parse("kg"), null, "kg");
+		assert.deepEqual(oFormat.parse("XXX"), null, "XXX");
+		assert.deepEqual(oFormat.parse("1 day"), null, "1 day");
 
-		aResult = oFormat.parse("EUR-1234567.89");
-		assert.equal(aResult, null, "Currency with measure cannot be parsed");
-
-		aResult = oFormat.parse("EUR");
-		assert.equal(aResult, null, "String with currency code only can't be parsed");
-
-		aResult = oFormat.parse("1234567.89");
-		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
-		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
+		assert.equal(oFormat.parse("-12,345.67 EUR"), null, "Currency with measure cannot be parsed");
+		assert.equal(oFormat.parse("USD23.4567"), null, "Currency with measure cannot be parsed");
+		assert.equal(oFormat.parse("EUR-1234567.89"), null, "Currency with measure cannot be parsed");
+		assert.equal(oFormat.parse("EUR"), null, "String with currency code only can't be parsed");
 
 		oFormat = getCurrencyInstance({
 			parseAsString: true

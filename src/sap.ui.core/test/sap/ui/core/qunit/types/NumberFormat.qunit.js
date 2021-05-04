@@ -1448,8 +1448,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		var oLocale = new Locale("en");
 		var oFormat = NumberFormat.getUnitInstance({}, oLocale);
 
-		assert.equal(oFormat.format(1123, "coordinateUnit"), "", "invalid unit pattern");
-		assert.equal(oFormat.format(1123, "per"), "", "invalid unit pattern");
+		assert.equal(oFormat.format(1123, "coordinateUnit"), "1,123 coordinateUnit", "invalid unit pattern");
+		assert.equal(oFormat.format(1123, "per"), "1,123 per", "invalid unit pattern");
 	});
 
 	QUnit.test("Unit format with unknown locale", function (assert) {
@@ -1484,7 +1484,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		}, oLocale);
 
 		// test exclusiveness
-		assert.equal(oFormat.format(20, "area-hectare").toString(), "", "20 ha");
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "20 area-hectare", "20 ha");
 
 		// test "other" units
 		assert.equal(oFormat.format(20, "olf").toString(), "20 olfers", "20 olfers");
@@ -1635,9 +1635,9 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format(20, "IND").toString(), "20 H", "20 H");
 		assert.equal(oFormat.format(20, "MTR").toString(), "20 m", "20 m");
 		assert.equal(oFormat.format(20, "MET").toString(), "20 m", "20 m");
-		assert.equal(oFormat.format(20, "DET").toString(), "", "mapping of mapping");
-		assert.equal(oFormat.format(20, "one").toString(), "", "recursive mapping");
-		assert.equal(oFormat.format(20, "two").toString(), "", "recursive mapping");
+		assert.equal(oFormat.format(20, "DET").toString(), "20 DET", "mapping of mapping");
+		assert.equal(oFormat.format(20, "one").toString(), "20 one", "recursive mapping");
+		assert.equal(oFormat.format(20, "two").toString(), "20 two", "recursive mapping");
 
 		oFormatSettings.setCustomUnits(undefined);
 		oFormatSettings.setUnitMappings(undefined);
@@ -1705,11 +1705,20 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		var oLocale = new Locale("en");
 		var oFormat = NumberFormat.getUnitInstance({showNumber: false}, oLocale);
 
+		assert.equal(oFormat.format(1).toString(), "", "number 1 is rendered as empty string");
 		assert.equal(oFormat.format(20, "duration-day").toString(), "days", "20 days");
 		assert.equal(oFormat.format(1, "duration-day").toString(), "day", "1 day");
 		assert.equal(oFormat.format(20, "duration-hour").toString(), "hr", "20 hr");
 		assert.equal(oFormat.format(1, "duration-hour").toString(), "hr", "1 hr");
-		assert.equal(oFormat.format(20, "duration-day-non-existing").toString(), "", "not existing");
+		assert.equal(oFormat.format(20, "duration-day-non-existing").toString(), "duration-day-non-existing", "not existing");
+
+		// null/undefined input values
+		assert.equal(oFormat.format(null, "PC").toString(), "PC", "null and unknown measure will result in 'PC'");
+		assert.equal(oFormat.format(null, "duration-day").toString(), "days", "null and known measure will result in 'days'");
+		assert.equal(oFormat.format(undefined, "duration-day").toString(), "days", "undefined and known measure will result in 'days'");
+		assert.equal(oFormat.format(undefined, "PC").toString(), "PC", "undefined and unknown measure will result in 'PC'");
+		assert.equal(oFormat.format(null, null).toString(), "", "null values result in empty string");
+		assert.equal(oFormat.format(undefined, undefined).toString(), "", "undefined values result in empty string");
 	});
 
 	QUnit.test("Unit parse showNumber false", function (assert) {
@@ -1719,8 +1728,18 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.deepEqual(oFormat.parse("days"), [undefined, "duration-day"], "days");
 		assert.deepEqual(oFormat.parse("day"), [undefined, "duration-day"], "day");
 		assert.deepEqual(oFormat.parse("hr"), [undefined, "duration-hour"], "hr");
-		// ambiguous
-		assert.deepEqual(oFormat.parse("c"), null, "days");
+		assert.deepEqual(oFormat.parse("kg"), [undefined, "mass-kilogram"], "kg");
+
+		// ambiguous unit (duration-century, volume-cup)
+		assert.deepEqual(oFormat.parse("c"), null, "century or cup");
+
+		// invalid values result in null
+		assert.deepEqual(oFormat.parse(""), null, "empty string results in null");
+		assert.deepEqual(oFormat.parse("x"), null, "'x' results in null");
+		assert.deepEqual(oFormat.parse("XXX"), null, "'XXX' results in null");
+		assert.deepEqual(oFormat.parse("1"), null, "'1' results in null");
+		assert.deepEqual(oFormat.parse("1.23\x0aXXX"), null, "'1.23 XXX' results in null");
+		assert.deepEqual(oFormat.parse("1.23 kg"), null, "'1.23 kg' results in null");
 	});
 
 	QUnit.test("Unit format showNumber false custom Units from global configuration with only other pattern", function (assert) {
@@ -1771,7 +1790,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 				}
 			}});
 
-		assert.equal(oFormat.format(20, "area-hectare").toString(), "", "20 ha");
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "area-hectare", "20 ha");
 		assert.equal(oFormat.format(20, "electric-inductance").toString(), "Hs", "20 H");
 		assert.equal(oFormat.format(1, "electric-inductance").toString(), "H", "1 H");
 	});
@@ -1812,18 +1831,18 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		// there is no pattern with the number placeholder therefore it cannot be split into number and unit
 		// Note: this does not exist in CLDR data but just in case
 		assert.equal(this.oLogWarningSpy.callCount, 0, "No warning logs should be called");
-		assert.equal(oFormat.format(1, "house-size").toString(), "", "Einfamilienhaus");
-		assert.equal(oFormat.format(2, "house-size").toString(), "", "Zweifamilienhaus");
-		assert.equal(oFormat.format(20, "house-size").toString(), "", "Mehrfamilienhaus");
+		assert.equal(oFormat.format(1, "house-size").toString(), "Einfamilienhaus", "Einfamilienhaus");
+		assert.equal(oFormat.format(2, "house-size").toString(), "Mehrfamilienhaus", "Zweifamilienhaus (no two plural for en_US)");
+		assert.equal(oFormat.format(20, "house-size").toString(), "Mehrfamilienhaus", "Mehrfamilienhaus");
 		assert.equal(this.oLogWarningSpy.callCount, 3, "Warning logs should be called");
 		assert.equal(this.oLogWarningSpy.getCall(0).args[0], "Cannot separate the number from the unit because unitPattern-count-other 'Mehrfamilienhaus' does not include the number placeholder '{0}' for unit 'house-size'", "Warning message");
 		assert.equal(this.oLogWarningSpy.getCall(1).args[0], "Cannot separate the number from the unit because unitPattern-count-other 'Mehrfamilienhaus' does not include the number placeholder '{0}' for unit 'house-size'", "Warning message");
 		assert.equal(this.oLogWarningSpy.getCall(2).args[0], "Cannot separate the number from the unit because unitPattern-count-other 'Mehrfamilienhaus' does not include the number placeholder '{0}' for unit 'house-size'", "Warning message");
 
 		// Bike Size (no pattern includes number placeholder, other pattern not present)
-		assert.equal(oFormat.format(1, "bike-size").toString(), "", "Fahrrad");
-		assert.equal(oFormat.format(2, "bike-size").toString(), "", "Tandem");
-		assert.equal(oFormat.format(3, "bike-size").toString(), "", "(does not exist))");
+		assert.equal(oFormat.format(1, "bike-size").toString(), "bike-size", "Fahrrad");
+		assert.equal(oFormat.format(2, "bike-size").toString(), "bike-size", "Tandem");
+		assert.equal(oFormat.format(3, "bike-size").toString(), "bike-size", "(does not exist))");
 
 	});
 
@@ -1857,21 +1876,23 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format(undefined, "area-hectare").toString(), "", "undefined");
 		assert.equal(oFormat.format(NaN, "area-hectare").toString(), "", "NaN");
 		assert.equal(oFormat.format({}, "area-hectare").toString(), "", "empty object");
+		assert.equal(oFormat.format(null, "area-hectare").toString(), "", "null area-hectare");
 		assert.equal(oFormat.format(function () { }, "area-hectare").toString(), "", "function");
 		assert.equal(oFormat.format().toString(), "", "no params");
 
 		//invalid unit
 		assert.equal(oFormat.format(12, 33).toString(), "", "");
-		assert.equal(oFormat.format(12, "").toString(), "", "");
-		assert.equal(oFormat.format(12, "a").toString(), "", "a");
+		assert.equal(oFormat.format(12, "").toString(), "12", "");
+		assert.equal(oFormat.format(12, "a").toString(), "12 a", "a");
 		assert.equal(oFormat.format(12, true).toString(), "", "boolean true");
 		assert.equal(oFormat.format(12, false).toString(), "", "boolean false");
-		assert.equal(oFormat.format(12, null).toString(), "", "null");
-		assert.equal(oFormat.format(12, undefined).toString(), "", "undefined");
+		assert.equal(oFormat.format(12, null).toString(), "12", "null");
+		assert.equal(oFormat.format(12, undefined).toString(), "12", "undefined");
 		assert.equal(oFormat.format(12, {}).toString(), "", "empty object");
 		assert.equal(oFormat.format(12, function () { }).toString(), "", "function");
-		assert.equal(oFormat.format(12).toString(), "", "params");
+		assert.equal(oFormat.format(12).toString(), "12", "params");
 		assert.equal(oFormat.format(12, NaN).toString(), "", "NaN empty string option is by default NaN");
+
 
 		// empty string option
 		oFormat = NumberFormat.getUnitInstance({ emptyString: 0 }, oLocale);
@@ -1931,9 +1952,18 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		var oLocale = new Locale("en");
 		var oFormat = NumberFormat.getUnitInstance({ showMeasure: false }, oLocale);
 
-		assert.deepEqual(oFormat.parse("20 ha"), [20, "area-hectare"], "parsed correctly");
-		assert.deepEqual(oFormat.parse("20 c"), [20, undefined], "number and ambigious unit duration-century and volume-cup");
+		assert.deepEqual(oFormat.parse("1.23"), [1.23, undefined], "1.23");
 		assert.deepEqual(oFormat.parse("20"), [20, undefined], "number only '20'");
+		assert.deepEqual(oFormat.parse("1"), [1, undefined], "1");
+		assert.deepEqual(oFormat.parse(""), [NaN, undefined], "number no unit '' empty string option is by default NaN");
+
+		// result in null
+		assert.deepEqual(oFormat.parse("1 day"), null, "1 day");
+		assert.deepEqual(oFormat.parse("x"), null, "x");
+		assert.deepEqual(oFormat.parse("kg"), null, "kg");
+		assert.deepEqual(oFormat.parse("XXX"), null, "XXX");
+		assert.equal(oFormat.parse("20 ha"), null, "parsed correctly");
+		assert.equal(oFormat.parse("20 c"), null, "number and ambigious unit duration-century and volume-cup");
 		assert.equal(oFormat.parse("ha"), null, "unit only 'ha'");
 		assert.equal(oFormat.parse("__ ha"), null, "no number area-hectare unit '__ ha'");
 		assert.equal(oFormat.parse("__ __"), null, "no number no unit '__ __'");
@@ -1947,7 +1977,6 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.parse(NaN), null, "number no unit NaN");
 		assert.equal(oFormat.parse(22), null, "number no unit 22");
 		assert.equal(oFormat.parse(function () { }), null, "number no unit function");
-		assert.deepEqual(oFormat.parse(""), [NaN, undefined], "number no unit '' empty string option is by default NaN");
 
 		oFormat = NumberFormat.getUnitInstance({ emptyString: 0 }, oLocale);
 		assert.deepEqual(oFormat.parse(""), [0, undefined], "empty string is 0");

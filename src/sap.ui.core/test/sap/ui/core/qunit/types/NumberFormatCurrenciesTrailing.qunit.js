@@ -84,8 +84,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format([123456.789, undefined]), "123,456.79", "123456.79");
 		assert.equal(oFormat.format(-123456.789, undefined), "-123,456.79", "-123456.79");
 		assert.equal(oFormat.format([-123456.789, "ASDEF"]).toString(), "-123,456.79" + "\xa0" + "ASDEF", "-123456.789 ASDEF");
-		assert.equal(oFormat.format([-123456.789, false]).toString(), "-123,456.79", "-123456.789 false");
-		assert.equal(oFormat.format([-123456.789, NaN]).toString(), "-123,456.79", "-123456.789 NaN");
+		assert.equal(oFormat.format([-123456.789, false]).toString(), "", "-123456.789 false");
+		assert.equal(oFormat.format([-123456.789, NaN]).toString(), "", "-123456.789 NaN");
 		assert.equal(oFormat.format([-123456.789, undefined]).toString(), "-123,456.79", "-123456.789 undefined");
 		assert.equal(oFormat.format([-123456.789, null]).toString(), "-123,456.79", "-123456.789 null");
 	});
