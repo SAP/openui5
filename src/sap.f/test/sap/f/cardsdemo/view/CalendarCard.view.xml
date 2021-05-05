@@ -13,7 +13,14 @@
 		</subHeader>
 
 		<Panel>
-			<w:Card id="calendarCard" class="sapUiMediumMargin" manifest="{manifests>/calendarCard/calendarCard}" width="700px" height="auto" />
+			<HBox width="100%" renderType="Bare">
+				<w:Card id="calendarCard" manifest="{manifests>/calendarCard/calendarCard}" width="100%" height="auto">
+					<w:layoutData>
+						<FlexItemData maxWidth="700px" />
+					</w:layoutData>
+				</w:Card>
+			</HBox>
 		</Panel>
+
 	</Page>
 </mvc:View>
