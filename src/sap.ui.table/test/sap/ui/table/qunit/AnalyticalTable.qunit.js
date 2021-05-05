@@ -140,6 +140,10 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Hierarchy mode", function(assert) {
+		assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), TableUtils.Grouping.HierarchyMode.Group, "Table is in mode 'Group'");
+	});
+
 	QUnit.test("Selection Plugin", function(assert) {
 		assert.ok(this.oTable._getSelectionPlugin().isA("sap.ui.table.plugins.BindingSelection"), "BindingSelection plugin is initialized");
 	});

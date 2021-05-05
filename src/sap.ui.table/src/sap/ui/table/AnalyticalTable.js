@@ -206,7 +206,7 @@ sap.ui.define([
 		this._bSuspendUpdateAnalyticalInfo = false;
 		this._mGroupHeaderMenuItems = null;
 
-		TableUtils.Grouping.setGroupMode(this);
+		TableUtils.Grouping.setToDefaultGroupMode(this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenMenu, onOpenTableContextMenu, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);

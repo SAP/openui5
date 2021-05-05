@@ -91,7 +91,7 @@ sap.ui.define([
 			fixedTop: false,
 			fixedBottom: false
 		});
-		TableUtils.Grouping.setGroupMode(oTable);
+		TableUtils.Grouping.setToDefaultGroupMode(oTable);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
@@ -109,7 +109,7 @@ sap.ui.define([
 		this.setRowCountConstraints();
 		resetCellContentVisibilitySettings(this);
 
-		TableUtils.Grouping.clearMode(oTable);
+		TableUtils.Grouping.setToDefaultFlatMode(oTable);
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);

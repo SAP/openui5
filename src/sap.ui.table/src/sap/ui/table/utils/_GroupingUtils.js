@@ -11,6 +11,11 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * Map from table to its hierarchy mode.
+	 */
+	var TableToHierarchyModeMap = new window.WeakMap();
+
+	/**
 	 * Static collection of utility functions related to grouping of sap.ui.table.Table, ...
 	 *
 	 * Note: Do not access the functions of this helper directly, but via <code>sap.ui.table.utils.TableUtils.Grouping...</code>
@@ -22,68 +27,144 @@ sap.ui.define([
 	 * @private
 	 */
 	var GroupingUtils = {
-
 		TableUtils: null, // Avoid cyclic dependency. Will be filled by TableUtils
 
 		/**
-		 * Resets the tree/group mode of the given table.
+		 * The visual appearance of the table is influenced by the chosen hierarchy mode, which influences how the state of rows is interpreted.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @private
+		 * @enum {string}
+		 * @alias sap.ui.table.utils.TableUtils.Grouping.HierarchyMode
 		 */
-		clearMode: function(oTable) {
-			oTable._mode = null;
+		HierarchyMode: {
+			/**
+			 * Default mode.
+			 * The data is presented in a non-hierarchical, flat list of rows. The row type "GroupHeader" and hierarchy information such as
+			 * "level" and "expandable" are ignored.
+			 */
+			Flat: "Flat",
+
+			/**
+			 * Default group mode.
+			 * Visualization for grouped data. The row type "GroupHeader" and hierarchy information are taken into account.
+			 */
+			Group: "Group",
+
+			/**
+			 * Default tree mode.
+			 * Visualization for tree data. The row type "GroupHeader" is ignored and hierarchy information are taken into account.
+			 */
+			Tree: "Tree",
+
+			/**
+			 * Visualization for tree data as a grouped structure. The row type "GroupHeader" and hierarchy information are taken into account.
+			 * Basically, the same indentation rules apply as for the default group mode. With the exception that leaf rows are not aligned with their
+			 * group headers, but are indented deeper to take into account the structure of tree data.
+			 */
+			GroupedTree: "GroupedTree"
 		},
 
 		/**
-		 * Sets the given table into group mode.
+		 * Sets the hierarchy mode of the table.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {sap.ui.table.utils.TableUtils.Grouping.HierarchyMode} sMode The hierarchy mode.
 		 */
-		setGroupMode: function(oTable) {
-			oTable._mode = "Group";
+		setHierarchyMode: function(oTable, sMode) {
+			if (!GroupingUtils.TableUtils.isA(oTable, "sap.ui.table.Table") || !(sMode in GroupingUtils.HierarchyMode)) {
+				return;
+			}
+
+			var sCurrentHierarchyMode = GroupingUtils.getHierarchyMode(oTable);
+
+			if (sCurrentHierarchyMode !== sMode) {
+				TableToHierarchyModeMap.set(oTable, sMode);
+				oTable.invalidate();
+			}
 		},
 
 		/**
-		 * Checks whether the given table is in group mode.
+		 * Gets the hierarchy mode of the table.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Whether the table is in group mode.
+		 * @returns {sap.ui.table.utils.TableUtils.Grouping.HierarchyMode | null} The hierarchy mode of the table.
 		 */
-		isGroupMode: function(oTable) {
-			return oTable ? oTable._mode === "Group" : false;
+		getHierarchyMode: function(oTable) {
+			return GroupingUtils.TableUtils.isA(oTable, "sap.ui.table.Table")
+				   ? TableToHierarchyModeMap.get(oTable) || GroupingUtils.HierarchyMode.Flat
+				   : null;
 		},
 
 		/**
-		 * Sets the given table into tree mode.
+		 * Sets the hierarchy mode of the table to the default non-hierarchical (flat) mode.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 */
-		setTreeMode: function(oTable) {
-			oTable._mode = "Tree";
+		setToDefaultFlatMode: function(oTable) {
+			GroupingUtils.setHierarchyMode(oTable, GroupingUtils.HierarchyMode.Flat);
 		},
 
 		/**
-		 * Checks whether the given table is in tree mode.
+		 * Sets the hierarchy mode of the table to the default group mode.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Whether the table is in tree mode.
 		 */
-		isTreeMode: function(oTable) {
-			return oTable ? oTable._mode === "Tree" : false;
+		setToDefaultGroupMode: function(oTable) {
+			GroupingUtils.setHierarchyMode(oTable, GroupingUtils.HierarchyMode.Group);
 		},
 
 		/**
-		 * Returns the CSS class which belongs to the mode of the given table or <code>null</code> if no CSS class is relevant.
+		 * Sets the hierarchy mode of the table to the default tree mode.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 */
+		setToDefaultTreeMode: function(oTable) {
+			GroupingUtils.setHierarchyMode(oTable, GroupingUtils.HierarchyMode.Tree);
+		},
+
+		/**
+		 * Check whether the table is in a non-hierarchical (flat) mode.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table is in a flat mode.
+		 */
+		isInFlatMode: function(oTable) {
+			return GroupingUtils.getHierarchyMode(oTable) === GroupingUtils.HierarchyMode.Flat;
+		},
+
+		/**
+		 * Check whether the table is in a group mode.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table is in a group mode.
+		 */
+		isInGroupMode: function(oTable) {
+			var sHierarchyMode = GroupingUtils.getHierarchyMode(oTable);
+			return sHierarchyMode === GroupingUtils.HierarchyMode.Group || sHierarchyMode === GroupingUtils.HierarchyMode.GroupedTree;
+		},
+
+		/**
+		 * Check whether the table is in a tree mode.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table is in a tree mode.
+		 */
+		isInTreeMode: function(oTable) {
+			return GroupingUtils.getHierarchyMode(oTable) === GroupingUtils.HierarchyMode.Tree;
+		},
+
+		/**
+		 * Returns the CSS class which belongs toupdateTableRowForGrouping the hierarchy mode of the given table or <code>null</code> if no CSS class
+		 * is relevant.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @returns {string | null} The mode specific CSS class.
 		 */
 		getModeCssClass: function(oTable) {
-			switch (oTable._mode) {
-				case "Group":
+			switch (GroupingUtils.getHierarchyMode(oTable)) {
+				case GroupingUtils.HierarchyMode.Group:
+				case GroupingUtils.HierarchyMode.GroupedTree:
 					return "sapUiTableGroupMode";
-				case "Tree":
+				case GroupingUtils.HierarchyMode.Tree:
 					return "sapUiTableTreeMode";
 				default:
 					return null;
@@ -97,6 +178,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the group menu button should be shown.
 		 */
 		showGroupMenuButton: function(oTable) {
+			// TODO: This should depend on the hierarchy mode. Consider this when reworking the group menu buttons for mobile.
 			return !Device.system.desktop && GroupingUtils.TableUtils.isA(oTable, "sap.ui.table.AnalyticalTable");
 		},
 
@@ -140,8 +222,9 @@ sap.ui.define([
 		 * @private
 		 */
 		calcGroupIndent: function(oRow) {
-			var bIsTreeTable = GroupingUtils.TableUtils.isA(oRow.getTable(), "sap.ui.table.TreeTable"); // temporary, until spec is clarified
-			var iLevel = oRow.getLevel() - (!oRow.isGroupHeader() && !oRow.isTotalSummary() && !bIsTreeTable ? 1 : 0);
+			var bTreeIndentation = GroupingUtils.getHierarchyMode(oRow.getTable()) === GroupingUtils.HierarchyMode.GroupedTree;
+			var bReduceIndentation = !bTreeIndentation && !oRow.isGroupHeader() && !oRow.isTotalSummary();
+			var iLevel = oRow.getLevel() - (bReduceIndentation ? 1 : 0);
 			var iIndent = 0;
 
 			for (var i = 1; i < iLevel; i++) {
@@ -222,16 +305,12 @@ sap.ui.define([
 			var oTable = oRow.getTable();
 			var oDomRefs = oRow.getDomRefs(true);
 			var $Row = oDomRefs.row;
-			var iLevel = oRow.getLevel();
 			var bIsExpanded = oRow.isExpanded();
 			var bIsExpandable = oRow.isExpandable();
 
-			$Row.attr({"data-sap-ui-level": iLevel})
-				.data("sap-ui-level", iLevel)
-				.toggleClass("sapUiTableSummaryRow", oRow.isSummary())
-				.toggleClass("sapUiTableGroupHeaderRow", oRow.isGroupHeader());
+			$Row.toggleClass("sapUiTableSummaryRow", oRow.isSummary());
 
-			if (GroupingUtils.isGroupMode(oTable)) {
+			if (GroupingUtils.isInGroupMode(oTable)) {
 				var sTitle = oRow.getTitle();
 				var iIndent = GroupingUtils.calcGroupIndent(oRow);
 
@@ -241,10 +320,11 @@ sap.ui.define([
 					.attr("title", oTable._getShowStandardTooltips() && sTitle ? sTitle : null)
 					.text(sTitle);
 				GroupingUtils.setGroupIndent(oRow, iIndent);
-				$Row.toggleClass("sapUiTableRowIndented", iIndent > 0);
+				$Row.toggleClass("sapUiTableRowIndented", iIndent > 0)
+					.toggleClass("sapUiTableGroupHeaderRow", oRow.isGroupHeader());
 			}
 
-			if (GroupingUtils.isTreeMode(oTable)) {
+			if (GroupingUtils.isInTreeMode(oTable)) {
 				var $TreeIcon = $Row.find(".sapUiTableTreeIcon");
 
 				$TreeIcon.toggleClass("sapUiTableTreeIconLeaf", !bIsExpandable)
@@ -254,14 +334,14 @@ sap.ui.define([
 			}
 
 			if (GroupingUtils.showGroupMenuButton(oTable)) {
-				// Update the GroupMenuButton
 				var $RowHdr = oDomRefs.rowHeaderPart;
 				var iScrollbarOffset = 0;
 				var $Table = oTable.$();
+				var $GroupHeaderMenuButton = $RowHdr.find(".sapUiTableGroupMenuButton");
+
 				if ($Table.hasClass("sapUiTableVScr")) {
 					iScrollbarOffset += $Table.find(".sapUiTableVSb").width();
 				}
-				var $GroupHeaderMenuButton = $RowHdr.find(".sapUiTableGroupMenuButton");
 
 				if (oTable._bRtlMode) {
 					$GroupHeaderMenuButton.css("right",
@@ -272,7 +352,12 @@ sap.ui.define([
 				}
 			}
 
-			oTable._getAccExtension().updateAriaExpandAndLevelState(oRow);
+			if (!GroupingUtils.isInFlatMode(oTable)) {
+				var iLevel = oRow.getLevel();
+
+				$Row.attr({"data-sap-ui-level": iLevel}).data("sap-ui-level", iLevel); // TODO: Check if this can be deleted
+				oTable._getAccExtension().updateAriaExpandAndLevelState(oRow);
+			}
 		},
 
 		/**
@@ -288,7 +373,7 @@ sap.ui.define([
 			oDomRefs.row.removeAttr("data-sap-ui-level");
 			oDomRefs.row.removeData("sap-ui-level");
 
-			if (GroupingUtils.isGroupMode(oTable)) {
+			if (GroupingUtils.isInGroupMode(oTable)) {
 				oDomRefs.row.removeClass("sapUiTableGroupHeaderRow sapUiTableSummaryRow sapUiTableRowIndented");
 				oRow.$("groupHeader")
 					.removeClass("sapUiTableGroupIconOpen", "sapUiTableGroupIconClosed")
@@ -297,7 +382,7 @@ sap.ui.define([
 				GroupingUtils.setGroupIndent(oRow, 0);
 			}
 
-			if (GroupingUtils.isTreeMode(oTable)) {
+			if (GroupingUtils.isInTreeMode(oTable)) {
 				oDomRefs.row.find(".sapUiTableTreeIcon")
 						.removeClass("sapUiTableTreeIconLeaf")
 						.removeClass("sapUiTableTreeIconNodeOpen")
@@ -315,19 +400,15 @@ sap.ui.define([
 		 * @see GroupingUtils.updateTableRowForGrouping
 		 * @see GroupingUtils.cleanupTableRowForGrouping
 		 */
-		updateGroups: function(oTable) {
-			if (GroupingUtils.isGroupMode(oTable) || GroupingUtils.isTreeMode(oTable)) {
-				var oBinding = oTable.getBinding();
-
-				if (oBinding) {
-					oTable.getRows().forEach(function(oRow) {
-						GroupingUtils.updateTableRowForGrouping(oRow);
-					});
-				} else {
-					oTable.getRows().forEach(function(oRow) {
-						GroupingUtils.cleanupTableRowForGrouping(oRow);
-					});
-				}
+		updateGroups: function(oTable) { // TODO: Move rendering parts to Table or an extension (Grouping/Hierarchy/WhateverExtension)
+			if (oTable.getBinding()) {
+				oTable.getRows().forEach(function(oRow) {
+					GroupingUtils.updateTableRowForGrouping(oRow);
+				});
+			} else {
+				oTable.getRows().forEach(function(oRow) {
+					GroupingUtils.cleanupTableRowForGrouping(oRow);
+				});
 			}
 		},
 
@@ -375,7 +456,7 @@ sap.ui.define([
 			oBinding._modified = true;
 
 			// set the table into grouping mode
-			GroupingUtils.setGroupMode(oTable);
+			GroupingUtils.setToDefaultGroupMode(oTable);
 
 			// we use sorting finally to sort the values and afterwards group them
 			var sPropertyName = oGroupBy.getSortProperty();
@@ -490,7 +571,7 @@ sap.ui.define([
 			var Hook = GroupingUtils.TableUtils.Hook;
 
 			if (oBinding && oBinding._modified) {
-				GroupingUtils.clearMode(oTable);
+				GroupingUtils.setToDefaultFlatMode(oTable);
 				oTable.bindRows(oTable.getBindingInfo("rows"));
 			}
 

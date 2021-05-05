@@ -92,67 +92,135 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Grouping Modes", {
+	QUnit.module("Hierarchy modes", {
 		beforeEach: function() {
 			createTables();
 		},
 		afterEach: function() {
 			destroyTables();
+		},
+		assertMode: function(assert, sExpectedMode, sMessage) {
+			sMessage = "Table is in mode '" + sExpectedMode + "'" + (sMessage ? " - " + sMessage : "");
+			assert.strictEqual(TableUtils.Grouping.getHierarchyMode(oTable), sExpectedMode, sMessage);
+		},
+		assertAccessors: function(assert, bFlat, bGroup, bTree) {
+			var sModeCSSClass = null;
+
+			if (bGroup) {
+				sModeCSSClass = "sapUiTableGroupMode";
+			} else if (bTree) {
+				sModeCSSClass = "sapUiTableTreeMode";
+			}
+
+			assert.strictEqual(Grouping.isInFlatMode(oTable), bFlat, "#isInFlatMode");
+			assert.strictEqual(Grouping.isInGroupMode(oTable), bGroup, "#isInGroupMode");
+			assert.strictEqual(Grouping.isInTreeMode(oTable), bTree, "#isInTreeMode");
+			assert.strictEqual(Grouping.getModeCssClass(oTable), sModeCSSClass, "#getModeCssClass");
+		},
+		assertAccessorsForFlatMode: function(assert) {
+			this.assertAccessors(assert, true, false, false);
+		},
+		assertAccessorsForGroupMode: function(assert) {
+			this.assertAccessors(assert, false, true, false);
+		},
+		assertAccessorsForTreeMode: function(assert) {
+			this.assertAccessors(assert, false, false, true);
 		}
 	});
 
-	QUnit.test("Mode Accessors", function(assert) {
-		var oTbl = {};
-
-		assert.ok(!Grouping.isGroupMode(oTbl), "Initial: No Group Mode");
-		assert.ok(!Grouping.isTreeMode(oTbl), "Initial: No Tree Mode");
-		assert.ok(!Grouping.getModeCssClass(oTbl), "Initial: No Mode Css Class");
-
-		Grouping.setGroupMode(oTbl);
-
-		assert.ok(Grouping.isGroupMode(oTbl), "Group Mode");
-		assert.ok(!Grouping.isTreeMode(oTbl), "No Tree Mode");
-		assert.strictEqual(Grouping.getModeCssClass(oTbl), "sapUiTableGroupMode", "Group Mode Css Class");
-
-		Grouping.setTreeMode(oTbl);
-
-		assert.ok(!Grouping.isGroupMode(oTbl), "No Group Mode");
-		assert.ok(Grouping.isTreeMode(oTbl), "Tree Mode");
-		assert.strictEqual(Grouping.getModeCssClass(oTbl), "sapUiTableTreeMode", "Tree Mode Css Class");
-
-		Grouping.clearMode(oTbl);
-
-		assert.ok(!Grouping.isGroupMode(oTbl), "Clear: No Group Mode");
-		assert.ok(!Grouping.isTreeMode(oTbl), "Clear: No Tree Mode");
-		assert.ok(!Grouping.getModeCssClass(oTbl), "Clear: No Mode Css Class");
+	QUnit.test("Default", function(assert) {
+		this.assertMode(assert, Grouping.HierarchyMode.Flat);
+		this.assertAccessorsForFlatMode(assert);
 	});
 
-	QUnit.test("Table default modes", function(assert) {
-		assert.ok(!Grouping.isGroupMode(oTable), "No Group Mode in sap.ui.table.Table");
-		assert.ok(!Grouping.isTreeMode(oTable), "No Tree Mode in sap.ui.table.Table");
+	QUnit.test("Set to default flat mode", function(assert) {
+		Grouping.setToDefaultGroupMode(oTable);
+		Grouping.setToDefaultFlatMode(oTable);
+		this.assertMode(assert, Grouping.HierarchyMode.Flat);
+		this.assertAccessorsForFlatMode(assert);
+	});
 
-		var oColumn = oTable.getColumns()[0];
-		oColumn.setSortProperty(aFields[0]);
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oColumn);
-		sap.ui.getCore().applyChanges();
+	QUnit.test("Set to default group mode", function(assert) {
+		Grouping.setToDefaultGroupMode(oTable);
+		this.assertMode(assert, Grouping.HierarchyMode.Group);
+		this.assertAccessorsForGroupMode(assert);
+	});
 
-		assert.ok(Grouping.isGroupMode(oTable), "Group Mode in sap.ui.table.Table (in experimental Group mode)");
-		assert.ok(!Grouping.isTreeMode(oTable), "No Tree Mode in sap.ui.table.Table (in experimental Group mode)");
+	QUnit.test("Set to default tree mode", function(assert) {
+		Grouping.setToDefaultTreeMode(oTable);
+		this.assertMode(assert, Grouping.HierarchyMode.Tree);
+		this.assertAccessorsForTreeMode(assert);
+	});
 
-		assert.ok(!Grouping.isGroupMode(oTreeTable), "No Group Mode in sap.ui.table.TreeTable");
-		assert.ok(Grouping.isTreeMode(oTreeTable), "Tree Mode in sap.ui.table.TreeTable");
+	QUnit.test("Set mode to '" + Grouping.HierarchyMode.Flat + "'", function(assert) {
+		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.Group);
+		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.Flat);
+		this.assertMode(assert, Grouping.HierarchyMode.Flat);
+		this.assertAccessorsForFlatMode(assert);
+	});
 
-		oTreeTable.setUseGroupMode(true);
-		sap.ui.getCore().applyChanges();
+	QUnit.test("Set mode to '" + Grouping.HierarchyMode.Group + "'", function(assert) {
+		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.Group);
+		this.assertMode(assert, Grouping.HierarchyMode.Group);
+		this.assertAccessorsForGroupMode(assert);
+	});
 
-		assert.ok(Grouping.isGroupMode(oTreeTable), "Group Mode in sap.ui.table.TreeTable (when useGroupMode=true)");
-		assert.ok(!Grouping.isTreeMode(oTreeTable), "No Tree Mode in sap.ui.table.TreeTable (when useGroupMode=true)");
+	QUnit.test("Set mode to '" + Grouping.HierarchyMode.Tree + "'", function(assert) {
+		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.Tree);
+		this.assertMode(assert, Grouping.HierarchyMode.Tree);
+		this.assertAccessorsForTreeMode(assert);
+	});
 
-		var oAnaTable = new AnalyticalTable();
+	QUnit.test("Set mode to '" + Grouping.HierarchyMode.GroupedTree + "'", function(assert) {
+		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.GroupedTree);
+		this.assertMode(assert, Grouping.HierarchyMode.GroupedTree);
+		this.assertAccessorsForGroupMode(assert);
+	});
 
-		assert.ok(Grouping.isGroupMode(oAnaTable), "Group Mode in sap.ui.table.AnalyticalTable");
-		assert.ok(!Grouping.isTreeMode(oAnaTable), "No Tree Mode in sap.ui.table.AnalyticalTable");
+	QUnit.test("Set invalid mode'", function(assert) {
+		Grouping.setHierarchyMode(oTable, "I_do_not_exist");
+		this.assertMode(assert, Grouping.HierarchyMode.Flat, "Set to invalid string");
+		this.assertAccessorsForFlatMode(assert);
+
+		Grouping.setHierarchyMode(oTable);
+		this.assertMode(assert, Grouping.HierarchyMode.Flat, "Set to 'undefined'");
+		this.assertAccessorsForFlatMode(assert);
+	});
+
+	QUnit.test("Table invalidation", function(assert) {
+		var oInvalidate = this.spy(oTable, "invalidate");
+		var sCurrentMode = "default flat";
+		var mGroupModeSetter = {};
+
+		mGroupModeSetter["default flat"] = Grouping.setToDefaultFlatMode.bind(Grouping, oTable);
+		mGroupModeSetter["default group"] = Grouping.setToDefaultGroupMode.bind(Grouping, oTable);
+		mGroupModeSetter["default tree"] = Grouping.setToDefaultTreeMode.bind(Grouping, oTable);
+		mGroupModeSetter[Grouping.HierarchyMode.Flat] = Grouping.setHierarchyMode.bind(Grouping, oTable, Grouping.HierarchyMode.Flat);
+		mGroupModeSetter[Grouping.HierarchyMode.Group] = Grouping.setHierarchyMode.bind(Grouping, oTable, Grouping.HierarchyMode.Group);
+		mGroupModeSetter[Grouping.HierarchyMode.Tree] = Grouping.setHierarchyMode.bind(Grouping, oTable, Grouping.HierarchyMode.Tree);
+		mGroupModeSetter[Grouping.HierarchyMode.GroupedTree] = Grouping.setHierarchyMode.bind(Grouping, oTable, Grouping.HierarchyMode.GroupedTree);
+
+		[
+			{newMode: "default flat", expectInvalidation: false},
+			{newMode: Grouping.HierarchyMode.Flat, expectInvalidation: false},
+			{newMode: "default group", expectInvalidation: true},
+			{newMode: "default group", expectInvalidation: false},
+			{newMode: Grouping.HierarchyMode.Group, expectInvalidation: false},
+			{newMode: "default tree", expectInvalidation: true},
+			{newMode: "default tree", expectInvalidation: false},
+			{newMode: Grouping.HierarchyMode.Tree, expectInvalidation: false},
+			{newMode: Grouping.HierarchyMode.Flat, expectInvalidation: true},
+			{newMode: Grouping.HierarchyMode.Group, expectInvalidation: true},
+			{newMode: Grouping.HierarchyMode.GroupedTree, expectInvalidation: true},
+			{newMode: Grouping.HierarchyMode.Tree, expectInvalidation: true},
+			{newMode: Grouping.HierarchyMode.GroupedTree, expectInvalidation: true}
+		].forEach(function(mTestSettings) {
+			mGroupModeSetter[mTestSettings.newMode]();
+			assert.equal(oInvalidate.callCount, mTestSettings.expectInvalidation ? 1 : 0,
+				"Set from " + sCurrentMode + " mode to " + mTestSettings.newMode + " mode");
+			oInvalidate.reset();
+			sCurrentMode = mTestSettings.newMode;
+		});
 	});
 
 	QUnit.module("Rendering", {

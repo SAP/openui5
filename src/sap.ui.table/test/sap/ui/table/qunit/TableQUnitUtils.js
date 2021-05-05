@@ -1648,7 +1648,7 @@ sap.ui.define([
 
 		var oRow = oTableInstance.getRows()[iRow];
 
-		oTable._mode = "Group";
+		TableUtils.Grouping.setToDefaultGroupMode(oTableInstance);
 		oRow.getType = function() {return oRow.Type.GroupHeader;};
 		oRow.getLevel = function() {return 1;};
 		oRow.isExpandable = function() {return true;};
@@ -1670,7 +1670,6 @@ sap.ui.define([
 
 		var oRow = oTableInstance.getRows()[iRow];
 
-		oTable._mode = "Tree";
 		oRow.getType = function() {return oRow.Type.Summary;};
 		oRow.getLevel = function() {return 1;};
 

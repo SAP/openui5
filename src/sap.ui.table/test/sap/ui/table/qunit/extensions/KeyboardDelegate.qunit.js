@@ -6895,7 +6895,7 @@ sap.ui.define([
 			var iFixedRowCount = oTable.getFixedRowCount();
 			var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
 			var bTableHasRowSelectors = TableUtils.isRowSelectorSelectionAllowed(oTable);
-			var bTableIsInGroupMode = TableUtils.Grouping.isGroupMode(oTable);
+			var bTableIsInGroupMode = TableUtils.Grouping.isInGroupMode(oTable);
 			var bTableHasRowHeader = bTableHasRowSelectors || bTableIsInGroupMode;
 			var bTableHasRowActions = TableUtils.hasRowActions(oTable);
 			var oKeyboardExtension = oTable._getKeyboardExtension();

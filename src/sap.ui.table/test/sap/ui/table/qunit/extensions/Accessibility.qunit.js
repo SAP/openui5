@@ -194,7 +194,7 @@ sap.ui.define([
 			}
 		}
 
-		if (oTable.isIndexSelected(iRow) && TableUtils.Grouping.isTreeMode(oTable)) {
+		if (oTable.isIndexSelected(iRow) && TableUtils.Grouping.isInTreeMode(oTable)) {
 			aLabels.push(sTableId + "-ariarowselected");
 		}
 
@@ -495,10 +495,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sum Row", function(assert) {
-		var done = assert.async();
-		initRowActions(oTable, 1, 1);
+		var oRowDomRefs;
 
-		fakeSumRow(1).then(function(oRefs) {
+		initRowActions(oTable, 1, 1);
+		TableUtils.Grouping.setToDefaultGroupMode(oTable);
+
+		return fakeSumRow(1).then(function(oRefs) {
+			oRowDomRefs = oRefs;
+
 			assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on sum row");
 			assert.strictEqual(oRefs.fixed.attr("aria-level"), "1", "aria-level set on sum row (fixed part)");
 			assert.strictEqual(oRefs.act.attr("aria-level"), "1", "aria-level set on sum row (action part)");
@@ -531,10 +535,17 @@ sap.ui.define([
 			}
 
 			TableQUnitUtils.setFocusOutsideOfTable(assert);
-			setTimeout(function () {
-				testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
-				done();
-			}, 100);
+		}).then(TableQUnitUtils.$wait(100)).then(function() {
+			testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
+			TableUtils.Grouping.setToDefaultFlatMode(oTable);
+
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("rowsUpdated", resolve);
+			});
+		}).then(function() {
+			assert.strictEqual(oRowDomRefs.row.attr("aria-level"), undefined, "aria-level set on sum row");
+			assert.strictEqual(oRowDomRefs.fixed.attr("aria-level"), undefined, "aria-level set on sum row (fixed part)");
+			assert.strictEqual(oRowDomRefs.act.attr("aria-level"), undefined, "aria-level set on sum row (action part)");
 		});
 	});
 
@@ -855,11 +866,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sum Row", function(assert) {
+		var $Cell;
+		var oRowDomRefs;
 		var that = this;
-		var done = assert.async();
-		fakeSumRow(1).then(function(oRefs) {
-			var $Cell;
 
+		TableUtils.Grouping.setToDefaultGroupMode(oTable);
+
+		return fakeSumRow(1).then(function(oRefs) {
+			oRowDomRefs = oRefs;
 			assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on sum row header");
 
 			$Cell = getRowHeader(1, false, assert);
@@ -875,10 +889,15 @@ sap.ui.define([
 				"The row header of a sum row doesn't have row selector text");
 
 			TableQUnitUtils.setFocusOutsideOfTable(assert);
-			setTimeout(function () {
-				that.testAriaLabels($Cell, 1, assert);
-				done();
-			}, 100);
+		}).then(TableQUnitUtils.$wait(100)).then(function() {
+			that.testAriaLabels($Cell, 1, assert);
+			TableUtils.Grouping.setToDefaultFlatMode(oTable);
+
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("rowsUpdated", resolve);
+			});
+		}).then(function() {
+			assert.strictEqual(oRowDomRefs.hdr.attr("aria-level"), undefined, "aria-level not set on sum row header if table is in flat mode");
 		});
 	});
 

@@ -1140,10 +1140,10 @@ sap.ui.define([
 				 "Every second element with data-sap-ui-rowindex attribute has the sapUiTableRowAlternate class");
 
 		// check tree mode
-		sinon.stub(TableUtils.Grouping, "isTreeMode").returns(false);
+		sinon.stub(TableUtils.Grouping, "isInTreeMode").returns(false);
 		oTable.rerender();
 		assert.equal(oTable.$().find("sapUiTableRowAlternate").length, 0, "No alternating rows for tree mode");
-		TableUtils.Grouping.isTreeMode.restore();
+		TableUtils.Grouping.isInTreeMode.restore();
 	});
 
 	QUnit.module("Column operations", {
@@ -5925,7 +5925,291 @@ sap.ui.define([
 		oGetBindingLength.restore();
 	});
 
-	QUnit.module("Row visualization", {
+	QUnit.module("Hierarchy modes", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(12),
+				columns: [
+					TableQUnitUtils.createTextColumn()
+				],
+				visibleRowCount: 12
+			});
+			this.iCurrentState = 0;
+
+			TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, function(oState) {
+				Object.assign(oState, this.aRowStates[this.iCurrentState]);
+				this.iCurrentState++;
+			}, this);
+
+			this.oTable.attachRowsUpdated(function() {
+				this.iCurrentState = 0;
+			}, this);
+
+			this.oTable.bindRows({
+				path: "/"
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		aRowStates: [{
+			title: "Non-expandable standard row",
+			type: Row.prototype.Type.Standard,
+			level: 1,
+			expandable: false
+		}, {
+			title: "Collapsed standard row",
+			type: Row.prototype.Type.Standard,
+			level: 2,
+			expandable: true,
+			expanded: false
+		}, {
+			title: "Expanded standard row",
+			type: Row.prototype.Type.Standard,
+			level: 3,
+			expandable: true,
+			expanded: true
+		}, {
+			title: "Standard row",
+			type: Row.prototype.Type.Standard,
+			level: 4
+		}, {
+			title: "Standard row",
+			type: Row.prototype.Type.Standard,
+			level: 5
+		}, {
+			title: "Non-expandable group header row",
+			type: Row.prototype.Type.GroupHeader,
+			level: 1,
+			expandable: false
+		}, {
+			title: "Collapsed group header row",
+			type: Row.prototype.Type.GroupHeader,
+			level: 2,
+			expandable: true,
+			expanded: false
+		}, {
+			title: "Expanded group header row",
+			type: Row.prototype.Type.GroupHeader,
+			level: 3,
+			expandable: true,
+			expanded: true
+		}, {
+			title: "Standard row",
+			type: Row.prototype.Type.Standard,
+			level: 4
+		}, {
+			title: "Non-expandable summary row",
+			type: Row.prototype.Type.Summary,
+			level: 1,
+			expandable: false
+		}, {
+			title: "Collapsed summary row",
+			type: Row.prototype.Type.Summary,
+			level: 2,
+			expandable: true,
+			expanded: false
+		}, {
+			title: "Expanded summary row",
+			type: Row.prototype.Type.Summary,
+			level: 5,
+			expandable: true,
+			expanded: true
+		}],
+		assertRowIndentation: function(assert, aIndentations) {
+			var aRows = this.oTable.getRows();
+
+			function getCSSPixelSize(iPixel) {
+				return iPixel === 0 ? "" : iPixel + "px";
+			}
+
+			for (var i = 0; i < aRows.length; i++) {
+				var oRow = aRows[i];
+				var bRTL = this.oTable._bRtlMode;
+				var mRowDomRefs = oRow.getDomRefs();
+				var oRowHeader = mRowDomRefs.rowHeaderPart;
+				var oFirstCellContentInRow = mRowDomRefs.rowScrollPart.querySelector("td.sapUiTableCellFirst > .sapUiTableCellInner");
+				var sMessagePrefix = (bRTL ? "RTL - " : "") + "Indentation"
+									 + "; " + oRow.getTitle()
+									 + "; Level " + oRow.getLevel()
+									 + "; Index " + oRow.getIndex() + ": ";
+
+				if (TableUtils.Grouping.isInGroupMode(this.oTable)) {
+					var oGroupShield = oRowHeader.querySelector(".sapUiTableGroupShield");
+
+					assert.equal(oRowHeader.style[bRTL ? "right" : "left"], getCSSPixelSize(aIndentations[i]),
+						sMessagePrefix + "Row header");
+					assert.equal(oGroupShield.style[bRTL ? "marginRight" : "marginLeft"], getCSSPixelSize(-aIndentations[i]),
+						sMessagePrefix + "Group shield");
+					assert.equal(oFirstCellContentInRow.style[bRTL ? "paddingRight" : "paddingLeft"],
+						getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
+						sMessagePrefix + "Content of first cell");
+				} else if (TableUtils.Grouping.isInTreeMode(this.oTable)) {
+					var oTreeIcon = mRowDomRefs.rowScrollPart.querySelector(".sapUiTableTreeIcon");
+
+					assert.equal(oTreeIcon.style[bRTL ? "marginRight" : "marginLeft"], getCSSPixelSize(aIndentations[i]),
+						sMessagePrefix + "Tree icon");
+				} else {
+					assert.equal(oRowHeader.style[bRTL ? "right" : "left"], getCSSPixelSize(aIndentations[i]),
+						sMessagePrefix + "Row header");
+					assert.equal(oFirstCellContentInRow.style[bRTL ? "paddingRight" : "paddingLeft"],
+						getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
+						sMessagePrefix + "Content of first cell");
+				}
+			}
+		},
+		RowType: {
+			Standard: 1 << 1,
+			GroupHeaderLeaf: 1 << 2,
+			GroupHeaderExpanded: 1 << 3,
+			GroupHeaderCollapsed: 1 << 4,
+			TreeNodeLeaf: 1 << 5,
+			TreeNodeExpanded: 1 << 6,
+			TreeNodeCollapsed: 1 << 7,
+			Summary: 1 << 8
+		},
+		assertRowVisualization: function(assert, aExpectedRowTypes) {
+			var aRows = this.oTable.getRows();
+			var AnyGroupHeader = this.RowType.GroupHeaderLeaf | this.RowType.GroupHeaderExpanded | this.RowType.GroupHeaderCollapsed;
+			var AnyTreeNode = this.RowType.TreeNodeLeaf | this.RowType.TreeNodeExpanded | this.RowType.TreeNodeCollapsed;
+
+			function isType(type, matchingType) {
+				return (type & matchingType) > 0;
+			}
+
+			for (var i = 0; i < aRows.length; i++) {
+				var oRow = aRows[i];
+				var iExpectedRowType = aExpectedRowTypes[i];
+				var mRowDomRefs = oRow.getDomRefs();
+				var oGroupIcon = mRowDomRefs.rowHeaderPart.querySelector(".sapUiTableGroupIcon");
+				var bIsGroupHeader = mRowDomRefs.row.every(function(oRowElement) {
+					return oRowElement.classList.contains("sapUiTableGroupHeaderRow");
+				});
+				var bIsGroupExpanded = bIsGroupHeader && oGroupIcon.classList.contains("sapUiTableGroupIconOpen");
+				var bIsGroupCollapsed = bIsGroupHeader && oGroupIcon.classList.contains("sapUiTableGroupIconClosed");
+				var bIsGroupLeaf = bIsGroupHeader && !bIsGroupExpanded && !bIsGroupCollapsed;
+				var oTreeIcon = this.oTable.qunit.getDataCell(i, 0).querySelector(".sapUiTableTreeIcon");
+				var bIsTreeNode = oTreeIcon !== null;
+				var bIsTreeLeaf = bIsTreeNode && oTreeIcon.classList.contains("sapUiTableTreeIconLeaf");
+				var bIsTreeExpanded = bIsTreeNode && oTreeIcon.classList.contains("sapUiTableTreeIconNodeOpen");
+				var bIsTreeCollapsed = bIsTreeNode && oTreeIcon.classList.contains("sapUiTableTreeIconNodeClosed");
+				var bIsSummary = mRowDomRefs.row.every(function(oRowElement) {
+					return oRowElement.classList.contains("sapUiTableSummaryRow");
+				});
+				var sMessagePrefix = "Visualization: " + oRow.getTitle() + "; Index " + oRow.getIndex() + ": ";
+
+				if (isType(iExpectedRowType, this.RowType.Standard)) {
+					assert.ok(!bIsGroupHeader && !bIsTreeNode && !bIsSummary, sMessagePrefix + "Standard row");
+				} else if (isType(iExpectedRowType, AnyGroupHeader)) {
+					assert.ok(bIsGroupHeader && !bIsTreeNode && !bIsSummary, sMessagePrefix + "Group header row");
+				} else if (isType(iExpectedRowType, AnyTreeNode)) {
+					assert.ok(!bIsGroupHeader && bIsTreeNode && !bIsSummary, sMessagePrefix + "Tree row");
+				} else if (isType(iExpectedRowType, this.RowType.Summary)) {
+					assert.ok(!bIsGroupHeader && bIsSummary, sMessagePrefix + "Summary row");
+				}
+
+				if (isType(iExpectedRowType, this.RowType.GroupHeaderLeaf)) {
+					assert.ok(bIsGroupLeaf && !bIsGroupExpanded && !bIsGroupCollapsed, sMessagePrefix + "Group header row is leaf");
+				} else if (isType(iExpectedRowType, this.RowType.GroupHeaderExpanded)) {
+					assert.ok(!bIsGroupLeaf && bIsGroupExpanded && !bIsGroupCollapsed, sMessagePrefix + "Group header row is expanded");
+				} else if (isType(iExpectedRowType, this.RowType.GroupHeaderCollapsed)) {
+					assert.ok(!bIsGroupLeaf && !bIsGroupExpanded && bIsGroupCollapsed, sMessagePrefix + "Group header row is collapsed");
+				}
+
+				if (isType(iExpectedRowType, this.RowType.TreeNodeLeaf)) {
+					assert.ok(bIsTreeLeaf && !bIsTreeExpanded && !bIsTreeCollapsed, sMessagePrefix + "Tree row is leaf");
+				} else if (isType(iExpectedRowType, this.RowType.TreeNodeExpanded)) {
+					assert.ok(!bIsTreeLeaf && bIsTreeExpanded && !bIsTreeCollapsed, sMessagePrefix + "Tree row is expanded");
+				} else if (isType(iExpectedRowType, this.RowType.TreeNodeCollapsed)) {
+					assert.ok(!bIsTreeLeaf && !bIsTreeExpanded && bIsTreeCollapsed, sMessagePrefix + "Tree row is collapsed");
+				}
+			}
+		}
+	});
+
+	QUnit.test(TableUtils.Grouping.HierarchyMode.Flat, function(assert) {
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Flat);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			this.assertRowIndentation(assert, new Array(12).fill(0));
+			this.assertRowVisualization(assert, new Array(9).fill(this.RowType.Standard).concat(new Array(3).fill(this.RowType.Summary)));
+		}.bind(this));
+	});
+
+	QUnit.test(TableUtils.Grouping.HierarchyMode.Group, function(assert) {
+		var aExpectedIndentations = [0, 0, 24, 36, 44, 0, 24, 36, 36, 0, 0, 44];
+		var that = this;
+
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Group);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			that.assertRowIndentation(assert, aExpectedIndentations);
+			that.assertRowVisualization(assert, new Array(5).fill(that.RowType.Standard).concat([
+				that.RowType.GroupHeaderLeaf,
+				that.RowType.GroupHeaderCollapsed,
+				that.RowType.GroupHeaderExpanded,
+				that.RowType.Standard,
+				that.RowType.Summary,
+				that.RowType.Summary,
+				that.RowType.Summary
+			]));
+		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertRowIndentation(assert, aExpectedIndentations);
+		}).then(TableQUnitUtils.$changeTextDirection(false));
+	});
+
+	QUnit.test(TableUtils.Grouping.HierarchyMode.Tree, function(assert) {
+		var aExpectedIndentations = [0, 17, 34, 51, 68, 0, 17, 34, 51, 0, 17, 68];
+		var that = this;
+
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Tree);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			that.assertRowIndentation(assert, aExpectedIndentations);
+			that.assertRowVisualization(assert, [
+				that.RowType.TreeNodeLeaf,
+				that.RowType.TreeNodeCollapsed,
+				that.RowType.TreeNodeExpanded,
+				that.RowType.TreeNodeLeaf,
+				that.RowType.TreeNodeLeaf,
+				that.RowType.TreeNodeLeaf,
+				that.RowType.TreeNodeCollapsed,
+				that.RowType.TreeNodeExpanded,
+				that.RowType.TreeNodeLeaf,
+				that.RowType.Summary,
+				that.RowType.Summary,
+				that.RowType.Summary
+			]);
+		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertRowIndentation(assert, aExpectedIndentations);
+		}).then(TableQUnitUtils.$changeTextDirection(false));
+	});
+
+	QUnit.test(TableUtils.Grouping.HierarchyMode.GroupedTree, function(assert) {
+		var aExpectedIndentations = [0, 24, 36, 44, 52, 0, 24, 36, 44, 0, 24, 52];
+		var that = this;
+
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.GroupedTree);
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			that.assertRowIndentation(assert, aExpectedIndentations);
+			that.assertRowVisualization(assert, new Array(5).fill(that.RowType.Standard).concat([
+				that.RowType.GroupHeaderLeaf,
+				that.RowType.GroupHeaderCollapsed,
+				that.RowType.GroupHeaderExpanded,
+				that.RowType.Standard,
+				that.RowType.Summary,
+				that.RowType.Summary,
+				that.RowType.Summary
+			]));
+		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			that.assertRowIndentation(assert, aExpectedIndentations);
+		}).then(TableQUnitUtils.$changeTextDirection(false));
+	});
+
+	QUnit.module("Hide content", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
@@ -5954,147 +6238,10 @@ sap.ui.define([
 			return this.oTable.qunit.whenRenderingFinished().then(function() {
 				TableUtils.Hook.deregister(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState);
 			}.bind(this));
-		},
-		assertIndentation: function(assert, aIndentations) {
-			var aRows = this.oTable.getRows();
-
-			function getCSSPixelSize(iPixel) {
-				return iPixel === 0 ? "" : iPixel + "px";
-			}
-
-			for (var i = 0; i < aIndentations.length; i++) {
-				var oRow = aRows[i];
-				var iRowIndex = oRow.getIndex();
-				var bRTL = this.oTable._bRtlMode;
-				var oRowDomRefs = oRow.getDomRefs();
-				var oRowHeader = oRowDomRefs.rowHeaderPart;
-				var oFirstCellContentInRow = oRowDomRefs.rowScrollPart.querySelector("td.sapUiTableCellFirst > .sapUiTableCellInner");
-				var sMessagePrefix = (bRTL ? "RTL - " : "") + "Row #" + iRowIndex + ": ";
-
-				if (TableUtils.Grouping.isGroupMode(this.oTable)) {
-					var oGroupShield = oRowHeader.querySelector(".sapUiTableGroupShield");
-
-					assert.equal(oRowHeader.style[bRTL ? "right" : "left"], getCSSPixelSize(aIndentations[i]),
-						sMessagePrefix + "Row header");
-					assert.equal(oGroupShield.style[bRTL ? "marginRight" : "marginLeft"], getCSSPixelSize(-aIndentations[i]),
-						sMessagePrefix + "Group shield");
-					assert.equal(oFirstCellContentInRow.style[bRTL ? "paddingRight" : "paddingLeft"],
-						getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
-						sMessagePrefix + "Content of first cell");
-				} else if (TableUtils.Grouping.isTreeMode(this.oTable)) {
-					var oTreeIcon = oRowDomRefs.rowScrollPart.querySelector(".sapUiTableTreeIcon");
-
-					assert.equal(oTreeIcon.style[bRTL ? "marginRight" : "marginLeft"], getCSSPixelSize(aIndentations[i]),
-						sMessagePrefix + "Tree icon");
-				} else {
-					assert.equal(oRowHeader.style[bRTL ? "right" : "left"], getCSSPixelSize(aIndentations[i]),
-						sMessagePrefix + "Row header");
-					assert.equal(oFirstCellContentInRow.style[bRTL ? "paddingRight" : "paddingLeft"],
-						getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
-						sMessagePrefix + "Content of first cell");
-				}
-			}
 		}
 	});
 
-	QUnit.skip("Group indentation", function(assert) {
-		var oRow = this.oTable.getRows()[0];
-		var aRowStates = [{
-			type: oRow.Type.GroupHeader,
-			level: 1
-		}, {
-			type: oRow.Type.Standard,
-			level: 2
-		}, {
-			type: oRow.Type.GroupHeader,
-			level: 2
-		}, {
-			type: oRow.Type.Standard,
-			level: 3
-		}, {
-			type: oRow.Type.Summary,
-			level: 3
-		}, {
-			type: oRow.Type.Summary,
-			level: 2
-		}, {
-			type: oRow.Type.Standard,
-			level: 4
-		}, {
-			type: oRow.Type.Standard,
-			level: 5
-		}, {
-			type: oRow.Type.Standard,
-			level: 6
-		}, {
-			type: oRow.Type.Summary,
-			level: 1
-		}];
-		var aExpectedIndentations = [0, 0, 24, 24, 24, 0, 36, 44, 52, 0];
-		var that = this;
-
-		TableUtils.Grouping.setGroupMode(this.oTable);
-		this.oTable.invalidate();
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			return that.setRowStates(aRowStates);
-		}).then(function() {
-			that.assertIndentation(assert, aExpectedIndentations);
-		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			return that.setRowStates(aRowStates);
-		}).then(function() {
-			that.assertIndentation(assert, aExpectedIndentations);
-		}).then(TableQUnitUtils.$changeTextDirection(false));
-	});
-
-	QUnit.skip("Tree indentation", function(assert) {
-		var aRowStates = [
-			{level: 1, expandable: true},
-			{level: 2},
-			{level: 3},
-			{level: 4},
-			{level: 5},
-			{level: 1}
-		];
-		var aExpectedIndentations = [0, 17, 34, 51, 68, 0];
-		var that = this;
-
-		TableUtils.Grouping.setTreeMode(this.oTable);
-		this.oTable.invalidate();
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			return that.setRowStates(aRowStates);
-		}).then(function() {
-			that.assertIndentation(assert, aExpectedIndentations);
-		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			return that.setRowStates(aRowStates);
-		}).then(function() {
-			that.assertIndentation(assert, aExpectedIndentations);
-		}).then(TableQUnitUtils.$changeTextDirection(false));
-	});
-
-	QUnit.skip("Indentation without group or tree mode", function(assert) {
-		var oRow = this.oTable.getRows()[0];
-		var aRowStates = [{
-			type: oRow.Type.GroupHeader,
-			level: 1
-		}, {
-			type: oRow.Type.GroupHeader,
-			level: 2
-		}, {
-			type: oRow.Type.Standard,
-			level: 3
-		}, {
-			type: oRow.Type.Summary,
-			level: 4
-		}];
-
-		return this.setRowStates(aRowStates).then(function() {
-			this.assertIndentation(assert, [0, 0, 0, 0]);
-		}.bind(this));
-	});
-
-	QUnit.test("Hidden row content", function(assert) {
+	QUnit.test("Row", function(assert) {
 		var oTable = this.oTable;
 		var oRow = oTable.getRows()[0];
 		var aRowInfo = [{
@@ -6145,7 +6292,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Hidden cell content", function(assert) {
+	QUnit.test("Cell", function(assert) {
 		var oTable = this.oTable;
 		var oRow = oTable.getRows()[0];
 		var aRowInfo = [{

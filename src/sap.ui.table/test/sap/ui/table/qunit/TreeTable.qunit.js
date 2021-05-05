@@ -300,15 +300,31 @@ sap.ui.define([
 		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
 	});
 
-	QUnit.test("Flat mode", function(assert) {
-		assert.ok(this.table.$().find(".sapUiTableTreeIcon").length > 0, "Tree Icons available in TreeMode");
-		assert.ok(!this.table._bFlatMode, "Flat Mode not set");
+	QUnit.test("Hierarchy modes", function(assert) {
+		function assertMode(oTable, sExpectedMode, sMessage) {
+			sMessage = "Table is in mode '" + sExpectedMode + "'" + (sMessage ? " - " + sMessage : "");
+			assert.strictEqual(TableUtils.Grouping.getHierarchyMode(oTable), sExpectedMode, sMessage);
+		}
+
+		assertMode(this.table, TableUtils.Grouping.HierarchyMode.Tree, "Initial");
 
 		this.table.setUseFlatMode(true);
 		sap.ui.getCore().applyChanges();
+		assertMode(this.table, TableUtils.Grouping.HierarchyMode.Flat, "Enabled flat mode");
 
-		assert.ok(this.table.$().find(".sapUiTableTreeIcon").length == 0, "Tree Icons not available in FlatMode");
-		assert.ok(this.table._bFlatMode, "Flat Mode set");
+		this.table.setUseGroupMode(true);
+		sap.ui.getCore().applyChanges();
+		assertMode(this.table, TableUtils.Grouping.HierarchyMode.GroupedTree, "Enabled group mode when flat mode is enabled");
+
+		this.table.setUseGroupMode(false);
+		assertMode(this.table, TableUtils.Grouping.HierarchyMode.Flat, "Disabled group mode when flat mode is enabled");
+
+		this.table.setUseFlatMode(false);
+		assertMode(this.table, TableUtils.Grouping.HierarchyMode.Tree, "Disabled flat mode");
+
+		this.table.setUseGroupMode(true);
+		this.table.setUseFlatMode(true);
+		assertMode(this.table, TableUtils.Grouping.HierarchyMode.GroupedTree, "Enabled flat mode when group mode is enabled");
 	});
 
 	QUnit.module("Events", {

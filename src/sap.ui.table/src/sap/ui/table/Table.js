@@ -360,6 +360,7 @@ sap.ui.define([
 			 * Constraints on the row counts of the table. May impact the result of the row count computation in the row modes.
 			 * This hidden property may only be used indirectly by row modes and may not be used otherwise.
 			 *
+			 * @see sap.ui.table.plugins.PluginBase#setRowCountConstraints
 			 * @see sap.ui.table.rowmodes.RowMode#getRowCountConstraints
 			 * @private
 			 */
