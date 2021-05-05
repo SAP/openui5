@@ -150,13 +150,13 @@
     }, {
       "fileName": "id_1606828544793_205_addFavorite",
       "fileType": "change",
-      "changeType": "addFavorite",
+      "changeType": "updateVariant",
       "moduleName": "",
       "reference": "sap.ui.demoapps.rta.fiorielements.Component",
       "packageName": "",
       "content": {
         "key": "variant_3",
-        "visible": true
+        "favorite": true
       },
       "selector": {
         "persistencyKey": "variantManagement1"
