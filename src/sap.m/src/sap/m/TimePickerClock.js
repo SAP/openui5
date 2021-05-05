@@ -363,7 +363,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerClock.prototype._getClockCoverContainerDomRef = function() {
-			return this.$().find("#" + this.getId() + "-cover")[0];
+			return document.getElementById(this.getId() + "-cover");
 		};
 
 		/**
@@ -387,9 +387,10 @@ sap.ui.define([
 		 * @private
 		 */
 		 TimePickerClock.prototype._onMouseOut = function(oEvent) {
-			var sId = this.getId();
+			var sId = this.getId(),
+				oNumber = document.getElementById(sId + "-" + this._iHoveredValue);
 
-			jQuery("#" + sId + "-" + this._iHoveredValue).removeClass("sapMTPCNumberHover");
+			oNumber && oNumber.classList.remove("sapMTPCNumberHover");
 			this._iHoveredValue = -1;
 			this._iPrevHoveredValue = -1;
 		};
@@ -488,7 +489,8 @@ sap.ui.define([
 		 */
 		TimePickerClock.prototype._onTouchMove = function(oEvent) {
 			var sId,
-				iDisplayStep;
+				iDisplayStep,
+				oNumber;
 
 			oEvent.preventDefault();
 			if (this._mouseOrTouchDown) {
@@ -516,9 +518,11 @@ sap.ui.define([
 				}
 				if (this.getEnabled() && this._iHoveredValue !== this._iPrevHoveredValue) {
 					sId = this.getId();
-					jQuery("#" + sId + "-" + this._iPrevHoveredValue).removeClass("sapMTPCNumberHover");
+					oNumber = document.getElementById(sId + "-" + this._iPrevHoveredValue);
+					oNumber && oNumber.classList.remove("sapMTPCNumberHover");
 					this._iPrevHoveredValue = this._iHoveredValue;
-					jQuery("#" + sId + "-" + this._iHoveredValue).addClass("sapMTPCNumberHover");
+					oNumber = document.getElementById(sId + "-" + this._iPrevHoveredValue);
+					oNumber && oNumber.classList.add("sapMTPCNumberHover");
 				}
 			}
 		};
@@ -669,11 +673,11 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerClock.prototype._calculateDimensions = function() {
-			var oCover = jQuery('#' + this.getId() + "-cover").first(),
-				iRadius = Math.round(oCover.outerHeight() / 2),
+			var oCover = this._getClockCoverContainerDomRef(),
+				iRadius = Math.round(oCover.offsetHeight / 2),
 				iDotHeight = jQuery('.sapMTPCDot').first().outerHeight(true),
 				iNumberHeight = jQuery('.sapMTPCNumber').first().outerHeight(true),
-				oOffset = oCover.offset();
+				oOffset = oCover.getBoundingClientRect();
 
 			this._dimensionParameters = {
 				'radius': iRadius,
