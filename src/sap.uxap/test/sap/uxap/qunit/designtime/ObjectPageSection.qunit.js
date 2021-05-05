@@ -1,10 +1,7 @@
-/*global QUnit*/
-
 sap.ui.define([
 	"sap/ui/rta/enablement/elementActionTest",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/util/reflection/XmlTreeModifier"
-], function (elementActionTest, ChangeRegistry, XmlTreeModifier) {
+], function (elementActionTest, XmlTreeModifier) {
 
 	"use strict";
 
@@ -564,22 +561,4 @@ sap.ui.define([
 		afterUndo: fnConfirmSubSectionIsRenamedLayoutParameterOldValue,
 		afterRedo: fnConfirmSubSectionRenamedLayoutParameterNewValue
 	});
-
-	QUnit.module("We have a _StashedControl before a section gets unstashed...", {
-		beforeEach : function(assert) {
-			this.oChangeRegistry = ChangeRegistry.getInstance();
-		}
-	});
-
-	QUnit.test("then for the _StashedControl control", function(assert) {
-		assert.ok(
-			this.oChangeRegistry.getChangeHandler("stashControl", "sap.ui.core._StashedControl", null, XmlTreeModifier),
-			"there is a change handler for changetype stashControl"
-		);
-		assert.ok(
-			this.oChangeRegistry.getChangeHandler("unstashControl", "sap.ui.core._StashedControl", null, XmlTreeModifier),
-			"there is a change handler for changetype unstashControl"
-		);
-	});
-
 });

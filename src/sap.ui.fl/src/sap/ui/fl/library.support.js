@@ -9,8 +9,6 @@ sap.ui.define([
 	"sap/ui/support/library",
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/DesignTime",
-	"sap/ui/core/Component",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/rta/util/validateStableIds",
 	"sap/base/util/ObjectPath",
 	"sap/m/InstanceManager"
@@ -18,8 +16,6 @@ sap.ui.define([
 	SupportLib,
 	Utils,
 	DesignTime,
-	Component,
-	ChangeRegistry,
 	validateStableIds,
 	ObjectPath,
 	InstanceManager

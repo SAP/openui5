@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/Utils"
 ], function (
 	FlexCustomData,
 	ChangeRegistry,
+	ChangeHandlerRegistration,
 	FlUtils
 ) {
 	"use strict";
@@ -65,11 +67,11 @@ sap.ui.define([
 		 * @param {string} mControl.controlType - Type of the control
 		 * @param {object} mPropertyBag - Contains additional data that are needed for fetching the change handler
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise/FakePromise resolving with the change handler or an empty object
+		 * @returns {Promise} Promise resolving with the change handler or an empty object
 		 */
 		getChangeHandler: function(oChange, mControl, mPropertyBag) {
 			var sLibraryName = mPropertyBag.modifier.getLibraryName(mControl.control);
-			return ChangeRegistry.waitForChangeHandlerRegistration(sLibraryName).then(function() {
+			return ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName).then(function() {
 				var sChangeType = oChange.getChangeType();
 				var sLayer = oChange.getLayer();
 				var oChangeRegistryInstance = ChangeRegistry.getInstance();

@@ -38,7 +38,6 @@ sap.ui.define([
 	ChangeRegistry._instance = undefined;
 	ChangeRegistry.prototype._oDefaultChangeHandlers = {};
 	ChangeRegistry.prototype._mDeveloperModeChangeHandlers = {};
-	var mRegistrationPromises = {};
 
 	/**
 	 * Registers default change handlers and developer mode change handlers.
@@ -50,51 +49,11 @@ sap.ui.define([
 		this._mDeveloperModeChangeHandlers = mDeveloperModeHandlers;
 	};
 
-	ChangeRegistry.addRegistrationPromise = function(sKey, oPromise) {
-		mRegistrationPromises[sKey] = oPromise;
-		oPromise
-		.catch(function() {})
-		.then(function() {
-			delete mRegistrationPromises[sKey];
-		});
-	};
-
-	ChangeRegistry.waitForChangeHandlerRegistration = function(sKey) {
-		if (mRegistrationPromises[sKey]) {
-			return mRegistrationPromises[sKey].catch(function() {});
-		}
-		return new Utils.FakePromise();
-	};
-
 	ChangeRegistry.getInstance = function() {
 		if (!ChangeRegistry._instance) {
 			ChangeRegistry._instance = new ChangeRegistry();
 		}
 		return ChangeRegistry._instance;
-	};
-
-	/**
-	 * TODO: remove. used heavily in RTA tests
-	 * Registration of multiple changeHandlers for controlls.
-	 *
-	 * @param {object} mControlChanges - Map of changeHandler configuration for controls
-	 * @returns {Promise} Returns an empty promise when all changeHandlers are registered
-	 */
-	ChangeRegistry.prototype.registerControlsForChanges = function(mControlChanges) {
-		var aPromises = [];
-		each(mControlChanges, function(sControlType, vChangeHandlers) {
-			var mChangeHandlers = {};
-			if (Array.isArray(vChangeHandlers)) {
-				vChangeHandlers.forEach(function (oChangeHandler) {
-					// check!
-					mChangeHandlers[oChangeHandler.changeType] = oChangeHandler.changeHandler;
-				});
-			} else {
-				mChangeHandlers = vChangeHandlers;
-			}
-			aPromises.push(ChangeHandlerStorage.registerChangeHandlersForControl(sControlType, mChangeHandlers));
-		});
-		return Promise.all(aPromises);
 	};
 
 	/**
