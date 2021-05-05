@@ -391,16 +391,23 @@ sap.ui.define([
 	}
 
 	/**
-	* Returns a Promise representing loading state of the root control.
-	*
-	* For UIComponents loading its root control asynchronously the Promise resolves as soon as the creation is finished.
-	* For synchronous root control creation the Promise resolves immediately.
-	* The result Promise resolves with the created root control or <code>null</code> if none was created.
-	*
-	* @return {Promise<sap.ui.core.Control|null>} resolves with the created root control or null if none was created, rejects with any thrown error
-	* @private
-	* @ui5-restricted sap.ui.core.Component
-	*/
+	 * Returns a Promise representing the loading state of the root control.
+	 *
+	 * For UIComponents implementing the {@link sap.ui.core.IAsyncContentCreation} interface, there are two possible cases:
+	 * <ol>
+	 * <li> The <code>UIComponent</code> overwrites the {@link sap.ui.core.UIComponent#createContent} function and returns a Promise.
+	 * The <code>rootControlLoaded</code> function will then return the same Promise.</li>
+	 * <li> The <code>UIComponent</code> defines a root view via its manifest.
+	 * The root view is then automatically created asynchronously, and the <code>rootControlLoaded</code> function returns a Promise
+	 * which resolves with the fully loaded and processed root view instance.</li>
+	 * </ol>
+	 *
+	 * For synchronous root control creation the Promise resolves immediately with the root control instance or null if none was created.
+	 *
+	 * @since 1.90.0
+	 * @return {Promise<sap.ui.core.Control|null>} resolves with the created root control or null if none was created, rejects with any thrown error
+	 * @public
+	 */
 	UIComponent.prototype.rootControlLoaded = function() {
 		if (!this.pRootControlLoaded) {
 			Log.error(
