@@ -175,6 +175,12 @@ sap.ui.define([
 		var aOperators = oFilterField.getOperators();
 		assert.ok(aOperators.length == 0, "no Operators returned");
 
+		oFilterField.setOperators("BT,LT");
+		aOperators = oFilterField.getOperators();
+		assert.equal(aOperators.length, 2, "two Operator returned");
+		assert.equal(aOperators[0], "BT", "right Operator returned");
+		assert.equal(aOperators[1], "LT", "right Operator returned");
+
 		oFilterField.setOperators(["BT"]);
 		aOperators = oFilterField.getOperators();
 		assert.equal(aOperators.length, 1, "one Operator returned");

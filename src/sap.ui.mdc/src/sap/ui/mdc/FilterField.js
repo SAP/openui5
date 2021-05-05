@@ -161,6 +161,11 @@ sap.ui.define([
 	FilterField.prototype.setOperators = function(aOperators) {
 		var aOperatorNames = [];
 
+		if (!Array.isArray(aOperators)) {
+			// aOperators can be a comma separated string of operators.
+			aOperators = aOperators.split(",");
+		}
+
 		aOperators.forEach(function(oOperator) {
 			if (typeof oOperator === "string") {
 				aOperatorNames.push(oOperator);
@@ -188,12 +193,16 @@ sap.ui.define([
 	 */
 	FilterField.prototype.addOperator = function(vOperator) {
 		var aOperators = this._getOperators();
-		if (typeof vOperator === "string") {
-			aOperators.push(vOperator);
-		} else {
-			aOperators.push(vOperator.name);
+
+		var sOpName = vOperator;
+		if (typeof vOperator !== "string") {
+			sOpName = vOperator.name;
 		}
-		this.setOperators(aOperators);
+
+		if (aOperators.indexOf(sOpName) < 0) {
+			aOperators.push(sOpName);
+			this.setOperators(aOperators);
+		}
 	};
 
 	/**
@@ -232,13 +241,13 @@ sap.ui.define([
 	 */
 	FilterField.prototype.removeOperator = function(vOperator) {
 		var aOperators = this.getOperators();
-		var sName = vOperator;
+		var sOpName = vOperator;
 		if (typeof vOperator !== "string") {
-			sName = vOperator.name;
+			sOpName = vOperator.name;
 		}
 
-		if (aOperators.indexOf(sName)) {
-			aOperators.splice(aOperators.indexOf(sName), 1);
+		if (aOperators.indexOf(sOpName) > -1) {
+			aOperators.splice(aOperators.indexOf(sOpName), 1);
 			this.setOperators(aOperators);
 		}
 	};
