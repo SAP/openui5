@@ -1056,9 +1056,11 @@ sap.ui.define([
 				if (oProperty) {
 					var oCondition = this._toInternal(oProperty, oXCondition);
 					if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) < 0) {
-						var aCondition = [{sFieldPath: oProperty}];
-						FilterController.checkConditionOperatorSanity(aCondition); //check if the single condition's operator is valid
-						if (aCondition && aCondition.length > 0){
+						var mCondition = {};
+						mCondition[sFieldPath] = [oCondition];
+						FilterController.checkConditionOperatorSanity(mCondition); //check if the single condition's operator is valid
+						var aConditions = mCondition[sFieldPath];
+						if (aConditions && aConditions.length > 0){
 							this._cleanUpFilterFieldInErrorStateByName(sFieldPath);
 							oCM.addCondition(sFieldPath, oCondition);
 						}
