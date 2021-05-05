@@ -1214,6 +1214,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the content density.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {string} sDensity The content density value to be set.
+	 */
+	TableQUnitUtils.setDensity = function(oTable, sDensity) {
+		if (!oTable) {
+			return;
+		}
+
+		var oBody = document.body;
+
+		oBody.classList.remove("sapUiSizeCozy");
+		oBody.classList.remove("sapUiSizeCompact");
+		oTable.removeStyleClass("sapUiSizeCondensed");
+
+		if (sDensity != null) {
+			if (sDensity === "sapUiSizeCondensed") {
+				oBody.classList.add("sapUiSizeCompact");
+				oTable.addStyleClass("sapUiSizeCondensed");
+			} else {
+				oBody.classList.add(sDensity);
+			}
+		}
+
+		sap.ui.getCore().applyChanges();
+	};
+
+	/**
 	 * Checks if the "NoData" text of a table matches certain conditions.
 	 *
 	 * @param {object} assert QUnit assert object.
@@ -1252,6 +1281,65 @@ sap.ui.define([
 		assert.equal(iFixedTopRowCount, iFixedTop, "Fixed top row count");
 		assert.equal(iScrollableTopRowCount, iScrollable, "Scrollable row count");
 		assert.equal(iFixedBottomRowCount, iFixedBottom, "Fixed bottom row count");
+	};
+
+	/**
+	 * Checks if the row heights for the given test settings are correct.
+	 *
+	 * @param {object} assert QUnit assert object.
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {object} mTestSettings
+	 *     Test settings.
+	 * @param {string} mTestSettings.density
+	 *     Current content density.
+	 * @param {string} mTestSettings.title
+	 *     Title for the assertion.
+	 * @param {number} mTestSettings.expectedHeight
+	 *     Expected row height.
+	 */
+	TableQUnitUtils.assertRowHeights = function(assert, oTable, mTestSettings) {
+		var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
+		mTestSettings.title += " (Density=\"" + sDensity + "\")";
+
+		var aRowDomRefs = oTable.getRows()[0].getDomRefs();
+		assert.strictEqual(aRowDomRefs.rowSelector.getBoundingClientRect().height, mTestSettings.expectedHeight,
+			mTestSettings.title + ": Selector height is ok");
+		assert.strictEqual(aRowDomRefs.rowFixedPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
+			mTestSettings.title + ": Fixed part height is ok");
+		assert.strictEqual(aRowDomRefs.rowScrollPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
+			mTestSettings.title + ": Scrollable part height is ok");
+		assert.strictEqual(aRowDomRefs.rowAction.getBoundingClientRect().height, mTestSettings.expectedHeight,
+			mTestSettings.title + ": Action height is ok");
+	};
+
+	/**
+	 * Checks if the column header heights for the given test settings are correct.
+	 *
+	 * @param {object} assert QUnit assert object.
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {object} mTestSettings
+	 *     Test settings.
+	 * @param {string} mTestSettings.density
+	 *     Current content density.
+	 * @param {string} mTestSettings.title
+	 *     Title for the assertion.
+	 * @param {number} mTestSettings.expectedHeight
+	 *     Expected column header height.
+	 */
+	TableQUnitUtils.assertColumnHeaderHeights = function(assert, oTable, mTestSettings) {
+		var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
+		mTestSettings.title += " (VisibleRowCountMode=\"" + mTestSettings.visibleRowCountMode + "\""
+			+ ", Density=\"" + sDensity + "\")";
+
+		var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
+		var oColumnHeaderCnt = oTable.getDomRef().querySelector(".sapUiTableColHdrCnt");
+
+		assert.strictEqual(aRowDomRefs[0].getBoundingClientRect().height, mTestSettings.expectedHeight,
+			mTestSettings.title + ": Fixed part height is ok");
+		assert.strictEqual(aRowDomRefs[1].getBoundingClientRect().height, mTestSettings.expectedHeight,
+			mTestSettings.title + ": Scrollable part height is ok");
+		assert.strictEqual(oColumnHeaderCnt.getBoundingClientRect().height, mTestSettings.expectedHeight + 1 /* border */,
+			mTestSettings.title + ": Column header container height is ok");
 	};
 
 	/**

@@ -24,7 +24,9 @@ sap.ui.define([
 				visibleRowCount: 5,
 				fixedRowCount: 1,
 				fixedBottomRowCount: 2,
-				rowHeight: 8
+				rowHeight: 8,
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			});
 			this.oMode = this.oTable._getRowMode();
 		},
@@ -77,6 +79,88 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Row height", function(assert) {
+		var oTable = this.oTable;
+		var oBody = document.body;
+		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
+		var sequence = Promise.resolve();
+
+		oTable.addColumn(new Column({template: new HeightTestControl()}));
+		oTable.addColumn(new Column({template: new HeightTestControl()}));
+		oTable.setFixedColumnCount(1);
+		oTable.setRowActionCount(1);
+		oTable.setRowActionTemplate(new RowAction());
+
+		function test(mTestSettings) {
+			sequence = sequence.then(function() {
+				oTable.setRowHeight(mTestSettings.rowHeight || 0);
+				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
+				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
+
+				return oTable.qunit.whenRenderingFinished();
+			}).then(function() {
+				TableQUnitUtils.assertRowHeights(assert, oTable, mTestSettings);
+			});
+		}
+
+		test({
+			title: "Default height",
+			density: "sapUiSizeCozy",
+			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
+		});
+
+		test({
+			title: "Default height",
+			density: "sapUiSizeCompact",
+			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
+		});
+
+		test({
+			title: "Default height",
+			density: "sapUiSizeCondensed",
+			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed
+		});
+
+		test({
+			title: "Default height",
+			density: undefined,
+			expectedHeight: TableUtils.DefaultRowHeight.undefined
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Default height with large content",
+				density: sDensity,
+				templateHeight: 87,
+				expectedHeight: 88
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application defined height",
+				density: sDensity,
+				rowHeight: 55,
+				expectedHeight: 56
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application defined height with large content",
+				density: sDensity,
+				rowHeight: 55,
+				templateHeight: 87,
+				expectedHeight: 88
+			});
+		});
+
+		return sequence.then(function() {
+			oBody.classList.remove("sapUiSizeCompact");
+			oBody.classList.add("sapUiSizeCozy");
+		});
+	});
+
 	QUnit.module("Row heights", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
@@ -107,35 +191,12 @@ sap.ui.define([
 			pSequence = pSequence.then(function() {
 				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
 				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
-				oBody.classList.remove("sapUiSizeCozy");
-				oBody.classList.remove("sapUiSizeCompact");
-				oTable.removeStyleClass("sapUiSizeCondensed");
+				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
 
-				if (mTestSettings.density != null) {
-					if (mTestSettings.density === "sapUiSizeCondensed") {
-						oBody.classList.add("sapUiSizeCompact");
-						oTable.addStyleClass("sapUiSizeCondensed");
-					} else {
-						oBody.classList.add(mTestSettings.density);
-					}
-				}
-
-				sap.ui.getCore().applyChanges();
 				return oTable.qunit.whenRenderingFinished();
 
 			}).then(function() {
-				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
-				mTestSettings.title += " (Density=\"" + sDensity + "\")";
-
-				var aRowDomRefs = oTable.getRows()[0].getDomRefs();
-				assert.strictEqual(aRowDomRefs.rowSelector.getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Selector height is ok");
-				assert.strictEqual(aRowDomRefs.rowFixedPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Fixed part height is ok");
-				assert.strictEqual(aRowDomRefs.rowScrollPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Scrollable part height is ok");
-				assert.strictEqual(aRowDomRefs.rowAction.getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Action height is ok");
+				TableQUnitUtils.assertRowHeights(assert, oTable, mTestSettings);
 			});
 		}
 
@@ -203,35 +264,12 @@ sap.ui.define([
 				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
 				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
 				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
-				oBody.classList.remove("sapUiSizeCozy");
-				oBody.classList.remove("sapUiSizeCompact");
-				oTable.removeStyleClass("sapUiSizeCondensed");
+				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
 
-				if (mTestSettings.density != null) {
-					if (mTestSettings.density === "sapUiSizeCondensed") {
-						oBody.classList.add("sapUiSizeCompact");
-						oTable.addStyleClass("sapUiSizeCondensed");
-					} else {
-						oBody.classList.add(mTestSettings.density);
-					}
-				}
-
-				sap.ui.getCore().applyChanges();
 				return oTable.qunit.whenRenderingFinished();
 
 			}).then(function() {
-				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
-				mTestSettings.title += " (Density=\"" + sDensity + "\")";
-
-				var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
-				var oColumnHeaderCnt = oTable.getDomRef().querySelector(".sapUiTableColHdrCnt");
-
-				assert.strictEqual(aRowDomRefs[0].getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Fixed part height is ok");
-				assert.strictEqual(aRowDomRefs[1].getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Scrollable part height is ok");
-				assert.strictEqual(oColumnHeaderCnt.getBoundingClientRect().height, mTestSettings.expectedHeight + 1 /* border */,
-					mTestSettings.title + ": Column header container height is ok");
+				TableQUnitUtils.assertColumnHeaderHeights(assert, oTable, mTestSettings);
 			});
 		}
 

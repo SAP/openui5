@@ -621,131 +621,6 @@ sap.ui.define([
 		assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
 	});
 
-	QUnit.test("Row height; After rendering", function(assert) {
-		var oBody = document.body;
-		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
-		var sequence = Promise.resolve();
-
-		oTable.removeAllColumns();
-		oTable.addColumn(new Column({template: new HeightTestControl()}));
-		oTable.addColumn(new Column({template: new HeightTestControl()}));
-		oTable.setFixedColumnCount(1);
-		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
-
-		function test(mTestSettings) {
-			sequence = sequence.then(function() {
-				oTable.setVisibleRowCountMode(mTestSettings.visibleRowCountMode);
-				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
-				oBody.classList.remove("sapUiSizeCozy");
-				oBody.classList.remove("sapUiSizeCompact");
-				oTable.removeStyleClass("sapUiSizeCondensed");
-
-				if (mTestSettings.density != null) {
-					if (mTestSettings.density === "sapUiSizeCondensed") {
-						oBody.classList.add("sapUiSizeCompact");
-						oTable.addStyleClass("sapUiSizeCondensed");
-					} else {
-						oBody.classList.add(mTestSettings.density);
-					}
-				}
-
-				sap.ui.getCore().applyChanges();
-
-				return new Promise(function(resolve) {
-					oTable.attachEventOnce("rowsUpdated", resolve);
-				});
-			}).then(function() {
-				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
-				mTestSettings.title += " (VisibleRowCountMode=\"" + mTestSettings.visibleRowCountMode + "\""
-									   + ", Density=\"" + sDensity + "\")";
-
-				var aRowDomRefs = oTable.getRows()[0].getDomRefs();
-				assert.strictEqual(aRowDomRefs.rowSelector.getBoundingClientRect().height, mTestSettings.expectedHeight,
-								   mTestSettings.title + ": Selector height is ok");
-				assert.strictEqual(aRowDomRefs.rowFixedPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
-								   mTestSettings.title + ": Fixed part height is ok");
-				assert.strictEqual(aRowDomRefs.rowScrollPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
-								   mTestSettings.title + ": Scrollable part height is ok");
-				assert.strictEqual(aRowDomRefs.rowAction.getBoundingClientRect().height, mTestSettings.expectedHeight,
-								   mTestSettings.title + ": Action height is ok");
-			});
-		}
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			test({
-				title: "Default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCozy",
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
-			});
-
-			test({
-				title: "Default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCompact",
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
-			});
-
-			test({
-				title: "Default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCondensed",
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed
-			});
-
-			test({
-				title: "Default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: undefined,
-				expectedHeight: TableUtils.DefaultRowHeight.undefined
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Default height with large content",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					templateHeight: 87,
-					expectedHeight: 88
-				});
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 55,
-					expectedHeight: 56
-				});
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height with large content",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 55,
-					templateHeight: 87,
-					expectedHeight: sVisibleRowCountMode === VisibleRowCountMode.Auto ? 56 : 88
-				});
-			});
-		});
-
-		return sequence.then(function() {
-			oBody.classList.remove("sapUiSizeCompact");
-			oBody.classList.add("sapUiSizeCozy");
-		});
-	});
-
 	QUnit.test("Row height; After binding context update", function(assert) {
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
@@ -788,215 +663,151 @@ sap.ui.define([
 
 		function test(mTestSettings) {
 			sequence = sequence.then(function() {
-				oTable.setVisibleRowCountMode(mTestSettings.visibleRowCountMode);
+				oTable.setVisibleRowCountMode(VisibleRowCountMode.Fixed);
 				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
 				oTable.setRowHeight(mTestSettings.rowHeight || 0);
 				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
-				oBody.classList.remove("sapUiSizeCozy");
-				oBody.classList.remove("sapUiSizeCompact");
-				oTable.removeStyleClass("sapUiSizeCondensed");
-
-				if (mTestSettings.density != null) {
-					if (mTestSettings.density === "sapUiSizeCondensed") {
-						oBody.classList.add("sapUiSizeCompact");
-						oTable.addStyleClass("sapUiSizeCondensed");
-					} else {
-						oBody.classList.add(mTestSettings.density);
-					}
-				}
-
-				sap.ui.getCore().applyChanges();
+				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
 
 				return new Promise(function(resolve) {
 					oTable.attachEventOnce("rowsUpdated", resolve);
 				});
 			}).then(function() {
-				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
-				mTestSettings.title += " (VisibleRowCountMode=\"" + mTestSettings.visibleRowCountMode + "\""
-									   + ", Density=\"" + sDensity + "\")";
-
-				var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
-				var oColumnHeaderCnt = oTable.getDomRef().querySelector(".sapUiTableColHdrCnt");
-
-				assert.strictEqual(aRowDomRefs[0].getBoundingClientRect().height, mTestSettings.expectedHeight,
-								   mTestSettings.title + ": Fixed part height is ok");
-				assert.strictEqual(aRowDomRefs[1].getBoundingClientRect().height, mTestSettings.expectedHeight,
-								   mTestSettings.title + ": Scrollable part height is ok");
-				assert.strictEqual(oColumnHeaderCnt.getBoundingClientRect().height, mTestSettings.expectedHeight + 1 /* border */,
-								   mTestSettings.title + ": Column header container height is ok");
+				TableQUnitUtils.assertColumnHeaderHeights(assert, oTable, mTestSettings);
 			});
 		}
 
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
+		test({
+			title: "Default height",
+			density: "sapUiSizeCozy",
+			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
+		});
+
+		test({
+			title: "Default height",
+			density: "sapUiSizeCompact",
+			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
+		});
+
+		test({
+			title: "Default height",
+			density: "sapUiSizeCondensed",
+			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
+		});
+
+		test({
+			title: "Default height",
+			density: undefined,
+			expectedHeight: TableUtils.DefaultRowHeight.undefined
+		});
+
+		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCozy",
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
+				title: "Default height with large content",
+				density: sDensity,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
 			});
+		});
 
+		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCompact",
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
+				title: "Application defined height (rowHeight)",
+				density: sDensity,
+				rowHeight: 55,
+				expectedHeight: 56
 			});
+		});
 
+		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCondensed",
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
+				title: "Application defined height (columnHeaderHeight)",
+				density: sDensity,
+				columnHeaderHeight: 55,
+				expectedHeight: 55
 			});
+		});
 
+		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: undefined,
-				expectedHeight: TableUtils.DefaultRowHeight.undefined
+				title: "Application defined height (rowHeight = columnHeaderHeight)",
+				density: sDensity,
+				rowHeight: 55,
+				columnHeaderHeight: 55,
+				expectedHeight: 55
 			});
 		});
 
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Default height with large content",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					labelHeight: 87,
-					expectedHeight: 87 + iPadding
-				});
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application defined height (rowHeight < columnHeaderHeight)",
+				density: sDensity,
+				rowHeight: 55,
+				columnHeaderHeight: 80,
+				expectedHeight: 80
 			});
 		});
 
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (rowHeight)",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 55,
-					expectedHeight: 56
-				});
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application defined height (rowHeight > columnHeaderHeight)",
+				density: sDensity,
+				rowHeight: 80,
+				columnHeaderHeight: 55,
+				expectedHeight: 55
 			});
 		});
 
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (columnHeaderHeight)",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					columnHeaderHeight: 55,
-					expectedHeight: 55
-				});
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application defined height (rowHeight) with large content",
+				density: sDensity,
+				rowHeight: 55,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
 			});
 		});
 
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (rowHeight = columnHeaderHeight)",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 55,
-					columnHeaderHeight: 55,
-					expectedHeight: 55
-				});
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application defined height (columnHeaderHeight) with large content",
+				density: sDensity,
+				columnHeaderHeight: 55,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
 			});
 		});
 
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (rowHeight < columnHeaderHeight)",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 55,
-					columnHeaderHeight: 80,
-					expectedHeight: 80
-				});
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application defined height (rowHeight = columnHeaderHeight) with large content",
+				density: sDensity,
+				rowHeight: 55,
+				columnHeaderHeight: 55,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
 			});
 		});
 
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (rowHeight > columnHeaderHeight)",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 80,
-					columnHeaderHeight: 55,
-					expectedHeight: 55
-				});
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application defined height (rowHeight < columnHeaderHeight) with large content",
+				density: sDensity,
+				rowHeight: 55,
+				columnHeaderHeight: 80,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
 			});
 		});
 
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (rowHeight) with large content",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 55,
-					labelHeight: 87,
-					expectedHeight: 87 + iPadding
-				});
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (columnHeaderHeight) with large content",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					columnHeaderHeight: 55,
-					labelHeight: 87,
-					expectedHeight: 87 + iPadding
-				});
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (rowHeight = columnHeaderHeight) with large content",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 55,
-					columnHeaderHeight: 55,
-					labelHeight: 87,
-					expectedHeight: 87 + iPadding
-				});
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (rowHeight < columnHeaderHeight) with large content",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 55,
-					columnHeaderHeight: 80,
-					labelHeight: 87,
-					expectedHeight: 87 + iPadding
-				});
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height (rowHeight > columnHeaderHeight) with large content",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 80,
-					columnHeaderHeight: 55,
-					labelHeight: 87,
-					expectedHeight: 87 + iPadding
-				});
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application defined height (rowHeight > columnHeaderHeight) with large content",
+				density: sDensity,
+				rowHeight: 80,
+				columnHeaderHeight: 55,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
 			});
 		});
 
@@ -3233,7 +3044,7 @@ sap.ui.define([
 					);
 
 					resolve();
-				}, iDelay == null ? 250 : iDelay);
+				}, iDelay == null ? 500 : iDelay);
 			});
 		},
 		setQUnitFixtureHeight: function(sHeight) {
@@ -3448,6 +3259,10 @@ sap.ui.define([
 			aFiredReasons = [];
 			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
@@ -3461,6 +3276,10 @@ sap.ui.define([
 		}).then(function() {
 			aFiredReasons = [];
 			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
@@ -3484,9 +3303,13 @@ sap.ui.define([
 		}
 
 		_createTable(VisibleRowCountMode.Fixed);
-		return this.checkRowsUpdated(assert, aFiredReasons, [
-			TableUtils.RowsUpdateReason.Render
-		]).then(function() {
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("_rowsUpdated", resolve);
+		}).then(function() {
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
 			_createTable(VisibleRowCountMode.Interactive);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
@@ -3555,6 +3378,10 @@ sap.ui.define([
 			aFiredReasons = [];
 			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
@@ -3568,6 +3395,10 @@ sap.ui.define([
 		}).then(function() {
 			aFiredReasons = [];
 			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
@@ -3801,6 +3632,10 @@ sap.ui.define([
 			aFiredReasons = [];
 			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
@@ -3814,6 +3649,10 @@ sap.ui.define([
 		}).then(function() {
 			aFiredReasons = [];
 			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
@@ -4260,14 +4099,13 @@ sap.ui.define([
 			oTable.getDomRef().parentElement.style.height = "500px";
 
 			return new Promise(function(resolve) {
-				window.requestAnimationFrame(function() {
-					that.checkRowsUpdated(assert, aFiredReasons, [
-						TableUtils.RowsUpdateReason.Resize
-					], 500).then(function() {
-						oTable.getDomRef().parentElement.style.height = sOriginalTableParentHeight;
-						resolve();
-					});
-				});
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			}).then(function() {
+				return that.checkRowsUpdated(assert, aFiredReasons, [
+					TableUtils.RowsUpdateReason.Resize
+				]);
+			}).then(function() {
+				oTable.getDomRef().parentElement.style.height = sOriginalTableParentHeight;
 			});
 		});
 	});
@@ -4342,7 +4180,7 @@ sap.ui.define([
 				window.requestAnimationFrame(function() {
 					that.checkRowsUpdated(assert, aFiredReasons, [
 						TableUtils.RowsUpdateReason.Animation
-					], 500).then(resolve);
+					]).then(resolve);
 				});
 			});
 		});
