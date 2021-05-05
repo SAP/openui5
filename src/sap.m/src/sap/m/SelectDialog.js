@@ -14,7 +14,7 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
-	'sap/m/Label',
+	'sap/m/Text',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/m/Title',
@@ -32,7 +32,7 @@ function(
 	InvisibleText,
 	Device,
 	Toolbar,
-	Label,
+	Text,
 	BusyIndicator,
 	Bar,
 	Title,
@@ -339,7 +339,7 @@ function(
 				visible: false,
 				active: false,
 				content: [
-					new Label({
+					new Text({
 						text: this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [0])
 					})
 				]
