@@ -1191,9 +1191,6 @@ sap.ui.define([
 
 		var METHOD = "sap.ui.core.Core.init()";
 
-		// ensure that the core is booted now (e.g. loadAllMode)
-		this.boot();
-
 		Log.info("Initializing",null,METHOD);
 
 		this.oFocusHandler = new FocusHandler(document.body, this);
