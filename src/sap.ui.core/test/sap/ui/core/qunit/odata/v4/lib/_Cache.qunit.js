@@ -9584,6 +9584,10 @@ sap.ui.define([
 	QUnit.test("from$skip", function (assert) {
 		var aCollection = [];
 
+		// code under test - initial data of a create
+		assert.strictEqual(_Cache.from$skip("1", aCollection), 1);
+
+		// This is always set in aElements and in response data (from visitResponse)
 		aCollection.$created = 3;
 
 		// code under test

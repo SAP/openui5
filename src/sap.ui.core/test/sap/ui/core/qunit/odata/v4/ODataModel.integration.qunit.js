@@ -33131,6 +33131,30 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A collection-valued structural property in the initial data of a created entity.
+	// BCP: 2170084493
+	QUnit.test("BCP: 2170084493", function (assert) {
+		var oModel = createSalesOrdersModel({updateGroupId : "doNotSubmit"}),
+			sView = '<Text id="code" text="{Messages/0/code}"/>',
+			that = this;
+
+		this.expectChange("code", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = oModel.bindList("/SalesOrderList"),
+				oContext = oBinding.create({
+					Messages : [{code : "foo"}]
+				});
+
+			that.expectChange("code", ["foo"]);
+
+			that.oView.setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: New change requests for the same group ID (e.g. $auto) are submitted before the
 	// previous response arrives, leading to the error "Unexpected second $batch". Here,
 	// ODataContextBinding#execute is used.
