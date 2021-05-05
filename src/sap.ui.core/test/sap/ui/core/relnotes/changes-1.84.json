@@ -302,5 +302,32 @@
         ]
       }
     ]
+  },
+  "1.84.12": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "ddeb2228e1108270142c1bc8ecf7a5438e2a9712",
+        "type": "FIX",
+        "text": " DateFormat: Add \"a. m.\" and \"p. m.\" as possible variant for time",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170136809"
+          }
+        ]
+      },
+      {
+        "id": "d33a4bcc7cbdd3f3c6793a57c3d33154e1f749be",
+        "type": "FIX",
+        "text": " routing.HashChanger: forward hash to RouterHashChanger during creation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002368562021"
+          }
+        ]
+      }
+    ]
   }
 }
