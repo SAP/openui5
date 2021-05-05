@@ -170,3 +170,31 @@ Example (note the escaped &lt;TR&gt; in the first and third line of the doc comm
      */
     sap.ui.table.Table.prototype.getRowNumber = function(oDomRow) {
 ```
+
+Hiding Methods in Subclasses
+-----------------------------
+Sometimes a public (or protected) method inherited from a superclass does not make sense in a subclass and should not be used by application developers. In this situation one might be tempted to mark the inherited method as `@private` to hide it from the generated documentation.
+
+This, however, contradicts common object-orientation principles. When the situation cannot be avoided altogether, the recommendation is to add a JSDoc comment for the method in the subclass and to do all of the following:
+
+ 1. Mark the method as `@public` (or `@protected` - whatever it is in the superclass)
+ 2. Mark the method as `@deprecated not supported` (this ensures the method name is displayed in a "do not use" way - usually in strike-through appearance - in any tool making use of the JSDoc)
+ 3. Add a custom JSDoc tag: `@ui5-not-supported` (this can help the UI5 API documentation to differentiate between "real" deprecation and this special use case)
+ 4. Add fulltext documentation saying that the method should not be used on your subclass.
+ 5. Consider throwing an exception ("not supported") for new cases - but only if it feels safe: do not risk breaking existing apps, e.g. when method calls in existing code might in the future encounter objects of this subclass.
+
+For example a "joke of the day" control inheriting from sap.m.Text and setting the text content by itself could look like this (the signature of the original method needs to be preserved):
+
+```js
+/**
+ * Calls to "setText" are ignored; do not use!
+ * 
+ * @public
+ * @deprecated not supported
+ * @ui5-not-supported
+ *
+ * @param {string} sText the text to display
+ * @returns {this} Reference to <code>this</code> in order to allow method chaining
+ * @name sap.m.JokeOfTheDay#setText
+ */
+```
