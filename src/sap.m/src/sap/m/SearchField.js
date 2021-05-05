@@ -490,7 +490,7 @@ sap.ui.define([
 			this._fireChangeEvent();
 			this.fireSearch({
 				query: this.getValue(),
-				refreshButtonPressed: !!(this.getShowRefreshButton() && !this.$().hasClass("sapMFocus")),
+				refreshButtonPressed: !!(this.getShowRefreshButton() && !this.hasStyleClass("sapMFocus")),
 				clearButtonPressed: false
 			});
 		} else {
@@ -705,7 +705,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.$().toggleClass("sapMFocus", true);
+		this.addStyleClass("sapMFocus");
 
 		// Remember the original value for the case when the user presses ESC
 		this._sOriginalValue = this.getValue();
@@ -728,7 +728,7 @@ sap.ui.define([
 	 */
 	SearchField.prototype.onBlur = function(oEvent) {
 
-		this.$().toggleClass("sapMFocus", false);
+		this.removeStyleClass("sapMFocus");
 
 		if (this._bSuggestionSuppressed) {
 			this._bSuggestionSuppressed = false; // void the reset button handling

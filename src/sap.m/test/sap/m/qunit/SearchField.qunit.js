@@ -26,7 +26,8 @@ sap.ui.define([
 	SuggestionItem
 ) {
 	"use strict";
-	createAndAppendDiv("content");
+
+	var DOM_RENDER_LOCATION = createAndAppendDiv("content");
 
 	var sPlaceholder = "search for..",
 		sValue = "value",
@@ -74,7 +75,7 @@ sap.ui.define([
 		enabled: true,
 		search:onSearch,
 		liveChange: onLiveChange
-	}).placeAt("content");
+	}).placeAt(DOM_RENDER_LOCATION);
 
 	new SearchField("sf2", {
 		placeholder: sPlaceholder,
@@ -83,7 +84,7 @@ sap.ui.define([
 		showMagnifier: false,
 		search:onSearch,
 		liveChange: onLiveChange
-	}).placeAt("content");
+	}).placeAt(DOM_RENDER_LOCATION);
 
 	new SearchField("sf3", {
 		placeholder: sPlaceholder,
@@ -91,7 +92,7 @@ sap.ui.define([
 		enabled: true,
 		showRefreshButton: true,
 		visible: true
-	}).placeAt("content");
+	}).placeAt(DOM_RENDER_LOCATION);
 
 	new SearchField("sf4", {
 		placeholder: sPlaceholder,
@@ -100,7 +101,7 @@ sap.ui.define([
 		showRefreshButton: true,
 		showSearchButton: false,
 		visible: true
-	}).placeAt("content");
+	}).placeAt(DOM_RENDER_LOCATION);
 
 
 	QUnit.module("Basic", {
@@ -158,11 +159,11 @@ sap.ui.define([
 			text: "Label",
 			labelFor: "sf6"
 		});
-		lbl.placeAt("content");
+		lbl.placeAt(DOM_RENDER_LOCATION);
 		var sf = new SearchField("sf6", {
 			placeholder: sPlaceholder
 		});
-		sf.placeAt("content");
+		sf.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		var describedById = this.sf3Dom.getAttribute("aria-describedby");
@@ -233,7 +234,7 @@ sap.ui.define([
 				enabled: true,
 				showRefreshButton: true,
 				visible: true
-			}).placeAt("content");
+			}).placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function() {
@@ -284,7 +285,7 @@ sap.ui.define([
 	QUnit.test("Setting value to empty string should update the search field", function (assert) {
 		// arrange
 		var oSF = new SearchField();
-		oSF.placeAt("content");
+		oSF.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// act
@@ -311,8 +312,8 @@ sap.ui.define([
 				enabled: true,
 				showRefreshButton: true,
 				visible: true
-			}).placeAt("content");
-			this.oButton = new Button({}).placeAt("content");
+			}).placeAt(DOM_RENDER_LOCATION);
+			this.oButton = new Button({}).placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 
 			this.oRB = Core.getLibraryResourceBundle("sap.m");
@@ -407,7 +408,7 @@ sap.ui.define([
 				enabled: true,
 				showRefreshButton: true,
 				visible: true
-			}).placeAt("content");
+			}).placeAt(DOM_RENDER_LOCATION);
 
 			this.oMockEvent = {type: "focus"};
 
@@ -449,7 +450,7 @@ sap.ui.define([
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oSearchField = new SearchField();
-			this.oSearchField.placeAt("content");
+			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function() {
@@ -537,7 +538,7 @@ sap.ui.define([
 					this.oSearchField.suggest();
 				}.bind(this)
 			});
-			this.oSearchField.placeAt("content");
+			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function() {
@@ -691,7 +692,7 @@ sap.ui.define([
 					this.oSearchField.suggest();
 				}.bind(this)
 			});
-			this.oSearchField.placeAt("content");
+			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function() {
@@ -716,5 +717,31 @@ sap.ui.define([
 	QUnit.test("Aria-haspopup is listbox when there are suggestions", function (assert) {
 		// Act
 		assert.strictEqual(this.oSearchField.$("I").attr("aria-haspopup"), "listbox", "Aria-haspopup is set to listbox.");
+	});
+
+	QUnit.module("Focus handling", {
+		beforeEach: function () {
+			this.oSearchField = new SearchField();
+			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oSearchField.destroy();
+		}
+	});
+
+	QUnit.test("sapMFocus class isn't deleted when invalidated", function (assert) {
+		// Act
+		this.oSearchField.focus();
+
+		// Assert
+		assert.ok(this.oSearchField.$().hasClass("sapMFocus"), "Focus class wasn't added");
+
+		// Act
+		this.oSearchField.invalidate();
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oSearchField.$().hasClass("sapMFocus"), "Focus class should still be present after invalidation");
 	});
 });
