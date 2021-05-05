@@ -3,6 +3,31 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "70661b15ceb2c10318e5781134ef96a28f16c269",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: support resizing of blocklayer when custom within area is used"
+      },
+      {
+        "id": "9112034f090b8584de9b27e02892ffde82eda52b",
+        "type": "FIX",
+        "text": " core.format.NumberFormat: Make #format and #parse robust",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170107047"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080440164"
+          }
+        ]
+      },
+      {
+        "id": "1ac366b50fed4af12cbe9d6961211492b97b8113",
+        "type": "FEATURE",
+        "text": " Add new shortcuts for forward and backward group skipping"
+      },
+      {
         "id": "670ed410eda255103ac3756b9e3c31c012f520c7",
         "type": "FIX",
         "text": " MockServer: issue with parenthesis parsing in ODATA filters",
