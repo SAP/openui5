@@ -8811,4 +8811,70 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: On creation (POST) of a new entity, not only the path but also the deep path of
+	// the corresponding context is updated. With this, subsequent read requests triggered for
+	// dependent bindings using this context use the key predicate of the created entity sent from
+	// the back end.
+	// BCP: 2170119337
+	QUnit.test("createEntry: update deep path of created context", function (assert) {
+		var oCreatedContext,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="productDetails" binding="{ToProduct}">\
+	<Text id="productName" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrderLineItem"
+						}
+					},
+					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')/ToLineItems"
+				}, {
+					data : {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					},
+					statusCode : 201
+				});
+
+			// code under test
+			oCreatedContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				properties : {}
+			});
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct",
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						+ "/ToProduct"
+				}, {
+					__metadata : {
+						uri : "ProductSet('P1')"
+					},
+					Name : "Product 1"
+				})
+				.expectValue("productName", "Product 1");
+
+			// code under test
+			that.oView.byId("productDetails").setBindingContext(oCreatedContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

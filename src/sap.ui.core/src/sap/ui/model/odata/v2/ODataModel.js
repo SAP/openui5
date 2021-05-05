@@ -2294,17 +2294,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates an existing context with a new path. This is useful for contexts with a temporary, non-canonical path, which should
-	 * be replaced once the canonical path is known, without creating a new context instance.
+	 * Updates an existing context with a new path and deep path. This is used for contexts with
+	 * a temporary, non-canonical path, which is replaced once the canonical path is known, without
+	 * creating a new context instance.
 	 *
-	 * @param {sap.ui.model.Context} oContext the context
-	 * @param {string} sPath the path
+	 * @param {sap.ui.model.Context} oContext The context
+	 * @param {string} sPath The new path for the context
+	 * @param {string} [sDeepPath]
+	 *   If set, the new deep path for the context; if not set, the context's deep path is not
+	 *   updated
+	 *
+	 * @private
 	 */
-	ODataModel.prototype._updateContext = function(oContext, sPath) {
-		if (!sPath.startsWith("/")) {
-			throw new Error("Path " + sPath + " must start with a / ");
-		}
+	ODataModel.prototype._updateContext = function(oContext, sPath, sDeepPath) {
 		oContext.sPath = sPath;
+		if (sDeepPath !== undefined) {
+			oContext.sDeepPath = sDeepPath;
+		}
 		this.mContexts[sPath] = oContext;
 	};
 
@@ -4191,12 +4197,12 @@ sap.ui.define([
 						var sKey = this._getKey(oResultData); // e.g. /myEntity-4711
 						// rewrite context for new path
 						var oContext = this.getContext("/" + oRequest.key);
-						this._updateContext(oContext, '/' + sKey);
 						sDeepPath = oRequest.deepPath;
 						if (oContext.bCreated && sDeepPath.endsWith(")")) {
 							oRequest.deepPath = sDeepPath.slice(0, sDeepPath.lastIndexOf("("))
 								+ sKey.slice(sKey.indexOf("("));
 						}
+						this._updateContext(oContext, '/' + sKey, oRequest.deepPath);
 						oContext.bCreated = false;
 						oContext.setUpdated(true);
 						// register function to reset updated flag call as callAfterUpdate
