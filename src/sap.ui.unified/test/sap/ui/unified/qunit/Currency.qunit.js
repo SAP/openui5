@@ -537,7 +537,7 @@ sap.ui.define([
 
 	QUnit.test("Indicator should be rendered", function(assert) {
 		var oSpan = this.oCurrency.getDomRef().children[0];
-		assert.strictEqual(oSpan.firstChild.textContent, "-", "Empty indicator is rendered");
+		assert.strictEqual(oSpan.firstChild.textContent, oRb.getText("EMPTY_INDICATOR"), "Empty indicator is rendered");
 		assert.strictEqual(oSpan.firstChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
 		assert.strictEqual(oSpan.lastChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
@@ -564,7 +564,7 @@ sap.ui.define([
 	QUnit.test("Indicator should be rendered, when sapMShowEmpty-CTX is added to parent", function(assert) {
 		//Assert
 		var oSpan = this.oCurrencyEmptyAuto.getDomRef().childNodes[0];
-		assert.strictEqual(oSpan.firstChild.textContent, "-", "Empty indicator is rendered");
+		assert.strictEqual(oSpan.firstChild.textContent, oRb.getText("EMPTY_INDICATOR"), "Empty indicator is rendered");
 		assert.strictEqual(oSpan.firstChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
 		assert.strictEqual(oSpan.lastChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
