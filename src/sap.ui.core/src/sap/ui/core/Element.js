@@ -1590,7 +1590,7 @@ sap.ui.define([
 		// Notify all listeners, for which a media breakpoint change occurred, based on their RangeSet
 		aListeners.forEach(function (oL) {
 			var oMedia = this._getCurrentMediaContainerRange(oL.name);
-			if (oMedia.from !== oL.media.from) {
+			if (oMedia && oMedia.from !== oL.media.from) {
 				oL.media = oMedia;
 				oL.callback.call(oL.listener || window, oMedia);
 			}

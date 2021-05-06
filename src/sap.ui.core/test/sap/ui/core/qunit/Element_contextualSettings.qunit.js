@@ -130,4 +130,13 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("_onContextualSettingsChanged - unknown device media range set", function(assert) {
+		assert.expect(1);
+		var fnHandler1 = this.spy();
+		this.element._applyContextualSettings({contextualWidth: 500});
+		this.element._attachMediaContainerWidthChange(fnHandler1, this.element, "UnknownRangeSet");
+		this.element._applyContextualSettings({contextualWidth: 1100});
+		assert.equal(fnHandler1.callCount, 0, "Handler not called on attach");
+	});
+
 });
