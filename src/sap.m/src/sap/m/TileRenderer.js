@@ -13,7 +13,9 @@ sap.ui.define([],
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var TileRenderer = {};
+	var TileRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -24,18 +26,16 @@ sap.ui.define([],
 		var oTileContainer,
 			aVisibleTiles;
 
-		rm.write("<div tabindex=\"0\"");
-		rm.writeControlData(oControl);
-		rm.addClass("sapMTile");
-		rm.addClass("sapMPointer");
-		rm.writeClasses();
+		rm.openStart("div", oControl);
+		rm.attr("tabindex", "0");
+		rm.class("sapMTile");
+		rm.class("sapMPointer");
 		if (oControl._invisible) {
-			rm.addStyle("visibility", "hidden");
-			rm.writeStyles();
+			rm.style("visibility", "hidden");
 		}
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
+			rm.attr("title", sTooltip);
 		}
 
 		/* WAI ARIA if in TileContainer context */
@@ -43,22 +43,20 @@ sap.ui.define([],
 			oTileContainer = oControl.getParent();
 			aVisibleTiles = oTileContainer._getVisibleTiles();
 
-			rm.writeAccessibilityState(oControl, {
+			rm.accessibilityState(oControl, {
 				role: "option",
 				posinset: oTileContainer._indexOfVisibleTile(oControl, aVisibleTiles) + 1,
 				setsize: aVisibleTiles.length
 			});
 		}
 
-		rm.write(">");
-		if (oControl.getRemovable()) {
-			rm.write("<div id=\"" + oControl.getId() + "-remove\" class=\"sapMTCRemove\"></div>");
-		} else {
-			rm.write("<div id=\"" + oControl.getId() + "-remove\" class=\"sapMTCNoRemove\"></div>");
-		}
-		rm.write("<div class=\"sapMTileContent\">");
-		this._renderContent(rm,oControl);
-		rm.write("</div></div>");
+		rm.openEnd();
+		rm.openStart("div", oControl.getId() + "-remove");
+		rm.class(oControl.getRemovable() ? "sapMTCRemove" : "sapMTCNoRemove");
+		rm.openEnd().close("div");
+		rm.openStart("div").class("sapMTileContent").openEnd();
+		this._renderContent(rm, oControl);
+		rm.close("div").close("div");
 	};
 
 	TileRenderer._renderContent = function(rm, oControl) {};

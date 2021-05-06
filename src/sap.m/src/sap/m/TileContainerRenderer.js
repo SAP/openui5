@@ -12,6 +12,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var TileContainerRenderer = {
+		apiVersion: 2
 	};
 
 	/*The default amount of tiles this renderer will render if the max tiles per page is not calculated yet.*/
@@ -27,41 +28,48 @@ sap.ui.define([],
 	TileContainerRenderer.render = function(rm, oControl) {
 		var id =  oControl.getId();
 
-		rm.write("<div tabindex=\"-1\"");
-		rm.writeControlData(oControl);
-		rm.addStyle("height",oControl.getHeight());
-		rm.addStyle("width",oControl.getWidth());
-		rm.writeStyles();
-		rm.addClass("sapMTC");
-		rm.writeClasses();
+		rm.openStart("div", oControl)
+			.attr("tabindex", "-1")
+			.style("height", oControl.getHeight())
+			.style("width", oControl.getWidth())
+			.class("sapMTC");
 
 		/* WAI ARIA region */
-		rm.writeAccessibilityState(oControl, {
+		rm.accessibilityState(oControl, {
 			role: "listbox",
 			multiSelectable: false,
 			activeDescendant: oControl.getTiles().length > 0 ? oControl.getTiles()[0].getId() : ""
 		});
 
-		rm.write(" >");
-		rm.write("<div id=\"" + id + "-scrl\" class=\"sapMTCScrl\" style=\"height:0px;");
-		if (!oControl.bRtl) {
-			rm.write(" overflow: hidden;");
-		}
-		rm.write("\">");
-		rm.write("<div id=\"" + id + "-blind\" class=\"sapMTCBlind\"></div>");
-		rm.write("<div id=\"" + id + "-cnt\" class=\"sapMTCCnt sapMTCAnim\" style=\"height:0px; width:0px;\" role=\"group\">");
+		rm.openEnd();
+			rm.openStart("div", id + "-scrl").class("sapMTCScrl").style("height", "0");
+			if (!oControl.bRtl) {
+				rm.style("overflow", "hidden");
+			}
+			rm.openEnd();
+				rm.openStart("div", id + "-blind").class("sapMTCBlind").openEnd().close("div");
+				rm.openStart("div", id + "-cnt")
+					.class("sapMTCCnt")
+					.class("sapMTCAnim")
+					.style("height","0")
+					.style("width", "0")
+					.attr("role", "group")
+					.openEnd();
 
-		this.renderTiles(oControl, rm);
+				this.renderTiles(oControl, rm);
 
-		rm.write("</div>");
-		rm.write("</div>");
-		rm.write("<div id=\"" + id + "-pager\" class=\"sapMTCPager\">");
-		rm.write("</div>");
-		rm.write("<div id=\"" + id + "-leftedge\" class=\"sapMTCEdgeLeft\"></div>");
-		rm.write("<div id=\"" + id + "-rightedge\" class=\"sapMTCEdgeRight\"></div>");
-		rm.write("<div id=\"" + id + "-leftscroller\" class=\"sapMTCScroller sapMTCLeft\" tabindex=\"-1\"><div class=\"sapMTCInner\" ></div></div>");
-		rm.write("<div id=\"" + id + "-rightscroller\" class=\"sapMTCScroller sapMTCRight\" tabindex=\"-1\"><div class=\"sapMTCInner\" ></div></div>");
-		rm.write("</div>");
+				rm.close("div");
+			rm.close("div");
+			rm.openStart("div", id + "-pager").class("sapMTCPager").openEnd().close("div");
+			rm.openStart("div", id + "-leftedge").class("sapMTCEdgeLeft").openEnd().close("div");
+			rm.openStart("div", id + "-rightedge").class("sapMTCEdgeRight").openEnd().close("div");
+			rm.openStart("div", id + "-leftscroller").class("sapMTCScroller").class("sapMTCLeft").attr("tabindex", "-1").openEnd();
+				rm.openStart("div").class("sapMTCInner").openEnd().close("div");
+			rm.close("div");
+			rm.openStart("div", id + "-rightscroller").class("sapMTCScroller").class("sapMTCRight").attr("tabindex", "-1").openEnd();
+				rm.openStart("div").class("sapMTCInner").openEnd().close("div");
+			rm.close("div");
+		rm.close("div");
 	};
 
 	/**
