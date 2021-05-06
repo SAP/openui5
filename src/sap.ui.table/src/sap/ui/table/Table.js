@@ -3939,14 +3939,15 @@ sap.ui.define([
 		this._iSourceRowIndex = undefined;
 	};
 
-	Table.prototype.setBusy = function(bBusy, sBusySection) {
-		var bBusyChanged = this.getBusy() != bBusy;
+	Table.prototype.setBusy = function(bBusy) {
+		var bOldBusyState = this.getBusy();
+		var vReturn = Control.prototype.setBusy.call(this, bBusy, "sapUiTableGridCnt");
+		var bNewBusyState = this.getBusy();
 
-		sBusySection = "sapUiTableGridCnt";
-		var vReturn = Control.prototype.setBusy.call(this, bBusy, sBusySection);
-		if (bBusyChanged) {
-			this.fireBusyStateChanged({busy: bBusy});
+		if (bOldBusyState !== bNewBusyState) {
+			this.fireBusyStateChanged({busy: bNewBusyState});
 		}
+
 		return vReturn;
 	};
 
