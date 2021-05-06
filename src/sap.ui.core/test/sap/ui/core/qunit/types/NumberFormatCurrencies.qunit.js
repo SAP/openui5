@@ -688,6 +688,50 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		}
 	});
 
+	QUnit.test("Currencies with numbers in their names Edge Cases", function(assert) {
+		// showMeasure: true
+		var oFormatEN = getCurrencyInstance({
+			customCurrencies: {
+				"1":{"decimals":1,"isoCode":""},
+				"EUR":{"decimals":2,"isoCode":"EUR"}
+			},
+			unitOptional: false,
+			parseAsString: true,
+			trailingCurrencyCode:true,
+			currencyCode: true,
+			showMeasure: true
+		});
+
+		assert.deepEqual(oFormatEN.format("2", "EUR"), "2.00" + "\xa0" + "EUR", "2.00 EUR");
+		assert.deepEqual(oFormatEN.format("2", "1"), "2.0" + "\xa0" + "1", "2.0 1");
+
+		// can only be parsed if there is no "1" in the value to be parsed
+		assert.deepEqual(oFormatEN.parse("10"), null, "10 contains currency 1");
+		assert.deepEqual(oFormatEN.parse("20"), ["20", undefined], "does not contain currency 1");
+		assert.deepEqual(oFormatEN.parse("21"), ["2", "1"], "21 contains currency at the end");
+		assert.deepEqual(oFormatEN.parse("45167"), ["4567", "1"], "currency contains it in the middle");
+
+		// showMeasure: false
+		var oFormatENNoMeasure = getCurrencyInstance({
+			customCurrencies: {
+				"1":{"decimals":1,"isoCode":""},
+				"EUR":{"decimals":2,"isoCode":"EUR"}
+			},
+			unitOptional: false,
+			parseAsString: true,
+			trailingCurrencyCode:true,
+			currencyCode: true,
+			showMeasure: false
+		});
+
+		// can be parsed because with showMeasure false currency is not parsed
+		assert.deepEqual(oFormatENNoMeasure.parse("10"), ["10", undefined], "10");
+		assert.deepEqual(oFormatENNoMeasure.parse("20"), ["20", undefined], "20");
+		assert.deepEqual(oFormatENNoMeasure.parse("21"), ["21", undefined], "21");
+		assert.deepEqual(oFormatENNoMeasure.parse("212"), ["212", undefined], "212");
+		assert.deepEqual(oFormatENNoMeasure.parse("45167"), ["45167", undefined], "45167");
+	});
+
 	QUnit.test("Currencies with numbers in their names", function(assert) {
 		// English
 		var oFormatEN = getCurrencyInstance({
@@ -714,7 +758,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			}
 		});
 
-		// these assertation also check if the longest match is found
+		// these assertion also check if the longest match is found
 		assert.equal(oFormatEN.format(1234.5678, "4DOL"), "4DOL" + "\xa0" + "1,234.57", "format in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("4DOL 1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("4DOL1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start - no delimiter");
