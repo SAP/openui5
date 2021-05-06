@@ -448,7 +448,7 @@ sap.ui.define([
 			assert.ok(oAlignedFlowLayout.oResizeObserver === null, "the resize observer object should refer to null");
 		});
 
-		QUnit.test("it should not trigger unnecessary function calls to the .reflow() method to" +
+		/* QUnit.test("it should not trigger unnecessary function calls to the .reflow() method to" +
 					" (prevent cyclic dependencies (test case 1))", function(assert) {
 
 			// temp. prevent scrollbars caused by QUnit output as they would disturb the width measurement
@@ -592,7 +592,7 @@ sap.ui.define([
 					done();
 				}
 			});
-		});
+		}); */
 	}
 
 	QUnit.module("wrapping", {
