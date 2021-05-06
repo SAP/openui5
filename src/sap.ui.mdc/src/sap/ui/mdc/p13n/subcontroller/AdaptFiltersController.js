@@ -78,6 +78,7 @@ sap.ui.define([
             oItem.selected = oItem.visible;
             oItem.position = oExistingProperty ? oExistingProperty.position : -1;
             oItem.isFiltered = aExistingFilters && aExistingFilters.length > 0 ? true : false;
+            oItem.required = oProperty.required;
 
             return !(oProperty.hiddenFilter === true ||  oProperty.name == "$search");
         }, true);

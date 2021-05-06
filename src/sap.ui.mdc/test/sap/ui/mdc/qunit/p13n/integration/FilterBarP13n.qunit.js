@@ -21,9 +21,13 @@ sap.ui.define([
 					"label": "item2"
 				}, {
 					"name": "item3",
-					"label": "item3"
+					"label": "item3",
+					"required": true
 				}, {
 					"name": "$search"
+				},{
+					"name": "someHiddenProperty",
+					"hiddenFilter": true
 				}
 			];
 
@@ -67,7 +71,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Custom propertyinfo should not take $search into account for FilterBar", function(assert){
+	QUnit.test("PropertyInfo should not take $search into account for FilterBar", function(assert){
 		var done = assert.async();
 
         this.setLiveMode("Item", false);
@@ -93,6 +97,30 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("PropertyInfo should not take 'hiddenFilter' into account for FilterBar 'Adapt Filters'", function(assert){
+		var done = assert.async();
+
+		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
+			var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
+            assert.equal(oInnerTable.getItems().length, 3, "Inner Table does not know about 'hiddenFilter'");
+			done();
+		});
+
+	});
+
+	QUnit.test("PropertyInfo 'required' should be respected in 'Adapt Filters' Dialog", function(assert){
+		var done = assert.async();
+
+		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
+			var oAdaptationFilterBar = oP13nControl.getContent()[0];
+			var oAdaptFiltersPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
+			var oInnerTable = oAdaptFiltersPanel.getCurrentViewContent()._oListControl;
+			var oLabelThirdItem = oInnerTable.getItems()[2].getCells()[0].getItems()[0];
+			assert.ok(oLabelThirdItem.getRequired(), "Required property info has been propagated to the UI");
+			done();
+		});
+
+	});
 
 	QUnit.test("use AdaptationFilterBar", function (assert) {
         var done = assert.async();
