@@ -947,9 +947,6 @@ sap.ui.define([
 		stack : "Failure\n    at _Helper.createError", // like Chrome
 		message : "Failure\n    at _Helper.createError"
 	}, {
-		stack : undefined, // like IE
-		message : "Failure"
-	}, {
 		stack : "_Helper.createError@_Helper.js", // like FF
 		message : "Failure\n_Helper.createError@_Helper.js"
 	}].forEach(function (oFixture, i) {
@@ -1017,7 +1014,8 @@ sap.ui.define([
 				},
 				"message" : "Failure",
 				"requestUrl" : "/service/Product",
-				"resourcePath" : sResourcePath + "?foo=bar"
+				"resourcePath" : sResourcePath + "?foo=bar",
+				"stack" : "Some stack"
 			},
 			oHelperMock = this.mock(_Helper),
 			sLogMessage = "Failed to read path /Product('1')/Unknown",
@@ -1041,7 +1039,8 @@ sap.ui.define([
 				"@$ui5.originalMessage" : sinon.match.same(oError.error.details[1])
 			}];
 
-		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.oLogMock.expects("error")
+			.withExactArgs(sLogMessage, oError.message + "\n" + oError.stack, sClassName);
 		oHelperMock.expects("getAdditionalTargets").exactly(bIgnoreTopLevel ? 0 : 1)
 			.withExactArgs(sinon.match.same(oError.error))
 			.returns(undefined);
@@ -1131,7 +1130,8 @@ sap.ui.define([
 				},
 				message : "Failure",
 				requestUrl : "/Employees('1')/service.ChangeTeamOfEmployee(...)",
-				resourcePath : "Employees('1')"
+				resourcePath : "Employees('1')",
+				stack : "Some stack"
 			},
 			sLogMessage = "Action could not be executed",
 			oModel = this.createModel();
@@ -1141,7 +1141,8 @@ sap.ui.define([
 		aBoundMessages[1]["@$ui5.error"] = sinon.match.same(oError);
 		aBoundMessages[1]["@$ui5.originalMessage"] = Object.assign({}, oError.error.details[1]);
 
-		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.oLogMock.expects("error")
+			.withExactArgs(sLogMessage, oError.message + "\n" + oError.stack, sClassName);
 		this.mock(_Helper).expects("makeAbsolute").never();
 		this.mock(oModel).expects("reportBoundMessages")
 			.withExactArgs("Employees('1')", {"" : aBoundMessages}, []);
@@ -1155,19 +1156,21 @@ sap.ui.define([
 	QUnit.test("reportError: JSON response, top-level bound, no details", function () {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			oError = {
-				"error" : {
-					"code" : "top",
-					"message" : "Value must be greater than 0",
-					"target" : "Quantity",
+				error : {
+					code : "top",
+					message : "Value must be greater than 0",
+					target : "Quantity",
 					"@foo.additionalTargets" : ["ProductID"]
 				},
-				"message" : "Failure",
-				"resourcePath" : "/Product('1')"
+				message : "Failure",
+				resourcePath : "/Product('1')",
+				stack : "Some stack"
 			},
 			sLogMessage = "Failed to read path /Product('1')/Unknown",
 			oModel = this.createModel();
 
-		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.oLogMock.expects("error")
+			.withExactArgs(sLogMessage, oError.message + "\n" + oError.stack, sClassName);
 		this.mock(_Helper).expects("getAdditionalTargets")
 			.withExactArgs(sinon.match.same(oError.error)).returns("~additionalTargets~");
 		this.mock(oModel).expects("reportUnboundMessages")
@@ -1193,20 +1196,22 @@ sap.ui.define([
 	QUnit.test("reportError: JSON response, top-level bound to query option", function () {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			oError = {
-				"error" : {
+				error : {
 					"@Common.longtextUrl" : "/long/text",
-					"code" : "top",
-					"message" : "Invalid token 'name' at position '1'",
-					"target" : "$filter"
+					code : "top",
+					message : "Invalid token 'name' at position '1'",
+					target : "$filter"
 				},
-				"message" : "Failure",
-				"requestUrl" : "/service/SalesOrderList",
-				"resourcePath" : "/SalesOrderList"
+				message : "Failure",
+				requestUrl : "/service/SalesOrderList",
+				resourcePath : "/SalesOrderList",
+				stack : "Some stack"
 			},
 			sLogMessage = "Failed to read path /SalesOrderList?$filter=name eq 'Hugo'",
 			oModel = this.createModel();
 
-		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.oLogMock.expects("error")
+			.withExactArgs(sLogMessage, oError.message + "\n" + oError.stack, sClassName);
 		this.mock(oModel).expects("reportBoundMessages").never();
 		this.mock(oModel).expects("reportUnboundMessages")
 			.withExactArgs([{
@@ -1252,11 +1257,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("reportError: no message for $reported", function () {
 		var sClassName = "class",
-			oError = {$reported : true, message : "Reported"},
+			oError = {$reported : true, message : "Reported", stack : "Some stack"},
 			sLogMessage = "Failure",
 			oModel = this.createModel();
 
-		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.oLogMock.expects("error")
+			.withExactArgs(sLogMessage, oError.message + "\n" + oError.stack, sClassName);
 		this.mock(oModel).expects("fireMessageChange").never();
 
 		// code under test

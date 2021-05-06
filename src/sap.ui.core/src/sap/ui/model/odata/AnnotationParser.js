@@ -437,7 +437,6 @@ var AnnotationParser =  {
 			aSegments = [];
 
 		// returns the current oElement's index in its parentElement's "children" collection
-		// (but works in IE as well)
 		function index() {
 			return Array.prototype.filter.call(oElement.parentNode.childNodes, function (oNode) {
 					return oNode.nodeType === 1;

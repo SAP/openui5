@@ -337,16 +337,7 @@ sap.ui.define([
 		}
 		var sNameSpace = this._getNameSpace(sName),
 			sLocalName = this._getLocalName(sName);
-		if (oNode.getAttributeNS) {
-			return oNode.getAttributeNS(sNameSpace, sLocalName);
-		} else { // IE8
-			if (!this.oDocNSPrefixes) {
-				this.oDocNSPrefixes = this._getDocNSPrefixes();
-			}
-			var sPrefix = this.oDocNSPrefixes[sNameSpace];
-			sName = (sPrefix ? sPrefix + ":" : "") + sLocalName;
-			return oNode.getAttribute(sName);
-		}
+		return oNode.getAttributeNS(sNameSpace, sLocalName);
 	};
 
 	/**

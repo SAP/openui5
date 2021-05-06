@@ -152,9 +152,8 @@ sap.ui.define([
 
 	/**
 	 * Serializes the current JSON data of the model into a string.
-	 * Note: May not work in Internet Explorer 8 because of lacking JSON support (works only if IE 8 mode is enabled)
 	 *
-	 * @return {string} the JSON data serialized as string
+	 * @return {string} The JSON data serialized as string
 	 * @public
 	 */
 	JSONModel.prototype.getJSON = function(){

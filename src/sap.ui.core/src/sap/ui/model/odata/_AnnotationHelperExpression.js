@@ -902,8 +902,8 @@ sap.ui.define([
 				// convert V4 to V2 for sap.ui.model.odata.ODataUtils
 				if (oResult.type === "Edm.Date") {
 					oResult.type = "Edm.DateTime";
-					// Note: ODataUtils.formatValue calls Date.parse() indirectly, use UTC to make
-					// sure IE9 does not mess with time zone
+					// Note: ODataUtils.formatValue calls Date.parse() indirectly, make sure the
+					// value is interpreted in UTC
 					oResult.value = oResult.value + "T00:00:00Z";
 				} else if (oResult.type === "Edm.TimeOfDay") {
 					oResult.type = "Edm.Time";

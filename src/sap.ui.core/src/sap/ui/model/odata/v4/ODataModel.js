@@ -1764,10 +1764,9 @@ sap.ui.define([
 			return;
 		}
 
-		sDetails = oError.stack || oError.message;
-		if (!sDetails.includes(oError.message)) {
-			sDetails = oError.message + "\n" + oError.stack;
-		}
+		sDetails = oError.stack.includes(oError.message)
+			? oError.stack
+			: oError.message + "\n" + oError.stack;
 
 		if (oError.canceled) {
 			Log.debug(sLogMessage, sDetails, sReportingClassName);
