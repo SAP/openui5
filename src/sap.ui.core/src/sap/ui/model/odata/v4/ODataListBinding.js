@@ -690,8 +690,10 @@ sap.ui.define([
 	 * this property has a default value.
 	 *
 	 * Note: After creation, the created entity is refreshed to ensure that the data specified in
-	 * this list binding's $expand is available; to skip this refresh, set <code>bSkipRefresh</code>
-	 * to <code>true</code>. To avoid errors you must skip this refresh when using
+	 * this list binding's $expand is available. This refresh is done via the group ID of the
+	 * binding, unless the group ID has {@link sap.ui.model.odata.v4.SubmitMode.API}, in which case
+	 * '$auto' is used. To skip this refresh, set <code>bSkipRefresh</code> to <code>true</code>. To
+	 * avoid errors you must skip this refresh when using
 	 * {@link sap.ui.model.odata.v4.Context#requestSideEffects} in the same $batch to refresh the
 	 * complete collection containing the newly created entity.
 	 *
