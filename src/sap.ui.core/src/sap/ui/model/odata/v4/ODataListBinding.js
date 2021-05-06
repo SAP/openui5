@@ -700,7 +700,7 @@ sap.ui.define([
 	 *
 	 * Note: Creating at the end is only allowed if the final length of the binding is known (see
 	 * {@link #isLengthFinal}), so that there is a clear position to place this entity at. This is
-	 * the case if the complete collection has been read or if the system parameter
+	 * the case if the complete collection has been read or if the system query option
 	 * <code>$count</code> is <code>true</code> and the binding has processed at least one request.
 	 *
 	 * @param {object} [oInitialData={}]
@@ -1952,7 +1952,9 @@ sap.ui.define([
 	 * Returns the header context which allows binding to <code>$count</code>. If known, the value
 	 * of such a binding is the sum of the element count of the collection on the server and the
 	 * number of transient entities created on the client. Otherwise it is <code>undefined</code>.
-	 * The value is a number and its type is <code>Edm.Int64</code>.
+	 * The value is a number and its type is <code>Edm.Int64</code>. Since 1.91.0, in case of data
+	 * aggregation, the count is the leaf count on the server; it is only determined if the system
+	 * query option <code>$count</code> is given.
 	 *
 	 * The count is known to the binding in the following situations:
 	 * <ul>
@@ -2797,7 +2799,7 @@ sap.ui.define([
 	 * @param {string[]} [oAggregation.groupLevels]
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
-	 *   filtering for aggregated properties or with the system query option <code>$count</code>.
+	 *   filtering for aggregated properties.
 	 * @param {boolean} [oAggregation.subtotalsAtBottomOnly]
 	 *   Tells whether subtotals for aggregatable properties are displayed at the bottom only, as a
 	 *   separate row after all children, when a group level node is expanded (since 1.86.0);

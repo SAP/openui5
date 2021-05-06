@@ -46,10 +46,14 @@ sap.ui.define([
 				sGrandTotalAtBottomOnly = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.DataAggregation.grandTotalAtBottomOnly")
 					|| oUriParameters.get("grandTotalAtBottomOnly"),
+				sLeafCount = TestUtils.retrieveData( // controlled by OPA
+						"sap.ui.core.sample.odata.v4.DataAggregation.leafCount")
+					|| oUriParameters.get("leafCount"),
 				sSubtotalsAtBottomOnly = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.DataAggregation.subtotalsAtBottomOnly")
 					|| oUriParameters.get("subtotalsAtBottomOnly"),
 				oTable = this.byId("table"),
+				oTitle = this.byId("title"),
 				oRowsBinding = oTable.getBinding("rows"),
 				sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.DataAggregation.visibleRowCount")
@@ -61,14 +65,19 @@ sap.ui.define([
 			}), "ui");
 			this.initMessagePopover("showMessages");
 
-			oTable.setBindingContext(oRowsBinding.getHeaderContext(), "headerContext");
-			oTable.setModel(oTable.getModel(), "headerContext");
 			if (sGrandTotalAtBottomOnly) {
 				if (sGrandTotalAtBottomOnly === "true") {
 					oTable.setFixedRowCount(0);
 				}
 				oTable.setFixedBottomRowCount(1);
 				oAggregation.grandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true";
+			}
+			if (sLeafCount) {
+				oRowsBinding.changeParameters({$count : sLeafCount === "true"});
+				oTitle.setBindingContext(oRowsBinding.getHeaderContext());
+				oTitle.applySettings({
+					text : "Sales Amount by Account Responsible ({$count})"
+				});
 			}
 			if (sSubtotalsAtBottomOnly) {
 				oAggregation.subtotalsAtBottomOnly = sSubtotalsAtBottomOnly === "true";

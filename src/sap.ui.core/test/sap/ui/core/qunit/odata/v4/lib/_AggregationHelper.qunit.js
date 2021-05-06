@@ -640,6 +640,66 @@ sap.ui.define([
 		sFollowUpApply : "filter(Name eq 'Foo')/groupby((Country)"
 			+ ",aggregate(SalesAmount as SalesAmountSum,Currency))"
 			+ "/filter(SalesAmountSum gt 0)/orderby(Country desc)/skip(42)/top(99)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				GrossAmount : {subtotals : true}
+			},
+			group : { // Note: intentionally not sorted
+				LifecycleStatus : {},
+				CurrencyCode : {}
+			},
+			groupLevels : ['LifecycleStatus', 'CurrencyCode']
+		},
+		mQueryOptions : {
+			$$leaves : true,
+			$count : true,
+			$orderby : 'LifecycleStatus desc',
+			$top : 3
+		},
+		sApply : "concat(groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
+			+ ",groupby((LifecycleStatus),aggregate(GrossAmount))/orderby(LifecycleStatus desc)"
+			+ "/concat(aggregate($count as UI5__count),top(3)))",
+		sFollowUpApply : "groupby((LifecycleStatus),aggregate(GrossAmount))"
+			+ "/orderby(LifecycleStatus desc)/top(3)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				GrossAmount : {subtotals : true}
+			},
+			// group is optional
+			groupLevels : ['LifecycleStatus', 'CurrencyCode']
+		},
+		iLevel : 2, // ignore $$leaves!
+		mQueryOptions : {
+			$$filterBeforeAggregate : "LifecycleStatus eq 'X'",
+			$$leaves : true,
+			$count : true,
+			$orderby : 'LifecycleStatus desc',
+			$top : 3
+		},
+		sApply : "filter(LifecycleStatus eq 'X')/groupby((CurrencyCode),aggregate(GrossAmount))"
+			+ "/orderby(LifecycleStatus desc)/concat(aggregate($count as UI5__count),top(3))",
+		sFollowUpApply : "filter(LifecycleStatus eq 'X')"
+			+ "/groupby((CurrencyCode),aggregate(GrossAmount))/orderby(LifecycleStatus desc)/top(3)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				GrossAmount : {grandTotal : true, subtotals : true}
+			},
+			// group is optional
+			groupLevels : ['LifecycleStatus', 'CurrencyCode']
+		},
+		mQueryOptions : {
+			$$leaves : true,
+			$count : true,
+			$top : 3
+		},
+		sApply : "concat(groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
+			+ ",aggregate(GrossAmount)"
+			+ ",groupby((LifecycleStatus),aggregate(GrossAmount))"
+				+ "/concat(aggregate($count as UI5__count),top(3)))",
+		sFollowUpApply : "groupby((LifecycleStatus),aggregate(GrossAmount))/top(3)"
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {},

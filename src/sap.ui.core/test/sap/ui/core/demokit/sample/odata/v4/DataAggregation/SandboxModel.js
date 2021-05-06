@@ -20,6 +20,9 @@ sap.ui.define([
 				"BusinessPartners?$apply=concat(aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country,CountryText),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(CountryText%20desc)/concat(aggregate($count%20as%20UI5__count),top(4)))" : {
 					source : "BusinessPartners_L1.json"
 				},
+				"BusinessPartners?$apply=concat(groupby((AccountResponsible,Country,Region,Segment))/aggregate($count%20as%20UI5__leaves),aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country,CountryText),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(CountryText%20desc)/concat(aggregate($count%20as%20UI5__count),top(4)))" : {
+					source : "BusinessPartners_L1_leaves.json"
+				},
 				"BusinessPartners?$apply=filter(Country%20eq%20'3')/groupby((Region,RegionText),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(RegionText%20desc)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_Germany_top5.json"
 				},

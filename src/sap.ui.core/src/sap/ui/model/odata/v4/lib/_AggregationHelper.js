@@ -147,6 +147,9 @@ sap.ui.define([
 		 * @param {string} [mQueryOptions.$$filterBeforeAggregate]
 		 *   The value for a filter which is applied before the aggregation; it is removed from the
 		 *   returned map and turned into a "filter()" transformation
+		 * @param {boolean} [mQueryOptions.$$leaves]
+		 *   Tells whether the count of leaves is requested; it is removed from the returned map; it
+		 *   is turned into an aggregate "$count as UI5__leaves" for the first request
 		 * @param {string} [mQueryOptions.$orderby]
 		 *   The value for a "$orderby" system query option; it is removed from the returned map and
 		 *   turned into an "orderby()" transformation
@@ -184,6 +187,7 @@ sap.ui.define([
 				bGrandTotalLike184 = oAggregation["grandTotal like 1.84"],
 				aGroupBy,
 				bIsLeafLevel,
+				sLeaves,
 				aMinMaxAggregate = [], // concat(aggregate(???),.) content for min/max or count
 				sSkipTop,
 				aSubtotalsAggregate = []; // groupby(.,aggregate(???)) content for subtotals/leaves
@@ -298,9 +302,17 @@ sap.ui.define([
 				} else if (sSkipTop) {
 					sApply += "/" + sSkipTop;
 				}
+				if (iLevel === 1 && mQueryOptions.$$leaves && !bFollowUp) {
+					sLeaves = "groupby(("
+						+ Object.keys(oAggregation.group).sort().join(",")
+						+ "))/aggregate($count as UI5__leaves)";
+				}
+				delete mQueryOptions.$$leaves;
 				if (aGrandTotalAggregate.length) {
-					sApply = "concat(aggregate(" + aGrandTotalAggregate.join(",") + "),"
-						+ sApply + ")";
+					sApply = "concat(" + (sLeaves ? sLeaves + "," : "") + "aggregate("
+						+ aGrandTotalAggregate.join(",") + ")," + sApply + ")";
+				} else if (sLeaves) {
+					sApply = "concat(" + sLeaves + "," + sApply + ")";
 				}
 			}
 			if (mQueryOptions.$$filterBeforeAggregate) {

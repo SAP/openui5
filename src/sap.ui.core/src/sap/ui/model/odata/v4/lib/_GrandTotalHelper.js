@@ -10,8 +10,8 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Enhances the given cache, so that the count and/or grand total are requested together
-		 * with the first request. Subsequent requests remain unchanged.
+		 * Enhances the given cache, so that the (leaf) count and/or grand total are requested
+		 * together with the first request. Subsequent requests remain unchanged.
 		 *
 		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 		 *   The cache to be enhanced
@@ -20,17 +20,19 @@ sap.ui.define([
 		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 		 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
 		 *   {@link _AggregationHelper.buildApply}
-		 * @param {function} fnGrandTotal
+		 * @param {function} [fnGrandTotal]
 		 *   Callback for the grand total response
+		 * @param {function} [fnLeaves]
+		 *   Callback for the leaf count response
 		 */
-		enhanceCacheWithGrandTotal : function (oCache, oAggregation, fnGrandTotal) {
+		enhanceCacheWithGrandTotal : function (oCache, oAggregation, fnGrandTotal, fnLeaves) {
 			var bFollowUp;
 
 			/**
 			 * Returns the resource path including the query string with "$apply" which includes the
-			 * aggregation functions for count and grand total, minimum or maximum values and
-			 * "skip()/top()" as transformations. Follow-up requests do not aggregate the count and
-			 * grand total, minimum or maximum values again.
+			 * aggregation functions for (leaf) count and grand total and "skip()/top()" as
+			 * transformations. Follow-up requests do not aggregate the (leaf) count and grand
+			 * total again.
 			 *
 			 * This function is used to replace <code>getResourcePathWithQuery</code> of the first
 			 * level cache and needs to be called on the first level cache.
@@ -57,8 +59,8 @@ sap.ui.define([
 			};
 
 			/**
-			 * Handles a GET response wich may contain grand total or count, each in a row of its
-			 * own.
+			 * Handles a GET response wich may contain grand total or (leaf) count, each in a row of
+			 * its own.
 			 *
 			 * @param {number} iStart
 			 *   The index of the first element to request ($skip)
@@ -70,7 +72,12 @@ sap.ui.define([
 			 */
 			// @override sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
 			oCache.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
-				fnGrandTotal(oResult.value.shift());
+				if (fnLeaves) {
+					fnLeaves(oResult.value.shift());
+				}
+				if (fnGrandTotal) {
+					fnGrandTotal(oResult.value.shift());
+				}
 
 				// Note: drop row with UI5__count only
 				oResult["@odata.count"] = oResult.value.shift().UI5__count;
