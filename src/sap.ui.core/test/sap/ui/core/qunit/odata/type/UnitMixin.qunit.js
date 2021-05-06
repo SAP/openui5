@@ -36,12 +36,11 @@ sap.ui.define([
 			this.oBasePrototype = BaseType.prototype = {
 				formatValue : function () {},
 				getFormatOptions : function () {},
-				getInvalidUnitText : function () {},
 				parseValue : function () {},
 				setFormatOptions : function () {}
 			};
 			UnitMixin.prototype.getCustomUnitForKey = function () {};
-			applyUnitMixin(UnitMixin.prototype, BaseType, "customUnitsOrCurrencies");
+			applyUnitMixin(UnitMixin.prototype, BaseType, "customUnitsOrCurrencies", "Unit");
 		},
 
 		beforeEach : function () {
@@ -557,25 +556,31 @@ sap.ui.define([
 			});
 		oType.formatValue([42, "KG", mCustomizing], "string");
 
+		oTypeMock.expects("getValidateException").withExactArgs(2).returns("error0");
+
 		// code under test: validate exception with number of decimals
 		TestUtils.withNormalizedMessages(function () {
 			assert.throws(function () {
 				oType.validateValue(["123456789012345678901234567890.123", "KG"]);
-			}, new ValidateException("EnterNumberFraction 2"));
+			}, "error0");
 		});
+
+		oTypeMock.expects("getValidateException").withExactArgs(0).returns("error1");
 
 		// code under test: validate exception w/o decimals
 		TestUtils.withNormalizedMessages(function () {
 			assert.throws(function () {
 				oType.validateValue(["12.1", "KG0"]);
-			}, new ValidateException("EnterInt"));
+			}, "error1");
 		});
+
+		oTypeMock.expects("getValidateException").withExactArgs(0).returns("error2");
 
 		// code under test: decimals validate exception also works for bParseAsString=false
 		TestUtils.withNormalizedMessages(function () {
 			assert.throws(function () {
 				oType.validateValue([12.34, "KG0"]);
-			}, new ValidateException("EnterInt"));
+			}, "error2");
 		});
 	});
 
@@ -626,4 +631,36 @@ sap.ui.define([
 		assert.deepEqual(oType.getFormatOptions(),
 			{emptyString: 0, parseAsString : true, unitOptional : true});
 	});
+
+	//*********************************************************************************************
+[{
+	iDecimals : 0,
+	oFormatOptions : {},
+	sResult : "EnterInt"
+}, {
+	iDecimals : 2,
+	oFormatOptions : {},
+	sResult : "EnterNumberFraction 2"
+}, {
+	iDecimals : 0,
+	oFormatOptions : {showNumber : false},
+	sResult : "Unit.WithoutDecimals"
+}, {
+	iDecimals : 2,
+	oFormatOptions : {showNumber : false},
+	sResult : "Unit.WithDecimals 2"
+}].forEach(function (oFixture, i) {
+	QUnit.test("getValidateException #" + i, function (assert) {
+		var oResult,
+			oType = new UnitMixin(oFixture.oFormatOptions);
+
+		TestUtils.withNormalizedMessages(function () {
+			// code under test
+			oResult = oType.getValidateException(oFixture.iDecimals);
+		});
+
+		assert.ok(oResult instanceof ValidateException);
+		assert.strictEqual(oResult.message, oFixture.sResult);
+	});
+});
 });

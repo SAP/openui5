@@ -35,7 +35,8 @@ sap.ui.define([
 
 		Object.keys(oMixin).forEach(function (sKey) {
 			if (sKey !== "formatValue" && sKey !== "getFormatOptions"
-					&& sKey !== "getPartsIgnoringMessages" && sKey !== "parseValue"
+					&& sKey !== "getPartsIgnoringMessages" && sKey !== "getValidateException"
+					&& sKey !== "parseValue" && sKey !== "validateValue"
 					&& sKey !== "_applyUnitMixin") {
 				assert.strictEqual(oType[sKey], oMixin[sKey], sKey);
 			}

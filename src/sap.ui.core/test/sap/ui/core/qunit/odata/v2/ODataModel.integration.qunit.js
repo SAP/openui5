@@ -7914,24 +7914,26 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			that.expectMessages([{
 				descriptionUrl : undefined,
-				message : "Enter a valid currency amount",
+				message : "EnterNumber",
 				target : oAmount0.getId() + "/value",
 				type : "Error"
 			}, {
 				descriptionUrl : undefined,
-				message : "Enter a text with a maximum of 3 characters and spaces",
+				message : "EnterTextMaxLength 3",
 				target : oCurrency0.getId() + "/value",
 				type : "Error"
 			}]);
 
-			// code under test
-			oAmount0.setValue("invalid amount");
-			oCurrency0.setValue("invalid currency");
+
+			TestUtils.withNormalizedMessages(function () {
+				// code under test
+				oAmount0.setValue("invalid amount");
+				oCurrency0.setValue("invalid currency");
+			});
 
 			return Promise.all([
-				that.checkValueState(assert, oAmount0, "Error", "Enter a valid currency amount"),
-				that.checkValueState(assert, oCurrency0, "Error",
-					"Enter a text with a maximum of 3 characters and spaces"),
+				that.checkValueState(assert, oAmount0, "Error", "EnterNumber"),
+				that.checkValueState(assert, oCurrency0, "Error", "EnterTextMaxLength 3"),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -8823,7 +8825,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectValue("currency", "foo")
 				.expectMessages([{
 					descriptionUrl: undefined,
-					message : "Currency.Invalid",
+					message : "Currency.InvalidMeasure",
 					target : oControl.getId() + "/value",
 					type : "Error"
 				}]);
@@ -8834,7 +8836,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			});
 
 			return Promise.all([
-				that.checkValueState(assert, "currency", "Error", "Currency.Invalid"),
+				that.checkValueState(assert, "currency", "Error", "Currency.InvalidMeasure"),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {

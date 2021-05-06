@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"require",
 	"sap/base/Log",
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/ValueState",
 	"sap/ui/test/opaQunit"
-], function (require, Log, Helper, ValueState, opaTest) {
+], function (Log, Helper, ValueState, opaTest) {
 	"use strict";
 
 	/* global opaSkip */
@@ -68,8 +67,9 @@ sap.ui.define([
 			Then.onMainPage.checkUnit("");
 			Then.onMainPage.checkValue("100.10", "100.1");
 			When.onMainPage.enterUnit("JPY");
-			Then.onMainPage.checkUnit("JPY", null, ValueState.Error, "EnterInt");
-			Then.onMainPage.checkValue("100.1", "100.1", ValueState.Error, "EnterInt");
+			Then.onMainPage.checkUnit("JPY", null, ValueState.Error, "Currency.WithoutDecimals");
+			Then.onMainPage.checkValue("100.1", "100.1", ValueState.Error,
+				"Currency.WithoutDecimals");
 
 			Given.iTeardownMyUIComponent();
 		});
@@ -142,9 +142,10 @@ sap.ui.define([
 			Then.onMainPage.checkValue("100.10", "100.1");
 			When.onMainPage.enterUnit("JPY");
 			//FIXME validation message text is wrong, if one field does not accept input
-			Then.onMainPage.checkUnit("JPY", "EUR", ValueState.Error, "EnterInt");
+			Then.onMainPage.checkUnit("JPY", "EUR", ValueState.Error, "Currency.WithoutDecimals");
 			// disabled/readonly fields also get an error value state but cannot show it
-			Then.onMainPage.checkValue("100.1", "100.1", ValueState.Error, "EnterInt");
+			Then.onMainPage.checkValue("100.1", "100.1", ValueState.Error,
+				"Currency.WithoutDecimals");
 
 			Given.iTeardownMyUIComponent();
 		});
@@ -182,8 +183,9 @@ sap.ui.define([
 			Then.onMainPage.checkUnit("EUR");
 			Then.onMainPage.checkValue("100.10", "100.1");
 			When.onMainPage.enterUnit("JPY");
-			Then.onMainPage.checkUnit("JPY", "EUR", ValueState.Error, "EnterInt");
-			Then.onMainPage.checkValue("100.1", "100.1", ValueState.Error, "EnterInt");
+			Then.onMainPage.checkUnit("JPY", "EUR", ValueState.Error, "Currency.WithoutDecimals");
+			Then.onMainPage.checkValue("100.1", "100.1", ValueState.Error,
+				"Currency.WithoutDecimals");
 
 			Given.iTeardownMyUIComponent();
 		});
@@ -203,7 +205,7 @@ sap.ui.define([
 	// additional tests not specified in CPOUI5MODELS-6
 
 	//*****************************************************************************
-	opaSkip("10) Entry of an invalid unit",
+	opaTest("10) Entry of an invalid unit",
 		function (Given, When, Then) {
 			Given.iStartMyUIComponent(oComponentOptions);
 
@@ -211,7 +213,7 @@ sap.ui.define([
 			Then.onMainPage.checkUnit("EUR");
 			Then.onMainPage.checkValue("1.23");
 			When.onMainPage.enterUnit("WRONG");
-			Then.onMainPage.checkUnit("WRONG", "EUR", ValueState.Error, "Currency.Invalid");
+			Then.onMainPage.checkUnit("WRONG", "EUR", ValueState.Error, "Currency.InvalidMeasure");
 			Then.onMainPage.checkValue("1.23");
 
 			Given.iTeardownMyUIComponent();
@@ -264,10 +266,10 @@ sap.ui.define([
 			Then.onMainPage.checkUnit("M/L");
 			When.onMainPage.enterUnit("XYZ");
 			Then.onMainPage.checkValue("2.1");
-			Then.onMainPage.checkUnit("XYZ", "M/L", ValueState.Error, "Unit.Invalid");
+			Then.onMainPage.checkUnit("XYZ", "M/L", ValueState.Error, "Unit.InvalidMeasure");
 			When.onMainPage.enterUnit("KG");
-			Then.onMainPage.checkUnit("KG", "M/L", ValueState.Error, "EnterInt");
-			Then.onMainPage.checkValue("2.1", "2.1", ValueState.Error, "EnterInt");
+			Then.onMainPage.checkUnit("KG", "M/L", ValueState.Error, "Unit.WithoutDecimals");
+			Then.onMainPage.checkValue("2.1", "2.1", ValueState.Error, "Unit.WithoutDecimals");
 			When.onMainPage.enterValue("2");
 			Then.onMainPage.checkValue("2");
 			Then.onMainPage.checkUnit("KG");
@@ -290,7 +292,7 @@ sap.ui.define([
 			When.onMainPage.enterUnit("XYZ");
 			Then.onMainPage.checkValue("2");
 			//TODO text should be "Enter a valid unit"
-			Then.onMainPage.checkUnit("XYZ", "KG", ValueState.Error, "Unit.Invalid");
+			Then.onMainPage.checkUnit("XYZ", "KG", ValueState.Error, "Unit.InvalidMeasure");
 			When.onMainPage.enterValue("3");
 			//TODO new error message text required for this special case, e.g.
 			// "Enter a valid unit to change the number"

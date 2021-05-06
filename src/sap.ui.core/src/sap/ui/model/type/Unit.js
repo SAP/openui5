@@ -260,7 +260,7 @@ sap.ui.define([
 				// more specific errors describing the actual issue during parse()
 				// will be introduced with later work on the NumberFormat
 				if (!Array.isArray(vResult) || this.bShowNumber && isNaN(vResult[0])) {
-					throw new ParseException(this.getInvalidUnitText());
+					throw this.getParseException();
 				}
 				break;
 			case "int":
@@ -348,14 +348,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the error text to be used for a "Unit.Invalid" error.
+	 * Returns the parse exception based on "showNumber" and "showMeasure" format options.
 	 *
-	 * @returns {string} The error text
+	 * @returns {sap.ui.model.ParseException} The parse exception
 	 *
 	 * @private
 	 */
-	Unit.prototype.getInvalidUnitText = function () {
-		return sap.ui.getCore().getLibraryResourceBundle().getText("Unit.Invalid");
+	Unit.prototype.getParseException = function () {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			sText;
+
+		if (!this.bShowNumber) {
+			sText = oBundle.getText("Unit.InvalidMeasure");
+		} else if (!this.bShowMeasure) {
+			sText = oBundle.getText("EnterNumber");
+		} else {
+			sText = oBundle.getText("Unit.Invalid");
+		}
+
+		return new ParseException(sText);
 	};
 
 	 /**
