@@ -8,8 +8,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"stringParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/stringParameter/value",
 						"type": "string",
-						"label": "StaticLabel",
-						"defaultValue": "StaticLabelDefaultValue"
+						"label": "StaticLabel"
 					}
 				}
 			}

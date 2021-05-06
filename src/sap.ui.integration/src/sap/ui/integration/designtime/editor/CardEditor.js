@@ -1565,7 +1565,7 @@ sap.ui.define([
 							oItem.valueTranslations = merge(oValueTranslationsInManifest, aTranslationLayerValueChanges);
 							aTranslationLayerValueChanges = undefined;
 						}*/
-						oItem._translatedDefaultPlaceholder = this._getManifestDefaultValue(oItem.manifestpath) || oItem.defaultValue;
+						oItem._translatedDefaultPlaceholder = this._getManifestDefaultValue(oItem.manifestpath);
 						var sTranslationTextKey = null,
 							sPlaceholder = oItem._translatedDefaultPlaceholder;
 						if (sPlaceholder) {
@@ -1724,11 +1724,11 @@ sap.ui.define([
 			//false, "", 0... are valid values and should not apply the default
 			if (oItem.value === undefined || oItem.value === null) {
 				switch (oItem.type) {
-					case "boolean": oItem.value = oItem.defaultValue || false; break;
+					case "boolean": oItem.value = false; break;
 					case "integer":
-					case "number": oItem.value = oItem.defaultValue || 0; break;
-					case "string[]": oItem.value = oItem.defaultValue || []; break;
-					default: oItem.value = oItem.defaultValue || "";
+					case "number": oItem.value = 0; break;
+					case "string[]": oItem.value = []; break;
+					default: oItem.value = "";
 				}
 			}
 			if (oItem.type === "group") {

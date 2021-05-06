@@ -7,13 +7,11 @@ sap.ui.define(["sap/ui/integration/Designtime"
 				"items": {
 					"stringArrayParameterNoValues": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArrayParameterNoValues/value",
-						"defaultValue": ["key1"],
 						"description": "String Array",
 						"type": "string[]"
 					},
 					"stringArrayParameterNoValuesNotEditable": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArrayParameterNoValuesNotEditable/value",
-						"defaultValue": ["key1"],
 						"description": "String Array",
 						"type": "string[]",
 						"editable": false

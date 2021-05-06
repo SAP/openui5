@@ -23,14 +23,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
-						"defaultValue": "StringValue",
 						"type": "string",
 						"translatable": true,
 						"required": true
 					},
 					"stringLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
-						"defaultValue": "StringValue",
 						"type": "string",
 						"label": "Direct String Label",
 						"translatable": true
@@ -65,12 +63,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"label": "String with translated value in i18n format"
 					},
-					"stringWithTranslatedDTDefaultValue": {
-						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedDTDefaultValue/value",
-						"type": "string",
-						"label": "String with translated default value",
-						"defaultValue": "{i18n>TRANSLATED_STRING_DEFAULT_VALUE}"
-					},
 					"stringInCols1": {
 						"manifestpath": "/sap.card/configuration/parameters/stringInCols1/value",
 						"label": "stringInCols1 long long long long long long long long long long long long label",
@@ -89,7 +81,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
-						"defaultValue": 1,
 						"type": "integer",
 						"visualization": {
 							"type": "sap/m/Slider",
@@ -107,36 +98,30 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"integerLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/integerLabel/value",
-						"defaultValue": 1,
 						"type": "integer",
 						"label": "Direct Integer Label"
 					},
 					"integerLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/integerLabelTrans/value",
-						"defaultValue": 1,
 						"type": "integer",
 						"label": "{i18n>TRANSLATED_INTEGER_LABEL}"
 					},
 					"number": {
 						"manifestpath": "/sap.card/configuration/parameters/number/value",
-						"defaultValue": 1.5,
 						"type": "number"
 					},
 					"numberLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/numberLabel/value",
-						"defaultValue": 1.5,
 						"type": "number",
 						"label": "Direct number Label"
 					},
 					"numberLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/numberLabelTrans/value",
-						"defaultValue": 1.5,
 						"type": "number",
 						"label": "{i18n>TRANSLATED_NUMBER_LABEL}"
 					},
 					"boolean": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
-						"defaultValue": false,
 						"description": "Description",
 						"type": "boolean",
 						"visualization": {
@@ -151,47 +136,39 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"booleanLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",
-						"defaultValue": true,
 						"type": "boolean",
 						"label": "Direct Boolean Label"
 					},
 					"booleanLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabelTrans/value",
-						"defaultValue": false,
 						"type": "boolean",
 						"label": "{i18n>TRANSLATED_BOOLEAN_LABEL}"
 					},
 					"date": {
 						"manifestpath": "/sap.card/configuration/parameters/date/value",
-						"defaultValue": "2020-09-02",
 						"type": "date"
 					},
 					"dateLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/dateLabel/value",
-						"defaultValue": "2020-09-02",
 						"type": "date",
 						"label": "Direct Date Label"
 					},
 					"dateLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/dateLabelTrans/value",
-						"defaultValue": "2020-09-02",
 						"type": "date",
 						"label": "{i18n>TRANSLATED_DATE_LABEL}"
 					},
 					"dateTime": {
 						"manifestpath": "/sap.card/configuration/parameters/dateTime/value",
-						"defaultValue": "2020-09-02T11:21:51.470Z",
 						"type": "datetime"
 					},
 					"dateTimeLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/dateTimeLabel/value",
-						"defaultValue": "2020-09-02T11:21:51.470Z",
 						"type": "datetime",
 						"label": "Direct Date Time Label"
 					},
 					"dateTimeLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/dateTimeLabelTrans/value",
-						"defaultValue": "2020-09-02T11:21:51.470Z",
 						"type": "datetime",
 						"label": "{i18n>TRANSLATED_DATETIME_LABEL}"
 					},
@@ -199,18 +176,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/enum/value",
 						"label": "Enumerations",
 						"type": "enum",
-						"required": true,
-						"enum": [
-							"Option A",
-							"Option B",
-							"Option C"
-						]
-					},
-					"enumWithDefaultValue": {
-						"manifestpath": "/sap.card/configuration/parameters/enumWithDefaultValue/value",
-						"label": "Enumerations",
-						"type": "enum",
-						"defaultValue": "Option A",
 						"required": true,
 						"enum": [
 							"Option A",
@@ -261,7 +226,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"stringArrayFormatter": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArrayFormatter/value",
 						"label": "String Array",
-						"defaultValue": ["key1", "key2"],
 						"type": "string[]",
 						"editable": true,
 						"values": {
@@ -331,7 +295,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"stringphone": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
-						"defaultValue": "StringValue",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -346,7 +309,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"stringphonenomessage": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
-						"defaultValue": "StringValue",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -360,7 +322,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"stringmaxmin": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
-						"defaultValue": "",
 						"type": "string",
 						"translatable": false,
 						"required": true,
@@ -380,7 +341,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"integervalidation": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
-						"defaultValue": 1,
 						"type": "integer",
 						"visualization": {
 							"type": "sap/m/Slider",
@@ -438,7 +398,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"numberrequired": {
 						"manifestpath": "/sap.card/configuration/parameters/number/value",
-						"defaultValue": 2.5,
 						"type": "number",
 						"translatable": false,
 						"required": true
@@ -537,7 +496,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"stringArray": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArray/value",
 						"label": "String Array",
-						"defaultValue": ["key1", "key2"],
 						"type": "string[]",
 						"values": {
 							"data": {
@@ -559,7 +517,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"stringArrayNoValues": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArrayNoValues/value",
 						"label": "String Array With No Values",
-						"defaultValue": ["key1", "key2"],
 						"type": "string[]"
 					},
 					"Customers": {
@@ -584,7 +541,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"iconNotAllowFile": {
 						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFile/src",
-						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"label": "Icon Not Allow File",
 						"visualization": {
@@ -598,7 +554,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"iconNotAllowNone": {
 						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowNone/src",
-						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"label": "Icon Not Allow None",
 						"visualization": {
@@ -612,7 +567,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"iconNotAllowFileAndNone": {
 						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFileAndNone/src",
-						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"label": "Icon Not Allow File And None",
 						"visualization": {
@@ -627,7 +581,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"iconWithImage": {
 						"manifestpath": "/sap.card/configuration/parameters/iconWithImage/value",
-						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"label": "iconWithImage",
 						"visualization": {
@@ -640,7 +593,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"iconWithImageNotAllowNone": {
 						"manifestpath": "/sap.card/configuration/parameters/iconWithImageNotAllowNone/value",
-						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"label": "iconWithImage Not Allow None",
 						"visualization": {
@@ -654,7 +606,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"icon": {
 						"manifestpath": "/sap.card/header/icon/src",
-						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"label": "Icon",
 						"visualization": {
@@ -667,7 +618,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"color": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
-						"defaultValue": "",
 						"type": "string",
 						"label": "Icon Background",
 						"description": "Description",
@@ -682,7 +632,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"shape": {
 						"manifestpath": "/sap.card/header/icon/shape",
-						"defaultValue": "Circle",
 						"label": "Icon Shape",
 						"type": "string",
 						"description": "Description",
@@ -697,7 +646,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"color1": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
-						"defaultValue": "",
 						"type": "string",
 						"description": "Description",
 						"label": "Icon Background",
@@ -712,7 +660,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"maxItems": {
 						"manifestpath": "/sap.card/content/maxItems",
-						"defaultValue": 1,
 						"type": "integer",
 						"visualization": {
 							"type": "sap/m/Slider",
@@ -730,7 +677,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"color2": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
-						"defaultValue": "",
 						"type": "string",
 						"description": "Description",
 						"label": "Icon Background",
@@ -749,44 +695,37 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"string1": {
 						"manifestpath": "/sap.card/configuration/parameters/string1/value",
-						"defaultValue": "editable",
 						"label": "String: editable, visible, label",
 						"type": "string",
 						"translatable": true
 					},
 					"dependentString1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentString1/value",
-						"defaultValue": "Editable changes depend on string1",
 						"type": "string",
 						"editable": "{= ${items>string1/value} === 'editable'}"
 					},
 					"dependentString2": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentString2/value",
-						"defaultValue": "Visible changes depend on string1",
 						"type": "string",
 						"visible": "{= ${items>string1/value} === 'visible'}"
 					},
 					"dependentString3": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentString3/value",
 						"label": "{= ${items>string1/value} === 'label'? 'dependentString3 True' : 'dependentString3 False' }",
-						"defaultValue": "Label changes depend on string1",
 						"type": "string"
 					},
 					"integer1": {
 						"manifestpath": "/sap.card/configuration/parameters/integer1/value",
-						"defaultValue": 1,
 						"type": "integer",
 						"label": "Integer: 1, 3, 6, 9"
 					},
 					"dependentInteger1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
-						"defaultValue": "Editable changes depend on integer1",
 						"type": "string",
 						"editable": "{= ${items>integer1/value} > 2}"
 					},
 					"dependentInteger2": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
-						"defaultValue": "Visible changes depend on integer1",
 						"type": "string",
 						"visible": "{= ${items>integer1/value} > 5}"
 					},
@@ -797,7 +736,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"boolean1": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean1/value",
-						"defaultValue": false,
 						"type": "boolean",
 						"label": "boolean",
 						"visualization": {
@@ -812,13 +750,11 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"dependentBoolean1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean1/value",
-						"defaultValue": "Editable changes depend on boolean1",
 						"type": "string",
 						"editable": "{items>boolean1/value}"
 					},
 					"dependentBoolean2": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean2/value",
-						"defaultValue": "Visible changes depend on boolean1",
 						"type": "string",
 						"visible": "{items>boolean1/value}"
 					},

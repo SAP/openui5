@@ -127,7 +127,7 @@ sap.ui.define([
 								if (sPath.startsWith("/")) {
 									sPath = sPath.substring(1);
 								}
-								var vValue = ObjectPath.get(sPath.split("/"), oJson) || oItem.defaultValue || "";
+								var vValue = ObjectPath.get(sPath.split("/"), oJson) || "";
 								mParameters[n] = {
 									value: vValue
 								};
@@ -295,16 +295,16 @@ sap.ui.define([
 		if (oItem.value === undefined || oItem.value === null) {
 			switch (oItem.type) {
 				case "boolean":
-					oItem.value = oItem.defaultValue || false;
+					oItem.value = false;
 					break;
 				case "integer":
 				case "number":
-					oItem.value = oItem.defaultValue || 0;
+					oItem.value = 0;
 					break;
 				case "string[]":
-					oItem.value = oItem.defaultValue || [];
+					oItem.value = [];
 					break;
-				default: oItem.value = oItem.defaultValue || "";
+				default: oItem.value = "";
 			}
 		}
 	};

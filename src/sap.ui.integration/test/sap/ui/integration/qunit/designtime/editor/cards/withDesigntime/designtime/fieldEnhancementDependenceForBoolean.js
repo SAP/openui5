@@ -9,7 +9,6 @@ sap.ui.define(["sap/ui/integration/Designtime"
 				"items": {
 					"booleanVisualization": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
-						"defaultValue": true,
 						"type": "boolean",
 						"label": "Boolean Label using Switch",
 						"visualization": {
@@ -24,13 +23,11 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					},
 					"dependentfield1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependent1/value",
-						"defaultValue": "Editable changes from boolean",
 						"type": "string",
 						"editable": "{items>booleanVisualization/value}"
 					},
 					"dependentfield2": {
 						"manifestpath": "/sap.card/configuration/parameters/dependent2/value",
-						"defaultValue": "Visible changes from boolean",
 						"type": "string",
 						"visible": "{items>booleanVisualization/value}"
 					},

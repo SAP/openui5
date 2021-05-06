@@ -7,7 +7,9 @@
 		"type": "List",
 		"configuration": {
 			"parameters": {
-				"stringParameter": {}
+				"stringParameter": {
+					"value": "StaticLabel Value"
+				}
 			}
 		}
 	}

@@ -8,7 +8,6 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"stringNotEditableParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/stringNotEditableParameter/value",
 						"type": "string",
-						"defaultValue": "stringNotEditableDefaultValue",
 						"translatable": true,
 						"editable": false,
 						"description": "Description"
@@ -16,7 +15,6 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"stringNotVisibleParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/stringNotVisibleParameter/value",
 						"type": "string",
-						"defaultValue": "stringNotVisibleTransDefaultValue",
 						"translatable": true,
 						"visible": false,
 						"description": "Description"

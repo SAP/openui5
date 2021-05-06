@@ -9,19 +9,16 @@ sap.ui.define(["sap/ui/integration/Designtime"
 				"items": {
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
-						"defaultValue": 1,
 						"type": "integer",
 						"label": "Integer Label"
 					},
 					"dependentfield1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependent1/value",
-						"defaultValue": "Editable changes from boolean",
 						"type": "string",
 						"editable": "{= ${items>integer/value} > 2}"
 					},
 					"dependentfield2": {
 						"manifestpath": "/sap.card/configuration/parameters/dependent2/value",
-						"defaultValue": "Visible changes from boolean",
 						"type": "string",
 						"visible": "{= ${items>integer/value} > 5}"
 					},

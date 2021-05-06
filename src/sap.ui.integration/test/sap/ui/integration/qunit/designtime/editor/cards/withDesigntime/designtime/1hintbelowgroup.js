@@ -14,7 +14,6 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"manifestpath": "/sap.card/configuration/parameters/stringParameter/value",
 						"type": "string",
 						"label": "StaticLabel",
-						"defaultValue": "StaticLabelDefaultValue",
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					}
 				}

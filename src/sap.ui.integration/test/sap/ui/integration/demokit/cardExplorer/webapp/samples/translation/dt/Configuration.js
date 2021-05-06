@@ -14,15 +14,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/header/title",
 						"type": "string",
 						"translatable": true,
-						"label": "Card Title",
-						"defaultValue": "{i18n>TITLE}"
+						"label": "Card Title"
 					},
 					"subtitle": {
 						"manifestpath": "/sap.card/header/subTitle",
 						"type": "string",
 						"translatable": true,
-						"label": "Card Subtitle",
-						"defaultValue": "{i18n>SUBTITLE}"
+						"label": "Card Subtitle"
 					}
 				}
 			},

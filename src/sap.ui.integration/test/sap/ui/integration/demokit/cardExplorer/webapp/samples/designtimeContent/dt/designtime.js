@@ -41,7 +41,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"maxItems": {
 						"manifestpath": "/sap.card/content/maxItems",
-						"defaultValue": 1,
 						"type": "integer",
 						"allowDynamicValues": false,
 						"allowSettings": false,

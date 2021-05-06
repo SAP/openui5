@@ -8,7 +8,9 @@
 		"type": "List",
 		"configuration": {
 			"parameters": {
-				"stringParameter": {}
+				"stringParameter": {
+					"value": "StringLabelTrans Value"
+				}
 			}
 		}
 	}

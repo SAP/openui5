@@ -13,7 +13,6 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"stringParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/stringParameter/value",
 						"type": "string",
-						"defaultValue": "stringParameterDefaultValue",
 						"allowDynamicValues": true
 					}
 				}

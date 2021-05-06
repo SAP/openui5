@@ -10,7 +10,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				"items": {
 					"booleanVisualization": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
-						"defaultValue": false,
 						"type": "boolean",
 						"label": "Boolean Label using Switch",
 						"visualization": {

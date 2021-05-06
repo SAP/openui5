@@ -52,7 +52,10 @@
 						"parameters": {
 							"param": {
 
-							}
+							},
+							"param1": {
+								"value": "2020-09-02"
+							},
 						}
 					}
 				}
@@ -174,7 +177,6 @@
 						<td>
 							<pre class="prettyprint lang-js" sample="1">{
 	"manifestpath": "/sap.card...param/value",
-	"defaultValue": "StringValue",
 	"label": "Fixed Label Text",
 	"type": "string"
 }</pre>
@@ -190,7 +192,6 @@
 						<td>
 							<pre class="prettyprint lang-js" sample="2">{
 	"manifestpath": "/sap.card...param/value",
-	"defaultValue": true,
 	"label": "Fixed Label Text",
 	"type": "boolean"
 }</pre>
@@ -206,7 +207,6 @@
 						<td>
 							<pre class="prettyprint lang-js" sample="3">{
 	"manifestpath": "/sap.card...param/value",
-	"defaultValue": 1,
 	"label": "Fixed Label Text",
 	"type": "integer"
 }</pre>
@@ -221,10 +221,11 @@
 						</td>
 						<td>
 							<pre class="prettyprint lang-js" sample="4">{
-	"manifestpath": "/sap.card...param/value",
-	"defaultValue": "",
-	"label": "Fixed Label Text",
-	"type": "date"
+	"param1": {
+		"manifestpath": "/sap.card/configuration/parameters/param1/value",
+		"label": "Fixed Label Text",
+		"type": "date"
+	}
 }</pre>
 						</td>
 					</tr>
@@ -237,10 +238,11 @@
 						</td>
 						<td>
 							<pre class="prettyprint lang-js" sample="5">{
-	"manifestpath": "/sap.card...param/value",
-	"defaultValue": "2020-05-31T19:05:30",
-	"label": "Fixed Label Text",
-	"type": "datetime"
+	"param1": {
+		"manifestpath": "/sap.card/configuration/parameters/param1/value",
+		"label": "Fixed Label Text",
+		"type": "datetime"
+	}
 }</pre>
 						</td>
 					</tr>
@@ -256,14 +258,12 @@
 							<pre class="prettyprint lang-js" sample="6">{
 	"param1": {
 		"manifestpath": "/sap.card...param/value1",
-		"defaultValue": "",
 		"label": "Field 1",
 		"type": "string",
 		"cols":1
 	},
 	"param2": {
 		"manifestpath": "/sap.card...param/value2",
-		"defaultValue": "",
 		"label": "Field 2",
 		"type": "string",
 		"cols": 1
@@ -285,7 +285,6 @@
 	},
 	"param1": {
 		"manifestpath": "/sap.card...param/value1",
-		"defaultValue": "",
 		"label": "Field",
 		"type": "string"
 	}
@@ -312,7 +311,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				"items": {
 					"integer": {
 						"manifestpath": "/sap.card/.../integer/value",
-						"defaultValue": false,
 						"type": "integer",
 						"visualization": {
 							"type": "sap/m/Slider",
@@ -355,7 +353,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				"items": {
 					"boolean": {
 						"manifestpath": "/sap.card/.../boolean/value",
-						"defaultValue": false,
 						"type": "boolean",
 						"visualization": {
 							"type": "sap/m/Switch",

@@ -27,17 +27,14 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"string4": {
 						"manifestpath": "/sap.card/configuration/parameters/string4/value",
 						"type": "string",
-						"label": "{i18n>string4label}",
-						"defaultValue": "{i18n>string4}"
+						"label": "{i18n>string4label}"
 					},
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
-						"defaultValue": 1,
 						"type": "integer"
 					},
 					"number": {
 						"manifestpath": "/sap.card/configuration/parameters/number/value",
-						"defaultValue": 1.5,
 						"type": "number"
 					}
 				}

@@ -14,8 +14,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/header/title",
 						"type": "string",
 						"translatable": true,
-						"label": "Card Title",
-						"defaultValue": "{i18n>CARDTITLE}"
+						"label": "Card Title"
 					},
 					"subtitle": {
 						"manifestpath": "/sap.card/header/subTitle",
@@ -66,7 +65,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"maxItems": {
 						"manifestpath": "/sap.card/content/maxItems",
-						"defaultValue": 1,
 						"type": "integer",
 						"allowDynamicValues": false,
 						"allowSettings": false,

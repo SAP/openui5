@@ -9,13 +9,11 @@ sap.ui.define(["sap/ui/integration/Designtime"
 				"items": {
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
-						"defaultValue": 1,
 						"type": "integer",
 						"label": "Integer Label"
 					},
 					"integerVisualization": {
 						"manifestpath": "/sap.card/configuration/parameters/integerVisualization/value",
-						"defaultValue": 2,
 						"type": "integer",
 						"label": "Integer Label using Slider",
 						"visualization": {
@@ -34,13 +32,11 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					},
 					"boolean": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
-						"defaultValue": true,
 						"type": "boolean",
 						"label": "Boolean Label"
 					},
 					"booleanVisualization": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanVisualization/value",
-						"defaultValue": false,
 						"type": "boolean",
 						"label": "Boolean Label using Switch",
 						"visualization": {

@@ -1,0 +1,26 @@
+[
+	{
+		"text": "text1req",
+		"key": "key1",
+		"additionalText": "addtext1",
+		"icon": "sap-icon://accept"
+	},
+	{
+		"text": "text2req",
+		"key": "key2",
+		"additionalText": "addtext2",
+		"icon": "sap-icon://cart"
+	},
+	{
+		"text": "text3req",
+		"key": "key3",
+		"additionalText": "addtext3",
+		"icon": "sap-icon://zoom-in"
+	},
+	{
+		"text": "text4req",
+		"key": "key4",
+		"additionalText": "addtext4",
+		"icon": "sap-icon://zoom-out"
+	}
+]

@@ -29,7 +29,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"stringArray": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArray/value",
 						"label": "String Array",
-						"defaultValue": ["key1", "key2"],
 						"type": "string[]",
 						"editable": true,
 						"values": {
