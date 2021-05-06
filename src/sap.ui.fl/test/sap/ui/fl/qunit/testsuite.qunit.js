@@ -561,6 +561,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/connectors/NeoLrepConnector"]
 				}
 			},
+			"write/_internal/delegates/ODataV4ReadDelegate": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"]
+				}
+			},
 			"write/_internal/extensionPoint/Registry": {
 				group: "Write Internal",
 				coverage: {
