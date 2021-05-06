@@ -1,15 +1,17 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Renderer', 'sap/m/ButtonRenderer'],
-	function(Renderer, ButtonRenderer) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 	/**
 	 * SelectionDetails renderer.
 	 * @namespace
 	 */
-	var SelectionDetailsRenderer = Renderer.extend(ButtonRenderer);
+	var SelectionDetailsRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -20,13 +22,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/ButtonRenderer'],
 	 */
 	SelectionDetailsRenderer.render = function(oRm, oControl) {
 		var oButton = oControl.getAggregation("_button");
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.write(">");
+		oRm.openStart("div", oControl);
+		oRm.openEnd();
 
 		oRm.renderControl(oButton);
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return SelectionDetailsRenderer;

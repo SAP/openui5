@@ -1,8 +1,8 @@
  /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/library', "sap/base/security/encodeCSS"],
-	function(coreLibrary, encodeCSS) {
+sap.ui.define(['sap/ui/core/library'],
+	function(coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
@@ -12,7 +12,9 @@ sap.ui.define(['sap/ui/core/library', "sap/base/security/encodeCSS"],
 	 * HeaderContainer Renderer.
 	 * @namespace
 	 */
-	var HeaderContainerRenderer = {};
+	var HeaderContainerRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -23,83 +25,65 @@ sap.ui.define(['sap/ui/core/library', "sap/base/security/encodeCSS"],
 	HeaderContainerRenderer.render = function(oRm, oControl) {
 		var sTooltip = oControl.getTooltip_AsString();
 		var sOrientationClass = oControl.getOrientation();
-		if (sOrientationClass) {
-			sOrientationClass = encodeCSS(sOrientationClass);
-		}
-		var sBackgroundClass = encodeCSS("sapMHdrCntrBG" + oControl.getBackgroundDesign());
+		var sBackgroundClass = "sapMHdrCntrBG" + oControl.getBackgroundDesign();
 		// write the HTML into the render manager
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		if (sTooltip && (typeof sTooltip === "string")) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+		oRm.openStart("div", oControl);
+		if (sTooltip) {
+			oRm.attr("title", sTooltip);
 		}
-		oRm.addClass("sapMHdrCntr");
-		oRm.addClass(sOrientationClass);
+		oRm.class("sapMHdrCntr");
+		oRm.class(sOrientationClass);
 		if (oControl.getShowDividers()) {
-			oRm.addClass("sapMHrdrCntrDvdrs");
+			oRm.class("sapMHrdrCntrDvdrs");
 		}
-		oRm.writeClasses();
 		if (oControl.getHeight()) {
-			oRm.addStyle("height", oControl.getHeight());
+			oRm.style("height", oControl.getHeight());
 		} else {
-			oRm.addStyle("height", (oControl.getOrientation() === Orientation.Horizontal) ? "auto" : "100%");
+			oRm.style("height", (oControl.getOrientation() === Orientation.Horizontal) ? "auto" : "100%");
 		}
 		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
+			oRm.style("width", oControl.getWidth());
 		} else {
-			oRm.addStyle("width", (oControl.getOrientation() === Orientation.Horizontal) ? "100%" : "auto");
+			oRm.style("width", (oControl.getOrientation() === Orientation.Horizontal) ? "100%" : "auto");
 		}
-		oRm.writeStyles();
-		var sDesc = "";
-		var aContent = oControl.getContent();
-		for (var i = 0; aContent && i < aContent.length; i++) {
-			sDesc += aContent[i].getId() + " ";
-		}
-		// oRm.writeAttribute("role", "list");
-		oRm.write(">");
+		// oRm.attr("role", "list");
+		oRm.openEnd();
 
-		oRm.write("<div");
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-scroll-area");
-		oRm.addClass("sapMHdrCntrCntr");
-		oRm.addClass(sOrientationClass);
-		oRm.addClass(sBackgroundClass);
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("div", oControl.getId() + "-scroll-area");
+		oRm.class("sapMHdrCntrCntr");
+		oRm.class(sOrientationClass);
+		oRm.class(sBackgroundClass);
+		oRm.openEnd();
 		oRm.renderControl(oControl.getAggregation("_scrollContainer"));
-		oRm.write("</div>");
+		oRm.close("div");
 
 		var oButton = oControl.getAggregation("_prevButton");
 		if (oButton) {
-			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-prev-button-container");
-			oRm.addClass("sapMHdrCntrBtnCntr");
-			oRm.addClass("sapMHdrCntrLeft");
-			oRm.addClass(sOrientationClass);
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div", oControl.getId() + "-prev-button-container");
+			oRm.class("sapMHdrCntrBtnCntr");
+			oRm.class("sapMHdrCntrLeft");
+			oRm.class(sOrientationClass);
+			oRm.openEnd();
 			oRm.renderControl(oButton);
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 
 		oButton = oControl.getAggregation("_nextButton");
 		if (oButton) {
-			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-next-button-container");
-			oRm.addClass("sapMHdrCntrBtnCntr");
-			oRm.addClass("sapMHdrCntrRight");
-			oRm.addClass(sOrientationClass);
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div", oControl.getId() + "-next-button-container");
+			oRm.class("sapMHdrCntrBtnCntr");
+			oRm.class("sapMHdrCntrRight");
+			oRm.class(sOrientationClass);
+			oRm.openEnd();
 			oRm.renderControl(oButton);
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 
 		// A sentry of HeaderContainer to catch the focus and put the focus at the right element in HeaderContainer
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-after");
-		oRm.writeAttribute("tabindex", "0");
-		oRm.write("></div>");
-		oRm.write("</div>");
+		oRm.openStart("div", oControl.getId() + "-after");
+		oRm.attr("tabindex", "0");
+		oRm.openEnd().close("div");
+		oRm.close("div");
 	};
 
 	return HeaderContainerRenderer;

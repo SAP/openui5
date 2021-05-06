@@ -81,26 +81,27 @@ sap.ui.define([
 					}
 				}
 			},
-			renderer: function (oRM, oControl) {
-				var oInnerControl = oControl.getAggregation("item");
-				if (!oInnerControl || !oInnerControl.getVisible()) {
-					return;
-				}
+			renderer: {
+				apiVersion: 2,
+				render: function (oRM, oControl) {
+					var oInnerControl = oControl.getAggregation("item");
+					if (!oInnerControl || !oInnerControl.getVisible()) {
+						return;
+					}
 
-				oRM.write("<div");
-				oRM.writeControlData(oControl);
-				oRM.addClass("sapMHdrCntrItemCntr");
-				oRM.addClass("sapMHrdrCntrInner");
-				oRM.writeAttribute("aria-setsize", oControl.getSetSize());
-				oRM.writeAttribute("aria-posinset", oControl.getPosition());
-				oRM.writeAttribute("role", "listitem");
-				if (oControl.getAriaLabelledBy()) {
-					oRM.writeAttributeEscaped("aria-labelledby", oControl.getAriaLabelledBy());
+					oRM.openStart("div", oControl);
+					oRM.class("sapMHdrCntrItemCntr");
+					oRM.class("sapMHrdrCntrInner");
+					oRM.attr("aria-setsize", oControl.getSetSize());
+					oRM.attr("aria-posinset", oControl.getPosition());
+					oRM.attr("role", "listitem");
+					if (oControl.getAriaLabelledBy()) {
+						oRM.attr("aria-labelledby", oControl.getAriaLabelledBy());
+					}
+					oRM.openEnd();
+					oRM.renderControl(oInnerControl);
+					oRM.close("div");
 				}
-				oRM.writeClasses();
-				oRM.write(">");
-				oRM.renderControl(oInnerControl);
-				oRM.write("</div>");
 			}
 		});
 
@@ -353,6 +354,9 @@ sap.ui.define([
 				this._oArrowPrev.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
 				this._oArrowNext.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
 			}
+
+			// before rendering starts, content items need to be updated - see _callSuperMethod
+			this.getContent();
 		};
 
 		HeaderContainer.prototype.onAfterRendering = function () {
