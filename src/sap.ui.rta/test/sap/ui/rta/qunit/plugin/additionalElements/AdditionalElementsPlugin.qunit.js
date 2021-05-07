@@ -295,6 +295,7 @@ sap.ui.define([
 		].forEach(function (test) {
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
 			var sOverlayType = test.sibling ? ON_SIBLING : ON_CHILD;
+			var sAggregationName = test.sibling ? "content" : "contentLeft";
 			QUnit.test(sPrefix + test.msg, function (assert) {
 				return createOverlayWithAggregationActions.call(this, test.dtMetadata, sOverlayType)
 					.then(function (oOverlay) {
@@ -308,7 +309,7 @@ sap.ui.define([
 						var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME");
 						assert.equal(this.oPlugin.getContextMenuTitle(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
 						assert.ok(this.oPlugin.isAvailable(test.sibling, [oOverlay]), "then the action is available");
-						assert.notOk(this.oPlugin.isEnabled(test.sibling, [oOverlay]), "then the action is disabled");
+						assert.notOk(this.oPlugin.isEnabled(test.sibling, [oOverlay], sAggregationName), "then the action is disabled");
 						return this.oPlugin._isEditableCheck(oOverlay, test.sibling)
 							.then(function (bIsEditable) {
 								assert.strictEqual(bIsEditable, true, "then the overlay is editable");
@@ -336,7 +337,7 @@ sap.ui.define([
 					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", [sExpectedControlTypeText]);
 					assert.equal(this.oPlugin.getContextMenuTitle(true, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
 					assert.ok(this.oPlugin.isAvailable(true, [oOverlay]), "then the action is available");
-					assert.notOk(this.oPlugin.isEnabled(true, [oOverlay]), "then the action is disabled");
+					assert.notOk(this.oPlugin.isEnabled(true, [oOverlay], "content"), "then the action is disabled");
 					return this.oPlugin._isEditableCheck(oOverlay, true)
 						.then(function (bIsEditable) {
 							assert.strictEqual(bIsEditable, true, "then the overlay is editable");
@@ -363,7 +364,7 @@ sap.ui.define([
 				}.bind(this))
 				.then(function (oOverlay) {
 					assert.ok(this.oPlugin.isAvailable(ON_SIBLING, [oOverlay]), "then the action is available");
-					assert.notOk(this.oPlugin.isEnabled(ON_SIBLING, [oOverlay]), "then the action is disabled");
+					assert.notOk(this.oPlugin.isEnabled(ON_SIBLING, [oOverlay], "content"), "then the action is disabled");
 					return this.oPlugin._isEditableCheck(oOverlay, ON_SIBLING)
 						.then(function (bIsEditable) {
 							assert.strictEqual(bIsEditable, true, "then the overlay is editable");
@@ -461,7 +462,7 @@ sap.ui.define([
 			}, ON_CHILD)
 				.then(function (oOverlay) {
 					this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, "contentLeft", [oOverlay]);
 				}.bind(this))
 				.then(function () {
 					assert.ok(this.fnGetCommandSpy.notCalled, "then no commands are created");
@@ -487,7 +488,7 @@ sap.ui.define([
 			}, ON_CHILD)
 				.then(function (oOverlay) {
 					this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, "contentLeft", [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -513,7 +514,7 @@ sap.ui.define([
 			}, ON_SIBLING)
 
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(true, [oOverlay]);
+					return this.oPlugin.showAvailableElements(true, "contentLeft", [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -549,6 +550,7 @@ sap.ui.define([
 			}
 		].forEach(function (test) {
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
+
 			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate and a reveal action", function (assert) {
 				var done = assert.async();
 				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
@@ -577,9 +579,9 @@ sap.ui.define([
 				}, test.sibling ? ON_SIBLING : ON_CHILD)
 
 					.then(function (oOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oOverlay])
+						return this.oPlugin.showAvailableElements(test.sibling, "contentLeft", [oOverlay])
 							.then(function () {
-								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oOverlay]), true, "then isEnabled() returns true");
+								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oOverlay], "contentLeft"), true, "then isEnabled() returns true");
 							}.bind(this));
 					}.bind(this))
 
@@ -595,11 +597,11 @@ sap.ui.define([
 				var done = assert.async();
 				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
 				var aCustomItems = getCustomItems(2).reverse();
+				var sAggregationName = "contentLeft";
 
 				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");
 					var aCommands = oCompositeCommand.getCommands();
-					var sAggregationName = "contentLeft";
 					var sChangeType = "customAdd";
 
 					assert.strictEqual(aCommands.length, 2, "then two commands ware created");
@@ -635,9 +637,9 @@ sap.ui.define([
 				}, test.sibling ? ON_SIBLING : ON_CHILD)
 
 					.then(function (oCreatedOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oCreatedOverlay])
+						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay])
 							.then(function () {
-								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay]), true, "then isEnabled() returns true");
+								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay], sAggregationName), true, "then isEnabled() returns true");
 							}.bind(this));
 					}.bind(this))
 
@@ -655,6 +657,7 @@ sap.ui.define([
 				var done = assert.async();
 				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
 				var aCustomItems = getCustomItems(2).reverse();
+				var sAggregationName = "contentLeft";
 
 				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");
@@ -675,7 +678,7 @@ sap.ui.define([
 					}
 				}, test.sibling ? ON_SIBLING : ON_CHILD)
 					.then(function (oCreatedOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oCreatedOverlay]);
+						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay]);
 					}.bind(this))
 
 					.then(function () {
@@ -688,11 +691,12 @@ sap.ui.define([
 			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate or reveal or custom add actions", function (assert) {
 				var fnElementModifiedStub = sandbox.stub();
 				this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
+				var sAggregationName = test.sibling ? "content" : "contentLeft";
 
 				return test.overlay.call(this, {}, test.sibling ? ON_SIBLING : ON_CHILD)
 
 					.then(function (oOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oOverlay]);
+						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oOverlay]);
 					}.bind(this))
 
 					.then(function () {
@@ -707,6 +711,7 @@ sap.ui.define([
 			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action", function (assert) {
 				var done = assert.async();
 				sandbox.stub(RTAPlugin.prototype, "getVariantManagementReference").returns(sVariantManagementReference);
+				var sAggregationName = "contentLeft";
 				var sChangeType = "addFields";
 				var oElement;
 
@@ -757,9 +762,9 @@ sap.ui.define([
 
 					.then(function (oCreatedOverlay) {
 						oElement = oCreatedOverlay.getElement();
-						return this.oPlugin.showAvailableElements(test.sibling, [oCreatedOverlay])
+						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay])
 							.then(function() {
-								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay]), true, "then isEnabled() returns true");
+								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay], sAggregationName), true, "then isEnabled() returns true");
 							}.bind(this));
 					}.bind(this))
 
@@ -778,6 +783,7 @@ sap.ui.define([
 			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action and a default delegate is available", function (assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
+				var sAggregationName = "contentLeft";
 				var oElement;
 
 				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
@@ -829,9 +835,9 @@ sap.ui.define([
 
 					.then(function (oCreatedOverlay) {
 						oElement = oCreatedOverlay.getElement();
-						return this.oPlugin.showAvailableElements(test.sibling, [oCreatedOverlay])
+						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay])
 							.then(function() {
-								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay]), true, "then isEnabled() returns true");
+								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay], sAggregationName), true, "then isEnabled() returns true");
 							}.bind(this));
 					}.bind(this))
 
@@ -849,6 +855,7 @@ sap.ui.define([
 			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with a valid delegate configured", function (assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
+				var sAggregationName = "contentLeft";
 
 				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 					var aCommands = oEvent.getParameter("command").getCommands();
@@ -866,7 +873,7 @@ sap.ui.define([
 				}, test.sibling ? ON_SIBLING : ON_CHILD)
 
 					.then(function (oOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oOverlay]);
+						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oOverlay]);
 					}.bind(this))
 
 					.then(function () {
@@ -885,6 +892,7 @@ sap.ui.define([
 				var done = assert.async();
 				var sChangeType = "addFields";
 				var sDelegatePath = "misconfigured/module/path";
+				var sAggregationName = test.sibling ? "content" : "contentLeft";
 
 				sandbox.stub(Log, "error").callsFake(function(sMessage) {
 					assert.ok(sMessage.indexOf(sDelegatePath) !== -1, "then an error was logged for a mis-configured delegate module path");
@@ -901,7 +909,7 @@ sap.ui.define([
 				}, test.sibling ? ON_SIBLING : ON_CHILD)
 
 					.then(function (oOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oOverlay]);
+						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oOverlay]);
 					}.bind(this))
 
 					.then(function () {
@@ -915,6 +923,7 @@ sap.ui.define([
 
 		QUnit.test("when the control's dt metadata has NO addViaDelegate and a reveal action and we call showAvailableElements with an index", function (assert) {
 			var done = assert.async();
+			var sAggregationName = "contentLeft";
 			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
 				assert.equal(oCompositeCommand.getCommands().length, 2, "then for the one selected to be revealed element reveal and move command is created as target position differs");
@@ -934,7 +943,7 @@ sap.ui.define([
 				},
 				ON_SIBLING)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(true, [oOverlay], 0);
+					return this.oPlugin.showAvailableElements(true, sAggregationName, [oOverlay], 0);
 				}.bind(this))
 
 				.then(function () {
@@ -968,8 +977,6 @@ sap.ui.define([
 				}.bind(this)).then(function (aMenuItems) {
 					assert.equal(aMenuItems[0].id, "CTX_ADD_ELEMENTS_AS_SIBLING", "there is an entry for add elements as sibling");
 					assert.deepEqual(aMenuItems[0].responsible[0], this.oSiblingOverlay, "then the responsible element overlay is set as a menu item property");
-					assert.equal(aMenuItems[1].id, "CTX_ADD_ELEMENTS_AS_CHILD", "there is an entry for add elements as child");
-					assert.deepEqual(aMenuItems[1].responsible[0], this.oSiblingOverlay, "then the responsible element overlay is set as a menu item property");
 				}.bind(this));
 		});
 
@@ -1023,9 +1030,8 @@ sap.ui.define([
 				.then(function (oCreatedOverlay) {
 					return this.oPlugin._getActions(true, oCreatedOverlay);
 				}.bind(this)).then(function (mActions) {
-					assert.equal(mActions.reveal.elements.length, 2, "then the reveal actions has two elements from the responsible element");
-					assert.equal(mActions.addViaDelegate.action.changeType, "addFields", "then the addViaDelegate action was retrieved from the responsible element");
-					assert.equal(mActions.aggregation, "contentLeft", "then the reveal actions has the correct aggregation name from the responsible element");
+					assert.equal(mActions['contentLeft'].reveal.elements.length, 2, "then the reveal actions has two elements from the responsible element");
+					assert.equal(mActions['contentLeft'].addViaDelegate.action.changeType, "addFields", "then the addViaDelegate action was retrieved from the responsible element");
 				});
 		});
 
@@ -1046,9 +1052,8 @@ sap.ui.define([
 				.then(function (oCreatedOverlay) {
 					return this.oPlugin._getActions(true, oCreatedOverlay);
 				}.bind(this)).then(function (mActions) {
-					assert.equal(mActions.addViaCustom.items.length, 2, "then the custom add action has two elements from the responsible element");
-					assert.ok(typeof mActions.addViaCustom.action.getItems === "function", "then the custom add action was retrieved from the responsible element");
-					assert.equal(mActions.addViaCustom.action.aggregation, "contentLeft", "then the custom add action has the correct aggregation name from the responsible element");
+					assert.equal(mActions['contentLeft'].addViaCustom.items.length, 2, "then the custom add action has two elements from the responsible element");
+					assert.ok(typeof mActions['contentLeft'].addViaCustom.action.getItems === "function", "then the custom add action was retrieved from the responsible element");
 				});
 		});
 
@@ -1076,6 +1081,7 @@ sap.ui.define([
 		QUnit.test("when the control's dt metadata has addViaDelegate, a reveal and a custom add actions", function (assert) {
 			var oOriginalRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
+			var sAggregationName = "contentLeft";
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
@@ -1101,7 +1107,7 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1139,9 +1145,9 @@ sap.ui.define([
 				.then(function (oCreatedOverlay) {
 					return this.oPlugin._getActions(true, oCreatedOverlay);
 				}.bind(this)).then(function (mActions) {
-					assert.notOk(mActions.hasOwnProperty("addViaDelegate"), "then the invalid add via delegate action is filtered");
-					assert.ok(mActions.hasOwnProperty("reveal"), "then the reveal action is still available");
-					assert.ok(mActions.hasOwnProperty("addViaCustom"), "then the custom add action is still available");
+					assert.notOk(mActions["contentLeft"].hasOwnProperty("addViaDelegate"), "then the invalid add via delegate action is filtered");
+					assert.ok(mActions["contentLeft"].hasOwnProperty("reveal"), "then the reveal action is still available");
+					assert.ok(mActions["contentLeft"].hasOwnProperty("addViaCustom"), "then the custom add action is still available");
 				});
 		});
 
@@ -1177,7 +1183,7 @@ sap.ui.define([
 				.then(function (oCreatedOverlay) {
 					return this.oPlugin._getActions(true, oCreatedOverlay);
 				}.bind(this)).then(function (mActions) {
-					assert.ok(mActions.hasOwnProperty("addViaDelegate"), "then the add via delegate action for the instance-sepcific delegate is available");
+					assert.ok(mActions["contentLeft"].hasOwnProperty("addViaDelegate"), "then the add via delegate action for the instance-sepcific delegate is available");
 				});
 		});
 
@@ -1343,35 +1349,15 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when the control has addViaDelegate and Reveal in different aggregations from DesignTimeMetadata", function (assert) {
-			var fnLogErrorSpy = sandbox.spy(Log, "error");
-			sandbox.stub(this.oPlugin, "_getRevealActions").resolves({
-				aggregation1: {
-					dummy: "value"
-				}
-			});
-			sandbox.stub(this.oPlugin, "_getAddViaDelegateActions").resolves({
-				aggregation2: {
-					dummy: "value"
-				}
-			});
-			sandbox.stub(this.oPlugin, "_getCustomAddActions");
-			sandbox.stub(this.oPlugin, "_checkInvalidAddActions");
-
-			return this.oPlugin._getActions(true, {})
-				.then(function () {
-					assert.equal(fnLogErrorSpy.args[0][0].indexOf("action defined for more than 1 aggregation") > -1, true, "then the correct error is thrown");
-				});
-		});
-
 		QUnit.test("when the Child-controls have no designtime Metadata", function (assert) {
+			var sAggregationName = "contentLeft";
 			return createOverlayWithoutDesignTimeMetadata.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				}
 			})
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1381,6 +1367,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has no addViaDelegate and reveal action, and the parent is invisible", function (assert) {
+			var sAggregationName = "contentLeft";
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
@@ -1394,7 +1381,7 @@ sap.ui.define([
 					var fnElementModifiedStub = sandbox.stub();
 					this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
 
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1404,6 +1391,7 @@ sap.ui.define([
 
 		QUnit.test("when the control's dt metadata has an add via delegate action", function (assert) {
 			var done = assert.async();
+			var sAggregationName = "contentLeft";
 			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
 				assert.equal(oCompositeCommand.getCommands().length, 1, "then one command is created");
@@ -1426,7 +1414,7 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1436,6 +1424,7 @@ sap.ui.define([
 
 		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available", function (assert) {
 			var done = assert.async();
+			var sAggregationName = "contentLeft";
 			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
 				assert.equal(oCompositeCommand.getCommands().length, 2, "then two commands are created");
@@ -1471,7 +1460,7 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1498,6 +1487,7 @@ sap.ui.define([
 
 		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available, but library dependency already exists", function (assert) {
 			givenAddHasLibraryDependencyToDefaultDelegatesLibDependencies();
+			var sAggregationName = "contentLeft";
 
 			var done = assert.async();
 			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
@@ -1520,7 +1510,7 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1680,13 +1670,14 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when the service is not up to date and no addViaDelegate action is available", function (assert) {
 			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").rejects();
+			var sAggregationName = "contentLeft";
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1698,6 +1689,7 @@ sap.ui.define([
 
 		QUnit.test("when the service is up to date and addViaDelegate action is available but extensibility is not enabled in the system", function (assert) {
 			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
+			var sAggregationName = "contentLeft";
 
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
@@ -1707,7 +1699,7 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1721,6 +1713,7 @@ sap.ui.define([
 			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			sandbox.stub(FieldExtensibility, "getExtensionData").resolves({foo: "bar"});
+			var sAggregationName = "contentLeft";
 
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
@@ -1730,7 +1723,7 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1741,6 +1734,7 @@ sap.ui.define([
 
 		QUnit.test("when the service is not up to date and addViaDelegate action is available", function (assert) {
 			sandbox.stub(RTAUtils, "isServiceUpToDate").rejects();
+			var sAggregationName = "contentLeft";
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
@@ -1752,7 +1746,7 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.catch(function () {
@@ -1762,13 +1756,14 @@ sap.ui.define([
 
 		QUnit.test("when no addViaDelegate action is available", function (assert) {
 			var oGetExtensionDataStub = sandbox.stub(FieldExtensibility, "getExtensionData");
+			var sAggregationName = "contentLeft";
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1779,6 +1774,7 @@ sap.ui.define([
 
 		QUnit.test("when addViaDelegate action is available and simulating a click on open custom field", function (assert) {
 			var done = assert.async();
+			var sAggregationName = "contentLeft";
 
 			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
@@ -1798,7 +1794,7 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 
 				.then(function () {
@@ -1820,6 +1816,7 @@ sap.ui.define([
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			sandbox.stub(FieldExtensibility, "getExtensionData").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 			var showAvailableElementsSpy = sandbox.spy(this.oPlugin, "showAvailableElements");
+			var sAggregationName = "contentLeft";
 
 			sandbox.stub(FieldExtensibility, "onTriggerCreateExtensionData").callsFake(function (oExtensionData) {
 				assert.ok(showAvailableElementsSpy.calledThrice, "then showAvailableElements is called 3 times");
@@ -1836,70 +1833,22 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay])
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay])
 
 						.then(function () {
 							assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
 							assert.equal(this.oDialog._oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 							assert.equal(this.oDialog._oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
-							return this.oPlugin.showAvailableElements(false, [oOverlay]);
+							return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 						}.bind(this))
 						.then(function () {
-							return this.oPlugin.showAvailableElements(false, [oOverlay]);
+							return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 						}.bind(this))
 						.then(function () {
 							//Simulate custom field button pressed, should trigger openNewWindow
 							this.oDialog.fireOpenCustomField();
 						}.bind(this));
 				}.bind(this));
-		});
-
-		QUnit.test("when retrieving the contextmenu items for the additional elements plugin", function (assert) {
-			var bCheckValue = true;
-			var bIsAvailable = true;
-			var bFirstCall = true;
-			var oOverlay;
-
-			return createOverlayWithAggregationActions.call(this, {
-				add: {
-					delegate: {
-						changeType: "addFields"
-					}
-				}
-			}, ON_CHILD)
-
-				.then(function (oCreatedOverlay) {
-					oOverlay = oCreatedOverlay;
-					sandbox.stub(this.oPlugin, "isAvailable").callsFake(function (bOverlayIsSibling, aElementOverlays) {
-						assert.equal(bOverlayIsSibling, bFirstCall, "the isAvailable function is called once with bOverlayIsSibling = " + bFirstCall);
-						assert.deepEqual(aElementOverlays[0], oOverlay, "the isAvailable function is called with the correct overlay");
-						bFirstCall = false;
-						return bIsAvailable;
-					});
-					sandbox.stub(this.oPlugin, "showAvailableElements").callsFake(function (bOverlayIsSibling, aOverlays) {
-						assert.equal(bOverlayIsSibling, bCheckValue, "the 'handler' function calls showAvailableElements with bOverlayIsSibling = " + bCheckValue);
-						assert.deepEqual(aOverlays, [oOverlay], "the 'handler' function calls showAvailableElements with the correct overlays");
-					});
-					sandbox.stub(this.oPlugin, "isEnabled").callsFake(function (bOverlayIsSibling, aElementOverlays) {
-						assert.equal(bOverlayIsSibling, bCheckValue, "the 'enabled' function calls isEnabled with bOverlayIsSibling = " + bCheckValue);
-						assert.deepEqual(aElementOverlays[0], oOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
-					});
-					return this.oPlugin.getMenuItems([oOverlay]);
-				}.bind(this)).then(function (aMenuItems) {
-					assert.equal(aMenuItems[0].id, "CTX_ADD_ELEMENTS_AS_SIBLING", "there is an entry for add elements as sibling");
-					aMenuItems[0].handler([oOverlay]);
-					aMenuItems[0].enabled([oOverlay]);
-					bCheckValue = false;
-					assert.equal(aMenuItems[1].id, "CTX_ADD_ELEMENTS_AS_CHILD", "there is an entry for add elements as child");
-					aMenuItems[1].handler([oOverlay]);
-					aMenuItems[1].enabled([oOverlay]);
-
-					bIsAvailable = false;
-					bFirstCall = true;
-					return this.oPlugin.getMenuItems([oOverlay]);
-				}.bind(this)).then(function (aMenuItems) {
-					assert.equal(aMenuItems.length, 0, "and if plugin is not available for the overlay, no menu items are returned");
-				});
 		});
 
 		QUnit.test("when getAllElements is called for sibling overlay,", function (assert) {
@@ -1938,7 +1887,7 @@ sap.ui.define([
 					return this.oPlugin.getAllElements(false, [oOverlay]);
 				}.bind(this))
 				.then(function (aAllElements) {
-					assert.equal(aAllElements.length, 5, "then 5 Elements are available");
+					assert.equal(aAllElements[0].elements.length, 5, "then 5 Elements are available");
 				});
 		});
 
@@ -1965,6 +1914,7 @@ sap.ui.define([
 
 		QUnit.test("when showAvailableElements is called,", function (assert) {
 			var ogetAllElementsSpy = sandbox.spy(this.oPlugin, "getAllElements");
+			var sAggregationName = "contentLeft";
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
@@ -1977,7 +1927,7 @@ sap.ui.define([
 				}
 			}, ON_CHILD)
 				.then(function (oOverlay) {
-					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 				}.bind(this))
 				.then(function () {
 					assert.equal(ogetAllElementsSpy.callCount, 1, "then getAllElements Method for collecting Elements was called once");
@@ -1988,6 +1938,7 @@ sap.ui.define([
 			// we stub "setCachedElements" which is only called when getAllElements is processed.
 			// "setCachedElements" is not called, when there are Cashed Elements available
 			var ogetAllElementsSpy = sandbox.spy(this.oPlugin, "setCachedElements");
+			var sAggregationName = "contentLeft";
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
@@ -2004,7 +1955,7 @@ sap.ui.define([
 					return this.oPlugin.getMenuItems([this._oOverlay]);
 				}.bind(this))
 				.then(function () {
-					return this.oPlugin.showAvailableElements(false, [this._oOverlay]);
+					return this.oPlugin.showAvailableElements(false, sAggregationName, [this._oOverlay]);
 				}.bind(this))
 				.then(function () {
 					assert.equal(ogetAllElementsSpy.callCount, 2, "then getAllElements Method has been processed only twice");
@@ -2244,6 +2195,10 @@ sap.ui.define([
 			aggregations: {
 				contentLeft: {
 					childNames: mChildNames,
+					displayName: {
+						singular: "I18N_KEY_USER_FRIENDLY_AGGREGATION_NAME",
+						plural: "I18N_KEY_USER_FRIENDLY_AGGREGATION_NAME_PLURAL"
+					},
 					actions: (mActions.move || mActions.add || mActions.addODataProperty) ? {
 						add: mActions.add || null,
 						move: mActions.move || null,

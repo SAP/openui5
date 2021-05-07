@@ -2,12 +2,12 @@
 
 sap.ui.define([
 	"qunit/RtaQunitUtils",
-	"sap/m/Button",
-	"sap/m/Page",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/m/Page",
+	"sap/m/Button",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
@@ -17,12 +17,12 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection"
 ], function(
 	RtaQunitUtils,
-	Button,
-	Page,
 	OverlayRegistry,
 	PropertyChange,
 	ChangesWriteAPI,
 	FieldExtensibility,
+	Page,
+	Button,
 	FlexUtils,
 	RuntimeAuthoring,
 	sinon,
@@ -309,6 +309,7 @@ sap.ui.define([
 
 		QUnit.test("when context menu (context menu) is opened on a Control with a defined settings action", function(assert) {
 			var oSettings = this.oRta.getPlugins()["settings"];
+
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves(PropertyChange);
 			var oGroupDesigntime = {
 				settings: function() {

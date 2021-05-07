@@ -27,6 +27,10 @@ sap.ui.define([
 					},
 					aggregations: {
 						testAggregation: {
+							displayName: {
+								singular: "I18N_KEY_USER_FRIENDLY_AGGREGATION_NAME",
+								plural: "I18N_KEY_USER_FRIENDLY_AGGREGATION_NAME_PLURAL"
+							},
 							testField: "testValue",
 							actions: {
 								action1: "firstChangeType",
@@ -66,6 +70,21 @@ sap.ui.define([
 							childNames: function(oElement) {
 								//fake 2 cases:
 								//1. childNames is a function, that returns the object
+								//2. singular and plural can be functions to handle cases with self made resource bundling
+								return {
+									singular: function() {
+										//fake own resource bundle handling
+										return "I18N_KEY" + oElement.getText();
+									},
+									plural: function() {
+										//fake own resource bundle handling
+										return "I18N_KEY_PLURAL" + oElement.getText();
+									}
+								};
+							},
+							displayName: function(oElement) {
+								//fake 2 cases:
+								//1. displayName is a function, that returns the object
 								//2. singular and plural can be functions to handle cases with self made resource bundling
 								return {
 									singular: function() {
@@ -154,6 +173,35 @@ sap.ui.define([
 				singular: "I18N_KEYsimulateElement",
 				plural: "I18N_KEY_PLURALsimulateElement"
 			}, "then the translated texts are returned for variable texts/keys");
+		});
+
+		QUnit.test("when getAggregationDisplayName is called", function(assert) {
+			var oFakeElement = {
+				getMetadata: sandbox.stub().returns({
+					getLibraryName: sandbox.stub().returns("fakeLibrary"),
+					getParent: sandbox.stub().returns(undefined)
+				}),
+				getText: sandbox.stub().returns("simulateElement")
+			};
+			var oFakeLibBundle = {
+				getText: sandbox.stub().returnsArg(0), //just return i18n keys
+				hasText: sandbox.stub().returns(false)
+			};
+			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
+
+			var mExpectedDisplayNames = {
+				singular: "I18N_KEY_USER_FRIENDLY_AGGREGATION_NAME",
+				plural: "I18N_KEY_USER_FRIENDLY_AGGREGATION_NAME_PLURAL"
+			};
+
+			var mExpectedTranslatedTexts = {
+				singular: "I18N_KEYsimulateElement",
+				plural: "I18N_KEY_PLURALsimulateElement"
+			};
+
+			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDisplayName("testAggregation", oFakeElement), mExpectedDisplayNames, "then the translated texts are returned for static keys");
+			assert.notOk(this.oElementDesignTimeMetadata.getAggregationDisplayName("testAggregation2", oFakeElement), "then undefined is returned missing childNames");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDisplayName("testAggregation3", oFakeElement, "simulateElement"), mExpectedTranslatedTexts, "then the translated texts are returned for variable texts/keys");
 		});
 
 		QUnit.test("when getText is called (with and without function)", function(assert) {
