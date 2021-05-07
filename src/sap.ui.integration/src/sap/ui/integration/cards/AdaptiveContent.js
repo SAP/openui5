@@ -12,11 +12,10 @@ sap.ui.define([
 		"sap/ui/core/HTML",
 		"sap/ui/core/Core",
 		"sap/ui/model/json/JSONModel",
-		"sap/base/Log",
-		"sap/ui/Device"
+		"sap/base/Log"
 	],
 	function (library, coreLibrary, includeScript, BaseContent, HostConfig,
-			VBox, MessageStrip, HTML, Core, JSONModel, Log, Device) {
+			VBox, MessageStrip, HTML, Core, JSONModel, Log) {
 		"use strict";
 
 		// lazy dependencies, loaded on demand
@@ -530,19 +529,11 @@ sap.ui.define([
 					return;
 				}
 
-				// Older Edge versions don't support some of the modern ES syntax
-				if (Device.browser.edge || Device.browser.msie) {
-					includeScript({
-						id: "webcomponents-bundle-es5",
-						url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.es5.js")
-					});
-				} else {
-					includeScript({
-						id: "webcomponents-bundle",
-						attributes: {type: "module"},
-						url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
-					});
-				}
+				includeScript({
+					id: "webcomponents-bundle",
+					attributes: {type: "module"},
+					url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
+				});
 				this.setComponentsReady(true);
 				this._fireCardReadyEvent();
 			}.bind(this));
