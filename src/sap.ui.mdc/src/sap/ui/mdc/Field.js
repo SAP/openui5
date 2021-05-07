@@ -214,8 +214,11 @@ sap.ui.define([
 	 *
 	 * @param {int} iMaxConditions Only 1 condition allowed in <code>Field</code>
 	 * @returns {this} <code>this</code> to allow method chaining.
-	 * @public
-	 * @deprecated As of version 1.54, this property is not supported for the <code>Field</code>.
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, this property is not supported for the <code>Field</code>.
+	 * @ui5-not-supported
 	 */
 	Field.prototype.setMaxConditions = function(iMaxConditions) {
 
@@ -521,8 +524,11 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aConditions Conditions to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @public
-	 * @deprecated As of version 1.54, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
+	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setConditions
 	 * @function
 	 */
@@ -534,13 +540,18 @@ sap.ui.define([
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
 	 * @returns {object[]} conditions of the field
-	 * @public
-	 * @deprecated As of version 1.54, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
+	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getConditions
 	 * @function
 	 */
 
 	/**
+	 * Sets a new value for property <code>dataType</code>.
+	 *
 	 * The type of data handled by the field. The type is used to parse, format, and validate the value.
 	 *
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
@@ -548,13 +559,37 @@ sap.ui.define([
 	 *
 	 * @param {string} sDataType DataType to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @public
-	 * @deprecated As of version 1.54, the type in the binding to the <code>value</code> property is used.
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
+	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataType
 	 * @function
 	 */
 
 	/**
+	 * Gets a new value for property <code>dataType</code>.
+	 *
+	 * The type of data handled by the field. The type is used to parse, format, and validate the value.
+	 *
+	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
+	 * In this case the value of the <code>dataType</code> property is ignored.
+	 *
+	 * @param {string} sDataType DataType to be set
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.Field#getDataType
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property <code>dataTypeConstraints</code>.
+	 *
 	 * The constraints of the type specified in <code>dataType</code>.
 	 *
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
@@ -562,13 +597,37 @@ sap.ui.define([
 	 *
 	 * @param {string} oDataTypeConstraints Constraints to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @public
-	 * @deprecated As of version 1.54, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
+	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataTypeConstraints
 	 * @function
 	 */
 
 	/**
+	 * Gets a new value for property <code>dataTypeConstraints</code>.
+	 *
+	 * The constraints of the type specified in <code>dataType</code>.
+	 *
+	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
+	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
+	 *
+	 * @param {string} oDataTypeConstraints Constraints to be set
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.Field#getDataTypeConstraints
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property <code>dataTypeFormatOptions</code>.
+	 *
 	 * The format options of the type specified in <code>dataType</code>.
 	 *
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
@@ -576,9 +635,31 @@ sap.ui.define([
 	 *
 	 * @param {string} oDataTypeFormatOptions Format options to be set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @public
-	 * @deprecated As of version 1.54, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
+	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataTypeFormatOptions
+	 * @function
+	 */
+
+	/**
+	 * Gets a new value for property <code>dataTypeFormatOptions</code>.
+	 *
+	 * The format options of the type specified in <code>dataType</code>.
+	 *
+	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
+	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
+	 *
+	 * @param {string} oDataTypeFormatOptions Format options to be set
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.Field#getDataTypeFormatOptions
 	 * @function
 	 */
 
