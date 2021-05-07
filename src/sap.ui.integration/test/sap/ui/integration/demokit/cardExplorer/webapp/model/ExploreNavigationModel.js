@@ -1428,6 +1428,23 @@ sap.ui.define([
 								key: 'designtime.js'
 							}
 						]
+					},
+					{
+						key: 'designtime',
+						target: 'exploreSamples',
+						title: 'Formatters in Configuration Editor',
+						files: [
+							{
+								url: '/samples/designtimeFormatter/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/designtimeFormatter/dt/designtime.js',
+								name: 'dt/designtime.js',
+								key: 'designtime.js'
+							}
+						]
 					}
 				]
 			},
@@ -2002,28 +2019,6 @@ sap.ui.define([
 						]
 					},
 					{
-						key: 'designtimeFields',
-						target: 'exploreSamples',
-						title: 'Field Playground',
-						files: [
-							{
-								url: '/samples/designtimeFields/dt/designtime.js',
-								name: 'dt/designtime.js',
-								key: 'designtime.js'
-							},
-							{
-								url: '/samples/designtimeFields/manifest.json',
-								name: 'manifest.json',
-								key: 'cardManifest.json'
-							},
-							{
-								url: '/samples/designtimeFields/i18n/i18n.properties',
-								name: 'i18n/i18n.properties',
-								key: 'i18n.properties'
-							}
-						]
-					},
-					{
 						key: 'designtimePreview',
 						target: 'exploreSamples',
 						title: 'Editor Preview Settings ',
@@ -2046,24 +2041,119 @@ sap.ui.define([
 						]
 					},
 					{
-						key: 'designtimeFormatter',
+						title: 'Playground',
 						target: 'exploreSamples',
-						title: 'Formatters',
-						files: [
+						key: 'playground',
+						subSamples: [
 							{
-								url: '/samples/designtimeFormatter/dt/designtime.js',
-								name: 'dt/designtime.js',
-								key: 'designtime.js'
+								title: 'Fields',
+								key: 'designtimeFields',
+								files: [
+									{
+										url: '/samples/designtimeFields/dt/designtime.js',
+										name: 'dt/designtime.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeFields/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeFields/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							},
 							{
-								url: '/samples/designtimeFormatter/manifest.json',
-								name: 'manifest.json',
-								key: 'cardManifest.json'
+								title: 'Formatters',
+								key: 'designtimeFormatter',
+								files: [
+									{
+										url: '/samples/designtimeFormatter/dt/designtime.js',
+										name: 'dt/designtime.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeFormatter/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeFormatter/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							},
 							{
-								url: '/samples/designtimeFormatter/i18n/i18n.properties',
-								name: 'i18n/i18n.properties',
-								key: 'i18n.properties'
+								title: 'Data Extension',
+								key: 'dataExtension',
+								files: [
+									{
+										url: '/samples/designtimeDataExtension/dt/designtime.js',
+										name: 'dt/designtime.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeDataExtension/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeDataExtension/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									},
+									{
+										url: '/samples/designtimeDataExtension/DataExtension.js',
+										name: 'DataExtension.js',
+										key: 'dataExtension.js'
+									}
+								]
+							},
+							{
+								title: 'Filter',
+								key: 'designtimeFilter',
+								files: [
+									{
+										url: '/samples/designtimeFilter/dt/designtime.js',
+										name: 'dt/designtime.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeFilter/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeFilter/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
+							},
+							{
+								title: 'Linked Parameters',
+								key: 'designtimeLinkedPara',
+								files: [
+									{
+										url: '/samples/designtimeLinkedParameter/dt/designtime.js',
+										name: 'dt/designtime.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeLinkedParameter/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeLinkedParameter/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							}
 						]
 					}
