@@ -6504,5 +6504,14 @@
 			"covariance",
 			"covariance matrix"
 		]
+	},
+	"qr-code": {
+		"tags": [
+			"qr",
+			"qrcode",
+			"qr-code",
+			"scan",
+			"code"
+		]
 	}
 }

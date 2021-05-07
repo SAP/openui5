@@ -713,7 +713,8 @@ sap.ui.define([
 				'translate': 0x1e28b,
 				'clear-all': 0xe28c,
 				'command-line-interfaces': 0xe28d,
-				'sum': 0x1e28e
+				'sum': 0x1e28e,
+				'qr-code': 0x1e28f
 			}
 		};
 
