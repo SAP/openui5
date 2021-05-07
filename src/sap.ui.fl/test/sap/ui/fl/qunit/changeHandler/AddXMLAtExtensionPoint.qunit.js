@@ -6,10 +6,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
@@ -17,10 +15,8 @@ sap.ui.define([
 	XMLView,
 	AddXMLAtExtensionPoint,
 	Change,
-	Layer,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	ChangeRegistry,
 	sinon
 ) {
 	"use strict";
@@ -135,11 +131,6 @@ sap.ui.define([
 			assert.ok(this.oChangeHandler.applyChange, "then applyChange function exists");
 			assert.ok(this.oChangeHandler.revertChange, "then revertChange function exists");
 			assert.ok(this.oChangeHandler.completeChangeContent, "then completeChangeContent function exists");
-			var oChangeRegistryInstance = ChangeRegistry.getInstance();
-			var sLayer = Layer.VENDOR;
-			return oChangeRegistryInstance.getChangeHandler("addXMLAtExtensionPoint", "sap.ui.core.mvc.View", undefined, XmlTreeModifier, sLayer).then(function(oChangeHandler) {
-				assert.deepEqual(oChangeHandler, AddXMLAtExtensionPoint, "then changehandler is registered");
-			});
 		});
 
 		QUnit.test("When calling 'completeChangeContent' with complete information", function(assert) {

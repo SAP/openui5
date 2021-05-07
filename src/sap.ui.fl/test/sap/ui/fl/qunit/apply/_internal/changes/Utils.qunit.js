@@ -6,21 +6,20 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	Text,
 	JsControlTreeModifier,
 	Control,
 	FlexCustomData,
 	ChangeUtils,
+	ChangeHandlerStorage,
 	ChangeHandlerRegistration,
-	ChangeRegistry,
 	Change,
 	FlUtils,
 	jQuery,
@@ -128,21 +127,10 @@ function (
 		}
 	}, function() {
 		QUnit.test("when change handler is not loaded yet and we have to wait for registration", function(assert) {
-			assert.expect(5);
-			sandbox.stub(ChangeHandlerRegistration, "waitForChangeHandlerRegistration")
+			var oWaitStub = sandbox.stub(ChangeHandlerRegistration, "waitForChangeHandlerRegistration")
 				.withArgs("library")
-				.callsFake(function() {
-					assert.ok(true, "the waitForChangeHandlerRegistration function was called");
-					return Promise.resolve();
-				});
-			sandbox.stub(ChangeRegistry, "getInstance").returns({
-				getChangeHandler: function(sChangeType, sControlType, oControl, oModifier, sLayer) {
-					assert.equal(sChangeType, "type", "the passed property 'sChangeType' is correct");
-					assert.equal(sControlType, "sap.ui.core.Control", "the passed property 'sControlType' is correct");
-					assert.equal(sLayer, "layer", "the passed property 'sLayer' is correct");
-					return "changeHandler";
-				}
-			});
+				.resolves();
+			var oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves("changeHandler");
 			var mPropertyBag = {
 				modifier: {
 					getLibraryName: function() {return "library";}
@@ -153,7 +141,12 @@ function (
 				controlType: "sap.ui.core.Control"
 			};
 			return ChangeUtils.getChangeHandler(this.oChange, mControl, mPropertyBag).then(function(oChangeHandler) {
+				assert.equal(oWaitStub.callCount, 1, "the waitForChangeHandlerRegistration function was called");
 				assert.equal(oChangeHandler, "changeHandler", "the returned change handler is correct");
+				assert.equal(oGetChangeHandlerStub.callCount, 1, "the getChangeHandler function was called");
+				assert.equal(oGetChangeHandlerStub.firstCall.args[0], "type", "the passed property 'sChangeType' is correct");
+				assert.equal(oGetChangeHandlerStub.firstCall.args[1], "sap.ui.core.Control", "the passed property 'sControlType' is correct");
+				assert.equal(oGetChangeHandlerStub.firstCall.args[4], "layer", "the passed property 'sLayer' is correct");
 			});
 		});
 	});

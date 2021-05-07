@@ -1129,17 +1129,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/registry/ChangeHandlerRegistration"]
 				}
 			},
-			"registry/ChangeRegistry": {
-				group: "registry",
-				coverage: {
-					only: ["sap/ui/fl/registry/ChangeRegistry"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/ui/fl/test/registry": "test-resources/sap/ui/fl/qunit/registry"
-					}
-				}
-			},
 			"registry/ChangeRegistryItem": {
 				group: "registry",
 				coverage: {

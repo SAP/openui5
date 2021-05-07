@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
@@ -31,7 +31,7 @@ sap.ui.define([
 	ChangesController,
 	DescriptorChangeFactory,
 	Settings,
-	ChangeRegistry,
+	ChangeHandlerStorage,
 	AppVariantInlineChangeFactory,
 	ChangesWriteAPI,
 	Layer,
@@ -307,10 +307,10 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				changeType: "myFancyChangeType"
 			};
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns("myFancyChangeHandler");
+			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").returns("myFancyChangeHandler");
 			var oReturn = ChangesWriteAPI.getChangeHandler(mPropertyBag);
 
-			assert.strictEqual(oReturn, "myFancyChangeHandler", "the function returns the value of the ChangeRegistry function");
+			assert.strictEqual(oReturn, "myFancyChangeHandler", "the function returns the value of the ChangeHandlerStorage function");
 		});
 	});
 

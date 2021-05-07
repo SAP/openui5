@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
@@ -19,7 +19,7 @@ sap.ui.define([
 ], function(
 	Layer,
 	Utils,
-	ChangeRegistry,
+	ChangeHandlerStorage,
 	FlexControllerFactory,
 	JsControlTreeModifier,
 	Element,
@@ -237,8 +237,7 @@ sap.ui.define([
 			}
 
 			var sControlType = oChange.selectorControl.getMetadata().getName();
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.getChangeHandler(
+			return ChangeHandlerStorage.getChangeHandler(
 				oChange.changeSpecificData.changeType,
 				sControlType,
 				oChange.selectorControl,

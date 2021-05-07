@@ -1,43 +1,43 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/api/AppVariantWriteAPI",
+	"sap/base/util/restricted/_omit",
+	"sap/base/Log",
 	"sap/ui/core/Manifest",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
+	"sap/ui/fl/write/_internal/SaveAs",
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/api/AppVariantWriteAPI",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/base/Log",
-	"sap/ui/fl/write/_internal/SaveAs",
-	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ChangesController,
-	PersistenceWriteAPI,
-	AppVariantWriteAPI,
+	_omit,
+	Log,
 	Manifest,
-	Settings,
-	ChangeRegistry,
-	LrepConnector,
-	Storage,
+	ChangesController,
+	ChangeHandlerStorage,
 	InitialUtils,
+	LrepConnector,
 	WriteUtils,
 	TransportSelection,
+	SaveAs,
+	Storage,
+	AppVariantWriteAPI,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
+	Settings,
 	Layer,
 	flexUtils,
-	ChangesWriteAPI,
-	Log,
-	SaveAs,
-	_omit,
 	jQuery,
 	sinon
 ) {
@@ -244,7 +244,7 @@ sap.ui.define([
 
 			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
+			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
 				applyChange: function() {
@@ -327,7 +327,7 @@ sap.ui.define([
 
 			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
+			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
 				applyChange: function() {
@@ -407,7 +407,7 @@ sap.ui.define([
 
 			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
+			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
 				applyChange: function() {
@@ -498,7 +498,7 @@ sap.ui.define([
 
 			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
+			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
 				applyChange: function() {
@@ -1175,7 +1175,7 @@ sap.ui.define([
 			getComponentClassNameStub.withArgs(oAppVariantComponent).returns("customer.reference.app.variant.id_123456");
 			getAppComponentForControlStub.withArgs(oAppVariantComponent).returns(oAppVariantComponent);
 
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
+			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
 				applyChange: function() {
