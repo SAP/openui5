@@ -579,8 +579,17 @@ sap.ui.define([
 			// initializes the application cachebuster mechanism if configured
 			var aACBConfig = this.oConfiguration.getAppCacheBuster();
 			if (aACBConfig && aACBConfig.length > 0) {
-				var AppCacheBuster = sap.ui.requireSync('sap/ui/core/AppCacheBuster');
-				AppCacheBuster.boot(oSyncPoint2);
+				if ( bAsync ) {
+					var iLoadACBTask = oSyncPoint2.startTask("require AppCachebuster");
+					sap.ui.require(["sap/ui/core/AppCacheBuster"], function(AppCacheBuster) {
+						AppCacheBuster.boot(oSyncPoint2);
+						// finish the task only after ACB had a chance to create its own task(s)
+						oSyncPoint2.finishTask(iLoadACBTask);
+					});
+				} else {
+					var AppCacheBuster = sap.ui.requireSync('sap/ui/core/AppCacheBuster');
+					AppCacheBuster.boot(oSyncPoint2);
+				}
 			}
 
 			// Initialize support info stack
