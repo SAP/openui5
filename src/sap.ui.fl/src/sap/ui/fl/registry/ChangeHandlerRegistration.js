@@ -3,6 +3,7 @@
 */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/changeHandler/AddXML",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/fl/changeHandler/UnstashControl"
 ], function(
+	Core,
 	ChangeHandlerStorage,
 	ChangeRegistry,
 	AddXML,
@@ -47,6 +49,33 @@ sap.ui.define([
 		propertyChange: PropertyChange
 	};
 
+	var mRegistrationPromises = {};
+
+	function addRegistrationPromise(sKey, oPromise) {
+		mRegistrationPromises[sKey] = oPromise;
+		oPromise
+			.catch(function() {})
+			.then(function() {
+				delete mRegistrationPromises[sKey];
+			});
+	}
+
+	function registerFlexChangeHandlers(oFlChangeHandlers) {
+		return ChangeHandlerStorage.registerChangeHandlersForLibrary(oFlChangeHandlers);
+	}
+
+	function handleLibraryRegistrationAfterFlexLibraryIsLoaded(oLibraryChangedEvent) {
+		if (oLibraryChangedEvent.getParameter("operation") === "add") {
+			var oLibMetadata = oLibraryChangedEvent.getParameter("metadata");
+			var sLibName = oLibMetadata.sName;
+			var oFlChangeHandlers = oLibMetadata && oLibMetadata.extensions && oLibMetadata.extensions.flChangeHandlers;
+			if (oFlChangeHandlers) {
+				var oRegistrationPromise = registerFlexChangeHandlers(oFlChangeHandlers);
+				addRegistrationPromise(sLibName, oRegistrationPromise);
+			}
+		}
+	}
+
 	var ChangeHandlerRegistration = {
 		/**
 		 * Detects already loaded libraries and registers defined changeHandlers.
@@ -54,38 +83,23 @@ sap.ui.define([
 		 * @returns {Promise} Returns an empty promise when all changeHandlers from all libraries are registered.
 		 */
 		getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs: function () {
-			var oCore = sap.ui.getCore();
-			var oAlreadyLoadedLibraries = oCore.getLoadedLibraries();
+			var oAlreadyLoadedLibraries = Core.getLoadedLibraries();
 			var aPromises = [];
 
 			Object.values(oAlreadyLoadedLibraries).forEach(function(oLibrary) {
 				if (oLibrary.extensions && oLibrary.extensions.flChangeHandlers) {
-					aPromises.push(this._registerFlexChangeHandlers(oLibrary.extensions.flChangeHandlers));
+					aPromises.push(registerFlexChangeHandlers(oLibrary.extensions.flChangeHandlers));
 				}
-			}.bind(this));
+			});
 
-			oCore.attachLibraryChanged(this._handleLibraryRegistrationAfterFlexLibraryIsLoaded.bind(this));
+			Core.attachLibraryChanged(handleLibraryRegistrationAfterFlexLibraryIsLoaded);
 
 			return Promise.all(aPromises);
 		},
 
-		_registerFlexChangeHandlers: function (oFlChangeHandlers) {
-			if (oFlChangeHandlers) {
-				return ChangeHandlerStorage.registerChangeHandlersForLibrary(oFlChangeHandlers);
-			}
-			return Promise.resolve();
-		},
-
-		_handleLibraryRegistrationAfterFlexLibraryIsLoaded: function (oLibraryChangedEvent) {
-			if (oLibraryChangedEvent.getParameter("operation") === "add") {
-				var oLibMetadata = oLibraryChangedEvent.getParameter("metadata");
-				var oLibName = oLibMetadata.sName;
-				if (oLibMetadata && oLibMetadata.extensions && oLibMetadata.extensions.flChangeHandlers) {
-					var oFlChangeHandlers = oLibMetadata.extensions.flChangeHandlers;
-					var oRegistrationPromise = this._registerFlexChangeHandlers(oFlChangeHandlers);
-					ChangeRegistry.addRegistrationPromise(oLibName, oRegistrationPromise);
-					return oRegistrationPromise;
-				}
+		waitForChangeHandlerRegistration: function(sKey) {
+			if (mRegistrationPromises[sKey]) {
+				return mRegistrationPromises[sKey].catch(function() {});
 			}
 			return Promise.resolve();
 		},

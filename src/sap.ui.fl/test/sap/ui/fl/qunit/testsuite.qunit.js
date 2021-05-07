@@ -1152,12 +1152,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/registry/Settings"]
 				}
 			},
-			"registry/SimpleChanges": {
-				group: "registry",
-				coverage: {
-					only: ["sap/ui/fl/registry/SimpleChanges"]
-				}
-			},
 			//OVP key user test scenarios
 			"apply/_internal/changes/descriptor/ovp/ChangeCard": {
 				group: "Apply Internal - OVP Change card",

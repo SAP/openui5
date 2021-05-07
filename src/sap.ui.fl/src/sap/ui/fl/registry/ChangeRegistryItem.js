@@ -32,6 +32,7 @@ sap.ui.define([
 	 *
 	 */
 	var ChangeRegistryItem = function(mParam) {
+		// TODO: remove whole file
 		if (!mParam.changeHandler) {
 			Log.error("sap.ui.fl.registry.ChangeRegistryItem: changeHandler required");
 		}

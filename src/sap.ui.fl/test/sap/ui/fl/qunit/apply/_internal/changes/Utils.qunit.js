@@ -129,7 +129,7 @@ function (
 	}, function() {
 		QUnit.test("when change handler is not loaded yet and we have to wait for registration", function(assert) {
 			assert.expect(5);
-			sandbox.stub(ChangeRegistry, "waitForChangeHandlerRegistration")
+			sandbox.stub(ChangeHandlerRegistration, "waitForChangeHandlerRegistration")
 				.withArgs("library")
 				.callsFake(function() {
 					assert.ok(true, "the waitForChangeHandlerRegistration function was called");

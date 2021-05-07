@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	// "sap/ui/core/UIComponent",
 	// "sap/ui/mdc/TableDelegate",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/Change",
 	"sap/ui/thirdparty/sinon-4"
@@ -18,9 +18,9 @@ sap.ui.define([
 	JsControlTreeModifier,
 	// UIComponent,
 	// TableDelegate,
+	ChangeHandlerStorage,
 	Applier,
 	Reverter,
-	ChangeRegistry,
 	Condenser,
 	Change,
 	sinon
@@ -452,14 +452,11 @@ sap.ui.define([
 
 		// only non-index relevant changes get condensed
 		QUnit.test("various index and non-index related changes together with non-classified", function(assert) {
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.comp.smartform.GroupElement": {
-					unclassified: {
-						completeChangeContent: sandbox.stub(),
-						applyChange: sandbox.stub(),
-						revertChange: sandbox.stub()
-					}
+			return ChangeHandlerStorage.registerChangeHandlersForControl("sap.ui.comp.smartform.GroupElement", {
+				unclassified: {
+					completeChangeContent: sandbox.stub(),
+					applyChange: sandbox.stub(),
+					revertChange: sandbox.stub()
 				}
 			})
 			.then(loadApplyCondenseChanges.bind(this, "mixIndexNonIndexUnclassified.json", 41, 27, assert, []));

@@ -3,29 +3,23 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/ChangeRegistryItem",
-	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	JsControlTreeModifier,
-	ChangeHandlerStorage,
 	ChangeHandlerRegistration,
 	ChangeRegistry,
 	ChangeRegistryItem,
-	SimpleChanges,
 	MoveControlsChangeHandler,
 	AddXMLChangeHandler,
 	Layer,
-	Utils,
 	Log,
 	sinon
 ) {
@@ -46,52 +40,6 @@ sap.ui.define([
 		QUnit.test("getInstance", function (assert) {
 			var changeRegistryInstance = ChangeRegistry.getInstance();
 			assert.ok(changeRegistryInstance);
-		});
-
-		QUnit.test("waitForChangeHandlerRegistration without adding a promise", function(assert) {
-			var oPromise = ChangeRegistry.waitForChangeHandlerRegistration("key");
-			assert.ok(oPromise instanceof Utils.FakePromise, "the function returns a FakePromise");
-
-			return oPromise.then(function() {
-				assert.ok(true, "the function resolves");
-			});
-		});
-
-		QUnit.test("addRegistrationPromise + waitForChangeHandlerRegistration - resolving promise", function(assert) {
-			var done = assert.async();
-			var sKey = "myFancyKey";
-			var fnResolve;
-			var oPromise = new Promise(function(resolve) {
-				fnResolve = resolve;
-			});
-			ChangeRegistry.addRegistrationPromise(sKey, oPromise);
-			var oWaitPromise = ChangeRegistry.waitForChangeHandlerRegistration(sKey);
-			assert.notOk(oWaitPromise instanceof Utils.FakePromise, "the real promise is returned");
-			oWaitPromise.then(function() {
-				assert.ok(true, "the function resolves");
-				done();
-			});
-
-			fnResolve();
-		});
-
-		QUnit.test("addRegistrationPromise + waitForChangeHandlerRegistration - rejecting promise", function(assert) {
-			var done = assert.async();
-			var sKey = "myFancyKey";
-			var fnReject;
-			var oPromise = new Promise(function(resolve, reject) {
-				fnReject = reject;
-			});
-			ChangeRegistry.addRegistrationPromise(sKey, oPromise);
-			var oWaitPromise = ChangeRegistry.waitForChangeHandlerRegistration(sKey);
-			assert.notOk(oWaitPromise instanceof Utils.FakePromise, "the real promise is returned");
-
-			oWaitPromise.then(function() {
-				assert.ok(true, "the function resolves");
-				done();
-			});
-
-			fnReject();
 		});
 
 		QUnit.test("_createChangeRegistryItemForSimpleChange - when we register a change with an unsupported layer in change.layers", function(assert) {
@@ -181,7 +129,8 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when getChangeHandler is called for a control without instance specific changeHandler", function (assert) {
+		// TODO: re-enable when getChangeHandler function is moved
+		QUnit.skip("when getChangeHandler is called for a control without instance specific changeHandler", function (assert) {
 			var oControl = {};
 			var sChangeType = "moveControls";
 			var sControlType = "VerticalLayout";
@@ -207,7 +156,8 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when getChangeHandler is called for a control with instance specific and default changeHandlers", function (assert) {
+		// TODO: re-enable when getChangeHandler function is moved
+		QUnit.skip("when getChangeHandler is called for a control with instance specific and default changeHandlers", function (assert) {
 			var oControl = {};
 			var sChangeType = "doSomething";
 			var sControlType = "VerticalLayout";
@@ -240,7 +190,8 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getChangeHandler is called for previously existing changetype and existing instance specific changehandler for another changetype", function (assert) {
+		// TODO: re-enable when getChangeHandler function is moved
+		QUnit.skip("when getChangeHandler is called for previously existing changetype and existing instance specific changehandler for another changetype", function (assert) {
 			var oControl = {};
 			var sChangeType = "moveControls";
 			var sControlType = "VerticalLayout";

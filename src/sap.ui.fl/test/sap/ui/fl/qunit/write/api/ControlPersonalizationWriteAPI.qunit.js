@@ -1,42 +1,44 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/ControlPersonalizationAPI",
-	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/fl/registry/Settings",
+	"sap/base/Log",
 	"sap/m/App",
 	"sap/m/Dialog",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/mvc/XMLView",
-	"sap/base/Log",
+	"sap/ui/fl/registry/ChangeHandlerRegistration",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ControlPersonalizationAPI,
-	FlexControllerFactory,
-	Utils,
-	Layer,
-	ChangeRegistry,
-	VariantModel,
-	ControlPersonalizationWriteAPI,
-	Settings,
+	Log,
 	App,
 	Dialog,
 	ManagedObject,
+	XMLView,
 	ComponentContainer,
 	Control,
 	Element,
 	UIComponent,
-	XMLView,
-	Log,
+	ChangeHandlerRegistration,
+	ChangeRegistry,
+	Settings,
+	VariantModel,
+	ControlPersonalizationWriteAPI,
+	ControlPersonalizationAPI,
+	FlexControllerFactory,
+	Layer,
+	Utils,
 	sinon
 ) {
 	"use strict";
@@ -290,7 +292,7 @@ sap.ui.define([
 					this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
 
 					//registration is triggered by instantiation of XML View above
-					ChangeRegistry.waitForChangeHandlerRegistration("sap.uxap").then(done);
+					ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
 				}.bind(this));
 			}.bind(this));
 		},
@@ -557,7 +559,7 @@ sap.ui.define([
 					this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
 
 					//registration is triggered by instantiation of XML View above
-					ChangeRegistry.waitForChangeHandlerRegistration("sap.uxap").then(done);
+					ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
 				}.bind(this));
 			}.bind(this));
 		},
