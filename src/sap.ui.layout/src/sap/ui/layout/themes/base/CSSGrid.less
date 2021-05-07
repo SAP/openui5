@@ -1,3 +1,8 @@
+/* ============================================= */
+/* CSS for control sap.ui.layout/cssgrid.CSSGrid */
+/* Base theme                                    */
+/* ============================================= */
+
 .sapUiLayoutCSSGrid {
 	box-sizing: border-box;
 }
@@ -19,34 +24,13 @@
 
 /* Mixins */
 
-/* Mixin to generate breakpoints.
- * Used for all browsers except IE11.
- */
+// Mixin to generate breakpoints. */
 .sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(@size, @counter: 0, @i: 1) when (@i =< 12) {
 	&.sapUiLayoutCSSGridBoxLayoutSize@{size}.sapUiLayoutCSSGridBoxLayoutSpan@{size}@{i} {
 		grid-template-columns: repeat(auto-fit, minmax(calc(~"(100% - @{counter} * 0.5rem - 1px) / @{i}"), 1fr));
 	}
 
 	.sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(@size, (@counter + 1), (@i + 1));
-}
-
-/* Mixin to generate IE breakpoints.
- * Adding -0.1px to the calculation to avoid rounding errors.
- */
-.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(@size, @counter: 0, @i: 1) when (@i =< 12) {
-	&.sapUiLayoutCSSGridBoxLayoutSize@{size}.sapUiLayoutCSSGridBoxLayoutSpan@{size}@{i} {
-		@nselector: ~"@{i}n+1";
-
-			> .sapUiLayoutCSSGridItem {
-				width: calc(~"(100% - @{counter} * 0.5rem - 0.1px) / @{i}");
-			}
-	}
-
-	.sapUiLayoutCSSGridBoxLayoutGenerateIEBreakpoints(@size, (@counter + 1), (@i + 1));
-}
-
-.sapUiLayoutCSSGridItem.sapUiLayoutCSSGridItemLastOnRow {
-	margin-right: 0;
 }
 
 .sapUiLayoutCSSGrid .sapUiBlockLayerTabbable {
