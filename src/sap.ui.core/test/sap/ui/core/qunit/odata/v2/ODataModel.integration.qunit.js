@@ -2308,7 +2308,8 @@ sap.ui.define([
 					statusCode : 503
 				}), sODataModelClassName);
 		this.oLogMock.expects("error")
-			.withExactArgs("Error message returned by server could not be parsed");
+			.withExactArgs("Error message returned by server could not be parsed",
+				sinon.match.instanceOf(Error), "sap.ui.model.odata.ODataMessageParser");
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
