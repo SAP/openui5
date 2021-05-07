@@ -14,9 +14,10 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/unified/library",
 	"sap/ui/qunit/utils/waitForThemeApplied",
-	"sap/ui/unified/CalendarMonthInterval"
+	"sap/ui/unified/CalendarMonthInterval",
+	"sap/ui/unified/calendar/MonthRenderer"
 ], function(qutils, Calendar, DateRange, DateTypeRange, CalendarLegend,
-	CalendarLegendItem, Locale, HTML, KeyCodes, CalendarDate, InvisibleText, unifiedLibrary, waitForThemeApplied, CalendarMonthInterval) {
+	CalendarLegendItem, Locale, HTML, KeyCodes, CalendarDate, InvisibleText, unifiedLibrary, waitForThemeApplied, CalendarMonthInterval, MonthRenderer) {
 	"use strict";
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
@@ -2572,6 +2573,46 @@ sap.ui.define([
 
 		// clean
 		oCalendar.destroy();
+	});
+
+	QUnit.test("Dummy cell above week numbers is rendered only when necessary", function(assert) {
+		// prepare
+		var oCalM = new Calendar("CalM", {
+				showWeekNumbers: false,
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}),
+			dummyCellSpy = this.spy(MonthRenderer, "renderDummyCell");
+
+		//arrange
+		oCalM.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//act
+		assert.equal(dummyCellSpy.callCount, 0, "The function wasn't called when calendar type is Gregorian and showWeekNumber=false");
+
+		//arrange
+		oCalM.setShowWeekNumbers(true);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		assert.equal(dummyCellSpy.callCount, 1, "The function was called when calendar type is Gregorian and showWeekNumber=true");
+
+		//arrange
+		oCalM.setPrimaryCalendarType(sap.ui.core.CalendarType.Islamic);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		assert.equal(dummyCellSpy.callCount, 1, "The function wasn't called when calendar type is Islamic and showWeekNumber=true");
+
+		//arrange
+		oCalM.setShowWeekNumbers(false);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		assert.equal(dummyCellSpy.callCount, 1, "The function wasn't called when calendar type is Islamic and showWeekNumber=false");
+
+		// clean up
+		oCalM.destroy();
 	});
 
 	//================================================================================

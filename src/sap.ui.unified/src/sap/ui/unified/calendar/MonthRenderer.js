@@ -197,7 +197,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		}
 		var aWeekDaysWide = oLocaleData.getDaysStandAlone("wide", sCalendarType);
 
-		if (oMonth.getShowWeekNumbers()) {
+		if (oMonth.getShowWeekNumbers() && sCalendarType !== CalendarType.Islamic) { // on Islamic primary calendar week numbers are not shown, do not add dummy cell
 			this.renderDummyCell(oRm, "sapUiCalWH", true, "columnheader");
 		}
 
