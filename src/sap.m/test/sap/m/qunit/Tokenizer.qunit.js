@@ -1055,11 +1055,7 @@ sap.ui.define([
 		assert.equal(aTextArray1[2], "3)\t(/&%$)", "text separated");
 	});
 
-	QUnit.test("Copy to clipboard (Non IE):", function(assert) {
-		if (Device.browser.msie) {
-			assert.ok(true, "There is separate test for IE browser");
-			return;
-		}
+	QUnit.test("Copy to clipboard", function(assert) {
 		assert.expect(6);
 		var oAddListenerSpy = new sinon.spy(document, "addEventListener"),
 			oExecCommandSpy = new sinon.spy(document, "execCommand"),
@@ -1131,33 +1127,6 @@ sap.ui.define([
 		document.removeEventListener("copy", oExecCommandSpy);
 		oAddListenerSpy.restore();
 		oExecCommandSpy.restore();
-	});
-
-	QUnit.test("Copy to clipboard (IE):", function(assert) {
-		if (!(Device.browser.msie && window.clipboardData && window.clipboardData.getData)) {
-			assert.ok(true, "There is separate test for non IE browsers");
-			return;
-		}
-		assert.expect(1);
-
-		// arrange
-		for (var i = 0; i < 4; i++) {
-			this.tokenizer.addToken(new Token({text: "Token " + i, key: "000" + i}));
-		}
-		sap.ui.getCore().applyChanges();
-
-		this.tokenizer.focus();
-		this.tokenizer.selectAllTokens(true);
-
-		// act
-		this.tokenizer._copy();
-
-		// assert
-		assert.strictEqual(
-			window.clipboardData.getData("Text"),
-			"Token 0\r\nToken 1\r\nToken 2\r\nToken 3",
-			"The correct text was added to the clipboard data object"
-		);
 	});
 
 	QUnit.module("useCollapsedMode", {
