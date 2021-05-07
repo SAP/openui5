@@ -118,6 +118,7 @@ sap.ui.define([
 				columnWidth: "7.5rem",
 				standardItems: []
 			});
+			this._oCalendar.setLegend(this._oLegend);
 			this._oContent = new FlexBox(this.getId() + "-wrapper", {
 				items: [this._oCalendar, this._oLegend]
 			});
