@@ -96,6 +96,6 @@ sap.ui.define([
 		Then.onTheHomePage.iShouldSeeTheHomeView();
 
 		// Cleanup
-		Then.iTeardownMyApp();
+		Then.iRestoreBodyStyles().and.iTeardownMyApp();
 	});
 });

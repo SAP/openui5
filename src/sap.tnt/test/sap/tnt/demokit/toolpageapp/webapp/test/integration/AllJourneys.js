@@ -7,6 +7,17 @@ sap.ui.define([
 
 	Opa5.extendConfig({
 		arrangements: new Startup(),
+		assertions: new Opa5({
+			iRestoreBodyStyles: function () {
+				var oBody = document.body;
+				oBody.style.width = "";
+				oBody.style.left = "";
+				oBody.style.position = "";
+				oBody.classList.remove("sapUiOpaBodyComponent");
+
+				return this;
+			}
+		}),
 		viewNamespace: "sap.ui.demo.toolpageapp.view.",
 		autoWait: true
 	});
