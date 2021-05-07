@@ -1,9 +1,11 @@
-(function() {
+sap.ui.define([
+	"sap/ui/table/plugins/MultiSelectionPlugin",
+	"sap/m/MessageToast"
+], function(MultiSelectionPlugin, MessageToast) {
 	"use strict";
 
 	window.TABLESETTINGS = {};
 	var TABLESETTINGS = window.TABLESETTINGS;
-
 	// Test data
 	var i, l;
 
@@ -39,7 +41,6 @@
 		window.TABLESETTINGS.listTestData[i].lastName += " - " + (i + 1);
 		window.TABLESETTINGS.listTestData[i].birthdayDate = new Date(window.TABLESETTINGS.listTestData[i].birthday);
 	}
-
 
 	window.TABLESETTINGS.treeTestData = {
 		root:{
@@ -499,7 +500,6 @@
 						MULTISELECTION: {
 							text: "MultiSelection",
 							action: function(oTable) {
-								var MultiSelectionPlugin = sap.ui.requireSync("sap/ui/table/plugins/MultiSelectionPlugin");
 								var oPlugin = new MultiSelectionPlugin({
 									limit: 20,
 									enableNotification: true
@@ -1044,8 +1044,7 @@
 					},
 					input: "boolean",
 					_cellClickHandler: function(oEvent) {
-						jQuery.sap.require("sap.m.MessageToast");
-						sap.m.MessageToast.show("Cell " + oEvent.getParameter("rowIndex") + "/" + oEvent.getParameter("columnIndex") + " clicked");
+						MessageToast.show("Cell " + oEvent.getParameter("rowIndex") + "/" + oEvent.getParameter("columnIndex") + " clicked");
 					},
 					action: function(oTable, bValue) {
 						if (bValue) {
@@ -1062,8 +1061,7 @@
 					},
 					input: "boolean",
 					_pasteHandler: function(oEvent) {
-						jQuery.sap.require("sap.m.MessageToast");
-						sap.m.MessageToast.show("Paste data: " + oEvent.getParameter("data"));
+						MessageToast.show("Paste data: " + oEvent.getParameter("data"));
 					},
 					action: function(oTable, bValue) {
 						if (bValue) {
@@ -1816,8 +1814,7 @@
 		var oRow = oEvent.getParameter("row");
 		var oItem = oEvent.getParameter("item");
 
-		jQuery.sap.require("sap.m.MessageToast");
-		sap.m.MessageToast("Item " + (oItem.getText() || oItem.getType()) + " in row " + oRow.getIndex() + " pressed.");
+		MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " in row " + oRow.getIndex() + " pressed.");
 	}
 
 	function switchRowActions(oTable, iCount, oTemplate) {
@@ -1831,4 +1828,4 @@
 	}
 
 
-})();
+});
