@@ -20,6 +20,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
 	"testdata/StaticDesigntimeMetadata",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -40,6 +42,8 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer,
 	XMLView,
+	Controller,
+	JSONModel,
 	StaticDesigntimeMetadata,
 	sinon
 ) {
@@ -618,21 +622,22 @@ sap.ui.define([
 		return new MockComponent("testComponent");
 	}
 
-	function _createAsyncView(sViewName, sXmlView, oComponent) {
+	function _createAsyncView(sViewName, sXmlView, oComponent, oController) {
+		var mController = oController ? { controller: oController } : {};
 		return oComponent.runAsOwner(function () {
-			return XMLView.create({
+			return XMLView.create(Object.assign({
 				id: sViewName,
 				definition: sXmlView,
 				async: true
-			});
+			}, mController));
 		});
 	}
 
-	function _beforeEachExtensionPoint (sXmlView) {
+	function _beforeEachExtensionPoint (sXmlView, oController) {
 		sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 		sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 		this.oComponent = _createComponent();
-		return _createAsyncView("myView", sXmlView, this.oComponent)
+		return _createAsyncView("myView", sXmlView, this.oComponent, oController)
 			.then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				oXmlView.placeAt("qunit-fixture");
@@ -742,6 +747,63 @@ sap.ui.define([
 						"then the lable from default content of the extension point is now placed in the FormElements aggregation");
 					assert.deepEqual(oFormElementsAggregation.elements[1].instanceName, "label3",
 						"then the lable outsite the extension point is now placed in the FormElements aggregation");
+				});
+		});
+	});
+
+	function createController(sController) {
+		var oData = {
+			ProductCollection: [
+				{ ProductId: "HT-1000", Category: "Laptops"	},
+				{ ProductId: "HT-1001", Category: "Laptops" },
+				{ ProductId: "HT-1007", Category: "Accessories" }
+			]
+		};
+		var MyController = Controller.extend(sController, {
+			onInit: function () {
+				var oModel = new JSONModel(oData);
+				this.getView().setModel(oModel);
+			}
+		});
+		return new MyController();
+	}
+
+	QUnit.module("Given that xmlView with table and extensionPoint (RuntimeAuthoring and outline service are started)", {
+		beforeEach: function () {
+			var oXmlTable =
+			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
+					'<items>' +
+						'<StandardListItem title="{Name}" />' +
+					'</items>' +
+				'</List>' +
+			'</mvc:View>';
+			var oController = createController("myController");
+			return _beforeEachExtensionPoint.call(this, oXmlTable, oController);
+		},
+		afterEach: function () {
+			return _afterEachExtensionPoint.call(this);
+		}
+	}, function() {
+		QUnit.test("when get() is called", function (assert) {
+			return this.oOutline.get()
+				.then(function(aReceivedResponse) {
+					var aRootElements = aReceivedResponse[0].elements;
+					assert.strictEqual(aRootElements[0].technicalName, "content",
+						"then in the view elements the second item is an content aggregation");
+					var oListElementInfo = aRootElements[0].elements[0];
+					assert.strictEqual(oListElementInfo.technicalName, "sap.m.List",
+						"then list is available in the view elements");
+					assert.strictEqual(oListElementInfo.elements.length, 4,
+						"then list contains 4 elements - 3 elements as given aggregations and 1 element for the template");
+					assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://card",
+						"then the first list entry (aggregation) has the correct icon assigned");
+					assert.strictEqual(oListElementInfo.elements[0].elements[0].name, "TEMPLATE-List Item",
+						"then the first list entry aggregates one template");
+					assert.strictEqual(oListElementInfo.elements[0].elements[0].icon, "sap-icon://card",
+						"then the template element contained in the first list entry has the correct icon assigned");
+					assert.strictEqual(oListElementInfo.elements[1].elements.length, 3,
+						"then the second list entry aggregates 3 list items");
 				});
 		});
 	});
