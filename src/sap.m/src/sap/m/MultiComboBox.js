@@ -449,13 +449,6 @@ function(
 						oLink.getDomRef().setAttribute("tabindex", "-1");
 					});
 				}
-
-				// In IE a pseudo visual focus is applied to the FormattedText because no visible
-				// focus outlines are natively added to the value state header when it is active.
-				// Remove it when the picker is closed.
-				if (Device.browser.msie) {
-					oFormattedText.removeStyleClass("sapMPseudoFocus");
-				}
 			}
 		};
 
@@ -470,13 +463,6 @@ function(
 	 */
 	MultiComboBox.prototype._closePickerDelegate = {
 		onsaptabnext: function() {
-			// In IE a pseudo visual focus is applied to the FormattedText because no visible
-			// focus outlines are natively added to the value state header when it is active.
-			// Remove it when the picker is closed.
-			if (Device.browser.msie) {
-				this.getPicker().getCustomHeader().getFormattedText().removeStyleClass("sapMPseudoFocus");
-			}
-
 			this.close();
 
 			// Closing with timeout as it is open that way
@@ -527,12 +513,6 @@ function(
 		oCustomHeader.addDelegate(oValueStateNavDelegate);
 		oCustomHeader.addStyleClass("sapMFocusable");
 		oCustomHeader.focus();
-
-		// IE doesn't seem to like putting focus outline on a div, even if the div is
-		// currently on focus, so we apply the visual focus styling manually
-		if (Device.browser.msie) {
-			oFormattedText.addStyleClass("sapMPseudoFocus");
-		}
 
 		// Linka should not be part of the tab chain when the focus is out of the value state header
 		// (on the items list or on the input) and the opposite when the header is focused.

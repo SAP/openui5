@@ -5517,7 +5517,7 @@ sap.ui.define([
 
 		//arrange
 		var sInvisibleTextId1 = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER"),
-			sAriaDescribedBy = Device.browser.msie ? oMultiComboBox.getId() + "-describedby" + " " + sInvisibleTextId + " " + sInvisibleTextId1 : sInvisibleTextId + " " + sInvisibleTextId1;
+			sAriaDescribedBy = sInvisibleTextId + " " + sInvisibleTextId1;
 
 		// act
 		oMultiComboBox.setEditable(false);
