@@ -85,7 +85,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 
 		var sTooltip = this.getTooltipText(oCheckBox);
 
-		if (sTooltip && bEditableAndEnabled) {
+		if (sTooltip && (bEditable || bEnabled)) {
 			oRm.attr("title", sTooltip);
 		}
 
