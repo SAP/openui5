@@ -969,7 +969,7 @@ sap.ui.define([
 		 * @ui5-restricted Fiori Elements, sap.ui.mdc
 		 */
 		Chart.prototype._onFiltersChanged = function(oEvent) {
-			if (this.getControlDelegate() && this.getControlDelegate().getInnerChartBound() && oEvent.getParameter("conditionsBased")) {
+			if (this._bInnerChartReady && this.getControlDelegate() && this.getControlDelegate().getInnerChartBound() && oEvent.getParameter("conditionsBased")) {
 				this._renderOverlay(true);
 			}
 		};
