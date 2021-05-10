@@ -5,10 +5,10 @@
 // Provides basic internal functions for sap.ui.model.odata.AnnotationHelper
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/extend",
 	"sap/ui/base/BindingParser",
-	"sap/ui/performance/Measurement",
-	"sap/ui/thirdparty/jquery"
-], function (Log, BindingParser, Measurement, jQuery) {
+	"sap/ui/performance/Measurement"
+], function (Log, extend, BindingParser, Measurement) {
 	'use strict';
 
 	var sAnnotationHelper = "sap.ui.model.odata.AnnotationHelper",
@@ -66,7 +66,7 @@ sap.ui.define([
 		 *   if the result is not of the expected type
 		 */
 		descend : function (oPathValue, vProperty, vExpectedType) {
-			var oTarget = jQuery.extend({}, oPathValue);
+			var oTarget = extend({}, oPathValue);
 
 			Basics.expectType(oPathValue, typeof vProperty === "number" ? "array" : "object");
 			oTarget.path = oPathValue.path + "/" + vProperty;

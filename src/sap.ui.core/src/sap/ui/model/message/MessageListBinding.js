@@ -4,16 +4,14 @@
 
 // Provides the JSON model implementation of a list binding
 sap.ui.define([
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/ClientListBinding',
 	"sap/base/strings/hash",
 	"sap/base/util/deepEqual",
-	"sap/ui/thirdparty/jquery"
-],
-	function(ChangeReason, ClientListBinding, hash, deepEqual, jQuery) {
+	"sap/base/util/each",
+	"sap/base/util/merge",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ClientListBinding"
+], function(hash, deepEqual, each, merge, ChangeReason, ClientListBinding) {
 	"use strict";
-
-
 
 	/**
 	 *
@@ -115,7 +113,7 @@ sap.ui.define([
 		var oList = this.oModel._getObject(this.sPath, this.oContext);
 		if (Array.isArray(oList)) {
 			if (this.bUseExtendedChangeDetection) {
-				this.oList = jQuery.extend(true, [], oList);
+				this.oList = merge([], oList);
 			} else {
 				this.oList = oList.slice(0);
 			}
@@ -165,7 +163,7 @@ sap.ui.define([
 				if (this.aLastContexts.length != aContexts.length) {
 					bChangeDetected = true;
 				} else {
-					jQuery.each(this.aLastContextData, function(iIndex, oLastData) {
+					each(this.aLastContextData, function(iIndex, oLastData) {
 						if (that.getContextData(aContexts[iIndex]) !== oLastData) {
 							bChangeDetected = true;
 							return false;

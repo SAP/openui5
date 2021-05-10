@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
+	"sap/base/util/each",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/uid",
 	"sap/ui/model/ChangeReason",
@@ -21,11 +22,10 @@ sap.ui.define([
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/Filter",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/OperationMode",
-	"sap/ui/thirdparty/jquery"
-], function(assert, Log, deepEqual, isEmptyObject,  uid, ChangeReason, Context, Filter,
+	"sap/ui/model/odata/OperationMode"
+], function(assert, Log, deepEqual, each, isEmptyObject,  uid, ChangeReason, Context, Filter,
 		FilterOperator, FilterProcessor, FilterType, ListBinding, Sorter, SorterProcessor,
-		CountMode, ODataFilter, ODataUtils,  OperationMode, jQuery) {
+		CountMode, ODataFilter, ODataUtils,  OperationMode) {
 	"use strict";
 
 	/*global Set */
@@ -601,7 +601,7 @@ sap.ui.define([
 			if (that.useClientMode()) {
 				// For clients mode, store all keys separately and set length to final
 				that.aKeys = [];
-				jQuery.each(oData.results, function(i, entry) {
+				each(oData.results, function(i, entry) {
 					that.aKeys[i] = that.oModel._getKey(entry);
 				});
 				that.updateExpandedList(that.aKeys);
@@ -615,7 +615,7 @@ sap.ui.define([
 				if (oData.results.length > 0) {
 					// Collecting contexts, after the $inlinecount was evaluated, so we do not have to clear it again when
 					// the Auto modes initial threshold <> count check failed.
-					jQuery.each(oData.results, function(i, entry) {
+					each(oData.results, function(i, entry) {
 						that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
 					});
 
@@ -773,7 +773,7 @@ sap.ui.define([
 		// use only custom params for count and not expand,select params
 		if (this.mParameters && this.mParameters.custom) {
 			var oCust = { custom: {}};
-			jQuery.each(this.mParameters.custom, function (sParam, oValue) {
+			each(this.mParameters.custom, function (sParam, oValue) {
 				oCust.custom[sParam] = oValue;
 			});
 			aParams.push(this.oModel.createCustomParams(oCust));
@@ -871,7 +871,7 @@ sap.ui.define([
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				jQuery.each(this.aKeys, function(i, sKey) {
+				each(this.aKeys, function(i, sKey) {
 					if (sKey in mChangedEntities) {
 						bChangeDetected = true;
 						return false;
@@ -1062,7 +1062,7 @@ sap.ui.define([
 				if (this.aLastContexts.length !== aContexts.length) {
 					bChangeDetected = true;
 				} else {
-					jQuery.each(this.aLastContextData, function(iIndex, oLastData) {
+					each(this.aLastContextData, function(iIndex, oLastData) {
 						oCurrentData = that.getContextData(aContexts[iIndex]);
 						// Compare whether last data is completely contained in current data
 						if (oLastData !== oCurrentData) {
@@ -1114,7 +1114,7 @@ sap.ui.define([
 	ODataListBinding.prototype.abortPendingRequest = function(bAbortCountRequest) {
 		if (!isEmptyObject(this.mRequestHandles)) {
 			this.bSkipDataEvents = true;
-			jQuery.each(this.mRequestHandles, function(sPath, oRequestHandle){
+			each(this.mRequestHandles, function(sPath, oRequestHandle){
 				oRequestHandle.abort();
 			});
 			if (bAbortCountRequest && this.oCountHandle) {
