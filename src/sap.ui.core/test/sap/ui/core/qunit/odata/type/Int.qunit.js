@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/ObjectPath",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -12,8 +12,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Int",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, Control, NumberFormat, FormatException, ParseException, ValidateException,
-		Int, ODataType, TestUtils) {
+], function (Log, ObjectPath, Control, NumberFormat, FormatException, ParseException,
+		ValidateException, Int, ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 
@@ -23,7 +23,7 @@ sap.ui.define([
 		var oType;
 
 		function createType(oFormatOptions, oConstraints) {
-			return new (jQuery.sap.getObject(sName))(oFormatOptions, oConstraints);
+			return new (ObjectPath.get(sName))(oFormatOptions, oConstraints);
 		}
 
 		function testRange(assert, iValue, sExpectedMessage) {
@@ -132,7 +132,7 @@ sap.ui.define([
 				"empty string becomes null for any type");
 
 			sap.ui.getCore().getConfiguration().setLanguage("de-DE");
-			oType = new (jQuery.sap.getObject(sName))();
+			oType = new (ObjectPath.get(sName))();
 			assert.strictEqual(oType.parseValue(1234.001, "float"), 1234,
 				"don't parse float as string");
 
@@ -173,7 +173,7 @@ sap.ui.define([
 			QUnit.test("setConstraints: nullable=" + bNullable, function (assert) {
 				var oExpectedConstraints = bNullable === false ? {nullable : false} : undefined;
 
-				oType = new (jQuery.sap.getObject(sName))({},
+				oType = new (ObjectPath.get(sName))({},
 					{minimum : -100, maximum : 100, nullable : bNullable});
 				assert.deepEqual(oType.oConstraints, oExpectedConstraints,
 					"only nullable accepted");
@@ -218,25 +218,25 @@ sap.ui.define([
 			this.oLogMock.expects("warning")
 				.withExactArgs("Illegal nullable: 42", null, sName);
 
-			oType = new (jQuery.sap.getObject(sName))({});
+			oType = new (ObjectPath.get(sName))({});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : true});
+			oType = new (ObjectPath.get(sName))({}, {nullable : true});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : "true"});
+			oType = new (ObjectPath.get(sName))({}, {nullable : "true"});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : undefined});
+			oType = new (ObjectPath.get(sName))({}, {nullable : undefined});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : 42});
+			oType = new (ObjectPath.get(sName))({}, {nullable : 42});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : false});
+			oType = new (ObjectPath.get(sName))({}, {nullable : false});
 			assert.strictEqual(oType.oConstraints.nullable, false);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable : "false"});
+			oType = new (ObjectPath.get(sName))({}, {nullable : "false"});
 			assert.strictEqual(oType.oConstraints.nullable, false);
 
 			TestUtils.withNormalizedMessages(function () {

@@ -2,8 +2,8 @@
  *{copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/ObjectPath",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, CalendarType, Control, DateFormat, FormatException, ParseException,
+], function (Log, ObjectPath, CalendarType, Control, DateFormat, FormatException, ParseException,
 	ValidateException, JSONModel, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
@@ -39,7 +39,7 @@ sap.ui.define([
 		};
 
 	function createInstance(sTypeName, oFormatOptions, oConstraints) {
-		return new (jQuery.sap.getObject(sTypeName))(oFormatOptions, oConstraints);
+		return new (ObjectPath.get(sTypeName))(oFormatOptions, oConstraints);
 	}
 
 	/*

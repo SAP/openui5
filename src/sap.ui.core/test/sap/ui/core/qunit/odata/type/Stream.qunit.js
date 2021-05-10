@@ -2,14 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/Stream"
-], function (jQuery, Log, FormatException, ParseException, ValidateException, ODataType, Stream) {
+], function (Log, FormatException, ParseException, ValidateException, ODataType, Stream) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";

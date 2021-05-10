@@ -2,7 +2,6 @@
  *{copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
@@ -13,7 +12,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/type/Float",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, Control, NumberFormat, FormatException, ParseException, ValidateException,
+], function (Log, Control, NumberFormat, FormatException, ParseException, ValidateException,
 		Decimal, ODataType, Float, TestUtils) {
 	/*global QUnit, sap, sinon */
 	"use strict";

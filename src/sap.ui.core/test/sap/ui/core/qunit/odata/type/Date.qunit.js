@@ -2,7 +2,6 @@
  *{copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Control",
@@ -13,7 +12,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, CalendarType, Control, DateFormat, FormatException, ParseException, ValidateException, DateType, ODataType, TestUtils) {
+], function (Log, CalendarType, Control, DateFormat, FormatException, ParseException,
+		ValidateException, DateType, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";
