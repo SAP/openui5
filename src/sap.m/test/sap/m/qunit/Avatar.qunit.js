@@ -82,16 +82,14 @@ sap.ui.define([
 	QUnit.test("Focus does not have outline-offset", function (assert) {
 		// Arrange
 		var $oAvatar = this.oAvatar.$(),
-			sOffset,
-			bOk;
+			sOffset;
 
 		// Act
 		$oAvatar.trigger("focus");
 		sOffset = $oAvatar.css("outline-offset");
-		bOk = sOffset === "0px" || sOffset === undefined; // IE does not support outline-offset
 
 		// Assert
-		assert.ok(bOk, "Outline-offset is not set");
+		assert.strictEqual(sOffset, "0px", "Outline-offset is not set");
 	});
 
 	QUnit.module("Rendering different sizes", {
