@@ -178,12 +178,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("and static preload when loading flex data, get name/reference from mComponent", function (assert) {
 			// simulate a component-preload
-			jQuery.sap.registerPreloadedModules({
-				version: "2.0",
-				name: "test.app",
-				modules: {
-					"test/app/changes/changes-bundle.json": '[{"otherDummy":true}]'
-				}
+			sap.ui.require.preload({
+				"test/app/changes/changes-bundle.json": '[{"otherDummy":true}]'
 			});
 
 			var mPropertyBag = {
