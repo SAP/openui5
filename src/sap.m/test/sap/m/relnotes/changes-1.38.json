@@ -6183,5 +6183,21 @@
         ]
       }
     ]
+  },
+  "1.38.50": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "cf5539ebacee96637e6da143fb55d5f5e99b5bf4",
+        "type": "FIX",
+        "text": " sap.m.Shell: the logo property documentation is improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007918612020"
+          }
+        ]
+      }
+    ]
   }
 }

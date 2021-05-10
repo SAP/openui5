@@ -3709,5 +3709,29 @@
         ]
       }
     ]
+  },
+  "1.38.50": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "be434a3ef290b3475b3a5649917e642452ffc9f2",
+        "type": "FIX",
+        "text": " theming/Parameters: Request library-parameters.json with credentials",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070394805"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070394696"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180075387"
+          }
+        ]
+      }
+    ]
   }
 }
