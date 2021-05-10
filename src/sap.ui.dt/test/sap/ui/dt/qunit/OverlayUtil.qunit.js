@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/VBox",
 	"sap/m/Button",
+	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -26,6 +27,7 @@ function(
 	ObjectPageSubSection,
 	VBox,
 	Button,
+	TestUtil,
 	sinon
 ) {
 	"use strict";
@@ -575,6 +577,60 @@ function(
 				undefined,
 				"nothing is returned because it's invisible"
 			);
+		});
+	});
+
+	QUnit.module("getClosestBoundControl() - Given is a list with bounded items", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			this.oHorizontalLayout = TestUtil.createListWithBoundItems();
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oHorizontalLayout]
+			});
+			this.oDesignTime.attachEventOnce("synced", fnDone);
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oHorizontalLayout.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when overlay that is part of the binding aggregation template is given", function(assert) {
+			var oSelectedOverlay = OverlayRegistry.getOverlay("boundListItem-btn");
+			var mAggregationBindingStack = OverlayUtil.getClosestBoundControl(oSelectedOverlay);
+			var oClosestBoundOverlay = OverlayRegistry.getOverlay(mAggregationBindingStack.overlayId);
+			assert.strictEqual(oClosestBoundOverlay.getElement().getId(), "boundlist", "then the closest bounded overlay could be found");
+			assert.strictEqual(mAggregationBindingStack.aggregation, "items", "then the closest bounded overlay could be found for the correct aggregation");
+			assert.strictEqual(mAggregationBindingStack.stack.length, 2, "then the stack to the closest bounded overlay includes 3 info objects");
+			var mFirstStackObject = mAggregationBindingStack.stack.pop();
+			assert.deepEqual(mFirstStackObject, {
+				overlayId: OverlayRegistry.getOverlay("boundListItem").getId(),
+				aggregation: "items",
+				index: 0
+			},	"then the stack is valid");
+		});
+
+		QUnit.test("when overlay that is part of the binding aggregation cloned item is given", function(assert) {
+			var oSelectedOverlay = OverlayRegistry.getOverlay("boundListItem-btn-boundlist-0");
+			var mAggregationBindingStack = OverlayUtil.getClosestBoundControl(oSelectedOverlay);
+			var oClosestBoundOverlay = OverlayRegistry.getOverlay(mAggregationBindingStack.overlayId);
+			assert.strictEqual(oClosestBoundOverlay.getElement().getId(), "boundlist", "then the closest bounded overlay could be found");
+			assert.strictEqual(mAggregationBindingStack.aggregation, "items", "then the closest bounded overlay could be found for the correct aggregation");
+			assert.strictEqual(mAggregationBindingStack.stack.length, 2, "then the stack to the closest bounded overlay includes 3 info objects");
+			var mFirstStackObject = mAggregationBindingStack.stack.pop();
+			assert.deepEqual(mFirstStackObject, {
+				overlayId: OverlayRegistry.getOverlay("boundListItem-boundlist-0").getId(),
+				aggregation: "items",
+				index: 0
+			}, "then the stack is valid");
+		});
+
+		QUnit.test("when overlay that does not belong to a binding aggregation is given", function(assert) {
+			var oSelectedOverlay = OverlayRegistry.getOverlay("item1-btn");
+			var mAggregationBindingStack = OverlayUtil.getClosestBoundControl(oSelectedOverlay);
+			assert.strictEqual(mAggregationBindingStack.overlayId, undefined, "then the closest bounded overlay id is empty (not found)");
+			assert.strictEqual(mAggregationBindingStack.aggregation, undefined, "then no aggregation available as no closest bounded overlay was found");
+			assert.strictEqual(mAggregationBindingStack.stack.length, 4, "then the stack to the stack includes the whole path to the root element");
 		});
 	});
 

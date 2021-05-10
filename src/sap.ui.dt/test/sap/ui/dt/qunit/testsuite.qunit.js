@@ -75,7 +75,8 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/"
+						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/",
+						"sap/ui/dt/qunit": "test-resources/sap/ui/dt/qunit/"
 					}
 				}
 			},
@@ -116,6 +117,11 @@ sap.ui.define(function () {
 			OverlayUtil: {
 				coverage: {
 					only: ['sap/ui/dt/OverlayUtil']
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/dt/qunit": "test-resources/sap/ui/dt/qunit/"
+					}
 				}
 			},
 			Plugin: {

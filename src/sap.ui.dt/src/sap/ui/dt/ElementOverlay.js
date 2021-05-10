@@ -4,6 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/dt/Overlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/ControlObserver",
 	"sap/ui/dt/ManagedObjectObserver",
 	"sap/ui/dt/ElementDesignTimeMetadata",
@@ -19,6 +21,8 @@ sap.ui.define([
 	"sap/base/util/restricted/_max"
 ], function (
 	Overlay,
+	OverlayRegistry,
+	OverlayUtil,
 	ControlObserver,
 	ManagedObjectObserver,
 	ElementDesignTimeMetadata,
@@ -76,7 +80,8 @@ sap.ui.define([
 				 */
 				aggregationBindingTemplateOverlays: {
 					type: "sap.ui.dt.Overlay",
-					multiple: true
+					multiple: true,
+					defaultValue: []
 				}
 			},
 			properties: {
@@ -659,6 +664,12 @@ sap.ui.define([
 			this.setProperty("selected", bSelected);
 			this.toggleStyleClass("sapUiDtOverlaySelected", bSelected);
 
+			var mAggregationBindingInfo = OverlayUtil.getClosestBoundControl(this);
+			if (mAggregationBindingInfo.overlayId) {
+				var oBoundOverlay = OverlayRegistry.getOverlay(mAggregationBindingInfo.overlayId);
+				highlightTemplateCloneElements(mAggregationBindingInfo, oBoundOverlay);
+			}
+
 			this.fireSelectionChange({
 				selected: bSelected
 			});
@@ -666,6 +677,29 @@ sap.ui.define([
 
 		return this;
 	};
+
+	function highlightTemplateCloneElements(mAggregationBindingInfo, oElementOverlay, iStackIndex) {
+		iStackIndex = iStackIndex === undefined ? mAggregationBindingInfo.stack.length - 1 : iStackIndex;
+		var mStackEntry = mAggregationBindingInfo.stack[iStackIndex];
+		var bLastStackEntry = iStackIndex === 0;
+		var bTemplateSelected = mAggregationBindingInfo.stack.length === 1;
+		if (mStackEntry) {
+			oElementOverlay.getChildren().forEach(function(oChildAggregationOverlay) {
+				if (oChildAggregationOverlay.getAggregationName() === mStackEntry.aggregation) {
+					oChildAggregationOverlay.getChildren().some(function(oChildElementOverlay, iIndex) {
+						if (bLastStackEntry && bTemplateSelected) {
+							oChildElementOverlay.toggleStyleClass("sapUiDtOverlayHighlighted");
+						} else if (bLastStackEntry && iIndex === mStackEntry.index) {
+							oChildElementOverlay.toggleStyleClass("sapUiDtOverlayHighlighted");
+							return true;
+						} else if (!bLastStackEntry) {
+							highlightTemplateCloneElements(mAggregationBindingInfo, oChildElementOverlay, iStackIndex - 1);
+						}
+					});
+				}
+			});
+		}
+	}
 
 	/**
 	 * Sets whether the ElementOverlay is movable and toggles corresponding css class
@@ -811,12 +845,14 @@ sap.ui.define([
 
 	/**
 	 * Returns AggregationOverlay the public aggregations of the associated Element by aggregation name
-	 * @param {string} sAggregationName name of the aggregation
-	 * @return {sap.ui.dt.AggregationOverlay} AggregationOverlays for the aggregation
+	 * @param {string} sAggregationName - Name of the aggregation
+	 * @param {string} sAggregationType - Type of the aggregation
+	 * @return {sap.ui.dt.AggregationOverlay} AggregationOverlay for the aggregation
 	 * @public
 	 */
-	ElementOverlay.prototype.getAggregationOverlay = function(sAggregationName) {
-		return this.getChildren().filter(function (oAggregationOverlay) {
+	ElementOverlay.prototype.getAggregationOverlay = function(sAggregationName, sAggregationType) {
+		var sGetterFunction = "get" + (sAggregationType || "Children");
+		return this[sGetterFunction]().filter(function (oAggregationOverlay) {
 			return oAggregationOverlay.getAggregationName() === sAggregationName;
 		}).pop();
 	};

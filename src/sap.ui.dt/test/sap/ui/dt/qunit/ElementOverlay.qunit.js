@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
+	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -49,6 +50,7 @@ function (
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
+	TestUtil,
 	jQuery,
 	sinon
 ) {
@@ -1702,6 +1704,69 @@ function (
 		});
 	});
 
+	QUnit.module("Highlighting on selection - Given a List with bound items and a List with unbound items", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			this.oHorizontalLayout = TestUtil.createListWithBoundItems();
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oHorizontalLayout]
+			});
+			this.oDesignTime.attachEventOnce("synced", fnDone);
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oHorizontalLayout.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		[
+			{
+				description: "when overlay is selected that is a cloned item from binding aggregation",
+				selected: { id: "boundListItem-boundlist-0", highlighted: true },
+				twin: { id: "boundListItem-boundlist-1", highlighted: true }
+			},
+			{
+				description: "when overlay is selected that is part of a cloned item from binding aggregation",
+				selected: { id: "boundListItem-btn-boundlist-0", highlighted: true },
+				twin: { id: "boundListItem-btn-boundlist-1", highlighted: true }
+			},
+			{
+				description: "when overlay is selected that does not belong to a binding aggregation",
+				selected: { id: "item1-btn", highlighted: false },
+				twin: { id: "item2-btn", highlighted: false }
+			},
+			{
+				description: "when overlay is selected that is part of the binding aggregation template",
+				selected: { id: "boundListItem-btn", highlighted: false },
+				twin: { id: "boundListItem-btn-boundlist-0", highlighted: true },
+				twin1: { id: "boundListItem-btn-boundlist-1", highlighted: true }
+			}
+		].forEach(function (options) {
+			QUnit.test(options.description, function(assert) {
+				var oSelectedOverlay = OverlayRegistry.getOverlay(options.selected.id);
+				var oFirstListItemButtonOverlay = OverlayRegistry.getOverlay(options.twin.id);
+				oSelectedOverlay.setSelectable(true);
+				oSelectedOverlay.setSelected(true);
+				assert.equal(oSelectedOverlay.isSelectable(), true, "then the overlay is selectable");
+				assert.equal(oSelectedOverlay.isSelected(), true, "then the overlay is selected");
+				assert.strictEqual(oSelectedOverlay.hasStyleClass("sapUiDtOverlayHighlighted"), options.selected.highlighted,
+					"then the selected Overlay " +
+					options.selected.highlighted ? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"
+				);
+				assert.strictEqual(oFirstListItemButtonOverlay.hasStyleClass("sapUiDtOverlayHighlighted"), options.twin.highlighted,
+					"then the first twin Overlay " +
+					options.twin.highlighted ? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"
+				);
+				if (options.twin1) {
+					var oSecondListItemButtonOverlay = OverlayRegistry.getOverlay(options.twin1.id);
+					assert.strictEqual(oSecondListItemButtonOverlay.hasStyleClass("sapUiDtOverlayHighlighted"), options.twin1.highlighted,
+						"then the second twin Overlay " +
+						options.twin1.highlighted ? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"
+					);
+				}
+			});
+		});
+	});
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
