@@ -1045,5 +1045,21 @@
         ]
       }
     ]
+  },
+  "1.71.33": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "204988318ba6276f805c5b1ede156f7ae87350e1",
+        "type": "FIX",
+        "text": " routing.HashChanger: forward hash to RouterHashChanger during creation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002368562021"
+          }
+        ]
+      }
+    ]
   }
 }

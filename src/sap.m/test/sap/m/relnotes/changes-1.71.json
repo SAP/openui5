@@ -2565,5 +2565,21 @@
         ]
       }
     ]
+  },
+  "1.71.33": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "7f844d3e02eda61f35cc34378f8798848bcc1443",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Prevent item highlighting when initially selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003008012021"
+          }
+        ]
+      }
+    ]
   }
 }
