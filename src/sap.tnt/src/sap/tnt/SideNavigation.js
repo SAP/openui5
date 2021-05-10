@@ -298,10 +298,10 @@ sap.ui.define([
 			var selectedKey;
 
 			if (!selectedItem) {
-				if (navigationList.setSelectedItem) {
+				if (navigationList) {
 					navigationList.setSelectedItem(null);
 				}
-				if (fixedNavigationList.setSelectedItem) {
+				if (fixedNavigationList) {
 					fixedNavigationList.setSelectedItem(null);
 				}
 			}
