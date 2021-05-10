@@ -10,14 +10,15 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/each",
+	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/uid",
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/cache/CacheManager",
-	"sap/ui/thirdparty/datajs",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/datajs"
 ],
-	function(Utils, assert, Log, each, isEmptyObject, uid, EventProvider, CacheManager, OData, jQuery) {
+	function(Utils, assert, Log, each, extend, isEmptyObject, uid, EventProvider, CacheManager,
+		OData) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0*/
 
@@ -616,7 +617,6 @@ sap.ui.define([
 			this.mEntityTypes[sPath] = oEntityType;
 		}
 
-		//jQuery.sap.assert(oEntityType, "EntityType for path " + sPath + " could not be found!");
 		return oEntityType;
 	};
 
@@ -645,9 +645,9 @@ sap.ui.define([
 		if (this.mEntityTypes[sName]) {
 			oEntityType = this.mEntityTypes[sName];
 		} else {
-			jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
+			each(this.oMetadata.dataServices.schema, function(i, oSchema) {
 				if (oSchema.entityType && (!sNamespace || oSchema.namespace === sNamespace)) {
-					jQuery.each(oSchema.entityType, function(k, oEntity) {
+					each(oSchema.entityType, function(k, oEntity) {
 						if (oEntity.name === sEntityName) {
 							oEntityType = oEntity;
 							that.mEntityTypes[sName] = oEntityType;
@@ -823,9 +823,9 @@ sap.ui.define([
 		var sTargetName = oEntityType.namespace ? oEntityType.namespace + "." : "";
 		sTargetName += oEntityType.name + "/" + oObject.name;
 
-		jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
+		each(this.oMetadata.dataServices.schema, function(i, oSchema) {
 			if (oSchema.annotations) {
-				jQuery.each(oSchema.annotations, function(k, oObject) {
+				each(oSchema.annotations, function(k, oObject) {
 					//we do not support qualifiers on target level
 					if (oObject.target === sTargetName && !oObject.qualifier) {
 						aAnnotations.push(oObject.annotation);
@@ -835,8 +835,8 @@ sap.ui.define([
 			}
 		});
 		if (aAnnotations) {
-			jQuery.each(aAnnotations, function(i, aAnnotation) {
-				jQuery.each(aAnnotation, function(j, oAnnotation) {
+			each(aAnnotations, function(i, aAnnotation) {
+				each(aAnnotation, function(j, oAnnotation) {
 					if (oAnnotation.term === aParts[0]) {
 						oAnnotationNode = oAnnotation;
 					}
@@ -872,7 +872,6 @@ sap.ui.define([
 				sEntityTypeName = oEntitySet.entityType;
 			}
 		}
-		//jQuery.sap.assert(sEntityTypeName, "EntityType name of EntitySet "+ sCollection + " not found!");
 		return sEntityTypeName;
 	};
 
@@ -883,10 +882,10 @@ sap.ui.define([
 		var oObject;
 		if (sObjectName && sNamespace) {
 			// search in all schemas for the sObjectName
-			jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
+			each(this.oMetadata.dataServices.schema, function(i, oSchema) {
 				// check if we found the right schema which will contain the sObjectName
 				if (oSchema[sObjectType] && oSchema.namespace === sNamespace) {
-					jQuery.each(oSchema[sObjectType], function(j, oCurrentObject) {
+					each(oSchema[sObjectType], function(j, oCurrentObject) {
 						if (oCurrentObject.name === sObjectName) {
 							oObject = oCurrentObject;
 							oObject.namespace = oSchema.namespace;
@@ -908,11 +907,11 @@ sap.ui.define([
 	ODataMetadata.prototype.getUseBatch = function() {
 		var bUseBatch = false;
 		// search in all schemas for the use batch extension
-		jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
+		each(this.oMetadata.dataServices.schema, function(i, oSchema) {
 			if (oSchema.entityContainer) {
-				jQuery.each(oSchema.entityContainer, function(k, oEntityContainer) {
+				each(oSchema.entityContainer, function(k, oEntityContainer) {
 					if (oEntityContainer.extensions) {
-						jQuery.each(oEntityContainer.extensions, function(l, oExtension) {
+						each(oEntityContainer.extensions, function(l, oExtension) {
 							if (oExtension.name === "use-batch" && oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
 								bUseBatch = (typeof oExtension.value === 'string') ? (oExtension.value.toLowerCase() === 'true') : !!oExtension.value;
 								return false;
@@ -1053,7 +1052,7 @@ sap.ui.define([
 	ODataMetadata.prototype._getNavigationPropertyNames = function(oEntityType) {
 		var aNavProps = [];
 		if (oEntityType.navigationProperty) {
-			jQuery.each(oEntityType.navigationProperty, function(k, oNavigationProperty) {
+			each(oEntityType.navigationProperty, function(k, oNavigationProperty) {
 				aNavProps.push(oNavigationProperty.name);
 			});
 		}
@@ -1125,7 +1124,7 @@ sap.ui.define([
 		sProperty = sProperty.replace(/^\/|\/$/g, "");
 		var aParts = sProperty.split("/"); // path could point to a complex type or nav property
 
-		jQuery.each(oEntityType.property, function(k, oProperty) {
+		each(oEntityType.property, function(k, oProperty) {
 			if (oProperty.name === aParts[0]) {
 				oPropertyMetadata = oProperty;
 				return false;
@@ -1148,7 +1147,6 @@ sap.ui.define([
 			}
 		}
 
-		//jQuery.sap.assert(oPropertyMetadata, "PropertyType for property "+ aParts[0]+ " of EntityType " + oEntityType.name + " not found!");
 		return oPropertyMetadata;
 	};
 
@@ -1157,7 +1155,7 @@ sap.ui.define([
 		var that = this;
 
 		// Abort pending xml request
-		jQuery.each(this.mRequestHandles, function(sKey, oRequestHandle) {
+		each(this.mRequestHandles, function(sKey, oRequestHandle) {
 			oRequestHandle.bSuppressErrorHandlerCall = true;
 			oRequestHandle.abort();
 			delete that.mRequestHandles[sKey];
@@ -1223,7 +1221,7 @@ sap.ui.define([
 				"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag()
 			};
 
-		jQuery.extend(oDefaultHeaders, this.mHeaders, oLangHeader);
+		extend(oDefaultHeaders, this.mHeaders, oLangHeader);
 
 		var oRequest = {
 			headers: oDefaultHeaders,
@@ -1290,9 +1288,9 @@ sap.ui.define([
 		if (this.mEntitySets) {
 			delete this.mEntitySets;
 		}
-		jQuery.each(oTarget.dataServices.schema, function(i, oTargetSchema) {
+		each(oTarget.dataServices.schema, function(i, oTargetSchema) {
 			// find schema
-			jQuery.each(oSource.dataServices.schema, function(j, oSourceSchema) {
+			each(oSource.dataServices.schema, function(j, oSourceSchema) {
 				if (oSourceSchema.namespace === oTargetSchema.namespace) {
 					//merge entityTypes
 					if (oSourceSchema.entityType) {
@@ -1313,9 +1311,9 @@ sap.ui.define([
 					}
 					//find EntityContainer if any
 					if (oTargetSchema.entityContainer && oSourceSchema.entityContainer) {
-						jQuery.each(oTargetSchema.entityContainer, function(k, oTargetContainer) {
+						each(oTargetSchema.entityContainer, function(k, oTargetContainer) {
 							//merge entitySets
-							jQuery.each(oSourceSchema.entityContainer, function(l, oSourceContainer) {
+							each(oSourceSchema.entityContainer, function(l, oSourceContainer) {
 								if (oSourceContainer.entitySet) {
 									if (oSourceContainer.name === oTargetContainer.name) {
 										//cache entitySet names
