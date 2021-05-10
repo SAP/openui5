@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Operator',
+	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/enum/EditMode',
 	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/enum/BaseType',
@@ -28,7 +29,8 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/m/ScrollContainer',
 	'sap/m/Button',
-	'sap/m/Panel'
+	'sap/m/Panel',
+	'sap/base/Log'
 ], function(
 		Control,
 		ManagedObjectObserver,
@@ -37,6 +39,7 @@ sap.ui.define([
 		Condition,
 		FilterOperatorUtil,
 		Operator,
+		ConditionType,
 		EditMode,
 		FieldDisplay,
 		BaseType,
@@ -56,7 +59,8 @@ sap.ui.define([
 		mLibrary,
 		ScrollContainer,
 		Button,
-		Panel
+		Panel,
+		Log
 		) {
 	"use strict";
 
@@ -429,36 +433,46 @@ sap.ui.define([
 
 			if (aSeparatedText && aSeparatedText.length > 1) {
 				setTimeout(function() {
-					var oType = _getType.call(this);
+					var oFormatOptions = merge({}, this.getFormatOptions());
+					delete oFormatOptions.fieldHelpID;
+					delete oFormatOptions.conditionModelName;
+					oFormatOptions.maxConditions = 1;
+					oFormatOptions.display = FieldDisplay.Value;
+					//oFormatOptions.valueType = this._getFieldType.call(this, oOperator.name, 0); //TODO using the _getFieldType for better support of types
+					var oConditionType = new ConditionType(oFormatOptions);
 
 					var iLength = aSeparatedText.length;
 					var aConditions = this.getConditions();
 					for (var i = 0; i < iLength; i++) {
 						if (aSeparatedText[i]) {
-							var sValue = aSeparatedText[i];
-							var aValues = sValue.split(/\t/g); // if two values exist, use it as Between
-							var oOperator;
-							if (aValues.length == 2 && aValues[0] && aValues[1]) {
-								oOperator = FilterOperatorUtil.getOperator("BT");
-							} else {
-								aValues = [sValue.trim()];
-								oOperator = _getDefaultOperator.call(this);
-							}
-							sValue = oOperator ? oOperator.format(Condition.createCondition(oOperator.name, aValues)) : aValues[0];
+							var sValue = aSeparatedText[i].trim();
 
-							if (oOperator) {
-								var oCondition = oOperator.getCondition(sValue, oType, FieldDisplay.Value, true);
-								if (oCondition) {
-									oCondition.validated = ConditionValidated.NotValidated;
-									if (aConditions.length > iIndex) {
-										// overwrite existing condition
-										aConditions.splice(iIndex, 1, oCondition);
-									} else {
-										// add new condition
-										aConditions.push(oCondition);
-									}
-									iIndex++;
+							var aValues = sValue.split(/\t/g); // if two values exist, use it as Between and create a "a...z" value
+							if (aValues.length == 2 && aValues[0] && aValues[1]) {
+								var oOperator = FilterOperatorUtil.getOperator("BT");
+
+								sValue = oOperator.tokenFormat;
+								for (var j = 0; j < 2; j++) {
+									sValue = sValue.replace(new RegExp("\\{" + j + "\\}", "g"), aValues[j]);
 								}
+
+							}
+
+							try {
+								var oCondition = oConditionType.parseValue(sValue, "string");
+								oConditionType.validateValue(oCondition);
+
+								if (aConditions.length > iIndex) {
+									// overwrite existing condition
+									aConditions.splice(iIndex, 1, oCondition);
+								} else {
+									// add new condition
+									aConditions.push(oCondition);
+								}
+								iIndex++;
+
+							} catch (error) {
+								Log.error("Paste handling", "the pasted value '" + sValue + "' could not be handled! " + error.message);
 							}
 						}
 					}
