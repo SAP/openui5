@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/odata/CountMode"
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/fl/Utils"
 ], function(
 	UriParameters,
 	Log,
@@ -15,15 +16,15 @@ sap.ui.define([
 	BindingMode,
 	JSONModel,
 	ODataModel,
-	CountMode
+	CountMode,
+	FlUtils
 ) {
 	"use strict";
 
 	Controller.extend("sap.ui.rta.qunitrta.ComplexTest", {
 		onInit: function () {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
-			var sManifestUrl = this._sResourcePath + "/manifest.json";
-			var oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data;
+			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
 			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
 
 			var iAutoRespond = iServerDelay || 1000;
