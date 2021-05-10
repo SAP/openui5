@@ -8,14 +8,13 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/dom/units/Rem",
-	"sap/ui/Device",
 	"./AvatarGroupRenderer",
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
-], function(library, Control, ItemNavigation, Rem, Device, AvatarGroupRenderer, Button, mLibrary, ResizeHandler, KeyCodes, Core) {
+], function(library, Control, ItemNavigation, Rem, AvatarGroupRenderer, Button, mLibrary, ResizeHandler, KeyCodes, Core) {
 	"use strict";
 
 	var AvatarGroupType = library.AvatarGroupType;
@@ -40,29 +39,11 @@ sap.ui.define([
 		XL: 2.75
 	};
 
-	// TODO: IE specific code
-	var AVATAR_MARGIN_GROUP_IE = {
-		XS: 0.75,
-		S: 1.25,
-		M: 1.62,
-		L: 2,
-		XL: 2.75
-	};
-
 	var AVATAR_MARGIN_INDIVIDUAL = {
 		XS: 0.0625,
 		S: 0.125,
 		M: 0.125,
 		L: 0.125,
-		XL: 0.25
-	};
-
-	// TODO: IE specific code
-	var AVATAR_MARGIN_INDIVIDUAL_IE = {
-		XS: 0.06,
-		S: 0.12,
-		M: 0.12,
-		L: 0.12,
 		XL: 0.25
 	};
 
@@ -176,9 +157,6 @@ sap.ui.define([
 		this._onResizeRef = this._onResize.bind(this);
 		this._iCurrentAvatarColorNumber = 1;
 		this._bShowMoreButton = false;
-
-		// TODO: IE specific code
-		this._bIEBrowser = Device.browser.internet_explorer;
 	};
 
 	AvatarGroup.prototype.exit = function () {
@@ -398,11 +376,10 @@ sap.ui.define([
 		var sGroupType = this.getGroupType(),
 			iMargin;
 
-		// TODO: IE specific code
 		if (sGroupType === AvatarGroupType.Group) {
-			iMargin = this._bIEBrowser ? AVATAR_MARGIN_GROUP_IE[sAvatarDisplaySize] : AVATAR_MARGIN_GROUP[sAvatarDisplaySize];
+			iMargin = AVATAR_MARGIN_GROUP[sAvatarDisplaySize];
 		} else {
-			iMargin = this._bIEBrowser ? AVATAR_MARGIN_INDIVIDUAL_IE[sAvatarDisplaySize] : AVATAR_MARGIN_INDIVIDUAL[sAvatarDisplaySize];
+			iMargin = AVATAR_MARGIN_INDIVIDUAL[sAvatarDisplaySize];
 		}
 
 		return iMargin;
@@ -464,17 +441,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AvatarGroup.prototype._getWidth = function () {
-		var oDomRef = this.getDomRef(),
-			iWidth;
-
-		// TODO: IE specific code
-		if (this._bIEBrowser && oDomRef) {
-			iWidth = parseFloat(oDomRef.getBoundingClientRect().width.toFixed(2));
-		} else {
-			iWidth = Math.ceil(this.$().width());
-		}
-
-		return iWidth;
+		return Math.ceil(this.$().width());
 	};
 
 	/**
