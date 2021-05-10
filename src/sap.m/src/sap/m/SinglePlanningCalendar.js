@@ -952,7 +952,7 @@ function(
 	 * @param {String} sKey The key of the view
 	 * @public
 	 * @since 1.75
-	 * @returns {sap.m.SinglePlanningCalendarView} the view object matched the given sKey, of null if there is no such view
+	 * @returns {sap.m.SinglePlanningCalendarView} the view object which matched the given <code>sKey</code>, or null if there is no such view
 	 */
 	SinglePlanningCalendar.prototype.getViewByKey = function (sKey) {
 		var aViews = this.getViews(),
@@ -969,7 +969,7 @@ function(
 	 * Finds the view object by given ID
 	 * @param {String} sId The ID of the view
 	 * @private
-	 * @returns {sap.m.SinglePlanningCalendarView} the view object matched the given sId, of null if there is no such view
+	 * @returns {sap.m.SinglePlanningCalendarView} the view object which matched the given <code>sId</code>, or null if there is no such view
 	 */
 	SinglePlanningCalendar.prototype._getViewById = function (sId) {
 		var aViews = this.getViews(),
