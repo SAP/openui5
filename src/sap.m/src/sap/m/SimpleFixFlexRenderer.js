@@ -9,7 +9,9 @@ sap.ui.define([],
 		 * SimpleFixFlex renderer
 		 * @namespace
 		 */
-		var SimpleFixFlexRenderer = {};
+		var SimpleFixFlexRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -20,11 +22,9 @@ sap.ui.define([],
 		SimpleFixFlexRenderer.render = function (oRm, oControl) {
 			var oFixContent = oControl.getFixContent();
 
-			oRm.write('<div');
-			oRm.addClass('sapUiSimpleFixFlex');
-			oRm.writeControlData(oControl);
-			oRm.writeClasses();
-			oRm.write('>');
+			oRm.openStart('div', oControl);
+			oRm.class('sapUiSimpleFixFlex');
+			oRm.openEnd();
 
 			if (oFixContent) {
 				oRm.renderControl(oFixContent.addStyleClass('sapUiSimpleFixFlexFixed'));
@@ -32,7 +32,7 @@ sap.ui.define([],
 
 			this.renderFlexContentContainer(oRm, oControl);
 
-			oRm.write('</div>');
+			oRm.close('div');
 		};
 
 		/**
@@ -44,26 +44,23 @@ sap.ui.define([],
 		SimpleFixFlexRenderer.renderFlexContentContainer = function (oRm, oControl) {
 			var aFlexContent = oControl.getFlexContent();
 
-			oRm.write('<div');
-			oRm.writeAttribute("id", oControl.getId() + "-flexContentContainer");
-			oRm.addClass('sapUiSimpleFixFlexFlexContentContainer');
-			oRm.writeClasses();
-			oRm.write('>');
+			oRm.openStart('div', oControl.getId() + "-flexContentContainer");
+			oRm.class('sapUiSimpleFixFlexFlexContentContainer');
+			oRm.openEnd();
 
 			if (aFlexContent) {
-				oRm.write('<div');
-				oRm.addClass('sapUiSimpleFixFlexFlexContent');
-				oRm.writeClasses();
-				oRm.write('>');
+				oRm.openStart('div');
+				oRm.class('sapUiSimpleFixFlexFlexContent');
+				oRm.openEnd();
 
 				aFlexContent.forEach(function(oControl) {
 					oRm.renderControl(oControl);
 				});
 
-				oRm.write('</div>');
+				oRm.close('div');
 			}
 
-			oRm.write('</div>');
+			oRm.close('div');
 		};
 
 		return SimpleFixFlexRenderer;
