@@ -4,27 +4,18 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
-	'sap/ui/core/format/NumberFormat',
-	'sap/ui/model/CompositeType',
-	'sap/ui/model/FormatException',
-	'sap/ui/model/ParseException',
-	'sap/ui/model/ValidateException',
-	'sap/ui/core/LocaleData',
 	"sap/base/strings/hash",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isEmptyObject"
-],
-	function(
-		NumberFormat,
-		CompositeType,
-		FormatException,
-		ParseException,
-		ValidateException,
-		LocaleData,
-		hash,
-		jQuery,
-		isEmptyObject
-	) {
+	"sap/base/util/each",
+	"sap/base/util/extend",
+	"sap/base/util/isEmptyObject",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/model/CompositeType",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException"
+], function(hash, each, extend, isEmptyObject, LocaleData, NumberFormat, CompositeType,
+		FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -126,7 +117,7 @@ sap.ui.define([
 
 			// we have a unit pattern, so we create a customUnit definition for the format options
 			if (mUnitPatterns) {
-				var mUnitClone = jQuery.extend({}, mUnitPatterns);
+				var mUnitClone = extend({}, mUnitPatterns);
 				mUnitClone.decimals = (oFormatArgs.decimals != undefined) ? oFormatArgs.decimals : mUnitClone.decimals;
 				mUnitClone.precision = (oFormatArgs.precision != undefined) ? oFormatArgs.precision : mUnitClone.precision;
 				oFormatArgs.customUnits = {};
@@ -137,7 +128,7 @@ sap.ui.define([
 		var oFormatOptionsMerged = oFormatArgs;
 		// merge the format options defined via constructor with the bound dynamic format options
 		if (this.oFormatOptions) {
-			oFormatOptionsMerged = jQuery.extend({}, this.oFormatOptions, oFormatArgs);
+			oFormatOptionsMerged = extend({}, this.oFormatOptions, oFormatArgs);
 		}
 
 		// Only subclasses of the Unit type use a NumberFormat instance cache.
@@ -294,7 +285,7 @@ sap.ui.define([
 				aValues = this.oInputFormat.parse(vValue);
 			}
 			iValue = aValues[0];
-			jQuery.each(this.oConstraints, function(sName, oContent) {
+			each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":
 						if (iValue < oContent) {
