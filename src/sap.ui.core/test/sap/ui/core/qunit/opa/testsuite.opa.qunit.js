@@ -15,8 +15,7 @@ sap.ui.define([
 		"actions/EnterText": {
 			title: "QUnit Page for sap.ui.test.actions.EnterText",
 			qunit: {
-				testTimeout: 5000,
-				noglobals: true
+				testTimeout: 5000
 			},
 			module: "./actions/EnterText.qunit"
 		},
@@ -46,13 +45,24 @@ sap.ui.define([
 					"unitTests" : "test-resources/sap/ui/core/qunit/opa/"
 				}
 			},
-			qunit: {
-				noglobals: true
-			},
 			ui5: {
 				libs: "sap.m"
 			},
 			module: "./actions/Press.qunit"
+		},
+		"actions/Scroll": {
+			title: "QUnit Page for sap.ui.test.actions.Scroll",
+			module: "./actions/Scroll.qunit",
+			qunit: {
+				noglobals: false
+			},
+			loader: {
+				paths: {
+					"sap/uxap/sample": "test-resources/sap/uxap/demokit/sample",
+					"sap/m/sample": "test-resources/sap/m/demokit/sample",
+					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+				}
+			}
 		},
 		"autowaiter/autoWaiter": {
 			title: "QUnit Page for sap.ui.test.autoWaiter",
