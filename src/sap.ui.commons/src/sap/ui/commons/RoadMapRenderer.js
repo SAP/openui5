@@ -843,7 +843,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/base/security/e
 	//  -IE:      right side has scrollleft=0, scrolling is indicated with positive values
 	//  -Safari:  left side has scrollleft=0, scrolling is indicated with positive values
 	var getRTLFactor = function(){
-		return sap.ui.getCore().getConfiguration().getRTL() && !Device.browser.msie ? -1 : 1;
+		return sap.ui.getCore().getConfiguration().getRTL() ? -1 : 1;
 	};
 
 

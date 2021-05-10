@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/ui/commons/Title",
 	"sap/ui/commons/Button",
-	"sap/ui/Device",
 	"sap/ui/commons/library",
 	"sap/ui/commons/layout/VerticalLayout"
 ], function(
@@ -26,7 +25,6 @@ sap.ui.define([
 	CoreTitle,
 	Title,
 	Button,
-	Device,
 	commonsLibrary,
 	VerticalLayout
 ) {
@@ -321,11 +319,7 @@ sap.ui.define([
 
 		// make sure it is actually filled
 		var sColor = jQuery(oContDomRef).css("backgroundColor");
-		if (Device.browser.internet_explorer && (!document.documentMode || document.documentMode < 9)) {
-			assert.ok(sColor === "#f2f2f2", "Panel must by default be filled with a white color (Actual: " + sColor + ")");
-		} else {
-			assert.equal(sColor, "rgba(255, 255, 255, 0.8)",	"Panel must by default be filled with a white color");
-		}
+		assert.equal(sColor, "rgba(255, 255, 255, 0.8)", "Panel must by default be filled with a white color");
 
 		// now switch to "Plain" and do the same tests
 		oCtrl.setAreaDesign(AreaDesign.Plain);
@@ -336,11 +330,7 @@ sap.ui.define([
 		assert.ok(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignPlain") > -1, "Panel should now have AreaDesign.Plain");
 		assert.equal(oRootDomRef2.className.indexOf("sapUiPanelAreaDesignFill"), -1, "Panel must not anymore have AreaDesign.Fill");
 		sColor = jQuery(oContDomRef2).css("backgroundColor");
-		if (Device.browser.internet_explorer && (!document.documentMode || document.documentMode < 9)) {
-			assert.ok(sColor === "white" || sColor === "#ffffff", "Panel should now be filled with a white color (Actual: " + sColor + ")");
-		} else {
-			assert.equal(sColor, "rgb(255, 255, 255)", "Panel should now be filled with a white color");
-		}
+		assert.equal(sColor, "rgb(255, 255, 255)", "Panel should now be filled with a white color");
 
 		// now switch to "transparent" and do the same tests
 		oCtrl.setAreaDesign(AreaDesign.Transparent);

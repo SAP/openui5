@@ -4,15 +4,14 @@
 
 // Provides control sap.ui.commons.RatingIndicator.
 sap.ui.define([
-    'sap/ui/thirdparty/jquery',
-    './library',
-    'sap/ui/core/Control',
-    'sap/ui/core/theming/Parameters',
-    './RatingIndicatorRenderer',
-    'sap/ui/Device',
-    'sap/ui/events/checkMouseEnterOrLeave'
+	'sap/ui/thirdparty/jquery',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/theming/Parameters',
+	'./RatingIndicatorRenderer',
+	'sap/ui/events/checkMouseEnterOrLeave'
 ],
-	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer, Device, checkMouseEnterOrLeave) {
+	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer, checkMouseEnterOrLeave) {
 	"use strict";
 
 
@@ -277,24 +276,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RatingIndicator.prototype.onfocusout = function(oEvent){
-		//Do not react on focusouts of child DOM refs in IE
-		if (Device.browser.msie && oEvent.target != this.getDomRef()) {
-			return;
-		}
 		this.saveValue(oEvent, false, this.iHoveredRating);
-	};
-
-	/**
-	 * Behavior implementation which is executed when the control gets the focus.
-	 *
-	 * @param {jQuery.Event} oEvent
-	 * @private
-	 */
-	RatingIndicator.prototype.onfocusin = function(oEvent){
-		//Avoid focusing child DOM refs in IE
-		if (Device.browser.msie && oEvent.target != this.getDomRef()) {
-			this.getDomRef().focus();
-		}
 	};
 
 	/**

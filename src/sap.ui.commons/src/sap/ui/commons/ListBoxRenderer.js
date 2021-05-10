@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.ListBox
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/security/encodeXML', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/ui/Device'],
-	function(jQuery, encodeXML, Renderer, IconPool, Device) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/security/encodeXML', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
+	function(jQuery, encodeXML, Renderer, IconPool) {
 	"use strict";
 
 
@@ -30,20 +30,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/security/encodeXML', 'sap/u
 		// Do not copy this approach for now!
 		// Main problem: renderers are supposed to create a string, not DOM elements, e.g. so they could also run on the server. At least that was the idea in former times.
 		if (ListBoxRenderer.borderWidths === undefined) {
-			if (Device.browser.msie) { // all known IE versions have this issue (min-width does not include borders)  TODO: update
-				var oFakeLbx = document.createElement("div");
-				var oStaticArea = sap.ui.getCore().getStaticAreaRef();
-				oStaticArea.appendChild(oFakeLbx);
-				oFakeLbx.className = "sapUiLbx";
-				var $fakeLbx = jQuery(oFakeLbx);
-				$fakeLbx.css("width", "50px");
-				$fakeLbx.css("min-width", "100px");
-				ListBoxRenderer.borderWidths = oFakeLbx.offsetWidth - 100;
-				oStaticArea.removeChild(oFakeLbx);
-			} else {
-				// all other browsers are fine
-				ListBoxRenderer.borderWidths = 0;
-			}
+			ListBoxRenderer.borderWidths = 0;
 		}
 
 		rm.addClass("sapUiLbx");
@@ -87,10 +74,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/security/encodeXML', 'sap/u
 		// min/max-widths need fixes in IE
 		var sMinWidth = oListBox.getMinWidth();
 		var sMaxWidth = oListBox.getMaxWidth();
-		if (Device.browser.msie) {
-			sMinWidth = ListBoxRenderer.fixWidth(sMinWidth);
-			sMaxWidth = ListBoxRenderer.fixWidth(sMaxWidth);
-		}
 		if (sMinWidth) {
 			rm.addStyle("min-width", sMinWidth);
 		}

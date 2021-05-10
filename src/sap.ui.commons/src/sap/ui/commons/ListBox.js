@@ -269,20 +269,6 @@ sap.ui.define([
 			var oItemDomRef = div.firstChild.firstChild.firstChild;
 			ListBox._fItemHeight = oItemDomRef.offsetHeight;
 
-			// subpixel rendering strategy in IE >= 9 can lead to the total being larger than the sum of heights
-			if (Device.browser.msie && (document.documentMode == 9 || document.documentMode == 10)) { // TODO: browser version check... not good...
-				var cs = document.defaultView.getComputedStyle(oItemDomRef.firstChild, "");
-				var h = parseFloat(cs.getPropertyValue("height").split("px")[0]);
-				if (!(typeof h === "number") || !(h > 0)) { // sometimes cs.getPropertyValue("height") seems to return "auto"
-					h = jQuery(oItemDomRef.firstChild).height();
-				}
-				var pt = parseFloat(cs.getPropertyValue("padding-top").split("px")[0]);
-				var pb = parseFloat(cs.getPropertyValue("padding-bottom").split("px")[0]);
-				var bt = parseFloat(cs.getPropertyValue("border-top-width").split("px")[0]);
-				var bb = parseFloat(cs.getPropertyValue("border-bottom-width").split("px")[0]);
-				ListBox._fItemHeight = h + pt + pb + bt + bb;
-			}
-
 			// remove the dummy
 			oStaticArea.removeChild(div);
 		}

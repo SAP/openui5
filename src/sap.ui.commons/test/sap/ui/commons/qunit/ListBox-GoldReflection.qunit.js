@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/commons/ListBox",
 	"sap/ui/core/ListItem",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/Device",
 	"sap/ui/core/library"
 ], function(
 	createAndAppendDiv,
 	ListBox,
 	ListItem,
 	jQuery,
-	Device,
 	coreLibrary
 ) {
 	"use strict";
@@ -95,8 +93,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// check width in DOM
-		var expectedSetting = (Device.browser.internet_explorer
-				&& (!document.documentMode || document.documentMode < 9)) ? "398px" : "400px"; // the visual result is 400px in both cases
+		var expectedSetting = "400px";
 		var $DomRef = jQuery("#ListBox1");
 		assert.equal($DomRef.css("min-width"), expectedSetting, "min-width should be set in CSS");
 		assert.equal($DomRef[0].offsetWidth, 400, "actual ListBox width should be determined by the min-width");
@@ -112,8 +109,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// check width in DOM
-		var expectedSetting = (Device.browser.internet_explorer
-				&& (!document.documentMode || document.documentMode < 9)) ? "48px" : "50px"; // the visual result is 50px in both cases
+		var expectedSetting = "50px";
 		var $DomRef = jQuery("#ListBox1");
 		assert.equal($DomRef.css("max-width"), expectedSetting, "max-width should be set in CSS");
 		assert.equal($DomRef[0].offsetWidth, 50, "actual ListBox width should be determined by the max-width");
