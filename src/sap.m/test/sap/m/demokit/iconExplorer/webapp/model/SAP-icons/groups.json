@@ -1181,7 +1181,8 @@
 				{ "name" : "table-column" },
 				{ "name" : "keyboard-and-mouse" },
 				{ "name" : "touch" },
-				{ "name" : "s4hana" }
+				{ "name" : "s4hana" },
+				{ "name" : "qr-code" }
 			]
 		},
 		{
