@@ -2,13 +2,12 @@
  * ${copyright}
  */
 
-/* global QUnit */
+/* global QUnit, XMLHttpRequest */
 
 sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/json/JSONModel",
-	"jquery.sap.global",
-	"jquery.sap.sjax"
+	"jquery.sap.global"
 ], function (
 	ResourceModel,
 	JSONModel,
@@ -195,18 +194,28 @@ sap.ui.define([
 				assert.strictEqual(typeof mEntry, "object", sControlName + " defines optional entry /palette/");
 				assert.strictEqual(aValidGroups.indexOf(mEntry.group) > -1, true, "palette entry defines valid group " + mEntry.group);
 				if (mEntry.icons) { //icons in palette optional
-					Object.keys(mEntry.icons).forEach(function(sKey) {
+					return Promise.all(Object.keys(mEntry.icons).map(function(sKey) {
 						var sIcon = mEntry.icons[sKey];
 						assert.strictEqual(typeof sIcon, "string", "palette/icons/" + sKey + " entry defines icon path " + sIcon);
-						// TODO: migration not possible. jQuery.sap.sjax is deprecated. Please use native <code>XMLHttpRequest</code>
-						var oResult = jQuery.sap.sjax({
-							url: sap.ui.require.toUrl(sIcon) + ""
+
+						return new Promise(function (resolve, reject) {
+							var xhr = new XMLHttpRequest();
+							xhr.open("GET", sap.ui.require.toUrl(sIcon) + "", true);
+							xhr.onload = function () {
+								if (xhr.readyState === 4) {
+									if (xhr.status === 200) {
+										if (sIcon.indexOf(".svg") === sIcon.length - 4) {
+											assert.equal(xhr.responseXML.documentElement && xhr.responseXML.documentElement.tagName, "svg", "File " + sIcon + " starts with a svg node");
+										}
+										resolve(); // existence is tested by resolving
+									} else {
+										reject();
+									}
+								}
+							};
+							xhr.send();
 						});
-						assert.ok(oResult.status === "success", "File " + sIcon + " does exist. Check entry palette/icons/" + sKey);
-						if (sIcon.indexOf(".svg") === sIcon.length - 4) {
-							assert.ok(oResult.data.documentElement && oResult.data.documentElement.tagName === "svg", "File " + sIcon + " starts with a svg node");
-						}
-					});
+					}));
 				}
 			}
 		},
@@ -216,15 +225,28 @@ sap.ui.define([
 				if (mEntry.create) { //icons in palette optional
 					var sCreateTemplate = mEntry.create;
 					assert.strictEqual(typeof sCreateTemplate, "string", "templates/create entry defines fragment path to " + sCreateTemplate);
-					// TODO: migration not possible. jQuery.sap.sjax is deprecated. Please use native <code>XMLHttpRequest</code>
-					var oData = jQuery.sap.sjax({url: sap.ui.require.toUrl(sCreateTemplate) + ""});
-					assert.ok(oData.data.documentElement && oData.data.documentElement.localName === "FragmentDefinition", "File " + sCreateTemplate + " exists and starts with a FragmentDefinition node");
-					/*
-					var oControl = sap.ui.xmlfragment({
-						fragmentContent: oData.data.documentElement,
-						oController: this
+					return new Promise(function (resolve, reject) {
+						var xhr = new XMLHttpRequest();
+						xhr.open("GET", sap.ui.require.toUrl(sCreateTemplate) + "", true);
+						xhr.onload = function () {
+							if (xhr.readyState === 4) {
+								if (xhr.status === 200) {
+									assert.ok(xhr.responseXML.documentElement && xhr.responseXML.documentElement.localName === "FragmentDefinition", "File " + sCreateTemplate + " exists and starts with a FragmentDefinition node");
+									resolve();
+								} else {
+									reject();
+								}
+							}
+						};
+
+						xhr.send();
 					});
-					*/
+									/*
+									var oControl = sap.ui.xmlfragment({
+										fragmentContent: oData.data.documentElement,
+										oController: this
+									});
+									*/
 					//check the controls type
 					//assert.strictEqual((oControl instanceof jQuery.sap.getObject(sControlName)) ||  , true, sCreateTemplate + " created a control with the right type " + sControlName + "/" + oControl.getMetadata().getName());
 				}
@@ -254,19 +276,20 @@ sap.ui.define([
 			var oControlMetadata = oModel._oControlMetadata;
 			var sControlName = oControlMetadata.getName();
 			QUnit.test(sControlName + ": Checking entries in designtime data", function(assert) {
-				Object.keys(mModelChecks).forEach(function(sPath) {
+				return Promise.all(Object.keys(mModelChecks).map(function(sPath) {
 					var oCheck = mModelChecks[sPath];
 					var vValue = oModel.getProperty(sPath);
 					if (vValue === undefined && !oCheck.optional) {
 						assert.equal(false, true, sControlName + " does not define mandatory entry " + sPath);
+						return Promise.resolve();
 					} else if (vValue !== undefined && oCheck.optional) {
 						assert.equal(true, true, sControlName + " does define optional entry " + sPath);
-						oCheck.check(assert, vValue, sControlName);
+						return oCheck.check(assert, vValue, sControlName);
 					} else if (vValue !== undefined && !oCheck.optional) {
 						assert.equal(true, true, sControlName + " does define mandatory entry " + sPath);
-						oCheck.check(assert, vValue, sControlName);
+						return oCheck.check(assert, vValue, sControlName);
 					}
-				});
+				}));
 			});
 		});
 	}
