@@ -156,6 +156,17 @@ sap.ui.define([
 		assert.strictEqual(fixedListItem.$().hasClass('sapTntNavLIItemSelected'), false, 'The class "sapTntNavLIItemSelected" should be removed from the deselected item');
 	});
 
+	QUnit.test('Passing null on empty control (empty aggregations) should not throw error', function (assert) {
+		var oEmptySideNav = new SideNavigation();
+		oEmptySideNav.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		oEmptySideNav.setSelectedItem(null);
+		assert.ok(true, "No error was thrown");
+
+		oEmptySideNav.destroy();
+	});
+
 	QUnit.module('Events', {
 		beforeEach: function () {
 			this.sideNavigation = new SideNavigation({
