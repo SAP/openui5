@@ -3,6 +3,8 @@
 /* Base theme                                                  */
 /* =========================================================== */
 
+@_sap_ui_integration_AnalyticsCloud_ScrollBorder: transparent;
+
 .sapFCardContent {
 	.sapFCardAnalyticsCloudContent {
 		svg {
@@ -60,26 +62,28 @@
 				fill: @sapUiTileBackground;
 			}
 
-			.highcharts-scrollbar-track {
-				fill: @sapUiScrollBarTrackColor;
-				stroke: @sapUiScrollBarBorderColor;
+			.highcharts-scrollbar * {
+				fill: transparent;
+				stroke: transparent;
 			}
 
-			.highcharts-scrollbar-button,
-			.highcharts-scrollbar-thumb {
-				fill: @sapUiScrollBarFaceColor;
-				stroke: @sapUiScrollBarBorderColor;
-			}
+			&:hover .highcharts-scrollbar {
+				.highcharts-scrollbar-thumb {
+					fill: @sapUiScrollBarFaceColor;
+					width: 6px;
+				}
 
-			.highcharts-scrollbar-button:hover,
-			.highcharts-scrollbar-thumb:hover {
-				fill: @sapUiScrollBarHoverFaceColor;
-			}
+				.highcharts-scrollbar-arrow {
+					fill: @sapUiScrollBarFaceColor;
+					transform: translate(-3.1px, 2px) scale(0.8);
+				}
 
-			.highcharts-scrollbar-arrow,
-			.highcharts-scrollbar-rifles {
-				stroke: @sapUiScrollBarSymbolColor;
-				fill: @sapUiScrollBarSymbolColor;
+				.highcharts-scrollbar-track {
+					fill: @sapBackgroundColor;
+					stroke: @_sap_ui_integration_AnalyticsCloud_ScrollBorder;
+					width: 6px;
+					transform: translateX(-0.5px);
+				}
 			}
 		}
 	}
