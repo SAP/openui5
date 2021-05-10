@@ -15,6 +15,7 @@ sap.ui.define([
 	 */
 	var ResponsiveLayoutRenderer = Renderer.extend(FormLayoutRenderer);
 
+	ResponsiveLayoutRenderer.apiVersion = 2;
 
 	ResponsiveLayoutRenderer.getMainClass = function(){
 		return "sapUiFormResLayout";
