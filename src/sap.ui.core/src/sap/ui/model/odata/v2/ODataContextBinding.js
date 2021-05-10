@@ -4,14 +4,13 @@
 
 //Provides an abstraction for list bindings
 sap.ui.define([
-	'sap/ui/model/Context',
-	'sap/ui/model/ContextBinding',
-	'sap/ui/model/ChangeReason',
-	"sap/ui/thirdparty/jquery"
-],
-		function(Context, ContextBinding, ChangeReason, jQuery) {
+	"sap/base/util/extend",
+	"sap/base/util/merge",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Context",
+	"sap/ui/model/ContextBinding"
+], function(extend, merge, ChangeReason, Context, ContextBinding) {
 	"use strict";
-
 
 	/**
 	 * Constructor for odata.ODataContextBinding
@@ -44,7 +43,7 @@ sap.ui.define([
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
 			this.sRefreshGroupId = undefined;
 			this.bPendingRequest = false;
-			this.mParameters = jQuery.extend(true, {}, this.mParameters);
+			this.mParameters = merge({}, this.mParameters);
 			this.bCreatePreliminaryContext = this.mParameters.createPreliminaryContext || oModel.bPreliminaryContext;
 			this.bUsePreliminaryContext = this.mParameters.usePreliminaryContext || oModel.bPreliminaryContext;
 			this.mParameters.createPreliminaryContext = this.bCreatePreliminaryContext;
@@ -225,7 +224,7 @@ sap.ui.define([
 				this.bPendingRequest = true;
 			}
 			if (this.sRefreshGroupId) {
-				mParameters = jQuery.extend({},this.mParameters);
+				mParameters = extend({},this.mParameters);
 				mParameters.groupId = this.sRefreshGroupId;
 			}
 			var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
