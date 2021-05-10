@@ -1,0 +1,17 @@
+{
+  "1.91.0": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "6ff3a6afaffa7ad98d89b9e0782f84a5a5e4b51d",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl adds the updateVariant to the comp data"
+      },
+      {
+        "id": "8b2963f4aec5d66affc6f29d08f4817586115c69",
+        "type": "FIX",
+        "text": " sap.ui.fl StorageUtils orders comp changes by time"
+      }
+    ]
+  }
+}

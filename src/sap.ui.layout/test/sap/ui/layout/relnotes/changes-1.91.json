@@ -1,0 +1,40 @@
+{
+  "1.91.0": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "42466f02711031bf9b2b2f99138522d85614e0ca",
+        "type": "FIX",
+        "text": " layout.Responsive*LayoutRenderer: activate semantic rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170166928"
+          }
+        ]
+      },
+      {
+        "id": "20fbeca3115273ea93c0bb64c86337d151aff457",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Pagination is only shown for multiple pages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170093454"
+          }
+        ]
+      },
+      {
+        "id": "20cbc302516960ce991e6aa39d3340da94cc5d7a",
+        "type": "FIX",
+        "text": " sap.ui.layout.cssgrid.GridBoxLayout: Updated documentation for the \"boxesPerRowConfig\" property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170109589"
+          }
+        ]
+      }
+    ]
+  }
+}
