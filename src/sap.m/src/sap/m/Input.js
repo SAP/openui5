@@ -1695,7 +1695,7 @@ function(
 	/**
 	 * Refreshes delayed items.
 	 *
-	 * @public
+	 * @private
 	 */
 	Input.prototype._refreshItemsDelayed = function () {
 		clearTimeout(this._iRefreshListTimeout);
