@@ -366,8 +366,6 @@ sap.ui.define([
 		this._headerBiggerThanAllowedHeight = false;
 		this._oStickySubheader = null;
 		this._bStickySubheaderInTitleArea = false;
-		/* TODO remove after the end of support for Internet Explorer */
-		this._bMSBrowser = Device.browser.internet_explorer || Device.browser.edge || false;
 		this._oScrollHelper = new ScrollEnablement(this, this.getId() + "-content", {
 			horizontal: false,
 			vertical: true
@@ -1141,12 +1139,10 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._canSnapHeaderOnScroll = function () {
-		var iMaxScrollPosition = this._getMaxScrollPosition(),
-			iThreshold = this._bMSBrowser ? 1 : 0;
+		var iMaxScrollPosition = this._getMaxScrollPosition();
 
 		if (this._bHeaderInTitleArea  && iMaxScrollPosition > 0) { // when snapping with scroll, the header will be in the content area
 			iMaxScrollPosition += this._getHeaderHeight();
-			iMaxScrollPosition -= iThreshold;
 		}
 		return iMaxScrollPosition > this._getSnappingHeight();
 	};
@@ -1199,9 +1195,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		var iThreshold = this._bMSBrowser ? 1 : 0;
-
-		return this._getMaxScrollPosition() > iThreshold;
+		return this._getMaxScrollPosition() > 0;
 	};
 
 	/**
