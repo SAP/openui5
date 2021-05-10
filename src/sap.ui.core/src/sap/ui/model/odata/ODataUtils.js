@@ -12,16 +12,15 @@
 
 // Provides class sap.ui.model.odata.ODataUtils
 sap.ui.define([
-	'sap/ui/model/Sorter',
-	'sap/ui/model/FilterProcessor',
-	'sap/ui/core/format/DateFormat',
-	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
 	"sap/base/security/encodeURL",
-	"sap/ui/core/CalendarType"
-],
-	function(Sorter, FilterProcessor, DateFormat, Log, assert, jQuery, encodeURL, CalendarType ) {
+	"sap/base/util/each",
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/Sorter"
+], function(assert, Log, encodeURL, each, CalendarType, DateFormat, FilterProcessor, Sorter) {
 	"use strict";
 
 	var oDateTimeFormat,
@@ -223,7 +222,7 @@ sap.ui.define([
 			return "";
 		}
 		var aUrlParams = [];
-		jQuery.each(mParams, function (sName, oValue) {
+		each(mParams, function (sName, oValue) {
 			if (typeof oValue === "string" || oValue instanceof String) {
 				oValue = encodeURIComponent(oValue);
 			}
@@ -395,7 +394,7 @@ sap.ui.define([
 
 		if (aFilters) {
 			sFilterParam += "(";
-			jQuery.each(aFilters, function(i, oFilter) {
+			each(aFilters, function(i, oFilter) {
 				if (oFilter._bMultiFilter) {
 					sFilterParam += that._resolveMultiFilter(oFilter, oMetadata, oEntityType);
 				} else if (oFilter.sPath) {

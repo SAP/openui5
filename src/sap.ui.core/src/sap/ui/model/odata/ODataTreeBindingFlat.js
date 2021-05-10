@@ -4,29 +4,18 @@
 
 // Provides class sap.ui.model.odata.ODataTreeBindingFlat
 sap.ui.define([
-	'sap/ui/model/Filter',
-	'sap/ui/model/TreeBinding',
-	'sap/ui/model/odata/v2/ODataTreeBinding',
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/TreeBindingUtils',
-	"sap/base/util/uid",
-	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isEmptyObject"
-],
-	function(
-		Filter,
-		TreeBinding,
-		ODataTreeBinding,
-		ChangeReason,
-		TreeBindingUtils,
-		uid,
-		Log,
-		assert,
-		jQuery,
-		isEmptyObject
-	) {
+	"sap/base/Log",
+	"sap/base/util/extend",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/uid",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/TreeBinding",
+	"sap/ui/model/TreeBindingUtils",
+	"sap/ui/model/odata/v2/ODataTreeBinding"
+], function(assert, Log, extend, isEmptyObject, uid, ChangeReason, Filter, TreeBinding,
+		TreeBindingUtils, ODataTreeBinding) {
 	"use strict";
 
 	/**
@@ -2946,7 +2935,7 @@ sap.ui.define([
 			this.oTreeProperties["hierarchy-level-for"], "LE", this.getNumberOfExpandedLevels()
 		));
 
-		mUrlParameters = jQuery.extend({}, this.mParameters);
+		mUrlParameters = extend({}, this.mParameters);
 		mUrlParameters.select =  sKeySelect +
 									"," + this.oTreeProperties["hierarchy-node-for"] +
 									"," + this.oTreeProperties["hierarchy-node-descendant-count-for"] +
@@ -2990,7 +2979,7 @@ sap.ui.define([
 		));
 		*/
 
-		mUrlParameters = jQuery.extend({}, this.mParameters);
+		mUrlParameters = extend({}, this.mParameters);
 		mUrlParameters.select =  this.oTreeProperties["hierarchy-sibling-rank-for"];
 
 		// request the siblings position for moved nodes only as siblings position are already available for added nodes
