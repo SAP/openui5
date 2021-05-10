@@ -828,14 +828,7 @@ function(
 		}
 
 		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
-		if (window.clipboardData) {
-			/* TODO remove after the end of support for Internet Explorer */
-			//IE
-			sOriginalText = window.clipboardData.getData("Text");
-		} else {
-			// Chrome, Firefox, Safari
-			sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
-		}
+		sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 
 		aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
 
