@@ -104,7 +104,7 @@ function(
 		 * </ul>
 		 *
 		 * <b>Note:</b> The control uses a JavaScript number to keep its value, which
-		 * has a certain precision limitation.
+		 * has a certain precision limit.
 		 *
 		 * In general, exponential notation is used:
 		 * <ul>
@@ -118,7 +118,7 @@ function(
 		 * Also, the JavaScript number persists its precision up to 16 digits. If the user enters
 		 * a number with a greater precision, the value will be rounded.
 		 *
-		 * This limitation comes from JavaScript itself and it cannot be worked around in a
+		 * This restriction comes from JavaScript itself and it cannot be worked around in a
 		 * feasible way.
 		 *
 		 * <b>Note:</b> Formatting of decimal numbers is browser dependent, regardless of
