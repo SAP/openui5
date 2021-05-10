@@ -6,12 +6,10 @@
 
 sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/model/json/JSONModel",
-	"jquery.sap.global"
+	"sap/ui/model/json/JSONModel"
 ], function (
 	ResourceModel,
-	JSONModel,
-	jQuery
+	JSONModel
 ) {
 	"use strict";
 	var aDesigntimeElements = [];
@@ -56,8 +54,7 @@ sap.ui.define([
 				var aElements = oLibrary.controls.concat(oLibrary.elements);
 				sLibrary = sTestLibrary;
 				sap.ui.require(aElements.map(function(s) {
-					// TODO: migration not possible. jQuery.sap.getResourceName is deprecated and private.
-					return jQuery.sap.getResourceName(s, "");
+					return s.replace(/\./g, "/");
 				}), function() {
 					//all controls are loaded, now all libs are loaded
 					var mLazyLibraries = sap.ui.getCore().getLoadedLibraries();
