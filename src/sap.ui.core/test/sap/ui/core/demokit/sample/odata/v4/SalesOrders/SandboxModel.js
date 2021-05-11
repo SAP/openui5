@@ -216,9 +216,30 @@ sap.ui.define([
 				"SalesOrderList('NEW1')/SO_2_SOITEM(SalesOrderID='NEW1',ItemPosition='10')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
 					source : "SalesOrderList('NEW1')-SO_2_SOITEM('10').json"
 				},
-				"POST SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value" : {
-					source : "POST-SalesOrderList('NEW1')-SO_2_SOITEM.json"
+				"SalesOrderList('NEW1')/SO_2_SOITEM(SalesOrderID='NEW1',ItemPosition='11')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
+					source : "SalesOrderList('NEW1')-SO_2_SOITEM('11').json"
 				},
+				"POST SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value" : [{
+					code : 400,
+					ifMatch : /"ProductID":"HT-1003","Quantity":"1",/,
+					message : {
+						error : {
+							code : "OO/000",
+							message : "Quantity for Product HT-1003 has to be a multiple of 3",
+							"@SAP__common.numericSeverity" : 4,
+							"@SAP__Common.longtextUrl" : "",
+							target : "Quantity",
+							"@SAP__Common.additionalTargets" : ["ProductID"],
+							details : []
+						}
+					}
+				}, {
+					code : 200,
+					ifMatch : /"ProductID":"HT-1003","Quantity":"3",/,
+					source : "POST-SalesOrderList('NEW1')-SO_2_SOITEM_11.json"
+				}, {
+					source : "POST-SalesOrderList('NEW1')-SO_2_SOITEM.json"
+				}],
 				"SalesOrderList('NEW2')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber)" : {
 					source : "SalesOrderList('NEW2').json"
 				},
@@ -328,11 +349,11 @@ sap.ui.define([
 				"SalesOrderList('0500000001')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$filter=ItemPosition%20gt%20'0000000000'&$select=DeliveryDate,GrossAmount,ItemPosition,Note,NoteLanguage,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=100" : {
 					source : "SalesOrderItemsList_1.json"
 				},
-				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=75)?custom-option=value" : {
+				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=75,Approver='')?custom-option=value" : {
 					code : 400,
 					source : "SalesOrderSimulateDiscount(Discount=75).json"
 				},
-				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=25)?custom-option=value" : {
+				"SalesOrderList('0500000002')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSimulateDiscount(Discount=25,Approver='')?custom-option=value" : {
 					source : "SalesOrderSimulateDiscount(Discount=25).json"
 				},
 				"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000000'%20or%20SalesOrderID%20eq%20'0500000001'%20or%20SalesOrderID%20eq%20'0500000002'%20or%20SalesOrderID%20eq%20'0500000003'%20or%20SalesOrderID%20eq%20'0500000004'%20or%20SalesOrderID%20eq%20'0500000005'%20or%20SalesOrderID%20eq%20'0500000006'%20or%20SalesOrderID%20eq%20'0500000007'%20or%20SalesOrderID%20eq%20'0500000008'%20or%20SalesOrderID%20eq%20'0500000009'&$select=SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$top=10" : {

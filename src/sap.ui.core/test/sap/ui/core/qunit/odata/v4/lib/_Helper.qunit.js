@@ -3627,50 +3627,282 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getAnnotation: success", function (assert) {
+		var oMessage = {"~key~" : "~value~"};
+
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oMessage), "~sName~").returns("~key~");
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation(oMessage, "~sName~"), "~value~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAnnotation: failure", function (assert) {
+		var oMessage = {"undefined" : "~value~"};
+
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oMessage), "~sName~").returns(undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation(oMessage, "~sName~"), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAnnotationKey", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.getAnnotationKey({}, ".AnyAnnotation"), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotationKey({"@Foo.NoAnyAnnotation" : "n/a"},
+			".AnyAnnotation"), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotationKey({"@Foo.Bar" : "n/a"}, "bar"), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotationKey({"message@Core.AnyAnnotation" : "n/a"},
+			".AnyAnnotation"), undefined);
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot distinguish @Core.AnyAnnotation from @SAP__core.AnyAnnotation",
+				undefined, sClassName);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotationKey({
+				"@Core.AnyAnnotation" : "1.0",
+				"@SAP__core.AnyAnnotation" : "1.0"
+			}, ".AnyAnnotation"), undefined, "duplicate alias");
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot distinguish @Core.AnyAnnotation from @Foo.AnyAnnotation",
+				undefined, sClassName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot distinguish @Foo.AnyAnnotation from @SAP__core.AnyAnnotation",
+				undefined, sClassName);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotationKey({
+				"@Core.AnyAnnotation" : "1.0",
+				"@Foo.AnyAnnotation" : "1.0",
+				"@SAP__core.AnyAnnotation" : "1.0"
+			}, ".AnyAnnotation"), undefined, "toggling sAnyAnnotation is not enough");
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotationKey({"@SAP__core.AnyAnnotation" : "1.0"},
+			".AnyAnnotation"), "@SAP__core.AnyAnnotation");
+
+		// code under test
+		assert.strictEqual(
+			_Helper.getAnnotationKey({"@Core.AnyAnnotation" : "2.1"},".AnyAnnotation"),
+			"@Core.AnyAnnotation");
+
+		// code under test
+		assert.strictEqual(
+			_Helper.getAnnotationKey({"@Org.OData.Core.V1.AnyAnnotation" : "3.2"},
+				".AnyAnnotation"),
+			"@Org.OData.Core.V1.AnyAnnotation");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getContentID", function (assert) {
-		// code under test
-		assert.strictEqual(_Helper.getContentID({}), undefined);
+		var oMessage = {};
+
+		this.mock(_Helper).expects("getAnnotation")
+			.withExactArgs(sinon.match.same(oMessage), ".ContentID")
+			.returns("~ContentID~");
+
+		assert.strictEqual(_Helper.getContentID(oMessage), "~ContentID~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAdditionalTargets", function (assert) {
+		var oMessage = {};
+
+		this.mock(_Helper).expects("getAnnotation")
+			.withExactArgs(sinon.match.same(oMessage), ".additionalTargets")
+			.returns("~additionalTargets~");
+
+		assert.strictEqual(_Helper.getAdditionalTargets(oMessage), "~additionalTargets~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("adjustTargetsInError: technical error", function (assert) {
+		var oError = {};
+
+		this.mock(_Helper).expects("adjustTargets").never();
 
 		// code under test
-		assert.strictEqual(_Helper.getContentID({"@Foo.NoContentID" : "n/a"}), undefined);
+		_Helper.adjustTargetsInError(oError, "oOperationMetadata", "sParameterContextPath",
+			"sContextPath");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("adjustTargetsInError: no details", function (assert) {
+		var oError = {error : {}};
+
+		this.mock(_Helper).expects("adjustTargets")
+			.withExactArgs(sinon.match.same(oError.error), "oOperationMetadata",
+				"sParameterContextPath", "sContextPath");
 
 		// code under test
-		assert.strictEqual(_Helper.getContentID({"message@Core.ContentID" : "n/a"}), undefined);
+		_Helper.adjustTargetsInError(oError, "oOperationMetadata", "sParameterContextPath",
+			"sContextPath");
+	});
 
-		this.oLogMock.expects("warning")
-			.withExactArgs("Cannot distinguish @Core.ContentID from @SAP__core.ContentID",
-				undefined, sClassName);
+	//*********************************************************************************************
+	QUnit.test("adjustTargetsInError: with details", function (assert) {
+		var oDetail0 = {},
+			oDetail1 = {},
+			oError = {
+				error : {
+					details : [oDetail0, oDetail1]
+				}
+			},
+			oHelperMock = this.mock(_Helper);
 
-		// code under test
-		assert.strictEqual(_Helper.getContentID({
-				"@Core.ContentID" : "1.0",
-				"@SAP__core.ContentID" : "1.0"
-			}), undefined, "duplicate alias");
-
-		this.oLogMock.expects("warning")
-			.withExactArgs("Cannot distinguish @Core.ContentID from @Foo.ContentID",
-				undefined, sClassName);
-		this.oLogMock.expects("warning")
-			.withExactArgs("Cannot distinguish @Foo.ContentID from @SAP__core.ContentID",
-				undefined, sClassName);
-
-		// code under test
-		assert.strictEqual(_Helper.getContentID({
-				"@Core.ContentID" : "1.0",
-				"@Foo.ContentID" : "1.0",
-				"@SAP__core.ContentID" : "1.0"
-			}), undefined, "toggling sContentID is not enough");
-
-		// code under test
-		assert.strictEqual(_Helper.getContentID({"@SAP__core.ContentID" : "1.0"}), "1.0");
+		oHelperMock.expects("adjustTargets")
+			.withExactArgs(sinon.match.same(oError.error), "oOperationMetadata",
+				"sParameterContextPath", "sContextPath");
+		oHelperMock.expects("adjustTargets")
+			.withExactArgs(sinon.match.same(oDetail0), "oOperationMetadata",
+				"sParameterContextPath", "sContextPath");
+		oHelperMock.expects("adjustTargets")
+			.withExactArgs(sinon.match.same(oDetail1), "oOperationMetadata",
+					"sParameterContextPath", "sContextPath");
 
 		// code under test
-		assert.strictEqual(_Helper.getContentID({"@Core.ContentID" : "2.1"}), "2.1");
+		_Helper.adjustTargetsInError(oError, "oOperationMetadata", "sParameterContextPath",
+			"sContextPath");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("adjustTargets: no target", function (assert) {
+		var oMessage = {};
+
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oMessage), ".additionalTargets")
+			.returns(undefined);
+		this.mock(_Helper).expects("getAdjustedTarget").never();
 
 		// code under test
-		assert.strictEqual(_Helper.getContentID({"@Org.OData.Core.V1.ContentID" : "3.2"}), "3.2");
+		_Helper.adjustTargets(oMessage, "oOperationMetadata", "sParameterContextPath",
+			"sContextPath");
+
+		assert.deepEqual(oMessage, {target : undefined});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("adjustTargets: without additional targets", function (assert) {
+		var oMessage = {target : "target"};
+
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oMessage), ".additionalTargets")
+			.returns(undefined);
+		this.mock(_Helper).expects("getAdjustedTarget")
+			.withExactArgs("target", "oOperationMetadata", "sParameterContextPath", "sContextPath")
+			.returns("~adjusted~");
 
 		// code under test
-		assert.strictEqual(_Helper.getContentID({"@Foo.ContentID" : "bar"}), "bar");
+		_Helper.adjustTargets(oMessage, "oOperationMetadata", "sParameterContextPath",
+			"sContextPath");
+
+		assert.deepEqual(oMessage, {target : "~adjusted~"});
+	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bTargetIsValid) {
+	var sTitle = "adjustTargets: with additional targets, target is valid: " + bTargetIsValid;
+
+	QUnit.test(sTitle, function (assert) {
+		var oHelperMock = this.mock(_Helper),
+			oMessage = {
+				target : "target",
+				"@foo.additionalTargets" : ["additional1", "foo", "additional2"]
+			};
+
+		oHelperMock.expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oMessage), ".additionalTargets")
+			.returns("@foo.additionalTargets");
+		oHelperMock.expects("getAdjustedTarget")
+			.withExactArgs("target", "oOperationMetadata", "sParameterContextPath", "sContextPath")
+			.returns(bTargetIsValid ? "~adjusted~" : undefined);
+		oHelperMock.expects("getAdjustedTarget")
+			.withExactArgs("additional1", "oOperationMetadata", "sParameterContextPath",
+				"sContextPath")
+			.returns("~adjusted1~");
+		oHelperMock.expects("getAdjustedTarget")
+			.withExactArgs("foo", "oOperationMetadata", "sParameterContextPath",
+				"sContextPath")
+			.returns(undefined);
+		oHelperMock.expects("getAdjustedTarget")
+			.withExactArgs("additional2", "oOperationMetadata", "sParameterContextPath",
+				"sContextPath")
+			.returns("~adjusted2~");
+
+		// code under test
+		_Helper.adjustTargets(oMessage, "oOperationMetadata", "sParameterContextPath",
+			"sContextPath");
+
+		if (bTargetIsValid) {
+			assert.deepEqual(oMessage, {
+				target : "~adjusted~",
+				"@foo.additionalTargets" : ["~adjusted1~", "~adjusted2~"]
+			});
+		} else {
+			assert.deepEqual(oMessage, {
+				target : "~adjusted1~",
+				"@foo.additionalTargets" : ["~adjusted2~"]
+			});
+		}
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getAdjustedTarget: unbound operation", function (assert) {
+		var oOperationMetadata = {
+				$Parameter : [{$Name : "baz"}, {$Name : "foo"}]
+			};
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getAdjustedTarget("bar", oOperationMetadata, "~parameterContextPath~"),
+			undefined);
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getAdjustedTarget("foo", oOperationMetadata, "~parameterContextPath~"),
+			"~parameterContextPath~/foo");
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getAdjustedTarget("foo/bar", oOperationMetadata, "~parameterContextPath~"),
+			"~parameterContextPath~/foo/bar");
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getAdjustedTarget("$Parameter/foo/bar", oOperationMetadata,
+				"~parameterContextPath~"),
+			"~parameterContextPath~/foo/bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAdjustedTarget: bound operation", function (assert) {
+		var oOperationMetadata = {
+				$IsBound : true,
+				$Parameter : [{$Name : "foo"}]
+			};
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getAdjustedTarget("$Parameter/foo/bar", oOperationMetadata,
+				"~parameterContextPath~", "~contextPath~"),
+			"~contextPath~/bar");
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getAdjustedTarget("$Parameter/bar", oOperationMetadata,
+				"~parameterContextPath~", "~contextPath~"),
+			undefined);
 	});
 });

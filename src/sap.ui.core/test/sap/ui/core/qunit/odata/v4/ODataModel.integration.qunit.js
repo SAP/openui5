@@ -569,15 +569,16 @@ sap.ui.define([
 		checkMessages : function (assert) {
 			var aCurrentMessages = sap.ui.getCore().getMessageManager().getMessageModel()
 					.getObject("/").map(function (oMessage) {
-						var sTarget = oMessage.getTarget()
-								.replace(rTransientPredicate, "($uid=...)");
+						var aTargets = oMessage.getTargets().map(function (sTarget) {
+							return sTarget.replace(rTransientPredicate, "($uid=...)");
+						});
 
 						return {
 							code : oMessage.getCode(),
 							descriptionUrl : oMessage.getDescriptionUrl(),
 							message : oMessage.getMessage(),
 							persistent : oMessage.getPersistent(),
-							target : sTarget,
+							targets : aTargets,
 							technical : oMessage.getTechnical(),
 							technicalDetails : oMessage.getTechnicalDetails(),
 							type : oMessage.getType()
@@ -1425,13 +1426,21 @@ sap.ui.define([
 		 */
 		expectMessages : function (aExpectedMessages, bHasMatcher) {
 			this.aMessages = aExpectedMessages.map(function (oMessage) {
-				return Object.assign({
-					code : undefined,
-					descriptionUrl : undefined,
-					persistent : false,
-					target : "",
-					technical : false
-				}, oMessage);
+				var aTargets = oMessage.targets || [oMessage.target || ""],
+					oClone = Object.assign({
+						code : undefined,
+						descriptionUrl : undefined,
+						persistent : false,
+						targets : aTargets,
+						technical : false
+					}, oMessage);
+
+				if (oMessage.target && oMessage.targets) {
+					throw new Error("Use either target or targets, not both!");
+				}
+				delete oClone.target;
+
+				return oClone;
 			});
 			this.aMessages.bHasMatcher = bHasMatcher;
 
@@ -4839,6 +4848,7 @@ sap.ui.define([
 	// - parameters change because of change in property binding
 	// JIRA: CPOUI5UISERVICESV3-2010
 	// JIRA: CPOUI5ODATAV4-29, check message target for unbound action
+	// JIRA: CPOUI5ODATAV4-852, support multiple targets in messages
 	QUnit.test("Allow binding of operation parameters: Changing with controls", function (assert) {
 		var oModel = createTeaBusiModel({groupId : "$direct"}),
 			oOperation,
@@ -4904,7 +4914,8 @@ sap.ui.define([
 			// JIRA: CPOUI5ODATAV4-29
 			var oError = createError({
 					message : "Invalid Budget",
-					target : "Budget"
+					target : "Foo",
+					"@Common.additionalTargets" : ["Budget", "Bar", "TeamID"]
 				});
 
 			that.oLogMock.expects("error")
@@ -4921,7 +4932,10 @@ sap.ui.define([
 				.expectMessages([{
 					message : "Invalid Budget",
 					persistent : true,
-					target : "/ChangeTeamBudgetByID(...)/$Parameter/Budget",
+					targets : [
+						"/ChangeTeamBudgetByID(...)/$Parameter/Budget",
+						"/ChangeTeamBudgetByID(...)/$Parameter/TeamID"
+					],
 					technical : true,
 					type : "Error"
 				}])
@@ -29732,6 +29746,7 @@ sap.ui.define([
 	// Scenario: Create a context in a nested table w/o cache and see that error message and success
 	// message are bound to the corresponding control.
 	// BCP: 2070272170
+	// JIRA: CPOUI5ODATAV4-849
 	QUnit.test("BCP: 2070272170", function (assert) {
 		var oCreatedContext,
 			oInput,
@@ -29743,20 +29758,26 @@ sap.ui.define([
 </Table>\
 <Table id="equipments" items="{EMPLOYEE_2_EQUIPMENTS}">\
 	<Input id="category" value="{Category}"/>\
+	<Input id="equipmentID" value="{ID}"/>\
+	<Input id="equipmentName" value="{Name}"/>\
 </Table>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$skip=0&$top=100", {
 				value : [{
 					ID : "1",
-					EMPLOYEE_2_EQUIPMENTS : [{Category : "F1", ID : 11}]
+					EMPLOYEE_2_EQUIPMENTS : [{Category : "F1", ID : 11, Name : "F1-11"}]
 				}]
 			})
 			.expectChange("id", ["1"])
-			.expectChange("category", []);
+			.expectChange("category", [])
+			.expectChange("equipmentID", [])
+			.expectChange("equipmentName", []);
 
 		return this.createView(assert, sView).then(function () {
-			that.expectChange("category", ["F1"]);
+			that.expectChange("category", ["F1"])
+				.expectChange("equipmentID", ["11"])
+				.expectChange("equipmentName", ["F1-11"]);
 
 			oTable = that.oView.byId("equipments");
 			oTable.setBindingContext(
@@ -29766,6 +29787,8 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("category", ["F2", "F1"])
+				.expectChange("equipmentID", [null, "11"])
+				.expectChange("equipmentName", ["", "F1-11"])
 				.expectRequest({
 					method : "POST",
 					payload : {Category : "F2"},
@@ -29773,13 +29796,18 @@ sap.ui.define([
 				}, createError({
 					code : "CODE",
 					message : "Invalid category",
-					target : "Category"
+					target : "Category",
+					"@Common.additionalTargets" : ["ID", "Name"]
 				}))
 				.expectMessages([{
 					code : "CODE",
 					message : "Invalid category",
 					persistent : true,
-					target : "/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS($uid=...)/Category",
+					targets : [
+						"/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS($uid=...)/Category",
+						"/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS($uid=...)/ID",
+						"/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS($uid=...)/Name"
+					],
 					technical : true,
 					type : "Error"
 				}]);
@@ -29796,24 +29824,32 @@ sap.ui.define([
 			return that.checkValueState(assert, oInput, "Error", "Invalid category");
 		}).then(function () {
 			that.expectChange("category", ["F3"])
+				.expectChange("equipmentID", ["33"])
+				.expectChange("equipmentName", ["F3-33"])
 				.expectRequest({
 					method : "POST",
 					payload : {Category : "F3"},
 					url : "EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS"
 				}, {
 					Category : "F3",
-					ID : "42",
+					ID : 33,
+					Name : "F3-33",
 					__FAKE__Messages : [{
 						code : "CODE",
 						message : "Correct category",
 						numericSeverity : 1,
-						target : "Category"
+						target : "Category",
+						additionalTargets : ["ID", "Name"]
 					}]
 				})
 				.expectMessages([{
 					code : "CODE",
 					message : "Correct category",
-					target : "/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS(Category='F3',ID=42)/Category",
+					targets : [
+						"/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS(Category='F3',ID=33)/Category",
+						"/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS(Category='F3',ID=33)/ID",
+						"/EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS(Category='F3',ID=33)/Name"
+					],
 					type : "Success"
 				}]);
 

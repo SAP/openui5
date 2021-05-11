@@ -3249,17 +3249,17 @@ sap.ui.define([
 
 		//*****************************************************************************************
 		QUnit.test("processBatch (real OData): error in change set", function (assert) {
-			var oCommonError,
+			var sCommonMessage,
 				oEntity = {
 					"@odata.etag" : "*"
 				},
 				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), oModelInterface);
 
 			function onError(oError) {
-				if (oCommonError) {
-					assert.strictEqual(oError, oCommonError);
+				if (sCommonMessage) {
+					assert.strictEqual(oError.message, sCommonMessage);
 				} else {
-					oCommonError = oError;
+					sCommonMessage = oError.message;
 				}
 			}
 

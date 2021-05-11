@@ -29,15 +29,24 @@ sap.ui.define([
 				return false;
 			}
 			return aExpected.some(function (oExpected, i) {
-				if (oLog.component === oExpected.component &&
-						oLog.level === oExpected.level &&
-						oLog.message.indexOf(oExpected.message) >= 0 &&
-						(!oExpected.details ||
-							oLog.details.indexOf(oExpected.details) >= 0 )) {
+				if (oLog.component === oExpected.component
+						&& oLog.level === oExpected.level
+						&& matches(oLog.message, oExpected.message)
+						&& (!oExpected.details || matches(oLog.details, oExpected.details))) {
 					aExpected.splice(i, 1);
 					return true;
 				}
 			});
+		}
+
+		function matches(sActual, vExpected) {
+			return vExpected instanceof RegExp
+				? vExpected.test(sActual)
+				: sActual.includes(vExpected);
+		}
+
+		function replacer(_sKey, vValue) {
+			return vValue instanceof RegExp ? vValue.toString() : vValue;
 		}
 
 		Opa.getContext().iNextLogIndex = aLogEntries.length;
@@ -56,7 +65,8 @@ sap.ui.define([
 						"Unexpected warning or error found: " + sComponent
 						+ " Level: " + oLog.level
 						+ " Message: " + oLog.message
-						+ (oLog.details ? " Details: " + oLog.details : ""));
+						+ (oLog.details ? " Details: " + oLog.details : "")
+						+ "\r\nExpected one of: " + JSON.stringify(aExpected, replacer, "\t"));
 				}
 			}
 		});
@@ -263,7 +273,7 @@ sap.ui.define([
 								// But, if only ONE Message is in the popover, then
 								// the message cannot (and need not) be selected because the
 								// details are already shown
-								return;
+								return null;
 							}
 							return this.waitFor({
 								controlType : "sap.m.StandardListItem",

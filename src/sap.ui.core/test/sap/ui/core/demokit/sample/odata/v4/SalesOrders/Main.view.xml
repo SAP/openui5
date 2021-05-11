@@ -165,7 +165,8 @@
 										press="onCloseSimulateDiscountDialog"/>
 								</buttons>
 								<form:SimpleForm ariaLabelledBy="SimulateDiscountDialog"
-										id="SimulateDiscountForm" layout="ResponsiveGridLayout">
+										id="SimulateDiscountForm" layout="ResponsiveGridLayout"
+										editable="true">
 									<Label text="Sales Order" />
 									<Text id="SimulateDiscountForm::SalesOrderID"
 										  text="{parameterContext>SalesOrder/SalesOrderID}"
@@ -177,6 +178,11 @@
 									<Label text="Reduction in %" />
 									<StepInput id="SimulateDiscountForm::Discount" min="0" max="100"
 										step="5" value="{parameterContext>Discount}"/>
+									<Label text="Approver"/>
+									<Input id="SimulateDiscountForm::Approver"
+										editable="true"
+										enabled="{= %{parameterContext>Discount} > 50}"
+										value="{parameterContext>Approver}"/>
 								</form:SimpleForm>
 								<form:SimpleForm ariaLabelledBy="SimulateDiscountDialog"
 										editable="true" id="SimulateDiscountResult"
