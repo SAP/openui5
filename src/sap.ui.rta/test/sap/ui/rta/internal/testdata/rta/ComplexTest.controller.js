@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
-	"sap/ui/model/odata/CountMode"
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/fl/Utils"
 ], function(
 	UriParameters,
 	Log,
@@ -19,16 +20,29 @@ sap.ui.define([
 	BindingMode,
 	JSONModel,
 	ODataModel,
-	CountMode
+	CountMode,
+	FlUtils
 ) {
 	"use strict";
+	function setTableModelData (oModel, sResourcePath) {
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", sResourcePath + "/TableData.json", true);
+		xhr.onload = function () {
+			if (xhr.readyState === 4) {
+				if (xhr.status >= 200 && xhr.status < 400) {
+					var oTableData = JSON.parse(xhr.responseText);
+					oModel.setData(oTableData.ProductCollection);
+				}
+			}
+		};
+		xhr.send();
+	}
 
 	return Controller.extend("sap.ui.rta.test.ComplexTest", {
 
 		onInit: function () {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
-			var sManifestUrl = this._sResourcePath + "/manifest.json";
-			var oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data;
+			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
 			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
 
 			var iAutoRespond = iServerDelay || 1000;
@@ -90,13 +104,11 @@ sap.ui.define([
 								enabled: true
 							};
 
-							var sTableDataURL = this._sResourcePath + "/TableData.json";
-							var oTableData = jQuery.sap.syncGetJSON(sTableDataURL).data;
-							var oTableModel = new JSONModel(oTableData.ProductCollection);
+							var oTableModel = new JSONModel();
 							oView.setModel(oTableModel, "ProductCollection");
+							setTableModelData(oTableModel, this._sResourcePath);
 
-							var oStateModel = new JSONModel();
-							oStateModel.setData(data);
+							var oStateModel = new JSONModel(data);
 							oView.setModel(oStateModel, "state");
 							oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
 						} else if (property === "smartFilterService") {
