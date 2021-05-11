@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/FormatException",
@@ -12,8 +11,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, ManagedObject, FormatException, ParseException, ValidateException,
-		JSONModel, BooleanType, ODataType, TestUtils) {
+], function (Log, ManagedObject, FormatException, ParseException, ValidateException, JSONModel,
+		BooleanType, ODataType, TestUtils) {
 	/*global QUnit */
 	"use strict";
 

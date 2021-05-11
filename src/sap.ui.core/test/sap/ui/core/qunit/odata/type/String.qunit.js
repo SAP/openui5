@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -10,7 +9,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, FormatException, ParseException, ValidateException, ODataType, StringType,
+], function (Log, FormatException, ParseException, ValidateException, ODataType, StringType,
 		TestUtils) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */

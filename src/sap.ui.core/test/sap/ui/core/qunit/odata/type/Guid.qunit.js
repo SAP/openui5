@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -10,8 +9,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Guid",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, FormatException, ParseException, ValidateException, Guid, ODataType,
-		TestUtils) {
+], function (Log, FormatException, ParseException, ValidateException, Guid, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";

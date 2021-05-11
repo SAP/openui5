@@ -2,7 +2,6 @@
  *{copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
@@ -12,8 +11,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, Control, NumberFormat, FormatException, ParseException, ValidateException,
-		Int64, ODataType, TestUtils) {
+], function (Log, Control, NumberFormat, FormatException, ParseException, ValidateException, Int64,
+		ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 

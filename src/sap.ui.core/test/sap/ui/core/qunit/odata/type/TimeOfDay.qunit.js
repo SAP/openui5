@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Control",
@@ -13,7 +12,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, CalendarType, Control, DateFormat, FormatException, ParseException,
+], function (Log, CalendarType, Control, DateFormat, FormatException, ParseException,
 		ValidateException, ODataType, TimeOfDay, TestUtils) {
 	/*global QUnit */
 	"use strict";
