@@ -5,9 +5,9 @@
 sap.ui.define([
 	"./_AnnotationHelperBasics",
 	"sap/base/Log",
-	"sap/base/util/extend",
-	"sap/base/util/merge"
-], function (_AnnotationHelperBasics, Log, extend, merge) {
+	"sap/base/util/deepExtend",
+	"sap/base/util/extend"
+], function (_AnnotationHelperBasics, Log, deepExtend, extend) {
 	"use strict";
 
 	var oBoolFalse = { "Bool" : "false" },
@@ -183,7 +183,7 @@ sap.ui.define([
 			if (sTypeClass === "EntitySet" && oExtension.value === sNonDefaultValue) {
 				// potentially nested structure so do deep copy
 				if (bDeepCopy) {
-					merge(o, mV2ToV4[oExtension.name]);
+					deepExtend(o, mV2ToV4[oExtension.name]);
 				} else {
 					// Warning: Passing false for the first argument is not supported!
 					extend(o, mV2ToV4[oExtension.name]);

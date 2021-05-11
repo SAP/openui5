@@ -6,10 +6,10 @@
 sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/util/deepExtend",
 	"sap/base/util/each",
 	"sap/base/util/includes",
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/merge",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode"
-], function(assert, Log, each, includes, isEmptyObject, merge, ChangeReason, Context, Filter,
+], function(assert, Log, deepExtend, each, includes, isEmptyObject, ChangeReason, Context, Filter,
 		FilterProcessor, FilterType, Sorter, SorterProcessor, TreeBinding, TreeBindingUtils,
 		CountMode, ODataUtils, OperationMode) {
 	"use strict";
@@ -1272,9 +1272,9 @@ sap.ui.define([
 				that.oFinalLengths["null"] = true;
 			}
 
-			that.oAllKeys = merge({}, that.oKeys);
-			that.oAllLengths = merge({}, that.oLengths);
-			that.oAllFinalLengths = merge({}, that.oFinalLengths);
+			that.oAllKeys = deepExtend({}, that.oKeys);
+			that.oAllLengths = deepExtend({}, that.oLengths);
+			that.oAllFinalLengths = deepExtend({}, that.oFinalLengths);
 
 			delete that.mRequestHandles[sRequestKey];
 			that.bNeedsUpdate = true;
@@ -1547,9 +1547,9 @@ sap.ui.define([
 			if (this.bClientOperation && (sFilterType === FilterType.Control || (sFilterType === FilterType.Application && !this.bUseServersideApplicationFilters))) {
 
 				if (this.oAllKeys) {
-					this.oKeys = merge({}, this.oAllKeys);
-					this.oLengths = merge({}, this.oAllLengths);
-					this.oFinalLengths = merge({}, this.oAllFinalLengths);
+					this.oKeys = deepExtend({}, this.oAllKeys);
+					this.oLengths = deepExtend({}, this.oAllLengths);
+					this.oFinalLengths = deepExtend({}, this.oAllFinalLengths);
 
 					this._applyFilter();
 					this._applySort();

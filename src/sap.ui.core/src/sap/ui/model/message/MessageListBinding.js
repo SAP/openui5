@@ -6,11 +6,11 @@
 sap.ui.define([
 	"sap/base/strings/hash",
 	"sap/base/util/deepEqual",
+	"sap/base/util/deepExtend",
 	"sap/base/util/each",
-	"sap/base/util/merge",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ClientListBinding"
-], function(hash, deepEqual, each, merge, ChangeReason, ClientListBinding) {
+], function(hash, deepEqual, deepExtend, each, ChangeReason, ClientListBinding) {
 	"use strict";
 
 	/**
@@ -113,7 +113,7 @@ sap.ui.define([
 		var oList = this.oModel._getObject(this.sPath, this.oContext);
 		if (Array.isArray(oList)) {
 			if (this.bUseExtendedChangeDetection) {
-				this.oList = merge([], oList);
+				this.oList = deepExtend([], oList);
 			} else {
 				this.oList = oList.slice(0);
 			}
