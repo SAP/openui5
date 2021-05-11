@@ -88,6 +88,17 @@ sap.ui.define([
 				ariaHasPopup: HasPopup.Dialog
 			});
 		},
+		createPasteButton: function (sIdPrefix) {
+			var oPasteButton = this._createButton(sIdPrefix + "-paste");
+
+			sap.ui.require(["sap/m/plugins/PasteProvider"], function(PasteProvider) {
+				oPasteButton.addDependent(new PasteProvider({
+					pasteFor: sIdPrefix + "-innerTable"
+				}));
+			});
+
+			return oPasteButton;
+		},
 		createExportButton: function(sIdPrefix, mEventInfo) {
 			if (!oRb) {
 				this._loadResourceBundle();

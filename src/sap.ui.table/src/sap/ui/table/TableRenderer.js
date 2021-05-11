@@ -144,6 +144,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		// Define group for F6 handling
 		rm.attr("data-sap-ui-fastnavgroup", "true");
+		// Define the paste region for the paste event
+		rm.attr("data-sap-ui-pasteregion", "true");
+
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "CONTAINER");
 		rm.openEnd();
 

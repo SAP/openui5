@@ -397,6 +397,7 @@ sap.ui.define([
 			"sap.m.ViewSettingsItem",
 			"sap.m.plugins.ColumnResizer",
 			"sap.m.plugins.DataStateIndicator",
+			"sap.m.plugins.PasteProvider",
 			"sap.m.plugins.PluginBase",
 			"sap.m.semantic.AddAction",
 			"sap.m.semantic.CancelAction",

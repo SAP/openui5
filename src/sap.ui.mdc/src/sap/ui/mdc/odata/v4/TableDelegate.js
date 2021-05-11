@@ -171,12 +171,11 @@ sap.ui.define([
 	 * Provides hook to update the binding info object that is used to bind the table to the model.
 	 *
 	 * Delegate objects that implement this method must ensure that at least the <code>path</code> key of the binding info is provided.
-	 * While defining binding info parameters to remove a parameter <code>undefined</code> must be set.
-	 * For more information, see {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
+	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code>. For more information, see {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
 	 *
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
 	 * @param {object} oDelegatePayload The delegate payload
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @function
 	 * @name sap.ui.mdc.odata.v4.TableDelegate.updateBindingInfo
 	 * @abstract
@@ -184,17 +183,17 @@ sap.ui.define([
 	//Delegate.updateBindingInfo = function(oTable, oDelegatePayload, oBindingInfo) { };
 
 	/**
-	 * Updates the rows binding of the table if possible, rebinds otherwise.
+	 * Updates the row binding of the table if possible, rebinds otherwise.
 	 *
 	 * Compares the current and previous state of the table to detect whether rebinding is necessary or not.
 	 * The diffing happens for the sorters, filters, aggregation, parameters, and the path of the binding.
 	 * Other {@link sap.ui.base.ManagedObject.AggregationBindingInfo binding info} keys like <code>events</code>,
-	 * <code>model</code>... must be provided in the {@link #updateBindingInfo updateBindingInfo} method always
+	 * <code>model</code>... must be provided in the {@link #updateBindingInfo updateBindingInfo} method always,
 	 * and those keys must not be changed conditionally.
 	 *
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
-	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instace of the table
+	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
 	 * @protected
 	 * @override
 	 */

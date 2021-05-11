@@ -149,7 +149,7 @@
 
     function applyPastedData(oEvent) {
         var aData = oEvent.getParameter("data");
-        sap.m.MessageToast.show("Pasted Data: " + aData);
+        sap.m.MessageToast.show("Table paste event: " + aData);
     }
 
 	var oSalaryFooter = new sap.m.Label({
@@ -285,6 +285,14 @@
 				text : "Keyboard Handling Test Page"
 			}),
 			new sap.m.ToolbarSpacer(),
+			new sap.m.Button({
+				dependents: new sap.m.plugins.PasteProvider({
+					pasteFor: "table",
+					paste: function(oEvent) {
+						//sap.m.MessageToast.show("PasteProvider: " + oEvent.getParameter("text"));
+					}
+				})
+			}),
 			new sap.m.Button({
 				tooltip: "View Settings",
 				icon: "sap-icon://drop-down-list",
@@ -456,7 +464,7 @@
 		}
 	});
 
-	var oTable = new sap.m.Table({
+	var oTable = new sap.m.Table("table", {
 		ariaLabelledBy: [oTableHeader.getContent()[0]],
 		growing: true,
 		growingThreshold: 5,

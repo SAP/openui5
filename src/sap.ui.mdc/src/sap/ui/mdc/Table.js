@@ -340,6 +340,16 @@ sap.ui.define([
 					type: "boolean",
 					group: "Behaviour",
 					defaultValue: true
+				},
+				/**
+				 * Controls the visibility of the Paste button.
+				 *
+				 * @since 1.91
+				 */
+				showPasteButton: {
+					type: "boolean",
+					group: "Behaviour",
+					defaultValue: false
 				}
 			},
 			aggregations: {
@@ -1284,6 +1294,21 @@ sap.ui.define([
 		return this;
 	};
 
+	Table.prototype.setShowPasteButton = function(bShowPasteButton) {
+		if ((bShowPasteButton = !!bShowPasteButton) == this.getShowPasteButton()) {
+			return this;
+		}
+
+		this.setProperty("showPasteButton", bShowPasteButton, true);
+		if (bShowPasteButton && !this._oPasteButton && this._oToolbar) {
+			this._oToolbar.insertEnd(this._getPasteButton(), 0);
+		} else if (this._oPasteButton) {
+			this._oPasteButton.setVisible(bShowPasteButton);
+		}
+
+		return this;
+	};
+
 	Table.prototype._createToolbar = function() {
 		if (!this._oToolbar) {
 			// Create Title
@@ -1300,6 +1325,7 @@ sap.ui.define([
 					this._oTitle
 				],
 				end: [
+					this._getPasteButton(),
 					this._getP13nButtons(),
 					this._getExportButton()
 				]
@@ -1458,6 +1484,12 @@ sap.ui.define([
 		}
 
 		return aButtons;
+	};
+
+	Table.prototype._getPasteButton = function() {
+		if (this.getShowPasteButton()) {
+			return this._oPasteButton || (this._oPasteButton = TableSettings.createPasteButton(this.getId()));
+		}
 	};
 
 	/**
@@ -2551,6 +2583,7 @@ sap.ui.define([
 
 		this._oTableReady = null;
 		this._oFullInitialize = null;
+		this._oPasteButton = null;
 
 		Control.prototype.exit.apply(this, arguments);
 	};

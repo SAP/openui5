@@ -17,9 +17,11 @@
 			selectionMode="Multi"
 			height="100%"
 			p13nMode="Column,Sort"
-			noDataText="This text is shown when nothing no data is present in the table"
-			paste="onPaste"
+			noDataText="This text is shown when no data is present in the table"
+			core:require="{Toast:'sap/m/MessageToast'}"
+			paste="Toast.show(${$parameters>data})"
 			enableExport="true"
+			showPasteButton="true"
 			beforeExport="onBeforeExport">
 		<mdc:type>
 			<mdcTable:GridTableType rowCountMode="Fixed" rowCount="20"/>

@@ -15,6 +15,10 @@ sap.ui.define([
 			this.getView().bindElement("/ProductList");
 		},
 
+		onPaste: function(oEvent) {
+			this.oDataStatePlugin.showMessage(oEvent.getParameter("data"));
+		},
+
 		onMessagePopoverPress : function (oEvent) {
 			var oSourceControl = oEvent.getSource();
 			this._getMessagePopover().then(function(oMessagePopover){

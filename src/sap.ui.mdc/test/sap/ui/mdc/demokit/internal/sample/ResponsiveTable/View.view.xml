@@ -33,6 +33,7 @@
 	<mdc:Table id="mdcTable"
 			header="Products"
 			showRowCount="false"
+			showPasteButton="true"
 			delegate='\{ "name": "sap/ui/mdc/sample/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
 			type="ResponsiveTable"
 			p13nMode="Column,Sort,Filter"

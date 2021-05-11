@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/Event",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/mdc/table/TableSettings",
 	"sap/ui/Device",
 	"sap/m/VBox",
@@ -29,7 +28,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/mdc/odata/TypeUtil",
 	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
-	"sap/ui/mdc/actiontoolbar/ActionToolbarAction"
+	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
+	"sap/m/plugins/PasteProvider"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -49,7 +49,6 @@ sap.ui.define([
 	JSONModel,
 	UI5Event,
 	containsOrEquals,
-	FlexUtil,
 	TableSettings,
 	Device,
 	VBox,
@@ -2327,6 +2326,32 @@ sap.ui.define([
 			this.oTable.setBusyIndicatorDelay(200);
 			assert.strictEqual(this.oTable.getBusyIndicatorDelay(), 200, "sap.ui.mdc.Table - Custom Busy Indicator Delay");
 			assert.strictEqual(this.oTable._oTable.getBusyIndicatorDelay(), 200, "Inner table - Custom Busy Indicator Delay");
+		}.bind(this));
+	});
+
+	QUnit.test("showPasteButton", function(assert) {
+		assert.notOk(this.oTable.getShowPasteButton(), "default value of showPasteButton=false");
+
+		this.oTable.setShowPasteButton(true);
+		assert.ok(this.oTable.getShowPasteButton(), "showPasteButton=true");
+
+		return this.oTable.initialized().then(function() {
+			assert.ok(this.oTable._oPasteButton, "Paste button created");
+
+			Core.applyChanges();
+			assert.ok(this.oTable._oPasteButton.getDomRef(), "Paste button is visible");
+
+			Promise.resolve().then(function() {
+				assert.ok(this.oTable._oPasteButton.getDependents()[0].isA("sap.m.plugins.PasteProvider"), "PasteProvider plugin is added to the paste button");
+				assert.equal(this.oTable._oPasteButton.getDependents()[0].getPasteFor(), this.getId() + "-innerTable", "PasteProvider plugin is added to the paste button");
+
+				this.oTable.setShowPasteButton();
+				assert.notOk(this.oTable._oPasteButton.getVisible(), "Paste button is not visible");
+
+				this.oTable.setShowPasteButton(true);
+				assert.ok(this.oTable._oPasteButton.getVisible(), "Paste button is now visible");
+			}.bind(this));
+
 		}.bind(this));
 	});
 

@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @abstract
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
 	 * @param {object} oDelegatePayload The delegate payload
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 */
 	TableDelegate.updateBindingInfo = function(oMDCTable, oDelegatePayload, oBindingInfo) {
 		oBindingInfo.parameters = {};
@@ -47,14 +47,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the rows binding of the table.
+	 * Updates the row binding of the table.
 	 *
-	 * The default implementation rebinds the table but model specific subclasses should call dedicated binding methods to update the binding instead of rebind.
+	 * The default implementation rebinds the table but model-specific subclasses must call dedicated binding methods to update the binding instead of using {@link #rebindTable}.
 	 *
 	 * @virtual
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
-	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instace of the table
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
+	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
 	 */
 	TableDelegate.updateBinding = function(oMDCTable, oBindingInfo, oBinding) {
 		this.rebindTable(oMDCTable, oBindingInfo);
@@ -64,7 +64,7 @@ sap.ui.define([
 	 * Rebinds the table.
 	 *
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 */
 	TableDelegate.rebindTable = function(oMDCTable, oBindingInfo) {
 		if (oMDCTable._oTable) {
