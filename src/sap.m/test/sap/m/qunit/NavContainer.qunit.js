@@ -2399,10 +2399,8 @@ sap.ui.define([
 
 		// Check
 		var fnOnBlur = function(oEvent) {
-			if (!Device.browser.msie) {
-				assert.strictEqual(oEvent.target, oFocusable1.getDomRef());
-				assert.ok(transitionComplete, "transition already completed");
-			}
+			assert.strictEqual(oEvent.target, oFocusable1.getDomRef());
+			assert.ok(transitionComplete, "transition already completed");
 			document.removeEventListener("blur", fnOnBlur, true);
 		};
 
