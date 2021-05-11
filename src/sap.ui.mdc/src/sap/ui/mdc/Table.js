@@ -1196,8 +1196,9 @@ sap.ui.define([
 				this._createContent();
 				this._bTableExists = true;
 			}
-		}.bind(this)).catch(function() {
+		}.bind(this)).catch(function(oError) {
 			this._onAfterTableCreated();
+			throw oError;
 		}.bind(this));
 	};
 
@@ -1249,8 +1250,9 @@ sap.ui.define([
 			delete this._pDelegatePreInit;
 			this._bFullyInitialized = true;
 			this._onAfterFullInitialization(true);
-		}.bind(this)).catch(function() {
+		}.bind(this)).catch(function(oError) {
 			this._onAfterFullInitialization();
+			throw oError;
 		}.bind(this));
 	};
 

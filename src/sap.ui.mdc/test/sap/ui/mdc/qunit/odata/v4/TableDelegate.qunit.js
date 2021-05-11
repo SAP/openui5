@@ -32,8 +32,7 @@ sap.ui.define([
 		var TestDelegate = Object.assign({}, TableDelegate);
 
 		TestDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
-			oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
-			oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
+			oBindingInfo.path = "ProductList";
 		};
 
 		return TestDelegate;
@@ -43,7 +42,7 @@ sap.ui.define([
 
 	var sTableView1 =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
-		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
+		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate" \}\'>' +
 		'<columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="Name">' +
 		'<m:Text text="{Name}" id="myTable--text0" /></mdcTable:Column>' +
 		'<mdcTable:Column id="myTable--column1" header="column 1" dataProperty="Country">' +
@@ -54,7 +53,7 @@ sap.ui.define([
 
 	var sTableView2 =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
-		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
+		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate" \}\'>' +
 		'<columns>' +
 		'<mdcTable:Column header="column 2" dataProperty="name_country"> ' +
 		'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
@@ -167,16 +166,21 @@ sap.ui.define([
 		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		var oTable = this.oTable;
+		var oPlugin;
+		var fSetAggregationSpy;
 
 		return oTable._fullyInitialized().then(function() {
 			var oFirstInnerColumn = oTable._oTable.getColumns()[0];
-			var oPlugin = oTable._oTable.getDependents()[0];
-			var oDelegate = oTable.getControlDelegate();
-			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 
-			oDelegate._setAggregation(oTable, [], {Country: "Country"});
+			oPlugin = oTable._oTable.getDependents()[0];
+			fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+
+			oTable.setAggregateConditions({
+				Country: {}
+			});
+			oTable.rebind();
 			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-				visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+				visible: ["Name", "Country"],
 				groupLevels: [],
 				grandTotal: ["Country"],
 				subtotals: ["Country"],
@@ -186,13 +190,11 @@ sap.ui.define([
 					{subtotals: true, grandTotal: true}
 				])
 			}), "Plugin#setAggregationInfo call");
-			fSetAggregationSpy.restore();
 
 			oTable._oTable.fireEvent("columnSelect", {
 				column: oFirstInnerColumn
 			});
 			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
-			fSetAggregationSpy.restore();
 			return oTable._fullyInitialized();
 		}).then(function() {
 			var oThirdInnerColumn = oTable._oTable.getColumns()[2];
@@ -207,17 +209,10 @@ sap.ui.define([
 			});
 			return oTable._fullyInitialized();
 		}).then(function() {
-			var oPlugin = oTable._oTable.getDependents()[0];
-			var oDelegate = oTable.getControlDelegate();
-			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-
 			assert.strictEqual(fColumnPressSpy.callCount, 2, "Third Column pressed");
 			assert.strictEqual(oTable._oPopover.getItems()[0].getItems().length,2, "The last column has complex property with list of two items");
 
-			var oNewCol = new Column({
-				id:"cl"
-			});
-			oTable.insertColumn(oNewCol, 2);
+			fSetAggregationSpy.reset();
 			oTable.setGroupConditions({
 				groupLevels: [
 					{
@@ -226,18 +221,37 @@ sap.ui.define([
 				]
 			});
 			oTable.rebind();
-			assert.ok(fSetAggregationSpy.firstCall.calledWithExactly({
-				visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
+				visible: ["Name", "Country"],
 				groupLevels: ["Name"],
-				grandTotal: [],
-				subtotals: [],
+				grandTotal: ["Country"],
+				subtotals: ["Country"],
 				columnState: createColumnStateIdMap(oTable, [
 					{subtotals: false, grandTotal: false},
-					{subtotals: false, grandTotal: false},
-					{subtotals: false, grandTotal: false},
-					{subtotals: false, grandTotal: false}
+					{subtotals: true, grandTotal: true},
+					{subtotals: true, grandTotal: true}
 				])
 			}), "Plugin#setAggregationInfo call");
+
+			var oNewCol = new sap.ui.mdc.table.Column({
+				id: "cl"
+			});
+			fSetAggregationSpy.reset();
+			oTable.insertColumn(oNewCol, 2);
+			oTable.rebind();
+			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
+				visible: ["Name", "Country"],
+				groupLevels: ["Name"],
+				grandTotal: ["Country"],
+				subtotals: ["Country"],
+				columnState: createColumnStateIdMap(oTable, [
+					{subtotals: false, grandTotal: false},
+					{subtotals: true, grandTotal: true},
+					{subtotals: false, grandTotal: false},
+					{subtotals: true, grandTotal: true}
+				])
+			}), "Plugin#setAggregationInfo call");
+
 			fSetAggregationSpy.restore();
 		});
 	});
@@ -264,7 +278,7 @@ sap.ui.define([
 				oDelegate.rebindTable = function () {
 					fnRebindTable.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+						visible: ["Name", "Country"],
 						groupLevels: ["Name"],
 						grandTotal: [],
 						subtotals: [],
@@ -306,7 +320,7 @@ sap.ui.define([
 				oDelegate.rebindTable = function () {
 					fnRebindTable.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+						visible: ["Name", "Country"],
 						groupLevels: [],
 						grandTotal: ["Country"],
 						subtotals: ["Country"],
@@ -347,7 +361,7 @@ sap.ui.define([
 				oDelegate.rebindTable = function () {
 					fnRebindTable.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+						visible: ["Name", "Country"],
 						groupLevels: ["Name"],
 						grandTotal: [],
 						subtotals: [],
@@ -374,7 +388,7 @@ sap.ui.define([
 						oDelegate.rebindTable = function () {
 							fnRebindTable.apply(this, arguments);
 							assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-								visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+								visible: ["Name", "Country"],
 								groupLevels: ["Name"],
 								grandTotal: ["Country"],
 								subtotals: ["Country"],
@@ -427,7 +441,7 @@ sap.ui.define([
 					fnRebindTable.apply(this, arguments);
 
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+						visible: ["Name", "Country"],
 						groupLevels: ["Name"],
 						grandTotal: [],
 						subtotals: [],
@@ -452,7 +466,7 @@ sap.ui.define([
 					fnRebindTable.apply(this, arguments);
 
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
+						visible: ["Name", "Country"],
 						groupLevels: [],
 						grandTotal: ["Name"],
 						subtotals: ["Name"],

@@ -1,13 +1,9 @@
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
-	"sap/ui/mdc/Field",
-	"sap/ui/core/library"
-], function (ODataTableDelegate, Field, CoreLibrary) {
+	"sap/ui/mdc/Field"
+], function (ODataTableDelegate, Field) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
-
-	//Shortcut to core messagetype
-	var MessageType = CoreLibrary.MessageType;
 
 	BooksTableDelegate.fetchProperties = function (oTable) {
 		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
@@ -97,42 +93,22 @@ sap.ui.define([
 
 		}
 
-		return Promise.resolve(new Field(oProps));
+		return new Field(oProps);
 	};
 
-	BooksTableDelegate.validateState = function(oTable, oState){
-		var mExistingColumns = {};
+	BooksTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
+		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
+			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
+			var aSmallCols = ["actions", "stock", "ID"];
 
-		//Map columns for easier access
-		mExistingColumns = oState.items.reduce(function(mMap, oProp, iIndex){
-			mMap[oProp.name] = oProp;
-			return mMap;
-		}, {});
-
-		//Check if there is a sorter for a unselected column
-		var bShowWarning = oState.sorters.some(function(oSorter){
-			return !mExistingColumns[oSorter.name];
-		});
-
-		return {
-			validation: bShowWarning ? MessageType.Warning : MessageType.None,
-			message: "Please note: you have added a sorter for an unselected column!"
-		};
-	};
-
-	BooksTableDelegate._createColumn = function (sPropertyInfoName, oTable) {
-		return ODataTableDelegate._createColumn.apply(this, arguments).then(function (oColumn) {
-
-			var sProp = oColumn.getDataProperty(),
-				aSmallCols = ["actions", "stock", "ID"];
-
-			if (sProp === "title") {
+			if (oProperty.name === "title") {
 				oColumn.setWidth("15rem");
-			} else if (sProp != "descr") {
-				oColumn.setWidth(aSmallCols.indexOf(sProp) != -1 ? "6rem" : "10rem");
+			} else if (oProperty.name != "descr") {
+				oColumn.setWidth(aSmallCols.indexOf(oProperty.name) != -1 ? "6rem" : "10rem");
 			}
 
-
+			oColumn.getTemplate().destroy();
+			oColumn.setTemplate(BooksTableDelegate._createColumnTemplate(oProperty));
 
 			return oColumn;
 		});
