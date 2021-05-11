@@ -61,8 +61,16 @@ sap.ui.define([
 	var oDataType;
 	var oFormatOptions;
 
-	var _init = function(bNoRender) {
-		oDataType = new StringType();
+	var _init = function(bNoRender, oType) {
+		if (!oType) {
+			oDataType = new StringType();
+		} else {
+			oDataType = oType;
+			// var oIntType = new IntegerType({}, {maximum: 10});
+			// var oStringType = new StringType({}, {maxLength: 5});
+			// var oNUMCType = new StringType({}, {maxLength: 5, isDigitSequence: true, nullable: false});
+		}
+
 		oFormatOptions = {
 				valueType: oDataType,
 				maxConditions: -1,
@@ -1080,14 +1088,16 @@ sap.ui.define([
 			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
+			var sPastedValues = "AA\nBB\nC	D\nEE";
+
 			var oFakeClipboardData = {
 					getData: function() {
-						return "AA\nBB\nC	D";
+						return sPastedValues;
 					}
 			};
 
 			if (window.clipboardData) {
-				window.clipboardData.setData("text", "AA\nBB\nC	D\nEE");
+				window.clipboardData.setData("text", sPastedValues);
 			}
 
 			qutils.triggerEvent("paste", oControl.getFocusDomRef(), {clipboardData: oFakeClipboardData});
@@ -1096,8 +1106,63 @@ sap.ui.define([
 				assert.equal(aConditions.length, 3, "3 Conditions exist");
 				assert.equal(aConditions[0].values[0], "AA", "1. Condition");
 				assert.equal(aConditions[1].values[0], "BB", "2. Condition");
-				assert.equal(aConditions[2].values[0], "C", "3. Condition - from");
-				assert.equal(aConditions[2].values[1], "D", "3. Condition - to");
+				assert.equal(aConditions[2].values[0], "C", "3. Condition BT");
+				assert.equal(aConditions[2].values[1], "D", "3. Condition BT");
+
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.module("Interaction2", {
+		beforeEach: function() {
+			_init(false, new IntegerType({}, {maximum: 10}));
+			},
+		afterEach: _teardown
+	});
+
+	QUnit.test("paste multiple values with operators and invalid values", function(assert) {
+
+		var oFormatOptions = merge({}, oDefineConditionPanel.getFormatOptions());
+		oFormatOptions.maxConditions = -1;
+		oDefineConditionPanel.setFormatOptions(oFormatOptions); // to test with maxConditions
+
+		var fnDone = assert.async();
+		setTimeout(function () { // as model update is async
+			sap.ui.getCore().applyChanges();
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oField = aContent[2];
+			assert.equal(aContent.length, 5, "Dummy line created");
+
+			aContent = oField.getAggregation("_content");
+			var oControl = aContent && aContent.length > 0 && aContent[0];
+
+			var sPastedValues = "1\n2\n1	10\n4...8\n<10\n=12";
+
+			var oFakeClipboardData = {
+					getData: function() {
+						return sPastedValues;
+					}
+			};
+
+			if (window.clipboardData) {
+				window.clipboardData.setData("text", sPastedValues);
+			}
+
+			qutils.triggerEvent("paste", oControl.getFocusDomRef(), {clipboardData: oFakeClipboardData});
+			setTimeout(function () { // as past handling is async
+				var aConditions = oModel.getConditions("Name");
+				assert.equal(aConditions.length, 5, "5 Conditions exist");
+				assert.equal(aConditions[0].values[0], 1, "1. Condition");
+				assert.equal(aConditions[1].values[0], 2, "2. Condition");
+				assert.equal(aConditions[2].values[0], 1, "3. Condition BT");
+				assert.equal(aConditions[2].values[1], 10, "3. Condition BT");
+				assert.equal(aConditions[3].values[0], 4, "4. Condition BT");
+				assert.equal(aConditions[3].values[1], 8, "4. Condition BT");
+				assert.equal(aConditions[4].operator, "LT", "5. Condition LE");
+				assert.equal(aConditions[4].values[0], 10, "5. Condition LE");
 
 				fnDone();
 			}, 0);
