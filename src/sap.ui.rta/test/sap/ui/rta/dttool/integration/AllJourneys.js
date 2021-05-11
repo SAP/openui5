@@ -1,20 +1,20 @@
 /*global QUnit*/
-sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
-sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
-sap.ui.requireSync("sap/ui/qunit/qunit-junit");
-sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
-
 if (window.blanket) {
 	window.blanket.options("sap-ui-cover-only", "[sap/ui/rta/dttool]");
 	window.blanket.options("sap-ui-cover-never", "[sap/ui/rta/dttool/integration]");
 }
-QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/test/Opa5",
-	"sap/ui/rta/dttool/integration/pages/Common"
+	"sap/ui/rta/dttool/integration/pages/Common",
+	"sap/ui/qunit/qunit-2-css",
+	"sap/ui/thirdparty/qunit-2",
+	"sap/ui/qunit/qunit-junit",
+	"sap/ui/qunit/qunit-coverage"
 ], function(Opa5, Common) {
 	"use strict";
+
+	QUnit.config.autostart = false;
 
 	Opa5.extendConfig({
 		arrangements: new Common(),

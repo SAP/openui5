@@ -26,39 +26,49 @@
 		</script>
 
 		<script>
-			sap.ui.requireSync("sap/ui/dt/ElementUtil");
-			sap.ui.requireSync("sap/ui/dt/DesignTime");
-			sap.ui.requireSync("sap/ui/dt/plugin/TabHandling");
-			sap.ui.requireSync("sap/ui/dt/plugin/ControlDragDrop");
-			sap.ui.requireSync("sap/ui/dt/plugin/MouseSelection");
-			sap.ui.requireSync("sap/ui/dt/plugin/CutPaste");
-			sap.ui.requireSync("sap/ui/core/mvc/XMLView");
-			sap.ui.core.mvc.XMLView.create({id: "testView", viewName: "dt.view.Test2"})
-				.then(function (oView) {
-					oView.placeAt("content");
+			sap.ui.require([
+				"sap/ui/dt/DesignTime",
+				"sap/ui/dt/plugin/TabHandling",
+				"sap/ui/dt/plugin/ControlDragDrop",
+				"sap/ui/dt/plugin/MouseSelection",
+				"sap/ui/dt/plugin/CutPaste",
+				"sap/ui/core/mvc/XMLView"
+			],
+			function (
+				DesignTime,
+				TabHandling,
+				ControlDragDrop,
+				MouseSelection,
+				CutPaste,
+				XMLView
+			) {
+				XMLView.create({id: "testView", viewName: "dt.view.Test2"})
+					.then(function (oView) {
+						oView.placeAt("content");
 
-					var aMOVABLE_TYPES = ["sap.m.Button", "sap.m.Label", "sap.m.StandardListItem", "sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer", "sap.m.ObjectHeader", "sap.m.ObjectAttribute"]
+						var aMOVABLE_TYPES = ["sap.m.Button", "sap.m.Label", "sap.m.StandardListItem", "sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer", "sap.m.ObjectHeader", "sap.m.ObjectAttribute"]
 
-					jQuery(function () {
-						var oTabHandlingPlugin = new sap.ui.dt.plugin.TabHandling();
-						var oSelectionPlugin = new sap.ui.dt.plugin.MouseSelection();
-						var oDragPlugin = new sap.ui.dt.plugin.ControlDragDrop({
-							draggableTypes: aMOVABLE_TYPES
-						});
-						var oCutPastePlugin = new sap.ui.dt.plugin.CutPaste({
-							movableTypes: aMOVABLE_TYPES
-						});
+						jQuery(function () {
+							var oTabHandlingPlugin = new TabHandling();
+							var oSelectionPlugin = new MouseSelection();
+							var oDragPlugin = new ControlDragDrop({
+								draggableTypes: aMOVABLE_TYPES
+							});
+							var oCutPastePlugin = new CutPaste({
+								movableTypes: aMOVABLE_TYPES
+							});
 
-						var oDesignTime = new sap.ui.dt.DesignTime({
-							rootElements: [oView],
-							plugins: [
-								oSelectionPlugin,
-								oCutPastePlugin,
-								oDragPlugin
-							]
+							var oDesignTime = new DesignTime({
+								rootElements: [oView],
+								plugins: [
+									oSelectionPlugin,
+									oCutPastePlugin,
+									oDragPlugin
+								]
+							});
 						});
-					});
-				}.bind(this));
+					}.bind(this));
+			});
 		</script>
 	</head>
 	<body class="sapUiBody">

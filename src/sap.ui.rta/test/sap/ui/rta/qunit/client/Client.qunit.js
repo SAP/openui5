@@ -31,13 +31,19 @@ function (
 	}
 
 	function getPostMessageBus(oWindow) {
-		var PostMessageBus = oWindow.sap.ui.requireSync('sap/ui/core/postmessage/Bus');
-		return PostMessageBus.getInstance();
+		return new Promise(function (resolve) {
+			oWindow.sap.ui.require(['sap/ui/core/postmessage/Bus'], function(oPostMessageBus) {
+				resolve(oPostMessageBus.getInstance());
+			});
+		});
 	}
 
 	QUnit.module("Initialisation", {
 		beforeEach: function () {
-			this.oPostMessageBus = getPostMessageBus(window);
+			return getPostMessageBus(window)
+				.then(function(oPostMessageBus) {
+					this.oPostMessageBus = oPostMessageBus;
+				}.bind(this));
 		},
 		afterEach: function () {
 			this.oPostMessageBus.destroy();
@@ -162,12 +168,16 @@ function (
 			}.bind(this));
 		},
 		beforeEach: function () {
-			this.oPostMessageBus = getPostMessageBus(window);
-			this.oPostMessageBusInIframe = getPostMessageBus(this.oIframeWindow);
 			this.oRTAClient = new RTAClient({
 				window: this.oIframeWindow,
 				origin: this.oIframeWindow.location.origin
 			});
+
+			return Promise.all([getPostMessageBus(window), getPostMessageBus(this.oIframeWindow)])
+				.then(function(aPostMessageBus) {
+					this.oPostMessageBus = aPostMessageBus[0];
+					this.oPostMessageBusInIframe = aPostMessageBus[1];
+				}.bind(this));
 		},
 		afterEach: function () {
 			this.oPostMessageBus.destroy();
@@ -305,13 +315,17 @@ function (
 			]);
 		},
 		beforeEach: function () {
-			this.oPostMessageBus = getPostMessageBus(window);
-			this.oPostMessageBusInIframe1 = getPostMessageBus(this.oIframeWindow1);
-			this.oPostMessageBusInIframe2 = getPostMessageBus(this.oIframeWindow2);
 			this.oRTAClient = new RTAClient({
 				window: this.oIframeWindow1,
 				origin: this.oIframeWindow1.location.origin
 			});
+
+			return Promise.all([getPostMessageBus(window), getPostMessageBus(this.oIframeWindow1), getPostMessageBus(this.oIframeWindow2)])
+				.then(function(aPostMessageBus) {
+					this.oPostMessageBus = aPostMessageBus[0];
+					this.oPostMessageBusInIframe1 = aPostMessageBus[1];
+					this.oPostMessageBusInIframe2 = aPostMessageBus[2];
+				}.bind(this));
 		},
 		afterEach: function () {
 			this.oPostMessageBus.destroy();
@@ -603,12 +617,16 @@ function (
 			}.bind(this));
 		},
 		beforeEach: function () {
-			this.oPostMessageBus = getPostMessageBus(window);
-			this.oPostMessageBusInIframe = getPostMessageBus(this.oIframeWindow);
 			this.oRTAClient = new RTAClient({
 				window: this.oIframeWindow,
 				origin: this.oIframeWindow.location.origin
 			});
+
+			return Promise.all([getPostMessageBus(window), getPostMessageBus(this.oIframeWindow)])
+				.then(function(aPostMessageBus) {
+					this.oPostMessageBus = aPostMessageBus[0];
+					this.oPostMessageBusInIframe = aPostMessageBus[1];
+				}.bind(this));
 		},
 		afterEach: function () {
 			this.oPostMessageBus.destroy();
@@ -1029,49 +1047,53 @@ function (
 			}.bind(this));
 		},
 		beforeEach: function () {
-			this.oPostMessageBus = getPostMessageBus(window);
-			this.oPostMessageBusInIframe = getPostMessageBus(this.oIframeWindow);
 			this.oRTAClient = new RTAClient({
 				window: this.oIframeWindow,
 				origin: this.oIframeWindow.location.origin
 			});
-			this.oPublishStub = sandbox.stub(this.oPostMessageBus, 'publish')
-				.callThrough()
-				// getService events
-				.withArgs(
-					sinon.match(function (mParameters) {
-						return (
-							mParameters.target === this.oIframeWindow
-							&& mParameters.origin === this.oIframeWindow.location.origin
-							&& mParameters.channelId === CHANNEL_ID
-							&& mParameters.eventId === 'getService'
-						);
-					}.bind(this))
-				)
-				.callsFake(function (mParameters) {
+
+			return Promise.all([getPostMessageBus(window), getPostMessageBus(this.oIframeWindow)])
+				.then(function(aPostMessageBus) {
+					this.oPostMessageBus = aPostMessageBus[0];
+					this.oPostMessageBusInIframe = aPostMessageBus[1];
+					this.oPublishStub = sandbox.stub(this.oPostMessageBus, 'publish')
+					.callThrough()
+					// getService events
+					.withArgs(
+						sinon.match(function (mParameters) {
+							return (
+								mParameters.target === this.oIframeWindow
+								&& mParameters.origin === this.oIframeWindow.location.origin
+								&& mParameters.channelId === CHANNEL_ID
+								&& mParameters.eventId === 'getService'
+							);
+						}.bind(this))
+					)
+					.callsFake(function (mParameters) {
+						this.oPostMessageBusInIframe.publish({
+							target: window,
+							origin: window.location.origin,
+							channelId: CHANNEL_ID,
+							eventId: 'getService',
+							data: {
+								id: mParameters.data.id,
+								type: "response",
+								body: {
+									events: ["customEvent"]
+								}
+							}
+						});
+					}.bind(this));
 					this.oPostMessageBusInIframe.publish({
 						target: window,
 						origin: window.location.origin,
 						channelId: CHANNEL_ID,
-						eventId: 'getService',
-						data: {
-							id: mParameters.data.id,
-							type: "response",
-							body: {
-								events: ["customEvent"]
-							}
-						}
+						eventId: PostMessageBus.event.READY
 					});
+					return this.oRTAClient.getService('foo').then(function (oService) {
+						this.oService = oService;
+					}.bind(this));
 				}.bind(this));
-			this.oPostMessageBusInIframe.publish({
-				target: window,
-				origin: window.location.origin,
-				channelId: CHANNEL_ID,
-				eventId: PostMessageBus.event.READY
-			});
-			return this.oRTAClient.getService('foo').then(function (oService) {
-				this.oService = oService;
-			}.bind(this));
 		},
 		afterEach: function () {
 			this.oPostMessageBus.destroy();
