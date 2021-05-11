@@ -3,6 +3,8 @@
 /* Base theme                          */
 /* =================================== */
 
+@sapMONInformativeElement: @sapUiInformativeElement;
+
 .sapMObjectNumber {
 	display: block;
 	white-space: normal;
@@ -263,5 +265,5 @@ html.sap-desktop .sapMObjectNumberActive:focus {
 .objectNumberStatusMixIn(sapMObjectNumberStatusError, @sapUiButtonNegativeBackground, @sapUiButtonNegativeTextColor, @sapUiButtonNegativeHoverBackground, @sapUiButtonNegativeHoverTextColor, @sapUiButtonNegativeActiveBackground);
 .objectNumberStatusMixIn(sapMObjectNumberStatusWarning, @sapUiButtonCriticalBackground, @sapUiButtonCriticalTextColor, @sapUiButtonCriticalHoverBackground, @sapUiButtonCriticalHoverTextColor, @sapUiButtonCriticalActiveBackground);
 .objectNumberStatusMixIn(sapMObjectNumberStatusSuccess, @sapUiButtonSuccessBackground, @sapUiButtonSuccessTextColor, @sapUiButtonSuccessHoverBackground, @sapUiButtonSuccessHoverTextColor, @sapUiButtonSuccessActiveBackground);
-.objectNumberStatusMixIn(sapMObjectNumberStatusInformation, @sapUiInformativeElement, @sapUiButtonInformationTextColor, @sapUiButtonInformationHoverBackground, @sapUiButtonInformationHoverTextColor, @sapUiButtonInformationActiveBackground);
+.objectNumberStatusMixIn(sapMObjectNumberStatusInformation, @sapMONInformativeElement, @sapUiButtonInformationTextColor, @sapUiButtonInformationHoverBackground, @sapUiButtonInformationHoverTextColor, @sapUiButtonInformationActiveBackground);
 .objectNumberStatusMixIn(sapMObjectNumberStatusNone, @sapUiButtonNeutralBackground, @sapUiButtonNeutralTextColor, @sapUiButtonNeutralHoverBackground, @sapUiButtonNeutralHoverTextColor, @sapUiButtonNeutralActiveBackground);
