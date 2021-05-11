@@ -4608,13 +4608,13 @@ sap.ui.define([
 	 * <ul>
 	 * <li>Some browsers do not let you pass more than 2022 characters in the URL</li>
 	 * <li>MAPI (Outlook) limit is 2083, max. path under Internet Explorer is 2048</li>
-	 * <li>Different Internet Explorer versions have a different limitation (IE9 approximately 1000 characters)</li>
+	 * <li>Different Internet Explorer versions have a different URL length limits (IE9 approximately 1000 characters)</li>
 	 * <li>MS mail app under Windows 8 cuts mail links after approximately 100 characters</li>
 	 * <li>Safari gets a confirmation from user before opening a native application and can block other triggers if the user cancels it</li>
 	 * <li>Some mail applications(Outlook) do not respect all encodings (e.g. Cyrillic texts are not encoded correctly)</li>
 	 * </ul>
 	 *
-	 * <b>Note:</b> all the given limitation lengths are for URL encoded text (e.g a space character will be encoded as "%20").
+	 * <b>Note:</b> all the given length limits are for URL encoded text (e.g a space character will be encoded as "%20").
 	 *
 	 * It has been reported by some users that the content send through the <code>URLHelper</code> is not correctly displayed by the native applications (e.g. a native mail application).
 	 *
