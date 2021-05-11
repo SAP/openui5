@@ -77,8 +77,11 @@ sap.ui.define([
 			//check if the control has static position, if this is the case we need to change it,
 			//because we relay on relative/absolute/fixed positioning
 			if (oBlockState.$parent.css('position') == 'static') {
-				oBlockState.originalPosition = 'static';
+				if (oParentDomRef.style && oParentDomRef.style.position === "static") {
+					oBlockState.originalPosition = 'static';
+				}
 				oBlockState.$parent.css('position', 'relative');
+				oBlockState.positionChanged = true;
 			}
 
 			fnHandleInteraction.call(oBlockState, true);
@@ -100,6 +103,9 @@ sap.ui.define([
 			// reset the position css attribute to its original value (only used for the value "static")
 			if (oBlockState.originalPosition) {
 				oBlockState.$parent.css('position', oBlockState.originalPosition);
+			} else if (oBlockState.positionChanged) {
+				// reset the position set to 'relative' by the BlockLayer itself
+				oBlockState.$parent.css('position', "");
 			}
 
 			// deregister handlers and :before and :after tabbable spans
