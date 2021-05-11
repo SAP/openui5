@@ -1547,12 +1547,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Suggestion on Phone", function(assert){
-
-		if (Device.browser.internet_explorer && Device.browser.version < 11) {// TODO remove after the end of support for Internet Explorer
-			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
-			return;
-		}
-
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -1622,11 +1616,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Suggestion on Phone with changing the input value in SuggestionItemSelected event handler", function(assert){
-		if (Device.browser.internet_explorer && Device.browser.version < 11) {// TODO remove after the end of support for Internet Explorer
-			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
-			return;
-		}
-
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -1681,12 +1670,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Two value Suggestion on Phone", function(assert){
-
-		if (Device.browser.internet_explorer && Device.browser.version < 11) {// TODO remove after the end of support for Internet Explorer
-			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
-			return;
-		}
-
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -1755,12 +1738,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Suggestion with liveChange handler on phone", function(assert){
-
-		if (Device.browser.internet_explorer && Device.browser.version < 11) {// TODO remove after the end of support for Internet Explorer
-			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
-			return;
-		}
-
 		var fnLC1 = this.spy();
 
 		var oSystem = {
@@ -1795,12 +1772,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("SuggestionPopup shouldn't invalidate when insert suggest item on phone", function(assert){
-
-		if (Device.browser.internet_explorer && Device.browser.version < 11) {// TODO remove after the end of support for Internet Explorer
-			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
-			return;
-		}
-
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -2297,11 +2268,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tabular Suggestion on Phone", function(assert){
-
-		if (Device.browser.internet_explorer && Device.browser.version < 11) {// TODO remove after the end of support for Internet Explorer
-			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
-			return;
-		}
 		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		var oSystem = {
@@ -2311,11 +2277,6 @@ sap.ui.define([
 			};
 
 		this.stub(Device, "system", oSystem);
-
-		//test was failing inside ie9, because popup does special handling for this case// TODO remove after the end of support for Internet Explorer
-		this.stub(Device, "browser", {
-			internet_explorer : false// TODO remove after the end of support for Internet Explorer
-		});
 
 		var oInput = new Input({
 			showSuggestion: true,
@@ -4794,68 +4755,6 @@ sap.ui.define([
 		oInput = null;
 	});
 
-	QUnit.test("Auto complete should not be allowed when it is set to false", function (assert) {
-		// Arrange
-		var oInput = new Input({
-			showSuggestion: true,
-			filterSuggests: false,
-			autocomplete: false,
-			suggestionItems: [
-				new Item({text: "Germany"}),
-				new Item({text: "Bulgaria"}),
-				new Item({text: "Italy"})
-			]
-		}).placeAt("content");
-
-		var sTestTypedInValue = "Test";
-		var oMockFocus = {
-				id: '1',
-				cursorPos: 1,
-				selectionEnd: 1,
-				selectionStart: 1
-			};
-
-		var oStubFocusInfo = sinon.stub(oInput, "getFocusInfo", function () {
-			return oMockFocus;
-		});
-
-		var oStubPopover = sinon.stub(oInput._getSuggestionsPopover().getPopover(), "isOpen", function () {
-			return true;
-		});
-
-		var oStub = this.stub(Device, "browser", {
-			internet_explorer: true
-		});
-
-		var oApplyFocusInfoSpy = sinon.spy(oInput, "applyFocusInfo");
-		var oSetDOMValueSpy = sinon.spy(oInput, "setDOMValue");
-		var oSystem = {
-			desktop: true,
-			phone: false,
-			tablet: false
-		};
-
-		this.stub(Device, "system", oSystem);
-		sap.ui.getCore().applyChanges();
-		oInput._sTypedInValue = sTestTypedInValue;
-
-		// Act
-		oInput._hideSuggestionPopup();
-		this.clock.tick(300);
-
-		// Assert
-		assert.ok(oApplyFocusInfoSpy.calledOnce, "Apply focus should be called once.");
-		assert.ok(oSetDOMValueSpy.calledWith(sTestTypedInValue), "Set dom value should be called with correct params.");
-		assert.ok(oApplyFocusInfoSpy.calledWith(oMockFocus), "Apply focus should be called with correct params.");
-
-		// cleanup
-		oInput.destroy();
-		oInput = null;
-		oStubFocusInfo.restore();
-		oStubPopover.restore();
-		oStub.restore();
-	});
-
 	QUnit.test("Autocomplete on desktop", function (assert) {
 		// arrange
 		var oInput = new Input({
@@ -4947,11 +4846,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Autocomplete on phone", function (assert) {
-		if (Device.browser.internet_explorer && Device.browser.version < 11) { // TODO remove after the end of support for Internet Explorer
-			assert.ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
-			return;
-		}
-
 		// arrange
 		var oSystem = {
 			desktop : false,
