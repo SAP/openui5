@@ -173,13 +173,7 @@ sap.ui.define([
 											|| [];
 
 									oIssues = oIssues.filter(function (oIssue) {
-										if (oIssue.severity !== "High"
-											// cannot easily avoid sap.ui.view inside
-											// sap.ui.core.UIComponent#createContent
-											|| oIssue.rule.id === "syncFactoryLoading") {
-											return false;
-										}
-										return true;
+										return oIssue.severity === "High";
 									});
 
 									Opa5.assert.strictEqual(oIssues.length, 0,

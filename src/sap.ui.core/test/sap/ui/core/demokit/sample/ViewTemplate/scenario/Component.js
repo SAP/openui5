@@ -9,21 +9,16 @@
  */
 sap.ui.define([
 	"sap/base/util/UriParameters",
-	"sap/ui/core/library",
-	"sap/ui/core/mvc/View", // sap.ui.view()
-	"sap/ui/core/mvc/XMLView", // type : ViewType.XML
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (UriParameters, library, _View, _XMLView, BaseComponent, MockServer, XMLPreprocessor,
-		JSONModel, ODataModel, ODataModel2) {
+], function (UriParameters, XMLView, BaseComponent, MockServer, XMLPreprocessor, JSONModel,
+		ODataModel, ODataModel2) {
 	"use strict";
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
 
 	/*
 	 * Plug-in a visitor for XMLPreprocessor to replace
@@ -72,6 +67,7 @@ sap.ui.define([
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
 		metadata : {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest : "json"
 		},
 
@@ -83,7 +79,7 @@ sap.ui.define([
 				oModel,
 				sServiceUri,
 				oUriParameters = UriParameters.fromQuery(window.location.search),
-				bIsRealOData = oUriParameters.get("realOData") === "true",
+				bRealOData = oUriParameters.get("realOData") === "true",
 				fnModel = oUriParameters.get("oldOData") === "true" ? ODataModel : ODataModel2;
 
 			// GWSAMPLE_BASIC with external annotations
@@ -92,7 +88,7 @@ sap.ui.define([
 			sAnnotationUri2 = "/sap(====)/bc/bsp/sap/zanno_gwsample/annotations.xml";
 			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 
-			if (bIsRealOData) {
+			if (bRealOData) {
 				sServiceUri = this.proxy(sServiceUri);
 			} else {
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
@@ -131,8 +127,7 @@ sap.ui.define([
 				skipMetadataAnnotationParsing : true
 			});
 
-			return sap.ui.view({
-					async : true,
+			return XMLView.create({
 					models : {
 						undefined : oModel,
 						ui : new JSONModel({
@@ -140,13 +135,11 @@ sap.ui.define([
 							sCode : "",
 							bCodeVisible : false,
 							entitySet : [],
-							icon : bIsRealOData ? "sap-icon://building" : "sap-icon://record",
-							iconTooltip
-								: bIsRealOData ? "real OData service" : "mock OData service",
+							icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
+							iconTooltip : bRealOData ? "real OData service" : "mock OData service",
 							selectedEntitySet : ""
 						})
 					},
-					type : ViewType.XML,
 					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main"
 				});
 		}
