@@ -202,6 +202,7 @@ sap.ui.define([
 
     QueryPanel.prototype._createKeySelect = function (sKey) {
         var oKeySelect = new Select({
+            width: "14rem",
             items: this._getAvailableItems(),
             selectedKey: sKey,
             change: this._selectKey.bind(this)

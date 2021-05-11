@@ -302,6 +302,7 @@ sap.ui.define([
 
 		var mSettings = Object.assign({
 			verticalScrolling: true,
+			reset: mUISettings.reset,
 			afterClose: fnAfterDialogClose
 		}, mUISettings.containerSettings);
 
@@ -352,6 +353,7 @@ sap.ui.define([
 
 		var mSettings = Object.assign({
 			verticalScrolling: true,
+			reset: mUISettings.reset,
 			afterClose: function(oEvt) {
 				var oDialog = oEvt.getSource();
 				if (oDialog) {
@@ -401,10 +403,12 @@ sap.ui.define([
 	UIManager.prototype._getDefaultContainerConfig = function(oUISettings) {
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		var aKeys = Object.keys(oUISettings);
-		return {
+		var oContainerConfig =  {
 			containerSettings: {
 				title: oRB.getText("p13nDialog.VIEW_SETTINGS"),
 				verticalScrolling: false, //The Wrapper already takes care of the scrolling
+				contentHeight: oUISettings.contentHeight,
+				contentWidth: oUISettings.contentWidth,
 				afterClose: function(oEvt) {
 					aKeys.forEach(function(sKey){
 						if (oUISettings[sKey].containerSettings && oUISettings[sKey].containerSettings.afterClose instanceof Function) {
@@ -414,16 +418,21 @@ sap.ui.define([
 						}
 					});
 					oEvt.getSource().destroy();
-				},
-
-				reset: {
-					onExecute: function(oControl) {
-						this.oAdaptationProvider.reset(oControl, aKeys);
-					}.bind(this),
-					warningText: oRB.getText("p13nDialog.RESET_WARNING_TEXT", ListFormat.getInstance().format(aKeys))
 				}
 			}
 		};
+
+		if (oUISettings.resetEnabled !== false) {
+			oContainerConfig.reset = {
+				onExecute: function(oControl) {
+					this.oAdaptationProvider.reset(oControl, aKeys);
+				}.bind(this),
+				warningText: oRB.getText("p13nDialog.RESET_WARNING_TEXT", ListFormat.getInstance().format(aKeys))
+			};
+		}
+
+		return oContainerConfig;
+
 	};
 
 	/**
