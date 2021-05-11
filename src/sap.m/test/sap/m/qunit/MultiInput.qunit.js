@@ -1838,40 +1838,35 @@ sap.ui.define([
 	});
 
 	QUnit.test("token update event", function(assert) {
-		/* TODO remove after the end of support for Internet Explorer */
-		if (!Device.browser.internet_explorer) {
-			//arrange
-			var sPastedString = "a\nb\nc\nd\ne\nf\n\a",
-					counter = 0;
+		//arrange
+		var sPastedString = "a\nb\nc\nd\ne\nf\n\a",
+			counter = 0;
 
-			this.multiInput1.addValidator(function (args) {
-				return new Token({text: args.text, key: args.text});
-			});
+		this.multiInput1.addValidator(function (args) {
+			return new Token({text: args.text, key: args.text});
+		});
 
-			this.multiInput1.attachTokenUpdate(function (args) {
-				counter++;
-			});
+		this.multiInput1.attachTokenUpdate(function (args) {
+			counter++;
+		});
 
-			//act
-			qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
-				originalEvent: {
-					clipboardData: {
-						getData: function () {
-							return sPastedString;
-						}
+		//act
+		qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+			originalEvent: {
+				clipboardData: {
+					getData: function () {
+						return sPastedString;
 					}
 				}
-			});
+			}
+		});
 
-			this.clock.tick(10);
-			Core.applyChanges();
+		this.clock.tick(10);
+		Core.applyChanges();
 
-			//assert
-			assert.equal(counter, 1, "tokenUpdate event should be fired once");
-			assert.equal(this.multiInput1.getTokens().length, 6, "6 tokens should be added to MultiInput");
-		} else {
-			assert.expect(0);
-		}
+		//assert
+		assert.equal(counter, 1, "tokenUpdate event should be fired once");
+		assert.equal(this.multiInput1.getTokens().length, 6, "6 tokens should be added to MultiInput");
 	});
 
 	QUnit.test("token update event on paste of a single string", function(assert) {
@@ -2478,32 +2473,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("Paste (with suggestions)", function(assert) {
-		/* TODO remove after the end of support for Internet Explorer */
-		if (!Device.browser.internet_explorer) {
-			//arrange
-			var sPastedString = "a\nb";
-			this.multiInput1.addSuggestionItem(new Item({ text : "a"}));
-			this.multiInput1.addSuggestionItem(new Item({ text : "b"}));
+		//arrange
+		var sPastedString = "a\nb";
+		this.multiInput1.addSuggestionItem(new Item({ text : "a"}));
+		this.multiInput1.addSuggestionItem(new Item({ text : "b"}));
 
-			//act
-			qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
-				originalEvent: {
-					clipboardData: {
-						getData: function () {
-							return sPastedString;
-						}
+		//act
+		qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+			originalEvent: {
+				clipboardData: {
+					getData: function () {
+						return sPastedString;
 					}
 				}
-			});
+			}
+		});
 
-			Core.applyChanges();
-			this.clock.tick(10);
+		Core.applyChanges();
+		this.clock.tick(10);
 
-			//assert
-			assert.equal(this.multiInput1.getTokens().length, 2, "2 tokens should be added to MultiInput on paste");
-		} else {
-			assert.expect(0);
-		}
+		//assert
+		assert.equal(this.multiInput1.getTokens().length, 2, "2 tokens should be added to MultiInput on paste");
 	});
 
 	QUnit.test("_convertTextToToken", function(assert) {
@@ -2572,12 +2562,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		if (Device.browser.internet_explorer) {
-			this.multiInput.getAggregation("tokenizer").$().trigger("click");
-		} else {
-			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
-		}
-
+		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		oPicker = this.multiInput.getAggregation("tokenizer").getTokensPopup();
 		this.clock.tick(100);
 
@@ -2589,12 +2574,8 @@ sap.ui.define([
 
 		//close and open the picker
 		oPicker.close();
-		// act
-		if (Device.browser.internet_explorer) {
-			this.multiInput.getAggregation("tokenizer").$().trigger("click");
-		} else {
-			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
-		}
+		this.multiInput.getAggregation("tokenizer").$().trigger("click");
+
 		//assert
 		assert.strictEqual(oPicker.getContent()[0].getItems().length, 3, "The items in the list are updated");
 	});
@@ -2805,12 +2786,9 @@ sap.ui.define([
 			oStub = sinon.stub(oTokenizer.getTokensPopup(), "openBy");
 
 		Core.applyChanges();
+
 		// act
-		if (Device.browser.internet_explorer) {
-			oTokenizer.$().trigger("click");
-		} else {
-			this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
-		}
+		this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
 		this.clock.tick(1000);
 
 		assert.ok(oStub.called, "The suggestion dialog is opened on click on N-more");
@@ -3052,11 +3030,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		if (Device.browser.msie) {
-			oTokenizer.$().trigger("click");
-		} else {
-			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
-		}
+		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+
 		Core.applyChanges();
 
 
@@ -3586,26 +3561,6 @@ sap.ui.define([
 		// Assert
 		assert.ok(oSpy.calledWith(TokenizerRenderMode.Loose), "Collapsed mode called with 'Loose'");
 		assert.ok(!this.oMultiInput.getAggregation("tokenizer").hasOneTruncatedToken(), "Truncation was removed from the token.");
-	});
-
-	QUnit.test("Prevent IE default scrolling on focus when one extra long token is clicked", function(assert) {
-		// Arrange
-		var oTokenizer = this.oMultiInput.getAggregation("tokenizer"),
-			oSpy = sinon.spy(oTokenizer, "scrollToEnd"),
-			aTokens = oTokenizer._getVisibleTokens(),
-			oLastToken = aTokens[aTokens.length - 1];
-
-		// Stub the browser to be only IE
-		this.stub(Device, "browser", {
-			msie: true
-		});
-
-		// Act
-		qutils.triggerEvent("tap", oLastToken.getDomRef());
-		Core.applyChanges();
-
-		// Assert
-		assert.ok(oSpy.called, "scrollToEnd has been called.");
 	});
 
 	QUnit.test("Prevent IE default scrolling when one extra long token is focused", function(assert) {
