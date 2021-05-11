@@ -18,7 +18,8 @@ sap.ui.define([
 		arrangements: new Arrangement(),
 		actions: new Action(),
 		assertions: new Assertion(),
-		autoWait: true
+		autoWait: true,
+		timeout: 45
 	});
 
 	var LABEL_MTABLE_MDCGRID_DELEGATE = "M.Table / MDC.GridtableType: via Delegate";
