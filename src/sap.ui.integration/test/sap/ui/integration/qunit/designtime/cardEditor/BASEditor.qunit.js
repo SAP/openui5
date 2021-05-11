@@ -83,7 +83,7 @@ sap.ui.define([
 				this.oBASEditor.attachEvent("createConfiguration", function (oEvent) {
 					var mParameters = oEvent.getParameters();
 					assert.ok(!this.oBASEditor.isReady(), "BAS Card Editor is not ready");
-					assert.ok(mParameters.file === "dt/configuration.js", "DT file path/name correct");
+					assert.ok(mParameters.file === "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js", "DT file path/name correct");
 					var sDesigntime = this.oBASEditor.getConfigurationTemplate();
 					assert.ok(mParameters.content === sDesigntime, "DT file content correct");
 					resolve();
