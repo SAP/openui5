@@ -64,7 +64,7 @@
 								id="openConfigurationEditorButton"
 								text="Configuration Editor"
 								type="Transparent"
-								visible="{=  ${settings>/internal} &amp;&amp; ${settings>/editable} &amp;&amp; !${settings>/isApplication} }"
+								visible="{=  ${settings>/internal} &amp;&amp; ${settings>/editable} &amp;&amp; !${settings>/isApplication} &amp;&amp; ${settings>/designtimeEnabled} }"
 							>
 								<menu>
 									<Menu>

@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/integration/util/loadCardEditor",
 	"sap/base/util/restricted/_debounce",
-	"sap/ui/integration/designtime/editor/CardEditor"
+	"sap/ui/integration/designtime/editor/CardEditor",
+	"sap/base/util/ObjectPath"
 ], function (
 	BaseController,
 	Constants,
@@ -45,7 +46,8 @@ sap.ui.define([
 	Device,
 	loadCardEditor,
 	_debounce,
-	CardEditor
+	CardEditor,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -363,7 +365,11 @@ sap.ui.define([
 					return this._oFileEditor.getManifestContent();
 				}.bind(this))
 				.then(function (sManifestContent) {
-					sJson = sManifestContent;
+					sJson = JSON.parse(sManifestContent);
+					var sDesigntimePath = this._sanitizePath(ObjectPath.get(["sap.card", "designtime"], sJson) || "");
+					if (!sDesigntimePath) {
+						ObjectPath.set(["sap.card", "designtime"], "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate", sJson);
+					}
 					if (this._bCardEditorInitialized) {
 						this._oVisualEditor._bDesigntimeInit = true;
 						return this._oFileEditor.getDesigntimeContent();
@@ -522,10 +528,24 @@ sap.ui.define([
 				oFrameWrapperEl = this.byId("iframeWrapper"),
 				bUseIFrame = !!oCurrentSample.useIFrame;
 
-				exploreSettingsModel.getData().configMode = "All";
-				if (oCurrentSample.configMode) {
-					exploreSettingsModel.getData().configMode = oCurrentSample.configMode;
+			//disable "Configuration Editor" if there is not designtime.js file
+			if (oCurrentSample && oCurrentSample.files) {
+				exploreSettingsModel.getData().designtimeEnabled = false;
+				var i = 0;
+				while (i < oCurrentSample.files.length) {
+					if (oCurrentSample.files[i].key === "designtime.js") {
+						exploreSettingsModel.getData().designtimeEnabled = true;
+						break;
+					}
+					i++;
 				}
+			}
+			//enable/disable menu items of "Configuration Editor" according to card mode, enable all menu items by default
+			exploreSettingsModel.getData().configMode = "All";
+			if (oCurrentSample.configMode) {
+				exploreSettingsModel.getData().configMode = oCurrentSample.configMode;
+				exploreSettingsModel.refresh();
+			}
 			this.oModel.setProperty("/currentSampleKey", oCurrentSample.key);
 			this._oCurrSample = oCurrentSample;
 
@@ -786,6 +806,10 @@ sap.ui.define([
 				e.message = "Unable to parse the settings given to Designtime constructor. " + e.message;
 				throw e;
 			}
+		},
+
+		_sanitizePath: function (sPath) {
+			return sPath.trim().replace(/\/*$/, "");
 		},
 
 		onEditorDialogClose: function (oEvent) {
