@@ -40,6 +40,9 @@ sap.ui.define([
 	 * There are options for setting the background color and a background image with the use of the
 	 * <code>backgroundColor</code> and <code>backgroundImage</code> properties.
 	 *
+	 * <b>Note</b>: Keep in mind that by default (<code>isTopLevel</code> is set to <code>true</code>)
+	 * <code>sap.m.App</code> traverses its parent elements and automatically sets their height to 100%.
+	 *
 	 * @see {@link topic:a4afb138acf64a61a038aa5b91a4f082 App}
 	 *
 	 * @extends sap.m.NavContainer
@@ -128,7 +131,16 @@ sap.ui.define([
 			 *
 			 * @since 1.58.0
 			 */
-			mobileWebAppCapable : {type : "boolean", group : "Appearance", defaultValue : true}
+			mobileWebAppCapable : {type : "boolean", group : "Appearance", defaultValue : true},
+			/**
+			 * Determines whether <code>sap.m.App</code> is used as a top level control.
+			 *
+			 * <b>Note</b>: When the <code>isTopLevel</code> property set to <code>true</code>, <code>sap.m.App</code>
+			 * traverses its parent DOM elements and sets their height to 100%.
+			 *
+			 * @since 1.91
+			 */
+			 isTopLevel : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
 		events : {
 
@@ -177,6 +189,13 @@ sap.ui.define([
 		if (NavContainer.prototype.onAfterRendering) {
 			NavContainer.prototype.onAfterRendering.apply(this, arguments);
 		}
+
+		if (this.getIsTopLevel()) {
+			this._adjustParentsHeight();
+		}
+	};
+
+	App.prototype._adjustParentsHeight = function () {
 		var ref = this.getDomRef().parentNode;
 		// set all parent elements to 100% height this *should* be done by the application in CSS, but people tend to forget it...
 		while (ref && ref !== document.documentElement) {
@@ -190,7 +209,6 @@ sap.ui.define([
 			ref = ref.parentNode;
 		}
 	};
-
 
 	/**
 	 * Termination of the App control
