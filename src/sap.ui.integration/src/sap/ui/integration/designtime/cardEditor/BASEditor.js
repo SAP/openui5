@@ -321,7 +321,7 @@ sap.ui.define([
 		oJson = oJson || this.getJson();
 		var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
 		if (!sDesigntimePath) {
-			ObjectPath.set(["sap.card", "designtime"], "dt/configuration", oJson);
+			ObjectPath.set(["sap.card", "designtime"], "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate", oJson);
 		}
 		oJson = deepClone(oJson);
 		var bCleanParameters = bCleanParameters !== false;
@@ -502,26 +502,39 @@ sap.ui.define([
 			if (!sDesigntimePath) {
 				var sDesigntime = configurationTemplate;
 				//sDesigntime = sDesigntime.replace(/\$\$CARDID\$\$/, sCardId + ".Configuration");
-				ObjectPath.set(["sap.card", "designtime"], "dt/configuration", oJson);
+				ObjectPath.set(["sap.card", "designtime"], "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate", oJson);
 				sTempDesigntimeUrl = "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate";
 				this.fireCreateConfiguration({
-					file: "dt/configuration.js",
+					file: "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js",
 					content: sDesigntime,
 					manifest: this._cleanJson(oJson, false)
 				});
 				return;
 			}
-			var sBaseUrl = sanitizePath(this.getBaseUrl() || "");
-			if (sBaseUrl && sDesigntimePath) {
-				var mPaths = {};
-				var sSanitizedBaseUrl = sanitizePath(sBaseUrl);
-				var sDesigntimeRelativePath = trimCurrentFolderPrefix(sDesigntimePath);
+			var sBaseUrl = sanitizePath(this.getBaseUrl() || ""),
+			mPaths = {},
+			sSanitizedBaseUrl = null,
+			sDesigntimeRelativePath = null,
+			sNamespace = null,
+			sFileName = null;
+			if (sDesigntimePath && sDesigntimePath.indexOf("cardEditor/ConfigurationTemplate") > 0) {
+				sTempDesigntimeUrl = sDesigntimePath;
+				sDesigntimeRelativePath = trimCurrentFolderPrefix(sDesigntimePath);
+				sNamespace = sCardId.replace(/\./g, "/") + "/" + sDesigntimeRelativePath;
+				mPaths[sNamespace] = sDesigntimeRelativePath;
+				mPaths[sNamespace + "js"] = sDesigntimeRelativePath.substring(0, sDesigntimeRelativePath.lastIndexOf("/"));
+				sFileName = sDesigntimeRelativePath.replace(mPaths[sNamespace + "js"] + "/", "");
+			} else if (sBaseUrl && sDesigntimePath) {
+				sSanitizedBaseUrl = sanitizePath(sBaseUrl);
+				sDesigntimeRelativePath = trimCurrentFolderPrefix(sDesigntimePath);
 				var sDesigntimeAbsolutePath = sSanitizedBaseUrl + "/" + sDesigntimeRelativePath;
-				var sNamespace = sCardId.replace(/\./g, "/") + "/" + sDesigntimeRelativePath;
+				sNamespace = sCardId.replace(/\./g, "/") + "/" + sDesigntimeRelativePath;
 
 				mPaths[sNamespace] = sDesigntimeAbsolutePath;
 				mPaths[sNamespace + "js"] = sDesigntimeAbsolutePath.substring(0, sDesigntimeAbsolutePath.lastIndexOf("/"));
-				var sFileName = sDesigntimeAbsolutePath.replace(mPaths[sNamespace + "js"] + "/", "");
+				sFileName = sDesigntimeAbsolutePath.replace(mPaths[sNamespace + "js"] + "/", "");
+			}
+			if (sBaseUrl && sDesigntimePath) {
 				sap.ui.loader.config({
 					paths: mPaths
 				});
