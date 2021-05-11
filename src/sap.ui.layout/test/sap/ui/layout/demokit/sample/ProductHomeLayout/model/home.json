@@ -9,17 +9,17 @@
 			"columns": {
 				"default": 10,
 				"S": 4,
-				"ML": 8,
-				"XL": 11,
-				"XXL": 12,
-				"XXXL": 9,
+				"ML": 12,
+				"L": 12,
+				"XL": 12,
+				"XXL": 14,
+				"XXXL": 11,
 				"current": null
 			}
 		},
 		"group2": {
 			"columns": {
 				"default": 4,
-				"XXL": 5,
 				"current": null
 			}
 		},
@@ -27,6 +27,7 @@
 			"columns": {
 				"default": 7,
 				"S": 4,
+				"XXXL": 4,
 				"current": null
 			}
 		},
