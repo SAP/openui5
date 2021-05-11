@@ -4,12 +4,12 @@
 
 //Provides an abstraction for list bindings
 sap.ui.define([
+	"sap/base/util/deepExtend",
 	"sap/base/util/extend",
-	"sap/base/util/merge",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/ContextBinding"
-], function(extend, merge, ChangeReason, Context, ContextBinding) {
+], function(deepExtend, extend, ChangeReason, Context, ContextBinding) {
 	"use strict";
 
 	/**
@@ -43,7 +43,7 @@ sap.ui.define([
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
 			this.sRefreshGroupId = undefined;
 			this.bPendingRequest = false;
-			this.mParameters = merge({}, this.mParameters);
+			this.mParameters = deepExtend({}, this.mParameters);
 			this.bCreatePreliminaryContext = this.mParameters.createPreliminaryContext || oModel.bPreliminaryContext;
 			this.bUsePreliminaryContext = this.mParameters.usePreliminaryContext || oModel.bPreliminaryContext;
 			this.mParameters.createPreliminaryContext = this.bCreatePreliminaryContext;

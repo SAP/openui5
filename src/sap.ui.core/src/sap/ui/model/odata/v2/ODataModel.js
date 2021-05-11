@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
 	"sap/base/util/deepEqual",
+	"sap/base/util/deepExtend",
 	"sap/base/util/each",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
@@ -46,9 +47,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/datajs",
 	"sap/ui/thirdparty/URI"
 ], function(ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding, assert, Log,
-		encodeURL, deepEqual, each, extend, isEmptyObject, isPlainObject, merge, uid, UriParameters,
-		coreLibrary, Message, MessageParser, BindingMode, Context, FilterProcessor, Model,
-		CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
+		encodeURL, deepEqual, deepExtend, each, extend, isEmptyObject, isPlainObject, merge, uid,
+		UriParameters, coreLibrary, Message, MessageParser, BindingMode, Context, FilterProcessor,
+		Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
 		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, URI
 ) {
 
@@ -5345,7 +5346,7 @@ sap.ui.define([
 	};
 
 	ODataModel.prototype._createFunctionImportParameters = function(sFunctionName, sMethod, mParams) {
-		var mUrlParams = merge({}, mParams);
+		var mUrlParams = deepExtend({}, mParams);
 		delete mUrlParams.__metadata;
 		delete mUrlParams["$result"];
 		var oFunctionMetadata = this.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
