@@ -325,14 +325,6 @@ function(
 			assert.strictEqual(bIsBinding, false);
 		});
 
-		QUnit.test("isBinding shall return false if the property is not a string", function(assert) {
-			var oPropertyValue = {
-				mParams: {}
-			};
-			var bIsBinding = Utils.isBinding(oPropertyValue);
-			assert.strictEqual(bIsBinding, false);
-		});
-
 		QUnit.test("isBinding shall return false if the property is a string which does not represent a binding", function(assert) {
 			var sPropertyValue = "test";
 			var bIsBinding = Utils.isBinding(sPropertyValue);
@@ -343,6 +335,41 @@ function(
 			var sPropertyValue = "{i18n>test}";
 			var bIsBinding = Utils.isBinding(sPropertyValue);
 			assert.strictEqual(bIsBinding, true);
+		});
+
+		QUnit.test("when isBinding is called with binding objects", function(assert) {
+			assert.ok(
+				Utils.isBinding({
+					path: "some/binding/path"
+				}),
+				"then the check succeeds for regular bindings"
+			);
+
+			assert.ok(
+				Utils.isBinding({
+					parts: [{
+						path: "path/of/part"
+					}]
+				}),
+				"then the check succeeds for binding objects containing multiple parts"
+			);
+		});
+
+		QUnit.test("when isBinding is called with non-binding objects", function(assert) {
+			assert.notOk(
+				Utils.isBinding({
+					someProperty: "someValue"
+				}),
+				"then the check fails for regular objects"
+			);
+
+			assert.notOk(
+				Utils.isBinding({
+					path: "i/pretend/to/be/a/binding",
+					ui5object: true
+				}),
+				"then the check fails for ui5objects that look like bindings"
+			);
 		});
 
 		QUnit.test("Utils.isHotfixMode shall return the hotfix url parameter", function(assert) {

@@ -6,13 +6,11 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/util/includes",
 	"sap/base/util/values",
-	"sap/base/util/each",
 	"sap/base/util/restricted/_omit"
 ], function(
 	ManagedObject,
 	includes,
 	values,
-	each,
 	_omit
 ) {
 	"use strict";
@@ -99,18 +97,19 @@ sap.ui.define([
 				{
 					id: oChange.change.getId(),
 					dependent: bDependent,
-					affectedElementId: sAffectedElementId
+					affectedElementId: sAffectedElementId,
+					payload: oChange.visualizationInfo.payload || {}
 				},
-				_omit(oChange, ["displayElementIds", "dependentElementIds", "affectedElementIds"])
+				_omit(oChange, ["visualizationInfo"])
 			));
 		}
 
 		values(this._oChanges).forEach(function (oChange) {
-			oChange.displayElementIds.forEach(function (sSelectorId, iIndex) {
-				addSelector(sSelectorId, oChange.affectedElementIds[iIndex], oChange, false);
+			oChange.visualizationInfo.displayElementIds.forEach(function (sSelectorId, iIndex) {
+				addSelector(sSelectorId, oChange.visualizationInfo.affectedElementIds[iIndex], oChange, false);
 			});
 
-			oChange.dependentElementIds.forEach(function (sSelectorId) {
+			oChange.visualizationInfo.dependentElementIds.forEach(function (sSelectorId) {
 				addSelector(sSelectorId, sSelectorId, oChange, true);
 			});
 		});
@@ -161,9 +160,11 @@ sap.ui.define([
 			commandCategory: Object.keys(aCategories).find(function (sCommandCategoryName) {
 				return includes(aCategories[sCommandCategoryName], sCommandName);
 			}),
-			affectedElementIds: [],
-			displayElementIds: [],
-			dependentElementIds: []
+			visualizationInfo: {
+				affectedElementIds: [],
+				displayElementIds: [],
+				dependentElementIds: []
+			}
 		};
 
 		// Only register changes that are valid for visualization
@@ -188,20 +189,19 @@ sap.ui.define([
 	 * Adds selectors for a registered change.
 	 *
 	 * @param {string} sChangeId - ID of the registered change
-	 * @param {object} oSelectorMap - Map of selector IDs to register
-	 * @param {string[]} oSelectorMap.affectedElementIds - Array of affected element IDs
-	 * @param {string[]} oSelectorMap.displayElementIds - Array of element IDs that the indicators are attached to
-	 * @param {string[]} oSelectorMap.dependentElementIds - Array of element IDs that the dependent indicators are attached to
+	 * @param {object} mVisualizationInfo - Map of selector IDs to register
+	 * @param {string[]} [mVisualizationInfo.affectedElementIds] - Array of affected element IDs
+	 * @param {string[]} [mVisualizationInfo.displayElementIds] - Array of element IDs that the indicators are attached to
+	 * @param {string[]} [mVisualizationInfo.dependentElementIds] - Array of element IDs that the dependent indicators are attached to
+	 * @param {object} [mVisualizationInfo.payload] - Command category specific visualization information
 	 */
-	ChangeIndicatorRegistry.prototype.addSelectorsForChangeId = function (sChangeId, oSelectorMap) {
+	ChangeIndicatorRegistry.prototype.addVisualizationInfo = function (sChangeId, mVisualizationInfo) {
 		var oChange = this._oChanges[sChangeId];
 		if (oChange === undefined) {
 			throw new Error("Change id is not registered");
 		}
 
-		each(oSelectorMap, function (sSelectorType, aSelectors) {
-			oChange[sSelectorType] = aSelectors;
-		});
+		oChange.visualizationInfo = Object.assign({}, oChange.visualizationInfo, mVisualizationInfo);
 	};
 
 	/**

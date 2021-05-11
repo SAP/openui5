@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/strings/formatMessage",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/mvc/View"
+	"sap/ui/core/mvc/View",
+	"sap/base/util/isPlainObject"
 ],
 function(
 	jQuery,
@@ -24,7 +25,8 @@ function(
 	uid,
 	formatMessage,
 	ManagedObject,
-	View
+	View,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -246,18 +248,29 @@ function(
 		/**
 		 * Indicates if the property value represents a binding
 		 *
-		 * @param {object} sPropertyValue - Property value
+		 * @param {object} vPropertyValue - Property value
 		 * @returns {boolean} true if value represents a binding
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.isBinding
 		 */
-		isBinding: function(sPropertyValue) {
-			var bIsBinding = false;
-			if (sPropertyValue && typeof sPropertyValue === "string" && sPropertyValue.substring(0, 1) === "{" && sPropertyValue.slice(-1) === "}") {
-				bIsBinding = true;
-			}
-			return bIsBinding;
+		isBinding: function(vPropertyValue) {
+			return (
+				(
+					typeof vPropertyValue === "string"
+					&& !!ManagedObject.bindingParser(vPropertyValue)
+				)
+				|| (
+					isPlainObject(vPropertyValue)
+					&& (
+						(
+							vPropertyValue.hasOwnProperty("path")
+							|| vPropertyValue.hasOwnProperty("parts")
+						)
+						&& !vPropertyValue.hasOwnProperty("ui5object")
+					)
+				)
+			);
 		},
 
 		/**

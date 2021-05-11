@@ -10,7 +10,10 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Icon",
 	"sap/ui/events/KeyCodes",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/ui/rta/util/changeVisualization/categories/getVisualizationCategory",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/util/resolveBinding"
 ], function(
 	Fragment,
 	JSONModel,
@@ -19,7 +22,10 @@ sap.ui.define([
 	DateFormat,
 	Icon,
 	KeyCodes,
-	capitalize
+	capitalize,
+	getVisualizationCategory,
+	FlUtils,
+	resolveBinding
 ) {
 	"use strict";
 
@@ -254,28 +260,40 @@ sap.ui.define([
 		});
 	};
 
-	ChangeIndicator.prototype._formatChangesModelItem = function (oChange) {
-		var oAffectedElement = sap.ui.getCore().byId(oChange.affectedElementId);
+	ChangeIndicator.prototype._formatChangesModelItem = function (mChangeInformation) {
+		var oAffectedElement = sap.ui.getCore().byId(mChangeInformation.affectedElementId);
+		var mPayload = Object.keys(mChangeInformation.payload || {}).reduce(function (mPayload, sKey) {
+			var vOriginalValue = mChangeInformation.payload[sKey];
+			var bIsBinding = FlUtils.isBinding(vOriginalValue);
+			var vValue = bIsBinding
+				? resolveBinding(vOriginalValue, oAffectedElement)
+				: vOriginalValue;
+			mPayload[sKey] = vValue;
+			return mPayload;
+		}, {});
+
 		var oOverlay = sap.ui.getCore().byId(this.getOverlayId());
+		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
+		var oVisualizationUtil = getVisualizationCategory(mChangeInformation.commandCategory);
+		var sDescription = oVisualizationUtil && oVisualizationUtil.getDescription(mPayload, sElementLabel);
 		var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sMode = this.getMode();
-		var sChangeTitle = oChange.commandName.charAt(0).toUpperCase() + oChange.commandName.slice(1);
-		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
+		var sChangeTitle = mChangeInformation.commandName.charAt(0).toUpperCase() + mChangeInformation.commandName.slice(1);
 		sElementLabel = sElementLabel && "'" + sElementLabel + "'";
 		var sChangeTextKey = (
 			"TXT_CHANGEVISUALIZATION_"
 			+ sMode.toUpperCase() + "_"
-			+ oChange.commandName.toUpperCase()
+			+ mChangeInformation.commandName.toUpperCase()
 		);
-		var sChangeText = oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
-		var sDate = DateFormat.getDateTimeInstance().format(new Date(oChange.change.getCreation()));
+		var sChangeText = sDescription || oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
+		var sDate = DateFormat.getDateTimeInstance().format(new Date(mChangeInformation.change.getCreation()));
 		var bEnableDetailButton = (
 			sMode === "change"
-			&& (oChange.commandName === "move" || oChange.commandName === "split")
+			&& (mChangeInformation.commandName === "move" || mChangeInformation.commandName === "split")
 		);
 		return {
-			id: oChange.id,
-			change: oChange,
+			id: mChangeInformation.id,
+			change: mChangeInformation,
 			changeTitle: sChangeTitle,
 			description: sChangeText,
 			date: sDate,

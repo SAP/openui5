@@ -89,6 +89,8 @@ sap.ui.define([
 				 *
 				 * @param {sap.ui.fl.Change} oChange change wrapper object to be completed
 				 * @param {object} mSpecificChangeInfo with attribute (e.g. textLabel) to be included in the change
+				 * @param {object} mPropertyBag - Property bag
+				 * @param {object} mPropertyBag.modifier - Modifier for the controls
 				 * @public
 				 */
 				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
@@ -118,6 +120,26 @@ sap.ui.define([
 						affectedControl: oChange.getSelector(),
 						classification: sap.ui.fl.condenser.Classification.LastOneWins,
 						uniqueKey: mRenameSettings.propertyName || mRenameSettings.changePropertyName
+					};
+				},
+
+				/**
+				 * Retrieves the information required for the change visualization.
+				 *
+				 * @param {sap.ui.fl.Change} oChange - Object with change data
+				 * @returns {object} Object with a payload containing the information required for the change visualization
+				 * @public
+				 */
+				getChangeVisualizationInfo: function(oChange) {
+					var oNewLabel = (
+						oChange.getDefinition().texts
+						&& oChange.getDefinition().texts[mRenameSettings.changePropertyName]
+					);
+					return {
+						payload: {
+							originalLabel: oChange.getRevertData(),
+							newLabel: oNewLabel && oNewLabel.value
+						}
 					};
 				}
 			};

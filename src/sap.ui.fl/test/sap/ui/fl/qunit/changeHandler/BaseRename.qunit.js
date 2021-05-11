@@ -34,7 +34,7 @@ function (
 
 	var mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
 
-	QUnit.module("Given that rename change handlers for a button is created", {
+	QUnit.module("Given that a rename change handler for a button is created based on the BaseRename", {
 		beforeEach: function() {
 			this.oButton = new Button(oComponent.createId("myButton"));
 
@@ -206,6 +206,16 @@ function (
 
 			assert.equal(this.oChange.getContent().originalControlType, "sap.m.Button", "then the original control type is stored in the change");
 			assert.equal(this.oChange.getText("buttonText"), this.mSpecificChangeInfo.value, "then text is stored with the default change property Name inside the translateable part of the change");
+		});
+
+		QUnit.test('when getChangeVisualization is called', function (assert) {
+			this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
+			this.oChange.setRevertData("Button Old Text");
+
+			var mVisualizationInfo = this.oDefaultRenameChangeHandler.getChangeVisualizationInfo(this.oChange);
+
+			assert.equal(mVisualizationInfo.payload.originalLabel, "Button Old Text", "then the returned payload contains the original label");
+			assert.equal(mVisualizationInfo.payload.newLabel, "Button New Text", "then the returned payload contains the new label");
 		});
 	});
 

@@ -711,7 +711,8 @@ sap.ui.define([
 						only: ["sap/ui/rta/util/showMessageBox"]
 					}
 				},
-				"util/ChangeVisualization": {
+				"util/changeVisualization/ChangeVisualization": {
+					group: "Change visualization",
 					coverage: {
 						only: [
 							"sap/ui/rta/util/changeVisualization/ChangeVisualization",
@@ -726,18 +727,27 @@ sap.ui.define([
 						}
 					}
 				},
-				"util/ChangeIndicator": {
+				"util/changeVisualization/ChangeIndicator": {
+					group: "Change visualization",
 					coverage: {
 						only: [
 							"sap/ui/rta/util/changeVisualization/ChangeIndicator"
 						]
 					}
 				},
-
-				"util/ChangeIndicatorRegistry": {
+				"util/changeVisualization/ChangeIndicatorRegistry": {
+					group: "Change visualization",
 					coverage: {
 						only: [
 							"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
+						]
+					}
+				},
+				"util/changeVisualization/categories/RenameVisualization": {
+					group: "Change visualization",
+					coverage: {
+						only: [
+							"sap/ui/rta/util/changeVisualization/categories/RenameVisualization"
 						]
 					}
 				},

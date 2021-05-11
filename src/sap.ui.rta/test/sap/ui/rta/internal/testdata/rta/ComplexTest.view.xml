@@ -38,6 +38,7 @@
 				<Button id="smartFormPopoverButton" text="Open Popover" press=".openSmartFormPopover" />
 				<Button id="smartFormDialogButton" text="Open Smart Form Dialog" press=".openSmartFormDialog" />
 				<Button id="createDeleteButton" text="Create/Delete SmartForm" press=".createOrDeleteContent" />
+				<Text id="headerTextWithFormatter" text="{path: 'i18n>appTitle', formatter: '.sampleFormatter'}" />
 
 				<core:Fragment fragmentName="sap.ui.rta.test.fragment.QUnitTestArea" type="XML"></core:Fragment>
 
