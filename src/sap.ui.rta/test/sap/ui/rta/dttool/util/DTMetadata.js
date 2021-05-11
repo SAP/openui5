@@ -98,7 +98,7 @@ sap.ui.define([
 									oLibData.controls.forEach(function (oData) {
 										if (oData) {
 											oData = jQuery.extend(true, {}, mLibraryData[sLibraryName][oData.is], oData);
-											oData.designtimeModule = jQuery.sap.getResourceName(oData.className, ".designtime");
+											oData.designtimeModule = sap.ui.require.toUrl(oData.className) + ".designtime";
 											registerDTData(sLibraryName, oData);
 										}
 									});
@@ -107,7 +107,7 @@ sap.ui.define([
 									oLibData.elements.forEach(function (oData) {
 										if (oData) {
 											oData = jQuery.extend(true, {}, mLibraryData[sLibraryName][oData.is], oData);
-											oData.designtimeModule = jQuery.sap.getResourceName(oData.className, ".designtime");
+											oData.designtimeModule = sap.ui.require.toUrl(oData.className) + ".designtime";
 											registerDTData(sLibraryName, oData);
 										}
 									});
