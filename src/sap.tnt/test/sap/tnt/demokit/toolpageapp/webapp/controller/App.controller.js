@@ -1,15 +1,10 @@
 sap.ui.define([
 	'./BaseController',
-	'sap/ui/core/Fragment',
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel',
 	'sap/m/ResponsivePopover',
 	'sap/m/MessagePopover',
 	'sap/m/ActionSheet',
 	'sap/m/Button',
 	'sap/m/Link',
-	'sap/m/Bar',
-	'sap/ui/layout/VerticalLayout',
 	'sap/m/NotificationListItem',
 	'sap/m/MessagePopoverItem',
 	'sap/ui/core/CustomData',
@@ -19,16 +14,11 @@ sap.ui.define([
 	'sap/m/library'
 ], function(
 	BaseController,
-	Fragment,
-	Controller,
-	JSONModel,
 	ResponsivePopover,
 	MessagePopover,
 	ActionSheet,
 	Button,
 	Link,
-	Bar,
-	VerticalLayout,
 	NotificationListItem,
 	MessagePopoverItem,
 	CustomData,
@@ -60,17 +50,12 @@ sap.ui.define([
 				this.onSideNavButtonPress();
 			}
 
-			Device.media.attachHandler(function (oDevice) {
-				if ((oDevice.name === "Tablet" && this._bExpanded) || oDevice.name === "Desktop") {
-					this.onSideNavButtonPress();
-					// set the _bExpanded to false on tablet devices
-					// extending and collapsing of side navigation should be done when resizing from
-					// desktop to tablet screen sizes)
-					this._bExpanded = (oDevice.name === "Desktop");
-				}
-			}.bind(this));
-
+			Device.media.attachHandler(this._handleWindowResize, this);
 			this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
+		},
+
+		onExit: function() {
+			Device.media.detachHandler(this._handleWindowResize, this);
 		},
 
 		onRouteChange: function (oEvent) {
@@ -283,6 +268,16 @@ sap.ui.define([
 		 */
 		getBundleText: function(sI18nKey, aPlaceholderValues){
 			return this.getBundleTextByModel(sI18nKey, this.getModel("i18n"), aPlaceholderValues);
+		},
+
+		_handleWindowResize: function (oDevice) {
+			if ((oDevice.name === "Tablet" && this._bExpanded) || oDevice.name === "Desktop") {
+				this.onSideNavButtonPress();
+				// set the _bExpanded to false on tablet devices
+				// extending and collapsing of side navigation should be done when resizing from
+				// desktop to tablet screen sizes)
+				this._bExpanded = (oDevice.name === "Desktop");
+			}
 		}
 
 	});
