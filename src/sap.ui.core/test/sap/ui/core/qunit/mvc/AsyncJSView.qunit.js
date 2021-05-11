@@ -84,4 +84,17 @@ sap.ui.define([
 			oTypedView.destroy();
 		}.bind(this));
 	});
+
+	QUnit.test("Created via JSView.create - sync createContent", function(assert) {
+		assert.expect(3);
+
+		return JSView.create({
+			viewName : "module:testdata/mvc/TypedViewSyncCreateContent"
+		}).then(function(oTypedView) {
+			assert.equal(this.oAfterInitSpy.callCount, 1, "AfterInit event fired before resolving");
+			assert.ok(oTypedView.isA("testdata.mvc.TypedView"), "Views is a typed view");
+			assert.ok(oTypedView.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+			oTypedView.destroy();
+		}.bind(this));
+	});
 });

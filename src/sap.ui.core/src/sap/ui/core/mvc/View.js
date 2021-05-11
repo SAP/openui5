@@ -1381,7 +1381,9 @@ sap.ui.define([
 
 		return ManagedObject.runWithPreprocessors(function() {
 			if (mSettings.async) {
-				return this.createContent(oController).then(function(vContent) {
+				var vContent = this.createContent(oController);
+				vContent = vContent instanceof Promise ? vContent : Promise.resolve(vContent);
+				return vContent.then(function(vContent) {
 					this.applySettings({
 						content : vContent
 					});
