@@ -3901,7 +3901,6 @@ sap.ui.define([
 						var oItem = testInterface.getMenuItems()[0];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
 						testInterface.oPopover.getEndButton().firePress();
-						testInterface.oSettingsPanel.getItems()[0].getItems()[1].firePress();
 						testInterface.oSegmentedButton.getItems()[1].firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
@@ -4108,6 +4107,8 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
 						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected by default");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by default");
 						testInterface.oSettingsPanel.getItems()[1].getItems()[1].fireSelect({ selected: false });
 						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is not enabled after setting visible to false");
 						assert.ok(testInterface.oSettingsPanel.getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting visible to false");
@@ -4125,6 +4126,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
+
 		QUnit.test("Change editing enable in settings panel", function (assert) {
 			this.oCardEditor.setMode("admin");
 			this.oCardEditor.setAllowSettings(true);
@@ -4190,6 +4192,8 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
 						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected by default");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by default");
 						testInterface.oSettingsPanel.getItems()[2].getItems()[1].fireSelect({ selected: false });
 						assert.ok(testInterface.oSettingsPanel.getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting editing enable to false");
 						testInterface.oPopover.getBeginButton().firePress();
@@ -4203,6 +4207,510 @@ sap.ui.define([
 							resolve();
 						}, 1000);
 					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable disabled in dt: in admin mode", function (assert) {
+			this.oCardEditor.setMode("admin");
+			this.oCardEditor.setAllowSettings(true);
+			this.oCardEditor.setAllowDynamicValues(true);
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsDisabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: []
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = oCardEditor.getAggregation("_formContent")[1];
+					var oField = oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
+					//settings button
+					var oButton = oField.getAggregation("_settingsButton");
+					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+					oButton.firePress();
+					oButton.focus();
+					setTimeout(function () {
+						//popup is opened
+						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
+						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
+						var testInterface = settingsClass._private();
+						assert.ok(testInterface.oCurrentInstance === oField._oSettingsPanel, "Settings: Points to right settings panel");
+						assert.ok(testInterface.oPopover.isA("sap.m.ResponsivePopover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
+						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
+						testInterface.oSegmentedButton.getItems()[1].firePress();
+						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
+						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === false, "Settings: Allow visible option is unselected by visibleToUser");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is disabled by visibleToUser");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === false, "Settings: Allow editing option is unselected by editableToUser");
+						testInterface.oSettingsPanel.getItems()[1].getItems()[1].fireSelect({ selected: true });
+						testInterface.oSettingsPanel.getItems()[2].getItems()[1].fireSelect({ selected: true });
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected after setting visible to true");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === true, "Settings: Allow editing option is enabled after setting editing enable to true");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by editableToUser");
+						testInterface.oPopover.getBeginButton().firePress();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
+							var oCurrentSettings = oCardEditor.getCurrentSettings();
+							var sContext = oField.getBindingContext("currentSettings");
+							var bVisible = oCurrentSettings[":designtime"][sContext.getPath() + "/visible"];
+							assert.ok(typeof (bVisible) !== "undefined" && bVisible, "Field: visible value true is set to designtime");
+							var bEditable = oCurrentSettings[":designtime"][sContext.getPath() + "/editable"];
+							assert.ok(typeof (bEditable) !== "undefined" && bEditable, "Field: editable value true is set to designtime");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable disabled in dt: in content mode", function (assert) {
+			this.oCardEditor.setMode("content");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsDisabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: []
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					assert.ok(oCardEditor.getAggregation("_formContent") === null, "Parameter is not visible");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable disabled in dt but enable both in settings panel : in content mode", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/visible": true,
+					"/form/items/stringParameter/editable": true
+				},
+				":layer": 0,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsDisabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = oCardEditor.getAggregation("_formContent")[1];
+					var oField = oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable disabled in dt but just enable visible in settings panel: in content mode", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/visible": true
+				},
+				":layer": 0,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsDisabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = oCardEditor.getAggregation("_formContent")[1];
+					var oField = oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
+					assert.ok(oField.getAggregation("_field").getEditable() === false, "Field: Is NOT editable");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable disabled in dt but just enable editable in settings panel: in content mode", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/editable": true
+				},
+				":layer": 0,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsDisabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					assert.ok(oCardEditor.getAggregation("_formContent") === null, "Parameter is not visible");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable enabled in dt: in admin mode", function (assert) {
+			this.oCardEditor.setMode("admin");
+			this.oCardEditor.setAllowSettings(true);
+			this.oCardEditor.setAllowDynamicValues(true);
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsEnabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: []
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = oCardEditor.getAggregation("_formContent")[1];
+					var oField = oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
+					//settings button
+					var oButton = oField.getAggregation("_settingsButton");
+					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+					assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+					oButton.firePress();
+					oButton.focus();
+					setTimeout(function () {
+						//popup is opened
+						assert.ok(oField._oSettingsPanel._oOpener === oField, "Settings: Has correct owner");
+						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
+						var testInterface = settingsClass._private();
+						assert.ok(testInterface.oCurrentInstance === oField._oSettingsPanel, "Settings: Points to right settings panel");
+						assert.ok(testInterface.oPopover.isA("sap.m.ResponsivePopover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
+						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
+						testInterface.oSegmentedButton.getItems()[1].firePress();
+						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
+						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
+						assert.ok(testInterface.oSettingsPanel.getItems().length === 4, "Settings: Settings Panel has 4 items");
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === true, "Settings: Allow visible option is selected by visibleToUser");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === true, "Settings: Allow editing option is enabled by visibleToUser");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by editableToUser");
+						testInterface.oSettingsPanel.getItems()[2].getItems()[1].fireSelect({ selected: false });
+						testInterface.oSettingsPanel.getItems()[1].getItems()[1].fireSelect({ selected: false });
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getItems()[1].getSelected() === false, "Settings: Allow visible option is unselected after setting visible to false");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is enabled after setting visible enable to false");
+						assert.ok(testInterface.oSettingsPanel.getItems()[2].getItems()[1].getSelected() === false, "Settings: Allow editing option is unselected after setting editable to false");
+						testInterface.oPopover.getBeginButton().firePress();
+						setTimeout(function () {
+							//this is delayed not to give time to show the tokenizer
+							assert.ok(oButton.getIcon() === "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
+							var oCurrentSettings = oCardEditor.getCurrentSettings();
+							var sContext = oField.getBindingContext("currentSettings");
+							var bVisible = oCurrentSettings[":designtime"][sContext.getPath() + "/visible"];
+							assert.ok(typeof (bVisible) !== "undefined" && !bVisible, "Field: visible value false is set to designtime");
+							var bEditable = oCurrentSettings[":designtime"][sContext.getPath() + "/editable"];
+							assert.ok(typeof (bEditable) !== "undefined" && !bEditable, "Field: editable value false is set to designtime");
+							resolve();
+						}, 1000);
+					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable enabled in dt: in content mode", function (assert) {
+			this.oCardEditor.setMode("content");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsEnabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: []
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = oCardEditor.getAggregation("_formContent")[1];
+					var oField = oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable enabled in dt but disabled both in settings panel : in content mode", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/visible": false,
+					"/form/items/stringParameter/editable": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsEnabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					assert.ok(oCardEditor.getAggregation("_formContent") === null, "Parameter is not visible");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable enabled in dt but just disable visible in settings panel: in content mode", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/visible": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsEnabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					assert.ok(oCardEditor.getAggregation("_formContent") === null, "Parameter is not visible");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check visible and editable enabled in dt but just disable editable in settings panel: in content mode", function (assert) {
+			this.oCardEditor.setMode("content");
+			var adminchanges = {
+				":designtime": {
+					"/form/items/stringParameter/editable": false
+				},
+				":layer": 0,
+				":errors": false
+			};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithSettingsEnabled",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					var oCardEditor = this.oCardEditor;
+					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = oCardEditor.getAggregation("_formContent")[1];
+					var oField = oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
+					assert.ok(oField.getAggregation("_field").getEditable() === false, "Field: Is NOT editable");
+					resolve();
 				}.bind(this));
 			}.bind(this));
 		});

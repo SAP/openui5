@@ -271,14 +271,21 @@ sap.ui.define([
 	var oResetToDefaultButton = new Button({
 		type: "Transparent",
 		text: oResourceBundle.getText("CARDEDITOR_MORE_RESET"),
-		enabled: "{= ${currentSettings>_next/visible} === false || ${currentSettings>_next/editable} === false || ${currentSettings>_next/allowDynamicValues} === false || ${currentSettings>_beforeValue} !== ${currentSettings>value}}",
+		enabled: "{= ${currentSettings>_next/visible} === (typeof(${currentSettings>visibleToUser}) === 'undefined' ? false : !${currentSettings>visibleToUser}) || ${currentSettings>_next/editable} === (typeof(${currentSettings>editableToUser}) === 'undefined' ? false : !${currentSettings>editableToUser}) || ${currentSettings>_next/allowDynamicValues} === (typeof(${currentSettings>allowDynamicValues}) === 'undefined' ? false : !${currentSettings>allowDynamicValues}) || ${currentSettings>_beforeValue} !== ${currentSettings>value}}",
 		tooltip: oResourceBundle.getText("CARDEDITOR_MORE_SETTINGS_P_ADMIN_RESET"),
 		press: function () {
-			setNextSetting("visible", true);
-			setNextSetting("editable", true);
-			setNextSetting("allowDynamicValues", true);
+			var bVisibleDefault = typeof (oCurrentModel.getProperty("/visibleToUser")) === 'undefined' ? true : oCurrentModel.getProperty("/visibleToUser");
+			var bEditableDefault = typeof (oCurrentModel.getProperty("/editableToUser")) === 'undefined' ? true : oCurrentModel.getProperty("/editableToUser");
+			var bAllowDynamicValuesDefault = typeof (oCurrentModel.getProperty("/allowDynamicValues")) === 'undefined' ? true : oCurrentModel.getProperty("/allowDynamicValues");
+			setNextSetting("visible", bVisibleDefault);
+			setNextSetting("editable", bEditableDefault);
+			setNextSetting("allowDynamicValues", bAllowDynamicValuesDefault);
 			if (oCurrentModel.getProperty("/translatable")) {
-				oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_translatedDefaultValue"));
+				if (oCurrentModel.getProperty("/_translatedDefaultValue") && oCurrentModel.getProperty("/_translatedDefaultValue") !== "") {
+					oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_translatedDefaultValue"));
+				} else if (oCurrentModel.getProperty("/_translatedDefaultPlaceholder") && oCurrentModel.getProperty("/_translatedDefaultPlaceholder") !== "") {
+					oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_translatedDefaultPlaceholder"));
+				}
 				oCurrentModel.setProperty("/_changed", false);
 			} else {
 				oCurrentModel.setProperty("/value", oCurrentModel.getProperty("/_beforeValue"));
@@ -410,24 +417,8 @@ sap.ui.define([
 
 		//create the settings content
 		oSettingsPanel.addStyleClass("sapUiSmallMargin");
-		oSettingsPanel.addItem(new HBox({
-			items: [
-				new Title({ text: oResourceBundle.getText("CARDEDITOR_MORE_SETTINGS_P_ADMIN") }),
-				new Button({
-					type: "Transparent",
-					tooltip: oResourceBundle.getText("CARDEDITOR_MORE_SETTINGS_P_ADMIN_RESET"),
-					enabled: "{= ${currentSettings>_next/visible} === false || ${currentSettings>_next/editable} === false || ${currentSettings>_next/allowDynamicValues} === false}",
-					icon: "sap-icon://reset",
-					visible: false,
-					press: function () {
-						//set the focus to avoid closing of popup. enabled binding sets disabled and then focus handling breaks.
-						oSettingsPanel.getItems()[1].getItems()[1].focus(); //first checkbox
-						setNextSetting("visible", true);
-						setNextSetting("editable", true);
-						setNextSetting("allowDynamicValues", true);
-					}
-				})
-			]
+		oSettingsPanel.addItem(new Title({
+			text: oResourceBundle.getText("CARDEDITOR_MORE_SETTINGS_P_ADMIN")
 		}));
 		oSettingsPanel.addItem(new HBox({
 			items: [

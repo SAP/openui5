@@ -623,13 +623,26 @@ sap.ui.define([
 	BaseField.prototype._hasSettings = function () {
 		var oConfig = this.getConfiguration();
 		if (oConfig._next) {
+			var bVisibleDefault = oConfig.hasOwnProperty("visibleToUser") ? oConfig.visibleToUser : true;
+			var bEditableDefault = oConfig.hasOwnProperty("editableToUser") ? oConfig.editableToUser : true;
+			var bEditable = oConfig._next.visible === false ? false : oConfig._next.editable;
+			var bAllowDynamicValuesDefault = oConfig.hasOwnProperty("allowDynamicValues") ? oConfig.allowDynamicValues : true;
 			oConfig._hasSettings = (
-				oConfig._next.editable === false ||
-				oConfig._next.visible === false ||
-				oConfig._next.allowDynamicValues === false
+				oConfig._next.visible === !bVisibleDefault ||
+				bEditable === !bEditableDefault ||
+				oConfig._next.allowDynamicValues === !bAllowDynamicValuesDefault
 			);
 		} else {
 			oConfig._hasSettings = false;
+			if (oConfig.hasOwnProperty("editableToUser") || oConfig.hasOwnProperty("visibleToUser")) {
+				oConfig._next = {};
+			}
+			if (oConfig.hasOwnProperty("editableToUser")) {
+				oConfig._next.editable = oConfig.editableToUser;
+			}
+			if (oConfig.hasOwnProperty("visibleToUser")) {
+				oConfig._next.visible = oConfig.visibleToUser;
+			}
 		}
 		return oConfig._hasSettings;
 	};

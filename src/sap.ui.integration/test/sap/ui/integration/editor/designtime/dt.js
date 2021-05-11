@@ -19,19 +19,23 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"translatable": true,
 						"required": true,
-						"allowDynamicValues": true
+						"allowDynamicValues": true,
+						"editableToUser": false,
+						"visibleToUser": false
 					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"type": "string",
 						"translatable": true,
-						"required": true
+						"required": true,
+						"editableToUser": false
 					},
 					"stringLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
 						"type": "string",
 						"label": "Direct String Label",
-						"translatable": true
+						"editableToUser": true,
+						"visibleToUser": true
 					},
 					"stringLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",

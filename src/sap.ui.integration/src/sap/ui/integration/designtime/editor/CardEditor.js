@@ -771,13 +771,15 @@ sap.ui.define([
 						mResult[oItem.manifestpath] = oItem.value;
 					}
 					if (oItem._next && (this.getAllowSettings())) {
-						if (oItem._next.editable === false) {
+						var bVisibleDefault = typeof (oItem.visibleToUser) === "undefined" ? true : oItem.visibleToUser;
+						var bEditableDefault = typeof (oItem.editableToUser) === "undefined" ? true : oItem.editableToUser;
+						if (oItem._next.visible === !bVisibleDefault) {
 							mNext = mNext || {};
-							mNext[oItem._settingspath + "/editable"] = false;
+							mNext[oItem._settingspath + "/visible"] = oItem._next.visible;
 						}
-						if (oItem._next.visible === false) {
+						if (oItem._next.editable === !bEditableDefault) {
 							mNext = mNext || {};
-							mNext[oItem._settingspath + "/visible"] = false;
+							mNext[oItem._settingspath + "/editable"] = oItem._next.editable;
 						}
 						if (typeof oItem._next.allowDynamicValues === "boolean" && this.getAllowDynamicValues()) {
 							mNext = mNext || {};
@@ -1706,11 +1708,19 @@ sap.ui.define([
 			if (oItem.visible === undefined || oItem.visible === null) {
 				oItem.visible = true;
 			}
-			if (typeof oItem.translatable !== "boolean") {
-				oItem.translatable = false;
-			}
 			if (oItem.editable === undefined || oItem.editable === null) {
 				oItem.editable = true;
+			}
+			if (this.getMode() !== "admin") {
+				if (oItem.visibleToUser !== undefined) {
+					oItem.visible = oItem.visibleToUser;
+				}
+				if (oItem.editableToUser !== undefined) {
+					oItem.editable = oItem.editableToUser;
+				}
+			}
+			if (typeof oItem.translatable !== "boolean") {
+				oItem.translatable = false;
 			}
 			if (!oItem.label) {
 				oItem.label = n;
