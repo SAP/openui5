@@ -744,7 +744,7 @@ sap.ui.define([
 	 * @param {string} [offset='0 0'] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "10 0" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
 	 * @param {string} [collision='flip'] defines how the position of an element should be adjusted in case it overflows the within area in some direction.
 	 * @param {string | sap.ui.core.Element | Element | Window} [within=Window] defines the area the popup should be placed in. This affects the collision detection.
-	 * @param {boolean | function} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
+	 * @param {boolean} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
 	 * @public
 	 */
 	Popup.prototype.open = function(iDuration, my, at, of, offset, collision, within, followOf) {
@@ -788,7 +788,7 @@ sap.ui.define([
 		assert(!offset || typeof offset === "string", "offset must be empty or a string");
 		assert(!collision || typeof collision === "string", "collision must be empty or a string");
 		assert(!within || within === window || typeof within === "string" || within instanceof Element || within instanceof HTMLElement, "within must be either empty, or the global window object, or a string, or a sap.ui.core.Element, or a DOM element");
-		assert(!followOf || typeof followOf === "boolean" || typeof followOf === "function", "followOf must be either empty, or a boolean, or a function");
+		assert(!followOf || typeof followOf === "boolean" || typeof followOf === "function" || followOf === Popup.CLOSE_ON_SCROLL, "followOf must be either empty or a boolean");
 
 		this.eOpenState = OpenState.OPENING;
 
