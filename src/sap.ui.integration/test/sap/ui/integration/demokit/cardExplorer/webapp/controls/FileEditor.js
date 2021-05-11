@@ -143,6 +143,7 @@ sap.ui.define([
 		this._getHeader().destroyItems();
 		this._bFetch = true;
 		this._createInternalFiles(aFiles);
+		this._getHeader().setSelectedKey(aFiles[0].key);
 
 		return this.setProperty("files", aFiles);
 	};
@@ -449,8 +450,10 @@ sap.ui.define([
 	};
 
 	FileEditor.prototype.setDesigntimeContent = function (sValue) {
-		this.getDesigntimeFile().content = sValue;
-		this._update();
+		if (this.getDesigntimeFile()) {
+			this.getDesigntimeFile().content = sValue;
+			this._update();
+		}
 	};
 
 	FileEditor.prototype.getDesigntimeContent = function () {

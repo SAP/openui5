@@ -575,11 +575,6 @@ sap.ui.define([
 										url: '/samples/list/quickLinks.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/list/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
