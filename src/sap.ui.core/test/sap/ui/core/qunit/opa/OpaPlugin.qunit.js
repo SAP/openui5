@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/_Enabled",
 	"sap/m/CheckBox",
 	"sap/m/Button",
+	"sap/m/Input",
 	"sap/m/Dialog",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Fragment",
@@ -17,6 +18,7 @@ sap.ui.define([
 			 _Enabled,
 			 CheckBox,
 			 Button,
+			 Input,
 			 Dialog,
 			 View,
 			 Fragment,
@@ -372,9 +374,11 @@ sap.ui.define([
 
 			this.oPlugin = new OpaPlugin();
 			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
+			this.fnErrorLogSpy = sinon.spy(this.oPlugin._oLogger, "error");
 		},
 		afterEach: function () {
 			this.fnLogSpy.restore();
+			this.fnErrorLogSpy.restore();
 			this.oView.destroy();
 			this.oPlugin.destroy();
 		}
@@ -510,6 +514,34 @@ sap.ui.define([
 		assert.strictEqual(aMatchedButtons[1].getId(), "myFooBarView--bar", "Should match the second button");
 		assert.strictEqual(aMatchedButtons[2].getId(), "myFooBarView--baz", "Should match the third button");
 		sinon.assert.calledWith(this.fnLogSpy, "Found view with ID 'myFooBarView' and viewName 'undefined'");
+	});
+
+	// change logic to "should not match" when the warning is replaced by a fix
+	// BCP: 2070254964
+	QUnit.test("Should match any controls of a view when ID is given and the control type is not correct", function(assert) {
+		var oResultSingleId = this.oPlugin.getMatchingControls({
+			controlType: "sap.m.Input",
+			viewName: "bar",
+			id: "foo"
+		});
+		var oResultArrayId = this.oPlugin.getMatchingControls({
+			controlType: "sap.m.Input",
+			viewName: "bar",
+			id: ["foo"]
+		});
+		var oResultRegexId = this.oPlugin.getMatchingControls({
+			controlType: "sap.m.Input",
+			viewName: "bar",
+			id: /fo/
+		});
+
+		assert.ok(this.oPlugin.getControlConstructor("sap.m.Input"), "Control constructor is found"); // avoid false positives
+		assert.ok(oResultSingleId, "Should match (but print warning) when controlType is different - single ID as string");
+		assert.ok(oResultArrayId.length, "Should match (but print warning) when controlType is different - array of IDs");
+		assert.ok(!oResultRegexId.length, "Should not match when controlType is different - ID regex");
+
+		assert.ok(this.fnErrorLogSpy.firstCall.args[0].match(/Found control with ID 'foo' in view 'bar' but it does not have required controlType 'sap.m.Input'/));
+		assert.ok(this.fnErrorLogSpy.secondCall.args[0].match(/Some results don't match the desired controlType 'sap.m.Input'/));
 	});
 
 	QUnit.test("Should match controls by string ID and view ID", function (assert) {

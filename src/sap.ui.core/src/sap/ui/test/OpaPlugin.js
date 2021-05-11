@@ -145,6 +145,7 @@ sap.ui.define([
 				var sViewName = oView.getViewName();
 				var sFragmentPrefix = oOptions.fragmentId ? oOptions.fragmentId + OpaPlugin.VIEW_ID_DELIMITER : "";
 
+				// first check for exact Ids, to skip searching through all the view's controls if possible
 				if (Array.isArray(oOptions.id)) {
 					var aControls = [];
 					var aUnmatchedIds = [];
@@ -159,18 +160,39 @@ sap.ui.define([
 						}
 					});
 
-					var sUnmatchedLog = aUnmatchedIds.length ? ". Found no controls matching the subset of IDs " + aUnmatchedIds : "";
-					this._oLogger.debug("Found " + aControls.length + " controls with ID contained in " + oOptions.id + " in view '" + sViewName + "'" + sUnmatchedLog);
+					this._oLogger.debug("Found " + aControls.length + " controls with ID contained in " + oOptions.id + " in view '" + sViewName + "'" +
+						aUnmatchedIds.length ? ". Found no controls matching the subset of IDs " + aUnmatchedIds : "");
+
+					if (aControls.length && oOptions.controlType) {
+						var aControlsWithCorrectType = this._filterUniqueControlsByCondition(aControls, makeTypeFilterFn(oOptions.controlType));
+						this._oLogger.debug("Found " + (aControlsWithCorrectType.length ? aControlsWithCorrectType.length : "no") + " controls in view '" + sViewName +
+							"' with control type matching '" + oOptions.sOriginalControlType + "' and ID contained in " + oOptions.id);
+						if (aControlsWithCorrectType.length !== aControls.length) {
+							this._oLogger.error("Some results don't match the desired controlType '" + oOptions.sOriginalControlType +
+								"'. Please double check the expected controlType - this might lead to unexpected test results!");
+						}
+					}
 					return aControls;
 				}
 
 				if (bSearchForSingleControl) {
 					var sId = sFragmentPrefix + oOptions.id;
 					var oControl = oView.byId(sId) || null;
-					this._oLogger.debug("Found " + (oControl ? "" : "no ") + "control with ID '" + sId + "' in view '" + sViewName + "'");
-					return oControl;
+					if (oControl) {
+						if (makeTypeFilterFn(oOptions.controlType)(oControl)) {
+							this._oLogger.debug("Found control with ID '" + sId + "' and controlType '" + oOptions.sOriginalControlType + "' in view '" + sViewName + "'");
+						} else {
+							this._oLogger.error("Found control with ID '" + sId + "' in view '" + sViewName + "' but it does not have required controlType '" +
+								oOptions.sOriginalControlType + "'. Please double check the expected controlType - this might lead to unexpected test results!");
+						}
+						return oControl;
+					} else {
+						this._oLogger.debug("Found no control with ID '" + sId + "' in view '" + sViewName + "'");
+						return oControl;
+					}
 				}
 
+				// if not exact Id is given, start a thorough search
 				var aAllControlsOfTheView = this.getAllControlsWithTheParent(oView, oOptions.controlType, oOptions.sOriginalControlType);
 				var bMatchById = this._isRegExp(oOptions.id);
 
@@ -246,8 +268,7 @@ sap.ui.define([
 				if (vControls.length && oOptions.controlType) {
 					var hasExpectedType = makeTypeFilterFn(oOptions.controlType);
 					vControls = this._filterUniqueControlsByCondition(vControls, hasExpectedType);
-
-					this._oLogger.debug("Found " + (vControls.length ? vControls.length : "no") + " controls in the static area with control type matching '" + oOptions.controlType + "'");
+					this._oLogger.debug("Found " + (vControls.length ? vControls.length : "no") + " controls in the static area with control type matching '" + oOptions.sOriginalControlType + "'");
 				}
 
 				if (oOptions.id && typeof oOptions.id === "string") {
