@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
+	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/_ODataMetaModelUtils",
@@ -21,10 +22,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, coreLibrary, Message, FilterProcessor, Model, _ODataMetaModelUtils,
-		CountMode, MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding,
-		ODataUtils, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel,
-		ODataTreeBinding, TestUtils
+], function (Log, SyncPromise, coreLibrary, Message, Context, FilterProcessor, Model,
+		_ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel,
+		ODataPropertyBinding, ODataUtils, ODataAnnotations, ODataContextBinding, ODataListBinding,
+		ODataModel, ODataTreeBinding, TestUtils
 ) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -1209,7 +1210,8 @@ sap.ui.define([
 			.returns(oFixture.responseEntityKey);
 		oModelMock.expects("getContext").withExactArgs("/key('id-0-0')").returns(oContext);
 		oModelMock.expects("_updateContext")
-			.withExactArgs(sinon.match.same(oContext), "/" + oFixture.responseEntityKey);
+			.withExactArgs(sinon.match.same(oContext), "/" + oFixture.responseEntityKey,
+				oFixture.resultDeepPath);
 		this.mock(oContext).expects("setUpdated").withExactArgs(true);
 		oModelMock.expects("callAfterUpdate").withExactArgs(sinon.match.func);
 		oModelMock.expects("_getEntity").withExactArgs(oFixture.responseEntityKey)
@@ -4225,5 +4227,38 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(ODataModel.prototype.getMetadataUrl.call(oModel), "~metadataUrl");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_updateContext", function (assert) {
+		var oModel = {mContexts : {}},
+			oContext = new Context(oModel, "/path");
+
+		oModel.mContexts["/path"] = oContext;
+
+		assert.strictEqual(oContext.getPath(), "/path");
+		assert.strictEqual(oContext.sDeepPath, "");
+
+		// code under test
+		ODataModel.prototype._updateContext.call(oModel, oContext, "/newPath");
+
+		assert.strictEqual(oContext.getPath(), "/newPath");
+		assert.strictEqual(oContext.sDeepPath, "", "deep path is not changed");
+		assert.deepEqual(oModel.mContexts, {
+			//TODO is it necessary the context remains stored with its previous path as key?
+			"/path"  : oContext,
+			"/newPath" : oContext
+		});
+
+		// code under test
+		ODataModel.prototype._updateContext.call(oModel, oContext, "/newPath2", "/deep/newPath2");
+
+		assert.strictEqual(oContext.getPath(), "/newPath2");
+		assert.strictEqual(oContext.sDeepPath, "/deep/newPath2");
+		assert.deepEqual(oModel.mContexts, {
+			"/path"  : oContext,
+			"/newPath" : oContext,
+			"/newPath2" : oContext
+		});
 	});
 });
