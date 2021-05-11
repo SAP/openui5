@@ -4811,7 +4811,7 @@ sap.ui.define([
 	thisLib.BackgroundHelper = {
 		/**
 		 * Adds CSS classes and styles to the given RenderManager, depending on the given configuration for background color and background image.
-		 * To be called by control renderers supporting the global themable background image within their root tag, before they call writeClasses() and writeStyles().
+		 * To be called by control renderers supporting the global themable background image within their root tag, before they call openEnd, voidEnd, writeClasses() and writeStyles().
 		 *
 		 * @param {sap.ui.core.RenderManager} rm The RenderManager
 		 * @param {sap.ui.core.CSSColor} [sBgColor] A configured custom background color for the control, if any

@@ -754,12 +754,14 @@ sap.ui.define([
 					date: { type: "object", group: "Data" }
 				}
 			},
-			renderer: function(oRm, oControl) {
-				oRm.write("<div");
-				oRm.writeControlData(oControl);
-				oRm.addClass("sapMSinglePCPlaceholder");
-				oRm.writeClasses();
-				oRm.write("></div>");
+			renderer: {
+				apiVersion: 2,
+				render: function(oRm, oControl) {
+					oRm.openStart("div", oControl)
+						.class("sapMSinglePCPlaceholder")
+						.openEnd()
+						.close("div");
+				}
 			}
 		});
 
