@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/deepExtend",
 	"sap/base/util/extend",
-	"sap/base/util/merge",
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/AnalyticalBinding",
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
@@ -27,9 +27,10 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/TBA_Batch_ExpandCollapseToggle",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
-], function (Log, extend, merge, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
-		ODataModelAdapter, ChangeReason, Filter, FilterOperator, FilterProcessor, Sorter, CountMode,
-		ODataModelV1, ODataModelV2, TreeAutoExpandMode, o4aFakeService) {
+], function (Log, deepExtend, extend, odata4analytics, AnalyticalBinding,
+		AnalyticalTreeBindingAdapter, ODataModelAdapter, ChangeReason, Filter, FilterOperator,
+		FilterProcessor, Sorter, CountMode, ODataModelV1, ODataModelV2, TreeAutoExpandMode,
+		o4aFakeService) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -2150,7 +2151,7 @@ sap.ui.define([
 
 		return setupAnalyticalBinding(2, {}, /*fnODataV2Callback*/null, aInitialColumns)
 		.then(function (oBinding) {
-			var mAnalyticalInfoByProperty = merge({}, oBinding.mAnalyticalInfoByProperty),
+			var mAnalyticalInfoByProperty = deepExtend({}, oBinding.mAnalyticalInfoByProperty),
 				iAnalyticalInfoVersionNumber = oBinding.iAnalyticalInfoVersionNumber,
 				fnDeepEqualExpectation,
 				aInitialColumnsAfterUpdate = [{
