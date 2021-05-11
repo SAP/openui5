@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @public
-	 * @since 1.62
+	 * @since 1.63
 	 * @alias sap.m.upload.UploadSet
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel.
 	 */

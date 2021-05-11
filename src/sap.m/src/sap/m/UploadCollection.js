@@ -80,7 +80,7 @@ sap.ui.define([
 	 * This control allows you to upload single or multiple files from your devices (desktop, tablet or phone) and attach them to the application.
 	 *
 	 * The consuming application needs to take into account that the consistency checks of the model during the upload of the file need to be performed, for example, if the user is editing or deleting a file.
-	 * <br> As of version 1.62, there is an {@link sap.m.upload.UploadSet} control available that is based on this control.
+	 * <br> As of version 1.63, there is an {@link sap.m.upload.UploadSet} control available that is based on this control.
 	 * {@link sap.m.upload.UploadSet} provides enhanced handling of headers and requests, unified behavior of instant
 	 * and deferred uploads, as well as improved progress indication.
 	 * @extends sap.ui.core.Control
