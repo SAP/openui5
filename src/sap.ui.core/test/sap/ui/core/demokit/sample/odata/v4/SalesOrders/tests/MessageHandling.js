@@ -16,7 +16,7 @@ sap.ui.define([
 	return {
 		checkMessages : function (Given, When, Then, sUIComponent) {
 			var sDiscountFailure =
-					"User John Doe is not authorized to approve more than 50% discount",
+					"User John Doe is not authorized to approve more than 50% discount w/o approver",
 				sNoteBoundWarning = "Enter customer reference if available",
 				sNoteFailure = "Property `Note` value `RAISE_ERROR` not allowed!",
 				sQuantityBoundError = "Minimum order quantity is 2",
@@ -238,6 +238,8 @@ sap.ui.define([
 			When.onTheSimulateDiscountDialog.enterDiscount(75);
 			When.onTheSimulateDiscountDialog.executeSimulateDiscount();
 			Then.onTheSimulateDiscountDialog.checkDiscountValueState(ValueState.Error,
+				sDiscountFailure);
+			Then.onTheSimulateDiscountDialog.checkApproverValueState(ValueState.Error,
 				sDiscountFailure);
 			When.onTheSimulateDiscountDialog.close();
 

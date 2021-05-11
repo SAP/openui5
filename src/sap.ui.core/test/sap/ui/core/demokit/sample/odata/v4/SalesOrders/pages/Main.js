@@ -28,6 +28,33 @@ sap.ui.define([
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 	/*
+	 * Checks the value state and value state text for a sap.m.Input or
+	 * sap.ui.core.sample.common.ValueHelp control within a given table row <code>iRow</code> and
+	 * control ID <code>rID</code>.
+	 */
+	function checkControlValueState(oOpa, iRow, rId, sExpectedValueState, sExpectedValueStateText) {
+		return oOpa.waitFor({
+			id : rId,
+			matchers : function (oControl) {
+				return (oControl instanceof sap.m.Input ||
+					oControl instanceof sap.ui.core.sample.common.ValueHelp ) &&
+					oControl.getBindingContext().getIndex() === iRow;
+			},
+			success : function (aControls) {
+				var oControl = aControls[0];
+
+				Opa5.assert.strictEqual(oControl.getValueState(), sExpectedValueState,
+					"ValueState of " + oControl.getId() + " in row " + iRow + " as expected: "
+					+ sExpectedValueState);
+				Opa5.assert.strictEqual(oControl.getValueStateText(), sExpectedValueStateText,
+					"ValueState " + "of " + oControl.getId() + " in row " + iRow + " as expected: "
+					+ sExpectedValueStateText);
+			},
+			viewName : sViewName
+		});
+	}
+
+	/*
 	 * Search for the control with the given ID, extract the number and compare with the expected
 	 * count.
 	 */
@@ -980,25 +1007,13 @@ sap.ui.define([
 				},
 				checkSalesOrderLineItemQuantityValueState : function (iRow, sExpectedValueState,
 						sExpectedValueStateText) {
-					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : /SO_2_SOITEM:Quantity/,
-						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
-						},
-						success : function (aControls) {
-							var oInput = aControls[0];
-
-							Opa5.assert.strictEqual(oInput.getValueState(), sExpectedValueState,
-								"ValueState of quantity in row " + iRow + " as expected: "
-									+ sExpectedValueState);
-							Opa5.assert.strictEqual(oInput.getValueStateText(),
-								sExpectedValueStateText,
-								"ValueStateText of quantity in row " + iRow + " as expected: "
-									+ sExpectedValueStateText);
-						},
-						viewName : sViewName
-					});
+					return checkControlValueState(this, iRow, /SO_2_SOITEM:Quantity/,
+						sExpectedValueState, sExpectedValueStateText);
+				},
+				checkSalesOrderLineItemProductIDValueState : function (iRow, sExpectedValueState,
+						sExpectedValueStateText) {
+					return checkControlValueState(this, iRow, /SO_2_SOITEM:ProductID/,
+						sExpectedValueState, sExpectedValueStateText);
 				},
 				checkSalesOrdersCount : function (iExpectedCount) {
 					return checkCount(this, iExpectedCount, "salesOrderListTitle");
@@ -1168,6 +1183,24 @@ sap.ui.define([
 				}
 			},
 			assertions : {
+				//TODO: factor out with checkDiscountValueState
+				checkApproverValueState : function (sState, sMessage) {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "SimulateDiscountForm::Approver",
+						searchOpenDialogs : true,
+						success : function (oInput) {
+							Opa5.assert.strictEqual(oInput.getValueState(), sState,
+								"checkApproverValueState('" + oInput.getId() + "', '"
+									+ sState + "')");
+							if (sMessage) {
+								Opa5.assert.strictEqual(oInput.getValueStateText(), sMessage,
+									"ValueStateText: " + sMessage);
+							}
+						},
+						viewName : sViewName
+					});
+				},
 				checkControlValue : function (sID, sValue) {
 					return Helper.checkControlValue(this, sViewName, sID, sValue, true);
 				},
