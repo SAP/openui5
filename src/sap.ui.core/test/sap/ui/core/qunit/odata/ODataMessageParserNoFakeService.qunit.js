@@ -2052,7 +2052,10 @@ sap.ui.define([
 	{code : "~code0", message : {value : "foo"}},
 	{code : "~code0", message : "foo"}
 ].forEach(function (oOuterMessage, i) {
-	QUnit.test("_getBodyMessages: filter duplicates #" + i, function (assert) {
+	[{headers : {}}, undefined].forEach(function (oRequest) {
+	var sTitle = "_getBodyMessages: filter duplicates with" + (oRequest ? "" : "out")
+			+ " given request #" + i;
+	QUnit.test(sTitle, function (assert) {
 		var aInnerMessages = [
 				{code : "~code0", message : "foo"},
 				{code : "~code1", message : "bar"}
@@ -2063,26 +2066,30 @@ sap.ui.define([
 			oMessage2 = new Message(aInnerMessages[1]),
 			oMessageParser = new ODataMessageParser("/foo"),
 			oMessageParserMock = this.mock(oMessageParser),
+			mRequestInfo = {request : oRequest},
 			aResult;
 
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(sinon.match.same(oOuterMessage), "~mRequestInfo", true)
+			.withExactArgs(sinon.match.same(oOuterMessage), sinon.match.same(mRequestInfo), true)
 			.returns(oMessage0);
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(sinon.match.same(aInnerMessages[0]), "~mRequestInfo", true)
+			.withExactArgs(sinon.match.same(aInnerMessages[0]), sinon.match.same(mRequestInfo),
+				true)
 			.returns(oMessage1);
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(sinon.match.same(aInnerMessages[1]), "~mRequestInfo", true)
+			.withExactArgs(sinon.match.same(aInnerMessages[1]), sinon.match.same(mRequestInfo),
+				true)
 			.returns(oMessage2);
 		this.mock(oMessage0).expects("getCode").withExactArgs().callThrough();
 		this.mock(oMessage0).expects("getMessage").withExactArgs().callThrough();
 
 		// code under test
-		aResult = oMessageParser._getBodyMessages(oOuterMessage, aInnerMessages, "~mRequestInfo");
+		aResult = oMessageParser._getBodyMessages(oOuterMessage, aInnerMessages, mRequestInfo);
 
 		assert.strictEqual(aResult.length, 2);
 		assert.strictEqual(aResult[0], oMessage1);
 		assert.strictEqual(aResult[1], oMessage2);
+	});
 	});
 });
 
@@ -2100,9 +2107,13 @@ sap.ui.define([
 		message : "foo"
 	}
 }].forEach(function (oFixture, i) {
-	QUnit.test("_getBodyMessages: no duplicates #" + i, function (assert) {
+	[{"Content-ID" : "id-123"}, {}].forEach(function (oRequestHeaders){
+	var sTitle = "_getBodyMessages: no duplicates #" + i + "; request headers: "
+			+ JSON.stringify(oRequestHeaders);
+
+	QUnit.test(sTitle, function (assert) {
 		var aInnerMessages = [
-				{code : "~code0", message : "foo"},
+				{code : "~code0", ContentID : "", message : "foo"},
 				{code : "~code1", message : "bar"}
 			],
 			// use Message instances as getCode and getMessage are called
@@ -2111,16 +2122,20 @@ sap.ui.define([
 			oMessage2 = new Message(aInnerMessages[1]),
 			oMessageParser = new ODataMessageParser("/foo"),
 			oMessageParserMock = this.mock(oMessageParser),
+			mRequestInfo = {request : {headers : oRequestHeaders}},
 			aResult;
 
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(sinon.match.same(oFixture.oOuterMessage), "~mRequestInfo", true)
+			.withExactArgs(sinon.match.same(oFixture.oOuterMessage), sinon.match.same(mRequestInfo),
+				true)
 			.returns(oMessage0);
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(sinon.match.same(aInnerMessages[0]), "~mRequestInfo", true)
+			.withExactArgs(sinon.match.same(aInnerMessages[0]), sinon.match.same(mRequestInfo),
+				true)
 			.returns(oMessage1);
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(sinon.match.same(aInnerMessages[1]), "~mRequestInfo", true)
+			.withExactArgs(sinon.match.same(aInnerMessages[1]), sinon.match.same(mRequestInfo),
+				true)
 			.returns(oMessage2);
 		this.mock(oMessage0).expects("getCode").withExactArgs().twice().callThrough();
 		this.mock(oMessage0).expects("getMessage").withExactArgs()
@@ -2129,14 +2144,66 @@ sap.ui.define([
 
 		// code under test
 		aResult = oMessageParser._getBodyMessages(oFixture.oOuterMessage, aInnerMessages,
-			"~mRequestInfo");
+			mRequestInfo);
 
 		assert.strictEqual(aResult.length, 3);
 		assert.strictEqual(aResult[0], oMessage0);
 		assert.strictEqual(aResult[1], oMessage1);
 		assert.strictEqual(aResult[2], oMessage2);
 	});
+	});
 });
+
+	//**********************************************************************************************
+	QUnit.test("_getBodyMessages: filter by ContentID", function (assert) {
+		var aInnerMessages = [
+				{code : "~code0", ContentID : "id-123", message : "foo"},
+				{code : "~code1", ContentID : "id-456", message : "bar"},
+				{code : "~code2", ContentID : "id-123", message : "baz"},
+				{code : "~code3", ContentID : "id-456", message : "quz"}
+			],
+			// use Message instances as getCode and getMessage are called
+			oMessage0 = new Message({code : "~code0", message : "foo"}),
+			oMessage1 = new Message(aInnerMessages[0]),
+			oMessage2 = new Message(aInnerMessages[1]),
+			oMessage3 = new Message(aInnerMessages[2]),
+			oMessage4 = new Message(aInnerMessages[3]),
+			oMessageParser = new ODataMessageParser("/foo"),
+			oMessageParserMock = this.mock(oMessageParser),
+			oOuterMessage = {code : "~code1", message : {value : "bar"}},
+			mRequestInfo = {request : {headers : {"Content-ID" : "id-123"}}},
+			aResult;
+
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(oOuterMessage), sinon.match.same(mRequestInfo),
+				true)
+			.returns(oMessage0);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(aInnerMessages[0]), sinon.match.same(mRequestInfo),
+				true)
+			.returns(oMessage1);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(aInnerMessages[1]), sinon.match.same(mRequestInfo),
+				true)
+			.returns(oMessage2);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(aInnerMessages[2]), sinon.match.same(mRequestInfo),
+				true)
+			.returns(oMessage3);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(aInnerMessages[3]), sinon.match.same(mRequestInfo),
+				true)
+			.returns(oMessage4);
+		this.mock(oMessage0).expects("getCode").withExactArgs().callThrough();
+		this.mock(oMessage0).expects("getMessage").withExactArgs().callThrough();
+
+		// code under test
+		aResult = oMessageParser._getBodyMessages(oOuterMessage, aInnerMessages, mRequestInfo);
+
+		assert.strictEqual(aResult.length, 2);
+		assert.strictEqual(aResult[0], oMessage1);
+		assert.strictEqual(aResult[1], oMessage3);
+	});
 
 	//**********************************************************************************************
 	QUnit.test("_parseBodyJSON: calls _getBodyMessages", function (assert) {

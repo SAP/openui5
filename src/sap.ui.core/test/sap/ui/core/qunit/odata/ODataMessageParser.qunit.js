@@ -526,9 +526,10 @@ sap.ui.define([
 
 			//SETUP
 			var oRequest = {
-				method: "POST",
+				created: true,
+				headers : {},
 				key: "Products(1)",
-				created: true
+				method: "POST"
 			};
 
 			var oResponse = {
@@ -551,9 +552,10 @@ sap.ui.define([
 			};
 
 			var oRequest2 = {
-				method: "POST",
+				created: true,
+				headers : {},
 				key: "Products(1)",
-				created: true
+				method: "POST"
 			};
 
 			var oResponseHeaderSapMessageObject2 = {

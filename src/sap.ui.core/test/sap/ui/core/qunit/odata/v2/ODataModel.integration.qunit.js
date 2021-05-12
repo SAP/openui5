@@ -908,6 +908,17 @@ sap.ui.define([
 									.replace("~key~", that.sTemporaryKey);
 						}
 					}
+					if (oExpectedRequest.headers && oExpectedRequest.headers["Content-ID"]) {
+						oExpectedRequest.headers["Content-ID"] =
+							oActualRequest.headers["Content-ID"];
+						if (oExpectedResponse.body && oExpectedResponse.statusCode >= 400) {
+							oExpectedResponse.body = oExpectedResponse.body.replace("~key~",
+								oActualRequest.headers["Content-ID"]);
+						}
+					} else {
+						// ignore content ID if not specified in the expected request
+						delete oActualRequest.headers["Content-ID"];
+					}
 					if (oActualRequest.requestUri.startsWith("$") && sMethod === "GET") {
 						oExpectedRequest.requestUri = oExpectedRequest.requestUri.replace("~key~",
 							that.sTemporaryKey);
@@ -8874,6 +8885,123 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			// code under test
 			that.oView.byId("productDetails").setBindingContext(oCreatedContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Properly assign error responses to the entities caused the error response by using
+	// the "ContentID".
+	// JIRA: CPOUI5MODELS-275
+	QUnit.test("Messages: avoid duplicate messages using ContentID", function (assert) {
+		var oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				refreshAfterChange : false,
+				tokenHandling : false,
+				useBatch : true
+			}),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="2">\
+	<Input id="note" value="{Note}" />\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=102", {
+				results : [{
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					ItemPosition : "10",
+					Note : "Note 10",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					ItemPosition : "20",
+					Note : "Note 20",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectValue("note", ["Note 10", "Note 20"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					data : {
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						Note : "foo"
+					},
+					deepPath : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+					headers : {"Content-ID" : "~key~"},
+					key : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
+					method : "MERGE",
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+				}, {
+					body : JSON.stringify({
+						error : {
+							code : "UF0",
+							innererror : {errordetails : [{
+								code : "UF0",
+								ContentID : "~key~",
+								message : "value not allowed",
+								severity : "error",
+								target : "Note",
+								transition : true
+							}]},
+							message : {value : "value not allowed"}
+						}
+					}),
+					headers : {
+						"Content-Type" : "application/json;charset=utf-8",
+						ContentID : "~key~"
+					},
+					statusCode : 400,
+					statusText : "Bad Request"
+				})
+				.expectRequest({
+					data : {
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+						},
+						Note : "bar"
+					},
+					deepPath : "/SalesOrderSet('1')"
+						+ "/ToLineItems(SalesOrderID='1',ItemPosition='20')",
+					headers : {"Content-ID" : "~key~"},
+					key : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')",
+					method : "MERGE",
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+				}, undefined/*not relevant*/)
+				.expectValue("note", ["foo", "bar"])
+				.expectMessages([{
+					fullTarget :
+						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/Note",
+					target : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/Note",
+					code : "UF0",
+					message : "value not allowed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				  }]);
+
+			that.oView.byId("table").getRows()[0].getCells()[0].setValue("foo");
+			that.oView.byId("table").getRows()[1].getCells()[0].setValue("bar");
+
+			that.oLogMock.expects("error")
+				.withExactArgs("'HTTP request failed' while processing MERGE"
+						+ " SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
+					sinon.match.string, sODataModelClassName);
+			that.oLogMock.expects("error")
+				.withExactArgs("'HTTP request failed' while processing MERGE"
+						+ " SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')",
+					sinon.match.string, sODataModelClassName);
+
+			// code under test
+			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
 		});

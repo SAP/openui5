@@ -49,7 +49,8 @@
 					"canonicalRequests" : true,
 					"defaultBindingMode" : "TwoWay",
 					"defaultCountMode" : "None",
-					"earlyTokenRequest" : true
+					"earlyTokenRequest" : true,
+					"persistTechnicalMessages" : true
 				},
 				"type" : "sap.ui.core.internal.samples.odata.v2.SalesOrders.SandboxModel",
 				"uriSettingName" : "serviceUrl"

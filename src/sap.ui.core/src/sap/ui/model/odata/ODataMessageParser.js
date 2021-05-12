@@ -661,21 +661,24 @@ ODataMessageParser.prototype._createGenericError = function (mRequestInfo) {
 /**
  * Gets the body messages from the given outer and inner messages. If there is a message in the
  * inner messages with the same code and message as the outer message, the outer message is filtered
- * out.
+ * out. If the request given in "mRequestInfo" has a "Content-ID" header only messages without a
+ * "ContentID" or with the same "ContentID" are returned.
  *
  * @param {object} oOuterError
- *   The outer error message as parsed by _parseBodyJSON or _parseBodyXML; outer message differs in
- *   the "message" property, in JSON it is an object like {value : "foo"} and in XML it is a string;
- *   _createMessage takes care of this difference
+ *   The outer error message as parsed by "_parseBodyJSON" or "_parseBodyXML"; outer message differs
+ *   in the "message" property, in JSON it is an object like {value : "foo"} and in XML it is a
+ *   string; "_createMessage" takes care of this difference
  * @param {object[]} aInnerErrors
- *   The inner error messages as parsed by _parseBodyJSON or _parseBodyXML
+ *   The inner error messages as parsed by "_parseBodyJSON" or "_parseBodyXML"
  * @param {ODataMessageParser~RequestInfo} mRequestInfo
  *   Info object about the request URL
  * @returns {sap.ui.core.message.Message[]}
  *   An array with messages contained in the body
  */
 ODataMessageParser.prototype._getBodyMessages = function (oOuterError, aInnerErrors, mRequestInfo) {
-	var aMessages = [],
+	var sContentID = mRequestInfo.request // is undefined for token request errors
+			&& mRequestInfo.request.headers["Content-ID"],
+		aMessages = [],
 		oOuterMessage = this._createMessage(oOuterError, mRequestInfo, true),
 		that = this;
 
@@ -686,7 +689,10 @@ ODataMessageParser.prototype._getBodyMessages = function (oOuterError, aInnerErr
 				&& oOuterMessage.getMessage() === oMessage.getMessage()) {
 			oOuterMessage = undefined;
 		}
-		aMessages.push(oMessage);
+
+		if (!sContentID || !oInnerError.ContentID || sContentID === oInnerError.ContentID) {
+			aMessages.push(oMessage);
+		}
 	});
 
 	if (oOuterMessage) {

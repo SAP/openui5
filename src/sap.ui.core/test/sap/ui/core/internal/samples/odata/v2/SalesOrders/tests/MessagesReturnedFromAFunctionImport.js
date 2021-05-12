@@ -39,9 +39,7 @@ sap.ui.define([
 		Then.onMainPage.checkMessageInPopover("010", "updateSuccess");
 
 		When.onMainPage.toggleMessagePopover();
-		Then.onMainPage.checkMessageCountHasChangedBy(-1);
-		When.onMainPage.toggleMessagePopover();
-		Then.onMainPage.checkMessageNotInPopover("010", "updateSuccess");
+		Then.onMainPage.checkMessageCountHasChangedBy(0);
 		When.onMainPage.toggleMessagePopover();
 
 		Given.iTeardownMyApp();

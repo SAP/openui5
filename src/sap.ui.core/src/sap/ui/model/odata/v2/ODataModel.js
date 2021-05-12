@@ -4684,6 +4684,8 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._createRequest = function(sUrl, sDeepPath, sMethod, mHeaders, oData, sETag,
 			bAsync, bUpdateAggregatedMessages) {
+		var oRequest;
+
 		bAsync = bAsync !== false;
 
 		if (sETag && sMethod !== "GET") {
@@ -4726,7 +4728,11 @@ sap.ui.define([
 			&& this.sMessageScope === MessageScope.BusinessObject
 			&& this.bIsMessageScopeSupported;
 
-		var oRequest = {
+		if (this.bUseBatch && sMethod !== "GET" && sMethod !== "HEAD" && !mHeaders["Content-ID"]) {
+			mHeaders["Content-ID"] = uid();
+		}
+
+		oRequest = {
 			headers : mHeaders,
 			requestUri : sUrl,
 			method : sMethod,

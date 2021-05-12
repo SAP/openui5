@@ -8,36 +8,29 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils"
-], function (encodeURL, MessageBox, MessageToast, coreLibrary, Core, Element, Controller, Filter,
-		FilterOperator, ODataUtils) {
+], function (encodeURL, MessageBox, MessageToast, coreLibrary, Core, Element, Message, Controller,
+		Filter, FilterOperator, ODataUtils) {
 	"use strict";
 	var MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Main", {
-		defaultErrorHandler : function (sMessage, oError) {
-			var sCode = "unknown",
-				sDetailMessage = "unknown",
-				oErrorDetails;
+		/**
+		 * Clears persistent or technical messages from the message model.
+		 *
+		 * @param {boolean} bUnboundOnly Whether only unbound messages are removed
+		 */
+		clearPersistentMessages : function (bUnboundOnly) {
+			var aMessages = this.getView().getModel("messages").getObject("/");
 
-			//TODO: avoid that message is reported twice in error handler and in requestFailed event
-			// hack
-			if (oError.headers && oError.headers.processed
-					|| oError.expandAfterCreateFailed/*handled in success event handler*/) {
-				return;
-			}
-			try {
-				oErrorDetails = JSON.parse(oError.responseText);
-				sCode = oErrorDetails.error.code;
-				sDetailMessage = oErrorDetails.error.message.value;
-			} catch (error) {/*ignore errors while parsing the response*/}
-			MessageBox.error(sMessage + ": " + sDetailMessage + " (" + sCode + ").");
-			if (oError.headers) { // hack to mark error as processed
-				oError.headers.processed = true;
-			}
+			Core.getMessageManager().removeMessages(aMessages.filter(function (oMessage) {
+				return (oMessage.technical || oMessage.persistent)
+					&& (!bUnboundOnly || !oMessage.target);
+			}));
 		},
 
 		formatMessageDescription : function (oMessage) {
@@ -72,6 +65,25 @@ sap.ui.define([
 			return aTargets && aTargets.join("\n");
 		},
 
+		handleMessageChange : function (oEvent) {
+			var aMessages = oEvent.getParameter("newMessages"),
+				sMessageText,
+				aPersistentMessages = aMessages.filter(function (oMessage) {
+					return oMessage.getPersistent()
+						// don't show success messages in a popup dialog
+						&& oMessage.getType() !== MessageType.Success;
+				}).sort(Message.compare);
+
+			if (!aPersistentMessages.length) {
+				return;
+			}
+
+			sMessageText = aPersistentMessages.map(function (oMessage) {
+				return oMessage.getMessage();
+			}).join(";\n");
+			MessageBox[aPersistentMessages[0].getType().toLowerCase()](sMessageText);
+		},
+
 		onCloneItem : function (oEvent) {
 			var oView = this.getView(),
 				oModel = oView.getModel(),
@@ -89,7 +101,6 @@ sap.ui.define([
 
 					return "/SalesOrderSet('" + sSalesOrderID + "')/ToLineItems" + sKeyPredicate;
 				},
-				error : this.defaultErrorHandler.bind(null, "Failed to clone item " + sItem),
 				expand : "ToProduct,ToHeader",
 				method : "POST",
 				success : MessageToast.show.bind(null, "Successfully cloned item " + sItem),
@@ -118,7 +129,6 @@ sap.ui.define([
 
 			oCreatedContext = this.getView().getModel().createEntry("ToLineItems", {
 				context : oBindingContext,
-				error : this.defaultErrorHandler.bind(null, "Failed to create sales order item"),
 				expand : "ToProduct,ToHeader",
 				groupId : "create",
 				properties : {
@@ -209,7 +219,6 @@ sap.ui.define([
 				adjustDeepPath : function () {
 					return "/SalesOrderSet('" + sSalesOrderID + "')/ToLineItems";
 				},
-				error : this.defaultErrorHandler.bind(null, "Failed to fix all quantities"),
 				method : "GET",
 				success : function () {
 					MessageToast.show("Successfully fixed all quantities for sales order "
@@ -231,8 +240,6 @@ sap.ui.define([
 				sSalesOrderID = oBindingContext.getProperty("SalesOrderID");
 
 			oModel.callFunction("/SalesOrderItem_FixQuantity", {
-				error : this.defaultErrorHandler.bind(null,
-					"Failed to fix quantity for item " + sItemPosition),
 				groupId : "FixQuantity",
 				method : "POST",
 				refreshAfterChange : false,
@@ -252,19 +259,15 @@ sap.ui.define([
 
 		onInit : function () {
 			var oRowSettings = this.byId("rowsettings"),
-				oView = this.getView(),
-				that = this;
+				oView = this.getView();
 
-			oView.setModel(Core.getMessageManager().getMessageModel(), "messages");
-			oView.getModel().attachRequestFailed(function (oEvent) {
-				that.defaultErrorHandler("Service request failed", oEvent.getParameter("response"));
-			});
+			oView.getModel().attachMessageChange(this.handleMessageChange, this);
 
 			// adding the formatter dynamically is a prerequisite that it is called with the control
 			// as 'this'
 			oRowSettings.bindProperty("highlight", {
 				parts : [
-					'messageModel>/',
+					'messages>/',
 					'' // ensure formatter is called on scrolling
 				],
 				formatter : this.rowHighlight
@@ -272,11 +275,7 @@ sap.ui.define([
 		},
 
 		onMessagePopoverClosed : function () {
-			var aMessages = this.getView().getModel("messages").getObject("/");
-
-			Core.getMessageManager().removeMessages(aMessages.filter(function (oMessage) {
-				return oMessage.technical || oMessage.persistent;
-			}));
+			this.clearPersistentMessages(true);
 		},
 
 		onMessagePopoverPress : function (oEvent) {
@@ -309,9 +308,8 @@ sap.ui.define([
 
 			// ensure that the read request is in the same batch
 			this.readSalesOrder("changes");
+			this.clearPersistentMessages();
 			oView.getModel().submitChanges({
-				error : this.defaultErrorHandler.bind(null, "Failed to save the sales order'"
-					+ sSalesOrder + "'"),
 				success : function (oResultData) {
 					var bHasMessages = false;
 

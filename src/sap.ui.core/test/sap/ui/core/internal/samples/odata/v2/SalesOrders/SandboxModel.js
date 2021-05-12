@@ -781,7 +781,7 @@ sap.ui.define([
 					ifMatch : ithCall.bind(null, 111),
 					source : "Messages/TC11/SalesOrderLineItem-ToProduct-ToHeader.json"
 				}, {
-					code : 400,
+					code : 424,
 					source : "Messages/TC6/error-1.json"
 				}]
 			}]

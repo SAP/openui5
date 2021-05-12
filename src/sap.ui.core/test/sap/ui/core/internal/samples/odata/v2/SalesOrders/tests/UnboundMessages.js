@@ -18,6 +18,9 @@ sap.ui.define([
 		});
 
 		When.onMainPage.showSalesOrder("107");
+		Then.onMainPage.checkDialogOpen("Warning", "System maintenance starts in 2 hours");
+		When.onMainPage.closeDialog("Warning");
+
 		Then.onMainPage.checkSalesOrderLoaded("107");
 		Then.onMainPage.checkSalesOrderItemsLoaded("107");
 		When.onMainPage.rememberCurrentMessageCount();
