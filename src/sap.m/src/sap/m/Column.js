@@ -488,7 +488,7 @@ sap.ui.define([
 
 		var oParent = this.getParent(),
 			oTableDomRef = oParent && oParent.getTableDomRef && oParent.getTableDomRef(),
-			bSupressInvalidate = oTableDomRef && this._index >= 0 && !oParent.getAutoPopinMode();
+			bSupressInvalidate = oTableDomRef && this._index >= 0 && !oParent.getAutoPopinMode() && !this._bForcedColumn;
 
 		if (bSupressInvalidate) {
 			this.setProperty("visible", bVisible, bSupressInvalidate);

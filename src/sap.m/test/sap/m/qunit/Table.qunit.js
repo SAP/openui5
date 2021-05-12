@@ -1746,6 +1746,19 @@ sap.ui.define([
 		assert.ok(column1.isPopin(), "Column1 is in the popin");
 		assert.equal(table.$("tblHeader").text(), "Column2", "Column2 shown as a physical column since it is not configured for being shown as popin");
 
+		// Act for if first column visibility is set to false
+		column0.setVisible(false);
+		column2.setMinScreenWidth("46000px");
+		column2.setDemandPopin(true);
+		Core.applyChanges();
+
+		// Assert
+		assert.equal(column0.getVisible(), false, "Column0 is not visible");
+		assert.equal(column2.getMinScreenWidth(), "46000px", "Column2 minScreenWidth = 46000px");
+		assert.equal(column2.getDemandPopin(), true, "Column2 getDemandPopin = true");
+		assert.ok(sut.hasPopin(), "Table still has popin");
+		assert.ok(column2._bForcedColumn, "Due Column0 is not visible, Column1 is in popin due its minScreenWidth is higher then of Column2, Column2 becomes as forced column");
+
 		//Cleanup
 		table.destroy();
 	});
