@@ -198,24 +198,34 @@ sap.ui.define([
 	 * @override
 	 */
 	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding) {
-		var bForceRebind = false;
 		if (!oBinding || oBinding.hasPendingChanges() || oBinding.getPath() != oBindingInfo.path) {
-			bForceRebind = true;
-		} else {
-			try { oBinding.suspend(); } catch (e) { /* empty */ }
-			try {
-				oBinding.changeParameters(oBindingInfo.parameters);
-				oBinding.filter(oBindingInfo.filters, "Application");
-				oBinding.sort(oBindingInfo.sorter);
-				setAggregation(oTable);
-			} catch (e) {
-				bForceRebind = true;
-			}
-			try { !bForceRebind && oBinding.resume(); } catch (e) { /* empty */ }
+			this.rebindTable(oTable, oBindingInfo);
+			return;
 		}
 
-		if (bForceRebind) {
+		// suspend and resume have to be called on the root binding
+		var oRootBinding = oBinding.getRootBinding();
+		var bHasRootBindingAndWasNotSuspended = oRootBinding && !oRootBinding.isSuspended();
+
+		try {
+			if (bHasRootBindingAndWasNotSuspended) {
+				oRootBinding.suspend();
+			}
+			oBinding.changeParameters(oBindingInfo.parameters);
+			oBinding.filter(oBindingInfo.filters, "Application");
+			oBinding.sort(oBindingInfo.sorter);
+			setAggregation(oTable);
+		} catch (e) {
 			this.rebindTable(oTable, oBindingInfo);
+			if (oRootBinding == oBinding) {
+				// If we resume before the rebind, you get an extra request therefore we must
+				// resume after rebind, but only if the list binding was not the root binding.
+				bHasRootBindingAndWasNotSuspended = false;
+			}
+		} finally {
+			if (bHasRootBindingAndWasNotSuspended && oRootBinding.isSuspended()) {
+				oRootBinding.resume();
+			}
 		}
 	};
 

@@ -32,7 +32,7 @@ sap.ui.define([
 		var TestDelegate = Object.assign({}, TableDelegate);
 
 		TestDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
-			oBindingInfo.path = "ProductList";
+			oBindingInfo.path = "/ProductList";
 		};
 
 		return TestDelegate;
@@ -934,7 +934,7 @@ sap.ui.define([
 				delegate: {
 					name: "odata.v4.TestDelegate",
 					payload: {
-						collectionPath: "ProductList"
+						collectionPath: "/ProductList"
 					}
 				}
 			}).setModel(new ODataModel({
