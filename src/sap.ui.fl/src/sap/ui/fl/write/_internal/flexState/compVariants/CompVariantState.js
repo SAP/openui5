@@ -380,6 +380,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference - Flex reference of the application
 	 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
 	 * @param {string} mPropertyBag.id - ID of the variant
+	 * @param {string} [mPropertyBag.packageName] - ID of the package in which the update should be transported - only valid for sap-ui-layer=VENDOR use case
 	 * @param {object} [mPropertyBag.revert=false] - Flag if the update is a revert operation
 	 * @param {object} [mPropertyBag.name] - Title of the variant
 	 * @param {object} [mPropertyBag.content] - Content of the new change
@@ -443,6 +444,9 @@ sap.ui.define([
 			if (mPropertyBag.name) {
 				oVariant.storeName(mPropertyBag.name);
 			}
+			if (mPropertyBag.packageName) {
+				oVariant.setRequest(mPropertyBag.packageName);
+			}
 			oVariant.storeContent(mPropertyBag.content || oVariant.getContent());
 		}
 
@@ -501,6 +505,7 @@ sap.ui.define([
 				layer: sLayer,
 				fileType: "change",
 				reference: mPropertyBag.reference,
+				packageName: mPropertyBag.packageName,
 				content: {},
 				selector: {
 					persistencyKey: mPropertyBag.persistencyKey,

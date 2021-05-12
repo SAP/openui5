@@ -81,6 +81,7 @@ sap.ui.define([
 		 * 			sap.ui.comp.smarttable.SmartTable|
 		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be updated
 		 * @param {string} mPropertyBag.id - ID of the variant
+		 * @param {string} [mPropertyBag.packageName] - ID of the package in which the update should be transported - only valid for sap-ui-layer=VENDOR use case
 		 * @param {object} [mPropertyBag.name] - Title of the variant
 		 * @param {object} [mPropertyBag.content] - Content of the new change
 		 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
