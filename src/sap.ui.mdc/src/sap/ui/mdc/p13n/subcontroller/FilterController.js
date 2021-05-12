@@ -18,9 +18,10 @@ sap.ui.define([
         return !!this.getAdaptationControl()._bNewP13n;
     };
 
-    FilterController.prototype.getContainerSettings = function() {
+    FilterController.prototype.getUISettings = function() {
         return {
             title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filter.PERSONALIZATION_DIALOG_TITLE"),
+            tabText: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.TAB_Filter"),
             afterClose: function(oEvt) {
                 var oDialog = oEvt.getSource();
                 if (oDialog) {

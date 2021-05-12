@@ -12,8 +12,9 @@ sap.ui.define([
         return this.getAdaptationControl().getCurrentState().groupLevels;
     };
 
-    GroupController.prototype.getContainerSettings = function () {
+    GroupController.prototype.getUISettings = function () {
         return {
+            tabText: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.TAB_Group"),
             title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("group.PERSONALIZATION_DIALOG_TITLE")
         };
     };

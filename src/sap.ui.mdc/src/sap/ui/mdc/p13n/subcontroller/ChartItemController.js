@@ -24,9 +24,10 @@ sap.ui.define([
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
-    ChartItemController.prototype.getContainerSettings = function() {
+    ChartItemController.prototype.getUISettings = function() {
         return {
-            title: oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE")
+            title: oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE"),
+            tabText: oResourceBundle.getText("p13nDialog.TAB_Chart")
         };
     };
 

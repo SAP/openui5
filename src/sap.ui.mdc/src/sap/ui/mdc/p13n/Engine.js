@@ -604,7 +604,7 @@ sap.ui.define([
 				mUiSettings[sKey] = {};
 				mUiSettings[sKey] = {
 					resetEnabled: oController.getResetEnabled(),
-					containerSettings: oController.getContainerSettings(),
+					containerSettings: oController.getUISettings(),
 					adaptationUI: pAdaptationUI
 				};
 			}

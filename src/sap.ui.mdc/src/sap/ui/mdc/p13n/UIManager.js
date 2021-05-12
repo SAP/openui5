@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/ui/mdc/p13n/panels/Wrapper",
 	"sap/base/util/UriParameters",
-	"sap/base/Log",
-	"sap/ui/core/format/ListFormat"
-], function (BaseObject, P13nBuilder, Wrapper, SAPUriParameters, Log, ListFormat) {
+	"sap/base/Log"
+], function (BaseObject, P13nBuilder, Wrapper, SAPUriParameters, Log) {
 	"use strict";
 
 	var ERROR_INSTANCING = "UIManager: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.ui.mdc.p13n.Engine.getInstance().uimanager' instead";
@@ -192,8 +191,9 @@ sap.ui.define([
 						this.oAdaptationProvider.validateP13n(oControl, sKey, oAdaptationUI);
 					}.bind(this));
 				}
+				var oSetting = oUISettings[pAdaptationUI._key];
 				return {
-					key: pAdaptationUI._key,
+					key: oSetting.containerSettings && oSetting.containerSettings.tabText ? oSetting.containerSettings.tabText : oSetting._key,
 					panel: oAdaptationUI
 				};
 			}.bind(this));
@@ -206,7 +206,7 @@ sap.ui.define([
 			if (bUseP13nContainer) {
 				aUIs.forEach(function(mUI){
 					var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-					var sTabText = oRB.getText("p13nDialog.TAB_" + mUI.key);
+					var sTabText = oRB.getText(mUI.key);
 					oPopupContent.addPanel(mUI.panel, sTabText);
 				});
 				oPopupContent.switchView(aUIs[0].key);
@@ -427,7 +427,7 @@ sap.ui.define([
 				onExecute: function(oControl) {
 					this.oAdaptationProvider.reset(oControl, aKeys);
 				}.bind(this),
-				warningText: oRB.getText("p13nDialog.RESET_WARNING_TEXT", ListFormat.getInstance().format(aKeys))
+				warningText: oRB.getText("p13nDialog.RESET_WARNING_TEXT")
 			};
 		}
 

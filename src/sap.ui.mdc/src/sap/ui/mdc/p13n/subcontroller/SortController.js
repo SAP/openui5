@@ -17,8 +17,9 @@ sap.ui.define([
         return !!this.getAdaptationControl()._bNewP13n;
     };
 
-    SortController.prototype.getContainerSettings = function() {
+    SortController.prototype.getUISettings = function() {
         return {
+            tabText: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.TAB_Sort"),
             title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("sort.PERSONALIZATION_DIALOG_TITLE")
         };
     };

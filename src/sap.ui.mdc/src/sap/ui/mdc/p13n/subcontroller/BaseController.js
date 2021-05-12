@@ -45,7 +45,7 @@ sap.ui.define([
      *
      * @returns {object} The configuration for the Dialog/Popover
      */
-    BaseController.prototype.getContainerSettings = function() {
+    BaseController.prototype.getUISettings = function() {
         //Should always be overruled
         return {
             title: "Adaptation Dialog"

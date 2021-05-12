@@ -9,7 +9,7 @@ sap.ui.define([
 
     var AdaptFiltersController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.AdaptFiltersController");
 
-    AdaptFiltersController.prototype.getContainerSettings = function() {
+    AdaptFiltersController.prototype.getUISettings = function() {
         return {
             verticalScrolling: false,
             title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_TITLE"),
