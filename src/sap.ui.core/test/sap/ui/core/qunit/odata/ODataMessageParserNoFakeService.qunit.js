@@ -13,7 +13,7 @@ sap.ui.define([
 ], function (Log, coreLibrary, Message, MessageScope, ODataMessageParser, ODataMetadata, ODataUtils,
 		 TestUtils) {
 	/*global QUnit,sinon*/
-	/*eslint camelcase: 0, no-warning-comments: 0*/
+	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.ODataMessageParser",
@@ -1443,12 +1443,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_addGenericError", function (assert) {
-		var oMessage = "~oMessage",
-			aMessages = ["~message0"],
-			oODataMessageParser = {
-				_createMessage : function () {}
-			},
+	QUnit.test("_createGenericError", function (assert) {
+		var oODataMessageParser = new ODataMessageParser("/foo"),
 			mRequestInfo = {
 				response : {body : "~body"}
 			},
@@ -1469,21 +1465,251 @@ sap.ui.define([
 				severity : MessageType.Error,
 				transition : true
 			}, sinon.match.same(mRequestInfo), true)
-			.returns(oMessage);
+			.returns("~oMessage");
 
 		// code under test
-		ODataMessageParser.prototype._addGenericError.call(oODataMessageParser, aMessages,
-			mRequestInfo);
-
-		assert.deepEqual(aMessages, ["~message0", "~oMessage"]);
+		assert.deepEqual(oODataMessageParser._createGenericError(mRequestInfo), ["~oMessage"]);
 	});
+
+	//*********************************************************************************************
+[{
+	headers : {"Content-Type" : "application/xml;charset=utf-8"},
+	expectedContentType : "application/xml"
+}, {
+	headers : {"CONTENT-TYPE" : "application/xml;charset=utf-8"},
+	expectedContentType : "application/xml"
+}, {
+	headers : {"content-type" : "application/xml"},
+	expectedContentType : "application/xml"
+}, {
+	headers : {"Content-Type" : "text/xml;charset=utf-8"},
+	expectedContentType : "text/xml"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_parseBody: xml #" + i, function (assert) {
+		var oMessageParser = new ODataMessageParser("/foo"),
+			oResponse = {headers : oFixture.headers};
+
+		this.mock(oMessageParser).expects("_parseBodyXML")
+			.withExactArgs(sinon.match.same(oResponse),
+				"~mRequestInfo", oFixture.expectedContentType)
+			.returns("~aMessages");
+
+		// code under test
+		assert.strictEqual(oMessageParser._parseBody(oResponse, "~mRequestInfo"), "~aMessages");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{},
+	{"content-type" : "foo"},
+	{"Content-Type" : "application/json;charset=utf-8"},
+	{"CONTENT-TYPE" : "application/json;charset=utf-8"},
+	{"content-type" : "application/json"}
+].forEach(function (mHeaders, i) {
+	QUnit.test("_parseBody: json #" + i, function (assert) {
+		var oMessageParser = new ODataMessageParser("/foo"),
+			oResponse = {headers : mHeaders};
+
+		this.mock(oMessageParser).expects("_parseBodyJSON")
+			.withExactArgs(sinon.match.same(oResponse), "~mRequestInfo")
+			.returns("~aMessages");
+
+		// code under test
+		assert.strictEqual(oMessageParser._parseBody(oResponse, "~mRequestInfo"), "~aMessages");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBody: xml parse error", function (assert) {
+		var oError = new Error("~error"),
+			oMessageParser = new ODataMessageParser("/foo"),
+			oResponse = {headers : {"content-type" : "application/xml"}};
+
+		this.mock(oMessageParser).expects("_parseBodyXML")
+			.withExactArgs(sinon.match.same(oResponse), "~mRequestInfo", "application/xml")
+			.throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			oMessageParser._parseBody(oResponse, "~mRequestInfo");
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBody: json parse error", function (assert) {
+		var oMessageParser = new ODataMessageParser("/foo"),
+			oResponse = {headers : {"content-type" : "application/json"}};
+
+		this.mock(oMessageParser).expects("_parseBodyJSON")
+			.withExactArgs(sinon.match.same(oResponse), "~mRequestInfo")
+			.throws("~error");
+
+		// code under test
+		assert.throws(function () {
+			oMessageParser._parseBody(oResponse, "~mRequestInfo");
+		}, "~error");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBody: filter duplicates JSON (integrative)", function (assert) {
+		var oInnerError0 = {
+				code : "~code0",
+				message : "foo",
+				severity : "error",
+				target : "",
+				transition : false
+			},
+			oInnerError1 = {
+				code : "~code1",
+				message : "bar",
+				severity : "error",
+				target : "",
+				transition : false
+			},
+			// use Message instances, filtering calls getCode and getMessage on these instances
+			oMessage0 = new Message({code : "~code0", message : "foo"}),
+			oMessage1 = new Message({code : "~code0", message : "foo"}),
+			oMessage2 = new Message({code : "~code1", message : "bar"}),
+			oMessageParser = new ODataMessageParser("/foo"),
+			oMessageParserMock = this.mock(oMessageParser),
+			oResponse = {
+				body : "{\"error\":{\"code\":\"~code0\",\"message\":{\"value\":\"foo\"},"
+					+ "\"innererror\":{\"errordetails\":[{\"code\":\"~code0\",\"message\":\"foo\","
+					+ "\"severity\":\"error\",\"transition\":false,\"target\":\"\"},"
+					+ "{\"code\":\"~code1\",\"message\":\"bar\",\"severity\":\"error\","
+					+ "\"transition\":false,\"target\":\"\"}]}}}",
+				headers : {"content-type" : "application/json"}
+			},
+			aResult;
+
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs({
+					code : "~code0",
+					innererror : {errordetails : [oInnerError0, oInnerError1]},
+					message : {value : "foo"},
+					severity : "Error"
+				}, "~mRequestInfo", true)
+			.returns(oMessage0);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(oInnerError0, "~mRequestInfo", true)
+			.returns(oMessage1);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(oInnerError1, "~mRequestInfo", true)
+			.returns(oMessage2);
+
+		// code under test
+		aResult = oMessageParser._parseBody(oResponse, "~mRequestInfo");
+
+		assert.strictEqual(aResult.length, 2);
+		assert.strictEqual(aResult[0], oMessage1);
+		assert.strictEqual(aResult[1], oMessage2);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBody: filter duplicates XML (integrative)", function (assert) {
+		// use Message instances, filtering calls getCode and getMessage on these instances
+		var oMessage0 = new Message({code : "~code0", message : "foo"}),
+			oMessage1 = new Message({code : "~code0", message : "foo"}),
+			oMessage2 = new Message({code : "~code1", message : "bar"}),
+			oMessageParser = new ODataMessageParser("/foo"),
+			oMessageParserMock = this.mock(oMessageParser),
+			oResponse = {
+				body : "<error><code>~code0</code><message>foo</message><innererror><errordetails>"
+					+ "<errordetail><code>~code0</code><message>foo</message><target></target>"
+					+ "<severity>error</severity></errordetail><errordetail><code>~code1</code>"
+					+ "<message>bar</message><target></target><severity>error</severity>"
+					+ "</errordetail></errordetails></innererror></error>",
+				headers : {"content-type" : "application/xml"}
+			},
+			aResult;
+
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs({code : "~code0", message : "foo", severity : "Error"}, "~mRequestInfo",
+				true)
+			.returns(oMessage0);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs({code : "~code0", message : "foo", severity : "error", target : ""},
+				"~mRequestInfo", true)
+			.returns(oMessage1);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs({code : "~code1", message : "bar", severity : "error", target : ""},
+				"~mRequestInfo", true)
+			.returns(oMessage2);
+
+		// code under test
+		aResult = oMessageParser._parseBody(oResponse, "~mRequestInfo");
+
+		assert.strictEqual(aResult.length, 2);
+		assert.strictEqual(aResult[0], oMessage1);
+		assert.strictEqual(aResult[1], oMessage2);
+	});
+
+	//*********************************************************************************************
+[{
+	code : "~code0",
+	message : "foo2"
+}, {
+	code : "~code0.1",
+	message : "foo"
+}].forEach(function (oOuterMessage, i) {
+	[{
+		body : "{\"error\":{\"code\":\"" + oOuterMessage.code + "\",\"message\":"
+			+ "{\"value\":\"" + oOuterMessage.message + "\"},"
+			+ "\"innererror\":{\"errordetails\":[{\"code\":\"~code0\",\"message\":\"foo\","
+			+ "\"severity\":\"error\",\"transition\":false,\"target\":\"\"},"
+			+ "{\"code\":\"~code1\",\"message\":\"bar\",\"severity\":\"error\","
+			+ "\"transition\":false,\"target\":\"\"}]}}}",
+		headers : {"content-type" : "application/json"}
+	}, {
+		body : "<error><code>" + oOuterMessage.code + "</code><message>" + oOuterMessage.message
+			+ "</message><innererror><errordetails>"
+			+ "<errordetail><code>~code0</code><message>foo</message><target></target>"
+			+ "<severity>error</severity></errordetail><errordetail><code>~code1</code>"
+			+ "<message>bar</message><target></target><severity>error</severity>"
+			+ "</errordetail></errordetails></innererror></error>",
+		headers : {"content-type" : "application/xml"}
+	}].forEach(function (oResponse) {
+	var sTitle = "_parseBody: no duplicate (integrative) #" + i + ", "
+			+ oResponse.headers["content-type"];
+
+	QUnit.test(sTitle, function (assert) {
+		// use Message instances, filtering calls getCode and getMessage on these instances
+		var oMessage0 = new Message({code : oOuterMessage.code, message : oOuterMessage.message}),
+			oMessage1 = new Message({code : "~code0", message : "foo"}),
+			oMessage2 = new Message({code : "~code1", message : "bar"}),
+			oMessageParser = new ODataMessageParser("/foo"),
+			oMessageParserMock = this.mock(oMessageParser),
+			aResult;
+
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.object.and(sinon.match.has("code", oOuterMessage.code))
+					.and(/*JSON*/sinon.match.has("message", {value : oOuterMessage.message})
+						.or(/*XML*/sinon.match.has("message", oOuterMessage.message))),
+				"~mRequestInfo", true)
+			.returns(oMessage0);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.object, "~mRequestInfo", true)
+			.returns(oMessage1);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.object, "~mRequestInfo", true)
+			.returns(oMessage2);
+
+		// code under test
+		aResult = oMessageParser._parseBody(oResponse, "~mRequestInfo");
+
+		assert.strictEqual(aResult.length, 3);
+		assert.strictEqual(aResult[0], oMessage0);
+		assert.strictEqual(aResult[1], oMessage1);
+		assert.strictEqual(aResult[2], oMessage2);
+	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_parseBodyXML: no error tag", function (assert) {
 		var sContentType = "application/xml",
-			oODataMessageParser = {
-				_addGenericError : function () {}
-			},
+			oMessageParser = new ODataMessageParser("/foo"),
 			oResponse = {
 				// valid XML, but no error or errordetail tag
 				body : '<?xml version="1.0" encoding="utf-8"?><foo></foo>'
@@ -1492,42 +1718,38 @@ sap.ui.define([
 				response : oResponse
 			};
 
-		this.mock(oODataMessageParser).expects("_addGenericError")
-			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
+		this.mock(oMessageParser).expects("_createGenericError")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns("~aMessages");
 
 		// code under test
-		ODataMessageParser.prototype._parseBodyXML.call(oODataMessageParser, "~aMessages",
-			oResponse, mRequestInfo, sContentType);
+		assert.strictEqual(oMessageParser._parseBodyXML(oResponse, mRequestInfo, sContentType),
+			"~aMessages");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_parseBodyXML: DOMParser throws exception", function (assert) {
-		var // wrong content does not cause exception in Chrome but in IE, unsupported content type
-			// throws exception in all browsers
-			sContentType = "unknown-xml-content-type",
-			oODataMessageParser = {
-				_addGenericError : function () {}
-			},
+		var oError = Error("~error"),
+			oMessageParser = new ODataMessageParser("/foo"),
 			oResponse = {body : "~foo"},
 			mRequestInfo = {
 				response : oResponse
 			};
 
-		this.mock(oODataMessageParser).expects("_addGenericError")
-			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
-		this.oLogMock.expects("error")
-			.withExactArgs("Error message returned by server could not be parsed");
+		this.mock(DOMParser.prototype).expects("parseFromString")
+			.withExactArgs("~foo", "~content-type")
+			.throws(oError);
+		this.mock(oMessageParser).expects("_createGenericError").never();
 
 		// code under test
-		ODataMessageParser.prototype._parseBodyXML.call(oODataMessageParser, "~aMessages",
-			oResponse, mRequestInfo, sContentType);
+		assert.throws(function () {
+			oMessageParser._parseBodyXML(oResponse, mRequestInfo, "~content-type");
+		}, oError);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_parseBodyJSON: no error property", function (assert) {
-		var oODataMessageParser = {
-				_addGenericError : function () {}
-			},
+		var oMessageParser = new ODataMessageParser("/foo"),
 			oResponse = {
 				// valid JSON, but no error property
 				body : '{"foo" : "bar"}'
@@ -1536,34 +1758,32 @@ sap.ui.define([
 				response : oResponse
 			};
 
-		this.mock(oODataMessageParser).expects("_addGenericError")
-			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
 		this.oLogMock.expects("error")
 			.withExactArgs("Error message returned by server did not contain error-field");
+		this.mock(oMessageParser).expects("_createGenericError")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns("~aMessages");
 
 		// code under test
-		ODataMessageParser.prototype._parseBodyJSON.call(oODataMessageParser, "~aMessages",
-			oResponse, mRequestInfo);
+		assert.strictEqual(oMessageParser._parseBodyJSON(oResponse, mRequestInfo), "~aMessages");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_parseBodyJSON: plain text", function (assert) {
-		var oODataMessageParser = {
-				_addGenericError : function () {}
-			},
+		var oError = new Error("~error"),
+			oMessageParser = new ODataMessageParser("/foo"),
 			oResponse = {body : "~foo"},
 			mRequestInfo = {
 				response : oResponse
 			};
 
-		this.mock(oODataMessageParser).expects("_addGenericError")
-			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
-		this.oLogMock.expects("error")
-			.withExactArgs("Error message returned by server could not be parsed");
+		this.mock(JSON).expects("parse").withExactArgs("~foo").throws(oError);
+		this.mock(oMessageParser).expects("_createGenericError").never();
 
 		// code under test
-		ODataMessageParser.prototype._parseBodyJSON.call(oODataMessageParser, "~aMessages",
-			oResponse, mRequestInfo);
+		assert.throws(function () {
+			oMessageParser._parseBodyJSON(oResponse, mRequestInfo);
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -1712,12 +1932,10 @@ sap.ui.define([
 			};
 
 		this.mock(oODataMessageParser).expects(oFixture.method)
-			.withExactArgs([], sinon.match.same(oResponse), mRequestInfo)
-			.callsFake(function (aMessages) { // check proper handling of "ref" parameter aMessages
-				aMessages.push("~message");
-			});
+			.withExactArgs(sinon.match.same(oResponse), mRequestInfo)
+			.returns("~aMessages");
 		this.mock(oODataMessageParser).expects("_propagateMessages")
-			.withExactArgs(["~message"], mRequestInfo, "~mGetEntities", "~mChangeEntities",
+			.withExactArgs("~aMessages", mRequestInfo, "~mGetEntities", "~mChangeEntities",
 				!bMessageScopeSupported);
 
 		// code under test
@@ -1729,10 +1947,44 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("parse: catch _parseBody error", function (assert) {
+		var oError = new Error("~error"),
+			oMessageParser = new ODataMessageParser("/foo"),
+			oRequest = {
+				method : "POST",
+				requestUri : "~requestUri"
+			},
+			oResponse = {
+				statusCode : "400"
+			},
+			mRequestInfo = {
+				request : oRequest,
+				response : oResponse,
+				url : "~requestUri"
+			};
+
+		this.mock(oMessageParser).expects("_parseBody")
+			.withExactArgs(sinon.match.same(oResponse), mRequestInfo)
+			.throws(oError);
+		this.mock(oMessageParser).expects("_createGenericError")
+			.withExactArgs(mRequestInfo)
+			.returns("~aMessages");
+		this.oLogMock.expects("error")
+			.withExactArgs("Error message returned by server could not be parsed",
+				sinon.match.same(oError), sClassName);
+		this.mock(oMessageParser).expects("_propagateMessages")
+			.withExactArgs("~aMessages", mRequestInfo, "~mGetEntities", "~mChangeEntities", false);
+
+		// code under test
+		oMessageParser.parse(oResponse, oRequest, "~mGetEntities", "~mChangeEntities",
+			/*bMessageScopeSupported*/ true);
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bStatusCodeAsString) {
 	QUnit.test("parse: unsupported status code, " + bStatusCodeAsString, function (assert) {
 		var oODataMessageParser = {
-				_addGenericError : function () {},
+				_createGenericError : function () {},
 				_parseBody : function () {},
 				_parseHeader : function () {},
 				_propagateMessages : function () {}
@@ -1747,14 +1999,11 @@ sap.ui.define([
 
 		this.mock(oODataMessageParser).expects("_parseBody").never();
 		this.mock(oODataMessageParser).expects("_parseHeader").never();
-		this.mock(oODataMessageParser).expects("_addGenericError")
-			.withExactArgs([], mRequestInfo)
-			.callsFake(function (aMessages, mRequestInfo) {
-				aMessages.push("~genericMessage");
-			});
+		this.mock(oODataMessageParser).expects("_createGenericError")
+			.withExactArgs(mRequestInfo)
+			.returns("~aMessages");
 		this.mock(oODataMessageParser).expects("_propagateMessages")
-			.withExactArgs(["~genericMessage"], mRequestInfo, "~mGetEntities", "~mChangeEntities",
-				false);
+			.withExactArgs("~aMessages", mRequestInfo, "~mGetEntities", "~mChangeEntities", false);
 
 		// code under test
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
@@ -1791,10 +2040,155 @@ sap.ui.define([
 	QUnit.test("_setPersistTechnicalMessages", function (assert) {
 		var oODataMessageParser = {};
 
-		//code under test
+		// code under test
 		ODataMessageParser.prototype._setPersistTechnicalMessages.call(oODataMessageParser,
 			"~bPersist");
 
 		assert.strictEqual(oODataMessageParser._bPersistTechnicalMessages, "~bPersist");
+	});
+
+	//**********************************************************************************************
+[
+	{code : "~code0", message : {value : "foo"}},
+	{code : "~code0", message : "foo"}
+].forEach(function (oOuterMessage, i) {
+	QUnit.test("_getBodyMessages: filter duplicates #" + i, function (assert) {
+		var aInnerMessages = [
+				{code : "~code0", message : "foo"},
+				{code : "~code1", message : "bar"}
+			],
+			// use Message instances as getCode and getMessage are called
+			oMessage0 = new Message({code : "~code0", message : "foo"}),
+			oMessage1 = new Message(aInnerMessages[0]),
+			oMessage2 = new Message(aInnerMessages[1]),
+			oMessageParser = new ODataMessageParser("/foo"),
+			oMessageParserMock = this.mock(oMessageParser),
+			aResult;
+
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(oOuterMessage), "~mRequestInfo", true)
+			.returns(oMessage0);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(aInnerMessages[0]), "~mRequestInfo", true)
+			.returns(oMessage1);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(aInnerMessages[1]), "~mRequestInfo", true)
+			.returns(oMessage2);
+		this.mock(oMessage0).expects("getCode").withExactArgs().callThrough();
+		this.mock(oMessage0).expects("getMessage").withExactArgs().callThrough();
+
+		// code under test
+		aResult = oMessageParser._getBodyMessages(oOuterMessage, aInnerMessages, "~mRequestInfo");
+
+		assert.strictEqual(aResult.length, 2);
+		assert.strictEqual(aResult[0], oMessage1);
+		assert.strictEqual(aResult[1], oMessage2);
+	});
+});
+
+	//**********************************************************************************************
+[{
+	iGetMessageCount : 1,
+	oOuterMessage : {
+		code : "~code0",
+		message : "foo2"
+	}
+}, {
+	iGetMessageCount : 0,
+	oOuterMessage : {
+		code : "~code0.1",
+		message : "foo"
+	}
+}].forEach(function (oFixture, i) {
+	QUnit.test("_getBodyMessages: no duplicates #" + i, function (assert) {
+		var aInnerMessages = [
+				{code : "~code0", message : "foo"},
+				{code : "~code1", message : "bar"}
+			],
+			// use Message instances as getCode and getMessage are called
+			oMessage0 = new Message(oFixture.oOuterMessage),
+			oMessage1 = new Message(aInnerMessages[0]),
+			oMessage2 = new Message(aInnerMessages[1]),
+			oMessageParser = new ODataMessageParser("/foo"),
+			oMessageParserMock = this.mock(oMessageParser),
+			aResult;
+
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(oFixture.oOuterMessage), "~mRequestInfo", true)
+			.returns(oMessage0);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(aInnerMessages[0]), "~mRequestInfo", true)
+			.returns(oMessage1);
+		oMessageParserMock.expects("_createMessage")
+			.withExactArgs(sinon.match.same(aInnerMessages[1]), "~mRequestInfo", true)
+			.returns(oMessage2);
+		this.mock(oMessage0).expects("getCode").withExactArgs().twice().callThrough();
+		this.mock(oMessage0).expects("getMessage").withExactArgs()
+			.exactly(oFixture.iGetMessageCount)
+			.callThrough();
+
+		// code under test
+		aResult = oMessageParser._getBodyMessages(oFixture.oOuterMessage, aInnerMessages,
+			"~mRequestInfo");
+
+		assert.strictEqual(aResult.length, 3);
+		assert.strictEqual(aResult[0], oMessage0);
+		assert.strictEqual(aResult[1], oMessage1);
+		assert.strictEqual(aResult[2], oMessage2);
+	});
+});
+
+	//**********************************************************************************************
+	QUnit.test("_parseBodyJSON: calls _getBodyMessages", function (assert) {
+		var oInnerError = {
+				code : "~code0",
+				message : "foo",
+				severity : "error",
+				target : "",
+				transition : false
+			},
+			oMessageParser = new ODataMessageParser("/foo"),
+			oResponse = {
+				body : "{\"error\":{\"code\":\"~code0\",\"message\":{\"value\":\"foo\"},"
+					+ "\"innererror\":{\"errordetails\":[{\"code\":\"~code0\",\"message\":\"foo\","
+					+ "\"severity\":\"error\",\"transition\":false,\"target\":\"\"}]}}}"
+			};
+
+		this.mock(oMessageParser).expects("_getBodyMessages")
+			.withExactArgs({
+					code : "~code0",
+					innererror : {
+						errordetails : [oInnerError]
+					},
+					message : {value : "foo"},
+					severity : "Error"
+				}, [oInnerError], "~mRequestInfo")
+			.returns("~aMessages");
+
+		// code under test
+		assert.strictEqual(oMessageParser._parseBodyJSON(oResponse, "~mRequestInfo"), "~aMessages");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBodyXML: calls _getBodyMessages", function (assert) {
+		var oMessageParser = new ODataMessageParser("/foo"),
+			oResponse = {
+				body : "<error><code>~code0</code><message>foo</message><innererror><errordetails>"
+					+ "<errordetail><code>~code0</code><message>foo</message><target></target>"
+					+ "<severity>error</severity></errordetail></errordetails></innererror>"
+					+ "</error>",
+				headers : {"content-type" : "application/xml"}
+			};
+
+		this.mock(oMessageParser).expects("_getBodyMessages")
+			.withExactArgs({code : "~code0", message : "foo", severity : "Error"},
+				[{code : "~code0", message : "foo", target : "", severity : "error"}],
+				"~mRequestInfo")
+			.returns("~aMessages");
+
+		assert.strictEqual(
+			// code under test
+			oMessageParser._parseBodyXML(oResponse, "~mRequestInfo", "application/xml"),
+			"~aMessages");
 	});
 });
