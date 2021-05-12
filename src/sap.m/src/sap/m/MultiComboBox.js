@@ -30,6 +30,8 @@ sap.ui.define([
 	"sap/m/inputUtils/itemsVisibilityHandler",
 	"sap/m/inputUtils/selectionRange",
 	"sap/m/inputUtils/calculateSelectionStart",
+	"sap/m/inputUtils/forwardItemPropertiesToToken",
+	"sap/m/inputUtils/getTokenByItem",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
@@ -70,6 +72,8 @@ function(
 	itemsVisibilityHandler,
 	selectionRange,
 	calculateSelectionStart,
+	forwardItemPropertiesToToken,
+	getTokenByItem,
 	KeyCodes,
 	deepEqual,
 	assert,
@@ -1133,12 +1137,25 @@ function(
 	 * @protected
 	 */
 	MultiComboBox.prototype.onBeforeRendering = function() {
+		var bEditable = this.getEditable();
+		var oTokenizer = this.getAggregation("tokenizer");
+
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
+
 		this._bInitialSelectedKeysSettersCompleted = true;
-		this.getAggregation("tokenizer").setEnabled(this.getEnabled());
+
+		oTokenizer.setEnabled(this.getEnabled());
+		oTokenizer.setEditable(bEditable);
+		this._updatePopoverBasedOnEditMode(bEditable);
+
+		if (!this.getItems().length) {
+			this._clearTokenizer();
+		}
+
 		if (this._getList()) {
 			this.syncPickerContent(true);
 		}
+
 		this._deregisterResizeHandler();
 		this._synchronizeSelectedItemAndKey();
 		this.setProperty("hasSelection", !!this.getSelectedItems().length, true);
@@ -1171,8 +1188,7 @@ function(
 
 		if (bForceListSync) {
 			oList = this._getList();
-			aItems = this.getEditable() ?
-				this.getItems() : this.getSelectedItems();
+			aItems = this.getEditable() ? this.getItems() : this.getSelectedItems();
 
 			this._synchronizeSelectedItemAndKey();
 
@@ -1544,7 +1560,7 @@ function(
 
 		// Synch the Tokenizer
 		if (!mOptions.tokenUpdated) {
-			var oToken = this._getTokenByItem(mOptions.item);
+			var oToken = getTokenByItem(mOptions.item);
 			mOptions.item.data(ListHelpers.CSS_CLASS + "Token", null);
 			this.getAggregation("tokenizer").removeToken(oToken);
 		}
@@ -1608,17 +1624,6 @@ function(
 	};
 
 	// --------------------------- End ------------------------------------
-
-	/**
-	 * Get token instance for a specific item
-	 *
-	 * @param {sap.ui.core.Item} oItem The item in question
-	 * @returns {sap.m.Token | null} Token instance, null if not found
-	 * @private
-	 */
-	MultiComboBox.prototype._getTokenByItem = function(oItem) {
-		return oItem ? oItem.data(ListHelpers.CSS_CLASS + "Token") : null;
-	};
 
 	/**
 	 * Called whenever the binding of the aggregation named <code>items</code> is changed.
@@ -2016,26 +2021,16 @@ function(
 	};
 
 	MultiComboBox.prototype.onItemChange = function (oControlEvent) {
-		var oValue = ComboBoxBase.prototype.onItemChange.apply(this, arguments);
-		this._forwardItemInfoToToken(oControlEvent);
+		var oValue = ComboBoxBase.prototype.onItemChange.call(this, oControlEvent, this.getShowSecondaryValues());
+		var oParameters = oControlEvent.getParameters();
+
+		forwardItemPropertiesToToken({
+			item: oControlEvent.getSource(),
+			propName: oParameters.name,
+			propValue: oParameters.newValue
+		});
 
 		return oValue;
-	};
-
-	MultiComboBox.prototype._forwardItemInfoToToken = function (oControlEvent) {
-		var oItem = oControlEvent.getSource(),
-			oPropertyInfo = oControlEvent.getParameters(),
-			oToken = this._getTokenByItem(oItem);
-
-		if (!oToken) {
-			return;
-		}
-
-		if (oPropertyInfo.name === "enabled") {
-			oToken.setVisible(oPropertyInfo.newValue);
-		} else if (oToken.getMetadata().hasProperty(oPropertyInfo.name)) {
-			oToken.setProperty(oPropertyInfo.name, oPropertyInfo.newValue, false);
-		}
 	};
 
 	/**
@@ -2980,24 +2975,6 @@ function(
 	// ----------------------- Inheritance ---------------------
 
 	/**
-	 * @override
-	 */
-	MultiComboBox.prototype.setEditable = function (bEditable) {
-		var oList = this._getList(),
-			oTokenizer = this.getAggregation("tokenizer");
-
-		ComboBoxBase.prototype.setEditable.apply(this, arguments);
-		oTokenizer.setEditable(bEditable);
-
-		if (oList) {
-			this.syncPickerContent(true);
-			this._updatePopoverBasedOnEditMode(bEditable);
-		}
-
-		return this;
-	};
-
-	/**
 	 * Adds correct content and sets the correct list mode for the popover.
 	 * The method is used to switch between read-only mode and edit mode.
 	 *
@@ -3071,7 +3048,7 @@ function(
 	MultiComboBox.prototype.setSelectable = function(oItem, bSelectable) {
 		ComboBoxBase.prototype.setSelectable.call(this, oItem, bSelectable);
 
-		var oToken = this._getTokenByItem(oItem);
+		var oToken = getTokenByItem(oItem);
 
 		if (oToken) {
 			oToken.setVisible(bSelectable);
@@ -3087,10 +3064,16 @@ function(
 	 * @returns {null} Null if array is empty
 	 * @private
 	 */
-	MultiComboBox.prototype._fillList = function(aItems) {
-		if (!aItems) {
-			return null;
+	MultiComboBox.prototype._fillList = function() {
+		var oList = this._getList();
+		var aItems = this.getEditable() ?
+		this.getItems() : this.getSelectedItems();
+
+		if (!oList) {
+			return;
 		}
+
+		oList.destroyItems();
 
 		if (!this._oListItemEnterEventDelegate) {
 			this._oListItemEnterEventDelegate = {
@@ -3269,57 +3252,11 @@ function(
 	};
 
 	/**
-	 * Clear the selection.
+	 * Fires when an object gets removed from the items aggregation
 	 *
-	 * @protected
+	 * @private
 	 */
-	MultiComboBox.prototype.clearSelection = function() {
-		this.removeAllSelectedItems();
-	};
-
-	/**
-	 * Inserts an item into the aggregation named <code>items</code>.
-	 *
-	 * @param {sap.ui.core.Item} oItem The item to insert; if empty, nothing is inserted.
-	 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
-	 * a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
-	 * greater than the current size of the aggregation, the item is inserted at
-	 * the last position.
-	 * @returns {this} <code>this</code> to allow method chaining.
-	 * @public
-	 */
-	MultiComboBox.prototype.insertItem = function(oItem, iIndex) {
-		this.insertAggregation("items", oItem, iIndex, true);
-
-		if (oItem) {
-			oItem.attachEvent("_change", this.onItemChange, this);
-		}
-
-		if (this._getList()) {
-			this._getList().insertItem(this._mapItemToListItem(oItem), iIndex);
-		}
-
-		return this;
-	};
-
-	/**
-	 * Removes an item from the aggregation named <code>items</code>.
-	 *
-	 * @param {int | string | sap.ui.core.Item} oItem The item to remove or its index or id.
-	 * @returns {sap.ui.core.Item} The removed item or null.
-	 * @public
-	 */
-	MultiComboBox.prototype.removeItem = function(oItem) {
-
-		// remove the item from the aggregation items
-		oItem = this.removeAggregation("items", oItem);
-
-		// remove the corresponding mapped item from the List
-		if (this._getList()) {
-			this._getList().removeItem(oItem && ListHelpers.getListItem(oItem));
-		}
-
-		// If the removed item is selected remove it also from 'selectedItems'.
+	MultiComboBox.prototype.handleItemRemoval = function (oItem) {
 		this.removeSelection({
 			item: oItem,
 			id: oItem ? oItem.getId() : "",
@@ -3328,8 +3265,6 @@ function(
 			suppressInvalidate: true,
 			listItemUpdated: true
 		});
-
-		return oItem;
 	};
 
 	/**
@@ -3386,30 +3321,10 @@ function(
 	 * @public
 	 */
 	MultiComboBox.prototype.destroyItems = function() {
-		this.destroyAggregation("items");
-		this.setProperty("selectedKeys", [], true);
+		this.setProperty("selectedKeys", []);
+		this._clearTokenizer();
 
-		if (this._getList()) {
-			this._getList().destroyItems();
-		}
-
-		this.getAggregation("tokenizer").destroyTokens();
-		return this;
-	};
-
-	/**
-	 * Removes all the items in the aggregation named <code>items</code>.
-	 *
-	 * @returns {sap.ui.core.Item[]} An array of sap.ui.core.Item of the removed items (might be empty).
-	 * @public
-	 */
-	MultiComboBox.prototype.removeAllItems = function() {
-		var aItems = this.removeAllAggregation("items");
-		this.removeAllSelectedItems();
-		if (this._getList()) {
-			this._getList().removeAllItems();
-		}
-		return aItems;
+		return this.destroyAggregation("items");
 	};
 
 	/**

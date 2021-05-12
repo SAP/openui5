@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/m/inputUtils/ListHelpers",
 	"sap/m/inputUtils/itemsVisibilityHandler",
+	"sap/m/inputUtils/getTokenByItem",
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/InvisibleText",
 	"sap/m/library"
@@ -57,6 +58,7 @@ sap.ui.define([
 	inputsDefaultFilter,
 	ListHelpers,
 	itemsVisibilityHandler,
+	getTokenByItem,
 	SeparatorItem,
 	InvisibleText,
 	mLibrary
@@ -404,15 +406,15 @@ sap.ui.define([
 		oMultiComboBox.setSelectedKeys(["0"]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
-		assert.deepEqual(oItem0.data(ListHelpers.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		assert.deepEqual(oItem0.data(ListHelpers.CSS_CLASS + "Token"), getTokenByItem(oItem0));
 		assert.deepEqual(oItem1.data(ListHelpers.CSS_CLASS + "Token"), null);
 		assert.deepEqual(oItem2.data(ListHelpers.CSS_CLASS + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(["0", "1"]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["0", "1"]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0, oItem1]);
-		assert.deepEqual(oItem0.data(ListHelpers.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem0));
-		assert.deepEqual(oItem1.data(ListHelpers.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem1));
+		assert.deepEqual(oItem0.data(ListHelpers.CSS_CLASS + "Token"), getTokenByItem(oItem0));
+		assert.deepEqual(oItem1.data(ListHelpers.CSS_CLASS + "Token"), getTokenByItem(oItem1));
 		assert.deepEqual(oItem2.data(ListHelpers.CSS_CLASS + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(null); // enforce default value
@@ -442,14 +444,14 @@ sap.ui.define([
 		oMultiComboBox.removeSelectedKeys(["1"]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
-		assert.deepEqual(oItem0.data(ListHelpers.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		assert.deepEqual(oItem0.data(ListHelpers.CSS_CLASS + "Token"), getTokenByItem(oItem0));
 		assert.deepEqual(oItem1.data(ListHelpers.CSS_CLASS + "Token"), null);
 		assert.deepEqual(oItem2.data(ListHelpers.CSS_CLASS + "Token"), null);
 
 		oMultiComboBox.removeSelectedKeys(["dummy"]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
-		assert.deepEqual(oItem0.data(ListHelpers.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		assert.deepEqual(oItem0.data(ListHelpers.CSS_CLASS + "Token"), getTokenByItem(oItem0));
 		assert.deepEqual(oItem1.data(ListHelpers.CSS_CLASS + "Token"), null);
 		assert.deepEqual(oItem2.data(ListHelpers.CSS_CLASS + "Token"), null);
 
@@ -838,18 +840,26 @@ sap.ui.define([
 		// system under test
 		var oMultiComboBox = new MultiComboBox();
 
+		oMultiComboBox.placeAt("MultiComboBox-content");
+
 		// arrange
-		oMultiComboBox.syncPickerContent();
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
-		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
 		var oItem = new Item({
 			key : "0",
 			text : "item 0"
 		});
 
+		oMultiComboBox.syncPickerContent();
+		sap.ui.getCore().applyChanges();
+		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
+
 		// act
 		oMultiComboBox.addItem(oItem);
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.open();
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -882,8 +892,12 @@ sap.ui.define([
 			text : "item 0"
 		});
 
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
 		// act
 		oMultiComboBox.addItem(oItem);
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -914,8 +928,12 @@ sap.ui.define([
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
 		var oItem = new Item();
 
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
 		// act
 		oMultiComboBox.addItem(oItem);
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -941,6 +959,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.syncPickerContent();
+
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
 		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
@@ -949,9 +968,13 @@ sap.ui.define([
 			text : "item 0"
 		});
 
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
 		// act
 		oMultiComboBox.addItem(oItem);
 		oMultiComboBox.addItem(oItem);
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -976,17 +999,15 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
-		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
 
 		// act
 		oMultiComboBox.addItem(null);
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", null),
 				"sap.m.MultiComboBox.addAggregation() method was called with the expected arguments");
-		assert.ok(fnListAddAggregationSpy.calledWith("items", null),
-				"sap.m.List.addAggregation() method was called with the expected arguments");
 		assert.ok(fnAddItemSpy.returned(oMultiComboBox));
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), []);
 		assert.deepEqual(oMultiComboBox.getItems(), []);
@@ -1013,6 +1034,7 @@ sap.ui.define([
 
 		// act
 		oItemRemoved = oMultiComboBox.removeItem(oItem);
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.strictEqual(oItemRemoved, oItem);
@@ -1044,7 +1066,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1069,7 +1091,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1145,7 +1167,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1170,7 +1192,7 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), [oItem.getKey()]);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [oMultiComboBox._getTokenByItem(oItem)]);
+		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), [getTokenByItem(oItem)]);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -1253,44 +1275,22 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: clearSelection()", function(assert) {
-
-		// system under test
-		var oItem;
-		var oMultiComboBox = new MultiComboBox({
-			items : [oItem = new Item()],
-			selectedItems : [oItem]
-		});
-
-		// arrange
-
-		// act
-		oMultiComboBox.clearSelection();
-
-		// assertions
-		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox.getAggregation("items"), [oItem]);
-		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
-		assert.deepEqual(oMultiComboBox.getAggregation("tokenizer").getTokens(), []);
-
-		// cleanup
-		oMultiComboBox.destroy();
-	});
-
 	QUnit.test("method: destroyItems()", function(assert) {
 
 		// system under test
 		var oItem;
 		var oMultiComboBox = new MultiComboBox({
-			items : [oItem = new Item()],
+			items : [oItem = new Item({ key: "a" })],
 			selectedItems : [oItem]
 		});
 
 		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
 
 		// act
 		oMultiComboBox.destroyItems();
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getItems(), []);
@@ -1312,10 +1312,14 @@ sap.ui.define([
 		// system under test
 		var oMultiComboBox = new MultiComboBox();
 
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
 		// arrange
 		oMultiComboBox.syncPickerContent();
+		sap.ui.getCore().applyChanges();
+
 		var fnInsertAggregation = this.spy(oMultiComboBox, "insertAggregation");
-		var fnListInsertAggregation = this.spy(oMultiComboBox._getList(), "insertAggregation");
 		var fnInsertItem = this.spy(oMultiComboBox, "insertItem");
 		var oItem = new Item({
 			key : "0",
@@ -1324,13 +1328,16 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.insertItem(oItem, 0);
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.syncPickerContent(true);
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.ok(fnInsertAggregation.calledWith("items", oItem, 0),
 				"oMultiComboBox.insertAggregation() method was called with the expected arguments");
-		assert.ok(fnListInsertAggregation.calledWith("items", ListHelpers.getListItem(oItem), 0),
-				"oList.insertAggregation() method was called with the expected arguments");
 		assert.ok(fnInsertItem.returned(oMultiComboBox), 'oMultiComboBox.insertAggregation() method return the "this" reference');
+		assert.strictEqual(oMultiComboBox._getList().getItems().length, 1, 'One item should be availble in the list');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2810,7 +2817,8 @@ sap.ui.define([
 		assert.strictEqual(aTokens[2].getKey(), oItem3.getKey());
 
 		// arrange
-		oMultiComboBox.clearSelection();
+		oMultiComboBox.removeAllSelectedItems();
+		sap.ui.getCore().applyChanges();
 
 		// act
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem3.getText());

@@ -180,5 +180,31 @@ sap.ui.define([
 		return oListItem;
 	};
 
+	/**
+	 * Fills an item Container (sap.m.List or sap.m.Table) with items mapped by the <code>fnMapItem</code>.
+	 *
+	 * @param aItems Array of sap.ui.core.Item to be mapped
+	 * @param oItemsContainer A container to be filled with items (List or Table)
+	 * @param fnMapItem Mapping function for core items to listItems
+	 */
+	ListHelpers.fillList = function (aItems, oItemsContainer, fnMapItem) {
+		var aEnabledItems = ListHelpers.getEnabledItems(aItems);
+
+		if (!oItemsContainer) {
+			return;
+		}
+
+		if (oItemsContainer.isA("sap.m.Table")) {
+			oItemsContainer.removeSelections(true);
+		} else {
+			oItemsContainer.destroyItems();
+		}
+
+		// map the items to list items and add them to the list
+		aEnabledItems.forEach(function (oItem) {
+			oItemsContainer.addItem(fnMapItem(oItem));
+		});
+	};
+
 	return ListHelpers;
 });
