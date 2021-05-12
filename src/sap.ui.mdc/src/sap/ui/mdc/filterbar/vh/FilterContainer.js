@@ -65,6 +65,13 @@ sap.ui.define(
 			this.setAggregation("_layout", this.oLayout, true);
 		};
 
+		FilterContainer.prototype.exit = function() {
+			this.aLayoutItems.forEach(function(oItem){
+				oItem.destroy();
+			});
+			this.aLayoutItems = null;
+		};
+
 		FilterContainer.prototype.addControl = function (oControl) {
 			this.oToolbar.addContent(oControl);
 		};
