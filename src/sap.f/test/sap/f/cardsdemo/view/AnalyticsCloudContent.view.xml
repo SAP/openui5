@@ -13,12 +13,6 @@
 			</Toolbar>
 		</subHeader>
 
-		<MessageStrip
-			class="sapUiSmallMargin"
-			type="Warning"
-			showIcon="true"
-			text="To run this sample check the instructions in the related BLI." />
-
 		<f:GridContainer class="sapUiSmallMargin">
 			<w:Card id="card1" manifest="./cardsdemo/cardcontent/analyticsCloud/manifestLine1.json">
 				<w:layoutData>
