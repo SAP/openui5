@@ -421,17 +421,7 @@
 								id="ff2" label="Title"
 								conditions="{$filters>/conditions/title}"
 								fieldHelp="FH4"/>
-
-							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
-								id="ff3" label="Stock range"
-								conditions="{$filters>/conditions/stock}"
-								maxConditions="1"
-								operators="BT">
-								<mdc:contentEdit>
-									<demo:CustomRangeSlider value="{path: '$field>/conditions/stock'}" max="99999" width="100%" class="sapUiMediumMarginBottom" />
-								</mdc:contentEdit>
-							</mdc:FilterField>
-
+								
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
 								id="ff4" label="Published"
 								dataType="Edm.Date" dataTypeConstraints="{V4: true}"
