@@ -363,6 +363,9 @@ sap.ui.define([
 		}];
 		checkTable(aAfterExpandBwSmall);
 		checkSubtotalsAtBottom(16, oBwSmall, true);
+		if (sLeafCount === "true") {
+			Then.onTheMainPage.checkTitle("Sales Amount by Account Responsible (90)");
+		}
 
 		When.onTheMainPage.scrollToRow(0, "Scroll to top.");
 		toggleExpandInRow(3, "Collapse Germany.");
