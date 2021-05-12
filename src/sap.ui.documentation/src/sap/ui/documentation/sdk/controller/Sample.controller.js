@@ -88,8 +88,7 @@ sap.ui.define([
 				var oPage = this.byId("page"),
 					oModelData = this.oModel.getData(),
 					oSample = oData.samples[this._sId],
-					oSampleContext,
-					oContent;
+					oSampleContext;
 
 				if (!oSample) {
 					setTimeout(function () {
@@ -129,83 +128,81 @@ sap.ui.define([
 				// set page title
 				oModelData.title = "Sample: " + oSample.name;
 
-				try {
-					oContent = this._createComponent();
-				} catch (ex) {
-					oPage.removeAllContent();
-					oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
-					setTimeout(function () {
-						oPage.setBusy(false);
-					}, 0);
-					return;
-				}
+				this._createComponent()
+					.then(function (oComponentContainer) {
+						// Store a reference to the currently opened sample on the application component
+						this.getOwnerComponent()._oCurrentOpenedSample = oComponentContainer ? oComponentContainer : undefined;
 
-				// Store a reference to the currently opened sample on the application component
-				this.getOwnerComponent()._oCurrentOpenedSample = oContent ? oContent : undefined;
+						//get config
+						var oComponent = Component.get(oComponentContainer.getComponent());
+						var oConfig = (oComponent.getMetadata()) ? oComponent.getMetadata().getConfig() : null;
+						var oSampleConfig = oConfig && oConfig.sample || {};
 
-				//get config
-				var oConfig = (this._oComp.getMetadata()) ? this._oComp.getMetadata().getConfig() : null;
-				var oSampleConfig = oConfig && oConfig.sample || {};
+						// only have the option to run standalone if there is an iframe
+						oModelData.showNewTab = !!oSampleConfig.iframe;
+						oModelData.id = oSample.id;
+						oModelData.name = oSample.name;
+						oModelData.details = oSample.details;
+						oModelData.description = oSample.description;
 
-				// only have the option to run standalone if there is an iframe
-				oModelData.showNewTab = !!oSampleConfig.iframe;
-				oModelData.id = oSample.id;
-				oModelData.name = oSample.name;
-				oModelData.details = oSample.details;
-				oModelData.description = oSample.description;
+						if (oSampleConfig) {
 
-				if (oSampleConfig) {
+							oModelData.stretch = oSampleConfig.stretch;
+							oModelData.includeInDownload = oSampleConfig.additionalDownloadFiles;
 
-					oModelData.stretch = oSampleConfig.stretch;
-					oModelData.includeInDownload = oSampleConfig.additionalDownloadFiles;
+							// retrieve files
+							if (oSampleConfig.files) {
+								var sRef = sap.ui.require.toUrl((oSample.id).replace(/\./g, "/"));
+								oModelData.files = [];
+								for (var i = 0; i < oSampleConfig.files.length; i++) {
+									var sFile = oSampleConfig.files[i];
+									oModelData.files.push({
+										name: sFile
+									});
+									this._updateFileContent(sRef, sFile);
+								}
+							}
 
-					// retrieve files
-					if (oSampleConfig.files) {
-						var sRef = sap.ui.require.toUrl((oSample.id).replace(/\./g, "/"));
-						oModelData.files = [];
-						for (var i = 0; i < oSampleConfig.files.length; i++) {
-							var sFile = oSampleConfig.files[i];
-							oModelData.files.push({
-								name : sFile
-							});
-							this._updateFileContent(sRef, sFile);
+							if (oSampleConfig.iframe) {
+								oComponentContainer = this._createIframe(oComponentContainer, oSampleConfig.iframe);
+							} else {
+								this.sIFrameUrl = null;
+							}
 						}
-					}
 
-					if (oSampleConfig.iframe) {
-						oContent = this._createIframe(oContent, oSampleConfig.iframe);
-					} else {
-						this.sIFrameUrl = null;
-					}
-				}
+						// Sets the current iframe URL or restores it to "undefined"
+						oModelData.iframe = oSampleConfig.iframe;
 
-				// Sets the current iframe URL or restores it to "undefined"
-				oModelData.iframe = oSampleConfig.iframe;
+						// handle stretch content
+						var bStretch = !!oSampleConfig.stretch;
+						var sHeight = bStretch ? "100%" : null;
+						oPage.setEnableScrolling(!bStretch);
+						if (oComponentContainer.setHeight) {
+							oComponentContainer.setHeight(sHeight);
+						}
+						// add content
+						oPage.removeAllContent();
+						oPage.addContent(oComponentContainer);
 
-				// handle stretch content
-				var bStretch = !!oSampleConfig.stretch;
-				var sHeight = bStretch ? "100%" : null;
-				oPage.setEnableScrolling(!bStretch);
-				if (oContent.setHeight) {
-					oContent.setHeight(sHeight);
-				}
-				// add content
-				oPage.removeAllContent();
-				oPage.addContent(oContent);
+						// scroll to top of page
+						oPage.scrollTo(0);
 
-				// scroll to top of page
-				oPage.scrollTo(0);
+						this.getAPIReferenceCheckPromise(oSample.entityId).then(function (bHasAPIReference) {
+							this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
+						}.bind(this));
 
-				this.getAPIReferenceCheckPromise(oSample.entityId).then(function (bHasAPIReference) {
-					this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
-				}.bind(this));
-
-				this.oModel.setData(oModelData);
-
-				setTimeout(function () {
-					oPage.setBusy(false);
-				}, 0);
-				this.appendPageTitle(this.getModel().getProperty("/name"));
+						this.oModel.setData(oModelData);
+						this.appendPageTitle(this.getModel().getProperty("/name"));
+					}.bind(this))
+					.catch(function (oError) {
+						oPage.removeAllContent();
+						oPage.addContent(new Text({ text: "Error while loading the sample: " + oError }));
+					})
+					.finally(function(){
+						setTimeout(function () {
+							oPage.setBusy(false);
+						}, 0);
+					});
 			},
 
 			_updateFileContent: function(sRef, sFile) {
@@ -358,23 +355,21 @@ sap.ui.define([
 				var sCompName = this._sId;
 				var oMainComponent = this.getOwnerComponent();
 
-				this._oComp = sap.ui.component(sCompId);
+				var oComp = Component.get(sCompId);
 
-				if (this._oComp) {
-					this._oComp.destroy();
+				if (oComp) {
+					oComp.destroy();
 				}
 
-				return oMainComponent.runAsOwner(function() {
-					this._oComp = sap.ui.getCore().createComponent({
+				return oMainComponent.runAsOwner(function(){
+					return Component.create({
 						id: sCompId,
-						name: sCompName
+						name: sCompName,
+						manifest: false
+					}).then(function (oComponent) {
+						return new ComponentContainer({component : oComponent});
 					});
-
-					// create component container
-					return new ComponentContainer({
-						component: this._oComp
-					});
-				}.bind(this));
+				});
 			},
 
 			onNavBack : function (oEvt) {
