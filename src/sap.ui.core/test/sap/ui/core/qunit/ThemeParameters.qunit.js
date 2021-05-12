@@ -60,8 +60,8 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		 *  3. it should be reliably there for accessibility reasons
 		 *  4. text and background color differ from the base theme
 		 */
-		assert.equal(getParameterInUnifiedHexNotation("sapUiText"), "#ffffff", "sapUiText must be defined as 'white - #ffffff'");
-		assert.equal(getParameterInUnifiedHexNotation("sapUiExtraLightBG"), "#000000", "sapUiExtraLightBG must be defined as black '#000000'");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiBaseText"), "#ffffff", "sapUiBaseText must be defined as 'white - #ffffff'");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiBaseBG"), "#000000", "sapUiBaseBG must be defined as black '#000000'");
 
 		// Read parameters of legacy library-parameters.json format
 		assert.equal(Parameters.get("sapUiLegacyTstTextColor"), "#fafafa", "sapUiLegacyTstTextColor must be defined as '#fafafa'");
@@ -101,8 +101,8 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		var fnAssertThemeChanged = function() {
 
 			// parameters of base theme should now be present
-			assert.equal(getParameterInUnifiedHexNotation("sapUiText"), "#000000", "sapUiText must be defined as 'black - #000000'");
-			assert.equal(getParameterInUnifiedHexNotation("sapUiExtraLightBG"), "#ffffff", "sapUiExtraLightBG must be defined as 'white - #ffffff'");
+			assert.equal(getParameterInUnifiedHexNotation("sapUiBaseText"), "#000000", "sapUiBaseText must be defined as 'black - #000000'");
+			assert.equal(getParameterInUnifiedHexNotation("sapUiBaseBG"), "#ffffff", "sapUiBaseBG must be defined as 'white - #ffffff'");
 
 			sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
 			sap.ui.getCore().attachThemeChanged(fnContinue);
@@ -358,11 +358,11 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 	QUnit.test("Read multiple given parameters (async including undefined param name)", function(assert) {
 		var done = assert.async();
 		var oControl = new Control();
-		var aParams = ["sapUiMultipleAsyncThemeParamWithScopeForLib7", "sapUiMultipleAsyncThemeParamWithoutScopeForLib7", "sapUiNotExistingTestParam", "sapHighlightColor"];
+		var aParams = ["sapUiMultipleAsyncThemeParamWithScopeForLib7", "sapUiMultipleAsyncThemeParamWithoutScopeForLib7", "sapUiNotExistingTestParam", "sapUiBaseColor"];
 		var oExpected = {
 			"sapUiMultipleAsyncThemeParamWithScopeForLib7": "#cccccc",
 			"sapUiMultipleAsyncThemeParamWithoutScopeForLib7": "#dddddd",
-			"sapHighlightColor": "#cc8700"
+			"sapUiBaseColor": "#000000"
 		};
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib7");
@@ -372,11 +372,11 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 			name: aParams,
 			scopeElement: oControl,
 			callback: function (oParamResult) {
-				assert.deepEqual(oParamResult, oExpected, "Key-value map for the given params 'sapUiMultipleAsyncThemeParamWithScopeForLib7', 'sapUiMultipleAsyncThemeParamWithoutScopeForLib7' and 'sapHighlightColor' should be returned");
+				assert.deepEqual(oParamResult, oExpected, "Key-value map for the given params 'sapUiMultipleAsyncThemeParamWithScopeForLib7', 'sapUiMultipleAsyncThemeParamWithoutScopeForLib7' and 'sapUiBaseColor' should be returned");
 				assert.strictEqual(checkLibraryParametersJsonRequestForLib("7").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib7");
 				done();
 			}
-		}), undefined, "Parameter 'sapHighlightColor' should already be available but value should be returned in callback.");
+		}), undefined, "Parameter 'sapUiBaseColor' should already be available but value should be returned in callback.");
 	});
 
 	QUnit.test("Call Parameters.get multiple times with same callback function should only be executed once", function (assert) {
@@ -430,7 +430,7 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		var fnAssertThemeChanged = function() {
 
 			// parameters of base theme should now be present
-			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParam1ForLib10"), "#123321", "sapUiText must be defined as '#123321'");
+			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParam1ForLib10"), "#123321", "sapUiThemeParam1ForLib10 must be defined as '#123321'");
 			assert.strictEqual(checkLibraryParametersJsonRequestForLib("10").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib10");
 
 			sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
