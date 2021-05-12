@@ -372,6 +372,11 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 			name: aParams,
 			scopeElement: oControl,
 			callback: function (oParamResult) {
+				aParams.forEach(function(key) {
+					if (oParamResult[key]) {
+						oParamResult[key] = unifyHexNotation(oParamResult[key]);
+					}
+				});
 				assert.deepEqual(oParamResult, oExpected, "Key-value map for the given params 'sapUiMultipleAsyncThemeParamWithScopeForLib7', 'sapUiMultipleAsyncThemeParamWithoutScopeForLib7' and 'sapUiBaseColor' should be returned");
 				assert.strictEqual(checkLibraryParametersJsonRequestForLib("7").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib7");
 				done();
