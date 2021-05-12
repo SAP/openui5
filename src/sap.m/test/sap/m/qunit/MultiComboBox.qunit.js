@@ -8567,7 +8567,7 @@ sap.ui.define([
 		assert.strictEqual(oTokenizer._getTokensList().getItems().length, 4, "Only the selected items should be in the list");
 
 		// Act
-		oMultiComboBox.close();
+		oTokenizer.getTokensPopup().close();
 		this.clock.tick(nPopoverAnimationTick);
 		oMultiComboBox.setEditable(false);
 		oMultiComboBox.$().find(".sapMTokenizerIndicator")[0].click();

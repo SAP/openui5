@@ -354,15 +354,25 @@ sap.ui.define([
 	 *
 	 * @param oList {sap.m.List}
 	 * @param fnFilter {function}
+	 * @param oLimit {Object}
+	 * @param oLimit.offset {Number}
+	 * @param oLimit.limit {Number}
 	 * @private
 	 */
-	Tokenizer.prototype._fillTokensList = function (oList, fnFilter) {
-		oList.destroyItems();
+	Tokenizer.prototype._fillTokensList = function (oList, fnFilter, oLimit) {
+		var oTokens = this.getTokens();
 
 		fnFilter = fnFilter ? fnFilter : function () { return true; };
 
-		this.getTokens()
+		oLimit = jQuery.extend({offset: 0, limit: oTokens.length}, oLimit);
+
+		if (oLimit.offset === 0) {
+			this._getTokensList().destroyItems();
+		}
+
+		oTokens
 			.filter(fnFilter)
+			.slice(oLimit.offset, oLimit.limit)
 			.forEach(function (oToken) {
 				oList.addItem(this._mapTokenToListItem(oToken));
 			}, this);
@@ -426,7 +436,7 @@ sap.ui.define([
 				if (oPopup.getContent && !oPopup.getContent().length) {
 					oPopup.addContent(this._getTokensList());
 				}
-				this._fillTokensList(this._getTokensList());
+				this._fillTokensList(this._getTokensList(), null, {offset: 0, limit: 100});
 
 				iWidestElement += Object.keys(this._oTokensWidthMap) // Object.values is not supported in IE
 					.map(function (sKey) { return this._oTokensWidthMap[sKey]; }, this)
@@ -434,6 +444,12 @@ sap.ui.define([
 					.pop() || 0; // Get the longest element in PX
 
 				oPopup.setContentWidth(iWidestElement + "px");
+			}, this)
+			.attachAfterOpen(function () {
+				this._fillTokensList(this._getTokensList(), null, {offset: 100});
+			}, this)
+			.attachAfterClose(function () {
+				this._getTokensList().destroyItems();
 			}, this);
 
 		this.addDependent(this._oPopup);
