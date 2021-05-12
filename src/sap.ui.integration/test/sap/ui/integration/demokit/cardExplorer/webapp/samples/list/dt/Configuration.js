@@ -7,8 +7,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 			"form": {
 				"items": {
 					"title": {
+						"manifestpath": "/sap.card/configuration/parameters/title/value",
 						"label": "Title",
-						"manifestpath": "/sap.card/header/title"
+						"type": "string",
+						"translatable": true
+					},
+					"subTitle": {
+						"manifestpath": "/sap.card/configuration/parameters/subTitle/value",
+						"label": "SubTitle",
+						"type": "string",
+						"translatable": true
+					},
+					"maxItems": {
+						"manifestpath": "/sap.card/configuration/parameters/maxItems/value",
+						"label": "MaxItems",
+						"type": "integer"
 					}
 				}
 			},

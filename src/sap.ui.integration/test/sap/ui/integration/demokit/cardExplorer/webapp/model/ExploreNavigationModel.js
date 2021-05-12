@@ -27,11 +27,6 @@ sap.ui.define([
 										url: '/samples/adaptive/adaptive.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -43,11 +38,6 @@ sap.ui.define([
 										url: '/samples/adaptive/richtext.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -59,11 +49,6 @@ sap.ui.define([
 										url: '/samples/adaptive/form.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -75,11 +60,6 @@ sap.ui.define([
 										url: '/samples/adaptive/templating.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -96,11 +76,6 @@ sap.ui.define([
 										url: '/samples/adaptive/data-json.json',
 										name: 'data.json',
 										key: 'data.json'
-									},
-									{
-										url: '/samples/adaptive/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -112,11 +87,6 @@ sap.ui.define([
 										url: '/samples/adaptive/markdown.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -128,11 +98,6 @@ sap.ui.define([
 										url: '/samples/adaptive/action-submit.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -154,11 +119,6 @@ sap.ui.define([
 										url: '/samples/adaptive/extensionSample/i18n/i18n.properties',
 										name: 'i18n/i18n.properties',
 										key: 'i18n/i18n.properties'
-									},
-									{
-										url: '/samples/adaptive/extensionSample/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -170,11 +130,6 @@ sap.ui.define([
 										url: '/samples/adaptive/action-openurl.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							}
@@ -197,11 +152,6 @@ sap.ui.define([
 										url: '/samples/analytical/line.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/analytical/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -217,11 +167,6 @@ sap.ui.define([
 										url: '/samples/analytical/stackedColumn.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/analytical/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -237,11 +182,6 @@ sap.ui.define([
 										url: '/samples/analytical/donut.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/analytical/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							}
@@ -295,11 +235,6 @@ sap.ui.define([
 								url: '/samples/calendar/calendar.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/calendar/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -316,11 +251,6 @@ sap.ui.define([
 										url: '/samples/component/cardContent/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/component/cardContent/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/component/cardContent/Component.js',
@@ -354,11 +284,6 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/component/cardContentHeaderBottom/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/component/cardContentHeaderBottom/Component.js',
 										name: 'Component.js',
 										key: 'Component.js'
@@ -390,11 +315,6 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/component/cardContentControls/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/component/cardContentControls/Component.js',
 										name: 'Component.js',
 										key: 'Component.js'
@@ -419,11 +339,6 @@ sap.ui.define([
 										url: '/samples/component/advanced/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/component/advanced/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/component/advanced/Component.js',
@@ -452,11 +367,6 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/component/triggerAction/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/component/triggerAction/Component.js',
 										name: 'Component.js',
 										key: 'Component.js'
@@ -481,11 +391,6 @@ sap.ui.define([
 										url: '/samples/component/customActions/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/component/customActions/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/component/customActions/Component.js',
@@ -540,11 +445,6 @@ sap.ui.define([
 										url: '/samples/list/icon.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/list/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -556,11 +456,6 @@ sap.ui.define([
 										url: '/samples/list/numeric.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/list/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -589,11 +484,6 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/list/bulletChart/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/list/bulletChart/data.json',
 										name: 'data.json',
 										key: 'data.json'
@@ -611,11 +501,6 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/list/stackedBar/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/list/stackedBar/data.json',
 										name: 'data.json',
 										key: 'data.json'
@@ -630,11 +515,6 @@ sap.ui.define([
 										url: '/samples/list/friendRequests/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/list/friendRequests/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/list/friendRequests/images/John_Miller.png',
@@ -671,11 +551,6 @@ sap.ui.define([
 										url: '/samples/object/object.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/object/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -690,11 +565,6 @@ sap.ui.define([
 										url: '/samples/object/visibleObject.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/object/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -735,11 +605,6 @@ sap.ui.define([
 										url: '/samples/table/table.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/table/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -754,11 +619,6 @@ sap.ui.define([
 										url: '/samples/table/visibleColumns.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/table/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -773,11 +633,6 @@ sap.ui.define([
 										url: '/samples/table/employees/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/table/employees/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/table/employees/images/John_Miller.png',
@@ -814,11 +669,6 @@ sap.ui.define([
 										url: '/samples/timeline/activities.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/timeline/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -830,11 +680,6 @@ sap.ui.define([
 										url: '/samples/timeline/members.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/timeline/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/timeline/images/Alain_Chevalier.png',
@@ -870,11 +715,6 @@ sap.ui.define([
 								url: '/samples/webPage/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/webPage/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						],
 						settings: {
@@ -902,11 +742,6 @@ sap.ui.define([
 								url: '/samples/actions/quickLinks/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/actions/quickLinks/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -923,11 +758,6 @@ sap.ui.define([
 										url: '/samples/data/basic/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/data/basic/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -940,11 +770,6 @@ sap.ui.define([
 										url: '/samples/data/graphql/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/data/graphql/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -958,11 +783,6 @@ sap.ui.define([
 										url: '/samples/data/batchRequest/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/data/batchRequest/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							}
@@ -982,11 +802,6 @@ sap.ui.define([
 										url: '/samples/dataSources/topProducts.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/dataSources/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -1002,11 +817,6 @@ sap.ui.define([
 										url: '/samples/dataSources/product.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/dataSources/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/dataSources/i18n/i18n.properties',
@@ -1030,11 +840,6 @@ sap.ui.define([
 								url: '/samples/dateRanges/card1/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/dateRanges/card1/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -1047,11 +852,6 @@ sap.ui.define([
 								url: '/samples/dynamicCounter/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/dynamicCounter/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							},
 							{
 								url: '/samples/dynamicCounter/i18n/i18n.properties',
@@ -1075,11 +875,6 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/gettingData/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/extension/gettingData/DataExtension.js',
 										name: 'DataExtension.js',
 										key: 'DataExtension.js'
@@ -1096,11 +891,6 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/customFormatters/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/extension/customFormatters/CustomFormattersExtension.js',
 										name: 'CustomFormattersExtension.js',
 										key: 'CustomFormattersExtension.js'
@@ -1115,11 +905,6 @@ sap.ui.define([
 										url: '/samples/extension/customActions/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/extension/customActions/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/extension/customActions/CustomActionsExtension.js',
@@ -1139,11 +924,6 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/namedDataSection/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/extension/namedDataSection/DataExtension.js',
 										name: 'DataExtension.js',
 										key: 'DataExtension.js'
@@ -1158,11 +938,6 @@ sap.ui.define([
 										url: '/samples/extension/northwindImage/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/extension/northwindImage/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/extension/northwindImage/NorthwindImageExtension.js',
@@ -1187,11 +962,6 @@ sap.ui.define([
 										url: '/samples/filters/dynamicFilter.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/filters/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							},
@@ -1204,11 +974,6 @@ sap.ui.define([
 										url: '/samples/filters/usingStaticItems.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									},
-									{
-										url: '/samples/filters/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									}
 								]
 							}
@@ -1223,11 +988,6 @@ sap.ui.define([
 								url: '/samples/parameters/parameters/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/parameters/parameters/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -1240,11 +1000,6 @@ sap.ui.define([
 								url: '/samples/translation/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/translation/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							},
 							{
 								url: '/samples/translation/i18n/i18n.properties',
@@ -1304,11 +1059,6 @@ sap.ui.define([
 								url: '/samples/formatters/currency/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/formatters/currency/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -1321,11 +1071,6 @@ sap.ui.define([
 								url: '/samples/formatters/dateAndTime/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/formatters/dateAndTime/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -1338,11 +1083,6 @@ sap.ui.define([
 								url: '/samples/formatters/float/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/formatters/float/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -1355,11 +1095,6 @@ sap.ui.define([
 								url: '/samples/formatters/integer/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/formatters/integer/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -1372,11 +1107,6 @@ sap.ui.define([
 								url: '/samples/formatters/percent/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/formatters/percent/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -1389,11 +1119,6 @@ sap.ui.define([
 								url: '/samples/formatters/text/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/formatters/text/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							},
 							{
 								url: '/samples/formatters/text/i18n/i18n.properties',
@@ -1416,11 +1141,6 @@ sap.ui.define([
 								url: '/samples/formatters/unit/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
-							},
-							{
-								url: '/samples/formatters/unit/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							}
 						]
 					},
@@ -1468,11 +1188,6 @@ sap.ui.define([
 								key: 'cardManifest.json'
 							},
 							{
-								url: '/samples/adaptiveCustomizedActions/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
-							},
-							{
 								url: '/samples/adaptiveCustomizedActions/AdaptiveCustomizedActions.view.xml',
 								name: 'AdaptiveCustomizedActions.view.xml',
 								key: 'AdaptiveCustomizedActions.view.xml'
@@ -1518,11 +1233,6 @@ sap.ui.define([
 								key: 'cardManifest.json'
 							},
 							{
-								url: '/samples/badge/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
-							},
-							{
 								url: '/samples/badge/Badge.view.xml',
 								name: 'Badge.view.xml',
 								key: 'Badge.view.xml'
@@ -1563,11 +1273,6 @@ sap.ui.define([
 								key: 'manifest.json'
 							},
 							{
-								url: '/samples/htmlConsumption/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
-							},
-							{
 								url: '/samples/htmlConsumption/i18n/i18n.properties',
 								name: 'i18n/i18n.properties',
 								key: 'i18n/i18n.properties'
@@ -1599,11 +1304,6 @@ sap.ui.define([
 										url: '/samples/destinations/general/cardManifest.json',
 										name: 'cardManifest.json',
 										key: 'cardManifest.json'
-									},
-									{
-										url: '/samples/destinations/general/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/destinations/general/Destinations.view.xml',
@@ -1666,11 +1366,6 @@ sap.ui.define([
 										key: 'sampleComponent/manifest.json'
 									},
 									{
-										url: '/samples/destinations/component/sampleComponent/dt/Configuration.js',
-										name: 'sampleComponent/dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/destinations/component/sampleComponent/Component.js',
 										name: 'sampleComponent/Component.js',
 										key: 'sampleComponent/Component.js'
@@ -1697,11 +1392,6 @@ sap.ui.define([
 										url: '/samples/destinations/extensionUsingDestinations/cardBundle/cardManifest.json',
 										name: 'cardBundle/cardManifest.json',
 										key: 'cardBundle/cardManifest.json'
-									},
-									{
-										url: '/samples/destinations/extensionUsingDestinations/cardBundle/dt/Configuration.js',
-										name: 'cardBundle/dt/Configuration.js',
-										key: 'designtime.js'
 									},
 									{
 										url: '/samples/destinations/extensionUsingDestinations/cardBundle/DataExtension.js',
@@ -1749,11 +1439,6 @@ sap.ui.define([
 										key: 'cardBundle/cardManifest.json'
 									},
 									{
-										url: '/samples/destinations/scp/cardBundle/dt/Configuration.js',
-										name: 'cardBundle/dt/Configuration.js',
-										key: 'designtime.js'
-									},
-									{
 										url: '/samples/destinations/scp/neo-app.json',
 										name: 'neo-app.json',
 										key: 'neo-app.json'
@@ -1794,11 +1479,6 @@ sap.ui.define([
 								url: '/samples/hostActions/cardManifest.json',
 								name: 'cardManifest.json',
 								key: 'cardManifest.json'
-							},
-							{
-								url: '/samples/hostActions/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							},
 							{
 								url: '/samples/hostActions/adaptiveCardManifest.json',
@@ -1846,11 +1526,6 @@ sap.ui.define([
 								key: 'cardBundle/cardManifest.json'
 							},
 							{
-								url: '/samples/hostAndExtensionActions/cardBundle/dt/Configuration.js',
-								name: 'cardBundle/dt/Configuration.js',
-								key: 'designtime.js'
-							},
-							{
 								url: '/samples/hostAndExtensionActions/cardBundle/ActionsExtension.js',
 								name: 'ActionsExtension.js',
 								key: 'ActionsExtension.js'
@@ -1895,11 +1570,6 @@ sap.ui.define([
 								url: '/samples/hostContext/cardManifest.json',
 								name: 'cardManifest.json',
 								key: 'cardManifest.json'
-							},
-							{
-								url: '/samples/hostContext/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
 							},
 							{
 								url: '/samples/hostContext/HostContext.view.xml',
