@@ -542,6 +542,52 @@ sap.ui.define([
 		assert.strictEqual(oNextColumn.getWidth(), "116px", "Column 1 has increased width by 16px");
 	});
 
+	QUnit.test("Column resize should strictly happen only when SHIFT + ARROW_KEY is pressed", function(assert) {
+		var oColumn = this.oTable.getColumns()[0];
+		oColumn.setWidth("100px");
+		Core.applyChanges();
+		var oColumnDomRef = oColumn.getDomRef();
+		oColumn.focus();
+
+		// ALT key is pressed
+		QUtils.triggerKeydown(oColumnDomRef, KeyCodes.ARROW_LEFT, true, true);
+		Core.applyChanges();
+		assert.strictEqual(oColumn.getWidth(), "100px", "Column width did not change, since ALT key was also pressed");
+
+		// CTRL key is pressed
+		QUtils.triggerKeydown(oColumnDomRef, KeyCodes.ARROW_LEFT, true, false, true);
+		Core.applyChanges();
+		assert.strictEqual(oColumn.getWidth(), "100px", "Column width did not change, since CTRL key was also pressed");
+
+		// CTRL & ALT keys are pressed
+		QUtils.triggerKeydown(oColumnDomRef, KeyCodes.ARROW_LEFT, true, true, true);
+		Core.applyChanges();
+		assert.strictEqual(oColumn.getWidth(), "100px", "Column width did not change, since CTRL & ALT keys are also pressed");
+	});
+
+	QUnit.test("No column resize when text is selected in the column header", function(assert) {
+		var oColumn = this.oTable.getColumns()[0];
+		oColumn.setWidth("100px");
+		Core.applyChanges();
+		var oColumnDomRef = oColumn.getDomRef();
+		oColumn.focus();
+
+		var bStubWindowGetSelection = sinon.stub(window, "getSelection").callsFake(function() {
+			return {
+				toString: function() {
+					return "foo";
+				},
+				focusNode: oColumnDomRef.firstChild
+			};
+		});
+
+		QUtils.triggerKeydown(oColumn.getDomRef(), KeyCodes.ARROW_LEFT, true);
+		Core.applyChanges();
+		assert.strictEqual(oColumn.getWidth(), "100px", "Column width did not change, since there was text selected in the column header");
+
+		bStubWindowGetSelection.restore();
+	});
+
 	QUnit.test("Cancel column resize with 'ESC' key", function(assert) {
 		var oTableDomRef = this.oTable.getDomRef("listUl"),
 			oColumn = this.oTable.getColumns()[1],
