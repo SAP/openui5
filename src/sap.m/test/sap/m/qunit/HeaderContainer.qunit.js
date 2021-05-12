@@ -162,6 +162,19 @@ sap.ui.define([
 		assert.equal(sRole, "list", "scrollContainer role is of type list");
 	});
 
+	QUnit.test("onAfterRendering is triggered only once after initial rendering", function (assert) {
+		//Arrange
+		var oHeaderContainer = new HeaderContainer();
+		var oSpy = sinon.spy(oHeaderContainer, "onAfterRendering");
+		//Act
+		oHeaderContainer.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.strictEqual(oSpy.callCount, 1, "HeaderContainer was rendered only once");
+		//Cleanup
+		oHeaderContainer.destroy();
+	});
+
 	QUnit.module("Background design", {
 		beforeEach: function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");

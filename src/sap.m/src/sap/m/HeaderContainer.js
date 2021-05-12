@@ -340,6 +340,9 @@ sap.ui.define([
 		};
 
 		HeaderContainer.prototype.onBeforeRendering = function () {
+			var isHorizontal = this.getOrientation() === Orientation.Horizontal,
+				sIconPrev = isHorizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up",
+				sIconNext = isHorizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down";
 			if (!this.getHeight()) {
 				Log.warning("No height provided", this);
 			}
@@ -347,11 +350,11 @@ sap.ui.define([
 				Log.warning("No width provided", this);
 			}
 			if (Device.system.desktop) {
-				this._oArrowPrev.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
-				this._oArrowNext.setIcon(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
+				this._oArrowPrev.setProperty("icon", sIconPrev, true);
+				this._oArrowNext.setProperty("icon", sIconNext, true);
 			} else if (Device.system.phone || Device.system.tablet) {
-				this._oArrowPrev.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-left" : "sap-icon://slim-arrow-up");
-				this._oArrowNext.setSrc(this.getOrientation() === Orientation.Horizontal ? "sap-icon://slim-arrow-right" : "sap-icon://slim-arrow-down");
+				this._oArrowPrev.setProperty("src", sIconPrev, true);
+				this._oArrowNext.setProperty("src", sIconNext, true);
 			}
 		};
 
