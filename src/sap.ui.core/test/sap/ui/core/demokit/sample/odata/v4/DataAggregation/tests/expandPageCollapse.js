@@ -8,7 +8,8 @@ sap.ui.define([
 ], function (_Any, _Main, TestUtils) {
 	"use strict";
 
-	return function (sGrandTotalAtBottomOnly, sSubtotalsAtBottomOnly, Given, When, Then) {
+	return function (sGrandTotalAtBottomOnly, sSubtotalsAtBottomOnly, sLeafCount, Given, When,
+			Then) {
 		var aAfterExpandBwSmall,
 			oBw = {
 				level : 2,
@@ -100,6 +101,7 @@ sap.ui.define([
 		TestUtils.setData(
 			"sap.ui.core.sample.odata.v4.DataAggregation.subtotalsAtBottomOnly",
 			sSubtotalsAtBottomOnly);
+		TestUtils.setData("sap.ui.core.sample.odata.v4.DataAggregation.leafCount", sLeafCount);
 		Given.iStartMyUIComponent({
 			autoWait : true,
 			componentConfig : {
@@ -142,6 +144,9 @@ sap.ui.define([
 			subtotal : true
 		}, oGermany];
 		checkTable(aInitialTableState);
+		if (sLeafCount === "true") {
+			Then.onTheMainPage.checkTitle("Sales Amount by Account Responsible (90)");
+		}
 
 		toggleExpandInRow(3, "Expand Germany.");
 		checkTable([{

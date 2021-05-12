@@ -120,6 +120,17 @@ sap.ui.define([
 						},
 						viewName : sViewName
 					});
+				},
+				checkTitle : function (sExpectedTitle) {
+					this.waitFor({
+						controlType : "sap.m.Title",
+						id : "title",
+						success : function (oTitle) {
+							Opa5.assert.strictEqual(oTitle.getText(), sExpectedTitle,
+								"Title is: " + sExpectedTitle);
+						},
+						viewName : sViewName
+					});
 				}
 			}
 		}

@@ -178,12 +178,6 @@ sap.ui.define([
 	groupLevels : ["BillToParty"],
 	hasGrandTotal : false,
 	hasMinOrMax : false,
-	message : "Unsupported system query option: $count",
-	queryOptions : {$count : true}
-}, {
-	groupLevels : ["BillToParty"],
-	hasGrandTotal : false,
-	hasMinOrMax : false,
 	message : "Unsupported system query option: $filter",
 	queryOptions : {$filter : "answer eq 42"}
 }, {
@@ -218,8 +212,16 @@ sap.ui.define([
 	//*********************************************************************************************
 ["none", "top", "bottom", "top&bottom"].forEach(function (sGrandTotalPosition) {
 	[false, true].forEach(function (bGrandTotalLike184) {
-		var sTitle = "create: either grandTotal or groupLevels, position = " + sGrandTotalPosition
-				+ ", grandTotal like 1.84 = " + bGrandTotalLike184;
+		[false, true].forEach(function (bCountLeaves) {
+			var sTitle = "create: (either) grandTotal or groupLevels, position = "
+					+ sGrandTotalPosition + ", grandTotal like 1.84 = " + bGrandTotalLike184
+					+ ", count leaves = " + bCountLeaves;
+
+			// Note: counting of leaves only makes sense with group levels, which cannot be combined
+			// with "grandTotal like 1.84"
+			if (bCountLeaves && bGrandTotalLike184) {
+				return;
+			}
 
 	QUnit.test(sTitle, function (assert) {
 		var bHasGrandTotal = sGrandTotalPosition !== "none",
@@ -237,7 +239,7 @@ sap.ui.define([
 					a : {},
 					b : {}
 				},
-				groupLevels : bHasGrandTotal ? [] : ["a"]
+				groupLevels : bHasGrandTotal && !bCountLeaves ? [] : ["a"]
 			},
 			aAllProperties = [],
 			oCache,
@@ -251,7 +253,7 @@ sap.ui.define([
 			},
 			oHelperMock = this.mock(_Helper),
 			mQueryOptions = {
-				$count : bHasGrandTotal,
+				$count : bHasGrandTotal || bCountLeaves,
 				//TODO get rid of bGrandTotalLike184 here (JIRA: CPOUI5ODATAV4-713)
 				$filter : bHasGrandTotal && bGrandTotalLike184 ? "answer eq 42" : "",
 				$orderby : "a",
@@ -275,12 +277,20 @@ sap.ui.define([
 		oGetDownloadUrlExpectation = this.mock(_Cache.prototype).expects("getDownloadUrl")
 			.withExactArgs("").returns("~downloadUrl~");
 		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
-			.withExactArgs(null, bHasGrandTotal).returns(oFirstLevelCache);
-		oEnhanceCacheWithGrandTotalExpectation
-			= this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
-				.exactly(bHasGrandTotal ? 1 : 0)
+			.withExactArgs(null, bHasGrandTotal || bCountLeaves).returns(oFirstLevelCache);
+		if (bHasGrandTotal) {
+			oEnhanceCacheWithGrandTotalExpectation = this.mock(_GrandTotalHelper)
+				.expects("enhanceCacheWithGrandTotal")
 				.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
-					sinon.match.func);
+					sinon.match.func, bCountLeaves ? sinon.match.func : null);
+		} else if (bCountLeaves) {
+			oEnhanceCacheWithGrandTotalExpectation = this.mock(_GrandTotalHelper)
+				.expects("enhanceCacheWithGrandTotal")
+				.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
+					null, sinon.match.func);
+		} else {
+			this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal").never();
+		}
 
 		// code under test
 		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, "", oAggregation,
@@ -307,10 +317,28 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.strictEqual(oCache.aElements.$created, 0);
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
+		if (bCountLeaves) {
+			assert.strictEqual(oCache.mQueryOptions.$$leaves, true);
+			assert.ok(oCache.oLeavesPromise instanceof SyncPromise);
+			assert.strictEqual(oCache.oLeavesPromise.isPending(), true);
+
+			// code under test (fnLeaves)
+			oEnhanceCacheWithGrandTotalExpectation.args[0][3]({"UI5__leaves" : "42"});
+
+			assert.strictEqual(oCache.oLeavesPromise.isFulfilled(), true);
+			assert.strictEqual(oCache.oLeavesPromise.getResult(), 42);
+
+			// code under test
+			assert.strictEqual(oCache.fetchValue(null, "$count"), oCache.oLeavesPromise);
+		} else {
+			assert.notOk("$$leaves" in oCache.mQueryOptions);
+			assert.ok("oLeavesPromise" in oCache, "be nice to V8");
+			assert.strictEqual(oCache.oLeavesPromise, undefined);
+		}
 		if (!bHasGrandTotal) {
 			assert.strictEqual(oCache.oGrandTotalPromise, undefined);
 			assert.ok("oGrandTotalPromise" in oCache, "be nice to V8");
-			return null; // be nice to eslint's "consistent-return" rule
+			return null; // be nice to eslint's "consistent-return" rule ---------------------------
 		}
 		assert.ok(oCache.oGrandTotalPromise instanceof SyncPromise);
 		assert.strictEqual(oCache.oGrandTotalPromise.isPending(), true);
@@ -363,7 +391,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.$created, 0);
 
 		if (sGrandTotalPosition === "bottom") {
-			return null; // be nice to eslint's "consistent-return" rule
+			return null; // be nice to eslint's "consistent-return" rule ---------------------------
 		}
 		assert.strictEqual(oReadPromise.isPending(), true, "still async...");
 
@@ -374,6 +402,7 @@ sap.ui.define([
 		});
 	});
 
+		});
 	});
 });
 

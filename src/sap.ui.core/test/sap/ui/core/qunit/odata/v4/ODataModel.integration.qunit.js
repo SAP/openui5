@@ -15950,12 +15950,15 @@ sap.ui.define([
 	// Check download URL.
 	// JIRA: CPOUI5ODATAV4-609
 	//
+	// Request leaf count.
+	// JIRA: CPOUI5ODATAV4-164
 	//TODO support $filter : \'GrossAmount gt 0\',\
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
 		var oListBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
+<Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
 			$$aggregation : {\
@@ -15969,6 +15972,7 @@ sap.ui.define([
 				},\
 				groupLevels : [\'LifecycleStatus\']\
 			},\
+			$count : true,\
 			$orderby : \'LifecycleStatus desc,ItemPosition asc\'\
 		}}" threshold="0" visibleRowCount="3">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
@@ -15979,15 +15983,19 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-				+ "/orderby(LifecycleStatus desc)&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "26",
+		this.expectRequest("SalesOrderList?$apply=concat("
+				+ "groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
+				+ ",groupby((LifecycleStatus),aggregate(GrossAmount))/orderby(LifecycleStatus desc)"
+				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [
+					{UI5__leaves : "42", "UI5__leaves@odata.type" : "#Decimal"},
+					{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
 					{GrossAmount : "1", LifecycleStatus : "Z"},
 					{GrossAmount : "2", LifecycleStatus : "Y"},
 					{GrossAmount : "3", LifecycleStatus : "X"}
 				]
 			})
+			.expectChange("count")
 			.expectChange("isExpanded", [false, false, false])
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [1, 1, 1])
@@ -16009,9 +16017,18 @@ sap.ui.define([
 					"/SalesOrderList(LifecycleStatus='" + "ZYX"[i] + "')");
 			});
 
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+			assert.strictEqual(oListBinding.getLength(), 26, "flat list as currently expanded");
+			// Note: header context gives count of leaves
+			that.expectChange("count", "42");
+
+			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			that.expectRequest("SalesOrderList"
 					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-					+ "/orderby(LifecycleStatus desc)&$skip=7&$top=3", {
+					+ "/orderby(LifecycleStatus desc)/skip(7)/top(3)", {
 					value : [
 						{GrossAmount : "7", LifecycleStatus : "T"},
 						{GrossAmount : "8", LifecycleStatus : "S"},
@@ -16029,22 +16046,32 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
-					+ "/orderby(LifecycleStatus desc)&$count=true&$skip=0&$top=3", {
-					"@odata.count" : "26",
+			that.expectRequest("SalesOrderList?$apply=concat("
+					+ "groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
+					+ ",groupby((LifecycleStatus))/orderby(LifecycleStatus desc)"
+					+ "/concat(aggregate($count as UI5__count),top(3)))", {
 					value : [
+						{UI5__leaves : "32", "UI5__leaves@odata.type" : "#Decimal"},
+						{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
 						{LifecycleStatus : "Z"},
 						{LifecycleStatus : "Y"},
 						{LifecycleStatus : "X"}
 					]
 				})
+				.expectChange("count", "32")
 				.expectChange("isExpanded", [false, false, false])
 				.expectChange("isTotal", [false, false, false])
 				.expectChange("level", [1, 1, 1])
 				.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 			oTable.removeColumn(4).destroy(); // GrossAmount
-			oListBinding.setAggregation({groupLevels : ["LifecycleStatus"]});
+			oListBinding.setAggregation({
+				group : {
+					// Note: a single group level w/o further groups makes little sense
+					CurrencyCode : {}
+				},
+				groupLevels : ["LifecycleStatus"]
+			});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -16749,10 +16776,14 @@ sap.ui.define([
 	//
 	// Check download URL.
 	// JIRA: CPOUI5ODATAV4-609
+	//
+	// Request leaf count.
+	// JIRA: CPOUI5ODATAV4-164
 	QUnit.test("Data Aggregation: expand and paging to the last loaded leaf", function (assert) {
 		var oModel = createAggregationModel(),
 			oTable,
 			sView = '\
+<Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'/BusinessPartners\',\
 	parameters : {\
 		$$aggregation : {\
@@ -16768,6 +16799,7 @@ sap.ui.define([
 			},\
 			groupLevels : [\'Country\']\
 		},\
+		$count : true,\
 		$orderby : \'Country desc,Region,Currency asc,LocalCurrency desc\'\
 	}}" threshold="0" visibleRowCount="4">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
@@ -16784,12 +16816,17 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=concat(aggregate(AmountPerSale,Currency"
-				+ ",SalesAmount,SalesAmountLocalCurrency,LocalCurrency,SalesNumber)"
+		this.expectRequest("BusinessPartners?$apply=concat("
+				+ "groupby((Country,Region))/aggregate($count as UI5__leaves)"
+				+ ",aggregate(AmountPerSale,Currency,SalesAmount,SalesAmountLocalCurrency"
+					+ ",LocalCurrency,SalesNumber)"
 				+ ",groupby((Country),aggregate(SalesAmountLocalCurrency,LocalCurrency))"
 				+ "/orderby(Country desc,LocalCurrency desc)"
 				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [{
+					UI5__leaves : "42",
+					"UI5__leaves@odata.type" : "#Decimal"
+				}, {
 					AmountPerSale : "10",
 					Currency : "DEM",
 					SalesAmount : "38610", // + 10% ;-)
@@ -16815,6 +16852,7 @@ sap.ui.define([
 					SalesAmountLocalCurrency : "300"
 				}]
 			})
+			.expectChange("count")
 			.expectChange("isExpanded", [true, false, false, false])
 			.expectChange("isTotal", [true, true, true, true])
 			.expectChange("level", [0, 1, 1, 1])
@@ -16828,7 +16866,10 @@ sap.ui.define([
 			.expectChange("salesNumber", ["0", null, null, null]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding;
+
 			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("rows");
 
 			assert.strictEqual(oTable.getBinding("rows").getDownloadUrl(),
 				"/aggregation/BusinessPartners?$apply=groupby((Country,Region)"
@@ -16837,6 +16878,15 @@ sap.ui.define([
 				+ "/orderby(Country%20desc,Region,Currency%20asc,LocalCurrency%20desc)",
 				"CPOUI5ODATAV4-609");
 
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+			assert.strictEqual(oListBinding.getLength(), 27, "length includes grand total row");
+			// Note: header context gives count of leaves
+			that.expectChange("count", "42");
+
+			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			///TODO could we omit Currency here because it was non-null at parent?
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'X')/groupby((Region)"
 					+ ",aggregate(AmountPerSale,Currency,SalesAmount,SalesAmountLocalCurrency"

@@ -23,13 +23,17 @@ sap.ui.getCore().attachInit(function () {
 						+ "; subtotals at bottom only: " + sSubtotalsAtBottomOnly;
 
 				//*****************************************************************************
-				opaTest(sTitle,
-					expandPageCollapse.bind(null, sGrandTotalAtBottomOnly, sSubtotalsAtBottomOnly));
+				opaTest(sTitle, expandPageCollapse.bind(null,
+					sGrandTotalAtBottomOnly, sSubtotalsAtBottomOnly, ""));
 			});
 		});
 
 		//*****************************************************************************
 		opaTest("filter", filter);
+
+		//*****************************************************************************
+		opaTest("expand, page, collapse w/ leaf count", expandPageCollapse.bind(null,
+			"", "", "true"));
 
 		QUnit.start();
 	});

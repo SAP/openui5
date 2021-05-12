@@ -23,6 +23,7 @@ sap.ui.define([
 	/**
 	 * Creates a cache for data aggregation that performs requests using the given requestor.
 	 * Note: The paths in $expand and $select will always be sorted in the cache's query string.
+	 * This kind of cache is only used if grand totals or group levels are involved!
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
@@ -45,7 +46,8 @@ sap.ui.define([
 	 */
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
 			bHasGrandTotal) {
-		var that = this;
+		var fnLeaves = null,
+			that = this;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 
@@ -55,7 +57,18 @@ sap.ui.define([
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined;
 		this.aElements.$created = 0; // required for _Cache#drillDown (see _Cache.from$skip)
-		this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal);
+		this.oLeavesPromise = undefined;
+		if (mQueryOptions.$count && oAggregation.groupLevels.length) {
+			mQueryOptions.$$leaves = true; // do this after #getDownloadUrl
+			this.oLeavesPromise = new SyncPromise(function (resolve) {
+				fnLeaves = function (oLeaves) {
+					// Note: count is of type Edm.Int64, represented as a string in OData responses;
+					// $count should be a number and the loss of precision is acceptable
+					resolve(parseInt(oLeaves.UI5__leaves));
+				};
+			});
+		}
+		this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal || !!fnLeaves);
 		this.oGrandTotalPromise = undefined;
 		if (bHasGrandTotal) {
 			this.oGrandTotalPromise = new SyncPromise(function (resolve) {
@@ -81,8 +94,11 @@ sap.ui.define([
 						_Helper.setPrivateAnnotation(oGrandTotal, "predicate", "()");
 
 						resolve(oGrandTotal);
-					});
+					}, fnLeaves);
 			});
+		} else if (fnLeaves) {
+			_GrandTotalHelper.enhanceCacheWithGrandTotal(that.oFirstLevel, oAggregation, null,
+				fnLeaves);
 		}
 	}
 
@@ -201,14 +217,15 @@ sap.ui.define([
 	 *
 	 * @param {object} [oGroupNode]
 	 *   The group node or <code>undefined</code> for the first level cache
-	 * @param {boolean} [bHasGrandTotal]
-	 *   Whether a grand total is needed (use only for the first level cache!)
+	 * @param {boolean} [bHasGrandTotalHelper]
+	 *   Whether the _GrandTotalHelper is involved (use only for the first level cache!)
 	 * @returns {sap.ui.model.odata.v4.lib._CollectionCache}
 	 *   The group level cache
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.createGroupLevelCache = function (oGroupNode, bHasGrandTotal) {
+	_AggregationCache.prototype.createGroupLevelCache = function (oGroupNode,
+			bHasGrandTotalHelper) {
 		var oAggregation = this.oAggregation,
 			aAllProperties = _AggregationHelper.getAllProperties(oAggregation),
 			oCache, aGroupBy, bLeaf, iLevel, mQueryOptions, bTotal;
@@ -232,7 +249,8 @@ sap.ui.define([
 						? " and (" + mQueryOptions.$$filterBeforeAggregate + ")"
 						: "");
 		}
-		if (!bHasGrandTotal) { // Note: UI5__count currently handled only by _GrandTotalHelper!
+		if (!bHasGrandTotalHelper) {
+			// Note: UI5__count currently handled only by _GrandTotalHelper!
 			delete mQueryOptions.$count;
 			mQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions, iLevel);
 		}
@@ -395,6 +413,9 @@ sap.ui.define([
 	_AggregationCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
 			oListener) {
 		if (sPath === "$count") {
+			if (this.oLeavesPromise) {
+				return this.oLeavesPromise;
+			}
 			if (this.oAggregation.groupLevels.length) {
 				Log.error("Failed to drill-down into $count, invalid segment: $count",
 					this.toString(), "sap.ui.model.odata.v4.lib._Cache");
@@ -730,13 +751,13 @@ sap.ui.define([
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
-	 *   repeats the key for each array value.
+	 *   repeats the key for each array value.<br>
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @param {boolean} [bSortExpandSelect]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string. When
-	 *   using min, max, grand total, or data aggregation they will always be sorted
+	 *   using min, max, grand total, or data aggregation they will always be sorted.
 	 * @param {boolean} [bSharedRequest]
 	 *   If this parameter is set, multiple requests for a cache using the same resource path will
 	 *   always return the same, shared cache. This cache is read-only, modifying calls lead to an
@@ -744,10 +765,10 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 * @throws {Error}
-	 *   If the system query options "$count" or "$filter" are combined with group levels, or
-	 *   "$filter" combined with grand totals (unless "grandTotal like 1.84"), or if grand totals or
-	 *   group levels are combined with min/max, or if the system query options "$expand" or
-	 *   "$select" are combined with data aggregation
+	 *   If the system query option "$filter" is combined with group levels or with grand totals
+	 *   (unless "grandTotal like 1.84"), or if grand totals or group levels are combined with
+	 *   min/max, or if the system query options "$expand" or "$select" are combined with data
+	 *   aggregation
 	 *
 	 * @public
 	 */
@@ -763,13 +784,8 @@ sap.ui.define([
 			if (bHasGrandTotal && mQueryOptions.$filter && !oAggregation["grandTotal like 1.84"]) {
 				throw new Error("Unsupported system query option: $filter");
 			}
-			if (bHasGroupLevels) {
-				if (mQueryOptions.$count) {
-					throw new Error("Unsupported system query option: $count");
-				}
-				if (mQueryOptions.$filter) {
-					throw new Error("Unsupported system query option: $filter");
-				}
+			if (bHasGroupLevels && mQueryOptions.$filter) {
+				throw new Error("Unsupported system query option: $filter");
 			}
 			if (bHasMinOrMax) {
 				if (bHasGrandTotal) {

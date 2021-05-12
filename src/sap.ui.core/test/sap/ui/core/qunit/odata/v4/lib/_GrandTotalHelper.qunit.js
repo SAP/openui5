@@ -19,7 +19,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("enhanceCacheWithGrandTotal", function (assert) {
+[undefined, sinon.spy()].forEach(function (fnGrandTotal) {
+	[undefined, sinon.spy()].forEach(function (fnLeaves) {
+		var sTitle = "enhanceCacheWithGrandTotal, fnGrandTotal: " + fnGrandTotal
+				+ ", fnLeaves: " + fnLeaves;
+
+	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCountRow = {
@@ -36,18 +41,21 @@ sap.ui.define([
 				},
 				sResourcePath : "SalesOrderList"
 			}),
-			fnGrandTotal = sinon.spy(),
 			oGrandTotalRow = {},
 			fnHandleResponse = oFirstLevelCache.handleResponse,
+			oLeavesRow = {},
 			mQueryOptions = oFirstLevelCache.mQueryOptions,
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions),
 			mQueryOptionsWithApply = {},
 			oRequestorMock = this.mock(oFirstLevelCache.oRequestor),
 			sResourcePath,
-			oResult = {value : [oGrandTotalRow, oCountRow, oDataRow]},
+			oResult = {value : [oCountRow, oDataRow]},
 			mTypeForMetaPath = {/*fetchTypes result*/};
 
-		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation, fnGrandTotal);
+		// code under test
+		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation, fnGrandTotal,
+			fnLeaves);
+
 		oAggregationHelperMock.expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation),
 				{$skip : 42, $top : 57, "sap-client" : "123"}, 1, undefined)
@@ -78,17 +86,34 @@ sap.ui.define([
 		assert.strictEqual(sResourcePath, "SalesOrderList?$apply=2nd");
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unmodified");
 
+		if (fnGrandTotal) {
+			oResult.value.unshift(oGrandTotalRow);
+		}
+		if (fnLeaves) {
+			oResult.value.unshift(oLeavesRow);
+		}
+
 		// code under test
 		oFirstLevelCache.handleResponse(42, 99, oResult, mTypeForMetaPath);
 
 		assert.notOk(oFirstLevelCache.hasOwnProperty("handleResponse"), "reverted to prototype");
-		assert.strictEqual(fnGrandTotal.callCount, 1);
-		assert.ok(fnGrandTotal.calledWith(sinon.match.same(oGrandTotalRow)));
+		if (fnLeaves) {
+			assert.strictEqual(fnLeaves.callCount, 1);
+			assert.ok(fnLeaves.calledWith(sinon.match.same(oLeavesRow)));
+		}
+		if (fnGrandTotal) {
+			assert.strictEqual(fnGrandTotal.callCount, 1);
+			assert.ok(fnGrandTotal.calledWith(sinon.match.same(oGrandTotalRow)));
+			fnGrandTotal.resetHistory(); // Note: fnGrandTotal is reused by inner forEach!
+		}
 		assert.strictEqual(fnHandleResponse.callCount, 1);
 		assert.ok(fnHandleResponse.calledWith(42, 99, sinon.match.same(oResult),
 			sinon.match.same(mTypeForMetaPath)));
 		assert.strictEqual(oResult["@odata.count"], "26");
-		assert.strictEqual(oResult.value.length, 1, "grand total and count rows removed");
+		assert.strictEqual(oResult.value.length, 1, "extra rows removed");
 		assert.strictEqual(oResult.value[0], oDataRow);
 	});
+
+	});
+});
 });
