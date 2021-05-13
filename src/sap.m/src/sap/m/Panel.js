@@ -237,10 +237,6 @@ sap.ui.define([
 			this._oExpandButton = this._createExpandButton();
 		}
 
-		if (Device.browser.msie || Device.browser.edge) {
-			this._updateButtonAriaLabelledBy();
-		}
-
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			this.$().attr("role", this.getAccessibleRole().toLowerCase());
 		}
@@ -389,27 +385,6 @@ sap.ui.define([
 		}
 
 		this.$().children(".sapMPanelExpandablePart").slideToggle(oOptions);
-	};
-
-	Panel.prototype._updateButtonAriaLabelledBy = function () {
-		var sLabelId, aAriaLabels, bFormRole;
-
-		if (!this._oExpandButton || !this.getHeaderToolbar()) {
-			return;
-		}
-
-		if (this.getAccessibleRole() === PanelAccessibleRole.Form) {
-			bFormRole = true;
-		}
-
-		sLabelId = this._getLabellingElementId();
-		aAriaLabels = this._oExpandButton.getAriaLabelledBy();
-
-		// If the old label is different we should reinitialize the association, because we can have only one label
-		if (sLabelId && aAriaLabels.indexOf(sLabelId) === -1) {
-			this._oExpandButton.removeAllAssociation("ariaLabelledBy");
-			!bFormRole && this._oExpandButton.addAriaLabelledBy(sLabelId);
-		}
 	};
 
 	Panel.prototype._getLabellingElementId = function () {
