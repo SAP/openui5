@@ -397,7 +397,11 @@ function(
 
 			// remember dom value in case of invalidation during keystrokes
 			// so the following should only be used onAfterRendering
-			this._sDomValue = this._getInputValue();
+			if (this.isActive()) {
+                this._sDomValue = this._getInputValue();
+            } else {
+                this._bCheckDomValue = false;
+            }
 		}
 
 		if (oFormattedVSText && oFormattedVSTextContent !== oFormattedVSTextAccContent) {
