@@ -12,8 +12,6 @@ sap.ui.define([
 ], function (_LogCollector, _OpaLogger, _resourceWaiter, Image, Text, Panel, BlockLayout, BlockLayoutRow, BlockLayoutCell) {
 	"use strict";
 
-	// before running this test in IE11, clear cached images
-
 	var oLogCollector = _LogCollector.getInstance();
 
 	QUnit.module("ResourceWaiter", {

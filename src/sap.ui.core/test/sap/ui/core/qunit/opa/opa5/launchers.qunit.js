@@ -164,15 +164,9 @@ sap.ui.define([
 	QUnit.module("Launchers and autoWait", {
 		beforeEach: function () {
 			Opa5.resetConfig();
-			this.fnWindowOnError = window.onerror;
-			window.onerror = function () {
-				// suppress iFrame errors in IE11
-				return true;
-			};
 		},
 		afterEach: function () {
 			Opa5.resetConfig();
-			window.onerror = this.fnWindowOnError;
 		}
 	});
 

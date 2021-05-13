@@ -1,15 +1,23 @@
+/*global QUnit*/
 sap.ui.define([
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/opaQunit"
-], function (Drag, Drop, Press, Opa5, opaTest) {
+	"sap/ui/test/opaQunit",
+	"sap/ui/Device"
+], function (Drag, Drop, Press, Opa5, opaTest, Device) {
 	"use strict";
 
 	Opa5.extendConfig({
 		autoWait: true
 	});
+
+	if (Device.browser.safari) {
+		QUnit.test("Should not run in Safari", function (assert) {
+			assert.ok(true, "DataTransfer object can't be instantiated in Safari, but drag event needs a dataTransfer");
+		});
+	} else {
 
 	opaTest("Should drag and drop and drop - Tree", function (Given, When, Then) {
 		Given.iStartMyUIComponent({
@@ -375,4 +383,5 @@ sap.ui.define([
 
 		Then.iTeardownMyApp();
 	});
+}
 });

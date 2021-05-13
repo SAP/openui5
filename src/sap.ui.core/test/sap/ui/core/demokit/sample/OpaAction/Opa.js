@@ -14,7 +14,8 @@ sap.ui.require([
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
-	"sap/ui/test/actions/Scroll"
+	"sap/ui/test/actions/Scroll",
+	"sap/ui/Device"
 ], function (Opa5,
 			 opaTest,
 			 AggregationLengthEquals,
@@ -26,7 +27,8 @@ sap.ui.require([
 			 EnterText,
 			 Drag,
 			 Drop,
-			 Scroll) {
+			 Scroll,
+			 Device) {
 	"use strict";
 
 	Opa5.extendConfig({
@@ -223,42 +225,6 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.module("Drag and drop");
-
-	opaTest("Should rearrange items in a list using drag and drop", function (Given, When, Then) {
-		When.waitFor({
-			controlType: "sap.m.StandardListItem",
-			matchers: new BindingPath({
-				path: "/ProductCollection/1",
-				modelName: "orderedListModel"
-			}),
-			actions: new Drag()
-		});
-
-		When.waitFor({
-			controlType: "sap.m.StandardListItem",
-			matchers: new BindingPath({
-				path: "/ProductCollection/5",
-				modelName: "orderedListModel"
-			}),
-			actions: new Drop({
-				before: true
-			})
-		});
-
-		Then.waitFor({
-			controlType: "sap.m.List",
-			matchers: function (oList) {
-				return oList.getItems().splice(4, 2);
-			},
-			success: function (aItems) {
-				// assert that items are reordered
-				Opa5.assert.strictEqual(aItems[0][0].getTitle(), "Notebook Basic 17", "The second item was dropped in place");
-				Opa5.assert.strictEqual(aItems[0][1].getTitle(), "Notebook Professional 15", "The second item was dropped before the sixth item");
-			}
-		});
-	});
-
 	QUnit.module("Scroll");
 
 	opaTest("Should scroll a page", function (Given, When, Then) {
@@ -290,9 +256,57 @@ sap.ui.require([
 				Opa5.assert.ok(isInViewport(aControls[0].getDomRef()), "The page is scrolled");
 			}
 		});
-
-		Then.iTeardownMyApp();
 	});
+
+	if (Device.browser.safari) {
+		opaTest("Should not run in Safari", function (Given, When, Then) {
+			Then.waitFor({
+				success: function () {
+					Opa5.assert.ok(true, "DataTransfer object can't be instantiated in Safari, but drag event needs a dataTransfer");
+				}
+			});
+			Then.iTeardownMyApp();
+		});
+	} else {
+
+		QUnit.module("Drag and drop");
+
+		opaTest("Should rearrange items in a list using drag and drop", function (Given, When, Then) {
+			When.waitFor({
+				controlType: "sap.m.StandardListItem",
+				matchers: new BindingPath({
+					path: "/ProductCollection/1",
+					modelName: "orderedListModel"
+				}),
+				actions: new Drag()
+			});
+
+			When.waitFor({
+				controlType: "sap.m.StandardListItem",
+				matchers: new BindingPath({
+					path: "/ProductCollection/5",
+					modelName: "orderedListModel"
+				}),
+				actions: new Drop({
+					before: true
+				})
+			});
+
+			Then.waitFor({
+				controlType: "sap.m.List",
+				matchers: function (oList) {
+					return oList.getItems().splice(4, 2);
+				},
+				success: function (aItems) {
+					// assert that items are reordered
+					Opa5.assert.strictEqual(aItems[0][0].getTitle(), "Notebook Basic 17", "The second item was dropped in place");
+					Opa5.assert.strictEqual(aItems[0][1].getTitle(), "Notebook Professional 15", "The second item was dropped before the sixth item");
+				}
+			});
+
+			Then.iTeardownMyApp();
+		});
+	}
 
 	QUnit.module("Select buttons in a responsive toolbar");
 
