@@ -101,7 +101,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		if (sState === LoadState.Failed) {
 			oRm.class("sapMGTFailed");
 		}
-		// oRm.writeClasses();
 		oRm.openEnd();
 		// focus div was only getting rendered when screen size was small
 		// which in turn was not rendering active state when screen size was large and thus default browser active state would suffice

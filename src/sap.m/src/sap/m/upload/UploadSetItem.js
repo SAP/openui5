@@ -158,22 +158,24 @@ sap.ui.define([
 			}
 		},
 		renderer: {
+			apiVersion: 2,
 			render: function (oRm, oControl) {
 				var oItem = oControl.getItem();
-				oRm.write("<div class=\"sapMUCTextContainer ");
+				oRm.openStart("div");
+				oRm.class("sapMUCTextContainer");
 				if (this._bInEditMode) {
-					oRm.write("sapMUCEditMode ");
+					oRm.class("sapMUCEditMode");
 				}
-				oRm.write("\" >");
+				oRm.openEnd();
 
-				oRm.write("<div style=\"display:flex;\">");
+				oRm.openStart("div").style("display", "flex").openEnd();
 				oRm.renderControl(oItem._bInEditMode ? oItem._getFileNameEdit() : oItem._getFileNameLink());
 				oItem._renderMarkers(oRm);
-				oRm.write("</div>");
+				oRm.close("div");
 
 				oItem._renderAttributes(oRm);
 				oItem._renderStatuses(oRm);
-				oRm.write("</div>");
+				oRm.close("div");
 				oItem._renderStateAndProgress(oRm);
 				oItem._renderButtons(oRm);
 			}
@@ -184,7 +186,6 @@ sap.ui.define([
 	/* Constants */
 	/* ========= */
 
-	UploadSetItem.DYNAMIC_CONTENT_SEPARATOR = "<div class=\"sapMUCSeparator\">&nbsp&#x00B7&#160</div>";
 	UploadSetItem.MEGABYTE = 1048576;
 	UploadSetItem.IMAGE_FILE_ICON = "sap-icon://card";
 
@@ -810,24 +811,25 @@ sap.ui.define([
 		var iLastAttribure = this.getAttributes().length - 1;
 
 		if (this.getAttributes().length > 0) {
-			oRm.write("<div class=\"sapMUCAttrContainer\">");
+			oRm.openStart("div").class("sapMUCAttrContainer").openEnd();
 			this.getAttributes().forEach(function (oAttribute, iIndex) {
 				oRm.renderControl(oAttribute.addStyleClass("sapMUCAttr"));
 				if (iIndex < iLastAttribure) {
-					oRm.write(UploadSetItem.DYNAMIC_CONTENT_SEPARATOR);
+					oRm.openStart("div").class("sapMUCSeparator").openEnd();
+					oRm.text("\u00a0\u00B7\u00a0").close("div");
 				}
 			});
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
 	UploadSetItem.prototype._renderMarkers = function (oRm) {
 		if (this.getMarkers().length > 0) {
-			oRm.write("<div class=\"sapMUSObjectMarkerContainer\">");
+			oRm.openStart("div").class("sapMUSObjectMarkerContainer").openEnd();
 			this.getMarkers().forEach(function (oMarker) {
 				oRm.renderControl(oMarker.addStyleClass("sapMUCObjectMarker"));
 			});
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
@@ -835,14 +837,15 @@ sap.ui.define([
 		var iLastStatus = this.getStatuses().length - 1;
 
 		if (this.getStatuses().length > 0) {
-			oRm.write("<div class=\"sapMUCStatusContainer\">");
+			oRm.openStart("div").class("sapMUCStatusContainer").openEnd();
 			this.getStatuses().forEach(function (oStatus, iIndex) {
 				oRm.renderControl(oStatus);
 				if (iIndex < iLastStatus) {
-					oRm.write(UploadSetItem.DYNAMIC_CONTENT_SEPARATOR);
+					oRm.openStart("div").class("sapMUCSeparator").openEnd();
+					oRm.text("\u00a0\u00B7\u00a0").close("div");
 				}
 			});
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
@@ -869,14 +872,14 @@ sap.ui.define([
 
 		// Render div container only if there is at least one button
 		if (aButtonsToRender.length > 0) {
-			oRm.write("<div class=\"sapMUCButtonContainer\">");
+			oRm.openStart("div").class("sapMUCButtonContainer").openEnd();
 			aButtonsToRender.forEach(function (oBtn, iIndex) {
 				if (iIndex < (aButtonsToRender.length - 1)) {
 					oBtn.addStyleClass("sapMUCFirstButton");
 				}
 				oRm.renderControl(oBtn);
 			});
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
