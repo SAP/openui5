@@ -40,36 +40,4 @@ sap.ui.define([
 		assert.strictEqual(selectionRange(oInputDomRef).start, 0, "Should return the correct start position");
 		assert.strictEqual(selectionRange(oInputDomRef).end, 1, "Should return the correct end position");
 	});
-
-	QUnit.test("selectionRange (IE & Edge)", function (assert) {
-		this.stub(Device, "browser", {
-			msie: true
-		});
-
-		// Setup
-		var oInputDomRef = document.createElement("input");
-
-		oInputDomRef.value = "Test";
-		document.body.appendChild(oInputDomRef);
-
-		// Act
-		selectionRange();
-
-		// Assert
-		assert.ok(true, "Should not throw an error, when no dom ref is provided");
-
-		assert.strictEqual(selectionRange(oInputDomRef, true).start, 4, "Should return the value length as a start position");
-		assert.strictEqual(selectionRange(oInputDomRef, true).end, 4, "Should return the value length as an end position");
-		assert.strictEqual(selectionRange(oInputDomRef).start, 4, "Should return the value length as a start position");
-		assert.strictEqual(selectionRange(oInputDomRef).end, 4, "Should return the value length as an end position");
-
-		// Act
-		jQuery(oInputDomRef).selectText(0,1);
-
-		// Assert
-		assert.strictEqual(selectionRange(oInputDomRef, true).start, 4, "Should return the value length as a start position");
-		assert.strictEqual(selectionRange(oInputDomRef, true).end, 4, "Should return the value length as an end position");
-		assert.strictEqual(selectionRange(oInputDomRef).start, 0, "Should return the correct start position");
-		assert.strictEqual(selectionRange(oInputDomRef).end, 1, "Should return the correct end position");
-	});
 });
