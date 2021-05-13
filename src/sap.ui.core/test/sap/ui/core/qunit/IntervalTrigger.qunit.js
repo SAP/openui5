@@ -66,7 +66,7 @@ sap.ui.define([
 			}
 		},
 
-		renderer: ButtonRenderer.render
+		renderer: ButtonRenderer
 	});
 
 	var aListeners = [];

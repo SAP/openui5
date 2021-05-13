@@ -50,7 +50,9 @@ sap.ui.define([
                 }
             }
         },
-        renderer: {}
+        renderer: {
+          apiVersion: 2
+        }
     });
 
     Wrapper.prototype.DEFAULT_KEY = "$default";

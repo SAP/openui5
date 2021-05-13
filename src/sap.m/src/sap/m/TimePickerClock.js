@@ -136,7 +136,7 @@ sap.ui.define([
 					}
 				}
 			},
-			renderer: TimePickerClockRenderer.render
+			renderer: TimePickerClockRenderer
 		});
 
 		/**

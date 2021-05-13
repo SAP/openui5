@@ -64,7 +64,7 @@ sap.ui.define([
 		destroy: function() {
 			Dialog.prototype.destroy.apply(this, arguments);
 		},
-		renderer: DialogRenderer.render
+		renderer: DialogRenderer
 	});
 
 	AppVariantOverviewDialog.prototype._createButton = function() {

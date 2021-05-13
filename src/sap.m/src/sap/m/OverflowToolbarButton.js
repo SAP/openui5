@@ -40,7 +40,7 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 				"sap.m.IOverflowToolbarContent"
 			]
 		},
-		renderer: ButtonRenderer.render
+		renderer: ButtonRenderer
 	});
 
 	OverflowToolbarButton.prototype._getText = function() {
