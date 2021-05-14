@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/Link",
+	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"jquery.sap.keycodes"
 ], function(
@@ -28,11 +29,15 @@ sap.ui.define([
 	KeyCodes,
 	Device,
 	Link,
+	Core,
 	coreLibrary
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection,
 		oCore = sap.ui.getCore();
+
+	// shortcut for library resource bundle
+	var oRb = Core.getLibraryResourceBundle("sap.m");
 
 	createAndAppendDiv("objectAttributes");
 	createAndAppendDiv("objectAttributesWrap");
@@ -332,6 +337,28 @@ sap.ui.define([
 		}
 
 		// destroy
+		oAttr.destroy();
+	});
+
+	QUnit.test("customContent with sap.m.Text and EmptyIndicatorMode is on", function(assert) {
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute({
+			title:'Object Attribute without text',
+			customContent : new sap.m.Text({
+				emptyIndicatorMode : sap.m.EmptyIndicatorMode.On
+			})
+		}),
+		sExpected = oRb.getText("EMPTY_INDICATOR") + oRb.getText("EMPTY_INDICATOR_TEXT");
+
+		oAttr.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		var sResult = document.getElementsByClassName("sapMEmptyIndicator")[0].firstElementChild.innerText +
+		document.getElementsByClassName("sapMEmptyIndicator")[0].lastElementChild.innerText;
+
+		//assertions
+		assert.equal(sResult, sExpected, "The EmptyIndicator are rendered");
+
+		//Cleanup
 		oAttr.destroy();
 	});
 
