@@ -1189,9 +1189,6 @@ sap.ui.define([
 						this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
 						oField._hideValueState(true);
 					}.bind(this)).catch(function (oError) {
-						oConfig._values = {};
-						oValueModel.setData({});
-						oValueModel.checkUpdate(true);
 						this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
 						var sError = oResourceBundle.getText("CARDEDITOR_BAD_REQUEST");
 						if (Array.isArray(oError) && oError.length > 0) {
@@ -1263,11 +1260,13 @@ sap.ui.define([
 							if (oItem) {
 								//DIGITALWORKPLACE-4802
 								//clone the config since the item may dependent to itself in filter backend feature
-								var oDependentFieldConfig = merge({}, oConfig);
+								if (oItem._settingspath === oConfig._settingspath) {
+									oConfig = merge({}, oConfig);
+								}
 								oItem._dependentFields = oItem._dependentFields || [];
 								oItem._dependentFields.push({
 									field: oField,
-									config: oDependentFieldConfig
+									config: oConfig
 								});
 
 							}
