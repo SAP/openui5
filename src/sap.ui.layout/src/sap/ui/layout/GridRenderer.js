@@ -120,7 +120,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 
 
 		for ( var i = 0; i < aItems.length; i++) { // loop over all child controls
-			oRm.openStart("div");
+			oRm.openStart("div", oControl.getId() + "-wrapperfor-" + aItems[i].getId());
 			var oLay = oControl._getLayoutDataForControl(aItems[i]);
 			var bCellSpanXLChanged = false;
 
