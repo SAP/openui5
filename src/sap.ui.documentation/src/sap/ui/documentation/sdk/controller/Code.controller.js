@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/model/formatter",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/merge",
-	"sap/ui/core/Component"
-], function(jQuery, SampleBaseController, ControlsInfo, formatter, JSONModel, merge, Component) {
+	"sap/ui/core/Component",
+	"sap/ui/core/Core"
+], function(jQuery, SampleBaseController, ControlsInfo, formatter, JSONModel, merge, Component, Core) {
 		"use strict";
 
 		return SampleBaseController.extend("sap.ui.documentation.sdk.controller.Code", {
@@ -33,6 +34,13 @@ sap.ui.define([
 				this._aFilesAvailable = [];
 
 				this._bFirstLoad = true;
+
+				this.bus = Core.getEventBus();
+				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
+			},
+
+			onDemoKitThemeChanged: function (sChannelId, sEventId, oData) {
+				this._updateCodeEditorTheme(oData.sThemeActive);
 			},
 
 			onRouteMatched: function (oEvt) {
@@ -199,6 +207,23 @@ sap.ui.define([
 						oAceRenderer.onResize();
 					}, 0);
 				}
+
+				this._updateCodeEditorTheme(Core.getConfiguration().getTheme().toLowerCase());
+			},
+
+			_updateCodeEditorTheme : function(sTheme) {
+				// coppied from the original CodeEditor file
+				var sEditorTheme = "tomorrow";
+				if (sTheme.indexOf("hcb") > -1) {
+					sEditorTheme = "chaos";
+				} else if (sTheme.indexOf("hcw") > -1) {
+					sEditorTheme = "github";
+				} else if (sTheme === "sap_fiori_3") {
+					sEditorTheme = "crimson_editor";
+				} else if (sTheme === "sap_fiori_3_dark") {
+					sEditorTheme = "clouds_midnight";
+				}
+				this._getCodeEditor().setColorTheme(sEditorTheme);
 			},
 
 			_getCode : function (sFileName) {
