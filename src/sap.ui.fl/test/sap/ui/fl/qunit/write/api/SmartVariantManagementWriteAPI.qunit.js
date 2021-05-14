@@ -474,14 +474,17 @@ sap.ui.define([
 						control: oControl,
 						layer: Layer.VENDOR,
 						id: "flex_variant_1",
-						name: "a new name"
+						name: "a new name",
+						packageName: "SOME_OTHER_TRANSPORT"
 					});
 				}).then(function (oVariant) {
 					if (oTestData.expectedChange) {
 						assert.equal(oVariant.getChanges().length, 1, "one change was added");
+						assert.equal(oVariant.getChanges()[0].getDefinition().packageName, "SOME_OTHER_TRANSPORT", "the packageName was set correct");
 						assert.equal(oVariant.getState(), Change.states.PERSISTED, "the change is not flagged as dirty");
 					} else {
 						assert.equal(oVariant.getChanges().length, 0, "no change was added");
+						assert.equal(oVariant.getRequest(), "SOME_OTHER_TRANSPORT", "the packageName was set correct");
 						assert.equal(oVariant.getState(), Change.states.DIRTY, "the change is not flagged as dirty");
 					}
 				});
