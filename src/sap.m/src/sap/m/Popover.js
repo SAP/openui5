@@ -1430,7 +1430,8 @@ sap.ui.define([
 		Popover.prototype._getDocHeight = function () {
 			var body = document.body,
 				html = document.documentElement,
-				oOffset = jQuery(this.getWithinAreaDomRef()).offset() || {top: 0};
+				oWithinArea = this.getWithinAreaDomRef(),
+				oOffset = (oWithinArea !== window) ? jQuery(oWithinArea).offset() : {top: 0};
 
 			return oOffset.top + Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.offsetHeight);
 		};
@@ -1700,7 +1701,7 @@ sap.ui.define([
 				$window = jQuery(window),
 				fScrollWidth = this.getDomRef().clientHeight !== this.getDomRef().scrollHeight ? getScrollbarSize().width : 0,
 				$popoverWithinArea = jQuery(this.getWithinAreaDomRef()),
-				oWithinOffset = $popoverWithinArea.offset() || {top: 0, left: 0},
+				oWithinOffset = ($popoverWithinArea[0] !== window) ? $popoverWithinArea.offset() : {top: 0, left: 0},
 				oPosParams = {};
 
 			oPosParams._$popover = $popover;
