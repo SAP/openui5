@@ -219,6 +219,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"GroupPanel": {
+				group: "UI Panels",
+				module: "./panels/GroupPanel.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"SelectionPanel": {
 				group: "UI Panels",
 				module: "./SelectionPanel.qunit",

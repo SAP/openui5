@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/util/merge', 'sap/ui/mdc/p13n/panels/QueryPanel', 'sap/ui/mdc/p13n/panels/SelectionPanel'
-], function (BaseController, P13nBuilder, merge, QueryPanel, SelectionPanel) {
+    './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/util/merge', 'sap/ui/mdc/p13n/panels/GroupPanel', 'sap/ui/mdc/p13n/panels/SelectionPanel'
+], function (BaseController, P13nBuilder, merge, GroupPanel, SelectionPanel) {
     "use strict";
 
     var GroupController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.GroupController");
@@ -24,7 +24,7 @@ sap.ui.define([
 
     GroupController.prototype.getAdaptationUI = function(oPropertyHelper){
 
-        var oGroupPanel = this.getAdaptationControl()._bNewP13n ? new QueryPanel() : new SelectionPanel();
+        var oGroupPanel = this.getAdaptationControl()._bNewP13n ? new GroupPanel() : new SelectionPanel();
         this._oPanel = oGroupPanel;
         var oAdaptationModel = this._getP13nModel(oPropertyHelper);
         oGroupPanel.setP13nModel(oAdaptationModel);
