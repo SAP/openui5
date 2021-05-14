@@ -1248,7 +1248,7 @@ sap.ui.define([
 		this._setTitle(oMessageItem, oListItem);
 		this._sanitizeDescription(oMessageItem);
 		this._setIcon(oMessageItem, oListItem);
-		this._detailsPage.rerender();
+		this._detailsPage.invalidate();
 		this.fireLongtextLoaded();
 
 		if (!bSuppressNavigate) {
