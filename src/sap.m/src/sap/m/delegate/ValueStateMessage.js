@@ -177,13 +177,11 @@ sap.ui.define([
 				jQuery(document.getElementById(sID)).remove();
 			});
 			this._oPopup.attachOpened(function () {
-				var content = this._oPopup.getContent(),
-					bControlWithValueStateTextInIE = Device.browser.msie &&
-						this._oControl && this._oControl.getFormattedValueStateText && !!this._oControl.getFormattedValueStateText();
+				var content = this._oPopup.getContent();
 
 				/* z-index of the popup is not calculated correctly by this._getCorrectZIndex() in IE, causing it
 				to be "under" the "blind layer" and links to be unreachable (unclickable) in IE */
-				if (content && !bControlWithValueStateTextInIE) {
+				if (content) {
 					content.style.zIndex = this._getCorrectZIndex();
 				}
 			}.bind(this));
@@ -271,8 +269,6 @@ sap.ui.define([
 			// If ValueState Message is sap.m.FormattedText
 			if (!oTextDomRef) {
 				oMessageDomRef.lastElementChild.setAttribute("id", sID + "-text");
-			} else if (!oControl.isA('sap.m.Select') && Device.browser.msie) {
-				oTextDomRef.setAttribute("aria-hidden", "true");
 			}
 
 			oMessageDomRef.id = sID;
