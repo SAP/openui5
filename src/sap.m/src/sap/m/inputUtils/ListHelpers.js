@@ -188,9 +188,7 @@ sap.ui.define([
 	 * @param fnMapItem Mapping function for core items to listItems
 	 */
 	ListHelpers.fillList = function (aItems, oItemsContainer, fnMapItem) {
-		var aEnabledItems = ListHelpers.getEnabledItems(aItems);
-
-		if (!oItemsContainer) {
+		if (!oItemsContainer || !Array.isArray(aItems)) {
 			return;
 		}
 
@@ -201,7 +199,7 @@ sap.ui.define([
 		}
 
 		// map the items to list items and add them to the list
-		aEnabledItems.forEach(function (oItem) {
+		aItems.forEach(function (oItem) {
 			oItemsContainer.addItem(fnMapItem(oItem));
 		});
 	};

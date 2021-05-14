@@ -10458,11 +10458,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oComboBox.getItems().length - 2, oComboBox._getList().getItems().length, "On init the List item should be the same as the enabled core items");
+		assert.strictEqual(oComboBox.getItems().length - 2, oComboBox._getList().getVisibleItems().length, "On init the List item should be the same as the enabled core items");
 
 		// Act
 		oComboBox.open();
-		assert.strictEqual(oComboBox.getVisibleItems().length, oComboBox._getList().getItems().length, "ComboBox should not display disabled items as a suggestions");
+		assert.strictEqual(oComboBox.getVisibleItems().length, oComboBox._getList().getVisibleItems().length, "ComboBox should not display disabled items as a suggestions");
 		sap.ui.getCore().applyChanges();
 
 		// Act
