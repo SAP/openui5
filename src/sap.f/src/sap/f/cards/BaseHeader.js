@@ -56,7 +56,13 @@ sap.ui.define([
 				 *
 				 * @experimental Since 1.89 this feature is experimental and the API may change.
 				 */
-				dataTimestamp: { type: "string", defaultValue: ""}
+				dataTimestamp: { type: "string", defaultValue: ""},
+
+				/**
+				 * Set to true to show that the data timestamp is currently updating.
+				 * @private
+				 */
+				dataTimestampUpdating: { type: "boolean", defaultValue: false, visibility: "hidden" }
 			},
 			aggregations: {
 				/**
@@ -108,6 +114,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	BaseHeader.prototype.setDataTimestampUpdating = function (bDataTimestampUpdating) {
+		var oTimestampText = this._createDataTimestamp();
+		this.setProperty("dataTimestampUpdating", bDataTimestampUpdating);
+
+		if (bDataTimestampUpdating) {
+			oTimestampText.setText("updating..."); //@todo translate
+			oTimestampText.addStyleClass("sapFCardDataTimestampUpdating");
+			this._removeTimestampListener();
+		} else {
+			oTimestampText.removeStyleClass("sapFCardDataTimestampUpdating");
+		}
+
+		return this;
+	};
+
+	/**
 	 * Lazily creates a title and returns it.
 	 * @private
 	 */
@@ -116,7 +140,8 @@ sap.ui.define([
 
 		if (!oDataTimestamp) {
 			oDataTimestamp = new Text({
-				wrapping: false
+				wrapping: false,
+				textAlign: "End"
 			});
 			oDataTimestamp.addStyleClass("sapFCardDataTimestamp");
 			this.setAggregation("_dataTimestamp", oDataTimestamp);
@@ -145,7 +170,13 @@ sap.ui.define([
 		oUniversalDate = new UniversalDate(sDataTimestamp);
 		sFormattedText = oDateFormat.format(oUniversalDate);
 
+		// no less than "1 minute ago" should be shown, "30 seconds ago" should not be shown
+		if (oUniversalDate.getTime() + 59000 > (new Date()).getTime()) {
+			sFormattedText = "now"; //@todo get formatted (translated text) for "now"
+		}
+
 		oDataTimestamp.setText(sFormattedText);
+		oDataTimestamp.removeStyleClass("sapFCardDataTimestampUpdating");
 	};
 
 	/**

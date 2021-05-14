@@ -576,6 +576,10 @@ sap.ui.define([
 			this._oDestinations.setHost(oHostInstance);
 		}
 
+		if (oHostInstance && oHostInstance.bUseExperimentalCaching) {
+			this.addStyleClass("sapFCardExperimentalCaching");
+		}
+
 		return this;
 	};
 

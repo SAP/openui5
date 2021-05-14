@@ -468,3 +468,20 @@ html[data-sap-ui-browser^="ie"] .sapFCardHeader:focus::before {
 	color: @_sap_f_Card_Badge_Color;
 	border: @_sap_f_Card_Badge_Border;
 }
+
+.sapFCardExperimentalCaching {
+	.sapFCardDataTimestamp {
+		min-width: 100px;
+		padding-right: 1px;
+	}
+
+	.sapFCardDataTimestamp:not(.sapFCardDataTimestampUpdating) {
+		cursor: pointer;
+		&:hover:before {
+			content: "\e010";
+			font-family: "SAP-icons";
+			margin-right: 4px;
+			font-size: 0.7rem;
+		}
+	}
+}

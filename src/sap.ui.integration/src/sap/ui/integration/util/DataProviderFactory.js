@@ -5,12 +5,13 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/integration/util/CacheAndRequestDataProvider",
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/ExtensionDataProvider",
 	"sap/ui/integration/util/JSONBindingHelper",
 	"sap/ui/integration/util/BindingHelper"
 ],
-function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, ExtensionDataProvider, JSONBindingHelper, BindingHelper) {
+function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestDataProvider, DataProvider, ExtensionDataProvider, JSONBindingHelper, BindingHelper) {
 "use strict";
 
 	/**
@@ -74,6 +75,8 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, Ex
 	 */
 	DataProviderFactory.prototype.create = function (oDataSettings, oServiceManager, bIsFilter) {
 		var oCard = this._oCard,
+			oHost = oCard.getHostInstance(),
+			bUseExperimentalCaching = oHost && oHost.bUseExperimentalCaching,
 			oConfig,
 			oDataProvider;
 
@@ -86,7 +89,9 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, Ex
 			"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings, oCard.getBindingNamespaces())
 		};
 
-		if (oDataSettings.request) {
+		if (oDataSettings.request && bUseExperimentalCaching) {
+			oDataProvider = new CacheAndRequestDataProvider(oConfig);
+		} else if (oDataSettings.request) {
 			oDataProvider = new RequestDataProvider(oConfig);
 		} else if (oDataSettings.service) {
 			oDataProvider = new ServiceDataProvider(oConfig);
