@@ -335,7 +335,7 @@ function(
 			var sText = this.getHtmlText(),
 				sAutoGenerateLinkTags = this.getConvertLinksToAnchorTags();
 
-			if (sAutoGenerateLinkTags === library.LinkConversion.None) {
+			if (sAutoGenerateLinkTags === LinkConversion.None) {
 				return sText;
 			}
 

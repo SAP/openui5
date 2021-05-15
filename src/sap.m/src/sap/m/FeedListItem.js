@@ -348,7 +348,7 @@ function(
 		var oFormattedText = this.getAggregation("_text");
 		oFormattedText.setProperty("convertLinksToAnchorTags", this.getConvertLinksToAnchorTags(), true);
 		oFormattedText.setProperty("convertedLinksDefaultTarget", this.getConvertedLinksDefaultTarget(), true);
-		if (this.getConvertLinksToAnchorTags() === library.LinkConversion.None) {
+		if (this.getConvertLinksToAnchorTags() === LinkConversion.None) {
 			oFormattedText.setHtmlText(this.getText());
 		} else {
 			oFormattedText.setProperty("htmlText", this.getText(), true);
