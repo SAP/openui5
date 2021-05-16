@@ -199,17 +199,17 @@ sap.ui.define([
 		oRow._setFocus();
 		assert.deepEqual(document.activeElement, oRow.getDomRef("col0"),
 			"_setFocus called with no parameter: focus is set on the first data cell");
-		$SelectAll.focus();
+		$SelectAll.trigger("focus");
 		assert.deepEqual(document.activeElement, $SelectAll[0], "Focus set outside of Row");
 		oRow._setFocus(false);
 		assert.deepEqual(document.activeElement, oRow.getDomRef("col0"),
 			"_setFocus(false): focus is set on the first data cell");
-		$SelectAll.focus();
+		$SelectAll.trigger("focus");
 		assert.deepEqual(document.activeElement, $SelectAll[0], "Focus set outside of Row");
 		oRow._setFocus(true);
 		assert.deepEqual(document.activeElement, oRow.getDomRef("col0"),
 			"_setFocus(true), but no interactive elements: focus is set on the first data cell");
-		$SelectAll.focus();
+		$SelectAll.trigger("focus");
 		assert.deepEqual(document.activeElement, $SelectAll[0], "Focus set outside of Row");
 		oRow.getCells()[0].$().attr("tabindex", 0);
 		oRow.getCells()[1].$().attr("tabindex", 0);

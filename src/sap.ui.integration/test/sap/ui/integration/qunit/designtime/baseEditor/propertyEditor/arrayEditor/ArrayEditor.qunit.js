@@ -998,7 +998,7 @@ sap.ui.define([
 			oVWOwnersEditorElements.items[0].item.attachEventOnce("expand", function () {
 				var oOwnerInput = oOwnerNameEditor.getContent();
 
-				oOwnerInput.$("inner").focus();
+				oOwnerInput.$("inner").trigger("focus");
 				assert.strictEqual(document.activeElement, oOwnerInput.$("inner").get(0));
 
 				EditorQunitUtils.setInputValue(oOwnerInput, "Kevin");
