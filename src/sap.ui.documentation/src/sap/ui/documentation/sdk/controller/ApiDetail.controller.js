@@ -691,7 +691,7 @@ sap.ui.define([
 						if (oBaseClass) {
 							baseClassCache = oBaseClass["ui5-metadata"] || [];
 
-							if (!oControlData["ui5-metadata"].defaultAggregation && baseClassCache.defaultAggregation) {
+							if (oControlData["ui5-metadata"] && !oControlData["ui5-metadata"].defaultAggregation && baseClassCache.defaultAggregation) {
 								oControlData["ui5-metadata"].defaultAggregation = baseClassCache.defaultAggregation;
 							}
 
