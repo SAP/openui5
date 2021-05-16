@@ -42,7 +42,6 @@
 		"since": "1.26",
 		"samples": [
 		  "sap.uxap.sample.ObjectPageOnJSON",
-		  "sap.uxap.sample.ObjectPageDynamicHeader",
 		  "sap.uxap.sample.ObjectPageTabNavigationMode",
 		  "sap.uxap.sample.ObjectPageSelectedSection",
 		  "sap.uxap.sample.ObjectPageTitleOnLeft",
