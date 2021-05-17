@@ -2,18 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, BindingParser, ManagedObject, PropertyBinding, JSONModel, Basics,
-		Expression, ODataModel, TestUtils) {
+], function (Log, ObjectPath, BindingParser, ManagedObject, JSONModel, Basics, Expression,
+		ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
@@ -1028,7 +1027,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					oSingleBindingInfo = parse(sBinding);
 
 					assert.strictEqual(oSingleBindingInfo.path, oRawValue.Path);
-					assert.ok(oSingleBindingInfo.type instanceof jQuery.sap.getObject(oType.name),
+					assert.ok(oSingleBindingInfo.type instanceof ObjectPath.get(oType.name),
 						"type is " + oType.name);
 					assert.deepEqual(oSingleBindingInfo.type.oConstraints, oType.constraints);
 

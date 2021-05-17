@@ -1,14 +1,8 @@
-/* eslint-disable no-multi-str */
-
-/* eslint-disable no-extend-native */
-if (!String.prototype.startsWith) {
-	String.prototype.startsWith = function(sString, iPosition) {
-		"use strict";
-		iPosition = iPosition === undefined ? 0 : iPosition;
-		return this.substr(iPosition, sString.length) === sString;
-	};
-}
-/* eslint-enable no-extend-native */
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/util/extend"
+], function (Log, extend) {
+	"use strict";
 
 var mHeaderTypes = {
 	xml: {
@@ -35,7 +29,6 @@ var mPredefinedServiceResponses = {
 
 
 (function(sinon) {
-	"use strict";
 
 	var mServiceData = {
 		serviceUrl: "fakeservice://testdata/odata/northwind/",
@@ -118,7 +111,7 @@ var mPredefinedServiceResponses = {
 			switch (sUrl) {
 				case "fakeservice://testdata/odata/northwind/Products(1)?$expand=Supplier":
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["json"]);
+					mResponseHeaders = extend({}, mHeaderTypes["json"]);
 					mResponseHeaders["sap-message"] = JSON.stringify({
 						"code":		"999",
 						"message":	"This is a server test message",
@@ -130,7 +123,7 @@ var mPredefinedServiceResponses = {
 					break;
 				case "fakeservice://testdata/odata/function-imports/":
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
+					mResponseHeaders = extend({}, mHeaderTypes["xml"]);
 					mResponseHeaders["sap-message"] = JSON.stringify({
 						"code":		"999",
 						"message":	"This is a server wide test message",
@@ -143,13 +136,13 @@ var mPredefinedServiceResponses = {
 
 				case "fakeservice://testdata/odata/function-imports/$metadata":
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
+					mResponseHeaders = extend({}, mHeaderTypes["xml"]);
 					sAnswer = mPredefinedServiceResponses.functionImportMetadata;
 					break;
 
 				case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000001'":
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders = extend({}, mHeaderTypes["atom"]);
 					mResponseHeaders["sap-message"] = JSON.stringify({
 						"code":		"999",
 						"message":	"This is FunctionImport specific test message",
@@ -163,7 +156,7 @@ var mPredefinedServiceResponses = {
 
 				case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000002'":
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders = extend({}, mHeaderTypes["atom"]);
 					mResponseHeaders["sap-message"] = JSON.stringify({
 						"code":		"999",
 						"message":	"This is FunctionImport specific test message",
@@ -176,7 +169,7 @@ var mPredefinedServiceResponses = {
 
 				case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'30000000-0000-0000-0000-000000000003'":
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders = extend({}, mHeaderTypes["atom"]);
 					mResponseHeaders["sap-message"] = JSON.stringify({
 						"code":		"999",
 						"message":	"This is FunctionImport specific test message",
@@ -189,30 +182,30 @@ var mPredefinedServiceResponses = {
 				case "fakeservice://testdata/odata/technical-errors/Error(400)":
 					iStatus = 400;
 					sAnswer = bJson ? mPredefinedServiceResponses.technicalError400Json : mPredefinedServiceResponses.technicalError400Xml;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+					mResponseHeaders = extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
 					break;
 
 				case "fakeservice://testdata/odata/technical-errors/Error(500)":
 					iStatus = 500;
 					sAnswer = bJson ? mPredefinedServiceResponses.technicalError500Json : mPredefinedServiceResponses.technicalError500Xml;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+					mResponseHeaders = extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
 					break;
 
 				case "fakeservice://testdata/odata/technical-errors/$metadata":
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
+					mResponseHeaders = extend({}, mHeaderTypes["xml"]);
 					sAnswer = mPredefinedServiceResponses.functionImportMetadata;
 					break;
 
 				case "fakeservice://testdata/odata/technical-errors/Error2(400)":
 					iStatus = 400;
 					sAnswer = bJson ? mPredefinedServiceResponses.technicalError400Json2 : mPredefinedServiceResponses.technicalError400Xml2;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+					mResponseHeaders = extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
 					break;
 
 				case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000001'":
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders = extend({}, mHeaderTypes["atom"]);
 					mResponseHeaders["sap-message"] = JSON.stringify({
 						"code":		"999",
 						"message":	"This is FunctionImport specific test message",
@@ -225,7 +218,7 @@ var mPredefinedServiceResponses = {
 
 				case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000002'":
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders = extend({}, mHeaderTypes["atom"]);
 					mResponseHeaders["sap-message"] = JSON.stringify({
 						"code":		"999",
 						"message":	"This is FunctionImport specific test message",
@@ -239,7 +232,7 @@ var mPredefinedServiceResponses = {
 				// Special function import for showing use of invalid targets
 				case "fakeservice://testdata/odata/northwind/functionWithInvalidTarget":
 					iStatus = 204;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders = extend({}, mHeaderTypes["atom"]);
 					mResponseHeaders["sap-message"] = JSON.stringify({
 						"code":		Date.now(),
 						"message":	"This is FunctionImport specific message that will stay until the function is called again.",
@@ -258,7 +251,7 @@ var mPredefinedServiceResponses = {
 
 				case "fakeservice://testdata/odata/northwind/functionWithInvalidReturnType":
 				iStatus = 204;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders = extend({}, mHeaderTypes["atom"]);
 				mResponseHeaders["location"] = "fakeservice://testdata/odata/northwind";
 				mResponseHeaders["sap-message"] = JSON.stringify({
 					"code":		Date.now(),
@@ -270,7 +263,7 @@ var mPredefinedServiceResponses = {
 
 				case "fakeservice://testdata/odata/northwind/functionWithInvalidEntitySet":
 				iStatus = 204;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders = extend({}, mHeaderTypes["atom"]);
 				mResponseHeaders["location"] = "fakeservice://testdata/odata/northwind";
 				mResponseHeaders["sap-message"] = JSON.stringify({
 					"code":		Date.now(),
@@ -284,7 +277,7 @@ var mPredefinedServiceResponses = {
 				case "fakeservice://testdata/odata/northwind/TransientTest1":
 					var iDate = Date.now();
 					iStatus = 200;
-					mResponseHeaders = jQuery.extend({}, mHeaderTypes["json"]);
+					mResponseHeaders = extend({}, mHeaderTypes["json"]);
 					mResponseHeaders["sap-message"] = JSON.stringify({
 						"code":		iDate,
 						"message":	"This is a normal message.",
@@ -466,7 +459,7 @@ var mPredefinedServiceResponses = {
 				mResponse.status = 204;
 				mResponse.body = "";
 			} else {
-				jQuery.sap.log.warning("ODataRandomService ignores writes...");
+				Log.warning("ODataRandomService ignores writes...");
 				if (!bInChangeset) {
 					mBatchResponse.body += "\r\n--" + sBatchSeparator + "\r\n";
 					mBatchResponse.body += "Content-Type: multipart/mixed; boundary=changeset_" + sBatchSeparator + "\r\n";
@@ -645,7 +638,7 @@ var mPredefinedServiceResponses = {
 
 		if (mCollection.itemMessages) {
 			for (var n = 0; n < mCollection.itemMessages.length; ++n) {
-				mMessage = jQuery.extend({}, mCollection.itemMessages[n]);
+				mMessage = extend({}, mCollection.itemMessages[n]);
 				mMessage.target = sTargetPrefix + mCollection.itemMessages[n].target;
 				aMessages.push(mMessage);
 			}
@@ -664,7 +657,7 @@ var mPredefinedServiceResponses = {
 
 		if (mCollection.collectionMessages) {
 			for (var i = 0; i < mCollection.collectionMessages.length; ++i) {
-				mMessage = jQuery.extend({}, mCollection.collectionMessages[i]);
+				mMessage = extend({}, mCollection.collectionMessages[i]);
 				mMessage.target = "/" + sCollection;
 				aMessages.push(mMessage);
 			}
@@ -673,7 +666,7 @@ var mPredefinedServiceResponses = {
 		var sType = this._useJson ? "json" : "atom";
 		var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
 
-		var mHead = jQuery.extend({}, mHeaderTypes[sType]);
+		var mHead = extend({}, mHeaderTypes[sType]);
 		mHead["sap-message"] = this._createMessageHeader(aMessages);
 
 		return {
@@ -826,7 +819,7 @@ var mPredefinedServiceResponses = {
 
 			if (oColData.itemMessages) {
 				for (var n = 0; n < oColData.itemMessages.length; ++n) {
-					mMessage = jQuery.extend({}, oColData.itemMessages[n]);
+					mMessage = extend({}, oColData.itemMessages[n]);
 					mMessage.code = oColData.itemMessages[n].code + i;
 					mMessage.target = "(" + (i + 1) + ")/" + oColData.itemMessages[n].target;
 					mMessage.propertyRef = "(" + (i + 1) + ")/" + oColData.itemMessages[n].target;
@@ -848,7 +841,7 @@ var mPredefinedServiceResponses = {
 
 		if (oColData.collectionMessages) {
 			for (i = 0; i < oColData.collectionMessages.length; ++i) {
-				mMessage = jQuery.extend({}, oColData.collectionMessages[i]);
+				mMessage = extend({}, oColData.collectionMessages[i]);
 				mMessage.target = "/" + sColName;
 				aMessages.push(mMessage);
 			}
@@ -857,7 +850,7 @@ var mPredefinedServiceResponses = {
 		var sType = this._useJson ? "json" : "atom";
 		var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
 
-		var mHead = jQuery.extend({}, mHeaderTypes[sType]);
+		var mHead = extend({}, mHeaderTypes[sType]);
 		mHead["sap-message"] = this._createMessageHeader(aMessages);
 
 		return {
@@ -960,707 +953,6 @@ var mPredefinedServiceResponses = {
 
 
 })(window.sinon);
-
-
-
-/*
-var sNorthwindDataJSON = {
-	"d" : {
-		"EntitySets" : [ "Categories", "CustomerDemographics", "Customers", "Employees", "Order_Details", "Orders", "Products", "Regions", "Shippers", "Suppliers", "Territories", "Alphabetical_list_of_products", "Category_Sales_for_1997", "Current_Product_Lists", "Customer_and_Suppliers_by_Cities", "Invoices", "Order_Details_Extendeds", "Order_Subtotals", "Orders_Qries", "Product_Sales_for_1997", "Products_Above_Average_Prices", "Products_by_Categories", "Sales_by_Categories", "Sales_Totals_by_Amounts", "Summary_of_Sales_by_Quarters", "Summary_of_Sales_by_Years" ]
-	}
-};
-*/
-
-/*
-var sNorthwindProductsDataJSON = {
-	"d" : {
-		"results" : [ {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(1)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(1)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Supplier"
-			}
-		},
-		"ProductID" : 1,
-		"ProductName" : "Chai",
-		"SupplierID" : 1,
-		"CategoryID" : 1,
-		"QuantityPerUnit" : "10 boxes x 20 bags",
-		"UnitPrice" : "18.0000",
-		"UnitsInStock" : 39,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 10,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(2)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(2)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(2)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(2)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(2)/Supplier"
-			}
-		},
-		"ProductID" : 2,
-		"ProductName" : "Chang",
-		"SupplierID" : 1,
-		"CategoryID" : 1,
-		"QuantityPerUnit" : "24 - 12 oz bottles",
-		"UnitPrice" : "19.0000",
-		"UnitsInStock" : 17,
-		"UnitsOnOrder" : 40,
-		"ReorderLevel" : 25,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(3)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(3)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(3)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(3)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(3)/Supplier"
-			}
-		},
-		"ProductID" : 3,
-		"ProductName" : "Aniseed Syrup",
-		"SupplierID" : 1,
-		"CategoryID" : 2,
-		"QuantityPerUnit" : "12 - 550 ml bottles",
-		"UnitPrice" : "10.0000",
-		"UnitsInStock" : 13,
-		"UnitsOnOrder" : 70,
-		"ReorderLevel" : 25,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(4)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(4)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(4)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(4)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(4)/Supplier"
-			}
-		},
-		"ProductID" : 4,
-		"ProductName" : "Chef Anton\'s Cajun Seasoning",
-		"SupplierID" : 2,
-		"CategoryID" : 2,
-		"QuantityPerUnit" : "48 - 6 oz jars",
-		"UnitPrice" : "22.0000",
-		"UnitsInStock" : 53,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(5)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(5)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(5)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(5)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(5)/Supplier"
-			}
-		},
-		"ProductID" : 5,
-		"ProductName" : "Chef Anton\'s Gumbo Mix",
-		"SupplierID" : 2,
-		"CategoryID" : 2,
-		"QuantityPerUnit" : "36 boxes",
-		"UnitPrice" : "21.3500",
-		"UnitsInStock" : 0,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : true
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(6)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(6)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(6)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(6)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(6)/Supplier"
-			}
-		},
-		"ProductID" : 6,
-		"ProductName" : "Grandma\'s Boysenberry Spread",
-		"SupplierID" : 3,
-		"CategoryID" : 2,
-		"QuantityPerUnit" : "12 - 8 oz jars",
-		"UnitPrice" : "25.0000",
-		"UnitsInStock" : 120,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 25,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(7)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(7)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(7)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(7)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(7)/Supplier"
-			}
-		},
-		"ProductID" : 7,
-		"ProductName" : "Uncle Bob\'s Organic Dried Pears",
-		"SupplierID" : 3,
-		"CategoryID" : 7,
-		"QuantityPerUnit" : "12 - 1 lb pkgs.",
-		"UnitPrice" : "30.0000",
-		"UnitsInStock" : 15,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 10,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(8)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(8)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(8)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(8)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(8)/Supplier"
-			}
-		},
-		"ProductID" : 8,
-		"ProductName" : "Northwoods Cranberry Sauce",
-		"SupplierID" : 3,
-		"CategoryID" : 2,
-		"QuantityPerUnit" : "12 - 12 oz jars",
-		"UnitPrice" : "40.0000",
-		"UnitsInStock" : 6,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(9)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(9)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(9)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(9)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(9)/Supplier"
-			}
-		},
-		"ProductID" : 9,
-		"ProductName" : "Mishi Kobe Niku",
-		"SupplierID" : 4,
-		"CategoryID" : 6,
-		"QuantityPerUnit" : "18 - 500 g pkgs.",
-		"UnitPrice" : "97.0000",
-		"UnitsInStock" : 29,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : true
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(10)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(10)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(10)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(10)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(10)/Supplier"
-			}
-		},
-		"ProductID" : 10,
-		"ProductName" : "Ikura",
-		"SupplierID" : 4,
-		"CategoryID" : 8,
-		"QuantityPerUnit" : "12 - 200 ml jars",
-		"UnitPrice" : "31.0000",
-		"UnitsInStock" : 31,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(11)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(11)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(11)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(11)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(11)/Supplier"
-			}
-		},
-		"ProductID" : 11,
-		"ProductName" : "Queso Cabrales",
-		"SupplierID" : 5,
-		"CategoryID" : 4,
-		"QuantityPerUnit" : "1 kg pkg.",
-		"UnitPrice" : "21.0000",
-		"UnitsInStock" : 22,
-		"UnitsOnOrder" : 30,
-		"ReorderLevel" : 30,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(12)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(12)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(12)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(12)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(12)/Supplier"
-			}
-		},
-		"ProductID" : 12,
-		"ProductName" : "Queso Manchego La Pastora",
-		"SupplierID" : 5,
-		"CategoryID" : 4,
-		"QuantityPerUnit" : "10 - 500 g pkgs.",
-		"UnitPrice" : "38.0000",
-		"UnitsInStock" : 86,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(13)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(13)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(13)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(13)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(13)/Supplier"
-			}
-		},
-		"ProductID" : 13,
-		"ProductName" : "Konbu",
-		"SupplierID" : 6,
-		"CategoryID" : 8,
-		"QuantityPerUnit" : "2 kg box",
-		"UnitPrice" : "6.0000",
-		"UnitsInStock" : 24,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 5,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(14)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(14)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(14)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(14)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(14)/Supplier"
-			}
-		},
-		"ProductID" : 14,
-		"ProductName" : "Tofu",
-		"SupplierID" : 6,
-		"CategoryID" : 7,
-		"QuantityPerUnit" : "40 - 100 g pkgs.",
-		"UnitPrice" : "23.2500",
-		"UnitsInStock" : 35,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(15)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(15)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(15)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(15)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(15)/Supplier"
-			}
-		},
-		"ProductID" : 15,
-		"ProductName" : "Genen Shouyu",
-		"SupplierID" : 6,
-		"CategoryID" : 2,
-		"QuantityPerUnit" : "24 - 250 ml bottles",
-		"UnitPrice" : "15.5000",
-		"UnitsInStock" : 39,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 5,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(16)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(16)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(16)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(16)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(16)/Supplier"
-			}
-		},
-		"ProductID" : 16,
-		"ProductName" : "Pavlova",
-		"SupplierID" : 7,
-		"CategoryID" : 3,
-		"QuantityPerUnit" : "32 - 500 g boxes",
-		"UnitPrice" : "17.4500",
-		"UnitsInStock" : 29,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 10,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(17)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(17)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(17)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(17)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(17)/Supplier"
-			}
-		},
-		"ProductID" : 17,
-		"ProductName" : "Alice Mutton",
-		"SupplierID" : 7,
-		"CategoryID" : 6,
-		"QuantityPerUnit" : "20 - 1 kg tins",
-		"UnitPrice" : "39.0000",
-		"UnitsInStock" : 0,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : true
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(18)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(18)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(18)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(18)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(18)/Supplier"
-			}
-		},
-		"ProductID" : 18,
-		"ProductName" : "Carnarvon Tigers",
-		"SupplierID" : 7,
-		"CategoryID" : 8,
-		"QuantityPerUnit" : "16 kg pkg.",
-		"UnitPrice" : "62.5000",
-		"UnitsInStock" : 42,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(19)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(19)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(19)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(19)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(19)/Supplier"
-			}
-		},
-		"ProductID" : 19,
-		"ProductName" : "Teatime Chocolate Biscuits",
-		"SupplierID" : 8,
-		"CategoryID" : 3,
-		"QuantityPerUnit" : "10 boxes x 12 pieces",
-		"UnitPrice" : "9.2000",
-		"UnitsInStock" : 25,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 5,
-		"Discontinued" : false
-		}, {
-		"__metadata" : {
-		"id" : "fakeservice://testdata/odata/northwind/Products(20)",
-		"uri" : "fakeservice://testdata/odata/northwind/Products(20)",
-		"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(20)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(20)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(20)/Supplier"
-			}
-		},
-		"ProductID" : 20,
-		"ProductName" : "Sir Rodney\'s Marmalade",
-		"SupplierID" : 8,
-		"CategoryID" : 3,
-		"QuantityPerUnit" : "30 gift boxes",
-		"UnitPrice" : "81.0000",
-		"UnitsInStock" : 40,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 0,
-		"Discontinued" : false
-		} ],
-	// "__next" : "fakeservice://testdata/odata/northwind/Products/?$skiptoken=20"
-	}
-};
-*/
-
-/*
-var oProducts1JSON = {
-	"d" : {
-		"__metadata" : {
-			"id" : "fakeservice://testdata/odata/northwind/Products(1)",
-			"uri" : "fakeservice://testdata/odata/northwind/Products(1)",
-			"type" : "NorthwindModel.Product"
-		},
-		"Category" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Category"
-			}
-		},
-		"Order_Details" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Order_Details"
-			}
-		},
-		"Supplier" : {
-			"__deferred" : {
-				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Supplier"
-			}
-		},
-		"ProductID" : 1,
-		"ProductName" : "Chai",
-		"SupplierID" : 1,
-		"CategoryID" : 1,
-		"QuantityPerUnit" : "10 boxes x 20 bags",
-		"UnitPrice" : "18.0000",
-		"UnitsInStock" : 39,
-		"UnitsOnOrder" : 0,
-		"ReorderLevel" : 10,
-		"Discontinued" : false
-	}
-};
-*/
-
-/*
-var sNorthwindError400XML = '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code /><m:message xml:lang="en-US">ERROR MESSAGE!!!</m:message></m:error>';
-var sNorthwindError400JSON = {
-	"odata.error" : {
-	"code" : "",
-	"message" : {
-	"lang" : "en-US",
-	"value" : "ERROR MESSAGE!!!."
-	}
-	}
-};
-var sNorthwindError501JSON = {
-	"odata.error" : {
-	"code" : "ErrorCode",
-	"message" : {
-	"lang" : "en-US",
-	"value" : "ERROR MESSAGE!!!."
-	}
-	}
-};
-*/
-
-
-
 
 mPredefinedServiceResponses.northwindMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
@@ -3463,3 +2755,4 @@ mPredefinedServiceResponses.ProductsExpandSupplier = '\
 }\
 }\
 }';
+});

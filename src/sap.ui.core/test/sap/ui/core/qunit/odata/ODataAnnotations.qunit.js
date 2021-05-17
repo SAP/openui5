@@ -1,12 +1,10 @@
 sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/util/XMLHelper",
 	"sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(
-	fakeService,
-	V1ODataModel,
-	V2ODataModel
-) {
+], function(Log, XMLHelper, fakeService, V1ODataModel, V2ODataModel) {
 	"use strict";
 
 	/*global QUnit, sinon */
@@ -435,7 +433,6 @@ sap.ui.define([
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function(assert) {
-			var done = assert.async();
 			if (!bSharedMetadata){
 				cleanOdataCache();
 			}
@@ -444,95 +441,82 @@ sap.ui.define([
 			var bMetadataLoaded = false;
 			var bAnnotationsLoaded = false;
 
-			var fnOnLoaded = function(sWhat) {
-
-				switch (sWhat) {
-
-					case "Metadata":
-						assert.ok(bMetadataLoaded, "Metadata loaded successfully");
-						jQuery.sap.log.debug("check for metadata");
-					break;
-
-					case "Annotations":
-						assert.ok(bAnnotationsLoaded, "Annotations loaded successfully");
-					break;
-
-					case "Both":
-						assert.ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
-						jQuery.sap.log.debug("check for both");
-						done();
-					break;
-
-					case "MetadataFailed":
-						// Nothing should be loaded
-						assert.ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
-						jQuery.sap.log.debug("check for none");
-						done();
-					break;
-
-					case "AnnotationsFailed":
-						// Metadata should be loaded, but no annotations
-						if (sAnnotationsValid === "none") {
-						assert.ok(bMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
-						} else {
-							assert.ok(bMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
-						}
-						jQuery.sap.log.debug("check for no annotations");
-						oModel.destroy();
-						done();
-					break;
-
-					default:
-						throw "This is unexpected and should never happen...";
-
-				}
-			};
-
-			/* eslint-disable new-cap */
-			var metadataDfd = jQuery.Deferred();
-			var annotationsDfd = jQuery.Deferred();
-			/* eslint-enable new-cap */
+			var fnResolveMetadata, fnRejectMetadata, fnResolveAnnotations, fnRejectAnnotations,
+				oAnnotationsPromise = new Promise(function (resolve, reject) {
+					fnResolveAnnotations = resolve;
+					fnRejectAnnotations = reject;
+				}),
+				oMetadataPromise = new Promise(function (resolve, reject) {
+					fnResolveMetadata = resolve;
+					fnRejectMetadata = reject;
+				});
 
 			// Metadata must be loaded before annotations
 			oModel.attachMetadataLoaded(function() {
 				bMetadataLoaded = true;
-				jQuery.sap.log.debug("metadata loaded is fired");
-				fnOnLoaded("Metadata");
-				metadataDfd.resolve();
+				Log.debug("metadata loaded is fired");
+				assert.ok(bMetadataLoaded, "Metadata loaded successfully");
+				Log.debug("check for metadata");
+				fnResolveMetadata();
 			});
 
 			oModel.attachAnnotationsLoaded(function() {
 				bAnnotationsLoaded = true;
-				jQuery.sap.log.debug("annotations loaded is fired");
-				fnOnLoaded("Annotations");
-				annotationsDfd.resolve();
+				Log.debug("annotations loaded is fired");
+				assert.ok(bAnnotationsLoaded, "Annotations loaded successfully");
+				fnResolveAnnotations();
 			});
 
 			oModel.attachMetadataFailed(function() {
-				jQuery.sap.log.debug("metadata failed is fired");
-				metadataDfd.reject();
+				Log.debug("metadata failed is fired");
+				fnRejectMetadata();
+			});
+
+			oModel.attachAnnotationsFailed(function() {
+				Log.debug("annotations failed is fired");
+				fnRejectAnnotations();
 			});
 
 			if (bServiceValid && (sAnnotationsValid === "some" || sAnnotationsValid === "all")) {
-				jQuery.when(metadataDfd, annotationsDfd).done(function(e){
-						jQuery.sap.log.debug("both promises fulfilled");
-						fnOnLoaded("Both");
-					}).fail(function(e){
-						jQuery.sap.log.debug("metadata promise failed");
-						assert.ok(false, 'Metadata promise rejected');
-					});
-			} else if (bServiceValid && (sAnnotationsValid === "none" || sAnnotationsValid === "metadata")){
-				jQuery.when(metadataDfd).done(function(e){
-					jQuery.sap.log.debug("metadata promise fulfilled");
-					//make sure annotations really don't load an we're not just too quick
-					window.setTimeout(function() {
-						fnOnLoaded("AnnotationsFailed");
-					}, 50);
+				return Promise.all([oMetadataPromise, oAnnotationsPromise]).then(function () {
+					Log.debug("both promises fulfilled");
+					assert.ok(bMetadataLoaded && bAnnotationsLoaded,
+						"Check: Annotations and Metadata loaded");
+					Log.debug("check for both");
+				}, function () {
+					Log.debug("metadata promise failed");
+					assert.ok(false, 'Metadata promise rejected');
+				});
+			} else if (bServiceValid && sAnnotationsValid === "none"){
+				return Promise.all([
+					oMetadataPromise.then(function () {
+						Log.debug("metadata promise fulfilled");
+					}),
+					oAnnotationsPromise.then(function () {
+						assert.ok(false);
+					}, function () {
+						assert.ok(bMetadataLoaded && !bAnnotationsLoaded,
+							"Check: Invalid Annotations - Only Metadata loaded");
+						Log.debug("check for no annotations");
+						oModel.destroy();
+					})
+				]);
+			} else if (bServiceValid && sAnnotationsValid === "metadata") {
+				return oMetadataPromise.then(function () {
+					Log.debug("metadata promise fulfilled");
+					assert.ok(bMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
+					Log.debug("check for no annotations");
+					oModel.destroy();
 				});
 			} else if (!bServiceValid){
-				jQuery.when(metadataDfd).fail(function(e){
-					jQuery.sap.log.debug("metadata failed fulfilled");
-					fnOnLoaded("MetadataFailed");
+				return oMetadataPromise.then(function () {
+					assert.ok(false);
+				}, function () {
+					Log.debug("metadata failed fulfilled");
+					// Nothing should be loaded
+					assert.ok(!bServiceValid && !bAnnotationsLoaded,
+						"Check: Invalid Service - Annotations and Metadata NOT loaded");
+					Log.debug("check for none");
 				});
 			}
 		};
@@ -565,7 +549,7 @@ sap.ui.define([
 			(bSharedMetadata ?  "/Shared Metadata" : "") +
 			")";
 
-		jQuery.sap.log.debug("testtype: " + sTestType);
+		Log.debug("testtype: " + sTestType);
 
 		QUnit.test(
 			"Asynchronous loading - " + sTestType,
@@ -577,7 +561,6 @@ sap.ui.define([
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
 		return function(assert) {
-			var done = assert.async();
 			if (!bSharedMetadata){
 				V2ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 			}
@@ -586,95 +569,83 @@ sap.ui.define([
 			var bMetadataLoaded = false;
 			var bAnnotationsLoaded = false;
 
-			var fnOnLoaded = function(sWhat) {
-
-				switch (sWhat) {
-
-					case "Metadata":
-						assert.ok(bMetadataLoaded, "Metadata loaded successfully");
-						jQuery.sap.log.debug("check for metadata");
-					break;
-
-					case "Annotations":
-						assert.ok(bAnnotationsLoaded, "Annotations loaded successfully");
-					break;
-
-					case "Both":
-						assert.ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
-						jQuery.sap.log.debug("check for both");
-						done();
-					break;
-
-					case "MetadataFailed":
-						// Nothing should be loaded
-						assert.ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
-						jQuery.sap.log.debug("check for none");
-						done();
-					break;
-
-					case "AnnotationsFailed":
-						// Metadata should be loaded, but no annotations
-						if (sAnnotationsValid === "none") {
-						assert.ok(bMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
-						} else {
-							assert.ok(bMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
-						}
-						jQuery.sap.log.debug("check for no annotations");
-						oModel.destroy();
-						done();
-					break;
-
-					default:
-						throw "This is unexpected and should never happen...";
-
-				}
-			};
-
-			/* eslint-disable new-cap */
-			var metadataDfd = jQuery.Deferred();
-			var annotationsDfd = jQuery.Deferred();
-			/* eslint-enable new-cap */
+			var fnResolveMetadata, fnRejectMetadata, fnResolveAnnotations, fnRejectAnnotations,
+				oAnnotationsPromise = new Promise(function (resolve, reject) {
+					fnResolveAnnotations = resolve;
+					fnRejectAnnotations = reject;
+				}),
+				oMetadataPromise = new Promise(function (resolve, reject) {
+					fnResolveMetadata = resolve;
+					fnRejectMetadata = reject;
+				});
 
 			// Metadata must be loaded before annotations
 			oModel.attachMetadataLoaded(function() {
 				bMetadataLoaded = true;
-				jQuery.sap.log.debug("metadata loaded is fired");
-				fnOnLoaded("Metadata");
-				metadataDfd.resolve();
+				Log.debug("metadata loaded is fired");
+				assert.ok(bMetadataLoaded, "Metadata loaded successfully");
+				Log.debug("check for metadata");
+				fnResolveMetadata();
 			});
 
 			oModel.attachAnnotationsLoaded(function() {
 				bAnnotationsLoaded = true;
-				jQuery.sap.log.debug("annotations loaded is fired");
-				fnOnLoaded("Annotations");
-				annotationsDfd.resolve();
+				Log.debug("annotations loaded is fired");
+				assert.ok(bAnnotationsLoaded, "Annotations loaded successfully");
+				fnResolveAnnotations();
 			});
 
 			oModel.attachMetadataFailed(function() {
-				jQuery.sap.log.debug("metadata failed is fired");
-				metadataDfd.reject();
+				Log.debug("metadata failed is fired");
+				fnRejectMetadata();
+			});
+
+			oModel.attachAnnotationsFailed(function() {
+				Log.debug("annotations failed is fired");
+				fnRejectAnnotations();
 			});
 
 			if (bServiceValid && (sAnnotationsValid === "some" || sAnnotationsValid === "all")) {
-				jQuery.when(metadataDfd, annotationsDfd).done(function(e){
-						jQuery.sap.log.debug("both promises fulfilled");
-						fnOnLoaded("Both");
-					}).fail(function(e){
-						jQuery.sap.log.debug("metadata promise failed");
-						assert.ok(false, 'Metadata promise rejected');
-					});
-			} else if (bServiceValid && (sAnnotationsValid === "none" || sAnnotationsValid === "metadata")){
-				jQuery.when(metadataDfd).done(function(e){
-					jQuery.sap.log.debug("metadata promise fulfilled");
-					//make sure annotations really don't load an we're not just too quick
-					window.setTimeout(function() {
-						fnOnLoaded("AnnotationsFailed");
-					}, 50);
+				return Promise.all([oMetadataPromise, oAnnotationsPromise]).then(function () {
+					Log.debug("both promises fulfilled");
+					assert.ok(bMetadataLoaded && bAnnotationsLoaded,
+						"Check: Annotations and Metadata loaded");
+					Log.debug("check for both");
+				}, function () {
+					Log.debug("metadata promise failed");
+					assert.ok(false, 'Metadata promise rejected');
+				});
+			} else if (bServiceValid && sAnnotationsValid === "none"){
+				return Promise.all([
+					oMetadataPromise.then(function () {
+						Log.debug("metadata promise fulfilled");
+					}),
+					oAnnotationsPromise.then(function () {
+						assert.ok(false);
+					}, function () {
+						// Metadata should be loaded, but no annotations
+						assert.ok(bMetadataLoaded && !bAnnotationsLoaded,
+							"Check: Invalid Annotations - Only Metadata loaded");
+						Log.debug("check for no annotations");
+						oModel.destroy();
+					})
+				]);
+			} else if (bServiceValid && sAnnotationsValid === "metadata") {
+				return oMetadataPromise.then(function () {
+					Log.debug("metadata promise fulfilled");
+					assert.ok(bMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
+					Log.debug("check for no annotations");
+					oModel.destroy();
 				});
 			} else if (!bServiceValid){
-				jQuery.when(metadataDfd).fail(function(e){
-					jQuery.sap.log.debug("metadata failed fulfilled");
-					fnOnLoaded("MetadataFailed");
+				return oMetadataPromise.then(function () {
+					assert.ok(false);
+				}, function () {
+					Log.debug("metadata failed fulfilled");
+					// Nothing should be loaded
+					assert.ok(!bServiceValid && !bAnnotationsLoaded,
+						"Check: Invalid Service - Annotations and Metadata NOT loaded");
+					Log.debug("check for none");
 				});
 			}
 		};
@@ -707,7 +678,7 @@ sap.ui.define([
 			(bSharedMetadata ?  "/Shared Metadata" : "") +
 			")";
 
-		jQuery.sap.log.debug("testtype: " + sTestType);
+		Log.debug("testtype: " + sTestType);
 
 		QUnit.test(
 			"Asynchronous loading - " + sTestType,
@@ -730,66 +701,26 @@ sap.ui.define([
 			var bAnnotationsLoaded = false;
 			var bInternalMetadataLoaded = false;
 
-			var fnOnLoaded = function(sWhat) {
-
-				switch (sWhat) {
-
-					case "InternalMetadata":
-						// assert.ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
-					break;
-
-					case "Metadata":
-						assert.ok(bMetadataLoaded, "Metadata loaded successfully");
-						assert.ok(bAnnotationsLoaded, "Metadata loaded after annotations");
-					break;
-
-					case "Both":
-						assert.ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
-						jQuery.sap.log.debug("check for both");
-						done();
-					break;
-
-					case "MetadataFailed":
-						// Nothing should be loaded
-						assert.ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
-						jQuery.sap.log.debug("check for none");
-						done();
-					break;
-
-					case "AnnotationsFailed":
-						if (sAnnotationsValid === "none") {
-							assert.ok(bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
-						} else {
-							assert.ok(bInternalMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
-						}
-						// Metadata should be loaded, but no annotations
-						jQuery.sap.log.debug("check for no annotations");
-						oModel.destroy();
-						done();
-					break;
-
-					default:
-						throw "This is unexpected and should never happen...";
-				}
-
-			};
-
-			/* eslint-disable new-cap */
-			var metadataDfd = jQuery.Deferred();
-			var internalMetadataDfd = jQuery.Deferred();
-			/* eslint-enable new-cap */
+			var fnResolveMetadata, fnRejectMetadata, fnResolveInternalMetadata,
+				oInternalMetadataPromise = new Promise(function (resolve) {
+					fnResolveInternalMetadata = resolve;
+				}),
+				oMetadataPromise = new Promise(function (resolve, reject) {
+					fnResolveMetadata = resolve;
+					fnRejectMetadata = reject;
+				});
 
 			// Use internal metadata loaded event, because in case of joined loading, the real one
 			// does not fire until Annotations are there
 			if (oModel.oMetadata.getServiceMetadata()){
 				bInternalMetadataLoaded = true;
-				fnOnLoaded("InternalMetadata");
-				internalMetadataDfd.resolve();
+				// assert.ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
+				fnResolveInternalMetadata();
 			} else {
 				oModel.oMetadata.attachLoaded(function() {
 					bInternalMetadataLoaded = true;
-					fnOnLoaded("InternalMetadata");
-					internalMetadataDfd.resolve();
+					// assert.ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
+					fnResolveInternalMetadata();
 				});
 			}
 			// Metadata must be loaded before annotations
@@ -799,35 +730,55 @@ sap.ui.define([
 					// Metadata loaded event is only fired after both metadata and annotations have been loaded successfully, so we can also set bAnnotationsloaded to true
 					bAnnotationsLoaded = true;
 				}
-				fnOnLoaded("Metadata");
-				metadataDfd.resolve();
+				assert.ok(bMetadataLoaded, "Metadata loaded successfully");
+						assert.ok(bAnnotationsLoaded, "Metadata loaded after annotations");
+				fnResolveMetadata();
 			});
 
 			oModel.attachMetadataFailed(function() {
-				metadataDfd.reject();
+				fnRejectMetadata();
 			});
 			oModel.attachAnnotationsLoaded(function() {
 				bAnnotationsLoaded = true;
 			});
 
 			if (bServiceValid && (sAnnotationsValid === "some" || sAnnotationsValid === "all" || sAnnotationsValid === "metadata")){
-				jQuery.when(metadataDfd).done(function(e){
-					jQuery.sap.log.debug("metadata promise fulfilled");
-					fnOnLoaded("Both");
-				}).fail(function(e){
-				jQuery.sap.log.debug("metadata promise failed");
-				assert.ok(false, 'Metadata promise rejected');
-			});
-		} else if (bServiceValid && sAnnotationsValid === "none"){
+				oMetadataPromise.then(function(e){
+					Log.debug("metadata promise fulfilled");
+					assert.ok(bMetadataLoaded && bAnnotationsLoaded,
+						"Check: Annotations and Metadata loaded");
+					Log.debug("check for both");
+					done();
+				}, function(e){
+					Log.debug("metadata promise failed");
+					assert.ok(false, 'Metadata promise rejected');
+				});
+			} else if (bServiceValid && sAnnotationsValid === "none"){
 				//internal metadata needs to be sucessful prior to the failed annotations
-				jQuery.when(internalMetadataDfd).done(function(){
-					jQuery.sap.log.debug("metadata promise rejected");
-					oModel.attachAnnotationsFailed(function(){fnOnLoaded("AnnotationsFailed");}, that);
+				oInternalMetadataPromise.then(function(){
+					Log.debug("metadata promise rejected");
+					oModel.attachAnnotationsFailed(function(){
+						if (sAnnotationsValid === "none") {
+							assert.ok(bInternalMetadataLoaded && !bAnnotationsLoaded,
+								"Check: Invalid Annotations - Only Metadata loaded");
+						} else {
+							assert.ok(bInternalMetadataLoaded,
+								"Check: Invalid Annotations - Metadata loaded");
+						}
+						// Metadata should be loaded, but no annotations
+						Log.debug("check for no annotations");
+						oModel.destroy();
+						done();
+					}, that);
 				});
 			} else if (!bServiceValid){
-				jQuery.when(metadataDfd).fail(function(e){
-					jQuery.sap.log.debug("metadata failed fulfilled");
-					fnOnLoaded("MetadataFailed");
+				oMetadataPromise.catch(function(e){
+					Log.debug("metadata failed fulfilled");
+					// Nothing should be loaded
+					assert.ok(!bInternalMetadataLoaded && !bAnnotationsLoaded,
+						"Check: Invalid Service - Annotations and Metadata NOT loaded");
+					Log.debug("check for none");
+					done();
 				});
 			}
 		};
@@ -880,66 +831,26 @@ sap.ui.define([
 			var bAnnotationsLoaded = false;
 			var bInternalMetadataLoaded = false;
 
-			var fnOnLoaded = function(sWhat) {
-
-				switch (sWhat) {
-
-					case "InternalMetadata":
-					//	assert.ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
-					break;
-
-					case "Metadata":
-						assert.ok(bMetadataLoaded, "Metadata loaded successfully");
-						assert.ok(bAnnotationsLoaded, "Metadata loaded after annotations");
-					break;
-
-					case "Both":
-						assert.ok(bMetadataLoaded && bAnnotationsLoaded, "Check: Annotations and Metadata loaded");
-						jQuery.sap.log.debug("check for both");
-						done();
-					break;
-
-					case "MetadataFailed":
-						// Nothing should be loaded
-						assert.ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
-						jQuery.sap.log.debug("check for none");
-						done();
-					break;
-
-					case "AnnotationsFailed":
-						if (sAnnotationsValid === "none") {
-						assert.ok(bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Annotations - Only Metadata loaded");
-						} else {
-							assert.ok(bInternalMetadataLoaded, "Check: Invalid Annotations - Metadata loaded");
-						}
-						// Metadata should be loaded, but no annotations
-						jQuery.sap.log.debug("check for no annotations");
-						oModel.destroy();
-						done();
-					break;
-
-					default:
-						throw "This is unexpected and should never happen...";
-				}
-
-			};
-
-			/* eslint-disable new-cap */
-			var metadataDfd = jQuery.Deferred();
-			var internalMetadataDfd = jQuery.Deferred();
-			/* eslint-enable new-cap */
+			var fnResolveMetadata, fnRejectMetadata, fnResolveInternalMetadata,
+				oInternalMetadataPromise = new Promise(function (resolve) {
+					fnResolveInternalMetadata = resolve;
+				}),
+				oMetadataPromise = new Promise(function (resolve, reject) {
+					fnResolveMetadata = resolve;
+					fnRejectMetadata = reject;
+				});
 
 			// Use internal metadata loaded event, because in case of joined loading, the real one
 			// does not fire until Annotations are there
 			if (oModel.oMetadata.getServiceMetadata()){
 				bInternalMetadataLoaded = true;
-				fnOnLoaded("InternalMetadata");
-				internalMetadataDfd.resolve();
+				//	assert.ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
+				fnResolveInternalMetadata();
 			} else {
 				oModel.oMetadata.attachLoaded(function() {
 					bInternalMetadataLoaded = true;
-					fnOnLoaded("InternalMetadata");
-					internalMetadataDfd.resolve();
+					//	assert.ok(!bAnnotationsLoaded, "Internal metadata loaded before annotations");
+					fnResolveInternalMetadata();
 				});
 			}
 			// Metadata must be loaded before annotations
@@ -949,37 +860,62 @@ sap.ui.define([
 					// Metadata loaded event is only fired after both metadata and annotations have been loaded successfully, so we can also set bAnnotationsloaded to true
 					bAnnotationsLoaded = true;
 				}
-				fnOnLoaded("Metadata");
-				metadataDfd.resolve();
+				assert.ok(bMetadataLoaded, "Metadata loaded successfully");
+				assert.ok(bAnnotationsLoaded, "Metadata loaded after annotations");
+				fnResolveMetadata();
 			});
 
 			oModel.attachMetadataFailed(function() {
-				metadataDfd.reject();
+				fnRejectMetadata();
 			});
 			oModel.attachAnnotationsLoaded(function() {
 				bAnnotationsLoaded = true;
 			});
 
 			if (bServiceValid && (sAnnotationsValid === "some" || sAnnotationsValid === "all")){
-				jQuery.when(metadataDfd).done(function(e){
-					jQuery.sap.log.debug("metadata promise fulfilled");
-					fnOnLoaded("Both");
-				}).fail(function(e){
-				jQuery.sap.log.debug("metadata promise failed");
-				assert.ok(false, 'Metadata promise rejected');
-			});
+				oMetadataPromise.then(function(e){
+					Log.debug("metadata promise fulfilled");
+					assert.ok(bMetadataLoaded && bAnnotationsLoaded,
+						"Check: Annotations and Metadata loaded");
+					Log.debug("check for both");
+					done();
+				}, function(e){
+					Log.debug("metadata promise failed");
+					assert.ok(false, 'Metadata promise rejected');
+				});
 		} else if (bServiceValid && sAnnotationsValid === "metadata") {
-			oModel.metadataLoaded().then(fnOnLoaded.bind(this, "Both"));
+			oModel.metadataLoaded().then(function() {
+				assert.ok(bMetadataLoaded && bAnnotationsLoaded,
+					"Check: Annotations and Metadata loaded");
+				Log.debug("check for both");
+				done();
+			});
 		} else if (bServiceValid && sAnnotationsValid === "none"){
 				//internal metadata needs to be sucessful prior to the failed annotations
-				jQuery.when(internalMetadataDfd).done(function(){
-					jQuery.sap.log.debug("metadata promise rejected");
-					oModel.attachAnnotationsFailed(function(){fnOnLoaded("AnnotationsFailed");}, that);
+				oInternalMetadataPromise.then(function(){
+					Log.debug("metadata promise rejected");
+					oModel.attachAnnotationsFailed(function(){
+						if (sAnnotationsValid === "none") {
+							assert.ok(bInternalMetadataLoaded && !bAnnotationsLoaded,
+								"Check: Invalid Annotations - Only Metadata loaded");
+						} else {
+							assert.ok(bInternalMetadataLoaded,
+								"Check: Invalid Annotations - Metadata loaded");
+						}
+						// Metadata should be loaded, but no annotations
+						Log.debug("check for no annotations");
+						oModel.destroy();
+						done();
+					}, that);
 				});
 			} else if (!bServiceValid){
-				jQuery.when(metadataDfd).fail(function(e){
-					jQuery.sap.log.debug("metadata failed fulfilled");
-					fnOnLoaded("MetadataFailed");
+				oMetadataPromise.catch(function(e){
+					Log.debug("metadata failed fulfilled");
+					// Nothing should be loaded
+					assert.ok(!bInternalMetadataLoaded && !bAnnotationsLoaded,
+						"Check: Invalid Service - Annotations and Metadata NOT loaded");
+					Log.debug("check for none");
+					done();
 				});
 			}
 		};
@@ -3460,13 +3396,13 @@ sap.ui.define([
 		var oModel = new V2ODataModel(sServiceURI, mModelOptions);
 
 
-		var sFirstAnnotations  = jQuery.sap.syncGet(mTest.annotations[0]).data;
+		var sFirstAnnotations  = fakeService.getAnnotationFromFakeUrl(mTest.annotations[0]);
 		assert.ok(sFirstAnnotations.indexOf("<?xml") === 0, "First annotation file data loaded");
 
-		var sSecondAnnotations = jQuery.sap.syncGet(mTest.annotations[1]).data;
+		var sSecondAnnotations = fakeService.getAnnotationFromFakeUrl(mTest.annotations[1]);
 		assert.ok(sSecondAnnotations.indexOf("<?xml") === 0, "Second annotation file data loaded");
 
-		var sThirdAnnotations  = jQuery.sap.syncGet(mTest.annotations[2]).data;
+		var sThirdAnnotations  = fakeService.getAnnotationFromFakeUrl(mTest.annotations[2]);
 		assert.ok(sThirdAnnotations.indexOf("<?xml") === 0, "Third annotation file data loaded");
 
 
@@ -5521,8 +5457,7 @@ sap.ui.define([
 	function xml(assert, sContent) {
 		var oDocument;
 
-		jQuery.sap.require("jquery.sap.xml"); // needed to have jQuery.sap.parseXML
-		oDocument = jQuery.sap.parseXML(sContent.replace(/>\s+</g, "><")); // avoid Text nodes!
+		oDocument = XMLHelper.parse(sContent.replace(/>\s+</g, "><")); // avoid Text nodes!
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument.documentElement;
 	}

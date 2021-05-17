@@ -1,4 +1,6 @@
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/base/Log"
+], function(Log) {
 	"use strict";
 
 	/* global sinon */
@@ -272,7 +274,7 @@ sap.ui.define([], function() {
 
 			if (request.async === true) {
 				_setTimeout(function() {
-					jQuery.sap.log.info("[FakeService] Responding to: " + request.url);
+					Log.info("[FakeService] Responding to: " + request.url);
 					request.respond(iStatus, mHeaders, sAnswer);
 				}, bRandomizeResponseDelay ? Math.round(Math.random() * maxResponseDelay) : 50);
 			} else {
@@ -5398,4 +5400,20 @@ sap.ui.define([], function() {
 			</Schema>\
 		</edm:DataServices>\
 	</edm:Edm>';
+
+	return {
+		getAnnotationFromFakeUrl : function (sUrl) {
+			switch (sUrl) {
+				case "fakeService://testdata/odata/multiple-annotations-01.xml" :
+					return sMultipleTest01;
+				case "fakeService://testdata/odata/multiple-annotations-02.xml" :
+					return sMultipleTest02;
+				case "fakeService://testdata/odata/multiple-annotations-03.xml" :
+					return sMultipleTest03;
+
+				default:
+					return undefined;
+			}
+		}
+	};
 });

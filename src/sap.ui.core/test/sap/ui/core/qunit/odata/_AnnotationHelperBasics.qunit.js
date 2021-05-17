@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/BindingParser",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/performance/Measurement"
-], function (jQuery, Log, BindingParser, Basics, Measurement) {
+], function (Log, BindingParser, Basics, Measurement) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0*/
 	"use strict";
