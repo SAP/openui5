@@ -2956,6 +2956,8 @@ sap.ui.define([
 	// fetched
 	// JIRA: CPOUI5ODATAV4-27 see that two late property requests are merged
 	// BCP: 2070470932: see that sap-client and system query options are handled properly
+	// Test ODLB#getCount
+	// JIRA: CPOUI5ODATAV4-958
 	QUnit.test("ODLB: late property", function (assert) {
 		var oModel = createModel(sTeaBusi + "?sap-client=123", {autoExpandSelect : true}),
 			oRowContext,
@@ -2999,6 +3001,10 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
+
+			// code under test - count is not requested
+			assert.strictEqual(oTable.getBinding("items").getCount(), undefined);
+			assert.strictEqual(oTable.getBinding("items").getLength(), 12);
 
 			// two late property requests (one had only a $expand, so EMPLOYEE_2_TEAM is selected)
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?sap-client=123"
@@ -3843,7 +3849,7 @@ sap.ui.define([
 	// In this test dynamic filters are used instead of dynamic sorters
 	// Additionally ODLB#getDownloadUrl is tested
 	// JIRA: CPOUI5ODATAV4-12
-	QUnit.test("Relative ODLB inherits parent OBCB's query options on filter", function (assert) {
+	QUnit.test("Relative ODLB inherits parent ODCB's query options on filter", function (assert) {
 		var oBinding,
 			oModel = createModel(sTeaBusi + "?c1=a&c2=b"),
 			sView = '\
@@ -5409,6 +5415,9 @@ sap.ui.define([
 	// * Filter in the items, so that there are less
 	// * See that the count decreases
 	// The test simplifies it: It filters in the sales orders list directly
+	//
+	// Test ODLB#getCount
+	// JIRA: CPOUI5ODATAV4-958
 	QUnit.test("ODLB: $count and filter()", function (assert) {
 		var oTable,
 			oTableBinding,
@@ -5433,6 +5442,8 @@ sap.ui.define([
 			oTableBinding = oTable.getBinding("items");
 
 			that.expectChange("count", "2");
+			assert.strictEqual(oTableBinding.getCount(), 2);
+			assert.strictEqual(oTableBinding.getLength(), 2);
 
 			// code under test
 			that.oView.byId("count").setBindingContext(oTableBinding.getHeaderContext());
@@ -15952,6 +15963,9 @@ sap.ui.define([
 	//
 	// Request leaf count.
 	// JIRA: CPOUI5ODATAV4-164
+	//
+	// Test ODLB#getCount
+	// JIRA: CPOUI5ODATAV4-958
 	//TODO support $filter : \'GrossAmount gt 0\',\
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
 		var oListBinding,
@@ -16019,6 +16033,7 @@ sap.ui.define([
 
 			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
 			assert.strictEqual(oListBinding.getLength(), 26, "flat list as currently expanded");
+			assert.strictEqual(oListBinding.getCount(), 42, "count of leaves");
 			// Note: header context gives count of leaves
 			that.expectChange("count", "42");
 
@@ -16075,6 +16090,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			assert.strictEqual(oListBinding.getCount(), 32, "count of leaves");
+
 			assert.throws(function () {
 				oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
 			}, new Error("Cannot combine $$aggregation and $apply"));
@@ -16093,6 +16110,9 @@ sap.ui.define([
 	//
 	// Check the download URL.
 	// JIRA: CPOUI5ODATAV4-609
+	//
+	// Test ODLB#getCount
+	// JIRA: CPOUI5ODATAV4-958
 	QUnit.test("Data Aggregation: $$aggregation w/ grand total w/ unit", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -16141,11 +16161,16 @@ sap.ui.define([
 			.expectChange("currencyCode", ["", "EUR", "GBP"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			assert.strictEqual(that.oView.byId("table").getBinding("items").getDownloadUrl(),
+			var oListBinding = that.oView.byId("table").getBinding("items");
+
+			// code under test
+			assert.strictEqual(oListBinding.getDownloadUrl(),
 				sSalesOrderService + "SalesOrderList"
 				+ "?$apply=groupby((LifecycleStatus,LifecycleStatusDesc)"
 					+ ",aggregate(GrossAmount,CurrencyCode))/orderby(LifecycleStatusDesc%20asc)",
 				"CPOUI5ODATAV4-609");
+			assert.strictEqual(oListBinding.getLength(), 3, "table length");
+			assert.strictEqual(oListBinding.getCount(), 2, "count of leaves");
 		});
 	});
 
@@ -16218,6 +16243,9 @@ sap.ui.define([
 	//
 	// Expand the first node again.
 	// JIRA: CPOUI5ODATAV4-378
+	//
+	// Test ODLB#getCount
+	// JIRA: CPOUI5ODATAV4-958
 	QUnit.test("Data Aggregation: expand, paging and collapse on sap.m.Table", function (assert) {
 		var oListBinding,
 			oModel = createAggregationModel({autoExpandSelect : true}),
@@ -16288,7 +16316,18 @@ sap.ui.define([
 				.expectChange("salesAmount", [/*"100"*/, "10", "20"])
 				.expectChange("salesNumber", [/*null*/, "1", "2"]);
 
+			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into $count, "
+				+ "invalid segment: $count",
+				"/aggregation/BusinessPartners?$apply=groupby((Region,AccountResponsible),"
+				+ "aggregate(SalesAmount,SalesNumber))/orderby(Region%20desc,AccountResponsible)",
+				"sap.ui.model.odata.v4.lib._Cache");
+
 			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("items");
+
+			// code under test -- will log an error because $count was not requested and is
+			// therefore not available
+			assert.strictEqual(oListBinding.getCount(), undefined);
 
 			// code under test
 			oTable.getItems()[0].getBindingContext().expand();
@@ -16315,8 +16354,6 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			oListBinding = oTable.getBinding("items");
-
 			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
 				"/BusinessPartners(Region='Z')",
 				"/BusinessPartners(Region='Z',AccountResponsible='a')",
@@ -18533,6 +18570,8 @@ sap.ui.define([
 
 				assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
 				assert.strictEqual(oListBinding.getLength(), 27, "length includes grand total row");
+				assert.strictEqual(oListBinding.getCount(), 26, "count of leaves");
+
 				// Note: header context gives count of leaves (w/o grand total)
 				that.expectChange("count", "26");
 
@@ -26737,6 +26776,9 @@ sap.ui.define([
 	// Scenario: GET request is triggered before POST, but ends up inside same $batch and thus
 	// could return the newly created entity.
 	// JIRA: CPOUI5UISERVICESV3-1825
+	//
+	// Test ODLB#getCount
+	// JIRA: CPOUI5ODATAV4-958
 	QUnit.skip("JIRA: CPOUI5UISERVICESV3-1825 - GET & POST in same $batch", function (assert) {
 		var oBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
@@ -26769,6 +26811,9 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			var oContext;
+
+			assert.strictEqual(oBinding.getCount(), 3, "count of elements");
+			assert.strictEqual(oBinding.getLength(), 2, "length of the table");
 
 			that.expectRequest({
 					batchNo : 2,
