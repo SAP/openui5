@@ -420,7 +420,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnResizer.prototype._onLeftRightModifiersKeyDown = function(oEvent, iDistanceX) {
-		if (!oEvent.shiftKey) {
+		// prevent column resize when there is text selection in the column header
+		if (!oEvent.shiftKey || oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey || ColumnResizer.detectTextSelection(oEvent.target)) {
 			return;
 		}
 
@@ -435,6 +436,13 @@ sap.ui.define([
 		this._setSessionDistanceX(iDistanceX);
 		this._setColumnWidth();
 		this._endResizeSession();
+	};
+
+	ColumnResizer.detectTextSelection = function(oDomRef) {
+		var oSelection = window.getSelection(),
+			sTextSelection = oSelection.toString().replace("/n", "");
+
+		return sTextSelection && jQuery.contains(oDomRef, oSelection.focusNode);
 	};
 
 	/**
