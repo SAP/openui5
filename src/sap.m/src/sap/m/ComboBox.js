@@ -1578,6 +1578,7 @@ sap.ui.define([
 				oPickerTextField = this.getPickerTextField();
 
 				ListHelpers.fillList(this.getItems(), this._getList(), this._mapItemToListItem.bind(this));
+				itemsVisibilityHandler(this.getItems(), this.filterItems(""));
 
 				if (oPickerTextField) {
 					aProperties.forEach(function (sProp) {
