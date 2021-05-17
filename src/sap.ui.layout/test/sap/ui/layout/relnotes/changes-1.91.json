@@ -3,6 +3,17 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "74d5c03bbe3c6d65afd26c922e2d0295785bf82d",
+        "type": "FIX",
+        "text": " GridRenderer: Provide renderer key for control wrappers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180144530"
+          }
+        ]
+      },
+      {
         "id": "42466f02711031bf9b2b2f99138522d85614e0ca",
         "type": "FIX",
         "text": " layout.Responsive*LayoutRenderer: activate semantic rendering",

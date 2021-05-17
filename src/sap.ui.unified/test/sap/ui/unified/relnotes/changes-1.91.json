@@ -3,6 +3,17 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "957a2fe3fa499890803f5c231bfd9d1e0e6d2e6c",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: now screen reader announces proper week day on Islamic calendar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138934"
+          }
+        ]
+      },
+      {
         "id": "a0ecbc1e8b715cc5208437449e376e4509e21aed",
         "type": "FIX",
         "text": " EmptyIndicator behavior test fix"

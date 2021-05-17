@@ -3,6 +3,27 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "2b32a82da8736568181b589e9cd3332e1adba2d9",
+        "type": "FIX",
+        "text": " XMLViewRenderer: Correctly close placeholder div",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008652872020"
+          }
+        ]
+      },
+      {
+        "id": "60a9885ddfce60ace9f1350f35caca67c2b121fd",
+        "type": "FIX",
+        "text": " sap.ui.core.mvc.View: createContent must support Controls & Promise"
+      },
+      {
+        "id": "d3afbb229c4e9407b311fc3b4a49938a821458b0",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v4.10"
+      },
+      {
         "id": "70661b15ceb2c10318e5781134ef96a28f16c269",
         "type": "FIX",
         "text": " sap.ui.core.Popup: support resizing of blocklayer when custom within area is used"
@@ -37,6 +58,11 @@
             "reference": "2170144784"
           }
         ]
+      },
+      {
+        "id": "e816b12ccf796d64ed123cd000c2f580d11d37ac",
+        "type": "FEATURE",
+        "text": " Opa: add scroll action"
       },
       {
         "id": "ce6431fb00e0c46311d6eb6059628cce4cbc75eb",

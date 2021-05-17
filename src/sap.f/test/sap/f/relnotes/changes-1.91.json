@@ -14,6 +14,17 @@
         ]
       },
       {
+        "id": "116771ba368157ce2a2649469987acc10ad0d6bc",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Visual misalignments fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170123729"
+          }
+        ]
+      },
+      {
         "id": "53bd20e0dcc3c8df2595bc31ae0723070eb7cd54",
         "type": "FIX",
         "text": " sap.f.delegate.GridContainerItemNavigation: Added check for valid DOM element",

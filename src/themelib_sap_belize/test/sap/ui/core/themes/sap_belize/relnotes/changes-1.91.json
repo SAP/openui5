@@ -3,6 +3,17 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "dccfc4a411cbb718f814191106bf464e4bb18385",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: less variables are now overridden correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170128519"
+          }
+        ]
+      },
+      {
         "id": "a0fd7d17bf8cb9940634c0f55264a17120915bb3",
         "type": "FIX",
         "text": " ObjectHeader: Align focus state by VD specification in belize, fiori 3 and fiori 3 HCB/HCW",

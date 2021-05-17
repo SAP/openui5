@@ -3,6 +3,55 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "7d1f4aa30ecce9dc952d7c69fbcf027003c1d780",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: supported empty indicator mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170090815"
+          }
+        ]
+      },
+      {
+        "id": "0fe7a04cb9b9d6ce4ce1cada3332fa198da3a66d",
+        "type": "FIX",
+        "text": " InputBase: retaining wrong DOM value in onAfterRendering is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180144530"
+          }
+        ]
+      },
+      {
+        "id": "0301efadb383d0c1c8e1c3adb98f87944659eb42",
+        "type": "FIX",
+        "text": " sap/m/messagebundle.properties: restored deleted translations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "d3afbb229c4e9407b311fc3b4a49938a821458b0",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v4.10"
+      },
+      {
+        "id": "7bbd47abef3442d83947e47134a3bfd8eae5a832",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Focus outline is now always shown while typing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170062558"
+          }
+        ]
+      },
+      {
         "id": "d8cc2ee8bfaa2d00a08df4a3c9d34434271a2374",
         "type": "FIX",
         "text": " sap.m.DateTimePicker: Styling corrected",
@@ -55,6 +104,17 @@
         "id": "a376daef075b7516e7af7249563a551b0a42b19e",
         "type": "FEATURE",
         "text": " sap.m.TimePicker: redesign"
+      },
+      {
+        "id": "dccfc4a411cbb718f814191106bf464e4bb18385",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: less variables are now overridden correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170128519"
+          }
+        ]
       },
       {
         "id": "79f462c275b2192e13409eeee35c33cf37c9f7ab",
