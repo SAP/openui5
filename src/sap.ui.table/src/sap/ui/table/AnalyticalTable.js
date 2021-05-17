@@ -19,8 +19,7 @@ sap.ui.define([
 	"./plugins/BindingSelection",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/UriParameters"
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		AnalyticalColumn,
@@ -38,15 +37,14 @@ sap.ui.define([
 		BindingSelectionPlugin,
 		Log,
 		assert,
-		jQuery,
-		UriParameters
+		jQuery
 	) {
 	"use strict";
 
-	// shortcuts
-	var GroupEventType = library.GroupEventType,
-		SortOrder = library.SortOrder,
-		TreeAutoExpandMode = library.TreeAutoExpandMode;
+	var GroupEventType = library.GroupEventType;
+	var SortOrder = library.SortOrder;
+	var TreeAutoExpandMode = library.TreeAutoExpandMode;
+	var _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Constructor for a new AnalyticalTable.
@@ -318,6 +316,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	AnalyticalTable.prototype._bindRows = function(oBindingInfo) {
+		delete _private(this).bPendingRequest;
 		this._applyAnalyticalBindingInfo(oBindingInfo);
 		Table.prototype._bindRows.call(this, oBindingInfo);
 	};
@@ -1334,6 +1333,46 @@ sap.ui.define([
 	// This table sets its own constraints on the row counts.
 	AnalyticalTable.prototype._setRowCountConstraints = function() {};
 
-	return AnalyticalTable;
+	// If the AnalyticalBinding is created with the parameter "useBatchRequest" set to false, an imbalance between dataRequested and
+	// dataReceived events can occur. There will be one dataRequested event for every request that would otherwise be part of a batch
+	// request. But still only one dataReceived event is fired after all responses are received.
+	// Therefore, a more limited method using a flag has to be used instead of a counter.
 
+	AnalyticalTable.prototype._onBindingDataRequested = function(oEvent) {
+		if (oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+			return;
+		}
+
+		var oBinding = this.getBinding();
+
+		if (!oBinding.bUseBatchRequests) {
+			_private(this).bPendingRequest = true;
+		}
+
+		Table.prototype._onBindingDataRequested.apply(this, arguments);
+	};
+
+	AnalyticalTable.prototype._onBindingDataReceived = function(oEvent) {
+		if (oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+			return;
+		}
+
+		var oBinding = this.getBinding();
+
+		if (!oBinding.bUseBatchRequests) {
+			_private(this).bPendingRequest = false;
+		}
+
+		Table.prototype._onBindingDataReceived.apply(this, arguments);
+	};
+
+	AnalyticalTable.prototype._hasPendingRequests = function() {
+		if (_private(this).hasOwnProperty("bPendingRequest")) {
+			return _private(this).bPendingRequest;
+		} else {
+			return Table.prototype._hasPendingRequests.apply(this, arguments);
+		}
+	};
+
+	return AnalyticalTable;
 });

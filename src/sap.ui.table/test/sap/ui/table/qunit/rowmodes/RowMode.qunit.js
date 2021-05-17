@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/rowmodes/RowMode",
 	"sap/ui/table/Table",
-	"sap/ui/table/utils/TableUtils"
-], function(TableQUnitUtils, RowMode, Table, TableUtils) {
+	"sap/ui/table/utils/TableUtils",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, RowMode, Table, TableUtils, Core) {
 	"use strict";
 
 	var RowModeSubclass = RowMode.extend("sap.ui.table.test.RowModeSubClass", {
@@ -33,6 +34,9 @@ sap.ui.define([
 			this.delegate = {
 				onBeforeRendering: function() {
 					this.updateTable();
+				},
+				onAfterRendering: function() {
+					this.fireRowsUpdated();
 				}
 			};
 			TableUtils.addDelegate(this.getTable(), this.delegate, this);
@@ -165,72 +169,44 @@ sap.ui.define([
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
-	QUnit.test("Enable NoData when it is disabled in the table", function(assert) {
+	QUnit.test("Enable when it is disabled in the table", function(assert) {
 		this.oTable.setShowNoData(false);
 		this.oTable.unbindRows();
-		sap.ui.getCore().applyChanges();
-
-		var oInvalidateSpy = this.spy(this.oTable, "invalidate");
 		this.oTable.getRowMode().enableNoData();
-		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated");
+		Core.applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
-	QUnit.test("Disable/Enable with data", function(assert) {
-		var oInvalidateSpy = this.spy(this.oTable, "invalidate");
-
-		this.oTable.getRowMode().disableNoData();
-		assert.ok(oInvalidateSpy.notCalled, "Disable: Table not invalidated");
-		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable");
-
-		oInvalidateSpy.reset();
+	QUnit.test("Enable with data", function(assert) {
 		this.oTable.getRowMode().enableNoData();
-		assert.ok(oInvalidateSpy.notCalled, "Enable: Table not invalidated");
-		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Enable");
+		Core.applyChanges();
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
 	QUnit.test("Disable/Enable without data", function(assert) {
-		var oInvalidateSpy = this.spy(this.oTable, "invalidate");
-
 		this.oTable.unbindRows();
-
-		oInvalidateSpy.reset();
 		this.oTable.getRowMode().disableNoData();
-		assert.equal(oInvalidateSpy.callCount, 1, "Disable without rows: Table invalidated");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable");
 
-		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable without rows");
-
-		oInvalidateSpy.reset();
 		this.oTable.getRowMode().disableNoData();
-		assert.ok(oInvalidateSpy.notCalled, "Disable again: Table not invalidated");
+		Core.applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable again");
 
-		oInvalidateSpy.reset();
 		this.oTable.getRowMode().enableNoData();
-		assert.ok(oInvalidateSpy.notCalled, "Enable: Table not invalidated");
+		Core.applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Enable");
 
-		oInvalidateSpy.reset();
 		this.oTable.getRowMode().enableNoData();
-		assert.ok(oInvalidateSpy.notCalled, "Enable again: Table not invalidated");
+		Core.applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Enable again");
-
-		oInvalidateSpy.reset();
-		this.oTable.getRowMode().disableNoData();
-		assert.ok(oInvalidateSpy.notCalled, "Disable with rows: Table not invalidated");
-		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable with rows");
 	});
 
 	QUnit.test("No columns", function(assert) {
 		this.oTable.removeAllColumns();
 		this.oTable.setShowNoData(false);
-		sap.ui.getCore().applyChanges();
-		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
-
-		var oInvalidateSpy = this.spy(this.oTable, "invalidate");
 		this.oTable.getRowMode().disableNoData();
-		assert.ok(oInvalidateSpy.notCalled, "Disable: Table not invalidated");
+		Core.applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Disable");
 	});
 });

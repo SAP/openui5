@@ -13,12 +13,14 @@ sap.ui.define([
 	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/ui/model/type/Float",
+	"sap/ui/model/Filter",
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
-	"sap/ui/core/TooltipBase"
+	"sap/ui/core/TooltipBase",
+	"sap/ui/core/Core"
 ], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2,
 			o4aFakeService, TBA_ServiceDocument, ATBA_Batch_Contexts, ODataModelAdapter, AnalyticalTreeBindingAdapter,
-			TreeAutoExpandMode, AnalyticalColumn, FloatType, Row, library, TooltipBase) {
+			TreeAutoExpandMode, AnalyticalColumn, FloatType, Filter, Row, library, TooltipBase, Core) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -1041,5 +1043,341 @@ sap.ui.define([
 		var oMenu = this._oColumn._createMenu();
 		assert.ok(oMenu.isA("sap.ui.table.AnalyticalColumnMenu"), "Menu available");
 		assert.equal(oMenu.getId(), this._oColumn.getId() + "-menu", "Menu Id");
+	});
+
+	QUnit.module("BusyIndicator", {
+		before: function() {
+			this.oDataModel = new ODataModelV2(sServiceURI);
+
+			TableQUnitUtils.setDefaultSettings({
+				id: "table",
+				models: this.oDataModel,
+				columns: [
+					createColumn({grouped: true, name: "CostCenter"}),
+					createColumn({name: "CostCenterText"}),
+					createColumn({grouped: true, name: "CostElement"}),
+					createColumn({name: "CostElementText"}),
+					createColumn({grouped: true, name: "Currency"}),
+					createColumn({summed: true, name: "ActualCosts"}),
+					createColumn({summed: true, name: "PlannedCosts"})
+				]
+			});
+
+			return this.oDataModel.metadataLoaded();
+		},
+		afterEach: function() {
+			this.getTable().destroy();
+		},
+		after: function() {
+			this.oDataModel.destroy();
+			TableQUnitUtils.setDefaultSettings();
+		},
+		assertState: function(assert, sMessage, mExpectation) {
+			var oTable = this.getTable();
+
+			assert.deepEqual({
+				pendingRequests: oTable._hasPendingRequests(),
+				busy: oTable.getBusy()
+			}, mExpectation, sMessage);
+		},
+		getTable: function() {
+			return Core.byId("table");
+		}
+	});
+
+	QUnit.test("Initial request; Automatic BusyIndicator disabled; Batch requests disabled", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var iCurrentRequest = 0;
+		var iExpectedRequestCount = 2;
+
+		assert.expect(7);
+
+		TableQUnitUtils.createTable(AnalyticalTable, {
+			busyStateChanged: function() {
+				assert.ok(false, "The 'busyStateChanged' event should not be fired");
+			},
+			rows: {
+				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+				events: {
+					dataRequested: function() {
+						that.assertState(assert, "On 'dataRequested'", {pendingRequests: true, busy: false});
+					},
+					dataReceived: function() {
+						that.assertState(assert, "On 'dataReceived'", {pendingRequests: false, busy: false});
+						iCurrentRequest++;
+
+						if (iCurrentRequest === iExpectedRequestCount) {
+							setTimeout(function() {
+								that.assertState(assert, "200ms after last 'dataReceived'", {pendingRequests: false, busy: false});
+								done();
+							}, 200);
+						}
+					}
+				}
+			}
+		});
+
+		this.assertState(assert, "After initialization", {pendingRequests: true, busy: false});
+	});
+
+	QUnit.test("Initial request; Automatic BusyIndicator enabled; Batch requests disabled", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		assert.expect(8);
+
+		TableQUnitUtils.createTable(AnalyticalTable, {
+			enableBusyIndicator: true,
+			busyStateChanged: function(oEvent) {
+				if (oEvent.getParameter("busy")) {
+					that.assertState(assert, "On 'busyStateChanged' - State changed to true", {pendingRequests: true, busy: true});
+				} else {
+					that.assertState(assert, "On 'busyStateChanged' - State changed to false", {pendingRequests: false, busy: false});
+					done();
+				}
+			},
+			rows: {
+				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+				events: {
+					dataRequested: function() {
+						that.assertState(assert, "On 'dataRequested'", {pendingRequests: true, busy: true});
+					},
+					dataReceived: function() {
+						that.assertState(assert, "On 'dataReceived'", {pendingRequests: false, busy: true});
+					}
+				}
+			}
+		});
+
+		this.assertState(assert, "After initialization", {pendingRequests: true, busy: true});
+	});
+
+	QUnit.test("Initial request; Automatic BusyIndicator enabled; Batch requests enabled", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		assert.expect(5);
+
+		TableQUnitUtils.createTable(AnalyticalTable, {
+			enableBusyIndicator: true,
+			busyStateChanged: function(oEvent) {
+				if (oEvent.getParameter("busy")) {
+					that.assertState(assert, "On 'busyStateChanged' - State changed to true", {pendingRequests: true, busy: true});
+				} else {
+					that.assertState(assert, "On 'busyStateChanged' - State changed to false", {pendingRequests: false, busy: false});
+					done();
+				}
+			},
+			rows: {
+				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+				events: {
+					dataRequested: function() {
+						that.assertState(assert, "On 'dataRequested'", {pendingRequests: true, busy: true});
+					},
+					dataReceived: function() {
+						that.assertState(assert, "On 'dataReceived'", {pendingRequests: false, busy: true});
+					}
+				},
+				parameters: {
+					useBatchRequests: true
+				}
+			}
+		});
+
+		this.assertState(assert, "After initialization", {pendingRequests: false, busy: false});
+	});
+
+	QUnit.test("Rebind after 'dataRequested'", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var bRebound = false;
+
+		assert.expect(5);
+
+		TableQUnitUtils.createTable(AnalyticalTable, {
+			enableBusyIndicator: true,
+			busyStateChanged: function(oEvent) {
+				if (oEvent.getParameter("busy")) {
+					that.assertState(assert, "On 'busyStateChanged' - State changed to true", {pendingRequests: true, busy: true});
+				} else {
+					that.assertState(assert, "On 'busyStateChanged' - State changed to false", {pendingRequests: false, busy: false});
+					done();
+				}
+			},
+			rows: {
+				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+				events: {
+					dataRequested: function() {
+						that.assertState(assert, "On 'dataRequested'", {pendingRequests: true, busy: true});
+
+						if (!bRebound) {
+							var oBindingInfo = that.getTable().getBindingInfo("rows");
+
+							oBindingInfo.parameters = {useBatchRequests: true};
+							bRebound = true;
+							that.getTable().bindRows(oBindingInfo);
+						}
+					},
+					dataReceived: function() {
+						that.assertState(assert, "On 'dataReceived'", {pendingRequests: false, busy: true});
+					}
+				}
+			}
+		});
+	});
+
+	QUnit.module("NoData", {
+		before: function() {
+			this.oDataModel = new ODataModelV2(sServiceURI);
+
+			TableQUnitUtils.setDefaultSettings({
+				models: this.oDataModel,
+				columns: [
+					createColumn({grouped: true, name: "CostCenter"}),
+					createColumn({name: "CostCenterText"}),
+					createColumn({grouped: true, name: "CostElement"}),
+					createColumn({name: "CostElementText"}),
+					createColumn({grouped: true, name: "Currency"}),
+					createColumn({summed: true, name: "ActualCosts"}),
+					createColumn({summed: true, name: "PlannedCosts"})
+				]
+			});
+
+			return this.oDataModel.metadataLoaded();
+		},
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
+				rows: {
+					path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+					parameters: {
+						useBatchRequests: true
+					}
+				}
+			});
+			this.iNoDataVisibilityChanges = 0;
+
+			return this.oTable.qunit.whenRenderingFinished().then(function() {
+				this.oObserver = new MutationObserver(function(aRecords) {
+					var oRecord = aRecords[0];
+					var bNoDataWasVisible = oRecord.oldValue.includes("sapUiTableEmpty");
+					var bNoDataIsVisible = oRecord.target.classList.contains("sapUiTableEmpty");
+
+					if (bNoDataWasVisible !== bNoDataIsVisible) {
+						this.iNoDataVisibilityChanges++;
+					}
+				}.bind(this));
+
+				this.oObserver.observe(this.oTable.getDomRef(), {attributes: true, attributeOldValue: true, attributeFilter: ["class"]});
+			}.bind(this));
+		},
+		afterEach: function() {
+			if (this.oObserver) {
+				this.oObserver.disconnect();
+			}
+			this.oTable.destroy();
+		},
+		after: function() {
+			this.oDataModel.destroy();
+			TableQUnitUtils.setDefaultSettings();
+		},
+		assertNoDataVisibilityChangeCount: function(assert, iCount) {
+			assert.equal(this.iNoDataVisibilityChanges, iCount, "Number of NoData visibility changes");
+			this.resetNoDataVisibilityChangeCount();
+		},
+		resetNoDataVisibilityChangeCount: function() {
+			this.iNoDataVisibilityChanges = 0;
+		}
+	});
+
+	QUnit.test("After rendering with data", function(assert) {
+		var pDone;
+
+		this.oTable.destroy();
+		this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
+			rows: {
+				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+				parameters: {
+					useBatchRequests: true
+				}
+			}
+		}, function(oTable) {
+			pDone = new Promise(function(resolve) {
+				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
+					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
+					resolve();
+				});
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				TableQUnitUtils.assertNoDataVisible(assert, oTable, false);
+			});
+		});
+
+		return pDone;
+	});
+
+	QUnit.test("After rendering without data", function(assert) {
+		var pDone;
+
+		this.oTable.destroy();
+		this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
+			rows: {
+				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+				parameters: {
+					useBatchRequests: true
+				}
+			}
+		}, function(oTable) {
+			oTable.getBinding().getLength = function() {return 0;}; // It seems that the MockServer with the analytical fake service can't filter.
+			pDone = new Promise(function(resolve) {
+				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
+					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
+					resolve();
+				});
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
+			});
+		});
+
+		return pDone;
+	});
+
+	QUnit.test("Bind/Unbind", function(assert) {
+		var oBindingInfo = this.oTable.getBindingInfo("rows");
+		var that = this;
+
+		this.oTable.unbindRows();
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
+			that.assertNoDataVisibilityChangeCount(assert, 1);
+			that.oTable.bindRows(oBindingInfo);
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
+			that.assertNoDataVisibilityChangeCount(assert, 1);
+		});
+	});
+
+	QUnit.test("Rerender while binding/unbinding", function(assert) {
+		var oBindingInfo = this.oTable.getBindingInfo("rows");
+		var that = this;
+
+		this.oTable.unbindRows();
+		this.oTable.rerender();
+		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
+			that.assertNoDataVisibilityChangeCount(assert, 1);
+			that.oTable.rerender();
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
+			that.assertNoDataVisibilityChangeCount(assert, 0);
+			that.oTable.bindRows(oBindingInfo);
+			that.oTable.rerender();
+		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
+			that.assertNoDataVisibilityChangeCount(assert, 1);
+			that.oTable.rerender();
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Rerender");
+			that.assertNoDataVisibilityChangeCount(assert, 0);
+		});
 	});
 });

@@ -27,6 +27,8 @@ sap.ui.define([
 	) {
 	"use strict";
 
+	var _private = TableUtils.createWeakMapFacade();
+
 	/**
 	 * Constructor for a new TreeTable.
 	 *
@@ -157,6 +159,9 @@ sap.ui.define([
 	 */
 	TreeTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
+
+		_private(this).bPendingRequest = false;
+
 		TableUtils.Grouping.setToDefaultTreeMode(this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
@@ -164,6 +169,8 @@ sap.ui.define([
 	};
 
 	TreeTable.prototype._bindRows = function(oBindingInfo) {
+		_private(this).bPendingRequest = false;
+
 		if (!oBindingInfo.parameters) {
 			oBindingInfo.parameters = {};
 		}
@@ -688,6 +695,24 @@ sap.ui.define([
 		return new BindingSelectionPlugin();
 	};
 
-	return TreeTable;
+	// If the ODataTreeBindingFlat adapter is applied to the TreeBinding, the adapter fires a dataRequested event on every call of getNodes,
+	// even if no request is sent. This can happen if the adapter ignores the request, because it finds out there is a pending request which
+	// covers it. When a request is ignored, no dataReceived event is fired.
+	// Therefore, a more limited method using a flag has to be used instead of a counter.
 
+	TreeTable.prototype._onBindingDataRequested = function(oEvent) {
+		_private(this).bPendingRequest = true;
+		Table.prototype._onBindingDataRequested.apply(this, arguments);
+	};
+
+	TreeTable.prototype._onBindingDataReceived = function(oEvent) {
+		_private(this).bPendingRequest = false;
+		Table.prototype._onBindingDataReceived.apply(this, arguments);
+	};
+
+	TreeTable.prototype._hasPendingRequests = function() {
+		return _private(this).bPendingRequest;
+	};
+
+	return TreeTable;
 });

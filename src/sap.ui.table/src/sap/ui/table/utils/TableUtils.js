@@ -398,55 +398,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns whether one or more requests are currently in process by the binding.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Whether the binding of the table is currently requesting data.
-		 */
-		hasPendingRequests: function(oTable) {
-			if (!oTable) {
-				return false;
-			}
-
-			if (TableUtils.canUsePendingRequestsCounter(oTable)) {
-				return oTable._iPendingRequests > 0;
-			} else {
-				return oTable._bPendingRequest;
-			}
-		},
-
-		/**
-		 * A counter to determine whether there are pending requests can be used if exactly one dataReceived event is fired for every
-		 * dataRequested event. If this is not the case and there can be an imbalance between dataReceived and dataRequested events, a more limited
-		 * method using a boolean flag must be used.
-		 *
-		 * It is not always possible to correctly determine whether there is a pending request, because the table must use a flag instead of a
-		 * counter. A flag is necessary under the following conditions:
-		 *
-		 * If the AnalyticalBinding is created with the parameter "useBatchRequest" set to false, an imbalance between dataRequested and
-		 * dataReceived events can occur. There will be one dataRequested event for every request that would otherwise be part of a batch
-		 * request. But still only one dataReceived event is fired after all responses are received.
-		 *
-		 * If the ODataTreeBindingFlat adapter is applied to the TreeBinding, the adapter fires a dataRequested event on every call of getNodes,
-		 * even if no request is sent. This can happen if the adapter ignores the request, because it finds out there is a pending request which
-		 * covers it. When a request is ignored no dataReceived event is fired.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Returns <code>true</code>, if the table can use a counter for pending request detection.
-		 */
-		canUsePendingRequestsCounter: function(oTable) {
-			var oBinding = oTable ? oTable.getBinding() : null;
-
-			if (TableUtils.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding")) {
-				return oBinding.bUseBatchRequests;
-			} else if (TableUtils.isA(oBinding, "sap.ui.model.TreeBinding")) {
-				return false;
-			}
-
-			return true;
-		},
-
-		/**
 		 * Checks whether an object is of the given type(s).
 		 * Wrapper for {@link sap.ui.base.Object.isA}.
 		 *

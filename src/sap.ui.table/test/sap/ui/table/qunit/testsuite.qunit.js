@@ -103,7 +103,8 @@ sap.ui.define([
 			},
 			"TreeTable": {
 			},
-			"TreeTableOData": {
+			"TreeTable with ODataV2": {
+				module: "./TreeTable.ODataV2.qunit",
 				sinon: false, /*uses Mockserver*/
 				coverage: {
 					only: null /*full report*/

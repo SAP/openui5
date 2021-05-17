@@ -723,24 +723,10 @@ sap.ui.define([
 	 */
 	RowMode.prototype.disableNoData = function() {
 		var oTable = this.getTable();
-		var bNoDataVisible;
 
-		if (this.isNoDataDisabled()) {
-			return;
-		}
-
-		bNoDataVisible = oTable ? TableUtils.isNoDataVisible(oTable) : false;
-		_private(this).bNoDataDisabled = true;
-
-		if (!oTable) {
-			return;
-		}
-
-		if (bNoDataVisible && oTable.getRows().length === 0) {
-			// If the NoData text is disabled, but there is no data, the table needs to be invalidated to make sure that empty rows are rendered.
+		if (oTable && !this.isNoDataDisabled()) {
+			_private(this).bNoDataDisabled = true;
 			oTable.invalidate();
-		} else if (!oTable._bInvalid) {
-			oTable._updateNoData();
 		}
 	};
 
@@ -753,14 +739,9 @@ sap.ui.define([
 	RowMode.prototype.enableNoData = function() {
 		var oTable = this.getTable();
 
-		if (!this.isNoDataDisabled()) {
-			return;
-		}
-
-		_private(this).bNoDataDisabled = false;
-
-		if (oTable && !oTable._bInvalid) {
-			oTable._updateNoData();
+		if (oTable && this.isNoDataDisabled()) {
+			_private(this).bNoDataDisabled = false;
+			oTable.invalidate();
 		}
 	};
 

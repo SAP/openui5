@@ -309,17 +309,12 @@ sap.ui.define([
 	});
 
 	function createTableSettings(TableClass, mSettings) {
-		var oMetadata = TableClass.getMetadata();
-		var aProperties = Object.keys(oMetadata.getAllProperties());
-		var aAggregations = Object.keys(oMetadata.getAllAggregations());
-		var aAssociations = Object.keys(oMetadata.getAllAssociations());
-		var aAdditionalKeys = ["models"];
-		var aAllMetadataKeys = aProperties.concat(aAggregations).concat(aAssociations).concat(aAdditionalKeys);
+		var aAllSettingKeys = Object.keys(TableClass.getMetadata().getAllSettings());
 
-		aAllMetadataKeys = aAllMetadataKeys.concat(["rowMode", "creationRow"]); // TODO: Remove this once row modes and CreationRow are public.
+		aAllSettingKeys = aAllSettingKeys.concat(["rowMode", "creationRow"]); // TODO: Remove this once row modes and CreationRow are public.
 
 		return Object.keys(mSettings).reduce(function(oObject, sKey) {
-			if (aAllMetadataKeys.indexOf(sKey) >= 0) {
+			if (aAllSettingKeys.indexOf(sKey) >= 0) {
 				oObject[sKey] = mSettings[sKey];
 			}
 			return oObject;
@@ -894,6 +889,9 @@ sap.ui.define([
 			fnBeforePlaceAt = mSettings;
 			mSettings = TableClass;
 			TableClass = Table;
+		} else if (typeof TableClass === "function" && typeof mSettings === "function") {
+			fnBeforePlaceAt = mSettings;
+			mSettings = undefined;
 		}
 		mSettings = Object.assign({}, deepCloneSettings(mDefaultSettings), mSettings);
 		TableClass = TableClass == null ? Table : TableClass;
@@ -1257,7 +1255,8 @@ sap.ui.define([
 
 		if (!bVisible) {
 			// If the NoData element is not visible, the table must have focusable elements (cells).
-			assert.ok(oTable.qunit.getDataCell(0, 0), sTestTitle + "If 'NoData' is not visible, rows are rendered");
+			assert.ok(oTable.qunit.getDataCell(0, oTable._getVisibleColumns()[0].getIndex()),
+				sTestTitle + "If 'NoData' is not visible, rows are rendered");
 		}
 	};
 

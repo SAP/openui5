@@ -1645,8 +1645,9 @@ sap.ui.define([
 	QUnit.test("ARIA for NoData", function(assert) {
 		var done = assert.async();
 		var $NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
-		//2xTable + Row Selector = 3
-		assert.strictEqual($NoDataCoveredElements.length, 3, "Number of potentionally covered elements");
+
+		// 2xTable + Row Selector = 3
+		assert.strictEqual($NoDataCoveredElements.length, 3, "Number of potentially covered elements");
 		$NoDataCoveredElements.each(function() {
 			assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
 		});
@@ -1663,6 +1664,7 @@ sap.ui.define([
 				assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 			});
 			oTable.setShowNoData(false);
+			sap.ui.getCore().applyChanges();
 			$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
 			$NoDataCoveredElements.each(function() {
 				assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");

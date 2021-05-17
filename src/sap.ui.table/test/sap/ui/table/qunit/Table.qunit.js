@@ -1178,19 +1178,6 @@ sap.ui.define([
 		assert.deepEqual(aColumns[1], oColA, "The column was inserted at the correct position by index");
 	});
 
-	QUnit.test("NoColumns handling", function (assert) {
-		var sNoDataClassOfTable = "sapUiTableEmpty";
-
-		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), false,
-			"Columns are visible - The table has the NoColumns class assigned: " + false);
-
-		oTable.removeAllColumns();
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), true,
-			"No columns are visible - The table has the NoColumns class assigned: " + true);
-	});
-
 	QUnit.test("ColumnMenu", function(assert) {
 		var oColumn = oTable.getColumns()[1];
 		var oMenu = oColumn.getMenu();
@@ -3953,7 +3940,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Unbind", function(assert) {
+	QUnit.test("Unbind with showNoData=true", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
 		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
@@ -3969,6 +3956,48 @@ sap.ui.define([
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Unbind
 			]);
+		});
+	});
+
+	QUnit.test("Unbind with showNoData=false", function(assert) {
+		var aFiredReasons = [];
+		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed, true, function(oTable) {
+			oTable.setShowNoData(false);
+		});
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			aFiredReasons = [];
+			oTable.unbindRows();
+
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Unbind
+			]);
+		});
+	});
+
+	QUnit.test("Unbind when invalid", function(assert) {
+		var aFiredReasons = [];
+		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			aFiredReasons = [];
+			oTable.invalidate();
+			oTable.unbindRows();
+
+			// Because the table was invalidated, rows will be re-rendered, clearing all modifications that were done in a "rowsUpdated" event
+			// listener. It is therefore not required to fire the event because of the unbind. In general, the "rowsUpdated" event is not fired
+			// if the table has no binding for the rows aggregation.
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		});
 	});
 
@@ -4651,120 +4680,6 @@ sap.ui.define([
 		assert.verifySteps(["busy: true", "busy: false", "busy: true", "busy: false"], "busyStateChanged event");
 
 		oControlSetBusy.restore();
-	});
-
-	QUnit.test("BusyIndicator handling", function(assert) {
-		var sBusyIndicatorParent = "sapUiTableCnt";
-		var sBusyIndicatorClass = "sapUiLocalBusyIndicator";
-		var onBusyStateChangedEventHandler = function(oEvent) {
-			onBusyStateChangedEventHandler.callCount = this.callCount === undefined ? 1 : this.callCount + 1;
-			onBusyStateChangedEventHandler.parameters = oEvent.mParameters;
-		};
-		onBusyStateChangedEventHandler.reset = function() {
-			onBusyStateChangedEventHandler.callCount = 0;
-			onBusyStateChangedEventHandler.parameters = null;
-		};
-		var oEvent = {};
-		var oBinding = oTable.getBinding();
-		oEvent.getSource = function() {
-			return oBinding;
-		};
-		oEvent.getParameter = function() {
-			return false;
-		};
-		var clock = sinon.useFakeTimers();
-
-		oTable.attachEvent("busyStateChanged", onBusyStateChangedEventHandler);
-		oTable.setBusyIndicatorDelay(0);
-
-		function test(bDataRequested, vExpectedPendingRequests, bExpectedBusyIndicatorVisible) {
-			var bBusyStateBefore = oTable.getBusy();
-
-			onBusyStateChangedEventHandler.reset();
-
-			if (bDataRequested) {
-				oTable._onBindingDataRequested.call(oTable, oEvent);
-			} else {
-				oTable._onBindingDataReceived.call(oTable, oEvent);
-				clock.tick(1);
-			}
-			sap.ui.getCore().applyChanges();
-
-			assert.strictEqual(oTable.getBusy(), bExpectedBusyIndicatorVisible, "The busy state of the table is: " + bExpectedBusyIndicatorVisible);
-
-			if (bBusyStateBefore === bExpectedBusyIndicatorVisible) {
-				assert.strictEqual(onBusyStateChangedEventHandler.callCount, 0, "BusyStateChanged event has not been fired");
-			} else {
-				assert.strictEqual(onBusyStateChangedEventHandler.callCount, 1, "BusyStateChanged event has been fired once");
-
-				if (onBusyStateChangedEventHandler.callCount === 1) {
-					assert.deepEqual(onBusyStateChangedEventHandler.parameters, {busy: bExpectedBusyIndicatorVisible, id: oTable.getId()},
-						"BusyStateChanged event has been fired with the correct arguments");
-				}
-			}
-
-			assert.strictEqual(oTable.getDomRef(sBusyIndicatorParent).querySelector("." + sBusyIndicatorClass) != null, bExpectedBusyIndicatorVisible,
-				"The busy indicator element exists in the DOM: " + bExpectedBusyIndicatorVisible);
-
-			if (typeof vExpectedPendingRequests === "boolean") {
-				assert.strictEqual(oTable._bPendingRequest, vExpectedPendingRequests, "The pending requests flag is correct");
-			} else {
-				assert.strictEqual(oTable._iPendingRequests, vExpectedPendingRequests, "The pending requests counter is correct");
-			}
-		}
-
-		// Busy indicator handling disabled: No busy state change.
-		oTable.setEnableBusyIndicator(false);
-		test(true, 1, false);
-		test(true, 2, false);
-		test(false, 1, false);
-		test(false, 0, false);
-		oTable.setEnableBusyIndicator(true);
-
-		// No binding: No busy state change.
-		sinon.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
-		test(true, 0, false);
-		test(true, 0, false);
-		test(false, 0, false);
-		test(false, 0, false);
-		oTable.getBinding.restore();
-
-		// Simulated asynchronous analytical binding request: No busy state change.
-		oEvent.getParameter = function() {
-			return true;
-		};
-		test(true, 0, false);
-		test(true, 0, false);
-		test(false, 0, false);
-		test(false, 0, false);
-		oEvent.getParameter = function() {
-			return false;
-		};
-
-		sinon.stub(TableUtils, "canUsePendingRequestsCounter").returns(true);
-		test(true, 1, true); // Data requested: Set busy state to true.
-		test(true, 2, true); // Data requested: Keep busy state.
-		test(false, 1, true); // Data received: Keep busy state.
-		test(false, 0, false); // Data received: Set busy state to false.
-
-		TableUtils.canUsePendingRequestsCounter.returns(false);
-		test(true, true, true); // Data requested: Set busy state to true.
-		test(true, true, true); // Data requested: Keep busy state.
-		test(false, false, false); // Data received: Set busy state to false.
-		test(false, false, false); // Data received: Keep busy state.
-
-		// Handling of a "dataRequested" event after multiple "dataReceived" events if the pending requests counter cannot be used.
-		oTable._onBindingDataReceived.call(oTable, oEvent);
-		oTable._onBindingDataReceived.call(oTable, oEvent);
-		oTable._onBindingDataRequested.call(oTable, oEvent);
-		clock.tick(1);
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oTable.getBusy(), true, "The busy state of the table is: true");
-
-		// Cleanup
-		oTable.detachEvent("busyStateChanged", onBusyStateChangedEventHandler);
-		clock.restore();
-		TableUtils.canUsePendingRequestsCounter.restore();
 	});
 
 	QUnit.test("test setGroupBy function", function(assert) {
@@ -5802,67 +5717,40 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change 'showNoData' property with data", function(assert) {
-		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
-
 		this.oTable.setShowNoData(true);
-		assert.ok(this.oTable.getShowNoData(), "Change from true to true: Property value");
-		assert.ok(oInvalidateSpy.notCalled, "Change from true to true: Table not invalidated");
+		sap.ui.getCore().applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to true");
 
-		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(false);
-		assert.ok(!this.oTable.getShowNoData(), "Change from true to false: Property value");
-		assert.ok(oInvalidateSpy.notCalled, "Change from true to false: Table not invalidated");
+		sap.ui.getCore().applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to false");
 
-		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(false);
-		assert.ok(!this.oTable.getShowNoData(), "Change from false to false: Property value");
-		assert.ok(oInvalidateSpy.notCalled, "Change from false to false: Table not invalidated");
+		sap.ui.getCore().applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from false to false");
 
-		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(true);
-		assert.ok(this.oTable.getShowNoData(), "Change from false to true: Property value");
-		assert.ok(oInvalidateSpy.notCalled, "Change from false to true: Table not invalidated");
+		sap.ui.getCore().applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from false to true");
 	});
 
 	QUnit.test("Change 'showNoData' property without data", function(assert) {
-		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
-
 		this.oTable.unbindRows();
-
-		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(true);
-		assert.ok(this.oTable.getShowNoData(), "Change from true to true: Property value");
-		assert.ok(oInvalidateSpy.notCalled, "Change from true to true: Table not invalidated");
+		sap.ui.getCore().applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Change from true to true");
 
-		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(false);
-		assert.ok(!this.oTable.getShowNoData(), "Change from true to false without rows: Property value");
-		assert.equal(oInvalidateSpy.callCount, 1, "Change from true to false without rows: Table invalidated");
 		sap.ui.getCore().applyChanges();
-		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to false without rows");
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to false");
 
-		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(false);
-		assert.ok(!this.oTable.getShowNoData(), "Change from false to false: Property value");
-		assert.ok(oInvalidateSpy.notCalled, "Change from false to false: Table not invalidated");
+		sap.ui.getCore().applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from false to false");
 
-		oInvalidateSpy.reset();
 		this.oTable.setShowNoData(true);
-		assert.ok(this.oTable.getShowNoData(), "Change from false to true: Property value");
-		assert.ok(oInvalidateSpy.notCalled, "Change from false to true: Table not invalidated");
+		sap.ui.getCore().applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Change from false to true");
-
-		oInvalidateSpy.reset();
-		this.oTable.setShowNoData(false);
-		assert.ok(!this.oTable.getShowNoData(), "Change from true to false with rows: Property value");
-		assert.ok(oInvalidateSpy.notCalled, "Change from true to false with rows: Table not invalidated");
-		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to false with rows");
 	});
 
 	QUnit.test("Change 'noData' aggregation", function(assert) {
@@ -5904,76 +5792,28 @@ sap.ui.define([
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
 	});
 
-	QUnit.test("Update visibility", function(assert) {
-		var oBinding = this.oTable.getBinding();
-		var oGetBindingLength = sinon.stub(oBinding, "getLength");
-		var oBindingIsA = sinon.stub(oBinding, "isA");
-		var oClock = sinon.useFakeTimers();
+	QUnit.test("Binding change", function(assert) {
+		var oBindingInfo = this.oTable.getBindingInfo("rows");
 		var that = this;
 
-		function testNoData(bVisible, sTestTitle) {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, bVisible, sTestTitle);
-			assert.strictEqual(TableUtils.isNoDataVisible(that.oTable), bVisible, sTestTitle + " - NoData is visible: " + bVisible);
-		}
-
-		function testDataReceivedListener(bNoDataVisible, sTestTitle) {
-			var oEvent = {
-				getSource: function() {
-					return oBinding;
-				},
-				getParameter: function() {
-					return false;
-				}
-			};
-
-			that.oTable._onBindingDataReceived.call(that.oTable, oEvent);
-			oClock.tick(1);
-			sap.ui.getCore().applyChanges();
-
-			testNoData(bNoDataVisible, sTestTitle);
-		}
-
-		function testUpdateTotalRowCount(bNoDataVisible, sTestTitle) {
-			that.oTable._adjustToTotalRowCount();
-			sap.ui.getCore().applyChanges();
-
-			testNoData(bNoDataVisible, sTestTitle);
-		}
-
-		oGetBindingLength.returns(1);
-		this.oTable.setShowNoData(true);
-
-		// Data available: NoData area is not visible.
-		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Data available");
-		assert.strictEqual(TableUtils.isNoDataVisible(this.oTable), false, "Data available - NoData is visible: false");
-
-		// No data received: NoData area becomes visible.
-		oGetBindingLength.returns(0);
-		testDataReceivedListener(true, "No data received");
-
-		// Data received: NoData area will be hidden.
-		oGetBindingLength.returns(1);
-		testDataReceivedListener(false, "Data received");
-
-		// Client binding without data: NoData area becomes visible.
-		oBindingIsA.withArgs("sap.ui.model.ClientListBinding").returns(true);
-		oGetBindingLength.returns(0);
-		testUpdateTotalRowCount(true, "Client binding without data");
-
-		// Client binding with data: NoData area will be hidden.
-		oBindingIsA.restore();
-		oBindingIsA.withArgs("sap.ui.model.ClientTreeBinding").returns(true);
-		oGetBindingLength.returns(1);
-		testUpdateTotalRowCount(false, "Client binding with data");
-
-		// Binding removed: NoData area becomes visible.
-		oBindingIsA.restore();
-		this.oTable.unbindRows();
-		testUpdateTotalRowCount(true, "Binding removed");
-
-		// Cleanup
-		oClock.restore();
-		oGetBindingLength.restore();
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			that.oTable.getBinding().filter(new Filter({
+				path: "something",
+				operator: "LT",
+				value1: 5
+			}));
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Filter");
+			that.oTable.getBinding().filter();
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Remove filter");
+			that.oTable.unbindRows();
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
+			that.oTable.bindRows(oBindingInfo);
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
+		});
 	});
 
 	QUnit.module("Hierarchy modes", {
