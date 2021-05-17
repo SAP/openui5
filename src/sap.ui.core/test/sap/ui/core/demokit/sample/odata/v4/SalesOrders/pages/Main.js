@@ -785,17 +785,41 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				checkMessageStrip : function (sExpectedMessageType) {
+				/*
+				 * Checks if a message strip with the given type is shown for the given table.
+				 *
+				 * @param {string} sTableId
+				 *   Table control id
+				 * @param {string} [sExpectedMessageType]
+				 *   The expected message type; undefined if no message strip is expected
+				 */
+				checkMessageStrip : function (sTableId, sExpectedMessageType) {
 					this.waitFor({
-						controlType : "sap.m.MessageStrip",
-						success : function (aMatchedControls) {
-							var sMessageType = aMatchedControls[0].getProperty("type");
+						controlType : "sap.m.Table",
+						id : sTableId,
+						success : function (oTable) {
+							this.waitFor({
+								controlType : "sap.m.MessageStrip",
+								matchers : new Ancestor(oTable),
+								success : function (aControls) {
+									var oMessageStrip = aControls[0];
 
-							Opa5.assert.strictEqual(sMessageType, sExpectedMessageType,
-								"Message strip shows correct message: " + sExpectedMessageType);
+									if (oMessageStrip.getVisible()) {
+										Opa5.assert.strictEqual(oMessageStrip.getType(),
+											sExpectedMessageType,
+											"Message strip in table " + sTableId
+												+ " shows correct message type: "
+												+ sExpectedMessageType);
+									} else {
+										Opa5.assert.strictEqual(sExpectedMessageType, undefined,
+											"Message strip in table " + sTableId + " is invisible");
+									}
+								},
+								viewName : sViewName,
+								visible : false
+							});
 						},
-						viewName : sViewName,
-						visible : false
+						viewName : sViewName
 					});
 				},
 				checkNewSalesOrderItemProductName : function (sExpectProductName) {

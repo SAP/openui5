@@ -41,7 +41,7 @@ sap.ui.define([
 			When.onTheMainPage.firstSalesOrderIsVisible();
 			Then.onTheMainPage.checkMessagesButtonCount(3);
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteWarning);
-			Then.onTheMainPage.checkMessageStrip("Error");
+			Then.onTheMainPage.checkMessageStrip("SalesOrderList", "Error");
 			Then.onTheMainPage.checkHighlight(1, "Error");
 
 			When.onTheMainPage.pressMessagesButton();
@@ -116,7 +116,8 @@ sap.ui.define([
 				sNoteWarning);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
 				sQuantityError);
-			Then.onTheMainPage.checkMessageStrip("Error");
+			Then.onTheMainPage.checkMessageStrip("SalesOrderList", "Error");
+			Then.onTheMainPage.checkMessageStrip("SO_2_SOITEM", "Error");
 			Then.onTheMainPage.checkHighlight(1, "Error");
 
 			When.onTheMainPage.pressMessagesButton();
@@ -257,7 +258,8 @@ sap.ui.define([
 
 			// MessageStrip, highlight and filter entities by messages scenario
 			Then.onTheMainPage.checkMessagesButtonCount(2);
-			Then.onTheMainPage.checkMessageStrip("Error");
+			Then.onTheMainPage.checkMessageStrip("SalesOrderList", "Error");
+			Then.onTheMainPage.checkMessageStrip("SO_2_SOITEM");
 			Then.onTheMainPage.checkHighlight(1, "Error");
 			When.onTheMainPage.pressMoreButton(); // 0500000006 has further messages
 			Then.onTheMainPage.checkMessagesButtonCount(4);
@@ -278,6 +280,14 @@ sap.ui.define([
 			}]);
 			When.onTheMessagePopover.close();
 			When.onTheMainPage.selectSalesOrder(6);
+			Then.onTheMainPage.checkMessageStrip("SalesOrderList", "Error");
+			Then.onTheMainPage.checkMessageStrip("SO_2_SOITEM", "Error");
+			When.onTheMainPage.selectSalesOrder(5);
+			Then.onTheMainPage.checkMessageStrip("SalesOrderList", "Error");
+			Then.onTheMainPage.checkMessageStrip("SO_2_SOITEM");
+			When.onTheMainPage.selectSalesOrder(6);
+			Then.onTheMainPage.checkMessageStrip("SalesOrderList", "Error");
+			Then.onTheMainPage.checkMessageStrip("SO_2_SOITEM", "Error");
 			Then.onTheMainPage.checkMessagesButtonCount(4);
 			Then.onTheMainPage.checkTableLength(8, "SO_2_SOITEM");
 			When.onTheMainPage.setFilter("Error");

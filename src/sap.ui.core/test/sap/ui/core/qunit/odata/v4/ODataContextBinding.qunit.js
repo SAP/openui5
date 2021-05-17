@@ -383,12 +383,12 @@ sap.ui.define([
 }].forEach(function (oFixture, i) {
 	QUnit.test("setContext, relative path, " + i, function (assert) {
 		var oBinding,
+			oBindingPrototypeMock = this.mock(Binding.prototype),
 			oContext = {
 				getBinding : function () {},
 				getPath : function () { return "/contextPath"; }
 			},
-			oModelMock = this.mock(this.oModel),
-			oSetContextSpy = this.spy(Binding.prototype, "setContext");
+			oModelMock = this.mock(this.oModel);
 
 		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 		oBinding = this.bindContext("relative");
@@ -396,16 +396,15 @@ sap.ui.define([
 		oModelMock.expects("resolve").twice()
 			.withExactArgs("relative", sinon.match.same(oContext))
 			.returns("/contextPath/relative");
-		this.mock(oBinding).expects("_fireChange").twice()
-			.withExactArgs({reason : ChangeReason.Context});
+		oBindingPrototypeMock.expects("setContext").on(oBinding)
+			.withExactArgs(sinon.match.same(oContext));
 
 		// code under test
 		oBinding.setContext(oContext);
 
-		assert.strictEqual(oBinding.oContext, oContext);
 		assert.strictEqual(oBinding.getBoundContext().getPath(), "/contextPath/relative");
-		assert.strictEqual(oSetContextSpy.callCount, 1);
 
+		oBinding.oContext = oContext;
 		oBinding.oParameterContext = oFixture.oParameterContext;
 		oBinding.oReturnValueContext = oFixture.oReturnValueContext;
 		this.mock(oBinding.getBoundContext()).expects("destroy").withExactArgs();
@@ -415,24 +414,23 @@ sap.ui.define([
 		if (oFixture.oReturnValueContext) {
 			this.mock(oBinding.oReturnValueContext).expects("destroy").withExactArgs();
 		}
-
 		oModelMock.expects("resolve").withExactArgs("relative", undefined).returns(undefined);
+		oBindingPrototypeMock.expects("setContext").on(oBinding).withExactArgs(undefined);
 
 		// code under test: reset parent binding fires change
 		oBinding.setContext(undefined);
 
-		assert.strictEqual(oBinding.oContext, undefined);
 		assert.strictEqual(oBinding.getBoundContext(), null);
 		assert.strictEqual(oBinding.oParameterContext, null);
 		assert.strictEqual(oBinding.oReturnValueContext, null);
-		assert.strictEqual(oSetContextSpy.callCount, 2);
 
-		// code under test: setting to null doesn't change the bound context -> no change event
+		oBinding.oContext = undefined;
+
+		// code under test: setting to null doesn't change the bound context -> no change event,
+		// i.e. Binding#setContext is not called
 		oBinding.setContext(null);
 
-		assert.strictEqual(oBinding.oContext, null);
 		assert.strictEqual(oBinding.getBoundContext(), null);
-		assert.strictEqual(oSetContextSpy.callCount, 2, "no addt'l change event");
 	});
 });
 
@@ -483,16 +481,16 @@ sap.ui.define([
 					.withExactArgs("EMPLOYEE_2_TEAM", sinon.match.same(oTargetContext))
 					.returns("/EMPLOYEES(ID='2')/EMPLOYEE_2_TEAM");
 			}
-			this.mock(oBinding).expects("_fireChange")
-				.withExactArgs({reason : ChangeReason.Context});
 			if (oInitialContext) {
 				this.mock(oBinding.getBoundContext()).expects("destroy").withExactArgs();
 			}
+			this.mock(Binding.prototype).expects("setContext").on(oBinding)
+				.withExactArgs(sinon.match.same(oTargetContext));
+
 
 			// code under test
 			oBinding.setContext(oTargetContext);
 
-			assert.strictEqual(oBinding.oContext, oTargetContext);
 			if (oTargetContext) {
 				assert.strictEqual(oBinding.getBoundContext().getPath(),
 					"/EMPLOYEES(ID='2')/EMPLOYEE_2_TEAM");

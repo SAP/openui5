@@ -27,10 +27,23 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("setContext", function (assert) {
 		var oContext = {},
-			oBinding = new Binding(/*oModel*/null, "some/path", oContext);
+			oBinding = new Binding(/*oModel*/null, "some/path", oContext),
+			oDataState = {
+				getControlMessages : function () {},
+				reset : function () {}
+			},
+			oMessageManager = {removeMessages : function () {}};
 
 		assert.strictEqual(oBinding.getContext(), oContext);
 
+		this.mock(sap.ui.getCore()).expects("getMessageManager").withExactArgs()
+			.returns(oMessageManager);
+		this.mock(oBinding).expects("getDataState").withExactArgs().twice().returns(oDataState);
+		this.mock(oDataState).expects("getControlMessages").withExactArgs()
+			.returns("~messages");
+		this.mock(oMessageManager).expects("removeMessages").withExactArgs("~messages", true);
+		this.mock(oDataState).expects("reset").withExactArgs();
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
 		this.mock(oBinding).expects("_fireChange").withExactArgs({
 			reason : ChangeReason.Context
 		});

@@ -189,7 +189,8 @@ sap.ui.define([
 			sap.ui.getCore().getMessageManager()
 				.removeMessages(this.getDataState().getControlMessages(), true);
 			this.oContext = oContext;
-			this.oDataState = null;
+			this.getDataState().reset();
+			this.checkDataState();
 			mChangeParameters = {reason : ChangeReason.Context};
 			if (mParameters && mParameters.detailedReason) {
 				mChangeParameters.detailedReason = mParameters.detailedReason;

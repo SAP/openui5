@@ -198,7 +198,7 @@ sap.ui.define([
 				oSalesOrderContext = oTable.getSelectedItem().getBindingContext();
 
 			function onConfirm(sCode) {
-				if (sCode !== 'OK') {
+				if (sCode !== "OK") {
 					return;
 				}
 				// Use "$auto" or "$direct" just like selected when creating the model
@@ -229,7 +229,7 @@ sap.ui.define([
 			}
 
 			function onConfirm(sCode) {
-				if (sCode !== 'OK') {
+				if (sCode !== "OK") {
 					return;
 				}
 
@@ -348,28 +348,33 @@ sap.ui.define([
 		},
 
 		onInit : function () {
+			var oHighlightBindingInfo = {
+					formatter : function (aModelMessages, oRowData) {
+						var aMessages,
+							//formatter MUST be defined in a way that this is the control!
+							oRowContext = this.getBindingContext();
+
+						if (oRowContext) { // formatter is called with oRowContext null initially
+							aMessages = oRowContext.getMessages();
+							return aMessages.length
+								? aMessages[0].type
+								: sap.ui.core.MessageType.None;
+						}
+					},
+					parts : [
+						"messageModel>/",
+						{ // ensure formatter is called on scrolling
+							mode : "OneTime",
+							path : "",
+							targetType : "any"
+						}
+					]
+				};
+
 			this.initMessagePopover("showMessages");
 
-			this.byId("highlight").bindProperty("highlight", {
-				formatter : function (aModelMessages, oRowData) {
-					var aMessages,
-						//formatter MUST be defined in a way that this is the control!
-						oRowContext = this.getBindingContext();
-
-					if (oRowContext) { // formatter is called with oRowContext null initially
-						aMessages = oRowContext.getMessages();
-						return aMessages.length ? aMessages[0].type : sap.ui.core.MessageType.None;
-					}
-				},
-				parts : [
-					'messageModel>/',
-					{ // ensure formatter is called on scrolling
-						mode : 'OneTime',
-						path : '',
-						targetType : 'any'
-					}
-				]
-			});
+			this.byId("highlight").bindProperty("highlight", oHighlightBindingInfo);
+			this.byId("itemHighlight").bindProperty("highlight", oHighlightBindingInfo);
 		},
 
 		onProductIDChanged : function (oEvent) {

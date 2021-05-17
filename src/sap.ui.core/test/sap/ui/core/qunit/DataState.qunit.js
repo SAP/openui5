@@ -23,6 +23,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor",function(assert) {
+		var oDataState,
+			oDataStateMock = this.mock(DataState);
+
+		oDataStateMock.expects("getInitialProperties").withExactArgs().returns("~initial0");
+		oDataStateMock.expects("getInitialProperties").withExactArgs().returns("~initial1");
+
+		// code under test
+		oDataState = new DataState();
+
+		assert.strictEqual(oDataState.mProperties, "~initial0");
+		assert.strictEqual(oDataState.mChangedProperties, "~initial1");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("test DataState API",function(assert) {
 		var oDataState = new DataState();
 		var mChanges = oDataState.getChanges();
@@ -161,5 +176,43 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oDataState._getOldMessages(), "aMessages");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getInitialProperties", function(assert) {
+		var oInitialProperties;
+
+		// code under test
+		oInitialProperties = DataState.getInitialProperties();
+
+		assert.deepEqual(oInitialProperties, {
+			controlMessages : [],
+			dirty : false,
+			internalValue : undefined,
+			invalidValue : undefined,
+			laundering : false,
+			messages : [],
+			modelMessages : [],
+			originalInternalValue : undefined,
+			originalValue : undefined,
+			value : undefined
+		});
+
+		// code under test
+		assert.notStrictEqual(DataState.getInitialProperties(), oInitialProperties);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reset", function(assert) {
+		var oDataState = new DataState();
+
+		this.mock(DataState).expects("getInitialProperties").withExactArgs().returns("~initial");
+
+		assert.notStrictEqual(oDataState.mChangedProperties, "~initial");
+
+		// code under test
+		oDataState.reset();
+
+		assert.strictEqual(oDataState.mChangedProperties, "~initial");
 	});
 });

@@ -70,21 +70,9 @@ sap.ui.define([
 	 */
 	var DataState = BaseObject.extend("sap.ui.model.DataState", /** @lends sap.ui.model.DataState.prototype */ {
 		metadata : {},
-		constructor : function() {
-			this.mProperties = {
-				modelMessages : [],
-				controlMessages: [],
-				laundering: false,
-				originalValue : undefined,
-				originalInternalValue: undefined,
-				value : undefined,
-				invalidValue: undefined,
-				internalValue: undefined,
-				dirty: false,
-				messages: []
-
-			};
-			this.mChangedProperties = Object.assign({},this.mProperties);
+		constructor : function () {
+			this.mProperties = DataState.getInitialProperties();
+			this.mChangedProperties = DataState.getInitialProperties();
 		}
 	});
 
@@ -393,6 +381,37 @@ sap.ui.define([
 		}
 
 		return mChanges;
+	};
+
+	/**
+	 * Returns an object containing the data state properties with their initial value; each call
+	 * to this method creates a new object.
+	 *
+	 * @returns {object} An object with the initial data state properties
+	 * @private
+	 */
+	DataState.getInitialProperties = function () {
+		return {
+			controlMessages : [],
+			dirty : false,
+			internalValue : undefined,
+			invalidValue : undefined,
+			laundering : false,
+			messages : [],
+			modelMessages : [],
+			originalInternalValue : undefined,
+			originalValue : undefined,
+			value : undefined
+		};
+	};
+
+	/**
+	 * Resets the data state properties to their initial value.
+	 *
+	 * @private
+	 */
+	DataState.prototype.reset = function () {
+		this.mChangedProperties = DataState.getInitialProperties();
 	};
 
 	return DataState;

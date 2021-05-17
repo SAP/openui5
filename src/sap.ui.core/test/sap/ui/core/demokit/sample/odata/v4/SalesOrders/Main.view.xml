@@ -383,6 +383,9 @@
 						templateShareable : false
 					}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">
+				<dependents>
+					<plugins:DataStateIndicator/>
+				</dependents>
 				<!--Note: templateShareable has to be false in order to ensure that the
 					template is destroyed by the framework, otherwise the reuse of the template
 					(e.g. within OPA test sequence) leads to duplicate ID errors-->
@@ -449,7 +452,7 @@
 						<Text text="Note"/>
 					</Column>
 				</columns>
-				<ColumnListItem>
+				<ColumnListItem id="itemHighlight">
 					<Text text="{SalesOrderID}"/>
 					<Text text="{ItemPosition}"/>
 					<demo:ValueHelp id="SO_2_SOITEM:ProductID" value="{ProductID}"

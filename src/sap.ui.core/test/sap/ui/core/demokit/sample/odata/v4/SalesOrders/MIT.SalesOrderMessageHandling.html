@@ -226,8 +226,8 @@
 		<ul>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				<code>2</code>.</li>
-			<li><b>Check:</b> A message strip is displayed above the table indicating that there are
-				issues for the table.</li>
+			<li><b>Check:</b> A message strip is displayed above the <code>New Sales Orders</code>
+				table indicating that there are issues for the table.</li>
 			<li><b>Check:</b> The row of the sales order with the ID <code>0500000001</code> is
 				highlighted as an error.</li>
 			<li>Press the 'More' button of the <code>New Sales Orders</code> table.</li>
@@ -250,8 +250,18 @@
 				still <code>4</code>.</li>
 			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
 				<code>0500000006</code>.</li>
-			<li><b>Check:</b> There are 8 line items, one with an value state error "Enter a Note"
-				</li>
+			<li><b>Check:</b> A message strip is displayed above the
+				<code>Sales Order Line Items</code> table indicating that there are issues.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000005</code> which has no issues.</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table shows no issues: There
+				is no message strip above the table.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000006</code> again.</li>
+			<li><b>Check:</b> A message strip is displayed above the
+				<code>Sales Order Line Items</code> table indicating that there are issues.</li>
+			<li><b>Check:</b> There are 8 line items, one is highlighted as an error and has a
+				quantity field with value state error "Enter a minimum value of 2"</li>
 			<li>Change the <code>Filter</code> value in the <code>Sales Order Line Items</code>
 				table from <code>Show All</code> to <code>With Error Messages</code>.<br />
 				<b>Check:</b> Only the line item with the error is displayed.<br />
