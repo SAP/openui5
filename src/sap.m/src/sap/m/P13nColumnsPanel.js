@@ -102,6 +102,7 @@ sap.ui.define([
 				 * @since 1.26.0
 				 */
 				addColumnsItem: {
+					deprecated: true,
 					parameters: {
 						/**
 						 * <code>columnsItem</code> that needs to be added in the model.
@@ -159,7 +160,9 @@ sap.ui.define([
 				 * @deprecated As of version 1.50, the event <code>setData</code> is obsolete.
 				 * @since 1.26.7
 				 */
-				setData: {}
+				setData: {
+					deprecated: true
+				}
 			}
 		},
 		renderer: {

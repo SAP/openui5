@@ -62,6 +62,7 @@ sap.ui.define([
 					"sap.ui.core.Toolbar"
 				],
 				library: "sap.ui.commons",
+				deprecated: true,
 				properties: {
 					/**
 					 * When there is not enough space for the toolbar to display all items, the rightmost items are overflowing into a drop-down menu.

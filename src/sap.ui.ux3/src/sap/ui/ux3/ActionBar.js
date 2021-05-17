@@ -80,6 +80,7 @@ sap.ui.define([
 	 */
 	var ActionBar = Control.extend("sap.ui.ux3.ActionBar", /** @lends sap.ui.ux3.ActionBar.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

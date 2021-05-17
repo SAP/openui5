@@ -50,6 +50,7 @@ sap.ui.define([
 	var ApplicationHeader = Control.extend("sap.ui.commons.ApplicationHeader", /** @lends sap.ui.commons.ApplicationHeader.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

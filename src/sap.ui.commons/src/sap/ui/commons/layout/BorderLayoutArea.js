@@ -35,6 +35,7 @@ sap.ui.define(['sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 
 	 */
 	var BorderLayoutArea = Element.extend("sap.ui.commons.layout.BorderLayoutArea", /** @lends sap.ui.commons.layout.BorderLayoutArea.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.commons",
 		properties : {
 

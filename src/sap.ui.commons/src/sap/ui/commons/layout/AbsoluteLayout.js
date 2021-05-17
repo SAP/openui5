@@ -43,6 +43,7 @@ sap.ui.define([
 	 */
 	var AbsoluteLayout = Control.extend("sap.ui.commons.layout.AbsoluteLayout", /** @lends sap.ui.commons.layout.AbsoluteLayout.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.commons",
 		properties : {
 			/**

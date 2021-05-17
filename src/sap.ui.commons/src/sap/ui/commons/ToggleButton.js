@@ -31,6 +31,7 @@ sap.ui.define(['./Button', './ToggleButtonRenderer'],
 	var ToggleButton = Button.extend("sap.ui.commons.ToggleButton", /** @lends sap.ui.commons.ToggleButton.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

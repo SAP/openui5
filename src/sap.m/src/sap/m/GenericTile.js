@@ -93,7 +93,7 @@ sap.ui.define([
 				 * The size of the tile. If not set, then the default size is applied based on the device.
 				 * @deprecated Since version 1.38.0. The GenericTile control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				size: {type: "sap.m.Size", group: "Misc", defaultValue: Size.Auto},
+				size: {type: "sap.m.Size", group: "Misc", defaultValue: Size.Auto, deprecated: true},
 				/**
 				 * The FrameType: OneByOne, TwoByOne, OneByHalf, or TwoByHalf. Default set to OneByOne if property is not defined or set to Auto by the app.
 				 */
@@ -172,7 +172,7 @@ sap.ui.define([
 				 * This aggregation is deprecated since version 1.36.0, to display an icon or image use sap.m.ImageContent control instead.
 				 * @deprecated since version 1.36.0. This aggregation is deprecated, use sap.m.ImageContent control to display an icon instead.
 				 */
-				icon: {type: "sap.ui.core.Control", multiple: false},
+				icon: {type: "sap.ui.core.Control", multiple: false, deprecated: true},
 				/**
 				 * The hidden aggregation for the title.
 				 */

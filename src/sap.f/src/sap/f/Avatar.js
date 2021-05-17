@@ -51,6 +51,7 @@ sap.ui.define([
 	var Avatar = MAvatar.extend("sap.f.Avatar", {
 		metadata: {
 			library: "sap.f",
+			deprecated: true,
 			properties: { },
 			designtime: "sap/f/designtime/Avatar.designtime"
 		},

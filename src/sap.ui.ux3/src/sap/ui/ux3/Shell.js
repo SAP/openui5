@@ -96,6 +96,7 @@ sap.ui.define([
 	 */
 	var Shell = Control.extend("sap.ui.ux3.Shell", /** @lends sap.ui.ux3.Shell.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

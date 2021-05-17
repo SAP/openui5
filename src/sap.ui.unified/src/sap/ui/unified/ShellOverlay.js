@@ -50,6 +50,7 @@ sap.ui.define([
 	var ShellOverlay = Control.extend("sap.ui.unified.ShellOverlay", /** @lends sap.ui.unified.ShellOverlay.prototype */ { metadata : {
 
 		library : "sap.ui.unified",
+		deprecated : true,
 		defaultAggregation : "content",
 		aggregations : {
 

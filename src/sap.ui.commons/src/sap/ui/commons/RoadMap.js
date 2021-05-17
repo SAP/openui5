@@ -38,6 +38,7 @@ sap.ui.define([
 	var RoadMap = Control.extend("sap.ui.commons.RoadMap", /** @lends sap.ui.commons.RoadMap.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

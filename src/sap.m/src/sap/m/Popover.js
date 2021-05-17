@@ -212,7 +212,7 @@ sap.ui.define([
 					 * @since 1.16.5
 					 * @deprecated since 1.42. This parameter is obsolete and has no effect.
 					 */
-					bounce: {type: "boolean", group: "Behavior", defaultValue: null},
+					bounce: {type: "boolean", group: "Behavior", defaultValue: null, deprecated: true},
 
 					/**
 					 * Whether resize option is enabled.

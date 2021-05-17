@@ -32,6 +32,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyle
 	var TreeNode = Element.extend("sap.ui.commons.TreeNode", /** @lends sap.ui.commons.TreeNode.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

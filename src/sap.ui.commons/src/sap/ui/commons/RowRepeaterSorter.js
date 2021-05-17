@@ -31,6 +31,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	var RowRepeaterSorter = Element.extend("sap.ui.commons.RowRepeaterSorter", /** @lends sap.ui.commons.RowRepeaterSorter.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

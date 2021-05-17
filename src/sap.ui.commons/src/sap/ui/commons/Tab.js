@@ -37,6 +37,7 @@ sap.ui.define(['./Panel', './library', 'sap/ui/core/library'],
 		metadata : {
 
 			library : "sap.ui.commons",
+			deprecated: true,
 			properties : {
 
 				/**
@@ -56,7 +57,7 @@ sap.ui.define(['./Panel', './library', 'sap/ui/core/library'],
 
 				/**
 				 * Defines whether the tab is the active one.
-				 * @deprecated AS of 0.17.0.
+				 * @deprecated As of 0.17.0.
 				 * This property is not used. To identify the selected tab in a TabStrip selectedIndex is used.
 				 */
 				selected : {type : "boolean", group : "Behavior", defaultValue : false, deprecated: true}

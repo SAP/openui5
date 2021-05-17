@@ -37,6 +37,7 @@ sap.ui.define([
 	var ValueHelpField = TextField.extend("sap.ui.commons.ValueHelpField", /** @lends sap.ui.commons.ValueHelpField.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

@@ -60,6 +60,7 @@ sap.ui.define([
 	var InPlaceEdit = Control.extend("sap.ui.commons.InPlaceEdit", /** @lends sap.ui.commons.InPlaceEdit.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

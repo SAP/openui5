@@ -43,6 +43,7 @@ sap.ui.define([
 	 */
 	var Overlay = Control.extend("sap.ui.ux3.Overlay", /** @lends sap.ui.ux3.Overlay.prototype */ { metadata : {
 
+		deprecated: true,
 		interfaces : [
 			"sap.ui.core.PopupInterface"
 		],

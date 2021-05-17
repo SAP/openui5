@@ -114,7 +114,7 @@ sap.ui.define([
 			 * in versions greater than or equal to 1.32.1
 			 * @deprecated Since version 1.32.1
 			 */
-			design : {type : "string", group : "Appearance", defaultValue : "auto"}
+			design : {type : "string", group : "Appearance", defaultValue : "auto", deprecated: true}
 		},
 		associations: {
 			/**

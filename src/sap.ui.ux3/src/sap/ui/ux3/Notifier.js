@@ -44,6 +44,7 @@ sap.ui.define([
 	 */
 	var Notifier = Element.extend("sap.ui.ux3.Notifier", /** @lends sap.ui.ux3.Notifier.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

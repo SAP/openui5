@@ -30,7 +30,8 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './TextField', './library', './Passwo
 	 */
 	var PasswordField = TextField.extend("sap.ui.commons.PasswordField", /** @lends sap.ui.commons.PasswordField.prototype */ { metadata : {
 
-		library : "sap.ui.commons"
+		library : "sap.ui.commons",
+		deprecated: true
 	}});
 
 	PasswordField.prototype.onfocusin = function(oEvent) {

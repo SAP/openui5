@@ -31,6 +31,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	var ResponsiveContainerRange = Element.extend("sap.ui.commons.ResponsiveContainerRange", /** @lends sap.ui.commons.ResponsiveContainerRange.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

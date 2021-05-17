@@ -38,6 +38,7 @@ sap.ui.define([
 	 */
 	var CollectionInspector = Control.extend("sap.ui.ux3.CollectionInspector", /** @lends sap.ui.ux3.CollectionInspector.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

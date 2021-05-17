@@ -42,6 +42,7 @@ sap.ui.define([
 	 */
 	var ListBox = Control.extend("sap.ui.commons.ListBox", /** @lends sap.ui.commons.ListBox.prototype */ { metadata : {
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

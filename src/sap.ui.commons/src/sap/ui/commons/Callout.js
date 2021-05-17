@@ -31,6 +31,7 @@ sap.ui.define(['./CalloutBase', './library', './CalloutRenderer'],
 	var Callout = CalloutBase.extend("sap.ui.commons.Callout", /** @lends sap.ui.commons.Callout.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		aggregations : {
 
 			/**

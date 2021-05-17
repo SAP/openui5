@@ -45,6 +45,7 @@ sap.ui.define([
 	var DropdownBox = ComboBox.extend("sap.ui.commons.DropdownBox", /** @lends sap.ui.commons.DropdownBox.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

@@ -47,6 +47,7 @@ sap.ui.define([
 	var RatingIndicator = Control.extend("sap.ui.commons.RatingIndicator", /** @lends sap.ui.commons.RatingIndicator.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 			/**
 			 * Determines if the rating symbols can be edited.

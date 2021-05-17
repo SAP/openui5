@@ -39,6 +39,7 @@ sap.ui.define([
 	 */
 	var ExactArea = Control.extend("sap.ui.ux3.ExactArea", /** @lends sap.ui.ux3.ExactArea.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

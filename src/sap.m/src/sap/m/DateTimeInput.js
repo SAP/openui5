@@ -72,6 +72,7 @@ function(
 	var DateTimeInput = Control.extend("sap.m.DateTimeInput", /** @lends sap.m.DateTimeInput.prototype */ { metadata : {
 
 		library : "sap.m",
+		deprecated: true,
 		designtime: "sap/m/designtime/DateTimeInput.designtime",
 		properties : {
 

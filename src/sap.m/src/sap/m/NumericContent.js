@@ -157,7 +157,7 @@ sap.ui.define([
 				 * Updates the size of the control. If not set, then the default size is applied based on the device tile.
 				 * @deprecated Since version 1.38.0. The NumericContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				"size": {type: "sap.m.Size", group: "Appearance", defaultValue: "Auto"},
+				"size": {type: "sap.m.Size", group: "Appearance", defaultValue: "Auto", deprecated: true},
 
 				/**
 				 * The number of characters of the <code>value</code> property to display.

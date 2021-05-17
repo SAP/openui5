@@ -36,6 +36,7 @@ sap.ui.define([
 	 */
 	var OverlayContainer = Overlay.extend("sap.ui.ux3.OverlayContainer", /** @lends sap.ui.ux3.OverlayContainer.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		defaultAggregation : "content",
 		aggregations : {

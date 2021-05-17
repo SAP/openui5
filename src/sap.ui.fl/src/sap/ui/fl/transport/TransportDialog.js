@@ -26,9 +26,12 @@ function(
 	 * @deprecated Since version 1.74
 	 * The TransportDialog should be used only internally inside the <code>sap.ui.fl</code> library.
 	 * @alias sap.ui.fl.transport.TransportDialog
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TransportDialog = InternalTransportDialog.extend("sap.ui.fl.transport.TransportDialog");
+	var TransportDialog = InternalTransportDialog.extend("sap.ui.fl.transport.TransportDialog", {
+		metadata: {
+			deprecated: true
+		}
+	});
 
 	return TransportDialog;
 });

@@ -38,6 +38,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ImageRenderer'],
 			"sap.ui.core.IFormContent"
 		],
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

@@ -80,6 +80,7 @@ sap.ui.define([
 	 */
 	var SearchField = Control.extend("sap.ui.commons.SearchField", /** @lends sap.ui.commons.SearchField.prototype */ { metadata : {
 
+		deprecated: true,
 		interfaces : [
 			"sap.ui.commons.ToolbarItem"
 		],

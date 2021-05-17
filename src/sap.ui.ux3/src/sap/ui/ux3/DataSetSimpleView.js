@@ -45,6 +45,7 @@ sap.ui.define([
 	 */
 	var DataSetSimpleView = Control.extend("sap.ui.ux3.DataSetSimpleView", /** @lends sap.ui.ux3.DataSetSimpleView.prototype */ { metadata : {
 
+		deprecated: true,
 		interfaces : [
 			"sap.ui.ux3.DataSetView"
 		],

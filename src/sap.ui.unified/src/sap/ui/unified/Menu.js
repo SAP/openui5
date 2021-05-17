@@ -82,7 +82,7 @@ sap.ui.define([
 			 * Accessible label / description of the menu for assistive technologies like screenreaders.
 			 * @deprecated as of version 1.27.0, replaced by <code>ariaLabelledBy</code> association
 			 */
-			ariaDescription : {type : "string", group : "Accessibility", defaultValue : null},
+			ariaDescription : {type : "string", group : "Accessibility", defaultValue : null, deprecated: true},
 
 			/**
 			 * The maximum number of items which are displayed before an overflow mechanism takes effect.

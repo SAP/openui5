@@ -29,6 +29,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/SelectionModel', './library'
 	 */
 	var Collection = Element.extend("sap.ui.ux3.Collection", /** @lends sap.ui.ux3.Collection.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

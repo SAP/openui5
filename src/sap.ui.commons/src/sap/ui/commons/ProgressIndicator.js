@@ -40,6 +40,7 @@ sap.ui.define([
 	 */
 	var ProgressIndicator = Control.extend("sap.ui.commons.ProgressIndicator", /** @lends sap.ui.commons.ProgressIndicator.prototype */ { metadata : {
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

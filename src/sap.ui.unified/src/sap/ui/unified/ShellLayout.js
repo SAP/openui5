@@ -58,6 +58,7 @@ sap.ui.define([
 	var ShellLayout = Control.extend("sap.ui.unified.ShellLayout", /** @lends sap.ui.unified.ShellLayout.prototype */ { metadata : {
 
 		library : "sap.ui.unified",
+		deprecated: true,
 		properties : {
 
 			/**

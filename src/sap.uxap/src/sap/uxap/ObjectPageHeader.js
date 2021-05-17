@@ -171,7 +171,8 @@ sap.ui.define([
 				 */
 				headerDesign: {
 					type: "sap.uxap.ObjectPageHeaderDesign",
-					defaultValue: ObjectPageHeaderDesign.Light
+					defaultValue: ObjectPageHeaderDesign.Light,
+					deprecated: true
 				},
 
 				/**
@@ -234,7 +235,7 @@ sap.ui.define([
 				 * A list of all the active link elements in the BreadCrumbs control.
 				 * @deprecated as of version 1.50, use the <code>breadcrumbs</code> aggregation instead.
 				 */
-				breadCrumbsLinks: {type: "sap.m.Link", multiple: true, singularName: "breadCrumbLink"},
+				breadCrumbsLinks: {type: "sap.m.Link", multiple: true, singularName: "breadCrumbLink", deprecated: true},
 
 				/**
 				 *

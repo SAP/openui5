@@ -40,6 +40,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	var Panel = Control.extend("sap.ui.commons.Panel", /** @lends sap.ui.commons.Panel.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

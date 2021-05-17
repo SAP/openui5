@@ -34,6 +34,7 @@ sap.ui.define([
 	 */
 	var HorizontalLayout = LayoutHorizontalLayout.extend("sap.ui.commons.layout.HorizontalLayout", /** @lends sap.ui.commons.layout.HorizontalLayout.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.commons"
 	}});
 

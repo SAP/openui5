@@ -56,6 +56,7 @@ sap.ui.define([
 			"sap.ui.commons.ToolbarItem"
 		],
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

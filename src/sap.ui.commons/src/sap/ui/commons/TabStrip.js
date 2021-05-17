@@ -64,6 +64,7 @@ sap.ui.define([
 	var TabStrip = Control.extend("sap.ui.commons.TabStrip", /** @lends sap.ui.commons.TabStrip.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

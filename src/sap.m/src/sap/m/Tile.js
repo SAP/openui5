@@ -45,6 +45,7 @@ sap.ui.define([
 	var Tile = Control.extend("sap.m.Tile", /** @lends sap.m.Tile.prototype */ { metadata : {
 
 		library : "sap.m",
+		deprecated: true,
 		properties : {
 
 			/**

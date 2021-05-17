@@ -58,6 +58,7 @@ sap.ui.define([
 	 */
 	var ExactBrowser = Control.extend("sap.ui.ux3.ExactBrowser", /** @lends sap.ui.ux3.ExactBrowser.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

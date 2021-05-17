@@ -42,6 +42,7 @@ sap.ui.define([
 	 */
 	var ThingViewer = Control.extend("sap.ui.ux3.ThingViewer", /** @lends sap.ui.ux3.ThingViewer.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

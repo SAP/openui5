@@ -57,7 +57,7 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 			 * @since 1.13.2
 			 * @deprecated Since version 1.40.10
 			 */
-			upperCase : {type : "boolean", group : "Appearance", defaultValue : false},
+			upperCase : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
 			 * Defines the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.

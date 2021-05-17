@@ -31,6 +31,7 @@ sap.ui.define(['sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 
 	 */
 	var MatrixLayoutRow = Element.extend("sap.ui.commons.layout.MatrixLayoutRow", /** @lends sap.ui.commons.layout.MatrixLayoutRow.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.commons",
 		aggregatingType : "MatrixLayout",
 		properties : {

@@ -28,6 +28,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 */
 	var ThingAction = Element.extend("sap.ui.ux3.ThingAction", /** @lends sap.ui.ux3.ThingAction.prototype */ { metadata : {
 
+		deprecated: true,
 		library : "sap.ui.ux3",
 		properties : {
 

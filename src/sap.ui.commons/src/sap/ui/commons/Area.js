@@ -31,6 +31,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/Element', '
 	var Area = Element.extend("sap.ui.commons.Area", /** @lends sap.ui.commons.Area.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
+		deprecated: true,
 		properties : {
 
 			/**

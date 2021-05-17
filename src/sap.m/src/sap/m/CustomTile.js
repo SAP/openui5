@@ -31,6 +31,7 @@ sap.ui.define(['./Tile', './library', './CustomTileRenderer'],
 	var CustomTile = Tile.extend("sap.m.CustomTile", /** @lends sap.m.CustomTile.prototype */ { metadata : {
 
 		library : "sap.m",
+		deprecated: true,
 		designtime: "sap/m/designtime/CustomTile.designtime",
 		defaultAggregation : "content",
 		aggregations : {
