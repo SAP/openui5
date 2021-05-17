@@ -1865,7 +1865,16 @@ function(
 
 			var oSubHeader = this.getSubHeader();
 			if (oSubHeader) {
-				aLabels.unshift(oSubHeader.getId());
+				var aSubtitles = oSubHeader.findAggregatedObjects(true, function(oObject) {
+					return oObject.isA("sap.m.Title");
+				});
+
+				// if there are titles in the subheader, add all of them to labels, else use the full subheader
+				if (aSubtitles.length) {
+					aLabels = aSubtitles.map(function (oTitle) {
+						return oTitle.getId();
+					}).concat(aLabels);
+				}
 			}
 
 			if (oHeader) {

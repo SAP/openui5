@@ -30,7 +30,8 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/InstanceManager",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/m/Title"
 ], function(
 	Log,
 	qutils,
@@ -61,7 +62,8 @@ sap.ui.define([
 	Column,
 	InstanceManager,
 	JSONModel,
-	KeyCodes
+	KeyCodes,
+	Title
 ) {
 	"use strict";
 
@@ -1115,14 +1117,13 @@ sap.ui.define([
 
 		// Assert
 		var dialogTitleId = oDialog.$().find('header > .sapMBar .sapMTitle').attr('id');
-		var subHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar').attr('id');
+		var subHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar .sapMTitle').attr('id');
 		var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
-		assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogTitleId + ' ' + subHeaderId +
-			' ' + TEXT_ID);
-		assert.strictEqual(dialogAriaLabelledBy.length, 3);
+		assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogTitleId + ' ' + TEXT_ID);
+		assert.strictEqual(dialogAriaLabelledBy.length, 2);
 		assert.strictEqual(dialogAriaLabelledBy.indexOf(dialogTitleId), 0);
-		assert.strictEqual(dialogAriaLabelledBy.indexOf(subHeaderId), 1);
-		assert.strictEqual(dialogAriaLabelledBy.indexOf(TEXT_ID), 2);
+		assert.strictEqual(dialogAriaLabelledBy.indexOf(subHeaderId), -1);
+		assert.strictEqual(dialogAriaLabelledBy.indexOf(TEXT_ID), 1);
 
 		// Clean up
 		oDialog.destroy();
@@ -1531,6 +1532,32 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oDialog.$().attr('aria-modal'), "true", 'aria-modal attribute is true');
+
+		// cleanup
+		oDialog.destroy();
+	});
+
+	QUnit.test("Dialog should have aria-labelledBy pointing to title inside the subheader", function(assert) {
+		// arrange
+		var oDialog = new Dialog({
+			title: "Qunit test",
+			subHeader: new Bar({
+				contentMiddle: [
+					new Title({
+						text: "subtitle"
+					})
+				]
+			})
+		});
+
+		// act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		var dialogTitleId = oDialog.$().find('header > .sapMBar .sapMTitle').attr('id');
+		var titleInSubHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar .sapMTitle').attr('id');
+		assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogTitleId + ' ' + titleInSubHeaderId);
 
 		// cleanup
 		oDialog.destroy();
