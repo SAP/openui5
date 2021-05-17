@@ -138,7 +138,7 @@ sap.ui.define([
 	ContentFactory.prototype.getContentMode = function(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators) {
 		var sContentMode = ContentMode.Edit;
 		if (sEditMode === EditMode.Display) {
-			sContentMode = ContentMode.Display;
+			sContentMode = bMultipleLines ? ContentMode.DisplayMultiLine : ContentMode.Display;
 		} else if (iMaxConditions !== 1) {
 			sContentMode = ContentMode.EditMulti;
 		} else if (bMultipleLines) {

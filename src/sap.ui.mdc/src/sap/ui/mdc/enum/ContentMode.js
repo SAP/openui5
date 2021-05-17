@@ -23,6 +23,12 @@ sap.ui.define(function() {
 		/**
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
+		 * @since 1.91
+		 */
+		DisplayMultiLine: "DisplayMultiLine",
+		/**
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Edit: "Edit",
 		/**
