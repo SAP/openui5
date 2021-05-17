@@ -151,6 +151,9 @@
 									<smartForm:GroupElement id="EntityType02.technicalInvisibleProp" visible="false" label="Technical invisible via ui.hidden annotation (not revealable)">
 										<TextArea value="{TechnicalInvisibleProperty}"/>
 									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Field with property bound to control field" id="PropertyBoundToControlField">
+										<TextArea id="BoundPropertyHiddenByAnnotationTextArea" value="{EntityType02_Property03}" visible="{EntityType02_Property03f}"/>
+									</smartForm:GroupElement>
 								</smartForm:Group>
 							</smartForm:SmartForm>
 						</uxap:ObjectPageSubSection>

@@ -15,7 +15,7 @@ sap.ui.define([
 	 * @param {Object} mProperty - property from entityType
 	 * @returns {boolean} - Returns true if property is using a complex type
 	 */
-	function _isComplexType (mProperty) {
+	function isComplexType (mProperty) {
 		if (mProperty && mProperty.type) {
 			if (mProperty.type.toLowerCase().indexOf("edm") !== 0) {
 				return true;
@@ -52,7 +52,7 @@ sap.ui.define([
 		return vBinding;
 	}
 
-	function _enrichProperty(mProperty, mODataEntity, oElement, sAggregationName) {
+	function enrichProperty(mProperty, mODataEntity, oElement, sAggregationName) {
 		var mProp = {
 			name: mProperty.name,
 			bindingPath: mProperty.name,
@@ -91,22 +91,32 @@ sap.ui.define([
 	}
 
 	function _convertMetadataToDelegateFormat (mODataEntity, oMetaModel, oElement, sAggregationName) {
+		var aFieldControlProperties = mODataEntity.property.map(function(mProperty) {
+			return mProperty["sap:field-control"];
+		}).filter(Boolean);
+
+		var fnFilterFieldControlProperties = function (mProperty) {
+			return !aFieldControlProperties.includes(mProperty.name);
+		};
+
 		var aProperties = mODataEntity.property.map(function(mProperty) {
-			var mProp = _enrichProperty(mProperty, mODataEntity, oElement, sAggregationName);
-			if (_isComplexType(mProperty)) {
+			var mProp = enrichProperty(mProperty, mODataEntity, oElement, sAggregationName);
+			if (isComplexType(mProperty)) {
 				var mComplexType = oMetaModel.getODataComplexType(mProperty.type);
 				if (mComplexType) {
 					//deep properties, could get multiple-level deep
 					mProp.properties = mComplexType.property.map(function(mComplexProperty) {
-						var mInnerProp = _enrichProperty(mComplexProperty, mODataEntity, oElement, sAggregationName);
+						var mInnerProp = enrichProperty(mComplexProperty, mODataEntity, oElement, sAggregationName);
 						mInnerProp.bindingPath = mProperty.name + "/" + mComplexProperty.name;
-						mInnerProp.referencedComplexPropertyName = mProp.label || mProp.name; //TODO find a more generic name here and in dialog
+						mInnerProp.referencedComplexPropertyName = mProp.label || mProp.name;
 						return mInnerProp;
-					});
+					})
+					.filter(fnFilterFieldControlProperties);
 				}
 			}
 			return mProp;
 		});
+
 		if (mODataEntity.navigationProperty) {
 			var aNavigationProperties = mODataEntity.navigationProperty.map(function(mNavProp) {
 				var sFullyQualifiedEntityName = (
@@ -124,7 +134,8 @@ sap.ui.define([
 			});
 			aProperties = aProperties.concat(aNavigationProperties);
 		}
-		return aProperties;
+
+		return aProperties.filter(fnFilterFieldControlProperties);
 	}
 	function _getBindingPath(oElement, sAggregationName, mPayload) {
 		if (mPayload.path) {
