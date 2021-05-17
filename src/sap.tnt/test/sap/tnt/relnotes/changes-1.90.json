@@ -1,7 +1,18 @@
 {
   "1.90.0": {
-    "date": "April 2021",
+    "date": "May 2021",
     "notes": [
+      {
+        "id": "a8929d4e11dbf73a78683968c4d571ddad4e57e4",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Improved null check for empty aggregations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180140208"
+          }
+        ]
+      },
       {
         "id": "af3c4e06f44418e812d5db89a0bfc47926324ca6",
         "type": "FIX",
