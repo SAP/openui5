@@ -893,7 +893,7 @@ sap.ui.define([
 	};
 
 	IconTabFilter.prototype._hasChildWithBadge = function () {
-		var aItems = this._isOverflow() ? this._getIconTabHeader()._getItemsForOverflow() : this._getAllSubItems();
+		var aItems = this._isOverflow() ? this._getIconTabHeader()._getItemsForOverflow(this._bIsStartOverflow) : this._getAllSubItems();
 
 		return aItems.some(function (oIT) {
 			return oIT.isA("sap.m.IBadge") && oIT.getBadgeCustomData() && oIT.getBadgeCustomData().getVisible();
