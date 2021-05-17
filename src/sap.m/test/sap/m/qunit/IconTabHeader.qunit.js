@@ -937,4 +937,38 @@ sap.ui.define([
 		// Assert
 		assert.notOk(this.oITH._getOverflow()._isBadgeAttached, "Badge is removed from the start overflow tab");
 	});
+
+	QUnit.module("Separator", {
+
+		beforeEach: function () {
+			this.oITH = createHeaderWithItems(40, true);
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Separator goes to the overflow", function (assert) {
+
+		this.oITH.$().width("400px");
+		Core.applyChanges();
+
+		var aItems = this.oITH.getItems(),
+			oLastVisibleItem = aItems[6],
+			oLastVisibleSeparator = aItems[5];
+
+		// Assert
+		assert.notOk(oLastVisibleItem.$().hasClass("sapMITBFilterHidden"), "the last item is visible");
+		assert.notOk(oLastVisibleSeparator.$().hasClass("sapMITBFilterHidden"), "the last item separator is visible");
+
+		// Act
+		this.oITH.setSelectedKey("10");
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oLastVisibleItem.$().hasClass("sapMITBFilterHidden"), "the last item is not visible");
+		assert.ok(oLastVisibleSeparator.$().hasClass("sapMITBFilterHidden"), "the last item separator is not visible");
+	});
 });

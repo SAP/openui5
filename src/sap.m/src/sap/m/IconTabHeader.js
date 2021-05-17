@@ -1199,6 +1199,12 @@ sap.ui.define([
 			iLastVisible = iIndex;
 		}
 
+		// if prev item is separator - hide it
+		var oPrevItem = aItems[iIndex - 1];
+		if (oPrevItem && oPrevItem.classList.contains("sapMITBSep")) {
+			iLastVisible -= 1;
+		}
+
 		return iLastVisible;
 	};
 
