@@ -169,5 +169,21 @@
         ]
       }
     ]
+  },
+  "1.87.6": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "64960b8953d5830a80555952677fcae6bd66c262",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Improve NMore opening UX",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170111397"
+          }
+        ]
+      }
+    ]
   }
 }
