@@ -274,21 +274,26 @@ sap.ui.define([
 		 * @public
 		 */
 		MenuButton.prototype.setButtonMode = function(sMode) {
-			var sTooltip = this.getTooltip();
+			var sTooltip = this.getTooltip(),
+				oButtonControl,
+				oButtonProperties;
 
 			Control.prototype.setProperty.call(this, "buttonMode", sMode, true);
 			this._getButtonControl().destroy();
 			this._initButtonControl();
 
+			oButtonControl = this._getButtonControl();
+			oButtonProperties = oButtonControl.getMetadata().getAllProperties();
+
 			//update all properties
 			for (var key in this.mProperties) {
-				if (this.mProperties.hasOwnProperty(key) && aNoneForwardableProps.indexOf(key) < 0) {
-					this._getButtonControl().setProperty(key, this.mProperties[key], true);
+				if (this.mProperties.hasOwnProperty(key) && aNoneForwardableProps.indexOf(key) < 0 && oButtonProperties.hasOwnProperty(key)) {
+					oButtonControl.setProperty(key, this.mProperties[key], true);
 				}
 			}
 			//and tooltip aggregation
 			if (sTooltip) {
-				this._getButtonControl().setTooltip(sTooltip);
+				oButtonControl.setTooltip(sTooltip);
 			}
 
 			//update the text only

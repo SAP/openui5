@@ -1164,5 +1164,33 @@ sap.ui.define([
 		});
 	}
 
+	QUnit.test("Exception is not thrown when the control is extended", function (assert) {
+		// Arrange
+		var CustomMenuButton = new sap.m.MenuButton.extend("myMB", {
+				metadata: {
+					properties: {
+						myProp: {type: "string"}
+					}
+				}
+			}),
+			bError,
+			oCMB;
+
+		try {
+			oCMB = new CustomMenuButton({
+				myProp: "bla",
+				buttonMode: "Regular"
+			});
+		} catch (error) {
+			bError = true;
+		}
+
+		// Assert
+		assert.notOk(bError, "There is no exception thrown");
+
+		// Clenaup
+		oCMB.destroy();
+	});
+
 	return waitForThemeApplied();
 });
