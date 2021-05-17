@@ -138,7 +138,16 @@ sap.ui.define([
 			 * regardless of what is set to this property.
 			 * @since 1.48
 			 */
-			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : true}
+			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * The value of this property is set trough the sap.ui.unified.Calendar control,
+			 * in order for the current sap.ui.unified.calendar.Month control to know which
+			 * is the focused date even if this date is out of the visible date range
+			 *
+			 * @since 1.90
+			 */
+			_focusedDate : {type : "object", group : "Data", visibility: "hidden", defaultValue: null}
 
 		},
 		aggregations : {
@@ -340,6 +349,9 @@ sap.ui.define([
 				$CheckRef.addClass('sapUiCalItemSelBetween');
 			} else {
 				$CheckRef.removeClass('sapUiCalItemSelBetween');
+				if (iCheckDate != iDate1 && iCheckDate != iDate2) {
+					$CheckRef.removeClass('sapUiCalItemSel');
+				}
 			}
 		}
 	};
@@ -763,48 +775,47 @@ sap.ui.define([
 
 		CalendarUtils._checkCalendarDate(oDate);
 
-		var iSelected = 0;
-		var aSelectedDates = this.getSelectedDates();
-		var oTimeStamp = oDate.toUTCJSDate().getTime();
-		var sCalendarType = this.getPrimaryCalendarType();
+		var iSelected = 0,
+			aSelectedDates = this.getSelectedDates(),
+			sCalendarType = this.getPrimaryCalendarType(),
+			i = 0,
+			oFocusedDate = this.getProperty("_focusedDate"),
+			bSelectionBetween = false,
+			oArrangedDates;
 
-		for ( var i = 0; i < aSelectedDates.length; i++) {
-			// initalize the time part of the start and end time
-			var oRange = aSelectedDates[i];
-			var oStartDate = oRange.getStartDate();
-			var oStartTimeStamp = 0;
-			if (oStartDate) {
-				oStartDate = CalendarDate.fromLocalJSDate(oStartDate, sCalendarType);
-				oStartTimeStamp = oStartDate.toUTCJSDate().getTime();
-			}
-			var oEndDate = oRange.getEndDate();
-			var oEndTimeStamp = 0;
-			if (oEndDate) {
-				oEndDate = CalendarDate.fromLocalJSDate(oEndDate, sCalendarType);
-				oEndTimeStamp = oEndDate.toUTCJSDate().getTime();
+		for (i = 0; i < aSelectedDates.length; i++) {
+			var oRange = aSelectedDates[i],
+				oStartDate = oRange.getStartDate() ? CalendarDate.fromLocalJSDate(oRange.getStartDate(), sCalendarType) : undefined,
+				oEndDate = oRange.getEndDate() ? CalendarDate.fromLocalJSDate(oRange.getEndDate(), sCalendarType) : undefined;
+
+			if (oStartDate && oEndDate) {
+				oArrangedDates = this._arrangeStartAndEndDates(oStartDate, oEndDate);
+				oStartDate = oArrangedDates.startDate;
+				oEndDate = oArrangedDates.endDate;
 			}
 
-			if (oTimeStamp === oStartTimeStamp && !oEndDate ) {
+			bSelectionBetween = this._isMarkingUnfinishedRangeAllowed() && oFocusedDate &&
+				(CalendarUtils._isBetween(oDate, oStartDate, oFocusedDate, true) || CalendarUtils._isBetween(oDate, oFocusedDate, oStartDate, true));
+
+			if (oStartDate && !oEndDate && oDate.isSame(oStartDate)) {
 				iSelected = 1; // single day selected
 				break;
-			} else if (oTimeStamp === oStartTimeStamp && oEndDate ) {
+			} else if (oEndDate && oDate.isSame(oStartDate)) {
 				iSelected = 2; // interval start
-				if (oEndDate && oTimeStamp === oEndTimeStamp) {
-					// one day interval
-					iSelected = 5;
+				if (oDate.isSame(oEndDate)) {
+					iSelected = 5; // one day interval
 				}
 				break;
-			} else if (oEndDate && oTimeStamp === oEndTimeStamp) {
-				iSelected = 3; // interval end
+			} else if (oEndDate && oDate.isSame(oEndDate)) {
+				iSelected = 3; // interval _getend
 				break;
-			} else if (oEndDate && oTimeStamp > oStartTimeStamp && oTimeStamp < oEndTimeStamp) {
+			} else if ((oEndDate && oDate.isAfter(oStartDate) && oDate.isBefore(oEndDate)) || bSelectionBetween) {
 				iSelected = 4; // interval between
 				break;
 			}
 
 			if (this.getSingleSelection()) {
-				// if single selection only check the first range
-				break;
+				break; // if single selection only check the first range
 			}
 		}
 
@@ -1279,16 +1290,6 @@ sap.ui.define([
 
 			this.fireFocus({date: oFocusedDate.toLocalJSDate(), otherMonth: true});
 
-			// If the user is in single interval selection mode and he/she has selected interval's startingDate,
-			// but no end date yet, then any date between startingDate and the currently focused date must be marked
-			// as part of the new interval.
-			if (this._isMarkingUnfinishedRangeAllowed()) {
-				var oIntervalStart = this.getSelectedDates()[0],
-					iParsedStartDate = parseInt(this._oFormatYyyymmdd.format(oIntervalStart.getStartDate())),
-					iParsedEndDate = parseInt(this._oFormatYyyymmdd.format(oFocusedDate.toLocalJSDate()));
-
-				this._markDatesBetweenStartAndHoveredDate(iParsedStartDate, iParsedEndDate);
-			}
 		}
 
 	};
@@ -2038,21 +2039,6 @@ sap.ui.define([
 		if (oEvent.type === "mousedown") {
 			// as no click event is fired in some cases, e.g. if month is changed (because of changing DOM) select the day on mousedown
 			this._handleMousedown(oEvent, oFocusedDate, iIndex);
-		}
-
-		if (oEvent.type === "sapnext" || oEvent.type === "sapprevious") {
-			var oSelectedDateRange = this.getSelectedDates()[0],
-				iIntervalStartDate,
-				iIntervalEndDate;
-
-			if (!this._isMarkingUnfinishedRangeAllowed()) {
-				return;
-			}
-
-			iIntervalStartDate = parseInt(this._oFormatYyyymmdd.format(oSelectedDateRange.getStartDate()));
-			iIntervalEndDate = $DomRef.data("sapDay");
-
-			this._markDatesBetweenStartAndHoveredDate(iIntervalStartDate, iIntervalEndDate);
 		}
 	}
 
