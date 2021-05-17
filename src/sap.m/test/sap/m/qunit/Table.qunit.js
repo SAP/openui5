@@ -2432,4 +2432,24 @@ sap.ui.define([
 		Core.applyChanges();
 		this.clock.tick(1);
 	});
+
+	QUnit.test("Changes to hiddenInPopin", function(assert) {
+		var fnFirePopinChanged = sinon.spy(this.sut, "_firePopinChangedEvent");
+
+		this.sut.setHiddenInPopin(["Low"]);
+		Core.applyChanges();
+		assert.strictEqual(fnFirePopinChanged.callCount, 1, "hiddenInPopin=Low");
+
+		this.sut.setHiddenInPopin(["Low", "Medium"]);
+		Core.applyChanges();
+		assert.strictEqual(fnFirePopinChanged.callCount, 2, "hiddenInPopin=Low,Medium");
+
+		this.sut.setHiddenInPopin(["Low", "None"]);
+		Core.applyChanges();
+		assert.strictEqual(fnFirePopinChanged.callCount, 3, "hiddenInPopin=Low,None");
+
+		this.sut.setHiddenInPopin();
+		Core.applyChanges();
+		assert.strictEqual(fnFirePopinChanged.callCount, 4, "hiddenInPopin=undefined");
+	});
 });

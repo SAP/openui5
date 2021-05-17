@@ -1,8 +1,9 @@
 sap.ui.define([
 	"./Formatter",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function(Formatter, Controller, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/m/MessageToast"
+], function(Formatter, Controller, JSONModel, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.TableAutoPopin.Table", {
@@ -21,6 +22,11 @@ sap.ui.define([
 
 		onSelectionFinish: function(oEvent) {
 			this.byId("idProductsTable").setHiddenInPopin(oEvent.getSource().getSelectedKeys());
+		},
+
+		onPopinChanged: function(oEvent) {
+			var aHiddenInPopin = oEvent.getParameter("hiddenInPopin");
+			MessageToast.show("Number of hidden pop-ins: " + aHiddenInPopin.length);
 		}
 	});
 });

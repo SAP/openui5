@@ -10,7 +10,7 @@
 				  showCloseButton="true"
 				  class="sapUiMediumMarginBottom" />
 	<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
-	<Table id="idProductsTable" autoPopinMode="true" contextualWidth="Auto" items="{
+	<Table id="idProductsTable" autoPopinMode="true" contextualWidth="Auto" popinChanged=".onPopinChanged" items="{
 			path: '/ProductCollection',
 			sorter: {
 				path: 'Name'

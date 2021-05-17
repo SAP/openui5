@@ -431,6 +431,24 @@ sap.ui.define([
 		}
 	};
 
+	Table.prototype.setHiddenInPopin = function(aPriorities) {
+		var aOldPriorities = this.getHiddenInPopin() || [],
+			aNewPriorities = aPriorities || [];
+
+		this.setProperty("hiddenInPopin", aPriorities);
+
+		if (aNewPriorities.length !== aOldPriorities.length) {
+			this._bFirePopinChanged = true;
+		} else {
+			this._bFirePopinChanged = !aNewPriorities.every(function(sPriority) {
+				return aOldPriorities.includes(sPriority);
+			});
+		}
+
+		this._aPopins = this._getPopins();
+		return this;
+	};
+
 	Table.prototype._renderOverlay = function() {
 		var $this = this.$(),
 			$overlay = $this.find(".sapMTableOverlay"),
