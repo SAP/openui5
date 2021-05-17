@@ -14,22 +14,22 @@
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Currently closed"
-			icon="sap-icon://message-information"
+			icon="sap-icon://information"
 			state="Information" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Product Shipped"
-			icon="sap-icon://message-success"
+			icon="sap-icon://sys-enter-2"
 			state="Success" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Product Missing"
-			icon="sap-icon://message-warning"
+			icon="sap-icon://alert"
 			state="Warning" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Product Damaged"
-			icon="sap-icon://message-error"
+			icon="sap-icon://error"
 			state="Error" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
@@ -42,13 +42,13 @@
 			active="true"
 			state="Error"
 			press="handleStatusPressed"
-			icon="sap-icon://message-error" />
+			icon="sap-icon://error" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			title="Test"
 			active="true"
 			state="Error"
-			icon="sap-icon://message-error" />
+			icon="sap-icon://error" />
 	</l:VerticalLayout>
 	<l:VerticalLayout
 		class="sapUiContentPadding"
@@ -112,14 +112,14 @@
 			class="sapUiSmallMarginBottom"
 			text="Product Shipped"
 			inverted="true"
-			icon="sap-icon://message-success"
+			icon="sap-icon://sys-enter-2"
 			state="Success" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Currently closed (click)"
 			inverted="true"
 			active="true"
-			icon="sap-icon://message-information"
+			icon="sap-icon://information"
 			state="Information" />
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
@@ -127,7 +127,7 @@
 			active="true"
 			inverted="true"
 			state="Error"
-			icon="sap-icon://message-error" />
+			icon="sap-icon://error" />
 
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
@@ -157,6 +157,6 @@
 			title="Product status"
 			text="Shipped"
 			state="Success"
-			icon="sap-icon://message-success" />
+			icon="sap-icon://sys-enter-2" />
 	</l:VerticalLayout>
 </mvc:View>
