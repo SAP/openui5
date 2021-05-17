@@ -1583,9 +1583,14 @@ sap.ui.define([
 				oEvent.preventDefault();
 				break;
 			case KeyCodes.SPACE:
-				this._handleActivation(oEvent);
 				oEvent.preventDefault(); // prevent scrolling when focused on the tab
 				break;
+		}
+	};
+
+	IconTabHeader.prototype.onkeyup = function(oEvent) {
+		if (oEvent.which === KeyCodes.SPACE) {
+			this._handleActivation(oEvent);
 		}
 	};
 
