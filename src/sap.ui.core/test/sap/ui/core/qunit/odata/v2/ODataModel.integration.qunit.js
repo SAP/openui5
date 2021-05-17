@@ -34,6 +34,7 @@ sap.ui.define([
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
+		sODataMessageParserClassName = "sap.ui.model.odata.ODataMessageParser",
 		sODataModelClassName = "sap.ui.model.odata.v2.ODataModel",
 		// determine the row in which the entity is expected from the context path
 		rRowIndex = /~(\d+)~/,
@@ -2131,9 +2132,9 @@ sap.ui.define([
 		oModel.attachRequestFailed(oEventHandlers.requestFailed);
 		oModel.attachRequestSent(oEventHandlers.requestSent);
 		this.oLogMock.expects("error")
-			.withExactArgs("'HTTP request failed' while processing "
+			.withExactArgs("Request failed with status code 400: "
 					+ "GET SalesOrderSet?$skip=0&$top=100",
-				JSON.stringify(oErrorResponse), sODataModelClassName);
+				/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -2198,10 +2199,9 @@ sap.ui.define([
 		oModel.attachRequestFailed(oEventHandlers.requestFailed);
 		oModel.attachRequestSent(oEventHandlers.requestSent);
 		this.oLogMock.expects("error")
-			.withExactArgs("'HTTP request failed' while processing "
+			.withExactArgs("Request failed with unsupported status code 0: "
 					+ "POST /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$batch",
-				JSON.stringify({body : "", headers : [], statusCode : 0, statusText : ""}),
-				sODataModelClassName);
+				undefined, sODataMessageParserClassName);
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -2260,9 +2260,9 @@ sap.ui.define([
 		oModel.attachRequestFailed(oEventHandlers.requestFailed);
 		oModel.attachRequestSent(oEventHandlers.requestSent);
 		this.oLogMock.expects("error")
-			.withExactArgs("'HTTP request failed' while processing "
+			.withExactArgs("Request failed with status code 500: "
 					+ "POST /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$batch",
-				JSON.stringify(createErrorResponse()), sODataModelClassName);
+				/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -2310,17 +2310,8 @@ sap.ui.define([
 			}]);
 
 		this.oLogMock.expects("error")
-			.withExactArgs("'HTTP request failed' while processing POST /SalesOrderSrv/$batch",
-				JSON.stringify({
-					body : "A plain error text",
-					headers : {
-						"Content-Type" : "text/plain;charset=utf-8"
-					},
-					statusCode : 503
-				}), sODataModelClassName);
-		this.oLogMock.expects("error")
-			.withExactArgs("Error message returned by server could not be parsed",
-				sinon.match.instanceOf(Error), "sap.ui.model.odata.ODataMessageParser");
+			.withExactArgs("Request failed with status code 503: POST /SalesOrderSrv/$batch",
+				sinon.match.instanceOf(Error), sODataMessageParserClassName);
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -4947,9 +4938,9 @@ usePreliminaryContext : false}}">\
 				.expectMessages(oFixture.aExpectedMessages);
 			if (bWithError) {
 				that.oLogMock.expects("error").twice()
-					.withExactArgs("'HTTP request failed' while processing "
+					.withExactArgs("Request failed with status code 500: "
 							+ "POST SalesOrderSet('1')/ToLineItems",
-						JSON.stringify(oFixture.aResponses[0]), sODataModelClassName);
+						/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 			}
 
 			// don't care about passed arguments
@@ -5042,7 +5033,7 @@ usePreliminaryContext : false}}">\
 		this.expectChange("productName", null);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oErrorGET = createErrorResponse({message : "GET failed", statusCode : 400}),
+			var oErrorGET = createErrorResponse({message : "GET failed", statusCode : 424}),
 				oErrorPOST = createErrorResponse({message : "POST failed", statusCode : 400}),
 				bHandlerCalled;
 
@@ -5070,15 +5061,6 @@ usePreliminaryContext : false}}">\
 					target : "/SalesOrderLineItemSet('~key~')",
 					technical : true,
 					type : "Error"
-				}, {
-					code : "UF0",
-					descriptionUrl : "",
-					fullTarget : "/$~key~",
-					message : "GET failed",
-					persistent : false,
-					target : "/$~key~",
-					technical : true,
-					type : "Error"
 				}]);
 
 			oModel.attachRequestFailed(fnHandleError);
@@ -5090,13 +5072,13 @@ usePreliminaryContext : false}}">\
 			});
 
 			that.oLogMock.expects("error")
-				.withExactArgs("'HTTP request failed' while processing "
+				.withExactArgs("Request failed with status code 400: "
 						+ "POST SalesOrderSet('1')/ToLineItems",
-					JSON.stringify(oErrorPOST), sODataModelClassName);
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 			that.oLogMock.expects("error")
-				.withExactArgs(sinon.match(new RegExp("'HTTP request failed' while processing "
+				.withExactArgs(sinon.match(new RegExp("Request failed with status code 424: "
 						+ "GET \\$id-\\d*-\\d*\\?\\$expand=ToProduct&\\$select=ToProduct")),
-					JSON.stringify(oErrorGET), sODataModelClassName);
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 
 			oModel.submitChanges();
 
@@ -5227,13 +5209,13 @@ usePreliminaryContext : false}}">\
 			});
 
 			that.oLogMock.expects("error")
-				.withExactArgs("'HTTP request failed' while processing "
+				.withExactArgs("Request failed with status code 400: "
 						+ "POST SalesOrderSet('1')/ToLineItems",
-					JSON.stringify(oErrorPOST), sODataModelClassName);
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 			that.oLogMock.expects("error")
-				.withExactArgs(sinon.match(new RegExp("'HTTP request failed' while processing "
+				.withExactArgs(sinon.match(new RegExp("Request failed with status code 424: "
 						+ "GET \\$id-\\d*-\\d*\\?\\$expand=ToProduct&\\$select=ToProduct")),
-					JSON.stringify(oErrorGET), sODataModelClassName);
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 
 			oModel.submitChanges();
 
@@ -7047,9 +7029,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectChange("idNote", "bar");
 
 		this.oLogMock.expects("error")
-			.withExactArgs("'HTTP request failed' while processing "
+			.withExactArgs("Request failed with status code 404: "
 					+ "GET SalesOrderSet?$skip=0&$top=100&$select=foo",
-				JSON.stringify(oErrorMessage), sODataModelClassName);
+				/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -7088,8 +7070,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectChange("idNote", null);
 
 		this.oLogMock.expects("error")
-			.withExactArgs("'HTTP request failed' while processing GET SalesOrderSet('1')",
-				JSON.stringify(oErrorMessage), sODataModelClassName);
+			.withExactArgs("Request failed with status code 404: GET SalesOrderSet('1')",
+				/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oErrorMessage = createErrorResponse({message : "Not Found", statusCode : 404});
@@ -7117,8 +7099,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectChange("idNote", null);
 
 			that.oLogMock.expects("error")
-				.withExactArgs("'HTTP request failed' while processing GET SalesOrderSet('1')",
-					JSON.stringify(oErrorMessage), sODataModelClassName);
+				.withExactArgs("Request failed with status code 404: GET SalesOrderSet('1')",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 
 			if (bPersistTechnicalMessages !== undefined) {
 				that.oLogMock.expects("warning")
@@ -7604,13 +7586,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}));
 			that.mock(oEventHandlers).expects("success").never();
 			that.oLogMock.expects("error")
-				.withExactArgs("'HTTP request failed' while processing "
-						+ "POST SalesOrderItem_Clone?ItemPosition='10'&SalesOrderID='1'",
-					JSON.stringify(oErrorPOST), sODataModelClassName);
+				.withExactArgs("Request failed with status code 400: POST "
+						+ "SalesOrderItem_Clone?ItemPosition='10'&SalesOrderID='1'",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 			that.oLogMock.expects("error")
-				.withExactArgs(sinon.match(new RegExp("'HTTP request failed' while processing "
+				.withExactArgs(sinon.match(new RegExp("Request failed with status code 400: "
 						+ "GET \\$id-\\d*-\\d*\\?\\$expand=ToProduct&\\$select=ToProduct")),
-					JSON.stringify(oErrorGET), sODataModelClassName);
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 
 			that.expectRequest({
 					batchNo : 1,
@@ -8992,13 +8974,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.oView.byId("table").getRows()[1].getCells()[0].setValue("bar");
 
 			that.oLogMock.expects("error")
-				.withExactArgs("'HTTP request failed' while processing MERGE"
-						+ " SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
-					sinon.match.string, sODataModelClassName);
+				.withExactArgs("Request failed with status code 400: MERGE "
+						+ "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
 			that.oLogMock.expects("error")
-				.withExactArgs("'HTTP request failed' while processing MERGE"
-						+ " SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')",
-					sinon.match.string, sODataModelClassName);
+				.withExactArgs("Request failed with status code 400: MERGE "
+						+ "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')",
+					"Another request in the same change set failed", sODataMessageParserClassName);
 
 			// code under test
 			oModel.submitChanges();

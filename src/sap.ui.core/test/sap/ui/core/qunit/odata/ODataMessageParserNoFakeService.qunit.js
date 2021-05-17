@@ -1914,6 +1914,7 @@ sap.ui.define([
 		[false, true].forEach(function (bStatusCodeAsString, k) {
 	QUnit.test("parse: " + i + "," + j + "," + k, function (assert) {
 		var oODataMessageParser = {
+				_logErrorMessages : function () {},
 				_parseBody : function () {},
 				_parseHeader : function () {},
 				_propagateMessages : function () {}
@@ -1934,6 +1935,9 @@ sap.ui.define([
 		this.mock(oODataMessageParser).expects(oFixture.method)
 			.withExactArgs(sinon.match.same(oResponse), mRequestInfo)
 			.returns("~aMessages");
+		this.mock(oODataMessageParser).expects("_logErrorMessages")
+			.withExactArgs("~aMessages", sinon.match.same(oRequest), String(oFixture.statusCode))
+			.exactly(oFixture.method === "_parseBody" ? 1 : 0);
 		this.mock(oODataMessageParser).expects("_propagateMessages")
 			.withExactArgs("~aMessages", mRequestInfo, "~mGetEntities", "~mChangeEntities",
 				!bMessageScopeSupported);
@@ -1970,7 +1974,7 @@ sap.ui.define([
 			.withExactArgs(mRequestInfo)
 			.returns("~aMessages");
 		this.oLogMock.expects("error")
-			.withExactArgs("Error message returned by server could not be parsed",
+			.withExactArgs("Request failed with status code 400: POST ~requestUri",
 				sinon.match.same(oError), sClassName);
 		this.mock(oMessageParser).expects("_propagateMessages")
 			.withExactArgs("~aMessages", mRequestInfo, "~mGetEntities", "~mChangeEntities", false);
@@ -2002,6 +2006,9 @@ sap.ui.define([
 		this.mock(oODataMessageParser).expects("_createGenericError")
 			.withExactArgs(mRequestInfo)
 			.returns("~aMessages");
+		this.oLogMock.expects("error")
+			.withExactArgs("Request failed with unsupported status code 301: GET ~requestUri",
+				undefined, sClassName);
 		this.mock(oODataMessageParser).expects("_propagateMessages")
 			.withExactArgs("~aMessages", mRequestInfo, "~mGetEntities", "~mChangeEntities", false);
 
@@ -2012,18 +2019,15 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[204, 424].forEach(function (iStatusCode) {
-	[false, true].forEach(function (bStatusCodeAsString) {
-	var sTitle = "parse: ignore GET with " + iStatusCode + " response, " + bStatusCodeAsString;
-
-	QUnit.test(sTitle, function (assert) {
+[false, true].forEach(function (bStatusCodeAsString) {
+	QUnit.test("parse: ignore GET with 204 response, " + bStatusCodeAsString, function (assert) {
 		var oODataMessageParser = {
 				_parseBody : function () {},
 				_parseHeader : function () {},
 				_propagateMessages : function () {}
 			},
 			oRequest = {method : "GET", requestUri : "~requestUri"},
-			oResponse = {statusCode : bStatusCodeAsString ? String(iStatusCode) : iStatusCode};
+			oResponse = {statusCode : bStatusCodeAsString ? "204" : 204};
 
 		this.mock(oODataMessageParser).expects("_parseBody").never();
 		this.mock(oODataMessageParser).expects("_parseHeader").never();
@@ -2033,6 +2037,35 @@ sap.ui.define([
 		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
 			"~mGetEntities", "~mChangeEntities", true);
 	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bStatusCodeAsString) {
+	QUnit.test("parse: only log GET with 424 response, " + bStatusCodeAsString, function (assert) {
+		var oODataMessageParser = {
+				_logErrorMessages : function () {},
+				_parseBody : function () {},
+				_parseHeader : function () {},
+				_propagateMessages : function () {}
+			},
+			oRequest = {method : "GET", requestUri : "~requestUri"},
+			oResponse = {statusCode : bStatusCodeAsString ? "424" : 424};
+
+		this.mock(oODataMessageParser).expects("_parseBody")
+			.withExactArgs(sinon.match.same(oResponse), {
+				request : sinon.match.same(oRequest),
+				response : sinon.match.same(oResponse),
+				url : "~requestUri"
+			})
+			.returns("~aMessages");
+		this.mock(oODataMessageParser).expects("_logErrorMessages")
+			.withExactArgs("~aMessages", sinon.match.same(oRequest), "424");
+		this.mock(oODataMessageParser).expects("_parseHeader").never();
+		this.mock(oODataMessageParser).expects("_propagateMessages").never();
+
+		// code under test
+		ODataMessageParser.prototype.parse.call(oODataMessageParser, oResponse, oRequest,
+			"~mGetEntities", "~mChangeEntities", true);
 	});
 });
 
@@ -2257,5 +2290,79 @@ sap.ui.define([
 			// code under test
 			oMessageParser._parseBodyXML(oResponse, "~mRequestInfo", "application/xml"),
 			"~aMessages");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_logErrorMessages: no oRequest object", function (assert) {
+		var oMessageParser = new ODataMessageParser("/foo");
+
+		// code under test - log error never called
+		oMessageParser._logErrorMessages(/*aMessages*/[] /* , oRequest, sStatusCode */);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_logErrorMessages: empty aMessages array", function (assert) {
+		var oMessageParser = new ODataMessageParser("/foo"),
+			oRequest = {method : "~method", requestUri : "~uri"};
+
+		this.oLogMock.expects("error")
+			.withExactArgs("Request failed with status code ~statusCode: ~method ~uri",
+				"Another request in the same change set failed", sClassName);
+
+		// code under test
+		oMessageParser._logErrorMessages(/*aMessages*/[], oRequest, "~statusCode");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_logErrorMessages: with messages", function (assert) {
+		var aExpectedMessageLogDetails = [{
+				code : "~code0",
+				message : "~message0",
+				persistent : "~persistent0",
+				targets : "~targets0",
+				type : "~type0"
+			}, {
+				code : "~code1",
+				message : "~message1",
+				persistent : "~persistent1",
+				targets : "~targets1",
+				type : "~type1"
+			}],
+			oMessageParser = new ODataMessageParser("/foo"),
+			oMessage0 = {
+				getCode : function () {},
+				getMessage : function () {},
+				getPersistent : function () {},
+				getTargets : function () {},
+				getType : function () {}
+			},
+			oMessage1 = {
+				getCode : function () {},
+				getMessage : function () {},
+				getPersistent : function () {},
+				getTargets : function () {},
+				getType : function () {}
+			},
+			oRequest = {method : "~method", requestUri : "~uri"};
+
+		this.mock(oMessage0).expects("getCode").withExactArgs().returns("~code0");
+		this.mock(oMessage0).expects("getMessage").withExactArgs().returns("~message0");
+		this.mock(oMessage0).expects("getPersistent").withExactArgs().returns("~persistent0");
+		this.mock(oMessage0).expects("getTargets").withExactArgs().returns("~targets0");
+		this.mock(oMessage0).expects("getType").withExactArgs().returns("~type0");
+		this.mock(oMessage1).expects("getCode").withExactArgs().returns("~code1");
+		this.mock(oMessage1).expects("getMessage").withExactArgs().returns("~message1");
+		this.mock(oMessage1).expects("getPersistent").withExactArgs().returns("~persistent1");
+		this.mock(oMessage1).expects("getTargets").withExactArgs().returns("~targets1");
+		this.mock(oMessage1).expects("getType").withExactArgs().returns("~type1");
+		this.mock(JSON).expects("stringify")
+			.withExactArgs(aExpectedMessageLogDetails)
+			.returns("~details");
+		this.oLogMock.expects("error")
+			.withExactArgs("Request failed with status code ~statusCode: ~method ~uri", "~details",
+				sClassName);
+
+		// code under test
+		oMessageParser._logErrorMessages([oMessage0, oMessage1], oRequest, "~statusCode");
 	});
 });

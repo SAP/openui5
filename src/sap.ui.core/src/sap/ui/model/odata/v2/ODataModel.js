@@ -4558,11 +4558,10 @@ sap.ui.define([
 						this.resetSecurityToken();
 					}
 				}
-				sErrorMsg = oRequest
-					? "'" + oError.message + "' while processing " + oRequest.method + " "
-						+ oRequest.requestUri
-					: oError.message;
-				sErrorDetails = JSON.stringify(oError.response);
+				if (!oRequest) {
+					sErrorMsg = oError.message;
+					sErrorDetails = JSON.stringify(oError.response);
+				}
 			}
 			mParameters.statusCode = oError.response.statusCode;
 			mParameters.statusText = oError.response.statusText;
@@ -4571,7 +4570,7 @@ sap.ui.define([
 		} else {
 			sErrorMsg = "The following problem occurred: " + oError.message;
 		}
-		if (!oError.$reported) {
+		if (sErrorMsg && !oError.$reported) {
 			Log.error(sErrorMsg, sErrorDetails, sClassName);
 		}
 		oError.$reported = true;
