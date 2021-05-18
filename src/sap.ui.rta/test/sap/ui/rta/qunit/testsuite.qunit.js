@@ -559,22 +559,22 @@ sap.ui.define([
 			"dttool/controls/ListItem": {
 				group: 'DtTool',
 				coverage: {
-					only: ["sap/ui/rta/dttool/controls/DTToolListItem"]
+					only: ["sap/ui/rta/internal/dttool/controls/DTToolListItem"]
 				},
 				ui5: {
 					resourceroots: {
-						"sap.ui.rta.dttool": "test-resources/sap/ui/rta/dttool/"
+						"sap.ui.rta.internal.dttool": "test-resources/sap/ui/rta/internal/dttool/"
 					}
 				}
 			},
 			"dttool/controls/OutlineTree": {
 				group: 'DtTool',
 				coverage: {
-					only: ["sap/ui/rta/dttool/controls/OutlineTree"]
+					only: ["sap/ui/rta/internal/dttool/controls/OutlineTree"]
 				},
 				ui5: {
 					resourceroots: {
-						"sap.ui.rta.dttool": "test-resources/sap/ui/rta/dttool/"
+						"sap.ui.rta.internal.dttool": "test-resources/sap/ui/rta/internal/dttool/"
 					}
 				}
 			},
