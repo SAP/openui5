@@ -137,6 +137,71 @@ sap.ui.define([
 
     }); */
 
+    QUnit.test("Check 'enhanceXConfig' throws error for unregistered control instances", function(assert){
+
+        this.oUnregisteredControl = new Control("myControl");
+
+        assert.throws(function() {
+			this.oEngine.enhanceXConfig(this.oUnregisteredControl, {});
+		}, "The Engine expects the control to be registered to enhance the xConfig");
+
+    });
+
+    QUnit.test("Check 'enhanceXConfig' throws error if aggregation does not exist", function(assert){
+
+        assert.throws(function() {
+			this.oEngine.enhanceXConfig(this.ocontrol , {
+                controlMeta: {
+                    aggregation: "items",
+                    property: "text"
+                },
+                name: "test",
+                value: "someTestText"
+            });
+		}, "The Engine expects the control to be registered to enhance the xConfig");
+
+    });
+
+    QUnit.test("Check 'enhanceXConfig' and 'readXConfig' ", function(assert){
+
+        var oFMHStub = sinon.spy(FlexModificationHandler.getInstance(), "enhanceConfig");
+
+        var TestClass = Control.extend("adaptationTestControl", {
+            metadata: {
+                aggregations: {
+                    items: {
+                        type: "sap.ui.core.Item"
+                    }
+                }
+            }
+        });
+
+        this.oCustomAggregationControl = new TestClass();
+
+        this.oEngine.registerAdaptation(this.oCustomAggregationControl, {
+            controller: {
+                someTest: Controller
+            }
+        });
+
+        this.oEngine.enhanceXConfig(this.oCustomAggregationControl , {
+            controlMeta: {
+                aggregation: "items",
+                property: "text"
+            },
+            name: "test",
+            value: "someTestText"
+        });
+
+        var oAggregationConfig = this.oEngine.readXConfig(this.oCustomAggregationControl);
+
+        assert.equal(oAggregationConfig.aggregations.items.test.text, "someTestText", "The xConfig customdata has been written and read correctly");
+
+        assert.ok(oFMHStub.calledOnce, "Check that the correct modification handler has been called");
+
+        FlexModificationHandler.getInstance().enhanceConfig.restore();
+    });
+
 	QUnit.module("Generic API tests", {
         prepareSetup: function() {
             var TestClass = Control.extend("adaptationTestControl", {

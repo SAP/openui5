@@ -2,8 +2,10 @@
 * ! ${copyright}
 */
 sap.ui.define([
-	"sap/ui/base/Object"
-], function(BaseObject) {
+	"sap/ui/base/Object",
+	"sap/base/util/merge",
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
+], function(BaseObject, merge, JsControlTreeModifier) {
 	"use strict";
 
 	var oModificationHandler;
@@ -70,6 +72,100 @@ sap.ui.define([
 	 */
 	ModificationHandler.prototype.isModificationSupported = function(mPropertyBag, oModificationPayload){
 		return false;
+	};
+
+	/**
+	 * Enhances the $aggregactionconfig object for a given mdc control instance.
+	 *
+	 * @param {sap.ui.core.Element} oControl The according element which should be checked
+	 * @param {object} oModificationPayload An object providing a modification handler specific payload
+	 * @param {object} oModificationPayload.name The affected property name
+	 * @param {object} oModificationPayload.controlMeta Object describing which config is affected
+	 * @param {object} oModificationPayload.controlMeta.aggregation The affected aggregation name (such as <code>columns</code> or <code>filterItems</code>)
+	 * @param {object} oModificationPayload.controlMeta.property The affected property name (such as <code>width</code> or <code>lable</code>)
+	 * @param {object} oModificationPayload.value The value that should be written in nthe xConfig
+	 * @param {object} [oModificationPayload.propertyBag] Optional propertybag for different modification handler derivations
+	 *
+	 * @returns {object} The adapted xConfig object
+	 */
+	ModificationHandler.prototype.enhanceConfig = function(oControl, oModificationPayload) {
+		var mPropertyBag = oModificationPayload.propertyBag;
+        var oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
+		var sPropertyInfoKey = oModificationPayload.name;
+		var mControlMeta = oModificationPayload.controlMeta;
+
+        var sAffectedAggregation = mControlMeta.aggregation;
+        var sAffectedProperty = mControlMeta.property;
+
+        var vValue = oModificationPayload.value;
+
+		var oControlMetadata = oModifier.getControlMetadata(oControl);
+		var sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().name;
+
+		var oXConfig = oModifier.getAggregation(oControl, "customData").find(function(oCustomData){
+            return oModifier.getProperty(oCustomData, "key") == "xConfig";
+        });
+
+        var oConfig = oXConfig ? oModifier.getProperty(oXConfig, "value") : {
+			aggregations: {}
+		};
+
+		if (!oConfig.aggregations.hasOwnProperty(sAggregationName)) {
+			if (oControlMetadata.hasAggregation(sAggregationName)) {
+				oConfig.aggregations[sAggregationName] = {};
+			} else {
+				throw new Error("The aggregation " + sAggregationName + " does not exist for" + oControl);
+			}
+		}
+
+		if (!oConfig.aggregations.hasOwnProperty(sPropertyInfoKey)) {
+			oConfig.aggregations[sAggregationName][sPropertyInfoKey] = {};
+		}
+
+        if (vValue !== null) {
+            oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue;
+        } else {
+            delete oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty];
+
+            //Delete empty property name object
+            if (Object.keys(oConfig.aggregations[sAggregationName][sPropertyInfoKey]).length === 0) {
+                delete oConfig.aggregations[sAggregationName][sPropertyInfoKey];
+
+                //Delete empty aggregation name object
+                if (Object.keys(oConfig.aggregations[sAggregationName]).length === 0) {
+                    delete oConfig.aggregations[sAggregationName];
+                }
+            }
+        }
+
+		var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
+
+		if (!oXConfig) {
+			oModifier.createAndAddCustomData(oControl, "xConfig", oConfig, oAppComponent);
+		} else {
+			oModifier.setProperty(oXConfig, "value", oConfig);
+		}
+
+		return oConfig;
+	};
+
+	/**
+	 * Returns a copy of the xConfig object
+	 *
+	 * @param {sap.ui.core.Element} oControl The according element which should be checked
+	 * @param {object} [oModificationPayload] An object providing a modification handler specific payload
+	 * @param {object} [oModificationPayload.propertyBag] Optional propertybag for different modification handler derivations
+	 *
+	 * @returns {object} The adapted xConfig object
+	 */
+	ModificationHandler.prototype.readConfig = function(oControl, oModificationPayload) {
+        var oConfig, oAggregationConfig;
+		var oModifier = oModificationPayload && oModificationPayload.propertyBag ? oModificationPayload.propertyBag .modifier : JsControlTreeModifier;
+		oAggregationConfig = oModifier.getAggregation(oControl, "customData").find(function(oCustomData){
+			return oModifier.getProperty(oCustomData, "key") == "xConfig";
+		});
+		oConfig = oAggregationConfig ? merge({}, oModifier.getProperty(oAggregationConfig, "value")) : null;
+        return oConfig;
 	};
 
 	ModificationHandler.getInstance = function() {

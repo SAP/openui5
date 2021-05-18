@@ -54,6 +54,14 @@ sap.ui.define(
         };
 
         /**
+         * Hook which is executed after a set of changes has been applied
+         *
+         */
+        AdaptationMixin._onModifications = function() {
+            //
+        };
+
+        /**
          * Initializes the <code>AdaptationFilterBar</code> used for inbuilt filtering.
          *
          * @private
@@ -135,6 +143,7 @@ sap.ui.define(
             this.retrieveInbuiltFilter = AdaptationMixin.retrieveInbuiltFilter;
             this.getInbuiltFilter = AdaptationMixin.getInbuiltFilter;
             this.validateState = AdaptationMixin.validateState;
+            this._onModifications = AdaptationMixin._onModifications;
             this.getEngine = AdaptationMixin.getEngine;
             this.exit = AdaptationMixin.exit(this.exit);
         };

@@ -103,6 +103,36 @@ sap.ui.define([
 			return aChanges;
 		},
 
+		getPropertySetterChanges: function(mDeltaInfo) {
+			var oControl = mDeltaInfo.control;
+			var aExistingState = mDeltaInfo.existingState;
+			var aChangedState = mDeltaInfo.changedState;
+			var sOperation = mDeltaInfo.operation;
+			var sSetAttribute = mDeltaInfo.deltaAttribute;
+
+			var aSetterChanges = [];
+
+			aChangedState.forEach(function(oItem){
+				//check if the provided state item holds the value to check for
+				if (oItem.hasOwnProperty(sSetAttribute)) {
+					var oExistingItem = aExistingState.find(function(oExisting){return oExisting.name == oItem.name;});
+
+					//compare to identify delta (only create a change if really necessary)
+					var vOldValue = oExistingItem && oExistingItem.hasOwnProperty(sSetAttribute) && oExistingItem[sSetAttribute];
+					var vNewValue = oItem[sSetAttribute];
+					var bValueChanged = vOldValue !== vNewValue;
+					if (bValueChanged) {
+						aSetterChanges.push(this.createAddRemoveChange(oControl, sOperation, {
+							name: oItem.name,
+							value: oItem[sSetAttribute]
+						}));
+					}
+				}
+			}.bind(this));
+
+			return aSetterChanges;
+		},
+
 		/**
 		 * Method which reduces a propertyinfo map to changecontent relevant attributes.
 		 * <b>Note:</b> This method determines the attributes stored in the changeContent.
@@ -242,7 +272,6 @@ sap.ui.define([
 
 			return aChanges;
 		},
-
 		createAddRemoveChange: function(oControl, sOperation, oContent){
 			var oAddRemoveChange = {
 				selectorElement: oControl,
