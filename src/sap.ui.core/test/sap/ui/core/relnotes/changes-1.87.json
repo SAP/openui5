@@ -105,5 +105,25 @@
         ]
       }
     ]
+  },
+  "1.87.7": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "218b6adf2204fbc3ae490bab04c8150d0e165a01",
+        "type": "FIX",
+        "text": " XMLViewRenderer: Correctly close placeholder div",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008652872020"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500002121172021"
+          }
+        ]
+      }
+    ]
   }
 }

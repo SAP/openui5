@@ -185,5 +185,21 @@
         ]
       }
     ]
+  },
+  "1.87.7": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "a9cf1415ad3a1284db278358e0a2ed044a60fad3",
+        "type": "FIX",
+        "text": " sap.m.Wizard: ProgressNavigator layouting fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170129759"
+          }
+        ]
+      }
+    ]
   }
 }
