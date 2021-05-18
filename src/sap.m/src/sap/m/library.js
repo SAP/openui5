@@ -1793,7 +1793,7 @@ sap.ui.define([
 
 	/**
 	 * Specifies <code>IconTabBar</code> tab overflow mode.
-	 *
+	 * @enum {string}
  	 * @since 1.90.0
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
