@@ -151,7 +151,7 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		mRequestInfo,
 		sStatusCode = String(oResponse.statusCode);
 
-	if (oRequest.method === "GET" && (sStatusCode === "204" || sStatusCode === "424")) {
+	if (oRequest.method === "GET" && sStatusCode === "204") {
 		return;
 	}
 
@@ -168,14 +168,23 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		// Status us 4XX or 5XX - parse body
 		try {
 			aMessages = this._parseBody(oResponse, mRequestInfo);
+			this._logErrorMessages(aMessages, oRequest, sStatusCode);
 		} catch (ex) {
 			aMessages = this._createGenericError(mRequestInfo);
-			Log.error("Error message returned by server could not be parsed", ex, sClassName);
+			Log.error("Request failed with status code " + sStatusCode + ": " + oRequest.method
+				+ " " + oRequest.requestUri, ex, sClassName);
 		}
 	} else {
 		// Status neither ok nor error, may happen if no network connection is available (some
 		// browsers use status code 0 in that case)
 		aMessages = this._createGenericError(mRequestInfo);
+		Log.error("Request failed with unsupported status code " + sStatusCode + ": "
+			+ oRequest.method + " " + oRequest.requestUri, undefined, sClassName);
+	}
+
+	if (oRequest.method === "GET" && sStatusCode === "424") {
+		// Failed dependency: End user message already created for superordinate request
+		return;
 	}
 
 	this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities,
@@ -700,6 +709,33 @@ ODataMessageParser.prototype._getBodyMessages = function (oOuterError, aInnerErr
 	}
 
 	return aMessages;
+};
+
+/**
+ * Logs the given messages as an error if a request object is given.
+ *
+ * @param {sap.ui.core.message.Message[]} aMessages Messages to be logged
+ * @param {object} [oRequest] The request object which caused the given messages
+ */
+ODataMessageParser.prototype._logErrorMessages = function (aMessages, oRequest, sStatusCode) {
+	var sErrorDetails;
+
+	if (oRequest) {
+		sErrorDetails = aMessages.length
+			? JSON.stringify(aMessages.map(function (oMessage) {
+				return {
+					code : oMessage.getCode(),
+					message : oMessage.getMessage(),
+					persistent : oMessage.getPersistent(),
+					targets : oMessage.getTargets(),
+					type : oMessage.getType()
+				};
+			}))
+			: "Another request in the same change set failed";
+
+		Log.error("Request failed with status code " + sStatusCode + ": " + oRequest.method + " "
+			+ oRequest.requestUri, sErrorDetails, sClassName);
+	}
 };
 
 /**

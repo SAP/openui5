@@ -2820,14 +2820,14 @@ sap.ui.define([
 			oRequest = bWithRequestObject ? {method : "~method", requestUri : "~uri"} : undefined,
 			oResult;
 
-		this.mock(oModel).expects("_parseResponse").exactly(bReported ? 0 : 1)
-			.withExactArgs(sinon.match.same(oError.response), sinon.match.same(oRequest));
-		this.oLogMock.expects("error").exactly(bReported ? 0 : 1)
-			.withExactArgs(
-				bWithRequestObject ? "'~message' while processing ~method ~uri" : "~message",
-				'{"body":"~body","headers":"~headers","statusCode":"~code",'
+		this.mock(oModel).expects("_parseResponse")
+			.withExactArgs(sinon.match.same(oError.response), sinon.match.same(oRequest))
+			.exactly(bReported ? 0 : 1);
+		this.oLogMock.expects("error")
+			.withExactArgs("~message", '{"body":"~body","headers":"~headers","statusCode":"~code",'
 					+ '"statusText":"~statusText"}',
-				sClassName);
+				sClassName)
+			.exactly(!bWithRequestObject && !bReported ? 1 : 0);
 
 		// code under test
 		oResult = ODataModel.prototype._handleError.call(oModel, oError, oRequest);
