@@ -36,7 +36,7 @@ sap.ui.define([
 
 	CustomRangeSlider.prototype.getContent = function() {
 		if (!this._oContent) {
-			this._oContent = new RangeSlider({
+			this._oContent = new RangeSlider(this.getId() + "-slider", {
 				range: [this.getMin() || 0, this.getMax() || 100],
 				showAdvancedTooltip: true,
 				showHandleTooltip: true,
@@ -89,6 +89,34 @@ sap.ui.define([
 
 		this._oManagedObjectModel.destroy();
 		this._oManagedObjectModel = undefined;
+	};
+
+	CustomRangeSlider.prototype.getIdForLabel = function() {
+		return this.getId() + "-slider";
+	};
+
+	CustomRangeSlider.prototype.getFocusDomRef = function() {
+		if (this._oContent) {
+			return this._oContent.getFocusDomRef();
+		} else {
+			return this.getDomRef();
+		}
+	};
+
+	CustomRangeSlider.prototype.getDomRef = function() {
+		if (this._oContent) {
+			return this._oContent.getDomRef();
+		} else {
+			return Control.prototype.getDomRef.apply(this, arguments);
+		}
+	};
+
+	CustomRangeSlider.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
+		var oParent = this.getParent();
+		if (oParent && oParent.enhanceAccessibilityState) {
+			// use CustomRangeSlider as control, but aria properties of rendered inner control.
+			oParent.enhanceAccessibilityState(this, mAriaProps);
+		}
 	};
 
 	return CustomRangeSlider;
