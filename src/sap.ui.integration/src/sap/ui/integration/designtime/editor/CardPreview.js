@@ -31,6 +31,7 @@ sap.ui.define([
 	 */
 	var CardPreview = Control.extend("sap.ui.integration.designtime.editor.CardPreview", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				settings: {
 					type: "any"

@@ -26,6 +26,7 @@ sap.ui.define([
 	 */
 	var ShapeSelect = Control.extend("sap.ui.integration.designtime.editor.fields.viz.ShapeSelect", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				value: {
 					type: "string",

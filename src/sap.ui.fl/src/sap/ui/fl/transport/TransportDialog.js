@@ -29,6 +29,7 @@ function(
 	 */
 	var TransportDialog = InternalTransportDialog.extend("sap.ui.fl.transport.TransportDialog", {
 		metadata: {
+			library: "sap.ui.fl",
 			deprecated: true
 		}
 	});

@@ -31,6 +31,7 @@ sap.ui.define([
 	 */
 	var IconSelect = Control.extend("sap.ui.integration.designtime.editor.fields.viz.IconSelect", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				value: {
 					type: "string",

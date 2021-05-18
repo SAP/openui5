@@ -45,6 +45,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var IconEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.cardEditor.propertyEditor.iconEditor.IconEditor", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		xmlFragment: "sap.ui.integration.designtime.cardEditor.propertyEditor.iconEditor.IconEditor",
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});

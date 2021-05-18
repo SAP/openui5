@@ -80,6 +80,7 @@ sap.ui.define([
 	 */
 	var ChangeVisualization = Control.extend("sap.ui.rta.util.changeVisualization.ChangeVisualization", {
 		metadata: {
+			library: "sap.ui.rta",
 			properties: {
 				/**
 				 * Id of the component or control to visualize the changes for

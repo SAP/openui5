@@ -21,6 +21,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var DateTimeField = BaseField.extend("sap.ui.integration.designtime.editor.fields.DateTimeField", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
 

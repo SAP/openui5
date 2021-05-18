@@ -26,6 +26,7 @@ sap.ui.define([
 	 */
 	var ColorSelect = Control.extend("sap.ui.integration.designtime.editor.fields.viz.ColorSelect", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				enumValue: {
 					type: "string",

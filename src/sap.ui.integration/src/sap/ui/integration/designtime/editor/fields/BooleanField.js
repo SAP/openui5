@@ -21,6 +21,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var BooleanField = BaseField.extend("sap.ui.integration.designtime.editor.fields.BooleanField", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
 
