@@ -412,27 +412,6 @@ sap.ui.define([
 			isSelectedDaySpy.restore();
 		});
 
-		QUnit.test("Selecting a week number in IE + touch does not cause day selection", function (assert) {
-			// Arrange
-			this.oM.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			var oTarget = this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1],
-				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
-				isSelectedDaySpy = this.spy(this.oM, "_selectDay"),
-				oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true });
-
-			//act
-			this.oM._handleMousedown(oMouseEvent, CalendarDate.fromLocalJSDate(new Date(2017, 6, 20), this.oM.getPrimaryCalendarType()));
-
-			//assert
-			assert.strictEqual(isSelectedDaySpy.called, false, "_handleMousedown does not invoke _selectDay in IE");
-
-			//cleanup
-			oBrowserStub.restore();
-			isSelectedDaySpy.restore();
-		});
-
 		QUnit.test("Selecting a week number in Edge + touch does not cause day selection", function (assert) {
 			// Arrange
 			this.oM.placeAt("qunit-fixture");
