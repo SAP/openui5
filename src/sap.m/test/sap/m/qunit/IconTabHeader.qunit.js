@@ -894,4 +894,47 @@ sap.ui.define([
 		assert.strictEqual(oTargetTab._isInStartOverflow(), true, "The target tab is in the startOverflow");
 
 	});
+
+	QUnit.module("Badges - Start overflow", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader({
+				tabsOverflowMode: TabsOverflowMode.StartAndEnd
+			});
+
+			// Arrange
+			fillWithItems(this.oITH, 100);
+
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+
+			this.oITH.setSelectedKey("50");
+			Core.applyChanges();
+
+			this.oITH.getItems()[1].addCustomData(new BadgeCustomData());
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("Badge is shown on the start overflow tab when there are tabs with badges in it", function (assert) {
+
+		// Assert
+		assert.ok(this.oITH._getStartOverflow().getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is rendered on the start overflow tab");
+	});
+
+	QUnit.test("Badge is removed from the start overflow tab when there are no more tabs with badges in it", function (assert) {
+
+		// Act
+		this.oITH._getStartOverflow()._expandButtonPress();
+		var oItems = this.oITH._getStartOverflow()._getSelectList().getItems();
+		var oFakeEvent = {
+			srcControl: oItems[1],
+			preventDefault: function () {}
+		};
+		this.oITH._getStartOverflow()._getSelectList().ontap(oFakeEvent);
+
+		// Assert
+		assert.notOk(this.oITH._getOverflow()._isBadgeAttached, "Badge is removed from the start overflow tab");
+	});
 });
