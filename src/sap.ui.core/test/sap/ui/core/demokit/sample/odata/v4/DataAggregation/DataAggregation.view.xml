@@ -17,7 +17,7 @@
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Sales Amount by Account Responsible"/>
-				<m:ToolbarSpacer />
+				<m:ToolbarSpacer/>
 				<m:Button icon="sap-icon://download" press="onDownload" tooltip="Download"/>
 				<m:Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 					press="onToggleMessagePopover" text="{ui>/iMessages}"

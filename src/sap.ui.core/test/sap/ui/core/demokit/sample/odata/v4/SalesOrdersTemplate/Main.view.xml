@@ -67,10 +67,10 @@
 					</headerToolbar>
 					<columns>
 						<Column>
-							<Label text="Name" />
+							<Label text="Name"/>
 						</Column>
 						<Column>
-							<Label text="Type" />
+							<Label text="Type"/>
 						</Column>
 					</columns>
 					<ColumnListItem>
@@ -123,11 +123,11 @@
 											=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
 											<!-- Text: "A descriptive text for values of the annotated property.
 												Value MUST be a dynamic expression when used as metadata annotation." -->
-											<Text text="{field>Value/@@value} {target>@com.sap.vocabularies.Common.v1.Text/@@value}" />
+											<Text text="{field>Value/@@value} {target>@com.sap.vocabularies.Common.v1.Text/@@value}"/>
 										</template:if>
 									</template:elseif>
 									<template:else>
-										<Text text="{field>Value/@@value}" />
+										<Text text="{field>Value/@@value}"/>
 									</template:else>
 								</template:if>
 							</template:with>

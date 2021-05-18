@@ -11,7 +11,7 @@
 				<f:Form editable="true" id="objectPageForm"
 					validateFieldGroup="onValidateFieldGroup">
 					<f:title>
-						<core:Title text="Artist Details" />
+						<core:Title text="Artist Details"/>
 					</f:title>
 					<f:layout>
 						<f:ResponsiveGridLayout
@@ -27,53 +27,53 @@
 							labelSpanL="3"
 							labelSpanM="3"
 							labelSpanS="12"
-							singleContainerFullSize="false" />
+							singleContainerFullSize="false"/>
 					</f:layout>
 					<f:formContainers>
 						<f:FormContainer>
 							<f:formElements>
 								<f:FormElement label="Name">
 									<f:fields>
-										<Input editable="{ui-op>/bEditMode}" value="{Name}" />
+										<Input editable="{ui-op>/bEditMode}" value="{Name}"/>
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Country of Origin">
 									<f:fields>
 										<Input change="onChange" editable="{ui-op>/bEditMode}"
 											fieldGroupIds="countryGroup"
-											value="{CountryOfOrigin}" />
+											value="{CountryOfOrigin}"/>
 										<Input editable="false" fieldGroupIds="countryGroup"
-											value="{CountryOfOrigin_Text}" />
+											value="{CountryOfOrigin_Text}"/>
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Region of Origin">
 									<f:fields>
 										<Input editable="{ui-op>/bEditMode}"
-											value="{RegionOfOrigin}" />
+											value="{RegionOfOrigin}"/>
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Founding Year">
 									<f:fields>
 										<Input editable="{ui-op>/bEditMode}"
-											value="{FoundingYear}" />
+											value="{FoundingYear}"/>
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Breakup Year">
 									<f:fields>
 										<Input editable="{ui-op>/bEditMode}"
-											value="{BreakupYear}" />
+											value="{BreakupYear}"/>
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Sibling" binding="{path : 'SiblingEntity',
 									parameters : {$$ownRequest : true}}">
 									<f:fields>
-										<Text text="{Name}" />
+										<Text text="{Name}"/>
 									</f:fields>
 								</f:FormElement>
 <!-- TODO: enable this as soon as FIORITECHP1-9095 is done
 								<f:FormElement label="Last Changed">
 									<f:fields>
-										<Text text="{DraftAdministrativeData/LastChangeDateTime}" />
+										<Text text="{DraftAdministrativeData/LastChangeDateTime}"/>
 									</f:fields>
 								</f:FormElement>
 -->
@@ -93,7 +93,7 @@
 						<Toolbar>
 						<Title text="Publications"/>
 							<ToolbarSpacer/>
-							<Button enabled="{ui-op>/bEditMode}" press="onCreate" text="Create" />
+							<Button enabled="{ui-op>/bEditMode}" press="onCreate" text="Create"/>
 							<ToolbarSeparator/>
 							<!--Button press="onRefresh" text="Refresh" /-->
 						</Toolbar>
@@ -103,10 +103,10 @@
 							type="Active">
 							<firstStatus>
 								<ObjectStatus state="None"
-									text="{Price}" />
+									text="{Price}"/>
 							</firstStatus>
 							<attributes>
-								<ObjectAttribute text="{CurrencyCode}" />
+								<ObjectAttribute text="{CurrencyCode}"/>
 							</attributes>
 						</ObjectListItem>
 					</items>
@@ -120,9 +120,9 @@
 				</contentLeft>
 				<contentRight>
 					<!--Button press="onRefresh" text="Refresh"/-->
-					<Button enabled="{= !${ui-op>/bEditMode}}" press="onEdit" text="Edit" />
-					<Button enabled="{ui-op>/bEditMode}" press="onDiscard" text="Discard" />
-					<Button enabled="{ui-op>/bEditMode}" press="onSave" text="Save" />
+					<Button enabled="{= !${ui-op>/bEditMode}}" press="onEdit" text="Edit"/>
+					<Button enabled="{ui-op>/bEditMode}" press="onDiscard" text="Discard"/>
+					<Button enabled="{ui-op>/bEditMode}" press="onSave" text="Save"/>
 				</contentRight>
 			</Bar>
 		</footer>

@@ -8,7 +8,7 @@
 		<Button icon="sap-icon://save" id="save" press="onSave" text="Save" tooltip="Save changes"/>
 		<Button id="cancel" icon="sap-icon://sys-cancel-2" press="onCancel" text="Cancel"
 				tooltip="Cancel changes"/>
-		<ToolbarSpacer />
+		<ToolbarSpacer/>
 		<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 				press="onToggleMessagePopover" text="{ui>/iMessages}"
 				type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
@@ -29,13 +29,13 @@
 							<Title id="salesOrderListTitle" level="H2"
 								text="{headerContext>$count} New Sales Orders">
 								<layoutData>
-									<ToolbarLayoutData shrinkable="false" />
+									<ToolbarLayoutData shrinkable="false"/>
 								</layoutData>
 							</Title>
 							<SearchField id="filterGrossAmount" search="onFilterSalesOrders"
 									placeholder="Gross amount greater than" width="50%">
 								<layoutData>
-									<ToolbarLayoutData shrinkable="false" />
+									<ToolbarLayoutData shrinkable="false"/>
 								</layoutData>
 							</SearchField>
 							<Button enabled="true" icon="sap-icon://refresh"
@@ -47,16 +47,16 @@
 						<Column hAlign="Right" width="9em">
 							<Button iconFirst="false" icon="{ui>/sSortSalesOrderIDIcon}"
 								id="sortBySalesOrderId" press="onSortBySalesOrderID"
-								text="Sales Order ID" />
+								text="Sales Order ID"/>
 						</Column>
 						<Column demandPopin="true">
 							<Text text="Buyer Name"/>
 						</Column>
 						<Column demandPopin="true">
-							<Text text="Note" />
+							<Text text="Note"/>
 						</Column>
 						<Column demandPopin="true" hAlign="Right">
-							<Text text="Gross Amount" />
+							<Text text="Gross Amount"/>
 						</Column>
 						<Column demandPopin="true">
 							<Text text="Currency"/>
@@ -65,7 +65,7 @@
 					<ColumnListItem type="Navigation">
 						<Text id="salesOrderId" text="{SalesOrderID}"/>
 						<Text binding="{SO_2_BP}" text="{CompanyName}"/>
-						<Text id="salesOrderNote" text="{Note}" />
+						<Text id="salesOrderNote" text="{Note}"/>
 						<Text id="grossAmount" text="{GrossAmount}"/>
 						<Text text="{CurrencyCode}"/>
 					</ColumnListItem>
