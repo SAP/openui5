@@ -31,6 +31,9 @@ function(
 		metadata: {
 			library: "sap.ui.fl",
 			deprecated: true
+		},
+		renderer: { // inherit Dialog renderer
+			apiVersion: 2
 		}
 	});
 
