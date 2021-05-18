@@ -181,7 +181,8 @@ sap.ui.define([
 					}
 
 					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
-					var oUnitAnnotation = oPropertyAnnotations["@Org.OData.Measures.V1.ISOCurrency"] || oPropertyAnnotations["@Org.OData.Measures.V1.Unit"];
+					var vUnitAnnotation = oPropertyAnnotations["@Org.OData.Measures.V1.ISOCurrency"] || oPropertyAnnotations["@Org.OData.Measures.V1.Unit"];
+					var oUnitAnnotation = !vUnitAnnotation || typeof vUnitAnnotation === "string" ? undefined : vUnitAnnotation;
 					var bUnitIsFromNavigationProperty = oUnitAnnotation != null && oUnitAnnotation.$Path.includes("/")[0];
 					var oTextAnnotation = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"];
 					var bTextIsFromNavigationProperty = oTextAnnotation != null && oTextAnnotation.$Path.includes("/")[0];
