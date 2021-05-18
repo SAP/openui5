@@ -8,7 +8,7 @@ sap.ui.define(['sap/m/semantic/SemanticSelect'], function(SemanticSelect) {
 	/**
 	 * Constructor for a new GroupSelect.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Custom initial settings for the new control
+	 * @param {object} [mSettings] Optional initial settings for the new control:  a map/JSON-object with initial property values, event listeners etc. for the new object
 	 *
 	 * @class
 	 * A GroupSelect is a {@link sap.m.Select} control enhanced with styling according to the semantics of a common "Group" acton.

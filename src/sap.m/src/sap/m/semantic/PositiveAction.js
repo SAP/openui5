@@ -8,7 +8,7 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	/**
 	 * Constructor for a new PositiveAction.
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] custom initial settings for the new control
+	 * @param {object} [mSettings] Optional initial settings for the new control:  a map/JSON-object with initial property values, event listeners etc. for the new object
 	 *
 	 * @class
 	 * A PositiveAction button has default semantic-specific properties and
