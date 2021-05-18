@@ -109,5 +109,36 @@
         ]
       }
     ]
+  },
+  "1.90.1": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "4ac3c7dedd6f4bd73ab984eb5ef4f243b971d42c",
+        "type": "FIX",
+        "text": " XMLViewRenderer: Correctly close placeholder div",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008652872020"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500002121172021"
+          }
+        ]
+      },
+      {
+        "id": "1815723678ad77ceb9d0411d1d3734945e9c0972",
+        "type": "FIX",
+        "text": " sap.ui.core.mvc.View: createContent must support Controls & Promise",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
