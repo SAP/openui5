@@ -422,7 +422,6 @@ sap.ui.define([
 		return this._ready;
 	};
 
-
 	function flattenData(oData, s, a, path) {
 		path = path || "";
 		a = a || [];
@@ -1067,7 +1066,7 @@ sap.ui.define([
 				for (var i = 0; i < aDependentFields.length; i++) {
 					var o = aDependentFields[i];
 					o.config._cancel = false;
-					that._addValueListModel(o.config, o.field, true);
+					that._addValueListModel(o.config, o.field, true, 500 * i);
 				}
 				that._bIgnoreUpdates = false;
 			};
@@ -1117,12 +1116,13 @@ sap.ui.define([
 		oField._cols = oConfig.cols || 2; //by default 2 cols
 		return oField;
 	};
+
 	/**
 	 * Creates a unnamed model if a values.data section exists in the configuration
 	 * @param {object} oConfig
 	 * @param {BaseField} oField
 	 */
-	CardEditor.prototype._addValueListModel = function (oConfig, oField, bIgnore) {
+	CardEditor.prototype._addValueListModel = function (oConfig, oField, bIgnore, nTimeout) {
 		if (oConfig.values) {
 			var oValueModel;
 			if (oConfig.values.data) {
@@ -1132,89 +1132,91 @@ sap.ui.define([
 						oValueModel = new JSONModel({});
 						oField.setModel(oValueModel, undefined);
 					}
-					var oDataProvider = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data);
-					oDataProvider.bindObject({
-						path: "items>/form/items"
-					});
-					oDataProvider.bindObject({
-						path: "currentSettings>" + oConfig._settingspath
-					});
-					var oPromise = oDataProvider.getData();
-					this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
-					oPromise.then(function (oData) {
-						if (oConfig._cancel) {
-							oConfig._values = [];
-							return;
-						}
-						//add group property "Selected" to each record for MultiComboBox in ListField
-						if (oConfig.type === "string[]") {
-							var sPath = oConfig.values.data.path;
-							if (sPath && sPath !== "/") {
-								if (sPath.startsWith("/")) {
-									sPath = sPath.substring(1);
-								}
-								if (sPath.endsWith("/")) {
-									sPath = sPath.substring(0, sPath.length - 1);
-								}
-								var aPath = sPath.split("/");
-								var oResult = ObjectPath.get(aPath, oData);
-								if (Array.isArray(oResult)) {
-									for (var n in oResult) {
-										var sKey = oField.getKeyFromItem(oResult[n]);
+					if (!nTimeout) {
+						nTimeout = 0;
+					}
+					setTimeout(function() {
+						var oDataProvider = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data);
+						oDataProvider.bindObject({
+							path: "items>/form/items"
+						});
+						oDataProvider.bindObject({
+							path: "currentSettings>" + oConfig._settingspath
+						});
+						var oPromise = oDataProvider.getData();
+						this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
+						oPromise.then(function (oData) {
+							if (oConfig._cancel) {
+								oConfig._values = [];
+								return;
+							}
+							//add group property "Selected" to each record for MultiComboBox in ListField
+							if (oConfig.type === "string[]") {
+								var sPath = oConfig.values.data.path;
+								if (sPath && sPath !== "/") {
+									if (sPath.startsWith("/")) {
+										sPath = sPath.substring(1);
+									}
+									if (sPath.endsWith("/")) {
+										sPath = sPath.substring(0, sPath.length - 1);
+									}
+									var aPath = sPath.split("/");
+									var oResult = ObjectPath.get(aPath, oData);
+									if (Array.isArray(oResult)) {
+										for (var n in oResult) {
+											var sKey = oField.getKeyFromItem(oResult[n]);
+											if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
+												oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+											} else {
+												oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+											}
+										}
+										ObjectPath.set(aPath, oResult, oData);
+									}
+								} else if (Array.isArray(oData)) {
+									for (var n in oData) {
+										var sKey = oField.getKeyFromItem(oData[n]);
 										if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
-											oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+											oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
 										} else {
-											oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+											oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
 										}
 									}
-									ObjectPath.set(aPath, oResult, oData);
-								}
-							} else if (Array.isArray(oData)) {
-								for (var n in oData) {
-									var sKey = oField.getKeyFromItem(oData[n]);
-									if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
-										oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
-									} else {
-										oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
-									}
 								}
 							}
-						}
-						oConfig._values = oData;
-						oValueModel.setData(oData);
-						oValueModel.checkUpdate(true);
-						oValueModel.firePropertyChange();
-						this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-						oField._hideValueState(true);
-					}.bind(this)).catch(function (oError) {
-						oConfig._values = {};
-						oValueModel.setData({});
-						oValueModel.checkUpdate(true);
-						this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-						var sError = oResourceBundle.getText("CARDEDITOR_BAD_REQUEST");
-						if (Array.isArray(oError) && oError.length > 0) {
-							sError = oError[0];
-							var jqXHR = oError[1];
-							if (jqXHR) {
-								var oErrorInResponse;
-								if (jqXHR.responseJSON) {
-									oErrorInResponse = jqXHR.responseJSON.error;
-								} else if (jqXHR.responseText) {
-									if (Utils.isJson(jqXHR.responseText)) {
-										oErrorInResponse = JSON.parse(jqXHR.responseText).error;
-									} else {
-										sError = jqXHR.responseText;
+							oConfig._values = oData;
+							oValueModel.setData(oData);
+							oValueModel.checkUpdate(true);
+							oValueModel.firePropertyChange();
+							this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
+							oField._hideValueState(true);
+						}.bind(this)).catch(function (oError) {
+							this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
+							var sError = oResourceBundle.getText("CARDEDITOR_BAD_REQUEST");
+							if (Array.isArray(oError) && oError.length > 0) {
+								sError = oError[0];
+								var jqXHR = oError[1];
+								if (jqXHR) {
+									var oErrorInResponse;
+									if (jqXHR.responseJSON) {
+										oErrorInResponse = jqXHR.responseJSON.error;
+									} else if (jqXHR.responseText) {
+										if (Utils.isJson(jqXHR.responseText)) {
+											oErrorInResponse = JSON.parse(jqXHR.responseText).error;
+										} else {
+											sError = jqXHR.responseText;
+										}
+									}
+									if (oErrorInResponse) {
+										sError = (oErrorInResponse.code || oErrorInResponse.errorCode || jqXHR.status) + ": " + oErrorInResponse.message;
 									}
 								}
-								if (oErrorInResponse) {
-									sError = (oErrorInResponse.code || oErrorInResponse.errorCode || jqXHR.status) + ": " + oErrorInResponse.message;
-								}
+							} else if (typeof (oError) === "string") {
+								sError = oError;
 							}
-						} else if (typeof (oError) === "string") {
-							sError = oError;
-						}
-						oField._showValueState("error", sError, true);
-					}.bind(this));
+							oField._showValueState("error", sError, true);
+						}.bind(this));
+					}.bind(this), nTimeout);
 				}
 				//we use the binding context to connect the given path from oConfig.values.data.path
 				//with that the result of the data request can be have also other structures.
@@ -1261,11 +1263,13 @@ sap.ui.define([
 							if (oItem) {
 								//DIGITALWORKPLACE-4802
 								//clone the config since the item may dependent to itself in filter backend feature
-								var oDependentFieldConfig = merge({}, oConfig);
+								if (oItem._settingspath === oConfig._settingspath) {
+									oConfig = merge({}, oConfig);
+								}
 								oItem._dependentFields = oItem._dependentFields || [];
 								oItem._dependentFields.push({
 									field: oField,
-									config: oDependentFieldConfig
+									config: oConfig
 								});
 
 							}

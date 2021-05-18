@@ -1070,6 +1070,27 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"Orders": {
+						"manifestpath": "/sap.card/configuration/parameters/Orders/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Orders",
+									"parameters": {
+										"$select": "OrderID, OrderDate, CustomerID, EmployeeID",
+										"$filter": "(CustomerID eq '{items>Customer/value}') and (EmployeeID eq {items>Employee/value})"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{= ${OrderID} !== undefined ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID} : ''}",
+								"key": "{OrderID}",
+								"additionalText": "{OrderDate}"
+							}
+						}
+					},
 					"CustomerWithTopAndSkipOption": {
 						"manifestpath": "/sap.card/configuration/parameters/CustomerWithTopAndSkipOption/value",
 						"type": "string",
