@@ -128,6 +128,7 @@ sap.ui.define([
 	 */
 	function _eraseDirtyChanges(mPropertyBag) {
 		var aVariantDirtyChanges = mPropertyBag.model._getDirtyChangesFromVariantChanges(mPropertyBag.changes);
+		aVariantDirtyChanges = aVariantDirtyChanges.reverse();
 
 		return Promise.resolve()
 			.then(function() {

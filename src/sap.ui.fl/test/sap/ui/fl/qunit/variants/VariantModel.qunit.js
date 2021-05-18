@@ -2469,11 +2469,12 @@ sap.ui.define([
 					assert.equal(oCallListenerStub.lastCall.args[0], this.sVMReference, "the function is called with the correct parameters");
 					assert.equal(oCallListenerStub.lastCall.args[1], "variant1", "the function is called with the correct parameters");
 					assert.ok(this.oVariantModel.updateCurrentVariant.notCalled, "then variant switch was not performed");
-					assert.ok(Reverter.revertMultipleChanges.calledWith(aMockDirtyChanges, {
+					// the order of the changes should be reversed on revertMultipleChanges (change2, change1)
+					assert.ok(Reverter.revertMultipleChanges.calledWith(aMockDirtyChanges.reverse(), {
 						appComponent: this.oComp,
 						modifier: JsControlTreeModifier,
 						flexController: this.oFlexController
-					}), "then variant was reverted");
+					}), "then variant was reverted in correct order");
 					assert.strictEqual(this.oVariantModel.oData[this.sVMReference].modified, false);
 
 					aMockDirtyChanges.forEach(function(oDirtyChange) {
