@@ -90,6 +90,11 @@ sap.ui.define([
 		QUnitUtils.triggerEvent("keydown", oTargetDomRef, oParams);
 	}
 
+	function cleanInfoSessionStorage() {
+		var sFlexReference = Utils.getComponentClassName(oCompCont.getComponentInstance());
+		window.sessionStorage.removeItem("sap.ui.fl.info." + sFlexReference);
+	}
+
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
 		before: function () {
 			return oComponentPromise;
@@ -115,6 +120,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
+			cleanInfoSessionStorage();
 			return RtaQunitUtils.clear();
 		}
 	}, function() {
@@ -201,12 +207,14 @@ sap.ui.define([
 			});
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
-				isPublishEnabled: false
+				isPublishEnabled: false,
+				allContextsProvided: true
 			});
 
 			return RtaQunitUtils.clear();
 		},
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -361,6 +369,7 @@ sap.ui.define([
 			.then(this.oRta.start.bind(this.oRta));
 		},
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -422,6 +431,7 @@ sap.ui.define([
 		},
 
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			sandbox.restore();
 			Device.os.macintosh = this.bMacintoshOriginal;
 		}
@@ -512,6 +522,7 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			sandbox.restore();
 		}
 	}, function() {
@@ -620,6 +631,7 @@ sap.ui.define([
 		},
 
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			sandbox.restore();
 			this.oRemoveCommand.destroy();
 			this.oCommandStack.destroy();
@@ -796,6 +808,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			sandbox.restore();
 			this.oSmartForm.destroy();
 			this.oRta.destroy();
@@ -893,6 +906,7 @@ sap.ui.define([
 			.then(this.oRta.start.bind(this.oRta));
 		},
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -957,6 +971,7 @@ sap.ui.define([
 			return this.oRta._initVersioning();
 		},
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -1141,7 +1156,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully", function(assert) {
-			assert.expect(3);
+			assert.expect(4);
 			this.oDeleteChangesStub.restore();
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
@@ -1150,10 +1165,15 @@ sap.ui.define([
 				}, "then the correct parameters were passed");
 				return Promise.resolve();
 			});
+			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
+			var sFlexReference = Utils.getComponentClassName(oCompCont.getComponentInstance());
+			window.sessionStorage.setItem("sap.ui.fl.info." + sFlexReference, JSON.stringify(oFlexInfoResponse));
 
 			return this.oRta._deleteChanges().then(function() {
 				assert.equal(this.oHandleParametersOnExitSpy.callCount, 1, "then delete draft url parameter");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
+				var sFlexInfoFromSession = window.sessionStorage.getItem("sap.ui.fl.info." + sFlexReference);
+				assert.equal(sFlexInfoFromSession, null, "then flex info from session storage is null");
 			}.bind(this));
 		});
 
@@ -1177,6 +1197,10 @@ sap.ui.define([
 
 		QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert) {
 			this.oDeleteChangesStub.restore();
+			var sFlexReference = Utils.getComponentClassName(oCompCont.getComponentInstance());
+			var sInfoSessionName = "sap.ui.fl.info." + sFlexReference;
+			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
+			window.sessionStorage.setItem(sInfoSessionName, JSON.stringify(oFlexInfoResponse));
 
 			sandbox.stub(PersistenceWriteAPI, "reset").rejects("Error");
 
@@ -1186,11 +1210,17 @@ sap.ui.define([
 
 			return this.oRta._deleteChanges().then(function() {
 				assert.equal(this.oReloadPageStub.callCount, 0, "then page reload is not triggered");
+				var sFlexInfoFromSession = window.sessionStorage.getItem(sInfoSessionName);
+				assert.equal(sFlexInfoFromSession, JSON.stringify(oFlexInfoResponse), "then flex info from session storage still exists");
 			}.bind(this));
 		});
 
 		QUnit.test("when calling '_deleteChanges and reset is cancelled', ", function(assert) {
 			this.oDeleteChangesStub.restore();
+			var sFlexReference = Utils.getComponentClassName(oCompCont.getComponentInstance());
+			var sInfoSessionName = "sap.ui.fl.info." + sFlexReference;
+			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
+			window.sessionStorage.setItem(sInfoSessionName, JSON.stringify(oFlexInfoResponse));
 
 			sandbox.stub(PersistenceWriteAPI, "reset").returns(Promise.reject("cancel"));
 			var oStubShowError = sandbox.stub(RtaUtils, "showMessageBox");
@@ -1198,6 +1228,8 @@ sap.ui.define([
 			return this.oRta._deleteChanges().then(function() {
 				assert.equal(this.oReloadPageStub.callCount, 0, "then page reload is not triggered");
 				assert.equal(oStubShowError.callCount, 0, "no error messages is shown");
+				var sFlexInfoFromSession = window.sessionStorage.getItem(sInfoSessionName);
+				assert.equal(sFlexInfoFromSession, JSON.stringify(oFlexInfoResponse), "then flex info from session storage still exists");
 			}.bind(this));
 		});
 
@@ -1271,6 +1303,7 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -1343,6 +1376,7 @@ sap.ui.define([
 			return this.oRta.start();
 		},
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			if (this.oRta._oDraftDiscardWarningPromise) {
 				this.oRta._oDraftDiscardWarningPromise = undefined;
 				this.oRta._oDraftDiscardWarningDialog.destroy();
@@ -1387,6 +1421,7 @@ sap.ui.define([
 			return this.oRta.start();
 		},
 		afterEach: function() {
+			cleanInfoSessionStorage();
 			this.oRta.destroy();
 			sandbox.restore();
 		}

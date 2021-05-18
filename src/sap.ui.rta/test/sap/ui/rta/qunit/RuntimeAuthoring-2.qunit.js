@@ -995,11 +995,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _deleteChanges() is called", function(assert) {
+			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
+			var sFlexReference = FlexUtils.getComponentClassName(this.oRta.getRootControlInstance());
+			window.sessionStorage.setItem("sap.ui.fl.info." + sFlexReference, JSON.stringify(oFlexInfoResponse));
 			return this.oRta._deleteChanges().then(function() {
 				assert.equal(this.fnHandleParametersOnExitStub.callCount, 1, "then _handleParameterOnExit is called");
 				var oReloadInfo = this.fnHandleParametersOnExitStub.getCall(0).args[0];
+				var oFlexInfoFromSession = window.sessionStorage.getItem("sap.ui.fl.info." + sFlexReference);
 				assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
 				assert.equal(oReloadInfo.isDraftAvailable, false, "and with no draft change");
+				assert.equal(oFlexInfoFromSession, null, "and flex info session storage is empty");
 			}.bind(this));
 		});
 

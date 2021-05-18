@@ -858,4 +858,26 @@ sap.ui.define([
 			assert.equal(sParameters, sExpectedParams, "then the parameter was added");
 		});
 	});
+
+	QUnit.module("Given that removeInfoSessionStorage is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with foo oControl, but session storage has also bar oControl", function(assert) {
+			var oFlexInfoResponse = {allContextsProvided: true};
+			var oHugoFlexInfoResponse = {allContextsProvided: false};
+			window.sessionStorage.setItem("sap.ui.fl.info.bar", JSON.stringify(oFlexInfoResponse));
+			window.sessionStorage.setItem("sap.ui.fl.info.foo", JSON.stringify(oHugoFlexInfoResponse));
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("foo");
+			ReloadInfoAPI.removeInfoSessionStorage();
+
+			var sHugoInfoSession = JSON.parse(window.sessionStorage.getItem("sap.ui.fl.info.foo"));
+			assert.equal(sHugoInfoSession, null, "foo oControl is deleted");
+			var sInfoSession = JSON.parse(window.sessionStorage.getItem("sap.ui.fl.info.bar"));
+			assert.equal(sInfoSession.allContextsProvided, oFlexInfoResponse.allContextsProvided, "bar oControl still exists");
+			// clean up session storage
+			window.sessionStorage.removeItem("sap.ui.fl.info.bar");
+		});
+	});
 });
