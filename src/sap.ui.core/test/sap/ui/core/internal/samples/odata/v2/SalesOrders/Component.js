@@ -61,7 +61,7 @@ sap.ui.define([
 				messageCount : 0,
 				salesOrderID : "0500000005"
 			}), "ui");
-			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "messageModel");
+			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "messages");
 		}
 	});
 });

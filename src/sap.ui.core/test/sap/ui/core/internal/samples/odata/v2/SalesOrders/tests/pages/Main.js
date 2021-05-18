@@ -446,8 +446,7 @@ sap.ui.define([
 							var oDialog = aDialogs.find(function (oDialog) {
 								if (sSubHeader) {
 									return oDialog.getTitle().includes(sTitleText)
-										&& oDialog.getContent()[mColumn.SalesOrderID]
-											.getText().includes(sSubHeader);
+										&& oDialog.getContent()[0].getText().includes(sSubHeader);
 								} else {
 									return oDialog.getTitle().includes(sTitleText);
 								}

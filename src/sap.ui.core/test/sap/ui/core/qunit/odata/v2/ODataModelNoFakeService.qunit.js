@@ -390,7 +390,8 @@ sap.ui.define([
 		bAsync : true,
 		sMethod : "MERGE",
 		bUpdateAggregatedMessages : true,
-		bUseCredentials : true
+		bUseCredentials : true,
+		bUseGeneratedUID : true
 	}
 }, {
 	bAsync : undefined,
@@ -498,9 +499,84 @@ sap.ui.define([
 			oFixture.sMethod, oFixture.mHeaders, oFixture.oData, oFixture.sETag, oFixture.bAsync,
 			bUpdateAggregatedMessages);
 
+		if (oFixture.oExpected.bUseGeneratedUID) {
+			assert.ok(oRequest.headers["Content-ID"].startsWith("id-"));
+			delete oRequest.headers["Content-ID"];
+		}
+
 		assert.deepEqual(oRequest, oExpectedResult);
 	});
 		});
+	});
+});
+
+	//*********************************************************************************************
+[{
+	headers : {},
+	method : "DELETE",
+	useGeneratedUID : true
+}, {
+	headers : {},
+	method : "MERGE",
+	useGeneratedUID : true
+}, {
+	headers : {},
+	method : "POST",
+	useGeneratedUID : true
+}, {
+	headers : {"Content-ID" : "id-1234-123"},
+	method : "MERGE",
+	useGeneratedUID : false
+}, {
+	headers : {"Content-ID" : "foo"},
+	method : "POST",
+	useGeneratedUID : false
+}].forEach(function (oFixture) {
+	QUnit.test("_createRequest: using ContentID; " + JSON.stringify(oFixture), function (assert) {
+		var oModel = {
+				bUseBatch : true,
+				_createRequestID : function () {}
+			},
+			oRequest;
+
+		this.mock(oModel).expects("_createRequestID").withExactArgs().returns("~requestID");
+
+		// code under test
+		oRequest = ODataModel.prototype._createRequest.call(oModel, "~sUrl", "~sDeepPath",
+			oFixture.method, Object.assign({}, oFixture.headers));
+
+		if (oFixture.useGeneratedUID) {
+			assert.ok(oRequest.headers["Content-ID"].startsWith("id-"));
+		} else {
+			assert.strictEqual(oRequest.headers["Content-ID"], oFixture.headers["Content-ID"]);
+		}
+	});
+});
+
+	//*********************************************************************************************
+[
+	{method : "GET", useBatch : true},
+	{method : "HEAD", useBatch : true},
+	{method : "DELETE", useBatch : false},
+	{method : "HEAD", useBatch : false},
+	{method : "GET", useBatch : false},
+	{method : "MERGE", useBatch : false},
+	{method : "POST", useBatch : false}
+].forEach(function (oFixture) {
+	QUnit.test("_createRequest: no ContentID; " + JSON.stringify(oFixture), function (assert) {
+		var oModel = {
+				bUseBatch : oFixture.useBatch,
+				_createRequestID : function () {}
+			},
+			oRequest;
+
+		this.mock(oModel).expects("_createRequestID").withExactArgs().returns("~requestID");
+
+		// code under test
+		oRequest = ODataModel.prototype._createRequest.call(oModel, "~sUrl", "~sDeepPath",
+			oFixture.method, {/*mHeaders*/});
+
+		assert.notOk("Content-ID" in oRequest.headers);
 	});
 });
 
