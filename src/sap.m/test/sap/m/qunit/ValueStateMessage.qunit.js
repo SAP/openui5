@@ -220,7 +220,7 @@ sap.ui.define([
 		assert.strictEqual(oDomRef.getAttribute("role"), "tooltip");
 		assert.strictEqual(oDomRef.getAttribute("aria-live"), "off");
 		assert.strictEqual(oDomRef.getAttribute("aria-hidden"), "true");
-		assert.strictEqual(oDomRef.firstElementChild.getAttribute("aria-hidden"), Device.browser.msie ? "true" : null);
+		assert.strictEqual(oDomRef.firstElementChild.getAttribute("aria-hidden"), null);
 
 		// cleanup
 		oInputBase.destroy();
