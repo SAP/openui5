@@ -2799,11 +2799,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bReported) {
-	[false, true].forEach(function (bWithRequestObject) {
-	var sTitle = "_handleError: $reported = " + bReported
-			+ (bWithRequestObject ? "; no request given" : "");
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("_handleError: $reported = " + bReported, function (assert) {
 		var oError = {
 				$reported : bReported,
 				message : "~message",
@@ -2817,17 +2813,12 @@ sap.ui.define([
 			oModel = {
 				_parseResponse : function () {}
 			},
-			oRequest = bWithRequestObject ? {method : "~method", requestUri : "~uri"} : undefined,
+			oRequest = {method : "~method", requestUri : "~uri"},
 			oResult;
 
 		this.mock(oModel).expects("_parseResponse")
 			.withExactArgs(sinon.match.same(oError.response), sinon.match.same(oRequest))
 			.exactly(bReported ? 0 : 1);
-		this.oLogMock.expects("error")
-			.withExactArgs("~message", '{"body":"~body","headers":"~headers","statusCode":"~code",'
-					+ '"statusText":"~statusText"}',
-				sClassName)
-			.exactly(!bWithRequestObject && !bReported ? 1 : 0);
 
 		// code under test
 		oResult = ODataModel.prototype._handleError.call(oModel, oError, oRequest);
@@ -2840,7 +2831,6 @@ sap.ui.define([
 			statusText : "~statusText"
 		});
 		assert.strictEqual(oError.$reported, true);
-	});
 	});
 });
 
@@ -4336,5 +4326,51 @@ sap.ui.define([
 			"/newPath" : oContext,
 			"/newPath2" : oContext
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSecurityToken: call _handleError with oRequest", function (assert) {
+		var fnError, oResult,
+			oModel = {
+				bDisableHeadRequestForToken : true,
+				_createRequest : function () {},
+				_createRequestUrlWithNormalizedPath : function () {},
+				_getHeaders : function () {},
+				_handleError : function () {},
+				_request : function () {},
+				getServiceMetadata : function () {},
+				resetSecurityToken : function () {}
+			},
+			oRequest = {headers : {}};
+
+		this.mock(oModel).expects("_createRequestUrlWithNormalizedPath")
+			.withExactArgs("/")
+			.returns("~sUrl");
+		this.mock(oModel).expects("_getHeaders").withExactArgs(undefined, true).returns("~headers");
+		this.mock(oModel).expects("_createRequest")
+			.withExactArgs("~sUrl", "", "GET", "~headers", null, null, false)
+			.returns(oRequest);
+		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns("~serviceMetadata");
+		this.mock(oModel).expects("_request")
+			.withExactArgs(sinon.match.same(oRequest), sinon.match.func,
+				sinon.match(function (fnError0) {
+					fnError = fnError0;
+					return true;
+				}), undefined, undefined, "~serviceMetadata")
+			.returns("~requestHandle");
+
+		// code under test - parameters fnSuccess, fnError and bAsync are not relevant for this test
+		oResult = ODataModel.prototype.refreshSecurityToken.call(oModel);
+
+		assert.strictEqual(oResult.request, "~requestHandle");
+
+		this.mock(oModel).expects("resetSecurityToken").withExactArgs();
+		this.mock(oModel).expects("_handleError")
+			.withExactArgs("~error", sinon.match.same(oRequest));
+
+		// code under test - call error handler
+		fnError("~error");
+
+		assert.strictEqual(oModel.bTokenHandling, false);
 	});
 });
