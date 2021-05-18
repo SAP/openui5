@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'sap/ui/Device',
 	'sap/ui/core/library',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/ShortcutHintsMixin',
@@ -11,7 +10,7 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText'
 ],
 
-	function(Device, coreLibrary, IconPool, ShortcutHintsMixin, library, InvisibleText) {
+	function(coreLibrary, IconPool, ShortcutHintsMixin, library, InvisibleText) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -55,9 +54,8 @@ sap.ui.define([
 		var sTooltip = oButton._getTooltip();
 		var sText = oButton._getText();
 		var sTextDir = oButton.getTextDirection();
-		var bIE_Edge = Device.browser.internet_explorer || Device.browser.edge;
 		// render bdi tag only if the browser is different from IE and Edge since it is not supported there
-		var bRenderBDI = (sTextDir === TextDirection.Inherit) && !bIE_Edge;
+		var bRenderBDI = (sTextDir === TextDirection.Inherit);
 
 		// get icon from icon pool
 		var sBackURI = IconPool.getIconURI("nav-back");
@@ -145,10 +143,6 @@ sap.ui.define([
 		// check if button is focusable (not disabled)
 		if (bEnabled) {
 			oRm.class("sapMFocusable");
-			// special focus handling for IE
-			if (bIE_Edge) {
-				oRm.class("sapMIE");
-			}
 		}
 
 		if (!oButton._isUnstyled()) {
@@ -218,14 +212,6 @@ sap.ui.define([
 		// write icon
 		if (!oButton.getIconFirst() && oButton._getAppliedIcon()) {
 			this.writeImgHtml(oRm, oButton);
-		}
-
-		// special handling for IE focus outline
-		if (bIE_Edge && bEnabled) {
-			oRm.openStart("span");
-			oRm.class("sapMBtnFocusDiv");
-			oRm.openEnd();
-			oRm.close("span");
 		}
 
 		// end inner button tag

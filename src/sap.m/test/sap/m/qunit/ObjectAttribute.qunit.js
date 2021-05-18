@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/m/ObjectHeader",
 	"sap/m/ObjectListItem",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/Device",
 	"sap/m/Link",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
@@ -27,7 +26,6 @@ sap.ui.define([
 	ObjectHeader,
 	ObjectListItem,
 	KeyCodes,
-	Device,
 	Link,
 	Core,
 	coreLibrary
@@ -249,9 +247,8 @@ sap.ui.define([
 		// assertions
 
 		assert.ok(oAttr.mAggregations._textControl.$().hasClass("sapMTextNoWrap"), "sapMTextNoWrap class is present.");
-		if (!Device.browser.internet_explorer) {
-			assert.equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
-		}
+
+		assert.equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
 
 		//Cleanup
 		oObjectListItem.destroy();

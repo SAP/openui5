@@ -2322,7 +2322,7 @@ sap.ui.define([
 
 		   var oDomRef = this.getDomRef("head");
 		   var iScrollLeft = oDomRef.scrollLeft;
-		if (!Device.browser.internet_explorer && this._bRtl) {
+		if (this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
 

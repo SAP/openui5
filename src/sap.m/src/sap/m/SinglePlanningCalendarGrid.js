@@ -27,7 +27,6 @@ sap.ui.define([
 		'sap/ui/unified/DateTypeRange',
 		'sap/ui/events/KeyCodes',
 		'./SinglePlanningCalendarGridRenderer',
-		'sap/ui/Device',
 		'sap/ui/core/delegate/ItemNavigation',
 		"sap/ui/thirdparty/jquery",
 		'./PlanningCalendarLegend'
@@ -51,7 +50,6 @@ sap.ui.define([
 		DateTypeRange,
 		KeyCodes,
 		SinglePlanningCalendarGridRenderer,
-		Device,
 		ItemNavigation,
 		jQuery,
 		PlanningCalendarLegend
@@ -618,9 +616,8 @@ sap.ui.define([
 						});
 					});
 
-					if (!Device.browser.msie && !Device.browser.edge) {
-						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
-					}
+					oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+
 				}.bind(this),
 
 				/**
@@ -737,9 +734,7 @@ sap.ui.define([
 						jQuery(".sapUiDnDDragging").removeClass("sapUiDnDDragging");
 					});
 
-					if (!Device.browser.msie && !Device.browser.edge) {
-						oBrowserEvent.dataTransfer.setDragImage(getResizeGhost(), 0, 0);
-					}
+					oBrowserEvent.dataTransfer.setDragImage(getResizeGhost(), 0, 0);
 
 					var oGrid = oEvent.getParameter("target"),
 						aIntervalPlaceholders = oGrid.getAggregation("_intervalPlaceholders"),

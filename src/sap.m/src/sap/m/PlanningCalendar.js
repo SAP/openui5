@@ -3956,9 +3956,7 @@ sap.ui.define([
 						});
 					});
 
-					if (!Device.browser.msie && !Device.browser.edge) {
-						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
-					}
+					oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
 				},
 
 				/**
@@ -4184,9 +4182,7 @@ sap.ui.define([
 						$Indicator.removeClass("sapUiCalendarApp sapUiCalendarAppType01 sapUiAppCreate");
 					});
 
-					if (!Device.browser.msie && !Device.browser.edge) {
-						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
-					}
+					oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
 				},
 
 				dragEnter: function (oEvent) {

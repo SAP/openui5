@@ -56,119 +56,115 @@ sap.ui.define([
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
+	QUnit.module("List Container Rendering");
 
+	QUnit.test("Popover rendering", function(assert) {
+		var done = assert.async();
 
-	//	if(navigator.userAgent.indexOf("MSIE") === -1) {
-
-		QUnit.module("List Container Rendering");
-
-		QUnit.test("Popover rendering", function(assert) {
-			var done = assert.async();
-
-			var oFF = new FacetFilter({
-				showPopoverOKButton : true
-			});
-			var oFFL = new FacetFilterList({
-				title : "List"
-			});
-			var oFFI = new FacetFilterItem({
-				text : "val"
-			});
-			oFF.addList(oFFL);
-			oFFL.addItem(oFFI);
-			oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			var oPopover = oFF._getPopover();
-			oPopover.attachEventOnce("afterOpen", function(oEvent) {
-				assert.ok(oPopover.getDomRef(), "Popover should be rendered");
-				assert.ok(oPopover.$().hasClass("sapMFFPop"), "Popover is rendered with the correct CSS class");
-
-				assert.ok(oFFL.getDomRef(), "List should be rendered");
-				assert.ok(oFFI.getDomRef(), "List item should be rendered");
-
-				// Search field bar
-				var oSearchFieldBar = oPopover.getCustomHeader();
-				assert.ok(oSearchFieldBar.getDomRef(), "Popover custom header bar should be rendered");
-				var oSearchField = oSearchFieldBar.getContentMiddle()[0];
-				assert.ok(oSearchField.getDomRef(), "Popover search field should be rendered");
-
-				// Select all checkbox bar
-				var oCheckboxBar = oPopover.getSubHeader();
-				assert.ok(oCheckboxBar.getDomRef(), "Popover subheader bar should be rendered");
-				var oCheckbox = oCheckboxBar.getContentLeft()[0];
-				assert.ok(oCheckbox.getDomRef(), "Select all checkbox should be rendered");
-
-				// Popover ok button
-				assert.ok(oPopover.getFooter().getDomRef(), "Popover OK button should be rendered");
-				destroyFF(oFF);
-				done();
-			});
-			openPopover(oFF, 0);
+		var oFF = new FacetFilter({
+			showPopoverOKButton : true
 		});
-
-		QUnit.test("Dialog rendering", function(assert) {
-			var done = assert.async();
-
-			var oFF = new FacetFilter({
-				showPersonalization : true
-			});
-			var oFFL = new FacetFilterList({
-				title : "List"
-			});
-			var oFFI = new FacetFilterItem({
-				text : "val"
-			});
-			oFF.addList(oFFL);
-			oFFL.addItem(oFFI);
-			oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			var oDialog = oFF._getFacetDialog();
-			oDialog.attachEventOnce("afterOpen", function(oEvent) {
-				assert.ok(oDialog.getDomRef(), "Dialog should be rendered");
-				assert.ok(oDialog.$().hasClass("sapMFFDialog"), "Dialog is rendered with the correct CSS class");
-
-				// Facet list page
-				var oSearchField = getDialogFacetSearch(oFF);
-				assert.ok(oSearchField instanceof sap.m.SearchField, "Control should be an instance of SearchField");
-				assert.ok(oSearchField.getTooltip(), "Dialog search field has tooltip");
-				assert.ok(oSearchField.getDomRef(), "Facet search field should be rendered");
-				var oFacetList = getDialogFacetList(oFF);
-				assert.ok(oFacetList instanceof sap.m.List, "Control should be an instance of List");
-				assert.ok(oFacetList.getDomRef(), "Dialog facet list should be rendered");
-				var oFacetListItem = oFacetList.getItems()[0];
-				assert.ok(oFacetListItem.getDomRef(), "Facet list item should be rendered");
-
-				oFF._navToFilterItemsPage(oFacetListItem);
-
-				// Filter items page
-				var oFilterItemsPage = getDialogFilterItemsPage(oFF);
-				assert.ok(oFilterItemsPage.getDomRef(), "Filter items page is rendered");
-
-				var oSearchFieldBar = oFilterItemsPage.getSubHeader();
-				assert.ok(oSearchFieldBar.getDomRef(), "Filter items page subheader bar should be rendered");
-				var oSearchField = oSearchFieldBar.getContentMiddle()[0];
-				assert.ok(oSearchField.getDomRef(), "Filter items page search field should be rendered");
-
-				var oCheckboxBar = oFilterItemsPage.getContent()[0];
-				assert.ok(oCheckboxBar.getDomRef(), "Filter items page select all checkbox bar should be rendered");
-				var oCheckbox = oCheckboxBar.getContentLeft()[0];
-				assert.ok(oCheckbox.getDomRef(), "Select all checkbox should be rendered");
-
-				var oFilterItemsList = getDialogFilterItemsList(oFF);
-				assert.ok(oFilterItemsList instanceof FacetFilterList, "Control should be an instance of FacetFilterList");
-				assert.ok(oFilterItemsList.getDomRef(), "Filter items list is rendered");
-
-				assert.ok(oFilterItemsList.getItems()[0].getDomRef(), "Filter item is rendered");
-
-				destroyFF(oFF);
-				done();
-			});
-			openDialogFromAddFacet(oFF);
+		var oFFL = new FacetFilterList({
+			title : "List"
 		});
+		var oFFI = new FacetFilterItem({
+			text : "val"
+		});
+		oFF.addList(oFFL);
+		oFFL.addItem(oFFI);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
 
-		QUnit.module("Properties");
+		var oPopover = oFF._getPopover();
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			assert.ok(oPopover.getDomRef(), "Popover should be rendered");
+			assert.ok(oPopover.$().hasClass("sapMFFPop"), "Popover is rendered with the correct CSS class");
+
+			assert.ok(oFFL.getDomRef(), "List should be rendered");
+			assert.ok(oFFI.getDomRef(), "List item should be rendered");
+
+			// Search field bar
+			var oSearchFieldBar = oPopover.getCustomHeader();
+			assert.ok(oSearchFieldBar.getDomRef(), "Popover custom header bar should be rendered");
+			var oSearchField = oSearchFieldBar.getContentMiddle()[0];
+			assert.ok(oSearchField.getDomRef(), "Popover search field should be rendered");
+
+			// Select all checkbox bar
+			var oCheckboxBar = oPopover.getSubHeader();
+			assert.ok(oCheckboxBar.getDomRef(), "Popover subheader bar should be rendered");
+			var oCheckbox = oCheckboxBar.getContentLeft()[0];
+			assert.ok(oCheckbox.getDomRef(), "Select all checkbox should be rendered");
+
+			// Popover ok button
+			assert.ok(oPopover.getFooter().getDomRef(), "Popover OK button should be rendered");
+			destroyFF(oFF);
+			done();
+		});
+		openPopover(oFF, 0);
+	});
+
+	QUnit.test("Dialog rendering", function(assert) {
+		var done = assert.async();
+
+		var oFF = new FacetFilter({
+			showPersonalization : true
+		});
+		var oFFL = new FacetFilterList({
+			title : "List"
+		});
+		var oFFI = new FacetFilterItem({
+			text : "val"
+		});
+		oFF.addList(oFFL);
+		oFFL.addItem(oFFI);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oDialog = oFF._getFacetDialog();
+		oDialog.attachEventOnce("afterOpen", function(oEvent) {
+			assert.ok(oDialog.getDomRef(), "Dialog should be rendered");
+			assert.ok(oDialog.$().hasClass("sapMFFDialog"), "Dialog is rendered with the correct CSS class");
+
+			// Facet list page
+			var oSearchField = getDialogFacetSearch(oFF);
+			assert.ok(oSearchField instanceof sap.m.SearchField, "Control should be an instance of SearchField");
+			assert.ok(oSearchField.getTooltip(), "Dialog search field has tooltip");
+			assert.ok(oSearchField.getDomRef(), "Facet search field should be rendered");
+			var oFacetList = getDialogFacetList(oFF);
+			assert.ok(oFacetList instanceof sap.m.List, "Control should be an instance of List");
+			assert.ok(oFacetList.getDomRef(), "Dialog facet list should be rendered");
+			var oFacetListItem = oFacetList.getItems()[0];
+			assert.ok(oFacetListItem.getDomRef(), "Facet list item should be rendered");
+
+			oFF._navToFilterItemsPage(oFacetListItem);
+
+			// Filter items page
+			var oFilterItemsPage = getDialogFilterItemsPage(oFF);
+			assert.ok(oFilterItemsPage.getDomRef(), "Filter items page is rendered");
+
+			var oSearchFieldBar = oFilterItemsPage.getSubHeader();
+			assert.ok(oSearchFieldBar.getDomRef(), "Filter items page subheader bar should be rendered");
+			var oSearchField = oSearchFieldBar.getContentMiddle()[0];
+			assert.ok(oSearchField.getDomRef(), "Filter items page search field should be rendered");
+
+			var oCheckboxBar = oFilterItemsPage.getContent()[0];
+			assert.ok(oCheckboxBar.getDomRef(), "Filter items page select all checkbox bar should be rendered");
+			var oCheckbox = oCheckboxBar.getContentLeft()[0];
+			assert.ok(oCheckbox.getDomRef(), "Select all checkbox should be rendered");
+
+			var oFilterItemsList = getDialogFilterItemsList(oFF);
+			assert.ok(oFilterItemsList instanceof FacetFilterList, "Control should be an instance of FacetFilterList");
+			assert.ok(oFilterItemsList.getDomRef(), "Filter items list is rendered");
+
+			assert.ok(oFilterItemsList.getItems()[0].getDomRef(), "Filter item is rendered");
+
+			destroyFF(oFF);
+			done();
+		});
+		openDialogFromAddFacet(oFF);
+	});
+
+	QUnit.module("Properties");
 
 	QUnit.test("FacetFilter.visible", function(assert) {
 
@@ -190,47 +186,45 @@ sap.ui.define([
 	});
 
 	QUnit.test("FacetFilter.retainListSequence", function(assert) {
-			var oFF = new FacetFilter();
+		var oFF = new FacetFilter();
 
+		// Verify that retainListSequence behavior when inactive and made active again.
 
-			// Verify that retainListSequence behavior when inactive and made active again.
+		oFF.addList(new FacetFilterList({
+			active : false,
+			sequence : 9,
+			retainListSequence : true
+		}));
+		oFF.addList(new FacetFilterList({
+			sequence : 5
+		}));
+		oFF.addList(new FacetFilterList({
+			active : false,
+			sequence : 3,
+			retainListSequence : false
+		}));
+		var aSequencedLists = oFF._getSequencedLists();
+		assert.equal(aSequencedLists.length, 1, "There should be one sequenced list");
+		assert.strictEqual(aSequencedLists[0].getRetainListSequence(), false,"List sequence should not be retained by default when list is inactive and made active again");
+		assert.equal(aSequencedLists[0].getSequence(), 5, "Sequence of the list should be 5");
 
-			oFF.addList(new FacetFilterList({
-				active : false,
-				sequence : 9,
-				retainListSequence : true
-			}));
-			oFF.addList(new FacetFilterList({
-				sequence : 5
-			}));
-			oFF.addList(new FacetFilterList({
-				active : false,
-				sequence : 3,
-				retainListSequence : false
-			}));
-			var aSequencedLists = oFF._getSequencedLists();
-			assert.equal(aSequencedLists.length, 1, "There should be one sequenced list");
-			assert.strictEqual(aSequencedLists[0].getRetainListSequence(), false,"List sequence should not be retained by default when list is inactive and made active again");
-			assert.equal(aSequencedLists[0].getSequence(), 5, "Sequence of the list should be 5");
+		oFF.getLists()[0].setActive(true);
+		aSequencedLists = oFF._getSequencedLists();
+		assert.equal(aSequencedLists.length, 2, "There should be two sequenced lists");
+		assert.equal(aSequencedLists[0].getSequence(), 5, "Sequence of the first list should be 5");
+		assert.equal(aSequencedLists[1].getSequence(), 9, "Sequence of the second list should be 9");
 
-			oFF.getLists()[0].setActive(true);
-			aSequencedLists = oFF._getSequencedLists();
-			assert.equal(aSequencedLists.length, 2, "There should be two sequenced lists");
-			assert.equal(aSequencedLists[0].getSequence(), 5, "Sequence of the first list should be 5");
-			assert.equal(aSequencedLists[1].getSequence(), 9, "Sequence of the second list should be 9");
+		oFF.getLists()[2].setActive(true);
+		aSequencedLists = oFF._getSequencedLists();
+		assert.equal(aSequencedLists.length, 3, "There should be three sequenced lists");
+		assert.equal(aSequencedLists[0].getSequence(), 5, "Sequence of the first list should be 5");
+		assert.equal(aSequencedLists[1].getSequence(), 9, "Sequence of the second list should be 9");
+		assert.equal(aSequencedLists[2].getSequence(), 10, "Sequence of the second list should be 10");
 
-			oFF.getLists()[2].setActive(true);
-			aSequencedLists = oFF._getSequencedLists();
-			assert.equal(aSequencedLists.length, 3, "There should be three sequenced lists");
-			assert.equal(aSequencedLists[0].getSequence(), 5, "Sequence of the first list should be 5");
-			assert.equal(aSequencedLists[1].getSequence(), 9, "Sequence of the second list should be 9");
-			assert.equal(aSequencedLists[2].getSequence(), 10, "Sequence of the second list should be 10");
+		oFF.removeAllLists();
 
-			oFF.removeAllLists();
-
-			oFF.destroy();
-		});
-
+		oFF.destroy();
+	});
 
 	QUnit.test("FacetFilter.showPersonalization", function(assert) {
 		var done = assert.async();
@@ -316,7 +310,6 @@ sap.ui.define([
 				assert.ok(getRemoveIconCtrl(oFF, 1).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should be hidden.");
 			}
 
-
 		};
 
 		fnTestSimple(oFFSimple);
@@ -399,7 +392,6 @@ sap.ui.define([
 		 }
 
 	});
-
 
 	QUnit.test("FacetFilter.type interval timer", function(assert) {
 		var done = assert.async();
