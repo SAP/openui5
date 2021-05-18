@@ -807,10 +807,10 @@ sap.ui.define([
 		 *                                  and template have empty texts.
 		 * @param {string} [mConfig.id] Id for the new column.
 		 * @param {string} [mConfig.text=undefined] The text of the template.
-		 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
-		 *                                      The corresponding entry in the default test data is created if it does not yet exist.
-		 * @param {string} [mConfig.focusable=false] Whether the text is focusable.
-		 * @param {string} [mConfig.tabbable=false] Whether the text is tabbable.
+		 * @param {boolean} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
+		 *                                       The corresponding entry in the default test data is created if it does not yet exist.
+		 * @param {boolean} [mConfig.focusable=false] Whether the text is focusable.
+		 * @param {boolean} [mConfig.tabbable=false] Whether the text is tabbable.
 		 * @param {string} [mConfig.label=undefined] The text of the label.
 		 * @param {boolean} [mConfig.interactiveLabel=false] Whether the label should be interactive (focusable & tabbable).
 		 * @returns {sap.ui.table.Column} The column that was added to the table.
@@ -829,8 +829,8 @@ sap.ui.define([
 		 *                                  and template have empty texts.
 		 * @param {string} [mConfig.id] Id for the new column.
 		 * @param {string} [mConfig.text=undefined] The text of the template.
-		 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
-		 *                                      The corresponding entry in the default test data is created if it does not yet exist.
+		 * @param {boolean} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
+		 *                                       The corresponding entry in the default test data is created if it does not yet exist.
 		 * @param {string} [mConfig.label=undefined] The text of the label.
 		 * @returns {sap.ui.table.Column} The column that was added to the table.
 		 * @see TableQUnitUtils.createInteractiveTextColumn
@@ -848,10 +848,10 @@ sap.ui.define([
 		 *                                  and template have empty texts.
 		 * @param {string} [mConfig.id] Id for the new column.
 		 * @param {string} [mConfig.text=undefined] The text of the template.
-		 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
-		 *                                      The corresponding entry in the default test data is created if it does not yet exist.
+		 * @param {boolean} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
+		 *                                       The corresponding entry in the default test data is created if it does not yet exist.
 		 * @param {string} [mConfig.type=text] The type of the input element.
-		 * @param {string} [mConfig.tabbable=false] Whether the input is tabbable.
+		 * @param {boolean} [mConfig.tabbable=false] Whether the input is tabbable.
 		 * @param {string} [mConfig.label=undefined] The text of the label.
 		 * @param {boolean} [mConfig.interactiveLabel=false] Whether the label should be interactive (focusable & tabbable).
 		 * @returns {sap.ui.table.Column} The column that was added to the table.
@@ -984,10 +984,10 @@ sap.ui.define([
 	 *                                  and template have empty texts.
 	 * @param {string} [mConfig.id] Id for the new column.
 	 * @param {string} [mConfig.text=undefined] The text of the template.
-	 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
-	 *                                      The corresponding entry in the default test data is created if it does not yet exist.
-	 * @param {string} [mConfig.focusable=false] Whether the text is focusable.
-	 * @param {string} [mConfig.tabbable=false] Whether the text is tabbable.
+	 * @param {boolean} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
+	 *                                       The corresponding entry in the default test data is created if it does not yet exist.
+	 * @param {boolean} [mConfig.focusable=false] Whether the text is focusable.
+	 * @param {boolean} [mConfig.tabbable=false] Whether the text is tabbable.
 	 * @param {string} [mConfig.label=undefined] The text of the label.
 	 * @param {boolean} [mConfig.interactiveLabel=false] Whether the label should be interactive (focusable & tabbable).
 	 * @returns {sap.ui.table.Column} The column.
@@ -1023,8 +1023,8 @@ sap.ui.define([
 	 *                                  and template have empty texts.
 	 * @param {string} [mConfig.id] Id for the new column.
 	 * @param {string} [mConfig.text=undefined] The text of the template.
-	 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
-	 *                                      The corresponding entry in the default test data is created if it does not yet exist.
+	 * @param {boolean} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
+	 *                                       The corresponding entry in the default test data is created if it does not yet exist.
 	 * @param {string} [mConfig.label=undefined] The text of the label.
 	 * @returns {sap.ui.table.Column} The column.
 	 */
@@ -1045,10 +1045,10 @@ sap.ui.define([
 	 *                                  and template have empty texts.
 	 * @param {string} [mConfig.id] Id for the new column.
 	 * @param {string} [mConfig.text=undefined] The text of the template.
-	 * @param {string} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
-	 *                                      The corresponding entry in the default test data is created if it does not yet exist.
+	 * @param {boolean} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
+	 *                                       The corresponding entry in the default test data is created if it does not yet exist.
 	 * @param {string} [mConfig.type=text] The type of the input element.
-	 * @param {string} [mConfig.tabbable=false] Whether the input is tabbable.
+	 * @param {boolean} [mConfig.tabbable=false] Whether the input is tabbable.
 	 * @param {string} [mConfig.label=undefined] The text of the label.
 	 * @param {boolean} [mConfig.interactiveLabel=false] Whether the label should be interactive (focusable & tabbable).
 	 * @returns {sap.ui.table.Column} The column.
