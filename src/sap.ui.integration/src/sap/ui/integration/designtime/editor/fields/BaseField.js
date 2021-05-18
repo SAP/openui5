@@ -40,6 +40,7 @@ sap.ui.define([
 	 */
 	var BaseField = Control.extend("sap.ui.integration.designtime.editor.fields.BaseField", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				configuration: {
 					type: "object"

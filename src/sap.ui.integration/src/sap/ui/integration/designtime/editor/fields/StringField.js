@@ -46,6 +46,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var StringField = BaseField.extend("sap.ui.integration.designtime.editor.fields.StringField", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
 

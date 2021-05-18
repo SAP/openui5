@@ -58,9 +58,10 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var Settings = Control.extend("sap.ui.integration.designtime.editor.fields.Settings", {
-		metadata: {},
-		renderer: function () {
-		}
+		metadata: {
+			library: "sap.ui.integration"
+		},
+		renderer: null // Dialog-like control without renderer
 	});
 	Settings.prototype.setConfiguration = function (oConfig) {
 		this._originalConfig = oConfig;

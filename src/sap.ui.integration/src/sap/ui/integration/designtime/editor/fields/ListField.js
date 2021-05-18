@@ -33,6 +33,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var ListField = BaseField.extend("sap.ui.integration.designtime.editor.fields.ListField", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
 

@@ -23,6 +23,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var DestinationField = BaseField.extend("sap.ui.integration.designtime.editor.fields.DestinationField", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
 

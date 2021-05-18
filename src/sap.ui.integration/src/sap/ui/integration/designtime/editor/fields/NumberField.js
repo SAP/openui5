@@ -21,6 +21,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var NumberField = BaseField.extend("sap.ui.integration.designtime.editor.fields.NumberField", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
 	NumberField.prototype.initVisualization = function (oConfig) {

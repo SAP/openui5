@@ -21,6 +21,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var IntegerField = BaseField.extend("sap.ui.integration.designtime.editor.fields.IntegerField", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
 	IntegerField.prototype.initVisualization = function (oConfig) {

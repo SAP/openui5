@@ -38,6 +38,7 @@ sap.ui.define([
 	 */
 	var ChangeIndicator = Control.extend("sap.ui.rta.util.changeVisualization.ChangeIndicator", {
 		metadata: {
+			library: "sap.ui.rta",
 			properties: {
 				/**
 				 * List of changes that should be rendered for the indicator
