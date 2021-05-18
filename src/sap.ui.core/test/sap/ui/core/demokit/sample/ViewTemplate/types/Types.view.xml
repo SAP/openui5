@@ -161,6 +161,8 @@
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}" id="I30"/>
 			<Label text="precision: 10, scale: 3, minimum: 100 (exclusive), maximum: 1000" labelFor="decimalInput"/>
 			<Input id="decimalInput" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3, minimum: '100', minimumExclusive: true, maximum: '1000'}}"/>
+			<Label text="precision: 5, scale: 5" labelFor="decimalEqualScale"/>
+			<Input id="decimalEqualScale" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 5, scale: 5}}"/>
 
 			<core:Title text="sap.ui.model.odata.type.Double" />
 			<Label text="no constraints" labelFor="I31"/>

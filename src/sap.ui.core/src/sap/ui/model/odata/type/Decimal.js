@@ -159,8 +159,8 @@ sap.ui.define([
 
 			iScale = vScale === "variable" ? Infinity : validateInt(vScale, 0, 0, "scale");
 			iPrecision = validateInt(vPrecision, Infinity, 1, "precision");
-			if (iScale !== Infinity && iPrecision <= iScale) {
-				Log.warning("Illegal scale: must be less than precision (precision="
+			if (iScale !== Infinity && iPrecision < iScale) {
+				Log.warning("Illegal scale: must be less than or equal to precision (precision="
 					+ vPrecision + ", scale=" + vScale + ")", null, oType.getName());
 				iScale = Infinity; // "variable"
 			}
@@ -224,11 +224,13 @@ sap.ui.define([
 	 *   the maximum number of digits allowed
 	 * @param {int|string} [oConstraints.scale=0]
 	 *   the maximum number of digits allowed to the right of the decimal point; the number must be
-	 *   less than <code>precision</code> (if given). As a special case, "variable" is supported.
+	 *   less than or equal to <code>precision</code> (if given). As a special case, "variable" is
+	 *   supported.
 	 *
 	 *   The number of digits to the right of the decimal point may vary from zero to
 	 *   <code>scale</code>, and the number of digits to the left of the decimal point may vary
-	 *   from one to <code>precision</code> minus <code>scale</code>.
+	 *   from one to <code>precision</code> minus <code>scale</code>. If <code>scale</code> is equal
+	 *   to <code>precision</code>, a single zero has to precede the decimal point.
 	 *
 	 *   The number is always displayed with exactly <code>scale</code> digits to the right of the
 	 *   decimal point (unless <code>scale</code> is "variable").
@@ -372,8 +374,13 @@ sap.ui.define([
 			if (iScale === 0) {
 				throw new ValidateException(getText("EnterInt"));
 			} else if (iIntegerDigits + iScale > iPrecision) {
-				throw new ValidateException(getText("EnterNumberIntegerFraction",
-					[iPrecision - iScale, iScale]));
+				if (iScale !== iPrecision) {
+					throw new ValidateException(getText("EnterNumberIntegerFraction",
+						[iPrecision - iScale, iScale]));
+				}
+				if (aMatches[1] !== "0") {
+					throw new ValidateException(getText("EnterNumberFractionOnly", [iScale]));
+				}
 			}
 			throw new ValidateException(getText("EnterNumberFraction", [iScale]));
 		}
@@ -382,10 +389,15 @@ sap.ui.define([
 				throw new ValidateException(getText("EnterNumberPrecision", [iPrecision]));
 			}
 		} else if (iIntegerDigits > iPrecision - iScale) {
-			if (iScale) {
-				throw new ValidateException(getText("EnterNumberInteger", [iPrecision - iScale]));
-			} else {
+			if (iScale !== iPrecision) {
+				if (iScale) {
+					throw new ValidateException(getText("EnterNumberInteger",
+						[iPrecision - iScale]));
+				}
 				throw new ValidateException(getText("EnterMaximumOfDigits", [iPrecision]));
+			}
+			if (aMatches[1] !== "0") {
+				throw new ValidateException(getText("EnterNumberFractionOnly", [iScale]));
 			}
 		}
 		if (sMinimum) {
