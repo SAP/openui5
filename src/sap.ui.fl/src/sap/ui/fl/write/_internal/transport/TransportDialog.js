@@ -79,7 +79,9 @@ function(
 				cancel: {}
 			}
 		},
-		renderer: {} // inherit Dialog renderer
+		renderer: { // inherit Dialog renderer
+			apiVersion: 2
+		}
 	});
 
 
