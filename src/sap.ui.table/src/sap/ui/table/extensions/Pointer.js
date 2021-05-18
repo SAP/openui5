@@ -21,7 +21,7 @@ sap.ui.define([
 
 	var KNOWNCLICKABLECONTROLS = [
 		"sapMBtnBase", "sapMInputBase", "sapMLnk", "sapMSlt",
-		"sapMCb", "sapMRI", "sapMSegBBtn", "sapUiIconPointer", "sapMBtnIcon"];
+		"sapMCb", "sapMRI", "sapMSegBBtn", "sapUiIconPointer", "sapMBtnIcon", "sapMObjStatusActive"];
 
 	/*
 	 * Provides utility functions used this extension
