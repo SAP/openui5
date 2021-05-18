@@ -1296,7 +1296,8 @@
 			"sap.m.sample.TableContextualWidthDynamic",
 			"sap.m.sample.TableContextualWidthStatic",
 			"sap.m.sample.TableNavigated",
-			"sap.m.sample.TableAutoPopin"
+			"sap.m.sample.TableAutoPopin",
+			"sap.m.sample.TableStrictLayout"
 		  ]
 		},
 		{
@@ -2836,6 +2837,11 @@
 		  "name": "Table - Auto popin of the table columns",
 		  "description": "This example demonstrates the automatic pop-in behavior of the table and hiding columns instead of moving them into the pop-in depending on their importance."
 	    },
+		{
+			"id": "sap.m.sample.TableStrictLayout",
+			"name": "Table - Strict layout",
+			"description": "This example demonstrates the Strict layout of the table."
+		},
 		{
 		  "id": "sap.m.sample.ActionListItem",
 		  "name": "Action List Item",
