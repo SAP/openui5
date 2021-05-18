@@ -4276,12 +4276,12 @@ sap.ui.define([
 			}));
 			sap.ui.getCore().applyChanges();
 
-		}).then(oTable.qunit.whenRenderingFinished().then(function() {
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
 
 			qutils.triggerKeydown(document.activeElement, Key.Arrow.RIGHT, false, false, false);
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 2), "ArrowRight -> The cell to the right is focused");
-		}));
+		});
 	});
 
 	QUnit.test("Fix first column", function(assert) {
