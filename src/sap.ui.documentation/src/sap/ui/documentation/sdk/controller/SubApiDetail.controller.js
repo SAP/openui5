@@ -17,16 +17,19 @@ sap.ui.define([
 		"sap/m/Text",
 		"sap/m/HBox",
 		"sap/m/ObjectAttribute",
+		"sap/m/ObjectStatus",
 		"sap/m/Popover",
 		"sap/m/library",
+		"sap/ui/core/library",
 		"sap/m/CustomListItem",
 		"sap/m/List"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo,
-			formatter, Image, Label, Link, Text, HBox, ObjectAttribute, Popover, library, CustomListItem, List) {
+			formatter, Image, Label, Link, Text, HBox, ObjectAttribute, ObjectStatus, Popover, library, coreLibrary, CustomListItem, List) {
 		"use strict";
 
 		// shortcut for sap.m.FlexWrap
 		var FlexWrap = library.FlexWrap;
+		var ObjectStatusState =  coreLibrary.ValueState;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SubApiDetail", {
 
@@ -365,12 +368,25 @@ sap.ui.define([
 
 			_getHeaderLayoutUtil: function () {
 				if (!this._oHeaderLayoutUtil) {
-					var _getObjectAttributeBlock = function (sTitle, sText) {
-							return new ObjectAttribute({
+					var _getObjectAttributeBlock = function (sTitle, sText, oCustomContent) {
+							var oObjectAttribute = new ObjectAttribute({
 								title: sTitle,
 								text: sText
 							}).addStyleClass("sapUiTinyMarginBottom");
+							if (oCustomContent) {
+								oObjectAttribute.setCustomContent(oCustomContent);
+							}
+
+							return oObjectAttribute;
 						},
+						_getVisibilityObjectStatusBlock = function (sText, allowedFor) {
+							return new ObjectStatus({
+								title: "Visibility",
+								text: formatter.formatVisibility(sText, allowedFor),
+								state: ObjectStatusState.Warning
+							}).addStyleClass("sapUiTinyMarginBottom");
+						},
+
 						_getLink = function (oConfig) {
 							return new Link(oConfig || {});
 						},
@@ -503,7 +519,21 @@ sap.ui.define([
 							return _getObjectAttributeBlock("Library", oEntityData.lib);
 						},
 						_getVisibilityBlock: function (oControlData, oEntityData) {
-							return _getObjectAttributeBlock("Visibility", oControlData.visibility);
+							var sVisibility = oControlData.visibility,
+								aAllowedFor = oEntityData.allowedFor;
+							if ( sVisibility === "restricted" && aAllowedFor) {
+								return aAllowedFor.length > 1 ?
+									_getObjectAttributeBlock("Visibility", sVisibility,
+									_getLink({
+										text: "restricted to",
+										press: this._openVisibilityPopover.bind(this, aAllowedFor)
+								})) :
+								_getVisibilityObjectStatusBlock(sVisibility, aAllowedFor);
+
+							} else {
+								return _getObjectAttributeBlock("Visibility", sVisibility);
+							}
+
 						},
 						_getAvailableSinceBlock: function (oControlData, oEntityData) {
 							return _getObjectAttributeBlock("Available since", oControlData.sinceText);
@@ -531,12 +561,29 @@ sap.ui.define([
 							}).addStyleClass("sapUiTinyMargin")
 						]
 					});
-				}), oPopover = this._getSubClassesAndImplementationsPopover(aPopoverContent);
+				}), oPopover = this._addPopoverContent(aPopoverContent);
 
 				oPopover.openBy(oEvent.getSource());
 			},
 
-			_getSubClassesAndImplementationsPopover: function (aContent) {
+			/**
+			 * Opens the Popover, which displays the visibility of the restricted entities.
+			 */
+			_openVisibilityPopover: function (aAllowedForItems, oEvent) {
+				var aPopoverContent = aAllowedForItems.map(function (sElement) {
+					return new CustomListItem({
+						content: [
+							new Text({
+								text: sElement
+							}).addStyleClass("sapUiTinyMargin")
+						]
+					});
+				}), oPopover = this._addPopoverContent(aPopoverContent);
+
+				oPopover.openBy(oEvent.getSource());
+			},
+
+			_addPopoverContent: function (aContent) {
 				var oPopover = this._getPopover();
 
 				if (oPopover.getContent().length > 0) {
