@@ -25,15 +25,7 @@ sap.ui.define([
 
 		var iSelectionStart = oFocusDomRef.selectionStart,
 			iSelectionEnd = oFocusDomRef.selectionEnd,
-			sValue = oFocusDomRef.value,
 			oRange = {start: iSelectionStart, end: iSelectionEnd};
-
-		// This fixes an issue in IE & Edge, related to the selection,
-		// when the last focused item is a group header.
-		if ((Device.browser.msie || Device.browser.edge) && bSkipTextSelection) {
-			oRange.start = sValue.length;
-			oRange.end = sValue.length;
-		}
 
 		return oRange;
 	};
