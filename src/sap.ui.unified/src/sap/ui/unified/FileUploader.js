@@ -907,7 +907,6 @@ sap.ui.define([
 	 * @private
 	 */
 	FileUploader.prototype.onBeforeRendering = function() {
-
 		// store the file uploader outside in the static area
 		var oStaticArea = sap.ui.getCore().getStaticAreaRef();
 		jQuery(this.oFileUpload).appendTo(oStaticArea);
@@ -942,11 +941,6 @@ sap.ui.define([
 		} else {
 			this.oFilePath.$().find('input').attr("tabindex", "-1");
 		}
-		// in case of IE9 we prevent the browse button from being focused because the
-		// native file uploader requires the focus for catching the keyboard events
-		if ((!!Device.browser.internet_explorer && Device.browser.version == 9)) {
-			this.oBrowse.$().attr("tabindex", "-1");
-		}
 
 		setTimeout(this._recalculateWidth.bind(this), 0);
 
@@ -960,7 +954,6 @@ sap.ui.define([
 			this._submitAndResetValue();
 			this._submitAfterRendering = false;
 		}
-
 	};
 
 

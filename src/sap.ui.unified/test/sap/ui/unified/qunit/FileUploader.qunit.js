@@ -14,8 +14,8 @@ sap.ui.define([
 	"use strict";
 
 	/**
- 	 * Helper function to create a FileUploader with useful default value
- 	 */
+	* Helper function to create a FileUploader with useful default value
+	*/
 	var createFileUploader = function (mProps) {
 		mProps = mProps || {};
 		return new FileUploader({
@@ -654,9 +654,8 @@ sap.ui.define([
 			size: 100301
 		});
 		oFileUploader.handlechange(fakeEvent);
-		if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
-			assert.equal(oFileAllowedSpy.callCount, 1, "fileAllowed Event should be called exactly ONCE");
-		}
+
+		assert.equal(oFileAllowedSpy.callCount, 1, "fileAllowed Event should be called exactly ONCE");
 
 		//cleanup
 		oFileUploader.destroy();
@@ -697,46 +696,45 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
-		QUnit.test("Testing the filename lenth validation handling - handlechange()", function (assert) {
-			//setup
-			var oFileUploader = createFileUploader({
-					maximumFilenameLength: 10,
-					fileType: ["java"],
-					mimeType: ["text/x-java-source,java"]
-				}),
-				//rebuilding the native event structure
-				fakeEvent = {
-					type: "change",
-					target: {
-						files : {
-							"0": createFakeFile({
-									name:"AbstractSingletonProxyFactoryBean.java",
-									type:"text/x-java-source,java",
-									size:1226
-								}),
-							"length" : 1
-						}
+	QUnit.test("Testing the filename lenth validation handling - handlechange()", function (assert) {
+		//setup
+		var oFileUploader = createFileUploader({
+				maximumFilenameLength: 10,
+				fileType: ["java"],
+				mimeType: ["text/x-java-source,java"]
+			}),
+			//rebuilding the native event structure
+			fakeEvent = {
+				type: "change",
+				target: {
+					files : {
+						"0": createFakeFile({
+								name:"AbstractSingletonProxyFactoryBean.java",
+								type:"text/x-java-source,java",
+								size:1226
+							}),
+						"length" : 1
 					}
-				},
-				fnFilenameLengthExceedHandler = function (oEvent) {
-					assert.equal(oEvent.getParameter("fileName"), "AbstractSingletonProxyFactoryBean.java", "filenameLengthExceed Event delivers correct fileName, which is too long");
-				},
-				oSpy = this.spy(oFileUploader, "fireFilenameLengthExceed");
+				}
+			},
+			fnFilenameLengthExceedHandler = function (oEvent) {
+				assert.equal(oEvent.getParameter("fileName"), "AbstractSingletonProxyFactoryBean.java", "filenameLengthExceed Event delivers correct fileName, which is too long");
+			},
+			oSpy = this.spy(oFileUploader, "fireFilenameLengthExceed");
 
-			//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
-			oFileUploader.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+		//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-			oFileUploader.attachEvent("filenameLengthExceed", fnFilenameLengthExceedHandler);
+		oFileUploader.attachEvent("filenameLengthExceed", fnFilenameLengthExceedHandler);
 
-			oFileUploader.handlechange(fakeEvent);
-			assert.equal(oSpy.callCount, 1, "filenameLengthExceed Event should be called exactly ONCE");
+		oFileUploader.handlechange(fakeEvent);
+		assert.equal(oSpy.callCount, 1, "filenameLengthExceed Event should be called exactly ONCE");
 
-			//cleanup
-			oFileUploader.destroy();
-		});
-	}
+		//cleanup
+		oFileUploader.destroy();
+	});
+
 
 	QUnit.test("Testing the clearing of the input fields - clear()", function (assert) {
 		//setup
@@ -1368,41 +1366,6 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(oSpy.callCount, 1, "Clicking on browse button should focus the button in safari");
-
-		//Clean
-		oFileUploader.destroy();
-	});
-
-	QUnit.test("Content-Type request header is added once", function(assert) {
-		this.stub(Device, "browser", { "internet_explorer": true });
-
-		//Arrange
-		var oSetRequestHeaderSpy = this.spy(XMLHttpRequest.prototype, "setRequestHeader");
-		var oFileUploader = new FileUploader("fu", {
-			uploadUrl: "test",
-			sendXHR: true,
-			useMultipart: false,
-			headerParameters: [
-				new FileUploaderParameter({ name: "Content-Type", value: "application/pdf" })
-			]
-		});
-		var oFiles = [
-			createFakeFile({
-				name: "fake.pdf",
-				type: "application/pdf",
-				size: 404450
-			}, false)
-		];
-
-		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		oSetRequestHeaderSpy.reset();
-
-		//Act
-		oFileUploader._sendFilesWithXHR(oFiles);
-
-		//Assert
-		assert.equal(oSetRequestHeaderSpy.callCount, 1, "Content-Type is set only once");
 
 		//Clean
 		oFileUploader.destroy();
