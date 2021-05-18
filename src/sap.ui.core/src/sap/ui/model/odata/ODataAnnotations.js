@@ -7,12 +7,12 @@ sap.ui.define([
 	"./AnnotationParser",
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/base/EventProvider",
 	"sap/ui/thirdparty/jquery"
-], function (AnnotationParser, assert, Log, isEmptyObject, EventProvider, jQuery) {
+], function (AnnotationParser, assert, Log, extend, isEmptyObject, EventProvider, jQuery) {
 	"use strict";
-
 
 	/**
 	 * @param {string|string[]} aAnnotationURI The annotation-URL or an array of URLs that should be parsed and merged
@@ -57,7 +57,7 @@ sap.ui.define([
 			this.oRequestHandles = [];
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
-			this.mCustomHeaders = mOptions.headers ? jQuery.extend({}, mOptions.headers) : {};
+			this.mCustomHeaders = mOptions.headers ? extend({}, mOptions.headers) : {};
 
 			if (mOptions.urls) {
 				this.addUrl(mOptions.urls);
@@ -256,7 +256,7 @@ sap.ui.define([
 	 */
 	ODataAnnotations.prototype.setHeaders = function(mHeaders) {
 		// Copy headers (dont use reference to mHeaders map)
-		this.mCustomHeaders = jQuery.extend({}, mHeaders);
+		this.mCustomHeaders = extend({}, mHeaders);
 	};
 
 	/**
@@ -340,7 +340,7 @@ sap.ui.define([
 			error:      function() {},
 			fireEvents: false
 		};
-		mOptions = jQuery.extend({}, mDefaultOptions, mOptions);
+		mOptions = extend({}, mDefaultOptions, mOptions);
 
 		var oXMLDoc = this._createXMLDocument(oXMLDocument, sXMLContent);
 
@@ -490,7 +490,7 @@ sap.ui.define([
 			var mAjaxOptions = {
 				url: sUrl,
 				async: that.bAsync,
-				headers: jQuery.extend({}, that.mCustomHeaders, {
+				headers: extend({}, that.mCustomHeaders, {
 					"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag() // Always overwrite
 				})
 			};

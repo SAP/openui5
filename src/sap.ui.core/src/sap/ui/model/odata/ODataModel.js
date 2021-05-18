@@ -12,55 +12,34 @@
 
 // Provides class sap.ui.model.odata.ODataModel
 sap.ui.define([
-	'sap/ui/model/BindingMode',
-	'sap/ui/model/Context',
-	'sap/ui/model/Model',
-	'./ODataUtils',
-	'./CountMode',
-	'./ODataContextBinding',
-	'./ODataListBinding',
-	'./ODataMetadata',
-	'./ODataPropertyBinding',
-	'./ODataTreeBinding',
-	'sap/ui/model/FilterProcessor',
-	'sap/ui/model/odata/ODataMetaModel',
-	'sap/ui/thirdparty/URI',
-	'sap/ui/thirdparty/datajs',
-	"sap/base/util/isEmptyObject",
-	"sap/base/util/uid",
-	"sap/base/util/merge",
-	"sap/base/Log",
+	"./CountMode",
+	"./ODataContextBinding",
+	"./ODataListBinding",
+	"./ODataMetadata",
+	"./ODataPropertyBinding",
+	"./ODataTreeBinding",
+	"./ODataUtils",
 	"sap/base/assert",
+	"sap/base/Log",
 	"sap/base/security/encodeURL",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isPlainObject"
-],
-	function(
-		BindingMode,
-		Context,
-		Model,
-		ODataUtils,
-		CountMode,
-		ODataContextBinding,
-		ODataListBinding,
-		ODataMetadata,
-		ODataPropertyBinding,
-		ODataTreeBinding,
-		FilterProcessor,
-		ODataMetaModel,
-		URI,
-		OData,
-		isEmptyObject,
-		uid,
-		merge,
-		Log,
-		assert,
-		encodeURL,
-		jQuery,
-		isPlainObject
-	) {
+	"sap/base/util/each",
+	"sap/base/util/extend",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/isPlainObject",
+	"sap/base/util/merge",
+	"sap/base/util/uid",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/Context",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/Model",
+	"sap/ui/model/odata/ODataMetaModel",
+	"sap/ui/thirdparty/datajs",
+	"sap/ui/thirdparty/URI"
+], function(CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding,
+		ODataTreeBinding, ODataUtils, assert, Log, encodeURL, each, extend, isEmptyObject,
+		isPlainObject, merge, uid, BindingMode, Context, FilterProcessor, Model, ODataMetaModel,
+		OData, URI) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -716,7 +695,7 @@ sap.ui.define([
 		}
 		if (bCache === false) {
 
-			var timeStamp = jQuery.now();
+			var timeStamp = Date.now();
 			// try replacing _= if it is there
 			var ret = sUrl.replace( /([?&])_=[^&]*/, "$1_=" + timeStamp );
 			// if nothing was replaced, add timestamp to the end
@@ -935,7 +914,7 @@ sap.ui.define([
 		aList, sKey, oResult, oEntry;
 		if (oData.results) {
 			aList = [];
-			jQuery.each(oData.results, function(i, entry) {
+			each(oData.results, function(i, entry) {
 				aList.push(that._importData(entry, mKeys));
 			});
 			return aList;
@@ -946,7 +925,7 @@ sap.ui.define([
 				oEntry = oData;
 				this.oData[sKey] = oEntry;
 			}
-			jQuery.each(oData, function(sName, oProperty) {
+			each(oData, function(sName, oProperty) {
 				if (oProperty && (oProperty.__metadata && oProperty.__metadata.uri || oProperty.results) && !oProperty.__deferred) {
 					oResult = that._importData(oProperty, mKeys);
 					if (Array.isArray(oResult)) {
@@ -970,12 +949,12 @@ sap.ui.define([
 		var that = this, aList;
 		if (oData.results) {
 			aList = [];
-			jQuery.each(oData.results, function(i, entry) {
+			each(oData.results, function(i, entry) {
 				aList.push(that._removeReferences(entry));
 			});
 			return aList;
 		} else {
-			jQuery.each(oData, function(sPropName, oCurrentEntry) {
+			each(oData, function(sPropName, oCurrentEntry) {
 				if (oCurrentEntry) {
 					if (oCurrentEntry["__ref"] || oCurrentEntry["__list"]) {
 						delete oData[sPropName];
@@ -995,12 +974,12 @@ sap.ui.define([
 		aResults = [];
 		if (oData.results) {
 			aList = [];
-			jQuery.each(oData.results, function(i, entry) {
+			each(oData.results, function(i, entry) {
 				aList.push(that._restoreReferences(entry));
 			});
 			return aList;
 		} else {
-			jQuery.each(oData, function(sPropName, oCurrentEntry) {
+			each(oData, function(sPropName, oCurrentEntry) {
 				if (oCurrentEntry && oCurrentEntry["__ref"]) {
 					var oChildEntry = that._getObject("/" + oCurrentEntry["__ref"]);
 					assert(oChildEntry, "ODataModel inconsistent: " + oCurrentEntry["__ref"] + " not found!");
@@ -1011,7 +990,7 @@ sap.ui.define([
 						that._restoreReferences(oChildEntry);
 					}
 				} else if (oCurrentEntry && oCurrentEntry["__list"]) {
-					jQuery.each(oCurrentEntry["__list"], function(j, sEntry) {
+					each(oCurrentEntry["__list"], function(j, sEntry) {
 						var oChildEntry = that._getObject("/" + oCurrentEntry["__list"][j]);
 						assert(oChildEntry, "ODataModel inconsistent: " +  oCurrentEntry["__list"][j] + " not found!");
 						if (oChildEntry) {
@@ -1045,7 +1024,7 @@ sap.ui.define([
 	ODataModel.prototype.initialize = function() {
 		// Call initialize on all bindings in case metadata was not available when they were created
 		var aBindings = this.getBindings();
-		jQuery.each(aBindings, function(iIndex, oBinding) {
+		each(aBindings, function(iIndex, oBinding) {
 			oBinding.initialize();
 		});
 	};
@@ -1072,7 +1051,7 @@ sap.ui.define([
 	ODataModel.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
 		var aBindings = this.getBindings();
-		jQuery.each(aBindings, function(iIndex, oBinding) {
+		each(aBindings, function(iIndex, oBinding) {
 			oBinding.refresh(bForceUpdate, mChangedEntities, mEntityTypes);
 		});
 	};
@@ -1102,7 +1081,7 @@ sap.ui.define([
 			this.sUpdateTimer = null;
 		}
 		var aBindings = this.getBindings();
-		jQuery.each(aBindings, function(iIndex, oBinding) {
+		each(aBindings, function(iIndex, oBinding) {
 			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
 			}
@@ -1504,7 +1483,7 @@ sap.ui.define([
 			sValue = ODataUtils.formatValue(oKeyProperties[sName], oProperty.type);
 			sKey += bDecode ? sValue : encodeURIComponent(sValue);
 		} else {
-			jQuery.each(oEntityType.key.propertyRef, function(i, oPropertyRef) {
+			each(oEntityType.key.propertyRef, function(i, oPropertyRef) {
 				if (i > 0) {
 					sKey += ",";
 				}
@@ -1757,7 +1736,7 @@ sap.ui.define([
 
 			if (bImportData) {
 				if (oData && oData.__batchResponses) {
-					jQuery.each(oData.__batchResponses, function(iIndex, oResponse) {
+					each(oData.__batchResponses, function(iIndex, oResponse) {
 						if (oResponse && oResponse.data) {
 							that._importData(oResponse.data, mChangedEntities);
 						}
@@ -1841,7 +1820,7 @@ sap.ui.define([
 			sUrl += "?" + this.aUrlParams.join("&");
 		}
 
-		jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
+		extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
 
 		// reset
 		delete oChangeHeader["Content-Type"];
@@ -1860,16 +1839,16 @@ sap.ui.define([
 			oRequest.withCredentials = this.bWithCredentials;
 		}
 		//collect keys
-		jQuery.each(aBatchRequests, function(i, oBatchOperation) {
+		each(aBatchRequests, function(i, oBatchOperation) {
 			if (oBatchOperation["__changeRequests"]) {
 				//this is a changeset
-				jQuery.each(oBatchOperation["__changeRequests"],function(j, oChangeRequest){
+				each(oBatchOperation["__changeRequests"],function(j, oChangeRequest){
 					if (oChangeRequest.keys && oChangeRequest.method != "POST") {
-						jQuery.each(oChangeRequest.keys, function(k,sKey){
+						each(oChangeRequest.keys, function(k,sKey){
 							mKeys[k] = sKey;
 						});
 					} else if (oChangeRequest.entityTypes && oChangeRequest.method == "POST") {
-						jQuery.each(oChangeRequest.entityTypes, function(l, sEntityType){
+						each(oChangeRequest.entityTypes, function(l, sEntityType){
 							mEntityTypes[l] = sEntityType;
 						});
 					}
@@ -1956,7 +1935,7 @@ sap.ui.define([
 	ODataModel.prototype._getBatchErrors = function(oData) {
 		var aErrorResponses = [], sErrorMsg;
 		// check if errors occurred in the batch
-		jQuery.each(oData.__batchResponses, function(iIndex, oOperationResponse) {
+		each(oData.__batchResponses, function(iIndex, oOperationResponse) {
 			if (oOperationResponse.message) {
 				sErrorMsg = "The following problem occurred: " + oOperationResponse.message;
 				if (oOperationResponse.response) {
@@ -1968,7 +1947,7 @@ sap.ui.define([
 				Log.fatal(sErrorMsg);
 			}
 			if (oOperationResponse.__changeResponses) {
-				jQuery.each(oOperationResponse.__changeResponses, function(iIndex, oChangeOperationResponse) {
+				each(oOperationResponse.__changeResponses, function(iIndex, oChangeOperationResponse) {
 					if (oChangeOperationResponse.message) {
 						sErrorMsg = "The following problem occurred: " + oChangeOperationResponse.message;
 						if (oChangeOperationResponse.response) {
@@ -2067,7 +2046,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._createRequest = function(sUrl, sMethod, bAsync, oPayload, sETag) {
 		var oChangeHeader = {}, sETagHeader;
-		jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
+		extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
 
 		sETagHeader = this._getETag(sUrl, oPayload, sETag);
 
@@ -2128,7 +2107,7 @@ sap.ui.define([
 		if (oRequest.data && Array.isArray(oRequest.data.__batchRequests)) {
 			if (oResponse) {
 				aErrorResponses = that._getBatchErrors(oResponse.data);
-				jQuery.each(aErrorResponses, function(iIndex, oErrorResponse){
+				each(aErrorResponses, function(iIndex, oErrorResponse){
 					if (oErrorResponse.response && oErrorResponse.response.statusCode == "412") {
 						sErrorCode = oErrorResponse.response.statusCode;
 						return false;
@@ -2138,9 +2117,9 @@ sap.ui.define([
 					return false;
 				}
 			}
-			jQuery.each(oRequest.data.__batchRequests, function(iIndex, oBatchRequest) {
+			each(oRequest.data.__batchRequests, function(iIndex, oBatchRequest) {
 				if (Array.isArray(oBatchRequest.__changeRequests)) {
-					jQuery.each(oBatchRequest.__changeRequests, function(iIndex, oChangeRequest) {
+					each(oBatchRequest.__changeRequests, function(iIndex, oChangeRequest) {
 						bRefreshNeeded = bRefreshNeeded || that._isRefreshNeeded(oChangeRequest);
 						return !bRefreshNeeded; //break
 					});
@@ -2440,7 +2419,7 @@ sap.ui.define([
 			sUrl = this._createRequestUrl(sFunctionName, oContext, null,  this.bUseBatch);
 			var sUrlURI = URI(sUrl);
 			if (oFunctionMetadata.parameter != null) {
-				jQuery.each(oParameters, function (sParameterName, oParameterValue) {
+				each(oParameters, function (sParameterName, oParameterValue) {
 					var matchingParameters = oFunctionMetadata.parameter.filter(function (oParameter) {
 						return oParameter.name == sParameterName && oParameter.mode == "In";
 					});
@@ -2456,7 +2435,7 @@ sap.ui.define([
 	//			parameters are encoded in read function
 				return that.read(sFunctionName, oContext, oUrlParams, true, fnSuccess, fnError);
 			} else {
-				jQuery.each(oUrlParams, function (sParameterName, oParameterValue) {
+				each(oUrlParams, function (sParameterName, oParameterValue) {
 					// addQuery also encodes the url
 					sUrlURI.addQuery(sParameterName, oParameterValue);
 				});
@@ -2569,7 +2548,7 @@ sap.ui.define([
 	ODataModel.prototype.createBatchOperation = function(sPath, sMethod, oData, oParameters) {
 		var oChangeHeader = {}, sETag, oStoredEntry, sKey, oEntityType;
 
-		jQuery.extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
+		extend(oChangeHeader, this.mCustomHeaders, this.oHeaders);
 
 		// for batch remove starting / if any
 		if (sPath.startsWith("/")) {
@@ -2646,7 +2625,7 @@ sap.ui.define([
 			return false;
 		}
 		var that = this;
-		jQuery.each(aReadOperations, function(iIndex, oReadOperation) {
+		each(aReadOperations, function(iIndex, oReadOperation) {
 			if (oReadOperation.method != "GET") {
 				Log.warning("Batch operation should be a GET operation!");
 				return false;
@@ -2668,7 +2647,7 @@ sap.ui.define([
 		if (!Array.isArray(aChangeOperations) || aChangeOperations.length <= 0) {
 			return false;
 		}
-		jQuery.each(aChangeOperations, function(iIndex, oChangeOperation) {
+		each(aChangeOperations, function(iIndex, oChangeOperation) {
 			if (oChangeOperation.method != "POST" && oChangeOperation.method != "PUT" && oChangeOperation.method != "MERGE" && oChangeOperation.method != "DELETE") {
 				Log.warning("Batch operation should be a POST/PUT/MERGE/DELETE operation!");
 				return false;
@@ -2814,7 +2793,7 @@ sap.ui.define([
 						oPayload.__metadata.etag = sMetadataETag;
 					}
 				}
-				jQuery.each(oPayload, function(sPropName, oPropValue) {
+				each(oPayload, function(sPropName, oPropValue) {
 					if (oPropValue && oPropValue.__deferred) {
 						delete oPayload[sPropName];
 					}
@@ -2824,7 +2803,7 @@ sap.ui.define([
 				var oEntityType = this.oMetadata._getEntityTypeByPath(sPath);
 				if (oEntityType) {
 					var aNavProps = this.oMetadata._getNavigationPropertyNames(oEntityType);
-					jQuery.each(aNavProps, function(iIndex, sNavPropName) {
+					each(aNavProps, function(iIndex, sNavPropName) {
 						delete oPayload[sNavPropName];
 					});
 				}
@@ -2856,7 +2835,7 @@ sap.ui.define([
 
 		if (this.bUseBatch) {
 			var aChangeRequests = [];
-			jQuery.each(this.oRequestQueue, function(sKey, oCurrentRequest){
+			each(this.oRequestQueue, function(sKey, oCurrentRequest){
 				delete oCurrentRequest._oRef;
 				var oReqClone = merge({}, oCurrentRequest);
 				oCurrentRequest._oRef = oReqClone;
@@ -2870,7 +2849,7 @@ sap.ui.define([
 			this._submitRequest(oRequest, this.bUseBatch, fnSuccess, fnError, true);
 		} else {
 			//loop request queue
-			jQuery.each(this.oRequestQueue, function(sKey, oCurrentRequest){
+			each(this.oRequestQueue, function(sKey, oCurrentRequest){
 				// clone request and store the clone as reference to compare it in updateRequestQueue.
 				// We send the cloned request which will be modified by datajs but we want to keep the original request stored
 				// because it may fail and we need to send the request again.
@@ -2908,7 +2887,7 @@ sap.ui.define([
 						for (var j = 0; j < aChangeRequests.length; j++) {
 							oChangeRequest = aChangeRequests[j];
 							/*eslint-disable no-loop-func */
-							jQuery.each(this.oRequestQueue, function(sKey,oCurrentRequest) {
+							each(this.oRequestQueue, function(sKey,oCurrentRequest) {
 								if (oCurrentRequest._oRef === oChangeRequest && sKey !== that.sChangeKey) {
 									delete that.oRequestQueue[sKey];
 									delete that.oData[sKey];
@@ -2924,7 +2903,7 @@ sap.ui.define([
 				}
 			}
 		} else {
-			jQuery.each(this.oRequestQueue, function(sKey,oCurrentRequest) {
+			each(this.oRequestQueue, function(sKey,oCurrentRequest) {
 				if (oCurrentRequest._oRef === oRequest && sKey !== that.sChangeKey) {
 					delete that.oRequestQueue[sKey];
 					delete that.oData[sKey];
@@ -3078,7 +3057,7 @@ sap.ui.define([
 		var mCheckedHeaders = {},
 			that = this;
 		if (mHeaders) {
-			jQuery.each(mHeaders, function(sHeaderName, sHeaderValue){
+			each(mHeaders, function(sHeaderName, sHeaderValue){
 				// case sensitive check needed to make sure private headers cannot be overridden by difference in the upper/lower case (e.g. accept and Accept).
 				if (that._isHeaderPrivate(sHeaderName)) {
 					Log.warning("Not allowed to modify private header: " + sHeaderName);
@@ -3104,7 +3083,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.getHeaders = function() {
-		return jQuery.extend({}, this.mCustomHeaders, this.oHeaders);
+		return extend({}, this.mCustomHeaders, this.oHeaders);
 	};
 
 	/**
@@ -3511,7 +3490,7 @@ sap.ui.define([
 			aEntitySets = [],
 			that = this;
 
-		jQuery.each(aUrls, function(i, sUrl) {
+		each(aUrls, function(i, sUrl) {
 			var iIndex = sUrl.indexOf("$metadata");
 			if (iIndex >= 0) {
 				//add serviceUrl for relative metadata urls
@@ -3525,7 +3504,7 @@ sap.ui.define([
 		});
 
 		return this.oMetadata._addUrl(aMetadataUrls).then(function(aParams) {
-			return Promise.all(jQuery.map(aParams, function(oParam) {
+			return Promise.all(aParams.map(function(oParam) {
 				aEntitySets = aEntitySets.concat(oParam.entitySets);
 				return that.addAnnotationXML(oParam["metadataString"]);
 			}));
