@@ -4,15 +4,13 @@ sap.ui.define([
 	"sap/m/StandardTile",
 	"sap/ui/core/IconPool",
 	"sap/m/TileContainer",
-	"jquery.sap.global",
-	"sap/ui/Device"
+	"jquery.sap.global"
 ], function(
 	createAndAppendDiv,
 	StandardTile,
 	IconPool,
 	TileContainer,
-	jQuery,
-	Device
+	jQuery
 ) {
 	"use strict";
 
@@ -177,23 +175,6 @@ sap.ui.define([
 		tileBasic.firePress();
 		jQuery.sap.log.info("Pressed tile id=" + pressedTileId);
 		assert.equal(pressedTileId, tileBasicId, "tileBasic was pressed");
-	});
-
-	QUnit.test("ontap will set the focus to the StandardTile domRef in IE", function (assert) {
-		// Arrange
-		var oStandardTile = new StandardTile(),
-			bSpyDestroyHandler = this.spy(oStandardTile, "focus"),
-			oBrowserStub = this.stub(Device, "browser").value({ msie: true });
-
-		// Act
-		oStandardTile.ontap();
-
-		// Assert
-		assert.equal(bSpyDestroyHandler.callCount, 1, "StandardTile is focused");
-
-		// Cleanup
-		oStandardTile.destroy();
-		oBrowserStub.restore();
 	});
 
 	QUnit.test("ShouldDestroyTheImageIfTileGetsDestroyed", function(assert) {

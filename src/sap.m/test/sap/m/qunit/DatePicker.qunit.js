@@ -1734,78 +1734,6 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
-	// BCP: 1880193676
-	QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {
-		// Arrange
-		var done = assert.async(),
-			oBrowserStub = this.stub(Device, "browser", {msie: true}),
-			oTouchStub = this.stub(Device, "support", {touch: false});
-
-		this.clock = sinon.useFakeTimers();
-		var oDP = new DatePicker("DTP6", {
-			dateValue: new Date()
-		}).placeAt("uiArea2");
-		sap.ui.getCore().applyChanges();
-
-		oDP._$input.get(0).selectionStart = 3;
-		oDP._$input.get(0).selectionEnd = 3;
-
-		oDP.$().find(".sapUiIcon").trigger("click"); //simulate opening
-		this.clock.tick(100);
-
-		//Assert
-		assert.equal(oDP._$input.get(0).selectionStart, 0, "selection start should be 0");
-		assert.equal(oDP._$input.get(0).selectionEnd, 0, "selection end should be 0");
-
-		//Act
-		oDP._oPopup.close();
-
-		setTimeout(function(){
-			//Assert
-			assert.equal(oDP._$input.get(0).selectionStart, 3, "selection start must be restored");
-			assert.equal(oDP._$input.get(0).selectionEnd, 3, "selection end must be restored");
-
-			//Cleanup
-			oBrowserStub.restore();
-			oTouchStub.restore();
-			this.clock.restore();
-			done();
-		}.bind(this), 1000);
-
-		this.clock.tick(1000);//"waits" for close popup animation to complete
-	});
-
-	// BCP: 1880193676
-	QUnit.test("For IE & Edge the input selection is stored and cleared from _openPopup method (before opening the Popover)", function (assert) {
-		// Arrange
-		var fn = function () {},
-			oStub = this.stub(Device, "browser", { msie: true }),
-			oDP = new DatePicker(),
-			oDPStoreInputSelectionSpy = this.spy(oDP, "_storeInputSelection");
-
-		oDP._oPopup = {
-			openBy: fn,
-			isOpen: fn,
-			_getPopup: function() {
-				return { setAutoCloseAreas: fn, open: fn, isOpen: fn };
-			}
-		}; // simulate that there is a popup
-
-		oDP.placeAt("uiArea2");
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		oDP._openPopup();
-
-		// Arrange
-		assert.equal(oDPStoreInputSelectionSpy.callCount, 1, "_storeInputSelection is called once on _openPopup");
-
-		// Cleanup
-		oStub.restore();
-		oDPStoreInputSelectionSpy.restore();
-		oDP.destroy();
-	});
-
 	QUnit.test("Instance manager detects popup state changes", function (assert) {
 		// Prepare
 		var oCore = sap.ui.getCore(),
@@ -2277,58 +2205,6 @@ sap.ui.define([
 			this.oDP.destroy();
 			this.oDP = null;
 		}
-	});
-
-	// BCP: 1880193676
-	QUnit.test("_storeInputSelection should store the selectionStart and End position of the Input and set it to 0", function (assert) {
-		// Arrange
-		var oBrowserStub = this.stub(Device, "browser", {msie: true}),
-			oTouchStub = this.stub(Device, "support", {touch: false}),
-			iExpectedSelectionStart = 2,
-			iExpectedSelectionEnd = 3,
-			oMockedInput = { selectionStart: iExpectedSelectionStart, selectionEnd: iExpectedSelectionEnd },
-			oDP = new DatePicker();
-
-		// Act
-		oDP._storeInputSelection(oMockedInput);
-
-		// Assert
-		assert.equal(oDP._oInputSelBeforePopupOpen.iStart, iExpectedSelectionStart, "Stored selectionStart should be equal to " + iExpectedSelectionStart);
-		assert.equal(oDP._oInputSelBeforePopupOpen.iStart, iExpectedSelectionStart, "Stored selectionEnd should be equal to " + iExpectedSelectionEnd);
-		assert.equal(oMockedInput.selectionStart, 0, "Input's sectionStart should be restored to 0");
-		assert.equal(oMockedInput.selectionEnd, 0, "Input's sectionEnd should be restored to 0");
-
-		// Cleanup
-		oDP.destroy();
-		oTouchStub.restore();
-		oBrowserStub.restore();
-	});
-
-	// BCP: 1880193676
-	QUnit.test("_restoreInputSelection should restore the selectionStart and End position of the Input", function (assert) {
-		// Arrange
-		var oBrowserStub = this.stub(Device, "browser", {msie: true}),
-			oTouchStub = this.stub(Device, "support", {touch: false}),
-			iExpectedSelectionStart = 2,
-			iExpectedSelectionEnd = 3,
-			oMockedInput = { selectionStart: iExpectedSelectionStart, selectionEnd: iExpectedSelectionEnd },
-			oDP = new DatePicker();
-		oDP._oInputSelBeforePopupOpen = {
-			iStart: iExpectedSelectionStart,
-			iEnd: iExpectedSelectionEnd
-		};
-
-		// Act
-		oDP._restoreInputSelection(oMockedInput);
-
-		// Assert
-		assert.equal(oMockedInput.selectionStart, iExpectedSelectionStart, "Input's sectionStart should be restored to " + iExpectedSelectionStart);
-		assert.equal(oMockedInput.selectionEnd, iExpectedSelectionEnd, "Input's sectionEnd should be restored to " + iExpectedSelectionEnd);
-
-		// Cleanup
-		oBrowserStub.restore();
-		oTouchStub.restore();
-		oDP.destroy();
 	});
 
 	QUnit.test("_getVisibleDatesRange", function (assert) {

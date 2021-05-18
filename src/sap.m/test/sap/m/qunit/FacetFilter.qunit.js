@@ -110,9 +110,6 @@ sap.ui.define([
 		oFF._openPopover(oPopover, oButton);
 	});
 
-	//	if(navigator.userAgent.indexOf("MSIE") === -1) {
-
-
 	QUnit.module("Control Design");
 
 	QUnit.test("Aggregations", function(assert) {
@@ -1792,15 +1789,12 @@ sap.ui.define([
 						oFFL.getItems()[1].setSelected(false); // _updateSelectAllCheckBox called implicitly when list selection changes
 
 						// Verify the select all checkbox state is set correctly after search
-						if (!Device.browser.msie) {
-							simulateUserSearch("c", oFFL);
-							oFFL.getItems()[0].setSelected(true);
-						}
+						simulateUserSearch("c", oFFL);
+						oFFL.getItems()[0].setSelected(true);
 
 						setTimeout(function () {
-							if (!Device.browser.msie) {
-								assert.strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected after search, because 1 of 1 items is selected");
-							}
+
+							assert.strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected after search, because 1 of 1 items is selected");
 
 							simulateUserSearch(undefined, oFFL);
 
@@ -1808,19 +1802,14 @@ sap.ui.define([
 							// the "All" checkbox update is postponed (see FacetFilterList.prototype.onItemSelectedChange)
 
 							// Verify the select all checkbox state remains unchanged after search
-							if (!Device.browser.msie) {
-								assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 1 of 3 items is selected");
-								simulateUserSearch("a", oFFL);
-								oFFL.getItems()[0].setSelected(false);
-							} else {
-								assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
-							}
+							assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 1 of 3 items is selected");
+							simulateUserSearch("a", oFFL);
+							oFFL.getItems()[0].setSelected(false);
 
 							setTimeout(function () {
 								// Verify the select all checkbox state remains unchanged after search
-								if (!Device.browser.msie) {
-									assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
-								}
+								assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
+
 								simulateUserSearch(undefined, oFFL);
 								assert.strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
 
@@ -1831,7 +1820,6 @@ sap.ui.define([
 
 								destroyFF(oFF);
 								done();
-
 							}, 10);
 						}, 10);
 					}, 10);

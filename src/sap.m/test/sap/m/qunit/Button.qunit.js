@@ -289,24 +289,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("BDI set when no textdirection is given explicitly", function(assert) {
-		var bIE_Edge = Device.browser.internet_explorer || Device.browser.edge;
 		var $btnBDITag = document.getElementById('b1-content').firstChild.nodeName;
-		if (!bIE_Edge) {
-			assert.equal($btnBDITag.toLowerCase(), "bdi", "Control has bdi tag set");
-		} else {
-			assert.ok(!($btnBDITag.toLowerCase() === "bdi"), "Control doesn't have bdi tag set when the browser is IE or Edge, since it's not supported");
-		}
+
+		assert.equal($btnBDITag.toLowerCase(), "bdi", "Control has bdi tag set");
 	});
 
 	QUnit.test("BDI set after using the setter of the text property", function(assert) {
-		var bIE_Edge = Device.browser.internet_explorer || Device.browser.edge;
 		b1.setText("New Button Text");
 		var $btnBDITag = document.getElementById('b1-content').firstChild.nodeName;
-		if (!bIE_Edge) {
-			assert.equal($btnBDITag.toLowerCase(), "bdi", "Control has bdi tag set after using the setter of the text property");
-		} else {
-			assert.ok(!($btnBDITag.toLowerCase() === "bdi"), "Control doesn't have bdi tag set when the browser is IE or Edge, since it's not supported");
-		}
+
+		assert.equal($btnBDITag.toLowerCase(), "bdi", "Control has bdi tag set after using the setter of the text property");
 	});
 
 	QUnit.test("PressOk", function(assert) {
@@ -1010,66 +1002,65 @@ sap.ui.define([
 		}
 	});
 
-	if (!sap.ui.Device.browser.msie) { // this test is needed only on non-IE browsers
+		// this test is needed only on non-IE browsers
 
-		QUnit.test("Trigger TAP event in some cases missed by the core (for non-IE browsers only)", function(assert) {
-			var spy = this.spy(b15, "ontap");
+	QUnit.test("Trigger TAP event in some cases missed by the core (for non-IE browsers only)", function(assert) {
+		var spy = this.spy(b15, "ontap");
 
-			// events needed
-			var oEventDown = new Event("mousedown", {bubbles: true, cancelable: true});
-			var oEventUp = new Event("mouseup", {bubbles: true, cancelable: true});
+		// events needed
+		var oEventDown = new Event("mousedown", {bubbles: true, cancelable: true});
+		var oEventUp = new Event("mouseup", {bubbles: true, cancelable: true});
 
-			var oBdiContent = document.getElementById("b15-BDI-content");
-			var oContent = document.getElementById("b15-content");
-			var oInner = document.getElementById("b15-inner");
-			var oImg = document.getElementById("b15-img");
+		var oBdiContent = document.getElementById("b15-BDI-content");
+		var oContent = document.getElementById("b15-content");
+		var oInner = document.getElementById("b15-inner");
+		var oImg = document.getElementById("b15-img");
 
-			// cases where we don't get tap, check if artificial tap is working
+		// cases where we don't get tap, check if artificial tap is working
 
-			if (oBdiContent) {
-				// do the following 4 test only if <BDI> tag exists (in Edge it is missing)
-				oBdiContent.dispatchEvent(oEventDown);
-				oContent.dispatchEvent(oEventUp);
-				assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-content");
-				spy.reset();
-
-				oBdiContent.dispatchEvent(oEventDown);
-				oInner.dispatchEvent(oEventUp);
-				assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-inner");
-				spy.reset();
-
-				oBdiContent.dispatchEvent(oEventDown);
-				oImg.dispatchEvent(oEventUp);
-				assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-img");
-				spy.reset();
-
-				oImg.dispatchEvent(oEventDown);
-				oBdiContent.dispatchEvent(oEventUp);
-				assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-BDI-content");
-				spy.reset();
-			}
-
-			oContent.dispatchEvent(oEventDown);
-			oInner.dispatchEvent(oEventUp);
-			assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-inner");
-			spy.reset();
-
-			oContent.dispatchEvent(oEventDown);
-			oImg.dispatchEvent(oEventUp);
-			assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-img");
-			spy.reset();
-
-			oImg.dispatchEvent(oEventDown);
+		if (oBdiContent) {
+			// do the following 4 test only if <BDI> tag exists (in Edge it is missing)
+			oBdiContent.dispatchEvent(oEventDown);
 			oContent.dispatchEvent(oEventUp);
-			assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-content");
+			assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-content");
+			spy.reset();
+
+			oBdiContent.dispatchEvent(oEventDown);
+			oInner.dispatchEvent(oEventUp);
+			assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-inner");
+			spy.reset();
+
+			oBdiContent.dispatchEvent(oEventDown);
+			oImg.dispatchEvent(oEventUp);
+			assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-img");
 			spy.reset();
 
 			oImg.dispatchEvent(oEventDown);
-			oInner.dispatchEvent(oEventUp);
-			assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-inner");
+			oBdiContent.dispatchEvent(oEventUp);
+			assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-BDI-content");
+			spy.reset();
+		}
 
-		});
-	}
+		oContent.dispatchEvent(oEventDown);
+		oInner.dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-inner");
+		spy.reset();
+
+		oContent.dispatchEvent(oEventDown);
+		oImg.dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-img");
+		spy.reset();
+
+		oImg.dispatchEvent(oEventDown);
+		oContent.dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-content");
+		spy.reset();
+
+		oImg.dispatchEvent(oEventDown);
+		oInner.dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-inner");
+
+	});
 
 	QUnit.module("Determining ACC type", {
 		beforeEach: function () {
@@ -1627,6 +1618,4 @@ sap.ui.define([
 		$oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator").first();
 		assert.equal($oBadgeIndicator.attr("data-badge"), "5+", "Badge value maximum range is correctly taken from updated value");
 	});
-
-
 });

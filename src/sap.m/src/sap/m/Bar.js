@@ -279,11 +279,8 @@ sap.ui.define([
 		// reset to default
 		this._$RightBar.css({ width : "" });
 		this._$LeftBar.css({ width : "" });
-		if (Device.browser.msie) {
-			this._$MidBarPlaceHolder.css({ position : "", width : ""});
-		} else {
-			this._$MidBarPlaceHolder.css({ position : "", width : "", visibility: "hidden"});
-		}
+		this._$MidBarPlaceHolder.css({ position : "", width : "", visibility: "hidden"});
+
 		var iRightBarWidth = this._$RightBar.outerWidth(true);
 		//right bar is bigger than the bar - only show the right bar
 		if (iRightBarWidth > iBarWidth) {
@@ -389,7 +386,7 @@ sap.ui.define([
 		// Chrome browser has a problem in providing the correct div size when image inside does not have width explicitly set
 		//since ff version 24 the calculation is correct, since we don't support older versions we won't check it
 		// Edge also works correctly with this calculation unlike IE
-		if (Device.browser.webkit || Device.browser.firefox || Device.browser.edge) {
+		if (Device.browser.webkit || Device.browser.firefox) {
 
 			for (i = 0; i < aContainerChildren.length; i++) {
 

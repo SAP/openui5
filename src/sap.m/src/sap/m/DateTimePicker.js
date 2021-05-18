@@ -571,7 +571,6 @@ sap.ui.define([
 			return;
 		}
 		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
-		this._storeInputSelection(this._$input.get(0));
 
 		var oPopover = this._oPopup.getAggregation("_popup");
 		oPopover.oPopup.setAutoCloseAreas([this.getDomRef()]);
@@ -737,7 +736,6 @@ sap.ui.define([
 	function _handleAfterClose(){
 		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this.$("inner").attr("aria-expanded", false);
-		this._restoreInputSelection(this._$input.get(0));
 
 		this._oCalendar._closePickers();
 		Device.media.detachHandler(this._handleWindowResize, this);

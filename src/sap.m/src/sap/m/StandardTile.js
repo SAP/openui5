@@ -122,10 +122,6 @@ sap.ui.define([
 	};
 
 	StandardTile.prototype.ontap = function() {
-		// on IE when you click the focus is not applied so we have to set it explicitly
-		if (Device.browser.msie) {
-			this.focus();
-		}
 		Tile.prototype.ontap.apply(this, arguments);
 	};
 

@@ -559,10 +559,9 @@ function(
 		 */
 		TabStrip.prototype._scroll = function(iDelta, iDuration) {
 			var iScrollLeft = this.getDomRef("tabsContainer").scrollLeft,
-				bIE_Edge = Device.browser.internet_explorer || Device.browser.edge,// TODO remove after the end of support for Internet Explorer
 				iScrollTarget;
 
-			if (this._bRtl && !bIE_Edge) {// TODO remove after the end of support for Internet Explorer
+			if (this._bRtl) {
 				iScrollTarget = iScrollLeft - iDelta;
 
 				if (Device.browser.firefox) {
@@ -605,8 +604,7 @@ function(
 				oTabsContainerDomRef = this.getDomRef("tabsContainer"),
 				iScrollLeft = oTabsContainerDomRef.scrollLeft,
 				iContainerWidth = this.$("tabsContainer").width(),
-				iNewScrollLeft = iScrollLeft,
-				bIE_Edge = Device.browser.internet_explorer || Device.browser.edge;
+				iNewScrollLeft = iScrollLeft;
 
 			// check if item is outside of viewport
 			if (iItemPosLeft < 0 || iItemPosLeft > iContainerWidth - iItemWidth) {
@@ -616,12 +614,6 @@ function(
 						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
 					} else { // left side: make this the first item
 						iNewScrollLeft += iItemPosLeft;
-					}
-				} else if (this._bRtl && bIE_Edge) {
-					if (iItemPosLeft < 0) { // right side: make this the first item
-						iNewScrollLeft -= iItemPosLeft;
-					} else { // left side: make this the last item
-						iNewScrollLeft -= iItemPosLeft + iItemWidth - iContainerWidth;
 					}
 				} else {
 					if (iItemPosLeft < 0) { // left side: make this the first item
