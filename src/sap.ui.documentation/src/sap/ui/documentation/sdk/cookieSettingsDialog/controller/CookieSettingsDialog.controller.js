@@ -59,7 +59,7 @@ sap.ui.define([
 
 
 				oDialog.attachAfterOpen(function() {
-					Core.byId("btnSetPreferences").$().focus();
+					Core.byId("btnSetPreferences").focus();
 				});
 
 
@@ -176,14 +176,14 @@ sap.ui.define([
 			},
 
 			_focusButton: function(oButton) {
-				if (oButton.$().length) {
-					oButton.$().focus();
+				if (oButton.getDomRef()) {
+					oButton.focus();
 					return;
 				}
 
 				oButton.addEventDelegate({
 					"onAfterRendering": function() {
-						oButton.$().focus();
+						oButton.focus();
 						oButton.removeEventDelegate(this);
 					}
 				});

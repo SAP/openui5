@@ -466,7 +466,7 @@ sap.ui.define([
 					},
 					afterOpen: function() {
 						var $input = dialogSearchField.$().find('input');
-						$input.focus();
+						$input.trigger("focus");
 						moveCursorToEnd($input.get(0));
 					},
 					afterClose: function(oEvent) {

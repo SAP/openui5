@@ -1038,7 +1038,7 @@ sap.ui.define([
 		}
 
 		if (this._isOverflow() && this.getParent().oSelectedItem) {
-			(this.getParent()._oSelectedRootItem || this.getParent().oSelectedItem._getRootTab()).$().focus();
+			(this.getParent()._oSelectedRootItem || this.getParent().oSelectedItem._getRootTab()).$().trigger("focus");
 		}
 	};
 
