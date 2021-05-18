@@ -134,6 +134,7 @@ sap.ui.define([
 	var oInParameter = new InParameter({helpPath: "additionalText"});
 	var bUseOutParameters = false;
 	var oOutParameter = new OutParameter({helpPath: "additionalText"});
+	var bIsOpen = false;
 	var oValueHelp = {
 //			_getSingleSelection: function() {
 //				return bSingleSelection;
@@ -179,6 +180,9 @@ sap.ui.define([
 			},
 			getScrollDelegate: function () {
 				return undefined; // test real scrolling with FieldValueHelp and Popover
+			},
+			isOpen: function () {
+				return bIsOpen;
 			}
 	};
 
@@ -257,6 +261,7 @@ sap.ui.define([
 		FieldValueHelpMTableWrapper._init();
 		oModel.destroy();
 		oModel = undefined;
+		bIsOpen = false;
 	};
 
 	QUnit.module("API", {
@@ -470,6 +475,7 @@ sap.ui.define([
 		assert.notOk(oNavigateInParameters, "no in-parameters set");
 		assert.notOk(oNavigateOutParameters, "no out-parameters set");
 		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
+		assert.notOk(bNavigateLeave, "Navigate leave");
 		var aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
@@ -478,7 +484,24 @@ sap.ui.define([
 		assert.notOk(aSelectedItems[0].outParameters, "selectedItem no out-parameters");
 
 		iNavigate = 0;
-		oWrapper.navigate(1); // no next item
+		oWrapper.navigate(1); // no next item but closed
+		aItems = oTable.getItems();
+		assert.ok(aItems[2].getSelected(), "Item 2 is selected");
+		assert.equal(iNavigate, 1, "Navigate event fired");
+		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
+		assert.equal(sNavigateKey, "I3", "Navigate event key");
+		assert.notOk(oNavigateInParameters, "no in-parameters set");
+		assert.notOk(oNavigateOutParameters, "no out-parameters set");
+		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
+		assert.notOk(bNavigateLeave, "Navigate leave");
+		aSelectedItems = oWrapper.getSelectedItems();
+		assert.equal(aSelectedItems.length, 1, "selectedItems");
+		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
+		assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
+
+		bIsOpen = true;
+		iNavigate = 0;
+		oWrapper.navigate(1); // no next item and open
 		aItems = oTable.getItems();
 		assert.ok(aItems[2].getSelected(), "Item 2 is selected");
 		assert.equal(iNavigate, 0, "no Navigate event fired");
@@ -496,6 +519,7 @@ sap.ui.define([
 		assert.equal(sNavigateDescription, "Item 1", "Navigate event description");
 		assert.equal(sNavigateKey, "I1", "Navigate event key");
 		assert.equal(sNavigateItemId, "MyItem-T1-0", "Navigate event itemId");
+		assert.notOk(bNavigateLeave, "Navigate leave");
 		aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I1", "selectedItem key");
@@ -504,8 +528,12 @@ sap.ui.define([
 		iNavigate = 0;
 		oWrapper.navigate(-1); // no previous item
 		aItems = oTable.getItems();
-		assert.ok(aItems[0].getSelected(), "Item 2 is selected");
-		assert.equal(iNavigate, 0, "no Navigate event fired");
+		assert.ok(aItems[0].getSelected(), "Item 0 is selected");
+		assert.equal(iNavigate, 1, "Navigate event fired");
+		assert.equal(sNavigateDescription, undefined, "Navigate event description");
+		assert.equal(sNavigateKey, undefined, "Navigate event key");
+		assert.equal(sNavigateItemId, undefined, "Navigate event itemId");
+		assert.ok(bNavigateLeave, "Navigate leave");
 		aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I1", "selectedItem key");
@@ -520,6 +548,7 @@ sap.ui.define([
 		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
 		assert.equal(sNavigateKey, "I3", "Navigate event key");
 		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
+		assert.notOk(bNavigateLeave, "Navigate leave");
 		aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
@@ -534,6 +563,7 @@ sap.ui.define([
 		assert.equal(sNavigateDescription, "Item 2", "Navigate event description");
 		assert.equal(sNavigateKey, "I2", "Navigate event key");
 		assert.equal(sNavigateItemId, "MyItem-T1-1", "Navigate event itemId");
+		assert.notOk(bNavigateLeave, "Navigate leave");
 		aSelectedItems = oWrapper.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "selectedItems");
 		assert.equal(aSelectedItems[0].key, "I2", "selectedItem key");
@@ -550,6 +580,7 @@ sap.ui.define([
 		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
 		assert.equal(sNavigateKey, "I3", "Navigate event key");
 		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
+		assert.notOk(bNavigateLeave, "Navigate leave");
 		assert.ok(oNavigateInParameters, "In-parameters set");
 		assert.ok(oNavigateInParameters && oNavigateInParameters.hasOwnProperty("additionalText"), "in-parameters has additionalText");
 		assert.equal(oNavigateInParameters && oNavigateInParameters.additionalText, "Text 3", "in-parameters additionalText");
@@ -1548,7 +1579,6 @@ sap.ui.define([
 			assert.equal(iNavigate, 0, "Navigate event not fired");
 			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
 
-			sinon.spy(oField, "focus");
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
 			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 			oFocusedElement = document.activeElement;
@@ -1557,7 +1587,6 @@ sap.ui.define([
 			assert.notOk(sNavigateDescription, "Navigate event description");
 			assert.notOk(sNavigateItemId, "Navigate event itemId");
 			assert.ok(bNavigateLeave, "Navigate event leave");
-			assert.ok(oField.focus.called, "focus set on Field");
 
 			oFieldHelp.close();
 			oClock.tick(iPopoverDuration); // fake closing time

@@ -149,6 +149,26 @@ sap.ui.define([
 
 	};
 
+	FieldValueHelpTableWrapperBase.prototype.fieldHelpClose = function() {
+		FieldValueHelpContentWrapperBase.prototype.fieldHelpClose.apply(this, arguments);
+		var oTable = this._getWrappedTable();
+		if (oTable) {
+			oTable.removeStyleClass("sapMListFocus");
+		}
+
+		return this;
+	};
+
+	FieldValueHelpTableWrapperBase.prototype.removeFocus = function() {
+		FieldValueHelpContentWrapperBase.prototype.removeFocus.apply(this, arguments);
+		var oTable = this._getWrappedTable();
+		if (oTable) {
+			oTable.removeStyleClass("sapMListFocus");
+		}
+
+		return this;
+	};
+
 	FieldValueHelpTableWrapperBase.prototype.navigate = function(iStep, bIsOpen) {
 
 		var oTable = this._getWrappedTable();
@@ -177,9 +197,12 @@ sap.ui.define([
 			return;
 		}
 
+		oTable.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
+
 		var aItems = this._getTableItems();
 		var iItems = aItems.length;
 		var iSelectedIndex = 0;
+		var bLeaveFocus = false;
 
 		if (oTableItemForFirstSelection) {
 			iSelectedIndex = aItems.indexOf(oTableItemForFirstSelection);
@@ -194,6 +217,7 @@ sap.ui.define([
 		if (iSelectedIndex < 0) {
 			iSelectedIndex = 0;
 			bSeachForNext = true;
+			bLeaveFocus = true;
 		} else if (iSelectedIndex >= iItems - 1) {
 			iSelectedIndex = iItems - 1;
 			bSeachForNext = false;
@@ -223,8 +247,12 @@ sap.ui.define([
 			SyncPromise.resolve(this._handleScrolling(oItem)).then(function(bScrollSuccessful) {
 
 				var sRowItemId = oItem.getId && oItem.getId();
-				if (bIsAlreadySelected && !this.getParent().isOpen()) {
-					this.fireNavigate({key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters, itemId: sRowItemId});
+				if (bIsAlreadySelected) {
+					if (!this.getParent().isOpen()) {
+						this.fireNavigate({key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters, itemId: sRowItemId, leave: bLeaveFocus});
+					} else if (bLeaveFocus) {
+						this.fireNavigate({key: undefined, value: undefined, condition: undefined, itemId: undefined, leave: bLeaveFocus});
+					}
 					return;
 				}
 
@@ -239,7 +267,7 @@ sap.ui.define([
 				}
 
 				if (sRowItemId) {
-					this.fireNavigate({key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters, itemId: sRowItemId});
+					this.fireNavigate({key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters, itemId: sRowItemId, leave: bLeaveFocus});
 				} else {
 					this.fireNavigate({disableFocus: true}); // no item
 				}
@@ -622,6 +650,7 @@ sap.ui.define([
 		if (sMutation === "remove") {
 			this._handleEvents();
 			oTable.removeDelegate(this._oTableDelegate);
+			oTable.removeStyleClass("sapMComboBoxList");
 			oTable = undefined;
 			this._oTablePromise = new Promise(function(fResolve) {
 				this._oTablePromiseResolve = function() {
@@ -638,6 +667,7 @@ sap.ui.define([
 				this._bNavigate = false;
 				this.navigate(this._iStep);
 			}
+			oTable.addStyleClass("sapMComboBoxList"); // to allow focus outline in navigation
 		}
 
 		this.fireDataUpdate({contentChange: true});

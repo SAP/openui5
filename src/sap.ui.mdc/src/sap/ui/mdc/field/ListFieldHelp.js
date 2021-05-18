@@ -187,7 +187,7 @@ sap.ui.define([
 				mode: mLibrary.ListMode.SingleSelectMaster,
 				rememberSelections: false,
 				itemPress: _handleItemPress.bind(this) // as selected item can be pressed
-			});
+			}).addStyleClass("sapMComboBoxBaseList").addStyleClass("sapMComboBoxList");
 
 			this._oList.setModel(this._oManagedObjectModel, "$field");
 			this._oList.bindElement({ path: "/", model: "$field" });
@@ -214,7 +214,7 @@ sap.ui.define([
 				label: "{$field>text}",
 				value: "{$field>additionalText}",
 				valueTextDirection: "{$field>textDirection}"
-			});
+			}).addStyleClass("sapMComboBoxNonInteractiveItem"); // to add focus outline to selected items
 
 			var oFilter = new Filter("text", _suggestFilter.bind(this));
 
@@ -265,6 +265,7 @@ sap.ui.define([
 			this._bUpdateFilterAfterClose = false;
 			_updateFilter.call(this);
 		}
+		this._oList.removeStyleClass("sapMListFocus");
 
 		FieldHelpBase.prototype._handleAfterClose.apply(this, arguments);
 
@@ -341,6 +342,14 @@ sap.ui.define([
 
 	};
 
+	ListFieldHelp.prototype.removeFocus = function() {
+
+		if (this._oList) {
+			this._oList.removeStyleClass("sapMListFocus");
+		}
+
+	};
+
 	ListFieldHelp.prototype.navigate = function(iStep) {
 
 		var oPopover = this._getPopover();
@@ -352,12 +361,14 @@ sap.ui.define([
 			return;
 		}
 
+		this._oList.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
 		var oSelectedItem = this._oList.getSelectedItem();
 		var aItems = this._oList.getItems();
 		var iItems = aItems.length;
 		var iSelectedIndex = 0;
 		var bFilterList = this.getFilterList();
 		var sFilterValue = this.getFilterValue();
+		var bLeaveFocus = false;
 
 		if (!bFilterList && !oSelectedItem) {
 			// try to find item that matches Filter
@@ -390,6 +401,7 @@ sap.ui.define([
 		if (iSelectedIndex < 0) {
 			iSelectedIndex = 0;
 			bSeachForNext = true;
+			bLeaveFocus = true;
 		} else if (iSelectedIndex >= iItems - 1) {
 			iSelectedIndex = iItems - 1;
 			bSeachForNext = false;
@@ -406,19 +418,23 @@ sap.ui.define([
 		}
 
 		var oItem = aItems[iSelectedIndex];
-		if (oItem && oItem !== oSelectedItem) {
-			var oOriginalItem = _getOriginalItem.call(this, oItem);
-			var vKey = _getKey.call(this, oOriginalItem);
-			oItem.setSelected(true);
-			var oCondition = _setConditions.call(this, vKey, oItem.getLabel());
+		if (oItem) {
+			if (oItem !== oSelectedItem) {
+				var oOriginalItem = _getOriginalItem.call(this, oItem);
+				var vKey = _getKey.call(this, oOriginalItem);
+				oItem.setSelected(true);
+				var oCondition = _setConditions.call(this, vKey, oItem.getLabel());
 
-			if (!oPopover.isOpen()) {
-				this.open();
+				if (!oPopover.isOpen()) {
+					this.open();
+				}
+
+				this._oList.scrollToIndex(iSelectedIndex);
+
+				this.fireNavigate({key: vKey, value: oItem.getLabel(), condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
+			} else if (bLeaveFocus) {
+				this.fireNavigate({key: undefined, value: undefined, condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus});
 			}
-
-			this._oList.scrollToIndex(iSelectedIndex);
-
-			this.fireNavigate({key: vKey, value: oItem.getLabel(), condition: oCondition, itemId: oItem.getId()});
 		}
 
 	};

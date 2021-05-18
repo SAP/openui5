@@ -900,6 +900,14 @@ sap.ui.define([
 
 	};
 
+	FieldValueHelp.prototype.removeFocus = function() {
+
+		var oWrapper = _getWrapper.call(this, true); // only needed in suggestion because of navigation
+		if (oWrapper) {
+			oWrapper.removeFocus();
+		}
+
+	};
 
 	FieldValueHelp.prototype.navigate = function(iStep) {
 
@@ -968,7 +976,7 @@ sap.ui.define([
 
 		if (bLeave) {
 			// leave field help and focus Field
-			this._oField.focus();
+			this.fireNavigate({key: undefined, value: undefined, condition: undefined, itemId: undefined, leaveFocus: bLeave});
 			return;
 		}
 
@@ -999,7 +1007,7 @@ sap.ui.define([
 		}
 		oCondition = this._createCondition(vKey, sDescription, oInParameters, oOutParameters);
 		this.setProperty("conditions", [oCondition], true); // do not invalidate whole FieldHelp
-		this.fireNavigate({value: sDescription, key: vKey, condition: oCondition, itemId: sItemId});
+		this.fireNavigate({value: sDescription, key: vKey, condition: oCondition, itemId: sItemId, leaveFocus: bLeave});
 
 	}
 
