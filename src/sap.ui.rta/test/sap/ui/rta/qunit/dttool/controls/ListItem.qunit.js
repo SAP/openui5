@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/m/Input",
 	"sap/base/util/ObjectPath",
-	"sap/ui/rta/dttool/controls/DTToolListItem"
+	"sap/ui/rta/internal/dttool/controls/DTToolListItem"
 ], function (
 	Table,
 	Column,
