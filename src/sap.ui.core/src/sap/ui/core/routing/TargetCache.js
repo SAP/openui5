@@ -115,6 +115,17 @@ sap.ui.define([
 			},
 
 			/**
+			 * Determines the object with the given <code>oOptions</code>, <code>sType</code> from the Target cache.
+			 *
+			 * @param {object} oOptions The options of the desired object
+			 * @param {string} sType The type of the desired object, e.g. 'View', 'Component', etc.
+			 * @return {sap.ui.core.Control|Promise} The object if it already exists in the cache, if not the promise is returned
+			 */
+			fetch: function(oOptions, sType) {
+				return this._get(oOptions, sType, undefined, undefined, true);
+			},
+
+			/**
 			 * Adds or overwrites a view or a component in the TargetCache. The given object is cached under its name and the 'undefined' key.
 			 *
 			 * If the third parameter is set to null or undefined, the previous cache view or component under the same name isn't managed by the TargetCache instance.
@@ -253,14 +264,14 @@ sap.ui.define([
 			 * Privates
 			 */
 
-			_get : function (oOptions, sType, bGlobalId, oInfo) {
+			_get : function (oOptions, sType, bGlobalId, oInfo, bNoCreate) {
 				var oObject;
 				switch (sType) {
 					case "View":
-						oObject = this._getView(oOptions, bGlobalId);
+						oObject = this._getView(oOptions, bGlobalId, bNoCreate);
 						break;
 					case "Component":
-						oObject = this._getComponent(oOptions, bGlobalId, oInfo);
+						oObject = this._getComponent(oOptions, bGlobalId, oInfo, bNoCreate);
 						break;
 					default:
 						throw Error("The given sType: " + sType + " isn't supported by TargetCache.getObject");
@@ -275,20 +286,20 @@ sap.ui.define([
 			 * @returns {*} the view
 			 * @private
 			 */
-			_getView : function (oOptions, bGlobalId) {
+			_getView : function (oOptions, bGlobalId, bNoCreate) {
 				if (!bGlobalId) {
 					oOptions = this._createId(oOptions);
 				}
 
-				return this._getViewWithGlobalId(oOptions);
+				return this._getViewWithGlobalId(oOptions, bNoCreate);
 			},
 
-			_getComponent : function (oOptions, bGlobalId, oInfo) {
+			_getComponent : function (oOptions, bGlobalId, oInfo, bNoCreate) {
 				if (!bGlobalId) {
 					oOptions = this._createId(oOptions);
 				}
 
-				return this._getComponentWithGlobalId(oOptions, oInfo);
+				return this._getComponentWithGlobalId(oOptions, oInfo, bNoCreate);
 			},
 
 			_createId: function (oOptions) {

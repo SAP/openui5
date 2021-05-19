@@ -51,7 +51,9 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 				var oTargetCreateInfo = {
 					prefix: oTargetInfo.prefix,
 					propagateTitle: oTargetInfo.propagateTitle || false,
-					ignoreInitialHash: oTargetInfo.ignoreInitialHash
+					ignoreInitialHash: oTargetInfo.ignoreInitialHash,
+					placeholder: oTargetInfo.placeholder,
+					repeatedRoute: oTargetInfo.repeatedRoute
 				};
 
 				// gather view infos while processing Promise chain
