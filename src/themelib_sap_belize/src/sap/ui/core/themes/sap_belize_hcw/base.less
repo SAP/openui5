@@ -7,13 +7,15 @@
 // Theme Specifics/Internals
 // =====================================
 
-// [Tags "!Protected"]
+// [Tags "ThemeSpecific", "Base", "Content", "Color", "Protected"]
 @sapBackgroundColorDefault: @sapHC_StandardBackground;
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
 @sapContent_GridSize: 1rem;
 
-// [Tags "!Protected"]
+// [Label "Shell Background Pattern Color"]
+// [Description "The background pattern color of the shell. To turn off the pattern set the value to 'transparent'."]
+// [Tags "ThemeSpecific", "Base", "Shell", "Color", "Protected"]
 @sapShell_BackgroundPatternColor: @sapBackgroundColor;
 
 
@@ -25,47 +27,47 @@
 
 // [Label "High-Contrast Standard Background"]
 // [Description "The high-contrast reference background color for most backgrounds."]
-// [Tags "Quick", "Base", "Content", "Color", "HighContrast"]
+// [Tags "Base", "Content", "Color", "HighContrast"]
 @sapHC_StandardBackground: #fff;
 
 // [Label "High-Contrast Highlight Background"]
 // [Description "The high-contrast reference background color used for hover and active states."]
-// [Tags "Quick", "Base", "Content", "Color", "HighContrast"]
+// [Tags "Base", "Content", "Color", "HighContrast"]
 @sapHC_HighlightBackground: #ec8b46;
 
 // [Label "High-Contrast Highlight Alternative Background"]
 // [Description "The high-contrast reference background color used for selection."]
-// [Tags "Quick", "Base", "Content", "Color", "HighContrast"]
+// [Tags "Base", "Content", "Color", "HighContrast"]
 @sapHC_HighlightAltBackground: #8fb5ff;
 
 // [Label "High-Contrast Reduced Background"]
 // [Description "The high-contrast reference background color used for read-only and disabled items."]
-// [Tags "Quick", "Base", "Content", "Color", "HighContrast"]
+// [Tags "Base", "Content", "Color", "HighContrast"]
 @sapHC_ReducedBackground: #b3b3b3;
 
 // [Label "High-Contrast Reduced Alternative Background"]
 // [Description "The high-contrast reference background color used for read-only and disabled items."]
-// [Tags "Quick", "Base", "Content", "Color", "HighContrast"]
+// [Tags "Base", "Content", "Color", "HighContrast"]
 @sapHC_ReducedAltBackground: #4d4d4d;
 
 // [Label "High-Contrast Standard Foreground"]
 // [Description "The high-contrast reference foreground color for elements such as text, icons, and borders."]
-// [Tags "Quick", "Base", "Content", "Color", "HighContrast"]
+// [Tags "Base", "Content", "Color", "HighContrast"]
 @sapHC_StandardForeground: #000;
 
 // [Label "High-Contrast Enhanced Foreground"]
 // [Description "The high-contrast reference foreground color for elements such as help borders and help text."]
-// [Tags "Quick", "Base", "Content", "Color", "HighContrast"]
+// [Tags "Base", "Content", "Color", "HighContrast"]
 @sapHC_EnhancedForeground: #006500;
 
 // [Label "High-Contrast Reduced Foreground"]
 // [Description "The high-contrast reference foreground color for elements such as disabled text, icons, and borders."]
-// [Tags "Quick", "Base", "Content", "Color", "HighContrast"]
+// [Tags "Base", "Content", "Color", "HighContrast"]
 @sapHC_ReducedForeground: #888;
 
 // [Label "High-Contrast Reduced Alternative Foreground"]
 // [Description "The high-contrast reference foreground color for elements such as list borders or read-only borders that are less prominent than standard elements."]
-// [Tags "Quick", "Base", "Content", "Color", "HighContrast"]
+// [Tags "Base", "Content", "Color", "HighContrast"]
 @sapHC_ReducedAltForeground: #585858;
 
 // [Label "High-Contrast Negative Color"]
@@ -110,7 +112,7 @@
 @sapBaseColor: @sapHC_StandardBackground;
 
 // [Tags "!Protected"]
-@sapShellColor: @sapHC_StandardBackground;
+@sapShellColor: @sapBackgroundColor;
 
 // [Tags "!Protected"]
 @sapBackgroundColor: @sapHC_StandardBackground;
@@ -261,7 +263,7 @@
 // [Tags "Protected"]
 @sapElement_BorderWidth: 0.0625 * @sapContent_GridSize;
 
-// [Tags "Protected"]
+// [Tags "!Protected"]
 @sapElement_BorderCornerRadius: 0.25 * @sapContent_GridSize;
 
 // [Tags "Protected"]
@@ -314,7 +316,7 @@
 @sapContent_ImagePlaceholderBackground: @sapBackgroundColor;
 
 // [Tags "!Protected"]
-@sapContent_ImagePlaceholderForegroundColor: @sapHC_ReducedAltForeground;
+@sapContent_ImagePlaceholderForegroundColor: @sapContent_IconColor;
 
 // [Tags "!Protected"]
 @sapContent_RatedColor: @sapContent_IconColor;
@@ -422,7 +424,7 @@
 // Content Illustrative Colors
 // =====================================
 
-@sapContent_Illustrative_Color1: #0a6ed1;
+@sapContent_Illustrative_Color1: #212628;
 
 @sapContent_Illustrative_Color2: #434e56;
 
@@ -432,7 +434,7 @@
 
 @sapContent_Illustrative_Color5: #9da4aa;
 
-@sapContent_Illustrative_Color6: #0a6ed1;
+@sapContent_Illustrative_Color6: #c6cace;
 
 @sapContent_Illustrative_Color7: #e7e9ea;
 
@@ -452,7 +454,7 @@
 @sapFontBoldFamily: "72-Bold", "72-Boldfull", "72", "72full", Arial, Helvetica, sans-serif;
 
 // [Tags "!Protected"]
-@sapFontHeaderFamily:  @sapFontFamily;
+@sapFontHeaderFamily: @sapFontFamily;
 
 // [Tags "!Protected"]
 @sapFontSmallSize: 0.75 * @sapContent_GridSize;
@@ -1240,7 +1242,7 @@
 @sapInfobar_Background: @sapBackgroundColor;
 
 // [Tags "!Protected"]
-@sapInfobar_Hover_Background:  @sapHighlightColor;
+@sapInfobar_Hover_Background: @sapHighlightColor;
 
 // [Tags "!Protected"]
 @sapInfobar_Active_Background: @sapActiveColor;
