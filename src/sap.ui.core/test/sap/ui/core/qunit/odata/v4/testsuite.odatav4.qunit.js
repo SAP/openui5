@@ -46,7 +46,7 @@ sap.ui.define(function () {
 			"lib/_AggregationHelper" : {},
 			"lib/_Batch" : {},
 			"lib/_Cache" : {},
-			"lib/_GrandTotalHelper" : {},
+			"lib/_ConcatHelper" : {},
 			"lib/_GroupLock" : {},
 			"lib/_Helper" : {},
 			"lib/_MetadataConverter" : {},

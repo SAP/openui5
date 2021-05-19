@@ -4,13 +4,13 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_AggregationHelper",
-	"sap/ui/model/odata/v4/lib/_GrandTotalHelper"
-], function (Log, _AggregationHelper, _GrandTotalHelper) {
+	"sap/ui/model/odata/v4/lib/_ConcatHelper"
+], function (Log, _AggregationHelper, _ConcatHelper) {
 	/*eslint camelcase: 0 */
 	"use strict";
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.model.odata.v4.lib._GrandTotalHelper", {
+	QUnit.module("sap.ui.model.odata.v4.lib._ConcatHelper", {
 		beforeEach : function () {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -21,12 +21,11 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, sinon.spy()].forEach(function (fnGrandTotal) {
 	[undefined, sinon.spy()].forEach(function (fnLeaves) {
-		var sTitle = "enhanceCacheWithGrandTotal, fnGrandTotal: " + fnGrandTotal
-				+ ", fnLeaves: " + fnLeaves;
+		var sTitle = "enhanceCache, fnGrandTotal: " + fnGrandTotal + ", fnLeaves: " + fnLeaves;
 
 	QUnit.test(sTitle, function (assert) {
-		var oAggregation = {},
-			oAggregationHelperMock = this.mock(_AggregationHelper),
+		var oAggregationHelperMock = this.mock(_AggregationHelper),
+			fnCount = sinon.spy(),
 			oCountRow = {
 				UI5__count : "26",
 				"UI5__count@odata.type" : "#Decimal"
@@ -46,23 +45,20 @@ sap.ui.define([
 			oLeavesRow = {},
 			mQueryOptions = oFirstLevelCache.mQueryOptions,
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions),
-			mQueryOptionsWithApply = {},
 			oRequestorMock = this.mock(oFirstLevelCache.oRequestor),
 			sResourcePath,
-			oResult = {value : [oCountRow, oDataRow]},
-			mTypeForMetaPath = {/*fetchTypes result*/};
+			oResult = {value : [oCountRow, oDataRow]};
 
 		// code under test
-		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation, fnGrandTotal,
-			fnLeaves);
+		_ConcatHelper.enhanceCache(oFirstLevelCache, "~oAggregation~",
+			[fnLeaves, fnCount, fnGrandTotal], "~mAlias2MeasureAndMethod~");
 
 		oAggregationHelperMock.expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregation),
-				{$skip : 42, $top : 57, "sap-client" : "123"}, 1, undefined)
-			.returns(mQueryOptionsWithApply);
+			.withExactArgs("~oAggregation~", {$skip : 42, $top : 57, "sap-client" : "123"}, 1,
+				undefined, "~mAlias2MeasureAndMethod~")
+			.returns("~mQueryOptionsWithApply1~");
 		oRequestorMock.expects("buildQueryString")
-			.withExactArgs(oFirstLevelCache.sMetaPath, sinon.match.same(mQueryOptionsWithApply),
-				false, true)
+			.withExactArgs(oFirstLevelCache.sMetaPath, "~mQueryOptionsWithApply1~", false, true)
 			.returns("?$apply=1st");
 
 		// code under test
@@ -72,12 +68,11 @@ sap.ui.define([
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unmodified");
 
 		oAggregationHelperMock.expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregation),
-				{$skip : 42, $top : 57, "sap-client" : "123"}, 1, true)
-			.returns(mQueryOptionsWithApply);
+			.withExactArgs("~oAggregation~", {$skip : 42, $top : 57, "sap-client" : "123"}, 1, true,
+				"~mAlias2MeasureAndMethod~")
+			.returns("~mQueryOptionsWithApply2~");
 		oRequestorMock.expects("buildQueryString")
-			.withExactArgs(oFirstLevelCache.sMetaPath, sinon.match.same(mQueryOptionsWithApply),
-				false, true)
+			.withExactArgs(oFirstLevelCache.sMetaPath, "~mQueryOptionsWithApply2~", false, true)
 			.returns("?$apply=2nd");
 
 		// code under test
@@ -87,14 +82,14 @@ sap.ui.define([
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unmodified");
 
 		if (fnGrandTotal) {
-			oResult.value.unshift(oGrandTotalRow);
+			oResult.value.splice(1, 0, oGrandTotalRow);
 		}
 		if (fnLeaves) {
 			oResult.value.unshift(oLeavesRow);
 		}
 
 		// code under test
-		oFirstLevelCache.handleResponse(42, 99, oResult, mTypeForMetaPath);
+		oFirstLevelCache.handleResponse(42, 99, oResult, "~mTypeForMetaPath~");
 
 		assert.notOk(oFirstLevelCache.hasOwnProperty("handleResponse"), "reverted to prototype");
 		if (fnLeaves) {
@@ -108,7 +103,7 @@ sap.ui.define([
 		}
 		assert.strictEqual(fnHandleResponse.callCount, 1);
 		assert.ok(fnHandleResponse.calledWith(42, 99, sinon.match.same(oResult),
-			sinon.match.same(mTypeForMetaPath)));
+			"~mTypeForMetaPath~"));
 		assert.strictEqual(oResult["@odata.count"], "26");
 		assert.strictEqual(oResult.value.length, 1, "extra rows removed");
 		assert.strictEqual(oResult.value[0], oDataRow);

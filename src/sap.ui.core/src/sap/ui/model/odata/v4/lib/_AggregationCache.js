@@ -6,13 +6,13 @@
 sap.ui.define([
 	"./_AggregationHelper",
 	"./_Cache",
-	"./_GrandTotalHelper",
+	"./_ConcatHelper",
 	"./_GroupLock",
 	"./_Helper",
 	"./_MinMaxHelper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise"
-], function (_AggregationHelper, _Cache, _GrandTotalHelper, _GroupLock, _Helper, _MinMaxHelper,
+], function (_AggregationHelper, _Cache, _ConcatHelper, _GroupLock, _Helper, _MinMaxHelper,
 		Log, SyncPromise) {
 	"use strict";
 
@@ -46,7 +46,8 @@ sap.ui.define([
 	 */
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
 			bHasGrandTotal) {
-		var fnLeaves = null,
+		var fnCount = function () {}, // no specific handling needed for "UI5__count" here
+			fnLeaves = null,
 			that = this;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
@@ -72,7 +73,7 @@ sap.ui.define([
 		this.oGrandTotalPromise = undefined;
 		if (bHasGrandTotal) {
 			this.oGrandTotalPromise = new SyncPromise(function (resolve) {
-				_GrandTotalHelper.enhanceCacheWithGrandTotal(that.oFirstLevel, oAggregation,
+				_ConcatHelper.enhanceCache(that.oFirstLevel, oAggregation, [fnLeaves,
 					function (oGrandTotal) {
 						var oGrandTotalCopy;
 
@@ -94,11 +95,10 @@ sap.ui.define([
 						_Helper.setPrivateAnnotation(oGrandTotal, "predicate", "()");
 
 						resolve(oGrandTotal);
-					}, fnLeaves);
+					}, fnCount]);
 			});
 		} else if (fnLeaves) {
-			_GrandTotalHelper.enhanceCacheWithGrandTotal(that.oFirstLevel, oAggregation, null,
-				fnLeaves);
+			_ConcatHelper.enhanceCache(that.oFirstLevel, oAggregation, [fnLeaves, fnCount]);
 		}
 	}
 
@@ -217,15 +217,14 @@ sap.ui.define([
 	 *
 	 * @param {object} [oGroupNode]
 	 *   The group node or <code>undefined</code> for the first level cache
-	 * @param {boolean} [bHasGrandTotalHelper]
-	 *   Whether the _GrandTotalHelper is involved (use only for the first level cache!)
+	 * @param {boolean} [bHasConcatHelper]
+	 *   Whether the _ConcatHelper is involved (use only for the first level cache!)
 	 * @returns {sap.ui.model.odata.v4.lib._CollectionCache}
 	 *   The group level cache
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.createGroupLevelCache = function (oGroupNode,
-			bHasGrandTotalHelper) {
+	_AggregationCache.prototype.createGroupLevelCache = function (oGroupNode, bHasConcatHelper) {
 		var oAggregation = this.oAggregation,
 			aAllProperties = _AggregationHelper.getAllProperties(oAggregation),
 			oCache, aGroupBy, bLeaf, iLevel, mQueryOptions, bTotal;
@@ -249,8 +248,8 @@ sap.ui.define([
 						? " and (" + mQueryOptions.$$filterBeforeAggregate + ")"
 						: "");
 		}
-		if (!bHasGrandTotalHelper) {
-			// Note: UI5__count currently handled only by _GrandTotalHelper!
+		if (!bHasConcatHelper) {
+			// Note: UI5__count currently handled only by _ConcatHelper!
 			delete mQueryOptions.$count;
 			mQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions, iLevel);
 		}

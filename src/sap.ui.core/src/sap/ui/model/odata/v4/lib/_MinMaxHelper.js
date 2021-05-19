@@ -4,9 +4,9 @@
 
 //Provides class sap.ui.model.odata.v4.lib._MinMaxHelper
 sap.ui.define([
-	"./_AggregationHelper",
-	"./_Cache"
-], function (_AggregationHelper, _Cache) {
+	"./_Cache",
+	"./_ConcatHelper"
+], function (_Cache, _ConcatHelper) {
 	"use strict";
 
 	return {
@@ -34,14 +34,30 @@ sap.ui.define([
 			// {UI5min__Property : {measure : "Property", method : "min"}}}
 			var mAlias2MeasureAndMethod = {},
 				oCache,
-				bFollowUp = false,
-				oMeasureRangePromise,
-				fnMeasureRangeResolve;
+				fnMeasureRangeResolve,
+				oMeasureRangePromise = new Promise(function (resolve) {
+					fnMeasureRangeResolve = resolve;
+				});
+
+			function handleMinMaxElement(oMinMaxElement) {
+				var sAlias,
+					mMeasureRange = {};
+
+				function getMeasureRange(sMeasure) {
+					mMeasureRange[sMeasure] = mMeasureRange[sMeasure] || {};
+					return mMeasureRange[sMeasure];
+				}
+
+				for (sAlias in mAlias2MeasureAndMethod) {
+					getMeasureRange(mAlias2MeasureAndMethod[sAlias].measure)
+						[mAlias2MeasureAndMethod[sAlias].method] = oMinMaxElement[sAlias];
+				}
+				fnMeasureRangeResolve(mMeasureRange);
+			}
 
 			oCache = _Cache.create(oRequestor, sResourcePath, mQueryOptions, true);
-			oMeasureRangePromise = new Promise(function (resolve) {
-				fnMeasureRangeResolve = resolve;
-			});
+			_ConcatHelper.enhanceCache(oCache, oAggregation, [handleMinMaxElement],
+				mAlias2MeasureAndMethod);
 
 			/**
 			 * Gets the <code>Promise</code> which resolves with a map of minimum and maximum
@@ -59,71 +75,6 @@ sap.ui.define([
 			// @override sap.ui.model.odata.v4.lib._Cache#getMeasureRangePromise
 			oCache.getMeasureRangePromise = function () {
 				return oMeasureRangePromise;
-			};
-
-			/**
-			 * Returns the resource path including the query string with "$apply" which includes the
-			 * aggregation functions for count, minimum or maximum values and "skip()/top()" as
-			 * transformations. Follow-up requests do not aggregate the count and minimum or maximum
-			 * values again.
-			 *
-			 * @param {number} iStart
-			 *   The start index of the range
-			 * @param {number} iEnd
-			 *   The index after the last element
-			 * @returns {string} The resource path including the query string
-			 */
-			// @override sap.ui.model.odata.v4.lib._CollectionCache#getResourcePathWithQuery
-			// Note: same as in _GrandTotalHelper
-			oCache.getResourcePathWithQuery = function (iStart, iEnd) {
-				// Note: ignore existing mQueryOptions.$apply, e.g. from ODLB#updateAnalyticalInfo
-				var mQueryOptionsWithApply = _AggregationHelper.buildApply(oAggregation,
-						Object.assign({}, this.mQueryOptions, {
-							$skip : iStart,
-							$top : iEnd - iStart
-						}), 1, bFollowUp, mAlias2MeasureAndMethod);
-
-				bFollowUp = true; // next request is a follow-up
-
-				return this.sResourcePath + this.oRequestor.buildQueryString(this.sMetaPath,
-					mQueryOptionsWithApply, false, true);
-			};
-
-			/**
-			 * Handles a GET response by extracting the minimum and the maximum values from the
-			 * given result, resolving the measure range promise, restoring the original
-			 * <code>handleResponse</code> and calling it with the remaining values of
-			 * <code>oResult</code>.
-			 *
-			 * @param {number} iStart
-			 *   The index of the first element to request ($skip)
-			 * @param {number} iEnd
-			 *   The index after the last element to request ($skip + $top)
-			 * @param {object} oResult The result of the GET request
-			 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as
-			 *   delivered by {@link #fetchTypes})
-			 */
-			// @override sap.ui.model.odata.v4.lib._CollectionCache#handleResponse
-			oCache.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
-				var sAlias,
-					mMeasureRange = {},
-					oMinMaxElement = oResult.value.shift();
-
-				function getMeasureRange(sMeasure) {
-					mMeasureRange[sMeasure] = mMeasureRange[sMeasure] || {};
-					return mMeasureRange[sMeasure];
-				}
-
-				oResult["@odata.count"] = oMinMaxElement.UI5__count;
-				for (sAlias in mAlias2MeasureAndMethod) {
-					getMeasureRange(mAlias2MeasureAndMethod[sAlias].measure)
-						[mAlias2MeasureAndMethod[sAlias].method] = oMinMaxElement[sAlias];
-				}
-				fnMeasureRangeResolve(mMeasureRange);
-
-				// revert to prototype and call it
-				delete this.handleResponse;
-				this.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);
 			};
 
 			return oCache;
