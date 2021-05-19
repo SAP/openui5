@@ -152,6 +152,24 @@
 	margin-left: -0.5rem;
 }
 
+.sapUiIntegrationCardEditor .notWrappingRow {
+	width: 100%;
+}
+
+.sapUiIntegrationCardEditor .notWrappingRow .sapMFlexItem {
+	width: 50%;
+}
+
+.sapUiIntegrationCardEditor .notWrappingRow .notWrappingRowLabelBox {
+	width: 50%;
+}
+.sapUiIntegrationCardEditor .notWrappingRow .notWrappingRowLabelBox .sapMFlexItem {
+	width: 84%;
+}
+.sapUiIntegrationCardEditor .notWrappingRow .notWrappingRowLabelBox .sapMFlexItem .sapUiIntegrationCardEditorDescriptionIcon {
+	margin-left: -0.5rem;
+}
+
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .notWrappingBox {
 	margin: 7px 0 0 0;
 }

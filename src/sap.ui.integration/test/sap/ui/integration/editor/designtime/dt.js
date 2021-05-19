@@ -127,6 +127,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"boolean": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 						"description": "Description",
+						"label": "long long long long long long long long long long label",
 						"type": "boolean",
 						"visualization": {
 							"type": "sap/m/Switch",
@@ -140,8 +141,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"booleanLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",
-						"type": "boolean",
-						"label": "Direct Boolean Label"
+						"label": "long long long long long long long long long long label",
+						"type": "boolean"
 					},
 					"booleanLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabelTrans/value",
@@ -662,6 +663,22 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"cols": 1
 					},
+					"boolean2": {
+						"manifestpath": "/sap.card/configuration/parameters/boolean2/value",
+						"type": "boolean",
+						"description": "Description",
+						"label": "long long long long long long long long long long label",
+						"visualization": {
+							"type": "sap/m/Switch",
+							"settings": {
+								"state": "{currentSettings>value}",
+								"customTextOn": "Yes",
+								"customTextOff": "No",
+								"enabled": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
 					"maxItems": {
 						"manifestpath": "/sap.card/content/maxItems",
 						"type": "integer",
@@ -741,7 +758,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"boolean1": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean1/value",
 						"type": "boolean",
-						"label": "boolean",
+						"label": "long long long long long long long long long long label",
 						"visualization": {
 							"type": "sap/m/Switch",
 							"settings": {

@@ -226,13 +226,6 @@ sap.ui.define([
 					var oColFields = [];
 					var iColSize = 2;
 					var oOriginalField;
-					var oLayoutForNotWrapping = function () {
-						return new sap.m.FlexItemData({
-							growFactor: 1,
-							baseSize: "0",
-							maxWidth: "50%"
-						});
-					};
 					var addColFields = function () {
 						if (oColFields.length > 0) {
 							var iLess = iColSize - oColFields.length;
@@ -303,17 +296,16 @@ sap.ui.define([
 										}));
 										oColFields = [];
 									}
-									oLabelWithDependentHBox.addStyleClass("col1box");
-									olabelItemForCol = oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem;
+									olabelItemForCol = oLabelWithDependentHBox.addStyleClass("col1box");
 									continue;
 								}
 								//add current col fields to panel, then empty the col fields list
 								addColFields();
 								//now only Not wrap the label and field of boolean parameters
 								if (oItem._sOriginalType === "boolean") {
-									oLabelItemForNotWrapping = oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem; //store the label of boolean and render it together with the next field
+									oLabelItemForNotWrapping = oLabelWithDependentHBox.addStyleClass("notWrappingRowLabelBox"); //store the label of boolean and render it together with the next field
 								} else {
-									oPanel.addContent(oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem);
+									oPanel.addContent(oLabelWithDependentHBox);
 								}
 							} else if (oItem._cols === 1) {
 								var oColVBox = new VBox({
@@ -328,14 +320,12 @@ sap.ui.define([
 								olabelItemForCol = null;
 							} else if (oLabelItemForNotWrapping) {
 								//render lable and field for NotWrapping parameter
-								oItem.setLayoutData(oLayoutForNotWrapping());
-								oLabelItemForNotWrapping.setLayoutData(oLayoutForNotWrapping());
 								oPanel.addContent(new HBox({
 									items: [
 										oLabelItemForNotWrapping,
 										oItem
 									]
-								}).addStyleClass("notWrappingBox"));
+								}).addStyleClass("notWrappingRow"));
 								oLabelItemForNotWrapping = null;
 							} else {
 								oPanel.addContent(oItem);
@@ -376,16 +366,14 @@ sap.ui.define([
 								oOriginalField = oItem;
 								continue;
 							}
-							//bind originalField and translation field together
-							oOriginalField.setLayoutData(oLayoutForNotWrapping());
 							oOriginalField.addStyleClass("sapUiIntegrationFieldTranslationText");
-							oItem.setLayoutData(oLayoutForNotWrapping());
+							//bind originalField and translation field together
 							var oHBox = new HBox({
 								items: [
 									oOriginalField,
 									oItem
 								]
-							});
+							}).addStyleClass("notWrappingRow");
 							oPanel.addContent(oHBox);
 							if (i === aItems.length - 1) {
 								oLanguagePanel.addContent(oPanel);
