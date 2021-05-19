@@ -727,7 +727,9 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oDefaultFloat.format("1000.00"), "1,000.00", "1000.00");
 		assert.equal(oDefaultFloat.format("1000.0000"), "1,000.0000", "1000.0000");
 		assert.equal(oDefaultFloat.format("123456789.123456789"), "123,456,789.123456789", "123456789.123456789 (string)");
-		assert.equal(oDefaultFloat.format(123456789.123456789), "123,456,789.1234568", "123456789.123456789 (number)");
+		// Due to IEEE_754 (Binary Floating-Point Arithmetic)
+		// JavaScript can only represent the number 123456789.123456789 as 123456789.12345679
+		assert.equal(oDefaultFloat.format(123456789.123456789), "123,456,789.12345679", "123456789.123456789 (number)");
 	});
 
 	QUnit.test("float default format preserveDecimals=true", function (assert) {
@@ -768,8 +770,14 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 	QUnit.test("float with rounding", function (assert) {
 		var oFloatInstanceWithPreserveDecimals = NumberFormat.getFloatInstance({preserveDecimals: true});
-		assert.equal(oDefaultFloat.format(123456789.123456789), "123,456,789.1234568", "123456789.123456789 (number)");
-		assert.equal(oFloatInstanceWithPreserveDecimals.format(123456789.123456789), "123,456,789.12345679", "123456789.123456789 (number)");
+
+		// 123456789.12345679
+		assert.equal(oDefaultFloat.format(123456789.12345679), "123,456,789.12345679", "123456789.12345679 (number)");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(123456789.12345679), "123,456,789.12345679", "123456789.12345679 (number)");
+
+		// 0.9999999999999999
+		assert.equal(oDefaultFloat.format(0.9999999999999999), "0.9999999999999999", "0.9999999999999999");
+		assert.equal(oFloatInstanceWithPreserveDecimals.format(0.9999999999999999), "0.9999999999999999", "0.9999999999999999");
 	});
 
 	QUnit.test("float with big numbers and maxIntegerDigits", function (assert) {
@@ -953,6 +961,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			maxFractionDigits: 3
 		});
 
+		assert.equal(oFormat.format(.127), "0.127", ".127");
 		assert.equal(oFormat.format(.1230), "0.123", ".123");
 		assert.equal(oFormat.format(.1234), "0.123", ".1234");
 		assert.equal(oFormat.format(.1235), "0.124", ".1235");
@@ -1271,7 +1280,9 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format("-123.456789e-2", "mass-kilogram"), "-1.23456789 kg", "-123.456789e-2");
 		assert.equal(oFormat.format("1000.00", "mass-kilogram"), "1,000.00 kg", "1000.00");
 		assert.equal(oFormat.format("1000.0000", "mass-kilogram"), "1,000.0000 kg", "1000.0000");
-		assert.equal(oFormat.format(123456789.123456789, "mass-kilogram"), "123,456,789.1234568 kg", "123456789.123456789 (number)");
+		// Due to IEEE_754 (Binary Floating-Point Arithmetic)
+		// JavaScript can only represent the number 123456789.123456789 as 123456789.12345679
+		assert.equal(oFormat.format(123456789.123456789, "mass-kilogram"), "123,456,789.12345679 kg", "123456789.123456789 (number)");
 		assert.equal(oFormat.format("123456789.123456789", "mass-kilogram"), "123,456,789.123456789 kg", "123456789.123456789 (string)");
 	});
 
