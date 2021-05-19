@@ -269,7 +269,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 	 * add table container class name
 	 */
 	TableRenderer.renderContainerAttributes = function(rm, oControl) {
-		rm.attr("role", "application");
+		rm.attr("role", "application").attr("data-sap-ui-pasteregion", "true");
 		rm.attr("aria-roledescription", Core.getLibraryResourceBundle("sap.m").getText("TABLE_ROLE_DESCRIPTION"));
 		rm.class("sapMListTblCnt");
 

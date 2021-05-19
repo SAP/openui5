@@ -12,7 +12,7 @@ sap.ui.define(function() {
 
 	document.documentElement.addEventListener("paste", function(oEvent) {
 		var oActiveElement = document.activeElement;
-		if (oActiveElement instanceof HTMLElement &&
+		if (oEvent.isTrusted && oActiveElement instanceof HTMLElement &&
 			// The paste event should always be fired on or within
 			// the active element because the corresponding key board
 			// event can only occur on or within the active element.

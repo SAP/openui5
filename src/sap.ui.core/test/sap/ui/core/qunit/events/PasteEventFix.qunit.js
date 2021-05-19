@@ -12,7 +12,9 @@ sap.ui.define(["sap/ui/events/PasteEventFix"], function() {
 
 	QUnit.module("Paste Event Fix");
 
-	QUnit.test("Paste event which has wrong target should be caught and dispatched to the active element", function(assert) {
+	// PasteEventFix is using Event#isTrusted which is a read-only property therefore we cannot test this with synthetic events
+	// For more details, please see https://dom.spec.whatwg.org/#dom-event-istrusted
+	QUnit.skip("Paste event which has wrong target should be caught and dispatched to the active element", function(assert) {
 		oInput.focus();
 		assert.equal(document.activeElement.id, oInput.id, "Input is the current active element");
 
