@@ -49,7 +49,7 @@ sap.ui.define([
 				bRenderWhitespace = oText.getRenderWhitespace(),
 				bExpandable = oText._isExpandable(),
 				bExpanded = oText.getProperty("expanded"),
-				sEllipsisText = bExpanded ? "&nbsp;&nbsp;" : " ... ";
+				sEllipsisText = bExpanded ? " " : "... ";
 
 			// start writing HTML
 			oRm.openStart("div", oText);

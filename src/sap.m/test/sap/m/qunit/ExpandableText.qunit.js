@@ -50,7 +50,7 @@ sap.ui.define([
 
 		assert.ok(this.oExpandableText.getDomRef(), 'Control is rendered');
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
-		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), " ... " , "Ellipsis are rendered");
+		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), "... " , "Ellipsis are rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "Show more is rendered");
 	});
 
@@ -114,14 +114,14 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText(), "text is correct");
-		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), "  ", "Space is rendered");
+		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), " ", "Space is rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_LESS, "Show less is rendered");
 
 		oShowMoreLink.firePress();
 		Core.applyChanges();
 
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
-		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), " ... " , "Ellipsis are rendered");
+		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), "... " , "Ellipsis are rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "Show more is rendered");
 	});
 
@@ -138,7 +138,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
-		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), " ... " , "Ellipsis are rendered");
+		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), "... " , "Ellipsis are rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_LESS, "'Show less' text is rendered");
 
 		assert.strictEqual(jQuery(".sapMPopover").text(), this.oExpandableText.getText(), "popover is opened with the correct text");
