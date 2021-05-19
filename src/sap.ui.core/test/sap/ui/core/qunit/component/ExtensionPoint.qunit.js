@@ -1,10 +1,11 @@
 sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/XMLTemplateProcessor',
 	'sap/ui/core/ExtensionPoint',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/Fragment'
-], function(Component, ComponentContainer, ExtensionPoint, XMLView, Fragment) {
+], function(Component, ComponentContainer, XMLTemplateProcessor, ExtensionPoint, XMLView, Fragment) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -892,4 +893,103 @@ sap.ui.define([
 		oView.destroy();
 	});
 
+	QUnit.module("Async ExtensionPoints", {
+		before: function() {
+			this.oXMLTPSpy = sinon.spy(XMLTemplateProcessor, "parseTemplatePromise");
+		},
+		beforeEach: function() {
+			this.oXMLTPSpy.resetHistory();
+		},
+		after: function() {
+			this.oXMLTPSpy.restore();
+		}
+	});
+
+
+	QUnit.test("Default content contains Async View/Fragment", function(assert) {
+		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/extensionPoints/defaultContent/manifest.json");
+
+		return Component.create({
+			name: "testdata.extensionPoints",
+			manifest: sManifestUrl
+		}).then(function(oComponent) {
+			var oView = oComponent.getRootControl();
+			// check call count of async processing
+			assert.equal(this.oXMLTPSpy.callCount, 2, "2 async XMLViews processed.");
+
+			// check content order of outer view
+			var aViewContent = oView.getContent();
+			assert.equal(aViewContent.length, 5, "Correct amount of top-level controls.");
+			assert.equal(aViewContent[0], oView.byId("outerView_button_before"), "Button before ExtensionPoint is at the correct position.");
+			assert.equal(aViewContent[1], oView.byId("outerView_buttonInDefaultContent_before"), "Button before nested View in default content is at the correct position.");
+			assert.equal(aViewContent[2], oView.byId("innerView"), "Nested View in default content is at the correct position.");
+			assert.equal(aViewContent[3], oView.byId("outerView_buttonInDefaultContent_after"), "Button after nested View in default content is at the correct position.");
+			assert.equal(aViewContent[4], oView.byId("outerView_button_after"), "Button after ExtensionPoint is at the correct position.");
+
+			// check if inner view exists
+			var oInnerView = oView.byId("innerView");
+			assert.ok(oInnerView, "Inner view inside ExtensionPoint default content exists.");
+
+			// check if inner view content is available
+			var aInnerViewContent = oInnerView.getContent();
+			assert.equal(aInnerViewContent.length, 2, "Correct amount of controls inside inner View.");
+			assert.ok(oInnerView.byId("buttonInInnerView_1"), "Button inside inner view is available");
+			assert.ok(oInnerView.byId("buttonInInnerView_2"), "Button inside inner view is available");
+
+			return oComponent;
+		}.bind(this)).then(function(oComponent) {
+			oComponent.destroy();
+		});
+	});
+
+	QUnit.test("ExtensionPoint contains Async View/Fragment", function(assert) {
+		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/extensionPoints/viewExtensions/manifest.json");
+
+		return Component.create({
+			name: "testdata.extensionPoints",
+			manifest: sManifestUrl
+		}).then(function(oComponent) {
+
+			var oView = oComponent.getRootControl();
+
+			// check call count of XMLTP
+			assert.equal(this.oXMLTPSpy.callCount, 3, "3 async XMLViews or Fragments processed.");
+			// check async flags of the XMLTP start, arguments order: (0: xmlNode, 1: view/fragment instance, 2: bAsync, 3: oParseConfig)
+			assert.strictEqual(this.oXMLTPSpy.args[0][2], true, "Async root View.");
+			assert.strictEqual(this.oXMLTPSpy.args[1][2], true, "Async nested View from 'ExtPointFromView'.");
+			assert.strictEqual(this.oXMLTPSpy.args[2][2], true, "Async nested Fragment from 'ExtPointFromFragment'.");
+
+			// content amount
+			var aViewContent = oView.getContent();
+			assert.equal(aViewContent.length, 6, "Correct amount of top-level controls (6)");
+
+			// check content order of outer view
+			assert.equal(aViewContent[0], oView.byId("outerView_button_before"), "Button before ExtensionPoint is at the correct position.");
+
+			// nested view from EP
+			assert.equal(aViewContent[1], oView.byId("extPointFromView"), "ExtPointFromView content is at the correct position.");
+
+			assert.equal(aViewContent[2], oView.byId("outerView_button_middle"), "Button after ExtensionPoint is at the correct position.");
+
+			// fragment content from EP
+			assert.equal(aViewContent[3], oView.byId("extPointFromFragment--buttonExtPointFromFragment_1"), "Button 1 in ExtPointFromFragment is at the correct position.");
+			assert.equal(aViewContent[4], oView.byId("extPointFromFragment--buttonExtPointFromFragment_2"), "Button 2 in ExtPointFromFragment is at the correct position.");
+
+			assert.equal(aViewContent[5], oView.byId("outerView_button_after"), "Button after ExtensionPoint is at the correct position.");
+
+			// check if view provided by extension point exists
+			var oExtPointView = oView.byId("extPointFromView");
+			assert.ok(oExtPointView instanceof XMLView, "The extension point 'ExtPointFromView' exists and is a valid XMLView instance.");
+
+			// check if the extension points view content is available
+			var aExtPointViewContent = oExtPointView.getContent();
+			assert.equal(aExtPointViewContent.length, 2, "Correct amount of controls inside extension point.");
+			assert.ok(oExtPointView.byId("buttonExtPointFromView_1"), "Button 1 inside extension point view is available");
+			assert.ok(oExtPointView.byId("buttonExtPointFromView_2"), "Button 2 inside extension point view is available");
+
+			return oComponent;
+		}.bind(this)).then(function(oComponent) {
+			oComponent.destroy();
+		});
+	});
 });

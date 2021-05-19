@@ -1,0 +1,15 @@
+<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">
+
+	<Button id="outerView_button_before" text="Nothing" />
+
+	<core:ExtensionPoint name="ExtPoint1">
+		<Button id="outerView_buttonInDefaultContent_before" />
+		<mvc:XMLView viewName="testdata.customizing.async.noInterface.sap.views.XMLView1" id="innerView" />
+		<Button id="outerView_buttonInDefaultContent_after" />
+	</core:ExtensionPoint>
+
+	<core:ExtensionPoint name="ExtPoint2" />
+
+	<Button id="outerView_button_after" text="Nothing" />
+
+</mvc:View>

@@ -76,6 +76,12 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+			"Customizing_async": {
+				title: "Async Customizing - sap.ui.core",
+				qunit: {
+					reorder: false
+				}
+			},
 			ExtensionPoint: {
 				title: "ExtensionPoints with ExtensionProvider",
 				qunit: {
