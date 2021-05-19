@@ -17,13 +17,13 @@ sap.ui.define(function() {
 			ContentSecurityPolicy: {
 				page: "resources/sap/ui/test/starter/Test.qunit.html?testsuite=test-resources/sap/ui/core/qunit/csp/testsuite.csp.qunit&test=ContentSecurityPolicy&sap-ui-xx-csp-policy=sap-target-level-2:report-only",
 				title: "QUnit test: CSP Compliance of bootstrapping the Core and test preparation logic",
-				beforeBootstrap: "./ContentSecurityPolicy.beforeBootstrap.qunit",
+				runAfterLoader: "test-resources/sap/ui/core/qunit/csp/ContentSecurityPolicyErrorHandler",
 				module: "./ContentSecurityPolicy.qunit"
 			},
 			ContentSecurityPolicy_debug: {
 				page: "resources/sap/ui/test/starter/Test.qunit.html?testsuite=test-resources/sap/ui/core/qunit/csp/testsuite.csp.qunit&test=ContentSecurityPolicy&sap-ui-xx-csp-policy=sap-target-level-2:report-only&sap-ui-debug=true",
 				title: "QUnit test: CSP Compliance of bootstrapping the Core and test preparation logic (Debug Mode)",
-				beforeBootstrap: "./ContentSecurityPolicy.beforeBootstrap.qunit",
+				runAfterLoader: "test-resources/sap/ui/core/qunit/csp/ContentSecurityPolicyErrorHandler",
 				module: "./ContentSecurityPolicy.qunit"
 			}
 		}
