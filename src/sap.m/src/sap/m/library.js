@@ -4614,7 +4614,7 @@ sap.ui.define([
 	 * <li>Some mail applications(Outlook) do not respect all encodings (e.g. Cyrillic texts are not encoded correctly)</li>
 	 * </ul>
 	 *
-	 * <b>Note:</b> all the given length limits are for URL encoded text (e.g a space character will be encoded as "%20").
+	 * <b>Note:</b> all the given maximum lengths are for URL encoded text (e.g a space character will be encoded as "%20").
 	 *
 	 * It has been reported by some users that the content send through the <code>URLHelper</code> is not correctly displayed by the native applications (e.g. a native mail application).
 	 *
