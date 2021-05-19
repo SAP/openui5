@@ -272,7 +272,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!this._oHandle.parentNode) {
+		if (this._$Container[0] !== this._oHandle.parentNode) {
 			this._$Container.append(this._oHandle);
 
 			if (bMobileHandle) {
