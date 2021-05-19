@@ -43,9 +43,9 @@ sap.ui.define([
 
         this.oWrapper.setListLayout(false);
 
-        this.oWrapper.addPanel(new BasePanel(), "panel1");
-        this.oWrapper.addPanel(new BasePanel(), "panel2");
-        this.oWrapper.addPanel(new BasePanel(), "panel3");
+        this.oWrapper.addPanel(new BasePanel(), "panel1", "panel1");
+        this.oWrapper.addPanel(new BasePanel(), "panel2", "panel2");
+        this.oWrapper.addPanel(new BasePanel(), "panel3", "panel3");
 
         var oIconTabBar = this.oWrapper._getTabBar();
 
@@ -60,9 +60,9 @@ sap.ui.define([
 
         this.oWrapper.setListLayout(true);
 
-        this.oWrapper.addPanel(new BasePanel(), "panel1");
-        this.oWrapper.addPanel(new BasePanel(), "panel2");
-        this.oWrapper.addPanel(new BasePanel(), "panel3");
+        this.oWrapper.addPanel(new BasePanel(), "panel1", "panel1");
+        this.oWrapper.addPanel(new BasePanel(), "panel2", "panel2");
+        this.oWrapper.addPanel(new BasePanel(), "panel3", "panel3");
 
         var oList = this.oWrapper._getNavigationList();
 
