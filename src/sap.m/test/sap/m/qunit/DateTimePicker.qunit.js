@@ -228,7 +228,7 @@ sap.ui.define([
 		setTimeout(function() {
 			//Assert
 			assert.equal(oSpyUpdateSlidersFn.callCount, 1, "Once picker is opened, function updateSlidersValues should be called");
-			assert.ok(oTPS._getFirstSlider().getIsExpanded(), "Once picker is opened, the first slider is expanded");
+			assert.ok(!oTPS._getFirstSlider().getIsExpanded(), "Once picker is opened, the first slider is expanded");
 
 			//Cleanup
 			oSpyUpdateSlidersFn.restore();
