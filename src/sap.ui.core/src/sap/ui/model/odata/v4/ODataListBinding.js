@@ -229,7 +229,7 @@ sap.ui.define([
 
 		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity,
 			function (iIndex, aEntities) {
-				var sContextPath, i, sPredicate, sResolvedPath, i$skipIndex;
+				var sContextPath, sPredicate, sResolvedPath, i$skipIndex, i;
 
 				if (oContext.isKeepAlive()) {
 					oContext.resetKeepAlive(); // ensure that it is destroyed later
@@ -637,8 +637,7 @@ sap.ui.define([
 			iCount = this.oCache.collapse(
 				_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())),
 			iModelIndex = oContext.getModelIndex(),
-			i,
-			that = this;
+			i, that = this;
 
 		if (iCount > 0) {
 			aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
@@ -825,7 +824,6 @@ sap.ui.define([
 		var bChanged = false,
 			oContext,
 			sContextPath,
-			i,
 			iCount = aResults.$count,
 			i$skipIndex,
 			bLengthFinal = this.bLengthFinal,
@@ -833,14 +831,14 @@ sap.ui.define([
 			sPath = this.getResolvedPath(),
 			sPredicate,
 			bStartBeyondRange = iStart > this.aContexts.length,
-			that = this;
+			i, that = this;
 
 		/*
 		 * Shrinks contexts to the new length, destroys unneeded contexts
 		 */
 		function shrinkContexts() {
-			var i,
-				iNewLength = that.iMaxLength + that.iCreatedContexts;
+			var iNewLength = that.iMaxLength + that.iCreatedContexts,
+				i;
 
 			if (iNewLength >= that.aContexts.length) {
 				return;
@@ -958,8 +956,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.destroyCreated = function (oContext, bDestroyLater) {
-		var i,
-			iIndex = oContext.getModelIndex();
+		var iIndex = oContext.getModelIndex(),
+			i;
 
 		this.iCreatedContexts -= 1;
 		for (i = 0; i < iIndex; i += 1) {
@@ -1746,7 +1744,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.getContextsInViewOrder = function (iStart, iLength) {
-		var aContexts, i, iCount;
+		var aContexts, iCount, i;
 
 		if (this.bCreatedAtEnd) {
 			aContexts = [];
@@ -2330,8 +2328,8 @@ sap.ui.define([
 			 *   exists. In this case the context must not be destroyed.
 			 */
 			function onRemove(bStillAlive) {
-				var i,
-					iIndex = oContext.getModelIndex();
+				var iIndex = oContext.getModelIndex(),
+					i;
 
 				if (oContext.created()) {
 					that.destroyCreated(oContext);
@@ -2864,9 +2862,8 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#setContext
 	ODataListBinding.prototype.setContext = function (oContext) {
-		var i,
-			sResolvedPath,
-			that = this;
+		var sResolvedPath,
+			i, that = this;
 
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {

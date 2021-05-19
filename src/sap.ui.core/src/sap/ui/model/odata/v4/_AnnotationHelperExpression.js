@@ -539,9 +539,9 @@ sap.ui.define([
 		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		fillUriTemplate : function (oPathValue) {
-			var i,
-				aParameters = [],
-				aPromises;
+			var aParameters = [],
+				aPromises,
+				i;
 
 			// Note: it is safe to modify the caller's object here
 			oPathValue.complexBinding = false;

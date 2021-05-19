@@ -1425,7 +1425,7 @@ sap.ui.define([
 		var that = this;
 
 		Object.keys(this.mPatchRequests).forEach(function (sRequestPath) {
-			var i, aPromises;
+			var aPromises, i;
 
 			if (isSubPath(sRequestPath, sPath)) {
 				aPromises = that.mPatchRequests[sRequestPath];
@@ -1437,7 +1437,7 @@ sap.ui.define([
 		});
 
 		Object.keys(this.mPostRequests).forEach(function (sRequestPath) {
-			var aEntities, i, sTransientGroup;
+			var aEntities, sTransientGroup, i;
 
 			if (isSubPath(sRequestPath, sPath)) {
 				aEntities = that.mPostRequests[sRequestPath];
@@ -1872,7 +1872,11 @@ sap.ui.define([
 		 * @param {string} sContextUrl The context URL for message longtexts
 		 */
 		function visitArray(aInstances, sMetaPath, sCollectionPath, sContextUrl) {
-			var mByPredicate = {}, i, iIndex, vInstance, sPredicate;
+			var mByPredicate = {},
+				iIndex,
+				vInstance,
+				sPredicate,
+				i;
 
 			for (i = 0; i < aInstances.length; i += 1) {
 				vInstance = aInstances[i];
@@ -2162,7 +2166,11 @@ sap.ui.define([
 	 * @private
 	 */
 	_CollectionCache.prototype.getFilterExcludingCreated = function () {
-		var oElement, i, sKeyFilter, aKeyFilters = [], mTypeForMetaPath;
+		var oElement,
+			sKeyFilter,
+			aKeyFilters = [],
+			mTypeForMetaPath,
+			i;
 
 		for (i = 0; i < this.aElements.$created; i += 1) {
 			oElement = this.aElements[i];
@@ -2322,11 +2330,11 @@ sap.ui.define([
 			sCount,
 			iCreated = this.aElements.$created,
 			oElement,
-			i,
 			oKeptElement,
 			iOld$count = this.aElements.$count,
 			sPredicate,
-			iResultLength = oResult.value.length;
+			iResultLength = oResult.value.length,
+			i;
 
 		this.sContext = oResult["@odata.context"];
 		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, undefined, iStart);
@@ -2418,13 +2426,12 @@ sap.ui.define([
 	 */
 	_CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
-		var i, n,
-			aElementsRange,
+		var aElementsRange,
 			iEnd,
 			iGapStart = -1,
 			oPromise = this.oPendingRequestsPromise || this.aElements.$tail,
 			oRange,
-			that = this;
+			i, n, that = this;
 
 		if (iIndex < 0) {
 			throw new Error("Illegal index " + iIndex + ", must be >= 0");

@@ -211,9 +211,9 @@ sap.ui.define([
 		 * @returns {string} a composite path built from all arguments
 		 */
 		buildPath : function () {
-			var i,
-				sPath = "",
-				sSegment;
+			var sPath = "",
+				sSegment,
+				i;
 
 			for (i = 0; i < arguments.length; i += 1) {
 				sSegment = arguments[i];
@@ -2015,12 +2015,12 @@ sap.ui.define([
 		wrapChildQueryOptions : function (sBaseMetaPath, sChildMetaPath, mChildQueryOptions,
 				fnFetchMetadata) {
 			var sExpandSelectPath = "",
-				i,
 				aMetaPathSegments = sChildMetaPath.split("/"),
 				oProperty,
 				sPropertyMetaPath = sBaseMetaPath,
 				mQueryOptions = {},
-				mQueryOptionsForPathPrefix = mQueryOptions;
+				mQueryOptionsForPathPrefix = mQueryOptions,
+				i;
 
 			if (sChildMetaPath === "") {
 				return mChildQueryOptions;
