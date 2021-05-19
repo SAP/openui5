@@ -146,36 +146,26 @@ sap.ui.define([
 			var sExpectedSectionText = "Section text";
 			var sExpectedHeaderText = "Header text";
 
-			var sSingularSectionText = "Singular section Text";
-			var sPluralSectionText = "Plural section Text";
-			var sSingularHeaderText = "Singular header Text";
-			var sPluralHeaderText = "Plural header Text";
 			var oRtaTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(oRtaTextResources, "getText")
-				.withArgs("CTX_ADDIFRAME", sSingularSectionText).returns(sExpectedSectionText)
-				.withArgs("CTX_ADDIFRAME", sSingularHeaderText).returns(sExpectedHeaderText);
+				.withArgs("CTX_ADDIFRAME", "as foo").returns(sExpectedSectionText)
+				.withArgs("CTX_ADDIFRAME", "as bar").returns(sExpectedHeaderText);
 
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
 					sections: {
-						childNames: {
-							singular: sSingularSectionText,
-							plural: sPluralSectionText
-						},
 						actions: {
 							addIFrame: {
-								changeType: "addIFrame"
+								changeType: "addIFrame",
+								text: "as foo"
 							}
 						}
 					},
 					header: {
-						childNames: {
-							singular: sSingularHeaderText,
-							plural: sPluralHeaderText
-						},
 						actions: {
 							addIFrame: {
-								changeType: "addIFrame"
+								changeType: "addIFrame",
+								text: "as bar"
 							}
 						}
 					}
@@ -183,17 +173,9 @@ sap.ui.define([
 			});
 
 			var aMenuItems = this.oAddIFrame.getMenuItems([this.oObjectPageLayoutOverlay]);
-			var aExpectedTexts = [sExpectedHeaderText, sExpectedSectionText];
 
-			var bAggregationTextsValid = aMenuItems.every(function(oMenuItem) {
-				var iIndex = aExpectedTexts.indexOf(oMenuItem.text(this.oObjectPageLayoutOverlay));
-				if (iIndex > -1) {
-					aExpectedTexts.splice(iIndex, 1);
-					return true;
-				}
-			}.bind(this));
-
-			assert.ok(bAggregationTextsValid);
+			assert.strictEqual(aMenuItems[0].text(this.oObjectPageLayoutOverlay), sExpectedSectionText, "the Section text via the designtime is correct");
+			assert.strictEqual(aMenuItems[1].text(this.oObjectPageLayoutOverlay), sExpectedHeaderText, "the header text via the aggregation names is correct");
 		});
 
 		QUnit.test("when an overlay has no addIFrame action designTimeMetadata", function(assert) {
@@ -218,7 +200,8 @@ sap.ui.define([
 					sections: {
 						actions: {
 							addIFrame: {
-								changeType: "addIFrame"
+								changeType: "addIFrame",
+								text: "foo"
 							}
 						}
 					}
@@ -244,7 +227,8 @@ sap.ui.define([
 					sections: {
 						actions: {
 							addIFrame: {
-								isEnabled: true
+								isEnabled: true,
+								text: "foo"
 							}
 						}
 					}
@@ -266,18 +250,14 @@ sap.ui.define([
 
 		QUnit.test("when an overlay has addIFrame action on a responsible element", function(assert) {
 			assert.expect(9);
-			var sSingularText = "Singular Text";
-			var sPluralText = "Plural Text";
+			var sText = "as Section";
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
 					sections: {
-						childNames: {
-							singular: sSingularText,
-							plural: sPluralText
-						},
 						actions: {
 							addIFrame: {
-								changeType: "addIFrame"
+								changeType: "addIFrame",
+								text: sText
 							}
 						}
 					}
@@ -286,7 +266,7 @@ sap.ui.define([
 
 			var sExpectedText = "Section text";
 			var oRtaTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			sandbox.stub(oRtaTextResources, "getText").withArgs("CTX_ADDIFRAME", sSingularText).returns(sExpectedText);
+			sandbox.stub(oRtaTextResources, "getText").withArgs("CTX_ADDIFRAME", sText).returns(sExpectedText);
 
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions: {
@@ -343,7 +323,8 @@ sap.ui.define([
 								changeType: "addIFrame",
 								isEnabled: function (oElement) {
 									return oElement.getMetadata().getName() === "sap.uxap.ObjectPageLayout";
-								}
+								},
+								text: "foo"
 							}
 						}
 					}
@@ -372,11 +353,11 @@ sap.ui.define([
 					});
 
 					sandbox.stub(this.oAddIFrame, "isEnabled").callsFake(function(sAggregationName, aElementOverlays) {
-						var sAggregationName;
+						var sExpectedAggregationName;
 						if (this.callCount === 1) {
-							sAggregationName = "sections";
+							sExpectedAggregationName = "sections";
 						}
-						assert.strictEqual(sAggregationName, sAggregationName, "then enabled() was called with the correct aggregation");
+						assert.strictEqual(sExpectedAggregationName, sAggregationName, "then enabled() was called with the correct aggregation");
 						assert.strictEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "then handler() was called with the correct overlay");
 					}.bind(this.oAddIFrame.isEnabled));
 
@@ -417,7 +398,8 @@ sap.ui.define([
 							addIFrame: {
 								changeType: "addIFrame",
 								changeOnRelevantContainer: true
-							}
+							},
+							text: "foo"
 						}
 					}
 				}
@@ -447,7 +429,8 @@ sap.ui.define([
 					toolBar: {
 						actions: {
 							addIFrame: {
-								changeType: "addToolbarContainer"
+								changeType: "addToolbarContainer",
+								text: "foo"
 							}
 						}
 					}
@@ -521,13 +504,10 @@ sap.ui.define([
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
 					sections: {
-						childNames: {
-							singular: "GROUP_CONTROL_NAME",
-							plural: "GROUP_CONTROL_NAME_PLURAL"
-						},
 						actions: {
 							addIFrame: {
-								changeType: "addIFrame"
+								changeType: "addIFrame",
+								text: "foo"
 							}
 						}
 					}
@@ -557,14 +537,11 @@ sap.ui.define([
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
 					sections: {
-						childNames: {
-							singular: "GROUP_CONTROL_NAME",
-							plural: "GROUP_CONTROL_NAME_PLURAL"
-						},
 						actions: {
 							addIFrame: {
 								changeType: "addIFrame",
-								getCreatedContainerId: function() {}
+								getCreatedContainerId: function() {},
+								text: "foo"
 							}
 						}
 					}

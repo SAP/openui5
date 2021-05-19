@@ -52,6 +52,7 @@ function(
 					move : "moveControls",
 					addIFrame: {
 						changeType: "addIFrame",
+						text: sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ADD_IFRAME_AS_SECTION"),
 						getCreatedContainerId : function(sNewControlID) {
 							var oObjectPageSection = sap.ui.getCore().byId(sNewControlID);
 							var oObjectPageLayout = oObjectPageSection.getParent();
@@ -154,6 +155,7 @@ function(
 						}
 					},
 					addIFrame: {
+						text: sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ADD_IFRAME_IN_HEADER"),
 						changeType: "addIFrame"
 					}
 				}
