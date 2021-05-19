@@ -72,15 +72,14 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 
 			if (oSlider.getEnableTickmarks()) {
 				this.renderTickmarks(oRm, oSlider);
-			} else {
-				this.renderLabels(oRm, oSlider);
 			}
+
+			this.renderLabels(oRm, oSlider);
+
 
 			if (oSlider.getName()) {
 				this.renderInput(oRm, oSlider);
 			}
-
-			oSlider.getAggregation("_handlesLabels").forEach(oRm.renderControl, oRm);
 
 			oRm.write("</div>");
 		};
