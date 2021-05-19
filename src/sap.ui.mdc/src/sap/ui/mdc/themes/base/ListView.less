@@ -19,6 +19,14 @@
     display: flex; //Is the default for Lists - only needs to be set as the parent is a Table
 }
 
-.sapUiMDCListView tbody > tr > td {
+//Align inner rows with the outer controls
+.sapUiMDCListView table {
+    tr > td {
+        padding-left: 0.5rem;
+    }
+}
+
+//'Select All' should also be aligned correctly with the other controls in the panel
+.sapUiMDCListView .sapMTableTH {
     padding-left: 0.5rem;
 }
