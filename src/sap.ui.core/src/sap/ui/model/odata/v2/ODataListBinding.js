@@ -61,7 +61,7 @@ sap.ui.define([
 	 *   Whether a preliminary context will be used. When set to <code>true</code>, the model can
 	 *   bundle the OData calls for dependent bindings into fewer $batch requests. For more
 	 *   information, see
-	 *   {@link topic:62149734b5c24507868e722fe87a75db Optimizing Dependent Bindings}
+	 *   {@link topic:6c47b2b39db9404582994070ec3d57a2#loio62149734b5c24507868e722fe87a75db Optimizing Dependent Bindings}
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
