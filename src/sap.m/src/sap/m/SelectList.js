@@ -141,6 +141,17 @@ sap.ui.define([
 						type: "sap.m.SelectListKeyboardNavigationMode",
 						group: "Behavior",
 						defaultValue: SelectListKeyboardNavigationMode.Delimited
+					},
+					/**
+					 * Determines whether the disabled items are hidden from the DOM structure.
+					 *
+					 * @private
+					 * @since 1.91
+					 */
+					hideDisabledItems: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: false
 					}
 				},
 				defaultAggregation: "items",
@@ -306,10 +317,14 @@ sap.ui.define([
 		 * @returns {array} The enabled items DOM references.
 		 * @private
 		 */
-		SelectList.prototype._queryEnabledItemsDomRefs = function(oDomRef) {
-			var CSS_CLASS = "." + this.getRenderer().CSS_CLASS + "ItemBase";
-			oDomRef = oDomRef || this.getDomRef();
-			return oDomRef ? Array.prototype.slice.call(oDomRef.querySelectorAll(CSS_CLASS + ":not(" + CSS_CLASS + "Disabled)")) : [];
+		SelectList.prototype._queryEnabledItemsDomRefs = function() {
+			return this.getItems().reduce(function (aResult, oItem) {
+				if (oItem.getEnabled() && !(oItem.isA("sap.ui.core.SeparatorItem"))) {
+					aResult.push(oItem.getDomRef());
+				}
+
+				return aResult;
+			}, []);
 		};
 
 		SelectList.prototype._handleARIAActivedescendant = function() {
@@ -745,7 +760,9 @@ sap.ui.define([
 		 * @protected
 		 */
 		SelectList.prototype.getSelectableItems = function() {
-			return this.getEnabledItems(this.getVisibleItems());
+			return this.getEnabledItems(this.getVisibleItems()).filter(function(oItem) {
+				return !(oItem.isA("sap.ui.core.SeparatorItem"));
+			});
 		};
 
 		/*
@@ -801,8 +818,8 @@ sap.ui.define([
 		 * @private
 		 */
 		SelectList.prototype._getNonSeparatorItemsCount = function () {
-			return this.getItems().filter(function(oItem) {
-				return !(oItem instanceof sap.ui.core.SeparatorItem);
+			return this.getEnabledItems().filter(function(oItem) {
+				return !(oItem.isA("sap.ui.core.SeparatorItem"));
 			}).length;
 		};
 

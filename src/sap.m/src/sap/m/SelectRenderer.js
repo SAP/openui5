@@ -296,10 +296,11 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 */
 		SelectRenderer.renderShadowItems = function(oRm, oList) {
 			var oListRenderer = oList.getRenderer(),
-				iSize = oList.getItems().length,
+				aItems = oList.getSelectableItems(),
+				iSize = aItems.length,
 				oSelectedItem = oList.getSelectedItem();
 
-			for (var i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
+			for (var i = 0; i < iSize; i++) {
 				oListRenderer.renderItem(oRm, oList, aItems[i], {
 					selected: oSelectedItem === aItems[i],
 					setsize: iSize,

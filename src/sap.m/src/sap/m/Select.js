@@ -2125,7 +2125,8 @@ function(
 
 			this._oList = new SelectList({
 				width: "100%",
-				keyboardNavigationMode: sKeyboardNavigationMode
+				keyboardNavigationMode: sKeyboardNavigationMode,
+				hideDisabledItems: true
 			}).addStyleClass(this.getRenderer().CSS_CLASS + "List-CTX")
 			.addEventDelegate({
 				ontap: function(oEvent) {
@@ -2283,7 +2284,12 @@ function(
 		 */
 		Select.prototype.getSelectableItems = function() {
 			var oList = this.getList();
-			return oList ? oList.getSelectableItems() : [];
+
+			if (!oList) {
+				return [];
+			}
+
+			return oList.getSelectableItems();
 		};
 
 		/**
