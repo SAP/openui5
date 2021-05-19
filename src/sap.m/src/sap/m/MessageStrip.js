@@ -51,13 +51,17 @@ sap.ui.define([
 	 *
 	 * Each message can have a close button, so that it can be removed from the UI if needed.
 	 *
-	 * With version 1.50 you can use a limited set of formatting tags for the message text by setting <code>enableFormattedText</code>. The allowed tags are:
+	 * You can use a limited set of formatting tags for the message text by setting <code>enableFormattedText</code>. The allowed tags are:
+	 * With version 1.50
 	 * <ul>
 	 * <li>&lt;a&gt;</li>
-	 * <li>&lt;br&gt;</li>
 	 * <li>&lt;em&gt;</li>
 	 * <li>&lt;strong&gt;</li>
 	 * <li>&lt;u&gt;</li>
+	 * </ul>
+	 * With version 1.85
+	 * <ul>
+	 * <li>&lt;br&gt;</li>
 	 * </ul>
 	 *
 	 * <h3>Dynamically generated Message Strip</h3>
