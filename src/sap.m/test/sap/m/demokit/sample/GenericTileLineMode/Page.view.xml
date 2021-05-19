@@ -47,7 +47,7 @@
 				                    class="sapUiTinyMarginTopBottom">
 					<SlideTile id="slideTile1"
 					           tiles="{/slideTile1}"
-					           scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+					            scope="{=${/scope} === 'Actions' ? 'Actions' : 'Display'}"
 					           tooltip="SlideTile 1"
 					           press="pressSlideTile"
 					           class="sapUiTinyMarginEnd"
@@ -67,7 +67,7 @@
 					</SlideTile>
 					<SlideTile id="slideTile2"
 					           tiles="{/slideTile2}"
-					           scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+					           scope="{=${/scope} === 'Actions' ? 'Actions' : 'Display'}"
 					           tooltip="SlideTile 2"
 					           press="pressSlideTile"
 					           transitionTime="250" displayTime="2500"

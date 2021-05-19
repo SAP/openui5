@@ -51,11 +51,13 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 				sScopeClass = encodeCSS("sapMGTScopeActions");
 			}
 		} else if (sScope === GenericTileScope.ActionMore || sScope === GenericTileScope.ActionRemove) {
+
 			bIsSingleAction = true;
 			// given class only needs to be added if the tile's state is not disabled
 			if (sState !== LoadState.Disabled) {
 				sScopeClass = encodeCSS("sapMGTScopeSingleAction");
 			}
+
 		} else {
 			sScopeClass = encodeCSS("sapMGTScopeDisplay");
 		}
@@ -83,6 +85,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		}
 		oRm.class("sapMGT");
 		oRm.class(sScopeClass);
+		if (sScope ===  GenericTileScope.ActionMore) {
+				oRm.style("padding-right", "2.25rem");
+		}
 		oRm.class("sapMGTLineMode");
 		this._writeDirection(oRm);
 		if (sTooltipText) {

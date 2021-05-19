@@ -427,15 +427,17 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 }
 
 .sapMGTLineMode .sapMGTActionsContainer:not(.sapMGTScopeSingleActionContainer) {
-	width: 4rem;
+	width: 2rem;
 
 	.sapMGTMoreIcon {
 		position: static;
+		padding-right: 0.5rem;
 	}
 
 	.sapMGTRemoveButton {
-		position: static;
-		left: 2rem;
+		position: absolute;
+		top: -1rem;
+		left: 1.5rem;
 	}
 }
 
@@ -445,7 +447,9 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	}
 
 	.sapMGTRemoveButton {
-		position: static;
+		position: absolute;
+		top: -1rem;
+		left: 1.5rem;
 	}
 }
 
@@ -470,7 +474,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 
 	.sapMGTMoreIcon {
 		display: block;
-		right: 0;
+		right: -1.5rem;
 		bottom: 0.25rem;
 		width: 2rem;
 	}
@@ -478,8 +482,8 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	.sapMGTRemoveButton {
 		display: block;
 		margin: 0 0.3125rem;
-		top: 0;
-		right: 0;
+		top: -1rem;
+		left: -0.5rem;
 		z-index: 0; // Remark: If increased, this will break FLP footer visualization.
 
 		&:before {
@@ -617,13 +621,13 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	
 	.sapMGTLineMode.sapMGTScopeSingleAction {
 		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
-			padding-right: 2.25rem;
+			padding-right: 1rem;
 		}
 	}
 
 	.sapMGTLineMode.sapMGTScopeActions {
 		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
-			padding-right: 4.25rem;
+			padding-right: 3rem;
 		}
 	}
 
