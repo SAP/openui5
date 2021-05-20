@@ -28,6 +28,12 @@ sap.ui.define([
 			autostart: true
 		},
 		tests: {
+			"initial/_internal/changeHandlers/ChangeHandlerRegistration": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration"]
+				}
+			},
 			"initial/_internal/changeHandlers/ChangeHandlerStorage": {
 				group: "Initial Internal",
 				coverage: {
@@ -37,8 +43,14 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						"sap/ui/fl/test/registry": "test-resources/sap/ui/fl/qunit/registry"
+						"sap/ui/fl/test/registry": "test-resources/sap/ui/fl/qunit/testResources"
 					}
+				}
+			},
+			"initial/_internal/changeHandlers/ChangeRegistryItem": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/changeHandlers/ChangeRegistryItem"]
 				}
 			},
 			"initial/_internal/connectors/StaticFileConnector": {
@@ -1126,18 +1138,6 @@ sap.ui.define([
 					resourceroots: {
 						"sap.ui.fl.qunit.integration": "test-resources/sap/ui/fl/qunit/integration"
 					}
-				}
-			},
-			"registry/ChangeHandlerRegistration": {
-				group: "registry",
-				coverage: {
-					only: ["sap/ui/fl/registry/ChangeHandlerRegistration"]
-				}
-			},
-			"registry/ChangeRegistryItem": {
-				group: "registry",
-				coverage: {
-					only: ["sap/ui/fl/registry/ChangeRegistryItem"]
 				}
 			},
 			"registry/Settings": {
