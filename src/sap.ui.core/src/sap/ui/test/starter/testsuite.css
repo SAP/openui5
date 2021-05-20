@@ -25,3 +25,19 @@
 	color:#ef7b7b;
 	//color:red;
 }
+
+/**
+ * QUnit usually displays links in the header and limits its text color to the <a> tag.
+ * We want to use the same color for normal text in the header.
+ */ 
+.sapUiTstSuite #qunit-header {
+	color: #C2CCD1;
+}
+
+/**
+ * Our test suites use their own banner color to distinguish them from normal QUnit pages.
+ */ 
+.sapUiTstSuite #qunit-banner.testsuite {
+	background-color: #4646E7;
+}
+

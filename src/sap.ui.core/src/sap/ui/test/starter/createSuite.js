@@ -89,6 +89,7 @@
 		utils.addStylesheet("sap/ui/thirdparty/qunit-2.css");
 		utils.addStylesheet("sap/ui/test/starter/testsuite.css");
 		return utils.whenDOMReady().then(function() {
+			document.body.classList.add("sapUiTstSuite");
 			var elem = document.body.querySelector("#qunit");
 			if ( elem == null ) {
 				elem = document.createElement("div");
@@ -110,8 +111,8 @@
 
 		document.title = "Available Unit Tests - " + oSuiteConfig.name;
 
-		var sLinkHTML = "<h1 id='qunit-header' style='color:#C2CCD1;'>" + document.title + "</h1>"
-			+ "<h2 id='qunit-banner' style='background-color:#4646E7;'></h2>"
+		var sLinkHTML = "<h1 id='qunit-header'>" + document.title + "</h1>"
+			+ "<h2 id='qunit-banner' class='testsuite'></h2>"
 			+ "<div id='qunit-testrunner-toolbar'>"
 			+ "<button id='redirect'>Run All</button>"
 			+ "</div>"
@@ -167,7 +168,7 @@
 	function renderError(oErr) {
 
 		render(
-			"<h1 id='qunit-header' style='color:#C2CCD1;'>Failed to load Testsuite</h1>"
+			"<h1 id='qunit-header'>Failed to load Testsuite</h1>"
 			+ "<h2 id='qunit-banner' class='qunit-fail'></h2>"
 			+ "<ol id='qunit-tests'>"
 			+ "<li class='pass'><strong>" + utils.encode(oErr.message || String(oErr)) + "</strong></li>"
