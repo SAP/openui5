@@ -2876,6 +2876,72 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Model update on change - tabular suggestions", function (assert) {
+		var oModel = new JSONModel({
+				"items": [
+					{key: "text1", value: "Text 1"},
+					{key: "text2", value: "Text 2"},
+					{key: "text3", value: "Text 3"},
+					{key: "text4", value: "Text 4"}
+				]
+			}),
+			fnOnChange = function () {
+				oModel.setData({
+					"items": [
+						{key: "text1", value: "Text 1"},
+						{key: "text2", value: "Text 2"},
+						{key: "text3", value: "Text 3"},
+						{key: "text4", value: "Text 4"},
+						{key: "text5", value: "Text 5"}
+					]
+				});
+			},
+			oInput = new Input({
+				showSuggestion: true,
+				change: fnOnChange,
+				suggestionColumns : [
+					new sap.m.Column({
+						header : new sap.m.Label({
+							text : "Test"
+						})
+					})]
+			}).setModel(oModel);
+
+		oInput.bindAggregation("suggestionRows", {
+			path: "/items",
+			template: new sap.m.ColumnListItem({
+				cells : [
+					new sap.m.Label({
+						text : "{value}"
+					})
+				]
+			}),
+			templateShareable: true
+		});
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.onfocusin();
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.T });
+		// act
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("T").trigger("input");
+		this.clock.tick(500);
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerTouchEvent("tap", getPopupItemsContent(oInput._oSuggPopover._oPopover).getItems()[1].getDomRef());
+
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(!oInput._oSuggPopover._oPopover.isOpen(), "SuggestionsPopup should be closed.");
+
+		// Cleanup
+		oModel.destroy();
+		oInput.destroy();
+	});
+
 	QUnit.module("Key and Value");
 
 	function createInputWithSuggestions () {
