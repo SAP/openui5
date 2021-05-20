@@ -15,7 +15,7 @@
 					</headerToolbar>
 					<columns>
 						<Column>
-							<Label text="Index" />
+							<Label text="Index"/>
 						</Column>
 						<Column>
 							<Label text="ID"/>

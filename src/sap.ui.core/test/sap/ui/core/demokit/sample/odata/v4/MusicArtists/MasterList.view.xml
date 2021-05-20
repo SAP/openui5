@@ -19,9 +19,9 @@
 			<headerToolbar>
 				<Toolbar>
 					<ToolbarSpacer/>
-					<Button press="onCreate" text="Create" />
+					<Button press="onCreate" text="Create"/>
 					<ToolbarSeparator/>
-					<Button press="onRefresh" text="Refresh" />
+					<Button press="onRefresh" text="Refresh"/>
 				</Toolbar>
 			</headerToolbar>
 			<items>
@@ -29,10 +29,10 @@
 					type="Active">
 				<firstStatus>
 					<ObjectStatus state="None"
-						text="{= %{HasDraftEntity} === true ? 'Draft' : ''}" />
+						text="{= %{HasDraftEntity} === true ? 'Draft' : ''}"/>
 				</firstStatus>
 				<attributes>
-					<ObjectAttribute text="{CountryOfOrigin_Text}" />
+					<ObjectAttribute text="{CountryOfOrigin_Text}"/>
 				</attributes>
 			</ObjectListItem>
 			</items>

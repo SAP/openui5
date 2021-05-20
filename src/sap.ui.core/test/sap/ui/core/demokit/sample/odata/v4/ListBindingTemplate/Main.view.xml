@@ -72,10 +72,10 @@
 					</headerToolbar>
 					<columns>
 						<Column>
-							<Label text="Name" />
+							<Label text="Name"/>
 						</Column>
 						<Column>
-							<Label text="Type" />
+							<Label text="Type"/>
 						</Column>
 					</columns>
 					<ColumnListItem>
@@ -107,10 +107,10 @@
 				</template:repeat>
 				<Text text="- - - - - - - - - -"/>
 				<Title text="AnnotationHelper.value vs. AnnotationHelper.format" titleStyle="H2"/>
-				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@format" />
-				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@format', formatter : 'stringify'}" />
-				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@value" />
-				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@value', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@format"/>
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@format', formatter : 'stringify'}"/>
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@value"/>
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/5/Value@@value', formatter : 'stringify'}"/>
 
 				<Text text="- - - - - - - - - format with $Path"/>
 				<!--
@@ -118,14 +118,14 @@
 					@com.sap.vocabularies.Common.v1.QuickInfo = PRODUCT_2_SUPPLIER/Supplier_Name
 					Expected Result: {path:'EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
 				 -->
-				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
-				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
-				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value" />
-				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format"/>
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}"/>
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value"/>
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}"/>
 
 				<template:with path="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path" helper="AnnotationHelper.resolve$Path" var="value">
-					<Label text="value>@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
-					<Text text="{path : 'value>@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+					<Label text="value>@com.sap.vocabularies.Common.v1.QuickInfo@@format"/>
+					<Text text="{path : 'value>@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}"/>
 				</template:with>
 
 				<Text text="- - - - - - - - - format with $Path; multiple navigation steps"/>
@@ -134,10 +134,10 @@
 					@com.sap.vocabularies.Common.v1.QuickInfo = TEAM_2_MANAGER/ID
 					Expected Result: {path:'EMPLOYEE_2_MANAGER/Manager_to_Team/TEAM_2_MANAGER/ID',type:'sap.ui.model.odata.type.Int32',constraints:{'maxLength':4,'nullable':false}}
 				 -->
-				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
-				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
-				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value" />
-				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}" />
+				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format"/>
+				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}"/>
+				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value"/>
+				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}"/>
 
 				<Text text="- - - - - - - - - format $Path pointing to navigation property"/>
 				<!--
@@ -145,8 +145,8 @@
 					@com.sap.vocabularies.Common.v1.QuickInfo = Name
 					Expected Result: {path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
 				 -->
-				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path/@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
-				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path/@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path/@com.sap.vocabularies.Common.v1.QuickInfo@@format"/>
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path/@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}"/>
 
 				<Text text="- - - - - - - - - format $Path pointing to navigation property; annotation at the navigation property"/>
 				<!--
@@ -154,8 +154,8 @@
 					@com.sap.vocabularies.Common.v1.QuickInfo = Category (at Equipments)
 					Expected Result: {path:'Category',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
 				 -->
-				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
-				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format"/>
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem#test/0/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}"/>
 
 				<Text text="- - - - - - - - - format $Path pointing to a property of a complex type"/>
 				<!--
@@ -163,8 +163,8 @@
 					@com.sap.vocabularies.Common.v1.QuickInfo = COUNTRY
 					Expected Result: {path:'LOCATION/COUNTRY',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':255,'nullable':false}}
 				 -->
-				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format" />
-				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}" />
+				<Label text="meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format"/>
+				<Text text="{path : 'meta>/EMPLOYEES/@com.sap.vocabularies.UI.v1.LineItem/1/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}"/>
 
 				<Text text="- - - - - - - - - format with $AnnotationPath"/>
 				<!--
@@ -172,8 +172,8 @@
 					@com.sap.vocabularies.Common.v1.QuickInfo = Name
 					Expected Result: {path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
 				 -->
-				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@format" />
-				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@format', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@format"/>
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@format', formatter : 'stringify'}"/>
 
 				<Text text="- - - - - - - - - format with $AnnotationPath; annotation at navigation property"/>
 				<!--
@@ -181,8 +181,8 @@
 					@com.sap.vocabularies.Common.v1.QuickInfo = Category (at Equipments)
 					Expected Result: {path:'Category',type:'sap.ui.model.odata.type.String',constraints:{'nullable':false}}
 				 -->
-				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath/@@format" />
-				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath/@@format', formatter : 'stringify'}" />
+				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath/@@format"/>
+				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/1/Target/$AnnotationPath/@@format', formatter : 'stringify'}"/>
 
 				<!-- TODO repeat over $* properties! -->
 			</VBox>
@@ -214,11 +214,11 @@
 											=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
 											<!-- Text: "A descriptive text for values of the annotated property.
 												Value MUST be a dynamic expression when used as metadata annotation." -->
-											<Text text="{field>Value/@@value} {target>@com.sap.vocabularies.Common.v1.Text/@@value}" />
+											<Text text="{field>Value/@@value} {target>@com.sap.vocabularies.Common.v1.Text/@@value}"/>
 										</template:if>
 									</template:elseif>
 									<template:else>
-										<Text text="{field>Value/@@format}" />
+										<Text text="{field>Value/@@format}"/>
 									</template:else>
 								</template:if>
 							</template:with>

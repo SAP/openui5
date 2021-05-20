@@ -10,7 +10,7 @@
 			<VBox class="sapUiSmallMargin">
 				<f:Form editable="true">
 					<f:title>
-						<core:Title text="Publication Details" />
+						<core:Title text="Publication Details"/>
 					</f:title>
 					<f:layout>
 						<f:ResponsiveGridLayout
@@ -26,27 +26,27 @@
 							labelSpanL="3"
 							labelSpanM="3"
 							labelSpanS="12"
-							singleContainerFullSize="false" />
+							singleContainerFullSize="false"/>
 					</f:layout>
 					<f:formContainers>
 						<f:FormContainer>
 							<f:formElements>
 								<f:FormElement label="Name">
 									<f:fields>
-										<Input editable="{ui-op>/bEditMode}" value="{Name}" />
+										<Input editable="{ui-op>/bEditMode}" value="{Name}"/>
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Release Date">
 									<f:fields>
 										<Input editable="{ui-op>/bEditMode}"
-											value="{ReleaseDate}" />
+											value="{ReleaseDate}"/>
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Price">
 									<f:fields>
-										<Input editable="{ui-op>/bEditMode}" value="{Price}" />
+										<Input editable="{ui-op>/bEditMode}" value="{Price}"/>
 										<Input editable="{ui-op>/bEditMode}"
-											value="{CurrencyCode}" />
+											value="{CurrencyCode}"/>
 									</f:fields>
 								</f:FormElement>
 							</f:formElements>
