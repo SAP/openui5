@@ -2656,4 +2656,41 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.module("displayFormat");
+
+	QUnit.test("Picker type is changed when displayFormat is changed", function(assert) {
+		// prepare
+		this.oDP = new DatePicker({
+			displayFormat: "dd MMM yyyy"
+		});
+		this.oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.oDP.toggleOpen();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(this.oDP._getCalendar().getMetadata().getName().indexOf("Calendar") !== -1, "Calendar picker is opened");
+
+		// prepare
+		this.oDP.setDisplayFormat("MMM yyyy");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(this.oDP._getCalendar().getMetadata().getName().indexOf("CustomMonthPicker") !== -1, "Month picker is opened");
+
+		// prepare
+		this.oDP.setDisplayFormat("yyyy");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(this.oDP._getCalendar().getMetadata().getName().indexOf("CustomYearPicker") !== -1, "Year picker is opened");
+
+		// clean
+		this.oDP.destroy();
+		this.oDP = null;
+	});
+
+
 });
