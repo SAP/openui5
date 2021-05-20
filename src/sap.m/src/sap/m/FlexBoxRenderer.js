@@ -3,12 +3,11 @@
  */
 
 sap.ui.define([
-	'./FlexBoxStylingHelper',
-	'sap/m/library',
+	"./FlexBoxStylingHelper",
+	"sap/m/library",
 	"sap/base/Log",
 	"sap/m/FlexItemData"
-],
-	function(FlexBoxStylingHelper, library, Log, FlexItemData) {
+], function (FlexBoxStylingHelper, library, Log, FlexItemData) {
 	"use strict";
 
 	// shortcut for sap.m.FlexDirection
@@ -34,7 +33,8 @@ sap.ui.define([
 	 */
 	FlexBoxRenderer.render = function(oRm, oFlexBox) {
 		// Open FlexBox HTML element
-		oRm.openStart(oFlexBox.getRenderType() === FlexRendertype.List ? "ul" : "div", oFlexBox);
+		var sElementType = oFlexBox.getRenderType() === FlexRendertype.List ? "ul" : "div";
+		oRm.openStart(sElementType, oFlexBox);
 
 		// Special treatment if FlexBox is itself an item of a parent FlexBox
 		var oParent = oFlexBox.getParent();
@@ -45,7 +45,7 @@ sap.ui.define([
 
 			// Set layout properties for flex item
 			var oLayoutData = oFlexBox.getLayoutData();
-			if (oLayoutData instanceof FlexItemData) {
+			if (oLayoutData && oLayoutData.isA("sap.m.FlexItemData")) {
 				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
 			}
 		} else if (oFlexBox.getFitContainer()) {
@@ -96,20 +96,16 @@ sap.ui.define([
 		FlexBoxRenderer.renderItems(oFlexBox, oRm);
 
 		// Close FlexBox HTML element
-		if (oFlexBox.getRenderType() === FlexRendertype.List) {
-			oRm.close("ul");
-		} else {
-			oRm.close("div");
-		}
+		oRm.close(sElementType);
 	};
 
 	FlexBoxRenderer.renderItems = function(oFlexBox, oRm) {
 		var aChildren = oFlexBox.getItems(),
-			sWrapperTag = '';
+			sWrapperTag = "";
 
 		for (var i = 0; i < aChildren.length; i++) {
 			// Don't wrap if it's a FlexBox control
-			if (aChildren[i].isA('sap.m.FlexBox') || oFlexBox.getRenderType() === FlexRendertype.Bare) {
+			if (aChildren[i].isA("sap.m.FlexBox") || oFlexBox.getRenderType() === FlexRendertype.Bare) {
 				sWrapperTag = "";
 			} else if (oFlexBox.getRenderType() === FlexRendertype.List) {
 				sWrapperTag = "li";

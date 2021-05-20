@@ -513,6 +513,9 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.GrowingList databinding"
 			},
 			HBox: {
+				qunit: {
+					version: 2
+				},
 				title: "QUnit Page for sap.m.HBox"
 			},
 			HeaderContainer: {
@@ -1593,6 +1596,9 @@ sap.ui.define([
 				]
 			},
 			VBox: {
+				qunit: {
+					version: 2
+				},
 				title: "QUnit Page for sap.m.VBox"
 			},
 			ValueCSSColor: {

@@ -84,21 +84,6 @@ sap.ui.define([
 		return (Math.abs(value1 - value2)) < _margin;
 	}
 
-	function overwriteAnimationIE(oDialog) {// TODO remove after the end of support for Internet Explorer
-		if (Device.browser.msie) {
-			// Sinon fake timer doesn't work correctly with jQuery fadeIn. The fadeIn Animation which is used in IE9
-			// can't be controlled by the sinon fake timer. Therefore the animation has to be overwritten with no
-			// animation when runs in IE9
-			oDialog.oPopup.setAnimations(
-				function ($Ref, iDuration, fnOpen) {
-					fnOpen();
-				}, function ($Ref, iDuration, fnClosed) {
-					fnClosed();
-				}
-			);
-		}
-	}
-
 	function isTextTruncated($element) {
 		var iTolerance = 5;
 
@@ -1094,8 +1079,6 @@ sap.ui.define([
 			initialFocus: oInput2
 		});
 
-		overwriteAnimationIE(oDialog);
-
 		// Act
 		oDialog.open();
 		this.clock.tick(500);
@@ -1153,8 +1136,6 @@ sap.ui.define([
 			content: [oInput1, oInput2]
 		});
 
-		overwriteAnimationIE(oDialog);
-
 		// Act
 		oDialog.open();
 		this.clock.tick(500);
@@ -1174,8 +1155,6 @@ sap.ui.define([
 				content: [oHtml]
 			}),
 			oFocusedElement;
-
-		overwriteAnimationIE(oDialog);
 
 		// Act
 		oDialog.open();
@@ -1198,8 +1177,6 @@ sap.ui.define([
 			endButton: oButton2
 		});
 
-		overwriteAnimationIE(oDialogInitialFocus);
-
 		// Act
 		oDialogInitialFocus.open();
 		this.clock.tick(500);
@@ -1221,8 +1198,6 @@ sap.ui.define([
 			endButton: oButton2
 		});
 
-		overwriteAnimationIE(oDialog);
-
 		// Act
 		oDialog.open();
 		this.clock.tick(500);
@@ -1242,8 +1217,6 @@ sap.ui.define([
 		var oDialog = new Dialog({
 			buttons: [oButton1, oButton2]
 		});
-
-		overwriteAnimationIE(oDialog);
 
 		// Act
 		oDialog.open();
@@ -1265,8 +1238,6 @@ sap.ui.define([
 			buttons: [oButton1, oButton2]
 		});
 
-		overwriteAnimationIE(oDialog);
-
 		// Act
 		oDialog.open();
 		this.clock.tick(500);
@@ -1282,7 +1253,6 @@ sap.ui.define([
 	QUnit.test("No interactive elements or buttons", function (assert) {
 		// Arrange
 		var oDialog = new Dialog();
-		overwriteAnimationIE(oDialog);
 
 		// Act
 		oDialog.open();
@@ -1326,8 +1296,6 @@ sap.ui.define([
 			initialFocus: "inputWantsFocus"
 		});
 
-		overwriteAnimationIE(oDialog);
-
 		oDialog.open();
 		this.clock.tick(300);
 
@@ -1356,8 +1324,6 @@ sap.ui.define([
 			],
 			initialFocus: "initialFocusButton"
 		});
-
-		overwriteAnimationIE(oDialog);
 
 		oDialog.open();
 		this.clock.tick(400);
@@ -1450,8 +1416,6 @@ sap.ui.define([
 		var rb = Core.getLibraryResourceBundle("sap.m");
 		var sValueState = rb.getText("LIST_ITEM_STATE_SUCCESS");
 
-		overwriteAnimationIE(oDialogSuccess);
-
 		// Act
 		oDialogSuccess.open();
 		this.clock.tick(1500);
@@ -1468,7 +1432,7 @@ sap.ui.define([
 		var oDialogWarning = new Dialog({
 			state: ValueState.Warning
 		});
-		overwriteAnimationIE(oDialogWarning);
+
 		sValueState = rb.getText("LIST_ITEM_STATE_WARNING");
 
 		// Act
@@ -1486,7 +1450,7 @@ sap.ui.define([
 		var oDialogError = new Dialog({
 			state: ValueState.Error
 		});
-		overwriteAnimationIE(oDialogError);
+
 		sValueState = rb.getText("LIST_ITEM_STATE_ERROR");
 
 		// Act
@@ -1505,7 +1469,7 @@ sap.ui.define([
 		var oDialogInformation = new Dialog({
 			state: ValueState.Information
 		});
-		overwriteAnimationIE(oDialogInformation);
+
 		sValueState = rb.getText("LIST_ITEM_STATE_INFORMATION");
 
 		// Act

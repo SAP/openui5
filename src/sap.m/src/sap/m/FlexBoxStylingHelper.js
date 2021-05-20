@@ -1,8 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
-	function(FlexBoxCssPropertyMap, Device) {
+sap.ui.define(["sap/base/strings/hyphenate"], function(hyphenate) {
 	"use strict";
 
 	/**
@@ -49,12 +48,15 @@ sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
 		if (typeof sMinHeight !== 'undefined') {
 			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "min-height", sMinHeight);
 		}
+
 		if (typeof sMaxHeight !== 'undefined') {
 			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "max-height", sMaxHeight);
 		}
+
 		if (typeof sMinWidth !== 'undefined') {
 			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "min-width", sMinWidth);
 		}
+
 		if (typeof sMaxWidth !== 'undefined') {
 			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "max-width", sMaxWidth);
 		}
@@ -71,7 +73,7 @@ sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
 	FlexBoxStylingHelper.setStyle = function(oRm, oLayoutData, sProperty, sValue) {
 		if (typeof (sValue) === "string") {
 			// Convert camel-case to lower-case and dashes
-			sValue = sValue.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+			sValue = hyphenate(sValue);
 		} else if (typeof (sValue) === "number") {
 			sValue = sValue.toString();
 		}
@@ -88,20 +90,7 @@ sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
 	 * @param {string} sValue value of the property
 	 */
 	FlexBoxStylingHelper.writeStyle = function(oRm, oLayoutData, sProperty, sValue) {
-		// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box // TODO remove after the end of support for Internet Explorer
-		// Instead of using flex-basis, we use an explicit width/height
-		// @see https://github.com/philipwalton/flexbugs#7-flex-basis-doesnt-account-for-box-sizingborder-box
-		if (Device.browser.internet_explorer && (sProperty === "flex-basis" || sProperty === "flex-preferred-size")) {
-			if (oLayoutData.getParent()) {
-				if (oLayoutData.getParent().getParent().getDirection().indexOf("Row") > -1) {
-					sProperty = "width";
-				} else {
-					sProperty = "height";
-				}
-			}
-		}
-
-		// Finally, write property value to control using either the render manager or the element directly
+		// Write property value to control using either the render manager or the element directly
 		if (oRm) {
 			if (sValue === "0" || sValue) {
 				oRm.style(sProperty, sValue);
@@ -130,5 +119,4 @@ sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
 	};
 
 	return FlexBoxStylingHelper;
-
 }, /* bExport= */ true);

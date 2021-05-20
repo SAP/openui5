@@ -1,24 +1,22 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/VBox",
 	"sap/ui/core/HTML",
 	"sap/m/FlexItemData",
 	"sap/m/HBox",
-	"sap/ui/dom/includeStylesheet",
-	"jquery.sap.global"
-], function(
+	"sap/ui/dom/includeStylesheet"
+], function (
 	createAndAppendDiv,
 	VBox,
 	HTML,
 	FlexItemData,
 	HBox,
-	includeStylesheet,
-	jQuery
+	includeStylesheet
 ) {
-	createAndAppendDiv("content").classList.add("fitContainerV");
+	"use strict";
 
+	createAndAppendDiv("content").classList.add("fitContainerV");
 
 	var outervboxWidth = 400,
 		outervboxHeight = 600,
@@ -86,36 +84,36 @@ sap.ui.define([
 	oOuterVBox.placeAt("content");
 
 	QUnit.test("Flex Boxes rendered", function(assert) {
-		assert.ok(jQuery.sap.domById("outerVBox"), "Outer VBox should be rendered");
-		assert.ok(jQuery.sap.domById("item1"), "Item 1 should be rendered");
-		assert.ok(jQuery.sap.domById("item2"), "Item 2 should be rendered");
-		assert.ok(jQuery.sap.domById("hbox"), "HBox should be rendered");
-		assert.ok(jQuery.sap.domById("item3"), "Item 3 should be rendered");
-		assert.ok(jQuery.sap.domById("innerVBox"), "Inner VBox should be rendered");
-		assert.ok(jQuery.sap.domById("item4"), "Item 4 should be rendered");
-		assert.ok(jQuery.sap.domById("item5"), "Item 5 should be rendered");
-		assert.ok(jQuery.sap.domById("item6"), "Item 6 should be rendered");
+		assert.ok(document.getElementById("outerVBox"), "Outer VBox should be rendered");
+		assert.ok(document.getElementById("item1"), "Item 1 should be rendered");
+		assert.ok(document.getElementById("item2"), "Item 2 should be rendered");
+		assert.ok(document.getElementById("hbox"), "HBox should be rendered");
+		assert.ok(document.getElementById("item3"), "Item 3 should be rendered");
+		assert.ok(document.getElementById("innerVBox"), "Inner VBox should be rendered");
+		assert.ok(document.getElementById("item4"), "Item 4 should be rendered");
+		assert.ok(document.getElementById("item5"), "Item 5 should be rendered");
+		assert.ok(document.getElementById("item6"), "Item 6 should be rendered");
 	});
 
 	QUnit.test("Width and height correct", function(assert) {
-		assert.equal(jQuery.sap.domById("outerVBox").offsetWidth, outervboxWidth, "Outer VBox should have the correct width");
-		assert.equal(jQuery.sap.domById("outerVBox").offsetHeight, outervboxHeight, "Outer VBox should have the correct height");
-		assert.equal(jQuery.sap.domById("hbox").offsetWidth, hboxWidth, "HBox should have the correct width");
-		assert.equal(jQuery.sap.domById("hbox").offsetHeight, hboxHeight, "HBox should have the correct height");
-		assert.equal(jQuery.sap.domById("innerVBox").offsetWidth, innervboxWidth, "Inner VBox should have the correct width");
-		assert.equal(jQuery.sap.domById("innerVBox").offsetHeight, innervboxHeight, "Inner VBox should have the correct height");
-		assert.equal(jQuery.sap.domById("item1").offsetWidth, item1Width, "Item 1 should have the correct width");
-		assert.equal(jQuery.sap.domById("item1").offsetHeight, item1Height, "Item 1 should have the correct height");
-		assert.equal(jQuery.sap.domById("item2").offsetWidth, item2Width, "Item 2 should have the correct width");
-		assert.equal(jQuery.sap.domById("item2").offsetHeight, item2Height, "Item 2 should have the correct height");
-		assert.equal(jQuery.sap.domById("item3").offsetWidth, item3Width, "Item 3 should have the correct width");
-		assert.equal(jQuery.sap.domById("item3").offsetHeight, item3Height, "Item 3 should have the correct height");
-		assert.equal(jQuery.sap.domById("item4").offsetWidth, item4Width, "Item 4 should have the correct width");
-		assert.equal(jQuery.sap.domById("item4").offsetHeight, item4Height, "Item 4 should have the correct height");
-		assert.equal(jQuery.sap.domById("item5").offsetWidth, item5Width, "Item 5 should have the correct width");
-		assert.equal(jQuery.sap.domById("item5").offsetHeight, item5Height, "Item 5 should have the correct height");
-		assert.equal(jQuery.sap.domById("item6").offsetWidth, item6Width, "Item 6 should have the correct width");
-		assert.equal(jQuery.sap.domById("item6").offsetHeight, item6Height, "Item 6 should have the correct height");
+		assert.equal(document.getElementById("outerVBox").offsetWidth, outervboxWidth, "Outer VBox should have the correct width");
+		assert.equal(document.getElementById("outerVBox").offsetHeight, outervboxHeight, "Outer VBox should have the correct height");
+		assert.equal(document.getElementById("hbox").offsetWidth, hboxWidth, "HBox should have the correct width");
+		assert.equal(document.getElementById("hbox").offsetHeight, hboxHeight, "HBox should have the correct height");
+		assert.equal(document.getElementById("innerVBox").offsetWidth, innervboxWidth, "Inner VBox should have the correct width");
+		assert.equal(document.getElementById("innerVBox").offsetHeight, innervboxHeight, "Inner VBox should have the correct height");
+		assert.equal(document.getElementById("item1").offsetWidth, item1Width, "Item 1 should have the correct width");
+		assert.equal(document.getElementById("item1").offsetHeight, item1Height, "Item 1 should have the correct height");
+		assert.equal(document.getElementById("item2").offsetWidth, item2Width, "Item 2 should have the correct width");
+		assert.equal(document.getElementById("item2").offsetHeight, item2Height, "Item 2 should have the correct height");
+		assert.equal(document.getElementById("item3").offsetWidth, item3Width, "Item 3 should have the correct width");
+		assert.equal(document.getElementById("item3").offsetHeight, item3Height, "Item 3 should have the correct height");
+		assert.equal(document.getElementById("item4").offsetWidth, item4Width, "Item 4 should have the correct width");
+		assert.equal(document.getElementById("item4").offsetHeight, item4Height, "Item 4 should have the correct height");
+		assert.equal(document.getElementById("item5").offsetWidth, item5Width, "Item 5 should have the correct width");
+		assert.equal(document.getElementById("item5").offsetHeight, item5Height, "Item 5 should have the correct height");
+		assert.equal(document.getElementById("item6").offsetWidth, item6Width, "Item 6 should have the correct width");
+		assert.equal(document.getElementById("item6").offsetHeight, item6Height, "Item 6 should have the correct height");
 	});
 
 	// include stylesheet and return promise, test starter will wait for it
