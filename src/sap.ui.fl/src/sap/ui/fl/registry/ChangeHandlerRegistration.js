@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/fl/changeHandler/HideControl",
@@ -19,7 +18,6 @@ sap.ui.define([
 ], function(
 	Core,
 	ChangeHandlerStorage,
-	ChangeRegistry,
 	AddXML,
 	AddXMLAtExtensionPoint,
 	HideControl,
@@ -109,8 +107,6 @@ sap.ui.define([
 		 * This includes both default (e.g. <code>UnhideControl</code> or <code>MoveControls</code>) and <code>DeveloperMode</code> change handlers (e.g. <code>AddXML</code> or <code>propertyChange</code>)
 		 */
 		registerPredefinedChangeHandlers: function() {
-			// TODO remove; temporarily needed until the instance specific change handlers are migrated
-			ChangeRegistry.getInstance().registerPredefinedChangeHandlers(mDefaultHandlers, mDeveloperModeHandlers);
 			ChangeHandlerStorage.registerPredefinedChangeHandlers(mDefaultHandlers, mDeveloperModeHandlers);
 		}
 	};

@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/Control",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/HideControl",
@@ -12,10 +11,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
-	"sap/m/List",
-	"sap/m/Text",
 	"sap/m/Label",
-	"sap/m/CustomListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
@@ -32,7 +28,6 @@ sap.ui.define([
 	FlexController,
 	Change,
 	Layer,
-	ChangeRegistry,
 	Control,
 	Utils,
 	HideControl,
@@ -40,10 +35,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Manifest,
 	UIComponent,
-	List,
-	Text,
 	Label,
-	CustomListItem,
 	JSONModel,
 	Log,
 	URLHandler,
@@ -201,17 +193,6 @@ sap.ui.define([
 				.catch(function() {
 					assert.ok(true, "then Promise was rejected");
 				});
-		});
-
-		QUnit.test("if no instance specific change handler exists, _getChangeHandler shall retrieve the ChangeTypeMetadata and extract the change handler", function(assert) {
-			var sControlType = "sap.ui.core.Control";
-			var fChangeHandler = "dummyChangeHandler";
-			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(fChangeHandler);
-			return this.oFlexController._getChangeHandler(this.oChange, sControlType, this.oControl, JsControlTreeModifier)
-
-			.then(function(fChangeHandlerActual) {
-				assert.strictEqual(fChangeHandlerActual, fChangeHandler);
-			});
 		});
 
 		QUnit.test("addChange shall add a change", function(assert) {
@@ -775,109 +756,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("sap.ui.fl.FlexController with template affected changes", {
-		beforeEach: function() {
-			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-
-			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
-			var oModel = new JSONModel({
-				texts: aTexts
-			});
-
-			this.oText = new Text("text", {text: "{text}"});
-			this.oItemTemplate = new CustomListItem("item", {
-				content: this.oText
-			});
-			this.oList = new List("list", {
-				items: {
-					path: "/texts",
-					template: this.oItemTemplate
-				}
-			}).setModel(oModel);
-
-			var oChangeContent = {
-				fileName: "change4711",
-				selector: {
-					id: this.oList.getId(),
-					local: true
-				},
-				dependentSelector: {
-					originalSelector: {
-						id: this.oText.getId(),
-						local: true
-					}
-				},
-				layer: Layer.CUSTOMER,
-				changeType: "hideControl",
-				content: {
-					boundAggregation: "items",
-					removedElement: this.oText.getId() //original selector
-				}
-			};
-			this.oChange = new Change(oChangeContent);
-
-			var oChangeContent0815 = {
-				fileName: "change4712",
-				selector: {
-					id: this.oList.getId(),
-					local: true
-				},
-				dependentSelector: {
-					originalSelector: {
-						id: this.oText.getId(),
-						local: true
-					}
-				},
-				layer: Layer.CUSTOMER,
-				changeType: "unhideControl",
-				content: {
-					boundAggregation: "items",
-					revealedElementId: this.oText.getId() //original selector
-				}
-			};
-			this.oChange2 = new Change(oChangeContent0815);
-		},
-		afterEach: function() {
-			sandbox.restore();
-			this.oList.destroy();
-			this.oText.destroy();
-			this.oItemTemplate.destroy();
-			ChangePersistenceFactory._instanceCache = {};
-		}
-	}, function() {
-		QUnit.test("when calling '_getChangeHandler' twice with different changes", function(assert) {
-			var oHideControl = sap.ui.fl.changeHandler.HideControl;
-			var oUnhideControl = sap.ui.fl.changeHandler.UnhideControl;
-			var oGetChangeHandlerSpy = sandbox.spy(this.oFlexController, "_getChangeHandler");
-
-			var oFirstHandler;
-			var oSecondHandler;
-			var oFirstTest;
-			var oSecondTest;
-			return this.oFlexController._getChangeHandler(this.oChange, this.oText.getMetadata().getName(), this.oText, JsControlTreeModifier)
-				.then(function(oHandler) {
-					oFirstHandler = oHandler;
-					return oGetChangeHandlerSpy.returnValues[0];
-				})
-				.then(function(oReturn) {
-					oFirstTest = oReturn;
-					return this.oFlexController._getChangeHandler(this.oChange2, this.oText.getMetadata().getName(), this.oText, JsControlTreeModifier);
-				}.bind(this))
-				.then(function(oHandler) {
-					oSecondHandler = oHandler;
-					return oGetChangeHandlerSpy.returnValues[0];
-				})
-				.then(function(oReturn) {
-					oSecondTest = oReturn;
-					assert.equal(oGetChangeHandlerSpy.callCount, 2, "the function '_getChangeHandler' is called twice");
-					assert.equal(oFirstHandler, oHideControl, "and returns the correct change handler");
-					assert.equal(oSecondHandler, oUnhideControl, "and returns the correct change handler");
-					assert.equal(oFirstTest, oHideControl, "and contains the correct value in the first promise");
-					assert.equal(oSecondTest, oHideControl, "and contains the correct value in the second promise");
-				});
-		});
-	});
-
 	QUnit.module("applyVariantChanges with two changes for a label", {
 		beforeEach: function() {
 			this.oControl = new Label(labelChangeContent.selector.id);
@@ -1012,7 +890,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		function getControl(thiz, oControl, bAsInstance) {
+		function getControl(oComponent, oControl, bAsInstance) {
 			var vReturnValue;
 			if (bAsInstance) {
 				vReturnValue = oControl;
@@ -1020,7 +898,7 @@ sap.ui.define([
 				vReturnValue = {
 					id: oControl.getId(),
 					controlType: oControl.getMetadata().getName(),
-					appComponent: thiz.oComponent
+					appComponent: oComponent
 				};
 			}
 			return vReturnValue;
@@ -1030,7 +908,7 @@ sap.ui.define([
 		[true, false].forEach(function(bAsInstance) {
 			var sPrefix = bAsInstance ? "as instance" : "as selector";
 			QUnit.test(sPrefix + " with no changes", function(assert) {
-				return this.oFlexController.waitForChangesToBeApplied(getControl(this, this.oControl, bAsInstance))
+				return this.oFlexController.waitForChangesToBeApplied(getControl(this.oComponent, this.oControl, bAsInstance))
 					.then(function(oReturn) {
 						assert.ok(true, "then the function resolves");
 						assert.equal(oReturn, undefined, "the return value is undefined");
@@ -1041,7 +919,7 @@ sap.ui.define([
 				assert.expect(2);
 				this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
-				return this.oFlexController.waitForChangesToBeApplied(getControl(this, this.oControl, bAsInstance))
+				return this.oFlexController.waitForChangesToBeApplied(getControl(this.oComponent, this.oControl, bAsInstance))
 					.then(function(oReturn) {
 						assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
 						assert.equal(oReturn, undefined, "the return value is undefined");
@@ -1055,8 +933,8 @@ sap.ui.define([
 				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 				Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oOtherControl);
 				var pWaiting = this.oFlexController.waitForChangesToBeApplied([
-					getControl(this, this.oControl, bAsInstance),
-					getControl(this, this.oOtherControl, bAsInstance)
+					getControl(this.oComponent, this.oControl, bAsInstance),
+					getControl(this.oComponent, this.oOtherControl, bAsInstance)
 				]);
 				return pWaiting.then(function(oReturn) {
 					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 4, "addCustomData was called 4 times");

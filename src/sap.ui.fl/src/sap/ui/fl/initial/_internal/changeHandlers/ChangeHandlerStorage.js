@@ -36,7 +36,7 @@ sap.ui.define([
 
 		if (oResult.changeHandler === "default") {
 			oResult.changeHandler = mPredefinedChangeHandlers.defaultChangeHandlers[sChangeType];
-		} else if (Object.keys(mPredefinedChangeHandlers.developerChangeHandlers).includes(sChangeType)) {
+		} else if (Object.keys(mPredefinedChangeHandlers.developerChangeHandlers || {}).includes(sChangeType)) {
 			throw Error("You can't use a custom change handler for the following Developer Mode change type: " + sChangeType + ". Please use 'default' instead.");
 		}
 		return oResult;
@@ -56,6 +56,7 @@ sap.ui.define([
 	}
 
 	function createChangeRegistryItem(sControlType, sChangeType, oChangeHandler) {
+		oChangeHandler = replaceDefault(sChangeType, oChangeHandler);
 		var mLayerPermissions = Object.assign({}, Settings.getDefaultLayerPermissions());
 
 		if (oChangeHandler.layers) {
@@ -99,14 +100,61 @@ sap.ui.define([
 		return oPromise.then(function(vResult) {
 			if (vResult !== sSkipNext) {
 				each(vResult, function(sChangeType, vChangeHandler) {
-					var oChangeHandler = replaceDefault(sChangeType, vChangeHandler);
-					createAndAddChangeRegistryItem(sControlType, sChangeType, oChangeHandler);
+					createAndAddChangeRegistryItem(sControlType, sChangeType, vChangeHandler);
 				});
 			}
 		}).catch(function(oError) {
 			Log.error(oError.message);
 		});
 	}
+
+	function getRegistryItemOrThrowError(sControlType, sChangeType, sLayer) {
+		var oRegistryItem = mRegisteredItems[sControlType] && mRegisteredItems[sControlType][sChangeType] || mActiveForAllItems[sChangeType];
+
+		if (!oRegistryItem) {
+			throw Error("No Change handler registered for the Control and Change type");
+		}
+
+		if (!oRegistryItem.getLayers()[sLayer]) {
+			throw Error("Change type " + sChangeType + " not enabled for layer " + sLayer);
+		}
+
+		return oRegistryItem;
+	}
+
+	function getInstanceSpecificChangeRegistryItem(sChangeType, sControlType, oControl, oModifier) {
+		var sChangeHandlerModulePath = oModifier.getChangeHandlerModulePath(oControl);
+		if (typeof sChangeHandlerModulePath !== "string") {
+			return Promise.resolve(undefined);
+		}
+
+		return requireAsync(sChangeHandlerModulePath).then(function(vChangeHandlerRegistration) {
+			var vChangeHandler = vChangeHandlerRegistration[sChangeType];
+			if (vChangeHandler) {
+				return createChangeRegistryItem(sControlType, sChangeType, vChangeHandler);
+			}
+		}).catch(function(oError) {
+			Log.error("Flexibility registration for control " + oModifier.getId(oControl) + " failed to load module " + sChangeHandlerModulePath + "\n" + oError.message);
+		});
+	}
+
+	/**
+	 * Retrieves the change handler for a certain change type and control. Also checks for instance specific change handlers.
+	 * If the passed layer does not match or no change handler is found the promise will be rejected.
+	 *
+	 * @param {string} sChangeType - Change type of a <code>sap.ui.fl.Change</code> change
+	 * @param {string} sControlType - Name of the ui5 control type i.e. sap.m.Button
+	 * @param {sap.ui.core.Control} oControl - Control instance for which the instance specific change handler will be retrieved
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
+	 * @param {string} sLayer - Layer to be considered when getting the change handlers
+	 * @return {Promise.<object>} Change handler object wrapped in a promise
+	 */
+	ChangeHandlerStorage.getChangeHandler = function(sChangeType, sControlType, oControl, oModifier, sLayer) {
+		return getInstanceSpecificChangeRegistryItem(sChangeType, sControlType, oControl, oModifier).then(function(vInstanceSpecificRegistryItem) {
+			var oChangeRegistryItem = vInstanceSpecificRegistryItem || getRegistryItemOrThrowError(sControlType, sChangeType, sLayer);
+			return oChangeRegistryItem.getChangeHandler();
+		});
+	};
 
 	/**
 	 * Registers default change handlers and developer mode change handlers.
@@ -125,19 +173,6 @@ sap.ui.define([
 			aPromises.push(registerChangeHandlersForControl(sControlType, vChangeHandlers));
 		});
 		return Promise.all(aPromises);
-	};
-
-	ChangeHandlerStorage.getRegistryItem = function(sControlType, sChangeType) {
-		return mRegisteredItems[sControlType] && mRegisteredItems[sControlType][sChangeType];
-	};
-
-	// TODO: keep change registry items internal
-	ChangeHandlerStorage.getDeveloperModeChangeChangeRegistryItem = function(sChangeType) {
-		return mActiveForAllItems[sChangeType];
-	};
-
-	ChangeHandlerStorage.isChangeHandlerRegistered = function(sControlType, sChangeType) {
-		return Object.keys(mRegisteredItems[sControlType] || {}).includes(sChangeType);
 	};
 
 	// TODO: check if this should also be called in productive coding. if so care about async registration

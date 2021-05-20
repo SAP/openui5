@@ -4,12 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/Utils"
 ], function (
 	FlexCustomData,
-	ChangeRegistry,
+	ChangeHandlerStorage,
 	ChangeHandlerRegistration,
 	FlUtils
 ) {
@@ -74,8 +74,7 @@ sap.ui.define([
 			return ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName).then(function() {
 				var sChangeType = oChange.getChangeType();
 				var sLayer = oChange.getLayer();
-				var oChangeRegistryInstance = ChangeRegistry.getInstance();
-				return oChangeRegistryInstance.getChangeHandler(sChangeType, mControl.controlType, mControl.control, mPropertyBag.modifier, sLayer);
+				return ChangeHandlerStorage.getChangeHandler(sChangeType, mControl.controlType, mControl.control, mPropertyBag.modifier, sLayer);
 			});
 		},
 

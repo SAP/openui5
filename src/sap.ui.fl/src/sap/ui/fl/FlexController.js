@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/base/Log"
 ], function(
-	ChangeRegistry,
+	ChangeHandlerStorage,
 	Utils,
 	Layer,
 	Change,
@@ -491,19 +491,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the <code>sap.ui.fl.registry.ChangeRegistryItem</code> for the given change and control
+	 * Retrieves the change handler for the given change and control
 	 *
 	 * @param {sap.ui.fl.Change} oChange - Change instance
 	 * @param {string} sControlType - Mame of the ui5 control type i.e. sap.m.Button
 	 * @param {sap.ui.core.Control} oControl - Control for which to retrieve the change handler
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
-	 * @returns {Promise.<sap.ui.fl.changeHandler.Base>} Change handler or undefined if not found, wrapped in a promise.
+	 * @returns {Promise} Change handler or undefined if not found, wrapped in a promise.
 	 * @private
 	 */
 	FlexController.prototype._getChangeHandler = function(oChange, sControlType, oControl, oModifier) {
 		var sChangeType = oChange.getChangeType();
 		var sLayer = oChange.getLayer();
-		return ChangeRegistry.getInstance().getChangeHandler(sChangeType, sControlType, oControl, oModifier, sLayer);
+		return ChangeHandlerStorage.getChangeHandler(sChangeType, sControlType, oControl, oModifier, sLayer);
 	};
 
 	/**

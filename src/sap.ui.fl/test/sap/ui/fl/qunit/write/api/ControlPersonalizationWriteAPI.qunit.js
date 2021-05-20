@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
@@ -30,8 +30,8 @@ sap.ui.define([
 	Control,
 	Element,
 	UIComponent,
+	ChangeHandlerStorage,
 	ChangeHandlerRegistration,
-	ChangeRegistry,
 	Settings,
 	VariantModel,
 	ControlPersonalizationWriteAPI,
@@ -292,7 +292,23 @@ sap.ui.define([
 					this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
 
 					//registration is triggered by instantiation of XML View above
-					ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
+					ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(function() {
+						// register all ChangeHandlers again with modified default layer permissions
+						ChangeHandlerStorage.clearAll();
+						sandbox.stub(Settings, "getDefaultLayerPermissions").returns({
+							VENDOR: true,
+							CUSTOMER_BASE: true,
+							CUSTOMER: true,
+							PUBLIC: false,
+							USER: true
+						});
+						ChangeHandlerRegistration.registerPredefinedChangeHandlers();
+						return ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
+					})
+					.then(function() {
+						return ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap");
+					})
+					.then(done);
 				}.bind(this));
 			}.bind(this));
 		},
@@ -366,8 +382,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' where one change content has variantReference set", function(assert) {
-			sandbox.stub(ChangeRegistry.getInstance(), "_isRegistryItemValidForLayer").returns(true); //needed as some ChangeHandlers are not available for USER layer
-
 			sandbox.spy(ControlPersonalizationAPI, "_getVariantManagement");
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
@@ -387,7 +401,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with a change outside of a variant management control", function(assert) {
-			sandbox.stub(ChangeRegistry.getInstance(), "_isRegistryItemValidForLayer").returns(true); //needed as some ChangeHandlers are not available for USER layer
 			var oButton = sap.ui.getCore().byId("testComponent---mockview--Button");
 			var oChangeData = {
 				selectorElement: oButton,
@@ -415,7 +428,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and a variant model", function(assert) {
-			sandbox.stub(ChangeRegistry.getInstance(), "_isRegistryItemValidForLayer").returns(true); //needed as some ChangeHandlers are not available for USER layer
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2],
@@ -434,7 +446,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and no variant model", function(assert) {
-			sandbox.stub(ChangeRegistry.getInstance(), "_isRegistryItemValidForLayer").returns(true); //needed as some ChangeHandlers are not available for USER layer
 			sandbox.stub(this.oComp, "getModel")
 				.callThrough()
 				.withArgs(Utils.VARIANT_MODEL_NAME)
