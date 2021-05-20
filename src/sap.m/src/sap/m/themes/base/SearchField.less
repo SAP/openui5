@@ -6,7 +6,7 @@
 @_sap_m_SearchField_Height: 3rem;
 @_sap_m_SearchField_FormHeight: 2.5rem;
 @_sap_m_SearchField_InputHeight: 2.375rem;
-@_sap_m_SearchField_ButtonSize: 2.38rem; /* due to incorrect rounding in Windows Phone, it should be 2.38 instead of 2.375 */
+@_sap_m_SearchField_ButtonSize: 2.375rem;
 @_sap_m_SearchField_ButtonFontSize: 1.125rem;
 @_sap_m_SearchField_NoSearchButtonPadding: 2.375rem;
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.375rem;
@@ -78,11 +78,6 @@ input.sapMSFI[type="search"]:focus {
 	background: transparent;
 }
 
-.sapMSFPlaceholder {
-	font-size: 0.88em;
-	display: none;
-}
-
 .sapMSplitContainerMaster .sapMSF {
 	padding-right: 1px;
 }
@@ -137,10 +132,6 @@ input.sapMSFI[type="search"]:focus {
 	text-indent: 0.125rem;
 	vertical-align: top;
 	text-overflow: ellipsis;
-}
-
-.sapMSFI.sapMSFIA4{
-	-webkit-user-modify: read-write-plaintext-only;
 }
 
 .sapMSFI[type='search']{
@@ -221,11 +212,6 @@ input.sapMSFI[type="search"]:focus {
 	font-size:	   @sapMFontMediumSize;
 	font-style:	   italic;
 	opacity: 1; // in FF by default the opacity is 60%
-}
-
-.sapMSF.sapMSFVal>.sapMSFF>.sapMSFPlaceholder,
-.sapMSF.sapMFocus>.sapMSFF>.sapMSFPlaceholder {
-	display: none;
 }
 
 /* Compact size */
