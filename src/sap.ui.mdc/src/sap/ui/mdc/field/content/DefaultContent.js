@@ -265,7 +265,6 @@ sap.ui.define([
 				text: { path: "$field>/conditions", type: oConditionsType },
 				textAlign: "{$field>/textAlign}",
 				textDirection: "{$field>/textDirection}",
-				width: "100%",
 				tooltip: "{$field>/tooltip}"//,
 //				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
