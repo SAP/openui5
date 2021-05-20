@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/registry/ChangeHandlerRegistration",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",

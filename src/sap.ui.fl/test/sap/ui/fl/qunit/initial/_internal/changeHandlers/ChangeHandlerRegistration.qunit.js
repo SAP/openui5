@@ -2,14 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Core,
-	ChangeHandlerStorage,
 	ChangeHandlerRegistration,
+	ChangeHandlerStorage,
 	jQuery,
 	sinon
 ) {
@@ -17,7 +17,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("sap.ui.fl.registry.ChangeHandlerRegistration", {
+	QUnit.module("sap.ui.fl.initial._internal.changeHandlers.ChangeHandlerRegistration", {
 		beforeEach: function () {
 		},
 		afterEach: function () {

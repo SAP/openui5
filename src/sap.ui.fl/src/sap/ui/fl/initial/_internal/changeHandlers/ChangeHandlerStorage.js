@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/Log",
-	"sap/ui/fl/registry/ChangeRegistryItem",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeRegistryItem",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/requireAsync"
 ], function(

@@ -6,7 +6,7 @@
 sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/core/Component",
-	"sap/ui/fl/registry/ChangeHandlerRegistration",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",

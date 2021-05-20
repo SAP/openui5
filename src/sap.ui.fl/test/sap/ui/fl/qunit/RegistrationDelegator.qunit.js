@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/registry/ChangeHandlerRegistration",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/EventHistory",
 	"sap/ui/fl/RegistrationDelegator",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",

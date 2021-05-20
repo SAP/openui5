@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/changeHandler/MoveControls",
-	"sap/ui/fl/registry/ChangeRegistryItem",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeRegistryItem",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
@@ -18,7 +18,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 	var sErrorMessageInMissingChangeHandlerCase = "The ChangeHandler is either not available or does not have all required functions";
 
-	QUnit.module("sap.ui.fl.registry.ChangeRegistryItem", {
+	QUnit.module("sap.ui.fl.initial._internal.changeHandlers.ChangeRegistryItem", {
 		afterEach: function() {
 			sandbox.restore();
 		}

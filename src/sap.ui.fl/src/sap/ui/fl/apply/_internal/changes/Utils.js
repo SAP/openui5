@@ -5,12 +5,10 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/Utils"
 ], function (
 	FlexCustomData,
 	ChangeHandlerStorage,
-	ChangeHandlerRegistration,
 	FlUtils
 ) {
 	"use strict";
@@ -71,7 +69,16 @@ sap.ui.define([
 		 */
 		getChangeHandler: function(oChange, mControl, mPropertyBag) {
 			var sLibraryName = mPropertyBag.modifier.getLibraryName(mControl.control);
-			return ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName).then(function() {
+			// the ChangeHandlerRegistration includes all the predefined ChangeHandlers.
+			// With this as a standard import the ChangeHandlers would not be able to access API classes due to circular dependencies.
+			// TODO should be removed as soon as the ChangePersistence / FlexController are gone
+			return FlUtils.requireAsync("sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration")
+
+			.then(function(ChangeHandlerRegistration) {
+				return ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName);
+			})
+
+			.then(function() {
 				var sChangeType = oChange.getChangeType();
 				var sLayer = oChange.getLayer();
 				return ChangeHandlerStorage.getChangeHandler(sChangeType, mControl.controlType, mControl.control, mPropertyBag.modifier, sLayer);
