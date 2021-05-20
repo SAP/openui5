@@ -315,6 +315,7 @@ sap.ui.define([
 					.withExactArgs(/*bInitial*/true, "context");
 			}
 			this.mock(oBinding).expects("deregisterChange").withExactArgs();
+			this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
 
 			//code under test
 			oBinding.setContext(oTargetContext);

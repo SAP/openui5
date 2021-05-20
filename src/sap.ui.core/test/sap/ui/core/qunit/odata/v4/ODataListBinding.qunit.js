@@ -1095,7 +1095,7 @@ sap.ui.define([
 			oGroupLock = {unlock : function () {}};
 
 		aData.$count = 42;
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
 		this.mock(oBinding).expects("fetchCache").callsFake(function () {
 			this.oCache = undefined;
 			this.oCachePromise = SyncPromise.resolve(Promise.resolve(null));
@@ -1127,7 +1127,7 @@ sap.ui.define([
 			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
 			oPromise;
 
-		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("checkSuspended").withExactArgs(true);
 		oBindingMock.expects("fetchCache").callsFake(function () {
 			this.oCache = undefined;
 			this.oCachePromise = SyncPromise.resolve(Promise.resolve(bHasCache ? {} : null));
@@ -1139,7 +1139,7 @@ sap.ui.define([
 		// code under test
 		oPromise = oBinding.fetchData(3, 2, 0);
 
-		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("checkSuspended").withExactArgs(true);
 		oBindingMock.expects("fetchCache").callsFake(function () {
 			this.oCache = null;
 			this.oCachePromise = SyncPromise.resolve(null);
@@ -1978,7 +1978,7 @@ sap.ui.define([
 			oCache = {},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 
-		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("checkSuspended").withExactArgs(true);
 		// fetchCache is called once from applyParameters before oBinding.oContext is set
 		oBindingMock.expects("fetchCache").withExactArgs(undefined).callsFake(function () {
 			this.oCache = null;
@@ -2028,7 +2028,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.sChangeReason, "sChangeReason");
 
-		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("checkSuspended").withExactArgs(true);
 		oBindingMock.expects("reset").withExactArgs();
 		oResetKeepAliveCall = oBindingMock.expects("resetKeepAlive").withExactArgs();
 		oFetchCacheCall = oBindingMock.expects("fetchCache")
@@ -2075,7 +2075,7 @@ sap.ui.define([
 		oBinding.sChangeReason = "sChangeReason";
 		oBinding.bHasPathReductionToParent = true;
 		this.oModel.bAutoExpandSelect = true;
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
 		this.mock(oContext2).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext1).expects("isTransient").withExactArgs().returns(true);
 		this.mock(oContext0).expects("isTransient").withExactArgs().never();
@@ -2103,7 +2103,7 @@ sap.ui.define([
 			oContext = Context.create(this.oModel, {}, "/bar"),
 			oHeaderContext = Context.create(this.oModel, oBinding, "/bar/Suppliers");
 
-		oBindingMock.expects("checkSuspended").withExactArgs().thrice();
+		oBindingMock.expects("checkSuspended").withExactArgs(true).thrice();
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/bar/Suppliers")
@@ -3120,7 +3120,7 @@ sap.ui.define([
 					this.oCachePromise = SyncPromise.resolve(oTargetCache);
 				});
 			oBinding = oModel.bindList("Equipments", oInitialContext);
-			this.mock(oBinding).expects("checkSuspended").withExactArgs();
+			this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
 
 			// code under test
 			oBinding.setContext(oTargetContext);
@@ -3904,7 +3904,7 @@ sap.ui.define([
 			assert.strictEqual(aContexts[0].getIndex(), 1);
 
 			if (oFixture.bRelative) {
-				oBindingMock.expects("checkSuspended").withExactArgs();
+				oBindingMock.expects("checkSuspended").withExactArgs(true);
 				assert.throws(function () {
 					// code under test
 					oBinding.setContext({}/*some different context*/);
@@ -4068,14 +4068,14 @@ sap.ui.define([
 			assert.strictEqual(oBinding.aPreviousData[3], "/TEAMS/1/TEAM_2_EMPLOYEES('foo')");
 
 			assert.throws(function () {
-				oBindingMock.expects("checkSuspended").withExactArgs();
+				oBindingMock.expects("checkSuspended").withExactArgs(true);
 				// code under test
 				oBinding.setContext(oContext2);
 			}, new Error("setContext on relative binding is forbidden if a transient entity "
 				+ "exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS/1[1]|TEAM_2_EMPLOYEES"));
 
 			return oContext.created().then(function () {
-				oBindingMock.expects("checkSuspended").withExactArgs();
+				oBindingMock.expects("checkSuspended").withExactArgs(true);
 				oBindingMock.expects("reset").withExactArgs();
 				oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext2));
 
@@ -5263,7 +5263,7 @@ sap.ui.define([
 			oContext = Context.create(this.oModel, {}, "/TEAMS", 0);
 
 		assert.strictEqual(oBinding.getHeaderContext(), null);
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
 
 		// code under test
 		oBinding.setContext(oContext);

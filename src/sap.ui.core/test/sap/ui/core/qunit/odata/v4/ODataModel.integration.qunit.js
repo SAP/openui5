@@ -1296,11 +1296,14 @@ sap.ui.define([
 			this.oModel = oModel || createTeaBusiModel();
 			if (this.oModel.submitBatch) {
 				// stub request methods for the requestor prototype to also check requests from
-				// "hidden" model instances like the code list model
+				// "hidden" model instances like the code list model...
 				this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendBatch")
 					.atLeast(0).callsFake(checkBatch);
 				this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendRequest")
 					.atLeast(0).callsFake(checkRequest);
+				// ...but keep following stubs even after test ends!
+				this.oModel.oRequestor.sendBatch = checkBatch;
+				this.oModel.oRequestor.sendRequest = checkRequest;
 				fnLockGroup = this.oModel.oRequestor.lockGroup;
 				this.oModel.oRequestor.lockGroup = lockGroup;
 			} // else: it's a meta model
@@ -15309,6 +15312,40 @@ sap.ui.define([
 			oBinding.resume();
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A quasi-absolute ODCB is suspended, then #setContext is called.
+	// JIRA: CPOUI5ODATAV4-979
+	QUnit.test("setContext on a suspended quasi-absolute ODCB", function (assert) {
+		var oBinding,
+			sView = '\
+<FlexBox id="form" binding="{SO_2_BP}">\
+	<Text id="role" text="{BusinessPartnerRole}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("role");
+
+		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			oBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectRequest("SalesOrderList('42')/SO_2_BP", {
+					BusinessPartnerID : "0100000000",
+					BusinessPartnerRole : "01"
+				})
+				.expectChange("role", "01");
+
+			oBinding.setContext(that.oModel.createBindingContext("/SalesOrderList('42')"));
+			oBinding.suspend();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.throws(function () {
+				oBinding.setContext(that.oModel.createBindingContext("/SalesOrderList('23')"));
+			}, "Must not call method when the binding's root binding is suspended"
+				+ ": sap.ui.model.odata.v4.ODataContextBinding: /SalesOrderList('42')|SO_2_BP");
 		});
 	});
 
@@ -33258,6 +33295,67 @@ sap.ui.define([
 			fnResolveOperation0();
 
 			return oExecutePromise0;
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A list binding should be updated w.r.t. aggregation, filters, parameters, sorters
+	// inside suspend/resume. If any of these updates fails, the binding should be recreated
+	// ("rebind").
+	// Q: If list binding is unresolved, can we safely update it?
+	// A: Yes, see test "API calls before binding is resolved"
+	// Q: Do we need to resume in case of rebind?
+	// A: You better don't, in case it was "quasi-absolute" :-( "Cannot resume a relative binding: "
+	//    + "sap.ui.model.odata.v4.ODataListBinding: undefined|TEAM_2_EMPLOYEES"
+	// Q: If the list binding is not the root binding, should we resume *after* rebind?
+	// A: Of course you must resume, and if you do it before, you get an addt'l request.
+	// JIRA: CPOUI5ODATAV4-979
+	QUnit.test("CPOUI5ODATAV4-979: rebind and suspend/resume", function (assert) {
+		var sView = '\
+<FlexBox binding="{/TEAMS(\'1\')}">\
+	<t:Table id="table" rows="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+		<Text id="age" text="{AGE}"/>\
+		<Text binding="{}" id="name" text="{Name}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$skip=0&$top=110", {
+				value : [{
+					AGE : 30,
+					ID : "0",
+					Name : "Frederic Fall"
+				}]
+			})
+			.expectChange("age", ["30"])
+			.expectChange("name", "Frederic Fall");
+
+		return this.createView(assert, sView).then(function () {
+			var oTable = that.oView.byId("table"),
+				oListBinding = oTable.getBinding("rows"),
+				oRootBinding = oListBinding.getRootBinding();
+
+			oRootBinding.suspend();
+			oListBinding.sort(new Sorter("AGE"));
+
+			that.expectChange("age", null)
+				.expectChange("name", null)
+				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$skip=0&$top=110", {
+					value : [{
+						AGE : 40,
+						ID : "0",
+						Name : "Frederic Fall *"
+					}]
+				})
+				.expectChange("age", ["40"])
+				.expectChange("name", "Frederic Fall *");
+
+			// code under test
+			oTable.bindRows({path : "TEAM_2_EMPLOYEES", parameters : {$$ownRequest : true}});
+
+			oRootBinding.resume();
+
+			return that.waitForChanges(assert);
 		});
 	});
 });

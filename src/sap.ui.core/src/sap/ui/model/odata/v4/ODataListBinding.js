@@ -2870,7 +2870,7 @@ sap.ui.define([
 
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
-				this.checkSuspended();
+				this.checkSuspended(true);
 				for (i = 0; i < that.iCreatedContexts; i += 1) {
 					if (that.aContexts[i].isTransient()) {
 						// to allow switching the context for new created entities (transient or

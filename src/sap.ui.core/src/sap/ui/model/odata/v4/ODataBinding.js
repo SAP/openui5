@@ -17,6 +17,18 @@ sap.ui.define([
 		// Whether a path segment is an index or contains a transient predicate
 		rIndexOrTransientPredicate = /\/\d|\(\$uid=/;
 
+	/*
+	 * Tells whether the first given change reason has precedence over the second one.
+	 *
+	 * @param {string} sChangeReason0 - A change reason
+	 * @param {string} sChangeReason1  - A change reason
+	 * @returns {boolean} Whether the first given change reason has precedence over the second one
+	 */
+	function hasPrecedenceOver(sChangeReason0, sChangeReason1) {
+		return aChangeReasonPrecedence.indexOf(sChangeReason0)
+			> aChangeReasonPrecedence.indexOf(sChangeReason1);
+	}
+
 	/**
 	 * A mixin for all OData V4 bindings.
 	 *
@@ -169,14 +181,19 @@ sap.ui.define([
 	/**
 	 * Throws an Error if the binding's root binding is suspended.
 	 *
-	 * @throws {Error} If the binding's root binding is suspended
+	 * @param {boolean} [bIfNoResumeChangeReason]
+	 *   Whether to accept a suspended root binding as long as no <code>sResumeChangeReason</code>
+	 *   is known for this binding (which must not be a root itself) or any of its dependents
+	 * @throws {Error} If the binding's root binding is suspended, except if
+	 *   <code>bIfNoResumeChangeReason</code> is used as described
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.checkSuspended = function () {
+	ODataBinding.prototype.checkSuspended = function (bIfNoResumeChangeReason) {
 		var oRootBinding = this.getRootBinding();
 
-		if (oRootBinding && oRootBinding.isSuspended()) {
+		if (oRootBinding && oRootBinding.isSuspended()
+				&& (!bIfNoResumeChangeReason || this.isRoot() || this.getResumeChangeReason())) {
 			throw new Error("Must not call method when the binding's root binding is suspended: "
 				+ this);
 		}
@@ -667,6 +684,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the "strongest" change reason that {@link #resume} would fire for this binding or any
+	 * of its dependents.
+	 *
+	 * @returns {sap.ui.model.ChangeReason}
+	 *   The "strongest" change reason, or <code>undefined</code>
+	 *
+	 * @private
+	 * @see #getDependentBindings
+	 * @see #setResumeChangeReason
+	 */
+	ODataBinding.prototype.getResumeChangeReason = function () {
+		var sStrongestChangeReason = this.sResumeChangeReason;
+
+		this.getDependentBindings().forEach(function (oDependentBinding) {
+			var sDependentChangeReason = oDependentBinding.getResumeChangeReason();
+
+			if (sDependentChangeReason
+					&& hasPrecedenceOver(sDependentChangeReason, sStrongestChangeReason)) {
+				sStrongestChangeReason = sDependentChangeReason;
+			}
+		});
+
+		return sStrongestChangeReason;
+	};
+
+	/**
 	 * Returns a promise which resolves as soon as this binding is resumed.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
@@ -1107,8 +1150,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.setResumeChangeReason = function (sChangeReason) {
-		if (aChangeReasonPrecedence.indexOf(sChangeReason) >
-				aChangeReasonPrecedence.indexOf(this.sResumeChangeReason)) {
+		if (hasPrecedenceOver(sChangeReason, this.sResumeChangeReason)) {
 			this.sResumeChangeReason = sChangeReason;
 		}
 	};

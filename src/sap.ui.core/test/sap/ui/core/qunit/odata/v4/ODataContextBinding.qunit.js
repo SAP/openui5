@@ -392,7 +392,7 @@ sap.ui.define([
 
 		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 		oBinding = this.bindContext("relative");
-		this.mock(oBinding).expects("checkSuspended").withExactArgs().twice();
+		this.mock(oBinding).expects("checkSuspended").withExactArgs(true).twice();
 		oModelMock.expects("resolve").twice()
 			.withExactArgs("relative", sinon.match.same(oContext))
 			.returns("/contextPath/relative");
@@ -469,7 +469,7 @@ sap.ui.define([
 				return undefined;
 			}
 
-			this.mock(oBinding).expects("checkSuspended").withExactArgs();
+			this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
 			if (oFixture.sTarget === "base") {
 				this.mock(oBinding).expects("fetchCache")
 					.withExactArgs(sinon.match.same(oTargetContext))
@@ -512,7 +512,7 @@ sap.ui.define([
 			oCache = {},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 
-		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("checkSuspended").withExactArgs(true);
 		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext))
 			.callsFake(function () {
 				this.oCache = oContext ? oCache : null;
@@ -528,7 +528,7 @@ sap.ui.define([
 		oCache = null;
 		oContext = undefined;
 
-		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("checkSuspended").withExactArgs(true);
 		oBindingMock.expects("fetchCache").withExactArgs(undefined).callsFake(function () {
 			this.oCache = null;
 			this.oCachePromise = SyncPromise.resolve(null);
@@ -3620,7 +3620,7 @@ sap.ui.define([
 
 		this.mock(oBinding.oParameterContext).expects("destroy").withExactArgs();
 
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
 		oBinding.setContext(null);
 
 		// code under test
