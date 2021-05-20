@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/ui/integration/Host",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/Device"
 ],
 function (
 	Card,
 	Core,
 	Log,
 	Host,
-	QUnitUtils
+	QUnitUtils,
+	Device
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -470,7 +472,7 @@ function (
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
-	QUnit.test("Action property 'parameters'", function(assert) {
+	QUnit[Device.browser.msie ? "skip" : "test"]("Action property 'parameters'", function(assert) {
 		// Arrange
 		var done = assert.async(),
 			oWindowOpenStub = sinon.stub(window, 'open');
