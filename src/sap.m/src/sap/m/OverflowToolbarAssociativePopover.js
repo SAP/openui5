@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover.
-sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePopoverControls', './OverflowToolbarLayoutData', 'sap/m/library'],
-	function(Popover, PopoverRenderer, OverflowToolbarAssociativePopoverControls, OverflowToolbarLayoutData, library) {
+sap.ui.define(['./Popover', './OverflowToolbarAssociativePopoverControls', './OverflowToolbarAssociativePopoverRenderer', './OverflowToolbarLayoutData', 'sap/m/library'],
+	function(Popover, OverflowToolbarAssociativePopoverControls, OverflowToolbarAssociativePopoverRenderer, OverflowToolbarLayoutData, library) {
 	"use strict";
 
 
@@ -45,7 +45,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 				associatedContent: {type: "sap.ui.core.Control", multiple: true}
 			}
 		},
-		renderer: PopoverRenderer.render
+		renderer: OverflowToolbarAssociativePopoverRenderer
 	});
 
 	OverflowToolbarAssociativePopover.prototype.init = function() {
