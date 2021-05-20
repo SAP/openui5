@@ -587,15 +587,12 @@ sap.ui.define([
 		assert.strictEqual($oAvatar.prop("title"), "sampleTooltip", "Tooltip is present");
 	});
 
-	QUnit.test("Check ARIA specific attributes", function (assert) {
-		var $oAvatar = this.oAvatar.$();
-		assert.ok($oAvatar.attr("aria-roledescription") !== undefined, "aria-roledescription is present");
-	});
-
 	QUnit.test("Check ARIA specific roles", function (assert) {
-		var $oAvatar = this.oAvatar.$();
+		var $oAvatar = this.oAvatar.$(),
+			sDefaultTooltip = oCore.getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP");
 
 		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
+		assert.strictEqual($oAvatar.attr("aria-label"), "sampleTooltip", "Aria-label should be the custom 'sampleTooltip' text tooltip");
 
 		//act
 		this.oAvatar.setInitials("BP");
@@ -603,7 +600,7 @@ sap.ui.define([
 		$oAvatar = this.oAvatar.$();
 
 		//assert
-		assert.strictEqual($oAvatar.attr("aria-label"), "sampleTooltip", "Aria-label should include the tooltip if both tootltip and initials are set");
+		assert.strictEqual($oAvatar.attr("aria-label"), "sampleTooltip", "Aria-label should still be the custom 'sampleTooltip' text tooltip");
 
 		//act
 		this.oAvatar.setTooltip("");
@@ -611,7 +608,7 @@ sap.ui.define([
 		$oAvatar = this.oAvatar.$();
 
 		//assert
-		assert.strictEqual($oAvatar.attr("aria-label"), "BP", "Aria-label should include the defined initials if no tooltip is set");
+		assert.strictEqual($oAvatar.attr("aria-label"),  sDefaultTooltip + " BP", "Aria-label should include the defined initials and the default 'Avatar' text if no tooltip is set");
 
 		//act
 		this.oAvatar.setInitials("");
@@ -619,7 +616,7 @@ sap.ui.define([
 		$oAvatar = this.oAvatar.$();
 
 		//assert
-		assert.strictEqual($oAvatar.attr("aria-label"), undefined, "Aria-label should be the default one if no tooltip and initials are set");
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip, "Aria-label should be the default 'Avatar' text");
 
 		//act
 		this.oAvatar.attachPress();
