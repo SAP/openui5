@@ -1781,6 +1781,7 @@ sap.ui.define([
 				var oDelegate = this.bDelegateInitialized && this.getControlDelegate()[mDefaultHelps[sType].getDelegate]();
 				var oProperties = merge({ delegate: oDelegate }, mDefaultHelps[sType].properties);
 				oFieldHelp = new FieldHelp(mDefaultHelps[sType].id, oProperties);
+				oFieldHelp._bIsDefaultHelp = true;
 				mDefaultHelps[sType].control = oFieldHelp;
 				//				this.addDependent(oFieldHelp); // TODO: where to add to control tree
 				oFieldHelp.connect(this); // to forward dataType
@@ -2639,6 +2640,9 @@ sap.ui.define([
 
 			var oContent = this.getControlForSuggestion();
 			_setFocusHandlingForFieldHelp.call(this, oContent);
+			if (oFieldHelp._bIsDefaultHelp && oFieldHelp.setTitle) {
+				oFieldHelp.setTitle(this.getLabel()); // use label as default title for FilterField
+      }
 		}
 
 	}

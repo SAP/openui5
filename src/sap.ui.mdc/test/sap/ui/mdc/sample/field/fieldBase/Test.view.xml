@@ -392,6 +392,7 @@
 								maxConditions="-1"
 								display="Value"
 								placeholder="Placeholder"
+								label="Label"
 								liveChange="handleLiveChange"
 								submit="handleSubmit">
 							</mdcField:FieldBase>

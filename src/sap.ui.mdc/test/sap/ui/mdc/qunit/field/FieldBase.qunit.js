@@ -612,6 +612,18 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Label property & default help", function(assert) {
+
+		oField.setLabel("Test");
+		oField.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		var oFieldHelp = sap.ui.getCore().byId(oField._sDefaultFieldHelp);
+		oField.focus();
+
+		assert.equal(oFieldHelp.getTitle(), "Test", "Field help title");
+
+	});
+
 	QUnit.test("enhanceAccessibilityState", function(assert) {
 
 		oField.placeAt("content");
