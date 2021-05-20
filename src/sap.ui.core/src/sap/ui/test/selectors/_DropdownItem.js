@@ -21,19 +21,19 @@ sap.ui.define([
         /**
          * Generates control selector for sap.m.Select and sap.m.ComboBox items
          * @param {object} oControl the control for which to generate a selector
-         * @param {object} mAncestorSelector the control selector for the parent dropdown
+         * @param {object} mSelectorParts.ancestor the control selector for the parent dropdown
          * @returns {object} a plain object representation of a control. Contains the dropdown ancestor selector, item controlType and item key
          * Undefined, if the control is not a dropdown
          * @private
          */
-        _generate: function (oControl, mAncestorSelector) {
-            if (mAncestorSelector) {
+        _generate: function (oControl, mSelectorParts) {
+            if (mSelectorParts.ancestor) {
                 var sSelectionKey = oControl.getKey();
-                this._oLogger.debug("Control " + oControl + " with parent " + JSON.stringify(mAncestorSelector) +
+                this._oLogger.debug("Control " + oControl + " with parent " + JSON.stringify(mSelectorParts.ancestor) +
                     " has selection key " + sSelectionKey);
 
                     return {
-                        ancestor: mAncestorSelector,
+                        ancestor: mSelectorParts.ancestor,
                         properties: {
                             key: sSelectionKey
                         }

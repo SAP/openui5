@@ -22,14 +22,14 @@ sap.ui.define([
 
         /**
          * @param {object} oControl the control for which to generate a selector
-         * @param {object} mTableSelector unique selector for the control's table
-         * @param {object} mRowRelativeSelector selector for the control that is unique in the row subtree
+         * @param {object} mSelectorParts.table unique selector for the control's table
+         * @param {object} mSelectorParts.relative selector for the control that is unique in the row subtree
          * @returns {object} a plain object representation of a control. Contains unique selector within row, row binding path and table selector
          * Undefined if the control is not inside a table
          * @private
          */
-        _generate: function (oControl, mTableSelector, mRowRelativeSelector) {
-            if (mTableSelector && mRowRelativeSelector) {
+        _generate: function (oControl, mSelectorParts) {
+            if (mSelectorParts.ancestor && mSelectorParts.relative) {
                 var oRow = this._getValidationRoot(oControl);
                 var oTable = this._getAncestor(oControl);
 
@@ -43,13 +43,13 @@ sap.ui.define([
                             modelName: oTableBindingInfo.model || undefined,
                             path: sRowBindingContextPath
                         },
-                        ancestor: mTableSelector
+                        ancestor: mSelectorParts.ancestor
                     });
                 }
 
                 this._oLogger.debug("Control " + oControl + " has table row binding context path " + sRowBindingContextPath);
 
-                return $.extend({}, mRowRelativeSelector, {
+                return $.extend({}, mSelectorParts.relative, {
                     ancestor: mRowSelector
                 });
             } else {

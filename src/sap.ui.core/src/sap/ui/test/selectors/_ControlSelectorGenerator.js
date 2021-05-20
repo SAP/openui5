@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-
+/* eslint-disable no-loop-func */
  sap.ui.define([
     'sap/ui/base/ManagedObject',
     "sap/ui/test/_OpaLogger",
@@ -47,12 +47,13 @@
                     return Promise.reject(oError);
                 } else {
                     // if 'plain' generators don't find a selector, search the hierarchy
-                    return _ControlSelectorGenerator._generateHierarchicalUp(oOptions.control)
+                    return _ControlSelectorGenerator._generateHierarchicalUp(oOptions)
                         .catch(function () {
-                            return  _ControlSelectorGenerator._generateHierarchicalDown(oOptions.control);
+                            return _ControlSelectorGenerator._generateHierarchicalDown(oOptions);
+                        }).catch(function () {
+                            return _ControlSelectorGenerator._generateWithSibling(oOptions);
                         }).then(function (mSelector) {
-                            var aSelectors = _ControlSelectorGenerator._filterUnique(mSelector, oOptions);
-                            return oOptions.includeAll ? aSelectors : aSelectors[0];
+                            return mSelector;
                         });
                 }
             });
@@ -134,14 +135,16 @@
      * @private
      */
     _ControlSelectorGenerator._executeGenerator = function (oGenerator, oOptions) {
+        var mSelectorParts = {};
         return _ControlSelectorGenerator._getValidationRootSelector(oGenerator, oOptions)
             .then(function (mRelativeSelector) {
-                return _ControlSelectorGenerator._getAncestorSelector(oGenerator, oOptions)
-                    .then(function (mAncestorSelector) {
-                        // once all ancestor selectors are resolved, generate selector for the control itself
-                        var vSelector = oGenerator.generate(oOptions.control, mAncestorSelector, mRelativeSelector);
-                        return _ControlSelectorGenerator._filterUnique(vSelector, oOptions.validationRoot, oOptions.multiple);
-                    });
+                mSelectorParts.relative = mRelativeSelector;
+                return _ControlSelectorGenerator._getAncestorSelector(oGenerator, oOptions);
+            }).then(function (mAncestorSelector) {
+                mSelectorParts.ancestor = mAncestorSelector;
+                // once all ancestor selectors are resolved, generate selector for the control itself
+                var vSelector = oGenerator.generate(oOptions.control, mSelectorParts);
+                return _ControlSelectorGenerator._filterUnique(vSelector, oOptions);
             });
     };
 
@@ -209,48 +212,71 @@
 
     /**
      * (slow) Use when no selector can be generated for the control by the plain generators.
-     * Find an ancestor that is closest to the control, and has a selector that describes it uniquely within the app.
-     * Then, find a selector for the control, which uniquely describes it within the ancestor subtree.
-     * @param {object} oControl the control to use as a starting point for the search
+     * Search up the tree for an ancestor with unique selector, then get a selector relative to it:
+     * 1. Find an ancestor that is closest to the control, and has a selector that describes it uniquely within the app.
+     * 2. Then, find a selector for the control, which uniquely describes it within the ancestor subtree.
+     * @param {object} oOptions options to configure selector generation
+     * @param {object} oOptions.oControl the control to use as a starting point for the search
      * @returns {object} a selector
      * @private
      */
-    _ControlSelectorGenerator._generateHierarchicalUp = function (oControl) {
-        return _ControlSelectorGenerator._generateUniqueAncestorSelector(oControl)
+    _ControlSelectorGenerator._generateHierarchicalUp = function (oOptions) {
+        return _ControlSelectorGenerator._generateUniqueAncestorSelector(oOptions.control)
             .then(function (mUniqueAncestor) {
-                return _ControlSelectorGenerator._generateUniqueSelectorInSubtree(oControl, mUniqueAncestor.ancestor)
+                return _ControlSelectorGenerator._generateUniqueSelectorInSubtree(oOptions.control, mUniqueAncestor.ancestor)
                     .then(function (mRelativeSelector) {
                         return $.extend({}, mRelativeSelector, {
                             ancestor: mUniqueAncestor.selector
                         });
-                    });
-                    // .catch(function () {
-                    //     // for every ancestor between validation root and 'unique' ancestor,
-                    //     // find a 'sibling-level 'unique' selector for the ancestor, and then a unique selector for the control within the ancestor subtree
-                    // })
+                    }).then(_ControlSelectorGenerator._filterUniqueHierarchical(oOptions));
             });
     };
 
     /**
      * (slow) Use when no selector can be generated for the control by the plain generators.
-     * Find a selector that desribes the control within the app (doesn't have to be unique).
-     * Then, find the closest of its descendants, which has a selector that uniquely describes it within the app.
+     * Search down the tree for a descendant with unique selector, then get a selector relative to it:
+     * 1. Find a selector that desribes the control within the app (doesn't have to be unique).
+     * 2. Then, find the closest of its descendants, which has a selector that uniquely describes it within the app.
      * @param {object} oControl the control to use as a starting point for the search
      * @returns {object} a selector
      * @private
      */
-    _ControlSelectorGenerator._generateHierarchicalDown = function (oControl) {
+    _ControlSelectorGenerator._generateHierarchicalDown = function (oOptions) {
         return _ControlSelectorGenerator._generate({
-            control: oControl,
+            control: oOptions.control,
             shallow: true,
             multiple: true
         }).then(function (mMultiSelector) {
-            return _ControlSelectorGenerator._generateUniqueDescendantSelector(oControl)
+            return _ControlSelectorGenerator._generateUniqueDescendantSelector(oOptions.control)
                 .then(function (mUniqueDescendantSelector) {
                     return $.extend({}, mMultiSelector, {
                         descendant: mUniqueDescendantSelector
                     });
-                });
+                }).then(_ControlSelectorGenerator._filterUniqueHierarchical(oOptions));
+        });
+    };
+
+    /**
+     * (slow) Use when no selector can be generated for the control by the plain generators.
+     * Search up and down the tree for a control with a unique selector, then get a selector relative to it:
+     * 1. Find a selector that desribes the control within the app (doesn't have to be unique).
+     * 2. Then, find the closest of its siblings, which has a selector that uniquely describes it within the app.
+     * a sibling is a control that has the same ancestor
+     * This resembles a descendant search, done for every ancestor (up to a certain level)
+     * @param {object} oOptions options to configure selector generation
+     * @param {object} oOptions.control the control to use as a starting point for the search
+     * @returns {object} a selector
+     * @private
+     */
+    _ControlSelectorGenerator._generateWithSibling = function (oOptions) {
+        // find a selector for the target control - it doesn't have to be unique
+        return _ControlSelectorGenerator._generate({
+            control: oOptions.control,
+            shallow: true,
+            multiple: true
+        }).then(function (mTargetMultiSelector) {
+            // find a selector that incudes a relative or sibling, that has a unique selector
+            return _ControlSelectorGenerator._generateSelectorWithUniqueSibling(oOptions, mTargetMultiSelector);
         });
     };
 
@@ -269,18 +295,7 @@
                 reject(new Error("Could not generate selector for descendant of " + oControl + ". Exceeded limit of " + _ControlSelectorGenerator._maxDepth + " levels"));
             } else {
                 // extract all relevant children
-                var aChildren = Object.keys(oControl.mAggregations).filter(function (sAggregation) {
-                    // filter out aggregations with controls in them
-                    var vAggregation = oControl.mAggregations[sAggregation];
-                    return vAggregation && ((Array.isArray(vAggregation) && vAggregation.length) || (vAggregation.getMetadata && vAggregation.getMetadata().getName()));
-                }).map(function (sAggregation) {
-                    var vAggregation = oControl.mAggregations[sAggregation];
-                    return Array.isArray(vAggregation) ? vAggregation.slice(0, _ControlSelectorGenerator._maxWidth) : vAggregation;
-                }).reduce(function (aResult, aAggregationChildren) {
-                    // flatten
-                    return aResult.concat(aAggregationChildren);
-                }, []);
-
+                var aChildren = _ControlSelectorGenerator._getAggregatedControls(oControl.mAggregations);
                 return _ControlSelectorGenerator._generateUniqueSelectorForChild(aChildren)
                     .then(function (mSelector) {
                         resolve(mSelector);
@@ -312,9 +327,7 @@
             return Promise.reject(new Error("Could not generate unique selector for descendant at level " + iDepth));
         }
         return _ControlSelectorGenerator._generateUniqueDescendantSelector(aChildren[iIndex], iDepth)
-            .then(function (mSelector) {
-                return mSelector;
-            }).catch(function () {
+            .catch(function () {
                 // search through other children of the same parent
                 return _ControlSelectorGenerator._callGenerateUniqueDescendant(aChildren, iDepth, iIndex + 1);
             });
@@ -389,16 +402,128 @@
     };
 
      /**
+     * Search the ancestors' aggregations for controls with unique selectors.
+     * For each ancestor, search its aggregations. For each child, try to generate a unique selector.
+     * Find the "closest" child with unique selector (with closest ancestor)
+     * @param {object} oOptions options to configure selector generation
+     * @param {object} mTargetMultiSelector intermediate selector for the target - not unique
+     * @returns {object} a selector
+     * @private
+     */
+    _ControlSelectorGenerator._generateSelectorWithUniqueSibling = function (oOptions, mTargetMultiSelector) {
+        return new Promise(function (resolve, reject) {
+            // for every sibling, try to find a unique selector. stop on the first found
+            var oAncestor;
+            var iLevel = -1;
+            var fnGenerateWithNextParent = function () {
+                oAncestor = oAncestor && oAncestor.getParent() || oOptions.control.getParent();
+                iLevel += 1;
+                // look up the tree until maxDepth is reached,
+                // and for every parent, look though its aggregations for a relative (sibling) - and continue this down the tree
+                if (oAncestor && iLevel < _ControlSelectorGenerator._maxDepth) {
+                    var aSiblings = [];
+                    var aAggregated = _ControlSelectorGenerator._getAggregatedControls(oAncestor.mAggregations);
+                    aAggregated.forEach(function (oAggregatedControl) {
+                        if (oAggregatedControl !== oOptions.control) {
+                            aSiblings.push(oAggregatedControl);
+                            // look "down" through the aggregated controls' aggregations
+                            aSiblings = aSiblings.concat(_ControlSelectorGenerator._getAggregatedControls(oAggregatedControl.mAggregations));
+                        }
+                    });
+                    _oLogger.debug("Found " + aSiblings.length + " siblings at level " + iLevel + " with ancestor " + oAncestor);
+                    return _ControlSelectorGenerator._generateSelectorWithUniqueSiblingAtLevel({
+                        options: oOptions,
+                        targetMultiSelector: mTargetMultiSelector,
+                        level: {
+                            siblings: aSiblings,
+                            number: iLevel,
+                            width: _ControlSelectorGenerator._maxWidth
+                        }
+                    }).then(function (mSelector) {
+                        resolve(mSelector);
+                    }).catch(function () {
+                        return fnGenerateWithNextParent();
+                    });
+                } else {
+                    reject(new Error("Could not generate unique sibling selector at level " + iLevel));
+                }
+            };
+            return fnGenerateWithNextParent();
+        });
+    };
+
+     /**
+     * iterate thourgh all controls a a given level and attempt to generate a unique selector for each one.
+     * stop the cycle as soon as one unique selector is found
+     * @param {Array} oOptions.siblings the children at a given tree level
+     * @param {object} oOptions.options filter options
+     * @param {number} oOptions.index index of the child for which to start the search
+     * @param {object} oOptions.targetMultiSelector intermediate selector for the target - not unique
+     * @param {object} oOptions.level.siblings siblings at the current level
+     * @param {number} oOptions.level.number the current level
+     * @param {number} oOptions.level.width maximum width to search for the current level
+     * @returns {object} a selector
+     * @private
+     */
+    _ControlSelectorGenerator._generateSelectorWithUniqueSiblingAtLevel = function (oOptions) {
+        oOptions.index = oOptions.index || 0;
+        if (oOptions.index >= oOptions.level.width || oOptions.index >= oOptions.level.siblings.length) {
+            return Promise.reject(new Error("Could not generate unique selector for the first " + oOptions.index + " siblings"));
+        }
+        // first, find a globally unique selector for the sibling - without using hierarchical search
+        return _ControlSelectorGenerator._generate({
+            control: oOptions.level.siblings[oOptions.index],
+            shallow: true
+        }).then(function (mUniqueSiblingSelector) {
+            // then, combine the sibling's selector with the non-unique selector for the target
+            var mSelector = $.extend({}, oOptions.targetMultiSelector, {
+                sibling: [
+                    mUniqueSiblingSelector, {
+                        level: oOptions.level.number
+                    }
+                ]
+            });
+            // check if the combination is unique
+            return _ControlSelectorGenerator._filterUniqueHierarchical(oOptions.options)(mSelector);
+        }).catch(function () {
+            // if combination is not unique, search through the other children of the same ancestor
+            return _ControlSelectorGenerator._generateSelectorWithUniqueSiblingAtLevel($.extend(oOptions, {
+                index: oOptions.index + 1
+            }));
+        });
+    };
+
+	// get all controls in an aggregations object
+    _ControlSelectorGenerator._getAggregatedControls = function (mAggregations) {
+        var aResult = [];
+        for (var sAggregation in mAggregations) {
+            var vAggregation = mAggregations[sAggregation];
+            if (Array.isArray(vAggregation)) {
+                // "width limit" - check only the first 20 controls in 1 aggregation
+                aResult = aResult.concat(vAggregation.slice(0, _ControlSelectorGenerator._maxWidth));
+            } else if (vAggregation) {
+                aResult.push(vAggregation);
+            }
+        }
+        aResult = aResult.filter(function (oControl) {
+            // filter out non-control aggregations e.g. layoutData or dnd
+            return oControl.getMetadata && oControl.getMetadata().getName() && oControl.$().length;
+        });
+        return aResult;
+    };
+
+    /**
      * Filters valid selectors.
      * @param {object} vSelector a control selector or array of selectors
-     * @param {object} oValidationRoot the subtree root. If not defined, the selector will be valid for the entire app.
-     * @param {boolean} bMultiple whether the selector can match mulitple controls. False by default.
+     * @param {object} oOptions.validationRoot the subtree root. If not defined, the selector will be valid for the entire app.
+     * @param {boolean} oOptions.multiple whether the selector can match mulitple controls. False by default.
      * @returns {array} an array of valid selectors
      * @private
      */
-    _ControlSelectorGenerator._filterUnique = function (vSelector, oValidationRoot, bMultiple) {
+    _ControlSelectorGenerator._filterUnique = function (vSelector, oOptions) {
+        oOptions = oOptions || {};
         var aSelectors = [];
-        var oSelectorValidator = new _ControlSelectorValidator(oValidationRoot, bMultiple);
+        var oSelectorValidator = new _ControlSelectorValidator(oOptions.validationRoot, oOptions.multiple);
 
         if (Array.isArray(vSelector)) {
             // vSelector is an array when it includes multiple selectors of the same type (eg: 1 per property, each with a properties matcher)
@@ -419,6 +544,19 @@
         }
 
         return aSelectors;
+    };
+
+    _ControlSelectorGenerator._filterUniqueHierarchical = function (oOptions) {
+        return function (mSelector) {
+            _oLogger.debug("Found hierarchical selector '" + JSON.stringify(mSelector) + "'. Checking for uniqueness");
+            var aSelectors = _ControlSelectorGenerator._filterUnique(mSelector, oOptions);
+            if (aSelectors.length) {
+                _oLogger.debug("The matching unique selectors are: " + JSON.stringify(aSelectors));
+                return Promise.resolve(aSelectors[0]);
+            } else {
+                return Promise.reject(new Error("Could not generate a selector for control " + oOptions.control));
+            }
+        };
     };
 
     /**

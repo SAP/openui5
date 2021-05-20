@@ -216,5 +216,29 @@ sap.ui.require([
 		Then.iTeardownMyAppFrame();
 	});
 
+	opaTest("Should find buttons using sibling matcher", function(Given, When, Then) {
+		Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+		When.waitFor({
+			viewName : "Main",
+			controlType : "sap.m.Button",
+			matchers : {
+				sibling : {
+					controlType : "sap.m.Button",
+					properties: {
+						text: "Button in a Page"
+					}
+				}
+			},
+			success : function (aButtons) {
+				Opa5.assert.strictEqual(aButtons.length, 5, "Found 5 siblings");
+				Opa5.assert.ok(true, "Found the button: " + aButtons[0]);
+			},
+			errorMessage : "Did not find the buttons with a sibling"
+		});
+
+		Then.iTeardownMyAppFrame();
+	});
+
 	QUnit.start();
 });
