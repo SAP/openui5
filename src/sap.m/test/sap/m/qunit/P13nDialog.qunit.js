@@ -920,6 +920,26 @@ sap.ui.define([
 
 		this.oP13nDialog.open();
 	});
+
+	QUnit.test("check 'verticalScrolling' propagation from panel to Dialog (for phone)", function (assert) {
+		// Preconditions
+		assert.equal(Device.system.phone, true);
+		assert.equal(this.oP13nDialog.getPanels().length, 1);
+
+		this.oP13nDialog.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var done = assert.async();
+		this.oP13nDialog.attachAfterOpen(function () {
+			var bVerticalScrolling = this.oP13nDialog.getVerticalScrolling();
+
+			assert.ok(bVerticalScrolling, "The P13nColumnsPanel has vertical scrolling enabled --> it should be propagated to the P13nDialog");
+			done();
+		}.bind(this));
+
+		this.oP13nDialog.open();
+	});
+
 	QUnit.test("show dialog after panel has been added", function (assert) {
 		// Preconditions
 		assert.equal(Device.system.phone, true);

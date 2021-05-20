@@ -827,9 +827,7 @@ sap.ui.define([
 			oPanel.setVisible(bVisible);
 
 			if (bVisible) {
-				if (!Device.system.phone) {
-					this.setVerticalScrolling(oPanel.getVerticalScrolling());
-				}
+				this.setVerticalScrolling(oPanel.getVerticalScrolling());
 			}
 
 			// Update NavigationControl
