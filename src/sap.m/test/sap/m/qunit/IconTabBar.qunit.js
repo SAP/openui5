@@ -1160,8 +1160,8 @@ sap.ui.define([
 
 		// Act
 		// Try to expand the IconTabBar by pressing SPACE key
-		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// Assert
@@ -1194,8 +1194,8 @@ sap.ui.define([
 
 		// Act
 		// Try to expand the IconTabBar by pressing SPACE key
-		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// Assert
@@ -1228,8 +1228,8 @@ sap.ui.define([
 
 		// Act
 		// Collapse the IconTabBar by pressing SPACE key
-		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// Assert
@@ -1261,8 +1261,8 @@ sap.ui.define([
 
 		// Act
 		// Expand the IconTabBar by pressing SPACE key
-		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
@@ -1568,8 +1568,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Press SPACE key on second IconTabFilter to expand
-		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[1].$(), jQuery.sap.KeyCodes.SPACE);
-		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[1].$(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oIconTabBar.getItems()[1].$(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oIconTabBar.getItems()[1].$(), KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
@@ -1607,8 +1607,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Press SPACE key on second IconTabFilter to expand
-		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[1].$(), jQuery.sap.KeyCodes.SPACE);
-		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[1].$(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oIconTabBar.getItems()[1].$(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oIconTabBar.getItems()[1].$(), KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
@@ -1645,8 +1645,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Press SPACE key on first IconTabFilter to expand
-		sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
-		sap.ui.test.qunit.triggerKeyup(oIconTabBar.getItems()[0].$(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oIconTabBar.getItems()[0].$(), KeyCodes.SPACE);
 		this.clock.tick(500);
 
 		// Assert
@@ -1691,10 +1691,10 @@ sap.ui.define([
 
 		$tab1.trigger("focus"); // set focus on first filter
 
-		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on first filter
+		qutils.triggerKeydown($tab1, KeyCodes.ARROW_RIGHT); // trigger Arrow right on first filter
 		assert.ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus moved on second filter");
 
-		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on second filter
+		qutils.triggerKeydown($tab2, KeyCodes.ARROW_RIGHT); // trigger Arrow right on second filter
 		assert.ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus stay on second (last) filter"); // should not loop
 	});
 
@@ -1704,10 +1704,10 @@ sap.ui.define([
 
 		$tab2.trigger("focus"); // set focus on second filter
 
-		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on second filter
+		qutils.triggerKeydown($tab2, KeyCodes.ARROW_LEFT); // trigger Arrow left on second filter
 		assert.ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus moved on first filter");
 
-		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on first filter
+		qutils.triggerKeydown($tab1, KeyCodes.ARROW_LEFT); // trigger Arrow left on first filter
 		assert.ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus stayed on first filter"); // should not loop
 	});
 
@@ -1717,10 +1717,10 @@ sap.ui.define([
 
 		$tab1.trigger("focus"); // set focus on first filter
 
-		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on first filter
+		qutils.triggerKeydown($tab1, KeyCodes.ARROW_DOWN); // trigger Arrow down on first filter
 		assert.ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus moved on second filter");
 
-		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on second filter
+		qutils.triggerKeydown($tab2, KeyCodes.ARROW_DOWN); // trigger Arrow down on second filter
 		assert.ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus stay on second filter"); // should not loop
 	});
 
@@ -1730,10 +1730,10 @@ sap.ui.define([
 
 		$tab2.trigger("focus"); // set focus on second filter
 
-		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on second filter
+		qutils.triggerKeydown($tab2, KeyCodes.ARROW_UP); // trigger Arrow up on second filter
 		assert.ok($tab1.is(":focus"), "ARROW_UP is pressed, focus moved on first filter");
 
-		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on first filter
+		qutils.triggerKeydown($tab1, KeyCodes.ARROW_UP); // trigger Arrow up on first filter
 		assert.ok($tab1.is(":focus"), "ARROW_UP is pressed, focus stay on first filter"); // should not loop
 	});
 
@@ -1743,7 +1743,7 @@ sap.ui.define([
 
 		$tab1.trigger("focus"); // set focus on first filter
 
-		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.END); // trigger End on first filter
+		qutils.triggerKeydown($tab1, KeyCodes.END); // trigger End on first filter
 		assert.ok($tab2.is(":focus"), "END is pressed, focus moved on last filter");
 	});
 
@@ -1753,7 +1753,7 @@ sap.ui.define([
 
 		$tab2.trigger("focus"); // set focus on second filter
 
-		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.HOME); // trigger Home on second filter
+		qutils.triggerKeydown($tab2, KeyCodes.HOME); // trigger Home on second filter
 		assert.ok($tab1.is(":focus"), "HOME is pressed, focus moved on first filter");
 	});
 
@@ -1763,33 +1763,57 @@ sap.ui.define([
 
 		$tab1.trigger("focus"); // set focus on first filter
 
-		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.PAGE_DOWN); // trigger PAGEDOWN on first filter
+		qutils.triggerKeydown($tab1, KeyCodes.PAGE_DOWN); // trigger PAGEDOWN on first filter
 		assert.ok($tab2.is(":focus"), "PAGEDOWN is pressed, focus moved on last filter");
 		});
 
 	QUnit.test("PAGEUP", function(assert) {
+		var $tab1 = this.oIconTabBar.getItems()[0].$();
+		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-	var $tab1 = this.oIconTabBar.getItems()[0].$();
-	var $tab2 = this.oIconTabBar.getItems()[1].$();
+		$tab2.trigger("focus"); // set focus on second filter
 
-	$tab2.trigger("focus"); // set focus on second filter
+		qutils.triggerKeydown($tab2, KeyCodes.PAGE_UP); // trigger PAGEUP on second filter
+		assert.ok($tab1.is(":focus"), "PAGEUP is pressed, focus moved on first filter");
+	});
 
-	sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.PAGE_UP); // trigger PAGEUP on second filter
-	assert.ok($tab1.is(":focus"), "PAGEUP is pressed, focus moved on first filter");
-});
-
-	QUnit.test("SPACE", function(assert) {
+	QUnit.test("SPACE - keydown", function(assert) {
 		var oSelectSpy = sinon.spy(IconTabBar.prototype, "fireSelect");
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
 		$tab2.trigger("focus"); // set focus on second filter
 
-		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter
-		sap.ui.test.qunit.triggerKeyup($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter
-		assert.strictEqual(oSelectSpy.callCount, 1, "SPACE is pressed, select event was fired");
+		qutils.triggerKeydown($tab2, KeyCodes.SPACE); // trigger Space on second filter
+		assert.ok(oSelectSpy.notCalled, "Select event should NOT be fired on SPACE keydown");
 
 		// Clean up
 		IconTabBar.prototype.fireSelect.restore();
+	});
+
+	QUnit.test("SPACE - keyup", function(assert) {
+		var oSelectSpy = sinon.spy(IconTabBar.prototype, "fireSelect");
+		var $tab2 = this.oIconTabBar.getItems()[1].$();
+
+		$tab2.trigger("focus"); // set focus on second filter
+
+		qutils.triggerKeydown($tab2, KeyCodes.SPACE); // trigger Space on second filter
+		qutils.triggerKeyup($tab2, KeyCodes.SPACE); // trigger Space on second filter
+		assert.strictEqual(oSelectSpy.callCount, 1, "Select event should be fired on SPACE keyup");
+
+		// Clean up
+		IconTabBar.prototype.fireSelect.restore();
+	});
+
+	QUnit.test("SPACE - keydown doesn't scroll the page", function(assert) {
+		var $tab2 = this.oIconTabBar.getItems()[1].$(),
+			oFakeEvent = new jQuery.Event("keydown", {
+				which: KeyCodes.SPACE
+			}),
+			oPreventDefaultSpy = sinon.spy(oFakeEvent, "preventDefault");
+
+		$tab2.trigger(oFakeEvent); // press SPACE on second filter
+
+		assert.ok(oPreventDefaultSpy.called, "SPACE press shouldn't scroll the page (default action should be prevented)");
 	});
 
 	QUnit.test("ENTER", function(assert) {
@@ -1798,7 +1822,7 @@ sap.ui.define([
 
 		$tab2.trigger("focus"); // set focus on second filter
 
-		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ENTER); // trigger Enter on second filter
+		qutils.triggerKeydown($tab2, KeyCodes.ENTER); // trigger Enter on second filter
 
 		assert.strictEqual(oSelectSpy.callCount, 1, "Enter is pressed, select event was fired");
 
