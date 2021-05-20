@@ -43,7 +43,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				aLabelledBy = oAvatar.getAriaLabelledBy(),
 				aDescribedBy = oAvatar.getAriaDescribedBy(),
 				oBadge = oAvatar.hasListeners("press") ?  oAvatar._getBadge() : null,
-				sAriaRoledescription = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_ROLE_DESCRIPTION");
+				sDefaultTooltip = oAvatar._getDefaultTooltip();
 
 			oRm.openStart("span", oAvatar);
 			oRm.class(sAvatarClass);
@@ -59,7 +59,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			} else {
 				oRm.attr("role", "img");
 			}
-			oRm.attr("aria-roledescription", sAriaRoledescription);
 			if (oAvatar.getShowBorder()) {
 				oRm.class("sapFAvatarBorder");
 			}
@@ -69,10 +68,15 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				oRm.style("font-size", sCustomFontSize);
 			}
 			if (sTooltip) {
+				// if tooltip property is set the initials should be overwritten
 				oRm.attr("title", sTooltip);
 				oRm.attr("aria-label", sTooltip);
-			} else if (sInitials) { // if tooltip is set the initials should be overwritten
-				oRm.attr("aria-label", sInitials);
+			} else if (sInitials) {
+				// default "Avatar" text + initials
+				oRm.attr("aria-label", sDefaultTooltip + " " + sInitials);
+			} else {
+				// no tooltip set nor initials - set only the default "Avatar" text
+				oRm.attr("aria-label", sDefaultTooltip);
 			}
 			// aria-labelledby references
 			if (aLabelledBy && aLabelledBy.length > 0) {
