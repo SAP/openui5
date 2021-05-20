@@ -739,6 +739,11 @@ sap.ui.define([
 					only: ["sap/ui/fl/util/IFrame"]
 				}
 			},
+			"util/resolveBinding": {
+				coverage: {
+					only: ["sap/ui/fl/util/resolveBinding"]
+				}
+			},
 
 			// ChangeHandler tests:
 			"changeHandler/AddIFrame": {

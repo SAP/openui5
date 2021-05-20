@@ -96,12 +96,12 @@ function(
 			this.oRegistry.registerChange(oBarChange, "bar");
 			var sSelectorId = "test";
 
-			this.oRegistry.addSelectorsForChangeId("fooChange", {
+			this.oRegistry.addVisualizationInfo("fooChange", {
 				affectedElementIds: ["someOtherId"],
 				displayElementIds: [sSelectorId],
 				dependentElementIds: []
 			});
-			this.oRegistry.addSelectorsForChangeId("barChange", {
+			this.oRegistry.addVisualizationInfo("barChange", {
 				affectedElementIds: [],
 				displayElementIds: [],
 				dependentElementIds: [sSelectorId]
@@ -117,7 +117,8 @@ function(
 							dependent: false,
 							change: oFooChange,
 							commandName: "foo",
-							commandCategory: "fooCategory"
+							commandCategory: "fooCategory",
+							payload: {}
 						},
 						{
 							affectedElementId: sSelectorId,
@@ -125,7 +126,8 @@ function(
 							dependent: true,
 							change: oBarChange,
 							commandName: "bar",
-							commandCategory: "barCategory"
+							commandCategory: "barCategory",
+							payload: {}
 						}
 					]
 				},

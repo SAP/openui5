@@ -266,11 +266,11 @@ sap.ui.define([
 		});
 
 		return Promise.all(aRelevantChanges.map(function (oChange) {
-			return this._getChangedElements(oChange)
-				.then(function (oSelectorMap) {
-					this._oChangeIndicatorRegistry.addSelectorsForChangeId(
+			return this._getVisualizationInfo(oChange)
+				.then(function (mVisualizationInfo) {
+					this._oChangeIndicatorRegistry.addVisualizationInfo(
 						oChange.change.getId(),
-						oSelectorMap
+						mVisualizationInfo
 					);
 				}.bind(this));
 		}.bind(this)))
@@ -280,7 +280,7 @@ sap.ui.define([
 			}.bind(this));
 	};
 
-	ChangeVisualization.prototype._getChangedElements = function (oChangeInformation) {
+	ChangeVisualization.prototype._getVisualizationInfo = function (mChangeInformation) {
 		var oComponent = this._getComponent();
 
 		function getSelectorIds(aSelectorList) {
@@ -297,16 +297,18 @@ sap.ui.define([
 				.filter(Boolean);
 		}
 
-		return this._getInfoFromChangeHandler(oComponent, oChangeInformation.change)
+		return this._getInfoFromChangeHandler(oComponent, mChangeInformation.change)
 			.then(function (oInfoFromChangeHandler) {
-				var oVisualizationInfo = oInfoFromChangeHandler || {};
+				var mVisualizationInfo = oInfoFromChangeHandler || {};
 				var aAffectedElementIds = (
-					getSelectorIds(oVisualizationInfo.affectedControls || [oChangeInformation.change.getSelector()])
+					getSelectorIds(mVisualizationInfo.affectedControls || [mChangeInformation.change.getSelector()])
 				);
+
 				return {
 					affectedElementIds: aAffectedElementIds,
-					dependentElementIds: getSelectorIds(oVisualizationInfo.dependentControls) || [],
-					displayElementIds: getSelectorIds(oVisualizationInfo.displayControls) || aAffectedElementIds
+					dependentElementIds: getSelectorIds(mVisualizationInfo.dependentControls) || [],
+					displayElementIds: getSelectorIds(mVisualizationInfo.displayControls) || aAffectedElementIds,
+					payload: mVisualizationInfo.payload
 				};
 			});
 	};

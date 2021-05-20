@@ -375,6 +375,10 @@ sap.ui.define([
 					}
 				}.bind(this));
 			}.bind(this));
+		},
+
+		sampleFormatter: function(sValue) {
+			return "This text was changed by a formatter: " + (sValue && sValue.toUpperCase());
 		}
 	});
 });
