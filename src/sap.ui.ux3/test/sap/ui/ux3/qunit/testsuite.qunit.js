@@ -29,7 +29,10 @@ sap.ui.define(function() {
 			},
 			CollectionInspector: {
 				title: "QUnit Page for sap.ui.ux3.CollectionInspector",
-				_alternativeTitle: "QUnit Page for\n\t	sap.ui.ux3.CollectionInspector"
+				_alternativeTitle: "QUnit Page for\n\t	sap.ui.ux3.CollectionInspector",
+				ui5: {
+					"xx-waitForTheme": "init"
+				}
 			},
 			DataSet: {
 				title: "QUnit Page for sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem +\nsap.ui.ux3.DataSetSimpleView",

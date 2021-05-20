@@ -188,7 +188,8 @@ sap.ui.define([
 				group: "Extensions",
 				module: "./extensions/KeyboardDelegate.qunit",
 				ui5: {
-					rtl: true
+					rtl: true,
+					"xx-waitForTheme": "init"
 				},
 				qunit: {
 					version: "edge"
