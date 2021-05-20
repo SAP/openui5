@@ -39,7 +39,8 @@ sap.ui.define(function() {
 			"util/BusyIndicatorRTL": {
 				title: "sap.ui.core.BusyIndicator (RTL)",
 				ui5: {
-					rtl: true
+					rtl: true,
+					"xx-waitForTheme": "init"
 				}
 			},
 			ControlDefinition: {
