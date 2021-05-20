@@ -23,6 +23,7 @@
 						display="Description"
 						maxConditions="1"
 						placeholder="{/#Product/ProductId/@sap:label}"
+						label="{/#Product/ProductId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="FVH1">
@@ -64,7 +65,8 @@
 						display="Description"
 						maxConditions="1"
 						editMode="Display"
-						placeholder="Placeholder"
+						placeholder="{/#Product/ProductId/@sap:label}"
+						label="{/#Product/ProductId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="FVH1">
@@ -76,6 +78,7 @@
 						conditions="{cm>/conditions/Name}"
 						maxConditions="10"
 						placeholder="{/#Product/Name/@sap:label}"
+						label="{/#Product/Name/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="FVH1">
@@ -86,7 +89,8 @@
 						conditions="{cm>/conditions/Name}"
 						maxConditions="10"
 						editMode="Display"
-						placeholder="Placeholder"
+						placeholder="{/#Product/Name/@sap:label}"
+						label="{/#Product/Name/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
@@ -99,26 +103,18 @@
 						delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}"
 						maxConditions="3"
 						placeholder="{/#Product/Description/@sap:label}"
+						label="{/#Product/Description/@sap:label}"
 						change="handleChange"
-						liveChange="handleLiveChange"
-						fieldHelp="FVH2">
-							<mdc:dependents>
-								<mdcField:FieldValueHelp id="FVH2"
-									title="{/#Product/Description/@sap:label}"
-									filterFields="*Description*"
-									keyPath="Description"
-									descriptionPath="Description"
-									showConditionPanel="true">
-								</mdcField:FieldValueHelp>
-							</mdc:dependents>
-						</mdc:FilterField>
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
 
 					<m:Label text="multi value field in display mode (Description)"></m:Label>
 					<mdc:FilterField id="FF6"
 						conditions="{cm>/conditions/Description}"
 						maxConditions="3"
 						editMode="Display"
-						placeholder="Placeholder"
+						placeholder="{/#Product/Description/@sap:label}"
+						label="{/#Product/Description/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
@@ -131,6 +127,7 @@
 						maxConditions="1"
 						operators="EQ"
 						placeholder="{/#Product/DateTime/@sap:label}"
+						label="{/#Product/DateTime/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
@@ -141,7 +138,8 @@
 						dataType="Edm.DateTimeOffset"
 						maxConditions="1"
 						editMode="Display"
-						placeholder="Placeholder"
+						placeholder="{/#Product/DateTime/@sap:label}"
+						label="{/#Product/DateTime/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
@@ -155,6 +153,7 @@
 						display="Value"
 						maxConditions="1"
 						placeholder="{/#Product/Date/@sap:label}"
+						label="{/#Product/Date/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="CFH1">
@@ -170,6 +169,7 @@
 						maxConditions="1"
 						operators="BT"
 						placeholder="{/#Product/Date/@sap:label}"
+						label="{/#Product/Date/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
@@ -184,6 +184,7 @@
 						maxConditions="-1"
 						operators="EQ"
 						placeholder="{/#Product/Date/@sap:label}"
+						label="{/#Product/Date/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="CFH1">
@@ -195,6 +196,7 @@
 						display="Description"
 						maxConditions="1"
 						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="FF9-H">
@@ -212,6 +214,7 @@
 						display="Description"
 						maxConditions="1"
 						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="FF17-H">
@@ -231,6 +234,7 @@
 						display="Description"
 						maxConditions="-1"
 						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="FF18-H">
@@ -249,7 +253,8 @@
 						conditions="{cm>/conditions/Status}"
 						maxConditions="1"
 						editMode="Display"
-						placeholder="Placeholder"
+						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
@@ -262,6 +267,7 @@
 						display="Value"
 						maxConditions="2"
 						placeholder="{/#Product/Quantity/@sap:label}"
+						label="{/#Product/Quantity/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="CFH1">
@@ -273,7 +279,8 @@
 						dataType="Edm.Int32"
 						maxConditions="2"
 						editMode="Display"
-						placeholder="Placeholder"
+						placeholder="{/#Product/Quantity/@sap:label}"
+						label="{/#Product/Quantity/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
@@ -284,6 +291,7 @@
 						display="Description"
 						maxConditions="1"
 						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange">
 						<custom:CustomFilter id="FF13-Custom"
@@ -298,6 +306,7 @@
 						display="Description"
 						maxConditions="1"
 						placeholder="{/#Product/Status/@sap:label}"
+						label="{/#Product/Status/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="FF14-H">
@@ -347,6 +356,7 @@
 						display="Description"
 						editMode="Editable"
 						placeholder="{/#Product/WeightMeasure/@sap:label}"
+						label="{/#Product/WeightMeasure/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="FVH-WeightUnit">
@@ -365,6 +375,7 @@
 						display="Value"
 						editMode="Display"
 						placeholder="{/#Product/WeightMeasure/@sap:label}"
+						label="{/#Product/WeightMeasure/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
@@ -376,6 +387,8 @@
 						dataTypeConstraints="{maxLength: 10, search: '^(|[0-9])+$', nullable: false}"
 						dataTypeFormatOptions="{'parseKeepsEmptyString': true}"
 						display="ValueDescription"
+						placeholder="{/#Product/MatrId/@sap:label}"
+						label="{/#Product/MatrId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="MaterialHelp">
@@ -416,6 +429,7 @@
 						dataType="sap.ui.model.type.String"
 						dataTypeConstraints="{maxLength: 3}"
 						display="ValueDescription"
+						label="{/#Product/CountryId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="IOFFVHCountry">
@@ -455,6 +469,7 @@
 						dataType="sap.ui.model.type.String"
 						dataTypeConstraints="{maxLength: 2, search: '^[0-9]+$'}"
 						display="ValueDescription"
+						label="{/#Product/RegionId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="IOFFVHRegion">
@@ -520,6 +535,7 @@
 						dataType="sap.ui.model.odata.type.String"
 						dataTypeConstraints="{maxLength: 2, isDigitSequence: true, nullable: false}"
 						display="ValueDescription"
+						label="{/#Product/CityId/@sap:label}"
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="IOFFVHCity">
