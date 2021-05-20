@@ -375,7 +375,8 @@ sap.ui.define([
 			QUnit.start();
 		} else {
 			utils.whenDOMReady().then(function() {
-				document.body.innerHTML = "<pre style='color:red;'>" + utils.encode(oErr.stack || oErr.message || String(oErr)) + "</pre>";
+				document.body.style.color = "red";
+				document.body.innerHTML = "<pre>" + utils.encode(oErr.stack || oErr.message || String(oErr)) + "</pre>";
 			});
 		}
 	});
