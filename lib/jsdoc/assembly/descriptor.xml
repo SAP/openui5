@@ -26,6 +26,10 @@
 			<source>ui5/template/publish.js</source>
 			<outputDirectory>templates/sapui5-jsdoc3/</outputDirectory>
 		</file>
+		<file>
+			<source>ui5/template/utils/versionUtil.js</source>
+			<outputDirectory>templates/sapui5-jsdoc3/utils/</outputDirectory>
+		</file>
 	</files>
-	
+
 </assembly>
