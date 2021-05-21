@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/f/library",
 	"sap/m/Text",
 	"sap/f/Avatar",
-	"sap/ui/Device",
 	"sap/f/cards/HeaderRenderer",
 	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText"
@@ -17,7 +16,6 @@ sap.ui.define([
 	library,
 	Text,
 	Avatar,
-	Device,
 	HeaderRenderer,
 	Core,
 	InvisibleText
@@ -241,21 +239,6 @@ sap.ui.define([
 		// remove whitespace from both sides
 		// and merge the consecutive whitespaces into one
 		return sIds.replace(/ {2,}/g, ' ').trim();
-	};
-
-	/**
-	 * Called after the control is rendered.
-	 */
-	Header.prototype.onAfterRendering = function() {
-		//TODO performance will be affected, but text should clamp on IE also - TBD
-		if (Device.browser.msie) {
-			if (this.getTitle()) {
-				this._getTitle().clampText();
-			}
-			if (this.getSubtitle()) {
-				this._getSubtitle().clampText();
-			}
-		}
 	};
 
 	/**
