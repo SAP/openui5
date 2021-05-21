@@ -353,9 +353,6 @@ sap.ui.define([
 			}
 
 			if (!GroupingUtils.isInFlatMode(oTable)) {
-				var iLevel = oRow.getLevel();
-
-				$Row.attr({"data-sap-ui-level": iLevel}).data("sap-ui-level", iLevel); // TODO: Check if this can be deleted
 				oTable._getAccExtension().updateAriaExpandAndLevelState(oRow);
 			}
 		},
@@ -369,9 +366,6 @@ sap.ui.define([
 		cleanupTableRowForGrouping: function(oRow) {
 			var oTable = oRow.getTable();
 			var oDomRefs = oRow.getDomRefs(true);
-
-			oDomRefs.row.removeAttr("data-sap-ui-level");
-			oDomRefs.row.removeData("sap-ui-level");
 
 			if (GroupingUtils.isInGroupMode(oTable)) {
 				oDomRefs.row.removeClass("sapUiTableGroupHeaderRow sapUiTableSummaryRow sapUiTableRowIndented");

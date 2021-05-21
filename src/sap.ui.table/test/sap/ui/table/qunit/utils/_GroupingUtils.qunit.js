@@ -309,50 +309,39 @@ sap.ui.define([
 			for (var i = 0; i < iCount; i++) {
 				var oRow = oTreeTable.getRows()[i];
 				var oTreeIcon = oRow.getDomRef("col0").querySelector(".sapUiTableTreeIcon");
-				var $Row = oRow.$();
 				assert.ok(oTreeIcon != null, "Tree Icon Available in first column - row " + (i + 1));
 				var sClass = "sapUiTableTreeIconNodeClosed";
-				var iLevel = 1;
 				if (bSecondPass) {
 					if (i === 0) {
 						sClass = "sapUiTableTreeIconNodeOpen";
 					} else if (i === 1) {
 						sClass = "sapUiTableTreeIconLeaf";
-						iLevel = 2;
 					} else if (i === iCount - 1) {
 						sClass = "sapUiTableTreeIconLeaf";
-						iLevel = 0; // empty row
 					}
 				} else if (i === iCount - 1) {
 					sClass = "sapUiTableTreeIconLeaf";
-					iLevel = 0; // empty row
 				}
 				assert.ok(oTreeIcon.classList.contains(sClass), "Icon has correct expand state: " + sClass);
-				assert.equal($Row.data("sap-ui-level"), iLevel, "Row " + (i + 1) + " has correct level in data.");
-				assert.equal($Row.attr("data-sap-ui-level"), iLevel, "Row " + (i + 1) + " has correct level in dom.");
 			}
 
 			if (bSecondPass) {
-				var fnUnbindHandler = function() {
-					for (var i = 0; i < 12; i++) {
-						var oRow = oTreeTable.getRows()[i];
-						var oTreeIcon = oRow.getDomRef("col0").querySelector(".sapUiTableTreeIcon");
-						var $Row = oRow.$();
-						assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconNodeOpen"),
-							"No state class on icon after unbind: sapUiTableTreeIconNodeOpen");
-						assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconLeaf"),
-							"No state class on icon after unbind: sapUiTableTreeIconLeaf");
-						assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconNodeClosed"),
-							"No state class on icon after unbind: sapUiTableTreeIconNodeClosed");
-						assert.ok(!$Row.data("sap-ui-level"), "Row " + (i + 1) + " has no level in data.");
-						assert.ok(!$Row.attr("data-sap-ui-level"), "Row " + (i + 1) + " has no level in dom.");
-					}
-					done();
-				};
-
 				oTreeTable.setShowNoData(false);
-				oTreeTable.attachEventOnce("rowsUpdated", fnUnbindHandler);
 				oTreeTable.unbindRows();
+				sap.ui.getCore().applyChanges();
+
+				for (var i = 0; i < 12; i++) {
+					var oRow = oTreeTable.getRows()[i];
+					var oTreeIcon = oRow.getDomRef("col0").querySelector(".sapUiTableTreeIcon");
+					assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconNodeOpen"),
+						"No state class on icon after unbind: sapUiTableTreeIconNodeOpen");
+					assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconLeaf"),
+						"No state class on icon after unbind: sapUiTableTreeIconLeaf");
+					assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconNodeClosed"),
+						"No state class on icon after unbind: sapUiTableTreeIconNodeClosed");
+				}
+
+				done();
 			}
 		};
 
@@ -384,17 +373,14 @@ sap.ui.define([
 				var $Row = oRow.$();
 				var oRowHeader = oTreeTable.getDomRef("rowsel" + i).parentElement;
 				var oGroupHeader = oRow.getDomRef("groupHeader");
-				var iLevel = 1;
 				var bExpectGroupHeaderClass = true;
 				var bExpectExpanded = false;
 				if (bSecondPass && i === 1) {
 					bExpectGroupHeaderClass = false;
-					iLevel = 2;
 				} else if (bSecondPass && i === 0) {
 					bExpectExpanded = true;
 				} else if (i === iCount - 1) {
 					bExpectGroupHeaderClass = false;
-					iLevel = 0; // empty row
 				}
 				assert.ok($Row.hasClass("sapUiTableGroupHeaderRow") && bExpectGroupHeaderClass || !$Row.hasClass("sapUiTableGroupHeaderRow")
 						  && !bExpectGroupHeaderClass, "Row " + (i + 1) + " is Group Header");
@@ -410,25 +396,19 @@ sap.ui.define([
 							  && !oGroupHeader.classList.contains("sapUiTableGroupIconOpen"),
 						"Header has correct expand state");
 				}
-
-				assert.equal($Row.data("sap-ui-level"), iLevel, "Row " + (i + 1) + " has correct level in data.");
-				assert.equal($Row.attr("data-sap-ui-level"), iLevel, "Row " + (i + 1) + " has correct level in dom.");
 			}
 
 			if (bSecondPass) {
-				var fnUnbindHandler = function() {
-					for (var i = 0; i < 12; i++) {
-						var $Row = oTreeTable.getRows()[i].$();
-						assert.ok(!$Row.hasClass("sapUiTableGroupHeaderRow"), "No group headers any more after unbind");
-						assert.ok(!$Row.data("sap-ui-level"), "Row " + i + " has no level in data.");
-						assert.ok(!$Row.attr("data-sap-ui-level"), "Row " + i + " has no level in dom.");
-					}
-					done();
-				};
-
 				oTreeTable.setShowNoData(false);
-				oTreeTable.attachEventOnce("rowsUpdated", fnUnbindHandler);
 				oTreeTable.unbindRows();
+				sap.ui.getCore().applyChanges();
+
+				for (var i = 0; i < 12; i++) {
+					var $Row = oTreeTable.getRows()[i].$();
+					assert.ok(!$Row.hasClass("sapUiTableGroupHeaderRow"), "No group headers any more after unbind");
+				}
+
+				done();
 			}
 		};
 
