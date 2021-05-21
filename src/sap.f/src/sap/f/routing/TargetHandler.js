@@ -3,9 +3,10 @@
  */
 
  /*global Promise*/
-sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/base/Object', 'sap/ui/core/routing/History', "sap/base/Log"],
-	function(SyncPromise, InstanceManager, FlexibleColumnLayout, BaseObject, History, Log) {
+sap.ui.define(['sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/base/Object', 'sap/ui/core/routing/History', "sap/base/Log"],
+	function(InstanceManager, FlexibleColumnLayout, BaseObject, History, Log) {
 		"use strict";
+
 
 		/**
 		 * Constructor for a new <code>TargetHandler</code>.
@@ -150,8 +151,7 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/f/Flexib
 				oCurrentContainer = oCurrentParams.targetControl;
 				oCurrentNavigation = {
 					oContainer : oCurrentContainer,
-					oParams : oCurrentParams,
-					placeholderConfig: oCurrentParams.placeholderConfig
+					oParams : oCurrentParams
 				};
 
 				if (!isNavigationContainer(oCurrentContainer)) {
@@ -209,7 +209,6 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/f/Flexib
 			// If the page we are going to navigate is already displayed,
 			// we are skipping the navigation.
 			if (bSkipNavigation) {
-				oTargetControl.hidePlaceholder(oParams.placeholderConfig);
 				Log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.f.routing.TargetHandler");
 				return false;
 			}
@@ -255,41 +254,6 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/f/Flexib
 		function isNavigationContainer(oContainer) {
 			return oContainer && oContainer.isA(["sap.m.NavContainer", "sap.m.SplitContainer", "sap.f.FlexibleColumnLayout"]);
 		}
-
-		/**
-		 * Calls the 'showPlaceholder' method of the respective target container control depending on whether
-		 * a placeholder is needed or not.
-		 *
-		 * @param {object} mSettings Object containing the container control and the view object to display
-		 * @param {sap.ui.core.Control} mSettings.container The navigation target container
-		 * @param {sap.ui.core.Control|Promise} mSettings.object The component/view object
-		 *
-		 * @private
-	 	 * @ui5-restricted sap.ui.core.routing
-		 */
-		TargetHandler.prototype.showPlaceholder = function(mSettings) {
-			var oContainer = mSettings.container,
-				bNeedsPlaceholder = true,
-				pObject;
-
-			if (mSettings.object) {
-				if (mSettings.object instanceof Promise) {
-					pObject = mSettings.object;
-				} else {
-					pObject = SyncPromise.resolve(mSettings.object);
-				}
-
-				pObject.then(function(oObject) {
-					if (mSettings.container && typeof mSettings.container.needPlaceholder === "function") {
-						bNeedsPlaceholder = mSettings.container.needPlaceholder(mSettings.aggregation, oObject);
-					}
-
-					if (bNeedsPlaceholder) {
-						oContainer.showPlaceholder(mSettings);
-					}
-				});
-			}
-		};
 
 		return TargetHandler;
 

@@ -92,12 +92,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			RouterHashChanger: {
 				title: "QUnit Page for sap.ui.core.routing.RouterHashChanger"
-			},
-			Placeholder: {
-				title: "QUnit Page for sap.ui.core.Placeholder",
-				qunit: {
-					reorder: false
-				}
 			}
 		}
 	};

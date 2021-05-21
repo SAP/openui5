@@ -102,9 +102,6 @@ sap.ui.define([
 	 */
 	var FlexibleColumnLayout = Control.extend("sap.f.FlexibleColumnLayout", {
 		metadata: {
-			interfaces: [
-				"sap.ui.core.IPlaceholderSupport"
-			],
 			properties: {
 
 				/**
@@ -2212,76 +2209,6 @@ sap.ui.define([
 		ThreeColumnsBeginExpandedEndHidden: {
 			"left": LT.ThreeColumnsMidExpandedEndHidden
 		}
-	};
-
-	/**
-	 * Shows the placeholder on the corresponding column for the provided aggregation name.
-	 *
-	 * @param {object} mSettings Object containing the aggregation name
-	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be shown
-	 * @public
-	 * @since 1.91
-	 */
-	FlexibleColumnLayout.prototype.showPlaceholder = function(mSettings) {
-		switch (mSettings.aggregation) {
-			case "beginColumnPages":
-				this.getAggregation("_beginColumnNav").showPlaceholder(mSettings);
-				break;
-			case "midColumnPages":
-				this.getAggregation("_midColumnNav").showPlaceholder(mSettings);
-				break;
-			default:
-				this.getAggregation("_endColumnNav").showPlaceholder(mSettings);
-		}
-	};
-
-	/**
-	 * Hides the placeholder on the corresponding column for the provided aggregation name.
-	 *
-	 * @param {object} mSettings Object containing the aggregation name
-	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be hidden
-	 * @public
-	 * @since 1.91
-	 */
-	FlexibleColumnLayout.prototype.hidePlaceholder = function(mSettings) {
-		switch (mSettings.aggregation) {
-			case "beginColumnPages":
-				this.getAggregation("_beginColumnNav").hidePlaceholder(mSettings);
-				break;
-			case "midColumnPages":
-				this.getAggregation("_midColumnNav").hidePlaceholder(mSettings);
-				break;
-			default:
-				this.getAggregation("_endColumnNav").hidePlaceholder(mSettings);
-		}
-	};
-
-	/**
-	 * Checks whether a placeholder is needed by comparing the currently displayed page with
-	 * the page object that is going to be displayed. If they are the same, no placeholder needs
-	 * to be shown.
-	 *
-	 * @param {string} sAggregationName The aggregation name for the corresponding column
-	 * @param {sap.ui.core.Control} oObject The page object to be displayed
-	 * @returns {boolean} Whether placeholder is needed or not
-	 * @private
-	 * @ui5-restricted sap.ui.core.routing
-	 */
-	FlexibleColumnLayout.prototype.needPlaceholder = function(sAggregationName, oObject) {
-		var oContainer;
-
-		switch (sAggregationName) {
-			case "beginColumnPages":
-				oContainer = this.getAggregation("_beginColumnNav");
-				break;
-			case "midColumnPages":
-				oContainer = this.getAggregation("_midColumnNav");
-				break;
-			default:
-				oContainer = this.getAggregation("_endColumnNav");
-		}
-
-		return oContainer.getCurrentPage() !== oObject;
 	};
 
 	/**
