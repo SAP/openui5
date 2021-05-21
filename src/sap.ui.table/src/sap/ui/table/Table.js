@@ -1413,7 +1413,7 @@ sap.ui.define([
 
 		if (!bRenderedRows) {
 			// needed for the column resize ruler
-			this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
+			this._aTableHeaders = this.$("tableCCnt").find("th");
 		}
 
 		this._updateTableSizes(TableUtils.RowsUpdateReason.Render, true);
