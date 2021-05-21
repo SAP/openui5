@@ -4,20 +4,16 @@ sap.ui.define([
 	"sap/m/FlexBox",
 	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
-	"sap/ui/thirdparty/jquery",
 	"sap/m/Image",
 	"sap/m/FlexItemData",
-	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/m/VBox"
-], function(
+], function (
 	FlexBox,
 	Core,
 	HTML,
-	jQuery,
 	Image,
 	FlexItemData,
-	Device,
 	Button,
 	VBox
 ) {
@@ -82,14 +78,14 @@ sap.ui.define([
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>"
+					content: "<div class='items'>1</div>"
 				},
 				{
-				content: "<div class='items'>2</div>"
+					content: "<div class='items'>2</div>"
 				},
 				{
-				content: "<div class='items'>3</div>",
-				visible: false
+					content: "<div class='items'>3</div>",
+					visible: false
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -100,25 +96,29 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("FlexBox visible:false", function(assert) {
-		assert.ok(!jQuery(".sapMFlexBox", this.fixture).length, "Flex Box should not be rendered initially");
+		assert.strictEqual(this.fixture.querySelector(".sapMFlexBox"), null, "Flex Box should not be rendered initially");
 	});
 
 	QUnit.test("FlexBox visible:true - Item 3 visible:false", function(assert) {
 		this.oBox.setVisible(true);
 		Core.applyChanges();
-		assert.ok(jQuery(".sapMFlexBox", this.fixture).length, "Flex Box should now be rendered");
-		assert.equal(jQuery(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)", this.fixture).length, 2, "Only two items should be rendered");
+
+
+		assert.ok(this.fixture.querySelector(".sapMFlexBox"), "Flex Box should now be rendered");
+		assert.strictEqual(this.fixture.querySelectorAll(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)").length, 2, "Only two items should be rendered");
 	});
 
 	QUnit.test("Item 3 visible:true", function(assert) {
 		this.oBox.setVisible(true);
 		this.oBox.getItems()[2].setVisible(true);
 		Core.applyChanges();
-		assert.equal(jQuery(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)", this.fixture).length, 3, "Three items should now be rendered");
+
+		assert.strictEqual(this.fixture.querySelectorAll(".sapMFlexBox > .sapMFlexItem:not(.sapUiHiddenPlaceholder)").length, 3, "Three items should now be rendered");
 	});
 
 	QUnit.module("Render Type", {
@@ -151,31 +151,35 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("List", function(assert) {
-		assert.equal(this.oBox.$().get(0).tagName, "UL", "Flex Box should be rendered as UL");
-		assert.equal(this.oBox.$().find(".sapMFlexItem:first-child").get(0).tagName, "LI", "First item of Flex Box should be rendered as LI");
-		assert.equal(this.oBox.$().find(".sapMFlexItem:nth-child(2)").get(0).tagName, "LI", "Second item of Flex Box should be rendered as LI");
+		var oDomRef = this.oBox.getDomRef();
+
+		assert.equal(oDomRef.tagName, "UL", "Flex Box should be rendered as UL");
+		assert.equal(oDomRef.querySelector(".sapMFlexItem:first-child").tagName, "LI", "First item of Flex Box should be rendered as LI");
+		assert.equal(oDomRef.querySelector(".sapMFlexItem:nth-child(2)").tagName, "LI", "Second item of Flex Box should be rendered as LI");
 	});
 
 	QUnit.test("Div", function(assert) {
 		this.oBox.setRenderType("Div");
 		Core.applyChanges();
-		assert.equal(this.oBox.$().get(0).tagName, "DIV", "Flex Box should now be rendered as DIV");
-		assert.equal(this.oBox.$().find(".sapMFlexItem:first-child").get(0).tagName, "DIV", "First item of Flex Box should be rendered as DIV");
-		assert.equal(this.oBox.$().find(".sapMFlexItem:nth-child(2)").get(0).tagName, "DIV", "Second item of Flex Box should be rendered as DIV");
+
+		var oDomRef = this.oBox.getDomRef();
+		assert.equal(oDomRef.tagName, "DIV", "Flex Box should now be rendered as DIV");
+		assert.equal(oDomRef.querySelector(".sapMFlexItem:first-child").tagName, "DIV", "First item of Flex Box should be rendered as DIV");
+		assert.equal(oDomRef.querySelector(".sapMFlexItem:nth-child(2)").tagName, "DIV", "Second item of Flex Box should be rendered as DIV");
 	});
 
 	QUnit.test("Bare", function(assert) {
 		this.oBox.setRenderType("Bare");
 		Core.applyChanges();
-		assert.equal(this.oBox.getItems()[0].$().get(0).tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
-		if (!Device.browser.internet_explorer) {// TODO remove after the end of support for Internet Explorer
-			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
-			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
-		}
+
+		assert.equal(this.oBox.getItems()[0].getDomRef().tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
+		assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
+		assert.equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
 	});
 
 	QUnit.module("Inline vs. block display", {
@@ -192,18 +196,23 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("Inline", function(assert) {
 		this.oBox.setDisplayInline(true);
-		assert.equal(this.oBox.$().css('display'), "inline-flex", "Flex Box display property should be set to inline");
+
+		var sDisplay = window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("display");
+		assert.equal(sDisplay, "inline-flex", "Flex Box display property should be set to inline-flex");
 	});
 
 	QUnit.test("Block", function(assert) {
 		this.oBox.setDisplayInline(false);
 		Core.applyChanges();
-		assert.equal(this.oBox.$().css('display'), "flex", "Flex Box display property should be set to block");
+
+		var sDisplay = window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("display");
+		assert.equal(sDisplay, "flex", "Flex Box display property should be set to flex");
 	});
 
 	QUnit.module("Fit Container", {
@@ -220,15 +229,20 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("Height 100%", function(assert) {
-		jQuery("#" + DOM_RENDER_LOCATION).css("height", "123px");
+		var oFixtureDomRef = document.getElementById(DOM_RENDER_LOCATION);
+
+		oFixtureDomRef.style.height = "123px";
 		this.oBox.setFitContainer(true);
 		Core.applyChanges();
-		assert.equal(this.oBox.$().css('height'), "123px", "Flex Box height property should be set to 100%");
-		jQuery("#" + DOM_RENDER_LOCATION).css("height", "");
+
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("height"), "123px", "Flex Box height property should be set to 100%");
+
+		oFixtureDomRef.style.height = "";
 	});
 
 	QUnit.module("Width and height", {
@@ -245,6 +259,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -252,8 +267,10 @@ sap.ui.define([
 		this.oBox.setWidth("388px");
 		this.oBox.setHeight("398px");
 		Core.applyChanges();
-		assert.equal(this.oBox.$().css('width'), "388px", "Flex Box width property should be set correctly");
-		assert.equal(this.oBox.$().css('height'), "398px", "Flex Box height property should be set correctly");
+
+		var mStyles = window.getComputedStyle(this.oBox.getDomRef());
+		assert.equal(mStyles.getPropertyValue("width"), "388px", "Flex Box width property should be set correctly");
+		assert.equal(mStyles.getPropertyValue("height"), "398px", "Flex Box height property should be set correctly");
 	});
 
 	QUnit.module("Background Design", {
@@ -264,14 +281,14 @@ sap.ui.define([
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>"
+					content: "<div class='items'>1</div>"
 				},
 				{
-				content: "<div class='items'>2</div>"
+					content: "<div class='items'>2</div>"
 				},
 				{
-				content: "<div class='items'>3</div>",
-				layoutData: new FlexItemData({})
+					content: "<div class='items'>3</div>",
+					layoutData: new FlexItemData({})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -281,54 +298,68 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("FlexBox Solid", function(assert) {
 		this.oBox.setBackgroundDesign("Solid");
 		Core.applyChanges();
-		assert.ok(this.oBox.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
+
+		var aClasses = this.oBox.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), true, "HTML class for Solid is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), false, "HTML class for Transparent is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
 	QUnit.test("FlexBox Transparent", function(assert) {
 		this.oBox.setBackgroundDesign("Transparent");
-		assert.ok(this.oBox.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
+		Core.applyChanges();
+
+		var aClasses = this.oBox.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), true, "HTML class for Transparent is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), false, "HTML class for Solid is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
 	QUnit.test("FlexBox Translucent", function(assert) {
 		this.oBox.setBackgroundDesign("Translucent");
 		Core.applyChanges();
-		assert.ok(this.oBox.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
-		assert.ok(!this.oBox.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
+
+		var aClasses = this.oBox.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), true, "HTML class for Translucent is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), false, "HTML class for Transparent is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), false, "HTML class for Solid is not set");
 	});
 
 	QUnit.test("Flex item Solid", function(assert) {
 		var oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
 		oItem3LayoutData.setBackgroundDesign("Solid");
-		assert.ok(oItem3LayoutData.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
+
+		var aClasses = oItem3LayoutData.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), true, "HTML class for Solid is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), false, "HTML class for Transparent is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
 	QUnit.test("Flex item Transparent", function(assert) {
 		var oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
 		oItem3LayoutData.setBackgroundDesign("Transparent");
-		assert.ok(oItem3LayoutData.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is not set");
+
+		var aClasses = oItem3LayoutData.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), true, "HTML class for Transparent is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), false, "HTML class for Solid is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), false, "HTML class for Translucent is not set");
 	});
 
 	QUnit.test("Flex item Translucent", function(assert) {
 		var oItem3LayoutData = this.oBox.getItems()[2].getLayoutData();
 		oItem3LayoutData.setBackgroundDesign("Translucent");
-		assert.ok(oItem3LayoutData.$().hasClass("sapMFlexBoxBGTranslucent"), "HTML class for Translucent is set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGTransparent"), "HTML class for Transparent is not set");
-		assert.ok(!oItem3LayoutData.$().hasClass("sapMFlexBoxBGSolid"), "HTML class for Solid is not set");
+
+		var aClasses = oItem3LayoutData.getDomRef().classList;
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTranslucent"), true, "HTML class for Translucent is set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGTransparent"), false, "HTML class for Transparent is not set");
+		assert.strictEqual(aClasses.contains("sapMFlexBoxBGSolid"), false, "HTML class for Solid is not set");
 	});
 
 	QUnit.module("Direction", {
@@ -346,6 +377,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -382,16 +414,16 @@ sap.ui.define([
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>",
-				layoutData: new FlexItemData({order: 1})
+					content: "<div class='items'>1</div>",
+					layoutData: new FlexItemData({order: 1})
 				},
 				{
-				content: "<div class='items'>2</div>",
-				layoutData: new FlexItemData({order: 2})
+					content: "<div class='items'>2</div>",
+					layoutData: new FlexItemData({order: 2})
 				},
 				{
-				content: "<div class='items'>3</div>",
-				layoutData: new FlexItemData({order: 3})
+					content: "<div class='items'>3</div>",
+					layoutData: new FlexItemData({order: 3})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -407,6 +439,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -414,6 +447,8 @@ sap.ui.define([
 		this.oItem1LayoutData.setOrder(3);
 		this.oItem2LayoutData.setOrder(1);
 		this.oItem3LayoutData.setOrder(2);
+		Core.applyChanges();
+
 		assert.ok((this.oItem2DomRef.getBoundingClientRect().left - this.oItem3DomRef.getBoundingClientRect().left) < 0, "Item 3 should be placed to the right of Item 2");
 		assert.ok((this.oItem3DomRef.getBoundingClientRect().left - this.oItem1DomRef.getBoundingClientRect().left) < 0, "Item 1 should be placed to the right of Item 3");
 	});
@@ -427,14 +462,14 @@ sap.ui.define([
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>",
-				layoutData: new FlexItemData({})
+					content: "<div class='items'>1</div>",
+					layoutData: new FlexItemData({})
 				},
 				{
-				content: "<div class='items'>2</div>"
+					content: "<div class='items'>2</div>"
 				},
 				{
-				content: "<div class='items'>3</div>"
+					content: "<div class='items'>3</div>"
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -449,6 +484,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -535,8 +571,7 @@ sap.ui.define([
 
 	QUnit.module("Multi-line", {
 		beforeEach: function() {
-			this.oBoxConfig = {
-			};
+			this.oBoxConfig = {};
 			this.vItemTemplates = 4;
 			this.vItemConfigs = 4;
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -660,16 +695,16 @@ sap.ui.define([
 			this.vItemTemplates = 3;
 			this.vItemConfigs = [
 				{
-				content: "<div class='items'>1</div>",
-				layoutData: new FlexItemData({})
+					content: "<div class='items'>1</div>",
+					layoutData: new FlexItemData({})
 				},
 				{
-				content: "<div class='items'>2</div>",
-				layoutData: new FlexItemData({})
+					content: "<div class='items'>2</div>",
+					layoutData: new FlexItemData({})
 				},
 				{
-				content: "<div class='items'>3</div>",
-				layoutData: new FlexItemData({})
+					content: "<div class='items'>3</div>",
+					layoutData: new FlexItemData({})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -687,6 +722,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -706,16 +742,9 @@ sap.ui.define([
 		this.oItem1DomRef.style.width = "100%";
 		this.oItem2DomRef.style.width = "100%";
 		this.oItem3DomRef.style.width = "100%";
-		if (Device.browser.internet_explorer) {
-			// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box// TODO remove after the end of support for Internet Explorer
-			assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 247) <= 1, "Width of Item 1 should be 247 (is " + this.oItem1DomRef.offsetWidth + ")");
-			assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 107) <= 1, "Width of Item 2 should be 107 (is " + this.oItem2DomRef.offsetWidth + ")");
-			assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 34) <= 1, "Width of Item 3 should be 34 (is " + this.oItem3DomRef.offsetWidth + ")");
-		} else {
-			assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 244) <= 1, "Width of Item 1 should be 244 (is " + this.oItem1DomRef.offsetWidth + ")");
-			assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 101) <= 1, "Width of Item 2 should be 101 (is " + this.oItem2DomRef.offsetWidth + ")");
-			assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 43) <= 1, "Width of Item 3 should be 43 (is " + this.oItem3DomRef.offsetWidth + ")");
-		}
+		assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 244) <= 1, "Width of Item 1 should be 244 (is " + this.oItem1DomRef.offsetWidth + ")");
+		assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 101) <= 1, "Width of Item 2 should be 101 (is " + this.oItem2DomRef.offsetWidth + ")");
+		assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 43) <= 1, "Width of Item 3 should be 43 (is " + this.oItem3DomRef.offsetWidth + ")");
 	});
 
 	QUnit.test("Base Size", function(assert) {
@@ -763,6 +792,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -809,18 +839,18 @@ sap.ui.define([
 			];
 			this.vItemConfigs = [
 				{
-				layoutData: new FlexItemData({
-					baseSize: "0",
-					growFactor: 3
-				})
+					layoutData: new FlexItemData({
+						baseSize: "0",
+						growFactor: 3
+					})
 				},
 				{
-				content: "<div class='items'>2</div>",
-				layoutData: new FlexItemData({})
+					content: "<div class='items'>2</div>",
+					layoutData: new FlexItemData({})
 				},
 				{
-				content: "<div class='items'>3</div>",
-				layoutData: new FlexItemData({})
+					content: "<div class='items'>3</div>",
+					layoutData: new FlexItemData({})
 				}
 			];
 			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
@@ -831,6 +861,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -867,11 +898,10 @@ sap.ui.define([
 			Core.applyChanges();
 		},
 		afterEach: function() {
-
 			this.oLayoutData = null;
-
 			this.oBox.destroy();
 			this.oBox = null;
+			Core.applyChanges();
 		}
 	});
 
