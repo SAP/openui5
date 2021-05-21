@@ -147,13 +147,13 @@ sap.ui.define([
         return this._oNavBackBtn;
     };
 
-    Wrapper.prototype.addPanel = function (oPanel, sKey) {
+    Wrapper.prototype.addPanel = function (oPanel, sKey, sTab) {
         var oContainerItem = new ContainerItem({
             key: sKey,
             content: oPanel
         });
 
-        this._addToNavigator(sKey);
+        this._addToNavigator(sKey, sTab);
 
         this.addView(oContainerItem);
     };
@@ -165,7 +165,7 @@ sap.ui.define([
         this._getNavBackBtn().setText(sKey);
     };
 
-    Wrapper.prototype._addToNavigator = function (sKey) {
+    Wrapper.prototype._addToNavigator = function (sKey, sText) {
 
         if (sKey == this.DEFAULT_KEY) {
             return;
@@ -175,12 +175,12 @@ sap.ui.define([
             this.getView(this.DEFAULT_KEY);
             this._getNavigationList().addItem(new StandardListItem({
                 type: ListItemType.Navigation,
-                title: sKey
+                title: sText
             }));
         } else {
             this._getTabBar().addItem(new IconTabFilter({
                 key: sKey,
-                text: sKey
+                text: sText || sKey
             }));
         }
     };

@@ -193,7 +193,8 @@ sap.ui.define([
 				}
 				var oSetting = oUISettings[pAdaptationUI._key];
 				return {
-					key: oSetting.containerSettings && oSetting.containerSettings.tabText ? oSetting.containerSettings.tabText : oSetting._key,
+					key: pAdaptationUI._key,
+					tab: oSetting.containerSettings && oSetting.containerSettings.tabText ? oSetting.containerSettings.tabText : pAdaptationUI._key,
 					panel: oAdaptationUI
 				};
 			}.bind(this));
@@ -205,9 +206,7 @@ sap.ui.define([
 			var oPopupContent = bUseP13nContainer ? new Wrapper() : aUIs[0].panel;
 			if (bUseP13nContainer) {
 				aUIs.forEach(function(mUI){
-					var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-					var sTabText = oRB.getText(mUI.key);
-					oPopupContent.addPanel(mUI.panel, sTabText);
+					oPopupContent.addPanel(mUI.panel, mUI.key, mUI.tab);
 				});
 				oPopupContent.switchView(aUIs[0].key);
 			}
