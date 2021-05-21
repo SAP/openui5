@@ -8,7 +8,7 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleBu
 	/**
 	 * Constructor for a new MultiSelectAction.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Custom initial settings for the new control
+	 * @param {object} [mSettings] Optional initial settings for the new control:  a map/JSON-object with initial property values, event listeners etc. for the new object
 	 *
 	 * @class
 	 * A MultiSelectAction button has default semantic-specific properties and is
