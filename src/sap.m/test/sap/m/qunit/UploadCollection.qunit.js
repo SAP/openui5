@@ -902,8 +902,8 @@ sap.ui.define([
 
 	QUnit.test("Set tooltip of FileUploader", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOAD");
-		assert.strictEqual(this.oUploadCollection._oFileUploader.getTooltip(), sText, "Correct tooltip of FileUploader");
-		assert.strictEqual(this.oUploadCollection._oFileUploader.getButtonText(), sText, "Correct tooltip of FileUploader");
+		assert.strictEqual(this.oUploadCollection._oFileUploader.getTooltip(), null, "No tooltip set to the FileUploader");
+		assert.strictEqual(this.oUploadCollection._oFileUploader.getButtonText(), sText, "Correct Button Text of FileUploader");
 	});
 
 	QUnit.test("Determine icon from filename", function(assert) {
@@ -2312,6 +2312,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "Edit", "Item 2 has status 'Edit'");
 		assert.equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
+		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text for Editetd element is empty.");
 
 		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
@@ -2329,6 +2331,9 @@ sap.ui.define([
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[1].sId);
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "Item 2 has status 'display' after 'cancel'");
+		assert.notEqual(sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
+		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text is empty.");
 
 		//check file name after cancel
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
@@ -2357,6 +2362,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oUploadCollection.aItems[2]._status, "Edit", "Item 2 has status 'Edit'");
 		assert.equal(this.oUploadCollection.aItems[2].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
+		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.ok(!this.oUploadCollection.oInvisibleText.getText() , "Invisible Text for Editetd element is empty.");
 
 		var oInputField3 = jQuery.sap.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName-inner");
 		oInputField3[0].value = "NewDocument";
@@ -2382,6 +2389,9 @@ sap.ui.define([
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oUploadCollection.aItems[2]._status, "display", "Item 3 has status 'display' after 'cancel'");
+		assert.notEqual(sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
+		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text is empty.");
 
 		// edit and delete buttons
 		oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");

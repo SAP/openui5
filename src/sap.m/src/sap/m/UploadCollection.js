@@ -674,6 +674,7 @@ sap.ui.define([
 		this._oListEventDelegate = null;
 		this._oItemToUpdate = null;
 		this._sReziseHandlerId = null;
+		this.oInvisibleText = new sap.ui.core.InvisibleText().toStatic();
 	};
 
 	/* =========================================================== */
@@ -1118,6 +1119,10 @@ sap.ui.define([
 							});
 						}
 						$oEditBox.trigger("focus");
+						//Create dummy InvisibleText to reset the ariaLabel value read out
+						this.oInvisibleText.setText("");
+						sap.ui.getCore().byId(this.editModeItem + "-cli").removeAllAriaLabelledBy();
+						sap.ui.getCore().byId(this.editModeItem + "-cli").addAriaLabelledBy(this.oInvisibleText.getId());
 						this._oListEventDelegate = {
 							onclick: function(event) {
 								this._handleClick(event, sId);
@@ -1183,6 +1188,10 @@ sap.ui.define([
 			}
 		}
 		this._deregisterSizeHandler();
+		//Destroy the created InvisibleText
+		if (this.oInvisibleText) {
+			this.oInvisibleText.destroy();
+		}
 	};
 
 	/* =========================================================== */
@@ -2897,7 +2906,6 @@ sap.ui.define([
 			this._oFileUploader = new FileUploader(this.getId() + "-" + this._iFUCounter + "-uploader", {
 				buttonOnly: true,
 				buttonText: sTooltip,
-				tooltip: sTooltip,
 				iconOnly: false,
 				enabled: this.getUploadEnabled(),
 				fileType: this.getFileType(),
