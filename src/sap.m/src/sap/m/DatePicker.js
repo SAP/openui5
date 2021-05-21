@@ -431,6 +431,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the displayFormat of the DatePicker.
+	 *
+	 * @param {string} sDisplayFormat  new value for <code>displayFormat</code>
+	 * @returns {this} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	 DatePicker.prototype.setDisplayFormat = function(sDisplayFormat) {
+
+		this.setProperty("displayFormat", sDisplayFormat);
+
+		if (this._oCalendar) { // if the calendar already exists, destroy it and create new one according to the new format
+			this._oCalendar.removeDelegate(this._oCalendarAfterRenderDelegate);
+			this._oCalendar.destroy();
+			this._oCalendar = null;
+			this._createPopupContent();
+		}
+
+		return this;
+
+	};
+
+	/**
 	 * Defines the width of the DatePicker. Default value is 100%
 	 *
 	 * @param {string} sWidth  new value for <code>width</code>

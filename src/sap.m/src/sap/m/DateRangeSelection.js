@@ -390,7 +390,8 @@ sap.ui.define([
 
 		// if displayFormat changes the value must be formatted again
 
-		this.setProperty("displayFormat", sDisplayFormat, true); // no rerendering
+		DatePicker.prototype.setDisplayFormat.apply(this, arguments);
+
 		var sOutputValue = this._formatValue(this.getDateValue(), this.getSecondDateValue());
 
 		// as value also used displayFormat update value too
