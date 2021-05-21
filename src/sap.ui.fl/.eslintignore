@@ -2,4 +2,4 @@
 dist
 target
 
-test/sap/ui/fl/qunit/registry/TestChangeHandlersBROKEN.flexibility.js
+test/sap/ui/fl/qunit/testResources/TestChangeHandlersBROKEN.flexibility.js
