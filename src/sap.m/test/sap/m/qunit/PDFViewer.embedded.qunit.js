@@ -151,7 +151,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering with toolbar related changes", function (assert) {
-		assert.expect(9);
+		assert.expect(8);
 		var done = assert.async();
 
 		var oModel = new JSONModel({
@@ -193,6 +193,7 @@ sap.ui.define([
 			})
 			.then(function () {
 				oModel.setData({showDownloadButton: false}, true);
+				TestUtils.rerender();
 			})
 			.then(TestUtils.wait(2000))
 			.then(function () {

@@ -2,10 +2,8 @@
  * ${copyright}
  */
 
- /* global ActiveXObject:false */
-
-sap.ui.define(['sap/ui/Device', "sap/base/Log"],
-	function (Device, Log) {
+sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValidator"],
+	function (Device, Log, URLListValidator) {
 		"use strict";
 
 		function shouldShowToolbar(oControl) {
@@ -46,31 +44,11 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 				return bIsEnabled;
 			}
 
-			if (Device.browser.internet_explorer) {
-				// hacky code how to recognize that pdf plugin is installed and enabled
-				try {
-					/* eslint-disable no-new */
-					new ActiveXObject("AcroPDF.PDF");
-					/* eslint-enable no-new */
-				} catch (e) {
-					bIsEnabled = false;
-				}
-
-				return bIsEnabled;
-			}
-
 			var aMimeTypes = navigator.mimeTypes;
-			if (aMimeTypes.length) {
-				bIsEnabled = aAllowedMimeTypes.some(function (sAllowedMimeType) {
-					var oMimeTypeItem = aMimeTypes.namedItem(sAllowedMimeType);
-					return oMimeTypeItem !== null;
-				});
-			} else {
-				//Return true if the browser is headless, since there are no plugins installed on headless browsers
-				if (navigator.userAgent.match(/headless/gi)) {
-					bIsEnabled = false;
-				}
-			}
+			bIsEnabled = aAllowedMimeTypes.some(function (sAllowedMimeType) {
+				var oMimeTypeItem = aMimeTypes.namedItem(sAllowedMimeType);
+				return oMimeTypeItem !== null;
+			});
 
 			return bIsEnabled;
 		};
@@ -109,8 +87,28 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 		};
 
 		PDFViewerRenderer.renderPdfContent = function (oRm, oControl) {
+
 			if (oControl._shouldRenderPdfContent()) {
-				oRm.openStart("iframe");
+				oRm.openStart("iframe", oControl.getId() + "-iframe");
+
+				var sParametrizedSource = oControl.getSource();
+				var iCrossPosition = oControl.getSource().indexOf("#");
+				if (iCrossPosition > -1) {
+					sParametrizedSource = sParametrizedSource.substr(0, iCrossPosition);
+				}
+				if (!(Device.browser.safari && sParametrizedSource.startsWith("blob:"))) {
+					sParametrizedSource += "#view=FitH";
+				}
+				if (!URLListValidator.validate(sParametrizedSource)) {
+					sParametrizedSource = encodeURI(sParametrizedSource);
+				}
+
+				if (URLListValidator.validate(sParametrizedSource)) {
+					oRm.attr("src", sParametrizedSource);
+				} else {
+					oControl._fireErrorEvent();
+				}
+
 				oRm.class("sapMPDFViewerContent");
 				oRm.class("sapMPDFViewerLoading");
 				if (shouldShowToolbar(oControl)) {
