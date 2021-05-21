@@ -175,7 +175,24 @@ sap.ui.define([
 
 			done();
 		}, 300);
-
 	});
 
+	QUnit.test("Refresh", function (assert) {
+		// Arrange
+		var done = assert.async();
+		var oErrorSpy = sinon.spy(Log, "error");
+
+		setTimeout(function () {
+			Core.applyChanges();
+			this.oCard.refresh();
+
+			setTimeout(function () {
+				assert.notOk(oErrorSpy.called, "Error is not logged");
+
+				oErrorSpy.restore();
+				done();
+			}, 300);
+
+		}.bind(this), 300);
+	});
 });
