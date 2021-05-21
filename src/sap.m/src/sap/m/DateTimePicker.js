@@ -260,7 +260,7 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function() {
-
+			this.getAggregation('timeSliders').getAggregation("_columns")[0].setIsExpanded(false);
 			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 				var oSwitcher = this.getAggregation("_switcher");
 				var sKey = oSwitcher.getSelectedKey();
