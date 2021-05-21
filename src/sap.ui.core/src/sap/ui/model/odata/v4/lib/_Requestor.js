@@ -376,8 +376,7 @@ sap.ui.define([
 				oChangeRequest,
 				aChangeSet,
 				oError,
-				i,
-				j;
+				i, j;
 
 			// restore changes in reverse order to get the same initial state
 			for (j = aBatchQueue.length - 1; j >= 0; j -= 1) {

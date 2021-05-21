@@ -666,7 +666,7 @@ sap.ui.define([
 				? [vAnnotationUri] : vAnnotationUri;
 			this.sDefaultBindingMode = BindingMode.OneTime;
 			this.mETags = {};
-			this.dLastModified = new Date(0);
+			this.oLastModified = new Date(0);
 			this.oMetadataPromise = null;
 			this.oModel = oModel;
 			this.mMetadataUrl2Promise = {};
@@ -2042,7 +2042,7 @@ sap.ui.define([
 
 		// adds all reduced paths for the range iBasePathLength..iMaxIndex of the given segments
 		function reduce(aSegments0, aMetadataForPathPrefix0, iMaxIndex, bCopyOnWrite) {
-			var i, iPotentialPartner, aOverloadMetadata;
+			var iPotentialPartner, aOverloadMetadata, i;
 
 			// A match has been found at i, allowing to reduce iLength segments. First try to
 			// find other matches in the unreduced path, then reduce and add the match.
@@ -2206,7 +2206,7 @@ sap.ui.define([
 	 * @since 1.47.0
 	 */
 	ODataMetaModel.prototype.getLastModified = function () {
-		return this.dLastModified;
+		return this.oLastModified;
 	};
 
 	/**
@@ -3378,7 +3378,7 @@ sap.ui.define([
 	/**
 	 * Validates the given scope. Checks the OData version, searches for forbidden
 	 * $IncludeAnnotations and conflicting $Include. Uses and fills
-	 * <code>this.mSchema2MetadataUrl</code>. Computes <code>this.dLastModified</code> and
+	 * <code>this.mSchema2MetadataUrl</code>. Computes <code>this.oLastModified</code> and
 	 * <code>this.mETags</code>.
 	 *
 	 * @param {string} sUrl
@@ -3393,12 +3393,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.validate = function (sUrl, mScope) {
-		var i,
-			dDate,
-			dLastModified,
-			sSchema,
-			oReference,
-			sReferenceUri;
+		var oDate, oLastModified, sSchema, oReference, sReferenceUri, i;
 
 		if (!this.bSupportReferences) {
 			return mScope;
@@ -3424,12 +3419,12 @@ sap.ui.define([
 		}
 
 		// handle & remove Date, ETag and Last-Modified headers
-		dLastModified = mScope.$LastModified ? new Date(mScope.$LastModified) : null;
-		this.mETags[sUrl] = mScope.$ETag ? mScope.$ETag : dLastModified;
-		dDate = mScope.$Date ? new Date(mScope.$Date) : new Date();
-		dLastModified = dLastModified || dDate; // @see #getLastModified
-		if (this.dLastModified < dLastModified) {
-			this.dLastModified = dLastModified;
+		oLastModified = mScope.$LastModified ? new Date(mScope.$LastModified) : null;
+		this.mETags[sUrl] = mScope.$ETag ? mScope.$ETag : oLastModified;
+		oDate = mScope.$Date ? new Date(mScope.$Date) : new Date();
+		oLastModified = oLastModified || oDate; // @see #getLastModified
+		if (this.oLastModified < oLastModified) {
+			this.oLastModified = oLastModified;
 		}
 		delete mScope.$Date;
 		delete mScope.$ETag;

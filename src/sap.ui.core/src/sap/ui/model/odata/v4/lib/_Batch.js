@@ -113,9 +113,9 @@ sap.ui.define([
 	 * @returns {string} The HTTP header value
 	 */
 	function getHeaderValue(sHeaders, sHeaderName) {
-		var i,
-			aHeaderParts,
-			aHeaders = sHeaders.split("\r\n");
+		var aHeaderParts,
+			aHeaders = sHeaders.split("\r\n"),
+			i;
 
 		for (i = 0; i < aHeaders.length; i += 1) {
 			aHeaderParts = aHeaders[i].split(":");
@@ -154,11 +154,11 @@ sap.ui.define([
 				sHttpHeaders,
 				iHttpHeadersEnd,
 				aHttpStatusInfos,
-				i,
 				sMimeHeaders,
 				iMimeHeadersEnd,
 				oResponse = {},
-				iResponseIndex;
+				iResponseIndex,
+				i;
 
 			iMimeHeadersEnd = sBatchPart.indexOf("\r\n\r\n");
 			sMimeHeaders = sBatchPart.slice(0, iMimeHeadersEnd);

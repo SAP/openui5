@@ -158,7 +158,7 @@ sap.ui.define([
 	 *   The value for the JSON
 	 */
 	_MetadataConverter.prototype.getAnnotationValue = function (sType, sValue) {
-		var i, vValue, aValues;
+		var vValue, aValues, i;
 
 		switch (sType) {
 			case "AnnotationPath":
@@ -211,8 +211,8 @@ sap.ui.define([
 	_MetadataConverter.prototype.getInlineAnnotationValue = function (oElement) {
 		var oAttribute,
 			oAttributeList = oElement.attributes,
-			i,
-			vValue;
+			vValue,
+			i;
 
 		// check the last attribute first, this is typically the one with the annotation value
 		for (i = oAttributeList.length - 1; i >= 0; i -= 1) {
@@ -423,10 +423,10 @@ sap.ui.define([
 	 * @returns {object} The value for the JSON
 	 */
 	_MetadataConverter.prototype.postProcessRecord = function (oElement, aResult) {
-		var i,
-			oPropertyValue,
+		var oPropertyValue,
 			oResult = this.oAnnotatable.target,
-			oType = oElement.getAttribute("Type");
+			oType = oElement.getAttribute("Type"),
+			i;
 
 		if (oType) {
 			oResult.$Type = this.resolveAlias(oType);
@@ -739,14 +739,13 @@ sap.ui.define([
 			oChildList = oElement.childNodes,
 			oChildNode,
 			vChildResult,
-			i,
 			aIncludes,
-			j,
 			sName,
 			sPreviousNamespace = this.xmlns,
 			vResult,
 			aResult = [],
-			sXmlNamespace = oConfig.__xmlns || this.xmlns;
+			sXmlNamespace = oConfig.__xmlns || this.xmlns,
+			i, j;
 
 		if (sXmlNamespace && sXmlNamespace !== oElement.namespaceURI) {
 			// Ignore this element because the namespace is not as expected
