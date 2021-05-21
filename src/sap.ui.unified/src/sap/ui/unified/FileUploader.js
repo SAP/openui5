@@ -1510,6 +1510,8 @@ sap.ui.define([
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
+
+		this.oBrowse._bPressedSpace = false;
 	};
 
 	/**
