@@ -158,7 +158,7 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 	mRequestInfo = {
 		request: oRequest,
 		response: oResponse,
-		url: oRequest ? oRequest.requestUri : oResponse.requestUri
+		url: oRequest.requestUri
 	};
 
 	if (oResponse.statusCode >= 200 && oResponse.statusCode < 300) {
@@ -221,7 +221,7 @@ ODataMessageParser.prototype._getAffectedTargets = function (aMessages, mRequest
 		oEntitySet,
 		sRequestTarget = this._parseUrl(mRequestInfo.url).url;
 
-	if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.request.created){
+	if (mRequestInfo.request.key && mRequestInfo.request.created){
 		mAffectedTargets[mRequestInfo.request.key] = true;
 	}
 
@@ -685,8 +685,7 @@ ODataMessageParser.prototype._createGenericError = function (mRequestInfo) {
  *   An array with messages contained in the body
  */
 ODataMessageParser.prototype._getBodyMessages = function (oOuterError, aInnerErrors, mRequestInfo) {
-	var sContentID = mRequestInfo.request // is undefined for token request errors
-			&& mRequestInfo.request.headers["Content-ID"],
+	var sContentID = mRequestInfo.request.headers["Content-ID"],
 		aMessages = [],
 		oOuterMessage = this._createMessage(oOuterError, mRequestInfo, true),
 		that = this;
@@ -712,16 +711,14 @@ ODataMessageParser.prototype._getBodyMessages = function (oOuterError, aInnerErr
 };
 
 /**
- * Logs the given messages as an error if a request object is given.
+ * Logs the given messages as an error.
  *
  * @param {sap.ui.core.message.Message[]} aMessages Messages to be logged
- * @param {object} [oRequest] The request object which caused the given messages
+ * @param {object} oRequest The request object which caused the given messages
+ * @param {string} sStatusCode The status code of the error response
  */
 ODataMessageParser.prototype._logErrorMessages = function (aMessages, oRequest, sStatusCode) {
-	var sErrorDetails;
-
-	if (oRequest) {
-		sErrorDetails = aMessages.length
+	var sErrorDetails = aMessages.length
 			? JSON.stringify(aMessages.map(function (oMessage) {
 				return {
 					code : oMessage.getCode(),
@@ -733,9 +730,8 @@ ODataMessageParser.prototype._logErrorMessages = function (aMessages, oRequest, 
 			}))
 			: "Another request in the same change set failed";
 
-		Log.error("Request failed with status code " + sStatusCode + ": " + oRequest.method + " "
-			+ oRequest.requestUri, sErrorDetails, sClassName);
-	}
+	Log.error("Request failed with status code " + sStatusCode + ": " + oRequest.method + " "
+		+ oRequest.requestUri, sErrorDetails, sClassName);
 };
 
 /**

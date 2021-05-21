@@ -1573,6 +1573,7 @@ sap.ui.define([
 			oMessage2 = new Message({code : "~code1", message : "bar"}),
 			oMessageParser = new ODataMessageParser("/foo"),
 			oMessageParserMock = this.mock(oMessageParser),
+			mRequestInfo = {request : {headers : {}}},
 			oResponse = {
 				body : "{\"error\":{\"code\":\"~code0\",\"message\":{\"value\":\"foo\"},"
 					+ "\"innererror\":{\"errordetails\":[{\"code\":\"~code0\",\"message\":\"foo\","
@@ -1589,17 +1590,17 @@ sap.ui.define([
 					innererror : {errordetails : [oInnerError0, oInnerError1]},
 					message : {value : "foo"},
 					severity : "Error"
-				}, "~mRequestInfo", true)
+				}, sinon.match.same(mRequestInfo), true)
 			.returns(oMessage0);
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(oInnerError0, "~mRequestInfo", true)
+			.withExactArgs(oInnerError0, sinon.match.same(mRequestInfo), true)
 			.returns(oMessage1);
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(oInnerError1, "~mRequestInfo", true)
+			.withExactArgs(oInnerError1, sinon.match.same(mRequestInfo), true)
 			.returns(oMessage2);
 
 		// code under test
-		aResult = oMessageParser._parseBody(oResponse, "~mRequestInfo");
+		aResult = oMessageParser._parseBody(oResponse, mRequestInfo);
 
 		assert.strictEqual(aResult.length, 2);
 		assert.strictEqual(aResult[0], oMessage1);
@@ -1614,6 +1615,7 @@ sap.ui.define([
 			oMessage2 = new Message({code : "~code1", message : "bar"}),
 			oMessageParser = new ODataMessageParser("/foo"),
 			oMessageParserMock = this.mock(oMessageParser),
+			mRequestInfo = {request : {headers : {}}},
 			oResponse = {
 				body : "<error><code>~code0</code><message>foo</message><innererror><errordetails>"
 					+ "<errordetail><code>~code0</code><message>foo</message><target></target>"
@@ -1625,20 +1627,20 @@ sap.ui.define([
 			aResult;
 
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs({code : "~code0", message : "foo", severity : "Error"}, "~mRequestInfo",
-				true)
+			.withExactArgs({code : "~code0", message : "foo", severity : "Error"},
+				sinon.match.same(mRequestInfo), true)
 			.returns(oMessage0);
 		oMessageParserMock.expects("_createMessage")
 			.withExactArgs({code : "~code0", message : "foo", severity : "error", target : ""},
-				"~mRequestInfo", true)
+				sinon.match.same(mRequestInfo), true)
 			.returns(oMessage1);
 		oMessageParserMock.expects("_createMessage")
 			.withExactArgs({code : "~code1", message : "bar", severity : "error", target : ""},
-				"~mRequestInfo", true)
+				sinon.match.same(mRequestInfo), true)
 			.returns(oMessage2);
 
 		// code under test
-		aResult = oMessageParser._parseBody(oResponse, "~mRequestInfo");
+		aResult = oMessageParser._parseBody(oResponse, mRequestInfo);
 
 		assert.strictEqual(aResult.length, 2);
 		assert.strictEqual(aResult[0], oMessage1);
@@ -1680,23 +1682,24 @@ sap.ui.define([
 			oMessage2 = new Message({code : "~code1", message : "bar"}),
 			oMessageParser = new ODataMessageParser("/foo"),
 			oMessageParserMock = this.mock(oMessageParser),
+			mRequestInfo = {request : {headers : {}}},
 			aResult;
 
 		oMessageParserMock.expects("_createMessage")
 			.withExactArgs(sinon.match.object.and(sinon.match.has("code", oOuterMessage.code))
 					.and(/*JSON*/sinon.match.has("message", {value : oOuterMessage.message})
 						.or(/*XML*/sinon.match.has("message", oOuterMessage.message))),
-				"~mRequestInfo", true)
+				sinon.match.same(mRequestInfo), true)
 			.returns(oMessage0);
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(sinon.match.object, "~mRequestInfo", true)
+			.withExactArgs(sinon.match.object, sinon.match.same(mRequestInfo), true)
 			.returns(oMessage1);
 		oMessageParserMock.expects("_createMessage")
-			.withExactArgs(sinon.match.object, "~mRequestInfo", true)
+			.withExactArgs(sinon.match.object, sinon.match.same(mRequestInfo), true)
 			.returns(oMessage2);
 
 		// code under test
-		aResult = oMessageParser._parseBody(oResponse, "~mRequestInfo");
+		aResult = oMessageParser._parseBody(oResponse, mRequestInfo);
 
 		assert.strictEqual(aResult.length, 3);
 		assert.strictEqual(aResult[0], oMessage0);
@@ -1847,7 +1850,7 @@ sap.ui.define([
 				_serviceUrl : "serviceUrl"
 			},
 			mRequestInfo = {
-				request : oFixture.oRequest,
+				request : oFixture.oRequest || {},
 				url : "url"
 			},
 			that = this;
@@ -2085,10 +2088,7 @@ sap.ui.define([
 	{code : "~code0", message : {value : "foo"}},
 	{code : "~code0", message : "foo"}
 ].forEach(function (oOuterMessage, i) {
-	[{headers : {}}, undefined].forEach(function (oRequest) {
-	var sTitle = "_getBodyMessages: filter duplicates with" + (oRequest ? "" : "out")
-			+ " given request #" + i;
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("_getBodyMessages: filter duplicates #" + i, function (assert) {
 		var aInnerMessages = [
 				{code : "~code0", message : "foo"},
 				{code : "~code1", message : "bar"}
@@ -2099,7 +2099,7 @@ sap.ui.define([
 			oMessage2 = new Message(aInnerMessages[1]),
 			oMessageParser = new ODataMessageParser("/foo"),
 			oMessageParserMock = this.mock(oMessageParser),
-			mRequestInfo = {request : oRequest},
+			mRequestInfo = {request : {headers : {}}},
 			aResult;
 
 		oMessageParserMock.expects("_createMessage")
@@ -2122,7 +2122,6 @@ sap.ui.define([
 		assert.strictEqual(aResult.length, 2);
 		assert.strictEqual(aResult[0], oMessage1);
 		assert.strictEqual(aResult[1], oMessage2);
-	});
 	});
 });
 
@@ -2290,14 +2289,6 @@ sap.ui.define([
 			// code under test
 			oMessageParser._parseBodyXML(oResponse, "~mRequestInfo", "application/xml"),
 			"~aMessages");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_logErrorMessages: no oRequest object", function (assert) {
-		var oMessageParser = new ODataMessageParser("/foo");
-
-		// code under test - log error never called
-		oMessageParser._logErrorMessages(/*aMessages*/[] /* , oRequest, sStatusCode */);
 	});
 
 	//*********************************************************************************************

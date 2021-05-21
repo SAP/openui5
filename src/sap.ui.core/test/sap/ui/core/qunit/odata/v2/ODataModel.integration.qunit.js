@@ -2035,6 +2035,50 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A failed token HEAD request expects a following token GET request. A failed token
+	// GET request leads to an error message and corresponding console log.
+	QUnit.test("Messages: Failing token requests with logging", function (assert) {
+		var oModel = createSalesOrdersModel({persistTechnicalMessages : true, useBatch : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}" />\
+</FlexBox>';
+
+		this.expectRequest({
+				deepPath : "",
+				headers : {"x-csrf-token" : "Fetch"},
+				method : "HEAD",
+				requestUri : ""
+			}, createErrorResponse({message : "HEAD failed"}))
+			.expectRequest({
+				deepPath : "",
+				headers : {"x-csrf-token" : "Fetch"},
+				method : "GET",
+				requestUri : ""
+			}, createErrorResponse({message : "GET failed"}))
+			.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1"
+			})
+			.expectValue("id", "1")
+			.expectMessages([{
+				code : "UF0",
+				message : "GET failed",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}]);
+
+		this.oLogMock.expects("error")
+			.withExactArgs("Request failed with status code 500: "
+					+ "GET /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/",
+				/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Read and display collection data for a table with a single field
 	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	QUnit.test("Minimal integration test with collection data", function (assert) {

@@ -3139,16 +3139,14 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.refreshSecurityToken = function(fnSuccess, fnError, bAsync) {
-		var sToken;
-		var that = this;
-		var sUrl = this._createRequestUrlWithNormalizedPath("/");
-
-		var mTokenRequest = {
-			abort: function() {
-				this.request.abort();
-			}
-		};
-
+		var oRequest, sToken,
+			mTokenRequest = {
+				abort: function() {
+					this.request.abort();
+				}
+			},
+			sUrl = this._createRequestUrlWithNormalizedPath("/"),
+			that = this;
 
 		function handleSuccess(oData, oResponse) {
 			if (oResponse) {
@@ -3177,7 +3175,7 @@ sap.ui.define([
 			// Disable token handling, if token request returns an error
 			that.resetSecurityToken();
 			that.bTokenHandling = false;
-			that._handleError(oError);
+			that._handleError(oError, oRequest);
 
 			if (fnError) {
 				fnError(oError);
@@ -3191,7 +3189,8 @@ sap.ui.define([
 
 		function requestToken(sRequestType, fnError) {
 			// trigger a read to the service url to fetch the token
-			var oRequest = that._createRequest(sUrl, "", sRequestType, that._getHeaders(undefined, true), null, null, !!bAsync);
+			oRequest = that._createRequest(sUrl, "", sRequestType,
+				that._getHeaders(undefined, true), null, null, !!bAsync);
 			oRequest.headers["x-csrf-token"] = "Fetch";
 			return that._request(oRequest, handleSuccess, fnError, undefined, undefined, that.getServiceMetadata());
 		}
@@ -4536,12 +4535,12 @@ sap.ui.define([
 	 * Error handling for requests.
 	 *
 	 * @param {object} oError The error object
-	 * @param {object} [oRequest] The request object
+	 * @param {object} oRequest The request object
 	 * @returns {map} A map of error information
 	 * @private
 	 */
 	ODataModel.prototype._handleError = function(oError, oRequest) {
-		var sErrorDetails, sErrorMsg, sToken,
+		var sToken,
 			mParameters = {message : oError.message};
 
 		if (oError.response) {
@@ -4558,20 +4557,13 @@ sap.ui.define([
 						this.resetSecurityToken();
 					}
 				}
-				if (!oRequest) {
-					sErrorMsg = oError.message;
-					sErrorDetails = JSON.stringify(oError.response);
-				}
 			}
 			mParameters.statusCode = oError.response.statusCode;
 			mParameters.statusText = oError.response.statusText;
 			mParameters.headers = oError.response.headers;
 			mParameters.responseText = oError.response.body;
-		} else {
-			sErrorMsg = "The following problem occurred: " + oError.message;
-		}
-		if (sErrorMsg && !oError.$reported) {
-			Log.error(sErrorMsg, sErrorDetails, sClassName);
+		} else if (!oError.$reported) {
+			Log.error("The following problem occurred: " + oError.message, undefined, sClassName);
 		}
 		oError.$reported = true;
 
