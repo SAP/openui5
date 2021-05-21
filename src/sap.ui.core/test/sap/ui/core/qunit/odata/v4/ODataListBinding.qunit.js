@@ -1269,6 +1269,29 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("fetchContexts: binding already destroyed", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oPromise;
+
+		this.mock(oBinding).expects("fetchData")
+			.withExactArgs(1, 2, 3, "~oGroupLock~", "~fnDataRequested~")
+			.returns(SyncPromise.resolve({}));
+		this.mock(oBinding).expects("createContexts").never();
+
+		// code under test
+		oPromise = oBinding.fetchContexts(1, 2, 3, "~oGroupLock~", true, "~fnDataRequested~");
+
+		oBinding.destroy();
+
+		return oPromise.then(function () {
+			assert.ok(false, "Unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError.message, "Binding already destroyed");
+			assert.strictEqual(oError.canceled, true);
+		});
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bChanged) {
 	QUnit.test("requestContexts: changed=" + bChanged, function (assert) {
 		var oBinding = this.bindList("n/a"),
