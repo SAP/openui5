@@ -84,13 +84,12 @@ sap.ui.define([
 
 	QUnit.module("Focus", {
 		beforeEach: function () {
-			/* TODO replace with display: grid after the end of support for Internet Explorer */
 			this.$grid = jQuery(
-				"<div style='width: 250px;'>" +
-					"<div style='display: inline-block; width: 120px; height: 80px;'> item1 </div>" +
-					"<div style='display: inline-block; width: 120px' height: 80px;'> item2 </div>" +
-					"<div style='display: inline-block; width: 120px' height: 80px;'> item3 </div>" +
-					"<div style='display: inline-block; width: 120px' height: 80px;'> item4 </div>" +
+				"<div style='display: grid; grid-template-columns: repeat(2, 120px); grid-template-rows: 80px; grid-gap: 8px;'>" +
+					"<div> item1 </div>" +
+					"<div> item2 </div>" +
+					"<div> item3 </div>" +
+					"<div> item4 </div>" +
 				"</div>"
 			);
 
@@ -103,8 +102,8 @@ sap.ui.define([
 					getNavigationMatrix: function () {
 						return GridNavigationMatrix.create(this.$grid[0], this.$grid.children().get(), {
 							gap: 8,
-							columns: ["120px", "120px"],
-							rows: ["80px", "80px"]
+							columns: this.$grid.css("gridTemplateColumns").split(/\s+/),
+							rows: this.$grid.css("gridTemplateRows").split(/\s+/)
 						});
 					}.bind(this)
 				};

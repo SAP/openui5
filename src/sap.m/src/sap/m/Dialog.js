@@ -84,12 +84,12 @@ function(
 		var bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		// the time should be longer the longest transition in the CSS (200ms),
-		// because of focusing and transition relate issues especially in IE,
+		// because of focusing and transition related issues,
 		// where 200ms transition sometimes seems to last a little longer
 		var iAnimationDuration = bUseAnimations ? 300 : 10;
 
 		// HTML container scrollbar width
-		var iScrollbarWidth = 17;
+		var SCROLLBAR_WIDTH = 17;
 
 		var DRAGRESIZE_STEP = Rem.toPx(1);
 
@@ -1130,7 +1130,7 @@ function(
 						$dialogContent.width() < iMaxDialogWidth) {		// - if the dialog can't grow anymore
 
 						$dialog.addClass("sapMDialogVerticalScrollIncluded");
-						$dialogContent.css({"padding-right" : iScrollbarWidth});
+						$dialogContent.css({"padding-right" : SCROLLBAR_WIDTH});
 						this._iLastWidthAndHeightWithScroll = iCurrentWidthAndHeight;
 					} else {
 						$dialog.removeClass("sapMDialogVerticalScrollIncluded");
@@ -1152,12 +1152,6 @@ function(
 		 */
 		Dialog.prototype._hasVerticalScrollbar = function() {
 			var $dialogContent = this.$('cont');
-
-			if (Device.browser.msie) {
-				// The scrollHeight property may return incorrect value in IE
-				// so we do the check based on the width of the vertical scrollbar
-				return $dialogContent[0].clientWidth < $dialogContent.outerWidth();
-			}
 
 			return $dialogContent[0].clientHeight < $dialogContent[0].scrollHeight;
 		};
@@ -1597,11 +1591,6 @@ function(
 		Dialog.prototype._deregisterResizeHandler = function () {
 			var oWithin = Popup.getWithinAreaDomRef();
 
-			if (this._resizeListenerId) {
-				ResizeHandler.deregister(this._resizeListenerId);
-				this._resizeListenerId = null;
-			}
-
 			if (oWithin === window) {
 				Device.resize.detachHandler(this._onResize, this);
 			} else {
@@ -1615,12 +1604,7 @@ function(
 		 * @private
 		 */
 		Dialog.prototype._registerResizeHandler = function () {
-			var _$srollSontent = this.$("scroll"),
-				oWithin = Popup.getWithinAreaDomRef();
-
-			//The content have to have explicit size so the scroll will work when the user's content is larger than the available space.
-			//This can be removed and the layout change to flex when the support for IE9 is dropped// TODO remove after the end of support for Internet Explorer
-			this._resizeListenerId = ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
+			var oWithin = Popup.getWithinAreaDomRef();
 
 			if (oWithin === window) {
 				Device.resize.attachHandler(this._onResize, this);
