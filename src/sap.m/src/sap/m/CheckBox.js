@@ -8,7 +8,6 @@ sap.ui.define([
 	'./library',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
-	'sap/ui/core/IconPool',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
 	'./CheckBoxRenderer',
@@ -22,7 +21,6 @@ sap.ui.define([
 		library,
 		Device,
 		Control,
-		IconPool,
 		EnabledPropagator,
 		coreLibrary,
 		CheckBoxRenderer,
@@ -262,7 +260,6 @@ sap.ui.define([
 	 */
 	CheckBox.prototype.init = function() {
 		this.addActiveState(this);
-		IconPool.insertFontFaceStyle();
 		this._handleReferencingLabels();
 	};
 
