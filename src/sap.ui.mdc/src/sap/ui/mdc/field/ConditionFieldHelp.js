@@ -134,6 +134,12 @@ sap.ui.define([
 
 	};
 
+	ConditionFieldHelp.prototype.getAriaHasPopup = function() {
+
+		return "dialog"; // For JAWS this kind of PopOver is like a dialog
+
+	};
+
 	ConditionFieldHelp.prototype._createPopover = function() {
 
 		var oPopover = FieldHelpBase.prototype._createPopover.apply(this, arguments);

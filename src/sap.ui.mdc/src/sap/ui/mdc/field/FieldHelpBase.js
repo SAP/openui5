@@ -454,6 +454,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the value for aria attribute <code>haspopup</code>
+	 *
+	 * The screenreader needs to know what content the popup has.
+	 *
+	 * @returns {string|null} value for <code>haspopup</code>
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.92.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype.getAriaHasPopup = function() {
+
+		return "listbox"; // use listbox as default at it meets the most cases
+
+	};
+
+	/**
 	 * Returns the description of the ARIA role added to the assigned field.
 	 *
 	 * Normally the role is set to <code>combobox</code>. This works for most cases,
