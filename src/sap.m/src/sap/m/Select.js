@@ -533,7 +533,14 @@ function(
 
 		Select.prototype._getValueStateText = function() {
 			var sValueState = this.getValueState(),
-				sValueStateTypeText = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + sValueState.toUpperCase()),
+				sValueStateTypeText,
+				sValueStateText;
+
+				if (sValueState === ValueState.None) {
+					return "";
+				}
+
+				sValueStateTypeText = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + sValueState.toUpperCase());
 				sValueStateText = sValueStateTypeText + " " + (this.getValueStateText() || ValueStateSupport.getAdditionalText(this));
 
 			return sValueStateText;
