@@ -26,9 +26,7 @@ body {
 
 .mainLayoutContainer {
 	display: grid;
-	display: -ms-grid;
 	grid-gap: 0.5rem;
-	-ms-grid-gap: 0.5rem;
 	width: 100%;
 	height: 100%;
 }
@@ -44,55 +42,36 @@ body {
 #sap-ui-TitleWindow {
 	grid-column: 1 / 4;
 	grid-row: 1 / 1;
-	-ms-grid-column: 1;
-	-ms-grid-column-span: 4;
-	-ms-grid-row: 1;
 }
 
 #sap-ui-SampleWindow {
 	grid-column: 1;
 	grid-row: 2 / 4;
-	-ms-grid-column: 1;
-	-ms-grid-row: 2;
-	-ms-grid-row-span: 2;
 }
 
 #sap-ui-SettingsWindow {
 	grid-column: 1;
 	grid-row: 4;
-	-ms-grid-column: 1;
-	-ms-grid-row: 4;
-	-ms-grid-row-span: 2;
 }
 
 #sap-ui-ContentWindow {
 	grid-column: 2;
 	grid-row: 2 / 4;
-	-ms-grid-column: 2;
-	-ms-grid-row: 2;
-	-ms-grid-row-span: 3;
 }
 
 #sap-ui-TraceWindow {
 	grid-column: 2;
 	grid-row: 4;
-	-ms-grid-column: 2;
-	-ms-grid-row: 4;
 }
 
 #sap-ui-ControlTreeWindow {
 	grid-column: 3;
 	grid-row: 2;
-	-ms-grid-column: 3;
-	-ms-grid-row: 2;
 }
 
 #sap-ui-PropertyListWindow {
 	grid-column: 3;
 	grid-row: 3 / 5;
-	-ms-grid-column: 3;
-	-ms-grid-row: 3;
-	-ms-grid-row-span: 3;
 }
 
 /*
@@ -101,8 +80,6 @@ body {
 .mainLayoutContainer.sampleonly {
 	grid-template-columns: 0 auto 0;
 	grid-template-rows: 35px auto 0 0;
-	-ms-grid-columns: 0 1fr 0;
-	-ms-grid-rows: 35px 1fr 0 0;
 }
 
 .mainLayoutContainer.sampleonly #sap-ui-SampleWindow,
@@ -119,8 +96,6 @@ body {
 .mainLayoutContainer.sampletree {
 	grid-template-columns: 16rem auto 0;
 	grid-template-rows: 35px auto 100px 250px;
-	-ms-grid-columns: 16rem 1fr 0;
-	-ms-grid-rows: 35px 1fr 100px 250px;
 }
 
 .mainLayoutContainer.sampletree #sap-ui-ControlTreeWindow,
@@ -131,9 +106,6 @@ body {
 .mainLayoutContainer.sampletree #sap-ui-ContentWindow {
 	grid-column: 2;
 	grid-row: 2 / 5;
-	-ms-grid-column: 2;
-	-ms-grid-row: 2;
-	-ms-grid-row-span: 4;
 }
 
 .mainLayoutContainer.sampletree #sap-ui-TraceWindow {
@@ -146,8 +118,6 @@ body {
 .mainLayoutContainer.controltree {
 	grid-template-columns: 0 auto 15rem;
 	grid-template-rows: 35px auto 100px 250px;
-	-ms-grid-columns: 0 1fr 15rem;
-	-ms-grid-rows: 35px 1fr 100px 250px;
 }
 
 .mainLayoutContainer.controltree #sap-ui-SampleWindow,
@@ -158,9 +128,6 @@ body {
 .mainLayoutContainer.controltree #sap-ui-ContentWindow {
 	grid-column: 2;
 	grid-row: 2 / 5;
-	-ms-grid-column: 2;
-	-ms-grid-row: 2;
-	-ms-grid-row-span: 4;
 }
 
 .mainLayoutContainer.controltree #sap-ui-TraceWindow {
@@ -173,8 +140,6 @@ body {
 .mainLayoutContainer.full {
 	grid-template-columns: 16rem auto 15rem;
 	grid-template-rows: 35px auto 100px 250px;
-	-ms-grid-columns: 16rem 1fr 15rem;
-	-ms-grid-rows: 35px 1fr 100px 250px;
 }
 
 h2 {
@@ -208,7 +173,7 @@ h2 {
  * Title area styles
  * --------------------------------------- */
 
-/* Note: selector must be more specific than .mainLayoutContainer > div */ 
+/* Note: selector must be more specific than .mainLayoutContainer > div */
 .mainLayoutContainer > div.banner {
 	border-radius: 0;
 	font-weight:bold;
@@ -218,12 +183,50 @@ h2 {
 	box-shadow: inset 0 -0.0625rem #4f667a;
 }
 
-.banner > img.btn {
-	position: absolute;
+.banner > div:first-child {
+	position:absolute;
+	top:0;
+	left:0;
+}
+
+.banner > div:last-child {
+	position:absolute;
+	top:0;
+	right:0;
+}
+
+.banner > div > * {
+	display: inline-block;
+}
+
+.banner .logo-ui5 {
+	width: 90px;
+	height: 30px;
+	margin-left: 10px;
+}
+
+.banner span {
+	margin-top: 9px;
+	vertical-align: top;
+}
+
+.banner img.btn {
 	cursor: pointer;
-	width: 20px;
 	height: 20px;
-	top: 6px;
+	width: 20px;
+	margin: 6px 5px 4px;
+}
+
+.banner img.btn.disabled {
+	cursor: default;
+	opacity: 0.2;
+}
+
+.banner .logo-sap {
+	margin-left: 30px;
+	margin-right: 10px;
+	right: 10px;
+	height: 30px;
 }
 
 /* ---------------------------------------
@@ -361,6 +364,10 @@ h2 {
 	cursor: hand;
 }
 
+#sap-ui-SampleWindow > #toolbar {
+	float: right;
+}
+
 #sap-ui-SampleWindow.expanded > #toolbar {
 	display: block;
 	height: 1.75rem;
@@ -378,6 +385,11 @@ h2 {
 #sap-ui-SampleWindow.collapsed > #samples {
 	top: 2rem;
 	height: calc(100% - 2rem);
+}
+
+#sap-ui-SampleWindow #add-custom-test {
+	padding-left:10px;
+	margin-top:10px
 }
 
 #sap-ui-SettingsWindow > div {
@@ -401,7 +413,7 @@ h2 {
 	margin-left:auto;
 	margin-right:auto;
 	border:none;
-	vertical-align:middle;	
+	vertical-align:middle;
 }
 
 #samples > .section > .children > .error-msg {
@@ -420,9 +432,9 @@ h2 {
  * TraceWindow styles
  * --------------------------------------- */
 #sap-ui-TraceWindow {
-	box-sizing: border:box;
+	box-sizing: border-box;
 	padding: 2px;
-	height: 100&;
+	height: 100%;
 	font-size: 8pt;
 	overflow-x: hidden;
 	overflow-y: auto;

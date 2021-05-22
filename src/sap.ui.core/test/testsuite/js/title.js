@@ -7,7 +7,11 @@ sap.ui.define([
 	request.open('HEAD', '/snippix');
 	request.onreadystatechange = function() {
 		if (this.readyState == this.DONE && this.status == 200) {
-			document.getElementById("snippixButton").style.display = "block";
+			var snippixButton = document.getElementById("snippixButton");
+			snippixButton.classList.remove("disabled");
+			snippixButton.addEventListener("click", function() {
+				main.editInSnippix();
+			});
 		}
 	};
 	request.send();
@@ -23,9 +27,6 @@ sap.ui.define([
 	for ( var i = 0; i < aLayoutButtons.length; i++) {
 		aLayoutButtons[i].addEventListener("click", onChangeLayoutClick);
 	}
-	document.getElementById("snippixButton").addEventListener("click", function() {
-		main.editInSnippix();
-	});
 	document.getElementById("jsunit").addEventListener("click", function() {
 		main.redirectToTestrunner();
 	});
