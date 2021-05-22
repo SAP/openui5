@@ -2,15 +2,19 @@
  * ${copyright}
  */
 
-/* USED IN COMPONENTS QUNIT TEST, DO NOT CHANGE METADATA WITHOUT REFLECTING CHANGES IN Component.qunit.html!!!*/
-
-sap.ui.define(['sap/ui/commons/TextView', 'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/UIComponent', 'sap/ui/layout/VerticalLayout', 'sap/ui/ux3/NavigationBar', 'sap/ui/ux3/NavigationItem'],
-	function(TextView, Component1, ComponentContainer, UIComponent, VerticalLayout, NavigationBar, NavigationItem) {
+sap.ui.define([
+	'sap/m/Button',
+	'sap/m/Text',
+	'sap/m/Toolbar',
+	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/UIComponent',
+	'sap/ui/layout/VerticalLayout',
+	'sap/ui/core/Component'
+], function(Button, Text, Toolbar, ComponentContainer, UIComponent, VerticalLayout, BaseComponent) {
 	"use strict";
 
-
 	// new Component
-	var Component = UIComponent.extend("samples.components.verticalLayout.Component", {
+	var Component = UIComponent.extend("sap.ui.test.verticalLayout.Component", {
 		metadata : {
 			"abstract": true,
 			version : "1.0",
@@ -34,11 +38,12 @@ sap.ui.define(['sap/ui/commons/TextView', 'sap/ui/core/Component', 'sap/ui/core/
 	});
 
 	Component.prototype.createContent = function() {
-		var oNavBar = new NavigationBar(this.createId("nB"), {
-			items:[
-				new NavigationItem({key:"item1", text:"Item 1"}),
-				new NavigationItem({key:"item2", text:"Item with some text 2"}),
-				new NavigationItem({key:"item3", text:"Item with some text 3"})
+		var oToolbar = new Toolbar({
+			id: this.createId("toolbar"),
+			content:[
+				new Button({text:"Button 1"}),
+				new Button({text:"Button with some text 2"}),
+				new Button({text:"Button with some text 3"})
 			]
 		});
 
@@ -55,8 +60,8 @@ sap.ui.define(['sap/ui/commons/TextView', 'sap/ui/core/Component', 'sap/ui/core/
 
 		this.oVLayout = new VerticalLayout(this.createId("myLayout"), {
 			content: [
-				oNavBar,
-				new TextView(this.createId("myTF"), {text: this.getProperty("initalText")}),
+				oToolbar,
+				new Text(this.createId("myText"), {text: this.getProperty("initalText")}),
 				oCompCont
 			]
 		});
