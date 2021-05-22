@@ -1629,6 +1629,16 @@ function(
 				})
 				.catch(function(oErrorValue) {
 					assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
+				})
+				.then(function() {
+					//Return rejected FakePromise to native to ensure it settles
+					return new Utils.FakePromise(undefined, new Error("some error"));
+				})
+				.then(function() {
+					assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
+				})
+				.catch(function(oErrorValue) {
+					assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
 				});
 		});
 	});

@@ -1093,24 +1093,27 @@ function(
 			};
 
 			/**
-			 * <code>then</code> function as for promise (es6), but without a rejection handler.
-			 * @param {function} fn - Resolve handler
+			 * <code>then</code> function as for promise (es6)
+			 * @param {function} fnSuccess - Resolve handler
+			 * @param {function} fnError - Reject handler
 			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the resolve handler
 			 * @public
 			 */
-			Utils.FakePromise.prototype.then = function(fn) {
+			Utils.FakePromise.prototype.then = function(fnSuccess, fnError) {
 				if (!this.bContinueWithFakePromise) {
-					return Promise.resolve(fn(this.vValue));
+					return Promise.resolve(fnSuccess(this.vValue));
 				}
 
 				if (!this.vError) {
-					return fnResolveOrReject(this.vValue, fn);
+					return fnResolveOrReject(this.vValue, fnSuccess);
+				} else if (fnError) {
+					return fnResolveOrReject(this.vError, fnError);
 				}
 				return this;
 			};
 
 			/**
-			 * <code>catch</code> function as for promise (es6), but without a rejection handler.
+			 * <code>catch</code> function as for promise (es6)
 			 * @param {function} fn - Rejection handler
 			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the rejection handler
 			 * @public
