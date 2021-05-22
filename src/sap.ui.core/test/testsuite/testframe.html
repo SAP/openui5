@@ -19,24 +19,28 @@
 	<body>
 		<div class="mainLayoutContainer full">
 			<div id="sap-ui-TitleWindow" class="banner">
-				<img src="../../resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png" style="position:absolute; left:10px;height:30px;" alt="SAPUI5">
-				<div style="position:absolute;top:9px;left:105px">Testsuite</div>
-				<div style="position:absolute;bottom:10px;right:350px">UI5 version ${version}</div>
-				<img src="images/newwindow.png" data-layout="newwindow" class="btn" style="right:310px;" title="Open this sample in a new window.">
-				<img src="images/sampletree.png" data-layout="sampletree" class="btn" style="right:280px;" title="Sample Tree">
-				<img src="images/sampleonly.png" data-layout="sampleonly" class="btn" style="right:250px;" title="Sample Only">
-				<img src="images/controltree.png" data-layout="controltree" class="btn" style="right:220px;" title="Control Tree">
-				<img src="images/full.png" data-layout="full" class="btn" style="right:190px;" title="Full Testsuite">
-				<img src="images/edit.png" id="snippixButton" class="btn" style="right:160px;display:none;" title="Edit in Snippix">
-				<img src="images/jsunit.png" id="jsunit" class="btn" style="right:130px;" title="Open QUnit Testrunner">
-				<img src="../../resources/sap/ui/core/mimes/logo/sap_73x36.gif" style="position:absolute; right:10px;height:30px;" alt="SAP SE">
+				<div>
+					<img src="../../resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png" class="logo-ui5" alt="SAPUI5">
+					<span>Testsuite</span>
+				</div>
+				<div>
+					<span>UI5 version ${version}</span>
+					<img src="images/newwindow.png" data-layout="newwindow" class="btn" title="Open this sample in a new window.">
+					<img src="images/sampletree.png" data-layout="sampletree" class="btn" title="Sample Tree">
+					<img src="images/sampleonly.png" data-layout="sampleonly" class="btn" title="Sample Only">
+					<img src="images/controltree.png" data-layout="controltree" class="btn" title="Control Tree">
+					<img src="images/full.png" data-layout="full" class="btn" title="Full Testsuite">
+					<img src="images/edit.png" id="snippixButton" class="btn disabled" title="Edit in Snippix">
+					<img src="images/jsunit.png" id="jsunit" class="btn" title="Open QUnit Testrunner">
+					<img src="../../resources/sap/ui/core/mimes/logo/sap_73x36.gif" class="logo-sap" alt="SAP SE">
+				</div>
 			</div>
 			<div id="sap-ui-SampleWindow" class="expanded">
 				<h2>Tests &amp; Samples
 					<span id="refreshTests" title="Refresh List of TestStarter tests (expensive)" class="icon">&#xe010;</span>
 					<span class="expander" data-expands="sap-ui-SampleWindow">&#xe076;</span>
 				</h2>
-				<div id="toolbar" class="toolbar" style="float:right;">
+				<div id="toolbar" class="toolbar">
 					<span>Filter: </span>
 					<input tabindex="2" id="filter" title="Filter tests by name or path">
 					<span id="clearFilter" class="icon" title="Clear filter">&#xe249;</span>
@@ -68,7 +72,7 @@
 						</div>
 						<div id="custom-tests" class="children">
 							<span id="custom-tests-empty" class="info-msg">none so far...</span>
-							<div id="add-custom-test" style="padding-left:10px;margin-top:10px" >
+							<div id="add-custom-test">
 								<label>URL to HTML resource:</label>
 								<div>
 									<input id="sampleurl" value="">
