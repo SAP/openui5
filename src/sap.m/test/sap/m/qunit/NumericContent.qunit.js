@@ -264,6 +264,7 @@ sap.ui.define([
 		isValueColorPresent = sTooltip.indexOf(ValueColor.None) > -1;
 
 		//Assert
+		assert.equal(this.oNumericContent.$("value").hasClass("Neutral"), true, "It contains the Neutral class for value color None");
 		assert.equal(isValueColorPresent, false, "The tooltip does not contain the value color text");
 	});
 

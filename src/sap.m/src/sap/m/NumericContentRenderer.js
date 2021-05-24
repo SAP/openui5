@@ -174,7 +174,7 @@ sap.ui.define([
 		oRm.class("sapMNCValue");
 		oRm.class(sWithoutMargin);
 		if (oControl.getValueColor() === ValueColor.None) {
-			oRm.class(oResourceBundle.getText("SEMANTIC_COLOR_NEUTRAL"));
+			oRm.class("Neutral");
 		} else {
 			oRm.class(oControl.getValueColor());
 		}
