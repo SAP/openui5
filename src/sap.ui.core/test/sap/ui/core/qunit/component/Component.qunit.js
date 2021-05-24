@@ -4,7 +4,6 @@ sap.ui.define([
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/UIComponentMetadata',
-	'samples/components/loadfromfile/Component',
 	'samples/components/routing/Component',
 	'samples/components/routing/RouterExtension',
 	'sap/ui/thirdparty/URI',
@@ -12,7 +11,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/core/Manifest',
 	'sap/base/i18n/ResourceBundle'
-], function (jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry, Log, Manifest, ResourceBundle) {
+], function (jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry, Log, Manifest, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -76,7 +75,7 @@ sap.ui.define([
 				}
 			}).placeAt("comparea1");
 			return sap.ui.getCore().createComponent({
-				name: "samples.components.verticalLayout",
+				name: "sap.ui.test.verticalLayout",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"
@@ -106,8 +105,8 @@ sap.ui.define([
 		assert.ok(document.getElementById("ContVLayout"));
 		//check for ids of nested elements
 		assert.ok(document.getElementById("vLayout---myLayout"));
-		assert.ok(document.getElementById("vLayout---nB"));
-		assert.ok(document.getElementById("vLayout---myTF"));
+		assert.ok(document.getElementById("vLayout---toolbar"));
+		assert.ok(document.getElementById("vLayout---myText"));
 		assert.ok(document.getElementById("vLayout---ContButton"));
 		assert.ok(document.getElementById("vLayout---ContButton-uiarea"));
 		assert.ok(document.getElementById("vLayout---comp_button---mybutn"));
@@ -136,13 +135,6 @@ sap.ui.define([
 		assert.ok(!oSuccessUnMerged.property2, "Property 2 not merged (does not exist).");
 	});
 
-	QUnit.test("Components Metadata - Load from file", function(assert){
-		var oMetadata = SamplesLoadFromFileComponent.getMetadata();
-
-		assert.deepEqual(oMetadata.getIncludes(), ["css/includeme.css", "js/includeme.js"], "Includes are available.");
-		assert.ok(oMetadata.hasProperty("prop1"), "Property 'prop1' available.");
-	});
-
 	QUnit.test("Components Includes", function(assert){
 		assert.ok(typeof foo == 'function', "function foo from included js exists");
 		assert.equal(foo(), "bar", "function from JS include invoked");
@@ -151,7 +143,7 @@ sap.ui.define([
 		);
 		assert.ok(oLink, "Stylsheet from include has been inserted");
 		assert.equal(oLink.getAttribute("href"),
-			"test-resources/sap/ui/core/samples/components/verticalLayout/css/vlayout.css",
+			"test-resources/sap/ui/core/qunit/component/testdata/verticalLayout/css/vlayout.css",
 			"Stylesheet with correct href has been inserted"
 		);
 	});
@@ -161,7 +153,7 @@ sap.ui.define([
 		var oComponent = sap.ui.component(oComp.getId());
 		assert.equal(oComponent, oComp, "Factory function returns the same instance!");
 		oComponent = sap.ui.component({
-			name: "samples.components.verticalLayout",
+			name: "sap.ui.test.verticalLayout",
 			id: "factoryVLayout"
 		});
 		assert.ok(!!oComponent, "Component has been created!");
@@ -252,7 +244,7 @@ sap.ui.define([
 	QUnit.module("Creation Context", {
 		beforeEach: function() {
 			return sap.ui.getCore().createComponent({
-				name: "samples.components.verticalLayout",
+				name: "sap.ui.test.verticalLayout",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"
