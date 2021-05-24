@@ -1,0 +1,12 @@
+{
+  "1.91.0": {
+    "date": "May 2021",
+    "notes": [
+      {
+        "id": "176c54c31fe6b217f0b5f275ea9e58d6bbfab07a",
+        "type": "FEATURE",
+        "text": " PasteProvider plugin added"
+      }
+    ]
+  }
+}
