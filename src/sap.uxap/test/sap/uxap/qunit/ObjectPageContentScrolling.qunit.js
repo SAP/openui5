@@ -722,6 +722,48 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		Core.applyChanges();
 	});
 
+	QUnit.test("auto-scroll on resize of last section rounding", function (assert) {
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),
+			oLastSection = oObjectPageLayout.getSections()[1],
+			oLastSubSection = oLastSection.getSubSections()[0],
+			iResizableControlHeight = 100,
+			iHeightChange = 90,
+			oResizableControl = new HTML({ content: "<div style='height: " + iResizableControlHeight + "px'></div>"}),
+			iScrollTopBeforeResize,
+			iScrollLengthBeforeResize,
+			iRoundingOffset = 0.005,
+			oSandbox = this.sandbox,
+			done = assert.async();
+
+		oLastSubSection.addBlock(oResizableControl);
+		oObjectPageLayout.setSelectedSection(oLastSection);
+
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			iScrollTopBeforeResize = oObjectPageLayout._$opWrapper.scrollTop();
+			iScrollLengthBeforeResize = oObjectPageLayout._$opWrapper.get(0).scrollHeight;
+
+
+			// Act: make the height of the last section 90px smaller
+			oResizableControl.getDomRef().style.height = (iResizableControlHeight - iHeightChange) + "px";
+			oSandbox.stub(oObjectPageLayout, "_getScrollableContentLength", function() {
+				// the <code>iRoundingOffset</code> adds a tiny extra ammount of 0.005 that should not affect the outcome
+				return iScrollLengthBeforeResize - iHeightChange + iRoundingOffset;
+			});
+
+			oObjectPageLayout._onScroll({target: {scrollTop: iScrollTopBeforeResize - iHeightChange}});
+
+			// Check: test that the extra <code>iRoundingOffset</code> of 0.005px do not affect the outcome:
+			assert.strictEqual(oObjectPageLayout._isContentScrolledToBottom(), true, "content is scrolled to bottom");
+			oObjectPageLayout.destroy();
+			done();
+		});
+
+		// arrange
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
 	QUnit.test("auto-scroll on resize after layout calculation", function (assert) {
 		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),
 			oLastSection = oObjectPageLayout.getSections()[1],

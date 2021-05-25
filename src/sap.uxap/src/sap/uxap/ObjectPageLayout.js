@@ -2625,7 +2625,7 @@ sap.ui.define([
 			// with the latest changes to the spacer height
 			// (and thus to the length of the scrollable content)
 			merge(this._oScrollContainerLastState, {
-				iScrollableContentLength: Math.ceil(this._getScrollableContentLength()),
+				iScrollableContentLength: Math.round(this._getScrollableContentLength()),
 				iSpacerHeight: iSpacerHeight
 			});
 		}
@@ -3181,7 +3181,7 @@ sap.ui.define([
 
 		this._oScrollContainerLastState = {
 			iScrollTop: iScrollTop,
-			iScrollableContentLength: Math.ceil(this._getScrollableContentLength()),
+			iScrollableContentLength: Math.round(this._getScrollableContentLength()),
 			iScrollableViewportHeight: $wrapper.offsetHeight,
 			iSpacerHeight: iSpacerHeight
 		};
@@ -3216,10 +3216,17 @@ sap.ui.define([
 			if (!this._canReachScrollTop(oPreviousScrollState.iScrollTop)
 				&& this._canReachScrollTop(oPreviousScrollState.iScrollTop, iContentLengthChange)) {
 
-				var iNewSpacerHeight = iSpacerHeight + iContentLengthChange;
-				this._$spacer.height(iNewSpacerHeight + "px"); // add extra space to compensate height loss
-				this._scrollTo(oPreviousScrollState.iScrollTop); // scroll back to the previous scroll top (to fallback from the visual offset of content)
-				return;
+				var iRequiredScrollHeight = oPreviousScrollState.iScrollTop + this._oScrollContainerLastState.iScrollableViewportHeight,
+					iActualScrollHeight = this._oScrollContainerLastState.iScrollableContentLength,
+					iHeightDiff = iRequiredScrollHeight - iActualScrollHeight,
+					iNewSpacerHeight;
+
+					if (iHeightDiff > 0) {
+						iNewSpacerHeight = iSpacerHeight + iHeightDiff;
+						this._$spacer.height(iNewSpacerHeight + "px"); // add extra space to compensate height loss
+						this._scrollTo(oPreviousScrollState.iScrollTop); // scroll back to the previous scroll top (to fallback from the visual offset of content)
+						return;
+					}
 			}
 		}
 
