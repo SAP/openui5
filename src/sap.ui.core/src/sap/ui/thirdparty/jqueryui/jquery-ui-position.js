@@ -87,9 +87,14 @@ $.position = {
 			return cachedScrollbarWidth;
 		}
 		var w1, w2,
-			div = $( "<div style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
+			// ##### BEGIN: MODIFIED BY SAP
+			// CSP Modification - remove inline style
+			// div = $( "<div style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
+			div = $( "<div><div></div></div>" ),
 			innerDiv = div.children()[0];
-
+			div.style = "display:block;position:absolute;width:50px;height:50px;overflow:hidden;";
+			innerDiv.style = "height:100px;width:auto;";
+			// ##### END: MODIFIED BY SAP
 		$( "body" ).append( div );
 		w1 = innerDiv.offsetWidth;
 		div.css( "overflow", "scroll" );

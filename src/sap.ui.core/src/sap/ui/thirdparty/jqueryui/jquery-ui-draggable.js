@@ -86,8 +86,13 @@ $.widget("ui.draggable", $.ui.mouse, {
 		}
 
 		$(o.iframeFix === true ? "iframe" : o.iframeFix).each(function() {
-			$("<div class='ui-draggable-iframeFix' style='background: #fff;'></div>")
+			// ##### BEGIN: MODIFIED BY SAP
+			// CSP Modification - remove inline style
+			// $("<div class='ui-draggable-iframeFix' style='background: #fff;'></div>")
+			$("<div class='ui-draggable-iframeFix'></div>")
 			.css({
+				background: "#fff",
+			// ##### END: MODIFIED BY SAP
 				width: this.offsetWidth+"px", height: this.offsetHeight+"px",
 				position: "absolute", opacity: "0.001", zIndex: 1000
 			})

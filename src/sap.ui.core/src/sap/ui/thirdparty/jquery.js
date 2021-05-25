@@ -8134,7 +8134,16 @@ jQuery.extend( {
 					return value;
 				}
 			}
+		},
+		// ##### BEGIN: MODIFIED BY SAP
+		// CSP Modification - remove inline style
+		// hook for $.attr(): use the style property instead of setAttribute("style", ...)
+		style: {
+			set: function( elem, value ) {
+				return elem.style = value + "";
+			}
 		}
+		// ##### END: MODIFIED BY SAP
 	},
 
 	removeAttr: function( elem, value ) {
