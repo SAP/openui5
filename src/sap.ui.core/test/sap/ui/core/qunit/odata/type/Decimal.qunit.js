@@ -78,6 +78,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[
 		{i : {precision : 8, scale : 3}, o : {precision : 8, scale : 3}},
+		{i : {precision : 3, scale : 3}, o : {precision : 3, scale : 3}},
 		{i : {nullable : false, scale : 3}, o : {nullable : false, scale : 3}},
 		{i : {nullable : "foo"}, o : undefined,
 			warning : "Illegal nullable: foo"},
@@ -94,7 +95,8 @@ sap.ui.define([
 		{i : {precision : true}, o : undefined,
 			warning : "Illegal precision: true"},
 		{i : {precision : 2, scale : 3}, o : {precision : 2, scale : Infinity},
-			warning : "Illegal scale: must be less than precision (precision=2, scale=3)"},
+			warning : "Illegal scale: must be less than or equal to precision "
+				+ "(precision=2, scale=3)"},
 		{i : {minimum : "foo"}, o : undefined,
 			warning : "Illegal minimum: foo"},
 		{i : {minimum : "foo123"}, o : undefined,
@@ -339,7 +341,17 @@ sap.ui.define([
 		{value : "1000.001", constraints : {precision : 7, scale : 3, maximum : "1000"},
 			error : "EnterNumberMax 1,000.000"},
 		{value : "1000", constraints : {maximum : "1000", maximumExclusive: true},
-			error : "EnterNumberMaxExclusive 1,000"}
+			error : "EnterNumberMaxExclusive 1,000"},
+		{value : "0.1234", constraints : {precision : 3, scale : 3},
+			error : "EnterNumberFraction 3"},
+		{value : "1.1234", constraints : {precision : 3, scale : 3},
+			error : "EnterNumberFractionOnly 3"},
+		{value : "1.123", constraints : {precision : 4, scale : 4},
+			error : "EnterNumberFractionOnly 4"},
+		{value : "-1", constraints : {precision : 2, scale : 2},
+			error : "EnterNumberFractionOnly 2"},
+		{value : "10.2", constraints : {precision : 4, scale : 4},
+			error : "EnterNumberFractionOnly 4"}
 	].forEach(function (oFixture) {
 		QUnit.test("validate : " + oFixture.value, function (assert) {
 			TestUtils.withNormalizedMessages(function () {
@@ -377,6 +389,17 @@ sap.ui.define([
 			}
 		);
 	});
+
+	//*********************************************************************************************
+["+0.1", "+0.123", "-0.1", "-0.123", "0"].forEach(function (sValue) {
+	QUnit.test("validate success equal precision and scale: " + sValue, function (assert) {
+		var oType = new Decimal({}, {precision : 3, scale : 3});
+
+		// code under test
+		oType.validateValue(sValue);
+	});
+});
+
 	//*********************************************************************************************
 	QUnit.test("localization change", function (assert) {
 		var oControl = new Control(),
