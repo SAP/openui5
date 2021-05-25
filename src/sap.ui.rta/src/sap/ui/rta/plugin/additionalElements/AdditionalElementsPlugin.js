@@ -1193,7 +1193,8 @@ sap.ui.define([
 		_buildMenuItem: function(sPluginId, bOverlayIsSibling, aElementOverlays, aElementsWithAggregations, bHasSubMenu) {
 			var aSubMenuItems;
 			var vHandler;
-			var sAggregationName;
+			var aRelevantElements = bOverlayIsSibling ? aElementsWithAggregations[1] : aElementsWithAggregations[0];
+			var sAggregationName = aRelevantElements[0] && aRelevantElements[0].aggregation;
 			if (bHasSubMenu) {
 				// The children are displayed before the sibling
 				aSubMenuItems = this._buildSubmenuItems(false, aElementOverlays, aElementsWithAggregations[0]);
@@ -1201,16 +1202,16 @@ sap.ui.define([
 					aSubMenuItems = aSubMenuItems.concat(this._buildSubmenuItems(true, aElementOverlays, aElementsWithAggregations[1]));
 				}
 			} else {
-				var aRelevantElements = bOverlayIsSibling ? aElementsWithAggregations[1] : aElementsWithAggregations[0];
-				sAggregationName = aRelevantElements[0] && aRelevantElements[0].aggregation;
-				vHandler = function (bOverlayIsSibling, aElementOverlays, sAggregationName) {
+				vHandler = function (bOverlayIsSibling, aElementOverlays) {
 					return this.showAvailableElements(bOverlayIsSibling, sAggregationName, aElementOverlays);
-				}.bind(this, bOverlayIsSibling, aElementOverlays, sAggregationName);
+				}.bind(this, bOverlayIsSibling);
 			}
 			var oMenuItem = {
 				id: sPluginId,
 				text: this.getContextMenuTitle.bind(this, bOverlayIsSibling, aElementOverlays[0], sAggregationName, bHasSubMenu),
-				enabled: bHasSubMenu || this.isEnabled.bind(this, bOverlayIsSibling, aElementOverlays, sAggregationName),
+				enabled: bHasSubMenu || function(bOverlayIsSibling, aElementOverlays) {
+					return this.isEnabled(bOverlayIsSibling, aElementOverlays, sAggregationName);
+				}.bind(this, bOverlayIsSibling),
 				rank: 20,
 				icon: "sap-icon://add",
 				handler: vHandler
@@ -1245,11 +1246,13 @@ sap.ui.define([
 				var oItem = {
 					id: sPluginId + '_' + iPosition,
 					text: sDisplayText,
-					enabled: this.isEnabled.bind(this, bOverlayIsSibling, aElementOverlays, sAggregationName),
-					handler: function (bOverlayIsSibling, sAggregationName, aElementOverlays) {
+					enabled: function(bOverlayIsSibling, aElementOverlays) {
+						return this.isEnabled(bOverlayIsSibling, aElementOverlays, sAggregationName);
+					}.bind(this, bOverlayIsSibling),
+					handler: function (bOverlayIsSibling, aElementOverlays) {
 						// showAvailableElements has optional parameters
 						return this.showAvailableElements(bOverlayIsSibling, sAggregationName, aElementOverlays, undefined, undefined, sDisplayText);
-					}.bind(this, bOverlayIsSibling, sAggregationName, aElementOverlays),
+					}.bind(this, bOverlayIsSibling),
 					icon: bOverlayIsSibling ? "sap-icon://BusinessSuiteInAppSymbols/icon-add-outside" : "sap-icon://add"
 				};
 				aSubMenuItems.push(this.enhanceItemWithResponsibleElement(oItem, aElementOverlays, ["addViaDelegate", "reveal", "custom"]));
