@@ -1094,6 +1094,103 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	[{
+		requestUrl : "/service/Product",
+		resourcePath : undefined,
+		boundMessages : undefined,
+		unboundMessages : [{
+			additionalTargets : undefined,
+			code :  "top",
+			longtextUrl: "top/longtext",
+			message : "Error occurred while processing the request",
+			numericSeverity : 4,
+			technical : true
+		}, {
+			additionalTargets : undefined,
+			code : "bound",
+			longtextUrl: "bound/longtext",
+			message : "Quantity: Value must be greater than 0",
+			numericSeverity : 3,
+			technical : undefined
+		}]
+	}, {
+		requestUrl : undefined,
+		resourcePath : "/Product('1')",
+		boundMessages : [{
+			additionalTargets : undefined,
+			code : "bound",
+			message : "Value must be greater than 0",
+			numericSeverity : 3,
+			target : "Quantity",
+			technical : undefined,
+			transition : true
+		}],
+		unboundMessages : [{
+			additionalTargets : undefined,
+			code :  "top",
+			message : "Error occurred while processing the request",
+			numericSeverity : 4,
+			technical : true
+		}]
+	}].forEach(function (oFixture, i) {
+		var sTitle = "reportError: JSON response, resourcePath=" + oFixture.resourcePath
+				+ ", requestUrl=" + oFixture.requestUrl;
+
+		QUnit.test(sTitle, function () {
+			var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+				oError = {
+					"error" : {
+						"@Common.longtextUrl" : "top/longtext",
+						"code" : "top",
+						"details" : [{
+							"@com.sap.vocabularies.Common.v1.longtextUrl" : "bound/longtext",
+							"@com.sap.vocabularies.Common.v1.numericSeverity" : 3,
+							"code" : "bound",
+							"message" : "Value must be greater than 0",
+							"target" : "Quantity"
+						}],
+						"message" : "Error occurred while processing the request"
+					},
+					"message" : "Failure",
+					"requestUrl" : oFixture.requestUrl,
+					"resourcePath" : oFixture.resourcePath,
+					"stack" : "Failure\n..."
+				},
+				oHelperMock = this.mock(_Helper),
+				sLogMessage = "Failed to read path /Product('1')/Unknown",
+				oModel = this.createModel();
+
+			oFixture.unboundMessages[0]["@$ui5.error"] = sinon.match.same(oError);
+			oFixture.unboundMessages[0]["@$ui5.originalMessage"] = sinon.match.same(oError.error);
+			if (i === 0) {
+				oFixture.unboundMessages[1]["@$ui5.error"] = sinon.match.same(oError);
+				oFixture.unboundMessages[1]["@$ui5.originalMessage"]
+					= sinon.match.same(oError.error.details[0]);
+			} else {
+				oFixture.boundMessages[0]["@$ui5.error"] = sinon.match.same(oError);
+				oFixture.boundMessages[0]["@$ui5.originalMessage"]
+					= sinon.match.same(oError.error.details[0]);
+			}
+
+			this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.stack, sClassName);
+			oHelperMock.expects("makeAbsolute").exactly(oFixture.boundMessages ? 0 : 1)
+				.withExactArgs("top/longtext", "/service/Product")
+				.returns("top/longtext");
+			oHelperMock.expects("makeAbsolute").exactly(oFixture.boundMessages ? 0 : 1)
+				.withExactArgs("bound/longtext", "/service/Product")
+				.returns("bound/longtext");
+			this.mock(oModel).expects("reportUnboundMessages")
+				.withExactArgs(oFixture.unboundMessages);
+			this.mock(oModel).expects("reportBoundMessages")
+				.exactly(oFixture.boundMessages ? 1 : 0)
+				.withExactArgs(oFixture.resourcePath, {"" : oFixture.boundMessages}, []);
+
+			// code under test
+			oModel.reportError(sLogMessage, sClassName, oError);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("reportError: invoked by an action", function () {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			aBoundMessages = [{
