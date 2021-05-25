@@ -17,7 +17,7 @@
 		}
 	},
 	"sap.card": {
-		"designtime": "./dt/designtime",
+		"designtime": "./dt/Configuration",
 		"type": "List",
 		"configuration": {
 			"parameters": {

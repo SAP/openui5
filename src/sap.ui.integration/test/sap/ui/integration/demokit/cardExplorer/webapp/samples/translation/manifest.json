@@ -46,7 +46,6 @@
 			}
 		},
 		"type": "List",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "{{TITLE}}",
 			"subTitle": "{i18n>SUBTITLE}",

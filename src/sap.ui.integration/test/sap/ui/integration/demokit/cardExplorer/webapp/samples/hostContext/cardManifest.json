@@ -22,7 +22,6 @@
 	},
 	"sap.card": {
 		"type": "List",
-		"designtime": "dt/Configuration",
 		"data": {
 			"request": {
 				"url": "{{destinations.myDestination}}/Products",

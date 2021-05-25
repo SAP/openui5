@@ -41,7 +41,6 @@
 	},
 	"sap.card": {
 		"type": "Component",
-		"designtime": "dt/Configuration",
 		"configuration": {
 			"parameters": {
 				"city": {

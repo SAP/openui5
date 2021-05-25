@@ -34,7 +34,6 @@
 				}
 			}
 		},
-		"designtime": "dt/Configuration",
 		"data": {
 			"json": {
 				"showContactDetails": false,

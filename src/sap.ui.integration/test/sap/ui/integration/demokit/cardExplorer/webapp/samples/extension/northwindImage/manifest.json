@@ -21,7 +21,6 @@
 	},
 	"sap.card": {
 		"type": "Object",
-		"designtime": "dt/Configuration",
 		"extension": "./NorthwindImageExtension",
 		"configuration": {
 			"destinations": {

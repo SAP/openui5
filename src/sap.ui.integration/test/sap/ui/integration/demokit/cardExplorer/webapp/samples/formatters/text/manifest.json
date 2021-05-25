@@ -53,7 +53,6 @@
 			}
 		},
 		"type": "List",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "My Products",
 			"subTitle": "{= format.text('{{parameters.subtitleText}}', ['2', ${/items}.length]) }",

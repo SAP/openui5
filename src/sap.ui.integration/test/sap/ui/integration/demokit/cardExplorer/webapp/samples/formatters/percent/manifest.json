@@ -22,7 +22,6 @@
 	},
 	"sap.card": {
 		"type": "List",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Discount status",
 			"subTitle": "Discounts exceeding {= format.percent(0.50)} are highlighted as important",

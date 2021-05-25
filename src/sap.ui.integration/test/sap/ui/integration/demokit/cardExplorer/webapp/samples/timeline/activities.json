@@ -27,7 +27,6 @@
 	},
 	"sap.card": {
 		"type": "Timeline",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Upcoming Activities",
 			"subTitle": "For Today"

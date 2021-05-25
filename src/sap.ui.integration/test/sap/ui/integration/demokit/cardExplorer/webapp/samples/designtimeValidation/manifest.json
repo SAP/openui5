@@ -16,22 +16,25 @@
 				"OrderID": {
 					"value": 10329
 				},
-				"Customer": {
+				"string": {
+					"value": "StringValue"
+				},
+				"integerrequired": {
 					"value": ""
 				},
-				"Employee": {
-					"value": ""
+				"integerFormatter": {
+					"value": 99
 				},
-				"Order": {
-					"value": ""
+				"number": {
+					"value": 1.5
 				},
-				"Product": {
-					"value": ""
+				"integer": {
+					"value": 3
 				}
 			}
 		},
 		"type": "List",
-		"designtime": "dt/Configuration",
+		"designtime": "dt/configuration",
 		"header": {
 			"title": "Products",
 			"icon": {

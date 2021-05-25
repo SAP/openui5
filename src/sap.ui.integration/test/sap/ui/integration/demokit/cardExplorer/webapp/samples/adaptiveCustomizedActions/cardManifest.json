@@ -35,7 +35,6 @@
 			}
 		},
 	"type": "AdaptiveCard",
-	"designtime": "dt/Configuration",
 	"header": {
 		"title": "Adaptive Card with Customized Actions and Extension",
 		"subTitle": "Actions are modified via the app's controller or the extension module",

@@ -33,7 +33,6 @@
 	},
 	"sap.card": {
 		"type": "List",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Pending Friend Requests",
 			"icon": {

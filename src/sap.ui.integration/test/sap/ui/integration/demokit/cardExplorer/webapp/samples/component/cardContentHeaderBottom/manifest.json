@@ -41,7 +41,6 @@
 	},
 	"sap.card": {
 		"type": "Component",
-		"designtime": "dt/Configuration",
 		"headerPosition": "Bottom",
 		"header": {
 			"title": "Office Supplies, Books, Subscriptions"
