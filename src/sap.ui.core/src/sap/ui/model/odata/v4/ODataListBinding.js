@@ -1760,6 +1760,46 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the count of elements.
+	 *
+	 * If known, the value represents the sum of the element count of the collection on the server
+	 * and the number of transient entities created on the client. Otherwise, it is
+	 * <code>undefined</code>. The value is a number of type <code>Edm.Int64</code>. Since 1.91.0,
+	 * in case of data aggregation, the count is the leaf count on the server; it is only determined
+	 * if the <code>$count</code> system query option is given.
+	 *
+	 * The count is known to the binding in the following situations:
+	 * <ul>
+	 *   <li> The server-side count has been requested via the <code>$count</code> system query
+	 *     option.
+	 *   <li> A "short read" in a paged collection (the server delivered less elements than
+	 *     requested) indicated that the server has no more unread elements.
+	 *   <li> It has been read completely in one request, for example an embedded collection via
+	 *     <code>$expand</code>.
+	 * </ul>
+	 *
+	 * The <code>$count</code> is unknown if the binding is relative but has no context.
+	 *
+	 * The count is bindable via the header context (see {@link #getHeaderContext}) and path
+	 * <code>$count</code>.
+	 *
+	 * Use <code>getHeaderContext().requestProperty("$count")</code> if you want to wait for the
+	 * value.
+	 *
+	 * @returns {number|undefined}
+	 *   The count of elements or leaves, or <code>undefined</code> if the count or the header
+	 *   context is not available.
+	 *
+	 * @public
+	 * @since 1.91.0
+	 */
+	ODataListBinding.prototype.getCount = function () {
+		var oHeaderContext = this.getHeaderContext();
+
+		return oHeaderContext ? oHeaderContext.getProperty("$count") : undefined;
+	};
+
+	/**
 	 * Returns the contexts that were requested by a control last time. Does not trigger a data
 	 * request. In the time between the {@link #event:dataRequested} event and the
 	 * {@link #event:dataReceived} event, the resulting array contains <code>undefined</code> at
@@ -1949,29 +1989,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the header context which allows binding to <code>$count</code>. If known, the value
-	 * of such a binding is the sum of the element count of the collection on the server and the
-	 * number of transient entities created on the client. Otherwise it is <code>undefined</code>.
-	 * The value is a number and its type is <code>Edm.Int64</code>. Since 1.91.0, in case of data
-	 * aggregation, the count is the leaf count on the server; it is only determined if the system
-	 * query option <code>$count</code> is given.
-	 *
-	 * The count is known to the binding in the following situations:
-	 * <ul>
-	 *   <li> The server-side count has been requested via the system query option
-	 *     <code>$count</code>.
-	 *   <li> A "short read" in a paged collection (the server delivered less elements than
-	 *     requested) indicated that the server has no more unread elements.
-	 *   <li> It has been read completely in one request, for example an embedded collection via
-	 *     <code>$expand</code>.
-	 * </ul>
-	 *
-	 * The <code>$count</code> is unknown, if the binding is relative, but has no context.
+	 * Returns the header context which allows binding to <code>$count</code>.
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The header context or <code>null</code> if the binding is relative and has no context
 	 *
 	 * @public
+	 * @see #getCount
 	 * @since 1.45.0
 	 */
 	ODataListBinding.prototype.getHeaderContext = function () {

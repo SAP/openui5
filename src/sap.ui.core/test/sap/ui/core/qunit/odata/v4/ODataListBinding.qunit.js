@@ -7353,6 +7353,24 @@ sap.ui.define([
 			]})
 		);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getCount", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("getHeaderContext").withExactArgs().returns(oBinding.oHeaderContext);
+		this.mock(oBinding.oHeaderContext).expects("getProperty").withExactArgs("$count")
+			.returns(42);
+
+		// code under test
+		assert.strictEqual(oBinding.getCount(), 42);
+
+		oBindingMock.expects("getHeaderContext").withExactArgs().returns(null);
+
+		// code under test
+		assert.strictEqual(oBinding.getCount(), undefined);
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select
