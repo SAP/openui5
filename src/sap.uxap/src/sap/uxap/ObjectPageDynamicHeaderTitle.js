@@ -7,24 +7,17 @@ sap.ui.define([
 	'./library',
 	'sap/uxap/ObjectPageDynamicHeaderContent',
 	"./ObjectPageDynamicHeaderTitleRenderer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/f/DynamicPageTitle"
 ],
 	function(
 		library,
 		ObjectPageDynamicHeaderContent,
 		ObjectPageDynamicHeaderTitleRenderer,
-		Log
+		Log,
+		DynamicPageTitle
 	) {
 		"use strict";
-
-		try {
-			sap.ui.getCore().loadLibrary("sap.f");
-		} catch (e) {
-			Log.error("The control 'sap.uxap.ObjectPageDynamicHeaderTitle' needs library 'sap.f'.");
-			throw (e);
-		}
-
-		var DynamicPageTitle = sap.ui.requireSync("sap/f/DynamicPageTitle");
 
 		/**
 		 * Constructor for a new <code>ObjectPageDynamicHeaderTitle</code>.
