@@ -489,12 +489,12 @@ function(
 		Select.prototype._attachHiddenSelectHandlers = function () {
 			var oSelect = this._getHiddenSelect();
 
-			oSelect.on("focusin", this._addFocusClass.bind(this));
-			oSelect.on("focusout", this._removeFocusClass.bind(this));
+			oSelect.on("focus", this._addFocusClass.bind(this));
+			oSelect.on("blur", this._removeFocusClass.bind(this));
 		};
 
 		Select.prototype.focus = function() {
-			this._getHiddenSelect().focusin();
+			this._getHiddenSelect().focus();
 			Control.prototype.focus.call(this, arguments);
 		};
 
@@ -510,8 +510,8 @@ function(
 			var oSelect = this._getHiddenSelect();
 
 			if (oSelect) {
-				oSelect.off("focusin");
-				oSelect.off("focusout");
+				oSelect.off("focus");
+				oSelect.off("blur");
 			}
 		};
 
