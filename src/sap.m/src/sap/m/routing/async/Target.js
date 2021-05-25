@@ -28,10 +28,8 @@ sap.ui.define([], function() {
 						transitionParameters: that._oOptions.transitionParameters,
 						eventData: vData,
 						targetControl: oViewInfo.control,
-						aggregationName: that._oOptions.controlAggregation,
 						view: oViewInfo.view,
-						preservePageInSplitContainer: that._oOptions.preservePageInSplitContainer,
-						placeholderConfig: oViewInfo.placeholderConfig
+						preservePageInSplitContainer: that._oOptions.preservePageInSplitContainer
 					});
 
 					// do not forward the route config to navigation
@@ -42,16 +40,6 @@ sap.ui.define([], function() {
 					return oViewInfo;
 				});
 			}, this._oOptions._name);
-		},
-
-		showPlaceholder : function(mSettings) {
-			this._oTargetHandler.showPlaceholder(mSettings);
-		},
-		hidePlaceholder : function() {
-		/**
-		 * Overriding the hidePlaceholder to empty function because the placeholder is removed
-		 * after all targets are displayed
-		 */
 		}
 	};
 }, /* bExport= */ true);

@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @namespace
 	 * @since 1.58
 	 * @private
-	 * @ui5-restricted sap.ui.core, sap.fe.placeholder
+	 * @ui5-restricted sap.ui.core
 	 * @alias module:sap/base/util/LoaderExtensions
 	 */
 	var LoaderExtensions = {};

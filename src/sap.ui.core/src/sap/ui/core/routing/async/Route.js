@@ -32,13 +32,9 @@ sap.ui.define(["sap/base/Log", "sap/base/util/extend", "sap/ui/core/Component"],
 				bInitial,
 				oTargetData,
 				oCurrentPromise,
-				aAlignedTargets,
-				bRepeated = false;
+				aAlignedTargets;
 
 			oRouter._stopWaitingTitleChangedFromChild();
-			if (oRouter._oMatchedRoute === this) {
-				bRepeated = true;
-			}
 			oRouter._oMatchedRoute = this;
 			oRouter._bMatchingProcessStarted = true;
 
@@ -66,7 +62,6 @@ sap.ui.define(["sap/base/Log", "sap/base/util/extend", "sap/ui/core/Component"],
 					aAlignedTargets.forEach(function(oTarget){
 						oTarget.propagateTitle = oTarget.hasOwnProperty("propagateTitle") ? oTarget.propagateTitle : oRouter._oConfig.propagateTitle;
 						oTarget.routeRelevant = true;
-						oTarget.repeatedRoute = bRepeated;
 					});
 				}
 			} else {

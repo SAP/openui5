@@ -257,7 +257,6 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 						transitionParameters: oTargetConfig.transitionParameters,
 						eventData: mArguments.arguments,
 						targetControl: mArguments.targetControl,
-						aggregationName: oTargetConfig.controlAggregation,
 						view: mArguments.view,
 						preservePageInSplitContainer: oTargetConfig.preservePageInSplitContainer
 					});

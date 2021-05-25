@@ -3,19 +3,10 @@
  */
 
  /*global Promise*/
-sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device', "sap/base/Log"],
-	function(SyncPromise, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device, Log) {
+sap.ui.define(['sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device', "sap/base/Log"],
+	function(InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device, Log) {
 		"use strict";
 
-		var oOnAfterShowDelegate = {
-			"onAfterShow": function(oEvent) {
-				// 'this' == current page / view
-				// 'parent' == navContainer
-				this.getParent().hidePlaceholder({});
-
-				this.removeEventDelegate(oOnAfterShowDelegate);
-			}
-		};
 
 		/**
 		 * Constructor for a new <code>TargetHandler</code>.
@@ -83,8 +74,7 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 		};
 
 		TargetHandler.prototype.navigate = function(oDirectionInfo) {
-			var aUniqueNavigations = this._groupNavigation(),
-				aResultingNavigations = this._createResultingNavigations(oDirectionInfo.navigationIdentifier, aUniqueNavigations),
+			var aResultingNavigations = this._createResultingNavigations(oDirectionInfo.navigationIdentifier),
 				bCloseDialogs = false,
 				bBack = this._getDirection(oDirectionInfo),
 				bNavigationOccurred;
@@ -143,38 +133,6 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 			return bBack;
 		};
 
-		TargetHandler.prototype._groupNavigation = function() {
-			var oCurrentParams,
-				oCurrentContainer,
-				sCurrentAggregation,
-				oNavigationParams,
-				aUniqueNavigations = [],
-				i;
-
-			while (this._aQueue.length) {
-				oCurrentParams = this._aQueue.shift();
-				oCurrentContainer = oCurrentParams.targetControl;
-				sCurrentAggregation = oCurrentParams.aggregationName;
-
-				if (!oCurrentParams.preservePageInSplitContainer) {
-					for (i = 0; i < aUniqueNavigations.length; i++) {
-						oNavigationParams = aUniqueNavigations[i];
-
-						if (oCurrentContainer !== oNavigationParams.targetControl || sCurrentAggregation !== oNavigationParams.aggregationName) {
-							continue;
-						}
-
-						aUniqueNavigations.splice(i, 1);
-						break;
-					}
-				}
-
-				aUniqueNavigations.push(oCurrentParams);
-			}
-
-			return aUniqueNavigations;
-		};
-
 		/**
 		 * Goes through the queue and adds the last Transition for each container in the queue
 		 * In case of a navContainer or phone mode, only one transition for the container is allowed.
@@ -183,34 +141,41 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 		 * @returns {array} a queue of navigations
 		 * @private
 		 */
-		TargetHandler.prototype._createResultingNavigations = function(sNavigationIdentifier, aUniqueNavigations) {
+		TargetHandler.prototype._createResultingNavigations = function(sNavigationIdentifier) {
 			var i,
+				bFoundTheCurrentNavigation,
 				oCurrentParams,
 				oCurrentContainer,
 				oCurrentNavigation,
 				aResults = [],
 				oView,
 				bIsSplitContainer,
+				bIsNavContainer,
 				bPreservePageInSplitContainer,
 				oResult;
 
-			while (aUniqueNavigations.length) {
-				oCurrentParams = aUniqueNavigations.shift();
+			while (this._aQueue.length) {
+				bFoundTheCurrentNavigation = false;
+				oCurrentParams = this._aQueue.shift();
 				oCurrentContainer = oCurrentParams.targetControl;
 				bIsSplitContainer = oCurrentContainer instanceof SplitContainer;
+				bIsNavContainer = oCurrentContainer instanceof NavContainer;
 				oView = oCurrentParams.view;
 				oCurrentNavigation = {
 					oContainer : oCurrentContainer,
-					oParams : oCurrentParams
+					oParams : oCurrentParams,
+					bIsMasterPage : (bIsSplitContainer && !!oCurrentContainer.getMasterPage(oView.getId()))
 				};
-				if (bIsSplitContainer) {
-					oCurrentNavigation.bIsMasterPage = !!oCurrentContainer.getMasterPage(oView.getId());
-				}
 				bPreservePageInSplitContainer = bIsSplitContainer &&
 					oCurrentParams.preservePageInSplitContainer &&
 					//only switch the page if the container has a page in this aggregation
 					oCurrentContainer.getCurrentPage(oCurrentNavigation.bIsMasterPage)
 					&& sNavigationIdentifier !== oCurrentParams.navigationIdentifier;
+
+				//Skip no nav container controls
+				if (!(bIsNavContainer || bIsSplitContainer) || !oView) {
+					continue;
+				}
 
 				for (i = 0; i < aResults.length; i++) {
 					oResult = aResults[i];
@@ -220,24 +185,40 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 						continue;
 					}
 
-					if (bIsSplitContainer) {
-						// if its a splitContainer - in the mobile case it behaves like a nav container
-						if (Device.system.phone) {
-							aResults.splice(i, 1);
-							break;
-						} else if (oResult.bIsMasterPage === oCurrentNavigation.bIsMasterPage) {
-							//The page is in the same aggregation - overwrite the previous transition
-							//We have a desktop SplitContainer and need to add to transitions if necessary
-							if (!bPreservePageInSplitContainer) {
-								aResults.splice(i, 1);
-							}
+					//Always override the navigation when its a navContainer, and if its a splitContainer - in the mobile case it behaves like a nav container
+					if (bIsNavContainer || Device.system.phone) {
+						aResults.splice(i, 1);
+						aResults.push(oCurrentNavigation);
+						bFoundTheCurrentNavigation = true;
+						break;
+					}
+
+					//We have a desktop SplitContainer and need to add to transitions if necessary
+					//The page is in the same aggregation - overwrite the previous transition
+					if (oResult.bIsMasterPage === oCurrentNavigation.bIsMasterPage) {
+						if (bPreservePageInSplitContainer) {
+							//the view should be preserved, check the next navigation
 							break;
 						}
+
+						aResults.splice(i, 1);
+						aResults.push(oCurrentNavigation);
+						bFoundTheCurrentNavigation = true;
+						break;
 					}
 				}
 
+				if (oCurrentContainer instanceof SplitContainer && !Device.system.phone) {
+					//We have a desktop SplitContainer and need to add to transitions if necessary
+					oCurrentNavigation.bIsMasterPage = !!oCurrentContainer.getMasterPage(oView.getId());
+				}
+
 				//A new Nav container was found
-				if (!bPreservePageInSplitContainer) {
+				if (!bFoundTheCurrentNavigation) {
+					if (!!oCurrentContainer.getCurrentPage(oCurrentNavigation.bIsMasterPage) && bPreservePageInSplitContainer) {
+						//the view should be preserved, check the next navigation
+						continue;
+					}
 					aResults.push(oCurrentNavigation);
 				}
 			}
@@ -257,29 +238,14 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 		TargetHandler.prototype._applyNavigationResult = function(oParams, bBack) {
 			var oTargetControl = oParams.targetControl,
 				oPreviousPage,
-				//Parameters for the nav Container
+			//Parameters for the nav Container
 				oArguments = oParams.eventData,
-				//Nav container does not work well if you pass undefined as transition
+			//Nav container does not work well if you pass undefined as transition
 				sTransition = oParams.transition || "",
 				oTransitionParameters = oParams.transitionParameters,
-				sViewId = oParams.view && oParams.view.getId(),
-				//this is only necessary if the target control is a Split container since the nav container only has a pages aggregation
-				bNextPageIsMaster = oTargetControl instanceof SplitContainer && !!oTargetControl.getMasterPage(sViewId),
-				bNavigationRelevant = (oTargetControl instanceof SplitContainer || oTargetControl instanceof NavContainer) && oParams.view,
-				bPlaceholderAutoClose,
-				oPlaceholderContainer;
-
-			if (oParams.placeholderConfig) {
-				bPlaceholderAutoClose = oParams.placeholderConfig.autoClose;
-				oPlaceholderContainer = oParams.placeholderConfig.container;
-			}
-
-			if (!bNavigationRelevant) {
-				if (oPlaceholderContainer && bPlaceholderAutoClose && oPlaceholderContainer.hidePlaceholder) {
-					oPlaceholderContainer.hidePlaceholder(oParams.placeholderConfig);
-				}
-				return false;
-			}
+				sViewId = oParams.view.getId(),
+			//this is only necessary if the target control is a Split container since the nav container only has a pages aggregation
+				bNextPageIsMaster = oTargetControl instanceof SplitContainer && !!oTargetControl.getMasterPage(sViewId);
 
 			// It's NOT needed to navigate when both of the following conditions are valid:
 			// 1. The target control is already rendered
@@ -292,13 +258,8 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 			// TODO: when target view is loaded asyncly, it could happen that the target control is rendered with empty content and
 			// the target view is added later. oTargetControl.getDomRef has to be adapted with some new method in target control.
 			if (oTargetControl.getDomRef() && oTargetControl.getCurrentPage(bNextPageIsMaster).getId() === sViewId) {
-				if (bPlaceholderAutoClose && oPlaceholderContainer && oPlaceholderContainer.hidePlaceholder) {
-					oPlaceholderContainer.hidePlaceholder(oParams.placeholderConfig);
-				}
 				Log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.m.routing.TargetHandler");
 				return false;
-			} else if (bPlaceholderAutoClose) {
-				oParams.view.addEventDelegate(oOnAfterShowDelegate, oParams.view);
 			}
 
 			Log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
@@ -347,40 +308,7 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 			}
 		};
 
-		/**
-		 * Calls the 'showPlaceholder' method of the respective target container control depending on whether
-		 * a placeholder is needed or not.
-		 *
-		 * @param {object} mSettings Object containing the container control and the view object to display
-		 * @param {sap.ui.core.Control} mSettings.container The navigation target container
-		 * @param {sap.ui.core.Control|Promise} mSettings.object The component/view object
-		 *
-		 * @private
-	 	 * @ui5-restricted sap.ui.core.routing
-		 */
-		TargetHandler.prototype.showPlaceholder = function(mSettings) {
-			var oContainer = mSettings.container,
-				bNeedsPlaceholder = true,
-				pObject;
 
-			if (mSettings.object) {
-				if (mSettings.object instanceof Promise) {
-					pObject = mSettings.object;
-				} else {
-					pObject = SyncPromise.resolve(mSettings.object);
-				}
-
-				pObject.then(function(oObject) {
-					if (mSettings.container && typeof mSettings.container.needPlaceholder === "function") {
-						bNeedsPlaceholder = mSettings.container.needPlaceholder(mSettings.aggregation, oObject);
-					}
-
-					if (bNeedsPlaceholder) {
-						oContainer.showPlaceholder(mSettings);
-					}
-				});
-			}
-		};
 
 		return TargetHandler;
 
