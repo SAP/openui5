@@ -230,4 +230,28 @@ sap.ui.define([
 		oAppDom = getBgDomElement(oApp);
 		assert.strictEqual(oAppDom.onmouseover, oHandlerBeforeTest, "preserved handler value");
 	});
+
+	QUnit.module("Parent traversing", {
+		beforeEach: function () {
+			this.oApp = new sap.m.App();
+			this.oSpy = sinon.spy(this.oApp, "_adjustParentsHeight");
+			this.oApp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oApp.destroy();
+			this.oApp = null;
+		}
+	});
+
+	QUnit.test("isTopLevel property", function(assert) {
+		assert.strictEqual(this.oSpy.called, true, "Parents are traversed when isTopLevel value is true");
+
+		this.oSpy.reset();
+
+		this.oApp.setIsTopLevel(false);
+		Core.applyChanges();
+
+		assert.strictEqual(this.oSpy.notCalled, true, "Parents are not traversed when isTopLevel value is false");
+	});
 });
