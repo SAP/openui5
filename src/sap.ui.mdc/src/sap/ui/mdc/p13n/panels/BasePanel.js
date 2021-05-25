@@ -260,7 +260,7 @@ sap.ui.define([
 		var oTemplate = this.getTemplate();
 		if (bEnableReorder) {
 			this._addHover(oTemplate);
-		} else if (oTemplate.aDelegates && oTemplate.aDelegates.length > 0) {
+		} else if (oTemplate && oTemplate.aDelegates && oTemplate.aDelegates.length > 0) {
 			oTemplate.removeEventDelegate(oTemplate.aDelegates[0].oDelegate);
 		}
 		this._getDragDropConfig().setEnabled(bEnableReorder);
