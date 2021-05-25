@@ -44,8 +44,8 @@ describe("sap.m.IconTabBarGeneric3", function() {
 		});
 
 		it("should see Text only IconTabBar with filters with NO own content (non selectable) and only sub filters (Single click area)", function() {
-			var itb1a = element(by.id("itb1a"));
-			browser.executeScript("document.getElementById('itb1a').scrollIntoView()").then(function() {
+			var itb1a = element(by.id("itb1b"));
+			browser.executeScript("document.getElementById('itb1b').scrollIntoView()").then(function() {
 				expect(takeScreenshot(itb1a)).toLookAs(sType + "_5_text_only_single_click");
 			});
 		});
@@ -111,6 +111,14 @@ describe("sap.m.IconTabBarGeneric3", function() {
 			var itb7a = element(by.id("itb7a"));
 			browser.executeScript("document.getElementById('itb7a').scrollIntoView()").then(function() {
 				expect(takeScreenshot(itb7a)).toLookAs(sType + "_14_icon_only_single_click");
+			});
+		});
+
+		// start overflow
+		it("should open the select list on the start overflow", function() {
+			element(by.id("itb1a--header-startOverflow-text")).click();
+			browser.executeScript("document.getElementById('itb1a').scrollIntoView()").then(function() {
+				expect(takeScreenshot()).toLookAs(sType + "_15_startOverflow_list");
 			});
 		});
 
