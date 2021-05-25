@@ -70,29 +70,60 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates an error to be used in {@link #expectRequest} similar to _Helper#createError. It is
-	 * used to simulate a server error (the server responds with an error JSON) by giving an object
-	 * defining the relevant <code>error</code> property of this JSON. It should contain the
-	 * properties "code" and "message".
-	 *
-	 * When used without parameter, the function creates an error that makes the complete $batch
-	 * fail with status code 500.
+	 * Creates an error to be used in {@link #expectRequest}. The result is similar to that of
+	 * {@link _Helper.createError} and lets a $direct or $batch request fail.
 	 *
 	 * @param {object} [oErrorResponse]
-	 *   The <code>error</code> property of the simulated error response from the server
+	 *   The <code>error</code> property of a simulated JSON error response; default values for the
+	 *   properties "code" and "message" are provided in that case
 	 * @param {number} [iHttpStatus=500]
-	 *   The HTTP status code for the simulated error response from the server
+	 *   The HTTP status code for the simulated error response
 	 * @returns {Error}
 	 *   The error object for {@link #expectRequest}
 	 */
 	function createError(oErrorResponse, iHttpStatus) {
-		var oError = new Error();
+		var oError;
 
+		iHttpStatus = iHttpStatus || 500;
+
+		oError = new Error("Communication error: " + iHttpStatus + " ");
+		if (oErrorResponse) {
+			oError.error = Object.assign({
+					code : "CODE",
+					message : "Request intentionally failed"
+				}, oErrorResponse);
+		}
+		// oError.requestUrl = undefined; // @see checkRequest
+		// oError.resourcePath = undefined; // @see checkRequest
+		oError.status = iHttpStatus;
+		// oError.statusText = ""; // not needed
+
+		return oError;
+	}
+
+	/**
+	 * Creates an error to be used in {@link #expectRequest} in order to simulate a JSON error
+	 * response inside a $batch by giving an object defining the relevant <code>error</code>
+	 * property of that JSON.
+	 *
+	 * @param {object} [oErrorResponse={}]
+	 *   The <code>error</code> property of the simulated JSON error response; default
+	 *   values for the properties "code" and "message" are provided anyway
+	 * @param {number} [iHttpStatus=500]
+	 *   The HTTP status code for the simulated error response
+	 * @returns {Error}
+	 *   The error object for {@link #expectRequest}
+	 */
+	function createErrorInsideBatch(oErrorResponse, iHttpStatus) {
+		var oError = new Error("n/a");
+
+		oError.$insideBatch = true;
+		oError.error = Object.assign({
+				code : "CODE",
+				message : "Request intentionally failed"
+			}, oErrorResponse);
 		oError.status = iHttpStatus || 500;
-		oError.statusText = "";
-		oError.error = oErrorResponse;
-		oError.message = "Communication error: " + oError.status + " " + oError.statusText;
-		oError.resourcePath = "~resourcePath~";
+
 		return oError;
 	}
 
@@ -786,7 +817,7 @@ sap.ui.define([
 		 */
 		createKeepAliveScenario : function (assert, bDropFromCollection, fnOnBeforeDestroy) {
 			var oContext,
-				oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+				oModel = createSalesOrdersModel({autoExpandSelect : true}),
 				oTable,
 				sView = '\
 <Table id="listReport" growing="true" growingThreshold="2" items="{path : \'/SalesOrderList\',\
@@ -1116,7 +1147,7 @@ sap.ui.define([
 						oRequest.body, undefined, that.iBatchNo, iChangeSetNo || i + 1,
 						oRequest.$ContentID
 					).catch(function (oError) {
-						if (oError.error) {
+						if (oError.$insideBatch) {
 							// convert the error back to a response
 							return {
 								headers : {"Content-Type" : "application/json"},
@@ -1124,8 +1155,8 @@ sap.ui.define([
 								body : {error : oError.error}
 							};
 						}
-						// a technical error -> let the $batch itself fail
-						throw oError;
+						oError.resourcePath = undefined;
+						throw oError; // let the $batch itself fail
 					}).then(function (oResponse) {
 						var mHeaders = oResponse.messages
 								? Object.assign({}, oResponse.headers,
@@ -1259,7 +1290,9 @@ sap.ui.define([
 
 				return Promise.resolve(oResponse).then(function (oResponseBody) {
 					if (oResponseBody instanceof Error) {
+						// missing only for metadata and security token requests
 						oResponseBody.requestUrl = that.oModel.sServiceUrl + sUrl;
+						// this is also missing for $batch itself! @see processRequest
 						oResponseBody.resourcePath = sOriginalResourcePath;
 						throw oResponseBody;
 					}
@@ -1512,19 +1545,19 @@ sap.ui.define([
 		 * describes how to react on the request. Usually you simply give the JSON for the response
 		 * and the request will be responded in the next microtask.
 		 *
-		 * A failure response (with status code 500) is mocked if <code>oResponse</code> is an
-		 * Error. This error must be created with {@link #createError}. It is immediately used to
-		 * reject the promise of _Requestor#request for a $direct request.
+		 * A failure response is mocked if <code>oResponse</code> is an <code>Error</code> instance.
+		 * For a $direct request, this error must be created via {@link createError} and is
+		 * immediately used to reject the promise of
+		 * {@link sap.ui.model.odata.v4.lib._Requestor#request}.
 		 *
 		 * If the request is part of a $batch, there are two possibilities.
 		 * <ul>
-		 *   <li> If the error was created with an error object, {@link #checkBatch} converts it to
-		 *     a response and inserts it into the $batch response. If the request is part of a
-		 *     change set, the error is used as a response for the complete change set (the
-		 *     following requests do not need a response). GET requests following an error request
-		 *     are rejected automatically and do not need a response.
-		 *   <li> If the error was created without an error object, the complete $batch fails with
-		 *     status code 500.
+		 *   <li> If the error was created via {@link createErrorInsideBatch}, {@link #checkBatch}
+		 *     converts it to a response and inserts it into the $batch response. If the request is
+		 *     part of a change set, the error is used as a response for the complete change set
+		 *     (the following requests do not need a response). GET requests following an error
+		 *     request are rejected automatically and do not need a response.
+		 *   <li> If the error was created via {@link createError}, the complete $batch fails.
 		 * </ul>
 		 *
 		 * <code>oResponse</code> may also be a promise resolving with the response or the error. In
@@ -1935,24 +1968,22 @@ sap.ui.define([
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for direct requests
 	QUnit.test("error response: $direct (framework test)", function (assert) {
-		var oOriginalMessage = {
-				code : "Code",
-				message : "Request intentionally failed"
-			},
-			oError = createError(oOriginalMessage),
-			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
+		var sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
 
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
 
-		this.expectRequest("EMPLOYEES('1')/ID", oError)
+		this.expectRequest("EMPLOYEES('1')/ID", createError({}))
 			.expectMessages([{
-				code : "Code",
+				code : "CODE",
 				message : "Request intentionally failed",
 				persistent : true,
 				technical : true,
 				technicalDetails : {
 					httpStatus : 500, // CPOUI5ODATAV4-428
-					originalMessage : oOriginalMessage
+					originalMessage : {
+						code : "CODE",
+						message : "Request intentionally failed"
+					}
 				},
 				type : "Error"
 			}]);
@@ -1963,28 +1994,26 @@ sap.ui.define([
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for batch requests
 	QUnit.test("error response: $batch (framework test)", function (assert) {
-		var oOriginalMessage = {
-				code : "Code",
-				message : "Request intentionally failed"
-			},
-			oError = createError(oOriginalMessage),
-			sView = '\
+		var sView = '\
 <Text text="{/EMPLOYEES(\'1\')/ID}"/>\
 <Text text="{/EMPLOYEES(\'2\')/Name}"/>';
 
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('2')/Name");
 
-		this.expectRequest("EMPLOYEES('1')/ID", oError)
+		this.expectRequest("EMPLOYEES('1')/ID", createErrorInsideBatch())
 			.expectRequest("EMPLOYEES('2')/Name") // no response required
 			.expectMessages([{
-				code : "Code",
+				code : "CODE",
 				message : "Request intentionally failed",
 				persistent : true,
 				technical : true,
 				technicalDetails : {
 					httpStatus : 500, // CPOUI5ODATAV4-428
-					originalMessage : oOriginalMessage
+					originalMessage : {
+						code : "CODE",
+						message : "Request intentionally failed"
+					}
 				},
 				type : "Error"
 			}]);
@@ -2017,13 +2046,11 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var aTableRows = that.oView.byId("table").getItems(),
-				oError = createError({
-					code : "Code",
+				oError = createErrorInsideBatch({
 					details : [{
 						code : "Code1",
 						message : "Details 1"
-					}],
-					message : "Request intentionally failed"
+					}]
 				});
 
 			that.oLogMock.expects("error")
@@ -2049,7 +2076,7 @@ sap.ui.define([
 				.expectRequest("BusinessPartnerList('1')/CompanyName") // no response required
 				.expectChange("name", null)
 				.expectMessages([{
-					code : "Code",
+					code : "CODE",
 					message : "Request intentionally failed",
 					persistent : true,
 					technical : true,
@@ -3751,7 +3778,6 @@ sap.ui.define([
 	// BCP: 2070436327: the data state is updated if unbindProperty is called
 	QUnit.test("ODCB: read failure & message", function (assert) {
 		var oError = createError({
-				code : "CODE",
 				message : "Could not read",
 				target : "Name"
 			}),
@@ -3805,7 +3831,6 @@ sap.ui.define([
 	// Scenario: Failure to read from an ODataPropertyBinding returning a bound message
 	QUnit.test("ODPB: read failure & message", function (assert) {
 		var oError = createError({
-				code : "CODE",
 				message : "Could not read",
 				target : ""
 			}),
@@ -4086,7 +4111,6 @@ sap.ui.define([
 	// response.
 	QUnit.test("Context#refresh() error messages", function (assert) {
 		var oError = createError({
-				code : "CODE",
 				message : "Not found",
 				target : "ID"
 			}, 404),
@@ -4559,7 +4583,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			return that.checkValueState(assert, "text", "Warning", "Text");
 		}).then(function () {
-			var oError = createError({code : "CODE", message : "Employee does not exist"});
+			var oError = createError({message : "Employee does not exist"});
 
 			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
@@ -5014,6 +5038,7 @@ sap.ui.define([
 					}
 				}, oError) // simulates failure
 				.expectMessages([{
+					code : "CODE",
 					message : "Invalid Budget",
 					persistent : true,
 					targets : [
@@ -6266,24 +6291,21 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'EntitiesWithComplexKey' failed; "
 					+ "will be repeated automatically",
-					sinon.match("Create Error"), "sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match("Request intentionally failed"),
+					"sap.ui.model.odata.v4.ODataListBinding");
 			that.expectChange("item", ["", "Baz", "Foo", "Bar"])
 				.expectRequest({
 					method : "POST",
 					url : "EntitiesWithComplexKey",
 					payload : {}
-				},  createError({
-					code : "CODE",
-					message : "Create Error",
-					target : "Value"
-				}))
+				},  createErrorInsideBatch({target : "Value"}))
 				.expectMessages([{
 					message : "Foo error",
 					target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
 					type : "Error"
 				}, {
 					code : "CODE",
-					message : "Create Error",
+					message : "Request intentionally failed",
 					persistent : true,
 					target : "/EntitiesWithComplexKey($uid=...)/Value",
 					technical : true,
@@ -6488,7 +6510,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Test events createSent and createCompleted for success and error cases
-	// (CPOUI5UISERVICESV3-1761)
+	// JIRA: CPOUI5UISERVICESV3-1761
+	//
+	// JSON error response for $batch contains target (which cannot be resolved)
+	// BCP: 2180171988
 	QUnit.test("createSent and createCompleted", function (assert) {
 		var oBinding,
 			oCreatedContext,
@@ -6586,11 +6611,16 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			var oCreateCompletedPromise = expectCreateCompleted(false),
-				oError = createError({code : "CODE", message : "Failure"});
+				oError = createError({ // BCP: 2180171988
+					"@SAP__common.ExceptionCategory" : "Framework_Error",
+					code : "SYNTAX_ERROR",
+					message : "ABAP Runtime error 'SYNTAX_ERROR'",
+					target : "cannot/be/resolved"
+				});
 
 			that.expectMessages([{
-					code : "CODE",
-					message : "Failure",
+					code : "SYNTAX_ERROR",
+					message : "cannot/be/resolved: ABAP Runtime error 'SYNTAX_ERROR'",
 					persistent : true,
 					technical : true,
 					type : "Error"
@@ -6656,7 +6686,7 @@ sap.ui.define([
 	QUnit.test("BCP: 2070287827: restore created entities after failed refresh", function (assert) {
 		var oBinding,
 			aCreatedContexts = [],
-			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="note" text="{Note}"/>\
@@ -6702,8 +6732,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			var sCreateError = "Entity can not be created",
-				oError = createError({
-					code : "CODE",
+				oError = createErrorInsideBatch({
 					message : sCreateError,
 					"@Common.longtextUrl" : "longtext"
 				});
@@ -9485,7 +9514,6 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oError = createError({
-					code : "CODE",
 					message : "Enter a product ID",
 					target : "ProductID"
 				});
@@ -9800,7 +9828,7 @@ sap.ui.define([
 	// the message model
 	// Note: Key properties are omitted from response data to improve readability.
 	QUnit.test("Error response for a change set w/o content-ID", function (assert) {
-		var oError = createError({code : "CODE", message : "Value 4.22 not allowed"}),
+		var oError = createErrorInsideBatch({message : "Value 4.22 not allowed"}),
 			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
@@ -9899,9 +9927,7 @@ sap.ui.define([
 			.expectChange("amount", ["4.10", "4.20"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oError = createError({
-					code : "CODE",
-					message : "Request intentionally failed",
+			var oError = createErrorInsideBatch({
 					"@SAP__common.longtextUrl" : "Messages(1)/LongText",
 					"@SAP__core.ContentID" : "0.0",
 					target : "",
@@ -10450,7 +10476,7 @@ sap.ui.define([
 				that.oLogMock.expects("error")
 					.withArgs("Failed to update path /SalesOrderList('42')/Note");
 
-				fnReject(createError({code : "CODE", message : "Patch failed"}));
+				fnReject(createErrorInsideBatch({message : "Patch failed"}));
 
 				return oPromise;
 			}).then(function () {
@@ -11081,6 +11107,7 @@ sap.ui.define([
 					payload : {TeamID : ""}
 				}, oError) // simulates failure
 				.expectMessages([{
+					code : "CODE",
 					message : "Missing team ID",
 					persistent : true,
 					target : "/EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
@@ -23117,7 +23144,7 @@ sap.ui.define([
 					url : "SalesOrderList('42')?sap-client=123",
 					headers : {"If-Match" : "ETag0", Prefer : "return=minimal"},
 					payload : {NetAmount : "-1"}
-				}, createError({code : "CODE", message : "Value -1 not allowed"}))
+				}, createErrorInsideBatch({message : "Value -1 not allowed"}))
 				.expectRequest({
 					batchNo : 1,
 					method : "GET",
@@ -24654,7 +24681,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.oLogMock.expects("error"); // don't care about console here
 			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
-					createError({code : "CODE", message : "Request intentionally failed"}))
+					createErrorInsideBatch())
 				.expectMessages([{
 					code : "CODE",
 					message : "Request intentionally failed",
@@ -24724,7 +24751,7 @@ sap.ui.define([
 		}).then(function () {
 			that.oLogMock.expects("error").twice(); // don't care about console here
 			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
-					createError({code : "CODE", message : "Request intentionally failed"}))
+					createErrorInsideBatch())
 				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID") // no reponse req.
 				.expectMessages([{
 					code : "CODE",
@@ -24786,9 +24813,15 @@ sap.ui.define([
 			that.oLogMock.expects("error").thrice(); // don't care about console here
 			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
 					+ "&$skip=0&$top=100",
-					createError({code : "CODE1", message : "Request 1 intentionally failed"}))
+					createErrorInsideBatch({
+						code : "CODE1",
+						message : "Request 1 intentionally failed"
+					}))
 				.expectRequest("SalesOrderList('42')?$select=SalesOrderID",
-					createError({code : "CODE2", message : "Request 2 intentionally failed"}))
+					createErrorInsideBatch({
+						code : "CODE2",
+						message : "Request 2 intentionally failed"
+					}))
 				.expectMessages([{
 					code : "CODE1",
 					message : "Request 1 intentionally failed",
@@ -25148,7 +25181,7 @@ sap.ui.define([
 						url : "EMPLOYEES('3')",
 						headers : {"If-Match" : "ETag0"},
 						payload : {ROOM_ID : "42"}
-					}, createError({code : "CODE", message : "Request intentionally failed"}))
+					}, createErrorInsideBatch())
 					.expectMessages([{
 						code : "CODE",
 						message : "Request intentionally failed",
@@ -25223,7 +25256,7 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				var oError = createError({code : "CODE", message : "Request intentionally failed"});
+				var oError = createErrorInsideBatch();
 
 				that.expectChange("roomId", "23")
 					.expectRequest({
@@ -25337,7 +25370,7 @@ sap.ui.define([
 					}]);
 				that.oLogMock.expects("error").twice(); // don't care about console here
 
-				fnReject(createError({code : "CODE", message : "Request intentionally failed"}));
+				fnReject(createErrorInsideBatch());
 			}
 
 			that.expectRequest({
@@ -27051,9 +27084,7 @@ sap.ui.define([
 					method : "PATCH",
 					payload : {Name : "Best Team Ever"},
 					url : "TEAMS('TEAM_01')"
-				}, createError({
-					message : "something went wrong"
-				}))
+				}, createErrorInsideBatch())
 				.expectChange("name", "Team #1");
 
 			return Promise.all([
@@ -27061,7 +27092,7 @@ sap.ui.define([
 				oPromise.then(function () {
 					assert.ok(false);
 				}, function (oError) {
-					assert.strictEqual(oError.message, "something went wrong");
+					assert.strictEqual(oError.message, "Request intentionally failed");
 				}),
 				that.waitForChanges(assert)
 			]);
@@ -27093,11 +27124,10 @@ sap.ui.define([
 					method : "PATCH",
 					payload : {Name : "Foo"},
 					url : "TEAMS('TEAM_01')"
-				}, createError({
-					message : "something went wrong"
-				}))
+				}, createErrorInsideBatch())
 				.expectMessages([{
-					message : "something went wrong",
+					code : "CODE",
+					message : "Request intentionally failed",
 					persistent : true,
 					technical : true,
 					type : "Error"
@@ -27105,7 +27135,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /TEAMS('TEAM_01')/Name",
-					sinon.match("something went wrong"), "sap.ui.model.odata.v4.Context");
+					sinon.match("Request intentionally failed"), "sap.ui.model.odata.v4.Context");
 
 			oBinding.attachPatchSent(function () {
 				iPatchSent += 1;
@@ -27825,10 +27855,7 @@ sap.ui.define([
 			.expectChange("creationRow::note");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oError = createError({
-					code : "Code",
-					message : "Invalid currency code"
-				});
+			var oError = createErrorInsideBatch({message : "Invalid currency code"});
 
 			oFormBinding = that.oView.byId("form").getObjectBinding();
 			that.oLogMock.expects("error")
@@ -27840,7 +27867,7 @@ sap.ui.define([
 				}, oError)
 				.expectChange("soCurrencyCode", "invalid")
 				.expectMessages([{
-					code : "Code",
+					code : "CODE",
 					message : "Invalid currency code",
 					persistent : true,
 					technical : true,
@@ -28048,7 +28075,7 @@ sap.ui.define([
 	text : "Repeated POST succeeds"
 }, {
 	expectations : function () {
-		var oCausingError = createError(); // a technical error -> let the $batch itself fail
+		var oCausingError = createError();
 
 		this.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
 			+ " failed; will be repeated automatically").twice();
@@ -28130,7 +28157,7 @@ sap.ui.define([
 					method : "POST",
 					payload : {Note : "Created"},
 					url : "BusinessPartnerList('4711')/BP_2_SO"
-				}, createError()) // a technical error -> let the $batch itself fail
+				}, createError())
 				.expectRequest({
 					batchNo : 2,
 					method : "POST",
@@ -28236,7 +28263,7 @@ sap.ui.define([
 					method : "POST",
 					payload : {Note : "Created"},
 					url : "SalesOrderList"
-				}, createError()) // a technical error -> let the $batch itself fail
+				}, createError())
 				.expectMessages([{
 					message : "Communication error: 500 ",
 					persistent : true,
@@ -28265,7 +28292,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oCausingError = createError(); // a technical error -> let the $batch itself fail
+			var oCausingError = createError();
 
 			// remove persistent, technical messages from above
 			sap.ui.getCore().getMessageManager().removeAllMessages();
@@ -29093,14 +29120,10 @@ sap.ui.define([
 					method : "PATCH",
 					url : "SalesOrderList('4711')",
 					payload : {Note : "modified"}
-				}, createError({
-					code : "CODE",
-					message : "MESSAGE",
-					target : "Note"
-				}))
+				}, createErrorInsideBatch({target : "Note"}))
 				.expectMessages([{
 					code : "CODE",
-					message : "MESSAGE",
+					message : "Request intentionally failed",
 					persistent : true,
 					target : "/SalesOrderList('4711')/Note",
 					technical : true,
@@ -30698,8 +30721,7 @@ sap.ui.define([
 					method : "POST",
 					payload : {Category : "F2"},
 					url : "EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS"
-				}, createError({
-					code : "CODE",
+				}, createErrorInsideBatch({
 					message : "Invalid category",
 					target : "Category",
 					"@Common.additionalTargets" : ["ID", "Name"]
@@ -31699,7 +31721,7 @@ sap.ui.define([
 					},
 					method : "DELETE",
 					url : "SalesOrderList('1')"
-				}, createError({}, 404))
+				}, createErrorInsideBatch(null, 404))
 				.expectRequest({
 					batchNo : 4,
 					method : "GET",
@@ -32811,7 +32833,7 @@ sap.ui.define([
 	// See that the list refresh does not include late properties.
 	// JIRA: CPOUI5ODATAV4-544
 	QUnit.test("CPOUI5ODATAV4-578: kept-alive entity of object page deleted", function (assert) {
-		var oError = createError({message : "Not found"}),
+		var oError = createErrorInsideBatch({message : "Not found"}),
 			fnOnBeforeDestroy = sinon.stub(),
 			that = this;
 
@@ -32857,6 +32879,7 @@ sap.ui.define([
 							+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
 					}, oError)
 					.expectMessages([{
+						code : "CODE",
 						message : "Not found",
 						persistent : true,
 						technical : true,

@@ -316,14 +316,14 @@ sap.ui.define([
 		 * @returns {Error}
 		 *   An <code>Error</code> instance with the following properties:
 		 *   <ul>
-		 *     <li> <code>error</code>: The "error" value from the OData V4 error response JSON
-		 *       object (if available)
-		 *     <li> <code>isConcurrentModification</code>: <code>true</code> In case of a
+		 *     <li> <code>error</code>: (optional) The "error" value from the OData V4 error
+		 *       response JSON object (if available)
+		 *     <li> <code>isConcurrentModification</code>: (optional) <code>true</code> In case of a
 		 *       concurrent modification detected via ETags (i.e. HTTP status code 412)
 		 *     <li> <code>message</code>: Error message
-		 *     <li> <code>requestUrl</code>: The absolute request URL
-		 *     <li> <code>resourcePath</code>: The path by which this resource has originally been
-		 *       requested
+		 *     <li> <code>requestUrl</code>: (optional) The absolute request URL
+		 *     <li> <code>resourcePath</code>: (optional) The path by which this resource has
+		 *       originally been requested
 		 *     <li> <code>status</code>: HTTP status code
 		 *     <li> <code>statusText</code>: (optional) HTTP status text
 		 *   </ul>
