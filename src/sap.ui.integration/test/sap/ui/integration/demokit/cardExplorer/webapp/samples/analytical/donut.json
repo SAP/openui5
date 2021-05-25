@@ -26,7 +26,6 @@
 	},
 	"sap.card": {
 		"type": "Analytical",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "January"
 		},

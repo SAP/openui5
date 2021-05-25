@@ -1155,8 +1155,8 @@ sap.ui.define([
 								key: 'manifest.json'
 							},
 							{
-								url: '/samples/designtimeFormatter/dt/designtime.js',
-								name: 'dt/designtime.js',
+								url: '/samples/designtimeFormatter/dt/Configuration.js',
+								name: 'dt/Configuration.js',
 								key: 'designtime.js'
 							}
 						]
@@ -1611,8 +1611,8 @@ sap.ui.define([
 						configMode: 'Admin',
 						files: [
 							{
-								url: '/samples/designtimeAdmin/dt/designtime.js',
-								name: 'dt/designtime.js',
+								url: '/samples/designtimeAdmin/dt/Configuration.js',
+								name: 'dt/Configuration.js',
 								key: 'designtime.js'
 							},
 							{
@@ -1634,8 +1634,8 @@ sap.ui.define([
 						configMode: 'Content',
 						files: [
 							{
-								url: '/samples/designtimeContent/dt/designtime.js',
-								name: 'dt/designtime.js',
+								url: '/samples/designtimeContent/dt/Configuration.js',
+								name: 'dt/Configuration.js',
 								key: 'designtime.js'
 							},
 							{
@@ -1657,8 +1657,8 @@ sap.ui.define([
 						configMode: 'Translation',
 						files: [
 							{
-								url: '/samples/designtimeTranslation/dt/designtime.js',
-								name: 'dt/designtime.js',
+								url: '/samples/designtimeTranslation/dt/Configuration.js',
+								name: 'dt/Configuration.js',
 								key: 'designtime.js'
 							},
 							{
@@ -1689,8 +1689,8 @@ sap.ui.define([
 						title: 'Editor Preview Settings ',
 						files: [
 							{
-								url: '/samples/designtimePreview/dt/designtime.js',
-								name: 'dt/designtime.js',
+								url: '/samples/designtimePreview/dt/Configuration.js',
+								name: 'dt/Configuration.js',
 								key: 'designtime.js'
 							},
 							{
@@ -1715,8 +1715,8 @@ sap.ui.define([
 								key: 'designtimeFields',
 								files: [
 									{
-										url: '/samples/designtimeFields/dt/designtime.js',
-										name: 'dt/designtime.js',
+										url: '/samples/designtimeFields/dt/Configuration.js',
+										name: 'dt/Configuration.js',
 										key: 'designtime.js'
 									},
 									{
@@ -1736,8 +1736,8 @@ sap.ui.define([
 								key: 'designtimeFormatter',
 								files: [
 									{
-										url: '/samples/designtimeFormatter/dt/designtime.js',
-										name: 'dt/designtime.js',
+										url: '/samples/designtimeFormatter/dt/Configuration.js',
+										name: 'dt/Configuration.js',
 										key: 'designtime.js'
 									},
 									{
@@ -1754,11 +1754,11 @@ sap.ui.define([
 							},
 							{
 								title: 'Data Extension',
-								key: 'dataExtension',
+								key: 'designtimeDataExtension',
 								files: [
 									{
-										url: '/samples/designtimeDataExtension/dt/designtime.js',
-										name: 'dt/designtime.js',
+										url: '/samples/designtimeDataExtension/dt/Configuration.js',
+										name: 'dt/Configuration.js',
 										key: 'designtime.js'
 									},
 									{
@@ -1783,8 +1783,8 @@ sap.ui.define([
 								key: 'designtimeFilter',
 								files: [
 									{
-										url: '/samples/designtimeFilter/dt/designtime.js',
-										name: 'dt/designtime.js',
+										url: '/samples/designtimeFilter/dt/Configuration.js',
+										name: 'dt/Configuration.js',
 										key: 'designtime.js'
 									},
 									{
@@ -1804,8 +1804,8 @@ sap.ui.define([
 								key: 'designtimeLinkedPara',
 								files: [
 									{
-										url: '/samples/designtimeLinkedParameter/dt/designtime.js',
-										name: 'dt/designtime.js',
+										url: '/samples/designtimeLinkedParameter/dt/Configuration.js',
+										name: 'dt/Configuration.js',
 										key: 'designtime.js'
 									},
 									{
@@ -1815,6 +1815,27 @@ sap.ui.define([
 									},
 									{
 										url: '/samples/designtimeLinkedParameter/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
+							},
+							{
+								title: 'Validation',
+								key: 'designtimeValidation',
+								files: [
+									{
+										url: '/samples/designtimeValidation/dt/configuration.js',
+										name: 'dt/configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeValidation/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeValidation/i18n/i18n.properties',
 										name: 'i18n/i18n.properties',
 										key: 'i18n.properties'
 									}

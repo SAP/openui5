@@ -31,7 +31,7 @@
 			}
 		},
 		"type": "List",
-		"designtime": "dt/designtime",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Available Trainings",
 			"icon": {

@@ -37,7 +37,7 @@
 			}
 		},
 		"type": "List",
-		"designtime": "dt/designtime",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Customers",
 			"icon": {

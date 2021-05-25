@@ -23,7 +23,6 @@
 	},
 	"sap.card": {
 		"type": "WebPage",
-		"designtime": "dt/Configuration",
 		"configuration": {
 			"parameters": {
 				"minHeight": {

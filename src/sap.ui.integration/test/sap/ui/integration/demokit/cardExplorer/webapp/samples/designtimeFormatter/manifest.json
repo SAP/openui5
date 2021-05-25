@@ -17,7 +17,7 @@
 		}
 	},
 	"sap.card": {
-		"designtime": "./dt/designtime",
+		"designtime": "./dt/Configuration",
 		"type": "List",
 		"configuration": {
 			"parameters": {
@@ -63,7 +63,7 @@
 			"request": {
 				"url": "{{destinations.northwind}}/Invoices",
 				"parameters": {
-					"$select": "ShipName, ShipAddress, ShipCity, ShipCountry, ShippedDate"
+					"$select": "ShipName, ShipAddress, ShipCity, ShipCountry, ShippedDate, Quantity"
 				}
 			},
 			"path": "/value"
@@ -71,9 +71,9 @@
 		"content": {
 			"item": {
 				"title": "{ShipName}",
-				"description": "Address: {ShipAddress}, {ShipCity}, {ShipCountry}",
+				"description": "Shipped Date: {= format.dateTime(${ShippedDate}, {format: 'yMMMd'}) }",
 				"info": {
-					"value": "Shipped Date: {= format.dateTime(${ShippedDate}, {format: 'yMMMd'}) }"
+					"value": "Quantity: {= format.integer(${Quantity}, { 'minIntegerDigits': 2,  'maxIntegerDigits': 6, 'emptyString': ''}) }"
 				}
 			},
 			"maxItems": 4

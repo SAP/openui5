@@ -24,7 +24,6 @@
 	},
 	"sap.card": {
 		"type": "AdaptiveCard",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Short Summary",
 			"subTitle": "With a link to more details",

@@ -36,340 +36,354 @@
 				Build in configuration settings allow to easily create an appealing UI for the user.
 			</p>
 			<img src="img/ConfigurationEditorSample.png" style="margin-left:auto;width:400px;border:1px solid #f5f5f5"></td>
-			<h2 id="createfile">Create a configuration module and register it in the Cards manifest</h2>
-			<p>
-				Advanced design-time configuration and implementation should happen outside the manifest of the Card.
-				With that design-time code will not harm or influence the runtime or the Card instance for the end-user.
+			<div>
+				<h2 id="createfile">Create a configuration module and register it in the Cards manifest</h2>
+				<p>
+					Advanced design-time configuration and implementation should happen outside the manifest of the Card.
+					With that design-time code will not harm or influence the runtime or the Card instance for the end-user.
 
-				<br>
-				Create a folder "dt" besides the manifest.json to store all configuration related artifacts.
-				Create a designtime.js file in this new folder.<br>
-				Add the following inital module setup into the js file.
-			</p>
-			<pre class="prettyprint lang-js">
-sap.ui.define(["sap/ui/integration/Designtime"], function (
-	Designtime
-) {
-	"use strict";
-	return function () {
-		return new Designtime({
-			"form": {
-				"items": {
-					//here goes the configuration
-				}
-			},
-			"preview": {
-				"modes": "Abstract"
-			}
-		});
-	};
-});</pre>
-			<p>
-				Similar to a Card Extension, the configuration module is registered in the manifest. As soon as the Card
-				Editor is launched.
-			</p>
-
-
-			<pre class="prettyprint lang-js">
-"sap.card": {
-	"designtime": "dt/designtime"
-}</pre>
+					<br>
+					Create a folder "dt" besides the manifest.json to store all configuration related artifacts.
+					Create a designtime.js file in this new folder.<br>
+					Add the following inital module setup into the js file.
+				</p>
+				<pre class="prettyprint lang-js">
+					sap.ui.define(["sap/ui/integration/Designtime"], function (
+						Designtime
+					) {
+						"use strict";
+						return function () {
+							return new Designtime({
+								"form": {
+									"items": {
+										//here goes the configuration
+									}
+								},
+								"preview": {
+									"modes": "Abstract"
+								}
+							});
+						};
+					}); 
+				</pre>
+				<p>
+					Similar to a Card Extension, the configuration module is registered in the manifest. As soon as the Card
+					Editor is launched.
+				</p>
 
 
+				<pre class="prettyprint lang-js">
+					"sap.card": {
+						"designtime": "dt/configuration"
+					}
+				</pre>
 
-			<h3 id="form">Configure the editor's form</h3>
-			<p style="margin-bottom: auto;">
-				Within the configuration the form section will contain the items that are shown in the Editor
-			</p>
-			<div class="tableWrapper">
-			<table style="background-color: transparent; border:none;">
-				<tr>
-					<td style="vertical-align: top;background-color: transparent; border:none; padding-left: 0;">
-						<pre class="prettyprint lang-js" lines="7-11" style="font-weight:normal">
-sap.ui.define(["sap/ui/integration/Designtime"], function (
-	Designtime
-) {
-	"use strict";
-	return function () {
-		return new Designtime({
-			"form": {
-				"items": {
 
-				}
-			},
-			"preview": {
-				"modes": "Abstract"
-			}
-		});
-	};
-});</pre>
-					</td>
-					<td style="vertical-align: top;background-color: transparent; border:none;">
-						<img src="img/ConfigurationEditorForm.png"
-							style="margin:2rem;width:400px;border:1px solid #f5f5f5"></td>
-				</tr>
-			</table>
-		</div>
 
-			<h3>Form Items</h3>
-			<p>
-				The items section is a map of item configuration.
-				<br><br>
-				<a class="try-button" href="../../index.html#/explore/designtimeFields" target="_parent">Try it Out</a>
-				<br>
-			</p>
-			<div class="tableWrapper">
-				<table>
-					<caption>Field Type items</caption>
-					<tr>
-						<th>Property</th>
-						<th>Type</th>
-						<th>Required</th>
-						<th>Default</th>
-						<th>Description</th>
-						<th>Since</th>
-					</tr>
-					<tr>
-						<td>manifestpath</td>
-						<td>string</td>
-						<td><strong>Yes</strong></td>
-						<td></td>
-						<td>Path to the manifest value that should be edited.
-							In case a the type of the item is "group" the path can be omited.
-							<pre
-								class="prettyprint lang-js">manifestpath : "sap.card/configuration/parameters/title/value"</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>type</td>
-						<td>string</td>
-						<td><strong>Yes</strong></td>
-						<td>"string"</td>
-						<td>Type of the value in the manifest that is edited. Currently "string", "integer", "number",
-							"date", "datetime", "boolean", "string[]" are supported.<br>
-							type="group" in an item will allow to set an expandable panel within the form.
-							It will contains all the parameters behind it and before the next item which type is "group" too.
-							For a group typed item the manifestpath setting can be omitted. A label should be provided.
-							<pre class="prettyprint lang-js">type : "string"</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>label</td>
-						<td>string</td>
-						<td>No</td>
-						<td>Name of the item in the form/items collection</td>
-						<td>Defines the label string. This value can be bound to values in the i18n file used in the
-							connected Card.
-							<pre
-								class="prettyprint lang-js">label : "fixedString"<br>label : "{i18n>translatedStringKey}"</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>required</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>false</td>
-						<td>Defines whether the value is required or not. The editors label for the field will get a "*"
-							to indicate this state.
-							<pre class="prettyprint lang-js">required : true</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>visible</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>true</td>
-						<td>Defines whether the value is visible in the editor or not. For technical parameters it might
-							be needed to hide them from the user.
-							In future version an administrator is able to change the visible property for the
-							page/content administrator. This will only apply for
-							parameters that are visible to the administrator.
-							<pre class="prettyprint lang-js">visible : true</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>editable</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>true</td>
-						<td>Defines whether the value is editable in the editor or not. For technical parameters it might
-							be needed to make them consistent from the user.
-							In future version an administrator is able to change the editable property for the
-							page/content administrator. This will only apply for
-							parameters that are editable to the administrator.
-							<pre class="prettyprint lang-js">editable : true</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>translatable</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>false</td>
-						<td>Defines whether the value is potentially translatable and should be shown in the Card Editor
-							in translation mode.
-							This setting should be used for fields of type string only.
-							to indicate this state.
-							<pre class="prettyprint lang-js">translatable : true</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>description</td>
-						<td>string</td>
-						<td>No</td>
-						<td></td>
-						<td>Defines the description of current field.
-							<pre
-								class="prettyprint lang-js">description : "Description of current field"</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>cols</td>
-						<td>1 or 2</td>
-						<td>No</td>
-						<td>2</td>
-						<td>By default, the form in the editor spans field to its two columns. Setting cols=1 in two
-							sibling items,
-							will allow to align two fields next to each other
-							<pre class="prettyprint lang-js">cols : 1</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>Visualization</td>
-						<td>object of type Visualization</td>
-						<td>No</td>
-						<td>none</td>
-						<td>Defines a visualization for the field. It will render the field using the new control defined in visualization.
-							<pre class="prettyprint lang-js">visualization : {
-	//visualization settings
-}</pre>
-						</td>
-						<td>1.83</td>
-					</tr>
-					<tr>
-						<td>allowDynamicValues</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>false</td>
-						<td>Defines whether the value can be bound to a context value of the host environment.
-							The default value for an administrator and content admin is false. In translation mode this
-							property is ignored.
-							To activate the feature additionally the allowDynamicValues property
-							of the Card Editor control needs to be enabled.
-							<pre class="prettyprint lang-js">allowDynamicValues : true</pre>
-						</td>
-						<td>1.84</td>
-					</tr>
-					<tr>
-						<td>allowSettings</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>true</td>
-						<td>Defines whether the administrator is allowed to change the settings of the field.
-							For example the administrator can hide or disable fields for the content mode.
-							To activate the feature additionally the allowSettings property
-							of the Card Editor control needs to be enabled.
-							<pre class="prettyprint lang-js">allowSettings : true</pre>
-						</td>
-						<td>1.84</td>
-					</tr>
-					<tr>
-						<td>placeholder</td>
-						<td>string</td>
-						<td>No</td>
-						<td>none</td>
-						<td>Define a placeholder string that appears within a default input for string parameters.
+				<h3 id="form">Configure the editor's form</h3>
+				<p style="margin-bottom: auto;">
+					Within the configuration the form section will contain the items that are shown in the Editor
+				</p>
+				<div class="tableWrapper">
+					<table style="background-color: transparent; border:none;">
+						<tr>
+							<td style="vertical-align: top;background-color: transparent; border:none; padding-left: 0;">
+								<pre class="prettyprint lang-js" lines="7-11" style="font-weight:normal">
+									sap.ui.define(["sap/ui/integration/Designtime"], function (
+										Designtime
+									) {
+										"use strict";
+										return function () {
+											return new Designtime({
+												"form": {
+													"items": {
 
-							<pre class="prettyprint lang-js">placeholder : "My Placeholder"</pre>
-						</td>
-						<td>1.84</td>
-					</tr>
-					<tr>
-						<td>expanded</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>true</td>
-						<td>Defines whether the Group panel is expanded in the editor or not.
-							Only for Group type parameter.
-							<pre class="prettyprint lang-js">expanded : true</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>hint</td>
-						<td>string</td>
-						<td>No</td>
-						<td>none</td>
-						<td>Define a hint string that appears below a group or an item with the formatted text.
-							<pre class="prettyprint lang-js">hint : "Hint Message"</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>validation</td>
-						<td>object of type Validation</td>
-						<td>No</td>
-						<td>none</td>
-						<td>Defines a validation rule for the value of the field.
-							<pre class="prettyprint lang-js">validation : {
-	//validation settings
-}</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>validations</td>
-						<td>object[] of type Validation</td>
-						<td>No</td>
-						<td>none</td>
-						<td>Defines a validation rules for the value of the field.
-							<pre class="prettyprint lang-js">validations : {
-	//validations settings
-}</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>formatter</td>
-						<td>object of type formatter</td>
-						<td>No</td>
-						<td>none</td>
-						<td>Defines a formater options for the value of the field.
-							<pre class="prettyprint lang-js">formatter : {
-	//formatter options
-}</pre>
-						</td>
-						<td>1.88</td>
-					</tr>
-					<tr>
-						<td>visibleToUser</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>true</td>
-						<td>Defines whether the field can be seen by user(page admin) or not. It can be changed in settings of the field.
-							<pre class="prettyprint lang-js">visibleToUser : true</pre>
-						</td>
-						<td>1.91</td>
-					</tr>
-					<tr>
-						<td>editableToUser</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>true</td>
-						<td>Defines whether the field is editable by user(page admin) or not. It can be changed in settings of the field.
-							<pre class="prettyprint lang-js">editableToUser : true</pre>
-						</td>
-						<td>1.91</td>
-					</tr>
-				</table>
+													}
+												},
+												"preview": {
+													"modes": "Abstract"
+												}
+											});
+										};
+									});
+								</pre>
+							</td>
+							<td style="vertical-align: top;background-color: transparent; border:none;">
+								<img src="img/ConfigurationEditorForm.png"
+									style="margin:2rem;width:400px;border:1px solid #f5f5f5"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+            <div>
+				<h3>Form Items</h3>
+				<p>
+					The items section is a map of item configuration.
+					<br><br>
+					<a class="try-button" href="../../index.html#/explore/playground/designtimeFields" target="_parent">Try it Out</a>
+					<br>
+				</p>
+				<div class="tableWrapper">
+					<table>
+						<caption>Field Type items</caption>
+						<tr>
+							<th>Property</th>
+							<th>Type</th>
+							<th>Required</th>
+							<th>Default</th>
+							<th>Description</th>
+							<th>Since</th>
+						</tr>
+						<tr>
+							<td>manifestpath</td>
+							<td>string</td>
+							<td><strong>Yes</strong></td>
+							<td></td>
+							<td>Path to the manifest value that should be edited.
+								In case a the type of the item is "group" the path can be omited.
+								<pre
+									class="prettyprint lang-js">manifestpath : "sap.card/configuration/parameters/title/value"</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>type</td>
+							<td>string</td>
+							<td><strong>Yes</strong></td>
+							<td>"string"</td>
+							<td>Type of the value in the manifest that is edited. Currently "string", "integer", "number",
+								"date", "datetime", "boolean", "string[]" are supported.<br>
+								type="group" in an item will allow to set an expandable panel within the form.
+								It will contains all the parameters behind it and before the next item which type is "group" too.
+								For a group typed item the manifestpath setting can be omitted. A label should be provided.
+								<pre class="prettyprint lang-js">type : "string"</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>label</td>
+							<td>string</td>
+							<td>No</td>
+							<td>Name of the item in the form/items collection</td>
+							<td>Defines the label string. This value can be bound to values in the i18n file used in the
+								connected Card.
+								<pre
+									class="prettyprint lang-js">label : "fixedString"<br>label : "{i18n>translatedStringKey}"</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>required</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>false</td>
+							<td>Defines whether the value is required or not. The editors label for the field will get a "*"
+								to indicate this state.
+								<pre class="prettyprint lang-js">required : true</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>visible</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>true</td>
+							<td>Defines whether the value is visible in the editor or not. For technical parameters it might
+								be needed to hide them from the user.
+								In future version an administrator is able to change the visible property for the
+								page/content administrator. This will only apply for
+								parameters that are visible to the administrator.
+								<pre class="prettyprint lang-js">visible : true</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>editable</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>true</td>
+							<td>Defines whether the value is editable in the editor or not. For technical parameters it might
+								be needed to make them consistent from the user.
+								In future version an administrator is able to change the editable property for the
+								page/content administrator. This will only apply for
+								parameters that are editable to the administrator.
+								<pre class="prettyprint lang-js">editable : true</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>translatable</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>false</td>
+							<td>Defines whether the value is potentially translatable and should be shown in the Card Editor
+								in translation mode.
+								This setting should be used for fields of type string only.
+								to indicate this state.
+								<pre class="prettyprint lang-js">translatable : true</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>description</td>
+							<td>string</td>
+							<td>No</td>
+							<td></td>
+							<td>Defines the description of current field.
+								<pre
+									class="prettyprint lang-js">description : "Description of current field"</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>cols</td>
+							<td>1 or 2</td>
+							<td>No</td>
+							<td>2</td>
+							<td>By default, the form in the editor spans field to its two columns. Setting cols=1 in two
+								sibling items,
+								will allow to align two fields next to each other
+								<pre class="prettyprint lang-js">cols : 1</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>Visualization</td>
+							<td>object of type Visualization</td>
+							<td>No</td>
+							<td>none</td>
+							<td>Defines a visualization for the field. It will render the field using the new control defined in visualization.
+								<pre class="prettyprint lang-js">
+									visualization : {
+										//visualization settings
+									}
+								</pre>
+							</td>
+							<td>1.83</td>
+						</tr>
+						<tr>
+							<td>allowDynamicValues</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>false</td>
+							<td>Defines whether the value can be bound to a context value of the host environment.
+								The default value for an administrator and content admin is false. In translation mode this
+								property is ignored.
+								To activate the feature additionally the allowDynamicValues property
+								of the Card Editor control needs to be enabled.
+								<pre class="prettyprint lang-js">allowDynamicValues : true</pre>
+							</td>
+							<td>1.84</td>
+						</tr>
+						<tr>
+							<td>allowSettings</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>true</td>
+							<td>Defines whether the administrator is allowed to change the settings of the field.
+								For example the administrator can hide or disable fields for the content mode.
+								To activate the feature additionally the allowSettings property
+								of the Card Editor control needs to be enabled.
+								<pre class="prettyprint lang-js">allowSettings : true</pre>
+							</td>
+							<td>1.84</td>
+						</tr>
+						<tr>
+							<td>placeholder</td>
+							<td>string</td>
+							<td>No</td>
+							<td>none</td>
+							<td>Define a placeholder string that appears within a default input for string parameters.
+
+								<pre class="prettyprint lang-js">placeholder : "My Placeholder"</pre>
+							</td>
+							<td>1.84</td>
+						</tr>
+						<tr>
+							<td>expanded</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>true</td>
+							<td>Defines whether the Group panel is expanded in the editor or not.
+								Only for Group type parameter.
+								<pre class="prettyprint lang-js">expanded : true</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>hint</td>
+							<td>string</td>
+							<td>No</td>
+							<td>none</td>
+							<td>Define a hint string that appears below a group or an item with the formatted text.
+								<pre class="prettyprint lang-js">hint : "Hint Message"</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>validation</td>
+							<td>object of type Validation</td>
+							<td>No</td>
+							<td>none</td>
+							<td>Defines a validation rule for the value of the field.
+								<pre class="prettyprint lang-js">
+									validation : {
+										//validation settings
+									}
+								</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>validations</td>
+							<td>object[] of type Validation</td>
+							<td>No</td>
+							<td>none</td>
+							<td>Defines a validation rules for the value of the field.
+								<pre class="prettyprint lang-js">
+									validations : {
+										//validations settings
+									}
+								</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>formatter</td>
+							<td>object of type formatter</td>
+							<td>No</td>
+							<td>none</td>
+							<td>Defines a formater options for the value of the field.
+								<pre class="prettyprint lang-js">
+									formatter : {
+										//formatter options
+									}
+								</pre>
+							</td>
+							<td>1.88</td>
+						</tr>
+						<tr>
+							<td>visibleToUser</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>true</td>
+							<td>Defines whether the field can be seen by user(page admin) or not. It can be changed in settings of the field.
+								<pre class="prettyprint lang-js">visibleToUser : true</pre>
+							</td>
+							<td>1.91</td>
+						</tr>
+						<tr>
+							<td>editableToUser</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>true</td>
+							<td>Defines whether the field is editable by user(page admin) or not. It can be changed in settings of the field.
+								<pre class="prettyprint lang-js">editableToUser : true</pre>
+							</td>
+							<td>1.91</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 			<h3 id="lists">Providing Lists for string</h3>
 			<p>
@@ -380,56 +394,56 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 			<strong>Static Data List</strong>
 
 			<pre class="prettyprint lang-js collapsed" lines="4-18" caption="Static Values">
-"stringWithStaticList": {
-  "manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
-  "type": "string",
-  "values": {
-     "data": {
-        "json": {
-           "values": [
-              { "text": "From JSON 1", "key": "key1" },
-              { "text": "From JSON 2", "key": "key2" },
-              { "text": "From JSON 3", "key": "key3" }
-           ]
-        },
-        "path": "/values"
-     },
-     "item": {
-        "text": "{text}",
-        "key": "{key}"
-     }
-  }
-}</pre>
+				"stringWithStaticList": {
+				"manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
+				"type": "string",
+				"values": {
+					"data": {
+						"json": {
+						"values": [
+							{ "text": "From JSON 1", "key": "key1" },
+							{ "text": "From JSON 2", "key": "key2" },
+							{ "text": "From JSON 3", "key": "key3" }
+						]
+						},
+						"path": "/values"
+					},
+					"item": {
+						"text": "{text}",
+						"key": "{key}"
+					}
+				}
+				}
+            </pre>
 			<strong>Request Data List</strong>
 			<p>There referred url will deliver the data asynchronous. Also an extension could be used as a data
 				propvider.</p>
 			<pre class="prettyprint lang-js collapsed" lines="6-9" caption="Request Values">
-"stringWithStaticList": {
-  "manifestpath": "/sap.card/configuration/parameters/stringWithRequestList/value",
-  "type": "string",
-  "values": {
-     "data": {
-        "request": {
-            "url": "./dt/listdata.json"
-        },
-        "path": "/values"
-     },
-     "item": {
-        "text": "{text}",
-        "key": "{key}"
-     }
-  }
-}</pre>
+				"stringWithStaticList": {
+				"manifestpath": "/sap.card/configuration/parameters/stringWithRequestList/value",
+				"type": "string",
+				"values": {
+					"data": {
+						"request": {
+							"url": "./dt/listdata.json"
+						},
+						"path": "/values"
+					},
+					"item": {
+						"text": "{text}",
+						"key": "{key}"
+					}
+				}
+				}
+            </pre>
 
 			<pre class="prettyprint lang-js collapsed" lines="0" caption="Data of dt/listdata.json">
-	"values": [
-		{ "text": "From JSON 1", "key": "key1" },
-		{ "text": "From JSON 2", "key": "key2" },
-		{ "text": "From JSON 3", "key": "key3" }
-	]
-
-</pre>
-			</p>
+				"values": [
+					{ "text": "From JSON 1", "key": "key1" },
+					{ "text": "From JSON 2", "key": "key2" },
+					{ "text": "From JSON 3", "key": "key3" }
+				]
+            </pre>
 			<h3 id="lists">Providing Lists for string arrays</h3>
 			<p>
 				To allow a selection of values for fields of type "string[]", you can add the same values sections as
@@ -437,63 +451,65 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				Similar to the Card data section, the list can be filled with a static json or a request.
 				The item section in the values definition links the data. The "key" property of the item is used as
 				the value for the setting referred by the "manifestPath".
-				<strong>Static Data List</strong>
+			</p>
+			<strong>Static Data List</strong>
 			<pre class="prettyprint lang-js collapsed" lines="3" caption="String Array Lists">
-"stringArrayWithStaticList": {
-	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithStaticList/value",
-	"type": "string[]",
-	"values": {
-		"data": {
-		"json": {
-			"values": [
-				{ "text": "From JSON 1", "key": "key1" },
-				{ "text": "From JSON 2", "key": "key2" },
-				{ "text": "From JSON 3", "key": "key3" }
-			]
-		},
-		"path": "/values"
-		},
-		"item": {
-		"text": "{text}",
-		"key": "{key}"
-		}
-	}
-}</pre>
+				"stringArrayWithStaticList": {
+					"manifestpath": "/sap.card/configuration/parameters/stringArrayWithStaticList/value",
+					"type": "string[]",
+					"values": {
+						"data": {
+						"json": {
+							"values": [
+								{ "text": "From JSON 1", "key": "key1" },
+								{ "text": "From JSON 2", "key": "key2" },
+								{ "text": "From JSON 3", "key": "key3" }
+							]
+						},
+						"path": "/values"
+						},
+						"item": {
+						"text": "{text}",
+						"key": "{key}"
+						}
+					}
+				}
+            </pre>
 			<strong>Request Data List</strong>
 			<p>There referred url will deliver the data asynchronous. Also an extension could be used as a data
 				propvider.</p>
 			<pre class="prettyprint lang-js collapsed" lines="3" caption="String Array Lists with requests">
-"stringWithStaticList": {
-	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithRequestList/value",
-	"type": "string[]",
-	"values": {
-		"data": {
-		"request": {
-			"url": "./dt/listdata.json"
-		},
-		"path": "/values"
-		},
-		"item": {
-		"text": "{text}",
-		"key": "{key}"
-		}
-	}
-}</pre>
+				"stringWithStaticList": {
+					"manifestpath": "/sap.card/configuration/parameters/stringArrayWithRequestList/value",
+					"type": "string[]",
+					"values": {
+						"data": {
+						"request": {
+							"url": "./dt/listdata.json"
+						},
+						"path": "/values"
+						},
+						"item": {
+						"text": "{text}",
+						"key": "{key}"
+						}
+					}
+				}
+            </pre>
 
 			<pre class="prettyprint lang-js collapsed" caption="Data of dt/listdata.json">
-
-	"values": [
-		{ "text": "From JSON 1", "key": "key1" },
-		{ "text": "From JSON 2", "key": "key2" },
-		{ "text": "From JSON 3", "key": "key3" }
-	]
+				"values": [
+					{ "text": "From JSON 1", "key": "key1" },
+					{ "text": "From JSON 2", "key": "key2" },
+					{ "text": "From JSON 3", "key": "key3" }
+				]
 			</pre>
-			</p>
 			<h3>Validation of field input</h3>
 			<p>
 				Validation of input of the users can be added to the validation(s) settings in the configuration of each
 				field.
 				Please ensure that users are not overwhelmed with error and warning messages. Use validation wisely.
+			</p>
 			<pre class="prettyprint lang-js collapsed" caption="String/Integer fields with validations">
 					"string1": {
 						"type": "string",
@@ -542,8 +558,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						]
 					}
-							</pre>
-			</p>
+			</pre>
 			<div class="tableWrapper">
 				<table>
 					<caption>Validation Type</caption>
@@ -672,13 +687,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					</tr>
 				</table>
 			</div>
-			<div class="navigation">
-				<h4>Table of Contents</h4>
-				<div><a href="#overview">Configurations and APIs</a></div>
-				<div><a href="#form">Configure the editor's form</a></div>
-			</div>
 		</div>
 
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Configurations and APIs</a></div>
+			<div><a href="#form">Configure the editor's form</a></div>
+		</div>
+    </div>
 
 </body>
 

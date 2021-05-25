@@ -41,7 +41,6 @@
 	},
 	"sap.card": {
 		"type": "Component",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Visit our workshop"
 		}

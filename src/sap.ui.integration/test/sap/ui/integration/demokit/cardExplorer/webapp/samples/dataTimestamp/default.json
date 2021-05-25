@@ -21,7 +21,6 @@
 	},
 	"sap.card": {
 		"type": "List",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Data timestamp sample",
 			"subTitle": "These are the top sellers this month in 'Computers'",

@@ -51,7 +51,6 @@
 			}
 		},
 		"type": "AdaptiveCard",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Edit product from Northwind",
 			"subTitle": "ProductID: {{parameters.productId}}"
