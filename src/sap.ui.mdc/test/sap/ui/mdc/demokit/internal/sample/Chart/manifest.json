@@ -1,6 +1,6 @@
 {
   "sap.app": {
-	"id": "sap.ui.mdc.sample.FilterFieldTypes",
+	"id": "sap.ui.mdc.sample.Chart",
 	"type": "application",
 	"applicationVersion": {
 	  "version": "1.0.0"
@@ -8,7 +8,7 @@
   },
   "sap.ui5": {
 	"rootView": {
-	  "viewName": "sap.ui.mdc.sample.FilterFieldTypes.View",
+	  "viewName": "sap.ui.mdc.sample.Chart.View",
 	  "type": "XML",
 	  "async": true
 	},
@@ -22,7 +22,8 @@
 	  "sample": {
 		"files": [
 			"View.view.xml",
-			"Controller.controller.js"
+			"Controller.controller.js",
+			"Books.Table.delegate.js"
 		]
 	  }
 	},
