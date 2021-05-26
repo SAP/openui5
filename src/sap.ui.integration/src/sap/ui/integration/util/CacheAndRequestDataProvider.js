@@ -18,7 +18,8 @@ sap.ui.define([
 			return oRequest.url;
 		}
 
-		oUrl = new URL(sUrl);
+		oUrl = new URL(sUrl, window.location.href);
+
 		for (sParamKey in vData) {
 			oUrl.searchParams.set(sParamKey, vData[sParamKey]);
 		}
