@@ -215,8 +215,12 @@ sap.ui.define([
 			//get necessary properties from overlay
 			var oData = this._getNodeProperties(oOverlay, oParentOverlay) || {};
 
-			//find children
-			var aChildren = oOverlay.getChildren();
+			//find aggregation binding template overlays
+			var aChildren = (
+				oOverlay.getAggregationBindingTemplateOverlays
+				&& oOverlay.getAggregationBindingTemplateOverlays()
+			) || [];
+			aChildren = aChildren.concat(oOverlay.getChildren());
 
 			//check if the tree should be traversed deeper and children overlays are present
 			if ((!bValidDepth || (bValidDepth && iDepth > 0))
@@ -274,12 +278,26 @@ sap.ui.define([
 				oDtName = oDtMetadata.getName(oElement);
 				bVisible = oOverlay.isVisible();
 				bIsView = oOverlay.getElement() instanceof View;
+				var oParentElementOverlay = oOverlay.getParentElementOverlay();
+				var oParentAggregationOverlay = oOverlay.getParent() && oOverlay.getParentAggregationOverlay();
+				var sParentAggregationName = (oParentAggregationOverlay && oParentAggregationOverlay.getAggregationName()) || "";
+				if (
+					oParentElementOverlay
+					&& sParentAggregationName
+					&& oParentElementOverlay.getAggregationOverlay(sParentAggregationName, "AggregationBindingTemplateOverlays") === oParentAggregationOverlay
+				) {
+					sIconType = "sap-icon://card";
+					oDtName.singular = "TEMPLATE-" + oDtName.singular;
+				}
 			} else {
 				sType = "aggregation";
 				sAggregationName = oOverlay.getAggregationName();
 				oDtName = oParentOverlay.getAggregation(sAggregationName)
 					? oParentOverlay.getDesignTimeMetadata().getAggregationDescription(sAggregationName, oElement)
 					: undefined;
+				if (oParentOverlay.getAggregationBindingTemplateOverlays().length) {
+					sIconType = "sap-icon://card";
+				}
 			}
 
 			//add all mandatory info to data
