@@ -47,6 +47,8 @@ sap.ui.define([
 
 	var aNonRendererMethods = ["render", "flush", "destroy"];
 
+	var ATTR_STYLE_KEY_MARKER = "data-sap-ui-stylekey";
+
 	/**
 	 * Creates an instance of the RenderManager.
 	 *
@@ -196,7 +198,8 @@ sap.ui.define([
 			bDomInterface,                 // specifies the rendering interface that is used by the control renderers
 			sLegacyRendererControlId = "", // stores the id of the control that has a legacy renderer while its parent has the new semantic renderer
 			oStringInterface = {},         // holds old string based rendering API and the string implementation of the new semantic rendering API
-			oDomInterface = {};            // semantic rendering API for the controls whose renderer provides apiVersion=2 marker
+			oDomInterface = {},            // semantic rendering API for the controls whose renderer provides apiVersion=2 marker
+			aRenderingStyles = [];         // during string-based rendering, stores the styles that couldn't be set via style attribute due to CSP restrictions
 
 		/**
 		 * Sets the focus handler to be used by the RenderManager.
@@ -357,7 +360,9 @@ sap.ui.define([
 		this.writeStyles = function() {
 			var oStyle = aStyleStack[aStyleStack.length - 1];
 			if (oStyle.aStyle && oStyle.aStyle.length) {
-				this.writeAttribute("style", oStyle.aStyle.join(" "));
+				// Due to possible CSP restrictions we do not write styles into the HTML buffer. Instead, we store the styles in the aRenderingStyles array
+				// and add a ATTR_STYLE_KEY_MARKER attribute marker for which the value references the original style index in the aRenderingStyles array.
+				this.writeAttribute(ATTR_STYLE_KEY_MARKER, aRenderingStyles.push(oStyle.aStyle.join(" ")) - 1);
 			}
 			oStyle.aStyle = null;
 			return this;
@@ -621,6 +626,9 @@ sap.ui.define([
 		 * Adds a style name-value pair to the style collection of the last open HTML element.
 		 *
 		 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
+		 * To allow a more efficient DOM update, the CSS property names and values have to be used in their canonical form.
+		 * In general, CSS properties are lower-cased in their canonical form, except for parts that are not under the control of CSS.
+		 * For more information, see {@link https://www.w3.org/TR/CSS/#indices}.
 		 *
 		 * @param {string} sName Name of the style property
 		 * @param {string} sValue Value of the style property
@@ -957,21 +965,26 @@ sap.ui.define([
 				} else if (bDomInterface === undefined) {
 
 					// rendering interface must be determined for the root control once per rendering
-					// depending on the DOM reference of the control within the DOM tree
-					oDomRef = oControl.getDomRef() || InvisibleRenderer.getDomRef(oControl);
+					if (RenderManager.getApiVersion(oRenderer) == 2) {
 
-					// DOM based rendering is valid only for the controls that are already rendered and providing apiVersion=2 marker.
-					// If the control is in the preserved area then we should not use DOM rendering interface to avoid patching of preserved nodes.
-					if (oDomRef && RenderManager.getApiVersion(oRenderer) == 2 && !RenderManager.isPreservedContent(oDomRef)) {
+						// get the visible or invisible DOM element of the control
+						oDomRef = oDomRef || oControl.getDomRef() || InvisibleRenderer.getDomRef(oControl);
 
-						// patching will happen during the control renderer calls therefore we need to get the focus info before the patching
-						oFocusHandler && oFocusHandler.storePatchingControlFocusInfo(oDomRef);
+						// If the control is in the preserved area then we should not use the DOM-based rendering to avoid patching of preserved nodes
+						if (RenderManager.isPreservedContent(oDomRef)) {
+							bDomInterface = false;
+						} else {
+							// patching will happen during the control renderer calls therefore we need to get the focus info before the patching
+							if (oDomRef && oFocusHandler) {
+								oFocusHandler.storePatchingControlFocusInfo(oDomRef);
+							}
 
-						// set the starting point of the Patcher
-						Patcher.setRootNode(oDomRef);
+							// set the starting point of the Patcher
+							Patcher.setRootNode(oDomRef);
 
-						// remember that we are using DOM based rendering interface
-						bDomInterface = true;
+							// remember that we are using DOM based rendering interface
+							bDomInterface = true;
+						}
 
 					} else {
 
@@ -1036,7 +1049,7 @@ sap.ui.define([
 
 				// at the end of the rendering apply the rendering buffer of the control that is forced to render string interface
 				if (sLegacyRendererControlId && sLegacyRendererControlId === oControl.getId()) {
-					Patcher.unsafeHtml(aBuffer.join(""), sLegacyRendererControlId);
+					Patcher.unsafeHtml(aBuffer.join(""), sLegacyRendererControlId, restoreStyles);
 					sLegacyRendererControlId = "";
 					bDomInterface = true;
 					aBuffer = [];
@@ -1157,10 +1170,41 @@ sap.ui.define([
 
 			var oStoredFocusInfo;
 			if (!bDomInterface) {
+				// DOM-based rendering was not possible we are in the string-based initial rendering or re-rendering phase
 				oStoredFocusInfo = oFocusHandler && oFocusHandler.getControlFocusInfo();
-				fnPutIntoDom(aBuffer.join(""));
+				var sHtml = aBuffer.join("");
+				if (sHtml && aRenderingStyles.length) {
+					// During the string-based rendering, RM#writeStyles method is not writing the styles into the HTML buffer due to possible CSP restrictions.
+					// Instead, we store the styles in the aRenderingStyles array and add an ATTR_STYLE_KEY_MARKER attribute marker for which the value
+					// references the original style index in this array.
+					// Not to violate the CSP, we need to bring the original styles via HTMLElement.style API. Here we are converting the HTML buffer of
+					// string-based rendering to DOM nodes so that we can restore the orginal styles before we inject the rendering output to the DOM tree.
+					var $Html = jQuery(sHtml);
+					restoreStyles($Html.get());
+					fnPutIntoDom($Html);
+				} else {
+					fnPutIntoDom(sHtml);
+				}
 			} else {
-				oStoredFocusInfo = oFocusHandler && oFocusHandler.getPatchingControlFocusInfo();
+				// get the root node of the Patcher to determine whether we are in the initial rendering or the re-rendering phase
+				var oRootNode = Patcher.getRootNode();
+
+				// in case of DOM-based initial rendering, the Patcher creates a DocumentFragment to assemble all created control DOM nodes within it
+				if (oRootNode.nodeType == 11 /* Node.DOCUMENT_FRAGMENT_NODE */) {
+					// even though we are in the initial rendering phase a control within the control tree might has been already rendered before
+					// therefore we need to store the currectly focused control info before we inject the DocumentFragment into the real DOM tree
+					oStoredFocusInfo = oFocusHandler && oFocusHandler.getControlFocusInfo();
+
+					// controls are not necessarily need to produce output during their rendering
+					// in case of output is produced, let the callback injects the DocumentFragment
+					fnPutIntoDom(oRootNode.lastChild ? oRootNode : "");
+				} else {
+					// in case of DOM-based re-rendering, the root node of the Patcher must be an existing HTMLElement
+					// since the re-rendering happens during the control renderer APIs are executed here we get the stored focus info before the patching
+					oStoredFocusInfo = oFocusHandler && oFocusHandler.getPatchingControlFocusInfo();
+				}
+
+				// make the Patcher ready for the next patching
 				Patcher.reset();
 			}
 
@@ -1173,6 +1217,30 @@ sap.ui.define([
 			if (fnDone) {
 				fnDone();
 			}
+		}
+
+		function restoreStyle(oElement, iDomIndex) {
+			var sStyleIndex = oElement.getAttribute(ATTR_STYLE_KEY_MARKER);
+			if (sStyleIndex != iDomIndex) {
+				return 0;
+			}
+
+			oElement.style = aRenderingStyles[iDomIndex];
+			oElement.removeAttribute(ATTR_STYLE_KEY_MARKER);
+			return 1;
+		}
+
+		function restoreStyles(aDomNodes) {
+			var iDomIndex = 0;
+			aDomNodes.forEach(function(oDomNode) {
+				if (oDomNode.nodeType == 1 /* Node.ELEMENT_NODE */) {
+					iDomIndex += restoreStyle(oDomNode, iDomIndex);
+					oDomNode.querySelectorAll("[" + ATTR_STYLE_KEY_MARKER + "]").forEach(function(oElement) {
+						iDomIndex += restoreStyle(oElement, iDomIndex);
+					});
+				}
+			});
+			aRenderingStyles = [];
 		}
 
 		/**
@@ -1217,7 +1285,7 @@ sap.ui.define([
 				RenderManager.preserveContent(oTargetDomNode);
 			}
 
-			flushInternal(function(sHTML) {
+			flushInternal(function(vHTML) {
 
 				for (var i = 0; i < aRenderedControls.length; i++) {
 					//TODO It would be enough to loop over the controls for which renderControl was initially called but for this
@@ -1233,21 +1301,21 @@ sap.ui.define([
 				}
 				if (typeof vInsert === "number") {
 					if (vInsert <= 0) { // new HTML should be inserted at the beginning
-						jQuery(oTargetDomNode).prepend(sHTML);
+						jQuery(oTargetDomNode).prepend(vHTML);
 					} else { // new element should be inserted at a certain position > 0
 						var $predecessor = jQuery(oTargetDomNode).children().eq(vInsert - 1); // find the element which should be directly before the new one
 						if ($predecessor.length === 1) {
 							// element found - put the HTML in after this element
-							$predecessor.after(sHTML);
+							$predecessor.after(vHTML);
 						} else {
 							// element not found (this should not happen when properly used), append the new HTML
-							jQuery(oTargetDomNode).append(sHTML);
+							jQuery(oTargetDomNode).append(vHTML);
 						}
 					}
 				} else if (!vInsert) {
-					jQuery(oTargetDomNode).html(sHTML); // Put the HTML into the given DOM Node
+					jQuery(oTargetDomNode).html(vHTML); // Put the HTML into the given DOM Node
 				} else {
-					jQuery(oTargetDomNode).append(sHTML); // Append the HTML into the given DOM Node
+					jQuery(oTargetDomNode).append(vHTML); // Append the HTML into the given DOM Node
 				}
 
 			}, fnDone);
@@ -1286,7 +1354,7 @@ sap.ui.define([
 			// FIXME: MULTIPLE ROOTS
 			// The implementation of this method doesn't support multiple roots for a control.
 			// Affects all places where 'oldDomNode' is used
-			flushInternal(function(sHTML) {
+			flushInternal(function(vHTML) {
 
 				if (oControl && oTargetDomNode) {
 
@@ -1298,15 +1366,6 @@ sap.ui.define([
 
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;
 
-					var fAppend = function(){
-						var jTarget = jQuery(oTargetDomNode);
-						if (oTargetDomNode.innerHTML == "") {
-							jTarget.html(sHTML);
-						} else {
-							jTarget.append(sHTML);
-						}
-					};
-
 					if (bNewTarget) { //Control was rendered already and is now moved to different location
 
 						if (!RenderManager.isPreservedContent(oldDomNode)) {
@@ -1317,21 +1376,21 @@ sap.ui.define([
 							}
 						}
 
-						if (sHTML) {
-							fAppend();
+						if (vHTML) {
+							jQuery(oTargetDomNode).append(vHTML);
 						}
 
 					} else { //Control either rendered initially or rerendered at the same location
 
-						if (sHTML) {
+						if (vHTML) {
 							if (oldDomNode) {
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
-									jQuery(oldDomNode).html(sHTML);
+									jQuery(oldDomNode).html(vHTML);
 								} else {
-									jQuery(oldDomNode).replaceWith(sHTML);
+									jQuery(oldDomNode).replaceWith(vHTML);
 								}
 							} else {
-								fAppend();
+								jQuery(oTargetDomNode).append(vHTML);
 							}
 						} else {
 							if (RenderManager.isInlineTemplate(oldDomNode)) {
@@ -2038,7 +2097,7 @@ sap.ui.define([
 					// a move to the preserveArea will modify the sibling relationship!
 					candidate = next;
 					next = next.nextSibling;
-					if ( candidate.nodeType === 1 /* Node.ELEMENT */ ) {
+					if ( candidate.nodeType === 1 /* Node.ELEMENT_NODE */ ) {
 						check(candidate);
 					}
 				}

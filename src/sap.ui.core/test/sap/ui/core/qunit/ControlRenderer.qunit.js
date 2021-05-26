@@ -13,11 +13,21 @@ sap.ui.define([
 	createAndAppendDiv("uiArea1");
 	createAndAppendDiv("uiArea2");
 
+	function cleanupMutations(aMutations) {
+		for (var i = aMutations.length - 1; i > 0; i--) {
+			if (aMutations[i].attributeName == "data-sap-ui-stylekey") {
+				aMutations.splice(--i, 2);
+			}
+		}
+
+		return aMutations;
+	}
+
 	var StringControl = Control.extend("test.StringControl", {
 		metadata: {
 			properties: {
 				header: { type: "string", defaultValue: "StringControl" },
-				width: { type: "sap.ui.core.CSSSize", defaultValue: "100%" },
+				width: { type: "string", defaultValue: "100%" },
 				icon: { type: "sap.ui.core.URI", defaultValue: "" },
 				renderNothing: { type: "boolean", defaultValue: false },
 				doSomething: { type: "function" }
@@ -44,7 +54,7 @@ sap.ui.define([
 			rm.writeAttribute("aria-describedby", InvisibleText.getStaticId("sap.ui.core", "ARIA_DESCRIBEDBY")); /* during rerendering this will create new RM not to invalidate static UIArea */
 			rm.writeAttribute("tabindex", 0);
 			rm.addStyle("width", oControl.getWidth());
-			rm.addStyle("background", "red");
+			rm.addStyle("background-color", "red");
 			rm.addClass("StringControl");
 			rm.writeClasses();
 			rm.writeStyles();
@@ -72,7 +82,7 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				header: { type: "string", defaultValue: "PatchingControl" },
-				width: { type: "sap.ui.core.CSSSize", defaultValue: "100%" },
+				width: { type: "string", defaultValue: "100%" },
 				icon: { type: "sap.ui.core.URI", defaultValue: "" },
 				renderNothing: { type: "boolean", defaultValue: false },
 				doSomething: { type: "function" }
@@ -97,7 +107,7 @@ sap.ui.define([
 				rm.attr("aria-describedby", InvisibleText.getStaticId("sap.ui.core", "ARIA_DESCRIBEDBY"));
 				rm.attr("tabindex", 0);
 				rm.style("width", oControl.getWidth());
-				rm.style("background", "green");
+				rm.style("background-color", "green");
 				rm.class("PatchingControl");
 
 				if (oControl.getDoSomething()) {
@@ -121,6 +131,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("RenderManager");
+
+	QUnit.test("Custom RM writing text nodes and styles", function(assert) {
+		var oRoot = document.createElement("div");
+		var oRM = Core.createRenderManager();
+		oRM.write("<div").addStyle("width", "100px").writeStyles().write(">").write("DivText").write("</div>");
+		oRM.write("TextNode");
+		oRM.write("<b>BoldText</b>");
+		oRM.flush(oRoot);
+		oRM.destroy();
+
+		assert.equal(oRoot.outerHTML, '<div><div style="width: 100px;">DivText</div>TextNode<b>BoldText</b></div>', "styles and text nodes are written correctly");
+	});
 
 	QUnit.test("String rendering output and events", function(assert) {
 		var oStringControl = new StringControl();
@@ -166,6 +188,26 @@ sap.ui.define([
 		oStringControl.destroy();
 	});
 
+	QUnit.test("String rendering style checks", function(assert) {
+		var oStringControl = new StringControl("root", {
+			width: "99.9%",
+			items: [new StringControl("child1", {
+				width: "calc(-3rEm + 50vW)"
+			}), new StringControl("child2", {
+				width: '500px;" hack="true"'
+			})]
+		});
+
+		oStringControl.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.equal(document.getElementById("root").style.width, "99.9%", "Width is set correctly for the root");
+		assert.equal(document.getElementById("child1").style.width, "calc(-3rem + 50vw)", "Width is set correctly for the 1st child");
+		assert.equal(document.getElementById("child2").style.width, "500px", "Width is set for the 2nd child");
+		assert.notOk(document.getElementById("child2").hasAttribute("hack"), "Hack attribute is not set");
+		oStringControl.destroy();
+	});
+
 	QUnit.test("New rendering output and events", function(assert) {
 		var oPatchingControl = new PatchingControl();
 		var onBeforeRenderingSpy = sinon.spy();
@@ -207,6 +249,79 @@ sap.ui.define([
 		assert.equal(onAfterRenderingSpy.callCount, 2, "onAfterRendering is called again");
 		assert.equal(onBeforeRenderingSpy.callCount, 2, "onBeforeRendering is called again");
 
+		oPatchingControl.destroy();
+	});
+
+	QUnit.test("DOM rendering style checks", function(assert) {
+		var oPatchingControl = new PatchingControl("root", {
+			width: "99.9%",
+			items: [new PatchingControl("child1", {
+				width: "calc(-3rEm + 50vW)"
+			}), new PatchingControl("child2", {
+				width: '500px;" hack="true"'
+			})]
+		});
+
+		oPatchingControl.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.equal(document.getElementById("root").style.width, "99.9%", "Width is set correctly for the root");
+		assert.equal(document.getElementById("child1").style.width, "calc(-3rem + 50vw)", "Width is set correctly for the 1st child");
+		assert.notEqual(document.getElementById("child2").style.width, "500px", "Width is not set for the 2nd child since we initially do dom-based rendering");
+		assert.notOk(document.getElementById("child2").hasAttribute("hack"), "Hack attribute is not set");
+
+		Core.byId("child2").setWidth('300px;" hack="true"');
+		Core.applyChanges();
+		assert.notEqual(document.getElementById("child2").style.width, "300px", "Width is not set for the 2nd child since patching encodes semicolon");
+		assert.notOk(document.getElementById("child2").hasAttribute("hack"), "Hack attribute is not set");
+
+		oPatchingControl.destroy();
+	});
+
+	QUnit.test("Create RenderManager during the rendering", function(assert) {
+		var oPatchingControl = new PatchingControl({
+			header: "root",
+			items: new PatchingControl({
+				header: "child"
+			})
+		});
+
+		oPatchingControl.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oPatchingControl.setHeader("root2").getItems()[0].setDoSomething(function() {
+			var oRM = Core.createRenderManager();
+			var oNew = new PatchingControl({ header: "new" });
+			var oDom = document.createElement("section");
+
+			oRM.render(oNew, oDom);
+			oNew.destroy();
+			oRM.destroy();
+		}).setHeader("child2");
+
+		Core.applyChanges();
+		assert.equal(oPatchingControl.getDomRef().textContent, "root2child2");
+
+		oPatchingControl.destroy();
+	});
+
+	QUnit.test("Mix rendering style checks", function(assert) {
+		var oPatchingControl = new PatchingControl("root", {
+			width: "99.9%",
+			items: [new StringControl("child1", {
+				width: "calc(-3rEm + 50vW)"
+			}), new StringControl("child2", {
+				width: '500px;" hack="true"'
+			})]
+		});
+
+		oPatchingControl.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.equal(document.getElementById("root").style.width, "99.9%", "Width is set correctly for the root");
+		assert.equal(document.getElementById("child1").style.width, "calc(-3rem + 50vw)", "Width is set correctly for the 1st child");
+		assert.equal(document.getElementById("child2").style.width, "500px", "Width is set for the 2nd child");
+		assert.notOk(document.getElementById("child2").hasAttribute("hack"), "Hack attribute is not set");
 		oPatchingControl.destroy();
 	});
 
@@ -342,29 +457,29 @@ sap.ui.define([
 		assert.equal(aMutations.length, 0, "No DOM update");
 
 		oPatchingControl.addItem(new StringControl({header: "X", doSomething: fnCreateRenderManager})).rerender();
-		aMutations = oObserver.takeRecords();
+		aMutations = cleanupMutations(oObserver.takeRecords());
 		assert.equal(oDomRef.lastChild.textContent, "X", "Child X is added via String Rendering");
 		assert.equal(aMutations.length, 1, "Only child X is added");
 
 		assert.equal(oDomRef.textContent, "H/ABCX", "Rendering is valid after StringControl is added");
 
 		oPatchingControl.rerender();
-		aMutations = oObserver.takeRecords();
+		aMutations = cleanupMutations(oObserver.takeRecords());
 		assert.equal(aMutations.length, 2, "StringControl is replaced(removed from DOM and added again)");
 
 		oPatchingControl.setWidth("200px").rerender();
-		aMutations = oObserver.takeRecords();
+		aMutations = cleanupMutations(oObserver.takeRecords());
 		assert.equal(oDomRef.style.width, "200px", "Width is changed");
 		assert.equal(aMutations.length, 3, "Only width of Patching control is changed and StringControl is replaced");
 
 		oRemovedChild = oPatchingControl.removeItem(3);
 		oPatchingControl.insertItem(oRemovedChild, 2).rerender();
-		aMutations = oObserver.takeRecords();
+		aMutations = cleanupMutations(oObserver.takeRecords());
 		assert.equal(oDomRef.textContent, "H/ABXC", "Child X inserted to right position");
 		assert.equal(aMutations.length, 2, "StringControl is added to 3rd position and old one is removed");
 
 		oPatchingControl.insertItem(new StringControl({header: "Y"}), 0).rerender();
-		aMutations = oObserver.takeRecords();
+		aMutations = cleanupMutations(oObserver.takeRecords());
 		assert.equal(oDomRef.textContent, "H/YABXC", "Child Y inserted to first position");
 		assert.equal(aMutations.length, 3, "StringControl Y is added to first position, StringControl X is replaced");
 
@@ -583,7 +698,7 @@ sap.ui.define([
 		assert.equal(oDomRef.textContent, "R/1S/1.1P/1.2S/2P/2.1S/2.2P/", "Content is correct after initial rendering");
 
 		oRootControl.rerender();
-		var aMutations = oObserver.takeRecords();
+		var aMutations = cleanupMutations(oObserver.takeRecords());
 		assert.equal(aMutations.length, 4, "Only 1S/ and 2.1S/ String controls need to be replaced");
 		assert.equal(aMutations[0].addedNodes[0].textContent, "1S/1.1P/1.2S/", "New 1S/ String control is inserted with its children");
 		assert.equal(aMutations[1].removedNodes[0].textContent, "1S/1.1P/1.2S/", "Old 1S/ String control is removed with its childre");
