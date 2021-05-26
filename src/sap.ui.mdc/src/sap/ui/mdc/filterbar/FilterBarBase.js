@@ -574,11 +574,19 @@ sap.ui.define([
 					var mOrigConditions = {};
 					mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, oEvent.getParameter("value"));
 					this._cleanupConditions(mOrigConditions[sFieldPath]);
-					this.getEngine().createChanges({
+
+					var oChangePromise = this.getEngine().createChanges({
 						control: this,
 						key: "Filter",
 						state: mOrigConditions
 					});
+
+					if (!this._aCollectedChangePromises) {
+						this._aCollectedChangePromises = [];
+					}
+
+					this._aCollectedChangePromises.push(oChangePromise);
+
 				} else {
 					this._reportModelChange(false);
 				}
@@ -912,12 +920,35 @@ sap.ui.define([
 		}
 	};
 
+	FilterBarBase.prototype._waitForChangeAppliance = function(bFireSearch) {
+
+		var aChangePromises = this._aCollectedChangePromises.slice();
+		this._aCollectedChangePromises = null;
+
+		Promise.all(aChangePromises).then(function(aConditionsArray) {
+			this._validate(bFireSearch);
+		}.bind(this), function(aConditionsArray) {
+			this._validate(bFireSearch);
+		}.bind(this));
+	};
+
 	/**
 	 * Executes the search.
 	 * @private
+	 * @param {boolean} bFireSearch Determines whether a search event should be fired
 	 */
 	 FilterBarBase.prototype._validate = function(bFireSearch) {
 		var sErrorMessage, vRetErrorState;
+
+		var fnCleanup = function() {
+			this._fRejectedSearchPromise = null;
+			this._fResolvedSearchPromise = null;
+		}.bind(this);
+
+		if (this.bIsDestroyed) {
+			fnCleanup();
+			return;
+		}
 
 		// First check for validation errors or if search should be prevented
 		vRetErrorState = this._checkFilters();
@@ -927,10 +958,10 @@ sap.ui.define([
 			return;
 		}
 
-		var fnCleanup = function() {
-			this._fRejectedSearchPromise = null;
-			this._fResolvedSearchPromise = null;
-		}.bind(this);
+		if (this._aCollectedChangePromises && (this._aCollectedChangePromises.length > 0)) {
+			this._waitForChangeAppliance(bFireSearch);
+			return;
+		}
 
 		if (vRetErrorState === ErrorState.NoError) {
 			if (bFireSearch) {
@@ -1654,6 +1685,9 @@ sap.ui.define([
 		this._oSearchPromise = null;
 
 		this._aBindings = null;
+
+		this._aFIChanges = null;
+		this._aCollectedChangePromises = null;
 	};
 
 	return FilterBarBase;
