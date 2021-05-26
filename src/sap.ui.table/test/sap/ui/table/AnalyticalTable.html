@@ -78,7 +78,7 @@
 	}
 
 	TABLESETTINGS.init(oTable, function(oButton) {
-		oTable.getToolbar().addContent(oButton);
+		oTable.getExtension()[0].addContent(oButton);
 	}, {
 		GROUPING: {
 			hidden: true

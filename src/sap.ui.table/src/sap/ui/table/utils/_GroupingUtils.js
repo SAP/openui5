@@ -322,6 +322,15 @@ sap.ui.define([
 				GroupingUtils.setGroupIndent(oRow, iIndent);
 				$Row.toggleClass("sapUiTableRowIndented", iIndent > 0)
 					.toggleClass("sapUiTableGroupHeaderRow", oRow.isGroupHeader());
+
+				if (GroupingUtils.showGroupMenuButton(oTable)) {
+					var $Table = oTable.$();
+					var iScrollbarWidth = $Table.hasClass("sapUiTableVScr") ? $Table.find(".sapUiTableVSb").width() : 0;
+					var $GroupHeaderMenuButton = oDomRefs.rowHeaderPart.find(".sapUiTableGroupMenuButton");
+					var iMenuButtonOffset = $Table.width() - $GroupHeaderMenuButton.width() - iScrollbarWidth - 5 - iIndent;
+
+					$GroupHeaderMenuButton.css(oTable._bRtlMode ? "right" : "left", iMenuButtonOffset + "px");
+				}
 			}
 
 			if (GroupingUtils.isInTreeMode(oTable)) {
@@ -331,25 +340,6 @@ sap.ui.define([
 						 .toggleClass("sapUiTableTreeIconNodeOpen", bIsExpandable && bIsExpanded)
 						 .toggleClass("sapUiTableTreeIconNodeClosed", bIsExpandable && !bIsExpanded);
 				GroupingUtils.setTreeIndent(oRow, GroupingUtils.calcTreeIndent(oRow));
-			}
-
-			if (GroupingUtils.showGroupMenuButton(oTable)) {
-				var $RowHdr = oDomRefs.rowHeaderPart;
-				var iScrollbarOffset = 0;
-				var $Table = oTable.$();
-				var $GroupHeaderMenuButton = $RowHdr.find(".sapUiTableGroupMenuButton");
-
-				if ($Table.hasClass("sapUiTableVScr")) {
-					iScrollbarOffset += $Table.find(".sapUiTableVSb").width();
-				}
-
-				if (oTable._bRtlMode) {
-					$GroupHeaderMenuButton.css("right",
-						($Table.width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollbarOffset - 5) + "px");
-				} else {
-					$GroupHeaderMenuButton.css("left",
-						($Table.width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollbarOffset - 5) + "px");
-				}
 			}
 
 			if (!GroupingUtils.isInFlatMode(oTable)) {
