@@ -84,20 +84,6 @@ sap.ui.define([
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(oData);
 			this.getView().setModel(oModel);
-		},
-		toggleEditable: function () {
-			var oModel = this.getView().getModel(),
-				oData = oModel.getData();
-
-			oData.Editable = !oData.Editable;
-			oModel.setData(oData);
-		},
-		toggleEnabled: function () {
-			var oModel = this.getView().getModel(),
-				oData = oModel.getData();
-
-			oData.Enabled = !oData.Enabled;
-			oModel.setData(oData);
 		}
 	});
 });

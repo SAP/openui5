@@ -37,11 +37,11 @@
 				<VBox>
 					<HBox alignItems="Center">
 						<Label text="Enabled:" class="sapUiTinyMarginEnd"/>
-						<Switch type="AcceptReject" state="true" change="toggleEnabled"/>
+						<Switch type="AcceptReject" state="{/Enabled}"/>
 					</HBox>
 					<HBox alignItems="Center">
 						<Label text="Editable:" class="sapUiTinyMarginEnd"/>
-						<Switch type="AcceptReject" state="true" change="toggleEditable"/>
+						<Switch type="AcceptReject" state="{/Editable}"/>
 					</HBox>
 				</VBox>
 			</HBox>
