@@ -362,21 +362,29 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element} oInvisibleElement - Invisible Element
 	 * @param {object[]} aProperties - Array of Fields
 	 * @param {string[]} aBindingPaths - Map of all binding paths and binding context paths of the passed invisible element
+	 * @param {boolean} bHasAddViaDelegate - If there is Add Via Delegate action
 	 *
 	 * @return {boolean} - whether this field should be included
 	 *
 	 * @private
 	 */
-	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths) {
-		if (_hasBindings(aBindingPaths)) {
-			var aModelProperties = _findModelProperties(aBindingPaths, aProperties);
-			if (!aModelProperties.length || _checkHideFromReveal(aModelProperties)) {
+	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths, bHasAddViaDelegate) {
+		if (!_hasBindings(aBindingPaths)) {
+			// include it if the field has no bindings (bindings can be added in runtime)
+			return true;
+		}
+
+		var aModelProperties = _findModelProperties(aBindingPaths, aProperties);
+		if (aModelProperties.length) {
+			if (_checkHideFromReveal(aModelProperties)) {
 				return false;
 			}
 			_enhanceInvisibleElement(oInvisibleElement, aModelProperties.pop());
+			return true;
 		}
-		// include it if the field has no bindings (bindings can be added in runtime)
-		return true;
+
+		// if model properties are not found, only hide for AddViaDelegate case
+		return !bHasAddViaDelegate;
 	}
 
 	function _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties) {
@@ -391,13 +399,13 @@ sap.ui.define([
 		// BCP: 1880498671
 		} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
 			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel, oInvisibleElement).bindingPaths;
-		} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
+		} else if (!!mAddViaDelegate && BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
 			bIncludeElement = false;
 		}
 
 		if (bIncludeElement) {
 			oInvisibleElement.__duplicateName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
-			bIncludeElement = _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths);
+			bIncludeElement = _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths, !!mAddViaDelegate);
 		}
 		return bIncludeElement;
 	}
