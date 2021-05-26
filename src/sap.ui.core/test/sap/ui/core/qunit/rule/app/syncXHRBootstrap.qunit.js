@@ -36,9 +36,9 @@
 				iExpectedMaxSyncCalls++;
 			}
 
+			fnAssertRequireSync("sap/ui/base/Object");
 			fnAssertRequireSync("sap/ui/core/support/Support");
 			fnAssertRequireSync("sap/ui/support/Bootstrap");
-			fnAssertRequireSync("sap/ui/base/Object");
 
 			assert.equal(this.requireSyncStub.callCount, iExpectedMaxSyncCalls,
 				"The number of sync requests should be exactly " + iExpectedMaxSyncCalls);

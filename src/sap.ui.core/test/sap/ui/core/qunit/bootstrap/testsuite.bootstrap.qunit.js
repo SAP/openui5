@@ -315,6 +315,11 @@ sap.ui.define(function() {
 				page: "test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_SapUiCustomWithExtURL.qunit.html",
 				title: "Test Page for Resource Root when 'src' contains 'sap-ui-custom-some-ext.js' but no 'resources/'"
 			},
+			"SyncBootstrapWithCustomBootTask_unavoidablySync": {
+				page: "test-resources/sap/ui/core/qunit/bootstrap/SyncBootstrapWithCustomBootTask_unavoidablySync.qunit.html",
+				group: "Bootstrap",
+				bootCore: false
+			},
 			"ThemeVersion-off-async": {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - off - async",
