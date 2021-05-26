@@ -1191,6 +1191,7 @@ sap.ui.define([
 			} else if (typeof (oError) === "string") {
 				sError = oError;
 			}
+			oValueModel.firePropertyChange();
 			oField._showValueState("error", sError, true);
 		}.bind(this));
 	};
