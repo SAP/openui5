@@ -299,7 +299,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		oRm.class("sapUiCalDummy");
 		oRm.style("visibility", bVisible ? "visible" : "hidden");
 		oRm.attr("role", sRole);
-		oRm.attr("tabindex", "-1");
+		oRm.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_WEEK"));
 		oRm.openEnd();
 		oRm.close('div');
 	};
