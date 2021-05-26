@@ -511,7 +511,7 @@ sap.ui.define([
 			oState = {
 				items: [{name: "Name"}, {name: "name_country"}]
 			};
-			oValidationState = oTable.validateState(oState);
+			oValidationState = oTable.validateState(oState, "Sort");
 			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
 				"No message because oState.sorters is undefined");
 			assert.equal(oValidationState.message, undefined, "Message text is undefined");
@@ -519,8 +519,8 @@ sap.ui.define([
 			oState = {
 				sorters: [{name: "Name"}, {name: "Country"}]
 			};
-			oValidationState = oTable.validateState(oState);
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.Warning,
+			oValidationState = oTable.validateState(oState, "Sort");
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
 				"Warning message, oState.items is undefined");
 			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION"),
 				"Message text is correct");
@@ -529,7 +529,7 @@ sap.ui.define([
 				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}],
 				sorters: [{name: "Name"}, {name: "Country"}]
 			};
-			oValidationState = oTable.validateState(oState);
+			oValidationState = oTable.validateState(oState, "Sort");
 			assert.equal(oValidationState.validation, coreLibrary.MessageType.None, "No message");
 			assert.equal(oValidationState.message, undefined, "Message text is undefined");
 
@@ -537,8 +537,8 @@ sap.ui.define([
 				items: [{name: "Name"}],
 				sorters: [{name: "Country"}]
 			};
-			oValidationState = oTable.validateState(oState);
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.Warning,
+			oValidationState = oTable.validateState(oState, "Sort");
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
 				"Warning message, sorted a not visible property");
 			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION"),
 				"Message text is correct");
@@ -547,9 +547,105 @@ sap.ui.define([
 				items: [{name: "Name"}, {name: "name_country"}],
 				sorters: [{name: "Country"}]
 			};
-			oValidationState = oTable.validateState(oState);
+			oValidationState = oTable.validateState(oState, "Sort");
 			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
 				"No message, the sorted property is not visible but part of a visible complex property");
+			assert.equal(oValidationState.message, undefined, "Message text is undefined");
+		});
+	});
+
+	QUnit.test("Group restriction", function(assert) {
+		var oTable = this.oTable;
+
+		return oTable._fullyInitialized().then(function() {
+			var oDelegate = oTable.getControlDelegate();
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var oState, oValidationState;
+
+			oState = {
+				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
+			};
+			oValidationState = oTable.validateState(oState, "Group");
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.None, "No message");
+			assert.equal(oValidationState.message, undefined, "Message text is not defined");
+
+			oState = {
+				items: [{name: "Name"}],
+				aggregations: { Name : {}}
+			};
+			oValidationState = oTable.validateState(oState, "Group");
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
+				"Information message, Grouping and aggreagtion can't be used simulatneously");
+			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION", "Name"),
+				"Message text is correct");
+
+			oState = {
+				items: [{name: "Name"}, {name: "name_country"}],
+				sorters: [{name: "Country"}]
+			};
+			oValidationState = oDelegate.validateState(oTable, oState);
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
+				"No message, the sorted property is not visible but part of a visible complex property");
+			assert.equal(oValidationState.message, undefined, "Message text is undefined");
+
+			oState = {};
+			oValidationState = oDelegate.validateState(oTable, oState);
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
+				"No message because oState.items is undefined");
+			assert.equal(oValidationState.message, undefined, "Message text is undefined");
+		});
+	});
+
+	QUnit.test("Column restriction", function(assert) {
+		var oTable = this.oTable;
+
+		return oTable._fullyInitialized().then(function() {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			var oState, oValidationState;
+
+			oState = {
+				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
+			};
+			oValidationState = oTable.validateState(oState, "Column");
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.None, "No message");
+			assert.equal(oValidationState.message, undefined, "Message text is not defined");
+
+			oState = {
+				items: [{name: "Country"}],
+				aggregations: { Name : {}}
+			};
+			oValidationState = oTable.validateState(oState, "Column");
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
+				"Information message, Cannot remove column when the total is showed for the column");
+			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION"),
+				"Message text is correct");
+
+			oState = {
+				items: [{name: "Name"}],
+				sorters: [{name: "Country"}]
+			};
+			oValidationState = oTable.validateState(oState, "Column");
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
+				"Information message, Cannot remove column when the sorters is applied for the column");
+			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION", "Name"),
+				"Message text is correct");
+
+			oState = {
+				items: [{name: "Country"}],
+				sorters: [{name: "Name"}],
+				aggregations: { Name : {}}
+			};
+			oValidationState = oTable.validateState(oState, "Column");
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
+				"Information message, Cannot remove column when the sorters and totals is shown for the column");
+			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION") + "\n" +
+				oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION", "Name"),
+				"Message text is correct");
+
+			oState = {};
+			oValidationState = oTable.validateState(oState, "Column");
+			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
+				"No message because oState.items is undefined");
 			assert.equal(oValidationState.message, undefined, "Message text is undefined");
 		});
 	});

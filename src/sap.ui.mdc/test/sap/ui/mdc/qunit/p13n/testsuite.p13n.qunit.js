@@ -93,6 +93,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"GroupController": {
+				group: "SubController (generic)",
+				module: "./controllers/ControllerGeneric.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"ColumnController": {
 				group: "SubController (generic)",
 				module: "./controllers/ControllerGeneric.qunit",

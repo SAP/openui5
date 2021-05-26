@@ -43,6 +43,9 @@ sap.ui.define([
 					sorters: [
 						{name: "test"}
 					],
+					groupLevels: [
+						{name: "test"}
+					],
 					filter: {
 						test: [
 							{

@@ -21,6 +21,18 @@ sap.ui.define([
         return !!this.getAdaptationControl()._bNewP13n;
     };
 
+    ColumnController.prototype.model2State = function() {
+        var aItems = [];
+        this._oAdaptationModel.getProperty("/items").forEach(function(oItem){
+            if (oItem.visible){
+                aItems.push({
+                    name: oItem.name
+                });
+            }
+        });
+        return aItems;
+    };
+
     ColumnController.prototype.getAdaptationUI = function(oPropertyHelper){
 
         var oSelectionPanel = this.getAdaptationControl()._bNewP13n ? new ListView({
