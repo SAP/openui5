@@ -19,6 +19,7 @@
 				},
 				"EntityType02_Property02": "EntityType02Property02Value",
 				"EntityType02_Property03": "EntityType02_Property03Value",
+				"EntityType02_Property03f": true,
 				"EntityType02_Property04_Dynamically_Invisible_By_FieldControl": "EntityType02_Property04_Dynamically_Invisible_By_FieldControl",
 				"UxFcThatMakeFieldInvisible": 0,
 				"EntityType02_Property05": "EntityType02_Property05Value-Partially-Visible",

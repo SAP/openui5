@@ -76,7 +76,7 @@ sap.ui.define([
 		return aFlattenedProperties;
 	}
 
-	function _getAllPropertiesFromDelegate(oElement, sAggregationName, mAction) {
+	function _getAllPropertiesFromAddViaDelegateAction(oElement, sAggregationName, mAction) {
 		var mPropertyBag = {
 			element: oElement,
 			aggregationName: sAggregationName,
@@ -86,11 +86,10 @@ sap.ui.define([
 			.then(_flattenProperties);
 	}
 
-	function getAllPropertiesFromReadOnlyDelegate(oElement, sAggregationName) {
+	function getAllPropertiesFromDelegate(oElement, sAggregationName) {
 		return DelegateMediatorAPI.getDelegateForControl({
 			control: oElement,
 			modifier: JsControlTreeModifier,
-			readOnly: true,
 			supportsDefault: true
 		}).then(function(mDelegateInfo) {
 			if (mDelegateInfo && mDelegateInfo.instance) {
@@ -108,9 +107,9 @@ sap.ui.define([
 		var mAddViaDelegate = mActions.addViaDelegate;
 		var fnGetAllProperties;
 		if (mAddViaDelegate) {
-			fnGetAllProperties = _getAllPropertiesFromDelegate.bind(null, oElement, sAggregationName, mAddViaDelegate);
+			fnGetAllProperties = _getAllPropertiesFromAddViaDelegateAction.bind(null, oElement, sAggregationName, mAddViaDelegate);
 		} else {
-			fnGetAllProperties = getAllPropertiesFromReadOnlyDelegate.bind(null, oElement, sAggregationName);
+			fnGetAllProperties = getAllPropertiesFromDelegate.bind(null, oElement, sAggregationName);
 		}
 		return fnGetAllProperties() //arguments bound before
 			.then(function(aProperties) {
@@ -214,12 +213,6 @@ sap.ui.define([
 		});
 	}
 
-	function _checkHideFromReveal(aModelProperties) {
-		return aModelProperties.some(function (mModelProperty) {
-			return mModelProperty.hideFromReveal;
-		});
-	}
-
 	/**
 	 * Checks if array of paths is not empty
 	 * @param {string[]} aBindingPaths - Array of collected binding paths
@@ -240,15 +233,16 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	function _findModelProperties(aControlsBindingPaths, aProperties) {
+	function _findModelProperty(aControlsBindingPaths, aProperties) {
 		return aProperties.filter(function (oModelProperty) {
 			return aControlsBindingPaths.some(function(sBindingPath) {
 				//there might be some deeper binding paths available on controls,
 				//than returned by the model evaluation (e.g. navigation property paths)
 				//So we only check a properties are part of the controls bindings
-				return sBindingPath.startsWith(oModelProperty.bindingPath);
+				return sBindingPath.startsWith(oModelProperty.bindingPath)
+						&& oModelProperty.label !== "UI Field Control";
 			});
-		});
+		}).pop();
 	}
 
 	function _vBindingToPath(vBinding) {
@@ -368,15 +362,17 @@ sap.ui.define([
 	 * @private
 	 */
 	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths) {
-		if (_hasBindings(aBindingPaths)) {
-			var aModelProperties = _findModelProperties(aBindingPaths, aProperties);
-			if (!aModelProperties.length || _checkHideFromReveal(aModelProperties)) {
-				return false;
-			}
-			_enhanceInvisibleElement(oInvisibleElement, aModelProperties.pop());
+		if (!_hasBindings(aBindingPaths)) {
+			// include it if the field has no bindings (bindings can be added in runtime)
+			return true;
 		}
-		// include it if the field has no bindings (bindings can be added in runtime)
-		return true;
+
+		var mModelProperty = _findModelProperty(aBindingPaths, aProperties);
+		if (mModelProperty && !mModelProperty.hideFromReveal) {
+			_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
+			return true;
+		}
+		return false;
 	}
 
 	function _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties) {
@@ -390,7 +386,7 @@ sap.ui.define([
 			aBindingPaths = _getRepresentedBindingPathsOfInvisibleElement(oInvisibleElement, aRepresentedProperties);
 		// BCP: 1880498671
 		} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
-			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel, oInvisibleElement).bindingPaths;
+			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
 		} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
 			bIncludeElement = false;
 		}
@@ -484,7 +480,7 @@ sap.ui.define([
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;
 			return Promise.all([
-				_getAllPropertiesFromDelegate(oElement, sAggregationName, mAction),
+				_getAllPropertiesFromAddViaDelegateAction(oElement, sAggregationName, mAction),
 				_getRepresentedBindingPaths(oElement, mAction, sModelName, sAggregationName)
 			])
 				.then(function(args) {

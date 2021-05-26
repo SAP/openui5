@@ -755,6 +755,33 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when getting a property that has a bound field control property hidden by annotation", function(assert) {
+			var oGroup = this.oView.byId("GroupEntityType02");
+			var oGroupElement1 = oGroup.getGroupElements()[14];
+			oGroupElement1.setVisible(false);
+			sap.ui.getCore().applyChanges();
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal: {
+					elements: [{
+						element: oGroupElement1,
+						action: {} //not relevant for test
+					}]
+				},
+				addViaDelegate: {
+					delegateInfo: {
+						delegate: this.oDelegate
+					}
+				}
+			};
+
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+				assert.equal(aAdditionalElements.length, 1, "then there is 1 additional Element available");
+				assert.equal(aAdditionalElements[0].label, "Field with property bound to control field", "the property is found");
+			});
+		});
+
 		function getFilteredItemsListTests(aInvisibleItems, aInvisibleCustomItems, aUniqueCustomItems, aDelegateItems, assert) {
 			var aPropertyItems = aDelegateItems;
 

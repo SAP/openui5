@@ -103,7 +103,13 @@
 					sap:updatable="false" sap:sortable="false" />
 				<Property Name="EntityType02_Property03" Type="Edm.String"
 					Nullable="false" MaxLength="1" sap:display-format="UpperCase"
+					sap:field-control="EntityType02_Property03f"
 					sap:text="AccountingDocumentCategoryName" sap:label="EntityType02_Property03"
+					sap:heading="not addOData" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" />
+				<Property Name="EntityType02_Property03f" Type="Edm.Boolean"
+					Nullable="false" MaxLength="1" sap:display-format="UpperCase"
+					sap:text="Field Control Like" sap:label="UI Field Control"
 					sap:heading="not addOData" sap:creatable="false" sap:updatable="false"
 					sap:sortable="false" />
 				<Property Name="EntityType02_Property04_Dynamically_Invisible_By_FieldControl" Type="Edm.String"
@@ -317,6 +323,9 @@
 			</EntityContainer>
 
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType02/TechnicalInvisibleProperty">
+				<Annotation Term="UI.Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType02/EntityType02_Property03f">
 				<Annotation Term="UI.Hidden"/>
 			</Annotations>
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType01/EntityType01_TechnicalInvisibleProperty">

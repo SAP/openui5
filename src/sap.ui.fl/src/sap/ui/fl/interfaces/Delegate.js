@@ -108,7 +108,7 @@ sap.ui.define([
 	return /** @lends sap.ui.fl.interfaces.Delegate */ {
 		/**
 		 * Provides all properties that are available at the current binding context. In OData, this will probably
-		 * be all properties of the entityType.
+		 * be all properties of the entityType. Technical properties, such as field control, should not be returned.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.base.ManagedObject} mPropertyBag.element - Element instance the delegate is attached to
