@@ -5,11 +5,13 @@
 // Provides object sap.ui.dt.OverlayUtil.
 sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/ElementUtil"
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/core/UIArea"
 ],
 function(
 	OverlayRegistry,
-	ElementUtil
+	ElementUtil,
+	UIArea
 ) {
 	"use strict";
 
@@ -196,7 +198,7 @@ function(
 	/**
 	 * Returns all overlay children as ElementOverlay.
 	 *
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source overlay object
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Source overlay object
 	 * @returns {array} Returns an array of child overlays {sap.ui.dt.ElementOverlay}
 	 * @private
 	 */
@@ -558,6 +560,73 @@ function(
 			return !!OverlayRegistry.getOverlay(oCompareElement) || oCompareElement === oElement;
 		});
 		return aElements.indexOf(oElement);
+	};
+
+	function findBoundControl(oOverlay, aStack) {
+		var sAggregationName;
+		var iIndex;
+		var oParentOverlay = oOverlay.getParent();
+		var bBoundControlFound = false;
+
+		if (oOverlay.isA("sap.ui.dt.ElementOverlay")) {
+			var oParentElementOverlay = oOverlay.getParentElementOverlay();
+
+			if (oParentOverlay) {
+				sAggregationName = oParentOverlay.getAggregationName();
+				iIndex = oParentOverlay.getChildren().indexOf(oOverlay);
+				bBoundControlFound = oParentElementOverlay
+					&& oParentElementOverlay.getAggregationOverlay(sAggregationName, "AggregationBindingTemplateOverlays");
+			} else {
+				iIndex = -1;
+			}
+
+			aStack.push({
+				overlayId: oOverlay.getId(),
+				aggregation: sAggregationName,
+				index: iIndex
+			});
+
+			if (bBoundControlFound) {
+				return {
+					overlayId: oParentElementOverlay.getId(),
+					aggregation: sAggregationName,
+					stack: aStack
+				};
+			}
+		}
+
+		if (!oParentOverlay || oParentOverlay instanceof UIArea) {
+			return {
+				overlayId: undefined,
+				aggregation: undefined,
+				stack: aStack
+			};
+		}
+		return findBoundControl(oParentOverlay, aStack);
+	}
+
+	/**
+	 * The AggregationBindingInfo contains overlay id and aggregation name of the bound control together with a stack containing
+	 * information about the traversed elements for an Overlay which is part of an aggregation binding.
+	 * @typedef {Object} sap.ui.dt.OverlayUtil.AggregationBindingInfo
+	 * @property {string} overlayId - Id of the bound overlay that contains binding aggregation template overlays.
+	 * @property {string} aggregation - Name of the bound aggregation.
+	 * @property {Object[]} stack - Array of objects containing element, element type, aggregation name and index of the element in
+	 *                              the aggregation for each traversed aggregation.
+	 * @property {string} stack.overlayId - Overlay id of an element overlay
+	 * @property {string} stack.aggregation - Aggregation name
+	 * @property {number} stack.index - Index of the overlay in parent aggregation
+	 */
+
+	/**
+	 * Returns the overlay id, the aggregation name of the closest bound control for an overlay which is part of an aggregation binding.
+	 * In all cases there is also a stack of Element overlays returned that describes the path from the selected / passed overlay up to the
+	 * closest bound control.
+	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay being checked
+	 * @return {AggregationBindingInfo}  Returns the {@link sap.ui.dt.OverlayUtil.AggregationBindingInfo} object
+	 */
+	 OverlayUtil.getClosestBoundControl = function(oElementOverlay) {
+		return findBoundControl(oElementOverlay, []);
 	};
 
 	return OverlayUtil;

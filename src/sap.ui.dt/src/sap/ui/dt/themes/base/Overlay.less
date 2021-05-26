@@ -5,6 +5,7 @@
 @_sap_ui_dt_Overlay_TargetZoneColor : @sapUiSelected; //#2e9cea
 @_sap_ui_dt_Overlay_SelectionColor : lighten(@sapUiBlue,10); //#3333ff
 @_sap_ui_dt_Overlay_CuttedColor : @sapUiWhite; //#fff
+@_sap_ui_dt_Overlay_HighlightColor : @sapUiOrange; //#f27020
 
 #overlay-container {
 	position: absolute;
@@ -70,6 +71,16 @@
 		outline-offset: -0.125rem; //2px
 	}
 }
+
+.sapUiDtOverlayHighlighted:not(.sapUiDtOverlaySelected) {
+	&:after {
+	   content: " ";
+	   outline: 0.0625rem solid @_sap_ui_dt_Overlay_HighlightColor; //1px
+	   outline-offset: -0.0625rem; //1px
+	   box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.3);
+	   backdrop-filter: blur(1px);
+	}
+ }
 
 .sapUiDtOverlayMovable {
 	cursor: move;
