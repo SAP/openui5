@@ -398,6 +398,10 @@ sap.ui.define([
 		this.removeCachesAndMessages("");
 		this.fetchCache(this.oContext);
 		this.reset(sChangeReason);
+		if (this.oHeaderContext) {
+			// Update after the refresh event, otherwise $count is fetched before the request
+			this.oHeaderContext.checkUpdate();
+		}
 	};
 
 	/**
@@ -1538,6 +1542,10 @@ sap.ui.define([
 		this.removeCachesAndMessages("");
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Filter);
+		if (this.oHeaderContext) {
+			// Update after the refresh event, otherwise $count is fetched before the request
+			this.oHeaderContext.checkUpdate();
+		}
 
 		return this;
 	};
@@ -2283,7 +2291,9 @@ sap.ui.define([
 			aDependentBindings = that.getDependentBindings();
 			that.reset(ChangeReason.Refresh); // this may reset that.oRefreshPromise
 			return SyncPromise.all(
-				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise)
+				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise,
+					// Update after refresh event, otherwise $count is fetched before the request
+					that.oHeaderContext.checkUpdate()) // this is NOT done by refreshAll!
 			);
 		});
 	};
@@ -2665,7 +2675,7 @@ sap.ui.define([
 
 	/**
 	 * Resets the binding's contexts array and its members related to current contexts and length
-	 * calculation. All bindings dependent to the header context are requested to check for updates.
+	 * calculation.
 	 *
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
@@ -2699,12 +2709,6 @@ sap.ui.define([
 		if (sChangeReason && !(bEmpty && sChangeReason === ChangeReason.Change)) {
 			this.sChangeReason = sChangeReason;
 			this._fireRefresh({reason : sChangeReason});
-		}
-		// Update after the refresh event, otherwise $count is fetched before the request
-		if (this.getHeaderContext()) {
-			this.oModel.getDependentBindings(this.oHeaderContext).forEach(function (oBinding) {
-				oBinding.checkUpdate();
-			});
 		}
 	};
 
@@ -2764,11 +2768,8 @@ sap.ui.define([
 		} else if (sResumeChangeReason) {
 			this._fireRefresh({reason : sResumeChangeReason});
 		}
-
-		// Update after the change event, otherwise $count is fetched before the request
-		this.oModel.getDependentBindings(this.oHeaderContext).forEach(function (oBinding) {
-			oBinding.checkUpdate();
-		});
+		// Update after the refresh event, otherwise $count is fetched before the request
+		this.oHeaderContext.checkUpdate();
 	};
 
 	/**
@@ -2908,8 +2909,13 @@ sap.ui.define([
 				this.fetchCache(oContext);
 				if (oContext) {
 					sResolvedPath = this.oModel.resolve(this.sPath, oContext);
+					// Note: oHeaderContext is missing only if called from c'tor
 					if (this.oHeaderContext && this.oHeaderContext.getPath() !== sResolvedPath) {
-						this.oHeaderContext.destroy();
+						// Do not destroy the context immediately to avoid timing issues with
+						// dependent bindings, keep it in mPreviousContextsByPath to destroy it
+						// later
+						this.mPreviousContextsByPath[this.oHeaderContext.getPath()]
+							= this.oHeaderContext;
 						this.oHeaderContext = null;
 					}
 					if (!this.oHeaderContext) {
@@ -2976,6 +2982,10 @@ sap.ui.define([
 		this.removeCachesAndMessages("");
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);
+		if (this.oHeaderContext) {
+			// Update after the refresh event, otherwise $count is fetched before the request
+			this.oHeaderContext.checkUpdate();
+		}
 
 		return this;
 	};

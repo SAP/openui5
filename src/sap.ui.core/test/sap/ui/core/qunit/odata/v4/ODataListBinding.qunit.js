@@ -501,6 +501,7 @@ sap.ui.define([
 		oBinding.mCacheByResourcePath = {
 			"/Products" : {}
 		};
+		oBinding.oHeaderContext = undefined; // not yet...
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
@@ -595,6 +596,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext));
 		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
+		this.mock(oBinding.oHeaderContext).expects("checkUpdate").exactly(iCallCount)
+			.withExactArgs();
 
 		// code under test
 		oBinding.applyParameters(mParameters, ChangeReason.Change);
@@ -887,19 +890,6 @@ sap.ui.define([
 		oBinding.reset(ChangeReason.Change);
 
 		assert.strictEqual(oBinding.sChangeReason, ChangeReason.Change);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("reset with header context", function () {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			oCountBinding1 = this.oModel.bindProperty("$count", oBinding.getHeaderContext()),
-			oCountBinding2 = this.oModel.bindProperty("$count", oBinding.getHeaderContext());
-
-		this.mock(oCountBinding1).expects("checkUpdate").withExactArgs();
-		this.mock(oCountBinding2).expects("checkUpdate").withExactArgs();
-
-		// code under test
-		oBinding.reset(ChangeReason.Change);
 	});
 
 	//*********************************************************************************************
@@ -2027,6 +2017,7 @@ sap.ui.define([
 		oBinding.setContext(oBinding.oContext);
 
 		assert.strictEqual(oBinding.sChangeReason, "sChangeReason");
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("reset").withExactArgs();
@@ -2036,8 +2027,6 @@ sap.ui.define([
 		this.mock(this.oModel).expects("resolve").exactly(oFixture.newContext ? 1 : 0)
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
 			.returns("/bar/Suppliers");
-		this.mock(oOldHeaderContext).expects("destroy").exactly(oFixture.newContext ? 1 : 0)
-			.withExactArgs();
 		this.mock(Context).expects("create").exactly(oFixture.newContext ? 1 : 0)
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/bar/Suppliers")
@@ -2050,6 +2039,13 @@ sap.ui.define([
 
 		assert.ok(oFetchCacheCall.calledAfter(oResetKeepAliveCall));
 		assert.strictEqual(oBinding.sChangeReason, sExpectedChangeReason);
+		if (oFixture.newContext) {
+			assert.deepEqual(oBinding.mPreviousContextsByPath, {
+				"/foo/Suppliers" : oOldHeaderContext
+			});
+		} else {
+			assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+		}
 
 		// mock needed because Binding.prototype.setContext is mocked!
 		oBindingMock.expects("isResolved").withExactArgs().returns(true);
@@ -2166,6 +2162,7 @@ sap.ui.define([
 			oBindingMock = this.mock(ODataListBinding.prototype),
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
 			oError = new Error(),
+			oHeaderContextCheckUpdatePromise = SyncPromise.resolve(Promise.resolve({})),
 			oKeptContext = {resetKeepAlive : function() {}},
 			oNewCache = {refreshKeptElements : function () {}},
 			sPath = {/*TEAMS('1')*/},
@@ -2209,6 +2206,8 @@ sap.ui.define([
 			.returns(oRefreshKeptElementsPromise);
 		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().callThrough();
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
+		this.mock(oBinding.oHeaderContext).expects("checkUpdate").withExactArgs()
+			.returns(oHeaderContextCheckUpdatePromise);
 
 		// code under test
 		oRefreshResult = oBinding.refreshInternal(sPath, "myGroup", false);
@@ -2228,6 +2227,7 @@ sap.ui.define([
 			assert.ok(oFixture.success);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), oNewCache);
 			assert.strictEqual(oResult[1], oRefreshKeptElementsPromise.getResult());
+			assert.strictEqual(oResult[2], oHeaderContextCheckUpdatePromise.getResult());
 			assert.strictEqual(oBinding.mPreviousContextsByPath["/resolved/path('42')"],
 				oKeptContext);
 		}, function (oError0) {
@@ -2366,6 +2366,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
 		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding)).returns([]);
+		this.mock(oBinding.oHeaderContext).expects("checkUpdate").withExactArgs();
 		oRefreshPromise.catch(function () {
 			var oResourcePathPromise = Promise.resolve("n/a");
 
@@ -2418,6 +2419,7 @@ sap.ui.define([
 		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding)).returns([]);
 		this.mock(oBinding).expects("fetchResourcePath").never();
+		this.mock(oBinding.oHeaderContext).expects("checkUpdate").withExactArgs();
 
 		// code under test
 		return oBinding.refreshInternal("path", "myGroup", /*bCheckUpdate (ignored)*/false, true)
@@ -2792,6 +2794,8 @@ sap.ui.define([
 						this.oCache = {};
 						this.oCachePromise = SyncPromise.resolve(this.oCache);
 					});
+				this.mock(oBinding.oHeaderContext).expects("checkUpdate")
+					.exactly(bSuspended ? 0 : 1).withExactArgs();
 
 				// code under test
 				assert.strictEqual(oBinding.sort(oFixture.vSorters), oBinding, "chaining");
@@ -2799,6 +2803,15 @@ sap.ui.define([
 				assert.strictEqual(oBinding.aSorters, aSorters);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sort: unresolved binding", function () {
+		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null,
+				{$$operationMode : OperationMode.Server});
+
+		// code under test
+		oBinding.sort();
 	});
 
 	//*********************************************************************************************
@@ -2873,6 +2886,8 @@ sap.ui.define([
 					.withExactArgs(ChangeReason.Filter);
 				oBindingMock.expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 					.withExactArgs(ChangeReason.Filter);
+				this.mock(oBinding.oHeaderContext).expects("checkUpdate")
+					.exactly(bSuspended ? 0 : 1).withExactArgs();
 
 				// Code under test
 				assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
@@ -2899,6 +2914,15 @@ sap.ui.define([
 
 		// Code under test
 		oBinding.filter(/*no filter*/);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: unresolved binding", function () {
+		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null,
+				{$$operationMode : OperationMode.Server});
+
+		// code under test
+		oBinding.filter();
 	});
 
 	//*********************************************************************************************
@@ -5889,12 +5913,10 @@ sap.ui.define([
 				oBindingMock = this.mock(oBinding),
 				oDependent0 = {resumeInternal : function () {}},
 				oDependent1 = {resumeInternal : function () {}},
-				oDependent2 = {checkUpdate : function () {}},
-				oDependent3 = {checkUpdate : function () {}},
 				oFetchCacheExpectation,
 				oFireExpectation,
-				oGetDependentBindingsExpectation1,
-				oGetDependentBindingsExpectation2,
+				oGetDependentBindingsExpectation,
+				oHeaderContextCheckUpdateExpectation,
 				oResetExpectation;
 
 			oBinding.sChangeReason = bInitial ? "AddVirtualContext" : undefined;
@@ -5903,7 +5925,7 @@ sap.ui.define([
 			oResetExpectation = oBindingMock.expects("reset").withExactArgs();
 			oFetchCacheExpectation = oBindingMock.expects("fetchCache")
 				.withExactArgs(sinon.match.same(oContext), true);
-			oGetDependentBindingsExpectation1 = oBindingMock.expects("getDependentBindings")
+			oGetDependentBindingsExpectation = oBindingMock.expects("getDependentBindings")
 				.withExactArgs()
 				.returns([oDependent0, oDependent1]);
 			this.mock(oDependent0).expects("resumeInternal").withExactArgs(false, true);
@@ -5918,21 +5940,17 @@ sap.ui.define([
 				oFireExpectation = oBindingMock.expects("_fireRefresh")
 					.withExactArgs({reason : sinon.match.same(sChangeReason)});
 			}
-			oGetDependentBindingsExpectation2 = this.mock(this.oModel)
-				.expects("getDependentBindings")
-				.withExactArgs(sinon.match.same(oBinding.oHeaderContext))
-				.returns([oDependent2, oDependent3]);
-			this.mock(oDependent2).expects("checkUpdate").withExactArgs();
-			this.mock(oDependent3).expects("checkUpdate").withExactArgs();
+			oHeaderContextCheckUpdateExpectation = this.mock(oBinding.oHeaderContext)
+				.expects("checkUpdate").withExactArgs();
 
 			// code under test
 			oBinding.resumeInternal(true/*ignored*/);
 
 			assert.strictEqual(oBinding.sResumeChangeReason, undefined);
-			assert.ok(oResetExpectation.calledAfter(oGetDependentBindingsExpectation1));
+			assert.ok(oResetExpectation.calledAfter(oGetDependentBindingsExpectation));
 			assert.ok(oFetchCacheExpectation.calledAfter(oResetExpectation));
 			assert.ok(oFireExpectation.calledAfter(oFetchCacheExpectation));
-			assert.ok(oGetDependentBindingsExpectation2.calledAfter(oFireExpectation));
+			assert.ok(oHeaderContextCheckUpdateExpectation.calledAfter(oFireExpectation));
 		});
 	});
 	//TODO This is very similar to ODCB#resumeInternal; both should be refactored to

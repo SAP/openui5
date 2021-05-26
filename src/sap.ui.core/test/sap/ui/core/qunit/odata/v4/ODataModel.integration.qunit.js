@@ -6009,6 +6009,60 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Change parent context of ODLB and see what happens to {headerContext>$count} binding.
+	QUnit.test("BCP: 2180148277", function (assert) {
+		var oTable,
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'0\')}">\
+	<Text id="count" text="{headerContext>$count}"/>\
+	<Text id="oldCount" text="{headerContext>$count}"/>\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+		<Text id="item" text="{ItemPosition}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('0')/SO_2_SOITEM?$skip=0&$top=100", {
+				value : [{ItemPosition : "10"}, {ItemPosition : "20"}]
+			})
+			.expectChange("count")
+			.expectChange("oldCount")
+			.expectChange("item", ["10", "20"]);
+
+		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectChange("count", "2")
+				.expectChange("oldCount", "2");
+
+			that.oView.setModel(that.oView.getModel(), "headerContext");
+			that.oView.setBindingContext(oTable.getBinding("items").getHeaderContext(),
+				"headerContext");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$skip=0&$top=100", {
+					value : [{ItemPosition : "11"}]
+				})
+				.expectChange("count", "1")
+				.expectChange("item", ["11"])
+				.expectChange("oldCount", null);
+
+			// does not yet destroy header context, but makes ODLB unresolved!
+			oTable.setBindingContext(null);
+
+			// code under test
+			oTable.bindObject("/SalesOrderList('1')");
+
+			// update only "count" to see that old header context used by "oldCount" is destroyed
+			that.oView.byId("count").setBindingContext(
+				oTable.getBinding("items").getHeaderContext(), "headerContext");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Refresh a suspended ODCB with a dependent ODLB having a cache. See that both caches
 	// are refreshed when resuming. See CPOUI5UISERVICESV3-1179
 	QUnit.test("Refresh a suspended binding hierarchy", function (assert) {
