@@ -18,10 +18,10 @@
 				</snappedTitleOnMobile>
 
 				<actions>
-					<ObjectPageHeaderActionButton text="Edit" type="Emphasized" hideText="false"/>
-					<ObjectPageHeaderActionButton type="Transparent" text="Delete" hideText="false" hideIcon="true"/>
-					<ObjectPageHeaderActionButton type="Transparent" text="Copy" hideText="false" hideIcon="true"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
+					<m:Button text="Edit" type="Emphasized"/>
+					<m:Button type="Transparent" text="Delete"/>
+					<m:Button type="Transparent" text="Copy"/>
+					<m:OverflowToolbarButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
 				</actions>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>

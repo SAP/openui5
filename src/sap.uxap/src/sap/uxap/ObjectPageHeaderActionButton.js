@@ -15,6 +15,8 @@ sap.ui.define(["sap/m/Button", "./library", "./ObjectPageHeaderActionButtonRende
 	 * @class
 	 * A Button that is used in the <code>actions</code> aggregation of the {@link sap.uxap.ObjectPageHeader}.
 	 *
+	 * The button is designed to be used with {@link sap.uxap.ObjectPageHeader} and any usage outside the intended context is not recommended.
+	 *
 	 * @extends sap.m.Button
 	 *
 	 * @author SAP SE
