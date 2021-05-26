@@ -348,31 +348,38 @@ sap.ui.define([
 
 	/**
 	 * Checks if this InvisibleProperty should be included in resulting list and adds information
-	 * from models metadata to the InvisibleProperty if available
-	 * if metadata is available and the element is not present in it, do not include it:
+	 * from models metadata to the InvisibleProperty if available.
+	 * For "AddViaDelegate", if metadata is available and the element is not present in it, do not include it.
 	 * Example use case: custom field which was hidden and then removed from system
-	 * should not be available for reveal after the removal
+	 * should not be available for reveal after the removal.
+	 * For both "Reveal" and "AddViaDelegate", it must be checked if the field should be always hidden
+	 * (e.g. via "UI Hidden" annotation)
 	 *
 	 * @param {sap.ui.core.Element} oInvisibleElement - Invisible Element
 	 * @param {object[]} aProperties - Array of Fields
 	 * @param {string[]} aBindingPaths - Map of all binding paths and binding context paths of the passed invisible element
+	 * @param {boolean} bHasAddViaDelegate - If AddViaDelegate action is available
 	 *
 	 * @return {boolean} - whether this field should be included
 	 *
 	 * @private
 	 */
-	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths) {
+	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths, bHasAddViaDelegate) {
 		if (!_hasBindings(aBindingPaths)) {
 			// include it if the field has no bindings (bindings can be added in runtime)
 			return true;
 		}
 
 		var mModelProperty = _findModelProperty(aBindingPaths, aProperties);
-		if (mModelProperty && !mModelProperty.hideFromReveal) {
+		if (mModelProperty) {
+			if (mModelProperty.hideFromReveal) {
+				return false;
+			}
 			_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
 			return true;
 		}
-		return false;
+		// if model property is not found, only hide for AddViaDelegate case
+		return !bHasAddViaDelegate;
 	}
 
 	function _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties) {
@@ -387,13 +394,13 @@ sap.ui.define([
 		// BCP: 1880498671
 		} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
 			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
-		} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
+		} else if (mAddViaDelegate && BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
 			bIncludeElement = false;
 		}
 
 		if (bIncludeElement) {
 			oInvisibleElement.__duplicateName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
-			bIncludeElement = _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths);
+			bIncludeElement = _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths, !!mAddViaDelegate);
 		}
 		return bIncludeElement;
 	}
