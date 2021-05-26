@@ -78,7 +78,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 		 */
 		SelectListRenderer.renderItems = function(oRm, oList) {
 			var iSize = oList._getNonSeparatorItemsCount(),
-				aItems = oList.getItems(),
+				aItems = oList.getHideDisabledItems() ? oList.getEnabledItems() : oList.getItems(),
 				oSelectedItem = oList.getSelectedItem(),
 				iCurrentPosInSet = 1,
 				oItemStates,
@@ -95,7 +95,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 					elementData: true
 				};
 
-				if (!(aItems[i] instanceof sap.ui.core.SeparatorItem)) {
+				if (!(aItems[i] instanceof sap.ui.core.SeparatorItem) && aItems[i].getEnabled()) {
 					oItemStates.posinset = iCurrentPosInSet++;
 				}
 

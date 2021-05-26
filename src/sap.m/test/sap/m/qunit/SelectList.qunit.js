@@ -3025,6 +3025,46 @@ sap.ui.define([
 		oSelectList.destroy();
 	});
 
+
+	QUnit.module("Items count");
+
+	QUnit.test("Items count", function(assert) {
+		var oSelectList = new SelectList({
+			items: [
+				new Item({
+					text: "Test item 1"
+				}),
+				new Item({
+					text: "Test item 2"
+				}),
+				new Item({
+					text: "Test item 3",
+					enabled: false
+				}),
+				new SeparatorItem()
+			]
+		}).placeAt("content");
+		Core.applyChanges();
+
+
+		assert.strictEqual(oSelectList.getItems().length, 4, "Correct");
+		assert.strictEqual(oSelectList.$().find(".sapMSelectListItemBase,.sapMSelectListSeparatorItem").length, 4, "Rendered correctly");
+		assert.strictEqual(oSelectList.getEnabledItems().length, 3, "Ok");
+		assert.strictEqual(oSelectList.getSelectableItems().length, 2, "Ok");
+		assert.strictEqual(oSelectList._getNonSeparatorItemsCount(), 2, "Ok");
+
+		oSelectList.setProperty("hideDisabledItems", true);
+		Core.applyChanges();
+		// rendered items should not be rendered
+		assert.strictEqual(oSelectList.getItems().length, 4, "Correct");
+		assert.strictEqual(oSelectList.$().find(".sapMSelectListItemBase,.sapMSelectListSeparatorItem").length, 3, "Rendered correctly");
+		assert.strictEqual(oSelectList.getEnabledItems().length, 3, "Ok");
+		assert.strictEqual(oSelectList.getSelectableItems().length, 2, "Ok");
+		assert.strictEqual(oSelectList._getNonSeparatorItemsCount(), 2, "Ok");
+
+		oSelectList.destroy();
+	});
+
 	QUnit.module("updateAggregation()");
 
 	// unit test for CSN 0120061532 0001266189 2014
