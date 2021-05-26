@@ -239,12 +239,12 @@ sap.ui.define([
 				if (!oThemeCheck._oThemeMetaDataCheckElement) {
 					// Create dummy element to retrieve custom theme metadata which is applied
 					// via background-image data-uri
-					oThemeCheck._oThemeMetaDataCheckElement = document.createElement("style");
+					oThemeCheck._oThemeMetaDataCheckElement = document.createElement("span");
 					jQuery.each(mLibs, function(sLib) {
 						var sClassName = "sapThemeMetaData-UI5-" + sLib.replace(/\./g, "-");
 						oThemeCheck._oThemeMetaDataCheckElement.classList.add(sClassName);
 					});
-					document.head.appendChild(oThemeCheck._oThemeMetaDataCheckElement);
+					document.documentElement.appendChild(oThemeCheck._oThemeMetaDataCheckElement);
 				}
 				oThemeCheck._sFallbackTheme = getFallbackTheme(oThemeCheck._oThemeMetaDataCheckElement);
 			}
