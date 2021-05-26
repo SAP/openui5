@@ -1698,12 +1698,10 @@ sap.ui.define([
 	 *   Whether <code>oError.error</code> itself is not reported, but only the
 	 *   <code>oError.error.details</code>.
 	 * @param {string} [oError.requestUrl]
-	 *   The absolute request URL of the failed OData request, added by the requestor, always
-	 *   present if there is <code>oError.error</code>; it is required to resolve a long text URL.
+	 *   The absolute request URL of the failed OData request; required to resolve a long text URL.
 	 * @param {string} [oError.resourcePath]
 	 *   The resource path by which the resource causing the error has originally been requested;
-	 *   always present if there is <code>oError.error</code>; it is required to resolve a
-	 *   long text URL or a target.
+	 *   required to resolve a target.
 	 *
 	 * @private
 	 */
@@ -1748,8 +1746,8 @@ sap.ui.define([
 
 			if (typeof oMessage.target !== "string") {
 				aUnboundMessages.push(oReportMessage);
-			} else if (oMessage.target[0] === "$") {
-				// target for the bound message is a system query option
+			} else if (oMessage.target[0] === "$" || !sResourcePath) {
+				// target for the bound message is a system query option or cannot be resolved
 				// -> report as unbound message
 				oReportMessage.message = oMessage.target + ": " + oReportMessage.message;
 				aUnboundMessages.push(oReportMessage);
@@ -1780,7 +1778,7 @@ sap.ui.define([
 		oError.$reported = true;
 
 		if (oError.error) {
-			sResourcePath = oError.resourcePath.split("?")[0];
+			sResourcePath = oError.resourcePath && oError.resourcePath.split("?")[0];
 			if (!oError.error.$ignoreTopLevel) {
 				addMessage(oError.error, 4 /* Error */, true);
 			}
