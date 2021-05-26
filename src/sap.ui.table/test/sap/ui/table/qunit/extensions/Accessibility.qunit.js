@@ -366,6 +366,37 @@ sap.ui.define([
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
+	QUnit.test("no aria-labelledby attr. '-inner' in cell when columnHeaderVisible=false", function(assert) {
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
+		var oColumn;
+		var $Cell;
+		var i;
+
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		for (i = 0; i < oTable.columnCount; i++) {
+			oColumn = oTable._getVisibleColumns()[i];
+			$Cell = getCell(0, i, false, assert);
+			assert.strictEqual(
+				($Cell.attr("aria-labelledby") || "").trim().indexOf(oColumn.getId() + "-inner"),
+				-1,
+				"no aria-labelledby '" + oColumn.getId() + "-inner' in cell pointing to its column label"
+			);
+		}
+
+		for (i = 0; i < oTable.columnCount; i++) {
+			oColumn = oTable._getVisibleColumns()[i];
+			$Cell = getCell(1, i, true, assert);
+			assert.strictEqual(
+				($Cell.attr("aria-labelledby") || "").trim().indexOf(oColumn.getId() + "-inner"),
+				-1,
+				"no aria-labelledby '" + oColumn.getId() + "-inner' in cell pointing to its column label"
+			);
+		}
+		TableQUnitUtils.setFocusOutsideOfTable(assert);
+	});
+
 	QUnit.test("ACCInfo", function(assert) {
 		var done = assert.async();
 		var $Cell;
@@ -1881,6 +1912,11 @@ sap.ui.define([
 
 		oCol = oTable.getColumns()[4];
 		checkColumnHeaders(oTable, oCol, [oCol.getId(), oCol.getId() + "_1", oCol.getId() + "_2"]);
+
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+		oCol = oTable.getColumns()[0];
+		checkColumnHeaders(oTable, oCol, []);
 	});
 
 	QUnit.test("Hidden Standard Tooltips", function(assert) {
