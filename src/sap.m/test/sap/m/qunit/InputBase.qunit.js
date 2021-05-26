@@ -1235,6 +1235,30 @@ sap.ui.define([
 		oValueStateInput.destroy();
 	});
 
+	QUnit.test("Changing the value state should close the value state popup, even if something took away the focus from the input.", function(assert) {
+		// Arrange
+		var oInput = new InputBase({
+			valueState: "Error"
+		}).placeAt("content");
+		var oCloseValueStateSpy = new this.spy(oInput, "closeValueStateMessage");
+
+		oInput.openValueStateMessage();
+		sap.ui.getCore().applyChanges();
+
+		oCloseValueStateSpy.reset();
+
+		// Act
+		document.activeElement = "body";
+		oInput.setValueState("None");
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oCloseValueStateSpy.callCount, 1, "The value state popup was closed.");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	/* =========================================================== */
 	/* Text direction module                                       */
 	/* =========================================================== */
