@@ -4632,6 +4632,27 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("#setBusy", function(assert) {
+		var oControlSetBusy = sinon.spy(Control.prototype, "setBusy");
+
+		oTable.attachEvent("busyStateChanged", function(oEvent) {
+			assert.step("busy: " + oEvent.getParameter("busy"));
+		});
+
+		oTable.setBusy(false);
+		oTable.setBusy(true, "customBusySection");
+		assert.ok(oControlSetBusy.calledWithExactly(true, "sapUiTableGridCnt"), "Control#setBusy");
+		oTable.setBusy(true);
+		oTable.setBusy(false);
+		oTable.setBusy();
+		oTable.setBusy(true);
+		oTable.setBusy();
+
+		assert.verifySteps(["busy: true", "busy: false", "busy: true", "busy: false"], "busyStateChanged event");
+
+		oControlSetBusy.restore();
+	});
+
 	QUnit.test("BusyIndicator handling", function(assert) {
 		var sBusyIndicatorParent = "sapUiTableCnt";
 		var sBusyIndicatorClass = "sapUiLocalBusyIndicator";
