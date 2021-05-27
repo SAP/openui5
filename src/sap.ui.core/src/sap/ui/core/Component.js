@@ -666,7 +666,15 @@ sap.ui.define([
 
 		// before unload handler (if exists)
 		if (this.onWindowBeforeUnload) {
-			this._fnWindowBeforeUnloadHandler = this.onWindowBeforeUnload.bind(this);
+			this._fnWindowBeforeUnloadHandler = function(oEvent) {
+				var vReturnValue = this.onWindowBeforeUnload.apply(this, arguments);
+				// set returnValue for Chrome
+				if (typeof (vReturnValue) === 'string') {
+					oEvent.returnValue = vReturnValue;
+					oEvent.preventDefault();
+					return vReturnValue;
+				}
+			}.bind(this);
 			window.addEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
 		}
 
@@ -1177,8 +1185,10 @@ sap.ui.define([
 	 * implementation, to handle cleanup before the real unload or to prompt a question
 	 * to the user, if the component should be exited.
 	 *
-	 * @return {string} a string if a prompt should be displayed to the user
-	 *                  confirming closing the Component (e.g. when the Component is not yet saved).
+	 * @return {string|undefined} a string if a prompt should be displayed to the user
+	 *                  confirming closing the Component (e.g. when the Component is not yet saved),
+	 * 					or <code>undefined</code> if no prompt should be shown.
+	 *
 	 * @public
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowBeforeUnload

@@ -1956,7 +1956,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.addEventListenerSpy, "beforeunload", this.oComponent._fnWindowBeforeUnloadHandler);
 		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
 
-		var oFakeEvent = {};
+		var oFakeEvent = {preventDefault: function() {}};
 		this.oComponent._fnWindowBeforeUnloadHandler(oFakeEvent);
 		sinon.assert.calledOnce(this.oComponent.onWindowBeforeUnload);
 		sinon.assert.calledWithExactly(this.oComponent.onWindowBeforeUnload, oFakeEvent);
