@@ -2,11 +2,13 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ShortcutHintsMixin",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/ui/Device"
 ], function(
 	Component,
 	ShortcutHintsMixin,
-	Fragment
+	Fragment,
+	Device
 ) {
 	"use strict";
 
@@ -124,6 +126,26 @@ sap.ui.define([
 			assert.ok(ShortcutHintsMixin.isDOMIDRegistered(oCtrl.getId()),
 				"The correct DOM node is registered to show a shortcut");
 		});
+	});
+	QUnit.test("ShortcutHintsMixin instances is not created for mobile phone", function(assert){
+		// arrange
+		var oMyControl = new lib.my.MyControl({ myEvent: function() { } });
+		var oSandbox = sinon.sandbox.create();
+
+		oSandbox.stub(Device.system, "desktop").value(false);
+		oSandbox.stub(Device.system, "phone").value(true);
+		oSandbox.stub(Device.system, "tablet").value(false);
+
+		// act
+		ShortcutHintsMixin.addConfig(oMyControl, { event: "myEvent" }, oMyControl);
+
+		// assert
+		assert.notOk(oMyControl.hasOwnProperty("_shortcutHintsMixin"));
+
+		// clean
+		oMyControl.destroy();
+		oSandbox.restore();
+
 	});
 
 	QUnit.test("add config then add command", function(assert) {
