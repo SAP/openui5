@@ -30960,6 +30960,10 @@ sap.ui.define([
 	// Grouping changes after a refresh, but is not properly reflected with E.C.D.
 	//
 	// BCP: 2080132822
+	//
+	// A nested list binding inside a table row is destroyed before data for its refresh arrives.
+	// If the nested list binding uses E.C.D., addt'l issues have to be avoided.
+	// BCP: 360698 / 2021
 [
 	undefined,
 	"AGE",
@@ -30989,6 +30993,11 @@ sap.ui.define([
 	}">\
 	<ColumnListItem>\
 		<Text id="age" text="{AGE}"/>\
+		<List growing="true" items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
+			<CustomListItem>\
+				<Text id="category" text="{Category}"/>\
+			</CustomListItem>\
+		</List>\
 		<Text id="name" text="{Name}"/>\
 	</ColumnListItem>\
 </Table>';
@@ -31002,22 +31011,30 @@ sap.ui.define([
 				return oItem.getTitle
 					? oItem.getTitle() // GroupHeaderListItem
 					: oItem.getCells().map(function (oCell) {
-						return oCell.getText();
+						return oCell.getText
+							? oCell.getText()
+							: oCell.getItems().map(function (oCustomListItem) { // List
+								return oCustomListItem.getContent()[0].getText();
+							}).join();
 					}).join();
 			}), aExpectedContent);
 		}
 
-		this.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
+		this.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name"
+				+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID)&$skip=0&$top=20", {
 				value : [{
 					AGE : 23,
+					EMPLOYEE_2_EQUIPMENTS : [{Category : "F1", ID : 21}],
 					ID : "2",
 					Name : "Frederic Fall"
 				}, {
 					AGE : 42,
+					EMPLOYEE_2_EQUIPMENTS : [{Category : "J1", ID : 31}],
 					ID : "3",
 					Name : "Jonathan Smith"
 				}, {
 					AGE : 42,
+					EMPLOYEE_2_EQUIPMENTS : [{Category : "P1", ID : 41}],
 					ID : "4",
 					Name : "Peter Burke"
 				}]
@@ -31025,6 +31042,9 @@ sap.ui.define([
 			.expectChange("age", ["23", "42", "42"])
 			.expectChange("groupHeader", 23)
 			.expectChange("groupHeader", 42)
+			.expectChange("category", ["P1"])
+			.expectChange("category", ["J1"])
+			.expectChange("category", ["F1"])
 			.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 
 		return this.createView(assert, sView, oModel, oController).then(function () {
@@ -31038,7 +31058,7 @@ sap.ui.define([
 				"sap.m.GroupHeaderListItem",
 				"sap.m.ColumnListItem",
 				"sap.m.ColumnListItem"
-			], ["23", "23,Frederic Fall", "42", "42,Jonathan Smith", "42,Peter Burke"]);
+			], ["23", "23,F1,Frederic Fall", "42", "42,J1,Jonathan Smith", "42,P1,Peter Burke"]);
 
 			//TODO how could changes to a property affect the list's grouping?
 			// @see v2.ODataListBinding#checkUpdate
@@ -31047,25 +31067,38 @@ sap.ui.define([
 			// code under test
 			oItemsBinding.enableExtendedChangeDetection(false, vKey);
 
-			that.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
+			that.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name"
+					+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID)&$skip=0&$top=20", {
 					value : [{
 						AGE : 42, // surprise!
+						EMPLOYEE_2_EQUIPMENTS : [{Category : "F1*", ID : 21}],
 						ID : "2",
 						Name : "Frederic Fall"
 					}, {
 						AGE : 42,
+						EMPLOYEE_2_EQUIPMENTS : [],
 						ID : "3",
 						Name : "Jonathan Smith"
 					}, {
 						AGE : 42,
+						EMPLOYEE_2_EQUIPMENTS : [
+							{Category : "P1", ID : 41},
+							{Category : "P2", ID : 42}
+						],
 						ID : "4",
 						Name : "Peter Burke"
 					}]
 				})
 				.expectChange("age", ["42", "42", "42"]) // Note: no real E.C.D. with grouping
 				.expectChange("groupHeader", 42)
+				.expectChange("category", ["P1", "P2"])
+				.expectChange("category", [])
+				.expectChange("category", ["F1*"])
 				.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 
+			// BCP: 360698 / 2021 - This outer refresh also causes all inner ODLB to refresh and
+			// request data from the parent cache. But due to grouping, ManagedObject first destroys
+			// all rows - before the data response arrives at the inner ODLB!
 			// code under test
 			oItemsBinding.refresh();
 
@@ -31076,7 +31109,7 @@ sap.ui.define([
 				"sap.m.ColumnListItem",
 				"sap.m.ColumnListItem",
 				"sap.m.ColumnListItem"
-			], ["42", "42,Frederic Fall", "42,Jonathan Smith", "42,Peter Burke"]);
+			], ["42", "42,F1*,Frederic Fall", "42,,Jonathan Smith", "42,P1,P2,Peter Burke"]);
 		});
 	});
 });

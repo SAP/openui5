@@ -807,8 +807,8 @@ sap.ui.define([
 
 	/**
 	 * Creates contexts for this list binding in the given range for the given OData response.
-	 * Fires change and dataReceived events. Destroys contexts that became
-	 * obsolete and shrinks the array by removing trailing <code>undefined</code>.
+	 * Fires change events. Destroys contexts that became obsolete and shrinks the array by removing
+	 * trailing <code>undefined</code>.
 	 *
 	 * @param {number} iStart
 	 *   The start index of the range
@@ -1151,7 +1151,8 @@ sap.ui.define([
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise|Promise}
 	 *   A promise that resolves with a boolean indicating whether the binding's contexts have been
-	 *   modified; it rejects when iStart or iLength are negative or when the request failed
+	 *   modified; it rejects when iStart or iLength are negative, or when the request fails, or
+	 *   if this binding is already destroyed when the response arrives
 	 *
 	 * @private
 	 */
@@ -1174,6 +1175,14 @@ sap.ui.define([
 		}
 
 		return oPromise.then(function (oResult) {
+			var oError;
+
+			if (!that.aContexts) {
+				oError = new Error("Binding already destroyed");
+				oError.canceled = true;
+				throw oError;
+			}
+
 			return oResult && that.createContexts(iStart, oResult.value);
 		}, function (oError) {
 			oGroupLock.unlock(true);
