@@ -1192,6 +1192,8 @@ sap.ui.define([
 			}
 			this._oCalendarAfterRenderDelegate = {
 				onAfterRendering: function() {
+					var oPopup = this._oPopup && this._oPopup._getPopup();
+					oPopup && oPopup._oLastPosition && oPopup._applyPosition(oPopup._oLastPosition);
 					this._oCalendar.focus();
 				}.bind(this)
 			};
