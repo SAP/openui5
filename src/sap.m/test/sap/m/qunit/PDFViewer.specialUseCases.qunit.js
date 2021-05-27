@@ -70,7 +70,7 @@ sap.ui.define( [
 		oPDFViewer = TestUtils.createPdfViewer(oOptions);
 		TestUtils.renderPdfViewer(oPDFViewer);
 
-		TestUtils.wait(2000)()
+		TestUtils.wait(4000)()
 			.then(function () {
 				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 1, 'The error content is missing');
 				done();
@@ -100,7 +100,7 @@ sap.ui.define( [
 		oPDFViewer = TestUtils.createPdfViewer(oErrorOptions);
 		TestUtils.renderPdfViewer(oPDFViewer);
 
-		TestUtils.wait(2000)()
+		TestUtils.wait(4000)()
 			.then(function () {
 				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 1, 'The error content is missing');
 				oPDFViewer.detachLoaded(fnLoadedFailListener);
@@ -108,8 +108,9 @@ sap.ui.define( [
 				oPDFViewer.attachLoaded(fnLoadedOkListener);
 				oPDFViewer.attachError(fnErrorFailListener);
 				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf");
+				TestUtils.rerender();
 			})
-			.then(TestUtils.wait(2000))
+			.then(TestUtils.wait(4000))
 			.then(function () {
 				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 0, 'The error content should be hidden');
 				oPDFViewer.detachLoaded(fnLoadedOkListener);
@@ -117,8 +118,9 @@ sap.ui.define( [
 				oPDFViewer.attachLoaded(fnLoadedFailListener);
 				oPDFViewer.attachError(fnErrorOkListener);
 				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/not-existing");
+				TestUtils.rerender();
 			})
-			.then(TestUtils.wait(2000))
+			.then(TestUtils.wait(4000))
 			.then(function () {
 				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 1, 'The error content is missing');
 				done();
