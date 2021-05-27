@@ -105,7 +105,7 @@ sap.ui.define([
 		}), true);
 
 		this.setAggregation("_title", new Title({
-			level: TitleLevel.H5,
+			level: TitleLevel.H2,
 			wrapping: false
 		}), true);
 
