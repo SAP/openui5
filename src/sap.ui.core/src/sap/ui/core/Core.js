@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/ui/performance/trace/Interaction',
 	'./Component',
 	'./Configuration',
-	'./Control',
 	'./Element',
 	'./ElementMetadata',
 	'./FocusHandler',
@@ -57,7 +56,6 @@ sap.ui.define([
 		Interaction,
 		Component,
 		Configuration,
-		Control,
 		Element,
 		ElementMetadata,
 		FocusHandler,
@@ -2644,6 +2642,15 @@ sap.ui.define([
 
 	// ---- UIArea and Rendering -------------------------------------------------------------------------------------
 
+	function placeControlAt(oDomRef, oControl) {
+		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
+		assert(oControl instanceof Interface || BaseObject.isA(oControl, "sap.ui.core.Control"), "oControl must be a Control or Interface");
+
+		if (oControl) {
+			oControl.placeAt(oDomRef, "only");
+		}
+	}
+
 	/**
 	 * Implicitly creates a new <code>UIArea</code> (or reuses an exiting one) for the given DOM reference and
 	 * adds the given control reference to the UIAreas content (existing content will be removed).
@@ -2653,15 +2660,9 @@ sap.ui.define([
 	 *            oControl the Control that should be the added to the <code>UIArea</code>.
 	 * @public
 	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt oControl.placeAt(oDomRef, "only")} instead.
+	 * @function
 	 */
-	Core.prototype.setRoot = function(oDomRef, oControl) {
-		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
-		assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
-
-		if (oControl) {
-			oControl.placeAt(oDomRef, "only");
-		}
-	};
+	Core.prototype.setRoot = placeControlAt;
 
 	/**
 	 * Creates a new {@link sap.ui.core.UIArea UIArea}.
@@ -3185,7 +3186,7 @@ sap.ui.define([
 		var sName = oMetadata.getName(),
 			sLibraryName = oMetadata.getLibraryName() || "",
 			oLibrary = this.mLibraries[sLibraryName],
-			sCategory = Control.prototype.isPrototypeOf(oMetadata.getClass().prototype) ? 'controls' : 'elements';
+			sCategory = oMetadata.isA("sap.ui.core.Control") ? 'controls' : 'elements';
 
 		// if library has not been loaded yet, create empty 'adhoc' library
 		// don't set 'loaded' marker, so it might be loaded later
@@ -3701,7 +3702,7 @@ sap.ui.define([
 	 */
 	Core.prototype.byFieldGroupId = function(vFieldGroupIds) {
 		return Element.registry.filter(function(oElement) {
-			return oElement instanceof Control && oElement.checkFieldGroupIds(vFieldGroupIds);
+			return oElement.isA("sap.ui.core.Control") && oElement.checkFieldGroupIds(vFieldGroupIds);
 		});
 	};
 
@@ -4213,14 +4214,9 @@ sap.ui.define([
 	 * @public
 	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt Control#placeAt} instead.
 	 * @ui5-global-only
+	 * @function
 	 */
-	sap.ui.setRoot = function(oDomRef, oControl) {
-		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
-		assert(oControl instanceof Interface || oControl instanceof Control, "oControl must be a Control or Interface");
-
-		sap.ui.getCore().setRoot(oDomRef, oControl);
-	};
-
+	sap.ui.setRoot = placeControlAt;
 
 	/*
 	 * Create a new (the only) instance of the Core and return it's interface as module value.
