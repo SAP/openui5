@@ -1112,7 +1112,7 @@ sap.ui.define([
 	 * @param {object} oConfig
 	 * @param {BaseField} oField
 	 */
-	CardEditor.prototype._requestData = function (oValueModel, oConfig, oField) {
+	CardEditor.prototype._requestData = function (oConfig, oField) {
 		var oDataProvider = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data);
 		oDataProvider.bindObject({
 			path: "items>/form/items"
@@ -1162,6 +1162,7 @@ sap.ui.define([
 				}
 			}
 			oConfig._values = oData;
+			var oValueModel = oField.getModel();
 			oValueModel.setData(oData);
 			oValueModel.checkUpdate(true);
 			oValueModel.firePropertyChange();
@@ -1191,6 +1192,7 @@ sap.ui.define([
 			} else if (typeof (oError) === "string") {
 				sError = oError;
 			}
+			var oValueModel = oField.getModel();
 			oValueModel.firePropertyChange();
 			oField._showValueState("error", sError, true);
 		}.bind(this));
@@ -1213,10 +1215,10 @@ sap.ui.define([
 					}
 					this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
 					if (!nTimeout) {
-						this._requestData(oValueModel, oConfig, oField);
+						this._requestData(oConfig, oField);
 					} else {
 						setTimeout(function() {
-							this._requestData(oValueModel, oConfig, oField);
+							this._requestData(oConfig, oField);
 						}.bind(this), nTimeout);
 					}
 				}
