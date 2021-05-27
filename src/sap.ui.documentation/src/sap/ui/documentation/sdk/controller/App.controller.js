@@ -617,14 +617,20 @@ sap.ui.define([
 				var that = this;
 
 				if (!this._bAttachedPrefersColorSchemeChangeListener) {
-					window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+					var oQuery = window.matchMedia('(prefers-color-scheme: dark)');
+					var toggleAppearance = function(e) {
 						if (that._sLastKnownAppearanceKey === DEMOKIT_APPEARANCE_KEY_AUTO) {
 							that._toggleLightOrDarkAppearance(e.matches);
 							that.bus.publish("themeChanged", "onDemoKitThemeChanged", {
 								sThemeActive: DEMOKIT_APPEARANCE[e.matches ? DEMOKIT_APPEARANCE_KEY_DARK : DEMOKIT_APPEARANCE_KEY_LIGHT]
 							});
 						}
-					});
+					};
+					if (oQuery.addEventListener) {
+						oQuery.addEventListener('change', toggleAppearance);
+					} else { // Safari 13 and older only supports deprecated MediaQueryList.addListener
+						oQuery.addListener(toggleAppearance);
+					}
 					this._bAttachedPrefersColorSchemeChangeListener = true;
 				}
 			},

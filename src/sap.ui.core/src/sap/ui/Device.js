@@ -1384,7 +1384,11 @@ if (typeof window.sap.ui !== "object") {
 
 		oConfig.queries.forEach(function(oQuery) {
 			oQuery.media = window.matchMedia(oQuery.query);
-			oQuery.media.addEventListener("change", oConfig.listener);
+			if (oQuery.media.addEventListener) {
+				oQuery.media.addEventListener("change", oConfig.listener);
+			} else { // Safari 13 and older only supports deprecated MediaQueryList.addListener
+				oQuery.media.addListener(oConfig.listener);
+			}
 		});
 
 		oConfig.listener();
@@ -1454,14 +1458,13 @@ if (typeof window.sap.ui !== "object") {
 		}
 
 		var oConfig = oQuerySets[sName];
-		if (Device.support.matchmedialistener) { //FF, Safari, Chrome, IE10?
-			var queries = oConfig.queries;
-			for (var i = 0; i < queries.length; i++) {
+		var queries = oConfig.queries;
+		for (var i = 0; i < queries.length; i++) {
+			if (queries[i].media.removeEventListener) {
+				queries[i].media.removeEventListener("change", oConfig.listener);
+			} else { // Safari 13 and older only supports deprecated MediaQueryList.removeListener
 				queries[i].media.removeListener(oConfig.listener);
 			}
-		} else { //IE, Safari (<6?)
-			window.removeEventListener("resize", oConfig.listener, false);
-			window.removeEventListener("orientationchange", oConfig.listener, false);
 		}
 
 		refreshCSSClasses(sName, "", true);
