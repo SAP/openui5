@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/ui/integration/util/loadCardEditor",
 	"sap/base/util/restricted/_debounce",
 	"sap/ui/integration/designtime/editor/CardEditor",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/m/Popover"
 ], function (
 	BaseController,
 	Constants,
@@ -47,7 +48,8 @@ sap.ui.define([
 	loadCardEditor,
 	_debounce,
 	CardEditor,
-	ObjectPath
+	ObjectPath,
+	Popover
 ) {
 	"use strict";
 
@@ -523,6 +525,13 @@ sap.ui.define([
 			return this.oModel.getProperty("/currentSampleKey");
 		},
 
+		onhandleClosePopover: function(oEvent) {
+			if (this.byId("configurationEditorPopover").isOpen()) {
+				this.byId("configurationEditorPopover").close();
+			}
+			this.byId("openConfigurationEditorButton").setType("Transparent");
+		},
+
 		_showSample: function (oSample, oSubSample) {
 			var oCurrentSample = oSubSample || oSample,
 				oFrameWrapperEl = this.byId("iframeWrapper"),
@@ -538,6 +547,28 @@ sap.ui.define([
 						break;
 					}
 					i++;
+				}
+			}
+			//open a popover to highlight Configuration Editor button
+			if (exploreSettingsModel.getData().designtimeEnabled) {
+				var configEditorMenuBtn = this.byId("openConfigurationEditorButton");
+			    var oView = this.getView();
+				if (!this._pPopover) {
+					this._pPopover = Fragment.load({
+						id: oView.getId(),
+						name: "sap.ui.demo.cardExplorer.view.Popover",
+						controller: this
+					}).then(function(oPopover) {
+						oView.addDependent(oPopover);
+						return oPopover;
+					});
+
+					configEditorMenuBtn.setType("Ghost");
+					this._pPopover.then(function(oPopover) {
+					   setTimeout(function() {
+						   oPopover.openBy(configEditorMenuBtn);
+					   }, 150);
+					});
 				}
 			}
 			//enable/disable menu items of "Configuration Editor" according to card mode, enable all menu items by default
