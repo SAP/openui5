@@ -2,10 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 >
-	<Panel
-		headerText="{label}"
+	<ToolbarSpacer
 		visible="{visible}"
-		expandable="{expandable}"
-		expanded="{expanded}"
 	/>
 </core:FragmentDefinition>

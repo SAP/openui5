@@ -14,6 +14,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "General",
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
+					"separator1": {
+						"type": "separator",
+						"line": true
+					},
 					"cardTitle": {
 						"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
 						"type": "string",
@@ -37,12 +41,23 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"editableToUser": true,
 						"visibleToUser": true
 					},
+					"separator2": {
+						"type": "separator",
+						"line": true
+					},
+					"separator3": {
+						"type": "separator",
+						"line": true
+					},
 					"stringLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
 						"type": "string",
 						"label": "{i18n>TRANSLATED_STRING_LABEL}",
 						"translatable": true,
 						"allowDynamicValues": false
+					},
+					"separator4": {
+						"type": "separator"
 					},
 					"stringWithDescription": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithDescription/value",
@@ -56,6 +71,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "String with long description",
 						"description": "A very long description text that should wrap into the next line"
 					},
+					"separator5": {
+						"type": "separator",
+						"line": true
+					},
 					"stringWithTranslatedValue": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValue/value",
 						"type": "string",
@@ -66,6 +85,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValueIni18nFormat/value",
 						"type": "string",
 						"label": "String with translated value in i18n format"
+					},
+					"separator6": {
+						"type": "separator"
 					},
 					"stringInCols1": {
 						"manifestpath": "/sap.card/configuration/parameters/stringInCols1/value",
@@ -82,6 +104,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"cols": 1,
 						"allowSettings": false
+					},
+					"separator7": {
+						"type": "separator"
 					},
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
@@ -188,6 +213,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"Option C"
 						]
 					},
+					"separator8": {
+						"type": "separator"
+					},
 					"formatterGroup": {
 						"type": "group",
 						"label": "Formatter"
@@ -196,7 +224,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/dateFormatter/value",
 						"type": "date",
 						"formatter": {
-							style: 'long'
+							"style": "long"
 						}
 						// "formatter": {
 						// 	   format: 'yMMMMd'
@@ -209,23 +237,23 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/datetimeFormatter/value",
 						"type": "datetime",
 						"formatter": {
-							style: 'long'
+							"style": "long"
 						}
 					},
 					"floatFormatter": {
 						"manifestpath": "/sap.card/configuration/parameters/floatFormatter/value",
 						"type": "number",
 						"formatter": {
-							decimals: 3
+							"decimals": 3
 						}
 					},
 					"integerFormatter": {
 						"manifestpath": "/sap.card/configuration/parameters/integerFormatter/value",
 						"type": "integer",
 						"formatter": {
-							minIntegerDigits: 3,
-							maxIntegerDigits: 6,
-							emptyString: ""
+							"minIntegerDigits": 3,
+							"maxIntegerDigits": 6,
+							"emptyString": ""
 						}
 					},
 					"stringArrayFormatter": {
@@ -621,6 +649,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"separator9": {
+						"type": "separator",
+						"line": true
+					},
 					"color": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
 						"type": "string",
@@ -648,6 +680,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						},
 						"cols": 1
+					},
+					"separator10": {
+						"type": "separator",
+						"line": true
 					},
 					"color1": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
@@ -678,6 +714,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						},
 						"cols": 1
+					},
+					"separator11": {
+						"type": "separator",
+						"line": true
 					},
 					"maxItems": {
 						"manifestpath": "/sap.card/content/maxItems",

@@ -1,0 +1,16 @@
+{
+	"sap.app": {
+		"id": "test.sample"
+	},
+	"sap.card": {
+		"designtime": "designtime/separators",
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"stringParameter": {
+					"value": "stringParameter Value"
+				}
+			}
+		}
+	}
+}

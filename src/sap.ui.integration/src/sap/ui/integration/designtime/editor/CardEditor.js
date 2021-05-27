@@ -32,6 +32,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/m/FormattedText",
 	"sap/m/MessageStrip",
+	"sap/m/ToolbarSpacer",
 	"sap/base/util/includes"
 ], function (
 	ui5loader,
@@ -63,6 +64,7 @@ sap.ui.define([
 	ObjectPath,
 	FormattedText,
 	MessageStrip,
+	Separator,
 	includes
 ) {
 	"use strict";
@@ -263,7 +265,6 @@ sap.ui.define([
 								}
 								continue;
 							}
-
 							// add style class for the hint under group and checkbox/toggle
 							if (oItem.isA("sap.m.FormattedText")) {
 								oPanel.addContent(new HBox({
@@ -327,6 +328,14 @@ sap.ui.define([
 									]
 								}).addStyleClass("notWrappingRow"));
 								oLabelItemForNotWrapping = null;
+							}else if (oItem.isA("sap.m.ToolbarSpacer")) {
+								addColFields();
+								if (oItem._hasLine) {
+									oItem.addStyleClass("sapUiIntegrationCardEditorSpacerWithLine");
+								} else {
+									oItem.addStyleClass("sapUiIntegrationCardEditorSpacerWithoutLine");
+								}
+								oPanel.addContent(oItem);
 							} else {
 								oPanel.addContent(oItem);
 							}
@@ -352,6 +361,9 @@ sap.ui.define([
 								}
 								oPanel = oItem;
 								oPanel.addStyleClass("sapUiIntegrationCardEditorTranslationSubPanel");
+								continue;
+							}
+							if (oItem.isA("sap.m.ToolbarSpacer")) {
 								continue;
 							}
 							if (oItem.isA("sap.m.FormattedText")) {
@@ -1323,6 +1335,13 @@ sap.ui.define([
 			if (oConfig.hint) {
 				this._addHint(oConfig.hint);
 			}
+			return;
+		}
+		if (oConfig.type === "separator") {
+			var oSeparator = new Separator({});
+			this.addAggregation("_formContent", oSeparator);
+			//currently do not publish the line property to customer
+			//oSeparator._hasLine = oConfig.line || false;
 			return;
 		}
 		var oNewLabel = null;

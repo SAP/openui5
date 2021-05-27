@@ -120,7 +120,7 @@ sap.ui.define([
 					oItem = merge({}, oCopyConfig.form.items[n]);
 					if (!mParameters[n]) {
 						if (mParametersInDesigntime[n]) {
-							if (oItem.type === "group") {
+							if (oItem.type === "group" || oItem.type === "separater") {
 								mParameters[n] = {};
 							} else if (oItem.manifestpath && !oItem.manifestpath.startsWith("/sap.card/configuration/parameters")) {
 								var sPath = oItem.manifestpath;
@@ -176,7 +176,7 @@ sap.ui.define([
 						oCopyConfig.form.items[n].values = oValues;
 						oValues = null;
 					}
-					if (oItem.type === "group") {
+					if (oItem.type === "group" || oItem.type === "separator") {
 						delete oCopyConfig.form.items[n].manifestpath;
 					} else if (!oCopyConfig.form.items[n].manifestpath) {
 						mParametersInDesigntime[n].manifestpath = "/sap.card/configuration/parameters/" + n + "/value";
@@ -237,7 +237,7 @@ sap.ui.define([
 							oItem.visible = false;
 						}
 
-						if (oItem.type === "group") {
+						if (oItem.type === "group" || oItem.type === "separator") {
 							delete oItem.manifestpath;
 						}
 
@@ -329,13 +329,13 @@ sap.ui.define([
 			var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
 			for (var n in mParameters) {
 				var oParam = mParameters[n];
-				if (oParam && oParam.type === "group") {
+				if (oParam && (oParam.type === "group" || oParam.type === "separator")) {
 					delete mParameters[n];
 					continue;
 				}
 				if (this._oDesigntimeJSConfig && this._oDesigntimeJSConfig.form && this._oDesigntimeJSConfig.form.items) {
 					var oParamConfig = this._oDesigntimeJSConfig.form.items[n] || {};
-					if (oParamConfig.type === "group") {
+					if (oParamConfig.type === "group" || oParamConfig.type === "separator") {
 						delete mParameters[n];
 						continue;
 					}
@@ -447,7 +447,7 @@ sap.ui.define([
 					});
 				}
 
-				if (oMetaItem.type !== "group") {
+				if (oMetaItem.type !== "group" && oMetaItem.type === "separator") {
 					if (!oMetaItem.hasOwnProperty("value")) {
 						var aOtherPath = oMetaItem.manifestpath.substring(1).split("/"),
 							vValue = ObjectPath.get(aOtherPath, this._oInitialJson);
