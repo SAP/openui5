@@ -382,6 +382,29 @@ sap.ui.define([
 	});
 
 	// ----------------------------------------------------------------
+	// Open Dialog, Press escape and reopen it
+	// ----------------------------------------------------------------
+	opaTest("When I press 'Escape' the Dialog should close and open again after triggering 'Adapt Filters' afterwards", function (Given, When, Then) {
+
+		//open dialig
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.getButtonCountText(1));
+		Then.thePersonalizationDialogOpens(false);
+
+		//Press 'Escape'
+		When.iPressEscapeInDialog();
+
+		//check that p13n dialog is closed
+		Then.thePersonalizationDialogShouldBeClosed();
+
+		//open dialig (--> Check that cleanup works as expected)
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.getButtonCountText(1));
+		Then.thePersonalizationDialogOpens(false);
+
+		When.iPressDialogOk();
+
+	});
+
+	// ----------------------------------------------------------------
 	// Cancel Reset (Standard variant) --> no changes reverted
 	// ----------------------------------------------------------------
 	opaTest("Press reset and cancel - no changes expected", function(Given, When, Then){
