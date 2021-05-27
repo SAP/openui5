@@ -16,7 +16,7 @@
 			</f:layout>
 			<widgets:Card id="logonRequestsCard" height="100%">
 				<widgets:layoutData>
-					<f:GridContainerItemLayoutData columns="4" minRows="4"/>
+					<f:GridContainerItemLayoutData columns="4" minRows="3"/>
 				</widgets:layoutData>
 			</widgets:Card>
 			<f:Card height="100%">
@@ -29,7 +29,7 @@
 					</HBox>
 				</f:content>
 				<f:layoutData>
-					<f:GridContainerItemLayoutData columns="4" minRows="4"/>
+					<f:GridContainerItemLayoutData columns="4" minRows="3"/>
 				</f:layoutData>
 			</f:Card>
 		</f:GridContainer>
