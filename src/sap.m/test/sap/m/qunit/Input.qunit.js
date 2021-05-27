@@ -847,8 +847,7 @@ sap.ui.define([
 	QUnit.test("Destroy Suggestion List and Popup", function(assert) {
 		var oInput = new Input({
 				showSuggestion: true
-			}),
-			$Input;
+			});
 
 		var aData = [
 				{name: "Dente, Al", userid: "U01"},
@@ -888,7 +887,6 @@ sap.ui.define([
 
 		oInput.destroy();
 
-		// assert.ok(oInput._getSuggestionsPopover().getItemsContainer() === null || oInput._getSuggestionsPopover().getItemsContainer() === undefined, "The internal list is destroyed");
 		assert.ok(oInput._oSuggPopover === null || oInput._oSuggPopover === undefined, "The internal popup is destroyed");
 	});
 
