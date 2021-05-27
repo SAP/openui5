@@ -2250,6 +2250,18 @@ sap.ui.define([
 		sRoundingMode = sRoundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
 		iMaxFractionDigits = parseInt(iMaxFractionDigits);
 
+		// only round if it is required (number of fraction digits is bigger than the maxFractionDigits option)
+		var sValue = "" + fValue;
+		if (!isScientificNotation(sValue)) {
+			var iIndexOfPoint = sValue.indexOf(".");
+			if (iIndexOfPoint < 0) {
+				return fValue;
+			}
+			if (sValue.substring(iIndexOfPoint + 1).length <= iMaxFractionDigits) {
+				return fValue;
+			}
+		}
+
 		if (typeof sRoundingMode === "function") {
 			// Support custom function for rounding the number
 			fValue = sRoundingMode(fValue, iMaxFractionDigits);
@@ -2274,7 +2286,7 @@ sap.ui.define([
 			// 	1. Move the decimal point to right by 2 digits, result 100.5
 			// 	2. Using the round function, for example, Math.round(100.5) = 101
 			// 	3. Move the decimal point back by 2 digits, result 1.01
-			fValue =  NumberFormat._shiftDecimalPoint(mRoundingFunction[sRoundingMode](NumberFormat._shiftDecimalPoint(fValue, iMaxFractionDigits)), -iMaxFractionDigits);
+			fValue = NumberFormat._shiftDecimalPoint(mRoundingFunction[sRoundingMode](NumberFormat._shiftDecimalPoint(fValue, iMaxFractionDigits)), -iMaxFractionDigits);
 		}
 
 		return fValue;
