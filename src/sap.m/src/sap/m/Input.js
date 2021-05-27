@@ -1332,6 +1332,10 @@ function(
 		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
 			this.fireSubmit({value: this.getValue()});
 		}
+
+		if (!this.isMobileDevice()) {
+			this._resetTypeAhead();
+		}
 	};
 
 	/**
@@ -2230,6 +2234,8 @@ function(
 			this._refreshItemsDelayed();
 			return this;
 		};
+
+		oSuggestionsTable.attachItemPress(this._resetTypeAhead, this);
 
 		oTableObserver = new ManagedObjectObserver(function (oChange) {
 			var sMutation = oChange.mutation;
