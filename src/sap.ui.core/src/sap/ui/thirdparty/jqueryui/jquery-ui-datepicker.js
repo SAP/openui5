@@ -306,9 +306,16 @@ $.extend(Datepicker.prototype, {
 		if (!inst) {
 			this.uuid += 1;
 			id = "dp" + this.uuid;
-			this._dialogInput = $("<input type='text' id='" + id +
-				"' style='position: absolute; top: -100px; width: 0px;'/>");
 			// ##### BEGIN: MODIFIED BY SAP
+			// CSP Modification - remove inline style
+			//this._dialogInput = $("<input type='text' id='" + id +
+			//	"' style='position: absolute; top: -100px; width: 0px;'/>");
+			this._dialogInput = $("<input type='text' id='" + id + "'/>").css({
+				position: "absolute",
+				top: "-100px",
+				width: "0px"
+			});
+			// avoid deprecated jQuery APIs
 			// this._dialogInput.keydown(this._doKeyDown);
 			this._dialogInput.on("keydown", this._doKeyDown);
 			// ##### END: MODIFIED BY SAP

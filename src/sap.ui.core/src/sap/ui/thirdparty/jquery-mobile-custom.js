@@ -764,7 +764,11 @@ function validStyle( prop, value, check_vend ) {
 				uc_vend = uc( vend ),
 				propStyle = uc_vend + ( uc_vend === "" ? prop : uc( prop ) );
 
-			div.setAttribute( "style", vend_prop );
+			// ##### BEGIN: MODIFIED BY SAP
+			// CSP Modification - remove inline style
+			// div.setAttribute( "style", vend_prop );
+			div.style = vend_prop;
+			// ##### END: MODIFIED BY SAP
 
 			if ( !!div.style[ propStyle ] ) {
 				ret = true;
