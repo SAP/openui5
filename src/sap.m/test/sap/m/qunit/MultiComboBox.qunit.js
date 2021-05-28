@@ -2955,49 +2955,42 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", function(assert) {
-		/* TODO remove after the end of support for Internet Explorer */
-		// IE has security settings
-		// which prompt the user if he wants to let the page access the clipboard.
-		if (!Device.browser.internet_explorer) {
-			// system under test
-			var oItem;
-			var oMultiComboBox = new MultiComboBox({
-				items : [oItem = new Item({
-					key : "DZ",
-					text : "Algeria"
-				})]
-			});
+		// system under test
+		var oItem;
+		var oMultiComboBox = new MultiComboBox({
+			items : [oItem = new Item({
+				key : "DZ",
+				text : "Algeria"
+			})]
+		});
 
-			// arrange
-			oMultiComboBox.syncPickerContent();
-			oMultiComboBox.placeAt("MultiComboBoxContent");
-			sap.ui.getCore().applyChanges();
+		// arrange
+		oMultiComboBox.syncPickerContent();
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		sap.ui.getCore().applyChanges();
 
-			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
-			var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
+		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
+		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
-			// act
-			sap.ui.test.qunit.triggerEvent("paste", oMultiComboBox.getFocusDomRef(), {
-				originalEvent : {
-					clipboardData : {
-						getData : function() {
-							return "Algeria";
-						}
+		// act
+		sap.ui.test.qunit.triggerEvent("paste", oMultiComboBox.getFocusDomRef(), {
+			originalEvent : {
+				clipboardData : {
+					getData : function() {
+						return "Algeria";
 					}
 				}
-			});
+			}
+		});
 
-			// assertions
-			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-			assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+		// assertions
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
-			assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
-			// cleanup
-			oMultiComboBox.destroy();
-		} else {
-			assert.expect(0);
-		}
+		// cleanup
+		oMultiComboBox.destroy();
 	});
 
 	QUnit.test("Paste value behaviour", function (assert) {
@@ -3093,58 +3086,50 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function(assert) {
-		/* TODO remove after the end of support for Internet Explorer */
-		// IE has security settings
-		// which prompt the user if he wants to let the page access the clipboard.
-		if (!Device.browser.internet_explorer) {
-			// system under test
-			var oItem;
-			var oMultiComboBox = new MultiComboBox({
-				items : [oItem1 = new Item({
-					key : "key1",
-					text : "item1"
-				}),
-				oItem2 = new Item({
-					key : "key2",
-					text : "item2"
-				})]
-			});
+		// system under test
+		var oMultiComboBox = new MultiComboBox({
+			items : [oItem1 = new Item({
+				key : "key1",
+				text : "item1"
+			}),
+			oItem2 = new Item({
+				key : "key2",
+				text : "item2"
+			})]
+		});
 
-			// arrange
-			oMultiComboBox.syncPickerContent();
-			oMultiComboBox.placeAt("MultiComboBoxContent");
-			sap.ui.getCore().applyChanges();
+		// arrange
+		oMultiComboBox.syncPickerContent();
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		sap.ui.getCore().applyChanges();
 
-			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
-			var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
+		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
+		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
-			// act
-			sap.ui.test.qunit.triggerEvent("paste", oMultiComboBox.getFocusDomRef(), {
-				originalEvent : {
-					clipboardData : {
-						getData : function() {
-							return "item1\ritem2";
-						}
+		// act
+		sap.ui.test.qunit.triggerEvent("paste", oMultiComboBox.getFocusDomRef(), {
+			originalEvent : {
+				clipboardData : {
+					getData : function() {
+						return "item1\ritem2";
 					}
 				}
-			});
+			}
+		});
 
-			// assertions
-			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 2, "The selection change event was fired");
-			assert.strictEqual(fnFireSelectionFinishSpy.callCount, 2, "The selection finish event was fired");
+		// assertions
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 2, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 2, "The selection finish event was fired");
 
-			var selectedItems = oMultiComboBox.getSelectedItems();
-			assert.strictEqual(selectedItems[0].getKey(), oItem1.getKey(), "The first key should be 'key1'");
-			assert.strictEqual(selectedItems[1].getKey(), oItem2.getKey(), "The second key should be 'key2'");
+		var selectedItems = oMultiComboBox.getSelectedItems();
+		assert.strictEqual(selectedItems[0].getKey(), oItem1.getKey(), "The first key should be 'key1'");
+		assert.strictEqual(selectedItems[1].getKey(), oItem2.getKey(), "The second key should be 'key2'");
 
-			assert.strictEqual(selectedItems[0].getText(), oItem1.getText(), "The first item text should be 'item1'");
-			assert.strictEqual(selectedItems[1].getText(), oItem2.getText(), "The second item text should be 'item2'");
+		assert.strictEqual(selectedItems[0].getText(), oItem1.getText(), "The first item text should be 'item1'");
+		assert.strictEqual(selectedItems[1].getText(), oItem2.getText(), "The second item text should be 'item2'");
 
-			// cleanup
-			oMultiComboBox.destroy();
-		} else {
-			assert.expect(0);
-		}
+		// cleanup
+		oMultiComboBox.destroy();
 	});
 
 	QUnit.test("Scenario 'EVENT_VALUE_FOCUSOUT': 'Algeria' + FOCUSOUT", function(assert) {
@@ -5543,33 +5528,6 @@ sap.ui.define([
 		oItem2.destroy();
 		oMultiComboBox.destroy();
 	});
-
-	if (Device.browser.internet_explorer) {
-		QUnit.test("AriaDescribedBy announcement", function(assert) {
-			var oItem1 = new Item({key: "Item1", text: "Item1"}),
-				oItem2 = new Item({key: "Item2", text: "Item2"}),
-				oMultiComboBox = new MultiComboBox({
-					items: [oItem1, oItem2]
-				}),
-				sInvisibleTextId = oMultiComboBox.getAggregation("tokenizer").getTokensInfoId(),
-				oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
-
-			oMultiComboBox.placeAt("MultiComboBoxContent");
-			sap.ui.getCore().applyChanges();
-
-			var	oInvisibleText1 = oMultiComboBox.oInvisibleText;
-
-			//assert
-			assert.ok(oMultiComboBox.$("inner").attr("aria-describedby").length > 0, "Property aria-describedby should exist");
-			assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_NO_TOKENS") , "'MultiComboBox may contain tokens' text is announced.");
-			assert.strictEqual(oInvisibleText1.getText(), oResourceBundle.getText("ACC_CTR_TYPE_COMBO") , "'Combobox' is announced");
-
-			// destroy
-			oItem1.destroy();
-			oItem2.destroy();
-			oMultiComboBox.destroy();
-		});
-	}
 
 	QUnit.test("MultiComboBox with accessibility=false", function(assert) {
 		var oStub =  sinon.stub(sap.ui.getCore().getConfiguration(), "getAccessibility").returns(false),
