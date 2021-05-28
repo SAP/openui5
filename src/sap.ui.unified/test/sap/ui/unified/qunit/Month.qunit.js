@@ -600,6 +600,17 @@ sap.ui.define([
 					"The corresponding legend item's text is used as aria-label");
 		});
 
+		QUnit.test("Dummy cell has an accessible name", function (assert) {
+			var oCore = sap.ui.getCore();
+
+			this.oSut.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+			assert.strictEqual(document.getElementsByClassName("sapUiCalDummy")[0].getAttribute("aria-label"),
+				oCore.getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_WEEK"),
+				"Dummy cell's accessible name is provided in aria-label");
+		});
+
 		QUnit.module("Unfinished range selection indication allowance", {
 			beforeEach: function () {
 				this.oMonth = new Month();
