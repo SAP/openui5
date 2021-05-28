@@ -145,9 +145,8 @@ sap.ui.define([
 			} else if (Device.browser.safari || Device.browser.chrome) {
 				aScrollPosition = sap.ui.getCore().byId(sScrollContainerId).$().css("-webkit-transform").split(" ");
 				s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
-			} else if (Device.browser.msie && Device.browser.version >= 9) { /* TODO remove after the end of support for Internet Explorer */
-				s = sap.ui.getCore().byId(sScrollContainerId).$().css(sDirection);
 			}
+
 			return Math.round(parseFloat(s));
 
 		} else { // NativeMouseScroller
@@ -156,7 +155,7 @@ sap.ui.define([
 		}
 	}
 
-	if (Device.browser.mozilla || Device.browser.safari || Device.browser.chrome || (Device.browser.msie && Device.browser.version >= 9) /* TODO remove after the end of support for Internet Explorer */) {
+	if (Device.browser.mozilla || Device.browser.safari || Device.browser.chrome) {
 
 		QUnit.test("Scrolling - immediate", function(assert) {
 			assert.expect(4);
