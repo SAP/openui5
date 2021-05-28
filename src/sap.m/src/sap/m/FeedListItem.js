@@ -10,7 +10,10 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/Button",
 	"sap/ui/Device",
-	"./FeedListItemRenderer"
+	"./FeedListItemRenderer",
+	"sap/m/Avatar",
+	"sap/m/AvatarShape",
+	"sap/m/AvatarSize"
 ],
 function(
 	ListItemBase,
@@ -20,19 +23,15 @@ function(
 	IconPool,
 	Button,
 	Device,
-	FeedListItemRenderer
+	FeedListItemRenderer,
+	Avatar,
+	AvatarShape,
+	AvatarSize
 	) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
 	var ListType = library.ListType;
-
-	// shortcut for sap.m.Avatar
-	var Avatar = library.Avatar;
-
-	var AvatarSize = library.AvatarSize;
-
-	var AvatarShape = library.AvatarShape;
 
 	// shortcut for sap.m.LinkConversion
 	var LinkConversion = library.LinkConversion;
@@ -196,7 +195,12 @@ function(
 				/**
 				 * Hidden aggregation that displays the action button.
 				 */
-				_actionButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
+				_actionButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
+
+				/**
+				 * Defines the inner avatar control.
+				 */
+				_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" }
 			},
 			events: {
 
@@ -439,20 +443,19 @@ function(
 	 * @returns {sap.m.Avatar} Avatar control based on the provided 'icon' control property
 	 */
 	FeedListItem.prototype._getAvatar = function() {
-		var sIcon = this.getIcon();
-		var sIconSrc = sIcon ? sIcon : IconPool.getIconURI("person-placeholder");
+		var sIconSrc = this.getIcon();
 		var sId = this.getId() + '-icon';
 
-		if (!this.oAvatar) {
-			this.oAvatar = new Avatar({
-				id: sId,
-				src: sIconSrc,
-				displayShape: this.getIconDisplayShape(),
-				initials: this.getIconInitials(),
-				displaySize: this.getIconSize(),
-				ariaLabelledBy: this.getSender()
-			});
-		}
+		this.oAvatar = this.getAggregation("_avatar");
+
+		this.oAvatar = this.oAvatar || new Avatar(sId);
+		this.oAvatar.applySettings({
+		src: sIconSrc,
+		displayShape: this.getIconDisplayShape(),
+		initials: this.getIconInitials(),
+		displaySize: this.getIconSize(),
+		ariaLabelledBy: this.getSender()
+		});
 
 		var that = this;
 		if (this.getIconActive()) {
@@ -468,6 +471,9 @@ function(
 		} else {
 			this.oAvatar.addStyleClass("sapMFeedListItemImageInactive");
 		}
+
+		this.setAggregation("_avatar", this.oAvatar);
+
 
 		return this.oAvatar;
 	};

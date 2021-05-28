@@ -87,9 +87,18 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput._getAvatar().getDisplayShape(), "Circle", "Should have 'Square' shape");
 		assert.strictEqual(this.oFeedInput._getAvatar().getDisplaySize(), "M", "Should have 'M' size");
 
+		this.oFeedInput.setIcon("");
 		this.oFeedInput.setIconInitials("TT");
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(this.oFeedInput._getAvatar().getInitials(), "TT", "Should have initials set");
+		assert.strictEqual(this.oFeedInput._getAvatar()._getActualDisplayType(),
+		"Initials", "Should have initials set");
+
+		this.oFeedInput.setIcon("");
+		this.oFeedInput.setIconInitials("");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(this.oFeedInput._getAvatar()._getActualDisplayType(),
+		"Icon", "Should have default placeholder icon");
 	});
 
 	QUnit.test("MaxLength", function (assert) {

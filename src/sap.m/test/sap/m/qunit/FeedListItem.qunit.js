@@ -318,7 +318,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Show default icon (icon is initial + showIcon = true)", function (assert) {
-		assert.ok(oFeedList.getItems()[3].oAvatar.getSrc() === IconPool.getIconURI("person-placeholder"), "Placeholder icon rendered (icon  initial)");
+		assert.ok(oFeedList.getItems()[3].oAvatar._getIcon().getSrc() === IconPool.getIconURI("person-placeholder"), "Placeholder icon rendered (icon  initial)");
 	});
 
 	QUnit.test("Do not show icon", function (assert) {
