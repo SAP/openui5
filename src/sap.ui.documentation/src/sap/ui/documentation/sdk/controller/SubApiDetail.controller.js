@@ -111,10 +111,13 @@ sap.ui.define([
 				}
 
 				if (this._oModel.getProperty("/hasFAQ")) {
+					var sLibName = this._oEntityData.lib,
+						sLibPath = sLibName.replace(/\./g, '/'),
+						sFile = this._oEntityData.name.replace(sLibName, "").replace(/^[.]/, "").replace(/\./g, '/') + ".html";
 					jQuery.ajax({
 						type: "GET",
-						url: './docs/api/' + this._oEntityData.lib.replace(/\./g, '/') +
-						'/demokit/faq/' + this._oEntityData.displayName + '.html',
+						url: './docs/api/' + sLibPath +
+						'/demokit/faq/' + sFile,
 						success: function (data) {
 							this._oModel.setProperty("/faqContent", data);
 						}.bind(this)
