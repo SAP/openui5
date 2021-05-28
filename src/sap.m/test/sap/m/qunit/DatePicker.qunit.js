@@ -370,6 +370,34 @@ sap.ui.define([
 		oSystemStub.restore();
 	});
 
+	QUnit.test("_applyPosition is called after rendering", function(assert) {
+		// arrange
+		var oDP = new DatePicker(),
+			oPopup,
+			oSpy;
+
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oDP.toggleOpen();
+		sap.ui.getCore().applyChanges();
+		oDP._handleCancelButton();
+		sap.ui.getCore().applyChanges();
+
+		oPopup = oDP._oPopup._getPopup();
+		oSpy = this.spy(oPopup, "_applyPosition");
+
+		// Act
+		oDP.toggleOpen();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oSpy.callCount > 0, "_applyPosition is called after rendering");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+
 	QUnit.module("data binding");
 
 	QUnit.test("data binding with sap.ui.model.type.Date", function(assert) {
