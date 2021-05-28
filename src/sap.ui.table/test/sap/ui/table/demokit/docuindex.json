@@ -100,7 +100,7 @@
 			},{
 				"id": "sap.ui.table.sample.TreeTable.JSONTreeBinding",
 				"name": "JSONTreeBinding",
-				"description": "Basic example showing how a TreeTable can be build by using a JSONModel"
+				"description": "Basic example showing how a TreeTable can be built using a JSONModel"
 			},{
 				"id": "sap.ui.table.sample.TreeTable.BasicODataTreeBinding",
 				"name": "Basic OData TreeBinding",

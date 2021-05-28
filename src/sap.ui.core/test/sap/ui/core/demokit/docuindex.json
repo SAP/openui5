@@ -123,6 +123,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.model.json.JSONTreeBinding",
+				"name": "Tree Binding",
+				"category": "Data Binding",
+				"since": "1.36",
+				"samples": [
+					"sap.ui.table.sample.TreeTable.JSONTreeBinding"
+				]
+			},
+			{
 				"id" : "sap.ui.test.Opa5",
 				"name" : "OPA5",
 				"category" : "Testing",
