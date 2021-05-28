@@ -542,7 +542,7 @@ sap.ui.define([
 			this.sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
 			});
 		});
 
