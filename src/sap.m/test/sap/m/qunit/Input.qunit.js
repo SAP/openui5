@@ -208,7 +208,6 @@ sap.ui.define([
 		var oInput = new Input({
 				showSuggestion: true
 			}),
-			$Input,
 			oPopup, // is lazy loaded
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
 			aItemAdded = [],
@@ -218,7 +217,6 @@ sap.ui.define([
 
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		$Input = oInput.$();
 
 		oInput.attachSuggest(function(){
 			for (i = 0 ; i < aNames.length ; i++){
@@ -320,8 +318,7 @@ sap.ui.define([
 		var spy = this.spy(),
 			oInput = new Input( {
 				valueHelpRequest: spy
-			}),
-			oInputId = oInput.getId();
+			});
 
 		// place control
 		oInput.placeAt("content");
@@ -618,8 +615,7 @@ sap.ui.define([
 				showValueHelp: true,
 				valueHelpOnly: true,
 				valueHelpRequest: spy
-			}),
-			oInputIdVHO = oInputVHO.getId();
+			});
 
 		// place control
 		oInputVHO.placeAt("content");
@@ -640,8 +636,7 @@ sap.ui.define([
 				enabled: true,
 				editable: true,
 				valueHelpRequest: spy
-				}),
-			oInputIdVHO = oInputVHO.getId();
+			});
 
 		// place control
 		oInputVHO.placeAt("content");
@@ -664,8 +659,7 @@ sap.ui.define([
 				enabled: true,
 				editable: true,
 				valueHelpRequest: spy1
-				}),
-			oInputIdVHO1 = oInputVHO1.getId();
+				});
 
 		// place control
 		oInputVHO1.placeAt("content");
@@ -687,8 +681,7 @@ sap.ui.define([
 				enabled: true,
 				editable: false,
 				valueHelpRequest: spy2
-				}),
-			oInputIdVHO2 = oInputVHO2.getId();
+				});
 
 		// place control
 		oInputVHO2.placeAt("content");
@@ -710,8 +703,7 @@ sap.ui.define([
 				enabled: false,
 				editable: true,
 				valueHelpRequest: spy3
-				}),
-			oInputIdVHO3 = oInputVHO3.getId();
+			});
 
 		// place control
 		oInputVHO3.placeAt("content");
@@ -1055,14 +1047,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Suggestion on Desktop", function(assert){
-		var $Input = oInput6.$(),
-			oPopup, // is lazy loaded
+		var oPopup, // is lazy loaded
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
 			aItemAdded = [],
 			i;
 
 		oInput6.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput6.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1100,16 +1091,10 @@ sap.ui.define([
 		var oInput = new Input({
 				showSuggestion: true
 			}),
-			$Input,
-			oPopup, // is lazy loaded
-			aNames = ["abcTom", "abcPhilips", "abcAnna"],
-			aItemAdded = [],
-			i,
 			oSpy = this.spy();
 
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		$Input = oInput.$();
 
 		oInput.attachSuggest(oSpy);
 
@@ -1142,7 +1127,7 @@ sap.ui.define([
 		var oInput = new Input({
 			showSuggestion: true,
 			suggest: function(){
-				for (i = 0 ; i < aNames.length ; i++){
+				for (i = 0; i < aNames.length; i++){
 					if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 						oInput.addSuggestionItem(new Item({text: aNames[i]}));
 						aItemAdded.push(aNames[i]);
@@ -1240,7 +1225,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1253,7 +1238,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		oPopup = oInput._getSuggestionsPopover().getPopover();
+		var oPopup = oInput._getSuggestionsPopover().getPopover();
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
@@ -1327,8 +1312,7 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var $Input = oInput.$(),
-			oPopup1,
+		var oPopup1,
 			aItems,
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
 			aDescription = ["Heidelberg", "Mannheim", "Paris"],
@@ -1336,7 +1320,7 @@ sap.ui.define([
 			i;
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1388,8 +1372,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Two Value Suggestions with disabled items on Desktop", function(assert){
-		var $Input,
-			oPopup,
+		var oPopup,
 			aNames = ["abcTom", "abcPhilips", "abcAnna", "abcJames"],
 			aDescription = ["Heidelberg", "Mannheim", "Paris", "London"],
 			aEnabled = [true, false, true, false],
@@ -1402,9 +1385,8 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		$Input = oInput.$();
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i], enabled: aEnabled[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1481,8 +1463,7 @@ sap.ui.define([
 					minScreenWidth : "400px",
 					demandPopin : true
 				})
-			]}),
-			oInputId = oInput.getId();
+			]});
 
 		var oTableItemTemplate = new ColumnListItem({
 			type : "Inactive",
@@ -1524,16 +1505,15 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var	$Input = oInput.$(),
-			oPopup, // is lazy loaded
-			aAlreadyAddedProducts = [],
-			i;
+		var oPopup, // is lazy loaded
+			i,
+			oSuggestionRow;
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
 
 			assert.strictEqual(oTableItemTemplate.getType(), ListType.Inactive, "The type of the template item is \"Inactive\" (default value)");
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				oSuggestionRow = oTableItemTemplate.clone();
 				oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
 				oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);
@@ -1596,7 +1576,7 @@ sap.ui.define([
 			i;
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1668,7 +1648,7 @@ sap.ui.define([
 			i;
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1719,7 +1699,7 @@ sap.ui.define([
 			i;
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1847,8 +1827,7 @@ sap.ui.define([
 					minScreenWidth : "400px",
 					demandPopin : true
 				})
-			]}),
-			oInputId = oInput.getId();
+			]});
 
 		var oTableItemTemplate = new ColumnListItem({
 			vAlign : "Middle",
@@ -1893,14 +1872,14 @@ sap.ui.define([
 		oInput.setShowSuggestion(true);
 		sap.ui.getCore().applyChanges();
 
-		var	$Input = oInput.$(),
-			oPopup, // is lazy loaded
+		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
+			oSuggestionRow,
 			i;
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
@@ -1992,7 +1971,6 @@ sap.ui.define([
 					demandPopin : true
 				})
 			]}),
-			oInputId = oInput.getId(),
 			oInputRendererSpy;
 
 		var oTableItemTemplate = new ColumnListItem({
@@ -2038,14 +2016,14 @@ sap.ui.define([
 		oInput.setShowSuggestion(true);
 		sap.ui.getCore().applyChanges();
 
-		var	$Input = oInput.$(),
-			oPopup, // is lazy loaded
+		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
+			oSuggestionRow,
 			i;
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
@@ -2310,8 +2288,7 @@ sap.ui.define([
 					minScreenWidth : "400px",
 					demandPopin : true
 				})
-			]}),
-			oInputId = oInput.getId();
+			]});
 
 		var oTableItemTemplate = new ColumnListItem({
 			vAlign : "Middle",
@@ -2352,15 +2329,15 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var	$Input = oInput.$(),
-			oPopup, // is lazy loaded
+		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
 			oDialogRendererSpy,
+			oSuggestionRow,
 			i;
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
@@ -2486,8 +2463,7 @@ sap.ui.define([
 					minScreenWidth : "400px",
 					demandPopin : true
 				})
-			]}),
-			oInputId = oInput.getId();
+			]});
 
 		var oTableItemTemplate = new ColumnListItem({
 			vAlign : "Middle",
@@ -2540,14 +2516,14 @@ sap.ui.define([
 			return "You chose: " + oColumnListItem.getCells()[2].getText();
 		});
 
-		var	$Input = oInput.$(),
-			oPopup, // is lazy loaded
+		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
+			oSuggestionRow,
 			i;
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
@@ -2987,8 +2963,7 @@ sap.ui.define([
 					minScreenWidth : "400px",
 					demandPopin : true
 				})
-			]}),
-			oInputId = oInput.getId();
+			]});
 
 		var oTableItemTemplate = new ColumnListItem({
 			vAlign : "Middle",
@@ -3091,8 +3066,7 @@ sap.ui.define([
 					minScreenWidth : "400px",
 					demandPopin : true
 				})
-			]}),
-			oInputId = oInput.getId();
+			]});
 
 		var oTableItemTemplate = new ColumnListItem({
 			vAlign : "Middle",
@@ -3315,16 +3289,15 @@ sap.ui.define([
 					{key: "text4", value: "Text 4"}
 				]
 			}),
-			fnOnSuggest = function () {
-				oInput.bindAggregation("suggestionItems", {
-					path: "/items",
-					template: new Item({key: "{key}", text: "{value}"}),
-					templateShareable: true
-				});
-			},
 			oInput = new Input({
 				showSuggestion: true,
-				suggest: fnOnSuggest
+				suggest: function () {
+					oInput.bindAggregation("suggestionItems", {
+						path: "/items",
+						template: new Item({key: "{key}", text: "{value}"}),
+						templateShareable: true
+					});
+				}
 			}).setModel(oModel);
 
 		oInput.placeAt("content");
@@ -3712,7 +3685,7 @@ sap.ui.define([
 
 		oInput.setSelectedItem(oInput.getSuggestionItems()[2]);
 
-		var sValue = oInput.getValue();
+		sValue = oInput.getValue();
 		assert.equal(sValue, "Custom: Item 3 (3)", "custom formatting is correct");
 
 		oInput.destroy();
@@ -4348,7 +4321,7 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.module("Input clone", {
+	QUnit.module("Cloning", {
 		beforeEach: function () {
 			this.oTabularInputToClone = createInputWithTabularSuggestions();
 			// Remove the SuggestionRowValidator function for the cloning tests.
@@ -5458,9 +5431,8 @@ sap.ui.define([
 		assert.ok(iValueStateZIndex > this.dialog.$().zIndex(), "z-index of the value state message should be higher from all the parents z-indices");
 	});
 
-	QUnit.module("Input with Suggestions and Value State Message with sap.m.FormattedText containing links", {
+	QUnit.module("Value State Handling: Value State Message with links", {
 		beforeEach: function () {
-
 			this.oInput = new Input({
 				showSuggestion: true,
 				valueStateText: "Normal value state text",
@@ -5773,7 +5745,6 @@ sap.ui.define([
 			})
 		});
 		var	oSuggPopoverHeaderValueState;
-		var oPopup;
 		var oRenderedValueStateMessage;
 
 		// Act
@@ -5953,7 +5924,7 @@ sap.ui.define([
 		assert.strictEqual(iSuggestionItemSelectedCount,  1, 'attachSuggestionItemSelected is fired only once');
 	});
 
-	QUnit.module("Suggestions grouping", {
+	QUnit.module("Grouping", {
 		beforeEach : function() {
 			var oModel,
 				aData = [
@@ -6059,7 +6030,7 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
-	QUnit.test("Keyboard selection of group header", function () {
+	QUnit.test("Keyboard selection of group header", function (assert) {
 		var aVisibleItems;
 
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
