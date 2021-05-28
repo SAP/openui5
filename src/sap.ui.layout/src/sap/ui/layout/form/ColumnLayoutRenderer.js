@@ -5,8 +5,9 @@
 sap.ui.define([
 	'sap/ui/core/Renderer',
 	'sap/ui/Device',
-	'./FormLayoutRenderer'
-	], function(Renderer, Device, FormLayoutRenderer) {
+	'./FormLayoutRenderer',
+	'sap/base/Log'
+	], function(Renderer, Device, FormLayoutRenderer, Log) {
 	"use strict";
 
 	/**
@@ -164,7 +165,7 @@ sap.ui.define([
 			for (var k = 0, kl = aFields.length; k < kl; k++) {
 				var oField = aFields[k];
 				if (!oField.isA("sap.ui.core.IFormContent")) {
-					throw new Error(oField + " is not a valid Form content! Only use valid content in " + oLayout);
+					Log.error(oField + " is not a valid Form content! Only use valid content in " + oLayout);
 				}
 				oOptions = oLayout._getFieldSize(oField);
 				oRm.openStart("div");
