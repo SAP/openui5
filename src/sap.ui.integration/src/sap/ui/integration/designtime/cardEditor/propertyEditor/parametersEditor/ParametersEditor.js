@@ -96,6 +96,7 @@ sap.ui.define([
 		var oValidations = oConfigValue.value.validations || vItemMetadata.validations;
 		var sHint = oConfigValue.value.hint || vItemMetadata.hint || "";
 		var sFormattor = oConfigValue.value.formatter || vItemMetadata.formatter;
+		//var bLine = this.getBoolenValue(oConfigValue.value.line, vItemMetadata.line, false);
 		//var oTemplate = oConfigValue.value.template || vItemMetadata.template || {};
 /*
 		if (sType === "array") {
@@ -115,7 +116,7 @@ sap.ui.define([
 			}
 			oMapItemConfig[2].allowAddAndRemove = false;
 		}*/
-		oMapItemConfig[2].visible = !(sType === "group" || sType === "array");
+		oMapItemConfig[2].visible = !(sType === "group" || sType === "array" || sType === "separator");
 
 		oMapItemConfig.push(
 			{
@@ -123,6 +124,7 @@ sap.ui.define([
 				path: "label",
 				value: sLabel,
 				placeholder: sLabel ? undefined : sKey,
+				visible: sType !== "separator",
 				type: "string",
 				enabled: this.getConfig().allowLabelChange,
 				itemKey: sKey
@@ -132,7 +134,7 @@ sap.ui.define([
 				path: "description",
 				value: sDescription,
 				allowBindings: true,
-				visible: sType !== "group",
+				visible: sType !== "group" && sType !== "separator",
 				type: "string",
 				itemKey: sKey
 			},
@@ -142,6 +144,7 @@ sap.ui.define([
 				value: sHint,
 				allowBindings: true,
 				enabled: true,
+				visible: sType !== "separator",
 				type: "string",
 				itemKey: sKey
 			},
@@ -169,7 +172,7 @@ sap.ui.define([
 				path: "manifestpath",
 				value: sManifestpath,
 				allowBindings: true,
-				visible: sType !== "group",
+				visible: sType !== "group" && sType !== "separator",
 				type: "string",
 				itemKey: sKey
 			},
@@ -195,7 +198,7 @@ sap.ui.define([
 				allowBindings: true,
 				value: bEditable,
 				enabled: true,
-				visible: sType !== "group",
+				visible: sType !== "group" && sType !== "separator",
 				type: "boolean",
 				itemKey: sKey
 			},
@@ -205,7 +208,7 @@ sap.ui.define([
 				allowBindings: true,
 				value: bEditableToUser,
 				enabled: true,
-				visible: sType !== "group",
+				visible: sType !== "group" && sType !== "separator",
 				type: "boolean",
 				itemKey: sKey
 			},
@@ -234,6 +237,7 @@ sap.ui.define([
 				path: "translatable",
 				value: bTranslatable,
 				enabled: true,
+				visible: sType !== "separator",
 				type: "boolean",
 				itemKey: sKey
 			},
@@ -243,7 +247,7 @@ sap.ui.define([
 				allowBindings: true,
 				enabled: true,
 				value: bAllowDynamicValues,
-				visible: sType !== "group",
+				visible: sType !== "group" && sType !== "separator",
 				type: "boolean",
 				itemKey: sKey
 			},
@@ -252,7 +256,7 @@ sap.ui.define([
 				path: "allowSettings",
 				allowBindings: true,
 				value: bAllowSettings,
-				visible: sType !== "group",
+				visible: sType !== "group" && sType !== "separator",
 				type: "boolean",
 				itemKey: sKey
 			},
@@ -261,7 +265,7 @@ sap.ui.define([
 				path: "visualization",
 				allowBindings: true,
 				value: oVisualization,
-				visible: sType !== "group",
+				visible: sType !== "group" && sType !== "separator",
 				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISUALIZATION.PLACEHOLDER"),
 				type: "textArea",
 				itemKey: sKey
@@ -286,6 +290,16 @@ sap.ui.define([
 				type: "textArea",
 				itemKey: sKey
 			}
+			/*,
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.LINE"),
+				path: "line",
+				allowBindings: true,
+				value: bLine,
+				visible: sType === "separator",
+				type: "boolean",
+				itemKey: sKey
+			}*/
 		);
 		return oMapItemConfig;
 	};

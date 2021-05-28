@@ -32,6 +32,7 @@ sap.ui.define([
 		"icon": "BASE_EDITOR.MAP.TYPES.ICON",
 		"simpleicon": "BASE_EDITOR.MAP.TYPES.SIMPLEICON",
 		"group": "BASE_EDITOR.MAP.TYPES.GROUP",
+		"separator": "BASE_EDITOR.MAP.TYPES.SEPARATOR",
 		"array": "BASE_EDITOR.MAP.TYPES.ARRAY"
 	};
 
@@ -301,7 +302,7 @@ sap.ui.define([
 					path: "value",
 					value: vValue,
 					type: sType && includes(this._getAllowedTypes(), sType) ? sType : this._getDefaultType(vValue),
-					visible: sType !== "group",
+					visible: sType !== "group" && sType !== "separator",
 					itemKey: sKey,
 					designtime: (oDesigntime || {}).value
 				}
@@ -491,6 +492,7 @@ sap.ui.define([
 				});
 				if (oNewValue[sNewKey]
 					&& oNewValue[sNewKey].type !== "group"
+					&& oNewValue[sNewKey].type !== "separator"
 					&& oNewValue[sNewKey].manifestpath
 					&& oNewValue[sNewKey].manifestpath.startsWith("/sap.card/configuration/parameters/")) {
 						oNewValue[sNewKey].manifestpath = "/sap.card/configuration/parameters/" + sNewKey + "/value";
@@ -507,6 +509,7 @@ sap.ui.define([
 					if (oDesigntime[sNewKey].__value
 						&& oDesigntime[sNewKey].__value.type
 						&& oDesigntime[sNewKey].__value.type !== "group"
+						&& oDesigntime[sNewKey].__value.type !== "separator"
 						&& oDesigntime[sNewKey].__value.manifestpath) {
 						oDesigntime[sNewKey].__value.manifestpath = oDesigntime[sNewKey].__value.manifestpath.replace(sOldKey, sNewKey);
 					}

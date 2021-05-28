@@ -151,10 +151,11 @@
 							<td><strong>Yes</strong></td>
 							<td>"string"</td>
 							<td>Type of the value in the manifest that is edited. Currently "string", "integer", "number",
-								"date", "datetime", "boolean", "string[]" are supported.<br>
+								"date", "datetime", "boolean", "string[]", "group", "separator" are supported.<br>
 								type="group" in an item will allow to set an expandable panel within the form.
 								It will contains all the parameters behind it and before the next item which type is "group" too.
-								For a group typed item the manifestpath setting can be omitted. A label should be provided.
+								For a group typed item the manifestpath setting can be omitted. A label should be provided.<br>
+								type="separator" in an item will allow to set a separator (empty row) within the form.
 								<pre class="prettyprint lang-js">type : "string"</pre>
 							</td>
 							<td>1.83</td>

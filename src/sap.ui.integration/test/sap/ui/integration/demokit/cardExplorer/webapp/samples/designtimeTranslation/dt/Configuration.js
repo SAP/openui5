@@ -10,6 +10,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "General Settings",
 						"type": "group"
 					},
+					"separator1": {
+						"type": "separator"
+					},
 					"title": {
 						"manifestpath": "/sap.card/header/title",
 						"type": "string",
@@ -38,6 +41,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"editable": "{currentSettings>editable}"
 							}
 						}
+					},
+					"separator2": {
+						"type": "separator"
 					},
 					"translatableLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/translatableLabel/value",

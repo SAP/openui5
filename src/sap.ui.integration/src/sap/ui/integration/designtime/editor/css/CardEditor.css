@@ -497,3 +497,11 @@
 .sapUiIntegrationCardEditorItem > .sapMFT {
 	margin-bottom:0.5rem;
 }
+.sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorSpacerWithLine {
+	height: 10px;
+	border-bottom: ridge !important;
+	margin-bottom: 5px !important;
+}
+.sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorSpacerWithoutLine {
+	height: 15px;
+}

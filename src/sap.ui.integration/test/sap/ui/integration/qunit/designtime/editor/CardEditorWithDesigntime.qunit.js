@@ -5559,6 +5559,73 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Separator", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Check the separator with default config", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "separators.json" });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oSeparator = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oSeparator.isA("sap.m.ToolbarSpacer"), "Label: Form content contains a ToolbarSpacer");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+		QUnit.test("Check the separator can not be seen in translation mode", function (assert) {
+			this.oCardEditor.setMode("translation");
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "separators.json" });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(!oLabel.isA("sap.m.ToolbarSpacer"), "Label: The 1st content is not a ToolbarSpacer");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+		/*
+		QUnit.test("Check the separator with line property", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "separators.json" });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oSeparator = this.oCardEditor.getAggregation("_formContent")[4];
+					assert.ok(oSeparator.isA("sap.m.ToolbarSpacer"), "Label: Form content contains a ToolbarSpacer");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});*/
+	});
+
 	QUnit.module("Label and control in one line for boolean parameter", {
 		beforeEach: function () {
 			this.oHost = new Host("host");

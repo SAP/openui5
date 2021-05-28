@@ -54,6 +54,7 @@ sap.ui.define([
 			assert.ok(this.oGroupEditor.getDomRef() instanceof HTMLElement, "Then it is rendered correctly (1/3)");
 			assert.ok(this.oGroupEditor.getDomRef() && this.oGroupEditor.getDomRef().offsetHeight > 0, "Then it is rendered correctly (2/3)");
 			assert.ok(this.oGroupEditor.getDomRef() && this.oGroupEditor.getDomRef().offsetWidth > 0, "Then it is rendered correctly (3/3)");
+			assert.ok(this.oGroupEditorElement.isA("sap.m.Panel"), "Label: The content is a Panel");
 		});
 	});
 

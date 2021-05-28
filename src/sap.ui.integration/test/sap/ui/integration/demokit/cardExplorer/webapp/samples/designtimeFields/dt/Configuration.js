@@ -11,24 +11,40 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "General",
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
+					"separator1": {
+						"type": "separator",
+						"line": true
+					},
 					"cardTitle": {
 						"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
 						"type": "string",
 						"translatable": true,
 						"required": true,
-						"allowDynamicValues": true
+						"allowDynamicValues": true,
+						"editableToUser": false,
+						"visibleToUser": false
 					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"type": "string",
 						"translatable": true,
-						"required": true
+						"required": true,
+						"editableToUser": false
 					},
 					"stringLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
 						"type": "string",
 						"label": "Direct String Label",
-						"translatable": true
+						"editableToUser": true,
+						"visibleToUser": true
+					},
+					"separator2": {
+						"type": "separator",
+						"line": true
+					},
+					"separator3": {
+						"type": "separator",
+						"line": true
 					},
 					"stringLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
@@ -36,6 +52,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "{i18n>TRANSLATED_STRING_LABEL}",
 						"translatable": true,
 						"allowDynamicValues": false
+					},
+					"separator4": {
+						"type": "separator"
 					},
 					"stringWithDescription": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithDescription/value",
@@ -49,6 +68,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "String with long description",
 						"description": "A very long description text that should wrap into the next line"
 					},
+					"separator5": {
+						"type": "separator",
+						"line": true
+					},
 					"stringWithTranslatedValue": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValue/value",
 						"type": "string",
@@ -59,6 +82,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValueIni18nFormat/value",
 						"type": "string",
 						"label": "String with translated value in i18n format"
+					},
+					"separator6": {
+						"type": "separator"
 					},
 					"stringInCols1": {
 						"manifestpath": "/sap.card/configuration/parameters/stringInCols1/value",
@@ -75,6 +101,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"cols": 1,
 						"allowSettings": false
+					},
+					"separator7": {
+						"type": "separator"
 					},
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
@@ -120,6 +149,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"boolean": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 						"description": "Description",
+						"label": "long long long long long long long long long long label",
 						"type": "boolean",
 						"visualization": {
 							"type": "sap/m/Switch",
@@ -133,8 +163,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"booleanLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",
-						"type": "boolean",
-						"label": "Direct Boolean Label"
+						"label": "long long long long long long long long long long label",
+						"type": "boolean"
 					},
 					"booleanLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabelTrans/value",
@@ -179,6 +209,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"Option B",
 							"Option C"
 						]
+					},
+					"separator8": {
+						"type": "separator"
 					},
 					"formatterGroup": {
 						"type": "group",
@@ -408,6 +441,35 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"stringWithRequestExtensionList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestExtensionList/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"extension": {
+									"method": "getData"
+								},
+								"path": "/values"
+							},
+							"item": {
+								"text": "{trainer}",
+								"key": "{title}",
+								"additionalText": "{location}"
+							}
+						}
+					},
+					"stringWithDataFromExtensionList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithDataFromExtensionList/value",
+						"type": "string",
+						"values": {
+							"item": {
+								"text": "{trainer}",
+								"key": "{title}",
+								"additionalText": "{location}"
+							},
+							"path": "/values"
+						}
+					},
 					"stringWithRequestFromDestinationList": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestDestinationList/value",
 						"type": "string",
@@ -549,6 +611,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"separator9": {
+						"type": "separator",
+						"line": true
+					},
 					"color": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
 						"type": "string",
@@ -577,6 +643,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"cols": 1
 					},
+					"separator10": {
+						"type": "separator",
+						"line": true
+					},
 					"color1": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
 						"type": "string",
@@ -590,6 +660,26 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						},
 						"cols": 1
+					},
+					"boolean2": {
+						"manifestpath": "/sap.card/configuration/parameters/boolean2/value",
+						"type": "boolean",
+						"description": "Description",
+						"label": "long long long long long long long long long long label",
+						"visualization": {
+							"type": "sap/m/Switch",
+							"settings": {
+								"state": "{currentSettings>value}",
+								"customTextOn": "Yes",
+								"customTextOff": "No",
+								"enabled": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
+					"separator11": {
+						"type": "separator",
+						"line": true
 					},
 					"maxItems": {
 						"manifestpath": "/sap.card/content/maxItems",
@@ -670,7 +760,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"boolean1": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean1/value",
 						"type": "boolean",
-						"label": "boolean",
+						"label": "long long long long long long long long long long label",
 						"visualization": {
 							"type": "sap/m/Switch",
 							"settings": {
@@ -936,6 +1026,27 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"text": "{= ${OrderID} !== undefined ? ${OrderID} + '-' +  ${ProductID} + ':' + ${Product/ProductName} : ''}",
 								"key": "{ProductID}",
 								"additionalText": "{= ${OrderID} !== undefined ? ${UnitPrice} + ' USD, count: '+ ${Quantity} : ''}"
+							}
+						}
+					},
+					"Orders": {
+						"manifestpath": "/sap.card/configuration/parameters/Orders/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Orders",
+									"parameters": {
+										"$select": "OrderID, OrderDate, CustomerID, EmployeeID",
+										"$filter": "(CustomerID eq '{items>Customer/value}') and (EmployeeID eq {items>Employee/value})"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{= ${OrderID} !== undefined ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID} : ''}",
+								"key": "{OrderID}",
+								"additionalText": "{OrderDate}"
 							}
 						}
 					},
