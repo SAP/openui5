@@ -157,7 +157,7 @@ sap.ui.define([
 				bRenderCell = true,
 				oCell = aCells[oColumn.getInitialOrder()];
 
-			if (!oCell || !oColumn.getVisible() || oColumn.isPopin()) {
+			if (!oColumn.getVisible() || !oCell || oColumn.isPopin()) {
 				// update the visible index of the column
 				oColumn.setIndex(-1);
 				return;

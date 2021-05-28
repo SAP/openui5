@@ -77,12 +77,15 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			};
 
 		if (type == "Head") {
+			var aVisibleColumns = aColumns.filter(function(oCol){
+				return oCol.getVisible();
+			});
 			var oForcedColumn = aColumns.reduce(function(oRefColumn, oColumn, iOrder) {
 				oColumn.setIndex(-1);
 				oColumn.setInitialOrder(iOrder);
 				oColumn.setForcedColumn(false);
-				return (oColumn.getCalculatedMinScreenWidth() < oRefColumn.getCalculatedMinScreenWidth()) ? oColumn : oRefColumn;
-			}, aColumns[0]);
+				return (oColumn.getVisible() && oColumn.getCalculatedMinScreenWidth() < oRefColumn.getCalculatedMinScreenWidth()) ? oColumn : oRefColumn;
+			}, aVisibleColumns[0]);
 
 			var iHeaderLength = aColumns.filter(function(oColumn) {
 				return	oColumn.getVisible() &&
