@@ -337,7 +337,7 @@ sap.ui.define([
 			events: {
 				/**
 				 * The event is triggered when files are selected in the FileUploader dialog. Applications can set parameters and headerParameters which will be dispatched to the embedded FileUploader control.
-				 * Limitation: parameters and headerParameters are not supported by Internet Explorer 9.
+				 * Restriction: parameters and headerParameters are not supported by Internet Explorer 9.
 				 */
 				change: {
 					parameters: {
@@ -349,7 +349,7 @@ sap.ui.define([
 						documentId: {type: "string"},
 						/**
 						 * A FileList of individually selected files from the underlying system. See www.w3.org for the FileList Interface definition.
-						 * Limitation: Internet Explorer 9 supports only single file with property file.name.
+						 * Restriction: Internet Explorer 9 supports only single file with property file.name.
 						 * Since version 1.28.0.
 						 * @since 1.28.0
 						 */
@@ -390,7 +390,7 @@ sap.ui.define([
 						documentId: {type: "string"},
 						/**
 						 * A FileList of individually selected files from the underlying system.
-						 * Limitation: Internet Explorer 9 supports only single file with property file.name.
+						 * Restriction: Internet Explorer 9 supports only single file with property file.name.
 						 * Since version 1.28.0.
 						 * @since 1.28.0
 						 */
@@ -448,7 +448,7 @@ sap.ui.define([
 
 						/**
 						 * A FileList of individually selected files from the underlying system.
-						 * Limitation: Internet Explorer 9 supports only single file with property file.name.
+						 * Restriction: Internet Explorer 9 supports only single file with property file.name.
 						 * Since 1.28.0.
 						 * @since 1.28.0
 						 */
@@ -484,7 +484,7 @@ sap.ui.define([
 
 						/**
 						 * A FileList of individually selected files from the underlying system.
-						 * Limitation: Internet Explorer 9 supports only single file.
+						 * Restriction: Internet Explorer 9 supports only single file.
 						 * Since 1.28.0.
 						 * @since 1.28.0
 						 */
