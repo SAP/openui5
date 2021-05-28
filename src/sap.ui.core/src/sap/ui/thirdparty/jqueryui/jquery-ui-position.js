@@ -92,7 +92,7 @@ $.position = {
 			// div = $( "<div style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
 			div = $( "<div><div></div></div>" ),
 			innerDiv = div.children()[0];
-			div.style = "display:block;position:absolute;width:50px;height:50px;overflow:hidden;";
+			div[0].style = "display:block;position:absolute;width:50px;height:50px;overflow:hidden;";
 			innerDiv.style = "height:100px;width:auto;";
 			// ##### END: MODIFIED BY SAP
 		$( "body" ).append( div );
