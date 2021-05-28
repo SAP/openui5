@@ -213,6 +213,7 @@ sap.ui.define([
 				"actions"
 			]
 		});
+		this._oBlocksObserver = new ManagedObjectObserver(this._onBlocksChange.bind(this));
 
 		//switch logic for the default mode
 		this._switchSubSectionMode(this.getMode());
@@ -351,6 +352,11 @@ sap.ui.define([
 		}
 	};
 
+	ObjectPageSubSection.prototype._onBlocksChange = function () {
+		var oObjectPageLayout = this._getObjectPageLayout();
+		this._applyLayout(oObjectPageLayout);
+	};
+
 	/**
 	 * Starts observing the <code>visible</code> property.
 	 * @param {sap.ui.core.Control} oControl
@@ -458,6 +464,14 @@ sap.ui.define([
 		});
 	};
 
+	ObjectPageSubSection.prototype._unobserveBlocks = function() {
+		this.getBlocks().forEach(function (oBlock) {
+			this._oBlocksObserver.unobserve(oBlock, {
+				properties: ["visible"]
+			});
+		}, this);
+	};
+
 	ObjectPageSubSection.prototype.exit = function () {
 		if (this._oSeeMoreButton) {
 			this._oSeeMoreButton.destroy();
@@ -468,6 +482,8 @@ sap.ui.define([
 			this._oSeeLessButton.destroy();
 			this._oSeeLessButton = null;
 		}
+
+		this._unobserveBlocks();
 
 		this._oCurrentlyVisibleSeeMoreLessButton = null;
 
@@ -845,6 +861,28 @@ sap.ui.define([
 	ObjectPageSubSection.prototype.insertBlock = function (oObject, iIndex) {
 		Log.warning("ObjectPageSubSection :: usage of insertBlock is not supported - addBlock is performed instead.");
 		return this.addAggregation("blocks", oObject);
+	};
+
+	ObjectPageSubSection.prototype.addBlock = function (oBlock) {
+		this._oBlocksObserver.observe(oBlock, {
+			properties: ["visible"]
+		});
+
+		return this.addAggregation("blocks", oBlock);
+	};
+
+	ObjectPageSubSection.prototype.removeBlock = function (oBlock) {
+		this._oBlocksObserver.unobserve(oBlock, {
+			properties: ["visible"]
+		});
+
+		return this.removeAggregation("blocks", oBlock);
+	};
+
+	ObjectPageSubSection.prototype.removeAllBlocks = function () {
+		this._unobserveBlocks();
+
+		return this.removeAllAggregation("blocks");
 	};
 
 	/**
