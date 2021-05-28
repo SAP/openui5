@@ -160,7 +160,8 @@ sap.ui.define([
 
     Wrapper.prototype.switchView = function (sKey) {
         Container.prototype.switchView.apply(this, arguments);
-        this.oLayout.setShowHeader(sKey !== this.DEFAULT_KEY); //Don't show header in dafault view (avoid empty space)
+        this.oLayout.setShowHeader(sKey !== this.DEFAULT_KEY); //Don't show header in dafault view (avoid empty space),
+        this._getTabBar().setSelectedKey(sKey);
         this._getNavBackBtn().setVisible(sKey !== this.DEFAULT_KEY);
         this._getNavBackBtn().setText(sKey);
     };

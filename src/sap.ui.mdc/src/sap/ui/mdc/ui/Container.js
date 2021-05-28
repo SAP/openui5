@@ -145,7 +145,7 @@ sap.ui.define([
 	};
 
 	Container.prototype.addView = function(oView) {
-		if (oView && !oView.getContent().hasStyleClass("sapUiMDCContainerContent")){
+		if (oView && oView.getContent() && !oView.getContent().hasStyleClass("sapUiMDCContainerContent")){
 			oView.getContent().addStyleClass("sapUiMDCContainerContent");
 		}
 		this.addAggregation("views", oView);
