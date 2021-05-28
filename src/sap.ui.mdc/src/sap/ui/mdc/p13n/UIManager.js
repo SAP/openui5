@@ -254,9 +254,11 @@ sap.ui.define([
 					this.setActiveP13n(oControl, null);
 					aKeys.forEach(function(sKey){
 						if (oUISettings[sKey].containerSettings && oUISettings[sKey].containerSettings.afterClose instanceof Function) {
-							//TODO: currently 'afterClose' is only being used for not destroying the control instance,
-							//this assumption might not be correct in the future
-							oContainer.getContent()[0].removeView(sKey);
+							oUISettings[sKey].containerSettings.afterClose({
+								getSource: function() {
+									return oContainer;
+								}
+							});
 						}
 					});
 					oContainer.close();
@@ -411,9 +413,7 @@ sap.ui.define([
 				afterClose: function(oEvt) {
 					aKeys.forEach(function(sKey){
 						if (oUISettings[sKey] && oUISettings[sKey].containerSettings && oUISettings[sKey].containerSettings.afterClose instanceof Function) {
-							//TODO: currently 'afterClose' is only being used for not destroying the control instance,
-							//this assumption might not be correct in the future
-							oEvt.getSource().getContent()[0].removeView(sKey);
+							oUISettings[sKey].containerSettings.afterClose(oEvt);
 						}
 					});
 					oEvt.getSource().destroy();
