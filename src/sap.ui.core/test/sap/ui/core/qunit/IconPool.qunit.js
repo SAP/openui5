@@ -8,8 +8,6 @@ sap.ui.define([
 ], function(IconPool, Icon, Image, Log) {
 	"use strict";
 
-	var sBasePath = sap.ui.require.toUrl("");
-
 	QUnit.module("Basic");
 
 	QUnit.test("Constructor should throw an error", function(assert) {
@@ -28,13 +26,12 @@ sap.ui.define([
 	QUnit.module("Methods");
 
 	QUnit.test("insertFontFaceStyle", function(assert) {
-		assert.equal(jQuery("head > link[type='text/css']").get(0), null, "Style should not have been inserted.");
+		var iFontFaceCount = document.fonts.size;
 
 		// insert sap-icons font
 		IconPool.insertFontFaceStyle();
 
-		var oLinkElement = jQuery("head > link[type='text/css']");
-		assert.ok(oLinkElement.length === 0, "Link element isn't created because the font-face is declared in the library.css");
+		assert.ok(document.fonts.size === iFontFaceCount, "No new FontFace is created because the font-face is declared in the library.css");
 	});
 
 	QUnit.test("createControlByURI", function(assert) {
@@ -187,39 +184,43 @@ sap.ui.define([
 	QUnit.module("Loading of additional icon fonts");
 
 	QUnit.test("insertFontFaceStyle", function(assert) {
-		var iCountStyles = jQuery("head > style[type='text/css']").length;
+		var iFontFaceCount = document.fonts.size,
+			sFontFamily = "SAP-icons-TNT";
 
 		IconPool.registerFont({
-			fontFamily: "SAP-icons-TNT",
+			fontFamily: sFontFamily,
 			fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts")
 		});
 
 		// insert sap-icons-TNT font
-		IconPool.insertFontFaceStyle("SAP-icons-TNT", jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"));
-		assert.strictEqual(jQuery("head > style[type='text/css']").length, iCountStyles + 1, "The icon font has been added to the CSS");
-		var sCss = jQuery("head > style[type='text/css']").text();
+		IconPool.insertFontFaceStyle(sFontFamily, jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"));
+		assert.equal(document.fonts.size, iFontFaceCount + 1, "The icon font has been added to document.fonts");
 
-		assert.ok(sCss.indexOf("url('" + sBasePath + "/sap/tnt/themes/base/fonts/SAP-icons-TNT") !== -1,
-			"TNT Font should have been included from sap.tnt base theme folder.");
+		var oLastFontFace = Array.from(document.fonts).pop();
 
+		assert.equal(oLastFontFace.family, sFontFamily, "TNT font Family is set");
+		assert.equal(oLastFontFace.style, "normal", "TNT font style is set");
+		assert.equal(oLastFontFace.weight, "normal", "TNT font weight is set");
+
+		iFontFaceCount = document.fonts.size;
 		// insert font again
-		IconPool.insertFontFaceStyle("SAP-icons-TNT", jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"));
-		assert.strictEqual(jQuery("head > style[type='text/css']").length, iCountStyles + 1, "Fonts should only be included once");
+		IconPool.insertFontFaceStyle(sFontFamily, jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"));
+		assert.equal(document.fonts.size, iFontFaceCount, "No new FontFace is created");
 	});
 
 	QUnit.test("insertFontFaceStyle: insert an unregistered font logs an error", function(assert) {
-		var iCountStyles = jQuery("head > style[type='text/css']").length;
+		var iFontFaceCount = document.fonts.size;
 
 		// inserting a font that is not registered must fail
 		var oErrorSpy = this.spy(Log, "error");
 
 		IconPool.insertFontFaceStyle("unRegisteredFont", jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"));
-		assert.strictEqual(jQuery("head > style[type='text/css']").length, iCountStyles, "Inserting a unregistered font does not insert a new style tag");
+		assert.strictEqual(document.fonts.size, iFontFaceCount, "Inserting a unregistered font does not insert a new FontFace");
 		assert.strictEqual(oErrorSpy.callCount, 1, "Inserting an unregistered font logs an error");
 	});
 
 	QUnit.test("insertFontFaceStyle: no need to insert font face for the default font", function(assert) {
-		var iCountStyles = jQuery("head > style[type='text/css']").length;
+		var iFontFaceCount = document.fonts.size;
 
 		var oInfoSpy = this.spy(Log, "info");
 
@@ -231,17 +232,17 @@ sap.ui.define([
 
 		// overwriting SAP-icons with a different font must fail
 		IconPool.insertFontFaceStyle("SAP-icons", jQuery.sap.getModulePath("sap.tnt.themes.base.fonts", "/"), "overwriteDefaultFont");
-		assert.strictEqual(jQuery("head > style[type='text/css']").length, iCountStyles, "Inserting a new font as 'SAP-icons' must not insert a new style tag");
+		assert.strictEqual(document.fonts.size, iFontFaceCount, "Inserting a new font as 'SAP-icons' must not insert a new FontFace");
 		assert.strictEqual(oInfoSpy.callCount, 1, "Inserting font face for default font leads to an info log");
 	});
 
 	QUnit.test("insertFontFaceStyle: must provide a path for the font", function(assert) {
-		var iCountStyles = jQuery("head > style[type='text/css']").length;
+		var iFontFaceCount = document.fonts.size;
 		var oErrorSpy = this.spy(Log, "error");
 
 		IconPool.insertFontFaceStyle("Some-font-name");
 
-		assert.strictEqual(jQuery("head > style[type='text/css']").length, iCountStyles, "Inserting a new font as 'SAP-icons' must not insert a new style tag");
+		assert.strictEqual(document.fonts.size, iFontFaceCount, "Inserting a new font as 'SAP-icons' must not insert a new FontFace");
 		assert.strictEqual(oErrorSpy.callCount, 1, "Log an error when insertFontFaceStyle is called with only one parameter");
 	});
 

@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+/*global FontFace */
 sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	"sap/base/i18n/ResourceBundle",
@@ -1092,7 +1093,7 @@ sap.ui.define([
 		 * @param {string} [sCollectionName] the collection name, if not specified the font face is used
 		 */
 		IconPool.insertFontFaceStyle = function (sFontFace, sPath, sCollectionName) {
-			var oElement;
+			var oFontFace;
 
 			function convertUrl(sUrl) {
 				// AppCacheBuster createds the '_covnertUrl' function when it's active. Call the function to include the
@@ -1131,18 +1132,17 @@ sap.ui.define([
 				return;
 			}
 
-			oElement = document.createElement("style");
-			oElement.type = "text/css";
-			oElement.textContent = "@font-face {" +
-				"font-family: '" + sFontFace + "';" +
-				"src: url('" + convertUrl(sPath + sFontFace + ".woff2") + "') format('woff2')," +
-				"local('" + sFontFace + "');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
-				"font-weight: normal;" +
-				"font-style: normal;" +
-				"}";
+			oFontFace = new FontFace(sFontFace,
+				"url(" + convertUrl(sPath + sFontFace + ".woff2") + ") format('woff2'),"
+				+ "local(" + sFontFace + ")",
+				{
+					weight: "normal",
+					style: "normal"
+				}
+			);
 
-			// load the font asynchronously via CSS
-			document.head.appendChild(oElement);
+			document.fonts.add(oFontFace);
+			oFontFace.load();
 
 			mFontRegistry[sCollectionName].inserted = true;
 			mFontRegistry[sCollectionName].fontFace = sFontFace;
