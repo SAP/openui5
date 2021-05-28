@@ -30,13 +30,15 @@
 				return this.requireSyncStub.getCall(iPosition).args[0];
 			}.bind(this);
 
+			// as the Core facade is created before boot(), the sync request for base/Objects occurs first
+			fnAssertRequireSync("sap/ui/base/Object");
+
 			// In case preloads are used, there is also an additional sync request for the sap.ui.core library-preload.js
 			if (fnGetModuleName(iLoadedModuleIndex) === "sap/ui/core/library-preload") {
 				fnAssertRequireSync("sap/ui/core/library-preload");
 				iExpectedMaxSyncCalls++;
 			}
 
-			fnAssertRequireSync("sap/ui/base/Object");
 			fnAssertRequireSync("sap/ui/core/library");
 			fnAssertRequireSync("sap/ui/debug/DebugEnv");
 
