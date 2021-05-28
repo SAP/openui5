@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Button",
 	"sap/ui/model/odata/v4/ODataListBinding",
+	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
@@ -46,6 +47,7 @@ sap.ui.define([
 	Text,
 	Button,
 	ODataListBinding,
+	ODataListBindingV2,
 	Sorter,
 	Filter,
 	JSONModel,
@@ -828,7 +830,8 @@ sap.ui.define([
 			return waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRowBinding = sinon.createStubInstance(ODataListBinding);
-			oRowBinding.getLength.returns(10);
+			var oRowBindingV2 = sinon.createStubInstance(ODataListBindingV2);
+
 			oRowBinding.isLengthFinal.returns(true);
 			oRowBinding.getContexts.returns([]);
 
@@ -837,18 +840,35 @@ sap.ui.define([
 
 			var oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
 			var fDataReceived = oBindingInfo.events["dataReceived"];
+			assert.equal(this.oTable._oTitle.getText(), "Test");
 
 			assert.equal(this.oTable._oTitle.getText(), "Test");
 			assert.ok(fCustomDataReceived.notCalled);
 
-			fDataReceived(new UI5Event("dataReceived", oRowBinding));
-			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
-			assert.ok(fCustomDataReceived.calledOnce);
-
-			oRowBinding.isLengthFinal.returns(false);
+			oRowBinding.getCount.returns(undefined);
 			fDataReceived(new UI5Event("dataReceived", oRowBinding));
 			assert.equal(this.oTable._oTitle.getText(), "Test");
+
+			oRowBinding.getCount.returns(10);
+			fDataReceived(new UI5Event("dataReceived", oRowBinding));
+			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
 			assert.ok(fCustomDataReceived.calledTwice);
+
+			oRowBindingV2.getLength.returns(10);
+			oRowBindingV2.isLengthFinal.returns(true);
+
+			this.oTable._oTable.getBinding.returns(oRowBindingV2);
+
+			oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
+
+			fDataReceived(new UI5Event("dataReceived", oRowBindingV2));
+			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
+			assert.equal(fCustomDataReceived.callCount, 3);
+
+			oRowBindingV2.isLengthFinal.returns(false);
+			fDataReceived(new UI5Event("dataReceived", oRowBindingV2));
+			assert.equal(this.oTable._oTitle.getText(), "Test");
+			assert.equal(fCustomDataReceived.callCount, 4);
 
 			this.oTable.getControlDelegate().updateBindingInfo = fnOriginalUpdateBindingInfo;
 		}.bind(this));
