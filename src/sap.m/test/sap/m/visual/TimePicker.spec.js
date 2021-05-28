@@ -27,47 +27,47 @@ describe("sap.m.TimePicker", function() {
 	});
 
 	// 12 hours clock
-	it("keyboard: time picker with display format - 'h:mm:ss a' keyboard interaction", function() {
+	it("keyboard interaction: time picker with display format - 'h:mm:ss a'", function() {
 		element(by.id("TP5-icon")).click();
 
 		var oClock = element(by.id("TP5-RP-popover"));
-		expect(takeScreenshot(oClock)).toLookAs("TP5_hours_9_15_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_hours_9_15_16_initial");
 
 		// Hours shortcut
 		browser.actions().sendKeys(protractor.Key.PAGE_UP).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP5_hours_10_15_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_hours_10_15_16_page_up");
 
 		browser.actions().sendKeys(protractor.Key.PAGE_DOWN).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP5_hours_9_15_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_hours_9_15_16_page_down");
 
 		// Minutes shortcut
 		browser.actions().keyDown(protractor.Key.SHIFT).perform();
 
 		browser.actions().sendKeys(protractor.Key.PAGE_UP).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP5_minutes_9_16_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_minutes_9_16_16_page_up");
 
 		browser.actions().sendKeys(protractor.Key.PAGE_DOWN).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP5_minutes_9_15_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_minutes_9_15_16_page_down");
 
 		// Seconds shortcut
 		browser.actions().keyDown(protractor.Key.CONTROL).perform();
 
 		browser.actions().sendKeys(protractor.Key.PAGE_UP).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP5_seconds_9_15_17");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_seconds_9_15_17_page_up");
 
 		browser.actions().sendKeys(protractor.Key.PAGE_DOWN).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP5_seconds_9_15_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_seconds_9_15_16_page_down");
 
-		// Spetarator shortcut
+		// Separator shortcut
 		browser.actions().keyUp(protractor.Key.CONTROL).perform();
 		browser.actions().sendKeys(':').perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP5_hours_9_15_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_hours_9_15_16_separator");
 
 		browser.actions().sendKeys(':').perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP5_minutes_9_15_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_minutes_9_15_16_separator");
 
 		browser.actions().sendKeys(':').perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP5_seconds_9_15_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP5_seconds_9_15_16_separator");
 
 		browser.actions().keyUp(protractor.Key.SHIFT).perform();
 
@@ -76,33 +76,33 @@ describe("sap.m.TimePicker", function() {
 	});
 
 	// 24 hours clock
-	it("keyboard: time picker with display format - 'HH:mm'", function() {
+	it("keyboard interaction: time picker with display format - 'HH:mm'", function() {
 		element(by.id("TP14-icon")).click();
 		var oClock = element(by.id("TP14-RP-popover"));
-		expect(takeScreenshot(oClock)).toLookAs("TP14_hours_21_15");
+		expect(takeScreenshot(oClock)).toLookAs("TP14_hours_21_15_initial");
 
 		// Hours shortcut
 		browser.actions().sendKeys(protractor.Key.PAGE_UP).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP14_hours_22_15");
+		expect(takeScreenshot(oClock)).toLookAs("TP14_hours_22_15_page_up");
 
 		browser.actions().sendKeys(protractor.Key.PAGE_DOWN).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP14_hours_21_15");
+		expect(takeScreenshot(oClock)).toLookAs("TP14_hours_21_15_page_down");
 
 		// Minutes shortcut
 		browser.actions().keyDown(protractor.Key.SHIFT).perform();
 
 		browser.actions().sendKeys(protractor.Key.PAGE_UP).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP14_minutes_21_16");
+		expect(takeScreenshot(oClock)).toLookAs("TP14_minutes_21_16_page_up");
 
 		browser.actions().sendKeys(protractor.Key.PAGE_DOWN).perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP14_minutes_21_15");
+		expect(takeScreenshot(oClock)).toLookAs("TP14_minutes_21_15_page_down");
 
-		// Spetarator shortcut
+		// Separator shortcut
 		browser.actions().sendKeys(':').perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP14_hours_21_15");
+		expect(takeScreenshot(oClock)).toLookAs("TP14_hours_21_15_separator");
 
 		browser.actions().sendKeys(':').perform();
-		expect(takeScreenshot(oClock)).toLookAs("TP14_minutes_21_15");
+		expect(takeScreenshot(oClock)).toLookAs("TP14_minutes_21_15_separator");
 
 		browser.actions().keyUp(protractor.Key.SHIFT).perform();
 
@@ -130,7 +130,6 @@ describe("sap.m.TimePicker", function() {
 	it("mouse press: time picker with display format - hh:mm", function() {
 		element(by.id("TP14-icon")).click();
 		var oClock = element(by.id("TP14-RP-popover"));
-		expect(takeScreenshot(oClock)).toLookAs("TP14_hours_21_15");
 
 		var oHoursCover = element(by.id("TP14-clocks-clockH-cover"));
 		browser.actions().mouseMove(oHoursCover, {x: 165, y: 55}).click().perform();
@@ -144,7 +143,7 @@ describe("sap.m.TimePicker", function() {
 		element(by.id("TP14-Cancel")).click();
 	});
 
-	it("TimePicker input press triggers a popover to be opened", function() {
+	it("TimePicker input press triggers a popover to be opened on mobile", function() {
 		var oToggleMobileButton = element(by.id("toggleMobile"));
 		var oPopover = element(by.id("TP7-NP"));
 

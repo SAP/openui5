@@ -1406,12 +1406,12 @@ function(
 				verticalScrolling: true,
 				title: sTitle,
 				placement: PlacementType.VerticalPreferredBottom,
-				beginButton: new Button({
+				beginButton: new Button(this.getId() + "-OK", {
 					text: sOKButtonText,
 					type: ButtonType.Emphasized,
 					press: this._handleOkPress.bind(this)
 				}),
-				endButton: new Button({
+				endButton: new Button(this.getId() + "-Cancel", {
 					text: sCancelButtonText,
 					press: this._handleCancelPress.bind(this)
 				}),
@@ -1510,7 +1510,7 @@ function(
 					new Toolbar({
 						content: [
 							new ToolbarSpacer(),
-							new Button({
+							new Button(this.getId() + "-NumericOK", {
 								text: sOKButtonText,
 								type: ButtonType.Emphasized,
 								press: this._handleNumericOkPress.bind(this)
