@@ -4024,10 +4024,13 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oInput = new Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
+	QUnit.test("General - getAccessibilityInfo method", function(assert) {
+		//Arrange
+		var oInput = new Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"}),
+			oInfo = oInput.getAccessibilityInfo();
+
+		// Assert
 		assert.ok(!!oInput.getAccessibilityInfo, "Input has a getAccessibilityInfo function");
-		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInput.getRenderer().getAriaRole(), "", "No custom ARIA role");
@@ -4036,44 +4039,61 @@ sap.ui.define([
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
+
+		// Act
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
+
+		// Assert
 		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
+
+		// Act
 		oInput.setEnabled(true);
 		oInput.setEditable(false);
 		oInfo = oInput.getAccessibilityInfo();
+
+		// Assert
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
+
+		// Act
 		oInput.setDescription("Description");
 		oInfo = oInput.getAccessibilityInfo();
+
+		// Assert
 		assert.strictEqual(oInfo.description, "Description", "Description");
+
+		// Cleanup
 		oInput.destroy();
 	});
 
-	QUnit.test("Popup", function(assert) {
+	QUnit.test("General - Popup accessible name", function(assert) {
+		//Arrange
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("It").trigger("input");
-
 		this.clock.tick(300);
 
 		var $popover = oInput._getSuggestionsPopover().getPopover().$();
+
+		// Assert
 		assert.ok($popover.attr('aria-labelledby'), 'popup ariaLabelledBy is set');
 
+		// Cleanup
 		oInput.destroy();
-
 	});
 
-	QUnit.test("aria-haspopup should be correctly applied", function(assert) {
+	QUnit.test("General - aria-haspopup should be correctly applied", function(assert) {
 		//Arrange
 		var oInputWithoutSuggestions = new Input({}),
 			oInputWithSuggestions =  new Input({showSuggestion: true});
@@ -4098,16 +4118,16 @@ sap.ui.define([
 		oInputWithSuggestions.destroy();
 	});
 
-	QUnit.test("Suggestions results describedby node should not be added to the Input's aria-describedby attribute to avoid redundant speech output ", function(assert) {
+	QUnit.test("General - Suggestions results describedby node should not be added to the Input's aria-describedby attribute to avoid redundant speech output ", function(assert) {
 		//Arrange
 		var oInputWithSuggestions = createInputWithSuggestions();
 
 		oInputWithSuggestions.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		oInputWithSuggestions._openSuggestionsPopover();
-		this.clock.tick();
 
 		// Act
+		oInputWithSuggestions._openSuggestionsPopover();
+		this.clock.tick();
 		sap.ui.getCore().applyChanges();
 
 		//Assert
@@ -4117,9 +4137,111 @@ sap.ui.define([
 		oInputWithSuggestions.destroy();
 	});
 
-	QUnit.module("Value State accessibility");
+	QUnit.test("General - Input suggestions description", function(assert) {
+		// Arrange
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oInput = new Input({
+				showSuggestion: true,
+				suggestionItems: [
+					new sap.ui.core.Item({
+						text: "Item 1",
+						key: "001"
+					}),
+					new sap.ui.core.Item({
+						text: "Item 2",
+						key: "002"
+					})
+				]
+			});
 
-	QUnit.test("Aria-describedby reference element should have a separate persistent DOM node other than the visible value state popup", function(assert) {
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.onfocusin();
+		oInput._$input.trigger("focus").val("I").trigger("input");
+		this.clock.tick(400);
+
+		// Assert
+		assert.ok(!!oInput.getDomRef("SuggDescr"), "The description is added in the DOM.");
+		assert.strictEqual(oInput.getDomRef("SuggDescr").innerText,
+			oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", 2), "The description has correct text.");
+
+		// Act
+		oInput.onfocusout();
+
+		// Assert
+		assert.notOk(oInput.$("SuggDescr").text(), "The suggestion description is cleared");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Focus handling - Value Help Only 'tap' on Phone", function(assert) {
+		//Arrange
+		var bIsPhone = Device.system.phone;
+		sap.ui.Device.system.phone = true;
+		var oDialog = new Dialog({});
+		var oInputValueHelpOnly = new Input({
+			showValueHelp: true,
+			valueHelpOnly:  true,
+			valueHelpRequest: function (oEvent) {
+				oDialog.open();
+			}
+		});
+
+		oInputValueHelpOnly.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerTouchEvent("tap", oInputValueHelpOnly._$input[0]);
+		this.clock.tick(1000);
+		sap.ui.getCore().applyChanges();
+
+		oDialog.close();
+		this.clock.tick(1000);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(document.activeElement.id, oInputValueHelpOnly._$input[0].id, 'Active element is the input');
+
+		// Cleanup
+		oDialog.destroy();
+		oInputValueHelpOnly.destroy();
+		sap.ui.Device.system.phone = bIsPhone;
+	});
+
+	QUnit.test("Focus handling - Leaving the input field should trigger suggestions item selection", function(assert) {
+		// Setup
+		this.stub(Device, "system", {desktop: true, phone: false, tablet: false});
+
+		var oSelectionItem = new Item({text: "Bulgaria"}),
+			oInput = new Input({
+				showSuggestion: true,
+				suggestionItems: [
+					new Item({text: "Germany"}),
+					oSelectionItem
+				]
+			}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oInput.getSelectedItem(), "SelectedItems should be empty");
+
+		// Act
+		oInput._sProposedItemText = "Bulgaria";
+		oInput.onsaptabnext();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedItem(), oSelectionItem.getId(), "Focusleave should have triggered item selection");
+		assert.strictEqual(oInput.getSelectedKey(), oSelectionItem.getKey(), "Focusleave should have triggered key selection");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Value State - Aria-describedby reference element should have a separate persistent DOM node other than the visible value state popup", function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({
 			valueState: "Warning",
@@ -4138,7 +4260,7 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.test("Aria-describedby attribute should persists even if the message popup is not opened", function(assert) {
+	QUnit.test("Value State - Aria-describedby attribute should persists even if the message popup is not opened", function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({
 			valueState: "Warning",
@@ -4155,7 +4277,7 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.test("A static aria-errormessage attribute should be added to the control when the value state is error", function(assert) {
+	QUnit.test("Value State - A static aria-errormessage attribute should be added to the control when the value state is error", function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({
 			valueState: "Error",
@@ -4172,7 +4294,7 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.test("When value state other than error is updated dynamically by user input the accessibility element should not have aria-live= attribute", function(assert) {
+	QUnit.test("Value State - When value state other than error is updated dynamically by user input the accessibility element should not have aria-live= attribute", function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({
 			valueState: "Warning"
@@ -4199,7 +4321,7 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.test("When value state is error and is updated dynamically by user input the accessibility element should have aria-live=assertive attribute", function(assert) {
+	QUnit.test("Value State - When value state is error and is updated dynamically by user input the accessibility element should have aria-live=assertive attribute", function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({
 			valueState: "Information"
@@ -4276,43 +4398,6 @@ sap.ui.define([
 		var oInputClone  = this.oTabularInputToClone.clone();
 
 		assert.equal(oInputClone.getValue(), "The selected item: Auch ein gutes Ding", "The selectedRow association should be cloned");
-	});
-
-	QUnit.test("Input suggestions description", function(assert) {
-		// setup
-		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-			oInput = new Input({
-				showSuggestion: true,
-				suggestionItems: [
-					new sap.ui.core.Item({
-						text: "Item 1",
-						key: "001"
-					}),
-					new sap.ui.core.Item({
-						text: "Item 2",
-						key: "002"
-					})
-				]
-			});
-
-		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		oInput.onfocusin();
-		oInput._$input.trigger("focus").val("I").trigger("input");
-		this.clock.tick(400);
-
-		// assert
-		assert.ok(!!oInput.getDomRef("SuggDescr"), "The description is added in the DOM.");
-		assert.strictEqual(oInput.getDomRef("SuggDescr").innerText,
-			oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", 2), "The description has correct text.");
-
-		oInput.onfocusout();
-
-		assert.notOk(oInput.$("SuggDescr").text(), "The suggestion description is cleared");
-
-		// clean up
-		oInput.destroy();
 	});
 
 	QUnit.test("Input cloned with correct suggestion rows", function(assert) {
@@ -4407,71 +4492,6 @@ sap.ui.define([
 
 		// clear
 		oPage.destroy();
-		oInput.destroy();
-	});
-
-	QUnit.module("Focus");
-
-	QUnit.test("Value Help Only 'tap' on Phone", function(assert) {
-		var bIsPhone = Device.system.phone;
-		sap.ui.Device.system.phone = true;
-		var dialog = new Dialog({
-		});
-
-		var oInputValueHelpOnly = new Input({
-			showValueHelp: true,
-			valueHelpOnly:  true,
-			valueHelpRequest: function (oEvent) {
-				dialog.open();
-			}
-		});
-
-		oInputValueHelpOnly.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		qutils.triggerTouchEvent("tap", oInputValueHelpOnly._$input[0]);
-
-		this.clock.tick(1000);
-		sap.ui.getCore().applyChanges();
-
-		dialog.close();
-		this.clock.tick(1000);
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(document.activeElement.id, oInputValueHelpOnly._$input[0].id, 'active element is the input');
-
-		dialog.destroy();
-		oInputValueHelpOnly.destroy();
-		sap.ui.Device.system.phone = bIsPhone;
-	});
-
-	QUnit.test("Leaving the input field should trigger suggestions item selection", function(assert) {
-		// Setup
-		this.stub(Device, "system", {desktop: true, phone: false, tablet: false});
-
-		var oSelectionItem = new Item({text: "Bulgaria"}),
-			oInput = new Input({
-				showSuggestion: true,
-				suggestionItems: [
-					new Item({text: "Germany"}),
-					oSelectionItem
-				]
-			}).placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.notOk(oInput.getSelectedItem(), "SelectedItems should be empty");
-
-		// Act
-		oInput._sProposedItemText = "Bulgaria";
-		oInput.onsaptabnext();
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.strictEqual(oInput.getSelectedItem(), oSelectionItem.getId(), "Focusleave should have triggered item selection");
-		assert.strictEqual(oInput.getSelectedKey(), oSelectionItem.getKey(), "Focusleave should have triggered key selection");
-
-		// Cleanup
 		oInput.destroy();
 	});
 
