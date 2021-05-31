@@ -1456,10 +1456,6 @@ sap.ui.define([
 		}
 	};
 
-	FileUploader.prototype.onkeypress = function(oEvent) {
-		this.onkeydown(oEvent);
-	};
-
 	FileUploader.prototype.onclick = function(oEvent) {
 		if (this.getSameFilenameAllowed() && this.getEnabled()) {
 			this.setValue("", true);
@@ -1480,13 +1476,8 @@ sap.ui.define([
 		if (this.getSameFilenameAllowed() && this.getUploadOnChange()) {
 			this.setValue("", true);
 		}
-		var iKeyCode = oEvent.keyCode,
-			eKC = KeyCodes;
-		if (iKeyCode == eKC.DELETE || iKeyCode == eKC.BACKSPACE) {
-			if (this.oFileUpload) {
-				this.setValue("", true);
-			}
-		} else if (iKeyCode == eKC.SPACE || iKeyCode == eKC.ENTER) {
+		var iKeyCode = oEvent.keyCode;
+		if (iKeyCode === KeyCodes.ENTER) {
 			// this does not work for IE9 and downwards! TODO: check with IE10/11
 			// consider to always put the focus on the hidden file uploader
 			// and let the fileuploader manager the keyboard interaction
@@ -1495,18 +1486,45 @@ sap.ui.define([
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
-		} else if (iKeyCode != eKC.TAB &&
-					iKeyCode != eKC.SHIFT &&
-					iKeyCode != eKC.F6 &&
-					iKeyCode != eKC.PAGE_UP &&
-					iKeyCode != eKC.PAGE_DOWN &&
-					iKeyCode != eKC.ESCAPE &&
-					iKeyCode != eKC.END &&
-					iKeyCode != eKC.HOME &&
-					iKeyCode != eKC.ARROW_LEFT &&
-					iKeyCode != eKC.ARROW_UP &&
-					iKeyCode != eKC.ARROW_RIGHT &&
-					iKeyCode != eKC.ARROW_DOWN) {
+		}
+
+		this.oBrowse._bPressedSpace = false;
+	};
+
+	FileUploader.prototype.onkeyup = function(oEvent) {
+		if (!this.getEnabled()) {
+			return;
+		}
+		if (this.getSameFilenameAllowed() && this.getUploadOnChange()) {
+			this.setValue("", true);
+		}
+		var iKeyCode = oEvent.keyCode,
+			eKC = KeyCodes;
+		if (iKeyCode === eKC.DELETE || iKeyCode === eKC.BACKSPACE) {
+			if (this.oFileUpload) {
+				this.setValue("", true);
+			}
+		} else if (iKeyCode === eKC.SPACE) {
+			// this does not work for IE9 and downwards! TODO: check with IE10/11
+			// consider to always put the focus on the hidden file uploader
+			// and let the fileuploader manager the keyboard interaction
+			if (!(!!Device.browser.internet_explorer && Device.browser.version <= 9) && this.oFileUpload) {
+				this.oFileUpload.click();
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+			}
+		} else if (iKeyCode !== eKC.TAB &&
+			iKeyCode !== eKC.SHIFT &&
+			iKeyCode !== eKC.F6 &&
+			iKeyCode !== eKC.PAGE_UP &&
+			iKeyCode !== eKC.PAGE_DOWN &&
+			iKeyCode !== eKC.ESCAPE &&
+			iKeyCode !== eKC.END &&
+			iKeyCode !== eKC.HOME &&
+			iKeyCode !== eKC.ARROW_LEFT &&
+			iKeyCode !== eKC.ARROW_UP &&
+			iKeyCode !== eKC.ARROW_RIGHT &&
+			iKeyCode !== eKC.ARROW_DOWN) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}

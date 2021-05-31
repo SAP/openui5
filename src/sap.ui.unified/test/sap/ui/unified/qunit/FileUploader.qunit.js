@@ -1011,10 +1011,39 @@ sap.ui.define([
 		oFileUploader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oFileUploader.onkeypress(oMockEscapePress);
+		oFileUploader.onkeydown(oMockEscapePress);
 
 		assert.strictEqual(stopPropagationSpy.callCount, 0, "stopPropagation shouldn't be fired on ESCAPE key press");
 
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Browse logic is fired correctly", function (assert) {
+		// Prepare
+		var oFileUploader = createFileUploader().placeAt("qunit-fixture"),
+			oFakeEvent = {
+				keyCode: 32, // space
+				stopPropagation: function() {},
+				preventDefault: function () {}
+			},
+			oClickSpy;
+
+		sap.ui.getCore().applyChanges();
+		oClickSpy = this.spy(oFileUploader.oFileUpload, "click");
+
+		// Act
+		oFileUploader.onkeyup(oFakeEvent);
+		// Assert
+		assert.strictEqual(oClickSpy.callCount, 1, "keyup executes click on the browse button");
+
+		//Prepare
+		oFakeEvent.keyCode = 13; // enter
+		// Act
+		oFileUploader.onkeydown(oFakeEvent);
+		// Assert
+		assert.strictEqual(oClickSpy.callCount, 2, "keyup executes click on the browse button");
+
+		// Clean
 		oFileUploader.destroy();
 	});
 
