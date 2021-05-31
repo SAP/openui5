@@ -1,33 +1,18 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/util/each",
+	"sap/base/util/isEmptyObject",
+	"sap/m/Input",
+	"sap/m/Label",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/UpdateMethod",
-	"sap/ui/model/ChangeReason",
-	"sap/ui/model/type/DateTime",
-	"sap/m/DateTimeInput",
-	"sap/m/Label",
-	"sap/m/Input",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column",
-	"sap/base/util/isEmptyObject"
-], function(
-		MockServer,
-		ODataModel,
-		Filter,
-		Sorter,
-		UpdateMethod,
-		ChangeReason,
-		DateTime,
-		DateTimeInput,
-		Label,
-		Input,
-		Table,
-		Column,
-		isEmptyObject
-	) {
+	"sap/ui/table/Column"
+], function(each, isEmptyObject, Input, Label, MockServer, Filter, Sorter, UpdateMethod, ODataModel,
+	Table, Column) {
 
 	"use strict";
 
@@ -762,7 +747,7 @@ sap.ui.define([
 
 	var initTable = function(mEntities) {
 		var oTable = new Table();
-		jQuery.each(mEntities, function(sName, oData) {
+		each(mEntities, function(sName, oData) {
 			for (var i = 0; i <  mEntities[sName].properties; i++) {
 				oTable.addColumn(new Column().setLabel(
 					new Label({
@@ -1819,7 +1804,7 @@ sap.ui.define([
 							assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
 							"Should be also here because price is a currency and has sap:unit = currency code");
 							var iCount = 0;
-							jQuery.each(oRequest.data, function(iIndex, oValue){
+							each(oRequest.data, function(iIndex, oValue){
 								iCount++;
 							});
 							assert.equal(iCount, 4, "request payload number of properties");
@@ -1904,7 +1889,7 @@ sap.ui.define([
 						assert.equal(oRequest.data.CurrencyCode, "USD", "request payload currencyCode." +
 								"Should be also here because price is a currency and has sap:unit = currency code");
 						var iCount = 0;
-						jQuery.each(oRequest.data, function(iIndex, oValue) {
+						each(oRequest.data, function(iIndex, oValue) {
 							iCount++;
 						});
 						assert.equal(iCount, 4, "request payload number of properties");
@@ -1986,7 +1971,7 @@ sap.ui.define([
 				assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
 				"Should be also here because price is a currency and has sap:unit = currency code");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue){
+				each(oRequest.data, function(iIndex, oValue){
 					iCount2++;
 				});
 				assert.equal(iCount2, 4, "request payload number of properties");
@@ -2051,7 +2036,7 @@ sap.ui.define([
 							assert.equal(oRequest.data.Price, "4445.6", "request payload price");
 							assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
 							var iCount = 0;
-							jQuery.each(oRequest.data, function(iIndex, oValue){
+							each(oRequest.data, function(iIndex, oValue){
 								iCount++;
 							});
 							assert.equal(iCount, 22, "request payload number of properties");
@@ -2140,7 +2125,7 @@ sap.ui.define([
 							assert.equal(oRequest.data.CurrencyCode, "EUR",
 									"request payload currency code should be there and not changed!!!");
 							var iCount = 0;
-							jQuery.each(oRequest.data, function(iIndex, oValue) {
+							each(oRequest.data, function(iIndex, oValue) {
 								iCount++;
 							});
 							assert.equal(iCount, 22, "request payload number of properties");
@@ -2227,7 +2212,7 @@ sap.ui.define([
 				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
 				assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue){
+				each(oRequest.data, function(iIndex, oValue){
 					iCount2++;
 				});
 				assert.equal(iCount2, 22, "request payload number of properties ");
@@ -2292,7 +2277,7 @@ sap.ui.define([
 				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
 				assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue) {
+				each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
 				assert.equal(iCount2, 22, "request payload number of properties ");
@@ -2397,7 +2382,7 @@ sap.ui.define([
 							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 							assert.equal(oRequest.data.Name, "Test", "request payload name");
 							var iCount = 0;
-							jQuery.each(oRequest.data, function(iIndex, oValue) {
+							each(oRequest.data, function(iIndex, oValue) {
 								iCount++;
 							});
 							assert.equal(iCount, 1, "request payload number of properties");
@@ -2489,7 +2474,7 @@ sap.ui.define([
 							assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 							assert.equal(oRequest.data.Name, "Test", "request payload name");
 							var iCount = 0;
-							jQuery.each(oRequest.data, function(iIndex, oValue) {
+							each(oRequest.data, function(iIndex, oValue) {
 								iCount++;
 							});
 							assert.equal(iCount, 1, "request payload number of properties");
@@ -2572,7 +2557,7 @@ sap.ui.define([
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "Test3", "request payload name");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue) {
+				each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
 				assert.equal(iCount2, 1, "request payload number of properties ");
@@ -2635,7 +2620,7 @@ sap.ui.define([
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "Test2", "request payload name");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue) {
+				each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
 				assert.equal(iCount2, 1, "request payload number of properties ");
@@ -2829,10 +2814,10 @@ sap.ui.define([
 					assert.ok(false, "should not land here");
 				}
 			});
-			jQuery.sap.delayedCall(500, this, function() {
+			setTimeout(function() {
 				assert.ok(true, 'no request sent');
 				done();
-			});
+			}, 0);
 		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			assert.ok(false, "should not land here");

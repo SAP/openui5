@@ -1,45 +1,28 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/util/each",
+	"sap/base/util/isEmptyObject",
+	"sap/m/DateTimeInput",
+	"sap/m/Input",
+	"sap/m/Label",
+	"sap/m/List",
+	"sap/m/Panel",
+	"sap/m/StandardListItem",
+	"sap/ui/core/library",
+	"sap/ui/core/message/Message",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/UpdateMethod",
-	"sap/ui/model/ChangeReason",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/type/DateTime",
-	"sap/ui/core/message/Message",
-	"sap/m/DateTimeInput",
-	"sap/m/Label",
-	"sap/m/Panel",
-	"sap/m/Input",
-	"sap/m/List",
-	"sap/m/StandardListItem",
+	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column",
-	"sap/base/util/isEmptyObject",
-	"sap/ui/core/library",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(
-		MockServer,
-		ODataModel,
-		Filter,
-		Sorter,
-		UpdateMethod,
-		ChangeReason,
-		DateTime,
-		Message,
-		DateTimeInput,
-		Label,
-		Panel,
-		Input,
-		List,
-		ListItem,
-		Table,
-		Column,
-		isEmptyObject,
-		library,
-		createAndAppendDiv
-	) {
+	"sap/ui/table/Column"
+], function(each, isEmptyObject, DateTimeInput, Input, Label, List, Panel, ListItem, library,
+	Message, MockServer, ChangeReason, Filter, Sorter, UpdateMethod, ODataModel, DateTime,
+	createAndAppendDiv, Table, Column ) {
 
 	"use strict";
 
@@ -1699,11 +1682,11 @@ sap.ui.define([
 											assert.ok(false, "request failed");
 										}
 									});
-									jQuery.sap.delayedCall(0,this, function() {
+									setTimeout(function() {
 										assert.strictEqual(oSpy.callCount, 0, "No request sent");
 										oSpy.restore();
 										done();
-									});
+									}, 0);
 								},
 								error: function() {
 									assert.ok(false, "request failed");
@@ -1823,11 +1806,11 @@ sap.ui.define([
 				assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
-				jQuery.sap.delayedCall(0,this, function() {
+				setTimeout(function() {
 					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
-				});
+				}, 0);
 			},
 			error: function() {
 				assert.ok(false, "request failed");
@@ -1860,11 +1843,11 @@ sap.ui.define([
 
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
-				jQuery.sap.delayedCall(0,this, function() {
+				setTimeout(function() {
 					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
-				});
+				}, 0);
 			},
 			error: function() {
 				assert.ok(false, "request failed");
@@ -1886,11 +1869,11 @@ sap.ui.define([
 				assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
-				jQuery.sap.delayedCall(0,this, function() {
+				setTimeout(function() {
 					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
-				});
+				}, 0);
 			},
 			error: function() {
 				assert.ok(false, "request failed");
@@ -1988,11 +1971,11 @@ sap.ui.define([
 				assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
-				jQuery.sap.delayedCall(0,this, function() {
+				setTimeout(function() {
 					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
-				});
+				}, 0);
 			},
 			error: function() {
 				assert.ok(false, "request failed");
@@ -2071,11 +2054,11 @@ sap.ui.define([
 				assert.strictEqual(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length, 1, "1 Message for 'HT-1000' still exist");
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
-				jQuery.sap.delayedCall(0,this, function() {
+				setTimeout(function() {
 					assert.strictEqual(oSpy.callCount, 1, "Change request sent");
 					oSpy.restore();
 					done();
-				});
+				}, 0);
 			},
 			error: function() {
 				assert.ok(false, "request failed");
@@ -2125,11 +2108,11 @@ sap.ui.define([
 				assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 				oSpy = sinon.spy(oModel, "_submitBatchRequest");
 				oModel.submitChanges();
-				jQuery.sap.delayedCall(0,this, function() {
+				setTimeout(function() {
 					assert.strictEqual(oSpy.callCount, 0, "No request sent");
 					oSpy.restore();
 					done();
-				});
+				}, 0);
 			},
 			error: function() {
 				assert.ok(false, "request failed");
@@ -2390,7 +2373,7 @@ sap.ui.define([
 						assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
 								"Should be also here because price is a currency and has sap:unit = currency code");
 						var iCount = 0;
-						jQuery.each(oRequest.data, function(iIndex, oValue) {
+						each(oRequest.data, function(iIndex, oValue) {
 							iCount++;
 						});
 						assert.equal(iCount, 4, "request payload number of properties");
@@ -2469,7 +2452,7 @@ sap.ui.define([
 						assert.equal(oRequest.data.CurrencyCode, "USD", "request payload currencyCode." +
 								"Should be also here because price is a currency and has sap:unit = currency code");
 						var iCount = 0;
-						jQuery.each(oRequest.data, function(iIndex, oValue) {
+						each(oRequest.data, function(iIndex, oValue) {
 							iCount++;
 						});
 						assert.equal(iCount, 4, "request payload number of properties");
@@ -2548,7 +2531,7 @@ sap.ui.define([
 				assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +
 				"Should be also here because price is a currency and has sap:unit = currency code");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue) {
+				each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
 				assert.equal(iCount2, 4, "request payload number of properties");
@@ -2608,7 +2591,7 @@ sap.ui.define([
 						assert.equal(oRequest.data.CurrencyCode, "EUR",
 								"request payload currency code should be there and not changed!!!");
 						var iCount = 0;
-						jQuery.each(oRequest.data, function(iIndex, oValue) {
+						each(oRequest.data, function(iIndex, oValue) {
 							iCount++;
 						});
 						assert.equal(iCount, 22, "request payload number of properties");
@@ -2690,7 +2673,7 @@ sap.ui.define([
 						assert.equal(oRequest.data.CurrencyCode, "EUR",
 								"request payload currency code should be there and not changed!!!");
 						var iCount = 0;
-						jQuery.each(oRequest.data, function(iIndex, oValue) {
+						each(oRequest.data, function(iIndex, oValue) {
 							iCount++;
 						});
 						assert.equal(iCount, 22, "request payload number of properties");
@@ -2769,7 +2752,7 @@ sap.ui.define([
 				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
 				assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue) {
+				each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
 				assert.equal(iCount2, 22, "request payload number of properties ");
@@ -2828,7 +2811,7 @@ sap.ui.define([
 				assert.equal(oRequest.data.Price, "4445.8", "request payload price");
 				assert.equal(oRequest.data.CurrencyCode, "EUR", "request payload currency code should be there and not changed!!!");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue) {
+				each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
 				assert.equal(iCount2, 22, "request payload number of properties ");
@@ -2895,7 +2878,7 @@ sap.ui.define([
 						assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 						assert.equal(oRequest.data.Name, "Test", "request payload name");
 						var iCount = 0;
-						jQuery.each(oRequest.data, function(iIndex, oValue) {
+						each(oRequest.data, function(iIndex, oValue) {
 							iCount++;
 						});
 						assert.equal(iCount, 1, "request payload number of properties");
@@ -2981,7 +2964,7 @@ sap.ui.define([
 						assert.equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 						assert.equal(oRequest.data.Name, "Test", "request payload name");
 						var iCount = 0;
-						jQuery.each(oRequest.data, function(iIndex, oValue) {
+						each(oRequest.data, function(iIndex, oValue) {
 							iCount++;
 						});
 						assert.equal(iCount, 1, "request payload number of properties");
@@ -3057,7 +3040,7 @@ sap.ui.define([
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "Test3", "request payload name");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue) {
+				each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
 				assert.equal(iCount2, 1, "request payload number of properties ");
@@ -3114,7 +3097,7 @@ sap.ui.define([
 				assert.equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
 				assert.equal(oRequest.data.Name, "Test2", "request payload name");
 				var iCount2 = 0;
-				jQuery.each(oRequest.data, function(iIndex, oValue) {
+				each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
 				assert.equal(iCount2, 1, "request payload number of properties ");

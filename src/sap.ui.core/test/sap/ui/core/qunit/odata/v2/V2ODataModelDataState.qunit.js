@@ -1,33 +1,21 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/util/MockServer",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/CompositeBinding",
-	"sap/ui/model/DataState",
-	"sap/ui/model/type/Float",
-	"sap/ui/core/message/Message",
-	"sap/ui/core/message/ControlMessageProcessor",
-	"sap/ui/layout/VerticalLayout",
+	"sap/base/util/deepEqual",
+	"sap/base/util/deepExtend",
+	"sap/m/Button",
 	"sap/m/Input",
 	"sap/m/Text",
-	"sap/m/Button",
-	"sap/ui/core/library"
-], function(
-	MockServer,
-	ODataModel,
-	JSONModel,
-	CompositeBinding,
-	DataState,
-	Float,
-	Message,
-	ControlMessageProcessor,
-	VerticalLayout,
-	Input,
-	Text,
-	Button,
-	library
-) {
+	"sap/ui/core/library",
+	"sap/ui/core/message/ControlMessageProcessor",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/DataState",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/type/Float"
+], function(deepEqual, deepExtend, Button, Input, Text, library, ControlMessageProcessor, Message,
+		MockServer, VerticalLayout, DataState, JSONModel, ODataModel, Float) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -191,7 +179,7 @@ sap.ui.define([
 		assert.ok(true, "Starting Test: " + sComment);
 
 		for (var i = 0; i < aCompareMethods.length; i++) {
-			if (!jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]())) {
+			if (!deepEqual(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]())) {
 				// do nothing?
 			}
 			if (aCompareMethods[i] === "getMessages") {
@@ -219,7 +207,7 @@ sap.ui.define([
 					//assert.ok(false, "method "+ aCompareMethods[i] + " not implemented");
 				}
 			} else {
-				assert.equal(jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]()),true,"Compared " + aCompareMethods[i] + ": current(" +  oDataState1[aCompareMethods[i]]() + "), expected(" + oDataState2[aCompareMethods[i]]() + "): " + sComment);
+				assert.equal(deepEqual(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]()),true,"Compared " + aCompareMethods[i] + ": current(" +  oDataState1[aCompareMethods[i]]() + "), expected(" + oDataState2[aCompareMethods[i]]() + "): " + sComment);
 			}
 		}
 
@@ -550,7 +538,7 @@ sap.ui.define([
 			oModel.attachRequestSent(fn1);
 			oModel.attachRequestCompleted(
 				function(oInfo) {
-					oInfo = jQuery.extend(true, {}, oInfo);
+					oInfo = deepExtend({}, oInfo);
 					pOthers.then(function() {
 						if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
 							assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
@@ -882,7 +870,7 @@ sap.ui.define([
 						var oData = oModel.getProperty("/ProductSet('HT-1000')");
 						assert.equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('HT-1000')/Name"),"blabla2");
 						assert.equal(oData.Name,oModel.getProperty("/ProductSet('HT-1000')/Name"),"blabla2");
-						assert.ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
+						assert.ok(deepEqual(oOrigData, oData), "Same reference - no changed Entity");
 						testDataState(
 							assert,
 							oNameBinding,
