@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/WizardProgressNavigator",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device"
-], function(QUnitUtils, WizardProgressNavigator, JSONModel, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/InvisibleText"
+], function(QUnitUtils, WizardProgressNavigator, JSONModel, Device, InvisibleText) {
 	"use strict";
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
@@ -487,24 +488,41 @@ sap.ui.define([
 		var sWizardAriaLabelText = this.oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_LIST_ARIA_LABEL");
 		var sAriaControls = this.oProgressNavigator.$().find(".sapMWizardProgressNavList").attr("aria-controls");
 		var sWizardAriaControlsText = this.oProgressNavigator.getParent().sId + "-step-container";
+		var sDescribedById = InvisibleText.getStaticId("sap.m", "WIZARD_PROGRESS_NAVIGATOR_LIST_ARIA_DESCRIBEDBY");
+		var sDescribedByAttr = this.oProgressNavigator.$().find(".sapMWizardProgressNavList").attr("aria-describedby");
 
 		assert.strictEqual(sAriaLabel, sWizardAriaLabelText, "'aria-label' attribute should be set to '" + sWizardAriaLabelText + "'");
 		assert.strictEqual(sAriaControls, sWizardAriaControlsText, "'aria-controls' attribute should be set to '" + sWizardAriaControlsText + "'");
 		assert.strictEqual(sRole, "list", "'role' attribute of the unordered list should be set to 'list'");
+		assert.strictEqual(sDescribedById, sDescribedByAttr, "'aria-describedby' attribute was set with the correct invisible text.");
 	});
 
 	QUnit.test("WizardProgressNavigator li element aria attributes are set correctly", function (assert) {
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
-		var sOptionalText;
+		var sOptionalText, sActiveStep;
 		var sWizardAriaLabelText;
 
 		for (var i = 0; i < $steps.length; i++) {
 			sOptionalText = this.oProgressNavigator._aStepOptionalIndication[i] ? "Optional " : "";
-			sWizardAriaLabelText = this.oResourceBundle.getText("WIZARD_STEP_LABEL", [i + 1, this.oProgressNavigator.getStepTitles()[i], sOptionalText]);
+			sActiveStep = this.oProgressNavigator._isActiveStep(i + 1) ? "ACTIVE" : "INACTIVE";
+			sWizardAriaLabelText = this.oResourceBundle.getText("WIZARD_STEP_" + sActiveStep + "_LABEL", [i + 1, this.oProgressNavigator.getStepTitles()[i], sOptionalText]);
 
 			assert.strictEqual($steps.eq(i).attr("aria-label"), sWizardAriaLabelText, "'aria-label' attribute of the list item No" + (i + 1) + " should be set to '" + sWizardAriaLabelText + "'");
 			assert.strictEqual($steps.eq(i).attr("role"), "listitem", "'role' attribute of the list item No" + (i + 1) + " should be set to 'listitem'");
 		}
+	});
+
+	QUnit.test("WizardProgressNavigator li element aria-label attribute is updated correctly", function (assert) {
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
+
+		// assert
+		assert.strictEqual($steps.eq(1).attr("aria-label").indexOf(" Inactive") !== -1, true, "'aria-label' attribute of the list item states the step is inactive");
+
+		// act
+		this.oProgressNavigator._moveToStep(2);
+
+		// assert
+		assert.strictEqual($steps.eq(1).attr("aria-label").indexOf(" Active") !== -1, true, "'aria-label' attribute of the list item states the step is active");
 	});
 
 	QUnit.test("WizardProgressNavigator aria-posinset and aria-setsize attribute should be set correctly.", function (assert) {

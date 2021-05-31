@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/ui/core/InvisibleText"
+], function (
+	InvisibleText
+) {
 	"use strict";
 
 	var CLASSES = {
@@ -30,7 +34,8 @@ sap.ui.define([], function () {
 		ARIA_CURRENT: "aria-current",
 		ARIA_LABEL: "aria-label",
 		ARIA_HASPOPUP: "aria-haspopup",
-		ARIA_DISABLED: "aria-disabled"
+		ARIA_DISABLED: "aria-disabled",
+		ARIA_DESCRIBEDBY: "aria-describedby"
 	};
 
 	var WizardProgressNavigatorRenderer = {
@@ -85,7 +90,8 @@ sap.ui.define([], function () {
 		oRm.accessibilityState({
 			role: "list",
 			label: sWizardAriaLabelText,
-			controls: oControl.getParent().sId + "-step-container"
+			controls: oControl.getParent().sId + "-step-container",
+			describedby: InvisibleText.getStaticId("sap.m", "WIZARD_PROGRESS_NAVIGATOR_LIST_ARIA_DESCRIBEDBY")
 		});
 
 		oRm.openEnd();
@@ -108,16 +114,19 @@ sap.ui.define([], function () {
 	WizardProgressNavigatorRenderer.startStep = function (oRm, oControl, iStepNumber, sStepTitle, sIconUri, sOptionalLabel) {
 		var aSteps = oControl._aCachedSteps;
 		var	oCurrentStep = aSteps[iStepNumber - 1];
-		var sValueText = oResourceBundle.getText("WIZARD_STEP_LABEL", [iStepNumber, sStepTitle, sOptionalLabel]);
+		var bCurrentStepActive = oControl._isActiveStep(iStepNumber);
+		var sStepActive = bCurrentStepActive ? "ACTIVE" : "INACTIVE";
+		var sValueText = oResourceBundle.getText("WIZARD_STEP_" + sStepActive + "_LABEL", [iStepNumber, sStepTitle, sOptionalLabel]);
+		var mACCOptions = {
+			role: "listitem",
+			label: sValueText
+		};
 
 		oRm.openStart("li")
 			.class(CLASSES.STEP)
 			.attr(ATTRIBUTES.STEP, iStepNumber)
 			.attr("tabindex", "-1")
-			.accessibilityState({
-				role: "listitem",
-				label: sValueText
-			});
+			.accessibilityState(mACCOptions);
 
 		if (!oCurrentStep || !!parseInt(oCurrentStep.style.zIndex)) {
 			oRm.attr("aria-disabled", "true");

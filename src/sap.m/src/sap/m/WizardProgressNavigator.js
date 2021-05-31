@@ -148,7 +148,7 @@ function(
 		this._removeStepAriaDisabledAttribute(iZeroBasedActiveStep);
 
 		this._updateStepCurrentAttribute(iZeroBasedCurrentStep);
-		this._updateStepAriaLabelAttribute(iZeroBasedCurrentStep);
+		this._updateStepAriaCurrentAttribute(iZeroBasedCurrentStep);
 
 		this._updateOpenSteps();
 		ResizeHandler.register(this.getDomRef(), this._updateOpenSteps.bind(this));
@@ -437,7 +437,7 @@ function(
 	 * @param {number} iOldIndex The old index at which the attribute was set. Zero-based.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._updateStepAriaLabelAttribute = function (iNewIndex, iOldIndex) {
+	WizardProgressNavigator.prototype._updateStepAriaCurrentAttribute = function (iNewIndex, iOldIndex) {
 		var oStepNew = this._aCachedSteps[iNewIndex];
 
 		if (iOldIndex !== undefined && this._aCachedSteps[iOldIndex]) {
@@ -449,6 +449,24 @@ function(
 			oStepNew
 				.setAttribute(
 					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT, true);
+		}
+	};
+
+	/**
+	 * Updates the step aria-label attribute in the DOM structure of the Control.
+	 * @param {number} iIndex The index at which the attribute should be set. Zero-based.
+	 * @private
+	 */
+	 WizardProgressNavigator.prototype._updateStepAriaLabelAttribute = function (iIndex) {
+		var oStep = this._aCachedSteps[iIndex];
+		var sStepActive = this._isActiveStep(iIndex) ? "ACTIVE" : "INACTIVE";
+		var sStepOptional = this._aStepOptionalIndication[iIndex] ? this._oResourceBundle.getText("WIZARD_STEP_OPTIONAL_STEP_TEXT") : "";
+		var sValueText = this._oResourceBundle.getText("WIZARD_STEP_" + sStepActive + "_LABEL", [iIndex + 1, this.getStepTitles()[iIndex], sStepOptional]);
+
+		if (oStep) {
+			oStep
+				.setAttribute(
+					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_LABEL, sValueText);
 		}
 	};
 
@@ -487,6 +505,7 @@ function(
 		this._updateStepNavigation(iZeroBasedNewStep);
 		this._removeStepAriaDisabledAttribute(iZeroBasedNewStep);
 		this._updateStepActiveAttribute(iZeroBasedNewStep, iZeroBasedOldStep);
+		this._updateStepAriaLabelAttribute(iZeroBasedNewStep);
 	};
 
 	/**
@@ -504,7 +523,7 @@ function(
 		this._updateStepZIndex();
 		this._updateOpenSteps();
 		this._updateStepCurrentAttribute(iZeroBasedNewStep, iZeroBasedOldStep);
-		this._updateStepAriaLabelAttribute(iZeroBasedNewStep, iZeroBasedOldStep);
+		this._updateStepAriaCurrentAttribute(iZeroBasedNewStep, iZeroBasedOldStep);
 
 		return this;
 	};
