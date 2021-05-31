@@ -29,13 +29,14 @@ sap.ui.define([
 	 * This plugin can be added to the control via its <code>dependents</code> aggregation
 	 * and there must only be 1 instance of the plugin per control.
 	 *
-	 * @extends sap.m.plugins.PluginBase
+	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @since 1.87
+	 * @public
+	 * @since 1.91
 	 * @alias sap.m.plugins.ColumnResizer
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColumnResizer = PluginBase.extend("sap.m.plugins.ColumnResizer", /** @lends sap.m.plugins.ColumnResizer.prototype */ { metadata: {
 		library: "sap.m",
