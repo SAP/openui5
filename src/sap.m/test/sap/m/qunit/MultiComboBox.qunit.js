@@ -8013,7 +8013,9 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.onsapshow(oEventMock);
-		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.A, false, false, true);
+
+
+		sap.ui.test.qunit.triggerKeyboardEvent(ListHelpers.getListItem(this.oMultiComboBox.getItems()[0]).getDomRef(), KeyCodes.A, false, false, true);
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectedItems().length, 4, "All items are selected");
@@ -8922,5 +8924,100 @@ sap.ui.define([
 
 		// Clean
 		oMultiComboBox.destroy();
+	});
+
+
+	QUnit.module("Range Selection", {
+		beforeEach : function() {
+			var aItems = [
+				new ListItem({
+					key: "GER",
+					text: "Germany"
+				}),
+				new ListItem({
+					key: "AR",
+					text: "Argentina"
+				}),
+				new ListItem({
+					key: "BG",
+					text: "Bulgaria"
+				}),
+				new ListItem({
+					key: "BL",
+					text: "Belgium"
+				}),
+				new ListItem({
+					key: "MAD",
+					text: "Madagascar"
+				}),
+				new ListItem({
+					key: "SER",
+					text: "Serbia"
+				})
+			];
+			this.oMultiComboBox = new MultiComboBox({
+				items: aItems
+			}).placeAt("MultiComboBoxContent");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("It should select multiple items", function (assert) {
+		var that = this;
+		// Arrange
+		var oEventMock = {
+			getParameter: function(param) {
+				switch (param) {
+					case "listItems":
+						return [that.oMultiComboBox._getList().getItems()[1], that.oMultiComboBox._getList().getItems()[3], that.oMultiComboBox._getList().getItems()[4]];
+					case "listItem":
+						return that.oMultiComboBox._getList().getItems()[1];
+					case "selectAll":
+						return false;
+					case "selected":
+						return true;
+				}
+			}
+		};
+
+		// Act
+		this.oMultiComboBox.open();
+		this.oMultiComboBox._setIsClick(true);
+		this.oMultiComboBox._handleSelectionLiveChange(oEventMock);
+
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getAggregation("tokenizer").getTokens().length, 3, "3 Tokens must be added");
+		assert.strictEqual(this.oMultiComboBox.getAggregation("tokenizer").getTokens()[2].getText(), "Madagascar", "The last token's name is correct");
+		assert.strictEqual(this.oMultiComboBox._getList().getItems()[4].getDomRef(), document.activeElement, "The last selected item is focused");
+	});
+
+
+	QUnit.test("Should select all items and add the selectAll param to the event", function (assert) {
+		// Arrange
+		var oList, oItemToFocus, oItemDOM;
+		var fnFireSelectionChangeSpy = this.spy(this.oMultiComboBox, "fireSelectionChange");
+
+		// Act
+		this.oMultiComboBox.open();
+
+		oList = this.oMultiComboBox._getList();
+		oItemToFocus = oList.getItems()[0];
+		oItemDOM = oItemToFocus.getFocusDomRef();
+
+		oItemToFocus.focus();
+
+		sap.ui.test.qunit.triggerKeyboardEvent(oItemDOM, KeyCodes.A, false, false, true);
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getAggregation("tokenizer").getTokens().length, 6, "All Tokens must be added");
+		assert.strictEqual(fnFireSelectionChangeSpy.args[0][0].selectAll, true, "All Tokens must be added");
+
+		// Clean
+		fnFireSelectionChangeSpy.restore();
 	});
 });
