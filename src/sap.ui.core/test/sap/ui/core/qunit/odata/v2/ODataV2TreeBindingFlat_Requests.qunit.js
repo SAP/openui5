@@ -1,11 +1,9 @@
 /*global QUnit, OData, sinon */
 sap.ui.define([
+	"sap/base/util/uid",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(
-	MockServer,
-	ODataModel
-) {
+], function(uid, MockServer, ODataModel) {
 	"use strict";
 
 	var oModel, oBinding, oMockServer;
@@ -78,7 +76,7 @@ sap.ui.define([
 	};
 
 	var ensureCorrectChangeGroup = function () {
-		var sTreeChangeGroup = "sapTreeHM-" + jQuery.sap.uid();
+		var sTreeChangeGroup = "sapTreeHM-" + uid();
 
 		// make sure we have a change group
 		var mChangeGroups = oModel.getChangeGroups();

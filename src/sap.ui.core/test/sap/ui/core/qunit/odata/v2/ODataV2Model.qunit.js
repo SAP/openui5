@@ -1,58 +1,36 @@
 
 /*global OData, QUnit, sinon */
 sap.ui.define([
-		"sap/base/Log",
-		"sap/base/util/isEmptyObject",
-		"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
-		"sap/ui/model/odata/MessageScope",
-		"sap/ui/model/odata/ODataUtils",
-		"sap/ui/model/odata/v2/ODataModel",
-		"sap/ui/model/ChangeReason",
-		"sap/ui/model/ClientModel",
-		"sap/ui/model/Context",
-		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator",
-		"sap/ui/model/Sorter",
-		"sap/ui/model/json/JSONModel",
-		"sap/m/Button",
-		"sap/m/DisplayListItem",
-		"sap/m/HBox",
-		"sap/m/Input",
-		"sap/m/Label",
-		"sap/m/List",
-		"sap/m/Panel",
-		"sap/m/Text",
-		"sap/ui/table/Column",
-		"sap/ui/table/Table",
-		"sap/ui/core/message/Message"
-	],
-	function(
-		Log,
-		isEmptyObject,
-		fakeService,
-		MessageScope,
-		ODataUtils,
-		ODataModel,
-		ChangeReason,
-		ClientModel,
-		Context,
-		Filter,
-		FilterOperator,
-		Sorter,
-		JSONModel,
-		Button,
-		ListItem,
-		HBox,
-		Input,
-		Label,
-		List,
-		Panel,
-		Text,
-		Column,
-		Table,
-		Message
-	) {
-
+	"sap/base/Log",
+	"sap/base/security/encodeURL",
+	"sap/base/util/each",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/isPlainObject",
+	"sap/m/Button",
+	"sap/m/DisplayListItem",
+	"sap/m/HBox",
+	"sap/m/Input",
+	"sap/m/Label",
+	"sap/m/List",
+	"sap/m/Panel",
+	"sap/m/Text",
+	"sap/ui/core/message/Message",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ClientModel",
+	"sap/ui/model/Context",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/MessageScope",
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/table/Column",
+	"sap/ui/table/Table",
+	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService"
+], function(Log, encodeURL, each, isEmptyObject, isPlainObject, Button, ListItem, HBox, Input,
+	Label, List, Panel, Text, Message, ChangeReason, ClientModel, Context, Filter, FilterOperator,
+	Sorter, JSONModel, MessageScope, ODataUtils, ODataModel, Column, Table, fakeService) {
 	"use strict";
 
 	//some view
@@ -205,7 +183,7 @@ sap.ui.define([
 		var oModel2 = {};
 
 		oModel.oMetadata.attachLoaded(function() {
-			jQuery.sap.log.debug("test 1 - metadata loaded is fired on metadata onload of model1");
+			Log.debug("test 1 - metadata loaded is fired on metadata onload of model1");
 		});
 
 		oModel.attachMetadataLoaded(function() {
@@ -223,7 +201,7 @@ sap.ui.define([
 			// attach again and wait for the metadataloaded event at the model itself,
 			//fail if event is fired at the metadata object
 			oModel2.attachMetadataLoaded(function() {
-				jQuery.sap.log.debug("metadata loaded is fired");
+				Log.debug("metadata loaded is fired");
 				assert.ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
 				if (!bFiredAtMetadata) {
 					assert.ok(true, 'Metadata loaded fired at model only');
@@ -1357,13 +1335,13 @@ sap.ui.define([
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with no param");
 			var sDeferred = oValue.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with no param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "*", expand: "Products"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with no param");
 			var sDeferred = oValue.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with no param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
@@ -1372,9 +1350,9 @@ sap.ui.define([
 			assert.equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
 			assert.equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with expand param");
+			assert.ok(sDeferred.endsWith("/Products(16)/Supplier"), "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Category.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
+			assert.ok(sDeferred.endsWith("/Products(16)/Category"), "test getObject with expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products,Products/Supplier,Products/Category"});
 			assert.equal(oValue, undefined, "test getObject with expand returns undefined for incomplete data");
@@ -1389,12 +1367,12 @@ sap.ui.define([
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
 			assert.equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with expand param");
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with expand param");
 			assert.ok(!oValue.Products[0].Category.hasOwnProperty('Description'), "test getObject with expand param");
 
 			done();
@@ -1427,7 +1405,7 @@ sap.ui.define([
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			assert.equal(oValue.SupplierID, 7, "test getObject with no param");
 			var sDeferred = oValue.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with no param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
@@ -1436,9 +1414,9 @@ sap.ui.define([
 			assert.equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
 			assert.equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with expand param");
+			assert.ok(sDeferred.endsWith("/Products(16)/Supplier"), "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Category.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
+			assert.ok(sDeferred.endsWith("/Products(16)/Category"), "test getObject with expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products,Products/Supplier,Products/Category"});
 			assert.equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
@@ -1449,12 +1427,12 @@ sap.ui.define([
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
 			assert.equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with expand param");
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with expand param");
 			assert.equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "Products/*", expand:"Products,Products/Supplier"});
@@ -1463,7 +1441,7 @@ sap.ui.define([
 			assert.equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].ProductID, 16, "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with select and expand param");
+			assert.ok(sDeferred.endsWith("/Products(16)/Supplier"), "test getObject with select and expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products", expand:"Products,Products/Supplier,Products/Category"});
 			assert.equal(oValue.SupplierID, 7, "test getObject with select and expand param");
@@ -1473,12 +1451,12 @@ sap.ui.define([
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with select and expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products/ProductName", expand:"Products,Products/Supplier,Products/Category"});
@@ -1498,12 +1476,12 @@ sap.ui.define([
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
 			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			assert.ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			assert.ok(sDeferred.endsWith("/Suppliers(7)/Products"), "test getObject with select and expand param");
 			assert.equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with select and expand param");
 
 			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products/ProductName", expand:"Products"});
@@ -2872,12 +2850,12 @@ sap.ui.define([
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 4, "set Property with complete complex type data structure");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Plz/number"), 12345, "set Property with complete complex type data structure");
 			var iCount = 0;
-			jQuery.each(oModel.getProperty("/Suppliers(0)/Address"), function(i, oValue) {
+			each(oModel.getProperty("/Suppliers(0)/Address"), function(i, oValue) {
 				iCount++;
 			});
 			assert.equal(iCount, 3, "number of properties in complex type");
 			iCount = 0;
-			jQuery.each(oModel.getProperty("/Suppliers(0)/Address/Plz"), function(i, oValue) {
+			each(oModel.getProperty("/Suppliers(0)/Address/Plz"), function(i, oValue) {
 				iCount++;
 			});
 			assert.equal(iCount, 2, "number of properties in sub complex type");
@@ -2924,7 +2902,7 @@ sap.ui.define([
 			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
 			var oComplextType = oModel.getProperty("/Suppliers(0)/Address");
-			assert.ok(jQuery.isPlainObject(oComplextType), "get complext as object");
+			assert.ok(isPlainObject(oComplextType), "get complext as object");
 			assert.equal(oComplextType.City, "Boston", "complex obj type property check");
 			assert.equal(oComplextType.Street, "150th", "complex obj type property check");
 			assert.equal(oComplextType.Plz, "88888", "complex obj type property check");
@@ -3503,12 +3481,12 @@ sap.ui.define([
 			assert.equal(oEntry.Description, undefined, "category ID check");
 			oSpy = sinon.spy(oModel, "_submitBatchRequest");
 			oModel.submitChanges();
-			jQuery.sap.delayedCall(0,this, function() {
+			setTimeout(function() {
 				assert.equal(oSpy.callCount, 0, "No request sent");
 				oSpy.restore();
 				oModel.destroy();
 				done();
-			});
+			}, 0);
 		};
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);
@@ -3572,7 +3550,7 @@ sap.ui.define([
 					break;
 			}
 		};
-		jQuery.each(aRequestEvents, function(i, sEvent) {
+		each(aRequestEvents, function(i, sEvent) {
 			oInfo[sEvent.charAt(0).toLowerCase() + sEvent.substr(1)] = 0;
 			oModel["attach" + sEvent](fnHandler);
 		});
@@ -3580,7 +3558,7 @@ sap.ui.define([
 	}
 
 	function detachRequestEvents(oModel, fnHandler) {
-		jQuery.each(aRequestEvents, function(i, sEvent) {
+		each(aRequestEvents, function(i, sEvent) {
 			oModel["detach" + sEvent](fnHandler);
 		});
 	}
@@ -4735,7 +4713,6 @@ sap.ui.define([
 
 	QUnit.test("test ODataModel destroy cancel async metadata", function(assert) {
 		cleanSharedData();
-		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
 		var spy = this.spy(OData, "request");
 		var oModel = initModel(sURI, {json: true, loadMetadataAsync: true, useBatch: false }, true);
@@ -4755,7 +4732,6 @@ sap.ui.define([
 
 	QUnit.test("test ODataModel destroy", function(assert) {
 		cleanSharedData();
-		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
 		var oModel = initModel(sURI, {json: true, loadMetadataAsync: true, useBatch: false }, true);
 
@@ -6186,7 +6162,7 @@ sap.ui.define([
 			assert.ok(oSupplier, "Supplier created");
 			assert.ok(oSupplier.__metadata.created, "Supplier flagged as created");
 			assert.ok(oSupplier.__metadata.created.key == "Products(0)/Supplier", "POST key ok");
-			assert.ok(jQuery.sap.startsWith(oContext.getPath(),"/Suppliers("), "Data cache ok");
+			assert.ok(oContext.getPath().startsWith("/Suppliers("), "Data cache ok");
 			var fnCompl = function(oInfo) {
 				that.oModel.detachRequestCompleted(fnCompl);
 				assert.ok(oInfo.getParameter('success'), "request success");
@@ -6700,7 +6676,7 @@ sap.ui.define([
 
 				assert.ok(oModel.getObject("/" + oModel.createKey("Current_Product_Lists", {ProductID: 75, ProductName: "Rhönbräu Klosterbier"})), "Entity is returned, createKey");
 				assert.ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + encodeURIComponent("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
-				assert.ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + jQuery.sap.encodeURL("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
+				assert.ok(oModel.getObject("/Current_Product_Lists(ProductID=75,ProductName='" + encodeURL("Rhönbräu Klosterbier") + "')"), "Entity is returned, custom encoding");
 
 				assert.equal(oModel.getProperty("/Current_Product_Lists(ProductID=1,ProductName='Chai')/ProductName"), "Chai", "Property is returned");
 				assert.equal(oModel.getProperty("/Current_Product_Lists(ProductID=3,ProductName='Aniseed%20Syrup')/ProductName"), "Aniseed Syrup", "Property is returned");

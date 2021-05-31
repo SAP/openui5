@@ -1,13 +1,10 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/core/qunit/odata/v2/data/ODataTreeBindingFakeService",
+	"sap/base/Log",
 	"sap/ui/model/odata/UpdateMethod",
-	"sap/ui/model/odata/v2/ODataModel"
-], function(
-	ODataTreeBindingFakeService,
-	UpdateMethod,
-	ODataModel
-) {
+	"sap/ui/model/odata/v2/ODataModel",
+	"test-resources/sap/ui/core/qunit/odata/v2/data/ODataTreeBindingFakeService"
+], function(Log, UpdateMethod, ODataModel, ODataTreeBindingFakeService) {
 	"use strict";
 	var oModel, oBinding;
 
@@ -67,7 +64,7 @@ sap.ui.define([
 			oFirstChild = oBinding.findNode(1);
 
 			oBinding.attachChange(handler3);
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			var oLogSpy = sinon.spy(Log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				// Success: Promise resolved
 				assert.ok(Array.isArray(aResponseData), "Promise should be resolved");
@@ -135,7 +132,7 @@ sap.ui.define([
 			oFirstChild = oBinding.findNode(2);
 
 			oBinding.attachChange(handler4);
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			var oLogSpy = sinon.spy(Log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				// Success: Promise resolved
 				assert.ok(Array.isArray(aResponseData), "Promise should be resolved");
@@ -470,7 +467,7 @@ sap.ui.define([
 			oFirstChild = oBinding._aNodes[1];
 
 			oBinding.attachChange(handler2);
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			var oLogSpy = sinon.spy(Log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				assert.ok(Array.isArray(aResponseData), "The promise should be resolved");
 				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error got logged");
@@ -537,7 +534,7 @@ sap.ui.define([
 			assert.notOk(oBinding.isExpanded(1), "First child node is collapsed");
 
 			oBinding.attachChange(handler4);
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			var oLogSpy = sinon.spy(Log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				assert.ok(Array.isArray(aResponseData), "The promise should be resolved");
 				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error got logged");
@@ -1168,15 +1165,11 @@ sap.ui.define([
 			});
 			oBinding.addContexts(oParent.context, [oContext1]);
 
-			// oStubUid = sinon.stub(jQuery.sap, "uid", function() {
-			// 	return "uc4-new-node-2";
-			// });
 			var oContext2 = oBinding.createEntry({
 				urlParameters: {
 					"hierarchy_fake_node_id": "NODE500001"
 				}
 			});
-			// oStubUid.restore();
 			oBinding.addContexts(oContext1, [oContext2]);
 
 			oBinding.expand(6, true);

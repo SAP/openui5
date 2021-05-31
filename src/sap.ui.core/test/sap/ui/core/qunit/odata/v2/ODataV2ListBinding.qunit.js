@@ -1,36 +1,25 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/odata/CountMode",
-	"sap/ui/model/odata/OperationMode",
-	"sap/ui/model/Sorter",
+	"sap/base/Log",
+	"sap/base/util/each",
+	"sap/base/util/extend",
+	"sap/m/DisplayListItem",
+	"sap/m/List",
+	"sap/m/Panel",
+	"sap/m/StandardListItem",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/FilterType",
-	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/Filter",
-	"sap/m/Panel",
-	"sap/m/List",
-	"sap/m/DisplayListItem",
-	"sap/m/StandardListItem"
-], function(
-		fakeService,
-		ODataModel,
-		CountMode,
-		OperationMode,
-		Sorter,
-		Filter,
-		FilterProcessor,
-		FilterType,
-		FilterOperator,
-		ODataFilter,
-		Panel,
-		List,
-		DisplayListItem,
-		StandardListItem
-	) {
-
+	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/v2/ODataModel",
+	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService"
+], function(Log, each, extend, DisplayListItem, List, Panel, StandardListItem, Filter,
+	FilterOperator, FilterProcessor, FilterType, Sorter, CountMode, ODataFilter, OperationMode,
+	ODataModel, fakeService) {
 	"use strict";
 
 	var oModel;
@@ -39,11 +28,11 @@ sap.ui.define([
 
 	var oLogChecker = {
 		init: function(){
-			this.iLastLog = jQuery.sap.log.getLogEntries().length;
+			this.iLastLog = Log.getLogEntries().length;
 		},
 
 		getLogs: function(){
-			return jQuery.sap.log.getLogEntries().slice(this.iLastLog);
+			return Log.getLogEntries().slice(this.iLastLog);
 		}
 	};
 
@@ -116,7 +105,7 @@ sap.ui.define([
 				assert.equal(oBinding.getPath(), "/Categories", "ListBinding path");
 				assert.ok(oBinding.getModel() == oModel, "ListBinding model");
 				assert.equal(oBinding.getLength(), 8, "length of items");
-				jQuery(oBinding.getContexts()).each(function(i, context){
+				each(oBinding.getContexts(), function(i, context){
 					assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
 				});
 				oBinding.detachChange(handler);
@@ -924,9 +913,9 @@ sap.ui.define([
 			if (iCalls === 1) {
 				var aContexts = oListBinding.getContexts();
 				assert.equal(aContexts.length, 0, "1 entry contained");
-				aExpandRefs = jQuery.extend({}, oListBinding.aExpandRefs);
+				aExpandRefs = extend({}, oListBinding.aExpandRefs);
 			} else if (iCalls === 2) {
-				var aNewExpandRefs = jQuery.extend({}, oListBinding.aExpandRefs);
+				var aNewExpandRefs = extend({}, oListBinding.aExpandRefs);
 				assert.deepEqual(aNewExpandRefs, aExpandRefs, "must not be modified");
 				oListBinding.detachChange(listhandler);
 
