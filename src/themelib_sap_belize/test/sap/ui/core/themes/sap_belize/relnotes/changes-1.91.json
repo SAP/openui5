@@ -3,6 +3,22 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "a757123d64d6d80cbe577f9dc0b270c723037e95",
+        "type": "FEATURE",
+        "text": " new and updated less parameters for all themes"
+      },
+      {
+        "id": "a0bba2e6c7ee52531214a3ca7a4b3fe4af366a14",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected background in belize-deep",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003104972021"
+          }
+        ]
+      },
+      {
         "id": "f35949beaf02cbd1b87f5c9649152a1bacb57a7e",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: Contrast on hover is now correct in high contrast themes",
@@ -10,17 +26,6 @@
           {
             "type": "BCP",
             "reference": "2170119911"
-          }
-        ]
-      },
-      {
-        "id": "dccfc4a411cbb718f814191106bf464e4bb18385",
-        "type": "FIX",
-        "text": " sap.m.ObjectNumber: less variables are now overridden correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2170128519"
           }
         ]
       }

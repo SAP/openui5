@@ -3,6 +3,11 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "678d99681854f5c095d125fa126a74680836f034",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Correct contentLength rounding"
+      },
+      {
         "id": "1c5929eef74e209cea121d7ae5a4f4dea8e004f1",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Corrected unstable qunit",

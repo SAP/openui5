@@ -3,6 +3,17 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "7ecbc997270e5d6e7d4710e3fd8073aee3edd0ec",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Accessible name for dummy cell provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180167885"
+          }
+        ]
+      },
+      {
         "id": "0d0286e48ad0007b571fd78b48674ac789cda2e3",
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: After opening dialog are now not trapped with the focus",

@@ -3,6 +3,22 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "a757123d64d6d80cbe577f9dc0b270c723037e95",
+        "type": "FEATURE",
+        "text": " new and updated less parameters for all themes"
+      },
+      {
+        "id": "a1cf49852d2a0df092da3dccadc6249059b45f07",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Align focus state by VD specification in fiori 3 HCB and HCW",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138978"
+          }
+        ]
+      },
+      {
         "id": "f35949beaf02cbd1b87f5c9649152a1bacb57a7e",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: Contrast on hover is now correct in high contrast themes",
@@ -21,17 +37,6 @@
           {
             "type": "BCP",
             "reference": "2170128591"
-          }
-        ]
-      },
-      {
-        "id": "116771ba368157ce2a2649469987acc10ad0d6bc",
-        "type": "FIX",
-        "text": " sap.f.ShellBar: Visual misalignments fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2170123729"
           }
         ]
       }

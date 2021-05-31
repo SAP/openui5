@@ -3,6 +3,102 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "7f110ec877a2f5f9638a2f3cc8142727eaa0e2c5",
+        "type": "FIX",
+        "text": " sap.m.TabStrip: focus navigation in the tabs works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165991"
+          }
+        ]
+      },
+      {
+        "id": "eb64026ef93908e33b0d2aa11ce18220cb70e75f",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: popup content is always visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180182182"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170132760"
+          }
+        ]
+      },
+      {
+        "id": "8f1fd8dce02a26a5ae9c338a531303cffdc2fcc2",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Closing value state popup on value state change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180155920"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003150742021"
+          }
+        ]
+      },
+      {
+        "id": "af772e6634715f3eb1b48a63a0f3fabbcddd455c",
+        "type": "FIX",
+        "text": " sap.m.Dialog: References in aria-labelledBy are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170009554"
+          }
+        ]
+      },
+      {
+        "id": "7df7bb69b4f7684cca8f0a8ecf418cabd8d6ee77",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Title level is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170128594"
+          }
+        ]
+      },
+      {
+        "id": "3a22939ae03ed0ceca7a6472f2db2cc7c6c70547",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Fixed misaligned title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180175355"
+          }
+        ]
+      },
+      {
+        "id": "4756e84ef6b128b9c1e734ace4fcf30937bf58ac",
+        "type": "FIX",
+        "text": " sap.m.NumericContent : Neutral class for value color none",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "3ad4c964d2042416dee29031fb2ed0212f04cd7f",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: no errors when control is extended",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180148059"
+          }
+        ]
+      },
+      {
         "id": "207cf64282a66ad6f4f79adfd5749a464c59ca50",
         "type": "FIX",
         "text": " sap.m.DatePicker: proper picker is open when displayFormat is changed",
@@ -67,6 +163,11 @@
             "reference": "2170138973"
           }
         ]
+      },
+      {
+        "id": "48c47a49b23a373dae8e26f041678adf1b7af6c1",
+        "type": "FEATURE",
+        "text": " sap.m.App: Added new isTopLevel property"
       },
       {
         "id": "4aadb307e458e6c0b88affa829b271a2ae7afd40",

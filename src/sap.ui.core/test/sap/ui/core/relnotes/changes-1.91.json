@@ -3,6 +3,82 @@
     "date": "May 2021",
     "notes": [
       {
+        "id": "609ff549637b8f57f802a57db07ca75f2aab2475",
+        "type": "FIX",
+        "text": " Adjust MediaQueryList usage for Safari 13 and older",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003708942021"
+          }
+        ]
+      },
+      {
+        "id": "a757123d64d6d80cbe577f9dc0b270c723037e95",
+        "type": "FEATURE",
+        "text": " new and updated less parameters for all themes"
+      },
+      {
+        "id": "9b422703798ee0122535e058e62b6fa1dad02b77",
+        "type": "FEATURE",
+        "text": " sap.ui.core.ShortcutHintsMixin: Stop showing ShortcutHintsMixin on mobile phone"
+      },
+      {
+        "id": "81cb61ee4957ba7ce617d08a691aa0ebaabb4852",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#setContext: Do not replace but reset data state so that it provides changes properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170155021"
+          }
+        ]
+      },
+      {
+        "id": "d462a84b0a9ccf7fd3a3e68c7ac933e03cd2d5b4",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel#reportError: handle JSON error response from $batch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180171988"
+          }
+        ]
+      },
+      {
+        "id": "8d4f21dda8d5b0892abbbfb1b07c33644156f5ca",
+        "type": "FIX",
+        "text": " jquery.js: make 'offset' work with SVG child elements in Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170112268"
+          }
+        ]
+      },
+      {
+        "id": "6ddeaaae8d6065a008dc72e3a8ed3a1a43f7327d",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: check text-selection before calling 'preventDefault'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180148848"
+          }
+        ]
+      },
+      {
+        "id": "76bf1dc9a68104ca32278730028fce1abe966ff2",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.Decimal: precision and scale constraints can have the same value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180147443"
+          }
+        ]
+      },
+      {
         "id": "7b8662f3632ae497bdcd0af744ff524f66161ac8",
         "type": "FEATURE",
         "text": " Opa: add sibling matcher and selector"
