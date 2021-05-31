@@ -58,15 +58,21 @@
 							<Text text="Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text" />
 							<Label text="sap.m.ExpandableText" />
 							<ExpandableText text="Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text" />
+							<Label text="sap.m.ExpandableText emptyIndicatorMode='Auto'" />
+							<ExpandableText emptyIndicatorMode="Auto"/>
 						</form:SimpleForm>
 						<core:HTML content="&lt;hr/&gt;" />
 						<ScrollContainer width="100%" height="auto" vertical="false" horizontal="false" class="sapUiSizeCompact">
-							<form:SimpleForm editable="false" layout="ResponsiveGridLayout" columnsL="1" width="640px">
+							<form:SimpleForm editable="false" layout="ResponsiveGridLayout" columnsL="1" width="640px" class="sapMShowEmpty-CTX">
 								<core:Title text="Form: editable='false', compact mode" />
 								<Label text="sap.m.Text" />
 								<Text text="Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text" />
 								<Label text="sap.m.ExpandableText" />
 								<ExpandableText text="Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text. Long text" />
+								<Label text="sap.m.ExpandableText emptyIndicatorMode='On'" />
+								<ExpandableText emptyIndicatorMode="On"/>
+								<Label text="sap.m.ExpandableText emptyIndicatorMode='Auto'" />
+								<ExpandableText emptyIndicatorMode="Auto"/>
 							</form:SimpleForm>
 							<core:HTML content="&lt;hr/&gt;" />
 							<form:SimpleForm editable="true" layout="ResponsiveGridLayout" columnsL="1" width="640px">
@@ -104,6 +110,15 @@
 								</ColumnListItem>
 							</items>
 						</Table>
+						<ScrollContainer
+							width="280px"
+							height="auto"
+							vertical="false"
+							horizontal="false">
+							<ExpandableText emptyIndicatorMode="On"/>
+							<ExpandableText emptyIndicatorMode="Auto"/>
+							<core:HTML content="&lt;hr/&gt;" />
+						</ScrollContainer>
 					</Page>
 				</App>
 			</mvc:View>

@@ -54,6 +54,9 @@ function(library,
 	// shortcut for sap.m.ExpandableOverflowTextMode
 	var ExpandableTextOverflowMode = library.ExpandableTextOverflowMode;
 
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = library.EmptyIndicatorMode;
+
 	function reduceWhitespace(sText) {
 		return sText.replace(/ {2,}/g, ' ').replace(/\t{2,}/g, ' ');
 	}
@@ -151,7 +154,14 @@ function(library,
 				 * Determines if the text is expanded.
 				 * @private
 				 */
-				expanded: { type: "boolean", group: "Appearance", defaultValue: false, visibility: "hidden" }
+				expanded: { type: "boolean", group: "Appearance", defaultValue: false, visibility: "hidden" },
+
+				/**
+				 * Specifies if an empty indicator should be displayed when there is no text.
+				 *
+				 * @since 1.91
+				 */
+				emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
 			},
 			aggregations: {
 				/**
