@@ -1435,6 +1435,8 @@ sap.ui.define([
 				var oFirstItem = (this._displayedList.getMode() === ListMode.MultiSelect) ? oToPage.getContent(0)[1].getItems()[0] : oToPage.getContent(0)[0].getItems()[0];
 				if (oFirstItem) {
 					oFirstItem.focus();
+				} else if (oToPage.getContent()[1]) {
+					oToPage.getContent()[1].focus();
 				}
 			}
 			if (oToPage === oFacetPage) {
