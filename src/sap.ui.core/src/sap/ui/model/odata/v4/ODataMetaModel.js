@@ -1292,6 +1292,7 @@ sap.ui.define([
 				if (sSegment === "$Annotations") {
 					return log(WARNING, "Invalid segment: $Annotations");
 				}
+				sSegment = sSegment.replaceAll("%2F", "/");
 
 				if (i && typeof vResult === "object" && sSegment in vResult) {
 					// fast path for pure "JSON" drill-down, but this cannot replace scopeLookup()!
@@ -2919,7 +2920,10 @@ sap.ui.define([
 	 * calls a computed annotation on the navigation property itself, not on the corresponding type.
 	 *
 	 * Any other segment, including an OData simple identifier, is looked up as a property of the
-	 * current object.
+	 * current object. Segments which themselves represent a path, such as the keys for the
+	 * "$ReferentialConstraint" and "$NavigationPropertyBinding" maps, need to use URL encoding for
+	 * the slash character ("%2F"), for example
+	 * "/TEAMS/$NavigationPropertyBinding/Address%2FCountries/...".
 	 *
 	 * @param {string} sPath
 	 *   A relative or absolute path within the metadata model

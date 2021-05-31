@@ -616,6 +616,7 @@ sap.ui.define([
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
 						"TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "EMPLOYEES",
+						"TEAM_2_CONTAINED_S/S_2_C/C_2_S/S_2_EMPLOYEE" : "EMPLOYEES",
 						"TEAM_2_EMPLOYEES" : "EMPLOYEES",
 						"TEAM_2_MANAGER" : "MANAGERS"
 					},
@@ -747,6 +748,12 @@ sap.ui.define([
 				},
 				"TEAM_2_MANAGER" : {
 					"$kind" : "NavigationProperty",
+					"$ReferentialConstraint" : {
+						"foo" : "bar",
+						"foo@Common.Label" : "Just a Gigolo",
+						"Address/Country" : "WorkAddress/Country",
+						"Address/Country@Common.Label" : "Common Country"
+					},
 					"$Type" : "tea_busi.MANAGER"
 				},
 				"TEAM_2_EMPLOYEES" : {
@@ -754,10 +761,6 @@ sap.ui.define([
 					"$isCollection" : true,
 					"$OnDelete" : "None",
 					"$OnDelete@Common.Label" : "None of my business",
-					"$ReferentialConstraint" : {
-						"foo" : "bar",
-						"foo@Common.Label" : "Just a Gigolo"
-					},
 					"$Type" : "tea_busi.Worker"
 				},
 				"TEAM_2_CONTAINED_S" : {
@@ -1557,6 +1560,13 @@ sap.ui.define([
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/" : oWorkerData,
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
+		// URI encoding for slashes inside key - - - - - - - - - - - - - - - - - - - - - - - - - -
+		"/TEAMS/$NavigationPropertyBinding/TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE/AGE" : oWorkerData.AGE,
+		"/TEAMS/$NavigationPropertyBinding/TEAM_2_CONTAINED_S%2FS_2_C%2FC_2_S%2FS_2_EMPLOYEE/AGE"
+			: oWorkerData.AGE,
+		"/TEAMS/TEAM_2_MANAGER/$ReferentialConstraint/Address%2FCountry" : "WorkAddress/Country",
+		"/TEAMS/TEAM_2_MANAGER/$ReferentialConstraint/Address%2FCountry@Common.Label"
+			: "Common Country",
 		// operations -----------------------------------------------------------------------------
 		"/OverloadedAction" : oContainerData["OverloadedAction"],
 		"/OverloadedAction/$Action" : "name.space.OverloadedAction",
@@ -1755,7 +1765,7 @@ sap.ui.define([
 		"/T€AMS/tea_busi.NewAction//Team_Id@" : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
 		// inline annotations  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		"/T€AMS/TEAM_2_EMPLOYEES/$OnDelete@Common.Label" : "None of my business",
-		"/T€AMS/TEAM_2_EMPLOYEES/$ReferentialConstraint/foo@Common.Label" : "Just a Gigolo",
+		"/T€AMS/TEAM_2_MANAGER/$ReferentialConstraint/foo@Common.Label" : "Just a Gigolo",
 		"/T€AMS/@UI.LineItem/0/Label@Common.Label" : "Team ID's Label",
 		"/T€AMS/@UI.Badge@Common.Label" : "Best Badge Ever!", // annotation of annotation
 		"/T€AMS/@UI.Badge/@Common.Label" : "Label inside", // annotation of record
@@ -1820,6 +1830,8 @@ sap.ui.define([
 		"/T€AMS/tea_busi.NewAction/Team_Id/@sapui.name" : "name.space.Id", // due to $Type insertion
 		"/name.space.OverloadedAction@sapui.name" : "name.space.OverloadedAction",
 		"/name.space.OverloadedAction/_it@sapui.name" : "_it",
+		// "/TEAMS/$NavigationPropertyBinding/TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE/@sapui.name"
+		// 	: "TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE",
 		// .../$ ----------------------------------------------------------------------------------
 		"/$" : mScope, // @see #fetchData, but no clone
 		// "/$@sapui.name" --> "Unsupported path before @sapui.name"
