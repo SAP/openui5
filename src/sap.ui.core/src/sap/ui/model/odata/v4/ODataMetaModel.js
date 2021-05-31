@@ -304,7 +304,7 @@ sap.ui.define([
 	 *   a schema; schema children are ignored because they do not contain $Annotations
 	 * @param {object} mAnnotations
 	 *   the root scope's $Annotations
-	 * @param {boolean} [bPrivileged=false]
+	 * @param {boolean} [bPrivileged]
 	 *   whether the schema has been loaded from a privileged source and thus may overwrite
 	 *   existing annotations
 	 */
@@ -569,7 +569,7 @@ sap.ui.define([
 			// <code>Promise</code> resolving with the value. After the value is resolved a second
 			// change event is fired and <code>getValue</code> returns the value itself.
 			//
-			// @param {boolean} [bForceUpdate=false]
+			// @param {boolean} [bForceUpdate]
 			//   If <code>true</code>, the change event is always fired.
 			// @param {sap.ui.model.ChangeReason} [sChangeReason=ChangeReason.Change]
 			//   The change reason for the change event
@@ -921,7 +921,7 @@ sap.ui.define([
 	 * of qualified names to their corresponding metadata, with the special key "$EntityContainer"
 	 * mapped to the entity container's qualified name as a starting point.
 	 *
-	 * @param {boolean} [bPrefetch=false]
+	 * @param {boolean} [bPrefetch]
 	 *   Whether to just read the $metadata document and annotations, but not yet convert them from
 	 *   XML to JSON; this is useful at most once in an early call that precedes all other normal
 	 *   calls and ignored after the first call without this.
@@ -2278,7 +2278,7 @@ sap.ui.define([
 	 *   The (relative) $metadata URL, for example "../ValueListService/$metadata"
 	 * @param {string} [sGroupId]
 	 *   The group ID, for example "$direct"
-	 * @param {boolean} [bAutoExpandSelect=false]
+	 * @param {boolean} [bAutoExpandSelect]
 	 *   Whether the model is to be created with autoExpandSelect
 	 * @returns {sap.ui.model.odata.v4.ODataModel}
 	 *   The value list model
@@ -3059,7 +3059,7 @@ sap.ui.define([
 	 * @param {string} sPropertyPath
 	 *   An absolute path to an OData property within the OData data model or a (meta) path to an
 	 *   operation parameter, for example "/TEAMS(1)/acme.NewAction/Team_ID"
-	 * @param {boolean} [bAutoExpandSelect=false]
+	 * @param {boolean} [bAutoExpandSelect]
 	 *   The value of the parameter <code>autoExpandSelect</code> for value list models created by
 	 *   this method. If the value list model is the data model associated with this meta model,
 	 *   this flag has no effect. Supported since 1.68.0

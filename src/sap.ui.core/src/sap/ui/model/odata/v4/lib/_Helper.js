@@ -376,7 +376,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sFetch
 		 *   A "fetch*" method's name
-		 * @param {boolean} [bThrow=false]
+		 * @param {boolean} [bThrow]
 		 *   Whether the "get*" method throws if the promise is not (yet) fulfilled instead of just
 		 *   returning <code>undefined</code> (Note:
 		 *   {@link sap.ui.model.odata.v4.ODataMetaModel#getObject} intentionally never throws
@@ -1018,7 +1018,7 @@ sap.ui.define([
 		 *   A list of key properties, either as a string or an object with one property (its name
 		 *   is the alias in the key predicate, its value is the path in the instance); if not
 		 *   given, the entity's key is used
-		 * @param {boolean} [bReturnAlias=false]
+		 * @param {boolean} [bReturnAlias]
 		 *   Whether to return the aliases instead of the keys
 		 * @returns {object}
 		 *   The key properties map. For the metadata

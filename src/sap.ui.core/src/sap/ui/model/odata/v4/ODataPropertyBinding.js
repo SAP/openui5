@@ -526,7 +526,7 @@ sap.ui.define([
 	/**
 	 * Requests information to retrieve a value list for this property.
 	 *
-	 * @param {boolean} [bAutoExpandSelect=false]
+	 * @param {boolean} [bAutoExpandSelect]
 	 *   The value of the parameter <code>autoExpandSelect</code> for value list models created by
 	 *   this method. If the value list model is this binding's model, this flag has no effect.
 	 *   Supported since 1.68.0

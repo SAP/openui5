@@ -288,7 +288,7 @@ sap.ui.define([
 			 * Returns the string representation of the given parameter value.
 			 * @param {object} oParameterValue the parameter value
 			 * @param {boolean} bComplex whether the result is a complex binding or a simple binding
-			 * @param {boolean} [bRaw=false] whether the result will contain the raw value
+			 * @param {boolean} [bRaw] whether the result will contain the raw value
 			 */
 			function toString(oParameterValue, bComplex, bRaw) {
 				return Basics.resultToString(Expression.wrapExpression(oParameterValue), true,

@@ -17,7 +17,7 @@ sap.ui.define([
 	 *   The group ID
 	 * @param {object} oOwner
 	 *   The lock's owner for debugging
-	 * @param {boolean} [bLocked=false]
+	 * @param {boolean} [bLocked]
 	 *   Whether the lock is locked
 	 * @param {boolean} [bModifying]
 	 *   Whether the reason for the group lock is a modifying request
@@ -156,7 +156,7 @@ sap.ui.define([
 	/**
 	 * Unlocks the lock. Resolves all promises returned by {@link #waitFor}.
 	 *
-	 * @param {boolean} [bForce=false]
+	 * @param {boolean} [bForce]
 	 *   Whether unlock may be called multiple times.
 	 * @throws {Error}
 	 *   If unlock is called a second time without <code>bForce</code>

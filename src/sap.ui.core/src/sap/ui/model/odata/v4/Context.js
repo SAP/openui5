@@ -23,10 +23,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext The context
 	 * @param {string} sPath The requested path, absolute or relative to this context
-	 * @param {boolean} [bExternalFormat=false]
+	 * @param {boolean} [bExternalFormat]
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
-	 * @param {boolean} [bCached=false]
+	 * @param {boolean} [bCached]
 	 *   Whether to return cached values only and not trigger a request
 	 * @returns {sap.ui.base.SyncPromise} a promise on the formatted value
 	 */
@@ -337,7 +337,7 @@ sap.ui.define([
 	 *   The new value which must be primitive
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
 	 *   A lock for the group ID to be used for the PATCH request; without a lock, no PATCH is sent
-	 * @param {boolean} [bSkipRetry=false]
+	 * @param {boolean} [bSkipRetry]
 	 *   Whether to skip retries of failed PATCH requests and instead fail accordingly, but still
 	 *   fire "patchSent" and "patchCompleted" events
 	 * @returns {sap.ui.base.SyncPromise}
@@ -470,7 +470,7 @@ sap.ui.define([
 	 *   A path (absolute or relative to this context)
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {boolean} [bCached=false]
+	 * @param {boolean} [bCached]
 	 *   Whether to return cached values only and not trigger a request
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the binding's <code>fetchValue</code> call; it is rejected
@@ -650,7 +650,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   A path relative to this context
-	 * @param {boolean} [bExternalFormat=false]
+	 * @param {boolean} [bExternalFormat]
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
 	 *   If the type is not yet available, <code>undefined</code> is returned.
@@ -956,10 +956,9 @@ sap.ui.define([
 	 *
 	 * @param {string|string[]} [vPath]
 	 *   One or multiple paths relative to this context
-	 * @param {boolean} [bExternalFormat=false]
+	 * @param {boolean} [bExternalFormat]
 	 *   If <code>true</code>, the values are returned in external format using UI5 types for the
-	 *   given property paths that format corresponding to the properties' EDM types and
-	 *   constraints
+	 *   given property paths that format corresponding to the properties' EDM types and constraints
 	 * @returns {Promise}
 	 *   A promise on the requested value or values; it is rejected if a value is not primitive
 	 * @throws {Error}

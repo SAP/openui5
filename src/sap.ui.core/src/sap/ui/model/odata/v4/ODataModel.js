@@ -96,12 +96,12 @@ sap.ui.define([
 	 *   wins). The same annotations are overwritten; if an annotation file contains other elements
 	 *   (like a type definition) that are already merged, an error is thrown.
 	 *   Supported since 1.41.0
-	 * @param {boolean} [mParameters.autoExpandSelect=false]
+	 * @param {boolean} [mParameters.autoExpandSelect]
 	 *   Whether the OData model's bindings automatically generate $select and $expand system query
 	 *   options from the binding hierarchy. Note: Dynamic changes to the binding hierarchy are not
 	 *   supported. This parameter is supported since 1.47.0, and since 1.75.0 it also enables
 	 *   property paths containing navigation properties in <code>$select</code>.
-	 * @param {boolean} [mParameters.earlyRequests=false]
+	 * @param {boolean} [mParameters.earlyRequests]
 	 *   Whether the following is requested at the earliest convenience:
 	 *   <ul>
 	 *     <li> root $metadata document and annotation files;
@@ -343,7 +343,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
-	 * @param {boolean} [bCatch=false]
+	 * @param {boolean} [bCatch]
 	 *   Whether the returned promise always resolves and never rejects
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
@@ -419,7 +419,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnPrerenderingTask
 	 *   A function that is called before the rendering
-	 * @param {boolean} [bFirst=false]
+	 * @param {boolean} [bFirst]
 	 *   Whether the task should become the first one, not the last one
 	 * @private
 	 */
@@ -810,9 +810,9 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters={}]
 	 *   Map of binding parameters
-	 * @param {boolean} [bSystemQueryOptionsAllowed=false]
+	 * @param {boolean} [bSystemQueryOptionsAllowed]
 	 *   Whether system query options are allowed
-	 * @param {boolean} [bSapAllowed=false]
+	 * @param {boolean} [bSapAllowed]
 	 *   Whether custom query options starting with "sap-" are allowed (Note: "sap-valid-" is always
 	 *   allowed)
 	 * @throws {Error}
