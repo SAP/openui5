@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/core/Core',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'./Suggest',
@@ -19,6 +20,7 @@ sap.ui.define([
 	function(
 		library,
 		Control,
+		Core,
 		EnabledPropagator,
 		IconPool,
 		Suggest,
@@ -29,7 +31,7 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 	SearchFieldRenderer.oSearchFieldToolTips = {
 		SEARCH_BUTTON_TOOLTIP: oResourceBundle.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"),
 		RESET_BUTTON_TOOLTIP: oResourceBundle.getText("SEARCHFIELD_RESET_BUTTON_TOOLTIP"),
@@ -235,7 +237,7 @@ sap.ui.define([
 			},
 
 			/**
-			 * This event is fired each time when the value of the search field is changed by the user - e.g. at each key press. Do not invalidate or re-render a focused search field, especially during the liveChange event.
+			 * This event is fired each time when the value of the search field is changed by the user - e.g. at each key press. Do not invalidate a focused search field, especially during the liveChange event.
 			 * @since 1.9.1
 			 */
 			liveChange : {
@@ -305,12 +307,8 @@ sap.ui.define([
 		return this.getProperty("width") || "100%";
 	};
 
-	SearchField.prototype._hasPlaceholder = (function () {
-		return "placeholder" in document.createElement("input");
-	}());
-
 	/**
-	 * Returns the inner <input> elment.
+	 * Returns the inner <input> element.
 	 *
 	 * @private
 	 */
@@ -356,17 +354,10 @@ sap.ui.define([
 					jQuery(oEvent.target).removeClass("sapMSFBA");
 				});
 			}
-		} else if (window.PointerEvent) {
-			// IE Mobile sets active element to the reset button, save the previous reference// TODO remove after the end of support for Internet Explorer
-			jQuery(this._resetElement).on("touchstart", function(){
-				this._active = document.activeElement;
-			}.bind(this));
 		}
 
-		var oCore = sap.ui.getCore();
-
-		if (!oCore.isThemeApplied()) {
-			oCore.attachThemeChanged(this._handleThemeLoad, this);
+		if (!Core.isThemeApplied()) {
+			Core.attachThemeChanged(this._handleThemeLoad, this);
 		}
 	};
 
@@ -374,8 +365,8 @@ sap.ui.define([
 		if (this._oSuggest) {
 			this._oSuggest.setPopoverMinWidth();
 		}
-		var oCore = sap.ui.getCore();
-		oCore.detachThemeChanged(this._handleThemeLoad, this);
+
+		Core.detachThemeChanged(this._handleThemeLoad, this);
 	};
 
 	/**
@@ -471,10 +462,10 @@ sap.ui.define([
 			// When there was no "x" visible (bEmpty):
 			// - always focus
 			var active = document.activeElement;
-			if (((Device.system.desktop
+			if ((Device.system.desktop
 				|| bEmpty
-				|| /(INPUT|TEXTAREA)/i.test(active.tagName) || active ===  this._resetElement && this._active === oInputElement) // IE Mobile// TODO remove after the end of support for Internet Explorer
-				) && (active !== oInputElement)) {
+				|| /(INPUT|TEXTAREA)/i.test(active.tagName) || active === this._resetElement)
+				&& (active !== oInputElement)) {
 				oInputElement.focus();
 			}
 
@@ -590,25 +581,21 @@ sap.ui.define([
 	 * @param {oEvent} jQuery Event
 	 * @private
 	 */
-	SearchField.prototype.onInput = function(oEvent) {
+	SearchField.prototype.onInput = function() {
 		var value = this.getInputElement().value;
 
-		// IE fires an input event when an empty input with a placeholder is focused or loses focus.// TODO remove after the end of support for Internet Explorer
-		// Check if the value has changed, before firing the liveChange event.
-		if (value != this.getValue()) {
-			this._updateValue(value);
-			this.fireLiveChange({newValue: value});
-			if (this.getEnableSuggestions()) {
-				if (this._iSuggestDelay) {
-					clearTimeout(this._iSuggestDelay);
-				}
-
-				this._iSuggestDelay = setTimeout(function(){
-					this.fireSuggest({suggestValue: value});
-					updateSuggestions(this);
-					this._iSuggestDelay = null;
-				}.bind(this), 400);
+		this._updateValue(value);
+		this.fireLiveChange({newValue: value});
+		if (this.getEnableSuggestions()) {
+			if (this._iSuggestDelay) {
+				clearTimeout(this._iSuggestDelay);
 			}
+
+			this._iSuggestDelay = setTimeout(function(){
+				this.fireSuggest({suggestValue: value});
+				updateSuggestions(this);
+				this._iSuggestDelay = null;
+			}.bind(this), 400);
 		}
 	};
 
@@ -699,12 +686,6 @@ sap.ui.define([
 	 * @param {object} oEvent jQuery event
 	 */
 	SearchField.prototype.onFocus = function(oEvent) {
-
-		// IE does not really focuses inputs and does not blur them if the document itself is not focused// TODO remove after the end of support for Internet Explorer
-		if (Device.browser.internet_explorer && !document.hasFocus()) {// TODO remove after the end of support for Internet Explorer
-			return;
-		}
-
 		this.addStyleClass("sapMFocus");
 
 		// Remember the original value for the case when the user presses ESC
@@ -944,7 +925,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Close the suggestions list.
+	 * Closes the suggestions list.
 	 *
 	 * @param {sap.m.SearchField} oSF a SearchField instance
 	 */
@@ -953,7 +934,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Close the suggestions list.
+	 * Opens the suggestions list.
 	 *
 	 * @param {sap.m.SearchField} oSF a SearchField instance
 	 */

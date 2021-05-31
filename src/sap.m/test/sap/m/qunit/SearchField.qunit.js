@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/m/SearchField",
 	"sap/m/Label",
 	"sap/ui/Device",
@@ -133,14 +133,7 @@ sap.ui.define([
 		assert.equal(this.sf1.getValue(), sValue, "Value property, UI5");
 		assert.equal(this.sf1Dom.value, sValue, "Value property, DOM");
 		assert.equal(this.sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
-		if (this.sf2Dom.placeholder){
-			assert.equal(this.sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
-		} else {
-			// IE9
-			// IE9/IE10 cleanup comment: there are still issues with IE11 and placeholders
-			// TODO remove after the end of support for Internet Explorer
-			assert.equal(this.sf2.$("P").text(), sPlaceholder, "Placeholder in IE9");
-		}
+		assert.equal(this.sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
 		assert.equal(this.sf2.getEnabled(), false, "Enabled property, UI5");
 		assert.equal(this.sf2Dom.disabled, true, "Disabled property, DOM");
 		assert.ok(this.sf2.$().hasClass("sapMSFDisabled"),"CSS class name for \"disabled\" is set");
@@ -182,6 +175,7 @@ sap.ui.define([
 		// clean up
 		lbl.destroy();
 		sf.destroy();
+		Core.applyChanges();
 	});
 
 	// test the "reset" button
@@ -239,6 +233,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
+			Core.applyChanges();
 		}
 	});
 
@@ -248,7 +243,9 @@ sap.ui.define([
 		this.stub(Device, "browser", {name: "cr", chrome: true});
 
 		// act
-		this.oSearchField.rerender();
+		this.oSearchField.invalidate();
+		Core.applyChanges();
+
 		bHasAutocorrect = this.oSearchField.$("I").attr("autocorrect") == "off";
 
 		// assert
@@ -261,7 +258,9 @@ sap.ui.define([
 		this.stub(Device, "browser", {name: "sf", safari: true});
 
 		// act
-		this.oSearchField.rerender();
+		this.oSearchField.invalidate();
+		Core.applyChanges();
+
 		bHasAutocorrect = this.oSearchField.$("I").attr("autocorrect") == "off";
 
 		// assert
@@ -303,9 +302,10 @@ sap.ui.define([
 
 		// clean up
 		oSF.destroy();
+		Core.applyChanges();
 	});
 
-	QUnit.module("SearchField tooltip:", {
+	QUnit.module("SearchField tooltip", {
 		beforeEach: function () {
 			this.oSearchField = new SearchField("SF", {
 				placeholder: sPlaceholder,
@@ -325,13 +325,15 @@ sap.ui.define([
 			this.oButton.destroy();
 			this.oRb = null;
 			this.oMockEvent = null;
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("After initial loading only Search button", function (assert) {
 		//act
 		this.oSearchField.setShowRefreshButton(false);
-		this.oSearchField.rerender();
+		Core.applyChanges();
+
 		// assert
 		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
 	});
@@ -365,7 +367,7 @@ sap.ui.define([
 		//act
 		this.oSearchField.setRefreshButtonTooltip("Reload");
 		this.oSearchField.setValue("Test");
-		this.oSearchField.rerender();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(jQuery("#SF-reset").attr("title"), this.oRB.getText("SEARCHFIELD_RESET_BUTTON_TOOLTIP"), "Reset button should be with 'Reset' tooltip");
@@ -376,9 +378,9 @@ sap.ui.define([
 
 		// arrange
 		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP"), "Refresh button should be with 'Refresh' tooltip");
+
 		//act
-		//IE does not apply focus correctly, this way works for all browsers// TODO remove after the end of support for Internet Explorer
-		this.oSearchField.onFocus(this.oMockEvent);
+		this.oSearchField.focus();
 
 		// assert
 		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
@@ -392,9 +394,9 @@ sap.ui.define([
 
 		//act
 		this.oSearchField.setValue("Test");
-		this.oSearchField.rerender();
-		//IE does not apply focus correctly, this way works for all browsers// TODO remove after the end of support for Internet Explorer
-		this.oSearchField.onFocus(this.oMockEvent);
+		Core.applyChanges();
+
+		this.oSearchField.focus();
 
 		// assert
 		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
@@ -417,6 +419,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oSearchField.destroy();
 			this.oMockEvent = null;
+			Core.applyChanges();
 		}
 	});
 
@@ -455,6 +458,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
+			Core.applyChanges();
 		}
 	});
 
@@ -542,9 +546,9 @@ sap.ui.define([
 			Core.applyChanges();
 		},
 		afterEach: function() {
-			this.oSearchField.destroy();
-
 			Device.system.phone = this.isPhone;
+			this.oSearchField.destroy();
+			Core.applyChanges();
 		}
 	});
 
@@ -561,16 +565,13 @@ sap.ui.define([
 		this.oSearchField.focus();
 		Core.applyChanges();
 
+		this.oSuggestionItem1.$().tap();
 
+		// Assert
 		setTimeout(function () {
-			this.oSuggestionItem1.$().tap();
-
-			// Asert
-			setTimeout(function () {
-				assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
-				done();
-			}, 500);
-		}.bind(this), 300); // requires that timeout to work on IE
+			assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
+			done();
+		}, 500);
 	});
 
 	QUnit.test("Search is fired once when 'magnifier' button is pressed", function (assert) {
@@ -586,25 +587,22 @@ sap.ui.define([
 		this.oSearchField.focus();
 		Core.applyChanges();
 
+		// tap on the 'magnifier' button
+		var searchFieldInDialog = jQuery(".sapMDialog .sapMSF").control()[0];
+		var searchIconInDialog = jQuery(".sapMDialog .sapMSFS")[0];
 
+		searchFieldInDialog.ontouchend({
+			originalEvent: {
+				button: 1
+			},
+			target: searchIconInDialog
+		});
+
+		// Assert
 		setTimeout(function () {
-			// tap on the 'magnifier' button
-			var searchFieldInDialog = jQuery(".sapMDialog .sapMSF").control()[0];
-			var searchIconInDialog = jQuery(".sapMDialog .sapMSFS")[0];
-
-			searchFieldInDialog.ontouchend({
-				originalEvent: {
-					button: 1
-				},
-				target: searchIconInDialog
-			});
-
-			// Asert
-			setTimeout(function () {
-				assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
-				done();
-			}, 500);
-		}, 300); // requires that timeout to work on IE
+			assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
+			done();
+		}, 500);
 	});
 
 	QUnit.test("Search is fired once when 'OK' button is pressed", function (assert) {
@@ -620,17 +618,14 @@ sap.ui.define([
 		this.oSearchField.focus();
 		Core.applyChanges();
 
+		// tap on the 'OK' button
+		QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
 
+		// Assert
 		setTimeout(function () {
-			// tap on the 'OK' button
-			QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
-
-			// Asert
-			setTimeout(function () {
-				assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
-				done();
-			}, 500);
-		}, 300); // requires that timeout to work on IE
+			assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
+			done();
+		}, 500);
 	});
 
 	QUnit.test("Search is NOT fired when 'X' button is pressed", function (assert) {
@@ -647,16 +642,14 @@ sap.ui.define([
 		Core.applyChanges();
 
 
-		setTimeout(function () {
-			// tap on the 'X' button
-			QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogTitle .sapMBtn")[0]);
+		// tap on the 'X' button
+		QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogTitle .sapMBtn")[0]);
 
-			// Asert
-			setTimeout(function () {
-				assert.ok(fnSearchSpy.notCalled, "Search is not fired");
-				done();
-			}, 500);
-		}, 300); // requires that timeout to work on IE
+		// Assert
+		setTimeout(function () {
+			assert.ok(fnSearchSpy.notCalled, "Search is not fired");
+			done();
+		}, 500);
 	});
 
 	QUnit.test("When suggestions dialog is closed, suggestions are suppressed", function (assert) {
@@ -693,21 +686,18 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
+			Core.applyChanges();
 		}
 	});
 
 	QUnit.test("Aria-selected is false when non of the items are selected", function (assert) {
 		// Act
-		var done = assert.async(),
-			oSuggestionItems = this.oSearchField.getSuggestionItems();
+		var oSuggestionItems = this.oSearchField.getSuggestionItems();
+
 		this.oSearchField.focus();
 		Core.applyChanges();
 
-
-		setTimeout(function () {
-			assert.strictEqual(oSuggestionItems[0].getDomRef().getAttribute("aria-selected"), "false", "Aria-selected is set to false");
-			done();
-		}, 300); // requires that timeout to work on IE
+		assert.strictEqual(oSuggestionItems[0].getDomRef().getAttribute("aria-selected"), "false", "Aria-selected is set to false");
 	});
 
 	QUnit.test("Aria-haspopup is listbox when there are suggestions", function (assert) {
@@ -723,6 +713,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
+			Core.applyChanges();
 		}
 	});
 
@@ -731,7 +722,7 @@ sap.ui.define([
 		this.oSearchField.focus();
 
 		// Assert
-		assert.ok(this.oSearchField.$().hasClass("sapMFocus"), "Focus class wasn't added");
+		assert.ok(this.oSearchField.$().hasClass("sapMFocus"), "Focus class was added");
 
 		// Act
 		this.oSearchField.invalidate();

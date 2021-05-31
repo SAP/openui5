@@ -73,17 +73,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/librar
 
 			rm.openEnd();
 
-			// self-made placeholder
-			if (!oSF._hasPlaceholder && sPlaceholder) {
-				rm.openStart("label", sId + "-P")
-					.class("sapMSFPlaceholder")
-					.attr("for", sId + "-I")
-					.openEnd()
-					.text(sPlaceholder)
-					.close("label");
-			}
-
-			rm.voidStart('input', oSF.getId() + "-I")
+			rm.voidStart('input', sId + "-I")
 				.class("sapMSFI")
 				.attr("type", "search")
 				.attr("autocomplete", "off");
@@ -99,10 +89,6 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/librar
 			var sTooltip = oSF.getTooltip_AsString();
 			if (sTooltip) {
 				rm.attr("title", sTooltip);
-			}
-
-			if (Device.os.android && Device.os.version >= 4 && Device.os.version < 4.1 ) {
-				rm.class("sapMSFIA4"); // specific CSS layout for Android 4.0x
 			}
 
 			if (oSF.getEnableSuggestions() && Device.system.phone) {
@@ -144,7 +130,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/librar
 
 			if (oSF.getEnabled()) {
 				// 2. Reset button
-				rm.openStart("div", oSF.getId() + "-reset")
+				rm.openStart("div", sId + "-reset")
 					.class("sapMSFR") // reset
 					.class("sapMSFB") // button
 					.attr("aria-hidden", true);
@@ -165,7 +151,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/librar
 
 				// 3. Search/Refresh button
 				if (bShowSearchBtn) {
-					rm.openStart("div", oSF.getId() + "-search")
+					rm.openStart("div", sId + "-search")
 						.class("sapMSFS") // search
 						.class("sapMSFB") // button
 						.attr("aria-hidden", true);
@@ -190,7 +176,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/librar
 
 			if (oSF.getEnableSuggestions()) {
 
-				rm.openStart("span", oSF.getId() + "-SuggDescr")
+				rm.openStart("span", sId + "-SuggDescr")
 					.class("sapUiPseudoInvisibleText")
 					.attr("role", "status")
 					.attr("aria-live", "polite")

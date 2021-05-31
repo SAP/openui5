@@ -3,23 +3,24 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/util/MockServer",
 	"sap/m/SuggestionItem",
 	"sap/m/SearchField",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"jquery.sap.keycodes",
-	"jquery.sap.global"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
-	MockServer,
 	SuggestionItem,
 	SearchField,
 	Device,
 	InvisibleText,
+	KeyCodes,
 	jQuery
 ) {
+	"use strict";
+
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
 
@@ -150,25 +151,25 @@ sap.ui.define([
 		oSF.suggest();
 		this.clock.tick(1000);
 
-		sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oSF.getDomRef(), KeyCodes.ARROW_DOWN);
 		assert.strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected");
 		assert.strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
 		assert.strictEqual(oSF.$('I').attr('aria-activedescendant'), oSF.getSuggestionItems()[0].getId(), "aria-activedescendant is correct");
 
-		sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oSF.getDomRef(), KeyCodes.ARROW_DOWN);
 		assert.strictEqual(oSF._oSuggest.getSelected(), 1, "The second item is selected");
 		assert.strictEqual(oSF.getValue(), oSF.getSuggestionItems()[1].getSuggestionText(), "Suggestion text value is set to the search field");
 		assert.strictEqual(oSF.$('I').attr('aria-activedescendant'), oSF.getSuggestionItems()[1].getId(), "aria-activedescendant is correct");
 
-		sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oSF.getDomRef(), KeyCodes.ARROW_UP);
 		assert.strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected again");
 		assert.strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
 		assert.strictEqual(oSF.$('I').attr('aria-activedescendant'), oSF.getSuggestionItems()[0].getId(), "aria-activedescendant is correct");
 	});
 
 	QUnit.test("Enter closes suggestions", function(assert){
-		sap.ui.test.qunit.triggerKeydown(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeyup(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oSF.getDomRef("I"), KeyCodes.ENTER);
+		qutils.triggerKeyup(oSF.getDomRef("I"), KeyCodes.ENTER);
 		this.clock.tick(1000);
 		assert.ok(!oSF._oSuggest.isOpen(), "Picker is closed after ENTER");
 		assert.notOk(oSF.$('SuggDescr').text(), "'Available results' text is cleared");
@@ -182,8 +183,8 @@ sap.ui.define([
 
 
 		// press ESCAPE when the suggestions are visible
-		sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-		sap.ui.test.qunit.triggerKeyup(oSF.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oSF.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oSF.getDomRef(), KeyCodes.ESCAPE);
 
 		this.clock.tick(1000);
 
