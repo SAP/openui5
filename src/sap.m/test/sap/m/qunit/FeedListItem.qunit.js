@@ -328,6 +328,47 @@ sap.ui.define([
 	QUnit.test("No Icon", function (assert) {
 		assert.ok(!oFeedList.getItems()[4].oAvatar.$().hasClass("sapMImg"), "property icon initial: image should not have class sapMImg ");
 	});
+	QUnit.test("Default src - icon size", function (assert) {
+		assert.ok(oFeedList.getItems()[4].oAvatar.$().hasClass("sapFAvatarS"), "Avatar has class sapAvatarS applied");
+		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("font-size"), "32px", "Avatar icon font size is 2 rem");
+	});
+	QUnit.test("Default src - icon color", function (assert) {
+		this.oNonActiveItem = oFeedList.getItems().filter(function(oListItem) {
+			return !oListItem.getIconActive();
+		})[0];
+		assert.ok(this.oNonActiveItem.oAvatar.$().hasClass("sapMFeedListItemImageInactive"), "Avatar has the Inactive icon class applied");
+		assert.equal(this.oNonActiveItem.oAvatar.$().css("color"), "rgb(255, 255, 255)", "The inactive icon color is white in Default theme");
+		this.applyTheme = function(sTheme, fnCallback) {
+			this.sRequiredTheme = sTheme;
+			if (sap.ui.getCore().getConfiguration().getTheme() === this.sRequiredTheme && sap.ui.getCore().isThemeApplied()) {
+				if (typeof fnCallback === "function") {
+					fnCallback.bind(this)();
+					fnCallback = undefined;
+				}
+			} else {
+				sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
+				sap.ui.getCore().applyTheme(sTheme);
+			}
+
+			function fnThemeApplied(oEvent) {
+				sap.ui.getCore().detachThemeChanged(fnThemeApplied);
+				if (sap.ui.getCore().getConfiguration().getTheme() === this.sRequiredTheme && sap.ui.getCore().isThemeApplied()) {
+					if (typeof fnCallback === "function") {
+						fnCallback.bind(this)();
+						fnCallback = undefined;
+					}
+				} else {
+					jQuery.sap.delayedCall(1500, this, fnThemeApplied, oEvent);
+				}
+			}
+		};
+		var done = assert.async();
+		this.applyTheme("sap_belize", function() {
+			this.oNonActiveItem.rerender();
+			assert.equal(this.oNonActiveItem.oAvatar.$().css("color"), "rgb(255, 255, 255)", "The inactive icon color is white in sap_belize theme");
+			done();
+		}.bind(this));
+	});
 
 	QUnit.test("No Timestamp", function (assert) {
 		assert.ok(oFeedList.getItems()[4].$("timestamp").length === 0, "no timestamp should be rendered");
