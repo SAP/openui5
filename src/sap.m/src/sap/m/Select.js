@@ -95,7 +95,7 @@ function(
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/select/ Select}
 		 *
 		 * @extends sap.ui.core.Control
-		 * @implements sap.ui.core.IFormContent
+		 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -110,7 +110,8 @@ function(
 				interfaces: [
 					"sap.ui.core.IFormContent",
 					"sap.m.IOverflowToolbarContent",
-					"sap.f.IShellBar"
+					"sap.f.IShellBar",
+					"sap.ui.core.ISemanticFormContent"
 				],
 				library: "sap.m",
 				properties: {
@@ -2317,6 +2318,16 @@ function(
 		Select.prototype.isOpenArea = function(oDomRef) {
 			var oOpenAreaDomRef = this.getOpenArea();
 			return oOpenAreaDomRef && oOpenAreaDomRef.contains(oDomRef);
+		};
+
+		Select.prototype.getFormFormattedValue = function() {
+			var oItem = this.getSelectedItem();
+
+			return oItem ? oItem.getText() : "";
+		};
+
+		Select.prototype.getFormValueProperty = function () {
+			return "selectedKey";
 		};
 
 		/**
