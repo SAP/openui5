@@ -232,17 +232,6 @@ sap.ui.define([
 		assert.equal(oFormElement.indexOfField(oField2), 1, "Index of Field");
 		assert.equal(oLabel.getLabelForRendering(), "I1", "Label points to first field");
 		assert.notOk(oLabel.isRequired(), "Label not required");
-
-		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
-		sinon.spy(oLabel, "invalidate");
-		oField2.setRequired(true);
-		assert.ok(oLabel.isRequired(), "Label is required");
-		assert.ok(oLabel.invalidate.called, "Label invalidated");
-		oLabel.getDomRef.restore();
-
-		oFormElement.setLabel();
-		assert.notOk(oLabel.isRequired(), "Label not required");
-		oLabel.destroy();
 	});
 
 	QUnit.test("insertField", function(assert) {
@@ -261,14 +250,6 @@ sap.ui.define([
 		assert.equal(oFormElement.indexOfField(oField2), 0, "Index of Field");
 		assert.equal(oLabel.getLabelForRendering(), "I2", "Label points to first field");
 		assert.notOk(oLabel.isRequired(), "Label not required");
-
-		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
-		sinon.spy(oLabel, "invalidate");
-		oField2.setRequired(true);
-		assert.ok(oLabel.isRequired(), "Label is required");
-		assert.ok(oLabel.invalidate.called, "Label invalidated");
-
-		oLabel.getDomRef.restore();
 	});
 
 	QUnit.test("removeField", function(assert) {
@@ -368,6 +349,39 @@ sap.ui.define([
 		assert.equal(aFields.length, 2, "2 Fields assigned");
 		assert.equal(oLabel.getLabelForRendering(), aFields[0].getId(), "Label points to first field");
 		assert.notOk(oLabel.isRequired(), "Label is not required");
+	});
+
+	QUnit.test("Label required change", function(assert) {
+		var oLabel = new Label("L1", {text: "Test"});
+		oFormElement.setLabel(oLabel);
+		var oField1 = new Input("I1");
+		var oField2 = new Input("I2");
+		oFormElement.addField(oField1);
+		oFormElement.addField(oField2);
+
+		assert.notOk(oLabel.isRequired(), "Label not required");
+
+		sinon.stub(oLabel, "getDomRef").returns(true); // fake Label is rendered
+		sinon.spy(oLabel, "invalidate");
+		oField1.setRequired(true);
+		assert.ok(oLabel.isRequired(), "Label is required");
+		assert.ok(oLabel.invalidate.called, "Label invalidated");
+		oLabel.invalidate.reset();
+
+		oField1.setEditable(false);
+		assert.notOk(oLabel.isRequired(), "Label is not required");
+		assert.ok(oLabel.invalidate.called, "Label invalidated");
+		oLabel.invalidate.reset();
+
+		oField2.setRequired(true);
+		assert.ok(oLabel.isRequired(), "Label is required");
+		assert.ok(oLabel.invalidate.called, "Label invalidated");
+		oLabel.invalidate.reset();
+		oLabel.getDomRef.restore();
+
+		oFormElement.setLabel();
+		assert.notOk(oLabel.isRequired(), "Label not required");
+		oLabel.destroy();
 	});
 
 	QUnit.module("other functions", {
