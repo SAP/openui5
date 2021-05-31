@@ -4653,40 +4653,6 @@ sap.ui.define([
 		oStub.restore();
 	});
 
-	QUnit.module("Input in a Dialog", {
-		beforeEach: function () {
-			this.dialog = new Dialog({
-				content: [
-					new Input({
-						showSuggestion: true,
-						suggestionItems: [
-							new SuggestionItem()
-						]
-					})
-				]
-			});
-		},
-		afterEach: function () {
-			this.dialog.destroy();
-			this.dialog = null;
-		}
-	});
-
-	QUnit.test('Dialog scrollbar', function (assert) {
-		var input = this.dialog.getContent()[0];
-		this.dialog.open();
-
-		var scrollDiv = this.dialog.$().find(".sapMDialogScroll")[0];
-		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
-
-		input._$input.trigger("focus").val("abc").trigger("input");
-
-		this.dialog.focus();
-		this.clock.tick(300);
-
-		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
-	});
-
 	QUnit.module("Type-ahead");
 
 	QUnit.test("Typeahead should be disabled on adroid devices", function (assert) {
@@ -5033,73 +4999,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(stub.callCount, 0, "Should NOT call 'setSelectedRow' when aggregation is destroyed after a proposed item was found.");
-	});
-
-	QUnit.test("Dialog's input should propagate the correct typed value for the valueHelpRequest event", function (assert) {
-		this.stub(Device, "system", {
-			desktop: false,
-			phone: true,
-			tablet: false
-		});
-
-		assert.expect(1);
-
-		var done = assert.async();
-		var oInput = new Input({
-			width: "10rem",
-			showValueHelp: true,
-			showSuggestion: true,
-			suggestionRows: {
-				path: "/items",
-				template: new ColumnListItem({
-					cells: [
-						new Text({text:"{value}"}),
-						new Text({text:"{key}"})
-					]
-				})
-			},
-			suggestionColumns: [
-				new Column({
-					header: new Label({text: "Text"})
-				}),
-				new sap.m.Column({
-					header: new Label({text: "Key"})
-				})
-			],
-			valueHelpRequest: function (oEvent) {
-				assert.strictEqual(oEvent.getParameter("_userInputValue"), "te");
-				done();
-			}
-		})
-			.setModel(new JSONModel({
-				items: [
-					{key: "key1", value: "test1"},
-					{key: "key2", value: "test2"},
-					{key: "key3", value: "test3"},
-					{key: "key4", value: "test4"}
-				]
-			})).placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		var oSuggPopover = oInput._getSuggestionsPopover();
-		var oPopupInput = oSuggPopover.getInput();
-		oSuggPopover.getPopover().open();
-		this.clock.tick(500);
-
-		oPopupInput.setValue("te");
-		oPopupInput.fireLiveChange({value: "", newValue: "te"});
-		oInput._fireValueHelpRequest();
-		sap.ui.getCore().applyChanges();
-		this.clock.tick(500);
-
-		// Assert
-		// Assertion is within valueHelpRequest callback
-
-		// Cleanup
-		oSuggPopover.getPopover().close();
-		this.clock.tick(500);
-		oInput.destroy();
 	});
 
 	QUnit.test("Typeahead should select the correct formatter", function (assert) {
@@ -6655,91 +6554,191 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.module("maxLength Property");
+	QUnit.module("Usage");
 
-	var fnSetValueTestCase1 = function (mSettings) {
-		QUnit.test("method: setValue() initial rendering should respect getMaxLength", function (assert) {
-			// system under test
+	QUnit.test("Input with list suggestion: Braces in binded text and key properties do not cause error", function(assert) {
+		// Arrange
+		var oData = {
+				items: [
+					{key: "key1 {{}}{}", value: "test1 {{}}", group: "1 {{}}{"},
+					{key: "key2 }}{{", value: "test2", group: "1 {{}}{"},
+					{key: "key3", value: "test3", group: "2 {}{{}}"},
+					{key: "key4", value: "test4", group: "2 {}{{}}"}
+				]
+			},
+			oInput = new Input({
+				showSuggestion: true,
+				suggestionItems: {
+					path: "/items",
+					template: new sap.ui.core.Item({key: "{key}", text: "{value}"}),
+					sorter: [new Sorter('group', false, true)]
+				}
+			});
+
+		oInput.setModel(new JSONModel(oData));
+		oInput.placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.trigger("focus").val("t").trigger("input");
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getTitle(), "1 {{}}{", "Braces are escaped in inputs item group header");
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getTitle(), "test1 {{}}", "Braces are escaped in inputs item text");
+
+		// Act
+		oInput.setSelectionItem(oInput.getSuggestionItems()[1]);
+
+		// Assert
+		assert.strictEqual(oInput.getValue(), "test1 {{}}", "Braces are correctly set on the value.");
+		assert.strictEqual(oInput.getSelectedKey(), "key1 {{}}{}", "Braces are escaped in inputs selected key.");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Input with table suggestions: Braces in binded text and key properties do not cause error", function(assert) {
+		// Arrange
+		var oData = {
+				items: [
+					{key: "key1 {{}}{}", value: "test1 {{}}", group: "1 {{}}{"},
+					{key: "key2 }}{{", value: "test2", group: "1 {{}}{"},
+					{key: "key3", value: "test3", group: "2 {}{{}}"},
+					{key: "key4", value: "test4", group: "2 {}{{}}"}
+				]
+			},
+			oInput = new Input({
+				showSuggestion: true,
+				suggestionRows: {
+					path: "/items",
+					template: new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Text({text:"{value}"}),
+							new sap.m.Text({text:"{key}"})
+						]
+					}),
+					sorter: [new Sorter('group', false, true)]
+				},
+				suggestionColumns: [
+					new sap.m.Column({
+						header: new sap.m.Label({text: "Text"})
+					}),
+					new sap.m.Column({
+						header: new sap.m.Label({text: "Key"})
+					})
+				]
+			});
+
+		oInput.setModel(new JSONModel(oData));
+		oInput.placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.trigger("focus").val("t").trigger("input");
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getTitle(), "1 {{}}{", "Braces are escaped in inputs item group header");
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getCells()[0].getText(), "test1 {{}}", "Braces are escaped in inputs item text");
+
+		// Act
+		oInput.setSelectionRow(oInput.getSuggestionRows()[1]);
+
+		// Assert
+		assert.strictEqual(oInput.getValue(), "test1 {{}}", "Braces are correctly set on the value.");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test('Input inside a dialog: Dialog scrollbar', function (assert) {
+		// Arrange
+		var oInput = new Input({
+				showSuggestion: true,
+				suggestionItems: [
+					new SuggestionItem()
+				]
+			}),
+			oDialog = new Dialog({
+				content: [oInput]
+			});
+
+		// Act
+		oDialog.open();
+
+		var scrollDiv = oDialog.$().find(".sapMDialogScroll")[0];
+
+		// Assert
+		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
+
+		// Act
+		oInput._$input.trigger("focus").val("abc").trigger("input");
+		oDialog.focus();
+		this.clock.tick(300);
+
+		// Assert
+		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
+
+		// Cleanup
+		oDialog.destroy();
+	});
+
+	QUnit.test("maxLength: setValue() initial rendering should respect getMaxLength", function (assert) {
+		var fnSetValueTestCase1 = function (mSettings) {
+			// Arrange
 			var oInput = new Input({maxLength: mSettings.maxLength, value: mSettings.value});
 
-			// arrange
 			oInput.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			// assertions
+			// Assert
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
 
-			// cleanup
+			// Cleanup
 			oInput.destroy();
-		});
-	};
+		};
 
-	fnSetValueTestCase1({
-		maxLength : 0,
-			value : "Test",
-		output: "Test"
+		fnSetValueTestCase1({maxLength : 0, value : "Test", output: "Test"});
+		fnSetValueTestCase1({maxLength: 5, value: "Test", output: "Test"});
+		fnSetValueTestCase1({maxLength: 2, value: "Test", output: "Te"});
 	});
 
-	fnSetValueTestCase1({
-		maxLength: 5,
-		value: "Test",
-		output: "Test"
-	});
-
-	fnSetValueTestCase1({
-		maxLength: 2,
-		value: "Test",
-		output: "Te"
-	});
-
-	var fnSetValueTestCase2 = function(mSettings) {
-		QUnit.test("method: setValue() after the initial rendering should respect getMaxLength", function(assert) {
-			// system under test
+	QUnit.test("maxLength: setValue() after the initial rendering should respect getMaxLength", function(assert) {
+		var fnSetValueTestCase2 = function(mSettings) {
+			// Arrange
 			var oInput = new Input({maxLength: mSettings.maxLength});
-			var fnSetValueSpy = this.spy(oInput, "setValue");
+			var fnSetValueSpy = sinon.spy(oInput, "setValue");
 
-			// arrange
 			oInput.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			var fnRerenderSpy = this.spy(oInput, "onAfterRendering");
+			var fnRerenderSpy = sinon.spy(oInput, "onAfterRendering");
 
-			// act
+			// Act
 			oInput.setValue(mSettings.input);
 
-			// assertions
+			// Assert
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
 			assert.ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
 			assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
 
-			// cleanup
+			// Cleanup
 			fnSetValueSpy.restore();
 			fnRerenderSpy.restore();
 			oInput.destroy();
-		});
-	};
+		};
 
-	fnSetValueTestCase2({
-		maxLength : 0,
-		input : "Test",
-		output: "Test"
+		fnSetValueTestCase2({maxLength: 0, input : "Test", output: "Test"});
+		fnSetValueTestCase2({maxLength: 5, input: "Test", output: "Test"});
+		fnSetValueTestCase2({maxLength: 2, input: "Test", output: "Te"});
 	});
 
-	fnSetValueTestCase2({
-		maxLength : 5,
-		input : "Test",
-		output: "Test"
-	});
-
-	fnSetValueTestCase2({
-		maxLength : 2,
-		input : "Test",
-		output: "Te"
-	});
-
-	QUnit.test("setMaxLength vs setValue priorities", function (assert) {
-		// system under test
+	QUnit.test("maxLength: setMaxLength vs setValue priorities", function (assert) {
+		// Arrange
 		var oInput = new Input({});
-		// arrange
+
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -6773,113 +6772,74 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oInput.getValue(), "12345678", "maxLength is ignored when its value is 0");
 
-		// cleanup
+		// Cleanup
 		oInput.destroy();
 	});
 
-	QUnit.module("Handling curly braces", {
-		beforeEach: function() {
-			var oData = {
-				items: [
-					{key: "key1 {{}}{}", value: "test1 {{}}", group: "1 {{}}{"},
-					{key: "key2 }}{{", value: "test2", group: "1 {{}}{"},
-					{key: "key3", value: "test3", group: "2 {}{{}}"},
-					{key: "key4", value: "test4", group: "2 {}{{}}"}
+	QUnit.test("Mobile: Dialog's input should propagate the correct typed value for the valueHelpRequest event", function (assert) {
+		// Arrange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		assert.expect(1);
+
+		var done = assert.async();
+		var oInput = new Input({
+				width: "10rem",
+				showValueHelp: true,
+				showSuggestion: true,
+				suggestionRows: {
+					path: "/items",
+					template: new ColumnListItem({
+						cells: [
+							new Text({text:"{value}"}),
+							new Text({text:"{key}"})
+						]
+					})
+				},
+				suggestionColumns: [
+					new Column({
+						header: new Label({text: "Text"})
+					}),
+					new sap.m.Column({
+						header: new Label({text: "Key"})
+					})
 				],
-				columns: [
-					{ columnLabel: "Text" },
-					{ columnLabel: "Key" }
+				valueHelpRequest: function (oEvent) {
+					// Assert
+					assert.strictEqual(oEvent.getParameter("_userInputValue"), "te");
+					done();
+				}
+			})
+			.setModel(new JSONModel({
+				items: [
+					{key: "key1", value: "test1"},
+					{key: "key2", value: "test2"},
+					{key: "key3", value: "test3"},
+					{key: "key4", value: "test4"}
 				]
-			};
-			this.oModel = new JSONModel(oData);
-		},
-		afterEach: function() {
-			this.oModel.destroy();
-			this.oModel = null;
-		}
-	});
+			})).placeAt("content");
 
-	QUnit.test("Input with list suggestion - Braces in binded text and key properties do not cause error", function(assert) {
-		// Arrange
-		var oInput = new Input({
-			showValueHelp: true,
-			showSuggestion: true,
-			suggestionItems: {
-				path: "/items",
-				template: new sap.ui.core.Item({key: "{key}", text: "{value}"}),
-				sorter: [new Sorter('group', false, true)]
-			}
-		});
-
-		oInput.setModel(this.oModel);
-		oInput.placeAt('content');
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.trigger("focus").val("t").trigger("input");
-		this.clock.tick(300);
+		var oSuggPopover = oInput._getSuggestionsPopover();
+		var oPopupInput = oSuggPopover.getInput();
+		oSuggPopover.getPopover().open();
+		this.clock.tick(500);
 
-		// Assert
-		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getTitle(), "1 {{}}{", "Braces are escaped in inputs item group header");
-		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getTitle(), "test1 {{}}", "Braces are escaped in inputs item text");
-
-		// Act
-		oInput.setSelectionItem(oInput.getSuggestionItems()[1]);
-
-		// Assert
-		assert.strictEqual(oInput.getValue(), "test1 {{}}", "Braces are correctly set on the value.");
-		assert.strictEqual(oInput.getSelectedKey(), "key1 {{}}{}", "Braces are escaped in inputs selected key.");
-
-		// Cleanup
-		oInput.destroy();
-	});
-
-	QUnit.test("Input with table suggestions - Braces in binded text and key properties do not cause error", function(assert) {
-		// Arrange
-		var oInput = new Input({
-			showValueHelp: true,
-			showSuggestion: true,
-			suggestionRows: {
-				path: "/items",
-				template: new sap.m.ColumnListItem({
-					cells: [
-						new sap.m.Text({text:"{value}"}),
-						new sap.m.Text({text:"{key}"})
-					]
-				}),
-				sorter: [new Sorter('group', false, true)]
-			},
-			suggestionColumns: [
-				new sap.m.Column({
-					header: new sap.m.Label({text: "Text"})
-				}),
-				new sap.m.Column({
-					header: new sap.m.Label({text: "Key"})
-				})
-			]
-		});
-
-		oInput.setModel(this.oModel);
-		oInput.placeAt('content');
+		oPopupInput.setValue("te");
+		oPopupInput.fireLiveChange({value: "", newValue: "te"});
+		oInput._fireValueHelpRequest();
 		sap.ui.getCore().applyChanges();
-
-		// Act
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.trigger("focus").val("t").trigger("input");
-		this.clock.tick(300);
-
-		// Assert
-		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getTitle(), "1 {{}}{", "Braces are escaped in inputs item group header");
-		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getCells()[0].getText(), "test1 {{}}", "Braces are escaped in inputs item text");
-
-		// Act
-		oInput.setSelectionRow(oInput.getSuggestionRows()[1]);
-
-		// Assert
-		assert.strictEqual(oInput.getValue(), "test1 {{}}", "Braces are correctly set on the value.");
+		this.clock.tick(500);
 
 		// Cleanup
+		oSuggPopover.getPopover().close();
+		this.clock.tick(500);
 		oInput.destroy();
 	});
 
