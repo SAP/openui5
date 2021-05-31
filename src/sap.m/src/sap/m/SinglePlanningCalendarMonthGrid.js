@@ -315,13 +315,28 @@ sap.ui.define([
 			}
 		};
 
+		SinglePlanningCalendarMonthGrid.prototype._findSrcControl = function (oEvent) {
+			if (!oEvent.target.parentElement || !oEvent.target.parentElement.classList.contains("sapUiCalendarRowApps")) {
+				return oEvent.srcControl;
+			}
+
+			// data-sap-ui-related - This is a relation to appointment object.
+			// This is the connection between the DOM Element and the Object representing an appointment.
+			var sAppointmentId = oEvent.target.parentElement.getAttribute("data-sap-ui-related");
+
+			// finding the appointment
+			return this.getAppointments().find(function (oAppointment) {
+				return oAppointment.sId === sAppointmentId;
+			});
+		};
+
 		/**
 		 * Helper function handling <code>keydown</code> or <code>tap</code> event on the grid.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		SinglePlanningCalendarMonthGrid.prototype._fireSelectionEvent = function (oEvent) {
-			var oSrcControl = oEvent.srcControl,
+			var oSrcControl = this._findSrcControl(oEvent),
 				oTarget = oEvent.target,
 				bIsCell = oTarget && oTarget.classList.contains("sapMSPCMonthDay"),
 				bIsLink = oTarget && oTarget.classList.contains("sapMLnk"),
@@ -344,6 +359,18 @@ sap.ui.define([
 					appointments: this._toggleAppointmentSelection(undefined, true)
 				});
 			} else if (oSrcControl && oSrcControl.isA("sap.ui.unified.CalendarAppointment")) {
+				// add suffix in appointment
+				if (oTarget.parentElement && oTarget.parentElement.getAttribute("id")) {
+					var sTargetId = oTarget.parentElement.getAttribute("id");
+
+					// data-sap-ui-related - This is a relation to appointment object.
+					// This is the connection between the DOM Element and the Object representing an appointment.
+					var sBaseIDPart = oTarget.parentElement.getAttribute("data-sap-ui-related");
+					var sSuffix = sTargetId.replace(sBaseIDPart + "-", "");
+
+					oSrcControl._setAppointmentPartSuffix(sSuffix);
+				}
+
 				this.fireAppointmentSelect({
 					appointment: oSrcControl,
 					appointments: this._toggleAppointmentSelection(oSrcControl, !(oEvent.ctrlKey || oEvent.metaKey))

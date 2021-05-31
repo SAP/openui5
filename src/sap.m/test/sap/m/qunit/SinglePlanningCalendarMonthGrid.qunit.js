@@ -275,6 +275,36 @@ sap.ui.define([
 			assert.equal(aAppointmentNodes.length, 3, "exceeding view port appointments are rendered");
 		});
 
+		QUnit.test("Large appointment representation in DOM with unique ID", function(assert) {
+			// arrange
+			this.oSPC.destroyAppointments();
+			var oAppointment = new CalendarAppointment("appointment_from_01_to_22",{
+				startDate: new Date(2018, 2, 1),
+				endDate: new Date(2018, 7, 22)
+				});
+
+			// act
+			this.oSPC.addAppointment(oAppointment);
+			sap.ui.getCore().applyChanges();
+
+			var oFakeEvent = {
+				target: {
+					parentElement: document.getElementById("appointment_from_01_to_22-0_0"),
+					classList: {
+						contains: function() {
+							return false;
+						}
+					}
+				}
+			};
+			this.oSPC._fireSelectionEvent(oFakeEvent);
+
+			// assert
+			assert.ok(oAppointment.getDomRef(), "appointment shuld have DOM representation");
+			assert.equal(oAppointment, this.oSPC._findSrcControl(oFakeEvent), "the srcControl found must be the same as oAppointment");
+			assert.ok(oAppointment._sAppointmentPartSuffix, "after calling the _findSrcControl method, the appointment must have a suffix");
+		});
+
 		QUnit.module("Other", {
 			beforeEach: function() {
 				this.oSPCMG = new SinglePlanningCalendarMonthGrid({
