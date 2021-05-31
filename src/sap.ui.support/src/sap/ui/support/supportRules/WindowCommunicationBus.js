@@ -156,14 +156,21 @@ sap.ui.define([
 
 		// when a message is sent from a tool frame to the application (opener) window,
 		// the message should have the correct details, validating that it comes from a known tool frame
-		var bMatchOrigin = eMessage.origin === this._frame.origin;
+
+		// check if the frame ID (number represented as string) is the same
 		var bMatchIdentifier = eMessage.data._frameIdentifier === this._frame.identifier;
-		// remove relative paths (if the frame src is relative to the parent)
+
+		// check if the URL matches: 1. check if the domain name matches - should be case insensitive
+		var oOriginRegExp = new RegExp("^" + this._frame.origin + "$", "i");
+		var bMatchOrigin = oOriginRegExp.exec(eMessage.origin);
+
+		// check if the URL matches: 2. check if the path to the iframe matches.
+		// if the frame URL is relative to the parent window's URL, remove relative path segments
 		var iFrameUrlQuery = this._frame.url.indexOf("?");
 		var sFrameUrl = this._frame.url.substr(0, iFrameUrlQuery).replace(/\.\.\//g, "").replace(/\.\//g, "") + this._frame.url.substr(iFrameUrlQuery);
 		var bMatchUrl = eMessage.data._origin.indexOf(sFrameUrl) > -1;
 
-		return bMatchOrigin && bMatchIdentifier && bMatchUrl;
+		return bMatchIdentifier && bMatchOrigin && bMatchUrl;
 	};
 
 	WindowCommunicationBus.prototype._getFrameIdentifier = function () {
