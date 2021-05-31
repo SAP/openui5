@@ -415,7 +415,7 @@ sap.ui.define([
 
 	QUnit.module("Keyboard handling");
 
-	function checkKeyboardEventhandling(sTestName, oOptions) {
+	function checkKeyboardEventhandling(sTestName, oOptions, bKeyDown) {
 		QUnit.test(sTestName, function(assert) {
 			// arrange
 			var oObjectIdentifier = new ObjectIdentifier({
@@ -429,7 +429,12 @@ sap.ui.define([
 
 				// act
 			var fnFireSelectSpy = this.spy(oObjectIdentifier, "fireTitlePress");
-			sap.ui.test.qunit.triggerKeydown(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
+			if (bKeyDown) {
+				sap.ui.test.qunit.triggerKeydown(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
+			} else {
+				sap.ui.test.qunit.triggerKeyup(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
+			}
+
 			this.clock.tick(1);
 
 			// assertions
@@ -443,7 +448,7 @@ sap.ui.define([
 
 	checkKeyboardEventhandling("Firing ENTER event", {
 		keyCode : jQuery.sap.KeyCodes.ENTER
-	});
+	}, true);
 
 	checkKeyboardEventhandling("Firing SPACE event", {
 		keyCode : jQuery.sap.KeyCodes.SPACE
