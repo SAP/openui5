@@ -23,6 +23,7 @@ sap.ui.define([
 	'./TabStripRenderer',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/KeyCodes",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control",
 	// jQuery Plugin "scrollLeftRTL"
@@ -48,7 +49,8 @@ function(
 	SelectListRenderer,
 	TabStripRenderer,
 	Log,
-	jQuery
+	jQuery,
+	KeyCodes
 ) {
 		"use strict";
 
@@ -420,6 +422,13 @@ function(
 			return bScrollNeeded;
 		};
 
+		TabStrip.prototype.onkeyup = function (oEvent){
+			if (oEvent && oEvent.keyCode === KeyCodes.ARROW_LEFT || oEvent.keyCode === KeyCodes.ARROW_RIGHT) {
+				var oTarget = jQuery(oEvent.target).control(0);
+				this._scrollIntoView(oTarget, 500);
+			}
+		};
+
 		TabStrip.prototype._handleOverflowButtons = function() {
 			var oTabsDomRef = this.getDomRef("tabs"),
 				oTabsContainerDomRef = this.getDomRef("tabsContainer"),
@@ -598,6 +607,8 @@ function(
 		TabStrip.prototype._scrollIntoView = function (oItem, iDuration) {
 			var $tabs = this.$("tabs"),
 				$item = oItem.$(),
+				iLeftButtonWidth = this.$("leftOverflowButtons") ? this.$("leftOverflowButtons").width() : 0,
+				iRigtButtonWidth = this.$("rightOverflowButtons") ? this.$("rightOverflowButtons").width() : 0,
 				iTabsPaddingWidth = $tabs.innerWidth() - $tabs.width(),
 				iItemWidth = $item.outerWidth(true),
 				iItemPosLeft = $item.position().left - iTabsPaddingWidth / 2,
@@ -607,22 +618,20 @@ function(
 				iNewScrollLeft = iScrollLeft;
 
 			// check if item is outside of viewport
-			if (iItemPosLeft < 0 || iItemPosLeft > iContainerWidth - iItemWidth) {
-
+			if (iItemPosLeft < iLeftButtonWidth || iItemPosLeft + iRigtButtonWidth > iContainerWidth - iItemWidth) {
 				if (this._bRtl && Device.browser.firefox) {
-					if (iItemPosLeft < 0) { // right side: make this the last item
-						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
+					if (iItemPosLeft > iLeftButtonWidth) { // right side: make this the last item
+						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth + iRigtButtonWidth;
 					} else { // left side: make this the first item
-						iNewScrollLeft += iItemPosLeft;
+						iNewScrollLeft += iItemPosLeft - iLeftButtonWidth;
 					}
 				} else {
-					if (iItemPosLeft < 0) { // left side: make this the first item
-						iNewScrollLeft += iItemPosLeft;
+					if (iItemPosLeft < iLeftButtonWidth) { // left side: make this the first item
+						iNewScrollLeft += iItemPosLeft - iRigtButtonWidth;
 					} else { // right side: make this the last item
-						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
+						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth + iLeftButtonWidth;
 					}
 				}
-
 				// store current scroll state to set it after re-rendering
 				this._iCurrentScrollLeft = iNewScrollLeft;
 				this._oScroller.scrollTo(iNewScrollLeft, 0, iDuration);
