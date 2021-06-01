@@ -161,6 +161,9 @@ sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) 
 					{type: validateCellInfo},
 					{type: "class:sap.ui.unified.Menu"}
 				]
+			},
+			TotalRowCountChanged: {
+				arguments: []
 			}
 		},
 		Row: {

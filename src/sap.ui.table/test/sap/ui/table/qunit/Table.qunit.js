@@ -4839,13 +4839,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("test setSelectionInterval function", function(assert) {
-		assert.deepEqual(oTable.getSelectedIndices(), [], "Nothing is selected");
-		oTable.setSelectionInterval(2, 6);
-		assert.deepEqual(oTable.getSelectedIndices(), [2, 3, 4, 5, 6],
-			"Calling #setSelectedIndices(2, 6) selected the correct indices");
-	});
-
 	QUnit.test("test _setLargeDataScrolling function", function(assert) {
 		oTable._setLargeDataScrolling(true);
 		assert.ok(oTable._bLargeDataScrolling, "Large data scrolling enabled");
@@ -5725,6 +5718,43 @@ sap.ui.define([
 		this.oTable._updateTableSizes(TableUtils.RowsUpdateReason.Resize);
 		assert.equal(oUpdateSizesSpy.callCount, 1, "'UpdateSizes' hook was called once");
 		assert.ok(oUpdateSizesSpy.calledWithExactly(TableUtils.RowsUpdateReason.Resize), "'UpdateSizes' hook was correctly called");
+	});
+
+	QUnit.test("TotalRowCountChanged", function(assert) {
+		var oTotalRowCountChangedSpy = sinon.spy();
+		var that = this;
+
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, oTotalRowCountChangedSpy);
+
+		this.oTable.bindRows({path: "/"});
+		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(1));
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oTotalRowCountChangedSpy.callCount, 1, "Bind: 'TotalRowCountChanged' hook called once");
+			assert.ok(oTotalRowCountChangedSpy.calledWithExactly(), "Bind: 'TotalRowCountChanged' hook parameters");
+
+			oTotalRowCountChangedSpy.reset();
+			that.oTable.getBinding().filter(new Filter({path: "something", operator: "EQ", value1: "something"}));
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			assert.equal(oTotalRowCountChangedSpy.callCount, 1, "Filter: 'TotalRowCountChanged' hook called once");
+			assert.ok(oTotalRowCountChangedSpy.calledWithExactly(), "Filter: 'TotalRowCountChanged' hook parameters");
+
+			oTotalRowCountChangedSpy.reset();
+			that.oTable.getBinding().filter();
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			assert.equal(oTotalRowCountChangedSpy.callCount, 1, "Remove filter: 'TotalRowCountChanged' hook called once");
+			assert.ok(oTotalRowCountChangedSpy.calledWithExactly(), "Remove filter: 'TotalRowCountChanged' hook parameters");
+
+			oTotalRowCountChangedSpy.reset();
+			that.oTable.getBinding().sort(new Sorter({path: "something"}));
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			assert.equal(oTotalRowCountChangedSpy.callCount, 0, "Sort: 'TotalRowCountChanged' hook not called");
+
+			oTotalRowCountChangedSpy.reset();
+			that.oTable.unbindRows();
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			assert.equal(oTotalRowCountChangedSpy.callCount, 1, "Unbind: 'TotalRowCountChanged' hook called once");
+			assert.ok(oTotalRowCountChangedSpy.calledWithExactly(), "Unbind: 'TotalRowCountChanged' hook parameters");
+		});
 	});
 
 	QUnit.module("NoData", {

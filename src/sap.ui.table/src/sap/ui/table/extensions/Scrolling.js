@@ -1568,6 +1568,10 @@ sap.ui.define([
 			}
 		},
 
+		onTotalRowCountChanged: function() {
+			VerticalScrollingHelper.adjustToTotalRowCount(this);
+		},
+
 		adjustToTotalRowCount: function(oTable) {
 			var oScrollExtension = oTable._getScrollExtension();
 
@@ -2205,6 +2209,7 @@ sap.ui.define([
 			HorizontalScrollingHelper.addEventListeners(oTable);
 			VerticalScrollingHelper.addEventListeners(oTable);
 			ScrollingHelper.addEventListeners(oTable);
+			TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, VerticalScrollingHelper.onTotalRowCountChanged, oTable);
 		},
 
 		/**
@@ -2217,6 +2222,7 @@ sap.ui.define([
 			HorizontalScrollingHelper.removeEventListeners(oTable);
 			VerticalScrollingHelper.removeEventListeners(oTable);
 			ScrollingHelper.removeEventListeners(oTable);
+			TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, VerticalScrollingHelper.onTotalRowCountChanged, oTable);
 		},
 
 		/**
@@ -2539,13 +2545,6 @@ sap.ui.define([
 		} else {
 			VerticalScrollingHelper.adjustScrollPositionToFirstVisibleRow(oTable);
 		}
-	};
-
-	/**
-	 * Adjusts the scrollbar and the scroll position to the total row count. Expects that rows will be updated.
-	 */
-	ScrollExtension.prototype.adjustToTotalRowCount = function() {
-		VerticalScrollingHelper.adjustToTotalRowCount(this.getTable());
 	};
 
 	/**
