@@ -19,13 +19,13 @@
 							displayShape="Square" />
 						<m:VBox>
 							<m:Title text="Robot Arm Series 9" />
-							<m:Text text="PO-48865" />
+							<m:Label text="PO-48865" />
 						</m:VBox>
 					</m:HBox>
 				</snappedHeading>
 
 				<expandedContent>
-					<m:Text text="PO-48865"/>
+					<m:Label text="PO-48865"/>
 				</expandedContent>
 
 				<snappedTitleOnMobile>
@@ -49,17 +49,17 @@
 
 				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
 					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
-						<m:Label text="Manufacturer" class="sapUiTinyMarginEnd" />
+						<m:Label text="Manufacturer:" class="sapUiTinyMarginEnd" />
 						<m:Text text=" Robotech" />
 					</m:HBox>
 
 					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
-						<m:Label text="Factory" class="sapUiTinyMarginEnd" />
+						<m:Label text="Factory:" class="sapUiTinyMarginEnd" />
 						<m:Text text=" Orlando, Florida" />
 					</m:HBox>
 
 					<m:HBox>
-						<m:Label text="Supplier" class="sapUiTinyMarginEnd" />
+						<m:Label text="Supplier:" class="sapUiTinyMarginEnd" />
 						<m:Link text="Robotech (234242343)" />
 					</m:HBox>
 				</m:VBox>

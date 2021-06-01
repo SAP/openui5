@@ -1,13 +1,13 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:forms="sap.ui.layout.form" xmlns="sap.m">
 	<forms:SimpleForm editable="false" layout="ColumnLayout">
 
-			<Label text="Evangelize the UI framework across the company" design="Bold"/>
+			<Label text="Evangelize the UI framework across the company" />
 			<Text text="4 days overdue Cascaded"/>
 
-			<Label text="Get trained in development management direction" design="Bold"/>
+			<Label text="Get trained in development management direction" />
 			<Text text="Due Nov 21"/>
 
-			<Label text="Mentor junior developers" design="Bold"/>
+			<Label text="Mentor junior developers" />
 			<Text text="Due Dec 31 Cascaded"/>
 
 	</forms:SimpleForm>
