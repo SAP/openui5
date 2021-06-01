@@ -709,9 +709,10 @@ function(
 									}
 									aValues.push(sValue);
 								}
+								return [_getMonths.apply(this).indexOf(aValues[0])];
 							}
 
-							return [_getMonths.apply(this).indexOf(aValues[0])];
+							return null;
 						},
 						createControl: function(oType, sPath, iIndex, sId)  {
 							var getMonthItems = function() {
