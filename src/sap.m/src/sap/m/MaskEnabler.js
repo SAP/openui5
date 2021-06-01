@@ -1172,7 +1172,7 @@ sap.ui.define([
 		 * @private
 		 */
 		this._getMinBrowserDelay = function () {
-			return !Device.browser.msie ? 4 : 50;
+			return 4;
 		};
 
 		/**
@@ -1479,7 +1479,7 @@ sap.ui.define([
 
 		/**
 		 * Checks if the current environment is Android PS with browser Chrome
- 		 * @returns {boolean} true if it is both Chrome and Android, otherwise - false.
+		 * @returns {boolean} true if it is both Chrome and Android, otherwise - false.
 		 * @private
 		 */
 		this._isChromeOnAndroid = function() {
