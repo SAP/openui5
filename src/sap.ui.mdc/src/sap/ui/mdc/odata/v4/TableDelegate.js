@@ -113,14 +113,6 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
-		// disable temporary count in toolbar -> CPOUIFTEAMB-1769
-		// TODO: remove this once a solution has been found
-		oTable.setShowRowCount(false);
-		oTable.setShowRowCount = function() {
-			return this;
-		};
-		/************************************/
-
 		return enrichGridTable(oTable);
 	};
 

@@ -2478,7 +2478,9 @@ sap.ui.define([
 
 		var iRowCount;
 
-		if (oRowBinding.isLengthFinal()) {
+		if (oRowBinding.getCount) {
+			iRowCount = oRowBinding.getCount();
+		} else if (oRowBinding.isLengthFinal()) {
 			iRowCount = oRowBinding.getLength();
 		}
 
