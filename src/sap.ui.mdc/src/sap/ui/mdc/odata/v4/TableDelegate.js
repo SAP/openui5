@@ -7,23 +7,27 @@ sap.ui.define([
 	"../../util/loadModules",
 	"../../library",
 	"sap/m/ColumnPopoverSelectListItem",
+	"sap/m/MessageBox",
 	"sap/ui/core/Item",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
-	"sap/m/MessageBox",
-	"sap/ui/core/format/ListFormat"
+	"sap/ui/core/format/ListFormat",
+	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	TableDelegate,
 	loadModules,
 	library,
 	ColumnPopoverSelectListItem,
+	MessageBox,
 	Item,
 	Core,
 	coreLibrary,
-	MessageBox,
-	ListFormat
+	ListFormat,
+	ManagedObjectObserver
 ) {
 	"use strict";
+
+	/*global Set */
 
 	var TableType = library.TableType;
 	var TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
@@ -109,11 +113,14 @@ sap.ui.define([
 	Delegate.formatGroupHeader = function(oTable, oContext, sProperty) {};
 
 	Delegate.preInit = function(oTable) {
-		if (oTable._getStringType() === TableType.ResponsiveTable) {
-			return Promise.resolve();
+		if (!TableMap.has(oTable)) {
+			TableMap.set(oTable, {});
 		}
 
-		return enrichGridTable(oTable);
+		return configureInnerTable(oTable).then(function() {
+			setAggregation(oTable);
+			setUpTableObserver(oTable);
+		});
 	};
 
 	Delegate.validateState = function(oControl, oState, sKey) {
@@ -170,7 +177,8 @@ sap.ui.define([
 	 * Provides hook to update the binding info object that is used to bind the table to the model.
 	 *
 	 * Delegate objects that implement this method must ensure that at least the <code>path</code> key of the binding info is provided.
-	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code>. For more information, see {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
+	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code>. For more information, see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
 	 *
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
 	 * @param {object} oDelegatePayload The delegate payload
@@ -238,7 +246,7 @@ sap.ui.define([
 	};
 
 	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
-		if (!TableMap.get(oTable)) {
+		if (!isInnerTableReadyForAnalytics(oTable)) {
 			return [];
 		}
 
@@ -385,59 +393,51 @@ sap.ui.define([
 		}
 	}
 
-	function setAggregation(oTable, aGroupedProperties, mAggregatedProperties) {
-		var mTableMap = TableMap.get(oTable) || {};
-		var oPlugin = mTableMap.plugin;
-
-		if (oPlugin) {
-			aGroupedProperties = aGroupedProperties || oTable._getGroupedProperties();
-			mAggregatedProperties = mAggregatedProperties || oTable._getAggregatedProperties();
-
-			var aAggregates = Object.keys(mAggregatedProperties);
-			var aGroupLevels = aGroupedProperties.map(function (mGroupLevel) {
+	/**
+	 * Updates the aggregation info if the plugin is enabled.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 */
+	function setAggregation(oTable) {
+		if (isInnerTableReadyForAnalytics(oTable)) {
+			var aAggregates = Object.keys(oTable._getAggregatedProperties());
+			var aGroupLevels = oTable._getGroupedProperties().map(function (mGroupLevel) {
 				return mGroupLevel.name;
 			});
-
 			var oAggregationInfo = {
-				visible: getVisibleProperties(oTable, oPlugin),
+				visible: getVisibleProperties(oTable),
 				groupLevels: aGroupLevels,
 				grandTotal: aAggregates,
 				subtotals: aAggregates,
 				columnState: getColumnState(oTable, aAggregates)
 			};
 
-			oPlugin.setAggregationInfo(oAggregationInfo);
+			TableMap.get(oTable).plugin.setAggregationInfo(oAggregationInfo);
 		}
 	}
 
-	function getVisibleProperties(oTable, oPlugin) {
-		var aVisibleProperties = [];
-		var aProperties = oPlugin.getPropertyInfos();
+	function getVisibleProperties(oTable) {
+		var oVisiblePropertiesSet = new Set();
+		var oPropertyHelper = TableMap.get(oTable).oPropertyHelperForBinding;
 
 		oTable.getColumns().forEach(function(oColumn) {
-			var sPropertyName = oColumn.getDataProperty();
-			var oPropertyInfo = aProperties.find(function(oProp) {
-				return oProp.name === sPropertyName;
-			});
+			var oProperty = oPropertyHelper.getProperty(oColumn.getDataProperty());
 
-			if (!oPropertyInfo) {
+			if (!oProperty) {
 				return;
 			}
 
-			if (oPropertyInfo.propertyInfos) {
-				// Complex propertyInfo --> add the names of all related (simple) propertyInfos in the list
-				oPropertyInfo.propertyInfos.forEach(function(sRelatedInfoName) {
-					if (aVisibleProperties.indexOf(sRelatedInfoName) < 0) {
-						aVisibleProperties.push(sRelatedInfoName);
-					}
+			if (oProperty.isComplex()) {
+				// Add the names of all related (simple) propertyInfos in the list.
+				oProperty.getReferencedProperties().forEach(function(oProperty) {
+					oVisiblePropertiesSet.add(oProperty.name);
 				});
-			} else if (aVisibleProperties.indexOf(sPropertyName) < 0) {
-				// Simple propertyInfo --> add its name in the list
-				aVisibleProperties.push(sPropertyName);
+			} else {
+				oVisiblePropertiesSet.add(oProperty.name);
 			}
 		});
 
-		return aVisibleProperties;
+		return Array.from(oVisiblePropertiesSet);
 	}
 
 	function getColumnState(oTable, aAggregatedPropertyNames) {
@@ -481,6 +481,7 @@ sap.ui.define([
 		return mColumnState;
 	}
 
+	// TODO: Move this to TablePropertyHelper (or even base PropertyHelper - another variant of getReferencedProperties?)
 	function getColumnProperties(oTable, oColumn) {
 		var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getDataProperty());
 
@@ -539,18 +540,51 @@ sap.ui.define([
 		return bOnlyVisibleColumns;
 	}
 
-	function enrichGridTable(oTable) {
-		// The property helper is initialized after the table "initialized" promise resolves. So we can only wait for the property helper.
-		var aPropertiesForBinding;
-		var mExtensionsForBinding;
-		var oPlugin;
-		var oDelegate = oTable.getControlDelegate();
+	/**
+	 * Configures the inner table to support the p13n settings of the MDC table.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @return {Promise} A promise that revolves when the inner table is configured
+	 */
+	function configureInnerTable(oTable) {
+		return oTable._isOfType(TableType.Table) ? configureGridTable(oTable) : configureResponsiveTable(oTable);
+	}
 
+	/**
+	 * Checks whether the inner table supports the "analytical" p13n modes <code>Group</code> and <code>Aggregate</code>.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @return {boolean} Whether the inner table supports the "analytical" p13n modes
+	 */
+	function isInnerTableReadyForAnalytics(oTable) {
+		if (oTable._isOfType(TableType.Table)) {
+			var oPlugin = TableMap.get(oTable).plugin;
+			return oPlugin != null && !oPlugin.bIsDestroyed;
+		} else {
+			return false;
+		}
+	}
+
+	function configureGridTable(oTable) {
+		return isAnalyticsEnabled(oTable) ? enableGridTablePlugin(oTable) : disableGridTablePlugin(oTable);
+	}
+
+	function enableGridTablePlugin(oTable) {
+		var mTableMap = TableMap.get(oTable);
+		var oPlugin = mTableMap.plugin;
+
+		if (oPlugin && !oPlugin.bIsDestroyed) {
+			oPlugin.activate();
+			return Promise.resolve();
+		}
+
+		// The property helper is initialized after the table "initialized" promise resolves. So we can only wait for the property helper.
 		return Promise.all([
 			oTable.awaitPropertyHelper(),
 			loadModules("sap/ui/table/plugins/V4Aggregation")
 		]).then(function(aResult) {
 			var V4AggregationPlugin = aResult[1][0];
+			var oDelegate = oTable.getControlDelegate();
 
 			oPlugin = new V4AggregationPlugin({
 				groupHeaderFormatter: function(oContext, sProperty) {
@@ -559,25 +593,76 @@ sap.ui.define([
 			});
 
 			oTable._oTable.addDependent(oPlugin);
+			mTableMap.plugin = oPlugin;
 
-			TableMap.set(oTable, {
-				plugin: oPlugin
-			});
-
-			// Configure the plugin with the propertyInfos
-			return oDelegate.fetchPropertiesForBinding(oTable);
-		}).then(function(aProperties) {
-			aPropertiesForBinding = aProperties;
-			return oDelegate.fetchPropertyExtensionsForBinding(oTable, aPropertiesForBinding);
-		}).then(function(mExtensions) {
-			mExtensionsForBinding = mExtensions;
-			return oDelegate.fetchPropertyHelper(oTable, aPropertiesForBinding, mExtensionsForBinding);
-		}).then(function(HelperClass) {
-			var oHelper = new HelperClass(aPropertiesForBinding, mExtensionsForBinding, oTable);
-			oPlugin.setPropertyInfos(oHelper.getProperties());
-			setAggregation(oTable, [], {});
-			oHelper.destroy();
+			return fetchPropertyHelperForBinding(oTable);
+		}).then(function(oPropertyHelperForBinding) {
+			oPlugin.setPropertyInfos(oPropertyHelperForBinding.getProperties());
 		});
+	}
+
+	function disableGridTablePlugin(oTable) {
+		var mTableMap = TableMap.get(oTable);
+
+		if (mTableMap.plugin) {
+			mTableMap.plugin.deactivate();
+		}
+
+		return Promise.resolve();
+	}
+
+	function configureResponsiveTable(oTable) {
+		return Promise.resolve();
+	}
+
+	function fetchPropertyHelperForBinding(oTable) {
+		var mTableMap = TableMap.get(oTable);
+
+		if (mTableMap.oPropertyHelperForBinding) {
+			return Promise.resolve(mTableMap.oPropertyHelperForBinding);
+		}
+
+		var oDelegate = oTable.getControlDelegate();
+		var aProperties;
+		var mExtensions;
+
+		return oDelegate.fetchPropertiesForBinding(oTable).then(function(aPropertiesForBinding) {
+			aProperties = aPropertiesForBinding;
+			return oDelegate.fetchPropertyExtensionsForBinding(oTable, aProperties);
+		}).then(function(mExtensionsForBinding) {
+			mExtensions = mExtensionsForBinding;
+			return oDelegate.fetchPropertyHelper(oTable, aProperties, mExtensions);
+		}).then(function(PropertyHelper) {
+			var bIsPropertyHelperInstance = PropertyHelper.constructor === PropertyHelper;
+			mTableMap.oPropertyHelperForBinding = bIsPropertyHelperInstance ? PropertyHelper : new PropertyHelper(aProperties, mExtensions, oTable);
+			return mTableMap.oPropertyHelperForBinding;
+		});
+	}
+
+	function setUpTableObserver(oTable) {
+		var mTableMap = TableMap.get(oTable);
+
+		if (!mTableMap.observer) {
+			mTableMap.observer = new ManagedObjectObserver(function(oChange) {
+				if (oChange.type === "destroy") {
+					// Destroy objects that are not in the lifecycle of the table.
+					if (mTableMap.oPropertyHelperForBinding) {
+						mTableMap.oPropertyHelperForBinding.destroy();
+					}
+				} else {
+					configureInnerTable(oTable);
+				}
+			});
+		}
+
+		mTableMap.observer.observe(oTable, {
+			properties: ["p13nMode"],
+			destroy: true
+		});
+	}
+
+	function isAnalyticsEnabled(oTable) {
+		return oTable.isGroupingEnabled() || oTable.isAggregationEnabled();
 	}
 
 	return Delegate;

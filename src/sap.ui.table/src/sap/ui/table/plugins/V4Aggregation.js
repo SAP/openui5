@@ -75,7 +75,7 @@ sap.ui.define([
 	V4Aggregation.prototype.activate = function() {
 		var oBinding = this.getTableBinding();
 
-		if (oBinding && !oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
+		if (oBinding && !oBinding.isA("sap.ui.model.odata.v4.ODataListBinding")) {
 			return;
 		}
 
