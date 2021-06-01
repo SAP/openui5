@@ -47,7 +47,7 @@ sap.ui.define([
 		 */
 		formatter: function (sValue) {
 			if (sValue) {
-				return jQuery.sap.getResourcePath(sValue);
+				return sap.ui.require.toUrl(sValue);
 			}
 			return "";
 		},
