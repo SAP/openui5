@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library",
@@ -333,44 +333,7 @@ sap.ui.define([
 		}
 
 	});
-	if (Device.browser.internet_explorer) {
-		QUnit.test("Paste for IE", function (assert) {
-			//Arrange
-			var oT1 = sap.ui.getCore().byId("t1"),
-				sStringWithLineEndings = "A\r\nB\r\nC\r",
-				sStringWithoutLineEndings = "DE F",
-				oEvent = {
-					clipboardData: {
-						getData: function () {
-							return sStringWithLineEndings;
-						},
-						setData: function () {}
-					}
-				},
-				oSetDataSpy = sinon.spy(oEvent.clipboardData, "setData");
-
-			//Act
-			oT1.onpaste(oEvent);
-			//Assert
-			assert.deepEqual(oSetDataSpy.getCall(0).args, ["Text", "A B C"], "onpaste handler should remove all line" +
-					" endings from the pasted string");
-
-			//Arrange
-			oEvent.clipboardData.getData = function () {
-				return sStringWithoutLineEndings;
-			};
-			oSetDataSpy.reset();
-
-			//Act
-			oT1.onpaste(oEvent);
-
-			//Assert
-			assert.deepEqual(oSetDataSpy.getCall(0).args, ["Text", sStringWithoutLineEndings], "onpaste handler " +
-					"should not modify the pasted string if it does not contain line endings");
-		});
-	} else {
-		QUnit.test("Paste for browsers different than IE", function (assert) {
-			assert.ok(!sap.ui.getCore().byId('t1').onpaste, "There should not be any paste handler for non IE browsers.");
-		});
-	}
+	QUnit.test("Paste for browsers different than IE", function (assert) {
+		assert.ok(!sap.ui.getCore().byId('t1').onpaste, "There should not be any paste handler for non IE browsers.");
+	});
 });

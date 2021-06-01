@@ -4,21 +4,21 @@
 
 // Provides control sap.ui.commons.DropdownBox.
 sap.ui.define([
-    'sap/ui/thirdparty/jquery',
-    'sap/base/Log',
-    './ComboBox',
-    './library',
-    'sap/ui/core/History',
-    'sap/ui/core/SeparatorItem',
-    './DropdownBoxRenderer',
-    'sap/ui/Device',
-    './TextField',
-    'sap/ui/core/ListItem',
-    'sap/ui/dom/containsOrEquals',
-    'sap/ui/events/jquery/EventExtension',
-    'sap/ui/events/KeyCodes',
-    'sap/ui/dom/jquery/cursorPos', // jQuery.fn.cursorPos
-    'sap/ui/dom/jquery/selectText' // jQuery.fn.selectText
+	'sap/ui/thirdparty/jquery',
+	'sap/base/Log',
+	'./ComboBox',
+	'./library',
+	'sap/ui/core/History',
+	'sap/ui/core/SeparatorItem',
+	'./DropdownBoxRenderer',
+	'sap/ui/Device',
+	'./TextField',
+	'sap/ui/core/ListItem',
+	'sap/ui/dom/containsOrEquals',
+	'sap/ui/events/jquery/EventExtension',
+	'sap/ui/events/KeyCodes',
+	'sap/ui/dom/jquery/cursorPos', // jQuery.fn.cursorPos
+	'sap/ui/dom/jquery/selectText' // jQuery.fn.selectText
 ],
 	function(jQuery, Log, ComboBox, library, History, SeparatorItem, DropdownBoxRenderer, Device, TextField, ListItem, containsOrEquals, EventExtension, KeyCodes) {
 	"use strict";
@@ -530,12 +530,9 @@ sap.ui.define([
 			this.onkeypress(oEvent);
 		}
 
-		if (!Device.browser.msie || oEvent.which !== KeyCodes.BACKSPACE) {
+		if (oEvent.which !== KeyCodes.BACKSPACE) {
 			return;
 		}
-
-		// Quite a trick to solve the issue with 'delete from last cursorPos' vs. 'delete last (proposed / auto-completed) character in IE
-		this._iCursorPosBeforeBackspace = jQuery(this.getInputDomRef()).cursorPos();
 	};
 
 	/**
@@ -563,10 +560,6 @@ sap.ui.define([
 
 		if (this.mobile) {
 			// as no real input is possible on mobile devices
-			return;
-		}
-
-		if (!this._realOninput(oEvent)) {
 			return;
 		}
 
@@ -609,7 +602,7 @@ sap.ui.define([
 		// call keyup function of TextField to get liveChange event
 		TextField.prototype.onkeyup.apply(this, arguments);
 
-		if (!(Device.browser.msie && iKC === KeyCodes.BACKSPACE) && this._oValueBeforePaste === null || iKC === KeyCodes.TAB) {
+		if (this._oValueBeforePaste === null || iKC === KeyCodes.TAB) {
 			return;
 		}
 		// it's either backspace in IE or after paste (cumulating potentially multiple pastes, too)
@@ -848,18 +841,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DropdownBox.prototype._callDoSelectAfterFocusIn = function(iStart, iEnd) {
-		if (!Device.browser.msie) {
-			this._doSelect(iStart, iEnd);
-		} else {
-			// Enum _eDoSelectAfterFocusIn as well describes the IE flow:  undefined -> "onfocusin" -> "_doSelect",
-			// so make sure we are not called due to _doSelect.
-			if (!this._eDoSelectAfterFocusIn || this._eDoSelectAfterFocusIn !== "_doSelect") {
-				this._eDoSelectAfterFocusIn = "onfocusin";
-				this._doSelect(iStart, iEnd);
-			} else {
-				this._eDoSelectAfterFocusIn = undefined;
-			}
-		}
+		this._doSelect(iStart, iEnd);
 	};
 
 
@@ -1173,14 +1155,7 @@ sap.ui.define([
 	DropdownBox.prototype._handleOpened = function(){
 
 		ComboBox.prototype._handleOpened.apply(this, arguments);
-
-		if (!Device.browser.msie) {
-			// because in IE already async made in ComboBox
 			jQuery(this.getInputDomRef()).trigger("focus");
-		} else {
-			this._bFocusByOpen = true;
-		}
-
 	};
 
 	/**

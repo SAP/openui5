@@ -4,16 +4,16 @@
 
 // Provides control sap.ui.commons.TextField.
 sap.ui.define([
-    'sap/ui/thirdparty/jquery',
-    './library',
-    'sap/ui/core/Control',
-    'sap/ui/core/ValueStateSupport',
-    './TextFieldRenderer',
-    'sap/ui/core/library',
-    'sap/ui/Device',
-    'sap/ui/events/KeyCodes',
-    'sap/ui/dom/jquery/cursorPos', // jQuery.fn.cursorPos
-    'sap/ui/dom/jquery/selectText' // jQuery.fn.selectText
+	'sap/ui/thirdparty/jquery',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/ValueStateSupport',
+	'./TextFieldRenderer',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'sap/ui/events/KeyCodes',
+	'sap/ui/dom/jquery/cursorPos', // jQuery.fn.cursorPos
+	'sap/ui/dom/jquery/selectText' // jQuery.fn.selectText
 ],
 	function(jQuery, library, Control, ValueStateSupport, TextFieldRenderer, coreLibrary, Device, KeyCodes) {
 	"use strict";
@@ -193,17 +193,6 @@ sap.ui.define([
 
 		// currently empty but defined to add on Child controls (ComboBox...)
 		// for later use.
-
-	};
-
-	TextField.prototype.onAfterRendering = function() {
-
-		if (Device.browser.msie) {
-			// as IE fires oninput event directly after rendering if value contains special characters (like Ü,Ö,Ä)
-			// compare first value in first oninput event with rendered one
-			var $input = jQuery(this.getInputDomRef());
-			this._sRenderedValue = $input.val();
-		}
 
 	};
 
@@ -458,53 +447,12 @@ sap.ui.define([
 			} else if ($FocusDomRef.data("sap.InNavArea") === false) { // check for false to avoid undefined
 				$FocusDomRef.data("sap.InNavArea", true);
 			}
-		} else if ((Device.browser.msie && Device.browser.version < 10) &&
-					(oEvent.which === KeyCodes.DELETE || oEvent.which === KeyCodes.BACKSPACE)) {
-			this._fireLiveChange(oEvent);
 		}
 	};
 
 	TextField.prototype.oninput = function(oEvent) {
 
-		if (!this._realOninput(oEvent)) {
-			return;
-		}
-
 		this._fireLiveChange(oEvent);
-
-	};
-
-	if (Device.browser.msie) {
-		//In IE pasting of strings with line endings cutoffs the text after the 1st line ending, so make sure line endings are removed
-		TextField.prototype.onpaste = function(oEvent) {
-			var clipboardData,
-				pastedData,
-				modifiedData;
-
-			clipboardData = oEvent.clipboardData || window.clipboardData;
-			pastedData = clipboardData.getData('Text');
-
-			if (pastedData) {
-				modifiedData = pastedData.replace(/(?:\r\n|\r|\n)/g, ' ').replace(/\s+$/, "");
-				clipboardData.setData("Text", modifiedData);
-			}
-		};
-	}
-
-	TextField.prototype._realOninput = function(oEvent) {
-
-		if (Device.browser.msie) {
-			// as IE fires oninput event directly after rendering if value contains special characters (like Ü,Ö,Ä)
-			// compare first value in first oninput event with rendered one
-			var $input = jQuery(this.getInputDomRef());
-			var sRenderedValue = this._sRenderedValue;
-			this._sRenderedValue = undefined;
-			if (sRenderedValue == $input.val()) {
-				return false;
-			}
-		}
-
-		return true;
 
 	};
 
