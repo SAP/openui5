@@ -547,6 +547,10 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Accessibility", function (assert) {
+		assert.strictEqual(this.oSearchField.getFocusDomRef().getAttribute("inputmode"), "none", "inputmode is 'none'");
+	});
+
 	QUnit.test("Search is fired once when suggestion item is tapped", function (assert) {
 		// Arrange
 		var done = assert.async(),

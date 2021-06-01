@@ -107,8 +107,8 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/librar
 
 			if (oSF.getEnableSuggestions() && Device.system.phone) {
 				// Always open a dialog on a phone if suggestions are on.
-				// To avoid soft keyboard flickering, set the readonly attribute.
-				rm.attr("readonly", "readonly");
+				// avoid soft keyboard flickering
+				rm.attr("inputmode", "none");
 			}
 
 			if (!oSF.getEnabled()) {
