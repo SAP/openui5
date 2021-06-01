@@ -332,6 +332,12 @@ sap.ui.define([
                     return oCurrentPropertyInfo.name === oItem.getName();
                 });
 
+                //Skip a Item if there is no property representing the Item inside the backend
+                if (!oPropertyInfo){
+                    Log.error("sap.ui.mdc.Chart: Item " + oItem.getName() + " has no property info representing it in the metadata. Make sure the name is correct and the metadata is defined correctly. Skipping the item!");
+                    return;
+                }
+
                 switch (oItem.getType()) {
                     case "groupable":
                         aVisibleDimensions.push(oItem.getName());
