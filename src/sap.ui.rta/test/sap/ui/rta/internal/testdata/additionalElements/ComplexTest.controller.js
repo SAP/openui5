@@ -26,7 +26,7 @@ sap.ui.define([
 			var oMockServer = new MockServer({
 				rootUri: sURL
 			});
-			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/additionalElements");
+			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test/additionalElements");
 
 			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", {
 				sMockdataBaseUrl: this._sResourcePath + "/mockserver",
