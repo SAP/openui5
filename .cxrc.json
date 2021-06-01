@@ -1,0 +1,37 @@
+{
+  "includes": {
+    "controls": [
+      "src/sap.m/**/*",
+      "src/sap.tnt/**/*",
+      "src/sap.ui.commons/**/*",
+      "src/sap.ui.layout/**/*",
+      "src/sap.ui.unified/**/*",
+      "src/sap.ui.ux3/**/*",
+      "src/sap.uxap/**/*"
+    ],
+    "core": [
+      "/*",
+      "grunt/**/*",
+      "lib/**/*",
+      "src/sap.ui.core/**/*",
+      "src/testsuite-utils/**/*",
+      "src/testsuite/**/*"
+    ],
+    "demokit": [
+      "src/sap.ui.demokit/**/*"
+    ],
+    "suite-controls": [
+      "src/sap.ui.suite/**/*"
+    ],
+    "tables": [
+      "src/sap.ui.table/**/*"
+    ],
+    "flex": [
+      "src/sap.ui.dt/**/*"
+    ]
+  },
+  "excludes": [
+    "docs/**/*",
+    "src/themelib_*/**/*"
+  ]
+}
