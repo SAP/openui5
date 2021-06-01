@@ -1,5 +1,5 @@
 /*global sinon, sCategoriesXML, sCategoriesJSON */
-sap.ui.define("ODataTreeBindingFakeService", [], function() {
+sap.ui.define("ODataTreeBindingFakeService", ["sap/base/Log"], function(Log) {
 
 	"use strict";
 
@@ -438,8 +438,7 @@ sap.ui.define("ODataTreeBindingFakeService", [], function() {
 						return rCheck.test(url);
 					});
 				}
-
-				jQuery.sap.log.info("ODataTreeBindingFakeService", "Handling request: " + url);
+				Log.info("ODataTreeBindingFakeService", "Handling request: " + url);
 
 				if (bError) {
 					return [500, oHTMLHeaders, "Server Error"];
