@@ -46,45 +46,6 @@ sap.ui.define([
 	 * @private
 	 */
 
-	/**
-	 * Validates whether the given value in model representation as returned by {@link #parseValue}
-	 * is valid and meets the conditions of this type's unit/currency customizing.
-	 *
-	 * @param {any[]} aValues
-	 *   An array containing measure or amount, and unit or currency in this order, see return value
-	 *   of {@link #parseValue}
-	 * @throws {sap.ui.model.ValidateException}
-	 *   If {@link #formatValue} has not yet been called with a customizing part or if the entered
-	 *   measure/amount has too many decimals
-	 *
-	 * @function
-	 * @name sap.ui.model.odata.type.UnitMixin#validateValue
-	 * @public
-	 * @since 1.63.0
-	 */
-	function validateValue(aValues) {
-		var iDecimals, iFractionDigits, aMatches,
-			vNumber = aValues[0],
-			sUnit = aValues[1];
-
-		if (this.mCustomUnits === undefined) {
-			throw new ValidateException("Cannot validate value without customizing");
-		}
-
-		if (!vNumber || !sUnit || !this.mCustomUnits) {
-			return;
-		}
-
-		aMatches = rDecimals.exec(vNumber);
-		iFractionDigits = aMatches ? aMatches[1].length : 0;
-		iDecimals = this.mCustomUnits[sUnit].decimals;
-		if (iFractionDigits > iDecimals) {
-			throw new ValidateException(iDecimals
-				? getText("EnterNumberFraction", [iDecimals])
-				: getText("EnterInt"));
-		}
-	}
-
 	/* Enhances the given prototype.
 	 *
 	 * @param {object} oPrototype
@@ -95,8 +56,10 @@ sap.ui.define([
 	 *   The name of the format option that accepts the custom units,
 	 *   see {@link sap.ui.core.format.NumberFormat.getCurrencyInstance} or
 	 *   {@link sap.ui.core.format.NumberFormat.getUnitInstance}
+	 * @param {string} sMessageKeyPrefix
+	 *   The key prefix used to get error message texts from the resource bundle
 	 */
-	return function (oPrototype, fnBaseType, sFormatOptionName) {
+	return function (oPrototype, fnBaseType, sFormatOptionName, sMessageKeyPrefix) {
 		/**
 		 * Formats the given values of the parts of the composite type to the given target type.
 		 *
@@ -196,6 +159,33 @@ sap.ui.define([
 		}
 
 		/**
+		 * Returns the validate exception based on "showNumber" and "showMeasure" format options and
+		 * given decimals.
+		 *
+		 * @param {int} iDecimals
+		 *   The allowed number of decimals of the current currency
+		 * @returns {sap.ui.model.ValidateException}
+		 *   The validate exception
+		 *
+		 * @private
+		 */
+		function getValidateException(iDecimals) {
+			var sText;
+
+			if (!this.bShowNumber) {
+				sText = iDecimals
+					? getText(sMessageKeyPrefix + ".WithDecimals", [iDecimals])
+					: getText(sMessageKeyPrefix + ".WithoutDecimals");
+			} else {
+				sText = iDecimals
+					? getText("EnterNumberFraction", [iDecimals])
+					: getText("EnterInt");
+			}
+
+			return new ValidateException(sText);
+		}
+
+		/**
 		 * Parses the given string value to an array containing measure or amount, and unit or
 		 * currency.
 		 *
@@ -237,6 +227,44 @@ sap.ui.define([
 			}
 
 			return aValues;
+		}
+
+		/**
+		 * Validates whether the given value in model representation as returned by
+		 * {@link #parseValue} is valid and meets the conditions of this type's unit/currency
+		 * customizing.
+		 *
+		 * @param {any[]} aValues
+		 *   An array containing measure or amount, and unit or currency in this order, see return
+		 *   value of {@link #parseValue}
+		 * @throws {sap.ui.model.ValidateException}
+		 *   If {@link #formatValue} has not yet been called with a customizing part or if the
+		 *   entered measure/amount has too many decimals
+		 *
+		 * @function
+		 * @name sap.ui.model.odata.type.UnitMixin#validateValue
+		 * @public
+		 * @since 1.63.0
+		 */
+		function validateValue(aValues) {
+			var iDecimals, iFractionDigits, aMatches,
+				vNumber = aValues[0],
+				sUnit = aValues[1];
+
+			if (this.mCustomUnits === undefined) {
+				throw new ValidateException("Cannot validate value without customizing");
+			}
+
+			if (!vNumber || !sUnit || !this.mCustomUnits) {
+				return;
+			}
+
+			aMatches = rDecimals.exec(vNumber);
+			iFractionDigits = aMatches ? aMatches[1].length : 0;
+			iDecimals = this.mCustomUnits[sUnit].decimals;
+			if (iFractionDigits > iDecimals) {
+				throw this.getValidateException(iDecimals);
+			}
 		}
 
 		/*
@@ -311,6 +339,7 @@ sap.ui.define([
 		oPrototype.formatValue = formatValue;
 		oPrototype.getFormatOptions = getFormatOptions;
 		oPrototype.getPartsIgnoringMessages = getPartsIgnoringMessages;
+		oPrototype.getValidateException = getValidateException;
 		oPrototype.parseValue = parseValue;
 		oPrototype.validateValue = validateValue;
 	};

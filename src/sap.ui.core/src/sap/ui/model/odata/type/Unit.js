@@ -64,7 +64,7 @@ sap.ui.define([
 		}
 	});
 
-	applyUnitMixin(Unit.prototype, BaseUnit, "customUnits");
+	applyUnitMixin(Unit.prototype, BaseUnit, "customUnits", "Unit");
 
 	/**
 	 * Formats the given values of the parts of the <code>Unit</code> composite type to the given

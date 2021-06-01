@@ -62,7 +62,7 @@ sap.ui.define([
 		}
 	});
 
-	applyUnitMixin(Currency.prototype, BaseCurrency, "customCurrencies");
+	applyUnitMixin(Currency.prototype, BaseCurrency, "customCurrencies", "Currency");
 
 	/**
 	 * Formats the given values of the parts of the <code>Currency</code> composite type to the

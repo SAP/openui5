@@ -140,7 +140,7 @@ sap.ui.define([
 			case "string":
 				vResult = this.oOutputFormat.parse(sValue);
 				if (!Array.isArray(vResult) || this.bShowNumber && isNaN(vResult[0])) {
-					throw new ParseException(this.getInvalidUnitText());
+					throw this.getParseException();
 				}
 				break;
 			default:
@@ -225,14 +225,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the error text to be used for a "Currency.Invalid" error.
+	 * Returns the parse exception based on "showNumber" and "showMeasure" format options.
 	 *
-	 * @returns {string} The error text
+	 * @returns {sap.ui.model.ParseException} The parse exception
 	 *
 	 * @private
 	 */
-	Currency.prototype.getInvalidUnitText = function () {
-		return sap.ui.getCore().getLibraryResourceBundle().getText("Currency.Invalid");
+	Currency.prototype.getParseException = function () {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			sText;
+
+		if (!this.bShowNumber) {
+			sText = oBundle.getText("Currency.InvalidMeasure");
+		} else if (!this.bShowMeasure) {
+			sText = oBundle.getText("EnterNumber");
+		} else {
+			sText = oBundle.getText("Currency.Invalid");
+		}
+
+		return new ParseException(sText);
 	};
 
 	/**
