@@ -312,7 +312,7 @@ sap.ui.define([
 		assert.strictEqual(oHashChanged.callCount, 2, "Should be called twice");
 
 		assert.ok(oHashChanged.firstCall.calledWithExactly("foo", false), "Should register to setHash");
-		assert.ok(oHashChanged.secondCall.calledWithExactly("bar", true), "Should register to replaceHash");
+		assert.ok(oHashChanged.secondCall.calledWith("bar", true), "Should register to replaceHash");
 
 		assert.strictEqual(sut.aHistory.length, lengthBefore + 1, "should have 1 entry in the history");
 		assert.strictEqual(sut.aHistory[lengthBefore], "bar");

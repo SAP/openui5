@@ -104,13 +104,20 @@ sap.ui.define([
 	 * Replaces the hash with a certain value. When using the replace function, no browser history entry is written.
 	 * If you want to have an entry in the browser history, please use the {@link #setHash} function.
 	 *
+	 * The <code>sDirection</code> parameter can be used to provide direction information on the navigation which
+	 * leads to this hash replacement. This is typically used when synchronizing the hashes between multiple frames to
+	 * provide information to the frame where the hash is replaced with the navigation direction in the other frame
+	 * where the navigation occurs.
+	 *
 	 * @param {string} sHash New hash
+	 * @param {sap.ui.core.routing.HistoryDirection} sDirection The direction information for this hash replacement
 	 * @protected
 	 */
-	HashChangerBase.prototype.replaceHash = function(sHash) {
+	HashChangerBase.prototype.replaceHash = function(sHash, sDirection) {
 		this.fireEvent("hashReplaced", {
 			sHash: sHash, //deprecated
-			hash: sHash
+			hash: sHash,
+			direction: sDirection
 		});
 	};
 
