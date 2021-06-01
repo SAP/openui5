@@ -166,7 +166,7 @@ sap.ui.define([
 			oDPSPopover,
 			oCalendar;
 
-			oDPS.placeAt("qunit-fixture");
+		oDPS.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Act
@@ -213,6 +213,29 @@ sap.ui.define([
 
 		// Cleanup
 		oDPS.destroy();
+	});
+
+	QUnit.test("Current year is focused when there are no selected years", function(assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection({
+				displayFormat: "yyyy"
+			}),
+			oYear = new Date().getFullYear(),
+			oYearPicker;
+
+		oDRS.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDRS.toggleOpen();
+		sap.ui.getCore().applyChanges();
+		oYearPicker = oDRS._getCalendar()._getYearPicker();
+
+		// Assert
+		assert.equal(oYearPicker.getFocusDomRef().id, oYearPicker.getId() + "-y" + oYear + "0101", "Current year is focused");
+
+		// Cleanup
+		oDRS.destroy();
 	});
 
 	QUnit.module("interaction");

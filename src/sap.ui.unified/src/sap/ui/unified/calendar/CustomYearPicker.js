@@ -59,6 +59,7 @@ sap.ui.define([
 			}
 		} else {
 			oYearPicker.setProperty("_middleDate", this._getFocusedDate());
+			oYearPicker.setDate(this._getFocusedDate().toLocalJSDate());
 		}
 
 		Calendar.prototype.onBeforeRendering.call(this, arguments);
