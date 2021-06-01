@@ -9,8 +9,9 @@ sap.ui.define([
 	"./_Requestor",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/base/SyncPromise"
-], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise) {
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/odata/ODataUtils"
+], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise, ODataUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Cache",
@@ -2215,56 +2216,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calculates the index range to be read for the given start, length and prefetch length.
-	 * Checks if <code>aElements</code> entries are available for half the prefetch length left and
-	 * right to it. If not, the full prefetch length is added to this side.
-	 *
-	 * @param {number} iStart
-	 *   The start index for the data request
-	 * @param {number} iLength
-	 *   The number of requested entries
-	 * @param {number} iPrefetchLength
-	 *   The number of entries to prefetch before and after the given range; <code>Infinity</code>
-	 *   is supported
-	 * @returns {object}
-	 *   Returns an object with a member <code>start</code> for the start index for the next
-	 *   read and <code>length</code> for the number of entries to be read.
-	 *
-	 * @private
-	 */
-	_CollectionCache.prototype.getReadRange = function (iStart, iLength, iPrefetchLength) {
-		var aElements = this.aElements;
-
-		// Checks whether aElements contains at least one <code>undefined</code> entry within the
-		// given start (inclusive) and end (exclusive).
-		function isDataMissing(iStart, iEnd) {
-			var i;
-			for (i = iStart; i < iEnd; i += 1) {
-				if (aElements[i] === undefined) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		if (isDataMissing(iStart + iLength, iStart + iLength + iPrefetchLength / 2)) {
-			iLength += iPrefetchLength;
-		}
-		if (isDataMissing(Math.max(iStart - iPrefetchLength / 2, 0), iStart)) {
-			iLength += iPrefetchLength;
-			iStart -= iPrefetchLength;
-			if (iStart < 0) {
-				iLength += iStart; // Note: Infinity + -Infinity === NaN
-				if (isNaN(iLength)) {
-					iLength = Infinity;
-				}
-				iStart = 0;
-			}
-		}
-		return {length : iLength, start : iStart};
-	};
-
-	/**
 	 * Returns the resource path including the query string with $skip and $top if needed.
 	 *
 	 * @param {number} iStart
@@ -2425,11 +2376,8 @@ sap.ui.define([
 	_CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
 		var aElementsRange,
-			iEnd,
-			iGapStart = -1,
 			oPromise = this.oPendingRequestsPromise || this.aElements.$tail,
-			oRange,
-			i, n, that = this;
+			that = this;
 
 		if (iIndex < 0) {
 			throw new Error("Illegal index " + iIndex + ", must be >= 0");
@@ -2444,34 +2392,23 @@ sap.ui.define([
 			});
 		}
 
-		oRange = this.getReadRange(iIndex, iLength, this.bServerDrivenPaging ? 0 : iPrefetchLength);
-		iEnd = Math.min(oRange.start + oRange.length, this.aElements.$created + this.iLimit);
-		n = Math.min(iEnd, Math.max(oRange.start, this.aElements.length) + 1);
-
-		for (i = oRange.start; i < n; i += 1) {
-			if (this.aElements[i] !== undefined) {
-				if (iGapStart >= 0) {
-					this.requestElements(iGapStart, i, oGroupLock.getUnlockedCopy(),
-						fnDataRequested);
-					fnDataRequested = undefined;
-					iGapStart = -1;
-				}
-			} else if (iGapStart < 0) {
-				iGapStart = i;
-			}
-		}
-		if (iGapStart >= 0) {
-			this.requestElements(iGapStart, iEnd, oGroupLock.getUnlockedCopy(), fnDataRequested);
-		}
+		ODataUtils._getReadIntervals(this.aElements, iIndex, iLength,
+				this.bServerDrivenPaging ? 0 : iPrefetchLength,
+				this.aElements.$created + this.iLimit)
+			.forEach(function (oInterval) {
+				that.requestElements(oInterval.start, oInterval.end, oGroupLock.getUnlockedCopy(),
+					fnDataRequested);
+				fnDataRequested = undefined;
+			});
 
 		oGroupLock.unlock();
 
-		aElementsRange = this.aElements.slice(iIndex, iEnd);
+		aElementsRange = this.aElements.slice(iIndex, iIndex + iLength);
 		if (this.aElements.$tail) { // Note: if available, it must be ours!
 			aElementsRange.push(this.aElements.$tail);
 		}
 		return SyncPromise.all(aElementsRange).then(function () {
-			var aElements = that.aElements.slice(iIndex, iEnd);
+			var aElements = that.aElements.slice(iIndex, iIndex + iLength);
 
 			aElements.$count = that.aElements.$count;
 
