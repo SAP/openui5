@@ -53,7 +53,30 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"],
 
 	/**
 	 * Retrieves the personalization bundle.<br>
-	 * This must return a {@link http://api.jquery.com/promise/ jQuery promise}.
+	 * This must return a {@link http://api.jquery.com/promise/ jQuery Promise},
+	 * which resolves in the desired table state.
+	 *
+	 * @example [
+	 *		{
+	 *			id: "demoApp-productsTable-productCol",
+	 *			order: 2,
+	 *			text: "Product",
+	 *			visible: true
+	 *		},
+	 *		{
+	 *			id: "demoApp-productsTable-supplierCol",
+	 *			order: 1,
+	 *			text: "Supplier",
+	 *			visible: true
+	 *		},
+	 *		{
+	 *			id: "demoApp-productsTable-dimensionsCol",
+	 *			order: 0,
+	 *			text: "Dimensions",
+	 *			visible: false
+	 *		}
+	 *	]
+	 *
 	 * @public
 	 */
 	TablePersoProvider.prototype.getPersData = function() {
