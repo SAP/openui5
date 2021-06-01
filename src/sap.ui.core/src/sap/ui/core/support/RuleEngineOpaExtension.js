@@ -240,8 +240,6 @@ sap.ui.define([
 
 					oContext = getWindow();
 
-					// Avoid method calls on _$files as IE11/Edge throws "Can't execute code from a freed script"
-					// BCP: 1980144925
 					oContext._$files[oContext._$files.length] = {
 						name: sFileName,
 						content: JSON.stringify(oHistory)

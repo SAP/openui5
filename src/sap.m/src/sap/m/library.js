@@ -1432,7 +1432,6 @@ sap.ui.define([
 
 		/**
 		 * Flex items are evenly distributed in the line, with half-size spaces on either end.
-		 * <b>Note:</b> This value behaves like SpaceBetween in Internet Explorer 10.
 		 * @public
 		 */
 		SpaceAround : "SpaceAround",
@@ -1478,9 +1477,6 @@ sap.ui.define([
 
 	/**
 	 * Available options for the layout of container lines along the cross axis of the flexbox layout.
-	 *
-	 * <b>Note:</b> This property has no effect in Internet Explorer 10.
-	 *
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -1513,7 +1509,6 @@ sap.ui.define([
 
 		/**
 		 * Lines are evenly distributed in the line, with half-size spaces on either end.
-		 * <b>Note:</b> This value behaves like SpaceBetween in Internet Explorer 10.
 		 * @public
 		 */
 		SpaceAround : "SpaceAround",

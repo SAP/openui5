@@ -24,7 +24,6 @@
 }
 
 button.sapUiSupportRoundedButton {
-
 	border-radius: 3px;
 	border: 1px solid;
 	text-align: center;
@@ -32,8 +31,6 @@ button.sapUiSupportRoundedButton {
 	padding: 0.25rem 0.5rem;
 	margin: 2px 0;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: content-box;
 	background-color: #ffffff;
 	border-color: #bfbfbf;
 	color: #346187;
@@ -47,7 +44,8 @@ button.sapUiSupportRoundedButton {
 button.sapUiSupportHelpButton {
 	text-align: center;
 	padding: 0.25rem 0.5rem;
-	margin: 0 0.25rem;	font-family: "SAP-icons";
+	margin: 0 0.25rem;
+	font-family: "SAP-icons";
 	font-size: 17px;
 	border: none;
 	background-color: rgb(47, 60, 72);
@@ -61,39 +59,21 @@ button.sapUiSupportHelpButton:hover {
 
 .sapUiButtonsContainer {
 	padding: 0.4rem 0.25rem;
-	display: -ms-flexbox;
 	margin: 0;
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-direction: row;
-	-ms-flex-direction: row;
 	flex-direction: row;
-	-webkit-flex-wrap: nowrap;
-	-ms-flex-wrap: nowrap;
 	flex-wrap: nowrap;
-	-webkit-justify-content: flex-end;
-	-ms-flex-pack: end;
 	justify-content: flex-end;
-	-webkit-align-content: center;
-	-ms-flex-line-pack: stretch;
 	align-content: center;
-	-webkit-align-items: center;
-	-ms-flex-align: center;
 	align-items: center;
 }
 
 .sapUiButtonsContainer .title {
-	-webkit-flex: 1 1 auto;
-	-ms-flex: 1 1 auto;
 	flex: 1 1 auto;
-	-webkit-align-self: flex-start;
-	-ms-flex-item-align: start;
 	align-self: auto;
 }
 
 .sapUiButtonsContainer button.sapUiSupportRoundedButton {
-	-webkit-flex: 0 1 auto;
-	-ms-flex: 0 1 auto;
 	flex: 0 1 auto;
 }
 
@@ -199,7 +179,6 @@ button.sapUiSupportHelpButton:hover {
 	font-weight: normal;
 	color: #666666;
 	box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	display: inline-block;
 	padding: 0.25rem 0.5rem;
 }
@@ -210,20 +189,17 @@ button.sapUiSupportHelpButton:hover {
 	padding-bottom: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
-	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 .sapUiSupportTxtFld {
 	border: 1px solid #BFBFBF;
 	font-size: 14px;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
 .sapUiSupportTab {
 	border-width: 1px 1px 0 0;
-	-webkit-box-sizing: border-box;
 	padding: 0.3rem 0.7rem;
 	border-color: #ababab;
 }
@@ -307,10 +283,6 @@ button.sapUiSupportHelpButton:hover {
 	border-collapse: collapse;
 	margin: 5px;
 }
-
-/*.infoTable tr:nth-child(even) {
-	background: #f5f5f5;
-}*/
 
 .infoTable td {
 	padding: 5px;
@@ -406,7 +378,6 @@ ul.sapUiSupportControlTreeList li {
 }
 
 #sapUiSupportControlTreeArea li {
-	/*position: relative;*/
 	overflow: hidden;
 	cursor: pointer;
 }
@@ -488,16 +459,10 @@ ul.sapUiSupportControlTreeList li {
 	padding: 0 6px;
 }
 
-.sapUiSupportControlProperties td div {
-	/*padding: 0 5px;*/
-}
-
 .sapUiSupportControlProperties input[type="text"],
 .sapUiSupportControlProperties select {
 	width: 100%;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 }
 
 #sapUiSupportPerf > .sapUiSupportToolbar > button {
@@ -549,19 +514,7 @@ html[data-sap-ui-browser^="sf"] #sapUiSupportControlPropertiesArea ul li .set {
 select.sapUiSupportAutocomplete {
 	width: 198px;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 }
-
-/*
-input[type="text"].sapUiSupportAutocomplete {
-	margin-left: -195px;
-	padding: 0 5px;
-	width: 168px;
-	height: 23px;
-	border: none;
-}
-*/
 
 input.sapUiSupportAutocomplete[type="text"] {
 	margin-left: -195px;
@@ -580,10 +533,6 @@ html[data-sap-ui-browser^="sf"] input[type="text"].sapUiSupportAutocomplete {
 
 html[data-sap-ui-browser^="ff"] .sapUiSupportControlMethods button {
 	margin-left: 26px;
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiSupportControlMethods button {
-	margin-left: 24px;
 }
 
 html[data-sap-ui-browser^="sf"] .sapUiSupportControlMethods select.sapUiSupportAutocomplete {
@@ -655,12 +604,9 @@ ul.sapUiSupportBreakpointList li:hover img {
 }
 
 #sapUiSupportDebuggingRebootInput {
-	/*height: 26px;*/
 	font-size: 14px;
 	padding: 4px;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	width: calc(100% - 161px);
 	margin-right: 5px;
 	border-width: 1px;
@@ -705,12 +651,6 @@ html[data-sap-ui-browser^="sf"] #sapUiSupportDebuggingMethodInput {
 	margin-left: 25px;
 }
 
-
-html[data-sap-ui-browser^="ie"] #sapUiSupportDebuggingAddClass,
-html[data-sap-ui-browser^="ie"] #sapUiSupportDebuggingAddBreakpoint {
-	margin-left: 30px;
-}
-
 html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddClass,
 html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	margin-left: 28px;
@@ -752,21 +692,9 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 .sapUiSupportCntnt,
 .sapUiSupportPerf-PanelContent,
 #sapUiSupportPerf-Panel,
-#sapUiSupportPerf-PanelContent not(.sapUiSupportHidden) {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
+#sapUiSupportPerf-PanelContent:not(.sapUiSupportHidden) {
 	display: flex;
-
-	-webkit-box-direction: normal;
-	-webkit-box-orient: vertical;
-	-webkit-flex-direction: column;
-	-ms-flex-direction: column;
 	flex-direction: column;
-
-	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex: 1 1;
 	flex-grow: 1;
 }
 
@@ -799,9 +727,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 }
 
 .flex-spacer {
-	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex: 1 1;
 	flex-grow: 1;
 }
 
@@ -809,15 +734,7 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
    Performance Header
    ========================================================================== */
 #sapUiSupportPerfHeader {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
-
-	-webkit-box-direction: normal;
-	-webkit-box-orient: vertical;
-	-webkit-flex-direction: column;
-	-ms-flex-direction: column;
 	flex-direction: column;
 
 	height: 80px;
@@ -829,16 +746,12 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 }
 
 .sapUiSupportPerfHeaderFilters {
 	background: #eee;
 	border-bottom: solid 1px #ddd;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	height: 30px;
 	line-height: 30px;
@@ -854,18 +767,12 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	border-bottom: solid 1px #ddd;
 	padding-left: 250px;
 	position: relative;
-	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex: 1 1;
 	flex-grow: 1;
 }
 
 #sapUiSupportPerfHeaderTimelineOverview .timeline {
 	background: #fafafa;
 	bottom: 0;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	left: 0;
 	position: absolute;
@@ -875,9 +782,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 
 #sapUiSupportPerfHeaderTimelineOverview .timeline ol {
 	bottom: 0;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	left: 250px;
 	position: absolute;
@@ -886,9 +790,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 }
 
 #sapUiSupportPerfHeaderTimelineOverview .timeline li {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	position: relative;
 	flex: 1;
@@ -898,9 +799,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 #sapUiSupportPerfHeaderTimelineOverview .timeline li .time {
 	display: flex;
 	flex-direction: column;
-	-webkit-box-pack: end;
-	-webkit-justify-content: flex-end;
-	-ms-flex-pack: end;
 	justify-content: flex-end;
 }
 
@@ -921,13 +819,7 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	position: absolute;
 	right: 0;
 	top: 0;
-	-webkit-box-align: end;
-	-webkit-align-items: flex-end;
-	-ms-flex-align: end;
 	align-items: flex-end;
-	-webkit-box-pack: center;
-	-webkit-justify-content: center;
-	-ms-flex-pack: center;
 	justify-content: center;
 }
 
@@ -968,9 +860,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 }
 
 #categories {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	max-width: 440px;
 	padding-right: 0;
@@ -1057,9 +946,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
    ========================================================================== */
 
 #sapUiSupportPerfHeaderTimeline {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	bottom: 0;
 	left: 0;
@@ -1071,14 +957,10 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 }
 
 #sapUiSupportPerfHeaderTimelineBarWrapper {
-	-webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex-positive: 1;
 	flex-grow: 1;
 	position: relative;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 }
 
@@ -1096,15 +978,8 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 
 /* ================================================================================================================== */
 #sapUiSupportPerfHeaderTimelineBarInfoWrapper {
-	-webkit-box-flex: 0;
-	-webkit-flex-grow: 0;
-	-ms-flex-positive: 0;
 	flex-grow: 0;
-	-webkit-flex-shrink: 0;
-	-ms-flex-negative: 0;
 	flex-shrink: 0;
-	-webkit-flex-basis: 250px;
-	-ms-flex-preferred-size: 250px;
 	flex-basis: 250px;
 }
 
@@ -1149,9 +1024,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 }
 
 .timeline {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	overflow: hidden;
 }
@@ -1217,7 +1089,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	overflow: hidden;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 }
 
@@ -1302,14 +1173,7 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	right: 0;
 	bottom: 0;
 	left: 250px;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
-	-webkit-box-orient: vertical;
-	-webkit-box-direction: normal;
-	-webkit-flex-direction: column;
-	-ms-flex-direction: column;
 	flex-direction: column;
 	pointer-events: none;
 	border-left: 1px solid #eee;
@@ -1317,35 +1181,19 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 
 #grid .header {
 	width: 100%;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	box-sizing: border-box;
 }
 
 #grid .body {
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
-	webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex-positive: 1;
 	flex-grow: 1;
 }
 
 #grid .header > div,
 #grid .body > div {
-	webkit-box-flex: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex-positive: 1;
 	flex-grow: 1;
-	-webkit-flex-shrink: 1;
-	-ms-flex-negative: 1;
 	flex-shrink: 1;
-	-webkit-flex-basis: 0;
-	-ms-flex-preferred-size: 0;
 	flex-basis: 0;
 	box-sizing: border-box;
 	position: relative;
@@ -1471,11 +1319,7 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 
 .sapUiSupportSelect {
 	height: 26px;
-	/*padding: 0.20rem 0.9rem;*/
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
 	border-radius: 3px;
-	/*margin-top: 12px;*/
 }
 
 .sapUiFormResGridCont > .sapUiFormElementLbl.sapUiRespGridBreak {
@@ -1504,10 +1348,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	cursor: hand;
 	left: -4em;       /* avoid the input field behind the file chooser */
 	font-size: 500px; /* to make the field high enough for most themes; for themes with very large fonts this needs to be increased further */
-}
-
-html[data-sap-ui-browser^="ie"] .sapUiSupportIntFup > form input {
-	display: block;
 }
 
 html[data-sap-ui-browser^="sf"] .sapUiSupportIntFupInputMask > input, /* for Safari and Chrome the file input is not clickable with opacity "0" */
