@@ -11,7 +11,6 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/library',
-	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
 	'./SplitButtonRenderer',
 	"sap/ui/events/KeyCodes"
@@ -24,7 +23,6 @@ function(
 	EnabledPropagator,
 	IconPool,
 	coreLibrary,
-	Device,
 	InvisibleText,
 	SplitButtonRenderer,
 	KeyCodes
@@ -196,9 +194,6 @@ function(
 					press: this._handleAction.bind(this, false)
 				}).addStyleClass('sapMSBText');
 
-				if (Device.browser.msie) {
-					oCtrl.addStyleClass('sapMSBTextIE');
-				}
 				this.setAggregation("_textButton", oCtrl);
 			}
 
