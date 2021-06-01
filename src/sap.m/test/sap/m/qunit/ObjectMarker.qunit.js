@@ -779,4 +779,64 @@ sap.ui.define([
 		// Cleanup
 		oMarker.destroy();
 	});
+
+	QUnit.test("aria-label of the icon", function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker({
+				visibility: ObjectMarkerVisibility.IconOnly
+			}),
+			oIcon,
+			sType;
+
+		oMarker.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		for (sType in ObjectMarkerType) {
+			// Act
+			oMarker.setType(sType);
+			oIcon = oMarker._getInnerControl()._getIconAggregation();
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oIcon.getDomRef().getAttribute("aria-label"), oMarker._getMarkerText(ObjectMarker.M_PREDEFINED_TYPES[sType], sType, ""), "aria-label is correct for type " + sType);
+		}
+
+		// Cleanup
+		oMarker.destroy();
+	});
+
+	QUnit.test("Tooltips", function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker({
+				type: ObjectMarkerType.Locked
+			}),
+			oInnerControl = oMarker._getInnerControl();
+
+		oMarker.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oInnerControl.getTooltip(), "The tooltip of the inner control must not exist if the ObjectMarker has icon and text");
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconOnly);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oInnerControl.getTooltip(), "The tooltip of the inner control must exist if the ObjectMarker has icon only");
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.TextOnly);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oInnerControl.getTooltip(), "The tooltip of the inner control must not exist if the ObjectMarker has text only");
+
+		// Cleanup
+		oMarker.destroy();
+	});
 });
