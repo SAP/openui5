@@ -42,7 +42,6 @@
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 	background-color: @sapUiShellBackground;
 	box-sizing: border-box;
@@ -275,12 +274,5 @@
 		bottom: 0;
 		left: 0;
 		border: 1px dotted @sapUiContentFocusColor;
-	}
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop, // TODO remove after the end of support for Internet Explorer
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapUiLoSplitter > .sapUiLoSplitterBar:focus::after {
-		border-style: dashed;
 	}
 }
