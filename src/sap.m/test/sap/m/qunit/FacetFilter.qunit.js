@@ -91,12 +91,14 @@ sap.ui.define([
 		oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
 			oFF.attachEvent("reset", function() {
-				// assert
-				assert.strictEqual(oFF.getAggregation("lists").length, 1, "List belong to the FacetFilter lits aggregation");
+				setTimeout(function () {
+					// assert
+					assert.strictEqual(oFF.getAggregation("lists").length, 1, "List belong to the FacetFilter lists aggregation");
 
-				// clean
-				destroyFF(oFF);
-				done();
+					// clean
+					destroyFF(oFF);
+					done();
+				}, 500);
 			});
 
 			// act
