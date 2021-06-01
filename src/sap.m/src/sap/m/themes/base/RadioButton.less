@@ -123,6 +123,21 @@
 	}
 }
 
+/* Align RadioButton in Form with other controls */
+.sapUiForm.sapUiFormEdit-CTX{
+	.sapMRb > .sapMRbB {
+		width: 2.3rem;
+	}
+
+	.sapMRbSvg {
+		margin-left: 0.125rem;
+	}
+
+	.sapMRb:focus:before {
+		left: 0;
+	}
+}
+
 /* Compact size */
 .sapUiSizeCompact{
 	.sapMRb {
@@ -170,6 +185,20 @@
 
 	.sapMRbHasLabel.sapMRb:focus:before {
 		right: 0;
+	}
+
+	.sapUiForm.sapUiFormEdit-CTX{
+		.sapMRb > .sapMRbB {
+			width: 1.625rem;
+		}
+
+		.sapMRbSvg {
+			margin-left: 0.125rem;
+		}
+
+		.sapMRb:focus:before {
+			left: 0;
+		}
 	}
 }
 
