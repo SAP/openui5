@@ -632,8 +632,8 @@ span.sapMBtnInner.sapMBtnEmphasized {
 		border-color: @sapUiNegativeElement;
 	}
 	&.sapMBtnNeutral{
-		background: @sapUiNeutralElement;
-		border-color: @sapUiNeutralElement;
+		background: @sapButton_Neutral_Background;
+		border-color: @sapButton_Neutral_BorderColor;
 	}
 	&.sapMBtnSuccess{
 		background: @sapUiPositiveElement;
@@ -721,8 +721,8 @@ span.sapMBtnInner.sapMBtnEmphasized {
 }
 
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnNeutral:not(.sapMBtnActive) {
-	background-color: darken(@sapUiNeutralElement, 7);
-	border-color: darken(@sapUiNeutralElement, 7);
+	background-color: @sapButton_Neutral_Hover_Background;
+	border-color: @sapButton_Neutral_Hover_BorderColor;
 }
 
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnCritical.sapMBtnActive {
@@ -741,8 +741,8 @@ span.sapMBtnInner.sapMBtnEmphasized {
 }
 
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnNeutral.sapMBtnActive {
-	background-color: darken(@sapUiNeutralElement, 10);
-	border-color: darken(@sapUiNeutralElement, 10);
+	background-color: @sapButton_Neutral_Active_Background;
+	border-color: @sapButton_Neutral_Active_BorderColor;
 }
 
 /* Separators between buttons in a footer */
