@@ -15,10 +15,10 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Creates a list with bound items for qunit tests that requires test setup with aggregation bindings.
-		 * When intern structures are required it is mandatory to call this function with outer this context.
-		 * @param {string} [sIdPrefix] - prefix for ids defined with this function
-		 * @returns {sap.ui.layout.HorizontalLayout} root control
+		 * Creates a list with bound items for QUnit tests that requires test setup with aggregation bindings.
+		 * When internal structures are required it is mandatory to call this function with external <code>this</code> context.
+		 * @param {string} [sIdPrefix] - Prefix for IDs defined with this function
+		 * @returns {sap.ui.layout.HorizontalLayout} Root control
 		 */
 		createListWithBoundItems: function(sIdPrefix) {
 			//	horizontalLayout

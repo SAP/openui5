@@ -462,10 +462,10 @@ function(
 	 */
 
 	/**
-	 * Returns the element id and the aggregation name of the bound control for an Element which is part of an aggregation binding
-	 * The check is done recursively
+	 * Returns the element ID and the aggregation name of the bound control for an element which is part of an aggregation binding.
+	 * The check is done recursively.
 	 * @param  {sap.ui.core.Element} oElement - Element being checked
-	 * @return {AggregationBindingStack}  Returns the {@link sap.ui.dt.ElementUtil.AggregationBindingStack} object
+	 * @return {AggregationBindingStack} {@link sap.ui.dt.ElementUtil.AggregationBindingStack} object
 	 */
 	ElementUtil.getAggregationInformation = function(oElement) {
 		var aStack = [];
