@@ -26,10 +26,10 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 
 	if (!getValue(jQuery.fn, "zIndex")) {
 		/**
-		 * Get the z-index for an element.
+		 * Get (if no zIndex parameter is given) or set the z-index for an element.
 		 *
-		 * @param {int} zIndex The z-index to set
-		 * @returns {number} The z-index
+		 * @param {int} [zIndex] The z-index to set
+		 * @returns {jQuery | number} The z-index
 		 * @public
 		 * @name jQuery#zIndex
 		 * @function
