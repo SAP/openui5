@@ -7,7 +7,13 @@
 		<uxap:subSections>
 			<uxap:ObjectPageSubSection title="Connect">
 				<uxap:blocks>
-					<forms:SimpleForm layout="ColumnLayout" width="100%">
+					<forms:SimpleForm
+						layout="ColumnLayout"
+						width="100%"
+						class="sapUxAPObjectPageSubSectionAlignContent"
+						columnsM="2"
+						columnsL="3"
+						columnsXL="4">
 						<core:Title text="Phone Numbers"/>
 
 						<Label text="Home"/>
@@ -15,13 +21,7 @@
 
 						<Label text="Office phone"/>
 						<Text text="+ 1 415-321-5555"/>
-					</forms:SimpleForm>
 
-					<forms:SimpleForm
-						editable="false"
-						labelSpanM="4"
-						labelSpanS="4"
-						width="100%">
 						<core:Title text="Social Accounts"/>
 
 						<Label text="LinkedIn"/>
@@ -29,12 +29,7 @@
 
 						<Label text="Twitter"/>
 						<Text text="@DeniseSmith"/>
-					</forms:SimpleForm>
 
-					<forms:SimpleForm
-						layout="ColumnLayout"
-						editable="false"
-						width="100%">
 						<core:Title text="Addresses"/>
 
 						<Label text="Home Address"/>
@@ -42,9 +37,7 @@
 
 						<Label text="Mailing Address"/>
 						<Text text="PO Box 32114"/>
-					</forms:SimpleForm>
 
-					<forms:SimpleForm layout="ColumnLayout" width="100%">
 						<core:Title text="Mailing Address"/>
 
 						<Label text="Work"/>
@@ -56,9 +49,12 @@
 			<uxap:ObjectPageSubSection title="Payment information">
 				<uxap:blocks>
 					<forms:SimpleForm
-						width="250px"
-						editable="false"
-						layout="ColumnLayout">
+						layout="ColumnLayout"
+						width="100%"
+						class="sapUxAPObjectPageSubSectionAlignContent"
+						columnsM="2"
+						columnsL="3"
+						columnsXL="4">
 						<core:Title text="Main Payment Method"/>
 
 						<Label text="Bank Transfer"/>
