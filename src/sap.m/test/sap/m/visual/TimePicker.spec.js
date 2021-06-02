@@ -113,7 +113,7 @@ describe("sap.m.TimePicker", function() {
 	it("mouse press: time picker with display format - mm:ss and 15 step", function() {
 		element(by.id("TP1-icon")).click();
 		var oClock = element(by.id("TP1-RP-popover"));
-		expect(takeScreenshot(oClock)).toLookAs("TP1_minutes_13_15");
+		expect(takeScreenshot(oClock)).toLookAs("TP1_minutes_03_15");
 
 		var oMinutesCover = element(by.id("TP1-clocks-clockM-cover"));
 		browser.actions().mouseMove(oMinutesCover, {x: 135, y: 0}).click().perform();
