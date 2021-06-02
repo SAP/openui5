@@ -11,7 +11,6 @@
 			<QuickViewPage
 				pageId="{pageId}"
 				header="{header}"
-				icon="{icon}"
 				title="{title}"
 				titleUrl="{titleUrl}"
 				description="{description}"
@@ -19,6 +18,12 @@
 					path: 'groups',
 					templateShareable: true
 				}">
+				<avatar>
+					<Avatar
+						src="{icon}"
+						displayShape="{displayShape}"
+					/>
+				</avatar>
 				<QuickViewGroup heading="{heading}" elements="{ path: 'elements', templateShareable: true }">
 					<QuickViewGroupElement
 						label="{label}"

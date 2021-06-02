@@ -2,23 +2,24 @@
 	"pages": [
 		{
 			"pageId": "bankPage",
-			"header": "Company info",
-			"title": "SAP Bank",
+			"header": "Company Info",
+			"title": "SAP SE",
 			"icon": "sap-icon://building",
-			"description": "The bank of SAP",
+			"displayShape": "Square",
+			"description": "Founded in 1972",
 			"groups": [
 				{
 					"heading": "Office",
 					"elements": [
 						{
+							"label": "Headquarters",
+							"value": "Walldorf, Germany",
+							"elementType": "text"
+						},
+						{
 							"label": "Phone",
 							"value": "+001 6101 34869-0",
 							"elementType": "phone"
-						},
-						{
-							"label": "Address",
-							"value": "550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA",
-							"elementType": "text"
 						}
 					]
 				},

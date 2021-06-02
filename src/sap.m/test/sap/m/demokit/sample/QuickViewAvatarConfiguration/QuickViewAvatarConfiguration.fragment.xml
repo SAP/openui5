@@ -9,8 +9,6 @@
 		<QuickViewPage
 			pageId="{pageId}"
 			header="{header}"
-			icon="{icon}"
-			fallbackIcon="{fallbackIcon}"
 			title="{title}"
 			titleUrl="{titleUrl}"
 			groups="{
@@ -18,6 +16,20 @@
 				templateShareable: false
 			}"
 			description="{description}">
+			<avatar>
+				<Avatar
+					src="{icon}"
+					displayShape="{displayShape}"
+					fallbackIcon="{fallbackIcon}"
+					initials="{initials}"
+					backgroundColor="{backgroundColor}"
+					badgeIcon="{
+						path: 'pageId',
+						formatter: '.formatBadgeIcon'
+					}"
+					press=".handleAvatarPress"
+				/>
+			</avatar>
 			<QuickViewGroup
 				heading="{heading}"
 				elements="{

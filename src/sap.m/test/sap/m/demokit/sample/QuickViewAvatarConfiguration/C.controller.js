@@ -6,10 +6,10 @@ sap.ui.define([
 ], function (Fragment, Controller, JSONModel, MessageToast) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.QuickViewFallbackIcon.C", {
+	return Controller.extend("sap.m.sample.QuickViewAvatarConfiguration.C", {
 
 		onInit: function () {
-			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickViewFallbackIcon/model/data.json"));
+			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickViewAvatarConfiguration/model/data.json"));
 		},
 
 		onAfterRendering: function () {
@@ -24,7 +24,7 @@ sap.ui.define([
 			if (!this._pQuickView) {
 				this._pQuickView = Fragment.load({
 					id: oView.getId(),
-					name: "sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon",
+					name: "sap.m.sample.QuickViewAvatarConfiguration.QuickViewAvatarConfiguration",
 					controller: this
 				}).then(function (oQuickView) {
 					oQuickView.setModel(this.oModel);
@@ -35,6 +35,18 @@ sap.ui.define([
 			this._pQuickView.then(function(oQuickView) {
 				oQuickView.openBy(oButton);
 			});
+		},
+
+		handleAvatarPress: function () {
+			MessageToast.show("Avatar was pressed");
+		},
+
+		formatBadgeIcon: function (sPageId) {
+			if (sPageId === "companyEmployeePageId") {
+				return "sap-icon://edit";
+			}
+
+			return null;
 		}
 
 	});
