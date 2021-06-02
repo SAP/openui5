@@ -2177,6 +2177,8 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
 		this.mock(oRootBinding).expects("isSuspended").returns(false);
+		this.mock(oBinding).expects("isRoot").never();
+		this.mock(oBinding).expects("getResumeChangeReason").never();
 
 		// code under test
 		oBinding.checkSuspended();
@@ -2187,6 +2189,8 @@ sap.ui.define([
 		var oBinding = new ODataBinding();
 
 		this.mock(oBinding).expects("getRootBinding").returns(undefined);
+		this.mock(oBinding).expects("isRoot").never();
+		this.mock(oBinding).expects("getResumeChangeReason").never();
 
 		// code under test
 		oBinding.checkSuspended();
@@ -2201,10 +2205,65 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
 		this.mock(oRootBinding).expects("isSuspended").returns(true);
+		this.mock(oBinding).expects("isRoot").never();
+		this.mock(oBinding).expects("getResumeChangeReason").never();
 
 		// code under test
 		assert.throws(function () {
 			oBinding.checkSuspended();
+		}, new Error("Must not call method when the binding's root binding is suspended: /Foo"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkSuspended: suspended, but never mind", function () {
+		var oBinding = new ODataBinding({
+				toString : function () {return "/Foo";}
+			}),
+			oRootBinding = new ODataBinding();
+
+		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").returns(true);
+		this.mock(oBinding).expects("isRoot").returns(false);
+		this.mock(oBinding).expects("getResumeChangeReason").returns(undefined);
+
+		// code under test
+		oBinding.checkSuspended(true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkSuspended: suspended w/ resume change reason", function (assert) {
+		var oBinding = new ODataBinding({
+				toString : function () {return "/Foo";}
+			}),
+			oRootBinding = new ODataBinding();
+
+		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").returns(true);
+		this.mock(oBinding).expects("isRoot").returns(false);
+		this.mock(oBinding).expects("getResumeChangeReason").returns("bar");
+
+		// code under test
+		assert.throws(function () {
+			oBinding.checkSuspended(true);
+		}, new Error("Must not call method when the binding's root binding is suspended: /Foo"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkSuspended: suspended root", function (assert) {
+		var oBinding = new ODataBinding({
+				toString : function () {return "/Foo";}
+			}),
+			oRootBinding = new ODataBinding();
+
+		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").returns(true);
+		// Note: quasi-absolute would be realistic example
+		this.mock(oBinding).expects("isRoot").returns(true);
+		this.mock(oBinding).expects("getResumeChangeReason").never();
+
+		// code under test
+		assert.throws(function () {
+			oBinding.checkSuspended(true);
 		}, new Error("Must not call method when the binding's root binding is suspended: /Foo"));
 	});
 
@@ -2675,6 +2734,13 @@ sap.ui.define([
 	QUnit.test("setResumeChangeReason", function (assert) {
 		var oBinding = new ODataBinding();
 
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+
+		// code under test (cannot set non-enum values)
+		oBinding.setResumeChangeReason("foo");
+
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+
 		// code under test
 		oBinding.setResumeChangeReason(ChangeReason.Change);
 
@@ -2701,6 +2767,59 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Filter);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getResumeChangeReason", function (assert) {
+		var oBinding = new ODataBinding(),
+			oBindingMock = this.mock(oBinding),
+			oDependentBinding = {
+				getResumeChangeReason : function () {}
+			},
+			oDependentBinding1 = {
+				getResumeChangeReason : function () {}
+			},
+			oDependentBinding2 = {
+				getResumeChangeReason : function () {}
+			},
+			oDependentBindingMock = this.mock(oDependentBinding);
+
+		oBindingMock.expects("getDependentBindings").returns([]);
+
+		// code under test
+		assert.strictEqual(oBinding.getResumeChangeReason(), undefined);
+
+		oBinding.sResumeChangeReason = ChangeReason.Refresh;
+		oBindingMock.expects("getDependentBindings").returns([]);
+
+		// code under test
+		assert.strictEqual(oBinding.getResumeChangeReason(), ChangeReason.Refresh);
+
+		oBindingMock.expects("getDependentBindings").returns([oDependentBinding]);
+		oDependentBindingMock.expects("getResumeChangeReason").withExactArgs()
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(oBinding.getResumeChangeReason(), ChangeReason.Refresh);
+
+		oBindingMock.expects("getDependentBindings").returns([oDependentBinding]);
+		oDependentBindingMock.expects("getResumeChangeReason").withExactArgs()
+			.returns(ChangeReason.Change);
+
+		// code under test
+		assert.strictEqual(oBinding.getResumeChangeReason(), ChangeReason.Refresh);
+
+		oBindingMock.expects("getDependentBindings")
+			.returns([oDependentBinding, oDependentBinding1, oDependentBinding2]);
+		oDependentBindingMock.expects("getResumeChangeReason").withExactArgs()
+			.returns(ChangeReason.Change);
+		this.mock(oDependentBinding1).expects("getResumeChangeReason").withExactArgs()
+			.returns(ChangeReason.Filter);
+		this.mock(oDependentBinding2).expects("getResumeChangeReason").withExactArgs()
+			.returns(ChangeReason.Sort);
+
+		// code under test
+		assert.strictEqual(oBinding.getResumeChangeReason(), ChangeReason.Filter);
+});
 
 	//*********************************************************************************************
 	QUnit.test("doDeregisterChangeListener", function () {

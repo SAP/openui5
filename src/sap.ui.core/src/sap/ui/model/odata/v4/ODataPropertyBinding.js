@@ -632,6 +632,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended
 	 *
 	 * @private
 	 */
@@ -639,6 +641,7 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
+				this.checkSuspended(true);
 				this.deregisterChange();
 			}
 			this.oContext = oContext;

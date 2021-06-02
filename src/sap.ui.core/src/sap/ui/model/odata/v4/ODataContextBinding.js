@@ -1295,7 +1295,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
 			if (this.bRelative && (this.oContext || oContext)) {
-				this.checkSuspended();
+				this.checkSuspended(true);
 				if (this.oElementContext) {
 					this.oElementContext.destroy();
 					this.oElementContext = null;
