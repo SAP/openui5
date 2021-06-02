@@ -1,7 +1,18 @@
 {
   "1.91.0": {
-    "date": "May 2021",
+    "date": "June 2021",
     "notes": [
+      {
+        "id": "b6f04848db1b27f01897227d1e6ee7d96fcb0077",
+        "type": "FIX",
+        "text": " Field: clear invalid input and error for unit/currency",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165885"
+          }
+        ]
+      },
       {
         "id": "d6aae8ac20afc301c7eeb930739a08d9ea442ac2",
         "type": "FIX",
@@ -10,6 +21,17 @@
           {
             "type": "BCP",
             "reference": "2180166883"
+          }
+        ]
+      },
+      {
+        "id": "20cd130c506b04b4d0e6b499cee4f00d7a3a905d",
+        "type": "FIX",
+        "text": " TableDelegate: suspend/resume on the root binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
           }
         ]
       },

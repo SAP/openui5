@@ -1,7 +1,61 @@
 {
   "1.91.0": {
-    "date": "May 2021",
+    "date": "June 2021",
     "notes": [
+      {
+        "id": "9364f1e22eb1250fdd7c57148dd7370c35f2f08a",
+        "type": "FEATURE",
+        "text": " sap.m.ExpandableText: Empty indicator support added"
+      },
+      {
+        "id": "b827ebd3e21a86cabf4f26b4f3c472ccc93efd49",
+        "type": "FIX",
+        "text": " sap.m.Popover: Accessibility sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138437"
+          }
+        ]
+      },
+      {
+        "id": "5c058652ce24d1c10c0bfb8d13dd5731e68c5c68",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: has stable tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170145118"
+          }
+        ]
+      },
+      {
+        "id": "0b11a3f3fb2716e675a153dab6bdf09ab8885de0",
+        "type": "FEATURE",
+        "text": " sap.m.plugins.ColumnResizer plugin is added to resize columns"
+      },
+      {
+        "id": "e3a80d96468d01ca1039fd8011010f4477d0740b",
+        "type": "FIX",
+        "text": " sap.m.Button: has contrast ratio in toolbars of type info",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170086502"
+          }
+        ]
+      },
+      {
+        "id": "2a342c014c80ab50230290a4789527f1554c96c8",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CustomYearPicker: current year is focused when there is no year selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138936"
+          }
+        ]
+      },
       {
         "id": "7f110ec877a2f5f9638a2f3cc8142727eaa0e2c5",
         "type": "FIX",
@@ -209,6 +263,17 @@
           {
             "type": "BCP",
             "reference": "2170132629"
+          }
+        ]
+      },
+      {
+        "id": "02e7b81466c5acb53546e6b8320d719e943099da",
+        "type": "FIX",
+        "text": " Form: RadioButton wrong aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170132357"
           }
         ]
       },

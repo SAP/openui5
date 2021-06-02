@@ -1,7 +1,34 @@
 {
   "1.91.0": {
-    "date": "May 2021",
+    "date": "June 2021",
     "notes": [
+      {
+        "id": "5b5346968b5afa7093f07c6644fb0f45898589b8",
+        "type": "FEATURE",
+        "text": " new and updated less parameters for all themes"
+      },
+      {
+        "id": "b8d7b59ce674842aa8299db155bd3337a7716525",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel#requestObject: support encoding of slash",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180188366"
+          }
+        ]
+      },
+      {
+        "id": "13dfe242b1b18d0d6c75c7042a5d885362ef1f71",
+        "type": "FIX",
+        "text": " Component.onBeforeUnload",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170117638"
+          }
+        ]
+      },
       {
         "id": "609ff549637b8f57f802a57db07ca75f2aab2475",
         "type": "FIX",

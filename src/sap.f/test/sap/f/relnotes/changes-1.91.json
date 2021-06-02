@@ -1,7 +1,12 @@
 {
   "1.91.0": {
-    "date": "May 2021",
+    "date": "June 2021",
     "notes": [
+      {
+        "id": "2ff835dfeac9d5baf027145611ddd4ed6cfacb7c",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: IE 11 de support in css"
+      },
       {
         "id": "0fdbece63506986fe06bcb97ae111dd8d954ac90",
         "type": "FEATURE",

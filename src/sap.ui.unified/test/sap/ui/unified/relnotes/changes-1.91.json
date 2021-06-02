@@ -1,7 +1,18 @@
 {
   "1.91.0": {
-    "date": "May 2021",
+    "date": "June 2021",
     "notes": [
+      {
+        "id": "2a342c014c80ab50230290a4789527f1554c96c8",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CustomYearPicker: current year is focused when there is no year selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170138936"
+          }
+        ]
+      },
       {
         "id": "7ecbc997270e5d6e7d4710e3fd8073aee3edd0ec",
         "type": "FIX",
