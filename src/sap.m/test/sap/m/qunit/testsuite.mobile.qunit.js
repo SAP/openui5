@@ -267,6 +267,9 @@ sap.ui.define([
 				sinon: {
 					version: 1, // as sinon-qunit-bridge doesn't support fake timers yet
 					useFakeTimers: true
+				},
+				coverage: {
+					only: "sap/m/ExpandableText"
 				}
 			},
 			ExploredSamples1: {
