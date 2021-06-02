@@ -62,8 +62,9 @@ sap.ui.define([
 	 */
 	CardRenderer.renderContainerAttributes = function (oRm, oCard) {
 		var sHeight = oCard.getHeight(),
-			sTooltip = oCard.getTooltip_AsString(),
-			bHasHeader = !!(oCard.getCardHeader() && oCard.getCardHeader().getVisible()),
+			sTooltip = oCard.getTooltip_AsString();
+
+		var bHasHeader = !!(oCard.getCardHeader() && oCard.getCardHeader().getVisible()),
 			bCardHeaderBottom = bHasHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom;
 
 		oRm.class("sapFCard")

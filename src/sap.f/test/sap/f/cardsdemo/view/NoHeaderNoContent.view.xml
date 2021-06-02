@@ -15,13 +15,13 @@
 
 		<Panel>
 			<f:GridContainer>
-				<w:Card id="i1" manifest="{manifests>/noHeaderNoContent/card131}">
+				<w:Card id="i1" manifest="{manifests>/noHeaderNoContent/i1}">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="4" />
 					</w:layoutData>
 				</w:Card>
 
-				<w:Card id="i2" manifest="{manifests>/noHeaderNoContent/card141}">
+				<w:Card id="i2" manifest="{manifests>/noHeaderNoContent/i2}">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="4" />
 					</w:layoutData>
@@ -38,6 +38,12 @@
 						</VBox>
 					</f:content>
 				</f:Card>
+
+				<w:Card id="i4" manifest="{manifests>/noHeaderNoContent/i4}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
 			</f:GridContainer>
 		</Panel>
 	</Page>

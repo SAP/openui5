@@ -102,7 +102,7 @@ describe("sap.f.Card", function () {
 
 	it("Table Card", function () {
 		navigateTo("Table Card");
-		var aCardIds = ["tablecard1"];
+		var aCardIds = ["tablecard1", "tablecard2"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({
@@ -367,26 +367,28 @@ describe("sap.f.Card", function () {
 
 	it("No Header / No Content", function () {
 		navigateTo("No Header / No Content");
-		var aCardIds = ["i1", "i2", "f3"];
+		var aCards = [
+			{ id: "i1" },
+			{ id: "i2", focus: true },
+			{ id: "f3" },
+			{ id: "i4", focus: true }
+		];
 
-		focusElement({
-			control: {
-				viewNamespace: "sap.f.cardsdemo.view.",
-				viewName: "NoHeaderNoContent",
-				interaction: "root",
-				id: aCardIds[2]
-			}
-		});
-
-		aCardIds.forEach(function (sId) {
-			takePictureOfElement({
+		aCards.forEach(function (oCard) {
+			var oElement = {
 				control: {
 					viewNamespace: "sap.f.cardsdemo.view.",
 					viewName: "NoHeaderNoContent",
 					interaction: "root",
-					id: sId
+					id: oCard.id
 				}
-			}, "14_No_Header_No_Content_" + sId);
+			};
+
+			if (oCard.focus) {
+				focusElement(oElement);
+			}
+
+			takePictureOfElement(oElement, "14_No_Header_No_Content_" + oCard.id);
 		});
 
 		navigateBack();
