@@ -6,7 +6,7 @@
 		showHeader="false"
 		enableScrolling="true"
 		class="sapUiContentPadding suppliersPage">
-		<Table id="table" inset="false"
+		<Table inset="false"
 			busyIndicatorDelay="0"
 			items="{/Suppliers}">
 			<headerToolbar>
