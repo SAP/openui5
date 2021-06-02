@@ -10587,6 +10587,23 @@ jQuery.offset = {
 	}
 };
 
+// ##### BEGIN: MODIFIED BY SAP
+// Support: IE <= 11
+// IE <= 11 throws an error when running getBoundingClientRect on a disconnected node
+support.safeBoundingClientRect = ( function() {
+	var el = document.createElement( "div" );
+
+	try {
+		return !!el.getBoundingClientRect();
+	} catch ( e ) {
+		return false;
+	} finally {
+		// release memory in IE
+		el = null;
+	}
+} )();
+// ##### END: MODIFIED BY SAP
+
 jQuery.fn.extend( {
 
 	// offset() relates an element's border box to the document origin
@@ -10612,7 +10629,15 @@ jQuery.fn.extend( {
 		// Support: IE <=11 only
 		// Running getBoundingClientRect on a
 		// disconnected node in IE throws an error
-		if ( !elem.getClientRects().length ) {
+		// ##### BEGIN: MODIFIED BY SAP
+		// Safari returns an empty DOMRectList when 'getClientRects' is called on SVG child element.
+		// Therefore a wrong offset is returned for any child element of a SVG element in Safari.
+		// Because the call of 'getClientRects' is only needed for IE to avoid throwing an error
+		// when running getBoundingClientRect on a disconnected node, the 'safeBoundingClientect'
+		// support flag is checked to make 'offset' work for the child elements in SVG element in
+		// Safari.
+		if ( !support.safeBoundingClientRect && !elem.getClientRects().length ) {
+		// ##### END: MODIFIED BY SAP
 			return { top: 0, left: 0 };
 		}
 
