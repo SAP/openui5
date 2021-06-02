@@ -709,7 +709,7 @@ sap.ui.define([
 						group: 2
 					})
 				}), new OverflowToolbarButton({
-					icon: IconPool.getIconURI("slim-arrow-up"),
+					icon: IconPool.getIconURI("navigation-up-arrow"),
 					text: oRb.getText('COLUMNSPANEL_MOVE_UP'),
 					tooltip: oRb.getText('COLUMNSPANEL_MOVE_UP'),
 					type: ButtonType.Transparent,
@@ -723,7 +723,7 @@ sap.ui.define([
 						group: 1
 					})
 				}), new OverflowToolbarButton({
-					icon: IconPool.getIconURI("slim-arrow-down"),
+					icon: IconPool.getIconURI("navigation-down-arrow"),
 					text: oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
 					tooltip: oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
 					type: ButtonType.Transparent,

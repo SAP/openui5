@@ -185,7 +185,7 @@ sap.ui.define([
 			this._oMoveUpButton = new OverflowToolbarButton(this.getId() + "-moveUpBtn",{
 				type: "Transparent",
 				tooltip: this.getResourceText("p13nDialog.MOVE_UP"),
-				icon: "sap-icon://slim-arrow-up",
+				icon: "sap-icon://navigation-up-arrow",
 				press: [this._onPressButtonMoveUp, this],
 				visible: false,
 				layoutData: new OverflowToolbarLayoutData({
@@ -205,7 +205,7 @@ sap.ui.define([
 			this._oMoveDownButton = new OverflowToolbarButton(this.getId() + "-moveDownpBtn",{
 				type: "Transparent",
 				tooltip: this.getResourceText("p13nDialog.MOVE_DOWN"),
-				icon: "sap-icon://slim-arrow-down",
+				icon: "sap-icon://navigation-down-arrow",
 				press: [this._onPressButtonMoveDown, this],
 				visible: false,
 				layoutData: new OverflowToolbarLayoutData({

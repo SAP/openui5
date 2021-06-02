@@ -825,7 +825,7 @@ sap.ui.define([
 
 		this._oRemoveAllButton = new Button({
 			text: this._oRb.getText("CONDITIONPANEL_REMOVE_ALL"), // "Remove All",
-			//icon: sap.ui.core.IconPool.getIconURI("sys-cancel"),
+			//icon: sap.ui.core.IconPool.getIconURI("decline"),
 			//tooltip: "Remove All",
 			visible: true,
 			press: function(oEvent) {
@@ -2947,7 +2947,7 @@ sap.ui.define([
 		// create "Remove button"
 		var oRemoveControl = new Button({
 			type: ButtonType.Transparent,
-			icon: IconPool.getIconURI("sys-cancel"),
+			icon: IconPool.getIconURI("decline"),
 			tooltip: this._oRb.getText("CONDITIONPANEL_REMOVE" + (this._sAddRemoveIconTooltipKey ? "_" + this._sAddRemoveIconTooltipKey : "") + "_TOOLTIP"),
 			press: function() {
 				that._handleRemoveCondition(this.oTargetGrid, oConditionGrid);
