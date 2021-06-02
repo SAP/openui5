@@ -6,7 +6,7 @@
 		showHeader="false"
 		enableScrolling="true"
 		class="sapUiContentPadding categoriesPage">
-		<Table inset="false"
+		<Table id="table" inset="false"
 			busyIndicatorDelay="0"
 			items="{/Categories}">
 			<headerToolbar>
