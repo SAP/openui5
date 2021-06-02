@@ -68,10 +68,6 @@ sap.ui.define([
 					type: "int",
 					defaultValue: -1
 				},
-				dataProperties: {
-					type: "string[]",
-					defaultValue: []
-				},
 				dataProperty: {
 					type: "string"
 				}
@@ -96,17 +92,6 @@ sap.ui.define([
 			template: true,
 			creationTemplate: true
 		};
-	};
-
-	Column.prototype.setDataProperties = function(aDataProperties) {
-		this.setProperty("dataProperties", aDataProperties);
-
-		if (!this.getDataProperty()) {
-			this.setProperty("dataProperty", this.getDataProperties()[0]);
-		}
-
-		Log.error("The property 'dataProperties' is deprecated, please use the property 'dataProperty' instead", this);
-		return this;
 	};
 
 	// Return the clone of the template set by the app on the column
