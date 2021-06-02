@@ -77,10 +77,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "http://localhost:8090/",
-					"parameters": {
-						"file": "data1.json"
-					}
+					"url": "../mock/data1.json"
 				},
 				"cache": {
 					"maxAge": 0,

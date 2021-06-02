@@ -30,7 +30,7 @@
 		"designtime": "dt/Configuration",
 		"data": {
 			"request": {
-				"url": "http://localhost:8090/?file=data2.json"
+				"url": "../mock/data2.json"
 			},
 			"cache": {
 				"maxAge": 0,

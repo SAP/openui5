@@ -29,8 +29,8 @@
 		"type": "Object",
 		"designtime": "dt/Configuration",
 		"data": {
-            "request": {
-				"url": "http://localhost:8090/?file=data5.json"
+			"request": {
+				"url": "../mock/data5.json"
 			},
 			"cache": {
 				"maxAge": 86400,
