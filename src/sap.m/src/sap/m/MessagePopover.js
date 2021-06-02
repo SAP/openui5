@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./MessagePopoverRenderer",
 	"sap/base/Log",
+	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -31,6 +32,7 @@ function(
 	Device,
 	MessagePopoverRenderer,
 	Log,
+	ManagedObjectObserver,
 	jQuery
 ) {
 		"use strict";
@@ -401,6 +403,32 @@ function(
 					this['set' + capitalize(sFuncName)](DEFAULT_ASYNC_HANDLERS[sFuncName]);
 				}
 			}, this);
+
+			this._observeItems();
+		};
+
+		MessagePopover.prototype._observeItems = function () {
+			var oItemsObserver = new ManagedObjectObserver(function(oChange) {
+				var sMutation = oChange.mutation;
+				var oItem = oChange.child;
+
+				switch (sMutation) {
+
+					case "insert":
+						// invalidate items when something is changed so we can have them recraeted
+						oItem.attachEvent("_change", this.invalidate, this);
+						break;
+					case "remove":
+						oItem.detachEvent("_change", this.invalidate, this);
+						break;
+					default:
+						break;
+				}
+			}.bind(this));
+
+			oItemsObserver.observe(this, {
+				aggregations: ["items"]
+			});
 		};
 
 		MessagePopover.prototype.onBeforeRendering = function () {
@@ -435,6 +463,9 @@ function(
 					// update the MessageView's items as well
 					item._updateProperties(function () {
 						that._bItemsChanged = true;
+
+						// navigate back if a property is changed
+						that.navigateBack();
 					});
 
 					// we need to clone the item along with its bindings and aggregations
