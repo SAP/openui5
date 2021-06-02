@@ -347,6 +347,9 @@ sap.ui.define([
 	DynamicPage.HEADER = "header";
 	DynamicPage.FOOTER = "footer";
 
+	// Synced with @_sap_f_DynamicPageHeader_PaddingBottom in base less file of DynamicPageHeader
+	DynamicPage.HEADER_CONTENT_PADDING_BOTTOM = DomUnitsRem.toPx("1rem");
+
 	DynamicPage.SHOW_FOOTER_CLASS_NAME = "sapFDynamicPageActualFooterControlShow";
 	DynamicPage.HIDE_FOOTER_CLASS_NAME = "sapFDynamicPageActualFooterControlHide";
 
@@ -379,7 +382,6 @@ sap.ui.define([
 			}};
 
 		this._setAriaRoleDescription(Core.getLibraryResourceBundle("sap.f").getText(DynamicPage.ARIA_ROLE_DESCRIPTION));
-		this._iHeaderContentPaddingBottom = DomUnitsRem.toPx(Parameters.get("_sap_f_DynamicPageHeader_PaddingBottom"));
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
@@ -1164,7 +1166,7 @@ sap.ui.define([
 			iExpandedHeaderHeadingHeight = $expandWrapperHeading && $expandWrapperHeading.length ? $expandWrapperHeading.height() : 0,
 			iSnappedHeaderHeight =  $snappedWrapper && $snappedWrapper.length ? $snappedWrapper.height() : 0,
 			iSnappingHeight = Math.ceil(this._getHeaderHeight() ||
-			iExpandedHeaderHeight + iSnappedHeaderHeight + iSnappedHeaderHeadingHeight + iExpandedHeaderHeadingHeight) - this._iHeaderContentPaddingBottom;
+			iExpandedHeaderHeight + iSnappedHeaderHeight + iSnappedHeaderHeadingHeight + iExpandedHeaderHeadingHeight) - DynamicPage.HEADER_CONTENT_PADDING_BOTTOM;
 
 		return iSnappingHeight > 0 ? iSnappingHeight : 0;
 	};
@@ -2097,7 +2099,7 @@ sap.ui.define([
 			this._snapHeader(bMoveHeaderToContent, bUserInteraction);
 			if (!bMoveHeaderToContent) {
 				iSnappingHeight = this._getSnappingHeight();
-				this._setScrollPosition(iSnappingHeight ? (iSnappingHeight + this._iHeaderContentPaddingBottom) : 0);
+				this._setScrollPosition(iSnappingHeight ? (iSnappingHeight + DynamicPage.HEADER_CONTENT_PADDING_BOTTOM) : 0);
 			}
 		}
 	};

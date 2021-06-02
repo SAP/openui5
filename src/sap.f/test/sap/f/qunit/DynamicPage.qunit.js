@@ -1690,7 +1690,7 @@ function (
 	QUnit.test("DynamicPage _getSnappingHeight() returns the correct Snapping position", function (assert) {
 		var $HeaderDom = this.oDynamicPage.getHeader().getDomRef(),
 			$TitleDom = this.oDynamicPage.getTitle().getDomRef(),
-			iSnappingPosition = (getElementHeight($HeaderDom, true /* ceil */) || getElementHeight($TitleDom, true /* ceil */)) - this.oDynamicPage._iHeaderContentPaddingBottom;
+			iSnappingPosition = (getElementHeight($HeaderDom, true /* ceil */) || getElementHeight($TitleDom, true /* ceil */)) - DynamicPage.HEADER_CONTENT_PADDING_BOTTOM;
 
 		assert.equal(this.oDynamicPage._getSnappingHeight(), iSnappingPosition, "DynamicPage snapping position is correct");
 	});
