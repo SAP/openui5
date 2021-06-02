@@ -29,8 +29,8 @@
 		"type": "Object",
 		"designtime": "dt/Configuration",
 		"data": {
-            "request": {
-                "url": "http://localhost:8090/?file=data3.json"
+			"request": {
+				"url": "../mock/data3.json"
 			}
 		},
 		"header": {
