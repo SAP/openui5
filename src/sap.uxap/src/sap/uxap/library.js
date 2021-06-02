@@ -26,7 +26,7 @@ sap.ui.define([
 		// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name: "sap.uxap",
-		dependencies: ["sap.ui.core", "sap.m", "sap.ui.layout"],
+		dependencies: ["sap.ui.core", "sap.f", "sap.m", "sap.ui.layout"],
 		designtime: "sap/uxap/designtime/library.designtime",
 		types: [
 			"sap.uxap.BlockBaseColumnLayout",

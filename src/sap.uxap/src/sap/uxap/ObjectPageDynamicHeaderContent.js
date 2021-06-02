@@ -6,19 +6,11 @@
 sap.ui.define([
 	'./library',
 	"./ObjectPageDynamicHeaderContentRenderer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/f/DynamicPageHeader"
 ],
-	function(library, ObjectPageDynamicHeaderContentRenderer, Log) {
+	function(library, ObjectPageDynamicHeaderContentRenderer, Log, DynamicPageHeader) {
 		"use strict";
-
-		try {
-			sap.ui.getCore().loadLibrary("sap.f");
-		} catch (e) {
-			Log.error("The control 'sap.uxap.ObjectPageDynamicHeaderContent' needs library 'sap.f'.");
-			throw (e);
-		}
-
-		var DynamicPageHeader = sap.ui.requireSync("sap/f/DynamicPageHeader");
 
 		/**
 		 * Constructor for a new <code>ObjectPageDynamicHeaderContent</code>.
