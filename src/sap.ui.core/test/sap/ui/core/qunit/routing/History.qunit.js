@@ -282,10 +282,10 @@ sap.ui.define([
 			return undefined;
 		});
 
-		this.oExtendedHashChanger.setHash("hash3");
+		this.oExtendedHashChanger.setHash("hashÄ");
 		history.pushState({
 			sap: {
-				history: ["/hash1", "/hash2", "/hash3"]
+				history: ["hash1", "hash2", "hashÄ"]
 			}
 		}, "");
 		var oNewHistory = new History(this.oExtendedHashChanger);
@@ -294,9 +294,9 @@ sap.ui.define([
 			assert.equal(History._aStateHistory.length, 0, "There's no history state entry");
 		} else {
 			assert.equal(History._aStateHistory.length, 3, "There are three new history state entries");
-			assert.strictEqual(History._aStateHistory[0], "/hash1", "The first history state entry is correctly '/hash1'");
-			assert.strictEqual(History._aStateHistory[1], "/hash2", "The second history state entry is correctly '/hash2'");
-			assert.strictEqual(History._aStateHistory[2], "/hash3", "The third history state entry is correctly '/hash3'");
+			assert.strictEqual(History._aStateHistory[0], "hash1", "The first history state entry is correctly 'hash1'");
+			assert.strictEqual(History._aStateHistory[1], "hash2", "The second history state entry is correctly 'hash2'");
+			assert.strictEqual(History._aStateHistory[2], "hashÄ", "The third history state entry is correctly 'hashÄ'");
 			assert.strictEqual(oNewHistory.getPreviousHash(), undefined, "The previous hash is correctly undefined");
 		}
 

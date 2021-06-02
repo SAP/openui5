@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/Device",
-	"sap/base/util/ObjectPath"
-], function(library, HashChanger, Log, URI, Device, ObjectPath) {
+	"sap/base/util/ObjectPath",
+	"sap/ui/thirdparty/hasher"
+], function(library, HashChanger, Log, URI, Device, ObjectPath, hasher) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -39,8 +40,7 @@ sap.ui.define([
 			var oState = window.history.state === null ? {} : window.history.state;
 
 			if (typeof oState === "object") {
-				// remove the leading '#'
-				var sHash = window.location.hash.replace(/^#/, "");
+				var sHash = hasher.getHash();
 				oState.sap = oState.sap ? oState.sap : {};
 
 				if (oState.sap.history && Array.isArray(oState.sap.history) && oState.sap.history[oState.sap.history.length - 1] === sHash) {
