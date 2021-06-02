@@ -484,6 +484,7 @@ sap.ui.define([
 			sCustomControlName = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS");
 
 		assert.ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
+
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, undefined, "AriaRole");
@@ -492,11 +493,17 @@ sap.ui.define([
 		assert.strictEqual(oInfo.focusable, undefined, "Focusable");
 		assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 		assert.strictEqual(oInfo.editable, undefined, "Editable");
+
 		oControl.setState("Warning");
 		oControl.setTitle("");
 		oInfo = oControl.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "Text " + ValueStateSupport.getAdditionalText(oControl.getState()) + " " +
 			oControl.getTooltip() + " " + sCustomControlName, "Description");
+
+		oControl.setText("").setTitle("").setTooltip("").setState("None");
+		oInfo = oControl.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, "", "Description is empty if no text, title, tooltip or state are provided");
+
 		oControl.destroy();
 	});
 

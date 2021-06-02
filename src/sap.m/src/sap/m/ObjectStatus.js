@@ -248,20 +248,22 @@ sap.ui.define([
 	 * @protected
 	 */
 	ObjectStatus.prototype.getAccessibilityInfo = function() {
-		var sState = ValueStateSupport.getAdditionalText(this.getState());
+		var sState = ValueStateSupport.getAdditionalText(this.getState()),
+			sDescription;
 
 		if (this.getState() != ValueState.None) {
 			sState = (sState !== null) ? sState : IndicationColorSupport.getAdditionalText(this.getState());
 		}
 
+		sDescription = (
+			(this.getTitle() || "") + " " +
+			(this.getText() || "") + " " +
+			(sState !== null ? sState : "") + " " +
+			(this.getTooltip() || "")
+		).trim();
+
 		return {
-			description: (
-				(this.getTitle() || "") + " " +
-				(this.getText() || "") + " " +
-				(sState !== null ? sState : "") + " " +
-				(this.getTooltip() || "") + " " +
-				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS")
-			).trim()
+			description: sDescription + (sDescription ? " " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS") : "")
 		};
 	};
 
