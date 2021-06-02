@@ -606,24 +606,24 @@ function(
 	}
 
 	/**
-	 * The AggregationBindingInfo contains overlay id and aggregation name of the bound control together with a stack containing
-	 * information about the traversed elements for an Overlay which is part of an aggregation binding.
+	 * The AggregationBindingInfo contains the overlay ID and the aggregation name of the bound control together with stack containing
+	 * information about the traversed elements for an overlay which is part of an aggregation binding.
 	 * @typedef {Object} sap.ui.dt.OverlayUtil.AggregationBindingInfo
-	 * @property {string} overlayId - Id of the bound overlay that contains binding aggregation template overlays.
-	 * @property {string} aggregation - Name of the bound aggregation.
-	 * @property {Object[]} stack - Array of objects containing element, element type, aggregation name and index of the element in
-	 *                              the aggregation for each traversed aggregation.
-	 * @property {string} stack.overlayId - Overlay id of an element overlay
+	 * @property {string} overlayId - ID of the bound overlay that contains binding aggregation template overlays
+	 * @property {string} aggregation - Name of the bound aggregation
+	 * @property {Object[]} stack - Array of objects containing element, element type, aggregation name, and index of the element in
+	 *                              the aggregation for each traversed aggregation
+	 * @property {string} stack.overlayId - Overlay ID of an element overlay
 	 * @property {string} stack.aggregation - Aggregation name
 	 * @property {number} stack.index - Index of the overlay in parent aggregation
 	 */
 
 	/**
-	 * Returns the overlay id, the aggregation name of the closest bound control for an overlay which is part of an aggregation binding.
-	 * In all cases there is also a stack of Element overlays returned that describes the path from the selected / passed overlay up to the
+	 * Returns the overlay ID and the aggregation name of the closest bound control for an overlay which is part of an aggregation binding.
+	 * In all cases there is also a stack of element overlays returned that describes the path from the selected / passed overlay up to the
 	 * closest bound control.
 	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay being checked
-	 * @return {AggregationBindingInfo}  Returns the {@link sap.ui.dt.OverlayUtil.AggregationBindingInfo} object
+	 * @return {AggregationBindingInfo} {@link sap.ui.dt.OverlayUtil.AggregationBindingInfo} object
 	 */
 	 OverlayUtil.getClosestBoundControl = function(oElementOverlay) {
 		return findBoundControl(oElementOverlay, []);
