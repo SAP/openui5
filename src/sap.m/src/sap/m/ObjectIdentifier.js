@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
-	'./ObjectIdentifierRenderer'
+	'./ObjectIdentifierRenderer',
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	library,
@@ -25,7 +26,8 @@ function(
 	coreLibrary,
 	Device,
 	ManagedObject,
-	ObjectIdentifierRenderer
+	ObjectIdentifierRenderer,
+	KeyCodes
 	) {
 	"use strict";
 
@@ -397,8 +399,10 @@ function(
 	 * @param {jQuery.Event} oEvent The fired event
 	 * @private
 	 */
-	ObjectIdentifier.prototype.onsapspace = function(oEvent) {
-		ObjectIdentifier.prototype._handlePress.apply(this, arguments);
+	ObjectIdentifier.prototype.onkeyup = function(oEvent) {
+		if (oEvent && oEvent.which === KeyCodes.SPACE) {
+			ObjectIdentifier.prototype._handlePress.apply(this, arguments);
+		}
 	};
 
 	/**
