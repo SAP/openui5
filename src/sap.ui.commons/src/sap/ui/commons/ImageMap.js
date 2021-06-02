@@ -9,10 +9,9 @@ sap.ui.define([
     'sap/ui/core/Control',
     'sap/ui/core/delegate/ItemNavigation',
     './ImageMapRenderer',
-    './Area',
-    'sap/ui/Device'
+    './Area'
 ],
-	function(jQuery, library, Control, ItemNavigation, ImageMapRenderer, Area, Device) {
+	function(jQuery, library, Control, ItemNavigation, ImageMapRenderer, Area) {
 	"use strict";
 
 
@@ -112,28 +111,8 @@ sap.ui.define([
 			this.oItemNavigation = new ItemNavigation();
 		}
 
-		if (Device.browser.msie) {
-
-			var that = this;
-			var aImageControls = [];
-			this.oItemNavigation.setTabIndex0();
-
-			// Find the Image control and add delegate to it
-			var $Images = jQuery("img[usemap='#" + this.getName() + "']");
-			$Images.each(function(i, image) {
-				var id = image.getAttribute("id");
-				var imageControl = sap.ui.getCore().byId(id);
-				imageControl.addDelegate(that.oItemNavigation);
-				that.oItemNavigation.setRootDomRef(image);
-				aImageControls.push(imageControl);
-			});
-
-			this.aImageControls = aImageControls;
-		} else {
-
-			this.addDelegate(this.oItemNavigation);
-			this.oItemNavigation.setRootDomRef(this.oDomRef);
-		}
+		this.addDelegate(this.oItemNavigation);
+		this.oItemNavigation.setRootDomRef(this.oDomRef);
 
 		// Set navigations items = Areas inside of Image map
 		var aItemDomRefs = [];
@@ -161,13 +140,7 @@ sap.ui.define([
 	ImageMap.prototype.exit = function() {
 		// Remove the item navigation delegate
 		if (this.oItemNavigation) {
-			if (Device.browser.msie) {
-				for ( var i = 0; i < this.aImageControls.length; i++) {
-					this.aImageControls[i].removeDelegate(this.oItemNavigation);
-				}
-			} else {
-				this.removeDelegate(this.oItemNavigation);
-			}
+			this.removeDelegate(this.oItemNavigation);
 			this.oItemNavigation.destroy();
 			delete this.oItemNavigation;
 		}

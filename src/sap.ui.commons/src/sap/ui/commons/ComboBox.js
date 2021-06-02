@@ -4,23 +4,23 @@
 
 // Provides control sap.ui.commons.ComboBox.
 sap.ui.define([
-    'sap/ui/thirdparty/jquery',
-    './TextField',
-    './library',
-    'sap/ui/core/Popup',
-    './ComboBoxRenderer',
-    'sap/ui/core/library',
-    'sap/ui/Device',
-    './ListBox',
-    'sap/ui/base/Event',
-    'sap/ui/dom/containsOrEquals',
-    'sap/ui/events/KeyCodes',
-    'sap/ui/events/jquery/EventExtension',
-    'sap/ui/dom/jquery/rect', // jQuery Plugin "rect"
-    'sap/ui/dom/jquery/selectText', // jQuery.fn.selectText
-    'jquery.sap.strings' // jQuery.sap.startsWithIgnoreCase
+	'sap/ui/thirdparty/jquery',
+	'./TextField',
+	'./library',
+	'sap/ui/Device',
+	'sap/ui/core/Popup',
+	'./ComboBoxRenderer',
+	'sap/ui/core/library',
+	'./ListBox',
+	'sap/ui/base/Event',
+	'sap/ui/dom/containsOrEquals',
+	'sap/ui/events/KeyCodes',
+	'sap/ui/events/jquery/EventExtension',
+	'sap/ui/dom/jquery/rect', // jQuery Plugin "rect"
+	'sap/ui/dom/jquery/selectText', // jQuery.fn.selectText
+	'jquery.sap.strings' // jQuery.sap.startsWithIgnoreCase
 ],
-	function(jQuery, TextField, library, Popup, ComboBoxRenderer, coreLibrary, Device, ListBox, Event, containsOrEquals, KeyCodes, EventExtension) {
+	function(jQuery, TextField, library, Device, Popup, ComboBoxRenderer, coreLibrary, ListBox, Event, containsOrEquals, KeyCodes, EventExtension) {
 	"use strict";
 
 
@@ -1002,14 +1002,6 @@ sap.ui.define([
 		oListBox.attachSelect(this._handleSelect, this);
 		// and also ensure we get to know it closes / gets closed via automatic-close again
 		this.oPopup.attachClosed(this._handleClosed, this);
-
-		if (Device.browser.msie) {
-			// as IE just ignores syncron focus() called from popup by opening it must be called asynchron
-			// otherwise onfocusin is not executed.
-			setTimeout(function(){
-				jQuery(this.getInputDomRef()).trigger("focus");
-			}.bind(this), 0);
-		}
 
 		// if ComboBox is open -> switch to action mode
 		if (jQuery(this.getFocusDomRef()).data("sap.InNavArea")) {
