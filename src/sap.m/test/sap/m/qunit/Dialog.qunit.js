@@ -2316,53 +2316,66 @@ sap.ui.define([
 					})
 				]
 			});
+
+			sinon.config.useFakeTimers = false;
 		},
 		afterEach: function() {
+			sinon.config.useFakeTimers = true;
 			this.oDialog.destroy();
 		}
 	});
 
 	QUnit.test("Content width is smaller than the min-width of the dialog", function (assert) {
-
+		var done = assert.async();
 		// Arrange
 		// Set the long title to something shorter.
 		this.oDialog.getContent()[0].getItems()[3].setTitle("Item 3.5");
 		var iScrollWidth = 18;
 
+		this.oDialog.attachAfterOpen(function () {
+			var bContentGrowsToFitContainer = this.oDialog.$("scroll").width() + iScrollWidth >= this.oDialog.$().width();
+
+			// Assert
+			assert.equal(this.oDialog.$().css("width"), this.oDialog.$().css("min-width"), "Should have minimum width when content width is smaller.");
+			assert.ok(bContentGrowsToFitContainer, "Content should grow to fit the container when its width is smaller than the minimum width of the dialog.");
+
+			done();
+		}.bind(this));
+
 		// Act
 		this.oDialog.open();
-		this.clock.tick(500);
-
-		var bContentGrowsToFitContainer = this.oDialog.$("scroll").width() + iScrollWidth >= this.oDialog.$().width();
-
-		// Assert
-		assert.equal(this.oDialog.$().css("width"), this.oDialog.$().css("min-width"), "Should have minimum width when content width is smaller.");
-		assert.ok(bContentGrowsToFitContainer, "Content should grow to fit the container when its width is smaller than the minimum width of the dialog.");
 	});
 
 	QUnit.test("Item texts are not truncated when width is auto", function(assert) {
+		var done = assert.async();
+		this.oDialog.attachAfterOpen(function () {
+
+			var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
+
+			// assert
+			assert.strictEqual(isTextTruncated($longTextItem), false, "Long text is not truncated when width is auto");
+
+			done();
+		}.bind(this));
+
 		this.oDialog.open();
-		this.clock.tick(500);
-
-		Core.applyChanges();
-
-		var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
-
-		// assert
-		assert.strictEqual(isTextTruncated($longTextItem), false, "Long text is not truncated when width is auto");
 	});
 
 	QUnit.test("Text is truncated when width is too small", function(assert) {
+		var done = assert.async();
 		// make the dialog very small to ensure truncation
 		this.oDialog.setContentWidth("20rem");
 
+		this.oDialog.attachAfterOpen(function () {
+			var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
+
+			// assert
+			assert.strictEqual(isTextTruncated($longTextItem), true, "Text is truncated when width is small");
+
+			done();
+		}.bind(this));
+
 		this.oDialog.open();
-		this.clock.tick(500);
-
-		var $longTextItem = this.oDialog.$().find("#longTextItem .sapMSLITitleOnly");
-
-		// assert
-		assert.strictEqual(isTextTruncated($longTextItem), true, "Text is truncated when width is small");
 	});
 
 	QUnit.module("Dialog with specific tool bar design");
