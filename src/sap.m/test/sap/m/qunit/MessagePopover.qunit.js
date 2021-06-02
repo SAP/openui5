@@ -8,12 +8,14 @@ sap.ui.define([
 	"sap/ui/base/ObjectPool",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/library",
+	"sap/ui/core/IconPool",
 	"sap/m/library",
 	"sap/m/Toolbar",
 	"sap/ui/core/message/Message",
 	"sap/m/MessageItem",
 	"sap/ui/Device",
-	"sap/ui/core/CustomData"
+	"sap/ui/core/CustomData",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	MessagePopover,
@@ -22,12 +24,14 @@ sap.ui.define([
 	ObjectPool,
 	JSONModel,
 	coreLibrary,
+	IconPool,
 	mobileLibrary,
 	Toolbar,
 	Message,
 	MessageItem,
 	Device,
-	CustomData
+	CustomData,
+	Core
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -1329,6 +1333,62 @@ sap.ui.define([
 		oMessagePopover.destroy();
 		oButton.destroy();
 		sap.ui.getCore().getMessageManager().removeAllMessages();
+	});
+
+	QUnit.test("Update binding of single item should change its properties (integration test)", function (assert) {
+		var oMessageTemplate = new MessageItem({
+			type: '{messageSummary>type}',
+			title: '{messageSummary>message}'
+		});
+
+		var oMessagePopover = new MessagePopover({
+			items: {
+				path: "messageSummary>/",
+				template: oMessageTemplate
+			}
+		});
+
+		var oButton = new Button();
+		var sWarningText = "[WARNING] Veniam esse veniam nisi irure et labore eu consectetur dolor.";
+
+		var oChangeToWarningBtn = new Button({
+			press: function () {
+				_setMessageModel(sWarningText, "Warning");
+				Core.applyChanges();
+			}
+		}).placeAt("qunit-fixture");
+
+		var _setMessageModel = function(sText, sType) {
+			var oMessage = new Message({
+				message: sText,
+				type: sType
+			});
+
+			var aMessages = [oMessage];
+			var oMessageModel = Core.getModel("messageSummary");
+			oMessageModel.setData(aMessages);
+		};
+
+		Core.setModel(new JSONModel([]), "messageSummary");
+		_setMessageModel("[ERROR] Veniam esse veniam nisi irure et labore eu consectetur dolor.", "Error");
+
+		oButton.addDependent(oMessagePopover);
+		oButton.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+
+		oMessagePopover.openBy(oButton);
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		oChangeToWarningBtn.firePress();
+
+		assert.strictEqual(oMessagePopover._oMessageView._oMessageIcon.getSrc(), IconPool.getIconURI("message-warning"), "Icon should be warning");
+		assert.strictEqual(oMessagePopover._oMessageView._detailsPage.getContent()[0].getText(), sWarningText, "Text should be warning");
+
+		oButton.destroy();
+		oMessagePopover.destroy();
+		oChangeToWarningBtn.destroy();
 	});
 
 	QUnit.module("Refactoring", {
