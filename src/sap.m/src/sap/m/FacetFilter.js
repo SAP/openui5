@@ -164,7 +164,7 @@ sap.ui.define([
 	 * <h3>Additional Information</h3>
 	 *
 	 * For more information, go to <b>Developer Guide</b> section in the Demo Kit and navigate to
-	 * <b>More&nbsp;About&nbsp;Controls</b>&nbsp;>&nbsp;<b>sap.m</b>&nbsp;>&nbsp;<b>Facet&nbsp;Filter</b>
+	 * <b>More About Controls</b> &gt; <b>sap.m</b> &gt; <b>Facet Filter</b>
 	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
