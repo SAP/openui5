@@ -290,16 +290,6 @@ sap.ui.define([
 				type: "textArea",
 				itemKey: sKey
 			}
-			/*,
-			{
-				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.LINE"),
-				path: "line",
-				allowBindings: true,
-				value: bLine,
-				visible: sType === "separator",
-				type: "boolean",
-				itemKey: sKey
-			}*/
 		);
 		return oMapItemConfig;
 	};

@@ -12,8 +12,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
 					"separator1": {
-						"type": "separator",
-						"line": true
+						"type": "separator"
 					},
 					"cardTitle": {
 						"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
@@ -39,12 +38,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"visibleToUser": true
 					},
 					"separator2": {
-						"type": "separator",
-						"line": true
+						"type": "separator"
 					},
 					"separator3": {
-						"type": "separator",
-						"line": true
+						"type": "separator"
 					},
 					"stringLabelTrans": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
@@ -69,8 +66,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"description": "A very long description text that should wrap into the next line"
 					},
 					"separator5": {
-						"type": "separator",
-						"line": true
+						"type": "separator"
 					},
 					"stringWithTranslatedValue": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValue/value",
@@ -612,8 +608,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"separator9": {
-						"type": "separator",
-						"line": true
+						"type": "separator"
 					},
 					"color": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
@@ -644,8 +639,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"cols": 1
 					},
 					"separator10": {
-						"type": "separator",
-						"line": true
+						"type": "separator"
 					},
 					"color1": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
@@ -678,8 +672,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"cols": 1
 					},
 					"separator11": {
-						"type": "separator",
-						"line": true
+						"type": "separator"
 					},
 					"maxItems": {
 						"manifestpath": "/sap.card/content/maxItems",
