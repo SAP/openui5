@@ -55,7 +55,8 @@ sap.ui.define([
 				// check for an existing test page and check for test suite or page
 				jQuery.get(oTestPageConfig.fullpage).done(function(sData) {
 					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
-							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/run-test/.test(sData)) ) {
+							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/runTest/.test(sData))
+							|| /sap\/ui\/test\/starter\/createSuite/.test(sData) ) {
 
 						// console.log("execute page ", sTestPage);
 						var $frame = jQuery("<iframe>");

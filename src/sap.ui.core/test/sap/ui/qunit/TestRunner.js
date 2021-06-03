@@ -135,7 +135,8 @@
 				// check for an existing test page and check for test suite or page
 				oXHRQueue.ajax(sTestPage).then(function(sData) {
 					if (/(?:window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/.test(sData)
-							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/runTest/.test(sData)) ) {
+							|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/runTest/.test(sData))
+							|| /sap\/ui\/test\/starter\/createSuite/.test(sData) ) {
 						var $frame = jQuery("<iframe>");
 						var that = this;
 

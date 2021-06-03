@@ -29,6 +29,11 @@ sap.ui.define([
 		return tag ? tag.getAttribute(name) : null;
 	}
 
+	function getDefaultSuiteName() {
+		var sName = sap.ui.loader._.guessResourceName(location.href);
+		return sName ? sName.replace(/\.html$/, "") : null;
+	}
+
 	/**
 	 * Execute the given callback once the DOM is ready (which might already be the case).
 	 *
@@ -275,6 +280,7 @@ sap.ui.define([
 		addStylesheet: addStylesheet,
 		encode: encode,
 		getAttribute: getAttribute,
+		getDefaultSuiteName: getDefaultSuiteName,
 		getSuiteConfig: getSuiteConfig,
 		whenDOMReady: whenDOMReady
 	};
