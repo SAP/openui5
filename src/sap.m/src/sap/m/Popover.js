@@ -692,9 +692,7 @@ sap.ui.define([
 				}
 			}
 
-			if (!this.isPropertyInitial("title")) {
-				this._setHeaderTitle();
-			}
+			this._setHeaderTitle();
 
 			if (!Device.system.desktop) {
 				this.setResizable(false);
@@ -2402,16 +2400,23 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype._getAccessibilityOptions = function() {
-			var aAriaLabels, mAccOptions = {},
-                            oHeader = this._getAnyHeader();
+			var aAriaLabels,
+				mAccOptions = {},
+				oHeader = this._getAnyHeader(),
+				oCustomHeader = this.getCustomHeader();
 
 			mAccOptions.role = "dialog";
 			mAccOptions.modal = this.getProperty("ariaModal");
-			if (this.getShowHeader() && oHeader && oHeader.getVisible()) {
-				// If we have a header/title, we add a reference to it in the beginning of the aria-labelledby attribute
-				aAriaLabels = Array.prototype.concat(oHeader.getId(), this.getAssociation("ariaLabelledBy", []));
-				mAccOptions.labelledby = aAriaLabels.join(' ');
+
+			if (!this.getShowHeader() || !oHeader || !oHeader.getVisible()) {
+				return mAccOptions;
 			}
+
+			var oHeaderId = oCustomHeader ? oCustomHeader.getId() : this.getHeaderTitle().getId();
+
+			// If we have a header/title, we add a reference to it in the beginning of the aria-labelledby attribute
+			aAriaLabels = Array.prototype.concat(oHeaderId, this.getAssociation("ariaLabelledBy", []));
+			mAccOptions.labelledby = aAriaLabels.join(' ');
 
 			return mAccOptions;
 		};
@@ -2421,9 +2426,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype._setHeaderTitle = function () {
-			if (this._headerTitle) {
-				this._headerTitle.setText(this.getTitle());
-			} else {
+			if (!this._headerTitle) {
 				this._headerTitle = new Title(this.getId() + "-title", {
 					text: this.getTitle(),
 					level: "H2"
@@ -2431,7 +2434,23 @@ sap.ui.define([
 
 				this._createInternalHeader();
 				this._internalHeader.addContentMiddle(this._headerTitle);
+
+				return;
 			}
+
+			if (this._headerTitle.getText() !== this.getTitle()) {
+				this._headerTitle.setText(this.getTitle());
+			}
+		};
+
+		/**
+		 * The getter of the header title property.
+		 *
+		 * @returns {sap.m.Title} The title of the popover.
+		 * @private
+		 */
+		Popover.prototype.getHeaderTitle = function () {
+			return this._headerTitle;
 		};
 
 		/**

@@ -2005,7 +2005,7 @@ sap.ui.define([
 		oPopover.openBy(oButton);
 		this.clock.tick(400);
 
-		assert.equal(oPopover.$().attr('aria-labelledby'), oPopover._getAnyHeader().getId(), 'Popover aria labeledby attribute is equal to the header id');
+		assert.equal(oPopover.$().attr('aria-labelledby'), oPopover.getHeaderTitle().getId(), 'Popover aria labeledby attribute is equal to the header id');
 
 		oPopover.destroy();
 		oButton.destroy();
@@ -2101,7 +2101,7 @@ sap.ui.define([
 		this.clock.tick(400);
 
 		assert.equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
-		assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (oPopover._getAnyHeader().getId() + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the internal header and the additional invisible label");
+		assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (oPopover.getHeaderTitle().getId() + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the internal header and the additional invisible label");
 
 		oInvisibleText.destroy();
 		oPopover.destroy();
