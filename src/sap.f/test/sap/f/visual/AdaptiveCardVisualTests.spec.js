@@ -13,4 +13,10 @@ describe('sap.f.AdaptiveCardVisualTests', function() {
 			expect(takeScreenshot()).toLookAs("another_adaptive_card");
 		});
 	});
+
+	it('Changing themes should work', function() {
+		browser.executeScript('sap.ui.getCore().applyTheme("sap_fiori_3_dark")').then(function() {
+			expect(takeScreenshot()).toLookAs("cards_with_changed_theme");
+		});
+	});
 });
