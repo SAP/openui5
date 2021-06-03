@@ -128,11 +128,16 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.module("Content preservation");
+	QUnit.module("Content preservation", {
+		beforeEach: function() {
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function() {
+			sinon.config.useFakeTimers = true;
+		}
+	});
 
 	QUnit.test("Preserve Dialog Content", function(assert) {
-		this.clock.restore();
-
 		var bRendered = false;
 		var oDialog = new Dialog();
 		var oHtml = new HTML({
@@ -2554,7 +2559,14 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.module("Responsive padding support");
+	QUnit.module("Responsive padding support", {
+		beforeEach: function() {
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function() {
+			sinon.config.useFakeTimers = true;
+		}
+	});
 
 	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
 		// Arrange
@@ -2576,8 +2588,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Correct Responsive padding is applied", function (assert) {
-		this.clock.restore(); // restore the timer so we can use the real setTimeout for this test
-
 		// Arrange
 		var done = assert.async();
 		var oDialog = new Dialog({
@@ -2888,8 +2898,10 @@ sap.ui.define([
 	QUnit.module("Resize of Within Area", {
 		beforeEach: function () {
 			this.oDialog = new Dialog();
+			sinon.config.useFakeTimers = false;
 		},
 		afterEach: function () {
+			sinon.config.useFakeTimers = true;
 			this.oDialog.destroy();
 		}
 	});
@@ -2899,7 +2911,8 @@ sap.ui.define([
 		var oWindowDimensions = this.oDialog._getAreaDimensions(),
 			iNewWindowWidth = oWindowDimensions.width - 200;
 		this.oDialog.setStretch(true).open();
-		this.clock.tick(500);
+		Core.applyChanges();
+
 		this.stub(this.oDialog, "_getAreaDimensions").returns(
 			Object.assign(
 				oWindowDimensions,
@@ -2916,7 +2929,6 @@ sap.ui.define([
 
 	QUnit.test("Resize of custom Within Area. Dialog should be repositioned", function (assert) {
 		// Arrange
-		this.clock.restore();
 		var done = assert.async();
 		var oWithinArea = createAndAppendDiv("withinArea");
 		var mStyles = {
