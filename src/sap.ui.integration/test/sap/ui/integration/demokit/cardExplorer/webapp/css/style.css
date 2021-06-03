@@ -55,3 +55,7 @@ html.sap-phone .sapFGridContainer { /* in "Explore" section */
 	height: 1rem !important;
 	color:dimgray !important;
 }
+
+.StyleMessageIcon:focus-visible {
+	outline: none !important;
+}

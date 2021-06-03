@@ -11,9 +11,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "General",
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
-					"separator1": {
-						"type": "separator"
-					},
 					"cardTitle": {
 						"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
 						"type": "string",
@@ -23,69 +20,37 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"editableToUser": false,
 						"visibleToUser": false
 					},
+					"separator1": {
+						"type": "separator"
+					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"type": "string",
+						"label": "String Label",
 						"translatable": true,
 						"required": true,
 						"editableToUser": false
 					},
-					"stringLabel": {
-						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
-						"type": "string",
-						"label": "Direct String Label",
-						"editableToUser": true,
-						"visibleToUser": true
-					},
-					"separator2": {
-						"type": "separator"
-					},
-					"separator3": {
-						"type": "separator"
-					},
-					"stringLabelTrans": {
-						"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
+					"stringWithTranslatedValue": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValue/value",
 						"type": "string",
 						"label": "{i18n>TRANSLATED_STRING_LABEL}",
 						"translatable": true,
 						"allowDynamicValues": false
 					},
-					"separator4": {
-						"type": "separator"
-					},
-					"stringWithDescription": {
-						"manifestpath": "/sap.card/configuration/parameters/stringWithDescription/value",
-						"type": "string",
-						"label": "String with description",
-						"description": "Description"
-					},
-					"stringWithLongDescription": {
-						"manifestpath": "/sap.card/configuration/parameters/stringWithLongDescription/value",
-						"type": "string",
-						"label": "String with long description",
-						"description": "A very long description text that should wrap into the next line"
-					},
-					"separator5": {
-						"type": "separator"
-					},
-					"stringWithTranslatedValue": {
-						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValue/value",
-						"type": "string",
-						"label": "String with translated value",
-						"translatable": true
-					},
 					"stringWithTranslatedValueIni18nFormat": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValueIni18nFormat/value",
 						"type": "string",
-						"label": "String with translated value in i18n format"
+						"label": "String with translated value in i18n format",
+						"description": "A very long description text that should wrap into the next line"
 					},
-					"separator6": {
+					"separator2": {
 						"type": "separator"
 					},
 					"stringInCols1": {
 						"manifestpath": "/sap.card/configuration/parameters/stringInCols1/value",
-						"label": "stringInCols1 long long long long long long long long long long long long label",
-						"description": "aa",
+						"label": "Column 1",
+						"description": "Two columns in the same line",
 						"type": "string",
 						"cols": 1,
 						"allowSettings": false,
@@ -93,17 +58,23 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"stringInCols2": {
 						"manifestpath": "/sap.card/configuration/parameters/stringInCols2/value",
-						"label": "URL",
+						"label": "Column 2",
 						"type": "string",
 						"cols": 1,
 						"allowSettings": false
 					},
-					"separator7": {
+					"separator3": {
 						"type": "separator"
+					},
+					"integerLabel": {
+						"manifestpath": "/sap.card/configuration/parameters/integerLabel/value",
+						"type": "integer",
+						"label": "Direct Integer Label"
 					},
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"type": "integer",
+						"label": "Integer with Slider",
 						"visualization": {
 							"type": "sap/m/Slider",
 							"settings": {
@@ -118,34 +89,26 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
-					"integerLabel": {
-						"manifestpath": "/sap.card/configuration/parameters/integerLabel/value",
-						"type": "integer",
-						"label": "Direct Integer Label"
-					},
-					"integerLabelTrans": {
-						"manifestpath": "/sap.card/configuration/parameters/integerLabelTrans/value",
-						"type": "integer",
-						"label": "{i18n>TRANSLATED_INTEGER_LABEL}"
+					"separator4": {
+						"type": "separator"
 					},
 					"number": {
 						"manifestpath": "/sap.card/configuration/parameters/number/value",
-						"type": "number"
-					},
-					"numberLabel": {
-						"manifestpath": "/sap.card/configuration/parameters/numberLabel/value",
-						"type": "number",
-						"label": "Direct number Label"
-					},
-					"numberLabelTrans": {
-						"manifestpath": "/sap.card/configuration/parameters/numberLabelTrans/value",
 						"type": "number",
 						"label": "{i18n>TRANSLATED_NUMBER_LABEL}"
+					},
+					"separator5": {
+						"type": "separator"
+					},
+					"booleanLabel": {
+						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",
+						"label": "Boolean",
+						"type": "boolean"
 					},
 					"boolean": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 						"description": "Description",
-						"label": "long long long long long long long long long long label",
+						"label": "Boolean with Switch",
 						"type": "boolean",
 						"visualization": {
 							"type": "sap/m/Switch",
@@ -157,241 +120,31 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
-					"booleanLabel": {
-						"manifestpath": "/sap.card/configuration/parameters/booleanLabel/value",
-						"label": "long long long long long long long long long long label",
-						"type": "boolean"
-					},
-					"booleanLabelTrans": {
-						"manifestpath": "/sap.card/configuration/parameters/booleanLabelTrans/value",
-						"type": "boolean",
-						"label": "{i18n>TRANSLATED_BOOLEAN_LABEL}"
+					"separator6": {
+						"type": "separator"
 					},
 					"date": {
 						"manifestpath": "/sap.card/configuration/parameters/date/value",
-						"type": "date"
-					},
-					"dateLabel": {
-						"manifestpath": "/sap.card/configuration/parameters/dateLabel/value",
 						"type": "date",
-						"label": "Direct Date Label"
-					},
-					"dateLabelTrans": {
-						"manifestpath": "/sap.card/configuration/parameters/dateLabelTrans/value",
-						"type": "date",
-						"label": "{i18n>TRANSLATED_DATE_LABEL}"
+						"label": "Date"
 					},
 					"dateTime": {
 						"manifestpath": "/sap.card/configuration/parameters/dateTime/value",
-						"type": "datetime"
-					},
-					"dateTimeLabel": {
-						"manifestpath": "/sap.card/configuration/parameters/dateTimeLabel/value",
 						"type": "datetime",
-						"label": "Direct Date Time Label"
+						"label": "Date Time"
 					},
-					"dateTimeLabelTrans": {
-						"manifestpath": "/sap.card/configuration/parameters/dateTimeLabelTrans/value",
-						"type": "datetime",
-						"label": "{i18n>TRANSLATED_DATETIME_LABEL}"
+					"separator7": {
+						"type": "separator"
 					},
 					"enum": {
 						"manifestpath": "/sap.card/configuration/parameters/enum/value",
 						"label": "Enumerations",
 						"type": "enum",
-						"required": true,
 						"enum": [
 							"Option A",
 							"Option B",
 							"Option C"
 						]
-					},
-					"separator8": {
-						"type": "separator"
-					},
-					"formatterGroup": {
-						"type": "group",
-						"label": "Formatter"
-					},
-					"dateFormatter": {
-						"manifestpath": "/sap.card/configuration/parameters/dateFormatter/value",
-						"type": "date",
-						"formatter": {
-							"style": "long"
-						}
-					},
-					"datetimeFormatter": {
-						"manifestpath": "/sap.card/configuration/parameters/datetimeFormatter/value",
-						"type": "datetime",
-						"formatter": {
-							"style": "long"
-						}
-					},
-					"floatFormatter": {
-						"manifestpath": "/sap.card/configuration/parameters/floatFormatter/value",
-						"type": "number",
-						"formatter": {
-							"decimals": 3
-						}
-					},
-					"integerFormatter": {
-						"manifestpath": "/sap.card/configuration/parameters/integerFormatter/value",
-						"type": "integer",
-						"formatter": {
-							"minIntegerDigits": 3,
-							"maxIntegerDigits": 6,
-							"emptyString": ""
-						}
-					},
-					"stringArrayFormatter": {
-						"manifestpath": "/sap.card/configuration/parameters/stringArrayFormatter/value",
-						"label": "String Array",
-						"type": "string[]",
-						"editable": true,
-						"values": {
-							"data": {
-								"json": [
-									{ "text": 0.3, "key": "key1", "additionalText": 1293883200000, "icon": "sap-icon://accept" },
-									{ "text": 0.6, "key": "key2", "additionalText": 1293883200000, "icon": "sap-icon://cart" },
-									{ "text": 0.8, "key": "key3", "additionalText": 1293883200000, "icon": "sap-icon://zoom-in" }
-								],
-								"path": "/"
-							},
-							"item": {
-								"text": "Percent: {= format.percent(${text}) }",
-								"key": "{key}",
-								"additionalText": "datetime: {= format.dateTime(${additionalText}, {style: 'long'}) }",
-								"icon": "{icon}"
-							}
-						}
-					},
-					"InvoiceswithStringArray": {
-						"manifestpath": "/sap.card/configuration/parameters/InvoiceswithStringArray/value",
-						"type": "string[]",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Invoices",
-									"parameters": {
-										"$select": "OrderID, ShipName, ShippedDate",
-										"$skip": "5",
-										"$top": "5"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{OrderID}",
-								"key": "{OrderID}",
-								"additionalText": "{= format.dateTime(${ShippedDate}, {style: 'long'}) }"
-							}
-						}
-					},
-					"Invoices": {
-						"manifestpath": "/sap.card/configuration/parameters/Invoices/value",
-						"type": "string",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Invoices",
-									"parameters": {
-										"$select": "ShipName, ShippedDate",
-										"$skip": "8",
-										"$top": "8"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{ShipName}",
-								"key": "{ShipName}",
-								"additionalText": "Shipped Date: {= format.dateTime(${ShippedDate}, {style: 'short'}) }"
-							}
-						}
-					},
-					"validationGroup": {
-						"type": "group",
-						"label": "Validation"
-					},
-					"stringphone": {
-						"manifestpath": "/sap.card/configuration/parameters/string/value",
-						"type": "string",
-						"translatable": false,
-						"required": true,
-						"placeholder": "555-4555",
-						"validation": {
-							"type": "error",
-							"maxLength": 20,
-							"minLength": 1,
-							"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$",
-							"message": "The string does not match a telefone number"
-						}
-					},
-					"stringphonenomessage": {
-						"manifestpath": "/sap.card/configuration/parameters/string/value",
-						"type": "string",
-						"translatable": false,
-						"required": true,
-						"placeholder": "555-4555",
-						"validation": {
-							"type": "warning",
-							"maxLength": 20,
-							"minLength": 1,
-							"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$"
-						}
-					},
-					"stringmaxmin": {
-						"manifestpath": "/sap.card/configuration/parameters/string/value",
-						"type": "string",
-						"translatable": false,
-						"required": true,
-						"placeholder": "MinMaxlength",
-						"validation": {
-							"type": "warning",
-							"maxLength": 20,
-							"minLength": 1
-						},
-						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
-					},
-					"integerrequired": {
-						"manifestpath": "/sap.card/configuration/parameters/integerrequired/value",
-						"type": "integer",
-						"translatable": false,
-						"required": true
-					},
-					"integervalidation": {
-						"manifestpath": "/sap.card/configuration/parameters/integer/value",
-						"type": "integer",
-						"visualization": {
-							"type": "sap/m/Slider",
-							"settings": {
-								"value": "{currentSettings>value}",
-								"min": 0,
-								"max": 15,
-								"width": "100%",
-								"showAdvancedTooltip": true,
-								"showHandleTooltip": false,
-								"inputsAsTooltips": true,
-								"enabled": "{currentSettings>editable}"
-							}
-						},
-						"validations": [{
-							"type": "error",
-							"minimum": 1,
-							"exclusiveMinimum": true,
-							"message": "Minimum is 2"
-						},
-						{
-							"type": "error",
-							"multipleOf": 2,
-							"message": "Has to be multiple of 2"
-						}]
-					},
-					"numberrequired": {
-						"manifestpath": "/sap.card/configuration/parameters/number/value",
-						"type": "number",
-						"translatable": false,
-						"required": true
 					},
 					"lists": {
 						"type": "group",
@@ -437,53 +190,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
-					"stringWithRequestExtensionList": {
-						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestExtensionList/value",
-						"type": "string",
-						"values": {
-							"data": {
-								"extension": {
-									"method": "getData"
-								},
-								"path": "/values"
-							},
-							"item": {
-								"text": "{trainer}",
-								"key": "{title}",
-								"additionalText": "{location}"
-							}
-						}
-					},
-					"stringWithDataFromExtensionList": {
-						"manifestpath": "/sap.card/configuration/parameters/stringWithDataFromExtensionList/value",
-						"type": "string",
-						"values": {
-							"item": {
-								"text": "{trainer}",
-								"key": "{title}",
-								"additionalText": "{location}"
-							},
-							"path": "/values"
-						}
-					},
-					"stringWithRequestFromDestinationList": {
-						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestDestinationList/value",
-						"type": "string",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.local}}/stringWithRequestList.json"
-								},
-								"path": "/"
-							},
-							"item": {
-								"text": "{text}",
-								"key": "{key}",
-								"additionalText": "{additionalText}",
-								"icon": "{icon}"
-							}
-						}
-					},
 					"stringArray": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArray/value",
 						"label": "String Array",
@@ -507,16 +213,17 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"stringArrayNoValues": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArrayNoValues/value",
-						"label": "String Array With No Values",
+						"label": "String Array With Request List",
 						"type": "string[]"
 					},
 					"Customers": {
 						"manifestpath": "/sap.card/configuration/parameters/Customers/value",
 						"type": "string[]",
+						"label": "String Array With No Values",
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Customers",
+									"url": "{{destinations.Northwind_V3}}/Customers",
 									"parameters": {
 										"$select": "CustomerID, CompanyName, Country, City, Address"
 									}
@@ -533,59 +240,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"iconNotAllowFile": {
 						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFile/src",
 						"type": "string",
-						"label": "Icon Not Allow File",
-						"visualization": {
-							"type": "IconSelect",
-							"settings": {
-								"value": "{currentSettings>value}",
-								"editable": "{currentSettings>editable}",
-								"allowFile": false
-							}
-						}
-					},
-					"iconNotAllowNone": {
-						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowNone/src",
-						"type": "string",
-						"label": "Icon Not Allow None",
-						"visualization": {
-							"type": "IconSelect",
-							"settings": {
-								"value": "{currentSettings>value}",
-								"editable": "{currentSettings>editable}",
-								"allowNone": false
-							}
-						}
-					},
-					"iconNotAllowFileAndNone": {
-						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFileAndNone/src",
-						"type": "string",
-						"label": "Icon Not Allow File And None",
+						"label": "Icon Selectioin",
 						"visualization": {
 							"type": "IconSelect",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}",
 								"allowFile": false,
-								"allowNone": false
-							}
-						}
-					},
-					"iconWithImage": {
-						"manifestpath": "/sap.card/configuration/parameters/iconWithImage/value",
-						"type": "string",
-						"label": "iconWithImage",
-						"visualization": {
-							"type": "IconSelect",
-							"settings": {
-								"value": "{currentSettings>value}",
-								"editable": "{currentSettings>editable}"
+								"allowNone": true
 							}
 						}
 					},
 					"iconWithImageNotAllowNone": {
 						"manifestpath": "/sap.card/configuration/parameters/iconWithImageNotAllowNone/value",
 						"type": "string",
-						"label": "iconWithImage Not Allow None",
+						"label": "icon Selected from File",
 						"visualization": {
 							"type": "IconSelect",
 							"settings": {
@@ -606,9 +275,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"editable": "{currentSettings>editable}"
 							}
 						}
-					},
-					"separator9": {
-						"type": "separator"
 					},
 					"color": {
 						"manifestpath": "/sap.card/header/icon/backgroundColor",
@@ -638,79 +304,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"cols": 1
 					},
-					"separator10": {
-						"type": "separator"
-					},
-					"color1": {
-						"manifestpath": "/sap.card/header/icon/backgroundColor",
-						"type": "string",
-						"description": "Description",
-						"label": "Icon Background",
-						"visualization": {
-							"type": "ColorSelect",
-							"settings": {
-								"enumValue": "{currentSettings>value}",
-								"editable": "{currentSettings>editable}"
-							}
-						},
-						"cols": 1
-					},
-					"boolean2": {
-						"manifestpath": "/sap.card/configuration/parameters/boolean2/value",
-						"type": "boolean",
-						"description": "Description",
-						"label": "long long long long long long long long long long label",
-						"visualization": {
-							"type": "sap/m/Switch",
-							"settings": {
-								"state": "{currentSettings>value}",
-								"customTextOn": "Yes",
-								"customTextOff": "No",
-								"enabled": "{currentSettings>editable}"
-							}
-						},
-						"cols": 1
-					},
-					"separator11": {
-						"type": "separator"
-					},
-					"maxItems": {
-						"manifestpath": "/sap.card/content/maxItems",
-						"type": "integer",
-						"visualization": {
-							"type": "sap/m/Slider",
-							"settings": {
-								"value": "{currentSettings>value}",
-								"min": 0,
-								"max": 10,
-								"width": "100%",
-								"showAdvancedTooltip": true,
-								"showHandleTooltip": false,
-								"inputsAsTooltips": true,
-								"enabled": "{currentSettings>editable}"
-							}
-						}
-					},
-					"color2": {
-						"manifestpath": "/sap.card/header/icon/backgroundColor",
-						"type": "string",
-						"description": "Description",
-						"label": "Icon Background",
-						"visualization": {
-							"type": "ColorSelect",
-							"settings": {
-								"enumValue": "{currentSettings>value}",
-								"editable": "{currentSettings>editable}"
-							}
-						},
-						"cols": 1
-					},
 					"group": {
 						"label": "Dependent",
 						"type": "group"
 					},
-					"string1": {
-						"manifestpath": "/sap.card/configuration/parameters/string1/value",
+					"stringDependent": {
+						"manifestpath": "/sap.card/configuration/parameters/stringDependent/value",
 						"label": "String: editable, visible, label",
 						"type": "string",
 						"translatable": true
@@ -718,42 +317,26 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"dependentString1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentString1/value",
 						"type": "string",
-						"editable": "{= ${items>string1/value} === 'editable'}"
+						"label": "{= ${items>stringDependent/value} === 'label'? 'stringDependent True' : 'stringDependent False' }",
+						"editable": "{= ${items>stringDependent/value} === 'editable'}",
+						"visible": "{= ${items>stringDependent/value} === 'visible'}"
 					},
-					"dependentString2": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentString2/value",
-						"type": "string",
-						"visible": "{= ${items>string1/value} === 'visible'}"
-					},
-					"dependentString3": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentString3/value",
-						"label": "{= ${items>string1/value} === 'label'? 'dependentString3 True' : 'dependentString3 False' }",
-						"type": "string"
-					},
-					"integer1": {
-						"manifestpath": "/sap.card/configuration/parameters/integer1/value",
+					"integerDependent": {
+						"manifestpath": "/sap.card/configuration/parameters/integerDependent/value",
 						"type": "integer",
 						"label": "Integer: 1, 3, 6, 9"
 					},
 					"dependentInteger1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
 						"type": "string",
-						"editable": "{= ${items>integer1/value} > 2}"
+						"label": "{= ${items>integerDependent/value} > 8 ? 'integerDependent True' : 'integerDependent False' }",
+						"editable": "{= ${items>integerDependent/value} > 5}",
+						"visible": "{= ${items>integerDependent/value} > 2}"
 					},
-					"dependentInteger2": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentInteger1/value",
-						"type": "string",
-						"visible": "{= ${items>integer1/value} > 5}"
-					},
-					"dependentInteger3": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentInteger3/value",
-						"label": "{= ${items>integer1/value} > 8 ? 'dependentInteger3 True' : 'dependentInteger3 False' }",
-						"type": "string"
-					},
-					"boolean1": {
-						"manifestpath": "/sap.card/configuration/parameters/boolean1/value",
+					"booleanDependent": {
+						"manifestpath": "/sap.card/configuration/parameters/booleanDependent/value",
 						"type": "boolean",
-						"label": "long long long long long long long long long long label",
+						"label": "Boolean",
 						"visualization": {
 							"type": "sap/m/Switch",
 							"settings": {
@@ -767,303 +350,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"dependentBoolean1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean1/value",
 						"type": "string",
-						"editable": "{items>boolean1/value}"
-					},
-					"dependentBoolean2": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean2/value",
-						"type": "string",
-						"visible": "{items>boolean1/value}"
-					},
-					"dependentBoolean3": {
-						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean3/value",
-						"label": "{= ${items>boolean1/value} === true ? 'dependentBoolean3 True' : 'dependentBoolean3 False' }",
-						"type": "string"
-					},
-					"CustomerWithVisibleDependent": {
-						"manifestpath": "/sap.card/configuration/parameters/CustomerWithVisibleDependent/value",
-						"type": "string",
-						"visible": "{items>boolean1/value}",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.aaa}}/Customers"
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{CompanyName}",
-								"key": "{CustomerID}",
-								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							}
-						}
-					},
-					"filterBackendInStringArray": {
-						"label": "Filter backend by input in MultiComboBox",
-						"type": "group"
-					},
-					"CustomersWithMultiKeys": {
-						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeys/value",
-						"type": "string[]",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Customers",
-									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address",
-										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{CompanyName}",
-								"key": "{CustomerID}/{CompanyName}",
-								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							},
-							"keySeparator": "/"
-						}
-					},
-					"CustomersWithMultiKeysAndSeperator": {
-						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeysAndSeperator/value",
-						"type": "string[]",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Customers",
-									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address",
-										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{CompanyName}",
-								"key": "{CustomerID}#{CompanyName}",
-								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							}
-						}
-					},
-					"CustomersWithFilterParameter": {
-						"manifestpath": "/sap.card/configuration/parameters/CustomersWithFilterParameter/value",
-						"type": "string[]",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Customers",
-									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address",
-										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{CompanyName}",
-								"key": "{CustomerID}",
-								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							}
-						}
-					},
-					"CustomersWithFilterInURL": {
-						"manifestpath": "/sap.card/configuration/parameters/CustomersWithFilterInURL/value",
-						"type": "string[]",
-						"translatable": true,
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Customers?$select=CustomerID, CompanyName, Country, City, Address&$filter=contains(CompanyName,'{currentSettings>suggestValue}')"
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{CompanyName}",
-								"key": "{CustomerID}",
-								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							}
-						}
-					},
-					"filterBackendInString": {
-						"label": "Filter backend by input in ComboBox",
-						"type": "group"
-					},
-					"CustomerWithFilterParameter": {
-						"manifestpath": "/sap.card/configuration/parameters/CustomerWithFilterParameter/value",
-						"label": "Customer with filter parameter",
-						"type": "string",
-						"translatable": true,
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Customers",
-									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address",
-										"$filter": "contains(CompanyName,'{currentSettings>suggestValue}')"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{CompanyName}",
-								"key": "{CustomerID}",
-								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							}
-						}
-					},
-					"CustomerWithFilterInURL": {
-						"manifestpath": "/sap.card/configuration/parameters/CustomerWithFilterInURL/value",
-						"type": "string",
-						"translatable": true,
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Customers?$select=CustomerID, CompanyName, Country, City, Address&$filter=contains(CompanyName,'{currentSettings>suggestValue}')"
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{CompanyName}",
-								"key": "{CustomerID}",
-								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							}
-						}
-					},
-					"linkedParameters": {
-						"label": "Linked Parameters",
-						"type": "group"
-					},
-					"Customer": {
-						"manifestpath": "/sap.card/configuration/parameters/Customer/value",
-						"type": "string",
-						"translatable": true,
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Customers",
-									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{CompanyName}",
-								"key": "{CustomerID}",
-								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							}
-						}
-					},
-					"Employee": {
-						"manifestpath": "/sap.card/configuration/parameters/Employee/value",
-						"type": "string",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Employees",
-									"parameters": {
-										"$select": "EmployeeID, FirstName, LastName, Country, Title, HomePhone"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{FirstName} {LastName}",
-								"key": "{EmployeeID}",
-								"additionalText": "{= ${EmployeeID} !== undefined ? ${Country} + ', ' +  ${Title} + ', ' + ${HomePhone} : ''}"
-							}
-						}
-					},
-					"Order": {
-						"manifestpath": "/sap.card/configuration/parameters/Order/value",
-						"type": "string",
-						"translatable": true,
-						"required": true,
-						"validation": {
-							"type": "warning",
-							"maxLength": 4,
-							"minLength": 1
-						},
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Orders",
-									"parameters": {
-										"$select": "OrderID, OrderDate, CustomerID, EmployeeID",
-										"$filter": "(CustomerID eq '{items>Customer/value}') and (EmployeeID eq {items>Employee/value})"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{= ${OrderID} !== undefined ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID} : ''}",
-								"key": "{OrderID}",
-								"additionalText": "{OrderDate}"
-							}
-						}
-					},
-					"Product": {
-						"manifestpath": "/sap.card/configuration/parameters/Product/value",
-						"type": "string",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Order_Details",
-									"parameters": {
-										"$expand": "Product",
-										"$filter": "OrderID eq {items>Order/value}"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{= ${OrderID} !== undefined ? ${OrderID} + '-' +  ${ProductID} + ':' + ${Product/ProductName} : ''}",
-								"key": "{ProductID}",
-								"additionalText": "{= ${OrderID} !== undefined ? ${UnitPrice} + ' USD, count: '+ ${Quantity} : ''}"
-							}
-						}
-					},
-					"Orders": {
-						"manifestpath": "/sap.card/configuration/parameters/Orders/value",
-						"type": "string[]",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Orders",
-									"parameters": {
-										"$select": "OrderID, OrderDate, CustomerID, EmployeeID",
-										"$filter": "(CustomerID eq '{items>Customer/value}') and (EmployeeID eq {items>Employee/value})"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{= ${OrderID} !== undefined ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID} : ''}",
-								"key": "{OrderID}",
-								"additionalText": "{OrderDate}"
-							}
-						}
-					},
-					"CustomerWithTopAndSkipOption": {
-						"manifestpath": "/sap.card/configuration/parameters/CustomerWithTopAndSkipOption/value",
-						"type": "string",
-						"values": {
-							"data": {
-								"request": {
-									"url": "{{destinations.northwind}}/Customers",
-									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address",
-										"$skip": "5",
-										"$top": "5"
-									}
-								},
-								"path": "/value"
-							},
-							"item": {
-								"text": "{CompanyName}",
-								"key": "{CustomerID}",
-								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
-							}
-						}
+						"label": "{= ${items>booleanDependent/value} === true ? 'booleanDependent True' : 'booleanDependent False' }",
+						"editable": "{items>booleanDependent/value}",
+						"visible": "{items>booleanDependent/value}"
 					}
 				}
 			},

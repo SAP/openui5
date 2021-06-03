@@ -27,6 +27,12 @@
 				},
 				"Product": {
 					"value": ""
+				},
+				"Orders": {
+					"value": ""
+				},
+				"CustomerWithTopAndSkipOption": {
+					"value": ""
 				}
 			}
 		},

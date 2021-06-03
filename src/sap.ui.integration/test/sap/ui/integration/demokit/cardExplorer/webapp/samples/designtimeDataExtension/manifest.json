@@ -7,6 +7,10 @@
 		"extension": "./DataExtension",
 		"configuration": {
 			"destinations": {
+				"local": {
+					"name": "local",
+					"defaultUrl": "./"
+				},
 				"Northwind_V3": {
 					"name": "Northwind_V3",
 					"label": "Northwind V3 Service URL",
@@ -22,6 +26,9 @@
 				},
 				"stringWithDataFromExtensionList": {
 					"value": "Quality Management"
+				},
+				"stringWithRequestDestinationList": {
+					"value": ""
 				}
 			}
 		},

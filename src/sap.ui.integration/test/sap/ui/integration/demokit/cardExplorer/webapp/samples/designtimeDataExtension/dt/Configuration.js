@@ -35,6 +35,24 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"stringWithRequestFromDestinationList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestDestinationList/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.local}}/stringWithRequestList.json"
+								},
+								"path": "/"
+							},
+							"item": {
+								"text": "{text}",
+								"key": "{key}",
+								"additionalText": "{additionalText}",
+								"icon": "{icon}"
+							}
+						}
+					},
 					"maxItems": {
 						"manifestpath": "/sap.card/configuration/parameters/maxItems/value",
 						"type": "integer",
