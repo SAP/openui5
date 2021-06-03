@@ -4,22 +4,22 @@
 
 // Provides the class sap.ui.ux3.ShellPersonalization
 sap.ui.define([
-    'sap/ui/thirdparty/jquery',
-    'sap/ui/base/EventProvider',
-    'sap/ui/commons/Button',
-    'sap/ui/commons/Dialog',
-    'sap/ui/core/theming/Parameters',
-    './ShellColorPicker',
-    'sap/ui/commons/library',
-    'sap/ui/core/HTML',
-    'sap/ui/core/Popup',
-    'sap/ui/commons/Tab',
-    'sap/ui/core/Item',
-    'sap/ui/Device',
-    'sap/base/security/encodeXML'
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/base/EventProvider',
+	'sap/ui/commons/Button',
+	'sap/ui/commons/Dialog',
+	'sap/ui/core/theming/Parameters',
+	'./ShellColorPicker',
+	'sap/ui/commons/library',
+	'sap/ui/core/HTML',
+	'sap/ui/core/Popup',
+	'sap/ui/commons/Tab',
+	'sap/ui/core/Item',
+	'sap/ui/Device',
+	'sap/base/security/encodeXML'
 ],
 	function(
-	    jQuery,
+		jQuery,
 		EventProvider,
 		Button,
 		Dialog,
@@ -138,14 +138,6 @@ sap.ui.define([
 
 			if (Device.browser.firefox) {
 				ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-moz-linear-gradient(top, " + gradientTop + " 0, " + gradientBottom + " 108px, " + gradientBottom + ")";
-			} else if (Device.browser.msie) {
-				if (Device.browser.version == 9) {
-					ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "url("
-						+ ShellPersonalization.IMAGE_FOLDER_PATH
-						+ "Workset_bg.png)";
-				} else { // IE10+
-					ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-ms-linear-gradient(top, " + gradientTop + " 0, " + gradientBottom + " 108px, " + gradientBottom + ")";
-				}
 			} else if (Device.browser.webkit) {
 				ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-webkit-linear-gradient(top, " + gradientTop + " 0, " + gradientBottom + " 108px, " + gradientBottom + ")";
 			}
