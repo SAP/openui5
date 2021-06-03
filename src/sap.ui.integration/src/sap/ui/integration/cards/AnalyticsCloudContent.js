@@ -122,6 +122,10 @@ sap.ui.define([
 	 * Creates Highcharts' chart inside the card content.
 	 */
 	AnalyticsCloudContent.prototype._createHighchart = function () {
+		if (this._bIsBeingDestroyed) {
+			return;
+		}
+
 		var oCard = this.getCardInstance(),
 			oConfiguration = this.getConfiguration(),
 			oBindingContext = this.getBindingContext(),
@@ -137,6 +141,11 @@ sap.ui.define([
 		// is Highcharts library available
 		if (!window.Highcharts) {
 			this.handleError("There was a problem with loading Highcharts library. Could not initialize AnalyticsCloud card content.");
+			return;
+		}
+
+		if (!this._oHighchartContainer) {
+			Log.error("Highcharts container is not created or destroyed.");
 			return;
 		}
 
