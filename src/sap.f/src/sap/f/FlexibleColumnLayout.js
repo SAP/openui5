@@ -636,6 +636,9 @@ sap.ui.define([
 	FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION = 560; // ms
 	FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME = "sapFFCLPinnedColumn";
 	FlexibleColumnLayout.COLUMN_ORDER = ["begin", "mid", "end"]; // natural order of the columns in FCL
+	// synced with @_sap_f_FCL_navigation_arrow_width in base less file
+	FlexibleColumnLayout.NAVIGATION_ARROW_WIDTH = DomUnitsRem.toPx("1rem");
+
 	FlexibleColumnLayout.prototype.init = function () {
 		this._iWidth = 0;
 
@@ -659,9 +662,6 @@ sap.ui.define([
 
 		// Indicates if there are rendered pages inside columns
 		this._oRenderedColumnPagesBoolMap = {};
-
-		// We need to have column navigating buttons single width for animations of the layout
-		this._iNavigationArrowWidth = DomUnitsRem.toPx(Parameters.get("_sap_f_FCL_navigation_arrow_width"));
 
 		this._oColumnWidthInfo = {
 			begin: 0,
@@ -1079,7 +1079,7 @@ sap.ui.define([
 			iSeparatorsCount++;
 		}
 
-		return this._getControlWidth() - iSeparatorsCount * this._iNavigationArrowWidth;
+		return this._getControlWidth() - iSeparatorsCount * FlexibleColumnLayout.NAVIGATION_ARROW_WIDTH;
 	};
 
 	/**
