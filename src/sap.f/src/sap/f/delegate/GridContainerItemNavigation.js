@@ -248,6 +248,10 @@ sap.ui.define([
 	 * @private
 	 */
 	GridContainerItemNavigation.prototype.focusItem = function(iIndex, oEvent) {
+		var oItemItemNavigation,
+			oInnerControl,
+			oInnerControlFocusDomRef;
+
 		if (iIndex === this.iFocusedIndex && this.aItemDomRefs[this.iFocusedIndex] === document.activeElement) {
 			this.fireEvent(ItemNavigation.Events.FocusAgain, {
 				index: iIndex,
@@ -267,13 +271,24 @@ sap.ui.define([
 		if (oEvent && jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot")) {
 
 			// store event type for nested ItemNavigations
-			var oItemItemNavigation = jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot");
+			oItemItemNavigation = jQuery(this.aItemDomRefs[this.iFocusedIndex]).data("sap.INRoot");
 			oItemItemNavigation._sFocusEvent = oEvent.type;
 		}
 
 		// this is what the GridContainer changes
 		if (!this._bIsMouseDown && this.aItemDomRefs.length) {
 			this.aItemDomRefs[this.iFocusedIndex].focus();
+
+			// make the DOM element that has the outline focus to be visible in the view area
+			oInnerControl = jQuery(this.aItemDomRefs[this.iFocusedIndex].firstChild).control()[0];
+
+			if (oInnerControl) {
+				oInnerControlFocusDomRef = oInnerControl.getFocusDomRef();
+
+				if (oInnerControlFocusDomRef) {
+					this.scrollIntoViewIfNeeded(oInnerControlFocusDomRef);
+				}
+			}
 		}
 		/////////////////////////////////////////////
 
@@ -281,6 +296,40 @@ sap.ui.define([
 			index: iIndex,
 			event: oEvent
 		});
+	};
+
+	GridContainerItemNavigation.prototype.scrollIntoViewIfNeeded = function(oElementDomRef) {
+		var oParentDomRef = oElementDomRef.parentElement,
+			oContainerRect,
+			oElementRect;
+
+		// find the closest parent container with scroll
+		while (oParentDomRef &&
+			oParentDomRef.offsetWidth >= oParentDomRef.scrollWidth &&
+			oParentDomRef.offsetHeight >= oParentDomRef.scrollHeight) {
+			oParentDomRef = oParentDomRef.parentElement;
+		}
+
+		if (!oParentDomRef) {
+			return;
+		}
+
+		// we need to check according to its parent
+		oParentDomRef = oParentDomRef.parentElement;
+
+		if (!oParentDomRef) {
+			return;
+		}
+
+		oContainerRect = oParentDomRef.getBoundingClientRect();
+		oElementRect = oElementDomRef.getBoundingClientRect();
+
+		if (oElementRect.top < oContainerRect.top ||
+			oElementRect.bottom > oContainerRect.bottom ||
+			oElementRect.right > oContainerRect.right ||
+			oElementRect.left < oContainerRect.left) {
+			oElementDomRef.scrollIntoView();
+		}
 	};
 
 	return GridContainerItemNavigation;

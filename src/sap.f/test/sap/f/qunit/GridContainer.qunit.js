@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Button",
+	"sap/m/ScrollContainer",
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/model/json/JSONModel",
@@ -41,6 +42,7 @@ function (
 	qutils,
 	KeyCodes,
 	Button,
+	ScrollContainer,
 	Header,
 	IntegrationCard,
 	JSONModel,
@@ -883,51 +885,55 @@ function (
 			// Arrange
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
 
-			this.oGrid = new GridContainer({
-				layout: oSettings,
-				items: [
-					new Card({
-						header: new Header({ title: "Title" }),
-						content: new Button({ text: "Text" }),
-						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
-					}),
-					new Card({
-						header: new Header({ title: "Title" }),
-						content: new Button({ text: "Text" }),
-						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
-					}),
-					new Card({
-						header: new Header({ title: "Title" }),
-						content: new Button({ text: "Text" }),
-						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
-					}),
-					this.oTile = new GenericTile({
-						header: "headerText 1",
-						subheader: "subheaderText",
-						press: function () {},
-						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
-					}),
-					this.oCard = new IntegrationCard({
-						manifest: oIntegrationCardManifest,
-						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
-					})
-				]
+			this.oScrollContainer = new ScrollContainer({
+				height: "100px",
+				content: this.oGrid = new GridContainer({
+					layout: oSettings,
+					items: [
+						new Card({
+							header: new Header({ title: "Title" }),
+							content: new Button({ text: "Text" }),
+							layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+						}),
+						new Card({
+							header: new Header({ title: "Title" }),
+							content: new Button({ text: "Text" }),
+							layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+						}),
+						new Card({
+							header: new Header({ title: "Title" }),
+							content: new Button({ text: "Text" }),
+							layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+						}),
+						this.oTile = new GenericTile({
+							header: "headerText 1",
+							subheader: "subheaderText",
+							press: function () {},
+							layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+						}),
+						this.oCard = new IntegrationCard({
+							manifest: oIntegrationCardManifest,
+							layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+						})
+					]
+				})
 			});
 
-			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function () {
-			this.oGrid.destroy();
-			this.oCard.destroy();
-			this.oTile.destroy();
+			this.oScrollContainer.destroy();
 		}
 	});
 
 	QUnit.test("Right Arrow navigation through grid container", function (assert) {
+
+
 		// Arrange
 		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
-			oItemWrapper2 = this.oGrid.getDomRef().children[2];
+			oItemWrapper2 = this.oGrid.getDomRef().children[2],
+			oScrollSpy = sinon.spy(this.oGrid.getItems()[1].getCardHeader().getDomRef(), "scrollIntoView");
 
 		oItemWrapper1.focus();
 		Core.applyChanges();
@@ -943,13 +949,19 @@ function (
 
 		// Assert
 		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0", "Focus should stay on the same item");
+
+		// Assert
+		assert.ok(oScrollSpy.notCalled, "scrollIntoView is not called");
+
+		oScrollSpy.reset();
 	});
 
 	QUnit.test("Down Arrow navigating through grid container", function (assert) {
 		// Arrange
 		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
 			oItemWrapper3 = this.oGrid.getDomRef().children[3],
-			oItemWrapper5 = this.oGrid.getDomRef().children[5];
+			oItemWrapper5 = this.oGrid.getDomRef().children[5],
+			oScrollSpy = sinon.spy(this.oGrid.getItems()[2].getCardHeader().getDomRef(), "scrollIntoView");
 
 		oItemWrapper1.focus();
 		Core.applyChanges();
@@ -968,6 +980,10 @@ function (
 
 		// Assert
 		assert.strictEqual(oItemWrapper5.getAttribute("tabindex"), "0", "Focus should remain on the fifth GridItem if there is no other item below it");
+
+		assert.ok(oScrollSpy.called, "scrollIntoView is called");
+
+		oScrollSpy.reset();
 	});
 
 	QUnit.test("Left Arrow navigating through grid container", function (assert) {
