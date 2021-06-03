@@ -101,6 +101,10 @@ sap.ui.define([
 				oBadgeElement.removeClass("sapMBadgeAnimationAdd");
 				oBadgeElement.width();
 				oBadgeElement.addClass("sapMBadgeAnimationRemove");
+				oBadgeElement.on("animationend", function () {
+					oBadgeElement.css("display","none");
+					oBadgeElement.off();
+				});
 				oBadgeElement.removeAttr("aria-label");
 
 				this._isBadgeAttached = false;
