@@ -32,7 +32,7 @@ sap.ui.define(['sap/m/OverflowToolbarButton', 'sap/m/ButtonRenderer'],
 		metadata: {
 			library: "sap.m"
 		},
-		renderer: ButtonRenderer.render
+		renderer: ButtonRenderer
 	});
 
 	SemanticOverflowToolbarButton.prototype._getTooltip = function() {

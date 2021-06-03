@@ -51,7 +51,7 @@ sap.ui.define([
 			});
 
 		},
-		renderer: ButtonRenderer.render
+		renderer: ButtonRenderer
 	});
 
 	ChartTypeButton.mMatchingIcon = {

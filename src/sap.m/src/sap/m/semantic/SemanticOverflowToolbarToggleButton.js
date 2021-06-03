@@ -32,7 +32,7 @@ sap.ui.define(["sap/m/OverflowToolbarToggleButton", "sap/m/ToggleButtonRenderer"
 			metadata: {
 				library: "sap.m"
 			},
-			renderer: ToggleButtonRenderer.render
+			renderer: ToggleButtonRenderer
 		});
 
 		SemanticOverflowToolbarToggleButton.prototype._getTooltip = function() {

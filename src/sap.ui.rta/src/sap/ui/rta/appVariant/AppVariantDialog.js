@@ -354,7 +354,7 @@ function(
 			}
 			Dialog.prototype.destroy.apply(this, arguments);
 		},
-		renderer: DialogRenderer.render
+		renderer: DialogRenderer
 	});
 
 	return AppVariantDialog;

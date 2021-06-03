@@ -236,7 +236,7 @@ sap.ui.define([
 	testAllFlexBoxModes("Shrinking a toolbar should also move custom buttons to the overflow", function (assert) {
 
 		var MyButton = Button.extend("sap.m.MyButton", {
-			renderer: ButtonRenderer.render
+			renderer: ButtonRenderer
 		});
 
 		// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
