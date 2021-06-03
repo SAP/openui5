@@ -188,6 +188,39 @@ sap.ui.define([
 		assert.equal(i3.$().length, 0, "Invisible input not found");
 	});
 
+	QUnit.test("sTypedInValue", function(assert) {
+		// Arrange / Act
+		var oInput = new Input();
+
+		// Assert
+		assert.equal(oInput._getTypedInValue(), "", "_sTypedInValue is initially empty string");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("sTypedInValue - not reset onbefore rendering", function(assert) {
+		// Arrange
+		var oInput = new Input();
+		var oStub = this.stub(oInput, "_resetTypeAhead", function () {
+			this._sTypedInValue = "was reset";
+		});
+
+		oInput.placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.invalidate();
+		this.clock.tick();
+
+		// Assert
+		assert.equal(oStub.callCount, 0, "resetTypeAhead was not called even when the control was invalidated.");
+		assert.equal(oInput._getTypedInValue(), "", "'_sTypedInValue' is still an empty string");
+
+		// Clean
+		oInput. destroy();
+	});
+
 	QUnit.test("Change", function(assert) {
 		i1.setValue("new");
 		sap.ui.getCore().applyChanges();
