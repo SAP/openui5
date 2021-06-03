@@ -98,6 +98,49 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"additionalText": "{= ${OrderID} !== undefined ? ${UnitPrice} + ' USD, count: '+ ${Quantity} : ''}"
 							}
 						}
+					},
+					"Orders": {
+						"manifestpath": "/sap.card/configuration/parameters/Orders/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Orders",
+									"parameters": {
+										"$select": "OrderID, OrderDate, CustomerID, EmployeeID",
+										"$filter": "(CustomerID eq '{items>Customer/value}') and (EmployeeID eq {items>Employee/value})"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{= ${OrderID} !== undefined ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID} : ''}",
+								"key": "{OrderID}",
+								"additionalText": "{OrderDate}"
+							}
+						}
+					},
+					"CustomerWithTopAndSkipOption": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomerWithTopAndSkipOption/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$skip": "5",
+										"$top": "5"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
 					}
 				}
 			},
