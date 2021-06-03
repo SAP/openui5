@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/Core",
-	"sap/ui/model/Sorter"
+	"sap/ui/model/Sorter",
+	"sap/base/util/deepClone"
 ], function (
-	BaseField, Input, Text, MultiComboBox, ListItem, each, _debounce, ObjectPath, includes, SeparatorItem, Core, Sorter
+	BaseField, Input, Text, MultiComboBox, ListItem, each, _debounce, ObjectPath, includes, SeparatorItem, Core, Sorter, deepClone
 ) {
 	"use strict";
 	var sDefaultSeperator = "#";
@@ -68,7 +69,7 @@ sap.ui.define([
 						}
 					}
 				};
-				if (this.isFilterBackend(oConfig)) {
+				if (this.isFilterBackend()) {
 					oVisualization.settings.selectedKeys = {
 						parts: [
 							'currentSettings>value',
@@ -114,7 +115,7 @@ sap.ui.define([
 		if (oControl instanceof MultiComboBox) {
 			var oConfig = this.getConfiguration();
 			this.prepareFieldsInKey(oConfig);
-			if (this.isFilterBackend(oConfig)) {
+			if (this.isFilterBackend()) {
 				this.onInput = _debounce(this.onInput, 500);
 				//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
 				oControl.oninput = this.onInput;
@@ -248,6 +249,12 @@ sap.ui.define([
 		}
 	};
 
+	ListField.prototype.getSuggestValue = function() {
+		var sSettingspath = this.getBindingContext("currentSettings").sPath;
+		var oSettingsModel = this.getModel("currentSettings");
+		return oSettingsModel.getProperty(sSettingspath + "/suggestValue");
+	};
+
 	ListField.prototype.getGroupHeader = function(oGroup) {
 		return new SeparatorItem( {
 			text: oGroup.key
@@ -261,57 +268,55 @@ sap.ui.define([
 		var sChangedItemKey = oListItem.getKey();
 		var bIsSelected = oEvent.getParameter("selected");
 
-		//update the selected item list
-		if (!bIsSelected) {
-			//remove the diselected item from current selected item list
-			if (oConfig.valueItems) {
-				oConfig.valueItems = oConfig.valueItems.filter(function (oSelectedItem) {
-					var sItemKey = oField.getKeyFromItem(oSelectedItem);
-					return sItemKey !== sChangedItemKey;
-				});
+		//get items in data model
+		var oData = this.getModel().getData();
+		var sPath = oConfig.values.data.path || "/";
+		var aPath, oItems;
+		if (sPath !== "/") {
+			if (sPath.startsWith("/")) {
+				sPath = sPath.substring(1);
 			}
+			if (sPath.endsWith("/")) {
+				sPath = sPath.substring(0, sPath.length - 1);
+			}
+			aPath = sPath.split("/");
+			oItems = ObjectPath.get(aPath, oData);
 		} else {
-			//get items in data model
-			var oData = this.getModel().getData();
-			var sPath = oConfig.values.data.path || "/";
-			if (sPath !== "/") {
-				if (sPath.startsWith("/")) {
-					sPath = sPath.substring(1);
-				}
-				if (sPath.endsWith("/")) {
-					sPath = sPath.substring(0, sPath.length - 1);
-				}
-				var aPath = sPath.split("/");
-				oData = ObjectPath.get(aPath, oData);
-			}
-
-			if (oData) {
-				if (!oConfig.valueItems) {
-					//initial the selected item list
-					oConfig.valueItems = [];
-				}
-				//add the selected item into selected item list
-				oData.some(function (oItem) {
-					var sItemKey = oField.getKeyFromItem(oItem);
-					if (sItemKey === sChangedItemKey) {
-						oItem.Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
-						oConfig.valueItems = oConfig.valueItems.concat([oItem]);
-						return true;
-					}
-					return false;
-				});
-			}
+			oItems = oData;
 		}
 
-		//get selected keys of the selected items
-		var aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
-			return oField.getKeyFromItem(oSelectedItem);
-		});
-
-		//save the selected keys as field value
-		var sSettingspath = this.getBindingContext("currentSettings").sPath;
-		var oSettingsModel = this.getModel("currentSettings");
-		oSettingsModel.setProperty(sSettingspath + "/value", aSelectedItemKeys);
+		if (oItems) {
+			if (!oConfig.valueItems) {
+				//initial the selected item list
+				oConfig.valueItems = [];
+			}
+			//add the selected item into selected item list
+			var oNewItems = [];
+			oItems.forEach(function (oItem) {
+				//clone the current item since sometimes the item is readonly
+				var oNewItem = deepClone(oItem, 10);
+				var sItemKey = oField.getKeyFromItem(oNewItem);
+				if (sItemKey === sChangedItemKey) {
+					if (bIsSelected) {
+						oNewItem.Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+						oConfig.valueItems = oConfig.valueItems.concat([oNewItem]);
+					} else {
+						oNewItem.Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+						oConfig.valueItems = oConfig.valueItems.filter(function (oSelectedItem) {
+							var sItemKey = oField.getKeyFromItem(oSelectedItem);
+							return sItemKey !== sChangedItemKey;
+						});
+					}
+				}
+				oNewItems.push(oNewItem);
+			});
+			if (aPath !== undefined) {
+				ObjectPath.set(aPath, oNewItems, oData);
+				this.getModel().checkUpdate(true);
+			} else {
+				this.getModel().setData(oNewItems);
+			}
+		}
 	};
 
 	ListField.prototype.onSelectionChange = function(oEvent) {
@@ -395,8 +400,11 @@ sap.ui.define([
 		var oSettingsModel = this.getModel("currentSettings");
 		//save the selected keys as field value
 		oSettingsModel.setProperty(sSettingspath + "/value", aSelectedItemKeys);
-		//clean the suggestion value
-		oSettingsModel.setProperty(sSettingspath + "/suggestValue", "");
+		//clean the suggestion value if current suggestion value exist
+		var oSuggestValue = oField.getSuggestValue();
+		if (oSuggestValue && oSuggestValue !== "") {
+			oSettingsModel.setProperty(sSettingspath + "/suggestValue", "");
+		}
 	};
 
 	ListField.prototype.onInput = function (oEvent) {
@@ -407,14 +415,6 @@ sap.ui.define([
 		//set the suggestion value into data model property "suggestValue" for filter backend
 		oSettingsModel.setProperty(sSettingspath + "/suggestValue", sTerm.replaceAll("'", "\'\'"));
 		oSettingsModel.setProperty(sSettingspath + "/_loading", true);
-		//update the dependent fields via bindings
-		var aBindings = oSettingsModel.getBindings();
-		var sParameter = sSettingspath.substring(sSettingspath.lastIndexOf("/") + 1);
-		each(aBindings, function(iIndex, oBinding) {
-			if (oBinding.sPath === "/form/items/" + sParameter + "/value") {
-				oBinding.checkUpdate(true);
-			}
-		});
 		oEvent.srcControl.open();
 		oEvent.srcControl._getSuggestionsPopover()._sTypedInValue = sTerm;
 	};

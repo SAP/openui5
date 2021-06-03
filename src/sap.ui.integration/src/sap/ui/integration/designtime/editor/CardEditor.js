@@ -1109,9 +1109,9 @@ sap.ui.define([
 		});
 
 		this._aFieldReadyPromise.push(oField._readyPromise);
-		//listen to changes on the settings
-		var oBinding = this._settingsModel.bindProperty(oConfig._settingspath + "/value");
-		oBinding.attachChange(function () {
+		//listen to value changes on the settings
+		var oValueBinding = this._settingsModel.bindProperty(oConfig._settingspath + "/value");
+		oValueBinding.attachChange(function () {
 			if (!this._bIgnoreUpdates) {
 				oConfig._changed = true;
 				if (oConfig._dependentFields && oConfig._dependentFields.length > 0) {
@@ -1120,6 +1120,15 @@ sap.ui.define([
 				this._updatePreview();
 			}
 		}.bind(this));
+		if (oField.isFilterBackend()) {
+			//listen to suggest value changes on the settings if current field support filter backend feature
+			var oSuggestValueBinding = this._settingsModel.bindProperty(oConfig._settingspath + "/suggestValue");
+			oSuggestValueBinding.attachChange(function () {
+				var oConfigTemp = merge({}, oConfig);
+				oConfigTemp._cancel = false;
+				this._addValueListModel(oConfigTemp, oField, true);
+			}.bind(this));
+		}
 		this._addValueListModel(oConfig, oField);
 		oField._cols = oConfig.cols || 2; //by default 2 cols
 		oField._oProviderCard = this._oProviderCard;
@@ -1148,6 +1157,8 @@ sap.ui.define([
 				return;
 			}
 			//add group property "Selected" to each record for MultiComboBox in ListField
+			//user configration of the field since its value maybe changed
+			var oFieldConfig = oField.getConfiguration();
 			if (oConfig.type === "string[]") {
 				var sPath = oConfig.values.data.path;
 				if (sPath && sPath !== "/") {
@@ -1162,7 +1173,7 @@ sap.ui.define([
 					if (Array.isArray(oResult)) {
 						for (var n in oResult) {
 							var sKey = oField.getKeyFromItem(oResult[n]);
-							if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
+							if (Array.isArray(oFieldConfig.value) && oFieldConfig.value.length > 0 && includes(oFieldConfig.value, sKey)) {
 								oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
 							} else {
 								oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
@@ -1173,7 +1184,7 @@ sap.ui.define([
 				} else if (Array.isArray(oData)) {
 					for (var n in oData) {
 						var sKey = oField.getKeyFromItem(oData[n]);
-						if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
+						if (Array.isArray(oFieldConfig.value) && oFieldConfig.value.length > 0 && includes(oFieldConfig.value, sKey)) {
 							oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
 						} else {
 							oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
@@ -1262,7 +1273,7 @@ sap.ui.define([
 			if (!bIgnore) {
 				var sData = JSON.stringify(oConfig.values.data);
 				if (sData) {
-					var destParamRegExp = /parameters\.([^\}\}]+)|destinations\.([^\}\}]+)|\{items\>[\/?\w+]+\}|\{currentSettings\>[\/?\w+]+\}/g,
+					var destParamRegExp = /parameters\.([^\}\}]+)|destinations\.([^\}\}]+)|\{items\>[\/?\w+]+\}/g,
 						aResult = sData.match(destParamRegExp);
 					if (aResult) {
 						//add the field to dependency to either the parameter or destination
@@ -1276,12 +1287,6 @@ sap.ui.define([
 								sDependentPath = sDependentPath + aResult[i].replace(".", "/") + sValueKey;
 							} else if (aResult[i].indexOf("{items>") === 0) {
 								sDependentPath = sDependentPath + "parameters/" + aResult[i].slice(7, -1);
-							} else if (aResult[i].indexOf("{currentSettings>") === 0) {
-								if (aResult[i].endsWith("suggestValue}")) {
-									sDependentPath = sDependentPath + "parameters/" + oConfig._settingspath.substring(oConfig._settingspath.lastIndexOf("/") + 1) + "/value";
-								} else {
-									sDependentPath = sDependentPath + "parameters/" + aResult[i].slice(17, -1);
-								}
 							}
 							var oItem = this._mItemsByPaths[sDependentPath];
 							if (oItem) {

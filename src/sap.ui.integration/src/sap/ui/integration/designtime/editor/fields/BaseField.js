@@ -905,7 +905,8 @@ sap.ui.define([
 	};
 
 	//check if need to filter backend by input, used for ComoboBox in StringField and MultiComboBox in ListField
-	BaseField.prototype.isFilterBackend = function (oConfig) {
+	BaseField.prototype.isFilterBackend = function () {
+		var oConfig = this.getConfiguration();
 		var bIsFilterBackend = false;
 		if (oConfig && oConfig.values && oConfig.values.data) {
 			if (oConfig.values.data.request && oConfig.values.data.request.parameters && oConfig.values.data.request.parameters.$filter && oConfig.values.data.request.parameters.$filter.indexOf("{currentSettings>suggestValue}") > -1) {

@@ -136,7 +136,7 @@ sap.ui.define([
 						}
 					};
 					//check if need to filter backend
-					if (this.isFilterBackend(oConfig)) {
+					if (this.isFilterBackend()) {
 						oVisualization.settings.selectedKey = {
 							parts: [
 								'currentSettings>value',
@@ -208,8 +208,7 @@ sap.ui.define([
 	StringField.prototype._afterInit = function () {
 		var oControl = this.getAggregation("_field");
 		if (oControl instanceof ComboBox) {
-			var oConfig = this.getConfiguration();
-			if (this.isFilterBackend(oConfig)) {
+			if (this.isFilterBackend()) {
 				this.onInput = _debounce(this.onInput, 500);
 				//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
 				oControl.oninput = this.onInput;
