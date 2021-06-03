@@ -74,9 +74,11 @@ sap.ui.define([
 				this._oConfig = oConfig = this.getConfig();
 				this.oMatchedTopicDataTablesConfig = {};
 
-				if ( !window.prettyPrint ) {
-					//TODO: global jquery call found
-					jQuery.sap.require("sap.ui.documentation.sdk.thirdparty.google-code-prettify.prettify");
+				if ( !window.hljs ) {
+					//solarized-light
+					jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/highlight.js/styles.css");
+					jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js" });
+
 				}
 
 				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/css/dataTables.jqueryui.css");
@@ -260,7 +262,6 @@ sap.ui.define([
 
 				this._scrollContentToTop();
 
-				setTimeout(window.prettyPrint, 0);
 
 				this.searchResultsButtonVisibilitySwitch(this.byId("topicDetailBackToSearch"));
 
@@ -339,6 +340,12 @@ sap.ui.define([
 					var sSrc = image.getAttribute("src");
 					image.setAttribute("src", ResourcesUtil.getResourceOriginPath(sSrc));
 				});
+
+				if (window.hljs) {
+					document.querySelectorAll('pre').forEach(function(block) {
+						window.hljs.highlightBlock(block);
+					});
+				}
 			},
 
 			_enableImageMap: function (imageMap, bIsSideBySide) {

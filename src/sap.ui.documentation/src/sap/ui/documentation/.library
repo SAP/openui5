@@ -26,15 +26,11 @@
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
-      <exclude name="sap.ui.documentation.sdk.thirdparty.google-code-prettify." />
       <exclude name="sap.ui.documentation.sdk.thirdparty.jsanalyzer." />
     </jscoverage>
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
         <raw-module name="sap/ui/documentation/sdk/thirdparty/esprima.js" />
-        <raw-module name="sap/ui/documentation/sdk/thirdparty/google-code-prettify/lang-css.js" depends="sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js" />
-        <raw-module name="sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"/>
-        <raw-module name="sap/ui/documentation/sdk/thirdparty/google-code-prettify/run_prettify.js"/>
         <raw-module name="sap/ui/documentation/sdk/thirdparty/elasticlunr.js" />
       </module-infos>
       <all-in-one>
@@ -57,6 +53,11 @@
         <license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache-2.0" />
         <copyright>2006 Google Inc.</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/google-code-prettify/*</pattern>
+      </lib>
+      <lib name="highlights.js" displayName="highlights.js" version="10.4.1" homepage="https://highlightjs.org/">
+        <license url="https://github.com/highlightjs/highlight.js/blob/10.4.1/LICENSE" type="BSD-3-Clause" />
+        <copyright>2006-2020, Ivan Sagalaev</copyright>
+        <pattern>sap/ui/documentation/sdk/thirdparty/highlight.js/*</pattern>
       </lib>
       <lib name="elasticlunr" displayName="Elasticlunr" version="0.9.5" homepage="http://elasticlunr.com/">
         <license url="https://github.com/weixsong/elasticlunr.js/blob/v0.9.5/LICENSE" type="MIT" />

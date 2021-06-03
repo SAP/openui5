@@ -17,7 +17,6 @@ window.addEventListener("load", function () {
 	aNodes.push('<link rel="stylesheet" href="' + sWebApp + 'css/topic.css">');
 	aNodes.push('<link rel="stylesheet" href="' + sWebApp + 'css/codesample.css">');
 	aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/core/themes/sap_fiori_3/library.css">');
-	aNodes.push('<script src="' + sRes + 'sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>');
 	aNodes.push('<script src="' + sWebApp + 'scripts/topic.js"></script>');
 
 	function afterLoad() {
