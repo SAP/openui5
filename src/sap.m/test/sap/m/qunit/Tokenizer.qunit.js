@@ -1145,9 +1145,11 @@ sap.ui.define([
 
 		this.tokenizer.focus();
 		this.tokenizer.selectAllTokens(true);
+		this.clock = sinon.useFakeTimers();
 
 		// act
 		this.tokenizer._copy();
+		this.clock.tick(1000);
 
 		// assert
 		assert.strictEqual(
