@@ -154,7 +154,20 @@ sap.ui.define([
 					}
 				]
 			};
-			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(oAsyncHints), "token", "the cachebusterToken is returned");
+			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(sReference, oAsyncHints), "token", "the cachebusterToken is returned");
+		});
+
+		QUnit.test("with filled async hints given but with a differing reference (legacy app variant)", function(assert) {
+			var oAsyncHints = {
+				requests: [
+					{
+						name: "sap.ui.fl.changes",
+						reference: "some other reference",
+						cachebusterToken: "token"
+					}
+				]
+			};
+			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(sReference, oAsyncHints), undefined, "no cachebusterToken is returned");
 		});
 
 		QUnit.test("with empty async hints given (<NO CHANGES>)", function(assert) {
@@ -166,7 +179,7 @@ sap.ui.define([
 					}
 				]
 			};
-			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(oAsyncHints), "<NO CHANGES>", "nothing is returned");
+			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(sReference, oAsyncHints), "<NO CHANGES>", "nothing is returned");
 		});
 	});
 
