@@ -28,6 +28,7 @@ sap.ui.define([
 		 * @param {string} [oConfiguration.label] additional array of labels for the values of the operator. Will be shown as placeholder text or label on the value fields.
 		 * @param {function} [oConfiguration.calcRange] function to calculate the date range of the operation. the function returns an array of UniversalDates.
 		 * @param {function} [oConfiguration.formatRange] function to format the date range.
+		 * @param {int[]|function} [oConfiguration.defaultValues] Array of values for the defaults of <code>RangeOperators</code> parameter. This can be a function, which returns the array of values. If not used the default for the values is 1.
 		 * @constructor
 		 * @author SAP SE
 		 * @version ${version}
@@ -48,12 +49,20 @@ sap.ui.define([
 
 				// if the rangeOperator uses paramTypes, add the same number of valueDefaults
 				if (this.paramTypes) {
-					this.paramTypes.forEach(function(oType) {
-						if (!this.valueDefaults) {
-							this.valueDefaults = [];
+					if (oConfiguration.defaultValues !== undefined) {
+						if (Array.isArray(oConfiguration.defaultValues)) {
+							this.valueDefaults = oConfiguration.defaultValues;
+						} else {
+							this.valueDefaults = oConfiguration.defaultValues();
 						}
-						this.valueDefaults.push(1); // add a defualt value 1 for a RangeOperator value
-					}.bind(this));
+					} else {
+						this.paramTypes.forEach(function(oType) {
+							if (!this.valueDefaults) {
+								this.valueDefaults = [];
+							}
+							this.valueDefaults.push( 1); // add a default value 1 for a RangeOperator value
+						}.bind(this));
+					}
 				}
 
 				if (oConfiguration.label !== undefined) {
