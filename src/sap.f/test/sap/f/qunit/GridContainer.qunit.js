@@ -516,6 +516,7 @@ function (
 		// Act
 		this.oGrid.setWidth("370px"); // place for 4 columns
 		Core.applyChanges();
+		this.clock.tick(100);
 
 		// Assert
 		assert.strictEqual(oItem.$().parent().css("grid-column-start"), "span 4", "Item has 4 columns as expected");
@@ -873,6 +874,7 @@ function (
 			// Act
 			this.oGrid.$().width(sWidth);
 			this.oGrid._resize();
+			this.clock.tick(100);
 
 			// Assert
 			assert.strictEqual(mSizes[sWidth], iColumnsCount, "columnsChange event was called correctly for width " + sWidth);

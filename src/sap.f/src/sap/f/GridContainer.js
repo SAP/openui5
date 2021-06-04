@@ -489,8 +489,7 @@ sap.ui.define([
 			oRange = Device.media.getCurrentRange("GridContainerRangeSet", iWidth),
 			sLayout = "layout" + oRange.name,
 			oOldSettings = this.getActiveLayoutSettings(),
-			bSettingsAreChanged = false,
-			iColumns = oOldSettings.getComputedColumnsCount(this.$().innerWidth());
+			bSettingsAreChanged = false;
 
 		if (!iWidth) {
 			// width is 0 or unknown - can not detect the layout
@@ -511,16 +510,31 @@ sap.ui.define([
 			});
 		}
 
-		if (this._iColumns !== iColumns) {
+		return bSettingsAreChanged;
+	};
 
+	/**
+	 * Detects if there is change in columns count and fires column change event if needed.
+	 * @private
+	 */
+	GridContainer.prototype._detectColumnsChange = function () {
+		var oSettings = this.getActiveLayoutSettings(),
+			iWidth = this.$().innerWidth(),
+			iColumns;
+
+		if (!oSettings) {
+			return;
+		}
+
+		iColumns = oSettings.getComputedColumnsCount(iWidth);
+
+		if (this._iColumns !== iColumns) {
 			this.fireColumnsChange({
 				columns: iColumns
 			});
 
 			this._iColumns = iColumns;
 		}
-
-		return bSettingsAreChanged;
 	};
 
 	/**
@@ -696,6 +710,11 @@ sap.ui.define([
 		}
 
 		this._forceFocus = null;
+
+		if (this._checkColumnsTimeout) {
+			clearTimeout(this._checkColumnsTimeout);
+			this._checkColumnsTimeout = null;
+		}
 	};
 
 	/**
@@ -786,7 +805,23 @@ sap.ui.define([
 			this.getItems().forEach(this._applyItemAutoRows.bind(this));
 		}
 
-		this._enforceMaxColumns();
+		this._checkColumns();
+	};
+
+	/**
+	 * Applies operations related to columns count with a delay.
+	 * @private
+	 */
+	GridContainer.prototype._checkColumns = function () {
+		if (this._checkColumnsTimeout) {
+			clearTimeout(this._checkColumnsTimeout);
+			this._checkColumnsTimeout = null;
+		}
+
+		this._checkColumnsTimeout = setTimeout(function () {
+			this._detectColumnsChange();
+			this._enforceMaxColumns();
+		}.bind(this), 0);
 	};
 
 	/**
@@ -827,7 +862,13 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._enforceMaxColumns = function () {
 		var oSettings = this.getActiveLayoutSettings(),
-			iMaxColumns = oSettings.getComputedColumnsCount(this.$().innerWidth());
+			iMaxColumns;
+
+		if (!oSettings) {
+			return;
+		}
+
+		iMaxColumns = oSettings.getComputedColumnsCount(this.$().innerWidth());
 
 		if (!iMaxColumns) {
 			// if the max columns can not be calculated correctly, don't do anything
