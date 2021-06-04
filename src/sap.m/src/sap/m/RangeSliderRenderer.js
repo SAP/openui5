@@ -164,6 +164,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 		aRange[0] = oSlider.toFixed(aRange[0], oSlider._iDecimalPrecision);
 		aRange[1] = oSlider.toFixed(aRange[1], oSlider._iDecimalPrecision);
 
+		var iValueNow = Math.abs(aRange[1] - aRange[0]);
+
 		oRm.openStart("div", oSlider.getId() + "-progress");
 		if (oSlider.getEnabled()) {
 			oRm.attr("tabindex", "0");
@@ -176,6 +178,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 			orientation: "horizontal",
 			valuemin: oSlider.toFixed(oSlider.getMin()),
 			valuemax: oSlider.toFixed(oSlider.getMax()),
+			valuenow: iValueNow,
 			valuetext: oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(oSlider._formatValueByCustomElement, oSlider)),
 			labelledby: (sForwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[2].getId()).trim() // range label
 		}).openEnd().close("div");
