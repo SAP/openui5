@@ -73,9 +73,24 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				oAccAttributes.role = "group";
 			}
 
+			var bTooltipAndAriaDescribedBy = sTooltip && oObjStatus.getAriaDescribedBy().length,
+				sTooltipId;
+			if (bTooltipAndAriaDescribedBy) {
+				sTooltipId = oObjStatus.getId() + "-tooltip";
+				oAccAttributes["describedby"] = { value: sTooltipId, append: true };
+			}
+
 			oRm.accessibilityState(oObjStatus, oAccAttributes);
 
 			oRm.openEnd();
+
+			if (bTooltipAndAriaDescribedBy) {
+				oRm.openStart("span", sTooltipId);
+				oRm.class("sapUiInvisibleText");
+				oRm.openEnd();
+				oRm.text(sTooltip);
+				oRm.close("span");
+			}
 
 			if (oObjStatus.getTitle()) {
 
