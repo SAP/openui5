@@ -955,8 +955,7 @@ sap.ui.define([
 			this._oSeeMoreButton = new Button(this.getId() + "--seeMore", {
 				type: ButtonType.Transparent,
 				iconFirst: false,
-				text: ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_MORE"),
-				ariaLabelledBy: this.getId()
+				text: ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_MORE")
 			}).addStyleClass("sapUxAPSubSectionSeeMoreButton").attachPress(this._seeMoreLessControlPressHandler, this);
 		}
 
@@ -972,8 +971,7 @@ sap.ui.define([
 			this._oSeeLessButton = new Button(this.getId() + "--seeLess", {
 				type: ButtonType.Transparent,
 				iconFirst: false,
-				text: ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_LESS"),
-				ariaLabelledBy: this.getId()
+				text: ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_LESS")
 			}).addStyleClass("sapUxAPSubSectionSeeMoreButton").attachPress(this._seeMoreLessControlPressHandler, this);
 		}
 
