@@ -26,7 +26,7 @@
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
-      <exclude name="sap.ui.documentation.sdk.thirdparty.jsanalyzer." />
+      <exclude name="sap.ui.documentation.sdk.thirdparty." />
     </jscoverage>
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
