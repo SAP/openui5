@@ -296,8 +296,22 @@
 	line-height: 1rem;
 }
 
-.sapUiTableCell .sapMObjStatusIcon > .sapUiIcon {
-	line-height: normal;
+.sapUiTableCell {
+	.sapMObjStatus {
+		line-height: inherit;
+	}
+	.sapMObjStatusIcon {
+		line-height: inherit;
+		vertical-align: text-bottom;
+		& > .sapUiIcon {
+			vertical-align: bottom;
+		}
+
+	}
+	.sapMObjStatusText {
+		line-height: inherit;
+		vertical-align: middle;
+	}
 }
 
 .sapMObjectStatusLarge .sapMObjStatusIcon > .sapUiIcon {
