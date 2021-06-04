@@ -1608,6 +1608,40 @@ sap.ui.define([
 			assert.ok(true, "should not throw an error");
 		});
 
+		QUnit.test("Aria-valuenow is appropriately set to the progress bar", function (assert) {
+			var clock = sinon.useFakeTimers();
+			var oRangeSlider = new RangeSlider({
+				step: 1,
+				min: 0,
+				max: 50,
+				range: [2,30]
+			});
+
+			// arrange
+			oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			var oProgressHandle = oRangeSlider.getDomRef("progress");
+
+			// assert
+			assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), "28",
+				"The aria-valuenow is sset correctly.");
+
+			oRangeSlider.setValue(4);
+			oRangeSlider.setValue2(2);
+			sap.ui.getCore().applyChanges();
+			clock.tick(500);
+
+			// assert
+			assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), "2",
+				"The aria-valuenow is updated.");
+
+
+			// cleanup
+			clock.restore();
+			oRangeSlider.destroy();
+		});
+
 		QUnit.test("Firing event keydown === SPACE should prevent the page to scroll down", function(assert) {
 
 			// system under test
