@@ -678,6 +678,13 @@ function(
 						valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximun: 11 }}],
 						paramTypes: ["(.+)"],
 						additionalInfo: "",
+						// defaultValues: [0],
+						defaultValues: function() {
+							var oDate = new UniversalDate();
+							return [
+								oDate.getMonth()
+							];
+						},
 						calcRange: function(iDuration) {
 							var oDate = new UniversalDate();
 							oDate.setMonth(iDuration);
