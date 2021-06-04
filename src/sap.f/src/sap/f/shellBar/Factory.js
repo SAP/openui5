@@ -14,7 +14,6 @@ sap.ui.define([
 	"./Accessibility",
 	"sap/m/library",
 	"sap/ui/core/library",
-	"sap/ui/core/theming/Parameters",
 	"sap/m/HBox"
 ], function(
 	Title,
@@ -29,7 +28,6 @@ sap.ui.define([
 	Accessibility,
 	library,
 	coreLibrary,
-	Parameters,
 	HBox
 ) {
 	"use strict";
@@ -113,7 +111,6 @@ sap.ui.define([
 						minWidth: "1px"
 				}));
 		}
-		this._oControls.oSecondTitle._sFontSize = Parameters.get("_sap_f_ShellBar_SecondTitle_FontSize");
 		return this._oControls.oSecondTitle;
 	};
 
@@ -143,7 +140,6 @@ sap.ui.define([
 				})
 			}).addStyleClass("sapFSHMegaMenu");
 		}
-		this._oControls.oMegaMenu._sFontSize = Parameters.get("_sap_f_ShellBar_PrimaryTitle_FontSize");
 
 		return this._oControls.oMegaMenu;
 	};
@@ -162,7 +158,6 @@ sap.ui.define([
 					})
 				).addStyleClass("sapFShellBarPrimaryTitle");
 		}
-		this._oControls.oPrimaryTitle._sFontSize = Parameters.get("_sap_f_ShellBar_PrimaryTitle_FontSize");
 		return this._oControls.oPrimaryTitle;
 	};
 
