@@ -336,7 +336,11 @@ sap.ui.define([
             var aRange = this.getRange(),
                 oProgressHandle = this.getDomRef("progress"),
                 fNormalizedValue = this.toFixed(sValue, this._iDecimalPrecision),
-                sScaleLabel = this._formatValueByCustomElement(fNormalizedValue);
+                sScaleLabel = this._formatValueByCustomElement(fNormalizedValue),
+                firstValue = this.getValue(),
+                secondValue = this.getValue2(),
+                iValueNow = Math.abs(secondValue - firstValue);
+
 
             aRange[0] = this.toFixed(aRange[0], this._iDecimalPrecision);
             aRange[1] = this.toFixed(aRange[1], this._iDecimalPrecision);
@@ -348,6 +352,7 @@ sap.ui.define([
             if (oProgressHandle) {
                 oProgressHandle.setAttribute("aria-valuetext",
                     this._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(this._formatValueByCustomElement, this)));
+                oProgressHandle.setAttribute("aria-valuenow", iValueNow);
             }
         };
 
