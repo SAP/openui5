@@ -511,6 +511,10 @@ sap.ui.define([
 	ObjectPageLayout.DIV = "div";
 	ObjectPageLayout.HEADER = "header";
 	ObjectPageLayout.FOOTER = "section";
+	ObjectPageLayout.FOOTER = "section";
+
+	// Synced with @_sap_f_DynamicPageHeader_PaddingBottom in base less file of DynamicPageHeader
+	ObjectPageLayout.HEADER_CONTENT_PADDING_BOTTOM = DomUnitsRem.toPx("1rem");
 
 	ObjectPageLayout.SHOW_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterShow";
 	ObjectPageLayout.HIDE_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterHide";
@@ -3598,7 +3602,7 @@ sap.ui.define([
 		}
 
 		if (this._hasDynamicTitle()) {
-			this._iHeaderContentPaddingBottom = DomUnitsRem.toPx(Parameters.get("_sap_f_DynamicPageHeader_PaddingBottom"));
+			this._iHeaderContentPaddingBottom = ObjectPageLayout.HEADER_CONTENT_PADDING_BOTTOM;
 		}
 
 		return this;
