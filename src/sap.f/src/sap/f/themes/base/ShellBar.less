@@ -75,7 +75,36 @@
 		left: -10000px;
 	}
 
-	.sapFShellBarOTB {
+	.sapMBarChild {
+		flex-shrink: 0;
+	}
+
+	.sapFShellBarItem,
+	.sapMIBar.sapMTB .sapFShellBarItem.sapMBarChild{
+		margin: 0 0 0 0.5rem;
+		flex-shrink: 0;
+	}
+	.sapFShellBarOLHB>.sapFShellBarItem:first-child,
+	.sapFShellBarOLHB>.sapFShellBarOAHB:first-child > .sapFShellBarItem:first-child {
+		margin-left: 0;
+	}
+	.sapMIBar.sapMTB .sapMTBSpacer + .sapFShellBarItem.sapMBarChild,
+	.sapFShellBarCopilot + .sapFShellBarItem {
+		margin-left: 0;
+	}
+	.sapMBtn .sapMBtnInner {
+		.sapFAvatar {
+			vertical-align: middle;
+		}
+		&:after {
+			content: "";
+			display: inline-block;
+			vertical-align: middle;
+			height: 100%;
+		}
+	}
+
+	.sapFShellBarOTB.sapMIBar.sapMTB {
 		height: 3rem;
 		padding: 0;
 		flex-shrink: 1;
@@ -92,34 +121,6 @@
 
 		.sapFShellBarGridButton {
 			margin-right: 0;
-		}
-	}
-
-	.sapMBarChild {
-		flex-shrink: 0;
-	}
-
-	.sapFShellBarItem {
-		margin: 0 0 0 0.5rem;
-		flex-shrink: 0;
-	}
-	.sapFShellBarOLHB>.sapFShellBarItem:first-child,
-	.sapFShellBarOLHB>.sapFShellBarOAHB:first-child > .sapFShellBarItem:first-child {
-		margin-left: 0;
-	}
-	.sapMTBSpacer + .sapFShellBarItem,
-	.sapFShellBarCopilot + .sapFShellBarItem {
-		margin-left: 0;
-	}
-	.sapMBtn .sapMBtnInner {
-		.sapFAvatar {
-			vertical-align: middle;
-		}
-		&:after {
-			content: "";
-			display: inline-block;
-			vertical-align: middle;
-			height: 100%;
 		}
 	}
 
@@ -339,6 +340,20 @@
 			.sapFShellBarSearch,
 			.sapMSF {
 				max-width: 100%;
+			}
+		}
+		.sapMBtnInner {
+			&.sapMBtnIconFirst:not(.sapMBtnText),
+			&.sapMBadgeTopRight.sapMBadge.sapMBtnIconFirst:not(.sapMBtnText){
+				padding: 0;
+			}
+			&.sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+				top: -0.3125rem;
+				right: -0.4375rem;
+				padding-right: 0.125rem;
+				line-height: normal;
+				position: absolute;
+				display: block;
 			}
 		}
 	}
