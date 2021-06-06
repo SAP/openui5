@@ -233,6 +233,7 @@
         <exclude name="sap.ui.qunit." />
         <exclude name="sap.ui.thirdparty." />
         <exclude name="sap.ui.model.odata.datajs" /> <!-- legacy redirect, only part of internal core overlay -->
+        <exclude name="sap.ui.core.designtime.mvc.ControllerExtensionTemplate" /> <!-- template file with partially unexpected content --> 
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >

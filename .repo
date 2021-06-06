@@ -14,6 +14,11 @@
 				<copyright>2015-2017 Evgeny Poberezkin</copyright>
 				<pattern>../test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/ajv/ajv.min.js</pattern>
 			</lib>
+			<lib name="jsdoc-3.6.7" displayName="JSDoc 3" version="3.6.7" homepage="https://github.com/jsdoc/jsdoc">
+				<license url="https://github.com/jsdoc/jsdoc/blob/master/LICENSE" type="Apache-2.0" />
+				<copyright>2011-present Michael Mathews micmath@gmail.com and the contributors to JSDoc</copyright>
+				<pattern partial="true" otherContent="SAP" explanation="plugin.js is overall written by SAP, but contains code taken from JSDoc 3.6.7 (see the respective comments)">lib/jsdoc/ui5/plugin.js</pattern>
+			</lib>
 		</thirdparty>
 	</appData>
 
