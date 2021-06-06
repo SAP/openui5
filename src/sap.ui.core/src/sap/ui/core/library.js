@@ -1243,18 +1243,21 @@ sap.ui.define([
 		/**
 		 * Indication Color 6
 		 * @public
+		 * @since 1.75
 		 */
 		Indication06 : "Indication06",
 
 		/**
 		 * Indication Color 7
 		 * @public
+		 * @since 1.75
 		 */
 		Indication07 : "Indication07",
 
 		/**
 		 * Indication Color 8
 		 * @public
+		 * @since 1.75
 		 */
 		Indication08 : "Indication08"
 	};
