@@ -2914,8 +2914,8 @@ sap.ui.define([
 			sinon.config.useFakeTimers = false;
 		},
 		afterEach: function () {
-			sinon.config.useFakeTimers = true;
 			this.oDialog.destroy();
+			sinon.config.useFakeTimers = true;
 		}
 	});
 
@@ -2926,7 +2926,7 @@ sap.ui.define([
 		this.oDialog.setStretch(true).open();
 		Core.applyChanges();
 
-		this.stub(this.oDialog, "_getAreaDimensions").returns(
+		var oStub = this.stub(this.oDialog, "_getAreaDimensions").returns(
 			Object.assign(
 				oWindowDimensions,
 				{ width: iNewWindowWidth }
@@ -2938,6 +2938,9 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(this.oDialog.$().width() < iNewWindowWidth, "max-width of the dialog wasn't recalculated on resize of window");
+
+		this.oDialog.close();
+		oStub.restore();
 	});
 
 	QUnit.test("Resize of custom Within Area. Dialog should be repositioned", function (assert) {
@@ -2965,6 +2968,7 @@ sap.ui.define([
 				assert.notStrictEqual(this.oDialog.getDomRef().style.left, sCurrLeft, "Dialog wasn't repositioned when Within Area was resized");
 
 				// Clean up
+				this.oDialog.close();
 				oObserver.disconnect();
 				oWithinArea.remove();
 				Popup.setWithinArea(null);
