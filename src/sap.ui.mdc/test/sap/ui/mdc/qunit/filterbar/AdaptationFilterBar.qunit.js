@@ -672,4 +672,53 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Destroy lefover fields (also dynamically added ones)", function(assert){
+		var done = assert.async();
+
+		this.oParent.getInbuiltFilter().setP13nModel(new JSONModel({
+			items: [
+				{
+					name: "key1",
+					visible: true
+				},
+				{
+					name: "key2",
+					visible: false
+				}
+			]
+		}));
+
+		this.oParent.initControlDelegate().then(function(){
+
+			this.oParent.getInbuiltFilter().createFilterFields().then(function(oAdaptationFilterBar){
+
+				//Mock user interaction
+				// 1) Add the filterfield to the p13n model (usually triggered by user interaction with the AdaptationFilterBar)
+				// 2) Add the filterfield to the parent FilterBar --> check if the AdaptationFilterBar recognizes that the field has
+				// been added during runtime
+				var aP13nItems = oAdaptationFilterBar.getP13nModel().getProperty("/items");
+				aP13nItems[1].visible = true;
+				oAdaptationFilterBar.getP13nModel().setProperty("/items", aP13nItems);
+				this.oParent.addFilterItem(new FilterField({
+					fieldPath: "key2",
+					conditions: "{$filters>/conditions/key2}"
+				}));
+
+				oAdaptationFilterBar.executeRemoves().then(function(){
+
+					var oAddedField = oAdaptationFilterBar._mOriginalsForClone["key2"];
+
+					assert.ok(oAddedField, "The AdaptationFilterBar noticed that the field has been added and did not trigger 'removeItem'");
+
+					oAdaptationFilterBar.destroy();
+
+					assert.ok(oAddedField.bIsDestroyed, "The field will be destroyed on cleaning up the AdaptationFilterBar");
+
+					done();
+				});
+
+			}.bind(this));
+		}.bind(this));
+	});
+
 });

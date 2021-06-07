@@ -266,7 +266,6 @@ sap.ui.define([
 		Object.keys(this._mOriginalsForClone).forEach(function(sKey){
 			var oDelegate = this.getAdaptationControl().getControlDelegate();
 
-
 			if (aExistingItems.indexOf(sKey) < 0) {//Originals that have not been selected --> use continue similar to 'ItemBaseFlex'
 				var oRemovePromise = oDelegate.removeItem.call(oDelegate, sKey, this.getAdaptationControl()).then(function(bContinue){
 					if (bContinue && this._mOriginalsForClone[sKey]) {
@@ -276,8 +275,6 @@ sap.ui.define([
 					}
 				}.bind(this));
 				aOriginalsToRemove.push(oRemovePromise);
-			} else { //Originals that have been selected --> keep
-				delete this._mOriginalsForClone[sKey];
 			}
 
 		}.bind(this));
