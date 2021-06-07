@@ -329,7 +329,7 @@ sap.ui.define([
 
 		/**
 		 * @see sap.ui.core.Control#getAccessibilityInfo
-		 * @returns {Object} Current accessibility state of the control.
+		 * @returns {object} Current accessibility state of the control.
 		 * @protected
 		 */
 		Currency.prototype.getAccessibilityInfo = function() {

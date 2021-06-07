@@ -326,7 +326,7 @@ sap.ui.define([
 		/**
 		 * Gets the time values from the clocks, as a date object.
 		 *
-		 * @returns {Object} A JavaScript date object
+		 * @returns {Date} A JavaScript date object
 		 * @public
 		 */
 		TimePickerInputs.prototype.getTimeValues = function() {

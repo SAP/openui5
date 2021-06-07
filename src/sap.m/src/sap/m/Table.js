@@ -851,7 +851,7 @@ sap.ui.define([
 	 * those controls.
 	 *
 	 * @param {sap.ui.core.Control} oElement - The Control that gets rendered by the RenderManager
-	 * @param {Object} mAriaProps - The mapping of "aria-" prefixed attributes
+	 * @param {object} mAriaProps - The mapping of "aria-" prefixed attributes
 	 * @protected
 	 */
 	Table.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {

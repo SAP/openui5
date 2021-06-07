@@ -391,7 +391,7 @@ function(
 	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {Object} The <code>sap.m.Link</code>  accessibility information
+	 * @returns {object} The <code>sap.m.Link</code>  accessibility information
 	 */
 	Link.prototype.getAccessibilityInfo = function() {
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),

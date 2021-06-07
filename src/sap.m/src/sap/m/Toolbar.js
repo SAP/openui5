@@ -474,7 +474,7 @@ function(
 	/**
 	 * Returns the first sap.m.Title control id inside the toolbar for the accessibility
 	 *
-	 * @returns {String} The <code>sap.m.Title</code> ID
+	 * @returns {sap.ui.core.ID} The <code>sap.m.Title</code> ID
 	 * @since 1.28
 	 * @protected
 	 */

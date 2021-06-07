@@ -1946,7 +1946,7 @@ sap.ui.define([
 		 * those controls.
 		 *
 		 * @param {sap.ui.core.Control} oControl - The Control that gets rendered by the RenderManager
-		 * @param {Object} mAriaProps - The mapping of "aria-" prefixed attributes
+		 * @param {object} mAriaProps - The mapping of "aria-" prefixed attributes
 		 * @protected
 		 */
 		SinglePlanningCalendarGrid.prototype.enhanceAccessibilityState = function(oControl, mAriaProps) {

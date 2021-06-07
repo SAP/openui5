@@ -546,8 +546,8 @@ function(
 	 * Fires the change event for the listeners
 	 *
 	 * @protected
-	 * @param {String} sValue value of the input.
-	 * @param {Object} [oParams] extra event parameters.
+	 * @param {string} sValue value of the input.
+	 * @param {object} [oParams] extra event parameters.
 	 * @since 1.22.1
 	 */
 	InputBase.prototype.fireChangeEvent = function(sValue, oParams) {
@@ -568,7 +568,7 @@ function(
 	 * It may require to re-implement this method from sub classes for control specific behaviour.
 	 *
 	 * @protected
-	 * @param {String} sValue Reverted value of the input.
+	 * @param {string} sValue Reverted value of the input.
 	 * @since 1.26
 	 */
 	InputBase.prototype.onValueRevertedByEscape = function(sValue, sPreviousValue) {
@@ -1068,7 +1068,7 @@ function(
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {Object} The accessibility information for this <code>InputBase</code>
+	 * @returns {object} The accessibility information for this <code>InputBase</code>
 	 * @protected
 	 */
 	InputBase.prototype.getAccessibilityInfo = function() {

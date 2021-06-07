@@ -949,7 +949,7 @@ function(
 
 	/**
 	 * Finds the view object by given key
-	 * @param {String} sKey The key of the view
+	 * @param {string} sKey The key of the view
 	 * @public
 	 * @since 1.75
 	 * @returns {sap.m.SinglePlanningCalendarView} the view object which matched the given <code>sKey</code>, or null if there is no such view
@@ -967,7 +967,7 @@ function(
 
 	/**
 	 * Finds the view object by given ID
-	 * @param {String} sId The ID of the view
+	 * @param {string} sId The ID of the view
 	 * @private
 	 * @returns {sap.m.SinglePlanningCalendarView} the view object which matched the given <code>sId</code>, or null if there is no such view
 	 */

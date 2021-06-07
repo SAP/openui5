@@ -127,7 +127,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the icon of the <code>StandardTile</code> control.
-	 * @returns {Object} The icon of the control
+	 * @returns {sap.ui.core.URI} The icon of the control
 	 * @public
 	 */
 	StandardTile.prototype.getIcon = function() {

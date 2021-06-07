@@ -175,7 +175,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @see sap.ui.Device.os.OS
 	 * @name sap.ui.Device.os.name
-	 * @type String
+	 * @type string
 	 * @public
 	 */
 	/**
@@ -184,7 +184,7 @@ if (typeof window.sap.ui !== "object") {
 	 * Might be empty if no version can be determined.
 	 *
 	 * @name sap.ui.Device.os.versionStr
-	 * @type String
+	 * @type string
 	 * @public
 	 */
 	/**
@@ -461,7 +461,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @see sap.ui.Device.browser.BROWSER
 	 * @name sap.ui.Device.browser.name
-	 * @type String
+	 * @type string
 	 * @public
 	 */
 	/**
@@ -470,7 +470,7 @@ if (typeof window.sap.ui !== "object") {
 	 * Might be empty if no version can be determined.
 	 *
 	 * @name sap.ui.Device.browser.versionStr
-	 * @type String
+	 * @type string
 	 * @public
 	 */
 	/**
@@ -571,7 +571,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @see sap.ui.Device.browser.webkit
 	 * @name sap.ui.Device.browser.webkitVersion
-	 * @type String
+	 * @type string
 	 * @since 1.20.0
 	 * @private
 	 */

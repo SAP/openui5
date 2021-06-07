@@ -1658,7 +1658,7 @@ sap.ui.define([
 		 * Get the URI to locate the entity set holding the value set, if it is
 		 * available.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sServiceRootURI (optional) Identifies the root of the OData
 		 *            service
 		 * @returns The resource path of the URI pointing to the entity set. It is a
@@ -3883,12 +3883,12 @@ sap.ui.define([
 		/**
 		 * Assign a value to a parameter
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sParameterName Name of the parameter. In case of a range
 		 *            value, provide the name of the lower boundary parameter.
-		 * @param {String}
+		 * @param {string}
 		 *            sValue Assigned value. Pass null to remove a value assignment.
-		 * @param {String}
+		 * @param {string}
 		 *            sToValue Omit it or set it to null for single values. If set,
 		 *            it will be assigned to the upper boundary parameter
 		 * @public
@@ -3943,7 +3943,7 @@ sap.ui.define([
 		/**
 		 * Get the URI to locate the entity set for the query parameterization.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sServiceRootURI (optional) Identifies the root of the OData
 		 *            service
 		 * @returns The resource path of the URI pointing to the entity set. It is a
@@ -3965,7 +3965,7 @@ sap.ui.define([
 		 * "omitted" value. For example, for services based on BW Easy Queries, this
 		 * would be an empty string.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sServiceRootURI (optional) Identifies the root of the OData
 		 *            service
 		 * @returns The resource path of the URI pointing to the entity set. It is a
@@ -4513,16 +4513,16 @@ sap.ui.define([
 		 * Set further options to be applied for the OData request to fetch the
 		 * query result
 		 *
-		 * @param {Boolean}
+		 * @param {boolean}
 		 *            bIncludeEntityKey Indicates whether or not the entity key
 		 *            should be returned for every entry in the query result.
 		 *            Default is not to include it. Pass null to keep current
 		 *            setting.
-		 * @param {Boolean}
+		 * @param {boolean}
 		 *            bIncludeCount Indicates whether or not the result shall
 		 *            include a count for the returned entities. Default is not to
 		 *            include it. Pass null to keep current setting.
-		 * @param {Boolean}
+		 * @param {boolean}
 		 *            bReturnNoEntities Indicates whether or not the result shall
 		 *            be empty. This will translate to $top=0 in the OData request and override
 		 *            any setting done with setResultPageBoundaries. The default is not to
@@ -4550,11 +4550,11 @@ sap.ui.define([
 		 * described by its boundaries, that are row numbers for the first and last
 		 * rows in the query result to be returned.
 		 *
-		 * @param {Number}
+		 * @param {int}
 		 *            start The first row of the query result to be returned.
 		 *            Numbering starts at 1. Passing null is equivalent to start
 		 *            with the first row.
-		 * @param {Number}
+		 * @param {int}
 		 *            end The last row of the query result to be returned. Passing
 		 *            null is equivalent to get all rows up to the end of the query
 		 *            result.
@@ -4610,11 +4610,11 @@ sap.ui.define([
 		/**
 		 * Get the URI to locate the entity set for the query result.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sServiceRootURI (optional) Identifies the root of the OData
 		 *            service
 		 *
-		 * @returns {String} The resource path of the URI pointing to the entity
+		 * @returns {string} The resource path of the URI pointing to the entity
 		 *          set. It is a relative URI unless a service root is given, which
 		 *          would then prefixed in order to return a complete URL.
 		 * @public
@@ -4677,11 +4677,11 @@ sap.ui.define([
 		 * Get the value of a query option for the OData request URI corresponding
 		 * to this request.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sQueryOptionName Identifies the query option: $select,
 		 *            $filter,$orderby ... or any custom query option
 		 *
-		 * @returns {String} The value of the requested query option or null, if
+		 * @returns {string} The value of the requested query option or null, if
 		 *          this option is not used for the OData request.
 		 * @public
 		 * @function
@@ -4806,15 +4806,15 @@ sap.ui.define([
 		/**
 		 * Get the unescaped URI to fetch the query result.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sServiceRootURI (optional) Identifies the root of the OData
 		 *            service
-		 * @param {String}
+		 * @param {string}
 		 *            sResourcePath (optional) OData resource path to be considered.
 		 *            If provided, it overwrites any parameterization object that
 		 *            might have been specified separately.
 		 *
-		 * @returns {String} The unescaped URI that contains the OData resource path
+		 * @returns {string} The unescaped URI that contains the OData resource path
 		 *          and OData system query options to express the aggregation level,
 		 *          filter expression and further options.
 		 * @public
@@ -5038,11 +5038,11 @@ sap.ui.define([
 		 * Get the value of a query option for the OData request URI corresponding
 		 * to this request.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sQueryOptionName Identifies the query option: $select,
 		 *            $filter,... or any custom query option
 		 *
-		 * @returns {String} The value of the requested query option or null, if
+		 * @returns {string} The value of the requested query option or null, if
 		 *          this option is not used for the OData request.
 		 * @public
 		 * @function
@@ -5087,10 +5087,10 @@ sap.ui.define([
 		/**
 		 * Get the unescaped URI to fetch the parameter value set.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sServiceRootURI (optional) Identifies the root of the OData
 		 *            service
-		 * @returns {String} The unescaped URI that contains the OData resource path
+		 * @returns {string} The unescaped URI that contains the OData resource path
 		 *          and OData system query options to express the request for the
 		 *          parameter value set..
 		 * @public
@@ -5325,7 +5325,7 @@ sap.ui.define([
 		/**
 		 * Set further options to be applied for the OData request
 		 *
-		 * @param {Boolean}
+		 * @param {boolean}
 		 *            bIncludeCount Indicates whether or not the result shall
 		 *            include a count for the returned entities. Default is not to
 		 *            include it. Pass null to keep current setting.
@@ -5344,11 +5344,11 @@ sap.ui.define([
 		 * described by its boundaries, that are row numbers for the first and last
 		 * rows in the query result to be returned.
 		 *
-		 * @param {Number}
+		 * @param {int}
 		 *            start The first row of the query result to be returned.
 		 *            Numbering starts at 1. Passing null is equivalent to start
 		 *            with the first row.
-		 * @param {Number}
+		 * @param {int}
 		 *            end The last row of the query result to be returned. Passing
 		 *            null is equivalent to get all rows up to the end of the query
 		 *            result.
@@ -5405,11 +5405,11 @@ sap.ui.define([
 		 * Get the value of a query option for the OData request URI corresponding
 		 * to this request.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sQueryOptionName Identifies the query option: $select,
 		 *            $filter,... or any custom query option
 		 *
-		 * @returns {String} The value of the requested query option or null, if
+		 * @returns {string} The value of the requested query option or null, if
 		 *          this option is not used for the OData request.
 		 * @public
 		 * @function
@@ -5523,10 +5523,10 @@ sap.ui.define([
 		/**
 		 * Get the URI to locate the entity set for the dimension memebers.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sServiceRootURI (optional) Identifies the root of the OData
 		 *            service
-		 * @returns {String} The resource path of the URI pointing to the entity
+		 * @returns {string} The resource path of the URI pointing to the entity
 		 *          set. It is a relative URI unless a service root is given, which
 		 *          would then prefixed in order to return a complete URL.
 		 * @public
@@ -5548,10 +5548,10 @@ sap.ui.define([
 		 * Get the unescaped URI to fetch the dimension members, optionally
 		 * augmented by text and attributes.
 		 *
-		 * @param {String}
+		 * @param {string}
 		 *            sServiceRootURI (optional) Identifies the root of the OData
 		 *            service
-		 * @returns {String} The unescaped URI that contains the OData resource path
+		 * @returns {string} The unescaped URI that contains the OData resource path
 		 *          and OData system query options to express the request for the
 		 *          parameter value set..
 		 * @public

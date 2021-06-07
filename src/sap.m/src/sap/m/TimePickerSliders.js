@@ -342,7 +342,7 @@ sap.ui.define([
 		/**
 		 * Gets the time values from the sliders, as a date object.
 		 *
-		 * @returns {Object} A JavaScript date object
+		 * @returns {Date} A JavaScript date object
 		 * @public
 		 */
 		TimePickerSliders.prototype.getTimeValues = function () {

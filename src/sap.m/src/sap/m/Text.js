@@ -188,7 +188,7 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 	 *
 	 * @protected
 	 * @param {HTMLElement} oDomRef DOM reference of the text node container.
-	 * @param {String} [sNodeValue] new Node value.
+	 * @param {string} [sNodeValue] new Node value.
 	 * @since 1.30.3
 	 */
 	Text.setNodeValue = function (oDomRef, sNodeValue) {

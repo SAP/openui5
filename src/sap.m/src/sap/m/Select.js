@@ -3060,7 +3060,7 @@ function(
 		 *
 		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
-		 * @returns {Object} The <code>sap.m.Select</code> accessibility information
+		 * @returns {object} The <code>sap.m.Select</code> accessibility information
 		 */
 		Select.prototype.getAccessibilityInfo = function() {
 			var bIconOnly = this._isIconOnly(),

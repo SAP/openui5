@@ -190,7 +190,7 @@ sap.ui.define([
 
 		/**
 		 * Sets the title of the <code>Menu</code>.
-		 * @param {String} sTitle The new title of the <code>Menu</code>
+		 * @param {string} sTitle The new title of the <code>Menu</code>
 		 * @returns {this} <code>this</code> to allow method chaining
 		 * @public
 		 */
