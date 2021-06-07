@@ -2,16 +2,16 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/model/analytics/odata4analytics",
-	"sap/ui/model/analytics/ODataModelAdapter",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function (jQuery, odata4analytics, ODataModelAdapter, ODataModel, o4aFakeService, Log, isEmptyObject, Filter, FilterOperator) {
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/analytics/odata4analytics",
+	"sap/ui/model/analytics/ODataModelAdapter",
+	"sap/ui/model/odata/v2/ODataModel"
+], function (Log, isEmptyObject, o4aFakeService, Filter, FilterOperator, odata4analytics,
+	ODataModelAdapter, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
