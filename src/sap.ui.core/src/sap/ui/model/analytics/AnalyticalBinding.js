@@ -687,25 +687,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the total number of entities in the bound OData entity set.
+	 * Gets the total number of leaves or <code>undefined</code> if this is unknown.
 	 *
-	 * Counting takes place at the lowest aggregation level defined by the possible value
-	 * combinations for the complete set of dimension properties included in the bound entity set.
-	 * This means that intermediate aggregate entities with sub-totals at higher aggregation levels
-	 * are not counted.
-	 *
-	 * @return {number}
-	 *    The total number of addressed entities in the OData entity set, or -1 if the number is
-	 *    not yet known or if the binding parameter <code>provideTotalResultSize</code> is set to
-	 *    <code>false</code>
+	 * @return {number|undefined}
+	 *   The total number of leaves, or <code>undefined</code> if the number is not yet known or if
+	 *   the <code>provideTotalResultSize</code> binding parameter is set to <code>false</code>
 	 *
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataListBinding#getCount
+	 * @since 1.92.0
+	 */
+	AnalyticalBinding.prototype.getCount = function () {
+		return this.iTotalSize >= 0 ? this.iTotalSize : undefined;
+	};
+
+	/**
+	 * Gets the total number of leaves or <code>-1</code> if this is unknown.
+	 *
+	 * @return {number}
+	 *   The total number of leaves, or <code>-1</code> if the number is not yet known or if the
+	 *   binding parameter <code>provideTotalResultSize</code> is set to <code>false</code>
+	 *
+	 * @public
+	 * @deprecated Since 1.92 use {@link #getCount} instead
 	 */
 	AnalyticalBinding.prototype.getTotalSize = function() {
 		if (!this.bProvideTotalSize) {
 			oLogger.fatal("total size of result explicitly turned off, but getter invoked");
 		}
-		return +this.iTotalSize;
+		return this.iTotalSize;
 	};
 
 	/**
@@ -3243,7 +3253,7 @@ sap.ui.define([
 				this.mFinalLength[sGroupId] = true;
 
 				if (oRequestDetails.bIsFlatListRequest) {
-					this.iTotalSize = oData.__count;
+					this.iTotalSize = this.mServiceLength[sGroupId];
 				}
 				bNewLengthSet = true;
 			}
@@ -3305,7 +3315,7 @@ sap.ui.define([
 			oLogger.fatal("missing entity count in query result");
 			return;
 		}
-		this.iTotalSize = oData.__count;
+		this.iTotalSize = parseInt(oData.__count);
 	};
 
 	/**
