@@ -2311,8 +2311,7 @@ function(
 
 		if (oPopup.isA("sap.m.Dialog")) {
 			// phone variant, use endButton (beginButton is close)
-			var oShowMoreButton = this._getShowMoreButton();
-			oPopup.setEndButton(oShowMoreButton);
+			this._getShowMoreButton().setVisible(true);
 		} else {
 			var oButtonToolbar = this._getButtonToolbar();
 			// desktop/tablet variant, use popover footer
@@ -2333,7 +2332,7 @@ function(
 		}
 
 		if (oPopup.isA("sap.m.Dialog")) {
-			oPopup.setEndButton(null);
+			this._getShowMoreButton().setVisible(false);
 		} else {
 			oPopup.setFooter(null);
 		}
@@ -2559,6 +2558,11 @@ function(
 
 					oSuggPopover._oPopupInput.setValue(this.getValue());
 				}, this);
+
+				// set the button initially and control its visibility to prevent rerendering of the Dialog
+				// this is fixed when Semantic Rendering is introduced
+				oPopover.setEndButton(this._getShowMoreButton());
+				this._getShowMoreButton().setVisible(false);
 		} else {
 			oPopover
 				.attachAfterClose(function() {
