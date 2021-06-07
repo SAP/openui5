@@ -327,28 +327,6 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 			};
 		};
 
-		// CustomEvent polyfill for IE version 9 and higher
-		function initCustomEvents() {
-			if (typeof window.CustomEvent === "function") {
-				return false;
-			}
-
-			function CustomEvent(event, params) {
-				params = params || {
-					bubbles: false,
-					cancelable: false,
-					detail: undefined
-				};
-				var evt = document.createEvent('CustomEvent');
-				evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-				return evt;
-			}
-			CustomEvent.prototype = window.Event.prototype;
-			window.CustomEvent = CustomEvent;
-		}
-
-		initCustomEvents();
-
 		return EventBroadcaster;
 	});
 

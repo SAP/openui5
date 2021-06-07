@@ -72,8 +72,7 @@ sap.ui.define([
 				controlIDs = {
 					dvLoadedLibs: "LoadedLibs",
 					dvLoadedModules: "LoadedModules"
-				},
-				windowsPhoneTouches; // variable used to open the support dialog on windows phone
+				};
 
 			// copied from core
 			function line(buffer, right, border, label, content) {
@@ -278,13 +277,6 @@ sap.ui.define([
 				if (oEvent.touches) {
 					var currentTouches = oEvent.touches.length;
 
-					if (Device.browser.mobile &&
-						(Device.browser.name === Device.browser.BROWSER.INTERNET_EXPLORER ||// TODO remove after the end of support for Internet Explorer
-						Device.browser.name === Device.browser.BROWSER.EDGE)) {
-						windowsPhoneTouches = currentTouches;
-					}
-
-
 					if (currentTouches > maxFingersAllowed) {
 						document.removeEventListener('touchend', onTouchEnd);
 						return;
@@ -309,16 +301,11 @@ sap.ui.define([
 
 			//function is triggered when a touch is removed e.g. the user’s finger is removed from the touchscreen.
 			function onTouchEnd(oEvent) {
-				var windowsPhoneTouchCondition = Device.browser.mobile &&
-					(Device.browser.name === Device.browser.BROWSER.INTERNET_EXPLORER ||// TODO remove after the end of support for Internet Explorer
-					Device.browser.name === Device.browser.BROWSER.EDGE) &&
-					windowsPhoneTouches == maxFingersAllowed;
-
 				document.removeEventListener('touchend', onTouchEnd);
 
 				// Check if two fingers are holded for 3 seconds or more and after that it`s tapped with a third finger
 				if (timeDiff > minHoldTime
-					&& (oEvent.touches.length === holdFingersNumber || windowsPhoneTouchCondition) // on Windows Phone oEvent.touches.lenght is 0 instead of 2
+					&& (oEvent.touches.length === holdFingersNumber)
 					&& oEvent.changedTouches.length === releasedFingersNumber
 					&& oEvent.changedTouches[0].identifier === lastTouchUID) {
 
