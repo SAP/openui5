@@ -627,6 +627,95 @@ sap.ui.define([
 		},
 
 		/**
+		 * Extracts all (top and detail) messages from the given error instance into lists of
+		 * unbound and bound messages.
+		 *
+		 * @param {Error} oError
+		 *   An error instance as created by {@link .createError} or {@link .decomposeError}
+		 * @param {object} [oError.error]
+		 *   An error response as sent from the OData server
+		 * @param {object[]} [oError.error.details]
+		 *   A list of detail messages sent from the OData server. These messages are reported, too.
+		 * @param {boolean} [oError.error.$ignoreTopLevel]
+		 *   Whether <code>oError.error</code> itself is not reported, but only the
+		 *   <code>oError.error.details</code>
+		 * @param {string} [oError.requestUrl]
+		 *   The absolute request URL of the failed OData request; required to resolve a long text
+		 *   URL
+		 * @returns {object}
+		 *   An object containing "unbound" and "bound" properties each containing an array of raw
+		 *   message objects suitable for {@link sap.ui.model.odata.v4.ODataModel#createUI5Message}
+		 *
+		 * @private
+		 */
+		extractMessages : function (oError) {
+			var aBound = [],
+				aUnbound = [];
+
+			/*
+			 * Creates a raw message object taking all relevant properties, converts the annotations
+			 * for numeric severity and longtext to the corresponding properties and adds it to one
+			 * of the arrays to be reported later.
+			 * @param {object} oMessage The message
+			 * @param {number} [iNumericSeverity] The numeric severity
+			 * @param {boolean} [bTechnical] Whether the message is reported as technical
+			 */
+			function addMessage (oMessage, iNumericSeverity, bTechnical) {
+				var oRawMessage = {
+						additionalTargets : _Helper.getAdditionalTargets(oMessage),
+						code : oMessage.code,
+						message : oMessage.message,
+						numericSeverity : iNumericSeverity,
+						technical : bTechnical || oMessage.technical,
+						// use "@$ui5." prefix to overcome name collisions with instance annotations
+						// returned from back end.
+						"@$ui5.error" : oError,
+						"@$ui5.originalMessage" : oMessage
+					};
+
+				Object.keys(oMessage).forEach(function (sProperty) {
+					if (sProperty[0] === '@') {
+						// cannot use .getAnnotation() for compatibility reasons
+						if (sProperty.endsWith(".numericSeverity")) {
+							oRawMessage.numericSeverity = oMessage[sProperty];
+						} else if (sProperty.endsWith(".longtextUrl") && oError.requestUrl
+								&& oMessage[sProperty]) {
+							oRawMessage.longtextUrl
+								= _Helper.makeAbsolute(oMessage[sProperty], oError.requestUrl);
+						}
+					}
+				});
+
+				if (typeof oMessage.target !== "string") {
+					aUnbound.push(oRawMessage);
+				} else if (oMessage.target[0] === "$" || !oError.resourcePath) {
+					// target for the bound message is a system query option or cannot be resolved
+					// -> report as unbound message
+					oRawMessage.message = oMessage.target + ": " + oMessage.message;
+					aUnbound.push(oRawMessage);
+				} else {
+					oRawMessage.target = oMessage.target;
+					oRawMessage.transition = true;
+					aBound.push(oRawMessage);
+				}
+			}
+
+			if (oError.error) {
+				if (!oError.error.$ignoreTopLevel) {
+					addMessage(oError.error, 4 /*Error*/, true);
+				}
+				if (oError.error.details) {
+					oError.error.details.forEach(function (oMessage) {
+						addMessage(oMessage);
+					});
+				}
+			} else {
+				addMessage(oError, 4 /*Error*/, true);
+			}
+			return {bound : aBound, unbound : aUnbound};
+		},
+
+		/**
 		 * Extracts the mergeable query options "$expand" and "$select" from the given ones, returns
 		 * them as a new map while replacing their value with "~" in the old map.
 		 *

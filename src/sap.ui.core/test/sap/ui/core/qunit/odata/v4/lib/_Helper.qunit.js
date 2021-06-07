@@ -3923,4 +3923,230 @@ sap.ui.define([
 				"~parameterContextPath~", "~contextPath~"),
 			undefined);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("extractMessages w/o oError.error", function (assert) {
+		var oError = new Error("Failure"),
+			oExpectedResult = {
+				bound : [],
+				unbound : [{
+					additionalTargets : undefined,
+					code : undefined,
+					message : "Failure",
+					numericSeverity : 4,
+					technical : true,
+					"@$ui5.error" : oError,
+					"@$ui5.originalMessage" : oError
+				}]
+			},
+			oResult;
+
+		oError.resourcePath = "some/resource/path"; // required for bound message
+
+		this.mock(_Helper).expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oError));
+
+		// code under test
+		oResult = _Helper.extractMessages(oError);
+
+		assert.deepEqual(oResult, oExpectedResult);
+		assert.strictEqual(oResult.unbound[0]["@$ui5.error"], oError);
+		assert.strictEqual(oResult.unbound[0]["@$ui5.originalMessage"], oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("extractMessages with oError.error", function (assert) {
+		var oError = new Error(),
+			oDataError = {
+				code : "code",
+				details : [{
+					code : "detail-code0",
+					message : "detail-message0",
+					technical : "~bTechnical0~"
+				}, {
+					code : "detail-code1",
+					message : "detail-message1",
+					technical : "~bTechnical1~"
+				}, {
+					code : "detail-code2",
+					message : "detail-message2",
+					technical : "~bTechnical2~",
+					target : "$filter"
+				}, {
+					target : "",
+					technical : "~bTechnical3~"
+				}],
+				message : "OData-Error"
+			},
+			oExpectedResult = {
+				bound : [{
+					additionalTargets : "~add3~",
+					code : undefined,
+					message : undefined,
+					numericSeverity : undefined,
+					target : "",
+					technical : "~bTechnical3~",
+					transition : true,
+					"@$ui5.error" : oError,
+					"@$ui5.originalMessage" : oDataError.details[3]
+				}],
+				unbound : [{
+					additionalTargets : "~undefined~",
+					code : "code",
+					message : "OData-Error",
+					numericSeverity : 4,
+					technical : true,
+					"@$ui5.error" : oError,
+					"@$ui5.originalMessage" : oDataError
+				}, {
+					additionalTargets : "~add0-undefined~",
+					code : "detail-code0",
+					message : "detail-message0",
+					technical : "~bTechnical0~",
+					numericSeverity : undefined,
+					"@$ui5.error" : oError,
+					"@$ui5.originalMessage" : oDataError.details[0]
+				}, {
+					additionalTargets : "~add1-undefined~",
+					code : "detail-code1",
+					message : "detail-message1",
+					technical : "~bTechnical1~",
+					numericSeverity : undefined,
+					"@$ui5.error" : oError,
+					"@$ui5.originalMessage" : oDataError.details[1]
+				}, {
+					additionalTargets : "~add2-undefined~",
+					code : "detail-code2",
+					message : "$filter: detail-message2",
+					technical : "~bTechnical2~",
+					numericSeverity : undefined,
+					"@$ui5.error" : oError,
+					"@$ui5.originalMessage" : oDataError.details[2]
+				}]
+			},
+			oHelperMock = this.mock(_Helper),
+			oResult;
+
+		oError.error = oDataError;
+		oError.resourcePath = "some/resource/path"; // required for bound message
+
+		oHelperMock.expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oDataError)).returns("~undefined~");
+		oHelperMock.expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oDataError.details[0])).returns("~add0-undefined~");
+		oHelperMock.expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oDataError.details[1])).returns("~add1-undefined~");
+		oHelperMock.expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oDataError.details[2])).returns("~add2-undefined~");
+		oHelperMock.expects("getAdditionalTargets")
+			.withExactArgs(sinon.match.same(oDataError.details[3])).returns("~add3~");
+
+		// code under test
+		oResult = _Helper.extractMessages(oError);
+
+		assert.deepEqual(oResult, oExpectedResult);
+		assert.strictEqual(oResult.unbound[0]["@$ui5.error"], oError);
+		assert.strictEqual(oResult.unbound[0]["@$ui5.originalMessage"], oDataError);
+		assert.strictEqual(oResult.unbound[1]["@$ui5.error"], oError);
+		assert.strictEqual(oResult.unbound[1]["@$ui5.originalMessage"], oDataError.details[0]);
+		assert.strictEqual(oResult.unbound[2]["@$ui5.error"], oError);
+		assert.strictEqual(oResult.unbound[2]["@$ui5.originalMessage"], oDataError.details[1]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("extractMessages: special cases", function (assert) {
+		// $ignoreTopLevel, numericSeverity, longtextUrl
+		var oError = new Error(),
+			oHelperMock = this.mock(_Helper),
+			oResult;
+
+		oError.resourcePath = "some/resource/path"; // required for bound message
+		oError.requestUrl = "the/requestUrl";
+		oError.error = {
+			"$ignoreTopLevel" : true,
+			message : "ignored",
+			details : [{
+				numericSeverity : "does-not-fit",
+				"@Common.numericSeverity.somethingElse" : "does-not-fit",
+				"@com.sap.vocabularies.Common.v1.numericSeverity" : 1,
+				"@Common.numericSeverity" : 2,
+				longtextUrl : "does-not-fit",
+				"@Common.longtextUrl.somethingElse" : "does-not-fit",
+				"@com.sap.vocabularies.Common.v1.longtextUrl" : "some/longtextUrl",
+				"@Common.longtextUrl" : "the/only/one/longtextUrl0"
+			}, {
+				target : "",
+				"@Common.numericSeverity" : 42,
+				"@.numericSeverity" : 43,
+				"@Common.longtextUrl" : "some/longtextUrl",
+				"@.longtextUrl" : "the/only/one/longtextUrl1"
+			}]
+		};
+
+		oHelperMock.expects("makeAbsolute")
+			.withExactArgs(oError.error.details[0]["@com.sap.vocabularies.Common.v1.longtextUrl"],
+				oError.requestUrl)
+			.returns("~willBeOverwritten~");
+		oHelperMock.expects("makeAbsolute")
+			.withExactArgs(oError.error.details[0]["@Common.longtextUrl"], oError.requestUrl)
+			.returns("/absolute/url0");
+		oHelperMock.expects("makeAbsolute")
+			.withExactArgs(oError.error.details[1]["@Common.longtextUrl"], oError.requestUrl)
+			.returns("~willBeOverwritten~");
+		oHelperMock.expects("makeAbsolute")
+			.withExactArgs(oError.error.details[1]["@.longtextUrl"], oError.requestUrl)
+			.returns("/absolute/url1");
+
+		// code under test
+		oResult = _Helper.extractMessages(oError);
+
+		assert.strictEqual(oResult.unbound[0].numericSeverity, 2);
+		assert.strictEqual(oResult.bound[0].numericSeverity, 43);
+		assert.strictEqual(oResult.unbound[0].longtextUrl, "/absolute/url0");
+		assert.strictEqual(oResult.bound[0].longtextUrl, "/absolute/url1");
+
+		oError.error.details = [{
+			"@Common0.longtextUrl" : undefined,
+			"@Common1.longtextUrl" : null,
+			"@.longtextUrl" : "",
+			"@Core.longtextUrl" : 0
+		}];
+
+		oHelperMock.expects("makeAbsolute").never();
+
+		// code under test (falsy longtextUrl)
+		oResult = _Helper.extractMessages(oError);
+
+		assert.strictEqual(oResult.unbound[0].longtextUrl, undefined);
+		assert.strictEqual(oResult.unbound.length, 1);
+		assert.strictEqual(oResult.bound.length, 0);
+
+		delete oError.error.details;
+
+		// code under test (no oError.error.details)
+		oResult = _Helper.extractMessages(oError);
+
+		assert.strictEqual(oResult.unbound.length, 0);
+		assert.strictEqual(oResult.bound.length, 0);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("extractMessages: no resource path -> unbound", function (assert) {
+		// a bound message will be reported as unbound if there is no resource path
+		var oError = new Error(),
+			oResult;
+
+		oError.error = {
+			message : "message",
+			target : "target"
+		};
+
+		// code under test
+		oResult = _Helper.extractMessages(oError);
+
+		assert.strictEqual(oResult.bound.length, 0);
+		assert.strictEqual(oResult.unbound.length, 1);
+		assert.strictEqual(oResult.unbound[0].message, "target: message");
+		assert.notOk("target" in oResult.unbound[0]);
+	});
 });

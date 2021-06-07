@@ -1131,6 +1131,82 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a {@link sap.ui.core.message.Message} from a given "raw" message object. For a
+	 * bound message, targets are resolved if they are not yet resolved. A message is called a bound
+	 * message if is has a target, even if it is empty.
+	 *
+	 * @param {object} oRawMessage
+	 *   The raw message
+	 * @param {string} [oRawMessage.code]
+	 *   The error code
+	 * @param {string} [oRawMessage.longtextUrl]
+	 *   The message longtext URL; can be relative to the given <code>sResourcePath</code>
+	 * @param {string} [oRawMessage.message]
+	 *   The message text
+	 * @param {number} [oRawMessage.numericSeverity]
+	 *   The numeric message severity
+	 * @param {string} [oRawMessage.target]
+	 *   The message target; can be relative to the <code>sResourcePath</code> plus
+	 *   <code>sCachePath</code>
+	 * @param {string[]} [oRawMessage.additionalTargets]
+	 *   Array of additional targets with the same meaning as <code>target</code>
+	 * @param {boolean} [oRawMessage.technical]
+	 *   Whether the message is reported as <code>technical</code>
+	 * @param {boolean} [oRawMessage.transition]
+	 *   Whether the message is a transition message and not a state message. Unbound messages
+	 *   cannot be state messages
+	 * @param {object} [oRawMessage.@$ui5.error]
+	 *   The original error instance
+	 * @param {object} [oRawMessage.@$ui5.originalMessage]
+	 *   The original message object which is used to create the technical details
+	 * @param {string} [sResourcePath]
+	 *   The resource path of the cache that saw the messages; used to resolve the targets and
+	 *   the longtext URL
+	 * @param {string} [sCachePath]
+	 *   The cache-relative path to the entity; used to resolve the targets
+	 * @returns {sap.ui.core.message.Message}
+	 *   The created UI5 message object
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.createUI5Message = function (oRawMessage, sResourcePath, sCachePath) {
+		var bIsBound = oRawMessage.target !== undefined,
+			sMessageLongtextUrl = oRawMessage.longtextUrl,
+			aTargets;
+
+		function resolveTarget(sTarget) {
+			return sTarget[0] === "/"
+				? sTarget
+				: _Helper.buildPath("/" + sResourcePath, sCachePath, sTarget);
+		}
+
+		if (bIsBound) {
+			aTargets = [resolveTarget(oRawMessage.target)];
+			if (oRawMessage.additionalTargets) {
+				oRawMessage.additionalTargets.forEach(function (sTarget) {
+					aTargets.push(resolveTarget(sTarget));
+				});
+			}
+		}
+		if (sMessageLongtextUrl && sResourcePath) {
+			sMessageLongtextUrl = _Helper.makeAbsolute(sMessageLongtextUrl,
+				this.sServiceUrl + sResourcePath);
+		}
+
+		return new Message({
+			code : oRawMessage.code,
+			descriptionUrl : sMessageLongtextUrl || undefined,
+			message : oRawMessage.message,
+			persistent : bIsBound ? oRawMessage.transition : true,
+			processor : this,
+			target: bIsBound ? aTargets : undefined,
+			technical : oRawMessage.technical,
+			technicalDetails : _Helper.createTechnicalDetails(oRawMessage),
+			type : aMessageTypes[oRawMessage.numericSeverity] || MessageType.None
+		});
+	};
+
+	/**
 	 * Destroys this model, its requestor and its meta model.
 	 *
 	 * @public
@@ -1584,37 +1660,14 @@ sap.ui.define([
 	 * the new messages.
 	 *
 	 * @param {string} sResourcePath
-	 *   The resource path of the cache that saw the messages
+	 *   The resource path of the cache that saw the messages; used to resolve the targets and
+	 *   the longtext URL
 	 * @param {object} mPathToODataMessages
-	 *   Maps a cache-relative path with key predicates or indices to an array of messages with the
-	 *   following properties. Each message is passed to the "technicalDetails" (see
-	 *   _Helper.createTechnicalDetails). Currently the "technicalDetails" only contain an attribute
-	 *   named "originalMessage" that contains the message that is received from the back end.
-	 *   {string} code
-	 *     The error code
-	 *   {string} [longtextUrl]
-	 *     The absolute URL for the message's long text
-	 *   {string} message
-	 *     The message text
-	 *   {number} numericSeverity
-	 *     The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
-	 *     "error")
-	 *   {string} target
-	 *     The target for the message; if relative the reported target path is a concatenation of
-	 *     the resource path, the cache-relative path and this property
-	 *   {string[]} [additionalTargets]
-	 *     Array of additional targets with the same meaning as <code>target</code>
-	 *   {boolean} [technical]
-	 *     Whether the message is reported as <code>technical</code> (supplied by #reportError)
-	 *   {boolean} [transition]
-	 *     Whether the message is reported as <code>persistent=true</code> and therefore needs to be
-	 *     managed by the application
-	 *   {object} [@$ui5.originalMessage]
-	 *     The original message object supplied by #reportError. In case this is supplied it is used
-	 *     in _Helper.createTechnicalDetails to create the "originalMessage" property
+	 *   Maps a cache-relative path with key predicates or indices to an array of messages suitable
+	 *   for {@link #createUI5Message}
 	 * @param {string[]} [aCachePaths]
-	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
-	 *    be removed; if the array is not given, all entities are affected
+	 *   An array of cache-relative paths of the entities for which non-persistent messages have to
+	 *   be removed; if the array is not given, all entities are affected
 	 *
 	 * @private
 	 */
@@ -1627,32 +1680,7 @@ sap.ui.define([
 
 		Object.keys(mPathToODataMessages).forEach(function (sCachePath) {
 			mPathToODataMessages[sCachePath].forEach(function (oRawMessage) {
-				var aTargets;
-
-				function resolveTarget(sTarget) {
-					return sTarget[0] === "/"
-						? sTarget
-						: _Helper.buildPath(sDataBindingPath, sCachePath, sTarget);
-				}
-
-				aTargets = [resolveTarget(oRawMessage.target)];
-				if (oRawMessage.additionalTargets) {
-					oRawMessage.additionalTargets.forEach(function (sTarget) {
-						aTargets.push(resolveTarget(sTarget));
-					});
-				}
-
-				aNewMessages.push(new Message({
-					code : oRawMessage.code,
-					descriptionUrl : oRawMessage.longtextUrl || undefined,
-					message : oRawMessage.message,
-					persistent : oRawMessage.transition,
-					processor : that,
-					target : aTargets,
-					technical : oRawMessage.technical,
-					technicalDetails : _Helper.createTechnicalDetails(oRawMessage),
-					type : aMessageTypes[oRawMessage.numericSeverity] || MessageType.None
-				}));
+				aNewMessages.push(that.createUI5Message(oRawMessage, sResourcePath, sCachePath));
 			});
 		});
 		(aCachePaths || [""]).forEach(function (sCachePath) {
@@ -1706,57 +1734,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.reportError = function (sLogMessage, sReportingClassName, oError) {
-		var aBoundMessages = [],
-			sDetails,
-			sResourcePath,
-			aUnboundMessages = [];
-
-		/*
-		 * Clones the message object taking all relevant properties, converts the annotations for
-		 * numeric severity and longtext to the corresponding properties and adds it to one of the
-		 * arrays to be reported later.
-		 * @param {object} oMessage The message
-		 * @param {number} [iNumericSeverity] The numeric severity
-		 * @param {boolean} [bTechnical] Whether the message is reported as technical
-		 */
-		function addMessage(oMessage, iNumericSeverity, bTechnical) {
-			var oReportMessage = {
-					additionalTargets : _Helper.getAdditionalTargets(oMessage),
-					code : oMessage.code,
-					message : oMessage.message,
-					numericSeverity : iNumericSeverity,
-					technical : bTechnical || oMessage.technical,
-					// use "@$ui5." prefix to overcome name collisions with instance annotations
-					// returned from back end.
-					"@$ui5.error" : oError,
-					"@$ui5.originalMessage" : oMessage
-				};
-
-			Object.keys(oMessage).forEach(function (sProperty) {
-				if (sProperty[0] === '@') {
-					if (sProperty.endsWith(".numericSeverity")) {
-						oReportMessage.numericSeverity = oMessage[sProperty];
-					} else if (sProperty.endsWith(".longtextUrl") && oError.requestUrl
-							&& oMessage[sProperty]) {
-						oReportMessage.longtextUrl =
-							_Helper.makeAbsolute(oMessage[sProperty], oError.requestUrl);
-					}
-				}
-			});
-
-			if (typeof oMessage.target !== "string") {
-				aUnboundMessages.push(oReportMessage);
-			} else if (oMessage.target[0] === "$" || !sResourcePath) {
-				// target for the bound message is a system query option or cannot be resolved
-				// -> report as unbound message
-				oReportMessage.message = oMessage.target + ": " + oReportMessage.message;
-				aUnboundMessages.push(oReportMessage);
-			} else {
-				oReportMessage.target = oMessage.target;
-				oReportMessage.transition = true;
-				aBoundMessages.push(oReportMessage);
-			}
-		}
+		var sDetails,
+			oRawMessages;
 
 		if (oError.canceled === "noDebugLog") {
 			return;
@@ -1777,24 +1756,16 @@ sap.ui.define([
 		}
 		oError.$reported = true;
 
-		if (oError.error) {
-			sResourcePath = oError.resourcePath && oError.resourcePath.split("?")[0];
-			if (!oError.error.$ignoreTopLevel) {
-				addMessage(oError.error, 4 /* Error */, true);
-			}
-			if (oError.error.details) {
-				oError.error.details.forEach(function (oMessage) {
-					addMessage(oMessage);
-				});
-			}
-			if (aBoundMessages.length) {
-				this.reportBoundMessages(sResourcePath, {"" : aBoundMessages}, []);
-			}
-		} else {
-			addMessage(oError, 4 /* Error */, true);
+		oRawMessages = _Helper.extractMessages(oError);
+		if (oRawMessages.bound.length) {
+			this.reportBoundMessages(
+				oError.resourcePath.split("?")[0],
+				{"" : oRawMessages.bound},
+				[]
+			);
 		}
 		// The longtextUrls are already absolute, so sResourcePath is not needed here
-		this.reportUnboundMessages(aUnboundMessages);
+		this.reportUnboundMessages(oRawMessages.unbound);
 	};
 
 	/**
@@ -1802,27 +1773,10 @@ sap.ui.define([
 	 * the new messages.
 	 *
 	 * @param {object[]} aMessages
-	 *   The array of messages as contained in the <code>sap-messages</code> response header with
-	 *   the following properties. Each message is passed to the "technicalDetails" (see
-	 *   _Helper.createTechnicalDetails). Currently the "technicalDetails" only contain an attribute
-	 *   named "originalMessage" that contains the message that is received from the back end.
-	 *   {string} code
-	 *     The error code
-	 *   {string} [longtextUrl]
-	 *     The URL for the message's long text; it must be absolute if <code>sResourcePath</code> is
-	 *     missing
-	 *   {string} message
-	 *     The message text
-	 *   {number} numericSeverity
-	 *     The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
-	 *     "error")
-	 *   {boolean} [technical]
-	 *     Whether the message is reported as <code>technical</code> (supplied by #reportError)
-	 *   {object} [@$ui5.originalMessage]
-	 *     The original message object supplied by #reportError. In case this is supplied it is used
-	 *     in _Helper.createTechnicalDetails to create the "originalMessage" property
+	 *   An array of messages suitable for {@link #createUI5Message}
 	 * @param {string} [sResourcePath]
-	 *   The resource path of the request whose response contained the messages.
+	 *   The resource path of the cache that saw the messages; used to resolve the longtext URL
+	 *
 	 * @private
 	 */
 	ODataModel.prototype.reportUnboundMessages = function (aMessages, sResourcePath) {
@@ -1831,24 +1785,7 @@ sap.ui.define([
 		if (aMessages && aMessages.length) {
 			this.fireMessageChange({
 				newMessages : aMessages.map(function (oMessage) {
-					var sMessageLongTextUrl = oMessage.longtextUrl;
-
-					if (sMessageLongTextUrl && sResourcePath) {
-						sMessageLongTextUrl = _Helper.makeAbsolute(sMessageLongTextUrl,
-							that.sServiceUrl + sResourcePath);
-					}
-
-					return new Message({
-						code : oMessage.code,
-						descriptionUrl : sMessageLongTextUrl,
-						message : oMessage.message,
-						persistent : true,
-						processor : that,
-						target : "",
-						technical : oMessage.technical,
-						technicalDetails : _Helper.createTechnicalDetails(oMessage),
-						type : aMessageTypes[oMessage.numericSeverity] || MessageType.None
-					});
+					return that.createUI5Message(oMessage, sResourcePath);
 				})
 			});
 		}
