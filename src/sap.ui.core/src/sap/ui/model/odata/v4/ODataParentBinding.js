@@ -201,10 +201,9 @@ sap.ui.define([
 		 * @param {object} mQueryOptions0 The query options to merge into the aggregated query
 		 *   options
 		 * @param {string} sMetaPath The meta path for the current $expand
-		 * @param {boolean} [bInsideExpand=false] Whether the given query options are inside a
-		 *   $expand
-		 * @param {boolean} [bAdd=false] Whether to add the given query options because they are in
-		 *   a $expand that has not been aggregated yet
+		 * @param {boolean} [bInsideExpand] Whether the given query options are inside a $expand
+		 * @param {boolean} [bAdd] Whether to add the given query options because they are in a
+		 * $expand that has not been aggregated yet
 		 * @returns {boolean} Whether the query options can be fulfilled by this binding
 		 */
 		function merge(mAggregatedQueryOptions, mQueryOptions0, sMetaPath, bInsideExpand, bAdd) {

@@ -50,7 +50,7 @@ sap.ui.define([
 	 *   the XML snippet; it will be inserted below an <Edmx> element
 	 * @param {object} oExpected
 	 *   the expected JSON object
-	 * @param {boolean} [bSubset=false]
+	 * @param {boolean} [bSubset]
 	 *   whether the given JSON is just a subset of the real expectation, i.e. every top-level
 	 *   property that is given must exist with the exact value (deepEqual), but there may be others
 	 */
@@ -67,7 +67,7 @@ sap.ui.define([
 	 *   the XML snippet; it will be inserted below an <Edmx> element
 	 * @param {object} oExpected
 	 *   the expected JSON object
-	 * @param {boolean} [bSubset=false]
+	 * @param {boolean} [bSubset]
 	 *   whether the given JSON is just a subset of the real expectation, i.e. every top-level
 	 *   property that is given must exist with the exact value (deepEqual), but there may be others
 	 */

@@ -710,9 +710,9 @@ sap.ui.define([
 	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
-	 * @param {boolean} [bSkipRefresh=false]
+	 * @param {boolean} [bSkipRefresh]
 	 *   Whether an automatic refresh of the created entity will be skipped
-	 * @param {boolean} [bAtEnd=false]
+	 * @param {boolean} [bAtEnd]
 	 *   Whether the entity is inserted at the end of the list. When creating multiple entities,
 	 *   this parameter must have the same value for each entity. Supported since 1.66.0
 	 * @returns {sap.ui.model.odata.v4.Context}
@@ -1460,7 +1460,7 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {boolean} [bCached=false]
+	 * @param {boolean} [bCached]
 	 *   Whether to return cached values only and not trigger a request
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>fetchValue</code> call; it is rejected in
@@ -1957,8 +1957,8 @@ sap.ui.define([
 	 *     <li> <code>type</code>: "Custom"
 	 *   </ul>
 	 *
-	 * @param {boolean} [bIncludeOrigin=false] whether to include information about the filter
-	 *   objects from which the tree has been created
+	 * @param {boolean} [bIncludeOrigin] whether to include information about the filter objects
+	 *   from which the tree has been created
 	 * @returns {object} The AST of the filter tree including the static filter as string or null if
 	 *   no filters are set
 	 * @private
@@ -2094,7 +2094,7 @@ sap.ui.define([
 	/**
 	 * Returns the query options of the binding.
 	 *
-	 * @param {boolean} [bWithSystemQueryOptions=false]
+	 * @param {boolean} [bWithSystemQueryOptions]
 	 *   Whether system query options should be returned as well. The parameter value
 	 *   <code>true</code> is not supported.
 	 * @returns {object} mQueryOptions
@@ -2315,7 +2315,7 @@ sap.ui.define([
 	 *   The context object for the entity to be refreshed
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID to be used for refresh
-	 * @param {boolean} [bAllowRemoval=false]
+	 * @param {boolean} [bAllowRemoval]
 	 *   Allows the list binding to remove the given context from its collection because the
 	 *   entity does not match the binding's filter anymore,
 	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}; a removed context is

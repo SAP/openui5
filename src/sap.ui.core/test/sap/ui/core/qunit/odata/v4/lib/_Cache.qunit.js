@@ -105,7 +105,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sResourcePath The resource path
 		 * @param {object} [mQueryOptions] The query options
-		 * @param {boolean} [bWithKeyPredicates=false] Whether key predicates are calculated
+		 * @param {boolean} [bWithKeyPredicates] Whether key predicates are calculated
 		 * @param {string} [sDeepResourcePath] The deep resource path
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache

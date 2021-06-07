@@ -648,7 +648,7 @@ sap.ui.define([
 	 * Resolves all aliases in the given path.
 	 *
 	 * @param {string} sPath The path
-	 * @param {boolean} [bHandleParentheses=false]
+	 * @param {boolean} [bHandleParentheses]
 	 *   Whether parentheses in a path segment should be handled specially for alias replacement,
 	 *   for example to address a bound action's specific overload
 	 * @returns {string} The path with aliases resolved (if there were any)
@@ -727,7 +727,7 @@ sap.ui.define([
 	 *     known children.
 	 *   * All other properties are known child elements, the value is the configuration for
 	 *     that child element.
-	 * @param {boolean} [bUseProcessElementHook=false]
+	 * @param {boolean} [bUseProcessElementHook]
 	 *   If true, the hook processElement at the aggregate is used, otherwise the processor is
 	 *   called directly
 	 * @returns {any}

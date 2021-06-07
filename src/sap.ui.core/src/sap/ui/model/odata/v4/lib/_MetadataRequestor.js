@@ -36,10 +36,10 @@ sap.ui.define([
 				 * @param {string} sUrl
 				 *   The URL of a metadata document, it must not contain a query string or a
 				 *   fragment part
-				 * @param {boolean} [bAnnotations=false]
+				 * @param {boolean} [bAnnotations]
 				 *   <code>true</code> if an additional annotation file is read, otherwise it is
 				 *   expected to be a metadata document in the correct OData version
-				 * @param {boolean} [bPrefetch=false]
+				 * @param {boolean} [bPrefetch]
 				 *   Whether to just read the metadata document, but not yet convert it from XML to
 				 *   JSON. For any given URL, this is useful in an optional early call that precedes
 				 *   a normal call without this flag.

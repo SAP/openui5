@@ -26,7 +26,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oPayload
 	 *   the response payload
-	 * @param {boolean} [bFail=false]
+	 * @param {boolean} [bFail]
 	 *   fail if true
 	 * @param {string} [sDate=null]
 	 *   value of "Date" response header

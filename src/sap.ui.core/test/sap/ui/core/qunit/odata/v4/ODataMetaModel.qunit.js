@@ -1059,7 +1059,7 @@ sap.ui.define([
 	 *   method name "fetch*"
 	 * @param {object[]} aArguments
 	 *   method arguments
-	 * @param {boolean} [bThrow=false]
+	 * @param {boolean} [bThrow]
 	 *   whether the "get*" method throws if the promise is not fulfilled
 	 * @returns {Promise}
 	 *   the "request*" method's promise
