@@ -14,7 +14,7 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/base/Log"
 	],
-	function (library, coreLibrary, includeScript, BaseContent, HostConfig,
+	function (library, coreLibrary, includeScript, BaseContent, hostConfig,
 			VBox, MessageStrip, HTML, Core, JSONModel, Log) {
 		"use strict";
 
@@ -63,6 +63,11 @@ sap.ui.define([
 			this.setComponentsReady(false);
 			this._bAdaptiveCardElementsReady = false;
 			this._setupCardContent();
+
+			Core.attachThemeChanged(function () {
+				this._adjustHostConfig();
+				this.invalidate();
+			}.bind(this));
 		};
 
 		AdaptiveContent.prototype.onAfterRendering = function () {
@@ -247,7 +252,7 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._adjustHostConfig = function () {
-			this.adaptiveCardInstance.hostConfig = new AdaptiveCards.HostConfig(HostConfig);
+			this.adaptiveCardInstance.hostConfig = new AdaptiveCards.HostConfig(hostConfig());
 		};
 
 		/**
