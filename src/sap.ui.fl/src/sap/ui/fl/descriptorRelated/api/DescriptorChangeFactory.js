@@ -119,7 +119,7 @@ sap.ui.define([
 		return fnBaseMerge({}, this._getMap());
 	};
 
-//Descriptor LREP Change Factory
+	//Descriptor LREP Change Factory
 	/**
 	 * Factory for Descriptor Changes
 	 *

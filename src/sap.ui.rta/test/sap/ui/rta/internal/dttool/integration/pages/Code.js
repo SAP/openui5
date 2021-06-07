@@ -26,7 +26,7 @@ function (
 						return !!aFiles.find(function (oFile) {
 							var fname = oFile.getProperty("key");
 							return (doPartialCheck ?
-									fname.indexOf(filename) >= 0 : fname === filename)
+								fname.indexOf(filename) >= 0 : fname === filename)
 								&& (fileExtension ?
 									fname.endsWith(fileExtension) : true);
 						});

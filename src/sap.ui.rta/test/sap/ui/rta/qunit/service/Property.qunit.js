@@ -33,7 +33,7 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-// TODO: split big monolithic test into simple parts - 1 feature = 1 test case, not all at once!
+	// TODO: split big monolithic test into simple parts - 1 feature = 1 test case, not all at once!
 	QUnit.module("Given that RuntimeAuthoring and Property service are created", {
 		before: function () {
 			var MockComponent = UIComponent.extend("MockController", {
@@ -62,10 +62,10 @@ function(
 
 			var oPage = this.oComp.getRootControl();
 
-		// --Root control 1
-		//	page
-		//		verticalLayout
-		//		button
+			// --Root control 1
+			//	page
+			//		verticalLayout
+			//		button
 			oPage.addContent(
 				this.oLayout = new VerticalLayout("layout1", {
 					content: [
@@ -298,13 +298,13 @@ function(
 
 			var mControlMetadata = this.oControl.getMetadata();
 
-		// control metadata property values
+			// control metadata property values
 			sandbox.stub(this.oControl, "getProperty")
 			.withArgs("metadataProperty1").returns("metadataPropertyValue1")
 			.withArgs("metadataProperty2").returns("metadataPropertyValue2")
 			.withArgs("metadataProperty3").returns({subProp: function() {}}); // NOT_SERIALIZABLE inside sub property
 
-		// control metadata properties
+			// control metadata properties
 			sandbox.stub(mControlMetadata, "getAllProperties").returns({
 				metadataProperty1: {
 					type: "metadataPropertyType1",
@@ -332,12 +332,12 @@ function(
 				}
 			});
 
-		// mock designtime metadata
+			// mock designtime metadata
 			sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor")
 			.callThrough()
 			.withArgs(this.oControl).returns(this.oMockDesignTime);
 
-		// control binding info
+			// control binding info
 			sandbox.stub(this.oControl, "getBindingInfo")
 			.callThrough()
 			.withArgs("metadataProperty1").returns(

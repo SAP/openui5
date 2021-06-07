@@ -35,18 +35,18 @@ sap.ui.require([
 				.and.theElementShouldBeInTheOutline(1);
 	});
 
-		// opaTest("Should remove an element", function (Given, When, Then) {
-		// 	//Select an element to remove and remove it by setting its visible attribute to false
-		// 	When.onTheAppView.iSelectTheNthTreeItem(9)
-		// 		.and.iClickTheSwitchForThePassedPropertyNameAndClickThePassedIndex();
-		// 	Then.onTheAppView.theElementShouldBeRemoved();
-		// });
+	// opaTest("Should remove an element", function (Given, When, Then) {
+	// 	//Select an element to remove and remove it by setting its visible attribute to false
+	// 	When.onTheAppView.iSelectTheNthTreeItem(9)
+	// 		.and.iClickTheSwitchForThePassedPropertyNameAndClickThePassedIndex();
+	// 	Then.onTheAppView.theElementShouldBeRemoved();
+	// });
 
-		// opaTest("Should undo changes", function (Given, When, Then) {
-		// 	When.onTheAppView.iUndoTheLastChange();
-		// 	Then.onTheAppView.theElementShouldBeInTheOutline(1)
-		// 		.and.theRedoStateShouldBeCorrect(true);
-		// });
+	// opaTest("Should undo changes", function (Given, When, Then) {
+	// 	When.onTheAppView.iUndoTheLastChange();
+	// 	Then.onTheAppView.theElementShouldBeInTheOutline(1)
+	// 		.and.theRedoStateShouldBeCorrect(true);
+	// });
 
 	opaTest("Should save all changes (1/2)", function (Given, When, Then) {
 		When.onTheAppView.iStopRta();
@@ -59,15 +59,15 @@ sap.ui.require([
 				.and.aMoveControlsChangeShouldExist();
 	});
 
-		//FIXME: Currently commented out because the AddXML command cannot save the fragment in the Fake-LRep
-		// opaTest("Check the changes", function (Given, When, Then) {
-		// 	//Restart app and check if changes are applied
-		// 	Given.iTeardownMyUIComponent();
-		// 	Given.iStartMyApp({autoWait: true, hash: "#sample/sap.ui.rta.internal.dttool.sample"});
-		// 	When.onTheAppView.thePaletteIsLoaded()
-		// 		.and.theOutlineIsLoaded();
-		// 	Then.onTheAppView.theDraggedItemShouldBePartOfTheTargetGroup();
-		// });
+	//FIXME: Currently commented out because the AddXML command cannot save the fragment in the Fake-LRep
+	// opaTest("Check the changes", function (Given, When, Then) {
+	// 	//Restart app and check if changes are applied
+	// 	Given.iTeardownMyUIComponent();
+	// 	Given.iStartMyApp({autoWait: true, hash: "#sample/sap.ui.rta.internal.dttool.sample"});
+	// 	When.onTheAppView.thePaletteIsLoaded()
+	// 		.and.theOutlineIsLoaded();
+	// 	Then.onTheAppView.theDraggedItemShouldBePartOfTheTargetGroup();
+	// });
 
 	opaTest("Cleanup the changes", function (Given, When, Then) {
 		When.onTheAppView.iCleanupLocalChanges();

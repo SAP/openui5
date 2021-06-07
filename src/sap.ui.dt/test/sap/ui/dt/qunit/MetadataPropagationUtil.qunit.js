@@ -47,7 +47,7 @@ sap.ui.define([
 			assert.notOk(mResultData.propagationInfos, "then no propagation infos are generated");
 			assert.equal(fnParentPropagationInfoSpy.callCount, 1, "then _getParentPropagationInfo method should be called");
 			assert.strictEqual(fnPropagateRelevantContainerSpy.withArgs({}, null).callCount, 0,
-			"then '_setPropagationInfo' shouldn't be called");
+				"then '_setPropagationInfo' shouldn't be called");
 		});
 
 		QUnit.test("when '_setPropagationInfo' is called without attributes", function(assert) {
@@ -164,7 +164,7 @@ sap.ui.define([
 			assert.throws(function() {
 				MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oPropObject, this.oButton);
 			}, /Wrong type: it should be either a function or a boolean value/,
-				"then '_setPropagationInfo' should throw an exception");
+			"then '_setPropagationInfo' should throw an exception");
 		});
 	});
 
@@ -436,8 +436,10 @@ sap.ui.define([
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage],
-				designTimeMetadata: {	"sap.m.Page": oPageMetadata.data,
-										"sap.ui.layout.VerticalLayout": oVerticalLayoutMetadata.data }
+				designTimeMetadata: {
+					"sap.m.Page": oPageMetadata.data,
+					"sap.ui.layout.VerticalLayout": oVerticalLayoutMetadata.data
+				}
 			});
 
 			var done = assert.async();
@@ -577,9 +579,11 @@ sap.ui.define([
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage],
-				designTimeMetadata: {	"sap.m.Page": oPageMetadata.data,
-										"sap.ui.layout.VerticalLayout": oVerticalLayoutMetadata.data,
-										"sap.m.Toolbar": oToolbarMetadata.data }
+				designTimeMetadata: {
+					"sap.m.Page": oPageMetadata.data,
+					"sap.ui.layout.VerticalLayout": oVerticalLayoutMetadata.data,
+					"sap.m.Toolbar": oToolbarMetadata.data
+				}
 			});
 
 			var done = assert.async();

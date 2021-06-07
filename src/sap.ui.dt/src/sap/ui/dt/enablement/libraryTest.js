@@ -238,14 +238,14 @@ sap.ui.define([
 
 						xhr.send();
 					});
-									/*
-									var oControl = sap.ui.xmlfragment({
-										fragmentContent: oData.data.documentElement,
-										oController: this
-									});
-									*/
+					/*
+					var oControl = sap.ui.xmlfragment({
+						fragmentContent: oData.data.documentElement,
+						oController: this
+					});
 					//check the controls type
-					//assert.strictEqual((oControl instanceof jQuery.sap.getObject(sControlName)) ||  , true, sCreateTemplate + " created a control with the right type " + sControlName + "/" + oControl.getMetadata().getName());
+					assert.strictEqual((oControl instanceof jQuery.sap.getObject(sControlName)) ||  , true, sCreateTemplate + " created a control with the right type " + sControlName + "/" + oControl.getMetadata().getName());
+					*/
 				}
 			}
 		}

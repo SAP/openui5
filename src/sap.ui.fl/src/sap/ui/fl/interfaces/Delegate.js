@@ -77,7 +77,7 @@ sap.ui.define([
 	 * @since 1.78
 	 */
 
-//TODO add link to app developer guide when it includes delegate description and test utility
+	//TODO add link to app developer guide when it includes delegate description and test utility
 
 
 	/**

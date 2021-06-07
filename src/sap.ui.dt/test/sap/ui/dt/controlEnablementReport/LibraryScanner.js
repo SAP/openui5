@@ -36,10 +36,14 @@ sap.ui.define([
 
 	LibraryEnablementTest2.prototype._fillElementArray = function(sType) {
 		var oElementTestData = {};
-		if (["sap.ui.richtexteditor.RichTextEditor",
+		if (
+			[
+				"sap.ui.richtexteditor.RichTextEditor",
 				"sap.ui.ux3.QuickView",
 				"sap.uiext.inbox.SubstitutionRulesManager",
-				"sap.ui.codeeditor.CodeEditor"].indexOf(sType) === -1) {
+				"sap.ui.codeeditor.CodeEditor"
+			].indexOf(sType) === -1
+		) {
 			oElementTestData.type = sType;
 			this.aElementEnablementTest.push(new ElementActionDefinitionTest(oElementTestData));
 		}

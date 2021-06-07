@@ -116,7 +116,7 @@ function(
 				}
 			});
 			assert.strictEqual(this.oPluginManager.getPlugins()["settings"].getCommandStack().id,
-			oFakeCommandStack.id, "then command stack is provided to the settings plugin");
+				oFakeCommandStack.id, "then command stack is provided to the settings plugin");
 		});
 
 		QUnit.test("when 'preparePlugins' function is called with specific plugins defined", function(assert) {

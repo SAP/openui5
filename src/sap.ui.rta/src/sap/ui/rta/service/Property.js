@@ -272,7 +272,7 @@ sap.ui.define([
 										"Invalid ignore property value found in designtime for element with id " + oElement.getId() + " .", "sap.ui.rta"
 									);
 								}
-							// to ensure ignore function is replaced by a boolean value
+								// to ensure ignore function is replaced by a boolean value
 								mDtObj[sKey].ignore = bIgnore;
 								if (!bIgnore) {
 									mFiltered[sKey] = Object.assign({}, mDtObj[sKey]);

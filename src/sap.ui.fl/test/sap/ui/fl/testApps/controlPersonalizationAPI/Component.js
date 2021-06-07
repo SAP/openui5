@@ -42,8 +42,7 @@ sap.ui.define([
 			this.oChangePersistence.getChangesForComponent()//{includeCtrlVariants: true})
 				.then(function (oChanges) {
 					this.getModel().setProperty("/changes", oChanges);
-				}.bind(this)
-			);
+				}.bind(this));
 		},
 
 		createChangesAndSave: function (mChangeData, oControl) {

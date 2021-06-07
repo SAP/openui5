@@ -2,7 +2,7 @@
  * ! ${copyright}
  */
 
- sap.ui.define([
+sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/dt/Util",

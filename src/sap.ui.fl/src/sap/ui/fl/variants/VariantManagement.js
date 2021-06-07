@@ -1487,13 +1487,6 @@ sap.ui.define([
 				contentWidth: "64%",
 				resizable: true,
 				draggable: true,
-//				customHeader: new Bar(this.getId() + "-managementHeader", {
-//					contentMiddle: [
-//						new Text(this.getId() + "-managementHeaderText", {
-//							text: this._oRb.getText("VARIANT_MANAGEMENT_MANAGEDIALOG")
-//						})
-//					]
-//				}),
 				title: this._oRb.getText("VARIANT_MANAGEMENT_MANAGEDIALOG"),
 				beginButton: this.oManagementSave,
 				endButton: this.oManagementCancel,
@@ -1688,7 +1681,7 @@ sap.ui.define([
 		this._suspendManagementTableBinding();
 
 		this._clearDeletedItems();
-//		this.oManagementSave.setEnabled(false);
+		//		this.oManagementSave.setEnabled(false);
 		this._oSearchFieldOnMgmtDialog.setValue("");
 
 		// Ideally, this should be done only once in <code>_createtManagementDialog</code>. However, the binding does not recognize a change if filtering is involved.
@@ -1787,9 +1780,9 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._handleManageFavoriteChanged = function(oIcon, oItem) {
-//		if (!this._anyInErrorState(this.oManagementTable)) {
-//			this.oManagementSave.setEnabled(true);
-//		}
+		//		if (!this._anyInErrorState(this.oManagementTable)) {
+		//			this.oManagementSave.setEnabled(true);
+		//		}
 
 		if ((this.getDefaultVariantKey() === oItem.key) && oItem.favorite) {
 			return;
@@ -1849,15 +1842,15 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._handleManageExecuteOnSelectionChanged = function() {
-//		if (!this._anyInErrorState(this.oManagementTable)) {
-//			this.oManagementSave.setEnabled(true);
-//		}
+		//		if (!this._anyInErrorState(this.oManagementTable)) {
+		//			this.oManagementSave.setEnabled(true);
+		//		}
 	};
 
 	VariantManagement.prototype._handleManageTitleChanged = function() {
-//		if (!this._anyInErrorState(this.oManagementTable)) {
-//			this.oManagementSave.setEnabled(true);
-//		}
+		//		if (!this._anyInErrorState(this.oManagementTable)) {
+		//			this.oManagementSave.setEnabled(true);
+		//		}
 	};
 
 	VariantManagement.prototype._handleManageSavePressed = function() {

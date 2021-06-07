@@ -48,14 +48,14 @@ sap.ui.define([
 		QUnit.test("createForExistingVariant", function(assert) {
 			var oServer = sandbox.useFakeServer();
 			oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.string",
-								[200, { "Content-Type": "text/plain" }, //Simulate an server with incorrect content type response
-								'{ "id": "id.string", "reference":"base.id", "content": [] }']);
+				[200, { "Content-Type": "text/plain" }, //Simulate an server with incorrect content type response
+					'{ "id": "id.string", "reference":"base.id", "content": [] }']);
 			oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.json",
-								[200, { "Content-Type": "application/json" },
-								'{ "id": "id.json", "reference":"base.id", "content": [] }']);
+				[200, { "Content-Type": "application/json" },
+					'{ "id": "id.json", "reference":"base.id", "content": [] }']);
 			oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.refVer",
-					[200, { "Content-Type": "application/json" },
-						'{ "id": "id.refVer", "reference":"base.id", "referenceVersion":"1.1", "content": [] }']);
+				[200, { "Content-Type": "application/json" },
+					'{ "id": "id.refVer", "reference":"base.id", "referenceVersion":"1.1", "content": [] }']);
 			oServer.autoRespond = true;
 
 			return DescriptorVariantFactory.createForExisting("id.string").then(function(oVariant) {
@@ -1268,9 +1268,9 @@ sap.ui.define([
 		QUnit.test("create_flp_setConfig", function(assert) {
 			return DescriptorInlineChangeFactory.create_flp_setConfig({
 				config: { property1: "value1",
-											property2: "value2",
-											propertyList: ["a", "b"]
-										}
+					property2: "value2",
+					propertyList: ["a", "b"]
+				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 			});
@@ -1947,93 +1947,93 @@ sap.ui.define([
 		QUnit.test("createNew - w/o layer, check default", function(assert) {
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
-						"a.reference",
-						oDescriptorInlineChange
-						//no sLayer -> default is 'CUSTOMER'
-						).then(function(oDescriptorChange) {
-							assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
-						});
+					"a.reference",
+					oDescriptorInlineChange
+					//no sLayer -> default is 'CUSTOMER'
+				).then(function(oDescriptorChange) {
+					assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
+				});
 			});
 		});
 
 		QUnit.test("createNew - with layer VENDOR", function(assert) {
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
-						"a.reference",
-						oDescriptorInlineChange,
-						'VENDOR'
-						).then(function(oDescriptorChange) {
-							assert.equal(oDescriptorChange._mChangeFile.layer, 'VENDOR');
-						});
+					"a.reference",
+					oDescriptorInlineChange,
+					'VENDOR'
+				).then(function(oDescriptorChange) {
+					assert.equal(oDescriptorChange._mChangeFile.layer, 'VENDOR');
+				});
 			});
 		});
 
 		QUnit.test("createNew - with layer CUSTOMER", function(assert) {
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
-						"a.reference",
-						oDescriptorInlineChange,
-						'CUSTOMER'
-						).then(function(oDescriptorChange) {
-							assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
-						});
+					"a.reference",
+					oDescriptorInlineChange,
+					'CUSTOMER'
+				).then(function(oDescriptorChange) {
+					assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
+				});
 			});
 		});
 
 		QUnit.test("createNew - with layer CUSTOMER_BASE", function(assert) {
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
-						"a.reference",
-						oDescriptorInlineChange,
-						'CUSTOMER_BASE'
-						).then(function(oDescriptorChange) {
-							assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE');
-						});
+					"a.reference",
+					oDescriptorInlineChange,
+					'CUSTOMER_BASE'
+				).then(function(oDescriptorChange) {
+					assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE');
+				});
 			});
 		});
 
 		QUnit.test("createNew - with layer PARTNER", function(assert) {
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
-						"a.reference",
-						oDescriptorInlineChange,
-						'PARTNER'
-						).then(function(oDescriptorChange) {
-							assert.equal(oDescriptorChange._mChangeFile.layer, 'PARTNER');
-						});
+					"a.reference",
+					oDescriptorInlineChange,
+					'PARTNER'
+				).then(function(oDescriptorChange) {
+					assert.equal(oDescriptorChange._mChangeFile.layer, 'PARTNER');
+				});
 			});
 		});
 
 		QUnit.test("getJson", function(assert) {
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
-						"a.reference",
-						oDescriptorInlineChange,
-						'CUSTOMER'
-						).then(function(oDescriptorChange) {
-							var mExpectedPartJson = {
-								reference: "a.reference",
-								fileType:	"change",
-								layer: Layer.CUSTOMER,
-								namespace: "apps/a.reference/changes/",
-								packageName: "",
-								changeType: "changeType",
-								content: {
-									param: "value"
-								},
-								texts: {a: "b"}
-							};
-							var mJsonResult = oDescriptorChange.getJson();
-							assert.ok(mJsonResult);
-							assert.equal(mJsonResult.reference, mExpectedPartJson.reference);
-							assert.equal(mJsonResult.fileType, mExpectedPartJson.fileType);
-							assert.equal(mJsonResult.layer, mExpectedPartJson.layer);
-							assert.equal(mJsonResult.namespace, mExpectedPartJson.namespace);
-							assert.equal(mJsonResult.packageName, mExpectedPartJson.packageName);
-							assert.equal(mJsonResult.changeType, mExpectedPartJson.changeType);
-							assert.deepEqual(mJsonResult.content, mExpectedPartJson.content);
-							assert.deepEqual(mJsonResult.texts, mExpectedPartJson.texts);
-						});
+					"a.reference",
+					oDescriptorInlineChange,
+					'CUSTOMER'
+				).then(function(oDescriptorChange) {
+					var mExpectedPartJson = {
+						reference: "a.reference",
+						fileType:	"change",
+						layer: Layer.CUSTOMER,
+						namespace: "apps/a.reference/changes/",
+						packageName: "",
+						changeType: "changeType",
+						content: {
+							param: "value"
+						},
+						texts: {a: "b"}
+					};
+					var mJsonResult = oDescriptorChange.getJson();
+					assert.ok(mJsonResult);
+					assert.equal(mJsonResult.reference, mExpectedPartJson.reference);
+					assert.equal(mJsonResult.fileType, mExpectedPartJson.fileType);
+					assert.equal(mJsonResult.layer, mExpectedPartJson.layer);
+					assert.equal(mJsonResult.namespace, mExpectedPartJson.namespace);
+					assert.equal(mJsonResult.packageName, mExpectedPartJson.packageName);
+					assert.equal(mJsonResult.changeType, mExpectedPartJson.changeType);
+					assert.deepEqual(mJsonResult.content, mExpectedPartJson.content);
+					assert.deepEqual(mJsonResult.texts, mExpectedPartJson.texts);
+				});
 			});
 		});
 	});
@@ -2129,14 +2129,14 @@ sap.ui.define([
 			var that = this;
 			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
 			return DescriptorVariantFactory.createForExisting("a.id"
-					).then(function(oDescriptorVariant) {
-						return oDescriptorVariant.submit().then(function(oResponse) {
-							assert.ok(oStubOpenTransportSelection.calledOnce);
-							assert.notEqual(oResponse, null);
-							assert.equal(that._fStubSend.callCount, 2);
-							assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?sap-language=en");
-						});
-					});
+			).then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit().then(function(oResponse) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
+					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.callCount, 2);
+					assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?sap-language=en");
+				});
+			});
 		});
 
 		QUnit.test("for existing - submit - published", function(assert) {
@@ -2157,14 +2157,14 @@ sap.ui.define([
 			var that = this;
 			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
 			return DescriptorVariantFactory.createDeletion(
-						"a.id"
-					).then(function(oDescriptorVariant) {
-						return oDescriptorVariant.submit().then(function(oResponse) {
-							assert.ok(oStubOpenTransportSelection.calledOnce);
-							assert.notEqual(oResponse, null);
-							assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
-						});
-					});
+				"a.id"
+			).then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit().then(function(oResponse) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
+					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
+				});
+			});
 		});
 
 		QUnit.test("delete - submit - published", function(assert) {

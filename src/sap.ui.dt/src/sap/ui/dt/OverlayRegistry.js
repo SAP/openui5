@@ -49,8 +49,8 @@ function(
 	OverlayRegistry.getOverlay = function(vElementOrId) {
 		var sId = (
 			typeof vElementOrId === "string"
-			? vElementOrId
-			: ElementUtil.getElementInstance(vElementOrId) && ElementUtil.getElementInstance(vElementOrId).getId()
+				? vElementOrId
+				: ElementUtil.getElementInstance(vElementOrId) && ElementUtil.getElementInstance(vElementOrId).getId()
 		);
 
 		return mOverlays[sId] || mAliases[sId];

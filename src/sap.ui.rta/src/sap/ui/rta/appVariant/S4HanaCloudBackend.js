@@ -54,10 +54,10 @@ sap.ui.define([
 				}
 
 				this.checkCatalogCustomizingIsReady(sIamAppId, bAppVarCreation).then(function(bIsReady) {
-				// ... Resolve promise if true
+					// ... Resolve promise if true
 					if (bIsReady) {
 						resolve({ iamAppId: sIamAppId, customizingIsReady: true });
-				// ... Continue checking if false
+					// ... Continue checking if false
 					} else {
 						setTimeout(checkForNotification.bind(that), iMsec);
 					}

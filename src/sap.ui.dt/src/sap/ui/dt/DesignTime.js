@@ -872,19 +872,19 @@ function (
 					// If DesignTimeMetadata is an object of ElementDesignTimeMetadata, then it will be set
 					// on ElementOverlay and no Metadata will be loaded from the server for this Element.
 					this.getDesignTimeMetadataFor(oElement) instanceof ElementDesignTimeMetadata
-					? this.getDesignTimeMetadataFor(oElement)
-					: _curry(function (mMetadataExtension, mParentMetadata, oElement, mMetadata) {
-						mMetadata = merge({}, mMetadata, mMetadataExtension);
+						? this.getDesignTimeMetadataFor(oElement)
+						: _curry(function (mMetadataExtension, mParentMetadata, oElement, mMetadata) {
+							mMetadata = merge({}, mMetadata, mMetadataExtension);
 
-						this._mMetadataOriginal = mMetadata;
+							this._mMetadataOriginal = mMetadata;
 
-						// In case of root element we don't have parent to inherit from, thus no mParentMetadata
-						if (mParentMetadata) {
-							mMetadata = MetadataPropagationUtil.propagateMetadataToElementOverlay(mMetadata, mParentMetadata, oElement);
-						}
+							// In case of root element we don't have parent to inherit from, thus no mParentMetadata
+							if (mParentMetadata) {
+								mMetadata = MetadataPropagationUtil.propagateMetadataToElementOverlay(mMetadata, mParentMetadata, oElement);
+							}
 
-						return mMetadata;
-					})(this.getDesignTimeMetadataFor(oElement), mParams.parentMetadata, oElement)
+							return mMetadata;
+						})(this.getDesignTimeMetadataFor(oElement), mParams.parentMetadata, oElement)
 				),
 				init: function (oEvent) {
 					var oElementOverlay = oEvent.getSource();
@@ -1348,8 +1348,9 @@ function (
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		// Overlays of elements in "dependents" aggregation or not in root elements should be destroyed
 		if (
-			!oElement.bIsDestroyed 	// element overlays for destroyed elements will be destroyed already,
-									// but element might be recreated with the same id, so a new element overlay might exist that shouldn't be removed
+			// element overlays for destroyed elements will be destroyed already,
+			// but element might be recreated with the same id, so a new element overlay might exist that shouldn't be removed
+			!oElement.bIsDestroyed
 			&& oElementOverlay
 			&& (!this._isElementInRootElements(oElement) || oElement.sParentAggregationName === "dependents")
 		) {

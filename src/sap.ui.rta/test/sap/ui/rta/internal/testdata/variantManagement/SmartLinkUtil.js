@@ -7,8 +7,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var SmartLinkUtil = BaseObject.extend("sap.ui.rta.test.SmartlinkSmartLinkUtil",
-	{});
+	var SmartLinkUtil = BaseObject.extend("sap.ui.rta.test.SmartlinkSmartLinkUtil", {});
 
 	SmartLinkUtil.getServiceReal = Factory.getService;
 

@@ -20,7 +20,7 @@ sap.ui.define([
 	jQuery,
 	ObjectPageLayout,
 	ObjectPageSection
-	) {
+) {
 	"use strict";
 
 	var oMockUIComponent = new UIComponent("mockComponent");

@@ -186,7 +186,7 @@ function(
 		var bIsS4HanaCloud;
 		return Settings.getInstance().then(function(oSettings) {
 			bIsS4HanaCloud = AppVariantUtils.isS4HanaCloud(oSettings);
-				// Populate the app variant attributes with the cloud system information
+			// Populate the app variant attributes with the cloud system information
 			oAppVariantAttributes.isS4HanaCloud = bIsS4HanaCloud;
 
 			var oPreparedObject = {

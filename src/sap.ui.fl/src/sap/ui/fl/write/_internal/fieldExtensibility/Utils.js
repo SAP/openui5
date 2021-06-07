@@ -192,7 +192,7 @@ sap.ui.define([
 		return null;
 	}
 
-    /**
+	/**
 	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.Utils
 	 * @experimental Since 1.87.0
 	 * @author SAP SE
