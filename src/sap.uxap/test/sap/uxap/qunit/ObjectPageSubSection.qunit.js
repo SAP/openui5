@@ -810,6 +810,37 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 		oSubSection.destroy();
 	});
 
+	QUnit.test("Layout is updated when visibility of a Block is changed", function (assert) {
+		var oSubSection = oHelpers.getSubSection(),
+			oBlock1 = oHelpers.getBlock(),
+			oBlock2 = oHelpers.getBlock(),
+			oStub = this.stub(oSubSection, "_applyLayout", function () {}),
+			oSpy = this.spy(oSubSection._oBlocksObserver, "_fnCallback");
+
+		oSubSection.addBlock(oBlock1);
+		oSubSection.addBlock(oBlock2);
+
+		// Act: change visibility of one of the blocks
+		oBlock2.setVisible(false);
+
+		// Assert: check if _onBlocksChange listener and _applyLayout are called
+		assert.strictEqual(oSpy.callCount, 1, "_onBlocksChange is called once, when visibility of one of the blocks is changed");
+		assert.strictEqual(oStub.callCount, 1, "_applyLayout is called from _onBlocksChange");
+
+		// Act - remove all blocks and change visibility again
+		oSubSection.removeAllBlocks();
+		oBlock2.setVisible(true);
+
+		// Assert: _onBlocksChange listener should not be called if block is removed and its visibility is changed
+		assert.strictEqual(oSpy.callCount, 1, "_onBlocksChange is not called, when blocks are removed");
+
+		// Clean up
+		oSubSection.destroy();
+		oStub.restore();
+		oSpy.restore();
+	});
+
+
 	QUnit.test("removeAggregation", function (assert) {
 		var sXmlView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:m="sap.m">' +
 							'<uxap:ObjectPageLayout id="page">' +
