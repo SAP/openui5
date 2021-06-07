@@ -280,6 +280,10 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype._focusHandler = function(oEvt) {
+		if (!this.getEnableReorder()){
+			return;
+		}
+
         //(new) hovered item
         var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
         this._handleActivated(oHoveredItem);
@@ -290,6 +294,10 @@ sap.ui.define([
         if (this._oSelectedItem && !this._oSelectedItem.bIsDestroyed) {
             return;
         }
+
+		if (!this.getEnableReorder()){
+			return;
+		}
 
         //(new) hovered item
         var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
