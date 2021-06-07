@@ -80,16 +80,18 @@ sap.ui.define([
 				oProductsModel.setProperty("Rank", iSelectedItemRank, oSiblingItemContext);
 
 				// after move select the sibling
-				oSelectedProductsTable.getItems()[iSiblingItemIndex].setSelected(true);
+				oSelectedProductsTable.getItems()[iSiblingItemIndex].setSelected(true).focus();
 			});
 		},
 
-		moveUp: function() {
+		moveUp: function(oEvent) {
 			this.moveSelectedItem("Up");
+			oEvent.getSource().focus();
 		},
 
-		moveDown: function() {
+		moveDown: function(oEvent) {
 			this.moveSelectedItem("Down");
+			oEvent.getSource().focus();
 		},
 
 		onBeforeOpenContextMenu: function(oEvent) {
