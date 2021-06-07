@@ -74,6 +74,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.class("sapMGTScopeActions");
 		}
 		oRm.class(frameType);
+		if (frameType === frameTypes.OneByOne && oControl.getSystemInfo() || oControl.getAppShortcut()){
+			oRm.class("tileWithAppInfo");
+		}
 		if (sAriaRole) {
 			oRm.attr("role", sAriaRole);
 		} else if (!bRenderLink) { // buttons only; <a> elements always have the default role
@@ -119,9 +122,11 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		this._renderHeader(oRm, oControl);
 		var aTileContent = oControl.getTileContent();
 		var iLength = aTileContent.length;
+		var isFooterPresent = false;
 		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
 		var isContentPresent = false;
 		for (var i = 0; i < iLength; i++) {
+			isFooterPresent = oControl._checkFooter(aTileContent[i], oControl) && aTileContent[i].getFooter();
 			if (aTileContent[i].getAggregation("content") !== null){
 				if (frameType === frameTypes.OneByHalf && aTileContent[i].getAggregation("content").getMetadata()._sClassName === "sap.m.ImageContent") {
 					isContentPresent = false;
@@ -141,13 +146,39 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 
 		oRm.openStart("div", oControl.getId() + "-content");
 		oRm.class("sapMGTContent");
+		if (isFooterPresent && frameType === frameTypes.OneByOne && (oControl.getSystemInfo() || oControl.getAppShortcut())) {
+			oRm.class("appInfoWithFooter");
+		} else {
+			oRm.class("appInfoWithoutFooter");
+		}
 		oRm.openEnd();
 		for (var i = 0; i < iLength; i++) {
-			oControl._checkFooter(aTileContent[i], oControl);
 			oRm.renderControl(aTileContent[i]);
 		}
 		oRm.close("div");
+		if (frameType === frameTypes.OneByOne && (oControl.getSystemInfo() || oControl.getAppShortcut())){
 
+			oRm.openStart("div", oControl.getId() + "-tInfo");
+			oRm.class("sapMGTTInfoContainer");
+			oRm.openEnd();
+			oRm.openStart("div");
+			oRm.class("sapMGTTInfo");
+			oRm.openEnd();
+			if (oControl.getAppShortcut()) {
+				oRm.openStart("div", oControl.getId() + "-appShortcut");
+				oRm.class("sapMGTAppShortcutText").openEnd();
+				oRm.renderControl(oControl._oAppShortcut);
+				oRm.close("div");
+			}
+			if (oControl.getSystemInfo()) {
+				oRm.openStart("div", oControl.getId() + "-sytemInfo");
+				oRm.class("sapMGTSystemInfoText").openEnd();
+				oRm.renderControl(oControl._oSystemInfo);
+				oRm.close("div");
+			}
+			oRm.close("div");
+			oRm.close("div");
+		}
 		if (sState !== LoadState.Loaded) {
 			this._renderStateOverlay(oRm, oControl, sTooltipText);
 		}

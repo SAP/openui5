@@ -52,11 +52,91 @@
 	height: 5.25rem;
 }
 
+
+ .OneByOne.tileWithAppInfo {
+	.sapMGTContent.appInfoWithFooter {
+		height: 3.5rem;
+		.sapMTileCnt {
+			.sapMTileCntContent {
+				height: 1.75rem;
+				.sapMNC {
+					height: 1.75rem;
+					.sapMNCLargeFontSize {
+						font-size: 1.75rem;
+						height: 1.75rem;
+					}
+					.sapMNCIndScale {
+						padding: 0rem;
+						padding-left: 0.5rem;
+					}
+				}
+				.sapMImageContent {
+					height: 1.75rem;
+					.sapMImageContentImageIcon {
+						padding-bottom: 0rem;
+					}
+				}
+			}
+			.sapMTileCntFtrTxt {
+				position: static;
+			}
+		}
+	}
+	.sapMGTContent.appInfoWithoutFooter {
+		height: 3.5rem;
+		.sapMTileCnt {
+			height: 3.5rem;
+			.sapMTileCntContent {
+				height: 3.5rem;
+				.sapMImageContent {
+					height: 3.5rem;
+					.sapMImg{
+						padding-bottom: 0.2rem;
+					}
+				}
+			}
+		}
+	}
+	.sapMGTTInfoContainer {
+		height: 2rem;
+		margin-top: 0.25rem;
+		.sapMGTTInfo {
+			text-align: right;
+			padding-right: 1rem;
+			text-transform: uppercase;
+			margin-bottom: 0.25rem;
+			border-radius: 0.5rem 0 0 0.5rem;
+			background-color: @sapUiTileHoverBackground;
+			width: fit-content;
+			float: right;
+			padding-left: 0.5rem;
+			bottom: 0;
+			position: absolute;
+			right: 0;
+			.sapMText{
+				font-size: @sapMFontSmallSize ;
+			}
+			.sapMGTSystemInfoText{
+				display: flex;
+				justify-content: flex-end;
+				padding-top: 0.25rem;
+				.sapMText {
+					color: @sapUiTileTitleTextColor;
+				}
+			}
+			.sapMGTAppShortcutText {
+				display: flex;
+				.sapMText {
+					color: @sapUiTileTextColor;
+				}
+			}
+		}
+	}
+}
 .OneByHalf {
 	.sapMGTHdrContent {
 		height: 1.25rem;
 			.sapMGTHdrTxt {
-				
 				.sapMText {
 					display: block;
 				}

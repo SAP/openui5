@@ -512,6 +512,18 @@ sap.ui.define([
 		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oSubTitle.getWrappingType(), "Subtitle wrapping type should be Hyphenated");
 	});
 
+	QUnit.test("Wrapping type is propagated to appShortcut", function(assert) {
+		this.oGenericTile.setWrappingType(library.WrappingType.Hyphenated);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oAppShortcut.getWrappingType(), "AppShortcut wrapping type should be Hyphenated");
+	});
+
+	QUnit.test("Wrapping type is propagated to systemInfo", function(assert) {
+		this.oGenericTile.setWrappingType(library.WrappingType.Hyphenated);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oSystemInfo.getWrappingType(), "SystemInfo wrapping type should be Hyphenated");
+	});
+
 	QUnit.test("GenericTile is dragged", function(assert) {
 		this.oGenericTile.rerender();
 		//Style class which gets added when Generic Tile when it is Dragged.
@@ -3084,6 +3096,21 @@ QUnit.test("Content Proritisation -  Footer rendered in OneByHalf", function(ass
 	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
 	assert.equal(this.oGenericTile._oSubTitle.getDomRef(), null);
 	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, true);
+});
+
+QUnit.test("App shortcut and System info only rendered in OneByOne", function(assert) {
+	this.oGenericTile.setFrameType("OneByOne");
+	this.oGenericTile.setAppShortcut("app shortcut");
+	this.oGenericTile.setSystemInfo("system info");
+	sap.ui.getCore().applyChanges();
+	assert.notEqual(this.oGenericTile._oAppShortcut.getDomRef(), null);
+	assert.notEqual(this.oGenericTile._oSystemInfo.getDomRef(), null);
+
+	this.oGenericTile.setFrameType("OneByHalf");
+	sap.ui.getCore().applyChanges();
+
+	assert.equal(this.oGenericTile._oAppShortcut.getDomRef(), null);
+	assert.equal(this.oGenericTile._oSystemInfo.getDomRef(), null);
 });
 
 QUnit.test("Check the padding classes of the 2*1 small tile", function(assert) {

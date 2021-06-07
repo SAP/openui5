@@ -46,7 +46,7 @@
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Jessica D. Prince Senior Consultant"
-		subheader="Department" press="press">
+		subheader="Department" press="press" appShortcut = "shortcut" systemInfo = "systeminfo">
 		<TileContent>
 			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/ProfileImage_LargeGenTile.png" />
 		</TileContent>

@@ -99,6 +99,20 @@ sap.ui.define([
 				 */
 				frameType: {type: "sap.m.FrameType", group: "Misc", defaultValue: FrameType.OneByOne},
 				/**
+				 * Backend system context information
+				 * @private
+				 * @since 1.92.0
+				 * @experimental Since 1.92
+				 */
+				systemInfo: {type:"string",  group: "Misc", defaultValue:null},
+				/**
+				 * Application information such as ID/Shortcut
+				 * @private
+				 * @since 1.92.0
+				 * @experimental Since 1.92
+				 */
+				appShortcut: {type:"string",  group: "Misc", defaultValue:null},
+				/**
 				 * The URI of the background image.
 				 */
 				backgroundImage: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
@@ -245,6 +259,15 @@ sap.ui.define([
 		this._oTitle.cacheLineHeight = false;
 		this.setAggregation("_titleText", this._oTitle, true);
 
+
+		this._oAppShortcut = new Text(this.getId() + "-appShortcut");
+		this._oAppShortcut.cacheLineHeight = false;
+		this.addDependent(this._oAppShortcut);
+
+		this._oSystemInfo = new Text(this.getId() + "-systemInfo");
+		this._oSystemInfo.cacheLineHeight = false;
+		this.addDependent(this._oSystemInfo);
+
 		this._oSubTitle = new Text(this.getId() + "-subTitle");
 		this._oSubTitle.cacheLineHeight = false;
 		this.addDependent(this._oSubTitle);
@@ -285,12 +308,26 @@ sap.ui.define([
 		this._oTitle.setWrappingType(sWrappingType);
 		this._oFailedText.setWrappingType(sWrappingType);
 		this._oSubTitle.setWrappingType(sWrappingType);
+		this._oAppShortcut.setWrappingType(sWrappingType);
+		this._oSystemInfo.setWrappingType(sWrappingType);
 		return this;
 	};
 
 	GenericTile.prototype.setSubheader = function (sSubheader) {
 		this.setProperty("subheader", sSubheader);
 		this._oSubTitle.setText(sSubheader);
+		return this;
+	};
+
+	GenericTile.prototype.setAppShortcut = function (sAppShortcut) {
+		this.setProperty("appShortcut", sAppShortcut);
+		this._oAppShortcut.setText(sAppShortcut);
+		return this;
+	};
+
+	GenericTile.prototype.setSystemInfo = function (sSystemInfo) {
+		this.setProperty("systemInfo", sSystemInfo);
+		this._oSystemInfo.setText(sSystemInfo);
 		return this;
 	};
 
@@ -1172,6 +1209,7 @@ sap.ui.define([
 			tileContent.setRenderFooter(false);
 		} else {
 			tileContent.setRenderFooter(true);
+			return true;
 		}
 	};
 
