@@ -30,7 +30,7 @@ sap.ui.define([
 		{p13nItem: "artistUUID", selected: false},
 		{p13nItem: "Breakout Year", selected: false},
 		{p13nItem: "Changed On", selected: false},
-		{p13nItem: "cityOfOrigin_city", selected: false},
+		{p13nItem: "City of Origin", selected: false},
 		{p13nItem: "Country", selected: false},
 		{p13nItem: "Created (Complex)", selected: false},
 		{p13nItem: "Created By", selected: false},
@@ -233,7 +233,7 @@ sap.ui.define([
 			{p13nItem: "Created On", selected: true},
 			{p13nItem: "artistUUID", selected: false},
 			{p13nItem: "Changed On", selected: false},
-			{p13nItem: "cityOfOrigin_city", selected: false},
+			{p13nItem: "City of Origin", selected: false},
 			{p13nItem: "Created (Complex)", selected: false},
 			{p13nItem: "Created By", selected: false}
 		];
@@ -275,7 +275,7 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Created On", 6, true);
 		Then.iShouldSeeP13nItem("artistUUID", 7, false);
 		Then.iShouldSeeP13nItem("Changed On", 8, false);
-		Then.iShouldSeeP13nItem("cityOfOrigin_city", 9, false);
+		Then.iShouldSeeP13nItem("City of Origin", 9, false);
 		Then.iShouldSeeP13nItem("Created (Complex)", 10, false);
 		Then.iShouldSeeP13nItem("Created By", 11, false);
 		When.iPressButtonWithText("Save & Exit");
