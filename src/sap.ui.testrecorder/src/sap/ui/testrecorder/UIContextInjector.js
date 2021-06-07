@@ -19,8 +19,8 @@ sap.ui.define([
 	var UIContextInjector = BaseObject.extend("sap.ui.testrecorder.UIContextInjector", {
 		constructor: function () {
 			if (!oUIContextInjector) {
+				BaseObject.apply(this, arguments);
 				this._sIdentifier = generateIdentifier();
-				Object.apply(this, arguments);
 			} else {
 				return oUIContextInjector;
 			}

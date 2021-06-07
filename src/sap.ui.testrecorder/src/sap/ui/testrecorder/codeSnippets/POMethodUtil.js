@@ -17,7 +17,7 @@ sap.ui.define([
 	var POMethodUtil = BaseObject.extend("sap.ui.testrecorder.codeSnippets.POMethodUtil", {
 		constructor: function () {
 			if (!oPOMethodUtil) {
-				Object.apply(this, arguments);
+				BaseObject.apply(this, arguments);
 			} else {
 				return oPOMethodUtil;
 			}

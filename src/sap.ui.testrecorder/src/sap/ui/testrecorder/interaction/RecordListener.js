@@ -17,7 +17,7 @@ sap.ui.define([
 	var RecordListener = BaseObject.extend("sap.ui.testrecorder.interaction.RecordListener", {
 		constructor: function () {
 			if (!oRecordListener) {
-				Object.apply(this, arguments);
+				BaseObject.apply(this, arguments);
 				this._fnClickListener = this._onClick.bind(this);
 				this._fnContextmenuListener = this._onContextmenu.bind(this);
 			} else {

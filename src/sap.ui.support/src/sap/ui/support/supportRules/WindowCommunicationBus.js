@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/Log",
 	"jquery.sap.script"
-], function (Object, Log, jQuery) {
+], function (BaseObject, Log, jQuery) {
 	"use strict";
 
 	/**
@@ -27,8 +27,9 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 */
-	var WindowCommunicationBus = Object.extend("sap.ui.support.supportRules.WindowCommunicationBus", {
+	var WindowCommunicationBus = BaseObject.extend("sap.ui.support.supportRules.WindowCommunicationBus", {
 		constructor: function (oConfig) {
+			BaseObject.call(this);
 			this.bSilentMode = false;
 			this._channels = {};
 			this._frame = {};

@@ -15,7 +15,7 @@ sap.ui.define([
 	var DialectRegistry = BaseObject.extend("sap.ui.testrecorder.DialectRegistry", {
 		constructor: function () {
 			if (!oDialectRegistry) {
-				Object.apply(this, arguments);
+				BaseObject.apply(this, arguments);
 				this.setActiveDialect(DEFAULT_DIALECT);
 			} else {
 				return oDialectRegistry;

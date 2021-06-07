@@ -16,6 +16,7 @@ sap.ui.define([
 			library: "sap.ui.testrecorder"
 		},
 		constructor: function (fnCallback) {
+			ManagedObject.call(this);
 			this._fnObservationCb = fnCallback;
 			this._observer = new window.MutationObserver(this._onObservation.bind(this));
 		},
