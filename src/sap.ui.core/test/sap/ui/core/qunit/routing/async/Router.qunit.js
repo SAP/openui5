@@ -3537,6 +3537,145 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Router in IAsyncContentCreation with nested component", {
+		beforeEach: function() {
+			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
+			resetBrowserHash();
+			var that = this;
+			this.fnInitRouter = function() {
+				UIComponent.prototype.init.apply(this, arguments);
+				this._router = this.getRouter();
+				this._router.initialize();
+			};
+
+			sap.ui.jsview("rootView1", {
+				createContent : function() {
+					return new VBox(this.createId("box"), {
+						items: [
+							new ShellSubstitute(this.createId("shell"))
+						]
+					});
+				}
+			});
+
+			sap.ui.jsview("namespace1.footer" + count, {
+				createContent : function() {
+					return new Button({
+						text: "abc"
+					});
+				}
+			});
+
+			var ParentComponent;
+			ParentComponent = UIComponent.extend("namespace1.ParentComponent" + count, {
+				metadata : {
+					interfaces: ["sap.ui.core.IAsyncContentCreation"],
+					rootView: {
+						viewName: "rootView1",
+						type: "JS"
+					},
+					routing:  {
+						routes: [
+							{
+								pattern: "",
+								name: "home",
+								target: [ {
+									name: "home",
+									prefix: "child"
+								}, "footer"]
+							},
+							{
+								pattern: "category",
+								name: "category"
+							}
+						],
+						targets: {
+							home: {
+								name: "namespace1.ChildComponent" + count,
+								type: "Component",
+								clearControlAggregation: true,
+								controlId: "shell",
+								controlAggregation: "content",
+								options: {
+									manifest: false
+								}
+							},
+							footer: {
+								type: "View",
+								viewType: "JS",
+								name: "namespace1.footer" + count,
+								controlId: "box",
+								controlAggregation: "items"
+							}
+						}
+					}
+				},
+				init : that.fnInitRouter
+			});
+
+			this.oNestedRouteMatchedSpy = sinon.spy();
+
+			sap.ui.predefine("namespace1/ChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+				return UIComponent.extend("namespace1.ChildComponent" + count, {
+					metadata : {
+						routing:  {
+							config: {
+								async: true
+							},
+							routes: [
+								{
+									pattern: "product/{id}",
+									name: "product"
+								},
+								{
+									pattern: "",
+									name: "nestedHome"
+								}
+							]
+						}
+					},
+					init : function() {
+						UIComponent.prototype.init.apply(this, arguments);
+						var oRouter = this.getRouter();
+
+						oRouter.attachRouteMatched(that.oNestedRouteMatchedSpy);
+						oRouter.initialize();
+					}
+				});
+			});
+
+			this.oParentComponent = new ParentComponent("parent");
+		},
+		afterEach: function () {
+			this.oParentComponent.destroy();
+			this.oEventProviderStub.restore();
+			count++;
+		}
+	});
+
+	QUnit.test("Should load and instantiate the nested component when the home route is matched", function(assert) {
+		var that = this,
+			oRouter = this.oParentComponent.getRouter();
+
+		return new Promise(function(resolve, reject) {
+			oRouter.getRoute("home").attachMatched(function() {
+				var oContainer = that.oParentComponent.getRootControl(),
+					oShell = oContainer.byId("shell");
+				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
+				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+
+				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
+				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
+				assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+
+				var oEvent = that.oNestedRouteMatchedSpy.args[0][0];
+				assert.equal(oEvent.getParameter("name"), "nestedHome", "The route with empty string pattern is matched");
+				oNestedComponent.destroy();
+				resolve();
+			});
+		});
+	});
+
 	QUnit.module("navTo with nested components", {
 		beforeEach: function() {
 			this.buildNestedComponentStructure = function(level, suffix) {

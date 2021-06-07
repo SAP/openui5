@@ -50,7 +50,9 @@ sap.ui.define([
 	 */
 	var NavContainer = Control.extend("sap.m.NavContainer", /** @lends sap.m.NavContainer.prototype */ {
 		metadata: {
-
+			interfaces: [
+				"sap.ui.core.IPlaceholderSupport"
+			],
 			library: "sap.m",
 			properties: {
 
@@ -243,6 +245,15 @@ sap.ui.define([
 			}
 		}
 	});
+
+	// Delegate registered by the NavContainer#showPlaceholder function
+	var oPlaceholderDelegate = {
+		"onAfterRendering": function() {
+			if (this._placeholder) {
+				this._placeholder.show(this);
+			}
+		}
+	};
 
 	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation(),
 		fnGetDelay = function (iDelay) {
@@ -1796,6 +1807,61 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Shows the placeholder if NavContainer is rendered.
+	 * Otherwise, registers the 'onAfterRendering' delegate which shows the placeholder.
+	 *
+	 * @param {object} mSettings Object containing the placeholder instance
+	 * @param {sap.ui.core.Placeholder} mSettings.placeholder The placeholder instance
+	 * @public
+	 * @since 1.91
+	 */
+	NavContainer.prototype.showPlaceholder = function(mSettings) {
+		if (this._placeholder) {
+			this.hidePlaceholder();
+		}
+
+		this._placeholder = mSettings.placeholder;
+
+		if (this.getDomRef()) {
+			this._placeholder.show(this);
+		} else {
+			// Add an event delegate to reinsert the placeholder after it's removed after a rerendering
+			this.addEventDelegate(oPlaceholderDelegate, this);
+		}
+	};
+
+	/**
+	 * Hides the placeholder and removes the 'onAfterRendering' placeholder delegate.
+	 *
+	 * @public
+	 * @since 1.91
+	 */
+	NavContainer.prototype.hidePlaceholder = function() {
+		if (this._placeholder) {
+			this._placeholder.hide();
+
+			// remove the delegate because the placeholder is hidden
+			this.removeEventDelegate(oPlaceholderDelegate);
+			this._placeholder = undefined;
+		}
+	};
+
+	/**
+	 * Checks whether a placeholder is needed by comparing the currently displayed page with
+	 * the page object that is going to be displayed. If they are the same, no placeholder needs
+	 * to be shown.
+	 *
+	 * @param {string} sAggregationName The aggregation name
+	 * @param {object} oObject The page object to be displayed
+	 * @returns {boolean} Whether a placeholder is needed or not
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core.routing
+	 */
+	NavContainer.prototype.needPlaceholder = function(sAggregationName, oObject) {
+		return this.getCurrentPage() !== oObject;
+	};
 
 	/**
 	 * Fiori 2.0 Adaptation
