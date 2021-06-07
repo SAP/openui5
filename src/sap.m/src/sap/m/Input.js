@@ -561,6 +561,11 @@ function(
 		if (this.getId().indexOf("popup-input") === -1) {
 			this._createSuggestionsPopover();
 		}
+
+		// We need to set this to empty string as we are comparing it with sValue in the before rendering
+		// phase of the life cycle. Without this line, initially the condition fails and fires liveChange event
+		// even though there is no user input (check Input.prototype.onsapright).
+		this._setTypedInValue("");
 	};
 
 	/**
@@ -644,8 +649,6 @@ function(
 		if (!this.getWidth()) {
 			this.setProperty("width", "100%", true);
 		}
-
-		this._resetTypeAhead();
 
 		if (this._hasTabularSuggestions()) {
 			this._getSuggestionsTable().setAutoPopinMode(this.getEnableTableAutoPopinMode());
