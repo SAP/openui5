@@ -115,8 +115,8 @@ sap.ui.define([
 					that.oSelectedContentModel.setData(oModelData);
 					oPage.setBusy(false);
 				}, function () {
-				oPage.setBusy(false);
-			}
+					oPage.setBusy(false);
+				}
 			);
 		},
 

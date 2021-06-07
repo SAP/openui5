@@ -151,8 +151,8 @@ sap.ui.define([
 			this._oToolbarButton.setType(bActiveState ? ButtonType.Emphasized : ButtonType.Transparent);
 			this._oToolbarButton.setTooltip(this._oTextBundle.getText(
 				bActiveState
-				? "BUT_CHANGEVISUALIZATION_HIDECHANGES"
-				: "BUT_CHANGEVISUALIZATION_SHOWCHANGES"
+					? "BUT_CHANGEVISUALIZATION_HIDECHANGES"
+					: "BUT_CHANGEVISUALIZATION_SHOWCHANGES"
 			));
 		}
 	};

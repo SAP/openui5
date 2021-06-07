@@ -15,36 +15,37 @@ sap.ui.define([
 	var oCore = sap.ui.getCore();
 	var mLibraryData = {};
 	var mLibraryRuntimeData = {};
-		/**
-		 * Loads designtime metadata for the given libraries
-		 * The core needs to be loaded before this call
-		 * @param {string[]} aLibraryNames List of library names to be loaded
-		 * @returns {Promise} promise that resolves after all design time data for the libraries is ready
-		 * @private
-		 */
+	/**
+	 * Loads designtime metadata for the given libraries
+	 * The core needs to be loaded before this call
+	 * @param {string[]} aLibraryNames List of library names to be loaded
+	 * @returns {Promise} promise that resolves after all design time data for the libraries is ready
+	 * @private
+	 */
 	DTMetadata.loadLibraries = function(aLibraryNames) {
 		var that = this;
 		var oPromise = new Promise(function(resolve) {
-				//load all core libs async
+			//load all core libs async
 			oCore.loadLibraries(aLibraryNames).then(function() {
 				Promise.all(
-						//array of promises for the libs
-						aLibraryNames.map(function(sLibraryName) {
-							return that.loadLibrary(sLibraryName);
-						})
-					).then(function() {
-						resolve(mLibraryData);
-					});
+					//array of promises for the libs
+					aLibraryNames.map(function(sLibraryName) {
+						return that.loadLibrary(sLibraryName);
+					})
+				).then(function() {
+					resolve(mLibraryData);
+				});
 			});
 		});
 		return oPromise;
 	};
-		/**
-		 * Loads designtime metadata for the given library
-		 * @param {string} sLibraryName the library name
-		 * @returns {Promise} promise that resolves after all design time data for the library is loaded
-		 * @protected
-		 */
+
+	/**
+	 * Loads designtime metadata for the given library
+	 * @param {string} sLibraryName the library name
+	 * @returns {Promise} promise that resolves after all design time data for the library is loaded
+	 * @protected
+	 */
 	DTMetadata.loadLibrary = function(sLibraryName) {
 		var that = this;
 		var oLibraryPromise = new Promise(function(fnResolve) {
@@ -127,12 +128,13 @@ sap.ui.define([
 		});
 		return oLibraryPromise;
 	};
+
 	DTMetadata.enrichAPIDoc = function (oLibData) {
 		var oAPI = oLibData.apiJSON;
 		if (!oAPI || !oAPI.symbols || oAPI.symbols.length === 0) {
 			return;
 		}
-			//create a map for the classes, enums
+		//create a map for the classes, enums
 		var mControlAPIJson = {};
 		var mEnumsAPIJson = {};
 		oAPI.symbols.filter(function(oEntry) {
@@ -147,7 +149,7 @@ sap.ui.define([
 			var oEntry = mControlAPIJson[n];
 			var oDTEntry = this.getRuntimeData(oLibData.name, n);
 			if (oEntry && oDTEntry) {
-					//description
+				//description
 				if (oEntry.description) {
 					oLibData[n].descriptions = oLibData[n].descriptions || { "short": "", "long": ""};
 					oLibData[n].descriptions.long = oLibData[n].descriptions.long || oEntry.description;
@@ -156,6 +158,7 @@ sap.ui.define([
 			}
 		}
 	};
+
 	DTMetadata.getRuntimeData = function(sLib, sName, oData) {
 		if (mLibraryRuntimeData[sLib] && mLibraryRuntimeData[sLib][sName]) {
 			mLibraryRuntimeData[sLib] = mLibraryRuntimeData[sLib] || {};
@@ -165,9 +168,10 @@ sap.ui.define([
 			return mLibraryRuntimeData[sLib][sName];
 		}
 	};
-		/**
-		 * Loads the elements design time data
-		 */
+
+	/**
+	 * Loads the elements design time data
+	 */
 	DTMetadata.loadElement = function(sName) {
 		var that = this;
 		var oPromise = new Promise(function(resolve) {
@@ -199,6 +203,7 @@ sap.ui.define([
 		});
 		return oPromise;
 	};
+
 	DTMetadata.exportDTRuntimeData = function(oMetadata) {
 		var sClassName = oMetadata.getName();
 		var sName = splitCamelCase(sClassName.substring(sClassName.lastIndexOf(".") + 1));
@@ -281,31 +286,36 @@ sap.ui.define([
 		}
 		return oData;
 	};
+
 	function registerDTData(sLibraryName, oData) {
 		createLists(oData);
 		translate(oData, sLibraryName);
 		mLibraryData[sLibraryName][oData.className] = oData;
 	}
+
 	function splitCamelCase(sName) {
 		if (typeof sName === "string") {
 			return sName.replace(/([A-Z])([a-z])/g, ' $1$2').trim();
 		}
 		return "";
 	}
+
 	function createLists(oData) {
 		if (!oData) {
 			return;
 		}
 		["properties", "aggregations", "associations", "events"].forEach(function(sPropertyName) {
 			oData[sPropertyName + "List"] = (
-					oData[sPropertyName]
+				oData[sPropertyName]
 					&& Object.keys(oData[sPropertyName]).map(function(sKey) {
 						return oData[sPropertyName][sKey];
 					})
-					) || [];
+			) || [];
 		});
 	}
+
 	DTMetadata.createLists = createLists;
+
 	function translate(oData, sLibrary) {
 		if (!sLibrary) {
 			sLibrary = oData.library;
@@ -333,6 +343,8 @@ sap.ui.define([
 			}
 		}
 	}
+
 	DTMetadata.translate = translate;
+
 	return DTMetadata;
 }, /* bExport= */ true);

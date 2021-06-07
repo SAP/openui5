@@ -1823,23 +1823,23 @@ function(
 								.then(function (oService) {
 									if (this.bIsDestroyed) {
 										throw DtUtil.createError(
-												"RuntimeAuthoring#startService",
-												DtUtil.printf("RuntimeAuthoring instance is destroyed while initialising the service '{0}'", sName),
-												"sap.ui.rta"
-											);
+											"RuntimeAuthoring#startService",
+											DtUtil.printf("RuntimeAuthoring instance is destroyed while initialising the service '{0}'", sName),
+											"sap.ui.rta"
+										);
 									}
 									if (!jQuery.isPlainObject(oService)) {
 										throw DtUtil.createError(
-												"RuntimeAuthoring#startService",
-												DtUtil.printf("Invalid service format. Service should return simple javascript object after initialisation. Service name = '{0}'", sName),
-												"sap.ui.rta"
-											);
+											"RuntimeAuthoring#startService",
+											DtUtil.printf("Invalid service format. Service should return simple javascript object after initialisation. Service name = '{0}'", sName),
+											"sap.ui.rta"
+										);
 									}
 
 									mService.service = oService;
 									mService.exports = {};
 
-										// Expose events API if there is at least one event
+									// Expose events API if there is at least one event
 									if (Array.isArray(oService.events) && oService.events.length > 0) {
 										jQuery.extend(mService.exports, {
 											attachEvent: this._oServiceEventBus.subscribe.bind(this._oServiceEventBus, sName),
@@ -1848,18 +1848,18 @@ function(
 										});
 									}
 
-										// Expose methods/properties from exports object if any
+									// Expose methods/properties from exports object if any
 									var mExports = oService.exports || {};
 									jQuery.extend(
-											mService.exports,
-											Object.keys(mExports).reduce(function (mResult, sKey) {
-												var vValue = mExports[sKey];
-												mResult[sKey] = typeof vValue === "function"
-													? DtUtil.waitForSynced(this._oDesignTime, vValue)
-													: vValue;
-												return mResult;
-											}.bind(this), {})
-										);
+										mService.exports,
+										Object.keys(mExports).reduce(function (mResult, sKey) {
+											var vValue = mExports[sKey];
+											mResult[sKey] = typeof vValue === "function"
+												? DtUtil.waitForSynced(this._oDesignTime, vValue)
+												: vValue;
+											return mResult;
+										}.bind(this), {})
+									);
 
 									mService.status = SERVICE_STARTED;
 									fnResolve(Object.freeze(mService.exports));

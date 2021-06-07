@@ -203,11 +203,6 @@ sap.ui.define([
 			// this.oVM.setShowAsDefault(bShowDef);
 
 			this.oVM.setModel(this.oModel, this._sModelName);
-
-// var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext(this._sModelName));
-// oCurrentVariantChangeBinding.attachChange(function(oEvent) {
-// MessageToast.show("currentVariant: " + oEvent.oSource.oValue);
-// });
 		},
 
 		onToggleErrorState: function() {

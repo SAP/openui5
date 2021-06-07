@@ -188,8 +188,8 @@ sap.ui.define([
 	ElementOverlay.prototype.asyncInit = function () {
 		return (
 			this.getDesignTimeMetadata()
-			? Promise.resolve()
-			: this._loadDesignTimeMetadata()
+				? Promise.resolve()
+				: this._loadDesignTimeMetadata()
 		).then(function () {
 			this.attachEvent("elementModified", function (oEvent) {
 				var oParams = oEvent.getParameters();
@@ -769,8 +769,8 @@ sap.ui.define([
 		if (this.isRendered() && !oAggregationOverlay.isRendered()) {
 			var $Target = (
 				Util.isInteger(oAggregationOverlay.getScrollContainerId())
-				? this.getScrollContainerById(oAggregationOverlay.getScrollContainerId())
-				: jQuery(this.getChildrenDomRef())
+					? this.getScrollContainerById(oAggregationOverlay.getScrollContainerId())
+					: jQuery(this.getChildrenDomRef())
 			);
 			$Target.append(oAggregationOverlay.render());
 		}

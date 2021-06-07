@@ -110,18 +110,18 @@ sap.ui.define([
 									setTitle: [oVariantChangeContent0]
 								}
 							},
-								{
+							{
+								content: {
+									fileName: "variant1",
+									fileType: "ctrl_variant",
+									variantReference: "variantManagementId",
 									content: {
-										fileName: "variant1",
-										fileType: "ctrl_variant",
-										variantReference: "variantManagementId",
-										content: {
-											title: "variant 1"
-										}
-									},
-									controlChanges: [oChangeContent3],
-									variantChanges: {}
-								}],
+										title: "variant 1"
+									}
+								},
+								controlChanges: [oChangeContent3],
+								variantChanges: {}
+							}],
 							variantManagementChanges: {
 								setDefault: [oVariantManagementChangeContent0]
 							}
@@ -222,17 +222,17 @@ sap.ui.define([
 								controlChanges: [oChangeContent1, oChangeContent2],
 								variantChanges: {}
 							},
-								{
+							{
+								content: {
+									fileName: "variant1",
+									variantReference: "variant0",
 									content: {
-										fileName: "variant1",
-										variantReference: "variant0",
-										content: {
-											title: "variant 1"
-										}
-									},
-									controlChanges: [oChangeContent3, oChangeContent4],
-									variantChanges: {}
-								}],
+										title: "variant 1"
+									}
+								},
+								controlChanges: [oChangeContent3, oChangeContent4],
+								variantChanges: {}
+							}],
 							variantManagementChanges: {}
 						}
 					}

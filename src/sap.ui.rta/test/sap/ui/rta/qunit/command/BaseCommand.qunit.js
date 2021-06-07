@@ -239,7 +239,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
-						" the to be executed index is in range");
+					" the to be executed index is in range");
 			}.bind(this))
 
 			.catch(function (oError) {
@@ -254,7 +254,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
-								" the to be executed index is in range");
+					" the to be executed index is in range");
 			}.bind(this))
 
 			.catch(function (oError) {
@@ -733,7 +733,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
-						" the to be executed index is in range");
+					" the to be executed index is in range");
 				assert.equal(fnLastCommandUndo.callCount, 1, " the last command was undone");
 				assert.equal(fnStackModified.callCount, 1, " the modify stack listener is called");
 
@@ -759,7 +759,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
-						" the to be executed index is in range");
+					" the to be executed index is in range");
 				assert.equal(fnLastCommandUndo.callCount, 1, " the last command was undone");
 				assert.equal(fnFirstCommandUndo.callCount, 1, " the first command was undone");
 				assert.ok(fnLastCommandUndo.calledBefore(fnFirstCommandUndo), " the last is called before the first");

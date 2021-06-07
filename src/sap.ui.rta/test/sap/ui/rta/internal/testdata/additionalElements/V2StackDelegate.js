@@ -282,12 +282,13 @@ sap.ui.define([
 					oModifier.insertAggregation(oVBox, "items", mInnerControls.label, 0, mPropertyBag.view);
 					oModifier.insertAggregation(oVBox, "items", mInnerControls.control, 1, mPropertyBag.view);
 					return {
-						control: oVBox, //modifier created container containing already the label and control
-										//as it is needed for the current control type or position in the app (can be derived from payload)
-										//control type of relevant container (e.g. Form, ObjectPageLayout, Table)
-										//aggregation name of control insertion is given to support
+						//modifier created container containing already the label and control
+						//as it is needed for the current control type or position in the app (can be derived from payload)
+						//control type of relevant container (e.g. Form, ObjectPageLayout, Table)
+						//aggregation name of control insertion is given to support
+						control: oVBox,
+						//if available it has to be added to the relevant containers dependents aggregation otherwise it is expected for not being needed or included in the control
 						valueHelp: mInnerControls.valueHelp
-							//if available it has to be added to the relevant containers dependents aggregation otherwise it is expected for not being needed or included in the control
 					};
 				});
 			});

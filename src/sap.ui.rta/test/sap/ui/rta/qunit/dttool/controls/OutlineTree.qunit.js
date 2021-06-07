@@ -25,53 +25,52 @@ sap.ui.define([
 					text: "Node1-1",
 					ref: "../images/action.png"
 				},
-					{
-						text: "Node1-2",
-						ref: "../images/action.png",
-						nodes: [{
-							text: "Node1-2-1",
-							ref: "../images/action.png",
-							nodes: [{
-								text: "Node1-2-1-1",
-								ref: "../images/action.png"
-							}]
-						},
-							{
-								text: "Node1-2-2",
-								ref: "../images/action.png"
-							}
-							]
-					}
-					]
-			},
 				{
-					text: "Node2",
+					text: "Node1-2",
 					ref: "../images/action.png",
 					nodes: [{
-						text: "Node2-1",
+						text: "Node1-2-1",
 						ref: "../images/action.png",
 						nodes: [{
-							text: "Node2-1-1",
+							text: "Node1-2-1-1",
+							ref: "../images/action.png"
+						}]
+					},
+					{
+						text: "Node1-2-2",
+						ref: "../images/action.png"
+					}
+					]
+				}
+				]
+			},
+			{
+				text: "Node2",
+				ref: "../images/action.png",
+				nodes: [{
+					text: "Node2-1",
+					ref: "../images/action.png",
+					nodes: [{
+						text: "Node2-1-1",
+						ref: "../images/action.png",
+						nodes: [{
+							text: "Node2-1-1-1",
 							ref: "../images/action.png",
 							nodes: [{
-								text: "Node2-1-1-1",
+								text: "Node2-1-1-1-1",
 								ref: "../images/action.png",
 								nodes: [{
-									text: "Node2-1-1-1-1",
+									text: "Node2-1-1-1-1-1",
 									ref: "../images/action.png",
 									nodes: [{
-										text: "Node2-1-1-1-1-1",
+										text: "Node2-1-1-1-1-1-1",
 										ref: "../images/action.png",
 										nodes: [{
-											text: "Node2-1-1-1-1-1-1",
+											text: "Node2-1-1-1-1-1-1-1",
 											ref: "../images/action.png",
 											nodes: [{
-												text: "Node2-1-1-1-1-1-1-1",
-												ref: "../images/action.png",
-												nodes: [{
-													text: "Node2-1-1-1-1-1-1-1-1",
-													ref: "../images/action.png"
-												}]
+												text: "Node2-1-1-1-1-1-1-1-1",
+												ref: "../images/action.png"
 											}]
 										}]
 									}]
@@ -79,8 +78,8 @@ sap.ui.define([
 							}]
 						}]
 					}]
-				}
-			];
+				}]
+			}];
 
 			var oTreeItem = new StandardTreeItem({title: "{text}", icon: "{ref}"});
 			var oTree = new OutlineTree();

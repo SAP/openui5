@@ -383,8 +383,8 @@ function(
 		if (oElement.mBindingInfos) {
 			for (var oInfo in oElement.mBindingInfos) {
 				var sPath = oElement.mBindingInfos[oInfo].parts[0].path
-						? oElement.mBindingInfos[oInfo].parts[0].path
-						: "";
+					? oElement.mBindingInfos[oInfo].parts[0].path
+					: "";
 				sPath = sPath.split("/")[sPath.split("/").length - 1];
 				aPaths[sPath] = {
 					valueProperty: oInfo
@@ -428,11 +428,11 @@ function(
 		for (var sSourceProperty in mSource) {
 			if (mSource.hasOwnProperty(sSourceProperty)) {
 				if (fnCustomizer(
-						mDestination[sSourceProperty],
-						mSource[sSourceProperty],
-						sSourceProperty,
-						mDestination,
-						mSource)
+					mDestination[sSourceProperty],
+					mSource[sSourceProperty],
+					sSourceProperty,
+					mDestination,
+					mSource)
 				) {
 					mDestination[sSourceProperty] = mSource[sSourceProperty];
 				}

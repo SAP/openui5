@@ -154,7 +154,7 @@ sap.ui.define([
 				aAllSupportedPopups.push(oPopupElement);
 				return true;
 			} else if (oPopupElement instanceof Dialog) {
-					// all modal type popups are supported for which modal property is later turned true, when in Adaptation mode
+				// all modal type popups are supported for which modal property is later turned true, when in Adaptation mode
 				aAllSupportedPopups.push(oPopupElement);
 			}
 		}.bind(this));

@@ -64,8 +64,8 @@ sap.ui.define([
 				function() {
 					oPage.setBusy(false);
 				}).then(function () {
-					LRepConnector.requestPending = false;
-				});
+				LRepConnector.requestPending = false;
+			});
 		},
 
 		/**
@@ -136,7 +136,7 @@ sap.ui.define([
 			this.sNamespace = (this.sNamespace ? this.sNamespace : '/');
 
 			if (sContentFileType) {
-					// show details to a file
+				// show details to a file
 				var mRouteParameters = {
 					layer: this.sLayer,
 					namespace: encodeURIComponent(this.sNamespace),
@@ -145,7 +145,7 @@ sap.ui.define([
 				};
 				oRouter.navTo("ContentDetails", mRouteParameters);
 			} else {
-					// navigation to a namespace
+				// navigation to a namespace
 				this.sNamespace += sContentName + '/';
 				oRouter.navTo("LayerContentMaster", {layer: this.sLayer, namespace: encodeURIComponent(this.sNamespace)});
 			}

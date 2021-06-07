@@ -632,7 +632,7 @@ sap.ui.define([
 						contexts: oRevertDataContent.previousContexts
 					},
 					_pick(mPropertyBag, ["reference", "persistencyKey", "id"])
-				));
+					));
 				break;
 			case CompVariantState.operationType.NewChange:
 				var oChange = oVariantRevertData.getChange();

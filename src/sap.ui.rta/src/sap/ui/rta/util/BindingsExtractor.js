@@ -103,8 +103,8 @@ function(
 		if (isElementRelatedToRelevantContainer(oElement, oRelevantContainerElement)) {
 			aBindings = (
 				bTemplate
-				? getBindingsFromTemplateProperties(oElement)
-				: getBindingsFromProperties(oElement, oParentDefaultModel)
+					? getBindingsFromTemplateProperties(oElement)
+					: getBindingsFromProperties(oElement, oParentDefaultModel)
 			);
 		}
 		var aAggregationNames = sAggregationName ? [sAggregationName] : Object.keys(oElement.getMetadata().getAllAggregations());

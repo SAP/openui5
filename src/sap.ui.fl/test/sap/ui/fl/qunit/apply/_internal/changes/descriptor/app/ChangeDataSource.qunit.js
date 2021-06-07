@@ -142,7 +142,7 @@ function (
 			assert.throws(function () {
 				ChangeDataSource.applyChange(oManifest, this.oChangeInsert);
 			}, Error("Operation INSERT is not supported. The supported 'operation' is UPDATE|UPSERT"),
-				"throws error");
+			"throws error");
 		});
 
 		QUnit.test("when calling '_applyChange' with wrong manifest", function (assert) {
@@ -152,7 +152,7 @@ function (
 			assert.throws(function () {
 				ChangeDataSource.applyChange(oManifest, this.oChangeArray);
 			}, Error("No sap.app/dataSource found in manifest.json"),
-				"throws error");
+			"throws error");
 		});
 
 		QUnit.test("when calling '_applyChange' with no value to update", function (assert) {

@@ -13,8 +13,9 @@
 		"comma-spacing": 2,
 		"comma-style": 2,
 		"no-multi-spaces": 2,
-		"indent": [1, "tab", {
-			"SwitchCase": 1
+		"indent": [2, "tab", {
+			"SwitchCase": 1,
+			"MemberExpression": "off"
 		}],
 		"one-var": [2, "never"],
 		"no-useless-call": 2,

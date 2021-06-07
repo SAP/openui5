@@ -1,5 +1,4 @@
-sap.ui.define(["sap/ui/core/UIComponent"],
-function(Component) {
+sap.ui.define(["sap/ui/core/UIComponent"], function(Component) {
 	"use strict";
 
 	return Component.extend("sap.ui.fl.qunit.extensionPoint.testApp.Component", {

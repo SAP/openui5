@@ -47,8 +47,7 @@ function(
 		};
 	}
 
-	QUnit.module("Given test view", TestUtils.commonHooks(),
-	function () {
+	QUnit.module("Given test view", TestUtils.commonHooks(), function () {
 		QUnit.test("when getting invisible elements with a control without model", function(assert) {
 			var mTestData = _createSimpleFormFakingFormElements(this.oView);
 			var oSimpleFormWithoutModel = mTestData.simpleForm;
@@ -133,7 +132,7 @@ function(
 						]
 					})
 				]
-				//not assigning delegate as it is not read anymore but passed upfront
+			//not assigning delegate as it is not read anymore but passed upfront
 			});
 			oForm.setModel(new JSONModel({
 				Property01: "foo",
@@ -159,9 +158,7 @@ function(
 				aggregation: "formElements",
 				reveal: {
 					elements: [{
-						action: {
-							//reveal action, nothing relevant for the analyzer
-						},
+						action: {}, //reveal action, nothing relevant for the analyzer
 						element: mTestData.invisible
 					}]
 				},
@@ -256,7 +253,7 @@ function(
 						]
 					})
 				]
-				//not assigning delegate as it is not read anymore but passed upfront
+			//not assigning delegate as it is not read anymore but passed upfront
 			});
 			return {
 				form: oForm,
@@ -272,9 +269,8 @@ function(
 				aggregation: "formElements",
 				reveal: {
 					elements: [{
-						action: {
-							//reveal action, nothing relevant for the analyzer
-						},
+						action: {}, //reveal action, nothing relevant for the analyzer
+
 						element: mTestData.invisible
 					}]
 				},
@@ -408,6 +404,7 @@ function(
 			});
 		});
 	});
+
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});

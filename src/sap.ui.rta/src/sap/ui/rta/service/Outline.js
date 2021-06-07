@@ -376,19 +376,21 @@ sap.ui.define([
 
 				case "elementOverlayDestroyed":
 					var oParentAggregationOverlay = oResponse.elementOverlay.getParentAggregationOverlay();
-					if ( // Proceed only if (either):
+					// Proceed only if (either):
 					// Aggregation overlay exists for current element overlay & is not being destroyed
 					// Aggregation overlay doesn't exist and element overlay belongs to the root element
-					(oParentAggregationOverlay instanceof AggregationOverlay
-						&& !oParentAggregationOverlay._bIsBeingDestroyed
-					)
-					|| oResponse.elementOverlay.isRoot()
+					if (
+						(
+							oParentAggregationOverlay instanceof AggregationOverlay
+							&& !oParentAggregationOverlay._bIsBeingDestroyed
+						)
+						|| oResponse.elementOverlay.isRoot()
 					) {
 						oResponse.element = {};
 						oResponse.element.id =
 							oResponse.elementOverlay.getElement()
-							? oResponse.elementOverlay.getElement().getId()
-							: oResponse.elementOverlay.getAssociation("element"); // Triggered via DesignTime elementOverlayDestroyed event
+								? oResponse.elementOverlay.getElement().getId()
+								: oResponse.elementOverlay.getAssociation("element"); // Triggered via DesignTime elementOverlayDestroyed event
 						oResponse.type = "destroy";
 						break;
 					}

@@ -179,8 +179,8 @@ function(
 		// 1) animate DomRef
 		return (
 			this.animation
-			? Animation.waitTransition(this.$(), this.removeStyleClass.bind(this, 'is_visible'))
-			: Promise.resolve()
+				? Animation.waitTransition(this.$(), this.removeStyleClass.bind(this, 'is_visible'))
+				: Promise.resolve()
 		)
 		// 2) hide DomRef
 		.then(function () {

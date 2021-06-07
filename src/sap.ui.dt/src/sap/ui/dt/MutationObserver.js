@@ -262,7 +262,7 @@ sap.ui.define([
 						return oNode.id;
 					}),
 				Object.keys(this._mMutationHandlers)
-		);
+			);
 	};
 
 	MutationObserver.prototype._ignoreMutation = function(oMutation) {
@@ -281,8 +281,8 @@ sap.ui.define([
 		// text mutations have no class list, so we use a parent node as a target
 		return (
 			oMutation.type === "characterData"
-			? oMutation.target.parentNode
-			: oMutation.target
+				? oMutation.target.parentNode
+				: oMutation.target
 		);
 	};
 
