@@ -10,6 +10,10 @@ sap.ui.define([
 
 			aProperties.forEach(function(oProperty){
 				oProperty.groupable = true;
+
+				if (oProperty.name == "cityOfOrigin_city"){
+					oProperty.label = "City of Origin";
+				}
 			});
 
 			aProperties.push({
@@ -17,6 +21,11 @@ sap.ui.define([
 				label: "Created (Complex)",
 				propertyInfos: ["createdAt", "createdBy"]
 			});
+
+			if (oTable.data){
+				oTable.data("$tablePropertyInfo", aProperties);
+			}
+
 			return aProperties;
 		});
 	};
@@ -37,14 +46,25 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 		var sId = mPropertyBag.id + "--" + sPropertyInfoName;
 
+		var aInfo = oTable.data("$tablePropertyInfo");
+
+		var aFoundValue = [];
+		if (aInfo){
+			aFoundValue = aInfo.find(function(oProp){
+				return oProp.name == sPropertyInfoName;
+			});
+		}
+
+		var sLabel = aFoundValue && aFoundValue.length > 0 ? aFoundValue[0].label : sPropertyInfoName;
+
 		if (oTable.isA === undefined) {
 			return oModifier.createControl("sap.m.Text", mPropertyBag.appComponent, mPropertyBag.view, sId + "--text--" + sPropertyInfoName,{
 				text: "{" + sPropertyInfoName + "}"
 			}, true).then(function(oTemplate){
 				var oColumn = oModifier.createControl("sap.ui.mdc.table.Column", mPropertyBag.appComponent, mPropertyBag.view, sId, {
 					dataProperty: sPropertyInfoName,
-					width:"150px",
-					header: sPropertyInfoName
+					width: "150px",
+					header: sLabel
 				});
 				oColumn.appendChild(oTemplate);
 				return oColumn;

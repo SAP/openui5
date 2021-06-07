@@ -22,7 +22,7 @@ sap.ui.define([
 		{p13nItem: "Breakout Year", value: null},
 		{p13nItem: "Changed By", value: null},
 		{p13nItem: "Changed On", value: null},
-		{p13nItem: "cityOfOrigin_city", value: null},
+		{p13nItem: "City of Origin", value: null},
 		{p13nItem: "Country", value: null},
 		{p13nItem: "Created By", value: null},
 		{p13nItem: "Created On", value: null},

@@ -24,7 +24,7 @@ sap.ui.define([
 		{p13nItem: "artistUUID", selected: false},
 		{p13nItem: "Breakout Year", selected: false},
 		{p13nItem: "Changed On", selected: false},
-		{p13nItem: "cityOfOrigin_city", selected: false},
+		{p13nItem: "City of Origin", selected: false},
 		{p13nItem: "Country", selected: false},
 		{p13nItem: "Created (Complex)", selected: false},
 		{p13nItem: "Created By", selected: false},
@@ -36,7 +36,7 @@ sap.ui.define([
 		{p13nItem: "Breakout Year", descending: false},
 		{p13nItem: "Changed By", descending: false},
 		{p13nItem: "Changed On", descending: false},
-		{p13nItem: "cityOfOrigin_city", descending: false},
+		{p13nItem: "City of Origin", descending: false},
 		{p13nItem: "Country", descending: false},
 		{p13nItem: "Created By", descending: false},
 		{p13nItem: "Created On", descending: false},
@@ -50,7 +50,7 @@ sap.ui.define([
 		{p13nItem: "Breakout Year", value: null},
 		{p13nItem: "Changed By", value: null},
 		{p13nItem: "Changed On", value: null},
-		{p13nItem: "cityOfOrigin_city", value: null},
+		{p13nItem: "City of Origin", value: null},
 		{p13nItem: "Country", value: null},
 		{p13nItem: "Created By", value: null},
 		{p13nItem: "Created On", value: null},
@@ -146,7 +146,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		When.iSelectColumn("Breakout Year", undefined, aTableItems);
-		When.iSelectColumn("cityOfOrigin_city", undefined, aTableItems);
+		When.iSelectColumn("City of Origin", undefined, aTableItems);
 		When.iSelectColumn("Founding Year", undefined, aTableItems);
 
 		checkTestVariantColumnsDialog(Then);
@@ -208,7 +208,7 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("artistUUID", 4, false);
 		Then.iShouldSeeP13nItem("Breakout Year", 5, false);
 		Then.iShouldSeeP13nItem("Changed On", 6, false);
-		Then.iShouldSeeP13nItem("cityOfOrigin_city", 7, false);
+		Then.iShouldSeeP13nItem("City of Origin", 7, false);
 		Then.iShouldSeeP13nItem("Country", 8, false);
 		Then.iShouldSeeP13nItem("Created (Complex)", 9, false);
 		Then.iShouldSeeP13nItem("Created By", 10, false);
@@ -523,7 +523,7 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("artistUUID", 4, false);
 		Then.iShouldSeeP13nItem("Breakout Year", 5, true);
 		Then.iShouldSeeP13nItem("Changed On", 6, false);
-		Then.iShouldSeeP13nItem("cityOfOrigin_city", 7, true);
+		Then.iShouldSeeP13nItem("City of Origin", 7, true);
 		Then.iShouldSeeP13nItem("Country", 8, false);
 		Then.iShouldSeeP13nItem("Created (Complex)", 9, false);
 		Then.iShouldSeeP13nItem("Created By", 10, false);
