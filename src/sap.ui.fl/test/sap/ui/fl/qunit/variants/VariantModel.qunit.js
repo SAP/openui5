@@ -1990,7 +1990,6 @@ sap.ui.define([
 			assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
 			assert.ok(this.oModel.oData["varMgmtRef1"].init, "the init flag is set");
 			assert.equal(this.oModel.oData["varMgmtRef1"].showExecuteOnSelection, false, "showExecuteOnSelection is set to false");
-			assert.equal(this.oModel.oData["varMgmtRef1"]._executeOnSelectionForStandardDefault, true, "executeOnSelectionForStandardDefault is set to true");
 		});
 
 		QUnit.test("when waitForVMControlInit is called before the control is initialized", function(assert) {
@@ -2047,7 +2046,6 @@ sap.ui.define([
 
 		QUnit.test("when waitForVMControlInit is called before the control is initialized and with no variant data yet", function(assert) {
 			var oStandardVariant = {
-				_executeOnSelectionForStandardDefault: false,
 				currentVariant: "varMgmtRef1",
 				originalCurrentVariant: "varMgmtRef1",
 				defaultVariant: "varMgmtRef1",
@@ -2620,7 +2618,7 @@ sap.ui.define([
 		QUnit.test("when 'attachVariantApplied' is called with executeOnSelectionForStandardDefault set, standard being default and no flex change for apply automatically", function(assert) {
 			var sVMReference = "mockview--VariantManagement2";
 			var sVMControlId = "testComponent---" + sVMReference;
-			this.oVariantModel.oData[sVMReference]._executeOnSelectionForStandardDefault = true;
+			this.oView.byId(sVMControlId).setExecuteOnSelectionForStandardDefault(true);
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
 			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();

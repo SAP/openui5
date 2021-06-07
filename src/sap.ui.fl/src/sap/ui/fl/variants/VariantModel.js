@@ -400,7 +400,7 @@ sap.ui.define([
 		return this.getVariant(sVariantReference).content.content[sProperty];
 	};
 
-	function handleInitialLoadScenario(sVMReference) {
+	function handleInitialLoadScenario(sVMReference, oVariantManagementControl) {
 		var oVariantChangesForVariant = VariantManagementState.getVariantChangesForVariant({
 			vmReference: sVMReference,
 			reference: this.sFlexReference
@@ -408,7 +408,7 @@ sap.ui.define([
 		var sCurrentVariantReference = this.oData[sVMReference].currentVariant;
 		var sDefaultVariantReference = this.oData[sVMReference].defaultVariant;
 		if (
-			this.oData[sVMReference]._executeOnSelectionForStandardDefault
+			oVariantManagementControl.getExecuteOnSelectionForStandardDefault()
 			&& sCurrentVariantReference === sDefaultVariantReference
 			&& sCurrentVariantReference === sVMReference
 			&& !oVariantChangesForVariant.setExecuteOnSelect
@@ -424,6 +424,7 @@ sap.ui.define([
 			this.oData[sVMReference].variants[0].executeOnSelect = true;
 			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -440,14 +441,15 @@ sap.ui.define([
 	 * @returns {Promise} Promise that resolves after the sanity check
 	 */
 	VariantModel.prototype.attachVariantApplied = function(mPropertyBag) {
-		var sVMReference = this.getVariantManagementReferenceForControl(sap.ui.getCore().byId(mPropertyBag.vmControlId));
+		var oVariantManagementControl = sap.ui.getCore().byId(mPropertyBag.vmControlId);
+		var sVMReference = this.getVariantManagementReferenceForControl(oVariantManagementControl);
 
 		return this.waitForVMControlInit(sVMReference).then(function(sVMReference, mPropertyBag) {
 			if (!this._oVariantAppliedListeners[sVMReference]) {
 				this._oVariantAppliedListeners[sVMReference] = {};
 			}
 
-			var bInitialLoad = handleInitialLoadScenario.call(this, sVMReference);
+			var bInitialLoad = handleInitialLoadScenario.call(this, sVMReference, oVariantManagementControl);
 
 			// if the parameter callAfterInitialVariant or initialLoad is true call the function without check
 			if (mPropertyBag.callAfterInitialVariant || bInitialLoad) {
@@ -1270,9 +1272,6 @@ sap.ui.define([
 
 		// original setting of control parameter 'editable' is needed
 		this.oData[sVariantManagementReference]._isEditable = oVariantManagementControl.getEditable();
-
-		// original setting of control parameter 'executeOnSelectionForStandardDefault' is needed
-		this.oData[sVariantManagementReference]._executeOnSelectionForStandardDefault = oVariantManagementControl.getExecuteOnSelectionForStandardDefault();
 
 		// only attachVariantApplied will set this to true
 		this.oData[sVariantManagementReference].showExecuteOnSelection = false;
