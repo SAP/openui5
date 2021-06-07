@@ -3136,11 +3136,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createRefreshPromise/resolveRefreshPromise", function (assert) {
+[false, true].forEach(function (bCanceled) {
+	var sTitle = "createRefreshPromise/resolveRefreshPromise, canceled=" + bCanceled;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = new ODataParentBinding(),
 			oError = new Error(),
 			oErrorPromise = Promise.reject(oError),
 			oRefreshPromise;
+
+		oError.canceled = bCanceled;
 
 		// code under test
 		oRefreshPromise = oBinding.createRefreshPromise();
@@ -3153,14 +3158,16 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oRefreshPromise, null);
 
 		// code under test
-		oBinding.resolveRefreshPromise(Promise.resolve({}));
+		assert.strictEqual(oBinding.resolveRefreshPromise("~n/a~"), "~n/a~");
 
 		return oRefreshPromise.then(function () {
-			assert.ok(false);
+			assert.ok(bCanceled);
 		}, function (oResult) {
+			assert.notOk(bCanceled);
 			assert.strictEqual(oResult, oError);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("hasPendingChangesInDependents", function (assert) {

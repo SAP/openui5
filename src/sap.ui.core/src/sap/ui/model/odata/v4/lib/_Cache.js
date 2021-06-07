@@ -1043,7 +1043,7 @@ sap.ui.define([
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which resolves with the new entity when it is updated in the cache.
+	 *   A promise which resolves without a defined result when it is updated in the cache.
 	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
@@ -1085,8 +1085,6 @@ sap.ui.define([
 				var oElement = aResult[0];
 
 				that.replaceElement(aElements, iIndex, sPredicate, oElement, aResult[1], sPath);
-
-				return oElement;
 			});
 		});
 	};

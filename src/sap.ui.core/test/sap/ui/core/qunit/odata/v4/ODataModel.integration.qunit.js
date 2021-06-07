@@ -11322,6 +11322,13 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("Artists(ArtistID='ABC',IsActiveEntity=false)"
 					+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
+					// CPOUI5ODATAV4-980: this response is ignored anyway
+					ArtistID : "ABC",
+					IsActiveEntity : false,
+					Name : "After Refresh"
+				})
+				.expectRequest("Artists(ArtistID='ABC',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
 					"@odata.etag" : "ETagAfterRefresh",
 					ArtistID : "ABC",
 					IsActiveEntity : false,
@@ -11342,9 +11349,11 @@ sap.ui.define([
 					type : "Success"
 				}]);
 
-			oReturnValueContext.refresh();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oReturnValueContext.requestRefresh(), // will be canceled, must not fail
+				oReturnValueContext.requestRefresh(),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			return that.checkValueState(assert, "nameCreated", "Success", "Just Another Message");
 		}).then(function () {
@@ -29835,11 +29844,11 @@ sap.ui.define([
 	// cache for the old item is already inactive; thus the promise fails. Due to this failure, the
 	// old cache was restored, which was wrong. Timing is essential!
 	// BCP: 1970600374
-	QUnit.test("BCP: 1970600374", function (assert) {
+	QUnit.test("BCP: 1970600374 (CPOUI5ODATAV4-34)", function (assert) {
 		var oInput,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="detail">\
+<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}">\
 	<Input id="name" value="{Name}"/>\
 </FlexBox>',
 			that = this;
@@ -29854,8 +29863,7 @@ sap.ui.define([
 					Team_Id : "TEAM_01"
 				})
 				.expectChange("name", "Team #1");
-			that.oView.byId("detail").setBindingContext(
-				oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+			that.oView.setBindingContext(oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -29881,7 +29889,7 @@ sap.ui.define([
 
 			setTimeout(function () {
 				// pagination triggered by separate event --> new task
-				that.oView.byId("detail").setBindingContext(
+				that.oView.setBindingContext(
 					oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext());
 				setTimeout(fnRespond, 0);
 			}, 0);
@@ -29897,6 +29905,7 @@ sap.ui.define([
 					payload : {Name : "Palpatine"},
 					url : "TEAMS('TEAM_02')"
 				}, {/* response does not matter here */});
+
 			oInput.getBinding("value").setValue("Palpatine");
 
 			return that.waitForChanges(assert);
@@ -29906,12 +29915,18 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: A PATCH (not shown here) triggers a side effect for the whole list, while a
 	// paginator switches to another item. The side effect's GET is thus ignored because the cache
-	// for the old item is already inactive; thus the promise fails. Due to this failure, the old
-	// cache was restored, which was wrong. Timing is essential!
-	// Follow-up to BCP: 1970600374 with an ODCB instead of an ODLB.
+	// for the old item is already inactive; thus an internal promise fails. Due to this failure,
+	// the old cache was restored, which was wrong. Timing is essential!
+	// Follow-up to BCP: 1970600374 with an ODLB instead of an ODCB.
+	// Then we switch back to the old item and the cache is reused. Show that the side effect was
+	// not ignored.
 	// JIRA: CPOUI5ODATAV4-34
-	QUnit.test("CPOUI5ODATAV4-34", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+	// The API Context#requestSideEffects must not fail only because the refresh response arrives
+	// too late.
+	// JIRA: CPOUI5ODATAV4-980
+	QUnit.test("CPOUI5ODATAV4-34: ODLB instead of ODCB", function (assert) {
+		var oContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
@@ -29922,28 +29937,32 @@ sap.ui.define([
 		this.expectChange("name", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oContext = oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext();
+			oTable = that.oView.byId("table");
+
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100", {
 					value : [{ID : "1", Name : "Jonathan Smith"}]
 				})
 				.expectChange("name", ["Jonathan Smith"]);
-			oTable = that.oView.byId("table");
-			oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			oTable.setBindingContext(oContext);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oPromise, fnRespond;
+			var oBinding, oPromise, fnRespond;
 
 			// 1st, request side effects
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
 					+ "&$skip=0&$top=100",
 					new Promise(function (resolve) {
 						fnRespond = resolve.bind(null, {
-							value : [{ID : "1", Name : "Jonathan Smith"}]
+							value : [{ID : "1", Name : "Darth Vader"}]
 						});
 					}));
 
-			oPromise = oTable.getBinding("items").getHeaderContext().requestSideEffects([""]);
+			oBinding = oTable.getBinding("items");
+			oPromise = oBinding.getHeaderContext().requestSideEffects([""]);
 
 			// 2nd, switch to different context
 			that.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$select=ID,Name"
@@ -29959,12 +29978,11 @@ sap.ui.define([
 			}, 0);
 
 			return Promise.all([
-				oPromise.then(mustFail(assert), function (oError) {
-					assert.strictEqual(oError.message, "Response discarded: cache is inactive");
-				}),
+				oPromise,
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			// 3rd, change a value
 			var oInput = oTable.getItems()[0].getCells()[0]; // Note: different instance now!
 
 			that.expectChange("name", ["Palpatine"])
@@ -29973,76 +29991,12 @@ sap.ui.define([
 					payload : {Name : "Palpatine"},
 					url : "EMPLOYEES('2')"
 				}, {/* response does not matter here */});
+
 			oInput.getBinding("value").setValue("Palpatine");
 
 			return that.waitForChanges(assert);
-		});
-	});
-
-	//*********************************************************************************************
-	// Scenario: A PATCH (not shown here) triggers a side effect for the whole list, while a
-	// paginator switches to another item. The side effect's GET is thus ignored because the cache
-	// for the old item is already inactive. Then we switch back to the old item and the cache is
-	// reused. Show that the side effect was not ignored.
-	// JIRA: CPOUI5ODATAV4-34
-	QUnit.test("CPOUI5ODATAV4-34: Response discarded: cache is inactive", function (assert) {
-		var oContext,
-			oModel = createTeaBusiModel({autoExpandSelect : true}),
-			oTable,
-			sView = '\
-<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
-	<Input id="name" value="{Name}"/>\
-</Table>',
-			that = this;
-
-		this.expectChange("name", []);
-
-		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
-					+ "&$skip=0&$top=100", {
-					value : [{ID : "1", Name : "Jonathan Smith"}]
-				})
-				.expectChange("name", ["Jonathan Smith"]);
-			oContext = oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext();
-			oTable = that.oView.byId("table");
-			oTable.setBindingContext(oContext);
-
-			return that.waitForChanges(assert);
 		}).then(function () {
-			var oPromise, fnRespond;
-
-			// 1st, request side effects
-			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
-					+ "&$skip=0&$top=100",
-					new Promise(function (resolve) {
-						fnRespond = resolve.bind(null, {
-							value : [{ID : "1", Name : "Darth Vader"}]
-						});
-					}));
-
-			oPromise = oTable.getBinding("items").getHeaderContext().requestSideEffects([""]);
-
-			// 2nd, switch to different context
-			that.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$select=ID,Name"
-					+ "&$skip=0&$top=100", {
-					value : [{ID : "2", Name : "Frederic Fall"}]
-				})
-				.expectChange("name", ["Frederic Fall"]);
-
-			setTimeout(function () {
-				// pagination triggered by separate event --> new task
-				oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext());
-				fnRespond();
-			}, 0);
-
-			return Promise.all([
-				oPromise.then(mustFail(assert), function (oError) {
-					assert.strictEqual(oError.message, "Response discarded: cache is inactive");
-				}),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
-			// 3rd, switch back again
+			// 4th, switch back again
 			that.expectChange("name", ["Darth Vader"]);
 
 			oTable.setBindingContext(oContext);
@@ -30182,7 +30136,7 @@ sap.ui.define([
 			fnResolve(oRefreshResponse);
 
 			return Promise.all([
-				checkCanceled(assert, oPromise1),
+				oPromise1,
 				oPromise2,
 				that.waitForChanges(assert)
 			]);
@@ -32447,8 +32401,13 @@ sap.ui.define([
 	// Refresh a single kept context that is in the collection of a list binding w/o any $filter or
 	// $search. Only a query for the existence of the entity is sent. No additional query to check
 	// if the entity is still in the collection is sent.
+	// JIRA: CPOUI5ODATAV4-366
+	//
+	// See that a failed request causes Context#refresh to reject.
+	// JIRA: CPOUI5ODATAV4-980
 	QUnit.test("CPOUI5ODATAV4-366: kept-context in collection only one request", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="grossAmount" text="{GrossAmount}"/>\
@@ -32465,8 +32424,7 @@ sap.ui.define([
 		});
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
-
+			oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 			oContext.setKeepAlive(true);
 
 			that.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID"
@@ -32478,6 +32436,26 @@ sap.ui.define([
 			oContext.refresh(undefined, true);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=GrossAmount,SalesOrderID",
+					createErrorInsideBatch())
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withArgs("Failed to refresh entity: /SalesOrderList('1')[0]");
+
+			return Promise.all([
+				// code under test
+				oContext.requestRefresh().then(mustFail(assert), function (oError) {
+					assert.strictEqual(oError.message, "Request intentionally failed");
+				}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 

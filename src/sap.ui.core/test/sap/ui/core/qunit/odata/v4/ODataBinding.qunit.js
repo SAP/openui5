@@ -2857,15 +2857,19 @@ sap.ui.define([
 	QUnit.test("assertSameCache", function (assert) {
 		var oBinding = new ODataBinding({
 				oCache : {}
-			});
+			}),
+			oCache = {
+				toString : function () { return "~"; }
+			};
 
 		oBinding.assertSameCache(oBinding.oCache);
 
 		try {
-			oBinding.assertSameCache({});
+			oBinding.assertSameCache(oCache);
 			assert.ok(false);
 		} catch (oError) {
-			assert.strictEqual(oError.message, "Response discarded: cache is inactive");
+			assert.strictEqual(oError.message,
+				oBinding + " is ignoring response from inactive cache: ~");
 			assert.strictEqual(oError.canceled, true);
 		}
 	});

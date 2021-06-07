@@ -224,8 +224,9 @@ sap.ui.define([
 	 *   The new value obtained from the cache, see {@link #onChange}
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result when the check is finished, or rejecting in
-	 *   case of an error (e.g. thrown by the change event handler of a control), or if the cache is
-	 *   no longer the active cache when the response arrives
+	 *   case of an error (e.g. thrown by the change event handler of a control). If the cache is no
+	 *   longer the active cache when the response arrives, that response is silently ignored and
+	 *   the value remains unchanged.
 	 *
 	 * @private
 	 * @see sap.ui.model.PropertyBinding#checkDataState

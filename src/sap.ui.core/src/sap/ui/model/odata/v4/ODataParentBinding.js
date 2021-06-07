@@ -1208,20 +1208,24 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Resolves and clears the refresh promise created by {@link #createRefreshPromise} with the
-	 * given result if there is one.
+	 * If there is a refresh promise created by {@link #createRefreshPromise}, it is resolved with
+	 * the given promise and cleared. Does not reject the refresh promise with a canceled error.
 	 *
-	 * @param {any} vResult - The result to resolve with
-	 * @returns {any} vResult for chaining
+	 * @param {Promise} oPromise - The promise to resolve with
+	 * @returns {Promise} oPromise for chaining
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.resolveRefreshPromise = function (vResult) {
+	ODataParentBinding.prototype.resolveRefreshPromise = function (oPromise) {
 		if (this.oRefreshPromise) {
-			this.oRefreshPromise.$resolve(vResult);
+			this.oRefreshPromise.$resolve(oPromise.catch(function (oError) {
+				if (!oError.canceled) {
+					throw oError;
+				}
+			}));
 			this.oRefreshPromise = null;
 		}
-		return vResult;
+		return oPromise;
 	};
 
 	/**

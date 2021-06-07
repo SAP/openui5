@@ -2325,8 +2325,8 @@ sap.ui.define([
 	 *   A removed context is destroyed unless it is kept alive
 	 *   (see {@link sap.ui.model.odata.v4.Context#isKeepAlive}) and still exists on the server.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which resolves with the entity when the entity is updated in the
-	 *   cache, or <code>undefined</code> if <code>bAllowRemoval</code> is set to true.
+	 *   A promise which resolves without a defined value when the entity is updated in the cache,
+	 *   or rejects if the refresh failed.
 	 * @throws {Error}
 	 *   If the given context does not represent a single entity (see {@link #getHeaderContext})
 	 *
@@ -2341,7 +2341,7 @@ sap.ui.define([
 			throw new Error("Unsupported header context: " + oContext);
 		}
 
-		return this.withCache(function (oCache, sPath, _oBinding) {
+		return this.withCache(function (oCache, sPath, oBinding) {
 			var bDataRequested = false,
 				bDestroyed = false,
 				bKeepAlive = oContext.isKeepAlive(),
@@ -2409,10 +2409,11 @@ sap.ui.define([
 						sPredicate, bKeepAlive, fireDataRequested, onRemove)
 					: oCache.refreshSingle(oGroupLock, sPath, oContext.getModelIndex(), sPredicate,
 						bKeepAlive, fireDataRequested))
-				.then(function (oEntity) {
+				.then(function () {
 					var aUpdatePromises = [];
 
 					fireDataReceived({data : {}});
+					oBinding.assertSameCache(oCache);
 					if (!bDestroyed) { // do not update destroyed context
 						aUpdatePromises.push(oContext.checkUpdate());
 						if (bAllowRemoval) {
@@ -2422,9 +2423,7 @@ sap.ui.define([
 						}
 					}
 
-					return SyncPromise.all(aUpdatePromises).then(function () {
-						return oEntity;
-					});
+					return SyncPromise.all(aUpdatePromises);
 				}, function (oError) {
 					fireDataReceived({error : oError});
 					throw oError;
@@ -2432,6 +2431,9 @@ sap.ui.define([
 					oGroupLock.unlock(true);
 					that.oModel.reportError("Failed to refresh entity: " + oContext, sClassName,
 						oError);
+					if (!oError.canceled) {
+						throw oError;
+					}
 				})
 			);
 
@@ -2442,9 +2444,7 @@ sap.ui.define([
 					oGroupLock.getGroupId()));
 			}
 
-			return SyncPromise.all(aPromises).then(function (aResults) {
-				return aResults[0];
-			});
+			return SyncPromise.all(aPromises);
 		});
 	};
 
@@ -2609,7 +2609,8 @@ sap.ui.define([
 			that = this;
 
 		/*
-		 * Adds an error handler to the given promise which reports errors to the model.
+		 * Adds an error handler to the given promise which reports errors to the model and ignores
+		 * cancellations.
 		 *
 		 * @param {Promise} oPromise - A promise
 		 * @return {Promise} A promise including an error handler
@@ -2617,7 +2618,9 @@ sap.ui.define([
 		function reportError(oPromise) {
 			return oPromise.catch(function (oError) {
 				oModel.reportError("Failed to request side effects", sClassName, oError);
-				throw oError;
+				if (!oError.canceled) {
+					throw oError;
+				}
 			});
 		}
 
