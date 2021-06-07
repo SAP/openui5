@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"./TimePickerInternals",
 	"./Input",
+	"./InputRenderer",
+	"sap/ui/core/Renderer",
 	"./SegmentedButton",
 	"./SegmentedButtonItem",
 	"sap/ui/core/InvisibleText",
@@ -19,6 +21,8 @@ sap.ui.define([
 		coreLibrary,
 		TimePickerInternals,
 		Input,
+		InputRenderer,
+		Renderer,
 		SegmentedButton,
 		SegmentedButtonItem,
 		InvisibleText,
@@ -563,7 +567,7 @@ sap.ui.define([
 
 			if (bHours) {
 				// add Hours input
-				this.addAggregation("_inputs", new Input(sId + "-inputH", {
+				this.addAggregation("_inputs", new CustomNumericInput(sId + "-inputH", {
 					type: InputType.Number,
 					tooltip: this._oResourceBundle.getText("TIMEPICKER_INPUTS_ENTER_HOURS"),
 					textAlign: TextAlign.Center,
@@ -579,7 +583,7 @@ sap.ui.define([
 				bPrependZero = sFormat.indexOf("mm") !== -1;
 				iMax = 59;
 				// add Minutes input
-				this.addAggregation("_inputs", new Input(sId + "-inputM", {
+				this.addAggregation("_inputs", new CustomNumericInput(sId + "-inputM", {
 					type: InputType.Number,
 					tooltip: this._oResourceBundle.getText("TIMEPICKER_INPUTS_ENTER_MINUTES"),
 					textAlign: TextAlign.Center,
@@ -595,7 +599,7 @@ sap.ui.define([
 				bPrependZero = sFormat.indexOf("ss") !== -1;
 				iMax = 59;
 				// add Seconds input
-				this.addAggregation("_inputs", new Input(sId + "-inputS", {
+				this.addAggregation("_inputs", new CustomNumericInput(sId + "-inputS", {
 					type: InputType.Number,
 					tooltip: this._oResourceBundle.getText("TIMEPICKER_INPUTS_ENTER_SECONDS"),
 					textAlign: TextAlign.Center,
@@ -746,6 +750,22 @@ sap.ui.define([
 			}
 
 		};
+
+		/* Numeric Input override */
+
+		var CustomNumericInputRenderer = Renderer.extend(InputRenderer);
+
+		CustomNumericInputRenderer.apiVersion = 2;
+
+		CustomNumericInputRenderer.writeInnerAttributes = function(oRm, oControl) {
+			InputRenderer.writeInnerAttributes.call(this, oRm, oControl);
+			oRm.attr("pattern", "[0-9]*");
+			oRm.attr("inputmode", "numeric");
+		};
+
+		var CustomNumericInput = Input.extend("sap.m.internal.CustomNumericInput", {
+			renderer: CustomNumericInputRenderer
+		});
 
 		return TimePickerInputs;
 	});
