@@ -21,9 +21,10 @@ sap.ui.define([
 	var _getUITableItems = function (oTable, bSelectedOnly) {
 		var aSelectedIndices = _getUITableSelectionHandler(oTable).getSelectedIndices();
 
-		var aSelectedContexts = oTable._getContexts().filter(function (oContext, i) {
-			return aSelectedIndices.indexOf(i) >= 0;
-		});
+		var aSelectedContexts = aSelectedIndices.reduce(function(aResult, iCurrent) {
+			var oContext = oTable.getContextByIndex(iCurrent);
+			return oContext ? aResult.concat(oContext) : aResult;
+		}, []);
 
 		var aResult = oTable.getRows().filter(function (oRow) {
 			var oRowBindingContext = oRow.getBindingContext();
