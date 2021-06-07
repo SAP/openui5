@@ -3354,6 +3354,9 @@ sap.ui.define([
 			return this.oTable._fullyInitialized().then(function() {
 				assert.ok(that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar exists");
 				assert.ok(!that.getFilterInfoBar().getVisible(), "No initial filter conditions: Filter info bar is invisible");
+				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
+					return sId === that.getFilterInfoText().getId();
+				}).length, 0, "When the filter info bar is invisible its text is not in the \"ariaLabelledBy\" association of the table");
 			}).then(function() {
 				that.oTable.destroy();
 				that.oTable = new Table({
@@ -3431,6 +3434,9 @@ sap.ui.define([
 				});
 				assert.ok(that.hasFilterInfoBar(), "Filter conditions removed: Filter info bar exists");
 				assert.ok(!that.getFilterInfoBar().getVisible(), "Filter conditions removed: Filter info bar is invisible");
+				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
+					return sId === that.getFilterInfoText().getId();
+				}).length, 0, "When the filter info bar is invisible its text is not in the \"ariaLabelledBy\" association of the table");
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
 				that.oTable.setFilterConditions({
@@ -3482,6 +3488,9 @@ sap.ui.define([
 				that.oTable.setP13nMode(["Column", "Sort"]);
 				assert.ok(that.hasFilterInfoBar(), "Filter disabled: Filter info bar exists");
 				assert.ok(!oFilterInfoBar.getVisible(), "Filter disabled: Filter info bar is invisible");
+				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
+					return sId === that.getFilterInfoText().getId();
+				}).length, 0, "When the filter info bar is invisible its text is not in the \"ariaLabelledBy\" association of the table");
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
 				that.oTable.destroy();
@@ -3496,12 +3505,22 @@ sap.ui.define([
 
 		this.oTable.destroy();
 		this.oTable = new Table({
-			p13nMode: ["Filter"]
+			p13nMode: ["Filter"],
+			filterConditions: {
+				name: [
+					{
+						isEmpty: null,
+						operator: "EQ",
+						validated: "NotValidated",
+						values: ["test"]
+					}
+				]
+			}
 		});
 
 		return this.oTable.initialized().then(function() {
 			that.oTable.setType("ResponsiveTable");
-			return that.oTable.initialized();
+			return that.oTable._fullyInitialized();
 		}).then(function() {
 			assert.ok(that.hasFilterInfoBar(), "Changed from \"Table\" to \"ResponsiveTable\": Filter info bar exists");
 			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
@@ -3510,7 +3529,7 @@ sap.ui.define([
 						  + " table");
 		}).then(function() {
 			that.oTable.setType("Table");
-			return that.oTable.initialized();
+			return that.oTable._fullyInitialized();
 		}).then(function() {
 			assert.ok(that.hasFilterInfoBar(), "Changed from \"ResponsiveTable\" to \"Table\": Filter info bar exists");
 			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
