@@ -90,11 +90,7 @@ sap.ui.define([
 			rm.openStart("tr").class("sapUiGridTitle").openEnd();
 			rm.openStart("th").attr("colspan", iTitleCells).openEnd();
 
-			var sSize;
-			if (!oToolbar) {
-				sSize = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
-			}
-			this.renderHeader(rm, oToolbar, oTitle, undefined, false, sSize, oForm.getId());
+			this.renderHeader(rm, oToolbar, oTitle, undefined, false, oLayout._sFormTitleSize, oForm.getId());
 			rm.close("th");
 			rm.close("tr");
 		}
@@ -165,7 +161,7 @@ sap.ui.define([
 			}
 
 			rm.openEnd();
-			this.renderHeader(rm, oToolbar, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, false, oContainer.getId());
+			this.renderHeader(rm, oToolbar, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, oLayout._sFormSubTitleSize, oContainer.getId());
 			rm.close("td");
 			rm.close("tr");
 		}
@@ -271,7 +267,7 @@ sap.ui.define([
 			}
 			rm.openEnd();
 			if (oContainer1) {
-				this.renderHeader(rm, oToolbar1, oTitle1, oContainer1._oExpandButton, bExpandable1, false, oContainer1.getId());
+				this.renderHeader(rm, oToolbar1, oTitle1, oContainer1._oExpandButton, bExpandable1, oLayout._sFormSubTitleSize, oContainer1.getId());
 			}
 			rm.close("td");
 			rm.openStart("td").openEnd().close("td");
@@ -287,7 +283,7 @@ sap.ui.define([
 			}
 			rm.openEnd();
 			if (oContainer2) {
-				this.renderHeader(rm, oToolbar2, oTitle2, oContainer2._oExpandButton, bExpandable2, false, oContainer2.getId());
+				this.renderHeader(rm, oToolbar2, oTitle2, oContainer2._oExpandButton, bExpandable2, oLayout._sFormSubTitleSize, oContainer2.getId());
 			}
 			rm.close("td");
 			rm.close("tr");

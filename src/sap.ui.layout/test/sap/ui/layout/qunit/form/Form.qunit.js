@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/VariantLayoutData",
 	"sap/ui/core/Title",
+	'sap/ui/core/theming/Parameters',
 	"sap/m/library",
 	"sap/m/Toolbar",
 	"sap/m/Title",
@@ -34,6 +35,7 @@ sap.ui.define([
 		coreLibrary,
 		VariantLayoutData,
 		Title,
+		Parameters,
 		mLibrary,
 		Toolbar,
 		mTitle,
@@ -181,6 +183,36 @@ sap.ui.define([
 
 		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 		assert.notOk(window.document.getElementById("F1--title"), "no Title rendered");
+	});
+
+	QUnit.test("Title with async Theme-Parameter loading", function(assert) {
+		var fnCallback;
+		sinon.stub(Parameters, "get").callsFake(function(vName, oElement) {
+			if (vName instanceof Object && !Array.isArray(vName) && Array.isArray(vName.name) && vName.name[0] === 'sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize') {
+				fnCallback = vName.callback;
+				return undefined;
+			} else {
+				return Parameters.get.wrappedMethod(arguments);
+			}
+		});
+
+		oForm.setTitle("Test");
+		sap.ui.getCore().applyChanges();
+		assert.ok(window.document.getElementById("F1--title"), "Title rendered");
+		assert.equal(jQuery("#F1--title").text(), "Test", "Title rendered");
+		assert.ok(jQuery("#F1--title").is("h4"), "Title is rendered as H4 as default");
+
+		fnCallback({
+			"sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize": "H1",
+			"sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize": "H2"
+		});
+
+		sap.ui.getCore().applyChanges();
+		assert.ok(window.document.getElementById("F1--title"), "Title rendered");
+		assert.equal(jQuery("#F1--title").text(), "Test", "Title rendered");
+		assert.ok(jQuery("#F1--title").is("h1"), "Title is rendered as H1");
+
+		Parameters.get.restore();
 	});
 
 	QUnit.test("ariaLabelledBy", function(assert) {
@@ -342,7 +374,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.ok(window.document.getElementById("FC1--title"), "Title rendered");
 		assert.equal(jQuery("#FC1--title").text(), "Test", "Title rendered");
-		assert.ok(jQuery("#FC1--title").is("h4"), "Title is rendered as H4 as default");
+		assert.ok(jQuery("#FC1--title").is("h5"), "Title is rendered as H5 as default");
 		assert.ok(!jQuery("#FC1--title").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
 		assert.equal(jQuery("#FC1").attr("role"), "form", "role \"form\" set");
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "FC1--title", "aria-labelledby points to Title");
@@ -363,7 +395,7 @@ sap.ui.define([
 
 		assert.ok(window.document.getElementById("T1"), "Title rendered");
 		assert.equal(jQuery("#T1").text(), "Test", "Title rendered");
-		assert.ok(jQuery("#T1").is("h4"), "Title is rendered as H4 as default");
+		assert.ok(jQuery("#T1").is("h5"), "Title is rendered as H5 as default");
 		assert.notOk(jQuery("#T1").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
 		assert.notOk(jQuery("#T1").attr("title"), "Title: no tooltip rendered per default");
 		assert.notOk(window.document.getElementById("T1-ico"), "Title no image is rendered");
@@ -421,6 +453,38 @@ sap.ui.define([
 
 		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 		assert.notOk(window.document.getElementById("F1--title"), "no Title rendered");
+	});
+
+	QUnit.test("Title with async Theme-Parameter loading", function(assert) {
+		var fnCallback;
+		sinon.stub(Parameters, "get").callsFake(function(vName, oElement) {
+			if (vName instanceof Object && !Array.isArray(vName) && Array.isArray(vName.name) && vName.name[0] === 'sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize') {
+				fnCallback = vName.callback;
+				return undefined;
+			} else {
+				return Parameters.get.wrappedMethod(arguments);
+			}
+		});
+
+		var oFormContainer1 = new FormContainer("FC1");
+		oFormContainer1.setTitle("Test");
+		oForm.addFormContainer(oFormContainer1);
+		sap.ui.getCore().applyChanges();
+		assert.ok(window.document.getElementById("FC1--title"), "Title rendered");
+		assert.equal(jQuery("#FC1--title").text(), "Test", "Title rendered");
+		assert.ok(jQuery("#FC1--title").is("h5"), "Title is rendered as H5 as default");
+
+		fnCallback({
+			"sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize": "H1",
+			"sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize": "H2"
+		});
+
+		sap.ui.getCore().applyChanges();
+		assert.ok(window.document.getElementById("FC1--title"), "Title rendered");
+		assert.equal(jQuery("#FC1--title").text(), "Test", "Title rendered");
+		assert.ok(jQuery("#FC1--title").is("h2"), "Title is rendered as H2");
+
+		Parameters.get.restore();
 	});
 
 	QUnit.test("ariaLabelledBy", function(assert) {
