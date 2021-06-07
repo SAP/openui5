@@ -1,0 +1,50 @@
+{
+  "1.92.0": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "3e5c8e4534048f0c5da1dcf659db80675d5b0ae6",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Scrolling to the focused element is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170128593"
+          }
+        ]
+      },
+      {
+        "id": "37e78385ee2715e47633c104c18ab7f74779acd4",
+        "type": "FIX",
+        "text": " Integration cards: Header visibility change now invalidates the whole card",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170074698"
+          }
+        ]
+      },
+      {
+        "id": "2ff835dfeac9d5baf027145611ddd4ed6cfacb7c",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: IE 11 de support in css"
+      },
+      {
+        "id": "0fdbece63506986fe06bcb97ae111dd8d954ac90",
+        "type": "FEATURE",
+        "text": " core/routing: Introduce Placeholder"
+      },
+      {
+        "id": "4e488bb4cc65c558519443019389a550c0740d43",
+        "type": "FIX",
+        "text": " Card Playground - CalendarInCard: horizontal scrollbar removed for small sizes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170139025"
+          }
+        ]
+      }
+    ]
+  }
+}
