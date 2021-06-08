@@ -410,6 +410,10 @@ function(
 	};
 
 	InputBase.prototype.onAfterRendering = function() {
+		var sValueState = this.getValueState();
+		var bIsFocused = this.getFocusDomRef() === document.activeElement;
+		var bClosedValueState = sValueState === ValueState.None;
+
 		// maybe control is invalidated on keystrokes and
 		// even the value property did not change
 		// dom value is still the old value
@@ -434,10 +438,8 @@ function(
 		// rendering phase is finished
 		this.bRenderingPhase = false;
 
-		if (this.shouldValueStateMessageBeOpened()) {
-			this.openValueStateMessage();
-		} else {
-			this.closeValueStateMessage();
+		if (bIsFocused) {
+			this[bClosedValueState ? "closeValueStateMessage" : "openValueStateMessage"]();
 		}
 
 		if (this.getAggregation("_invisibleFormattedValueStateText")) {
