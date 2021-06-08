@@ -312,6 +312,8 @@ sap.ui.define([
 				]);
 
 				this._oObserver = new ManagedObjectObserver(this.observerChanges.bind(this));
+
+				this.setSizeLimit(1000000); // SizeLimit should be set on Model the control is bound to, the ManagedObjectModel should not limit aggregations inside.
 			}
 		});
 
