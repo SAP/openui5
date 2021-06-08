@@ -11,18 +11,18 @@ sap.ui.define([
 	"./FeedInputRenderer",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/URLListValidator",
-	"sap/base/security/sanitizeHTML"
+	"sap/base/security/sanitizeHTML",
+	"sap/m/Avatar",
+	"sap/m/AvatarShape",
+	"sap/m/AvatarSize"
 ],
-	function(library, Control, IconPool, TextArea, Button, FeedInputRenderer, jQuery, URLListValidator, sanitizeHTML0) {
+	function(library, Control, IconPool, TextArea, Button, FeedInputRenderer, jQuery, URLListValidator, sanitizeHTML0, Avatar,
+		AvatarShape, AvatarSize) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
-	// shortcut for sap.m.Avatar
-	var Avatar = library.Avatar;
-	var AvatarSize = library.AvatarSize;
-	var AvatarShape = library.AvatarShape;
 
 	var MAX_ROWS = 15,
 		MIN_ROWS = 2,
@@ -154,6 +154,12 @@ sap.ui.define([
 			 * Deprecated as of version 1.88. This will not have any effect in code now.
 			 */
 			ariaLabelForPicture : {type : "string", group : "Accessibility", defaultValue : null}
+		},
+		aggregations : {
+			/**
+			* Defines the inner avatar control.
+			 */
+			_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" }
 		},
 		events : {
 
@@ -498,10 +504,10 @@ sap.ui.define([
 	 * @returns {sap.m.Avatar} The Avatar control
 	 */
 	FeedInput.prototype._getAvatar = function() {
-		var sIcon = this.getIcon();
-		var sIconSrc = sIcon ? sIcon : IconPool.getIconURI("person-placeholder");
+		var sIconSrc = this.getIcon();
 		var sId = this.getId() + '-icon';
 
+		this.oAvatar = this.getAggregation("_avatar");
 		if (!this.oAvatar) {
 			this.oAvatar = new Avatar({
 				id: sId,
@@ -517,6 +523,8 @@ sap.ui.define([
 				.setInitials(this.getIconInitials())
 				.setDisplaySize(this.getIconSize());
 		}
+
+		this.setAggregation("_avatar", this.oAvatar);
 
 		return this.oAvatar;
 	};
