@@ -185,6 +185,7 @@
 			delegate="{ name: 'sap/ui/mdc/sample/TableWithFilterBar/Books.Table.delegate', payload: {collectionName: 'Books'}}"
 			type="ResponsiveTable"
 			p13nMode="Column,Sort,Filter"
+			selectionMode="Multi"
 			height="100%">
 		<mdc:columns>
 			<mdcTable:Column id="_ID" header="ID" dataProperty="ID">

@@ -111,8 +111,12 @@ sap.ui.define([
 
 	function addSearchParameter(oTable, oBindingInfo) {
 		var oFilter = Core.byId(oTable.getFilter());
-		var mConditions = oFilter ? oFilter.getConditions() : undefined;
-		var sSearchText = oFilter ? oFilter.getSearch() : undefined;
+		if (!oFilter) {
+			return;
+		}
+
+		var sSearchText = oFilter.getSearch();
+		var mConditions = oFilter.getConditions();
 
 		if (mConditions) {
 			var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
@@ -121,11 +125,7 @@ sap.ui.define([
 			}
 		}
 
-		if (sSearchText) {
-			oBindingInfo.parameters = {
-				"$search": sSearchText
-			};
-		}
+		oBindingInfo.parameters["$search"] = sSearchText || undefined;
 	}
 
 	TestTableDelegate.fetchProperties = function(oTable) {
