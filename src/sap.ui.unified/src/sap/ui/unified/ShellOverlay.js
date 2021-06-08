@@ -304,7 +304,7 @@ sap.ui.define([
 	};
 
 	ShellOverlay.prototype._getAnimActive = function(){
-		if (!this._animation || (Device.browser.internet_explorer && Device.browser.version < 10)) {
+		if (!this._animation) {
 			return false;
 		}
 		return true;

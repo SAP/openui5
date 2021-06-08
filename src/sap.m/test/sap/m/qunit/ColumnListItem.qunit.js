@@ -130,29 +130,6 @@ sap.ui.define([
 		table.destroy();
 	});
 
-	QUnit.test("RenderOulineClassButNotLegacyOutlineClass", function(assert) {
-		this.stub(Device.system, "desktop", true);
-		this.stub(Device, "browser", {"msie": true});
-
-		// SUT
-		var sut = new ColumnListItem(),
-			column = new Column(),
-			table = new Table({
-				columns : column,
-				items : sut
-			});
-
-		table.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		// Assert
-		assert.ok(sut.$().hasClass("sapMLIBFocusable"), "Outline class is added");
-		assert.ok(!sut.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
-
-		//Cleanup
-		table.destroy();
-	});
-
 	QUnit.test("Test for correct column id", function(assert) {
 		var oCLI = new ColumnListItem({
 			cells: [

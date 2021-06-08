@@ -2,6 +2,7 @@
 	controllerName="sap.m.sample.TableStrictLayout.Table"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
+	xmlns:plugins="sap.m.plugins"
 	xmlns="sap.m">
 	<Table id="idProductsTable"
 		fixedLayout="Strict"
@@ -14,6 +15,9 @@
 				path: 'Name'
 			}
 		}">
+		<dependents>
+			<plugins:ColumnResizer/>
+		</dependents>
 		<columns>
 			<Column
 				width="12em">
@@ -44,7 +48,8 @@
 				<cells>
 					<ObjectIdentifier
 						title="{Name}"
-						text="{ProductId}"/>
+						text="{ProductId}"
+						class="sapUiTinyMarginTopBottom"/>
 					<Text
 						text="{SupplierName}" />
 					<Text

@@ -466,7 +466,7 @@ sap.ui.define([
 		}
 
 		var duration = parseInt(Parameters.get("_sap_ui_unified_ShellLayout_AnimDuration"));
-		if (!this._animation || (Device.browser.internet_explorer && Device.browser.version < 10)) {
+		if (!this._animation) {
 			duration = 0;
 		}
 

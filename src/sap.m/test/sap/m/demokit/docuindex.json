@@ -2840,7 +2840,7 @@
 		{
 			"id": "sap.m.sample.TableStrictLayout",
 			"name": "Table - Strict layout",
-			"description": "This example demonstrates the Strict layout of the table."
+			"description": "This example demonstrates the Strict layout and the column resizing of the table."
 		},
 		{
 		  "id": "sap.m.sample.ActionListItem",

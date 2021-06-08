@@ -634,7 +634,9 @@ function(
 	function createVirtualItem(oList) {
 		var oBinding = oList.getBinding("items");
 		var oBindingInfo = oList.getBindingInfo("items");
-		var oVirtualContext = oBinding.getContexts(0, oList.getGrowing() ? oList.getGrowingThreshold() : oBindingInfo.length)[0];
+		var iLen = oList.getGrowing() ? oList.getGrowingThreshold() : oBindingInfo.length;
+		var iIdx = oList.getGrowing() || !oBindingInfo.startIndex ? 0 : oBindingInfo.startIndex;
+		var oVirtualContext = oBinding.getContexts(iIdx, iLen)[0];
 
 		destroyVirtualItem(oList);
 		oList._oVirtualItem = GrowingEnablement.createItem(oVirtualContext, oBindingInfo, "virtual");
