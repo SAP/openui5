@@ -1027,7 +1027,7 @@ sap.ui.define([
 				var _newWidth = $fp.outerWidth() - _buttonWidth;
 				if (_newWidth < 0) {
 					this.oFilePath.getDomRef().style.width = "0px";
-					if (this.oFileUpload && !Device.browser.internet_explorer) {
+					if (this.oFileUpload) {
 						this.oFileUpload.style.width = $b.outerWidth(true);
 					}
 				} else {
@@ -1238,16 +1238,16 @@ sap.ui.define([
 	};
 
 	FileUploader.prototype.sendFiles = function(aXhr, iIndex) {
-
 		var that = this;
-
 		var bAllPosted = true;
+
 		for (var i = 0; i < aXhr.length; i++) {
 			if (!aXhr[i].bPosted) {
 				bAllPosted = false;
 				break;
 			}
 		}
+
 		if (bAllPosted) {
 			if (this.getSameFilenameAllowed() && this.getUploadOnChange()) {
 				that.setValue("", true);
@@ -1257,16 +1257,6 @@ sap.ui.define([
 
 		var oXhr = aXhr[iIndex];
 		var sFilename = oXhr.file.name ? oXhr.file.name : "MultipartFile";
-
-		if ((Device.browser.edge || Device.browser.internet_explorer) && oXhr.file.type && oXhr.xhr.readyState == 1
-			&& !oXhr.requestHeaders.filter(function(oHeader) {
-				return oHeader.name.toLowerCase() == "content-type";
-			}).length) {
-			var sContentType = oXhr.file.type;
-			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
-			oXhr.requestHeaders.push({ name: "Content-Type", value: sContentType });
-		}
-
 		var oRequestHeaders = oXhr.requestHeaders;
 
 		var fnProgressListener = function(oProgressEvent) {
@@ -1504,27 +1494,22 @@ sap.ui.define([
 			if (this.oFileUpload) {
 				this.setValue("", true);
 			}
-		} else if (iKeyCode === eKC.SPACE) {
-			// this does not work for IE9 and downwards! TODO: check with IE10/11
-			// consider to always put the focus on the hidden file uploader
-			// and let the fileuploader manager the keyboard interaction
-			if (!(!!Device.browser.internet_explorer && Device.browser.version <= 9) && this.oFileUpload) {
-				this.oFileUpload.click();
-				oEvent.preventDefault();
-				oEvent.stopPropagation();
-			}
+		} else if (iKeyCode == eKC.SPACE || iKeyCode == eKC.ENTER) {
+			this.oFileUpload.click();
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
 		} else if (iKeyCode !== eKC.TAB &&
-			iKeyCode !== eKC.SHIFT &&
-			iKeyCode !== eKC.F6 &&
-			iKeyCode !== eKC.PAGE_UP &&
-			iKeyCode !== eKC.PAGE_DOWN &&
-			iKeyCode !== eKC.ESCAPE &&
-			iKeyCode !== eKC.END &&
-			iKeyCode !== eKC.HOME &&
-			iKeyCode !== eKC.ARROW_LEFT &&
-			iKeyCode !== eKC.ARROW_UP &&
-			iKeyCode !== eKC.ARROW_RIGHT &&
-			iKeyCode !== eKC.ARROW_DOWN) {
+					iKeyCode !== eKC.SHIFT &&
+					iKeyCode !== eKC.F6 &&
+					iKeyCode !== eKC.PAGE_UP &&
+					iKeyCode !== eKC.PAGE_DOWN &&
+					iKeyCode !== eKC.ESCAPE &&
+					iKeyCode !== eKC.END &&
+					iKeyCode !== eKC.HOME &&
+					iKeyCode !== eKC.ARROW_LEFT &&
+					iKeyCode !== eKC.ARROW_UP &&
+					iKeyCode !== eKC.ARROW_RIGHT &&
+					iKeyCode !== eKC.ARROW_DOWN) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
@@ -1609,14 +1594,13 @@ sap.ui.define([
 			// returning the filename only - we strip this path now
 			var sValue = this.oFileUpload.value || "";
 			var iIndex = sValue.lastIndexOf("\\");
+
 			if (iIndex >= 0) {
 				sValue = sValue.substring(iIndex + 1);
 			}
+
 			if (this.getMultiple()) {
-				//multiple is not supported in IE <= 9
-				if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
-					sValue = sFileString;
-				}
+				sValue = sFileString;
 			}
 
 			//sValue has to be filled to avoid clearing the FilePath by pressing cancel
@@ -1906,11 +1890,9 @@ sap.ui.define([
 	 * @private
 	 */
 	FileUploader.prototype.prepareFileUploadAndIFrame = function() {
-
 		this._prepareFileUpload();
 
 		if (!this.oIFrameRef) {
-
 			// create the upload iframe
 			var oIFrameRef = document.createElement("iframe");
 			oIFrameRef.style.display = "none";
@@ -1944,7 +1926,6 @@ sap.ui.define([
 
 	FileUploader.prototype._prepareFileUpload = function() {
 		if (!this.oFileUpload) {
-
 			// create the file uploader markup
 			var aFileUpload = [];
 			aFileUpload.push('<input ');
@@ -1952,31 +1933,24 @@ sap.ui.define([
 			aFileUpload.push('aria-hidden="true" ');
 			if (this.getName()) {
 				if (this.getMultiple()) {
-					//multiple is not supported in IE <= 9
-					if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
-						aFileUpload.push('name="' + encodeXML(this.getName()) + '[]" ');
-					}
+					aFileUpload.push('name="' + encodeXML(this.getName()) + '[]" ');
 				} else {
 					aFileUpload.push('name="' + encodeXML(this.getName()) + '" ');
 				}
 			} else {
 				if (this.getMultiple()) {
-					//multiple is not supported in IE <= 9
-					if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
-						aFileUpload.push('name="' + this.getId() + '[]" ');
-					}
+					aFileUpload.push('name="' + this.getId() + '[]" ');
 				} else {
 					aFileUpload.push('name="' + this.getId() + '" ');
 				}
 			}
 			aFileUpload.push('id="' + this.getId() + '-fu" ');
-			if (!(!!Device.browser.internet_explorer && Device.browser.version == 9)) {
-				// for IE9 the file uploader itself gets the focus to make sure that the
-				// keyboard interaction works and there is no security issue - unfortunately
-				// this has the negative side effect that 2 tabs are required.
-				aFileUpload.push('tabindex="-1" ');
-			}
+			// for IE9 the file uploader itself gets the focus to make sure that the
+			// keyboard interaction works and there is no security issue - unfortunately
+			// this has the negative side effect that 2 tabs are required.
+			aFileUpload.push('tabindex="-1" ');
 			aFileUpload.push('size="1" ');
+
 			if (this.getTooltip_AsString() ) {
 				aFileUpload.push('title="' + encodeXML(this.getTooltip_AsString()) + '" ');
 			//} else if (this.getTooltip() ) {
@@ -1985,15 +1959,15 @@ sap.ui.define([
 				// only if there is no tooltip, then set value as fallback
 				aFileUpload.push('title="' + encodeXML(this.getValue()) + '" ');
 			}
+
 			if (!this.getEnabled()) {
 				aFileUpload.push('disabled="disabled" ');
 			}
+
 			if (this.getMultiple()) {
-				//multiple is not supported in IE <= 9
-				if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
-					aFileUpload.push('multiple ');
-				}
+				aFileUpload.push('multiple ');
 			}
+
 			if ((this.getMimeType() || this.getFileType()) && window.File) {
 				var sAcceptedTypes = this._getAcceptedTypes();
 				aFileUpload.push('accept="' + encodeXML(sAcceptedTypes) + '" ');
@@ -2069,8 +2043,8 @@ sap.ui.define([
 	 *
 	 * This is a default implementation of the interface <code>sap.ui.unified.IProcessableBlobs</code>.
 	 *
-         * @public
-         * @since 1.52
+	 * @public
+	 * @since 1.52
 	 * @param {Blob[]} aBlobs The initial Blobs which can be used to determine/calculate a new array of Blobs for further processing.
 	 * @return {Promise} A Promise that resolves with an array of Blobs which is used for the final uploading.
 	 */
