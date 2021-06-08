@@ -620,10 +620,6 @@ function(
 			this.setProperty("width", "100%", true);
 		}
 
-		if (this._oSuggPopover) {
-			this._oSuggPopover._resetTypeAhead();
-		}
-
 		if (bSuggestionsPopoverIsOpen && ((this.getValueStateText() && sValueStateHeaderText !== this.getValueStateText()) ||
 			(this.getValueState() !== sValueStateHeaderValueState) ||
 			(this.getFormattedValueStateText()))) {
@@ -2352,6 +2348,7 @@ function(
 		this._iSetCount++;
 		InputBase.prototype.setValue.call(this, sValue);
 		this._onValueUpdated(sValue);
+		this._sTypedInValue = "";
 		return this;
 	};
 
