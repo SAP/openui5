@@ -556,33 +556,28 @@ sap.ui.define([
 
 	QUnit.test("State element is being referenced", function (assert) {
 		// Arrange
-		var oText = new sap.m.Text("description", {text: "test"});
-		var oObjectStatus = new ObjectStatus("os", {
-			text: "Something",
-			ariaDescribedBy: oText
+		var sId = "os",
+			oObjectStatus = new ObjectStatus(sId, {
+			text: "Something"
 		});
 
-		oText.placeAt("qunit-fixture");
 		oObjectStatus.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.notOk(oObjectStatus._oInvisibleText, "Hidden state element has not been created");
-		assert.strictEqual(oObjectStatus.$().attr("aria-describedby"), "description",
-			"There should be 1 ID (only Text id) in aria-describedby");
+		assert.notOk(document.getElementById(sId + "-state"), "Hidden state text element has not been created");
 
 		// Act
 		oObjectStatus.setState(ValueState.Error);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.ok(oObjectStatus._oInvisibleText, "Hidden state element has been created");
-		assert.strictEqual(oObjectStatus.$().attr("aria-describedby"), "description" + " " + oObjectStatus._oInvisibleText.getId(),
-			"There should be 2 ID (Text and InvisibleText) in aria-describedby");
+		assert.ok(document.getElementById(sId + "-state"), "Hidden state text element has been created");
+		assert.strictEqual(document.getElementById(sId + "-state").innerHTML, oObjectStatus._getStateText(ValueState.Error),
+			"The value of the hidden state text element is proper");
 
 		//Cleanup
 		oObjectStatus.destroy();
-		oText.destroy();
 	});
 
 	QUnit.test("Internal icon ARIA for icon-only ObjectStatus", function (assert) {
