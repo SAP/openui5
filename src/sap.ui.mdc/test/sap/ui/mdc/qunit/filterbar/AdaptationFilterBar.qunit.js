@@ -679,11 +679,13 @@ sap.ui.define([
 			items: [
 				{
 					name: "key1",
-					visible: true
+					visible: true,
+					visibleInDialog: true
 				},
 				{
 					name: "key2",
-					visible: false
+					visible: false,
+					visibleInDialog: true
 				}
 			]
 		}));

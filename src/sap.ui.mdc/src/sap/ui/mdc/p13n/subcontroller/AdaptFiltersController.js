@@ -75,6 +75,7 @@ sap.ui.define([
             var oExistingProperty = mExistingProperties[oProperty.name];
             var aExistingFilters = mExistingFilters[oProperty.name];
             oItem.visible = oExistingProperty ? true : false;
+            oItem.visibleInDialog = true;
             oItem.selected = oItem.visible;
             oItem.position = oExistingProperty ? oExistingProperty.position : -1;
             oItem.isFiltered = aExistingFilters && aExistingFilters.length > 0 ? true : false;

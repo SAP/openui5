@@ -46,7 +46,9 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc"
 		},
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	GroupView.prototype.init = function() {
@@ -218,7 +220,6 @@ sap.ui.define([
 			];
 
 			return new CustomListItem({
-				visible: "{" + this.P13N_MODEL + ">visibleInDialog}",
 				selected: "{" + this.P13N_MODEL + ">visible}",
 				tooltip: "{" + this.P13N_MODEL + ">tooltip}",
 				content: aInnerListItemContent
@@ -331,7 +332,7 @@ sap.ui.define([
 	};
 
 	GroupView.prototype.filterWithoutDestroy = function(aFilter) {
-		if (deepEqual(aFilter, this._aCurrentFilters)) {
+		if (!this._bInitialized || deepEqual(aFilter, this._aCurrentFilters)) {
 			return;
 		}
 

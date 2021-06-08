@@ -8,31 +8,7 @@ sap.ui.define([
 ], function(GroupView, P13nBuilder, JSONModel, PropertyHelper, VBox) {
     "use strict";
 
-    var oMockExisting = {
-        items: [
-            {
-                name: "key1"
-            },
-            {
-                name: "key2",
-                isFiltered: true
-            },
-            {
-                name: "key3"
-            }
-        ],
-        filter: {
-            key2: [
-                {
-                    operator: "EQ",
-                    values: [
-                        "Test"
-        ]
-                }
-            ]
-
-        }
-    };
+    var aVisible = ["key1", "key2", "key3"];
 
     var aInfoData = [
         {
@@ -70,7 +46,6 @@ sap.ui.define([
 
     QUnit.module("API Tests", {
         beforeEach: function(){
-            this.oExistingMock = oMockExisting;
             this.aMockInfo = aInfoData;
             this.oGroupView = new GroupView();
 
@@ -78,14 +53,20 @@ sap.ui.define([
                 return new VBox();
             });
 
-            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+            var fnEnhancer = function(mItem, oProperty) {
+                if (oProperty.name == "key2") {
+                    mItem.isFiltered = true;
+                }
+                mItem.visible = aVisible.indexOf(oProperty.name) > -1;
+                return true;
+            };
+            this.oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, fnEnhancer, true);
 
             this.oGroupView.placeAt("qunit-fixture");
             sap.ui.getCore().applyChanges();
         },
         afterEach: function(){
             this.sDefaultGroup = null;
-            this.oExistingMock = null;
             this.oP13nData = null;
             this.aMockInfo = null;
             this.oGroupView.destroy();
@@ -134,7 +115,7 @@ sap.ui.define([
         assert.equal(oOuterList.getInfoToolbar().getContent().length, 1, "Only one column");
     });
 
-    QUnit.test("Check 'ctive' icon'", function(assert){
+    QUnit.test("Check 'active' icon'", function(assert){
         this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
 
         //Go in 'active' with icon view --> hide filter fields
