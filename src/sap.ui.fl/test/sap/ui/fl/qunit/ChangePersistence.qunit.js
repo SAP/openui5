@@ -1,4 +1,5 @@
 /*global QUnit*/
+/* eslint-disable no-implicit-globals */
 var iOriginalMaxDepth = QUnit.dump.maxDepth;
 QUnit.dump.maxDepth = 10;
 

@@ -1,4 +1,5 @@
 /* eslint strict: [2, "global"] */
+/* eslint-disable no-implicit-globals */
 "use strict";
 function updateStatus(bSuccess) {
 	document.getElementById("status").innerHTML = "Framing has been " + (bSuccess ? "allowed" : "denied") + "!";

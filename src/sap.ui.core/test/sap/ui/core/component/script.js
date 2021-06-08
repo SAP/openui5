@@ -1,4 +1,5 @@
 /* exported main */
+/* eslint-disable no-implicit-globals */
 function main() {
 	"use strict";
 

@@ -1,4 +1,5 @@
 /* eslint strict: [2, "global"] */
+/* eslint-disable no-implicit-globals */
 /* exported aLocales, aRTLLocales, LocaleListItem, indent, formatValue, formatObject, validateFormatOptions, Options, bindHash, showError */
 
 "use strict";

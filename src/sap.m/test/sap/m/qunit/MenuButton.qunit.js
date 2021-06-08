@@ -748,7 +748,7 @@ sap.ui.define([
 		this.sut.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		fnFireDefaultAction = sinon.spy(this.sut, "fireDefaultAction");
+		var fnFireDefaultAction = sinon.spy(this.sut, "fireDefaultAction");
 		this.sut.getAggregation('_button').firePress();
 
 		this.clock.tick(1000);

@@ -1,3 +1,4 @@
+/* eslint-disable no-implicit-globals */
 var input = document.querySelector('input');
 input.focus();
 input.parentNode.removeChild(input);

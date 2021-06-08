@@ -1,3 +1,4 @@
+/* eslint-disable no-implicit-globals */
 function iLiner() {
 	"use strict";
 	var observer = new MutationObserver(function (mutations) {

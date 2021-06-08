@@ -9,12 +9,16 @@ sap.ui.define([
 ], function(QUnitUtils, createAndAppendDiv, Page, App, Bar) {
 	createAndAppendDiv("page-content");
 
-
+	var $Page;
+	var $PageHeader;
+	var $PageSubHeader;
+	var $PageFooter;
+	var $PageSection;
 
 	var cacheAndInitializeDomRefs = function(sId) {
 
 		// global variables
-		oPage = sap.ui.getCore().byId(sId);
+		var oPage = sap.ui.getCore().byId(sId);
 		$Page = oPage.$();
 		$PageHeader = $Page.find(".sapMBar.sapMHeader-CTX");
 		$PageSubHeader = $Page.find(".sapMBar.sapMSubHeader-CTX");

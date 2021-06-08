@@ -823,7 +823,7 @@ sap.ui.define([
 		this.oMaskInputLatin.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1000);
-		sContent = "abc";
+		var sContent = "abc";
 		this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
 		this.oMaskInputHebrew.focus(); //make sure complete handler for latin mask worked-out
 		assert.equal(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");

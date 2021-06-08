@@ -81,7 +81,7 @@ sap.ui.define([
 		bEnabled = true,
 		bDisabled = false,
 		sIcon = "../images/analytics_64.png",
-		sPressMessage = "Button Tapped Event!";
+		sPressMessage = "Button Tapped Event!",
 		sTapMessage = "There is Tap Event on a Button!";
 
 	function tabEventHandler1() {
@@ -611,7 +611,7 @@ sap.ui.define([
 
 	QUnit.test("Enter event should fire press on keydown", function(assert) {
 		// System under Test
-		var pressSpy = this.spy();
+		var pressSpy = this.spy(),
 			oButton = new Button({
 				press: pressSpy
 			}).placeAt("qunit-fixture");

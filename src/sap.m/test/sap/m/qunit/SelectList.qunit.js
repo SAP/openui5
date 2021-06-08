@@ -729,6 +729,7 @@ sap.ui.define([
 	QUnit.test("getSelectedKey()", function(assert) {
 
 		// system under test
+		var oExpectedItem;
 		var oSelectList = new SelectList({
 			items: [
 				oExpectedItem = new Item({
@@ -902,6 +903,7 @@ sap.ui.define([
 	QUnit.test("getSelectedKey()", function(assert) {
 
 		// system under test
+		var oExpectedItem;
 		var oSelectList = new SelectList({
 			items: [
 				oExpectedItem = new Item({
@@ -1715,6 +1717,7 @@ sap.ui.define([
 	QUnit.test("setSelectedItem()", function(assert) {
 
 		// system under test
+		var oExpectedItem;
 		var oSelectList = new SelectList({
 			items: [
 				oExpectedItem = new Item({
@@ -2035,6 +2038,7 @@ sap.ui.define([
 	QUnit.test("setSelectedKey()", function(assert) {
 
 		// system under test
+		var oExpectedItem;
 		var oSelectList = new SelectList({
 			items: [
 				oExpectedItem = new Item({

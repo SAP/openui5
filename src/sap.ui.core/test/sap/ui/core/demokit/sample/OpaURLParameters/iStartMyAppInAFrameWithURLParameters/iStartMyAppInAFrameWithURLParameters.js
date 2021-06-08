@@ -2,16 +2,16 @@
 
 QUnit.config.autostart = false;
 
-var oAppParams = {
-	"key": "value"
-};
-
 sap.ui.require([
 	'sap/ui/test/opaQunit',
 	'sap/ui/test/Opa5',
 	'sap/ui/thirdparty/URI'
 ], function (opaTest, Opa5, URI) {
 	"use strict";
+
+	var oAppParams = {
+		"key": "value"
+	};
 
 	Opa5.extendConfig({
 		viewNamespace : "view.",

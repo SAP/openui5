@@ -1498,8 +1498,8 @@ sap.ui.define([
 		QUnit.test("Property <colors> - setColor with valid colors, but less than allowed", function (assert) {
 			// Prepare
 			var oCP = new ColorPalette(),
-				aColors = DEFAULT_COLORS.slice().concat(["#FFFAAA"]);
-			oSpySetProperty = this.spy(oCP, "setProperty");
+				aColors = DEFAULT_COLORS.slice().concat(["#FFFAAA"]),
+				oSpySetProperty = this.spy(oCP, "setProperty");
 
 			// Act
 			assert.throws(function () {

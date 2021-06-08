@@ -382,7 +382,7 @@ sap.ui.define([
 		//DateTimeInput.prototype.type property and verifies that the picker is of correct type
 		function test(sDateTimeInputId, sPattern, sExpectedCtrType) {
 			//Prepare
-			var oDateTimeInput;
+			var oDateTimeInput,
 			oView = prepare();
 			oDateTimeInput = oView.byId(sDateTimeInputId);
 

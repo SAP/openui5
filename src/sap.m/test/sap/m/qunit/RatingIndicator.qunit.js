@@ -114,6 +114,14 @@ sap.ui.define([
 
 	oApp.placeAt("content");
 
+	var oRating;
+	var $RatingContainer;
+	var $SelectedDiv;
+	var $UnselectedDiv;
+	var $UnselectedContainerDiv;
+	var $SelectorDiv;
+	var $HoveredDiv;
+
 	var init = function (sId) {
 		// global variables
 		oRating = sap.ui.getCore().byId(sId);

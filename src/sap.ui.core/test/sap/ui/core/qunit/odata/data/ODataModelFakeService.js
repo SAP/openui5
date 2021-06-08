@@ -9778,7 +9778,7 @@ sap.ui.define([], function() {
 
   return ofakeService;
 });
-
+/* eslint-disable no-implicit-globals */
 var oCustomers1 = {
 	"d" : {
 		"results": [

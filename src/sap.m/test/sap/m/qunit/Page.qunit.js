@@ -460,7 +460,7 @@ sap.ui.define([
 			var fScrollLeft, scrollEnablement = sap.ui.getCore().byId(sPageId).getScrollDelegate();
 
 			if (scrollEnablement._scroller) { // iScroll
-				$Scroll = sap.ui.getCore().byId(sPageId + "-scroll").$();
+				var $Scroll = sap.ui.getCore().byId(sPageId + "-scroll").$();
 				if (Device.browser.mozilla) {
 					fScrollLeft = $Scroll.css("-moz-transform").split(" ")[5]; // "matrix(1, 0, 0, 1, 0, -99.9999)" => "99.9999)"
 				} else if (Device.browser.safari || Device.browser.chrome) {
@@ -513,7 +513,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("ScrollToElement Parameters forwarding", function(assert) {
-			var oButton = new Button();
+			var oButton = new Button(),
 				oPage5 = new Page("myPage",{
 					content:[
 						oButton

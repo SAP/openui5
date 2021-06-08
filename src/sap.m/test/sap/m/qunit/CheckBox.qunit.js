@@ -1041,7 +1041,7 @@ sap.ui.define([
 
 		// act
 		bPartiallySelected.restore();
-		getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return false; });
+		var getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return false; });
 
 		// assertions
 		assert.equal(oCheckBox._getSelectedState(), false, "Should return false when selected = true and partiallySelected = false");
@@ -1078,7 +1078,7 @@ sap.ui.define([
 
 		// act
 		bPartiallySelected.restore();
-		getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return false; });
+		var getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return false; });
 
 		// assertions
 		assert.equal(oCheckBox._getAriaChecked(), true, "Should return true when selected = true and partiallySelected = false");

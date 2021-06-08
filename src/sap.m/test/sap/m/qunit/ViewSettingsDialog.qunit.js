@@ -3737,7 +3737,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus on sortItems is being preserved on re-rendering", function (assert) {
-		var aSortItems, sItemToSelect,
+		var aSortItems, sItemToSelect, oListItem,
 				done = assert.async();
 
 		this.oVSD.open();
