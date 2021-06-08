@@ -103,11 +103,9 @@ function(
 		}
 	};
 	Input.prototype.isA = myTypeCheck;
-	Select.prototype.isA = myTypeCheck;
 	DatePicker.prototype.isA = myTypeCheck;
 	RadioButtonGroup.prototype.isA = myTypeCheck;
 	Slider.prototype.isA = myTypeCheck;
-	CheckBox.prototype.isA = myTypeCheck;
 
 	var oLayout1 = new ColumnLayout("L1");
 	var oForm1 = new Form("F1",{
