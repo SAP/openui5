@@ -25,11 +25,22 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 	BreadcrumbsRenderer.render = function (oRm, oControl) {
 		var aControls = oControl._getControlsForBreadcrumbTrail(),
 			oSelect = oControl._getSelect(),
-			sSeparator = oControl._sSeparatorSymbol;
+			sSeparator = oControl._sSeparatorSymbol,
+			sDefaultAriaLabelledBy = oControl._getInvisibleText().getId(),
+			aAriaLabelledBy = oControl.getAriaLabelledBy().slice();
 
 		oRm.openStart("nav", oControl);
 		oRm.class("sapMBreadcrumbs");
-		oRm.attr("aria-label", BreadcrumbsRenderer._getResourceBundleText("BREADCRUMB_LABEL"));
+
+		aAriaLabelledBy.push(sDefaultAriaLabelledBy);
+
+		oRm.accessibilityState(null, {
+			labelledby: {
+				value: aAriaLabelledBy.join(" "),
+				append: true
+			}
+		});
+
 		oRm.openEnd();
 		oRm.openStart("ol");
 		oRm.openEnd();
