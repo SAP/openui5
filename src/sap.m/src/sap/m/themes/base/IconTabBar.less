@@ -1242,6 +1242,12 @@ html[dir=rtl] {
 			color: @_sap_m_IconTabBar_ShellSelectedTextColor;
 		}
 	}
+	.sapMITBFilter .sapMITBText .sapMITHTextContent {
+		vertical-align: inherit;
+	}
+	.sapMITBFilter.sapMITHUnselectable:not(.sapMITBDisabled) .sapMITHTextContent {
+		position: initial;
+	}
 
 	.sapMITBFilter {
 		.sapMITBText,
