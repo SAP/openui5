@@ -57,16 +57,19 @@ sap.ui.define([
 				this.setModel(models.createDeviceModel(), "device");
 
 				var aFontsLoaded = [];
+				var sLocalFontFolder = sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/");
 
 				var oFontConfigs = {};
 				oFontConfigs["SAP-icons"] = {
 					fontFamily: "SAP-icons",
-					fontURI: sap.ui.require.toUrl("sap/ui/core/themes/base/fonts/")
+					fontURI: sap.ui.require.toUrl("sap/ui/core/themes/base/fonts/"),
+					downloadURI: sLocalFontFolder
 				};
 
 				var oTNTConfig = {
 					fontFamily: "SAP-icons-TNT",
-					fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/")
+					fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/"),
+					downloadURI: sLocalFontFolder
 				};
 
 				// register TNT icon font
