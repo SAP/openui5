@@ -444,7 +444,7 @@ sap.ui.define([
 			// runs after all setTimeout(0) tasks scheduled from within the current task, even those
 			// that were scheduled afterwards. A simple setTimeout(n) with n > 0 is not sufficient
 			// because this doesn't help if the current task runs very long.
-			iTimeoutId = setTimeout(function() {
+			iTimeoutId = setTimeout(function () {
 				iTimeoutId = setTimeout(fnRunTasks, 0);
 			}, 0);
 		}

@@ -1140,7 +1140,7 @@ sap.ui.define([
 	 * @param {object} mFixture
 	 *   map<string, any>
 	 * @param {function} fnTest
-	 *   function(string sPath, any vResult, string sContextPath, string sMetaPath)
+	 *   function (string sPath, any vResult, string sContextPath, string sMetaPath)
 	 */
 	function forEach(mFixture, fnTest) {
 		var sPath;
@@ -2830,13 +2830,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		$Type : "Edm.Boolean"
-	},{
+	}, {
 		$Type : "Edm.Byte"
 	}, {
 		$Type : "Edm.Date"
 	}, {
 		$Type : "Edm.DateTimeOffset"
-	},{
+	}, {
 		$Precision : 7,
 		$Type : "Edm.DateTimeOffset",
 		__constraints : {precision : 7}

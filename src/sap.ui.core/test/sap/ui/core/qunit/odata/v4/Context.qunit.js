@@ -620,7 +620,7 @@ sap.ui.define([
 					getMetaModel : function () {
 						return oMetaModel;
 					},
-					resolve : function() {}
+					resolve : function () {}
 				},
 				oContext = Context.create(oModel, oBinding, "/foo", 42),
 				oType = {

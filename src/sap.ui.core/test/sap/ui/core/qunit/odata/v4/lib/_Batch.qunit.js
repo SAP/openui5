@@ -1461,11 +1461,11 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				method : "GET",
 				url : "Departments",
 				headers : { "Accept" : "application/json"}
-			},{
+			}, {
 				method : "GET",
 				url : "Unknown",
 				headers : { "Accept" : "application/json"}
-			},{
+			}, {
 				method : "GET",
 				url : "TEAMS",
 				headers : { "Accept" : "application/json"}

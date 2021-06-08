@@ -976,7 +976,7 @@ sap.ui.define([
 
 		return Promise.all(aPaths.map(function (sPath) {
 			return that.oBinding.fetchIfChildCanUseCache(that, sPath, SyncPromise.resolve({}))
-				.then(function(sReducedPath) {
+				.then(function (sReducedPath) {
 					if (sReducedPath) {
 						return fetchPrimitiveValue(that, sReducedPath, bExternalFormat);
 					}

@@ -2473,7 +2473,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{}, undefined].forEach( function(vParam) {
+[{}, undefined].forEach( function (vParam) {
 	QUnit.test("setParameter: change listeners", function (assert) {
 		var oBinding = this.bindContext("/OperationImport(...)"),
 			vValue = {};
@@ -4159,7 +4159,7 @@ sap.ui.define([
 	name : "foo",
 	path : "$Parameter/foo/bar/any",
 	update : ["foo", "bar", "any"]
-}].forEach(function(oFixture) {
+}].forEach(function (oFixture) {
 	QUnit.test("doSetProperty: operation binding path: " + oFixture.path, function (assert) {
 		var oBinding = this.bindContext("/Operation(...)"),
 			oGroupLock = {

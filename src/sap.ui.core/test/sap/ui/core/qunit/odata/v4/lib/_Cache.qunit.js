@@ -7981,7 +7981,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[null, {}].forEach(function(mLateQueryOptions, i) {
+[null, {}].forEach(function (mLateQueryOptions, i) {
 	QUnit.test("CollectionCache#requestSideEffects: nothing to do #" + i, function (assert) {
 		var mByPredicate = { // some dummy content
 				"($uid=id-1-23)" : -1,

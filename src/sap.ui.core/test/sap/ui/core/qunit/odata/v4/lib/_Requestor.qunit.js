@@ -1832,7 +1832,7 @@ sap.ui.define([
 				{"If-Match" : {/* product 0*/}}, {Name : "foo"})
 			.then(unexpected, assertError));
 		aPromises.push(oRequestor.request("PATCH", "Products('1')", this.createGroupLock(),
-				{"If-Match" : {/* product 1*/}},{Name : "foo"})
+				{"If-Match" : {/* product 1*/}}, {Name : "foo"})
 			.then(unexpected, assertError));
 		aPromises.push(oRequestor.request("GET", "Products", this.createGroupLock())
 			.then(unexpected, assertError));
