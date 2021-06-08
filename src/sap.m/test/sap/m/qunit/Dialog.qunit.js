@@ -2942,46 +2942,4 @@ sap.ui.define([
 		this.oDialog.close();
 		oStub.restore();
 	});
-
-	QUnit.test("Resize of custom Within Area. Dialog should be repositioned", function (assert) {
-		// Arrange
-		var done = assert.async();
-		var oWithinArea = createAndAppendDiv("withinArea");
-		var mStyles = {
-			position: "absolute",
-			backgroundColor: "black",
-			top: "3rem",
-			left: "3rem",
-			width: "500px",
-			height: "500px"
-		};
-
-		for (var sProp in mStyles) {
-			oWithinArea.style[sProp] = mStyles[sProp];
-		}
-
-		Popup.setWithinArea(oWithinArea);
-		this.oDialog.attachAfterOpen(function() {
-			var sCurrLeft = this.oDialog.getDomRef().style.left;
-			var oStyleObserver = new MutationObserver(function(aMutations, oObserver) {
-				// Assert
-				assert.notStrictEqual(this.oDialog.getDomRef().style.left, sCurrLeft, "Dialog wasn't repositioned when Within Area was resized");
-
-				// Clean up
-				this.oDialog.close();
-				oObserver.disconnect();
-				oWithinArea.remove();
-				Popup.setWithinArea(null);
-				done();
-			}.bind(this));
-
-			oStyleObserver.observe(this.oDialog.getDomRef(), { attributes: true, attributeFilter: ["style"] });
-
-			// Act - increase Within Area size
-			oWithinArea.style.width = "600px";
-		}.bind(this));
-
-		// Act - open the dialog
-		this.oDialog.open();
-	});
 });
