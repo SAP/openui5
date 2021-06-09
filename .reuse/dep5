@@ -355,7 +355,7 @@ Comment: these files belong to: google-code-prettify
 Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/highlight.js/*
 Copyright: 2006-2020, Ivan Sagalaev
 License: BSD-3-Clause
-Comment: these files belong to: highlights.js
+Comment: these files belong to: highlight.js
 
 Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/elasticlunr.js
 Copyright: 2017 Wei Song and Oliver Nightingale
