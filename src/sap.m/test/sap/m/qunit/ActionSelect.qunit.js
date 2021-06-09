@@ -349,6 +349,7 @@ sap.ui.define([
 		oActionSelect.open();
 		this.clock.tick(500);
 
+		qutils.triggerKeydown(oActionSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oActionSelect.getDomRef(), KeyCodes.TAB, true, false, false);
 		this.clock.tick(500);
 
@@ -358,6 +359,8 @@ sap.ui.define([
 		} else {
 			assert.ok(true);
 		}
+
+		assert.strictEqual(oActionSelect.getSelectedItem(), oActionSelect.getItems()[1], "The second item is the selected one");
 
 		// cleanup
 		oActionSelect.destroy();
