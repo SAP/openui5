@@ -2622,6 +2622,18 @@ sap.ui.define([
 
 	};
 
+	FieldValueHelp.prototype.getAriaHasPopup = function() {
+
+		if (this.getNoDialog()) {
+			return "listbox";
+		} else if (this.getShowConditionPanel()) {
+			return "dialog";
+		} else {
+			return "listbox"; // as list is only content in Popover (it has both, popver and dialog, but on typing and with arrow keys the list is opend)
+		}
+
+	};
+
 	FieldValueHelp.prototype.getValueHelpEnabled = function() {
 
 		if (this.getNoDialog()) {

@@ -1302,7 +1302,7 @@ sap.ui.define([
 			if (sRoleDescription) {
 				oAttributes.aria["roledescription"] = sRoleDescription;
 			}
-			oAttributes.aria["haspopup"] = "listbox";
+			oAttributes.aria["haspopup"] = oFieldHelp.getAriaHasPopup();
 			oAttributes["autocomplete"] = "off";
 			if (bOpen) {
 				oAttributes.aria["expanded"] = "true";
@@ -1794,6 +1794,8 @@ sap.ui.define([
 		} else {
 			_defaultFieldHelpUpdate.call(this, mDefaultHelps[sType].id);
 		}
+
+		_setAriaAttributes.call(this, false);
 
 	}
 
