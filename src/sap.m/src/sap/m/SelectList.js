@@ -254,7 +254,7 @@ sap.ui.define([
 			}
 		};
 
-		SelectList.prototype.updateItems = function(sReason) {
+		SelectList.prototype.updateItems = function(sReason, oEventInfo) {
 			this.bItemsUpdated = false;
 
 			// note: for backward compatibility and to keep the old data binding behavior,
@@ -262,6 +262,16 @@ sap.ui.define([
 			this.destroyItems();
 			this.updateAggregation("items");
 			this.bItemsUpdated = true;
+
+			// Do not try to synchronize selection when updateItems is called with reason Add/Remove VirtualContext,
+			// as in some cases, when forceSelection is "true", unwanted PATCH requests with null value may be triggered
+			if (oEventInfo && (oEventInfo.detailedReason === "AddVirtualContext"
+				|| oEventInfo.detailedReason === "RemoveVirtualContext")) {
+				this._bHasVirtualContext = true;
+				return;
+			}
+
+			this._bHasVirtualContext = false;
 
 			// Try to synchronize the selection (synchronous), but if any item's key match with the value of the "selectedKey" property,
 			// don't force the first enabled item to be selected when the forceSelection property is set to true.
@@ -610,7 +620,7 @@ sap.ui.define([
 
 			// the aggregation items is not bound or
 			// it is bound and the data is already available
-			} else if (bForceSelection && this.getDefaultSelectedItem() && (!this.isBound("items") || this.bItemsUpdated)) {
+			} else if (bForceSelection && !this._bHasVirtualContext && this.getDefaultSelectedItem() && (!this.isBound("items") || this.bItemsUpdated)) {
 				try {
 					this.setSelection(this.getDefaultSelectedItem());
 				} catch (e) {
