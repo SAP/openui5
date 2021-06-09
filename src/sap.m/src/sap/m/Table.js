@@ -1133,7 +1133,7 @@ sap.ui.define([
 		var $this = this.$(),
 			iThemeDensityWidth = 3;
 
-		if ($this.closest(".sapUiSizeCompact").length) {
+		if ($this.closest(".sapUiSizeCompact").length || jQuery(document.body).hasClass("sapUiSizeCompact")) {
 			iThemeDensityWidth = 2;
 		} else {
 			var bThemeDensityWidthFound = false;
