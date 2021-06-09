@@ -646,6 +646,11 @@ sap.ui.define([
 		}
 		// After each rendering the delegate needs to be initialized as well.
 		this.oItemNavigation.setRootDomRef(oFocusRef);
+		if (this._invalidateFlag == true) {
+			this.oItemNavigation.setFocusedIndex(-1);
+			this.focus();
+			this._invalidateFlag = false;
+		}
 
 		//set the array of dom nodes representing the items.
 		this.oItemNavigation.setItemDomRefs(aDomRefs);
