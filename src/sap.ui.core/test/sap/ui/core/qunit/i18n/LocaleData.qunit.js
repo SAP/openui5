@@ -114,21 +114,21 @@ sap.ui.define([
 		assert.equal(oLocaleData.getCurrentLanguageName(), "עברית", "current language is present for locale: he-x-sapufmt");
 	});
 
-	// neither ji nor yi is present as CLDR data
+	// neither ji nor yi is present as CLDR data (en.json is used then)
 	QUnit.test("getCurrentLanguageName specific ji", function(assert) {
 		var oLocale = new Locale("ji"),
 			oLocaleData = new LocaleData(oLocale);
 		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.deepEqual(oLanguagesObject, {}, "languages are present for locale: ji");
-		assert.notOk(oLocaleData.getCurrentLanguageName(), "current language is present for locale: ji");
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: ji");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "Yiddish", "current language is present for locale: ji");
 	});
 
 	QUnit.test("getCurrentLanguageName specific yi", function(assert) {
 		var oLocale = new Locale("yi"),
 			oLocaleData = new LocaleData(oLocale);
 		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.deepEqual(oLanguagesObject, {}, "languages are present for locale: yi");
-		assert.notOk(oLocaleData.getCurrentLanguageName(), "current language is present for locale: yi");
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: yi");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "Yiddish", "current language is present for locale: yi");
 	});
 
 	QUnit.test("getCurrentLanguageName specific de-x-sapufmt", function(assert) {
@@ -476,14 +476,15 @@ sap.ui.define([
 
 	QUnit.module("Special Cases");
 
-	QUnit.test("getLenientNumberSymbols", function(assert) {
 
+	QUnit.test("getLenientNumberSymbols", function(assert) {
+		// unknown locale, en.json will be used
 		var oLocaleData = LocaleData.getInstance(new Locale("xx-XX"));
 
 		var sMinusSymbols = oLocaleData.getLenientNumberSymbols("minusSign");
 		var sPlusSymbols = oLocaleData.getLenientNumberSymbols("plusSign");
 
-		assert.strictEqual(sMinusSymbols, "\x2d\u2010\u2012\u2013\u207b\u208b\u2212\u2796\ufe63", "Should match the minus symbols default");
-		assert.strictEqual(sPlusSymbols, "\x2b\u207a\u208a\u2795\ufb29\ufe62", "Should match the plus symbols default");
+		assert.strictEqual(sMinusSymbols, "\x2d\u2010\u2012\u2013\u207b\u208b\u2212\u2796\ufe63\uff0d", "Should match the minus symbols default");
+		assert.strictEqual(sPlusSymbols, "\x2b\u207a\u208a\u2795\ufb29\ufe62\uff0b", "Should match the plus symbols default");
 	});
 });
