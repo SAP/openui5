@@ -170,8 +170,11 @@ sap.ui.define([
 				var oContext = oItem.getBindingContext(this.P13N_MODEL);
 				var oField = this.getItemFactory().call(this, oContext);
 
-				//Add Factory Control
-				oItem.addContent(oField);
+				//Add Factory Control + setLabelFor association (acc announcements)
+				if (oField) {
+					oItem.addContent(oField);
+					oItem.getContent()[0].getItems()[0].setLabelFor(oField.getId());
+				}
 
 				//Remove Icon
 				if (oItem.getContent()[0].getItems().length > 1) {
