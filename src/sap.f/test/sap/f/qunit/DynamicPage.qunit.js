@@ -64,6 +64,7 @@ function (
 		assert.ok(this.oDynamicPage, "The DynamicPage has instantiated successfully");
 		assert.ok(this.oDynamicPage.getTitle(), "The DynamicPage Title has instantiated successfully");
 		assert.ok(this.oDynamicPage.getHeader(), "The DynamicPage Header has instantiated successfully");
+		assert.strictEqual(this.oDynamicPage.getHeaderPinned(),  false, "The headerPinned property is 'false' by default.");
 	});
 
 	QUnit.test("Enabling preserveHeaderStateOnScroll should mutate headerExpanded", function (assert) {
@@ -167,6 +168,128 @@ function (
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperTransparent"), "Should not have sapFDynamicPageContentWrapperTransparent class");
 		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should have sapFDynamicPageContentWrapperStandard class");
 		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Standard, "Should have backgroundDesign property = 'Standard', which is default");
+	});
+
+	QUnit.module("DynamicPage - API - headerPinned property", {
+		beforeEach: function () {
+
+			// Setup
+			this.oDynamicPage = oFactory.getDynamicPageWithHeaderPinned();
+			this.oHeader = this.oDynamicPage.getHeader();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+
+			// Clean up
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+			this.oHeader = null;
+		}
+	});
+
+	QUnit.test("Pin button is pinned initially when all the requirements are met and the headerPinned property is true", function (assert) {
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage._bPinned, true, "Internal pin flag of the DynamicPage is 'true'");
+		assert.strictEqual(this.oHeader._getPinButton().getPressed(), true, "The pin button of the header is pressed.");
+	});
+
+	QUnit.test("Pin button is pinned initially, but becomes unpinned once the headerPinned property of the DynamicPage is set to 'false'", function (assert) {
+
+		// Act - Setting the headerPinned property to 'false' and forcing re-rendering
+		this.oDynamicPage.setHeaderPinned(false);
+		this.oDynamicPage.onAfterRendering();
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage._bPinned, false, "Internal pin flag of the DynamicPage is 'false'");
+		assert.strictEqual(this.oHeader._getPinButton().getPressed(), false, "The pin button of the header is not pressed.");
+	});
+
+	QUnit.test("The headerPinned property is altered and an event is fired when the pin button is toggled", function (assert) {
+
+		// Assert
+		assert.expect(3);
+
+		// Arrange
+		var oDynamicPage = this.oDynamicPage,
+			done = assert.async();
+		this.oDynamicPage.attachEventOnce("pinnedStateChange", function (oEvent) {
+
+			// Assert
+			assert.strictEqual(oDynamicPage._bPinned, false, "Internal pin flag of the DynamicPage is 'false'");
+			assert.strictEqual(oDynamicPage.getHeaderPinned(), false, "headerPinned property is forced to 'false'");
+			assert.strictEqual(oEvent.getParameter("pinned"), false, "pinnedStateChange event is fired with 'false' as parameter'");
+
+			done();
+		});
+
+		// Act - Simulating pin button press
+		this.oDynamicPage._onPinUnpinButtonPress();
+	});
+
+	QUnit.test("The headerPinned property is altered and an event is fired when header is snapped by the user", function (assert) {
+
+		// Assert
+		assert.expect(3);
+
+		// Arrange
+		var oDynamicPage = this.oDynamicPage,
+			done = assert.async();
+		this.oDynamicPage.attachEventOnce("pinnedStateChange", function (oEvent) {
+
+			// Assert
+			assert.strictEqual(oDynamicPage._bPinned, false, "Internal pin flag of the DynamicPage is 'false'");
+			assert.strictEqual(oDynamicPage.getHeaderPinned(), false, "headerPinned property is forced to 'false'");
+			assert.strictEqual(oEvent.getParameter("pinned"), false, "pinnedStateChange event is fired with 'false' as parameter'");
+
+			done();
+		});
+
+		// Act - Simulating snapping of header by user interaction
+		this.oDynamicPage._snapHeader(true, true);
+	});
+
+
+	QUnit.test("The headerPinned property isn't altered and an event isn't fired when header is snapped by dimension change", function (assert) {
+
+		// Assert
+		assert.expect(8);
+
+		// Arrange
+		var fnPinChangeSpy = this.spy(),
+			iDPOriginalHeight = this.oDynamicPage.getDomRef().style.height,
+			oDynamicPage = this.oDynamicPage,
+			oHeader = this.oHeader,
+			done = assert.async();
+		oDynamicPage.attachEventOnce("pinnedStateChange", fnPinChangeSpy);
+
+		// Act - Simulating snapping of header by change of dimensions
+		oDynamicPage.getDomRef().style.height = '100px';
+
+		setTimeout(function() {
+			// Assert
+			assert.strictEqual(oDynamicPage._bPinned, false, "Internal pin flag of the DynamicPage is 'false'");
+			assert.strictEqual(oHeader._getPinButton().getPressed(), false, "The pin button isn't pressed");
+			assert.strictEqual(oDynamicPage.getHeaderPinned(), true, "headerPinned property is still 'true'");
+			assert.strictEqual(fnPinChangeSpy.callCount, 0, "pinnedStateChange event isn't fired");
+
+			// Act Simulating expanding of header by change of dimensions
+			// It is expected to restore the pin status of the pin button to its previous - pressed state
+			oDynamicPage.getDomRef().style.height = iDPOriginalHeight;
+
+			setTimeout(function() {
+				// Assert
+				assert.strictEqual(oDynamicPage._bPinned, true, "Internal pin flag of the DynamicPage is restored to 'true'");
+				assert.strictEqual(oHeader._getPinButton().getPressed(), true, "The pin button pressed status is restored to 'true'");
+				assert.strictEqual(oDynamicPage.getHeaderPinned(), true, "headerPinned property is still 'true'");
+				assert.strictEqual(fnPinChangeSpy.callCount, 0, "pinnedStateChange event isn't fired");
+
+				// Clean Up
+				fnPinChangeSpy.reset();
+				done();
+			}, 420);
+		}, 420);
+
 	});
 
 	QUnit.module("DynamicPage - API - header initially snapped", {
@@ -1702,7 +1825,7 @@ function (
 		assert.equal($contentWrapper.find("#" + sHeaderId).length, 1, "The header is in the Content wrapper initially");
 
 		// Act
-		this.oDynamicPage._pin();
+		this.oDynamicPage._pin(true); // forcing user interaction in order to change the headerPinned property
 		this.oDynamicPage.rerender(); //rerender while header is pinned
 
 		// Assert

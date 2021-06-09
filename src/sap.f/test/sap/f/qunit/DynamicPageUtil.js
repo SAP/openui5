@@ -54,6 +54,14 @@ sap.ui.define([
 				footer: this.getFooter()
 			});
 		},
+		getDynamicPageWithHeaderPinned: function () {
+			return new DynamicPage({
+				title: this.getDynamicPageTitle(),
+				header: this.getDynamicPageHeader(),
+				headerPinned: true,
+				content: this.getContent(100)
+			});
+		},
 		getDynamicPageWithStickySubheader: function (bPreserveHeaderStateOnScroll, bHasHeader, bHasVisibleHeader, bHasTitle) {
 			var oHeader = bHasHeader ? this.getDynamicPageHeader() : null,
 				oContent = this.getIconTabBar();
