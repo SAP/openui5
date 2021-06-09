@@ -40,20 +40,21 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 			oRm.openEnd();
 		} else {
 
-			var sState = oObjStatus.getState();
-			var bInverted = oObjStatus.getInverted();
-			var sTextDir = oObjStatus.getTextDirection();
-			var oCore = sap.ui.getCore();
-			var bPageRTL = oCore.getConfiguration().getRTL();
-			var oAccAttributes = {
-				roledescription: oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS")
-			};
+			var sState = oObjStatus.getState(),
+				sStateText = oObjStatus._getStateText(sState),
+				bInverted = oObjStatus.getInverted(),
+				sTextDir = oObjStatus.getTextDirection(),
+				oCore = sap.ui.getCore(),
+				bPageRTL = oCore.getConfiguration().getRTL(),
+				oAccAttributes = {
+					roledescription: oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS")
+				},
+				sTooltip = oObjStatus.getTooltip_AsString();
 
 			if (sTextDir === TextDirection.Inherit) {
 				sTextDir = bPageRTL ? TextDirection.RTL : TextDirection.LTR;
 			}
 
-			var sTooltip = oObjStatus.getTooltip_AsString();
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
 			}
@@ -70,10 +71,6 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				oAccAttributes.role = "button";
 			} else {
 				oAccAttributes.role = "group";
-			}
-
-			if (oObjStatus._oInvisibleText) {
-				oAccAttributes["describedby"] = { value: oObjStatus._oInvisibleText.getId(), append: true };
 			}
 
 			oRm.accessibilityState(oObjStatus, oAccAttributes);
@@ -128,6 +125,15 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 			if (oObjStatus._isActive()) {
 				oRm.close("span");
 			}
+
+			if (sStateText) {
+				oRm.openStart("span", oObjStatus.getId() + "-state");
+				oRm.class("sapUiPseudoInvisibleText");
+				oRm.openEnd();
+				oRm.text(sStateText);
+				oRm.close("span");
+			}
+
 		}
 
 		oRm.close("div");

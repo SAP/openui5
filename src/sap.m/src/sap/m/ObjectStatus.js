@@ -135,29 +135,22 @@ sap.ui.define([
 	}});
 
 	/**
-	 * Creates a new sap.ui.core.InvisibleText control instance with a text property value compliant
-	 * to the sap.m.ObjectStatus control instance state and attaches its DOM representation
-	 * to the static area.
+	 * Returns a text compliant to the sap.m.ObjectStatus control instance state
 	 *
 	 * @private
 	 * @param {string} sState the propety state value.
+	 * @returns {string} The text compliant to the control state
 	 */
-	ObjectStatus.prototype._createInvisibleTextReferece = function(sState) {
+	ObjectStatus.prototype._getStateText = function(sState) {
 		var sStateText;
 
 		if (sState !== ValueState.None) {
 			sStateText = ValueStateSupport.getAdditionalText(sState) ?
 				ValueStateSupport.getAdditionalText(sState) :
 				IndicationColorSupport.getAdditionalText(sState);
-
-			if (this._oInvisibleText) {
-				this._oInvisibleText.setText(sStateText);
-			} else {
-				this._oInvisibleText = new InvisibleText({
-					text: sStateText
-				}).toStatic();
-			}
 		}
+
+		return sStateText;
 	};
 
 	/**
@@ -169,11 +162,6 @@ sap.ui.define([
 		if (this._oImageControl) {
 			this._oImageControl.destroy();
 			this._oImageControl = null;
-		}
-
-		if (this._oInvisibleText){
-			this._oInvisibleText.destroy();
-			this._oInvisibleText = null;
 		}
 	};
 
@@ -216,7 +204,6 @@ sap.ui.define([
 			throw new Error('"' + sValue + '" is not a value of the enums sap.ui.core.ValueState or sap.ui.core.IndicationColor for property "state" of ' + this);
 		}
 
-		this._createInvisibleTextReferece(sValue);
 		return this.setProperty("state", sValue);
 	};
 
