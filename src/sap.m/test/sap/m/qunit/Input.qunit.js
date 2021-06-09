@@ -474,6 +474,53 @@ sap.ui.define([
 		oUpdateSpy.restore();
 	});
 
+	QUnit.test("Tabular suggestions onsapenter should clear the _sTypedInValue", function (assert) {
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns : [
+				new Column({
+					styleClass : "name",
+					hAlign : "Begin",
+					header : new Label({
+						text : "Test"
+					})
+				})
+			],
+			suggestionRows : [
+				new ColumnListItem({
+					cells: [
+						new Text({text:"Text 1"})
+					]
+				})
+			]
+		});
+		var oSpy = this.spy(oInput, "_resetTypeAhead");
+
+		// Arrange
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "t");
+		qutils.triggerEvent("input", oInput.getFocusDomRef());
+		oInput._openSuggestionPopup();
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oInput._getTypedInValue(), "t", "Typed in value stored initially");
+
+		// Act
+		oSpy.reset();
+		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), KeyCodes.ENTER);
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "The _resetTypeAhead was called once, when the item was pressed.");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Submit Event", function(assert) {
 
 		var sEvents = "";
@@ -2231,6 +2278,57 @@ sap.ui.define([
 
 		assert.ok(!oInput._getSuggestionsPopover().getPopover().getFooter(), "Suggestion Popup doesn't have Toolbar footer");
 
+		oInput.destroy();
+	});
+
+	QUnit.test("Tabular suggestions Tapping a row should clear the _sTypedInValue", function (assert) {
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns : [
+				new Column({
+					styleClass : "name",
+					hAlign : "Begin",
+					header : new Label({
+						text : "Test"
+					})
+				})
+			],
+			suggestionRows : [
+				new ColumnListItem({
+					cells: [
+						new Text({text:"Text 1"})
+					]
+				})
+			]
+		});
+		var oItemsContainer = oInput._getSuggestionsPopover().getItemsContainer();
+		var oSpy;
+
+		// Arrange
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick();
+
+		// Act
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "t");
+		qutils.triggerEvent("input", oInput.getFocusDomRef());
+		oInput._openSuggestionPopup();
+		oSpy = this.spy(oInput, "_setTypedInValue");
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oInput._getTypedInValue(), "t", "Typed in value stored initially");
+
+		// Act
+		qutils.triggerTouchEvent("tap", oItemsContainer.getItems()[0].getDomRef());
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "The _setTypedInValue was called once, when the item was pressed.");
+		assert.strictEqual(oSpy.firstCall.args[0], "", "The _setTypedInValue was called with empty string.");
+		assert.strictEqual(oInput._getTypedInValue(), "", "The _sTypedInValue was reset to empty string, when the item was pressed.");
+
+		// Clean
 		oInput.destroy();
 	});
 
