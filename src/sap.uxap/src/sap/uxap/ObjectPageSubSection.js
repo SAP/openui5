@@ -354,6 +354,12 @@ sap.ui.define([
 
 	ObjectPageSubSection.prototype._onBlocksChange = function () {
 		var oObjectPageLayout = this._getObjectPageLayout();
+
+		if (!this._bRenderedFirstTime) {
+			return;
+		}
+
+		this._getGrid().removeAllContent();
 		this._applyLayout(oObjectPageLayout);
 	};
 
@@ -466,7 +472,7 @@ sap.ui.define([
 
 	ObjectPageSubSection.prototype._unobserveBlocks = function() {
 		this.getBlocks().forEach(function (oBlock) {
-			this._oBlocksObserver.unobserve(oBlock, {
+			oBlock && this._oBlocksObserver.unobserve(oBlock, {
 				properties: ["visible"]
 			});
 		}, this);
@@ -864,7 +870,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.addBlock = function (oBlock) {
-		this._oBlocksObserver.observe(oBlock, {
+		oBlock && this._oBlocksObserver.observe(oBlock, {
 			properties: ["visible"]
 		});
 
@@ -872,7 +878,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.removeBlock = function (oBlock) {
-		this._oBlocksObserver.unobserve(oBlock, {
+		oBlock && this._oBlocksObserver.unobserve(oBlock, {
 			properties: ["visible"]
 		});
 
