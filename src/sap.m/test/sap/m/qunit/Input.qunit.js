@@ -3565,6 +3565,36 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Set selection with 'ENTER' key press with suggestions opened and typeahead should set the selectedKey property", function(assert) {
+		// Arrange
+		var oInput = createInputWithSuggestions();
+		var oSetSelectionItemSpy = this.spy(oInput, "setSelectionItem");
+
+		oInput.placeAt("content");
+		oInput._bDoTypeAhead = true;
+		oInput._createSuggestionPopupContent();
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._$input.trigger("focus").val("it").trigger("input");
+		this.clock.tick(300);
+
+		oInput._getFilteredSuggestionItems("it");
+		oInput._openSuggestionsPopover();
+		this.clock.tick(300);
+
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSetSelectionItemSpy.calledOnce, true, "'setSelectionItem' was called once.");
+		assert.strictEqual(oSetSelectionItemSpy.firstCall.args[1], true, "Second parameter was 'true' indicating the selection was made by interaction.");
+		assert.strictEqual(oInput.getSelectedKey(), "2", "The 'selectedKey' property was set properly");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Selected item from value help is set to the input", function(assert) {
 
 		var oInput = createInputWithSuggestions(),

@@ -1317,12 +1317,20 @@ function(
 	Input.prototype.onsapenter = function(oEvent) {
 		var bPopupOpened = this._isSuggestionsPopoverOpen(),
 			bFocusInPopup = !this.hasStyleClass("sapMFocus") && bPopupOpened,
-			iValueLength;
+			aItems = this._hasTabularSuggestions() ? this.getSuggestionRows() : this.getSuggestionItems(),
+			iValueLength, oSelectedItem;
 
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
 		this.cancelPendingSuggest();
 
 		bFocusInPopup && this.setSelectionUpdatedFromList(true);
+
+		// The logic here works solely for suggestionItems. Once we move the whole dependent logic to coreItems
+		// it should work for suggetionRows as well.
+		if (this.getShowSuggestion() && this._bDoTypeAhead && bPopupOpened && !this._hasTabularSuggestions()) {
+			oSelectedItem = this._getSuggestionsPopover().getItemsContainer().getSelectedItem();
+			oSelectedItem && this.setSelectionItem(ListHelpers.getItemByListItem(aItems, oSelectedItem), true);
+		}
 
 		if (bPopupOpened && !this.isComposingCharacter()) {
 			this._closeSuggestionPopup();
