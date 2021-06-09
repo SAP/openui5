@@ -83,6 +83,17 @@ sap.ui.define([
 						type: "boolean",
 						group: "Misc",
 						defaultValue: false
+					},
+
+					/**
+					 * Indicates whether the picker is opened.
+					 *
+					 * @private
+					 */
+					 open: {
+						type: "boolean",
+						defaultValue: false,
+						hidden: true
 					}
 				},
 				aggregations: {
