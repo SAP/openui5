@@ -918,7 +918,7 @@ sap.ui.define([
 	/**
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the field.
 	 *
-	 * @since 1.91.0
+	 * @since 1.92.0
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
