@@ -235,6 +235,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * The focus visualization of the table needs to be removed as the user starts typing into the field.
+	 *
+	 * @since 1.91.0
+	 *
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldValueHelpContentWrapperBase.prototype.removeFocus = function() {
+
+		return this;
+
+	};
+
+	/**
 	 * Returns <code>true</code> if filtering of the content is supported.
 	 *
 	 * @returns {boolean} true if filtering on the content is supported

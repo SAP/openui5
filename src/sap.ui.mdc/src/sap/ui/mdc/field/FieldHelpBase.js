@@ -182,7 +182,14 @@ sap.ui.define([
 						 *
 						 * @since 1.81.0
 						 */
-						itemId: { type: "string" }
+						itemId: { type: "string" },
+
+						/**
+						 * If set the focus visualization should be moved back to the field
+						 *
+						 * @since 1.91.0
+						 */
+						leaveFocus: { type: "boolean" }
 					}
 				},
 
@@ -760,7 +767,7 @@ sap.ui.define([
 				showArrow: false,
 				afterOpen: this._handleAfterOpen.bind(this),
 				afterClose: this._handleAfterClose.bind(this)
-			});
+			}).addStyleClass("sapMComboBoxBasePicker").addStyleClass("sapMComboBoxBasePicker-CTX"); // to have a ComboBox popup
 
 			oPopover.isPopupAdaptationAllowed = function () {
 				return false;
@@ -905,6 +912,18 @@ sap.ui.define([
 	FieldHelpBase.prototype.isFocusInHelp = function() {
 
 		return !this.openByTyping(); // in type-ahead focus should stay on field
+
+	};
+
+	/**
+	 * The focus visualization of the field help needs to be removed as the user starts typing into the field.
+	 *
+	 * @since 1.91.0
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype.removeFocus = function() {
 
 	};
 

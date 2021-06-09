@@ -144,7 +144,7 @@ sap.ui.define([
 			var oItemTemplate = new StandardListItem(this.getId() + "-item", {
 				type: mLibrary.ListType.Active,
 				title: "{text}"
-			});
+			}).addStyleClass("sapMComboBoxNonInteractiveItem"); // to add focus outline to selected items
 
 			this._oList = new List(this.getId() + "-List", {
 				width: "100%",
@@ -153,7 +153,7 @@ sap.ui.define([
 				rememberSelections: false,
 				items: {path: "/items", template: oItemTemplate},
 				itemPress: _handleItemPress.bind(this) // as selected item can be pressed
-			});
+			}).addStyleClass("sapMComboBoxBaseList").addStyleClass("sapMComboBoxList");
 
 			this._oList.setModel(this._oModel);
 			_updateFilter.call(this, this.getFilterValue());
@@ -205,6 +205,7 @@ sap.ui.define([
 			this._bUpdateFilterAfterClose = false;
 			_updateFilter.call(this);
 		}
+		this._oList.removeStyleClass("sapMListFocus");
 
 		FieldHelpBase.prototype._handleAfterClose.apply(this, arguments);
 
@@ -234,6 +235,14 @@ sap.ui.define([
 
 	};
 
+	BoolFieldHelp.prototype.removeFocus = function() {
+
+		if (this._oList) {
+			this._oList.removeStyleClass("sapMListFocus");
+		}
+
+	};
+
 	BoolFieldHelp.prototype.navigate = function(iStep) {
 
 		var oPopover = this._getPopover();
@@ -245,16 +254,19 @@ sap.ui.define([
 			return;
 		}
 
+		this._oList.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
 		var oSelectedItem = this._oList.getSelectedItem();
 		var aItems = this._oList.getItems();
 		var iItems = aItems.length;
 		var iSelectedIndex = 0;
+		var bLeaveFocus = false;
 
 		if (oSelectedItem) {
 			iSelectedIndex = this._oList.indexOfItem(oSelectedItem);
 			iSelectedIndex = iSelectedIndex + iStep;
 			if (iSelectedIndex < 0) {
 				iSelectedIndex = 0;
+				bLeaveFocus = true;
 			} else if (iSelectedIndex >= iItems - 1) {
 				iSelectedIndex = iItems - 1;
 			}
@@ -276,6 +288,8 @@ sap.ui.define([
 				var oCondition = _getConditionForKey.call(this, vKey);
 				this.setProperty("conditions", [oCondition], true); // do not invalidate whole FieldHelp
 				this.fireNavigate({value: oItem.getTitle(), key: vKey, condition: oCondition, itemId: oItem.getId()});
+			} else if (bLeaveFocus) {
+				this.fireNavigate({key: undefined, value: undefined, condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus});
 			}
 
 		}

@@ -763,8 +763,15 @@ sap.ui.define([
 
 		// in "Select"-case the suggestion help should open on click into field
 		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp && oFieldHelp.openByClick() && !oFieldHelp.isOpen(true)) {
-			oFieldHelp.open(true);
+		if (oFieldHelp) {
+			if (oFieldHelp.openByClick() && !oFieldHelp.isOpen(true)) {
+				oFieldHelp.open(true);
+			}
+			if (oFieldHelp.isOpen(true) && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
+				var oSource = oEvent.srcControl;
+				oSource.addStyleClass("sapMFocus"); // to show focus outline again after navigation
+				oFieldHelp.removeFocus();
+			}
 		}
 
 	};
@@ -2515,9 +2522,19 @@ sap.ui.define([
 		var vKey = oEvent.getParameter("key");
 		var oCondition = oEvent.getParameter("condition");
 		var sItemId = oEvent.getParameter("itemId");
+		var bLeaveFocus = oEvent.getParameter("leaveFocus");
 		var sNewValue;
 		var sDOMValue;
 		var oContent = this.getControlForSuggestion();
+
+		if (bLeaveFocus) {
+			// nothing to navigate, just set focus visualization back to field
+			var oFieldHelp = _getFieldHelp.call(this);
+			oContent.addStyleClass("sapMFocus");
+			oContent.focus();
+			oFieldHelp.removeFocus();
+			return;
+		}
 
 		if (oCondition) {
 			this._oNavigateCondition = merge({}, oCondition);
@@ -2570,6 +2587,7 @@ sap.ui.define([
 					sDOMValue = sValue || vKey;
 				}
 			}
+			oContent.removeStyleClass("sapMFocus"); // to have focus outline on navigated item
 			oContent.setDOMValue(sDOMValue);
 			oContent._doSelect();
 		}

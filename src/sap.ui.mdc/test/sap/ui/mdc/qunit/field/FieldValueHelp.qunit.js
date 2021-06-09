@@ -111,6 +111,7 @@ sap.ui.define([
 	var sNavigateId;
 	var oNavigateCondition;
 	var sNavigateItemId;
+	var bNavigateLeaveFocus;
 	var iDataUpdate = 0;
 	var sDataUpdateId;
 	var iOpen = 0;
@@ -136,6 +137,7 @@ sap.ui.define([
 		sNavigateId = oEvent.oSource.getId();
 		oNavigateCondition = oEvent.getParameter("condition");
 		sNavigateItemId = oEvent.getParameter("itemId");
+		bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
 	};
 
 	var _myDataUpdateHandler = function(oEvent) {
@@ -331,6 +333,7 @@ sap.ui.define([
 		sNavigateId = undefined;
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
 		iDataUpdate = 0;
 		sDataUpdateId = undefined;
 		iOpen = 0;
@@ -1328,7 +1331,7 @@ sap.ui.define([
 		assert.equal(iOpen, 1, "Open event fired");
 		oClock.tick(iPopoverDuration); // fake opening time
 
-		oWrapper.fireNavigate({key: "I1", description: "Item 1", itemId: "Item1"});
+		oWrapper.fireNavigate({key: "I1", description: "Item 1", itemId: "Item1", leave: false});
 		var oPopover = oFieldHelp.getAggregation("_popover");
 		if (oPopover) {
 			assert.ok(bOpenSuggest, "Open as suggestion");
@@ -1345,12 +1348,13 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
 			assert.notOk(oFieldHelp.isFocusInHelp.returnValues[0], "isFocusInHelp returns false");
 			assert.equal(sNavigateItemId, "Item1", "Navigate itemId");
+			assert.notOk(bNavigateLeaveFocus, "Navigate leaveFocus");
 			oFieldHelp.isFocusInHelp.reset();
 
 			oFieldHelp.addInParameter(new InParameter({value: "{testIn}", helpPath: "myTestIn"}));
 			oFieldHelp.addOutParameter(new OutParameter({value: "{testOut}", helpPath: "myTestOut"}));
 			oFieldHelp.navigate(1);
-			oWrapper.fireNavigate({key: "I2", description: "Item 2", inParameters: {myTestIn: "X"}, outParameters: {myTestOut: "Y"}, itemId: "Item2"});
+			oWrapper.fireNavigate({key: "I2", description: "Item 2", inParameters: {myTestIn: "X"}, outParameters: {myTestOut: "Y"}, itemId: "Item2", leave: false});
 			assert.equal(iNavigate, 2, "Navigate event fired");
 			assert.equal(sNavigateValue, "Item 2", "Navigate event value");
 			assert.equal(sNavigateKey, "I2", "Navigate event key");
@@ -1362,6 +1366,7 @@ sap.ui.define([
 			assert.ok(oNavigateCondition.outParameters && oNavigateCondition.outParameters.hasOwnProperty("testOut"), "out-parameters has 'testOut'");
 			assert.equal(oNavigateCondition.outParameters && oNavigateCondition.outParameters.testOut, "Y", "out-parameters 'testOut'");
 			assert.equal(sNavigateItemId, "Item2", "Navigate itemId");
+			assert.notOk(bNavigateLeaveFocus, "Navigate leaveFocus");
 		}
 		oFieldHelp.close();
 		oClock.tick(iPopoverDuration); // fake closing time
@@ -1374,12 +1379,15 @@ sap.ui.define([
 		assert.ok(oFieldHelp.isFocusInHelp.returnValues[0], "isFocusInHelp returns true");
 		assert.ok(oPopover.isOpen(), "Field help opened");
 
-		sinon.spy(oField, "focus");
 		oWrapper.fireNavigate({leave: true});
 		oClock.tick(iPopoverDuration); // fake closing time
-		assert.equal(iNavigate, 0, "Navigate event not fired");
+		assert.equal(iNavigate, 1, "Navigate event fired");
+		assert.equal(sNavigateValue, undefined, "Navigate event value");
+		assert.equal(sNavigateKey, undefined, "Navigate event key");
+		assert.notOk(oNavigateCondition, "NavigateEvent condition");
+		assert.equal(sNavigateItemId, undefined, "Navigate itemId");
+		assert.ok(bNavigateLeaveFocus, "Navigate leaveFocus");
 		assert.ok(oPopover.isOpen(), "Field help opened");
-		assert.ok(oField.focus.called, "focus set on Field");
 
 		oFieldHelp.close();
 		oClock.tick(iPopoverDuration); // fake closing time

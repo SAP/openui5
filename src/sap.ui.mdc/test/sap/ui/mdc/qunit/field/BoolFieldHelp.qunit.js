@@ -50,6 +50,7 @@ sap.ui.define([
 	var sNavigateKey;
 	var oNavigateCondition;
 	var sNavigateItemId;
+	var bNavigateLeaveFocus;
 	var iDataUpdate = 0;
 	var iOpen = 0;
 
@@ -70,6 +71,7 @@ sap.ui.define([
 		sNavigateKey = oEvent.getParameter("key");
 		oNavigateCondition = oEvent.getParameter("condition");
 		sNavigateItemId = oEvent.getParameter("itemId");
+		bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
 	};
 
 	var _myDataUpdateHandler = function(oEvent) {
@@ -114,6 +116,7 @@ sap.ui.define([
 		sNavigateKey = undefined;
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
 		iDataUpdate = 0;
 		iOpen = 0;
 		BoolFieldHelp._init();
@@ -243,6 +246,7 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[1], "true", "Navigate event condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
 			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate event itemId");
+			assert.notOk(bNavigateLeaveFocus, "Navigate leaveFocus");
 			var aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], true, "conditions key");
@@ -257,6 +261,7 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[1], "false", "Navigate event condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
 			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-1", "Navigate event itemId");
+			assert.notOk(bNavigateLeaveFocus, "Navigate leaveFocus");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], false, "conditions key");
@@ -271,30 +276,17 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[1], "true", "Navigate event condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
 			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate event itemId");
+			assert.notOk(bNavigateLeaveFocus, "Navigate leaveFocus");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], true, "conditions key");
 
 			oFieldHelp.navigate(-1);
 			assert.ok(aItems[0].getSelected(), "Item 1 is selected");
-			assert.equal(iNavigate, 3, "Navigate event not fired");
+			assert.equal(iNavigate, 4, "Navigate event fired");
+			assert.ok(bNavigateLeaveFocus, "Navigate leaveFocus");
 
 			oFieldHelp.navigate(5);
-			assert.ok(aItems[1].getSelected(), "Item 2 is selected");
-			assert.equal(iNavigate, 4, "Navigate event fired");
-			assert.equal(sNavigateValue, "false", "Navigate event value");
-			assert.equal(sNavigateKey, false, "Navigate event key");
-			assert.equal(oNavigateCondition.operator, "EQ", "Navigate event condition operator");
-			assert.equal(oNavigateCondition.values[0], false, "Navigate event condition key");
-			assert.equal(oNavigateCondition.values[1], "false", "Navigate event condition description");
-			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
-			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-1", "Navigate event itemId");
-			aConditions = oFieldHelp.getConditions();
-			assert.equal(aConditions.length, 1, "conditions length");
-			assert.equal(aConditions[0].values[0], false, "conditions key");
-
-			oFieldHelp.setConditions([]); // to initialize
-			oFieldHelp.navigate(-1);
 			assert.ok(aItems[1].getSelected(), "Item 2 is selected");
 			assert.equal(iNavigate, 5, "Navigate event fired");
 			assert.equal(sNavigateValue, "false", "Navigate event value");
@@ -304,17 +296,34 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[1], "false", "Navigate event condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
 			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-1", "Navigate event itemId");
+			assert.notOk(bNavigateLeaveFocus, "Navigate leaveFocus");
+			aConditions = oFieldHelp.getConditions();
+			assert.equal(aConditions.length, 1, "conditions length");
+			assert.equal(aConditions[0].values[0], false, "conditions key");
+
+			oFieldHelp.setConditions([]); // to initialize
+			oFieldHelp.navigate(-1);
+			assert.ok(aItems[1].getSelected(), "Item 2 is selected");
+			assert.equal(iNavigate, 6, "Navigate event fired");
+			assert.equal(sNavigateValue, "false", "Navigate event value");
+			assert.equal(sNavigateKey, false, "Navigate event key");
+			assert.equal(oNavigateCondition.operator, "EQ", "Navigate event condition operator");
+			assert.equal(oNavigateCondition.values[0], false, "Navigate event condition key");
+			assert.equal(oNavigateCondition.values[1], "false", "Navigate event condition description");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-1", "Navigate event itemId");
+			assert.notOk(bNavigateLeaveFocus, "Navigate leaveFocus");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], false, "conditions key");
 
 			oFieldHelp.navigate(1);
 			assert.ok(aItems[1].getSelected(), "Item 2 is selected");
-			assert.equal(iNavigate, 5, "Navigate event not fired");
+			assert.equal(iNavigate, 6, "Navigate event not fired");
 
 			oFieldHelp.navigate(-5);
 			assert.ok(aItems[0].getSelected(), "Item 1 is selected");
-			assert.equal(iNavigate, 6, "Navigate event fired");
+			assert.equal(iNavigate, 7, "Navigate event fired");
 			assert.equal(sNavigateValue, "true", "Navigate event value");
 			assert.equal(sNavigateKey, true, "Navigate event key");
 			assert.equal(oNavigateCondition.operator, "EQ", "Navigate event condition operator");
@@ -322,6 +331,7 @@ sap.ui.define([
 			assert.equal(oNavigateCondition.values[1], "true", "Navigate event condition description");
 			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Navigate event Condition is validated");
 			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate event itemId");
+			assert.notOk(bNavigateLeaveFocus, "Navigate leaveFocus");
 			aConditions = oFieldHelp.getConditions();
 			assert.equal(aConditions.length, 1, "conditions length");
 			assert.equal(aConditions[0].values[0], true, "conditions key");

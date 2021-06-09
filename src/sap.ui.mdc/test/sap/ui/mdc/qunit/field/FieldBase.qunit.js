@@ -2610,8 +2610,20 @@ sap.ui.define([
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
 		assert.equal(aConditions[0].operator, "EQ", "condition operator");
 		assert.equal(oContent._$input.val(), "Navigate (Y)", "Field shown value");
+
+		sinon.spy(oContent, "focus");
+		oFieldHelp.fireNavigate({ value: undefined, key: undefined, leaveFocus: true });
+		assert.equal(iLiveCount, 1, "LiveChange Event not fired");
+		assert.equal(oContent._$input.val(), "Navigate (Y)", "Field shown value");
+		assert.ok(oContent.focus.called, "focus set on content");
+
 		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.ok(oFieldHelp.onFieldChange.calledTwice, "onFieldChange called on FieldHelp");
+		aConditions = oCM.getConditions("Name");
+		assert.equal(aConditions.length, 2, "two conditions in Codition model");
+		assert.equal(aConditions[1].values[0], "Y", "condition value[0]");
+		assert.equal(aConditions[1].values[1], "Navigate", "condition value[1]");
+		assert.equal(aConditions[1].operator, "EQ", "condition operator");
 
 		// simulate value help request to see if FieldHelp opens
 		oContent.fireValueHelpRequest();
