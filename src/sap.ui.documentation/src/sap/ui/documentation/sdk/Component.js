@@ -134,7 +134,19 @@ sap.ui.define([
 			// MODELS
 
 			loadVersionInfo: function () {
-				return VersionInfo.load();
+				return new Promise(function (resolve, reject) {
+					jQuery.ajax({
+						async: true,
+						url : ResourcesUtil.getResourceOriginPath("resources/sap-ui-version.json"),
+						dataType : 'json',
+						success : function(oResponse) {
+							resolve(oResponse);
+						},
+						error : function (err) {
+							reject(err);
+						}
+					});
+				});
 			},
 
 			loadMessagesInfo: function () {
@@ -154,7 +166,7 @@ sap.ui.define([
 							oComponent.oMessagesInfo = oResponse;
 						},
 						error : function (err) {
-							Log(err);
+							reject(err);
 						}
 					});
 				});

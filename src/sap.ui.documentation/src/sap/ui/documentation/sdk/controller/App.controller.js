@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/* global URLSearchParams */
+
 sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
@@ -150,6 +152,11 @@ sap.ui.define([
 					Object.keys(WEB_PAGE_TITLE).forEach(function(sKey) {
 						WEB_PAGE_TITLE[sKey] = WEB_PAGE_TITLE[sKey].replace("\uFFFD", sProduct);
 					});
+
+					if (this._sKey) {
+						this.appendPageTitle(null).appendPageTitle(WEB_PAGE_TITLE[this._sKey]);
+					}
+
 				}.bind(this));
 
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
@@ -987,10 +994,17 @@ sap.ui.define([
 
 			onVersionItemPress: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("listItem"),
-					oCustomData = oSelectedItem.getCustomData()[0];
+					oCustomData = oSelectedItem.getCustomData()[0],
+					bUseUnifiedResourceOrigin =  new URLSearchParams(window.location.search).get('sap-ui-xx-unifiedResources') != null;
 
 				if (oCustomData && oCustomData.getKey() === "path") {
-					window.location.href = oCustomData.getValue(); // Domain relative redirect
+
+					if (bUseUnifiedResourceOrigin) {
+						window.sessionStorage.setItem("versionPrefixPath", oCustomData.getValue());
+						window.location.reload();
+					} else {
+						window.location.href = oCustomData.getValue(); // Domain relative redirect
+					}
 				}
 			},
 
@@ -1501,6 +1515,7 @@ sap.ui.define([
 			_setHeaderSelectedKey: function(sKey) {
 				this._selectHeader.setSelectedKey(sKey);
 				this._tabHeader.setSelectedKey(sKey);
+				this._sKey = sKey;
 			},
 
 			onCloseImportantMessage: function (oEvent) {

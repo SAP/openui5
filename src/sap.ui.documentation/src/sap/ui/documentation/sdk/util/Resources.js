@@ -22,13 +22,15 @@
 		 */
 		getResourceOriginPath: function (sPath) {
 			var oConfig, sOrigin,
-				oUri = URI(sPath);
+				oUri = URI(sPath),
+				sVersionPrefixPath = window.sessionStorage.getItem("versionPrefixPath") || "";
 			if (oUri && oUri.is("absolute")) {
 				return sPath;
 			}
 			oConfig = self['sap-ui-documentation-config'];
 			sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
-			return sOrigin + this._formatPath(sPath);
+
+			return sOrigin + sVersionPrefixPath + this._formatPath(sPath);
 		},
 		_formatPath: function(sPath) {
 			sPath = sPath.replace(/^\.\//, '/');
