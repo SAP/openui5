@@ -58,6 +58,7 @@ sap.ui.define([
 			sNeoAppJsonPath = "/neo-app.json", /* Load neo-app.json always from root URL */
 			ABOUT_TEXT = "about",
 			FEEDBACK_TEXT = "feedback",
+			FEEDBACK_URL = "https://demokit-feedback-proxy.cfapps.eu12.hana.ondemand.com/issue",
 			CHANGE_VERSION_TEXT = "change_version",
 			DEMOKIT_COOKIE_NAME = "dkc";
 
@@ -144,8 +145,6 @@ sap.ui.define([
 						this.MENU_LINKS_MAP["Terms of Use"] = "TermsOfUse.txt";
 					}
 				}.bind(this));
-
-				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
 
 				// Cache view reference
 				this._oView = this.getView();
@@ -592,36 +591,26 @@ sap.ui.define([
 			 * Event handler for the send feedback button
 			 */
 			onFeedbackDialogSend: function() {
-				var data = {};
-
-				if (this._oFeedbackDialog.contextCheckBox.getSelected()) {
-					data = {
-						"texts": {
-							"t1": this._oFeedbackDialog.textInput.getValue()
-						},
-						"ratings":{
-							"r1": {"value" : this._oFeedbackDialog.ratingStatus.value}
-						},
-						"context": {"page": this._getCurrentPageRelativeURL(), "attr1": this._getUI5Distribution() + ":" + sap.ui.version}
+				var oVersionInfo = Version(sap.ui.version),
+				data = {
+						"text": this._oFeedbackDialog.textInput.getValue(),
+						"rating": this._oFeedbackDialog.ratingStatus.value,
+						"major": oVersionInfo.getMajor(),
+						"minor": oVersionInfo.getMinor(),
+						"patch": oVersionInfo.getPatch(),
+						"distribution": this._getUI5Distribution(),
+						"snapshot": oVersionInfo.getSuffix().indexOf("SNAPSHOT") > -1,
+						"url": this._getCurrentURL(),
+						"page": this._getCurrentPageRelativeURL(),
+						"pageContext": this._oFeedbackDialog.contextCheckBox.getSelected()
 					};
-				} else {
-					data = {
-						"texts": {
-							"t1": this._oFeedbackDialog.textInput.getValue()
-						},
-						"ratings":{
-							"r1": {"value" : this._oFeedbackDialog.ratingStatus.value}
-						},
-						"context": {"attr1": this._getUI5Distribution() + ":" + sap.ui.version}
-					};
-				}
 
 				// send feedback
 				this._oFeedbackDialog.setBusyIndicatorDelay(0);
 				this._oFeedbackDialog.setBusy(true);
 
 				jQuery.ajax({
-					url: this.FEEDBACK_SERVICE_URL,
+					url: FEEDBACK_URL,
 					type: "POST",
 					contentType: "application/json",
 					data: JSON.stringify(data)
@@ -881,8 +870,13 @@ sap.ui.define([
 			},
 
 			_getCurrentPageRelativeURL: function () {
-				var parser = window.location;
-				return parser.pathname + parser.hash + parser.search;
+				var currentLocation = window.location;
+				return currentLocation.pathname + currentLocation.hash + currentLocation.search;
+			},
+
+			_getCurrentURL: function () {
+				var currentLocation = window.location;
+				return currentLocation.href;
 			},
 
 			_setHeaderSelectedKey: function(sKey) {
