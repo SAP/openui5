@@ -22,7 +22,7 @@
 				</snappedContent>
 
 				<snappedTitleOnMobile>
-					<m:Title text="Header Title On Phone"/>
+					<m:Title text="Example of a ObjectPage with Header Content always shown on desktop"/>
 				</snappedTitleOnMobile>
 
 				<actions>
