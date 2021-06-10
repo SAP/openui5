@@ -58,6 +58,19 @@ sap.ui.define([
 	}
 
 	/**
+	 * Checks that the given promise is rejected with a cancellation error.
+	 *
+	 * @param {object} assert The QUnit assert object
+	 * @param {Promise} oPromise The promise to be checked
+	 * @returns {Promise} A promise that resolves after the check is done
+	 */
+	function checkCanceled(assert, oPromise) {
+		return oPromise.then(mustFail(assert), function (oError) {
+			assert.ok(oError instanceof Error && oError.canceled, "canceled error expected");
+		});
+	}
+
+	/**
 	 * Creates a V4 OData model for data aggregation tests.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
@@ -200,6 +213,19 @@ sap.ui.define([
 	 */
 	function getPath(oContext) {
 		return oContext.getPath();
+	}
+
+	/**
+	 * Returns a function that simply emits a failed assertion "Unexpected success", to be used as a
+	 * "then" handler when only a rejection is expected.
+	 *
+	 * @param {object} assert The QUnit assert object
+	 * @returns {function} The function
+	 */
+	function mustFail(assert) {
+		return function () {
+			assert.ok(false, "Unexpected success");
+		};
 	}
 
 	/**
@@ -559,22 +585,6 @@ sap.ui.define([
 				{suspended : !bRelative, template : oTemplate}));
 
 			return sId;
-		},
-
-		/**
-		 * Checks that the given promise is rejected and the passed result is a cancellation error
-		 * and nothing else.
-		 *
-		 * @param {object} assert The QUnit assert object
-		 * @param {Promise} oPromise The promise to be checked
-		 * @returns {Promise} A promise that resolves after the check is done
-		 */
-		checkCanceled : function (assert, oPromise) {
-			return oPromise.then(function () {
-				assert.ok(false, "unexpected success, 'canceled error' expected");
-			}, function (oError) {
-				assert.strictEqual(oError.canceled, true);
-			});
 		},
 
 		/**
@@ -3729,7 +3739,7 @@ sap.ui.define([
 			assert.notOk(oListBindingWithoutUI.hasPendingChanges());
 			assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
 
-			return oCreatedPromise.catch(function (oError) {
+			return oCreatedPromise.then(mustFail(assert), function (oError) {
 				// create (which ran asynchronously) must not have changed anything
 				assert.ok(oError.canceled);
 
@@ -3738,7 +3748,7 @@ sap.ui.define([
 				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
 
 				return Promise.all([
-					that.checkCanceled(assert, oCreatedPromise),
+					checkCanceled(assert, oCreatedPromise),
 					that.waitForChanges(assert) // to get all group locks unlocked
 				]);
 			});
@@ -5061,9 +5071,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oOperation.setParameter("Budget", "-42").execute()
-					.then(function () {
-						assert.ok(false, "Unexpected success");
-					}, function (oError0) {
+					.then(mustFail(assert), function (oError0) {
 						assert.strictEqual(oError0, oError);
 					}),
 				that.waitForChanges(assert)
@@ -6400,7 +6408,7 @@ sap.ui.define([
 				oContext.delete(); // clean up to be able to call filter API
 
 				return Promise.all([
-					that.checkCanceled(assert, oContext.created()),
+					checkCanceled(assert, oContext.created()),
 					that.waitForChanges(assert, "Clean up")
 				]).then(function () {
 					return oFilter;
@@ -6855,11 +6863,12 @@ sap.ui.define([
 			aCreatedContexts.push(oBinding.create({Note : "new4"}, /*bSkipRefresh*/true));
 			aCreatedContexts.push(oBinding.create({Note : "new5"}, /*bSkipRefresh*/true));
 
-			oBinding.getHeaderContext().requestSideEffects([""]).catch(function (oError0) {
-				assert.strictEqual(oError0.message,
-					"HTTP request was not processed because the previous request failed");
-				assert.strictEqual(oError0.cause.message, sCreateError);
-			});
+			oBinding.getHeaderContext().requestSideEffects([""])
+				.then(mustFail(assert), function (oError0) {
+					assert.strictEqual(oError0.message,
+						"HTTP request was not processed because the previous request failed");
+					assert.strictEqual(oError0.cause.message, sCreateError);
+				});
 
 			return that.waitForChanges(assert,
 				"2. creation of further entities fails and requested side effects rejected");
@@ -6889,7 +6898,7 @@ sap.ui.define([
 				// delete 2nd transient one
 				aCreatedContexts[3].delete(),
 				// handle rejection of created promise
-				aCreatedContexts[3].created().catch(function (oError) {
+				aCreatedContexts[3].created().then(mustFail(assert), function (oError) {
 					assert.strictEqual(oError.message,
 						"Request canceled: POST SalesOrderList; group: $parked.$auto"
 					);
@@ -7157,7 +7166,7 @@ sap.ui.define([
 				.expectChange("note", ["New 2", "New 1", "First SalesOrder"]);
 
 			return Promise.all([
-				oCreatedContext.created().catch(function () {/* avoid uncaught (in promise) */}),
+				checkCanceled(assert, oCreatedContext.created()),
 				deleteSalesOrder(),
 				that.waitForChanges(assert)
 			]);
@@ -7282,7 +7291,7 @@ sap.ui.define([
 				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
-				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
+				checkCanceled(assert, oCreatedContext1.created()),
 				oCreatedContext1.delete(),
 				that.waitForChanges(assert)
 			]);
@@ -7511,7 +7520,7 @@ sap.ui.define([
 				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
-				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
+				checkCanceled(assert, oCreatedContext1.created()),
 				oCreatedContext1.delete(),
 				that.waitForChanges(assert, "", true)
 			]);
@@ -8157,9 +8166,9 @@ sap.ui.define([
 			oModel.resetChanges();
 
 			return Promise.all([
-				oCreatedContext0.created().catch(function () {/* avoid uncaught (in promise) */}),
-				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
-				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
+				checkCanceled(assert, oCreatedContext0.created()),
+				checkCanceled(assert, oCreatedContext1.created()),
+				checkCanceled(assert, oCreatedContext2.created()),
 				that.waitForChanges(assert, "", true)
 			]);
 			// scrolling not possible: only one entry
@@ -8255,8 +8264,8 @@ sap.ui.define([
 
 			return Promise.all([
 				oBinding.resetChanges(),
-				that.checkCanceled(assert, oCreatedContext1.created()),
-				that.checkCanceled(assert, oCreatedContext2.created()),
+				checkCanceled(assert, oCreatedContext1.created()),
+				checkCanceled(assert, oCreatedContext2.created()),
 				that.waitForChanges(assert) // to get all group locks unlocked
 			]);
 		}).then(function () {
@@ -8324,7 +8333,7 @@ sap.ui.define([
 			// no change event: getContexts with E.C.D. returns a diff containing one delete only
 
 			return Promise.all([
-				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
+				checkCanceled(assert, oCreatedContext1.created()),
 				oCreatedContext1.delete(),
 				that.waitForChanges(assert)
 			]);
@@ -8399,9 +8408,9 @@ sap.ui.define([
 
 			return Promise.all([
 				oBinding.resetChanges(),
-				oCreatedContext0.created().catch(function () {/* avoid uncaught (in promise) */}),
-				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
-				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
+				checkCanceled(assert, oCreatedContext0.created()),
+				checkCanceled(assert, oCreatedContext1.created()),
+				checkCanceled(assert, oCreatedContext2.created()),
 				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
@@ -8491,8 +8500,8 @@ sap.ui.define([
 
 			return Promise.all([
 				oBinding.resetChanges(),
-				that.checkCanceled(assert, oCreatedContext1.created()),
-				that.checkCanceled(assert, oCreatedContext2.created()),
+				checkCanceled(assert, oCreatedContext1.created()),
+				checkCanceled(assert, oCreatedContext2.created()),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -8571,9 +8580,9 @@ sap.ui.define([
 			oModel.resetChanges();
 
 			return Promise.all([
-				that.checkCanceled(assert, oCreatedContext0.created()),
-				that.checkCanceled(assert, oCreatedContext1.created()),
-				that.checkCanceled(assert, oCreatedContext2.created())
+				checkCanceled(assert, oCreatedContext0.created()),
+				checkCanceled(assert, oCreatedContext1.created()),
+				checkCanceled(assert, oCreatedContext2.created())
 			]);
 		}).then(function () {
 			assert.strictEqual(oTable.getItems()[0].getBindingContext().isTransient(), undefined);
@@ -8659,8 +8668,8 @@ sap.ui.define([
 			oModel.resetChanges();
 
 			return Promise.all([
-				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
-				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
+				checkCanceled(assert, oCreatedContext1.created()),
+				checkCanceled(assert, oCreatedContext2.created()),
 				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
@@ -8971,8 +8980,7 @@ sap.ui.define([
 			that.expectChange("note", [,, "New 3"]);
 
 			return Promise.all([
-				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */
-				}),
+				checkCanceled(assert, oCreatedContext1.created()),
 				oCreatedContext1.delete(),
 				that.waitForChanges(assert, "", true)
 			]);
@@ -9064,8 +9072,8 @@ sap.ui.define([
 			that.oModel.resetChanges();
 
 			return Promise.all([
-				that.checkCanceled(assert, oCreatedContext1.created()),
-				that.checkCanceled(assert, oCreatedContext2.created()),
+				checkCanceled(assert, oCreatedContext1.created()),
+				checkCanceled(assert, oCreatedContext2.created()),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -9276,8 +9284,8 @@ sap.ui.define([
 
 			return Promise.all([
 				oBinding.resetChanges(),
-				that.checkCanceled(assert, oCreatedContext1.created()),
-				that.checkCanceled(assert, oCreatedContext2.created())
+				checkCanceled(assert, oCreatedContext1.created()),
+				checkCanceled(assert, oCreatedContext2.created())
 			]);
 		}).then(function () {
 			var aItems = oTable.getItems();
@@ -9391,8 +9399,6 @@ sap.ui.define([
 				.expectChange("note", [,, "New 3"]);
 
 			return Promise.all([
-				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */
-				}),
 				oCreatedContext1.delete("$auto"),
 				that.waitForChanges(assert, "", true)
 			]);
@@ -11046,7 +11052,7 @@ sap.ui.define([
 					.expectChange("text", ["John Doe", "Frederic Fall"]);
 
 				oNewContext = oTeam2EmployeesBinding.create({ID : null, Name : "John Doe"});
-				oNewContext.created().catch(function (oError) {
+				oNewContext.created().then(mustFail(assert), function (oError) {
 					assert.ok(true, oError); // promise rejected because request is canceled below
 				});
 				assert.ok(oTeam2EmployeesBinding.hasPendingChanges(),
@@ -11070,7 +11076,7 @@ sap.ui.define([
 
 				return Promise.all([
 					oPromise,
-					that.checkCanceled(assert, oNewContext.created()),
+					checkCanceled(assert, oNewContext.created()),
 					that.waitForChanges(assert)
 				]);
 			});
@@ -11204,9 +11210,7 @@ sap.ui.define([
 
 			return Promise.all([
 				that.oView.byId("action").getObjectBinding().setParameter("TeamID", "").execute()
-					.then(function () {
-						assert.ok(false, "Unexpected success");
-					}, function (oError0) {
+					.then(mustFail(assert), function (oError0) {
 						assert.strictEqual(oError0, oError);
 					}),
 				that.waitForChanges(assert)
@@ -19459,9 +19463,7 @@ sap.ui.define([
 		}).then(function () {
 			return that.oView.byId("table").getItems()[0].getBindingContext()
 				.requestSideEffects([{$PropertyPath : "Country"}])
-				.then(function () {
-					assert.ok(false);
-				}, function (oError) {
+				.then(mustFail(assert), function (oError) {
 					assert.strictEqual(oError.message, "Must not request side effects for a context"
 						+ " of a binding with $$aggregation");
 				});
@@ -20675,9 +20677,7 @@ sap.ui.define([
 
 			return oReturnValueContext.getBinding().getBoundContext()
 				.setProperty("BestFriend/Name", "n/a")
-				.then(function () {
-					assert.ok(false);
-				}, function () {
+				.then(mustFail(assert), function () {
 					// expect one message and remove it again
 					assert.strictEqual(oMessageManager.getMessageModel().getObject("/").length, 1);
 					oMessageManager.removeAllMessages();
@@ -20723,7 +20723,7 @@ sap.ui.define([
 			return Promise.all([
 				oCreationRowContext.delete(),
 				// handle cancellation caused by .delete()
-				that.checkCanceled(assert, oCreationRowContext.created()),
+				checkCanceled(assert, oCreationRowContext.created()),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -22664,7 +22664,9 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oContext.delete().catch(function () {}),
+				oContext.delete().then(mustFail(assert), function (oError0) {
+					assert.strictEqual(oError0, oError);
+				}),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -23343,7 +23345,7 @@ sap.ui.define([
 			// code under test
 			oPromise = that.oView.byId("form").getBindingContext().requestSideEffects([{
 				$PropertyPath : "GrossAmount"
-			}]).catch(function (oError0) {
+			}]).then(mustFail(assert), function (oError0) {
 				assert.strictEqual(oError0.message,
 					"HTTP request was not processed because the previous request failed");
 			});
@@ -24874,11 +24876,10 @@ sap.ui.define([
 			oTableBinding = oTable.getBinding("items");
 
 			return Promise.all([
-				oTableBinding.getHeaderContext().requestSideEffects([""]).then(function () {
-					assert.ok(false, "unexpected success");
-				}, function () {
-					assert.ok(true, "requestSideEffects failed as expected");
-				}),
+				oTableBinding.getHeaderContext().requestSideEffects([""])
+					.then(mustFail(assert), function () {
+						assert.ok(true, "requestSideEffects failed as expected");
+					}),
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
@@ -24942,11 +24943,10 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				oTableBinding.getHeaderContext().requestSideEffects([""]).then(function () {
-					assert.ok(false, "unexpected success");
-				}, function () {
-					assert.ok(true, "requestSideEffects failed as expected");
-				}),
+				oTableBinding.getHeaderContext().requestSideEffects([""])
+					.then(mustFail(assert), function () {
+						assert.ok(true, "requestSideEffects failed as expected");
+					}),
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
@@ -25012,15 +25012,13 @@ sap.ui.define([
 
 			return Promise.all([
 				that.oView.byId("form").getElementBinding().getBoundContext()
-					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
-					function () {
-						assert.ok(false, "unexpected success");
-					}, function (oError) {
-						assert.strictEqual(oError.message,
-							"HTTP request was not processed because the previous request failed");
-						assert.strictEqual(oError.cause.error.message,
-							"Request 1 intentionally failed");
-					}),
+					.requestSideEffects([{$NavigationPropertyPath : ""}])
+						.then(mustFail(assert), function (oError) {
+							assert.strictEqual(oError.message,
+								"HTTP request was not processed because the previous request failed");
+							assert.strictEqual(oError.cause.error.message,
+								"Request 1 intentionally failed");
+						}),
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
@@ -25465,9 +25463,7 @@ sap.ui.define([
 				fnReject(oError);
 
 				return Promise.all([
-					oPromise.catch(function (oError0) {
-						assert.strictEqual(oError0, oError);
-					}),
+					oPromise,
 					oModel.submitBatch("group"),
 					that.waitForChanges(assert)
 				]);
@@ -25850,7 +25846,7 @@ sap.ui.define([
 				return Promise.all([
 					// code under test
 					oTable.getBinding("items").getCurrentContexts()[0].delete()
-						.catch(function (oError0) {
+						.then(mustFail(assert), function (oError0) {
 							assert.strictEqual(oError0, oError);
 						}),
 					that.waitForChanges(assert)
@@ -27275,9 +27271,7 @@ sap.ui.define([
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
-				oPromise.then(function () {
-					assert.ok(false);
-				}, function (oError) {
+				oPromise.then(mustFail(assert), function (oError) {
 					assert.strictEqual(oError.message, "Request intentionally failed");
 				}),
 				that.waitForChanges(assert)
@@ -27609,7 +27603,7 @@ sap.ui.define([
 			that.expectChange("valueHelp::currencyCode", null);
 
 			// delete creation row to avoid errors in destroy
-			oCreationRowContext.created().catch(function () {/* avoid "Uncaught (in promise)" */});
+			checkCanceled(assert, oCreationRowContext.created());
 			oCreationRowContext.delete();
 		});
 	});
@@ -27991,8 +27985,7 @@ sap.ui.define([
 			return Promise.all([
 				// cleanup: delete creation row to avoid error on view destruction
 				oCreationRowContext.delete(),
-				oCreationRowContext.created()
-					.catch(function () {/* avoid "Uncaught (in promise)" */}),
+				checkCanceled(assert, oCreationRowContext.created()),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -28118,8 +28111,7 @@ sap.ui.define([
 			return Promise.all([
 				// cleanup: delete creation row to avoid error on view destruction
 				oCreationRowContext.delete(),
-				oCreationRowContext.created()
-					.catch(function () {/* avoid "Uncaught (in promise)" */}),
+				checkCanceled(assert, oCreationRowContext.created()),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -28171,9 +28163,7 @@ sap.ui.define([
 			return Promise.all([
 				// code under test (CPOUI5ODATAV4-14)
 				oCreatedContext.setProperty("Address/City", "St. Ingbert", "$direct")
-					.then(function () {
-						assert.ok(false);
-					}, function (oError) {
+					.then(mustFail(assert), function (oError) {
 						assert.strictEqual(oError.message, "The entity will be created via group"
 							+ " 'update'. Cannot patch via group '$direct'");
 					}),
@@ -28382,7 +28372,9 @@ sap.ui.define([
 				// code under test
 				that.oView.byId("form").getBindingContext().requestSideEffects([{
 					$NavigationPropertyPath : "BP_2_SO"
-				}]).catch(function (oError) {
+				}]).then(function () {
+					assert.notOk(oCausingError);
+				}, function (oError) {
 					if (!(oCausingError && oError.cause === oCausingError)) {
 						throw oError;
 					}
@@ -28520,7 +28512,7 @@ sap.ui.define([
 				// code under test
 				oTableBinding.getHeaderContext().requestSideEffects([{
 					$NavigationPropertyPath : ""
-				}]).catch(function (oError) {
+				}]).then(mustFail(assert), function (oError) {
 					if (!(oCausingError && oError.cause === oCausingError)) {
 						throw oError;
 					}
@@ -29225,7 +29217,7 @@ sap.ui.define([
 				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
 
 				return Promise.all([
-					that.checkCanceled(assert, oCreatedPromise),
+					checkCanceled(assert, oCreatedPromise),
 					that.waitForChanges(assert) // to get all group locks unlocked
 				]);
 			});
@@ -29270,7 +29262,7 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oFormBinding.resetChanges(),
-				oCreatedPromise.catch(function (oError) {
+				oCreatedPromise.then(mustFail(assert), function (oError) {
 					assert.strictEqual(oError.message,
 						"Request canceled: POST SalesOrderList('1')/SO_2_SOITEM; group: doNotSubmit"
 					);
@@ -29739,9 +29731,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oContextBinding.getBoundContext().setProperty("Name", "changed", null)
-					.then(function () {
-						assert.ok(false);
-					}, function (oError) {
+					.then(mustFail(assert), function (oError) {
 						assert.strictEqual(oError.message,
 							"Unexpected request: GET TEAMS('42')");
 					}),
@@ -29822,9 +29812,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oContextBinding.getBoundContext().setProperty("Name", "Darth Vader")
-					.then(function () {
-						assert.ok(false);
-					}, function () {
+					.then(mustFail(assert), function () {
 						// TypeError: Cannot read property 'resolve' of undefined
 						// --> setProperty fails somehow because the old bound context has already
 						// been destroyed; this is OK and better than changing the wrong data or so
@@ -29899,9 +29887,7 @@ sap.ui.define([
 			}, 0);
 
 			return Promise.all([
-				oPromise.catch(function (oError) {
-					assert.strictEqual(oError.message, "Response discarded: cache is inactive");
-				}),
+				oPromise,
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -29973,7 +29959,7 @@ sap.ui.define([
 			}, 0);
 
 			return Promise.all([
-				oPromise.catch(function (oError) {
+				oPromise.then(mustFail(assert), function (oError) {
 					assert.strictEqual(oError.message, "Response discarded: cache is inactive");
 				}),
 				that.waitForChanges(assert)
@@ -30050,7 +30036,7 @@ sap.ui.define([
 			}, 0);
 
 			return Promise.all([
-				oPromise.catch(function (oError) {
+				oPromise.then(mustFail(assert), function (oError) {
 					assert.strictEqual(oError.message, "Response discarded: cache is inactive");
 				}),
 				that.waitForChanges(assert)
@@ -30123,7 +30109,7 @@ sap.ui.define([
 //			assert.strictEqual(oNewContext.getIndex(), 0);
 
 			return Promise.all([
-				oSideEffectsPromise.catch(function (oError0) {
+				oSideEffectsPromise.then(mustFail(assert), function (oError0) {
 					assert.strictEqual(oError0, oError);
 				}),
 				that.waitForChanges(assert)
@@ -30196,7 +30182,7 @@ sap.ui.define([
 			fnResolve(oRefreshResponse);
 
 			return Promise.all([
-				that.checkCanceled(assert, oPromise1),
+				checkCanceled(assert, oPromise1),
 				oPromise2,
 				that.waitForChanges(assert)
 			]);
@@ -30342,11 +30328,10 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oContext.requestSideEffects(["BestFriend/*"]).then(function () {
-					assert.ok(false, "unexpected success");
-				}, function (oError) {
-					assert.strictEqual(oError.message, sError);
-				}),
+				oContext.requestSideEffects(["BestFriend/*"])
+					.then(mustFail(assert), function (oError) {
+						assert.strictEqual(oError.message, sError);
+					}),
 				that.waitForChanges(assert, "BestFriend/*")
 			]);
 		}).then(function () {
@@ -30517,9 +30502,7 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				oListBinding.create().created().then(function () {
-						assert.ok(false, "Unexpected success");
-					}, function (oError) {
+				oListBinding.create().created().then(mustFail(assert), function (oError) {
 						assert.strictEqual(oError.message,
 							"Could not load metadata: 500 Internal Server Error");
 					}),
@@ -31033,9 +31016,7 @@ sap.ui.define([
 						{$NavigationPropertyPath : "Best"},
 						{$PropertyPath : "BestFriend/*"}
 					])
-					.then(function () {
-						assert.ok(false, "unexpected success");
-					}, function (oError) {
+					.then(mustFail(assert), function (oError) {
 						assert.strictEqual(oError.message, "Key predicate of"
 							+ " '(ArtistID='XYZ',IsActiveEntity=true)/BestFriend'"
 							+ " changed from (ArtistID='23',IsActiveEntity=true)"
@@ -31377,9 +31358,7 @@ sap.ui.define([
 				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
 					sinon.match(sMessage), "sap.ui.model.odata.v4.ODataContextBinding");
 
-			oAction.execute().then(function () {
-				assert.ok(false, "Unexpected success");
-			}, function (oError) {
+			oAction.execute().then(mustFail(assert), function (oError) {
 				assert.strictEqual(oError.message, sMessage);
 			});
 		});
@@ -33107,9 +33086,10 @@ sap.ui.define([
 
 				return Promise.all([
 					// code under test
-					oKeptContext.getBinding().requestRefresh().catch(function (oError0) {
-						assert.strictEqual(oError0.message, "Not found");
-					}),
+					oKeptContext.getBinding().requestRefresh()
+						.then(mustFail(assert), function (oError0) {
+							assert.strictEqual(oError0.message, "Not found");
+						}),
 					that.waitForChanges(assert, "(3) refresh the list")
 				]);
 		}).then(function () {
