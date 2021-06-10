@@ -274,13 +274,15 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	line-height: 2.375rem;
 	padding: 0 0.4375rem;
 	color: @sapUiContentIconColor;
-
-	/* prevent IE to focus the icon (non-focusable element) */
-	pointer-events: none;
 }
 
 .sapMSltAutoAdjustedWidth .sapMSltIcon {
 	position: relative;
+}
+
+/* prevent IE to focus the icon (non-focusable element) */
+html[data-sap-ui-browser^="ie"] .sapMSltIcon {
+	pointer-events: none;
 }
 
 /* pressed */

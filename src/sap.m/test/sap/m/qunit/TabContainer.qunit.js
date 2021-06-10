@@ -146,8 +146,9 @@ sap.ui.define([
 
 			assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is still in the DOM.');
 
-		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		assert.strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oSelectDomRef = this.oTabContainer._getTabStrip().getAggregation('_select').getFocusDomRef();
+		assert.strictEqual(jQuery(oSelectDomRef).attr('title'),
 				oMessageBundle.getText("TABSTRIP_OPENED_TABS"),
 				"The select button tooltip is correct");
 

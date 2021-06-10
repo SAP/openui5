@@ -4257,6 +4257,30 @@ sap.ui.define([
 
 		QUnit.module("setTooltip()");
 
+		QUnit.test("it should display the default tooltip of the icon if control toolitp is not set", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				type: SelectType.IconOnly,
+				icon: IconPool.getIconURI("filter")
+			}),
+			oSelectDomRef,
+			oIconInfo = IconPool.getIconInfo(oSelect.getIcon()),
+			sIconText = oIconInfo && oIconInfo.text;
+
+			// arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			oSelectDomRef = oSelect.getFocusDomRef();
+			// assert
+			assert.strictEqual(oSelectDomRef.getAttribute("title"), sIconText);
+			assert.strictEqual(oSelect.$("icon").attr("title"), sIconText);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		// BCP 1580232802
 		QUnit.test("it should display the control tooltip instead of the default tooltip of the icon", function (assert) {
 
@@ -4265,14 +4289,16 @@ sap.ui.define([
 				tooltip: "lorem ipsum",
 				type: SelectType.IconOnly,
 				icon: IconPool.getIconURI("filter")
-			});
+			}),
+			oSelectDomRef;
 
 			// arrange
 			oSelect.placeAt("content");
 			Core.applyChanges();
 
+			oSelectDomRef = oSelect.getFocusDomRef();
 			// assert
-			assert.strictEqual(oSelect.$().attr("title"), "lorem ipsum");
+			assert.strictEqual(oSelectDomRef.getAttribute("title"), "lorem ipsum");
 			assert.strictEqual(oSelect.$("icon").attr("title"), oSelect.getTooltip_AsString());
 
 			// cleanup
@@ -4282,6 +4308,9 @@ sap.ui.define([
 		QUnit.test("it should display the control tooltip when the select has value state", function (assert) {
 			// system under test
 			var sSampleText = "lorem ipsum",
+				oSelect = new Select({
+					tooltip: sSampleText
+				}),
 				oSuccessSelect = new Select({
 					tooltip: sSampleText,
 					valueState: ValueState.Success
@@ -4300,6 +4329,7 @@ sap.ui.define([
 				});
 
 			// arrange
+			oSelect.placeAt("content");
 			oSuccessSelect.placeAt("content");
 			oWarningSelect.placeAt("content");
 			oErrorSelect.placeAt("content");
@@ -4307,10 +4337,12 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// assert
-			assert.strictEqual(oSuccessSelect.$().attr("title"), sSampleText, "select title attribute is correct");
-			assert.strictEqual(oWarningSelect.$().attr("title"), sSampleText, "select title attribute is correct");
-			assert.strictEqual(oErrorSelect.$().attr("title"), sSampleText, "select title attribute is correct");
-			assert.strictEqual(oInformationSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oSuccessSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oWarningSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oErrorSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oInformationSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
+			// since focusable element has sapUiPseudoInvisibleText class the tooltip is also set to the label element to be visually displayed
+			assert.strictEqual(oSelect.$("label").attr("title"), sSampleText, "select title attribute is correct");
 
 			// cleanup
 			oSuccessSelect.destroy();

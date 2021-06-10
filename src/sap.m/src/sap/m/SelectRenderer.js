@@ -37,8 +37,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.render = function(oRm, oSelect) {
-			var	sTooltip = oSelect.getTooltip_AsString(),
-				sType = oSelect.getType(),
+			var	sType = oSelect.getType(),
 				bAutoAdjustWidth = oSelect.getAutoAdjustWidth(),
 				bEditable = oSelect.getEditable(),
 				bEnabled = oSelect.getEnabled(),
@@ -88,16 +87,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oRm.attr("tabindex", "-1");
 			}
 
-			if (sTooltip) {
-				oRm.attr("title", sTooltip);
-			} else if (sType === SelectType.IconOnly) {
-				var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
-
-				if (oIconInfo) {
-					oRm.attr("title", oIconInfo.text);
-				}
-			}
-
 			oRm.openEnd();
 			// Used to benefit from the div[role="combobox"]. Direct textNode is the value of the div and no other elements should be placed inside.
 			this.renderFocusElement(oRm, oSelect);
@@ -135,8 +124,11 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 * @private
 		 */
-		SelectRenderer.renderFocusElement = function (oRm, oSelect) {
-			var oSelectedItem = oSelect.getSelectedItem();
+		 SelectRenderer.renderFocusElement = function (oRm, oSelect) {
+			var oSelectedItem = oSelect.getSelectedItem(),
+				sTooltip = oSelect.getTooltip_AsString(),
+				sType = oSelect.getType();
+
 			oRm.openStart("div", oSelect.getId() + "-hiddenSelect");
 
 			this.writeAccessibilityState(oRm, oSelect);
@@ -148,6 +140,16 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			// Attributes
 			if (oSelect.getEnabled()) {
 				oRm.attr("tabindex", "0");
+			}
+
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
+			} else if (sType === SelectType.IconOnly) {
+				var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
+
+				if (oIconInfo) {
+					oRm.attr("title", oIconInfo.text);
+				}
 			}
 
 			oRm.openEnd();
@@ -194,11 +196,18 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			var oSelectedItem = oSelect.getSelectedItem(),
 				sTextDir = oSelect.getTextDirection(),
 				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir),
-				CSS_CLASS = SelectRenderer.CSS_CLASS;
+				CSS_CLASS = SelectRenderer.CSS_CLASS,
+				sTooltip = oSelect.getTooltip_AsString();
 
 			oRm.openStart("span", oSelect.getId() + "-label");
 			oRm.attr("aria-hidden", true);
 			oRm.class(CSS_CLASS + "Label");
+
+			// since focusable element has sapUiPseudoInvisibleText class
+			// the tooltip is also set to the label element to be visually displayed
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
+			}
 
 			if (oSelect.getValueState() !== ValueState.None) {
 				oRm.class(CSS_CLASS + "LabelState");
@@ -241,7 +250,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @private
 		 */
 		SelectRenderer.renderArrow = function(oRm, oSelect) {
-			var CSS_CLASS = SelectRenderer.CSS_CLASS;
+			var CSS_CLASS = SelectRenderer.CSS_CLASS,
+				sTooltip = oSelect.getTooltip_AsString();
 
 			oRm.openStart("span", oSelect.getId() + "-arrow");
 			oRm.attr("aria-hidden", true);
@@ -249,6 +259,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			if (oSelect.getValueState() !== ValueState.None) {
 				oRm.class(CSS_CLASS + "ArrowState");
+			}
+
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
 			}
 
 			oRm.openEnd().close("span");
@@ -262,11 +276,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @private
 		 */
 		SelectRenderer.renderIcon = function(oRm, oSelect) {
-			var sTooltip = oSelect.getTooltip_AsString();
+			var sTooltip = oSelect.getTooltip_AsString(),
+				oIconInfo = IconPool.getIconInfo(oSelect.getIcon()),
+				sIconText = oIconInfo && oIconInfo.text;
 
 			oRm.icon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon", {
 				id: oSelect.getId() + "-icon",
-				title: sTooltip || null
+				title: sTooltip || sIconText || null
 			});
 		};
 
