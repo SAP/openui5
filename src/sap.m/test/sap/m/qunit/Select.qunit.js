@@ -10998,4 +10998,28 @@ sap.ui.define([
 			//Assert
 			assert.equal(oList.getProperty("_columnRatio"), oSelect.getColumnRatio(), "List's columnRatio property is synced correctly");
 		});
+		QUnit.module("ISemanticFormContent methods");
+
+		QUnit.test("Select with selected item", function (assert) {
+			var oSelectedItem,
+				oSelect = new Select({
+					forceSelection: false,
+					items: [
+						oSelectedItem = new Item({text: "First item text"})
+					],
+					selectedItem: oSelectedItem
+				});
+
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			//Assert
+			assert.strictEqual(oSelect.getFormFormattedValue(), oSelectedItem.getText(), "OK");
+
+			oSelect.setSelectedItem(null);
+			Core.applyChanges();
+
+			//Assert
+			assert.strictEqual(oSelect.getFormFormattedValue(), "", "OK");
+		});
 	});
