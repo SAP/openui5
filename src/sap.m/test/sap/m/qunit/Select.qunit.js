@@ -4323,14 +4323,16 @@ sap.ui.define([
 				tooltip: "lorem ipsum",
 				type: SelectType.IconOnly,
 				icon: IconPool.getIconURI("filter")
-			});
+			}),
+			oSelectDomRef;
 
 			// arrange
 			oSelect.placeAt("content");
 			Core.applyChanges();
 
+			oSelectDomRef = oSelect.getFocusDomRef();
 			// assert
-			assert.strictEqual(oSelect.$().attr("title"), "lorem ipsum");
+			assert.strictEqual(oSelectDomRef.getAttribute("title"), "lorem ipsum");
 			assert.strictEqual(oSelect.$("icon").attr("title"), oSelect.getTooltip_AsString());
 
 			// cleanup
@@ -4365,10 +4367,10 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// assert
-			assert.strictEqual(oSuccessSelect.$().attr("title"), sSampleText, "select title attribute is correct");
-			assert.strictEqual(oWarningSelect.$().attr("title"), sSampleText, "select title attribute is correct");
-			assert.strictEqual(oErrorSelect.$().attr("title"), sSampleText, "select title attribute is correct");
-			assert.strictEqual(oInformationSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oSuccessSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oWarningSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oErrorSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
+			assert.strictEqual(oInformationSelect.getFocusDomRef().getAttribute("title"), sSampleText, "select title attribute is correct");
 
 			// cleanup
 			oSuccessSelect.destroy();

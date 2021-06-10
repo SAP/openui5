@@ -37,8 +37,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.render = function(oRm, oSelect) {
-			var	sTooltip = oSelect.getTooltip_AsString(),
-				sType = oSelect.getType(),
+			var	sType = oSelect.getType(),
 				bAutoAdjustWidth = oSelect.getAutoAdjustWidth(),
 				bEditable = oSelect.getEditable(),
 				bEnabled = oSelect.getEnabled(),
@@ -85,16 +84,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			oRm.style("max-width", oSelect.getMaxWidth());
 
-			if (sTooltip) {
-				oRm.attr("title", sTooltip);
-			} else if (sType === SelectType.IconOnly) {
-				var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
-
-				if (oIconInfo) {
-					oRm.attr("title", oIconInfo.text);
-				}
-			}
-
 			if (bEnabled) {
 				oRm.attr("tabindex", "-1");
 			}
@@ -137,7 +126,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @private
 		 */
 		 SelectRenderer.renderFocusElement = function (oRm, oSelect) {
-			var oSelectedItem = oSelect.getSelectedItem();
+			var oSelectedItem = oSelect.getSelectedItem(),
+				sTooltip = oSelect.getTooltip_AsString(),
+				sType = oSelect.getType();
+
 			oRm.openStart("div", oSelect.getId() + "-hiddenSelect");
 
 			this.writeAccessibilityState(oRm, oSelect);
@@ -149,6 +141,16 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			// Attributes
 			if (oSelect.getEnabled()) {
 				oRm.attr("tabindex", "0");
+			}
+
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
+			} else if (sType === SelectType.IconOnly) {
+				var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
+
+				if (oIconInfo) {
+					oRm.attr("title", oIconInfo.text);
+				}
 			}
 
 			oRm.openEnd();
