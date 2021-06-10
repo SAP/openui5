@@ -856,6 +856,8 @@ sap.ui.define([
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
 				oDomRef = this.getFocusDomRef();
 
+				this.setProperty("open", true);
+
 			// the dropdown list can be opened by calling the .open() method (without
 			// any end user interaction), in this case if items are not already loaded
 			// and there is an {@link #loadItems} event listener attached, the items should be loaded
@@ -868,7 +870,6 @@ sap.ui.define([
 				// expose a parent/child contextual relationship to assistive technologies,
 				// notice that the "aria-controls" attribute is set when the popover opened.
 				oDomRef.setAttribute("aria-controls", this.getPicker().getId());
-				oDomRef.setAttribute("aria-expanded", true);
 			}
 
 			// call the hook to add additional content to the list
@@ -926,10 +927,11 @@ sap.ui.define([
 			ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
 			var oDomRef = this.getFocusDomRef();
 
+			this.setProperty("open", false);
+
 			if (oDomRef) {
 				// notice that the "aria-controls" attribute is removed when the popover is closed.
 				oDomRef.removeAttribute("aria-controls");
-				oDomRef.setAttribute("aria-expanded", false);
 			}
 
 			if (document.activeElement === oDomRef) {

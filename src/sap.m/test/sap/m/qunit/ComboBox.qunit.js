@@ -2242,6 +2242,45 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("aria-activedescendant attribute should be set if an item is selected snd then the picker is opened", function (assert) {
+		var oExpectedItem;
+		var oComboBox = new ComboBox({
+			items: [
+				new Item("firstItem", {
+					key: "GER",
+					text: "Germany"
+				}),
+				oExpectedItem = new Item("secondItem", {
+					key: "BG",
+					text: "Bulgaria"
+				}),
+				new Item("thirdItem", {
+					key: "GR",
+					text: "Greece"
+				})
+			]
+		});
+
+		// Arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.focus();
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		sap.ui.getCore().applyChanges();
+
+		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
+
+		// Assert
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
 
 	QUnit.test("setSelectedKey() on unbindObject call", function (assert) {
 		var oComboBox = new ComboBox({

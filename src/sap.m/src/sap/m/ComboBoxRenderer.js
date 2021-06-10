@@ -68,9 +68,11 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/inputUti
 		 */
 		ComboBoxRenderer.writeInnerAttributes = function(oRm, oControl) {
 			var oSelectedItem = oControl.getSelectedItem(),
-				oSelectedListItem = oSelectedItem && ListHelpers.getListItem(oSelectedItem);
+				oSelectedListItem = oSelectedItem && ListHelpers.getListItem(oSelectedItem),
+				bOpen = oControl.isOpen();
 
 			ComboBoxBaseRenderer.writeInnerAttributes.apply(this, arguments);
+			oRm.attr("aria-expanded", bOpen);
 
 			if (!oControl.isOpen()) {
 				return;
