@@ -631,8 +631,42 @@ sap.ui.define([
 	};
 
 	Table.prototype.getDataStateIndicatorPluginOwner = function(oDataStateIndicator) {
-		oDataStateIndicator.setEnableFiltering(false);
 		return this._oTable || this._oFullInitialize.promise;
+	};
+
+	Table.prototype.setDataStateIndicator = function(oDataStateIndicator) {
+		this._handleDataStateEvents(this.getDataStateIndicator(), "detach");
+		this.setAggregation("dataStateIndicator", oDataStateIndicator, true);
+		this._handleDataStateEvents(this.getDataStateIndicator(), "attach");
+		return this;
+	};
+
+	Table.prototype._handleDataStateEvents = function(oDataStateIndicator, sAction) {
+		if (oDataStateIndicator) {
+			oDataStateIndicator[sAction + "ApplyFilter"](this._onApplyMessageFilter, this);
+			oDataStateIndicator[sAction + "ClearFilter"](this._onClearMessageFilter, this);
+			oDataStateIndicator[sAction + "Event"]("filterInfoPress", this._showFilter, this);
+		}
+	};
+
+	/**
+	 * This gets called from the DataStateIndicator plugin when data state message filter is applied
+	 * @private
+	 */
+	 Table.prototype._onApplyMessageFilter = function(oEvent) {
+		this._oMessageFilter = oEvent.getParameter("filter");
+		oEvent.preventDefault();
+		this.rebind();
+	};
+
+	/**
+	 * This gets called from the DataStateIndicator plugin when the data state message filter is cleared
+	 * @private
+	 */
+	Table.prototype._onClearMessageFilter = function(oEvent) {
+		this._oMessageFilter = null;
+		oEvent.preventDefault();
+		this.rebind();
 	};
 
 	// ----Type----
@@ -2336,12 +2370,7 @@ sap.ui.define([
 			return;
 		}
 
-		// TODO: Temporary, until the FE delegate calls updateBindingInfo on the the base delegate. See sap.ui.mdc.TableDelegate.updateBindingInfo
-		var oBindingInfo = {
-			parameters: {},
-			filters: [],
-			sorter: this._getSorters()
-		};
+		var oBindingInfo = {};
 
 		this.getControlDelegate().updateBindingInfo(this, this.getPayload(), oBindingInfo);
 

@@ -60,12 +60,16 @@ sap.ui.define([
 	};
 
 	TestTableDelegate.updateBindingInfo = function(oTable, oMetadataInfo, oBindingInfo) {
+		TableDelegate.updateBindingInfo.apply(this, arguments);
 		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
 		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
-		var aFilters = createInnerFilters.call(this, oTable).concat(createOuterFilters.call(this, oTable));
-		oBindingInfo.filters = new Filter(aFilters, true);
+		var oDataStateIndicator = oTable.getDataStateIndicator();
+		if (!oDataStateIndicator || !oDataStateIndicator.isFiltering()) {
+			var aFilters = createInnerFilters.call(this, oTable).concat(createOuterFilters.call(this, oTable));
+			oBindingInfo.filters = new Filter(aFilters, true);
+		}
 
 		addSearchParameter(oTable, oBindingInfo);
 	};

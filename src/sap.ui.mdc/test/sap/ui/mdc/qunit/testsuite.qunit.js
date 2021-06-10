@@ -106,6 +106,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				module: "./table/Table.qunit"
 			},
+			"TableDelegate": {
+				group: "Table",
+				module: "./table/TableDelegate.qunit"
+			},
 			"odata.v4.TableDelegate": {
 				group: "Delegates",
 				module: "./odata/v4/TableDelegate.qunit"

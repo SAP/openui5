@@ -31,7 +31,10 @@ sap.ui.define([
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/m/plugins/PasteProvider",
 	"../util/createAppEnvironment",
-	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/m/plugins/DataStateIndicator",
+	"sap/ui/core/message/Message",
+	"sap/ui/model/odata/v2/ODataModel"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -62,7 +65,10 @@ sap.ui.define([
 	ActionToolbarAction,
 	PasteProvider,
 	createAppEnvironment,
-	ControlPersonalizationWriteAPI
+	ControlPersonalizationWriteAPI,
+	DataStateIndicator,
+	Message,
+	ODataModel
 ) {
 	"use strict";
 
@@ -4630,4 +4636,122 @@ sap.ui.define([
 			MDCQUnitUtils.restorePropertyInfos(this.oTable);
 		}.bind(this));
 	});
+
+	QUnit.module("DataStateIndicator", {
+		beforeEach: function() {
+			this.oDataStateIndicator = new DataStateIndicator({
+				filter: function(oMessage) {
+					return oMessage.getType() === "Error";
+				},
+				enableFiltering: true
+			});
+
+			this.oModel = sinon.createStubInstance(ODataModel);
+			this.oTable = new Table({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/foo"
+					}
+				},
+				type: "ResponsiveTable",
+				columns: [
+					new Column({
+						header: new Text({
+							text: "Column A"
+						}),
+						hAlign: "Begin",
+						importance: "High",
+						template: new Text({
+							text: "Column A"
+						})
+					})
+				],
+				dataStateIndicator: this.oDataStateIndicator
+			});
+			this.oTable.placeAt("qunit-fixture");
+			this.oType = this.oTable.getType();
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("DataStateIndicator", function(assert) {
+		var done = assert.async();
+
+		var aMessages = [
+			new Message({
+				message: "A message",
+				fullTarget: "/apath/somesubpath",
+				target: "/apath/somesubpath",
+				type: "Error"
+			}),
+			new Message({
+				message: "A message",
+				fullTarget: "/apath/somesubpath",
+				target: "/apath/somesubpath",
+				type: "Warning"
+			})
+		];
+		var oDataState = {
+			getChanges: function(){
+				return {messages: aMessages};
+			},
+			getMessages: function(){
+				return aMessages;
+			}
+		};
+
+		var oListBinding = sinon.createStubInstance(ODataListBinding);
+		oListBinding.getPath = function() {return "/apath";};
+		oListBinding.getDataState = function() {return oDataState;};
+
+
+		this.oTable.initialized().then(function() {
+			var oBindingStub = sinon.stub(this.oTable, "_getRowBinding");
+			oBindingStub.returns(oListBinding);
+
+			var oInnerBindingStub = sinon.stub(this.oTable._oTable, "getBinding");
+			oInnerBindingStub.returns(oListBinding);
+
+			var oError = new Filter("Key1", "EQ", "11");
+			var oWarning = new Filter("Key2", "EQ", "11");
+			var pFilterMessageResolve = Promise.resolve(oError);
+			oListBinding.requestFilterForMessages.returns(pFilterMessageResolve);
+
+			// simulate error message
+			oListBinding.fireEvent("AggregatedDataStateChange", {dataState: oDataState});
+			setTimeout(function() {
+				assert.notOk(this.oDataStateIndicator.isFiltering(), "Message filter is not active");
+				this.oDataStateIndicator._oLink.firePress();
+
+				this.oTable.initialized().then(function() {
+					assert.deepEqual(this.oTable._oTable.getBindingInfo("items").filters[0], oError, "The table rebinds and dataStateIndicator Filter is set to the bindingInfo");
+
+					this.oDataStateIndicator = new DataStateIndicator({
+						filter: function(oMessage) {
+							return oMessage.getType() === "Warning";
+						},
+						enableFiltering: true
+					});
+
+					pFilterMessageResolve = Promise.resolve(oWarning);
+					oListBinding.requestFilterForMessages.returns(pFilterMessageResolve);
+					this.oTable.setDataStateIndicator(this.oDataStateIndicator);
+					oListBinding.fireEvent("AggregatedDataStateChange", {dataState: oDataState});
+
+					setTimeout(function() {
+						this.oDataStateIndicator._oLink.firePress();
+						this.oTable.initialized().then(function() {
+							assert.deepEqual(this.oTable._oTable.getBindingInfo("items").filters[0], oWarning, "dataStateIndicator Filter is set to the right bindingInfo");
+							done();
+						}.bind(this));
+					}.bind(this), 0);
+				}.bind(this));
+			}.bind(this), 0);
+		}.bind(this));
+	});
+
 });

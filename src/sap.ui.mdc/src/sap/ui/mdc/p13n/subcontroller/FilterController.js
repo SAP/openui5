@@ -109,6 +109,18 @@ sap.ui.define([
         return FlexUtil.getConditionDeltaChanges(mPropertyBag);
     };
 
+    FilterController.prototype.model2State = function() {
+        var oItems = {},
+            oFilter = this.getCurrentState();
+        this._oAdaptationModel.getProperty("/items").forEach(function(oItem) {
+            if (oItem.isFiltered && Object.keys(oFilter).includes(oItem.name)) {
+                oItems[oItem.name] = oFilter[oItem.name];
+            }
+        });
+
+        return oItems;
+    };
+
     FilterController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
         var mExistingFilters = this.getCurrentState() || {};

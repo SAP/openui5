@@ -26,12 +26,14 @@ sap.ui.define([
 	};
 
 	TestTableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
+		TableDelegate.updateBindingInfo.apply(this, arguments);
 		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
 		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 
 		var oFilter = Core.byId(oMDCTable.getFilter());
 		var bFilterEnabled = oMDCTable.isFilteringEnabled();
 		var aFilters = [];
+		var oDataStateIndicator = oMDCTable.getDataStateIndicator();
 
 		if (bFilterEnabled) {
 			var aTableProperties = oMDCTable.getPropertyHelper().getProperties();
@@ -55,7 +57,9 @@ sap.ui.define([
 			}
 		}
 
-		oBindingInfo.filters = new Filter(aFilters, true);
+		if (!oDataStateIndicator || !oDataStateIndicator.isFiltering()) {
+			oBindingInfo.filters = new Filter(aFilters, true);
+		}
 	};
 
 	return TestTableDelegate;

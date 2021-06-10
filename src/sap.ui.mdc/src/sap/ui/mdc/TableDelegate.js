@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/AggregationBaseDelegate"
-], function(AggregationBaseDelegate) {
+	"sap/ui/mdc/AggregationBaseDelegate", "sap/ui/core/library", "sap/ui/core/Core"
+], function(AggregationBaseDelegate, coreLibrary, Core) {
 	"use strict";
 
 	/**
@@ -33,7 +33,12 @@ sap.ui.define([
 	 */
 	TableDelegate.updateBindingInfo = function(oMDCTable, oDelegatePayload, oBindingInfo) {
 		oBindingInfo.parameters = {};
-		oBindingInfo.filters = [];
+
+		if (oMDCTable._oMessageFilter) {
+			oBindingInfo.filters = [oMDCTable._oMessageFilter];
+		} else {
+			oBindingInfo.filters = [];
+		}
 		oBindingInfo.sorter = oMDCTable._getSorters();
 	};
 
@@ -49,6 +54,18 @@ sap.ui.define([
 	 */
 	TableDelegate.updateBinding = function(oMDCTable, oBindingInfo, oBinding) {
 		this.rebindTable(oMDCTable, oBindingInfo);
+	};
+
+	TableDelegate.validateState = function(oControl, oState, sKey) {
+		if (sKey == "Filter" && oControl._oMessageFilter) {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			return {
+				validation: coreLibrary.MessageType.Information,
+				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_FILTER_MESSAGESTRIP")
+			};
+		}
+
+		return  AggregationBaseDelegate.validateState.apply(this, arguments);
 	};
 
 	/**

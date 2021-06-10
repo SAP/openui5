@@ -124,11 +124,14 @@ sap.ui.define([
 	};
 
 	Delegate.validateState = function(oControl, oState, sKey) {
+		var oBaseStates = TableDelegate.validateState.apply(this, arguments);
+		var oValidation;
+
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 		if (sKey == "Sort" && oState.sorters) {
 			if (!checkForValidity(oControl, oState.items, oState.sorters)) {
-				return {
+				oValidation = {
 					validation: coreLibrary.MessageType.Information,
 					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
 				};
@@ -144,7 +147,7 @@ sap.ui.define([
 			});
 
 			if (aAggregateGroupableProperties.length) {
-				return {
+				oValidation = {
 					validation: coreLibrary.MessageType.Information,
 					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION", [oListFormat.format(aAggregateGroupableProperties)])
 				};
@@ -162,15 +165,14 @@ sap.ui.define([
 					: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
 			}
 			if (sMessage) {
-				return {
+				oValidation = {
 					validation: coreLibrary.MessageType.Information,
 					message: sMessage
 				};
 			}
 		}
-		return {
-			validation: coreLibrary.MessageType.None
-		};
+
+		return mergeValidation(oBaseStates, oValidation);
 	};
 
 	/**
@@ -545,6 +547,24 @@ sap.ui.define([
 		}) : true;
 
 		return bOnlyVisibleColumns;
+	}
+
+	/**
+	 * Compares the message type and returns the message with higher priority.
+	 *
+	 * @param {Object} oBaseState message set by the base table delegate.
+	 * @param {Object} oValidationState message set by the odata v4 delegate.
+	 * @return {Object} A message with higher priority.
+	 * @private
+	 */
+	function mergeValidation(oBaseState, oValidationState) {
+		var oSeverity = { Error: 1, Warning: 2, Information: 3, None: 4};
+
+		if (!oValidationState || oSeverity[oValidationState.validation] - oSeverity[oBaseState.validation] > 0) {
+			return oBaseState;
+		} else {
+			return oValidationState;
+		}
 	}
 
 	/**

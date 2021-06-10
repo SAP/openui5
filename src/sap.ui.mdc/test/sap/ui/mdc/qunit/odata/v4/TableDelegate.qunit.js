@@ -34,6 +34,7 @@ sap.ui.define([
 		var TestDelegate = Object.assign({}, TableDelegate);
 
 		TestDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
+			TableDelegate.updateBindingInfo.apply(this, arguments);
 			oBindingInfo.path = "/ProductList";
 		};
 
@@ -1346,6 +1347,7 @@ sap.ui.define([
 		var aFilters = [new Filter("Name", "EQ", "a")];
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
         oUpdateBindingInfoStub.callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			oBindingInfo.path = oMetadataInfo.collectionPath;
 			oBindingInfo.filters = aFilters;
         });
@@ -1382,15 +1384,19 @@ sap.ui.define([
 
 	QUnit.test("Paramaters", function(assert) {
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+
         oUpdateBindingInfoStub.onCall(0).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			oBindingInfo.path = oMetadataInfo.collectionPath;
             oBindingInfo.parameters.$search = "x";
         });
 		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			oBindingInfo.path = oMetadataInfo.collectionPath;
             oBindingInfo.parameters.$search = undefined;
         });
 		oUpdateBindingInfoStub.onCall(2).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			oBindingInfo.path = oMetadataInfo.collectionPath;
             oBindingInfo.parameters.$$canonicalPath = true;
         });

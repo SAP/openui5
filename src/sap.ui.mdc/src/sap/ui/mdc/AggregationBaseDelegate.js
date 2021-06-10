@@ -96,7 +96,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 
 			return {
 				validation: sValidation,
-				message: "Please provide a meaningful message here."
+				/* Please provide a meaningful message here. */
+				message: undefined
 			};
 		}
 
