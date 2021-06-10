@@ -1997,6 +1997,12 @@ sap.ui.define([
 		return oSummaryBar;
 	};
 
+	// Make sure we update selection texts when reset button is pressed
+	FacetFilter.prototype._handleReset = function () {
+		this.fireReset();
+		this.invalidate();
+	};
+
 	/**
 	 * @returns {sap.m.Button} The created reset button
 	 * @private
@@ -2014,9 +2020,9 @@ sap.ui.define([
 				if (this._popoverClosing) {
 					// We wait for the closing popover animation to finish before firing "reset" event,
 					// so "listClose" event is fired before "reset" event in all cases.
-					setTimeout(this.fireReset.bind(this), Popover.prototype._getAnimationDuration());
+					setTimeout(this._handleReset.bind(this), Popover.prototype._getAnimationDuration());
 				} else {
-					this.fireReset();
+					this._handleReset();
 				}
 
 				//clear search value when 'reset' button clicked
@@ -2029,9 +2035,6 @@ sap.ui.define([
 						oFirstItemInList.focus();
 					}
 				}
-				// Make sure we update selection texts
-				this.invalidate();
-
 			}.bind(this)
 		});
 		return oButton;
