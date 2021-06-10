@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var oEntity = {"@odata.etag" : "W/\"20180830000000.0000000\""},
 		oEmployeesBody = {
-			"@odata.context": "$metadata#EMPLOYEES",
+			"@odata.context" : "$metadata#EMPLOYEES",
 			"value" : [{
 				"ID" : "1",
 				"Name" : "Walter\"s Win's",
@@ -36,7 +36,7 @@ sap.ui.define([
 					"YEARLY_BONUS_AMOUNT" : 5000.000,
 					"BONUS_CURR" : "KWD"
 				},
-				"STATUS": "Available"
+				"STATUS" : "Available"
 			}, {
 				"ID" : "2",
 				"Name" : "Frederic Fall",
@@ -60,7 +60,7 @@ sap.ui.define([
 					"YEARLY_BONUS_AMOUNT" : 10000.00,
 					"BONUS_CURR" : "EUR"
 				},
-				"STATUS": "Occupied"
+				"STATUS" : "Occupied"
 			}, {
 				"ID" : "3",
 				"Name" : "Jonathan Smith",
@@ -84,7 +84,7 @@ sap.ui.define([
 					"YEARLY_BONUS_AMOUNT" : 10000.00,
 					"BONUS_CURR" : "EUR"
 				},
-				"STATUS": "Occupied"
+				"STATUS" : "Occupied"
 			}, {
 				"ID" : "4",
 				"Name" : "Peter Burke",
@@ -108,7 +108,7 @@ sap.ui.define([
 					"YEARLY_BONUS_AMOUNT" : 15000.00,
 					"BONUS_CURR" : "USD"
 				},
-				"STATUS": "Available"
+				"STATUS" : "Available"
 			}, {
 				"ID" : "5",
 				"Name" : "John Field",
@@ -132,7 +132,7 @@ sap.ui.define([
 					"YEARLY_BONUS_AMOUNT" : 15000.00,
 					"BONUS_CURR" : "USD"
 				},
-				"STATUS": "Available"
+				"STATUS" : "Available"
 			}, {
 				"ID" : "6",
 				"Name" : "Susan Bay",
@@ -156,7 +156,7 @@ sap.ui.define([
 					"YEARLY_BONUS_AMOUNT" : 15000.00,
 					"BONUS_CURR" : "USD"
 				},
-				"STATUS": "Occupied"
+				"STATUS" : "Occupied"
 			}]
 		},
 		oDepartmentsBody = {

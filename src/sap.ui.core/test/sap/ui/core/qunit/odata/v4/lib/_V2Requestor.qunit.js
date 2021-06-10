@@ -207,7 +207,7 @@ sap.ui.define([
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
 				"d" : {
-					"fldate": "/Date(1502323200000)/"
+					"fldate" : "/Date(1502323200000)/"
 				}
 			};
 
@@ -234,7 +234,7 @@ sap.ui.define([
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
 				"d" : {
-					"fldate": null
+					"fldate" : null
 				}
 			};
 
@@ -389,7 +389,7 @@ sap.ui.define([
 				complex : {},
 				missing : null,
 				Products : {
-					__deferred: {}
+					__deferred : {}
 				},
 				property : "42"
 			},
@@ -1131,8 +1131,8 @@ sap.ui.define([
 			{value : "2015-05-23T18:47:26+0500", type : "Edm.DateTimeOffset",
 				result : "datetimeoffset'2015-05-23T13:47:26Z'"},
 			{value : "2015-05-23T13:47:26Z", type : "Edm.DateTimeOffset",
-				v2type: "Edm.DateTime", result : "datetime'2015-05-23T13:47:26'"},
-			{value : "13:47:26", type : "Edm.TimeOfDay", v2type: "Edm.Time",
+				v2type : "Edm.DateTime", result : "datetime'2015-05-23T13:47:26'"},
+			{value : "13:47:26", type : "Edm.TimeOfDay", v2type : "Edm.Time",
 				result : "time'PT13H47M26S'"}
 			// TODO V2 literal formatting does not support milliseconds
 			// {value : "13:47:26.123", type : "Edm.TimeOfDay", v2type: "Edm.Time",
@@ -1760,20 +1760,20 @@ sap.ui.define([
 		oDateFormatMock.expects("getDateInstance")
 			.withExactArgs({
 				calendarType : CalendarType.Gregorian,
-				pattern: "yyyy-MM-dd",
+				pattern : "yyyy-MM-dd",
 				UTC : true
 			})
 			.callThrough();
 		oDateFormatMock.expects("getDateTimeInstance")
 			.withExactArgs({
 				calendarType : CalendarType.Gregorian,
-				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 			})
 			.callThrough();
 		oDateFormatMock.expects("getTimeInstance")
 			.withExactArgs({
 				calendarType : CalendarType.Gregorian,
-				pattern: "HH:mm:ss",
+				pattern : "HH:mm:ss",
 				UTC : true
 			})
 			.callThrough();

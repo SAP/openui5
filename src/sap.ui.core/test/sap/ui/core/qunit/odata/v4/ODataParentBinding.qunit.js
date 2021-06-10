@@ -2437,13 +2437,13 @@ sap.ui.define([
 		current : {$filter : "bar"},
 		result : {$filter : "bar"}
 	}, {
-		aggregated : {$select: ["foo", "bar"]},
+		aggregated : {$select : ["foo", "bar"]},
 		current : {$select : ["foo"]},
-		result : {$select: ["foo", "bar"]}
+		result : {$select : ["foo", "bar"]}
 	}, {
-		aggregated : {$expand: {foo : {}, bar : {}}},
-		current : {$expand: {foo : {}}},
-		result : {$expand: {foo : {}, bar : {}}}
+		aggregated : {$expand : {foo : {}, bar : {}}},
+		current : {$expand : {foo : {}}},
+		result : {$expand : {foo : {}, bar : {}}}
 	}, {
 		aggregated : {$filter : "foo"},
 		current : {},
@@ -2803,7 +2803,7 @@ sap.ui.define([
 				iCount = bLockIsUsedAndRemoved ? 1 : undefined,
 				oExpectation,
 				oGroupLock = {
-					toString: function () { return "~groupLock~"; },
+					toString : function () { return "~groupLock~"; },
 					unlock : function () {}
 				},
 				oModelMock = this.mock(oBinding.oModel),

@@ -337,7 +337,7 @@ sap.ui.define([
 		testExpression(assert, '<String><!-- foo -->bar</String>', "bar");
 		testExpression(assert, '<String>foo<!-- bar -->baz</String>', "foobaz");
 
-		testExpression(assert, '<Binary>T0RhdGE</Binary>', {"$Binary": "T0RhdGE"});
+		testExpression(assert, '<Binary>T0RhdGE</Binary>', {"$Binary" : "T0RhdGE"});
 		testExpression(assert, '<Bool>false</Bool>', false);
 		testExpression(assert, '<Date>2015-01-01</Date>', {"$Date" : "2015-01-01"});
 		testExpression(assert, '<DateTimeOffset>2000-01-01T16:00:00.000-09:00</DateTimeOffset>',

@@ -4831,11 +4831,11 @@ sap.ui.define([
 			},
 			filter : new Filter({
 				condition : new Filter({
-					filters: [
+					filters : [
 						new Filter("v0/p1", FilterOperator.EQ, "value1"),
 						new Filter("v0/p2", FilterOperator.EQ, "value2")
 					],
-					and: true
+					and : true
 				}),
 				operator : sFilterOperator,
 				path : "p0",
@@ -4853,7 +4853,7 @@ sap.ui.define([
 			},
 			filter : new Filter({
 				condition : new Filter({
-					filters: [
+					filters : [
 						new Filter({
 							condition : new Filter("v1/p2", FilterOperator.LT, "value1"),
 							operator : FilterOperator.Any,
@@ -4880,7 +4880,7 @@ sap.ui.define([
 			},
 			filter : new Filter({
 				condition : new Filter({
-					filters: [
+					filters : [
 						new Filter({
 							condition : new Filter("v1/p3", FilterOperator.LT, "value1"),
 							operator : FilterOperator.Any,
@@ -5043,7 +5043,7 @@ sap.ui.define([
 		filters : [{and : ["p1=v1", "p1=v2", "p2=v3"]}],
 		result : "p1 eq 'v1' and p1 eq 'v2' and p2 eq 'v3'"
 	}, {
-		filters : ["p1=v1", {or: ["p1=v2", "p1=v3"]}],
+		filters : ["p1=v1", {or : ["p1=v2", "p1=v3"]}],
 		result : "p1 eq 'v1' and (p1 eq 'v2' or p1 eq 'v3')"
 	}, {
 		filters : ["p1=v1", {and : ["p1=v2", "p1=v3"]}],
@@ -5127,11 +5127,11 @@ sap.ui.define([
 		oMetaModelMock.expects("resolve").withExactArgs("a", "oMetaContext").atLeast(0)
 			.returns("/resolved/a");
 		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/a").atLeast(0)
-			.returns(Promise.resolve({$Type: "Edm.Decimal"}));
+			.returns(Promise.resolve({$Type : "Edm.Decimal"}));
 		oMetaModelMock.expects("resolve").withExactArgs("b", "oMetaContext").atLeast(0)
 			.returns("/resolved/b");
 		oMetaModelMock.expects("fetchObject").withExactArgs("/resolved/b").atLeast(0)
-			.returns(Promise.resolve({$Type: "Edm.String"}));
+			.returns(Promise.resolve({$Type : "Edm.String"}));
 
 		// code under test
 		return oBinding.fetchFilter(oContext, oFixture.staticFilter).then(function (aFilterValues) {
@@ -6881,7 +6881,7 @@ sap.ui.define([
 			oContext = {
 				getModelIndex : function () {},
 				getPath : function () {},
-				toString: function () { return "~context~"; }
+				toString : function () { return "~context~"; }
 			},
 			oChangeCall,
 			aContextsBefore,

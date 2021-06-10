@@ -91,7 +91,7 @@ sap.ui.define([
 								.withExactArgs(sinon.match.same(oPathValue), "object");
 							oBasics.expects("expectType")
 								.withExactArgs({
-										model: sinon.match.same(oModel),
+										model : sinon.match.same(oModel),
 										path : "/my/path/" + sProperty,
 										value : vConstantValue
 									}, oFixture.expectType);
@@ -621,8 +621,8 @@ sap.ui.define([
 		var oError = new SyntaxError(),
 			oPathValue = {
 				value : {
-					$LabeledElement: {/**/},
-					$Name: "Team"
+					$LabeledElement : {/**/},
+					$Name : "Team"
 				}
 			};
 

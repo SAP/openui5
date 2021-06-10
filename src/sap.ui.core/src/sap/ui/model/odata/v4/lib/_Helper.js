@@ -684,7 +684,7 @@ sap.ui.define([
 		 * @returns {string[]}
 		 *   The filtered list
 		 */
-		filterPaths: function (aMetaPaths, aPathsToFilter) {
+		filterPaths : function (aMetaPaths, aPathsToFilter) {
 			return aPathsToFilter.filter(function (sPathToFilter) {
 				var sMetaPathToFilter = _Helper.getMetaPath(sPathToFilter);
 

@@ -472,7 +472,7 @@ sap.ui.define([
 					"$Type" : "Edm.Date"
 				}],
 				"$ReturnType" : {
-					"$Type": "tea_busi.TEAM"
+					"$Type" : "tea_busi.TEAM"
 				}
 			}, {
 				"$kind" : "Function",
@@ -1304,18 +1304,18 @@ sap.ui.define([
 		assert.throws(function () {
 			oMetaModel.checkFilterOperation(new Filter({
 				path : "path",
-				operator: FilterOperator.Any
+				operator : FilterOperator.Any
 			}));
 		}, /unsupported FilterOperator/, "ClientModel/ClientListBinding doesn't support \"Any\"");
 		assert.throws(function () {
 			oMetaModel.checkFilterOperation(new Filter({
 				path : "path",
-				operator: FilterOperator.All,
-				variable: 'foo',
-				condition: new Filter({
-					path: 'foo/bar',
-					operator: FilterOperator.GT,
-					value1: 0
+				operator : FilterOperator.All,
+				variable : 'foo',
+				condition : new Filter({
+					path : 'foo/bar',
+					operator : FilterOperator.GT,
+					value1 : 0
 				})
 			}));
 		}, /unsupported FilterOperator/, "ClientModel/ClientListBinding doesn't support \"All\"");
@@ -4453,7 +4453,7 @@ sap.ui.define([
 		// constructor, once from fetchContexts
 		this.oMetaModelMock.expects("fetchObject").twice()
 			.withExactArgs(sPath + "/")
-			.returns(SyncPromise.resolve(Promise.resolve({bar: "", baz: ""})));
+			.returns(SyncPromise.resolve(Promise.resolve({bar : "", baz : ""})));
 		oBinding = this.oMetaModel.bindList(sPath);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 
@@ -6674,8 +6674,8 @@ sap.ui.define([
 					this.mock(this.oMetaModel).expects("requestObject").twice()
 						.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 						.resolves({
-							CollectionPath: "UnitsOfMeasure",
-							Url: sUrl
+							CollectionPath : "UnitsOfMeasure",
+							Url : sUrl
 						});
 					this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
 						.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
@@ -6829,8 +6829,8 @@ sap.ui.define([
 			this.mock(this.oMetaModel).expects("requestObject").twice()
 				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 				.resolves({
-					CollectionPath: "UnitsOfMeasure",
-					Url: sUrl
+					CollectionPath : "UnitsOfMeasure",
+					Url : sUrl
 				});
 			this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
 				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
@@ -6892,8 +6892,8 @@ sap.ui.define([
 			this.mock(this.oMetaModel).expects("requestObject").twice()
 				.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 				.resolves({
-					CollectionPath: "UnitsOfMeasure",
-					Url: sUrl
+					CollectionPath : "UnitsOfMeasure",
+					Url : sUrl
 				});
 			this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl").twice()
 				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
@@ -7012,8 +7012,8 @@ sap.ui.define([
 		this.mock(this.oMetaModel).expects("requestObject")
 			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 			.resolves({
-				CollectionPath: "UnitsOfMeasure",
-				Url: sUrl
+				CollectionPath : "UnitsOfMeasure",
+				Url : sUrl
 			});
 		this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl")
 			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
@@ -7056,8 +7056,8 @@ sap.ui.define([
 		this.mock(this.oMetaModel).expects("requestObject")
 			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 			.resolves({
-				CollectionPath: "UnitsOfMeasure",
-				Url: sUrl
+				CollectionPath : "UnitsOfMeasure",
+				Url : sUrl
 			});
 		this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl")
 			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
@@ -7126,8 +7126,8 @@ sap.ui.define([
 		this.mock(this.oMetaModel).expects("requestObject")
 			.withExactArgs("/@com.sap.vocabularies.CodeList.v1.T€RM")
 			.resolves({
-				CollectionPath: "UnitsOfMeasure",
-				Url: sUrl
+				CollectionPath : "UnitsOfMeasure",
+				Url : sUrl
 			});
 		this.mock(this.oMetaModel).expects("getAbsoluteServiceUrl")
 			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);

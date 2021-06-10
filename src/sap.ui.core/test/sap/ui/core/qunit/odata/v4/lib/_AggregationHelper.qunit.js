@@ -1453,7 +1453,7 @@ sap.ui.define([
 					x : {},
 					y : {unit : "UnitY"}
 				},
-				group: {
+				group : {
 					c : {}, // intentionally out of ABC order
 					a : {additionally : ["TextA", "Texts/A"]},
 					b : {}
@@ -1513,7 +1513,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
-				group: {},
+				group : {},
 				groupLevels : ["a"]
 			},
 			mQueryOptions = {

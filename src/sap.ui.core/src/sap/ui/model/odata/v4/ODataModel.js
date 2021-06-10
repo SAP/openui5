@@ -956,7 +956,7 @@ sap.ui.define([
 				if (sHeaderName === "x-csrf-token") {
 					sKey = "X-CSRF-Token";
 				}
-				mHeadersCopy[sHeaderName] = {key : sKey, value: sHeaderValue};
+				mHeadersCopy[sHeaderName] = {key : sKey, value : sHeaderValue};
 			}
 		}
 		this.oRequestor.checkForOpenRequests();

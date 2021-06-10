@@ -3675,7 +3675,7 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "Employees('31')", {}),
 			oData = {
 				foo : {
-					bar: "baz"
+					bar : "baz"
 				}
 			},
 			oEntity = {foo : {}},
@@ -3983,8 +3983,8 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			oPromise1,
 			oPromise2,
-			mQueryOptionsFoo = {$select: []},
-			mQueryOptionsBar = {$select: []},
+			mQueryOptionsFoo = {$select : []},
+			mQueryOptionsBar = {$select : []},
 			mQueryOptionsForPath = {},
 			mTypeForMetaPath = {
 				"/Employees" : {}
@@ -4053,7 +4053,7 @@ sap.ui.define([
 			oGroupLock = {
 				getUnlockedCopy : function () {}
 			},
-			mQueryOptions = {$select: []},
+			mQueryOptions = {$select : []},
 			mQueryOptionsForPath = {};
 
 		oCache.fetchValue = function () {};
@@ -4118,7 +4118,7 @@ sap.ui.define([
 			oGroupLock = {
 				getUnlockedCopy : function () {}
 			},
-			mQueryOptions = {$select: []},
+			mQueryOptions = {$select : []},
 			mQueryOptionsForPath = {},
 			oRequestGroupLock = {},
 			mTypeForMetaPath = {
@@ -6666,7 +6666,7 @@ sap.ui.define([
 			oEntity1 = {},
 			oEntityData,
 			oGroupLock = {
-				cancel: function () {},
+				cancel : function () {},
 				getGroupId : function () {},
 				getSerialNumber : function () {},
 				isCanceled : function () { return false; },
@@ -6957,9 +6957,9 @@ sap.ui.define([
 
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
-				sinon.match.same(oCache.aElements[0]), {bar: "baz"});
+				sinon.match.same(oCache.aElements[0]), {bar : "baz"});
 		oHelperMock.expects("updateAll")
-			.withExactArgs({}, sTransientPredicate, sinon.match(isPostBody), {bar: "baz"});
+			.withExactArgs({}, sTransientPredicate, sinon.match(isPostBody), {bar : "baz"});
 		// called from the POST's success handler
 		oHelperMock.expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "")

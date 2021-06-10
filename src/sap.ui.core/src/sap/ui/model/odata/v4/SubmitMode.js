@@ -20,20 +20,20 @@ sap.ui.define(function () {
 		 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 		 * @public
 		 */
-		API: "API",
+		API : "API",
 
 		/**
 		 * Requests associated with the group ID are sent in a batch request which is triggered
 		 * automatically before rendering.
 		 * @public
 		 */
-		Auto: "Auto",
+		Auto : "Auto",
 
 		/**
 		 * Requests associated with the group ID are sent directly without batch.
 		 * @public
 		 */
-		Direct: "Direct"
+		Direct : "Direct"
 	};
 
 	return SubmitMode;

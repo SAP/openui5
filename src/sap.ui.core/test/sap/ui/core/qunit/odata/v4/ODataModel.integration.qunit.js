@@ -27143,7 +27143,7 @@ sap.ui.define([
 					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
 					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
 					+ "&$filter=SalesOrderID eq '1'", {
-					value: [{ // simulate that entity still matches list's filter
+					value : [{ // simulate that entity still matches list's filter
 						ItemPosition : "20",
 						Messages : [{
 							code : "0123",
@@ -29211,7 +29211,7 @@ sap.ui.define([
 			assert.ok(oListBindingWithoutUI.hasPendingChanges());
 			assert.strictEqual(oListBindingWithoutUI.getLength(), 1 + 10/*length is not final*/);
 
-			return oListBindingWithoutUI.resetChanges().then(function ( ) {
+			return oListBindingWithoutUI.resetChanges().then(function () {
 				assert.notOk(oModel.hasPendingChanges());
 				assert.notOk(oListBindingWithoutUI.hasPendingChanges());
 				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
@@ -33156,7 +33156,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
 					+ "&$orderby=SalesOrderID desc&$skip=0&$top=100", {
-					value: [{
+					value : [{
 						SalesOrderID : "2",
 						Note : "Note 2.1"
 					}, {
@@ -33178,7 +33178,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
 					+ "&$orderby=SalesOrderID desc&$filter=SalesOrderID eq '1'&$skip=0&$top=100", {
-					value: [{
+					value : [{
 						SalesOrderID : "1",
 						Note : "Note 1.2"
 					}]
@@ -33196,7 +33196,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
 					+ "&$orderby=SalesOrderID desc&$filter=SalesOrderID eq '1'&foo=bar"
 					+ "&$skip=0&$top=100", {
-					value: [{
+					value : [{
 						SalesOrderID : "1",
 						Note : "Note 1.3"
 					}]
@@ -33213,7 +33213,7 @@ sap.ui.define([
 			return that.waitForChanges(assert, "(3) changeParameters");
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
-					value: [{
+					value : [{
 						SalesOrderID : "1",
 						Note : "Note 1.4"
 					}, {
@@ -33232,7 +33232,7 @@ sap.ui.define([
 			oListBinding.suspend();
 			oListBinding.sort();
 			oListBinding.filter();
-			oListBinding.changeParameters({foo: undefined});
+			oListBinding.changeParameters({foo : undefined});
 			oListBinding.resume();
 
 			return that.waitForChanges(assert, "(4) suspend/resume");

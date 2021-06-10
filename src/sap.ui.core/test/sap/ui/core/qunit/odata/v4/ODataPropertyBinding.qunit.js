@@ -1656,7 +1656,7 @@ sap.ui.define([
 	//TODO enable this test again and restore the productive code from #1539070/1
 	QUnit.skip("setValue (absolute binding) via control or API", function (assert) {
 		var oControl,
-			oModel = new ODataModel({serviceUrl: "/", synchronizationMode : "None"}),
+			oModel = new ODataModel({serviceUrl : "/", synchronizationMode : "None"}),
 			oPropertyBinding,
 			oPropertyBindingCacheMock,
 			fnRead = this.getPropertyCacheMock().expects("read");
@@ -2090,7 +2090,7 @@ sap.ui.define([
 		oBinding.resetInvalidDataState();
 
 		oBinding.getDataState().setInvalidValue("foo");
-		oBindingMock.expects("_fireChange").withExactArgs({reason: ChangeReason.Change});
+		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
 		oBinding.resetInvalidDataState();

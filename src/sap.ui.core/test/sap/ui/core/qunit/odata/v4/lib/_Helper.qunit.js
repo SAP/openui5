@@ -1002,8 +1002,8 @@ sap.ui.define([
 		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
 		mKeyProperties : {"Bar" : "42","Fo=o" : "'Walter\"s Win''s'"}
 	}, {
-		sKeyPredicate: undefined,
-		mKeyProperties: undefined
+		sKeyPredicate : undefined,
+		mKeyProperties : undefined
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
 			var oEntityInstance = {},
@@ -1080,7 +1080,7 @@ sap.ui.define([
 			foo : "'baz'",
 			bar : "'qux'"
 		},
-		aKeyProperties: ["foo", "bar"]
+		aKeyProperties : ["foo", "bar"]
 
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyProperties: " + oFixture.mKeyProperties, function (assert) {
@@ -1114,24 +1114,24 @@ sap.ui.define([
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyProperties: bReturnAlias=" + oFixture.bReturnAlias, function (assert) {
 			var oComplexType = {
-					"baz": {
-						"$kind": "Property",
-						"$Type": "Edm.Int16"
+					"baz" : {
+						"$kind" : "Property",
+						"$Type" : "Edm.Int16"
 					}
 				},
 				oEntityInstance = {},
 				oEntityType = {
-					"$Key": ["qux", {"foo": "bar/baz"}],
-					"qux": {
-						"$kind": "Property",
-						"$Type": "Edm.String"
+					"$Key" : ["qux", {"foo" : "bar/baz"}],
+					"qux" : {
+						"$kind" : "Property",
+						"$Type" : "Edm.String"
 					}
 				},
 				oHelperMock = this.mock(_Helper),
 				sMetaPath = "~path~",
 				mTypeForMetaPath = {
-					"~path~": oEntityType,
-					"~path~/bar": oComplexType
+					"~path~" : oEntityType,
+					"~path~/bar" : oComplexType
 				};
 
 			oHelperMock.expects("drillDown")
@@ -2076,7 +2076,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("removeByPath", function (assert) {
-		var mMap = {"path1": ["item1", "item2"]};
+		var mMap = {"path1" : ["item1", "item2"]};
 
 		_Helper.removeByPath(mMap, "path1", "item2");
 		assert.deepEqual(mMap, {"path1" : ["item1"]});
@@ -2163,7 +2163,7 @@ sap.ui.define([
 			mChildren,
 			mExpectedResult = {
 				$expand : {to1 : null},
-				$select: ["A/a", "B/b"],
+				$select : ["A/a", "B/b"],
 				"sap-client" : "123"
 			},
 			oType = {},
@@ -2726,7 +2726,7 @@ sap.ui.define([
 		expected : {
 			$expand : {
 				"NavigationProperty" : {
-					$select: ["Property", "Property_1", "Property_2"]
+					$select : ["Property", "Property_1", "Property_2"]
 				}
 			}
 		}
@@ -2736,7 +2736,7 @@ sap.ui.define([
 		expected : {
 			$expand : {
 				"NavigationProperty" : {
-					$select: ["Property_1", "Property_2", "Property"]
+					$select : ["Property_1", "Property_2", "Property"]
 				}
 			}
 		}
@@ -2746,7 +2746,7 @@ sap.ui.define([
 		expected : {
 			$expand : {
 				"NavigationProperty" : {
-					$select: ["Property_1", "Property_2"]
+					$select : ["Property_1", "Property_2"]
 				}
 			}
 		}
@@ -2756,7 +2756,7 @@ sap.ui.define([
 		expected : {
 			$expand : {
 				"Property/NavigationProperty" : {
-					$select: ["Property_1", "Property_2"]
+					$select : ["Property_1", "Property_2"]
 				}
 			}
 		}
@@ -2773,10 +2773,10 @@ sap.ui.define([
 					$expand : {
 						"NavigationProperty_2" : {
 							$foo : "bar",
-							$select: ["Property_1", "Property_2"]
+							$select : ["Property_1", "Property_2"]
 						}
 					},
-					$select: ["Property_1", "Property_2"]
+					$select : ["Property_1", "Property_2"]
 				}
 			}
 		}
@@ -2929,15 +2929,15 @@ sap.ui.define([
 		aFilters : ["foo,bar"],
 		oResult : {$filter : "foo,bar", $select : "Name"}
 	}, {
-		mQueryOptions : {$filter: "bar", $select : "Name"},
+		mQueryOptions : {$filter : "bar", $select : "Name"},
 		sOrderBy : undefined,
 		aFilters : ["bar"]
 	}, {
-		mQueryOptions : {$filter: "bar", $orderby : "foo", $select : "Name"},
+		mQueryOptions : {$filter : "bar", $orderby : "foo", $select : "Name"},
 		sOrderBy : "foo",
 		aFilters : ["bar"]
 	}, {
-		mQueryOptions : {$filter: "foo", $orderby : "bar", $select : "Name"},
+		mQueryOptions : {$filter : "foo", $orderby : "bar", $select : "Name"},
 		sOrderBy : "foo,bar",
 		aFilters : ["bar,baz"],
 		oResult : {$filter : "bar,baz", $orderby : "foo,bar", $select : "Name"}
@@ -2947,7 +2947,7 @@ sap.ui.define([
 		aFilters : [undefined, "bar"],
 		oResult : {
 			$$filterBeforeAggregate : "bar",
-			$filter: "foo",
+			$filter : "foo",
 			$orderby : "foo,bar",
 			$select : "Name"
 		}
@@ -2957,7 +2957,7 @@ sap.ui.define([
 		aFilters : ["", "bar,baz"],
 		oResult : {
 			$$filterBeforeAggregate : "bar,baz",
-			$filter: "foo",
+			$filter : "foo",
 			$orderby : "foo,bar",
 			$select : "Name"
 		}
@@ -3479,11 +3479,11 @@ sap.ui.define([
 		aErrors = _Helper.decomposeError(oError, [{
 				$ContentID : "0.0",
 				$resourcePath : "~path0~",
-				url: "~url0~"
+				url : "~url0~"
 			}, {
 				$ContentID : "1.0",
 				$resourcePath : "~path1~",
-				url: "~url1~"
+				url : "~url1~"
 			}], "~serviceURL~/");
 
 		assert.strictEqual(aErrors.length, 2);
@@ -3537,15 +3537,15 @@ sap.ui.define([
 		aErrors = _Helper.decomposeError(oError, [{
 				$ContentID : "0.0",
 				$resourcePath : "~path0~",
-				url: "~url0~"
+				url : "~url0~"
 			}, {
 				$ContentID : "1.0",
 				$resourcePath : "~path1~",
-				url: "~url1~"
+				url : "~url1~"
 			}, {
 				$ContentID : "2.0",
 				$resourcePath : "~path2~",
-				url: "~url2~"
+				url : "~url2~"
 			}], "~serviceURL~/");
 
 		assert.strictEqual(aErrors.length, 3);
@@ -3602,11 +3602,11 @@ sap.ui.define([
 		aErrors = _Helper.decomposeError(oError, [{
 				$ContentID : "0.0",
 				$resourcePath : "~path0~",
-				url: "~url0~"
+				url : "~url0~"
 			}, {
 				$ContentID : "1.0",
 				$resourcePath : "~path1~",
-				url: "~url1~"
+				url : "~url1~"
 			}], "~serviceURL~/");
 
 		assert.strictEqual(aErrors.length, 2);

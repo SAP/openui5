@@ -188,7 +188,7 @@ sap.ui.define([
 		var oContext = new BaseContext(oMetaModel, "/"),
 			// code under test
 			sText = AnnotationHelper.value(vRawValue, {context : oContext}),
-			oInvisibleText = new InvisibleText({text: sText, models : oModel});
+			oInvisibleText = new InvisibleText({text : sText, models : oModel});
 
 		oInvisibleText.bindObject("/");
 		assert.strictEqual(oInvisibleText.getText(),
@@ -427,7 +427,7 @@ sap.ui.define([
 			oProperty = {
 				$Type : "Edm.String"
 			},
-			vRawValue = {$Path: "EQUIPMENT_2_PRODUCT/Name"};
+			vRawValue = {$Path : "EQUIPMENT_2_PRODUCT/Name"};
 
 		this.mock(Expression).expects("getExpression").withExactArgs({
 				asExpression : false,
@@ -965,7 +965,7 @@ sap.ui.define([
 				$MaxLength : "10",
 				$Type : "Edm.String"
 			},
-			vRawValue = {$Path: "EQUIPMENT_2_PRODUCT/Name"};
+			vRawValue = {$Path : "EQUIPMENT_2_PRODUCT/Name"};
 
 		this.mock(Expression).expects("getExpression").withExactArgs({
 				asExpression : false,
@@ -1011,7 +1011,7 @@ sap.ui.define([
 					return "/tea_busi.Product/@UI.LineItem/0/Value/";
 				}
 			},
-			vRawValue = {$Path: "Price"};
+			vRawValue = {$Path : "Price"};
 
 		this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
 			.withExactArgs().returns(SyncPromise.resolve(mScope));

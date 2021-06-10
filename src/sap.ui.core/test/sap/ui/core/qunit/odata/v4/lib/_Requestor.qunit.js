@@ -3946,7 +3946,7 @@ sap.ui.define([
 		return new Promise(function (resolve) {
 			oJQueryMock.expects("ajax")
 				.withExactArgs(sServiceUrl + sResourcePath, {
-					contentType: undefined,
+					contentType : undefined,
 					data : undefined,
 					headers : sinon.match.object,
 					method : "POST"

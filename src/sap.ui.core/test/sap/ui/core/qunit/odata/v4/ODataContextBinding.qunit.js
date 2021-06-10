@@ -579,7 +579,7 @@ sap.ui.define([
 
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-				"TEAMS('TEAM_01')/TEAM_2_MANAGER", {"sap-client": "111"}, false,
+				"TEAMS('TEAM_01')/TEAM_2_MANAGER", {"sap-client" : "111"}, false,
 				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func)
 			.returns({});
 
@@ -848,7 +848,7 @@ sap.ui.define([
 [
 	{path : "name", value : "value"},
 	{path : "name/complex", value : {complex : "value"}}
-].forEach( function (oFixture) {
+].forEach(function (oFixture) {
 	var sTitle = "fetchValue: operation binding returns $Parameter path: " + oFixture.path;
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindContext("/OperationImport(...)"),
@@ -1219,7 +1219,7 @@ sap.ui.define([
 		QUnit.test("execute: relative, bBaseContext=" + bBaseContext, function (assert) {
 			var oContext = {
 					isTransient : function () { return false;},
-					getPath: function () { return "/Employees('42')";}
+					getPath : function () { return "/Employees('42')";}
 				},
 				oBinding = this.bindContext("schema.Operation(...)", oContext),
 				oGroupLock = {},
@@ -1286,7 +1286,7 @@ sap.ui.define([
 		var oBinding,
 			oContext = {
 				isTransient : function () { return true;},
-				getPath: function () { return "/Employees($uid=id-1-23)";}
+				getPath : function () { return "/Employees($uid=id-1-23)";}
 			};
 
 		oBinding = this.bindContext("schema.Operation(...)", oContext);
@@ -2473,7 +2473,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{}, undefined].forEach( function (vParam) {
+[{}, undefined].forEach(function (vParam) {
 	QUnit.test("setParameter: change listeners", function (assert) {
 		var oBinding = this.bindContext("/OperationImport(...)"),
 			vValue = {};
@@ -3520,7 +3520,7 @@ sap.ui.define([
 						$Name : "_it",
 						$Nullable : false
 					}],
-					$ReturnType: {
+					$ReturnType : {
 						$Type : "special.cases.ArtistsType"
 					}
 				};
@@ -3553,7 +3553,7 @@ sap.ui.define([
 					$Name : "_it",
 					$Nullable : false
 				}],
-				$ReturnType: {
+				$ReturnType : {
 					$Type : "special.cases.ArtistsType"
 				}
 			};

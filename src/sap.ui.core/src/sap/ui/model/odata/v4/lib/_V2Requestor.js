@@ -165,7 +165,7 @@ sap.ui.define([
 		if (!mPattern2Formatter[sPattern]) {
 			mPattern2Formatter[sPattern] = DateFormat.getDateTimeInstance({
 				calendarType : CalendarType.Gregorian,
-				pattern: sPattern,
+				pattern : sPattern,
 				UTC : true
 			});
 		}
@@ -980,16 +980,16 @@ sap.ui.define([
 	asV2Requestor._setDateTimeFormatter = function () {
 		oDateFormatter = DateFormat.getDateInstance({
 			calendarType : CalendarType.Gregorian,
-			pattern: "yyyy-MM-dd",
+			pattern : "yyyy-MM-dd",
 			UTC : true
 		});
 		oDateTimeOffsetFormatter = DateFormat.getDateTimeInstance({
 			calendarType : CalendarType.Gregorian,
-			pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+			pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 		});
 		oTimeFormatter = DateFormat.getTimeInstance({
 			calendarType : CalendarType.Gregorian,
-			pattern: "HH:mm:ss",
+			pattern : "HH:mm:ss",
 			UTC : true
 		});
 	};

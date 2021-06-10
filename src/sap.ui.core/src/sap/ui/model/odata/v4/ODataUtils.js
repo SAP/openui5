@@ -40,7 +40,7 @@ sap.ui.define([
 			_setDateTimeFormatter : function () {
 				oDateFormatter = DateFormat.getDateInstance({
 					calendarType : CalendarType.Gregorian,
-					pattern: "yyyy-MM-dd",
+					pattern : "yyyy-MM-dd",
 					strictParsing : true,
 					UTC : true
 				});

@@ -1101,14 +1101,14 @@ sap.ui.define([
 		unboundMessages : [{
 			additionalTargets : undefined,
 			code :  "top",
-			longtextUrl: "top/longtext",
+			longtextUrl : "top/longtext",
 			message : "Error occurred while processing the request",
 			numericSeverity : 4,
 			technical : true
 		}, {
 			additionalTargets : undefined,
 			code : "bound",
-			longtextUrl: "bound/longtext",
+			longtextUrl : "bound/longtext",
 			message : "Quantity: Value must be greater than 0",
 			numericSeverity : 3,
 			technical : undefined
@@ -1328,7 +1328,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("reportError on canceled error", function () {
-		var oError = {canceled : true, message : "Canceled", stack: "Canceled\n    at foo.bar"},
+		var oError = {canceled : true, message : "Canceled", stack : "Canceled\n    at foo.bar"},
 			oModel = this.createModel();
 
 		this.oLogMock.expects("debug")
@@ -1573,8 +1573,8 @@ sap.ui.define([
 			metaPath : "/",
 			relativeMetaPath : "./" // meta path is always treated as a relative path
 		}, {
-			dataPath: "/BusinessPartnerList",
-			metaPath: "Name"
+			dataPath : "/BusinessPartnerList",
+			metaPath : "Name"
 		}, {
 			dataPath : "/BusinessPartnerList",
 			metaPath : "/Name",

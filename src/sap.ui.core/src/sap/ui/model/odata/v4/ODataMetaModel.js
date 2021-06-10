@@ -446,7 +446,7 @@ sap.ui.define([
 			this.update();
 			// the data cannot change, only new items may be added due to lazy loading of references
 			if (bForceUpdate || this.oList.length !== iPreviousLength) {
-				this._fireChange({reason: ChangeReason.Change});
+				this._fireChange({reason : ChangeReason.Change});
 			}
 		},
 
@@ -541,7 +541,7 @@ sap.ui.define([
 			} else {
 				oPromise.then(function (aContexts) {
 					that.setContexts(aContexts);
-					that._fireChange({reason: ChangeReason.Change});
+					that._fireChange({reason : ChangeReason.Change});
 				});
 				aContexts.dataRequested = true;
 			}

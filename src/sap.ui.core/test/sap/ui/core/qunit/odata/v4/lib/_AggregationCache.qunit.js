@@ -234,7 +234,7 @@ sap.ui.define([
 					}
 				},
 				"grandTotal like 1.84" : bGrandTotalLike184,
-				group: {
+				group : {
 					c : {}, // intentionally out of ABC order
 					a : {},
 					b : {}
@@ -467,7 +467,7 @@ sap.ui.define([
 						unit : "UnitY"
 					}
 				},
-				group: {
+				group : {
 					c : {}, // intentionally out of ABC order
 					a : {},
 					b : {}
@@ -2119,7 +2119,7 @@ sap.ui.define([
 	QUnit.test("addElements", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
-				group: {},
+				group : {},
 				groupLevels : ["foo"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
@@ -2154,7 +2154,7 @@ sap.ui.define([
 	QUnit.test("addElements: just a single one", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
-				group: {},
+				group : {},
 				groupLevels : ["foo"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
@@ -2179,7 +2179,7 @@ sap.ui.define([
 	QUnit.test("addElements: wrong placeholder", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
-				group: {},
+				group : {},
 				groupLevels : ["foo"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
@@ -2213,7 +2213,7 @@ sap.ui.define([
 	QUnit.test("addElements: unexpected element", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
-				group: {},
+				group : {},
 				groupLevels : ["foo"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
@@ -2231,7 +2231,7 @@ sap.ui.define([
 	QUnit.test("addElements: array index out of bounds", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
-				group: {},
+				group : {},
 				groupLevels : ["foo"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
@@ -2265,7 +2265,7 @@ sap.ui.define([
 	QUnit.test("addElements: duplicate placeholder", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
-				group: {},
+				group : {},
 				groupLevels : ["a"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
@@ -2286,7 +2286,7 @@ sap.ui.define([
 	QUnit.test("refreshKeptElements", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
-				group: {},
+				group : {},
 				groupLevels : ["a"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
@@ -2299,7 +2299,7 @@ sap.ui.define([
 	QUnit.test("getDownloadQueryOptions", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
-				group: {},
+				group : {},
 				groupLevels : ["a"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
