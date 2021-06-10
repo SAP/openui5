@@ -1617,5 +1617,41 @@ sap.ui.define([
 		//Assert
 		$oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator").first();
 		assert.equal($oBadgeIndicator.attr("data-badge"), "5+", "Badge value maximum range is correctly taken from updated value");
+
+		//Act
+		this.oButton.setBadgeMinValue(1).setBadgeMaxValue(9999);
+
+		//Assert
+		assert.equal(this.oButton._badgeMinValue, 1, "Badge minimum value is set to minimal possible value");
+		assert.equal(this.oButton._badgeMaxValue, 9999, "Badge maximum value is set to maximal possible value");
+
+		//Act
+		this.oButton.setBadgeMinValue(-3).setBadgeMaxValue(-2);
+
+		//Assert
+		assert.equal(this.oButton._badgeMinValue, 1, "Badge minimum value is not changed because is outside the constraints");
+		assert.equal(this.oButton._badgeMaxValue, 9999, "Badge maximum value is not changed becasue is outside the constraints");
+
+		//Act
+		this.oButton.setBadgeMinValue(100).setBadgeMaxValue(200);
+
+		//Assert
+		assert.equal(this.oButton._badgeMinValue, 100, "Badge minimum value is set correctly");
+		assert.equal(this.oButton._badgeMaxValue, 200, "Badge maximum value is set correctly");
+
+		//Act
+		this.oButton.setBadgeMinValue(201).setBadgeMaxValue(99);
+
+		//Assert
+		assert.equal(this.oButton._badgeMinValue, 100, "Badge minimum value is not changed because is greater than maximum badge value");
+		assert.equal(this.oButton._badgeMaxValue, 200, "Badge maximum value is not changed becasue is less than minimum badge value");
+
+		//Act
+		this.oButton.setBadgeMinValue(10000).setBadgeMaxValue(-1);
+
+		//Assert
+		assert.equal(this.oButton._badgeMinValue, 100, "Badge minimum value is not changed because is greater than maximum badge constraint");
+		assert.equal(this.oButton._badgeMaxValue, 200, "Badge maximum value is not changed becasue is less than minimum badge constraint");
+
 	});
 });
