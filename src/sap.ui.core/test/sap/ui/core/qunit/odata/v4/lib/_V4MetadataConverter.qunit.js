@@ -565,7 +565,7 @@ sap.ui.define([
 							"$Name" : "p1",
 							"$Type" : "foo.Bar",
 							"$Nullable" : false
-						},{
+						}, {
 							"$Name" : "p2",
 							"$isCollection" : true,
 							"$Type" : "foo.Bar",
@@ -583,7 +583,7 @@ sap.ui.define([
 							"$Scale" : "variable",
 							"$SRID" : "42"
 						}
-					},{
+					}, {
 						"$kind" : sRunnable,
 						"$IsComposable" : true
 					}]

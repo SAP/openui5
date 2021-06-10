@@ -2750,9 +2750,9 @@ sap.ui.define([
 
 		fnReject(oError);
 
-		return oResult.then(function() {
+		return oResult.then(function () {
 				assert.notOk(true);
-			}, function(oError0) {
+			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
 			});
 	});
@@ -3794,7 +3794,7 @@ sap.ui.define([
 	QUnit.test("getInheritableQueryOptions: inherit from parent", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oContext : {
-					getBinding : function() {}
+					getBinding : function () {}
 				},
 				sPath : "~path~"
 			}),

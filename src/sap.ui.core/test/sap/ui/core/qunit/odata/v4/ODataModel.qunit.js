@@ -1741,7 +1741,7 @@ sap.ui.define([
 			"sap-valid-*" : "n/a"
 		},
 		bSapAllowed : false // always allowed
-	},{
+	}, {
 		mParameters : {
 			$expand : { "TEAM_2_MANAGER" : {} },
 			$select : "bar"

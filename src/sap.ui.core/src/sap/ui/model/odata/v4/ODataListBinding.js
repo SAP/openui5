@@ -603,7 +603,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.Binding#_checkDataStateMessages
 	 */
-	ODataListBinding.prototype._checkDataStateMessages = function(oDataState, sResolvedPath) {
+	ODataListBinding.prototype._checkDataStateMessages = function (oDataState, sResolvedPath) {
 		if (sResolvedPath) {
 			oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath, true));
 		}
@@ -1924,7 +1924,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.ListBinding#getEntryData
 	 */
-	ODataListBinding.prototype.getEntryData = function(oContext) {
+	ODataListBinding.prototype.getEntryData = function (oContext) {
 		return JSON.stringify(oContext.getValue()); // Note: avoids _Helper.publicClone
 	};
 
@@ -2567,7 +2567,7 @@ sap.ui.define([
 			that.oModel.getMessagesByPath(sResolvedPath, true).filter(function (oMessage) {
 				return !fnFilter || fnFilter(oMessage);
 			}).forEach(function (oMessage) {
-				oMessage.getTargets().forEach(function(sTarget) {
+				oMessage.getTargets().forEach(function (sTarget) {
 					var sPredicate = sTarget.slice(sResolvedPath.length).split("/")[0];
 
 					if (!sPredicate.startsWith("($uid=")) {

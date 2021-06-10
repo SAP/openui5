@@ -2616,7 +2616,7 @@ sap.ui.define([
 			}),
 			oContext = {
 				fetchCanonicalPath : function () {},
-				getPath : function() {}
+				getPath : function () {}
 			};
 
 		this.mock(oContext).expects("getPath").withExactArgs()

@@ -5325,7 +5325,7 @@ sap.ui.define([
 				oOperation.execute(),
 				that.waitForChanges(assert)
 			]);
-		}).then(function() {
+		}).then(function () {
 			// verify that the original object remains unchanged
 			assert.strictEqual(JSON.stringify(oPerson), sPerson);
 			// verify that the private annotations in the parameter remain unchanged
@@ -6319,7 +6319,7 @@ sap.ui.define([
 						message : "Foo error",
 						numericSeverity : 4,
 						target : "Value"
-					},{
+					}, {
 						message : "Foo warning",
 						numericSeverity : 3,
 						target : "Value"
@@ -6419,7 +6419,7 @@ sap.ui.define([
 							message : "Foo error",
 							numericSeverity : 4,
 							target : "Value"
-						},{
+						}, {
 							message : "Foo warning",
 							numericSeverity : 3,
 							target : "Value"
@@ -12480,7 +12480,7 @@ sap.ui.define([
 			oPayload = Object.assign({}, oInitialData, {"@complexAnnotation" : {sub : "bar*"}}),
 			that = this;
 
-		return this.createView(assert, "", oModel).then(function() {
+		return this.createView(assert, "", oModel).then(function () {
 			var oListBinding = that.oModel.bindList("/Products");
 
 			that.expectRequest({
@@ -12498,7 +12498,7 @@ sap.ui.define([
 				oContext.created(),
 				that.waitForChanges(assert, "POST")
 			]);
-		}).then(function() {
+		}).then(function () {
 			that.expectRequest({
 				method : "PATCH",
 				url : "Products(42)",
@@ -20905,7 +20905,7 @@ sap.ui.define([
 			that.oView.byId("objectPage").setBindingContext(oReturnValueContext);
 
 			return that.waitForChanges(assert);
-		}).then(function() {
+		}).then(function () {
 			// 6. Refresh active version.
 			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)"
 					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
@@ -29086,7 +29086,7 @@ sap.ui.define([
 			assert.ok(oOrdersBinding.hasPendingChanges());
 
 			return Promise.all([
-				oOrdersBinding.resetChanges().then(function() {
+				oOrdersBinding.resetChanges().then(function () {
 					// code under test
 					assert.notOk(oOrdersBinding.hasPendingChanges());
 				}),
@@ -29136,7 +29136,7 @@ sap.ui.define([
 
 		return Promise.all([
 			// code under test
-			oBinding.resetChanges().then(function() {
+			oBinding.resetChanges().then(function () {
 				// code under test
 				assert.notOk(oModel.hasPendingChanges());
 				assert.notOk(oBinding.hasPendingChanges());

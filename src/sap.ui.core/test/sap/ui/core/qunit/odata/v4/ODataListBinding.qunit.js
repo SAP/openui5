@@ -2186,7 +2186,7 @@ sap.ui.define([
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
 			oError = new Error(),
 			oHeaderContextCheckUpdatePromise = SyncPromise.resolve(Promise.resolve({})),
-			oKeptContext = {resetKeepAlive : function() {}},
+			oKeptContext = {resetKeepAlive : function () {}},
 			oNewCache = {refreshKeptElements : function () {}},
 			sPath = {/*TEAMS('1')*/},
 			oRefreshKeptElementsCall,
@@ -6881,7 +6881,7 @@ sap.ui.define([
 			oContext = {
 				getModelIndex : function () {},
 				getPath : function () {},
-				toString: function() { return "~context~"; }
+				toString: function () { return "~context~"; }
 			},
 			oChangeCall,
 			aContextsBefore,
@@ -7207,7 +7207,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [{
 	messages : [], predicates : []
-},{
+}, {
 	messages : [{
 		getTargets : function () {return ["/TEAMS('1')/foo"];}
 	}, {
@@ -7298,7 +7298,7 @@ sap.ui.define([
 				assert.strictEqual(oFilter.aFilters[i], aFilters[i]);
 			});
 			if (fnCallback) {
-				oFixture.messages.forEach(function(oMessage) {
+				oFixture.messages.forEach(function (oMessage) {
 					assert.ok(fnCallback.calledWithExactly(oMessage));
 				});
 			}
