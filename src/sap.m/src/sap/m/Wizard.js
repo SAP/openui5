@@ -501,7 +501,7 @@ sap.ui.define([
 		/**
 		 * Sets association currentStep to the given step.
 		 *
-		 * @param {sap.m.WizardStep | String} vStepId The step of the wizard that will be currently activated (meaning the last step).
+		 * @param {sap.m.WizardStep | sap.ui.core.ID} vStepId The step of the wizard that will be currently activated (meaning the last step).
 		 * @returns {this} Reference to the control instance for chaining.
 		 * @public
 		 */

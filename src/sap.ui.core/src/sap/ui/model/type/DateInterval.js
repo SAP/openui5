@@ -43,8 +43,8 @@ sap.ui.define([
 	 *           For a list of all available options, see {@link sap.ui.core.format.DateFormat.getDateInstance DateFormat}.
 	 *           In case an empty object is given, the default is the ISO date notation (yyyy-MM-dd).
 	 * @param {object} [oConstraints] Value constraints
-	 * @param {Date|String} [oConstraints.minimum] Smallest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>.
-	 * @param {Date|String} [oConstraints.maximum] Largest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>.
+	 * @param {Date|string} [oConstraints.minimum] Smallest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>.
+	 * @param {Date|string} [oConstraints.maximum] Largest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>.
 	 * @alias sap.ui.model.type.DateInterval
 	 */
 	var DateInterval = CompositeType.extend("sap.ui.model.type.DateInterval", /** @lends sap.ui.model.type.DateInterval.prototype  */ {

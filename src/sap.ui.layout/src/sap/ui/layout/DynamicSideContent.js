@@ -382,9 +382,10 @@ sap.ui.define([
 
 		/**
 		 * Returns the breakpoint for the current state of the control.
-		 * If the control is not rendered yet this method will return <code>undefined</code>,
+		 *
+		 * If the control is not rendered yet, this method will return <code>undefined</code>,
 		 * as current break point calculation is based on the parent container width.
-		 * @returns {String} currentBreakpoint
+		 * @returns {string} currentBreakpoint
 		 * @public
 		 */
 		DynamicSideContent.prototype.getCurrentBreakpoint = function () {

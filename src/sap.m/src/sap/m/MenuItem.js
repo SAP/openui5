@@ -89,17 +89,17 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserv
 						/**
 						 * The aggregation name of the changed aggregation.
 						 */
-						aggregationName : {type: "String"},
+						aggregationName : {type: "string"},
 
 						/**
 						 * Which method changed the aggregation.
 						 */
-						methodName: {type: "String"},
+						methodName: {type: "string"},
 
 						/**
 						 * What parameters were used to change the aggregation.
 						 */
-						methodParams: {type: "Object"}
+						methodParams: {type: "object"}
 					}
 				}
 			}

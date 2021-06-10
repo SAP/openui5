@@ -1801,8 +1801,8 @@ function(
 		 * Fires the change event for the listeners.
 		 *
 		 * @protected
-		 * @param {String} sValue value of the input.
-		 * @param {Object} [oParams] extra event parameters.
+		 * @param {string} sValue value of the input.
+		 * @param {object} [oParams] extra event parameters.
 		 */
 		TimePicker.prototype.fireChangeEvent = function(sValue, oParams) {
 			if (sValue) {
@@ -2158,7 +2158,7 @@ function(
 
 		/**
 		 * @see sap.ui.core.Control#getAccessibilityInfo
-		 * @returns {Object} Current accessibility state of the control.
+		 * @returns {object} Current accessibility state of the control.
 		 * @protected
 		 */
 		TimePicker.prototype.getAccessibilityInfo = function() {

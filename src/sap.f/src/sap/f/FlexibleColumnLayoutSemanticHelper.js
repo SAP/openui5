@@ -224,7 +224,7 @@ sap.ui.define([
 	 *  </code>
 	 *  </pre>
 	 * @public
-	 * @returns {Object} The object describing the current UI state
+	 * @returns {object} The object describing the current UI state
 	 */
 	FlexibleColumnLayoutSemanticHelper.prototype.getCurrentUIState = function () {
 		var sCurrentLayout = this._oFCL.getLayout();
@@ -240,7 +240,7 @@ sap.ui.define([
 	 * 2 - master-detail-detail, 3 and above - subsequent views
 	 *
 	 * @public
-	 * @returns {Object} The object describing the next UI state
+	 * @returns {object} The object describing the next UI state
 	 */
 	FlexibleColumnLayoutSemanticHelper.prototype.getNextUIState = function (iNextLevel) {
 
@@ -449,7 +449,7 @@ sap.ui.define([
 	 * <li>defaultThreeColumnLayoutType - the layout that will be suggested by default when 3 columns have to be shown side by side</li></ul>
 	 *
 	 * @public
-	 * @returns {Object} The object describing the default layout types for the different numbers of columns
+	 * @returns {object} The object describing the default layout types for the different numbers of columns
 	 */
 	FlexibleColumnLayoutSemanticHelper.prototype.getDefaultLayouts = function () {
 		return {

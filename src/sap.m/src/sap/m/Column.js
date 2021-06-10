@@ -351,8 +351,8 @@ sap.ui.define([
 	 * Returns CSS alignment according to column hAlign setting or given parameter
 	 * for Begin/End values checks the locale settings
 	 *
-	 * @param {String} [sAlign] TextAlign enumeration
-	 * @return {String} left|center|right
+	 * @param {string} [sAlign] TextAlign enumeration
+	 * @return {string} left|center|right
 	 * @protected
 	 */
 	Column.prototype.getCssAlign = function(sAlign) {
@@ -447,7 +447,7 @@ sap.ui.define([
 	 * Display or hide the column from given table
 	 * This does not set the visibility property of the column
 	 *
-	 * @param {Object} oTableDomRef Table DOM reference
+	 * @param {Element} oTableDomRef Table DOM reference
 	 * @param {boolean} [bDisplay] whether visible or not
 	 * @protected
 	 */

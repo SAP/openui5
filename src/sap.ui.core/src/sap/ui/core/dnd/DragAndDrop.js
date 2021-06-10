@@ -265,7 +265,7 @@ function(Device, UIArea, jQuery) {
 			/**
 			 * Returns the calculated position of the drop action relative to the valid dropped control.
 			 *
-			 * @returns {String}
+			 * @returns {string}
 			 * @protected
 			 */
 			getDropPosition: function() {
