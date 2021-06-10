@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/LabelEnablement",
 	"sap/m/BadgeEnabler",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/base/Log"
 ], function(
 	library,
 	Control,
@@ -30,7 +31,8 @@ sap.ui.define([
 	KeyCodes,
 	LabelEnablement,
 	BadgeEnabler,
-	InvisibleText
+	InvisibleText,
+	Log
 ) {
 	"use strict";
 
@@ -259,16 +261,18 @@ sap.ui.define([
 	Button.prototype.setBadgeMinValue = function(iMin) {
 		var iValue = this.getBadgeCustomData().getValue();
 
-		if (iMin && !isNaN(iMin) && iMin >= BADGE_MIN_VALUE && iMin != this._badgeMinValue) {
+		if (iMin && !isNaN(iMin) && iMin >= BADGE_MIN_VALUE && iMin != this._badgeMinValue && iMin <= this._badgeMaxValue) {
 			this._badgeMinValue = iMin;
 			this.badgeValueFormatter(iValue);
 			this.invalidate();
+		} else {
+			Log.warning("minValue is not valid (it is is less than minimum allowed badge value [" + BADGE_MIN_VALUE + "] or greater than maximum badge value [" + this._badgeMaxValue + "])", this);
 		}
 		return this;
 	};
 
 	/**
-	 * Badge minimum value setter - called when someone wants to change the value
+	 * Badge maximum value setter - called when someone wants to change the value
 	 * above which the badge value is displayed with + after the value (ex. 999+)
 	 *
 	 * @param {number} iMax maximum visible value of the badge (not greater than maximum Badge value - 9999)
@@ -276,9 +280,11 @@ sap.ui.define([
 	 * @public
 	 */
 	Button.prototype.setBadgeMaxValue = function(iMax) {
-		if (iMax && !isNaN(iMax) && iMax <= BADGE_MAX_VALUE && iMax != this._badgeMaxValue) {
+		if (iMax && !isNaN(iMax) && iMax <= BADGE_MAX_VALUE && iMax != this._badgeMaxValue && iMax >= this._badgeMinValue) {
 			this._badgeMaxValue = iMax;
 			this.invalidate();
+		} else {
+			Log.warning("maxValue is not valid (it is is greater than than maximum allowed badge value [" + BADGE_MAX_VALUE + "] or less than minimum badge value [" + this._badgeMinValue + "])", this);
 		}
 		return this;
 	};

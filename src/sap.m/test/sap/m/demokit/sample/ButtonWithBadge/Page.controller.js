@@ -5,7 +5,11 @@ sap.ui.define([
 function(JSONModel, Controller) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.ButtonWithBadge.Page", {
+	// constraints for the minimum and maximum Badge value
+	var BADGE_MIN_VALUE = 1,
+		BADGE_MAX_VALUE = 9999;
+
+		var PageController = Controller.extend("sap.m.sample.ButtonWithBadge.Page", {
 
 		onInit: function () {
 			// create model with settings
@@ -29,6 +33,8 @@ function(JSONModel, Controller) {
 			this.oMax = this.byId("MaxInput");
 			this.oCurrent = this.byId("CurrentValue");
 			this.oLabelCheckBox = this.byId("LabelCheckBox");
+			this.iMinValue = parseInt(this.oMin.getValue());
+			this.iMaxValue = parseInt(this.oMax.getValue());
 
 			// initialize Badge
 			this.currentChangeHandler();
@@ -48,11 +54,24 @@ function(JSONModel, Controller) {
 		},
 
 		minChangeHandler: function() {
-			this.oButton.setBadgeMinValue(this.oModel.getProperty("/badgeMin"));
+			var iMin = parseInt(this.oModel.getProperty("/badgeMin"));
+			if (iMin >= BADGE_MIN_VALUE && iMin <= this.iMaxValue) {
+				this.oButton.setBadgeMinValue(iMin);
+				this.iMinValue = iMin;
+			} else {
+				this.oMin.setValue(this.iMinValue);
+			}
 		},
 
 		maxChangeHandler: function() {
-			this.oButton.setBadgeMaxValue(this.oModel.getProperty("/badgeMax"));
+			var iMax = parseInt(this.oModel.getProperty("/badgeMax"));
+			this.oButton.setBadgeMaxValue(iMax);
+			if (iMax <= BADGE_MAX_VALUE && iMax >= this.iMinValue) {
+				this.oButton.setBadgeMaxValue(iMax);
+				this.iMaxValue = iMax;
+			} else {
+				this.oMax.setValue(this.iMaxValue);
+			}
 		}
 
 	});
