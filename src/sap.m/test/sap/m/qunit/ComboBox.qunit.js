@@ -10553,6 +10553,30 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("Clone combobox with preselected item", function (assert) {
+		var oItem = new sap.ui.core.Item({
+			text: "Dryanovo",
+			key: "1"
+		});
+
+		var oCB = new sap.m.ComboBox({
+			items: [oItem],
+			selectedItem: oItem
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		var oClone = oCB.clone();
+		oClone.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oClone.getValue(), "Dryanovo", "Value should be kept");
+		assert.strictEqual(oClone.getSelectedItem().getText(), "Dryanovo", "Selected item should be cloned");
+
+		oClone.destroy();
+		oCB.destroy();
+	});
+
 	QUnit.test("Keep selected value on parent re-render", function (assert) {
 		var oComboBox = new ComboBox({
 			items: [
