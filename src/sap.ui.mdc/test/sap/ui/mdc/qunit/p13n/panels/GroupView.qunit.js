@@ -152,4 +152,16 @@ sap.ui.define([
         this.oGroupView.getP13nModel().refresh();
         assert.ok(this.oGroupView.getPanels()[0].getContent()[0].getItems()[1].getContent()[0].getItems()[1].getItems()[0].getVisible(), "Item is filtered (active)");
     });
+
+    QUnit.test("Check 'labelFor' association on fields", function(assert){
+        this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
+
+        var aPanels = this.oGroupView.getPanels();
+
+        //Due to lazy loading only the first panel is initialized (assocation can only be provided for loaded fields)
+        aPanels[0].getContent()[0].getItems().forEach(function(oInnerItem){
+            assert.ok(oInnerItem.getContent()[0].getItems()[0].getLabelFor(), "Label for assocation always provided");
+        });
+
+    });
 });
