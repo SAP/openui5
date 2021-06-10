@@ -10,13 +10,11 @@
 var path = require('path');
 var webdriver = require('selenium-webdriver');
 var async = require('async');
-var multiline = require('multiline');
 var prettyMs = require('pretty-ms');
 
 var testResourcesPattern = /.*test-resources\/(.*)/;
 
-var resultScript = multiline(function(){/*
-
+var resultScript = `
 if (window._$jUnitReport) {
 	return {
 		ready: !!window._$jUnitReport.results,
@@ -55,8 +53,8 @@ if (window._$jUnitReport) {
 		aTests = jQuery("#qunit-tests ol li").map(function() {
 			var $el = jQuery(this);
 			return {
-				text: jQuery('span', $el).text() + '\n' +
-					jQuery('tr', $el).map(function() { return jQuery(this).text(); }).get().join('\n'),
+				text: jQuery('span', $el).text() + '\\n' +
+					jQuery('tr', $el).map(function() { return jQuery(this).text(); }).get().join('\\n'),
 				pass: $el.hasClass('pass')
 			};
 		}).get();
@@ -65,8 +63,7 @@ if (window._$jUnitReport) {
 
 	return { ready: bReady, tests: aTests, results: mResults };
 }
-
-*/});
+`;
 
 module.exports = function(grunt) {
 
