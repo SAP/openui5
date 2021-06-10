@@ -605,6 +605,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given updateVariant is called on a non-updatable variant and a updatable change", function(assert) {
+			var oUpdatedContent = {};
 			CompVariantState.updateVariant({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
@@ -617,10 +618,12 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				id: this.oVariant.getId(),
 				favorite: true,
+				content: oUpdatedContent,
 				layer: Layer.USER
 			});
 			assert.equal(this.oVariant.getDefinition().favorite, undefined, "the favorite was NOT set within the variant");
 			assert.equal(this.oVariant.getChanges().length, 1, "one change was written");
+			assert.equal(this.oVariant.getChanges()[0].getContent().variantContent, oUpdatedContent, "the variant content is set correct");
 		});
 
 		QUnit.test("Given updateVariant is called on a non-updatable variant and a non-updatable change", function(assert) {
