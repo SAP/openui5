@@ -1535,6 +1535,10 @@ sap.ui.define([
 			var oComboBoxClone = ComboBoxBase.prototype.clone.apply(this, arguments),
 				oList = this._getList();
 
+			// ensure that selected item is cleared, but keep key
+			// cloning can't have a reference to an item of other ComboBox
+			oComboBoxClone.setAssociation("selectedItem", null);
+
 			if (!this.isBound("items") && oList) {
 				oComboBoxClone.syncPickerContent();
 				oComboBoxClone.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
