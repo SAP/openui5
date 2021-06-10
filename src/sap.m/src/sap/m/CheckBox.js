@@ -83,7 +83,7 @@ sap.ui.define([
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/checkbox/ Check Box}
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -95,7 +95,7 @@ sap.ui.define([
 	 */
 	var CheckBox = Control.extend("sap.m.CheckBox", /** @lends sap.m.CheckBox.prototype */ { metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
+		interfaces : ["sap.ui.core.IFormContent", "sap.ui.core.ISemanticFormContent"],
 		library : "sap.m",
 		properties : {
 
@@ -339,6 +339,16 @@ sap.ui.define([
 				}
 			});
 		}
+	};
+
+	CheckBox.prototype.getFormFormattedValue = function() {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		return this.getSelected() ? oBundle.getText("ACC_CTR_STATE_CHECKED") : oBundle.getText("ACC_CTR_STATE_NOT_CHECKED");
+	};
+
+	CheckBox.prototype.getFormValueProperty = function () {
+		return "selected";
 	};
 
 	/**
