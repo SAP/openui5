@@ -515,7 +515,7 @@ sap.ui.define([
 			}
 			if (mPropertyBag.content) {
 				oVariant.setContent(mPropertyBag.content);
-				oChangeContent.content = mPropertyBag.content;
+				oChangeContent.variantContent = mPropertyBag.content;
 			}
 			if (mPropertyBag.name) {
 				oVariant.setName(mPropertyBag.name);
