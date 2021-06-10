@@ -580,6 +580,32 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
+	QUnit.test("Tooltip and aria-describedby", function (assert) {
+		// Arrange
+		var sId = "os",
+			oObjectStatus = new ObjectStatus(sId, {
+				title: "Something",
+				tooltip: "Good"
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(document.getElementById(sId + "-tooltip"), "Hidden tooltip text element has not been created");
+
+		// Act
+		oObjectStatus.addAriaDescribedBy("boo");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(document.getElementById(sId + "-tooltip"), "Hidden tooltip text element has been created");
+		assert.strictEqual(document.getElementById(sId + "-tooltip").innerHTML, "Good",
+			"The value of the hidden tooltip text element is correct");
+
+		//Cleanup
+		oObjectStatus.destroy();
+	});
+
 	QUnit.test("Internal icon ARIA for icon-only ObjectStatus", function (assert) {
 		// Arrange
 		var oCore = sap.ui.getCore(),
