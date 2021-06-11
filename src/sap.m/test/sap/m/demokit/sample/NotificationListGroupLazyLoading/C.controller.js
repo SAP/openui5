@@ -43,7 +43,7 @@ sap.ui.define([
 		_addItemsToGroup: function (oNotificationListGroup) {
 			var aPriorities = Object.keys(Priority);
 			var aTimes = ["3 days", "5 minutes", "1 hour"];
-			var aTitles = ["New order request", "Your vacation has been approved", "New transaction in queue", "An new request await your action"];
+			var aTitles = ["New order request", "Your vacation has been approved", "New transaction in queue", "A new request awaits your action"];
 
 			function randomIndex(iMax) {
 				return Math.floor(Math.random() * iMax);
@@ -57,7 +57,8 @@ sap.ui.define([
 					showCloseButton: true,
 					datetime: aTimes[randomIndex(aTimes.length)],
 					unread: true,
-					priority: Priority[sNotificationPriority]
+					priority: Priority[sNotificationPriority],
+					close: this.onItemClose
 				}));
 			}
 		}
