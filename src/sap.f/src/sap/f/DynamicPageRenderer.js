@@ -29,6 +29,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			bHeaderHasContent = aHeaderContent.length > 0,
 			bShowFooter = oDynamicPage.getShowFooter(),
 			bPreserveHeaderStateOnScroll = oDynamicPage._preserveHeaderStateOnScroll(),
+			bHeaderInTitleArea = bPreserveHeaderStateOnScroll || oDynamicPage._bHeaderInTitleArea,
 			oLandmarkInfo = oDynamicPage.getLandmarkInfo(),
 			sHeaderTag = oDynamicPage._getHeaderTag(oLandmarkInfo),
 			sFooterTag = oDynamicPage._getFooterTag(oLandmarkInfo);
@@ -67,7 +68,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		// Sticky area
 		oRm.openStart("div", oDynamicPage.getId() + "-stickyPlaceholder");
 		oRm.openEnd();
-		if (bPreserveHeaderStateOnScroll) {
+		if (bHeaderInTitleArea) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
 		oRm.close("div");
@@ -81,7 +82,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			oRm.class("sapFDynamicPageContentWrapper" + oDynamicPage.getBackgroundDesign());
 		}
 		oRm.openEnd();
-		if (!bPreserveHeaderStateOnScroll) {
+		if (!bHeaderInTitleArea) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
 		oRm.openStart("div", oDynamicPage.getId() + "-content");

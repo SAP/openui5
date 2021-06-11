@@ -1664,6 +1664,32 @@ function (
 
 	});
 
+	QUnit.test("DynamicPage pin state preserved upon rerendering", function (assert) {
+		var $headerWrapper = this.oDynamicPage.$("header"),
+			$contentWrapper = this.oDynamicPage.$("contentWrapper"),
+			sHeaderId = this.oDynamicPage.getHeader().getId(),
+			oPinSpy = this.spy(this.oDynamicPage, "_updateScrollBar"),
+			oDynamicPageTitle = this.oDynamicPage.getTitle(),
+			oDynamicPageHeader = this.oDynamicPage.getHeader(),
+			$oDynamicPage =  this.oDynamicPage.$(),
+			$oCollapseButton = oDynamicPageHeader.getAggregation("_collapseButton").$(),
+			$oExpandButton = oDynamicPageTitle.getAggregation("_expandButton").$();
+
+		assert.equal($contentWrapper.find("#" + sHeaderId).length, 1, "The header is in the Content wrapper initially");
+
+		// Act
+		this.oDynamicPage._pin();
+		this.oDynamicPage.rerender(); //rerender while header is pinned
+
+		// Assert
+		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header is in the Header wrapper when pinned");
+		assert.ok(oPinSpy.called, "The ScrollBar is updated");
+		assert.equal($oDynamicPage.hasClass("sapFDynamicPageHeaderPinned"), true, "Header is pinned, Pinned class applied to DynamicPage root element");
+		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is pinned, the Expand Button is not visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), false, "Header is pinned, the Collapse Button is visible");
+
+	});
+
 	QUnit.test("DynamicPage _canSnapHeaderOnScroll() should return the correct value", function (assert) {
 		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), true, "The header can snap");
 	});

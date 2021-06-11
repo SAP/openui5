@@ -412,14 +412,13 @@ sap.ui.define([
 			setTimeout(this._overridePreserveHeaderStateOnScroll.bind(this), 0);
 		}
 
-		this._bPinned = false;
 		this._cacheDomElements();
 		this._attachResizeHandlers();
 		this._updateMedia(this._getWidth(this));
 		this._attachScrollHandler();
 		this._updateScrollBar();
 		this._attachPageChildrenAfterRenderingDelegates();
-		this._resetPinButtonState();
+		this._updatePinButtonState();
 
 		if (!this.getHeaderExpanded()) {
 			this._snapHeader(false);
@@ -920,8 +919,6 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._pin = function () {
-		var $oDynamicPage = this.$();
-
 		if (this._bPinned) {
 			return;
 		}
@@ -935,9 +932,7 @@ sap.ui.define([
 
 		this._updateToggleHeaderVisualIndicators();
 
-		if (exists($oDynamicPage)) {
-			$oDynamicPage.addClass("sapFDynamicPageHeaderPinned");
-		}
+		this.addStyleClass("sapFDynamicPageHeaderPinned");
 	};
 
 
@@ -946,8 +941,6 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._unPin = function () {
-		var $oDynamicPage = this.$();
-
 		if (!this._bPinned) {
 			return;
 		}
@@ -955,9 +948,7 @@ sap.ui.define([
 		this._bPinned = false;
 		this._updateToggleHeaderVisualIndicators();
 
-		if (exists($oDynamicPage)) {
-			$oDynamicPage.removeClass("sapFDynamicPageHeaderPinned");
-		}
+		this.removeStyleClass("sapFDynamicPageHeaderPinned");
 	};
 
 	/**
@@ -988,15 +979,29 @@ sap.ui.define([
 
 
 	/**
-	 * Resets the header pin button state
+	 * Resets the header pin button state if the header is no longer pinnable
 	 * @private
 	 */
-	DynamicPage.prototype._resetPinButtonState = function () {
+	DynamicPage.prototype._updatePinButtonState = function () {
+		if (this._bPinned && !this._isHeaderPinnable()) {
+			this._togglePinButtonPressedState(false);
+			this._unPin();
+		}
 		if (this._preserveHeaderStateOnScroll()) {
 			this._togglePinButtonVisibility(false);
-		} else {
-			this._togglePinButtonPressedState(false);
 		}
+	};
+
+	/**
+	 * Checks if there are conditions to directly enable the pinned state of the header
+	 * @returns {boolean}
+	 * @private
+	 */
+	DynamicPage.prototype._isHeaderPinnable = function () {
+		var oHeader = this.getHeader();
+		return oHeader && oHeader.getPinnable()
+			&& this.getHeaderExpanded()
+			&& !this.getPreserveHeaderStateOnScroll();
 	};
 
 	/**
