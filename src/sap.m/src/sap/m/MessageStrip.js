@@ -261,7 +261,8 @@ sap.ui.define([
 
 	MessageStrip.prototype.setAggregation = function (sName, oControl, bSupressInvalidate) {
 		if (sName === "link" && oControl instanceof Link) {
-			oControl.addAriaDescribedBy(this.getId());
+			var sId = this.getId() + "-info" + " " + this.getId() + "-content";
+			oControl.addAriaDescribedBy(sId);
 		}
 
 		Control.prototype.setAggregation.call(this, sName, oControl, bSupressInvalidate);
