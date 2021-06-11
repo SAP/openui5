@@ -33,7 +33,8 @@ sap.ui.define([
 		 * @override
 		 */
 		renderContentSection: function (oRm, oCard) {
-			var oFilterBar = oCard.getAggregation("_filterBar");
+			var oFilterBar = oCard.getAggregation("_filterBar"),
+				oFooter = oCard.getAggregation("_footer"); // move to sap.f.CardRenderer
 
 			if (oFilterBar) {
 				oRm.openStart("div")
@@ -46,6 +47,16 @@ sap.ui.define([
 			}
 
 			FCardRenderer.renderContentSection.apply(this, arguments);
+
+			if (oFooter) {
+				oRm.openStart("div")
+					.class("sapFCardFooter")
+					.openEnd();
+
+				oRm.renderControl(oFooter);
+
+				oRm.close("div");
+			}
 		}
 	});
 

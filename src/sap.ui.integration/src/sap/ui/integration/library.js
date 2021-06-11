@@ -117,7 +117,8 @@ sap.ui.define([
 		Content: "Content",
 		ContentItem: "ContentItem",
 		ContentItemDetail: "ContentItemDetail",
-		Header: "Header"
+		Header: "Header",
+		Footer: "Footer"
 	};
 
 	/**

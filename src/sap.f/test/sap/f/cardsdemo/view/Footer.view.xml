@@ -1,0 +1,26 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Footer (experimental)" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<Panel>
+			<f:GridContainer>
+				<w:Card id="card1" manifest="./cardsdemo/cardcontent/footer/footer.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="5" />
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+		</Panel>
+	</Page>
+</mvc:View>
