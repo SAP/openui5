@@ -268,18 +268,13 @@ describe("sap.ui.unified.CalendarVisual", function() {
 				expect(takeScreenshot(oCal)).toLookAs("093_multiple_month_MonthPicker");
 				_pressMonth(sCalId, "1"); // month picker closed, February 28 focused
 
-				if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-					browser.actions().mouseMove(element(by.css("#B1"))).perform();
-					expect(takeScreenshot(oCal)).toLookAs("094_multiple_month_MonthPicker_Select");
-				}
-
 				_initCalendar("6");
 				_pressYearPicker(sCalId);   // year Picker shown, 2015 selected and focused
-				expect(takeScreenshot(oCal)).toLookAs("095_multiple_month_YearPicker");
+				expect(takeScreenshot(oCal)).toLookAs("094_multiple_month_YearPicker");
 				_pressYear(sCalId, "2014"); // year picker closed, January-April 2014 shown, January 31 focused
 
 				browser.actions().mouseMove(element(by.css("#B1"))).perform();
-				expect(takeScreenshot(oCal)).toLookAs("096_multiple_month_YearPicker_Select");
+				expect(takeScreenshot(oCal)).toLookAs("095_multiple_month_YearPicker_Select");
 			}
 		}, iDefaultTimeout);
 
@@ -288,28 +283,28 @@ describe("sap.ui.unified.CalendarVisual", function() {
 				// only on desktop and not in Safari (sendKeys needs an Element in Safari, so test makes no sense there)
 				_initCalendar("6");
 				browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform(); // focus on February 1
-				expect(takeScreenshot(oCal)).toLookAs("097_multiple_month_keyboard_Arrow_Right");
+				expect(takeScreenshot(oCal)).toLookAs("096_multiple_month_keyboard_Arrow_Right");
 				browser.actions().sendKeys(protractor.Key.ARROW_UP).perform(); // focus on January 25
-				expect(takeScreenshot(oCal)).toLookAs("098_multiple_month_keyboard_Arrow_UP");
+				expect(takeScreenshot(oCal)).toLookAs("097_multiple_month_keyboard_Arrow_UP");
 				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform(); // focus on February 1
-				expect(takeScreenshot(oCal)).toLookAs("099_multiple_month_keyboard_Arrow_Down");
+				expect(takeScreenshot(oCal)).toLookAs("098_multiple_month_keyboard_Arrow_Down");
 				browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform(); // focus on January 31
-				expect(takeScreenshot(oCal)).toLookAs("100_multiple_month_keyboard_Arrow_Left");
+				expect(takeScreenshot(oCal)).toLookAs("099_multiple_month_keyboard_Arrow_Left");
 
 				browser.actions().sendKeys(protractor.Key.PAGE_UP).perform(); // switch to December-March, focus on December 31
-				expect(takeScreenshot(oCal)).toLookAs("101_multiple_month_keyboard_Page_Up1");
+				expect(takeScreenshot(oCal)).toLookAs("100_multiple_month_keyboard_Page_Up1");
 				browser.actions().sendKeys(protractor.Key.PAGE_UP).perform(); // focus on November-February 30
-				expect(takeScreenshot(oCal)).toLookAs("102_multiple_month_keyboard_Page_Up2");
+				expect(takeScreenshot(oCal)).toLookAs("101_multiple_month_keyboard_Page_Up2");
 				browser.actions().sendKeys(protractor.Key.PAGE_DOWN).perform(); // focus on December-March 30
-				expect(takeScreenshot(oCal)).toLookAs("103_multiple_month_keyboard_Page_Down1");
+				expect(takeScreenshot(oCal)).toLookAs("102_multiple_month_keyboard_Page_Down1");
 				browser.actions().sendKeys(protractor.Key.PAGE_DOWN).perform();  // switch to January-April, focus on January 30
-				expect(takeScreenshot(oCal)).toLookAs("103_multiple_month_keyboard_Page_Down2");
+				expect(takeScreenshot(oCal)).toLookAs("102_multiple_month_keyboard_Page_Down2");
 			}
 		}, iDefaultTimeout);
 
 		it("sap.ui.unified.calendar.Header looks OK when chinese language is set", function() {
 			_initCalendar("70");
-			expect(takeScreenshot(oCal)).toLookAs("1040_month_displayed");
+			expect(takeScreenshot(oCal)).toLookAs("103_month_displayed");
 		});
 
 		it("sap.ui.unified.calendar.Header looks OK when chinese language is set and calendar has two months", function() {
