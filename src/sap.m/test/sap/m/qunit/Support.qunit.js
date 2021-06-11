@@ -1,20 +1,17 @@
-/*global sinon */
-/*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit, sinon */
+
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Support",
 	"sap/m/library"
 ], function(createAndAppendDiv, Support, mobileLibrary) {
+	"use strict";
+
 	// shortcut for sap.m.DialogType
 	var DialogType = mobileLibrary.DialogType;
 
-	createAndAppendDiv("content");
-
-
-
 	var sSupportTitle = "Technical Information";
-
+	createAndAppendDiv("content");
 
 	QUnit.module("Open API", {
 		beforeEach: function() {
@@ -44,6 +41,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("On and Off API");
+
 	QUnit.test("Register/Unregister event", function(assert) {
 
 		var sEventName = "ontouchstart";
