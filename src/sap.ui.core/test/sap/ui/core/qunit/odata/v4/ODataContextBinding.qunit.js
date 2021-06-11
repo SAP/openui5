@@ -2731,8 +2731,8 @@ sap.ui.define([
 			});
 
 		sinon.assert.callOrder(fnHasChangeListeners, fnFetchCache);
-		if (bHasChangeListeners) {
-			oBinding.resolveRefreshPromise(); // simulate fetchValue triggered by a property binding
+		if (bHasChangeListeners) { // simulate fetchValue triggered by a property binding
+			oBinding.resolveRefreshPromise(Promise.resolve());
 		}
 		return oRefreshResult;
 	});
@@ -3792,17 +3792,20 @@ sap.ui.define([
 					oCache = {
 						requestSideEffects : function () {}
 					},
+					oCanceledError = new Error(),
 					oContext = bWithContext
 						? {getPath : function () {}}
 						: undefined,
 					oError = new Error(),
 					sGroupId = "group",
 					oGroupLock = {},
+					oModelMock = this.mock(this.oModel),
 					aPaths = [],
 					oPromise = Promise.resolve({/*the updated data*/}),
 					oResult,
 					that = this;
 
+				oCanceledError.canceled = true;
 				oBinding.oCache = oCache; // simulate execute
 				this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId)
 					.returns(oGroupLock);
@@ -3820,6 +3823,7 @@ sap.ui.define([
 							.callsFake(function (_sGroupId, _aPaths, _oContext,
 									_mNavigationPropertyPaths, aPromises) {
 								aPromises.push(Promise.resolve());
+								aPromises.push(Promise.reject(oCanceledError));
 								if (bRecursionRejects) {
 									aPromises.push(Promise.reject(oError));
 								}
@@ -3829,8 +3833,11 @@ sap.ui.define([
 
 						return oPromise;
 					});
+				oModelMock.expects("reportError")
+					.withExactArgs("Failed to request side effects", sClassName,
+						sinon.match.same(oCanceledError));
 				if (bRecursionRejects) {
-					this.mock(this.oModel).expects("reportError")
+					oModelMock.expects("reportError")
 						.withExactArgs("Failed to request side effects", sClassName,
 							sinon.match.same(oError));
 				}

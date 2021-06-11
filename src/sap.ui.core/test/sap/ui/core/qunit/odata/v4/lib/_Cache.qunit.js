@@ -3246,8 +3246,6 @@ sap.ui.define([
 					"EMPLOYEE_2_EQUIPMENTS");
 
 			return oPromise;
-		}).then(function (oResult) {
-			assert.strictEqual(oResult, oResponse);
 		});
 	});
 });

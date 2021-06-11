@@ -69,11 +69,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Throws an Error that the response is discarded if the current cache not the expected one.
-	 * The error has the property <code>canceled : true</code>
+	 * Throws an error that the response is being ignored if the current cache is not the expected
+	 * one. The error has the property <code>canceled : true</code>
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Cache} oExpectedCache - The expected cache
-	 * @throws {Error} If the cache has changed
+	 * @throws {Error} If the current cache is not the expected one
 	 *
 	 * @private
 	 */
@@ -81,7 +81,8 @@ sap.ui.define([
 		var oError;
 
 		if (this.oCache !== oExpectedCache) {
-			oError = new Error("Response discarded: cache is inactive");
+			oError = new Error(this + " is ignoring response from inactive cache: "
+				+ oExpectedCache);
 			oError.canceled = true;
 			throw oError;
 		}
