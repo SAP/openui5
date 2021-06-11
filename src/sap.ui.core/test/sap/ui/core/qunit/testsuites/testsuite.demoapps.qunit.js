@@ -18,13 +18,14 @@ sap.ui.define(function () {
 			"sap/ui/core/demokit/tutorial/troubleshooting/01/webapp/test/integration/opaTests": {
 				group: "Troubleshooting Tutorial",
 				page: "test-resources/sap/ui/core/demokit/tutorial/troubleshooting/01/webapp/test/integration/opaTests.qunit.html"
-			},
+			}
 
+			/* skipping test due to unstable voter executions,
 			// sap.ui.core Sample Apps
 			"sap/ui/core/demokit/sample/RoutingNestedComponent/test/integration/opaTests": {
 				group: "Routing Nested Component Sample App",
 				page: "test-resources/sap/ui/core/demokit/sample/RoutingNestedComponent/test/integration/opaTests.qunit.html"
-			}
+			}*/
 		}
 	};
 });
