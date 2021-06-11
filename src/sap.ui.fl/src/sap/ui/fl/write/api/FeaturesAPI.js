@@ -97,6 +97,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks if key user has also the admin role to enable the translation button
+		 *
+		 * @returns {Promise<boolean>} Resolves to a boolean indicating if they keyuser is also admin
+		 * @public
+		 */
+		isKeyUserTranslationEnabled: function (sLayer) {
+			if (sLayer === Layer.CUSTOMER) {
+				return Settings.getInstance()
+				.then(function (oSettings) {
+					return oSettings.isKeyUserTranslationEnabled();
+				});
+			}
+		},
+
+		/**
 		 * Checks if context sharing is enbaled.
 		 *
 		 * @param {string} sLayer - Layer to get correct connector

@@ -22,6 +22,7 @@ sap.ui.define([
 			var oSettings = {
 				isKeyUser: false,
 				isAtoAvailable: false,
+				isKeyUserTranslationEnabled: false,
 				isAtoEnabled: false,
 				isPublicLayerAvailable: false,
 				isVariantPersonalizationEnabled: true,
@@ -50,6 +51,12 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isKeyUser, false);
 			var bIsKeyUser = this.cut.isKeyUser();
 			assert.equal(bIsKeyUser, false);
+		});
+
+		QUnit.test("isKeyUserTranslationEnabled", function(assert) {
+			assert.equal(this.cut._oSettings.isKeyUserTranslationEnabled, false);
+			var bIsKeyUserTranslationEnabled = this.cut.isKeyUserTranslationEnabled();
+			assert.equal(bIsKeyUserTranslationEnabled, false);
 		});
 
 		QUnit.test("isAppVariantSaveAsEnabled", function(assert) {

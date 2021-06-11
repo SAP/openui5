@@ -174,6 +174,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the information if translation is enabled for the KeyUser or not (has admin role).
+	 *
+	 * @returns {boolean} true if the user is a flexibility key user and has the admin role.
+	 */
+	Settings.prototype.isKeyUserTranslationEnabled = function() {
+		return this._getBooleanProperty("isKeyUserTranslationEnabled");
+	};
+
+	/**
 	 * Returns the information if a back end supports the PUBLIC layer.
 	 *
 	 * @returns {boolean} true if the PUBLIC layer is supported
