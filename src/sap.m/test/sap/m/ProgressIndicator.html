@@ -155,16 +155,16 @@
 				text:"ChangePI",
 				press: function(){
 					var sPercent = sap.ui.getCore().byId("input").getValue();
-					oProgInd8.setPercentValue(parseFloat(sPercent));
 					oProgInd8.setDisplayValue(sPercent + "%");
+					oProgInd8.setPercentValue(parseFloat(sPercent));
 				}
 			});
 
 			var oButton2 = new sap.m.Button("change_pi", {
 				text:"Change PI to 40%",
 				press: function(){
-					oProgInd8.setPercentValue(40);
 					oProgInd8.setDisplayValue("40%");
+					oProgInd8.setPercentValue(40);
 				}
 			});
 
@@ -192,32 +192,32 @@
 			var oButton6 = new sap.m.Button("change_pi_empty", {
 				text:"Change PI to -20%",
 				press: function(){
-					oProgInd8.setPercentValue(-20);
 					oProgInd8.setDisplayValue("-20%");
+					oProgInd8.setPercentValue(-20);
 				}
 			});
 
 			var oButton7 = new sap.m.Button("change_pi_full", {
 				text:"Change PI to 120%",
 				press: function(){
-					oProgInd8.setPercentValue(120);
 					oProgInd8.setDisplayValue("120%");
+					oProgInd8.setPercentValue(120);
 				}
 			});
 
 			var oButton10 = new sap.m.Button("button_no_animation100", {
 				text:"Change PI to 100% without animation",
 				press: function(){
-					oProgInd10.setPercentValue(100);
 					oProgInd10.setDisplayValue("100%");
+					oProgInd10.setPercentValue(100);
 				}
 			});
 
 			var oButton11 = new sap.m.Button("button_no_animation0", {
 				text:"Change PI to 0% without animation",
 				press: function(){
-					oProgInd10.setPercentValue(0);
 					oProgInd10.setDisplayValue("0%");
+					oProgInd10.setPercentValue(0);
 				}
 			}).addStyleClass("sapUiSmallMarginEnd");
 

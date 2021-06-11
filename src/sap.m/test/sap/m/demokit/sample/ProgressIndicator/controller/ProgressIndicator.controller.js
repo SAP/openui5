@@ -13,8 +13,8 @@ sap.ui.define([
 				oProgressIndicator = this.getView().byId(sSourceId.substring(0, iIndexOfButton - 1)),
 				sValue = sSourceId.substring(iIndexOfButton + sButton.length);
 
-			oProgressIndicator.setPercentValue(+sValue);
 			oProgressIndicator.setDisplayValue(sValue + '%');
+			oProgressIndicator.setPercentValue(+sValue);
 		}
 
 	});
