@@ -79,8 +79,11 @@ sap.ui.define([
         var sAggregationName = this.getLayoutInformation().aggregationName;
         var oActionToolbar = this.getParent();
 
-        this._oSeparatorBefore.setVisible(sAlignment === ActionToolbarActionAlignment.End && !oActionToolbar._aggregationContainsActionSeparatorBefore(sAggregationName));
-        this._oSeparatorAfter.setVisible(sAlignment === ActionToolbarActionAlignment.Begin && !oActionToolbar._aggregationContainsActionSeparatorAfter(sAggregationName));
+        var bSeparatorBeforeVisible = sAlignment === ActionToolbarActionAlignment.End && !oActionToolbar._aggregationContainsActionSeparatorBefore(sAggregationName);
+        var bSeparatorAfterVisible = sAlignment === ActionToolbarActionAlignment.Begin && !oActionToolbar._aggregationContainsActionSeparatorAfter(sAggregationName);
+
+        this._oSeparatorBefore.setVisible(this.getAction() && this.getAction().getVisible() && bSeparatorBeforeVisible);
+        this._oSeparatorAfter.setVisible(this.getAction() && this.getAction().getVisible() && bSeparatorAfterVisible);
     };
 
     ActionToolbarAction.prototype.getSeparatorBefore = function() {
