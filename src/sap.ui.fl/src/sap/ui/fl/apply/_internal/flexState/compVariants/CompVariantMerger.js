@@ -37,6 +37,10 @@ sap.ui.define([
 			if (sVariantName) {
 				oVariant.setName(sVariantName);
 			}
+		},
+		standardVariant: function (oVariant, oChange) {
+			// legacy change on stanard variants
+			oVariant.setExecuteOnSelection(oChange.getContent().executeOnSelect);
 		}
 	};
 
@@ -116,7 +120,6 @@ sap.ui.define([
 		merge: function (sPersistencyKey, mCompData, oStandardVariantInput) {
 			var aVariants = mCompData.nonPersistedVariants.concat(mCompData.variants);
 			var mChanges = getChangesMappedByVariant(mCompData);
-			aVariants.forEach(applyChangesOnVariant.bind(undefined, mChanges));
 
 			// check for an overwritten standard variant
 			var oStandardVariant;
@@ -135,7 +138,9 @@ sap.ui.define([
 					return !oVariant.getContent() || !oVariant.getContent().standardvariant;
 				});
 			}
-			applyChangesOnVariant(mChanges, oStandardVariant);
+			// apply all changes on non-standard variants
+			aVariants.forEach(applyChangesOnVariant.bind(undefined, mChanges));
+
 			// the standard must always be visible
 			oStandardVariant.setFavorite(true);
 			oStandardVariant.setStandardVariant(true);
@@ -143,13 +148,22 @@ sap.ui.define([
 
 			var oStandardVariantChange = mCompData.standardVariantChange;
 			if (oStandardVariantChange) {
-				var bExecuteOnSelection = oStandardVariantChange.getContent().executeOnSelect;
-				oStandardVariant.addChange(oStandardVariantChange);
-				oStandardVariant.setExecuteOnSelection(bExecuteOnSelection);
-				oStandardVariant.getContent().executeOnSelect = bExecuteOnSelection;
+				mChanges[oStandardVariant.getId()] = mChanges[oStandardVariant.getId()] || [];
+				mChanges[oStandardVariant.getId()].push(oStandardVariantChange);
+				mChanges[oStandardVariant.getId()].sort(function (a, b) {
+					if (a.getDefinition().creation < b.getDefinition().creation) {
+						return -1;
+					}
+					if (a.getDefinition().creation > b.getDefinition().creation) {
+						return 1;
+					}
+					return 0;
+				});
 			}
+			applyChangesOnVariant(mChanges, oStandardVariant);
 
 			mCompData.standardVariant = oStandardVariant;
+
 
 			return {
 				standardVariant: oStandardVariant,

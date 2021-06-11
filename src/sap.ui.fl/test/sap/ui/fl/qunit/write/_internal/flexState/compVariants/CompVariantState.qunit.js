@@ -1128,7 +1128,7 @@ sap.ui.define([
 			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
 			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
 			var oMockedStandardVariant = new CompVariant({
-				id: "fileId_123"
+				fileName: "fileId_123"
 			});
 			mMapForPersistencyKey.standardVariant = oMockedStandardVariant;
 			mMapForPersistencyKey.byId[oMockedStandardVariant.getId()] = oMockedStandardVariant;
@@ -1140,8 +1140,7 @@ sap.ui.define([
 				executeOnSelection: false
 			});
 
-			var oStandardVariant = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).byId[CompVariant.STANDARD_VARIANT_ID];
-			assert.equal(oStandardVariant.getExecuteOnSelection(), false, "then the executeOnSelection is set to false");
+			assert.equal(oMockedStandardVariant.getExecuteOnSelection(), false, "then the executeOnSelection is set to false");
 		});
 
 		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied change, when the standard variant is overridden", function (assert) {
@@ -1149,7 +1148,7 @@ sap.ui.define([
 			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
 			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
 			var oMockedStandardVariant = new CompVariant({
-				id: "fileId_123"
+				fileName: "fileId_123"
 			});
 			mMapForPersistencyKey.standardVariant = oMockedStandardVariant;
 			mMapForPersistencyKey.byId[oMockedStandardVariant.getId()] = oMockedStandardVariant;
@@ -1157,7 +1156,7 @@ sap.ui.define([
 			CompVariantState.updateVariant({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
-				id: CompVariant.STANDARD_VARIANT_ID,
+				id: "fileId_123",
 				executeOnSelection: true
 			});
 
@@ -1168,9 +1167,63 @@ sap.ui.define([
 				executeOnSelection: false
 			});
 
-			var oStandardVariant = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey).byId[CompVariant.STANDARD_VARIANT_ID];
-			assert.equal(oStandardVariant.getExecuteOnSelection(), true, "then the executeOnSelection is set to true");
-			assert.equal(oStandardVariant.getChanges().length, 1, "the change is mentioned as applied");
+			assert.equal(oMockedStandardVariant.getExecuteOnSelection(), true, "then the executeOnSelection is set to true");
+			assert.equal(oMockedStandardVariant.getChanges().length, 1, "one change is mentioned as applied");
+		});
+
+		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied legacy change", function (assert) {
+			var mCompData = FlexState.getCompVariantsMap(sComponentId);
+			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
+			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
+			var oMockedStandardVariant = new CompVariant({
+				fileName: "fileId_123"
+			});
+			mMapForPersistencyKey.standardVariant = oMockedStandardVariant;
+			mMapForPersistencyKey.byId[oMockedStandardVariant.getId()] = oMockedStandardVariant;
+
+			CompVariantMerger.applyChangeOnVariant(oMockedStandardVariant, new Change({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				changeType: "standardVariant",
+				id: "fileId_123",
+				content: {
+					executeOnSelect: true
+				}
+			}));
+
+			assert.equal(oMockedStandardVariant.getExecuteOnSelection(), true, "then the executeOnSelection is set to true");
+			assert.equal(oMockedStandardVariant.getChanges().length, 1, "one change is mentioned as applied");
+		});
+
+		QUnit.test("Given a standard variant set by a back end variant flagged as standard and an applied legacy change, when overrideStandardVariant is called and overrules the legacy change", function (assert) {
+			var mCompData = FlexState.getCompVariantsMap(sComponentId);
+			var mMapForPersistencyKey = mCompData._getOrCreate(this.sPersistencyKey);
+			CompVariantMerger.merge(this.sPersistencyKey, mMapForPersistencyKey, {});
+			var oMockedStandardVariant = new CompVariant({
+				fileName: "fileId_123"
+			});
+			mMapForPersistencyKey.standardVariant = oMockedStandardVariant;
+			mMapForPersistencyKey.byId[oMockedStandardVariant.getId()] = oMockedStandardVariant;
+
+			CompVariantMerger.applyChangeOnVariant(oMockedStandardVariant, new Change({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				changeType: "standardVariant",
+				id: "fileId_123",
+				content: {
+					executeOnSelect: true
+				}
+			}));
+
+			CompVariantState.overrideStandardVariant({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey,
+				layer: Layer.CUSTOMER,
+				executeOnSelection: false
+			});
+
+			assert.equal(oMockedStandardVariant.getExecuteOnSelection(), true, "then the executeOnSelection is set to true");
+			assert.equal(oMockedStandardVariant.getChanges().length, 1, "one change is mentioned as applied");
 		});
 	});
 
