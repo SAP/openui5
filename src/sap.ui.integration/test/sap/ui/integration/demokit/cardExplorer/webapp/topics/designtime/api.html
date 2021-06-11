@@ -504,9 +504,9 @@
 					{ "text": "From JSON 3", "key": "key3" }
 				]
 			</pre>
-			<h3>Validation of field input</h3>
+			<h3>Validation of field value</h3>
 			<p>
-				Validation of input of the users can be added to the validation(s) settings in the configuration of each
+				Validation of value can be added to the validation(s) settings in the configuration of each
 				field.
 				Please ensure that users are not overwhelmed with error and warning messages. Use validation wisely.
 			</p>
@@ -559,6 +559,151 @@
 						]
 					}
 			</pre>
+			<p>
+				Now users can also validate the value via request result.
+			</p>
+			<pre class="prettyprint lang-js collapsed" caption="Validations via request result">
+				"boolean1": {
+					"manifestpath": "/sap.card/configuration/parameters/boolean1/value",
+					"type": "boolean",
+					"visualization": {
+						"type": "sap/m/Switch",
+						"settings": {
+							"busy": "{currentSettings>_loading}",
+							"state": "{currentSettings>value}",
+							"customTextOn": "Yes",
+							"customTextOff": "No",
+							"enabled": "{currentSettings>editable}"
+						}
+					},
+					"validations": [{
+						"type": "error",
+						"validate": function (value, config, context) {
+							return context["requestData"]({
+								"data": {
+									"extension": {
+										"method": "checkCanSeeCourses"
+									},
+									"path": "/values/canSeeCourses"
+								}
+							}).then(function (oData){
+								if (oData === false && value === true) {
+									context["control"].setState(false);
+									return false;
+								}
+								return true;
+							});
+						},
+						"message": "Do not have right to request data, disable it"
+					}]
+				},
+				"boolean2": {
+					"manifestpath": "/sap.card/configuration/parameters/boolean2/value",
+					"type": "boolean",
+					"validations": [{
+						"type": "error",
+						"validate": function (value, config, context) {
+							return context["requestData"]({
+								"data": {
+									"extension": {
+										"method": "checkCanSeeCourses"
+									},
+									"path": "/values/canSeeCourses"
+								}
+							}).then(function (oData){
+								if (oData === false && value === true) {
+									context["control"].setSelected(false);
+									return false;
+								}
+								return true;
+							});
+						},
+						"message": "Do not have right to request data, disable it"
+					}]
+				},
+				"Customers1": {
+					"manifestpath": "/sap.card/configuration/parameters/Customers1/value",
+					"type": "string[]",
+					"required": true,
+					"values": {
+						"data": {
+							"request": {
+								"url": "{{destinations.northwind}}/Customers",
+								"parameters": {
+									"$select": "CustomerID, CompanyName, Country, City, Address"
+								}
+							},
+							"path": "/value"
+						},
+						"item": {
+							"text": "{CompanyName}",
+							"key": "{CustomerID}",
+							"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+						}
+					},
+					"validations": [{
+						"type": "error",
+						"validate": function (value, config, context) {
+							return context["requestData"]({
+								"data": {
+									"extension": {
+										"method": "getMinLength"
+									},
+									"path": "/values/minLength"
+								}
+							}).then(function (oData){
+								if (value.length < oData) {
+									context["control"].setEditable(false);
+									return false;
+								}
+								return true;
+							});
+						},
+						"message": "Please select more items!"
+					}]
+				},
+				"Customers2": {
+					"manifestpath": "/sap.card/configuration/parameters/Customers2/value",
+					"type": "string[]",
+					"required": true,
+					"values": {
+						"data": {
+							"request": {
+								"url": "{{destinations.northwind}}/Customers",
+								"parameters": {
+									"$select": "CustomerID, CompanyName, Country, City, Address"
+								}
+							},
+							"path": "/value"
+						},
+						"item": {
+							"text": "{CompanyName}",
+							"key": "{CustomerID}",
+							"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+						}
+					},
+					"validations": [{
+						"type": "error",
+						"validate": function (value, config, context) {
+							return context["requestData"]({
+								"data": {
+									"request": {
+										"url": "{{destinations.northwind}}/getMaxLength"
+									},
+									"path": "/values/maxLength"
+								}
+							}).then(function (oData){
+								if (value.length > oData) {
+									context["control"].setEditable(false);
+									return false;
+								}
+								return true;
+							});
+						},
+						"message": "Please remove some items!"
+					}]
+				}
+			</pre>
 			<div class="tableWrapper">
 				<table>
 					<caption>Validation Type</caption>
@@ -598,8 +743,9 @@
 						<td>integer</td>
 						<td>No</td>
 						<td>0</td>
-						<td>string</td>
-						<td>Minimal length of a string value
+						<td>string/string[]</td>
+						<td>Minimal length of a string value.<br>
+Minimal size of a string array value.
 							<pre class="prettyprint lang-js">minLength : 10</pre>
 						</td>
 						<td>1.86</td>
@@ -609,8 +755,9 @@
 						<td>integer</td>
 						<td>No</td>
 						<td>unlimited</td>
-						<td>string</td>
-						<td>Maximal length of a string value
+						<td>string/string[]</td>
+						<td>Maximal length of a string value<br>
+Maximal size of a string array value.
 							<pre class="prettyprint lang-js">maxLength : 10</pre>
 						</td>
 						<td>1.86</td>
@@ -632,10 +779,60 @@
 						<td>No</td>
 						<td>none</td>
 						<td>all</td>
-						<td>Own implementation function to check values
-							<pre class="prettyprint lang-js">validate : function(value) {
-								return true if value is valid
-							}</pre>
+						<td>Own implementation function to check value.
+							<pre class="prettyprint lang-js">
+validate : function(value, config, context) {
+	return context["requestData"]({
+		"data": {
+			"request": {
+				"url": "{{destinations.northwind}}/getMaxLength"
+			},
+			"path": "/values/maxLength"
+		}
+	}).then(function (oData){
+		if (value.length > oData) {
+			context["control"].setEditable(false);
+			return false;
+		}
+		return true;
+	});
+}
+							</pre>
+							or
+							<pre class="prettyprint lang-js">
+validate: function (value, config, context) {
+	return context["requestData"]({
+		"data": {
+			"request": {
+				"url": "{{destinations.mock_request}}/checkValidation"
+			},
+			"path": "/values/valueRange"
+		}
+	}).then(function (valueRange){
+		var oResult = true;
+		if (!value || value.length === 0) {
+			oResult = false;
+		}
+		for (var i = 0; i < value.length; i++) {
+			var sKey = value[i];
+			if (!includes(valueRange, sKey)) {
+				oResult = false;
+				break;
+			}
+		}
+		return {
+			"isValid": oResult,
+			"data": valueRange
+		};
+	});
+}
+							</pre>
+							or
+							<pre class="prettyprint lang-js">
+validate : function (value) {
+	return value !== 5;
+}
+							</pre>
 						</td>
 						<td>1.86</td>
 					</tr>

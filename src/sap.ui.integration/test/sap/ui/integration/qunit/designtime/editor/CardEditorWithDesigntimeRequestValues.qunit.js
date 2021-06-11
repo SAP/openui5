@@ -622,7 +622,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Select Customer and Employee, check Oder", function (assert) {
+		QUnit.test("Select Customer and Employee, check Order", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
 				host: "contexthost",

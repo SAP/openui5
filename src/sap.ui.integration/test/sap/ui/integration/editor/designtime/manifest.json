@@ -22,6 +22,9 @@
 		"type": "List",
 		"configuration": {
 			"parameters": {
+				"enableLearningCourses": {
+					"value": false
+				},
 				"cardTitle": {
 					"value": "Card Title Default"
 				},
