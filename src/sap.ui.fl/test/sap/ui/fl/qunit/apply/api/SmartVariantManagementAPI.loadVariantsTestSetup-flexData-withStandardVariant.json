@@ -18,8 +18,9 @@
         "compositeCommand": ""
       },
       "content": {
-        "executeOnSelect": true
-      },"creation":"2020-12-11T06:21:52.183Z"
+        "executeOnSelect": false
+      },
+      "creation":"2020-12-11T06:21:52.183Z"
     }],
     "variants": [{
       "fileName": "variant_1",
@@ -82,6 +83,28 @@
       }
     }],
     "changes": [{
+      "fileName":"id_1607667712160_48_standardVariant",
+      "fileType":"change",
+      "changeType":"updateVariant",
+      "layer":"USER",
+      "reference":"sap.ui.demoapps.rta.fiorielements.Component",
+      "selector":  {
+        "persistencyKey":"variantManagement1"
+      },
+      "support": {
+        "generator": "Change.createInitialFileContent",
+        "service": "",
+        "user": "some.user@sap.com",
+        "sapui5Version": "1.82.2",
+        "sourceChangeFileName": "",
+        "compositeCommand": ""
+      },
+      "content": {
+        "executeOnSelection": true,
+        "key": "variant_standard2"
+      },
+      "creation":"2020-12-12T06:21:52.183Z"
+    }, {
       "fileName": "id_1606828544793_204_addFavorite",
       "fileType": "change",
       "changeType": "addFavorite",
