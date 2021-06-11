@@ -553,8 +553,8 @@ sap.ui.define([
 		var that = this;
 
 		return this.oLoadedPromiseSync.then(function () {
-			var sCacheKey, oCodeListModel, oCodeListModelCache, sCollectionPath, sMetaDataUrl,
-				oPromise, oReadPromise,
+			var sCacheKey, oCodeListModel, oCodeListModelCache, sCollectionPath, oMappingPromise,
+				sMetaDataUrl, oPromise, oReadPromise,
 				sCodeListAnnotation = "com.sap.vocabularies.CodeList.v1." + sTerm,
 				oCodeListAnnotation = that.getODataEntityContainer()[sCodeListAnnotation];
 
@@ -583,20 +583,25 @@ sap.ui.define([
 			oCodeListModelCache = that._getOrCreateSharedModelCache();
 			oCodeListModel = oCodeListModelCache.oModel;
 
-			oReadPromise = new Promise(function (fnResolve, fnReject) {
+			oReadPromise = new SyncPromise(function (fnResolve, fnReject) {
 				oCodeListModel.read("/" + sCollectionPath, {
 					error : fnReject,
 					success : fnResolve
 				});
 			});
+			oMappingPromise = new SyncPromise(function (fnResolve, fnReject) {
+				try {
+					fnResolve(that._getPropertyNamesForCodeListCustomizing(sCollectionPath));
+				} catch (oError) {
+					// ensure that oPromise gets a value and is cached even if there is an error
+					// when calling _getPropertyNamesForCodeListCustomizing
+					fnReject(oError);
+				}
+			});
 
-			oPromise = SyncPromise.all([
-				oReadPromise,
-				oCodeListModel.getMetaModel().loaded()
-			]).then(function (aResults) {
+			oPromise = SyncPromise.all([oReadPromise, oMappingPromise]).then(function (aResults) {
 				var aData = aResults[0].results,
-					mMapping = ODataMetaModel._getPropertyNamesForCodeListCustomizing(
-						oCodeListModel, sCollectionPath);
+					mMapping = aResults[1];
 
 				return aData.reduce(function (mCode2Customizing, oEntity) {
 					var sCode = oEntity[mMapping.code],
@@ -1194,6 +1199,59 @@ sap.ui.define([
 		throw new Error("Unsupported operation: ODataMetaModel#setProperty");
 	};
 
+	/**
+	 * Gets the property names for the code list customizing for the given code list collection
+	 * path.
+	 *
+	 * In some cases it might be necessary to overwrite code list annotations contained in the
+	 * service metadata document. So local annotations need to be considered when loading code
+	 * lists. As code lists have to be provided by the same service as the current data model is
+	 * using, the metadata of the data model can be used to determine the property names
+	 * for the code list customizing. In that case also annotations added via
+	 * {@link sap.ui.model.odata.v2.ODataModel#addAnnotationUrl} or
+	 * {@link sap.ui.model.odata.v2.ODataModel#addAnnotationXML} are considered.
+	 *
+	 * @param {string} sCollectionPath
+	 *   The collection path specified in the corresponding
+	 *   com.sap.vocabularies.CodeList.v1.* annotation e.g. "SAP__Currencies"
+	 * @returns {object}
+	 *   The returned object has the properties "code", "text", "unitSpecificScale" and
+	 *   optionally "standardCode", with the values for the corresponding property names of the
+	 *   entity representing a code list entry
+	 * @throws {Error}
+	 *   If there is more than one alternative or more than one key per alternative
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype._getPropertyNamesForCodeListCustomizing = function (sCollectionPath) {
+		var sPathToCollectionMetadata = "/" + sCollectionPath + "/##",
+			oTypeMetadata = this.oDataModel.getObject(sPathToCollectionMetadata),
+			aAlternateKeys = oTypeMetadata["Org.OData.Core.V1.AlternateKeys"],
+			sKeyPath = ODataMetaModel._getKeyPath(oTypeMetadata, sPathToCollectionMetadata),
+			oKeyMetadata = this.oDataModel.getObject("/" + sCollectionPath + "/" + sKeyPath
+				+ "/##");
+
+		if (aAlternateKeys) {
+			if (aAlternateKeys.length !== 1) {
+				throw new Error("Single alternative expected: " + sPathToCollectionMetadata
+					+ "Org.OData.Core.V1.AlternateKeys");
+			} else if (aAlternateKeys[0].Key.length !== 1) {
+				throw new Error("Single key expected: " + sPathToCollectionMetadata
+					+ "Org.OData.Core.V1.AlternateKeys/0/Key");
+			}
+			sKeyPath = aAlternateKeys[0].Key[0].Name.Path;
+		}
+
+		return {
+			code : sKeyPath,
+			standardCode : oKeyMetadata["com.sap.vocabularies.CodeList.v1.StandardCode"]
+				&& oKeyMetadata["com.sap.vocabularies.CodeList.v1.StandardCode"].Path,
+			text : oKeyMetadata["com.sap.vocabularies.Common.v1.Text"].Path,
+			unitSpecificScale :
+				oKeyMetadata["com.sap.vocabularies.Common.v1.UnitSpecificScale"].Path
+		};
+	};
+
 	//*********************************************************************************************
 	// "static" functions
 	//*********************************************************************************************
@@ -1215,53 +1273,6 @@ sap.ui.define([
 			return aKeys[0].name;
 		}
 		throw new Error("Single key expected: " + sTypePath);
-	};
-
-	/**
-	 * Gets the property names for the code list customizing for the given code list collection
-	 * path.
-	 *
-	 * @param {sap.ui.model.odata.v2.ODataModel} oCodeListModel
-	 *   The code list model
-	 * @param {string} sCollectionPath
-	 *   The collection path specified in the corresponding
-	 *   com.sap.vocabularies.CodeList.v1.* annotation e.g. "SAP__Currencies"
-	 * @returns {object}
-	 *   The returned object has the properties "code", "text", "unitSpecificScale" and
-	 *   optionally "standardCode", with the values for the corresponding property names of the
-	 *   entity representing a code list entry
-	 * @throws {Error}
-	 *   If there is more than one alternative or more than one key per alternative
-	 *
-	 * @private
-	 */
-	ODataMetaModel._getPropertyNamesForCodeListCustomizing = function (oCodeListModel,
-			sCollectionPath) {
-		var sPathToCollectionMetadata = "/" + sCollectionPath + "/##",
-			oTypeMetadata = oCodeListModel.getObject(sPathToCollectionMetadata),
-			aAlternateKeys = oTypeMetadata["Org.OData.Core.V1.AlternateKeys"],
-			sKeyPath = ODataMetaModel._getKeyPath(oTypeMetadata, sPathToCollectionMetadata),
-			oKeyMetadata = oCodeListModel.getObject("/" + sCollectionPath + "/" + sKeyPath + "/##");
-
-		if (aAlternateKeys) {
-			if (aAlternateKeys.length !== 1) {
-				throw new Error("Single alternative expected: " + sPathToCollectionMetadata
-					+ "Org.OData.Core.V1.AlternateKeys");
-			} else if (aAlternateKeys[0].Key.length !== 1) {
-				throw new Error("Single key expected: " + sPathToCollectionMetadata
-					+ "Org.OData.Core.V1.AlternateKeys/0/Key");
-			}
-			sKeyPath = aAlternateKeys[0].Key[0].Name.Path;
-		}
-
-		return {
-			code : sKeyPath,
-			standardCode : oKeyMetadata["com.sap.vocabularies.CodeList.v1.StandardCode"]
-				&& oKeyMetadata["com.sap.vocabularies.CodeList.v1.StandardCode"].Path,
-			text : oKeyMetadata["com.sap.vocabularies.Common.v1.Text"].Path,
-			unitSpecificScale :
-				oKeyMetadata["com.sap.vocabularies.Common.v1.UnitSpecificScale"].Path
-		};
 	};
 
 	/**
