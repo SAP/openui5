@@ -1377,6 +1377,29 @@ sap.ui.define([
 		oRemoveStyleClassSpy.restore();
 	});
 
+	QUnit.test("One token with later rebinding", function(assert) {
+		// Act
+		var oModel = new sap.ui.model.json.JSONModel({items: [{text: "token1"}]});
+		var oTokenizer = new Tokenizer({
+			width: "18rem",
+			tokens: {
+				path: "/items",
+				template: new Token({text: "{text}"})
+			}
+		}).placeAt("content").setModel(oModel);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oTokenizer.hasStyleClass("sapMTokenizerOneLongToken"), "Tokenizer does not have one long token");
+
+		oTokenizer.setRenderMode(TokenizerRenderMode.Loose);
+		oModel.setData({items:[{text:"token1"},{text:"token2"},{text:"token3"}]});
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oTokenizer.hasStyleClass("sapMTokenizerOneLongToken"), "Tokenizer still does not have one long token");
+
+		oTokenizer.destroy();
+	});
+
 	QUnit.test("Click on tokenizer should remove truncation", function(assert) {
 		// Arrange
 		var oToken = this.tokenizer.getTokens()[0],

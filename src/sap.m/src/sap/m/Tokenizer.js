@@ -787,7 +787,7 @@ sap.ui.define([
 	Tokenizer.prototype.onBeforeRendering = function() {
 		var aTokens = this.getTokens();
 
-		if (aTokens.length === 0) {
+		if (aTokens.length !== 1) {
 			this.setFirstTokenTruncated(false);
 		}
 
