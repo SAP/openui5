@@ -58,7 +58,9 @@ sap.ui.define([
                 }
             }
         },
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
     });
 
     AdaptFiltersPanel.prototype.GROUP_KEY = "group";
@@ -246,6 +248,7 @@ sap.ui.define([
             var oP13nPanel = oContainerItem.getContent();
 			oP13nPanel.setP13nModel(oModel);
 		});
+        this._filterByModeAndSearch();
     };
 
     /**
@@ -407,7 +410,9 @@ sap.ui.define([
     }*/
 
     AdaptFiltersPanel.prototype._createFilterQuery = function() {
-		var aFiltersSearch = [], oFilterMode, aFilters;
+		var aFiltersSearch = [], vFilterMode = [], vQueryFilter = [];
+
+        // 1) Check if there is a "search" filtering
 		if (this._sSearchString){
             //Match "Any term starting with"
             //this._oSearchRegex = new RegExp("(?<=^|\\s)" + this._sSearchString + "\\w*", "i");
@@ -415,41 +420,33 @@ sap.ui.define([
 				new Filter("label", "Contains", this._sSearchString),
 				new Filter("tooltip", "Contains", this._sSearchString)
 			];
-			aFilters = new Filter(aFiltersSearch, false);
+			vQueryFilter = new Filter(aFiltersSearch, false);
 		}
 
-		var fnAppendFilter = function() {
-			if (aFilters) {
-				aFilters = new Filter([new Filter(aFiltersSearch), oFilterMode], true);
-			} else {
-				aFilters = oFilterMode;
-			}
-		};
-
-		if (this._sModeKey === "visible") {
-			oFilterMode = new Filter("visible", "EQ", true);
-			fnAppendFilter();
-		}
-
-		if (this._sModeKey === "active") {
-			oFilterMode = new Filter("isFiltered", "EQ", true);
-			fnAppendFilter();
+        // 2) Check if the filter combobox has been used and append the filter to the previous filters
+        switch (this._sModeKey) {
+            case "visible":
+                vFilterMode = new Filter("visible", "EQ", true);
+                break;
+            case "active":
+                vFilterMode = new Filter("isFiltered", "EQ", true);
+                break;
+            case "mandatory":
+                vFilterMode = new Filter("required", "EQ", true);
+                break;
+            case "visibleactive":
+                vFilterMode = new Filter([
+                    new Filter("isFiltered", "EQ", true),
+                    new Filter("visible", "EQ", true)
+                ], true);
+                break;
+            default:
         }
 
-        if (this._sModeKey === "mandatory") {
-			oFilterMode = new Filter("required", "EQ", true);
-			fnAppendFilter();
-		}
+        // 3) always add the 'visibleInDialog' filter to the query
+        var oVisibleInDialogFilter = new Filter("visibleInDialog", "EQ", true);
 
-		if (this._sModeKey === "visibleactive") {
-			oFilterMode = oFilterMode = new Filter([
-				new Filter("isFiltered", "EQ", true),
-				new Filter("visible", "EQ", true)
-			], true);
-			fnAppendFilter();
-		}
-
-		return aFilters || [];
+        return new Filter([].concat(vQueryFilter, vFilterMode, oVisibleInDialogFilter), true);
     };
 
     AdaptFiltersPanel.prototype.exit = function() {

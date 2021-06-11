@@ -14,30 +14,7 @@ sap.ui.define([
 ], function(AdaptFiltersPanel, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem, PropertyHelper, VBox) {
     "use strict";
 
-    var oMockExisting = {
-        items: [
-            {
-                name: "key1"
-            },
-            {
-                name: "key2"
-            },
-            {
-                name: "key3"
-            }
-        ],
-        filter: {
-            key2: [
-                {
-                    operator: "EQ",
-                    values: [
-                        "Test"
-                    ]
-                }
-            ]
-
-        }
-    };
+    var aVisible = ["key1", "key2", "key3"];
 
     var aInfoData = [
         {
@@ -63,8 +40,7 @@ sap.ui.define([
         {
             name: "key5",
             label: "Field 5",
-            group: "G2",
-            required: true
+            group: "G2"
         },
         {
             name: "key6",
@@ -77,7 +53,6 @@ sap.ui.define([
     QUnit.module("API Tests", {
         beforeEach: function(){
             this.sDefaultGroup = "BASIC";
-            this.oExistingMock = oMockExisting;
             this.aMockInfo = aInfoData;
             this.oAFPanel = new AdaptFiltersPanel({
                 defaultView: "group",
@@ -88,14 +63,30 @@ sap.ui.define([
                 return new VBox();
             });
 
-            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+            this.fnEnhancer = function(mItem, oProperty) {
+
+                //Add (mock) an 'active' field
+                if (oProperty.name == "key2") {
+                    mItem.isFiltered = true;
+                }
+
+                //Add (mock) a 'mandatory' field
+                if (oProperty.name == "key5") {
+                    mItem.required = true;
+                }
+
+                mItem.visibleInDialog = true;
+                mItem.visible = aVisible.indexOf(oProperty.name) > -1;
+                return true;
+            };
+
+            this.oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
             this.oAFPanel.placeAt("qunit-fixture");
             sap.ui.getCore().applyChanges();
         },
         afterEach: function(){
             this.sDefaultGroup = null;
-            this.oExistingMock = null;
             this.oP13nData = null;
             this.aMockInfo = null;
             this.oAFPanel.destroy();
@@ -242,7 +233,7 @@ sap.ui.define([
 
     QUnit.test("Check that groups are initially only displayed if necessary", function(assert){
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
         this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
 
         assert.equal(this.oAFPanel.getCurrentViewContent()._oListControl.getVisibleItems().length, 2, "All groups visible");
@@ -252,14 +243,38 @@ sap.ui.define([
         });
 
         this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
-
         assert.equal(this.oAFPanel.getCurrentViewContent()._oListControl.getVisibleItems().length, 1, "Only necessary groups visible");
+
+    });
+
+    QUnit.test("Check additional filter implementation (visibleInDialog)", function(assert){
+
+        var oP13nData = this.oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, function(oItem, oProp) {
+            if (oProp.name == "key2") {
+                oItem.visibleInDialog = false;
+            } else {
+                oItem.visibleInDialog = true;
+            }
+            return oItem;
+        }, true);
+
+        this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
+
+        var aGroupPanels = this.oAFPanel.getCurrentViewContent().getPanels();
+
+        //Check in GroupView
+        assert.equal(aGroupPanels[0].getContent()[0].getVisibleItems().length, 2, "There are 3 items in the model, but one should be hidden for the user");
+
+        //Check in ListView
+        this.oAFPanel.switchView("list");
+        var aItems = this.oAFPanel.getCurrentViewContent().getItems();
+        assert.equal(aItems.length, 5, "There are 6 items in the model, but one should be hidden for the user");
 
     });
 
     QUnit.test("Check 'itemFactory' execution for only necessary groups", function(assert){
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
         var fnItemFactoryCallback = function(oContext) {
             return new VBox();
@@ -280,13 +295,12 @@ sap.ui.define([
 
     QUnit.test("Check 'itemFactory' execution for expanded groups", function(assert){
 
-        //6 items in 2 groups --> 6x callback excuted after expanding
-        var done = assert.async(6);
+        //6 items in 2 groups --> 6x callback excuted after expanding --> +3x for initial filtering
+        var done = assert.async(9);
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
         var fnItemFactoryCallback = function (oContext) {
-
             assert.ok(oContext, "Callback executed with binding context");
             done(6);
         };
@@ -301,7 +315,7 @@ sap.ui.define([
 
     QUnit.test("Check 'itemFactory' execution for expanded groups by checking created controls", function(assert){
 
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
         var fnItemFactoryCallback = function (oContext) {
 
@@ -383,7 +397,7 @@ sap.ui.define([
         this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
         //Three existing items --> the amount of selected items should match the initially visible ones
-        assert.equal(this.oAFPanel.getSelectedFields().length, this.oExistingMock.items.length, "Correct amount of selected items returned");
+        assert.equal(this.oAFPanel.getSelectedFields().length, aVisible.length, "Correct amount of selected items returned");
 
     });
 
@@ -610,13 +624,10 @@ sap.ui.define([
 
     QUnit.module("'AdaptFiltersPanel' instance with a custom model name",{
         beforeEach: function() {
-            this.oAFPanel = new AdaptFiltersPanel({
-                enableListView: true
-            });
+            this.oAFPanel = new AdaptFiltersPanel();
 
             this.oAFPanel.P13N_MODEL = "$My_very_own_model";
 
-            this.oExistingMock = oMockExisting;
             this.aMockInfo = aInfoData;
             this.oAFPanel.setItemFactory(function(){
                 return new CustomListItem({
@@ -627,7 +638,14 @@ sap.ui.define([
             }.bind(this));
 
             this.oPropertyHelper = new PropertyHelper(this.aMockInfo);
-            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.oPropertyHelper.getProperties());
+            this.oP13nData = P13nBuilder.prepareAdaptationData(aInfoData, function(mItem, oProperty) {
+                if (oProperty.name == "key2") {
+                    mItem.isFiltered = true;
+                }
+                mItem.visibleInDialog = true;
+                mItem.visible = aVisible.indexOf(oProperty.name) > -1;
+                return true;
+            }, true);
 
             this.oAFPanel.placeAt("qunit-fixture");
             sap.ui.getCore().applyChanges();

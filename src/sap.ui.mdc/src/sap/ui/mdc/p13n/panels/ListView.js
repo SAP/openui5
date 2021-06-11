@@ -52,7 +52,9 @@ sap.ui.define([
                 }
             }
         },
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
     });
 
     ListView.prototype.applySettings = function(){
@@ -73,7 +75,6 @@ sap.ui.define([
     ListView.prototype._getListTemplate = function() {
         return new ColumnListItem({
             selected: "{" + this.P13N_MODEL + ">visible}",
-            visible: "{" + this.P13N_MODEL + ">visibleInDialog}",
             type: ListType.Active,
             cells: [
                 new VBox({
