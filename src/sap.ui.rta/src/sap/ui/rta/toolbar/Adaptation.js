@@ -9,7 +9,8 @@ sap.ui.define([
 	"./Base",
 	"sap/ui/core/library",
 	"sap/ui/fl/library",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/Utils",
+	"sap/ui/rta/toolbar/translation/Translation"
 ],
 function(
 	Fragment,
@@ -18,7 +19,8 @@ function(
 	Base,
 	coreLibrary,
 	flexLibrary,
-	Utils
+	Utils,
+	Translation
 ) {
 	"use strict";
 
@@ -251,6 +253,10 @@ function(
 		});
 	};
 
+	Adaptation.prototype.showTranslationPopover = function (oEvent) {
+		return Translation.showTranslationPopover(oEvent, this);
+	};
+
 	Adaptation.prototype.showRestore = function (bVersioningEnabled) {
 		return !bVersioningEnabled;
 	};
@@ -329,6 +335,7 @@ function(
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
 				formatDiscardDraftVisible: this.formatDiscardDraftVisible.bind(this),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
+				showTranslationPopover: this.showTranslationPopover.bind(this),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
 				toggleChangeVisualization: this.eventHandler.bind(this, "ToggleChangeVisualization"),

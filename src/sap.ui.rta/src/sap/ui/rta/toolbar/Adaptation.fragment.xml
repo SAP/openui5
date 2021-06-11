@@ -79,6 +79,18 @@
 			<content>
 				<ToolbarSpacer />
 				<Button
+						id="sapUiRta_translate"
+						icon="sap-icon://translate"
+						press=".showTranslationPopover"
+						visible="{controls>/translationVisible}"
+						enabled="{controls>/translationEnabled}"
+						type="Transparent"
+						tooltip="{i18n>BTN_TRANSLATE}">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</Button>
+				<Button
 						id="sapUiRta_undo"
 						icon="sap-icon://undo"
 						press=".undo"

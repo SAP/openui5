@@ -99,6 +99,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/toolbar/Adaptation"]
 				}
 			},
+			"toolbar/translation/Translation": {
+				group: 'Toolbar',
+				coverage: {
+					only: ["sap/ui/rta/toolbar/translation/Translation"]
+				}
+			},
 			"toolbar/Fiori": {
 				group: 'Toolbar',
 				coverage: {

@@ -1051,6 +1051,8 @@ function(
 				this._oToolbarControlsModel = new JSONModel({
 					undoEnabled: false,
 					redoEnabled: false,
+					translationVisible: false,
+					translationEnabled: false,
 					publishVisible: aButtonsVisibility.publishAvailable,
 					publishEnabled: this.bInitialPublishEnabled,
 					restoreEnabled: this.bInitialResetEnabled,
@@ -1070,6 +1072,12 @@ function(
 						this._oToolbarControlsModel.setProperty("/manageAppsEnabled", bResult);
 					}.bind(this));
 				}
+
+				/* TODO enable as soon as the code is ready
+				FeaturesAPI.isKeyUserTranslationEnabled(this.getLayer()).then(function(oResult) {
+					this._oToolbarControlsModel.setProperty("/translationVisible", oResult);
+				}.bind(this));
+				*/
 
 				this.getToolbar().setModel(this._oVersionsModel, "versions");
 				this.getToolbar().setModel(this._oToolbarControlsModel, "controls");

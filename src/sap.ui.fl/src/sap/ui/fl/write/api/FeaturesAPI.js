@@ -109,6 +109,7 @@ sap.ui.define([
 					return oSettings.isKeyUserTranslationEnabled();
 				});
 			}
+			return Promise.resolve(false);
 		},
 
 		/**

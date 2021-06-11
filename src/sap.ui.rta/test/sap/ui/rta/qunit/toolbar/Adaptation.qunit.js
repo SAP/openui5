@@ -855,52 +855,109 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given a toolbar is created and app variants parameter in the model are switched back and forth", function(assert) {
+		QUnit.test("Given a toolbar is created and app variants parameter in the model are switched back and forth", function (assert) {
 			this.oControlsModel.setProperty("/saveAsVisible", false);
 			this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
 			this.oControlsModel.setProperty("/manageAppsVisible", false);
 			this.oToolbar.animation = false;
 			return this.oToolbar.show()
-				.then(function() {
-					assert.notOk(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is not visible");
-					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is not visible");
-					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
-					this.oControlsModel.setProperty("/saveAsVisible", true);
-					this.oControlsModel.setProperty("/saveAsEnabled", false);
-					this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
-					this.oControlsModel.setProperty("/manageAppsVisible", true);
-					this.oControlsModel.setProperty("/manageAppsEnabled", false);
-					assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
-					assert.notOk(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is not enabled");
-					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is not visible");
-					assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
-					assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
-					this.oControlsModel.setProperty("/saveAsVisible", true);
-					this.oControlsModel.setProperty("/saveAsEnabled", true);
-					this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
-					this.oControlsModel.setProperty("/manageAppsVisible", true);
-					this.oControlsModel.setProperty("/manageAppsEnabled", true);
-					assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
-					assert.ok(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is enabled");
-					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is not visible");
-					assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
-					assert.ok(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is enabled");
-					this.oControlsModel.setProperty("/saveAsVisible", true);
-					this.oControlsModel.setProperty("/saveAsEnabled", true);
-					this.oControlsModel.setProperty("/appVariantsOverviewVisible", true);
-					this.oControlsModel.setProperty("/appVariantsOverviewEnabled", true);
-					this.oControlsModel.setProperty("/manageAppsVisible", false);
-					this.oControlsModel.setProperty("/manageAppsEnabled", false);
-					assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
-					assert.ok(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is enabled");
-					assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is visible");
-					assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is enabled");
-					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
-					assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
-				}.bind(this));
+			.then(function () {
+				assert.notOk(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is not visible");
+				assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is not visible");
+				assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
+				this.oControlsModel.setProperty("/saveAsVisible", true);
+				this.oControlsModel.setProperty("/saveAsEnabled", false);
+				this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
+				this.oControlsModel.setProperty("/manageAppsVisible", true);
+				this.oControlsModel.setProperty("/manageAppsEnabled", false);
+				assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
+				assert.notOk(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is not enabled");
+				assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is not visible");
+				assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
+				assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
+				this.oControlsModel.setProperty("/saveAsVisible", true);
+				this.oControlsModel.setProperty("/saveAsEnabled", true);
+				this.oControlsModel.setProperty("/appVariantsOverviewVisible", false);
+				this.oControlsModel.setProperty("/manageAppsVisible", true);
+				this.oControlsModel.setProperty("/manageAppsEnabled", true);
+				assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
+				assert.ok(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is enabled");
+				assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is not visible");
+				assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
+				assert.ok(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is enabled");
+				this.oControlsModel.setProperty("/saveAsVisible", true);
+				this.oControlsModel.setProperty("/saveAsEnabled", true);
+				this.oControlsModel.setProperty("/appVariantsOverviewVisible", true);
+				this.oControlsModel.setProperty("/appVariantsOverviewEnabled", true);
+				this.oControlsModel.setProperty("/manageAppsVisible", false);
+				this.oControlsModel.setProperty("/manageAppsEnabled", false);
+				assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
+				assert.ok(this.oToolbar.getControl("saveAs").getEnabled(), "saveAs is enabled");
+				assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is visible");
+				assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "AppVariantOverview is enabled");
+				assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
+				assert.notOk(this.oToolbar.getControl("manageApps").getEnabled(), "manageApps is not enabled");
+			}.bind(this));
+		});
+
+		QUnit.module("Changes list popover", {
+			before: function () {
+				this.oToolbar = new Adaptation({
+					textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				});
+				this.oToolbarControlsModel = new JSONModel({
+					undoEnabled: false,
+					redoEnabled: false,
+					publishVisible: true,
+					publishEnabled: true,
+					restoreEnabled: false,
+					appVariantsOverviewVisible: false,
+					appVariantsOverviewEnabled: false,
+					saveAsVisible: false,
+					saveAsEnabled: false,
+					manageAppsVisible: false,
+					manageAppsEnabled: false,
+					modeSwitcher: "adaptation"
+				});
+				this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+				return this.oToolbar._pFragmentLoaded;
+			},
+			after: function () {
+				this.oToolbar.destroy();
+				sandbox.restore();
+			}
+		}, function () {
+			QUnit.test("When the translation button is pressed", function (assert) {
+				var oFragmentLoadSpy = sandbox.spy(Fragment, "load");
+				var oTranslationButton = this.oToolbar.getControl("translate");
+
+				// force a rendering of the button for the Popover.openBy function
+				oTranslationButton.placeAt("qunit-fixture");
+				Core.applyChanges();
+
+				var oAddDependentSpy = sandbox.spy(oTranslationButton, "addDependent");
+				var oTranslationDialog;
+				var oEvent = {
+					getSource: function () {
+						return oTranslationButton;
+					}
+				};
+				return this.oToolbar.showTranslationPopover(oEvent)
+				.then(function () {
+					assert.equal(oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
+					// checking for the dialog instance wrapped into a promise
+					return oFragmentLoadSpy.getCall(0).returnValue;
+				})
+				.then(this.oToolbar.oTranslationDialogPromise)
+				.then(function (oVersionDialogResolveValue) {
+					oTranslationDialog = oVersionDialogResolveValue;
+					assert.ok(oTranslationDialog, "and the dialog promise was assigned");
+					assert.equal(oTranslationDialog.isOpen(), true, "and the dialog was opened");
+					assert.equal(oAddDependentSpy.callCount, 1, "and the dialog is set as a dependent for the button");
+				});
+			});
 		});
 	});
-
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});

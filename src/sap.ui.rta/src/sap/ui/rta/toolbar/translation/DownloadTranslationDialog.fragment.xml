@@ -1,0 +1,39 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core" >
+	<Dialog
+		title="{i18n>TIT_DOWNLOAD_CHANGED_TEXTS}"
+		type="Message"
+		contentWidth="33%">
+		<Label
+			wrappingType="Hyphenated"
+			wrapping="true"
+			width="auto"
+			text="{i18n>MSG_DOWNLOAD_CHANGED_TEXTS}">
+		</Label>
+		<VBox width="100%">
+			<ComboBox
+				width="100%"
+				value="{translation>/sourceLanguage}"
+				id="sapUiRta_selectSourceLanguage"
+				placeholder="{i18n>TXT_SOURCE_LANGUAGE}" />
+			<ComboBox
+				width="100%"
+				id="sapUiRta_selectTargetLanguage"
+				placeholder="{i18n>TXT_TARGET_LANGUAGE}" />
+		</VBox>
+		<beginButton>
+			<Button
+				id="sapUiRta_downloadChangedTextsButton"
+				text="{i18n>BTN_DOWNLOAD_CHANGED_TEXTS}"
+				type="Emphasized"
+				enabled="{= ${translation>/downloadChangedTexts}}"
+				press=".onDownloadFile" />
+		</beginButton>
+		<endButton>
+			<Button
+				text="{i18n>BUT_DOWNLOAD_CHANGED_TEXTS_CANCEL}"
+				press=".onCancelDownloadDialog" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
