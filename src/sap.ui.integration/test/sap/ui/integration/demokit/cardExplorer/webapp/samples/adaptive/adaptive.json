@@ -21,6 +21,7 @@
 	},
 	"sap.card": {
 		"type": "AdaptiveCard",
+		"designtime": "dt/Configuration",
 		"data": {
 			"json": {
 				"firstName": "Donna",
@@ -39,6 +40,16 @@
 			"subTitle": "{position}",
 			"icon": {
 				"src": "{image}"
+			}
+		},
+		"configuration": {
+			"parameters": {
+				"title" : {
+					"value": "Employee ID card"
+				},
+				"subTitle": {
+					"value": "Obligations and Responsibilities"
+				}
 			}
 		},
 		"content": {

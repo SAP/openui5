@@ -26,7 +26,7 @@
 	"configuration": {
 	  "actionHandlers": {
 		"submit": {
-		  "url": "./samples/adaptive/action-submit.json",
+		  "url": "./action-submit.json",
 		  "method": "GET"
 		}
 	  }

@@ -27,6 +27,11 @@ sap.ui.define([
 										url: '/samples/adaptive/adaptive.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
+									},
+									{
+										url: '/samples/adaptive/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
 									}
 								]
 							},
@@ -60,6 +65,11 @@ sap.ui.define([
 										url: '/samples/adaptive/templating.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
+									},
+									{
+										url: '/samples/adaptive/templating-content.json',
+										name: 'templating-content.json',
+										key: 'templating-content.json'
 									}
 								]
 							},

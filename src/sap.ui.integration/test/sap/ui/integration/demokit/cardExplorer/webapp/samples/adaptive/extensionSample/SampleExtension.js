@@ -29,7 +29,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 
 		// Submits to a mock server
 		oCard.request({
-			"url": "samples/adaptive/extensionSample/MOCK.json",
+			"url": "./MOCK.json",
 			"method": "GET",
 			"parameters": mSubmitData
 		}).then(function () {
