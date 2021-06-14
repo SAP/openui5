@@ -102,7 +102,9 @@ sap.ui.define([
 	};
 
 	Change.prototype.setQueuedForRevert = function() {
-		this._aQueuedProcesses.unshift(Change.operations.REVERT);
+		if (this._aQueuedProcesses[this._aQueuedProcesses.length - 1] !== Change.operations.REVERT) {
+			this._aQueuedProcesses.unshift(Change.operations.REVERT);
+		}
 	};
 
 	Change.prototype.isQueuedForRevert = function() {
@@ -110,7 +112,12 @@ sap.ui.define([
 	};
 
 	Change.prototype.setQueuedForApply = function() {
-		this._aQueuedProcesses.unshift(Change.operations.APPLY);
+		// Not optimized application code can result that the change applying call twice
+		// So check if there was already APPLY operation to prevent permanent waitForChangeApplied issue
+		// Same apply for setQueuedForRevert
+		if (this._aQueuedProcesses[this._aQueuedProcesses.length - 1] !== Change.operations.APPLY) {
+			this._aQueuedProcesses.unshift(Change.operations.APPLY);
+		}
 	};
 
 	Change.prototype.isQueuedForApply = function() {

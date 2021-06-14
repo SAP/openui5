@@ -112,7 +112,9 @@ function(
 			assert.equal(oChange.getProperty("applyState"), Change.applyState.INITIAL, "initially the state is INITIAL");
 
 			oChange.setQueuedForApply();
+			oChange.setQueuedForApply();
 			oChange.startApplying();
+			assert.equal(oChange._aQueuedProcesses.length, 1, "APPLY operation only added once");
 			assert.equal(oChange.getProperty("applyState"), Change.applyState.APPLYING, "the applyState got changed correctly");
 			assert.ok(oChange.hasApplyProcessStarted(), "the function returns the correct value");
 			assert.notOk(oChange.isCurrentProcessFinished());
@@ -127,7 +129,9 @@ function(
 			assert.notOk(oChange.isQueuedForApply());
 
 			oChange.setQueuedForRevert();
+			oChange.setQueuedForRevert();
 			oChange.startReverting();
+			assert.equal(oChange._aQueuedProcesses.length, 1, "REVERT operation only added once");
 			assert.equal(oChange.getProperty("applyState"), Change.applyState.REVERTING, "the applyState got changed correctly");
 			assert.ok(oChange.hasRevertProcessStarted(), "the function returns the correct value");
 			assert.notOk(oChange.isCurrentProcessFinished());
