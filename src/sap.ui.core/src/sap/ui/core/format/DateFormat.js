@@ -1377,7 +1377,7 @@ sap.ui.define([
 					iTZDiff = 0;
 				} else {
 					return {
-						error: "cannot be parsed correcly by sap.ui.core.format.DateFormat: The given timezone is not supported!"
+						error: "cannot be parsed correctly by sap.ui.core.format.DateFormat: The given timezone is not supported!"
 					};
 				}
 
