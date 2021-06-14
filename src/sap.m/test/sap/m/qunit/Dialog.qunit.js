@@ -1018,10 +1018,10 @@ sap.ui.define([
 		var mIcons = {},
 			oDialog = new Dialog();
 
-		mIcons[ValueState.Success] = IconPool.getIconURI("message-success");
-		mIcons[ValueState.Warning] = IconPool.getIconURI("message-warning");
-		mIcons[ValueState.Error] = IconPool.getIconURI("message-error");
-		mIcons[ValueState.Information] = IconPool.getIconURI("hint");
+		mIcons[ValueState.Success] = IconPool.getIconURI("sys-enter-2");
+		mIcons[ValueState.Warning] = IconPool.getIconURI("alert");
+		mIcons[ValueState.Error] = IconPool.getIconURI("error");
+		mIcons[ValueState.Information] = IconPool.getIconURI("information");
 		mIcons[ValueState.None] = "";
 
 		oDialog.open();
