@@ -101,10 +101,6 @@ sap.ui.define(function() {
 			"integration/ui/PresetsPersistenceJourney": {
 				title: "Integration Tests for Support Assistant's Presets Persistency",
 				module: "sap/ui/support/integration/ui/journeys/PresetsPersistenceJourney"
-			},
-			"integration/ui/TemporaryRulesJourney": {
-				title: "Integration Tests for Support Assistant's Temporary Rules",
-				module: "sap/ui/support/integration/ui/journeys/TemporaryRulesJourney"
 			}
 		}
 	};
