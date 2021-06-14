@@ -226,7 +226,6 @@ sap.ui.define([
 		oRm.openStart("div", oDynamicPageTitleState.id + "-snapped-heading-wrapper");
 		if (!oDynamicPageTitleState.isSnapped) {
 			oRm.class("sapUiHidden");
-			oRm.class("sapUiForcedHidden");
 		}
 		oRm.openEnd();
 		oRm.renderControl(oDynamicPageTitleState.snappedHeading);
@@ -244,7 +243,6 @@ sap.ui.define([
 		oRm.openStart("div", oDynamicPageTitleState.id + "-snapped-wrapper");
 		if (!oDynamicPageTitleState.isSnapped) {
 			oRm.class("sapUiHidden");
-			oRm.class("sapUiForcedHidden");
 		}
 		oRm.class("sapFDynamicPageTitleSnapped");
 		oRm.openEnd();
@@ -256,7 +254,6 @@ sap.ui.define([
 		oRm.openStart("div", oDynamicPageTitleState.id + "-snapped-title-on-mobile-wrapper");
 		if (!oDynamicPageTitleState.isSnapped) {
 			oRm.class("sapUiHidden");
-			oRm.class("sapUiForcedHidden");
 		}
 		oRm.class("sapFDynamicPageTitleSnappedTitleOnMobile");
 		oRm.openEnd();
