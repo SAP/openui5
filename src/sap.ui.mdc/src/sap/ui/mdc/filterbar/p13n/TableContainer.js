@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.mdc.filterbar.FilterItemLayout.
 sap.ui.define([
-	'sap/ui/mdc/filterbar/IFilterContainer','sap/m/Table', 'sap/m/Column', 'sap/m/Text'
-], function(IFilterContainer, Table, Column, Text) {
+	'sap/ui/mdc/filterbar/IFilterContainer','sap/m/Table', 'sap/m/Column', 'sap/m/Text', 'sap/m/VBox'
+], function(IFilterContainer, Table, Column, Text, VBox) {
 	"use strict";
 
 	/**
@@ -25,7 +25,7 @@ sap.ui.define([
 	TableContainer.prototype.init = function() {
 		IFilterContainer.prototype.init.apply(this, arguments);
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		this.oLayout = new Table({
+		this._oTable = new Table({
 			sticky: ["ColumnHeaders"],
 			growing: true,
 			columns: [
@@ -41,22 +41,41 @@ sap.ui.define([
 				})
 			]
 		});
+
+		this._oMessageStripContainer = new VBox(this.getId() + "-messageStripContainer");
+
+		this.oLayout = new VBox({
+			items: [
+				this._oMessageStripContainer,
+				this._oTable
+			]
+		});
 	};
 
 	TableContainer.prototype.insertFilterField = function(oControl, iIndex) {
-		this.oLayout.insertItem(oControl, iIndex);
+		this._oTable.insertItem(oControl, iIndex);
 	};
 
 	TableContainer.prototype.removeFilterField = function(oControl) {
-		this.oLayout.removeItem(oControl);
+		this._oTable.removeItem(oControl);
+	};
+
+	TableContainer.prototype.setMessageStrip = function(oStrip) {
+		this._oMessageStripContainer.removeAllItems();
+		this._oMessageStripContainer.addItem(oStrip);
 	};
 
 	TableContainer.prototype.getFilterFields = function() {
-		return this.oLayout.getItems();
+		return this._oTable.getItems();
 	};
 
 	TableContainer.prototype.update = function() {
 		//Called when the UI model is being set - trigger update logic here
+	};
+
+	TableContainer.prototype.exit = function() {
+		this._oTable = null;
+		this._oMessageStripContainer = null;
 	};
 
 	return TableContainer;

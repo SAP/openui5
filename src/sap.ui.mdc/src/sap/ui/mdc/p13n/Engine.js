@@ -878,7 +878,12 @@ sap.ui.define([
 				});
 			}
 
-			oP13nUI.setMessageStrip(oMessageStrip);
+			if (oP13nUI.setMessageStrip instanceof Function) {
+				oP13nUI.setMessageStrip(oMessageStrip);
+			} else {
+				Log.warning("message strip could not be provided - the adaptation UI needs to implement 'setMessageStrip'");
+			}
+
 		}
 
 	};
