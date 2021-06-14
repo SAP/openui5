@@ -1368,7 +1368,6 @@ sap.ui.define([
 
 		// cleanup
 		oInput.destroy();
-		InputSubclass = null;
 		delete window.InputSubclass;
 	});
 
@@ -1431,7 +1430,6 @@ sap.ui.define([
 
 		// cleanup
 		oInput.destroy();
-		InputSubclass = null;
 		delete window.InputSubclass;
 	});
 
@@ -1987,7 +1985,6 @@ sap.ui.define([
 
 		// cleanup
 		oInput.destroy();
-		CustomInput = null;
 		delete window.CustomInput;
 	});
 
@@ -2026,7 +2023,6 @@ sap.ui.define([
 		// cleanup
 		oText.destroy();
 		oInput.destroy();
-		CustomInput = null;
 		delete window.CustomInput;
 	});
 

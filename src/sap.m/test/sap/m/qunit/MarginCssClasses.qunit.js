@@ -150,6 +150,17 @@ sap.ui.define([
 
 
 	QUnit.module("Apply pre-defined css classes");
+	var oPage;
+	var oObjectHeader;
+	var oIconTabBar;
+	var oSimpleForm;
+	var oList;
+	var oTable;
+	var oPanel;
+	var oRestrictedWidthPanel;
+	var oScrollCont;
+	var oCarousel;
+	var oSplitContainer;
 
 	var fnTest = function(sCssProperty, sMarginClass, sExpectedMarginValue, bHorizontal) {
 		assert.ok( true, " " ); //Group tests

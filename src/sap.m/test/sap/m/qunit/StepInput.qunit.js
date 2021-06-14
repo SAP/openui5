@@ -267,7 +267,7 @@ sap.ui.define([
 			"Value of 'min' is not changed");
 
 		//prepare
-		oSpyDisableButtons = this.spy(this.stepInput, "_disableButtons");
+		var oSpyDisableButtons = this.spy(this.stepInput, "_disableButtons");
 		//act
 		this.stepInput.setMin(9);
 		oCore.applyChanges();

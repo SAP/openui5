@@ -95,6 +95,10 @@ sap.ui.define([
 
 	var i1;
 	var i2;
+	var i3;
+	var i4;
+	var i5;
+	var i8;
 	var value = "value";
 
 	var oInput = new Input("i1");

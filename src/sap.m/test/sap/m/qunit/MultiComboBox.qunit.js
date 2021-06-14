@@ -2994,6 +2994,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Paste value behaviour", function (assert) {
+		var oItem;
 		var oMultiComboBox = new MultiComboBox({
 			items : [oItem = new Item({
 				key : "DZ",
@@ -3087,6 +3088,7 @@ sap.ui.define([
 
 	QUnit.test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function(assert) {
 		// system under test
+		var oItem1, oItem2;
 		var oMultiComboBox = new MultiComboBox({
 			items : [oItem1 = new Item({
 				key : "key1",
@@ -5070,7 +5072,7 @@ sap.ui.define([
 			}).placeAt("MultiComboBoxContent");
 
 		var oSpy = sinon.spy(oMultiComboBox.getAggregation("tokenizer"), "scrollToEnd");
-		oHandleFocusleaveStub = sinon.stub(Event.prototype, "getParameter");
+		var oHandleFocusleaveStub = sinon.stub(Event.prototype, "getParameter");
 
 		sap.ui.getCore().applyChanges();
 

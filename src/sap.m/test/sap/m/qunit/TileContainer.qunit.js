@@ -819,7 +819,7 @@ sap.ui.define([
 		setTimeout(function(){
 			assert.strictEqual(this.oTileContainer._oPagesInfo.getCount(), 1, "There is one page");
 
-			newDataModel = new JSONModel({});
+			var newDataModel = new JSONModel({});
 
 			sap.ui.getCore().setModel(newDataModel);
 

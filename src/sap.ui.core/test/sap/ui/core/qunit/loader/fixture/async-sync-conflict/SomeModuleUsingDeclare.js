@@ -1,4 +1,5 @@
 /*eslint strict: [2, "global"] */
+/* eslint-disable no-implicit-globals */
 "use strict";
 function jQuerySapDeclare(module) {
 	module = module.replace(/\./g, "/") + ".js";

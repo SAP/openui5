@@ -13,6 +13,15 @@
 		"jQuery": true
 	},
 	"rules": {
+		"no-restricted-globals": [1, "closed", "defaultStatus", "frames",
+			"history", "innerHeight", "innerWidth",	"length", "location", "menubar", "name",
+			"navigator", "opener", "pageXOffset", "pageYOffset", "parent", "personalbar",
+			"scrollbars", "status", "statusbar", "toolbar",
+			"blur", "close", "find", "focus", "moveBy", "moveTo", "open", "print", "resizeBy",
+			"resizeTo", "scroll", "scrollBy", "scrollTo", "stop",
+			"onload"
+		],
+		"no-implicit-globals": [2, {"lexicalBindings": true}],
 		"comma-dangle": [2, "never"],
 		"no-cond-assign": 2,
 		"no-console": 2,

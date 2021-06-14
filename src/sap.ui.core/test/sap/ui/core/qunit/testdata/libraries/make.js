@@ -9,6 +9,7 @@
    ------------------------------------------------------------------------------------------- */
 
 /* eslint strict: [2, "global"] */
+/* eslint-disable no-implicit-globals */
 /* global require */
 "use strict";
 

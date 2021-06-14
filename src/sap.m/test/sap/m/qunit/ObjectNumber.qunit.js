@@ -46,7 +46,7 @@ sap.ui.define([
 		assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
 		assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be there");
 
-		$ontxt = jQuery("#on1").find(".sapMObjectNumberText");
+		var $ontxt = jQuery("#on1").find(".sapMObjectNumberText");
 		var sFontWeight = $ontxt.css("font-weight");
 		assert.equal((sFontWeight === "bold" || sFontWeight === "700"), true, "font weight should be bold by default"); // IE and FF return "700" while chrome returns "bold"
 
@@ -57,7 +57,7 @@ sap.ui.define([
 	QUnit.test("ShouldRenderUnit", function(assert) {
 		//SUT
 		var sUnit = "Dollar";
-		sut = new ObjectNumber("unit", {
+		var sut = new ObjectNumber("unit", {
 		number: "10",
 		unit : sUnit,
 		numberUnit: "Euro"
@@ -113,7 +113,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		$ontxt = jQuery("#on2").find(".sapMObjectNumberText");
+		var $ontxt = jQuery("#on2").find(".sapMObjectNumberText");
 		var expected = jQuery.browser.webkit ? "normal" : "400";
 		// check if the jQuery version is lower than 1.10 then use "normal" will be set as font-weigt
 		// from jQuery 1.10 jQuery converts the font-weight of "normal" into 400
@@ -140,7 +140,7 @@ sap.ui.define([
 
 		//Assert
 		//Check value
-		$ontxt = jQuery("#on3");
+		var $ontxt = jQuery("#on3");
 		assert.ok($ontxt.hasClass("sapMObjectNumberStatusNone"), "Object Number should be assigned css class 'sapMObjectNumberStatusNone'" );
 
 		var aValueStates = [
@@ -154,7 +154,7 @@ sap.ui.define([
 			sut.setState(aValueStates[i]);
 			sap.ui.getCore().applyChanges();
 			var sStatusClass = "sapMObjectNumberStatus" + aValueStates[i];
-			$ontxt = jQuery("#on3");
+			var $ontxt = jQuery("#on3");
 			assert.ok($ontxt.hasClass(sStatusClass), "Object Number should be assigned css class '" + sStatusClass + "'" );
 			if (i > 0) {
 				//Make sure that the old class got removed

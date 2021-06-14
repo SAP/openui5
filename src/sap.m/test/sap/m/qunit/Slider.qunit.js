@@ -2061,7 +2061,7 @@ sap.ui.define([
 			// arrange
 			oSlider.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			$HandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
+			var $HandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
 
 			// assert
 			assert.strictEqual(oScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the user defined scale.");
