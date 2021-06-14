@@ -441,13 +441,13 @@ sap.ui.define([
 			"only one element with class .sapUiPseudoInvisibleText should be present");
 	});
 
-	QUnit.test("When link is set it should have aria-labelledby attribute", function (assert) {
+	QUnit.test("When link is set it should have aria-descrribedby attribute", function (assert) {
 		var link = this.oMessageStrip.getLink(),
 			linkDom = link.getDomRef(),
-			describedBy = linkDom.getAttribute("aria-describedby");
+			describedBy = linkDom.getAttribute("aria-describedby"),
+			sId = this.oMessageStrip.getId() + "-info" + " " + this.oMessageStrip.getId() + "-content";
 
-			assert.strictEqual(describedBy, this.oMessageStrip.getId(),
-				"link aria-labelledby should point to the MessageStrip and Link id");
+			assert.strictEqual(describedBy, sId, "link aria-labelledby should point to the MessageStrip and Link id");
 	});
 
 	QUnit.test("When we have a close button it should have an aria-labelledby attribute", function (assert) {
