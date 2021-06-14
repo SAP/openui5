@@ -125,5 +125,32 @@
         ]
       }
     ]
+  },
+  "1.87.9": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "0e5d77533d7570bf2c6afd061533652fcbdd57da",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: decode existing hash before using it to restore the history state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          }
+        ]
+      },
+      {
+        "id": "55dcf6cb80db23f0bfe4f8656d95b88b71006530",
+        "type": "FIX",
+        "text": " jquery.js: make 'offset' work with SVG child elements in Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170112268"
+          }
+        ]
+      }
+    ]
   }
 }
