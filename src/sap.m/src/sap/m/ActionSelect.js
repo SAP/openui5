@@ -163,6 +163,8 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', 'sap/ui/Device', 'sap/ui
 				oPicker = this.getPicker(),
 				i;
 
+			this._bProcessChange = false;
+
 			// check whether event is marked or not
 			if ( oEvent.isMarked() || !this.getEnabled()) {
 				return;
