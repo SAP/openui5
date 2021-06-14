@@ -3482,5 +3482,36 @@
         ]
       }
     ]
+  },
+  "1.60.37": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "42dd73a01028231d2e2ff34128f2e57f2dd6c766",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Empty containers now are removed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006795502020"
+          }
+        ]
+      },
+      {
+        "id": "f0c0e0a30e71460cbe911ce0d1eb004b5c64e768",
+        "type": "FIX",
+        "text": " P13nConditionPanel: improve validation handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980411112"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001732142021"
+          }
+        ]
+      }
+    ]
   }
 }
