@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/support/Plugin",
 	"sap/ui/fl/support/Flexibility",
 	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/core/Component",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	Plugin,
 	Flexibility,
 	ChangePersistenceFactory,
+	Component,
 	jQuery,
 	sinon
 ) {
@@ -96,20 +98,43 @@ sap.ui.define([
 
 		QUnit.test("sends the data to the support window for a reference", function(assert) {
 			var done = assert.async();
-			var sReference = "ref1";
+			var sReference = "testComponent";
 			ChangePersistenceFactory.getChangePersistenceForComponent(sReference); // create instance
 
 			sandbox.stub(SupportStub, "sendEvent").callsFake(function(sEventName, oPayload) {
 				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
-				assert.equal(Object.keys(oPayload).length, 1, "one object was passed");
+				assert.equal(Object.keys(oPayload).length, 2, "one object was passed");
 				var oPassedAppData = oPayload[0];
 				assert.equal(oPassedAppData.key, sReference, "the key was passed correct");
 				assert.equal(oPassedAppData.text, sReference, "the app id was passed correct");
+				assert.equal(oPassedAppData.additionalText, "App variant based on:\nparentTestComponent (1.2.2) in layer VENDOR\ncustomer.testComponent.id_1 (1.2.3) in layer CUSTOMER", "the app var hierarchy was passed correct");
 				done();
 			});
+			return Component.create({name: "testComponent"}).then(function (oComponent) {
+				this.oFlexibility.onsapUiSupportFlexibilityGetApps();
+				oComponent.destroy();
+			}.bind(this));
+		});
+	});
 
-			this.oFlexibility.onsapUiSupportFlexibilityGetApps();
+	QUnit.module("getAppVariantHierarchy", {
+		beforeEach: function() {
+			this.oFlexibility = new Flexibility(SupportStub);
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("gets nothing if no component is registered", function(assert) {
+			assert.equal(this.oFlexibility.getAppVariantHierarchy("testComponent"), "", "appVariantIdHierarchy extraced succesfully");
+		});
+
+		QUnit.test("gets app variant hierarchy if component is registered that has an appVariantHierarchy", function(assert) {
+			return Component.create({name: "testComponent"}).then(function(oComponent) {
+				assert.equal(this.oFlexibility.getAppVariantHierarchy("testComponent"), "App variant based on:\nparentTestComponent (1.2.2) in layer VENDOR\ncustomer.testComponent.id_1 (1.2.3) in layer CUSTOMER", "appVariantIdHierarchy extraced succesfully");
+				oComponent.destroy();
+			}.bind(this));
 		});
 	});
 

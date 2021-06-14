@@ -35,6 +35,18 @@
 		"models": {},
 		"routing": {},
 		"contentDensities": {},
-		"flexExtensionPointEnabled": true
+		"flexExtensionPointEnabled": true,
+		"appVariantIdHierarchy": [
+			{
+				"appVariantId": "parentTestComponent",
+				"version": "1.2.2",
+				"layer": "VENDOR"
+			},
+			{
+				"appVariantId": "customer.testComponent.id_1",
+				"version": "1.2.3",
+				"layer": "CUSTOMER"
+			}
+		]
 	}
 }

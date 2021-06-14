@@ -1099,6 +1099,11 @@ sap.ui.define([
 				group: "support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
 				}
 			},
 
