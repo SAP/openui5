@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>ProductSwitch - sap.ui.webc.fiori</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.fiori">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/fiori/ProductSwitch",
+                "sap/ui/webc/fiori/ProductSwitchItem"
+            ], function(
+                ProductSwitch, ProductSwitchItem
+            ) {
+
+
+                var oProductSwitch = new ProductSwitch({
+                    items: [
+                        new ProductSwitchItem({
+                            icon: "employee",
+                            subtitleText: "Some text...",
+                            titleText: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for ProductSwitchItem with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new ProductSwitchItem({
+                            icon: "employee",
+                            subtitleText: "Some text...",
+                            titleText: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for ProductSwitchItem with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new ProductSwitchItem({
+                            icon: "employee",
+                            subtitleText: "Some text...",
+                            titleText: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for ProductSwitchItem with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ]
+                });
+                oProductSwitch.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

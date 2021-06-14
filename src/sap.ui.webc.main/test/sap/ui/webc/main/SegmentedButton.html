@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>SegmentedButton - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/SegmentedButton",
+                "sap/ui/webc/main/Button"
+            ], function(
+                SegmentedButton, Button
+            ) {
+
+                var oSegmentedButton0Button = new Button({
+                    text: "getSelectedButton",
+                    click: function(oEvent) {
+                        console.log("Calling getSelectedButton...");
+                        var result = oSegmentedButton.getSelectedButton();
+                        console.log("... getSelectedButton returned: ", result);
+                    }
+                });
+                oSegmentedButton0Button.placeAt("methodButtons");
+
+
+                var oSegmentedButton = new SegmentedButton({
+                    buttons: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for SegmentedButton with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oSegmentedButton.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

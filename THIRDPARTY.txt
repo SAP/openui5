@@ -405,6 +405,43 @@ License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.mdc/test/sap/ui/mdc/sample/field/filterfieldwithoperators/BoolExprTool.js
 
 
+Library: sap.ui.webc.common:
+
+Component: UI5 Web Components, version: 1.0.0-rc.12
+Copyright: SAP
+License: Apache-2.0
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+Contained in: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/base/*.*
+	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/theme-base/*.*
+	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/localization/*.*
+	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons/*.*
+	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-tnt/*.*
+
+Component: lit-html, version: 1.4.1
+Copyright: Google LLC
+License: BSD-3-Clause
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
+Contained in: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/lit-html/*.*
+
+
+Library: sap.ui.webc.fiori:
+
+Component: UI5 Web Components, version: 1.0.0-rc.12
+Copyright: SAP
+License: Apache-2.0
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+Contained in: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/thirdparty/*.*
+
+
+Library: sap.ui.webc.main:
+
+Component: UI5 Web Components, version: 1.0.0-rc.12
+Copyright: SAP
+License: Apache-2.0
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+Contained in: src/sap.ui.webc.main/src/sap/ui/webc/main/thirdparty/*.*
+
+
 Outside of Libraries:
 
 Component: LESS, version: 1.6.3

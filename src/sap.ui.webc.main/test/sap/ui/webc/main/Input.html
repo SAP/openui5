@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Input - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/Input",
+                "sap/ui/webc/main/Icon",
+                "sap/ui/webc/main/SuggestionItem",
+                "sap/ui/webc/main/Button"
+            ], function(
+                Input, Icon, SuggestionItem, Button
+            ) {
+
+                var oInput0Button = new Button({
+                    text: "getPreviewItem",
+                    click: function(oEvent) {
+                        console.log("Calling getPreviewItem...");
+                        var result = oInput.getPreviewItem();
+                        console.log("... getPreviewItem returned: ", result);
+                    }
+                });
+                oInput0Button.placeAt("methodButtons");
+
+
+                var oInput = new Input({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    suggestionItems: [
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        }),
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        }),
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for Input with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for Input with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionItemPreview: function(oEvent) {
+                        console.log("Event suggestionItemPreview fired for Input with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionItemSelect: function(oEvent) {
+                        console.log("Event suggestionItemSelect fired for Input with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionScroll: function(oEvent) {
+                        console.log("Event suggestionScroll fired for Input with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oInput.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

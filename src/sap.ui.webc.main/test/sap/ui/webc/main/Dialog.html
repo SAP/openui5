@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Dialog - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/Dialog",
+                "sap/ui/webc/main/Button"
+            ], function(
+                Dialog, Button
+            ) {
+
+                var oDialog0Button = new Button({
+                    text: "applyFocus",
+                    click: function(oEvent) {
+                        console.log("Calling applyFocus...");
+                        var result = oDialog.applyFocus();
+                        console.log("... applyFocus returned: ", result);
+                    }
+                });
+                oDialog0Button.placeAt("methodButtons");
+
+
+
+                var oDialog1Button = new Button({
+                    text: "close",
+                    click: function(oEvent) {
+                        console.log("Calling close...");
+                        var result = oDialog.close();
+                        console.log("... close returned: ", result);
+                    }
+                });
+                oDialog1Button.placeAt("methodButtons");
+
+
+
+                var oDialog2Button = new Button({
+                    text: "isOpen",
+                    click: function(oEvent) {
+                        console.log("Calling isOpen...");
+                        var result = oDialog.isOpen();
+                        console.log("... isOpen returned: ", result);
+                    }
+                });
+                oDialog2Button.placeAt("methodButtons");
+
+
+
+                var oDialog3Button = new Button({
+                    text: "open",
+                    click: function(oEvent) {
+                        console.log("Calling open...");
+                        var result = oDialog.open();
+                        console.log("... open returned: ", result);
+                    }
+                });
+                oDialog3Button.placeAt("methodButtons");
+
+
+                var oDialog = new Dialog({
+                    headerText: "Some text...",
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    footer: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    afterClose: function(oEvent) {
+                        console.log("Event afterClose fired for Dialog with parameters: ", oEvent.getParameters());
+                    },
+                    afterOpen: function(oEvent) {
+                        console.log("Event afterOpen fired for Dialog with parameters: ", oEvent.getParameters());
+                    },
+                    beforeClose: function(oEvent) {
+                        console.log("Event beforeClose fired for Dialog with parameters: ", oEvent.getParameters());
+                    },
+                    beforeOpen: function(oEvent) {
+                        console.log("Event beforeOpen fired for Dialog with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oDialog.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>FlexibleColumnLayout - sap.ui.webc.fiori</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.fiori, sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/fiori/FlexibleColumnLayout",
+                "sap/ui/webc/main/Button"
+            ], function(
+                FlexibleColumnLayout, Button
+            ) {
+
+                var oFlexibleColumnLayout0Button = new Button({
+                    text: "getColumnLayout",
+                    click: function(oEvent) {
+                        console.log("Calling getColumnLayout...");
+                        var result = oFlexibleColumnLayout.getColumnLayout();
+                        console.log("... getColumnLayout returned: ", result);
+                    }
+                });
+                oFlexibleColumnLayout0Button.placeAt("methodButtons");
+
+
+
+                var oFlexibleColumnLayout1Button = new Button({
+                    text: "getEndColumnVisible",
+                    click: function(oEvent) {
+                        console.log("Calling getEndColumnVisible...");
+                        var result = oFlexibleColumnLayout.getEndColumnVisible();
+                        console.log("... getEndColumnVisible returned: ", result);
+                    }
+                });
+                oFlexibleColumnLayout1Button.placeAt("methodButtons");
+
+
+
+                var oFlexibleColumnLayout2Button = new Button({
+                    text: "getMidColumnVisible",
+                    click: function(oEvent) {
+                        console.log("Calling getMidColumnVisible...");
+                        var result = oFlexibleColumnLayout.getMidColumnVisible();
+                        console.log("... getMidColumnVisible returned: ", result);
+                    }
+                });
+                oFlexibleColumnLayout2Button.placeAt("methodButtons");
+
+
+
+                var oFlexibleColumnLayout3Button = new Button({
+                    text: "getStartColumnVisible",
+                    click: function(oEvent) {
+                        console.log("Calling getStartColumnVisible...");
+                        var result = oFlexibleColumnLayout.getStartColumnVisible();
+                        console.log("... getStartColumnVisible returned: ", result);
+                    }
+                });
+                oFlexibleColumnLayout3Button.placeAt("methodButtons");
+
+
+
+                var oFlexibleColumnLayout4Button = new Button({
+                    text: "getVisibleColumns",
+                    click: function(oEvent) {
+                        console.log("Calling getVisibleColumns...");
+                        var result = oFlexibleColumnLayout.getVisibleColumns();
+                        console.log("... getVisibleColumns returned: ", result);
+                    }
+                });
+                oFlexibleColumnLayout4Button.placeAt("methodButtons");
+
+
+                var oFlexibleColumnLayout = new FlexibleColumnLayout({
+                    endColumn: new Button({
+                        icon: "employee",
+                        text: "Some text...",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    midColumn: new Button({
+                        icon: "employee",
+                        text: "Some text...",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    startColumn: new Button({
+                        icon: "employee",
+                        text: "Some text...",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    layoutChange: function(oEvent) {
+                        console.log("Event layoutChange fired for FlexibleColumnLayout with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oFlexibleColumnLayout.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

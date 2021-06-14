@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>TextArea - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/TextArea"
+            ], function(
+                TextArea
+            ) {
+
+
+                var oTextArea = new TextArea({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    change: function(oEvent) {
+                        console.log("Event change fired for TextArea with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for TextArea with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oTextArea.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

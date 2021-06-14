@@ -38,6 +38,8 @@
     "karma:sap.ui.table": "npm run karma -- --lib=sap.ui.table",
     "karma:sap.ui.unified": "npm run karma -- --lib=sap.ui.unified",
     "karma:sap.ui.ux3": "npm run karma -- --lib=sap.ui.ux3",
+    "karma:sap.ui.webc.main": "npm run karma -- --lib=sap.ui.webc.main",
+    "karma:sap.ui.webc.fiori": "npm run karma -- --lib=sap.ui.webc.fiori",
     "karma:sap.uxap": "npm run karma -- --lib=sap.uxap",
     "generate-cldr": "grunt cldr-download cldr-generate"
   },

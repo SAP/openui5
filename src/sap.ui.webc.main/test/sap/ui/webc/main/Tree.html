@@ -1,0 +1,387 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Tree - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/Tree",
+                "sap/ui/webc/main/Button",
+                "sap/ui/webc/main/TreeItem"
+            ], function(
+                Tree, Button, TreeItem
+            ) {
+
+                var oTree0Button = new Button({
+                    text: "walk",
+                    click: function(oEvent) {
+                        console.log("Calling walk...");
+                        var result = oTree.walk();
+                        console.log("... walk returned: ", result);
+                    }
+                });
+                oTree0Button.placeAt("methodButtons");
+
+
+                var oTree = new Tree({
+                    footerText: "Some text...",
+                    headerText: "Some text...",
+                    noDataText: "Some text...",
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    items: [
+                        new TreeItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            items: [
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        new TreeItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            items: [
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        new TreeItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            items: [
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        })
+                    ],
+                    itemClick: function(oEvent) {
+                        console.log("Event itemClick fired for Tree with parameters: ", oEvent.getParameters());
+                    },
+                    itemDelete: function(oEvent) {
+                        console.log("Event itemDelete fired for Tree with parameters: ", oEvent.getParameters());
+                    },
+                    itemToggle: function(oEvent) {
+                        console.log("Event itemToggle fired for Tree with parameters: ", oEvent.getParameters());
+                    },
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for Tree with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oTree.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

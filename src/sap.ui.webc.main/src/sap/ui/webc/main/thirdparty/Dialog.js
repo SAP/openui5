@@ -1,0 +1,279 @@
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/util/clamp', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', './Popup', 'sap/ui/webc/common/thirdparty/icons/resize-corner', './Icon', './generated/templates/DialogTemplate.lit', './generated/themes/BrowserScrollbar.css', './generated/themes/PopupsCommon.css', './generated/themes/Dialog.css'], function (Device, clamp, ResizeHandler, Popup, resizeCorner, Icon, DialogTemplate_lit, BrowserScrollbar_css, PopupsCommon_css, Dialog_css) { 'use strict';
+
+	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+
+	var clamp__default = /*#__PURE__*/_interopDefaultLegacy(clamp);
+	var ResizeHandler__default = /*#__PURE__*/_interopDefaultLegacy(ResizeHandler);
+
+	const metadata = {
+		tag: "ui5-dialog",
+		slots:  {
+			header: {
+				type: HTMLElement,
+			},
+			footer: {
+				type: HTMLElement,
+			},
+		},
+		properties:  {
+			headerText: {
+				type: String,
+			},
+			accessibleName: {
+				type: String,
+			},
+			stretch: {
+				type: Boolean,
+			},
+			draggable: {
+				type: Boolean,
+			},
+			resizable: {
+				type: Boolean,
+			},
+			onPhone: {
+				type: Boolean,
+			},
+			onDesktop: {
+				type: Boolean,
+			},
+		},
+	};
+	class Dialog extends Popup {
+		constructor() {
+			super();
+			this._screenResizeHandler = this._center.bind(this);
+			this._dragMouseMoveHandler = this._onDragMouseMove.bind(this);
+			this._dragMouseUpHandler = this._onDragMouseUp.bind(this);
+			this._resizeMouseMoveHandler = this._onResizeMouseMove.bind(this);
+			this._resizeMouseUpHandler = this._onResizeMouseUp.bind(this);
+		}
+		static get metadata() {
+			return metadata;
+		}
+		static get dependencies() {
+			return [
+				Icon,
+			];
+		}
+		static get template() {
+			return DialogTemplate_lit;
+		}
+		static get styles() {
+			return [BrowserScrollbar_css, PopupsCommon_css, Dialog_css];
+		}
+		async open(preventInitialFocus) {
+			await super.open(preventInitialFocus);
+		}
+		get isModal() {
+			return true;
+		}
+		get shouldHideBackdrop() {
+			return false;
+		}
+		get _ariaLabelledBy() {
+			let ariaLabelledById;
+			if (this.headerText !== "" && !this.ariaLabel) {
+				ariaLabelledById = "ui5-popup-header-text";
+			}
+			return ariaLabelledById;
+		}
+		get _ariaLabel() {
+			let ariaLabel;
+			if (this.header.length > 0 && !!this.accessibleName) {
+				ariaLabel = this.accessibleName;
+			}
+			return this.ariaLabel ? this.ariaLabel : ariaLabel;
+		}
+		get _ariaModal() {
+			return true;
+		}
+		get _displayProp() {
+			return "flex";
+		}
+		get _displayHeader() {
+			return this.header.length || this.headerText;
+		}
+		show() {
+			super.show();
+			this._center();
+		}
+		onBeforeRendering() {
+			this._isRTL = this.effectiveDir === "rtl";
+			this.onPhone = Device.isPhone();
+			this.onDesktop = Device.isDesktop();
+		}
+		onEnterDOM() {
+			super.onEnterDOM();
+			ResizeHandler__default.register(this, this._screenResizeHandler);
+			ResizeHandler__default.register(document.body, this._screenResizeHandler);
+		}
+		onExitDOM() {
+			super.onExitDOM();
+			ResizeHandler__default.deregister(this, this._screenResizeHandler);
+			ResizeHandler__default.deregister(document.body, this._screenResizeHandler);
+		}
+		_center() {
+			const height = window.innerHeight - this.offsetHeight,
+				width = window.innerWidth - this.offsetWidth;
+			Object.assign(this.style, {
+				top: `${Math.round(height / 2)}px`,
+				left: `${Math.round(width / 2)}px`,
+			});
+		}
+		_revertSize() {
+			Object.assign(this.style, {
+				top: "",
+				left: "",
+				width: "",
+				height: "",
+			});
+			this.removeEventListener("ui5-before-close", this._revertSize);
+		}
+		_onDragMouseDown(event) {
+			if (!(this.draggable && this.onDesktop)) {
+				return;
+			}
+			if (!event.target.classList.contains("ui5-popup-header-root")
+				&& event.target.getAttribute("slot") !== "header") {
+				return;
+			}
+			event.preventDefault();
+			const {
+				top,
+				left,
+			} = this.getBoundingClientRect();
+			const {
+				width,
+				height,
+			} = window.getComputedStyle(this);
+			Object.assign(this.style, {
+				top: `${top}px`,
+				left: `${left}px`,
+				width: `${Math.round(Number.parseFloat(width) * 100) / 100}px`,
+				height: `${Math.round(Number.parseFloat(height) * 100) / 100}px`,
+			});
+			this._x = event.clientX;
+			this._y = event.clientY;
+			this._attachDragHandlers();
+		}
+		_onDragMouseMove(event) {
+			event.preventDefault();
+			const calcX = this._x - event.clientX;
+			const calcY = this._y - event.clientY;
+			const {
+				left,
+				top,
+			} = this.getBoundingClientRect();
+			Object.assign(this.style, {
+				left: `${Math.floor(left - calcX)}px`,
+				top: `${Math.floor(top - calcY)}px`,
+			});
+			this._x = event.clientX;
+			this._y = event.clientY;
+		}
+		_onDragMouseUp() {
+			this._x = null;
+			this._y = null;
+			this._detachDragHandlers();
+		}
+		_attachDragHandlers() {
+			ResizeHandler__default.deregister(this, this._screenResizeHandler);
+			ResizeHandler__default.deregister(document.body, this._screenResizeHandler);
+			window.addEventListener("mousemove", this._dragMouseMoveHandler);
+			window.addEventListener("mouseup", this._dragMouseUpHandler);
+		}
+		_detachDragHandlers() {
+			window.removeEventListener("mousemove", this._dragMouseMoveHandler);
+			window.removeEventListener("mouseup", this._dragMouseUpHandler);
+		}
+		_onResizeMouseDown(event) {
+			if (!(this.resizable && this.onDesktop)) {
+				return;
+			}
+			event.preventDefault();
+			const {
+				top,
+				left,
+			} = this.getBoundingClientRect();
+			const {
+				width,
+				height,
+				minWidth,
+				minHeight,
+			} = window.getComputedStyle(this);
+			this._initialX = event.clientX;
+			this._initialY = event.clientY;
+			this._initialWidth = Number.parseFloat(width);
+			this._initialHeight = Number.parseFloat(height);
+			this._initialTop = top;
+			this._initialLeft = left;
+			this._minWidth = Number.parseFloat(minWidth);
+			this._minHeight = Number.parseFloat(minHeight);
+			Object.assign(this.style, {
+				top: `${top}px`,
+				left: `${left}px`,
+			});
+			this._attachResizeHandlers();
+		}
+		_onResizeMouseMove(event) {
+			const { clientX, clientY } = event;
+			let newWidth;
+			let newLeft;
+			if (this._isRTL) {
+				newWidth = clamp__default(
+					this._initialWidth - (clientX - this._initialX),
+					this._minWidth,
+					this._initialLeft + this._initialWidth,
+				);
+				newLeft = clamp__default(
+					this._initialLeft + (clientX - this._initialX),
+					0,
+					this._initialX + this._initialWidth - this._minWidth,
+				);
+			} else {
+				newWidth = clamp__default(
+					this._initialWidth + (clientX - this._initialX),
+					this._minWidth,
+					window.innerWidth - this._initialLeft,
+				);
+			}
+			const newHeight = clamp__default(
+				this._initialHeight + (clientY - this._initialY),
+				this._minHeight,
+				window.innerHeight - this._initialTop,
+			);
+			Object.assign(this.style, {
+				height: `${newHeight}px`,
+				width: `${newWidth}px`,
+				left: newLeft ? `${newLeft}px` : undefined,
+			});
+		}
+		_onResizeMouseUp() {
+			this._initialX = null;
+			this._initialY = null;
+			this._initialWidth = null;
+			this._initialHeight = null;
+			this._initialTop = null;
+			this._initialLeft = null;
+			this._minWidth = null;
+			this._minHeight = null;
+			this._detachResizeHandlers();
+		}
+		_attachResizeHandlers() {
+			ResizeHandler__default.deregister(this, this._screenResizeHandler);
+			ResizeHandler__default.deregister(document.body, this._screenResizeHandler);
+			window.addEventListener("mousemove", this._resizeMouseMoveHandler);
+			window.addEventListener("mouseup", this._resizeMouseUpHandler);
+			this.addEventListener("ui5-before-close", this._revertSize);
+		}
+		_detachResizeHandlers() {
+			window.removeEventListener("mousemove", this._resizeMouseMoveHandler);
+			window.removeEventListener("mouseup", this._resizeMouseUpHandler);
+		}
+	}
+	Dialog.define();
+
+	return Dialog;
+
+});

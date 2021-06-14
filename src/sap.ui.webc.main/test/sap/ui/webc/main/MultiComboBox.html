@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>MultiComboBox - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/MultiComboBox",
+                "sap/ui/webc/main/Icon",
+                "sap/ui/webc/main/MultiComboBoxItem",
+                "sap/ui/webc/main/Button"
+            ], function(
+                MultiComboBox, Icon, MultiComboBoxItem, Button
+            ) {
+
+                var oMultiComboBox0Button = new Button({
+                    text: "getOpen",
+                    click: function(oEvent) {
+                        console.log("Calling getOpen...");
+                        var result = oMultiComboBox.getOpen();
+                        console.log("... getOpen returned: ", result);
+                    }
+                });
+                oMultiComboBox0Button.placeAt("methodButtons");
+
+
+                var oMultiComboBox = new MultiComboBox({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    items: [
+                        new MultiComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        }),
+                        new MultiComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        }),
+                        new MultiComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for MultiComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for MultiComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    openChange: function(oEvent) {
+                        console.log("Event openChange fired for MultiComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for MultiComboBox with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oMultiComboBox.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

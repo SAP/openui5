@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Select - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/Select",
+                "sap/ui/webc/main/Option",
+                "sap/ui/webc/main/Button"
+            ], function(
+                Select, Option, Button
+            ) {
+
+                var oSelect0Button = new Button({
+                    text: "getSelectedOption",
+                    click: function(oEvent) {
+                        console.log("Calling getSelectedOption...");
+                        var result = oSelect.getSelectedOption();
+                        console.log("... getSelectedOption returned: ", result);
+                    }
+                });
+                oSelect0Button.placeAt("methodButtons");
+
+
+                var oSelect = new Select({
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    options: [
+                        new Option({
+                            icon: "employee",
+                            text: "Some text...",
+                            value: "Control value"
+                        }),
+                        new Option({
+                            icon: "employee",
+                            text: "Some text...",
+                            value: "Control value"
+                        }),
+                        new Option({
+                            icon: "employee",
+                            text: "Some text...",
+                            value: "Control value"
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for Select with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oSelect.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

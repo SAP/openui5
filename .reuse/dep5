@@ -416,6 +416,35 @@ License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and BooleanExpressionEvaluator: BoolExprTool.js is authored by SAP, but partly inspired by BooleanExpressionEvaluator
 
 
+# Library: sap.ui.webc.common:
+
+Files: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/base/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/theme-base/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/localization/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-tnt/*.*
+Copyright: SAP
+License: Apache-2.0
+Comment: these files belong to: UI5 Web Components
+
+Files: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/lit-html/*.*
+Copyright: Google LLC
+License: BSD-3-Clause
+Comment: these files belong to: lit-html
+
+
+# Library: sap.ui.webc.fiori:
+
+Files: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/thirdparty/*.*
+Copyright: SAP
+License: Apache-2.0
+Comment: these files belong to: UI5 Web Components
+
+
+# Library: sap.ui.webc.main:
+
+Files: src/sap.ui.webc.main/src/sap/ui/webc/main/thirdparty/*.*
+Copyright: SAP
+License: Apache-2.0
+Comment: these files belong to: UI5 Web Components
+
+
 # Outside of Libraries:
 
 Files: src/testsuite-utils/src/main/resources/META-INF/less/less.js
