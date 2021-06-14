@@ -242,4 +242,28 @@ sap.ui.define([
 		// code under test
 		oBinding.checkDataState("~mPaths");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_checkDataStateMessages", function (assert) {
+		var oModel = {
+				getMessagesByPath : function () {}
+			},
+			oBinding = new Binding(oModel, "/n/a"),
+			oDataState = {
+				setModelMessages : function () {}
+			},
+			oDataStateMock = this.mock(oDataState);
+
+		this.mock(oModel).expects("getMessagesByPath").withExactArgs("~resolvedPath")
+			.returns("~messages");
+		oDataStateMock.expects("setModelMessages").withExactArgs("~messages");
+
+		// code under test
+		oBinding._checkDataStateMessages(oDataState, "~resolvedPath");
+
+		oDataStateMock.expects("setModelMessages").withExactArgs([]);
+
+		// code under test
+		oBinding._checkDataStateMessages(oDataState, undefined);
+	});
 });
