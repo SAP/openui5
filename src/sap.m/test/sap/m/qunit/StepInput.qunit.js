@@ -67,7 +67,7 @@ sap.ui.define([
 		//assert
 		var $stepInput = this.stepInput.$();
 		assert.ok($stepInput.length > 0, "The control was successfully rendered");
-		equals($stepInput.attr("tabindex"), "-1", "tabindex attribute should be negative");
+		assert.strictEqual($stepInput.attr("tabindex"), undefined, "tabindex attribute should not be present");
 	});
 
 	QUnit.test("incrementButton", function (assert) {
@@ -1298,7 +1298,7 @@ sap.ui.define([
 		var oWheelDownEvent = jQuery.Event(sWheelEventType, { originalEvent: { detail: bFirefox ? 1 : 0 , wheelDelta: -13 } });
 
 
-		this.stepInput.focus();
+		this.stepInput.getAggregation("_input").focus();
 		//act
 		qutils.triggerEvent(sWheelEventType, this.stepInput.getDomRef(), oWheelUpEvent);
 
