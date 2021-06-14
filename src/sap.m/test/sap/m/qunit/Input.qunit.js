@@ -3481,6 +3481,39 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Tabular Suggestions - Add show all items button dynamically", function(assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		var oInput = createInputWithTabularSuggestions();
+		oInput.setShowSuggestion(true);
+		oInput.setShowValueHelp(true);
+		oInput.setShowTableSuggestionValueHelp(false);
+
+		oInput.attachSuggest(function(oEvent) {
+			oInput.setShowTableSuggestionValueHelp(true);
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._openSuggestionsPopover();
+		sap.ui.getCore().applyChanges();
+
+		var oSpy = this.spy(sap.m.Dialog.prototype, "rerender");
+
+		oInput.fireSuggest();
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oSpy.called, "Dialog should not be rerendered");
+
+		oInput.destroy();
+	});
+
+
 	QUnit.module("Input Description");
 
 	QUnit.test("Input description", function(assert) {
