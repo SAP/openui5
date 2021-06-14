@@ -245,9 +245,16 @@ input.sapMInputBaseInner:invalid {
 	background: transparent;
 }
 
-.sapMLIBActive .sapMInputBaseInner {
-	color: @sapUiListActiveTextColor;
-	background: transparent;
+.sapMLIBActive {
+	.sapMInputBaseInner,
+	.sapMInputBaseContentWrapper {
+		color: @sapUiListActiveTextColor;
+		background: transparent;
+	}
+
+	.sapMInputDescriptionText {
+		color: @sapUiListActiveTextColor;
+	}
 }
 
 .sapMLIBActive .sapMInputBaseInner::-webkit-input-placeholder {
