@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', "sap/ui/mdc/condition/Condition
 	 *
 	 * @namespace
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.util.FilterUtil
 	 */
@@ -27,7 +27,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', "sap/ui/mdc/condition/Condition
 				 * @param {string} sKey - name of the property
 				 * @returns {object}  PropertyInfo object for a given name, or <code>null</code>
 				 * @private
-				 * @ui5-restricted sap.ui.mdc
+				 * @ui5-restricted sap.ui.mdc, sap.fe
 				 */
 				getPropertyByKey : function(aPropertiesMetadata, sKey) {
 					var oPropertyInfo = null;
