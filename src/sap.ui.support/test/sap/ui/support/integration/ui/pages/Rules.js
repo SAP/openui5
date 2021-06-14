@@ -267,34 +267,6 @@ sap.ui.define([
 						errorMessage: "Clone icon was not found"
 					});
 				},
-				iPressDeleteIconOfTemporaryRule: function (sTitle) {
-					return this.waitFor({
-						id: sTreeTableId,
-						matchers: new AggregationFilled({name: "columns"}),
-						viewName: sViewName,
-						viewNamespace: sViewNameSpace,
-						success: function (oTable) {
-							var oRowElements = getRowElements(oTable, sTitle);
-							oRowElements.deleteIcon.click();
-							Opa5.assert.ok(true, "Delete icon of " + sTitle + " was pressed");
-						},
-						errorMessage: "Delete Rule icon was not found"
-					});
-				},
-				iPressEditIconOfTemporaryRule: function (sTitle) {
-					return this.waitFor({
-						id: sTreeTableId,
-						matchers: new AggregationFilled({name: "columns"}),
-						viewName: sViewName,
-						viewNamespace: sViewNameSpace,
-						success: function (oTable) {
-							var oRowElements = getRowElements(oTable, sTitle);
-							oRowElements.editIcon.click();
-							Opa5.assert.ok(true, "Edit icon of " + sTitle + " was pressed");
-						},
-						errorMessage: "Edit Rule icon was not found"
-					});
-				},
 				iPressExpandCollapseButtonOfRuleSet: function (sTitle, sSuccessMessage, sErrorMessage) {
 					return this.waitFor({
 						id: sTreeTableId,
