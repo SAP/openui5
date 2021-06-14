@@ -1721,7 +1721,7 @@ sap.ui.define([
 	 * @name sap.ui.core.IPlaceholderSupport
 	 * @interface
 	 * @public
-	 * @since 1.91.0
+	 * @since 1.92.0
 	 */
 
 	/**

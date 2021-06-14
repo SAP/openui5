@@ -349,17 +349,23 @@ sap.ui.define([
 						});
 					})
 					.then(function(oContainerControl) {
+						var bHasPlaceholderConfig = false;
 						var oPlaceholderConfig = oTargetCreateInfo.placeholder || that._oOptions.placeholder || {};
 
-						if (!oPlaceholderConfig.html && Placeholder.hasProviders()) {
+						if (Placeholder.hasProviders()) {
 							Object.assign(oPlaceholderConfig, Placeholder.getPlaceholderFromProviders({
 									name: that._oOptions.name,
 									type:  that._oOptions.type
 								})
 							);
-							oPlaceholderConfig.autoClose = true;
 						}
-						var bHasPlaceholderConfig = Object.keys(oPlaceholderConfig).length > 0;
+
+						if (Object.keys(oPlaceholderConfig).length > 0) {
+							if (oPlaceholderConfig.autoClose === undefined) {
+								oPlaceholderConfig.autoClose = true;
+							}
+							bHasPlaceholderConfig = true;
+						}
 
 						if (bIsComponentTarget) {
 							var oOwnerComponent = that._oCache._oComponent;
