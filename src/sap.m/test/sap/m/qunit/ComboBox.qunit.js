@@ -8749,6 +8749,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.focus();
+		oComboBox.onmouseup();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
 		// assert
@@ -11396,7 +11397,7 @@ sap.ui.define([
 	QUnit.test('Selection when typing and focus in', function (assert) {
 		// Act
 		this.comboBox._$input.trigger("focus").val("a").trigger("input");
-		var selectedText = selectedText = this.comboBox._$input.getSelectedText();
+		var selectedText = this.comboBox._$input.getSelectedText();
 
 		// Assert
 		assert.equal(selectedText, "", "There is no selected text when matching a suggestion");
@@ -11421,6 +11422,7 @@ sap.ui.define([
 			this.clock.tick(500);
 			this.comboBox._$input.trigger("focus");
 			this.comboBox.onfocusin({});
+			this.comboBox.onmouseup({});
 			this.clock.tick(500);
 
 			selectedText = this.comboBox._$input.getSelectedText();

@@ -448,9 +448,6 @@ sap.ui.define([
 			// the last selected item before opening the picker
 			this._oSelectedItemBeforeOpen = null;
 
-			// indicated if the ComboBox is already focused
-			this.bIsFocused = false;
-
 			if (Device.system.phone) {
 				this.attachEvent("_change", this.onPropertyChange, this);
 			}
@@ -1297,6 +1294,15 @@ sap.ui.define([
 			oDomRef.removeAttribute( "aria-activedescendant");
 		};
 
+		ComboBox.prototype.onmouseup = function () {
+			if (this.getPickerType() === "Dropdown" &&
+				document.activeElement === this.getFocusDomRef() &&
+				!this.getSelectedText()) {
+
+				this.selectText(0, this.getValue().length);
+			}
+		};
+
 		/**
 		 * Handles the <code>focusin</code> event.
 		 *
@@ -1330,23 +1336,6 @@ sap.ui.define([
 
 			// probably the input field is receiving focus
 			} else {
-
-				// avoid the text-editing mode popup to be open on mobile,
-				// text-editing mode disturbs the usability experience (it blocks the UI in some devices)
-				// note: This occurs only in some specific mobile devices
-				if (bDropdownPickerType) {
-					setTimeout(function() {
-						if (document.activeElement === this.getFocusDomRef() &&
-							!this.bIsFocused &&
-							!this.bFocusoutDueRendering &&
-							!this.getSelectedText()) {
-
-								this.selectText(0, this.getValue().length);
-							}
-						this.bIsFocused = true;
-					}.bind(this), 0);
-				}
-
 				// open the message popup
 				if (!this.isOpen() && this.bOpenValueStateMessage && this.shouldValueStateMessageBeOpened()) {
 					this.openValueStateMessage();
@@ -1368,7 +1357,6 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
-			this.bIsFocused = false;
 			var bTablet, oPicker,
 				oRelatedControl, oFocusDomRef,
 				oItem = this.getSelectedItem();
