@@ -26,7 +26,13 @@ sap.ui.define([
      */
     var QueryPanel = BasePanel.extend("sap.ui.mdc.p13n.panels.QueryPanel", {
         metadata: {
-            library: "sap.ui.mdc"
+            library: "sap.ui.mdc",
+            properties: {
+                queryLimit: {
+                    type: "int",
+                    defaultValue: -1 //unlimited queries
+                }
+            }
         },
         renderer: {}
     });
@@ -150,6 +156,10 @@ sap.ui.define([
 
     QueryPanel.prototype._addQueryRow = function (oItem) {
 
+        if (this.getQueryLimit() > -1 && this.getQueryLimit() === this._oListControl.getItems().length) {
+            return;
+        }
+
         oItem = oItem ? oItem : {name: null, descending: null};
 
         var oQueryRowGrid = this._createQueryRowGrid(oItem);
@@ -161,7 +171,10 @@ sap.ui.define([
             ]
         });
 
-        if (this.getEnableReorder()){
+        //We only need 'move' buttons if:
+        // 1) Reordering is enabled
+        // 2) At least 2 queries can be made
+        if (this.getEnableReorder() && (this.getQueryLimit() === -1 || this.getQueryLimit() > 1)){
             this._addHover(oRow);
         }
 
@@ -237,6 +250,9 @@ sap.ui.define([
         //Add a new row in case the last "empty" row has been configured
         if (sNewKey !== this.NONE_KEY && bIsLastRow) {
             this._addQueryRow();
+            var oSelect = oEvt.getSource();
+            var oNoneItem = oSelect.getItemByKey(this.NONE_KEY);
+            oNoneItem.setEnabled(false);
         }
     };
 

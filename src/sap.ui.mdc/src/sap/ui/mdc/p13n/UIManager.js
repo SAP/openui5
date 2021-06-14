@@ -138,10 +138,11 @@ sap.ui.define([
 			aKeys.forEach(function(sKey){
 				var bWrapperUsed = aKeys.length > 1;
 				var oAdaptationUI;
-				if (bWrapperUsed) {
-					oAdaptationUI = oP13nControl.getContent()[0].getView(sKey).getContent();
+				var oContent = oP13nControl.getContent()[0];
+				if (bWrapperUsed && oContent.isA("sap.ui.mdc.p13n.panels.Wrapper")) {
+					oAdaptationUI = oContent.getView(sKey).getContent();
 				} else {
-					oAdaptationUI = oP13nControl.getContent()[0];
+					oAdaptationUI = oContent;
 				}
 				this.oAdaptationProvider.validateP13n(vControl, sKey, oAdaptationUI);
 			}.bind(this));
@@ -206,7 +207,9 @@ sap.ui.define([
 			var oPopupContent = bUseP13nContainer ? new Wrapper() : aUIs[0].panel;
 			if (bUseP13nContainer) {
 				aUIs.forEach(function(mUI){
-					oPopupContent.addPanel(mUI.panel, mUI.key, mUI.tab);
+					if (mUI.panel) {
+						oPopupContent.addPanel(mUI.panel, mUI.key, mUI.tab);
+					}
 				});
 				oPopupContent.switchView(aUIs[0].key);
 			}

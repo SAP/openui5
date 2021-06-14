@@ -14,8 +14,9 @@ sap.ui.define([
     "sap/m/library",
     "sap/m/ToolbarSpacer",
     "sap/m/Button",
-    "sap/m/OverflowToolbar"
-], function(BasePanel, Label, ColumnListItem, HBox, VBox, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar) {
+    "sap/m/OverflowToolbar",
+    "sap/ui/model/Filter"
+], function(BasePanel, Label, ColumnListItem, HBox, VBox, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar, Filter) {
 	"use strict";
 
     // shortcut for sap.m.ListKeyboardMode
@@ -121,9 +122,9 @@ sap.ui.define([
 					new ToolbarSpacer(),
                     new Button({
                         press: function(oEvt){
-                            var bShowSelected = oEvt.getSource().getText() == sShowSelected;
-                            this._filterBySelected(bShowSelected, this._oListControl);
-                            oEvt.getSource().setText(bShowSelected ? sShowAll : sShowSelected);
+                            this._bShowSelected = oEvt.getSource().getText() == sShowSelected;
+                            this._filterList(this._bShowSelected, this._sSearch);
+                            oEvt.getSource().setText(this._bShowSelected ? sShowAll : sShowSelected);
                         }.bind(this),
                         text: sShowSelected
                     })
@@ -135,6 +136,22 @@ sap.ui.define([
 
         return this;
     };
+
+    ListView.prototype._filterList = function(bShowSelected, sSarch) {
+        var oSearchFilter = [], oSelectedFilter = [];
+        if (bShowSelected) {
+            oSelectedFilter = new Filter(this._getPresenceAttribute(), "EQ", true);
+        }
+        if (sSarch) {
+            oSearchFilter = new Filter("label", "Contains", sSarch);
+        }
+		this._oListControl.getBinding("items").filter(new Filter([].concat(oSelectedFilter, oSearchFilter), true));
+	};
+
+    ListView.prototype._onSearchFieldLiveChange = function(oEvent) {
+        this._sSearch = oEvent.getSource().getValue();
+        this._filterList(this._bShowSelected, this._sSearch);
+	};
 
     ListView.prototype._handleActivated = function(oHoveredItem) {
         //remove move buttons if unselected item is hovered (not covered by updateStarted)
@@ -318,6 +335,8 @@ sap.ui.define([
         this._aInitializedFields = null;
         this._oHoveredItem = null;
         this._bShowFactory = null;
+        this._sSearch = null;
+        this._bShowSelected = null;
     };
 
 	return ListView;
