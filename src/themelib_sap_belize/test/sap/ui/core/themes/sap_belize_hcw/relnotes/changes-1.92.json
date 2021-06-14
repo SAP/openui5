@@ -3,17 +3,6 @@
     "date": "June 2021",
     "notes": [
       {
-        "id": "a71bfd847635d56804c78ab728fca13b82b3d6f2",
-        "type": "FIX",
-        "text": "sap.ui.unified.CalendarRow: Focus is now correct for non working days",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070448075"
-          }
-        ]
-      },
-      {
         "id": "5b5346968b5afa7093f07c6644fb0f45898589b8",
         "type": "FEATURE",
         "text": " new and updated less parameters for all themes"
@@ -24,13 +13,13 @@
         "text": " new and updated less parameters for all themes"
       },
       {
-        "id": "a1cf49852d2a0df092da3dccadc6249059b45f07",
+        "id": "a0bba2e6c7ee52531214a3ca7a4b3fe4af366a14",
         "type": "FIX",
-        "text": " sap.m.Toolbar: Align focus state by VD specification in fiori 3 HCB and HCW",
+        "text": " sap.uxap.ObjectPageLayout: Corrected background in belize-deep",
         "references": [
           {
             "type": "BCP",
-            "reference": "2170138978"
+            "reference": "002075129400003104972021"
           }
         ]
       },
@@ -53,17 +42,6 @@
           {
             "type": "BCP",
             "reference": "2170132357"
-          }
-        ]
-      },
-      {
-        "id": "2bb623d999562a4e5f367f6fde4509756b96bb82",
-        "type": "FIX",
-        "text": " sap.m.RadioButtonGroup: remove double focus outline for HC themes",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2170128591"
           }
         ]
       }

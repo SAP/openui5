@@ -3,6 +3,22 @@
     "date": "June 2021",
     "notes": [
       {
+        "id": "7259aff07fc48c77debe3bff8cadfc8b6c666532",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#fetchCodeList: consider local annotations when loading code lists",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180201135"
+          }
+        ]
+      },
+      {
+        "id": "204841de28eb9254371283a7aa883711fe0e6ba4",
+        "type": "FEATURE",
+        "text": " core/routing: Introduce Placeholder"
+      },
+      {
         "id": "c8a53c8d47939f441250bde96287ea578489aa57",
         "type": "FIX",
         "text": " sap.ui.core.routing.History: decode existing hash before using it to restore the history state",

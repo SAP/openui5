@@ -3,6 +3,44 @@
     "date": "June 2021",
     "notes": [
       {
+        "id": "3416d039546dc6e5bbad85731f1a8428a3e0b64a",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Removed potential redundant tab stops",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180200701"
+          }
+        ]
+      },
+      {
+        "id": "204841de28eb9254371283a7aa883711fe0e6ba4",
+        "type": "FEATURE",
+        "text": " core/routing: Introduce Placeholder"
+      },
+      {
+        "id": "fae59acb5c43e714fe765e6ceeeadc4832207ac9",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.AdaptiveContent: Refresh CSS properly on theme changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180176493"
+          }
+        ]
+      },
+      {
+        "id": "b3b8143410006b030963c1281126148f0f4af620",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Duplicated speech removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170125788"
+          }
+        ]
+      },
+      {
         "id": "3e5c8e4534048f0c5da1dcf659db80675d5b0ae6",
         "type": "FIX",
         "text": " sap.f.GridContainer: Scrolling to the focused element is now correct",

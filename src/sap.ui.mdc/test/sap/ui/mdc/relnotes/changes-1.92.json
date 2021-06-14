@@ -3,6 +3,39 @@
     "date": "June 2021",
     "notes": [
       {
+        "id": "7414228d21d21718b44a2a0a3ea4b1c523985ef1",
+        "type": "FIX",
+        "text": " mdc.ActionToolbar: fix for separator visibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180177320"
+          }
+        ]
+      },
+      {
+        "id": "5e9b8249445c156b178441067a7b02f1295e67e4",
+        "type": "FIX",
+        "text": " Field FilterField: set aria-haspopup in the right way",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170165642"
+          }
+        ]
+      },
+      {
+        "id": "fe313d465d87876c7291c5191e23dc0127f9161b",
+        "type": "FIX",
+        "text": " FieldHelp: show focus outline on navigated item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170145994"
+          }
+        ]
+      },
+      {
         "id": "b6f04848db1b27f01897227d1e6ee7d96fcb0077",
         "type": "FIX",
         "text": " Field: clear invalid input and error for unit/currency",
