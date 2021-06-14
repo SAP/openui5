@@ -5,14 +5,15 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (Log, isEmptyObject, SyncPromise, _Cache, _GroupLock, _Helper, _Parser, _Requestor,
-		TestUtils) {
+], function (Log, isEmptyObject, SyncPromise, ODataUtils, _Cache, _GroupLock, _Helper, _Parser,
+		_Requestor, TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Cache",
@@ -4587,6 +4588,10 @@ sap.ui.define([
 			fnDataRequested = function () {},
 			aElements = [{ // a created element (transient or not)
 				"@$ui5._" : {
+					"transientPredicate" : "($uid=id-17-4)"
+				}
+			}, { // a created element (transient or not)
+				"@$ui5._" : {
 					"transientPredicate" : "($uid=id-1-23)"
 				}
 			}, { // a "normal" element
@@ -4599,10 +4604,11 @@ sap.ui.define([
 
 		oCache.aElements = aElements;
 		oCache.aElements.$count = 1;
-		oCache.aElements.$created = 1;
+		oCache.aElements.$created = 2;
 		oCache.iLimit = 1; // "the upper limit for the count": does not include created elements!
-		this.mock(oCache).expects("getReadRange").withExactArgs(0, 100, 0)
-			.returns({length : 100, start : 0});
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(oCache.aElements), 0, 100, 0, 2 + 1)
+			.returns([]);
 		this.mock(oCache).expects("requestElements").never();
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
@@ -4627,7 +4633,7 @@ sap.ui.define([
 			fnResolve = resolve;
 		});
 		oCache.aElements.$tail = new Promise(function () {}); // never resolved, must be ignored
-		this.mock(oCache).expects("getReadRange").never();
+		this.mock(ODataUtils).expects("_getReadIntervals").never();
 		this.mock(oCache).expects("requestElements").never();
 
 		// code under test
@@ -4898,77 +4904,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{ // no prefetch
-		range : [0, 10, 0],
-		expected : {start : 0, length : 10}
-	}, {
-		range : [40, 10, 0],
-		expected : {start : 40, length : 10}
-	}, {
-		current : [[40, 50]],
-		range : [40, 10, 0],
-		expected : {start : 40, length : 10}
-	}, {
-		current : [[50, 110]],
-		range : [100, 20, 0],
-		expected : {start : 100, length : 20}
-	}, { // initial read with prefetch
-		range : [0, 10, 100],
-		expected : {start : 0, length : 110}
-	}, { // iPrefetchLength / 2 available on both sides
-		current : [[0, 110]],
-		range : [50, 10, 100],
-		expected : {start : 50, length : 10}
-	}, { // missing a row at the end
-		current : [[0, 110]],
-		range : [51, 10, 100],
-		expected : {start : 51, length : 110}
-	}, { // missing a row before the start
-		current : [[100, 260]],
-		range : [149, 10, 100],
-		expected : {start : 49, length : 110}
-	}, { // missing a row before the start, do not read beyond 0
-		current : [[40, 200]],
-		range : [89, 10, 100],
-		expected : {start : 0, length : 99}
-	}, { // missing data on both sides, do not read beyond 0
-		range : [430, 10, 100],
-		expected : {start : 330, length : 210}
-	}, { // missing data on both sides, do not read beyond 0
-		current : [[40, 100]],
-		range : [89, 10, 100],
-		expected : {start : 0, length : 199}
-	}, { // fetch all data
-		range : [0, 0, Infinity],
-		expected : {start : 0, length : Infinity}
-	}, { // fetch all data with offset
-		range : [1, 0, Infinity],
-		expected : {start : 0, length : Infinity}
-	}].forEach(function (oFixture) {
-		QUnit.test("CollectionCache#getReadRange: " + oFixture.range, function (assert) {
-			var oCache = _Cache.create(this.oRequestor, "TEAMS"),
-				aElements = [],
-				oResult;
-
-			// prepare elements array
-			if (oFixture.current) {
-				oFixture.current.forEach(function (aRange) {
-					var i, n;
-
-					for (i = aRange[0], n = aRange[1]; i < n; i += 1) {
-						aElements[i] = i;
-					}
-				});
-			}
-			oCache.aElements = aElements;
-
-			oResult = oCache.getReadRange(oFixture.range[0], oFixture.range[1], oFixture.range[2]);
-
-			assert.deepEqual(oResult, oFixture.expected);
-		});
-	});
-
-	//*********************************************************************************************
 [false, true].forEach(function (bServerDrivenPaging) {
 	QUnit.test("CollectionCache#read: prefetch, SDP = " + bServerDrivenPaging, function (assert) {
 		var sResourcePath = "Employees",
@@ -4980,9 +4915,11 @@ sap.ui.define([
 			oUnlockedCopy = {};
 
 		oCache.bServerDrivenPaging = bServerDrivenPaging;
-		this.mock(oCache).expects("getReadRange").withExactArgs(20, 6, bServerDrivenPaging ? 0 : 10)
-			.returns({start : 15, length : 16}); // Note: not necessarily a realistic example
-
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(sinon.match.same(oCache.aElements), 20, 6, bServerDrivenPaging ? 0 : 10,
+				oCache.aElements.$created + oCache.iLimit)
+			// Note: not necessarily a realistic example
+			.returns([{start: 15, end: 31}]);
 		this.mock(oReadGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oUnlockedCopy);
 		this.mock(oReadGroupLock).expects("unlock").withExactArgs();
 		this.oRequestorMock.expects("request")
@@ -5833,7 +5770,7 @@ sap.ui.define([
 
 		// code under test
 		return oCache.read(1, 0, Infinity, oGroupLock).then(function (oResult) {
-			assert.deepEqual(oResult, createResult(1, 6, undefined, true));
+			assert.deepEqual(oResult, createResult(1, 0, undefined, true));
 		});
 	});
 
@@ -5888,8 +5825,8 @@ sap.ui.define([
 				.resolves(createResult(10, 7));
 
 			// code under test
-			return oCache.read(1, 0, Infinity, oReadGroupLock).then(function (oResult) {
-				assert.deepEqual(oResult, createResult(1, 16, undefined, true));
+			return oCache.read(1, 3, Infinity, oReadGroupLock).then(function (oResult) {
+				assert.deepEqual(oResult, createResult(1, 3, undefined, true));
 			});
 		});
 	});
@@ -5905,7 +5842,7 @@ sap.ui.define([
 		oCache.aElements.$tail = new Promise(function (resolve) {
 			fnResolve = resolve;
 		});
-		this.mock(oCache).expects("getReadRange").never(); // not yet
+		this.mock(ODataUtils).expects("_getReadIntervals").never(); // not yet
 		this.mock(oCache).expects("requestElements").never(); // not yet
 
 		// code under test

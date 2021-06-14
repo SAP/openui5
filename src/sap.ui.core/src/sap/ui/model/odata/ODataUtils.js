@@ -798,6 +798,113 @@ sap.ui.define([
 		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase).replace(rNormalizeBinary, fnNormalizeBinary);
 	};
 
+	/**
+	 * Returns the array of gaps in the given array of elements, taking the given start index,
+	 * length, and prefetch length into consideration.
+	 *
+	 * @param {any[]} aElements
+	 *   The array of available elements; it is used read-only to check if an element at a given
+	 *   index is not yet available (that is, is <code>undefined</code>)
+	 * @param {number} iStart
+	 *   The start index of the range
+	 * @param {number} iLength
+	 *   The length of the range; <code>Infinity</code> is supported
+	 * @param {number} iPrefetchLength
+	 *   The number of elements to read before and after the given range; with this it is possible
+	 *   to prefetch data for a paged access. The read intervals are computed so that at least half
+	 *   the prefetch length is available left and right of the requested range without a further
+	 *   request. If data is missing on one side, the full prefetch length is added at this side.
+	 *   <code>Infinity</code> is supported.
+	 * @param {number} [iLimit=Infinity]
+	 *   An upper limit on the number of elements
+	 * @returns {object[]}
+	 *   Array of right open intervals which need to be read; each interval is an object with
+	 *   properties <code>start</code> and <code>end</code> with the interval's start and end index;
+	 *   empty if no intervals need to be read
+	 *
+	 * @private
+	 * @see sap.ui.model.ListBinding#getContexts
+	 */
+	ODataUtils._getReadIntervals = function (aElements, iStart, iLength, iPrefetchLength, iLimit) {
+		var i, iEnd, n,
+			iGapStart = -1,
+			aIntervals = [],
+			oRange = ODataUtils._getReadRange(aElements, iStart, iLength, iPrefetchLength);
+
+		if (iLimit === undefined) {
+			iLimit = Infinity;
+		}
+		iEnd = Math.min(oRange.start + oRange.length, iLimit);
+		n = Math.min(iEnd, Math.max(oRange.start, aElements.length) + 1);
+
+		for (i = oRange.start; i < n; i += 1) {
+			if (aElements[i] !== undefined) {
+				if (iGapStart >= 0) {
+					aIntervals.push({start : iGapStart, end : i});
+					iGapStart = -1;
+				}
+			} else if (iGapStart < 0) {
+				iGapStart = i;
+			}
+		}
+		if (iGapStart >= 0) {
+			aIntervals.push({start : iGapStart, end : iEnd});
+		}
+
+		return aIntervals;
+	};
+
+	/**
+	 * Calculates the index range to be read for the given start, length and prefetch length.
+	 * Checks if <code>aElements</code> entries are available for half the prefetch length left and
+	 * right to it. If not, the full prefetch length is added to this side.
+	 *
+	 * @param {object[]} aElements
+	 *   The array of available elements
+	 * @param {number} iStart
+	 *   The start index for the data request
+	 * @param {number} iLength
+	 *   The number of requested entries
+	 * @param {number} iPrefetchLength
+	 *   The number of entries to prefetch before and after the given range; <code>Infinity</code>
+	 *   is supported
+	 * @returns {object}
+	 *   An object with a member <code>start</code> for the start index for the next read and
+	 *   <code>length</code> for the number of entries to be read
+	 *
+	 * @private
+	 */
+	ODataUtils._getReadRange = function (aElements, iStart, iLength, iPrefetchLength) {
+		// Checks whether aElements contains at least one <code>undefined</code> entry within the
+		// given start (inclusive) and end (exclusive).
+		function isDataMissing(iStart, iEnd) {
+			var i;
+			for (i = iStart; i < iEnd; i += 1) {
+				if (aElements[i] === undefined) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		if (isDataMissing(iStart + iLength, iStart + iLength + iPrefetchLength / 2)) {
+			iLength += iPrefetchLength;
+		}
+		if (isDataMissing(Math.max(iStart - iPrefetchLength / 2, 0), iStart)) {
+			iLength += iPrefetchLength;
+			iStart -= iPrefetchLength;
+			if (iStart < 0) {
+				iLength += iStart; // Note: Infinity + -Infinity === NaN
+				if (isNaN(iLength)) {
+					iLength = Infinity;
+				}
+				iStart = 0;
+			}
+		}
+
+		return {length : iLength, start : iStart};
+	};
+
 	return ODataUtils;
 
 }, /* bExport= */ true);
