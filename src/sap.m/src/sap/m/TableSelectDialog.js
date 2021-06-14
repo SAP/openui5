@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
-	'sap/ui/core/theming/Parameters',
 	'sap/m/Title',
 	'sap/base/Log'
 ], function (
@@ -32,10 +31,9 @@ sap.ui.define([
 	Text,
 	BusyIndicator,
 	Bar,
-	Parameters,
 	Title,
-	Log) {
-
+	Log
+) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -441,10 +439,6 @@ sap.ui.define([
 		}).addStyleClass("sapMTableSelectDialog");
 		this._dialog = this._oDialog; // for downward compatibility
 		this.setAggregation("_dialog", this._oDialog);
-
-		// internally set top and bottom margin of the dialog to 8rem respectively
-		// CSN# 333642/2014: in base theme the parameter sapUiFontSize is "medium", implement a fallback
-		this._oDialog._iVMargin = 8 * (parseInt(Parameters.get("sapUiFontSize")) || 16); //128
 
 		// helper variables for search update behaviour
 		this._sSearchFieldValue = "";

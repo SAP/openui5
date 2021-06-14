@@ -18,7 +18,6 @@ sap.ui.define([
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/m/Title',
-	'sap/ui/core/theming/Parameters',
 	"sap/base/Log"
 ],
 function(
@@ -36,12 +35,9 @@ function(
 	BusyIndicator,
 	Bar,
 	Title,
-	Parameters,
 	Log
-	) {
+) {
 	"use strict";
-
-
 
 	// shortcut for sap.m.ListMode
 	var ListMode = library.ListMode;
@@ -429,10 +425,6 @@ function(
 		// for downward compatibility reasons
 		this._dialog = this._oDialog;
 		this.setAggregation("_dialog", this._oDialog);
-
-		// internally set top and bottom margin of the dialog to 4rem respectively
-		// CSN# 333642/2014: in base theme the parameter sapUiFontSize is "medium", implement a fallback
-		this._oDialog._iVMargin = 8 * (parseInt(Parameters.get("sapUiFontSize")) || 16); // 128
 
 		// helper variables for search update behaviour
 		this._sSearchFieldValue = "";
