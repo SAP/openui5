@@ -23,7 +23,7 @@ sap.ui.define([
 
 	QUnit.module("Colors", {
 		beforeEach: function () {
-			this.COLOR_FROM_CHART_PALETTE = "COLOR_FROM_CHART_PALETTE";
+			this.COLOR_FROM_CHART_PALETTE = "sapUi_COLOR_FROM_CHART_PALETTE";
 			this.COLOR_FROM_VALUE_COLOR = ValueColor.Good;
 			this.COLOR_CSS = "aquamarine";
 
@@ -45,29 +45,29 @@ sap.ui.define([
 				{ legendTitle: "Bar2" },
 				{ legendTitle: "Bar3" }
 			], "");
+
+			sinon.stub(Parameters, "get")
+				.withArgs(sinon.match({ name: [this.COLOR_FROM_CHART_PALETTE] }))
+				.returns("rgb(1, 1, 1)");
 		},
 		afterEach: function () {
 			this.oMicrochartLegend.destroy();
 			this.oMicrochartLegend = null;
 			this.oChartStub.destroy();
 			this.oChartStub = null;
+			Parameters.get.restore();
 		}
 	});
 
 	QUnit.test("Legend item color from chart palette", function (assert) {
 		// arrange
 		var sExpectedBackground = "rgb(1, 1, 1)";
-		sinon.stub(Parameters, "get").withArgs(this.COLOR_FROM_CHART_PALETTE).returns(sExpectedBackground);
-
 		this.oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 		var oFirstBarBackground = this.oMicrochartLegend.$().find(".sapUiIntMicrochartLegendItem :first-child")[0].style.background;
 
 		// assert
 		assert.strictEqual(oFirstBarBackground, sExpectedBackground, "The item should have expected background from chart color palette.");
-
-		// clean up
-		Parameters.get.restore();
 	});
 
 	QUnit.test("Legend item color from ValueColor enumeration", function (assert) {

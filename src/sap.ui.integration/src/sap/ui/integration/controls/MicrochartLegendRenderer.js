@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	"sap/m/library",
-	"sap/ui/core/Core",
-	"sap/ui/core/theming/Parameters"
-], function(mLibrary, Core, Parameters) {
+	"sap/ui/core/Core"
+], function(mLibrary, Core) {
 	"use strict";
 
 	var ValueColor = mLibrary.ValueColor;
@@ -38,7 +37,7 @@ sap.ui.define([
 				.openEnd();
 
 			oRm.openStart("div");
-			MicrochartLegendRenderer.addColor(oRm, sColor);
+			MicrochartLegendRenderer.addColor(oRm, oMicrochartLegend, sColor);
 			oRm.openEnd().close("div");
 
 			oRm.renderControl(aTexts[i]);
@@ -49,11 +48,11 @@ sap.ui.define([
 		oRm.close("div");
 	};
 
-	MicrochartLegendRenderer.addColor = function (oRm, sColor) {
+	MicrochartLegendRenderer.addColor = function (oRm, oMicrochartLegend, sColor) {
 		if (ValueColor[sColor]) {
 			oRm.class("sapUiIntMicrochartLegendItem" + sColor);
 		} else {
-			var sColorAsCSSValue = Parameters.get(sColor) || sColor; // A value from the chart palette OR any CSS value.
+			var sColorAsCSSValue = oMicrochartLegend._mLegendColors[sColor] || sColor; // A value from the chart palette OR any CSS value.
 			oRm.style("background", sColorAsCSSValue);
 		}
 	};
