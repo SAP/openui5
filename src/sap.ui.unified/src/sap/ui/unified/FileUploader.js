@@ -946,10 +946,6 @@ sap.ui.define([
 
 		this.oFilePath.$().find('input').removeAttr("role").attr("aria-live", "polite");
 
-		if (this.getValueState() === ValueState.Error && this.getEnabled()) {
-			this.oBrowse.$().attr("aria-invalid", "true");
-		}
-
 		if (this._submitAfterRendering) {
 			this._submitAndResetValue();
 			this._submitAfterRendering = false;
@@ -1066,24 +1062,22 @@ sap.ui.define([
 			Log.warning("Setting the valueState property with the combination of libraries used is not supported.", this);
 		}
 
-		if (this.oBrowse.getDomRef()) {
-			if (sValueState === ValueState.Error && this.getEnabled()) {
-				this.oBrowse.$().attr("aria-invalid", "true");
-			} else  {
-				this.oBrowse.$().removeAttr("aria-invalid");
-			}
-		}
+		var bControlFocused = containsOrEquals(this.getDomRef(), document.activeElement);
 
-		if (containsOrEquals(this.getDomRef(), document.activeElement)) {
-			switch (sValueState) {
-				case ValueState.Error:
-				case ValueState.Warning:
-				case ValueState.Success:
+		switch (sValueState) {
+			case ValueState.Error:
+			case ValueState.Warning:
+			case ValueState.Success:
+				this.oBrowse.addAssociation("ariaDescribedBy", this.oFilePath.getId() + "-message-sr");
+				if (bControlFocused) {
 					this.openValueStateMessage();
-					break;
-				default:
+				}
+				break;
+			default:
+				this.oBrowse.removeAssociation("ariaDescribedBy", this.oFilePath.getId() + "-message-sr");
+				if (bControlFocused) {
 					this.closeValueStateMessage();
-			}
+				}
 		}
 
 		return this;
@@ -1987,7 +1981,6 @@ sap.ui.define([
 
 		if (this.oFilePath.openValueStateMessage) {
 			this.oFilePath.openValueStateMessage();
-			this.oBrowse.$().addAriaDescribedBy(this.oFilePath.getId() + "-message");
 		}
 
 	};
@@ -1996,7 +1989,6 @@ sap.ui.define([
 
 		if (this.oFilePath.closeValueStateMessage) {
 			this.oFilePath.closeValueStateMessage();
-			this.oBrowse.$().removeAriaDescribedBy(this.oFilePath.getId() + "-message");
 		}
 
 	};
