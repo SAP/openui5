@@ -1865,6 +1865,29 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.test("Selecting a month from CustomMonthPicker sets correct date, when the new month is with fewer days", function(assert) {
+		// Prepare
+		var oDP = new DatePicker({
+				dateValue: new Date(2021, 4, 31),
+				displayFormat: "yyyy+++++MM"
+			}).placeAt("qunit-fixture"),
+			oCustomMonthPicker;
+
+		sap.ui.getCore().applyChanges();
+		oDP.toggleOpen(oDP.isOpen());
+		oCustomMonthPicker = oDP._getCalendar();
+
+		// Act
+		oCustomMonthPicker._getMonthPicker().setMonth(8);
+		oCustomMonthPicker._selectMonth();
+
+		// Assert
+		assert.strictEqual(oDP.getDateValue().getTime(), new Date(2021, 8, 1).getTime(),"Date is correct");
+
+		// Clean
+		oDP.destroy();
+	});
+
 	QUnit.test("Open popup with Calendar when the display format is dd/MM/YYYY where YYYY results in weekYear for PatternSymbolSettings.type", function(assert) {
 		// Prepare
 		var oDP = new DatePicker({
