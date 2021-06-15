@@ -20,8 +20,8 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @class
 	 * @extends sap.ui.webc.common.WebComponent
+	 * @class
 	 *
 	 * The <code>sap.ui.webc.main.SuggestionItem</code> represents the suggestion item of the <code>sap.ui.webc.main.Input</code>.
 	 *
@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.92.0
-	 * @experimantal Since 1.92.0 This control is experimental and its API might change significantly.
+	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.SuggestionItem
 	 * @implements sap.ui.webc.main.IInputSuggestionItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

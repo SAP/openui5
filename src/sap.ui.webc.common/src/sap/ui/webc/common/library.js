@@ -38,13 +38,27 @@ sap.ui.define([
 	});
 
 	/**
-	 * SAPUI5 lib
+	 * Namespace for UI5 Web Components Retrofit libraries
+	 *
+	 * @namespace
+	 * @alias sap.ui.webc
+	 * @author SAP SE
+	 * @version ${version}
+	 * @public
+	 * @since 1.92.0
+	 * @experimental Since 1.92.0
+	 */
+
+	/**
+	 * UI5 library: sap.ui.webc.common
 	 *
 	 * @namespace
 	 * @alias sap.ui.webc.common
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
+	 * @since 1.92.0
+	 * @experimental Since 1.92.0
 	 */
 	var thisLib = sap.ui.webc.common;
 
