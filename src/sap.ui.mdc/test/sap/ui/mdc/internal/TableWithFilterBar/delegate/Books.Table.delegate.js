@@ -9,18 +9,18 @@ sap.ui.define([
 		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
 		return oODataProps.then(function (aProps) {
 			var aFrontProps = [{
-				description: undefined,
 				filterable: true,
 				label: "Author",
-				maxLength: undefined,
 				name: "author/name",
 				path: "author/name",
-				precision: undefined,
-				scale: undefined,
 				sortable: false,
 				type: "Edm.String",
 				typeConfig: oTable.getTypeUtil().getTypeConfig("Edm.String")
 			}];
+
+			// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
+			// Provide the fieldHelp for some of the properties. Without fieldHelp the filter panel will not provide the expected VH.
+			// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
 			aProps.forEach(function(oProperty){
 				if (oProperty.name === "language_code") {
 					oProperty.fieldHelp = "FHLanguage";
@@ -99,12 +99,11 @@ sap.ui.define([
 	BooksTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
-			var aSmallCols = ["actions", "stock", "ID"];
 
 			if (oProperty.name === "title") {
 				oColumn.setWidth("15rem");
 			} else if (oProperty.name != "descr") {
-				oColumn.setWidth(aSmallCols.indexOf(oProperty.name) != -1 ? "6rem" : "10rem");
+				oColumn.setWidth(["actions", "stock", "ID"].indexOf(oProperty.name) != -1 ? "6rem" : "10rem");
 			}
 
 			oColumn.getTemplate().destroy();
