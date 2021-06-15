@@ -4,22 +4,22 @@
 
 // Provides control sap.m.IconTabBarSelectList.
 sap.ui.define([
-	'./library',
-	'sap/ui/core/Control',
-	"sap/ui/core/Core",
-	'sap/ui/core/delegate/ItemNavigation',
-	'./IconTabBarDragAndDropUtil',
-	'sap/ui/core/library',
-	'./IconTabBarSelectListRenderer',
+	"./library",
+	"./IconTabBarDragAndDropUtil",
+	"./IconTabBarSelectListRenderer",
+	"sap/ui/core/Control",
+	"sap/ui/core/delegate/ItemNavigation",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	library,
-	Control,
-	Core,
-	ItemNavigation,
 	IconTabBarDragAndDropUtil,
-	coreLibrary,
 	IconTabBarSelectListRenderer,
+	Control,
+	ItemNavigation,
+	Parameters,
+	coreLibrary,
 	jQuery
 ) {
 	"use strict";
@@ -206,6 +206,24 @@ sap.ui.define([
 	 */
 	IconTabBarSelectList.prototype._getIconTabHeader = function () {
 		return this._oIconTabHeader;
+	};
+
+	IconTabBarSelectList.prototype._getParams = function () {
+		var mParams = Object.assign({
+			"_sap_m_IconTabBar_SelectListItem_PaddingLeft": "0.5rem",
+			"_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional": "0"
+		}, Parameters.get({
+			name: [
+				"_sap_m_IconTabBar_SelectListItem_PaddingLeft",
+				"_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional"
+			],
+			callback: this.invalidate.bind(this)
+		}));
+
+		return {
+			fNestedItemPaddingLeft: Number.parseFloat(mParams["_sap_m_IconTabBar_SelectListItem_PaddingLeft"]),
+			fAdditionalPadding: Number.parseFloat(mParams["_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional"])
+		};
 	};
 
 	/**

@@ -4,12 +4,11 @@
 
 // Provides default renderer for control sap.m.IconTabBarSelectList
 sap.ui.define([
-	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/library"
-], function (Parameters, coreLibary) {
+], function (coreLibrary) {
 	"use strict";
 
-	var IconColor = coreLibary.IconColor;
+	var IconColor = coreLibrary.IconColor;
 
 	/**
 	 * IconTabBarSelectList renderer.
@@ -20,20 +19,19 @@ sap.ui.define([
 		apiVersion: 2
 	};
 
-	IconTabBarSelectListRenderer.fNestedItemPaddingLeft = Number.parseFloat(Parameters.get("_sap_m_IconTabBar_SelectListItem_PaddingLeft"));
-
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.m.IconTabBarSelectList} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.IconTabBarSelectList} oSelectList an object representation of the control that should be rendered
 	 */
 	IconTabBarSelectListRenderer.render = function(oRM, oSelectList) {
-		var aItems = oSelectList.getVisibleItems(),
+		var mParams = oSelectList._getParams(),
+			aItems = oSelectList.getVisibleItems(),
 			oIconTabHeader = oSelectList._oIconTabHeader,
 			bTextOnly = oIconTabHeader._checkTextOnly(),
 			iTotalItemsCount = oIconTabHeader.getVisibleTabFilters().length,
-			fNestedItemPaddingLeft = this.fNestedItemPaddingLeft,
+			fNestedItemPaddingLeft = mParams.fNestedItemPaddingLeft,
 			bExtraIndent = false;
 
 		// find if in that level of nesting there is some semantic icon set
@@ -44,7 +42,7 @@ sap.ui.define([
 
 		oSelectList.checkIconOnly();
 
-		var fAdditionalPadding = Number.parseFloat(Parameters.get("_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional"));
+		var fAdditionalPadding = mParams.fAdditionalPadding;
 		if (bHasSemanticColor && fAdditionalPadding) {
 			fNestedItemPaddingLeft += fAdditionalPadding;
 			bExtraIndent = true;
