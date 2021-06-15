@@ -86,8 +86,12 @@ html[data-sap-ui-os^="Android"] {
 	line-height: 2rem;
 }
 
-.sapMLIBActive .sapMObjectNumber {
-	color: @sapUiListActiveTextColor;
+.sapMLIBActive {
+	.sapMObjectNumberText,
+	.sapMObjectNumberUnit {
+		color: @sapUiListActiveTextColor;
+		text-shadow: none;
+	}
 }
 
 .sapMObjectNumberStatusNone {
