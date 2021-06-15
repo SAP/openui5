@@ -983,6 +983,10 @@
 	});
 	oMultiComboBoxWithGrouping.setModel(oGroupedModel, "groupedModel");
 
+	var oEmptyMultiComboBox = new sap.m.MultiComboBox({
+		placeholder: "MultiComboBox with no items"
+	});
+
 	// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
 	var oCustomCssButton = new sap.m.Button ("customCssButton",{
 			text: "Toggle custom CSS for visual test",
@@ -1011,7 +1015,7 @@
 			oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
 			oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
 			oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken, MultiComboBoxFourItems,
-			oMultiComboBoxBinding, oMultiComboBoxWithGrouping, oToolbar
+			oMultiComboBoxBinding, oMultiComboBoxWithGrouping, oToolbar, oEmptyMultiComboBox
 		],
 		showNavButton : true,
 		navButtonPress : function() {
