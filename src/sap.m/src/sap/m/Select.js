@@ -1438,14 +1438,14 @@ function(
 		 * @private
 		 */
 		Select.prototype.ontouchstart = function(oEvent) {
-
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (this.getEnabled() && this.getEditable() && this.isOpenArea(oEvent.target)) {
+			if (this.getEnabled() && this.getEditable()) {
 
 				// add the active state to the Select's field
 				this.addStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
+				this.focus();
 			}
 		};
 
