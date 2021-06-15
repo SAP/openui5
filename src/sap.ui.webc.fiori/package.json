@@ -1,7 +1,7 @@
 {
   "name": "@openui5/sap.ui.webc.fiori",
   "version": "1.92.0-SNAPSHOT",
-  "description": "OpenUI5 UI Library sap.ui.webc.main",
+  "description": "OpenUI5 UI Library sap.ui.webc.fiori",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
   "keywords": [

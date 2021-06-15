@@ -16,8 +16,8 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @class
 	 * @extends sap.ui.webc.common.WebComponent
+	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.main.Dialog</code> component is used to temporarily display some information in a size-limited window in front of the regular app screen. It is used to prompt the user for an action or a confirmation. The <code>sap.ui.webc.main.Dialog</code> interrupts the current app processing as it is the only focused UI element and the main screen is dimmed/blocked. The dialog combines concepts known from other technologies where the windows have names such as dialog box, dialog window, pop-up, pop-up window, alert box, or message box. <br>
 	 * <br>
@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.92.0
-	 * @experimantal Since 1.92.0 This control is experimental and its API might change significantly.
+	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Dialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

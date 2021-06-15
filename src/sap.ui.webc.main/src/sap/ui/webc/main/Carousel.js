@@ -18,8 +18,8 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @class
 	 * @extends sap.ui.webc.common.WebComponent
+	 * @class
 	 *
 	 * <h3>Overview</h3> The Carousel allows the user to browse through a set of items. The component is mostly used for showing a gallery of images, but can hold any other HTML element. <br>
 	 * There are several ways to perform navigation:
@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.92.0
-	 * @experimantal Since 1.92.0 This control is experimental and its API might change significantly.
+	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Carousel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

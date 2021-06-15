@@ -63,13 +63,15 @@ sap.ui.define([
 		});
 
 		/**
-		 * SAPUI5 library with controls based on UI5 Web Components
+		 * UI5 library: sap.ui.webc.fiori
 		 *
 		 * @namespace
 		 * @alias sap.ui.webc.fiori
 		 * @author SAP SE
 		 * @version ${version}
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 */
 		var thisLib = sap.ui.webc.fiori;
 
@@ -80,6 +82,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.fiori.INotificationAction
 		 * @interface
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -89,6 +93,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.fiori.INotificationListItem
 		 * @interface
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -98,6 +104,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.fiori.IProductSwitchItem
 		 * @interface
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -107,6 +115,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.fiori.IShellBarItem
 		 * @interface
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -116,6 +126,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.fiori.ISideNavigationItem
 		 * @interface
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -125,6 +137,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.fiori.ISideNavigationSubItem
 		 * @interface
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -134,6 +148,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.fiori.ITimelineItem
 		 * @interface
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -143,6 +159,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.fiori.IUploadCollectionItem
 		 * @interface
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -152,6 +170,8 @@ sap.ui.define([
 		 * @name sap.ui.webc.fiori.IWizardStep
 		 * @interface
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -160,6 +180,8 @@ sap.ui.define([
 		 *
 		 * @enum {string}
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.BarDesign = {
@@ -195,6 +217,8 @@ sap.ui.define([
 		 *
 		 * @enum {string}
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.FCLLayout = {
@@ -276,6 +300,8 @@ Use to display both a master and a detail page when the user should focus on the
 		 *
 		 * @enum {string}
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.PageBackgroundDesign = {
@@ -305,6 +331,8 @@ Use to display both a master and a detail page when the user should focus on the
 		 *
 		 * @enum {string}
 		 * @public
+		 * @since 1.92.0
+		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.UploadState = {

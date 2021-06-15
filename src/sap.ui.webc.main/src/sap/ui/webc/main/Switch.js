@@ -18,8 +18,8 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @class
 	 * @extends sap.ui.webc.common.WebComponent
+	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.main.Switch</code> component is used for changing between binary states. <br>
 	 * The component can display texts, that will be switched, based on the component state, via the <code>textOn</code> and <code>textOff</code> properties, but texts longer than 3 letters will be cutted off. <br>
@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.92.0
-	 * @experimantal Since 1.92.0 This control is experimental and its API might change significantly.
+	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Switch
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
