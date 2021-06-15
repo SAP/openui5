@@ -40,7 +40,7 @@ sap.ui.define([
 	 * The quick view is used to show business information on either a person or an entity (e.g. a company). It uses a set of pre-defined controls.
 	 * Objects can be linked together and you can navigate between several objects. An unlimited number of objects can be linked.
 	 * <h3>Structure</h3>
-	 * Each card is represented by a {@link sap.m.QuickViewPage} which holds all the information (icon, title, header, description) for the object.
+	 * Each card is represented by a {@link sap.m.QuickViewPage} which holds all the information (avatar, title, header, description) for the object.
 	 * A single quick view can hold multiple objects, each showing information on a single entity.
 	 * <h3>Usage</h3>
 	 * <h4>When to use</h4>

@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.QuickViewFallbackIcon.V",
+			"viewName": "sap.m.sample.QuickViewAvatarConfiguration.V",
 			"type": "XML",
 			"async": true
 		},
@@ -23,7 +23,7 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"QuickViewFallbackIcon.fragment.xml",
+					"QuickViewAvatarConfiguration.fragment.xml",
 					"model/data.json",
 					"manifest.json"
 				]

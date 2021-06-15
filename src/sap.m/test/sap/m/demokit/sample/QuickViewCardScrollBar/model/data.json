@@ -6,6 +6,7 @@
 			"title": "Adventure Company",
 			"titleUrl": "http://sap.com",
 			"icon": "sap-icon://building",
+			"displayShape": "Square",
 			"description": "John Doe",
 			"groups": [
 				{
@@ -57,6 +58,7 @@
 			"header": "Employee Info",
 			"title": "John Doe",
 			"icon": "sap-icon://person-placeholder",
+			"displayShape": "Circle",
 			"description": "Department Manager",
 			"groups": [
 				{

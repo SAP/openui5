@@ -5,7 +5,8 @@
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-compatVersion="edge">
 	</script>
 
 	<script>
@@ -293,21 +294,6 @@
 			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function() {
 				oQuickView.openBy(this);
-			}
-		});
-
-		var oModifyJsonButton = new sap.m.Button({
-			text: "Modify binded data",
-			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
-			press: function() {
-				for(var i in mData.pages[0].groups[1].elements) {
-					var element = mData.pages[0].groups[1].elements[i];
-					var tmp = element.label;
-					element.label = element.value;
-					element.value = tmp;
-				}
-				var newData = $.extend({}, mData, true);
-				oModel.setData(newData);
 			}
 		});
 
@@ -609,6 +595,80 @@
 			]
 		});
 
+		var oQuickView6 = new sap.m.QuickView({
+			placement : sap.m.PlacementType.VerticalPreferedBottom,
+			pages : [
+				new sap.m.QuickViewPage({
+					header: "Financial Department",
+					title : "Jane Doe",
+					description : "Financial Advisor",
+					avatar: new sap.m.Avatar({
+						initials: "JD",
+						displayShape: "Circle" 
+					}),
+					groups : [
+						new sap.m.QuickViewGroup({
+							heading : "Contact Details",
+							elements : [
+								new sap.m.QuickViewGroupElement({
+									label : "Address",
+									value : "Sunset Blvd. 7, Los Angeles"
+								}),
+								new sap.m.QuickViewGroupElement({
+									label : "Mobile",
+									value : "+123456789",
+									type : sap.m.QuickViewGroupElementType.phone
+								}),
+								new sap.m.QuickViewGroupElement({
+									label : "Email",
+									value : "jane.doe@sap.com",
+									type : sap.m.QuickViewGroupElementType.email
+								})
+							]
+						})
+					]
+				})
+			]
+		});
+
+		var oQuickView7 = new sap.m.QuickView({
+			placement : sap.m.PlacementType.VerticalPreferedBottom,
+			pages : [
+				new sap.m.QuickViewPage({
+					header	: "Store",
+					title	: "Lorem ipsum dolor sit amet",
+					titleUrl: "https://www.sap.com",
+					avatar: new sap.m.Avatar({
+						initials: "JD",
+						displayShape: "Circle",
+						detailBox: new sap.m.LightBox({
+							imageContent: sap.m.LightBoxItem({
+								imageSrc: "images/Woman_avatar_01.png",
+								title: "LightBox example"
+							})
+						})
+					}),
+					groups	: [
+						new sap.m.QuickViewGroup({
+							heading		: "Store details",
+							elements	: [
+								new sap.m.QuickViewGroupElement({
+									label	: "Address",
+									value	: "Sunset Blvd. 7, Los Angeles"
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Website",
+									value	: "https://www.sap.com",
+									url 	: "https://www.sap.com",
+									type	: sap.m.QuickViewGroupElementType.link
+								})
+							]
+						})
+					]
+				})
+			]
+		});
+
 		var oButton3 = new sap.m.Button({
 			text: "Open Quick View with binding and fallback images",
 			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
@@ -633,16 +693,33 @@
 			}
 		});
 
+		var oButton6 = new sap.m.Button({
+			text: "Open Quick View with avatar",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function() {
+				oQuickView6.openBy(this);
+			}
+		});
+
+		var oButton7 = new sap.m.Button({
+			text: "Open Quick View with detailBox (not recommended)",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+			press: function() {
+				oQuickView7.openBy(this);
+			}
+		});
+
 		// create and add a page with icon tab bar
 		var page = new sap.m.Page("quickViewPage", {
 			title : "Quick View",
 			content : [
 				oButton,
-				//oModifyJsonButton,
 				oSinglePageQuickViewButton,
 				oButton3,
 				oButton4,
 				oButton5,
+				oButton6,
+				oButton7,
 				oPanel
 			]
 		});

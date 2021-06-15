@@ -4,6 +4,7 @@
 		"header": "Employee Info",
 		"title": "Johnny Cash",
 		"icon": "sap-icon://person-placeholder",
+		"displayShape": "Circle",
 		"description": "Department Manager",
 		"groups": [
 			{
@@ -44,6 +45,7 @@
 		"header": "Employee Info",
 		"title": "James Bonus",
 		"icon": "sap-icon://person-placeholder",
+		"displayShape": "Circle",
 		"description": "Department Manager",
 		"groups": [
 			{
@@ -84,6 +86,7 @@
 		"header": "Employee Info",
 		"title": "Maria Leasing",
 		"icon": "sap-icon://person-placeholder",
+		"displayShape": "Circle",
 		"description": "Department Manager",
 		"groups": [
 			{
@@ -124,6 +127,7 @@
 		"header": "Employee Info",
 		"title": "Claudia Credit",
 		"icon": "sap-icon://person-placeholder",
+		"displayShape": "Circle",
 		"description": "Department Manager",
 		"groups": [
 			{

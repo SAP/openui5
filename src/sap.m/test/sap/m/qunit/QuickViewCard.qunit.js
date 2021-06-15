@@ -1,5 +1,5 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
@@ -21,10 +21,10 @@ sap.ui.define([
 	QuickViewGroup,
 	QuickViewGroupElement
 ) {
+	"use strict";
+
 	// shortcut for sap.m.QuickViewGroupElementType
 	var QuickViewGroupElementType = mobileLibrary.QuickViewGroupElementType;
-
-
 
 	//create JSON model instance
 	var oModel = new JSONModel();

@@ -1,25 +1,33 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/m/App",
+	"sap/m/Avatar",
+	"sap/m/library",
 	"sap/m/Page",
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
 	"sap/m/QuickViewGroupElement"
 ], function(
-	qutils,
 	JSONModel,
 	Core,
+	QUnitUtils,
 	App,
+	Avatar,
+	library,
 	Page,
 	QuickViewPage,
 	QuickViewGroup,
 	QuickViewGroupElement
 ) {
 	"use strict";
+
+	var AVATAR_INDEX = 0;
+
+	// shortcut for sap.m.AvatarShape
+	var AvatarShape = library.AvatarShape;
 
 	//create JSON model instance
 	var oModel = new JSONModel();
@@ -84,7 +92,7 @@ sap.ui.define([
 	var oApp = new App("myApp", {initialPage: "quickViewPage"});
 	oApp.placeAt("qunit-fixture");
 
-	// create and add a page with icon tab bar
+	// create and add a page
 	var oPage = new Page("quickViewPage", {
 		title: "Quick View Page"
 	});
@@ -193,64 +201,10 @@ sap.ui.define([
 		assert.strictEqual(this.oQuickViewPage.$().length, 1, "should render");
 	});
 
-	QUnit.module("Fallback icon", {
-		beforeEach: function () {
-			this.oQuickViewPage = getQuickViewPage();
-			this.oQuickViewPage.setModel(oModel);
-		},
-		afterEach: function () {
-			this.oQuickViewPage.destroy();
-			this.oQuickViewPage = null;
-		}
-	});
-
-	QUnit.test("Fallback icon when the real icon failed to load", function (assert) {
-		// Arrange
-		var FALLBACK_ICON_INDEX = 0,
-			IMAGE_INDEX = 1,
-			aHeaderContent,
-			oImage,
-			oFallbackIcon,
-			done = assert.async();
-
-		this.oQuickViewPage.setIcon("some/invalid/path");
-		this.oQuickViewPage.setFallbackIcon("sap-icon://error");
-		this.oQuickViewPage.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		aHeaderContent = this.oQuickViewPage._mPageContent.header.getContent();
-		oFallbackIcon = aHeaderContent[FALLBACK_ICON_INDEX];
-		oImage = aHeaderContent[IMAGE_INDEX];
-
-		oImage.$().on("error", function () {
-			// Assert
-			assert.notStrictEqual(oFallbackIcon.$().css("display"), "none", "The fallback icon should be displayed.");
-			assert.strictEqual(oImage.$().css("display"), "none", "The image should NOT be displayed.");
-
-			done();
-		});
-	});
-
-	QUnit.test("Fallback icon when the real icon is successfully loaded", function (assert) {
-		// Arrange
-		var FALLBACK_ICON_INDEX = 0,
-			aHeaderContent,
-			oFallbackIcon;
-
-		this.oQuickViewPage.setFallbackIcon("sap-icon://error");
-		this.oQuickViewPage.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		aHeaderContent = this.oQuickViewPage._mPageContent.header.getContent();
-		oFallbackIcon = aHeaderContent[FALLBACK_ICON_INDEX];
-
-		// Assert
-		assert.ok(oFallbackIcon.hasStyleClass("sapMQuickViewPageFallbackIconHidden"), "The fallback icon should NOT be displayed.");
-	});
-
-	QUnit.module("Private API", {
+	QUnit.module("Icon (deprecated)", {
 		beforeEach: function () {
 			this.oQuickViewPage = new QuickViewPage();
+			this.oQuickViewPage.placeAt("qunit-fixture");
 		},
 		afterEach: function () {
 			this.oQuickViewPage.destroy();
@@ -258,22 +212,101 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_createIcon", function (assert) {
+	QUnit.test("Deprecated property 'icon'", function (assert) {
 		// Arrange
-		var bDecorative = false,
-			sTooltip = "test tooltip",
-			sIconSrc = "sap-icon://error",
-			oIcon = this.oQuickViewPage._createIcon(sIconSrc, bDecorative, sTooltip);
+		var sIcon = "sap-icon://building";
+		this.oQuickViewPage.setIcon(sIcon);
+		Core.applyChanges();
+		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
 
 		// Assert
-		assert.ok(oIcon.isA("sap.ui.core.Icon"), "The method should return new Icon instance");
-		assert.strictEqual(oIcon.getDecorative(), bDecorative, "The 'decorative' property should be set");
-		assert.strictEqual(oIcon.getTooltip(), sTooltip, "The 'tooltip' property should be set");
-		assert.strictEqual(oIcon.getSrc(), sIconSrc, "The 'src' property should be set");
-		assert.strictEqual(oIcon.getUseIconTooltip(), false, "The 'useIconTooltip' should be 'false'");
+		assert.strictEqual(oAvatar.getSrc(), sIcon, "'icon' property should be correctly propagated to inner avatar");
+	});
 
-		// Clean up
-		oIcon.destroy();
-		oIcon = null;
+	QUnit.test("crossApplicationNavigation when property 'icon and 'titleUrl' are set", function (assert) {
+		// Arrange
+		var oStub = sinon.stub(this.oQuickViewPage, "_crossApplicationNavigation");
+		this.oQuickViewPage.setIcon("sap-icon://building").setTitleUrl("someTitleUrl");
+		Core.applyChanges();
+		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
+
+		// Act
+		QUnitUtils.triggerMouseEvent(oAvatar.getDomRef(), "tap");
+
+		// Assert
+		assert.ok(oStub.called, "crossApplicationNavigation should happen");
+	});
+
+	QUnit.test("Deprecated property 'fallbackIcon'", function (assert) {
+		// Arrange
+		var sFallbackIcon = "sap-icon://error";
+		this.oQuickViewPage.setIcon("some/invalid/image.jpg");
+		this.oQuickViewPage.setFallbackIcon(sFallbackIcon);
+		Core.applyChanges();
+		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
+
+		// Assert
+		assert.strictEqual(oAvatar.getFallbackIcon(), sFallbackIcon, "'fallbackIcon' property should be correctly propagated to inner avatar");
+	});
+
+	QUnit.module("Avatar", {
+		beforeEach: function () {
+			this.oQuickViewPage = new QuickViewPage();
+			this.oQuickViewPage.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oQuickViewPage.destroy();
+			this.oQuickViewPage = null;
+		}
+	});
+
+	QUnit.test("Properties are correctly cloned", function (assert) {
+		// Arrange
+		var oAvatar = new Avatar({
+			src: "sap-icon://error",
+			displayShape: AvatarShape.Square
+		});
+		this.oQuickViewPage.setAvatar(oAvatar);
+		Core.applyChanges();
+
+		var oRenderedAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
+
+		// Assert
+		assert.strictEqual(oRenderedAvatar.getSrc(), oAvatar.getSrc(), "Properties should have same values");
+		assert.strictEqual(oRenderedAvatar.getDisplayShape(), oAvatar.getDisplayShape(), "Properties should have same values");
+	});
+
+	QUnit.test("Properties are correctly cloned when they depend on binding context", function (assert) {
+		// Arrange
+		var oAvatar = new Avatar({
+			src: "{src}",
+			displayShape: "{displayShape}"
+		});
+		oAvatar.setModel(new JSONModel({
+			src: "sap-icon://error",
+			displayShape: AvatarShape.Square
+		}));
+		oAvatar.bindObject("/");
+		this.oQuickViewPage.setAvatar(oAvatar);
+		var oRenderedAvatar = this.oQuickViewPage._getAvatar();
+
+		// Assert
+		assert.strictEqual(oRenderedAvatar.getSrc(), oAvatar.getSrc(), "Properties should have same values");
+		assert.strictEqual(oRenderedAvatar.getDisplayShape(), oAvatar.getDisplayShape(), "Properties should have same values");
+	});
+
+	QUnit.test("Rendered avatar is correctly updated when the real avatar is updated", function (assert) {
+		// Arrange
+		var oAvatar = new Avatar({
+			src: "sap-icon://error"
+		});
+		this.oQuickViewPage.setAvatar(oAvatar);
+
+		// Act
+		oAvatar.setSrc("sap-icon://hint");
+		var oRenderedAvatar = this.oQuickViewPage._getAvatar();
+
+		// Assert
+		assert.strictEqual(oRenderedAvatar.getSrc(), "sap-icon://hint", "Properties should have same values");
 	});
 });

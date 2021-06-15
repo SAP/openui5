@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.m.sample.QuickViewFallbackIcon.Component", {
+	return UIComponent.extend("sap.m.sample.QuickViewAvatarConfiguration.Component", {
 
 		metadata: {
 			manifest: "json"

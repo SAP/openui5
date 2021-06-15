@@ -823,7 +823,7 @@
 		  "samples": [
 			"sap.m.sample.QuickView",
 			"sap.m.sample.QuickViewNavOrigin",
-			"sap.m.sample.QuickViewFallbackIcon"
+			"sap.m.sample.QuickViewAvatarConfiguration"
 		  ]
 		},
 		{
@@ -1707,27 +1707,27 @@
 		{
 		  "id": "sap.m.sample.QuickView",
 		  "name": "QuickView",
-		  "description": "QuickView embedded in popover"
+		  "description": "QuickView basic samples."
 		},
 		{
 		  "id": "sap.m.sample.QuickViewNavOrigin",
-		  "name": "QuickView with navigation and data binding",
-		  "description": "QuickView using navOrigin parameter when navigating"
+		  "name": "QuickView with Navigation and Data Binding",
+		  "description": "QuickView using navOrigin parameter when navigating."
 		},
 		{
-		  "id": "sap.m.sample.QuickViewFallbackIcon",
-		  "name": "QuickView with fallback icon",
-		  "description": "QuickView using a fallback icon when there are problems with loading."
+		  "id": "sap.m.sample.QuickViewAvatarConfiguration",
+		  "name": "QuickView with Different Configurations of Avatar",
+		  "description": "QuickView with fallback icon, initials, display shape and other avatar properties."
 		},
 		{
 		  "id": "sap.m.sample.QuickViewCard",
 		  "name": "QuickViewCard",
-		  "description": "QuickView embedded in container"
+		  "description": "QuickViewCard embedded in container"
 		},
 		{
 		  "id": "sap.m.sample.QuickViewCardScrollBar",
-		  "name": "QuickViewCard - Scroll example",
-		  "description": "QuickView embedded in container with scroll bar"
+		  "name": "QuickViewCard Scroll Example",
+		  "description": "QuickViewCard embedded in container with scroll bar"
 		},
 		{
 		  "id": "sap.m.sample.ResponsivePopover",
