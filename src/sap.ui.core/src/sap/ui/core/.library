@@ -232,6 +232,7 @@
         <exclude name="sap.ui.test.starter.runTest" />
         <exclude name="sap.ui.qunit." />
         <exclude name="sap.ui.thirdparty." />
+        <exclude name="sap.ui.model.odata.datajs" /> <!-- legacy redirect, only part of internal core overlay -->
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
