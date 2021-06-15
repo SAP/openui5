@@ -2,8 +2,14 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/test/Opa5", "sap/ui/core/library", "sap/ui/core/format/DateFormat", "test-resources/sap/ui/mdc/qunit/link/opa/test/Util", "sap/ui/test/matchers/PropertyStrictEquals"
-], function(Opa5, coreLibrary, DateFormat, TestUtil, PropertyStrictEquals) {
+	"sap/ui/test/Opa5",
+	"sap/ui/core/library",
+	"sap/ui/core/format/DateFormat",
+	"test-resources/sap/ui/mdc/qunit/link/opa/test/Util",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/Ancestor",
+	"./waitForPersonalizationDialog"
+], function(Opa5, coreLibrary, DateFormat, TestUtil, PropertyStrictEquals, Ancestor, waitForPersonalizationDialog) {
 	"use strict";
 	var Assertion = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Assertion", {
 		isTabSelected: function(oSegmentedButton, sTabName) {
@@ -58,15 +64,9 @@ sap.ui.define([
 			});
 		},
 		thePersonalizationDialogOpens: function() {
-			return this.waitFor({
-				controlType: "sap.m.Dialog",
-				check: function(aSelectionDialogs) {
-					return aSelectionDialogs.length > 0;
-				},
-				success: function(aSelectionDialogs) {
-					// aP13nDialogs[0].setShowResetEnabled(true); // workaround because changing filter selection (Action.iChangeFilterSelectionToDate())
-					// does not trigger enabling of "Restore" button
-					Opa5.assert.ok(aSelectionDialogs.length, 'Personalization Dialog should be open');
+			return waitForPersonalizationDialog.call(this, {
+				success: function(oSelectionDialog) {
+					Opa5.assert.ok(oSelectionDialog, 'Personalization Dialog should be open');
 				}
 			});
 		},
@@ -609,18 +609,26 @@ sap.ui.define([
 			});
 		},
 		iShouldSeeRestoreButtonWhichIsEnabled: function(bEnabled) {
-			return this.waitFor({
-				searchOpenDialogs: true,
-				visible: bEnabled,
-				controlType: "sap.m.Button",
-				success: function(aButtons) {
-					var aRestoreButtons = aButtons.filter(function(oButton) {
-						return oButton.getText() === TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.RESET");
+			return waitForPersonalizationDialog.call(this, {
+				success: function(oSelectionDialog) {
+					return this.waitFor({
+						searchOpenDialogs: true,
+						visible: bEnabled,
+						controlType: "sap.m.Button",
+						matchers: [
+							new PropertyStrictEquals({
+								name: "text",
+								value: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.RESET")
+							}),
+							new Ancestor(oSelectionDialog, false)
+						],
+						success: function(aButtons) {
+							Opa5.assert.equal(aButtons.length, 1);
+							Opa5.assert.ok(aButtons[0].getEnabled() === bEnabled, "The 'Restore' is " + (bEnabled ? "enabled" : "disabled"));
+						},
+						errorMessage: "The 'Restore' is not " + (bEnabled ? "enabled" : "disabled")
 					});
-					Opa5.assert.equal(aRestoreButtons.length, 1);
-					Opa5.assert.ok(aRestoreButtons[0].getEnabled() === bEnabled, "The 'Restore' is " + (bEnabled ? "enabled" : "disabled"));
-				},
-				errorMessage: "The 'Restore' is not " + (bEnabled ? "enabled" : "disabled")
+				}
 			});
 		},
 		// iShouldSeeSelectedVariant: function(sVariantName) {
