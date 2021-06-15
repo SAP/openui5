@@ -755,20 +755,37 @@ sap.ui.define([
              * @private
              */
             var fnSetArrowDimensions = function (oThis) {
+                var mParams = Object.assign({
+                    sapUiUx3ToolPopupArrowWidth: "13px",
+                    sapUiUx3ToolPopupArrowHeight: "24px",
+                    sapUiUx3ToolPopupArrowRightMarginCorrection: "-2px",
+                    sapUiUx3ToolPopupArrowRightMarginCorrectionInverted: "-7px"
+                }, Parameters.get({
+                    name: [
+                        "sapUiUx3ToolPopupArrowWidth",
+                        "sapUiUx3ToolPopupArrowHeight",
+                        "sapUiUx3ToolPopupArrowRightMarginCorrection",
+                        "sapUiUx3ToolPopupArrowRightMarginCorrectionInverted"
+                    ],
+                    callback: function () {
+                        oThis.invalidate();
+                    }
+                }));
+
                 var sParam = "sapUiUx3ToolPopupArrowWidth";
-                oThis.sArrowWidth = Parameters.get(sParam);
+                oThis.sArrowWidth = mParams[sParam];
                 oThis.iArrowWidth = parseInt(oThis.sArrowWidth);
 
                 sParam = "sapUiUx3ToolPopupArrowHeight";
-                oThis.sArrowHeight = Parameters.get(sParam);
+                oThis.sArrowHeight = mParams[sParam];
                 oThis.iArrowHeight = parseInt(oThis.sArrowHeight);
 
                 sParam = "sapUiUx3ToolPopupArrowRightMarginCorrection";
-                oThis.sArrowPadding = Parameters.get(sParam);
+                oThis.sArrowPadding = mParams[sParam];
                 oThis.iArrowPadding = parseInt(oThis.sArrowPadding);
 
                 sParam = "sapUiUx3ToolPopupArrowRightMarginCorrectionInverted";
-                oThis.sArrowPaddingInverted = Parameters.get(sParam);
+                oThis.sArrowPaddingInverted = mParams[sParam];
                 oThis.iArrowPaddingInverted = parseInt(oThis.sArrowPaddingInverted);
             };
 
@@ -1110,6 +1127,8 @@ sap.ui.define([
             };
 
             ToolPopup.prototype.onBeforeRendering = function () {
+                fnSetArrowDimensions(this);
+
                 var sInitialFocusId = this.getInitialFocus() || this._sInitialFocusId;
                 var sDefaultButtontId = this.getDefaultButton();
                 this._bFocusSet = true;
@@ -1302,7 +1321,14 @@ sap.ui.define([
             var fnUpdateThemeInverted = function (oThis) {
                 var sParam = "sapUiUx3ToolPopupInverted";
 
-                sParam = Parameters.get(sParam);
+                sParam = Parameters.get({
+                    name: sParam,
+                    callback: function (_sParam) {
+                        oThis._bThemeInverted = sParam === "true";
+                        oThis.invalidate();
+                    }
+                }) || "true";
+
                 oThis._bThemeInverted = sParam === "true";
             };
 
