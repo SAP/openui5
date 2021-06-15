@@ -1503,7 +1503,7 @@ sap.ui.define([
 		var fnCreateInternalContent = function() {
 			if (!this.bDelegateInitialized) {
 				// wait until delegate is loaded
-				this.awaitControlDelegate().then(function() { _createInternalContent.call(this); }.bind(this));
+				this.awaitControlDelegate().then(function() { _createInternalContentWrapper.call(this); }.bind(this));
 			} else {
 				_createInternalContent.call(this);
 			}
