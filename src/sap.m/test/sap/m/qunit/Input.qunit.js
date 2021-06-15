@@ -231,6 +231,21 @@ sap.ui.define([
 		oInput. destroy();
 	});
 
+	QUnit.test("sTypedInValue should be reset when setValue API is used", function(assert) {
+		// Arrange
+		var oInput = new Input();
+		oInput._setTypedInValue("not empty");
+
+		// Act
+		oInput.setValue("");
+
+		// Assert
+		assert.equal(oInput._getTypedInValue(), "", "_sTypedInValue is initially empty string");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Change", function(assert) {
 		i1.setValue("new");
 		sap.ui.getCore().applyChanges();
