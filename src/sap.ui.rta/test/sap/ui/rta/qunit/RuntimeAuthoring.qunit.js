@@ -183,24 +183,82 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when setMode is called", function(assert) {
+		QUnit.test("when Mode is changed from adaptation to navigation and back to adaptation", function(assert) {
 			var oTabhandlingPlugin = this.oRta.getPlugins()["tabHandling"];
 			var oTabHandlingRemoveSpy = sandbox.spy(oTabhandlingPlugin, "removeTabIndex");
 			var oTabHandlingRestoreSpy = sandbox.spy(oTabhandlingPlugin, "restoreTabIndex");
+			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabhandlingPlugin, "removeOverlayTabIndex");
+			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabhandlingPlugin, "restoreOverlayTabIndex");
 			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
 
 			this.oRta.setMode("navigation");
-			assert.notOk(this.oRta._oDesignTime.getEnabled(), "then the designTime property enabled is false");
-			assert.ok(oTabHandlingRestoreSpy.callCount, 1, "restoreTabIndex was called");
-			assert.ok(oFireModeChangedSpy.callCount, 1, "then the event was fired");
-			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"});
+			assert.notOk(this.oRta._oDesignTime.getEnabled(), " in navigation mode the designTime property enabled is false");
+			assert.equal(oTabHandlingRestoreSpy.callCount, 1, "restoreTabIndex was called");
+			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
+			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
+			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
 
 			// simulate mode change from toolbar
 			this.oRta.getToolbar().fireModeChange({item: { getKey: function() {return "adaptation";}}});
-			assert.ok(this.oRta._oDesignTime.getEnabled(), "then the designTime property enabled is true again");
-			assert.ok(oTabHandlingRemoveSpy.callCount, 1, "removeTabIndex was called");
-			assert.ok(oFireModeChangedSpy.callCount, 2, "then the event was fired again");
-			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "adaptation"});
+			assert.ok(this.oRta._oDesignTime.getEnabled(), "in adaption mode the designTime property enabled is true again");
+			assert.equal(oTabHandlingRemoveSpy.callCount, 1, "removeTabIndex was called");
+			assert.equal(oTabHandlingRestoreOverlaySpy.callCount, 1, "restoreOverlayTabIndex was called");
+			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
+			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "adaptation"}, "the argument of the event is correct");
+		});
+
+		QUnit.test("when Mode is changed from adaptation to visualization and back to adaptation", function(assert) {
+			var oTabhandlingPlugin = this.oRta.getPlugins()["tabHandling"];
+			var oTabHandlingRemoveSpy = sandbox.spy(oTabhandlingPlugin, "removeTabIndex");
+			var oTabHandlingRestoreSpy = sandbox.spy(oTabhandlingPlugin, "restoreTabIndex");
+			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabhandlingPlugin, "removeOverlayTabIndex");
+			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabhandlingPlugin, "restoreOverlayTabIndex");
+			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+
+			this.oRta.setMode("visualization");
+			assert.ok(this.oRta._oDesignTime.getEnabled(), "in visualization mode the designTime property enabled is true");
+			assert.equal(oTabHandlingRestoreSpy.callCount, 0, "restoreTabIndex was not called");
+			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
+			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
+			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
+			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched to the default cursor");
+
+			// simulate mode change from toolbar
+			this.oRta.getToolbar().fireModeChange({item: { getKey: function() {return "adaptation";}}});
+			assert.ok(this.oRta._oDesignTime.getEnabled(), "in adaption mode the designTime property enabled is true");
+			assert.equal(oTabHandlingRemoveSpy.callCount, 0, "removeTabIndex was not called");
+			assert.equal(oTabHandlingRestoreOverlaySpy.callCount, 1, "restoreOverlayTabIndex was called");
+			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
+			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "adaptation"}, "the argument of the event is correct");
+			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "move", "the movable overlays switched back to the move cursor");
+		});
+
+		QUnit.test("when Mode is changed from visualizaton to navigation and back to visualization", function(assert) {
+			this.oRta.setMode("visualization");
+			var oTabhandlingPlugin = this.oRta.getPlugins()["tabHandling"];
+			var oTabHandlingRemoveSpy = sandbox.spy(oTabhandlingPlugin, "removeTabIndex");
+			var oTabHandlingRestoreSpy = sandbox.spy(oTabhandlingPlugin, "restoreTabIndex");
+			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabhandlingPlugin, "removeOverlayTabIndex");
+			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabhandlingPlugin, "restoreOverlayTabIndex");
+			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched to the default cursor");
+
+			this.oRta.setMode("navigation");
+			assert.notOk(this.oRta._oDesignTime.getEnabled(), " in navigation mode the designTime property enabled is false");
+			assert.equal(oTabHandlingRestoreSpy.callCount, 1, "restoreTabIndex was called");
+			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
+			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
+			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
+			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "move", "the movable overlays back to the move cursor");
+
+			// simulate mode change from toolbar
+			this.oRta.getToolbar().fireModeChange({item: { getKey: function() {return "visualization";}}});
+			assert.ok(this.oRta._oDesignTime.getEnabled(), "in visualization mode the designTime property enabled is true again");
+			assert.equal(oTabHandlingRemoveSpy.callCount, 1, "removeTabIndex was called");
+			assert.equal(oTabHandlingRestoreOverlaySpy.callCount, 0, "restoreOverlayTabIndex was not called");
+			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
+			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
+			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched again to the default cursor");
 		});
 	});
 

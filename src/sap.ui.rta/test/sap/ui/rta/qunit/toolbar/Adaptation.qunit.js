@@ -898,6 +898,87 @@ sap.ui.define([
 			});
 		});
 	});
+	QUnit.module("Setting different modes", {
+		beforeEach: function () {
+			this.oToolbar = new Adaptation({
+				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			});
+			this.oVersionsModel = new JSONModel({
+				versioningEnabled: true,
+				displayedVersion: sap.ui.fl.Versions.Draft
+			});
+			this.oControlsModel = new JSONModel({
+				publishVisible: true,
+				appVariantsOverviewVisible: true,
+				saveAsVisible: true,
+				manageAppsVisible: true
+			});
+			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			this.oToolbar.setModel(this.oControlsModel, "controls");
+			return this.oToolbar._pFragmentLoaded;
+		},
+		afterEach: function() {
+			this.oToolbar.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given a toolbar is created and mode is set to 'adaptation'", function(assert) {
+			this.oControlsModel.setProperty("/modeSwitcher", "adaptation");
+			this.oToolbar.animation = false;
+			return this.oToolbar.show()
+				.then(function() {
+					assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is visible");
+					assert.ok(this.oToolbar.getControl("activate").getVisible(), "activate is visible");
+					assert.ok(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is visible");
+					assert.ok(this.oToolbar.getControl("undo").getVisible(), "undo is visible");
+					assert.ok(this.oToolbar.getControl("redo").getVisible(), "redo is visible");
+					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationPopoverButton").getVisible(), "toggleChangeVisualizationPopoverButton is not visible");
+					assert.ok(this.oToolbar.getControl("publish").getVisible(), "publish is visible");
+					assert.notOk(this.oToolbar.getControl("restore").getVisible(), "restore is not visible");
+					assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
+					assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is visible");
+					assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
+				}.bind(this));
+		});
+		QUnit.test("Given a toolbar is created and mode is set to 'navigation'", function(assert) {
+			this.oControlsModel.setProperty("/modeSwitcher", "navigation");
+			this.oToolbar.animation = false;
+			return this.oToolbar.show()
+				.then(function() {
+					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is not visible");
+					assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
+					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
+					assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
+					assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
+					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationPopoverButton").getVisible(), "toggleChangeVisualizationPopoverButton is not visible");
+					assert.notOk(this.oToolbar.getControl("publish").getVisible(), "publish is not visible");
+					assert.notOk(this.oToolbar.getControl("restore").getVisible(), "restore is not visible");
+					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
+					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is not visible");
+					assert.notOk(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is not visible");
+				}.bind(this));
+		});
+		QUnit.test("Given a toolbar is created and mode is set to 'visualization'", function(assert) {
+			this.oControlsModel.setProperty("/modeSwitcher", "visualization");
+			this.oVersionsModel.setProperty("/versioningEnabled", false);
+			this.oToolbar.animation = false;
+			return this.oToolbar.show()
+				.then(function() {
+					assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "versionButton is not visible");
+					assert.notOk(this.oToolbar.getControl("activate").getVisible(), "activate is not visible");
+					assert.notOk(this.oToolbar.getControl("discardDraft").getVisible(), "discardDraft is not visible");
+					assert.ok(this.oToolbar.getControl("undo").getVisible(), "undo is visible");
+					assert.ok(this.oToolbar.getControl("redo").getVisible(), "redo is visible");
+					assert.ok(this.oToolbar.getControl("toggleChangeVisualizationPopoverButton").getVisible(), "toggleChangeVisualizationPopoverButton is visible");
+					assert.notOk(this.oToolbar.getControl("publish").getVisible(), "publish is not visible");
+					assert.ok(this.oToolbar.getControl("restore").getVisible(), "restore is visible");
+					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
+					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is not visible");
+					assert.notOk(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is not visible");
+				}.bind(this));
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});

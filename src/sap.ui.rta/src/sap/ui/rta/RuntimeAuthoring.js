@@ -164,7 +164,7 @@ function(
 					}
 				},
 
-				/** Defines view state of the RTA. Possible values: adaptation, navigation */
+				/** Defines view state of key user adaptation. Possible values: adaptation, navigation, visualization */
 				mode: {
 					type: "string",
 					defaultValue: "adaptation"
@@ -512,11 +512,6 @@ function(
 				if (this.getShowToolbars()) {
 					// the show() method of the toolbar relies on this RTA instance being set on the PopupManager
 					return this.getToolbar().show();
-				}
-			}.bind(this))
-			.then(function () {
-				if (this.getShowToolbars() && this.getChangeVisualization) {
-					this.getChangeVisualization().setRootControlId(this.getRootControl());
 				}
 			}.bind(this))
 			.then(function () {
@@ -1020,8 +1015,8 @@ function(
 				oProperties.activate = this._onActivate.bind(this);
 				oProperties.discardDraft = this._onDiscardDraft.bind(this);
 				oProperties.switchVersion = this._onSwitchVersion.bind(this);
-				oProperties.toggleChangeVisualization = this.getChangeVisualization
-					? this.getChangeVisualization().toggleActive.bind(this.getChangeVisualization())
+				oProperties.toggleChangeVisualizationPopover = this.getChangeVisualization
+					? this.getChangeVisualization().togglePopover.bind(this.getChangeVisualization())
 					: function () {};
 			}
 
@@ -1703,10 +1698,31 @@ function(
 	 * @param {string} sNewMode The new value for the 'mode' property
 	 */
 	RuntimeAuthoring.prototype.setMode = function (sNewMode) {
-		if (this.getMode() !== sNewMode) {
-			var bOverlaysEnabled = sNewMode === "adaptation";
-			this._oDesignTime.setEnabled(bOverlaysEnabled);
-			this.getPluginManager().getPlugin("tabHandling")[bOverlaysEnabled ? "removeTabIndex" : "restoreTabIndex"]();
+		var sCurrentMode = this.getMode();
+		if (sCurrentMode !== sNewMode) {
+			var oChangeVisualization = this.getChangeVisualization && this.getChangeVisualization();
+			if (sNewMode === "visualization" || sCurrentMode === "visualization") {
+				oChangeVisualization.triggerModeChange(this.getRootControl());
+			}
+			var oTabHandlingPlugin = this.getPluginManager().getPlugin("tabHandling");
+			var oSelectionPlugin = this.getPluginManager().getPlugin("selection");
+
+			// Switch between another mode and navigation -> toggle overlay & App-Tabindex enablement
+			if (sCurrentMode === "navigation" || sNewMode === "navigation") {
+				this._oDesignTime.setEnabled(sNewMode !== "navigation");
+				oTabHandlingPlugin[(sNewMode === "navigation") ? "restoreTabIndex" : "removeTabIndex"]();
+			}
+
+			oTabHandlingPlugin[(sNewMode === "adaptation") ? "restoreOverlayTabIndex" : "removeOverlayTabIndex"]();
+			oSelectionPlugin.setIsActive(!(sNewMode === "visualization"));
+
+			Overlay.getOverlayContainer().toggleClass("sapUiRtaVisualizationMode", (sNewMode === "visualization"));
+			if (sNewMode === "visualization") {
+				jQuery(".sapUiDtOverlayMovable").css("cursor", "default");
+			} else {
+				jQuery(".sapUiDtOverlayMovable").css("cursor", "move");
+			}
+
 			this._oToolbarControlsModel.setProperty("/modeSwitcher", sNewMode);
 			this.setProperty("mode", sNewMode);
 			this.fireModeChanged({mode: sNewMode});

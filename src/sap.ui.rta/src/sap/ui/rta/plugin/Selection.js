@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/Overlay",
 	"sap/base/util/restricted/_intersection",
+	"sap/m/InstanceManager",
 	"sap/ui/Device"
 ],
 function (
@@ -18,6 +19,7 @@ function (
 	KeyCodes,
 	Overlay,
 	_intersection,
+	InstanceManager,
 	Device
 ) {
 	"use strict";
@@ -43,6 +45,10 @@ function (
 			properties: {
 				multiSelectionRequiredPlugins: {
 					type: "string[]"
+				},
+				isActive: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			associations: {},
@@ -98,6 +104,7 @@ function (
 
 	/**
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for developer mode
+	 * @param {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata - Design Time Metadata of the element
 	 * @returns {boolean} true if it's in developer mode
 	 * @private
 	 */
@@ -188,6 +195,9 @@ function (
 	 * @private
 	 */
 	Selection.prototype._onKeyDown = function(oEvent) {
+		if (!this.getIsActive()) {
+			return;
+		}
 		var oOverlay = Utils.getFocusedOverlay();
 		if (oEvent.keyCode === KeyCodes.ENTER) {
 			this._selectOverlay(oEvent);
@@ -232,6 +242,10 @@ function (
 	};
 
 	Selection.prototype._selectOverlay = function (oEvent) {
+		if (!this.getIsActive()) {
+			preventEventDefaultAndPropagation(oEvent);
+			return;
+		}
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		var bMultiSelection = oEvent.metaKey || oEvent.ctrlKey;
 		var bContextMenu = oEvent.type === "contextmenu";
@@ -261,6 +275,18 @@ function (
 	 * @private
 	 */
 	Selection.prototype._onMouseDown = function(oEvent) {
+		if (!this.getIsActive()) {
+			// In Visualization Mode we must prevent MouseDown-Event for Overlays
+			// We have to close open PopOvers from the ChangeVisualization because they
+			// should close on MouseDown
+			preventEventDefaultAndPropagation(oEvent);
+			InstanceManager.getOpenPopovers().forEach(function(oPopOver) {
+				if (oPopOver._bOpenedByChangeIndicator) {
+					oPopOver.close();
+				}
+			});
+			return;
+		}
 		// set focus after clicking, needed only for internet explorer
 		if (Device.browser.name === "ie") {
 			// when the EasyAdd Button is clicked, we don't want to focus/stopPropagation.
@@ -288,6 +314,10 @@ function (
 	 * @private
 	 */
 	Selection.prototype._onMouseover = function(oEvent) {
+		if (!this.getIsActive()) {
+			preventEventDefaultAndPropagation(oEvent);
+			return;
+		}
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (oOverlay.isSelectable()) {
 			if (oOverlay !== this._oHoverTarget) {
@@ -305,6 +335,10 @@ function (
 	 * @private
 	 */
 	Selection.prototype._onMouseleave = function(oEvent) {
+		if (!this.getIsActive()) {
+			preventEventDefaultAndPropagation(oEvent);
+			return;
+		}
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (oOverlay.isSelectable()) {
 			this._removePreviousHover();

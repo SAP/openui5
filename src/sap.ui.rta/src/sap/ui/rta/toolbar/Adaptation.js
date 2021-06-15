@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/Device"
-], function(
+],
+function(
 	DateFormat,
 	Fragment,
 	coreLibrary,
@@ -62,7 +63,7 @@ sap.ui.define([
 				activate: {},
 				discardDraft: {},
 				switchVersion: {},
-				toggleChangeVisualization: {}
+				toggleChangeVisualizationPopover: {}
 			}
 		}
 	});
@@ -276,6 +277,7 @@ sap.ui.define([
 		oIconSpacer.setVisible(false);
 		this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
 		this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
+		this._showButtonIcon("visualizationSwitcherButton", "sap-icon://show", "BTN_VISUALIZATION");
 		this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
 	};
 
@@ -287,6 +289,7 @@ sap.ui.define([
 		oIconSpacer.setVisible(true);
 		this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
 		this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
+		this._showButtonText("visualizationSwitcherButton", "BTN_VISUALIZATION");
 		this._showButtonText("exit", "BTN_EXIT");
 	};
 
@@ -330,7 +333,7 @@ sap.ui.define([
 				showTranslationPopover: this.showTranslationPopover.bind(this),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
-				toggleChangeVisualization: this.eventHandler.bind(this, "ToggleChangeVisualization"),
+				toggleChangeVisualizationPopover: this.eventHandler.bind(this, "ToggleChangeVisualizationPopover"),
 				manageApps: onManageAppsPressed.bind(this),
 				appVariantOverview: onOverviewPressed.bind(this),
 				saveAs: onSaveAsPressed.bind(this),

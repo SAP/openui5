@@ -18,7 +18,7 @@
 						class="sapUiRtaVersionButton"
 						icon="sap-icon://megamenu"
 						iconFirst="false"
-						visible="{versions>/versioningEnabled}"
+						visible="{= (${versions>/versioningEnabled} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
 						text="{parts: [{path: 'versions>/versions'}, {path: 'versions>/displayedVersion'}], formatter: '.formatVersionButtonText'}"
 						tooltip="{parts: [{path: 'versions>/versions'}, {path: 'versions>/displayedVersion'}], formatter: '.formatVersionButtonText'}"
 						press=".showVersionHistory">
@@ -30,7 +30,7 @@
 						id="sapUiRta_activate"
 						icon="sap-icon://activate"
 						press=".activate(${versions>/displayedVersion})"
-						visible="{versions>/versioningEnabled}"
+						visible="{= (${versions>/versioningEnabled} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
 						enabled="{versions>/activateEnabled}"
 						type="Transparent"
 						text="{i18n>TOL_ACTIVATE}"
@@ -39,7 +39,7 @@
 						id="sapUiRta_discardDraft"
 						icon="sap-icon://delete"
 						press=".discardDraft"
-						visible="{parts: ['versions>/displayedVersion', 'versions>/versioningEnabled' ], formatter: '.formatDiscardDraftVisible'}"
+						visible="{= ((${parts: ['versions>/displayedVersion', 'versions>/versioningEnabled' ], formatter: '.formatDiscardDraftVisible'})  &amp;&amp; (${controls>/modeSwitcher} === 'adaptation'))}"
 						type="Transparent"
 						text="{i18n>TOL_DISCARD_DRAFT}"
 						tooltip="{i18n>TOL_DISCARD_DRAFT}" />
@@ -68,6 +68,11 @@
 								text="{i18n>BTN_NAVIGATION}"
 								width="auto"
 								key="navigation" />
+						<SegmentedButtonItem
+								id="sapUiRta_visualizationSwitcherButton"
+								text="{i18n>BTN_VISUALIZATION}"
+								width="auto"
+								key="visualization" />
 					</items>
 				</SegmentedButton>
 				<ToolbarSpacer />
@@ -99,6 +104,7 @@
 						icon="sap-icon://undo"
 						press=".undo"
 						enabled="{controls>/undoEnabled}"
+						visible="{= (${controls>/modeSwitcher} === 'visualization' || ${controls>/modeSwitcher} === 'adaptation')}"
 						type="Transparent"
 						tooltip="{i18n>BTN_UNDO}" >
 					<layoutData>
@@ -110,6 +116,7 @@
 						icon="sap-icon://redo"
 						press=".redo"
 						enabled="{controls>/redoEnabled}"
+						visible="{= (${controls>/modeSwitcher} === 'visualization' || ${controls>/modeSwitcher} === 'adaptation')}"
 						type="Transparent"
 						tooltip="{i18n>BTN_REDO}" >
 					<layoutData>
@@ -117,13 +124,13 @@
 					</layoutData>
 				</Button>
 				<toolbar:OverflowToolbarButton
-						id="sapUiRta_toggleChangeVisualizationButton"
+						id="sapUiRta_toggleChangeVisualizationPopoverButton"
 						icon="sap-icon://show"
-						press=".toggleChangeVisualization"
-						enabled="{= ${controls>/modeSwitcher} === 'adaptation'}"
+						press=".toggleChangeVisualizationPopover"
+						visible="{= ${controls>/modeSwitcher} === 'visualization'}"
 						type="Transparent"
-						text="{i18n>BUT_CHANGEVISUALIZATION_SHOWCHANGES}"
-						tooltip="{i18n>BUT_CHANGEVISUALIZATION_SHOWCHANGES}">
+						text="{i18n>BTN_CHANGEVISUALIZATION_OVERVIEW_ALL}"
+						tooltip="{i18n>BUT_CHANGEVISUALIZATION_SELECTCHANGES}">
 					<toolbar:layoutData>
 						<OverflowToolbarLayoutData priority="Low" />
 					</toolbar:layoutData>
@@ -131,7 +138,7 @@
 				<toolbar:OverflowToolbarButton
 						id="sapUiRta_publish"
 						enabled="{controls>/publishEnabled}"
-						visible="{controls>/publishVisible}"
+						visible="{= (${controls>/publishVisible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
 						press=".publish"
 						type="Transparent"
 						text="{i18n>BTN_PUBLISH}" >
@@ -142,7 +149,7 @@
 				<toolbar:OverflowToolbarButton
 						id="sapUiRta_restore"
 						enabled="{controls>/restoreEnabled}"
-						visible="{path: 'versions>/versioningEnabled', formatter: '.showRestore'}"
+						visible="{= ((${path: 'versions>/versioningEnabled', formatter: '.showRestore'}) &amp;&amp; ((${controls>/modeSwitcher} === 'visualization') || (${controls>/modeSwitcher} === 'adaptation')))}"
 						press=".restore"
 						type="Transparent"
 						text="{i18n>BTN_RESTORE}" >
@@ -154,7 +161,7 @@
 						id="sapUiRta_manageApps"
 						press=".manageApps"
 						enabled="{controls>/manageAppsEnabled}"
-						visible="{controls>/manageAppsVisible}"
+						visible="{= (${controls>/manageAppsVisible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
 						type="Transparent"
 						text="{i18n>BTN_MANAGE_APPS_TXT}" >
 					<toolbar:layoutData>
@@ -164,7 +171,7 @@
 				<MenuButton
 						id="sapUiRta_appVariantOverview"
 						enabled="{controls>/appVariantsOverviewEnabled}"
-						visible="{controls>/appVariantsOverviewVisible}"
+						visible="{= (${controls>/appVariantsOverviewVisible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
 						type="Transparent"
 						text="{i18n>BTN_MANAGE_APPS_TXT}" >
 					<menu>
@@ -185,7 +192,7 @@
 				</MenuButton>
 				<toolbar:OverflowToolbarButton
 						id="sapUiRta_saveAs"
-						visible="{controls>/saveAsVisible}"
+						visible="{= (${controls>/saveAsVisible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
 						enabled="{controls>/saveAsEnabled}"
 						press=".saveAs"
 						type="Transparent"

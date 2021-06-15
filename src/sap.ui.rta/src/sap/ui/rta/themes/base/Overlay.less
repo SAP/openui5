@@ -113,67 +113,10 @@
 			}
 		}
 	}
-
-	.sapUiRtaOverlayHover {
-		-webkit-transition: background 0.1s cubic-bezier(1,.01,1,0);
-		-moz-transition: background 0.1s cubic-bezier(1,.01,1,0);
-		-o-transition: background 0.1s cubic-bezier(1,.01,1,0);
-		transition: background 0.1s cubic-bezier(1,.01,1,0);
-
-		&:after {
-			content: " ";
-			border: 0.0625rem solid @_sap_ui_rta_Overlay_HoverBorder; //1px
-			transition: box-shadow .25s;
-			box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
-			outline: 0.0625rem solid @_sap_ui_rta_Overlay_Border; //1px
-			outline-offset: -0.0625rem; //1px
-		}
-	}
-
 	.sapUiDtOverlaySelected {
-		transition: box-shadow .25s;
-		box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
-		&.sapUiDtOverlayWithScrollBar:after {
-			bottom: 0;
-			right: 0;
-			top: 0;
-			left: 0;
-			// IE doesn't support width/height: 'initial'.// TODO remove after the end of support for Internet Explorer
-			// With the property 'auto' the same effect is achieved.
-			// When initial is supported, auto is ignored.
-			width: auto;
-			width: initial;
-			height: auto;
-			height: initial;
-		}
-
 		&:after {
-			outline: 0.125rem solid @_sap_ui_rta_Overlay_Border; //2px
+			outline: none;
 			border:	none
-		}
-
-		&.sapUiRtaErrorBg:after {
-			outline: 0.125rem solid @_sap_ui_rta_Overlay_ErrorBorder; //2px
-			outline-offset: -0.125rem; //2px
-			border:	none
-		}
-
-		&.sapUiDtOverlayFocusable {
-			&:focus {
-				&:before {
-					top: 0.125rem; //2px
-					left: 0.125rem; //2px
-					bottom: 0.125rem; //2px
-					right: 0.125rem; //2px
-					// IE doesn't support width/height: 'initial'.// TODO remove after the end of support for Internet Explorer
-					// With the property 'auto' the same effect is achieved.
-					// When initial is supported, auto is ignored.
-					width: auto;
-					width: initial;
-					height: auto;
-					height: initial;
-				}
-			}
 		}
 	}
 
@@ -253,6 +196,64 @@
 	}
 }
 
+.sapUiRta:not(.sapUiRtaVisualizationMode) {
+	.sapUiRtaOverlayHover {
+		-webkit-transition: background 0.1s cubic-bezier(1,.01,1,0);
+		-moz-transition: background 0.1s cubic-bezier(1,.01,1,0);
+		-o-transition: background 0.1s cubic-bezier(1,.01,1,0);
+		transition: background 0.1s cubic-bezier(1,.01,1,0);
+
+		&:after {
+			content: " ";
+			border: 0.0625rem solid @_sap_ui_rta_Overlay_HoverBorder; //1px
+			transition: box-shadow .25s;
+			box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
+			outline: 0.0625rem solid @_sap_ui_rta_Overlay_Border; //1px
+			outline-offset: -0.0625rem; //1px
+		}
+	}
+	.sapUiDtOverlaySelected {
+		transition: box-shadow .25s;
+		box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
+		&.sapUiDtOverlayWithScrollBar:after {
+			bottom: 0;
+			right: 0;
+			top: 0;
+			left: 0;
+			width: initial;
+			height: initial;
+		}
+
+		&:after {
+			outline: 0.125rem solid @_sap_ui_rta_Overlay_Border; //2px
+			border:	none
+		}
+
+		&.sapUiRtaErrorBg:after {
+			outline: 0.125rem solid @_sap_ui_rta_Overlay_ErrorBorder; //2px
+			outline-offset: -0.125rem; //2px
+			border:	none
+		}
+
+		&.sapUiDtOverlayFocusable {
+			&:focus {
+				&:before {
+					top: 0.125rem; //2px
+					left: 0.125rem; //2px
+					bottom: 0.125rem; //2px
+					right: 0.125rem; //2px
+					// IE doesn't support width/height: 'initial'.// TODO remove after the end of support for Internet Explorer
+					// With the property 'auto' the same effect is achieved.
+					// When initial is supported, auto is ignored.
+					width: auto;
+					width: initial;
+					height: auto;
+					height: initial;
+				}
+			}
+		}
+	}
+}
 .sapUiRtaMode #shell-shapes {
 	display: none;
 }

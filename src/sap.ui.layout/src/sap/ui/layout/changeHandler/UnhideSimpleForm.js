@@ -143,9 +143,9 @@ sap.ui.define([
 			});
 	};
 
-	UnhideForm.getChangeVisualizationInfo = function(oChange) {
+	UnhideForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		return {
-			affectedControls: [oChange.getDefinition().content.elementSelector]
+			affectedControls: [JsControlTreeModifier.bySelector(oChange.getDefinition().content.elementSelector, oAppComponent).getParent().getId()]
 		};
 	};
 
