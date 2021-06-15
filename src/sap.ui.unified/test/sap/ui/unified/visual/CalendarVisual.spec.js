@@ -6,7 +6,7 @@ describe("sap.ui.unified.CalendarVisual", function() {
 
 	var sCalId = "Cal1",
 		oCal = element(by.id(sCalId)),
-		iDefaultTimeout = 60000; // timeout for test execution in milliseconds
+		iDefaultTimeout = 70000; // timeout for test execution in milliseconds
 
 	singleDaySelection();
 	twoTypes();
