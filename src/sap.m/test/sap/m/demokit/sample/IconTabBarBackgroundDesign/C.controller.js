@@ -18,16 +18,17 @@ sap.ui.define([
 		onFilterSelect: function (oEvent) {
 			var oBinding = this.byId("productsTable").getBinding("items"),
 				sKey = oEvent.getParameter("key"),
+				oUnitFilter = new Filter("WeightUnit", "EQ", "KG"),
 				oFilter;
 
 			if (sKey === "Ok") {
-				oFilter = new Filter("WeightMeasure", "LE", 1000);
+				oFilter = new Filter({filters: [oUnitFilter, new Filter("WeightMeasure", "LE", 1)], and: true});
 				oBinding.filter([oFilter]);
 			} else if (sKey === "Heavy") {
-				oFilter = new Filter("WeightMeasure", "BT", 1001, 2000);
+				oFilter = new Filter({filters: [oUnitFilter, new Filter("WeightMeasure", "BT", 1, 5)], and: true});
 				oBinding.filter([oFilter]);
 			} else if (sKey === "Overweight") {
-				oFilter = new Filter("WeightMeasure", "GT", 2000);
+				oFilter = new Filter({filters: [oUnitFilter, new Filter("WeightMeasure", "GT", 5)], and: true});
 				oBinding.filter([oFilter]);
 			} else {
 				oBinding.filter([]);
