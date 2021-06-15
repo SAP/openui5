@@ -30,9 +30,4 @@ describe("sap.m.MessageStrip", function() {
 	it("should show MessageStrip with a long text of type information and a close button", function() {
 		expect(takeScreenshot(element(by.id("mcontainer6")))).toLookAs("verylong-messagestrip");
 	});
-
-	it("should show MessageStrip containing a very long word without adding a scroll under IE11", function() {
-		expect(takeScreenshot(element(by.id("mcontainer8")))).toLookAs("messagestrip-with-long-word");
-	});
-
 });
