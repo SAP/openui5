@@ -95,10 +95,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				}
 			}
 
-			if (bEnabled) {
-				oRm.attr("tabindex", "-1");
-			}
-
 			oRm.openEnd();
 			// Used to benefit from the input[type="button"]. Text in value attribute is announced by screen readers when changed.
 			// Type is button, otherwise keyboard is shown on mobile when focused.
