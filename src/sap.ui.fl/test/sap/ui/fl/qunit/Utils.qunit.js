@@ -1347,12 +1347,7 @@ function(
 				assert.strictEqual(vResult, 3, "then the parameter is passed to the 'then' method");
 			});
 		});
-	});
 
-	QUnit.module("Utils.FakePromise", {
-		beforeEach: function() {},
-		afterEach: function() {}
-	}, function() {
 		[42, undefined, {then: 42}, {then: function() {}}]
 			.forEach(function(vResult) {
 				QUnit.test("when instanciated with " + vResult + " value as parameter", function(assert) {
@@ -1603,6 +1598,17 @@ function(
 				.catch(function(oErrorValue) {
 					assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
 				});
+		});
+
+		QUnit.test("when a thenable is returned from FakePromise.then", function(assert) {
+			var oPromise = new Utils.FakePromise()
+				.then(function() {
+					return {
+						then: function() {}
+					};
+				});
+
+			assert.notOk(oPromise instanceof Utils.FakePromise, "then the returned value is not wrapped in another FakePromise");
 		});
 	});
 
