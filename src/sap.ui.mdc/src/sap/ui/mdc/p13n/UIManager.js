@@ -139,7 +139,7 @@ sap.ui.define([
 				var bWrapperUsed = aKeys.length > 1;
 				var oAdaptationUI;
 				var oContent = oP13nControl.getContent()[0];
-				if (bWrapperUsed && oContent.isA("sap.ui.mdc.p13n.panels.Wrapper")) {
+				if (bWrapperUsed && oContent.isA("sap.ui.mdc.p13n.panels.Wrapper") && oContent.getView(sKey)) {
 					oAdaptationUI = oContent.getView(sKey).getContent();
 				} else {
 					oAdaptationUI = oContent;
