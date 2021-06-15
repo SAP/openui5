@@ -1,0 +1,723 @@
+/*!
+ * ${copyright}
+ */
+
+sap.ui.define([
+	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/Matcher",
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/Descendant",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/actions/EnterText",
+	"./waitForP13nButtonWithParentAndIcon",
+	"./waitForP13nDialog",
+	"./waitForSelectWithSelectedTextOnPanel"
+], function(
+	Opa5,
+	Matcher,
+	Properties,
+	Ancestor,
+	Descendant,
+	PropertyStrictEquals,
+	Press,
+	EnterText,
+	waitForP13nButtonWithParentAndIcon,
+	waitForP13nDialog,
+	waitForSelectWithSelectedTextOnPanel
+) {
+	"use strict";
+
+	var iOpenThePersonalizationDialog = function(oControl, oSettings) {
+		var sControlId = typeof oControl === "string" ? oControl : oControl.getId();
+		var aMatchers = [
+			new Properties({
+				title: "View Settings"
+			})
+		];
+		return this.waitFor({
+			id: sControlId,
+			success: function(oControlInstance) {
+				Opa5.assert.ok(oControlInstance);
+
+				if (oControlInstance.isA("sap.ui.comp.smartchart.SmartChart")) {
+					aMatchers.push(function(oP13nDialog) {
+						return oP13nDialog.getParent().getChart() === oControlInstance.getChart().getId();
+					});
+				} else {
+					aMatchers.push(new Ancestor(oControlInstance, false));
+				}
+
+				waitForP13nButtonWithParentAndIcon.call(this, {
+					parent: oControlInstance,
+					// TODO: move this to UTIL?
+					icon: "sap-icon://action-settings",
+					actions: new Press(),
+					success: function() {
+						waitForP13nDialog.call(this, {
+							matchers: aMatchers,
+							success:  function(oP13nDialog) {
+								if (oSettings && typeof oSettings.success === "function") {
+									oSettings.success.call(this, oP13nDialog);
+								}
+							}
+						});
+					},
+					errorMessage: "Control '" + sControlId + "' has no P13n button"
+				});
+			},
+			errorMessage: "Control '" + sControlId + "' not found."
+		});
+	};
+
+	var iPressAButtonOnTheDialog = function(oDialog, sButtonText, oSettings) {
+		return this.waitFor({
+			searchOpenDialogs: true,
+			controlType: "sap.m.Button",
+			matchers: [
+				new PropertyStrictEquals({
+					name: "text",
+					value: sButtonText
+				}),
+				new Ancestor(oDialog, false)
+			],
+			actions: new Press(),
+			success: function() {
+				if (oSettings && typeof oSettings.success === "function") {
+					oSettings.success.call(this);
+				}
+			},
+			errorMessage: "Could not find the '" + sButtonText + "' button"
+		});
+	};
+
+	var waitForTheWarningDialog = function(oSettings) {
+		return this.waitFor({
+			controlType: "sap.m.Dialog",
+			matchers: new PropertyStrictEquals({
+				name: "title",
+				// TODO: Use message bundle!
+				value: "Warning"
+			}),
+			success: function(aDialogs) {
+				Opa5.assert.equal(aDialogs.length, 1, "warning dialog found");
+				if (oSettings && typeof oSettings.success === "function") {
+					oSettings.success.call(this, aDialogs[0]);
+				}
+			}
+		});
+	};
+
+	var iPressTheOKButtonOnTheDialog = function(oDialog, oSettings) {
+		// TODO: Use message bundle!
+		return iPressAButtonOnTheDialog.call(this, oDialog, "OK", oSettings);
+	};
+
+	var iPressTheResetButtonOnTheDialog = function(oDialog, oSettings) {
+		// TODO: Use message bundle!
+		return iPressAButtonOnTheDialog.call(this, oDialog, "Reset", oSettings);
+	};
+
+	var waitForNavigationControl = function (oP13nDialog, oSettings) {
+		oSettings = oSettings || {};
+
+		//Mobile
+		if (sap.ui.Device.system.phone) {
+			return this.waitFor({
+				controlType: "sap.m.List",
+				success: function(aLists) {
+					Opa5.assert.equal(aLists.length, 1 , "One list found");
+					if (oSettings && typeof oSettings.success === "function") {
+						oSettings.succes.call(this, aLists[0]);
+					}
+				}
+			});
+		}
+
+		return this.waitFor({
+			controlType: "sap.m.IconTabBar",
+			matchers: {
+				ancestor: oP13nDialog
+			},
+			success: function(aTabBar) {
+				Opa5.assert.ok(aTabBar.length === 1, "IconTabBar found");
+				if (oSettings && typeof oSettings.success === "function") {
+					oSettings.success.call(this, aTabBar[0]);
+				}
+			},
+			errorMessage: "sap.m.IconTabBar not found"
+		});
+	};
+
+	var iNavigateToPanel = function(oP13nPanel, sPanelName, oSettings) {
+		return waitForNavigationControl.call(this, oP13nPanel, {
+			success: function(oNavigationControl) {
+
+				var sNavigationControlType, sInnerControlType, sInnerControlPropertyName;
+
+				//Mobile
+				if (oNavigationControl.isA("sap.m.List")) {
+					sNavigationControlType = "sap.m.List";
+					sInnerControlType = "sap.m.StandardListItem";
+					sInnerControlPropertyName = "title";
+				}
+
+				//New Layout
+				if (oNavigationControl.isA("sap.m.IconTabBar")) {
+					sNavigationControlType = "sap.m.IconTabBar";
+					sInnerControlType = "sap.m.IconTabFilter";
+					sInnerControlPropertyName = "text";
+				}
+
+				//Old Layout
+				if (oNavigationControl.isA("sap.m.SegmentedButton")) {
+					sNavigationControlType = "sap.m.SegmentedButton";
+					sInnerControlType = "sap.m.Button";
+					sInnerControlPropertyName = "text";
+				}
+
+				return this.waitFor({
+					controlType: sNavigationControlType,
+					success: function(aNavigationControls) {
+						var oNavigationControl = aNavigationControls[0];
+						this.waitFor({
+							controlType: sInnerControlType,
+							matchers: [
+								new Ancestor(oNavigationControl),
+								new PropertyStrictEquals({
+									name: sInnerControlPropertyName,
+									value: sPanelName
+								})
+							],
+							actions: new Press(),
+							success: function () {
+								if (oSettings && typeof oSettings.success === "function") {
+									oSettings.success.call(this);
+								}
+							}
+						});
+					}
+				});
+			}
+		});
+	};
+
+	var iPersonalize = function(oControl, sPanelName, oSettings) {
+		return iOpenThePersonalizationDialog.call(this, oControl, {
+			success:  function(oP13nDialog) {
+				iNavigateToPanel.call(this, oP13nDialog, sPanelName, {
+					success: function() {
+						if (oSettings && typeof oSettings.success === "function") {
+							oSettings.success.call(this, oP13nDialog);
+						}
+					}
+				});
+			}
+		});
+	};
+
+	var iChangeComboBoxSelection = function(oComboBox, sNew, oSettings) {
+		new Press().executeOn(oComboBox);
+		this.waitFor({
+			controlType: "sap.m.Popover",
+			matchers: new Ancestor(oComboBox),
+			success: function(aPopovers) {
+				Opa5.assert.ok(aPopovers.length === 1, "ComboBox popover found");
+				var oPopover = aPopovers[0];
+				this.waitFor({
+					controlType: "sap.m.StandardListItem",
+					matchers: [
+						new Ancestor(oPopover, false),
+						new PropertyStrictEquals({
+							name: "title",
+							value: sNew
+						})
+					],
+					actions: new Press(),
+					success: function(oSelect) {
+						if (oSettings && typeof oSettings.success === "function") {
+							oSettings.success.call(this, oSelect);
+						}
+					},
+					errorMessage: "ComboBox StandardListItem with text '" + sNew + "' not found"
+				});
+			}
+		});
+	};
+
+	var iChangeSelectSelection = function(oSelect, sNew) {
+		new Press().executeOn(oSelect);
+		this.waitFor({
+			controlType: "sap.m.Popover",
+			matchers: new Ancestor(oSelect),
+			success: function(aPopovers) {
+				Opa5.assert.ok(aPopovers.length === 1, "Selection popover found");
+				var oPopover = aPopovers[0];
+				this.waitFor({
+					controlType: "sap.ui.core.Item",
+					matchers: [
+						new Ancestor(oPopover, false),
+						new PropertyStrictEquals({
+							name: "text",
+							value: sNew
+						})
+					],
+					actions: new Press(),
+					errorMessage: "Selection Item with text '" + sNew + "' not found"
+				});
+			}
+		});
+	};
+
+	var iChangeSelectOnPanel = function(oGroupPanel, sOld, sNew, oSettings) {
+		waitForSelectWithSelectedTextOnPanel.call(this, sOld, oGroupPanel, {
+			actions: function (oSelect) {
+				iChangeSelectSelection.call(this, oSelect, sNew);
+			}.bind(this),
+			success: function(oSelect) {
+				if (oSettings && typeof oSettings.success === "function") {
+					oSettings.success.call(this, oSelect);
+				}
+			}
+		});
+	};
+
+	var iAddGroupConfiguration = function(oGroupPanel, oGroupConfiguration) {
+		// TODO: Use message bundle!
+		iChangeSelectOnPanel.call(this, oGroupPanel, "(none)", oGroupConfiguration.key, {
+			success: function(oSelect) {
+				if (oGroupConfiguration.showFieldAsColumn !== undefined) {
+					this.waitFor({
+						controlType: "sap.m.CustomListItem",
+						matchers: new Descendant(oSelect, false),
+						success: function(aCustomListItems) {
+							var aCustomListItem = aCustomListItems[0];
+							this.waitFor({
+								controlType: "sap.m.CheckBox",
+								matchers: new Ancestor(aCustomListItem),
+								actions: function(oCheckBox) {
+									if (oCheckBox.getSelected() !== oGroupConfiguration.showFieldAsColumn) {
+										new Press().executeOn(oCheckBox);
+									}
+								}
+							});
+						}
+					});
+				}
+			}
+		});
+	};
+
+	var iAddSortConfiguration = function(oSortPanel, oSortConfiguration) {
+		// TODO: Use message bundle!
+		iChangeSelectOnPanel.call(this, oSortPanel, "(none)", oSortConfiguration.key, {
+			success: function(oSelect) {
+				if (oSortConfiguration.descending !== undefined) {
+					this.waitFor({
+						controlType: "sap.m.CustomListItem",
+						matchers: new Descendant(oSelect, false),
+						success: function(aCustomListItems) {
+							var aCustomListItem = aCustomListItems[0];
+							this.waitFor({
+								controlType: "sap.m.Button",
+								matchers: [
+									new Ancestor(aCustomListItem),
+									new PropertyStrictEquals({
+										name: "icon",
+										// TODO: move this to UTIL?
+										value: "sap-icon://sort-descending"
+									})
+								],
+								actions: function(oButton) {
+									if (oSortConfiguration.descending && oButton.getParent().getSelectedButton() !== oButton) {
+										new Press().executeOn(oButton);
+									}
+								}
+							});
+						}
+					});
+				}
+			}
+		});
+	};
+
+	var iAddFilterConfiguration = function(oWrappingGrid, oConfiguration, bPressAddButton) {
+		this.waitFor({
+			controlType: "sap.m.Button",
+			matchers: [
+				new PropertyStrictEquals({
+					name: "text",
+					value: "Add"
+				}),
+				new Ancestor(oWrappingGrid, false)
+			],
+			success: function(aAddButtons) {
+				var oAddButton = aAddButtons[0];
+				this.waitFor({
+					controlType: "sap.ui.layout.Grid",
+					matchers: [
+						new Descendant(oAddButton),
+						new Ancestor(oWrappingGrid)
+					],
+					success: function(aGrids) {
+						var oGrid = aGrids[0];
+						this.waitFor({
+							controlType: "sap.m.ComboBox",
+							matchers: new Ancestor(oGrid),
+							success: function(aComboBoxes) {
+								var oComboBoxName = aComboBoxes[0];
+								var oComboBoxCondition = aComboBoxes[1];
+								// Select name
+								iChangeComboBoxSelection.call(this, oComboBoxName, oConfiguration.key , {
+									success: function() {
+										// Select condition
+										iChangeComboBoxSelection.call(this, oComboBoxCondition, oConfiguration.operator, {
+											success: function() {
+												// Add filter value(s)
+												if (oConfiguration.values && oConfiguration.values.length) {
+													oConfiguration.values.forEach(function(sConfigurationValue) {
+														this.waitFor({
+															controlType: oConfiguration.inputControl,
+															matchers: new Ancestor(oGrid),
+															success: function(aInputs) {
+																var oInput = aInputs[oConfiguration.values.indexOf(sConfigurationValue)];
+																new EnterText({
+																	text: sConfigurationValue
+																}).executeOn(oInput);
+															}
+														});
+													}.bind(this));
+												}
+												// click add button if needed
+												if (bPressAddButton) {
+													new Press().executeOn(oAddButton);
+												}
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			}
+		});
+	};
+
+	var iPressAllDeclineButtonsOnPanel = function(oPanel, oSettings) {
+		this.waitFor({
+			controlType: "sap.m.Button",
+			matchers: [
+				new Ancestor(oPanel, false),
+				new PropertyStrictEquals({
+					name: "icon",
+					// TODO: move to util
+					value: "sap-icon://decline"
+				})
+			],
+			actions: new Press(),
+			// Add new group entries
+			success: function() {
+				if (oSettings && typeof oSettings.success === "function") {
+					oSettings.success.call(this);
+				}
+			}
+		});
+	};
+
+    return {
+		iPersonalizeChart: function(oControl, sChartType, aItems) {
+			// TODO: Use message bundle!
+			return iPersonalize.call(this, oControl, "Chart", {
+				success: function(oP13nDialog) {
+					this.waitFor({
+						controlType: "sap.m.P13nDimMeasurePanel",
+						matchers: new Ancestor(oP13nDialog, false),
+						success: function(aP13nDimMeasurePanels) {
+							var oP13nDimMeasurePanel = aP13nDimMeasurePanels[0];
+							// Setup chart type
+							this.waitFor({
+								controlType: "sap.m.OverflowToolbar",
+								matchers: new Ancestor(oP13nDimMeasurePanel, false),
+								success: function(aOverflowToolbars) {
+									var oOverflowToolbar = aOverflowToolbars[0];
+									this.waitFor({
+										controlType: "sap.m.ComboBox",
+										matchers: new Ancestor(oOverflowToolbar),
+										success: function(aComboBoxes) {
+											var oComboBox = aComboBoxes[0];
+											iChangeComboBoxSelection.call(this, oComboBox, sChartType, {
+												success: function() {
+													this.waitFor({
+														controlType: "sap.m.ColumnListItem",
+														matchers: [
+															new Ancestor(oP13nDialog, false)
+														],
+														actions: function(oColumnListItem) {
+															this.waitFor({
+																controlType: "sap.m.Text",
+																matchers: new Ancestor(oColumnListItem),
+																success: function(aTexts) {
+																	var oText = aTexts[0];
+																	var oItem = aItems.find(function(oItem) {
+																		return oText.getText() === oItem.key;
+																	});
+																	var bItemIsPresent = !!oItem;
+
+																	this.waitFor({
+																		controlType: "sap.m.CheckBox",
+																		matchers: new Ancestor(oColumnListItem),
+																		actions: function(oCheckBox) {
+																			if ((!oCheckBox.getSelected() && bItemIsPresent) ||
+																				(oCheckBox.getSelected() && !bItemIsPresent)) {
+																				new Press().executeOn(oCheckBox);
+																			}
+																		},
+																		success: function() {
+																			if (bItemIsPresent) {
+																				this.waitFor({
+																					controlType: "sap.m.Select",
+																					matchers: new Ancestor(oColumnListItem),
+																					actions: function(oSelect) {
+																						iChangeSelectSelection.call(this, oSelect, oItem.role);
+																					}.bind(this)
+																				});
+																			}
+																		}
+																	});
+																}
+															});
+														}.bind(this),
+														success: function() {
+															iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+														}
+													});
+												}
+											});
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		},
+		/**
+		 * NEW!
+		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be personalized
+		 * @param {String[]} aColumns Array containing the keys of the columns that should be result of the personalisation
+		 * @returns this
+		 */
+		 iPersonalizeColumns: function(oControl, aColumns) {
+			// TODO: Use message bundle!
+			return iPersonalize.call(this, oControl, "Column", {
+				success: function(oP13nDialog) {
+					this.waitFor({
+						controlType: "sap.ui.mdc.p13n.panels.ListView",
+						matchers: new Ancestor(oP13nDialog, false),
+						success: function(aListViews) {
+							var oListView = aListViews[0];
+							this.waitFor({
+								controlType: "sap.m.Label",
+								matchers: new Ancestor(oListView, false),
+								actions: function(oLabelControl) {
+									this.waitFor({
+										controlType: "sap.m.ColumnListItem",
+										matchers: [
+											new Ancestor(oP13nDialog, false),
+											new Descendant(oLabelControl)
+										],
+										success: function(aColumnListItems) {
+											var oColumnListItem = aColumnListItems[0];
+											this.waitFor({
+												controlType: "sap.m.CheckBox",
+												matchers: [
+													new Ancestor(oColumnListItem, false)
+												],
+												actions: function(oCheckBox) {
+													if ((!oCheckBox.getSelected() && aColumns.includes(oLabelControl.getText())) ||
+														(oCheckBox.getSelected() && !aColumns.includes(oLabelControl.getText()))) {
+														new Press().executeOn(oCheckBox);
+													}
+												}
+											});
+										}
+									});
+								}.bind(this),
+								success: function() {
+									iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+								}
+							});
+						}
+					});
+				}
+			});
+		},
+		/**
+		 * @typedef {Object} FilterPersonalizationConfiguration
+		 * @property {String} key of the item that should be result of the personalisation
+		 * @property {String} operator operator in which the items should be filtered
+		 * @property {String[]} values filter values for the given operator
+		 * @property {String} inputControl
+		 */
+		/**
+		 * NEW!
+		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
+		 * @param {FilterPersonalizationConfiguration[]} aConfigurations an array containing the group personalization configuration objects
+		 */
+		iPersonalizeFilter: function(oControl, aConfigurations) {
+			// TODO: Use message bundle!
+			iPersonalize.call(this, oControl, "Filter", {
+				success: function(oP13nDialog) {
+					this.waitFor({
+						controlType: "sap.ui.comp.p13n.P13nFilterPanel",
+						matchers: new Ancestor(oP13nDialog, false),
+						success: function(aFilterPanels) {
+							var oFilterPanel = aFilterPanels[0];
+							this.waitFor({
+								controlType: "sap.m.Panel",
+								matchers: new Ancestor(oFilterPanel),
+								success: function(aPanels) {
+									var oPanel = aPanels[0];
+									this.waitFor({
+										controlType: "sap.ui.comp.p13n.P13nConditionPanel",
+										matchers: new Ancestor(oPanel),
+										success: function(aP13nConditionPanels) {
+											var oP13nConditionPanel = aP13nConditionPanels[0];
+											// Remove all filter entries
+											iPressAllDeclineButtonsOnPanel.call(this, oP13nConditionPanel, {
+												success: function() {
+													this.waitFor({
+														controlType: "sap.ui.layout.Grid",
+														matchers: new Ancestor(oP13nConditionPanel),
+														success: function(aGrids) {
+															var oWrappingGrid = aGrids[0];
+															aConfigurations.forEach(function(oConfiguration) {
+																var bPressAddButton = (aConfigurations.indexOf(oConfiguration) != aConfigurations.length - 1);
+																iAddFilterConfiguration.call(this, oWrappingGrid, oConfiguration, bPressAddButton);
+															}.bind(this));
+														}
+													});
+												}
+											});
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		},
+		/**
+		 * @typedef {Object} GroupPersonalizationConfiguration
+		 * @property {String} key of the item that should be result of the personalisation
+		 * @property {Boolean} showFieldAsColumn determinating if the "Show Field as Column" checkbox should be checked
+		 */
+		/**
+		 * NEW!
+		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
+		 * @param {GroupPersonalizationConfiguration[]} aConfigurations an array containing the group personalization configuration objects
+		 */
+		iPersonalizeGroup: function(oControl, aConfigurations) {
+			// TODO: Use message bundle!
+			return iPersonalize.call(this, oControl, "Group", {
+				success: function(oP13nDialog) {
+					this.waitFor({
+						controlType: "sap.ui.mdc.p13n.panels.GroupPanel",
+						matchers: new Ancestor(oP13nDialog, false),
+						success: function(aGroupPanels) {
+							var oGroupPanel = aGroupPanels[0];
+							// Remove all group entries
+							iPressAllDeclineButtonsOnPanel.call(this, oGroupPanel, {
+								// Add new group entries
+								// TODO: remove this copy pasta block?
+								success: function() {
+									this.waitFor({
+										controlType: "sap.m.CustomListItem",
+										matchers: new Ancestor(oGroupPanel, false),
+										success: function(aCustomListItems) {
+											Opa5.assert.ok(aCustomListItems.length === 1);
+											aConfigurations.forEach(function(oConfiguration) {
+												iAddGroupConfiguration.call(this, oGroupPanel, oConfiguration);
+											}.bind(this));
+											iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		},
+		/**
+		 * @typedef {Object} SortPersonalizationConfiguration
+		 * @property {String} key of the item that should be result of the personalisation
+		 * @property {Boolean} descending determinating if the sort direction is descending
+		 */
+		/**
+		 * NEW!
+		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
+		 * @param {SortPersonalizationConfiguration[]} aConfigurations an array containing the sort personalization configuration objects
+		 */
+		iPersonalizeSort: function(oControl, aConfigurations) {
+			// TODO: Use message bundle!
+			return iPersonalize.call(this, oControl, "Sort", {
+				success: function(oP13nDialog) {
+					this.waitFor({
+						controlType: "sap.ui.mdc.p13n.panels.SortQueryPanel",
+						matchers: new Ancestor(oP13nDialog, false),
+						success: function(aSortPanels) {
+							var oSortPanel = aSortPanels[0];
+							// Remove all Sort entries
+							iPressAllDeclineButtonsOnPanel.call(this, oSortPanel, {
+								// Add new Sort entries
+								// TODO: remove this copy pasta block?
+								success: function() {
+									this.waitFor({
+										controlType: "sap.m.CustomListItem",
+										matchers: new Ancestor(oSortPanel, false),
+										success: function(aCustomListItems) {
+											Opa5.assert.ok(aCustomListItems.length === 1);
+											aConfigurations.forEach(function(oConfiguration) {
+												iAddSortConfiguration.call(this, oSortPanel, oConfiguration);
+											}.bind(this));
+											iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		},
+		/**
+		 * NEW!
+		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
+		 * @returns this
+		 */
+		iResetThePersonalization: function (oControl) {
+			return iOpenThePersonalizationDialog.call(this, oControl, {
+				success: function(oP13nDialog) {
+					iPressTheResetButtonOnTheDialog.call(this, oP13nDialog, {
+						success: function() {
+							waitForTheWarningDialog.call(this, {
+								success: function(oWarningDialog) {
+									iPressTheOKButtonOnTheDialog.call(this, oWarningDialog, {
+										success: function() {
+											iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+    };
+});
