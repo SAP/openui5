@@ -132,6 +132,7 @@ sap.ui.define([
 			"sap.m.SelectType",
 			"sap.m.Size",
 			"sap.m.SplitAppMode",
+			"sap.m.StandardDynamicDateRangeKeys",
 			"sap.m.StandardTileType",
 			"sap.m.StepInputStepModeType",
 			"sap.m.StepInputValidationMode",
@@ -199,6 +200,7 @@ sap.ui.define([
 			"sap.m.Dialog",
 			"sap.m.DisplayListItem",
 			"sap.m.DraftIndicator",
+			"sap.m.DynamicDateRange",
 			"sap.m.ExpandableText",
 			"sap.m.FacetFilter",
 			"sap.m.FacetFilterItem",
@@ -353,6 +355,9 @@ sap.ui.define([
 			"sap.m.ColumnPopoverCustomItem",
 			"sap.m.ColumnPopoverItem",
 			"sap.m.ColumnPopoverSortItem",
+			"sap.m.CustomDynamicDateOption",
+			"sap.m.DynamicDateOption",
+			"sap.m.DynamicDateValueHelpUIType",
 			"sap.m.FlexItemData",
 			"sap.m.FeedListItemAction",
 			"sap.m.IconTabFilter",
@@ -383,6 +388,7 @@ sap.ui.define([
 			"sap.m.SinglePlanningCalendarWeekView",
 			"sap.m.SinglePlanningCalendarWorkWeekView",
 			"sap.m.SinglePlanningCalendarView",
+			"sap.m.StandardDynamicDateOption",
 			"sap.m.SuggestionItem",
 			"sap.m.TabContainerItem",
 			"sap.m.TabStripItem",
@@ -3267,6 +3273,57 @@ sap.ui.define([
 	};
 
 	/**
+	 * The option keys of all the standard options of a DynamicDateRange control.
+	 *
+	 * @public
+	 * @ui5-metamodel This array also will be described in the UI5 (legacy) designtime metamodel
+	 * @experimental Since 1.92. These keys are experimental. The API might be changed in future.
+	 */
+	thisLib.StandardDynamicDateRangeKeys = [
+		"DATE",
+		"TODAY",
+		"YESTERDAY",
+		"TOMORROW",
+
+		"DATERANGE",
+		"FROM",
+		"TO",
+		"YEARTODATE",
+		"LASTDAYS",
+		"LASTWEEKS",
+		"LASTMONTHS",
+		"LASTQUARTERS",
+		"LASTYEARS",
+		"NEXTDAYS",
+		"NEXTWEEKS",
+		"NEXTMONTHS",
+		"NEXTQUARTERS",
+		"NEXTYEARS",
+		"TODAYFROMTO",
+
+		"THISWEEK",
+		"LASTWEEK",
+		"NEXTWEEK",
+
+		"SPECIFICMONTH",
+		"THISMONTH",
+		"LASTMONTH",
+		"NEXTMONTH",
+
+		"THISQUARTER",
+		"LASTQUARTER",
+		"NEXTQUARTER",
+		"QUARTER1",
+		"QUARTER2",
+		"QUARTER3",
+		"QUARTER4",
+
+		"THISYEAR",
+		"LASTYEAR",
+		"NEXTYEAR"
+	];
+
+	/**
 	 * QuickViewGroupElement is a combination of one label and another control (Link or Text) associated to this label.
 	 *
 	 * @enum {string}
@@ -4301,6 +4358,8 @@ sap.ui.define([
 		 */
 		ServiceReset: "ServiceReset"
 	};
+
+	sap.ui.lazyRequire("sap.m.DynamicDate");
 
 		//lazy imports for MessageToast
 	sap.ui.lazyRequire("sap.m.MessageToast", "show");

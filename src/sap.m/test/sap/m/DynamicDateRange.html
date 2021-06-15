@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>sap.m.DynamicDateRange test page</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+</script>
+
+<script>
+	jQuery.sap.require('sap.m.DynamicDateOption');
+	jQuery.sap.require('sap.ui.core.format.DateFormat');
+	jQuery.sap.require('sap.m.DynamicDate');
+	var DynamicDateFormat = sap.ui.requireSync('sap/m/DynamicDateFormat');
+	var DynamicDateUtil = sap.ui.requireSync('sap/m/DynamicDateUtil');
+	var DynamicDateValueHelpUIType = sap.ui.requireSync('sap/m/DynamicDateValueHelpUIType');
+	var StandardKeys = sap.ui.requireSync('sap/m/StandardDynamicDateRangeKeys');
+
+	var oDisplayFormatter = DynamicDateFormat.getInstance({
+		"date": {
+			style: "long"
+		},
+		"month": {
+			pattern: "MM"
+		}
+	});
+
+	var oCustomOnOption = (function() {
+		var dateFormatter = sap.ui.core.format.DateFormat.getInstance();
+
+		return new sap.m.CustomDynamicDateOption({
+			key: "On",
+			valueTypes: ["date"],
+			getValueHelpUITypes: function(oControl) {
+				return [new DynamicDateValueHelpUIType({ type: "date" })];
+			},
+			format: function(oValue) {
+				return `On ${dateFormatter.format(oValue.values[0])}`;
+			},
+			parse: function(sValue) {
+				var oResult;
+				if (sValue.indexOf("On ") === 0) {
+					oResult = {};
+					oResult.operator = "On";
+					oResult.values = [dateFormatter.parse(sValue.slice(3))];
+				}
+
+				return oResult;
+			},
+			toDates: function(oValue) {
+				return [oValue.values[0], oValue.values[0]]
+			}
+		})
+	})();
+
+	var oCustomBeforeFullMoonsOption = (function() {
+		return new sap.m.CustomDynamicDateOption({
+			key: "Before full moons",
+			valueTypes: ["int"],
+			getValueHelpUITypes: function(oControl) {
+				return [new DynamicDateValueHelpUIType({ type: "int" })];
+			},
+			format: function(oValue) {
+				return `Before ${oValue.values[0]} full moons`;
+			},
+			parse: function(sValue) {
+				var oResult,
+					sVal = sValue,
+					iNumberEnd;
+				if (sValue.indexOf("full moons") > -1) {
+					oResult = {};
+					oResult.operator = "BeforeFullMoons";
+
+					sVal = sVal.slice(7);
+					iNumberEnd = sVal.indexOf(" ");
+
+					oResult.values = [parseInt(sVal.slice(0, iNumberEnd))];
+				}
+
+				return oResult;
+			},
+			toDates: function(oValue) {
+				var now = new Date();
+				return [now, now]
+			}
+		})
+	})();
+
+	DynamicDateUtil.addOption(oCustomOnOption);
+	DynamicDateUtil.addOption(oCustomBeforeFullMoonsOption);
+
+	function handleValueChange(oEvent) {
+		var sDDRValue = JSON.stringify(oEvent.getParameter("value"), null, 2);
+		var oTextArea = sap.ui.getCore().byId("txt1");
+		var oDDR = oEvent.getSource();
+
+		oTextArea.setValue(sDDRValue + "\n" + oTextArea.getValue());
+
+		if (oEvent.getParameter("valid")) {
+			oDDR.setValueState("None");
+			oDDR.setValueStateText("");
+		} else {
+			oDDR.setValueState("Error");
+			oDDR.setValueStateText("Parse error!");
+		}
+	}
+
+	var oDDR1 = new sap.m.DynamicDateRange({
+			width: '350px',
+			options: StandardKeys,
+			value: {
+				path: '/val1',
+				type: new sap.m.DynamicDate()
+			},
+			change: handleValueChange
+		}),
+		oDDR2 = new sap.m.DynamicDateRange({
+			width: '350px',
+			options: ["DATE", "TODAY", "LASTDAYS", "LASTQUARTERS", "TODAYFROMTO", "On", "Before full moons"],
+			value: {
+				path: '/val2',
+				type: new sap.m.DynamicDate()
+			},
+			change: handleValueChange
+		}),
+		oDDR3 = new sap.m.DynamicDateRange({
+			width: '350px',
+			options: ["DATE", "TODAY", "LASTDAYS", "LASTQUARTERS", "TODAYFROMTO", "SPECIFICMONTH"],
+			value: {
+				path: '/val3',
+				type: new sap.m.DynamicDate({
+					date: {
+						style: "short"
+					},
+					month: {
+						pattern: "MMM"
+					},
+					int: {
+						minIntegerDigits: 2
+					}
+				})
+			},
+			change: handleValueChange
+		}),
+		oDDR4 = new sap.m.DynamicDateRange({
+			width: '350px',
+			options: StandardKeys,
+			enableGroupHeaders: false,
+			value: {
+				path: '/val4',
+				type: new sap.m.DynamicDate()
+			},
+			change: handleValueChange
+		}),
+		oApp = new sap.m.App("myApp", {
+			initialPage:"myPage1"
+		}),
+		oPage1 = new sap.m.Page("myPage1", {
+			title: "DynamicDateRange Control",
+			content: [
+				new sap.m.Label({ text: "All keys:"}),
+				oDDR1,
+				new sap.m.Label({ text: "Custom options:"}),
+				oDDR2,
+				new sap.m.Label({ text: "Different format:"}),
+				oDDR3,
+				new sap.m.Label({ text: "No group headers:"}),
+				oDDR4,
+				new sap.m.TextArea("txt1", { width: "350px", height: "300px"})
+			]
+		});
+
+	var oModel = new sap.ui.model.json.JSONModel({
+			val1: {
+				operator: "DATE",
+				values: [1602277200000]
+			},
+			val2: {
+				operator: "DATE",
+				values: [1602277200000]
+			},
+			val3: {
+				operator: "DATE",
+				values: [1602277200000]
+			},
+			val4: {
+				operator: "DATE",
+				values: [1602277200000]
+			}
+		});
+
+	oApp.addPage(oPage1);
+	oApp.setModel(oModel);
+
+	oApp.placeAt("body");
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

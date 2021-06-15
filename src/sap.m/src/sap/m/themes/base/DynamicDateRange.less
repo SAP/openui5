@@ -1,0 +1,56 @@
+/* ============================================= */
+/* CSS for control sap.m/DynamicDateRange        */
+/* Base theme                                    */
+/* ============================================= */
+
+.sapMDynamicDateRangePopover {
+	section {
+		& > * {
+			box-sizing: border-box;
+			padding: 0 1rem;
+		}
+		& > .sapMLabel {
+			display: block;
+			margin: 0.75rem 0 0.25rem 0;
+		}
+		& > .sapMLabel:first-child {
+			margin-top: 1rem;
+		}
+	}
+
+	.sapUiCal {
+		padding: 0;
+	}
+
+	.sapUiCalMonthPicker {
+		min-width: 19.5rem;
+		width: 100%;
+		margin: 0;
+		padding: 1rem 0.25rem
+	}
+
+	&.sapMPage {
+		background-color: @sapGroup_ContentBackground;
+	}
+
+	.sapMTB-Info-CTX.sapMIBar-CTX .sapMLabel {
+		color: @sapUiPageFooterTextColor;
+	}
+}
+
+.sapUiSizeCompact .sapMDynamicDateRangePopover {
+	.sapUiCalMonthPicker {
+		width: 100%;
+		min-width: 16.5rem;
+	}
+
+	.sapMPageFooter .sapMIBar {
+		height: 2rem;
+	}
+}
+
+.sapUiIcon.sapMDDRDateOption {
+	font-size: 1rem;
+
+	color: @sapUiContentIconColor;
+}

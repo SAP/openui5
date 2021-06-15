@@ -262,6 +262,21 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			DynamicDateRange: {
+				title: "Test Page for sap.m.DynamicDateRange",
+				ui5: {
+					language: "en-US"
+				},
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
+				coverage: {
+					only: "//sap\/m\/[\\w]*DynamicDate.*/"
+				}
+			},
 			ExpandableText: {
 				title: "QUnit Tests - sap.m.ExpandableText",
 				sinon: {

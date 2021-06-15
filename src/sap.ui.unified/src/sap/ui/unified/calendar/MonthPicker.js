@@ -113,6 +113,14 @@ sap.ui.define([
 			 */
 			selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate" }
 		},
+		associations: {
+			/**
+			 * Association to controls / IDs that label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.92
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+
+		},
 		events : {
 
 			/**
