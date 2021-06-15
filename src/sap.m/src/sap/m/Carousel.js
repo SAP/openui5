@@ -12,8 +12,6 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
 	"sap/m/MessagePage",
-	"sap/ui/core/theming/Parameters",
-	"sap/ui/dom/units/Rem",
 	"./CarouselRenderer",
 	"./CarouselLayout",
 	"sap/ui/events/KeyCodes",
@@ -30,8 +28,6 @@ sap.ui.define([
 	ResizeHandler,
 	coreLibrary,
 	MessagePage,
-	Parameters,
-	Rem,
 	CarouselRenderer,
 	CarouselLayout,
 	KeyCodes,
@@ -584,7 +580,8 @@ sap.ui.define([
 	 */
 	Carousel.prototype._calculatePagesWidth = function (iNumberOfItemsToShow) {
 		var iWidth = this.$().width(),
-			iMargin = Rem.toPx(Parameters.get("_sap_m_Carousel_PagesMarginRight")),
+			oSlide = this.getDomRef().querySelector(".sapMCrslFluid .sapMCrslItem"),
+			iMargin = parseFloat(window.getComputedStyle(oSlide).marginRight),
 			iItemWidth = (iWidth - (iMargin * (iNumberOfItemsToShow - 1))) / iNumberOfItemsToShow,
 			iItemWidthPercent = (iItemWidth / iWidth) * 100;
 
