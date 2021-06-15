@@ -95,7 +95,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @alias sap.ui.webc.common.WebComponent
-		 * @experimental Since 1.92.0 This base class may change significantly. Do not base your productive code on it.
+		 * @experimental Since 1.92.0 The API might change. It is not intended for productive usage yet!
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var WebComponent = Control.extend("sap.ui.webc.common.WebComponent", {

@@ -15,7 +15,7 @@ sap.ui.define([
 		/**
 		 * WebComponent renderer.
 		 * @namespace
-		 * @experimental Since 1.92.0 Do not base your productive code on this renderer as its API may change.
+		 * @experimental Since 1.92.0 The API might change. It is not intended for productive usage yet!
 		 */
 		var WebComponentRenderer = {
 			apiVersion: 2

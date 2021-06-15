@@ -22,7 +22,7 @@ sap.ui.define([
 		 * @author SAP SE
 		 * @version ${version}
 		 * @since 1.92.0
-		 * @experimental
+		 * @experimental Since 1.92.0 The API might change. It is not intended for productive usage yet!
 		 * @alias sap.ui.webc.common.WebComponentMetadata
 		 * @extends sap.ui.core.ElementMetadata
 		 * @public
