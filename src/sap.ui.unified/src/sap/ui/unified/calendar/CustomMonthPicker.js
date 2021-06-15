@@ -104,7 +104,7 @@ sap.ui.define([
 		}
 
 		if (!oMonthPicker.getIntervalSelection()) {
-			oFocusedDate.setMonth(oMonthPicker.getMonth());
+			oFocusedDate.setMonth(oMonthPicker.getMonth(), 1);
 
 			oSelectedDate.setStartDate(oFocusedDate.toLocalJSDate());
 			this.addSelectedDate(oSelectedDate);
