@@ -333,7 +333,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.writeStyles", function(assert) {
-		checkRMWriter(assert, " style=\"att1: val1; att2: val2;\"", true, 0, function(rm) {
+		checkRMWriter(assert, " data-sap-ui-stylekey=\"0\"", true, 0, function(rm) {
 			rm.addStyle("att1", "val1");
 			rm.addStyle("att2", "val2");
 			return rm.writeStyles();

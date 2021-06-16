@@ -1,19 +1,21 @@
 sap.ui.define([
 	"sap/ui/core/Patcher",
-	"sap/base/security/encodeXML",
-	"sap/base/security/encodeCSS"
-], function(Patcher, encodeXML, encodeCSS) {
+	"sap/base/security/encodeXML"
+], function(Patcher, encodeXML) {
 
 	"use strict";
-	/*global QUnit,sinon*/
+	/*global QUnit, CSS*/
 
-	QUnit.module("Patcher", {
+	QUnit.module("Patching", {
 		before: function() {
 			this.oContainer = document.getElementById("qunit-fixture");
 			this.oObserver = new MutationObserver(function() {});
 
-			this.html = function (sHtml) {
+			this.html = function (sHtml, fnProcess) {
 				this.oContainer.innerHTML = sHtml;
+				if (fnProcess) {
+					fnProcess(this.oContainer.firstChild);
+				}
 				return this;
 			};
 
@@ -82,16 +84,28 @@ sap.ui.define([
 			assert.equal(aMutations.length, 0, "Normal tag - classes");
 		});
 
-		this.html("<div style='width: 10px;'></div>").patch(function() {
+		this.html("<div></div>", function(oElement) {
+			oElement.style.width = "10px";
+		}).patch(function() {
 			Patcher.openStart("div").style("width", "10px").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - style");
 		});
 
-		this.html("<div style='width: 10px; background: pink;'></div>").patch(function() {
-			Patcher.openStart("div").style("width", "10px").style("background", "pink").openEnd().close("div");
+		this.html("<div></div>", function(oElement) {
+			oElement.style = "width: 10px; background-color: pink;";
+		}).patch(function() {
+			Patcher.openStart("div").style("width", "10px").style("background-color", "pink").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - styles");
+		});
+
+		this.html("<div></div>", function(oElement) {
+			oElement.style = 'font-family: "He\\"rb;width:0";';
+		}).patch(function() {
+			Patcher.openStart("div").style("font-family", '"He\\"rb;width:0"').openEnd().close("div");
+		}, function(aMutations) {
+			assert.equal(aMutations.length, 0, "Normal tag - style with semicolon");
 		});
 
 		this.html("<div>Text</div>").patch(function() {
@@ -121,16 +135,19 @@ sap.ui.define([
 		this.html(
 			"<div id='d' title='t'>" +
 				"<div class='x'></div><div class='x'></div>" +
-				"<div style='width: 10px;'><div style='width: 10px;'></div></div>" +
+				"<div id='n'><div></div></div>" +
 				"0<span>1<img id='s'>2</span>3 4" +
 				"<b>b<i>bi<u>biu</u></i></b>" +
 				"<h1>" + encodeXML("<h1> & <hr>") + "</h1><hr>" +
-			"</div>"
+			"</div>",
+			function(oElement) {
+				document.getElementById("n").style.width = "10px";
+			}
 		).patch(function() {
 			Patcher.
 			openStart("div", "d").attr("title", "t").openEnd().
 				openStart("div").class("x").openEnd().close("div").openStart("div").class("x").openEnd().close("div").
-				openStart("div").style("width", "10px").openEnd().openStart("div").style("width", "10px").openEnd().close("div").close("div").
+				openStart("div", "n").style("width", "10px").openEnd().openStart("div").openEnd().close("div").close("div").
 				text(0).openStart("span").openEnd().text(1).voidStart("img", "s").voidEnd().text(2).close("span").text("3 4").
 				openStart("b").openEnd().text("b").openStart("i").openEnd().text("bi").openStart("u").openEnd().text("biu").close("u").close("i").close("b").
 				openStart("h1").openEnd().text("<h1> & <hr>").close("h1").voidStart("hr").voidEnd().
@@ -185,13 +202,18 @@ sap.ui.define([
 			assert.equal(aMutations.length, 0, "Void tag - classes");
 		});
 
-		this.html("<img style='width: 10px;'>").patch(function() {
+		this.html("<img>", function(oElement) {
+			oElement.style.width = "10px";
+		}).patch(function() {
 			Patcher.voidStart("img").style("width", "10px").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - style");
 		});
 
-		this.html("<img style='width: 10px; height: 20px;'>").patch(function() {
+		this.html("<img>", function(oElement) {
+			oElement.style.width = "10px";
+			oElement.style.height = "20px";
+		}).patch(function() {
 			Patcher.voidStart("img").style("width", "10px").style("height", "20px").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - styles");
@@ -207,8 +229,11 @@ sap.ui.define([
 					"<stop offset='5%' stop-color='gold'/>" +                         // attribute with hyphen
 					"<stop offset='95%' stop-color='red'></stop>" +                   // explicit close tag
 				"</linearGradient>" +                                                 // case-sensitive tag name
-				"<rect x='0' y='0' width='100%' style='height: 100%;'/>" +            // self-closing tag
-			"</svg>"
+				"<rect x='0' y='0' width='100%' />" +                                 // self-closing tag
+			"</svg>",
+			function(oElement) {
+				oElement.lastChild.style.height = "100%";
+			}
 		).patch(function() {
 			Patcher.
 			openStart("svg", "x").attr("viewBox", "-5 -5 10 10").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
@@ -275,34 +300,57 @@ sap.ui.define([
 			assert.equal(oElement.className, "y x", "class attribute is changed, order is ignored");
 		});
 
-		this.html("<div style='width: calc(100% - 3rem);'></div>").patch(function() {
+		this.html("<div></div>", function(oElement) {
+			oElement.style.width = "calc(100% - 3rem)";
+		}).patch(function() {
 			Patcher.openStart("div").style("width", "calc(100% - 2rem)").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.getAttribute("style"), "width: calc(100% - 2rem);", "style is changed");
 		});
 
-		this.html("<div style='width: 10px;'></div>").patch(function() {
+		this.html("<div></div>", function(oElement) {
+			oElement.style.width = "10px";
+		}).patch(function() {
 			Patcher.openStart("div").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.getAttribute("style"), null, "style attribute is removed");
 		});
 
-		this.html("<div style='width: 10px;'></div>").patch(function() {
+		this.html("<div></div>", function(oElement) {
+			oElement.style.width = "10px";
+		}).patch(function() {
 			Patcher.openStart("div").style("width", "").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.getAttribute("style"), null, "style attribute is removed since it had no value");
 		});
 
+		this.html("<div></div>", function(oElement) {
+			oElement.style.width = "10px";
+		}).patch(function() {
+			Patcher.openStart("div").style("width", "10px; color: red").openEnd().close("div");
+		}, function(aMutations, oElement) {
+			assert.equal(aMutations.length, 1, "Only one change");
+			assert.equal(oElement.getAttribute("style"), "", "style attribute is empty");
+			assert.notEqual(oElement.style.color, "red", "Color red is not set since the provided style was not valid");
+			assert.notEqual(oElement.style.width, "10px", "Width 10px is not set since the provided style was not valid");
+		});
+
 		this.html("<div></div>").patch(function() {
-			Patcher.openStart("div").style("background-image", "url(\"" + encodeCSS("~!@#$%^&()_+{}'.jpg") + "\")").openEnd().close("div");
+			Patcher.openStart("div").style("background-image", "url(\"" + CSS.escape("~!@#$%^&(;)_+{}'.jpg") + "\")").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change - style attribute");
 
 			// safari is returning the full path e.g. "url("http://localhost:8080/testsuite/~!@#$%^&()_+{}'.jpg")"
-			assert.equal(oElement.style.backgroundImage.replace(/http.*\//, ""), "url(\"~!@#$%^&()_+{}'.jpg\")", "style attribute is set via cssText");
+			assert.equal(oElement.style.backgroundImage.replace(/http.*\//, ""), "url(\"~!@#$%^&(;)_+{}'.jpg\")", "style attribute is set via cssText");
+		});
+
+		this.html("<div></div>").patch(function() {
+			Patcher.openStart("div").style("background-image", 'url("a;b.png")').openEnd().close("div");
+		}, function(aMutations, oElement) {
+			assert.equal(oElement.style.backgroundImage, 'url("a;b.png")', "escaping did not modify semicolons");
 		});
 
 		this.html("<div id='x' tabindex='0' title='t'></div>").patch(function() {
@@ -544,44 +592,21 @@ sap.ui.define([
 			assert.equal(aMutations[0].addedNodes[0], oElement.children[1], "Only 2nd item is added");
 		});
 
-		this.html("<ul><li id='x'></li></ul>").patch(function() {
-			var stub = sinon.stub(Patcher, "matchElement").callsFake(function(sId, sTagName, oElement) {
-				return oElement;
-			});
-
-			Patcher.openStart("ul").openEnd().openStart("li", "y").openEnd().close("li").close("ul");
-
-			stub.restore();
-		}, function(aMutations, oElement) {
-			assert.equal(aMutations.length, 1, "One changes: reuse of old element with matched node even though node thas another id");
-			assert.equal(oElement.firstChild.id, "y", "id is updated");
-			assert.equal(oElement.childElementCount, 1, "has only one child");
-		});
-
 		this.html(
 			"<ul>" +
 				"<li id='x'></li>" +
 				"<li id='prefix-y'></li>" +
 			"</ul>"
 		).patch(function() {
-			var stub = sinon.stub(Patcher, "matchElement").callsFake(function(sId, sTagName, oElement) {
-				return document.getElementById("prefix-" + sId);
-			});
-
 			Patcher.openStart("ul").openEnd().
 				openStart("li", "y").openEnd().close("li").
 			close("ul");
-
-			stub.restore();
 		}, function(aMutations, oElement) {
 			assert.equal(oElement.firstChild.id, "y", "id is updated");
 			assert.equal(oElement.childElementCount, 1, "has only one child");
 		});
 
 		this.html("<ul></ul>").patch(function() {
-			var stub = sinon.stub(Patcher, "createElement").callsFake(function(sId, sTagName, oParent) {
-				return oParent.lastChild ? oParent.lastChild.cloneNode(true) : null;
-			});
 
 			Patcher.openStart("ul").openEnd().
 				openStart("li", "a").attr("title", "a").openEnd().text("a").close("li").
@@ -593,7 +618,6 @@ sap.ui.define([
 				openStart("li").openEnd().close("li").
 			close("ul");
 
-			stub.restore();
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 5, "Five changes: all children are inserted");
 			assert.equal(oElement.childElementCount, 5, "has five children");
@@ -683,10 +707,8 @@ sap.ui.define([
 		this.html("<div></div>").patch(function() {
 			Patcher.unsafeHtml("<img>");
 		}, function(aMutations, oElement) {
-			assert.equal(aMutations.length, 1, "outerHTML is replaced");
-			assert.equal(aMutations[0].removedNodes[0].tagName, "DIV", "div element is removed");
-			assert.equal(aMutations[0].addedNodes[0].tagName, "IMG", "img element is added");
-			assert.equal(oElement.tagName, "IMG", "There is only an img element");
+			assert.equal(aMutations.length, 0, "There is no update since replacing the root node output is not supported");
+			assert.equal(oElement.tagName, "DIV", "Root node is not changed");
 		});
 
 		this.html("<div id='x'></div>").patch(function() {
@@ -732,12 +754,18 @@ sap.ui.define([
 			"</ul>"
 		).patch(function() {
 			Patcher.openStart("ul").openEnd().
-				unsafeHtml("<li id='a'>A</li>", "a").
+				unsafeHtml("<li id='a'>A</li><li id='d'>D</li>", "a", function(aDomNodes) {
+			assert.equal(aDomNodes[0].id, "a");
+			assert.equal(aDomNodes[0].textContent, "A");
+			assert.equal(aDomNodes[1].id, "d");
+			assert.equal(aDomNodes[1].textContent, "D");
+		}).
 				unsafeHtml("<li id='b'>B</li>", "b").
 				unsafeHtml("<li id='c'>C</li>", "c").
 			close("ul");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 7, "Seven changes");
+			assert.equal(oElement.textContent, "ADBC", "The content is correct after patching");
 			assert.equal(aMutations[0].addedNodes[0].id, "a", "Node A is first added");
 			assert.equal(aMutations[1].removedNodes[0].id, "a", "then old Node A is removed");
 			assert.equal(aMutations[2].addedNodes[0].id, "b", "Node B is first added");
@@ -814,12 +842,13 @@ sap.ui.define([
 			"</svg>"
 		).patch(function() {
 			Patcher.
-			openStart("svg").attr("viewBox", "0 0 220 100").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
+			openStart("svg").class("c").attr("viewBox", "0 0 220 100").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
 				openStart("rect").attr("width", "100").attr("height", "100").openEnd().close("rect").
 				openStart("rect").attr("x", 120).attr("width", "100").attr("height", "100").openEnd().close("rect").
 			close("svg");
 		}, function(aMutations, oSVG) {
-			assert.equal(aMutations.length, 1, "Single change - new rect element is added");
+			assert.equal(aMutations.length, 2, "Two changes - new rect element is added and class attribute is set");
+			assert.equal(oSVG.getAttribute("class"), "c", "Class name is correctly set for the SVG element");
 			assert.equal(oSVG.lastChild.namespaceURI, oSVG.namespaceURI, "Namespace is set on the new rect element");
 		});
 
@@ -840,6 +869,156 @@ sap.ui.define([
 			assert.equal(oSVG.textContent, "Text", "Text is set for the SVG with foreignObject");
 			assert.equal(oSVG.lastChild.namespaceURI, oSVG.namespaceURI, "Namespace is set on the new foreignObject element");
 			assert.equal(oSVG.lastChild.firstChild.namespaceURI, oSVG.parentNode.namespaceURI, "Namespace of the p tag is valid");
+		});
+
+	});
+
+
+	QUnit.module("Rendering", {
+		before: function() {
+
+			this.oObserver = new MutationObserver(function() {});
+			this.oContainer = document.getElementById("qunit-fixture");
+
+			this.render = function(fnRender, fnAfterRendering) {
+				this.oObserver.observe(document.body, {
+					characterData: true,
+					attributes: true,
+					childList: true,
+					subtree: true
+				});
+
+				Patcher.setRootNode();
+				fnRender.call(this);
+				var oRootNode = Patcher.getRootNode();
+
+				var aMutations = this.oObserver.takeRecords();
+				this.oObserver.disconnect();
+
+				oRootNode && this.oContainer.appendChild(oRootNode);
+				fnAfterRendering.call(this, this.oContainer.firstChild, aMutations);
+
+				this.oContainer.textContent = "";
+				Patcher.reset();
+			};
+		}
+	});
+
+	QUnit.test("no existing elements", function(assert) {
+
+		this.render(function() {
+			Patcher.
+			openStart("div", "d").attr("title", "t").openEnd().
+				openStart("div").class("x").openEnd().close("div").
+				openStart("p").attr("data-x", "~!@#$%^&*()_+{}:<>?\'\"").openEnd().close("div").
+				openStart("div").style("width", "10px").openEnd().openStart("div").style("width", "20px").openEnd().close("div").close("div").
+				text(0).
+				openStart("span").openEnd().text(1).voidStart("img", "s").voidEnd().text(2).close("span").
+				text("3 4").
+				openStart("b").openEnd().text("b").openStart("i").openEnd().text("bi").openStart("u").openEnd().text("biu").close("u").close("i").close("b").
+				openStart("h1").openEnd().text("<h1> & <hr>").close("h1").voidStart("hr").voidEnd().
+			close("div");
+		}, function(oElement, aMutations) {
+			assert.equal(aMutations.length, 0, "No mutations during the Patcher execution");
+			assert.equal(oElement.outerHTML,
+				'<div id="d" title="t">' +
+					'<div class="x"></div>' +
+					'<p data-x="~!@#$%^&amp;*()_+{}:<>?\'&quot;"></p>' +
+					'<div style="width: 10px;"><div style="width: 20px;"></div></div>' +
+					'0' +
+					'<span>1<img id="s">2</span>' +
+					'3 4' +
+					'<b>b<i>bi<u>biu</u></i></b>' +
+					'<h1>&lt;h1&gt; &amp; &lt;hr&gt;</h1><hr>' +
+				'</div>',
+			"Complex structure is rendered");
+		});
+
+		this.render(function() {
+			Patcher.
+			openStart("svg", "x").attr("viewBox", "-5 -5 10 10").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
+				openStart("linearGradient").attr("gradientTransform", "rotate(90)").openEnd().
+					openStart("stop").attr("offset", '5%').attr("stop-color", "gold").openEnd().close("stop").
+					openStart("stop").attr("offset", '95%').attr("stop-color", "red").openEnd().close("stop").
+				close("linearGradient").
+			close("svg");
+		}, function(oElement, aMutations) {
+			assert.equal(aMutations.length, 0, "No mutations during the Patcher execution");
+			assert.equal(oElement.outerHTML,
+				'<svg id="x" viewBox="-5 -5 10 10" xmlns="http://www.w3.org/2000/svg">' + // case-sensitive attribute
+					'<linearGradient gradientTransform="rotate(90)">' +                   // case-sensitive tag name
+						'<stop offset="5%" stop-color="gold"></stop>' +                   // attribute with hyphen
+						'<stop offset="95%" stop-color="red"></stop>' +                   // explicit close tag
+					'</linearGradient>' +                                                 // case-sensitive tag name
+				'</svg>',
+			"SVG structure is rendered");
+		});
+
+		this.render(function() {
+			Patcher.
+			openStart("div").openEnd().close("div").
+			voidStart("img").voidEnd().
+			openStart("p").openEnd().close("p");
+		}, function(oElement, aMutations) {
+			assert.equal(aMutations.length, 0, "No mutations during the Patcher execution");
+			assert.equal(oElement.parentNode.innerHTML, '<div></div><img><p></p>', "Multiple root node is rendered");
+		});
+
+	});
+
+	QUnit.test("existing elements", function(assert) {
+
+		document.body.insertAdjacentHTML("beforeend", '<div id="outer"><i>text</i></div>');
+		this.render(function() {
+			Patcher.openStart("div", "outer").attr("draggable", "true").openEnd().
+				openStart("i").attr("title", "t").openEnd().text("text").close("i").
+			close("div");
+		}, function(oElement, aMutations) {
+			assert.equal(aMutations.length, 0, "No mutations");
+			assert.equal(document.body.lastChild.id, "outer", "Outer node is found but not moved during the rendering");
+			assert.equal(oElement.outerHTML,
+				'<div id="outer" draggable="true">' +
+					'<i title="t">text</i>' +
+				'</div>',
+			"Output correct for the existing element");
+			document.body.lastChild.remove();
+		});
+
+	});
+
+	QUnit.test("unsafeHtml", function(assert) {
+
+		this.render(function() {
+			Patcher.openStart("div").openEnd().
+				unsafeHtml("<div></div><img><p></p><b>b<i>bi<u>biu</u></i></b><input>").
+			close("div");
+		}, function(oElement) {
+			assert.equal(oElement.outerHTML,
+				'<div>' +
+					'<div></div><img><p></p><b>b<i>bi<u>biu</u></i></b><input>' +
+				'</div>',
+			"Output correct for the unsafeHtml");
+		});
+
+		this.render(function() {
+			Patcher.openStart("svg").attr("xmlns", "http://www.w3.org/2000/svg").attr("viewBox", "0 0 30 10").openEnd().
+				unsafeHtml('<circle id="circle" cx="5" cy="5" r="4" stroke="blue"></circle>', "circle", function(aElements) {
+					assert.equal(aElements[0].namespaceURI, "http://www.w3.org/2000/svg", "Parsed SVG element NS is valid");
+				}).
+			close("svg");
+		}, function(oElement) {
+			assert.equal(oElement.outerHTML,
+				'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 10">' +
+					'<circle id="circle" cx="5" cy="5" r="4" stroke="blue"></circle>' +
+				'</svg>',
+			"Output correct for the SVG unsafeHtml");
+			assert.equal(oElement.lastChild.namespaceURI, oElement.namespaceURI, "Namespace is set on the new circle element");
+		});
+
+		this.render(function() {
+			Patcher.unsafeHtml("<div></div>");
+		}, function(oElement) {
+			assert.notOk(oElement, "unsafeHtml is not supported without openStart/voidStart call");
 		});
 
 	});
