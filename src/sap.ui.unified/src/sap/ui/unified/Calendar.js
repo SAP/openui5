@@ -2157,7 +2157,7 @@ sap.ui.define([
 			iMonth = oMonthPicker._focusedMonth || oMonthPicker._focusedMonth === 0 ?
 				oMonthPicker._focusedMonth :
 				oMonthPicker.getMonth(),
-			oSecondDate = Boolean(oMonthPicker._iYear) ?
+			oSecondDate = oMonthPicker._iYear ?
 				new CalendarDate(oMonthPicker._iYear, iMonth - 1, 1) :
 				new CalendarDate(this._getFocusedDate().getYear(), iMonth - 1, 1);
 

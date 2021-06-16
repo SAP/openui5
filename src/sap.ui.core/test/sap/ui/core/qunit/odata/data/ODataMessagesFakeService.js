@@ -2625,7 +2625,7 @@ mPredefinedServiceResponses.technicalError400Json = '\
 	}\
 }';
 
-mPredefinedServiceResponses.technicalError500Json = mPredefinedServiceResponses.technicalError400Json = mPredefinedServiceResponses.technicalError400Json;
+mPredefinedServiceResponses.technicalError500Json = mPredefinedServiceResponses.technicalError400Json;
 
 mPredefinedServiceResponses.technicalError400Json2 = '\
 {\

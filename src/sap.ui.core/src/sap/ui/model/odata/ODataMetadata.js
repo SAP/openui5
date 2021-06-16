@@ -1160,10 +1160,10 @@ sap.ui.define([
 			oRequestHandle.abort();
 			delete that.mRequestHandles[sKey];
 		});
-		if (!!this.oLoadEvent) {
+		if (this.oLoadEvent) {
 			clearTimeout(this.oLoadEvent);
 		}
-		if (!!this.oFailedEvent) {
+		if (this.oFailedEvent) {
 			clearTimeout(this.oFailedEvent);
 		}
 

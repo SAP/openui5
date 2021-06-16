@@ -108,7 +108,7 @@ sap.ui.define([
 					}
 				}, this);
 
-				oLogger.debug(!!aControls.length ? aMatchedValues.length + " out of " + aControls.length + " controls met the matchers pipeline requirements" :
+				oLogger.debug(aControls.length ? aMatchedValues.length + " out of " + aControls.length + " controls met the matchers pipeline requirements" :
 					"No controls found so matcher pipeline processing was skipped");
 
 				if (!aMatchedValues.length) {

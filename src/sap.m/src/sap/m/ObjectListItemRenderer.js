@@ -130,7 +130,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/li
 
 			rm.openEnd();
 
-			if (!!oLI.getIcon()) {
+			if (oLI.getIcon()) {
 				rm.openStart("div");
 				rm.class("sapMObjLIconDiv");
 

@@ -1501,7 +1501,7 @@ sap.ui.define([
 		var oFileUploader, i, j;
 		this._setNumberOfAttachmentsTitle(count);
 		if (!this._oHeaderToolbar) {
-			if (!!this._oFileUploader && !this.getInstantUpload()) {
+			if (this._oFileUploader && !this.getInstantUpload()) {
 				this._oFileUploader.destroy();
 			}
 			oFileUploader = this._getFileUploader();

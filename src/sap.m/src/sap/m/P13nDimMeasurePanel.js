@@ -520,7 +520,7 @@ sap.ui.define([
 			return;
 		}
 		sap.ui.getCore().applyChanges();
-		if (!!oItem.getDomRef()) {
+		if (oItem.getDomRef()) {
 			oItem.focus();
 		}
 	};

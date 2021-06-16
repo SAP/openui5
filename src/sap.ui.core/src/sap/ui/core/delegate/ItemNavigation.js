@@ -106,7 +106,7 @@ sap.ui.define([
 			this.iTabIndex = -1;
 
 			// whether the active element should get a tabindex of 0 or -1
-			this.iActiveTabIndex = !!bNotInTabChain ? -1 : 0;
+			this.iActiveTabIndex = bNotInTabChain ? -1 : 0;
 
 			// the initial focusedindex
 			this.iFocusedIndex = -1;
@@ -1343,7 +1343,7 @@ sap.ui.define([
 				iIndex = iRow * this.iColumns;
 			}
 		} else {
-			if (!!(oEvent.metaKey || oEvent.ctrlKey) && !this._bCtrlEnabled) {
+			if ((oEvent.metaKey || oEvent.ctrlKey) && !this._bCtrlEnabled) {
 
 				// do not handle ctrl
 				return;
@@ -1418,7 +1418,7 @@ sap.ui.define([
 			}
 		} else {
 
-			if (!!(oEvent.metaKey || oEvent.ctrlKey) && !this._bCtrlEnabled) {
+			if ((oEvent.metaKey || oEvent.ctrlKey) && !this._bCtrlEnabled) {
 
 				// do not handle ctrl
 				return;

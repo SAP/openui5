@@ -106,7 +106,7 @@ sap.ui.define(['./library', 'sap/ui/core/Core'],
 			oRm.openStart("div", oOI.getId() + "-text"); // Text begins
 			oRm.class("sapMObjectIdentifierText");
 
-			if (!!oOI.getProperty("text") && !!oOI.getProperty("title")) {
+			if (oOI.getProperty("text") && oOI.getProperty("title")) {
 				oRm.class("sapMObjectIdentifierTextBellow");
 			}
 			oRm.openEnd();

@@ -14,28 +14,39 @@
 	},
 	"rules": {
 		// Possible Errors
+		"for-direction": "error",
+		"getter-return": "error",
+		"no-async-promise-executor": "error",
+		"no-compare-neg-zero": "error",
 		"no-cond-assign": "error",
 		"no-console": "error",
 		"no-constant-condition": "error",
 		"no-control-regex": "error",
 		"no-debugger": "error",
 		"no-dupe-args": "error",
+		"no-dupe-else-if": "error",
 		"no-dupe-keys": "error",
 		"no-duplicate-case": "error",
 		"no-empty-character-class": "error",
 		"no-empty": "error",
 		"no-ex-assign": "error",
-		"no-extra-boolean-cast": "warn",
+		"no-extra-boolean-cast": ["error", {"enforceForLogicalOperands": true}],
 		"no-extra-parens": ["error", "functions"],
 		"no-extra-semi": "error",
 		"no-func-assign": "error",
+		"no-global-assign": "error",
+		"no-import-assign": "error",
 		"no-inner-declarations": ["error", "functions"],
 		"no-invalid-regexp": "error",
 		"no-irregular-whitespace": "error",
+		"no-misleading-character-class": "error",
 		"no-obj-calls": "error",
 		"no-regex-spaces": "error",
+		"no-self-assign": "error",
+		"no-setter-return": "error",
 		"no-sparse-arrays": "error",
 		"no-unreachable": "error",
+		"no-unsafe-finally": "error",
 		"use-isnan": "error",
 		"valid-typeof": "error",
 
@@ -47,7 +58,9 @@
 		"default-case": "warn",
 		"no-alert": "error",
 		"no-caller": "error",
+		"no-case-declarations": "error",
 		"no-div-regex": "error",
+		"no-empty-pattern": "error",
 		"no-eval": "error",
 		"no-extend-native": "error",
 		"no-extra-bind": "error",
@@ -71,6 +84,8 @@
 		"no-self-compare": "error",
 		"no-sequences": "error",
 		"no-unused-expressions": "warn",
+		"no-unused-labels": "error",
+		"no-useless-catch": "error",
 		"no-void": "error",
 		"no-warning-comments": "warn",
 		"no-with": "error",
@@ -120,9 +135,17 @@
 		"space-infix-ops": "error",
 		"space-unary-ops": ["error", { "words": true, "nonwords": false }],
 
+		// ECMAScript 6
+		"constructor-super": "error",
+		"no-class-assign": "error",
+		"no-const-assign": "error",
+		"no-dupe-class-members": "error",
+		"no-new-symbol": "error",
+		"no-this-before-super": "error",
+		"require-yield": "error",
+
 		// Deprecated
 		"no-catch-shadow": "error",    // => no-shadow
-		"no-native-reassign": "error", // => no-global-assign
 		"no-negated-in-lhs": "error",  // => no-unsafe-negation
 		"no-spaced-func": "error",     // => func-call-spacing
 		"valid-jsdoc": ["warn", {      // => eslint-plugin-jsdoc

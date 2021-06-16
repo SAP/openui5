@@ -73,7 +73,7 @@ sap.ui.define([
             var oExisting = mItemState[oProperty.name];
             mItem.grouped = !!oExisting;
             mItem.position =  oExisting ? oExisting.position : -1;
-            return !(oProperty.groupable === false || !!oAggregations[oProperty.name]);
+            return !(oProperty.groupable === false || oAggregations[oProperty.name]);
         });
 
         P13nBuilder.sortP13nData({

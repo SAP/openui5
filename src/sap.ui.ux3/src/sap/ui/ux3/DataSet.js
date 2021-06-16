@@ -507,12 +507,12 @@ sap.ui.define([
 		this.clearSelection();
 		if (!bMode) {
 			this.setProperty("multiSelect", false);
-			if (!!this.selectionModel) {
+			if (this.selectionModel) {
 				this.selectionModel.setSelectionMode(SelectionModel.SINGLE_SELECTION);
 			}
 		} else {
 			this.setProperty("multiSelect", true);
-			if (!!this.selectionModel) {
+			if (this.selectionModel) {
 				this.selectionModel.setSelectionMode(SelectionModel.MULTI_SELECTION);
 			}
 		}

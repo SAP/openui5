@@ -959,7 +959,7 @@ sap.ui.define([
 			}
 
 			this.$().on('selectstart', fnFalse);
-			this.$().on(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onMouseWheel);
+			this.$().on(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onMouseWheel);
 		};
 
 		function fnFalse() {
@@ -998,7 +998,7 @@ sap.ui.define([
 			}
 
 			this.$().off('selectstart', fnFalse);
-			this.$().off(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onMouseWheel);
+			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onMouseWheel);
 		};
 
 		/**

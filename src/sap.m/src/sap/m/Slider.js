@@ -528,7 +528,7 @@ function(
 			var sPerValue = Math.max(this._getPercentOfValue(+sNewValue), 0) + "%",
 				oHandleDomRef = this.getDomRef("handle");
 
-			if (!!this.getName()) {
+			if (this.getName()) {
 				this.getDomRef("input").setAttribute("value", sScaleLabel);
 			}
 

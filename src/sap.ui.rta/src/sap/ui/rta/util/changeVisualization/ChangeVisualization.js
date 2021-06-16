@@ -507,7 +507,7 @@ sap.ui.define([
 				path: "changes",
 				formatter: function (aChanges) {
 					var sSelectedChange = this.getModel().getData().selectedChange;
-					return (!!sSelectedChange && (aChanges || []).some(function (oChange) {
+					return (sSelectedChange && (aChanges || []).some(function (oChange) {
 						return oChange.dependent;
 					})) ? "dependent" : "change";
 				}

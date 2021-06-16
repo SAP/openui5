@@ -743,7 +743,7 @@ sap.ui.define([
 				}
 			}
 
-			if (!!bForce && !logo) {
+			if (bForce && !logo) {
 				return sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif');
 			}
 

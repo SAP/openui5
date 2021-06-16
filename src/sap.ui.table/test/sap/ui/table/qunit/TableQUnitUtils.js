@@ -1440,7 +1440,7 @@ sap.ui.define([
 	window.iNumberOfRows = iNumberOfDataRows;
 
 	window.createTables = function(bSkipPlaceAt, bFocusableCellTemplates, iCustomNumberOfRows) {
-		var iCount = !!iCustomNumberOfRows ? iCustomNumberOfRows : iNumberOfDataRows;
+		var iCount = iCustomNumberOfRows ? iCustomNumberOfRows : iNumberOfDataRows;
 
 		oTable = new Table({
 			rows: "{/rows}",

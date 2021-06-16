@@ -166,7 +166,7 @@ sap.ui.define([
 
 		// code under test
 		assert.throws(function () {
-			Object.defineProperty(oMessage, "target", {get : function () {}});
+			Object.defineProperty(oMessage, "target", {get : function () {return null;}});
 		});
 	});
 
@@ -180,7 +180,7 @@ sap.ui.define([
 
 		// code under test
 		assert.throws(function () {
-			Object.defineProperty(oMessage, "fullTarget", {get : function () {}});
+			Object.defineProperty(oMessage, "fullTarget", {get : function () {return null;}});
 		});
 	});
 

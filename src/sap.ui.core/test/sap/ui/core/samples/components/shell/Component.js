@@ -126,7 +126,7 @@ sap.ui.define([
 	// if the master component has an eventBus channel to publish to _and_ the dependent component also has a corresponding subscription property
 	// connect the two initially
 			this.oEventBusPub = this.masterComponent.getProperty("eventBusPublication") || null;
-			if (!!this.oEventBusPub && oComp.setEventBusSubscription){
+			if (this.oEventBusPub && oComp.setEventBusSubscription){
 				oComp.setEventBusSubscription(this.oEventBusPub);
 				// Pass the selection from master to the other
 				var bus = sap.ui.getCore().getEventBus();

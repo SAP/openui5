@@ -309,7 +309,7 @@ function(
 		this.setProperty("selected", bSelected);
 		this._updateGroupName(sGroupName);
 
-		if (!!bSelected && sGroupName && sGroupName !== "") { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
+		if (bSelected && sGroupName) { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
 			for (var i = 0; i < iLength; i++) {
 				var oControl = aControlsInGroup[i];
 

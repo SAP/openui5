@@ -48,8 +48,6 @@ sap.ui.define([
 			DeclarativeSupport.compile(jQuery("#button-with-tooltip"));
 			var oButton = oCore.byId("buttonWithTooltip");
 			assert.ok(!!oButton, 'Control with id "buttonWithTooltip" found.');
-		} catch (exc) {
-			throw exc;
 		} finally {
 			if (backup) {
 				DeclarativeSupport.attributes["data-tooltip"] = backup;

@@ -405,7 +405,7 @@ sap.ui.define([
 		var mAnnotation = oMetadata._getV4AnnotationObject(mEntityType, mObject, ["com.sap.test.ui5"]);
 		assert.ok(!!mAnnotation, "Annotation object found");
 		assert.ok(!!mAnnotation.extensions, "Annotation extension object found");
-		assert.ok(Array.isArray(mAnnotation.extensions) && !!mAnnotation.extensions.length > 0, "Filled annotation extension array found");
+		assert.ok(Array.isArray(mAnnotation.extensions) && mAnnotation.extensions.length > 0, "Filled annotation extension array found");
 		assert.equal(mAnnotation.extensions[0].value, "AirLineID Annotation", "Correct value for AirLineID annotation");
 
 		mAnnotation = oMetadata._getV4AnnotationObject(mEntityType, mObject, ["AirLineID", "com.sap.test.ui5"]);

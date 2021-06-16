@@ -224,7 +224,7 @@ sap.ui.define([
 			if (!sText) {
 				sText = "";
 			}
-			this.$("hdrRightTxt").text(sText).css("display", (!!sText ? "inline" : "none"));
+			this.$("hdrRightTxt").text(sText).css("display", (sText ? "inline" : "none"));
 			return this;
 		};
 

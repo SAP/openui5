@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mv
 	var aObsoleteFunctionNames = ["jQuery.sap.require", "$.sap.require", "sap.ui.requireSync", "jQuery.sap.sjax"];
 
 	// avoid spoiling the globalAPIRule by using Object.getOwnPropertyDescriptor
-	if (jQuery && jQuery.sap && !!Object.getOwnPropertyDescriptor(jQuery.sap, "sjax").value) {
+	if (jQuery && jQuery.sap && Object.getOwnPropertyDescriptor(jQuery.sap, "sjax").value) {
 		aObsoleteFunctionNames.push("jQuery.sap.syncHead",
 			"jQuery.sap.syncGet",
 			"jQuery.sap.syncPost",

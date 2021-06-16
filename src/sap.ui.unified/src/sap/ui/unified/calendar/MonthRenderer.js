@@ -510,7 +510,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 		oRm.openStart("span");
 		oRm.class("sapUiCalItemText");
-		if (!!aDayTypes[0] && aDayTypes[0].color) {
+		if (aDayTypes[0] && aDayTypes[0].color) {
 			oRm.class("sapUiCalItemTextCustomColor");
 		}
 		oRm.openEnd(); // span

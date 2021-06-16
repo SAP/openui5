@@ -380,7 +380,7 @@ sap.ui.define([
 		}
 		var oModel = this._getInternalModel();
 		oModel.getProperty("/runtimeItems").forEach(function(oMItem, iIndex) {
-			if (!!oMItem.icon) {
+			if (oMItem.icon) {
 				return;
 			}
 			// Note: due to this enhancement of default icon we have to use internal JSON model $sapuimdclinkPanel>/runtimeItems

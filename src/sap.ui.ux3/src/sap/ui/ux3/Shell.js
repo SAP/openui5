@@ -1376,7 +1376,7 @@ sap.ui.define([
 					this.$("paneContent").css("width", iWidth + "px");
 					this.$("paneBar").css("width", (iWidth + Shell.SIDE_BAR_BASE_WIDTH) + "px");
 
-					if (!!this._sOpenPaneId) { // pane area is open
+					if (this._sOpenPaneId) { // pane area is open
 						if (this._bRtl) {
 							this.$("wBar").css("marginLeft", (iWidth + Shell.SIDE_BAR_BASE_WIDTH) + "px");
 							this.$("canvas").css("left", (iWidth + Shell.SIDE_BAR_BASE_WIDTH + Shell._SHELL_OFFSET_RIGHT) + "px");

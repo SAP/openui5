@@ -1196,7 +1196,7 @@ sap.ui.define([
 
 		this._clearDetailsPage.call(this, aDetailsPageContent);
 
-		if (typeof asyncDescHandler === "function" && !!oMessageItem.getLongtextUrl()) {
+		if (typeof asyncDescHandler === "function" && oMessageItem.getLongtextUrl()) {
 			// Set markupDescription to true as markup description should be processed as markup
 			oMessageItem.setMarkupDescription(true);
 

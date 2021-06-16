@@ -85,7 +85,7 @@ sap.ui.define([
 		 */
 		WheelSliderContainer.prototype.exit = function() {
 			this.$().off('selectstart', fnFalse);
-			this.$().off(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 			Device.resize.detachHandler(this._fnOrientationChanged);
 		};
 
@@ -95,8 +95,8 @@ sap.ui.define([
 		 * @private
 		 */
 		WheelSliderContainer.prototype.onAfterRendering = function() {
-			this.$().off(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
-			this.$().on(!!Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
+			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().on(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
 
 			this.$().off('selectstart', fnFalse);
 			this.$().on('selectstart', fnFalse);

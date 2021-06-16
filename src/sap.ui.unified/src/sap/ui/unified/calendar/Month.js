@@ -985,7 +985,7 @@ sap.ui.define([
 		};
 
 		// handle only mouse down on a week number
-		if (!!oEvent.button
+		if (oEvent.button
 			|| Device.support.touch
 			|| !this._isWeekSelectionAllowed()
 			|| !oEvent.target.classList.contains("sapUiCalWeekNum")) {

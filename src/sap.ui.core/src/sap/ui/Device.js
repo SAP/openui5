@@ -1558,8 +1558,8 @@ if (typeof window.sap.ui !== "object") {
 		var isWin7 = Device.os.windows && Device.os.version === 7;
 
 		var oSystem = {};
-		oSystem.tablet = !!(((Device.support.touch && !isWin7) || isWin8Upwards || !!simMobileOnDesktop) && bTabletDetected);
-		oSystem.phone = !!(((Device.support.touch && !isWin7) || !!simMobileOnDesktop) && !bTabletDetected);
+		oSystem.tablet = !!(((Device.support.touch && !isWin7) || isWin8Upwards || simMobileOnDesktop) && bTabletDetected);
+		oSystem.phone = !!(((Device.support.touch && !isWin7) || simMobileOnDesktop) && !bTabletDetected);
 		oSystem.desktop = !!((!oSystem.tablet && !oSystem.phone) || isWin8Upwards || isWin7 || Device.os.linux || Device.os.macintosh);
 		oSystem.combi = oSystem.desktop && oSystem.tablet;
 		oSystem.SYSTEMTYPE = SYSTEMTYPE;

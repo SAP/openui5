@@ -108,10 +108,10 @@ sap.ui.define([
 				});
 
 				oPopup.setShowHeader(true);
-				if (!!this.getPopupHeaderTitle()) {
+				if (this.getPopupHeaderTitle()) {
 					oPopup.setTitle(this.getPopupHeaderTitle());
 				}
-				if (!!this.getTitle()) {
+				if (this.getTitle()) {
 					oPopup.setTitle(this.getTitle());
 				}
 			};
