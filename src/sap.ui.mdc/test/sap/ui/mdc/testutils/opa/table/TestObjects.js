@@ -4,8 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"test-resources/sap/ui/mdc/pageobjects/p13n/Actions",
-	"test-resources/sap/ui/mdc/pageobjects/p13n/Assertions"
+	"test-resources/sap/ui/mdc/testutils/opa/p13n/Actions",
+	"test-resources/sap/ui/mdc/testutils/opa/p13n/Assertions"
 ], function(
 	Opa5,
 	p13nActions,
