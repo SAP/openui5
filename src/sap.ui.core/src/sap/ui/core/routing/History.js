@@ -71,11 +71,10 @@ sap.ui.define([
 	/*
 	 * Whether the push state API should be used.
 	 *
-	 * The state information isn't used when at least one of the following points is met:
-	 * <ul>
-	 * <li>Running in an iFrame: because browser doesn't update the history state correct after forward/backward
-	 * navigation</li>
-	 * </ul>
+	 * Within iframe, the usage of push state API has to be turned off because some browsers (Chrome, Firefox and Edge)
+	 * change the ownership of the last "hashchange" event to the outer frame as soon as the outer frame replaces the
+	 * current hash. This makes the state that is saved by using push state API incomplete in both outer and inner
+	 * frames. Due to this, the usage of push state can only be done in outer frame.
 	 *
 	 * @private
 	 */
@@ -282,7 +281,7 @@ sap.ui.define([
 				History._aStateHistory.push(sHash);
 				oState.sap = {};
 				oState.sap.history = History._aStateHistory;
-				history.replaceState(oState, document.title);
+				window.history.replaceState(oState, document.title);
 				sDirection = HistoryDirection.NewEntry;
 			} else {
 				bBackward = oState.sap.history.every(function(sURL, index) {
@@ -328,53 +327,87 @@ sap.ui.define([
 		var actualHistoryLength = window.history.length,
 			sDirection;
 
-		//We don't want to record replaced hashes
+		// We don't want to record replaced hashes
 		if (this._oNextHash && this._oNextHash.bWasReplaced && this._oNextHash.sHash === sNewHash) {
-			//Since a replace has taken place, the current history entry is also replaced
-			this.aHistory[this.iHistoryPosition] = sNewHash;
+			if (this._oNextHash.sDirection) {
+				sDirection = this._oNextHash.sDirection;
+			} else {
+				// Since a replace has taken place, the current history entry is also replaced
+				this.aHistory[this.iHistoryPosition] = sNewHash;
 
-			if (sFullHash !== undefined && History._bUsePushState && this === History.getInstance()) {
-				// after the hash is replaced, the history state is cleared.
-				// We need to update the last entry in _aStateHistory and save the
-				// history back to the browser history state
-				History._aStateHistory[History._aStateHistory.length - 1] = sFullHash;
-				window.history.replaceState({
-					sap: {
-						history: History._aStateHistory
-					}
-				}, window.document.title);
-			}
+				if (sFullHash !== undefined && History._bUsePushState && this === History.getInstance()) {
+					// after the hash is replaced, the history state is cleared.
+					// We need to update the last entry in _aStateHistory and save the
+					// history back to the browser history state
+					History._aStateHistory[History._aStateHistory.length - 1] = sFullHash;
+					window.history.replaceState({
+						sap: {
+							history: History._aStateHistory
+						}
+					}, window.document.title);
+				}
 
-			this._oNextHash = null;
-			//reset the direction to Unknown when hash is replaced after history is already initialized
-			if (!this._bIsInitial) {
-				this._sCurrentDirection = HistoryDirection.Unknown;
+				this._oNextHash = null;
+				// reset the direction to Unknown when hash is replaced after history is already initialized
+				if (!this._bIsInitial) {
+					this._sCurrentDirection = HistoryDirection.Unknown;
+				}
+				return;
 			}
-			return;
 		}
 
-		//a navigation has taken place so the history is not initial anymore.
+		// a navigation has taken place so the history is not initial anymore.
 		this._bIsInitial = false;
 
-		// Extended direction determination with window.history.state
-		//
-		// The enhancement for direction determination is only done for the global
-		// instance because the window.history.state can only be used once for the
-		// new entry determination. Once the window.history.state is changed, it
-		// can't be used again for the same hashchange event to determine the
-		// direction which is the case if additional History instance is created
-		if (sFullHash !== undefined && History._bUsePushState && this === History.getInstance()) {
-			sDirection = this._getDirectionWithState(sFullHash);
-		}
+		if (sDirection) {
+			this._adaptToDirection(sDirection, {
+				oldHash: sOldHash,
+				newHash: sNewHash,
+				fullHash: sFullHash
+			});
+		} else {
+			// Extended direction determination with window.history.state
+			//
+			// The enhancement for direction determination is only done for the global
+			// instance because the window.history.state can only be used once for the
+			// new entry determination. Once the window.history.state is changed, it
+			// can't be used again for the same hashchange event to determine the
+			// direction which is the case if additional History instances are created
+			if (!sDirection && sFullHash !== undefined && History._bUsePushState && this === History.getInstance()) {
+				sDirection = this._getDirectionWithState(sFullHash);
+			}
 
-		// if the hashChange event is fired without a real browser hashchange event, the direction isn't updated
-		if (sDirection === DIRECTION_UNCHANGED) {
-			return;
-		}
+			// if the hashChange event is fired without a real browser hashchange event, the direction isn't updated
+			if (sDirection === DIRECTION_UNCHANGED) {
+				return;
+			}
 
-		// if the direction can't be decided by using the state method, the fallback to the legacy method is taken
-		if (!sDirection) {
-			sDirection = this._getDirection(sNewHash, this._iHistoryLength < window.history.length, true);
+			// if the direction can't be decided by using the state method, the fallback to the legacy method is taken
+			if (!sDirection) {
+				sDirection = this._getDirection(sNewHash, this._iHistoryLength < window.history.length, true);
+			}
+
+			// We are at a known state of the history now, since we have a new entry / forwards or backwards
+			this._bUnknown = false;
+
+			switch (sDirection) {
+				case HistoryDirection.Unknown:
+					// We don't know the state of the history, don't record it and set it back to unknown, since we can't say what comes up until the app navigates again
+					this._reset();
+					break;
+				case HistoryDirection.NewEntry:
+					this.aHistory.splice(this.iHistoryPosition + 1, this.aHistory.length - this.iHistoryPosition - 1, sNewHash);
+					this.iHistoryPosition++;
+					break;
+				case HistoryDirection.Forwards:
+					this.iHistoryPosition++;
+					break;
+				case HistoryDirection.Backwards:
+					this.iHistoryPosition--;
+					break;
+				default:
+					break;
+			}
 		}
 
 		this._sCurrentDirection = sDirection;
@@ -386,35 +419,79 @@ sap.ui.define([
 		if (this._oNextHash) {
 			this._oNextHash = null;
 		}
+	};
 
-		//We don't know the state of the history, don't record it set it back to unknown, since we can't say what comes up until the app navigates again
-		if (sDirection === HistoryDirection.Unknown) {
-			this._reset();
-			return;
-		}
+	/**
+	 * Adapts the internal structure by using the given direction information.
+	 *
+	 * @param {sap.ui.core.routing.HistoryDirection} sDirection The given navigation direction
+	 * @param {object} oHashInfo The object that contains the 'oldHash', 'newHash' and 'fullHash'
+	 * @private
+	 *
+	 */
+	History.prototype._adaptToDirection = function(sDirection, oHashInfo) {
+		var sFullHash = oHashInfo.fullHash,
+			sNewHash = oHashInfo.newHash,
+			iIndex, oState;
 
-		//We are at a known state of the history now, since we have a new entry / forwards or backwards
-		this._bUnknown = false;
-
-		//new history entry
-		if (sDirection === HistoryDirection.NewEntry) {
-			//new item and there where x back navigations before - remove all the forward items from the history
-			if (this.iHistoryPosition + 1 < this.aHistory.length) {
-				this.aHistory = this.aHistory.slice(0, this.iHistoryPosition + 1);
+		if (History._bUsePushState && this === History.getInstance() && sFullHash !== undefined) {
+			switch (sDirection) {
+				case HistoryDirection.NewEntry:
+				case HistoryDirection.Forwards:
+					History._aStateHistory.push(sFullHash);
+					break;
+				case HistoryDirection.Backwards:
+					iIndex = History._aStateHistory.lastIndexOf(sFullHash);
+					if (iIndex !== -1) {
+						History._aStateHistory.splice(iIndex + 1);
+					} else {
+						History._aStateHistory = [sFullHash];
+						Log.debug("Can't find " + sFullHash + " in " + JSON.stringify(History._aStateHistory));
+					}
+					break;
+				case HistoryDirection.Unknown:
+					History._aStateHistory[History._aStateHistory.length - 1] = sFullHash;
+					break;
+				default:
+					break;
 			}
 
-			this.aHistory.push(sNewHash);
-			this.iHistoryPosition += 1;
-			return;
+			oState = {};
+			oState.sap = {};
+			oState.sap.history = History._aStateHistory;
+			window.history.replaceState(oState, document.title);
 		}
 
-		if (sDirection === HistoryDirection.Forwards) {
-			this.iHistoryPosition++;
-			return;
-		}
+		switch (sDirection) {
+			case HistoryDirection.NewEntry:
+				this.aHistory.splice(this.iHistoryPosition + 1, this.aHistory.length - this.iHistoryPosition - 1, sNewHash);
+				this.iHistoryPosition += 1;
+				break;
+			case HistoryDirection.Forwards:
+				iIndex = this.aHistory.indexOf(sNewHash, this.iHistoryPosition + 1);
 
-		if (sDirection === HistoryDirection.Backwards) {
-			this.iHistoryPosition--;
+				if (iIndex !== -1) {
+					this.iHistoryPosition = iIndex;
+				} else {
+					// insert the new hash at the next position after the current history position
+					this.aHistory.splice(this.iHistoryPosition + 1, this.aHistory.length - this.iHistoryPosition - 1, sNewHash);
+					this.iHistoryPosition++;
+				}
+				break;
+			case HistoryDirection.Backwards:
+				iIndex = this.aHistory.lastIndexOf(sNewHash, this.iHistoryPosition - 1);
+				if (iIndex !== -1) {
+					this.iHistoryPosition = iIndex;
+				} else {
+					this.aHistory = [sNewHash];
+					this.iHistoryPosition = 0;
+				}
+				break;
+			case HistoryDirection.Unknown:
+				this.aHistory[this.iHistoryPosition] = sNewHash;
+				break;
+			default:
+				break;
 		}
 	};
 
@@ -424,7 +501,13 @@ sap.ui.define([
 	 * @private
 	 */
 	History.prototype._hashSet = function(oEvent) {
-		this._hashChangedByApp(oEvent.getParameter("sHash"), false);
+		var sHash = oEvent.getParameter("hash");
+
+		if (sHash === undefined) {
+			sHash = oEvent.getParameter("sHash");
+		}
+
+		this._hashChangedByApp(sHash, false);
 	};
 
 	/**
@@ -433,16 +516,24 @@ sap.ui.define([
 	 * @private
 	 */
 	History.prototype._hashReplaced = function(oEvent) {
-		this._hashChangedByApp(oEvent.getParameter("sHash"), true);
+		var sHash = oEvent.getParameter("hash");
+
+		if (sHash === undefined) {
+			sHash = oEvent.getParameter("sHash");
+		}
+
+		this._hashChangedByApp(sHash, true, oEvent.getParameter("direction"));
 	};
 
 	/**
 	 * Sets the next hash that is going to happen in the hashChange function - used to determine if the app or the browserHistory/links triggered this navigation
+	 *
 	 * @param {string} sNewHash The new hash
 	 * @param {boolean} bWasReplaced If the hash was replaced
+	 * @param {sap.ui.core.routing.HistoryDirection} sDirection The direction of the last navigation
 	 */
-	History.prototype._hashChangedByApp = function(sNewHash, bWasReplaced) {
-		this._oNextHash = { sHash : sNewHash, bWasReplaced : bWasReplaced };
+	History.prototype._hashChangedByApp = function(sNewHash, bWasReplaced, sDirection) {
+		this._oNextHash = { sHash : sNewHash, bWasReplaced : bWasReplaced, sDirection: sDirection};
 	};
 
 	var instance;
