@@ -119,8 +119,7 @@ sap.ui.define([
             this._oNavigationList = new List({
                 itemPress: function (oEvt) {
                     var oItem = oEvt.getParameter("listItem");
-                    var sKey = oItem.getTitle();
-                    this.switchView(sKey);
+                    this.switchView(oItem._key);
                 }.bind(this)
             }).addStyleClass("wrapperDefaultList");
             this.addDependent(this._oNavigationList);
@@ -176,10 +175,12 @@ sap.ui.define([
 
         if (this.getListLayout()) {
             this.getView(this.DEFAULT_KEY);
-            this._getNavigationList().addItem(new StandardListItem({
+            var oItem =  new StandardListItem({
                 type: ListItemType.Navigation,
                 title: sText
-            }));
+            });
+            oItem._key = sKey;
+            this._getNavigationList().addItem(oItem);
         } else {
             this._getTabBar().addItem(new IconTabFilter({
                 key: sKey,
