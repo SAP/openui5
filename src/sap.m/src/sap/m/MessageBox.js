@@ -15,8 +15,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
 	'sap/m/library',
-	"sap/ui/thirdparty/jquery",
-	'sap/ui/core/theming/Parameters'
+	"sap/ui/thirdparty/jquery"
 ],
 		function(
 			Button,
@@ -30,8 +29,7 @@ sap.ui.define([
 			coreLibrary,
 			Control,
 			library,
-			jQuery,
-			Parameters
+			jQuery
 		) {
 			"use strict";
 
@@ -279,9 +277,6 @@ sap.ui.define([
 								details: "",
 								contentWidth: null
 							},
-							//set the information icon according to the used theme
-							bInformationIconUsed = Parameters.get("_sap_m_Message_Box_Information_Icon") === "true",
-							sSrcIcon = bInformationIconUsed ? "message-information" : "hint",
 							mClasses = {
 								"INFORMATION": "sapMMessageBoxInfo",
 								"WARNING": "sapMMessageBoxWarning",
@@ -291,11 +286,11 @@ sap.ui.define([
 								"STANDARD":  "sapMMessageBoxStandard"
 							},
 							mIcons = {
-								"INFORMATION": IconPool.getIconURI(sSrcIcon),
-								"WARNING": IconPool.getIconURI("message-warning"),
-								"ERROR": IconPool.getIconURI("message-error"),
-								"SUCCESS": IconPool.getIconURI("message-success"),
-								"QUESTION": IconPool.getIconURI("question-mark")
+								"INFORMATION": IconPool.getIconURI("information"),
+								"WARNING": IconPool.getIconURI("alert"),
+								"ERROR": IconPool.getIconURI("error"),
+								"SUCCESS": IconPool.getIconURI("sys-enter-2"),
+								"QUESTION": IconPool.getIconURI("sys-help-2")
 							};
 
 					_verifyBundle();

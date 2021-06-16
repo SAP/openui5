@@ -450,10 +450,10 @@ function(
 		Dialog._bPaddingByDefault = (Core.getConfiguration().getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
 
 		Dialog._mIcons = {};
-		Dialog._mIcons[ValueState.Success] = IconPool.getIconURI("message-success");
-		Dialog._mIcons[ValueState.Warning] = IconPool.getIconURI("message-warning");
-		Dialog._mIcons[ValueState.Error] = IconPool.getIconURI("message-error");
-		Dialog._mIcons[ValueState.Information] = IconPool.getIconURI("hint");
+		Dialog._mIcons[ValueState.Success] = IconPool.getIconURI("sys-enter-2");
+		Dialog._mIcons[ValueState.Warning] = IconPool.getIconURI("alert");
+		Dialog._mIcons[ValueState.Error] = IconPool.getIconURI("error");
+		Dialog._mIcons[ValueState.Information] = IconPool.getIconURI("information");
 
 		/* =========================================================== */
 		/*                  begin: Lifecycle functions                 */

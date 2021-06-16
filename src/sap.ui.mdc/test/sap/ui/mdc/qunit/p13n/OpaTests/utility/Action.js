@@ -62,7 +62,7 @@ sap.ui.define([
 					ancestor: {
 						controlType: "sap.m.Dialog",
 						properties: {
-							icon: "sap-icon://message-warning"
+							icon: "sap-icon://alert"
 						}
 					}
 				},
@@ -84,7 +84,7 @@ sap.ui.define([
 					ancestor: {
 						controlType: "sap.m.Dialog",
 						properties: {
-							icon: "sap-icon://message-warning"
+							icon: "sap-icon://alert"
 						}
 					}
 				},

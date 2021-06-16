@@ -42,7 +42,7 @@ sap.ui.define([
 
 				Then.waitFor({
 					controlType : "sap.m.Dialog",
-					matchers : new Properties({icon : "sap-icon://message-success"}),
+					matchers : new Properties({icon : "sap-icon://sys-enter-2"}),
 					success : function (aControls) {
 						new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
 						Opa5.assert.ok(true, "Deleted all selected Schedules");
@@ -63,7 +63,7 @@ sap.ui.define([
 
 				Then.waitFor({
 					controlType : "sap.m.Dialog",
-					matchers : new Properties({icon : "sap-icon://message-success"}),
+					matchers : new Properties({icon : "sap-icon://sys-enter-2"}),
 					success : function (aControls) {
 						new Press().executeOn(aControls[0].getButtons()[0]); // confirm success
 						Opa5.assert.ok(true, "Business Partner deleted");
@@ -91,7 +91,7 @@ sap.ui.define([
 
 				Then.waitFor({
 					controlType : "sap.m.Dialog",
-					matchers : new Properties({icon : "sap-icon://message-success"}),
+					matchers : new Properties({icon : "sap-icon://sys-enter-2"}),
 					success : function (aControls) {
 						new Press().executeOn(aControls[0].getButtons()[0]); // confirm success
 						Opa5.assert.ok(true, "Selected Sales Order deleted");

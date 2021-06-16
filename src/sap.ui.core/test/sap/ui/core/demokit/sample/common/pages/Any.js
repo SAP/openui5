@@ -216,7 +216,7 @@ sap.ui.define([
 				confirm : function () {
 					this.waitFor({
 						controlType : "sap.m.Dialog",
-						matchers : new Properties({icon : "sap-icon://message-error"}),
+						matchers : new Properties({icon : "sap-icon://error"}),
 						success : function (aControls) {
 							aControls[0].getButtons()[0].$().tap();
 							Opa5.assert.ok(true, "Confirm 'Error'");
@@ -391,7 +391,7 @@ sap.ui.define([
 				confirm : function () {
 					this.waitFor({
 						controlType : "sap.m.Dialog",
-						matchers : new Properties({icon : "sap-icon://message-success"}),
+						matchers : new Properties({icon : "sap-icon://sys-enter-2"}),
 						success : function (aControls) {
 							aControls[0].getButtons()[0].$().tap();
 							Opa5.assert.ok(true, "Confirm 'Success'");
@@ -403,7 +403,7 @@ sap.ui.define([
 				checkMessage : function (rMessage) {
 					this.waitFor({
 						controlType : "sap.m.Dialog",
-						matchers : new Properties({icon : "sap-icon://message-success"}),
+						matchers : new Properties({icon : "sap-icon://sys-enter-2"}),
 						success : function (aControls) {
 							var sText = aControls[0].getContent()[0].getText();
 							Opa5.assert.ok(rMessage.test(sText),
