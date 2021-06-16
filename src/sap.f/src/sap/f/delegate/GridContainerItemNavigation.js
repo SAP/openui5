@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
-	"./GridItemNavigation"
+	"./GridItemNavigation",
+	"sap/ui/dom/containsOrEquals"
 ], function (
 	ItemNavigation,
-	GridItemNavigation
+	GridItemNavigation,
+	containsOrEquals
 ) {
 	"use strict";
 
@@ -204,7 +206,8 @@ sap.ui.define([
 		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
 			oControl,
 			aNavigationDomRefs,
-			lastFocusedIndex;
+			iLastFocusedIndex,
+			oLastFocused;
 
 		if ($listItem.length) {
 			oControl = $listItem.children().eq(0).control()[0];
@@ -228,12 +231,12 @@ sap.ui.define([
 
 		if (this._bFocusLeft && !this._bIsMouseDown) {
 			aNavigationDomRefs = this.getItemDomRefs();
-			lastFocusedIndex = this.getFocusedIndex();
+			iLastFocusedIndex = this.getFocusedIndex();
 
-			if (this._lastFocusedElement) {
-				this._lastFocusedElement.focus();
-			} else if (aNavigationDomRefs[lastFocusedIndex]) {
-				aNavigationDomRefs[lastFocusedIndex].focus();
+			oLastFocused = this._lastFocusedElement || aNavigationDomRefs[iLastFocusedIndex];
+
+			if (!containsOrEquals(oLastFocused, oEvent.target)) {
+				oLastFocused.focus();
 			}
 		}
 
