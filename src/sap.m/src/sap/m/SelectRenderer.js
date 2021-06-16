@@ -94,10 +94,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				}
 			}
 
-			if (bEnabled) {
-				oRm.attr("tabindex", "-1");
-			}
-
 			oRm.openEnd();
 			// Used to benefit from the div[role="combobox"]. Direct textNode is the value of the div and no other elements should be placed inside.
 			this.renderFocusElement(oRm, oSelect);
