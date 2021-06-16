@@ -51,7 +51,8 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 				var oTargetCreateInfo = {
 					prefix: oTargetInfo.prefix,
 					propagateTitle: oTargetInfo.propagateTitle || false,
-					ignoreInitialHash: oTargetInfo.ignoreInitialHash
+					ignoreInitialHash: oTargetInfo.ignoreInitialHash,
+					routeRelevant: oTargetInfo.routeRelevant || false
 				};
 
 				// gather view infos while processing Promise chain
@@ -109,7 +110,6 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 				oTarget = this.getTarget(sName);
 
 			if (oTarget !== undefined) {
-				oTarget._routeRelevant = oTargetInfo.routeRelevant || false;
 				if (oTargetInfo.routeRelevant) {
 					this._addDynamicTargetToRoute(oTargetInfo);
 				}
