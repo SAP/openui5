@@ -2246,8 +2246,6 @@ function(
 			return this;
 		};
 
-		oSuggestionsTable.attachItemPress(this._resetTypeAhead, this);
-
 		oTableObserver = new ManagedObjectObserver(function (oChange) {
 			var sMutation = oChange.mutation;
 			var vItem = oChange.child;
@@ -2313,6 +2311,7 @@ function(
 		this._iSetCount++;
 		InputBase.prototype.setValue.call(this, sValue);
 		this._onValueUpdated(sValue);
+		this._setTypedInValue("");
 		return this;
 	};
 
