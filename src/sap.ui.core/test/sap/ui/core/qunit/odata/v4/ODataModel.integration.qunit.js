@@ -1768,10 +1768,11 @@ sap.ui.define([
 		 * awaiting changes.
 		 *
 		 * @param {object} assert - The QUnit assert object
+		 * @param {string} [sModelBudgetCurrency="EUR"] - The model's BudgetCurrency value
 		 * @returns {Promise}
 		 *   A promise which resolves after awaiting changes
 		 */
-		setInvalidBudgetCurrency : function (assert) {
+		setInvalidBudgetCurrency : function (assert, sModelBudgetCurrency) {
 			var oInput = this.oView.byId("budgetCurrency"),
 				sMessage = "Enter a text with a maximum of 5 characters and spaces";
 
@@ -1788,10 +1789,11 @@ sap.ui.define([
 			oInput.setValue("INVALID");
 
 			assert.strictEqual(oInput.getValue(), "INVALID");
-			assert.strictEqual(oInput.getBinding("value").getValue(), "EUR");
+			assert.strictEqual(oInput.getBinding("value").getValue(),
+				sModelBudgetCurrency === undefined ? "EUR" : sModelBudgetCurrency);
 
 			return Promise.all([
-				this.checkValueState(assert, "budgetCurrency", "Error", sMessage),
+				this.checkValueState(assert, oInput, "Error", sMessage),
 				this.waitForChanges(assert)
 			]);
 		},
@@ -3104,8 +3106,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			return that.checkValueState(assert,
-				that.oView.byId("age1"), "Warning", "That is very young");
+			return that.checkValueState(assert, "age1", "Warning", "That is very young");
 		}).then(function () {
 			that.expectChange("team", "changed")
 				.expectRequest({
@@ -12002,6 +12003,53 @@ sap.ui.define([
 			assert.strictEqual(that.oView.byId("budgetCurrency").getValue(), "EUR");
 
 			return that.checkValueState(assert, "budgetCurrency", "None", "");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: An input field is bound to a transient context which is never persisted. It gets
+	// an invalid value which is removed when the binding context is removed.
+	// BCP: 2180177518
+	QUnit.test("BCP: 2180177518", function (assert) {
+		var oInput,
+			oModel = createTeaBusiModel({updateGroupId: "noSubmit"}),
+			oTransientContext,
+			sView = '<Input id="budgetCurrency" value="{BudgetCurrency}"/>',
+			that = this;
+
+		function waitForChange(oBinding) {
+			return new Promise(function (resolve) {
+				oBinding.attachEventOnce("change", function () {
+					resolve();
+				});
+			});
+		}
+
+		// Note: Because the invalid value has to be set via control, changes for that control
+		// cannot be observed via expectChange
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oInput = that.oView.byId("budgetCurrency");
+			assert.strictEqual(oInput.getValue(), "");
+
+			oTransientContext = oModel.bindList("/TEAMS").create();
+			oInput.setBindingContext(oTransientContext);
+
+			return waitForChange(oInput.getBinding("value")); // wait for auto-type detection
+		}).then(function () {
+			assert.strictEqual(oInput.getValue(), "");
+
+			return that.setInvalidBudgetCurrency(assert, /*sModelBudgetCurrency*/null);
+		}).then(function () {
+			oInput.setBindingContext(null);
+
+			// #checkUpdateInternal says "an unresolved binding only fires if it had a value before"
+			// - and NULL also counts as a value here, only UNDEFINED doesn't!
+			return waitForChange(oInput.getBinding("value"));
+		}).then(function () {
+			assert.strictEqual(oInput.getValue(), "");
+
+			return that.checkValueState(assert, oInput, "None", "");
 		});
 	});
 
