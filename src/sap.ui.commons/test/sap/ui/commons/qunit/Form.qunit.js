@@ -208,9 +208,9 @@ sap.ui.define([
 
 	QUnit.test("Container", function(assert) {
 		assert.ok(document.getElementById("C1"), "Container is rendered");
-		assert.ok(jQuery('h4:contains("Container1")').get(0), "Title (as text) is renderd");
+		assert.ok(jQuery('h5:contains("Container1")').get(0), "Title (as text) is renderd");
 		assert.ok(document.getElementById("C2T"), "Title (as Control) is rendered");
-		assert.ok(jQuery("#C2T").is("h4"), "Container title is rendered as H4 as default");
+		assert.ok(jQuery("#C2T").is("h5"), "Container title is rendered as H5 as default");
 		assert.ok(jQuery("#C3T").is("h3"), "Container title is rendered as H3 as set there");
 		assert.ok(document.getElementById("C3-content"), "Container3 contetnt area is rendered");
 		assert.ok(jQuery("#C3-content").is(":visible"), "Container3 content area is visible");

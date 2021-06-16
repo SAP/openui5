@@ -183,7 +183,7 @@ sap.ui.define([
 				oRm.openEnd();
 
 				// container header
-				oLayout.getRenderer().renderHeader(oRm, oToolbar, oTitle, oContainer._oExpandButton, bExpandable, false, oContainer.getId());
+				oLayout.getRenderer().renderHeader(oRm, oToolbar, oTitle, oContainer._oExpandButton, bExpandable, oLayout._sFormSubTitleSize, oContainer.getId());
 
 				if (oContent) {
 					oRm.openStart("div");
@@ -202,6 +202,8 @@ sap.ui.define([
 	/* eslint-disable no-lonely-if */
 
 	ResponsiveLayout.prototype.init = function(){
+
+		FormLayout.prototype.init.apply(this, arguments);
 
 		this.mContainers = {}; //association of container to panel and ResponsiveFlowLayout
 		this._defaultLayoutData = new ResponsiveFlowLayoutData({margin: false});
@@ -227,6 +229,8 @@ sap.ui.define([
 	};
 
 	ResponsiveLayout.prototype.onBeforeRendering = function( oEvent ){
+
+		FormLayout.prototype.onBeforeRendering.apply(this, arguments);
 
 		var oForm = this.getParent();
 		if (!oForm || !(oForm instanceof Form)) {

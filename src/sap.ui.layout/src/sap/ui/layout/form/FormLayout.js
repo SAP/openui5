@@ -7,12 +7,13 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/layout/library',
 	'./FormLayoutRenderer',
-	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/theming/Parameters',
+	'sap/ui/thirdparty/jquery',
 	// jQuery custom selectors ":sapFocusable"
 	'sap/ui/dom/jquery/Selectors',
 	// jQuery Plugin "control"
 	'sap/ui/dom/jquery/control'
-], function(Control, library, FormLayoutRenderer, jQuery) {
+], function(Control, library, FormLayoutRenderer, Parameters, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign
@@ -57,6 +58,20 @@ sap.ui.define([
 	}});
 
 	/* eslint-disable no-lonely-if */
+
+	FormLayout.prototype.init = function(){
+
+		this._sFormTitleSize = "H4"; // to have default as Theme parameter could be loaded async.
+		this._sFormSubTitleSize = "H5";
+
+	};
+
+	FormLayout.prototype.onBeforeRendering = function( oEvent ){
+
+		// get title sizes from theme
+		this.loadTitleSizes();
+
+	};
 
 	FormLayout.prototype.contentOnAfterRendering = function(oFormElement, oControl){
 
@@ -937,6 +952,47 @@ sap.ui.define([
 	 * @since: 1.86.0
 	 */
 	FormLayout.prototype.getLayoutDataForSemanticField = function(iFields, iIndex, oLayoutData) {
+	};
+
+	/**
+	 * Determines the sizes for <code>Form</code> and <code>FormContainer</code> from the theme
+	 *
+	 * @private
+	 * @since: 1.92.0
+	 */
+	FormLayout.prototype.loadTitleSizes = function() {
+
+		// read theme parameters to get current header sizes
+		var oSizes = Parameters.get({
+			name: ['sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize', 'sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize'],
+			callback: this.applyTitleSizes.bind(this)
+		});
+		if (oSizes && oSizes.hasOwnProperty('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize')) { // sync case
+			this.applyTitleSizes(oSizes, true);
+		}
+
+	};
+
+	/**
+	 * Applies the sizes for <code>Form</code> and <code>FormContainer</code> from the theme
+	 *
+	 * @param {object} oSizes Sizes from theme parameters
+	 * @param {boolean} bSync If set, the paramters are determines synchronously. (No re-rendering needed.)
+	 * @private
+	 * @since: 1.92.0
+	 */
+	FormLayout.prototype.applyTitleSizes = function(oSizes, bSync) {
+
+		if (oSizes && (this._sFormTitleSize !== oSizes["sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize"] ||
+				this._sFormSubTitleSize !== oSizes["sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize"])) {
+			this._sFormTitleSize = oSizes["sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize"];
+			this._sFormSubTitleSize = oSizes["sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize"];
+
+			if (!bSync) {
+				this.invalidate(); // re-render
+			}
+		}
+
 	};
 
 	return FormLayout;
