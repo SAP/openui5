@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/strings/formatMessage",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/mvc/View",
-	"sap/base/util/isPlainObject"
+	"sap/base/util/isPlainObject",
+	"sap/ui/base/SyncPromise"
 ],
 function(
 	jQuery,
@@ -26,7 +27,8 @@ function(
 	formatMessage,
 	ManagedObject,
 	View,
-	isPlainObject
+	isPlainObject,
+	SyncPromise
 ) {
 	"use strict";
 
@@ -1081,8 +1083,7 @@ function(
 			var fnResolveOrReject = function(vParam, fn) {
 				try {
 					var vResolve = fn(vParam, Utils.FakePromise.fakePromiseIdentifier);
-					if (vResolve instanceof Promise ||
-						vResolve instanceof Utils.FakePromise) {
+					if (SyncPromise.isThenable(vResolve)) {
 						return vResolve;
 					}
 					return new Utils.FakePromise(vResolve);
