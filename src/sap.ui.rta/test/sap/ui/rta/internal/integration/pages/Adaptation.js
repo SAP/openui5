@@ -1,4 +1,3 @@
-/* global assert */
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
@@ -46,7 +45,7 @@ sap.ui.define([
 							return oRootView.getBusy() === false;
 						},
 						success: function() {
-							assert.ok(true, "the App is not busy anymore");
+							Opa5.assert.ok(true, "the App is not busy anymore");
 						},
 						errorMessage: "The app is still busy.."
 					});
@@ -62,7 +61,7 @@ sap.ui.define([
 									oButton.isActive() === true);
 						},
 						success: function() {
-							assert.ok(true, "the compact contextMenu is open now");
+							Opa5.assert.ok(true, "the compact contextMenu is open now");
 						},
 						errorMessage: "The compact contextMenu is still closed"
 					});
@@ -233,7 +232,7 @@ sap.ui.define([
 							return oToolbar.$().hasClass("sapUiRtaToolbar");
 						},
 						success: function(oToolbar) {
-							assert.ok(oToolbar[0].getVisible(), "The Toolbar is shown.");
+							Opa5.assert.ok(oToolbar[0].getVisible(), "The Toolbar is shown.");
 						},
 						errorMessage: "Did not find the Toolbar"
 					});
@@ -247,8 +246,8 @@ sap.ui.define([
 						},
 						success: function (oToolbar) {
 							var oFioriToolbar = oToolbar[0];
-							assert.ok(oFioriToolbar.getVisible(), "The Toolbar is shown.");
-							assert.ok(oFioriToolbar.getControl("icon"), "The FLP Icon is part of the Toolbar");
+							Opa5.assert.ok(oFioriToolbar.getVisible(), "The Toolbar is shown.");
+							Opa5.assert.ok(oFioriToolbar.getControl("icon"), "The FLP Icon is part of the Toolbar");
 
 							return this.waitFor({
 								controlType: "sap.m.Image",
@@ -256,7 +255,7 @@ sap.ui.define([
 									return oImage.$().closest(".sapUiRtaToolbar").length > 0;
 								},
 								success: function (aLogo) {
-									assert.ok(aLogo.length > 0, "the logo is found on the UI");
+									Opa5.assert.ok(aLogo.length > 0, "the logo is found on the UI");
 								}
 							});
 						},
@@ -267,8 +266,8 @@ sap.ui.define([
 					return this.waitFor({
 						id: "shell-header",
 						success: function(oToolbar) {
-							assert.ok(oToolbar.getVisible(), "the FLP Toolbar is shown");
-							assert.equal(FakeLrepConnectorSessionStorage.forTesting.synchronous.getNumberOfChanges(sReference), iCount, "the number of changes is correct");
+							Opa5.assert.ok(oToolbar.getVisible(), "the FLP Toolbar is shown");
+							Opa5.assert.equal(FakeLrepConnectorSessionStorage.forTesting.synchronous.getNumberOfChanges(sReference), iCount, "the number of changes is correct");
 						},
 						errorMessage: "the FLP-Toolbar was not found"
 					});
@@ -290,7 +289,7 @@ sap.ui.define([
 							return oOverlay.getElementInstance() === oApp;
 						},
 						success: function(oOverlay) {
-							assert.ok(oOverlay[0].getVisible(), "The Overlay is shown.");
+							Opa5.assert.ok(oOverlay[0].getVisible(), "The Overlay is shown.");
 						},
 						errorMessage: "Did not find the Element Overlay for the App Control"
 					});
@@ -300,7 +299,7 @@ sap.ui.define([
 						id: sId,
 						viewName: sViewName,
 						success: function() {
-							assert.equal(FakeLrepConnectorSessionStorage.forTesting.synchronous.getNumberOfChanges(sReference), iCount, "the number of changes is correct");
+							Opa5.assert.equal(FakeLrepConnectorSessionStorage.forTesting.synchronous.getNumberOfChanges(sReference), iCount, "the number of changes is correct");
 						},
 						errorMessage: "The app is still busy.."
 					});
@@ -313,7 +312,7 @@ sap.ui.define([
 							return oOverlay.getElementInstance().getId() === sId;
 						},
 						success: function(aOverlays) {
-							assert.notOk(aOverlays[0].getElementInstance().getVisible(), "The section is not shown on the UI");
+							Opa5.assert.notOk(aOverlays[0].getElementInstance().getVisible(), "The element is not visible on the UI");
 						},
 						errorMessage: "Did not find the element or it is still visible"
 					});
@@ -326,7 +325,7 @@ sap.ui.define([
 							return oOverlay.getElementInstance().getId() === sId;
 						},
 						success: function(aOverlays) {
-							assert.ok(aOverlays[0].getElementInstance().getVisible(), "The section is again visible on the UI");
+							Opa5.assert.ok(aOverlays[0].getElementInstance().getVisible(), "The element is visible on the UI");
 						},
 						errorMessage: "Did not find the element or it is still invisible"
 					});
@@ -338,7 +337,7 @@ sap.ui.define([
 							return oButton.getId().indexOf("__mbox") > -1;
 						},
 						success: function(aButtons) {
-							assert.ok(aButtons[0].getVisible(), "The Dialog is shown.");
+							Opa5.assert.ok(aButtons[0].getVisible(), "The Dialog is shown.");
 						},
 						actions: bWithAction ? new Press() : undefined,
 						errorMessage: "Did not find the Dialog"
@@ -353,7 +352,7 @@ sap.ui.define([
 							return oHashChanger.getHash().includes("sap-ui-fl-control-variant-id");
 						},
 						success: function () {
-							assert.ok(true, "The URL parameter for variant id is present");
+							Opa5.assert.ok(true, "The URL parameter for variant id is present");
 						},
 						errorMessage: "The URL parameter for variant id is not being added"
 					});
@@ -367,7 +366,7 @@ sap.ui.define([
 							return !oHashChanger.getHash().includes("sap-ui-fl-control-variant-id");
 						},
 						success: function () {
-							assert.ok(true, "The URL parameter for variant id is present");
+							Opa5.assert.ok(true, "The URL parameter for variant id is present");
 						},
 						errorMessage: "The URL parameter for variant id is not being added"
 					});
