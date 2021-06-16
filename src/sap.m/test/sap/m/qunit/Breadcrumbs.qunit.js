@@ -587,13 +587,13 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		}
 	});
 
-	QUnit.test("Screen reader support", function (assert) {
+	QUnit.test("Screen reader support", function ( assert) {
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
-			sExpectedText = oFactory.getResourceBundle().getText("BREADCRUMB_LABEL");
+			sExpectedText = oStandardBreadCrumbsControl._getInvisibleText().getId();
 
 		helpers.renderObject(oStandardBreadCrumbsControl);
 		assert.strictEqual(oStandardBreadCrumbsControl.$()[0].tagName, "NAV", "Breadcrumbs is rendered in nav HTML element");
-		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("aria-label"), sExpectedText, "has correct 'aria-label'");
+		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("aria-labelledby"), sExpectedText, "has correct 'aria-labelledby'");
 		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("role"), undefined, "Role shouldn't be defined for the nav element");
 
 		oStandardBreadCrumbsControl.$().find("li").each(function (index, item) {
@@ -647,5 +647,17 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 
 	});
 
+	QUnit.test("ARIA labelledBy", function(assert) {
+		var oBreadcrumbsControl = new Breadcrumbs({
+			ariaLabelledBy: "id1"
+		});
+
+		oBreadcrumbsControl.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		assert.strictEqual(oBreadcrumbsControl.getAriaLabelledBy().join(""), "id1", "aria-labelledby is set correctly");
+
+		oBreadcrumbsControl.destroy();
+	});
 
 });
