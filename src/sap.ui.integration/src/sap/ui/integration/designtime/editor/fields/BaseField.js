@@ -529,6 +529,7 @@ sap.ui.define([
 
 			var that = this;
 			oMessageStrip.onAfterRendering = function () {
+				oMessageStrip.getDomRef().style.zIndex = "1";
 				oMessageStrip.getDomRef().style.opacity = "1";
 				that.getDomRef("ms").appendChild(oMessageStrip.getDomRef());
 				var oField = that.getAggregation("_field");
@@ -550,6 +551,7 @@ sap.ui.define([
 		if (oMessageStrip) {
 			if (!bFocusInField && oMessageStrip.getDomRef()) {
 				oMessageStrip.getDomRef().style.opacity = "0";
+				oMessageStrip.getDomRef().style.zIndex = "-1";
 			}
 			oMessageStrip.onAfterRendering = null;
 		}

@@ -433,7 +433,7 @@
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip {
 	margin: -0.3rem 0 0 0.1rem;
 	padding: 0 0.5rem;
-	position: absolute;
+	position: absolute !important;
 	min-height: 1.2rem;
 	opacity: 0;
 	transition: opacity 0.3s;
