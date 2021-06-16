@@ -9034,4 +9034,61 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Value state of a control with a composite binding is updated when the binding is
+	// destroyed.
+	// BCP: 2180190002
+	QUnit.test("Composite Binding: Value state updated after binding removal", function (assert) {
+		var oModel = new JSONModel({
+				RequestedQuantity : "-1",
+				RequestedQuantityUnit : "mass-kilogram"
+			}),
+			sView = '\
+<Input id="quantity" value="{\
+		formatOptions : {showMeasure : false},\
+		parts : [{\
+			path : \'/RequestedQuantity\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'RequestedQuantityUnit\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}],\
+		type : \'sap.ui.model.type.Unit\'\
+	}" />',
+			that = this;
+
+		this.expectValue("quantity", "-1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectMessages([{
+					descriptionUrl : undefined,
+					message : "Some message",
+					target : "/RequestedQuantity",
+					type : "Error"
+				}]);
+
+			sap.ui.getCore().getMessageManager().addMessages(new Message({
+				message: "Some message",
+				processor: oModel,
+				target: "/RequestedQuantity",
+				type: "Error"
+			}));
+
+			return Promise.all([
+				that.checkValueState(assert, "quantity", "Error", "Some message"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("quantity", "");
+
+			// code under test
+			that.oView.byId("quantity").unbindProperty("value");
+
+			return Promise.all([
+				that.checkValueState(assert, "quantity", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });

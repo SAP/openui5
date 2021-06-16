@@ -83,10 +83,10 @@ sap.ui.define([
 	});
 
 	CompositeBinding.prototype.destroy = function() {
-		PropertyBinding.prototype.destroy.apply(this);
 		this.aBindings.forEach(function(oBinding) {
 			oBinding.destroy();
 		});
+		PropertyBinding.prototype.destroy.apply(this);
 	};
 
 	CompositeBinding.prototype.getPath = function() {
