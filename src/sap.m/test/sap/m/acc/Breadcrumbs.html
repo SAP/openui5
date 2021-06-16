@@ -13,6 +13,9 @@
 <body id="body" class="sapUiBody">
 <script>
 	(function (jQuery, App, Page, Link, Breadcrumbs, MessageToast, Input, Label, Button, VerticalLayout, Slider, Panel) {
+		new sap.ui.core.InvisibleText("BREADCRUMBS_NORMAL", {text: "Normal"}).toStatic();
+		new sap.ui.core.InvisibleText("BREADCRUMBS_SELECT", {text: "Select"}).toStatic();
+
 		var fnLinkPressHandler = function (oEvent) {
 				MessageToast.show(oEvent.getSource().getText() + " has been activated");
 			},
@@ -41,10 +44,12 @@
 			}),
 			sBreadcrumbWidth = "auto",
 			oBreadcrumbs = new Breadcrumbs({
+				ariaLabelledBy: "BREADCRUMBS_NORMAL",
 				currentLocationText: "currentLocationText",
 				links: fnLinkGenerator(10, "NormalLink")
 			}).addEventDelegate({onAfterRendering: fnUpdateBreadcrumbsWidth}),
 			oBreadcrumbsWithSelect = new Breadcrumbs("breadCrumbWithSelect", {
+				ariaLabelledBy: "BREADCRUMBS_SELECT",
 				currentLocationText: "currentLocationText",
 				links: fnLinkGenerator(10, "NormalLink")
 			}).addEventDelegate({
