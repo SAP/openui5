@@ -671,7 +671,7 @@ sap.ui.define([
 				//   => prevent the default behavior only in this case (to still allow text selection)
 				// Also prevent default when clicking on scrollbars to prevent ItemNavigation to re-apply
 				// focus to old position (table cell).
-				if ((Device.browser.firefox && !!(oEvent.metaKey || oEvent.ctrlKey))
+				if ((Device.browser.firefox && (oEvent.metaKey || oEvent.ctrlKey))
 					|| $Target.closest(".sapUiTableHSb", this.getDomRef()).length === 1
 					|| $Target.closest(".sapUiTableVSb", this.getDomRef()).length === 1) {
 					oEvent.preventDefault();

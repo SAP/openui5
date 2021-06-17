@@ -168,7 +168,7 @@ sap.ui.define([
 		getSelectedKeys: function() {
 			var aKeys = [];
 			for (var sKey in this._keys) {
-				if (!!this._keys[sKey]){
+				if (this._keys[sKey]){
 					aKeys.push(sKey);
 				}
 			}

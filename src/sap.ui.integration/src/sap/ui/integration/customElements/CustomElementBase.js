@@ -175,7 +175,7 @@ sap.ui.define([
 						vValue = JSON.stringify(vValue);
 					}
 
-					return this.setAttribute(hyphenate(sPropertyName), vValue);
+					this.setAttribute(hyphenate(sPropertyName), vValue);
 				}
 			});
 		});

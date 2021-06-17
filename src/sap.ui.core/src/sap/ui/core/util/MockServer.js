@@ -1054,13 +1054,13 @@ sap.ui
 
 						//check if an expanded operation was already executed. for 1:* check results . otherwise, check if there is __deferred for clean start.
 						var aNavEntry = oRecord[sNavProp].results || oRecord[sNavProp];
-						if (!aNavEntry || !!aNavEntry.__deferred) {
+						if (!aNavEntry || aNavEntry.__deferred) {
 							aNavEntry = jQuery.extend(true, [], that._resolveNavigation(sEntitySetName, oRecord, sNavProp, oRecord));
 						} else if (!Array.isArray(aNavEntry)) {
 							aNavEntry = [aNavEntry];
 						}
 
-						if (!!aNavEntry && aNavProps.length > 1) {
+						if (aNavEntry && aNavProps.length > 1) {
 							var sRestNavProps = aNavProps.splice(1, aNavProps.length).join("/");
 							aNavEntry = that._getOdataQueryExpand(aNavEntry, sRestNavProps,
 								oEntitySetNavProps[sNavProp].to.entitySet);
@@ -1607,7 +1607,7 @@ sap.ui
 						case "Edm.Binary":
 						case "Edm.DateTimeOffset":
 						default:
-							oResult[sKeyName] = oResult[sKeyName];
+							// no value update needed
 					}
 
 				}
@@ -2030,7 +2030,7 @@ sap.ui
 								case "Edm.Binary":
 								case "Edm.DateTimeOffset":
 								default:
-									sNewValue = sNewValue;
+									// no value update needed
 							}
 
 							//value doesn't match, continue to next entry
@@ -2380,7 +2380,7 @@ sap.ui
 							var oBoundaryRegex = new RegExp("--batch_[a-z0-9-]*");
 							var sBoundary = oBoundaryRegex.exec(sRequestBody)[0];
 							// boundary is defined in request header
-							if (!!sBoundary) {
+							if (sBoundary) {
 								var aBatchBodyResponse = [];
 								//split requests by boundary
 								var aBatchRequests = sRequestBody.split(sBoundary);

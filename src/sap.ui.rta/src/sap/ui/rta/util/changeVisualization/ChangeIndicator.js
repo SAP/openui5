@@ -134,7 +134,7 @@ sap.ui.define([
 				if (
 					oControl.getMode() === "change"
 					&& oControl.getModel()
-					&& !!oControl.getModel().getData().selectedChange
+					&& oControl.getModel().getData().selectedChange
 				) {
 					// Root selector of dependent selection
 					oRm.class("sapUiRtaChangeIndicatorChangeSolid");
@@ -237,7 +237,7 @@ sap.ui.define([
 	ChangeIndicator.prototype._onSelect = function (oEvent) {
 		oEvent.stopPropagation();
 		if (
-			!!this.getModel().getData().selectedChange
+			this.getModel().getData().selectedChange
 			&& !this.getChanges().some(function (oChange) {
 				return oChange.dependent;
 			})

@@ -112,7 +112,7 @@ sap.ui.define([
 		if (oPayload && oPayload.semanticObjects) {
 			return fnHasDistinctSemanticObject(oPayload.semanticObjects).then(function(bHasDisctinctSemanticObject) {
 				return Promise.resolve({
-					type: !!bHasDisctinctSemanticObject ? 2 : 0,
+					type: bHasDisctinctSemanticObject ? 2 : 0,
 					directLink: undefined
 				});
 			});

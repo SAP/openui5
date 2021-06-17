@@ -244,7 +244,7 @@ sap.ui.define([
 
 			this._setButtonsState({edit: true, save: false, cancel: false});
 
-			if (sProductId && !!this._oNewUnsavedItems[sProductId]) {
+			if (sProductId && this._oNewUnsavedItems[sProductId]) {
 				this._closeItemInTabContainer(oSelectedItem);
 			} else if (sProductId) {
 				oSelectedItem.setModified(false);

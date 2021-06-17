@@ -414,7 +414,7 @@ function(
 		ObjectListItem.prototype._activeHandlingInheritor = function() {
 			var sActiveSrc = this.getActiveIcon();
 
-			if (!!this._oImageControl  && !!sActiveSrc) {
+			if (this._oImageControl && sActiveSrc) {
 				this._oImageControl.setSrc(sActiveSrc);
 			}
 		};
@@ -426,7 +426,7 @@ function(
 		 */
 		ObjectListItem.prototype._inactiveHandlingInheritor = function() {
 			var sSrc = this.getIcon();
-			if (!!this._oImageControl) {
+			if (this._oImageControl) {
 				this._oImageControl.setSrc(sSrc);
 			}
 		};

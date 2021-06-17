@@ -181,7 +181,7 @@ function(
 
 					var oFirstTile = this._getVisibleTiles()[iTargetTileIndex];
 
-					if (!!oFirstTile) {
+					if (oFirstTile) {
 						this._findTile(oFirstTile.$()).trigger("focus");
 						// event should not trigger any further actions
 						oEvent.stopPropagation();
@@ -218,7 +218,7 @@ function(
 
 					var oNextTile = aTiles[iNextIndex];
 
-					if (!!oNextTile) {
+					if (oNextTile) {
 						this._renderTilesInTheSamePage(iNextIndex, aTiles);
 						this._findTile(oNextTile.$()).trigger("focus");
 						// event should not trigger any further actions
@@ -237,7 +237,7 @@ function(
 
 					var oNextTile = aTiles[iNextIndex];
 
-					if (!!oNextTile) {
+					if (oNextTile) {
 						this._renderTilesInTheSamePage(iNextIndex, aTiles);
 						this._findTile(oNextTile.$()).trigger("focus");
 						// event should not trigger any further actions
@@ -255,7 +255,7 @@ function(
 					if (!oEvent.ctrlKey) {
 						var oNextTile = aTiles[iNextIndex];
 
-						if (!!oNextTile) {
+						if (oNextTile) {
 							if (iNextIndex < this._iCurrentTileStartIndex + this._iMaxTiles) { // tile on same page?
 								this._findTile(oNextTile.$()).trigger("focus");
 							} else {
@@ -287,7 +287,7 @@ function(
 					if (!oEvent.ctrlKey) {
 						var oNextTile = aTiles[iNextIndex];
 
-						if (!!oNextTile) {
+						if (oNextTile) {
 							if (iNextIndex >= this._iCurrentTileStartIndex) { // tile on same page?
 								this._findTile(oNextTile.$()).trigger("focus");
 							} else {
@@ -321,7 +321,7 @@ function(
 					if (!oEvent.ctrlKey) {
 						var oNextTile = oTiles[iNextIndex];
 
-						if ((iModNext > iModCurr) && !!oNextTile) {
+						if ((iModNext > iModCurr) && oNextTile) {
 							// '(iModNext > iModCurr)' means: still on same page
 							this._findTile(oNextTile.$()).trigger("focus");
 						}
@@ -346,7 +346,7 @@ function(
 
 					if (!oEvent.ctrlKey) {
 						var oNextTile = oTiles[iNextIndex];
-						if ((iModNext < iModCurr) && !!oNextTile) {
+						if ((iModNext < iModCurr) && oNextTile) {
 							// '(iModNext < iModCurr)' means: still on same page
 							this._findTile(oNextTile.$()).trigger("focus");
 						}

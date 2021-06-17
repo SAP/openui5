@@ -128,7 +128,7 @@ sap.ui.define([
 			.attr("tabindex", "-1")
 			.accessibilityState(mACCOptions);
 
-		if (!oCurrentStep || !!parseInt(oCurrentStep.style.zIndex)) {
+		if (!oCurrentStep || parseInt(oCurrentStep.style.zIndex)) {
 			oRm.attr("aria-disabled", "true");
 		}
 

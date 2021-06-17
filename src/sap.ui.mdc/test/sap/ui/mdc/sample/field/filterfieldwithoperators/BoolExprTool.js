@@ -236,9 +236,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/mdc/con
 				if (cm) { //} && cm.getFilterField(sfieldPath)) {
 					// var oType = cm.getFilterField(sfieldPath)._getFormatOptions().valueType;
 					try {
-						sValue.values[0] = sValue.values[0]; //oType.parseValue(sValue.values[0], "string");
+						// sValue.values[0] = sValue.values[0]; //oType.parseValue(sValue.values[0], "string");
 						if (sValue.values.length > 1) {
-							sValue.values[1] = sValue.values[1]; //oType.parseValue(sValue.values[1], "string");
+							// sValue.values[1] = sValue.values[1]; //oType.parseValue(sValue.values[1], "string");
 						}
 					} catch (error) {
 						throwError("value type parse exception : " + error.message, pos, sy);

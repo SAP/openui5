@@ -424,7 +424,7 @@ sap.ui.define([
 
 		// mPersoMap may be null if oTable's id is not static
 		// or if any of the column ids is not static
-		if (!!mPersoMap && !!this._oPersonalizations) {
+		if (mPersoMap && this._oPersonalizations) {
 			var bDoSaveMigration = false;
 			// Set order and visibility
 			for ( var c = 0, cl = this._oPersonalizations.aColumns.length; c < cl; c++) {

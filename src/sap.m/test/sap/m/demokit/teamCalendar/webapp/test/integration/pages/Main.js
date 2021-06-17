@@ -132,7 +132,7 @@ sap.ui.define([
 								// there is no expected key, use initial one (from the model)
 								sExpectedViewKey = oCalendar.getBinding("rows").getModel().getProperty("/viewKey");
 							}
-							if (!!oCalendar.getViewKey) {
+							if (oCalendar.getViewKey) {
 								sSelectedViewKey = oCalendar.getViewKey();
 							} else {
 								sSelectedViewKey = sap.ui.getCore().byId(oCalendar.getSelectedView()).getKey();

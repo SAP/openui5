@@ -100,8 +100,8 @@ sap.ui.define([
 			try {
 				var sBeautifiedCode = JSON.stringify(JSON.parse(this._oEditor.getValue()), 0, "\t");
 				this._oEditor.setValue(sBeautifiedCode);
-			} finally {
-				return;
+			} catch (err) {
+				// ignore
 			}
 		},
 

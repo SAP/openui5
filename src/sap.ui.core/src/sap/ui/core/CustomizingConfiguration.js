@@ -243,7 +243,7 @@ sap.ui.define([
 			hasCustomProperties: function(sViewName, vObject) {
 				var mSettings = {};
 				findConfig(CONFIG_VIEW_MODIFICATIONS, vObject, function(oConfig) {
-					if (!!oConfig[sViewName]) {
+					if (oConfig[sViewName]) {
 						mSettings = oConfig[sViewName];
 					}
 				});

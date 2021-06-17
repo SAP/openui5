@@ -113,16 +113,16 @@ sap.ui.define(["sap/ui/support/library"],
 							sHeaderId = oHeaderTitle.getId();
 
 						if (bShowTitleInHeaderContent) {
-							if (!!oHeaderTitle.getObjectImageURI() && bIsObjectIconAlwaysVisible) {
+							if (oHeaderTitle.getObjectImageURI() && bIsObjectIconAlwaysVisible) {
 								addIssueBuilder(sHeaderName, sHeaderId, "Icon");
 
 							}
 
-							if (!!oHeaderTitle.getObjectTitle() && bIsObjectTitleAlwaysVisible) {
+							if (oHeaderTitle.getObjectTitle() && bIsObjectTitleAlwaysVisible) {
 								addIssueBuilder(sHeaderName, sHeaderId, "Title");
 							}
 
-							if (!!oHeaderTitle.getObjectSubtitle() && bIsObjectSubtitleAlwaysVisible) {
+							if (oHeaderTitle.getObjectSubtitle() && bIsObjectSubtitleAlwaysVisible) {
 								addIssueBuilder(sHeaderName, sHeaderId, "SubTitle");
 							}
 						}

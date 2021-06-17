@@ -190,7 +190,7 @@ sap.ui.define([
 				if (
 					vValue.backgroundColor
 					|| vValue.color
-					|| (IconPool.isIconURI(vValue.src) && !!IconPool.getIconInfo(vValue.src))
+					|| (IconPool.isIconURI(vValue.src) && IconPool.getIconInfo(vValue.src))
 					|| isValidBindingString(vValue.src, false)
 				) {
 					return "icon";

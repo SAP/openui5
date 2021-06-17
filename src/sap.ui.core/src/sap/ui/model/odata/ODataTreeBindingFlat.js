@@ -1819,7 +1819,7 @@ sap.ui.define([
 						var iVisibilityFactor = (aCheckMatrix[bVisible | 0][bVisibleNewParent | 0]);
 						// iVisibilityFactor is either 0, 1 or -1.
 						// 1 and -1 are the relevant factors here, otherwise the node is not visible
-						if (!!iVisibilityFactor) {
+						if (iVisibilityFactor) {
 							if (oNode.isDeepOne) {
 								iDelta += iVisibilityFactor * 1;
 							} else {

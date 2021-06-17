@@ -353,7 +353,7 @@ sap.ui.define([
 		var that = this;
 		this.bUseBatch = this.bUseBatch || this.oMetadata.getUseBatch();
 		var doFire = function(bDelay){
-			if (!!bDelay) {
+			if (bDelay) {
 				that.metadataLoadEvent = setTimeout(doFire.bind(that), 0);
 			} else {
 				if (that.oMetadata) {
@@ -2113,7 +2113,7 @@ sap.ui.define([
 						return false;
 					}
 				});
-				if (!!sErrorCode) {
+				if (sErrorCode) {
 					return false;
 				}
 			}
@@ -2789,7 +2789,7 @@ sap.ui.define([
 						oPayload.__metadata.type = sType;
 					}
 					// etag information may be needed by an odata service, too!!!
-					if (!!sMetadataETag) {
+					if (sMetadataETag) {
 						oPayload.__metadata.etag = sMetadataETag;
 					}
 				}
@@ -3405,10 +3405,10 @@ sap.ui.define([
 			}
 			delete this.aPendingRequestHandles;
 		}
-		if (!!this.oMetadataLoadEvent) {
+		if (this.oMetadataLoadEvent) {
 			clearTimeout(this.oMetadataLoadEvent);
 		}
-		if (!!this.oMetadataFailedEvent) {
+		if (this.oMetadataFailedEvent) {
 			clearTimeout(this.oMetadataFailedEvent);
 		}
 

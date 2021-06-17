@@ -35,7 +35,7 @@ sap.ui.define([],
 			oRm.class("sapMFeedInDisabled");
 		}
 		oRm.openEnd();
-		if (!!oControl.getShowIcon()) {
+		if (oControl.getShowIcon()) {
 			this._addImage(oRm, oControl, sMyId);
 		}
 		oRm.openStart("div", sMyId + "-container");

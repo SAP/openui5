@@ -1468,10 +1468,9 @@ sap.ui.define([
 		}
 		var iKeyCode = oEvent.keyCode;
 		if (iKeyCode === KeyCodes.ENTER) {
-			// this does not work for IE9 and downwards! TODO: check with IE10/11
 			// consider to always put the focus on the hidden file uploader
-			// and let the fileuploader manager the keyboard interaction
-			if (!(!!Device.browser.internet_explorer && Device.browser.version <= 9) && this.oFileUpload) {
+			// and let the fileuploader manage the keyboard interaction
+			if (this.oFileUpload) {
 				this.oFileUpload.click();
 				oEvent.preventDefault();
 				oEvent.stopPropagation();

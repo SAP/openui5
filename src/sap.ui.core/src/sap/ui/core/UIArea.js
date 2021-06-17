@@ -883,7 +883,7 @@ sap.ui.define([
 
 		// in case of CRTL+SHIFT+ALT the contextmenu event should not be dispatched
 		// to allow to display the browsers context menu
-		if (oEvent.type === "contextmenu" && oEvent.shiftKey && oEvent.altKey && !!(oEvent.metaKey || oEvent.ctrlKey)) {
+		if (oEvent.type === "contextmenu" && oEvent.shiftKey && oEvent.altKey && (oEvent.metaKey || oEvent.ctrlKey)) {
 			Log.info("Suppressed forwarding the contextmenu event as control event because CTRL+SHIFT+ALT is pressed!");
 			return;
 		}
