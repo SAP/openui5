@@ -32,7 +32,7 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.60",
+			"minUI5Version": "1.90",
 			"libs": {
 				"sap.m": {}
 			}

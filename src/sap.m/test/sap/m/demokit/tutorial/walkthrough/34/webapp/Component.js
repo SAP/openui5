@@ -8,7 +8,8 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.walkthrough.Component", {
 
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+			interfaces: ["sap.ui.core.IAsyncContentCreation"]
 		},
 
 		init: function () {
@@ -25,15 +26,19 @@ sap.ui.define([
 			this.setModel(oModel);
 
 			// set dialog
-			this._helloDialog = new HelloDialog(this.getRootControl());
+			this.rootControlLoaded().then(function() {
+				this._helloDialog = new HelloDialog(this.getRootControl());
+			}.bind(this));
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
 		},
 
 		exit : function () {
-			this._helloDialog.destroy();
-			delete this._helloDialog;
+			if (this._helloDialog) {
+				this._helloDialog.destroy();
+				delete this._helloDialog;
+			}
 		},
 
 		openHelloDialog : function () {
