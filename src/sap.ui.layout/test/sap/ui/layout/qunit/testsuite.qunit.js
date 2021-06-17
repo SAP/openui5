@@ -106,6 +106,9 @@ sap.ui.define([
 				}
 			},
 			"ResponsiveSplitter": {
+				ui5: {
+					"xx-waitForTheme": "init"
+				},
 				sinon: {
 					version: 1, // because the bridge for sinon-4 doesn't support fake timers yet
 					useFakeTimers: true
