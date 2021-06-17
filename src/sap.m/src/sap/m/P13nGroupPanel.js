@@ -265,13 +265,7 @@ sap.ui.define([
 
 			var aKeyFields = [];
 			var sModelName = (this.getBindingInfo("items") || {}).model;
-			var fGetValueOfProperty = function(sName, oContext, oItem) {
-				var oBinding = oItem.getBinding(sName);
-				if (oBinding && oContext) {
-					return oContext.getObject()[oBinding.getPath()];
-				}
-				return oItem.getMetadata().getProperty(sName) ? oItem.getProperty(sName) : oItem.getAggregation(sName);
-			};
+
 			this.getItems().forEach(function(oItem_) {
 				var oContext = oItem_.getBindingContext(sModelName);
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
@@ -280,8 +274,8 @@ sap.ui.define([
 				}
 				aKeyFields.push({
 					key: oItem_.getColumnKey(),
-					text: fGetValueOfProperty("text", oContext, oItem_),
-					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_)
+					text: oItem_.getText(),
+					tooltip: oItem_.getTooltip()
 				});
 			});
 			aKeyFields.splice(0, 0, {
@@ -301,9 +295,9 @@ sap.ui.define([
 				}
 				aConditions.push({
 					key: oGroupItem_.getKey(),
-					keyField: fGetValueOfProperty("columnKey", oContext, oGroupItem_),
-					operation: fGetValueOfProperty("operation", oContext, oGroupItem_),
-					showIfGrouped: fGetValueOfProperty("showIfGrouped", oContext, oGroupItem_)
+					keyField: oGroupItem_.getColumnKey(),
+					operation: oGroupItem_.getOperation(),
+					showIfGrouped: oGroupItem_.getShowIfGrouped()
 				});
 			});
 			this._oGroupPanel.setConditions(aConditions);
