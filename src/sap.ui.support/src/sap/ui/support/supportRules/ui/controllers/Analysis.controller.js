@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
+	"sap/ui/support/supportRules/util/EvalUtils",
 	"sap/ui/support/supportRules/ui/models/SelectionUtils",
 	"sap/ui/support/supportRules/ui/controllers/PresetsController",
 	"sap/ui/support/supportRules/ui/models/PresetsUtils",
@@ -28,6 +29,7 @@ sap.ui.define([
 	RuleSerializer,
 	Constants,
 	Storage,
+	EvalUtils,
 	SelectionUtils,
 	PresetsController,
 	PresetsUtils,
@@ -777,9 +779,7 @@ sap.ui.define([
 
 		checkFunctionString: function (functionString) {
 			try {
-				/* eslint-disable no-eval */
-				eval("var testAsignedVar = " + functionString);
-				/* eslint-enable no-eval */
+				EvalUtils.evalFunction(functionString);
 			} catch (err) {
 				MessageToast.show("Your check function contains errors, and can't be evaluated:" + err);
 				return false;

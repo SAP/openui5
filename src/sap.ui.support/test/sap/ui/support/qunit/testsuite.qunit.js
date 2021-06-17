@@ -59,6 +59,12 @@ sap.ui.define(function() {
 				}
 			},
 			"report/DataCollector": {},
+			"util/EvalUtils": {
+				module: "./util/EvalUtils.qunit",
+				sinon: {
+					version: 4
+				}
+			},
 			"util/RuleValidator": {
 				module: "./util/RuleValidator.qunit"
 			},
