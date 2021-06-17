@@ -61,10 +61,19 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 		var oContent = this.getContent();
 		if (oContent) {
 			return oContent.setLayoutData(oLayoutdata);
-		} else {
-			this._oLayoutData = oLayoutdata;
-			return this;
 		}
+
+		this._oLayoutData = oLayoutdata;
+		return this;
+	};
+
+	SplitPane.prototype.getLayoutData = function() {
+		var oContent = this.getContent();
+		if (oContent) {
+			return oContent.getLayoutData();
+		}
+
+		return this._oLayoutData;
 	};
 
 	// overrides the default set method in order to apply layout data that is provided before content
