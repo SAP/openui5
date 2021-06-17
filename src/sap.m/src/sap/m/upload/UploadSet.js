@@ -31,8 +31,6 @@ sap.ui.define([
 			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod) {
 	"use strict";
 
-	var HttpRequestMethod = UploaderHttpRequestMethod;
-
 	/**
 	 * Constructor for a new UploadSet.
 	 *
@@ -105,12 +103,12 @@ sap.ui.define([
 				 * URL where the uploaded files will be stored.
 				 */
 				uploadUrl: {type: "string", defaultValue: null},
-				 /**
-				  * HTTP request method chosen for file upload.
-				  * @since 1.90
-				  */
-				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: HttpRequestMethod.Post}
-			},
+				/**
+				 * HTTP request method chosen for file upload.
+				 * @since 1.90
+				 */
+				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: UploaderHttpRequestMethod.Post}
+				},
 			defaultAggregation: "items",
 			aggregations: {
 				/**

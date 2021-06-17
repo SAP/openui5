@@ -25,6 +25,7 @@ sap.ui.define([
 	"./AvatarType",
 	"./AvatarColor",
 	"./AvatarImageFitType",
+	"./upload/UploaderHttpRequestMethod",
 	// referenced here to enable the Support feature
 	"./Support"
 ],
@@ -46,7 +47,8 @@ sap.ui.define([
 	AvatarSize,
 	AvatarType,
 	AvatarColor,
-	AvatarImageFitType
+	AvatarImageFitType,
+	UploaderHttpRequestMethod
 ) {
 
 	"use strict";
@@ -152,7 +154,8 @@ sap.ui.define([
 			"sap.m.VerticalPlacementType",
 			"sap.m.WrappingType",
 			"sap.m.WizardRenderMode",
-			"sap.m.semantic.SemanticRuleSetType"
+			"sap.m.semantic.SemanticRuleSetType",
+			"sap.m.upload.UploaderHttpRequestMethod"
 		],
 		interfaces: [
 			"sap.m.IBar",
@@ -561,6 +564,8 @@ sap.ui.define([
 	 * @public
 	 */
 	var thisLib = sap.m;
+	thisLib.upload.UploaderHttpRequestMethod = UploaderHttpRequestMethod;
+
 	/* eslint-disable no-undef */
 
 
