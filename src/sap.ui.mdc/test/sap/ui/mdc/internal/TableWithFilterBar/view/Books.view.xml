@@ -54,7 +54,7 @@
 								<mdcf:suggestContent>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<mdcf:table>
-											<Table items='{path : "/Books"}' width="20rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<Table items='{path : "/Books", length: 10}' width="30rem">
 												<columns>
 													<Column>
 														<header>
@@ -141,6 +141,9 @@
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcf:filterBar>
+								<mdcf:suggestContent>
+									<mdcf:FieldValueHelpMTableWrapper></mdcf:FieldValueHelpMTableWrapper>
+								</mdcf:suggestContent>
 								<mdcf:content>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<!-- <mdcf:table>
@@ -183,6 +186,40 @@
 							<mdcf:FieldValueHelp title="Langugages" id="FHLanguage"
 								noDialog="false" keyPath="code" descriptionPath="name" showConditionPanel="true"
 								filterFields="$search" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+								<mdcf:suggestContent>
+									<mdcf:FieldValueHelpMTableWrapper>
+										<mdcf:table>
+											<Table items='{path : "/Languages", length: 10}' width="30rem">
+												<columns>
+													<Column width="5rem">
+														<header>
+															<Text text="Code" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Name" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="native Name" />
+														</header>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem type="Active">
+														<cells>
+															<Text text="{code}" />
+															<Text text="{name}" />
+															<Text text="{nativeName}" />
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</mdcf:table>
+									</mdcf:FieldValueHelpMTableWrapper>
+								</mdcf:suggestContent>
 								<mdcf:content>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<mdcf:table>
@@ -271,10 +308,50 @@
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcf:filterBar>
+								<mdcf:suggestContent>
+									<mdcf:FieldValueHelpMTableWrapper>
+										<mdcf:table>
+											<Table items='{path : "/SubGenres", length: 10}' width="30rem">
+												<columns>
+													<Column>
+														<header>
+															<Text text="Code" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Title" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Genre" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Classification" />
+														</header>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem type="Active">
+														<cells>
+															<Text text="{code}" />
+															<Text text="{title}" />
+															<Text text="{genre_code}" />
+															<Text text="{classification_code}" />
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</mdcf:table>
+									</mdcf:FieldValueHelpMTableWrapper>
+								</mdcf:suggestContent>
 								<mdcf:content>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<mdcf:table>
-											<Table items='{path : "/SubGenres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<Table items='{path : "/SubGenres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
 													<Column>
 														<header>
@@ -583,7 +660,7 @@
 								<mdcf:content>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<mdcf:table>
-											<Table items='{path : "/SubGenres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<Table items='{path : "/SubGenres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
 													<Column>
 														<header>
@@ -626,7 +703,7 @@
 				</VBox>
 			</f2:content>
 			<f2:dependents>
-				<mdcf:FieldValueHelp open="onGenreVHOpen" dataRequested="onGenreVHOpen" filterFields="$search" title="Genre" id="FHGenre"
+				<mdcf:FieldValueHelp open="onGenreVHOpen" dataRequested="onGenreVHOpen" filterFields="$search" title="GenreAAAA" id="FHGenre"
 					noDialog="false" keyPath="code" descriptionPath="title" showConditionPanel="true"
 					delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
 					<mdcf:inParameters>
@@ -637,6 +714,40 @@
 					</mdcf:outParameters>
 					<mdcf:filterBar>
 					</mdcf:filterBar>
+					<mdcf:suggestContent>
+						<mdcf:FieldValueHelpMTableWrapper>
+							<mdcf:table>
+								<Table items='{path : "/Genres", length: 10}' width="30rem">
+									<columns>
+										<Column>
+											<header>
+												<Text text="Code" />
+											</header>
+										</Column>
+										<Column>
+											<header>
+												<Text text="Title" />
+											</header>
+										</Column>
+										<Column>
+											<header>
+												<Text text="Classification" />
+											</header>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Active">
+											<cells>
+												<Text text="{code}" />
+												<Text text="{title}" />
+												<Text text="{classification_code}" />
+											</cells>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcf:table>
+						</mdcf:FieldValueHelpMTableWrapper>
+					</mdcf:suggestContent>
 					<mdcf:content>
 						<mdcf:FieldValueHelpMTableWrapper>
 						</mdcf:FieldValueHelpMTableWrapper>

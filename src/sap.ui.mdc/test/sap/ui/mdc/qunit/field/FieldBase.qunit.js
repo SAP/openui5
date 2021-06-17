@@ -3295,6 +3295,7 @@ sap.ui.define([
 		assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
 		assert.equal(oFieldHelp.getConditions().length, 1, "One condition set on FieldHelp");
 		assert.ok(oFieldHelp.open.called, "open called");
+		assert.ok(oFieldHelp.open.calledWith, true, "open called as Suggestion");
 		assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
 		oContent._$input.val("=A");
@@ -3315,6 +3316,37 @@ sap.ui.define([
 		oClock.tick(400); // fake time to open field help
 
 		assert.equal(oFieldHelp.getFilterValue(), "C B", "FilterValue set");
+
+		oFieldHelp.close();
+		oClock.tick(400); // fake closing time
+		oClock.restore();
+
+	});
+
+	QUnit.test("filtering and switching to value help", function(assert) {
+
+		oField.setDisplay(FieldDisplay.DescriptionValue);
+		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
+		oFieldHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
+		sap.ui.getCore().applyChanges();
+		sinon.spy(oFieldHelp, "initBeforeOpen");
+
+		var oClock = sinon.useFakeTimers();
+		oField.focus(); // as FieldHelp is connected with focus
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent._$input.val("i");
+		oContent.fireLiveChange({ value: "I" });
+		oClock.tick(400); // fake time to open field help
+
+		oFieldHelp.fireSwitchToValueHelp();
+		oClock.tick(400); // fake time to open  and close field help
+
+		assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
+		assert.equal(oFieldHelp.getConditions().length, 1, "One condition set on FieldHelp");
+		assert.ok(oFieldHelp.open.called, "open called");
+		assert.ok(oFieldHelp.open.calledWith, false, "open called as ValueHelp");
+		assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
 		oFieldHelp.close();
 		oClock.tick(400); // fake closing time

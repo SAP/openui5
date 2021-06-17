@@ -228,7 +228,15 @@ sap.ui.define([
 				 * This event is fired after the field help has been closed.
 				 * @since 1.61.0
 				 */
-				afterClose: {}
+				afterClose: {},
+
+				/**
+				 * This event is fired if suggestion should be closed and value help should be opened.
+				 *
+				 * The opening must be handled by the field as focus and accessibility handling is needed.
+				 * @since 1.92.0
+				 */
+				switchToValueHelp: {}
 			},
 			defaultProperty: "filterValue"
 		}

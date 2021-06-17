@@ -44,24 +44,46 @@
 					<mdcf:FieldValueHelp id="fhAdob" title="Birth Epoch" showConditionPanel="true" filterFields="*dateOfBirth*" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
 					<mdcf:ConditionFieldHelp id="fhAdod" title="Define Filter Conditions" label="Date of death" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}"/>
 					<mdcf:FieldValueHelp id="IOFFVHCountry" title="Countries" showConditionPanel="true" filterFields="*code,descr*" keyPath="code" descriptionPath="descr" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+					<mdcf:suggestContent>
 						<mdcf:FieldValueHelpMTableWrapper>
-							<Table items="{path: '/Countries'}" width="26rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
-								<columns>
-									<Column>
-										<Label text="Country"></Label>
-									</Column>
-									<Column>
-										<Label text="Name"></Label>
-									</Column>
-								</columns>
-								<items>
-									<ColumnListItem type="Active">
-										<Text text="{code}"></Text>
-										<Text text="{descr}"></Text>
-									</ColumnListItem>
-								</items>
-							</Table>
-						</mdcf:FieldValueHelpMTableWrapper>
+								<Table items="{path: '/Countries', length: 10}" width="30rem">
+									<columns>
+										<Column>
+											<Label text="Country"></Label>
+										</Column>
+										<Column>
+											<Label text="Name"></Label>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Active">
+											<Text text="{code}"></Text>
+											<Text text="{descr}"></Text>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcf:FieldValueHelpMTableWrapper>
+					</mdcf:suggestContent>
+						<mdcf:content>
+							<mdcf:FieldValueHelpMTableWrapper>
+								<Table items="{path: '/Countries'}" width="100%">
+									<columns>
+										<Column>
+											<Label text="Country"></Label>
+										</Column>
+										<Column>
+											<Label text="Name"></Label>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Active">
+											<Text text="{code}"></Text>
+											<Text text="{descr}"></Text>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcf:FieldValueHelpMTableWrapper>
+						</mdcf:content>
 					</mdcf:FieldValueHelp>
 
 					<mdcf:FieldValueHelp id="IOFFVHRegion" title="Regions" showConditionPanel="true" filterFields="*code,country_code,text*" keyPath="code" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
@@ -77,28 +99,54 @@
 								</mdc:FilterField>
 							</vhfb:FilterBar>
 						</mdcf:filterBar>
-						<mdcf:FieldValueHelpMTableWrapper>
-							<Table items="{path: '/Regions'}" width="26rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
-								<columns>
-									<Column>
-										<Label text="Region"></Label>
-									</Column>
-									<Column>
-										<Label text="Name"></Label>
-									</Column>
-									<Column>
-										<Label text="Country"></Label>
-									</Column>
-								</columns>
-								<items>
-									<ColumnListItem type="Active">
-										<Text text="{code}"></Text>
-										<Text text="{text}"></Text>
-										<Text text="{country_code}"></Text>
-									</ColumnListItem>
-								</items>
-							</Table>
-						</mdcf:FieldValueHelpMTableWrapper>
+						<mdcf:suggestContent>
+							<mdcf:FieldValueHelpMTableWrapper>
+								<Table items="{path: '/Regions', length: 10}" width="30rem">
+									<columns>
+										<Column>
+											<Label text="Region"></Label>
+										</Column>
+										<Column>
+											<Label text="Name"></Label>
+										</Column>
+										<Column>
+											<Label text="Country"></Label>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Active">
+											<Text text="{code}"></Text>
+											<Text text="{text}"></Text>
+											<Text text="{country_code}"></Text>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcf:FieldValueHelpMTableWrapper>
+						</mdcf:suggestContent>
+						<mdcf:content>
+							<mdcf:FieldValueHelpMTableWrapper>
+								<Table items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+									<columns>
+										<Column>
+											<Label text="Region"></Label>
+										</Column>
+										<Column>
+											<Label text="Name"></Label>
+										</Column>
+										<Column>
+											<Label text="Country"></Label>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Active">
+											<Text text="{code}"></Text>
+											<Text text="{text}"></Text>
+											<Text text="{country_code}"></Text>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcf:FieldValueHelpMTableWrapper>
+						</mdcf:content>
 					</mdcf:FieldValueHelp>
 
 					<mdcf:FieldValueHelp id="IOFFVHCity" title="Cities" showConditionPanel="true" filterFields="*country_code,region_code,city,text*" keyPath="city" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
@@ -116,32 +164,54 @@
 								<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFRegion2" label= "Region" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" />
 							</vhfb:FilterBar>
 						</mdcf:filterBar>
-						<mdcf:FieldValueHelpMTableWrapper>
-							<Table items="{path: '/Cities'}" width="26rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
-								<columns>
-									<Column>
-										<Label text="City"></Label>
-									</Column>
-									<Column>
-										<Label text="Name"></Label>
-									</Column>
-									<Column>
-										<Label text="Country"></Label>
-									</Column>
-									<Column>
-										<Label text="Region"></Label>
-									</Column>
-								</columns>
-								<items>
-									<ColumnListItem type="Active">
-										<Text text="{city}"></Text>
-										<Text text="{text}"></Text>
-										<Text text="{country_code}"></Text>
-										<Text text="{region_code}"></Text>
-									</ColumnListItem>
-								</items>
-							</Table>
-						</mdcf:FieldValueHelpMTableWrapper>
+						<mdcf:suggestContent>
+							<mdcf:FieldValueHelpMTableWrapper>
+								<Table items="{path: '/Cities', length: 10}" width="30rem">
+									<columns>
+										<Column>
+											<Label text="City"></Label>
+										</Column>
+										<Column>
+											<Label text="Name"></Label>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Active">
+											<Text text="{city}"></Text>
+											<Text text="{text}"></Text>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcf:FieldValueHelpMTableWrapper>
+						</mdcf:suggestContent>
+						<mdcf:content>
+							<mdcf:FieldValueHelpMTableWrapper>
+								<Table items="{path: '/Cities'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+									<columns>
+										<Column>
+											<Label text="City"></Label>
+										</Column>
+										<Column>
+											<Label text="Name"></Label>
+										</Column>
+										<Column>
+											<Label text="Country"></Label>
+										</Column>
+										<Column>
+											<Label text="Region"></Label>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Active">
+											<Text text="{city}"></Text>
+											<Text text="{text}"></Text>
+											<Text text="{country_code}"></Text>
+											<Text text="{region_code}"></Text>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcf:FieldValueHelpMTableWrapper>
+						</mdcf:content>
 					</mdcf:FieldValueHelp>
 				</mdc:dependents>
 

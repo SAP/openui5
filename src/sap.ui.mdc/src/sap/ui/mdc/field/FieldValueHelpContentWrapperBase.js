@@ -144,7 +144,7 @@ sap.ui.define([
 	 * should be loaded that are only needed if the help is open.
 	 *
 	 * @param {boolean} bSuggestion Flag if field help is opened as suggestion or dialog
-	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this|Promise} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -412,9 +412,39 @@ sap.ui.define([
 
 	};
 
-/* get Information from FieldHelp. Do not use properties here as it would be difficult to keep them
- * in sync. Also some information depend on the connected field and the state of the field help.
- */
+	/**
+	 * Checks if a ShoWAllItems-Footer should be created in the suggestion popover which will be shown if further selectable items are available.
+	 *
+	 * @returns {boolean} true if the ShoWAllItems Feature should be enabled
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
+	 * @since 1.92.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	 FieldValueHelpContentWrapperBase.prototype.enableShowAllItems = function() {
+
+		return false;
+
+	};
+
+	/**
+	 * Checks if the shown content currently displays all relevant values
+	 *
+	 * @returns {boolean} true if all relevant values are shown
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
+ 	 * @since 1.92.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldValueHelpContentWrapperBase.prototype.getAllItemsShown = function() {
+
+		return false;
+
+	};
+
+	/* get Information from FieldHelp. Do not use properties here as it would be difficult to keep them
+	* in sync. Also some information depend on the connected field and the state of the field help.
+	*/
 
 	FieldValueHelpContentWrapperBase.prototype._getFieldHelp = function() {
 

@@ -52,24 +52,46 @@
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" additionalValue="{countryOfOrigin/descr}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCountry">
 										<mdc:dependents>
 											<mdcf:FieldValueHelp id="IOFFVHCountry" title="Countries" showConditionPanel="false" filterFields="*code,descr*" keyPath="code" descriptionPath="descr" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-												<mdcf:FieldValueHelpMTableWrapper>
-													<Table items="{path: '/Countries'}" width="26rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
-														<columns>
-															<Column>
-																<Label text="Country"></Label>
-															</Column>
-															<Column>
-																<Label text="Name"></Label>
-															</Column>
-														</columns>
-														<items>
-															<ColumnListItem type="Active">
-																<Text text="{code}"></Text>
-																<Text text="{descr}"></Text>
-															</ColumnListItem>
-														</items>
-													</Table>
-												</mdcf:FieldValueHelpMTableWrapper>
+												<mdcf:suggestContent>
+													<mdcf:FieldValueHelpMTableWrapper>
+														<Table items="{path: '/Countries', length: 10}" width="30rem">
+															<columns>
+																<Column>
+																	<Label text="Country"></Label>
+																</Column>
+																<Column>
+																	<Label text="Name"></Label>
+																</Column>
+															</columns>
+															<items>
+																<ColumnListItem type="Active">
+																	<Text text="{code}"></Text>
+																	<Text text="{descr}"></Text>
+																</ColumnListItem>
+															</items>
+														</Table>
+													</mdcf:FieldValueHelpMTableWrapper>
+												</mdcf:suggestContent>
+												<mdcf:content>
+													<mdcf:FieldValueHelpMTableWrapper>
+														<Table items="{path: '/Countries'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+															<columns>
+																<Column>
+																	<Label text="Country"></Label>
+																</Column>
+																<Column>
+																	<Label text="Name"></Label>
+																</Column>
+															</columns>
+															<items>
+																<ColumnListItem type="Active">
+																	<Text text="{code}"></Text>
+																	<Text text="{descr}"></Text>
+																</ColumnListItem>
+															</items>
+														</Table>
+													</mdcf:FieldValueHelpMTableWrapper>
+												</mdcf:content>
 											</mdcf:FieldValueHelp>
 										</mdc:dependents>
 									</mdc:Field>
@@ -100,8 +122,9 @@
 														</mdc:FilterField>
 													</vhfb:FilterBar>
 												</mdcf:filterBar>
-												<mdcf:FieldValueHelpMTableWrapper>
-													<Table items="{path: '/Regions'}" width="26rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+												<mdcf:suggestContent>
+													<mdcf:FieldValueHelpMTableWrapper>
+													<Table items="{path: '/Regions', length: 10}" width="30rem">
 														<columns>
 															<Column>
 																<Label text="Region"></Label>
@@ -122,6 +145,31 @@
 														</items>
 													</Table>
 												</mdcf:FieldValueHelpMTableWrapper>
+												</mdcf:suggestContent>
+												<mdcf:content>
+													<mdcf:FieldValueHelpMTableWrapper>
+													<Table items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+														<columns>
+															<Column>
+																<Label text="Region"></Label>
+															</Column>
+															<Column>
+																<Label text="Name"></Label>
+															</Column>
+															<Column>
+																<Label text="Country"></Label>
+															</Column>
+														</columns>
+														<items>
+															<ColumnListItem type="Active">
+																<Text text="{code}"></Text>
+																<Text text="{text}"></Text>
+																<Text text="{country_code}"></Text>
+															</ColumnListItem>
+														</items>
+													</Table>
+												</mdcf:FieldValueHelpMTableWrapper>
+												</mdcf:content>
 											</mdcf:FieldValueHelp>
 										</mdc:dependents>
 
@@ -148,8 +196,9 @@
 														</mdc:FilterField>
 													</vhfb:FilterBar>
 												</mdcf:filterBar>
-												<mdcf:FieldValueHelpMTableWrapper>
-													<Table items="{path: '/Cities'}" width="26rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+												<mdcf:suggestContent>
+													<mdcf:FieldValueHelpMTableWrapper>
+													<Table items="{path: '/Cities', length: 10}" width="30rem">
 														<columns>
 															<Column>
 																<Label text="City"></Label>
@@ -174,6 +223,35 @@
 														</items>
 													</Table>
 												</mdcf:FieldValueHelpMTableWrapper>
+												</mdcf:suggestContent>
+												<mdcf:content>
+													<mdcf:FieldValueHelpMTableWrapper>
+													<Table items="{path: '/Cities'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+														<columns>
+															<Column>
+																<Label text="City"></Label>
+															</Column>
+															<Column>
+																<Label text="Name"></Label>
+															</Column>
+															<Column>
+																<Label text="Country"></Label>
+															</Column>
+															<Column>
+																<Label text="Region"></Label>
+															</Column>
+														</columns>
+														<items>
+															<ColumnListItem type="Active">
+																<Text text="{city}"></Text>
+																<Text text="{text}"></Text>
+																<Text text="{country_code}"></Text>
+																<Text text="{region_code}"></Text>
+															</ColumnListItem>
+														</items>
+													</Table>
+												</mdcf:FieldValueHelpMTableWrapper>
+												</mdcf:content>
 											</mdcf:FieldValueHelp>
 										</mdc:dependents>
 

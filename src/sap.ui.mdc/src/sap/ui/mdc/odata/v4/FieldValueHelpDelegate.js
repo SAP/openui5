@@ -101,13 +101,13 @@ sap.ui.define([
 
 	};
 
-	ODataFieldValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding) {
+	ODataFieldValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding, oListBindingInfo) {
 
 		if (!oListBinding || oListBinding.isSuspended()) {
 			return false;
 		}
 
-		return oListBinding.requestContexts().then(function(aContexts){
+		return oListBinding.requestContexts(0, oListBindingInfo && oListBindingInfo.length).then(function(aContexts){
 			return aContexts.length > 0;
 		});
 

@@ -1390,6 +1390,16 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("enableShowAllItems", function(assert) {
+
+		assert.notOk(oWrapper.enableShowAllItems(), "not supported per default");
+
+		oTable.bindAggregation("items", {path: "/items", length: 3, template: oItemTemplate});
+
+		assert.ok(oWrapper.enableShowAllItems(), "supported if length set in Binding");
+
+	});
+
 	// test integration to FieldValueHelp //
 
 	var iFVHSelect = 0;

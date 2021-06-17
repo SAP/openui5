@@ -39,7 +39,7 @@
                 </mdcf:filterBar>
                 <mdcf:suggestContent>
                     <mdcf:FieldValueHelpMTableWrapper>
-                        <Table id="FB1-FH1--mTable" items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+                        <Table id="FB1-FH1--mTable" items='{path : "/Authors", length: 10}' width="30rem">
                             <columns>
                                 <Column width="5rem">
                                     <header>

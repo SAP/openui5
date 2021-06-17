@@ -37,7 +37,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/Dialog",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSpacer"
 ], function (
 		qutils,
 		FieldValueHelp,
@@ -71,7 +73,8 @@ sap.ui.define([
 		mLibrary,
 		Popover,
 		Dialog,
-		Button
+		Button,
+		ToolbarSpacer
 	) {
 	"use strict";
 
@@ -1974,6 +1977,33 @@ sap.ui.define([
 		oPopover.invalidate.reset();
 		oWrapper.invalidate(); // fake some change inside wrapper, e.g. item selection
 		assert.notOk(oPopover.invalidate.called, "closed Popover not invalidated");
+
+	});
+
+	QUnit.test("show more button", function(assert) {
+
+		sinon.stub(oWrapper, "enableShowAllItems").returns(true);
+		var iEvent = 0;
+		oFieldHelp.attachEvent("switchToValueHelp", function (oEvent) {iEvent++;});
+
+		oFieldHelp.open(true);
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		assert.ok(oPopover, "Popover created");
+
+		var oFooter = oPopover && oPopover.getFooter();
+		assert.ok(oFooter, "Footer created");
+		assert.ok(oFooter.isA("sap.m.Toolbar"), "Toolbar used as footer");
+
+		var oButton = oFooter && oFooter.getContent()[1];
+		assert.ok(oButton, "oButton created");
+		assert.ok(oButton.isA("sap.m.Button"), "Butten used");
+
+		oButton.firePress(); // simulate button press
+
+		assert.equal(iEvent, 1, "switchToValueHelp Event fireded");
+
+		oFieldHelp.close();
+		oClock.tick(iDialogDuration); // fake closing time
 
 	});
 

@@ -576,7 +576,7 @@ sap.ui.define([
 			oListBinding.resume();
 		}
 
-		this.fireDataUpdate({contentChange: false});
+		//this.fireDataUpdate({contentChange: false});
 	};
 
 	FieldValueHelpTableWrapperBase.prototype.isSuspended = function() {
@@ -903,9 +903,11 @@ sap.ui.define([
 
 		return SyncPromise.resolve().then(function() {
 			var oListBinding = this.getListBinding();
+			var oListBindingInfo = this._getListBindingInfo();
+
 			var oDelegate = this._getDelegate();
 			if (oListBinding && oDelegate.delegate){
-				return oDelegate.delegate.checkListBindingPending(oDelegate.payload, oListBinding);
+				return oDelegate.delegate.checkListBindingPending(oDelegate.payload, oListBinding, oListBindingInfo);
 			} else {
 				return false;
 			}
@@ -956,6 +958,10 @@ sap.ui.define([
 	};
 
 	FieldValueHelpTableWrapperBase.prototype.getListBinding = function() {
+		// Defaults to no-op.
+	};
+
+	FieldValueHelpTableWrapperBase.prototype._getListBindingInfo = function() {
 		// Defaults to no-op.
 	};
 

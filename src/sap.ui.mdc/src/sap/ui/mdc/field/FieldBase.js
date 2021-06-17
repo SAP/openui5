@@ -594,6 +594,9 @@ sap.ui.define([
 		});
 
 		this._oCreateContentPromise = undefined;
+
+		this._sFilterValue = "";
+
 	};
 
 	FieldBase.prototype.exit = function() {
@@ -726,6 +729,7 @@ sap.ui.define([
 		if (oFieldHelp && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
+			oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
 			oFieldHelp.navigate(-1);
 		}
 
@@ -739,6 +743,7 @@ sap.ui.define([
 		if (oFieldHelp && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
+			oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
 			oFieldHelp.navigate(1);
 		}
 
@@ -751,6 +756,7 @@ sap.ui.define([
 		if (oFieldHelp && oFieldHelp.isOpen(true)) {
 			oFieldHelp.close();
 		}
+		this._sFilterValue = "";
 
 	};
 
@@ -1866,6 +1872,7 @@ sap.ui.define([
 
 		// as change event if inner control is fired even Input is wrong, check parse exception from binding
 		this._bParseError = true;
+		this._sFilterValue = "";
 
 	}
 
@@ -1873,6 +1880,7 @@ sap.ui.define([
 
 		// as change event if inner control is fired even Input is wrong, check validation exception from binding
 		this._bParseError = true;
+		this._sFilterValue = "";
 
 		// try to find the corresponding async. change and reject it
 		var vValue = oEvent.getParameter("newValue");
@@ -2011,6 +2019,7 @@ sap.ui.define([
 				bValid = false;
 				vWrongValue = vValue;
 				this._bParseError = true;
+				this._sFilterValue = "";
 				_setUIMessage.call(this, oException.message);
 
 				if (oMyChange && oMyChange.reject) {
@@ -2037,6 +2046,7 @@ sap.ui.define([
 			if (sap.ui.getCore().getCurrentFocusedControlId() === oSource.getId()) {
 				oFieldHelp.close(); // if focus is not in field, Field help closes automatically
 			}
+			this._sFilterValue = "";
 			oFieldHelp.setFilterValue("");
 			if (!bAsync && bValid) {
 				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
@@ -2159,7 +2169,9 @@ sap.ui.define([
 				// close FieldHelp if escape pressed and not repoen it for last typed characters
 				if (oFieldHelp.isOpen(true)) {
 					oFieldHelp.close();
+					_setConditionsOnFieldHelp.call(this, this.getConditions(), oFieldHelp); // reset conditions
 					_clearLiveChangeTimer.call(this);
+					this._sFilterValue = "";
 				}
 			} else {
 				var aOperators = this._getOperators(); // show suggestion only if equal operators are supported
@@ -2183,19 +2195,19 @@ sap.ui.define([
 							var sDisplay = this.getDisplay();
 							// remove "(", ")" from serach string
 							// TODO: better solution to search in this case?
-							var vFilter = "";
+							this._sFilterValue = "";
 							if (this._vLiveChangeValue) {
 								// use EQ operator
 								var oOperator = FilterOperatorUtil.getEQOperator();
 								var aParts = oOperator.getValues(this._vLiveChangeValue, sDisplay, true);
 								if (aParts[0]) {
-									vFilter = aParts[0];
+									this._sFilterValue = aParts[0];
 									if (aParts[1]) {
-										vFilter = vFilter + " ";
+										this._sFilterValue = this._sFilterValue + " ";
 									}
 								}
 								if (aParts[1]) {
-									vFilter = vFilter + aParts[1];
+									this._sFilterValue = this._sFilterValue + aParts[1];
 								}
 							}
 
@@ -2203,7 +2215,7 @@ sap.ui.define([
 							if (this._bConnected && this._getContent()[0] && vOpenByTyping && !(vOpenByTyping instanceof Promise) &&
 								(sap.ui.getCore().getCurrentFocusedControlId() === this._getContent()[0].getId() ||
 									(this._getContent()[1] && sap.ui.getCore().getCurrentFocusedControlId() === this._getContent()[1].getId()))) { // only if still connected and focussed
-								oFieldHelp.setFilterValue(vFilter);
+								oFieldHelp.setFilterValue(this._sFilterValue);
 								if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
 									// While single-suggestion no item is selected
 									oFieldHelp.setConditions([]);
@@ -2308,6 +2320,7 @@ sap.ui.define([
 				oFieldHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
 				oFieldHelp.detachEvent("disconnect", _handleDisconnect, this);
 				oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this);
+				oFieldHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 			}
 			this.setProperty("_fieldHelpEnabled", false, true);
 			this._bConnected = false;
@@ -2381,7 +2394,7 @@ sap.ui.define([
 		var oFieldHelp = _getFieldHelp.call(this);
 
 		if (oFieldHelp) {
-			oFieldHelp.setFilterValue("");
+			oFieldHelp.setFilterValue(this._sFilterValue); // use types value for filtering, even if reopening FieldHelp
 			var aConditions = this.getConditions();
 			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 			oFieldHelp.toggleOpen(false);
@@ -2495,9 +2508,11 @@ sap.ui.define([
 					oContent.setDOMValue(""); // to overwrite it even if the text is the same -> otherwise cursor position could be wrong
 					oContent.setDOMValue(sDOMValue);
 				}
+				this._sFilterValue = "";
 			} else if (bClose) {
 				// remove typed value from MultiInput
 				oContent.setDOMValue("");
+				this._sFilterValue = "";
 				oFieldHelp.setFilterValue("");
 				this._bIgnoreInputValue = false; // just clean up
 			} else {
@@ -2629,6 +2644,18 @@ sap.ui.define([
 
 	}
 
+	function _handleFieldSwitchToValueHelp(oEvent) {
+
+		var oContent = this.getControlForSuggestion();
+		oContent.focus(); // move focus back to Field before opening valueHelp
+		if (oContent.fireValueHelpRequest) {
+			// fake valueHelp icon pressed
+			oContent.bValueHelpRequested = true; // to prevent change event
+			oContent.fireValueHelpRequest();
+		}
+
+	}
+
 	function _handleHelpDataUpdate(oEvent) {
 
 		var isEditing = this.getEditMode() === EditMode.Editable && this._getContent().length > 0 &&
@@ -2653,6 +2680,7 @@ sap.ui.define([
 		oFieldHelp.detachEvent("navigate", _handleFieldHelpNavigate, this);
 		oFieldHelp.detachEvent("disconnect", _handleDisconnect, this);
 		oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this);
+		oFieldHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 		this._bConnected = false;
 
 	}
@@ -2667,6 +2695,7 @@ sap.ui.define([
 			oFieldHelp.attachEvent("navigate", _handleFieldHelpNavigate, this);
 			oFieldHelp.attachEvent("disconnect", _handleDisconnect, this);
 			oFieldHelp.attachEvent("afterClose", _handleFieldHelpAfterClose, this);
+			oFieldHelp.attachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 			var aConditions = this.getConditions();
 			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 
