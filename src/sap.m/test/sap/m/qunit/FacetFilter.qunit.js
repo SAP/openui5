@@ -309,7 +309,6 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
-
 	QUnit.test("FacetFilter._moveListToDisplayContainer, _restoreListFromDisplayContainer", function(assert) {
 
 		var oFF = new FacetFilter();
@@ -2538,7 +2537,7 @@ sap.ui.define([
 			var oSelectedKeys = oEvent.getParameter("selectedKeys");
 			assert.equal(Object.getOwnPropertyNames(oSelectedKeys).length, 0, "No items should be selected");
 			var bAllSelected = oEvent.getParameter("allSelected");
-			assert.equal(bAllSelected, true, "allSelected parameter should be true");
+			assert.equal(bAllSelected, false, "allSelected parameter should be true");
 			destroyFF(oFF);
 			done();
 		});
@@ -2633,7 +2632,7 @@ sap.ui.define([
 			assert.ok(aSelectedItems[1].getSelected(), "The item should be selected");
 			assert.ok(aSelectedItems[2].getSelected(), "The item should be selected");
 			var bAllSelected = oEvent.getParameter("allSelected");
-			assert.strictEqual(bAllSelected, false, "allSelected parameter should be false");
+			assert.strictEqual(bAllSelected, true, "allSelected parameter should be false");
 
 			destroyFF(oFF);
 			done();

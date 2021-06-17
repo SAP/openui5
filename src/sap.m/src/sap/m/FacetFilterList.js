@@ -541,7 +541,7 @@ sap.ui.define([
 	FacetFilterList.prototype._fireListCloseEvent = function() {
 		var aSelectedItems = this.getSelectedItems();
 		var oSelectedKeys = this.getSelectedKeys();
-		var bAllSelected = aSelectedItems.length === 0;
+		var bAllSelected = this.isAllSelectableSelected();
 
 		this._firstTime = true;
 
