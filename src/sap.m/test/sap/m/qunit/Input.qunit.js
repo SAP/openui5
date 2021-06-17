@@ -467,6 +467,44 @@ sap.ui.define([
 		oUpdateSpy.restore();
 	});
 
+	QUnit.test("sTypedInValue - not reset on before rendering", function(assert) {
+		// Arrange
+		var oInput = new Input();
+		var oSuggestionsPopover = oInput._getSuggestionsPopover();
+		var oStub = this.stub(oSuggestionsPopover, "_resetTypeAhead", function () {
+			this._sTypedInValue = "was reset";
+		});
+
+		oInput.placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.invalidate();
+		this.clock.tick();
+
+		// Assert
+		assert.equal(oStub.callCount, 0, "resetTypeAhead was not called even when the control was invalidated.");
+		assert.equal(oSuggestionsPopover._sTypedInValue, "", "'_sTypedInValue' is still an empty string");
+
+		// Clean
+		oInput. destroy();
+	});
+
+	QUnit.test("sTypedInValue should be reset when setValue API is used", function(assert) {
+		// Arrange
+		var oInput = new Input();
+		oInput._sTypedInValue = "not empty";
+
+		// Act
+		oInput.setValue("");
+
+		// Assert
+		assert.equal(oInput._sTypedInValue, "", "_sTypedInValue is initially empty string");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Submit Event", function(assert) {
 
 		var sEvents = "";
