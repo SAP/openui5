@@ -2420,7 +2420,7 @@ sap.ui.define([
 		assert.strictEqual(oUI5Message.getTechnical(), "technical");
 		assert.strictEqual(oUI5Message.processor, oModel);
 		assert.strictEqual(oUI5Message.getPersistent(), true);
-		assert.strictEqual(oUI5Message.getTarget(), undefined);
+		assert.strictEqual(oUI5Message.getTarget(), "");
 		assert.strictEqual(oUI5Message.getTechnicalDetails(), "~technicalDetails~");
 	});
 

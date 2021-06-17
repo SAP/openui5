@@ -1199,7 +1199,8 @@ sap.ui.define([
 			message : oRawMessage.message,
 			persistent : bIsBound ? oRawMessage.transition : true,
 			processor : this,
-			target: bIsBound ? aTargets : undefined,
+			// Note: "" instead of undefined makes filtering easier (agreement with FE!)
+			target : bIsBound ? aTargets : "",
 			technical : oRawMessage.technical,
 			technicalDetails : _Helper.createTechnicalDetails(oRawMessage),
 			type : aMessageTypes[oRawMessage.numericSeverity] || MessageType.None

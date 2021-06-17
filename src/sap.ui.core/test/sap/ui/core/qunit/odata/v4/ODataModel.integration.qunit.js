@@ -1524,14 +1524,14 @@ sap.ui.define([
 		 *
 		 * @param {object[]} aExpectedMessages The expected messages with properties corresponding
 		 *   to the getters of sap.ui.core.message.Message: message and type are required; code,
-		 *   descriptionUrl, persistent (default false), target(s), technical (default false) are
-		 *   optional; technicalDetails is only compared if given
+		 *   descriptionUrl, persistent (default false), target (default ""), technical (default
+		 *   false) are optional; technicalDetails is only compared if given
 		 * @param {boolean} [bHasMatcher] Whether the expected messages have a Sinon.JS matcher
 		 * @returns {object} The test instance for chaining
 		 */
 		expectMessages : function (aExpectedMessages, bHasMatcher) {
 			this.aMessages = aExpectedMessages.map(function (oMessage) {
-				var aTargets = oMessage.targets || (oMessage.target ? [oMessage.target] : []),
+				var aTargets = oMessage.targets || [oMessage.target || ""],
 					oClone = Object.assign({
 						code : undefined,
 						descriptionUrl : undefined,
