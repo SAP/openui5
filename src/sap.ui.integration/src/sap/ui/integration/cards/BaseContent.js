@@ -293,8 +293,6 @@ sap.ui.define([
 		if (oLoadingProvider) {
 			oLoadingProvider.setLoading(true);
 		}
-
-		this.hideContent();
 	};
 
 	/**
@@ -305,33 +303,6 @@ sap.ui.define([
 		var oLoadingProvider = this.getAggregation("_loadingProvider");
 		if (oLoadingProvider) {
 			oLoadingProvider.setLoading(false);
-		}
-
-		this.showContent();
-	};
-
-	/**
-	 * @private
-	 * @ui5-restricted
-	 */
-	BaseContent.prototype.hideContent = function () {
-		var oContent = this.getAggregation("_content");
-
-		if (oContent) {
-			oContent.addStyleClass("sapFCardContentHidden");
-		}
-	};
-
-	/**
-	 * @private
-	 * @ui5-restricted
-	 */
-	BaseContent.prototype.showContent = function () {
-		var oContent = this.getAggregation("_content");
-
-		if (oContent) {
-			// restore tab chain
-			oContent.removeStyleClass("sapFCardContentHidden");
 		}
 	};
 

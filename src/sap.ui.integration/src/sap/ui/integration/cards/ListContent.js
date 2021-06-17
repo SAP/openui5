@@ -155,31 +155,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
-	 */
-	ListContent.prototype.hideContent = function () {
-		BaseListContent.prototype.hideContent.call(this);
-
-		var oLegend = this.getAggregation("_legend");
-		if (oLegend) {
-			oLegend.addStyleClass("sapFCardContentHidden");
-		}
-	};
-
-	/**
-	 * @override
-	 */
-	ListContent.prototype.showContent = function () {
-		BaseListContent.prototype.showContent.apply(this, arguments);
-
-		var oLegend = this.getAggregation("_legend");
-
-		if (oLegend) {
-			oLegend.removeStyleClass("sapFCardContentHidden");
-		}
-	};
-
-	/**
 	 * Lazily get a configured <code>sap.m.List</code>.
 	 *
 	 * @private
