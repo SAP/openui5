@@ -409,7 +409,7 @@ sap.ui.define([], function() {
 			// this problem would not bring a better performance since the possibility of changed styles is much more
 			// less than unchanged styles in the overall rendering.
 			// Therefore, to compare faster, here we do only string-based comparison of retrived and applied styles.
-			// In worst case, we will try to update the style property unnecessarily but this will not ba a real
+			// In worst case, we will try to update the style property unnecessarily but this will not be a real
 			// style update for the engine since the parsed CSS declaration blocks will be equal at the end.
 			if (this._mAttributes.style != this._sStyles) {
 				this._oCurrent.style = this._sStyles;

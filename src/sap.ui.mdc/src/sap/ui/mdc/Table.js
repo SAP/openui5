@@ -340,7 +340,7 @@ sap.ui.define([
 				 */
 				enableColumnResize: {
 					type: "boolean",
-					group: "Behaviour",
+					group: "Behavior",
 					defaultValue: true
 				},
 				/**
@@ -350,7 +350,7 @@ sap.ui.define([
 				 */
 				showPasteButton: {
 					type: "boolean",
-					group: "Behaviour",
+					group: "Behavior",
 					defaultValue: false
 				}
 			},
