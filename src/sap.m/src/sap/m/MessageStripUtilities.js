@@ -12,7 +12,7 @@ sap.ui.define(function () {
 	var MessageStripUtilities = {};
 
 	MessageStripUtilities.MESSAGES = {
-		TYPE_NOT_SUPPORTED: "Value 'sap.ui.core.MessageType.None' for property 'type' is not supported." +
+		TYPE_NOT_SUPPORTED: "Value 'sap.ui.core.MessageType.None' for property 'type' is not supported. " +
 		"Defaulting to 'sap.ui.core.MessageType.Information'"
 	};
 
