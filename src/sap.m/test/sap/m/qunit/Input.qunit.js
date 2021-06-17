@@ -209,7 +209,7 @@ sap.ui.define([
 		$Input = oInput.$();
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -917,7 +917,7 @@ sap.ui.define([
 			i;
 
 		oInput6.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput6.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -996,7 +996,7 @@ sap.ui.define([
 		var oInput = new Input({
 			showSuggestion: true,
 			suggest: function(){
-				for (i = 0 ; i < aNames.length ; i++){
+				for (i = 0; i < aNames.length; i++){
 					if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 						oInput.addSuggestionItem(new Item({text: aNames[i]}));
 						aItemAdded.push(aNames[i]);
@@ -1042,7 +1042,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1094,7 +1094,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1182,7 +1182,7 @@ sap.ui.define([
 			i;
 
 		oInput7.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput7.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1249,7 +1249,7 @@ sap.ui.define([
 
 		$Input = oInput.$();
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i], enabled: aEnabled[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1386,7 +1386,7 @@ sap.ui.define([
 			oInput.destroySuggestionRows();
 
 			assert.strictEqual(oTableItemTemplate.getType(), ListType.Inactive, "The type of the template item is \"Inactive\" (default value)");
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				oSuggestionRow = oTableItemTemplate.clone();
 				oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
 				oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);
@@ -1455,7 +1455,7 @@ sap.ui.define([
 			i;
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1532,7 +1532,7 @@ sap.ui.define([
 			i;
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1589,7 +1589,7 @@ sap.ui.define([
 			i;
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i]}));
 					aItemAdded.push(aNames[i]);
@@ -1824,7 +1824,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
@@ -1969,7 +1969,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
@@ -2294,7 +2294,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
@@ -2480,7 +2480,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
-			for (i = 0 ; i < oSuggestionData.tabularSuggestionItems.length ; i++){
+			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
 				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
@@ -4537,6 +4537,43 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
+	});
+
+	QUnit.test("Show suggestions on mobile - _refreshListItems should be called", function (assert) {
+		// arrange
+		var oStub = this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		}),
+			oInput = new Input({
+				showSuggestion: true,
+				filterSuggests: false,
+				suggestionItems: [
+					new Item({text: "Germany"}),
+					new Item({text: "Bulgaria"})
+				]
+			}).placeAt("content"),
+			oSpy = sinon.spy(oInput, "_refreshListItems"),
+			oPopupInput = oInput._oSuggPopover._oPopupInput,
+			oPopover = oInput._oSuggPopover._oPopover;
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oPopover.open();
+		oPopupInput._$input.trigger("focus").trigger("keydown").val("g").trigger("input");
+		this.clock.tick(500);
+		oSpy.reset();
+		oInput._synchronizeSuggestions();
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(oSpy.calledOnce, "_refreshListItems should be called once");
+
+		// clean
+		oInput.destroy();
+		oStub.restore();
 	});
 
 	QUnit.module("Type-ahead");
