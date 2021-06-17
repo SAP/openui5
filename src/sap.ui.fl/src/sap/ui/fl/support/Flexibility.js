@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.fl.support.Flexibility
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"sap/base/util/each",
 	"sap/ui/core/support/Plugin",
 	"sap/ui/core/support/Support",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor",
-	"sap/ui/core/mvc/XMLView"
-], function (jQuery, Plugin, Support, JsControlTreeModifier, JSONModel, FlexController, ChangePersistenceFactory, Utils, Extractor, XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/Component"
+], function (each, Plugin, Support, JsControlTreeModifier, JSONModel, FlexController, ChangePersistenceFactory, Utils, Extractor, XMLView, CoreComponent) {
 	"use strict";
 
 	/**
@@ -135,16 +136,38 @@ sap.ui.define([
 		var aApps = [];
 
 		if (ChangePersistenceFactory._instanceCache) {
-			jQuery.each(ChangePersistenceFactory._instanceCache, function (sReference, oChangePersistanceInstance) {
+			each(ChangePersistenceFactory._instanceCache, function (sReference, oChangePersistanceInstance) {
 				aApps.push({
 					key: sReference,
 					text: sReference,
+					additionalText: this.getAppVariantHierarchy(sReference),
 					data: Extractor.extractData(oChangePersistanceInstance)
 				});
-			});
+			}.bind(this));
 		}
 
 		this._oStub.sendEvent(this.getId() + "SetApps", aApps);
+	};
+
+	/**
+	 * Parses all registered components and extracts <code>sap.ui5/appVariantHierarchy</code>.
+	 * @param {string} sReference
+	 * @returns {string} Joined app variant hierarchy and its app version
+	 */
+	Flexibility.prototype.getAppVariantHierarchy = function (sReference) {
+		var oRegistry = CoreComponent.registry.all();
+		var aAppDetails = [];
+		Object.values(oRegistry).find(function(oComponent) {
+			var sId = oComponent.getMetadata().getManifestEntry("/sap.app/id");
+			var oUi5Node = oComponent.getMetadata().getManifestEntry("sap.ui5");
+			if (sId === sReference) {
+				oUi5Node.appVariantIdHierarchy.forEach(function(oHierarchy) {
+					aAppDetails.push(oHierarchy.appVariantId + " (" + oHierarchy.version + ")" + (oHierarchy.layer ? " in layer " + oHierarchy.layer : ""));
+				});
+				return true;
+			}
+		});
+		return aAppDetails.length ? "App variant based on:\n" + aAppDetails.join("\n") : "";
 	};
 
 	/**
