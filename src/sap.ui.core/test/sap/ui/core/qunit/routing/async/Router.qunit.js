@@ -3288,6 +3288,151 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Should suspend a dynamic displayed target and its parent when router navigates away from it - routeRelevant: true", function(assert) {
+		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
+				metadata : {
+					routing:  {
+						config: {
+							async: true
+						},
+						routes: [
+							{
+								pattern: "product/{id}",
+								name: "product"
+							},
+							{
+								pattern: "",
+								name: "nestedHome"
+							}
+						]
+					}
+				},
+				init : function() {
+					UIComponent.prototype.init.apply(this, arguments);
+					var oRouter = this.getRouter();
+
+					oRouter.initialize();
+				}
+			});
+		});
+
+		sap.ui.jsview("DynamicComponentTargetParent", {
+			createContent : function() {
+				return new VBox(this.createId("box"));
+			}
+		});
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			sDynamicComponentName = "DynamicChildComponent" + count,
+			sParentTarget = sDynamicComponentName + "Parent";
+
+		var oResetHashSpy = sinon.spy(oRouter.getHashChanger(), "resetHash");
+
+		return waitTillRouteMatched(oRouter, "home").then(function(oParams) {
+			var oContainer = that.oParentComponent.getRootControl(),
+				oShell = oContainer.byId("shell");
+			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
+			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+
+			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
+			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
+			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+
+			return {
+				container: oContainer
+			};
+		})
+		// Step1: display dynamic component target
+		.then(function(mParam) {
+			oRouter.getTargets().addTarget(sParentTarget, {
+				name: "DynamicComponentTargetParent",
+				type: "View",
+				viewType: "JS",
+				rootView: mParam.container.getId(),
+				controlId: "shell",
+				controlAggregation: "content"
+			});
+
+			// Add dynamic component target
+			oRouter.getTargets().addTarget(sDynamicComponentName, {
+				name: "namespace1.DynamicChildComponent" + count,
+				type: "Component",
+				parent: sParentTarget,
+				controlId: "box",
+				controlAggregation: "items",
+				options: {
+					manifest: false
+				}
+			});
+
+			var aDisplayedTargets = [];
+
+			var fnDisplayed1 = function (oEvent) {
+				var sName = oEvent.getParameter("name");
+				if (sName === sDynamicComponentName) {
+					oRouter.getTargets().detachDisplay(fnDisplayed1);
+				}
+				aDisplayedTargets.push(sName);
+			};
+			oRouter.getTargets().attachDisplay(fnDisplayed1);
+
+			return oRouter.getTargets().display({
+				name: sDynamicComponentName,
+				prefix: "dynamic",
+				routeRelevant: true
+			}).then(function(oTargetInfo) {
+				assert.equal(oResetHashSpy.callCount, 0, "resetHash shouldn't be called");
+				assert.equal(oRouter.getHashChanger().getHash(), "", "hash should be correct");
+				assert.deepEqual(aDisplayedTargets, [sParentTarget, sDynamicComponentName], "Both parent and dynamic targets are displayed in the correct order");
+
+				var oControl = oTargetInfo[0].control;
+				return Component.getOwnerComponentFor(oControl);
+			});
+		})
+		// Step2: navigate to another route and check whether the dynamic target and its parent are suspended
+		.then(function(oComponent) {
+			var oDynmaicTarget = oRouter.getTarget(sDynamicComponentName);
+			var oDynamicTargetSuspendSpy = that.spy(oDynmaicTarget, "suspend");
+
+			var oParentTarget = oRouter.getTarget(sParentTarget);
+			var oParentTargetSuspendSpy = that.spy(oParentTarget, "suspend");
+
+			assert.ok(oComponent, "Component should be loaded");
+
+			oRouter.navTo("category");
+			return waitTillRouteMatched(oRouter, "category").then(function() {
+				assert.equal(oDynamicTargetSuspendSpy.callCount, 1, "dynamic displayed target is suspended");
+				assert.equal(oParentTargetSuspendSpy.callCount, 1, "dynamic displayed target's parent is suspended");
+				oDynamicTargetSuspendSpy.restore();
+				oParentTargetSuspendSpy.restore();
+			});
+		})
+		// Step3: navigate back to home
+		.then(function() {
+			var oDisplayEventSpy = that.spy();
+			oRouter.getTargets().attachDisplay(oDisplayEventSpy);
+
+			oRouter.navTo("home");
+
+			return waitTillRouteMatched(oRouter, "home").then(function() {
+				assert.ok(oDisplayEventSpy.callCount > 0, "Display event handler is called");
+				assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("name"), "home", "Correct target is displayed");
+				var oContainer = that.oParentComponent.getRootControl(),
+					oShell = oContainer.byId("shell");
+				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
+				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+
+				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
+				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
+				assert.equal(that.oNestedRouteMatchedSpy.callCount, 2, "Route is matched again inside the nested component");
+
+				oResetHashSpy.restore();
+			});
+		});
+	});
+
 	QUnit.test("Should suspend a dynamic displayed target when router navigates away from it - routeRelevant: false", function(assert) {
 		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
@@ -3523,11 +3668,11 @@ sap.ui.define([
 
 			return oRouter.getTargets().display({
 				name: sDynamicComponentName,
-				prefix: "dynamic",
-				routeRelevant: false
+				prefix: "dynamic"
 			}).then(function() {
 				assert.equal(oDisplayEventSpy.callCount, 1, "The event handler is called");
 				assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("name"), sDynamicComponentName, "Correct target is displayed");
+				assert.strictEqual(oDisplayEventSpy.getCall(0).args[0].getParameter("routeRelevant"), false, "'routeRelevant' is defaulted to false");
 
 				assert.equal(oResetHashSpy.callCount, 1, "resetHash should be called");
 				assert.equal(oRouter.getHashChanger().getHash(), undefined, "hash should be undefined");

@@ -524,7 +524,7 @@ sap.ui.define([
 						control : oContainerControl,
 						config : that._oOptions,
 						data: vData,
-						routeRelevant: that._routeRelevant
+						routeRelevant: oTargetCreateInfo.routeRelevant
 					});
 				}
 
