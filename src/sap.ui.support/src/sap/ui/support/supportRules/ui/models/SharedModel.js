@@ -4,8 +4,15 @@
 
 sap.ui.define([
 	"sap/ui/support/library",
+	"sap/ui/support/supportRules/Storage",
+	"sap/ui/support/supportRules/util/EvalUtils",
 	"sap/ui/model/json/JSONModel"
-], function (library, JSONModel) {
+], function (
+	library,
+	Storage,
+	EvalUtils,
+	JSONModel
+) {
 	"use strict";
 
 	var Audiences = library.Audiences,
@@ -104,7 +111,9 @@ sap.ui.define([
 		customPresets: [
 			// presets added by the user via import
 		],
-		selectionPresetsCurrent: null
+		selectionPresetsCurrent: null,
+		tempRulesDisabled: !EvalUtils.isEvalAllowed(),
+		tempRulesDisabledWarned: !!Storage.getTempRulesDisabledWarned()
 	});
 
 	return model;

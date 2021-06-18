@@ -19,8 +19,8 @@ sap.ui.define([
 		 * <h3>Usage</h3>
 		 *
 		 * <ul>
-		 * <li> <code>sap.ui.support.RuleAnalyzer.addRule</code> method allows adding a new rule. </li>
-		 * <li> <code>sap.ui.support.RuleAnalyzer.analyze</code> starts the analysis of the application. </li>
+		 * <li> <code>sap.ui.support.RuleAnalyzer.addRule</code> method allows adding a new rule.</li>
+		 * <li> <code>sap.ui.support.RuleAnalyzer.analyze</code> starts the analysis of the application.</li>
 		 * <li> Then the result can be accessed with methods <code>sap.ui.support.RuleAnalyzer.getAnalysisHistory</code>,
 		 * <code>sap.ui.support.RuleAnalyzer.getLastAnalysisHistory</code> or <code>sap.ui.support.RuleAnalyzer.getFormattedAnalysisHistory</code>. </li>
 		 * </ul>
@@ -111,13 +111,13 @@ sap.ui.define([
 				return Main.getFormattedAnalysisHistory(sFormat);
 			},
 
-			 /**
-			 * Adds new temporary rule when in silent mode
+			/**
+	 		 * Adds new temporary rule when in silent mode
 			 *
 			 * @memberof sap.ui.support.RuleAnalyzer
 			 * @public
 			 * @since 1.60
-			 * @param {Object} oRule Settings for the new rule. For detailed information about its properties see {@link topic:eaeea19a991d46f29e6d8d8827317d0e Rule Property Values}
+			 * @param {object} oRule Settings for the new rule. For detailed information about its properties see {@link topic:eaeea19a991d46f29e6d8d8827317d0e Rule Property Values}
 			 * @returns {string} Rule creation status. Possible values are "success" or description of why adding failed.
 			 */
 			addRule: function (oRule) {

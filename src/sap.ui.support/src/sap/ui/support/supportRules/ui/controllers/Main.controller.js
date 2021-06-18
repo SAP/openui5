@@ -3,18 +3,34 @@
  */
 
 sap.ui.define([
-	"sap/ui/support/supportRules/ui/controllers/BaseController",
-	"sap/ui/model/json/JSONModel",
+	"./BaseController",
+	"../models/SharedModel",
+	"../models/Documentation",
+	"../models/SelectionUtils",
+	"../models/PresetsUtils",
 	"sap/ui/support/supportRules/CommunicationBus",
-	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
+	"sap/ui/support/supportRules/util/EvalUtils",
 	"sap/ui/thirdparty/URI",
-	"sap/ui/support/supportRules/ui/models/Documentation",
 	"sap/ui/VersionInfo",
 	"sap/m/library"
-], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, Documentation, VersionInfo, mobileLibrary) {
+], function (
+	BaseController,
+	SharedModel,
+	Documentation,
+	SelectionUtils,
+	PresetsUtils,
+	CommunicationBus,
+	channelNames,
+	Constants,
+	Storage,
+	EvalUtils,
+	URI,
+	VersionInfo,
+	mobileLibrary
+) {
 	"use strict";
 
 	var ButtonType = mobileLibrary.ButtonType;
@@ -28,7 +44,7 @@ sap.ui.define([
 			this.initSettingsPopoverModel();
 			this.hidden = false;
 			this.model.setProperty("/hasNoOpener", window.opener ? false : true);
-			this.model.setProperty("/constants", constants);
+			this.model.setProperty("/constants", Constants);
 			this.updateShowButton();
 			this._setContextSettings();
 			this._zoomUI();
@@ -73,6 +89,8 @@ sap.ui.define([
 					location: new URI(jQuery.sap.getModulePath("sap.ui.support"), window.location.origin + window.location.pathname).toString()
 				});
 			});
+
+			this._checkTempRules();
 		},
 
 		initSettingsPopoverModel: function () {
@@ -128,7 +146,7 @@ sap.ui.define([
 					}.bind(this), 2000);
 				}
 
-				oProgressIndicator.setDisplayValue(constants.RULESET_LOADING + " " + iCurrentProgress + "%");
+				oProgressIndicator.setDisplayValue(Constants.RULESET_LOADING + " " + iCurrentProgress + "%");
 
 				this.model.setProperty("/progress", iCurrentProgress);
 			}, this);
@@ -170,21 +188,41 @@ sap.ui.define([
 
 		onSettings: function (oEvent) {
 			CommunicationBus.publish(channelNames.ENSURE_FRAME_OPENED);
-
-			if (!this._settingsPopover) {
-				this._settingsPopover = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.StorageSettings", this);
-				this.getView().addDependent(this._settingsPopover);
-			}
-			var that = this,
-				oSource = oEvent.getSource();
-
-			setTimeout(function () {
-				that._settingsPopover.openBy(oSource);
-			});
+			this._openSettingsPopover(oEvent.getSource());
 		},
+
+		onPersistedSettingSelect: function() {
+			if (this.model.getProperty("/persistingSettings")) {
+				Storage.createPersistenceCookie(Constants.COOKIE_NAME, true);
+
+				this.model.getProperty("/libraries").forEach(function (lib) {
+					if (lib.title === Constants.TEMP_RULESETS_NAME) {
+						Storage.setRules(lib.rules);
+					}
+				});
+
+				this.persistExecutionScope();
+				this.persistVisibleColumns();
+				SelectionUtils.persistSelection();
+				PresetsUtils.persistSelectionPresets();
+				PresetsUtils.persistCustomPresets();
+			} else {
+				Storage.deletePersistenceCookie(Constants.COOKIE_NAME);
+				this.deletePersistedData();
+			}
+		},
+
+		onSettingsPopoverClose: function () {
+			if (this.model.getProperty("/persistingSettings") && !this.model.getProperty("/tempRulesDisabledWarned")) {
+				this.model.setProperty("/tempRulesDisabledWarned", true);
+				Storage.markTempRulesDisabledWarned();
+			}
+		},
+
 		goToAnalysis: function (oEvent) {
 			this._setActiveView("analysis");
 		},
+
 		goToIssues: function (oEvent) {
 			this._setActiveView("issues");
 		},
@@ -212,10 +250,10 @@ sap.ui.define([
 		},
 
 		_setContextSettings: function () {
-			var cookie = storage.readPersistenceCookie(constants.COOKIE_NAME);
+			var cookie = Storage.readPersistenceCookie(Constants.COOKIE_NAME);
 			if (cookie) {
 				this.model.setProperty("/persistingSettings", true);
-				var contextSettings = storage.getSelectedContext();
+				var contextSettings = Storage.getSelectedContext();
 
 				if (contextSettings) {
 					this.model.setProperty("/analyzeContext", contextSettings.analyzeContext);
@@ -235,6 +273,25 @@ sap.ui.define([
 			this.byId(sId + "Btn").setType(ButtonType.Emphasized);
 			this.byId("navCon").to(this.byId(sId), "show");
 			this.ensureOpened();
+		},
+
+		_checkTempRules: function () {
+			if (!EvalUtils.isEvalAllowed() && !this.model.getProperty("/tempRulesDisabledWarned")) {
+				this._openSettingsPopover();
+			}
+		},
+
+		_openSettingsPopover: function () {
+			if (!this._settingsPopover) {
+				this._settingsPopover = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.StorageSettings", this);
+				this.getView().addDependent(this._settingsPopover);
+			}
+
+			this._settingsPopover.openBy(this.byId("settingsIcon"));
+		},
+
+		_isSettingsPopoverOpen: function () {
+			return this._settingsPopover && this._settingsPopover.isOpen();
 		}
 	});
 });

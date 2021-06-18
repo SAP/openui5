@@ -27,4 +27,16 @@ sap.ui.define([
 		Then.iTeardownSupportAssistantFrame();
 	});
 
+	opaTest("Should see the settings popover if temporary rules are disabled", function (Given, When, Then) {
+
+		Given.iDeletePersistedData()
+			.and.iDisableEval()
+			.and.iStartMyApp();
+
+		Then.onTheRulesPage.iShouldSeeStorageSettingsPopOver();
+
+		Given.iEnableEval();
+		Then.iTeardownSupportAssistantFrame();
+	});
+
 });

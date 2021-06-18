@@ -78,10 +78,8 @@
 			</l:fixContent>
 
 			<l:flexContent>
-				<NavContainer
-					id="navCon">
+				<NavContainer id="navCon">
 					<mvc:XMLView id="analysis" viewName="sap.ui.support.supportRules.ui.views.Analysis" async="true"></mvc:XMLView>
-					<!-- <mvc:XMLView id="issues"  viewName="sap.ui.support.supportRules.ui.views.Issues" async="true"></mvc:XMLView> -->
 				</NavContainer>
 			</l:flexContent>
 		</l:FixFlex>

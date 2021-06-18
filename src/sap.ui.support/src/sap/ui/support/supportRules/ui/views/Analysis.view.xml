@@ -8,8 +8,8 @@
 		xmlns:t="sap.ui.table"
 		xmlns:layout="sap.ui.layout">
 	<m:NavContainer
-		id="rulesNavContainer"
-		afterNavigate="onAfterNavigate">
+			id="rulesNavContainer"
+			autoFocus="{= ${/tempRulesDisabled} === ${/tempRulesDisabledWarned} }">
 		<l:Splitter id="rulesDisplayPage">
 			<l:contentAreas>
 				<m:Page
@@ -75,7 +75,12 @@
 									</m:HBox>
 								</m:contentLeft>
 								<m:contentRight>
-									<m:Button id="createRuleBtn" text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
+									<m:Button
+										id="createRuleBtn"
+										text="Create Rule"
+										icon="sap-icon://add"
+										visible="{= !${/tempRulesDisabled}}"
+										press="createNewRulePress"/>
 								</m:contentRight>
 							</m:Bar>
 						</m:subHeader>
@@ -136,11 +141,11 @@
 								</t:Column>
 							</t:columns>
 							<t:rowActionTemplate>
-									<t:RowAction>
+									<t:RowAction id="rowActionTemplate">
 										<t:items>
 											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${ruleSets>libName} === 'temporary'}" />
 											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${ruleSets>libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${ruleSets>libName} !== 'temporary' &amp;&amp; ${ruleSets>type} !== 'lib'}" />
+											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= !${/tempRulesDisabled} &amp;&amp; ${ruleSets>libName} !== 'temporary' &amp;&amp; ${ruleSets>type} !== 'lib'}" />
 										</t:items>
 									</t:RowAction>
 							</t:rowActionTemplate>
