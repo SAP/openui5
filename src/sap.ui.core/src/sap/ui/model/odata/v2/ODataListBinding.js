@@ -1537,7 +1537,8 @@ sap.ui.define([
 				vValue = sKey;
 				sKey = that.oModel.oMetadata.getKeyPropertyNamesByPath(that.sDeepPath)[0];
 			}
-			aFilters.push(new Filter(sKey, FilterOperator.EQ, ODataUtils.parseValue(vValue)));
+			aFilters.push(new Filter(sKey, FilterOperator.EQ,
+				ODataUtils.parseValue(decodeURIComponent(vValue))));
 		});
 		if (aFilters.length === 1) {
 			return aFilters[0];
