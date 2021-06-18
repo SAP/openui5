@@ -10,6 +10,9 @@
 	<SplitContainer>
 		<masterPages>
 			<semantic:MasterPage title="Master Page Title">
+				<semantic:landmarkInfo>
+					<PageAccessibleLandmarkInfo rootLabel="Root label" headerLabel="Header label" footerLabel="Footer label"></PageAccessibleLandmarkInfo>
+				</semantic:landmarkInfo>
 				<semantic:sort>
 					<semantic:SortSelect change="onSemanticSelectChange"
 											 items="{
