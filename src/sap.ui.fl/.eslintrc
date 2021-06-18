@@ -1,24 +1,24 @@
 {
 	"rules": {
-		"quote-props": [2, "as-needed", { "keywords": true }],
-		"no-unused-vars": [2, { "vars": "all", "args": "after-used" }],
+		"quote-props": ["error", "as-needed", { "keywords": true }],
+		"no-unused-vars": ["error", { "vars": "all", "args": "after-used" }],
 
-		"no-unneeded-ternary": [2, { "defaultAssignment": false }],
-		"space-before-blocks": 2,
-		"eqeqeq": 2,
-		"no-else-return": 2,
-		"padded-blocks": [2, "never"],
-		"space-in-parens": [2, "never"],
-		"array-bracket-spacing": 2,
-		"comma-spacing": 2,
-		"comma-style": 2,
-		"no-multi-spaces": 2,
-		"indent": [2, "tab", {
+		"no-unneeded-ternary": ["error", { "defaultAssignment": false }],
+		"space-before-blocks": "error",
+		"eqeqeq": "error",
+		"no-else-return": "error",
+		"padded-blocks": ["error", "never"],
+		"space-in-parens": ["error", "never"],
+		"array-bracket-spacing": "error",
+		"comma-spacing": "error",
+		"comma-style": "error",
+		"no-multi-spaces": "error",
+		"indent": ["error", "tab", {
 			"SwitchCase": 1,
 			"MemberExpression": "off"
 		}],
-		"one-var": [2, "never"],
-		"no-useless-call": 2,
-		"key-spacing": [2, { "beforeColon": false }]
+		"one-var": ["error", "never"],
+		"no-useless-call": "error",
+		"key-spacing": ["error", { "beforeColon": false }]
 	}
 }
