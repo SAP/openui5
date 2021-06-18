@@ -26,8 +26,8 @@ sap.ui.define(["jquery.sap.mobile"],function(/*jQuerySapMobile*/){
 		assert.equal($ti.filter(":eq(2)").attr("href"), "phone-retina.png", "The apple-touch-icon link tag href should be correct");
 		assert.equal($ti.filter(":eq(3)").attr("href"), "tablet-retina.png", "The apple-touch-icon link tag href should be correct");
 
-		var $si = jQuery("link").filter("[rel^=shortcut]");
-		assert.equal($si.length, 1, "There should be one shortcut icon tag");
-		assert.equal($si.attr("href"), "desktop.ico", "The shortcut icon link tag href should be correct");
+		var $si = jQuery("link").filter("[rel=icon]");
+		assert.equal($si.length, 1, "There should be one icon tag");
+		assert.equal($si.attr("href"), "desktop.ico", "The icon link tag href should be correct");
 	});
 });
