@@ -49,7 +49,7 @@ sap.ui.define([
 				 * Determines the title of the step.
 				 * The title is visualized in the Wizard control.
 				 */
-				title: {type: "string", group: "appearance", defaultValue: ""},
+				title: {type: "string", group: "Appearance", defaultValue: ""},
 				/**
 				 * Determines the icon that is displayed for this step.
 				 * The icon is visualized in the progress navigation part of the Wizard control.

@@ -46,7 +46,7 @@ function (library, Log, Element) {
 				/**
 				 * Adds a title for the view
 				 */
-				title : { type : "string", group : "Appereance" }
+				title : { type : "string", group : "Appearance" }
 
 			}
 		}
