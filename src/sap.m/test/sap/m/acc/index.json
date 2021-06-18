@@ -111,6 +111,11 @@
 			}
 		},
 		{
+			"control": "sap.m.DynamicDateRange",
+			"url": "../DynamicDateRange.html",
+			"appComponent": "CA-UI5-CTR-BAL"
+		},
+		{
 			"control": "sap.m.ExpandableText",
 			"url": "../ExpandableText.html",
 			"appComponent": "CA-UI5-CTR-ROD"

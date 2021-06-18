@@ -336,6 +336,14 @@
 		  "samples": ["sap.m.sample.CustomTreeItem"]
 		},
 		{
+			"id": "sap.m.DynamicDateRange",
+			"name": "Dynamic Date Range",
+			"category": "User Input",
+			"since": "1.92",
+			"formFactors": "-",
+			"samples": ["sap.m.sample.DynamicDateRange"]
+		},
+		{
 		  "id": "sap.m.DatePicker",
 		  "name": "Date Picker",
 		  "category": "User Input",
@@ -2248,6 +2256,11 @@
 			"id": "sap.m.sample.CheckBoxTriState",
 			"name": "Tri-State Check Box",
 			"description": "In this sample, the CheckBox reflects the selection states of its dependent input fields - selected, not selected, and partially selected."
+		},
+		{
+			"id": "sap.m.sample.DynamicDateRange",
+			"name": "Dynamic Date Range (Experimental)",
+			"description": "The dynamic date range is a control that offers a choice of absolute and relative dates, using different offset from the current date. The list of values offered must be defined by the application."
 		},
 		{
 		  "id": "sap.m.sample.DatePicker",

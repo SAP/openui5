@@ -18,6 +18,7 @@ module.exports = [
 	"DateRangeSelection.spec.js",
 	"DateTimePicker.spec.js",
 	"Dialog.spec.js",
+	"DynamicDateRangeVisual.spec.js",
 	"ExpandableText.spec.js",
 	"FacetFilter.spec.js",
 	"GenericTag.spec.js",

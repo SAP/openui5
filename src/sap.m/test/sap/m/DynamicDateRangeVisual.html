@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>sap.m.DynamicDateRange visual testing page</title>
+
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
+				data-sap-ui-trace="false"
+				data-sap-ui-async="true"
+				src="../../../resources/sap-ui-core.js">
+		</script>
+
+		<script>
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/m/App",
+				"sap/m/Page",
+				"sap/m/VBox",
+				"sap/m/Label",
+				"sap/m/DynamicDateRange"
+			], function(
+				App,
+				Page,
+				VBox,
+				Label,
+				DynamicDateRange
+			) {
+				"use strict";
+
+				function handleChange(oEvent) {
+					var oDDR = oEvent.oSource;
+					var bValid = oEvent.getParameter("valid");
+
+					if (bValid) {
+						oDDR.setValueState(sap.ui.core.ValueState.None);
+					} else {
+						oDDR.setValueState(sap.ui.core.ValueState.Error);
+					}
+				}
+
+				var oVBox = new VBox("vertical-box", {
+					items: [
+						new Label("DDR1-label", {text: "Group headers disabled when there are more then ten options available", labelFor: "DDR1"}),
+						new DynamicDateRange("DDR1", {
+							enableGroupHeaders: false,
+							change: handleChange,
+							width: '300px',
+							options: [
+								"DATERANGE",
+								"SPECIFICMONTH",
+								"THISMONTH",
+								"LASTMONTH",
+								"NEXTMONTH",
+								"LASTDAYS",
+								"NEXTDAYS",
+								"FROM",
+								"TO",
+								"YEARTODATE",
+								"TODAYFROMTO"
+							],
+						}),
+						new Label("DDR2-label", {text: "Fixed date and date range options with 'Calendar' based UI", labelFor: "DDR2"}),
+						new DynamicDateRange("DDR2", {
+							width: '300px',
+							change: handleChange,
+							options: [
+								"DATE",
+								"DATERANGE",
+								"SPECIFICMONTH",
+								"FROM",
+								"TO",
+							],
+						}),
+						new Label("DDR3-label", {text: "Relative date and date range options with 'StepInput' based UI", labelFor: "DDR3"}),
+						new DynamicDateRange("DDR3", {
+							width: '300px',
+							change: handleChange,
+							options: [
+								"LASTDAYS",
+								"LASTMONTHS",
+								"LASTYEARS",
+								"NEXTDAYS",
+								"TODAYFROMTO"
+							],
+						})
+					]
+				}).addStyleClass("sapUiSmallMargin");
+
+				new App({
+					pages: [
+						new Page({
+							title: "DynamicDateRange",
+							content: [
+								oVBox
+							]
+						})
+					]
+				}).placeAt("body");
+			});
+
+		});
+
+		</script>
+	</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>
