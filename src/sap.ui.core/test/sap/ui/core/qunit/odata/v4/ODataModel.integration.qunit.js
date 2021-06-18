@@ -33471,4 +33471,68 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A control becomes target of a model message, but then its context is changed and
+	// it is not target of a message anymore.
+[false, true].forEach(function (bNull) {
+	QUnit.test("_checkDataStateMessages, bNull=" + bNull, function (assert) {
+		var oInput,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '<Input id="age" value="{AGE}"/>',
+			that = this;
+
+		this.expectChange("age");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/EMPLOYEES('1')", null, {
+					$select : "__CT__FAKE__Message/__FAKE__Messages"
+				});
+
+			oInput = that.oView.byId("age");
+
+			that.expectRequest("EMPLOYEES('1')?$select=AGE,ID,__CT__FAKE__Message/__FAKE__Messages",
+				{
+					AGE : 18,
+					ID : "1",
+					__CT__FAKE__Message : {
+						__FAKE__Messages : [{
+							code : "1",
+							message : "That is very young",
+							numericSeverity : 3,
+							target : "AGE",
+							transition : false
+						}]
+					}
+				})
+				.expectChange("age", "18")
+				.expectMessages([{
+					code : "1",
+					message : "That is very young",
+					target : "/EMPLOYEES('1')/AGE",
+					type : "Warning"
+				}]);
+
+			oInput.setBindingContext(oContextBinding.getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, oInput, "Warning", "That is very young");
+		}).then(function () {
+			if (bNull) {
+				that.expectChange("age", null);
+			} else {
+				that.expectRequest("EMPLOYEES('2')/AGE", {value : 3 * 7})
+					.expectChange("age", "21");
+			}
+
+			// code under test
+			oInput.setBindingContext(bNull ? null : oModel.createBindingContext("/EMPLOYEES('2')"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, oInput, "None", "");
+		});
+	});
+});
 });

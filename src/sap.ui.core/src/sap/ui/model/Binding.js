@@ -777,14 +777,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check for Messages and set them to the DataState.
+	 * Sets the given data state's model messages to the messages for the given resolved path in the
+	 * binding's model.
 	 *
-	 * @param {sap.ui.model.DataState} oDataState The DataState of the binding.
-	 * @param {string} sResolvedPath The resolved binding path.
+	 * @param {sap.ui.model.DataState} oDataState The binding's data state
+	 * @param {string} [sResolvedPath] The binding's resolved path
+	 * @private
 	 */
 	Binding.prototype._checkDataStateMessages = function(oDataState, sResolvedPath) {
 		if (sResolvedPath) {
 			oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
+		} else {
+			oDataState.setModelMessages([]);
 		}
 	};
 
