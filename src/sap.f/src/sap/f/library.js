@@ -131,6 +131,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @alias sap.f
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.44
 	 * @public
 	 */
 	var thisLib = sap.f;

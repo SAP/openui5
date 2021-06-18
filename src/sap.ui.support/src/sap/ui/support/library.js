@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/core/library"],
 	 * @name sap.ui.support
 	 * @author SAP SE
 	 * @version ${version}
-	 *
+	 * @since 1.50
 	 * @public
 	 */
 

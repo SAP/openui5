@@ -97,6 +97,7 @@ sap.ui.define([
 	 * @alias sap.ui.unified
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.28
 	 * @public
 	 */
 	var thisLib = sap.ui.unified;
@@ -106,7 +107,7 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @since 1.24.0
+	 * @since 1.13
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CalendarDayType = {

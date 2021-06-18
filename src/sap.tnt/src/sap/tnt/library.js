@@ -16,6 +16,7 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 	 * @name sap.tnt
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.36
 	 * @public
 	 */
 

@@ -48,6 +48,7 @@ sap.ui.define([
 	 * @name sap.ui.documentation
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.48
 	 * @public
 	 */
 	var thisLibrary = sap.ui.documentation;

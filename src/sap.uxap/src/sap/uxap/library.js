@@ -20,6 +20,9 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @name sap.uxap
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.36
 	 * @public
 	 */
 		// library dependencies

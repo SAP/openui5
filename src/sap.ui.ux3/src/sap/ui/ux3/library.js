@@ -20,6 +20,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
+	 * @since 0.13
 	 * @deprecated Since 1.38
 	 */
 
