@@ -1580,7 +1580,7 @@ sap.ui.define([
 		 * @param {string|object} vRequest
 		 *   The request with the properties "method", "url" and "headers". A string is interpreted
 		 *   as URL with method "GET". Spaces inside the URL are percent-encoded automatically.
-		 * @param {function|object|Error|Promise} [oResponse]
+		 * @param {any|Error|Promise|function} [oResponse]
 		 *   The response message to be returned from the requestor or a promise on it or a function
 		 *   (invoked "just in time" when the request is actually sent) returning the response
 		 *   message (error, object, or promise)
@@ -5407,7 +5407,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		that.expectRequest("EMPLOYEES('2')", {Name : "Jonathan Smith"})
+		this.expectRequest("EMPLOYEES('2')", {Name : "Jonathan Smith"})
 			.expectChange("text", "Jonathan Smith");
 
 		return this.createView(assert, sView).then(function () {
@@ -5464,7 +5464,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 				value : [
 					{SalesOrderID : "0500000001"},
 					{SalesOrderID : "0500000002"}
@@ -5565,7 +5565,7 @@ sap.ui.define([
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
-		that = this;
+			that = this;
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 				value : [
@@ -5630,7 +5630,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 				value : [
 					{SalesOrderID : "0500000001"},
 					{SalesOrderID : "0500000002"}
@@ -5677,7 +5677,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
 				value : [
 					{SalesOrderID : "0500000001"},
 					{SalesOrderID : "0500000002"},
@@ -5725,7 +5725,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
 				value : [
 					{SalesOrderID : "0500000001"},
 					{SalesOrderID : "0500000002"},
@@ -5777,7 +5777,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 				value : [
 					{SalesOrderID : "0500000001"},
 					{SalesOrderID : "0500000002"},
@@ -5949,7 +5949,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
 				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
 				// SalesOrderId : "1,
 				SO_2_SOITEM : [
@@ -21508,7 +21508,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		that.expectRequest("SalesOrderList('42')?$select=LifecycleStatusDesc,SalesOrderID"
+		this.expectRequest("SalesOrderList('42')?$select=LifecycleStatusDesc,SalesOrderID"
 				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 				SalesOrderID : "42",
 				LifecycleStatusDesc : "New",
@@ -22183,7 +22183,7 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
-		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 					value : [
 						{SalesOrderID : "0500000347"},
 						{SalesOrderID : "0500000348"}
@@ -28319,7 +28319,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		that.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
+		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
 				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
 				BusinessPartnerID : "4711",
 				BP_2_SO : [{
@@ -28432,7 +28432,7 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2", {
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2", {
 				value : [
 					{Note : "Test 1", SalesOrderID : "0500000001"},
 					{Note : "Test 2", SalesOrderID : "0500000002"}
@@ -32480,7 +32480,7 @@ sap.ui.define([
 		</List>\
 	</Table>\
 </FlexBox>',
-		that = this;
+			that = this;
 
 		this.expectRequest("TEAMS('1')?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
 				Team_Id : "1",
@@ -32535,7 +32535,7 @@ sap.ui.define([
 		</FlexBox>\
 	</Table>\
 </FlexBox>',
-		that = this;
+			that = this;
 
 		this.expectRequest("TEAMS('1')?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
 				Team_Id : "1",
