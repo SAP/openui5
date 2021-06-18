@@ -165,14 +165,18 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			var oIcons;
 
 			if (typeof options.homeIcon === "string") {
-				oIcons = {phone: options.homeIcon};
+				oIcons = {
+					phone: options.homeIcon,
+					favicon: options.homeIcon
+				};
 			} else {
 				oIcons = jQuery.extend({}, options.homeIcon);
+				oIcons.phone = options.homeIcon.phone || options.homeIcon.icon || oIcons.favicon;
+				oIcons.favicon = oIcons.favicon || options.homeIcon.icon || options.homeIcon.phone;
+				oIcons.icon = undefined;
 			}
 
 			oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
-			oIcons.favicon = options.homeIcon.icon || oIcons.favicon;
-			oIcons.icon = undefined;
 			Mobile.setIcons(oIcons);
 		}
 
@@ -251,16 +255,15 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 		// desktop icon
 		if (oIcons["favicon"]) {
 			// remove any other favicons
-			var $fav = $head.find("[rel^=shortcut]"); // cannot search for "shortcut icon"
-
+			var $fav = $head.find("[rel=icon]");
 			$fav.each(function() {
-				if (this.rel === "shortcut icon") {
+				if (this.rel === "icon") {
 					jQuery(this).remove();
 				}
 			});
 
 			// create favicon
-			$head.append(jQuery('<link rel="shortcut icon" href="' + oIcons["favicon"] + '">'));
+			$head.append(jQuery('<link rel="icon" href="' + oIcons["favicon"] + '">'));
 		}
 
 		// mobile home screen icons
