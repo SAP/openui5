@@ -38,6 +38,8 @@ sap.ui.define([
 	// shortcut for sap.ui.integration.CardActionArea
 	var ActionArea = library.CardActionArea;
 
+	var LEGEND_COLORS_LOAD = "_legendColorsLoad";
+
 	/**
 	 * Constructor for a new <code>ListContent</code>.
 	 *
@@ -268,12 +270,16 @@ sap.ui.define([
 
 		if (oChartSettings.type === "StackedBar") {
 			var oLegend = new MicrochartLegend({
-				chart: oChart.getChart()
+				chart: oChart.getChart(),
+				colorsLoad: function () {
+					this.fireEvent(LEGEND_COLORS_LOAD);
+				}.bind(this)
 			});
 
 			oLegend.initItemsTitles(oChartSettings.bars, this.getBindingContext().getPath());
 
 			this.setAggregation("_legend", oLegend);
+			this.awaitEvent(LEGEND_COLORS_LOAD);
 		}
 
 		return oChart;

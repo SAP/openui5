@@ -6,11 +6,15 @@ sap.ui.define([
 	"./MicrochartLegendRenderer",
 	"sap/m/Text",
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
+	"sap/ui/core/theming/Parameters",
 	"sap/ui/integration/util/BindingHelper"
 ], function (
 	MicrochartLegendRenderer,
 	Text,
 	Control,
+	Core,
+	Parameters,
 	BindingHelper
 ) {
 	"use strict";
@@ -46,10 +50,21 @@ sap.ui.define([
 				 * Chart from the <code>sap.suite.ui.microchart</code> library.
 				 */
 				chart: { type: "sap.ui.core.Control", multiple: false }
+			},
+			events: {
+				/**
+				 * Fires when the colors from the theme are loaded.
+				 */
+				colorsLoad: {}
 			}
 		},
 		renderer: MicrochartLegendRenderer
 	});
+
+	MicrochartLegend.prototype.onBeforeRendering = function () {
+		this._mLegendColors = {};
+		this._loadLegendColors();
+	};
 
 	MicrochartLegend.prototype.onAfterRendering = function () {
 		this._equalizeWidths();
@@ -95,6 +110,48 @@ sap.ui.define([
 
 			this.addAggregation("_titles", oText);
 		}.bind(this));
+	};
+
+	MicrochartLegend.prototype._loadLegendColors = function () {
+		var oChart = Core.byId(this.getChart()),
+			aNames = [],
+			vParams;
+
+		if (oChart) {
+			aNames = oChart._calculateChartData()
+				.map(function (oData) {
+					return oData.color;
+				})
+				.filter(function (sColor) {
+					return sColor.startsWith("sapUi");
+				});
+		}
+
+		if (aNames.length > 0) {
+			vParams = Parameters.get({
+				name: aNames,
+				callback: function (_vParams) {
+					this._handleColorsLoad(aNames, _vParams);
+				}.bind(this)
+			});
+		}
+
+		// colors available synchronously or no colors at all
+		if (this._mLegendColors !== undefined) {
+			this._handleColorsLoad(aNames, vParams);
+		}
+	};
+
+	MicrochartLegend.prototype._handleColorsLoad = function (aNames, vParams) {
+		// single param
+		if (typeof vParams === "string") {
+			this._mLegendColors = { };
+			this._mLegendColors[aNames[0]] = vParams;
+		} else if (vParams) { // map of parameters
+			this._mLegendColors = vParams;
+		}
+
+		this.fireColorsLoad();
 	};
 
 	return MicrochartLegend;
