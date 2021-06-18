@@ -117,8 +117,8 @@
 			</dependents>
 			<headerToolbar>
 				<Toolbar id="salesOrderListToolbar">
-					<Title id="salesOrderListTitle" text="{$count} New Sales Orders"
-						level="H2">
+					<Title id="salesOrderListTitle" level="H2"
+						text="{$count} New Sales Orders ({/SalesOrderList/$count} overall)">
 						<layoutData>
 							<ToolbarLayoutData shrinkable="false"/>
 						</layoutData>

@@ -1045,6 +1045,43 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests side effects for the given absolute paths.
+	 *
+	 * @param {string} sGroupId
+	 *   The effective group ID
+	 * @param {string[]} aAbsolutePaths
+	 *   The absolute paths to request side effects for
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
+	 *   effects fails, or <code>undefined</code> if there is nothing to do
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.requestAbsoluteSideEffects = function (sGroupId, aAbsolutePaths) {
+		var aPaths = [],
+			sMetaPath = _Helper.getMetaPath(this.getResolvedPath());
+
+		aAbsolutePaths.some(function (sAbsolutePath) {
+			var sRelativePath = _Helper.getRelativePath(sAbsolutePath, sMetaPath);
+
+			if (sRelativePath !== undefined) {
+				aPaths.push(sRelativePath);
+			} else if (_Helper.hasPathPrefix(sMetaPath, sAbsolutePath)) {
+				aPaths = [""]; // "refresh"
+				return true; // break
+			}
+		});
+
+		if (aPaths.length) {
+			if (this.requestSideEffects) {
+				return this.requestSideEffects(sGroupId, aPaths);
+			}
+			return this.refreshInternal("", sGroupId, true);
+		}
+		// return undefined;
+	};
+
+	/**
 	 * Refreshes the binding and returns a promise to wait for it. See {@link #refresh} for details.
 	 * Use {@link #refresh} if you do not need the promise.
 	 *

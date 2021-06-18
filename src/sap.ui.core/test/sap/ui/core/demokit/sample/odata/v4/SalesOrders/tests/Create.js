@@ -42,7 +42,7 @@ sap.ui.define([
 
 			// Create, modify and delete of an unsaved sales order
 			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10);
+				Then.onTheMainPage.checkSalesOrdersCount(10, 23);
 			}
 
 			// check value helps within sales order line items

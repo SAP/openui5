@@ -42,6 +42,9 @@ sap.ui.define([
 				"ProductList('HT-1000')/ProductID?custom-option=value" : {
 					source : "ProductListId.json"
 				},
+				"SalesOrderList/$count?custom-option=value" : {
+					message : 23
+				},
 				"SalesOrderList?custom-option=value&$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'%20and%20(SO_2_BP/CompanyName%20ge%20'M')&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
 					source : "SalesOrderList_skip0.json"
 				},

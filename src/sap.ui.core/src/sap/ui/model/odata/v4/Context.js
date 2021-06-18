@@ -1105,6 +1105,7 @@ sap.ui.define([
 	 *   error handler, you can repeat the loading of side effects.
 	 * @throws {Error} If
 	 *   <ul>
+	 *     <li> metadata has not yet been loaded
 	 *     <li> <code>aPathExpressions</code> contains objects other than
 	 *       "14.4.11 Expression edm:String", "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *       "14.5.13 Expression edm:PropertyPath"
@@ -1173,8 +1174,12 @@ sap.ui.define([
 		if (!this.oBinding.isResolved()) {
 			throw new Error("Cannot request side effects of unresolved binding's context: " + this);
 		}
+		sEntityContainer = oMetaModel.getObject("/$EntityContainer");
+		if (!sEntityContainer) {
+			throw new Error("Missing metadata");
+		}
 
-		sEntityContainer = "/" + oMetaModel.getObject("/$EntityContainer") + "/";
+		sEntityContainer = "/" + sEntityContainer + "/";
 		aPathExpressions.map(function (vPath) {
 			if (vPath && typeof vPath === "object") {
 				if (isPropertyPath(vPath.$PropertyPath)) {

@@ -2890,4 +2890,95 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.sReducedPath, "/A('foo')/A_2_B(id=42)");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("requestAbsoluteSideEffects: nothing to do", function (assert) {
+		var oBinding = new ODataBinding(),
+			oHelperMock = this.mock(_Helper);
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved");
+		oHelperMock.expects("getMetaPath").withExactArgs("/resolved").returns("/meta");
+		oHelperMock.expects("getRelativePath").withExactArgs("/request1", "/meta")
+			.returns(undefined);
+		oHelperMock.expects("hasPathPrefix").withExactArgs("/meta", "/request1").returns(false);
+		oHelperMock.expects("getRelativePath").withExactArgs("/request2", "/meta")
+			.returns(undefined);
+		oHelperMock.expects("hasPathPrefix").withExactArgs("/meta", "/request2").returns(false);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.requestAbsoluteSideEffects("group", ["/request1", "/request2"]),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestAbsoluteSideEffects: refresh", function (assert) {
+		var oBinding = new ODataBinding({
+				requestSideEffects : function () {}
+			}),
+			oHelperMock = this.mock(_Helper);
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved");
+		oHelperMock.expects("getMetaPath").withExactArgs("/resolved").returns("/meta");
+		oHelperMock.expects("getRelativePath").withExactArgs("/request1", "/meta").returns("~1");
+		oHelperMock.expects("getRelativePath").withExactArgs("/request2", "/meta")
+			.returns(undefined);
+		oHelperMock.expects("hasPathPrefix").withExactArgs("/meta", "/request2").returns(true);
+		this.mock(oBinding).expects("requestSideEffects").withExactArgs("group", [""])
+			.resolves("~");
+
+		// code under test
+		return oBinding.requestAbsoluteSideEffects("group", ["/request1", "/request2", "/request3"])
+			.then(function (vResult) {
+				assert.strictEqual(vResult, "~");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestAbsoluteSideEffects: refreshInternal", function (assert) {
+		var oBinding = new ODataBinding({
+				refreshInternal : function () {}
+			}),
+			oHelperMock = this.mock(_Helper);
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved");
+		oHelperMock.expects("getMetaPath").withExactArgs("/resolved").returns("/meta");
+		oHelperMock.expects("getRelativePath").withExactArgs("/request1", "/meta").returns("~1");
+		oHelperMock.expects("getRelativePath").withExactArgs("/request2", "/meta")
+			.returns(undefined);
+		oHelperMock.expects("hasPathPrefix").withExactArgs("/meta", "/request2").returns(true);
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group", true)
+			.resolves("~");
+
+		// code under test
+		return oBinding.requestAbsoluteSideEffects("group", ["/request1", "/request2", "/request3"])
+			.then(function (vResult) {
+				assert.strictEqual(vResult, "~");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestAbsoluteSideEffects: sideEffects", function (assert) {
+		var oBinding = new ODataBinding({
+				requestSideEffects : function () {}
+			}),
+			oHelperMock = this.mock(_Helper);
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved");
+		oHelperMock.expects("getMetaPath").withExactArgs("/resolved").returns("/meta");
+		oHelperMock.expects("getRelativePath").withExactArgs("/request1", "/meta")
+			.returns("~1");
+		oHelperMock.expects("getRelativePath").withExactArgs("/request2", "/meta")
+			.returns(undefined);
+		oHelperMock.expects("hasPathPrefix").withExactArgs("/meta", "/request2").returns(false);
+		oHelperMock.expects("getRelativePath").withExactArgs("/request3", "/meta").returns("~3");
+		this.mock(oBinding).expects("requestSideEffects").withExactArgs("group", ["~1", "~3"])
+			.resolves("~");
+
+		// code under test
+		return oBinding.requestAbsoluteSideEffects("group", ["/request1", "/request2", "/request3"])
+			.then(function (vResult) {
+				assert.strictEqual(vResult, "~");
+			});
+	});
 });

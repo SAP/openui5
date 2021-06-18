@@ -2298,7 +2298,7 @@ sap.ui.define([
 				isRoot : function () { return  true; },
 				requestAbsoluteSideEffects : function () {}
 			},
-			oBinding2 = { // has requestAbsoluteSideEffects, but is not root
+			oBinding2 = {
 				isRoot : function () { return  false; },
 				requestAbsoluteSideEffects : function () {}
 			},
@@ -2306,14 +2306,11 @@ sap.ui.define([
 				isRoot : function () { return  true; },
 				requestAbsoluteSideEffects : function () {}
 			},
-			oBinding4 = { // is root, but has no requestAbsoluteSideEffects
-				isRoot : function () { return  true; }
-			},
 			oModel = this.createModel(),
 			aPaths = ["/foo", "/bar/baz"],
 			oPromise;
 
-		oModel.aAllBindings = [oBinding1, oBinding2, oBinding3, oBinding4];
+		oModel.aAllBindings = [oBinding1, oBinding2, oBinding3];
 		this.mock(oBinding1).expects("requestAbsoluteSideEffects")
 			.withExactArgs("group", sinon.match.same(aPaths)).resolves("~1");
 		this.mock(oBinding2).expects("requestAbsoluteSideEffects").never();
