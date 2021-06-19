@@ -1,0 +1,35 @@
+.crazy {
+	color:blue;
+	background-color:#CCCCFF;
+	border: 3px solid green;
+	font-family: serif;
+	padding: 20px;
+	margin: 16px;
+}
+#testTable {
+	width: 80%;
+}
+table {
+	color: red;
+	background-color: red;
+}
+#testTable td:first-child {
+	width: 66%;
+	border: 3px ridge #CCFFCC;
+	color: black;
+	background-color: white;
+}
+#testTable td {
+	padding: 8px;
+	border: 0;
+}
+#pageWrapper {
+	text-align: center;
+}
+#pageHolder {
+	border: 3px solid black;
+	width: 80%;
+	height: 300px;
+	display: inline-block;
+	text-align: left;
+}

@@ -33,7 +33,7 @@ sap.ui.define([
 	var ListType = mobileLibrary.ListType;
 
 	// some minimum height is required to ensure scrolling to certain positions in the tests works properly
-	createAndAppendDiv("content").setAttribute("style", "height:300px;");
+	createAndAppendDiv("content").style.height = "300px";
 
 
 

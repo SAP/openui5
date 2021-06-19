@@ -54,12 +54,12 @@ sap.ui.define([
 	(function(){
 		var elem = document.createElement("DIV");
 		elem.setAttribute("id", "Placeholder");
-		elem.setAttribute("style", "margin-top: 100px;");
+		elem.style.marginTop = "100px";
 		elem.setAttribute("tabindex", "0");
 		document.body.insertBefore(elem, document.body.firstChild);
 	}());
-	document.body.insertBefore(createAndAppendDiv("uiArea2"), document.body.firstChild).setAttribute("style", "margin-top: 20px; margin-right: 100px; text-align: right;");
-	document.body.insertBefore(createAndAppendDiv("uiArea1"), document.body.firstChild).setAttribute("style", "margin-top: 100px; margin-left: 200px;");
+	document.body.insertBefore(createAndAppendDiv("uiArea2"), document.body.firstChild).style = "margin-top: 20px; margin-right: 100px; text-align: right;";
+	document.body.insertBefore(createAndAppendDiv("uiArea1"), document.body.firstChild).style = "margin-top: 100px; margin-left: 200px;";
 	var styleElement = document.createElement("style");
 	styleElement.textContent =
 		".widePopup {" +

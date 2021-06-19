@@ -504,9 +504,9 @@ sap.ui.define([
 			beforeEach: function () {
 				this.container = document.createElement("div");
 				this.$container = jQuery(this.container);
-				this.container.setAttribute("style", "direction:rtl;overflow-x:scroll;overflow-y:hidden;width:100px;height:20px");
+				this.container.style = "direction:rtl;overflow-x:scroll;overflow-y:hidden;width:100px;height:20px";
 				this.element = document.createElement("div");
-				this.element.setAttribute("style", "width:200px;height:10px;background:linear-gradient(to right,red,yellow);");
+				this.element.style = "width:200px;height:10px;background:linear-gradient(to right,red,yellow);";
 				this.container.appendChild(this.element);
 				document.body.appendChild(this.container);
 			},

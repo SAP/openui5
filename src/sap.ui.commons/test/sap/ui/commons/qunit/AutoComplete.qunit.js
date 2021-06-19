@@ -23,8 +23,8 @@ sap.ui.define([
 
 	// prepare DOM
 	document.body.insertBefore(document.createElement("BUTTON"), document.body.firstChild).setAttribute("id", "focusDummy");
-	document.body.insertBefore(createAndAppendDiv("uiArea2"), document.body.firstChild).setAttribute("style", "position: relative; left: 10px; top: 10px;");
-	document.body.insertBefore(createAndAppendDiv("uiArea1"), document.body.firstChild).setAttribute("style", "position: relative; left: 10px; top: 10px;");
+	document.body.insertBefore(createAndAppendDiv("uiArea2"), document.body.firstChild).style = "position: relative; left: 10px; top: 10px;";
+	document.body.insertBefore(createAndAppendDiv("uiArea1"), document.body.firstChild).style = "position: relative; left: 10px; top: 10px;";
 
 
 	function clear(oAuto, bDestroyItems){

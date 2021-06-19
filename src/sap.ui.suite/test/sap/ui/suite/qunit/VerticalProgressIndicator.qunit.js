@@ -8,11 +8,11 @@ sap.ui.define([
 
 	// prepare DOM
 	createAndAppendDiv("uiArea1");
-	createAndAppendDiv("uiArea2").setAttribute("style", "position:relative; top:-13px; margin-left:40px");
-	createAndAppendDiv("uiArea3").setAttribute("style", "position:relative; top:-26px; margin-left:80px");
-	createAndAppendDiv("uiArea4").setAttribute("style", "position:relative; top:-39px; margin-left:120px");
-	createAndAppendDiv("uiArea5").setAttribute("style", "position:relative; top:-52px; margin-left:160px");
-	createAndAppendDiv("uiArea6").setAttribute("style", "position:relative; top:-65px; margin-left:200px");
+	createAndAppendDiv("uiArea2").style = "position:relative; top:-13px; margin-left:40px";
+	createAndAppendDiv("uiArea3").style = "position:relative; top:-26px; margin-left:80px";
+	createAndAppendDiv("uiArea4").style = "position:relative; top:-39px; margin-left:120px";
+	createAndAppendDiv("uiArea5").style = "position:relative; top:-52px; margin-left:160px";
+	createAndAppendDiv("uiArea6").style = "position:relative; top:-65px; margin-left:200px";
 
 
 	/****************************************************

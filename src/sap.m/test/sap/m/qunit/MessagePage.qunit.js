@@ -22,7 +22,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-	createAndAppendDiv("content").setAttribute("style", "height:100%;");
+	createAndAppendDiv("content").style.height = "100%";
 
 
 

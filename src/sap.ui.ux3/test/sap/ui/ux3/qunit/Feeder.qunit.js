@@ -13,9 +13,9 @@ sap.ui.define([
 	var FeederType = ux3Library.FeederType;
 
 	// prepare DOM
-	createAndAppendDiv("uiArea1").setAttribute("style", "width:80%;");
-	createAndAppendDiv("uiArea2").setAttribute("style", "width:80%;");
-	createAndAppendDiv("uiArea3").setAttribute("style", "width:80%;");
+	createAndAppendDiv("uiArea1").style.width = "80%";
+	createAndAppendDiv("uiArea2").style.width = "80%";
+	createAndAppendDiv("uiArea3").style.width = "80%";
 
 
 

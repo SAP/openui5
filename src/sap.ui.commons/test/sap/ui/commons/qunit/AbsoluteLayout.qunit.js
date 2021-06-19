@@ -21,7 +21,7 @@ sap.ui.define([
 		var elem = document.createElement("DIV");
 		elem.setAttribute("id", "uiArea2");
 		elem.setAttribute("class", "testUIArea");
-		elem.setAttribute("style", "height:50px;");
+		elem.style.height = "50px";
 		document.body.appendChild(elem);
 	}());
 	createAndAppendDiv("uiArea3").setAttribute("class", "testUIArea");
