@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	// prepare DOM
-	createAndAppendDiv("uiArea1").setAttribute("style", "margin-top:10px;");
+	createAndAppendDiv("uiArea1").style.marginTop = "10px";
 	var styleElement = document.createElement("style");
 	styleElement.textContent =
 		".sapUiUx3NavBarArrow {" +

@@ -43,7 +43,7 @@ window.sapUiSupportReport.collapseExpand = (function() {
 					elementToExpand.classList.add('expanded');
 				}
 
-				expandableElements[i].setAttribute('style', 'cursor: pointer;');
+				expandableElements[i].style = 'cursor: pointer;';
 			}
 		} catch (ex) {
 			/* eslint-disable no-console */

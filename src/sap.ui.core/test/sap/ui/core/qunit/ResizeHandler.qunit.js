@@ -34,7 +34,7 @@ sap.ui.define([
 	}
 
 	function setStyle(id, style) {
-		document.getElementById(id).setAttribute("style", style);
+		document.getElementById(id).style = style;
 	}
 
 	var TestControl = Control.extend("TestControl", {

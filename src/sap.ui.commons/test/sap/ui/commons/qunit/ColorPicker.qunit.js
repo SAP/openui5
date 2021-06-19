@@ -16,7 +16,7 @@ sap.ui.define([
 
 	// prepare DOM
 	["uiArea8","uiArea7","uiArea6","uiArea5","uiArea4","uiArea3","uiArea2","uiArea1"].forEach(function(id) {
-		document.body.insertBefore(createAndAppendDiv(id), document.body.firstChild).setAttribute("style", "display:inline-block");
+		document.body.insertBefore(createAndAppendDiv(id), document.body.firstChild).style.display = "inline-block";
 	});
 
 

@@ -40,7 +40,7 @@ sap.ui.define([
 	(function(){
 		var elem = document.createElement("A");
 		elem.setAttribute("id", "backLink");
-		elem.setAttribute("style", "display:none;");
+		elem.style.display = "none";
 		elem.setAttribute("href", "../RowRepeater.html");
 	document.body.appendChild(elem);
 	}());

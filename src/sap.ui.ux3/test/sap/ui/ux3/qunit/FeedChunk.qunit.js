@@ -9,8 +9,8 @@ sap.ui.define([
 	"use strict";
 
 	// prepare DOM
-	createAndAppendDiv("uiArea1").setAttribute("style", "width:80%;");
-	createAndAppendDiv("uiArea2").setAttribute("style", "width:80%;");
+	createAndAppendDiv("uiArea1").style.width = "80%";
+	createAndAppendDiv("uiArea2").style.width = "80%";
 
 
 

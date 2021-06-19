@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	// prepare DOM
-	createAndAppendDiv("area").setAttribute("style", "height:500px;");
+	createAndAppendDiv("area").style.height = "500px";
 
 
 	var oCompCont = new ComponentContainer("CompCont", {

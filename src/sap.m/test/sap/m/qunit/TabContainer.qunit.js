@@ -32,7 +32,7 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
-	createAndAppendDiv("visible-content").setAttribute("style", "padding-left:800px;");
+	createAndAppendDiv("visible-content").style.paddingLeft = "800px";
 
 
 

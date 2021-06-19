@@ -30,7 +30,7 @@ sap.ui.define([
 	createAndAppendDiv("uiArea2");
 	createAndAppendDiv("uiArea3");
 	createAndAppendDiv("uiArea4");
-	createAndAppendDiv("uiArea5").setAttribute("style", "width:200px;");
+	createAndAppendDiv("uiArea5").style.width = "200px";
 	createAndAppendDiv("uiArea6");
 	createAndAppendDiv("uiArea7");
 	createAndAppendDiv("uiArea8");

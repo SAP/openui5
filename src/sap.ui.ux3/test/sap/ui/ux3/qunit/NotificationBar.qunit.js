@@ -30,7 +30,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.MessageType
 	var MessageType = coreLibrary.MessageType;
 
-	createAndAppendDiv("uiArea1").setAttribute("style", "margin-top: 40px;");
+	createAndAppendDiv("uiArea1").style.marginTop = "40px";
 
 
 	var oNotiBar;

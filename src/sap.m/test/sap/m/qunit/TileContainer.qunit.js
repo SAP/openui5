@@ -28,7 +28,7 @@ sap.ui.define([
 	var is = jQuery.device.is;
 	var $ = jQuery;
 
-	createAndAppendDiv("uiArea1").setAttribute("style", "width: 600px; height: 480px");
+	createAndAppendDiv("uiArea1").style = "width: 600px; height: 480px";
 	createAndAppendDiv("uiArea2");
 	var styleElement = document.createElement("style");
 	styleElement.textContent =

@@ -136,7 +136,7 @@ sap.ui.define([
 		// HACK: enforce scrollbars
 		// - with a dedicated *.qunit.html page, the QUnit header + 100% body always enforced a scrollbar
 		// - with the generic test starter, the QUnit header get a height only after all tests have been created
-		document.getElementById("qunit").setAttribute("style", "height:200px;");
+		document.getElementById("qunit").style.height = "200px";
 
 		return new Promise(function(resolve) {
 			setTimeout(function() {

@@ -12,8 +12,8 @@ sap.ui.define([
 	"use strict";
 
 
-	createAndAppendDiv("content").setAttribute("style", "height:100%;");
-	createAndAppendDiv("qunit_results").setAttribute("style", "height:100%;");
+	createAndAppendDiv("content").style.height = "100%";
+	createAndAppendDiv("qunit_results").style.height = "100%";
 	var styleElement = document.createElement("style");
 	styleElement.textContent =
 		"html, body {" +

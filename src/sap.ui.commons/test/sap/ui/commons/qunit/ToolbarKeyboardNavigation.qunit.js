@@ -15,7 +15,7 @@ sap.ui.define([
 
 
 	// prepare DOM
-	createAndAppendDiv("content").setAttribute("style", "width: 100%");
+	createAndAppendDiv("content").style.width = "100%";
 
 
 
