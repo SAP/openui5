@@ -109,7 +109,7 @@ sap.ui.define([
 			oDeviceStub.restore();
 			oClock.restore();
 			done();
-		}.bind(this), 400 /* focus is not testable otherwise */);
+		}.bind(this), 500 /* focus is not testable otherwise */);
 	});
 
 	QUnit.test("navigator.clipboard API: Clipboard Access Denied", function(assert) {
