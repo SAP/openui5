@@ -126,7 +126,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			rm.class("sapMListTblHeaderNone");
 		} else {
 			rm.class("sapMListTblRow").class("sapMListTbl" + type + "er");
-			ColumnListItemRenderer.addFocusableClasses(rm, oTable);
+			rm.class("sapMLIBFocusable").class("sapMTableRowCustomFocus");
 		}
 
 		rm.openEnd();
