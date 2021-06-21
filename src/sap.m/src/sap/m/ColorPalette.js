@@ -22,7 +22,9 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/unified/ColorPickerDisplayMode"
+	"sap/ui/unified/library",
+	"sap/ui/unified/ColorPickerDisplayMode",
+	"sap/ui/unified/ColorPicker"
 ], function(
 	Control,
 	Device,
@@ -36,18 +38,17 @@ sap.ui.define([
 	containsOrEquals,
 	KeyCodes,
 	jQuery,
-	ColorPickerDisplayMode
+	unifiedLibrary,
+	ColorPickerDisplayMode,
+	ColorPicker
 ) {
 		"use strict";
 
 		// shortcut to CSSColor of the core library
 		var CSSColor = coreLibrary.CSSColor;
 
-		// shortcut to ColorPicker (lazy initialized)
-		var ColorPicker;
-
-		// shortcut to ColorPickerMode (lazy initialized)
-		var ColorPickerMode;
+		// shortcut to ColorPickerMode
+		var ColorPickerMode = unifiedLibrary.ColorPickerMode;
 
 		// shortcut to the ButtonType enumeration
 		var ButtonType = library.ButtonType;
@@ -527,8 +528,6 @@ sap.ui.define([
 				title: oLibraryResourceBundle.getText("COLOR_PALETTE_MORE_COLORS_TITLE")
 			}).addStyleClass("CPDialog");
 
-			this._ensureUnifiedLibrary();
-
 			// keep explicit reference to the picker attached to the parent dialog
 			oDialog.addContent(oDialog._oColorPicker = new ColorPicker({
 				mode: ColorPickerMode.HSL,
@@ -559,21 +558,8 @@ sap.ui.define([
 
 			return oDialog;
 		};
+
 		// Other
-
-		// Ensure that the sap.ui.unified library and sap.ui.unified.ColorPicker are both loaded
-		ColorPalette.prototype._ensureUnifiedLibrary = function () {
-			var oUnifiedLib;
-
-			if (!ColorPicker) {
-				sap.ui.getCore().loadLibrary("sap.ui.unified");
-				oUnifiedLib = sap.ui.require("sap/ui/unified/library");
-
-				ColorPicker = sap.ui.requireSync("sap/ui/unified/ColorPicker");
-				ColorPickerMode = oUnifiedLib.ColorPickerMode;
-			}
-		};
-
 		/**
 		 * Focuses the first available element in the palette.
 		 * @private
