@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"./waitForP13nButtonWithParentAndIcon",
 	"./waitForP13nDialog",
-	"./waitForSelectWithSelectedTextOnPanel"
+	"./waitForSelectWithSelectedTextOnPanel",
+	"./Util"
 ], function(
 	Opa5,
 	Matcher,
@@ -25,7 +26,8 @@ sap.ui.define([
 	EnterText,
 	waitForP13nButtonWithParentAndIcon,
 	waitForP13nDialog,
-	waitForSelectWithSelectedTextOnPanel
+	waitForSelectWithSelectedTextOnPanel,
+	Util
 ) {
 	"use strict";
 
@@ -51,8 +53,7 @@ sap.ui.define([
 
 				waitForP13nButtonWithParentAndIcon.call(this, {
 					parent: oControlInstance,
-					// TODO: move this to UTIL?
-					icon: "sap-icon://action-settings",
+					icon: Util.icons.settings,
 					actions: new Press(),
 					success: function() {
 						waitForP13nDialog.call(this, {
@@ -97,8 +98,7 @@ sap.ui.define([
 			controlType: "sap.m.Dialog",
 			matchers: new PropertyStrictEquals({
 				name: "title",
-				// TODO: Use message bundle!
-				value: "Warning"
+				value: Util.texts.resetwarning
 			}),
 			success: function(aDialogs) {
 				Opa5.assert.equal(aDialogs.length, 1, "warning dialog found");
@@ -110,13 +110,11 @@ sap.ui.define([
 	};
 
 	var iPressTheOKButtonOnTheDialog = function(oDialog, oSettings) {
-		// TODO: Use message bundle!
-		return iPressAButtonOnTheDialog.call(this, oDialog, "OK", oSettings);
+		return iPressAButtonOnTheDialog.call(this, oDialog, Util.texts.ok, oSettings);
 	};
 
 	var iPressTheResetButtonOnTheDialog = function(oDialog, oSettings) {
-		// TODO: Use message bundle!
-		return iPressAButtonOnTheDialog.call(this, oDialog, "Reset", oSettings);
+		return iPressAButtonOnTheDialog.call(this, oDialog, Util.texts.reset, oSettings);
 	};
 
 	var waitForNavigationControl = function (oP13nDialog, oSettings) {
@@ -284,8 +282,7 @@ sap.ui.define([
 	};
 
 	var iAddGroupConfiguration = function(oGroupPanel, oGroupConfiguration) {
-		// TODO: Use message bundle!
-		iChangeSelectOnPanel.call(this, oGroupPanel, "(none)", oGroupConfiguration.key, {
+		return iChangeSelectOnPanel.call(this, oGroupPanel, Util.texts.none, oGroupConfiguration.key, {
 			success: function(oSelect) {
 				if (oGroupConfiguration.showFieldAsColumn !== undefined) {
 					this.waitFor({
@@ -310,8 +307,7 @@ sap.ui.define([
 	};
 
 	var iAddSortConfiguration = function(oSortPanel, oSortConfiguration) {
-		// TODO: Use message bundle!
-		iChangeSelectOnPanel.call(this, oSortPanel, "(none)", oSortConfiguration.key, {
+		return iChangeSelectOnPanel.call(this, oSortPanel, Util.texts.none, oSortConfiguration.key, {
 			success: function(oSelect) {
 				if (oSortConfiguration.descending !== undefined) {
 					this.waitFor({
@@ -325,13 +321,16 @@ sap.ui.define([
 									new Ancestor(aCustomListItem),
 									new PropertyStrictEquals({
 										name: "icon",
-										// TODO: move this to UTIL?
-										value: "sap-icon://sort-descending"
+										value: Util.icons.descending
 									})
 								],
 								actions: function(oButton) {
 									if (oSortConfiguration.descending && oButton.getParent().getSelectedButton() !== oButton) {
 										new Press().executeOn(oButton);
+									}
+
+									if (oSortConfiguration && typeof oSortConfiguration.success === "function") {
+										oSortConfiguration.success.call(this);
 									}
 								}
 							});
@@ -406,14 +405,19 @@ sap.ui.define([
 	};
 
 	var iPressAllDeclineButtonsOnPanel = function(oPanel, oSettings) {
+
+		if (oSettings.itemAmount < 2) {
+			oSettings.success.call(this);
+			return;
+		}
+
 		this.waitFor({
 			controlType: "sap.m.Button",
 			matchers: [
 				new Ancestor(oPanel, false),
 				new PropertyStrictEquals({
 					name: "icon",
-					// TODO: move to util
-					value: "sap-icon://decline"
+					value: Util.icons.decline
 				})
 			],
 			actions: new Press(),
@@ -428,8 +432,7 @@ sap.ui.define([
 
     return {
 		iPersonalizeChart: function(oControl, sChartType, aItems) {
-			// TODO: Use message bundle!
-			return iPersonalize.call(this, oControl, "Chart", {
+			return iPersonalize.call(this, oControl, Util.texts.chart, {
 				success: function(oP13nDialog) {
 					this.waitFor({
 						controlType: "sap.m.P13nDimMeasurePanel",
@@ -505,14 +508,13 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * NEW!
+		 *
 		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be personalized
 		 * @param {String[]} aColumns Array containing the keys of the columns that should be result of the personalisation
-		 * @returns this
+		 * @returns {Promise} Opa waitFor
 		 */
 		 iPersonalizeColumns: function(oControl, aColumns) {
-			// TODO: Use message bundle!
-			return iPersonalize.call(this, oControl, "Column", {
+			return iPersonalize.call(this, oControl, Util.texts.column, {
 				success: function(oP13nDialog) {
 					this.waitFor({
 						controlType: "sap.ui.mdc.p13n.panels.ListView",
@@ -541,6 +543,41 @@ sap.ui.define([
 														(oCheckBox.getSelected() && !aColumns.includes(oLabelControl.getText()))) {
 														new Press().executeOn(oCheckBox);
 													}
+												},
+												success: function(aCheckBoxes) {
+													if (aCheckBoxes[0].getSelected()) {
+														// click on columnlist item
+														new Press().executeOn(oColumnListItem);
+														// click on move to top
+														if (oColumnListItem.getParent().getItems().indexOf(oColumnListItem) > 0) {
+															this.waitFor({
+																controlType: "sap.m.Button",
+																matchers: [
+																	new PropertyStrictEquals({
+																		name: "icon",
+																		value: Util.icons.movetotop
+																	})
+																],
+																actions: new Press(),
+																success: function() {
+																	var iIndex = aColumns.indexOf(oLabelControl.getText());
+																	while (iIndex > 0) {
+																		this.waitFor({
+																			controlType: "sap.m.Button",
+																			matchers:  [
+																				new PropertyStrictEquals({
+																					name: "icon",
+																					value: Util.icons.movedown
+																				})
+																			],
+																			actions: new Press()
+																		});
+																		iIndex--;
+																	}
+																}
+															});
+														}
+													}
 												}
 											});
 										}
@@ -563,13 +600,13 @@ sap.ui.define([
 		 * @property {String} inputControl
 		 */
 		/**
-		 * NEW!
+		 *
 		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
 		 * @param {FilterPersonalizationConfiguration[]} aConfigurations an array containing the group personalization configuration objects
+		 * @returns {Promise} Opa waitFor
 		 */
 		iPersonalizeFilter: function(oControl, aConfigurations) {
-			// TODO: Use message bundle!
-			iPersonalize.call(this, oControl, "Filter", {
+			return iPersonalize.call(this, oControl, Util.texts.filter, {
 				success: function(oP13nDialog) {
 					this.waitFor({
 						controlType: "sap.ui.comp.p13n.P13nFilterPanel",
@@ -617,13 +654,13 @@ sap.ui.define([
 		 * @property {Boolean} showFieldAsColumn determinating if the "Show Field as Column" checkbox should be checked
 		 */
 		/**
-		 * NEW!
+		 *
 		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
 		 * @param {GroupPersonalizationConfiguration[]} aConfigurations an array containing the group personalization configuration objects
+		 * @returns {Promise} Opa waitFor
 		 */
 		iPersonalizeGroup: function(oControl, aConfigurations) {
-			// TODO: Use message bundle!
-			return iPersonalize.call(this, oControl, "Group", {
+			return iPersonalize.call(this, oControl, Util.texts.group, {
 				success: function(oP13nDialog) {
 					this.waitFor({
 						controlType: "sap.ui.mdc.p13n.panels.GroupPanel",
@@ -633,7 +670,7 @@ sap.ui.define([
 							// Remove all group entries
 							iPressAllDeclineButtonsOnPanel.call(this, oGroupPanel, {
 								// Add new group entries
-								// TODO: remove this copy pasta block?
+								itemAmount: oGroupPanel.getItems().length,
 								success: function() {
 									this.waitFor({
 										controlType: "sap.m.CustomListItem",
@@ -659,13 +696,13 @@ sap.ui.define([
 		 * @property {Boolean} descending determinating if the sort direction is descending
 		 */
 		/**
-		 * NEW!
+		 *
 		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
 		 * @param {SortPersonalizationConfiguration[]} aConfigurations an array containing the sort personalization configuration objects
+		 * @returns {Promise} Opa waitFor
 		 */
 		iPersonalizeSort: function(oControl, aConfigurations) {
-			// TODO: Use message bundle!
-			return iPersonalize.call(this, oControl, "Sort", {
+			return iPersonalize.call(this, oControl, Util.texts.sort, {
 				success: function(oP13nDialog) {
 					this.waitFor({
 						controlType: "sap.ui.mdc.p13n.panels.SortQueryPanel",
@@ -675,16 +712,17 @@ sap.ui.define([
 							// Remove all Sort entries
 							iPressAllDeclineButtonsOnPanel.call(this, oSortPanel, {
 								// Add new Sort entries
-								// TODO: remove this copy pasta block?
+								itemAmount: oSortPanel.getItems().length,
 								success: function() {
 									this.waitFor({
 										controlType: "sap.m.CustomListItem",
 										matchers: new Ancestor(oSortPanel, false),
 										success: function(aCustomListItems) {
 											Opa5.assert.ok(aCustomListItems.length === 1);
-											aConfigurations.forEach(function(oConfiguration) {
+											aConfigurations.forEach(function(oConfiguration, iIndex) {
 												iAddSortConfiguration.call(this, oSortPanel, oConfiguration);
 											}.bind(this));
+
 											iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
 										}
 									});
@@ -696,9 +734,8 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * NEW!
 		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
-		 * @returns this
+		 * @returns {Promise} Opa waitFor
 		 */
 		iResetThePersonalization: function (oControl) {
 			return iOpenThePersonalizationDialog.call(this, oControl, {
