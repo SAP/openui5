@@ -184,6 +184,19 @@
 						<td>1.65</td>
 					</tr>
 					<tr>
+						<td>retryAfter</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>
+							Number of seconds before the request is retried if it failed the previous time.<br>
+							Request will be retried only if it failed with status code 429 or 503.<br>
+							If the server response contains "Retry-After" header - it will be used instead of this property.<br>
+							Only number of seconds is supported for both this property and the "Retry-After" header. Other values will be ignored.
+						</td>
+						<td>1.34.0</td>
+						<td>1.92</td>
+					</tr>
+					<tr>
 						<td>withCredentials</td>
 						<td>boolean</td>
 						<td>No</td>

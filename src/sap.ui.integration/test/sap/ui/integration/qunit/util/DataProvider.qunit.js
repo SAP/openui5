@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/RequestDataProvider",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/base/Log"
 ], function (
 	Core,
 	DataProviderFactory,
 	ServiceDataProvider,
 	DataProvider,
 	RequestDataProvider,
-	Card
+	Card,
+	Log
 ) {
 	"use strict";
 
@@ -450,6 +452,140 @@ sap.ui.define([
 
 		// Act
 		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Retry after - with configuration", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			bFirstTry = true;
+
+		assert.expect(2);
+
+		this.oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url",
+				retryAfter: 1
+			}
+		});
+
+		this.oServer.respondWith("GET", "/data/provider/test/url", function (oXhr) {
+			if (bFirstTry) {
+				oXhr.respond(503, {}, "");
+
+				// Assert - first try
+				assert.ok(true, "Request is done once and fails.");
+				bFirstTry = false;
+				return;
+			}
+
+			// Assert - second try
+			assert.ok(true, "Request is retried.");
+			oXhr.respond(200, {}, "");
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Retry after - with header", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			bFirstTry = true;
+
+		assert.expect(2);
+
+		this.oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url"
+			}
+		});
+
+		this.oServer.respondWith("GET", "/data/provider/test/url", function (oXhr) {
+			if (bFirstTry) {
+				oXhr.respond(503, {"Retry-After": 1}, "");
+
+				// Assert - first try
+				assert.ok(true, "Request is done once and fails.");
+				bFirstTry = false;
+				return;
+			}
+
+			// Assert - second try
+			assert.ok(true, "Request is retried.");
+			oXhr.respond(200, {}, "");
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Retry after - no time setting", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oDataProvider = this.oDataProvider,
+			oLogSpy = sinon.spy(Log, "warning"),
+			iCounter = 0;
+
+		assert.expect(2);
+
+		oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url"
+			}
+		});
+
+		this.oServer.respondWith("GET", "/data/provider/test/url", function (oXhr) {
+			iCounter++;
+			oXhr.respond(503, {}, "");
+		});
+
+		oDataProvider.attachError(function () {
+			assert.strictEqual(iCounter, 1, "Request fails without retries.");
+			assert.ok(oLogSpy.calledOnce, "A warning is logged.");
+
+			oLogSpy.restore();
+
+			done();
+		});
+
+		// Act
+		oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Retry after - wrong time setting", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oDataProvider = this.oDataProvider,
+			oLogSpy = sinon.spy(Log, "error"),
+			iCounter = 0;
+
+		assert.expect(2);
+
+		oDataProvider.setSettings({
+			request: {
+				url: "/data/provider/test/url",
+				retryAfter: "2050-01-01"
+			}
+		});
+
+		this.oServer.respondWith("GET", "/data/provider/test/url", function (oXhr) {
+			iCounter++;
+			oXhr.respond(503, {}, "");
+		});
+
+		oDataProvider.attachError(function () {
+			assert.strictEqual(iCounter, 1, "Request fails without retries.");
+			assert.ok(oLogSpy.calledOnce, "An error is logged.");
+
+			oLogSpy.restore();
+
+			done();
+		});
+
+		// Act
+		oDataProvider.triggerDataUpdate();
 	});
 
 	QUnit.module("RequestDataProvider - Resolve Relative Url", {

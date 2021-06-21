@@ -28,7 +28,8 @@
         "1.16.0",
         "1.17.0",
         "1.18.0",
-        "1.19.0"
+        "1.19.0",
+        "1.20.0"
       ]
     },
     "designtime": {
@@ -1726,6 +1727,17 @@
           "description": "Represents HTTP headers",
           "type": "object",
           "additionalProperties": true
+        },
+        "retryAfter": {
+          "description": "Number of seconds before the request is retried if it failed the previous time.",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         },
         "withCredentials": {
           "description": "Indicates whether cross-site requests should be made using credentials",
