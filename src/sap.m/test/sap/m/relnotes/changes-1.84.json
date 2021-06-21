@@ -648,5 +648,47 @@
         ]
       }
     ]
+  },
+  "1.84.14": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "39268d887fc14d46ae9cf6e018d0d3a7d512f0a6",
+        "type": "FIX",
+        "text": " sap.m.Input: sTypedInValue initialy set to empty string",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180207858"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180196886"
+          }
+        ]
+      },
+      {
+        "id": "f6104c359abe3f8b01d4da44c95263040bf96a02",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: QUnit tests 'Copy to clipboard (IE)' fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180159141"
+          }
+        ]
+      },
+      {
+        "id": "2db61486cabab6cac664197e990b6e00c15e3ca7",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: First item padding corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070431246"
+          }
+        ]
+      }
+    ]
   }
 }

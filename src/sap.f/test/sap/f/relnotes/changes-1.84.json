@@ -131,5 +131,21 @@
         ]
       }
     ]
+  },
+  "1.84.14": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "8ed1f83983b586f93effd9bbd62857af48ff7aa2",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Visual misalignments fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170123729"
+          }
+        ]
+      }
+    ]
   }
 }

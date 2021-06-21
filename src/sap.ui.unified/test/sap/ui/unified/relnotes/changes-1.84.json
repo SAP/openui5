@@ -247,5 +247,21 @@
         ]
       }
     ]
+  },
+  "1.84.14": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "fc7fecf208b79ed8b60c9c730bab073f9bbc28b5",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Accessible name for dummy cell provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180167885"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -349,5 +349,43 @@
         ]
       }
     ]
+  },
+  "1.84.14": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "11390dc3d796b0e18c3599b46f9c5828aef89a02",
+        "type": "FIX",
+        "text": " jquery.js: make 'offset' work with SVG child elements in Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170112268"
+          }
+        ]
+      },
+      {
+        "id": "813e03eea94971a68ae7113e483620e2b05925a3",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#_submitRequest: avoid TypeError if request is aborted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080258237"
+          }
+        ]
+      },
+      {
+        "id": "85dfb9b6238d7e6929fc50245d8a0bc5276d5c37",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: decode existing hash before using it to restore the history state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          }
+        ]
+      }
+    ]
   }
 }
