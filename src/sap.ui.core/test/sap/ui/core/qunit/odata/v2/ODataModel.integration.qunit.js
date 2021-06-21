@@ -4522,6 +4522,7 @@ usePreliminaryContext : false}}">\
 	// part of the sales order items are displayed. Some of the items have messages. Filter the
 	// items table by entries having messages.
 	// JIRA: CPOUI5MODELS-106
+	// BCP: 2170093336: ensure that key predicates are decoded before creating message filter
 	QUnit.test("Filter table by items with messages", function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({
 				preliminaryContext : true,
@@ -4540,16 +4541,16 @@ usePreliminaryContext : false}}">\
 			oSalesOrderToItem20NoteWarning = this.createResponseMessage(
 				"ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/Note", undefined, "warning"),
 			oSalesOrderToItem30NoteError = this.createResponseMessage(
-				["ToLineItems(SalesOrderID='1',ItemPosition='30~1~')/Note",
-				 "ToLineItems(SalesOrderID='1',ItemPosition='30~1~')/GrossAmount"]),
+				["ToLineItems(SalesOrderID='1',ItemPosition='30%20~1~')/Note",
+				 "ToLineItems(SalesOrderID='1',ItemPosition='30%20~1~')/GrossAmount"]),
 			oSalesOrderItem10ToProductPriceError
 				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
 					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
 			oSalesOrderItem20NoteWarning = cloneODataMessage(oSalesOrderToItem20NoteWarning,
 				"(SalesOrderID='1',ItemPosition='20~1~')/Note"),
 			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
-				"(SalesOrderID='1',ItemPosition='30~1~')/Note",
-				["(SalesOrderID='1',ItemPosition='30~1~')/GrossAmount"]),
+				"(SalesOrderID='1',ItemPosition='30%20~1~')/Note",
+				["(SalesOrderID='1',ItemPosition='30%20~1~')/GrossAmount"]),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -4645,7 +4646,7 @@ usePreliminaryContext : false}}">\
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 						+ "&$filter=(SalesOrderID eq '1' and ItemPosition eq '40~2~')"
 						+ " or (SalesOrderID eq '1' and ItemPosition eq '10~0~')"
-						+ " or (SalesOrderID eq '1' and ItemPosition eq '30~1~')"
+						+ " or (SalesOrderID eq '1' and ItemPosition eq '30 ~1~')"
 				}, {
 					results : [{
 						__metadata : {
@@ -4656,14 +4657,14 @@ usePreliminaryContext : false}}">\
 						SalesOrderID : "1"
 					}, {
 						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~1~')"
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30%20~1~')"
 						},
 						Note : "Qux",
-						ItemPosition : "30~1~",
+						ItemPosition : "30 ~1~",
 						SalesOrderID : "1"
 					}]
 				})
-				.expectChange("itemPosition", "30~1~", 1)
+				.expectChange("itemPosition", "30 ~1~", 1)
 				.expectChange("note::item", "Qux", 1);
 
 			oItemsBinding.filter(oFilter);
