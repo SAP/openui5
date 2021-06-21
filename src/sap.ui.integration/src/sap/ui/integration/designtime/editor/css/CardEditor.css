@@ -430,29 +430,29 @@
 	vertical-align:top;
 }
 
-.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip {
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip,  .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorFormWithNoPreview  .sapMMsgStrip {
 	margin: -0.3rem 0 0 0.1rem;
 	padding: 0 0.5rem;
-	position: absolute !important;
+	position: absolute;
 	min-height: 1.2rem;
 	opacity: 0;
 	transition: opacity 0.3s;
 	z-index:1;
 }
-.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapMText{
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapMText, .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorFormWithNoPreview .sapMMsgStrip .sapMText {
 	font-size: 0.75rem;
 	vertical-align: middle;
 }
-.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapUiIcon{
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapUiIcon, .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorFormWithNoPreview .sapMMsgStrip .sapUiIcon {
 	font-size: 0.75rem;
 }
-.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapMMsgStripIcon {
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapMMsgStripIcon, .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorFormWithNoPreview .sapMMsgStrip .sapMMsgStripIcon {
 	width: 1.4rem;
 	margin: 0.20rem 0.4rem;
 	vertical-align: top;
 	padding-top: 6px;
 }
-.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage, .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorFormWithNoPreview .sapMMsgStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
     margin-left: 0.85rem;
 }
 
