@@ -14,8 +14,6 @@ sap.ui.define([
 ], function (Log, MobileLibrary, Element, FileUtil, Device, HeaderField, UploadSetItem, UploaderHttpRequestMethod) {
 	"use strict";
 
-	var HttpRequestMethod = UploaderHttpRequestMethod;
-
 	/**
 	 * Constructor for a new Uploader.
 	 *
@@ -51,7 +49,7 @@ sap.ui.define([
 				 * HTTP request method chosen for file upload.
 				 * @since 1.90
 				 */
-				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: HttpRequestMethod.Post}
+				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: UploaderHttpRequestMethod.Post}
 			},
 			events: {
 				/**
