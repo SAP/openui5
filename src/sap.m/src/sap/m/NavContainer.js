@@ -1905,51 +1905,63 @@ sap.ui.define([
 
 	/**
 	 * This event is fired before the NavContainer shows this child control for the first time.
+	 *
+	 * @name sap.m.NavContainerChild#beforeFirstShow
 	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {jQuery.Event} oEvent The event object
 	 * @param {sap.ui.core.Control} oEvent.srcControl the NavContainer firing the event
 	 * @param {object} oEvent.data the data object which has been passed with the "to" navigation, or an empty object
 	 * @param {object} oEvent.backData the data object which has been passed with the back navigation, or an empty object
-	 * @name sap.m.NavContainerChild.prototype.BeforeFirstShow
 	 * @public
 	 */
 
 	/**
 	 * This event is fired every time before the NavContainer shows this child control. In case of animated transitions this
 	 * event is fired before the transition starts.
+	 *
+	 * @name sap.m.NavContainerChild#beforeShow
 	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {jQuery.Event} oEvent The event object
 	 * @param {sap.ui.core.Control} oEvent.srcControl the NavContainer firing the event
 	 * @param {object} oEvent.data the data object which has been passed with the "to" navigation, or an empty object
 	 * @param {object} oEvent.backData the data object which has been passed with the back navigation, or an empty object
-	 * @name sap.m.NavContainerChild.prototype.BeforeShow
 	 * @public
 	 */
 
 	/**
 	 * This event is fired every time when the NavContainer has made this child control visible. In case of animated transitions this
 	 * event is fired after the transition finishes. This control is now being displayed and not animated anymore.
+	 *
+	 * @name sap.m.NavContainerChild#afterShow
 	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {jQuery.Event} oEvent The event object
 	 * @param {sap.ui.core.Control} oEvent.srcControl the NavContainer firing the event
 	 * @param {object} oEvent.data the data object which has been passed with the "to" navigation, or an empty object
 	 * @param {object} oEvent.backData the data object which has been passed with the back navigation, or an empty object
-	 * @name sap.m.NavContainerChild.prototype.AfterShow
 	 * @public
 	 */
 
-	/**
-	 * This event is fired every time before the NavContainer hides this child control. In case of animated transitions this
-	 * event is fired before the transition starts.
-	 * @event
-	 * @param {sap.ui.core.Control} oEvent.srcControl the NavContainer firing the event
-	 * @name sap.m.NavContainerChild.prototype.BeforeHide
-	 * @public
-	 */
 
 	/**
 	 * This event is fired every time when the NavContainer has made this child control invisible. In case of animated transitions this
 	 * event is fired after the transition finishes. This control is now no longer being displayed and not animated anymore.
+	 *
+	 * @name sap.m.NavContainerChild#beforeHide
 	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {jQuery.Event} oEvent The event object
 	 * @param {sap.ui.core.Control} oEvent.srcControl the NavContainer firing the event
-	 * @name sap.m.NavContainerChild.prototype.AfterHide
 	 * @public
 	 */
 
