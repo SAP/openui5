@@ -289,17 +289,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("Right arrow", function (assert) {
+		var oResizeSpy = sinon.spy(this.oResponsiveSplitter.getRootPaneContainer(), "fireResize");
 		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_RIGHT);
 		this.clock.tick(1);
 
+		var mParams = oResizeSpy.args[0][0];
+
 		assert.strictEqual(this.$FirstPane.width(), this.iFirstPaneInitialWidth + 20, "Splitter's width should be 20 pixels bigger");
+		assert.ok(oResizeSpy.called, "resize event is fired");
+		assert.strictEqual(Math.round(mParams.oldSizes[0]), Math.round(mParams.newSizes[0] - 20), "parameters are correct");
 	});
 
 	QUnit.test("Left arrow", function (assert) {
+		var oResizeSpy = sinon.spy(this.oResponsiveSplitter.getRootPaneContainer(), "fireResize");
 		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_LEFT);
 		this.clock.tick(1);
 
+		var mParams = oResizeSpy.args[0][0];
+
 		assert.strictEqual(this.$FirstPane.width(), this.iFirstPaneInitialWidth - 20, "Splitter's width should be 20 pixels less");
+		assert.ok(oResizeSpy.called, "resize event is fired");
+		assert.strictEqual(Math.round(mParams.oldSizes[0]), Math.round(mParams.newSizes[0] + 20), "parameters are correct");
 	});
 
 	QUnit.test("Shift + Left arrow", function (assert) {

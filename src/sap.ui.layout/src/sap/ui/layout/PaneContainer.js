@@ -43,19 +43,48 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 			 * The panes to be split. The control will show n-1 splitter bars between n controls in this aggregation.
 			 */
 			panes: { type: "sap.ui.core.Element", multiple: true, singularName: "pane" }
+		},
+		events: {
+			/**
+			 * Fired when contents are resized.
+			 */
+			resize : {
+				parameters : {
+
+					/**
+					 * An array of values representing the old (pixel)sizes of the split panes,
+					 * which are inside the pane container.
+					 */
+					oldSizes : {type : "float[]"},
+
+					/**
+					 * An array of values representing the new (pixel)sizes of the split panes,
+					 * which are inside the pane container.
+					 */
+					newSizes : {type : "float[]"}
+				}
+			}
 		}
 	}});
 
 	PaneContainer.prototype.init = function () {
 		this._oSplitter = new AssociativeSplitter({
 			orientation: this.getOrientation(),
-			height: "100%"
+			height: "100%",
+			resize: this._onSplitterResize.bind(this)
 		});
 	};
 
 	PaneContainer.prototype.exit = function () {
 		this._oSplitter.destroy();
 		this._oSplitter = null;
+	};
+
+	PaneContainer.prototype._onSplitterResize = function (oEvent) {
+		this.fireResize({
+			oldSizes: oEvent.getParameter("oldSizes"),
+			newSizes: oEvent.getParameter("newSizes")
+		});
 	};
 
 	/**
@@ -85,6 +114,15 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	PaneContainer.prototype.setLayoutData = function(oLayoutData) {
 		this._oSplitter.setLayoutData(oLayoutData);
 		return this;
+	};
+
+	/**
+	 * Getter for property layoutData.
+	 * @public
+	 * @returns {sap.ui.core.LayoutData} The LayoutData object.
+	 */
+	PaneContainer.prototype.getLayoutData = function() {
+		return this._oSplitter.getLayoutData();
 	};
 
 	/**
