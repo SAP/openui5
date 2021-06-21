@@ -1042,7 +1042,8 @@
 			"sap.m.sample.PlanningCalendarModifyAppointments",
 			"sap.m.sample.PlanningCalendarWithLegend",
 			"sap.m.sample.PlanningCalendarDnD",
-			"sap.m.sample.PlanningCalendarWithStickyHeader"]
+			"sap.m.sample.PlanningCalendarWithStickyHeader",
+			"sap.m.sample.PlanningCalendarRelativeViews"]
 		},
 		{
 			"id": "sap.m.SinglePlanningCalendar",
@@ -3493,6 +3494,11 @@
 		  "name": "Planning Calendar - with header that remains visible (fixed on top) on scroll",
 		  "description": "PlanningCalendar with header area that remains visible (fixed on top) when the rest of the content is scrolled out of view."
 		},
+		{
+			"id": "sap.m.sample.PlanningCalendarRelativeViews",
+			"name": "Planning Calendar - with relative views",
+			"description": "PlanningCalendar with relative views. The relative periods are not directly related to dates, but periods with pre-defined duration."
+		  },
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendar",
 		  "name": "Single Planning Calendar",

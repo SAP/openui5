@@ -56,6 +56,31 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 			intervalType : {type : "sap.ui.unified.CalendarIntervalType", group : "Appearance", defaultValue : CalendarIntervalType.Hour},
 
 			/**
+			 *  An integer that defines the period size.
+			 *
+			 * @experimental Since 1.93. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 		 * @since 1.93
+			 * */
+			intervalSize: {type: "int", group: "Appearance", defaultValue: 1},
+
+			/**
+			 * A function that formats the interval.
+			 *
+			 * @experimental Since 1.93. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 		 * @since 1.93
+			 *
+			 */
+			intervalLabelFormatter: {type: "object", group: "Appearance"},
+
+			/**
+			 *  Defines if the view will be relative.
+			 *  NOTE: Relative views, can be only used with intervalType - Day and when used they need intervalSize and intervalLabelFormatter defined.
+			 * @experimental Since 1.93. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 		 * @since 1.93
+			 */
+			relative: {type: "boolean", group: "Appearance", defaultValue: false},
+
+			/**
 			 * Defines the description of the <code>PlanningCalendarView</code>.
 			 */
 			description : {type : "string", group : "Data"},
@@ -96,7 +121,6 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 
 		}
 	}});
-
 	return PlanningCalendarView;
 
 });

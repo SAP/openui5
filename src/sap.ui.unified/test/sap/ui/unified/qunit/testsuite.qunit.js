@@ -313,6 +313,19 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/calendar/YearPicker"]
 				}
 			},
+			"IndexPicker": {
+				group: "Calendar",
+				ui5: {
+					noConflict: true,
+					theme: "sap_belize"
+				},
+				qunit: {
+					reorder: false
+				},
+				coverage: {
+					only: ["sap/ui/unified/calendar/IndexPicker"]
+				}
+			},
 			"ExploredSamples": {
 				loader: {
 					map: {

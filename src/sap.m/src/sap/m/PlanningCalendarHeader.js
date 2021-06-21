@@ -23,6 +23,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CustomMonthPicker',
 	'sap/ui/unified/calendar/CustomYearPicker',
+	'sap/ui/unified/calendar/IndexPicker',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
@@ -44,6 +45,7 @@ function(
 	CalendarDate,
 	CustomMonthPicker,
 	CustomYearPicker,
+	IndexPicker,
 	DateFormat,
 	IconPool,
 	InvisibleText,
@@ -170,7 +172,15 @@ function(
 			 *
 			 * @private
 			 */
-			_yearPicker : { type : "sap.ui.unified.internal.CustomYearPicker", multiple : false, visibility : "hidden" }
+			_yearPicker : { type : "sap.ui.unified.internal.CustomYearPicker", multiple : false, visibility : "hidden" },
+
+			/**
+			 * Hidden, for internal use only.
+			 * The popup which contains the index picker for navigation.
+			 *
+			 * @private
+			 */
+			_indexPicker : { type : "sap.ui.unified.calendar.IndexPicker", multiple : false, visibility : "hidden" }
 
 		},
 
@@ -306,16 +316,23 @@ function(
 		this.setAggregation("_yearPicker", oYearPicker);
 		this._oYearPicker = oYearPicker;
 
+		var oIndexPicker = new IndexPicker(sOPHId + "-IndexPicker");
+		oIndexPicker.attachEvent("select", this._handleIndexPickerSelect, this);
+		this.setAggregation("_indexPicker", oIndexPicker);
+		this._oIndexPicker = oIndexPicker;
+
 		this._oPickerBtn = new Button(sNavToolbarId + "-PickerBtn", {
 			text: this.getPickerText(),
-			ariaHasPopup: coreLibrary.aria.HasPopup.Grid,
+			ariaHasPopup: coreLibrary.aria.HasPopup.Dialog,
 			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_SELECT_RANGE"),
 			press: function () {
 				if (this.fireEvent("_pickerButtonPress", {}, true)) {
 					var oDate = this.getStartDate() || new Date(),
 						sCurrentPickerId = this.getAssociation("currentPicker");
 					oPicker = Element.registry.get(sCurrentPickerId);
-					oPicker.displayDate(oDate);
+					if (oPicker.displayDate) {
+						oPicker.displayDate(oDate);
+					}
 					this._openCalendarPickerPopup(oPicker);
 				}
 			}.bind(this)
@@ -526,6 +543,18 @@ function(
 		//oPickerBtnDomRef && oPickerBtnDomRef.focus();
 	};
 
+	PlanningCalendarHeader.prototype._handleIndexPickerSelect = function (oEvent) {
+		var iSelectedIndex = this._oIndexPicker.getSelectedIndex();
+		var oSelectedDate = new Date(this._oCalendar.getMinDate());
+		var oRelativeInfo = this._getRelativeInfo();
+
+		oSelectedDate.setDate(oSelectedDate.getDate() + iSelectedIndex * oRelativeInfo.iIntervalSize);
+
+		this.setStartDate(oSelectedDate);
+		this._closeCalendarPickerPopup();
+		this.fireDateSelect();
+	};
+
 	/**
 	 * Handler for the change event of the view switch.
 	 * @private
@@ -554,6 +583,8 @@ function(
 				this.setAggregation("_yearPicker", this._oPopup.removeAllContent()[0]);
 			} else if (oContent.isA("sap.ui.unified.internal.CustomMonthPicker")) {
 				this.setAggregation("_monthPicker", this._oPopup.removeAllContent()[0]);
+			} else if (oContent.isA("sap.ui.unified.calendar.IndexPicker")) {
+				this.setAggregation("_indexPicker", this._oPopup.removeAllContent()[0]);
 			} else if (oPicker !== oContent) {
 				this.setAggregation("_calendarPicker", this._oPopup.removeAllContent()[0]);
 			}
@@ -569,8 +600,8 @@ function(
 			var iOffsetY = this._oPickerBtn.$().height();
 
 			this._oPopup.setOffsetY(this._oPopup._getCalculatedPlacement() === "Top" ? iOffsetY : -iOffsetY);
+			this._oPopup.getContent()[0].focus();
 		}, this);
-
 		this._oPopup.openBy(this._oPickerBtn.getDomRef());
 	};
 

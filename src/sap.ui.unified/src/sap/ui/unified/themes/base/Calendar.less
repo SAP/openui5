@@ -572,6 +572,15 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	line-height: 2rem;
 }
 
+.sapUiCalNoNameLine .sapUiCalItem.sapUiRelativeCalItem > .sapUiCalItemText {
+	line-height: 3rem;
+	padding-top: 0;
+}
+
+.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem.sapUiRelativeCalItem > .sapUiCalItemText {
+    padding-left: 25%;
+}
+
 .sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
 	line-height: 1.85rem;
 }
@@ -611,6 +620,10 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	color: @sapUiContentContrastTextColor;
 }
 
+.sapPCRelative .sapUiCalRowWeekNumbers {
+	margin-top: 0;
+}
+
 .sapUiCalRowWeekNumbers {
 	clear: left;
 	font-size: 0.875rem;
@@ -630,6 +643,10 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	overflow: hidden;
 	user-select: none;
 	cursor: default;
+}
+
+.sapPCRelative .sapUiCalRowWeekNumber {
+	border-bottom-width: 0;
 }
 
 .sapUiCalHeadSecondMonth {

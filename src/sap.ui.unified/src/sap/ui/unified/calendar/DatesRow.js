@@ -217,10 +217,20 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Handler used for controling the behaviour when border is reached.
+	 *
+	 * The method this._getRelativeInfo provides information from the PlanningCalendar about the relative views.
+	 *
+	 * @private
+	 * @param {int} oControlEvent The control event.
+	 * @returns {this} <code>this</code> to allow method chaining
+	 */
 	DatesRow.prototype._handleBorderReached = function(oControlEvent){
 
 		var oEvent = oControlEvent.getParameter("event");
-		var iDays = this.getDays();
+		var iDays = this._getRelativeInfo ? this.getDays() * this._getRelativeInfo().iIntervalSize : this.getDays();
+		var iStep = this._getRelativeInfo ? this._getRelativeInfo().iIntervalSize : 1;
 		var oOldDate = this._getDate();
 		var oFocusedDate = new CalendarDate(oOldDate, this.getPrimaryCalendarType());
 
@@ -229,13 +239,13 @@ sap.ui.define([
 			case "sapnext":
 			case "sapnextmodifiers":
 				//go to next day
-				oFocusedDate.setDate(oFocusedDate.getDate() + 1);
+				oFocusedDate.setDate(oFocusedDate.getDate() + iStep);
 				break;
 
 			case "sapprevious":
 			case "sappreviousmodifiers":
 				//go to previous day
-				oFocusedDate.setDate(oFocusedDate.getDate() - 1);
+				oFocusedDate.setDate(oFocusedDate.getDate() - iStep);
 				break;
 
 			case "sappagedown":
@@ -275,7 +285,13 @@ sap.ui.define([
 		var oStartDate = this._getStartDate();
 
 		var oEndDate = new CalendarDate(oStartDate, this.getPrimaryCalendarType());
-		oEndDate.setDate(oEndDate.getDate() + this.getDays());
+		var iAdditionalDays = this.getDays();
+
+		if (this._getRelativeInfo && this._getRelativeInfo().bIsRelative) {
+			iAdditionalDays = this.getDays() * this._getRelativeInfo().iIntervalSize;
+		}
+
+		oEndDate.setDate(oEndDate.getDate() + iAdditionalDays);
 		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
 
 		return oCalDate.isSameOrAfter(oStartDate) && oCalDate.isBefore(oEndDate);

@@ -62,6 +62,7 @@ module.exports = [
 	"PlanningCalendarStickyHeader.spec.js",
 	"PlanningCalendarAppointmentSize.spec.js",
 	"PlanningCalendarWithLegend.spec.js",
+	"PlanningCalendarRelativeView.spec.js",
 	"Popover.spec.js",
 	"ProgressIndicator.spec.js",
 	"PullToRefresh.spec.js",
