@@ -289,7 +289,8 @@ sap.ui.define([
 		var oDocument;
 
 		oDocument = XMLHelper.parse(
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table"'
+			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:plugins="sap.m.plugins"'
+			+ ' xmlns:t="sap.ui.table"'
 			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">'
 			+ sViewXML
 			+ '</mvc:View>',
@@ -356,6 +357,8 @@ sap.ui.define([
 					case "columns" :
 						bHasColumns = true;
 						break;
+					case "dependents":
+						break; // leave alone
 					case "items" :
 						throw new Error("Do not use <items> in sap.m.Table");
 					case "ColumnListItem" :
@@ -4422,6 +4425,7 @@ sap.ui.define([
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
+	<dependents><plugins:DataStateIndicator/></dependents>\
 	<Input id="name" value="{Name}"/>\
 </Table>',
 			that = this;
@@ -4459,6 +4463,11 @@ sap.ui.define([
 
 			return that.checkValueState(assert, oTable.getItems()[0].getCells()[0], "Warning",
 				"Text");
+		}).then(function () { // it takes some time until the sap.m.MessageStrip is there
+			return resolveLater(function () {
+				assert.strictEqual(oTable.getAggregation("_messageStrip").getType(), "Warning",
+					"JIRA: CPOUI5ODATAV4-460");
+			});
 		}).then(function () {
 			that.expectRequest("EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
 					+ "&$skip=0&$top=100", {
@@ -4472,12 +4481,20 @@ sap.ui.define([
 				})
 				.expectChange("name", ["Frederic Fall", "Peter Burke"])
 				.expectMessages([]);
+			that.oLogMock.expects("warning").atMost(1) //TODO remove this!
+				// @see sap.m.MessageStrip#setType < sap.m.plugins.DataStateIndicator#showMessage
+				// < sap.m.plugins.DataStateIndicator#_processDataState:312
+				.withExactArgs("Value 'sap.ui.core.MessageType.None' for property 'type' is not"
+					+ " supported.Defaulting to 'sap.ui.core.MessageType.Information'");
 
 			// code under test
 			oTable.getBinding("items").refresh();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			assert.strictEqual(oTable.getAggregation("_messageStrip").getVisible(), false,
+				"JIRA: CPOUI5ODATAV4-460");
+
 			return that.checkValueState(assert, oTable.getItems()[0].getCells()[0], "None", "");
 		});
 	});
