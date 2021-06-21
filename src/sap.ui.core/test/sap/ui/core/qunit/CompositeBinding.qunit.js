@@ -1034,4 +1034,24 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oCompositeBinding.getResolvedPath(), undefined);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy", function (assert) {
+		var oCompositeDestroyCall, oPart0DestroyCall, oPart1DestroyCall,
+			oModel = {},
+			oPart0 = new PropertyBinding(oModel, ""),
+			oPart1 = new PropertyBinding(oModel, ""),
+			oCompositeBinding = new CompositeBinding([oPart0, oPart1]);
+
+		oPart0DestroyCall = this.mock(oPart0).expects("destroy").withExactArgs();
+		oPart1DestroyCall = this.mock(oPart1).expects("destroy").withExactArgs();
+		oCompositeDestroyCall = this.mock(PropertyBinding.prototype).expects("destroy")
+			.withExactArgs().on(oCompositeBinding);
+
+		// code under test
+		oCompositeBinding.destroy();
+
+		assert.ok(oCompositeDestroyCall.calledAfter(oPart0DestroyCall));
+		assert.ok(oCompositeDestroyCall.calledAfter(oPart1DestroyCall));
+	});
 });
