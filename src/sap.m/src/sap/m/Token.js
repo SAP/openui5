@@ -11,7 +11,6 @@ sap.ui.define([
 	'./TokenRenderer',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/events/KeyCodes',
-	'sap/ui/core/theming/Parameters',
 	'sap/ui/core/Core'
 ],
 	function(
@@ -22,7 +21,6 @@ sap.ui.define([
 		TokenRenderer,
 		InvisibleText,
 		KeyCodes,
-		Parameters,
 		Core
 	) {
 	"use strict";
