@@ -7,11 +7,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_AggregationCache",
 	"sap/ui/model/odata/v4/lib/_AggregationHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/lib/_GrandTotalHelper",
+	"sap/ui/model/odata/v4/lib/_ConcatHelper",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_MinMaxHelper"
-], function (Log, SyncPromise, _AggregationCache, _AggregationHelper, _Cache, _GrandTotalHelper,
+], function (Log, SyncPromise, _AggregationCache, _AggregationHelper, _Cache, _ConcatHelper,
 		_GroupLock, _Helper, _MinMaxHelper) {
 	/*eslint no-sparse-arrays: 0 */
 	"use strict";
@@ -279,17 +279,20 @@ sap.ui.define([
 		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
 			.withExactArgs(null, bHasGrandTotal || bCountLeaves).returns(oFirstLevelCache);
 		if (bHasGrandTotal) {
-			oEnhanceCacheWithGrandTotalExpectation = this.mock(_GrandTotalHelper)
-				.expects("enhanceCacheWithGrandTotal")
-				.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
-					sinon.match.func, bCountLeaves ? sinon.match.func : null);
+			oEnhanceCacheWithGrandTotalExpectation = this.mock(_ConcatHelper)
+				.expects("enhanceCache")
+				.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation), [
+					bCountLeaves ? /*fnLeaves*/sinon.match.func : null,
+					/*fnGrandTotal*/sinon.match.func,
+					/*fnCount*/sinon.match.func
+				]);
 		} else if (bCountLeaves) {
-			oEnhanceCacheWithGrandTotalExpectation = this.mock(_GrandTotalHelper)
-				.expects("enhanceCacheWithGrandTotal")
+			oEnhanceCacheWithGrandTotalExpectation = this.mock(_ConcatHelper)
+				.expects("enhanceCache")
 				.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
-					null, sinon.match.func);
+					[/*fnLeaves*/sinon.match.func, /*fnCount*/sinon.match.func]);
 		} else {
-			this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal").never();
+			this.mock(_ConcatHelper).expects("enhanceCache").never();
 		}
 
 		// code under test
@@ -323,7 +326,7 @@ sap.ui.define([
 			assert.strictEqual(oCache.oLeavesPromise.isPending(), true);
 
 			// code under test (fnLeaves)
-			oEnhanceCacheWithGrandTotalExpectation.args[0][3]({"UI5__leaves" : "42"});
+			oEnhanceCacheWithGrandTotalExpectation.args[0][2][0]({"UI5__leaves" : "42"});
 
 			assert.strictEqual(oCache.oLeavesPromise.isFulfilled(), true);
 			assert.strictEqual(oCache.oLeavesPromise.getResult(), 42);
@@ -334,6 +337,10 @@ sap.ui.define([
 			assert.notOk("$$leaves" in oCache.mQueryOptions);
 			assert.ok("oLeavesPromise" in oCache, "be nice to V8");
 			assert.strictEqual(oCache.oLeavesPromise, undefined);
+		}
+		if (bHasGrandTotal || bCountLeaves) {
+			// code under test (fnCount) - nothing should happen :-)
+			oEnhanceCacheWithGrandTotalExpectation.args[0][2][bHasGrandTotal ? 2 : 1]({});
 		}
 		if (!bHasGrandTotal) {
 			assert.strictEqual(oCache.oGrandTotalPromise, undefined);
@@ -380,7 +387,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGrandTotal), "predicate", "()");
 
 		// code under test (fnGrandTotal)
-		oEnhanceCacheWithGrandTotalExpectation.args[0][2](oGrandTotal);
+		oEnhanceCacheWithGrandTotalExpectation.args[0][2][1](oGrandTotal);
 
 		assert.strictEqual(oCache.oGrandTotalPromise.isFulfilled(), true);
 		assert.strictEqual(oCache.oGrandTotalPromise.getResult(), oGrandTotal);
@@ -527,7 +534,7 @@ sap.ui.define([
 						return !("$count" in o) && o === mQueryOptions && isOK(o);
 					}), iLevel)
 				.returns(mCacheQueryOptions);
-			this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal").never();
+			this.mock(_ConcatHelper).expects("enhanceCache").never();
 		}
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(oAggregationCache.oRequestor), "Foo",
