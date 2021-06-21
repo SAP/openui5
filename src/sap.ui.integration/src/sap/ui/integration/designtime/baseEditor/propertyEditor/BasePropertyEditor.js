@@ -315,6 +315,12 @@ sap.ui.define([
 		var oConfig = this.getConfig() || {};
 		var vNextValue = vValue;
 
+		// If the editor is not visible, don't allow setting new values
+		// to avoid unwanted updates and side effects like validation failures
+		if (oConfig.visible === false) {
+			return;
+		}
+
 		if (typeof vNextValue === "undefined" && typeof oConfig.defaultValue !== "undefined") {
 			vNextValue = deepClone(oConfig.defaultValue);
 		}

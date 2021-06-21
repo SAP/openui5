@@ -272,6 +272,10 @@ sap.ui.define([
 					this._initPropertyEditor();
 				} else {
 					oNestedEditor.setConfig(oConfig);
+					if (oConfig.visible !== false && oPreviousConfig.visible === false) {
+						// If editor just got activated, make sure the value is up-to-date
+						oNestedEditor.setValue(this.getValue());
+					}
 				}
 			});
 
