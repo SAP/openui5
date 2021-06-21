@@ -3,9 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess"
+	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
+	"sap/ui/fl/write/_internal/fieldExtensibility/cap/CAPAccess",
+	"sap/base/util/UriParameters"
 ], function(
-	ABAPAccess
+	ABAPAccess,
+	CAPAccess,
+	UriParameters
 ) {
 	"use strict";
 
@@ -25,15 +29,21 @@ sap.ui.define([
 	// we can add parameters here, but the assumption is that this is not dependent on a single control
 	function getImplementationForCurrentScenario() {
 		if (!_oCurrentScenario) {
-			// currently there is only one case, but here would be the differentiation between the scenarios (CAP, ABAP, ...)
-			_oCurrentScenario = ABAPAccess;
+			var oUriParams = UriParameters.fromQuery(window.location.search);
+			if (oUriParams.get("sap-ui-fl-xx-capScenario") === "true") {
+				_oCurrentScenario = CAPAccess;
+			} else {
+				_oCurrentScenario = ABAPAccess;
+			}
 		}
 		return _oCurrentScenario;
 	}
 
-	function callFunctionInImplementation(sFunctionName, vArgs) {
+	function callFunctionInImplementation() {
+		var aArgs = Array.from(arguments);
+		var sFunctionName = aArgs.shift();
 		var oImplementation = getImplementationForCurrentScenario();
-		return Promise.resolve(oImplementation[sFunctionName](vArgs));
+		return Promise.resolve(oImplementation[sFunctionName].apply(null, aArgs));
 	}
 
 	/**
@@ -100,8 +110,13 @@ sap.ui.define([
 	 *
 	 * @param {object} oExtensibilityInfo - Information about the extension data. Should be the return value of <code>FieldExtensibility.getExtensionData</code>
 	 */
-	FieldExtensibility.onTriggerCreateExtensionData = function(oExtensibilityInfo) {
-		return callFunctionInImplementation("onTriggerCreateExtensionData", oExtensibilityInfo);
+	FieldExtensibility.onTriggerCreateExtensionData = function(oExtensibilityInfo, sRtaStyleClassName) {
+		return callFunctionInImplementation("onTriggerCreateExtensionData", oExtensibilityInfo, sRtaStyleClassName);
+	};
+
+	// Resets the current scenario for testing purposes
+	FieldExtensibility._resetCurrentScenario = function() {
+		_oCurrentScenario = null;
 	};
 
 	return FieldExtensibility;

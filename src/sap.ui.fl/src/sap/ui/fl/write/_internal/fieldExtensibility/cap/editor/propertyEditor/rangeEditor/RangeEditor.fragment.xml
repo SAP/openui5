@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:baseEditor="sap.ui.integration.designtime.baseEditor"
+>
+	<HBox>
+		<baseEditor:PropertyEditor
+			init="wrapperInit"
+			config="{contentModel>/0/config}"
+			value="{contentModel>/0/value}"
+			renderLabel="false"
+			valueChange="_onChange"
+		/>
+		<baseEditor:PropertyEditor
+			init="wrapperInit"
+			config="{contentModel>/1/config}"
+			value="{contentModel>/1/value}"
+			renderLabel="false"
+			valueChange="_onChange"
+		/>
+	</HBox>
+</core:FragmentDefinition>

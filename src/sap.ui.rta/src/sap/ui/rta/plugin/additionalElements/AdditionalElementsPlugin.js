@@ -802,7 +802,8 @@ sap.ui.define([
 		 *
 		 */
 		_onOpenCustomField: function (oEvent, bOverlayIsSibling) {
-			return FieldExtensibility.onTriggerCreateExtensionData(this.getExtensibilityInfo(bOverlayIsSibling));
+			var sRtaStyleClassName = Utils.getRtaStyleClassName();
+			return FieldExtensibility.onTriggerCreateExtensionData(this.getExtensibilityInfo(bOverlayIsSibling), sRtaStyleClassName);
 		},
 
 		_createCommands: function(mParents, oSiblingElement, mActions, iIndex) {
