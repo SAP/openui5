@@ -25,10 +25,11 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/model/TreeBinding",
-	"sap/ui/model/odata/CountMode"
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/model/odata/ODataUtils"
 ], function(AnalyticalVersionInfo, BatchResponseCollector, odata4analytics, Log, deepExtend, each,
 		extend, isEmptyObject, uid, ChangeReason, Filter, FilterOperator, FilterProcessor,
-		FilterType, Sorter, TreeAutoExpandMode, TreeBinding, CountMode) {
+		FilterType, Sorter, TreeAutoExpandMode, TreeBinding, CountMode, ODataUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.analytics.AnalyticalBinding",
@@ -3480,40 +3481,18 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype._calculateRequiredGroupSection = function (sGroupId, iStartIndex,
 			iLength, iThreshold) {
-		var fnGetKey = this._getKeys(sGroupId);
+		var aElements = this.mKeyIndex[sGroupId] || [],
+			iLimit = this.mFinalLength[sGroupId] && this.mLength[sGroupId],
+			aIntervals = ODataUtils._getReadIntervals(aElements, iStartIndex, iLength, iThreshold,
+				iLimit);
 
-		// prefetch before start
-		if (iStartIndex >= iThreshold) {
-			iStartIndex -= iThreshold;
-			iLength += iThreshold;
-		} else {
-			iLength += iStartIndex;
-			iStartIndex = 0;
+		if (aIntervals.length) {
+			return {
+				startIndex : aIntervals[0].start,
+				length : aIntervals[aIntervals.length - 1].end - aIntervals[0].start
+			};
 		}
-
-		// prefetch after end
-		iLength += iThreshold;
-		if (this.mFinalLength[sGroupId] && iStartIndex + iLength > this.mLength[sGroupId]) {
-			iLength = this.mLength[sGroupId] - iStartIndex;
-		}
-
-		if (fnGetKey) {
-			// search start of first gap
-			while (iLength && fnGetKey(iStartIndex)) {
-				iStartIndex += 1;
-				iLength -= 1;
-			}
-
-			// search end of last gap
-			while (iLength && fnGetKey(iStartIndex + iLength - 1)) {
-				iLength -= 1;
-			}
-		}
-
-		return {
-			startIndex : iStartIndex,
-			length : iLength
-		};
+		return {startIndex : 0, length : iLength > 0 ? 0 : iLength};
 	};
 
 	/**

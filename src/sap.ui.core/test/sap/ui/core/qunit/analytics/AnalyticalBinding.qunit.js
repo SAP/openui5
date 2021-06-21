@@ -14,10 +14,11 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Sorter",
+	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	// following resources add responses to the fake server
 	"sap/ui/core/qunit/analytics/CONTRACTPERFResults_Batch_MeasureWithTextAnnotation",
@@ -29,8 +30,8 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
 ], function (Log, deepExtend, extend, odata4analytics, AnalyticalBinding,
 		AnalyticalTreeBindingAdapter, ODataModelAdapter, ChangeReason, Filter, FilterOperator,
-		FilterProcessor, Sorter, CountMode, ODataModelV1, ODataModelV2, TreeAutoExpandMode,
-		o4aFakeService) {
+		FilterProcessor, Sorter, TreeAutoExpandMode, CountMode, ODataModelV1, ODataUtils,
+		ODataModelV2, o4aFakeService) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -3012,13 +3013,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_calculateRequiredGroupSection: no data", function (assert) {
-		var that = this;
-
+	QUnit.test("_calculateRequiredGroupSection: no data (integrative)", function (assert) {
 		return setupAnalyticalBinding().then(function (oBinding) {
-
-			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
-				.returns();
+			oBinding.mKeyIndex = {"/" : []};
 
 			// code under test
 			assert.deepEqual(
@@ -3038,15 +3035,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_calculateRequiredGroupSection: gap ]118, 148[", function (assert) {
-		var that = this;
-
+	QUnit.test("_calculateRequiredGroupSection: gap ]118, 148[ (integrative)", function (assert) {
 		return setupAnalyticalBinding().then(function (oBinding) {
-
-			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
-				.returns(function (iIndex) {
-					return iIndex <= 118 || iIndex >= 148 && iIndex < 264;
-				});
+			oBinding.mKeyIndex = {"/" : []};
+			for (var i = 0; i < 264; i += 1) {
+				if (i <= 118 || i >= 148 && i < 264) {
+					oBinding.mKeyIndex["/"][i] = i;
+				}
+			}
 			oBinding.mFinalLength["/"] = true;
 			oBinding.mLength["/"] = 264;
 
@@ -3093,15 +3089,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_calculateRequiredGroupSection: gap ]118, 264[", function (assert) {
-		var that = this;
-
+	QUnit.test("_calculateRequiredGroupSection: gap ]118, 264[ (integrative)", function (assert) {
 		return setupAnalyticalBinding().then(function (oBinding) {
-
-			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
-				.returns(function (iIndex) {
-					return iIndex <= 118;
-				});
+			oBinding.mKeyIndex = {"/" : []};
+			for (var i = 0; i < 264; i += 1) {
+				if (i <= 118) {
+					oBinding.mKeyIndex["/"][i] = i;
+				}
+			}
 			oBinding.mFinalLength["/"] = true;
 			oBinding.mLength["/"] = 264;
 
@@ -3113,15 +3108,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_calculateRequiredGroupSection: gaps [30, 40] and [60, 70]", function (assert) {
-		var that = this;
-
+	QUnit.test("_calculateRequiredGroupSection: gaps [30, 40] and [60, 70] (integrative)",
+			function (assert) {
 		return setupAnalyticalBinding().then(function (oBinding) {
-
-			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
-				.returns(function (iIndex) {
-					return iIndex < 30 || iIndex > 40 && iIndex < 60 || iIndex > 70 && iIndex < 100;
-				});
+			oBinding.mKeyIndex = {"/" : []};
+			for (var i = 0; i < 100; i += 1) {
+				if (i < 30 || i > 40 && i < 60 || i > 70 && i < 100) {
+					oBinding.mKeyIndex["/"][i] = i;
+				}
+			}
 			oBinding.mFinalLength["/"] = true;
 			oBinding.mLength["/"] = 100;
 
@@ -3141,6 +3136,85 @@ sap.ui.define([
 				{startIndex : 34 - 3, length : 3 + 2 + 3});
 		});
 	});
+
+	//*********************************************************************************************
+["~aElements", undefined].forEach(function (aElements, i) {
+	[true, undefined].forEach(function (vFinalLength, j) {
+	QUnit.test("_calculateRequiredGroupSection: use ODataUtils._getReadIntervals " + i + ", " + j,
+			function (assert) {
+		var oBinding = {
+				mFinalLength : {"/" : vFinalLength},
+				mKeyIndex : {"/" : aElements},
+				mLength : {"/" : 100}
+			};
+
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(aElements ? "~aElements" : [], 20, 70, 0, vFinalLength ? 100 : undefined)
+			.returns([{start : 30, end : 71}]);
+
+		// code under test
+		assert.deepEqual(
+			AnalyticalBinding.prototype._calculateRequiredGroupSection.call(oBinding,
+				"/", 20, 70, 0),
+			{startIndex : 30, length : 71 - 30});
+	});
+	});
+});
+
+	//*********************************************************************************************
+[
+	[{start : 30, end : 71}],
+	[{start : 30, end : 41}, {start : 51, end : 71}],
+	[{start : 30, end : 41}, {start : 51, end : 61}, {start : 65, end : 71}]
+].forEach(function (aIntervals, i) {
+	var sTitle = "_calculateRequiredGroupSection: use ODataUtils._getReadIntervals, multiple "
+			+ "intervals #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				mFinalLength : {"/" : true},
+				mKeyIndex : {"/" : "~aElements"},
+				mLength : {"/" : 100}
+			};
+
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs("~aElements", 20, 70, 0, 100)
+			.returns(aIntervals);
+
+		// code under test
+		assert.deepEqual(
+			AnalyticalBinding.prototype._calculateRequiredGroupSection.call(oBinding,
+				"/", 20, 70, 0),
+			{startIndex : 30, length : 71 - 30});
+	});
+});
+
+	//*********************************************************************************************
+[
+	{length : 70, expected : 0},
+	{length : -1, expected : -1}
+].forEach(function (oFixture, i) {
+	var sTitle = "_calculateRequiredGroupSection: use ODataUtils._getReadIntervals, no intervals #"
+			+ i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				mFinalLength : {"/" : true},
+				mKeyIndex : {"/" : "~aElements"},
+				mLength : {"/" : 100}
+			};
+
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs("~aElements", 20, oFixture.length, 0, 100)
+			.returns([]);
+
+		// code under test
+		assert.deepEqual(
+			AnalyticalBinding.prototype._calculateRequiredGroupSection.call(oBinding,
+				"/", 20, oFixture.length, 0),
+			{startIndex : 0, length : oFixture.expected});
+	});
+});
 
 	//*********************************************************************************************
 	// BCP: 1980533509
