@@ -38,6 +38,10 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	GroupContainer.prototype.setMessageStrip = function (oStrip) {
+		this.oLayout.getCurrentViewContent().setMessageStrip(oStrip);
+	};
+
 	GroupContainer.prototype.insertFilterField = function(oControl, iIndex) {
 		this.mFilterItems[oControl._getFieldPath()] = oControl;
 	};

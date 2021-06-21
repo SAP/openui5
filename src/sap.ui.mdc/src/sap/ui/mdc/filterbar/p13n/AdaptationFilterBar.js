@@ -50,6 +50,10 @@ sap.ui.define([
 		this._bPersistValues = true;
 	};
 
+	AdaptationFilterBar.prototype.setMessageStrip = function(oStrip) {
+		this._oFilterBarLayout.setMessageStrip(oStrip);
+	};
+
 	AdaptationFilterBar.prototype.setLiveMode = function(bLive, bSuppressInvalidate) {
 		FilterBarBase.prototype.setLiveMode.apply(this, arguments);
 
