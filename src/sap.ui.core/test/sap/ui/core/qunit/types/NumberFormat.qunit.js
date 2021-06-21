@@ -1464,12 +1464,19 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Unit format with unknown locale", function (assert) {
-		var oLocale = new Locale("unknown");
-		var oFormat = NumberFormat.getUnitInstance(oLocale);
+		["unknown", "en"].forEach(function (sLocale) {
+			var oLocale = new Locale(sLocale);
+			var oFormat = NumberFormat.getUnitInstance(oLocale);
 
-		//defaults to english locale as defined in M_DEFAULT_DATA in LocaleData.js
-		assert.equal(oFormat.format(12, "duration-hour").toString(), "12 hr", "20 hours");
-		assert.equal(oFormat.format(13, "volume-liter").toString(), "13 L", "13 liter");
+			// unknown locale defaults to en.json
+			assert.equal(oFormat.format(12, "duration-hour").toString(), "12 hr", "Locale " + sLocale + ": 12 hours");
+			assert.equal(oFormat.format(13, "volume-liter").toString(), "13 L", "Locale " + sLocale + ": 13 liter");
+			assert.equal(oFormat.format(0, "duration-day").toString(), "0 days", "Locale " + sLocale + ": 0 days");
+			assert.equal(oFormat.format(1, "duration-day").toString(), "1 day", "Locale " + sLocale + ": 1 day");
+			assert.equal(oFormat.format(2, "duration-day").toString(), "2 days", "Locale " + sLocale + ": 2 days");
+			assert.equal(oFormat.format(1.2, "duration-day").toString(), "1.2 days", "Locale " + sLocale + ": 1.2 days");
+			assert.equal(oFormat.format(1.2, "area-dunam").toString(), "1.2 dunam", "Locale " + sLocale + ": 1.2 dunam");
+		});
 	});
 
 	QUnit.test("Unit format custom pattern", function (assert) {

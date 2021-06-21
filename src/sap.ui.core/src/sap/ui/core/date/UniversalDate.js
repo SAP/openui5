@@ -202,13 +202,14 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 
 	UniversalDate.getWeekByDate = function(sCalendarType, iYear, iMonth, iDay) {
 		var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			oLocaleData = LocaleData.getInstance(oLocale),
 			clDate = this.getClass(sCalendarType),
 			oFirstDay = getFirstDayOfFirstWeek(clDate, iYear),
 			oDate = new clDate(clDate.UTC(iYear, iMonth, iDay)),
 			iWeek, iLastYear, iNextYear, oLastFirstDay, oNextFirstDay;
 		// If region is US, always calculate the week for the current year, otherwise
 		// the week might be the last week of the previous year or first week of next year
-		if (oLocale.getLanguage() === "en" && (oLocale.getRegion() === "US" || !oLocale.getRegion())) {
+		if (oLocaleData.firstDayStartsFirstWeek()) {
 			iWeek = calculateWeeks(oFirstDay, oDate);
 		} else {
 			iLastYear = iYear - 1;
@@ -233,10 +234,11 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 
 	UniversalDate.getFirstDateOfWeek = function(sCalendarType, iYear, iWeek) {
 		var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			oLocaleData = LocaleData.getInstance(oLocale),
 			clDate = this.getClass(sCalendarType),
 			oFirstDay = getFirstDayOfFirstWeek(clDate, iYear),
 			oDate = new clDate(oFirstDay.valueOf() + iWeek * iMillisecondsInWeek),
-			bIsRegionUS = oLocale.getLanguage() === "en" && (oLocale.getRegion() === "US" || !oLocale.getRegion());
+			bIsRegionUS = oLocaleData.firstDayStartsFirstWeek();
 		//If first day of week is in last year and region is US, return the
 		//1st of January instead for symmetric behaviour
 
