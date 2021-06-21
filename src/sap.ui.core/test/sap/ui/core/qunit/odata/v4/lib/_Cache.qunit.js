@@ -5824,10 +5824,11 @@ sap.ui.define([
 					/*mHeaders*/undefined, /*oPayload*/undefined, /*fnSubmit*/undefined)
 				.resolves(createResult(10, 7));
 
-			// code under test
-			return oCache.read(1, 3, Infinity, oReadGroupLock).then(function (oResult) {
-				assert.deepEqual(oResult, createResult(1, 3, undefined, true));
-			});
+			assert.deepEqual(
+				// code under test
+				oCache.read(7, 3, Infinity, oReadGroupLock).getResult(),
+				createResult(7, 3, undefined, true)
+			);
 		});
 	});
 

@@ -13283,13 +13283,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: read all data w/o a control on top
 	QUnit.test("read all data w/o a control on top", function (assert) {
-		var i,
-			n = 10000,
-			aIDs = new Array(n),
-			aValues = new Array(n),
+		var aIDs = [],
+			aValues = [],
+			i,
 			that = this;
 
-		for (i = 0; i < n; i += 1) {
+		for (i = 0; i < 10000; i += 1) {
 			aIDs[i] = "TEAM_" + i;
 			aValues[i] = {Team_Id : aIDs[i]};
 		}
@@ -13313,7 +13312,6 @@ sap.ui.define([
 				fnDone();
 			});
 
-
 			return Promise.all([
 				// wait until change event is processed
 				new Promise(function (resolve) {
@@ -13321,6 +13319,37 @@ sap.ui.define([
 				}),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: infinite prefetch alone must not make _CollectionCache#read async
+	QUnit.test("infinite prefetch", function (assert) {
+		var oListBinding,
+			aValues = [],
+			i,
+			that = this;
+
+		for (i = 0; i < 12; i += 1) {
+			aValues[i] = {Team_Id : "TEAM_" + i};
+		}
+
+		return this.createView(assert).then(function () {
+			oListBinding = that.oModel.bindList("/TEAMS");
+
+			that.expectRequest("TEAMS?$skip=0&$top=10", {value : aValues.slice(0, 10)});
+
+			return Promise.all([
+				oListBinding.requestContexts(0, 10),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("TEAMS?$skip=10", {value : aValues.slice(10)});
+
+			assert.strictEqual(
+				// code under test: must not be async (BEWARE: not an API!)
+				oListBinding.fetchContexts(0, 10, Infinity).getResult(),
+				false, "whether the binding's contexts have been modified");
 		});
 	});
 

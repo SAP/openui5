@@ -2404,7 +2404,7 @@ sap.ui.define([
 		oGroupLock.unlock();
 
 		aElementsRange = this.aElements.slice(iIndex, iIndex + iLength);
-		if (this.aElements.$tail) { // Note: if available, it must be ours!
+		if (this.aElements.$tail && iIndex + iLength > this.aElements.length) {
 			aElementsRange.push(this.aElements.$tail);
 		}
 		return SyncPromise.all(aElementsRange).then(function () {
