@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Component", "sap/ui/core/mvc/Controller", "sap/ui/VersionInfo", "sap/base/util/merge"],
-	function(Component, Controller, VersionInfo, merge) {
+sap.ui.define([
+		"sap/ui/core/Component",
+		"sap/ui/core/mvc/Controller",
+		"sap/ui/VersionInfo",
+		"sap/base/util/merge",
+		"sap/base/util/UriParameters"
+	], function(Component, Controller, VersionInfo, merge, UriParameters) {
 	"use strict";
 
 	var Component = Component.extend("sap.ui.documentation.sdk.cookieSettingsDialog.Component", {
@@ -27,24 +32,35 @@ sap.ui.define(["sap/ui/core/Component", "sap/ui/core/mvc/Controller", "sap/ui/Ve
 		},
 
 		enable: function(oRootView) {
-			VersionInfo.load().then(function (oVersionInfo) {
-				var bSupportsSWA = oVersionInfo.libraries.some(function (lib) {
-					return lib.name === "sap.webanalytics.core";
-				}),
-				bApprovalRequested = this.getCookieValue(this.COOKIE_NAMES.APPROVAL_REQUESTED) === "1",
-				bHasConsentUseSWA = this.getCookieValue(this.COOKIE_NAMES.ALLOW_USAGE_TRACKING) === "1";
+			var oUriParameters = UriParameters.fromQuery(location.search),
+			sParameter = "cookie-settings-dialog",
+			bCookieSettingsParameter = oUriParameters.has(sParameter);
 
-				if (!bApprovalRequested) {
-					this.cookieSettingsDialogOpen({
-						showCookieDetails: false,
-						supportsUsageTracking: bSupportsSWA
-					}, oRootView);
-				}
+			if (bCookieSettingsParameter) {
+				this.sCookieSettingsParameterValue = oUriParameters.get(sParameter);
+			}
 
-				if (bSupportsSWA && bHasConsentUseSWA) {
-					this.enableUsageTracking();
-				}
-			}.bind(this));
+			if (this.sCookieSettingsParameterValue === "true" || this.sCookieSettingsParameterValue === "" || !bCookieSettingsParameter) {
+
+				VersionInfo.load().then(function (oVersionInfo) {
+					var bSupportsSWA = oVersionInfo.libraries.some(function (lib) {
+						return lib.name === "sap.webanalytics.core";
+					}),
+					bApprovalRequested = this.getCookieValue(this.COOKIE_NAMES.APPROVAL_REQUESTED) === "1",
+					bHasConsentUseSWA = this.getCookieValue(this.COOKIE_NAMES.ALLOW_USAGE_TRACKING) === "1";
+
+					if (!bApprovalRequested) {
+						this.cookieSettingsDialogOpen({
+							showCookieDetails: false,
+							supportsUsageTracking: bSupportsSWA
+						}, oRootView);
+					}
+
+					if (bSupportsSWA && bHasConsentUseSWA) {
+						this.enableUsageTracking();
+					}
+				}.bind(this));
+			}
 		},
 
 		setCookie: function (sCookieName, sValue) {
