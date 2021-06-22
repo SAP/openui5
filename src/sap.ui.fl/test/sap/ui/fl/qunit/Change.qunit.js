@@ -86,6 +86,7 @@ function(
 		QUnit.test("constructor ", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			assert.ok(oInstance);
+			assert.notOk(oInstance.isCurrentProcessFinished());
 		});
 
 		QUnit.test("Shall inherit from EventProvider", function(assert) {
@@ -178,14 +179,37 @@ function(
 			oChange.markRevertFinished();
 		});
 
-		QUnit.test("ChangeProcessingPromise: addChangeProcessingPromises", function(assert) {
+		QUnit.test("ChangeProcessingPromise: addChangeProcessingPromises when no apply/revert operation started", function(assert) {
+			var done = assert.async();
+			var oChange = new Change(this.oChangeDef);
+
+			var aPromises = oChange.addChangeProcessingPromises();
+			assert.equal(aPromises.length, 1, "1 promise got added");
+
+			oChange.setQueuedForApply();
+			oChange.setQueuedForRevert();
+			var aPromises = oChange.addChangeProcessingPromises();
+			assert.equal(aPromises.length, 3, "3 promise got added");
+
+			Promise.all(aPromises)
+				.then(function() {
+					assert.ok(true, "the function resolves");
+					done();
+				});
+
+			oChange.markFinished();
+			oChange.markRevertFinished();
+		});
+
+		QUnit.test("ChangeProcessingPromise: addChangeProcessingPromises when apply operation started", function(assert) {
 			var done = assert.async();
 			var oChange = new Change(this.oChangeDef);
 			oChange.setQueuedForApply();
+			oChange.startApplying();
 			oChange.setQueuedForRevert();
 
 			var aPromises = oChange.addChangeProcessingPromises();
-			assert.equal(aPromises.length, 2, "two promises got added");
+			assert.equal(aPromises.length, 2, "2 promises got added");
 
 			Promise.all(aPromises)
 				.then(function() {

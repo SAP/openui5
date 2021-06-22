@@ -52,6 +52,7 @@ sap.ui.define([
 			this._oExtensionPointInfo = null;
 			this.setState(Change.states.NEW);
 			this._sPreviousState = null;
+			this._oChangeProcessedPromise = null;
 			this.setInitialApplyState();
 			this._oChangeProcessingPromises = {};
 		},
@@ -128,6 +129,12 @@ sap.ui.define([
 		this._aQueuedProcesses = [];
 		delete this._ignoreOnce;
 		this.setApplyState(Change.applyState.INITIAL);
+		this._oChangeProcessedPromise = {};
+		this._oChangeProcessedPromise.promise = new Promise(function(resolve) {
+			this._oChangeProcessedPromise.resolveFunction = {
+				resolve: resolve
+			};
+		}.bind(this));
 	};
 
 	Change.prototype.isInInitialState = function() {
@@ -176,7 +183,7 @@ sap.ui.define([
 	};
 
 	Change.prototype.isCurrentProcessFinished = function() {
-		return this._aQueuedProcesses.length === 0;
+		return this._aQueuedProcesses.length === 0 && this.getApplyState() !== Change.applyState.INITIAL;
 	};
 
 	/**
@@ -218,6 +225,9 @@ sap.ui.define([
 	 */
 	Change.prototype.addChangeProcessingPromises = function() {
 		var aReturn = [];
+		if (this.getApplyState() === Change.applyState.INITIAL && this._oChangeProcessedPromise) {
+			aReturn.push(this._oChangeProcessedPromise.promise);
+		}
 		this._aQueuedProcesses.forEach(function(sProcess) {
 			aReturn.push(this.addChangeProcessingPromise(sProcess));
 		}, this);
@@ -232,6 +242,10 @@ sap.ui.define([
 		if (this._oChangeProcessingPromises[sKey]) {
 			this._oChangeProcessingPromises[sKey].resolveFunction.resolve(oResult);
 			delete this._oChangeProcessingPromises[sKey];
+		}
+		if (this._oChangeProcessedPromise) {
+			this._oChangeProcessedPromise.resolveFunction.resolve(oResult);
+			this._oChangeProcessedPromise = null;
 		}
 	};
 

@@ -1143,9 +1143,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("with 3 async queued changes with 1 change whose selector points to no control", function(assert) {
-			var oChangePromiseSpy = sandbox.spy(this.oChange, "addChangeProcessingPromise");
-			var oChangePromiseSpy2 = sandbox.spy(this.oChange2, "addChangeProcessingPromise");
-			var oChangePromiseSpy4 = sandbox.spy(this.oChange4, "addChangeProcessingPromise");
+			var oChangePromiseSpy = sandbox.spy(this.oChange, "addChangeProcessingPromises");
+			var oChangePromiseSpy2 = sandbox.spy(this.oChange2, "addChangeProcessingPromises");
+			var oChangePromiseSpy4 = sandbox.spy(this.oChange4, "addChangeProcessingPromises");
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange4];
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
@@ -1158,9 +1158,9 @@ sap.ui.define([
 
 		QUnit.test("with 3 async queued changes dependend on each other with an unavailable control dependency", function(assert) {
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
-			var oChangePromiseSpy = sandbox.spy(this.oChange, "addChangeProcessingPromise");
-			var oChangePromiseSpy2 = sandbox.spy(this.oChange2, "addChangeProcessingPromise");
-			var oChangePromiseSpy3 = sandbox.spy(this.oChange3, "addChangeProcessingPromise");
+			var oChangePromiseSpy = sandbox.spy(this.oChange, "addChangeProcessingPromises");
+			var oChangePromiseSpy2 = sandbox.spy(this.oChange2, "addChangeProcessingPromises");
+			var oChangePromiseSpy3 = sandbox.spy(this.oChange3, "addChangeProcessingPromises");
 
 			var oChangeHandlerApplyChangeStub = sandbox.stub().callsFake(function() {});
 			this.oGetChangeHandlerStub.restore();
@@ -1231,10 +1231,10 @@ sap.ui.define([
 			this.mChanges.mDependencies = mDependencies;
 			this.mChanges.mDependentChangesOnMe = mDependentChangesOnMe;
 
-			var oChangePromiseSpy = sandbox.spy(this.oChange, "addChangeProcessingPromise");
-			var oChangePromiseSpy2 = sandbox.spy(this.oChange2, "addChangeProcessingPromise");
-			var oChangePromiseSpy3 = sandbox.spy(this.oChange3, "addChangeProcessingPromise");
-			var oChangePromiseSpy4 = sandbox.spy(this.oChange4, "addChangeProcessingPromise");
+			var oChangePromiseSpy = sandbox.spy(this.oChange, "addChangeProcessingPromises");
+			var oChangePromiseSpy2 = sandbox.spy(this.oChange2, "addChangeProcessingPromises");
+			var oChangePromiseSpy3 = sandbox.spy(this.oChange3, "addChangeProcessingPromises");
+			var oChangePromiseSpy4 = sandbox.spy(this.oChange4, "addChangeProcessingPromises");
 
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl3);
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
