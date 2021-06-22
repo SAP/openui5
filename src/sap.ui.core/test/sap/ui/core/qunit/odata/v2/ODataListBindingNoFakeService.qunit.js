@@ -298,6 +298,58 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_getFilterForPredicate: encoded key predicates; integrative", function (assert) {
+		var oExpectedFilter = new Filter({
+				bAnd : true,
+				aFilters : [
+					new Filter("string", FilterOperator.EQ, "abc123' !\"§$%&/()=:;/?+"),
+					new Filter("datetime", FilterOperator.EQ,
+						new Date(Date.UTC(2021, 5, 18, 9, 50, 58))),
+					new Filter("datetimems", FilterOperator.EQ,
+						new Date(Date.UTC(2021, 5, 19, 9, 50, 58, 123))),
+					new Filter("datetimeoffset", FilterOperator.EQ,
+						new Date(Date.UTC(2021, 5, 20, 9, 50, 58))),
+					new Filter("time", FilterOperator.EQ,
+						{"__edmType": "Edm.Time", "ms": 34936000}),
+					new Filter("guid", FilterOperator.EQ, "42010aef-0de5-1edb-aead-63ba217fb0e7"),
+					new Filter("null", FilterOperator.EQ, null),
+					new Filter("decimal", FilterOperator.EQ, "-1.23"),
+					new Filter("double", FilterOperator.EQ, "-2.34"),
+					new Filter("float", FilterOperator.EQ, "-3.45"),
+					new Filter("int64", FilterOperator.EQ, "-123"),
+					new Filter("sbyte", FilterOperator.EQ, -78),
+					new Filter("byte", FilterOperator.EQ, 255),
+					new Filter("true", FilterOperator.EQ, true),
+					new Filter("false", FilterOperator.EQ, false),
+					new Filter("binary", FilterOperator.EQ, "0123456789abcdef")
+				]
+			}),
+			sPredicate = "("
+				+ "string='abc123''%20%21%22%c2%a7%24%25%26%2f%28%29%3d%3a%3b%2f%3f%2b',"
+				+ "datetime=datetime'2021-06-18T09%3a50%3a58',"
+				+ "datetimems=datetime'2021-06-19T09%3a50%3a58.123',"
+				+ "datetimeoffset=datetimeoffset'2021-06-20T09%3a50%3a58Z',"
+				// for following data types encoded characters cannot be in the key predicate
+				+ "time=time'PT09H42M16S',"
+				+ "guid=guid'42010aef-0de5-1edb-aead-63ba217fb0e7'," // only [A-Fa-f0-9] allowed
+				+ "null=null,"
+				+ "decimal=-1.23m,"
+				+ "double=-2.34d,"
+				+ "float=-3.45f,"
+				+ "int64=-123l,"
+				+ "sbyte=-78,"
+				+ "byte=255,"
+				+ "true=true,"
+				+ "false=false,"
+				+ "binary=binary'0123456789abcdef'" // [A-Fa-f0-9][A-Fa-f0-9]*
+				+ ")";
+
+		// code under test
+		assert.deepEqual(ODataListBinding.prototype._getFilterForPredicate.call({}, sPredicate),
+			oExpectedFilter);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestFilterForMessages: unresolved", function (assert) {
 		var oModel = {
 				getMessagesByPath : function () {},
