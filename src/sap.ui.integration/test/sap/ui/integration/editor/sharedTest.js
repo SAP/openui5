@@ -28,6 +28,10 @@ var baseUrl = document.location.pathname.substring(0, document.location.pathname
 		}
 	};
 
+function switchTheme(oSelect) {
+	sap.ui.getCore().applyTheme(oSelect.options[oSelect.selectedIndex].value);
+}
+
 function switchLanguage(oSelect) {
 	this._sLanguage = oSelect.options[oSelect.selectedIndex].value;
 	sap.ui.getCore().getConfiguration().setLanguage(this._sLanguage);

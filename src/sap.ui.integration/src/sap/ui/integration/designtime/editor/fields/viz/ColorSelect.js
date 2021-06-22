@@ -81,23 +81,44 @@ sap.ui.define([
 
 	var mEnumColors = {};
 	function setEnumColors() {
-		mEnumColors = {
-			"sap.m.AvatarColor": {
-				"Accent1": Parameters.get("sapUiAccent1"),
-				"Accent2": Parameters.get("sapUiAccent2"),
-				"Accent3": Parameters.get("sapUiAccent3"),
-				"Accent4": Parameters.get("sapUiAccent4"),
-				"Accent5": Parameters.get("sapUiAccent5"),
-				"Accent6": Parameters.get("sapUiAccent6"),
-				"Accent7": Parameters.get("sapUiAccent7"),
-				"Accent8": Parameters.get("sapUiAccent8"),
-				"Accent9": Parameters.get("sapUiAccent9"),
-				"Accent10": Parameters.get("sapUiAccent10"),
-				"TileIcon": Parameters.get("sapUiTileIconColor"),
-				"Transparent": "transparent",
-				"Placeholder": Parameters.get("sapUiContentImagePlaceholderBackground")
+		var aVars = [
+			"sapUiAccent1",
+			"sapUiAccent2",
+			"sapUiAccent3",
+			"sapUiAccent4",
+			"sapUiAccent5",
+			"sapUiAccent6",
+			"sapUiAccent7",
+			"sapUiAccent8",
+			"sapUiAccent9",
+			"sapUiAccent10",
+			"sapUiContentImagePlaceholderBackground"
+		];
+		var mParams = Parameters.get({
+			name: aVars,
+			callback: function (_params) {
+			   // this will only be called if params weren’t available synchronously
 			}
-		};
+		});
+		if (mParams) {
+			mEnumColors = {
+				"sap.m.AvatarColor": {
+					"Accent1": mParams["sapUiAccent1"],
+					"Accent2": mParams["sapUiAccent2"],
+					"Accent3": mParams["sapUiAccent3"],
+					"Accent4": mParams["sapUiAccent4"],
+					"Accent5": mParams["sapUiAccent5"],
+					"Accent6": mParams["sapUiAccent6"],
+					"Accent7": mParams["sapUiAccent7"],
+					"Accent8": mParams["sapUiAccent8"],
+					"Accent9": mParams["sapUiAccent9"],
+					"Accent10": mParams["sapUiAccent10"],
+					"TileIcon": mParams["sapUiTileIconColor"],
+					"Transparent": "transparent",
+					"Placeholder": mParams["sapUiContentImagePlaceholderBackground"]
+				}
+			};
+		}
 	}
 	setEnumColors();
 	Core.attachThemeChanged(setEnumColors);

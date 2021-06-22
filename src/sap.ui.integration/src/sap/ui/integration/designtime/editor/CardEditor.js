@@ -1992,14 +1992,24 @@ sap.ui.define([
 			"sapUiNegativeText",
 			"sapUiCriticalText",
 			"sapUiPositiveText",
-			"sapUiChartScrollbarBorderColor"],
-			oStyle = document.createElement("style");
-		oStyle.setAttribute("id", "sap-ui-integration-editor-style");
-		for (var i = 0; i < aVars.length; i++) {
-			aVars[i] = "--" + aVars[i] + ":" + Parameters.get(aVars[i]);
+			"sapUiChartScrollbarBorderColor"
+		];
+		var mParams = Parameters.get({
+			name: aVars,
+			callback: function (_params) {
+			   // this will only be called if params weren’t available synchronously
+			}
+		});
+		if (mParams) {
+			var aResult = [],
+				oStyle = document.createElement("style");
+			oStyle.setAttribute("id", "sap-ui-integration-editor-style");
+			for (var n in mParams) {
+				aResult.push("--" + n + ":" + mParams[n]);
+			}
+			oStyle.innerHTML = ".sapUiIntegrationCardEditor, .sapUiIntegrationFieldSettings, .sapUiIntegrationIconSelectList {" + aResult.join(";") + "}";
+			document.body.appendChild(oStyle);
 		}
-		oStyle.innerHTML = ".sapUiIntegrationCardEditor, .sapUiIntegrationFieldSettings, .sapUiIntegrationIconSelectList {" + aVars.join(";") + "}";
-		document.body.appendChild(oStyle);
 	};
 
 	//initializes global settings
