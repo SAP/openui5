@@ -5,16 +5,16 @@ sap.ui.define([
 	"./BindingResolver",
 	"../library",
 	"sap/base/Log",
-	"sap/m/library",
 	"sap/ui/util/openWindow",
-	"sap/ui/base/ManagedObject"
+	"sap/ui/base/ManagedObject",
+	"sap/base/strings/capitalize"
 ], function (
 	BindingResolver,
 	library,
 	Log,
-	mLibrary,
 	openWindow,
-	ManagedObject
+	ManagedObject,
+	capitalize
 ) {
 		"use strict";
 
@@ -52,7 +52,17 @@ sap.ui.define([
 			metadata: {
 				library: "sap.ui.integration",
 				properties: {
-					card: {type: "object"}
+					card: {
+						type: "object"
+					},
+
+					/**
+					 * Set this function if specific binding path is needed.
+					 * By default getBindingContext().getPath() is used.
+					 */
+					bindingPathResolver: {
+						type: "function"
+					}
 				}
 			}
 		});
@@ -68,6 +78,7 @@ sap.ui.define([
 		 * @param {string} [oConfig.enabledPropertyName] Property of the control that will be maintained, based on the configuration of the actions.
 		 * @param {*} [oConfig.enabledPropertyValue=true] The value <code>oConfig.enabledPropertyName</code> will be set to if the action is enabled.
 		 * @param {*} [oConfig.disabledPropertyValue=false] The value <code>oConfig.disabledPropertyValue</code> will be set to if the action is disabled.
+		 * @param {string} [oConfig.eventName=press] Name of the event to attach to
 		 */
 		CardActions.prototype.attach = function (oConfig) {
 			var oControl = oConfig.control,
@@ -76,6 +87,7 @@ sap.ui.define([
 				oConfig.actionControl = oConfig.actionControl || oConfig.control;
 				oConfig.enabledPropertyValue = oConfig.enabledPropertyValue || true;
 				oConfig.disabledPropertyValue = oConfig.disabledPropertyValue || false;
+				oConfig.eventName = oConfig.eventName || "press";
 
 			if (!oConfig.actions) {
 				// For now firing the event here, after refactor need to think
@@ -125,7 +137,7 @@ sap.ui.define([
 
 				this._getSingleActionEnabledState(oAction, oAreaControl).then(function (bEnabled) {
 					if (bEnabled) {
-						this._attachPressEvent(oActionControl, oAction, oAreaControl);
+						this._attachEventListener(oConfig);
 					}
 
 					this._fireActionReady(oAreaControl, sActionArea);
@@ -140,7 +152,7 @@ sap.ui.define([
 			}
 
 			if (bActionEnabled) {
-				this._attachPressEvent(oActionControl, oAction, oAreaControl);
+				this._attachEventListener(oConfig);
 			}
 
 			this._fireActionReady(oAreaControl, sActionArea);
@@ -275,13 +287,22 @@ sap.ui.define([
 			oAreaControl.fireEvent(sEventName);
 		};
 
-		CardActions.prototype._handleServiceAction = function (oSource, oAction, oAreaControl) {
-			var oBindingContext = oSource.getBindingContext(),
+		CardActions.prototype._resolveBindingPath = function (oEvent) {
+			var oBindingContext = oEvent.getSource().getBindingContext(),
 				sPath;
 
-			if (oBindingContext) {
+			if (this.getBindingPathResolver()) {
+				sPath = this.getBindingPathResolver()(oEvent);
+			} else if (oBindingContext) {
 				sPath = oBindingContext.getPath();
 			}
+
+			return sPath;
+		};
+
+		CardActions.prototype._handleServiceAction = function (oEvent, oAction, oAreaControl) {
+			var oSource = oEvent.getSource();
+			var sPath = this._resolveBindingPath(oEvent);
 
 			oAreaControl._oServiceManager.getService(_getServiceName(oAction.service))
 				.then(function (oService) {
@@ -294,36 +315,25 @@ sap.ui.define([
 				.catch(function (e) {
 					Log.error("Navigation service unavailable", e);
 				}).finally(function () {
-				this._processAction(oSource, oAction, sPath);
-			}.bind(this));
+					this._processAction(oSource, oAction, sPath);
+				}.bind(this));
 		};
 
-		CardActions.prototype._handleAction = function (oSource, oAction) {
-			var oBindingContext = oSource.getBindingContext(),
-				sPath;
+		CardActions.prototype._attachEventListener = function (oConfig) {
+			var oAction = oConfig.action;
 
-			if (oBindingContext) {
-				sPath = oBindingContext.getPath();
-			}
-
-			this._processAction(oSource, oAction, sPath);
-		};
-
-		CardActions.prototype._attachPressEvent = function (oActionControl, oAction, oAreaControl) {
-
-			oActionControl.attachPress(function (oEvent) {
+			oConfig.actionControl["attach" + capitalize(oConfig.eventName)](function (oEvent) {
 				var oSource = oEvent.getSource();
 
 				if (oAction.service) {
-					this._handleServiceAction(oSource, oAction, oAreaControl);
+					this._handleServiceAction(oEvent, oAction, oConfig.control);
 				} else {
-					this._handleAction(oSource, oAction);
+					this._processAction(oSource, oAction, this._resolveBindingPath(oEvent));
 				}
 			}.bind(this));
 		};
 
 		CardActions.prototype._processAction = function (oSource, oAction, sPath) {
-
 			var oHost = this._getHostInstance(),
 				oCard = this.getCard(),
 				sUrl = oAction.url;

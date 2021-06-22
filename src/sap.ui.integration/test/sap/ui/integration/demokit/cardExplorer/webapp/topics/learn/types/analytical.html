@@ -12,15 +12,11 @@
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
-			<h1 id="overview">
-				Analytical Card
-			</h1>
+			<h1 id="overview">Analytical Card</h1>
+			Analytical Card displays a chart. Supported chart types are Line, StackedBar, StackedColumn and Donut.
 			<p>Usage:</p>
 			<ul>
 				<li>Use this card type if you want to visualize analytics data.</li>
-				<li>Analytical Card contains a chart visualization configuration. Supported chart types are Line,
-					StackedBar, StackedColumn, Donut.
-				</li>
 				<li>The card itself will always load the header content, but the chart will only be loaded if the used
 					distribution has the sap.viz library.</li>
 			</ul>
@@ -28,13 +24,12 @@
 			<h2 id="properties">Properties</h2>
 			<p>The Analytical Card contains a chart visualization configuration</p>
 
-			<h4>Configuration properties</h4>
-
 			<div class="tableWrapper">
 				<table>
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Default value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -43,62 +38,16 @@
 					<tr>
 						<td>chartType</td>
 						<td>string</td>
+						<td></td>
 						<td>Yes</td>
 						<td>Can be one of "Line", "StackedBar", "StackedColumn" or "Donut."</td>
 						<td>1.14.0</td>
 						<td>1.62</td>
 					</tr>
 					<tr>
-						<td>minHeight</td>
-						<td><a data-demokit-href="/api/sap.ui.core.CSSSize" target="_blank">sap.ui.core.CSSSize</a></td>
-						<td>No</td>
-						<td>Defines the minimum height of the chart.</td>
-						<td>1.16.0</td>
-						<td>1.85</td>
-					</tr>
-					<tr>
-						<td>legend</td>
-						<td>object</td>
-						<td>No</td>
-						<td>Represents chart legend attributes.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
-						<td>plotArea</td>
-						<td>object</td>
-						<td>No</td>
-						<td>Describes the plotArea properties.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
-						<td>title</td>
-						<td>object</td>
-						<td>No</td>
-						<td>Represents the title attributes.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
-						<td>measureAxis</td>
-						<td>string</td>
-						<td>No</td>
-						<td>Represents the value set for the measure axis.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
-						<td>dimensionAxis</td>
-						<td>string</td>
-						<td>No</td>
-						<td>Represents the value set for the dimension axis.</td>
-						<td>1.14.0</td>
-						<td>1.62</td>
-					</tr>
-					<tr>
 						<td>measures</td>
-						<td>array</td>
+						<td><a href="#feedItemProperties">FeedItem[]</a></td>
+						<td></td>
 						<td>Yes</td>
 						<td>List of definitions of all measures in the dataset.</td>
 						<td>1.14.0</td>
@@ -106,17 +55,108 @@
 					</tr>
 					<tr>
 						<td>dimensions</td>
-						<td>array</td>
+						<td><a href="#feedItemProperties">FeedItem[]</a></td>
+						<td></td>
 						<td>Yes</td>
 						<td>List of definitions of all dimensions in this dataset.</td>
 						<td>1.14.0</td>
 						<td>1.62</td>
 					</tr>
+					<tr>
+						<td>minHeight</td>
+						<td><a data-demokit-href="/api/sap.ui.core.CSSSize" target="_blank">sap.ui.core.CSSSize</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Defines the minimum height of the chart.</td>
+						<td>1.16.0</td>
+						<td>1.85</td>
+					</tr>
+					<tr>
+						<td>legend</td>
+						<td><a href="#legendProperties">Legend</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Configuration for the legend.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>plotArea</td>
+						<td><a href="#plotAreaProperties">PlotArea</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Plot configuration.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td><a href="#titleProperties">Title</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Configuration for the title of the chart.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>measureAxis</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>Represents the value set for the measure axis.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>dimensionAxis</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>Represents the value set for the dimension axis.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Actions that can be applied on the whole content area or only on the chart points, based on "actionableArea" property.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>actionableArea</td>
+						<td>string</td>
+						<td>"Full"</td>
+						<td>No</td>
+						<td>Defines which parts of the content are interactive. Possible values are:
+							<ul>
+								<li>"Full" - pressing anywhere in the content will trigger the defined actions</li>
+								<li>"Chart" - only pressing over the parts of the chart will trigger the defined actions</li>
+							</ul>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.34.0</td>
+						<td>1.92</td>
+					</tr>
+					<tr>
+						<td>popover</td>
+						<td><a href="#popoverSettings">Popover</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							Configuration for a popover, which will open while pressing chart points.
+							<br>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.34.0</td>
+						<td>1.92</td>
+					</tr>
 				</table>
 			</div>
 
-			<h4>Measures and dimensions properties</h4>
-
+			<h4 id="feedItemProperties">FeedItem properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -131,7 +171,7 @@
 						<td>label</td>
 						<td>string</td>
 						<td>Yes</td>
-						<td>Name of the field as displayed in the chart.</td>
+						<td>Name of the measure/dimension. This value will be used as label for the corresponding axis.</td>
 						<td>1.14.0</td>
 						<td>1.62</td>
 					</tr>
@@ -139,9 +179,219 @@
 						<td>value</td>
 						<td>string</td>
 						<td>Yes</td>
-						<td>Value for the field.</td>
+						<td>Value of the field.</td>
 						<td>1.14.0</td>
 						<td>1.62</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="legendProperties">Legend properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>Visibility of the legend.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>position</td>
+						<td>string</td>
+						<td>"Right"</td>
+						<td>No</td>
+						<td>The position of the legend. Possible values are "Top", "Bottom", "Left" and "Right"</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>alignment</td>
+						<td>string</td>
+						<td>"TopLeft</td>
+						<td>No</td>
+						<td>Defines how the how the legend will be aligned. Possible values are "TopLeft" and "Center"</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="plotAreaProperties">PlotArea properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>dataLabel</td>
+						<td><a href="#dataLabelProperties">DataLabel</a></td>
+						<td></td>
+						<td>No</td>
+						<td></td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>categoryAxisText</td>
+						<td><a href="#axisTextProperties">AxisText</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Configuration of the text for the category axis.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>valueAxisText</td>
+						<td><a href="#axisTextProperties">AxisText</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Configuration of the text for the value axis.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="dataLabelProperties">DataLabel properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>false</td>
+						<td>No</td>
+						<td>Visibility of the data labels.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>showTotal</td>
+						<td>boolean</td>
+						<td>false</td>
+						<td>No</td>
+						<td>Visibility of data label for total value in some charts.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="axisTextProperties">AxisText properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>Visibility of axis text.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="titleProperties">Title properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>Visibility of the title.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>text</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Title text.</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>alignment</td>
+						<td>string</td>
+						<td>"Center</td>
+						<td>No</td>
+						<td>The position of the title. Possible values are "Left", "Center" and "Right".</td>
+						<td>1.14.0</td>
+						<td>1.62</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="popoverSettings">Popover properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>active</td>
+						<td>boolean</td>
+						<td>false</td>
+						<td>No</td>
+						<td>
+							Whether the popover is active. If it's not it won't open.
+							<b>Note:</b> If there are actions attached, they will take precedence over the opening of the popover.
+						</td>
+						<td>1.34.0</td>
+						<td>1.92</td>
 					</tr>
 				</table>
 			</div>
@@ -322,6 +572,7 @@
 		<div class="navigation">
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Analytical Card</a></div>
+			<div><a href="#properties">Properties</a></div>
 			<div><a href="#example">Example</a></div>
 		</div>
 	</div>

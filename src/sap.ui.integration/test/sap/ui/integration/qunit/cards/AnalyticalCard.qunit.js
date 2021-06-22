@@ -528,6 +528,94 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_Analytical_ChartActions = {
+		"sap.app": {
+			"id": "test.cards.analytical.card6"
+		},
+		"sap.card": {
+			"type": "Analytical",
+			"content": {
+				"chartType": "Donut",
+				"measureAxis": "size",
+				"dimensionAxis": "color",
+				"dimensions": [
+					{
+						"label": "Store Name",
+						"value": "{Store Name}"
+					}
+				],
+				"measures": [
+					{
+						"label": "Revenue",
+						"value": "{Revenue}"
+					}
+				],
+				"actionableArea": "Chart",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "https://sap.com?revenue={Revenue}&storeName={Store Name}"
+						}
+					}
+				],
+				"data": {
+					"json": [
+						{
+							"Store Name": "24-Seven",
+							"Revenue": 345292.06
+						},
+						{
+							"Store Name": "A&A",
+							"Revenue": 1564235.29
+						}
+					]
+				}
+			}
+		}
+	};
+
+	var oManifest_Analytical_Popover = {
+		"sap.app": {
+			"id": "test.cards.analytical.card7"
+		},
+		"sap.card": {
+			"type": "Analytical",
+			"content": {
+				"chartType": "Donut",
+				"measureAxis": "size",
+				"dimensionAxis": "color",
+				"dimensions": [
+					{
+						"label": "Store Name",
+						"value": "{Store Name}"
+					}
+				],
+				"measures": [
+					{
+						"label": "Revenue",
+						"value": "{Revenue}"
+					}
+				],
+				"popover": {
+					"active": true
+				},
+				"data": {
+					"json": [
+						{
+							"Store Name": "24-Seven",
+							"Revenue": 345292.06
+						},
+						{
+							"Store Name": "A&A",
+							"Revenue": 1564235.29
+						}
+					]
+				}
+			}
+		}
+	};
+
 	function testChartCreation(oCard, oManifest, assert) {
 		// Arrange
 		var done = assert.async(),
@@ -634,7 +722,7 @@ sap.ui.define([
 			testChartCreation(this.oCard, oManifest_AnalyticalCard_DataOnCardLevel, assert);
 		});
 
-		QUnit.module("Navigation Action - Analytical Content", {
+		QUnit.module("Actions - Analytical Content", {
 			beforeEach: function () {
 				this.oCard = new Card({
 					width: "400px",
@@ -710,23 +798,22 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_Analytical_Url);
 		});
 
-		QUnit.test("Analytical Card should be not actionable", function (assert) {
+		QUnit.test("Analytical Card should not be actionable", function (assert) {
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
-			this.oCard.setManifest(oManifest_Analytical_No_Actions);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-				var oCardLContent = this.oCard.getCardContent(),
+				var oCardContent = this.oCard.getCardContent(),
 					oCardHeader = this.oCard.getCardHeader();
 				// Assert
-				assert.notOk(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+				assert.notOk(oCardContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
 				assert.notOk(oCardHeader.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oCardContent._getVizPropertiesObject(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself also shouldn't be interactive");
 				//Act
-				oCardLContent.firePress();
+				oCardContent.firePress();
 				oCardHeader.firePress();
 				Core.applyChanges();
 				//Assert
@@ -736,6 +823,56 @@ sap.ui.define([
 				oActionSpy.restore();
 				done();
 			}.bind(this));
+
+			this.oCard.setManifest(oManifest_Analytical_No_Actions);
+		});
+
+		QUnit.test("Navigation from chart parts only", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				var oCardContent = this.oCard.getCardContent();
+				// Assert
+				assert.notOk(oCardContent.$().hasClass("sapFCardClickable"), "Content area shouldn't have class 'sapFCardClickable'");
+				assert.notOk(oCardContent._getVizPropertiesObject(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_Analytical_ChartActions);
+		});
+
+		QUnit.module("Popover", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px",
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Chart parts are interactive when popover is attached", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				var oCardContent = this.oCard.getCardContent();
+				// Assert
+				assert.notOk(oCardContent._getVizPropertiesObject(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_Analytical_Popover);
 		});
 
 	}).catch(function () {
