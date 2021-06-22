@@ -197,6 +197,10 @@ sap.ui.define([
 				if (oChangeHandler && typeof oChangeHandler.getCondenserInfo === "function") {
 					return oChangeHandler.getCondenserInfo(oChange, mPropertyBag);
 				}
+				return undefined;
+			})
+			.catch(function() {
+				return undefined;
 			});
 		}
 
