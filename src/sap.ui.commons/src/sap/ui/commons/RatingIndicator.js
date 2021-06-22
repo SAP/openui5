@@ -7,11 +7,10 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'./library',
 	'sap/ui/core/Control',
-	'sap/ui/core/theming/Parameters',
 	'./RatingIndicatorRenderer',
 	'sap/ui/events/checkMouseEnterOrLeave'
 ],
-	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer, checkMouseEnterOrLeave) {
+	function(jQuery, library, Control, RatingIndicatorRenderer, checkMouseEnterOrLeave) {
 	"use strict";
 
 
