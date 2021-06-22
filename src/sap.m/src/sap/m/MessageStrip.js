@@ -184,6 +184,11 @@ sap.ui.define([
 		this._initCloseButton();
 	};
 
+	MessageStrip.prototype.onBeforeRendering = function () {
+		this._normalizeType(this.getType());
+		this._setButtonAriaLabelledBy(this.getType());
+	};
+
 	/**
 	 * Setter for property text.
 	 * Default value is empty/undefined
@@ -203,25 +208,6 @@ sap.ui.define([
 
 		return this.setProperty("text", sText);
 	};
-
-	/**
-	 * Setter for property type.
-	 * Default value is sap.ui.core.MessageType.Information
-	 * @public
-	 * @param {sap.ui.core.MessageType} sType The Message type
-	 * @returns {this} this to allow method chaining
-	 */
-	MessageStrip.prototype.setType = function (sType) {
-		if (!sType || sType === MessageType.None) {
-			Log.warning(MSUtils.MESSAGES.TYPE_NOT_SUPPORTED);
-			sType = MessageType.Information;
-		}
-
-		this.getType() !== sType && this._setButtonAriaLabelledBy(sType);
-
-		return this.setProperty("type", sType);
-	};
-
 
 	/**
 	 * Closes the MessageStrip.
@@ -298,6 +284,13 @@ sap.ui.define([
 		oEvent.setMarked();
 	};
 
+	MessageStrip.prototype._normalizeType = function (sType) {
+		if (sType === MessageType.None) {
+			Log.warning(MSUtils.MESSAGES.TYPE_NOT_SUPPORTED);
+			this.setProperty("type", MessageType.Information, true);
+		}
+	};
+
 	/**
 	 * Initialize close button.
 	 */
@@ -337,8 +330,8 @@ sap.ui.define([
 		}
 
 		if (oCloseButton) {
-			oCloseButton.removeAllAriaLabelledBy();
-			oCloseButton.addAriaLabelledBy(this._oInvisibleText.getId());
+			oCloseButton.removeAllAssociation("ariaLabelledBy", true);
+			oCloseButton.addAssociation("ariaLabelledBy", this._oInvisibleText.getId(), true);
 		}
 	};
 
