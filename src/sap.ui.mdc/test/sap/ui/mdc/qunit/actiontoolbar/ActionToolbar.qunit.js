@@ -153,9 +153,13 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - addAggregations", {
 		beforeEach: function() {
-			this.oToolbarAddAggregations = new ActionToolbar();
+			this.oToolbarAddAggregations = new ActionToolbar({
+				width: "100%"
+			});
+			this.oToolbarAddAggregations.placeAt("content");
 			this.oTitleSeparator = this.oToolbarAddAggregations._oTitleSeparator;
 			this.oSpacer = this.oToolbarAddAggregations._oSpacer;
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
 			if (this.oToolbarAddAggregations) {
@@ -234,78 +238,91 @@ sap.ui.define([
 	});
 
 	QUnit.test("addAction", function(assert) {
+		var oButtonEnd1 = new Button();
 		var oAction1 = new ActionToolbarAction({
-			action: new Button(),
+			visible: true,
+			action: new Button({
+				text: "Action1"
+			}),
 			layoutInformation: {
 				aggregationName: "end",
 				alignment: ActionToolbarActionAlignment.End
 			}
 		});
 		var oAction2 = new ActionToolbarAction({
-			action: new Button(),
+			visible: true,
+			action: new Button({
+				text: "Action2"
+			}),
 			layoutInformation: {
 				aggregationName: "end",
 				alignment: ActionToolbarActionAlignment.Begin
 			}
 		});
 		var oAction3 = new ActionToolbarAction({
-			action: new Button(),
+			action: new Button({
+				text: "Action3"
+			}),
 			layoutInformation: {
 				aggregationName: "end",
 				alignment: ActionToolbarActionAlignment.End
 			}
 		});
 		var oAction4 = new ActionToolbarAction({
-			action: new Button(),
+			action: new Button({
+				text: "Action4"
+			}),
 			layoutInformation: {
 				aggregationName: "end",
 				alignment: ActionToolbarActionAlignment.Begin
 			}
 		});
 
+		this.oToolbarAddAggregations.addEnd(oButtonEnd1);
+
 		this.oToolbarAddAggregations.addAction(oAction1);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction1.getSeparatorBefore(), oAction1
+			this.oTitleSeparator, this.oSpacer, oButtonEnd1, oAction1.getSeparatorBefore(), oAction1
 		], "After addAction 'end' alignment 'right'");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1 ], "After addAction 'end' alignment 'end' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oAction1.getSeparatorBefore(), oAction1
+			oButtonEnd1, oAction1.getSeparatorBefore(), oAction1
 		], "After addAction", oAction1);
 
 		this.oToolbarAddAggregations.addAction(oAction2);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction2, oAction2.getSeparatorAfter(), oAction1.getSeparatorBefore(), oAction1
+			this.oTitleSeparator, this.oSpacer, oAction2, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1
 		], "After addAction 'end' alignment 'left'");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2 ], "After addAction 'end' alignment 'begin' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oAction2, oAction2.getSeparatorAfter(), oAction1.getSeparatorBefore(), oAction1
+			oAction2, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1
 		], "After After addAction", oAction2);
 
 		this.oToolbarAddAggregations.addAction(oAction3);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction2, oAction2.getSeparatorAfter(), oAction1.getSeparatorBefore(), oAction1, oAction3
+			this.oTitleSeparator, this.oSpacer, oAction2, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
 		], "After addAction 'end' alignment 'right'");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2, oAction3 ], "After addAction 'end' alignment 'end' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oAction2, oAction2.getSeparatorAfter(), oAction1.getSeparatorBefore(), oAction1, oAction3
+			oAction2, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
 		], "After addAction", oAction2);
 
 		this.oToolbarAddAggregations.addAction(oAction4);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction2, oAction4, oAction2.getSeparatorAfter(), oAction1.getSeparatorBefore(), oAction1, oAction3
+			this.oTitleSeparator, this.oSpacer, oAction2, oAction4, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
 		], "After addAction 'end' alignment 'left'");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2, oAction3, oAction4 ], "After addAction 'end' alignment 'begin' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oAction2, oAction4, oAction2.getSeparatorAfter(), oAction1.getSeparatorBefore(), oAction1, oAction3
+			oAction2, oAction4, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
 		], "After addAction", oAction2);
 
 		this.oToolbarAddAggregations.addAction(null);
 		checkAggregation(assert, this.oToolbarAddAggregations, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction2, oAction4, oAction2.getSeparatorAfter(), oAction1.getSeparatorBefore(), oAction1, oAction3
+			this.oTitleSeparator, this.oSpacer, oAction2, oAction4, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
 		], "After addAction of null");
 		assert.deepEqual(this.oToolbarAddAggregations.getActions(), [ oAction1, oAction2, oAction3, oAction4 ], "After addAction 'end' alignment 'begin' - getActions correct");
 		checkAggregation(assert, this.oToolbarAddAggregations, "end", [
-			oAction2, oAction4, oAction2.getSeparatorAfter(), oAction1.getSeparatorBefore(), oAction1, oAction3
+			oAction2, oAction4, oAction2.getSeparatorAfter(), oButtonEnd1, oAction1.getSeparatorBefore(), oAction1, oAction3
 		], "After addAction", oAction2);
 	});
 
@@ -480,12 +497,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("insertAction", function(assert) {
+		var oButtonEnd1 = new Button();
+		this.oToolbarInsertAggregation.addEnd(oButtonEnd1);
 		var oAction1 = new ActionToolbarAction({
 			action: new Button()
 		});
 		this.oToolbarInsertAggregation.insertAction(oAction1, 0);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction1, oAction1.getSeparatorAfter()
+			this.oTitleSeparator, this.oSpacer, oAction1, oAction1.getSeparatorAfter(), oButtonEnd1
 		], "After insertAction");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "actions", [
 			oAction1
@@ -496,7 +515,7 @@ sap.ui.define([
 		});
 		this.oToolbarInsertAggregation.insertAction(oAction2, -5);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction1, oAction2, oAction1.getSeparatorAfter()
+			this.oTitleSeparator, this.oSpacer, oAction1, oAction2, oAction1.getSeparatorAfter(), oButtonEnd1
 		], "After insertAction");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "actions", [
 			oAction1, oAction2
@@ -507,7 +526,7 @@ sap.ui.define([
 		});
 		this.oToolbarInsertAggregation.insertAction(oAction3, 100);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction1, oAction2, oAction3, oAction1.getSeparatorAfter()
+			this.oTitleSeparator, this.oSpacer, oAction1, oAction2, oAction3, oAction1.getSeparatorAfter(), oButtonEnd1
 		], "After insertAction");
 		checkAggregation(assert, this.oToolbarInsertAggregation, "actions", [
 			oAction1, oAction2, oAction3
@@ -515,7 +534,7 @@ sap.ui.define([
 
 		this.oToolbarInsertAggregation.insertAction(null);
 		checkAggregation(assert, this.oToolbarInsertAggregation, "content", [
-			this.oTitleSeparator, this.oSpacer, oAction1, oAction2, oAction3, oAction1.getSeparatorAfter()
+			this.oTitleSeparator, this.oSpacer, oAction1, oAction2, oAction3, oAction1.getSeparatorAfter(), oButtonEnd1
 		], "After insertAction of nothing");
 	});
 
@@ -542,10 +561,10 @@ sap.ui.define([
 			this.oToolbarRemoveAggregation.addBegin(this.oButtonBegin2);
 			this.oToolbarRemoveAggregation.addBetween(this.oButtonBetween1);
 			this.oToolbarRemoveAggregation.addBetween(this.oButtonBetween2);
-			this.oToolbarRemoveAggregation.addAction(this.oAction1);
-			this.oToolbarRemoveAggregation.addAction(this.oAction2);
 			this.oToolbarRemoveAggregation.addEnd(this.oButtonEnd1);
 			this.oToolbarRemoveAggregation.addEnd(this.oButtonEnd2);
+			this.oToolbarRemoveAggregation.addAction(this.oAction1);
+			this.oToolbarRemoveAggregation.addAction(this.oAction2);
 		},
 		afterEach: function() {
 			if (this.oToolbarRemoveAggregation) {
@@ -627,10 +646,10 @@ sap.ui.define([
 			this.oToolbarRemoveAllAggregation.addBegin(this.oButtonBegin2);
 			this.oToolbarRemoveAllAggregation.addBetween(this.oButtonBetween1);
 			this.oToolbarRemoveAllAggregation.addBetween(this.oButtonBetween2);
-			this.oToolbarRemoveAllAggregation.addAction(this.oAction1);
-			this.oToolbarRemoveAllAggregation.addAction(this.oAction2);
 			this.oToolbarRemoveAllAggregation.addEnd(this.oButtonEnd1);
 			this.oToolbarRemoveAllAggregation.addEnd(this.oButtonEnd2);
+			this.oToolbarRemoveAllAggregation.addAction(this.oAction1);
+			this.oToolbarRemoveAllAggregation.addAction(this.oAction2);
 		},
 		afterEach: function() {
 			if (this.oToolbarRemoveAllAggregation) {
@@ -704,10 +723,10 @@ sap.ui.define([
 			this.oToolbarDestroyAggregation.addBegin(this.oButtonBegin2);
 			this.oToolbarDestroyAggregation.addBetween(this.oButtonBetween1);
 			this.oToolbarDestroyAggregation.addBetween(this.oButtonBetween2);
-			this.oToolbarDestroyAggregation.addAction(this.oAction1);
-			this.oToolbarDestroyAggregation.addAction(this.oAction2);
 			this.oToolbarDestroyAggregation.addEnd(this.oButtonEnd1);
 			this.oToolbarDestroyAggregation.addEnd(this.oButtonEnd2);
+			this.oToolbarDestroyAggregation.addAction(this.oAction1);
+			this.oToolbarDestroyAggregation.addAction(this.oAction2);
 		},
 		afterEach: function() {
 			if (this.oToolbarDestroyAggregation) {
