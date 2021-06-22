@@ -112,7 +112,6 @@ sap.ui.define([
 
 			/**
 			 * Specifies the header mode.
-			 * <b>Note:</b> The Inline mode works only if no icons are set.
 			 *
 			 * @since 1.40
 			 */
@@ -875,7 +874,7 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabHeader.prototype.isInlineMode = function () {
-		return this._bTextOnly && this.getMode() == IconTabHeaderMode.Inline;
+		return this.getMode() === IconTabHeaderMode.Inline;
 	};
 
 	/**

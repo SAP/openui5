@@ -218,5 +218,6 @@
 					key="Overweight" />
 			</items>
 		</IconTabBar>
+		<IconTabBar id="iconTabBarInlineIcons" class="sapUiResponsiveContentPadding" />
 	</Panel>
 </mvc:View>

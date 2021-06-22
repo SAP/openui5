@@ -171,7 +171,6 @@ sap.ui.define([
 
 			/**
 			 * Specifies the header mode.
-			 * <b>Note:</b> The Inline mode works only if no icons are set.
 			 *
 			 * @since 1.40
 			 */

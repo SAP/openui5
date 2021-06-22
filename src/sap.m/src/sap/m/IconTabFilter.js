@@ -601,6 +601,10 @@ sap.ui.define([
 
 			oRM.openEnd();
 
+			if (bInLine && oIcon) {
+				this._renderIcon(oRM);
+			}
+
 			oRM.openStart("span")
 				.class("sapMITHTextContent")
 				.attr("dir", sTextDir !== TextDirection.Inherit ? sTextDir.toLowerCase() : "auto");
@@ -775,6 +779,10 @@ sap.ui.define([
 
 			if (bIconOnly) {
 				aClasses.push("sapMITBBadgeHolder");
+			}
+
+			if (this._getIconTabHeader().isInlineMode()) {
+				aClasses.push("sapMITBInlineIcon");
 			}
 
 			oRM.icon(oIcon, aClasses, {
