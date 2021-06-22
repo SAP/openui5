@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/CustomListItem",
 	"sap/m/FlexBox",
+	"sap/m/MessageStrip", // hopefully speed up sap.m.plugins.DataStateIndicator#showMessage
 	"sap/m/Text",
 	"sap/ui/Device",
 	"sap/ui/base/EventProvider",
@@ -25,7 +26,7 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, Text, Device,
+], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device,
 		EventProvider, SyncPromise, Controller, View, Filter, FilterOperator, Sorter, OperationMode,
 		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, camelcase: 0 */
@@ -267,9 +268,13 @@ sap.ui.define([
 	 *   A promise which resolves with the given value after the given delay
 	 */
 	function resolveLater(vValue, iDelay) {
-		return new Promise(function (resolve) {
+		return new Promise(function (resolve, reject) {
 			setTimeout(function () {
-				resolve(typeof vValue === "function" ? vValue() : vValue);
+				try {
+					resolve(typeof vValue === "function" ? vValue() : vValue);
+				} catch (e) {
+					reject(e);
+				}
 			}, iDelay === undefined ? 5 : iDelay);
 		});
 	}
