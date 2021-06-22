@@ -374,6 +374,15 @@ sap.ui.define([
 			"property should be equal to 800");
 	});
 
+	QUnit.test("layoutData", function (assert) {
+		var oLayoutData = new SplitterLayoutData();
+
+		this.oSplitPane.setContent(new Button({text: "Button"}));
+		this.oSplitPane.setLayoutData(oLayoutData);
+
+		assert.strictEqual(this.oSplitPane.getLayoutData(), oLayoutData, "getLayoutData method works correctly");
+	});
+
 	QUnit.module("Aria support", {
 		beforeEach: function () {
 			initSetup.call(this);

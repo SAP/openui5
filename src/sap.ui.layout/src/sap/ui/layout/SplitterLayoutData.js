@@ -43,7 +43,11 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 			resizable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Sets the size of the splitter content.
+			 * The size of the splitter content.
+			 * This property is updated when the area is resized by the user.
+			 *
+			 * <b>Note:</b> Resizing areas in the sap.ui.layout.Splitter sets this property to "px" values,
+			 * while resizing areas in the sap.ui.layout.ResponsiveSplitter sets it to % values.
 			 */
 			size : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
 
