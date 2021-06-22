@@ -3399,7 +3399,14 @@ function(
 			this._iInitialItemFocus = iItemToFocus;
 		}
 
-		oPicker.setInitialFocus(oList);
+		if (!oItemToFocus) {
+			// If there are no items currently in the MultiComboBox the focus needs to return to the Input field,
+			// as otherwise it is moved to the first focusable element of the static UI area, which prevents
+			// the normal keyboard interaction flow.
+			oPicker.setInitialFocus(this);
+		} else {
+			oPicker.setInitialFocus(oList);
+		}
 	};
 
 	/**

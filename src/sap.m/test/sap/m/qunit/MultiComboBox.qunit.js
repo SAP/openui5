@@ -3897,6 +3897,37 @@ sap.ui.define([
 		this.clock.reset();
 	});
 
+	QUnit.test("Scenario onsapshow with no items", function(assert) {
+		var oSystem = {
+			desktop : true,
+			phone : false,
+			tablet : false
+		};
+		this.stub(Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
+
+		// system under test
+		var oMultiComboBox = new MultiComboBox({
+			items : []
+		});
+
+		// arrange
+		oMultiComboBox.syncPickerContent();
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(500);
+
+		// assertions
+		assert.strictEqual(document.activeElement, oMultiComboBox.getFocusDomRef(), "The focus is on the MultiComboBox");
+
+		// cleanup
+		oMultiComboBox.destroy();
+		this.clock.reset();
+	});
+
 	QUnit.test("Scenario OPEN_ARROW: tap on arrow", function(assert) {
 
 		var oSystem = {
