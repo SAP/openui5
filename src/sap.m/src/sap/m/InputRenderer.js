@@ -53,10 +53,6 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 			oRm.attr("dir", "ltr").style("text-align", "right");
 		}
 
-		if (bShowSuggestions) {
-			oRm.attr("aria-haspopup", "listbox");
-		}
-
 		if (bShowSuggestions || oControl.getShowValueStateMessage()) {
 			oRm.attr("autocomplete", "off"); // autocomplete="off" needed so the native browser autocomplete is not shown?
 		}
@@ -146,8 +142,13 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	};
 
 	InputRenderer.getAccessibilityState = function (oControl) {
+		var bShowSuggestions = oControl.getShowSuggestion();
 
 		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
+
+		if (bShowSuggestions) {
+			mAccessibilityState["haspopup"] = "listbox";
+		}
 
 
 		return mAccessibilityState;
