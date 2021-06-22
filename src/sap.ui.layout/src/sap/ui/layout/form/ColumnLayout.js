@@ -9,10 +9,9 @@ sap.ui.define([
 	'sap/ui/layout/library',
 	'./FormLayout',
 	'./ColumnLayoutRenderer',
-	"sap/ui/thirdparty/jquery",
-	'sap/base/Log'
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Device, ResizeHandler, library, FormLayout, ColumnLayoutRenderer, jQuery, Log) {
+	function(Device, ResizeHandler, library, FormLayout, ColumnLayoutRenderer, jQuery) {
 	"use strict";
 
 	/* global ResizeObserver */
@@ -251,7 +250,7 @@ sap.ui.define([
 			oOptions.XL.Size = oLD.getColumnsXL();
 
 			if (oOptions.M.Size > iColumnsM || oOptions.L.Size > iColumnsL || oOptions.XL.Size > iColumnsXL) {
-				Log.error("More cells defined for FormContainer " + oContainer.getId() + " than columns on " + this);
+				throw new Error("More cells defined for FormContainer " + oContainer.getId() + " than columns on " + this);
 			}
 		}
 
