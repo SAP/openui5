@@ -1,5 +1,5 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
+	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Messages,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
 	"@odata.metadataEtag" : "W/\"20200804153016\"",
 	"value" : [{
 		"@odata.etag" : "W/\"20200807145436.8614010 \"",
@@ -8,6 +8,7 @@
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "1001.00",
 		"LifecycleStatusDesc" : "New",
+		"Messages" : [],
 		"CreatedAt" : "2020-08-01T22:00:00Z",
 		"ChangedAt" : "2020-08-23T17:08:35.968275Z",
 		"SO_2_BP" : {

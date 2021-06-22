@@ -1322,8 +1322,12 @@ sap.ui.define([
 	 * @param {boolean} bKeepAlive
 	 *   Whether to keep the context alive
 	 * @param {function} [fnOnBeforeDestroy]
-	 *  Callback function that is executed once for a kept-alive context just before it is
-	 *  destroyed, see {@link #destroy}. Supported since 1.84.0
+	 *   Callback function that is executed once for a kept-alive context just before it is
+	 *   destroyed, see {@link #destroy}. Supported since 1.84.0
+	 * @param {boolean} [bRequestMessages]
+	 *   Whether to request messages for this entity. Only used if <code>bKeepAlive</code> is
+	 *   <code>true</code>. The binding keeps requesting messages until it is destroyed. Supported
+	 *   since 1.92.0
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> this context is not a list binding's context,
@@ -1332,14 +1336,21 @@ sap.ui.define([
 	 *     <li> it does not point to an entity,
 	 *     <li> a key property of the entity has not been requested,
 	 *     <li> the list binding is relative and does not use the <code>$$ownRequest</code>
-	 *       parameter (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *       parameter (see {@link sap.ui.model.odata.v4.ODataModel#bindList}),
+	 *     <li> the list binding uses data aggregation
+	 *       (see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}),
+	 *     <li> messages are requested, but the model does not use the <code>autoExpandSelect</code>
+	 *       parameter or the annotation "com.sap.vocabularies.Common.v1.Messages" is missing.
 	 *   </ul>
 	 *
 	 * @public
 	 * @see #isKeepAlive
 	 * @since 1.81.0
 	 */
-	Context.prototype.setKeepAlive = function (bKeepAlive, fnOnBeforeDestroy) {
+	Context.prototype.setKeepAlive = function (bKeepAlive, fnOnBeforeDestroy, bRequestMessages) {
+		var sMessagesPath,
+			that = this;
+
 		if (this.isTransient()) {
 			throw new Error("Unsupported transient context " + this);
 		}
@@ -1347,6 +1358,24 @@ sap.ui.define([
 			throw new Error("No key predicate known at " + this);
 		}
 		this.oBinding.checkKeepAlive(this);
+
+		if (bKeepAlive && bRequestMessages) {
+			if (!this.oModel.bAutoExpandSelect) {
+				throw new Error("Missing parameter autoExpandSelect at model");
+			}
+			// the metadata is already known because we have a predicate
+			sMessagesPath = this.oModel.getMetaModel().getObject(_Helper.getMetaPath(this.sPath)
+				+ "/@com.sap.vocabularies.Common.v1.Messages/$Path");
+			if (!sMessagesPath) {
+				throw new Error("Missing @com.sap.vocabularies.Common.v1.Messages");
+			}
+			this.oBinding.fetchIfChildCanUseCache(this, sMessagesPath, {})
+				.then(function (sReducedPath) {
+					return that.fetchValue(sReducedPath);
+				})
+				.catch(this.oModel.getReporter());
+		}
+
 		this.bKeepAlive = bKeepAlive;
 		this.fnOnBeforeDestroy = bKeepAlive ? fnOnBeforeDestroy : undefined;
 	};

@@ -1315,6 +1315,9 @@ sap.ui.define([
 						throw oResponseBody;
 					}
 
+					if ("ETag" in mResponseHeaders) {
+						oResponseBody["@odata.etag"] = mResponseHeaders.ETag;
+					}
 					return {
 						body : oResponseBody,
 						messages : mResponseHeaders["sap-messages"],
@@ -32501,39 +32504,65 @@ sap.ui.define([
 	//
 	// See that a failed request causes Context#refresh to reject.
 	// JIRA: CPOUI5ODATAV4-980
+	//
+	// Request the messages for the kept-alive context
+	// JIRA: CPOUI5ODATAV4-981
 	QUnit.test("CPOUI5ODATAV4-366: kept-context in collection only one request", function (assert) {
 		var oContext,
+			oInput,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<Text id="grossAmount" text="{GrossAmount}"/>\
+	<Input id="grossAmount" value="{GrossAmount}"/>\
 </Table>',
 			that = this;
 
 		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
-			value : [
-				{GrossAmount : "123", SalesOrderID : "1"},
-				// Note: the number of remaining contexts does not matter
-				{GrossAmount : "99", SalesOrderID : "2"},
-				{GrossAmount : "101", SalesOrderID : "3"}
-			]
-		});
+				value : [
+					{GrossAmount : "123", SalesOrderID : "1"},
+					// The following items must not be refreshed
+					{GrossAmount : "99", SalesOrderID : "2"}
+				]
+			})
+			.expectChange("grossAmount", ["123.00", "99.00"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oContext = that.oView.byId("table").getItems()[0].getBindingContext();
-			oContext.setKeepAlive(true);
+			that.expectRequest("SalesOrderList('1')?$select=Messages", {
+					Messages : [{
+						message : "Just a message",
+						numericSeverity : 2,
+						target : "GrossAmount"
+					}]
+				})
+				.expectMessages([{
+					message : "Just a message",
+					type : "Information",
+					target : "/SalesOrderList('1')/GrossAmount"
+				}]);
 
-			that.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID"
+			oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			oContext.setKeepAlive(true, null, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oInput = that.oView.byId("table").getItems()[0].getCells()[0];
+			return that.checkValueState(assert, oInput, "Information", "Just a message");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=GrossAmount,Messages,SalesOrderID"
 					+ "&$filter=SalesOrderID eq '1'", {
-					value : [{GrossAmount : "190", SalesOrderID : "1"}]
-				});
+					value : [{GrossAmount : "190", Messages : [], SalesOrderID : "1"}]
+				})
+				.expectChange("grossAmount", ["190.00"])
+				.expectMessages([]);
 
 			// code under test
 			oContext.refresh(undefined, true);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList('1')?$select=GrossAmount,SalesOrderID",
+			return that.checkValueState(assert, oInput, "None", "");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=GrossAmount,Messages,SalesOrderID",
 					createErrorInsideBatch())
 				.expectMessages([{
 					code : "CODE",
@@ -33170,6 +33199,210 @@ sap.ui.define([
 			sinon.assert.called(fnOnBeforeDestroy);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Flexible Column Layout
+	// A list report and an object page are set up in different ways such that the object page shows
+	// an active entity visible in the list report. Afterwards the object page switches to the
+	// draft, a property is changed in the object page and side effects including messages are
+	// requested. The result must not be influenced by the different setups.
+	// (1) Initialize the list and afterwards set the list's row context at the object page.
+	//     setKeepAlive must request messages (JIRA: CPOUI5ODATAV4-981)
+	// (2)..(4) requires moveEntityTo -> CPOUI5ODATAV4-474
+[{
+	description : "(1) first list, then object page",
+	setup : function (assert, oListBinding) {
+		var that = this;
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,defaultChannel"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "etag.active1",
+					ArtistID : "A1",
+					IsActiveEntity : true,
+					Name : "Artist 1",
+					defaultChannel : "Channel 1"
+				}]
+			})
+			.expectChange("listName", ["Artist 1"])
+			.expectChange("listChannel", ["Channel 1"]);
+
+		oListBinding.resume();
+
+		return this.waitForChanges(assert, "initialize list").then(function () {
+			var oRowContext = oListBinding.getCurrentContexts()[0];
+
+			that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)"
+					+ "?$select=Messages,lastUsedChannel", {
+					"@odata.etag" : "etag.active1",
+					Messages : [{
+						message : "Active message",
+						numericSeverity : 2,
+						target : "defaultChannel"
+					}],
+					lastUsedChannel : "Channel 2"
+				})
+				.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)/_Publication"
+					+ "?$select=PublicationID&$skip=0&$top=100",
+					{value : [{PublicationID : "P1"}]}
+				)
+				.expectChange("name", "Artist 1")
+				.expectChange("channel", "Channel 1")
+				.expectChange("lastUsedChannel", "Channel 2")
+				.expectChange("publication", ["P1"])
+				.expectMessages([{
+					message : "Active message",
+					type : "Information",
+					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+				}]);
+
+			oRowContext.setKeepAlive(true, null, true);
+			that.oView.byId("objectPage").setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert, "initialize object page");
+		});
+	}
+}].forEach(function (oFixture) {
+	QUnit.test("FCL Safeguard: " + oFixture.description, function (assert) {
+		var oListBinding,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oObjectPage,
+			sView = '\
+<Table id="listReport"\ items="{path : \'/Artists\', \
+		parameters : {$$patchWithoutSideEffects : true}, suspended : true}">\
+	<Text id="listName" text="{Name}"/>\
+	<Text id="listChannel" text="{defaultChannel}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="name" text="{Name}"/>\
+	<Input id="channel" value="{defaultChannel}"/>\
+	<Text id="lastUsedChannel" text="{lastUsedChannel}"/>\
+	<Table items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+		<Text id="publication" text="{PublicationID}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("listName", [])
+			.expectChange("listChannel", [])
+			.expectChange("name")
+			.expectChange("channel")
+			.expectChange("lastUsedChannel")
+			.expectChange("publication", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("listReport").getBinding("items");
+			oObjectPage = that.oView.byId("objectPage");
+
+			return oFixture.setup.call(that, assert, oListBinding);
+		}).then(function () {
+			return that.checkValueState(assert, "channel", "Information", "Active message");
+		}).then(function () {
+			var oActionBinding = that.oModel.bindContext("special.cases.EditAction(...)",
+					oObjectPage.getBindingContext(), {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='A1',IsActiveEntity=true)/special.cases.EditAction"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name,defaultChannel,"
+						+ "lastUsedChannel",
+					headers : {"If-Match" : "etag.active1"},
+					payload : {}
+				}, {
+					"@odata.etag" : "etag.draft1",
+					ArtistID : "A1",
+					IsActiveEntity : false,
+					Messages : [{
+						message : "Draft message",
+						numericSeverity : 2,
+						target : "defaultChannel"
+					}],
+					Name : "Artist 1",
+					defaultChannel : "Channel 1",
+					lastUsedChannel : "Channel 2"
+				})
+				.expectMessages([{
+					message : "Active message",
+					type : "Information",
+					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+				}, {
+					message : "Draft message",
+					type : "Information",
+					target : "/Artists(ArtistID='A1',IsActiveEntity=false)/defaultChannel"
+				}]);
+
+			return Promise.all([
+				oActionBinding.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			var oReturnValueContext = aResults[0];
+
+			that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=false)/_Publication"
+					+ "?$select=PublicationID&$skip=0&$top=100",
+					{value : [{PublicationID : "P1"}]}
+				)
+				.expectChange("publication", ["P1"]);
+
+			oObjectPage.setBindingContext(oReturnValueContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, "channel", "Information", "Draft message");
+		}).then(function () {
+			that.expectChange("channel", "Channel 3")
+				// TODO requires CPOUI5ODATAV4-347: Context#replaceWith
+				//.expectChange("listChannel", ["Channel 3"])
+				.expectRequest({
+					batchNo : 5,
+					headers : {
+						"If-Match": "etag.draft1",
+						"Prefer": "return=minimal"
+					},
+					method : "PATCH",
+					payload : {
+						defaultChannel : "Channel 3"
+					},
+					url : "Artists(ArtistID='A1',IsActiveEntity=false)"
+				}) // no need to update the ETag when requesting side effects
+				.expectRequest({
+					batchNo : 5,
+					method : "GET",
+					url : "Artists(ArtistID='A1',IsActiveEntity=false)"
+						+ "?$select=Messages,defaultChannel"
+				}, {
+					"@odata.etag" : "etag.draft2",
+					Messages : [{
+						message : "Updated message",
+						numericSeverity : 2,
+						target : "defaultChannel"
+					}],
+					defaultChannel : "Channel 3*"
+				})
+				.expectChange("channel", "Channel 3*")
+				// TODO requires CPOUI5ODATAV4-347: Context#replaceWith
+				// .expectChange("listChannel", ["Channel 3*"])
+				.expectMessages([{
+					message : "Active message",
+					type : "Information",
+					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
+				}, {
+					message : "Updated message",
+					type : "Information",
+					target : "/Artists(ArtistID='A1',IsActiveEntity=false)/defaultChannel"
+				}]);
+
+			that.oView.byId("channel").getBinding("value").setValue("Channel 3");
+
+			return Promise.all([
+				oObjectPage.getBindingContext().requestSideEffects(["defaultChannel", "Messages"]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return that.checkValueState(assert, "channel", "Information", "Updated message");
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: List report with absolute binding, object page with a late property. Ensure that

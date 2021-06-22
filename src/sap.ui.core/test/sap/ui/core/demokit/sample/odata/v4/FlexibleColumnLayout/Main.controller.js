@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./Formatter", // make it available to the view
 	"sap/base/Log",
 	"sap/f/library",
 	"sap/m/MessageBox",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (Log, library, MessageBox, MessageToast, Controller, Filter, FilterOperator,
+], function (_Formatter, Log, library, MessageBox, MessageToast, Controller, Filter, FilterOperator,
 		FilterType, Sorter, JSONModel, TestUtils) {
 	"use strict";
 
@@ -149,6 +150,9 @@ sap.ui.define([
 			);
 			this.getView().setModel(this.oUIModel, "ui");
 			this.getView().setModel(this.getView().getModel(), "headerContext");
+			// TODO initMessagePopover should expose its "messages" model to the complete view
+			this.getView().setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
+				"messages");
 			this.byId("salesOrderListTitle").setBindingContext(
 				this.byId("SalesOrderList").getBinding("items").getHeaderContext(),
 				"headerContext");
@@ -186,7 +190,7 @@ sap.ui.define([
 				// Handle destruction of a kept-alive context
 				that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
 				that.oUIModel.setProperty("/bSalesOrderSelected", false);
-			});
+			}, /*bRequestMessages*/true);
 			if (oObjectPage.getBindingContext()) {
 				oObjectPage.getBindingContext().setKeepAlive(false);
 			}

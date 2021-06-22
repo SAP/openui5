@@ -3042,6 +3042,9 @@ sap.ui.define([
 			var oNewValue = aResult[0],
 				oOldValue = aResult[2];
 
+			// ensure that the new value has a predicate although key properties were not requested
+			_Helper.setPrivateAnnotation(oNewValue, "predicate",
+				_Helper.getPrivateAnnotation(oOldValue, "predicate"));
 			// visit response to report the messages
 			that.visitResponse(oNewValue, aResult[1]);
 			_Helper.updateAll(that.mChangeListeners, "", oOldValue, oNewValue, function (sPath) {

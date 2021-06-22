@@ -1093,8 +1093,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oFixture.rejected ? undefined : "/some/path"));
 
 		// code under test
-		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
-			SyncPromise.resolve(mChildLocalQueryOptions));
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath", mChildLocalQueryOptions);
 
 		assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 		assert.notStrictEqual(oBinding.oCachePromise, oCachePromise);
