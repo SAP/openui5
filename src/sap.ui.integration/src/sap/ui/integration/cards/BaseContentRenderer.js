@@ -31,7 +31,8 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 			sName = oCardContent.getMetadata().getName(),
 			sType = sName.slice(sName.lastIndexOf(".") + 1),
 			oCard = oCardContent.getParent(),
-			bIsCardValid = oCard && oCard.isA("sap.f.ICard");
+			bIsCardValid = oCard && oCard.isA("sap.f.ICard"),
+			bLoading = sType !== "AdaptiveContent" && bIsCardValid && oCardContent.isLoading();
 
 		sClass += sType;
 
@@ -48,16 +49,14 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 			oRm.style("min-height", sHeight);
 		}
 
+		if (bLoading) {
+			oRm.class("sapFCardContentLoading");
+		}
+
 		oRm.openEnd();
 
-		// render placeholder and hide content
-		if (sType !== "AdaptiveContent" && bIsCardValid && oCardContent.isLoading()) {
+		if (bLoading) {
 			oRm.renderControl(oCardContent._oLoadingPlaceholder);
-
-			//Removing content from the tab chain
-			if (sType !== "AnalyticalContent" && sType !== "TimelineContent") {
-				oCardContent.hideContent();
-			}
 		}
 
 		this.renderContent(oRm, oCardContent);

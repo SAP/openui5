@@ -25,10 +25,6 @@ sap.ui.define(["./BaseContentRenderer", "sap/ui/integration/util/BindingResolver
 		oRm.openStart("iframe", oWebPageContent.getId() + "-frame")
 			.class("sapUiIntWPCFrame");
 
-		if (oWebPageContent.isLoading()) {
-			oRm.class("sapFCardContentHidden");
-		}
-
 		oRm.style("height", "calc(" + oWebPageContent.getMinHeight() + " - " + PADDING + ")")
 			.attr("src", oWebPageContent.getSrc())
 			.attr("tabindex", "0")

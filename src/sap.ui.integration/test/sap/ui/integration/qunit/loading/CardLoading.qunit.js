@@ -1125,6 +1125,49 @@ sap.ui.define([
 				// Cleanup
 				done();
 			}.bind(this));
+		});
+
+		QUnit.test("Content is shown only after loading placeholder is hidden", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			assert.expect(4);
+
+			oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Arrange
+				var oContent = oCard.getCardContent(),
+					bShouldBeLoading = true;
+
+				oContent.addEventDelegate({
+					onAfterRendering: function () {
+						var bContentLoading = !!oCard.$().find(".sapFCardContentLoading").length,
+							bPlaceholderVisible = !!oCard.$().find(".sapFCardContentPlaceholder").length;
+
+						if (bShouldBeLoading) {
+							// Assert
+							assert.ok(bContentLoading, "Content is hidden before re-rendering.");
+							assert.ok(bPlaceholderVisible, "Placeholder is shown before re-rendering.");
+
+							// Act
+							bShouldBeLoading = false;
+							oCard.hideLoadingPlaceholders(CardArea.Content);
+							Core.applyChanges();
+						} else {
+							// Assert
+							assert.notOk(bContentLoading, "Content is shown after re-rendering.");
+							assert.notOk(bPlaceholderVisible, "Placeholder is hidden after re-rendering.");
+
+							done();
+						}
+					}
+				});
+
+				// Act
+				oCard.showLoadingPlaceholders(CardArea.Content);
+				Core.applyChanges();
+			});
 
 		});
 
