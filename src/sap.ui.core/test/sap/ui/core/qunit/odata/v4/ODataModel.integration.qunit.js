@@ -4485,7 +4485,7 @@ sap.ui.define([
 				// @see sap.m.MessageStrip#setType < sap.m.plugins.DataStateIndicator#showMessage
 				// < sap.m.plugins.DataStateIndicator#_processDataState:312
 				.withExactArgs("Value 'sap.ui.core.MessageType.None' for property 'type' is not"
-					+ " supported.Defaulting to 'sap.ui.core.MessageType.Information'");
+					+ " supported. Defaulting to 'sap.ui.core.MessageType.Information'");
 
 			// code under test
 			oTable.getBinding("items").refresh();
