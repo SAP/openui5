@@ -105,10 +105,14 @@ sap.ui.define([
         return oField;
     };
 
-    QueryPanel.prototype._getAvailableItems = function () {
+    QueryPanel.prototype._getAvailableItems = function (sKey) {
         var aItems = this.getP13nModel().getProperty("/items");
 
-        var aAvailableItems = [new Item({ key: this.NONE_KEY, text: this.getResourceText("sort.PERSONALIZATION_DIALOG_OPTION_NONE") })];
+        var aAvailableItems = [new Item({
+            key: this.NONE_KEY,
+            text: this.getResourceText("sort.PERSONALIZATION_DIALOG_OPTION_NONE"),
+            enabled: !sKey
+        })];
 
         aItems.forEach(function (oNonPresent, iIndex) {
             aAvailableItems.push(new Item({
@@ -216,7 +220,7 @@ sap.ui.define([
     QueryPanel.prototype._createKeySelect = function (sKey) {
         var oKeySelect = new Select({
             width: "14rem",
-            items: this._getAvailableItems(),
+            items: this._getAvailableItems(sKey),
             selectedKey: sKey,
             change: this._selectKey.bind(this)
         });
