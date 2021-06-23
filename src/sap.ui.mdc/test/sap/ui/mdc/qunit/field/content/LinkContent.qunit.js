@@ -18,6 +18,12 @@ sap.ui.define([
 			instances: [Link],
 			createFunction: LinkContent.createDisplay
 		},
+		"DisplayMultiLine": {
+			getPathsFunction: LinkContent.getDisplayMultiLine,
+			paths: ["sap/m/Link"],
+			instances: [Link],
+			createFunction: LinkContent.createDisplayMultiLine
+		},
 		"Edit": {
 			getPathsFunction: LinkContent.getEdit,
 			paths: ["sap/ui/mdc/field/FieldInput"],
