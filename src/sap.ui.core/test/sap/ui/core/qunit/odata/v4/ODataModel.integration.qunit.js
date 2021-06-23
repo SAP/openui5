@@ -4487,11 +4487,6 @@ sap.ui.define([
 				})
 				.expectChange("name", ["Frederic Fall", "Peter Burke"])
 				.expectMessages([]);
-			that.oLogMock.expects("warning").atMost(1) //TODO remove this!
-				// @see sap.m.MessageStrip#setType < sap.m.plugins.DataStateIndicator#showMessage
-				// < sap.m.plugins.DataStateIndicator#_processDataState:312
-				.withExactArgs("Value 'sap.ui.core.MessageType.None' for property 'type' is not"
-					+ " supported. Defaulting to 'sap.ui.core.MessageType.Information'");
 
 			// code under test
 			oTable.getBinding("items").refresh();
@@ -13420,6 +13415,8 @@ sap.ui.define([
 				// code under test: must not be async (BEWARE: not an API!)
 				oListBinding.fetchContexts(0, 10, Infinity).getResult(),
 				false, "whether the binding's contexts have been modified");
+
+			return that.waitForChanges(assert);
 		});
 	});
 
