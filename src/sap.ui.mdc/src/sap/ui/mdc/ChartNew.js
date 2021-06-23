@@ -335,6 +335,18 @@ sap.ui.define([
          * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype.applySettings = function (mSettings, oScope) {
+			// Note: In the mdc.Chart control metadata, the "action" aggregation
+			// is defined as a forwarded aggregation.
+			// However, the automatic forwarding of aggregations only works when
+			// the target aggregation exists.
+			// So, the actions are removed from the settings argument to prevent
+			// an exception to happen when an aggregation is forwarded to a
+			// target control that has not been created.
+			if (mSettings) {
+				this._aInitialToolbarActions = mSettings.actions;
+				delete mSettings.actions;
+			}
+
             Control.prototype.applySettings.apply(this, arguments);
 
             this.initializedPromise = new Promise(function (resolve, reject) {
@@ -535,7 +547,8 @@ sap.ui.define([
          */
         Chart.prototype._createToolbar = function () {
             var toolbar = new ChartToolbar(this.getId() + "--toolbar", {
-                design: "Transparent"
+                design: "Transparent",
+                actions: this._aInitialToolbarActions
             });
 
             toolbar.createToolbarContent(this);
