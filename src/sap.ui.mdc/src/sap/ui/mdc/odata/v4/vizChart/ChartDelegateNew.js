@@ -951,6 +951,8 @@ sap.ui.define([
                 }
                 // add basic search parameter as expected by v4.ODataListBinding
                 oBindingInfo.parameters.$search = sSearchText;
+            } else if (oBindingInfo.parameters && oBindingInfo.parameters.$search) {
+                delete oBindingInfo.parameters.$search;
             }
         }
     };
