@@ -18,17 +18,19 @@ sap.ui.define([
 		var sEntityType = ObjectPath.get("oDataInformation.entityType", mChangeDefinition);
 		if (sEntityType) {
 			var mContent = mChangeDefinition.content;
-			return oModifier.createControl(
-				'sap.m.Text',
-				oAppComponent,
-				oView,
-				mContent.newFieldSelector.id + '--column',
-				{
-					text: "{/#" + sEntityType + "/" + mContent.bindingPath + "/@sap:label}"
-				}
-			);
+			return Promise.resolve()
+				.then(oModifier.createControl.bind(
+					oModifier,
+					'sap.m.Text',
+					oAppComponent,
+					oView,
+					mContent.newFieldSelector.id + '--column',
+					{
+						text: "{/#" + sEntityType + "/" + mContent.bindingPath + "/@sap:label}"
+					}
+				));
 		}
-		return mInnerControls.label;
+		return Promise.resolve(mInnerControls.label);
 	}
 
 	/**
@@ -48,16 +50,27 @@ sap.ui.define([
 
 	var AddTableColumn = BaseAddViaDelegate.createAddViaDelegateChangeHandler({
 
+		aggregationName: COLUMNS_AGGREGATION_NAME,
+		parentAlias: "targetTable",
+		fieldSuffix: "--field",
+		skipCreateLabel: function(mPropertyBag) {
+			//if entity type is given we create label ourselves
+			return !!ObjectPath.get("changeDefinition.oDataInformation.entityType", mPropertyBag);
+		},
+		skipCreateLayout: true,
+		supportsDefault: true,
+
 		/**
 		 * Add a new column
 		 * @param {*} mPropertyBag - Parameters
+		 * @returns {Promise} Promise resolving when the column is added
 		 */
 		addProperty : function(mPropertyBag) {
 			var mInnerControls = mPropertyBag.innerControls;
 			if (mInnerControls.valueHelp) {
 				//TODO clarify if value help needs to be supported and where to add them
 				//for V2 addODataProperty compatibility it is not necessary to support value helps
-				throw Error("Adding properties with value helps is not yet supported by addTableColumn change handler");
+				return Promise.reject(new Error("Adding properties with value helps is not yet supported by addTableColumn change handler"));
 			}
 
 			var oTable = mPropertyBag.control;
@@ -72,53 +85,72 @@ sap.ui.define([
 			var iIndex = mContent.newFieldIndex;
 			var mFieldSelector = mContent.newFieldSelector;
 
-			var oTemplate = oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME, oView);
-			if (oTemplate) {
-				var oSmartField = mInnerControls.control;
+			return Promise.resolve()
+				.then(oModifier.getBindingTemplate.bind(oModifier,oTable, ITEMS_AGGREGATION_NAME, oView))
+				.then(function (oTemplate) {
+					if (oTemplate) {
+						var oSmartField = mInnerControls.control;
 
-				oModifier.insertAggregation(oTemplate, CELLS_AGGREGATION_NAME, oSmartField, iIndex, oView);
-				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);//only needed in JS case
-				oRevertData.newCellSelector = {
-					id: mFieldSelector.id + '--field',
-					idIsLocal: true
-				};
-			}
-
-			var oControl = oModifier.createControl('sap.m.Column', oAppComponent, oView, mFieldSelector);
-			var oLabel = getLabel(mChangeDefinition, mInnerControls, oModifier, oView, oAppComponent);
-			oModifier.insertAggregation(oControl, 'header', oLabel, 0, oView);
-			oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oControl, iIndex, oView);
+						return Promise.resolve()
+							.then(oModifier.insertAggregation.bind(oModifier, oTemplate, CELLS_AGGREGATION_NAME, oSmartField, iIndex, oView))
+							.then(oModifier.updateAggregation.bind(oModifier, oTable, ITEMS_AGGREGATION_NAME)) //only needed in JS case
+							.then(function() {
+								oRevertData.newCellSelector = {
+									id: mFieldSelector.id + '--field',
+									idIsLocal: true
+								};
+								oChange.setRevertData(oRevertData);
+							});
+					}
+					return undefined;
+				})
+				.then(oModifier.createControl.bind(oModifier, 'sap.m.Column', oAppComponent, oView, mFieldSelector))
+				.then(function(oCreatedControl) {
+					return getLabel(mChangeDefinition, mInnerControls, oModifier, oView, oAppComponent)
+						.then(function(oLabel) {
+							return Promise.resolve()
+								.then(oModifier.insertAggregation.bind(oModifier, oCreatedControl, 'header', oLabel, 0, oView))
+								.then(oModifier.insertAggregation.bind(oModifier, oTable, COLUMNS_AGGREGATION_NAME, oCreatedControl, iIndex, oView));
+						});
+				});
 		},
+
 		/**
 		 * Revert the controls for the cell that are added in addition to the new column
 		 * @param {*} mPropertyBag - Parameters
+		 * @returns {Promise} Promise resolving when the controls are reverted
 		 */
 		revertAdditionalControls : function(mPropertyBag) {
 			var oTable = mPropertyBag.control;
 			var oChange = mPropertyBag.change;
+			var oChangeRevertData = oChange.getRevertData();
 
 			var oModifier = mPropertyBag.modifier;
 			var oAppComponent = mPropertyBag.appComponent;
 
-			// Column Content
-			var oTemplate = oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME);
-			if (oTemplate) {
-				var oNewCell = oModifier.bySelector(oChange.getRevertData().newCellSelector, oAppComponent);
-				oModifier.removeAggregation(oTemplate, CELLS_AGGREGATION_NAME, oNewCell);
-				oModifier.destroy(oNewCell);
-				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);
-			}
+			var oTemplate, oNewCell;
 
-		},
-		aggregationName: COLUMNS_AGGREGATION_NAME,
-		parentAlias: "targetTable",
-		fieldSuffix: "--field",
-		skipCreateLabel: function(mPropertyBag) {
-			//if entity type is given we create label ourselves
-			return !!ObjectPath.get("changeDefinition.oDataInformation.entityType", mPropertyBag);
-		},
-		skipCreateLayout: true,
-		supportsDefault: true
+			// Column Content
+			return Promise.resolve()
+				.then(oModifier.getBindingTemplate.bind(oModifier, oTable, ITEMS_AGGREGATION_NAME))
+				.then(function(oRetrievedTemplate){
+					oTemplate = oRetrievedTemplate;
+					if (oTemplate) {
+						return Promise.resolve()
+							.then(oModifier.bySelector.bind(oModifier, oChangeRevertData.newCellSelector, oAppComponent))
+							.then(function(oCreatedCell) {
+								oNewCell = oCreatedCell;
+								return oModifier.removeAggregation(oTemplate, CELLS_AGGREGATION_NAME, oNewCell);
+							})
+							.then(function() {
+								return oModifier.destroy(oNewCell);
+							})
+							.then(oModifier.updateAggregation.bind(oModifier, oTable, ITEMS_AGGREGATION_NAME));
+					}
+					return undefined;
+				});
+		}
+
 	});
 
 	return AddTableColumn;

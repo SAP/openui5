@@ -1,3 +1,4 @@
+/* eslint-disable max-nested-callbacks */
 /*!
  * ${copyright}
  */
@@ -31,13 +32,13 @@ sap.ui.define([
 	 * @param {sap.m.IBar} oControl Bar control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
-	 * @return {boolean} true if change could be applied
+	 * @return {Promise} Promise resolving when change was applied
 	 *
 	 * @public
 	 */
 	SplitMenuButton.applyChange = function(oChange, oControl, mPropertyBag) {
 		if (mPropertyBag.modifier.targets !== "jsControlTree") {
-			throw new Error("Split change can't be applied on XML tree");
+			return Promise.reject(new Error("Split change can't be applied on XML tree"));
 		}
 
 		var oChangeDefinition = oChange.getDefinition();
@@ -45,85 +46,124 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
 		var oSourceControl = oChange.getDependentControl(SOURCE_CONTROL, mPropertyBag);
-		var oMenu = oModifier.getAggregation(oSourceControl, "menu");
-		var aMenuItems = oModifier.getAggregation(oMenu, "items");
-		var oParent = oModifier.getParent(oSourceControl);
-		var sParentAggregation = oModifier.getParentAggregationName(oSourceControl, oParent);
-		var iAggregationIndex = oModifier.findIndexInParentAggregation(oSourceControl);
-		var aNewElementSelectors = oChangeDefinition.content.newElementIds;
-		var oRevertData = {
-			parentAggregation: sParentAggregation,
-			insertIndex: iAggregationIndex,
-			insertedButtons: []
-		};
+		var oMenu;
+		var aMenuItems;
+		var sParentAggregation;
+		var iAggregationIndex;
+		var aNewElementSelectors;
+		var oRevertData;
+		var sModelName;
+		var oManagedObjectModel;
+		var oParent;
 
-		aMenuItems.forEach(function (oMenuItem, index) {
-			var oSelector = aNewElementSelectors[index];
-			var oButton = oModifier.createControl("sap.m.Button", oAppComponent, oView, oSelector);
+		return Promise.resolve()
+			.then(function() {
+				return oModifier.getAggregation(oSourceControl, "menu");
+			})
+			.then(function(oRetrievedMenu) {
+				oMenu = oRetrievedMenu;
+				return oModifier.getAggregation(oMenu, "items");
+			})
+			.then(function(aReturnedMenuItems) {
+				aMenuItems = aReturnedMenuItems;
+				oParent = oModifier.getParent(oSourceControl);
+				return oModifier.getParentAggregationName(oSourceControl, oParent);
+			})
+			.then(function(sRetrievedParentAggregation) {
+				sParentAggregation = sRetrievedParentAggregation;
+				return oModifier.findIndexInParentAggregation(oSourceControl);
+			})
+			.then(function(iRetrievedAggregationIndex) {
+				iAggregationIndex = iRetrievedAggregationIndex;
+				aNewElementSelectors = oChangeDefinition.content.newElementIds;
+				oRevertData = {
+					parentAggregation: sParentAggregation,
+					insertIndex: iAggregationIndex,
+					insertedButtons: []
+				};
+				return aMenuItems.reduce(function (oPreviousPromise, oMenuItem, index) {
+					var oSelector;
+					var iIndex;
+					var oButton;
 
-			oRevertData.insertedButtons.push(oSelector);
-
-			var sModelName = "$sap.m.flexibility.SplitButtonsModel";
-			var oManagedObjectModel = oModifier.createControl(
-				"sap.ui.fl.util.ManagedObjectModel",
-				oAppComponent,
-				oView,
-				Object.assign({}, oSelector, {
-					id: oSelector.id + '-managedObjectModel'
-				}),
-				{
-					object: oMenuItem,
-					name: sModelName
-				}
-			);
-
-			// ManagedObjectModel should be placed in `dependents` aggregation of the Button
-			oModifier.insertAggregation(oButton, "dependents", oManagedObjectModel, 0, oView);
-
-			oModifier.bindProperty(oButton, "text", sModelName + ">/text");
-			oModifier.bindProperty(oButton, "icon", sModelName + ">/icon");
-			oModifier.bindProperty(oButton, "enabled", sModelName + ">/enabled");
-			oModifier.bindProperty(oButton, "visible", sModelName + ">/visible");
-			oModifier.bindAggregation(oButton, "customData", {
-				path: sModelName + ">/customData",
-				template: oModifier.createControl(
-					"sap.ui.core.CustomData",
-					oAppComponent,
-					oView,
-					Object.assign({}, oSelector, {
-						id: oSelector.id + '-customData'
-					}),
-					{
-						key: {
-							path: sModelName + ">key"
-						},
-						value: {
-							path: sModelName + ">value"
-						}
-					}
-				),
-				templateShareable: false
-			});
-
-			oModifier.attachEvent(
-				oButton,
-				"press",
-				"sap.m.changeHandler.SplitMenuButton.pressHandler",
-				{
-					selector: oModifier.getSelector(oMenuItem, oAppComponent),
-					appComponentId: oAppComponent.getId()
-				}
-			);
-
-			oModifier.insertAggregation(oParent, sParentAggregation, oButton, iAggregationIndex + index, oView);
-		});
-
-		oModifier.removeAggregation(oParent, sParentAggregation, oSourceControl);
-		oModifier.insertAggregation(oParent, "dependents", oSourceControl, 0, oView);
-
-		oChange.setRevertData(oRevertData);
-
-		return true;
+					return oPreviousPromise
+						.then(function() {
+							iIndex = index;
+							oSelector = aNewElementSelectors[iIndex];
+							return oModifier.createControl("sap.m.Button", oAppComponent, oView, oSelector);
+						})
+						.then(function(oCreatedButton){
+							oButton = oCreatedButton;
+							oRevertData.insertedButtons.push(oSelector);
+							sModelName = "$sap.m.flexibility.SplitButtonsModel";
+							return oModifier.createControl(
+								"sap.ui.fl.util.ManagedObjectModel",
+								oAppComponent,
+								oView,
+								Object.assign({}, oSelector, {
+									id: oSelector.id + '-managedObjectModel'
+								}),
+								{
+									object: oMenuItem,
+									name: sModelName
+								}
+							);
+						})
+						.then(function(oCreatedManagedObjectModel) {
+							oManagedObjectModel = oCreatedManagedObjectModel;
+							// ManagedObjectModel should be placed in `dependents` aggregation of the Button
+							return oModifier.insertAggregation(oButton, "dependents", oManagedObjectModel, 0, oView);
+						})
+						.then(function(){
+							oModifier.bindProperty(oButton, "text", sModelName + ">/text");
+							oModifier.bindProperty(oButton, "icon", sModelName + ">/icon");
+							oModifier.bindProperty(oButton, "enabled", sModelName + ">/enabled");
+							oModifier.bindProperty(oButton, "visible", sModelName + ">/visible");
+							return oModifier.bindAggregation(oButton, "customData", {
+								path: sModelName + ">/customData",
+								template: oModifier.createControl(
+									"sap.ui.core.CustomData",
+									oAppComponent,
+									oView,
+									Object.assign({}, oSelector, {
+										id: oSelector.id + '-customData'
+									}),
+									{
+										key: {
+											path: sModelName + ">key"
+										},
+										value: {
+											path: sModelName + ">value"
+										}
+									}
+								),
+								templateShareable: false
+							});
+						})
+						.then(function(){
+							return oModifier.attachEvent(
+								oButton,
+								"press",
+								"sap.m.changeHandler.SplitMenuButton.pressHandler",
+								{
+									selector: oModifier.getSelector(oMenuItem, oAppComponent),
+									appComponentId: oAppComponent.getId()
+								}
+							);
+						})
+						.then(function(){
+							return oModifier.insertAggregation(oParent, sParentAggregation, oButton, iAggregationIndex + iIndex, oView);
+						});
+				}, Promise.resolve());
+			})
+			.then(function() {
+				return Promise.resolve()
+					.then(oModifier.removeAggregation.bind(oModifier, oParent, sParentAggregation, oSourceControl))
+					.then(oModifier.insertAggregation.bind(oModifier, oParent, "dependents", oSourceControl, 0, oView))
+					.then(function() {
+						oChange.setRevertData(oRevertData);
+					});
+				});
 	};
 
 	/**
@@ -133,7 +173,7 @@ sap.ui.define([
 	 * @param {sap.m.IBar} oControl Bar control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
-	 * @return {boolean} true if change could be applied
+	 * @return {Promise} Promise resolving when change was reverted
 	 *
 	 * @public
 	 */
@@ -146,20 +186,28 @@ sap.ui.define([
 		var oParent = oModifier.getParent(oSourceControl);
 		var sParentAggregation = oRevertData.parentAggregation;
 		var iAggregationIndex = oRevertData.insertIndex;
-		var aInsertedButtons = oRevertData.insertedButtons.map(function (oSelector) {
-			return oModifier.bySelector(oSelector, oAppComponent, oView);
-		});
 
-		aInsertedButtons.forEach(function (oButton) {
-			oModifier.removeAggregation(oParent, sParentAggregation, oButton);
-			oModifier.destroy(oButton);
-		});
+		var aInsertedButtons = [];
 
-		oModifier.insertAggregation(oParent, sParentAggregation, oSourceControl, iAggregationIndex, oView);
-
-		oChange.resetRevertData();
-
-		return true;
+		return Promise.resolve()
+			.then(function() {
+				oRevertData.insertedButtons.forEach(function(oSelector) {
+					aInsertedButtons.push(oModifier.bySelector(oSelector, oAppComponent, oView));
+				});
+				return aInsertedButtons.reduce(function(oPreviousPromise, oButton) {
+					return oPreviousPromise
+						.then(function() {
+							return oModifier.removeAggregation(oParent, sParentAggregation, oButton);
+						})
+						.then(function() {
+							return oModifier.destroy(oButton);
+						});
+				}, Promise.resolve());
+			})
+			.then(oModifier.insertAggregation.bind(oModifier, oParent, sParentAggregation, oSourceControl, iAggregationIndex, oView))
+			.then(function() {
+				oChange.resetRevertData();
+			});
 	};
 
 	/**

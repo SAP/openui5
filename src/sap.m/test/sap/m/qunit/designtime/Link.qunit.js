@@ -129,22 +129,20 @@ sap.ui.define([
 
 			var oChange = new Change({"changeType" : "changeLinkTarget", "content" : "_blank"});
 
-			// Act
-			ChangeLinkTarget.applyChange(oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent});
-			// Assert
-			assert.equal(this.oLink.getTarget(), "_blank", "After applying the change the Link target is _blank");
-
-			// Act
-			ChangeLinkTarget.revertChange(oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent});
-			// Assert
-			assert.equal(this.oLink.getTarget(), "_self", "After reverting the change the Link target is _self");
-
-			// Act
-			ChangeLinkTarget.applyChange(oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent});
-			// Assert
-			assert.equal(this.oLink.getTarget(), "_blank", "After applying the change again the Link target is _blank");
-
-			this.oLink.destroy();
+			return Promise.resolve()
+				.then(ChangeLinkTarget.applyChange.bind(this, oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}))
+				.then(function(){
+					assert.equal(this.oLink.getTarget(), "_blank", "After applying the change the Link target is _blank");
+				}.bind(this))
+				.then(ChangeLinkTarget.revertChange.bind(this, oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}))
+				.then(function() {
+					assert.equal(this.oLink.getTarget(), "_self", "After reverting the change the Link target is _self");
+				}.bind(this))
+				.then(ChangeLinkTarget.applyChange.bind(this, oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}))
+				.then(function(){
+					assert.equal(this.oLink.getTarget(), "_blank", "After applying the change again the Link target is _blank");
+					this.oLink.destroy();
+				}.bind(this));
 		});
 
 	});

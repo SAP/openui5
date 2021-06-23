@@ -24,6 +24,154 @@ sap.ui.define([
 	 */
 	var CombineButtons = {};
 
+	function fnHandleMenuItems(aButtons, oModifier, oAppComponent, oMenu, oParent, sParentAggregation, oView, oChangeDefinition, oRevertData) {
+		var sPropertyEnabled = "";
+		var sPropertyVisible = "";
+		var sOR = "";
+		var aMenuButtonModels = [];
+		var sCombineButtonsModelName = "$sap.m.flexibility.CombineButtonsModel";
+		var bIsRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var aMenuButtonName = [];
+
+		return aButtons.reduce(function(oPreviousPromise, oButton, index) {
+			var oIdToSave;
+			var iIndex = index;
+			var oMenuItem;
+			var oManagedObjectModel;
+			var oSelector = oChangeDefinition.content.buttonsIdForSave[iIndex];
+			var sButtonText;
+			var sModelName = "$sap.m.flexibility.MenuButtonModel" + iIndex;
+			return oPreviousPromise
+				.then(oModifier.getProperty.bind(oModifier, oButton, "text"))
+				.then(function(sRetrievedButtonText) {
+					sButtonText = sRetrievedButtonText;
+					return oModifier.createControl("sap.m.MenuItem", oAppComponent, oView, oSelector);
+				})
+				.then(function(oCreatedMenuItem) {
+					oMenuItem = oCreatedMenuItem;
+					// Save the original position of the button
+					return oModifier.findIndexInParentAggregation(oButton);
+				})
+				.then(function(iIndexInParentAggregation) {
+					oRevertData.insertIndexes[iIndex] = iIndexInParentAggregation;
+					return oModifier.attachEvent(
+							oMenuItem,
+							"press",
+							"sap.m.changeHandler.CombineButtons.pressHandler",
+							{
+								selector: oModifier.getSelector(oButton, oAppComponent),
+								appComponentId: oAppComponent.getId()
+							}
+						);
+				})
+				.then(function() {
+					return oModifier.createControl(
+						"sap.ui.fl.util.ManagedObjectModel",
+						oAppComponent,
+						oView,
+						Object.assign({}, oSelector, {
+							id: oSelector.id + '-managedObjectModel'
+						}),
+						{
+							object: oButton,
+							name: sCombineButtonsModelName
+						}
+					);
+				})
+				.then(function(oCreatedManagedObjectModel) {
+					oManagedObjectModel = oCreatedManagedObjectModel;
+					// ManagedObjectModel should be placed in `dependents` aggregation of MenuItem
+					return oModifier.insertAggregation(oMenuItem, "dependents", oManagedObjectModel, 0, oView);
+				})
+				.then(function() {
+					oModifier.bindProperty(oMenuItem, "text", sCombineButtonsModelName + ">/text");
+					oModifier.bindProperty(oMenuItem, "icon", sCombineButtonsModelName + ">/icon");
+					oModifier.bindProperty(oMenuItem, "enabled", sCombineButtonsModelName + ">/enabled");
+					oModifier.bindProperty(oMenuItem, "visible", sCombineButtonsModelName + ">/visible");
+					return oModifier.bindAggregation(oMenuItem, "customData", {
+						path: sCombineButtonsModelName + ">/customData",
+						template: oModifier.createControl(
+							"sap.ui.core.CustomData",
+							oAppComponent,
+							oView,
+							Object.assign({}, oSelector, {
+								id: oSelector.id + '-customData'
+							}),
+							{
+								key: "{ path: '" + sCombineButtonsModelName + ">key' }",
+								value: "{ path: '" + sCombineButtonsModelName + ">value' }"
+							}
+						),
+						templateShareable: false
+					}, oView);
+				})
+				.then(function() {
+					// FIXME: will not work in XML in case original button has a binding on `text` property
+					if (sButtonText) {
+						bIsRtl ? aMenuButtonName.unshift(sButtonText) : aMenuButtonName.push(sButtonText);
+					}
+					// Add suffix to the id, so we can get the original ids of the combined buttons
+					// when we want to split the menu. The suffix is used in SplitMenuButton change handler.
+					oSelector.id = oSelector.id + "-originalButtonId"; // FIXME: do not mutate original object!
+
+					// Create CustomData, holding the original ids of the combined buttons
+					return oModifier.createControl("sap.ui.core.CustomData", oAppComponent, oView, oSelector);
+				})
+				.then(function(oRetrievedId) {
+					oIdToSave = oRetrievedId;
+					oModifier.setProperty(oIdToSave, "key", "originalButtonId");
+					oModifier.setProperty(oIdToSave, "value", oModifier.getId(oButton));
+					// FIXME: fix implementation of ObjectPageDynamicHeaderTitle and remove next line
+					return oModifier.removeAggregation(oParent, sParentAggregation, oButton);
+				})
+
+				// Adding each button control to the container's dependents aggregation
+				.then(function() {
+					return oModifier.insertAggregation(oParent, "dependents", oButton, 0, oView);
+				})
+
+				// Saving original ID to original button to avoid conflict with aggregation binding for customData aggregation.
+				// The new MenuItem will receive this data via ManagedObjectModel synchronization.
+				.then(function() {
+					oModifier.insertAggregation(oButton, "customData", oIdToSave, 0, oView);
+				})
+				.then(function() {
+					oModifier.insertAggregation(oMenu, "items", oMenuItem, iIndex, oView);
+				})
+
+				// Create ManagedObjectModel for every MenuItem
+				// later it will be placed in dependents aggregation of the MenuButton
+				// and enabled and visibility properties of each item will be bound to the enabled and visibility property of the MenuButton
+				.then(function() {
+					return oModifier.createControl(
+						"sap.ui.fl.util.ManagedObjectModel",
+						oAppComponent,
+						oView,
+						Object.assign({}, oSelector, {
+							id: oSelector.id + '-managedObjectModelMenuItem'
+						}),
+						{
+							object: oMenuItem,
+							name: sModelName
+						}
+					);
+				})
+				.then(function(oCreatedMenuButtonModel) {
+					aMenuButtonModels[iIndex] = oCreatedMenuButtonModel;
+					// create binding expression for the visibility and enabled property of the MenuButton
+					sPropertyEnabled = sPropertyEnabled + sOR + "${" + sModelName + ">/enabled}";
+					sPropertyVisible = sPropertyVisible + sOR + "${" + sModelName + ">/visible}";
+					sOR = " || ";
+					return {
+						menuButtonModels: aMenuButtonModels,
+						menuButtonName: aMenuButtonName,
+						propertyEnabled: sPropertyEnabled,
+						propertyVisible: sPropertyVisible
+					};
+				});
+			}, Promise.resolve());
+	}
+
 	/**
 	 * Combines sap.m.Button(s) into a sap.m.MenuButton
 	 *
@@ -31,179 +179,122 @@ sap.ui.define([
 	 * @param {sap.m.Bar} oControl - Control containing the buttons
 	 * @param {object} mPropertyBag - Map of properties
 	 * @param {object} mPropertyBag.modifier - Modifier for the controls
-	 * @return {boolean} true if change could be applied
+	 * @return {Promise} Promise resolving when the change was applied
 	 *
 	 * @public
 	 */
 	CombineButtons.applyChange = function(oChange, oControl, mPropertyBag) {
 		if (mPropertyBag.modifier.targets !== "jsControlTree") {
-			throw new Error("Combine buttons change can't be applied on XML tree");
+			return Promise.reject(new Error("Combine buttons change can't be applied on XML tree"));
 		}
 
 		var oChangeDefinition = oChange.getDefinition();
 		var oModifier = mPropertyBag.modifier;
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
-		var oSourceControl = oModifier.bySelector(oChangeDefinition.content.combineButtonSelectors[0], oAppComponent, oView);
-		var oParent = oModifier.getParent(oSourceControl); // === oControl
+		var oParent;
+		var oSourceControl;
 		var iAggregationIndex;
 		var sParentAggregation;
 		var aButtons;
-		var bIsRtl = sap.ui.getCore().getConfiguration().getRTL();
 		var oMenu;
 		var oMenuButton;
-		var aMenuButtonName = [];
-		var sPropertyEnabled = "";
-		var sPropertyVisible = "";
-		var sOR = "";
 		var oRevertData = {
 			parentAggregation: "",
 			insertIndexes: []
 		};
 		var aMenuButtonModels = [];
+		var aMenuButtonName = [];
 
-		aButtons = oChangeDefinition.content.combineButtonSelectors.map(function (oCombineButtonSelector) {
-			return oModifier.bySelector(oCombineButtonSelector, oAppComponent, oView);
-		});
-
-		sParentAggregation = oModifier.getParentAggregationName(aButtons[0], oParent);
-		oRevertData.parentAggregation = sParentAggregation;
-
-		iAggregationIndex = oModifier.findIndexInParentAggregation(oSourceControl);
-
-		oMenu = oModifier.createControl("sap.m.Menu", oAppComponent, oView, oChangeDefinition.content.menuIdSelector);
-
-		aButtons.forEach(function (oButton, iIndex) {
-			var oIdToSave;
-			var oMenuItem;
-			var oSelector = oChangeDefinition.content.buttonsIdForSave[iIndex];
-			var sButtonText = oModifier.getProperty(oButton, "text");
-
-			oMenuItem = oModifier.createControl("sap.m.MenuItem", oAppComponent, oView, oSelector);
-
-			// Save the original position of the button
-			oRevertData.insertIndexes[iIndex] = oModifier.findIndexInParentAggregation(oButton);
-
-			oModifier.attachEvent(
-				oMenuItem,
-				"press",
-				"sap.m.changeHandler.CombineButtons.pressHandler",
-				{
-					selector: oModifier.getSelector(oButton, oAppComponent),
-					appComponentId: oAppComponent.getId()
-				}
-			);
-
-			var sModelName = "$sap.m.flexibility.CombineButtonsModel";
-			var oManagedObjectModel = oModifier.createControl(
-				"sap.ui.fl.util.ManagedObjectModel",
-				oAppComponent,
-				oView,
-				Object.assign({}, oSelector, {
-					id: oSelector.id + '-managedObjectModel'
-				}),
-				{
-					object: oButton,
-					name: sModelName
-				}
-			);
-			// ManagedObjectModel should be placed in `dependents` aggregation of MenuItem
-			oModifier.insertAggregation(oMenuItem, "dependents", oManagedObjectModel, 0, oView);
-
-			oModifier.bindProperty(oMenuItem, "text", sModelName + ">/text");
-			oModifier.bindProperty(oMenuItem, "icon", sModelName + ">/icon");
-			oModifier.bindProperty(oMenuItem, "enabled", sModelName + ">/enabled");
-			oModifier.bindProperty(oMenuItem, "visible", sModelName + ">/visible");
-			oModifier.bindAggregation(oMenuItem, "customData", {
-				path: sModelName + ">/customData",
-				template: oModifier.createControl(
-					"sap.ui.core.CustomData",
+		return Promise.resolve()
+			.then(oModifier.bySelector.bind(oModifier, oChangeDefinition.content.combineButtonSelectors[0], oAppComponent, oView))
+			.then(function(oReturnedSourceControl) {
+				oSourceControl = oReturnedSourceControl;
+				oParent = oModifier.getParent(oSourceControl); // === oControl
+				var aPromises = [];
+				oChangeDefinition.content.combineButtonSelectors.forEach(function(oCombineButtonSelector) {
+					var oPromise = Promise.resolve()
+						.then(oModifier.bySelector.bind(oModifier, oCombineButtonSelector, oAppComponent, oView));
+					aPromises.push(oPromise);
+				});
+				return Promise.all(aPromises);
+			})
+			.then(function(aCombineButtons){
+				aButtons = aCombineButtons;
+				return oModifier.getParentAggregationName(aButtons[0], oParent);
+			})
+			.then(function(sRetrievedParentAggregation){
+				sParentAggregation = sRetrievedParentAggregation;
+				oRevertData.parentAggregation = sParentAggregation;
+				return oModifier.findIndexInParentAggregation(oSourceControl);
+			})
+			.then(function(iAggrIndex){
+				iAggregationIndex = iAggrIndex;
+				return oModifier.createControl("sap.m.Menu", oAppComponent, oView, oChangeDefinition.content.menuIdSelector);
+			})
+			.then(function(oCreatedMenu){
+				oMenu = oCreatedMenu;
+				return fnHandleMenuItems(
+					aButtons,
+					oModifier,
+					oAppComponent,
+					oMenu,
+					oParent,
+					sParentAggregation,
+					oView,
+					oChangeDefinition,
+					oRevertData);
+			})
+			// Create MenuButton
+			.then(function(mMenuItemsInfo) {
+				aMenuButtonModels = mMenuItemsInfo.menuButtonModels;
+				aMenuButtonName = mMenuItemsInfo.menuButtonName;
+				var sPropertyVisible = mMenuItemsInfo.propertyVisible;
+				var sPropertyEnabled = mMenuItemsInfo.propertyEnabled;
+				return oModifier.createControl(
+					"sap.m.MenuButton",
 					oAppComponent,
 					oView,
-					Object.assign({}, oSelector, {
-						id: oSelector.id + '-customData'
-					}),
+					oChangeDefinition.content.menuButtonIdSelector,
 					{
-						key: "{ path: '" + sModelName + ">key' }",
-						value: "{ path: '" + sModelName + ">value' }"
-					}
-				),
-				templateShareable: false
-			}, oView);
-
-			// FIXME: will not work in XML in case original button has a binding on `text` property
-			if (sButtonText) {
-				bIsRtl ? aMenuButtonName.unshift(sButtonText) : aMenuButtonName.push(sButtonText);
-			}
-
-			// Add suffix to the id, so we can get the original ids of the combined buttons
-			// when we want to split the menu. The suffix is used in SplitMenuButton change handler.
-			oSelector.id = oSelector.id + "-originalButtonId"; // FIXME: do not mutate original object!
-
-			// Create CustomData, holding the original ids of the combined buttons
-			oIdToSave = oModifier.createControl("sap.ui.core.CustomData", oAppComponent, oView, oSelector);
-			oModifier.setProperty(oIdToSave, "key", "originalButtonId");
-			oModifier.setProperty(oIdToSave, "value", oModifier.getId(oButton));
-
-			// FIXME: fix implementation of ObjectPageDynamicHeaderTitle and remove next line
-			oModifier.removeAggregation(oParent, sParentAggregation, oButton);
-
-			// Adding each button control to the container's dependents aggregation
-			oModifier.insertAggregation(oParent, "dependents", oButton, 0, oView);
-
-			// Saving original ID to original button to avoid conflict with aggregation binding for customData aggregation.
-			// The new MenuItem will receive this data via ManagedObjectModel synchronization.
-			oModifier.insertAggregation(oButton, "customData", oIdToSave, 0, oView);
-
-			oModifier.insertAggregation(oMenu, "items", oMenuItem, iIndex, oView);
-
-			// Create ManagedObjectModel for every MenuItem
-			// later it will be placed in dependents aggregation of the MenuButton
-			// and enabled and visibility properties of each item will be bound to the enabled and visibility property of the MenuButton
-			var sModelName = "$sap.m.flexibility.MenuButtonModel" + iIndex;
-			aMenuButtonModels[iIndex] = oModifier.createControl(
-					"sap.ui.fl.util.ManagedObjectModel",
-					oAppComponent,
-					oView,
-					Object.assign({}, oSelector, {
-						id: oSelector.id + '-managedObjectModelMenuItem'
-					}),
-					{
-						object: oMenuItem,
-						name: sModelName
+						visible: "{= " + sPropertyVisible + "}",
+						enabled: "{= " + sPropertyEnabled + "}"
 					}
 				);
-
-			// create binding expression for the visibility and enabled property of the MenuButton
-			sPropertyEnabled = sPropertyEnabled + sOR + "${" + sModelName + ">/enabled}";
-			sPropertyVisible = sPropertyVisible + sOR + "${" + sModelName + ">/visible}";
-			sOR = " || ";
-		});
-
-		// Create MenuButton
-		oMenuButton = oModifier.createControl(
-				"sap.m.MenuButton",
-				oAppComponent,
-				oView,
-				oChangeDefinition.content.menuButtonIdSelector,
-				{
-					visible: "{= " + sPropertyVisible + "}",
-					enabled: "{= " + sPropertyEnabled + "}"
-				}
-		);
-
-		// ManagedObjectModel should be placed in `dependents` aggregation of the MenuButton
-		aMenuButtonModels.forEach(function (oModel) {
-			oModifier.insertAggregation(oMenuButton, "dependents", oModel, 0, oView);
-		});
-
-		oModifier.setProperty(oMenuButton, "text", aMenuButtonName.join("/"));
-		oModifier.insertAggregation(oMenuButton, "menu", oMenu, 0, oView);
-		oModifier.insertAggregation(oParent, sParentAggregation, oMenuButton, iAggregationIndex, oView);
-		oChange.setRevertData(oRevertData);
-
-		return true;
+			})
+			.then(function(oCreatedMenuButton){
+				oMenuButton = oCreatedMenuButton;
+				// ManagedObjectModel should be placed in `dependents` aggregation of the MenuButton
+				return aMenuButtonModels.reduce(function (oPreviousPromise, oModel) {
+					return oPreviousPromise
+						.then(oModifier.insertAggregation.bind(oModifier, oMenuButton, "dependents", oModel, 0, oView));
+				}, Promise.resolve());
+			})
+			.then(function() {
+				oModifier.setProperty(oMenuButton, "text", aMenuButtonName.join("/"));
+				return Promise.resolve()
+					.then(oModifier.insertAggregation.bind(oModifier, oMenuButton, "menu", oMenu, 0, oView))
+					.then(oModifier.insertAggregation.bind(oModifier, oParent, sParentAggregation, oMenuButton, iAggregationIndex, oView))
+					.then(function(){
+						oChange.setRevertData(oRevertData);
+					});
+			});
 	};
+
+	function fnDestroyControls(aCustomData, oModifier) {
+		return aCustomData.reduce(function(oPreviousInnerPromise, oCustomData) {
+			return oPreviousInnerPromise
+				.then(function(){
+					return oModifier.getProperty(oCustomData, "key");
+				})
+				.then(function(sKey) {
+					if (sKey === "originalButtonId"){
+						return oModifier.destroy(oCustomData);
+					}
+					return undefined;
+				});
+		}, Promise.resolve());
+	}
 
 	/**
 	 * Reverts applied change
@@ -213,7 +304,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property bag containing the modifier and the view
 	 * @param {object} mPropertyBag.modifier - Modifier for the controls
 	 * @param {object} mPropertyBag.view - Application view
-	 * @return {boolean} true if successful
+	 * @return {Promise} Promise resolving when change is reverted
 	 * @public
 	 */
 	CombineButtons.revertChange = function(oChange, oControl, mPropertyBag) {
@@ -222,32 +313,47 @@ sap.ui.define([
 		var oRevertData = oChange.getRevertData();
 		var oChangeDefinition = oChange.getDefinition();
 		var sParentAggregation = oRevertData.parentAggregation;
-		var oMenuButton = oModifier.bySelector(oChangeDefinition.content.menuButtonIdSelector, mPropertyBag.appComponent, oView);
-		var oParent = oModifier.getParent(oMenuButton);
-		var aButtonsIdsReversed = oChangeDefinition.content.combineButtonSelectors.slice().reverse();
-		var oButton;
+		var oMenuButton, oParent, aButtonsIdsReversed;
 
-		// FIXME: fix implementation of ObjectPageDynamicHeaderTitle and remove next line
-		oModifier.removeAggregation(oParent, sParentAggregation, oMenuButton);
-		oModifier.destroy(oMenuButton);
-
-		for (var i = 0, l = aButtonsIdsReversed.length; i < l; i++) {
-			oButton = oModifier.bySelector(aButtonsIdsReversed[i], mPropertyBag.appComponent, oView);
-
-			// Custom data clean up
-			oModifier.getAggregation(oButton, "customData").some(function (oCustomData) { // eslint-disable-line no-loop-func
-				if (oModifier.getProperty(oCustomData, "key") === "originalButtonId") {
-					oModifier.destroy(oCustomData);
-					return true;
-				}
+		return Promise.resolve()
+			.then(function(){
+				return oModifier.bySelector(oChangeDefinition.content.menuButtonIdSelector, mPropertyBag.appComponent, oView);
+			})
+			.then(function(oRetrievedButton) {
+				oMenuButton = oRetrievedButton;
+				oParent = oModifier.getParent(oMenuButton);
+				aButtonsIdsReversed = oChangeDefinition.content.combineButtonSelectors.slice().reverse();
+				// FIXME: fix implementation of ObjectPageDynamicHeaderTitle and remove next line
+				return oModifier.removeAggregation(oParent, sParentAggregation, oMenuButton);
+			})
+			.then(function(){
+				return oModifier.destroy(oMenuButton);
+			})
+			.then(function() {
+				var iLength = aButtonsIdsReversed.length;
+				return aButtonsIdsReversed.reduce(function(oPreviousPromise, oButtonIdReversed, index){
+					var iIndex = index;
+					var oButton;
+					return oPreviousPromise
+						.then(function() {
+							return oModifier.bySelector(oButtonIdReversed, mPropertyBag.appComponent, oView);
+						})
+						// Custom data clean up
+						.then(function(oRetrievedButton) {
+							oButton = oRetrievedButton;
+							return oModifier.getAggregation(oButton, "customData");
+						})
+						.then(function(aControls) {
+							return fnDestroyControls(aControls, oModifier);
+						})
+						.then(function() {
+							return oModifier.insertAggregation(oParent, sParentAggregation, oButton, oRevertData.insertIndexes[iLength - iIndex - 1], oView);
+						});
+				}, Promise.resolve())
+					.then(function() {
+						oChange.resetRevertData();
+					});
 			});
-
-			oModifier.insertAggregation(oParent, sParentAggregation, oButton, oRevertData.insertIndexes[l - i - 1], oView);
-		}
-
-		oChange.resetRevertData();
-
-		return true;
 	};
 
 	/**
@@ -290,9 +396,7 @@ sap.ui.define([
 	 * Callback function which is attached via modifier in applyChange
 	 *
 	 * @param {sap.ui.base.Event} oEvent - Event object
-	 * @param {object} mSelector - Selector object
-	 * @param {string} mSelector.id - ID used for determination of the flexibility target
-	 * @param {boolean} mSelector.idIsLocal - Flag if the selector.id has to be concatenated with the application component ID
+	 * @param {object} mParameters - parameters containing the selector and appComponentId
 	 * while applying the change.
 	 */
 	CombineButtons.pressHandler = function (oEvent, mParameters) {
