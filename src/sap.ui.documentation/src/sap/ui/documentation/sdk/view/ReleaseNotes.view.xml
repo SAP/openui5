@@ -21,11 +21,7 @@
 
 				<headerContent>
 					<layout:VerticalLayout>
-						<html:div class="sapUiCustomTitleText">
-							This log includes the library notes for the libraries listed below.
-							The change log for old version which are not patched anymore can be reviewed
-							<m:Link text="here" href="docs/guide/relnotes/ReleaseNotes.html"/>.
-						</html:div>
+						<m:Text text="This log includes the library notes for the libraries listed below."/>
 						<m:Select id="VersionSelect" items="{select>/items}" change="handleVersionChange" visible="false">
 							<core:Item text="{select>value}" key="{select>key}"/>
 						</m:Select>

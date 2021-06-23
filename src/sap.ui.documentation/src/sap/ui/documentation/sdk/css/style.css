@@ -1590,14 +1590,6 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 	white-space: pre-line;
 }
 
-/* Release notes */
-.sapUiCustomTitleText {
-	font-size: 0.875rem;
-}
-.sapUiCustomTitleText .sapMLnk {
-	display: inline;
-}
-
 /* 5 Depths are handled - if more than 5 levels should be displayed we should think of another approach */
 html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-1 {
 	padding-left: 1.5rem;
