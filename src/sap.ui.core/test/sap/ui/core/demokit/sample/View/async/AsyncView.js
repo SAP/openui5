@@ -38,7 +38,7 @@ sap.ui.define([
 						text: "Material: Vibranium"
 					}),
 					new ObjectAttribute("c4", {
-						text: "Description: A really nice javascript screw."
+						text: "Description: A really nice typed screw."
 					})
 				],
 				iconDensityAware: false
