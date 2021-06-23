@@ -303,7 +303,13 @@ sap.ui.define([
 
 						bUseDefaultOperator = true;
 					} else {
-						oOperator = aMatchingOperators[0]; // TODO: multiple matches?
+						//in case of multiple matches we use the first operators without ValueType (if exist) / at the moment we have two matching operators for "<empty>"" --> LT and EMPTY
+						var aOperatorsWithoutValueType = aMatchingOperators.filter(function(oOperator){ return oOperator.valueTypes.length === 0; });
+						if (aOperatorsWithoutValueType.length >= 1) {
+							oOperator = aOperatorsWithoutValueType[0];
+						} else {
+							oOperator = aMatchingOperators[0]; // TODO: use the first of the matching operators
+						}
 					}
 				}
 

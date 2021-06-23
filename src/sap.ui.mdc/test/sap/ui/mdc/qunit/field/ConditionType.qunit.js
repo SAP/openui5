@@ -245,6 +245,17 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Parsing: <empty> - string", function(assert) {
+
+		var oCondition = oConditionType.parseValue("<empty>");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "Empty", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 0, "Values length");
+
+	});
+
 	QUnit.test("Parsing: null", function(assert) {
 
 		var oCondition = oConditionType.parseValue(null);
