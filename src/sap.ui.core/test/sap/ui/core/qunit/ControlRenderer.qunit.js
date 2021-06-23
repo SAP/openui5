@@ -144,6 +144,22 @@ sap.ui.define([
 		assert.equal(oRoot.outerHTML, '<div><div style="width: 100px;">DivText</div>TextNode<b>BoldText</b></div>', "styles and text nodes are written correctly");
 	});
 
+	QUnit.test("Custom RM writing svg elements", function(assert) {
+		var oRoot = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		var oRM = Core.createRenderManager();
+		oRM.openStart("circle", "circle").openEnd().close("circle");
+		oRM.flush(oRoot, false, true);
+
+		assert.equal(oRoot.outerHTML, '<svg><circle id="circle"></circle></svg>', "styles and svg elements are written correctly");
+		assert.equal(oRoot.namespaceURI, oRoot.firstChild.namespaceURI, "circle element is created as an SVG element");
+
+		oRoot = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+		oRM.voidStart("input").voidEnd();
+		oRM.flush(oRoot, false, true);
+		oRM.destroy();
+		assert.notEqual(oRoot.namespaceURI, oRoot.firstChild.namespaceURI, "div element within the foreignObject is created different than SVG context");
+	});
+
 	QUnit.test("String rendering output and events", function(assert) {
 		var oStringControl = new StringControl();
 		var onBeforeRenderingSpy = sinon.spy();
