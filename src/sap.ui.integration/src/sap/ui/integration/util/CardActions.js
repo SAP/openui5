@@ -539,7 +539,11 @@ sap.ui.define([
 		 * @returns {boolean} If the action is configured for the header, content, or a detail of an item in the content of the card
 		 */
 		CardActions.prototype._isSingleAction = function (sActionArea) {
-			return [ActionArea.Header, ActionArea.Content, ActionArea.ContentItemDetail, ActionArea.Footer].indexOf(sActionArea) > -1;
+			return [ActionArea.Header,
+				ActionArea.Content,
+				ActionArea.ContentItemDetail,
+				ActionArea.FooterToolbar,
+				ActionArea.ContentItemToolbar].indexOf(sActionArea) > -1;
 		};
 
 		return CardActions;

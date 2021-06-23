@@ -413,6 +413,7 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#getManifestEntry as getManifestEntry
 		 * @borrows sap.ui.integration.widgets.Card#resolveDestination as resolveDestination
 		 * @borrows sap.ui.integration.widgets.Card#request as request
+		 * @borrows sap.ui.integration.widgets.Card#refresh as refresh
 		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
 		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as getBaseUrl
 		 * @borrows sap.ui.integration.widgets.Card#getRuntimeUrl as getRuntimeUrl
@@ -436,6 +437,7 @@ sap.ui.define([
 			"getManifestEntry",
 			"resolveDestination",
 			"request",
+			"refresh",
 			"showMessage",
 			"getBaseUrl",
 			"getRuntimeUrl",
