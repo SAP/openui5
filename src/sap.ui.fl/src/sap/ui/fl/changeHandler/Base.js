@@ -52,7 +52,7 @@ sap.ui.define([
 		instantiateFragment: function(oChange, mPropertyBag) {
 			var sModuleName = oChange.getModuleName();
 			if (!sModuleName) {
-				throw new Error("The module name of the fragment is not set. This should happen in the backend");
+				return Promise.reject(new Error("The module name of the fragment is not set. This should happen in the backend"));
 			}
 			var sViewId = mPropertyBag.viewId ? mPropertyBag.viewId + "--" : "";
 			var sProjectId = oChange.getProjectId() || "";
@@ -66,12 +66,14 @@ sap.ui.define([
 
 			var oModifier = mPropertyBag.modifier;
 			var oView = mPropertyBag.view;
-			var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
-			try {
-				return oModifier.instantiateFragment(sFragment, sIdPrefix, oView);
-			} catch (oError) {
-				throw new Error("The following XML Fragment could not be instantiated: " + sFragment + " Reason: " + oError.message);
-			}
+			return Promise.resolve()
+				.then(function () {
+					var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
+					return oModifier.instantiateFragment(sFragment, sIdPrefix, oView)
+						.catch(function (oError) {
+							throw new Error("The following XML Fragment could not be instantiated: " + sFragment + " Reason: " + oError.message);
+						});
+				});
 		},
 
 		/**

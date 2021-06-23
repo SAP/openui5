@@ -1138,7 +1138,7 @@ sap.ui.define([
 		QUnit.test("logs an error if no changes were passed", function(assert) {
 			var oErrorStub = sandbox.stub(Log, "error");
 
-			Applier.applyAllChangesForXMLView(this.mPropertyBag, "thisIsNoArray").then(function() {
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, "thisIsNoArray").then(function() {
 				assert.equal(oErrorStub.callCount, 1, "a error was logged");
 			});
 		});
@@ -1150,7 +1150,7 @@ sap.ui.define([
 			};
 			sandbox.stub(this.oChange, "getDependentControlSelectorList").returns([oDependentSelectorSelector]);
 
-			Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange]).then(function() {
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange]).then(function() {
 				assert.equal(this.oWarningStub.callCount, 1, "an ApplyChangeError was logged");
 				assert.ok(this.oWarningStub.lastCall.args[0].indexOf("A dependent selector control of the flexibility change is not available.") > -1, "an ApplyChangeError was logged");
 			}.bind(this));
@@ -1235,7 +1235,7 @@ sap.ui.define([
 			var oChange2 = new Change(getLabelChangeContent("a2"));
 			var oChange3 = new Change(getLabelChangeContent("a3"));
 
-			sandbox.stub(XmlTreeModifier, "bySelector").withArgs(sinon.match.defined).returns(this.oXmlLabel);
+			sandbox.stub(XmlTreeModifier, "bySelectorTypeIndependent").withArgs(sinon.match.defined).resolves(this.oXmlLabel);
 			sandbox.stub(XmlTreeModifier, "getControlType").returns("aType");
 			this.oApplyChangeOnControlStub.resolves({success: true});
 

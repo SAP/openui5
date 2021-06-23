@@ -26,23 +26,23 @@ sap.ui.define([
 	function _checkControlAndDependentSelectorControls(oChange, mPropertyBag) {
 		var oSelector = oChange.getSelector && oChange.getSelector();
 		if (!oSelector || (!oSelector.id && !oSelector.name)) {
-			throw Error("No selector in change found or no selector ID.");
+			return Promise.reject(Error("No selector in change found or no selector ID."));
 		}
 
-		var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view);
-		if (!oControl) {
-			throw Error("A flexibility change tries to change a nonexistent control.");
-		}
-
-		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
-		aDependentControlSelectorList.forEach(function(sDependentControlSelector) {
-			var oDependentControl = mPropertyBag.modifier.bySelector(sDependentControlSelector, mPropertyBag.appComponent, mPropertyBag.view);
-			if (!oDependentControl) {
-				throw Error("A dependent selector control of the flexibility change is not available.");
-			}
-		});
-
-		return oControl;
+		return mPropertyBag.modifier.bySelectorTypeIndependent(oSelector, mPropertyBag.appComponent, mPropertyBag.view)
+			.then(function (oControl) {
+				if (!oControl) {
+					throw Error("A flexibility change tries to change a nonexistent control.");
+				}
+				var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
+				aDependentControlSelectorList.forEach(function(sDependentControlSelector) {
+					var oDependentControl = mPropertyBag.modifier.bySelector(sDependentControlSelector, mPropertyBag.appComponent, mPropertyBag.view);
+					if (!oDependentControl) {
+						throw new Error("A dependent selector control of the flexibility change is not available.");
+					}
+				});
+				return oControl;
+			});
 	}
 
 	function _checkAndAdjustChangeStatusSync(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
@@ -381,25 +381,27 @@ sap.ui.define([
 
 			return aChanges.reduce(function(oPreviousPromise, oChange) {
 				var oControl;
-				return oPreviousPromise.then(function() {
-					oControl = _checkControlAndDependentSelectorControls(oChange, mPropertyBag);
-					oChange.setQueuedForApply();
-					return _checkAndAdjustChangeStatus(oControl, oChange, undefined, undefined, mPropertyBag);
-				})
-				.then(function () {
-					if (!oChange.isApplyProcessFinished()) {
-						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
-					}
-					return {success: true};
-				})
-				.then(function(oReturn) {
-					if (!oReturn.success) {
-						throw Error(oReturn.error);
-					}
-				})
-				.catch(function(oError) {
-					_logApplyChangeError(oError, oChange);
-				});
+				return oPreviousPromise
+					.then(_checkControlAndDependentSelectorControls.bind(null, oChange, mPropertyBag))
+					.then(function (oReturnedControl) {
+						oControl = oReturnedControl;
+						oChange.setQueuedForApply();
+						return _checkAndAdjustChangeStatus(oControl, oChange, undefined, undefined, mPropertyBag);
+					})
+					.then(function () {
+						if (!oChange.isApplyProcessFinished()) {
+							return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
+						}
+						return {success: true};
+					})
+					.then(function(oReturn) {
+						if (!oReturn.success) {
+							throw Error(oReturn.error);
+						}
+					})
+					.catch(function(oError) {
+						_logApplyChangeError(oError, oChange);
+					});
 			}, new FlUtils.FakePromise())
 			.then(function() {
 				return mPropertyBag.view;

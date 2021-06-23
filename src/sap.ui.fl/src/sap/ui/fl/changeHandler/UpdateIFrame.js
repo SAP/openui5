@@ -77,10 +77,9 @@ sap.ui.define([
 	UpdateIFrame.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
-		var oControlMetadata = oModifier.getControlMetadata(oControl);
 
-		return Promise.resolve()
-			.then(function() {
+		return oModifier.getControlMetadata(oControl)
+			.then(function (oControlMetadata) {
 				if (oControlMetadata.getName() !== "sap.ui.fl.util.IFrame") {
 					return Promise.reject(new Error("UpdateIFrame only for sap.ui.fl.util.IFrame"));
 				}

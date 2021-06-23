@@ -171,25 +171,6 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change} oChange The change instance
 	 * @param {object} mPropertyBag The propertyBag
 	 * @param {object} mPropertyBag.view The view to process
-	 * @param {object} mPropertyBag.appDescriptor The app descriptor containing the metadata of the current application
-	 * @param {object} mPropertyBag.appComponent The component instance that is currently loading
-	 * @param {boolean} bSaveRevertData 'true' if the revert data should be saved as value
-	 * @returns {Promise} resolves when custom data is written
-	 */
-	FlexCustomData.sync.addAppliedCustomData = function(oControl, oChange, mPropertyBag, bSaveRevertData) {
-		var sCustomDataValue = getCustomValueData(bSaveRevertData, oChange);
-		var sCustomDataKey = FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
-		return writeCustomDataSync(oControl, sCustomDataKey, sCustomDataValue, mPropertyBag);
-	};
-
-	/**
-	 * Adds applied custom data to the control. Depending on whether the change is revertible,
-	 * the value of the custom data is either the revert data of the change (stringified and '{' and '}' escaped) or simply 'true'
-	 *
-	 * @param {sap.ui.core.Control} oControl The control that should be checked
-	 * @param {sap.ui.fl.Change} oChange The change instance
-	 * @param {object} mPropertyBag The propertyBag
-	 * @param {object} mPropertyBag.view The view to process
 	 * @param {object} mPropertyBag.modifier The polymorph reuse operations handling the changes on the given view type
 	 * @param {object} mPropertyBag.appDescriptor The app descriptor containing the metadata of the current application
 	 * @param {object} mPropertyBag.appComponent The component instance that is currently loading
@@ -291,15 +272,6 @@ sap.ui.define([
 	FlexCustomData._getCustomDataKey = function(oChange, sIdentifier) {
 		return sIdentifier + "." + oChange.getId();
 	};
-
-	function writeCustomDataSync(oControl, sKey, sValue, mPropertyBag) {
-		var mCustomData = getCustomDataSync(oControl, sKey);
-		if (!mCustomData.customData) {
-			mPropertyBag.modifier.createAndAddCustomData(oControl, sKey, sValue, mPropertyBag.appComponent);
-		} else {
-			mPropertyBag.modifier.setProperty(mCustomData.customData, "value", sValue);
-		}
-	}
 
 	function writeCustomDataAsync(oControl, sKey, sValue, mPropertyBag) {
 		return getCustomDataAsync(oControl, mPropertyBag.modifier, sKey)
