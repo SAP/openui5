@@ -93,6 +93,8 @@ sap.ui.define([
             if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.DrillDownUp) < 0) {
                 this._oDrillDownBtn = new OverflowButton(oMDCChart.getId() + "-drillDown", {
                     icon: "sap-icon://drill-down",
+                    tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
+					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
                     press: function (oEvent) {
                         oMDCChart._showDrillDown(this._oDrillDownBtn);
                     }.bind(this)
@@ -115,6 +117,8 @@ sap.ui.define([
             if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.ZoomInOut)) {
                 this.oZoomInButton = new OverflowButton(oMDCChart.getId() + "btnZoomIn", {
                     icon: "sap-icon://zoom-in",
+                    tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
+                    text: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
                     press: function onZoomOutButtonPressed(oControlEvent) {
                         oMDCChart.zoomIn();
                         this.toggleZoomButtons(oMDCChart);
@@ -123,6 +127,8 @@ sap.ui.define([
 
                 this.oZoomOutButton = new OverflowButton(oMDCChart.getId() + "btnZoomOut", {
                     icon: "sap-icon://zoom-out",
+                    tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
+                    text: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
                     press: function onZoomOutButtonPressed(oControlEvent) {
                         oMDCChart.zoomOut();
                         this.toggleZoomButtons(oMDCChart);
@@ -138,6 +144,8 @@ sap.ui.define([
             if (aP13nMode.indexOf("Item") > -1) {
                 this._oSettingsBtn = new OverflowButton(oMDCChart.getId() + "-chart_settings", {
                     icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
+                    tooltip: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
                     press: function (oEvent) {
                         var oSource = oEvent.getSource();
                         ChartSettings.showPanel(oMDCChart, "Chart", oSource);
@@ -149,6 +157,8 @@ sap.ui.define([
             if (aP13nMode.indexOf("Sort") > -1) {
                 this._oSortBtn = new OverflowButton(oMDCChart.getId() + "-sort_settings", {
                     icon: "sap-icon://sort",
+                    tooltip: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
+					text: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
                     press: function (oEvent) {
                         var oSource = oEvent.getSource();
                         ChartSettings.showPanel(oMDCChart, "Sort", oSource, oMDCChart._getPropertyData());
