@@ -221,6 +221,30 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Check multi-part form data in XMLHttpRequest", function (assert) {
+		//Setup
+		var oUploader = new Uploader({
+			useMultipart: true
+                }),
+		oItem = this.oUploadSet.getItems()[0],
+		oXMLHttpRequestSendSpy = this.spy(window.XMLHttpRequest.prototype, "send");
+		var oFormData = new window.FormData();
+
+		this.oUploadSet.setAggregation("uploader", oUploader);
+		this.oUploadSet.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oUploader.uploadItem(oItem);
+
+		//Assert
+		assert.ok(oXMLHttpRequestSendSpy.calledWith(oFormData), "XML Http request is made with form-data");
+
+		//Clean
+		oUploader.destroy();
+		oXMLHttpRequestSendSpy.restore();
+	});
+
 	QUnit.test("No data rendering - with default text and description", function(assert) {
 		//Arrange
 		this.oUploadSet.unbindAggregation("items");
