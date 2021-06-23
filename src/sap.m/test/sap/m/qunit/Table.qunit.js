@@ -609,6 +609,18 @@ sap.ui.define([
 		oContainer.destroy();
 	});
 
+	QUnit.test("Focus style class on tr element", function(assert) {
+		var sut = createSUT("focusStyleClassTest", true, true);
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var oTableHeader = sut.getDomRef("tblHeader");
+		assert.ok(oTableHeader.classList.contains("sapMTableRowCustomFocus"), "sapMTableRowCustomFocus style class is added to the tr element");
+		assert.ok(oTableHeader.classList.contains("sapMLIBFocusable"), "sapMLIBFocusable style class is added to the tr element");
+
+		sut.destroy();
+	});
+
 	QUnit.module("TypeColumn");
 
 	QUnit.test("TypeColumn visibility should updated correctly", function(assert) {
