@@ -1629,5 +1629,12 @@ sap.ui.define([
 		assert.ok(true, 'error is not thrown');
 	});
 
+	QUnit.test("resize handler doesn't throw error", function (assert) {
+		this.oCarousel._fnAdjustAfterResize();
+
+		assert.ok(true, 'error is not thrown');
+	});
+
+
 	return waitForThemeApplied();
 });

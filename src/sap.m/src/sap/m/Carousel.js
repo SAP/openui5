@@ -274,7 +274,10 @@ sap.ui.define([
 		this._fnAdjustAfterResize = function() {
 			var $carouselInner = this.$().find(Carousel._INNER_SELECTOR);
 			this._oMobifyCarousel.resize($carouselInner);
-			this._setWidthOfPages(this._getNumberOfItemsToShow());
+
+			if (this.getPages().length > 1) {
+				this._setWidthOfPages(this._getNumberOfItemsToShow());
+			}
 		}.bind(this);
 
 		this._aOrderOfFocusedElements = [];
