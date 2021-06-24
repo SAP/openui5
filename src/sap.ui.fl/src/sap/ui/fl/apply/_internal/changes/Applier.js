@@ -60,7 +60,9 @@ sap.ui.define([
 			oChange.setInitialApplyState();
 		} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
 			// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
+			// and the revert data fetched from the Custom Data
 			// scenario: viewCache
+			oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, mPropertyBag.modifier));
 			oChange.markFinished();
 		}
 	}
