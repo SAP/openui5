@@ -8,19 +8,15 @@
 		width="100%">
 		<Button
 			text="Open View Settings Dialog"
-			press="handleOpenDialog"
-			ariaHasPopup="Dialog" />
+			press="handleOpenDialog" />
 		<Button
 				text="Open View Settings Dialog in Filter view"
-				press="handleOpenDialogFilter"
-				ariaHasPopup="Dialog" />
+				press="handleOpenDialogFilter" />
 		<Button
 				text="Open View Settings Dialog with preselected filters"
-				press="handleOpenDialogFilterPreselected"
-				ariaHasPopup="Dialog" />
+				press="handleOpenDialogFilterPreselected" />
 		<Button
 				text="Open View Settings Dialog with presetFilterItems"
-				press="handleOpenDialogPresetFilterItems"
-				ariaHasPopup="Dialog" />
+				press="handleOpenDialogPresetFilterItems" />
 </l:VerticalLayout>
 </mvc:View>

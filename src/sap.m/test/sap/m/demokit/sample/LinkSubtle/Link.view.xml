@@ -52,13 +52,11 @@
 			<Link
 				text="{SupplierName}"
 				subtle="true"
-				press="handleLinkPress"
-				ariaHasPopup="Dialog" />
+				press="handleLinkPress" />
 			<Link
 				text="{Category}"
 				subtle="true"
-				press="handleLinkPress"
-				ariaHasPopup="Dialog" />
+				press="handleLinkPress" />
 			<Link
 				text="picture"
 				subtle="true"

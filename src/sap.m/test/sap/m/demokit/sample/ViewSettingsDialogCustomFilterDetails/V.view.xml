@@ -8,15 +8,12 @@
 			width="100%">
 		<Button
 				text="Search Contains"
-				press="handleOpenDialogSearchContains"
-				ariaHasPopup="Dialog" />
+				press="handleOpenDialogSearchContains" />
 		<Button
 				text="Search Any Word Starts With"
-				press="handleOpenDialogSearchWordsStartWith"
-				ariaHasPopup="Dialog" />
+				press="handleOpenDialogSearchWordsStartWith" />
 		<Button
 				text="Search Case Sensitive Contains"
-				press="handleOpenDialogCustomSearch"
-				ariaHasPopup="Dialog" />
+				press="handleOpenDialogCustomSearch" />
 	</l:VerticalLayout>
 </mvc:View>

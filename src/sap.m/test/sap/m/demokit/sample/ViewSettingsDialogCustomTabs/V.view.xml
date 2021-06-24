@@ -8,12 +8,10 @@
 		width="100%">
 		<Button
 			text="Open View Settings Dialog with several tabs"
-			press="handleOpenDialog"
-			ariaHasPopup="Dialog" />
+			press="handleOpenDialog" />
 
 		<Button
 				text="Open View Settings Dialog with single custom tab"
-				press="handleOpenDialogSingleCustomTab"
-				ariaHasPopup="Dialog" />
+				press="handleOpenDialogSingleCustomTab" />
 	</l:VerticalLayout>
 </mvc:View>
