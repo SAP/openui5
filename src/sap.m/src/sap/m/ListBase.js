@@ -2637,6 +2637,30 @@ function(
 		}.bind(this));
 	};
 
+	/**
+	 * Requests a specified number of items from the back end to load more data in the list.
+	 * This method has no effect on the list if the <code>growing</code> feature is disabled.
+	 * See {@link sap.m.ListBase#getGrowing} and {@link sap.m.ListBase#getGrowingThreshold}.
+	 * @param {int|undefined} iItems The number of items to be requested
+	 * @since 1.92
+	 * @public
+	 */
+	ListBase.prototype.requestItems = function(iItems) {
+		if (!this.getGrowing() || !this._oGrowingDelegate) {
+			Log.warning("The 'growing' feature is disabled on the control. Please enable 'growing' to use 'requestItems' API", this.getMetadata().getName() + ": " + this.getId());
+			return;
+		}
+
+		if (!iItems) {
+			this._oGrowingDelegate.requestNewPage();
+		} else {
+			var iOldGrowingThreshold = this.getGrowingThreshold();
+			this.setGrowingThreshold(iItems);
+			this._oGrowingDelegate.requestNewPage();
+			this.setGrowingThreshold(iOldGrowingThreshold);
+		}
+	};
+
 	function getItemAtIndex(oList, iIndex) {
 		var aItems = oList.getVisibleItems();
 		var iRowCount = aItems.length;
