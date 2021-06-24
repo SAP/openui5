@@ -1008,16 +1008,17 @@ function(
 		};
 
 		/**
-		 * Calculates "left" and "top" positions, so the dialog is centered.
+		 * Calculates "left" side ("right" side in RTL mode) and "top" positions, so the dialog is centered.
 		 *
-		 * @returns {object} Object that has "left" and "top"  positions of the dialog
+		 * @returns {object} Object that has "left" side ("right" side in RTL mode) and "top" positions of the dialog
 		 * @private
 		 */
 		Dialog.prototype._calcPosition = function () {
 			var oAreaDimensions = this._getAreaDimensions(),
 				$this = this.$(),
 				iLeft,
-				iTop;
+				iTop,
+				oPosition;
 
 			if (Device.system.phone && this.getStretch()) {
 				iLeft = 0;
@@ -1030,10 +1031,12 @@ function(
 				iTop = (oAreaDimensions.height - $this.outerHeight()) / 2;
 			}
 
-			return {
-				left: Math.round(oAreaDimensions.left + iLeft),
+			oPosition = {
 				top: Math.round(oAreaDimensions.top + iTop)
 			};
+			oPosition[this._bRTL ? "right" : "left"] = Math.round(oAreaDimensions.left + iLeft);
+
+			return oPosition;
 		};
 
 		/**
@@ -2015,8 +2018,9 @@ function(
 
 							//move the dialog
 							that._$dialog.css({
+								top: that._oManuallySetPosition.y,
 								left: that._oManuallySetPosition.x,
-								top: that._oManuallySetPosition.y
+								right: that._bRTL ? "" : undefined
 							});
 						});
 					});
