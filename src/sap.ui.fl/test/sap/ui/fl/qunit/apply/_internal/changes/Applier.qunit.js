@@ -179,6 +179,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("updates change status if change was already applied (viewCache)", function(assert) {
+			var oRevertData = {foo: "bar"};
 			var oChange0 = new Change(getLabelChangeContent("a"));
 			var oChange1 = new Change(getLabelChangeContent("a"));
 			var fnGetChangesMap = function() {
@@ -190,6 +191,7 @@ sap.ui.define([
 			};
 			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
 			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(true);
+			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").returns(oRevertData);
 			var oMarkFinishedSpy0 = sandbox.spy(oChange0, "markFinished");
 			var oMarkFinishedSpy1 = sandbox.spy(oChange1, "markFinished");
 
@@ -202,6 +204,8 @@ sap.ui.define([
 				assert.equal(oMarkFinishedSpy1.callCount, 1, "the status of the change got updated");
 				assert.ok(oChange0.isApplyProcessFinished(), "the status is APPLY_FINISHED");
 				assert.ok(oChange1.isApplyProcessFinished(), "the status is APPLY_FINISHED");
+				assert.deepEqual(oChange0.getRevertData(), oRevertData, "the revert data is saved in the change");
+				assert.deepEqual(oChange1.getRevertData(), oRevertData, "the revert data is saved in the change");
 			}.bind(this));
 		});
 
