@@ -37,7 +37,7 @@
 			<f2:DynamicPageHeader>
 				<f2:content>
 
-			<mdc:FilterBar id="authorsFilterBar" filtersChanged="onFiltersChanged" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Authors.FB.delegate', payload: {collectionName: 'Authors'}}" p13nMode="Item,Value">
+			<mdc:FilterBar id="authorsFilterBar" variantBackreference="IDVariantManagementOfTable" filtersChanged="onFiltersChanged" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Authors.FB.delegate', payload: {collectionName: 'Authors'}}" p13nMode="Item,Value">
 				<mdc:dependents>
 					<mdcf:FieldValueHelp filterFields="$search" id="FVH_Generic_Multi" title="Conditions" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
 					<mdcf:FieldValueHelp id="fhName" title="Name" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />

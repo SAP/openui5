@@ -65,7 +65,7 @@
 																<columns>
 																	<Column width="5rem">
 																		<header>
-																			<Text text="ID" />
+																			<Text text="my ID" />
 																		</header>
 																	</Column>
 																	<Column>
@@ -73,7 +73,7 @@
 																			<Text text="Name" />
 																		</header>
 																	</Column>
-																	<Column width="5rem">
+																	<Column width="8rem">
 																		<header>
 																			<Text text="Date of Birth" />
 																		</header>

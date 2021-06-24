@@ -39,6 +39,7 @@
 				<f2:content>
 			<mdc:FilterBar
 					id="ordersFilterBar"
+					variantBackreference="IDVariantManagementOfTable"
 					liveMode="false"
 					delegate="{name: 'sap/ui/v4demo/delegate/Orders.FB.delegate', payload: {collectionName: 'Orders'} }"
 					search="onSearch"
