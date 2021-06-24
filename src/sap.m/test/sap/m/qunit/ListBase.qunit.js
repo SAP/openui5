@@ -1335,6 +1335,10 @@ sap.ui.define([
 			oPage.removeAllContent();
 		});
 
+		QUnit.test("getStickyFocusOffset", function(assert){
+			assert.strictEqual(oList.getStickyFocusOffset(), 0, "The sticky UI element has proper focus offset");
+		});
+
 		/********************************************************************************/
 		QUnit.module("Other API methods", {
 			beforeEach: function() {
