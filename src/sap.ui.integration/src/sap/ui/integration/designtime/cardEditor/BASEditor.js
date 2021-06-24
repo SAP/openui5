@@ -319,7 +319,11 @@ sap.ui.define([
 
 	BASEditor.prototype._cleanJson = function (oJson, bCleanParameters) {
 		oJson = oJson || this.getJson();
-		var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
+		//handle designtime keyword removal
+		var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "configuration", "editor"], oJson) || "");
+		if (sDesigntimePath === "") {
+			sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
+		}
 		if (!sDesigntimePath) {
 			ObjectPath.set(["sap.card", "designtime"], "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate", oJson);
 		}
@@ -498,7 +502,11 @@ sap.ui.define([
 			this.setPreventInitialization(true);
 			this._bCardId = sCardId;
 			var sTempDesigntimeUrl;
-			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
+			//handle designtime keyword removal
+			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "configuration", "editor"], oJson) || "");
+			if (sDesigntimePath === "") {
+				sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
+			}
 			if (!sDesigntimePath) {
 				var sDesigntime = configurationTemplate;
 				//sDesigntime = sDesigntime.replace(/\$\$CARDID\$\$/, sCardId + ".Configuration");

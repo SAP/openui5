@@ -157,7 +157,11 @@ sap.ui.define([
 			this.setPreventInitialization(true);
 			this._bDesigntimeInit = true;
 			this._bCardId = sCardId;
-			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
+			//handle designtime keyword removal
+			var sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "configuration", "editor"], oJson) || "");
+			if (sDesigntimePath === "") {
+				sDesigntimePath = sanitizePath(ObjectPath.get(["sap.card", "designtime"], oJson) || "");
+			}
 			var sBaseUrl = sanitizePath(this.getBaseUrl() || "");
 
 			if (sBaseUrl && sDesigntimePath) {

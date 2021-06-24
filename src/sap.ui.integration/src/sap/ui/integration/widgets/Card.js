@@ -1742,8 +1742,12 @@ sap.ui.define([
 
 		return new Promise(function (resolve, reject) {
 			//build the module path to load as part of the widgets module path
-			var sDesigntimePath = this._oCardManifest.get("/sap.card/designtime"),
-				sFullDesigntimePath = this._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + sDesigntimePath;
+			//handle keyword designtime removal
+			var sDesigntimePath = this._oCardManifest.get("/sap.card/configuration/editor");
+			if (sDesigntimePath === undefined) {
+				sDesigntimePath = this._oCardManifest.get("/sap.card/designtime");
+			}
+			var	sFullDesigntimePath = this._oCardManifest.get("/sap.app/id").replace(/\./g, "/") + "/" + sDesigntimePath;
 			if (sFullDesigntimePath) {
 				sap.ui.require([sFullDesigntimePath], function (oDesigntime) {
 					//successfully loaded
