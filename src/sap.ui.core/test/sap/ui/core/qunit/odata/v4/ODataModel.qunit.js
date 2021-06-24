@@ -2456,7 +2456,8 @@ sap.ui.define([
 
 		this.mock(_Helper).expects("createTechnicalDetails"); // ignore details
 		this.mock(_Helper).expects("makeAbsolute")
-			.withExactArgs("longtextUrl", sServiceUrl + "~path~").returns("~absoluteLongtextUrl~");
+			.withExactArgs("longtextUrl", TestUtils.proxy(sServiceUrl) + "~path~")
+			.returns("~absoluteLongtextUrl~");
 
 		assert.strictEqual(
 			// code under test
