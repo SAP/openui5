@@ -34,6 +34,7 @@ sap.ui.define([
 	 * @param {object} oControl - the control which has been determined by the selector id
 	 * @param {object} mPropertyBag - map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
 	 *                                sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
+	 * @returns {Promise} Promise resolving when change is successfully applied
 	 * @private
 	 */
 	RenameForm.applyChange = function(oChangeWrapper, oControl, mPropertyBag) {
@@ -49,17 +50,22 @@ sap.ui.define([
 
 		if (oChangeDefinition.texts && oChangeDefinition.texts.formText && this._isProvided(oChangeDefinition.texts.formText.value)) {
 			if (!oControl) {
-				throw new Error("no Control provided for renaming");
+				return Promise.reject(new Error("no Control provided for renaming"));
 			}
 
-			oChangeWrapper.setRevertData(oModifier.getProperty(oRenamedElement, "text"));
-			var sValue = oChangeDefinition.texts.formText.value;
-			oModifier.setProperty(oRenamedElement, "text", sValue);
-
-			return true;
+			return Promise.resolve()
+				.then(function() {
+					return oModifier.getProperty(oRenamedElement, "text");
+				})
+				.then(function(sProperty) {
+					oChangeWrapper.setRevertData(sProperty);
+					var sValue = oChangeDefinition.texts.formText.value;
+					oModifier.setProperty(oRenamedElement, "text", sValue);
+				});
 		} else {
 			Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
 			//however subsequent changes should be applied
+			return Promise.resolve();
 		}
 	};
 
@@ -70,7 +76,6 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag property bag
 	 * @param {object} mPropertyBag.modifier modifier for the controls
-	 * @returns {boolean} true if successful
 	 * @public
 	 */
 	RenameForm.revertChange = function(oChangeWrapper, oControl, mPropertyBag) {
@@ -89,7 +94,6 @@ sap.ui.define([
 			// In some cases the SimpleForm does not properly update the value, so the invalidate call is required
 			oRenamedElement.getParent().invalidate();
 			oChangeWrapper.resetRevertData();
-			return true;
 		} else {
 			Log.error("Change doesn't contain sufficient information to be reverted. Most Likely the Change didn't go through applyChange.");
 		}

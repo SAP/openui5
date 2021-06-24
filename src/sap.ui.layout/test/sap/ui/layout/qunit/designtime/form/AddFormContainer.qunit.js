@@ -78,17 +78,19 @@ function (
 			"the form has only one form element in the beginning");
 
 			AddFormContainerChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo, oPropertyBag);
-			AddFormContainerChangeHandler.applyChange(oChange, this.oForm, oPropertyBag);
-			var oNewFormContainer = this.oForm.getFormContainers()[1];
-			assert.equal(oLogErrorSpy.callCount, 0, "the first change to add a container was applied without errors");
-			assert.equal(this.oForm.getFormContainers().length, 2, "the form has now 2 form container");
-			assert.equal(oNewFormContainer.getId(), "addedContainerId", "the new form container has a stable id");
-			assert.equal(oNewFormContainer.getTitle().getText(), "addedContainerLabel", "the new Title was inserted for the form container element");
-			assert.throws(function() {
-				AddFormContainerChangeHandler.applyChange(oChange, this.oForm, oPropertyBag);
-			}, function(oReturn) {
-				return oReturn && oReturn.message ? oReturn.message.indexOf("Control to be created already exists") >= 0 : false;
-			}, "the second change to add the same field throws a not applicable info message");
+			return AddFormContainerChangeHandler.applyChange(oChange, this.oForm, oPropertyBag)
+			 .then(function() {
+					var oNewFormContainer = this.oForm.getFormContainers()[1];
+					assert.equal(oLogErrorSpy.callCount, 0, "the first change to add a container was applied without errors");
+					assert.equal(this.oForm.getFormContainers().length, 2, "the form has now 2 form container");
+					assert.equal(oNewFormContainer.getId(), "addedContainerId", "the new form container has a stable id");
+					assert.equal(oNewFormContainer.getTitle().getText(), "addedContainerLabel", "the new Title was inserted for the form container element");
+					assert.throws(function() {
+						AddFormContainerChangeHandler.applyChange(oChange, this.oForm, oPropertyBag);
+					}, function(oReturn) {
+						return oReturn && oReturn.message ? oReturn.message.indexOf("Control to be created already exists") >= 0 : false;
+					}, "the second change to add the same field throws a not applicable info message");
+			 }.bind(this));
 		});
 	});
 });

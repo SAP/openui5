@@ -34,54 +34,74 @@ sap.ui.define([
 	MoveSimpleForm.CONTENT_AGGREGATION = "content";
 
 	function firstGroupWithoutTitle(oModifier, aStopToken, aContent) {
-		for (var i = 0; i < aContent.length; i++) {
-			var sType = oModifier.getControlType(aContent[i]);
-			if (aStopToken.indexOf(sType) === -1) {
-				if (oModifier.getVisible(aContent[i])) {
-					return true;
-				}
-			} else {
-				return false;
-			}
-		}
+		return aContent.reduce(function(oPreviousPromise, oContent){
+			return oPreviousPromise
+				.then(function(bReturnValue){
+					if (bReturnValue !== undefined) {
+						return bReturnValue;
+					}
+					var sType = oModifier.getControlType(oContent);
+					if (aStopToken.indexOf(sType) === -1) {
+						return Promise.resolve()
+							.then(oModifier.getVisible.bind(oModifier, oContent))
+							.then(function(bVisible){
+								return bVisible || undefined;
+							});
+					} else {
+						return false;
+					}
+				});
+		}, Promise.resolve());
 	}
 
 	function addTitleToFirstGroupIfNeeded(oChange, oModifier, aContent, oSimpleForm, mPropertyBag, aStopToken, oGroupSelector) {
-		if (firstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
-			var oView = mPropertyBag.view;
-			var oAppComponent = mPropertyBag.appComponent;
-
-			var oTitle = oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, oGroupSelector);
-			oModifier.setProperty(oTitle, "text", "");
-			oModifier.insertAggregation(oSimpleForm, "content", oTitle, 0, oView);
-
-			var oNewRevertData = oChange.getRevertData();
-			oNewRevertData.createdTitleSelector = mPropertyBag.modifier.getSelector(oTitle, mPropertyBag.appComponent);
-			oChange.setRevertData(oNewRevertData);
-		}
-
-		return oModifier.getAggregation(oSimpleForm, "content");
+		return firstGroupWithoutTitle(oModifier, aStopToken, aContent)
+			.then(function(bFirstGroupWithoutName){
+				if (bFirstGroupWithoutName) {
+					var oView = mPropertyBag.view;
+					var oAppComponent = mPropertyBag.appComponent;
+					var oTitle;
+					return Promise.resolve()
+						.then(oModifier.createControl.bind(oModifier, "sap.ui.core.Title", oAppComponent, oView, oGroupSelector))
+						.then(function(oCreatedTitle){
+							oTitle = oCreatedTitle;
+							oModifier.setProperty(oTitle, "text", "");
+							return oModifier.insertAggregation(oSimpleForm, "content", oTitle, 0, oView);
+						})
+						.then(function() {
+							var oNewRevertData = oChange.getRevertData();
+							oNewRevertData.createdTitleSelector = mPropertyBag.modifier.getSelector(oTitle, mPropertyBag.appComponent);
+							oChange.setRevertData(oNewRevertData);
+						});
+				}
+				return Promise.resolve();
+			})
+			.then(function(){
+				return oModifier.getAggregation(oSimpleForm, "content");
+			});
 	}
 
 	function mapGroupIndexToContentAggregationIndex(oModifier, aStopToken, aContent, iGroupIndex) {
 		var oResult;
 		var iCurrentGroupIndex = -1;
 
-		if (firstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
-			iCurrentGroupIndex++;
-		}
-
-		for (var i = 0; i < aContent.length; i++) {
-			var sType = oModifier.getControlType(aContent[i]);
-			if (aStopToken.indexOf(sType) > -1) {
-				iCurrentGroupIndex++;
-				if (iCurrentGroupIndex === iGroupIndex) {
-					oResult = aContent[i];
-					break;
+		return firstGroupWithoutTitle(oModifier, aStopToken, aContent)
+			.then(function(bFirstGroupWithoutName){
+				if (bFirstGroupWithoutName) {
+					iCurrentGroupIndex++;
 				}
-			}
-		}
-		return aContent.indexOf(oResult);
+				for (var i = 0; i < aContent.length; i++) {
+					var sType = oModifier.getControlType(aContent[i]);
+					if (aStopToken.indexOf(sType) > -1) {
+						iCurrentGroupIndex++;
+						if (iCurrentGroupIndex === iGroupIndex) {
+							oResult = aContent[i];
+							break;
+						}
+					}
+				}
+				return aContent.indexOf(oResult);
+			});
 	}
 
 	function isTitleOrToolbar(aElements, iIndex, oModifier) {
@@ -207,10 +227,19 @@ sap.ui.define([
 	}
 
 	function removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, oView) {
-		oModifier.removeAllAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
-		for (var i = 0; i < aContentClone.length; ++i) {
-			oModifier.insertAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION, aContentClone[i], i, oView);
-		}
+		return Promise.resolve()
+			.then(oModifier.removeAllAggregation.bind(oModifier, oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION))
+			.then(function(){
+				return aContentClone.reduce(function(oPreviousPromise, oContentClone, iIndex) {
+					return oPreviousPromise
+						.then(oModifier.insertAggregation.bind(oModifier,
+							oSimpleForm,
+							MoveSimpleForm.CONTENT_AGGREGATION,
+							oContentClone,
+							iIndex,
+							oView));
+				}, Promise.resolve());
+			});
 	}
 
 	/**
@@ -224,103 +253,116 @@ sap.ui.define([
 	 * @param {object} mPropertyBag
 	 *          Map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
 	 *          sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
-	 * @returns {boolean} true - if change could be applied
+	 * @returns {Promise} Promise resolving when change is applied successfully
 	 * @public
 	 */
 	MoveSimpleForm.applyChange = function(oChange, oSimpleForm, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
-		var oTargetGroup, aContentClone;
+		var oTargetGroup;
+		var aContentClone;
+		var iMovedGroupIndex;
 
 		var oContent = oChange.getContent();
 		var mMovedElement = oContent.movedElements[0];
-		var aContent = oModifier.getAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
+		return Promise.resolve()
+			.then(function(){
+				return oModifier.getAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
+			})
+			.then(function(aContent){
+				var aContentSelectors = aContent.map(function(oContentControl) {
+					return oModifier.getSelector(oContentControl, oAppComponent);
+				});
+				var mState = {content: aContentSelectors};
+				oChange.setRevertData(mState);
 
-		var aContentSelectors = aContent.map(function(oContentControl) {
-			return oModifier.getSelector(oContentControl, oAppComponent);
-		});
-		var mState = {content: aContentSelectors};
-		oChange.setRevertData(mState);
+				if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
+					// !important: element was used in 1.40, do not remove for compatibility!
+					var oSourceField = oModifier.bySelector(mMovedElement.elementSelector || mMovedElement.element, oAppComponent, oView);
+					var iSourceFieldIndex = aContent.indexOf(oSourceField);
+					var iSourceFieldLength = getFieldLength(oModifier, aContent, iSourceFieldIndex);
 
-		if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
-			// !important: element was used in 1.40, do not remove for compatibility!
-			var oSourceField = oModifier.bySelector(mMovedElement.elementSelector || mMovedElement.element, oAppComponent, oView);
-			var iSourceFieldIndex = aContent.indexOf(oSourceField);
-			var iSourceFieldLength = getFieldLength(oModifier, aContent, iSourceFieldIndex);
+					// Compute the fields target index
+					// !important: groupId was used in 1.40, do not remove for compatibility!
+					oTargetGroup = oModifier.bySelector(mMovedElement.target.groupSelector || mMovedElement.target.groupId, oAppComponent, oView);
+					var iTargetGroupIndex = aContent.indexOf(oTargetGroup);
+					// !important: groupId was used in 1.40, do not remove for compatibility!
+					var oSourceGroup = oModifier.bySelector(mMovedElement.source.groupSelector || mMovedElement.source.groupId, oAppComponent, oView);
+					var iSourceGroupIndex = aContent.indexOf(oSourceGroup);
 
-			// Compute the fields target index
-			// !important: groupId was used in 1.40, do not remove for compatibility!
-			oTargetGroup = oModifier.bySelector(mMovedElement.target.groupSelector || mMovedElement.target.groupId, oAppComponent, oView);
-			var iTargetGroupIndex = aContent.indexOf(oTargetGroup);
-			// !important: groupId was used in 1.40, do not remove for compatibility!
-			var oSourceGroup = oModifier.bySelector(mMovedElement.source.groupSelector || mMovedElement.source.groupId, oAppComponent, oView);
-			var iSourceGroupIndex = aContent.indexOf(oSourceGroup);
+					var iTargetFieldIndex = mapFieldIndexToContentAggregationIndex(oModifier, aContent, iTargetGroupIndex,
+							mMovedElement.target.fieldIndex, (iSourceGroupIndex === iTargetGroupIndex)
+									&& (mMovedElement.source.fieldIndex < mMovedElement.target.fieldIndex));
+					var iTargetFieldLength = getFieldLength(oModifier, aContent, iTargetFieldIndex);
 
-			var iTargetFieldIndex = mapFieldIndexToContentAggregationIndex(oModifier, aContent, iTargetGroupIndex,
-					mMovedElement.target.fieldIndex, (iSourceGroupIndex === iTargetGroupIndex)
-							&& (mMovedElement.source.fieldIndex < mMovedElement.target.fieldIndex));
-			var iTargetFieldLength = getFieldLength(oModifier, aContent, iTargetFieldIndex);
+					aContentClone = aContent.slice();
+					var aFieldElements = aContentClone.slice(iSourceFieldIndex, iSourceFieldIndex + iSourceFieldLength);
 
-			aContentClone = aContent.slice();
-			var aFieldElements = aContentClone.slice(iSourceFieldIndex, iSourceFieldIndex + iSourceFieldLength);
+					var aSegmentBeforeSource, aSegmentBeforeTarget, aSegmentBetweenSourceAndTarget, aSegmentTillEnd;
+					if (iSourceFieldIndex < iTargetFieldIndex) {
+						aSegmentBeforeSource = aContentClone.slice(0, iSourceFieldIndex);
+						aSegmentBetweenSourceAndTarget = aContentClone.slice(iSourceFieldIndex + iSourceFieldLength, iTargetFieldIndex
+								+ iTargetFieldLength);
+						aSegmentTillEnd = aContentClone.slice(iTargetFieldIndex + iTargetFieldLength, aContentClone.length);
+						aContentClone = aSegmentBeforeSource.concat(aSegmentBetweenSourceAndTarget.concat(aFieldElements.concat(aSegmentTillEnd)));
+					} else if (iSourceFieldIndex > iTargetFieldIndex) {
+						aSegmentBeforeTarget = aContentClone.slice(0, iTargetFieldIndex + iTargetFieldLength);
+						aSegmentBetweenSourceAndTarget = aContentClone.slice(iTargetFieldIndex + iTargetFieldLength, iSourceFieldIndex);
+						aSegmentTillEnd = aContentClone.slice(iSourceFieldIndex + iSourceFieldLength, aContentClone.length);
+						aContentClone = aSegmentBeforeTarget.concat(aFieldElements.concat(aSegmentBetweenSourceAndTarget.concat(aSegmentTillEnd)));
+					}
 
-			var aSegmentBeforeSource, aSegmentBeforeTarget, aSegmentBetweenSourceAndTarget, aSegmentTillEnd;
-			if (iSourceFieldIndex < iTargetFieldIndex) {
-				aSegmentBeforeSource = aContentClone.slice(0, iSourceFieldIndex);
-				aSegmentBetweenSourceAndTarget = aContentClone.slice(iSourceFieldIndex + iSourceFieldLength, iTargetFieldIndex
-						+ iTargetFieldLength);
-				aSegmentTillEnd = aContentClone.slice(iTargetFieldIndex + iTargetFieldLength, aContentClone.length);
-				aContentClone = aSegmentBeforeSource.concat(aSegmentBetweenSourceAndTarget.concat(aFieldElements.concat(aSegmentTillEnd)));
-			} else if (iSourceFieldIndex > iTargetFieldIndex) {
-				aSegmentBeforeTarget = aContentClone.slice(0, iTargetFieldIndex + iTargetFieldLength);
-				aSegmentBetweenSourceAndTarget = aContentClone.slice(iTargetFieldIndex + iTargetFieldLength, iSourceFieldIndex);
-				aSegmentTillEnd = aContentClone.slice(iSourceFieldIndex + iSourceFieldLength, aContentClone.length);
-				aContentClone = aSegmentBeforeTarget.concat(aFieldElements.concat(aSegmentBetweenSourceAndTarget.concat(aSegmentTillEnd)));
-			}
+					if (iSourceFieldIndex != iTargetFieldIndex) {
+						return removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, oView);
+					}
 
-			if (iSourceFieldIndex != iTargetFieldIndex) {
-				removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, oView);
-			}
+				} else if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP) {
 
-		} else if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP) {
+					var aStopGroupToken = [MoveSimpleForm.sTypeTitle,
+											MoveSimpleForm.sTypeToolBar,
+											MoveSimpleForm.sTypeMTitle,
+											MoveSimpleForm.sTypeOverflowToolBar];
+					// !important: element was used in 1.40, do not remove for compatibility!
+					var oMovedGroup = oModifier.bySelector(mMovedElement.elementSelector || mMovedElement.element, oAppComponent, oView);
 
-			var aStopGroupToken = [MoveSimpleForm.sTypeTitle,
-									MoveSimpleForm.sTypeToolBar,
-									MoveSimpleForm.sTypeMTitle,
-									MoveSimpleForm.sTypeOverflowToolBar];
-			// !important: element was used in 1.40, do not remove for compatibility!
-			var oMovedGroup = oModifier.bySelector(mMovedElement.elementSelector || mMovedElement.element, oAppComponent, oView);
+					return Promise.resolve()
+						.then(function(){
+							// If needed, insert a Title for the first group.
+							if (mMovedElement.target.groupIndex === 0 || !oMovedGroup) {
+								return addTitleToFirstGroupIfNeeded(oChange, oModifier, aContent, oSimpleForm, mPropertyBag, aStopGroupToken, oContent.newControlId)
+									.then(function(aContentReturn) {
+										aContent = aContentReturn;
+									});
+							}
+							return undefined;
+						})
+						.then(function(){
+							iMovedGroupIndex = oMovedGroup ? aContent.indexOf(oMovedGroup) : 0;
+							return mapGroupIndexToContentAggregationIndex(oModifier, aStopGroupToken, aContent, mMovedElement.target.groupIndex);
+						})
+						.then(function(iTargetIndex){
+							oTargetGroup = aContent[iTargetIndex];
+							var iTargetLength = measureLengthOfSequenceUntilStopToken(oModifier, iTargetIndex, aContent, aStopGroupToken);
 
-			// If needed, insert a Title for the first group.
-			if (mMovedElement.target.groupIndex === 0 || !oMovedGroup) {
-				aContent = addTitleToFirstGroupIfNeeded(oChange, oModifier, aContent, oSimpleForm, mPropertyBag, aStopGroupToken, oContent.newControlId);
-			}
+							var iMovedLength = measureLengthOfSequenceUntilStopToken(oModifier, iMovedGroupIndex, aContent,
+									aStopGroupToken);
+							aContentClone = aContent.slice();
+							// Cut the moved group from the result array...
+							aContentClone.splice(iMovedGroupIndex, iMovedLength);
 
-			var iMovedGroupIndex = oMovedGroup ? aContent.indexOf(oMovedGroup) : 0;
+							iTargetIndex = aContentClone.indexOf(oTargetGroup);
 
-			var iTargetIndex = mapGroupIndexToContentAggregationIndex(oModifier, aStopGroupToken, aContent, mMovedElement.target.groupIndex);
-			oTargetGroup = aContent[iTargetIndex];
-			var iTargetLength = measureLengthOfSequenceUntilStopToken(oModifier, iTargetIndex, aContent, aStopGroupToken);
+							var iOffset = mMovedElement.source.groupIndex < mMovedElement.target.groupIndex ? iTargetLength : 0;
+							// and insert it at the target index
+							aContentClone = arrayRangeCopy(aContent, iMovedGroupIndex, aContentClone, iTargetIndex + iOffset, iMovedLength);
 
-			var iMovedLength = measureLengthOfSequenceUntilStopToken(oModifier, iMovedGroupIndex, aContent,
-					aStopGroupToken);
-			aContentClone = aContent.slice();
-			// Cut the moved group from the result array...
-			aContentClone.splice(iMovedGroupIndex, iMovedLength);
-
-			iTargetIndex = aContentClone.indexOf(oTargetGroup);
-
-			var iOffset = mMovedElement.source.groupIndex < mMovedElement.target.groupIndex ? iTargetLength : 0;
-			// and insert it at the target index
-			aContentClone = arrayRangeCopy(aContent, iMovedGroupIndex, aContentClone, iTargetIndex + iOffset, iMovedLength);
-
-			removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, oView);
-		} else {
-			Log.warning("Unknown change type detected. Cannot apply to SimpleForm");
-		}
-
-		return true;
+							return removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContentClone, oView);
+						});
+				} else {
+					Log.warning("Unknown change type detected. Cannot apply to SimpleForm");
+				}
+			});
 	};
 
 	/**
@@ -390,7 +432,7 @@ sap.ui.define([
 		* @param {object} mPropertyBag
 		*          Map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
 		*          sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
-		* @returns {boolean} true - if change could be reverted
+		* @returns {Promise} Promise resolving when change is succesfully reverted
 		* @public
 		*/
 	MoveSimpleForm.revertChange = function(oChange, oSimpleForm, mPropertyBag) {
@@ -403,17 +445,19 @@ sap.ui.define([
 		var aContent = aContentSelectors.map(function(oSelector) {
 			return oModifier.bySelector(oSelector, oAppComponent, oView);
 		});
-		removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContent, oView);
-		// destroy implicitly created title
-		var oCreatedTitleSelector = oRevertData.createdTitleSelector;
-		var oCreatedTitle = mPropertyBag.modifier.bySelector(oCreatedTitleSelector, mPropertyBag.appComponent);
-		if (oCreatedTitle) {
-			oCreatedTitle.destroy();
-		}
+		return removeAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContent, oView)
+			.then(function(){
+				// destroy implicitly created title
+				var oCreatedTitleSelector = oRevertData.createdTitleSelector;
+				var oCreatedTitle = mPropertyBag.modifier.bySelector(oCreatedTitleSelector, mPropertyBag.appComponent);
+				if (oCreatedTitle) {
+					oCreatedTitle.destroy();
+				}
 
-		oChange.resetRevertData();
+				oChange.resetRevertData();
 
-		return true;
+				return true;
+			});
 	};
 
 	MoveSimpleForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {

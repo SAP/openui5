@@ -37,31 +37,35 @@ sap.ui.define([
 	 * @param {object} oControl The control which has been determined by the selector id
 	 * @param {object} mPropertyBag Map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
 	 *                                sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
+	 * @returns {Promise} Promise resolving when change is applied successfully
 	 * @private
 	 */
 	RenameFormContainer.applyChange = function(oChangeWrapper, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier,
 			oChangeDefinition = oChangeWrapper.getDefinition(),
-			oRenamedElement = oChangeWrapper.getDependentControl(_CONSTANTS.TARGET_ALIAS, mPropertyBag),
-			oTitle = oModifier.getAggregation(oRenamedElement, "title");
+			oRenamedElement = oChangeWrapper.getDependentControl(_CONSTANTS.TARGET_ALIAS, mPropertyBag);
 
-		if (oChangeDefinition.texts && oChangeDefinition.texts.formText && this._isProvided(oChangeDefinition.texts.formText.value)) {
+		return Promise.resolve()
+			.then(function() {
+				return oModifier.getAggregation(oRenamedElement, "title");
+			})
+			.then(function(oTitle) {
+				if (oChangeDefinition.texts && oChangeDefinition.texts.formText && this._isProvided(oChangeDefinition.texts.formText.value)) {
 
-			var sValue = oChangeDefinition.texts.formText.value;
+					var sValue = oChangeDefinition.texts.formText.value;
 
-			if (typeof oTitle === "string") {
-				oChangeWrapper.setRevertData(oModifier.getProperty(oRenamedElement, "title"));
-				oModifier.setProperty(oRenamedElement, "title", sValue);
-			} else {
-				oChangeWrapper.setRevertData(oModifier.getProperty(oTitle, "text"));
-				oModifier.setProperty(oTitle, "text", sValue);
-			}
-
-			return true;
-		} else {
-			Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
-			//however subsequent changes should be applied
-		}
+					if (typeof oTitle === "string") {
+						oChangeWrapper.setRevertData(oModifier.getProperty(oRenamedElement, "title"));
+						oModifier.setProperty(oRenamedElement, "title", sValue);
+					} else {
+						oChangeWrapper.setRevertData(oModifier.getProperty(oTitle, "text"));
+						oModifier.setProperty(oTitle, "text", sValue);
+					}
+				} else {
+					Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
+					//however subsequent changes should be applied
+				}
+			}.bind(this));
 	};
 
 	/**
@@ -97,23 +101,26 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
 	 * @param {object} mPropertyBag.view Application view
-	 * @returns {boolean} True if successful
+	 * @returns {Promise} Promise resolving when change is successfully reverted
 	 * @public
 	 */
 	RenameFormContainer.revertChange = function(oChangeWrapper, oControl, mPropertyBag) {
 		var sOldText = oChangeWrapper.getRevertData(),
 			oModifier = mPropertyBag.modifier,
-			oRenamedElement = oChangeWrapper.getDependentControl(_CONSTANTS.TARGET_ALIAS, mPropertyBag),
-			oTitle = oModifier.getAggregation(oRenamedElement, "title");
+			oRenamedElement = oChangeWrapper.getDependentControl(_CONSTANTS.TARGET_ALIAS, mPropertyBag);
 
-		if (typeof oTitle === "string") {
-			oModifier.setProperty(oRenamedElement, "title", sOldText);
-		} else {
-			oModifier.setProperty(oTitle, "text", sOldText);
-		}
-		oChangeWrapper.resetRevertData();
-
-		return true;
+		return Promise.resolve()
+			.then(function() {
+				return oModifier.getAggregation(oRenamedElement, "title");
+			})
+			.then(function(oTitle) {
+				if (typeof oTitle === "string") {
+					oModifier.setProperty(oRenamedElement, "title", sOldText);
+				} else {
+					oModifier.setProperty(oTitle, "text", sOldText);
+				}
+				oChangeWrapper.resetRevertData();
+			});
 	};
 
 	RenameFormContainer._isProvided = function(sString){
