@@ -27,7 +27,57 @@ sap.ui.define([
 				property: "value"
 			};
 			this.oManifest = new Manifest(this.oRawManifest);
-			this.oLoadFlexDataStub = sandbox.stub(ApplyStorage, "loadFlexData").resolves("load");
+			this.oFlexDataResponse = {
+				changes: [
+					{
+						fileName: "1",
+						selector: {
+							id: "ProductDetail--GeneralForm--generalForm",
+							idIsLocal: false
+						},
+						dependentSelector: {
+							movedElements: [
+								{
+									id: "ProductDetail--GeneralForm--productLabel",
+									idIsLocal: false
+								},
+								{
+									id: "ProductDetail--GeneralForm--productLabel2",
+									idIsLocal: false
+								}
+							]
+						}
+					}, {
+						fileName: "2",
+						selector: {
+							id: "ProductDetail--GeneralForm--generalForm",
+							idIsLocal: true
+						},
+						dependentSelector: {
+							movedElements: [
+								{
+									id: "ProductDetail--GeneralForm--productLabel",
+									idIsLocal: true
+								}
+							]
+						}
+					}, {
+						fileName: "3",
+						selector: "ProductDetail--GeneralForm--generalForm",
+						dependentSelector: {
+							movedElements: [
+								"ProductDetail--GeneralForm--productLabel"
+							]
+						}
+					}
+				],
+				variantDependentControlChanges: [],
+				compVariants: [],
+				variantChanges: [],
+				variants: [],
+				variantManagementChanges: []
+			};
+			this.oLoadFlexDataStub = sandbox.stub(ApplyStorage, "loadFlexData").resolves(this.oFlexDataResponse);
 			this.oCompleteFlexDataStub = sandbox.stub(ApplyStorage, "completeFlexData").resolves("complete");
 			this.oGetSiteIdStub = sandbox.stub(Utils, "getSiteIdByComponentData").returns("siteId");
 			this.oGetBaseCompNameStub = sandbox.stub(ManifestUtils, "getBaseComponentNameFromManifest").returns("baseName");
@@ -58,7 +108,7 @@ sap.ui.define([
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
-				assert.equal(oResult.changes, "load", "the Loader loads data");
+				assert.equal(oResult.changes, this.oFlexDataResponse, "the Loader loads data");
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the Storage.loadFlexData was called");
 				assert.equal(this.oCompleteFlexDataStub.callCount, 0, "the Storage.completeFlexData was not called");
 				assert.equal(this.oGetSiteIdStub.callCount, 1, "the siteId was retrieved from the Utils");
@@ -88,7 +138,7 @@ sap.ui.define([
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
-				assert.equal(oResult.changes, "load", "the Loader tries to load data");
+				assert.equal(oResult.changes, this.oFlexDataResponse, "the Loader tries to load data");
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the Storage.loadFlexData was called");
 				assert.equal(this.oCompleteFlexDataStub.callCount, 0, "the Storage.completeFlexData was not called");
 				assert.equal(this.oGetSiteIdStub.callCount, 1, "the siteId was retrieved from the Utils");
@@ -96,6 +146,119 @@ sap.ui.define([
 				assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");
 				assert.deepEqual(this.oLoadFlexDataStub.firstCall.args[0], oExpectedProperties, "the first argument are the properties");
 			}.bind(this));
+		});
+
+		QUnit.test("when loadFlexData is called with a ovp app", function (assert) {
+			var mPropertyBag = {
+				manifest: Object.assign({"sap.ovp": {}}, this.oManifest),
+				otherValue: "a",
+				reference: "reference",
+				componentData: {}
+			};
+
+			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
+				var aChanges = oResult.changes.changes;
+				assert.equal(aChanges.length, 5, "five changes are loaded");
+				assert.equal(aChanges[0].fileName, "1_localIdClone", "the file name of the first change is correct");
+				assert.deepEqual(aChanges[0].selector, {
+					id: "ProductDetail--GeneralForm--generalForm",
+					idIsLocal: true
+				}, "the selector of the first change is correct");
+				assert.deepEqual(aChanges[0].dependentSelector, {
+					movedElements: [{
+						id: "ProductDetail--GeneralForm--productLabel",
+						idIsLocal: true
+					}, {
+						id: "ProductDetail--GeneralForm--productLabel2",
+						idIsLocal: true
+					}]
+				}, "the dependent selector of the first change is correct");
+				assert.equal(aChanges[1].fileName, "1", "the file name of the second change is correct");
+				assert.deepEqual(aChanges[1].selector, {
+					id: "ProductDetail--GeneralForm--generalForm",
+					idIsLocal: false
+				}, "the selector of the second change is correct");
+				assert.deepEqual(aChanges[1].dependentSelector, {
+					movedElements: [{
+						id: "ProductDetail--GeneralForm--productLabel",
+						idIsLocal: false
+					}, {
+						id: "ProductDetail--GeneralForm--productLabel2",
+						idIsLocal: false
+					}]
+				}, "the dependent selector of the second change is correct");
+				assert.equal(aChanges[2].fileName, "2", "the file name of the third change is correct");
+				assert.deepEqual(aChanges[2].selector, {
+					id: "ProductDetail--GeneralForm--generalForm",
+					idIsLocal: true
+				}, "the selector of the third change is correct");
+				assert.deepEqual(aChanges[2].dependentSelector, {
+					movedElements: [{
+						id: "ProductDetail--GeneralForm--productLabel",
+						idIsLocal: true
+					}]
+				}, "the dependent selector of the third change is correct");
+				assert.equal(aChanges[3].fileName, "3_localIdClone", "the file name of the forth change is correct");
+				assert.deepEqual(aChanges[3].selector, {
+					id: "ProductDetail--GeneralForm--generalForm",
+					idIsLocal: true
+				}, "the selector of the forth change is correct");
+				assert.deepEqual(aChanges[3].dependentSelector, {
+					movedElements: [{
+						id: "ProductDetail--GeneralForm--productLabel",
+						idIsLocal: true
+					}]
+				}, "the dependent selector of the forth change is correct");
+				assert.equal(aChanges[4].fileName, "3", "the file name of the fifth change is correct");
+				assert.deepEqual(aChanges[4].selector, "ProductDetail--GeneralForm--generalForm", "the selector of the fifth change is correct");
+				assert.deepEqual(aChanges[4].dependentSelector, {
+					movedElements: ["ProductDetail--GeneralForm--productLabel"]
+				}, "the dependent selector of the fifth change is correct");
+			});
+		});
+
+		QUnit.test("when loadFlexData is called with a non-ovp app", function (assert) {
+			var mPropertyBag = {
+				manifest: Object.assign({}, this.oManifest),
+				otherValue: "a",
+				reference: "reference",
+				componentData: {}
+			};
+
+			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
+				var aChanges = oResult.changes.changes;
+				assert.equal(aChanges.length, 3, "three changes are loaded");
+				assert.equal(aChanges[0].fileName, "1", "the file name of the first change is correct");
+				assert.deepEqual(aChanges[0].selector, {
+					id: "ProductDetail--GeneralForm--generalForm",
+					idIsLocal: false
+				}, "the selector of the first change is correct");
+				assert.deepEqual(aChanges[0].dependentSelector, {
+					movedElements: [{
+						id: "ProductDetail--GeneralForm--productLabel",
+						idIsLocal: false
+					}, {
+						id: "ProductDetail--GeneralForm--productLabel2",
+						idIsLocal: false
+					}]
+				}, "the dependent selector of the first change is correct");
+				assert.equal(aChanges[1].fileName, "2", "the file name of the second change is correct");
+				assert.deepEqual(aChanges[1].selector, {
+					id: "ProductDetail--GeneralForm--generalForm",
+					idIsLocal: true
+				}, "the selector of the second change is correct");
+				assert.deepEqual(aChanges[1].dependentSelector, {
+					movedElements: [{
+						id: "ProductDetail--GeneralForm--productLabel",
+						idIsLocal: true
+					}]
+				}, "the dependent selector of the second change is correct");
+				assert.equal(aChanges[2].fileName, "3", "the file name of the third change is correct");
+				assert.deepEqual(aChanges[2].selector, "ProductDetail--GeneralForm--generalForm", "the selector of the third change is correct");
+				assert.deepEqual(aChanges[2].dependentSelector, {
+					movedElements: ["ProductDetail--GeneralForm--productLabel"]
+				}, "the dependent selector of the third change is correct");
+			});
 		});
 	});
 
