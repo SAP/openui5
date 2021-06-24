@@ -1644,7 +1644,7 @@ sap.ui.define([
 		var oPopover = new Popover();
 
 		var iMaxContentWidth = oPopover._getMaxContentWidth({
-			_fWindowWidth: 500,
+			_fDocumentWidth: 500,
 			_fPopoverMarginLeft: 10,
 			_fPopoverMarginRight: 10,
 			_fPopoverBorderLeft: 10,
@@ -1660,7 +1660,7 @@ sap.ui.define([
 		var oPopover = new Popover();
 
 		var iMaxContentHeight = oPopover._getMaxContentHeight({
-			_fWindowHeight: 500,
+			_fDocumentHeight: 500,
 			_fPopoverMarginTop: 10,
 			_fPopoverMarginBottom: 10,
 			_fHeaderHeight: 10,

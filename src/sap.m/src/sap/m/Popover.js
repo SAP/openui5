@@ -1721,10 +1721,11 @@ sap.ui.define([
 			oPosParams._fWindowWidth = window.innerWidth;
 			oPosParams._fWindowHeight = window.innerHeight;
 
-			// When there's no Within area, these are equal to Window's size
-			// i.e. _fWindowWidth === _fWithinAreaWidth && _fWindowHeight === _fWithinAreaHeight
-			oPosParams._fWithinAreaWidth = $popoverWithinArea.outerWidth();
-			oPosParams._fWithinAreaHeight = $popoverWithinArea.outerHeight();
+			oPosParams._fWithinAreaWidth = Math.min($popoverWithinArea.outerWidth(), oPosParams._fWindowWidth);
+			oPosParams._fWithinAreaHeight = Math.min($popoverWithinArea.outerHeight(), oPosParams._fWindowHeight);
+
+			oPosParams._fDocumentWidth = oPosParams._fWindowLeft + oPosParams._fWindowRight;
+			oPosParams._fDocumentHeight = oPosParams._fWindowTop + oPosParams._fWindowBottom;
 
 			oPosParams._fArrowHeight = $arrow.outerHeight(true);
 			oPosParams._fPopoverWidth = Popover.outerWidth($popover[0]);
@@ -1805,10 +1806,10 @@ sap.ui.define([
 				iRight,
 				iTop,
 				iBottom,
-				iPosToRightBorder = oPosParams._fWindowWidth - oPosParams._fPopoverOffset.left - oPosParams._fPopoverWidth,
-				iPosToBottomBorder = oPosParams._fWindowHeight - oPosParams._fPopoverOffset.top - oPosParams._fPopoverHeight,
-				bExceedHorizontal = (oPosParams._fWindowWidth - oPosParams._fPopoverMarginRight - oPosParams._fPopoverMarginLeft) < oPosParams._fPopoverWidth,
-				bExceedVertical = (oPosParams._fWindowHeight - oPosParams._fPopoverMarginTop - oPosParams._fPopoverMarginBottom) < oPosParams._fPopoverHeight,
+				iPosToRightBorder = oPosParams._fDocumentWidth - oPosParams._fPopoverOffset.left - oPosParams._fPopoverWidth,
+				iPosToBottomBorder = oPosParams._fDocumentHeight - oPosParams._fPopoverOffset.top - oPosParams._fPopoverHeight,
+				bExceedHorizontal = (oPosParams._fDocumentWidth - oPosParams._fPopoverMarginRight - oPosParams._fPopoverMarginLeft) < oPosParams._fPopoverWidth,
+				bExceedVertical = (oPosParams._fDocumentHeight - oPosParams._fPopoverMarginTop - oPosParams._fPopoverMarginBottom) < oPosParams._fPopoverHeight,
 				bOverLeft = oPosParams._fPopoverOffset.left < oPosParams._fPopoverMarginLeft,
 				//Include Scrollbar's width in these calculations
 				fScrollbarSize = this.getVerticalScrolling() && (oPosParams._fPopoverWidth !== oPosParams._fPopoverInnerWidth) ?
@@ -1904,7 +1905,7 @@ sap.ui.define([
 		Popover.prototype._getMaxContentWidth = function (oPosParams) {
 			var fPopoverInnerElementsSpacing = oPosParams._fPopoverBorderLeft + oPosParams._fPopoverBorderRight;
 
-			return oPosParams._fWindowWidth - oPosParams._fPopoverMarginLeft -
+			return oPosParams._fDocumentWidth - oPosParams._fPopoverMarginLeft -
 				oPosParams._fPopoverMarginRight - fPopoverInnerElementsSpacing;
 		};
 
@@ -1920,7 +1921,7 @@ sap.ui.define([
 				oPosParams._fFooterHeight + oPosParams._fContentMarginTop + oPosParams._fContentMarginBottom +
 				oPosParams._fPopoverBorderTop + oPosParams._fPopoverBorderBottom;
 
-			return oPosParams._fWindowHeight - oPosParams._fPopoverMarginTop -
+			return oPosParams._fDocumentHeight - oPosParams._fPopoverMarginTop -
 				oPosParams._fPopoverMarginBottom - fPopoverInnerElementsHeight;
 		};
 
