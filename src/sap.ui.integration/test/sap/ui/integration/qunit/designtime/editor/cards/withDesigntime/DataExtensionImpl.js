@@ -78,5 +78,16 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		});
 	};
 
+	// Requests XML data, then serializes it to an Object
+	DataExtension.prototype.checkValidation = function () {
+		var oCard = this.getCard();
+
+		return oCard.request({
+			"url": "{{destinations.mock_request}}/checkValidation"
+		}).then(function (aData) {
+			return aData;
+		});
+	};
+
 	return DataExtension;
 });

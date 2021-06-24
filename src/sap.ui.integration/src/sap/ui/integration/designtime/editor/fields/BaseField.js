@@ -10,7 +10,11 @@ sap.ui.define([
 	"sap/m/Token",
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper",
-	"sap/ui/core/ListItem"
+	"sap/ui/core/ListItem",
+	"sap/base/util/ObjectPath",
+	"sap/ui/integration/util/Utils",
+	"sap/base/util/deepEqual",
+	"sap/m/MessageToast"
 ], function (
 	Control,
 	Button,
@@ -20,7 +24,11 @@ sap.ui.define([
 	Token,
 	Core,
 	BindingHelper,
-	ListItem
+	ListItem,
+	ObjectPath,
+	Utils,
+	deepEqual,
+	MessageToast
 ) {
 	"use strict";
 
@@ -228,6 +236,10 @@ sap.ui.define([
 	};
 
 	BaseField.prototype._triggerValidation = function (value) {
+		if (deepEqual(value, this._preChangedValue) && this._messageFrom === "validation") {
+			return;
+		}
+		this._preChangedValue = value;
 		var oConfig = this.getConfiguration();
 		//check if trigger validation
 		var doValidation = false;
@@ -240,6 +252,10 @@ sap.ui.define([
 			if (value !== "") {
 				doValidation = true;
 			}
+		} else if (oConfig.type === "boolean") {
+			doValidation = true;
+		} else if (oConfig.type === "string[]" && Array.isArray(value)) {
+			doValidation = true;
 		}
 		if (oConfig.validations && Array.isArray(oConfig.validations) && doValidation) {
 			for (var i = 0; i < oConfig.validations.length; i++) {
@@ -264,6 +280,9 @@ sap.ui.define([
 
 		#XMSG: Validation Error: Number required
 		CARDEDITOR_VAL_TEXTREQ=Field is required, please enter a text
+
+		#XMSG: Validation Error: List required
+		CARDEDITOR_VAL_LISTREQ=Field is required, please select 1 item
 
 		#XMSG: Validation Error: Number Maximum Inclusive
 		CARDEDITOR_VAL_MAX_E=Value needs to be {0} or less
@@ -305,6 +324,20 @@ sap.ui.define([
 			},
 			requiredTxt: "CARDEDITOR_VAL_TEXTREQ",
 			validateTxt: "CARDEDITOR_VAL_NOMATCH"
+		},
+		"string[]": {
+			maxLength: function (v, max) {
+				return Array.isArray(v) && v.length <= max;
+			},
+			maxLengthTxt: "CARDEDITOR_VAL_LISTMAXLENGTH",
+			minLength: function (v, min) {
+				return Array.isArray(v) && v.length >= min;
+			},
+			minLengthTxt: "CARDEDITOR_VAL_LISTMINLENGTH",
+			required: function (v, b) {
+				return Array.isArray(v) && v.length > 0;
+			},
+			requiredTxt: "CARDEDITOR_VAL_LISTREQ"
 		},
 		integer: {
 			maximum: function (v, valValue, valSettings) {
@@ -366,50 +399,77 @@ sap.ui.define([
 		}
 	};
 
+	BaseField.prototype._requestData = function (oRequest) {
+		var oField = this.control.getParent();
+		var oConfig = oField.getConfiguration();
+		var oDataProvider = oField._oProviderCard._oDataProviderFactory.create(oRequest.data);
+		oField.getModel("currentSettings").setProperty(oConfig._settingspath + "/_loading", true);
+		var oPromise = oDataProvider.getData();
+		return oPromise.then(function (oData) {
+			oField.getModel("currentSettings").setProperty(oConfig._settingspath + "/_loading", false);
+			var sPath = oRequest.data.path || "/";
+			if (sPath.startsWith("/")) {
+				sPath = sPath.substring(1);
+			}
+			if (sPath.endsWith("/")) {
+				sPath = sPath.substring(0, sPath.length - 1);
+			}
+			var aPath = sPath.split("/");
+			var oResult = ObjectPath.get(aPath, oData);
+			return oResult;
+		});
+	};
+
 	BaseField.prototype._handleValidation = function (oSettings, oValue) {
 		var oConfig = this.getConfiguration(),
 			oValidations = BaseField.validations[oConfig.type];
-		for (var n in oSettings) {
-			if (oValidations) {
-				var fn = oValidations[n];
-				oSettings._txt = "";
-				if (fn) {
-					if (!fn(oValue, oSettings[n], oSettings)) {
-						var sError;
-						if (typeof oSettings.message === "function") {
-							sError = oSettings.message(oValue, oConfig);
-						} else {
-							sError = oSettings.message;
-						}
-						if (!sError) {
-							if (oSettings._txt) {
-								sError = oResourceBundle.getText(oValidations[oSettings._txt], [oSettings[n]]);
-							} else {
-								sError = oResourceBundle.getText(oValidations[n + "Txt"], [oSettings[n]]);
-							}
-						}
-						this._showValueState(oSettings.type || "error", sError);
-						return false;
-					}
+		var fnFailed = function(n, oData) {
+			var sError;
+			if (typeof oSettings.message === "function") {
+				sError = oSettings.message(oValue, oConfig, oData);
+			} else {
+				sError = oSettings.message;
+			}
+			if (!sError) {
+				if (oSettings._txt) {
+					sError = oResourceBundle.getText(oValidations[oSettings._txt], [oSettings[n]]);
+				} else {
+					sError = oResourceBundle.getText(oValidations[n + "Txt"], [oSettings[n]]);
 				}
 			}
-			if (n === "validate") {
-				if (!oSettings[n](oValue, oConfig)) {
-					var sError;
-					if (typeof oSettings.message === "function") {
-						sError = oSettings.message(oValue, oConfig);
-					} else {
-						sError = oSettings.message;
-					}
-					if (!sError) {
-						if (oSettings._txt) {
-							sError = oResourceBundle.getText(oValidations[oSettings._txt], [oSettings[n]]);
-						} else {
-							sError = oResourceBundle.getText(oValidations[n + "Txt"], [oSettings[n]]);
+			this._showValueState(oSettings.type || "error", sError);
+		}.bind(this);
+		if (oSettings["validate"]) {
+			var oContext = {
+				control: this.getAggregation("_field"),
+				requestData: this._requestData
+			};
+			var fnValidate = oSettings["validate"];
+			Promise.resolve(fnValidate(oValue, oConfig, oContext)).then(function(result) {
+				var bIsValid = result.isValid;
+				if (typeof bIsValid === "undefined") {
+					bIsValid = result;
+				}
+				var oData = result.data ? result.data : undefined;
+				if (!bIsValid) {
+					fnFailed("validate", oData);
+					return false;
+				} else {
+					this._hideValueState(true, false);
+					return true;
+				}
+			}.bind(this));
+		} else {
+			for (var n in oSettings) {
+				if (oValidations) {
+					var fn = oValidations[n];
+					oSettings._txt = "";
+					if (fn) {
+						if (!fn(oValue, oSettings[n], oSettings)) {
+							fnFailed(n);
+							return false;
 						}
 					}
-					this._showValueState(oSettings.type || "error", sError);
-					return false;
 				}
 			}
 		}
@@ -448,12 +508,13 @@ sap.ui.define([
 			"message": sMessage,
 			"atControl": false
 		};
+		this._messageFrom = "validation";
+		if (bFromDataRequest) {
+			this._messageFrom = "request";
+		}
 		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
 		if (oField.setValueState) {
 			this._message.atControl = true;
-			if (bFromDataRequest) {
-				this._message.fromDataRequest = bFromDataRequest;
-			}
 			if (oField.setShowValueStateMessage) {
 				oField.setShowValueStateMessage(false);
 			}
@@ -461,18 +522,20 @@ sap.ui.define([
 			oField.setValueStateText(sMessage);
 		} else if (oMessageStrip && oMessageStrip.getVisible()) {
 			this._showMessage();
+		} else {
+			MessageToast.show(sMessage);
 		}
 		this._applyMessage();
 	};
 
-	BaseField.prototype._hideValueState = function (bFromDataRequest) {
+	BaseField.prototype._hideValueState = function (bFromDataRequest, bTriggerValidationAgain) {
 		if (!this.getParent()) {
 			return;
 		}
 		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
 		if (this._message) {
-			if ((bFromDataRequest && this._message.fromDataRequest)
-				|| (!bFromDataRequest && !this._message.fromDataRequest)) {
+			if ((bFromDataRequest && this._messageFrom === "request")
+				|| (!bFromDataRequest && this._messageFrom === "validation")) {
 				var oField = this.getAggregation("_field");
 				this._message = {
 					"enum": "Success",
@@ -480,6 +543,10 @@ sap.ui.define([
 					"message": "Corrected",
 					"atControl": this._message.atControl
 				};
+				this._messageFrom = "validation";
+				if (bFromDataRequest) {
+					this._messageFrom = "request";
+				}
 				if (this._messageto) {
 					clearTimeout(this._messageto);
 				}
@@ -491,15 +558,20 @@ sap.ui.define([
 					}
 				}.bind(this), 1500);
 				this._applyMessage();
-				if (oMessageStrip.getDomRef()) {
-					oMessageStrip.getDomRef().style.opacity = "0";
+				if (oMessageStrip) {
+					if (oMessageStrip.getDomRef()) {
+						oMessageStrip.getDomRef().style.opacity = "0";
+					}
+					oMessageStrip.onAfterRendering = null;
 				}
 				if (oField.setValueState) {
 					oField.setValueState("Success");
 				}
-				oMessageStrip.onAfterRendering = null;
+				if (oField.setValueStateText) {
+					oField.setValueStateText("");
+				}
 				this._message = null;
-				if (bFromDataRequest) {
+				if (bTriggerValidationAgain) {
 					//check validations
 					this._triggerValidation(this.getConfiguration().value);
 				}
@@ -521,7 +593,7 @@ sap.ui.define([
 			return;
 		}
 		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
-		if (this._message) {
+		if (this._message && oMessageStrip) {
 			oMessageStrip.applySettings({
 				type: this._message.enum,
 				text: this._message.message
@@ -581,11 +653,26 @@ sap.ui.define([
 		}
 		if (oControl instanceof Control) {
 			this.setAggregation("_field", oControl);
-			if (oControl.attachChange) {
+			/*if (oControl.attachChange) {
 				oControl.attachChange(function (oEvent) {
-					this._triggerValidation(oEvent.getParameter("value"));
+					var value;
+					if (oConfig.type === "string[]") {
+						value = oConfig.value || [];
+						var sText = oEvent.getParameter("value");
+						var oSelectedItem = oEvent.getSource().getItemByText(sText);
+						if (oSelectedItem) {
+							value = value.concat([oSelectedItem.getKey()]);
+						}
+					} else if (oEvent.getParameters()) {
+						if (oEvent.getParameters().hasOwnProperty("value")) {
+							value = oEvent.getParameter("value");
+						} else if (oEvent.getParameters().hasOwnProperty("state")) {
+							value = oEvent.getParameter("state");
+						}
+					}
+					this._triggerValidation(value);
 				}.bind(this));
-			}
+			}*/
 			var oBinding = this.getModel("currentSettings").bindProperty("value", this.getBindingContext("currentSettings"));
 			oBinding.attachChange(function () {
 				this._triggerValidation(oConfig.value);

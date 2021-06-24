@@ -38,6 +38,11 @@ sap.ui.define([
 						type: 'sap.ui.model.type.Float',
 						formatOptions: oFormatter
 					},
+					change: function (oEvent) {
+						var oSource = oEvent.getSource();
+						oSource.getBinding("value").setValue(oSource.getValue());
+						oSource.getBinding("value").checkUpdate();
+					},
 					editable: oConfig.editable
 				}
 			};

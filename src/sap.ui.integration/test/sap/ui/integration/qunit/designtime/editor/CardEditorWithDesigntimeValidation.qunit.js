@@ -1,27 +1,30 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/integration/designtime/editor/CardEditor",
-	"sap/ui/integration/Designtime",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
 	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/core/util/MockServer",
+	"./cards/withDesigntime/DataExtensionImpl",
+	"sap/base/util/includes"
 ], function (
 	CardEditor,
-	Designtime,
 	Host,
 	sinon,
 	ContextHost,
 	Core,
 	Card,
 	QUnitUtils,
-	KeyCodes
+	MockServer,
+	DataExtensionImpl,
+	includes
 ) {
 	"use strict";
 
+	var sandbox = sinon.createSandbox();
 	QUnit.config.reorder = false;
 
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/designtime/editor/cards/withDesigntime/";
@@ -64,8 +67,7 @@ sap.ui.define([
 
 	}
 
-
-	QUnit.module("Check Validation", {
+	QUnit.module("Check Basic Validation - String, integer, number", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
 			this.oContextHost = new ContextHost("contexthost");
@@ -702,6 +704,1510 @@ sap.ui.define([
 									resolve();
 								});
 							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Check Basic Validation - List(string[])", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+		},
+		afterEach: function () {
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+		}
+	}, function () {
+		QUnit.test("required", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18nvalidation/i18n.properties"
+				},
+				"sap.card": {
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"stringArrayParameter": {
+								"value": []
+							}
+						}
+					}
+				}
+			};
+
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"required": true,
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								}
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+								assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_LISTREQ") === oMsgStrip.getText(), "Default Required List Text");
+								oMultiComboBox.setSelectedKeys(["key1"]);
+								wait(100).then(function () {
+									oMultiComboBox.focus();
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+									resolve();
+								});
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("min length", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18nvalidation/i18n.properties"
+				},
+				"sap.card": {
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"stringArrayParameter": {
+								"value": []
+							}
+						}
+					}
+				}
+			};
+
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+											{ "text": "text4", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-in" },
+											{ "text": "text5", "key": "key5", "additionalText": "addtext5", "icon": "sap-icon://zoom-in" },
+											{ "text": "text6", "key": "key6", "additionalText": "addtext6", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"minLength": 2,
+									"maxLength": 4
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+								assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_LISTMINLENGTH", 2) === oMsgStrip.getText(), "Default Min List Text");
+								oMultiComboBox.setSelectedKeys(["key1"]);
+								wait(100).then(function () {
+									oMultiComboBox.focus();
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+									assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_LISTMINLENGTH", 2) === oMsgStrip.getText(), "Default Min List Text");
+									oMultiComboBox.setSelectedKeys(["key1", "key2"]);
+									wait(100).then(function () {
+										oMultiComboBox.focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+										resolve();
+									});
+								});
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("max length", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18nvalidation/i18n.properties"
+				},
+				"sap.card": {
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"stringArrayParameter": {
+								"value": []
+							}
+						}
+					}
+				}
+			};
+
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+											{ "text": "text4", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-in" },
+											{ "text": "text5", "key": "key5", "additionalText": "addtext5", "icon": "sap-icon://zoom-in" },
+											{ "text": "text6", "key": "key6", "additionalText": "addtext6", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"minLength": 2,
+									"maxLength": 4
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+								assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_LISTMINLENGTH", 2) === oMsgStrip.getText(), "Default Min List Text");
+								oMultiComboBox.setSelectedKeys(["key1"]);
+								wait(100).then(function () {
+									oMultiComboBox.focus();
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+									assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_LISTMINLENGTH", 2) === oMsgStrip.getText(), "Default Min List Text");
+									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4", "key5"]);
+									oField1.getAggregation("_settingsButton").focus();
+									wait(100).then(function () {
+										oMultiComboBox.focus();
+										assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+										assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_LISTMAXLENGTH", 4) === oMsgStrip.getText(), "Default Max List Text");
+										resolve();
+									});
+								});
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+	QUnit.module("Check Validation via request - List(string[])", {
+		beforeEach: function () {
+			this.oManifest = {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18nvalidation/i18n.properties"
+				},
+				"sap.card": {
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"stringArrayParameter": {
+								"value": []
+							}
+						},
+						"destinations": {
+							"mock_request": {
+								"name": "mock_request"
+							}
+						}
+					}
+				}
+			};
+			this.oMockServer = new MockServer();
+			this.oMockServer.setRequests([
+				{
+					method: "GET",
+					path: "/mock_request/checkValidation",
+					response: function (xhr) {
+						xhr.respondJSON(200, null, {
+							"values": {
+								"checkEditable": false,
+								"minLength": 2,
+								"maxLength": 4,
+								"valueRange": ["key1", "key3", "key6"]
+							}
+						});
+					}
+				}
+			]);
+			this.oMockServer.start();
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oMockServer.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("boolean check", function (assert) {
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+											{ "text": "text4", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-in" },
+											{ "text": "text5", "key": "key5", "additionalText": "addtext5", "icon": "sap-icon://zoom-in" },
+											{ "text": "text6", "key": "key6", "additionalText": "addtext6", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"request": {
+													"url": "{{destinations.mock_request}}/checkValidation"
+												},
+												"path": "/values/checkEditable"
+											}
+										}).then(function (editable){
+											if (editable === false) {
+												context["control"].setEditable(false);
+											}
+											return editable;
+										});
+									},
+									"message": "The parameter is not allowed to edit"
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: this.oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+								assert.ok(oMsgStrip.getText() === "The parameter is not allowed to edit", "Message text correct");
+								assert.ok(!oMultiComboBox.getEditable(), "Editable is false");
+								resolve();
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("boolean check via extension", function (assert) {
+			return new Promise(function (resolve, reject) {
+				var oManifest = {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18nvalidation/i18n.properties"
+					},
+					"sap.card": {
+						"extension": "DataExtensionImpl",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringArrayParameter": {
+									"value": []
+								}
+							},
+							"destinations": {
+								"mock_request": {
+									"name": "mock_request"
+								}
+							}
+						}
+					}
+				};
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+											{ "text": "text4", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-in" },
+											{ "text": "text5", "key": "key5", "additionalText": "addtext5", "icon": "sap-icon://zoom-in" },
+											{ "text": "text6", "key": "key6", "additionalText": "addtext6", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"extension": {
+													"method": "checkValidation"
+												},
+												"path": "/values/checkEditable"
+											}
+										}).then(function (editable){
+											if (editable === false) {
+												context["control"].setEditable(false);
+											}
+											return editable;
+										});
+									},
+									"message": "The parameter is not allowed to edit"
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+								assert.ok(oMsgStrip.getText() === "The parameter is not allowed to edit", "Message text correct");
+								assert.ok(!oMultiComboBox.getEditable(), "Editable is false");
+								resolve();
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("min length check", function (assert) {
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+											{ "text": "text4", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-in" },
+											{ "text": "text5", "key": "key5", "additionalText": "addtext5", "icon": "sap-icon://zoom-in" },
+											{ "text": "text6", "key": "key6", "additionalText": "addtext6", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"request": {
+													"url": "{{destinations.mock_request}}/checkValidation"
+												},
+												"path": "/values/minLength"
+											}
+										}).then(function (minLength){
+											if (value.length < minLength) {
+												return {
+													"isValid": false,
+													"data": minLength
+												};
+											}
+											return true;
+										});
+									},
+									"message": function (value, config, minLength) {
+										return "Please select at least " + minLength + " items!";
+									}
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: this.oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+								assert.ok(oMsgStrip.getText() === "Please select at least 2 items!", "Message text correct");
+								oMultiComboBox.setSelectedKeys(["key1"]);
+								oField1.getAggregation("_settingsButton").focus();
+								wait(100).then(function () {
+									oMultiComboBox.focus();
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+									assert.ok(oMsgStrip.getText() === "Please select at least 2 items!", "Message text correct");
+									oMultiComboBox.setSelectedKeys(["key1", "key2"]);
+									oField1.getAggregation("_settingsButton").focus();
+									wait(100).then(function () {
+										oMultiComboBox.focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+										resolve();
+									});
+								});
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("max length check", function (assert) {
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+											{ "text": "text4", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-in" },
+											{ "text": "text5", "key": "key5", "additionalText": "addtext5", "icon": "sap-icon://zoom-in" },
+											{ "text": "text6", "key": "key6", "additionalText": "addtext6", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"request": {
+													"url": "{{destinations.mock_request}}/checkValidation"
+												},
+												"path": "/values/maxLength"
+											}
+										}).then(function (maxLength){
+											if (value.length > maxLength) {
+												return {
+													"isValid": false,
+													"data": maxLength
+												};
+											}
+											return true;
+										});
+									},
+									"message": function (value, config, maxLength) {
+										return "Please select at most " + maxLength + " items!";
+									}
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: this.oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+								oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4"]);
+								oField1.getAggregation("_settingsButton").focus();
+								wait(100).then(function () {
+									oMultiComboBox.focus();
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4", "key5"]);
+									oField1.getAggregation("_settingsButton").focus();
+									wait(100).then(function () {
+										oMultiComboBox.focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+										assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+										assert.ok(oMsgStrip.getText() === "Please select at most 4 items!", "Message text correct");
+										resolve();
+									});
+								});
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("value range check 1", function (assert) {
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+											{ "text": "text4", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-in" },
+											{ "text": "text5", "key": "key5", "additionalText": "addtext5", "icon": "sap-icon://zoom-in" },
+											{ "text": "text6", "key": "key6", "additionalText": "addtext6", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"request": {
+													"url": "{{destinations.mock_request}}/checkValidation"
+												},
+												"path": "/values/valueRange"
+											}
+										}).then(function (valueRange){
+											var oResult = true;
+											if (!value || value.length === 0) {
+												oResult = false;
+											}
+											for (var i = 0; i < value.length; i++) {
+												var sKey = value[i];
+												if (!includes(valueRange, sKey)) {
+													oResult = false;
+													break;
+												}
+											}
+											return {
+												"isValid": oResult,
+												"data": valueRange
+											};
+										});
+									},
+									"message": function (value, config, valueRange) {
+										return "Please select items in " + valueRange;
+									}
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: this.oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+								assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
+								oMultiComboBox.setSelectedKeys(["key1"]);
+								oField1.getAggregation("_settingsButton").focus();
+								wait(100).then(function () {
+									oMultiComboBox.focus();
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3"]);
+									oField1.getAggregation("_settingsButton").focus();
+									wait(100).then(function () {
+										oMultiComboBox.focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+										assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+										assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
+										resolve();
+									});
+								});
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("value range check 2", function (assert) {
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+											{ "text": "text4", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-in" },
+											{ "text": "text5", "key": "key5", "additionalText": "addtext5", "icon": "sap-icon://zoom-in" },
+											{ "text": "text6", "key": "key6", "additionalText": "addtext6", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"request": {
+													"url": "{{destinations.mock_request}}/checkValidation"
+												},
+												"path": "/values/valueRange"
+											}
+										}).then(function (valueRange){
+											var oResult = true;
+											if (!value || value.length === 0) {
+												oResult = false;
+											}
+											for (var i = 0; i < value.length; i++) {
+												var sKey = value[i];
+												if (!includes(valueRange, sKey)) {
+													oResult = false;
+													break;
+												}
+											}
+											return {
+												"isValid": oResult,
+												"data": valueRange
+											};
+										});
+									},
+									"message": function (value, config, valueRange) {
+										return "Please select items in " + valueRange;
+									}
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: this.oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+								assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
+								oMultiComboBox.setSelectedKeys(["key1", "key3"]);
+								oField1.getAggregation("_settingsButton").focus();
+								wait(100).then(function () {
+									oMultiComboBox.focus();
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+									oMultiComboBox.setSelectedKeys(["key1", "key3", "key6"]);
+									oField1.getAggregation("_settingsButton").focus();
+									wait(100).then(function () {
+										oMultiComboBox.focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip visible");
+										resolve();
+									});
+								});
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("value range check 3", function (assert) {
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"stringArrayParameter": {
+								"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
+								"description": "String Array",
+								"type": "string[]",
+								"values": {
+									"data": {
+										"json": [
+											{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+											{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+											{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+											{ "text": "text4", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-in" },
+											{ "text": "text5", "key": "key5", "additionalText": "addtext5", "icon": "sap-icon://zoom-in" },
+											{ "text": "text6", "key": "key6", "additionalText": "addtext6", "icon": "sap-icon://zoom-in" }
+										],
+										"path": "/"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}",
+										"additionalText": "{additionalText}",
+										"icon": "{icon}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"request": {
+													"url": "{{destinations.mock_request}}/checkValidation"
+												},
+												"path": "/values/valueRange"
+											}
+										}).then(function (valueRange){
+											var oResult = true;
+											if (!value || value.length === 0) {
+												oResult = false;
+											}
+											for (var i = 0; i < value.length; i++) {
+												var sKey = value[i];
+												if (!includes(valueRange, sKey)) {
+													oResult = false;
+													break;
+												}
+											}
+											return {
+												"isValid": oResult,
+												"data": valueRange
+											};
+										});
+									},
+									"message": function (value, config, valueRange) {
+										return "Please select items in " + valueRange;
+									}
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: this.oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(100).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							oField1.getAggregation("_settingsButton").focus();
+							var oMultiComboBox = oField1.getAggregation("_field");
+							wait(1000).then(function () {
+								oMultiComboBox.focus();
+								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+								assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
+								oMultiComboBox.setSelectedKeys(["key1", "key3", "key6"]);
+								oField1.getAggregation("_settingsButton").focus();
+								wait(100).then(function () {
+									oMultiComboBox.focus();
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+									oMultiComboBox.setSelectedKeys(["key1", "key3", "key6", "key7"]);
+									oField1.getAggregation("_settingsButton").focus();
+									wait(100).then(function () {
+										oMultiComboBox.focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+										assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+										assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
+										resolve();
+									});
+								});
+							}.bind(this));
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Check Validation via request - Boolean", {
+		beforeEach: function () {
+			this.oManifest = {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18nvalidation/i18n.properties"
+				},
+				"sap.card": {
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"boolean": {
+								"value": false
+							}
+						},
+						"destinations": {
+							"mock_request": {
+								"name": "mock_request"
+							}
+						}
+					}
+				}
+			};
+			this.oMockServer = new MockServer();
+			this.oMockServer.setRequests([
+				{
+					method: "GET",
+					path: "/mock_request/checkValidation",
+					response: function (xhr) {
+						xhr.respondJSON(200, null, {
+							"values": {
+								"checkEditable": false
+							}
+						});
+					}
+				}
+			]);
+			this.oMockServer.start();
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oMockServer.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("checkbox", function (assert) {
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"boolean": {
+								"manifestpath": "/sap.card/configuration/parameters/boolean/value",
+								"type": "boolean",
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"request": {
+													"url": "{{destinations.mock_request}}/checkValidation"
+												},
+												"path": "/values/checkEditable"
+											}
+										}).then(function (editable){
+											if (editable === false && value === true) {
+												context["control"].setSelected(false);
+												return false;
+											}
+											return true;
+										});
+									},
+									"message": "Do not have right to request data, unselected it"
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: this.oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(1000).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oCheckBox = oField1.getAggregation("_field");
+							assert.ok(!oCheckBox.getSelected(), "Selected is false");
+							oCheckBox.setSelected(true);
+							wait(1000).then(function () {
+								assert.ok(!oCheckBox.getSelected(), "Selected is false");
+								resolve();
+							});
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("checkbox - extension", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18nvalidation/i18n.properties"
+				},
+				"sap.card": {
+					"extension": "DataExtensionImpl",
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"boolean": {
+								"value": false
+							}
+						},
+						"destinations": {
+							"mock_request": {
+								"name": "mock_request"
+							}
+						}
+					}
+				}
+			};
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"boolean": {
+								"manifestpath": "/sap.card/configuration/parameters/boolean/value",
+								"type": "boolean",
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"extension": {
+													"method": "checkValidation"
+												},
+												"path": "/values/checkEditable"
+											}
+										}).then(function (editable){
+											if (editable === false && value === true) {
+												context["control"].setSelected(false);
+												return false;
+											}
+											return true;
+										});
+									},
+									"message": "Do not have right to request data, unselected it"
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(1000).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oCheckBox = oField1.getAggregation("_field");
+							assert.ok(!oCheckBox.getSelected(), "Selected is false");
+							oCheckBox.setSelected(true);
+							wait(1000).then(function () {
+								assert.ok(!oCheckBox.getSelected(), "Selected is false");
+								resolve();
+							});
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("switch", function (assert) {
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"boolean": {
+								"manifestpath": "/sap.card/configuration/parameters/boolean/value",
+								"type": "boolean",
+								"visualization": {
+									"type": "sap/m/Switch",
+									"settings": {
+										"busy": "{currentSettings>_loading}",
+										"state": "{currentSettings>value}",
+										"customTextOn": "Yes",
+										"customTextOff": "No",
+										"enabled": "{currentSettings>editable}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"request": {
+													"url": "{{destinations.mock_request}}/checkValidation"
+												},
+												"path": "/values/checkEditable"
+											}
+										}).then(function (editable){
+											if (editable === false && value === true) {
+												context["control"].setState(false);
+												return false;
+											}
+											return true;
+										});
+									},
+									"message": "Do not have right to request data, unselected it"
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: this.oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(1000).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oSwitch = oField1.getAggregation("_field");
+							assert.ok(!oSwitch.getState(), "State is false");
+							oSwitch.setState(true);
+							wait(1000).then(function () {
+								assert.ok(!oSwitch.getState(), "State is false");
+								resolve();
+							});
+						}.bind(this));
+					}.bind(this)).then(function () {
+						destroyEditor(this.oCardEditor);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("switch - extension", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18nvalidation/i18n.properties"
+				},
+				"sap.card": {
+					"extension": "DataExtensionImpl",
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"boolean": {
+								"value": false
+							}
+						},
+						"destinations": {
+							"mock_request": {
+								"name": "mock_request"
+							}
+						}
+					}
+				}
+			};
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor = createEditor({
+					"form": {
+						"items": {
+							"boolean": {
+								"manifestpath": "/sap.card/configuration/parameters/boolean/value",
+								"type": "boolean",
+								"visualization": {
+									"type": "sap/m/Switch",
+									"settings": {
+										"busy": "{currentSettings>_loading}",
+										"state": "{currentSettings>value}",
+										"customTextOn": "Yes",
+										"customTextOff": "No",
+										"enabled": "{currentSettings>editable}"
+									}
+								},
+								"validations": [{
+									"type": "error",
+									"validate": function (value, config, context) {
+										return context["requestData"]({
+											"data": {
+												"extension": {
+													"method": "checkValidation"
+												},
+												"path": "/values/checkEditable"
+											}
+										}).then(function (editable){
+											if (editable === false && value === true) {
+												context["control"].setState(false);
+												return false;
+											}
+											return true;
+										});
+									},
+									"message": "Do not have right to request data, unselected it"
+								}]
+							}
+						}
+					}
+				});
+				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+				Core.getConfiguration().setLanguage("en");
+				assert.ok(true, "Set language to en");
+				this.oCardEditor.setMode("admin");
+				this.oCardEditor.setAllowSettings(true);
+				this.oCardEditor.setAllowDynamicValues(true);
+				this.oCardEditor.setCard({
+					baseUrl: sBaseUrl,
+					host: "contexthost",
+					manifest: oManifest
+				});
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					return new Promise(function (resolve) {
+						wait(1000).then(function () {
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[0].getItems()[1];
+							var oSwitch = oField1.getAggregation("_field");
+							assert.ok(!oSwitch.getState(), "State is false");
+							oSwitch.setState(true);
+							wait(1000).then(function () {
+								assert.ok(!oSwitch.getState(), "State is false");
+								resolve();
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oCardEditor);

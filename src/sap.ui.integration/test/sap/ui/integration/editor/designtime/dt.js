@@ -429,6 +429,65 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"message": "Has to be multiple of 2"
 						}]
 					},
+					"booleanvalidation1": {
+						"manifestpath": "/sap.card/configuration/parameters/booleanvalidation1/value",
+						"type": "boolean",
+						"description": "description for boolean validation",
+						"visualization": {
+							"type": "sap/m/Switch",
+							"settings": {
+								"busy": "{currentSettings>_loading}",
+								"state": "{currentSettings>value}",
+								"customTextOn": "Yes",
+								"customTextOff": "No",
+								"enabled": "{currentSettings>editable}"
+							}
+						},
+						"validations": [{
+							"type": "error",
+							"validate": function (value, config, context) {
+								return context["requestData"]({
+									"data": {
+										"extension": {
+											"method": "checkCanSeeCourses"
+										},
+										"path": "/values/canSeeCourses"
+									}
+								}).then(function (oData){
+									if (oData === false && value === true) {
+										context["control"].setState(false);
+										return false;
+									}
+									return true;
+								});
+							},
+							"message": "Do not have right to request data, disable it"
+						}]
+					},
+					"booleanvalidation2": {
+						"manifestpath": "/sap.card/configuration/parameters/booleanvalidation2/value",
+						"type": "boolean",
+						"validations": [{
+							"type": "error",
+							"validate": function (value, config, context) {
+								return context["requestData"]({
+									"data": {
+										"extension": {
+											"method": "checkCanSeeCourses"
+										},
+										"path": "/values/canSeeCourses"
+									}
+								}).then(function (oData){
+									if (oData === false && value === true) {
+										context["control"].setSelected(false);
+										return false;
+									}
+									return true;
+								});
+							},
+							"message": "Do not have right to request data, disable it"
+						}]
+					},
 					"numberrequired": {
 						"manifestpath": "/sap.card/configuration/parameters/number/value",
 						"type": "number",
@@ -555,6 +614,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"Customers": {
 						"manifestpath": "/sap.card/configuration/parameters/Customers/value",
 						"type": "string[]",
+						"required": true,
 						"values": {
 							"data": {
 								"request": {
@@ -570,7 +630,32 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
-						}
+						},
+						"validations": [{
+							"type": "error",
+							"validate": function (value, config, context) {
+								return context["requestData"]({
+									"data": {
+										"extension": {
+											"method": "getMinLength"
+										},
+										"path": "/values/minLength"
+									}
+								}).then(function (minLength){
+									if (value.length < minLength) {
+										context["control"].setEditable(false);
+										return {
+											"isValid": false,
+											"data": minLength
+										};
+									}
+									return true;
+								});
+							},
+							"message": function (value, config, minLength) {
+								return "Please select at least " + minLength + " items!";
+							}
+						}]
 					},
 					"iconNotAllowFile": {
 						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFile/src",
@@ -866,7 +951,35 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							},
 							"keySeparator": "/"
-						}
+						},
+						"validations": [{
+							"type": "error",
+							"validate": function (value, config, context) {
+								return context["requestData"]({
+									"data": {
+										"request": {
+											"url": "{{destinations.northwind}}/Customers",
+											"parameters": {
+												"$select": "CustomerID, CompanyName, Country, City, Address"
+											}
+										},
+										"path": "/value"
+									}
+								}).then(function (oData){
+									if (value.length === 6) {
+										return false;
+									}
+									return true;
+								});
+							},
+							"message": function (value, config) {
+								return "Please do not select 6 items!";
+							}
+						}, {
+							"type": "error",
+							"minLength": 2,
+							"maxLength": 4
+						}]
 					},
 					"CustomersWithMultiKeysAndSeperator": {
 						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeysAndSeperator/value",

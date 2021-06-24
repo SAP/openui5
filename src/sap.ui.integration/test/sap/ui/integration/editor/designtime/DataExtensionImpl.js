@@ -78,5 +78,51 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		});
 	};
 
+	// should return a promise
+    DataExtension.prototype.getMinLength = function () {
+        // Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
+        return Promise.all([
+            this.getAvailableTrainings(),
+            this.getTrainers(),
+            this.getTrainingLocations()
+        ]).then(function (aData) {
+            // what we assembled here will be used as data in the card
+            return {
+                "values": {
+                    "minLength": 3
+                }
+            };
+        }).catch(function (oError) {
+            return {
+                "values": {
+                    "minLength": 3
+                }
+           };
+        });
+    };
+
+	// should return a promise
+    DataExtension.prototype.checkCanSeeCourses = function () {
+        // Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
+        return Promise.all([
+            this.getAvailableTrainings(),
+            this.getTrainers(),
+            this.getTrainingLocations()
+        ]).then(function (aData) {
+            // what we assembled here will be used as data in the card
+            return {
+                "values": {
+                    "canSeeCourses": false
+                }
+            };
+        }).catch(function (oError) {
+            return {
+                "values": {
+                    "canSeeCourses": false
+                }
+           };
+        });
+    };
+
 	return DataExtension;
 });

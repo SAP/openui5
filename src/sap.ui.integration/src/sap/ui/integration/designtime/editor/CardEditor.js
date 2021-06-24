@@ -1116,6 +1116,7 @@ sap.ui.define([
 		}.bind(this));
 		this._addValueListModel(oConfig, oField);
 		oField._cols = oConfig.cols || 2; //by default 2 cols
+		oField._oProviderCard = this._oProviderCard;
 		return oField;
 	};
 
@@ -1179,7 +1180,7 @@ sap.ui.define([
 			oValueModel.checkUpdate(true);
 			oValueModel.firePropertyChange();
 			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-			oField._hideValueState(true);
+			oField._hideValueState(true, true);
 		}.bind(this)).catch(function (oError) {
 			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
 			var sError = oResourceBundle.getText("CARDEDITOR_BAD_REQUEST");
