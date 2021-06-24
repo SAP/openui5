@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/f/library",
 	"sap/m/Text",
-	"sap/f/Avatar",
+	"sap/m/Avatar",
 	"sap/f/cards/HeaderRenderer",
 	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText"
@@ -119,7 +119,7 @@ sap.ui.define([
 				/**
 				 * Defines the inner avatar control.
 				 */
-				_avatar: { type: "sap.f.Avatar", multiple: false, visibility: "hidden" }
+				_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" }
 			},
 			events: {
 
@@ -192,7 +192,7 @@ sap.ui.define([
 	/**
 	 * Lazily creates an avatar control and returns it.
 	 * @private
-	 * @returns {sap.f.Avatar} The inner avatar aggregation
+	 * @returns {sap.m.Avatar} The inner avatar aggregation
 	 */
 	Header.prototype._getAvatar = function () {
 		var oAvatar = this.getAggregation("_avatar");
