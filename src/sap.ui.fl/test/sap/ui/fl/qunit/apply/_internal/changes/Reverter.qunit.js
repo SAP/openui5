@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	Log,
 	Text,
 	JsControlTreeModifier,
@@ -78,12 +77,10 @@ function (
 
 		QUnit.test("with an applied change with revert data and available change handler", function (assert) {
 			sandbox.stub(this.oAppliedChange, "hasRevertData").returns(true);
-			var oGetRevertDataStub = sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData");
 			var oUpdateAggregationStub = sandbox.stub(JsControlTreeModifier, "updateAggregation");
 
 			return Reverter.revertChangeOnControl(this.oAppliedChange, this.oControl, this.mPropertyBag).then(function(oResult) {
 				assert.deepEqual(oResult, this.oControl, "the control is returned");
-				assert.equal(oGetRevertDataStub.callCount, 0, "the function was not called");
 				assert.equal(this.oRevertChangeStub.callCount, 1, "the change handler was called");
 				assert.equal(oUpdateAggregationStub.callCount, 0, "the function was not called");
 			}.bind(this));
@@ -91,7 +88,6 @@ function (
 
 		QUnit.test("with an applied change with revert data and available change handler returning a new control", function (assert) {
 			sandbox.stub(this.oAppliedChange, "hasRevertData").returns(true);
-			var oGetRevertDataStub = sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData");
 			this.oRevertChangeStub.callsFake(function() {
 				this.oControl.destroy();
 				this.oText = new Text(sControlId);
@@ -100,7 +96,6 @@ function (
 
 			return Reverter.revertChangeOnControl(this.oAppliedChange, this.oControl, this.mPropertyBag).then(function(oResult) {
 				assert.deepEqual(oResult, this.oText, "the new control is returned");
-				assert.equal(oGetRevertDataStub.callCount, 0, "the function was not called");
 				assert.equal(this.oRevertChangeStub.callCount, 1, "the change handler was called");
 				this.oText.destroy();
 			}.bind(this));
@@ -114,17 +109,6 @@ function (
 				assert.equal(this.oRevertChangeStub.callCount, 1, "the change handler was called");
 				assert.equal(this.oLogStub.callCount, 1, "an error was logged");
 				assert.ok(this.oLogStub.lastCall.args[0].indexOf(sErrorMessage) > -1, "the specific message was logged");
-			}.bind(this));
-		});
-
-		QUnit.test("with an applied change without revert data and available change handler", function (assert) {
-			sandbox.stub(this.oAppliedChange, "hasRevertData").returns(false);
-			var oGetRevertDataStub = sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData");
-
-			return Reverter.revertChangeOnControl(this.oAppliedChange, this.oControl, this.mPropertyBag).then(function(oResult) {
-				assert.ok(oResult, "the return value is truthy");
-				assert.equal(oGetRevertDataStub.callCount, 1, "the function was called");
-				assert.equal(this.oRevertChangeStub.callCount, 1, "the change handler was called");
 			}.bind(this));
 		});
 

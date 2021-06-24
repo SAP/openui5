@@ -25,6 +25,7 @@ sap.ui.define([
 				}
 			});
 		}
+		return undefined;
 	}
 
 	var Reverter = {
@@ -52,10 +53,6 @@ sap.ui.define([
 
 			.then(function() {
 				if (oChange.isApplyProcessFinished()) {
-					if (!oChange.hasRevertData()) {
-						oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, mPropertyBag.modifier));
-					}
-
 					oChange.startReverting();
 					return oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
 				}
