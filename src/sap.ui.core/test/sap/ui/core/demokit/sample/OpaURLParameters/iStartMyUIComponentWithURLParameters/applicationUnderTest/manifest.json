@@ -11,7 +11,7 @@
 
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "view.Main",
+			"viewName": "sap.ui.sample.appUnderTest.view.Main",
 			"type": "XML",
 			"async": true
 		},

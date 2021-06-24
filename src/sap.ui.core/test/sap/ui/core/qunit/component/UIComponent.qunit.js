@@ -1454,6 +1454,45 @@ sap.ui.define([
 		});
 
 	});
+
+	QUnit.module("catch up async rootView loaded promise", {
+		before: function() {
+			sap.ui.predefine("my/AsyncComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+				return UIComponent.extend("my.AsyncComponent.Component", {
+					metadata: {
+						manifest: {
+							"sap.ui5": {
+								"rootView": {
+									async: true,
+									viewName: "module:my/AsyncJSView"
+								}
+							}
+						}
+					}
+				});
+			});
+			sap.ui.predefine("my/AsyncJSView", ["sap/ui/core/mvc/View", "sap/m/Panel"], function(View, Panel) {
+				return View.extend("my.AsyncJSView", {
+					createContent: function() {
+						return Promise.resolve(
+							new Panel({id: this.createId("myPanel")})
+						);
+					}
+				});
+			});
+		}
+	});
+
+	QUnit.test("Component should resolve with completed async rootView", function(assert) {
+		assert.expect(2);
+		return Component.create({
+			name: "my.AsyncComponent",
+			manifest: false
+		}).then(function(oComponent) {
+			assert.ok(oComponent.getRootControl().isA("sap.ui.core.mvc.View"), "root view created");
+			assert.ok(oComponent.getRootControl().byId("myPanel"), "View content created on Component resolve");
+		});
+	});
 });
 
 
