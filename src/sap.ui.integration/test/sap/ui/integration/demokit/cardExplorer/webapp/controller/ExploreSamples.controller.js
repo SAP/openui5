@@ -9,10 +9,6 @@ sap.ui.define([
 	"../localService/SEPMRA_PROD_MAN/mockServer",
 	"../localService/graphql/mockServer",
 	"sap/m/MessageToast",
-	"sap/m/Dialog",
-	"sap/m/Button",
-	"sap/m/library",
-	"sap/m/FormattedText",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
@@ -22,8 +18,7 @@ sap.ui.define([
 	"sap/ui/integration/util/loadCardEditor",
 	"sap/base/util/restricted/_debounce",
 	"sap/ui/integration/designtime/editor/CardEditor",
-	"sap/base/util/ObjectPath",
-	"sap/m/Popover"
+	"sap/base/util/ObjectPath"
 ], function (
 	BaseController,
 	Constants,
@@ -35,10 +30,6 @@ sap.ui.define([
 	SEPMRA_PROD_MAN_mockServer,
 	graphql_mockServer,
 	MessageToast,
-	Dialog,
-	Button,
-	mLibrary,
-	FormattedText,
 	GridContainerItemLayoutData,
 	Core,
 	Fragment,
@@ -48,12 +39,9 @@ sap.ui.define([
 	loadCardEditor,
 	_debounce,
 	CardEditor,
-	ObjectPath,
-	Popover
+	ObjectPath
 ) {
 	"use strict";
-
-	var ButtonType = mLibrary.ButtonType;
 
 	var SAMPLE_CHANGED_ERROR = "Sample changed";
 
@@ -464,23 +452,18 @@ sap.ui.define([
 		_onCardAction: function (oEvent) {
 			var sType = oEvent.getParameter("type"),
 				mParameters = oEvent.getParameter("parameters"),
-				sKey = exploreNavigationModel.getProperty("/selectedKey"),
 				sMessage;
 
-			if (sKey === "dataSources") {
-				this._openConfirmNavigationDialog(mParameters);
-			} else {
-				sMessage = "Action '" + sType + "'";
+			sMessage = "Action '" + sType + "'";
 
-				if (mParameters) {
-					sMessage += " with parameters '" + JSON.stringify(mParameters) + "'";
-				}
-
-				MessageToast.show(sMessage, {
-					at: "center center",
-					width: "25rem"
-				});
+			if (mParameters) {
+				sMessage += " with parameters '" + JSON.stringify(mParameters) + "'";
 			}
+
+			MessageToast.show(sMessage, {
+				at: "center center",
+				width: "25rem"
+			});
 
 			if (sType === "Navigation") {
 				oEvent.preventDefault();
@@ -761,43 +744,6 @@ sap.ui.define([
 					this._oCardSample.setManifest(null);
 				}
 			}
-		},
-
-		/**
-		 * Shows confirmation dialog before doing navigation to another app.
-		 * @param {object} mParameters Parameters from manifest action.
-		 */
-		_openConfirmNavigationDialog: function (mParameters) {
-			var oDialog = new Dialog({
-				title: "Confirm Navigation to App",
-				content: [
-					new FormattedText({
-						htmlText: "<p class='sapUiNoMargin'><span class='sapMText'>You are about to open </span></p>"
-							+ "<cite class='sapMText'>" + mParameters.url + "</cite>"
-							+ "<p class='sapUiNoMargin'>"
-							+ "<span class='sapMText'>This is the Manage Products Fiori Reference App. If you don't have registration for it, follow the instructions "
-							+ "<a target='_blank' href='https://developers.sap.com/tutorials/gateway-demo-signup.html'>here</a>. "
-							+ "Do you want to continue?" + "</span></p>",
-						width: "100%"
-					})
-				],
-				beginButton: new Button({
-					type: ButtonType.Emphasized,
-					text: "Navigate",
-					press: function () {
-						mLibrary.URLHelper.redirect(mParameters.url, true);
-						oDialog.destroy();
-					}
-				}),
-				endButton: new Button({
-					text: "Cancel",
-					press: function () {
-						oDialog.destroy();
-					}
-				})
-			}).addStyleClass("sapUiSizeCompact sapUiResponsiveContentPadding");
-
-			oDialog.open();
 		},
 
 		/**

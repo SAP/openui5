@@ -799,45 +799,6 @@ sap.ui.define([
 						]
 					},
 					{
-						key: 'dataSources',
-						target: 'exploreSamples',
-						title: 'Data Sources',
-						subSamples: [
-							{
-								title: 'Top Products',
-								key: 'topProducts',
-								mockServer: true,
-								files: [
-									{
-										url: '/samples/dataSources/topProducts.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Product',
-								key: 'product',
-								mockServer: true,
-								settings: {
-									columns: 6
-								},
-								files: [
-									{
-										url: '/samples/dataSources/product.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/dataSources/i18n/i18n.properties',
-										name: 'i18n/i18n.properties',
-										key: 'i18n/i18n.properties'
-									}
-								]
-							}
-						]
-					},
-					{
 						key: 'dateRange',
 						target: 'exploreSamples',
 						title: 'Date Ranges',

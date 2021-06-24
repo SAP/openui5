@@ -102,11 +102,6 @@ sap.ui.define([
 						key: 'data'
 					},
 					{
-						title: 'Data Sources',
-						target: 'learnDetail',
-						key: 'dataSources'
-					},
-					{
 						title: 'Date Ranges',
 						target: 'learnDetail',
 						key: 'dateRanges',
