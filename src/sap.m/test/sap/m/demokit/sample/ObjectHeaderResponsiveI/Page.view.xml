@@ -68,7 +68,7 @@
 					text="Attachments"
 					count="1"
 					key="key3">
-					<Link text="Attachment" press="onPress" ariaHasPopup="Dialog"/>
+					<Link text="Attachment" press="onPress"/>
 				</IconTabFilter>
 				<IconTabFilter
 					text="PartnerInfo"

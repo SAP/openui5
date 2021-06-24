@@ -15,18 +15,15 @@
 						<Button
 							tooltip="Sort"
 							icon="sap-icon://sort"
-							press="handleSortButtonPressed"
-							ariaHasPopup="Dialog"/>
+							press="handleSortButtonPressed"/>
 						<Button
 							tooltip="Filter"
 							icon="sap-icon://filter"
-							press="handleFilterButtonPressed"
-							ariaHasPopup="Dialog"/>
+							press="handleFilterButtonPressed"/>
 						<Button
 							tooltip="Group"
 							icon="sap-icon://group-2"
-							press="handleGroupButtonPressed"
-							ariaHasPopup="Dialog"/>
+							press="handleGroupButtonPressed"/>
 						<ToggleButton icon="sap-icon://menu" tooltip="Enable Custom Context Menu" press="onToggleContextMenu" />
 					</OverflowToolbar>
 				</headerToolbar>

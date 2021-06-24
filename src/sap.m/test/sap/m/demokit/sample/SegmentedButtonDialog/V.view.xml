@@ -9,7 +9,6 @@
 		<Button
 			text="Open Dialog"
 			press="onOpenDialog"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

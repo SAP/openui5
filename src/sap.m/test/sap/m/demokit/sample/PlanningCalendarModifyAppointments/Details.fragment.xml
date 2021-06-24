@@ -8,7 +8,7 @@
 			class="sapUiContentPadding"
 			placement="Auto">
 		<beginButton>
-			<Button text="Edit" type="Emphasized" press="handleEditButton" ariaHasPopup="Dialog"/>
+			<Button text="Edit" type="Emphasized" press="handleEditButton"/>
 		</beginButton>
 		<endButton>
 			<Button text="Delete" press="handleDeleteAppointment"/>
