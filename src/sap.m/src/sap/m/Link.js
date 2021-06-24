@@ -183,6 +183,11 @@ function(
 			 * Specifies the value of the <code>aria-haspopup</code> attribute
 			 *
 			 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered according to the selected value.
+			 *
+			 * NOTE: Use this property only when a link is related to a popover/popup. The value needs to be equal to the main/root role of the popup - e.g. dialog,
+			 * menu or list (examples: if you have dialog -> dialog, if you have menu -> menu; if you have list -> list; if you have dialog containing a list -> dialog).
+			 * Do not use it, if you open a standard sap.m.Dialog, MessageBox or other type of dialogs displayed as on overlay over the application.
+			 *
 			 * @since 1.86.0
 			 */
 			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None},
