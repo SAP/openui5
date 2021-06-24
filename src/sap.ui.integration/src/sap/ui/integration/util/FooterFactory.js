@@ -80,7 +80,10 @@ sap.ui.define([
 				type: mConfig.buttonType,
 				text: mConfig.text,
 				icon: mConfig.icon,
-				tooltip: sTooltip
+				tooltip: sTooltip,
+				ariaHasPopup: mConfig.ariaHasPopup,
+				enabled: mConfig.enabled,
+				visible: mConfig.visible
 			};
 
 			if (mConfig.icon) {

@@ -402,6 +402,8 @@ sap.ui.define([
 		 * @public
 		 * @author SAP SE
 		 * @version ${version}
+		 * @borrows sap.ui.integration.widgets.Card#getDomRef as getDomRef
+		 * @borrows sap.ui.integration.widgets.Card#setVisible as setVisible
 		 * @borrows sap.ui.integration.widgets.Card#getParameters as getParameters
 		 * @borrows sap.ui.integration.widgets.Card#getCombinedParameters as getCombinedParameters
 		 * @borrows sap.ui.integration.widgets.Card#getManifestEntry as getManifestEntry
@@ -409,6 +411,7 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#request as request
 		 * @borrows sap.ui.integration.widgets.Card#showMessage as showMessage
 		 * @borrows sap.ui.integration.widgets.Card#getBaseUrl as getBaseUrl
+		 * @borrows sap.ui.integration.widgets.Card#getRuntimeUrl as getRuntimeUrl
 		 * @borrows sap.ui.integration.widgets.Card#getTranslatedText as getTranslatedText
 		 * @borrows sap.ui.integration.widgets.Card#getModel as getModel
 		 * @borrows sap.ui.integration.widgets.Card#triggerAction as triggerAction
@@ -422,6 +425,8 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#hideLoadingPlaceholders as hideLoadingPlaceholders
 		 */
 		this._oLimitedInterface = new Interface(this, [
+			"getDomRef",
+			"setVisible",
 			"getParameters",
 			"getCombinedParameters",
 			"getManifestEntry",
@@ -429,6 +434,7 @@ sap.ui.define([
 			"request",
 			"showMessage",
 			"getBaseUrl",
+			"getRuntimeUrl",
 			"getTranslatedText",
 			"getModel",
 			"triggerAction",

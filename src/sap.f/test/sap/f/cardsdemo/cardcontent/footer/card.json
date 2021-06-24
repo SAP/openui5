@@ -1,7 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "card.explorer.object.card",
+		"id": "cardsdemo.footer.card",
 		"type": "card",
 		"title": "Sample of an Object Card",
 		"subTitle": "Sample of an Object Card",
@@ -27,6 +27,7 @@
 	},
 	"sap.card": {
 		"type": "Object",
+		"extension": "./FooterExtension",
 		"data": {
 			"json": {
 				"firstName": "Donna",
@@ -48,7 +49,7 @@
 		},
 		"header": {
 			"icon": {
-				"src": "{photo}"
+				"src": ""
 			},
 			"title": "Request from {firstName} {lastName}",
 			"subTitle": "{position}"
@@ -114,22 +115,35 @@
 					"overflowPriority": "High",
 					"actions": [
 						{
-							"type": "Navigation",
+							"type": "Custom",
 							"parameters": {
-								"url": "http://sap.com"
+								"method": "approve"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Reject",
+					"text": "Reject",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "reject"
 							}
 						}
 					]
 				},
 				{
 					"buttonType": "Transparent",
-					"text": "Reject",
-					"overflowPriority": "High",
+					"text": "Details",
+					"ariaHasPopup": "Dialog",
 					"actions": [
 						{
-							"type": "Navigation",
+							"type": "Custom",
 							"parameters": {
-								"url": "http://sap.com"
+								"method": "openSnack"
 							}
 						}
 					]
@@ -154,7 +168,7 @@
 					"actions": [
 						{
 							"type": "Navigation",
-							"enabled": "{= ${agendaUrl}}",
+							"enabled": "false",
 							"parameters": {
 								"url": "{agendaUrl}"
 							}

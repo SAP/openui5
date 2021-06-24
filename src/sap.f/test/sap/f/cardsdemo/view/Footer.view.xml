@@ -1,4 +1,5 @@
 <mvc:View
+	controllerName="sap.f.cardsdemo.controller.Footer"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
@@ -13,9 +14,19 @@
 			</Toolbar>
 		</subHeader>
 
+		<SegmentedButton
+			selectedKey="cozy"
+			selectionChange=".onFormFactorChange"
+			class="VizTestDensityBtn sapUiSmallMargin">
+			<items>
+				<SegmentedButtonItem text="Cozy" key="cozy" />
+				<SegmentedButtonItem text="Compact" key="compact" />
+			</items>
+		</SegmentedButton>
+
 		<Panel>
 			<f:GridContainer>
-				<w:Card id="card1" manifest="./cardsdemo/cardcontent/footer/footer.json">
+				<w:Card id="card1" manifest="./cardsdemo/cardcontent/footer/card.json">
 					<w:layoutData>
 						<f:GridContainerItemLayoutData columns="5" />
 					</w:layoutData>
