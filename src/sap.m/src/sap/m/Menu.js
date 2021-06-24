@@ -453,13 +453,14 @@ sap.ui.define([
 		Menu.prototype._createMenuListItemFromItem = function(oItem) {
 			return new MenuListItem({
 				id  : this._generateListItemId(oItem.getId()),
-				type: ListType.Active,
+				type: oItem.getEnabled() ? ListType.Active : ListType.Inactive,
 				icon: oItem.getIcon(),
 				title: oItem.getText(),
 				startsSection: oItem.getStartsSection(),
 				menuItem: oItem,
 				tooltip: oItem.getTooltip(),
-				visible: oItem.getVisible()
+				visible: oItem.getVisible(),
+				enabled: oItem.getEnabled()
 			});
 		};
 
