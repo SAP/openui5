@@ -21,6 +21,12 @@ sap.ui.define(function() {
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
+			AnnotationParserNoFakeService: {
+				title: "sap.ui.model.odata.AnnotationParser (AnnotationParserNoFakeService.qunit)",
+				module: [
+					"test-resources/sap/ui/core/qunit/odata/AnnotationParserNoFakeService.qunit"
+				]
+			},
 			BindingParser: {
 				title: "sap.ui.base.BindingParser - QUnit Tests",
 				coverage : {

@@ -4062,6 +4062,9 @@ sap.ui.define([], function() {
 	<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
 		<edmx:Reference Uri="/some/path/Test.xml">\
 			<edmx:Include Alias="TEST" Namespace="internal.ui5.test"/>\
+			<edmx:Include Alias="SUFFIX_TEST" Namespace="internal.ui5.test"/>\
+			<edmx:Include Alias="TEST_PREFIX" Namespace="internal.ui5.test"/>\
+			<edmx:Include Alias="IN_TEST_FIX" Namespace="internal.ui5.test"/>\
 		</edmx:Reference>\
 		<edm:DataServices>\
 			<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
@@ -4071,9 +4074,11 @@ sap.ui.define([], function() {
 						<PropertyValue Property="NotReplaced">\
 						<Collection>\
 							<AnnotationPath>@TEST.Value</AnnotationPath>\
+							<AnnotationPath>@IN_TEST_FIX.Value1</AnnotationPath>\
+							<AnnotationPath>@TEST_PREFIX.Value2</AnnotationPath>\
 						</Collection>\
 						</PropertyValue>\
-						<PropertyValue Property="Replaced" AnnotationPath="@TEST.Value"/>\
+						<PropertyValue Property="Replaced" AnnotationPath="@SUFFIX_TEST.Value"/>\
 					</Record>\
 					</Annotation>\
 				</Annotations>\
