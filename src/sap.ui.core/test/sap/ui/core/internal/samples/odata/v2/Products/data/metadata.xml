@@ -6,6 +6,10 @@
 	<edmx:Reference
 		Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
 		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<!-- BCP: 2180241022: An alias which is an infix of another alias is properly handled;
+		     it has to be ensured that i.E. "SAP__common.Text" is *not* resolved to
+		     "SAP__com.sap.vocabularies.Common.v1.Text" -->
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="common"/>
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
 	</edmx:Reference>
 	<edmx:Reference

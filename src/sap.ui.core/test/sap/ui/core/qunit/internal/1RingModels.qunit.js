@@ -121,6 +121,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/_ODataMetaModelUtils.qunit",
 		// Note: some types use lazy loading and are used by AnnotationHelper tests!
 		"sap/ui/core/qunit/odata/AnnotationHelper.qunit",
+		"sap/ui/core/qunit/odata/AnnotationParserNoFakeService.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataAnnotationsFakeService
 		// "sap/ui/core/qunit/odata/ODataAnnotations.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService

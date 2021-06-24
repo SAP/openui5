@@ -3479,7 +3479,7 @@ sap.ui.define([
 
 
 	QUnit.test("Alias Replacement", function(assert) {
-		assert.expect(11);
+		assert.expect(13);
 
 		var mTest = mAdditionalTestsServices["Alias Replacement"];
 		var sServiceURI = mTest.service;
@@ -3508,6 +3508,10 @@ sap.ui.define([
 		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0], "First Entry array is available.");
 		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "First Entry value is available.");
 		assert.equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "@internal.ui5.test.Value", "First Entry value is correct.");
+		assert.equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][1]
+			["AnnotationPath"], "@internal.ui5.test.Value1");
+		assert.equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][2]
+			["AnnotationPath"], "@internal.ui5.test.Value2");
 
 		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"], "Second Entry is available.");
 		assert.ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "Second Entry value is available.");
@@ -5517,7 +5521,8 @@ sap.ui.define([
 			aliases : {
 				UI : "com.sap.vocabularies.UI.v1",
 				self : "NorthwindModel"
-			}
+			},
+			aliasesByLength : ["self", "UI"]
 		};
 		this.stub(AnnotationParser, "syncAnnotationsAtArrays");
 
@@ -5615,6 +5620,7 @@ sap.ui.define([
 				UI : "com.sap.vocabularies.UI.v1",
 				self : "NorthwindModel"
 			},
+			aliasesByLength : ["self", "UI"],
 			annotationsAtArrays : []
 		};
 		this.spy(AnnotationParser, "syncAnnotationsAtArrays");
