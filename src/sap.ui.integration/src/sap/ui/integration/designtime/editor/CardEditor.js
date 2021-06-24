@@ -662,9 +662,14 @@ sap.ui.define([
 	 * Initializes the editor after the card is set
 	 */
 	CardEditor.prototype._initInternal = function () {
+		//handle keyword designtime removal
+		var sDesigntime = this._oEditorCard.getManifestEntry("/sap.card/configuration/editor");
+		if (sDesigntime === undefined) {
+			sDesigntime = this._oEditorCard.getManifestEntry("/sap.card/designtime");
+		}
 		//load the designtime control and bundles lazy
-		var sDesigntime = this._oEditorCard.getManifestEntry("/sap.card/designtime"),
-			oConfiguration = this._manifestModel.getProperty("/sap.card/configuration"),
+		// var sDesigntime = this._oEditorCard.getManifestEntry("/sap.card/designtime"),
+		var	oConfiguration = this._manifestModel.getProperty("/sap.card/configuration"),
 			oPromise,
 			oDesigntimeConfig = this.getDesigntime();
 		if (oDesigntimeConfig) {

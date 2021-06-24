@@ -17,9 +17,9 @@
 		}
 	},
 	"sap.card": {
-		"designtime": "dt/configuration",
 		"type": "List",
 		"configuration": {
+			"editor": "dt/configuration",
 			"parameters": {
 				"string": {
 					"value": "StringValue"

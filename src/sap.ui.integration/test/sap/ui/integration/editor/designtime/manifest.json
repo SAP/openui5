@@ -18,9 +18,9 @@
 	},
 	"sap.card": {
 		"extension": "DataExtensionImpl",
-		"designtime": "dt",
 		"type": "List",
 		"configuration": {
+			"editor": "dt",
 			"parameters": {
 				"enableLearningCourses": {
 					"value": false

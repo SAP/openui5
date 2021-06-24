@@ -17,8 +17,10 @@
 		}
 	},
 	"sap.card": {
-		"designtime": "dt/configuration",
 		"type": "List",
+		"configuration": {
+			"editor": "dt/configuration"
+		},
 		"header": {
 			"title": "Card Title",
 			"subTitle": "Card Sub Title",
