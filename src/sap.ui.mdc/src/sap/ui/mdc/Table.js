@@ -644,6 +644,10 @@ sap.ui.define([
 		return sType;
 	};
 
+	Table.prototype._isOfType = function(sType) {
+		return this._getStringType() === sType;
+	};
+
 	Table.prototype._updateTypeSettings = function() {
 		var oType = this.getType();
 		if (oType && typeof oType === "object") {
@@ -680,7 +684,7 @@ sap.ui.define([
 				return reject("The iIndex parameter has to be a number");
 			}
 
-			if (this._getStringType() === TableType.ResponsiveTable) {
+			if (this._isOfType(TableType.ResponsiveTable)) {
 				this._oTable.scrollToIndex(iIndex).then(resolve).catch(reject);
 			} else {
 				if (iIndex === -1) {
@@ -760,13 +764,11 @@ sap.ui.define([
 	// ----End Type----
 
 	Table.prototype.setRowSettings = function(oRowSettings) {
-		var sTableType = this._getStringType();
-
 		this.setAggregation("rowSettings", oRowSettings, true);
 
 		if (this._oTable) {
 			// Apply the new setting to the existing table
-			if (sTableType === "ResponsiveTable") {
+			if (this._isOfType(TableType.ResponsiveTable)) {
 				ResponsiveTableType.updateRowSettings(this._oTemplate, oRowSettings);
 			} else {
 				GridTableType.updateRowSettings(this._oTable, oRowSettings);
@@ -1198,7 +1200,7 @@ sap.ui.define([
 	Table.prototype._initializeContent = function() {
 		var oType, sType = this._getStringType();
 		// We also can use here static map instead of if else in the future
-		if (sType === "ResponsiveTable") {
+		if (this._isOfType(TableType.ResponsiveTable)) {
 			oType = ResponsiveTableType;
 		} else {
 			oType = GridTableType;
@@ -1347,7 +1349,7 @@ sap.ui.define([
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
 				design: ToolbarDesign.Transparent,
-				style: this._getStringType() === TableType.ResponsiveTable ? ToolbarStyle.Standard : ToolbarStyle.Clear,
+				style: this._isOfType(TableType.ResponsiveTable) ? ToolbarStyle.Standard : ToolbarStyle.Clear,
 				begin: [
 					this._oTitle
 				],

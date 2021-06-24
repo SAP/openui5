@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/Filter"
+	"sap/ui/model/Filter",
+	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	Table,
 	Column,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Core,
 	coreLibrary,
 	ODataModel,
-	Filter
+	Filter,
+	ManagedObjectObserver
 ) {
 	"use strict";
 
@@ -69,37 +71,230 @@ sap.ui.define([
 		return mState;
 	}
 
-	QUnit.module("Initialization");
-
-	QUnit.test("GridTable", function(assert) {
-		var oTable = new Table({
-			delegate: {
-				name: "odata.v4.TestDelegate"
+	QUnit.module("Initialization", {
+		afterEach: function() {
+			if (this.oTable) {
+				this.oFetchProperties.restore();
+				this.oFetchPropertyExtensions.restore();
+				this.oFetchPropertiesForBinding.restore();
+				this.oFetchPropertyExtensionsForBinding.restore();
+				this.oTable.destroy();
 			}
-		});
+		},
+		initTable: function(mSettings) {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
 
-		return oTable._fullyInitialized().then(function() {
+			this.oTable = new Table(Object.assign({
+				delegate: {
+					name: "odata.v4.TestDelegate"
+				}
+			}, mSettings));
+
+			return this.oTable.awaitControlDelegate().then(function(oDelegate) {
+				this.oFetchProperties = sinon.spy(oDelegate, "fetchProperties");
+				this.oFetchPropertyExtensions = sinon.spy(oDelegate, "fetchPropertyExtensions");
+				this.oFetchPropertiesForBinding = sinon.spy(oDelegate, "fetchPropertiesForBinding");
+				this.oFetchPropertyExtensionsForBinding = sinon.spy(oDelegate, "fetchPropertyExtensionsForBinding");
+				return this.oTable._fullyInitialized();
+			}.bind(this)).then(function() {
+				return this.oTable;
+			}.bind(this));
+		},
+		assertFetchPropertyCalls: function(assert, iProperties, iPropertyExtensions, iPropertiesForBinding, oPropertyExtensionsForBinding) {
+			assert.equal(this.oFetchProperties.callCount, iProperties, "Delegate.fetchProperties calls");
+			assert.equal(this.oFetchPropertyExtensions.callCount, iPropertyExtensions, "Delegate.fetchPropertyExtensions calls");
+			assert.equal(this.oFetchPropertiesForBinding.callCount, iPropertiesForBinding, "Delegate.fetchPropertiesForBinding calls");
+			assert.equal(this.oFetchPropertyExtensionsForBinding.callCount, oPropertyExtensionsForBinding, "Delegate.fetchPropertyExtensionsForBinding calls");
+		}
+	});
+
+	QUnit.test("GridTable; Grouping and aggregation disabled", function(assert) {
+		return this.initTable().then(function(oTable) {
+			assert.notOk(oTable._oTable.getDependents().find(function(oDependent) {
+				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
+			}), "V4Aggregation plugin is not added to the inner table");
+			this.assertFetchPropertyCalls(assert, 1, 1, 0, 0);
+		}.bind(this));
+	});
+
+	QUnit.test("GridTable; Grouping and aggregation enabled", function(assert) {
+		return this.initTable({
+			p13nMode: ["Group", "Aggregate"]
+		}).then(function(oTable) {
 			var oPlugin = oTable._oTable.getDependents()[0];
 			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 
 			var oGroupHeaderFormatter = sinon.spy(oTable.getControlDelegate(), "formatGroupHeader");
 			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
+			oGroupHeaderFormatter.restore();
 
-			oTable.destroy();
+			this.assertFetchPropertyCalls(assert, 2, 2, 1, 1);
+		}.bind(this));
+	});
+
+	QUnit.test("ResponsiveTable; Grouping and aggregation disabled", function(assert) {
+		return this.initTable({
+			type: TableType.ResponsiveTable
+		}).then(function(oTable) {
+			assert.notOk(oTable._oTable.getDependents().find(function(oDependent) {
+				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
+			}), "V4Aggregation plugin is not added to the inner table");
+			this.assertFetchPropertyCalls(assert, 1, 1, 0, 0);
+		}.bind(this));
+	});
+
+	QUnit.test("ResponsiveTable; Grouping and aggregation enabled", function(assert) {
+		return this.initTable({
+			type: TableType.ResponsiveTable,
+			p13nMode: ["Group", "Aggregate"]
+		}).then(function(oTable) {
+			assert.notOk(oTable._oTable.getDependents().find(function(oDependent) {
+				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
+			}), "V4Aggregation plugin is not added to the inner table");
+			this.assertFetchPropertyCalls(assert, 1, 1, 0, 0);
+		}.bind(this));
+	});
+
+	QUnit.module("Change table settings", {
+		beforeEach: function() {
+			return this.initTable();
+		},
+		afterEach: function() {
+			this.restoreFetchPropertyMethods();
+
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		},
+		initTable: function(mSettings) {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+
+			this.restoreFetchPropertyMethods();
+			this.oTable = new Table(Object.assign({
+				delegate: {
+					name: "odata.v4.TestDelegate"
+				},
+				p13nMode: ["Group", "Aggregate"]
+			}, mSettings));
+
+			return this.oTable.awaitControlDelegate().then(function(oDelegate) {
+				this.oFetchProperties = sinon.spy(oDelegate, "fetchProperties");
+				this.oFetchPropertyExtensions = sinon.spy(oDelegate, "fetchPropertyExtensions");
+				this.oFetchPropertiesForBinding = sinon.spy(oDelegate, "fetchPropertiesForBinding");
+				this.oFetchPropertyExtensionsForBinding = sinon.spy(oDelegate, "fetchPropertyExtensionsForBinding");
+				return this.oTable._fullyInitialized();
+			}.bind(this)).then(function() {
+				return this.oTable;
+			}.bind(this));
+		},
+		assertFetchPropertyCalls: function(assert, iProperties, iPropertyExtensions, iPropertiesForBinding, oPropertyExtensionsForBinding) {
+			assert.equal(this.oFetchProperties.callCount, iProperties, "Delegate.fetchProperties calls");
+			assert.equal(this.oFetchPropertyExtensions.callCount, iPropertyExtensions, "Delegate.fetchPropertyExtensions calls");
+			assert.equal(this.oFetchPropertiesForBinding.callCount, iPropertiesForBinding, "Delegate.fetchPropertiesForBinding calls");
+			assert.equal(this.oFetchPropertyExtensionsForBinding.callCount, oPropertyExtensionsForBinding, "Delegate.fetchPropertyExtensionsForBinding calls");
+		},
+		resetFetchPropertyCalls: function() {
+			this.oFetchProperties.reset();
+			this.oFetchPropertyExtensions.reset();
+			this.oFetchPropertiesForBinding.reset();
+			this.oFetchPropertyExtensionsForBinding.reset();
+		},
+		restoreFetchPropertyMethods: function() {
+			if (this.oFetchProperties) {
+				this.oFetchProperties.restore();
+				this.oFetchPropertyExtensions.restore();
+				this.oFetchPropertiesForBinding.restore();
+				this.oFetchPropertyExtensionsForBinding.restore();
+			}
+		}
+	});
+
+	QUnit.test("Type", function(assert) {
+		var that = this;
+		var oOldPlugin = that.oTable._oTable.getDependents()[0];
+
+		this.resetFetchPropertyCalls();
+		this.oTable.setType(TableType.ResponsiveTable);
+		return this.oTable._fullyInitialized().then(function() {
+			assert.notOk(that.oTable._oTable.getDependents().find(function(oDependent) {
+				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
+			}), "V4Aggregation plugin is not added to the inner table");
+			that.assertFetchPropertyCalls(assert, 0, 0, 0, 0);
+
+			that.resetFetchPropertyCalls();
+			that.oTable.setType(TableType.Table);
+			return that.oTable._fullyInitialized();
+		}).then(function() {
+			var oPlugin = that.oTable._oTable.getDependents()[0];
+			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
+			assert.notEqual(oPlugin, oOldPlugin, "V4Aggregation plugin is not the same instance");
+			assert.ok(oOldPlugin.bIsDestroyed, "Old V4Aggregation plugin is destroyed");
+
+			var oGroupHeaderFormatter = sinon.spy(that.oTable.getControlDelegate(), "formatGroupHeader");
+			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
+			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
+			oGroupHeaderFormatter.restore();
+
+			that.assertFetchPropertyCalls(assert, 0, 0, 0, 0);
 		});
 	});
 
-	QUnit.test("ResponsiveTable", function(assert) {
-		var oTable = new Table({
-			type: TableType.ResponsiveTable,
-			delegate: {
-				name: "odata.v4.TestDelegate"
-			}
-		});
+	QUnit.test("GridTable; p13nMode", function(assert) {
+		var oPlugin = this.oTable._oTable.getDependents()[0];
 
-		return oTable.initialized().then(function() {
-			assert.ok(true, "Initialization successful for ResponsiveTable");
+		this.resetFetchPropertyCalls();
+		this.oTable.setP13nMode();
+
+		assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+		assert.notOk(oPlugin.isActive(), "V4Aggregation plugin is not active");
+		assert.equal(oPlugin, this.oTable._oTable.getDependents()[0], "V4Aggregation plugin is the same instance");
+		this.assertFetchPropertyCalls(assert, 0, 0, 0, 0);
+
+		this.oTable.setP13nMode(["Group"]);
+		assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+		assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
+		assert.equal(oPlugin, this.oTable._oTable.getDependents()[0], "V4Aggregation plugin is the same instance");
+		this.assertFetchPropertyCalls(assert, 0, 0, 0, 0);
+	});
+
+	QUnit.test("GridTable; Initial activation of analytical p13n modes", function(assert) {
+		var that = this;
+
+		return this.initTable({
+			p13nMode: []
+		}).then(function() {
+			that.resetFetchPropertyCalls();
+			that.oTable.setP13nMode(["Group"]);
+
+			assert.notOk(that.oTable._oTable.getDependents().find(function(oDependent) {
+				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
+			}), "V4Aggregation plugin is not yet added to the inner table");
+
+			return new Promise(function(resolve) {
+				new ManagedObjectObserver(function(oChange) {
+					oChange.child.setPropertyInfos = resolve;
+				}).observe(that.oTable._oTable, {
+					aggregations: ["dependents"]
+				});
+			});
+		}).then(function() {
+			var oPlugin = that.oTable._oTable.getDependents()[0];
+			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
+
+			var oGroupHeaderFormatter = sinon.spy(that.oTable.getControlDelegate(), "formatGroupHeader");
+			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
+			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
+			oGroupHeaderFormatter.restore();
+
+			that.assertFetchPropertyCalls(assert, 1, 1, 1, 1);
 		});
 	});
 
