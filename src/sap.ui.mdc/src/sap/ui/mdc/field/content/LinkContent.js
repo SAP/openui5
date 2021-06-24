@@ -22,6 +22,9 @@ sap.ui.define([
 		getDisplay: function() {
 			return ["sap/m/Link"];
 		},
+		getDisplayMultiLine: function() {
+			return ["sap/m/Link"]; // render Link too, it wraps in Multiline
+		},
 		getUseDefaultFieldHelp: function() {
 			return false;
 		},
@@ -48,6 +51,9 @@ sap.ui.define([
 			oContentFactory.setBoundProperty("text");
 
 			return [oLink];
+		},
+		createDisplayMultiLine: function(oContentFactory, aControlClasses, sId) {
+			return LinkContent.createDisplay(oContentFactory, aControlClasses, sId);
 		}
 	});
 
