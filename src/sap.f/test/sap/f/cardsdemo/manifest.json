@@ -112,6 +112,11 @@
 					"target": "numericHeader"
 				},
 				{
+					"pattern": "footer",
+					"name": "footer",
+					"target": "footer"
+				},
+				{
 					"pattern": "analyticalContent",
 					"name": "analyticalContent",
 					"target": "analyticalContent"
@@ -286,6 +291,11 @@
 				"numericHeader": {
 					"viewId": "numericHeader",
 					"viewName": "NumericHeader",
+					"viewLevel": 1
+				},
+				"footer": {
+					"viewId": "footer",
+					"viewName": "Footer",
 					"viewLevel": 1
 				},
 				"manifest": {

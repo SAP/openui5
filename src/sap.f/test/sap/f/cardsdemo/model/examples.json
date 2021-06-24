@@ -110,6 +110,12 @@
 		"group": "Other Card Examples"
 	},
 	{
+		"title": "Footer (experimental)",
+		"description": "Having buttons with actions in a footer",
+		"route": "footer",
+		"group": "Other Card Examples"
+	},
+	{
 		"title": "Manifest initialization",
 		"description": "Three types of manifest initializations are possible",
 		"route": "manifest",

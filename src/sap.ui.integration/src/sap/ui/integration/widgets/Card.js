@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
+	"sap/ui/integration/util/FooterFactory",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/formatters/IconFormatter",
@@ -61,6 +62,7 @@ sap.ui.define([
 	Destinations,
 	LoadingProvider,
 	HeaderFactory,
+	FooterFactory,
 	ContentFactory,
 	BindingResolver,
 	IconFormatter,
@@ -76,6 +78,7 @@ sap.ui.define([
 		DATA: "/sap.card/data",
 		HEADER: "/sap.card/header",
 		HEADER_POSITION: "/sap.card/headerPosition",
+		FOOTER: "/sap.card/footer",
 		CONTENT: "/sap.card/content",
 		SERVICES: "/sap.ui5/services",
 		APP_TYPE: "/sap.app/type",
@@ -270,6 +273,15 @@ sap.ui.define([
 				 * Defines the content of the card.
 				 */
 				_content: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					visibility: "hidden"
+				},
+
+				/**
+				 * Defines the footer of the card.
+				 */
+				_footer: {
 					type: "sap.ui.core.Control",
 					multiple: false,
 					visibility: "hidden"
@@ -914,6 +926,7 @@ sap.ui.define([
 		this.destroyAggregation("_header");
 		this.destroyAggregation("_filterBar");
 		this.destroyAggregation("_content");
+		this.destroyAggregation("_footer");
 
 		this._aReadyPromises = null;
 
@@ -1223,6 +1236,7 @@ sap.ui.define([
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
 		this._applyContentManifestSettings();
+		this._applyFooterManifestSettings();
 
 		this.fireManifestApplied();
 
@@ -1422,6 +1436,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Lazily load and create a footer
+	 *
+	 * @private
+	 */
+	Card.prototype._applyFooterManifestSettings = function () {
+		var oFooter = this.createFooter();
+
+		this.destroyAggregation("_footer");
+
+		if (oFooter) {
+			this.setAggregation("_footer", oFooter);
+		}
+	};
+
+	/**
 	 * Gets the instance of the <code>host</code> association.
 	 *
 	 * @public
@@ -1494,6 +1523,13 @@ sap.ui.define([
 			oFactory = new FilterBarFactory(this);
 
 		return oFactory.create(mFiltersConfig, oFilters);
+	};
+
+	Card.prototype.createFooter = function () {
+		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER),
+			oFooterFactory = new FooterFactory(this);
+
+		return oFooterFactory.create(oManifestFooter);
 	};
 
 	Card.prototype.getContentManifest = function () {
