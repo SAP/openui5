@@ -126,13 +126,7 @@ sap.ui.define([
 		var sCurrentVariant = getCurrentVariant(oVariantModel, sVariantManagementReference);
 		var bHasVariant = !!sCurrentVariant;
 		var oVariantManagementControl = bHasVariant
-			? JsControlTreeModifier.bySelector(
-				{
-					id: sVariantManagementReference,
-					idIsLocal: true
-				},
-				oAppComponent
-			)
+			? oAppComponent.byId(sVariantManagementReference) || sap.ui.getCore().byId(sVariantManagementReference)
 			: undefined;
 		var oCommandFactory = this.getCommandFactory();
 
