@@ -467,6 +467,7 @@ sap.ui.define([
 			this.oVariantManagement.oSaveAsDialog.destroy();
 			this.oVariantManagement.oSaveAsDialog = undefined;
 			this.oVariantManagement.oExecuteOnSelect.destroy();
+			this.oVariantManagement.oPublic.destroy();
 
 			this.oVariantManagement._setShowExecuteOnSelection(true);
 			this.oVariantManagement._createSaveAsDialog();
@@ -505,8 +506,9 @@ sap.ui.define([
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
 			var bCalled = false;
-			this.oVariantManagement.attachSave(function() {
+			this.oVariantManagement.attachSave(function(oEvent) {
 				bCalled = true;
+				assert.ok(!oEvent.getParameter("public"));
 			});
 
 			this.oVariantManagement._createSaveAsDialog();

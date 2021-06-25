@@ -495,6 +495,7 @@ sap.ui.define([
 		var oModel = new JSONModel({
 			showExecuteOnSelection: false,
 			showSetAsDefault: true,
+			showPublic: false,
 			editable: true,
 			popoverTitle: this._oRb.getText("VARIANT_MANAGEMENT_VARIANTS")
 		});
@@ -502,7 +503,7 @@ sap.ui.define([
 
 		this._bindProperties();
 
-		this._updateInnerModelWithShowSaveAsProperty();
+		this._updateInnerModelWithSettingsInfo();
 	};
 
 	VariantManagement.prototype._bindProperties = function() {
@@ -516,10 +517,20 @@ sap.ui.define([
 		});
 	};
 
-	VariantManagement.prototype._updateInnerModelWithShowSaveAsProperty = function() {
+	VariantManagement.prototype._updateInnerModelWithSettingsInfo = function() {
 		flSettings.getInstance().then(function (oSettings) {
 			this.getModel(VariantManagement.INNER_MODEL_NAME).setProperty("/showSaveAs", oSettings.isVariantPersonalizationEnabled());
+			this.getModel(VariantManagement.INNER_MODEL_NAME).setProperty("/showPublic", oSettings.isPublicFlVariantEnabled());
 		}.bind(this));
+	};
+
+	VariantManagement.prototype._getShowPublic = function() {
+		var oModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
+		if (oModel) {
+			return oModel.getProperty("/showPublic");
+		}
+
+		return false;
 	};
 
 	VariantManagement.prototype._getShowExecuteOnSelection = function() {
@@ -537,7 +548,6 @@ sap.ui.define([
 			oInnerModel.setProperty("/showExecuteOnSelection", bValue);
 		}
 	};
-
 
 	VariantManagement.prototype.setExecuteOnSelection = function(bValue) {
 		var oModel = this.getModel(this._sModelName);
@@ -848,9 +858,7 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype.getFocusDomRef = function() {
-		if (this.oVariantPopoverTrigger) {
-			return this.oVariantPopoverTrigger.getFocusDomRef();
-		}
+		return this.oVariantPopoverTrigger.getFocusDomRef();
 	};
 
 	VariantManagement.prototype.onclick = function(oEvent) {
@@ -1192,6 +1200,15 @@ sap.ui.define([
 				width: "100%"
 			});
 
+			this.oPublic = new CheckBox(this.getId() + "-public", {
+				text: this._oRb.getText("VARIANT_MANAGEMENT_SETASPUBLIC"),
+				visible: {
+					path: "/showPublic",
+					model: VariantManagement.INNER_MODEL_NAME
+				},
+				width: "100%"
+			});
+
 			this.oExecuteOnSelect = new CheckBox(this.getId() + "-execute", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_EXECUTEONSELECT"),
 				visible: {
@@ -1237,6 +1254,10 @@ sap.ui.define([
 
 			if (this.getShowSetAsDefault()) {
 				oSaveAsDialogOptionsGrid.addContent(this.oDefault);
+			}
+
+			if (this._getShowPublic()) {
+				oSaveAsDialogOptionsGrid.addContent(this.oPublic);
 			}
 
 			if (this._getShowExecuteOnSelection()) {
@@ -1300,15 +1321,12 @@ sap.ui.define([
 		this._createSaveAsDialog();
 
 		this.oInputName.setValue(this.getSelectedVariantText(this.getCurrentVariantKey()));
-		//this.oSaveSave.setEnabled(false);
-
 		this.oInputName.setEnabled(true);
 		this.oInputName.setValueState(ValueState.None);
 		this.oInputName.setValueStateText(null);
 
-		//this._checkVariantNameConstraints(this.oInputName);
-
 		this.oDefault.setSelected(false);
+		this.oPublic.setSelected(false);
 		this.oExecuteOnSelect.setSelected(false);
 
 		if (this.oVariantPopOver) {
@@ -1364,7 +1382,8 @@ sap.ui.define([
 			name: sName,
 			overwrite: false,
 			def: this.oDefault.getSelected(),
-			execute: this.oExecuteOnSelect.getSelected()
+			execute: this.oExecuteOnSelect.getSelected(),
+			"public": this.oPublic.getSelected()
 		});
 	};
 
@@ -1759,16 +1778,12 @@ sap.ui.define([
 			return;
 		}
 
-		if (bToInActive) {
-			if (oIcon.hasStyleClass("sapUiFlVarMngmtFavColor")) {
-				oIcon.removeStyleClass("sapUiFlVarMngmtFavColor");
-				oIcon.addStyleClass("sapUiFlVarMngmtFavNonInteractiveColor");
-			}
-		} else {
-			if (oIcon.hasStyleClass("sapUiFlVarMngmtFavNonInteractiveColor")) {
-				oIcon.removeStyleClass("sapUiFlVarMngmtFavNonInteractiveColor");
-				oIcon.addStyleClass("sapUiFlVarMngmtFavColor");
-			}
+		if (bToInActive && oIcon.hasStyleClass("sapUiFlVarMngmtFavColor")) {
+			oIcon.removeStyleClass("sapUiFlVarMngmtFavColor");
+			oIcon.addStyleClass("sapUiFlVarMngmtFavNonInteractiveColor");
+		} else if (oIcon.hasStyleClass("sapUiFlVarMngmtFavNonInteractiveColor")) {
+			oIcon.removeStyleClass("sapUiFlVarMngmtFavNonInteractiveColor");
+			oIcon.addStyleClass("sapUiFlVarMngmtFavColor");
 		}
 	};
 
@@ -2123,6 +2138,11 @@ sap.ui.define([
 			this.oDefault.destroy();
 		}
 		this.oDefault = undefined;
+
+		if (this.oPublic && !this.oPublic._bIsBeingDestroyed) {
+			this.oPublic.destroy();
+		}
+		this.oPublic = undefined;
 
 		if (this.oExecuteOnSelect && !this.oExecuteOnSelect._bIsBeingDestroyed) {
 			this.oExecuteOnSelect.destroy();
