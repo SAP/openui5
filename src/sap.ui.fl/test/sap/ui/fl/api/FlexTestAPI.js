@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory"
 ], function(
 	FlexState,
 	ChangesController,
+	VariantModel,
 	ChangePersistenceFactory,
 	FlexControllerFactory
 ) {
@@ -45,6 +47,20 @@ sap.ui.define([
 	 */
 	FlexTestAPI.getDirtyChanges = function(mPropertyBag) {
 		return ChangesController.getFlexControllerInstance(mPropertyBag.selector)._oChangePersistence.getDirtyChanges();
+	};
+
+	/**
+	 * Returns a VariantModel instance for testing for the passed application component and with the passed data set.
+	 *
+	 * @param {object} mPropertyBag - Object with additional information
+	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - application component owning the VariantModel
+	 * @param {object} mPropertyBag.data - Preset data
+	 * @returns {sap.ui.fl.variants.VariantModel}
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
+	 */
+	FlexTestAPI.createVariantModel = function(mPropertyBag) {
+		var oFlexController = FlexControllerFactory.createForControl(mPropertyBag.appComponent);
+		return new VariantModel(mPropertyBag.data, oFlexController, mPropertyBag.appComponent);
 	};
 
 	return FlexTestAPI;

@@ -4,13 +4,13 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/variants/VariantModel",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
 	Utils,
 	VariantManagement,
-	VariantModel,
+	FlexTestAPI,
 	sinon
 ) {
 	"use strict";
@@ -52,7 +52,11 @@ sap.ui.define([
 			this.oVariantManagement = new VariantManagement(this.sVariantManagementReference, {});
 			this.oMockedAppComponent = this.fnGetMockedAppComponent();
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oMockedAppComponent);
-			this.oModel = new VariantModel({variantManagementReference: {variants: []}}, undefined, this.oMockedAppComponent);
+
+			this.oModel = FlexTestAPI.createVariantModel({
+				data: {variantManagementReference: {variants: []}},
+				appComponent: this.oMockedAppComponent
+			});
 			this.fnUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
 		},
 		afterEach: function () {

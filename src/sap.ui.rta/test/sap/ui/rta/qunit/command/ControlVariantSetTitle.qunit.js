@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/variants/VariantModel",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
@@ -20,7 +19,6 @@ sap.ui.define([
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
 	VariantManagement,
-	VariantModel,
 	FlexTestAPI,
 	VariantManagementState,
 	sinon
@@ -79,7 +77,10 @@ sap.ui.define([
 				}
 			};
 
-			this.oModel = new VariantModel(oData, undefined, this.oMockedAppComponent);
+			this.oModel = FlexTestAPI.createVariantModel({
+				data: oData,
+				appComponent: this.oMockedAppComponent
+			});
 
 			var oVariant = {
 				content: {

@@ -277,10 +277,6 @@ sap.ui.define([
 			JSONModel.apply(this, arguments);
 			this.bObserve = bObserve;
 
-			if (!oFlexController) {
-				oFlexController = sap.ui.requireSync("sap/ui/fl/FlexControllerFactory").createForControl(oAppComponent);
-			}
-
 			// FlexControllerFactory creates a FlexController instance for an application component,
 			// which creates a ChangePersistence instance.
 			// After retrieving changes for the created ChangePersistence instance,

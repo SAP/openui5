@@ -11,10 +11,10 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/ControlVariantConfigure",
@@ -40,10 +40,10 @@ sap.ui.define([
 	OverlayRegistry,
 	KeyCodes,
 	VariantManagement,
-	VariantModel,
 	ChangesWriteAPI,
 	flUtils,
 	Layer,
+	FlexTestAPI,
 	VerticalLayout,
 	CommandFactory,
 	ControlVariantConfigure,
@@ -143,7 +143,10 @@ sap.ui.define([
 				subSections: [this.oObjectPageSubSection]
 			});
 			this.sLocalVariantManagementId = "varMgtKey";
-			this.oModel = new VariantModel(this.oData, undefined, oMockAppComponent);
+			this.oModel = FlexTestAPI.createVariantModel({
+				data: this.oData,
+				appComponent: this.oMockedAppComponent
+			});
 			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oObjectPageLayout = new ObjectPageLayout("objPage", {
@@ -584,7 +587,10 @@ sap.ui.define([
 			//				button2
 
 			this.sLocalVariantManagementId = "varMgtKey";
-			this.oModel = new VariantModel(this.oData, undefined, oMockAppComponent);
+			this.oModel = FlexTestAPI.createVariantModel({
+				data: this.oData,
+				appComponent: this.oMockedAppComponent
+			});
 			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oButton1 = new Button("button1");
@@ -659,7 +665,10 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
-			this.oModel = new VariantModel({variantManagementReference: {variants: []}}, undefined, oMockAppComponent);
+			this.oModel = FlexTestAPI.createVariantModel({
+				data: {variantManagementReference: {variants: []}},
+				appComponent: this.oMockedAppComponent
+			});
 			this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
 			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 
@@ -1132,7 +1141,10 @@ sap.ui.define([
 			});
 			this.sLocalVariantManagementId = "varMgtKey";
 			this.sGlobalVariantManagementId = "Comp1--varMgtKey";
-			this.oModel = new VariantModel(this.oData, undefined, oMockAppComponent);
+			this.oModel = FlexTestAPI.createVariantModel({
+				data: this.oData,
+				appComponent: this.oMockedAppComponent
+			});
 			this.oVariantManagementControl = new VariantManagement(this.sGlobalVariantManagementId);
 			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oObjectPageLayout = new ObjectPageLayout("objPage", {
@@ -1216,7 +1228,10 @@ sap.ui.define([
 			};
 
 			this.sLocalVariantManagementId = "varMgtKey";
-			this.oModel = new VariantModel(this.oData, undefined, oMockAppComponent);
+			this.oModel = FlexTestAPI.createVariantModel({
+				data: this.oData,
+				appComponent: this.oMockedAppComponent
+			});
 			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oVariantManagementControl.addAssociation("for", "objPage", true);

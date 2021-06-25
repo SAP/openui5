@@ -10,8 +10,8 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -28,8 +28,8 @@ sap.ui.define([
 	RtaQunitUtils,
 	Layer,
 	flUtils,
-	VariantModel,
 	VariantManagement,
+	FlexTestAPI,
 	Input,
 	Panel,
 	PersistenceWriteAPI,
@@ -126,7 +126,10 @@ sap.ui.define([
 		variantChanges: {}
 	};
 
-	var oModel = new VariantModel(oData, undefined, oMockedAppComponent);
+	var oModel = FlexTestAPI.createVariantModel({
+		data: oData,
+		appComponent: this.oMockedAppComponent
+	});
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		beforeEach: function() {
