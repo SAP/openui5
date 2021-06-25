@@ -1070,45 +1070,40 @@ sap.ui.define([
 	/**
 	 * Creates a view of the given type, name and with the given ID.
 	 *
-	 * The <code>vView</code> configuration object can have the following properties for the view
-	 * instantiation:
-	 * <ul>
-	 * <li>The ID <code>vView.id</code> specifies an ID for the View instance. If no ID is given,
-	 * an ID will be generated.</li>
-	 * <li>The view name <code>vView.viewName</code> corresponds to an XML module that can be loaded
-	 * via the module system (vView.viewName + suffix ".view.xml")</li>
-	 * <li>The controller instance <code>vView.controller</code> must be a valid controller implementation.
-	 * The given controller instance overrides the controller defined in the view definition</li>
-	 * <li>The view type <code>vView.type</code> specifies what kind of view will be instantiated. All valid
-	 * view types are listed in the enumeration sap.ui.core.mvc.ViewType.</li>
-	 * <li>The view data <code>vView.viewData</code> can hold user specific data. This data is available
-	 * during the whole lifecycle of the view and the controller</li>
-	 * <li>The view loading mode <code>vView.async</code> must be a boolean and defines if the view source is loaded
-	 * synchronously or asynchronously. In async mode, the view is rendered empty initially, and re-rendered with the
-	 * loaded view content.</li>
-	 * <li><code>vView.preprocessors</code></li> can hold a map from the specified preprocessor type (e.g. "xml") to an array of
-	 * preprocessor configurations; each configuration consists of a <code>preprocessor</code> property (optional when
-	 * registered as on-demand preprocessor) and may contain further preprocessor-specific settings. The preprocessor can
-	 * be either a module name as string implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a function according to
-	 * {@link sap.ui.core.mvc.View.Preprocessor.process}. Do not set properties starting with underscore like <code>_sProperty</code>
-	 * property, these are reserved for internal purposes. When several preprocessors are provided for one hook, it has to be made
-	 * sure that they do not conflict when being processed serially.
+	 * @param {string} [sId] The ID of the newly created view, only allowed for instance creation. If no ID is given,
+	 * an ID will be generated. For view definition, skip this parameter and use <code>vView</code> as the first parameter.
+	 * @param {string|object} [vView] The view name or view configuration object.
+	 * @param {object} [vView.id] Specifies an ID for the view instance. If no ID is given,
+	 * an ID will be generated.
+	 * @param {object} [vView.viewName] Corresponds to an XML module that can be loaded
+	 * via the module system (vView.viewName + suffix ".view.xml").
+	 * @param {sap.ui.core.mvc.Controller} [vView.controller] The controller instance must be a valid controller implementation.
+	 * The given controller instance overrides the controller defined in the view definition.
+	 * @param {boolean} [vView.async] Whether the view source is loaded asynchronously. In asynchronous mode, the view is returned empty,
+	 * and the view content is loaded asynchronously.
+	 * @param {sap.ui.core.mvc.ViewType} [vView.type] Specifies what kind of view will be instantiated. All valid
+	 * view types are listed in the enumeration {@link sap.ui.core.mvc.ViewType}.
+	 * @param {object} [vView.viewData] Holds application specific data. This data is available
+	 * during the whole lifecycle of the view and the controller, for example in the constructor and in the {@link sap.ui.core.mvc.Controller.onInit onInit} hook.
+	 * @param {Map<string,object[]>} [vView.preprocessors] Holds a map from the specified preprocessor type (e.g. "xml") to an array of
+	 * preprocessor configurations. Each configuration consists of a <code>preprocessor</code> property (optional when
+	 * registered as on-demand preprocessor) and may contain further preprocessor-specific settings.
+	 * @param {string|sap.ui.core.mvc.View.Preprocessor|function} [vView.preprocessors.preprocessor]
+	 * The used preprocessor. For further information see {@link sap.ui.core.mvc.View.Preprocessor.process}.
+	 * Do not set properties starting with an underscore, such as <code>_sProperty</code>, as these are reserved for internal purposes.
+	 * When several preprocessors are provided for one hook, it has to be made sure that they do not conflict when being processed serially.
 	 *
-	 * <strong>Note</strong>: These preprocessors are only available to this instance. For global or
+	 * </br><strong>Note</strong>: These preprocessors are only available to this instance. For global or
 	 * on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
 	 *
-	 * <strong>Note</strong>: Please note that preprocessors in general are currently only available
-	 * to XMLViews.
+	 * </br><strong>Note</strong>: Please note that preprocessors in general are currently only available
+	 * for {@link sap.ui.core.mvc.XMLView XMLViews}.
 	 *
-	 * <strong>Note</strong>: Preprocessors only work in async views and will be ignored when the view is instantiated
-	 * in sync mode by default, as this could have unexpected side effects. You may override this behaviour by setting the
-	 * bSyncSupport flag of the preprocessor to true.
+	 * </br><strong>Note</strong>: Preprocessors only work in asynchronous views and will be ignored by default
+	 * when the view is instantiated synchronously, as this could have unexpected side effects.
+	 * You may override this behaviour by setting the <code>bSyncSupport</code> flag
+	 * of the preprocessor to <code>true</code>.
 	 *
-	 * @param {string} sId id of the newly created view, only allowed for instance creation
-	 * @param {string|object} [vView] the view name or view configuration object
-	 * @param {sap.ui.core.mvc.ViewType} sType Specifies what kind of view will be instantiated. All valid
-	 * view types are listed in the enumeration  {@link sap.ui.core.mvc.ViewType}.
-	 * @param {boolean} [vView.async] whether the view source is loaded asynchronously
 	 * @public
 	 * @static
 	 * @deprecated Since 1.56. Use {@link sap.ui.core.mvc.View.extend View.extend} to define the view class
@@ -1116,7 +1111,7 @@ sap.ui.define([
 	 * @return {sap.ui.core.mvc.View} the created View instance
 	 * @ui5-global-only
 	 */
-	sap.ui.view = function(sId, vView, sType /* used by factory functions */) {
+	sap.ui.view = function(sId, vView, sType /* internal, used by factory functions */) {
 		var sViewName = typeof sId === "string" ? sId : vView;
 		sViewName = typeof sViewName === "object" ? sViewName.viewName : sViewName;
 
