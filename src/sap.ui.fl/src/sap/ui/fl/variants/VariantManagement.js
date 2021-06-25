@@ -423,12 +423,10 @@ sap.ui.define([
 	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 	 */
 	VariantManagement.prototype.getOverflowToolbarConfig = function() {
-		var oConfig = {
+		return {
 			canOverflow: false,
 			invalidationEvents: ["save", "manage", "select"]
 		};
-
-		return oConfig;
 	};
 
 	/**
@@ -1646,7 +1644,7 @@ sap.ui.define([
 			});
 		}
 
-		var oTemplate = new ColumnListItem({
+		return new ColumnListItem({
 			cells: [
 				oFavoriteIcon, oNameControl, new RadioButton({
 					groupName: this.getId(),
@@ -1667,8 +1665,6 @@ sap.ui.define([
 
 			]
 		});
-
-		return oTemplate;
 	};
 
 	VariantManagement.prototype._openManagementDialog = function(sClass) {

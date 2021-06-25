@@ -570,14 +570,23 @@ sap.ui.define([
 			variantChanges: {}
 		};
 
-		var iCurrentLayerComp = LayerUtils.compareAgainstCurrentLayer(oSourceVariant.content.layer, !this._bDesignTimeMode ? Layer.USER : "");
+		var iCurrentLayerComp = LayerUtils.compareAgainstCurrentLayer(oSourceVariant.content.layer, mPropertyBag.layer);
 
 		Object.keys(oSourceVariant.content).forEach(function(sKey) {
 			if (sKey === "fileName") {
 				oDuplicateVariant.content[sKey] = sNewVariantReference;
 			} else if (sKey === "variantReference") {
-				if (iCurrentLayerComp === 0) {
-					oDuplicateVariant.content[sKey] = oSourceVariant.content["variantReference"];
+				if (iCurrentLayerComp === 1) {
+					// in case a user variant should be saved as a PUBLIC variant, but refers to a PUBLIC variant,
+					// the references dependencies must be followed one more time
+					var oSourceVariantsSource = this.getVariant(oSourceVariant.content.variantReference);
+					if (oSourceVariantsSource.content.layer === mPropertyBag.layer) {
+						oDuplicateVariant.content[sKey] = oSourceVariantsSource.content.variantReference;
+					} else {
+						oDuplicateVariant.content[sKey] = oSourceVariant.content.variantReference;
+					}
+				} else if (iCurrentLayerComp === 0) {
+					oDuplicateVariant.content[sKey] = oSourceVariant.content.variantReference;
 				} else if (iCurrentLayerComp === -1) {
 					oDuplicateVariant.content[sKey] = sSourceVariantReference;
 				}
@@ -587,16 +596,19 @@ sap.ui.define([
 			} else {
 				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
 			}
-		});
-		oDuplicateVariant.content["layer"] = mPropertyBag.layer;
+		}.bind(this));
+		oDuplicateVariant.content.layer = mPropertyBag.layer;
 
 		aVariantChanges = oDuplicateVariant.controlChanges.slice();
 
 		var oDuplicateChangeData = {};
 		var oDuplicateChangeContent;
 		oDuplicateVariant.controlChanges = aVariantChanges.reduce(function(aSameLayerChanges, oChange) {
-			if (LayerUtils.compareAgainstCurrentLayer(oChange.layer, !this._bDesignTimeMode ? Layer.USER : "") === 0) {
+			// copy all changes in the same layer and higher layers (PUBLIC variant can copy USER layer changes)
+			if (LayerUtils.compareAgainstCurrentLayer(oChange.layer, mPropertyBag.layer) >= 0) {
 				oDuplicateChangeData = merge({}, oChange);
+				// ensure that the layer is set to the current variants (USER may becomes PUBLIC)
+				oDuplicateChangeData.layer = mPropertyBag.layer;
 				oDuplicateChangeData.variantReference = oDuplicateVariant.content.fileName;
 				if (!oDuplicateChangeData.support) {
 					oDuplicateChangeData.support = {};
@@ -608,7 +620,7 @@ sap.ui.define([
 				aSameLayerChanges.push(new Change(oDuplicateChangeContent));
 			}
 			return aSameLayerChanges;
-		}.bind(this), []);
+		}, []);
 
 		return oDuplicateVariant;
 	};
@@ -782,6 +794,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.variants.VariantManagement} oVariantManagementControl - Variant management control
 	 * @param {String} sVariantManagementReference - Variant management reference
 	 * @param {String} sLayer - Current layer
+	 * @param {String} sClass - Style class assigned to the management dialog
 	 * @returns {Promise} Promise which resolves when "manage" event is fired from the variant management control
 	 * @public
 	 */
@@ -1165,12 +1178,12 @@ sap.ui.define([
 				changeInstance: true
 			});
 
-			if (mParameters["overwrite"]) {
+			if (mParameters.overwrite) {
 				// handle triggered "Save" button
 				return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aSourceVariantChanges), oAppComponent);
 			}
 
-			var sLayer = mParameters.layer || Layer.USER;
+			var sLayer = mParameters.layer || (mParameters.public ? Layer.PUBLIC : Layer.USER);
 
 			// handle triggered "SaveAs" button
 			var sNewVariantReference = mParameters.newVariantReference || Utils.createDefaultFileName();
@@ -1178,7 +1191,7 @@ sap.ui.define([
 				variantManagementReference: sVariantManagementReference,
 				appComponent: oAppComponent,
 				layer: sLayer,
-				title: mParameters["name"],
+				title: mParameters.name,
 				sourceVariantReference: sSourceVariantReference,
 				newVariantReference: sNewVariantReference,
 				generator: mParameters.generator
