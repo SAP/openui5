@@ -73,6 +73,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @alias sap.ui.table
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 0.8
 	 * @public
 	 */
 	var thisLib = sap.ui.table;

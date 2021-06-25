@@ -23,6 +23,7 @@ sap.ui.define([
 	 * process, any further flex processing is stopped to avoid runtime impact for end users.
 	 *
 	 * @version ${version}
+	 * @since 1.44
 	 * @namespace
 	 * @name sap.ui.fl.initial
 	 * @public

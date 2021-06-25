@@ -20,6 +20,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @name sap.ui.commons
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 0.8
 	 * @public
 	 * @deprecated as of version 1.38
 	 */

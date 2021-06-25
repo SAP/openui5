@@ -47,6 +47,7 @@ sap.ui.define([
 	 * @alias sap.ui.integration
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.62
 	 * @public
 	 */
 	var thisLib = sap.ui.integration;

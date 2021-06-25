@@ -35,6 +35,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], // library dependency
 	 * @alias sap.ui.suite
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.1
 	 * @public
 	 */
 	var thisLibrary = sap.ui.suite;

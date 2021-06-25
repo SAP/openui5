@@ -158,6 +158,7 @@ sap.ui.define([
 	 * @alias sap.ui.core
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 0.8
 	 * @public
 	 */
 	var thisLib = sap.ui.core;

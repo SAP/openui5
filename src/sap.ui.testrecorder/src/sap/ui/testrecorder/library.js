@@ -23,7 +23,7 @@ sap.ui.define([
 	 * @name sap.ui.testrecorder
 	 * @author SAP SE
 	 * @version ${version}
-	 *
+	 * @since 1.74
 	 * @public
 	 */
 

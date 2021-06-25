@@ -568,6 +568,7 @@ sap.ui.define([
 	 * @alias sap.m
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.4
 	 * @public
 	 */
 	var thisLib = sap.m;

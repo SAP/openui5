@@ -16,6 +16,9 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @name sap.ui.codeeditor
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.48
 	 * @public
 	 */
 

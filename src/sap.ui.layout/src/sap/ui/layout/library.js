@@ -19,6 +19,7 @@ sap.ui.define([
 	 * @name sap.ui.layout
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.15
 	 * @public
 	 */
 
