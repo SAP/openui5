@@ -1039,7 +1039,7 @@ function(
 								var sLocalName = localName(attr);
 								aCustomData.push(new CustomData({
 									key:sLocalName,
-									value:parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController)
+									value:parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController, oRequireModules)
 								}));
 							} else if (sNamespace === SUPPORT_INFO_NAMESPACE) {
 								sSupportData = sValue;

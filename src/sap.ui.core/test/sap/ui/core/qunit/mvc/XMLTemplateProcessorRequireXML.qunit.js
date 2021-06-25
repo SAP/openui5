@@ -127,6 +127,7 @@ sap.ui.define([
 			assert.ok(BusyIndicator, "Class is loaded");
 			assert.ok(Helper, "Class is loaded");
 
+			var oPage = oView.byId("page");
 			var oBoxButton = oView.byId("boxButton");
 			var oToastButton = oView.byId("toastButton");
 			var oGlobalToastButton = oView.byId("globalToastButton");
@@ -139,6 +140,9 @@ sap.ui.define([
 			var oToastShowSpy = this.spy(MessageToast, "show");
 			var oBusyIndicatorShowSpy = this.spy(BusyIndicator, "show");
 			var oHelperSpy = this.spy(Helper.groupA, "upperCase");
+
+			assert.equal(oPage.data("data1"), "abc", "core:require module in custom data is resolved correctly");
+			assert.equal(oPage.data("data2"), "foo", "core:require module in custom data is resolved correctly");
 
 			assert.strictEqual(oFunctionControl.getHandler().toString(),
 				Helper.groupA.lowerCase.bind(Helper.groupA).toString(), "The function property is resolved correctly");
@@ -200,6 +204,9 @@ sap.ui.define([
 
 			var oBoxShowSpy = this.spy(MessageBox, "show");
 			var oToastShowSpy = this.spy(MessageToast, "show");
+
+			assert.equal(oButton1.data("data1"), "abc", "core:require is resolved correctly in custom data");
+			assert.equal(oButton1.data("data2"), "foo", "core:require is resolved correctly in custom data");
 
 			oButton1.fireEvent("press");
 			assert.ok(oBoxShowSpy.calledOnce, "show method is called once");

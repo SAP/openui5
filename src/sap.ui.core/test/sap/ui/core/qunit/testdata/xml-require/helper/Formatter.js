@@ -5,6 +5,9 @@ sap.ui.define([], function() {
 			upperCase: function() {
 			},
 			lowerCase: function() {
+			},
+			keep: function(sValue) {
+				return sValue;
 			}
 		}
 	};
