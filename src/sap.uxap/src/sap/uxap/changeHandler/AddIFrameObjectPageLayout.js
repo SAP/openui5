@@ -36,6 +36,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl - Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - Map of properties
 	 * @param {object} mPropertyBag.modifier - Modifier for the controls
+	 * @returns {Promise} Promise resolving when the change is successfully applied
 	 * @ui5-restricted sap.uxap
 	 */
 	AddIFrameObjectPageLayout.applyChange = function(oChange, oControl, mPropertyBag) {
@@ -43,7 +44,8 @@ sap.ui.define([
 		var oChangeDefinition = oChange.getDefinition();
 		var sAggregationName = oChangeDefinition.content.targetAggregation;
 		if (sAggregationName !== "sections") {
-			return BaseAddIFrame.applyChange(oChange, oControl, mPropertyBag);
+			return Promise.resolve()
+				.then(BaseAddIFrame.applyChange.bind(BaseAddIFrame, oChange, oControl, mPropertyBag));
 		}
 		// Create a section, sub section and insert the IFrame
 		var oView = mPropertyBag.view;
@@ -51,26 +53,40 @@ sap.ui.define([
 		var oBaseSelector = oChangeDefinition.content.selector;
 		var sDefaultTitle = sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_TITLE_FOR_IFRAME");
 
-		var oOPSection = oModifier.createControl("sap.uxap.ObjectPageSection", oComponent, oView, oBaseSelector, {
-			title: sDefaultTitle
-		}, false);
-
-		var oOPSubSectionSelector = Object.create(oBaseSelector);
-		oOPSubSectionSelector.id += "-subSection";
-		var oOPSubSection = oModifier.createControl("sap.uxap.ObjectPageSubSection", oComponent, oView, oOPSubSectionSelector, {
-			title: sDefaultTitle
-		}, false);
-		oModifier.insertAggregation(oOPSection, "subSections", oOPSubSection, 0, oView);
-
-		var oIFrameSelector = Object.create(oBaseSelector);
-		oIFrameSelector.id += "-iframe";
-		var oIFrame = createIFrame(oChange, mPropertyBag, oIFrameSelector);
-		oModifier.insertAggregation(oOPSubSection, "blocks", oIFrame, 0, oView);
-
-		var iIndex = getTargetAggregationIndex(oChange, oControl, mPropertyBag);
-		oModifier.insertAggregation(oControl, "sections", oOPSection, iIndex, oView);
-
-		oChange.setRevertData([oModifier.getId(oOPSection)]);
+		var oOPSection;
+		var oOPSubSection;
+		return Promise.resolve()
+			.then(oModifier.createControl.bind(oModifier, "sap.uxap.ObjectPageSection", oComponent, oView, oBaseSelector, {
+					title: sDefaultTitle
+				}, false)
+			)
+			.then(function(oOPSectionLocal) {
+				oOPSection = oOPSectionLocal;
+				var oOPSubSectionSelector = Object.create(oBaseSelector);
+				oOPSubSectionSelector.id += "-subSection";
+				return oModifier.createControl("sap.uxap.ObjectPageSubSection", oComponent, oView, oOPSubSectionSelector, {
+					title: sDefaultTitle
+				}, false);
+			})
+			.then(function(oOPSubSectionLocal) {
+				oOPSubSection = oOPSubSectionLocal;
+				return oModifier.insertAggregation(oOPSection, "subSections", oOPSubSection, 0, oView);
+			})
+			.then(function () {
+				var oIFrameSelector = Object.create(oBaseSelector);
+				oIFrameSelector.id += "-iframe";
+				return createIFrame(oChange, mPropertyBag, oIFrameSelector);
+			})
+			.then(function(oIFrame) {
+				return oModifier.insertAggregation(oOPSubSection, "blocks", oIFrame, 0, oView);
+			})
+			.then(function () {
+				var iIndex = getTargetAggregationIndex(oChange, oControl, mPropertyBag);
+				return oModifier.insertAggregation(oControl, "sections", oOPSection, iIndex, oView);
+			})
+			.then(function () {
+				oChange.setRevertData([oModifier.getId(oOPSection)]);
+			});
 	};
 
 	return AddIFrameObjectPageLayout;

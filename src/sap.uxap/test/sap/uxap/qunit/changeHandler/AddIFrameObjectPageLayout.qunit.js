@@ -22,7 +22,7 @@ sap.ui.define([
 	"use strict";
 
 	var BASE_ID = "test";
-	var EXAMPLE_URL = "http://www.sap.com";
+	var EXAMPLE_URL = "exampleurl";
 
 	QUnit.module("Given a AddIFrameObjectPageLayout Change Handler", {
 		beforeEach : function() {
@@ -181,32 +181,33 @@ sap.ui.define([
 		}
 
 		QUnit.test("When applying the change on a js control tree", function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);
-			_checkCreatedSection.call(this, assert, 1);
+			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
+				.then(_checkCreatedSection.bind(this, assert, 1));
 		});
 
 		QUnit.test("When applying the change on a js control tree (index = 0)", function(assert) {
 			this.mChangeSpecificContent.index = 0;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);
-			_checkCreatedSection.call(this, assert, 0);
+			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
+				.then(_checkCreatedSection.bind(this, assert, 0));
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
 			this.mChangeSpecificContent.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);},
-				Error,
-				"then apply change throws an error"
-			);
+			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
+				.catch(function(oError) {
+					assert.ok(oError, "then apply change throws an error");
+				});
 		});
 
 		QUnit.test("When reverting the change on a js control tree", function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);
-			this.oChangeHandler.revertChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);
-			assert.strictEqual(this.oObjectPageLayout.getSections().length, 1, "after reversal there is again only one section of the object page layout");
-			assert.strictEqual(this.oChange.getRevertData(), null, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oObjectPageLayout, this.mPropertyBag))
+				.then(function() {
+					assert.strictEqual(this.oObjectPageLayout.getSections().length, 1, "after reversal there is again only one section of the object page layout");
+					assert.strictEqual(this.oChange.getRevertData(), null, "and the revert data got reset");
+				}.bind(this));
 		});
 	});
 
@@ -293,33 +294,34 @@ sap.ui.define([
 		}
 
 		QUnit.test("When applying the change on a xml control tree", function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);
-			_checkCreatedSection.call(this, assert, 1);
+			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
+				.then(_checkCreatedSection.bind(this, assert, 1));
 		});
 
 		QUnit.test("When applying the change on a xml control tree (index = 0)", function(assert) {
 			this.mChangeSpecificContent.index = 0;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);
-			_checkCreatedSection.call(this, assert, 0);
+			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
+				.then(_checkCreatedSection.bind(this, assert, 0));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
 			this.mChangeSpecificContent.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);},
-				Error,
-				"then apply change throws an error"
-			);
+			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
+				.catch(function(oError) {
+					assert.ok(oError, "then apply change throws an error");
+				});
 		});
 
 		QUnit.test("When reverting the change on an xml control tree", function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);
-			this.oChangeHandler.revertChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag);
-			var oObjectPageLayoutSectionsAggregation = this.oObjectPageLayout.childNodes[0];
-			assert.strictEqual(oObjectPageLayoutSectionsAggregation.childNodes.length, 1, "after reversal there is again only one section in the object page layout");
-			assert.strictEqual(this.oChange.getRevertData(), null, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oObjectPageLayout, this.mPropertyBag))
+				.then(function() {
+					var oObjectPageLayoutSectionsAggregation = this.oObjectPageLayout.childNodes[0];
+					assert.strictEqual(oObjectPageLayoutSectionsAggregation.childNodes.length, 1, "after reversal there is again only one section in the object page layout");
+					assert.strictEqual(this.oChange.getRevertData(), null, "and the revert data got reset");
+				}.bind(this));
 		});
 	});
 

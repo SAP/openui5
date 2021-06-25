@@ -57,14 +57,16 @@ sap.ui.define(["sap/ui/fl/changeHandler/MoveControls", "sap/ui/core/Core", "sap/
 	MoveObjectPageSection.completeChangeContent = function (oChange, mSpecificChangeInfo, mPropertyBag) {
 		var oSourceControl = Core.byId(mSpecificChangeInfo.source.id),
 			oTargetControl = Core.byId(mSpecificChangeInfo.target.id);
-
+		var oPromise = Promise.resolve();
 		if (oSourceControl.isA("sap.uxap.AnchorBar")
 			&& oTargetControl.isA("sap.uxap.AnchorBar")
 		) {
-			this._mapAnchorsToSections(mSpecificChangeInfo, mPropertyBag);
+			oPromise = oPromise.then(this._mapAnchorsToSections.bind(this, mSpecificChangeInfo, mPropertyBag));
 		}
 
-		return MoveControls.completeChangeContent.apply(this, arguments);
+		return oPromise.then(function(){
+			return MoveControls.completeChangeContent.apply(this, arguments[0]);
+		}.bind(this, arguments));
 	};
 
 	/**
@@ -76,36 +78,47 @@ sap.ui.define(["sap/ui/fl/changeHandler/MoveControls", "sap/ui/core/Core", "sap/
 	 * @private
 	 */
 	MoveObjectPageSection._mapAnchorsToSections = function (mSpecificChangeInfo, mPropertyBag) {
-		var oSection, oSectionParentInfo,
-			oModifier = mPropertyBag.modifier,
-			oLayout = oModifier.bySelector(mSpecificChangeInfo.selector, mPropertyBag.appComponent, mPropertyBag.view),
-			aAnchoredSections = oLayout._getVisibleSections(); // sections that have anchors
+		return Promise.resolve()
+			.then(function() {
+				var oSection, oSectionParentInfo;
+				var oModifier = mPropertyBag.modifier;
+				var oLayout = oModifier.bySelector(mSpecificChangeInfo.selector, mPropertyBag.appComponent, mPropertyBag.view);
+				var aAnchoredSections = oLayout._getVisibleSections(); // sections that have anchors
 
-		function getSectionForAnchor(sAnchorId) {
-			var oAnchor = Core.byId(sAnchorId),
-				sSectionId = oAnchor.data("sectionId");
-			return Core.byId(sSectionId);
-		}
-
-		mSpecificChangeInfo.movedElements.forEach(function(oElement) {
-			// adjust target index as invisible sections are not part of the anchor bar;
-			var oSectionAtTargetIndex = aAnchoredSections[oElement.targetIndex];
-			oElement.targetIndex = oModifier.findIndexInParentAggregation(oSectionAtTargetIndex);
-
-			// replace the anchorBar with the section
-			oSection = getSectionForAnchor(oElement.id);
-			if (!oSection || !oSection.getParent()) {
-				throw new Error("Cannot map anchor to section");
-			}
-			oSectionParentInfo = {
-				id: oSection.getParent().getId(),
-				aggregation: oSection.sParentAggregationName
-			};
-			oElement.id = oSection.getId();
-		});
-
-		merge(mSpecificChangeInfo.source, oSectionParentInfo);
-		merge(mSpecificChangeInfo.target, oSectionParentInfo);
+				function getSectionForAnchor(sAnchorId) {
+					var oAnchor = Core.byId(sAnchorId),
+						sSectionId = oAnchor.data("sectionId");
+					return Core.byId(sSectionId);
+				}
+				var aPromiseArray = [];
+				mSpecificChangeInfo.movedElements.forEach(function(oElement) {
+					// adjust target index as invisible sections are not part of the anchor bar;
+					var oSectionAtTargetIndex = aAnchoredSections[oElement.targetIndex];
+					var oPromise = Promise.resolve()
+						.then(function(){
+							return oModifier.findIndexInParentAggregation(oSectionAtTargetIndex);
+						})
+						.then(function(iTargetIndex){
+							oElement.targetIndex = iTargetIndex;
+							// replace the anchorBar with the section
+							oSection = getSectionForAnchor(oElement.id);
+							if (!oSection || !oSection.getParent()) {
+								throw new Error("Cannot map anchor to section");
+							}
+							oSectionParentInfo = {
+								id: oSection.getParent().getId(),
+								aggregation: oSection.sParentAggregationName
+							};
+							oElement.id = oSection.getId();
+						});
+					aPromiseArray.push(oPromise);
+				});
+				return Promise.all(aPromiseArray)
+					.then(function(){
+						merge(mSpecificChangeInfo.source, oSectionParentInfo);
+						merge(mSpecificChangeInfo.target, oSectionParentInfo);
+					});
+			});
 	};
 
 	return MoveObjectPageSection;
