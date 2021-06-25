@@ -110,7 +110,6 @@ sap.ui.define([
 		}
 
 		var vData = oRequestConfig.parameters,
-			oCard = this.getCardInstance(),
 			sUrl = oRequestConfig.url,
 			sDataType = (this.getAllowCustomDataType() && oRequestConfig.dataType) || "json",
 			mHeaders = oRequestConfig.headers || {},
@@ -118,8 +117,8 @@ sap.ui.define([
 			oBatchSerialized,
 			oRequest;
 
-		if (oCard && !sUrl.startsWith("/")) {
-			sUrl = oCard.getRuntimeUrl(oRequestConfig.url);
+		if ( !sUrl.startsWith("/")) {
+			sUrl = this.getRuntimeUrl(oRequestConfig.url);
 		}
 
 		// if not 'application/x-www-form-urlencoded', data has to be serialized manually

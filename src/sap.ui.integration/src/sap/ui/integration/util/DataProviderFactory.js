@@ -27,11 +27,12 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 	 * @alias sap.ui.integration.util.DataProviderFactory
 	 */
 	var DataProviderFactory = BaseObject.extend("sap.ui.integration.util.DataProviderFactory", {
-		constructor: function (oDestinations, oExtension, oCard) {
+		constructor: function (oDestinations, oExtension, oCard, oEditor) {
 			BaseObject.call(this);
 			this._oDestinations = oDestinations;
 			this._oExtension = oExtension;
 			this._oCard = oCard;
+			this._oEditor = oEditor;
 
 			this._aDataProviders = [];
 			this._aFiltersProviders = [];
@@ -75,7 +76,8 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 	 */
 	DataProviderFactory.prototype.create = function (oDataSettings, oServiceManager, bIsFilter) {
 		var oCard = this._oCard,
-			oHost = oCard.getHostInstance(),
+			oEditor = this._oEditor,
+			oHost = (oCard && oCard.getHostInstance()) || (oEditor && oEditor.getHostInstance()),
 			bUseExperimentalCaching = oHost && oHost.bUseExperimentalCaching,
 			oConfig,
 			oDataProvider;
@@ -84,10 +86,17 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 			return null;
 		}
 
-		oConfig = {
-			"card": oCard,
-			"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings, oCard.getBindingNamespaces())
-		};
+		if (oCard) {
+			oConfig = {
+				"baseRuntimeUrl": oCard.getRuntimeUrl("/"),
+				"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings, oCard.getBindingNamespaces())
+			};
+		} else if (oEditor) {
+			oConfig = {
+				"baseRuntimeUrl": oEditor.getRuntimeUrl("/"),
+				"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings, oEditor.getBindingNamespaces())
+			};
+		}
 
 		if (oDataSettings.request && bUseExperimentalCaching) {
 			oDataProvider = new CacheAndRequestDataProvider(oConfig);
@@ -103,7 +112,11 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, CacheAndRequestD
 			return null;
 		}
 
-		BindingHelper.propagateModels(oCard, oDataProvider);
+		if (oCard) {
+			BindingHelper.propagateModels(oCard, oDataProvider);
+		} else if (oEditor) {
+			BindingHelper.propagateModels(oEditor, oDataProvider);
+		}
 		oDataProvider.bindObject("/");
 
 		oDataProvider.setDestinations(this._oDestinations);

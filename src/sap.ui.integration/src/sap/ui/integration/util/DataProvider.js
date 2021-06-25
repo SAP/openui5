@@ -39,15 +39,9 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/core/Core"],
 				 */
 				settingsJson: {
 					type: "string"
-				}
-			},
-			associations : {
-				/**
-				 * The card.
-				 */
-				card: {
-					type : "sap.ui.integration.widgets.Card",
-					multiple: false
+				},
+				baseRuntimeUrl: {
+					type : "string"
 				}
 			},
 			events: {
@@ -122,6 +116,16 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/core/Core"],
 		}
 	};
 
+	DataProvider.prototype.getRuntimeUrl = function(sUrl) {
+		if (sUrl.startsWith("http://") ||
+			sUrl.startsWith("https://") ||
+			sUrl.startsWith("//")) {
+			return sUrl;
+		}
+		var sSanitizedUrl = sUrl && sUrl.trim().replace(/^\//, "");
+		return this.getBaseRuntimeUrl() + sSanitizedUrl;
+	};
+
 	/**
 	 * Sets the data settings for the <code>DataProvider</code>
 	 *
@@ -161,10 +165,6 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/core/Core"],
 		}
 
 		return pDataUpdate;
-	};
-
-	DataProvider.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
 	};
 
 	DataProvider.prototype._triggerDataUpdate = function () {

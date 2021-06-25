@@ -700,58 +700,76 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/CardEditorWithParameters": {
-				group: "Runtime Card Editor",
+			"editor/EditorWithParameters": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
 			},
-			"designtime/editor/CardEditorWithDesigntime": {
-				group: "Runtime Card Editor",
+			"editor/EditorWithDesigntime": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
 			},
-			"designtime/editor/CardEditorWithDesigntimeRequestValues": {
-				group: "Runtime Card Editor",
+			"editor/EditorWithDesigntimeRequestValues": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
 			},
-			"designtime/editor/CardEditorWithDesigntimeTrans": {
-				group: "Runtime Card Editor",
+			"editor/EditorWithDesigntimeTrans": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
 			},
-			"designtime/editor/CardEditorWithDesigntimeValidation": {
-				group: "Runtime Card Editor",
+			"editor/EditorWithDesigntimeValidation": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
-			}
+			},
+			"editor/EditorForSectionSapCard1": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/EditorForSectionTemp": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			/* hide multi language function since there has a translation issue in Portal
-			,
 			"designtime/editor/multiLanguagesOfValue/InitialWithNoChange": {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -760,7 +778,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -769,7 +788,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -778,7 +798,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -787,7 +808,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -796,7 +818,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -805,7 +828,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -814,7 +838,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -823,7 +848,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -832,7 +858,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -841,7 +868,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -850,7 +878,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -859,7 +888,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -868,7 +898,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -877,7 +908,8 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
@@ -886,11 +918,22 @@ sap.ui.define(function () {
 				group: "Runtime Card Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/editor"
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
 					]
 				},
 				sinon: false
-			}*/
+			},*/
+			"designtime/editor/CardEditor": {
+				group: "Runtime Editor for Card",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			}
 		}
 	};
 });
