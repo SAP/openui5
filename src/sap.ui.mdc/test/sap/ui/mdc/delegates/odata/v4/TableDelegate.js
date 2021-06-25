@@ -192,6 +192,16 @@ sap.ui.define([
 					var oTextAnnotation = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"];
 					var bTextIsFromNavigationProperty = oTextAnnotation != null && oTextAnnotation.$Path.includes("/")[0];
 					var bIsUpperCase = !!oPropertyAnnotations["@com.sap.vocabularies.Common.v1.IsUpperCase"];
+					var mConstraints = {};
+					if (oDataObject.$MaxLength > 0) {
+						mConstraints.maxLength = oDataObject.$MaxLength;
+					}
+					if (oDataObject.$Precision > 0) {
+						mConstraints.precision = oDataObject.$Precision;
+					}
+					if (oDataObject.$Scale > 0) {
+						mConstraints.scale = oDataObject.$Scale;
+					}
 
 					var oPropertyInfo = {
 						name: sKey,
@@ -199,7 +209,7 @@ sap.ui.define([
 						label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 						sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
 						filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
-						typeConfig: TypeUtil.getTypeConfig(oDataObject.$Type),
+						typeConfig: TypeUtil.getTypeConfig(oDataObject.$Type, null, mConstraints),
 						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
 						groupable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] || false,
 						unit: oUnitAnnotation && !bUnitIsFromNavigationProperty ? oUnitAnnotation.$Path : undefined,

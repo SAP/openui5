@@ -135,6 +135,9 @@ sap.ui.define([
 			type: "object",
 			allowedForComplexProperty: true
 		},
+		visualSettings: { // This object contains all relevant properties for visual adjustments
+			type: "object"
+		},
 
 		// Chart
 
@@ -980,6 +983,21 @@ sap.ui.define([
 		return oProperty ? oProperty.exportSettings : null;
 	};
 	aPropertyMethods.push("getExportSettings");
+
+	/**
+	 * Gets the visual settings.
+	 *
+	 * @function
+	 * @name getVisualSettings
+	 * @param {string} sName Name of a property
+	 * @returns {object|false|null} The visual settings
+	 * @public
+	 */
+	PropertyHelper.prototype.getVisualSettings = function(sName) {
+		var oProperty = this.getProperty(sName);
+		return oProperty ? oProperty.visualSettings : null;
+	};
+	aPropertyMethods.push("getVisualSettings");
 
 	/**
 	 * Gets the unique name (key) of a property.
