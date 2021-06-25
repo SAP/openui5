@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/Utils"
 ], function(
-	Log
+	Log,
+	FlUtils
 ) {
 	"use strict";
 
@@ -21,6 +23,62 @@ sap.ui.define([
 
 	MoveElements.CHANGE_TYPE = "moveElements";
 
+	function fnCheckConditions(oChange, oModifier, oView, oAppComponent) {
+		if (!oChange) {
+			return Promise.reject(new Error("No change instance"));
+		}
+
+		var oChangeContent = oChange.getContent();
+
+		if (!oChangeContent || !oChangeContent.movedElements || oChangeContent.movedElements.length === 0) {
+			return Promise.reject(new Error("Change format invalid"));
+		}
+		if (!oChange.getSelector().aggregation) {
+			return Promise.reject(new Error("No source aggregation supplied via selector for move"));
+		}
+		if (!oChangeContent.target || !oChangeContent.target.selector) {
+			return Promise.reject(new Error("No target supplied for move"));
+		}
+		if (!oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView)) {
+			return Promise.reject(new Error("Move target parent not found"));
+		}
+		if (!oChangeContent.target.selector.aggregation) {
+			return Promise.reject(new Error("No target aggregation supplied for move"));
+		}
+
+		return Promise.resolve();
+	}
+
+	function fnGetElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView) {
+		if (!mMovedElement.selector && !mMovedElement.id) {
+			return Promise.reject(new Error("Change format invalid - moveElements element has no id attribute"));
+		}
+		if (typeof mMovedElement.targetIndex !== "number") {
+			return Promise.reject(new Error("Missing targetIndex for element with id '" + mMovedElement.selector.id
+				+ "' in movedElements supplied"));
+		}
+
+		return Promise.resolve()
+			.then(function() {
+				return oModifier.bySelector(mMovedElement.selector || mMovedElement.id, oAppComponent, oView);
+			});
+	}
+
+	function fnHandleMovedElement(mMovedElement, oModifier, oAppComponent, oView, oSourceParent, oTargetParent, sSourceAggregation, sTargetAggregation) {
+		var oMovedElement;
+		return fnGetElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView)
+			.then(function(oRetrievedMovedElement) {
+				oMovedElement = oRetrievedMovedElement;
+				if (!oMovedElement) {
+					Log.warning("Element to move not found");
+					return Promise.reject();
+				}
+				return Promise.resolve()
+					.then(oModifier.removeAggregation.bind(oModifier, oSourceParent, sSourceAggregation, oMovedElement))
+					.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oMovedElement, mMovedElement.targetIndex, oView));
+			});
+	}
+
 	/**
 	 * Moves an element from one aggregation to another.
 	 *
@@ -30,79 +88,50 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.view - xml node representing a ui5 view
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - appComopnent
-	 * @return {boolean} true - if change could be applied
+	 * @return {Promise} Promise resolving when change has been applied
 	 * @public
 	 * @function
 	 * @name sap.ui.fl.changeHandler.MoveElements#applyChange
 	 */
 	MoveElements.applyChange = function(oChange, oSourceParent, mPropertyBag) {
-		function checkConditions(oChange, oModifier, oView, oAppComponent) {
-			if (!oChange) {
-				throw new Error("No change instance");
-			}
-
-			var oChangeContent = oChange.getContent();
-
-			if (!oChangeContent || !oChangeContent.movedElements || oChangeContent.movedElements.length === 0) {
-				throw new Error("Change format invalid");
-			}
-			if (!oChange.getSelector().aggregation) {
-				throw new Error("No source aggregation supplied via selector for move");
-			}
-			if (!oChangeContent.target || !oChangeContent.target.selector) {
-				throw new Error("No target supplied for move");
-			}
-			if (!oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView)) {
-				throw new Error("Move target parent not found");
-			}
-			if (!oChangeContent.target.selector.aggregation) {
-				throw new Error("No target aggregation supplied for move");
-			}
-		}
-
-		function getElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView) {
-			if (!mMovedElement.selector && !mMovedElement.id) {
-				throw new Error("Change format invalid - moveElements element has no id attribute");
-			}
-			if (typeof mMovedElement.targetIndex !== "number") {
-				throw new Error("Missing targetIndex for element with id '" + mMovedElement.selector.id
-						+ "' in movedElements supplied");
-			}
-
-			return oModifier.bySelector(mMovedElement.selector || mMovedElement.id, oAppComponent, oView);
-		}
-
 		var oModifier = mPropertyBag.modifier;
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
-
-		checkConditions(oChange, oModifier, oView, oAppComponent);
-
 		var oChangeContent = oChange.getContent();
-		var oTargetParent = oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
-		var sSourceAggregation = oChange.getSelector().aggregation;
-		var sTargetAggregation = oChangeContent.target.selector.aggregation;
+		var sSourceAggregation;
+		var sTargetAggregation;
+		var oTargetParent;
 
-		oChangeContent.movedElements.forEach(function(mMovedElement) {
-			var oMovedElement = getElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView);
-
-			if (!oMovedElement) {
-				Log.warning("Element to move not found");
-				return;
-			}
-
-			oModifier.removeAggregation(oSourceParent, sSourceAggregation, oMovedElement);
-			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oMovedElement, mMovedElement.targetIndex, oView);
-		});
-
-		return true;
+		return fnCheckConditions(oChange, oModifier, oView, oAppComponent)
+			.then(function() {
+				sSourceAggregation = oChange.getSelector().aggregation;
+				sTargetAggregation = oChangeContent.target.selector.aggregation;
+				return oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
+			})
+			.then(function(oRetrievedTargetParent) {
+				oTargetParent = oRetrievedTargetParent;
+				var aPromises = [];
+				oChangeContent.movedElements.forEach(function(mMovedElement) {
+					aPromises.push(fnHandleMovedElement.bind(
+						null,
+						mMovedElement,
+						oModifier,
+						oAppComponent,
+						oView,
+						oSourceParent,
+						oTargetParent,
+						sSourceAggregation,
+						sTargetAggregation));
+				});
+				return FlUtils.execPromiseQueueSequentially(aPromises, true, true);
+			});
 	};
 
 	/**
 	 * @deprecated
 	 */
 	MoveElements.completeChangeContent = function() {
-		throw new Error('Using deprecated change handler. Please consider of using \'MoveControls\' instead');
+		throw new Error('Using deprecated change handler. Please consider using \'MoveControls\' instead');
 	};
 
 	/**

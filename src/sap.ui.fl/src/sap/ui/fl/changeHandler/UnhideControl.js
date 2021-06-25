@@ -25,18 +25,21 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
-	 * @param {object} mPropertyBag
+	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {boolean} true - if change could be applied
+	 * @return {Promise} Promise resolving when the change is applied successfully
 	 * @public
 	 */
 	UnhideControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		oChange.setRevertData({
-			originalValue: mPropertyBag.modifier.getProperty(oControl, PROPERTY_NAME)
-		});
-
-		mPropertyBag.modifier.setVisible(oControl, true);
-		return true;
+		var oModifier = mPropertyBag.modifier;
+		return Promise.resolve()
+			.then(oModifier.getProperty.bind(oModifier, oControl, PROPERTY_NAME))
+			.then(function(oOriginalValue) {
+				oChange.setRevertData({
+					originalValue: oOriginalValue
+				});
+				mPropertyBag.modifier.setVisible(oControl, true);
+			});
 	};
 
 	/**
@@ -44,9 +47,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
-	 * @param {object} mPropertyBag
+	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {boolean} true - if change has been reverted
 	 * @public
 	 */
 	UnhideControl.revertChange = function(oChange, oControl, mPropertyBag) {
@@ -57,10 +59,7 @@ sap.ui.define([
 			oChange.resetRevertData();
 		} else {
 			Log.error("Attempt to revert an unapplied change.");
-			return false;
 		}
-
-		return true;
 	};
 
 	/**

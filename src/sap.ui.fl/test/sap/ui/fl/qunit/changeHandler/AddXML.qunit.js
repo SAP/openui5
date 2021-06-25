@@ -156,31 +156,34 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("When applying the change on a js control tree", function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-			assert.equal(this.oHBox.getItems().length, 2, "after the change there are 2 items in the hbox");
-			assert.equal(this.oHBox.getItems()[1].getId(), "projectId.button", "the fragments control id is prefixed with project id");
-			var mRevertData = {
-				id: "projectId.button",
-				aggregationName: "items"
-			};
-			assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag)
+				.then(function() {
+					assert.equal(this.oHBox.getItems().length, 2, "after the change there are 2 items in the hbox");
+					assert.equal(this.oHBox.getItems()[1].getId(), "projectId.button", "the fragments control id is prefixed with project id");
+					var mRevertData = {
+						id: "projectId.button",
+						aggregationName: "items"
+					};
+					assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
+				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
 			this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error(sWrongAggregationError),
-				"then apply change throws an error"
-			);
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag)
+				.catch(function(oError) {
+					assert.equal(oError.message, sWrongAggregationError, "then apply change throws an error");
+				});
 		});
 
 		QUnit.test("When reverting the change on a js control tree", function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-			assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
-			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.oPropertyBag))
+				.then(function() {
+					assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
+					assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+				}.bind(this));
 		});
 	});
 
@@ -252,29 +255,31 @@ sap.ui.define([
 				id: "projectId.button",
 				aggregationName: "items"
 			};
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-			assert.equal(oHBoxItems.childNodes.length, 2, "after the addXML there are two children of the HBox");
-			assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag)
+				.then(function() {
+					assert.equal(oHBoxItems.childNodes.length, 2, "after the addXML there are two children of the HBox");
+					assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
+				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
 			this.oChangeSpecificContent.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error(sWrongAggregationError),
-				"then apply change throws an error"
-			);
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag)
+				.catch(function(oError) {
+					assert.equal(oError.message, sWrongAggregationError, "then apply change throws an error");
+				});
 		});
 
 		QUnit.test("When reverting the change on an xml control tree", function(assert) {
 			var oHBoxItems = this.oHBox.childNodes[1];
 
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
-			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.oPropertyBag))
+				.then(function() {
+					assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
+					assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+				}.bind(this));
 		});
 	});
 

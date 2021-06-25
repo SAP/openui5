@@ -27,18 +27,26 @@ sap.ui.define([
 	 *
 	 * @param {object} oModifier Modifier for the controls
 	 * @param {sap.ui.fl.util.IFrame} oIFrame IFrame to extract settings from
-	 * @return {object} Settings
+	 * @return {Promise<object>} Promise returning the settings
 	 * @ui5-restricted sap.ui.fl
 	 */
 	function getIFrameSettings (oModifier, oIFrame) {
 		var oSettings = {};
+		var aPromises = [];
 		aUpdatableProperties.forEach(function (sPropertyName) {
-			var vValue = oModifier.getProperty(oIFrame, sPropertyName);
-			if (vValue !== undefined) {
-				oSettings[sPropertyName] = vValue;
-			}
+			var oPromise = Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oIFrame, sPropertyName))
+				.then(function(vValue) {
+					if (vValue !== undefined) {
+						oSettings[sPropertyName] = vValue;
+					}
+				});
+			aPromises.push(oPromise);
 		});
-		return oSettings;
+		return Promise.all(aPromises)
+			.then(function() {
+				return oSettings;
+			});
 	}
 
 	/**
@@ -47,11 +55,13 @@ sap.ui.define([
 	 * @param {object} oModifier Modifier for the controls
 	 * @param {sap.ui.fl.util.IFrame} oIFrame IFrame to set settings to
 	 * @param {object} mSettings Settings
+	 * @returns {Promise} Promise resolving with applySettings
 	 * @ui5-restricted sap.ui.fl
 	 */
 	function applySettings (oModifier, oIFrame, mSettings) {
 		var mFullSettings = extend({ _settings: mSettings }, mSettings);
-		oModifier.applySettings(oIFrame, mFullSettings);
+		return Promise.resolve()
+			.then(oModifier.applySettings.bind(oModifier, oIFrame, mFullSettings));
 	}
 
 	/**
@@ -61,19 +71,27 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @returns {Promise} Promise resolving with applySettings
 	 * @ui5-restricted sap.ui.fl
 	 */
 	UpdateIFrame.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
 		var oControlMetadata = oModifier.getControlMetadata(oControl);
-		if (oControlMetadata.getName() !== "sap.ui.fl.util.IFrame") {
-			throw new Error("UpdateIFrame only for sap.ui.fl.util.IFrame");
-		}
-		oChange.setRevertData({
-			originalSettings: getIFrameSettings(oModifier, oControl)
-		});
-		applySettings(oModifier, oControl, oChangeDefinition.settings);
+
+		return Promise.resolve()
+			.then(function() {
+				if (oControlMetadata.getName() !== "sap.ui.fl.util.IFrame") {
+					return Promise.reject(new Error("UpdateIFrame only for sap.ui.fl.util.IFrame"));
+				}
+				return getIFrameSettings(oModifier, oControl);
+			})
+			.then(function(oOriginalSettings) {
+				oChange.setRevertData({
+					originalSettings: oOriginalSettings
+				});
+				return applySettings(oModifier, oControl, oChangeDefinition.settings);
+			});
 	};
 
 	/**
@@ -83,16 +101,22 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @returns {Promise} Promise resolving with change being reverted
 	 * @ui5-restricted sap.ui.fl
 	 */
 	UpdateIFrame.revertChange = function(oChange, oControl, mPropertyBag) {
 		var mRevertData = oChange.getRevertData();
-		if (mRevertData) {
-			applySettings(mPropertyBag.modifier, oControl, mRevertData.originalSettings);
-			oChange.resetRevertData();
-		} else {
-			throw new Error("Attempt to revert an unapplied change.");
-		}
+
+		return Promise.resolve()
+			.then(function() {
+				if (mRevertData) {
+					return applySettings(mPropertyBag.modifier, oControl, mRevertData.originalSettings);
+				}
+				return Promise.reject(new Error("Attempt to revert an unapplied change."));
+			})
+			.then(function() {
+				oChange.resetRevertData();
+			});
 	};
 
 	/**

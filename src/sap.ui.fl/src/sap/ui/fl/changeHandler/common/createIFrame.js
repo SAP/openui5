@@ -17,6 +17,7 @@ sap.ui.define([
 	 * @param {object} [oSelector] Selector to calculate the ID for the control that is created
 	 * @param {string} [oSelector.id] Control ID targeted by the change
 	 * @param {boolean} [oSelector.isLocalId] <code>true</code> if the ID within the selector is a local ID or a global ID
+	 * @returns {Promise} Promise resolving with the created IFrame
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return function (oChange, mPropertyBag, oSelector) {
@@ -30,7 +31,10 @@ sap.ui.define([
 			mIFrameSettings[sIFrameProperty] = vValue;
 			mIFrameSettings._settings[sIFrameProperty] = vValue;
 		});
-		var oIFrame = oModifier.createControl("sap.ui.fl.util.IFrame", oComponent, oView, oSelector, mIFrameSettings, false);
-		return oIFrame;
+
+		return Promise.resolve()
+			.then(function() {
+				return oModifier.createControl("sap.ui.fl.util.IFrame", oComponent, oView, oSelector, mIFrameSettings, false);
+			});
 	};
 });

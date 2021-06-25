@@ -79,30 +79,37 @@ function (
 	}, function() {
 		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called", function (assert) {
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
-			UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag);
-			assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "then the IFrame url changes");
+
+			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
+				.then(function() {
+					assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "then the IFrame url changes");
+				}.bind(this));
 		});
 
 		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier are called and then reverted", function (assert) {
 			var originalUrl = this.oIFrame.getUrl();
-			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
-			UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag);
-			UpdateIFrame.revertChange(this.oChange, this.oIFrame, mPropertyBag);
 
-			assert.equal(this.oIFrame.getUrl(), originalUrl, "then the IFrame url does not change");
+			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
+
+			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
+				.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
+				.then(function() {
+					assert.equal(this.oIFrame.getUrl(), originalUrl, "then the IFrame url is the same as before");
+				}.bind(this));
 		});
 
 		QUnit.test("when completeChangeContent & applyChange with JsControlTreeModifier and binding value are called", function (assert) {
 			this.mSapUI5UrlChange.content.url = sBoundUrl;
 
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
-			UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag);
 
-			var oBindingInfo = this.oIFrame.getBindingInfo("url");
-			assert.equal(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path has changed as expected");
-			assert.equal(oBindingInfo.parts[0].model, "model", "and the property value binding model has changed as expected");
-
-			assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is correct");
+			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
+				.then(function() {
+					var oBindingInfo = this.oIFrame.getBindingInfo("url");
+					assert.equal(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path has changed as expected");
+					assert.equal(oBindingInfo.parts[0].model, "model", "and the property value binding model has changed as expected");
+					assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is correct");
+				}.bind(this));
 		});
 
 		QUnit.test("when a value is bound, completeChangeContent & applyChange with JsControlTreeModifier are called and then reverted", function (assert) {
@@ -112,15 +119,18 @@ function (
 			assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "the initial bound value is correct");
 
 			this.mSapUI5UrlChange.content.url = sOpenUI5Url;
+
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
-			UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag);
-			UpdateIFrame.revertChange(this.oChange, this.oIFrame, mPropertyBag);
 
-			var oBindingInfo = this.oIFrame.getBindingInfo("url");
-			assert.equal(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path does not change");
-			assert.equal(oBindingInfo.parts[0].model, "model", "and the property value binding model does not change");
+			return UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag)
+				.then(UpdateIFrame.revertChange.bind(UpdateIFrame, this.oChange, this.oIFrame, mPropertyBag))
+				.then(function() {
+					var oBindingInfo = this.oIFrame.getBindingInfo("url");
+					assert.equal(oBindingInfo.parts[0].path, "/protocol", "then the property value binding path does not change");
+					assert.equal(oBindingInfo.parts[0].model, "model", "and the property value binding model does not change");
 
-			assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is still correct");
+					assert.equal(this.oIFrame.getUrl(), sSapUI5Url, "and the property value is still correct");
+				}.bind(this));
 		});
 
 		QUnit.test("when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later", function (assert) {
@@ -144,15 +154,18 @@ function (
 			this.oXmlView = oXmlDocument.documentElement;
 			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlIFrame = this.oXmlLayout.childNodes[0].childNodes[0];
-
 			UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
-			UpdateIFrame.applyChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlIFrame.getAttribute("url"), sSapUI5Url, "then the IFrame url changes");
 
-			UpdateIFrame.revertChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlIFrame.getAttribute("url"), sOpenUI5Url, "then the IFrame url does not change");
+			return UpdateIFrame.applyChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier})
+				.then(function() {
+					assert.equal(this.oXmlIFrame.getAttribute("url"), sSapUI5Url, "then the IFrame url changes");
+					return UpdateIFrame.revertChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier});
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oXmlIFrame.getAttribute("url"), sOpenUI5Url, "then the IFrame url does not change");
 
-			this.oLayout.destroy();
+					this.oLayout.destroy();
+				}.bind(this));
 		});
 
 		// DISABLE since I have a question about this test

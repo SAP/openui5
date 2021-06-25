@@ -40,7 +40,7 @@ sap.ui.define([
 				 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 				 * @param {object} mPropertyBag property bag
 				 * @param {object} mPropertyBag.modifier modifier for the controls
-				 * @returns {boolean} true if successful
+				 * @returns {Promise} Promise resolving when the change is applied
 				 * @public
 				 */
 				applyChange: function(oChange, oControl, mPropertyBag) {
@@ -50,14 +50,17 @@ sap.ui.define([
 					var sText = oChangeDefinition.texts[mRenameSettings.changePropertyName];
 					var sValue = sText.value;
 
-					if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
-						oChange.setRevertData(oModifier.getPropertyBindingOrProperty(oControl, sPropertyName));
-						oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
-						return true;
-					}
+					return Promise.resolve()
+						.then(function() {
+							if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
+								oChange.setRevertData(oModifier.getPropertyBindingOrProperty(oControl, sPropertyName));
+								return oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
+							}
+							Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
+							//however subsequent changes should be applied
 
-					Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
-					//however subsequent changes should be applied
+							return undefined;
+						});
 				},
 
 				/**
@@ -67,7 +70,6 @@ sap.ui.define([
 				 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 				 * @param {object} mPropertyBag property bag
 				 * @param {object} mPropertyBag.modifier modifier for the controls
-				 * @returns {boolean} true if successful
 				 * @public
 				 */
 				revertChange: function(oChange, oControl, mPropertyBag) {
@@ -78,7 +80,6 @@ sap.ui.define([
 					if (vOldValue || vOldValue === "") {
 						oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, vOldValue);
 						oChange.resetRevertData();
-						return true;
 					}
 
 					Log.error("Change doesn't contain sufficient information to be reverted. Most Likely the Change didn't go through applyChange.");
@@ -98,14 +99,19 @@ sap.ui.define([
 					var sChangePropertyName = mRenameSettings.changePropertyName;
 					var sTranslationTextType = mRenameSettings.translationTextType;
 
-					var oControlToBeRenamed = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
-					oChangeDefinition.content.originalControlType = mPropertyBag.modifier.getControlType(oControlToBeRenamed);
+					return Promise.resolve()
+						.then(function() {
+							return mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+						})
+						.then(function(oControlToBeRenamed) {
+							oChangeDefinition.content.originalControlType = mPropertyBag.modifier.getControlType(oControlToBeRenamed);
 
-					if (typeof (mSpecificChangeInfo.value) === "string") {
-						Base.setTextInChange(oChangeDefinition, sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
-					} else {
-						throw new Error("oSpecificChangeInfo.value attribute required");
-					}
+							if (typeof (mSpecificChangeInfo.value) === "string") {
+								Base.setTextInChange(oChangeDefinition, sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
+							} else {
+								return Promise.reject(new Error("oSpecificChangeInfo.value attribute required"));
+							}
+						});
 				},
 
 				/**

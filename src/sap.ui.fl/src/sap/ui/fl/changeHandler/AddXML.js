@@ -40,8 +40,7 @@ sap.ui.define([
 			index: oChangeDefinition.content.index
 		};
 
-		BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mChangeInfo);
-		return true;
+		return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mChangeInfo);
 	};
 
 	/**

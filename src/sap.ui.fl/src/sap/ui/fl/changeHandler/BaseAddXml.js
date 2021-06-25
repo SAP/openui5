@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/fl/changeHandler/common/revertAddedControls"
+	"sap/ui/fl/changeHandler/common/revertAddedControls",
+	"sap/ui/fl/Utils"
 ], function(
 	Base,
 	LoaderExtensions,
-	revertAddedControls
+	revertAddedControls,
+	FlUtils
 ) {
 	"use strict";
 
@@ -42,36 +44,73 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#applyChange
 	 */
 	BaseAddXml.applyChange = function(oChange, oControl, mPropertyBag, mChangeInfo) {
-		var aNewControls = Base.instantiateFragment(oChange, mPropertyBag);
-
 		var oModifier = mPropertyBag.modifier;
 		var oView = mPropertyBag.view;
 		var sAggregationName = mChangeInfo.aggregationName;
-		var oAggregationDefinition = oModifier.findAggregation(oControl, sAggregationName);
-		if (!oAggregationDefinition) {
-			BaseAddXml._destroyArrayOfControls(aNewControls);
-			throw new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl));
-		}
-		var sModuleName = oChange.getModuleName();
-		var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
+		var oAggregationDefinition;
 		var iIndex = mChangeInfo.index;
 		var aRevertData = [];
-		aNewControls.forEach(function(oNewControl, iIterator) {
-			if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment, iIterator)) {
-				BaseAddXml._destroyArrayOfControls(aNewControls);
-				throw new Error("The content of the xml fragment does not match the type of the targetAggregation: " + oAggregationDefinition.type);
-			}
-		});
-		aNewControls.forEach(function(oNewControl, iIterator) {
-			oModifier.insertAggregation(oControl, sAggregationName, oNewControl, iIndex + iIterator, oView, mChangeInfo.skipAdjustIndex);
-			aRevertData.push({
-				id: oModifier.getId(oNewControl),
-				aggregationName: sAggregationName
-			});
-		});
+		var sModuleName = oChange.getModuleName();
+		var sFragment;
+		var aNewControls;
 
-		oChange.setRevertData(aRevertData);
-		return aNewControls;
+		var fnAddControls = function() {
+			var aPromises = [];
+			aNewControls.forEach(function(oNewControl, iIterator) {
+				var fnPromise = function() {
+					return Promise.resolve()
+						.then(oModifier.insertAggregation.bind(oModifier, oControl, sAggregationName, oNewControl, iIndex + iIterator, oView, mChangeInfo.skipAdjustIndex))
+						.then(function() {
+							aRevertData.push({
+								id: oModifier.getId(oNewControl),
+								aggregationName: sAggregationName
+							});
+						});
+				};
+				aPromises.push(fnPromise);
+			});
+			return FlUtils.execPromiseQueueSequentially(aPromises, true, true)
+				.then(function() {
+					oChange.setRevertData(aRevertData);
+					return aNewControls;
+				});
+		};
+
+		return Promise.resolve()
+			//validate aggregation
+			.then(oModifier.findAggregation.bind(oModifier, oControl, sAggregationName))
+			.then(function(oRetrievedAggregationDefinition) {
+				oAggregationDefinition = oRetrievedAggregationDefinition;
+				if (!oAggregationDefinition) {
+					return Promise.reject(new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl)));
+				}
+				// load and instantiate fragment
+				return LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
+			})
+			.then(function(sLoadedFragment) {
+				sFragment = sLoadedFragment;
+				return Base.instantiateFragment(oChange, mPropertyBag);
+			})
+			// validate types
+			.then(function(aRetrievedControls) {
+				aNewControls = aRetrievedControls;
+				var aPromises = [];
+				aNewControls.forEach(function(oNewControl, iIterator) {
+					var fnPromise = function() {
+						return Promise.resolve()
+							.then(oModifier.validateType.bind(oModifier, oNewControl, oAggregationDefinition, oControl, sFragment, iIterator))
+							.then(function(bValidated) {
+								if (!bValidated) {
+									BaseAddXml._destroyArrayOfControls(aNewControls);
+									return Promise.reject(new Error("The content of the xml fragment does not match the type of the targetAggregation: " + oAggregationDefinition.type));
+								}
+							});
+					};
+					aPromises.push(fnPromise);
+				});
+				return FlUtils.execPromiseQueueSequentially(aPromises, true, true)
+					.then(fnAddControls);
+			});
 	};
 
 	/**

@@ -25,19 +25,42 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl - Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - Map of properties
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
+	 * @returns {Promise} Promise resolving when the change is applied.
 	 * @public
 	 */
 	StashControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		var bStashed = mPropertyBag.modifier.getStashed(oControl);
-		var iOriginalIndex = mPropertyBag.modifier.findIndexInParentAggregation(oControl);
-		this.setChangeRevertData(oChange, bStashed, iOriginalIndex);
+		var bStashed;
+		var oModifier = mPropertyBag.modifier;
 
-		if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
-			mPropertyBag.modifier.setStashed(oControl, true);
-		} else {
-			mPropertyBag.modifier.setVisible(oControl, false);
-		}
+		return Promise.resolve()
+			.then(oModifier.getStashed.bind(oModifier, oControl))
+			.then(function(bRetrievedStashed) {
+				bStashed = bRetrievedStashed;
+				return oModifier.findIndexInParentAggregation(oControl);
+			})
+			.then(function(iOriginalIndex) {
+				this.setChangeRevertData(oChange, bStashed, iOriginalIndex);
+				if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
+					return oModifier.setStashed(oControl, true);
+				}
+				return oModifier.setVisible(oControl, false);
+			}.bind(this));
 	};
+
+	function fnHandleUnstashedControl(iUnstashedIndex, mRevertData, oUnstashedControl, oModifier) {
+		var sAggregationName;
+		if (iUnstashedIndex !== mRevertData.originalIndex) {
+			var oParent = oModifier.getParent(oUnstashedControl);
+			return Promise.return()
+				.then(oModifier.getParentAggregationName.bind(oModifier, oUnstashedControl))
+				.then(function(sRetrievedAggregationName) {
+					sAggregationName = sRetrievedAggregationName;
+					return oModifier.removeAggregation(oParent, sAggregationName, oUnstashedControl);
+				})
+				.then(oModifier.insertAggregation.bind(oModifier, oParent, sAggregationName, oUnstashedControl, mRevertData.originalIndex));
+		}
+		return Promise.resolve();
+	}
 
 	/**
 	 * Reverts previously applied change
@@ -46,26 +69,31 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl - Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - Map of properties
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
+	 * @returns {Promise} Promise resolving when change is reverted
 	 * @public
 	 */
 	StashControl.revertChange = function(oChange, oControl, mPropertyBag) {
 		var mRevertData = oChange.getRevertData();
+		var oModifier = mPropertyBag.modifier;
 
-		if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
-			var oUnstashedControl = mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
-			if (oUnstashedControl) {
-				var iUnstashedIndex = mPropertyBag.modifier.findIndexInParentAggregation((oUnstashedControl));
-				if (iUnstashedIndex !== mRevertData.originalIndex) {
-					var oParent = mPropertyBag.modifier.getParent(oUnstashedControl);
-					var sAggregationName = mPropertyBag.modifier.getParentAggregationName(oUnstashedControl);
-					mPropertyBag.modifier.removeAggregation(oParent, sAggregationName, oUnstashedControl);
-					mPropertyBag.modifier.insertAggregation(oParent, sAggregationName, oUnstashedControl, mRevertData.originalIndex);
+		return Promise.resolve()
+			.then(function() {
+				if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
+					var oUnstashedControl = oModifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
+					if (oUnstashedControl) {
+						return Promise.resolve()
+							.then(oModifier.findIndexInParentAggregation.bind(oModifier, oUnstashedControl))
+							.then(function(iUnstashedIndex) {
+								return fnHandleUnstashedControl(iUnstashedIndex, mRevertData, oUnstashedControl, oModifier);
+							});
+					}
+					return Promise.resolve();
 				}
-			}
-		} else {
-			mPropertyBag.modifier.setVisible(oControl, !mRevertData.originalValue);
-		}
-		oChange.resetRevertData();
+				return oModifier.setVisible(oControl, !mRevertData.originalValue);
+			})
+			.then(function() {
+				oChange.resetRevertData();
+			});
 	};
 
 	/**

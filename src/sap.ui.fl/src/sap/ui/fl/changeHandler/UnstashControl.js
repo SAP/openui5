@@ -28,22 +28,29 @@ sap.ui.define([], function() {
 		var mContent = oChange.getContent();
 		var oModifier = mPropertyBag.modifier;
 		var bStashed = false;
+		var oUnstashedControl;
 
-		oChange.setRevertData({
-			originalValue: mPropertyBag.modifier.getStashed(oControl)
-		});
-
-		var oUnstashedControl = oModifier.setStashed(oControl, bStashed, mPropertyBag.appComponent) || oControl;
-
-		//old way including move, new way will have separate move change
-		//only applicable for XML modifier
-		if (mContent.parentAggregationName) {
-			var sTargetAggregation = mContent.parentAggregationName;
-			var oTargetParent = oModifier.getParent(oUnstashedControl);
-			oModifier.removeAggregation(oTargetParent, sTargetAggregation, oUnstashedControl);
-			oModifier.insertAggregation(oTargetParent, sTargetAggregation, oUnstashedControl, mContent.index, mPropertyBag.view);
-		}
-		return oUnstashedControl;
+		return Promise.resolve()
+			.then(oModifier.getStashed.bind(oModifier, oControl))
+			.then(function(bPreviouslyStashed) {
+				oChange.setRevertData({
+					originalValue: bPreviouslyStashed
+				});
+				oUnstashedControl = oModifier.setStashed(oControl, bStashed, mPropertyBag.appComponent) || oControl;
+				//old way including move, new way will have separate move change
+				//only applicable for XML modifier
+				if (mContent.parentAggregationName) {
+					var sTargetAggregation = mContent.parentAggregationName;
+					var oTargetParent = oModifier.getParent(oUnstashedControl);
+					return Promise.resolve()
+						.then(oModifier.removeAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oUnstashedControl))
+						.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oUnstashedControl, mContent.index, mPropertyBag.view));
+				}
+				return undefined;
+			})
+			.then(function() {
+				return oUnstashedControl;
+			});
 	};
 
 	/**

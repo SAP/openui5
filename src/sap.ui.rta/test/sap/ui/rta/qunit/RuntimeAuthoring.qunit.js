@@ -645,6 +645,8 @@ sap.ui.define([
 			var fnStackModifiedSpy = sinon.spy(function() {
 				if (fnStackModifiedSpy.calledOnce) {
 					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CMD + Z the stack is empty");
+					//redo -> execute -> fireModified (inside promise)
+					triggerKeydown(this.oElement2Overlay.getDomRef(), KeyCodes.Z, true, false, false, true);
 				} else if (fnStackModifiedSpy.calledTwice) {
 					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + SHIFT + Z is again 1 command in the stack");
 					Device.os.macintosh = bMacintoshOriginal;
@@ -659,9 +661,6 @@ sap.ui.define([
 			//undo -> _unExecute -> fireModified
 			document.activeElement.blur(); // reset focus to body
 			triggerKeydown(this.oRootControlOverlay.getDomRef(), KeyCodes.Z, false, false, false, true);
-
-			//redo -> execute -> fireModified (inside promise)
-			triggerKeydown(this.oElement2Overlay.getDomRef(), KeyCodes.Z, true, false, false, true);
 		});
 
 		QUnit.test("when cut is triggered by keydown-event on rootElementOverlay, with no macintosh device and ctrlKey is pushed", function(assert) {
@@ -670,6 +669,8 @@ sap.ui.define([
 			var fnStackModifiedSpy = sinon.spy(function() {
 				if (fnStackModifiedSpy.calledOnce) {
 					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CTRL + Z the stack is empty");
+					//redo -> execute -> fireModified (inside promise)
+					triggerKeydown(this.oElement2Overlay.getDomRef(), KeyCodes.Y, false, false, true, false);
 				} else if (fnStackModifiedSpy.calledTwice) {
 					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CTRL + Y is again 1 command in the stack");
 					Device.os.macintosh = bMacintoshOriginal;
@@ -684,9 +685,6 @@ sap.ui.define([
 			//undo -> _unExecute -> fireModified
 			document.activeElement.blur(); // reset focus to body
 			triggerKeydown(this.oRootControlOverlay.getDomRef(), KeyCodes.Z, false, false, true, false);
-
-			//redo -> execute -> fireModified (inside promise)
-			triggerKeydown(this.oElement2Overlay.getDomRef(), KeyCodes.Y, false, false, true, false);
 		});
 
 		QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert) {

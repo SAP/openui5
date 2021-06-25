@@ -171,59 +171,67 @@ sap.ui.define([
 				id: "projectId.button",
 				aggregationName: "items"
 			};
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);
-			assert.equal(this.oHBox.getItems().length, 2, "after the change there are 2 items in the hbox");
-			assert.equal(this.oHBox.getItems()[1].getId(), "projectId.button", "the fragments control id is prefixed with project id");
-			assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.then(function() {
+					assert.equal(this.oHBox.getItems().length, 2, "after the change there are 2 items in the hbox");
+					assert.equal(this.oHBox.getItems()[1].getId(), "projectId.button", "the fragments control id is prefixed with project id");
+					assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
+				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
 			this.mChangeInfo.aggregationName = "invalidAggregation";
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
-				Error(sWrongAggregationError),
-				"then apply change throws an error"
-			);
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.catch(function(oError) {
+					assert.equal(oError.message, sWrongAggregationError, "then apply change throws an error");
+				});
 		});
 
 		QUnit.test("When applying the change on a js control tree with multiple root elements and one invalid type inside", function(assert) {
 			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
 
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-
-			assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.catch(function(oError) {
+					assert.equal(oError.message,
+						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"then apply change throws an error");
+					assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
+				}.bind(this));
 		});
 
 		QUnit.test("When reverting the change on a js control tree", function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-			assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
-			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.oPropertyBag))
+				.then(function() {
+					assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
+					assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+				}.bind(this));
 		});
 
 		QUnit.test("When reverting the change on a js control tree with multiple root elements", function(assert) {
 			this.oChange.setModuleName(sFragmentMultiplePath);
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
-			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.oPropertyBag))
+				.then(function() {
+					assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
+					assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+				}.bind(this));
 		});
 
 		QUnit.test("When reverting a change that failed on a js control tree with multiple root elements", function(assert) {
 			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
 
-			assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.catch(function(oError) {
+					assert.equal(oError.message,
+						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"then apply change throws an error");
+					assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
+					return this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
+				}.bind(this));
 		});
 	});
 
@@ -302,102 +310,110 @@ sap.ui.define([
 				id: "projectId.button",
 				aggregationName: "items"
 			};
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);
-			assert.notOk(oInsertAggregationSpy.args[0][5], "insertAggregation is called with falsy bSkipAdjustIndex");
-			assert.equal(oHBoxItems.childNodes.length, 2, "after the BaseAddXml there are two children of the HBox");
-			assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.then(function() {
+					assert.notOk(oInsertAggregationSpy.args[0][5], "insertAggregation is called with falsy bSkipAdjustIndex");
+					assert.equal(oHBoxItems.childNodes.length, 2, "after the BaseAddXml there are two children of the HBox");
+					assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
+				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
 			this.mChangeInfo.aggregationName = "invalidAggregation";
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
-				Error(sWrongAggregationError),
-				"then apply change throws an error"
-			);
+
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.catch(function(oError) {
+					assert.equal(oError.message,
+						sWrongAggregationError,
+						"then apply change throws an error");
+				});
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid type", function(assert) {
 			this.oChange.setModuleName(sFragmentInvalidTypePath);
 
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.catch(function(oError) {
+					assert.equal(oError.message,
+						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"then apply change throws an error");
+				}.bind(this));
 		});
 
 		QUnit.test("When reverting the change on an xml control tree", function(assert) {
 			var oHBoxItems = this.oHBox.childNodes[1];
 
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
-			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.oPropertyBag))
+				.then(function() {
+					assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
+					assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with multiple root elements", function(assert) {
 			this.oChange.setModuleName(sFragmentMultiplePath);
 
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);
-
-			var oHBoxItems = this.oHBox.childNodes[1];
-			assert.equal(oHBoxItems.childNodes.length, 4, "after the change there are 4 items in the hbox");
-			assert.equal(oHBoxItems.childNodes[1].getAttribute("id"), "projectId.button1", "then the first button in the fragment has the correct index and ID");
-			assert.equal(oHBoxItems.childNodes[2].getAttribute("id"), "projectId.button2", "then the second button in the fragment has the correct index and ID");
-			assert.equal(oHBoxItems.childNodes[3].getAttribute("id"), "projectId.button3", "then the third button in the fragment has the correct index and ID");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.then(function() {
+					var oHBoxItems = this.oHBox.childNodes[1];
+					assert.equal(oHBoxItems.childNodes.length, 4, "after the change there are 4 items in the hbox");
+					assert.equal(oHBoxItems.childNodes[1].getAttribute("id"), "projectId.button1", "then the first button in the fragment has the correct index and ID");
+					assert.equal(oHBoxItems.childNodes[2].getAttribute("id"), "projectId.button2", "then the second button in the fragment has the correct index and ID");
+					assert.equal(oHBoxItems.childNodes[3].getAttribute("id"), "projectId.button3", "then the third button in the fragment has the correct index and ID");
+				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with multiple root elements and one invalid type inside", function(assert) {
 			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
 
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-
-			var oHBoxItems = this.oHBox.childNodes[1];
-			assert.equal(oHBoxItems.childNodes.length, 1, "after the change there is still only 1 item in the hbox");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.catch(function(oError) {
+					assert.equal(oError.message,
+						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"then apply change throws an error");
+					var oHBoxItems = this.oHBox.childNodes[1];
+					assert.equal(oHBoxItems.childNodes.length, 1, "after the change there is still only 1 item in the hbox");
+				}.bind(this));
 		});
 
 		QUnit.test("When reverting the change on an xml control tree with multiple root elements", function(assert) {
 			this.oChange.setModuleName(sFragmentMultiplePath);
 
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			var oHBoxItems = this.oHBox.childNodes[1];
-			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
-			assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.oPropertyBag))
+				.then(function() {
+					var oHBoxItems = this.oHBox.childNodes[1];
+					assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
+					assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+				}.bind(this));
 		});
 
 		QUnit.test("When reverting a failed change on an xml control tree with multiple root elements", function(assert) {
 			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
 
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			var oHBoxItems = this.oHBox.childNodes[1];
-			assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.catch(function(oError) {
+					assert.equal(oError.message,
+						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"then apply change throws an error");
+					return this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
+				}.bind(this))
+				.then(function() {
+					var oHBoxItems = this.oHBox.childNodes[1];
+					assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
+				}.bind(this));
 		});
 
 		QUnit.test("When applying the change with a not found module", function(assert) {
 			this.oChange.setModuleName(sNonExistingPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);},
-				function(err) {
-					var sErrorMessage = "Error: resource sap/ui/fl/qunit/changeHander/BaseAddXml/" +
+
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.catch(function(oError) {
+					var sErrorMessage = "resource sap/ui/fl/qunit/changeHander/BaseAddXml/" +
 						"changes/fragments/NonExisting could not be loaded from";
-					return err.toString().indexOf(sErrorMessage) === 0;
-				},
-				"then apply change throws an error"
-			);
+					assert.ok(oError.message.indexOf(sErrorMessage) === 0, "then apply change throws an error");
+				});
 		});
 	});
 
