@@ -6,9 +6,11 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	// "sap/ui/core/UIComponent",
 	// "sap/ui/mdc/TableDelegate",
+	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/Change",
 	"sap/ui/thirdparty/sinon-4"
@@ -18,9 +20,11 @@ sap.ui.define([
 	JsControlTreeModifier,
 	// UIComponent,
 	// TableDelegate,
+	MoveControls,
 	ChangeHandlerStorage,
 	Applier,
 	Reverter,
+	ChangesUtils,
 	Condenser,
 	Change,
 	sinon
@@ -269,6 +273,23 @@ sap.ui.define([
 				assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sVictimFieldId);
 				assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sCompanyCodeFieldId);
 				assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sNameFieldId);
+			});
+		});
+
+		QUnit.test("move within one group - one change throwing an error in getCondenserInfo", function(assert) {
+			return loadChangesFromPath("moveFirstAndLastControlsWithinOneGroup.json", assert, 8).then(function(aLoadedChanges) {
+				this.aChanges = aLoadedChanges;
+				return applyChangeSequentially(aLoadedChanges);
+			}.bind(this)).then(function() {
+				sandbox.stub(MoveControls, "getCondenserInfo")
+					.onSecondCall()
+					.throws()
+					.callThrough();
+
+				return Condenser.condense(oAppComponent, this.aChanges);
+			}.bind(this))
+			.then(function(aRemainingChanges) {
+				assert.equal(aRemainingChanges.length, 8, "the broken changes cause all the move changes to be returned");
 			});
 		});
 
