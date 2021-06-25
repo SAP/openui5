@@ -50,7 +50,6 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] BindingContext of field. Used to get key or description from the value help using in/out parameters. (In table, the value help might be connected to different row)
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field. E.g. for date types internally a different type is used internally to have different <code>formatOptions</code>
-	 * @param {boolean} [oFormatOptions.isUnit] If set, the type is used for the unit part of a field
 	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field. Only used if <code>isUnit</code> is set. TODO: better solution
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {object} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined. Just return it
@@ -204,7 +203,7 @@ sap.ui.define([
 
 	function _parseConditionToConditions(oCondition) {
 
-		var bIsUnit = this.oFormatOptions.isUnit;
+		var bIsUnit = _isUnit(this.oFormatOptions.valueType);
 
 		if (bIsUnit) {
 			// update all conditions with unit
@@ -215,9 +214,17 @@ sap.ui.define([
 			var aConditions = this.oFormatOptions.getConditions();
 			for (var i = 0; i < aConditions.length; i++) {
 				aConditions[i].values[0][1] = sUnit;
+				if (sUnit === undefined) {
+					// for empty unit use updated number (0)
+					aConditions[i].values[0][0] = oCondition.values[0][0];
+				}
 				aConditions[i].values[0].splice(2); // do not have the unit table after parsing
 				if (aConditions[i].operator === "BT") {
 					aConditions[i].values[1][1] = sUnit;
+					if (sUnit === undefined) {
+						// for empty unit use updated number (0)
+						aConditions[i].values[1][0] = oCondition.values[0][0];
+					}
 					aConditions[i].values[1].splice(2); // do not have the unit table after parsing
 				}
 				if (oInParameters || aConditions[i].inParameters) {
@@ -272,6 +279,21 @@ sap.ui.define([
 		}
 
 		return iMaxConditions;
+
+	}
+
+	function _isUnit(oType) {
+
+		if (oType && oType.isA("sap.ui.model.CompositeType")) {
+			var oFormatOptions = oType.getFormatOptions();
+			var bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
+			var bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
+			if (bShowMeasure && !bShowNumber) {
+				return true;
+			}
+		}
+
+		return false;
 
 	}
 

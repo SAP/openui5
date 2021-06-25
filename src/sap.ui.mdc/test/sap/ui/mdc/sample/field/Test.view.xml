@@ -589,6 +589,9 @@
 								keyPath="unit"
 								descriptionPath="text"
 								filterFields="*unit,text*">
+								<mdcField:inParameters>
+									<mdcField:InParameter id="FVH-WeightUnit3_In-Material" value="1" helpPath="MatrId"/>
+								</mdcField:inParameters>
 								<mdcField:FieldValueHelpMTableWrapper>
 									<m:Table items="{/weightODataUnits}" width="16rem">
 										<m:columns>
@@ -615,6 +618,28 @@
 					</mdc:dependents>
 				</mdc:Field>
 
+				<m:Label text="single odata-unit field (VHD - description)"/>
+				<mdc:Field
+					id="F2-10_5"
+					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {emptyString: ''}}"
+					delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}"
+					placeholder="{/#Product/WeightMeasure/@sap:label}"
+					display="Description" change="handleChange"
+					liveChange="handleLiveChange"
+					submit="handleSubmit"
+					fieldHelp="FVH-WeightUnit3"/>
+
+				<m:Label text="single odata-unit field (without help)"/>
+				<mdc:Field
+					id="F2-10_6"
+					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {emptyString: 0}}"
+					delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}"
+					placeholder="{/#Product/WeightMeasure/@sap:label}"
+					display="Value" change="handleChange"
+					liveChange="handleLiveChange"
+					submit="handleSubmit">
+				</mdc:Field>
+
 				<m:Label text="odata-unit fields"></m:Label>
 				<mdc:Field
 					id="F2-10_1"
@@ -627,7 +652,7 @@
 				</mdc:Field>
 				<mdc:Field
 					id="F2-10_2"
-					value="{parts: ['WeightODataUnit'], type: 'sap.ui.model.odata.type.String'}"
+					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { showMeasure: true, showNumber: false, emptyString: 0}}"
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"

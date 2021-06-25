@@ -389,6 +389,14 @@ sap.ui.define([
 		this._oUnitOriginalType = oUnitOriginalType;
 	};
 
+	ContentFactory.prototype.getUnitType = function() {
+		return this._oUnitType;
+	};
+
+	ContentFactory.prototype.setUnitType = function(oUnitType) {
+		this._oUnitType = oUnitType;
+	};
+
 	ContentFactory.prototype.isMeasure = function() {
 		return this._bIsMeasure;
 	};

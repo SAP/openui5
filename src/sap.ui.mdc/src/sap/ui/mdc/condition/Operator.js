@@ -465,18 +465,18 @@ sap.ui.define([
 			}
 
 			var aCurrentValue;
-			if (oType instanceof sap.ui.model.CompositeType && oType._aCurrentValue && oType.getParseWithValues()) {
+			if (oType && oType.isA("sap.ui.model.CompositeType") && oType._aCurrentValue && oType.getParseWithValues()) {
 				aCurrentValue = oType._aCurrentValue;
 			}
 
 			var vValue = oType ? oType.parseValue(sValue, "string", aCurrentValue) : sValue;
 
-			if (aCurrentValue && Array.isArray(vValue)) {
+			if (oType && oType._aCurrentValue && Array.isArray(vValue)) {
 				// in case the user only entered a part of the CompositeType, we add the missing parts from aCurrentValue
 				// but add only the parts that have entries in array after parsing ( not set one-time parts)
 				for (var j = 0; j < vValue.length; j++) {
 					if (vValue[j] === undefined) {
-						vValue[j] = aCurrentValue[j];
+						vValue[j] = oType._aCurrentValue[j];
 					}
 				}
 			}

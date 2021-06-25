@@ -677,6 +677,8 @@ sap.ui.define([
 		assert.notOk(oContent1.getShowValueHelp(), "no valueHelp");
 		assert.equal(oField._oContentFactory._oConditionType.getFormatOptions().valueType.getFormatOptions().showMeasure, false, "showMeasure set to false on internal type");
 		assert.equal(oField._oContentFactory._oConditionType.getFormatOptions().valueType.getFormatOptions().strictParsing, true, "strictParsing set to true on internal type");
+		assert.equal(oField._oContentFactory._oUnitConditionsType.getFormatOptions().valueType.getFormatOptions().showNumber, false, "showNumber set to false on internal unit type");
+		assert.equal(oField._oContentFactory._oUnitConditionsType.getFormatOptions().valueType.getFormatOptions().strictParsing, true, "strictParsing set to true on internal unit type");
 
 		var oSuggestControl = oField.getControlForSuggestion();
 		assert.equal(oSuggestControl, oContent2, "Unit control is used for suggestion");
@@ -853,7 +855,7 @@ sap.ui.define([
 
 		oFormatOptions = oField._getUnitFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
-		assert.notOk(oFormatOptions.valueType, "valueType");
+		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.Currency"), "valueType");
 		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
 		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
 		assert.equal(oFormatOptions.fieldHelpID, "X", "fieldHelpID");

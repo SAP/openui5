@@ -60,7 +60,6 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] BindingContext of field. Used to get key or description from the value help using in/out parameters. (In table, the value help might be connected to different row)
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field. E.g. for date types internally a different type is used internally to have different <code>formatOptions</code>
-	 * @param {boolean} [oFormatOptions.isUnit] If set, the type is used for the unit part of a field
 	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field. Only used if <code>isUnit</code> is set. // TODO: better solution
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {object} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined. Just return it
@@ -114,26 +113,10 @@ sap.ui.define([
 
 		var oType = _getValueType.call(this);
 		var oOriginalDateType = _getOriginalDateType.call(this);
-		var bIsUnit = this.oFormatOptions.isUnit;
+		var bIsUnit = _isUnit(oType);
 		var bPreventGetDescription = this.oFormatOptions.preventGetDescription;
 
 		_attachCurrentValueAtType.call(this, oCondition, oOriginalDateType); // use original condition
-
-		if (bIsUnit) {
-			// only use unit in condition
-			oCondition = merge({}, oCondition);
-			if (oCondition.values[0] && Array.isArray(oCondition.values[0])) {
-				oCondition.values[0] = oCondition.values[0][1];
-			}
-			if (oCondition.operator !== "EQ") {
-				// in the moment only single value supported
-				oCondition.operator = "EQ";
-				if (oCondition.values[1]) {
-					oCondition.values.splice(1,1);
-				}
-			}
-		}
-
 		_attachCurrentValueAtType.call(this, oCondition, oType);
 
 		switch (this.getPrimitiveType(sInternalType)) {
@@ -146,18 +129,28 @@ sap.ui.define([
 				this._oCalls.last++;
 				var iCallCount = this._oCalls.last;
 
-				if (!bPreventGetDescription && oCondition.operator === oEQOperator.name && sDisplay !== FieldDisplay.Value &&
-						oCondition.validated === ConditionValidated.Validated && !oCondition.values[1]) {
+				if (!bPreventGetDescription && sDisplay !== FieldDisplay.Value && oCondition.validated === ConditionValidated.Validated &&
+						(bIsUnit || (oCondition.operator === oEQOperator.name && !oCondition.values[1]))) {
 					// handle sync case and async case similar
 					var oBindingContext = this.oFormatOptions.bindingContext;
 					var oConditionModel = this.oFormatOptions.conditionModel;
 					var sConditionModelName = this.oFormatOptions.conditionModelName;
+					var vKey = bIsUnit ? oCondition.values[0][1] : oCondition.values[0];
 
 					return SyncPromise.resolve().then(function() {
-						return _getDescription.call(this, oCondition.values[0], oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName);
+						return _getDescription.call(this, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName);
 					}.bind(this)).then(function(vDescription) { // if description needs to be requested -> return if it is resolved
 						if (vDescription) {
 							oCondition = merge({}, oCondition); // do not manipulate original object
+							if (bIsUnit) {
+								// in unit case create "standard" condition using String type for text arrangement
+								oType = _getDefaultType.call(this);
+								oCondition.operator = oEQOperator.name;
+								if (typeof vDescription !== "object") {
+									vDescription = {key: vKey, description: vDescription};
+								}
+							}
+
 							if (typeof vDescription === "object") {
 								oCondition = _mapResultToCondition.call(this, oCondition, vDescription);
 							} else if (oCondition.values.length === 1) {
@@ -190,11 +183,18 @@ sap.ui.define([
 
 	};
 
-	function _formatToString(oCondition) {
+	function _formatToString(oCondition, oType) {
 
 		var sDisplay = _getDisplay.call(this);
-		var oType = _getValueType.call(this);
-		var bHideOperator = this.oFormatOptions.hideOperator && oCondition.values.length === 1;
+		var bIsUnit = _isUnit(oType);
+
+		if (bIsUnit && oCondition.values.length > 1 && oCondition.values[0][1] === oCondition.values[1][1]) { // in Between case format only one unit
+			oCondition = merge({}, oCondition); // don't use same object
+			oCondition.operator = "EQ";
+			oCondition.values.splice(1);
+		}
+
+		var bHideOperator = (this.oFormatOptions.hideOperator && oCondition.values.length === 1) || bIsUnit;
 		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 
 		if (!oOperator) {
@@ -228,7 +228,7 @@ sap.ui.define([
 		// finalize condition. If Exception occurs here just throw it
 		var vResult;
 		if (bFormat) {
-			vResult = _formatToString.call(this, oCondition);
+			vResult = _formatToString.call(this, oCondition, oType);
 		} else {
 			vResult = _finishParseFromString.call(this, oCondition, oType);
 		}
@@ -263,17 +263,18 @@ sap.ui.define([
 		var oType = _getValueType.call(this);
 		var oOriginalDateType = _getOriginalDateType.call(this);
 		var aOperators = _getOperators.call(this);
-		var bIsUnit = this.oFormatOptions.isUnit;
+		var bIsUnit = _isUnit(oType);
 		var sDefaultOperator;
 
 		if (vValue === null || vValue === undefined || (vValue === "" && !bInputValidationEnabled)) { // check if "" is a key in FieldHelp
-			if (!_isCompositeType.call(this, oType) && !bIsUnit) {
+			if (!_isCompositeType.call(this, oType)) {
 				return null; // TODO: for all types???
 			}
 		}
 
 		_initCurrentValueAtType.call(this, oType);
 		_initCurrentValueAtType.call(this, oOriginalDateType);
+		_useCurrentValueFromOriginalType.call(this, oType, oOriginalDateType);
 
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
@@ -314,27 +315,27 @@ sap.ui.define([
 				}
 
 				if (oOperator) {
+					if (bIsUnit && oOperator !== FilterOperatorUtil.getEQOperator(aOperators)) {
+						throw new ParseException("unsupported operator");
+					}
 					var oCondition;
 					var bCompositeType = _isCompositeType.call(this, oType);
 					this._oCalls.active++;
 					this._oCalls.last++;
 					var iCallCount = this._oCalls.last;
 
-					if (!bCompositeType && oOperator.validateInput && bInputValidationEnabled) {
-						// use FieldHelp to determine condition
+					if ((!bCompositeType || bIsUnit) && oOperator.validateInput && bInputValidationEnabled) {
+						// use FieldHelp to determine condition (for unit part also if composite type used)
 						oCondition = _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, true);
 						if (oCondition instanceof Promise) {
 							return _fnReturnPromise.call(this, oCondition);
 						} else {
 							return oCondition;
 						}
-					} else if (vValue === "" && !bCompositeType) {
-						// nothing entered -> no condition ; but in unit case update existing condition
-						return _returnResult.call(this, null, undefined, iCallCount, false, oType);
 					} else {
 						// just normal operator parsing
 						try {
-						if (vValue === "" && bCompositeType && bUseDefaultOperator) {
+							if (vValue === "" && bCompositeType && bUseDefaultOperator) {
 								// parse using unit part
 								oCondition = Condition.createCondition(oOperator.name, [oType.parseValue(vValue, "string", oType._aCurrentValue)], undefined, undefined, ConditionValidated.NotValidated);
 							} else {
@@ -387,44 +388,26 @@ sap.ui.define([
 
 	function _finishParseFromString(oCondition, oType) {
 
-		var bIsUnit = this.oFormatOptions.isUnit;
+		var bIsUnit = _isUnit(oType);
 		var oOriginalDateType = _getOriginalDateType.call(this);
-		var sUnit = null; // default for empty unit
 
-		if (bIsUnit) {
-			var vMeasure;
-			if (oOriginalDateType._aCurrentValue) {
-				vMeasure = oOriginalDateType._aCurrentValue[0];
-			}
-
-			if (oCondition) {
-				if (oCondition.operator !== "EQ") {
-					throw new ParseException("unsupported operator");
-				}
-				sUnit = oCondition.values[0]; // use key of unit
-				oCondition.values = [[vMeasure, sUnit]];
-			} else {
-				// create a condition if no unit is entered
-				oCondition = Condition.createCondition("EQ", [[vMeasure, null]], undefined, undefined, ConditionValidated.NotValidated);
-			}
-			_attachCurrentValueAtType.call(this, oCondition, oOriginalDateType);
-		} else if (oCondition) {
+		if (oCondition && !bIsUnit) {
 			var sName = oType.getMetadata().getName();
 			var oDelegate = this.oFormatOptions.delegate;
 			var oPayload = this.oFormatOptions.payload;
 			if (oDelegate && oDelegate.getTypeUtil(oPayload).getBaseType(sName) === BaseType.Unit &&
 					!oCondition.values[0][1] && oType._aCurrentValue) {
 				// TODO: if no unit provided use last one
-				sUnit = oType._aCurrentValue[1] ? oType._aCurrentValue[1] : null; // if no unit set null
-				oCondition.values[0][1] = sUnit;
+				var sUnit = oType._aCurrentValue[1] ? oType._aCurrentValue[1] : null; // if no unit set null
+				oCondition.values[0][1] = oType._aCurrentValue[1] ? oType._aCurrentValue[1] : null; // if no unit set null
 				if (oCondition.operator === "BT") {
 					oCondition.values[1][1] = sUnit;
 				}
 			}
-
-			_attachCurrentValueAtType.call(this, oCondition, oType);
-			_attachCurrentValueAtType.call(this, oCondition, oOriginalDateType);
 		}
+
+		_attachCurrentValueAtType.call(this, oCondition, oType);
+		_attachCurrentValueAtType.call(this, oCondition, oOriginalDateType);
 
 		return oCondition;
 
@@ -513,6 +496,20 @@ sap.ui.define([
 			var oMyException;
 			try {
 				oCondition = fnCheck.call(this, vResult);
+				if (_isUnit(oType)) {
+					// create condition based on type
+					if (oCondition) {
+						if (oCondition.operator !== "EQ") {
+							throw new ParseException("unsupported operator");
+						}
+						var vNumber = oType._aCurrentValue && oType._aCurrentValue[0];
+						var sUnit = oCondition.values[0]; // use key of unit
+						oCondition.values = [[vNumber, sUnit]];
+					} else if (vValue === "") {
+						// create a condition if no unit is entered (use type to parse)
+						oCondition = Condition.createCondition(oOperator.name, [oType.parseValue(vValue, "string", oType._aCurrentValue)], undefined, undefined, ConditionValidated.NotValidated);
+					}
+				}
 			} catch (oException) {
 				oMyException = oException; // to store for pending async calls
 			}
@@ -520,8 +517,14 @@ sap.ui.define([
 		};
 
 		try {
-			vCheckParsedValue = oType.parseValue(vCheckValue, "string");
-			oType.validateValue(vCheckParsedValue);
+			if (_isUnit(oType)) {
+				vCheckParsedValue = oType.parseValue(vCheckValue, "string", oType._aCurrentValue);
+				oType.validateValue(vCheckParsedValue);
+				vCheckParsedValue = vCheckParsedValue[1]; // use unit part
+			} else {
+				vCheckParsedValue = oType.parseValue(vCheckValue, "string");
+				oType.validateValue(vCheckParsedValue);
+			}
 		} catch (oException) {
 			if (oException && !(oException instanceof ParseException) && !(oException instanceof ValidateException)) {// FormatException could also occur
 				// unknown error -> just raise it
@@ -591,7 +594,7 @@ sap.ui.define([
 		var oType = _getValueType.call(this);
 		var oOriginalDateType = _getOriginalDateType.call(this);
 		var aOperators = _getOperators.call(this);
-		var bIsUnit = this.oFormatOptions.isUnit;
+		var bIsUnit = _isUnit(oType);
 
 		if (oCondition === undefined || this._bDestroyed) { // if destroyed do nothing
 			return null;
@@ -628,10 +631,6 @@ sap.ui.define([
 
 		if (bIsUnit) {
 			// only use unit in condition
-			oCondition = merge({}, oCondition);
-			if (oCondition.values[0] && Array.isArray(oCondition.values[0])) {
-				oCondition.values[0] = oCondition.values[0][1];
-			}
 			oOperator = FilterOperatorUtil.getEQOperator(); // as only EQ is allowed for unit
 		}
 
@@ -669,13 +668,20 @@ sap.ui.define([
 		var oType = this.oFormatOptions.valueType;
 		if (!oType) {
 			// no type provided -> use string type as default
-			if (!this._oDefaultType) {
-				this._oDefaultType = new StringType();
-			}
-			oType = this._oDefaultType;
+			oType = _getDefaultType.call(this);
 		}
 
 		return oType;
+
+	}
+
+	function _getDefaultType() {
+
+		if (!this._oDefaultType) {
+			this._oDefaultType = new StringType();
+		}
+
+		return this._oDefaultType;
 
 	}
 
@@ -716,6 +722,21 @@ sap.ui.define([
 
 	}
 
+	function _isUnit(oType) {
+
+		if (_isCompositeType(oType)) {
+			var oFormatOptions = oType.getFormatOptions();
+			var bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
+			var bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
+			if (bShowMeasure && !bShowNumber) {
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+
 	function _attachCurrentValueAtType(oCondition, oType) {
 
 		if (_isCompositeType.call(this, oType) && oCondition && oCondition.values[0]) {
@@ -728,6 +749,14 @@ sap.ui.define([
 
 		if (_isCompositeType.call(this, oType) && !oType._aCurrentValue) {
 				oType._aCurrentValue = [];
+		}
+
+	}
+
+	function _useCurrentValueFromOriginalType(oType, oOriginalDateType) {
+
+		if (_isCompositeType.call(this, oType) && _isCompositeType.call(this, oOriginalDateType) && oOriginalDateType._aCurrentValue) {
+				oType._aCurrentValue = oOriginalDateType._aCurrentValue;
 		}
 
 	}

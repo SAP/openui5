@@ -81,10 +81,12 @@ sap.ui.define([
 
 				case "sap.ui.model.type.Unit":
 				case "sap.ui.model.type.Currency":
-					if (!oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure) {
+					if (!oFormatOptions || ((!oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure) && (!oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber))) {
 						return BaseType.Unit;
+					} else if (!oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber) {
+						return BaseType.Numeric; // only number to show
 					} else {
-						return BaseType.Numeric;
+						return BaseType.String; // only unit to show
 					}
 
 				case "sap.ui.model.type.Integer":

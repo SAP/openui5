@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/type/Date",
@@ -23,6 +24,7 @@ sap.ui.define([
 		FilterOperatorUtil,
 		Operator,
 		ConditionValidated,
+		FieldDisplay,
 		IntegerType,
 		CurrencyType,
 		DateType,
@@ -70,7 +72,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting: EQ - key/Description", function(assert) {
 
-		oConditionType.oFormatOptions.display = "Description"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		oConditionType.oFormatOptions.operators = ["EQ"]; // fake setting directly
 		var oCondition = Condition.createItemCondition("A", "Test");
 		var sResult = oConditionType.formatValue(oCondition);
@@ -481,7 +483,7 @@ sap.ui.define([
 			oStub.withArgs("Item3").returns({key: "I3", description: "Item3"});
 
 			oConditionType = new ConditionType({
-				display: "Description",
+				display: FieldDisplay.Description,
 				fieldHelpID: "FH1",
 				operators: ["EQ"],
 				asyncParsing: fnAsync,
@@ -506,15 +508,15 @@ sap.ui.define([
 		var sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "Text1", "Result of formatting (Description)");
 
-		oConditionType.oFormatOptions.display = "DescriptionValue"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.DescriptionValue; // fake setting directly
 		sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "Text1 (I1)", "Result of formatting (DescriptionValue)");
 
-		oConditionType.oFormatOptions.display = "ValueDescription"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
 		sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "I1 (Text1)", "Result of formatting (ValueDescription)");
 
-		oConditionType.oFormatOptions.display = "Value"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
 		sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "I1", "Result of formatting (Value)");
 
@@ -527,12 +529,12 @@ sap.ui.define([
 		assert.equal(sResult, "Item1", "Result of formatting");
 		assert.ok(oFieldHelp.getTextForKey.calledWith("I1", undefined, undefined, "BC", "CM", "Name"), "getTextForKey called");
 
-		oConditionType.oFormatOptions.display = "DescriptionValue"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.DescriptionValue; // fake setting directly
 		oCondition.values.push(undefined);
 		sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "Item1 (I1)", "Result of formatting");
 
-		oConditionType.oFormatOptions.display = "ValueDescription"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
 		oCondition = Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated);
 		sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "i2 (Item 2)", "Result of formatting");
@@ -712,7 +714,7 @@ sap.ui.define([
 
 	QUnit.test("Parsing: key and description -> key and Description (from help)", function(assert) {
 
-		oConditionType.oFormatOptions.display = "ValueDescription"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
 
 		var oCondition = oConditionType.parseValue("I2 (X)");
 		assert.ok(oCondition, "Result returned");
@@ -760,7 +762,7 @@ sap.ui.define([
 		var oType = new StringType({}, {maxLength: 2}); // use type to test invalid key is not checked for description
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 		var oException;
-		oConditionType.oFormatOptions.display = "ValueDescription"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
 
 		try {
 			oConditionType.parseValue("X");
@@ -801,7 +803,7 @@ sap.ui.define([
 
 		oFieldHelp.getItemForValue.resetHistory();
 		oException = null;
-		oConditionType.oFormatOptions.display = "DescriptionValue"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.DescriptionValue; // fake setting directly
 
 		try {
 			oConditionType.parseValue("X");
@@ -1076,7 +1078,7 @@ sap.ui.define([
 
 	QUnit.test("Parsing: key and description -> key and Description (from help) Async", function(assert) {
 
-		oConditionType.oFormatOptions.display = "ValueDescription"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
 		oFieldHelp.getItemForValue.restore();
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
@@ -1284,7 +1286,7 @@ sap.ui.define([
 
 	QUnit.test("Parsing: description (key entered) -> key (from help) Async", function(assert) {
 
-		oConditionType.oFormatOptions.display = "Description"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
 		oFieldHelp.getItemForValue.restore();
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
@@ -1371,7 +1373,7 @@ sap.ui.define([
 
 	QUnit.test("Parsing: value only -> validation from help Async", function(assert) {
 
-		oConditionType.oFormatOptions.display = "Value"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
 		oFieldHelp.getItemForValue.restore();
 		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
@@ -1514,7 +1516,7 @@ sap.ui.define([
 
 	QUnit.test("Parsing: empty string -> key only", function(assert) {
 
-		oConditionType.oFormatOptions.display = "Value"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
 		oFieldHelp.getItemForValue.withArgs("", "").returns({key: "", description: "Empty"});
 
 		var oCondition = oConditionType.parseValue("");
@@ -1598,7 +1600,7 @@ sap.ui.define([
 
 	QUnit.test("Parsing: empty string -> key only (Async)", function(assert) {
 
-		oConditionType.oFormatOptions.display = "Value"; // fake setting directly
+		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
 		var vResult = oConditionType.parseValue("");
 		assert.equal(vResult, null, "null returned");
 
@@ -1672,12 +1674,14 @@ sap.ui.define([
 	var oUnitConditionType;
 	var oOneFieldType;
 	var oOneFieldConditionType;
+	var oUnitType;
 
 	QUnit.module("Currency type", {
 		beforeEach: function() {
 			oValueType = new CurrencyType({showMeasure: false});
+			oUnitType = new CurrencyType({showNumber: false});
 			oConditionType = new ConditionType({valueType: oValueType, operators: ["EQ"], delegate: FieldBaseDelegate});
-			oUnitConditionType = new ConditionType({isUnit: true, operators: ["EQ"], hideOperator: true, originalDateType: oValueType, delegate: FieldBaseDelegate});
+			oUnitConditionType = new ConditionType({valueType: oUnitType, operators: ["EQ"], hideOperator: true, originalDateType: oValueType, delegate: FieldBaseDelegate});
 			oOneFieldType = new CurrencyType();
 			oOneFieldConditionType = new ConditionType({valueType: oOneFieldType, operators: ["EQ", "BT"], delegate: FieldBaseDelegate});
 		},
@@ -1686,6 +1690,8 @@ sap.ui.define([
 			oConditionType = undefined;
 			oValueType.destroy();
 			oValueType = undefined;
+			oUnitType.destroy();
+			oUnitType = undefined;
 			oUnitConditionType.destroy();
 			oUnitConditionType = undefined;
 			oOneFieldConditionType.destroy();
@@ -1749,10 +1755,27 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Formatting: unit from FieldHelp", function(assert) {
+
+		oFieldHelp = new FieldHelpBase("FH1");
+		var oStub = sinon.stub(oFieldHelp, "getTextForKey");
+		oStub.withArgs("EUR").returns("Euro");
+		oUnitConditionType.oFormatOptions.fieldHelpID = "FH1"; // fake setting directly
+		oUnitConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
+		var oCondition = Condition.createCondition("EQ", [[123.45, "EUR"]], undefined, undefined, ConditionValidated.Validated);
+
+		var sResult = oUnitConditionType.formatValue(oCondition);
+		assert.equal(sResult, "Euro", "Result of unit formatting");
+
+		oFieldHelp.destroy();
+		oFieldHelp = undefined;
+
+	});
+
 	QUnit.test("Parsing: with unit", function(assert) {
 
 		sinon.spy(oValueType, "parseValue");
-		sinon.stub(oValueType, "getParseWithValues").returns(true); // fake parseWithValue
+		sinon.stub(oValueType, "getParseWithValues").returns(true); // fake parseWithValue (to simulate oData type)
 
 		var oCondition = oConditionType.parseValue("1.23");
 		assert.ok(oCondition, "Result returned");
@@ -1799,15 +1822,15 @@ sap.ui.define([
 		assert.equal(oCondition.values[1][0], 2, "Values1 entry0");
 		assert.equal(oCondition.values[1][1], "USD", "Values1 entry1"); // as last entry used from type
 
-		oCondition = oUnitConditionType.parseValue("");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator"); // as it don't have the old condition just the old value
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 1, "Values length");
-		assert.equal(oCondition.values[0].length, 2, "Values0 length");
-		assert.equal(oCondition.values[0][0], 1, "Values entry0");
-		assert.equal(oCondition.values[0][1], null, "Values entry1");
+//		oCondition = oUnitConditionType.parseValue("");
+//		assert.ok(oCondition, "Result returned");
+//		assert.equal(typeof oCondition, "object", "Result is object");
+//		assert.equal(oCondition.operator, "EQ", "Operator"); // as it don't have the old condition just the old value
+//		assert.ok(Array.isArray(oCondition.values), "values are array");
+//		assert.equal(oCondition.values.length, 1, "Values length");
+//		assert.equal(oCondition.values[0].length, 2, "Values0 length");
+//		assert.ok(isNaN(oCondition.values[0][0]), "Values entry0"); // as number is cleared by type if unit is cleared
+//		assert.equal(oCondition.values[0][1], null, "Values entry1");
 
 		var oException;
 
@@ -1888,10 +1911,42 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validation: with unit", function(assert) {
+	QUnit.test("Parsing: unit from FieldHelp", function(assert) {
 
-		var oUnitType = new StringType(); // just fake a type for spy. (not needed to test the type)
-		oUnitConditionType.oFormatOptions.valueType = oUnitType; // fake setting directly
+		oFieldHelp = new FieldHelpBase("FH1");
+		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
+		oStub.withArgs("Euro").returns({key: "EUR", description: "Euro"});
+		oUnitConditionType.oFormatOptions.fieldHelpID = "FH1"; // fake setting directly
+		oUnitConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
+		oUnitType._aCurrentValue = [1, "USD"]; // fake existing value
+		oValueType._aCurrentValue = [1, "USD"]; // fake existing value
+
+		var oCondition = oUnitConditionType.parseValue("Euro");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0].length, 2, "Values0 length");
+		assert.equal(oCondition.values[0][0], 1, "Values entry0");
+		assert.equal(oCondition.values[0][1], "EUR", "Values entry1");
+
+//		oCondition = oUnitConditionType.parseValue("");
+//		assert.ok(oCondition, "Result returned");
+//		assert.equal(typeof oCondition, "object", "Result is object");
+//		assert.equal(oCondition.operator, "EQ", "Operator");
+//		assert.ok(Array.isArray(oCondition.values), "values are array");
+//		assert.equal(oCondition.values.length, 1, "Values length");
+//		assert.equal(oCondition.values[0].length, 2, "Values0 length");
+//		assert.ok(isNaN(oCondition.values[0][0]), "Values entry0"); // as number is cleared by type if unit is cleared
+//		assert.equal(oCondition.values[0][1], null, "Values entry1");
+
+		oFieldHelp.destroy();
+		oFieldHelp = undefined;
+
+	});
+
+	QUnit.test("Validation: with unit", function(assert) {
 
 		sinon.spy(oValueType, "validateValue");
 		sinon.spy(oUnitType, "validateValue");
@@ -1903,9 +1958,7 @@ sap.ui.define([
 
 		oUnitConditionType.validateValue(oCondition);
 		assert.ok(oValueType.validateValue.calledOnce, "Currency type not used for unit validation");
-		assert.ok(oUnitType.validateValue.calledWith("USD"), "String type used for validation");
-
-		oUnitType.destroy();
+		assert.ok(oUnitType.validateValue.calledWith([123.45, "USD"]), "Unit type used for validation");
 
 	});
 
@@ -1990,7 +2043,7 @@ sap.ui.define([
 			oStub.withArgs("Sync Text").returns({key: "S", description: "Sync Text"});
 
 			oConditionType = new ConditionType({
-				display: "Description",
+				display: FieldDisplay.Description,
 				fieldHelpID: "FH1",
 				operators: ["EQ", "GT"],
 				asyncParsing: fnAsync,

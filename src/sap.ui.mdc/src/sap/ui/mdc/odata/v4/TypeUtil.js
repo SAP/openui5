@@ -29,10 +29,12 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType'], functio
 
 			case "sap.ui.model.odata.type.Unit":
 			case "sap.ui.model.odata.type.Currency":
-				if (!oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure) {
+				if (!oFormatOptions || ((!oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure) && (!oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber))) {
 					return BaseType.Unit;
+				} else if (!oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber) {
+					return BaseType.Numeric; // only number to show
 				} else {
-					return BaseType.Numeric;
+					return BaseType.String; // only unit to show
 				}
 			default:
 				return ODataTypeUtil.getBaseType(sType, oFormatOptions, oConstraints);

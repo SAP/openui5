@@ -6,6 +6,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/mdc/enum/EditMode',
 	'sap/ui/mdc/enum/FieldDisplay',
+	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Condition',
@@ -36,6 +37,7 @@ sap.ui.define([
 	Device,
 	EditMode,
 	FieldDisplay,
+	ConditionValidated,
 	FieldBaseRenderer,
 	FilterOperatorUtil,
 	Condition,
@@ -2420,12 +2422,11 @@ sap.ui.define([
 					}
 				}
 			} else {
-				oCondition = merge({}, aNewConditions[0]); // use selected condition to keep in/out parameter
-				oCondition.values[0] = [undefined, oCondition.values[0]];
-				oCondition.values[1] = undefined;
+				var oOperator = FilterOperatorUtil.getEQOperator(this._getOperators());
+				oCondition = Condition.createCondition(oOperator.name, [[undefined, aNewConditions[0].values[0]]], aNewConditions[0].inParameters, aNewConditions[0].outParameters, ConditionValidated.NotValidated);
 				aConditions.push(oCondition);
 				var oConditionType = this._oContentFactory.getConditionType();
-				var oConditionsType = this._oContentFactory.getConditionsType();
+				var oConditionsType = this._oContentFactory.getUnitConditionsType();
 				// TODO: format once to update current value in type (as empty condtions are not displayed as token)
 				if (oConditionType) {
 					sDOMValue = oConditionType.formatValue(oCondition);
@@ -2526,6 +2527,7 @@ sap.ui.define([
 		var sNewValue;
 		var sDOMValue;
 		var oContent = this.getControlForSuggestion();
+		var oOperator = FilterOperatorUtil.getEQOperator(this._getOperators()); /// use EQ operator of Field (might be different one)
 
 		if (bLeaveFocus) {
 			// nothing to navigate, just set focus visualization back to field
@@ -2537,11 +2539,12 @@ sap.ui.define([
 		}
 
 		if (oCondition) {
-			this._oNavigateCondition = merge({}, oCondition);
+			this._oNavigateCondition = merge({}, oCondition); // to keep In- and OutParameters
+			this._oNavigateCondition.operator = oOperator.name;
 			vKey = oCondition.values[0];
 			sValue = oCondition.values[1];
 		} else {
-			this._oNavigateCondition = Condition.createItemCondition(vKey, sValue);
+			this._oNavigateCondition = Condition.createCondition(oOperator.name, [vKey, sValue],undefined, undefined, ConditionValidated.Validated);
 		}
 
 		if (this._oContentFactory.isMeasure()) {
@@ -2549,14 +2552,14 @@ sap.ui.define([
 			// use number of first condition. In Multicase all conditions must be updated in change event
 			if (aConditions.length > 0) {
 				this._oNavigateCondition.operator = aConditions[0].operator;
-				this._oNavigateCondition.values[0] = [aConditions[0].values[0][0], this._oNavigateCondition.values[0]];
+				this._oNavigateCondition.values[0] = [aConditions[0].values[0][0], vKey];
 				if (aConditions[0].operator === "BT") {
 					this._oNavigateCondition.values[1] = [aConditions[0].values[1][0], this._oNavigateCondition.values[0][1]];
-				} else {
-					this._oNavigateCondition.values[1] = undefined;
+				} else if (this._oNavigateCondition.values.length > 1) {
+					this._oNavigateCondition.values.splice(1);
 				}
 			} else {
-				this._oNavigateCondition.values = [[undefined, this._oNavigateCondition.values[0]], undefined];
+				this._oNavigateCondition.values = [[undefined, vKey]];
 			}
 		}
 
@@ -2822,7 +2825,7 @@ sap.ui.define([
 		var oConditionModelInfo = _getConditionModelInfo.call(this);
 
 		return {
-			valueType: undefined, // use String as default
+			valueType: this._oContentFactory.getUnitType(),
 			originalDateType: this._oContentFactory.retrieveDataType(), // use type of measure for currentValue
 			display: this.getDisplay(),
 			fieldHelpID: this.getFieldHelp() || this._sDefaultFieldHelp,
@@ -2838,7 +2841,6 @@ sap.ui.define([
 			preventGetDescription: this._bPreventGetDescription,
 			conditionModel: oConditionModelInfo.model,
 			conditionModelName : oConditionModelInfo.name,
-			isUnit: true,
 			getConditions: this.getConditions.bind(this) // TODO: better solution to update unit in all conditions
 		};
 
