@@ -1474,6 +1474,12 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent.getRequired(), "Required set on Input control");
 		assert.ok(oLabel.isRequired(), "Label rendered as required");
+
+		sinon.spy(oLabel, "invalidate");
+		oFieldEditMulti.setEditMode(EditMode.ReadOnly);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oLabel.invalidate.called, "Label invalidated"); // required for non-editable controls only removed in FormElement
+
 		oLabel.destroy();
 
 	});

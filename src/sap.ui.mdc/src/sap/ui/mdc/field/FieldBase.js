@@ -1126,6 +1126,10 @@ sap.ui.define([
 		if (oChanges.name === "ariaLabelledBy" && oChanges.ids) {
 			_ariaLabelledByChanged.call(this, oChanges.ids, oChanges.mutation);
 		}
+
+		if (oChanges.name === "editMode") {
+			_refreshLabel.call(this); // as required-idicator might set or removed on Label
+		}
 	};
 
 	// return the focus DOM elementof the used control
@@ -1153,6 +1157,13 @@ sap.ui.define([
 		}
 
 		return sId;
+
+	};
+
+	// return editable as boolean as this is checked in the FormElement to show required-indicator
+	FieldBase.prototype.getEditable = function() {
+
+		return ContentFactory._getEditable(this.getEditMode());
 
 	};
 
