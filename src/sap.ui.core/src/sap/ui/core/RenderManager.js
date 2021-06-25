@@ -36,6 +36,7 @@ sap.ui.define([
 ) {
 
 	"use strict";
+	/*global SVGElement*/
 
 	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering", "accessibilityState", "icon"];
 
@@ -46,6 +47,8 @@ sap.ui.define([
 	var aDomInterfaceMethods = ["openStart", "voidStart", "attr", "class", "style", "openEnd", "voidEnd", "text", "unsafeHtml", "close"];
 
 	var aNonRendererMethods = ["render", "flush", "destroy"];
+
+	var oTemplate = document.createElement("template");
 
 	var ATTR_STYLE_KEY_MARKER = "data-sap-ui-stylekey";
 
@@ -1166,7 +1169,7 @@ sap.ui.define([
 			}
 		}
 
-		function flushInternal(fnPutIntoDom, fnDone) {
+		function flushInternal(fnPutIntoDom, fnDone, oTargetDomNode) {
 
 			var oStoredFocusInfo;
 			if (!bDomInterface) {
@@ -1179,9 +1182,15 @@ sap.ui.define([
 					// references the original style index in this array.
 					// Not to violate the CSP, we need to bring the original styles via HTMLElement.style API. Here we are converting the HTML buffer of
 					// string-based rendering to DOM nodes so that we can restore the orginal styles before we inject the rendering output to the DOM tree.
-					var $Html = jQuery(sHtml);
-					restoreStyles($Html.get());
-					fnPutIntoDom($Html);
+					if (oTargetDomNode instanceof SVGElement && oTargetDomNode.localName != "foreignObject") {
+						oTemplate.innerHTML = "<svg>" + sHtml + "</svg>";
+						oTemplate.replaceWith.apply(oTemplate.content.firstChild, oTemplate.content.firstChild.childNodes);
+					} else {
+						oTemplate.innerHTML = sHtml;
+					}
+
+					restoreStyles(oTemplate.content.childNodes);
+					fnPutIntoDom(oTemplate.content);
 				} else {
 					fnPutIntoDom(sHtml);
 				}
@@ -1231,6 +1240,10 @@ sap.ui.define([
 		}
 
 		function restoreStyles(aDomNodes) {
+			if (!aRenderingStyles.length) {
+				return;
+			}
+
 			var iDomIndex = 0;
 			aDomNodes.forEach(function(oDomNode) {
 				if (oDomNode.nodeType == 1 /* Node.ELEMENT_NODE */) {
@@ -1301,24 +1314,24 @@ sap.ui.define([
 				}
 				if (typeof vInsert === "number") {
 					if (vInsert <= 0) { // new HTML should be inserted at the beginning
-						jQuery(oTargetDomNode).prepend(vHTML);
+						insertAdjacent(oTargetDomNode, "prepend", vHTML);
 					} else { // new element should be inserted at a certain position > 0
-						var $predecessor = jQuery(oTargetDomNode).children().eq(vInsert - 1); // find the element which should be directly before the new one
-						if ($predecessor.length === 1) {
+						var oPredecessor = oTargetDomNode.children[vInsert - 1]; // find the element which should be directly before the new one
+						if (oPredecessor) {
 							// element found - put the HTML in after this element
-							$predecessor.after(vHTML);
+							insertAdjacent(oPredecessor, "after", vHTML);
 						} else {
 							// element not found (this should not happen when properly used), append the new HTML
-							jQuery(oTargetDomNode).append(vHTML);
+							insertAdjacent(oTargetDomNode, "append", vHTML);
 						}
 					}
 				} else if (!vInsert) {
 					jQuery(oTargetDomNode).html(vHTML); // Put the HTML into the given DOM Node
 				} else {
-					jQuery(oTargetDomNode).append(vHTML); // Append the HTML into the given DOM Node
+					insertAdjacent(oTargetDomNode, "append", vHTML); // Append the HTML into the given DOM Node
 				}
 
-			}, fnDone);
+			}, fnDone, oTargetDomNode);
 
 		};
 
@@ -1377,7 +1390,7 @@ sap.ui.define([
 						}
 
 						if (vHTML) {
-							jQuery(oTargetDomNode).append(vHTML);
+							insertAdjacent(oTargetDomNode, "append", vHTML);
 						}
 
 					} else { //Control either rendered initially or rerendered at the same location
@@ -1387,10 +1400,11 @@ sap.ui.define([
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
 									jQuery(oldDomNode).html(vHTML);
 								} else {
-									jQuery(oldDomNode).replaceWith(vHTML);
+									insertAdjacent(oldDomNode, "after", vHTML);
+									jQuery(oldDomNode).remove();
 								}
 							} else {
-								jQuery(oTargetDomNode).append(vHTML);
+								insertAdjacent(oTargetDomNode, "append", vHTML);
 							}
 						} else {
 							if (RenderManager.isInlineTemplate(oldDomNode)) {
@@ -1409,7 +1423,7 @@ sap.ui.define([
 					}
 
 				}
-			}, fnDone);
+			}, fnDone, oTargetDomNode);
 		};
 
 		/**
@@ -2258,6 +2272,33 @@ sap.ui.define([
 		}
 
 		return this;
+	}
+
+
+
+	/**
+	 * Inserts a given Node or HTML string at a given position relative to the provided HTML element.
+	 *
+	 * <!-- before : beforebegin -->
+	 * <p>
+	 *     <!-- prepend : afterbegin -->
+	 *     foo
+	 *     <!-- append : beforeend -->
+	 * </p>
+	 * <!-- after : afterend -->
+	 *
+	 * @param {HTMLElement} oElement The reference HTML element which the API is invoked upon
+	 * @param {string} sPosition The insertion position "before", "after", "append", "prepend"
+	 * @param {string|Node} vHTMLorNode The Node or HTML string to be inserted
+	 * @private
+	 */
+	var mAdjacentMap = { before: "beforebegin", prepend: "afterbegin", append: "beforeend", after: "afterend" };
+	function insertAdjacent(oElement, sPosition, vHTMLorNode) {
+		if (typeof vHTMLorNode == "string")  {
+			oElement.insertAdjacentHTML(mAdjacentMap[sPosition], vHTMLorNode);
+		} else {
+			oElement[sPosition](vHTMLorNode);
+		}
 	}
 
 	return RenderManager;
