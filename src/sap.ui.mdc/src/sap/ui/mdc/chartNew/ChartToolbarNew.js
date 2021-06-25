@@ -185,7 +185,9 @@ sap.ui.define([
             }
 
             var oSelectionHandler = oMDCChart.getSelectionHandler();
-            this._oChartSelectionDetails.attachSelectionHandler(oSelectionHandler.eventId, oSelectionHandler.listener);
+            if (oSelectionHandler) {
+                this._oChartSelectionDetails.attachSelectionHandler(oSelectionHandler.eventId, oSelectionHandler.listener);
+            }
         };
 
         ChartToolbar.prototype._getZoomEnablement = function (oMDCChart) {
