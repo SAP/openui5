@@ -174,6 +174,19 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("onAfterRendering is triggered only once after initial rendering", function (assert) {
+		//Arrange
+		var oHeaderContainer = new HeaderContainer();
+		var oSpy = sinon.spy(oHeaderContainer, "onAfterRendering");
+		//Act
+		oHeaderContainer.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.strictEqual(oSpy.callCount, 1, "HeaderContainer was rendered only once");
+		//Cleanup
+		oHeaderContainer.destroy();
+	});
+
 	QUnit.test("Correct CSS Class added in case of 'Solid'", function (assert) {
 		//arrange
 		var oBackgroundDesignDefault = this.oHeaderContainer.getBackgroundDesign();
