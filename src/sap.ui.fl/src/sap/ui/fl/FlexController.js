@@ -159,14 +159,15 @@ sap.ui.define([
 		return this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier)
 			.then(function(oChangeHandler) {
 				if (oChangeHandler) {
-					oChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
+					return oChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
 						modifier: JsControlTreeModifier,
 						appComponent: oAppComponent,
 						view: Utils.getViewForControl(oControl)
 					});
-				} else {
-					throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
 				}
+				throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
+			})
+			.then(function () {
 				return oChange;
 			})
 			.catch(function(oError) {
