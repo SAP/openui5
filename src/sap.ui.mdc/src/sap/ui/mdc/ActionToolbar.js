@@ -322,7 +322,7 @@ sap.ui.define([
 		var iActionIndex = 0;
 
 		if (sAlignment === ActionToolbarActionAlignment.End) {
-			if (!this._aggregationContainsActionSeparatorBefore(sAggregationName)) {
+			if (oActionToolbarAction.getVisible() && !this._aggregationContainsActionSeparatorBefore(sAggregationName)) {
 				this.addAggregation(sAggregationName, oActionToolbarAction.getSeparatorBefore());
 			}
 			this.addAggregation(sAggregationName, oActionToolbarAction);
@@ -337,7 +337,7 @@ sap.ui.define([
 			}
 			this.insertAggregation(sAggregationName, oActionToolbarAction, iActionIndex);
 
-			if (!this._aggregationContainsActionSeparatorAfter(sAggregationName)) {
+			if (oActionToolbarAction.getVisible() && !this._aggregationContainsActionSeparatorAfter(sAggregationName)) {
 				this.insertAggregation(sAggregationName, oActionToolbarAction.getSeparatorAfter(), iActionIndex + 1);
 			}
 			if (!this._aActions.includes(oActionToolbarAction)) {
@@ -414,10 +414,10 @@ sap.ui.define([
 		if (aActionsInAggregation.length > 0) {
 			oActionInAggregation = aActionsInAggregation[0];
 			iSeparatorIndex = this.indexOfAggregation(sAggregationName, oActionInAggregation);
-			if (sAlignment === ActionToolbarActionAlignment.Begin && !this._aggregationContainsActionSeparatorAfter(sAggregationName)) {
+			if (sAlignment === ActionToolbarActionAlignment.Begin && oActionToolbarAction.getVisible() && !this._aggregationContainsActionSeparatorAfter(sAggregationName)) {
 				iSeparatorIndex = iSeparatorIndex + 1;
 				this.insertAggregation(sAggregationName, oActionInAggregation.getSeparatorAfter(), iSeparatorIndex);
-			} else if (sAlignment === ActionToolbarActionAlignment.End && !this._aggregationContainsActionSeparatorBefore(sAggregationName)) {
+			} else if (sAlignment === ActionToolbarActionAlignment.End && oActionToolbarAction.getVisible() && !this._aggregationContainsActionSeparatorBefore(sAggregationName)) {
 				this.insertAggregation(sAggregationName, oActionInAggregation.getSeparatorBefore(), iSeparatorIndex);
 			}
 			oActionInAggregation.updateSeparators();

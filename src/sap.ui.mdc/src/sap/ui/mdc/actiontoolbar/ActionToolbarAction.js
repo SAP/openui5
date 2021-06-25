@@ -57,7 +57,8 @@ sap.ui.define([
 
         this._oObserver = new ManagedObjectObserver(this._observeChanges.bind(this));
         this._oObserver.observe(this, {
-			parent: true
+			parent: true,
+            properties: ["visible"]
 		});
     };
 
@@ -78,9 +79,27 @@ sap.ui.define([
         var sAlignment = this.getLayoutInformation().alignment;
         var sAggregationName = this.getLayoutInformation().aggregationName;
         var oActionToolbar = this.getParent();
+        var oActionToolbarAggregation = oActionToolbar.getAggregation(sAggregationName);
 
-        var bSeparatorBeforeVisible = sAlignment === ActionToolbarActionAlignment.End && !oActionToolbar._aggregationContainsActionSeparatorBefore(sAggregationName);
-        var bSeparatorAfterVisible = sAlignment === ActionToolbarActionAlignment.Begin && !oActionToolbar._aggregationContainsActionSeparatorAfter(sAggregationName);
+        var aControlsInAggregation = oActionToolbarAggregation.filter(function(oControl) {
+            return !oControl.isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction") && oControl !== this && oControl !== this._oSeparatorBefore && oControl !== this._oSeparatorAfter;
+        }.bind(this));
+
+        var aControlsInAggregationAfter = aControlsInAggregation.filter(function(oControl) {
+            return oActionToolbarAggregation.indexOf(oControl) > oActionToolbarAggregation.indexOf(this) && oControl.getVisible();
+        }.bind(this));
+
+        var aControlsInAggregationBefore = aControlsInAggregation.filter(function(oControl) {
+            return oActionToolbarAggregation.indexOf(oControl) < oActionToolbarAggregation.indexOf(this) && oControl.getVisible();
+        }.bind(this));
+
+        var bSeparatorBeforeVisible = sAlignment === ActionToolbarActionAlignment.End &&
+            !oActionToolbar._aggregationContainsActionSeparatorBefore(sAggregationName) &&
+            aControlsInAggregationBefore.length > 0;
+
+        var bSeparatorAfterVisible = sAlignment === ActionToolbarActionAlignment.Begin &&
+            !oActionToolbar._aggregationContainsActionSeparatorAfter(sAggregationName) &&
+            aControlsInAggregationAfter.length > 0;
 
         this._oSeparatorBefore.setVisible(this.getAction() && this.getAction().getVisible() && bSeparatorBeforeVisible);
         this._oSeparatorAfter.setVisible(this.getAction() && this.getAction().getVisible() && bSeparatorAfterVisible);
@@ -97,6 +116,10 @@ sap.ui.define([
     ActionToolbarAction.prototype._observeChanges = function(oChanges) {
         if (oChanges.type === "parent" && oChanges.mutation === "unset") {
             this.destroy();
+        }
+
+        if (oChanges.name === "property" && oChanges.name === "visible") {
+            this.updateSeparators();
         }
     };
 
