@@ -47,6 +47,8 @@ sap.ui.define([
 		}).then(function () {
 			var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
 			var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+			//Store external input data to FlexState so they can be restored after invalidating cache
+			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey, mPropertyBag.standardVariant, mPropertyBag.variants);
 			return mCompVariantsMap._initialize(sPersistencyKey, mPropertyBag.variants);
 		});
 	}
