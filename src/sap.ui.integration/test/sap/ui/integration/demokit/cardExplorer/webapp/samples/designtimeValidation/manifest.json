@@ -5,6 +5,7 @@
 	},
 	"sap.card": {
 		"configuration": {
+			"editor": "dt/Configuration",
 			"destinations": {
 				"northwind": {
 					"name": "Northwind_V4",
@@ -34,7 +35,6 @@
 			}
 		},
 		"type": "List",
-		"designtime": "dt/configuration",
 		"header": {
 			"title": "Products",
 			"icon": {

@@ -79,12 +79,14 @@
 
 			<pre class="prettyprint lang-js">
 				"sap.card": {
-					"designtime": "dt/configuration"
+					"configuration": {​​​​​
+						"editor": "dt/configuration"
+					}​​​​​​​​​​​​​​​​​​​
 				}
             </pre>
 			<p>
-				The designtime configuration that is returned in the
-			<pre>Designtime.prototype.create</pre> method of your designtime file will contain the field definitions
+				The card editor configuration that is returned in the
+			<pre>Designtime.prototype.create</pre> method of your configuration file will contain the field definitions
 			that should be shown in the editor. Those are described in detail in the
 			<a href="./api.html">API section</a>.
 			</p>

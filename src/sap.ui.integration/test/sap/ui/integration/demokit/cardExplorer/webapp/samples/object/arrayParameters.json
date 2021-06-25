@@ -28,6 +28,7 @@
 	"sap.card": {
 		"type": "Object",
 		"configuration": {
+			"editor": "dt/Configuration",
 			"parameters": {
 				"visibleCompanyFields": {
 					"value": ["companyDetails", "companyName"]
@@ -37,7 +38,6 @@
 				}
 			}
 		},
-		"designtime": "dt/Configuration",
 		"data": {
 			"json": {
 				"firstName": "Donna",
