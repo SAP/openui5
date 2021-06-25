@@ -269,7 +269,7 @@ sap.ui.define([
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 			}
 
-			oRm.openStart("div", oAppointment.getId() + "_" + iColumn + iRow);
+			oRm.openStart("div", oAppointment.getId() + "-" + iColumn + "_" + iRow);
 			oRm.attr("draggable", bDraggable);
 			oRm.attr("data-sap-ui-draggable", bDraggable);
 			oRm.attr("data-sap-ui-related", oAppointment.getId());

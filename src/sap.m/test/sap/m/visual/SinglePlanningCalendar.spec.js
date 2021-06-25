@@ -52,6 +52,14 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		expect(takeScreenshot(oSPC)).toLookAs("month_view");
 	});
 
+	it("should be possible to select an appointment", function (){
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+		element(by.id("__appointment0-SinglePlanningCalendar-43-5_0")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("appointment select");
+		element(by.id("__appointment0-SinglePlanningCalendar-43-5_0")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("deselect appointment");
+	});
+
 	it("should navigate to week view", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 		element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).isPresent().then(function(presented){
