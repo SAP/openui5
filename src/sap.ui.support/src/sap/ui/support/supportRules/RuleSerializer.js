@@ -2,8 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function () {
+sap.ui.define([
+	"./util/EvalUtils"
+], function (EvalUtils) {
 		"use strict";
 
 		return {
@@ -28,11 +29,9 @@ sap.ui.define([],
 					rule = serializedRule;
 				}
 
-				/* eslint-disable no-eval */
 				if (!stringifyCheck && rule.check !== undefined) {
-					eval("rule.check = " + rule.check);
+					rule.check = EvalUtils.evalFunction(rule.check);
 				}
-				/* eslint-enable no-eval */
 
 				return rule;
 			}
