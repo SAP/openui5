@@ -457,3 +457,10 @@ Copyright: 2015-2017 Evgeny Poberezkin
 License: MIT
 Comment: these files belong to: ajv
 
+Files: lib/jsdoc/ui5/plugin.js
+Copyright:
+    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2011-present Michael Mathews micmath@gmail.com and the contributors to JSDoc
+License: Apache-2.0
+Comment: these files contain content from SAP and JSDoc 3: plugin.js is overall written by SAP, but contains code taken from JSDoc 3.6.7 (see the respective comments)
+

@@ -456,6 +456,12 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: ../test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/ajv/ajv.min.js
 
+Component: JSDoc 3, version: 3.6.7
+Copyright: 2011-present Michael Mathews micmath@gmail.com and the contributors to JSDoc
+License: Apache-2.0
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+Contained in: lib/jsdoc/ui5/plugin.js
+
 
 ALL LICENSE TEXTS:
 ==================
