@@ -35,11 +35,13 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Title",
 	"sap/m/plugins/DataStateIndicator",
-	"sap/ui/layout/VerticalLayout"
+	"sap/ui/layout/VerticalLayout",
+	"sap/base/Log"
+
 ], function(Core, createAndAppendDiv, jQuery,
 			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
 			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator,
-			VerticalLayout) {
+			VerticalLayout, Log) {
 		"use strict";
 		jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
@@ -1432,6 +1434,37 @@ sap.ui.define([
 				oScrollContainer.destroy();
 				done();
 			});
+		});
+
+		QUnit.test("Function requestItems", function(assert) {
+			var oNewList = new List({
+				growing: false
+			});
+
+			var fSpy =  sinon.spy(GrowingEnablement.prototype, "requestNewPage");
+			var fLogWarningSpy =  sinon.spy(Log, "warning");
+
+			bindListData(oNewList, data4, "/items", createTemplateListItem());
+			assert.strictEqual(oNewList.getItems().length, 10, "List has 10 items");
+
+			oNewList.requestItems(5);
+			assert.strictEqual(oNewList.getItems().length, 10, "growing is disabled, requestItems API  did not request data");
+			assert.ok(fSpy.notCalled);
+			assert.ok(fLogWarningSpy.calledWith("The 'growing' feature is disabled on the control. Please enable 'growing' to use 'requestItems' API", oNewList.getMetadata().getName() + ": " + oNewList.getId()));
+
+			oNewList = new List({
+				growing: true,
+				growingThreshold: 2
+			});
+
+			bindListData(oNewList, data4, "/items", createTemplateListItem());
+			assert.ok(oNewList.getGrowing(), "Growing enabled on the list");
+			assert.strictEqual(oNewList.getItems().length, 2, "growing is enabled and list has 2 items");
+			oNewList.requestItems(4);
+
+			assert.strictEqual(oNewList.getItems().length, 6, "growing is enabled, requestItems API request data");
+			assert.strictEqual(oNewList.getGrowingThreshold(), 2, "Growing threshold restored");
+			assert.ok(fSpy.calledOnce);
 		});
 
 		QUnit.test("Function _setFocus", function(assert) {
