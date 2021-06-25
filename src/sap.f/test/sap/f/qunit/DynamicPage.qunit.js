@@ -1197,6 +1197,30 @@ function (
 		assert.ok(oAdaptScrollPositionSpy.called, "scroll position is adaptation is called");
 	});
 
+	QUnit.test("DynamicPage header resize after rerendering - pin button visibility is updated", function (assert) {
+		// Arrange
+		var oHeader = this.oDynamicPage.getHeader(),
+			oTogglePinButtonVisibilitySpy;
+
+		this.oDynamicPage.setPreserveHeaderStateOnScroll(true);
+		oUtil.renderObject(this.oDynamicPage);
+
+		//Act - simulating invalidation of DynamicPage and rerendering
+		this.oDynamicPage.rerender();
+
+		oTogglePinButtonVisibilitySpy = this.spy(this.oDynamicPage, "_togglePinButtonVisibility");
+
+		// Simulate resizeHandler call after Header resize (due to FCL columns resize)
+		this.oDynamicPage._onChildControlsHeightChange({target: oHeader.getDomRef(),
+			size: { height: 100 }, oldSize: { height: 0 }});
+
+		// Assert
+		assert.ok(oTogglePinButtonVisibilitySpy.calledOnce,
+			"_togglePinButtonVisibility is called after resize (followed by rerendering)");
+		assert.ok(oTogglePinButtonVisibilitySpy.calledWith(false),
+			"_togglePinButtonVisibility is called with 'false' as preserveHeaderStateOnSroll is 'true'");
+	});
+
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
 	QUnit.module("DynamicPage On Title Press when Header State Preserved On Scroll", {
 		beforeEach: function () {
