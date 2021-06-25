@@ -368,7 +368,11 @@ sap.ui.define([
 				}.bind(this))
 				.then(function (sManifestContent) {
 					sJson = JSON.parse(sManifestContent);
-					var sDesigntimePath = this._sanitizePath(ObjectPath.get(["sap.card", "designtime"], sJson) || "");
+					//handle designtime keyword removal
+					var sDesigntimePath = this._sanitizePath(ObjectPath.get(["sap.card", "configuration", "editor"], sJson) || "");
+					if (sDesigntimePath === "") {
+						sDesigntimePath = this._sanitizePath(ObjectPath.get(["sap.card", "designtime"], sJson) || "");
+					}
 					if (!sDesigntimePath) {
 						ObjectPath.set(["sap.card", "designtime"], "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate", sJson);
 					}

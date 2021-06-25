@@ -28,7 +28,6 @@
 	},
 	"sap.card": {
 		"type": "List",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "{{parameters.title}}",
 			"subTitle": "{{parameters.subTitle}}",
@@ -40,6 +39,7 @@
 			}
 		},
 		"configuration": {
+			"editor": "dt/Configuration",
 			"parameters": {
 				"title" : {
 					"value": "List Card with Top {{parameters.maxItems}} Products"

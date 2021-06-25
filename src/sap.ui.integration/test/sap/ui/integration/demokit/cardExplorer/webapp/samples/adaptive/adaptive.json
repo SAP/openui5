@@ -21,7 +21,6 @@
 	},
 	"sap.card": {
 		"type": "AdaptiveCard",
-		"designtime": "dt/Configuration",
 		"data": {
 			"json": {
 				"firstName": "Donna",
@@ -43,6 +42,7 @@
 			}
 		},
 		"configuration": {
+			"editor": "dt/Configuration",
 			"parameters": {
 				"title" : {
 					"value": "Employee ID card"

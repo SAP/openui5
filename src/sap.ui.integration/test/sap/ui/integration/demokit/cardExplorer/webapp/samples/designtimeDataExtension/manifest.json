@@ -6,6 +6,7 @@
 	"sap.card": {
 		"extension": "./DataExtension",
 		"configuration": {
+			"editor": "dt/Configuration",
 			"destinations": {
 				"local": {
 					"name": "local",
@@ -38,7 +39,6 @@
 			}
 		},
 		"type": "List",
-		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Available Trainings",
 			"icon": {

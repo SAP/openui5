@@ -451,7 +451,7 @@ sap.ui.define([
 					});
 				}
 
-				if (oMetaItem.type !== "group" && oMetaItem.type === "separator") {
+				if (oMetaItem.type !== "group" && oMetaItem.type !== "separator") {
 					if (!oMetaItem.hasOwnProperty("value")) {
 						var aOtherPath = oMetaItem.manifestpath.substring(1).split("/"),
 							vValue = ObjectPath.get(aOtherPath, this._oInitialJson);

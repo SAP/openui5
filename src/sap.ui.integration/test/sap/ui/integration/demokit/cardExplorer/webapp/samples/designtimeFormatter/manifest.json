@@ -17,9 +17,9 @@
 		}
 	},
 	"sap.card": {
-		"designtime": "./dt/Configuration",
 		"type": "List",
 		"configuration": {
+			"editor": "./dt/Configuration",
 			"parameters": {
 				"date": {
 					"value": "2021/03/05"

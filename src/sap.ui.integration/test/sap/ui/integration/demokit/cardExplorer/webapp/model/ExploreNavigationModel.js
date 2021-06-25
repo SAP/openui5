@@ -1153,23 +1153,6 @@ sap.ui.define([
 								key: 'manifest.json'
 							}
 						]
-					},
-					{
-						key: 'designtime',
-						target: 'exploreSamples',
-						title: 'Formatters in Configuration Editor',
-						files: [
-							{
-								url: '/samples/designtimeFormatter/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
-							},
-							{
-								url: '/samples/designtimeFormatter/dt/Configuration.js',
-								name: 'dt/Configuration.js',
-								key: 'designtime.js'
-							}
-						]
 					}
 				]
 			},
