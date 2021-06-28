@@ -201,5 +201,21 @@
         ]
       }
     ]
+  },
+  "1.87.10": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "303ee1dc5aa48efa573abc0508d56ff1cd90027e",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: selects correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003918772021"
+          }
+        ]
+      }
+    ]
   }
 }
