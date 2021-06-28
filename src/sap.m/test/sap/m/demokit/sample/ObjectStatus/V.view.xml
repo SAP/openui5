@@ -91,7 +91,6 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<Label text="Inverted ObjectStatus with different states and indication states." design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
-		<Label text="Note: Inverted ObjectStatus, looks as none-inverted status in HCW and HCB themes" design="Bold" wrapping="true"/>
 		<ObjectStatus
 			class="sapUiSmallMarginBottom"
 			text="Unknown"
