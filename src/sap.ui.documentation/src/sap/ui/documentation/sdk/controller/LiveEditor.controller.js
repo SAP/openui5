@@ -192,6 +192,14 @@ sap.ui.define([
 						this); // context
 				}
 				return this._oThrottledTask;
+			},
+
+			/**
+			 * Handler for page navButton press event
+			 * @restricted
+			 */
+			onNavButtonPress: function () {
+				this.getRouter().myNavBack("welcome");
 			}
 		});
 	}

@@ -251,26 +251,48 @@
 			</headerToolbar>
 			<l:BlockLayout>
 				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							class="welcomeBlock"
-							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeC"
-							width="1">
-
-						<custom:TitleLink
-								href="topic/8b49fc198bf04b2d9800fc37fecbb218"
-								text="{i18n>WELCOME_BLOCK_6_TITLE}"
-								titleStyle="H2"/>
-						<Text class="sapUiMediumMarginTop" text="{i18n>WELCOME_BLOCK_6_TEXT_1}"/>
-						<Text class="sapUiSmallMarginTop" text="{i18n>WELCOME_BLOCK_6_TEXT_2}"/>
-					</l:BlockLayoutCell>
-
 					<l:BlockLayoutCell backgroundColorSet="ColorSet6"
 									   backgroundColorShade="ShadeC">
 						<l:layoutData>
 							<l:BlockLayoutCellData sSize="1" mSize="2" lSize="3" xlSize="3"/>
 						</l:layoutData>
-						<mvc:XMLView viewName="sap.ui.documentation.sdk.view.LiveEditor"/>
+
+						<HBox alignItems="Center" justifyContent="Center" width="100%" height="100%">
+
+							<Image
+								src="./resources/sap/ui/documentation/sdk/images/Home_laptop.png"
+								densityAware="false"
+								class="sapUiTinyMarginBeginEnd"
+								width="100%"
+								alt="{i18n>WELCOME_BLOCK_7_ALT}">
+								<layoutData>
+									<FlexItemData maxWidth="37.5rem" />
+								</layoutData>
+							</Image>
+						</HBox>
+
+					</l:BlockLayoutCell>
+
+					<l:BlockLayoutCell
+						class="welcomeBlock"
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeC">
+
+						<l:layoutData>
+							<l:BlockLayoutCellData sSize="1" mSize="2" lSize="3" xlSize="3"/>
+						</l:layoutData>
+
+						<HBox direction="Column" justifyContent="Center" width="100%" height="100%">
+							<custom:TitleLink
+							href="topic/8b49fc198bf04b2d9800fc37fecbb218"
+							text="{i18n>WELCOME_BLOCK_6_TITLE}"
+							titleStyle="H2"/>
+							<Text class="sapUiMediumMarginTop" text="{i18n>WELCOME_BLOCK_6_TEXT_1}"/>
+							<HBox width="100%">
+								<Text class="sapUiSmallMarginTop" text="{i18n>WELCOME_BLOCK_6_TEXT_2}"/>
+								<Link class="liveEditorLink sapUiSmallMarginTop" text="Live Editor." href="liveEditor" />
+							</HBox>
+						</HBox>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>

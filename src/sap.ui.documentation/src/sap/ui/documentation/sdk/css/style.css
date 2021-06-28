@@ -99,16 +99,22 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 
 /* welcome page code editor */
 
-.sapUiMedia-Std-Desktop .editorWrapper {
+.editorWrapper {
     display:flex;
+	height: 100%;
+}
+
+.outputWindowWrapper {
+	height: 100%;
+}
+
+.liveEditorLink {
+	display: inline-flex;
+	margin-left: 0.125rem;
 }
 
 .sapUiMedia-Std-Desktop .editorWrapper > div {
     flex-grow: 1;
-}
-
-.sapUiMedia-Std-Desktop .editorWrapper > div:first-child {
-    margin-right: 1rem;
 }
 
 .sapUiMedia-Std-Tablet .editorWrapper > div:first-child,
@@ -118,7 +124,7 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 
 .editorWrapper .editorSrcWindow,
 .editorWrapper .editorOutputWindow {
-    height: 285px;
+    height: 100%;
 }
 
 .editorWrapper .editorOutputWindow {
@@ -126,7 +132,7 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 .editorWrapper .sapMTB.editorToolbar {
-    height: 4rem;
+	height: 2.7rem;
 }
 
 .sapUiBlockLayout .welcomeBlock .sapUiBlockCellContent .sapMText {

@@ -341,6 +341,13 @@
 					"target": [
 						"sitemap"
 					]
+				},
+				{
+					"pattern": "liveEditor",
+					"name": "liveEditor",
+					"target": [
+						"liveEditor"
+					]
 				}
 			],
 			"targets": {
@@ -462,6 +469,10 @@
 				"sitemap": {
 					"viewName": "Sitemap",
 					"viewId": "sitemap"
+				},
+				"liveEditor": {
+					"viewName": "LiveEditor",
+					"viewId": "liveEditor"
 				},
 				"releaseNotes": {
 					"viewName": "ReleaseNotes",

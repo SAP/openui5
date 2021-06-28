@@ -387,6 +387,28 @@
 					</VBox>
 				</f:content>
 			</f:Card>
+			<!-- Live Editor -->
+			<f:Card class="threeColumnLayoutCard" visible="{=! (${device>/system/phone} || ${device>/browser/msie}) }">
+				<f:layoutData>
+					<l:GridData spanXL="4"/>
+				</f:layoutData>
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="{/liveEditor/text}"
+										href="{/liveEditor/href}"
+										target="_blank"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_10_TEXT}" />
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/Tools_LiveEditor.jpg" class="toolsPageImage" alt="{i18n>TOOLS_CARD_10_IMG_ALT}"/>
+					</VBox>
+				</f:content>
+			</f:Card>
 		</l:Grid>
 		<l:BlockLayout>
 			<l:BlockLayoutRow>
