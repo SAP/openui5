@@ -290,7 +290,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 
 			assert.equal(Device.system.phone, false);
-			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
+			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedKey(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
 
 			done();
 		}.bind(this));
@@ -311,7 +311,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 
 			assert.equal(Device.system.phone, false);
-			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
+			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedKey(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
 
 			done();
 		}.bind(this));
@@ -332,7 +332,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.sort);
 
 			assert.equal(Device.system.phone, false);
-			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
+			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedKey(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
 
 			done();
 		}.bind(this));
@@ -353,7 +353,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 
 			assert.equal(Device.system.phone, false);
-			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
+			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedKey(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
 
 			done();
 		}.bind(this));
@@ -373,7 +373,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.sort);
 
 			assert.equal(Device.system.phone, false);
-			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
+			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedKey(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
 
 			done();
 		}.bind(this));
@@ -401,7 +401,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.columns);
 
 			assert.equal(Device.system.phone, false);
-			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
+			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedKey(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
 
 			done();
 		}.bind(this));
@@ -429,7 +429,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.columns);
 
 			assert.equal(Device.system.phone, false);
-			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
+			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedKey(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
 
 			done();
 		}.bind(this));

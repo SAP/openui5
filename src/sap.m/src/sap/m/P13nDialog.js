@@ -26,6 +26,9 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
+
 	var NavigationControl; // List in case of Device.system.phone and SegmentedButton else
 	var NavigationControlItem; // StandardListItem in case of Device.system.phone and SegmentedButtonItem else
 
@@ -154,6 +157,7 @@ sap.ui.define([
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._mValidationListener = {};
 		this._createDialog();
+		this._bTabBarUsed = true;
 
 		this._mVisibleNavigationItems = {};
 		this._bNavigationControlsPromiseResolved = false;
@@ -667,6 +671,7 @@ sap.ui.define([
 		Dialog.prototype.exit.apply(this, arguments);
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
+		this._bTabBarUsed = false;
 
 		this._mValidationListener = {};
 		this._mVisibleNavigationItems = {};
@@ -799,8 +804,9 @@ sap.ui.define([
 		} else {
 			this.setSubHeader(new Bar(this.getId() + "-navigationBar", {
 				contentLeft: new NavigationControl(this.getId() + "-navigationItems", {
-					width: '100%',
-					selectionChange: function(oEvent) {
+					backgroundDesign: BackgroundDesign.Transparent,
+					expandable: false,
+					select: function(oEvent) {
 						this._switchPanel(oEvent.getParameter("item"));
 					}.bind(this)
 				})
@@ -865,8 +871,8 @@ sap.ui.define([
 	};
 
 	P13nDialog.prototype._requestRequiredNavigationControls = function() {
-		var sNavigationControl = Device.system.phone ? "sap/m/List" : "sap/m/SegmentedButton";
-		var sNavigationControlItem = Device.system.phone ? "sap/m/StandardListItem" : "sap/m/SegmentedButtonItem";
+		var sNavigationControl = Device.system.phone ? "sap/m/List" : "sap/m/IconTabBar";
+		var sNavigationControlItem = Device.system.phone ? "sap/m/StandardListItem" : "sap/m/IconTabFilter";
 
 		NavigationControl = sap.ui.require(sNavigationControl);
 		NavigationControlItem = sap.ui.require(sNavigationControlItem);
