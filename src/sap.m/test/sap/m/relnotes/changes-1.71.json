@@ -2581,5 +2581,106 @@
         ]
       }
     ]
+  },
+  "1.71.34": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "ff5542828136393b85e929d6f388223cb5421f00",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Typo in the endButton aggregation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180234042"
+          }
+        ]
+      },
+      {
+        "id": "e9a8c9455956d591cd452df100f5ad65b1b77454",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: resizing appointments now works correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180213992"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070260395"
+          }
+        ]
+      },
+      {
+        "id": "a52d92e338ae5a7d0ce11d43167169fcd7936a9e",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Empty containers now are removed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006795502020"
+          }
+        ]
+      },
+      {
+        "id": "2e75ce0d2119a94c48895af40f53f4dc8c78ca2a",
+        "type": "FIX",
+        "text": " P13nConditionPanel: improve validation handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980411112"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001732142021"
+          }
+        ]
+      },
+      {
+        "id": "0a3af2891ea0a34f8899ed50fd3593cbd6bfe0b2",
+        "type": "FIX",
+        "text": " sap.m.Input: Model update on change behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001813772021"
+          }
+        ]
+      },
+      {
+        "id": "532db105ca0a454ad5add90a8beb02ab97193193",
+        "type": "FIX",
+        "text": " sap.m.Slider: Aria-labelledby read twice fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180089110"
+          }
+        ]
+      },
+      {
+        "id": "6e7f35acaf159ed70b2a54b5af9fe2cd7224639c",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Special character Curly braces in the file name disrupts the behavior.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970592551"
+          }
+        ]
+      },
+      {
+        "id": "5c79c520024030e51037331619e26e9ac9bedd19",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: NMore expansion fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003357622021"
+          }
+        ]
+      }
+    ]
   }
 }

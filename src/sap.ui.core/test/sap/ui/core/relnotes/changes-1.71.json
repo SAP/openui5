@@ -1061,5 +1061,36 @@
         ]
       }
     ]
+  },
+  "1.71.34": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "88abaf8a0b38b6809c34f62e5af86f921b0e48d4",
+        "type": "FIX",
+        "text": " ManagedObject: Support extended change detection with named models",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004448382021"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980470497"
+          }
+        ]
+      },
+      {
+        "id": "2ebee075ac66cdd8d765730f61e2918112e96506",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: decode existing hash before using it to restore the history state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          }
+        ]
+      }
+    ]
   }
 }

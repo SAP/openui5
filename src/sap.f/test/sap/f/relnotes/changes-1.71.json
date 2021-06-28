@@ -176,5 +176,25 @@
         ]
       }
     ]
+  },
+  "1.71.34": {
+    "date": "June 2021",
+    "notes": [
+      {
+        "id": "bd3d5992f0983c96439c9b0be65ec2b63bef237b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected pin button update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003691172021"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980353295"
+          }
+        ]
+      }
+    ]
   }
 }
