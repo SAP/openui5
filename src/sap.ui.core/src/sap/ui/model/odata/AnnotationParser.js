@@ -596,6 +596,13 @@ var AnnotationParser =  {
 			AnnotationParser._parserData.aliases[oNode.getAttribute("Alias")] = oNode.getAttribute("Namespace");
 		}
 
+		// order the aliases by length to ensure that aliases are properly resolved even if there is
+		// an alias which is an infix of another alias
+		AnnotationParser._parserData.aliasesByLength =
+			Object.keys(AnnotationParser._parserData.aliases)
+				.sort(function (sAlias0, sAlias1) {
+					return sAlias1.length - sAlias0.length;
+				});
 
 		var sReferenceSelector = "//edmx:Reference[@Uri]/edmx:IncludeAnnotations[@TermNamespace]";
 		var oReferenceNodes = xPath.selectNodes(sReferenceSelector, AnnotationParser._parserData.xmlDocument);
@@ -1174,30 +1181,28 @@ var AnnotationParser =  {
 	},
 
 	/*
-	 * Replaces the first alias (existing as key in the map) found in the given string with the
-	 * respective value in the map if it is not directly behind a ".". By default only one
-	 * replacement is done, unless the iReplacements parameter is set to a higher number or 0
+	 * Replaces the first alias found in the given string with the corresponding namespace as given
+	 * in "AnnotationParser._parserData.aliases". Ensure that the array
+	 * "AnnotationParser._parserData.aliasesByLength" contains all aliases ordered by its length
+	 * starting with the longest alias. This order is necessary to avoid wrong replacement if there
+	 * is an alias which is a prefix of another alias, for example "Common" and "SAP_Common".
 	 *
-	 * @param {string} sValue - The string where the alias should be replaced
-	 * @param {int} iReplacements - The number of replacements to doo at most or 0 for all
-	 * @return {string} The string with the alias replaced
+	 * @param {string} sValue The string in which an alias should be replaced
+	 * @returns {string} The string with the alias replaced
 	 * @static
 	 * @private
 	 */
-	replaceWithAlias: function(sValue, iReplacements) {
-		if (iReplacements === undefined) {
-			iReplacements = 1;
-		}
-		for (var sAlias in AnnotationParser._parserData.aliases) {
-			if (sValue.indexOf(sAlias + ".") >= 0 && sValue.indexOf("." + sAlias + ".") < 0) {
-				sValue = sValue.replace(sAlias + ".", AnnotationParser._parserData.aliases[sAlias] + ".");
+	replaceWithAlias : function (sValue) {
+		AnnotationParser._parserData.aliasesByLength.some(function (sAlias) {
+			if (sValue.includes(sAlias + ".") && !sValue.includes("." + sAlias + ".")) {
+				sValue = sValue.replace(sAlias + ".",
+					AnnotationParser._parserData.aliases[sAlias] + ".");
 
-				iReplacements--;
-				if (iReplacements === 0) {
-					return sValue;
-				}
+				return true;
 			}
-		}
+			return false;
+		});
+
 		return sValue;
 	},
 

@@ -15,6 +15,7 @@ sap.ui.require([
 	// ODataAnnotationsFakeService.js
 	sap.ui.require([
 		"sap/ui/core/qunit/odata/AnnotationHelper.qunit",
+		"sap/ui/core/qunit/odata/AnnotationParserNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
 		"sap/ui/core/qunit/odata/_AnnotationHelperBasics.qunit",
 		"sap/ui/core/qunit/odata/_AnnotationHelperExpression.qunit",
