@@ -149,14 +149,18 @@ sap.ui.define([
 			var aSpecialDates = oControl._getSpecialDates(),
 				aDayTypes = Month.prototype._getDateTypes.call(oControl, oDay),
 				oFormat = oControl._getDateFormatter(),
+				bToday = oDay.isSame(CalendarDate.fromLocalJSDate(new Date())),
 				oType,
 				sLegendItemType;
 
 			oRm.openStart("div");
 			oRm.class("sapMSPCMonthDay");
+			if (bToday) {
+				oRm.class("sapMSPCMonthDayToday");
+			}
 			oRm.attr("role", "gridcell");
 
-			if (CalendarUtils._isWeekend(oDay, oLocaleData)) {
+			if (CalendarUtils._isWeekend(oDay, oLocaleData) || !CalendarUtils._isSameMonthAndYear(oDay, CalendarDate.fromLocalJSDate(oControl.getStartDate()))) {
 				oRm.class("nonWorkingTimeframe");
 			}
 
@@ -174,6 +178,12 @@ sap.ui.define([
 			oRm.openEnd();
 
 			this.renderDndPlaceholder(oRm, oControl.getAggregation("_appsPlaceholders")[iCellIndex]);
+
+			if (bToday) {
+				oRm.openStart("div");
+				oRm.class("sapMSPCMonthNowMarker");
+				oRm.openEnd();
+			}
 
 			oRm.openStart("div");
 			oRm.class("specialDateIndicator");
@@ -205,6 +215,10 @@ sap.ui.define([
 				oRm.text(sLegendItemType);
 			}
 			oRm.close("span");
+
+			if (bToday) {
+				oRm.close("div"); // close today wrapper
+			}
 
 			oRm.close("div");
 		};
@@ -371,6 +385,7 @@ sap.ui.define([
 				sCalendarType = Core.getConfiguration().getCalendarType(),
 				aWeekDays = oLocaleData.getDaysStandAlone("abbreviated", sCalendarType),
 				aWeekDaysWide = oLocaleData.getDaysStandAlone("wide", sCalendarType),
+				oFirstRenderedDate = CalendarUtils._getFirstDateOfWeek(CalendarDate.fromLocalJSDate(oControl.getStartDate())),
 				iDayIndex;
 
 			oRm.openStart("div", sId + "-Names");
@@ -387,6 +402,11 @@ sap.ui.define([
 				if (i === 0) {
 					oRm.class("sapUiCalFirstWDay");
 				}
+
+				if (CalendarUtils._isWeekend(oFirstRenderedDate, oLocaleData)) {
+					oRm.class("sapUiCalItemWeekEnd");
+				}
+				oFirstRenderedDate.setDate(oFirstRenderedDate.getDate() + 1);
 
 				oRm.accessibilityState(null, {
 					role: "columnheader",

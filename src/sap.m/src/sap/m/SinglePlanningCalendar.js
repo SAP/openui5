@@ -1286,11 +1286,18 @@ function(
 		var oRangeDates = this._getFirstAndLastRangeDate(),
 			oStartDate = oRangeDates.oStartDate.toLocalJSDate(),
 			oEndDate = oRangeDates.oEndDate.toLocalJSDate(),
-			oLongDateFormat = DateFormat.getDateInstance({format: "yMMMMd"}),
-			oResult = oLongDateFormat.format(oStartDate);
+			oFormat,
+			oResult;
 
-		if (oStartDate.getTime() !== oEndDate.getTime()) {
-			oResult += " - " + oLongDateFormat.format(oEndDate);
+		if (this._getSelectedView().isA("sap.m.SinglePlanningCalendarMonthView")) {
+			oFormat = DateFormat.getDateInstance({format: "yMMMM"});
+			oResult = oFormat.format(oStartDate);
+		} else {
+			oFormat = DateFormat.getDateInstance({format: "yMMMMd"});
+			oResult = oFormat.format(oStartDate);
+			if (oStartDate.getTime() !== oEndDate.getTime()) {
+				oResult += " - " + oFormat.format(oEndDate);
+			}
 		}
 
 		return oResult;

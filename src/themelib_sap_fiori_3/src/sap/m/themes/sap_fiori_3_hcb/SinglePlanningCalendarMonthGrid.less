@@ -10,6 +10,11 @@
 	}
 }
 
+html.sap-desktop .sapMSPCMonthDay:not(.sapMSPCMonthDayToday):focus::after,
+html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMarker::after {
+	border-width: 0.125rem;
+}
+
 .calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType01, @sapLegendColor1);
 .calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType02, @sapLegendColor2);
 .calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType03, @sapLegendColor3);
