@@ -3,6 +3,16 @@
     "date": "June 2021",
     "notes": [
       {
+        "id": "a83754d97f8997ba0082b06fe101fffae6acde30",
+        "type": "FIX",
+        "text": " Field: update required indicator if editMode changed"
+      },
+      {
+        "id": "4206924a9ffc12b2cc2766cc43acfbebdb02f0c4",
+        "type": "FIX",
+        "text": " Field: no Link rendered id Multiline set"
+      },
+      {
         "id": "7414228d21d21718b44a2a0a3ea4b1c523985ef1",
         "type": "FIX",
         "text": " mdc.ActionToolbar: fix for separator visibility",

@@ -3,6 +3,28 @@
     "date": "June 2021",
     "notes": [
       {
+        "id": "516f0786300c33ba96c73b5e4f3f8b3c45a2b00f",
+        "type": "FIX",
+        "text": " SinglePlanningCalendarMonthGrid: appointments in Month view are now selectable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180178688"
+          }
+        ]
+      },
+      {
+        "id": "03e86a3c94a4955a43b199ec7e874500f0197808",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: Use monospaced font only for unit part",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180216104"
+          }
+        ]
+      },
+      {
         "id": "a9d71d2bc9981dd3f28ec8f27d07c3864faa7701",
         "type": "FEATURE",
         "text": " sap.m.DynamicDateRange: new control"

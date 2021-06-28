@@ -3,6 +3,88 @@
     "date": "June 2021",
     "notes": [
       {
+        "id": "82eb1e6d88d1689af5aa75be5b8d9598037ba33c",
+        "type": "FEATURE",
+        "text": " ListBase: new method \"requestItems\" added to load more items in the control"
+      },
+      {
+        "id": "516f0786300c33ba96c73b5e4f3f8b3c45a2b00f",
+        "type": "FIX",
+        "text": " SinglePlanningCalendarMonthGrid: appointments in Month view are now selectable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180178688"
+          }
+        ]
+      },
+      {
+        "id": "801b62d96dfd9f91fcdda3d9d8eddf0f6c319f93",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Resizing carousel with no pages no longer throws an error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180246565"
+          }
+        ]
+      },
+      {
+        "id": "a60fdc632effe8b108400b226d7c6219cda16ad7",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: development sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "982242cc6300f5c059c410f113c3722b14b0a88e",
+        "type": "FIX",
+        "text": " sap.m.Input: Renderer's methods visibility is now specified",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180221549"
+          }
+        ]
+      },
+      {
+        "id": "27578cc0b8ba0c679d9e587ecbdfb5ff08536c35",
+        "type": "FIX",
+        "text": " sap.m.Input: aria-describedby announcement with delayed filtering fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170166116"
+          }
+        ]
+      },
+      {
+        "id": "1caafad03a9a9db4b9225fe0b5200037486b35cb",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Warning is no longer logged if type is not defined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180233989"
+          }
+        ]
+      },
+      {
+        "id": "9e5ce2d0606025137ca2404cb8d4cea9d82c8b21",
+        "type": "FIX",
+        "text": " sap.m.Input: Accessibility enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180237055"
+          }
+        ]
+      },
+      {
         "id": "a9d71d2bc9981dd3f28ec8f27d07c3864faa7701",
         "type": "FEATURE",
         "text": " sap.m.DynamicDateRange: new control"
@@ -15,6 +97,17 @@
           {
             "type": "BCP",
             "reference": "2170138939"
+          }
+        ]
+      },
+      {
+        "id": "affc15cb61cc41d52693cae087caaf0b9692619a",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: list close event fired with propper parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180227370"
           }
         ]
       },
@@ -37,6 +130,17 @@
           {
             "type": "BCP",
             "reference": "2180201938"
+          }
+        ]
+      },
+      {
+        "id": "695b2fb13c44723200f93ea6d5155fc10c9e6408",
+        "type": "FIX",
+        "text": " sap.m.Popover: Calculate properly dimensions when the within area is bigger that the screen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170132760"
           }
         ]
       },
