@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/ButtonRenderer", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/library"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary) {
+	"sap/m/OverflowToolbarButton", "sap/m/ButtonRenderer", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/library", "sap/m/PlacementType"
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, PlacementType) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -102,10 +102,6 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.oPopover) {
-			return this.oPopover.openBy(oButton);
-		}
-
 		if (!this.oReadyPromise) {
 			this.oReadyPromise = new Promise(function(resolve) {
 				if (ResponsivePopover) {
@@ -137,6 +133,9 @@ sap.ui.define([
 
 		this.oReadyPromise.then(function() {
 			this.oPopover = this._createPopover(oButton, oMDCChart);
+			this.oPopover.attachAfterClose(function(){
+				this.oPopover.destroy();
+			}.bind(this));
 			return this.oPopover.openBy(oButton);
 		}.bind(this));
 	};
@@ -204,7 +203,7 @@ sap.ui.define([
 
 		var oPopover = new ResponsivePopover({
 			id: oMDCChart.getId() + "-btnChartTypePopover",
-			placement: "Bottom",
+			placement: PlacementType.VerticalPreferredBottom,
 			subHeader: oSubHeader,
 			contentWidth: "25rem"
 		});

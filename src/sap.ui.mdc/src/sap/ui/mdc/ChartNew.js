@@ -787,7 +787,7 @@ sap.ui.define([
                 if (!mInfo) {
                     mInfo = {
                         icon: "sap-icon://vertical-bar-chart",
-                        text: ""
+                        text: "Selected Chart Type: Bar Chart"
                     };
                 }
             }
