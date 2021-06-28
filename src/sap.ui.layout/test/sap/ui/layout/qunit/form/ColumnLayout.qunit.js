@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/m/Label",
-	"sap/m/Text",
-	"sap/base/Log"
+	"sap/m/Text"
 	],
 	function(
 		jQuery,
@@ -32,8 +31,7 @@ sap.ui.define([
 		Title,
 		Toolbar,
 		Label,
-		Text,
-		Log
+		Text
 	) {
 	"use strict";
 
@@ -658,13 +656,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("ColumnContainerData - invalid cells", function(assert) {
-		var oLogSpy = sinon.spy(Log, "error");
-		var oLayoutData = new ColumnContainerData({columnsM: 2, columnsL: 3, columnsXL: 4});
-		oFormContainer1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		var oException;
 
-		assert.equal(oLogSpy.callCount, 1, "Error is logged");
-		oLogSpy.restore();
+		try {
+			var oLayoutData = new ColumnContainerData({columnsM: 2, columnsL: 3, columnsXL: 4});
+			oFormContainer1.setLayoutData(oLayoutData);
+			sap.ui.getCore().applyChanges();
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
 	});
 
 	QUnit.test("order of elements", function(assert) {
@@ -913,16 +915,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("invalid content", function(assert) {
-		var oLogSpy = sinon.spy(Log, "error");
-
 		var oToolbar = new Toolbar("TB1");
-		oFormElement1.addField(oToolbar);
-		sap.ui.getCore().applyChanges();
+		var oException;
 
-		assert.equal(oLogSpy.callCount, 1, "Error is logged");
+		try {
+			oFormElement1.addField(oToolbar);
+			sap.ui.getCore().applyChanges();
+		} catch (e) {
+			oException = e;
+		}
 
+		assert.ok(oException, "exception fired");
 		oToolbar.destroy();
-		oLogSpy.restore();
 	});
 
 	QUnit.test("getLayoutDataForDelimiter", function(assert) {
