@@ -3576,7 +3576,7 @@ sap.ui.define([
 				}, this);
 		}
 
-		return bIsKeepAliveSupported;
+		return !!bIsKeepAliveSupported;
 	};
 
 	/**
