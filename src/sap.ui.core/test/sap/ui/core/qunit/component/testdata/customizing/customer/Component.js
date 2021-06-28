@@ -71,6 +71,22 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 							type: "JS"
 						}
 					},
+					"testdata.customizing.sap.Sub4Typed": {
+						"extension42": {
+							className: "sap.ui.core.Fragment",
+							fragmentName: "testdata.customizing.customer.JSCustomFragWithCustomAction",
+							type: "JS"
+						},
+						"extension43": {
+							className: "sap.ui.core.mvc.View",
+							viewName: "module:testdata/customizing/customer/TypedCustomSubSubView"
+						},
+						"extension45": {
+							className: "sap.ui.core.Fragment",
+							fragmentName: "testdata.customizing.customer.CustomTextViewFrag",
+							type: "JS"
+						}
+					},
 					"testdata.customizing.customer.CustomSubSubView1": {
 						"extension2": {
 							className: "sap.ui.core.Fragment",
@@ -112,6 +128,11 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 							"visible": false
 						}
 					},
+					"testdata.customizing.sap.Sub4Typed": {
+						"typedCustomizableText1": {
+							"visible": false
+						}
+					},
 					"testdata.customizing.sap.Sub5": {
 						"Button2": {
 							"visible": false
@@ -124,6 +145,11 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 						"controllerName": "testdata.customizing.customer.Sub2ControllerExtension"
 					},
 					"testdata.customizing.sap.Sub4": {
+						"controllerNames": [
+							"testdata.customizing.customer.Sub4ControllerExtension"
+						]
+					},
+					"testdata.customizing.sap.Sub4Typed": {
 						"controllerNames": [
 							"testdata.customizing.customer.Sub4ControllerExtension"
 						]
