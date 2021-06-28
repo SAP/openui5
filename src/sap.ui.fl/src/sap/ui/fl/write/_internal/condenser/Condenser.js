@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/isEmptyObject",
+	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/changes/Utils",
@@ -19,7 +19,7 @@ sap.ui.define([
 ], function(
 	each,
 	isPlainObject,
-	isEmptyObject,
+	Log,
 	JsControlTreeModifier,
 	Core,
 	ChangesUtils,
@@ -475,14 +475,29 @@ sap.ui.define([
 			if (!bUnclassifiedChanges) {
 				Measurement.start("Condenser_handleIndexRelatedChanges", "handle index related changes - CondenserClass", ["sap.ui.fl", "Condenser"]);
 
+				var bSuccess = true;
 				var aCondenserInfos = getCondenserInfos(mReducedChanges, []);
-
-				Measurement.start("Condenser_sort", "sort index related changes - CondenserClass", ["sap.ui.fl", "Condenser"]);
-				var aReducedIndexRelatedChanges = UIReconstruction.sortIndexRelatedChanges(mUIReconstructions, aCondenserInfos);
+				try {
+					Measurement.start("Condenser_sort", "sort index related changes - CondenserClass", ["sap.ui.fl", "Condenser"]);
+					var aReducedIndexRelatedChanges = UIReconstruction.sortIndexRelatedChanges(mUIReconstructions, aCondenserInfos);
+				} catch (oError) {
+					// an error here has to be treated similar to if there were some unclassified changes
+					// TODO: could be improved to only add all the changes of that specific container
+					Log.error("Error during Condensing: " + oError.message, "No Condensing performed for index-relevant changes.");
+					bSuccess = false;
+				}
 				Measurement.end("Condenser_sort");
 
-				UIReconstruction.swapChanges(aReducedIndexRelatedChanges, aReducedChanges);
-				aReducedChanges = handleChangeUpdate(aCondenserInfos, aReducedChanges);
+				if (bSuccess) {
+					UIReconstruction.swapChanges(aReducedIndexRelatedChanges, aReducedChanges);
+					aReducedChanges = handleChangeUpdate(aCondenserInfos, aReducedChanges);
+				} else {
+					aAllIndexRelatedChanges.forEach(function(oChange) {
+						oChange.condenserState = "select";
+					});
+					addAllIndexRelatedChanges(aReducedChanges, aAllIndexRelatedChanges);
+					sortByInitialOrder(aChanges, aReducedChanges);
+				}
 
 				Measurement.end("Condenser_handleIndexRelatedChanges");
 			}

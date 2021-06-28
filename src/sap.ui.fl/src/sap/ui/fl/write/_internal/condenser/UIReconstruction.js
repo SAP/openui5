@@ -331,6 +331,7 @@ sap.ui.define([
 		forEveryMapInMap(mContainers, function(mAggregations, sContainerKey, aCondenserInfos, sAggregationName) {
 			var aTargetElementIds = mUIReconstructions[sContainerKey][sAggregationName][Utils.TARGET_UI];
 			var aInitialElementIds = mUIReconstructions[sContainerKey][sAggregationName][Utils.INITIAL_UI];
+			var bCorrectSortingFound = true;
 
 			// Verify whether the algorithm should be ready before ;)
 			if (
@@ -339,21 +340,26 @@ sap.ui.define([
 			) {
 				sortAscendingByTargetIndex(aCondenserInfos);
 			} else if (!isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialElementIds, aTargetElementIds, aCondenserInfos)) {
-				var abort = false;
+				bCorrectSortingFound = false;
 				var iTimes = aCondenserInfos.length;
-				while (iTimes !== 0 && !abort) {
+				while (iTimes !== 0 && !bCorrectSortingFound) {
 					var iOldIndex = 0;
 					var iNewIndex = 1;
-					// implement intelligent / efficient sorting  -> smart sort
-					while (iNewIndex < aCondenserInfos.length && !abort) {
+					// TODO implement intelligent / efficient sorting  -> smart sort
+					while (iNewIndex < aCondenserInfos.length && !bCorrectSortingFound) {
 						shiftElement(aCondenserInfos, iOldIndex, iNewIndex);
-						abort = isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialElementIds, aTargetElementIds, aCondenserInfos);
+						bCorrectSortingFound = isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialElementIds, aTargetElementIds, aCondenserInfos);
 						iOldIndex++;
 						iNewIndex++;
 					}
 					iTimes--;
 				}
 			}
+
+			if (!bCorrectSortingFound) {
+				throw Error("no correct sorting found for the container: " + sContainerKey);
+			}
+
 			aCondenserInfos.forEach(function(oCondenserInfo) {
 				aSortedIndexRelatedChanges = aSortedIndexRelatedChanges.concat(oCondenserInfo.change);
 			});

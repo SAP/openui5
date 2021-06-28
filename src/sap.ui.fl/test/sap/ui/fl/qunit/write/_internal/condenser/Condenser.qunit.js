@@ -3,6 +3,7 @@
 sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
 	// "sap/ui/core/ComponentContainer",
+	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	// "sap/ui/core/UIComponent",
 	// "sap/ui/mdc/TableDelegate",
@@ -17,6 +18,7 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	// ComponentContainer,
+	Log,
 	JsControlTreeModifier,
 	// UIComponent,
 	// TableDelegate,
@@ -257,6 +259,27 @@ sap.ui.define([
 				assert.equal(aRemainingChanges[1].getChangeType(), COMBINE_CHANGE_TYPE, sChangeTypeMsg + COMBINE_CHANGE_TYPE);
 				assert.equal(aRemainingChanges[2].getChangeType(), RENAME_FIELD_CHANGE_TYPE, sChangeTypeMsg + RENAME_FIELD_CHANGE_TYPE);
 				assert.equal(aRemainingChanges[3].getChangeType(), SPLIT_CHANGE_TYPE, sChangeTypeMsg + SPLIT_CHANGE_TYPE);
+			});
+		});
+
+		// Condenser is not able to find the correct sorting of the given changes -> abort and skip condensing for that container
+		QUnit.test("move and add within one group - condense not possible", function(assert) {
+			var oErrorLog = sandbox.stub(Log, "error");
+			return loadApplyCondenseChanges.call(this, "addMoveNoCondensePossible.json", 3, 3, assert)
+			.then(revertAndApplyNew.bind(this))
+			.then(function() {
+				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
+				var aGroups = oSmartForm.getGroups();
+				var aFirstGroupElements = aGroups[0].getGroupElements();
+				// Initial UI [ Name, Victim, Code ]
+				// Target UI [ Victim, Code, Amount, Name ]
+				assert.strictEqual(aFirstGroupElements.length, 4, sContainerElementsMsg + 4);
+				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sVictimFieldId);
+				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sCompanyCodeFieldId);
+				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 2) + sComplexProperty01FieldId);
+				assert.strictEqual(aFirstGroupElements[3].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 3) + sNameFieldId);
+
+				assert.ok(oErrorLog.calledWith("Error during Condensing: no correct sorting found for the container: Comp1---idMain1--GeneralLedgerDocument", "No Condensing performed for index-relevant changes."), "the correct error was logged");
 			});
 		});
 
