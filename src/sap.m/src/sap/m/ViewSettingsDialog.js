@@ -2399,7 +2399,7 @@ function(
 		if (aPresetFilterItems.length) {
 			oListItem = new StandardListItem({
 				id: this._presetFilterList.getId() + "-none" + LIST_ITEM_SUFFIX,
-				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
+				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM_FILTER"),
 				selected : !!this.getSelectedPresetFilterItem()
 			});
 			this._presetFilterList.addItem(oListItem);
