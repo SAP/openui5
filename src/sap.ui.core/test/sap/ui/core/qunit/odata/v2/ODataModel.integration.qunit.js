@@ -114,15 +114,12 @@ sap.ui.define([
 	 *   be overwritten by the following default test parameters:
 	 * @param {sap.ui.model.odata.CountMode} [mModelParameters.defaultCountMode=None]
 	 *   Sets the default count mode for the model
-	 * @param {boolean} [mModelParameters.useBatch=false]
-	 *   Whether all requests should be sent in batch requests
 	 * @returns {sap.ui.model.odata.v2.ODataModel} The model
 	 */
 	function createModel(sServiceUrl, mModelParameters) {
 		var mDefaultParameters = {
 				defaultCountMode : CountMode.None,
-				serviceUrl : sServiceUrl,
-				useBatch : false
+				serviceUrl : sServiceUrl
 			};
 
 		return new ODataModel(Object.assign(mDefaultParameters, mModelParameters));
@@ -1524,54 +1521,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 *
-	 * Creates a test with the given title and executes viewStart with the given parameters.
-	 *
-	 * @param {string} sTitle The title of the test case
-	 * @param {string} sView The XML snippet of the view
-	 * @param {object} mResponseByRequest A map containing the request as key
-	 *   and response as value
-	 * @param {object|object[]} mValueByControl A map or an array of maps containing control id as
-	 *   key and the expected control values as value
-	 * @param {string|sap.ui.model.odata.v4.ODataModel} [vModel]
-	 *   The model (or the name of a function at <code>this</code> which creates it); it is attached
-	 *   to the view and to the test instance.
-	 *   If no model is given, the <code>GWSAMPLE_BASIC</code> model is created and used.
-	 * @param {function} [fnAssert]
-	 *   A function containing additional assertions such as expected log messages which is called
-	 *   just before view creation with the test as "this"
-	 */
-	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel, fnAssert) {
-
-		QUnit.test(sTitle, function (assert) {
-			var sControlId, sRequest, that = this;
-
-			function expectChanges(mValueByControl) {
-				for (sControlId in mValueByControl) {
-					that.expectChange(sControlId, mValueByControl[sControlId]);
-				}
-			}
-
-			for (sRequest in mResponseByRequest) {
-				this.expectRequest(sRequest, mResponseByRequest[sRequest]);
-			}
-			if (Array.isArray(mValueByControl)) {
-				mValueByControl.forEach(expectChanges);
-			} else {
-				expectChanges(mValueByControl);
-			}
-			if (typeof vModel === "string") {
-				vModel = this[vModel]();
-			}
-			if (fnAssert) {
-				fnAssert.call(this);
-			}
-
-			return this.createView(assert, sView, vModel);
-		});
-	}
-
 	//*********************************************************************************************
 	// Integration test for correct path calculation during ODataModel#read(...).
 	// JIRA: CPOUI5MODELS-404
@@ -1737,7 +1686,7 @@ sap.ui.define([
 			+ (bCanonical ? "; using canonical requests" : "");
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModel({tokenHandling : false, useBatch : true}),
+		var oModel = createSalesOrdersModel({tokenHandling : false}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -1887,7 +1836,7 @@ sap.ui.define([
 			+ "; 'to 1' navigation property in the middle already read";
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModel({tokenHandling : false, useBatch : true}),
+		var oModel = createSalesOrdersModel({tokenHandling : false}),
 			that = this;
 
 		oFixture.previousReads.forEach(function (oPreviousRead) {
@@ -1925,7 +1874,7 @@ sap.ui.define([
 	// JIRA: CPOUI5MODELS-404
 	// BCP: 2080464216
 	QUnit.test("ODataModel#read: not addressable 'to n' navigation property" , function (assert) {
-		var oModel = createSpecialCasesModel({tokenHandling : false, useBatch : true}),
+		var oModel = createSpecialCasesModel({tokenHandling : false}),
 			sResourcePath = "C_SubscrpnProductChargeTP('ID')/to_AllUserContactCards",
 			that = this;
 
@@ -1953,7 +1902,7 @@ sap.ui.define([
 	// JIRA: CPOUI5MODELS-404
 	// BCP: 2080464216
 	QUnit.test("ODataModel#read: not addressable 'to 1' navigation property" , function (assert) {
-		var oModel = createSpecialCasesModel({tokenHandling : false, useBatch : true}),
+		var oModel = createSpecialCasesModel({tokenHandling : false}),
 			sResourcePath = "C_SubscrpnProductChargeTP('ID')/to_CreatedByUserContactCard",
 			that = this;
 
@@ -1984,7 +1933,7 @@ sap.ui.define([
 	path : "?sap-client=100"
 }].forEach(function (oFixture) {
 	QUnit.test("ODataModel#read: path with query string: " + oFixture.path, function (assert) {
-		var oModel = createSalesOrdersModel({tokenHandling : false, useBatch : true}),
+		var oModel = createSalesOrdersModel({tokenHandling : false}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -2005,20 +1954,28 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Read and display data for a single field in a form
 	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
-	testViewStart("Minimal integration test", '\
+	QUnit.test("Minimal integration test (useBatch=false)", function (assert) {
+		var oModel = createSalesOrdersModel({useBatch : false}),
+			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
-</FlexBox>',
-		{"SalesOrderSet('1')" : {SalesOrderID : "1"}},
-		[{id : null}, {id : "1"}]
-	);
+</FlexBox>';
+
+		this.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1"
+			})
+			.expectChange("id", null)
+			.expectChange("id", "1");
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
 
 	//*********************************************************************************************
 	// Scenario: Read and display data for a single field in a form
 	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	QUnit.test("Minimal integration test (useBatch=true)", function (assert) {
-		var oModel = createSalesOrdersModel({useBatch : true}),
-			sView = '\
+		var sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
 </FlexBox>';
@@ -2031,14 +1988,14 @@ sap.ui.define([
 			.expectChange("id", "1");
 
 		// code under test
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView);
 	});
 
 	//*********************************************************************************************
 	// Scenario: A failed token HEAD request expects a following token GET request. A failed token
 	// GET request leads to an error message and corresponding console log.
 	QUnit.test("Messages: Failing token requests with logging", function (assert) {
-		var oModel = createSalesOrdersModel({persistTechnicalMessages : true, useBatch : true}),
+		var oModel = createSalesOrdersModel({persistTechnicalMessages : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
@@ -2081,8 +2038,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Read and display collection data for a table with a single field
 	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
-	QUnit.test("Minimal integration test with collection data", function (assert) {
-		var sView = '\
+	QUnit.test("Minimal integration test with collection data (useBatch=false)", function (assert) {
+		var oModel = createSalesOrdersModel({useBatch : false}),
+			sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
 	<Text id="id" text="{SalesOrderID}" />\
 </Table>';
@@ -2096,15 +2054,14 @@ sap.ui.define([
 			.expectChange("id", ["0500000001", "0500000002"]);
 
 		// code under test
-		return this.createView(assert, sView);
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
 	// Scenario: Read and display collection data for a table with a single field
 	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	QUnit.test("Minimal integration test with collection data (useBatch=true)", function (assert) {
-		var oModel = createSalesOrdersModel({useBatch : true}),
-			sView = '\
+		var sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
 	<Text id="id" text="{SalesOrderID}" />\
 </Table>';
@@ -2119,7 +2076,7 @@ sap.ui.define([
 			.expectChange("id", ["0500000001", "0500000002"]);
 
 		// code under test
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView);
 	});
 
 	//*********************************************************************************************
@@ -2135,7 +2092,7 @@ sap.ui.define([
 				requestFailed : function () {},
 				requestSent : function () {}
 			},
-			oModel = createSalesOrdersModel({useBatch : true}),
+			oModel = createSalesOrdersModel(),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
@@ -2196,7 +2153,7 @@ sap.ui.define([
 				requestFailed : function () {},
 				requestSent : function () {}
 			},
-			oModel = createSalesOrdersModel({useBatch : true}),
+			oModel = createSalesOrdersModel(),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
@@ -2264,7 +2221,7 @@ sap.ui.define([
 				requestFailed : function () {},
 				requestSent : function () {}
 			},
-			oModel = createSalesOrdersModel({useBatch : true}),
+			oModel = createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
 	<Text text="{SalesOrderID}" />\
@@ -2317,7 +2274,7 @@ sap.ui.define([
 	// "text/plain": A persistent, generic UI message is created to show the issue on the UI.
 	// BCP: 002075129500003079342020
 	QUnit.test("$batch error handling: complete batch fails, plain error", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
 	<Text text="{SalesOrderID}" />\
@@ -2393,8 +2350,7 @@ sap.ui.define([
 	// Scenario: Message with a simple target in a complex data type
 	// JIRA: CPOUI5MODELS-35
 	QUnit.test("Messages: simple target with complex data type", function (assert) {
-		var oModel = createSalesOrdersModel(),
-			oResponseMessage = this.createResponseMessage("Address/City", "Foo"),
+		var oResponseMessage = this.createResponseMessage("Address/City", "Foo"),
 			sView = '\
 <FlexBox binding="{/BusinessPartnerSet(\'1\')}">\
 	<Text id="CompanyName" text="{CompanyName}" />\
@@ -2402,7 +2358,8 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("BusinessPartnerSet('1')", {
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet('1')", {
 				CompanyName : "SAP SE",
 				Address : {
 					City : "Walldorf"
@@ -2415,7 +2372,7 @@ sap.ui.define([
 			.expectMessage(oResponseMessage,"/BusinessPartnerSet('1')/");
 
 		// code under test
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView).then(function () {
 			return that.checkValueState(assert, "City", "Error", "Foo");
 		});
 	});
@@ -2431,15 +2388,15 @@ sap.ui.define([
 			+ "error message";
 
 	QUnit.test(sTitle , function (assert) {
-		var oModel = createSalesOrdersModel(),
-			sView = '\
+		var sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text text="{SalesOrderID}" />\
 </FlexBox>';
 
 		this.oLogMock.expects("error").once();
 
-		this.expectRequest("SalesOrderSet('1')", createErrorResponse(oFixture))
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", createErrorResponse(oFixture))
 			.expectMessages([{
 				code : "UF0",
 				fullTarget : "/SalesOrderSet('1')",
@@ -2451,7 +2408,7 @@ sap.ui.define([
 			}]);
 
 		// code under test
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView);
 	});
 });
 
@@ -2461,17 +2418,17 @@ sap.ui.define([
 	// JIRA: CPOUI5MODELS-103
 	QUnit.test("Messages: messages within a response body are not processed if http status code is "
 			+ "'200'", function (assert) {
-		var oModel = createSalesOrdersModel(),
-			sView = '\
+		var sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text text="{SalesOrderID}" />\
 </FlexBox>';
 
-		this.expectRequest("SalesOrderSet('1')", createErrorResponse({statusCode : 200}))
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", createErrorResponse({statusCode : 200}))
 			.expectMessages([]); // clean all expected messages
 
 		// code under test
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView);
 	});
 
 	//*********************************************************************************************
@@ -2479,8 +2436,7 @@ sap.ui.define([
 	// property). Tested with simple type (productName) and complex type (supplierAddress).
 	// JIRA: CPOUI5MODELS-103
 	QUnit.test("Messages: more than one navigation property", function (assert) {
-		var oModel = createSalesOrdersModel(),
-			oMsgProductName = this.createResponseMessage("Name", "Foo"),
+		var oMsgProductName = this.createResponseMessage("Name", "Foo"),
 			oMsgSupplierAddress = this.createResponseMessage("Address/City", "Bar", "warning"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
@@ -2497,7 +2453,8 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderSet('1')", {
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
 				SalesOrderID : "1"
 			})
 			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
@@ -2522,7 +2479,7 @@ sap.ui.define([
 			.expectChange("supplierAddress", null); // expect a later change
 
 		// code under test
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')"
 						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct",
@@ -2584,8 +2541,7 @@ sap.ui.define([
 	// Scenario: Messages are visualized at controls that are bound against the messages' target.
 	// BCP: 2070436327: the data state is updated if unbindProperty is called
 	QUnit.test("Messages: check value state", function (assert) {
-		var oModel = createSalesOrdersModel(),
-			oMsgGrossAmount = this.createResponseMessage("GrossAmount", "Foo", "warning"),
+		var oMsgGrossAmount = this.createResponseMessage("GrossAmount", "Foo", "warning"),
 			oMsgNote = this.createResponseMessage("Note", "Bar"),
 			that = this,
 			sView = '\
@@ -2595,7 +2551,8 @@ sap.ui.define([
 	<Input id="LifecycleStatusDescription" value="{LifecycleStatusDescription}" />\
 </FlexBox>';
 
-		this.expectRequest("SalesOrderSet('1')", {
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
 				GrossAmount : "GrossAmount A",
 				LifecycleStatusDescription : "LifecycleStatusDescription A",
 				Note : "Note A"
@@ -2610,7 +2567,7 @@ sap.ui.define([
 			.expectMessage(oMsgGrossAmount, "/SalesOrderSet('1')/");
 
 		// code under test
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView).then(function () {
 			return Promise.all([
 				that.checkValueState(assert, "Note", "Error", "Bar"),
 				that.checkValueState(assert, "GrossAmount", "Warning", "Foo"),
@@ -2664,14 +2621,14 @@ sap.ui.define([
 				target : "/SalesOrderSet('1')/Note",
 				type : MessageType.Error
 			},
-			oModel = createSalesOrdersModel(),
 			that = this,
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Input id="note" value="{Note}" />\
 </FlexBox>';
 
-		this.expectRequest("SalesOrderSet('1')", {
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
 				SalesOrderID : "1",
 				Note : "NoteA"
 			}, {
@@ -2689,7 +2646,7 @@ sap.ui.define([
 			.expectMessages([oExpectedMessage]);
 
 		// code under test
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView).then(function () {
 			return that.checkValueState(assert, "note", "Error", "Foo");
 		}).then(function () {
 			that.expectRequest("SalesOrderSet('1')", {
@@ -2739,7 +2696,8 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				requestUri : "SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"}
@@ -2853,7 +2811,8 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2",
 				headers : {"sap-message-scope" : "BusinessObject"}
@@ -2951,7 +2910,8 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest(sWCGroupRequest, {
+		this.expectHeadRequest()
+			.expectRequest(sWCGroupRequest, {
 				__metadata : {uri : "/" + sWCGroupRequest},
 				HierarchyRootNode : "10000425",
 				HierarchyParentNode : "00000000",
@@ -3058,7 +3018,8 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderSet('1')", {
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
 				__metadata : {uri : "SalesOrderSet('1')"},
 				GrossAmount : "0.00",
 				SalesOrderID : "1"
@@ -3228,7 +3189,9 @@ usePreliminaryContext : false}}">\
 		var oModel = createSalesOrdersModel({
 				defaultBindingMode : BindingMode.TwoWay,
 				preliminaryContext : true,
-				refreshAfterChange : true
+				refreshAfterChange : true,
+				// in batch mode the value state Error is lost after calling Binding#refresh
+				useBatch : false
 			}),
 			oNoteInput,
 			sView = '\
@@ -3353,7 +3316,8 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject;
 
-		this.expectRequest({
+		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
@@ -3444,7 +3408,8 @@ usePreliminaryContext : false}}">\
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
@@ -3583,7 +3548,8 @@ usePreliminaryContext : false}}">\
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
@@ -3736,7 +3702,8 @@ usePreliminaryContext : false}}">\
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
@@ -3929,7 +3896,8 @@ usePreliminaryContext : false}}">\
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
@@ -4038,7 +4006,8 @@ usePreliminaryContext : false}}">\
 		var oModel = createSalesOrdersModelMessageScope({
 				canonicalRequests : true,
 				preliminaryContext : true,
-				refreshAfterChange : false
+				refreshAfterChange : false,
+				useBatch : false
 			}),
 			oSalesOrderNoteError = this.createResponseMessage("Note"),
 			oSalesOrderToBusinessPartnerAddress
@@ -4252,7 +4221,8 @@ usePreliminaryContext : false}}">\
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
@@ -4310,10 +4280,7 @@ usePreliminaryContext : false}}">\
 		oModel.setMessageScope(sMessageScope);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectHeadRequest(bWithMessageScope
-					? {"sap-message-scope" : "BusinessObject"}
-					: {})
-				.expectRequest({
+			that.expectRequest({
 					deepPath :
 						"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
 					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
@@ -4374,7 +4341,8 @@ usePreliminaryContext : false}}">\
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
+			.expectRequest({
 				deepPath : "/SalesOrderSet",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet?$skip=0&$top=2"
@@ -4478,7 +4446,8 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
@@ -4524,10 +4493,7 @@ usePreliminaryContext : false}}">\
 	// JIRA: CPOUI5MODELS-106
 	// BCP: 2170093336: ensure that key predicates are decoded before creating message filter
 	QUnit.test("Filter table by items with messages", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({
-				preliminaryContext : true,
-				useBatch : true
-			}),
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
 			oItemsBinding,
 			oSalesOrderDeliveryStatusAndToItemError = this.createResponseMessage(
 				["DeliveryStatus", "ToLineItems(SalesOrderID='1',ItemPosition='40~2~')/Quantity"]),
@@ -4708,7 +4674,8 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
 				deepPath : "/CarrierCollection('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "CarrierCollection('1')"
@@ -4799,7 +4766,8 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')"
@@ -4937,10 +4905,7 @@ usePreliminaryContext : false}}">\
 	sTitle : "Create 2 entities with error response"
 }].forEach(function (oFixture) {
 	QUnit.test("ODataModel#createEntry: " + oFixture.sTitle, function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({
-				canonicalRequests : true,
-				useBatch : true
-			}),
+		var oModel = createSalesOrdersModelMessageScope({canonicalRequests : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -5014,7 +4979,7 @@ usePreliminaryContext : false}}">\
 	// The created entity is deleted and no request is sent.
 	// JIRA: CPOUI5MODELS-198
 	QUnit.test("ODataModel#createEntry: discard created entity", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			that = this;
 
 		return this.createView(assert, /*sView*/"", oModel).then(function () {
@@ -5051,10 +5016,7 @@ usePreliminaryContext : false}}">\
 				deepPath : "/$~key~",
 				requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
 			},
-			oModel = createSalesOrdersModelMessageScope({
-				canonicalRequests : true,
-				useBatch : true
-			}),
+			oModel = createSalesOrdersModelMessageScope({canonicalRequests : true}),
 			oNoteError = this.createResponseMessage("Note"),
 			oPOSTRequest = {
 				created : true,
@@ -5187,10 +5149,7 @@ usePreliminaryContext : false}}">\
 	// both the POST and the GET request contain error responses. If the response to the GET request
 	// has the status code 424, we do not create a message.
 	QUnit.test("createEntry: ignore status code 424 of GET in batch with POST", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({
-				canonicalRequests : true,
-				useBatch : true
-			}),
+		var oModel = createSalesOrdersModelMessageScope({canonicalRequests : true}),
 			sView = '\
 <FlexBox id="productDetails"\
 	binding="{path : \'ToProduct\', parameters : {select : \'Name\'}}">\
@@ -5274,7 +5233,7 @@ usePreliminaryContext : false}}">\
 	// the GET request for the automatic expansion of the given navigation properties.
 	// JIRA: CPOUI5MODELS-198
 	QUnit.test("createEntry: abort automatic expand of navigation properties", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			that = this;
 
 		return this.createView(assert, /*sView*/"", oModel).then(function () {
@@ -5299,7 +5258,7 @@ usePreliminaryContext : false}}">\
 	// fullTarget.
 	// BCP: 002028376600002197422020
 	QUnit.test("createEntry: update deep path with resulting entity", function (assert) {
-		var oModel = createSalesOrdersModel({useBatch : true}),
+		var oModel = createSalesOrdersModel(),
 			oNoteError = this.createResponseMessage("Note"),
 			sView = '\
 <FlexBox id="page">\
@@ -5357,7 +5316,7 @@ usePreliminaryContext : false}}">\
 	// not appear in the message's calculated fullTarget.
 	// BCP: 002028376600002197422020
 	QUnit.test("createEntry: update deep path with resulting entity (deep)", function (assert) {
-		var oModel = createSalesOrdersModel({refreshAfterChange : false, useBatch : true}),
+		var oModel = createSalesOrdersModel({refreshAfterChange : false}),
 			oNoteError = this.createResponseMessage("Note"),
 			sView = '\
 <FlexBox binding="{path : \'/SalesOrderSet(\\\'1\\\')\',\
@@ -5438,7 +5397,7 @@ usePreliminaryContext : false}}">\
 	// the same as the fullTarget of associated messages.
 	// BCP: 002028376600002197422020
 	QUnit.test("createEntry: no change of deep path for non-collections", function (assert) {
-		var oModel = createSalesOrdersModel({useBatch : true}),
+		var oModel = createSalesOrdersModel(),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}" id="page">\
 	<FlexBox id="details">\
@@ -5504,7 +5463,6 @@ usePreliminaryContext : false}}">\
 	// (ToProduct/ToSupplier). Element bindings on the second navigation property have a valid
 	// context (not null), so that relative bindings underneath hold data as expected.
 	// BCP: 2070126588
-	//TODO use testViewStart to shorten test
 	QUnit.test("BCP 2070126588: binding to nested 0..1 navigation property", function (assert) {
 		var sView = '\
 <FlexBox id="objectPage" binding="{\
@@ -5524,7 +5482,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderLineItemSet"
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderLineItemSet"
 					+ "(SalesOrderID='0500000005',ItemPosition='0000000010')"
 					+ "?$expand=ToProduct%2cToProduct%2fToSupplier"
 					+ "&$select=SalesOrderID%2cItemPosition%2cToProduct%2fProductID"
@@ -5580,7 +5539,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<Input id="note" value="{Note}" />\
 </FlexBox>';
 
-		this.expectRequest({
+		this.expectHeadRequest(bIsBusinessObject ? {"sap-message-scope" : "BusinessObject"} : {})
+			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bIsBusinessObject ? {"sap-message-scope" : "BusinessObject"} : {},
 				requestUri : "SalesOrderSet('1')"
@@ -5614,7 +5574,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// BCP: 2070060665
 	QUnit.test("BCP 2070060665: Ignore __metadata while updating the changed entities",
 			function (assert) {
-		var oModel = createSalesOrdersModel({refreshAfterChange : false, useBatch : true}),
+		var oModel = createSalesOrdersModel({refreshAfterChange : false}),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Input id="note" value="{Note}" />\
@@ -5683,7 +5643,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// of that response has to be used when sending the second modification to the backend.
 	// BCP: 2080271261
 	QUnit.test("BCP 2080271261: Use latest ETag when sending a request", function (assert) {
-		var oModel = createSalesOrdersModel({refreshAfterChange : false, useBatch : true}),
+		var oModel = createSalesOrdersModel({refreshAfterChange : false}),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Input id="note" value="{Note}" />\
@@ -5774,7 +5734,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	var sTitle = "BCP 2070222122: cleanup child messages for #remove, scope: " + sMessageScope;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			oSalesOrderNoteError = this.createResponseMessage("Note"),
 			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
 				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
@@ -5843,8 +5803,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// of this existing message.
 	// JIRA: CPOUI5MODELS-197
 	QUnit.test("Messages with multiple targets: value state and lifecycle", function (assert) {
-		var oModel = createSalesOrdersModel(),
-			oMsgNoteAndGrossAmount = this.createResponseMessage(["Note", "GrossAmount"], "Foo",
+		var oMsgNoteAndGrossAmount = this.createResponseMessage(["Note", "GrossAmount"], "Foo",
 				"warning"),
 			oMsgGrossAmountAndLifecycleStatus = this.createResponseMessage(
 				["Note", "LifecycleStatusDescription"], "Bar", "error"),
@@ -5856,7 +5815,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<Input id="LifecycleStatusDescription" value="{LifecycleStatusDescription}" />\
 </FlexBox>';
 
-		this.expectRequest("SalesOrderSet('1')", {
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
 				GrossAmount : "GrossAmount A",
 				LifecycleStatusDescription : "LifecycleStatusDescription A",
 				Note : "Note A"
@@ -5870,7 +5830,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectMessage(oMsgNoteAndGrossAmount, "/SalesOrderSet('1')/");
 
 		// code under test
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView).then(function () {
 			return Promise.all([
 				that.checkValueState(assert, "Note", "Warning", "Foo"),
 				that.checkValueState(assert, "GrossAmount", "Warning", "Foo"),
@@ -5912,7 +5872,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 	QUnit.test(sTitle, function (assert) {
 		var oFunctionHandle, fnResolve,
-			oModel = createSpecialCasesModel({tokenHandling : false, useBatch : true}),
+			oModel = createSpecialCasesModel({tokenHandling : false}),
 			oRequestPromise = new Promise(function (resolve) {
 				fnResolve = resolve;
 			}),
@@ -5978,7 +5938,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// collection get the correct full target.
 	// JIRA: CPOUI5MODELS-230
 	QUnit.test("Messages: function import for relative list entry; w/ location", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			oNoteError = this.createResponseMessage("('1')/Note"),
 			oToItem10NoteError = this.createResponseMessage(
 				"('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
@@ -6063,7 +6023,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// collection don't get the correct full target without a location header.
 	// JIRA: CPOUI5MODELS-230
 	QUnit.test("Messages: function import for relative list entry; no location", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			oNoteError = this.createResponseMessage("('1')/Note"),
 			oToItem10NoteError = this.createResponseMessage(
 				"('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
@@ -6153,7 +6113,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			+ bMultipleOccurrences;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			oToBPCompanyNameError = this.createResponseMessage("ToBusinessPartner/CompanyName"),
 			oCompanyNameError = cloneODataMessage(oToBPCompanyNameError, "CompanyName"),
 			oToProductADescriptionError = this.createResponseMessage(
@@ -6256,7 +6216,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			+ bResultingEntityOnUI;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			oCompanyNameError = this.createResponseMessage("CompanyName"),
 			oToProductADescriptionError = this.createResponseMessage("ToProducts('A')/Description"),
 			oProductADescriptionError = cloneODataMessage(oToProductADescriptionError,
@@ -6368,7 +6328,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// as full target.
 	// JIRA: CPOUI5MODELS-230
 	QUnit.test("Messages: function import with same entity twice on UI", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			oCompanyNameError = this.createResponseMessage("CompanyName"),
 			oToProductADescriptionError = this.createResponseMessage("ToProducts('A')/Description"),
 			oProductADescriptionError = cloneODataMessage(oToProductADescriptionError,
@@ -6490,8 +6450,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test(sTitle, function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({
 				defaultBindingMode : "TwoWay",
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			sView = '\
 <FlexBox binding="{/BusinessPartnerSet(\'100\')}">\
@@ -6581,8 +6540,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test("Messages: function import with expand and lazy parameters", function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({
 				defaultBindingMode : "TwoWay",
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			sView = '\
 <FlexBox id="form">\
@@ -6662,7 +6620,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// deep path.
 	// JIRA: CPOUI5MODELS-262
 	QUnit.test("Messages: function import with callback function", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Table items="{path : \'ToLineItems\', parameters : {transitionMessagesOnly : true}}">\
@@ -6781,7 +6739,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-262
 	QUnit.test("Messages: function import with callback function overrides calculated deepPath",
 			function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			oNoteError = this.createResponseMessage("('1')/Note"),
 			oToItem10NoteError = this.createResponseMessage(
 				"('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
@@ -6880,8 +6838,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// bindings.
 	// JIRA: CPOUI5MODELS-290
 	QUnit.test("ODataPropertyBindings and CompositeBindings: ignoreMessages", function (assert) {
-		var oModel = createSalesOrdersModel(),
-			oNoteWarning = this.createResponseMessage("Note", "Foo", "warning"),
+		var oNoteWarning = this.createResponseMessage("Note", "Foo", "warning"),
 			sView = '\
 <FlexBox id="objectPage" binding="{/SalesOrderSet(\'1\')}">\
 	<Input id="Note0" value="{Note}" />\
@@ -6907,7 +6864,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderSet('1')", {
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
 				Note : "Note",
 				SalesOrderID : '1'
 			}, {"sap-message" : getMessageHeader(oNoteWarning)})
@@ -6920,7 +6878,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectMessage(oNoteWarning, "/SalesOrderSet('1')/");
 
 		// code under test
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView).then(function () {
 			assert.strictEqual(that.oView.byId("Composite0").getValue(), "1 - Note");
 			assert.strictEqual(that.oView.byId("Composite1").getValue(), "1 - Note");
 			assert.strictEqual(that.oView.byId("Composite2").getValue(), "1 - Note");
@@ -6948,8 +6906,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// of <code>ignoreMessages</code> wins over automatic determination.
 	// JIRA: CPOUI5MODELS-302
 	QUnit.test("ignoreMessages for sap.ui.model.type.Currency", function (assert) {
-		var oModel = createSalesOrdersModel(),
-			oCurrencyCodeWarning = this.createResponseMessage("CurrencyCode", "Foo", "warning"),
+		var oCurrencyCodeWarning = this.createResponseMessage("CurrencyCode", "Foo", "warning"),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Input id="Amount0" value="{\
@@ -6999,7 +6956,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderSet('1')", {
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
 				CurrencyCode : "JPY",
 				GrossAmount : "12345",
 				SalesOrderID : "1"
@@ -7014,7 +6972,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectMessage(oCurrencyCodeWarning, "/SalesOrderSet('1')/");
 
 		// code under test
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView).then(function () {
 			return Promise.all([
 				that.checkValueState(assert, "Amount0", "None", ""),
 				that.checkValueState(assert, "Amount1", "Warning", "Foo"),
@@ -7035,10 +6993,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-250
 	QUnit.test("Messages: Handle technical messages as persistent", function (assert) {
 		var oErrorMessage = createErrorResponse({message : "Not Found", statusCode : 404}),
-			oModel = createSalesOrdersModel({
-				persistTechnicalMessages : true,
-				useBatch : true
-			}),
+			oModel = createSalesOrdersModel({persistTechnicalMessages : true}),
 			sView = '\
 <Table items="{path : \'/SalesOrderSet\', parameters : {select : \'foo\'}}">\
 	<Text text="{SalesOrderID}" />\
@@ -7092,8 +7047,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oErrorMessage = createErrorResponse({message : "Not Found", statusCode : 404}),
 			oModel = createSalesOrdersModel({
 				persistTechnicalMessages : bPersistTechnicalMessages,
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
@@ -7172,7 +7126,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-339
 	QUnit.test("Messages: GET returns 204 No Content", function (assert) {
 		var oBusinessPartnerError = this.createResponseMessage("ToBusinessPartner"),
-			oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			oModel = createSalesOrdersModelMessageScope(),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<FlexBox binding="{ToBusinessPartner}">\
@@ -7220,7 +7174,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test(sTitle, function (assert) {
 		var oCompanyNameError1 = this.createResponseMessage("CompanyName"),
 			oCompanyNameError2 = this.createResponseMessage("CompanyName"),
-			oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			oModel = createSalesOrdersModelMessageScope(),
 			oToProductADescriptionError1
 				= this.createResponseMessage("ToProducts('A')/Description"),
 			oProductADescriptionError1 = cloneODataMessage(oToProductADescriptionError1,
@@ -7331,7 +7285,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-287
 	QUnit.test("Messages: function import returning a collection (adjustDeepPath)",
 			function (assert) {
-		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+		var oModel = createSalesOrdersModelMessageScope(),
 			oQuantityError = this.createResponseMessage(
 				"(SalesOrderID='1',ItemPosition='20~1~')/Quantity"),
 			sView = '\
@@ -7431,8 +7385,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test("callFunction: expand navigation properties in the same $batch", function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({
 				canonicalRequests : true,
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			sView = '\
 <FlexBox id="productDetails">\
@@ -7555,7 +7508,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 	QUnit.test(sTitle, function (assert) {
 		var oCallFunctionResult,
-			oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			oModel = createSalesOrdersModelMessageScope(),
 			that = this;
 
 		oModel.setDeferredGroups(["change", "callFunction"]);
@@ -7607,8 +7560,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test("callFunction: with given expand parameter fails", function (assert) {
 		var oModel = createSalesOrdersModelMessageScope({
 				canonicalRequests : true,
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			that = this;
 
@@ -7711,7 +7663,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: TreeTable on an ObjectPage bound to a preliminary context.
 	// BCP: 2080201638
 	QUnit.test("TreeTable with preliminary context", function (assert) {
-		var oModel = createAllowanceModel({useBatch : true}),
+		var oModel = createAllowanceModel(),
 			sObjectUri = "C_DFS_AllwncReq(guid'fa163e35-93d9-1eda-b19c-c26490674ab4')",
 			//use row count 1, as there are 10 null change events otherwise
 			sView = '\
@@ -7768,7 +7720,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// BCP: 2070497030
 	// JIRA: CPOUI5MODELS-379
 	QUnit.test("ODataTreeBindingFlat: refreshAfterChange leads to GET", function (assert) {
-		var oModel = createSpecialCasesModel({refreshAfterChange : true, useBatch : true}),
+		var oModel = createSpecialCasesModel({refreshAfterChange : true}),
 			sView = '\
 <t:TreeTable id="table"\
 		rows="{\
@@ -7887,7 +7839,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderSet('1')", {
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
 				CurrencyCode : "USD",
 				GrossAmount : "10",
 				SalesOrderID : "1"
@@ -7964,7 +7917,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-336
 	QUnit.test("CompositeBinding: Set binding context; one model instance for two named models",
 			function (assert) {
-		var oModel = createSalesOrdersModel({useBatch : true}),
+		var oModel = createSalesOrdersModel(),
 			sView = '\
 <Table id="SalesOrderList" items="{/SalesOrderSet}">\
 	<Text id="SalesOrderNote" text="{Note}" />\
@@ -8102,7 +8055,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// UI5 built-in CLDR information for formatting and parsing.
 	// JIRA: CPOUI5MODELS-423
 	QUnit.test("OData Unit type without unit customizing falls back to CLDR", function (assert) {
-		var oModel = createSalesOrdersModel({defaultBindingMode : "TwoWay", useBatch : true}),
+		var oModel = createSalesOrdersModel({defaultBindingMode : "TwoWay"}),
 			sView = '\
 <FlexBox binding="{/ProductSet(\'P1\')}">\
 	<Input id="weight" value="{\
@@ -8156,7 +8109,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// uses the UI5 built-in CLDR information for formatting and parsing.
 	// JIRA: CPOUI5MODELS-423
 	QUnit.test("OData Currency type without customizing falls back to CLDR", function (assert) {
-		var oModel = createSalesOrdersModel({defaultBindingMode : "TwoWay", useBatch : true}),
+		var oModel = createSalesOrdersModel({defaultBindingMode : "TwoWay"}),
 			sView = '\
 <FlexBox binding="{/ProductSet(\'P1\')}">\
 	<Input id="price" value="{\
@@ -8235,7 +8188,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </t:TreeTable>',
 			that = this;
 
-		this.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel%20eq%200"
+		this.expectHeadRequest()
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel%20eq%200"
 				+ "&$skip=0&$top=2&$inlinecount=allpages",
 				{
 					__count : "273",
@@ -8327,8 +8281,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				defaultBindingMode : "TwoWay",
 				metadataUrlParams : {"customMeta" : "custom/meta"},
 				serviceUrlParams : {"customService" : "custom/service"},
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			sView = '\
 <FlexBox binding="{/ProductSet(\'P1\')}">\
@@ -8412,8 +8365,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				defaultBindingMode : "TwoWay",
 				metadataUrlParams : {"customMeta" : "custom/meta"},
 				serviceUrlParams : {"customService" : "custom/service"},
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			sView = '\
 <FlexBox binding="{/ProductSet(\'P1\')}">\
@@ -8502,8 +8454,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oAmountControl, oCurrencyControl,
 			oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=baz", {
 				defaultBindingMode : "TwoWay",
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			sView = '\
 <FlexBox binding="{/ProductSet(\'P1\')}">\
@@ -8643,8 +8594,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oMeasureControl, oUnitControl,
 			oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=baz", {
 				defaultBindingMode : "TwoWay",
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			sView = '\
 <FlexBox binding="{/ProductSet(\'P1\')}">\
@@ -8927,8 +8877,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oModel = createSalesOrdersModel({
 				defaultBindingMode : BindingMode.TwoWay,
 				refreshAfterChange : false,
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="2">\
