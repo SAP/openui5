@@ -61,6 +61,11 @@ sap.ui.define([
 				"sap.ui.fl.util.ManagedObjectModel": { exclude: ["data", "name", "object"] } // setters throw when called after initialization
 			}
 		},
+		"sap.ui.unified": {
+			elements: {
+				"sap.ui.unified._ColorPickerBox": NOT_A_MODULE
+			}
+		},
 
 		/*
 		 * sapui5.runtime
