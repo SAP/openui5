@@ -500,7 +500,7 @@ sap.ui.define([
 			var bValid = sInputValue.trim() === "" || !!oVal;
 
 			if (!bValid) {
-				this.setValue({ operator: "PARSEERROR", values: ["Wrong value!", sInputValue] });
+				this.setValue({ operator: "PARSEERROR", values: [oResourceBundle.getText("DDR_WRONG_VALUE"), sInputValue] });
 			} else {
 				this.setValue(oVal);
 			}

@@ -220,15 +220,18 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 				case Keys.NEXTYEARS:
 					return [
 						new DynamicDateValueHelpUIType({
-							text: "Value for X:", type: "int"
+							text: _resourceBundle.getText("DDR_LASTNEXTX_LABEL"),
+							type: "int"
 						})];
 				case Keys.TODAYFROMTO:
 					return [
 						new DynamicDateValueHelpUIType({
-							text: "Days before:", type: "int"
+							text: _resourceBundle.getText("DDR_TODAYFROMTO_FROM_LABEL"),
+							type: "int"
 						}),
 						new DynamicDateValueHelpUIType({
-							text: "Days after:", type: "int"
+							text: _resourceBundle.getText("DDR_TODAYFROMTO_TO_LABEL"),
+							type: "int"
 						})];
 			}
 		};
@@ -306,6 +309,11 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 		StandardDynamicDateOption.prototype._createIntegerControl = function(oValue, iIndex, fnControlsUpdated) {
 			var oControl = DynamicDateOption.prototype._createIntegerControl.call(this, oValue, iIndex, fnControlsUpdated);
 			var iMin = this.getKey() === "TODAYFROMTO" ? -MAX_VALUE_HELP_INTEGER : MIN_VALUE_HELP_INTEGER;
+			var bUseDefaultValue = !oValue || this.getKey() !== oValue.operator;
+
+			if (this.getKey() === "TODAYFROMTO" && bUseDefaultValue) {
+				oControl.setValue(1);
+			}
 
 			oControl.setMin(iMin);
 			oControl.setMax(MAX_VALUE_HELP_INTEGER);
