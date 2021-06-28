@@ -663,6 +663,8 @@ sap.ui.define([
 				tooltip: sTooltip,
 				iconOnly: false,
 				enabled: this.getUploadEnabled(),
+				fileType: this.getFileTypes(),
+				mimeType: this.getMediaTypes(),
 				icon: "",
 				iconFirst: false,
 				style: "Transparent",
