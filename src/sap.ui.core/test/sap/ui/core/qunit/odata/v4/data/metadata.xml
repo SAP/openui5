@@ -22,7 +22,9 @@
 					<PropertyRef Name="Sector"/>
 					<PropertyRef Name="ID"/>
 				</Key>
-				<Property Name="Sector" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<!-- missing Type="Edm.String" -->
+				<!-- @see https://answers.sap.com/questions/13412590/fiori-elements-rendering-issue-when-entity-key-or.html -->
+				<Property Name="Sector" Nullable="false" MaxLength="10"/>
 				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="4"/>
 				<Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="40"/>
 				<Property Name="MemberCount" Type="Edm.Int32" Nullable="false"/>
