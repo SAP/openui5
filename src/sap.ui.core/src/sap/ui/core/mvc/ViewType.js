@@ -9,6 +9,8 @@ sap.ui.define([], function () {
 	/**
 	 * Specifies possible view types.
 	 *
+	 * <b>Note:</b> Typed views do not rely on a <code>ViewType</code>, it must be omitted in the view settings.
+	 *
 	 * @enum {string}
 	 * @public
 	 * @alias sap.ui.core.mvc.ViewType

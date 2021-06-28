@@ -882,30 +882,102 @@ sap.ui.define([
 	QUnit.module("Typed Views", {
 		beforeEach: function() {
 			this.oAfterInitSpy = sinon.spy(View.prototype, "fireAfterInit");
+			this.oErrorLogSpy = sinon.spy(Log, "error");
 		},
 		afterEach: function() {
 			this.oAfterInitSpy.restore();
+			this.oErrorLogSpy.restore();
 		}
 	});
 
-	QUnit.test("Created via sap.ui.view", function(assert) {
-		assert.expect(2);
+	QUnit.test("Async view created via sap.ui.view - async=false", function(assert) {
+		assert.expect(3);
+
+		assert.throws(function() {
+			sap.ui.view({
+				type: "JS",
+				viewName: "module:testdata/mvc/TypedView"
+			});
+		}, new Error("An asynchronous view (createContent) cannot be instantiated synchronously. Affected view: 'testdata.mvc.TypedView'."));
+		assert.ok(this.oErrorLogSpy.calledOnce, "Error logged for wrong type usage");
+		assert.ok(this.oErrorLogSpy.calledWithExactly("When using the view factory, the 'type' setting must be omitted for typed views. When embedding typed views in XML, don't use the <JSView> tag, use the <View> tag instead."), "error is logged with correct message");
+	});
+
+	QUnit.test("Async view created via sap.ui.view - async=true", function(assert) {
+		assert.expect(4);
 
 		var oTypedView = sap.ui.view({
 			type: "JS",
-			viewName: "module:testdata/mvc/TypedView"
+			viewName: "module:testdata/mvc/TypedView",
+			async: true
+		});
+		return oTypedView.loaded().then(function(oView) {
+			assert.ok(oView.isA("testdata.mvc.TypedView"), "Views is a typed view");
+			assert.ok(oView.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+			assert.ok(this.oErrorLogSpy.calledOnce, "Error logged for wrong type usage");
+			assert.ok(this.oErrorLogSpy.calledWithExactly("When using the view factory, the 'type' setting must be omitted for typed views. When embedding typed views in XML, don't use the <JSView> tag, use the <View> tag instead."), "error is logged with correct message");
+			oView.destroy();
+		}.bind(this));
+	});
+
+	QUnit.test("Sync view created via sap.ui.view - async=false", function(assert) {
+		assert.expect(4);
+
+		var oTypedView = sap.ui.view({
+			type: "JS",
+			viewName: "module:testdata/mvc/TypedViewSyncCreateContent"
 		});
 		assert.ok(oTypedView.isA("testdata.mvc.TypedView"), "Views is a typed view");
 		assert.ok(oTypedView.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+		assert.ok(this.oErrorLogSpy.calledOnce, "Error logged for wrong type usage");
+		assert.ok(this.oErrorLogSpy.calledWithExactly("When using the view factory, the 'type' setting must be omitted for typed views. When embedding typed views in XML, don't use the <JSView> tag, use the <View> tag instead."), "error is logged with correct message");
 		oTypedView.destroy();
 	});
 
-	QUnit.test("Created via constructor", function(assert) {
+	QUnit.test("Sync view created via sap.ui.view - async=true", function(assert) {
+		assert.expect(4);
+
+		var oTypedView = sap.ui.view({
+			type: "JS",
+			viewName: "module:testdata/mvc/TypedViewSyncCreateContent",
+			async: true
+		});
+		return oTypedView.loaded().then(function(oView) {
+			assert.ok(oView.isA("testdata.mvc.TypedView"), "Views is a typed view");
+			assert.ok(oView.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+			assert.ok(this.oErrorLogSpy.calledOnce, "Error logged for wrong type usage");
+			assert.ok(this.oErrorLogSpy.calledWithExactly("When using the view factory, the 'type' setting must be omitted for typed views. When embedding typed views in XML, don't use the <JSView> tag, use the <View> tag instead."), "error is logged with correct message");
+			oView.destroy();
+		}.bind(this));
+	});
+
+	QUnit.test("Async view created via constructor", function(assert) {
+		assert.expect(3);
+
+		var pRequire = new Promise(function(res, rej) {
+			sap.ui.require(["testdata/mvc/TypedView"], function(TypedView) {
+				res(TypedView);
+			});
+		});
+
+		return pRequire.then(function(TypedView) {
+			assert.throws(function() {
+				sap.ui.view({
+					type: "JS",
+					viewName: "module:testdata/mvc/TypedView"
+				});
+			}, new Error("An asynchronous view (createContent) cannot be instantiated synchronously. Affected view: 'testdata.mvc.TypedView'."));
+			assert.ok(this.oErrorLogSpy.calledOnce, "Error logged for wrong type usage");
+			assert.ok(this.oErrorLogSpy.calledWithExactly("When using the view factory, the 'type' setting must be omitted for typed views. When embedding typed views in XML, don't use the <JSView> tag, use the <View> tag instead."), "error is logged with correct message");
+		}.bind(this));
+	});
+
+	QUnit.test("Sync view created via constructor", function(assert) {
 		assert.expect(2);
 		var done = assert.async();
 
 		sap.ui.require([
-			"testdata/mvc/TypedView"
+			"testdata/mvc/TypedViewSyncCreateContent"
 		], function(TypedView) {
 			var oTypedView = new TypedView();
 			assert.ok(oTypedView.isA("testdata.mvc.TypedView"), "Views is a typed view");
