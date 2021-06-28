@@ -3,7 +3,6 @@
 *******************************************************************/
 @_sap_ui_rta_ContextMenu_Border_LightColor: @sapUiWhite;  //#fff
 @_sap_ui_rta_ContextMenu_Border_DarkColor: darken(@sapPrimary1,8);	//#2F3C48
-@_sap_ui_dt_ContextMenu_BoxShadow: 0 10px 20px fade(black, 19), 0 6px 6px fade(black, 23), 0 0 0 1px fade(white, 20), 0 1px 0 0 fade(white, 20);
 
 .sapUiRtaMode {
 
@@ -12,7 +11,7 @@
 		&.sapMPopover, .sapMPopover {
 			border: 0.125rem solid @_sap_ui_rta_ContextMenu_Border_LightColor; //2px
 			border-image: repeating-linear-gradient( -45deg, @_sap_ui_rta_ContextMenu_Border_DarkColor, @_sap_ui_rta_ContextMenu_Border_DarkColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 6px) 4;
-			box-shadow: @_sap_ui_dt_ContextMenu_BoxShadow;
+			box-shadow: 0 10px 20px fade(black, 19), 0 6px 6px fade(black, 23), 0 0 0 1px fade(white, 20), 0 1px 0 0 fade(white, 20);
 		}
 
 		&.sapMPopoverArr, .sapMPopoverArr {
