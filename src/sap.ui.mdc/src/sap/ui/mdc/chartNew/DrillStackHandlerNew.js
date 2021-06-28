@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/mdc/chart/DimensionItem",
-	"sap/ui/mdc/chart/ChartSettings"
+	"sap/ui/mdc/chart/ChartSettings",
+	"sap/base/Log"
 ], function(
 	Core,
 	ResponsivePopover,
@@ -24,7 +25,8 @@ sap.ui.define([
 	MLibrary,
 	Device,
 	DimensionItem,
-	ChartSettings
+	ChartSettings,
+	Log
 ) {
 	"use strict";
 
@@ -148,8 +150,15 @@ sap.ui.define([
 		return pSortedDimensionsPromise.then(function(aSortedDimensions) {
 			//Remove all prior items from drill-down list
 			var oDrillDownPopover = oMDCChart._oDrillDownPopover;
-			var oDrillDownList = oDrillDownPopover.getContent()[1];
 			var aIgnoreDimensions, oDimension, oListItem;
+
+			var aFilteredList = oDrillDownPopover.getContent().filter(function(oEntry){return oEntry.getMetadata().getClass() == List;});
+			var oDrillDownList = aFilteredList.length > 0 ? aFilteredList[0] : null;
+
+			if (!oDrillDownList){
+				Log.error("MDC Chart: Could not determine list to show drilldown. This should not happen. Did the application modify the drill-down popover?");
+				return;
+			}
 
 			oDrillDownList.destroyItems();
 
