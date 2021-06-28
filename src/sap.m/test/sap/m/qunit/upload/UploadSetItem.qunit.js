@@ -14,9 +14,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
 	"sap/ui/core/IconPool",
-	"sap/m/upload/Uploader"
+	"sap/m/upload/Uploader",
+	"sap/ui/core/Item"
 ], function (jQuery, KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item) {
 	"use strict";
 
 	function getData() {
@@ -294,6 +295,72 @@ sap.ui.define([
 		//Assert
 		assert.equal(IconPool.getIconForMimeType(oItem.getMediaType()), oIcon, "Icon is set based on mimeType");
 
+	});
+
+	QUnit.test("Check header fields in UploadSet", function (assert) {
+		//Setup
+		var oItem = new UploadSetItem({
+			fileName: "fileName.xlsx",
+			mediaType: "application/msexcel"
+		});
+		oItem.setUploadState("Ready");
+		var oUploaderSpy = this.spy(Uploader.prototype, "uploadItem");
+
+		// add headers to item
+		var oUSHeaderField = new Item({
+			key: "key",
+			text: "value1"
+		});
+		this.oUploadSet.insertHeaderField(oUSHeaderField);
+
+		this.oUploadSet.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		this.oUploadSet._uploadItemIfGoodToGo(oItem);
+
+		//Assert
+		assert.equal(oUploaderSpy.args[0].length, 2, "Header is present");
+		assert.equal(oUploaderSpy.args[0][1][0].getText(), "value1", "Header is selected from UploadSet");
+
+		//Clean
+		oUploaderSpy.restore();
+	});
+
+	QUnit.test("Check header fields in UploadSetItem", function (assert) {
+		//Setup
+		var oItem = new UploadSetItem({
+			fileName: "fileName.xlsx",
+			mediaType: "application/msexcel"
+		});
+		oItem.setUploadState("Ready");
+		var oUploaderSpy = this.spy(Uploader.prototype, "uploadItem");
+
+		// add headers to item
+		var oUSHeaderField = new Item({
+			key: "key",
+			text: "value1"
+		});
+		this.oUploadSet.insertHeaderField(oUSHeaderField);
+
+		var oUSIHeaderField = new Item({
+			key: "key",
+			text: "value2"
+		});
+		oItem.insertHeaderField(oUSIHeaderField);
+
+		this.oUploadSet.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		this.oUploadSet._uploadItemIfGoodToGo(oItem);
+
+		//Assert
+		assert.equal(oUploaderSpy.args[0].length, 2, "Header is present");
+		assert.equal(oUploaderSpy.args[0][1][0].getText(), "value2", "Header is selected from UploadSetItem");
+
+		//Clean
+		oUploaderSpy.restore();
 	});
 
 	QUnit.test("Test for uploadUrl property", function (assert) {

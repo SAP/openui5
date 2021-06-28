@@ -1044,7 +1044,8 @@ sap.ui.define([
 	UploadSet.prototype._uploadItemIfGoodToGo = function (oItem) {
 		if (oItem.getUploadState() === UploadState.Ready && !oItem._isRestricted()) {
 			if (this.fireBeforeUploadStarts({item: oItem})) {
-				this._getActiveUploader().uploadItem(oItem, oItem.getHeaderFields() || this.getHeaderFields());
+				var oHeaderFields = oItem.getHeaderFields().length ? oItem.getHeaderFields() : this.getHeaderFields();
+				this._getActiveUploader().uploadItem(oItem, oHeaderFields);
 			}
 		}
 	};
