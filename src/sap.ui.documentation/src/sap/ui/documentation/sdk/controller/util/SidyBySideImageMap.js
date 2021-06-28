@@ -24,7 +24,7 @@ sap.ui.define(["./overlay/Overlay", "sap/ui/documentation/sdk/controller/util/Re
 
 		this.oHighlighter = new Overlay(this.oImg.parentNode); // used to mark the active area with permanent overlay
 		this.oMapWrapper = oMapWrapper;
-		this.aSections = [].slice.call(oData.querySelectorAll("section"));
+		this.aSections = [].slice.call(oData.querySelectorAll(":scope > section"));
 		this.bStatic = oData.dataset.staticType === "true";
 		this.bRestoreSize = false;
 		this.oMap = oMap;
