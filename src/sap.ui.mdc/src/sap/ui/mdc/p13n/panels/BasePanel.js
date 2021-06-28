@@ -35,7 +35,7 @@ sap.ui.define([
 				 * Determines whether the reordering of items should be enabled
 				 */
 				enableReorder: {
-					type: "Boolean",
+					type: "boolean",
 					defaultValue: true
 				},
 				/**
