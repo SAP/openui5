@@ -72,19 +72,6 @@ sap.ui.define([
 				});
 			}
 
-			// custom mock behavior may be added here
-			oMockServer.attachAfter("GET", function (oEvent) {
-
-				var aEntries = oEvent.getParameter("oFilteredData") && oEvent.getParameter("oFilteredData").results || [oEvent.getParameter("oEntry")];
-
-				// make pictures' URLs relative to the card's manifest
-				aEntries.forEach(function (oResult) {
-					oResult.ProductPictureURL = "./images/" + oResult.ProductPictureURL.split("/").pop();
-				});
-
-			}, "SEPMRA_C_PD_Product");
-
-
 			oMockServer.setRequests(aRequests);
 			oMockServer.start();
 

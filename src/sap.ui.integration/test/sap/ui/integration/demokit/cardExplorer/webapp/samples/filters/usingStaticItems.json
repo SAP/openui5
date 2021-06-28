@@ -2,13 +2,7 @@
 	"sap.app": {
 		"id": "card.explorer.filters.usingStaticItems",
 		"type": "card",
-		"title": "Sample of a Card with filters",
-		"dataSources": {
-			"products": {
-				"uri": "/SEPMRA_PROD_MAN",
-				"type": "OData"
-			}
-		}
+		"title": "Sample of a Card with filters"
 	},
 	"sap.card": {
 		"configuration": {
@@ -18,6 +12,13 @@
 					"type": "integer",
 					"label": "Number of products",
 					"description": "How many products to show in the list."
+				}
+			},
+			"destinations": {
+				"ProductsMockServer": {
+					"name": "ProductsMockServer",
+					"label": "Products Mock",
+					"defaultUrl": "/SEPMRA_PROD_MAN/"
 				}
 			},
 			"filters": {
@@ -45,7 +46,7 @@
 		},
 		"data": {
 			"request": {
-				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product",
+				"url": "{{destinations.ProductsMockServer}}/SEPMRA_C_PD_Product",
 				"parameters": {
 					"$filter": "{= ${filters>/productCategory/value} !== 'all' ? 'ProductCategory eq ' + ${filters>/productCategory/value} + ' and ' : ''}AverageRatingValue gt 3",
 					"$orderby": "AverageRatingValue desc",
