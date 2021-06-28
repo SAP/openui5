@@ -635,6 +635,8 @@ sap.ui.define([
 				iconOnly: true,
 				enabled: this.getUploadEnabled(),
 				icon: "sap-icon://add",
+				fileType: this.getFileTypes(),
+				mimeType: this.getMediaTypes(),
 				iconFirst: false,
 				multiple: true,
 				style: "Transparent",
