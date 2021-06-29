@@ -10,6 +10,11 @@ sap.ui.define([
 	"use strict";
 	/*global Response*/
 
+	/**
+	 * @const List of HTTP response status codes for which the request can be retried.
+	 */
+	var RETRY_STATUS_CODES = [429, 503];
+
 	var aModes = ["no-cors", "same-origin", "cors"];
 	var aMethods = ["GET", "POST"];
 
@@ -46,6 +51,14 @@ sap.ui.define([
 		}
 
 	});
+
+	RequestDataProvider.prototype.destroy = function () {
+		if (this._iRetryAfterTimeout) {
+			clearTimeout(this._iRetryAfterTimeout);
+		}
+
+		DataProvider.prototype.destroy.apply(this, arguments);
+	};
 
 	/**
 	 * @override
@@ -157,16 +170,82 @@ sap.ui.define([
 	/**
 	 * Sends a request with jQuery.ajax(). Wrapped in a Promise.
 	 * @param {Object} oRequest The request to be sent with jQuery.ajax().
+	 * @param {boolean} bNoRetry Set to true if this request should not be retried when failed.
 	 * @returns {Promise} A Promise which is resolved when request is done and rejected when it fails.
 	 */
-	RequestDataProvider.prototype._request = function (oRequest) {
+	RequestDataProvider.prototype._request = function (oRequest, bNoRetry) {
 		return new Promise(function (resolve, reject) {
 			jQuery.ajax(oRequest).done(function (vData, sTextStatus, jqXHR) {
 				resolve([vData, jqXHR]);
 			}).fail(function (jqXHR, sTextStatus, sError) {
-				reject([sError, jqXHR]);
-			});
-		});
+				var aError = [sError, jqXHR];
+
+				if (bNoRetry) {
+					reject(aError);
+					return;
+				}
+
+				this._retryRequest(aError, oRequest).then(resolve, reject);
+			}.bind(this));
+		}.bind(this));
+	};
+
+	/**
+	 * Retries to send the given request if response status code allows it
+	 * and if a retry-after value is specified in response header or in the request settings.
+	 * @param {Array} aError The error from the previous failed request.
+	 * @param {Object} oRequest The request to be sent.
+	 * @returns {Promise} A Promise which is fulfilled if retry is successful and rejected otherwise.
+	 */
+	RequestDataProvider.prototype._retryRequest = function (aError, oRequest) {
+		var jqXHR = aError[1],
+			iRetryAfter = this._getRetryAfter(jqXHR);
+
+		if (!RETRY_STATUS_CODES.includes(jqXHR.status)) {
+			// Request should not be retried.
+			return Promise.reject(aError);
+		}
+
+		if (!iRetryAfter) {
+			Log.warning("Request could be retried, but Retry-After header or configuration parameter retryAfter are missing.");
+			return Promise.reject(aError);
+		}
+
+		if (this._iRetryAfterTimeout) {
+			return Promise.reject("The retry was already scheduled.");
+		}
+
+		return new Promise(function (resolve, reject) {
+			this._iRetryAfterTimeout = setTimeout(function () {
+				this._request(oRequest, true).then(resolve, reject);
+				this._iRetryAfterTimeout = null;
+			}.bind(this), iRetryAfter * 1000);
+		}.bind(this));
+	};
+
+	/**
+	 * Reads retry-after value from response headers or from settings.
+	 * @param {Object} jqXHR The jQuery XHR response.
+	 * @returns {integer} The number of seconds after which to retry the request.
+	 */
+	RequestDataProvider.prototype._getRetryAfter = function (jqXHR) {
+		var oRequestConfig = this.getSettings().request,
+			vRetryAfter = jqXHR.getResponseHeader("Retry-After") || oRequestConfig.retryAfter;
+
+		if (!vRetryAfter) {
+			return 0;
+		}
+
+		if (Number.isInteger(vRetryAfter)) {
+			return vRetryAfter;
+		}
+
+		if (!vRetryAfter.match(/^\d+$/)) {
+			Log.error("Only number of seconds is supported as value of retry-after. Given '" + vRetryAfter + "'.");
+			return 0;
+		}
+
+		return parseInt(vRetryAfter);
 	};
 
 	/**
