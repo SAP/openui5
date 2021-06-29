@@ -23,6 +23,7 @@ sap.ui.define([
 		QUnit.test("mergeResults with empty aResponse", function (assert) {
 			var DEFAULT_FEATURES = {
 				isKeyUser: false,
+				isKeyUserTranslationEnabled: false,
 				isVariantSharingEnabled: false,
 				isVariantPersonalizationEnabled: true,
 				isAtoAvailable: false,
@@ -48,7 +49,7 @@ sap.ui.define([
 			};
 			var oResponse2 = {
 				layers: [],
-				features: {isAtoAvailable: true, isKeyUser: true}
+				features: {isAtoAvailable: true, isKeyUser: true, isKeyUserTranslationEnabled: true}
 			};
 			var oResponse3 = {
 				layers: [],
@@ -62,6 +63,7 @@ sap.ui.define([
 			assert.equal(oResult.isKeyUser, true, "last isKeyuser is true");
 			assert.equal(oResult.isAtoAvailable, true, "isAtoAvailable to true");
 			assert.equal(oResult.isProductiveSystem, false, "isProductiveSystem is false");
+			assert.equal(oResult.isKeyUserTranslationEnabled, true, "isKeyUserTranslationEnabled is true");
 		});
 
 		QUnit.test("mergeResults handles the versioning flags", function (assert) {

@@ -82,6 +82,7 @@ sap.ui.define([
 				// in case the back end cannot respond resolve with a default response
 				oSettings = {
 					isKeyUser: false,
+					isKeyUserTranslationEnabled: false,
 					isVariantSharingEnabled: false,
 					isVariantPersonalizationEnabled: true,
 					isAtoAvailable: false,
