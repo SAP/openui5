@@ -1,0 +1,13 @@
+{
+	"_version": "0.0.1",
+	"sap.app": {
+		"id": "testdata.extensionPoints"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "testdata.extensionPoints.defaultContent.OuterView",
+			"type": "XML",
+			"id": "outerView"
+		}
+	}
+}

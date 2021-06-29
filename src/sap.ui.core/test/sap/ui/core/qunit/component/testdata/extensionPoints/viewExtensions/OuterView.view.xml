@@ -1,0 +1,13 @@
+<mvc:View xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">
+
+	<m:Button id="outerView_button_before" text="Nothing" />
+
+	<core:ExtensionPoint name="ExtPointFromView" />
+
+	<m:Button id="outerView_button_middle" text="Nothing" />
+
+	<core:ExtensionPoint name="ExtPointFromFragment" />
+
+	<m:Button id="outerView_button_after" text="Nothing" />
+
+</mvc:View>

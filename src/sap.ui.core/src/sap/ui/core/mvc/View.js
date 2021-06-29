@@ -4,6 +4,7 @@
 
 // Provides control sap.ui.core.mvc.View.
 sap.ui.define([
+	"sap/base/util/isEmptyObject",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Control",
 	"sap/ui/core/mvc/Controller",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/ui/core/Core" // to ensure correct behaviour of sap.ui.getCore()
 ],
 	function(
+		isEmptyObject,
 		ManagedObject,
 		Control,
 		Controller,
@@ -442,10 +444,22 @@ sap.ui.define([
 				var defaultController = oThis.getControllerName();
 				if (defaultController) {
 					// check for controller replacement
-					var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
-					var sControllerReplacement = CustomizingConfiguration && CustomizingConfiguration.getControllerReplacement(defaultController, ManagedObject._sOwnerId);
-					if (sControllerReplacement) {
-						defaultController = typeof sControllerReplacement === "string" ? sControllerReplacement : sControllerReplacement.controllerName;
+					var Component = sap.ui.require("sap/ui/core/Component");
+					if (Component && ManagedObject._sOwnerId) {
+						var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
+
+						if (oOwnerComponent) {
+							if (oOwnerComponent.getExtensionComponent) {
+								oOwnerComponent = oOwnerComponent.getExtensionComponent();
+								if (!oOwnerComponent) {
+									throw new Error("getExtensionComponent() must return an instance.");
+								}
+							}
+							var sControllerReplacement = oOwnerComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.controllerReplacements/" + defaultController, true);
+							if (sControllerReplacement) {
+								defaultController = typeof sControllerReplacement === "string" ? sControllerReplacement : sControllerReplacement.controllerName;
+							}
+						}
 					}
 					// create controller
 					if (bAsync) {
@@ -508,6 +522,11 @@ sap.ui.define([
 		// remember the name of this View
 		this.sViewName = mSettings.viewName;
 
+		// typed views are prefixed with "module:" and contains slashes
+		if (this.sViewName && this.sViewName.startsWith("module:")) {
+			this.sViewName = this.sViewName.slice("module:".length).replace(/\//g, ".");
+		}
+
 		var that = this;
 
 		initPreprocessorQueues(this, mSettings);
@@ -517,28 +536,51 @@ sap.ui.define([
 			initAsyncState(this);
 		}
 
-		//check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
-		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
-		if (CustomizingConfiguration && CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
-			this._fnSettingsPreprocessor = function(mSettings) {
-				var sId = this.getId();
-				if (CustomizingConfiguration && sId) {
-					if (that.isPrefixedId(sId)) {
-						sId = sId.substring((that.getId() + "--").length);
-					}
-					var mCustomSettings = CustomizingConfiguration.getCustomProperties(that.sViewName, sId, that);
-					if (mCustomSettings) {
-						mSettings = extend(mSettings, mCustomSettings); // override original property initialization with customized property values
+		var Component = sap.ui.require("sap/ui/core/Component");
+		var oOwnerComponent = Component && Component.getOwnerComponentFor(this);
+
+		// view modifications
+		// check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
+		if (!sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
+			if (oOwnerComponent) {
+				if (oOwnerComponent.getExtensionComponent) {
+					oOwnerComponent = oOwnerComponent.getExtensionComponent();
+					if (!oOwnerComponent) {
+						throw new Error("getExtensionComponent() must return an instance.");
 					}
 				}
-			};
+				var mCustomSettings = oOwnerComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.viewModifications/" + this.sViewName, true);
+				if (!isEmptyObject(mCustomSettings)) {
+					// NOTE:
+					// nested views do not inherit the preprocessor settings function from the parent
+					// controls within fragments however do inherit the settings function from the containing view (see Fragment#init)
+					this._fnSettingsPreprocessor = function(mSettings) {
+						var sId = this.getId();
+						if (sId) {
+							if (that.isPrefixedId(sId)) {
+								sId = sId.substring((that.getId() + "--").length);
+							}
+							var oCustomSetting = Object.assign({}, mCustomSettings[sId]);
+							if (oCustomSetting) {
+								// only 'visible' property can be customized
+								for (var sProperty in oCustomSetting) {
+									if (sProperty !== "visible") {
+										Log.warning("Customizing: custom value for property '" + sProperty + "' of control '" + sId + "' in View '" + that.sViewName + "' ignored: only the 'visible' property can be customized.");
+										delete oCustomSetting[sProperty];
+									}
+								}
+								Log.info("Customizing: custom value for property 'visible' of control '" + sId + "' in View '" + that.sViewName + "' applied: " + oCustomSetting.visible);
+								mSettings = extend(mSettings, oCustomSetting); // override original property initialization with customized property values
+							}
+						}
+					};
+				}
+			}
 		}
 
 		var fnPropagateOwner = function(fnCallback, bAsync) {
 			assert(typeof fnCallback === "function", "fn must be a function");
 
-			var Component = sap.ui.require("sap/ui/core/Component");
-			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
 			if (oOwnerComponent) {
 				if (bAsync) {
 					// special treatment when component loading is async but instance creation is sync
@@ -1179,15 +1221,35 @@ sap.ui.define([
 			oView.processingMode = oView.processingMode || XMLProcessingMode.SequentialLegacy;
 		}
 
+
+
 		// view replacement
-		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
-		if (CustomizingConfiguration) {
-			var customViewConfig = CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
-			if (customViewConfig) {
-				Log.info("Customizing: View replacement for view '" + oView.viewName + "' found and applied: " + customViewConfig.viewName + " (type: " + customViewConfig.type + ")");
-				extend(oView, customViewConfig);
-			} else {
-				Log.debug("Customizing: no View replacement found for view '" + oView.viewName + "'.");
+		if (!sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
+			// get current owner component
+			var Component = sap.ui.require("sap/ui/core/Component");
+			var oOwnerComponent;
+
+			if (Component && ManagedObject._sOwnerId) {
+				oOwnerComponent = Component.get(ManagedObject._sOwnerId);
+			}
+
+			if (oOwnerComponent) {
+				if (oOwnerComponent.getExtensionComponent) {
+					oOwnerComponent = oOwnerComponent.getExtensionComponent();
+					if (!oOwnerComponent) {
+						throw new Error("getExtensionComponent() must return an instance.");
+					}
+				}
+				var customViewConfig = oOwnerComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.viewReplacements/" + oView.viewName, true);
+				if (customViewConfig) {
+					// make sure that "async=true" will not be overriden
+					delete customViewConfig.async;
+
+					Log.info("Customizing: View replacement for view '" + oView.viewName + "' found and applied: " + customViewConfig.viewName + " (type: " + customViewConfig.type + ")");
+					extend(oView, customViewConfig);
+				} else {
+					Log.debug("Customizing: no View replacement found for view '" + oView.viewName + "'.");
+				}
 			}
 		}
 

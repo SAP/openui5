@@ -884,9 +884,8 @@ function(
 					// whereas for Fragments the actual Fragment's name is required - oView can be either View or Fragment
 					var oContainer = oView instanceof View ? oView._oContainingView : oView;
 
-					// @evo-todo: The factory call needs to be refactored into a proper async/sync switch.
-					// @evo-todo: The ExtensionPoint module is actually the sap.ui.extensionpoint function.
-					//            We still call _factory for skipping the deprecation warning for now.
+					// The ExtensionPoint module is actually the sap.ui.extensionpoint function.
+					// We still call _factory for skipping the deprecation warning.
 					var fnExtensionPointFactory = ExtensionPoint._factory.bind(null, oContainer, node.getAttribute("name"), function() {
 						// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
 						var pChild = SyncPromise.resolve();
@@ -908,7 +907,7 @@ function(
 							});
 							return aDefaultContent;
 						});
-					});
+					}, undefined /* [targetControl] */, undefined /* [aggregationName] */, bAsync);
 
 					return SyncPromise.resolve(oView.fnScopedRunWithOwner ? oView.fnScopedRunWithOwner(fnExtensionPointFactory) : fnExtensionPointFactory());
 				}

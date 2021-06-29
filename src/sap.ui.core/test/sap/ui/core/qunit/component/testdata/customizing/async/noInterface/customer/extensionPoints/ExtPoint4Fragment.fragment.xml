@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns:m="sap.m" xmlns:core="sap.ui.core">
+	<m:Button id="buttonExtPoint4_1" text="Nothing" />
+	<m:Button id="buttonExtPoint4_2" text="Nothing" />
+</core:FragmentDefinition>
