@@ -1550,6 +1550,8 @@ sap.ui.define([
 				this._expandHeader(false /* remove header from title area */);
 				this._setScrollPosition(0);
 			}
+		} else if (this._preserveHeaderStateOnScroll() && oDynamicPageHeader) {
+			this._togglePinButtonVisibility(false);
 		}
 	};
 
