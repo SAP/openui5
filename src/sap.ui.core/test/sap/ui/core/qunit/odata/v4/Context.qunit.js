@@ -1536,18 +1536,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: error cases", function (assert) {
-		var oRootBinding = {
-				getContext : function () {},
-				getPath : function () {}
-			},
-			oBinding = {
+	QUnit.test("requestSideEffects: error cases 1/2", function (assert) {
+		var oBinding = {
 				checkSuspended : function () {},
-				getRootBinding : function () { return oRootBinding; },
 				isResolved : function () { return true; }
 			},
 			oMetaModel = {
-				getObject : function () {}
+				getObject : function () { assert.ok(false, "use only when mocked"); }
 			},
 			oModel = {
 				checkGroupId : function () {},
@@ -1564,6 +1559,33 @@ sap.ui.define([
 			// code under test
 			oContext.requestSideEffects([]);
 		}, new Error("Missing edm:(Navigation)PropertyPath expressions"));
+
+		this.mock(oMetaModel).expects("getObject").withExactArgs("/$EntityContainer")
+			.returns(undefined);
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects([""]);
+		}, new Error("Missing metadata"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: error cases 2/2", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {},
+				isResolved : function () { return true; }
+			},
+			oMetaModel = {
+				getObject : function (sPath) {
+					assert.strictEqual(sPath, "/$EntityContainer");
+					return "~container~";
+				}
+			},
+			oModel = {
+				checkGroupId : function () {},
+				getMetaModel : function () { return oMetaModel; }
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		[
 			undefined,
@@ -1587,9 +1609,6 @@ sap.ui.define([
 				oContext.requestSideEffects([oPath]);
 			}, new Error("Not an edm:(Navigation)PropertyPath expression: " + sJSON), sJSON);
 		});
-
-		this.mock(oMetaModel).expects("getObject").withExactArgs("/$EntityContainer")
-			.returns("~container~");
 
 		assert.throws(function () {
 			// code under test

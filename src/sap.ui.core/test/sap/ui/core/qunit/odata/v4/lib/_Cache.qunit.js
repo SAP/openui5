@@ -9085,8 +9085,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{}, null].forEach(function (oExpectedResult) {
-	QUnit.test("PropertyCache#fetchValue, oExpectedResult = " + oExpectedResult, function (assert) {
+[{
+	"in" : {value : "some value"},
+	out : "some value"
+}, {
+	"in" : null, // null value: null is returned due to "204 No Content"
+	out : null
+}, {
+	"in" : 42, // $count: "a simple primitive integer value with media type text/plain"
+	out : 42
+}].forEach(function (oFixture) {
+	QUnit.test("PropertyCache#fetchValue, value = " + oFixture.out, function (assert) {
 		var oCache,
 			oCacheMock,
 			fnDataRequested1 = {},
@@ -9114,10 +9123,10 @@ sap.ui.define([
 			.withExactArgs("GET", sResourcePath + "?~", sinon.match.same(oGroupLock1), undefined,
 				undefined, sinon.match.same(fnDataRequested1), undefined, "/Employees")
 			.returns(Promise.resolve().then(function () {
-					oCacheMock.expects("registerChange").withExactArgs("",
-						sinon.match.same(oListener1));
+					oCacheMock.expects("registerChange")
+						.withExactArgs("", sinon.match.same(oListener1));
 					oCacheMock.expects("registerChange").withExactArgs("", undefined);
-					return oExpectedResult ? {value : oExpectedResult} : null;
+					return oFixture.in;
 				}));
 
 		// code under test
@@ -9126,12 +9135,12 @@ sap.ui.define([
 				.then(function (oResult) {
 					var oGroupLock3 = {unlock : function () {}};
 
-					assert.strictEqual(oResult, oExpectedResult);
+					assert.strictEqual(oResult, oFixture.out);
 
 					that.mock(oGroupLock3).expects("unlock").withExactArgs();
 
 					assert.strictEqual(oCache.fetchValue(oGroupLock3, "").getResult(),
-						oExpectedResult);
+						oFixture.out);
 				})
 		];
 
@@ -9144,7 +9153,7 @@ sap.ui.define([
 		aFetchValuePromises.push(
 			oCache.fetchValue(oGroupLock2, "", fnDataRequested2, oListener2)
 				.then(function (oResult) {
-					assert.strictEqual(oResult, oExpectedResult);
+					assert.strictEqual(oResult, oFixture.out);
 				})
 		);
 

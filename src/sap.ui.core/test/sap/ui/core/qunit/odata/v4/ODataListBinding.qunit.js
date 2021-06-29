@@ -2155,16 +2155,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshInternal: relative binding with base context", function () {
-		var oBinding;
+	QUnit.test("refreshInternal: relative binding with base context", function (assert) {
+		var oBinding = this.bindList("TEAMS", this.oModel.createBindingContext("/"), undefined,
+				undefined, {$$groupId : "group"});
 
-		oBinding = this.bindList("TEAMS", this.oModel.createBindingContext("/"), undefined,
-			undefined, {$$groupId : "group"});
-
+		assert.strictEqual(oBinding.iCurrentEnd, 0);
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
-		this.mock(oBinding).expects("createRefreshPromise").withExactArgs();
+		this.mock(oBinding).expects("createRefreshPromise").never(); // iCurrentEnd === 0
 
 		// code under test
 		return oBinding.refreshInternal("", "myGroup", false);
@@ -2208,6 +2207,7 @@ sap.ui.define([
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
 			{$$groupId : "group"});
 		oBindingMock.verify();
+		oBinding.iCurrentEnd = 1;
 		oBinding.mPreviousContextsByPath = {
 			"/resolved/path('42')" : oKeptContext
 		};
@@ -2285,6 +2285,7 @@ sap.ui.define([
 			that = this;
 
 		oBinding.iCreatedContexts = 42;
+		oBinding.iCurrentEnd = 1;
 		this.mock(oBinding).expects("isRootBindingSuspended").exactly(iNoOfCalls).returns(false);
 		this.mock(oBinding).expects("refreshSuspended").never();
 		oReadPromise.catch(function () {
@@ -2374,6 +2375,7 @@ sap.ui.define([
 			oYetAnotherError = new Error(),
 			that = this;
 
+		oBinding.iCurrentEnd = 1;
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshSuspended").never();
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(bIsRoot);
@@ -2427,6 +2429,7 @@ sap.ui.define([
 			oNewCache = {refreshKeptElements : function () {}};
 
 		oError.canceled = true;
+		oBinding.iCurrentEnd = 1;
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshSuspended").never();
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns("bIsRoot");
@@ -6312,8 +6315,9 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bHeader) {
 	[false, true].forEach(function (bRecursionRejects) {
-		var sTitle = "requestSideEffects: efficient request possible, header=" + bHeader
-				+ ", reject=" + bRecursionRejects;
+		[false, true].forEach(function (bHasCache) {
+			var sTitle = "requestSideEffects: efficient request possible, header=" + bHeader
+					+ ", reject=" + bRecursionRejects + ", has cache=" + bHasCache;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
@@ -6334,6 +6338,22 @@ sap.ui.define([
 			oResult,
 			that = this;
 
+		function expectVisitAndRefresh(vNavigationPropertyPaths, aPromises) {
+			that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
+					sinon.match.same(aPaths), bHeader ? undefined : sinon.match.same(oContext),
+					vNavigationPropertyPaths, aPromises)
+				.callsFake(function (_sGroupId, _aPaths, _oContext, _mNavigationPropertyPaths,
+						aPromises) {
+					aPromises.push(Promise.resolve());
+					aPromises.push(Promise.reject(oCanceledError));
+					if (bRecursionRejects) {
+						aPromises.push(Promise.reject(oError));
+					}
+				});
+			that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
+				.exactly(bRecursionRejects ? 0 : 1).withExactArgs().resolves("~");
+		}
+
 		oCanceledError.canceled = true;
 		oBinding.createContexts(3, createData(9, 3, true, 9, true));
 		oBinding.iCurrentBegin = 3;
@@ -6343,34 +6363,27 @@ sap.ui.define([
 		oBinding.mPreviousContextsByPath["('8')"] = oPreviousContext8 = oBinding.aContexts[8];
 		oBinding.aContexts.length = 5;
 
-		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		this.mock(oBinding).expects("lockGroup").exactly(bHasCache ? 1 : 0)
+			.withExactArgs(sGroupId).returns(oGroupLock);
 		this.mock(oPreviousContext6).expects("isKeepAlive").exactly(bHeader ?  1 : 0)
 			.returns(true);
 		this.mock(oPreviousContext7).expects("isKeepAlive").exactly(bHeader ?  1 : 0)
 			.returns(false);
 		this.mock(oPreviousContext8).expects("isKeepAlive").exactly(bHeader ?  1 : 0)
 			.returns(true);
-		oCacheMock.expects("requestSideEffects")
+		oCacheMock.expects("requestSideEffects").exactly(bHasCache ? 1 : 0)
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
 				bHeader ? ["('3')", "('4')", "('6')", "('8')"] : ["('foo')"],
 				!bHeader)
-			.callsFake(function (_oGroupLock, aPaths, mNavigationPropertyPaths) {
-				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
-						sinon.match.same(aPaths), bHeader ? undefined : sinon.match.same(oContext),
-						sinon.match.same(mNavigationPropertyPaths), [oPromise])
-					.callsFake(function (_sGroupId, _aPaths, _oContext, _mNavigationPropertyPaths,
-							aPromises) {
-						aPromises.push(Promise.resolve());
-						aPromises.push(Promise.reject(oCanceledError));
-						if (bRecursionRejects) {
-							aPromises.push(Promise.reject(oError));
-						}
-					});
-				that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
-					.exactly(bRecursionRejects ? 0 : 1).withExactArgs().resolves("~");
+			.callsFake(function (_oGroupLock, _aPaths, mNavigationPropertyPaths) {
+				expectVisitAndRefresh(sinon.match.same(mNavigationPropertyPaths), [oPromise]);
 
 				return oPromise;
 			});
+		if (!bHasCache) {
+			oBinding.oCache = undefined; // not yet there
+			expectVisitAndRefresh({}, []);
+		}
 		oModelMock.expects("reportError")
 			.withExactArgs("Failed to request side effects", sClassName,
 				sinon.match.same(oCanceledError));
@@ -6393,6 +6406,7 @@ sap.ui.define([
 			});
 	});
 
+		});
 	});
 });
 

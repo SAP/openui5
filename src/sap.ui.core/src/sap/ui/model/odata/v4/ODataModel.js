@@ -1838,7 +1838,7 @@ sap.ui.define([
 
 		return SyncPromise.all(
 			this.aAllBindings.filter(function (oBinding) {
-				return oBinding.isRoot() && oBinding.requestAbsoluteSideEffects;
+				return oBinding.isRoot();
 			}).map(function (oRootBinding) {
 				return oRootBinding.requestAbsoluteSideEffects(sGroupId, aAbsolutePaths);
 			})

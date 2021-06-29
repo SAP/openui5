@@ -2277,10 +2277,9 @@ sap.ui.define([
 				oKeptElementsPromise = that.oCachePromise.then(function (oNewCache) {
 					return oNewCache.refreshKeptElements(that.lockGroup(sGroupId), onRemove);
 				});
-				oPromise = that.createRefreshPromise();
-				if (bKeepCacheOnError) {
-					oPromise = oPromise.catch(function (oError) {
-						if (oError.canceled) {
+				if (that.iCurrentEnd > 0) {
+					oPromise = that.createRefreshPromise().catch(function (oError) {
+						if (!bKeepCacheOnError || oError.canceled) {
 							throw oError;
 						}
 						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
@@ -2661,8 +2660,10 @@ sap.ui.define([
 				return sPredicate[0] !== "(";
 			});
 			if (!bMissingPredicate) {
-				aPromises = [this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths,
-					mNavigationPropertyPaths, aPredicates, bSingle)];
+				aPromises = this.oCache
+					? [this.oCache.requestSideEffects(this.lockGroup(sGroupId),
+						aPaths, mNavigationPropertyPaths, aPredicates, bSingle)]
+					: []; // can happen if invoked via absolute side effect
 				this.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined,
 					mNavigationPropertyPaths, aPromises);
 

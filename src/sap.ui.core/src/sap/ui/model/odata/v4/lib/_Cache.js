@@ -2734,7 +2734,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise to be resolved with an OData object for the requested property value.
+	 * Returns a promise to be resolved with the requested property value.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the request with
@@ -2772,11 +2772,10 @@ sap.ui.define([
 				fnDataRequested, undefined, this.sMetaPath));
 		}
 		return this.oPromise.then(function (oResult) {
-			// for a null value, null is returned due to "204 No Content". But it is expected in the
-			// value property of an object
-			oResult = oResult || {value : null};
 			that.registerChange("", oListener);
-			return oResult.value;
+			// Note: For a null value, null is returned due to "204 No Content". For $count,
+			// "a simple primitive integer value with media type text/plain" is returned.
+			return oResult && typeof oResult === "object" ? oResult.value : oResult;
 		});
 	};
 

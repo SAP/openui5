@@ -1423,8 +1423,9 @@ sap.ui.define([
 			function filterStructural(bSkipFirstSegment, sMetaPath) {
 				var aSegments = sMetaPath.split("/");
 
-				return aSegments.every(function (_sSegment, i) {
+				return aSegments.every(function (sSegment, i) {
 					return i === 0 && bSkipFirstSegment
+						|| sSegment === "$count"
 						|| fnFetchMetadata(
 								sRootMetaPath + "/" + aSegments.slice(0, i + 1).join("/")
 							).getResult().$kind === "Property";

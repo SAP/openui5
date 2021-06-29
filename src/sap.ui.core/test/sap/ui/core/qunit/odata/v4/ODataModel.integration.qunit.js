@@ -1591,15 +1591,15 @@ sap.ui.define([
 		 * @param {string|object} vRequest
 		 *   The request with the properties "method", "url" and "headers". A string is interpreted
 		 *   as URL with method "GET". Spaces inside the URL are percent-encoded automatically.
-		 * @param {any|Error|Promise|function} [oResponse]
+		 * @param {any|Error|Promise|function} [vResponse]
 		 *   The response message to be returned from the requestor or a promise on it or a function
 		 *   (invoked "just in time" when the request is actually sent) returning the response
-		 *   message (error, object, or promise)
+		 *   message (any, error, or promise)
 		 * @param {object} [mResponseHeaders]
 		 *   The response headers to be returned from the requestor
 		 * @returns {object} The test instance for chaining
 		 */
-		expectRequest : function (vRequest, oResponse, mResponseHeaders) {
+		expectRequest : function (vRequest, vResponse, mResponseHeaders) {
 			if (typeof vRequest === "string") {
 				vRequest = {
 					method : "GET",
@@ -1610,7 +1610,7 @@ sap.ui.define([
 			vRequest.headers = vRequest.headers || {};
 			vRequest.payload = vRequest.payload || undefined;
 			vRequest.responseHeaders = mResponseHeaders || {};
-			vRequest.response = oResponse
+			vRequest.response = vResponse
 					// With GET it must be visible that there is no content, with the other
 					// methods it must be possible to insert the ETag from the header
 					|| (vRequest.method === "GET" ? null : {});
@@ -2960,11 +2960,12 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')?$select=Messages,Note", {Note : "Note #1"});
 
-			// code under test
-			that.oView.byId("returnValue").getBindingContext()
-				.requestSideEffects([{$PropertyPath : "Messages"}, {$PropertyPath : "Note"}]);
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				that.oView.byId("returnValue").getBindingContext()
+					.requestSideEffects([{$PropertyPath : "Messages"}, {$PropertyPath : "Note"}]),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Messages,"
 					+ "SalesOrderID&$orderby=ItemPosition&$skip=0&$top=100", {
@@ -6884,15 +6885,16 @@ sap.ui.define([
 			aCreatedContexts.push(oBinding.create({Note : "new4"}, /*bSkipRefresh*/true));
 			aCreatedContexts.push(oBinding.create({Note : "new5"}, /*bSkipRefresh*/true));
 
-			oBinding.getHeaderContext().requestSideEffects([""])
-				.then(mustFail(assert), function (oError0) {
-					assert.strictEqual(oError0.message,
-						"HTTP request was not processed because the previous request failed");
-					assert.strictEqual(oError0.cause.message, sCreateError);
-				});
-
-			return that.waitForChanges(assert,
-				"2. creation of further entities fails and requested side effects rejected");
+			return Promise.all([
+				oBinding.getHeaderContext().requestSideEffects([""])
+					.then(mustFail(assert), function (oError0) {
+						assert.strictEqual(oError0.message,
+							"HTTP request was not processed because the previous request failed");
+						assert.strictEqual(oError0.cause.message, sCreateError);
+					}),
+				that.waitForChanges(assert,
+					"2. creation of further entities fails and requested side effects rejected")
+			]);
 		}).then(function () {
 			var aCurrentContexts = oBinding.getCurrentContexts();
 
@@ -26866,12 +26868,13 @@ sap.ui.define([
 				})
 				.expectChange("name", "Hour Frustrated");
 
-			// Note: do not use oReturnValueContext, it would trigger duplicate requests
-			that.oView.byId("objectPage").getObjectBinding().getBoundContext()
-				// code under test
-				.requestSideEffects([{$PropertyPath : "Name"}]);
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// Note: do not use oReturnValueContext, it would trigger duplicate requests
+				that.oView.byId("objectPage").getObjectBinding().getBoundContext()
+					// code under test
+					.requestSideEffects([{$PropertyPath : "Name"}]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -29435,10 +29438,11 @@ sap.ui.define([
 				})
 				.expectChange("note", "side effect");
 
-			that.oView.byId("form").getObjectBinding().getBoundContext()
-				.requestSideEffects([{$PropertyPath : "Note"}]);
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oView.byId("form").getObjectBinding().getBoundContext()
+					.requestSideEffects([{$PropertyPath : "Note"}]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -32849,10 +32853,11 @@ sap.ui.define([
 				.expectChange("grossAmount", ["149.30", "789.30"])
 				.expectChange("objectPageGrossAmount", "50.30");
 
-			// code under test
-			oListBinding.getHeaderContext().requestSideEffects(["GrossAmount"]);
-
-			return that.waitForChanges(assert, "Step 3: request side effects with kept contexts");
+			return Promise.all([
+				// code under test
+				oListBinding.getHeaderContext().requestSideEffects(["GrossAmount"]),
+				that.waitForChanges(assert, "Step 3: request side effects with kept contexts")
+			]);
 		}).then(function () {
 			sinon.assert.called(fnOnBeforeDestroy);
 
@@ -32873,11 +32878,12 @@ sap.ui.define([
 			that.oView.byId("objectPage").setBindingContext(null);
 			oKeptContext.setKeepAlive(false);
 
-			// code under test
-			oListBinding.getHeaderContext().requestSideEffects(["GrossAmount"]);
-
-			return that.waitForChanges(assert,
-				"Step 4: request side effects with kept contexts not yet destroyed");
+			return Promise.all([
+				// code under test
+				oListBinding.getHeaderContext().requestSideEffects(["GrossAmount"]),
+				that.waitForChanges(assert,
+					"Step 4: request side effects with kept contexts not yet destroyed")
+			]);
 		});
 	});
 
@@ -33861,6 +33867,61 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			return that.checkValueState(assert, oInput, "None", "");
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Absolute property binding for $count
+[false, true].forEach(function (bAutoExpandSelect) {
+	var sTitle = "ODPrB: /SalesOrderList/$count, autoExpandSelect=" + bAutoExpandSelect;
+
+	QUnit.test(sTitle, function (assert) {
+		var sEntityContainer = "/com.sap.gateway.default.zui5_epm_sample.v0002.Container",
+			oListBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
+			sView = '<Text id="count" text="{/SalesOrderList/$count}"/>',
+			that = this;
+
+		this.expectRequest("SalesOrderList/$count", 42)
+			.expectChange("count", "42");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList/$count", 1234)
+				.expectChange("count", "1,234"); // Edm.Int64 :-)
+
+			// code under test
+			that.oView.byId("count").getBinding("text").refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// load $metadata for #requestSideEffects
+			// (normally, this is done by auto-$expand/$select, but we have no real UI here)
+			return oModel.getMetaModel().requestObject("/");
+		}).then(function () {
+			oListBinding = oModel.bindList("/SalesOrderList");
+
+			that.expectRequest("SalesOrderList/$count", 42)
+				.expectChange("count", "42");
+
+			return Promise.all([
+				// code under test
+				oListBinding.getHeaderContext().requestSideEffects([
+					sEntityContainer + "/SalesOrderList/$count"
+				]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList/$count", 1234)
+				.expectChange("count", "1,234");
+
+			return Promise.all([
+				// code under test
+				oListBinding.getHeaderContext().requestSideEffects([
+					sEntityContainer + "/SalesOrderList"
+				]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });

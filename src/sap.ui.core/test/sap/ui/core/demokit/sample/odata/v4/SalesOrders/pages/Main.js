@@ -30,9 +30,9 @@ sap.ui.define([
 
 	/*
 	 * Search for the control with the given ID, extract the number and compare with the expected
-	 * count.
+	 * count and optional expected overall count.
 	 */
-	function checkCount(oOpa, iExpectedCount, sTitleId) {
+	function checkCount(oOpa, iExpectedCount, sTitleId, iExpectedOverallCount) {
 		oOpa.waitFor({
 			id : sTitleId,
 			success : function (oTitle) {
@@ -41,6 +41,13 @@ sap.ui.define([
 					Number(oTitle.getText().split(" ")[0]),
 					iExpectedCount,
 					"Expected count for " + sTitleId + ": " + iExpectedCount);
+				if (iExpectedOverallCount !== undefined) {
+					Opa5.assert.strictEqual(
+						// extract number from title "... (xyz overall)"
+						Number(oTitle.getText().split("(")[1].split(" ")[0]),
+						iExpectedOverallCount,
+						"Expected overall count for " + sTitleId + ": " + iExpectedOverallCount);
+				}
 			},
 			viewName : sViewName
 		});
@@ -945,8 +952,8 @@ sap.ui.define([
 					Helper.checkValueState(this, sViewName, /SO_2_SOITEM:ProductID.*\d$/,
 						sValueState, sValueStateText, false, iRow);
 				},
-				checkSalesOrdersCount : function (iExpectedCount) {
-					checkCount(this, iExpectedCount, "salesOrderListTitle");
+				checkSalesOrdersCount : function (iExpectedCount, iExpectedOverallCount) {
+					checkCount(this, iExpectedCount, "salesOrderListTitle", iExpectedOverallCount);
 				},
 				checkSalesOrdersSelectionMode : function (sMode) {
 					this.waitFor({

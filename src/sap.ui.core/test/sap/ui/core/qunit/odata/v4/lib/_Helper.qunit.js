@@ -2414,6 +2414,19 @@ sap.ui.define([
 			$select : ["A", "B", "C", "E/toF"],
 			"sap-client" : "123"
 		}
+	}, {
+		// Note: this test is using a recursion into "toA", but w/o mCacheQueryOptions the same
+		// would happen for "$count" already!
+		aPaths : ["toA/$count"], // Note: must not request metadata for $count!
+		mResult : {
+			$expand : {
+				"toA" : {
+					$select : ["$count"]
+				}
+			},
+			$select : ["toA"], // avoid $select= in URL, use any navigation property
+			"sap-client" : "123"
+		}
 	}].forEach(function (o, i) {
 		var sTitle = "intersectQueryOptions: " + o.aPaths + ", " + i;
 
