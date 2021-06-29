@@ -273,7 +273,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 	 */
 	TableRenderer.renderContainerAttributes = function(rm, oControl) {
 		rm.attr("role", "application").attr("data-sap-ui-pasteregion", "true");
-		rm.attr("aria-roledescription", Core.getLibraryResourceBundle("sap.m").getText("TABLE_ROLE_DESCRIPTION"));
+		rm.attr("aria-roledescription", Core.getLibraryResourceBundle("sap.m").getText("TABLE_CONTAINER_ROLE_DESCRIPTION"));
 		rm.class("sapMListTblCnt");
 
 		// write accessibility state for the table container
@@ -286,6 +286,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 	TableRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.openStart("table", oControl.getId("listUl"));
 		rm.class("sapMListTbl");
+		rm.attr("aria-labelledby", Core.getLibraryResourceBundle("sap.m").getText("TABLE_ARIA_LABEL"));
 		if (oControl.getFixedLayout() === false) {
 			rm.style("table-layout", "auto");
 		}
