@@ -52,10 +52,32 @@
 								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{book_ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH4" display="Description">
 									<mdc:dependents>
 										<mdcf:FieldValueHelp filterFields="$search" title="Book" id="FH4" noDialog="false" keyPath="ID" descriptionPath="title" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+										<mdcf:suggestContent>
+											<mdcf:FieldValueHelpMTableWrapper>
+												<mdcf:table>
+													<Table items='{path : "/Books", length: 10}' width="30rem">
+														<columns>
+															<Column width="5rem">
+																<header>
+																	<Text text="Title" />
+																</header>
+															</Column>
+														</columns>
+														<items>
+															<ColumnListItem type="Active">
+																<cells>
+																	<Text text="{title}" />
+																</cells>
+															</ColumnListItem>
+														</items>
+													</Table>
+												</mdcf:table>
+											</mdcf:FieldValueHelpMTableWrapper>
+										</mdcf:suggestContent>
 											<mdcf:content>
 												<mdcf:FieldValueHelpMTableWrapper>
 													<mdcf:table>
-														<Table items='{path : "/Books"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+														<Table items='{path : "/Books"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 															<columns>
 																<Column width="5rem">
 																	<header>

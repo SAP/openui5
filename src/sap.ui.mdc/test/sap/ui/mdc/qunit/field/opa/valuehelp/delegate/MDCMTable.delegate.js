@@ -165,15 +165,13 @@ sap.ui.define([
 
 			// get the basic search
 			var sSearchText = oFilter.getSearch();
-			if (sSearchText) {
 
-				if (!oBindingInfo.parameters) {
-					oBindingInfo.parameters = {};
-				}
-
-				// add basic search parameter as expected by v4.ODataListBinding
-				oBindingInfo.parameters.$search = sSearchText;
+			if (!oBindingInfo.parameters) {
+				oBindingInfo.parameters = {};
 			}
+
+			// add basic search parameter as expected by v4.ODataListBinding
+			oBindingInfo.parameters.$search = sSearchText || undefined;
 		}
 
 		oBindingInfo.filters = new Filter(aFilters, true);

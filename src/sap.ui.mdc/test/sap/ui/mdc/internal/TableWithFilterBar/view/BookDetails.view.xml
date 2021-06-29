@@ -58,10 +58,44 @@
 														</vhfb:filterItems>
 													</vhfb:FilterBar>
 												</mdcf:filterBar>
+												<mdcf:suggestContent>
+													<mdcf:FieldValueHelpMTableWrapper>
+														<mdcf:table>
+															<Table items='{path : "/Authors", length: 10}' width="30rem">
+																<columns>
+																	<Column width="5rem">
+																		<header>
+																			<Text text="my ID" />
+																		</header>
+																	</Column>
+																	<Column>
+																		<header>
+																			<Text text="Name" />
+																		</header>
+																	</Column>
+																	<Column width="8rem">
+																		<header>
+																			<Text text="Date of Birth" />
+																		</header>
+																	</Column>
+																</columns>
+																<items>
+																	<ColumnListItem type="Active">
+																		<cells>
+																			<Text text="{ID}" />
+																			<Text text="{name}" />
+																			<Text text="{dateOfBirth}" />
+																		</cells>
+																	</ColumnListItem>
+																</items>
+															</Table>
+														</mdcf:table>
+													</mdcf:FieldValueHelpMTableWrapper>
+												</mdcf:suggestContent>
 												<mdcf:content>
 													<mdcf:FieldValueHelpMTableWrapper>
 														<mdcf:table>
-															<Table items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+															<Table items='{path : "/Authors"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 																<columns>
 																	<Column width="5rem">
 																		<header>
@@ -141,10 +175,44 @@
 										<mdcf:outParameters>
 											<mdcf:OutParameter id="IOFFVHGenre-Out-Class" value="{classification_code}" helpPath="classification_code" />
 										</mdcf:outParameters>
+										<mdcf:suggestContent>
+											<mdcf:FieldValueHelpMTableWrapper>
+												<mdcf:table>
+													<Table items='{path : "/Genres", length: 10}' width="30rem">
+														<columns>
+															<Column>
+																<header>
+																	<Text text="Code" />
+																</header>
+															</Column>
+															<Column>
+																<header>
+																	<Text text="Title" />
+																</header>
+															</Column>
+															<Column>
+																<header>
+																	<Text text="Classification" />
+																</header>
+															</Column>
+														</columns>
+														<items>
+															<ColumnListItem type="Active">
+																<cells>
+																	<Text text="{code}" />
+																	<Text text="{title}" />
+																	<Text text="{classification_code}" />
+																</cells>
+															</ColumnListItem>
+														</items>
+													</Table>
+												</mdcf:table>
+											</mdcf:FieldValueHelpMTableWrapper>
+										</mdcf:suggestContent>
 										<mdcf:content>
 											<mdcf:FieldValueHelpMTableWrapper>
 												<mdcf:table>
-													<Table items='{path : "/Genres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+													<Table items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 														<columns>
 															<Column>
 																<header>
@@ -187,10 +255,50 @@
 											<mdcf:OutParameter id="IOFFVHSub-Out-Class" value="{classification_code}" helpPath="classification_code" />
 											<mdcf:OutParameter id="IOFFVHSub-Out-Genre" value="{genre_code}" helpPath="genre_code" />
 										</mdcf:outParameters>
+										<mdcf:suggestContent>
+											<mdcf:FieldValueHelpMTableWrapper>
+												<mdcf:table>
+													<Table items='{path: "/SubGenres", length: 10}' width="30rem">
+														<columns>
+															<Column>
+																<header>
+																	<Text text="Code" />
+																</header>
+															</Column>
+															<Column>
+																<header>
+																	<Text text="Title" />
+																</header>
+															</Column>
+															<Column>
+																<header>
+																	<Text text="Classification" />
+																</header>
+															</Column>
+															<Column>
+																<header>
+																	<Text text="Genre" />
+																</header>
+															</Column>
+														</columns>
+														<items>
+															<ColumnListItem type="Active">
+																<cells>
+																	<Text text="{code}" />
+																	<Text text="{title}" />
+																	<Text text="{classification_code}" />
+																	<Text text="{genre_code}" />
+																</cells>
+															</ColumnListItem>
+														</items>
+													</Table>
+												</mdcf:table>
+											</mdcf:FieldValueHelpMTableWrapper>
+										</mdcf:suggestContent>
 										<mdcf:content>
 											<mdcf:FieldValueHelpMTableWrapper>
 												<mdcf:table>
-													<Table items='{path : "/SubGenres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+													<Table items='{path : "/SubGenres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 														<columns>
 															<Column>
 																<header>

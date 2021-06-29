@@ -89,7 +89,7 @@ sap.ui.define([
 	FieldValueHelpMTableWrapper.prototype.initialize = function(bSuggestion) {
 
 		if (bSuggestion || this._oScrollContainer) {
-			return this;
+			return this._bTableResolved ? this : this._oTablePromise;
 		}
 
 		if (!ScrollContainer) {
@@ -161,6 +161,11 @@ sap.ui.define([
 	FieldValueHelpMTableWrapper.prototype.getListBinding = function() {
 		var oTable = this._getWrappedTable();
 		return oTable && oTable.getBinding("items");
+	};
+
+	FieldValueHelpMTableWrapper.prototype._getListBindingInfo = function() {
+		var oTable = this._getWrappedTable();
+		return oTable && oTable.getBindingInfo("items");
 	};
 
 	FieldValueHelpMTableWrapper.prototype.isSuspended = function() {
@@ -276,9 +281,7 @@ sap.ui.define([
 			this._bNavigate = false;
 			this.navigate(this._iStep);
 		}
-		if (oEvent.getParameter("reason") !== capitalize(ChangeReason.Filter)) {
-			this.fireDataUpdate({contentChange: false});
-		}
+		this.fireDataUpdate({contentChange: false});
 	};
 
 	FieldValueHelpMTableWrapper.prototype._getTableItems = function (bSelectedOnly, bNoVirtual) {
@@ -305,19 +308,19 @@ sap.ui.define([
 		var oItem = jQuery(oEvent.target).control(0);
 
 		switch (oEvent.type) {
-		case "sapprevious":
-			if (oItem.isA("sap.m.ListItemBase")) {
-				if (oTable.indexOfItem(oItem) === 0) {
-					// focus Field
-					this.fireNavigate({key: undefined, description: undefined, leave: true});
-					oEvent.preventDefault();
-					oEvent.stopPropagation();
-					oEvent.stopImmediatePropagation(true);
+			case "sapprevious":
+				if (oItem.isA("sap.m.ListItemBase")) {
+					if (oTable.indexOfItem(oItem) === 0) {
+						// focus Field
+						this.fireNavigate({key: undefined, description: undefined, leave: true});
+						oEvent.preventDefault();
+						oEvent.stopPropagation();
+						oEvent.stopImmediatePropagation(true);
+					}
 				}
-			}
-			break;
-		default:
-			break;
+				break;
+			default:
+				break;
 		}
 	};
 
@@ -331,6 +334,19 @@ sap.ui.define([
 			});
 			return true;
 		}
+	};
+
+	FieldValueHelpMTableWrapper.prototype.enableShowAllItems = function() {
+		var oTable = this._getWrappedTable();
+		var oBindingInfo = oTable && oTable.getBindingInfo("items");
+		return oBindingInfo && !!oBindingInfo.length;
+	};
+
+	FieldValueHelpMTableWrapper.prototype.getAllItemsShown = function() {
+
+		var oBinding = this.getListBinding();
+		return oBinding && (!oBinding.getLength() || oBinding.bLengthFinal);
+
 	};
 
 	return FieldValueHelpMTableWrapper;

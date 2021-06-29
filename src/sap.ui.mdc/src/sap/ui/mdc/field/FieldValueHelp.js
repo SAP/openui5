@@ -18,7 +18,9 @@ sap.ui.define([
 	'sap/ui/model/Context',
 	'sap/ui/Device',
 	'sap/m/library',
-	'sap/ui/core/library'
+	'sap/ui/core/library',
+	"sap/ui/mdc/util/loadModules",
+	"sap/ui/events/KeyCodes"
 ], function(
 		FieldHelpBase,
 		Condition,
@@ -35,7 +37,9 @@ sap.ui.define([
 		Context,
 		Device,
 		mobileLibrary,
-		coreLibrary
+		coreLibrary,
+		loadModules,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -397,6 +401,13 @@ sap.ui.define([
 			delete this._oCollectiveSearchSelect;
 		}
 
+		if (this._oResourceBundleM) {
+			this._oResourceBundleM = null;
+		}
+
+		if (this._oResourceBundle) {
+			this._oResourceBundle = null;
+		}
 	};
 
 	FieldValueHelp.prototype.invalidate = function(oOrigin) {
@@ -466,11 +477,36 @@ sap.ui.define([
 
 		var oPopover = FieldHelpBase.prototype._createPopover.apply(this, arguments);
 
+		var fnOpenDialogFromPopover = function (oEvent) {
+			this.fireSwitchToValueHelp();
+		}.bind(this);
+
 		if (oPopover) { // empty if loaded async
+			oPopover.addDelegate({onsapshow: fnOpenDialogFromPopover});
+
 			// use Wrapper content in Popover -> overwrite hook
 			var oWrapper = _getWrapper.call(this, true);
 			if (oWrapper) {
-				oWrapper.initialize(true);
+				SyncPromise.resolve(oWrapper.initialize(true)).then(function () {
+					if (oWrapper.enableShowAllItems()) {
+						loadModules(["sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer"]).then(function (aModules) {
+							var Button = aModules[0];
+							var Toolbar = aModules[1];
+							var ToolbarSpacer = aModules[2];
+							var sapMResourceBundle = getSAPMResourceBundle.apply(this);
+							var oShowAllItemsButton = new Button(this.getId() + "-showAllItems", {
+								text: sapMResourceBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
+								press: fnOpenDialogFromPopover
+							});
+							var aToolbarContent = [new ToolbarSpacer(this.getId() + "-Spacer")].concat(oShowAllItemsButton);
+							var oFooter = new Toolbar(this.getId() + "-TB", {
+								content: aToolbarContent,
+								visible: !oWrapper.getAllItemsShown()
+							}).setModel(this._oFooterModel, "$config");
+							oPopover.setFooter(oFooter);
+						}.bind(this));
+					}
+				}.bind(this));
 			}
 
 			oPopover._getAllContent = function() {
@@ -551,7 +587,8 @@ sap.ui.define([
 
 		oWrapper = _getWrapper.call(this, bSuggestion); // as Wrapper could be added synchronously in open event
 		if (oWrapper && oWrapper.getFilterEnabled() && !this._bNavigateRunning) { //in running navigation already filtered
-			if (!oWrapper.isSuspended() || bSuggestion) {// in suggestion applyFilter even if suspended (resume)
+			this._bApplyFilter = false; // initialize
+			if (!oWrapper.isSuspended() || bSuggestion || this.getFilterValue()) {// in suggestion applyFilter even if suspended (resume), if FilterValue set, filter always
 				// apply use in-parameter filters
 				this._bApplyFilter = true;
 			}
@@ -582,6 +619,7 @@ sap.ui.define([
 			if (oPopover) {
 				if (oPopover.isOpen()) {
 					this.close();
+					this._bSwitchToDialog = true;
 				}
 				oPopover.$().remove(); // destroy DOM of Wrapper content to not have it twice
 			}
@@ -680,6 +718,7 @@ sap.ui.define([
 			}
 
 			this._bReopen = false;
+			this._bSwitchToDialog = false;
 			delete this._bOpen;
 			delete this._bOpenAfterPromise;
 		}
@@ -759,6 +798,8 @@ sap.ui.define([
 		if (!this.isOpen()) { // maybe Popover closed while Dialog opens -> here Filter needs to be applied
 			this._bApplyFilter = false;
 		}
+
+		this._bNavigateRunning = false; // just to be sure - navigation cannot run after popover closed
 
 		FieldHelpBase.prototype._handleAfterClose.apply(this, arguments);
 
@@ -886,7 +927,7 @@ sap.ui.define([
 
 		if (!this.getNoDialog()) {
 			var oDialog = this.getAggregation("_dialog");
-			if ((oDialog && oDialog.isOpen()) || (this._bDialogRequested && this._bOpen)) {
+			if ((oDialog && oDialog.isOpen()) || (this._bDialogRequested && this._bOpen) || (this._bOpenAfterPromise && !this._bSuggestion)) {
 				return true;
 			}
 		}
@@ -944,7 +985,7 @@ sap.ui.define([
 			// apply use in-parameter filters
 			this._bApplyFilter = true;
 			this._bNavigateRunning = true;
-			_setInParameterFilters.call(this);
+			_initializeFilters.call(this);
 			_applyFilters.call(this, true); // if no filter set and no in-parameters, trigger initial select (if suspended)
 		}
 
@@ -1108,16 +1149,14 @@ sap.ui.define([
 						var oModel = oBinding.getModel();
 						aBindings.push(oModel.bindProperty(sPath, oBindingContext));
 					}
-				} else {
-					if ((!oParameterBindingContext && oBinding.isRelative()) // we don't have a BindingContext but need one -> need to wait for one
+				} else if ((!oParameterBindingContext && oBinding.isRelative()) // we don't have a BindingContext but need one -> need to wait for one
 							|| (oParameterBindingContext && oParameterBindingContext.getProperty(sPath) === undefined) // the BindingContext has no data right now -> need to wait for update
 							|| oBinding.getValue() === undefined // the Binding has no data right now, need to wait for update
 							|| (oParameterBindingContext && !deepEqual(oParameter.validateProperty("value", oParameterBindingContext.getProperty(sPath)), oParameter.getValue()))) { // value not alreday set
-						// Property not already known on BindingContext or not already updated in Parameter value
-						// use validateProperty as null might be converted to undefined, if invalid value don't run into a check
-						// use deepEqual as, depending on type, the value could be complex (same logic as in setProperty)
-						aBindings.push(oBinding);
-					}
+					// Property not already known on BindingContext or not already updated in Parameter value
+					// use validateProperty as null might be converted to undefined, if invalid value don't run into a check
+					// use deepEqual as, depending on type, the value could be complex (same logic as in setProperty)
+					aBindings.push(oBinding);
 				}
 			}
 		}
@@ -1298,9 +1337,18 @@ sap.ui.define([
 
 		var bContentChange = oEvent.getParameter("contentChange");
 		var oWrapper = oEvent.getSource();
+		var oPopover;
+
+		if (oWrapper.enableShowAllItems()) {
+			oPopover = this.getAggregation("_popover");
+			var oShowAllItemsFooter = oPopover && oPopover.getFooter();
+			if (oShowAllItemsFooter) {
+				oShowAllItemsFooter.setVisible(!oWrapper.getAllItemsShown());
+			}
+		}
 
 		if (bContentChange) {
-			var oPopover = this.getAggregation("_popover");
+			oPopover = oPopover || this.getAggregation("_popover");
 			var oDialog = this.getAggregation("_dialog");
 			if (oPopover && this._bOpenIfContent) {
 				oWrapper = _getWrapper.call(this, true);
@@ -1657,13 +1705,11 @@ sap.ui.define([
 										vValue.push(oNewCondition);
 										oOutParameter.setValue(vValue);
 									}
-								} else {
-									if (!oOutParameter.getHelpPath()) {
+								} else if (!oOutParameter.getHelpPath()) {
 										oOutParameter.setValue(oOutParameter.getFixedValue());
 									} else if (oOutParameter.getFieldPath() === sPath) { // in Conditions fieldPath is used
 										oOutParameter.setValue(oCondition.outParameters[sPath]);
 									}
-								}
 							}
 						}
 					}
@@ -1866,7 +1912,7 @@ sap.ui.define([
 			this._iFilterTimer = undefined;
 		}
 
-		if ((!this.isOpen() && !this._bNavigateRunning && !this._bOpen) || this._bClosing || !this._bApplyFilter) {
+		if ((!this.isOpen() && !this._bNavigateRunning && !this._bOpen) || (this._bClosing && !this._bSwitchToDialog) || !this._bApplyFilter) {
 			// apply filters only if open (no request on closed FieldHelp)
 			this._bPendingFilterUpdate = true;
 			return;
@@ -1894,7 +1940,7 @@ sap.ui.define([
 
 		// TODO: better way to detrmine what wrapper to use
 		var oDialog = this.getAggregation("_dialog");
-		var bSuggestion = !oDialog || !oDialog.isOpen();
+		var bSuggestion = (!oDialog || !oDialog.isOpen()) && !(this._bClosing && this._bSwitchToDialog); // if switching to dialog use dialog-wrapper
 
 		var oWrapper = _getWrapper.call(this, bSuggestion);
 		if (oWrapper) {
@@ -2325,6 +2371,8 @@ sap.ui.define([
 
 	function _handleDialogAfterOpen(oEvent) {
 
+		this._bSwitchToDialog = false;
+
 	}
 
 	function _handleDialogAfterClose(oEvent) {
@@ -2587,6 +2635,12 @@ sap.ui.define([
 
 	}
 
+	function getSAPMResourceBundle () {
+		if (!this._oResourceBundleM) {
+			this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		}
+		return this._oResourceBundleM;
+	}
 	FieldValueHelp.prototype.getScrollDelegate = function () {
 
 		var oDialog = this.getAggregation("_dialog");
@@ -2622,10 +2676,8 @@ sap.ui.define([
 		} else if (!_getWrapper.call(this, false) && this.getShowConditionPanel() && !this.getNoDialog()) { // no table, only condition panel -> no comboBox
 			return null;
 		} else {
-			if (!this._oResourceBundleM) {
-				this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			}
-			return this._oResourceBundleM.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
+			var sapMResourceBundle = getSAPMResourceBundle.apply(this);
+			return sapMResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
 		}
 
 	};

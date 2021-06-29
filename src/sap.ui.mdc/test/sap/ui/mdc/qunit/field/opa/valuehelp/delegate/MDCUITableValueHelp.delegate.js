@@ -19,13 +19,13 @@ sap.ui.define([
 		if (bSuggestion && !oWrapper.getTable()) {
 
 			var oSuggestionTable = new sap.m.Table(oFieldHelp.getId() + "--suggest--mTable", {
-				growing: true, growingScrollToLoad: true, growingThreshold: 20,
 				columns: [
 					new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
 					new sap.m.Column({header: new sap.m.Text({text : "Name"})})
 				],
 				items: {
 					path : "/Authors",
+					length: 10,
 					suspended: bSuspended,
 					template : new sap.m.ColumnListItem({
 						type: "Active",

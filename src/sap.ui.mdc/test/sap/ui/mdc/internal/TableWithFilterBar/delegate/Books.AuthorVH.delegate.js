@@ -12,10 +12,39 @@ sap.ui.define([
 		var oTable;
 		var oFilterBar;
 
+		var fnUpdateSuggestTable = function(oSuggestWrapper) {
+			var oSuggestTable = oSuggestWrapper.getTable();
+			if (!oSuggestTable) {
+				oSuggestTable = new sap.m.Table({
+					autoPopinMode: true,
+					contextualWidth: "Auto",
+					hiddenInPopin: ["Low"],
+					columns: [
+						new sap.m.Column({width: '5rem', importance:"High", header: new sap.m.Text({text : "ID"})}),
+						new sap.m.Column({header: new sap.m.Text({text : "Name "})}),
+						new sap.m.Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new sap.m.Text({text : "Date of Birth"})})
+					],
+					items: {
+						path : "/Authors",
+						length: 10,
+						template : new sap.m.ColumnListItem({
+							type: "Active",
+							cells: [new sap.m.Text({text: "{ID}"}),
+									new sap.m.Text({text: "{name}"}),
+									new sap.m.Text({text: "{dateOfBirth}"})]
+						})
+					},
+					width: "30rem"
+				});
+				oSuggestWrapper.setTable(oSuggestTable);
+			}
+
+			return oSuggestTable;
+		};
+
 		var fncGetDefaultSearchTemplateTable = function() {
 			if (!this._oDefaultSearchTemplateTable) {
 				this._oDefaultSearchTemplateTable = new sap.m.Table({
-					growing: true, growingScrollToLoad: true, growingThreshold: 20,
 					autoPopinMode: true,
 					contextualWidth: "Auto",
 					hiddenInPopin: ["Low"],
@@ -33,7 +62,7 @@ sap.ui.define([
 									new sap.m.Text({text: "{dateOfBirth}"})]
 						})
 					},
-					width: isSuggest ? "20rem" : "100%"
+					width: "100%"
 				});
 			}
 			return this._oDefaultSearchTemplateTable;
@@ -116,15 +145,15 @@ sap.ui.define([
 
 		oFieldHelp.setFilterFields("$search");
 
-		var oTableWrapper = oFieldHelp.getContent();
-		oTable = oTableWrapper.getTable();
-
 		oTable.getColumns()[2].setVisible(!isSuggest);
 		if (isSuggest) {
-			oTable.setWidth("20rem");
-			oTable.getColumns()[1].setWidth("100%");
-			oTable.getColumns()[2].setVisible(false);
+			var oSuggestWrapper = oFieldHelp.getSuggestContent();
+			fnUpdateSuggestTable(oSuggestWrapper);
+
 		} else {
+			var oTableWrapper = oFieldHelp.getContent();
+			oTable = oTableWrapper.getTable();
+
 			oTable.setWidth("100%");
 			oTable.getColumns()[1].setWidth(null);
 			oTable.getColumns()[2].setVisible(true);
