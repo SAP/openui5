@@ -720,6 +720,39 @@
           "items": {
             "$ref": "#/definitions/action"
           }
+        },
+        "actionableArea": {
+          "oneOf": [
+            {
+              "enum": [
+                "Full",
+                "Chart"
+              ],
+              "default": "Full"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "popover": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Configuration for a popover, which will open while pressing chart points",
+          "properties": {
+            "connected": {
+              "description": "Whether the popover is connected to the chart. If it's not it won't open",
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "default": false
+                },
+                {
+                  "$ref": "#/definitions/simpleBinding"
+                }
+              ]
+            }
+          }
         }
       }
     },
@@ -729,11 +762,11 @@
       "additionalProperties": false,
       "properties": {
         "visible": {
-          "description": "Represents the visibility state of the dataLabel",
+          "description": "Visibility of the data labels",
           "$ref": "#/definitions/visibility"
         },
         "showTotal": {
-          "description": "Represents the visibility state of 'show total' indicator",
+          "description": "Visibility of data label for total value in some charts",
           "$ref": "#/definitions/visibility"
         }
       }
@@ -755,11 +788,11 @@
       "additionalProperties": false,
       "properties": {
         "visible": {
-          "description": "Represent the visibility state of the legend",
+          "description": "Defines whether the legend will be visible",
           "$ref": "#/definitions/visibility"
         },
         "position": {
-          "description": "Representation of where the legend will be positioned",
+          "description": "Defines where the legend will be positioned",
           "type": "string",
           "oneOf": [
             {
@@ -777,7 +810,7 @@
           ]
         },
         "alignment": {
-          "description": "Representation of how the legend will be aligned",
+          "description": "Defines how the legend will be aligned",
           "type": "string",
           "oneOf": [
             {

@@ -1021,6 +1021,35 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest);
 		}
 
+		QUnit.module("CardActions API", {
+			beforeEach: function () {
+				this.oActions = new CardActions();
+			},
+			afterEach: function () {
+				this.oActions.destroy();
+			}
+		});
+
+		QUnit.test("Resolving binding path with custom bindingPathResolver", function (assert) {
+			// Arrange
+			var stubResolver = sinon.stub().returns("/custom/resolved/path");
+			this.oActions.setBindingPathResolver(stubResolver);
+			var oFakeEvent = {
+				getSource: function () {
+					return {
+						getBindingContext: function () { }
+					};
+				}
+			};
+
+			// Act
+			var sPath = this.oActions._resolveBindingPath(oFakeEvent);
+
+			// Assert
+			assert.strictEqual(sPath, "/custom/resolved/path", "Custom binding path resolver should be used when provided");
+			assert.ok(stubResolver.calledWith(oFakeEvent), "Custom binding path resolver should be called with the action event");
+		});
+
 		QUnit.module("Action Enablement - Header", {
 			beforeEach: function () {
 				this.oCard = new Card({

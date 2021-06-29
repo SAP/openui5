@@ -194,6 +194,43 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Navigation from Chart Sectors',
+								key: 'chartActions',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/analytical/chartActions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Details Popover',
+								key: 'detailsPopover',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/analytical/detailsPopover/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/detailsPopover/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
 							}
 						]
 					},
@@ -749,7 +786,7 @@ sap.ui.define([
 						},
 						files: [
 							{
-								url: '/samples/actions/quickLinks/manifest.json',
+								url: '/samples/actions/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
 							}

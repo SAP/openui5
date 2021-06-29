@@ -14,7 +14,7 @@ sap.ui.define([
 	var ActionArea = library.CardActionArea;
 
 	// lazy dependencies, loaded on the first attempt to create AnalyticalContent
-	var VizFrame, FeedItem, FlattenedDataset;
+	var VizFrame, FeedItem, FlattenedDataset, Popover;
 
 	/**
 	 * Enumeration with supported legend positions.
@@ -54,6 +54,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * Enumeration for actionable parts of the analytical content
+	 */
+	var ActionableArea = {
+		"Chart": "Chart",
+		"Full": "Full"
+	};
+
+	/**
 	 * Constructor for a new <code>AnalyticalContent</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -80,6 +88,14 @@ sap.ui.define([
 		renderer: AnalyticalContentRenderer
 	});
 
+	AnalyticalContent.prototype.exit = function () {
+		BaseContent.prototype.exit.apply(this, arguments);
+
+		if (this._oPopover) {
+			this._oPopover.destroy();
+		}
+	};
+
 	/**
 	 * @override
 	 */
@@ -90,10 +106,12 @@ sap.ui.define([
 					sap.ui.require([
 						"sap/viz/ui5/controls/VizFrame",
 						"sap/viz/ui5/controls/common/feeds/FeedItem",
+						"sap/viz/ui5/controls/Popover",
 						"sap/viz/ui5/data/FlattenedDataset"
-					], function (_VizFrame, _FeedItem, _FlattenedDataset) {
+					], function (_VizFrame, _FeedItem, _Popover, _FlattenedDataset) {
 						VizFrame = _VizFrame;
 						FeedItem = _FeedItem;
+						Popover = _Popover;
 						FlattenedDataset = _FlattenedDataset;
 						resolve();
 					}, function (sErr) {
@@ -110,17 +128,17 @@ sap.ui.define([
 	 * Creates vizFrame readable vizProperties object.
 	 *
 	 * @private
-	 * @param {Object} oChartObject Chart information
-	 * @returns {Object} oVizPropertiesObject vizFrame vizProperties object
+	 * @param {object} oConfiguration Configuration from the manifest with resolved bindings
+	 * @returns {object} vizProperties object
 	 */
-	AnalyticalContent.prototype._getVizPropertiesObject = function (oChartObject) {
-		var oTitle = oChartObject.title,
-			oLegend = oChartObject.legend,
-			oPlotArea = oChartObject.plotArea;
-
-		if (!oChartObject) {
-			return this;
+	AnalyticalContent.prototype._getVizPropertiesObject = function (oConfiguration) {
+		if (!oConfiguration) {
+			return null;
 		}
+
+		var oTitle = oConfiguration.title,
+			oLegend = oConfiguration.legend,
+			oPlotArea = oConfiguration.plotArea;
 
 		var oVizPropertiesObject = {
 			"title": {
@@ -147,9 +165,7 @@ sap.ui.define([
 			"valueAxis": {
 				"title": {}
 			},
-			"interaction": {
-				"noninteractiveMode": true
-			}
+			"interaction": {}
 		};
 
 		if (oTitle) {
@@ -176,6 +192,14 @@ sap.ui.define([
 			}
 		}
 
+		if (oConfiguration.actions || oConfiguration.popover) {
+			var bChartsInteractive = oConfiguration.actionableArea === ActionableArea.Chart
+									|| oConfiguration.popover && oConfiguration.popover.active;
+			oVizPropertiesObject.interaction.noninteractiveMode = !bChartsInteractive;
+		} else {
+			oVizPropertiesObject.interaction.noninteractiveMode = true;
+		}
+
 		return oVizPropertiesObject;
 	};
 
@@ -194,7 +218,9 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalContent.prototype._createChart = function () {
-		var oChartObject = this.getConfiguration();
+		var oChartObject = this.getConfiguration(),
+			aMeasures,
+			aDimensions;
 
 		if (!oChartObject.chartType) {
 			Log.error("ChartType is a mandatory property");
@@ -205,7 +231,7 @@ sap.ui.define([
 
 		var aDimensionNames = [];
 		if (oChartObject.dimensions) {
-			var aDimensions = [];
+			aDimensions = [];
 			for (var i = 0; i < oChartObject.dimensions.length; i++) {
 				var oDimension = oChartObject.dimensions[i];
 				var sName = oResolvedChartObject.dimensions[i].label;
@@ -221,7 +247,7 @@ sap.ui.define([
 
 		var aMeasureNames = [];
 		if (oChartObject.measures) {
-			var aMeasures = [];
+			aMeasures = [];
 			for (var i = 0; i < oChartObject.measures.length; i++) {
 				var oMeasure = oChartObject.measures[i];
 				var sName = oResolvedChartObject.measures[i].label;
@@ -232,7 +258,6 @@ sap.ui.define([
 				};
 				aMeasures.push(oMeasureMap);
 			}
-
 		}
 
 		var oFlattendedDataset = new FlattenedDataset({
@@ -268,16 +293,45 @@ sap.ui.define([
 
 		var oVizProperties = this._getVizPropertiesObject(oResolvedChartObject);
 		oChart.setVizProperties(oVizProperties);
-
-		this._oActions.attach({
-			area: ActionArea.Content,
-			actions: oChartObject.actions,
-			control: this
-		});
-
 		this.setAggregation("_content", oChart);
+		this._attachActions();
+
+		if (oResolvedChartObject.popover && oResolvedChartObject.popover.active) {
+			this._attachPopover();
+		}
 	};
 
+	AnalyticalContent.prototype._attachActions = function () {
+		var oConfiguration = this.getConfiguration();
+		var oActionConfig = {
+			area: ActionArea.Content,
+			actions: oConfiguration.actions,
+			control: this
+		};
+
+		if (oConfiguration.actionableArea === ActionableArea.Chart) {
+			oActionConfig.eventName = "selectData";
+			oActionConfig.actionControl = this.getAggregation("_content");
+
+			this._oActions.setBindingPathResolver(function (oEvent) {
+				var iIndex = oEvent.getParameter("data")[0].data._context_row_number;
+				return this.getBindingContext().getPath() + "/" + iIndex;
+			}.bind(this));
+		} else {
+			oActionConfig.eventName = "press";
+		}
+
+		this._oActions.attach(oActionConfig);
+	};
+
+	AnalyticalContent.prototype._attachPopover = function () {
+		if (this._oPopover) {
+			this._oPopover.destroy();
+		}
+
+		this._oPopover = new Popover();
+		this._oPopover.connect(this.getAggregation("_content").getVizUid());
+	};
 
 	return AnalyticalContent;
 });

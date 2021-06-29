@@ -268,15 +268,13 @@ sap.ui.define([
 			if (oColumn.actions) {
 				oControl.setTitleActive(true);
 
-				// workaround for lack of attachPress event handler on the control
-				oControl.attachPress = oControl.attachTitlePress;
-
 				this._oActions.attach({
 					area: ActionArea.ContentItemDetail,
 					actions: oColumn.actions,
 					control: this,
 					actionControl: oControl,
-					enabledPropertyName: "titleActive"
+					enabledPropertyName: "titleActive",
+					eventName: "titlePress"
 				});
 			}
 
