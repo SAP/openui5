@@ -54,9 +54,9 @@ sap.ui.define([
 	function makeNameFromURL(urlStr) {
 		let name;
 		try {
-			let url = new URL(urlStr, document.baseURI),
-				path = removeWebContext(url.pathname),
-				search = url.searchParams;
+			const url = new URL(urlStr, document.baseURI);
+			const search = url.searchParams;
+			let path = removeWebContext(url.pathname);
 
 			search.delete("hidepassed");
 			if ( path.includes("resources/sap/ui/test/starter/Test.qunit.html") && search.has("testsuite") && search.has("test") ) {
@@ -109,9 +109,9 @@ sap.ui.define([
 		return v != null ? "sinon" + v : "";
 	}
 
-	var oModel = new JSONModel({data: []});
-	var oTable;
-	var oTreeMapChart;
+	const oModel = new JSONModel({data: []});
+	let oTable;
+	let oTreeMapChart;
 
 	function fnSearch(oEvent) {
 		var oFilter = new Filter(
@@ -172,7 +172,7 @@ sap.ui.define([
 						contentRight: [
 							new SegmentedButton("view", {
 								selectionChange: function(e) {
-									let key = e.getSource().getSelectedKey();
+									const key = e.getSource().getSelectedKey();
 									if ( key === "table" ) {
 										oTable.setVisible(true);
 										if ( oTreeMapChart ) {
@@ -281,7 +281,7 @@ sap.ui.define([
 	const store = new Storage(Storage.Type.local, "sap-ui-find-tests");
 
 	function restoreData(entryPage) {
-		let data = store.get("data");
+		const data = store.get("data");
 		if ( data && data.entryPage === entryPage && data._$schemaVersion === SCHEMA_VERSION ) {
 			oModel.setData(data);
 			return true;
@@ -297,15 +297,16 @@ sap.ui.define([
 		if ( urlStr == null ) {
 			return urlStr;
 		}
-		let url = new URL(urlStr, document.baseURI);
+		const url = new URL(urlStr, document.baseURI);
 		if ( url.origin === window.location.origin ) {
 			return url.href;
 		}
+		return undefined;
 	}
 
 	includeStylesheet(require.toUrl("./main.css"));
 
-	const url = new URL(location.href);
+	const url = new URL(window.location.href);
 
 	const uiCreated = new Promise( (resolve, reject) => {
 		sap.ui.getCore().attachInit(() => {
@@ -316,18 +317,18 @@ sap.ui.define([
 
 	uiCreated.then(() => {
 
-		let search = sap.ui.getCore().byId("search");
+		const search = sap.ui.getCore().byId("search");
 		search.setValue( cleanURL(url.searchParams.get("testpage")) || "");
-		let entryPage = cleanURL(url.searchParams.get("root")) || _utils.getAttribute("data-sap-ui-root-testsuite") || "test-resources/qunit/testsuite.qunit.html";
+		const entryPage = cleanURL(url.searchParams.get("root")) || _utils.getAttribute("data-sap-ui-root-testsuite") || "test-resources/qunit/testsuite.qunit.html";
 
 		if ( restoreData(entryPage) ) {
 			sap.ui.getCore().byId("app").setBusy(false);
 		}
 
-		discovery.findTests( entryPage, progress ).then( aTests => {
+		discovery.findTests( entryPage, progress ).then( (aTests) => {
 			sap.ui.getCore().byId("app").setBusy(false);
 			oTable.setFooter("Refresh: done.");
-			let aTestPageUrls = [];
+			const aTestPageUrls = [];
 			// filter duplicate tests and sort them
 			aTests = aTests.filter((e,i,a) => {
 				return aTestPageUrls.indexOf(e.fullpage) === -1 && aTestPageUrls.push(e.fullpage) > 0;

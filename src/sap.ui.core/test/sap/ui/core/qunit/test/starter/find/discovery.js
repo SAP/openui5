@@ -42,7 +42,7 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 
 				// console.log("checking test page: " + sTestPage);
-				let url = new URL(oTestPageConfig.fullpage, location.href);
+				const url = new URL(oTestPageConfig.fullpage, window.location.href);
 				if ( !/testsuite[_.]/.test(url.pathname) ) {
 					resolve(oTestPageConfig);
 					return;
@@ -86,7 +86,7 @@ sap.ui.define([
 								}.bind(this));
 							}
 						});
-						let url = new URL(oTestPageConfig.fullpage, document.baseURI);
+						const url = new URL(oTestPageConfig.fullpage, document.baseURI);
 						url.searchParams.set("sap-ui-xx-noless","true");
 						$frame.attr("src", url);
 						$frame.appendTo(document.body);
@@ -150,7 +150,7 @@ sap.ui.define([
 	return {
 		findTestsuites: function(sEntryPage, progressCallback) {
 			return findPages(sEntryPage, progressCallback).then( (result) => {
-				let allSuites = [];
+				const allSuites = [];
 				function collect(test) {
 					if ( Array.isArray(test.tests) ) {
 						test.tests.forEach(collect);
@@ -165,7 +165,7 @@ sap.ui.define([
 		},
 		findTests: function(entryPage, progressCallback) {
 			return findPages(entryPage, progressCallback).then( (result) => {
-				let allTests = [];
+				const allTests = [];
 				function collect(test) {
 					if ( Array.isArray(test.tests) ) {
 						test.tests.forEach(collect);

@@ -17,6 +17,7 @@ sap.ui.define([
 		if ( str === "false" ) {
 			return true;
 		}
+		return undefined;
 	}
 
 	function toString(str) {
@@ -29,6 +30,7 @@ sap.ui.define([
 		} catch (e) {
 			// ignore
 		}
+		return undefined;
 	}
 
 	function nonEmpty(obj) {
@@ -41,11 +43,11 @@ sap.ui.define([
 
 	function normalizeIndent(str, tabWidth) {
 		tabWidth = tabWidth || 4;
-		let useTabs = true;
+		const useTabs = true;
 		let indent = 0;
 		let p = 0;
 		while (p < str.length) {
-			let c = str.charAt(p++);
+			const c = str.charAt(p++);
 			if (c === "\t") {
 				indent += tabWidth - (indent % tabWidth);
 			} else if (c === " ") {
@@ -93,7 +95,7 @@ sap.ui.define([
 					return indent;
 				}, indent);
 				if ( indent ) {
-					return lines.map((line) => line.trim() ? normalizeIndent(line).slice(indent.length) : "").join("\n");
+					return lines.map((line) => (line.trim() ? normalizeIndent(line).slice(indent.length) : "").join("\n"));
 				}
 			}
 		}
@@ -130,14 +132,14 @@ sap.ui.define([
 		if ( sResourceName.startsWith("/") ) {
 			sResourceName = sResourceName.slice(1);
 		}
-		let segments = sResourceName.split("/");
+		const segments = sResourceName.split("/");
 		let count = segments.length;
 		let baseRef = "";
 		while ( --count > 0 ) {
 			baseRef += "../";
 		}
 
-		let suitePageInfo = {
+		const suitePageInfo = {
 			url: sPageURL,
 			rootPath: sRootPath,
 			baseRef,
@@ -177,14 +179,14 @@ sap.ui.define([
 		if ( elem.children.length > 0 ) {
 			return undefined;
 		}
-		let info = {
+		const info = {
 			tag: elem.nodeName,
 			id: undefined,
 			attr: [],
 			text: elem.textContent
 		};
 		for ( let i = 0; i < elem.attributes.length; i++ ) {
-			let attr = elem.attributes[i];
+			const attr = elem.attributes[i];
 			if ( attr.name === 'id' ) {
 				info.id = attr.value;
 			} else {
@@ -249,12 +251,12 @@ sap.ui.define([
 
 	function isTestLauncherScript(test, script, bAutostartDisabled) {
 
-		let lines = script.split(/\r\n|\r|\n/).length;
+		const lines = script.split(/\r\n|\r|\n/).length;
 		if ( lines > 20 || !rRequire.test(script) || !bAutostartDisabled ) {
 			return false;
 		}
 
-		let Syntax = esprima.Syntax;
+		const Syntax = esprima.Syntax;
 		let ast;
 		try {
 			ast = esprima.parse(script);
@@ -269,7 +271,7 @@ sap.ui.define([
 		let bDisableAutoStart = false;
 		let bRequire = false;
 		let bStartQUnit = false;
-		let unknown = [];
+		const unknown = [];
 
 		function isNamedObject(node, objectPath) {
 			let length = objectPath.length;
@@ -286,14 +288,14 @@ sap.ui.define([
 		function checkForRequireAndStart(call) {
 			if ( isNamedObject(call.callee, ["sap","ui","require"]) ) {
 				bRequire = true;
-				let args = call.arguments,
-					arg = 0;
+				const args = call.arguments;
+				let arg = 0;
 				if ( arg < args.length && args[arg].type === Syntax.ArrayExpression ) {
 					test.module = test.module || [];
 					args[arg++].elements.forEach( (el) => test.module.push(el.value) );
 				}
 				if ( arg < args.length && args[arg].type === Syntax.FunctionExpression ) {
-					let callback = args[arg++];
+					const callback = args[arg++];
 					callback.body.body.forEach( (stmt) => {
 						if ( stmt.type === Syntax.ExpressionStatement
 							 && stmt.expression.type === Syntax.CallExpression
@@ -306,6 +308,7 @@ sap.ui.define([
 				}
 				return true;
 			}
+			return false;
 		}
 
 		ast.body.forEach( (stmt) => {
@@ -370,7 +373,7 @@ sap.ui.define([
 
 	function isQUnitLauncherScript(test, script, bAutostartDisabled) {
 
-		let Syntax = esprima.Syntax;
+		const Syntax = esprima.Syntax;
 		let ast;
 		try {
 			ast = esprima.parse(script);
@@ -394,7 +397,7 @@ sap.ui.define([
 			return length == 1 && node.type === Syntax.Identifier && node.name === objectPath[0];
 		}
 
-		let unknown = [];
+		const unknown = [];
 
 		ast.body.forEach( (stmt) => {
 			if ( stmt.type === Syntax.ExpressionStatement
@@ -404,7 +407,7 @@ sap.ui.define([
 				 && stmt.expression.arguments[0].type === Syntax.Literal
 				 && typeof stmt.expression.arguments[0].value === "string" ) {
 
-				let module = ui5ToRJS(stmt.expression.arguments[0].value);
+				const module = ui5ToRJS(stmt.expression.arguments[0].value);
 				if ( module === "sap/ui/thirdparty/qunit"
 					 || module === "sap/ui/thirdparty/qunit-2"
 					 || module === "sap/ui/thirdparty/qunit-sinon"
@@ -498,7 +501,7 @@ sap.ui.define([
 	}
 
 	function injectCode({script, bImportsQUtils, uiAreas, uiAreasBeforeQUnit, embeddedData, styles}) {
-		let codeToInject = [];
+		const codeToInject = [];
 		if ( bImportsQUtils ) {
 			Log.info("Adding import for QUnitUtils");
 			codeToInject.push("jQuery.sap.require(\"sap.ui.qunit.QUnitUtils\");");
@@ -541,10 +544,10 @@ sap.ui.define([
 
 		if ( codeToInject.length > 0 ) {
 			codeToInject.push("", "");
-			let snippet = codeToInject.join("\n");
-			let m = /['"]use strict['"];?[ \t]*(?:\r\n|\r|\n)/.exec(script);
+			const snippet = codeToInject.join("\n");
+			const m = /['"]use strict['"];?[ \t]*(?:\r\n|\r|\n)/.exec(script);
 			if ( m ) {
-				let p = m.index + m[0].length;
+				const p = m.index + m[0].length;
 				script = script.slice(0, p) + snippet + script.slice(p);
 			} else {
 				script = snippet + script;
@@ -555,7 +558,7 @@ sap.ui.define([
 	}
 
 	function postprocessScript(script, newlyExternalized) {
-		let globalsToAdd = [];
+		const globalsToAdd = [];
 		if ( /QUnit/.test(script) && !/\/\*\s*global\s+[^*]*QUnit/.test(script) ) {
 			globalsToAdd.push("QUnit");
 		}
@@ -605,7 +608,7 @@ sap.ui.define([
 		// find and cut off common prefix
 		var prefix = aTests.reduce((prefix, test) => {
 			// calculate name relative to the testsuite page
-			let relativeName = new URI(test.page).relativeTo(new URI(sSuiteURL)).toString();
+			const relativeName = new URI(test.page).relativeTo(new URI(sSuiteURL)).toString();
 			if ( !relativeName.startsWith("../") ) {
 				if ( prefix == null ) {
 					return test.page;
@@ -654,7 +657,7 @@ sap.ui.define([
 					var mResourceRoots = toJSON($bootstrap.attr("data-sap-ui-resourceroots"));
 					if ( mResourceRoots ) {
 						test.loader.paths = {};
-						for ( let sNamePrefix in mResourceRoots ) {
+						for ( const sNamePrefix in mResourceRoots ) {
 							var sURL = new URI(mResourceRoots[sNamePrefix], new URI(test.page).search("").fragment("")).relativeTo(suitePageInfo.rootPath).toString();
 							test.loader.paths[ui5ToRJS(sNamePrefix)] = sURL;
 						}
@@ -687,8 +690,8 @@ sap.ui.define([
 						}
 					}
 					var m;
-					if ( m = rRequire.exec(data) ) {
-						let deps = m[1].trim().split(/\s*,\s*/).map( (dep) => {
+					if ( (m = rRequire.exec(data)) ) {
+						const deps = m[1].trim().split(/\s*,\s*/).map( (dep) => {
 							if ( /^(?:'.*'|".*")$/.test(dep) ) {
 								return dep.slice(1,-1);
 							}
@@ -706,8 +709,8 @@ sap.ui.define([
 
 					let bAutostartDisabled = false;
 					rQUnitConfig.lastIndex = 0;
-					while ( m = rQUnitConfig.exec(data) ) {
-						let option = m[1];
+					while ( (m = rQUnitConfig.exec(data)) ) {
+						const option = m[1];
 						let value;
 						try {
 							eval("value = " + m[2]); // eslint-disable-line no-eval
@@ -723,8 +726,8 @@ sap.ui.define([
 					}
 
 					rSinonConfig.lastIndex = 0;
-					while ( m = rSinonConfig.exec(data) ) {
-						let option = m[1];
+					while ( (m = rSinonConfig.exec(data)) ) {
+						const option = m[1];
 						let value;
 						try {
 							eval("value = " + m[2]); // eslint-disable-line no-eval
@@ -735,19 +738,19 @@ sap.ui.define([
 						test.sinon[option] = value;
 					}
 
-					let $coverOnly = jQuery("[data-sap-ui-cover-only]");
+					const $coverOnly = jQuery("[data-sap-ui-cover-only]");
 					if ( $coverOnly.length > 0 ) {
 						test.coverage = test.coverage || {};
 						test.coverage.only = toString($coverOnly.attr("data-sap-ui-cover-only"));
 					}
-					let $coverNever = jQuery("[data-sap-ui-cover-never]");
+					const $coverNever = jQuery("[data-sap-ui-cover-never]");
 					if ( $coverNever.length > 0 ) {
 						test.coverage = test.coverage || {};
 						test.coverage.never = toString($coverNever.attr("data-sap-ui-cover-only"));
 					}
 
-					let reasonsToKeepPage = [];
-					let filesToCreate = [];
+					const reasonsToKeepPage = [];
+					const filesToCreate = [];
 
 					if ( /\/demokit\/sample\//.test(test.page) ) {
 						test.group = "Demokit Sample";
@@ -762,15 +765,15 @@ sap.ui.define([
 						test.group = "Designtime";
 					}
 
-					let $body = jQuery("body", dom).children();
-					let unknownElements = [];
+					const $body = jQuery("body", dom).children();
+					const unknownElements = [];
 					let uiAreas = [];
 					let uiAreasBeforeQUnit = null;
 					let embeddedData = [];
 					let styles = jQuery("style", dom).get().map((styleTag) => jQuery(styleTag).text());
 
 					$body.each((idx, elem) => {
-						let id = elem.id;
+						const id = elem.id;
 						let domInfo;
 						if ( /^qunit(?:-header|-banner|-userAgent|-testrunner-toolbar|-tests|-fixture)?$/.test(id) ) {
 							// ignore
@@ -779,7 +782,7 @@ sap.ui.define([
 							}
 						} else if ( (elem.nodeName === "BR" || elem.nodeName === "HR") && elem.children.length === 0 && !elem.textContent.trim() ) {
 							// ignore
-						} else if ( domInfo = getSimpleDOM(elem) ) {
+						} else if ( (domInfo = getSimpleDOM(elem)) ) {
 							Log.info("page contains simple DOM '" + domInfo.tagName + (domInfo.id ? "#" + id : ""));
 							uiAreas.push(domInfo);
 						} else {
@@ -792,9 +795,9 @@ sap.ui.define([
 					}
 
 					let bImportsQUtils = false;
-					let $externalScripts = jQuery("script[src]", dom);
+					const $externalScripts = jQuery("script[src]", dom);
 					$externalScripts.each( (idx,script) => {
-						let src = jQuery(script).attr("src");
+						const src = jQuery(script).attr("src");
 						if ( /(?:^|\/)sap-ui-core\.js(?:\?|#|$)/.test(src) ) {
 							test.bootCore = true;
 						} else if ( /(?:^|\/)sap\/ui\/thirdparty\/qunit\.js(?:\?|#|$)/.test(src) ) {
@@ -828,7 +831,7 @@ sap.ui.define([
 						} else if ( /(?:^|\/)shared-config\.js(?:\?|#|$)/.test(src) ) {
 							// ignore
 						} else if ( /^((?:\.\/)?[^\/]*)\.js(?:\?|#|$)/.test(src) ) {
-							let url = new URI(src, test.page).toString();
+							const url = new URI(src, test.page).toString();
 							jQuery.ajax({
 								url: url,
 								dataType: 'text',
@@ -838,7 +841,7 @@ sap.ui.define([
 									({script, bImportsQUtils, uiAreas, uiAreasBeforeQUnit, embeddedData, styles} =
 										injectCode({script, bImportsQUtils, uiAreas, uiAreasBeforeQUnit, embeddedData, styles}));
 									script = postprocessScript(script);
-									let relativeName = new URI(url).relativeTo(suitePageInfo.url).toString();
+									const relativeName = new URI(url).relativeTo(suitePageInfo.url).toString();
 									Log.info("update external script ", src, "'" + relativeName + "'");
 									filesToCreate.push({
 										name: relativeName,
@@ -846,7 +849,7 @@ sap.ui.define([
 									});
 								}
 							});
-							let mod = getTestResourceName(url).replace(/\.js$/, "");
+							const mod = getTestResourceName(url).replace(/\.js$/, "");
 							test.module = test.module || [];
 							test.module.push(mod);
 						} else {
@@ -857,14 +860,14 @@ sap.ui.define([
 						}
 					});
 
-					let inlineScripts = jQuery("script:not([src])", dom).get();
+					const inlineScripts = jQuery("script:not([src])", dom).get();
 					if ( inlineScripts.length === 0 ) {
 						Log.info("Test " + test.name + " has no more inline scripts \u2705");
 					} else {
 
 						let i = 0;
 						while ( i < inlineScripts.length ) {
-							let type = inlineScripts[i].getAttribute("type");
+							const type = inlineScripts[i].getAttribute("type");
 							if ( type != null && type !== "javascript" && type !== "text/javascript" ) {
 								if ( inlineScripts[i].getAttribute("id") && /\/xml(data|view)/.test(type) ) {
 									embeddedData.push({
@@ -886,7 +889,7 @@ sap.ui.define([
 						while ( i < inlineScripts.length ) {
 							let prev = inlineScripts[i];
 							let script = jQuery(inlineScripts[i]).text();
-							let j = i + 1;
+							const j = i + 1;
 							while ( j < inlineScripts.length && prev.nextElementSibling === inlineScripts[j] ) {
 								script = script + "\n" + jQuery(inlineScripts[j]).text();
 								jQuery(inlineScripts[i]).text(script);
@@ -942,9 +945,9 @@ sap.ui.define([
 					}
 
 					if ( reasonsToKeepPage.length === 0 ) {
-						let pageInfo = extractSuiteInfo(test.page);
+						const pageInfo = extractSuiteInfo(test.page);
 
-						let tmp = test.page;
+						const tmp = test.page;
 						delete test.page;
 						test._page = tmp;
 
@@ -1013,7 +1016,7 @@ sap.ui.define([
 
 			function visit(obj, prefix) {
 				Object.keys(obj).forEach( (key) => {
-					let fullkey = prefix + key;
+					const fullkey = prefix + key;
 					let values = condensed.get(fullkey);
 					let value = obj[key];
 					if ( values == null && wildcard[prefix] === true ) {
@@ -1038,14 +1041,14 @@ sap.ui.define([
 			// remove undefined values in the test config
 			test = JSON.parse(JSON.stringify(test));
 			// merge with defaults
-			let testWithDefaults = merge({}, testStarterUtils.defaultConfig, { ui5: { preload: "auto" } }, test);
+			const testWithDefaults = merge({}, testStarterUtils.defaultConfig, { ui5: { preload: "auto" } }, test);
 			// update counts
 			visit(testWithDefaults, "");
 		});
 
-		for ( let [key,values] of condensed ) {
+		for ( const [key,values] of condensed ) {
 			let s = [];
-			for ( let [value] of values ) {
+			for ( const [value] of values ) {
 				s.push(value);
 			}
 			s = s.sort(function(v1,v2) {
@@ -1059,7 +1062,7 @@ sap.ui.define([
 			return condensed.get(key) && condensed.get(key).length > 0 ? condensed.get(key)[0][0] : defaultValue;
 		}
 
-		let defaults = {
+		const defaults = {
 			bootCore: mostCommon("bootCore", testStarterUtils.defaultConfig.bootCore),
 			ui5: {
 				libs: mostCommon("ui5/libs", ""),
@@ -1125,7 +1128,7 @@ sap.ui.define([
 				}
 			}
 			if ( Array.isArray(test.module) ) {
-				let defaultModule = resolvePackage(resolvePlaceholders(defaults.module));
+				const defaultModule = resolvePackage(resolvePlaceholders(defaults.module));
 				test.module = test.module.filter( (module) => {
 					return resolvePackage(module) !== defaultModule;
 				});
@@ -1135,7 +1138,7 @@ sap.ui.define([
 			}
 
 			// remove empty objects
-			for ( let key in test ) {
+			for ( const key in test ) {
 				test[key] = nonEmpty(test[key]);
 			}
 
@@ -1160,7 +1163,7 @@ sap.ui.define([
 	}
 
 	function stringify(obj, indent) {
-		let s = [];
+		const s = [];
 
 		function pushName(key, indent, first) {
 			if ( !first ) {
@@ -1222,6 +1225,7 @@ sap.ui.define([
 				// ignore
 				return first;
 			}
+			return false;
 		}
 
 		if ( pushValue(obj, undefined, indent, true) ) {
@@ -1235,7 +1239,7 @@ sap.ui.define([
 
 	function createTestPage(testPageInfo, oConfig) {
 		const script = "script";
-		let content = `<!DOCTYPE html>
+		const content = `<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
@@ -1257,7 +1261,7 @@ sap.ui.define([
 
 	function createTestsuitePage(suitePageInfo, oConfig) {
 		const script = "script";
-		let content = `<!DOCTYPE html>
+		const content = `<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
@@ -1279,7 +1283,7 @@ sap.ui.define([
 
 	function createConfigFile(suitePageInfo, oConfig) {
 
-		let content = `sap.ui.define(function() {
+		const content = `sap.ui.define(function() {
 
 	"use strict";
 	return ${stringify(oConfig, "\t")};
@@ -1410,7 +1414,7 @@ sap.ui.define([
 		.then( (files) => {
 			testsuiteFiles = files;
 			updateCodeEditor();
-			let zipblob = oArchive.generate({type:"blob"});
+			const zipblob = oArchive.generate({type:"blob"});
 			var File = sap.ui.requireSync("sap/ui/core/util/File");
 			File.save(zipblob, "sources", "zip", "application/zip");
 		})
@@ -1423,15 +1427,15 @@ sap.ui.define([
 
 		createUI().then( () => {
 
-			let input = sap.ui.getCore().byId("testPage");
-			let sTestPage = sap.ui.qunit.TestRunner.getTestPageUrl(/* fallback URL = */ "");
+			const input = sap.ui.getCore().byId("testPage");
+			const sTestPage = sap.ui.qunit.TestRunner.getTestPageUrl(/* fallback URL = */ "");
 			input.setValue(sTestPage);
 
 			if (sTestPage && sap.ui.qunit.TestRunner.getAutoStart()) {
 				input.setEnabled(false);
 				extract();
 			} else {
-				discovery.findTestsuites( "test-resources/qunit/testsuite.qunit.html" ).then( aSuites => {
+				discovery.findTestsuites( "test-resources/qunit/testsuite.qunit.html" ).then( (aSuites) => {
 					input.destroySuggestionItems();
 					input.applySettings({
 						showSuggestion:true,
