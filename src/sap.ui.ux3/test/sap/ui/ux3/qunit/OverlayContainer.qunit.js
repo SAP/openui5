@@ -70,18 +70,6 @@ sap.ui.define([
 				}, 500);
 	});
 
-	// at the end close
-	QUnit.test("Close Event", function (assert) {
-		var done = assert.async();
-		assert.expect(3);
-		assert.ok(oOverlayContainer.isOpen(), "Rendered OverlayContainer is open");
-		qutils.triggerMouseEvent(oOverlayContainer.$("close"), "click", 1, 1, 1, 1);
-		setTimeout(function () {
-			assert.ok(!oOverlayContainer.isOpen(), "Rendered OverlayContainer is not open");
-			done();
-		}, 500);
-	});
-
 	QUnit.test("Destroy and remove control", function (assert) {
 		oOverlayContainer.destroy();
 		sap.ui.getCore().applyChanges();
