@@ -87,8 +87,8 @@ function readCacheHeader(request) {
 		result.maxAge = parseInt(parts["max-age"]);
 	}
 
-	if (parts["stale-while-revalidate"]) {
-		result.staleWhileRevalidate = parseInt(parts["stale-while-revalidate"]);
+	if (parts["x-stale-while-revalidate"]) {
+		result.staleWhileRevalidate = true;
 	}
 
 	if (parts["no-store"]) {
@@ -111,19 +111,6 @@ function readCacheHeader(request) {
 		return (date.getTime() + maxAgeMs) < now.getTime();
 	}
 
-	result.isTooStaleToUse = function (response) {
-		var date = readDateHeader(response),
-			now = new Date(),
-			maxAgeMs = this.maxAge * 1000,
-			staleMs = this.staleWhileRevalidate * 1000;
-
-		if (!date) {
-			return true;
-		}
-
-		return (date.getTime() + maxAgeMs + staleMs) < now.getTime();
-	}
-
 	return result;
 }
 
@@ -139,8 +126,7 @@ function readDateHeader(response) {
 
 //hook into all fetches
 self.addEventListener('fetch', function (event) {
-	var requestorigin = (new URL(event.request.url)).origin,
-		cardHeader = event.request.headers.get("x-sap-card");
+	var cardHeader = event.request.headers.get("x-sap-card");
 
 	if (!cardHeader) {
 		// intercept only for cards
@@ -163,17 +149,16 @@ self.addEventListener('fetch', function (event) {
 
 					console.log("[CARDS CACHE] cache for " + event.request.url);
 
-					var isStale = cacheControl.isStale(cachedResponse),
-						isTooStaleToUse = cacheControl.isTooStaleToUse(cachedResponse);
+					if (!cacheControl.isStale(cachedResponse)) {
+						return cachedResponse;
+					}
 
-					// Can't use the cache if it is way too old
-					if (isTooStaleToUse) {
-						console.log("[CARDS CACHE] cache is too stale to use for " + event.request.url);
-						return networkFetch(event, cache);
+					if (!cacheControl.staleWhileRevalidate) {
+						return networkFetch(event);
 					}
 
 					// If stale and not scheduled - schedule revalidate
-					if (isStale && !scheduled[event.request.url]) {
+					if (!scheduled[event.request.url]) {
 						console.log("[CARDS CACHE] cache is stale so revalidate for " + event.request.url);
 						scheduled[event.request.url] = event;
 					}

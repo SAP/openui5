@@ -60,10 +60,9 @@
 				},
 				"cache": {
 					"maxAge": 0,
-					"staleWhileRevalidate": 3000000
+					"staleWhileRevalidate": true
 				},
-				"updateInterval": 30,
-				"businessData": true
+				"updateInterval": 30
 			},
 			"maxItems": 5,
 			"item": {

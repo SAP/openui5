@@ -34,9 +34,8 @@
 			},
 			"cache": {
 				"maxAge": 86400,
-				"staleWhileRevalidate": 3000000
-			},
-			"businessData": true
+				"staleWhileRevalidate": true
+			}
 		},
 		"header": {
 			"title": "Show cache for 1day, if older - revalidate",
