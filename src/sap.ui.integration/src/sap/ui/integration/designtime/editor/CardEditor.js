@@ -1690,6 +1690,10 @@ sap.ui.define([
 		if (this._oDesigntimeInstance) {
 			this._oDesigntimeInstance.destroy();
 		}
+		var oPreview = this.getAggregation("_preview");
+		if (oPreview) {
+			oPreview.destroy();
+		}
 		this._manifestModel = null;
 		this._originalManifestModel = null;
 		this._settingsModel = null;
