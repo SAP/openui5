@@ -3050,10 +3050,28 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("setKeepAlive", function (assert) {
-		var oBinding = {
-				checkKeepAlive : function () {}
+		var done = assert.async(),
+			oBinding = {
+				checkKeepAlive : function () {},
+				fetchIfChildCanUseCache : function () {}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+			oError = new Error(),
+			oMetaModel = {
+				getObject : function () {
+					assert.ok(false); // use only when mocked
+				}
+			},
+			oModel = {
+				bAutoExpandSelect : true,
+				getMetaModel : function () { return oMetaModel; },
+				getReporter : function () {
+					return function (oError0) {
+						assert.strictEqual(oError0, oError);
+						done();
+					};
+				}
+			},
+			oContext = Context.create(oModel, oBinding, "/path");
 
 		this.mock(oContext).expects("isTransient").exactly(3).withExactArgs().returns(false);
 		this.mock(oContext).expects("getValue").exactly(3).withExactArgs().returns("~value~");
@@ -3068,13 +3086,23 @@ sap.ui.define([
 		assert.strictEqual(oContext.isKeepAlive(), "bTrueOrFalse");
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
+		this.mock(oMetaModel).expects("getObject")
+			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
+			.returns("path/to/messages");
+		this.mock(oBinding).expects("fetchIfChildCanUseCache")
+			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
+			.resolves("/reduced/path");
+		this.mock(oContext).expects("fetchValue").withExactArgs("/reduced/path")
+			.rejects(oError);
+
 		// code under test
-		oContext.setKeepAlive(true, "fnOnBeforeDestroy");
+		oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
 		assert.strictEqual(oContext.isKeepAlive(), true);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, "fnOnBeforeDestroy");
 
 		// code under test
-		oContext.setKeepAlive(false, "fnOnBeforeDestroy");
+		oContext.setKeepAlive(false, "fnOnBeforeDestroy", true);
 		assert.strictEqual(oContext.isKeepAlive(), false);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 	});
@@ -3131,6 +3159,106 @@ sap.ui.define([
 		}, new Error("No key predicate known at /path"));
 
 		assert.strictEqual(oContext.isKeepAlive(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setKeepAlive: bRequestMessages w/o autoExpandSelect", function (assert) {
+		var oBinding = {
+				checkKeepAlive : function () {}
+			},
+			oModel = {
+				bAutoExpandSelect : false
+			},
+			oContext = Context.create(oModel, oBinding, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs("~value~", "predicate")
+			.returns("('foo')");
+		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
+		this.mock(_Helper).expects("getMetaPath").never();
+
+		assert.throws(function () {
+			// code under test
+			oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
+		}, new Error("Missing parameter autoExpandSelect at model"));
+
+		assert.strictEqual(oContext.isKeepAlive(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setKeepAlive: missing messages annotation", function (assert) {
+		var oBinding = {
+				checkKeepAlive : function () {}
+			},
+			oMetaModel = {
+				getObject : function () {}
+			},
+			oModel = {
+				bAutoExpandSelect : true,
+				getMetaModel : function () { return oMetaModel; }
+			},
+			oContext = Context.create(oModel, oBinding, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs("~value~", "predicate")
+			.returns("('foo')");
+		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
+		this.mock(oMetaModel).expects("getObject")
+			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
+			.returns(undefined);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
+		}, new Error("Missing @com.sap.vocabularies.Common.v1.Messages"));
+
+		assert.strictEqual(oContext.isKeepAlive(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setKeepAlive: fetchIfChildCanUse fails", function (assert) {
+		var done = assert.async(),
+			oBinding = {
+				checkKeepAlive : function () {},
+				fetchIfChildCanUseCache : function () {}
+			},
+			oError = new Error(),
+			oMetaModel = {
+				getObject : function () {}
+			},
+			oModel = {
+				bAutoExpandSelect : true,
+				getMetaModel : function () { return oMetaModel; },
+				getReporter : function () {
+					return function (oError0) {
+						assert.strictEqual(oError0, oError);
+						done();
+					};
+				}
+			},
+			oContext = Context.create(oModel, oBinding, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("getValue").withExactArgs().returns("~value~");
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs("~value~", "predicate")
+			.returns("('foo')");
+		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
+		this.mock(oMetaModel).expects("getObject")
+			.withExactArgs("/meta/path/@com.sap.vocabularies.Common.v1.Messages/$Path")
+			.returns("path/to/messages");
+		this.mock(oBinding).expects("fetchIfChildCanUseCache")
+			.withExactArgs(sinon.match.same(oContext), "path/to/messages", {})
+			.rejects(oError);
+
+		// code under test
+		oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
 	});
 
 	//*********************************************************************************************

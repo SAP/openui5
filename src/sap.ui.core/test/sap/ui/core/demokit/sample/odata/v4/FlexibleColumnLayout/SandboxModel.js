@@ -26,7 +26,7 @@ sap.ui.define([
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$count=true&$orderby=ItemPosition&$select=CurrencyCode,GrossAmount,ItemPosition,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=5" : {
 					source : "SalesOrderList('0500000000')-SO_2_ITEM.json"
 				},
-				"SalesOrderList('0500000000')?$select=ChangedAt,CreatedAt,LifecycleStatusDesc" : {
+				"SalesOrderList('0500000000')?$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Messages" : {
 					source : "SalesOrderList('0500000000')-ChangedAt+CreatedAt+LifecycleStatusDesc.json"
 				},
 				"SalesOrderList?$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$orderby=SalesOrderID%20desc&$skip=0&$top=5" : {
@@ -44,16 +44,16 @@ sap.ui.define([
 				"SalesOrderList('0500000009')/SO_2_SOITEM?$count=true&$orderby=ItemPosition&$select=CurrencyCode,GrossAmount,ItemPosition,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=5" : {
 					source : "SalesOrderList('0500000009')-SO_2_ITEM.json"
 				},
-				"SalesOrderList('0500000009')?$select=ChangedAt,CreatedAt,LifecycleStatusDesc" : {
+				"SalesOrderList('0500000009')?$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Messages" : {
 					source : "SalesOrderList('0500000009')-ChangedAt+CreatedAt+LifecycleStatusDesc.json"
 				},
-				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000000'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000000'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('0500000000')-Refresh_Existence.json"
 				},
 				"SalesOrderList?$filter=(GrossAmount%20gt%201000)%20and%20SalesOrderID%20eq%20'0500000000'&$count=true&$top=0" : {
 					source : "SalesOrderList('0500000000')-Refresh_Filter.json"
 				},
-				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000009'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000009'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('0500000009')-Refresh.json"
 				},
 				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : [{
@@ -68,7 +68,7 @@ sap.ui.define([
 				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=4&$top=1" : {
 					source : "SalesOrderList_GrossAmount_GT_1000_skip4_top1.json"
 				},
-				"SalesOrderList('0500000004')?$select=ChangedAt,CreatedAt,LifecycleStatusDesc" : {
+				"SalesOrderList('0500000004')?$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Messages" : {
 					source : "SalesOrderList('0500000004')-ChangedAt+CreatedAt+LifecycleStatusDesc.json"
 				},
 				"SalesOrderList('0500000004')/SO_2_SOITEM?$count=true&$orderby=ItemPosition&$select=CurrencyCode,GrossAmount,ItemPosition,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=5" : {
@@ -80,7 +80,7 @@ sap.ui.define([
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$count=true&$top=0" : {
 					source : "SalesOrderList('0500000000')-SO_2_SOITEM_requestCount.json"
 				},
-				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000004'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000004'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('0500000004')-Refresh_Existence.json"
 				},
 				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000000'&$select=GrossAmount,SalesOrderID" : {

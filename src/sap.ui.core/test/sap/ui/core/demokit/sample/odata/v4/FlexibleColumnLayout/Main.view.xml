@@ -1,7 +1,8 @@
 <mvc:View
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main"
-	xmlns="sap.m" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc">
+	xmlns="sap.m" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.m.plugins">
 	<App>
 	<Page floatingFooter="true" id="page" showHeader="false">
 	<Toolbar>
@@ -114,6 +115,9 @@
 						path : 'SO_2_SOITEM',
 						templateShareable : false
 					}" mode="SingleSelectMaster" selectionChange="onSalesOrderLineItemSelect">
+					<dependents>
+						<plugins:DataStateIndicator/>
+					</dependents>
 					<headerToolbar>
 						<Toolbar id="lineItemsToolbar">
 							<Title id="lineItemsTitle" level="H2"
@@ -144,7 +148,13 @@
 							<Text text="Currency"/>
 						</Column>
 					</columns>
-					<ColumnListItem type="Navigation">
+					<ColumnListItem type="Navigation" highlight="{
+								parts : [
+									'messages>/',
+									{mode : 'OneTime', path : '', targetType : 'any'}
+								],
+								formatter : 'sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Formatter.formatRowHighlight'
+							}" >
 						<Text text="{ProductID}"/>
 						<Text id="itemPosition" text="{ItemPosition}"/>
 						<Text id="itemQuantity" text="{Quantity}" textAlign="Right"/>

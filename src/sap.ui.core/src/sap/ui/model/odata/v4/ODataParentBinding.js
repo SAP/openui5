@@ -628,8 +628,8 @@ sap.ui.define([
 	 *   <code>sChildPath</code> accordingly.
 	 * @param {string} sChildPath
 	 *   The child binding's binding path relative to <code>oContext</code>
-	 * @param {sap.ui.base.SyncPromise} oChildQueryOptionsPromise
-	 *   Promise resolving with the child binding's (aggregated) query options
+	 * @param {object|sap.ui.base.SyncPromise} vChildQueryOptions
+	 *   The child binding's (aggregated) query options or a promise resolving with them
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolved with the reduced path for the child binding if the child binding can use
 	 *   this binding's or an ancestor binding's cache; <code>undefined</code> otherwise.
@@ -638,7 +638,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataMetaModel#getReducedPath
 	 */
 	ODataParentBinding.prototype.fetchIfChildCanUseCache = function (oContext, sChildPath,
-			oChildQueryOptionsPromise) {
+			vChildQueryOptions) {
 		// getBaseForPathReduction must be called early, because the (virtual) parent context may be
 		// lost again when the path is needed
 		var sBaseForPathReduction = this.getBaseForPathReduction(),
@@ -698,7 +698,7 @@ sap.ui.define([
 			// is loaded so that synchronous access in wrapChildQueryOptions via getObject is
 			// possible
 			fetchPropertyAndType(),
-			oChildQueryOptionsPromise
+			vChildQueryOptions
 		];
 		oCanUseCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var sChildMetaPath,
@@ -727,7 +727,7 @@ sap.ui.define([
 				that.bHasPathReductionToParent = true;
 				return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
 					_Helper.getRelativePath(sResolvedChildPath, that.oContext.getPath()),
-					oChildQueryOptionsPromise);
+					vChildQueryOptions);
 			}
 
 			if (bDependsOnOperation) {

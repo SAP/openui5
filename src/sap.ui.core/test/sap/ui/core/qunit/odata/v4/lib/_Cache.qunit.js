@@ -8783,7 +8783,7 @@ sap.ui.define([
 				},
 				mNavigationPropertyPaths = {},
 				oNewValue = {},
-				oOldValue = {},
+				oOldValue = {"@$ui5._" : {predicate : "(~)"}},
 				aPaths = ["ROOM_ID"],
 				oPromise,
 				mQueryOptions = {},
@@ -8827,7 +8827,9 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 				.returns(SyncPromise.resolve(oOldValue));
 			oVisitResponseExpectation = oCacheMock.expects("visitResponse")
-				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath));
+				.withExactArgs(
+					sinon.match.same(oNewValue).and(sinon.match({"@$ui5._" : {predicate : "(~)"}})),
+					sinon.match.same(mTypeForMetaPath));
 			oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 					sinon.match.same(oOldValue), sinon.match.same(oNewValue), sinon.match.func)
