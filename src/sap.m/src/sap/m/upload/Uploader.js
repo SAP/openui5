@@ -49,8 +49,13 @@ sap.ui.define([
 				 * HTTP request method chosen for file upload.
 				 * @since 1.90
 				 */
-				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: UploaderHttpRequestMethod.Post}
-			},
+				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: UploaderHttpRequestMethod.Post},
+				/**
+				* This property decides the type of request. If set to "true", the request gets sent as a multipart/form-data request instead of file only request.
+				* @since 1.92
+				*/
+				useMultipart: { type: "boolean", defaultValue: false }
+            },
 			events: {
 				/**
 				 * The event is fired just after the POST request was sent.
@@ -184,6 +189,18 @@ sap.ui.define([
 			});
 		}
 
+		if (this.getUseMultipart()) {
+			var oFormData = new window.FormData();
+			var name = oFile ? oFile.name : null;
+			if (oFile instanceof window.Blob && name) {
+				oFormData.append(name, oFile, oFile.name);
+			} else {
+				oFormData.append(name, oFile);
+			}
+			oFormData.append("_charset_", "UTF-8");
+			oFile = oFormData;
+		}
+
 		oXhr.upload.addEventListener("progress", function (oEvent) {
 			that.fireUploadProgressed({
 				item: oItem,
@@ -201,7 +218,7 @@ sap.ui.define([
 		};
 
 		this._mRequestHandlers[oItem.getId()] = oRequestHandler;
-		oXhr.send(oItem.getFileObject());
+		oXhr.send(oFile);
 		this.fireUploadStarted({item: oItem});
 	};
 
