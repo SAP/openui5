@@ -64,12 +64,17 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 			if (oLI.getIcon()) {
 				rm.class("sapMSLIIcon");
 			}
+
 			if (oLI.getType() == ListType.Detail || oLI.getType() == ListType.DetailAndActive) {
 				rm.class("sapMSLIDetail");
 			}
 
 			if (oLI._hasSubItems()) {
 				rm.class("sapMMenuLIHasChildren");
+			}
+
+			if (!oLI.getEnabled()) {
+				rm.class("sapMMLIDisabled");
 			}
 		};
 
