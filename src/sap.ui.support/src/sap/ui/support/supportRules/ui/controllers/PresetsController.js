@@ -13,20 +13,20 @@ sap.ui.define([
 	"sap/ui/support/supportRules/util/Utils",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/library",
-	"sap/ui/support/library"
-], function (BaseController,
-			 SelectionUtils,
-			 PresetsUtils,
-			 Fragment,
-			 MessageToast,
-			 MessageBox,
-			 Documentation,
-			 Utils,
-			 GroupHeaderListItem,
-			 jQuery,
-			 coreLibrary,
-			 library) {
+	"sap/ui/core/library"
+], function (
+	BaseController,
+	SelectionUtils,
+	PresetsUtils,
+	Fragment,
+	MessageToast,
+	MessageBox,
+	Documentation,
+	Utils,
+	GroupHeaderListItem,
+	jQuery,
+	coreLibrary
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -107,24 +107,28 @@ sap.ui.define([
 		oBtn.focus();
 
 		if (!this._oPresetsPopover) {
-			this._oPresetsPopover = sap.ui.xmlfragment(
-				Constants.SELECT_FRAGMENT_ID,
-				"sap.ui.support.supportRules.ui.views.Presets",
-				this
-			);
-			this.oView.addDependent(this._oPresetsPopover);
+			this._oPresetsPopover = Fragment.load({
+				id: Constants.SELECT_FRAGMENT_ID,
+				name: "sap.ui.support.supportRules.ui.views.Presets",
+				controller: this
+			}).then(function (oPresetsPopover) {
+				this.oView.addDependent(oPresetsPopover);
+				return oPresetsPopover;
+			}.bind(this));
 		}
 
-		if (!this._oPresetsPopover.isOpen()) {
-			// set correct focus in the popover
-			this._oPresetsPopover.setInitialFocus(
-				Fragment.byId(Constants.SELECT_FRAGMENT_ID, "select").getSelectedItem().getId()
-			);
+		this._oPresetsPopover.then(function (oPresetsPopover) {
+			if (!oPresetsPopover.isOpen()) {
+				// set correct focus in the popover
+				oPresetsPopover.setInitialFocus(
+					Fragment.byId(Constants.SELECT_FRAGMENT_ID, "select").getSelectedItem().getId()
+				);
 
-			this._oPresetsPopover.openBy(oBtn);
-		} else {
-			this._oPresetsPopover.close();
-		}
+				oPresetsPopover.openBy(oBtn);
+			} else {
+				oPresetsPopover.close();
+			}
+		});
 	};
 
 	/**
@@ -143,7 +147,7 @@ sap.ui.define([
 	 * Closes the variant select when an item is clicked
 	 */
 	PresetsController.prototype.onPresetItemPress = function () {
-		this._oPresetsPopover.close();
+		Fragment.byId(Constants.SELECT_FRAGMENT_ID, "presetsPopover").close();
 	};
 
 	/**
@@ -231,15 +235,19 @@ sap.ui.define([
 	 */
 	PresetsController.prototype.onImportPress = function () {
 		if (!this._oImportDialog) {
-			this._oImportDialog = sap.ui.xmlfragment(
-				Constants.IMPORT_FRAGMENT_ID,
-				"sap.ui.support.supportRules.ui.views.PresetImport",
-				this
-			);
-			this.oView.addDependent(this._oImportDialog);
+			this._oImportDialog = Fragment.load({
+				id: Constants.IMPORT_FRAGMENT_ID,
+				name: "sap.ui.support.supportRules.ui.views.PresetImport",
+				controller: this
+			}).then(function (oImportDialog) {
+				this.oView.addDependent(oImportDialog);
+				return oImportDialog;
+			}.bind(this));
 		}
 
-		this._oImportDialog.open();
+		this._oImportDialog.then(function (oImportDialog) {
+			oImportDialog.open();
+		});
 	};
 
 	/**
@@ -317,7 +325,7 @@ sap.ui.define([
 	 * Handles the pressing of the cancel button on import
 	 */
 	PresetsController.prototype.onImportCancelPress = function () {
-		this._oImportDialog.close();
+		Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "importDialog").close();
 	};
 
 	/**
@@ -335,7 +343,7 @@ sap.ui.define([
 				+ "\"I agree to use local storage persistency\" from Support Assistant settings.";
 		}
 
-		this._oImportDialog.close();
+		Fragment.byId(Constants.IMPORT_FRAGMENT_ID, "importDialog").close();
 
 		MessageToast.show(sMessage, { width: "50%" });
 	};
@@ -371,20 +379,19 @@ sap.ui.define([
 		});
 
 		if (!this._oExportDialog) {
-			this._oExportDialog = sap.ui.xmlfragment(
-				Constants.EXPORT_FRAGMENT_ID,
-				"sap.ui.support.supportRules.ui.views.PresetExport",
-				this
-			);
-			this._oExportDialog.attachAfterClose(function () {
-				this._clearValidationState();
+			this._oExportDialog = Fragment.load({
+				id: Constants.EXPORT_FRAGMENT_ID,
+				name: "sap.ui.support.supportRules.ui.views.PresetExport",
+				controller: this
+			}).then(function (oExportDialog) {
+				this.oView.addDependent(oExportDialog);
+				return oExportDialog;
 			}.bind(this));
-			this.oView.addDependent(this._oExportDialog);
-
-			this.initializeExportValidations();
 		}
 
-		this._oExportDialog.open();
+		this._oExportDialog.then(function (oExportDialog) {
+			oExportDialog.open();
+		});
 	};
 
 	/**
@@ -494,7 +501,7 @@ sap.ui.define([
 	 * Cancels an export
 	 */
 	PresetsController.prototype.onExportCancelPress = function () {
-		this._oExportDialog.close();
+		Fragment.byId(Constants.EXPORT_FRAGMENT_ID, "exportDialog").close();
 	};
 
 	/**
@@ -521,8 +528,7 @@ sap.ui.define([
 		);
 
 		MessageToast.show("The Rule Preset \"" + title + "\" was successfully exported.", {width: "50%"});
-
-		this._oExportDialog.close();
+		Fragment.byId(Constants.EXPORT_FRAGMENT_ID, "exportDialog").close();
 	};
 
 	/**

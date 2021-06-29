@@ -8,6 +8,8 @@ sap.ui.define([
 	"../models/Documentation",
 	"../models/SelectionUtils",
 	"../models/PresetsUtils",
+	"sap/ui/core/Fragment",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants",
@@ -22,6 +24,8 @@ sap.ui.define([
 	Documentation,
 	SelectionUtils,
 	PresetsUtils,
+	Fragment,
+	XMLView,
 	CommunicationBus,
 	channelNames,
 	Constants,
@@ -78,8 +82,12 @@ sap.ui.define([
 		},
 
 		loadAdditionalUI: function () {
-			this._issuesPage = sap.ui.xmlview(this.getView().getId() + "--issues", "sap.ui.support.supportRules.ui.views.Issues");
-			this.byId("navCon").insertPage(this._issuesPage);
+			XMLView.create({
+				id: this.getView().getId() + "--issues",
+				viewName: "sap.ui.support.supportRules.ui.views.Issues"
+			}).then(function (issuesPage) {
+				this.byId("navCon").insertPage(issuesPage);
+			}.bind(this));
 		},
 
 		onAfterRendering: function () {
@@ -283,11 +291,18 @@ sap.ui.define([
 
 		_openSettingsPopover: function () {
 			if (!this._settingsPopover) {
-				this._settingsPopover = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.StorageSettings", this);
-				this.getView().addDependent(this._settingsPopover);
+				this._settingsPopover = Fragment.load({
+					name: "sap.ui.support.supportRules.ui.views.StorageSettings",
+					controller: this
+				}).then(function (settingsPopover) {
+					this.getView().addDependent(settingsPopover);
+					return settingsPopover;
+				}.bind(this));
 			}
 
-			this._settingsPopover.openBy(this.byId("settingsIcon"));
+			this._settingsPopover.then(function (settingsPopover) {
+				settingsPopover.openBy(this.byId("settingsIcon"));
+			}.bind(this));
 		},
 
 		_isSettingsPopoverOpen: function () {
