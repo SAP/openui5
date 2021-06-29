@@ -13,69 +13,30 @@
 		</subHeader>
 		<Panel>
 			<w:Card
-				id="default"
+				id="card1"
 				manifest="{manifests>/defaultHeader/card1}"
 				width="300px"
 				class="sapUiSmallMargin" />
 			<w:Card
-				id="default1x1"
+				id="card2"
 				manifest="{manifests>/defaultHeader/card2}"
 				width="300px"
 				class="sapUiSmallMargin" />
 			<w:Card
-				id="default2x1"
+				id="card3"
 				manifest="{manifests>/defaultHeader/card3}"
-				width="300px"
-				class="sapUiSmallMargin" />
-			<w:Card
-				id="stackedColumn"
-				manifest="{manifests>/defaultHeader/stackedColumn}"
-				height="500px"
-				width="700px"
-				class="sapUiSmallMargin" />
-			<w:Card
-				id="default4x1"
-				manifest="{manifests>/defaultHeader/card4}"
-				width="300px"
-				class="sapUiSmallMargin" />
-			<w:Card
-				id="default2x2"
-				manifest="{manifests>/defaultHeader/card5}"
 				width="300px"
 				height="200px"
 				class="sapUiSmallMargin" />
 			<w:Card
-				id="line"
-				manifest="{manifests>/defaultHeader/line}"
-				height="500px"
-				width="700px"
-				class="sapUiSmallMargin" />
-			<w:Card
-				id="default4x2"
-				manifest="{manifests>/defaultHeader/card6}"
-				width="320px"
-				class="sapUiSmallMargin" />
-			<w:Card
-				id="default4x4"
-				manifest="{manifests>/defaultHeader/card7}"
+				id="card4"
+				manifest="{manifests>/defaultHeader/card4}"
 				width="320px"
 				class="sapUiSmallMargin" />
 			<w:Card
 				id="defaultDataTimestamp"
-				manifest="{manifests>/defaultHeader/card8}"
+				manifest="{manifests>/defaultHeader/defaultDataTimestamp}"
 				width="320px"
-				class="sapUiSmallMargin" />
-			<w:Card
-				id="stackedBar"
-				manifest="{manifests>/defaultHeader/stackedBar}"
-				height="500px"
-				width="700px"
-				class="sapUiSmallMargin" />
-			<w:Card
-				id="donut"
-				manifest="{manifests>/defaultHeader/donut}"
-				height="500px"
-				width="700px"
 				class="sapUiSmallMargin" />
 		</Panel>
 	</Page>

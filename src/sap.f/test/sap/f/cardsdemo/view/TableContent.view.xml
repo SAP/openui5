@@ -35,15 +35,15 @@
 				</w:layoutData>
 			</w:Card>
 			<w:Card
-				id="tablecard3"
-				manifest="{/tablecard3}">
+				id="tablecard2"
+				manifest="{/tablecard2}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="5" />
 				</w:layoutData>
 			</w:Card>
 			<w:Card
-				id="tablecard4"
-				manifest="{/tablecard4}">
+				id="tablecard3"
+				manifest="{/tablecard3}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="5" />
 				</w:layoutData>

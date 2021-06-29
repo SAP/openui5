@@ -51,7 +51,7 @@
 			}
 		}
 	},
-	"tablecard3": {
+	"tablecard2": {
 		"sap.app": {
 			"type": "card"
 		},
@@ -65,7 +65,7 @@
 					"request": {
 						"url": "./cardsdemo/cardcontent/tableitems.json"
 					},
-					"path": "/tableCard3"
+					"path": "/tableCard2"
 				},
 				"row": {
 					"columns": [
@@ -98,7 +98,7 @@
 			}
 		}
 	},
-	"tablecard4": {
+	"tablecard3": {
 		"sap.app": {
 			"type": "card"
 		},
@@ -112,7 +112,7 @@
 					"request": {
 						"url": "./cardsdemo/cardcontent/tableitems.json"
 					},
-					"path": "/tableCard4"
+					"path": "/tableCard3"
 				},
 				"row": {
 					"columns": [
