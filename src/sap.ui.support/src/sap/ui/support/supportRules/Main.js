@@ -1,9 +1,7 @@
 /*!
 * ${copyright}
 */
-/**
-* @typedef {object} Event Certain event that's fired by the user action in the browser
-*/
+
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",

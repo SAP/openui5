@@ -15,8 +15,19 @@ sap.ui.define([
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/Constants",
+	"sap/ui/support/supportRules/util/EvalUtils",
 	"sap/ui/support/supportRules/util/Utils"
-], function (jQuery, VersionInfo, RuleSet, CommunicationBus, channelNames, RuleSerializer, constants, Utils) {
+], function (
+	jQuery,
+	VersionInfo,
+	RuleSet,
+	CommunicationBus,
+	channelNames,
+	RuleSerializer,
+	constants,
+	EvalUtils,
+	Utils
+	) {
 		"use strict";
 
 		// can be put in a util container
@@ -42,14 +53,6 @@ sap.ui.define([
 		var RuleSetLoader = {};
 
 		RuleSetLoader._mRuleSets = {};
-		RuleSetLoader._mRuleSets[constants.TEMP_RULESETS_NAME] = {
-			lib: {
-				name: constants.TEMP_RULESETS_NAME
-			},
-			ruleset: new RuleSet({
-				name: constants.TEMP_RULESETS_NAME
-			})
-		};
 
 		RuleSetLoader.getRuleSets = function () {
 			return this._mRuleSets;
@@ -506,6 +509,17 @@ sap.ui.define([
 				};
 			});
 		};
+
+		if (EvalUtils.isEvalAllowed()) {
+			RuleSetLoader.addRuleSet(constants.TEMP_RULESETS_NAME, {
+				lib: {
+					name: constants.TEMP_RULESETS_NAME
+				},
+				ruleset: new RuleSet({
+					name: constants.TEMP_RULESETS_NAME
+				})
+			});
+		}
 
 		return RuleSetLoader;
 	}, true);

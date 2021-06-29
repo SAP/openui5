@@ -1,9 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/support/supportRules/util/EvalUtils",
 	"sap/ui/test/opaQunit",
+	"sap/ui/test/Opa5",
 	"../SupportAssistantOpaConfig"
-], function (opaTest) {
+], function (EvalUtils, opaTest, Opa5) {
 	"use strict";
 
 	var CREATE_RULE_BUTTON = "Create Rule",
@@ -12,6 +14,17 @@ sap.ui.define([
 		TEMP_RULE_TITLE_AFTER_UPDATE = "Title of the rule after update";
 
 	QUnit.module("Support Assistant Temporary Rules");
+
+	if (!EvalUtils.isEvalAllowed()) {
+		opaTest("Temporary rules are not supported in this environment", function (Given, When, Then) {
+			Given.waitFor({
+				success: function () {
+					Opa5.assert.ok(true, "Temporary rules are not supported in this environment");
+				}
+			});
+		});
+		return;
+	}
 
 	opaTest("Should create new temporary rule", function (Given, When, Then) {
 

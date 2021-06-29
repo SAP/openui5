@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/*global URLSearchParams */
+
 /**
  * This module is used only for testing purposes.
  */
@@ -9,16 +11,28 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Page",
-	"sap/ui/support/mock/StorageSynchronizer"
+	"sap/ui/support/mock/StorageSynchronizer",
+	"sap/ui/support/supportRules/util/EvalUtils"
 ], function (
 	Core,
 	XMLView,
 	Page,
-	StorageSynchronizer
+	StorageSynchronizer,
+	EvalUtils
 ) {
 	"use strict";
 
-	var fnAfterStorageInitialized = function () {
+	function checkAndDisableEval () {
+		var oUrlParams = new URLSearchParams(window.location.search);
+
+		if (oUrlParams.get("sa-disabled-eval")) {
+			EvalUtils.isEvalAllowed = function () {
+				return false;
+			};
+		}
+	}
+
+	function afterStorageInitialized () {
 		XMLView.create({
 			viewName: "sap.ui.support.supportRules.ui.views.Main"
 		}).then(function (xmlView) {
@@ -32,11 +46,12 @@ sap.ui.define([
 
 			oPage.placeAt("content");
 		});
-	};
+	}
 
 	Core.attachInit(function () {
 		StorageSynchronizer.prepareInitFrame();
 		StorageSynchronizer.preparePreserveFrame();
-		StorageSynchronizer.initializeFrame(fnAfterStorageInitialized);
+		checkAndDisableEval();
+		StorageSynchronizer.initializeFrame(afterStorageInitialized);
 	});
 });

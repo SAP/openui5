@@ -67,6 +67,11 @@ sap.ui.define([],
 			LOCAL_STORAGE_CUSTOM_PRESETS_KEY: "support-assistant-custom-presets",
 
 			/**
+			 * Tells if the user was already warned that temp rules are disabled
+			 */
+			LOCAL_STORAGE_TEMP_RULES_DISABLED_WARNED: "support-assistant-temp-rules-disabled-warned",
+
+			/**
 			 * The name of the persistence cookie.
 			 */
 			COOKIE_NAME: "persistence-cookie",
