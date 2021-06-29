@@ -824,6 +824,7 @@ sap.ui.define([
 			var oExpectedResponse = {
 				isKeyUser: true,
 				isVariantSharingEnabled: false,
+				isPublicFlVariantEnabled: false,
 				isVariantPersonalizationEnabled: true,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
@@ -903,6 +904,7 @@ sap.ui.define([
 			var DEFAULT_FEATURES = {
 				isKeyUser: false,
 				isVariantSharingEnabled: false,
+				isPublicFlVariantEnabled: false,
 				isVariantPersonalizationEnabled: true,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
@@ -915,7 +917,7 @@ sap.ui.define([
 			};
 
 			return Storage.loadFeatures().then(function (mFeatures) {
-				assert.equal(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 9 feature was provided");
+				assert.equal(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 12 feature was provided");
 				assert.equal(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
 			});
 		});
