@@ -1307,7 +1307,14 @@ sap.ui.define([
 				);
 			}.bind(this));
 
-			return Promise.all(aCollectedPromises);
+			return Promise.all(aCollectedPromises)
+				.then(function(aElementsPerAggregation) {
+					// Filter out results without elements
+					return aElementsPerAggregation.filter(function(oElementsPerAggregation) {
+						var aElements = oElementsPerAggregation && oElementsPerAggregation.elements;
+						return aElements.length > 0;
+					});
+				});
 		},
 
 		clearCachedElements: function() {
