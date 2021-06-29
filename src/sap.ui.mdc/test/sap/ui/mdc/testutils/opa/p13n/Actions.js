@@ -692,7 +692,22 @@ sap.ui.define([
 		iOpenThePersonalizationDialog: function(oControl, oSettings) {
 			return iOpenThePersonalizationDialog.call(this, oControl, oSettings);
 		},
-
+		/**
+		 * @typedef {Object} ChartPersonalizationConfiguration
+		 * @property {String} key Key of the value that is the result of the personalization
+		 * @property {String} role Role of the given value
+		 */
+		/**
+		 * OPA5 test action
+		 * 1. Opens the personalization dialog of a given chart.
+		 * 2. Selects a chart type given by <code>sChartType</code>.
+		 * 3. Executes the given <code>ChartPersonalizationConfiguration</code>.
+		 * 4. Closes the personalization dialog.
+		 * @param {sap.ui.core.Control | String} oChart Instance / ID of the <code>SmartChart</code> that is personalized
+		 * @param {String} sChartType String containing the type of chart that is displayed
+		 * @param {ChartPersonalizationConfiguration[]} aConfigurations Array containing the chart personalization configuration objects
+		 * @returns {Promise} OPA waitFor
+		 */
 		iPersonalizeChart: function(oControl, sChartType, aItems) {
 			return iPersonalize.call(this, oControl, Util.texts.chart, {
 				success: function(oP13nDialog) {
@@ -850,9 +865,12 @@ sap.ui.define([
 			});
 		},
 		/**
-		 *
-		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be personalized
-		 * @param {string[]} aColumns Array containing the keys of the columns that should be result of the personalisation
+		 * OPA5 test action
+		 * 1. Opens the personalization dialog of a given table.
+		 * 2. Selects all columns determined by the given labels. Also deselects all other columns that are selected but not included in the given labels.
+		 * 3. Closes the personalization dialog.
+		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be personalized
+		 * @param {String[]} aColumns Array containing the labels of the columns that are the result of the personalization
 		 * @returns {Promise} Opa waitFor
 		 */
 		 iPersonalizeColumns: function(oControl, aColumns) {
@@ -915,17 +933,20 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * @typedef {object} FilterPersonalizationConfiguration
-		 * @property {string} key of the item that should be result of the personalisation
-		 * @property {string} operator operator in which the items should be filtered
-		 * @property {string[]} values filter values for the given operator
-		 * @property {string} inputControl
+		 * @typedef {Object} FilterPersonalizationConfiguration
+		 * @property {String} key Key of the value that is the result of the personalization
+		 * @property {String} operator Operator defining how the items are filtered
+		 * @property {String[]} values Filter values for the given operator
+		 * @property {String} inputControl <code>Control</code> that is used as input for the value
 		 */
 		/**
-		 *
-		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be reset
-		 * @param {FilterPersonalizationConfiguration[]} aConfigurations an array containing the group personalization configuration objects
-		 * @returns {Promise} Opa waitFor
+		 * OPA5 test action
+		 * 1. Opens the personalization dialog of a given chart.
+		 * 2. Executes the given <code>FilterPersonalizationConfiguration</code>.
+		 * 3. Closes the personalization dialog.
+		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the <code>Control</code> that is filtered
+		 * @param {FilterPersonalizationConfiguration[]} aConfigurations Array containing the filter personalization configuration objects
+		 * @returns {Promise} OPA waitFor
 		 */
 		iPersonalizeFilter: function(oControl, aConfigurations) {
 			return iPersonalize.call(this, oControl, Util.texts.filter, {
@@ -972,11 +993,14 @@ sap.ui.define([
 		},
 		/**
 		 * @typedef {object} GroupPersonalizationConfiguration
-		 * @property {string} key of the item that should be result of the personalisation
-		 * @property {boolean} showFieldAsColumn determinating if the "Show Field as Column" checkbox should be checked
+		 * @property {string} key of the item that is the result of the personalization
+		 * @property {boolean} showFieldAsColumn Determines if the "Show Field as Column" checkbox is to be checked
 		 */
 		/**
-		 *
+		 * Opa5 test action:
+		 * 1. Opens the personalization dialog of a given control.
+		 * 2. Executes the given <code>GroupPersonalizationConfiguration</code>.
+		 * 3. Closes the personalization dialog.
 		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be reset
 		 * @param {GroupPersonalizationConfiguration[]} aConfigurations an array containing the group personalization configuration objects
 		 * @returns {Promise} Opa waitFor
@@ -1013,15 +1037,18 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * @typedef {object} SortPersonalizationConfiguration
-		 * @property {string} key of the item that should be result of the personalisation
-		 * @property {boolean} descending determinating if the sort direction is descending
+		 * @typedef {Object} SortPersonalizationConfiguration
+		 * @property {String} key Key of the item that is the result of the personalization
+		 * @property {Boolean} descending Determines whether the sort direction is descending
 		 */
 		/**
-		 *
-		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be reset
-		 * @param {SortPersonalizationConfiguration[]} aConfigurations an array containing the sort personalization configuration objects
-		 * @returns {Promise} Opa waitFor
+		 * OPA5 test action
+		 * 1. Opens the personalization dialog of a given chart.
+		 * 2. Executes the given <code>SortPersonalizationConfiguration</code>.
+		 * 3. Closes the personalization dialog.
+		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the <code>Control</code> that is sorted
+		 * @param {SortPersonalizationConfiguration[]} aConfigurations Array containing the sort personalization configuration objects
+		 * @returns {Promise} OPA waitFor
 		 */
 		iPersonalizeSort: function(oControl, aConfigurations) {
 			return iPersonalize.call(this, oControl, Util.texts.sort, {
@@ -1055,8 +1082,13 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be reset
-		 * @returns {Promise} Opa waitFor
+		 * Opa5 test action
+		 * 1. Opens the personalization dialog of a given chart.
+		 * 2. Presses the reset personalization button.
+		 * 3. Confirms the reset dialog.
+		 * 4. Closes the personalization dialog.
+		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the <code>Control</code> that is reset
+		 * @returns {Promise} OPA waitFor
 		 */
 		iResetThePersonalization: function (oControl) {
 			return iOpenThePersonalizationDialog.call(this, oControl, {
