@@ -60,6 +60,7 @@
 	position: absolute;
 	top: 0;
 	right: 0;
+	margin: 0.063rem;
 }
 
 .sapMSPCMonthGrid .sapMSPCMonthDayNames {
@@ -71,7 +72,32 @@
 }
 
 .sapMSPCMonthDay.nonWorkingTimeframe {
-	background-color: darken(@sapUiListBackground, 3);
+	background-color: @sapUiListAlternatingBackground;
+}
+
+.sapMSPCMonthNowMarker {
+	border: 0.125rem solid @sapUiLegendCurrentDateTime;
+	height: inherit;
+	.sapMSPCMonthDayNumber {
+		padding-top: 0.4rem;
+	}
+}
+
+html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMarker::after {
+	content: "";
+	position: absolute;
+	top: 0.125rem;
+	left: 0.125rem;
+	right: 0.125rem;
+	bottom: 0.125rem;
+	border: 0.0625rem dotted @sapUiContentFocusColor;
+	pointer-events: none;
+	z-index: 3;
+}
+
+.sapMSPCMonthDay.sapMSPCMonthDayToday .specialDateIndicator {
+	top: 0.125rem;
+	right: 0.125rem;
 }
 
 .sapMSPCMonthDayNumber {
@@ -136,7 +162,7 @@
 	top: initial;
 }
 
-html.sap-desktop .sapMSPCMonthDay:focus::after {
+html.sap-desktop .sapMSPCMonthDay:not(.sapMSPCMonthDayToday):focus::after {
   content: "";
   position: absolute;
   top: 0;
