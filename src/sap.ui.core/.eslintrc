@@ -1,0 +1,37 @@
+{
+	"overrides": [
+		{
+			"files": [
+				"src/sap/ui/model/odata/v4/**/*.js",
+				"test/sap/ui/core/qunit/odata/v4/**/*.js"
+			],
+			"reportUnusedDisableDirectives": true,
+			"rules": {
+				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}]
+			}
+		},
+		{
+			"files": [
+				"test/sap/ui/core/qunit/odata/v4/**/*.js"
+			],
+			"globals": {
+				"QUnit": "readonly",
+				"sap": "readonly",
+				"sinon": "readonly"
+			},
+			"rules": {
+				"max-nested-callbacks": "off",
+				"no-warning-comments": "off"
+			}
+		},
+		{
+			"files": [
+				"test/sap/ui/core/qunit/test/starter/find/*.js",
+				"test/sap/ui/core/qunit/test/starter/migrate/*.js"
+			],
+			"parserOptions": {
+				"ecmaVersion": 6
+			}
+		}
+	]
+}

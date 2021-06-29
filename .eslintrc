@@ -34,7 +34,6 @@
 		"no-extra-parens": ["error", "functions"],
 		"no-extra-semi": "error",
 		"no-func-assign": "error",
-		"no-global-assign": "error",
 		"no-import-assign": "error",
 		"no-inner-declarations": ["error", "functions"],
 		"no-invalid-regexp": "error",
@@ -42,7 +41,6 @@
 		"no-misleading-character-class": "error",
 		"no-obj-calls": "error",
 		"no-regex-spaces": "error",
-		"no-self-assign": "error",
 		"no-setter-return": "error",
 		"no-sparse-arrays": "error",
 		"no-unreachable": "error",
@@ -66,6 +64,7 @@
 		"no-extra-bind": "error",
 		"no-fallthrough": "error",
 		"no-floating-decimal": "error",
+		"no-global-assign": "error",
 		"no-implicit-globals": ["error", {"lexicalBindings": true}],
 		"no-implied-eval": "error",
 		"no-iterator": "error",
@@ -81,6 +80,7 @@
 		"no-redeclare": "warn",
 		"no-return-assign": "error",
 		"no-script-url": "error",
+		"no-self-assign": "error",
 		"no-self-compare": "error",
 		"no-sequences": "error",
 		"no-unused-expressions": "warn",
@@ -151,16 +151,5 @@
 		"valid-jsdoc": ["warn", {      // => eslint-plugin-jsdoc
 			"requireReturn": false
 		}]
-	},
-	"overrides": [
-		{
-			"files": [
-				"src/sap.ui.core/test/sap/ui/core/qunit/test/starter/find/*.js",
-				"src/sap.ui.core/test/sap/ui/core/qunit/test/starter/migrate/*.js"
-			],
-			"parserOptions": {
-				"ecmaVersion": 6
-			}
-		}
-	]
+	}
 }
