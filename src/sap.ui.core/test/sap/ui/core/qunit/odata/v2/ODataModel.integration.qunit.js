@@ -403,7 +403,9 @@ sap.ui.define([
 				"/sap/opu/odata/sap/UI_C_DFS_ALLWNCREQ/$metadata"
 					: {source : "qunit/odata/v2/data/UI_C_DFS_ALLWNCREQ.metadata.xml"},
 				"/special/cases/$metadata"
-					: {source : "qunit/odata/v2/data/metadata_special_cases.xml"}
+					: {source : "qunit/odata/v2/data/metadata_special_cases.xml"},
+				"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata"
+					: {source : "qunit/model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning")
@@ -7162,6 +7164,115 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: When scrolling in an AnalyticalTable then the AnalyticalBinding requests an
+	// appropriate number of items according to the defined threshold. See implementation of
+	// ODataUtils#_getReadIntervals.
+	// BCP: 2170020571
+	// JIRA: CPOUI5MODELS-579
+	QUnit.test("AnalyticalBinding: gap calculation", function (assert) {
+		var iItemCount = 0,
+			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS", {
+				tokenHandling : false,
+				useBatch : true
+			}),
+			oTable,
+			sView = '\
+<t:AnalyticalTable id="table" rows="{path : \'/Items\', parameters : {useBatchRequests : true}}"\
+		threshold="10" visibleRowCount="2">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocumentItem"\
+		template="AccountingDocumentItem"/>\
+	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
+		template="AmountInCompanyCodeCurrency"/>\
+</t:AnalyticalTable>',
+			that = this;
+
+		function getItems (iNumberOfItems) {
+			var i, aItems = [];
+
+			for (i = 0; i < iNumberOfItems; i += 1) {
+				aItems.push({
+					__metadata : {
+						uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items(" + iItemCount + ")"
+					},
+					AccountingDocumentItem : String(iItemCount),
+					AmountInCompanyCodeCurrency : String(iItemCount),
+					Currency : "USD"
+				});
+				iItemCount += 1;
+			}
+
+			return aItems;
+		}
+
+		this.expectRequest("Items" // Grand Total Request
+					+ "?$select=AmountInCompanyCodeCurrency,Currency&$top=100"
+					+ "&$inlinecount=allpages", {
+				__count : "1",
+				results : [{
+					__metadata : {
+						uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('grandTotal')"
+					},
+					AmountInCompanyCodeCurrency : "21763001.16",
+					Currency : "USD"
+				}]
+			})
+			.expectRequest("Items" // Data and Count Request
+					+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
+					+ "&$orderby=AccountingDocumentItem%20asc&$top=11&$inlinecount=allpages", {
+				__count : "550",
+				results : getItems(11)
+			});
+			// no expectChange required because only $skip&$top is relevant to be checked
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest("Items"
+						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,"
+						+ "Currency&$orderby=AccountingDocumentItem%20asc&$skip=11&$top=6", {
+					results : getItems(6)
+				});
+
+			// code under test: gap at the end
+			oTable.setFirstVisibleRow(6);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test: no request needed
+			oTable.setFirstVisibleRow(11);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Items"
+						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=AccountingDocumentItem%20asc&$skip=90&$top=21", {
+					results : getItems(21)
+				});
+
+			// code under test: no data given for this row
+			oTable.setFirstVisibleRow(100);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test: no request needed
+			oTable.setFirstVisibleRow(95);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Items"
+						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=AccountingDocumentItem%20asc&$skip=84&$top=6", {
+					results : getItems(6)
+				});
+
+			// code under test: gap in front of start index
+			oTable.setFirstVisibleRow(94);
+
+			return that.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Root entity returns a message for a *:0..1 navigation property which is
