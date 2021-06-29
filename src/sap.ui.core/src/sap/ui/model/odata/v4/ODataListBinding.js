@@ -1782,8 +1782,8 @@ sap.ui.define([
 	 * If known, the value represents the sum of the element count of the collection on the server
 	 * and the number of transient entities created on the client. Otherwise, it is
 	 * <code>undefined</code>. The value is a number of type <code>Edm.Int64</code>. Since 1.91.0,
-	 * in case of data aggregation, the count is the leaf count on the server; it is only determined
-	 * if the <code>$count</code> system query option is given.
+	 * in case of data aggregation with group levels, the count is the leaf count on the server; it
+	 * is only determined if the <code>$count</code> system query option is given.
 	 *
 	 * The count is known to the binding in the following situations:
 	 * <ul>
@@ -2806,7 +2806,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> <code>grandTotal</code>: An optional boolean that tells whether a grand total for
 	 *       this aggregatable property is needed (since 1.59.0); filtering by any aggregatable
-	 *       property is not supported in this case (since 1.89.0)
+	 *       property is not supported in this case (since 1.89.0) as is "$search" (since 1.93.0)
 	 *     <li> <code>subtotals</code>: An optional boolean that tells whether subtotals for this
 	 *       aggregatable property are needed
 	 *     <li> <code>with</code>: An optional string that provides the name of the method (for
@@ -2837,7 +2837,17 @@ sap.ui.define([
 	 * @param {string[]} [oAggregation.groupLevels]
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
-	 *   filtering for aggregated properties.
+	 *   filtering for aggregated properties or (since 1.93.0) with "$search".
+	 * @param {string} [oAggregation.search]
+	 *   Like the <a
+	 *   href="https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html">
+	 *   "5.1.7 System Query Option $search"</a>, but applied before data aggregation
+	 *   (since 1.93.0). Note that certain content will break the syntax of the system query option
+	 *   <code>$apply</code> and result in an invalid request. If the OData service supports the
+	 *   proposal <a href="https://issues.oasis-open.org/browse/ODATA-1452">ODATA-1452</a>, then
+	 *   <code>ODataUtils.formatLiteral(sSearch, "Edm.String");</code> should be used to encapsulate
+	 *   the whole search string beforehand (see {@link
+	 *   sap.ui.model.odata.v4.ODataUtils.formatLiteral}).
 	 * @param {boolean} [oAggregation.subtotalsAtBottomOnly]
 	 *   Tells whether subtotals for aggregatable properties are displayed at the bottom only, as a
 	 *   separate row after all children, when a group level node is expanded (since 1.86.0);
@@ -3008,7 +3018,9 @@ sap.ui.define([
 	 * aggregation information. Its value is
 	 * "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,unit_or_text_K>),
 	 * aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))" where the "aggregate" part is
-	 * only present if measures are given and both "with" and "as" are optional.
+	 * only present if measures are given and both "with" and "as" are optional. Since 1.93.0, a
+	 * previous "search before data aggregation" is considered (see the
+	 * <code>oAggregation.search</code> parameter of {@link #setAggregation}).
 	 *
 	 * @param {object[]} aAggregation
 	 *   An array with objects holding the information needed for data aggregation; see also
@@ -3062,7 +3074,8 @@ sap.ui.define([
 	ODataListBinding.prototype.updateAnalyticalInfo = function (aAggregation) {
 		var oAggregation = {
 				aggregate : {},
-				group : {}
+				group : {},
+				search : this.mParameters.$$aggregation && this.mParameters.$$aggregation.search
 			},
 			bHasMinMax = false,
 			that = this;
@@ -3096,6 +3109,7 @@ sap.ui.define([
 				oAggregation.group[oColumn.name] = oDetails;
 			}
 		});
+
 		this.bHasAnalyticalInfo = true;
 		this.setAggregation(oAggregation);
 		if (bHasMinMax) {

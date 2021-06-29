@@ -267,6 +267,7 @@ sap.ui.define([
 			group : {
 				Region : {}
 			},
+			search : "blue OR green",
 			subtotalsAtBottomOnly : false // just to check validation
 		},
 		mQueryOptions : {
@@ -277,11 +278,12 @@ sap.ui.define([
 			$skip : 0,
 			$top : 42
 		},
-		sApply : "filter(Region gt 'E')"
+		sApply : "filter(Region gt 'E')/search(blue OR green)"
 			+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
 			+ "/concat(aggregate($count as UI5__count),top(42)))",
-		sFollowUpApply : "filter(Region gt 'E')/groupby((Region),aggregate(SalesNumber))"
+		sFollowUpApply : "filter(Region gt 'E')/search(blue OR green)"
+			+ "/groupby((Region),aggregate(SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/top(42)"
 	}, {
 		oAggregation : {
@@ -493,19 +495,6 @@ sap.ui.define([
 			UI5min__Amount2 : {measure : "Amount2", method : "min"},
 			UI5max__Amount2 : {measure : "Amount2", method : "max"}
 		}
-	}, {
-		oAggregation : {
-			aggregate : {
-				SalesNumber : {}
-			},
-			group : {
-				Region : {}
-			}
-		},
-		mQueryOptions : {
-			$$filterBeforeAggregate : "Name eq 'Foo'"
-		},
-		sApply : "filter(Name eq 'Foo')/groupby((Region),aggregate(SalesNumber))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -839,6 +828,7 @@ sap.ui.define([
 					}
 				},
 				groupLevels : ["string"],
+				search : "string",
 				subtotalsAtBottomOnly : "boolean"
 			}, "$$aggregation")
 			.throws(oError);
