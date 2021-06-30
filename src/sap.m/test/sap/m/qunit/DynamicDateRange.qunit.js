@@ -15,6 +15,9 @@ sap.ui.define([
 ) {
 	var oCore = sap.ui.getCore();
 
+	// shortcut for library resource bundle
+	var oRb = oCore.getLibraryResourceBundle("sap.m");
+
 	QUnit.module("initialization", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();
@@ -313,11 +316,13 @@ sap.ui.define([
 
 		sText = oOptionLast.getText(this.ddr);
 
-		assert.strictEqual(sText, "Last X days / months", "the text is correct");
+		var sLastText = oRb.getText("DYNAMIC_DATE_LASTX_TITLE", "days / months");
+		assert.strictEqual(sText, sLastText, "the text is correct");
 
 		sText = oOptionNext.getText(this.ddr);
 
-		assert.strictEqual(sText, "Next X weeks / quarters", "the text is correct");
+		var sNextText = oRb.getText("DYNAMIC_DATE_NEXTX_TITLE", "weeks / quarters");
+		assert.strictEqual(sText, sNextText, "the text is correct");
 
 		oOptionLast.destroy();
 		oOptionNext.destroy();
