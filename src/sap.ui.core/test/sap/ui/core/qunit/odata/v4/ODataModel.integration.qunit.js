@@ -34421,10 +34421,14 @@ sap.ui.define([
 			oListBinding = oModel.bindList("/SalesOrderList");
 
 			that.expectRequest("SalesOrderList/$count", 42)
+				.expectRequest("SalesOrderList/$count", 42)
 				.expectChange("count", "42");
 
 			return Promise.all([
 				// code under test
+				oListBinding.getHeaderContext().requestSideEffects([
+					sEntityContainer + "/SalesOrderList/$count"
+				]),
 				oListBinding.getHeaderContext().requestSideEffects([
 					sEntityContainer + "/SalesOrderList/$count"
 				]),

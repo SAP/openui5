@@ -1934,29 +1934,31 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshInternal", function (assert) {
+[false, true].forEach(function (bCheckUpdate) {
+	QUnit.test("refreshInternal: bCheckUpdate = " + bCheckUpdate, function (assert) {
 		var oBinding = this.oModel.bindProperty("NAME"),
-			oCheckUpdateInternalExpectation,
 			oCheckUpdatePromise = {},
-			oContext = Context.create(this.oModel, {}, "/EMPLOYEES/42");
+			oContext = Context.create(this.oModel, {}, "/EMPLOYEES/42"),
+			that = this;
 
 		oBinding.oContext = oContext; // avoid #setContext, it calls too many other methods
-		this.mock(oBinding).expects("isRootBindingSuspended").twice().withExactArgs()
-			.returns(false);
-		this.mock(oBinding).expects("fetchCache").twice()
-			.withExactArgs(oContext, false, /*bKeepQueryOptions*/true);
-		oCheckUpdateInternalExpectation = this.mock(oBinding).expects("checkUpdateInternal")
-			.withExactArgs(undefined, ChangeReason.Refresh, "myGroup")
-			.returns(oCheckUpdatePromise);
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding.oCachePromise).expects("then").callsFake(function (fnThen) {
+			that.mock(oBinding).expects("fetchCache")
+				.withExactArgs(oContext, false, /*bKeepQueryOptions*/true);
+			that.mock(oBinding).expects("checkUpdateInternal")
+				.exactly(bCheckUpdate ? 1 : 0)
+				.withExactArgs(undefined, ChangeReason.Refresh, "myGroup")
+				.returns(oCheckUpdatePromise);
+			return Promise.resolve().then(fnThen);
+		});
 
 		// code under test
-		assert.strictEqual(oBinding.refreshInternal("", "myGroup", true), oCheckUpdatePromise);
-
-		assert.ok(oCheckUpdateInternalExpectation.calledOnce);
-
-		// code under test
-		assert.strictEqual(oBinding.refreshInternal("", "myGroup", false).getResult(), undefined);
+		return oBinding.refreshInternal("", "myGroup", bCheckUpdate).then(function (vResult) {
+			assert.strictEqual(vResult, bCheckUpdate ? oCheckUpdatePromise : undefined);
+		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: suspended", function (assert) {

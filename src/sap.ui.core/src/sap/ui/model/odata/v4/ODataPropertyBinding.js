@@ -495,15 +495,20 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataPropertyBinding.prototype.refreshInternal = function (_sResourcePathPrefix, sGroupId,
-			bCheckUpdate/*, bKeepCacheOnError*/) {
+			bCheckUpdate, _bKeepCacheOnError) {
+		var that = this;
+
 		if (this.isRootBindingSuspended()) {
 			this.sResumeChangeReason = ChangeReason.Refresh;
 			return SyncPromise.resolve();
 		}
-		this.fetchCache(this.oContext, false, /*bKeepQueryOptions*/true);
-		return bCheckUpdate
-			? this.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId)
-			: SyncPromise.resolve();
+		return this.oCachePromise.then(function () {
+			that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true);
+
+			if (bCheckUpdate) {
+				return that.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId);
+			}
+		});
 	};
 
 	/**
