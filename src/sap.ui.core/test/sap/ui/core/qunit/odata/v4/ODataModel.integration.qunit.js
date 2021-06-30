@@ -2447,7 +2447,7 @@ sap.ui.define([
 				that.expectChange("note", [,,, "Note 4", "Note 5"]);
 
 				// show more items
-				that.oView.byId("table-trigger").firePress();
+				that.oView.byId("table").requestItems();
 			}
 
 			return that.waitForChanges(assert);
@@ -3166,7 +3166,7 @@ sap.ui.define([
 				.expectChange("manager", [,, "5"]);
 
 			// code under test - AGE must not be requested when paging
-			that.oView.byId("table-trigger").firePress();
+			oTable.requestItems();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -5774,7 +5774,7 @@ sap.ui.define([
 
 			// code under test
 			oDeletePromise = oTable.getItems()[1].getBindingContext().delete();
-			that.oView.byId("table-trigger").firePress();
+			oTable.requestItems();
 
 			return Promise.all([
 				oDeletePromise,
@@ -5949,7 +5949,7 @@ sap.ui.define([
 
 			// code under test
 			oTable.getItems()[1].getBindingContext().refresh(undefined, true);
-			that.oView.byId("table-trigger").firePress();
+			oTable.requestItems();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -7254,6 +7254,7 @@ sap.ui.define([
 				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
+			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" growing="true" growingThreshold="2"\
@@ -7278,7 +7279,8 @@ sap.ui.define([
 			.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("table").getBinding("items");
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
 
 			that.expectChange("count", "3");
 
@@ -7338,7 +7340,7 @@ sap.ui.define([
 				.expectChange("note", [,, "First SalesOrder", "Second SalesOrder"]);
 
 			// show more items
-			that.oView.byId("table-trigger").firePress();
+			oTable.requestItems();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -7354,7 +7356,7 @@ sap.ui.define([
 				.expectChange("note", "Third SalesOrder", 4);
 
 			// show more items - ensure correct server side index for reading more elements
-			that.oView.byId("table-trigger").firePress();
+			oTable.requestItems();
 
 			return that.waitForChanges(assert);
 		});
@@ -7981,7 +7983,7 @@ sap.ui.define([
 			that.expectChange("id", [,, "42", "43"])
 				.expectChange("note", [,, "First SalesOrder", "Second SalesOrder"]);
 
-			that.oView.byId("table-trigger").firePress();
+			oTable.requestItems();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -7989,7 +7991,7 @@ sap.ui.define([
 					+ " and not (SalesOrderID eq '46' or SalesOrderID eq '44')"
 					+ "&$select=Note,SalesOrderID&$skip=2&$top=2", {value : []});
 
-			that.oView.byId("table-trigger").firePress();
+			oTable.requestItems();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -16584,7 +16586,7 @@ sap.ui.define([
 				.expectChange("salesNumber", [,,, "3", "4", null]);
 
 			// code under test (CPOUI5ODATAV4-177)
-			that.oView.byId("table-trigger").firePress();
+			oTable.requestItems();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -26921,7 +26923,7 @@ sap.ui.define([
 		.expectChange("id", [,, "4712", "4713"])
 		.expectChange("name", [,, "Bar", "FooBar"]);
 	// show more items while POST is still pending
-	this.oView.byId("table-trigger").firePress();
+	this.oView.byId("table").requestItems();
 }, function () {
 	// Note: 4712 is discarded because it is currently not visible
 	this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID,CompanyName"
@@ -27060,7 +27062,7 @@ sap.ui.define([
 					value : [{BusinessPartnerID : "4713"}]
 				});
 			// show more items before POST is even triggered
-			that.oView.byId("table-trigger").firePress();
+			that.oView.byId("table").requestItems();
 
 			that.expectChange("count", "4")
 				.expectRequest({
@@ -29510,7 +29512,7 @@ sap.ui.define([
 				})
 				.expectChange("text", [,, "John Field", "Susan Bay"]);
 
-			that.oView.byId("table-trigger").firePress(); // press "More" button in table
+			that.oView.byId("table").requestItems();
 
 			return that.waitForChanges(assert);
 		});
@@ -30505,7 +30507,7 @@ sap.ui.define([
 				})
 				.expectChange("note", [, "Note 2"]);
 
-			that.oView.byId("table-trigger").firePress(); // show more items
+			oTable.requestItems(); // show more items
 
 			assert.strictEqual(
 				// code under test
@@ -30906,8 +30908,8 @@ sap.ui.define([
 				})
 				.expectChange("id2", [,,, "M4", "M5" , "M6"]);
 
-			// code under test - press "More" button in 2nd list
-			that.oView.byId("list2-trigger").firePress();
+			// code under test
+			that.oView.byId("list2").requestItems();
 
 			return that.waitForChanges(assert);
 		});
@@ -31926,7 +31928,7 @@ sap.ui.define([
 					sinon.match("Modified on client and on server: SalesOrderList('1')"));
 
 			// show more items
-			that.oView.byId("listReport-trigger").firePress();
+			oTable.requestItems();
 
 			return that.waitForChanges(assert);
 		});
