@@ -1100,13 +1100,8 @@ function (
 		QUnit.test("check whether scrollbar position doesn't affect sorting", function (assert) {
 			var fnDone = assert.async();
 
-			var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find(">");
 			var $ScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
 			var a$ScrollContainerChildren = $ScrollContainer.find(">");
-
-			var iIndexHeaderTitleOverlay = a$Children.index(this.oHeaderTitleOverlay.getDomRef());
-			var iScrollcontainer = a$Children.index($ScrollContainer);
-			var iIndexFooterOverlay = a$Children.index(this.oFooterOverlay.getDomRef());
 			var iIndexHeaderContentOverlay = a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef());
 			var iIndexSectionsOverlay = a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef());
 
@@ -1114,10 +1109,8 @@ function (
 			oScrollbarSynchronizer.attachEventOnce("synced", function () {
 				var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find(">");
 				var a$ScrollContainerChildren = $ScrollContainer.find(">");
-
-				assert.strictEqual(a$Children.index(this.oHeaderTitleOverlay.getDomRef()), iIndexHeaderTitleOverlay);
-				assert.strictEqual(a$Children.index($ScrollContainer), iScrollcontainer);
-				assert.strictEqual(a$Children.index(this.oFooterOverlay.getDomRef()), iIndexFooterOverlay);
+				assert.ok(a$Children.index(this.oHeaderTitleOverlay.getDomRef()) < a$Children.index($ScrollContainer));
+				assert.ok(a$Children.index($ScrollContainer) < a$Children.index(this.oFooterOverlay.getDomRef()));
 				assert.strictEqual(a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef()), iIndexHeaderContentOverlay);
 				assert.strictEqual(a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef()), iIndexSectionsOverlay);
 				fnDone();
