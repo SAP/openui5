@@ -176,9 +176,19 @@ sap.ui.define([
 	RequestDataProvider.prototype._request = function (oRequest, bNoRetry) {
 		return new Promise(function (resolve, reject) {
 			jQuery.ajax(oRequest).done(function (vData, sTextStatus, jqXHR) {
+				if (this.bIsDestroyed) {
+					reject("RequestDataProvider is already destroyed before the response is received.");
+					return;
+				}
+
 				resolve([vData, jqXHR]);
 			}).fail(function (jqXHR, sTextStatus, sError) {
 				var aError = [sError, jqXHR];
+
+				if (this.bIsDestroyed) {
+					reject("RequestDataProvider is already destroyed while error in the response occurred.");
+					return;
+				}
 
 				if (bNoRetry) {
 					reject(aError);
