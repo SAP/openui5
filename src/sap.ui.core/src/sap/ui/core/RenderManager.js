@@ -81,7 +81,7 @@ sap.ui.define([
 	 * suffix 'Renderer'. So for a control <code>sap.m.Input</code> the default renderer will be searched
 	 * for under the global name <code>sap.m.Input<i>Renderer</i></code>.
 	 *
-	 * <h3>In-place DOM patching</h3>
+	 * <h3>Semantic Rendering</h3>
 	 * As of 1.67, <code>RenderManager</code> provides a set of new APIs to describe the structure of the DOM that can be used by the control renderers.
 	 *
 	 * <pre>
@@ -121,7 +121,7 @@ sap.ui.define([
 	 * <pre>
 	 *
 	 *   var myButtonRenderer = {
-	 *       apiVersion: 2    // enable in-place DOM patching
+	 *       apiVersion: 2    // enable semantic rendering
 	 *   };
 	 *
 	 *   myButtonRenderer.render = function(rm, oButton) {
@@ -177,9 +177,6 @@ sap.ui.define([
 	 *
 	 * @see sap.ui.core.Core
 	 * @see sap.ui.getCore
-	 *
-	 * @borrows sap.ui.core.RenderManager#writeAccessibilityState as #accessibilityState
-	 * @borrows sap.ui.core.RenderManager#writeIcon as #icon
 	 *
 	 * @extends Object
 	 * @author SAP SE
@@ -266,8 +263,26 @@ sap.ui.define([
 		/**
 		 * Write the given texts to the buffer
 		 * @param {...string|number} sText (can be a number too)
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @deprecated Since 1.92. Instead, use the {@link sap.ui.core.RenderManager Semantic Rendering API}.
+		 *   There is no 1:1 replacement for <code>write</code>. Typically, <code>write</code> is used to create
+		 *   a longer sequence of HTML markup (e.g. an element with attibutes and children) in a single call.
+		 *   Such a markup sequence has to be split into the individual calls of the Semantic Rendering API.
+		 *
+		 *   Example:<br>
+		 *   <pre>
+		 *     oRm.write("<span id=\"" + oCtrl.getId() + "-outer\" class=\"myCtrlOuter\">"
+		 *        + "&nbsp;" + oResourceBundle.getText("TEXT_KEY") + "&nbsp;</span>");
+		 *   </pre>
+		 *   has to be transformed to
+		 *   <pre>
+		 *     oRm.openStart("span", oCtrl.getId() + "-outer")
+		 *        .class("myCtrlOuter")
+		 *        .openEnd()
+		 *        .text("\u00a0" + oResourceBundle.getText("TEXT_KEY") + "\u00a0") // \u00a0 replaces &nbsp;
+		 *        .close("span");
+		 *   </pre>
 		 * @SecSink {*|XSS}
 		 */
 		this.write = function(/** string|number */ sText /* ... */) {
@@ -283,8 +298,9 @@ sap.ui.define([
 		 *
 		 * @param {any} sText the text to escape
 		 * @param {boolean} [bLineBreaks=false] Whether to convert line breaks into <br> tags
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#text} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 		 */
 		this.writeEscaped = function(sText, bLineBreaks) {
 			if ( sText != null ) {
@@ -304,8 +320,9 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the attribute
 		 * @param {string | number | boolean} vValue Value of the attribute
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#attr} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 		 * @SecSink {0 1|XSS} Attributes are written to HTML without validation
 		 */
 		this.writeAttribute = function(sName, vValue) {
@@ -322,8 +339,9 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the attribute
 		 * @param {any} vValue Value of the attribute
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#attr} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 		 * @SecSink {0|XSS}
 		 */
 		this.writeAttributeEscaped = function(sName, vValue) {
@@ -338,8 +356,9 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the CSS property to write
 		 * @param {string|float|int} vValue Value to write
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#style} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 		 * @SecSink {0 1|XSS} Styles are written to HTML without validation
 		 */
 		this.addStyle = function(sName, vValue) {
@@ -357,8 +376,10 @@ sap.ui.define([
 
 		/**
 		 * Writes and flushes the style collection
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @deprecated Since 1.92. Not longer needed, when using the {@link sap.ui.core.RenderManager Semantic Rendering API}
+		 *  the actual writing of styles happens when {@link sap.ui.core.RenderManager#openEnd} or {@link sap.ui.core.RenderManager#voidEnd} are used.
 		 */
 		this.writeStyles = function() {
 			var oStyle = aStyleStack[aStyleStack.length - 1];
@@ -376,8 +397,9 @@ sap.ui.define([
 		 * The class collection is flushed if it is written to the buffer using {@link #writeClasses}
 		 *
 		 * @param {string} sName name of the class to be added; null values are ignored
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#class} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 		 * @SecSink {0|XSS} Classes are written to HTML without validation
 		 */
 		this.addClass = function(sName) {
@@ -399,8 +421,10 @@ sap.ui.define([
 		 * classes are added instead. If oElement === false, no custom style classes are added.
 		 *
 		 * @param {sap.ui.core.Element | boolean} [oElement] an Element from which to add custom style classes (instead of adding from the control itself)
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @deprecated Since 1.92. Not longer needed, when using the {@link sap.ui.core.RenderManager Semantic Rendering API}
+		 *  the actual writing of classes happens when {@link sap.ui.core.RenderManager#openEnd} or {@link sap.ui.core.RenderManager#voidEnd} are used.
 		 */
 		this.writeClasses = function(oElement) {
 			assert(!oElement || typeof oElement === "boolean" || BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be empty, a boolean, or an sap.ui.core.Element");
@@ -445,7 +469,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sTagName Tag name of the HTML element
 	 	 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] Control instance or ID to identify the element
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 *
 		 * @public
 		 * @since 1.67
@@ -472,7 +496,7 @@ sap.ui.define([
 		 *
 		 * This indicates that there are no more attributes to set to the open tag.
 		 *
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -494,7 +518,7 @@ sap.ui.define([
 		 * This indicates that there are no more children to append to the open tag.
 		 *
 		 * @param {string} sTagName Tag name of the HTML element
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -516,7 +540,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sTagName Tag name of the HTML element
 		 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] Control instance or ID to identify the element
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -533,7 +557,7 @@ sap.ui.define([
 		 * This indicates that there are no more attributes to set to the open tag.
 		 * For self-closing tags <code>close</code> must not be called.
 		 *
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -555,7 +579,7 @@ sap.ui.define([
 		 * This must not be used for plain texts; use the <code>text</code> method instead.
 		 *
 		 * @param {string} sHtml Well-formed, valid HTML markup
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 * @SecSink {*|XSS}
@@ -570,8 +594,17 @@ sap.ui.define([
 		/**
 		 * Sets the text content with the given text.
 		 *
+		 * Line breaks are not supported by this method, use CSS
+		 * {@link https://www.w3.org/TR/CSS2/text.html#white-space-prop white-space: pre-line}
+		 * option to implement line breaks.
+		 *
+		 * HTML entities are not supported by this method,
+		 * use unicode escaping or the unicode character to implement HTML entities.
+		 * For further information see
+		 * {@link https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references}.
+		 *
 		 * @param {string} sText The text to be written
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -592,9 +625,14 @@ sap.ui.define([
 		 * For HTML elements, {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes attribute names} must all be set in lowercase.
 		 * For foreign elements, such as SVG, {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute attribute names} can be set in upper camel case (e.g. viewBox).
 		 *
+		 * HTML entities are not supported by this method,
+		 * use unicode escaping or the unicode character to implement HTML entities.
+		 * For further information see
+		 * {@link https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references}.
+		 *
 		 * @param {string} sName Name of the attribute
 		 * @param {*} vValue Value of the attribute
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -612,7 +650,7 @@ sap.ui.define([
 		 * Class name must not contain any whitespace.
 		 *
 		 * @param {string} sClass Class name to be written
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -635,7 +673,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the style property
 		 * @param {string} sValue Value of the style property
-		 * @return {this} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -646,10 +684,99 @@ sap.ui.define([
 			return this;
 		};
 
-		// @borrows sap.ui.core.RenderManager#writeAccessibilityState as accessibilityState
+		/**
+		 * Collects accessibility related attributes for an <code>Element</code> and renders them as part of
+		 * the currently rendered DOM element.
+		 *
+		 * See the WAI-ARIA specification for a general description of the accessibility related attributes.
+		 * Attributes are only rendered when the accessibility feature is activated in the UI5 runtime configuration.
+		 *
+		 * The values for the attributes are collected from the following sources (last one wins):
+		 * <ol>
+		 * <li>from the properties and associations of the given <code>oElement</code>, using a heuristic mapping
+		 *     (described below)</li>
+		 * <li>from the <code>mProps</code> parameter, as provided by the caller</li>
+		 * <li>from the parent of the given <code>oElement</code>, if it has a parent and if the parent implements
+		 *     the method {@link sap.ui.core.Element#enhanceAccessibilityState enhanceAccessibilityState}</li>
+		 * </ol>
+		 * If no <code>oElement</code> is given, only <code>mProps</code> will be taken into account.
+		 *
+		 *
+		 * <h3>Heuristic Mapping</h3>
+		 * The following mapping from properties/values to ARIA attributes is used (if the element does have such properties):
+		 * <ul>
+		 * <li><code>editable===false</code> => <code>aria-readonly="true"</code></li>
+		 * <li><code>enabled===false</code> => <code>aria-disabled="true"</code></li>
+		 * <li><code>visible===false</code> => <code>aria-hidden="true"</code></li>
+		 * <li><code>required===true</code> => <code>aria-required="true"</code></li>
+		 * <li><code>selected===true</code> => <code>aria-selected="true"</code></li>
+		 * <li><code>checked===true</code> => <code>aria-checked="true"</code></li>
+		 * </ul>
+		 *
+		 * In case of the <code>required</code> property, all label controls which reference the given element
+		 * in their <code>labelFor</code> relation are additionally taken into account when determining the
+		 * value for the <code>aria-required</code> attribute.
+		 *
+		 * Additionally, the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to
+		 * determine the lists of IDs for the ARIA attributes <code>aria-describedby</code> and
+		 * <code>aria-labelledby</code>.
+		 *
+		 * Label controls that reference the given element in their <code>labelFor</code> relation are automatically
+		 * added to the <code>aria-labelledby</code> attribute.
+		 *
+		 * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
+		 * have to check whether it fulfills their requirements. In case of problems (for example the <code>RadioButton</code> has a
+		 * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
+		 * result of this function can be influenced via the parameter <code>mProps</code> as described below.
+		 *
+		 * The parameter <code>mProps</code> can be used to either provide additional attributes which should be rendered
+		 * and/or to avoid the automatic generation of single ARIA attributes. The 'aria-' prefix will be prepended
+		 * automatically to the keys (Exception: Attribute <code>role</code> does not get the prefix 'aria-').
+		 *
+		 *
+		 * Examples:<br>
+		 * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the presence or
+		 * absence of the visibility property.<br>
+		 * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent
+		 * of the presence or absence of the visibility property.<br>
+		 *
+		 * The function behaves in the same way for the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code>.
+		 * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code>
+		 * attributes, the following format can be used:
+		 * <pre>
+		 *   {describedby : {value: "id1 id2", append: true}} =>  aria-describedby = "ida idb id1 id2"
+		 * </pre>
+		 * (assuming that "ida idb" is the auto-generated part based on the association <code>ariaDescribedBy</code>).
+		 *
+		 * @param {sap.ui.core.Element}
+		 *            [oElement] The <code>Element</code> whose accessibility state should be rendered
+		 * @param {object}
+		 *            [mProps] A map of additional properties that should be added or changed.
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+		 * @public
+		 */
 		this.accessibilityState = this.writeAccessibilityState;
 
-		// @borrows sap.ui.core.RenderManager#writeIcon as icon
+		/**
+		 * Writes either an &lt;img&gt; tag for normal URI or a &lt;span&gt; tag with needed properties for an icon URI.
+		 *
+		 * Additional classes and attributes can be added to the tag with the second and third parameter.
+		 * All of the given attributes are escaped when necessary for security consideration.
+		 *
+		 * When an &lt;img&gt; tag is rendered, the following two attributes are added by default
+		 * and can be overwritten with corresponding values in the <code>mAttributes</code> parameter:
+		 * <ul>
+		 * <li><code>role: "presentation"</code></Li>
+		 * <li><code>alt: ""</code></li>
+		 * </ul>
+		 *
+		 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
+		 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
+		 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag.
+		 * Currently the attributes <code>class</code> and <code>style</code> are not allowed
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+		 * @public
+		 */
 		this.icon = this.writeIcon;
 
 
@@ -1097,7 +1224,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Control}
 		 *            oControl the Control whose HTML should be returned.
-		 * @return {string} the resulting HTML of the provided control
+		 * @returns {string} the resulting HTML of the provided control
 		 * @deprecated Since version 0.15.0. Use <code>flush()</code> instead render content outside the rendering phase.
 		 * @public
 		 */
@@ -1459,7 +1586,7 @@ sap.ui.define([
 		/**
 		 * Returns the public interface of the RenderManager which can be used by Renderers.
 		 *
-		 * @return {sap.ui.base.Interface} the interface
+		 * @returns {sap.ui.base.Interface} the interface
 		 * @private
 		 */
 		this.getRendererInterface = function() {
@@ -1476,8 +1603,9 @@ sap.ui.define([
 	/**
 	 * Returns the configuration object
 	 * Shortcut for <code>sap.ui.getCore().getConfiguration()</code>
-	 * @return {sap.ui.core.Configuration} the configuration object
+	 * @returns {sap.ui.core.Configuration} the configuration object
 	 * @public
+	 * @deprecated Since 1.92. Instead, use the {@link sap.ui.core.Core#getConfiguration} API.
 	 */
 	RenderManager.prototype.getConfiguration = function() {
 		return sap.ui.getCore().getConfiguration();
@@ -1494,7 +1622,7 @@ sap.ui.define([
 
 	/**
 	 * @deprecated As of version 1.1, never has been implemented - DO NOT USE
-	 * @return {this} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeAcceleratorKey = function() {
@@ -1513,8 +1641,10 @@ sap.ui.define([
 	 * Writes the controls data into the HTML.
 	 * Control Data consists at least of the id of a control
 	 * @param {sap.ui.core.Control} oControl the control whose identifying information should be written to the buffer
-	 * @return {this} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
+	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#openStart} or {@link sap.ui.core.RenderManager#voidStart}
+	 *  of the {@link sap.ui.core.RenderManager Semantic Rendering API} and pass the desired control data as the second parameter to the new API.
 	 */
 	RenderManager.prototype.writeControlData = function(oControl) {
 		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
@@ -1526,8 +1656,10 @@ sap.ui.define([
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of an element
 	 * @param {sap.ui.core.Element} oElement the element whose identifying information should be written to the buffer
-	 * @return {this} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
+	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#openStart} or {@link sap.ui.core.RenderManager#voidStart}
+	 *  of the {@link sap.ui.core.RenderManager Semantic Rendering API} and pass the desired element data as the second parameter to the new API.
 	 */
 	RenderManager.prototype.writeElementData = function(oElement) {
 		assert(oElement && BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be an sap.ui.core.Element");
@@ -1572,14 +1704,14 @@ sap.ui.define([
 	 * value for the <code>aria-required</code> attribute.
 	 *
 	 * Additionally, the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to
-	 * determine the lists of IDS for the ARIA attributes <code>aria-describedby</code> and
+	 * determine the lists of IDs for the ARIA attributes <code>aria-describedby</code> and
 	 * <code>aria-labelledby</code>.
 	 *
 	 * Label controls that reference the given element in their <code>labelFor</code> relation are automatically
 	 * added to the <code>aria-labelledby</code> attributes.
 	 *
 	 * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
-	 * have to check whether it fulfills their requirements. In case of problems (for example the RadioButton has a
+	 * have to check whether it fulfills their requirements. In case of problems (for example the <code>RadioButton</code> has a
 	 * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
 	 * result of this function can be influenced via the parameter <code>mProps</code> as described below.
 	 *
@@ -1606,8 +1738,9 @@ sap.ui.define([
 	 *            [oElement] The <code>Element</code> whose accessibility state should be rendered
 	 * @param {object}
 	 *            [mProps] A map of additional properties that should be added or changed.
-	 * @return {this} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
+	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#accessibilityState} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 	 */
 	RenderManager.prototype.writeAccessibilityState = function(oElement, mProps) {
 		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
@@ -1726,6 +1859,7 @@ sap.ui.define([
 	 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
+	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#icon} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
 		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool"),
@@ -1836,7 +1970,7 @@ sap.ui.define([
 	 * Returns the renderer class for a given control instance
 	 *
 	 * @param {sap.ui.core.Control} oControl the control that should be rendered
-	 * @return {object} the renderer class for a given control instance
+	 * @returns {object} the renderer class for a given control instance
 	 * @public
 	 */
 	RenderManager.prototype.getRenderer = function(oControl) {
@@ -1891,7 +2025,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control}
 	 *            oControl the control that should be rendered
 	 * @type function
-	 * @return {object} the renderer class for a given control instance
+	 * @returns {object} the renderer class for a given control instance
 	 * @static
 	 * @public
 	 */
@@ -2134,7 +2268,7 @@ sap.ui.define([
 	 * Searches "to-be-preserved" nodes for the given control id.
 	 *
 	 * @param {string} sId control id to search content for.
-	 * @return {jQuery} a jQuery collection representing the found content
+	 * @returns {jQuery} a jQuery collection representing the found content
 	 * @public
 	 * @static
 	 */
@@ -2161,7 +2295,7 @@ sap.ui.define([
 	 * Checks whether the given DOM element is part of the 'preserve' area.
 	 *
 	 * @param {Element} oElement DOM element to check
-	 * @return {boolean} Whether element is part of 'preserve' area
+	 * @returns {boolean} Whether element is part of 'preserve' area
 	 * @private
 	 * @static
 	 */
@@ -2172,7 +2306,7 @@ sap.ui.define([
 	/**
 	 * Returns the hidden area reference belonging to the current window instance.
 	 *
-	 * @return {Element} The hidden area reference belonging to the current window instance.
+	 * @returns {Element} The hidden area reference belonging to the current window instance.
 	 * @public
 	 * @static
 	 */
@@ -2197,7 +2331,7 @@ sap.ui.define([
 	 * Checks whether the given DOM node is an 'inline template' area.
 	 *
 	 * @param {Element} oDomNode dom node which is checked
-	 * @return {boolean} whether node is an 'inline template' area
+	 * @returns {boolean} whether node is an 'inline template' area
 	 * @private
 	 * @static
 	 */
@@ -2211,7 +2345,7 @@ sap.ui.define([
 	 * The inherited <code>apiVersion</code> value is not taken into account, <code>apiVersion</code> must be defined explicitly as an own property of the renderer.
 	 *
 	 * @param {sap.ui.core.Renderer} oRenderer The renderer of the control
-	 * @return {int} API version of the Renderer
+	 * @returns {int} API version of the Renderer
 	 * @private
 	 * @static
 	 */
