@@ -3,6 +3,38 @@
     "date": "June 2021",
     "notes": [
       {
+        "id": "061f9b11804dff6653bb2ae89c5f134c949191f6",
+        "type": "FEATURE",
+        "text": " Supports display of system and app information on Generic Tile"
+      },
+      {
+        "id": "8fcbc8eb4a0d3d996bbc503b2af2a90bd451210e",
+        "type": "FIX",
+        "text": " sap.m.Menu: disabled items now displayed/act corectly on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180241089"
+          }
+        ]
+      },
+      {
+        "id": "f65f57465211cff4ac50f393f3f652d769230cee",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Stretched dialog is correctly positioned in RTL languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180203872"
+          }
+        ]
+      },
+      {
+        "id": "bb09a807cf855840900063dd7087a7abbcc86369",
+        "type": "FIX",
+        "text": " Theming: do not overlay variables from other libs"
+      },
+      {
         "id": "82eb1e6d88d1689af5aa75be5b8d9598037ba33c",
         "type": "FEATURE",
         "text": " ListBase: new method \"requestItems\" added to load more items in the control"

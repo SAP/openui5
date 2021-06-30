@@ -3,6 +3,17 @@
     "date": "June 2021",
     "notes": [
       {
+        "id": "018c1a83d52b8874434782af635b4a04cb58c817",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix pin button visibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003206892021"
+          }
+        ]
+      },
+      {
         "id": "d4224c47595323cc6a6dec2569c573eefeed6012",
         "type": "FIX",
         "text": " sap.f.GridContainer: Improve focus handling when using ComboBox inside the grid",

@@ -6,17 +6,6 @@
         "id": "0ab7ff8a0eabe07b33e4cd17385bfe9acdcfbe7a",
         "type": "FEATURE",
         "text": " sap.ui.layout.ResponsiveSplitter: \"resize\" event is added"
-      },
-      {
-        "id": "a52dce25ac9a1fdbe7a1207b786167b63db1c672",
-        "type": "FIX",
-        "text": " FormElement: update Label on field editable change",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180160299"
-          }
-        ]
       }
     ]
   }

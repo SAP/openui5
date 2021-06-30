@@ -3,6 +3,33 @@
     "date": "June 2021",
     "notes": [
       {
+        "id": "04c465361d87ad603687cccdcedb4ddd094201a2",
+        "type": "FIX",
+        "text": " mvc/View.js: Don't override OwnerComponent with ExtensionComponent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180257449"
+          }
+        ]
+      },
+      {
+        "id": "67cda13405d4028bd01c2ed29008be7364eef249",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.odata.v4.lib._MetadataConverter#resolveAlias: treat type name as optional"
+      },
+      {
+        "id": "f512cc902e0bd08ce370a13d9bbfe9b82dbfe33c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: Aliases are properly resolved even if there is an alias which is an infix of another alias",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180241022"
+          }
+        ]
+      },
+      {
         "id": "cca6f8cfdeada11710d1bc5ad14b8dcaa110bdbc",
         "type": "FIX",
         "text": " sap.ui.model.Binding#_checkDataStateMessages: Remove messages if binding is unresolved"
