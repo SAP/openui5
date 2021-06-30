@@ -486,7 +486,7 @@ sap.ui.define([
 	 * @param {string} sErrorMessage - Error message
 	 */
 	BasePropertyEditor.prototype.setInputState = function (bHasError, sErrorMessage) {
-		this._sErrorMessage = sErrorMessage;
+		this._sErrorMessage = bHasError && sErrorMessage;
 		if (this.isReady()) {
 			this._setInputState();
 		}

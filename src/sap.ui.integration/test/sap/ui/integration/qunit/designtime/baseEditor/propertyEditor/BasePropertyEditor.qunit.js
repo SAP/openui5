@@ -271,8 +271,12 @@ function (
 	});
 
 	QUnit.module("Validation", {
-		beforeEach: function (assert) {
+		beforeEach: function() {
 			var mPropertyConfig = {
+				foo: {
+					path: "foo",
+					type: "string"
+				},
 				invalidFoo: {
 					path: "invalidFoo",
 					type: "string"
@@ -286,6 +290,7 @@ function (
 				}
 			};
 			var mJson = {
+				foo: "bar",
 				invalidFoo: "{bar"
 			};
 
@@ -302,6 +307,29 @@ function (
 			this.oBaseEditor.destroy();
 		}
 	}, function () {
+		QUnit.test("when setInputState is called with an error", function(assert) {
+			var oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("foo")[0];
+			oFooEditor.getAggregation("propertyEditor").setInputState(true, "some error");
+
+			assert.strictEqual(
+				oFooEditor.getContent().getValueState(),
+				"Error",
+				"then the error is shown"
+			);
+		});
+
+		QUnit.test("when an error is disabled later", function(assert) {
+			var oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("foo")[0];
+			oFooEditor.getAggregation("propertyEditor").setInputState(true, "some error");
+			oFooEditor.getAggregation("propertyEditor").setInputState(false, "some error");
+
+			assert.strictEqual(
+				oFooEditor.getContent().getValueState(),
+				"None",
+				"then the error is no longer shown"
+			);
+		});
+
 		QUnit.test("when a validator is disabled via config change", function (assert) {
 			var oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("invalidFoo")[0];
 
