@@ -4394,6 +4394,40 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Focus handling - pseudo focus should return to the input after selection from the list", function(assert) {
+		// Setup
+		var oInput = new Input({
+				showSuggestion: true,
+				suggestionItems: [
+					new Item({text: "Item 1"}),
+					new Item({text: "Item 2"}),
+					new Item({text: "Item 3"})
+				]
+			}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Arrange
+		oInput._createSuggestionPopupContent();
+		oInput._$input.trigger("focus").val("it").trigger("input");
+		this.clock.tick(300);
+		oInput._openSuggestionsPopover();
+		this.clock.tick();
+
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
+
+		// Act
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oInput.hasStyleClass("sapMFocus"), true, "The input has pseudo focus");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
 	QUnit.test("Value State - Aria-describedby reference element should have a separate persistent DOM node other than the visible value state popup", function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({

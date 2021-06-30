@@ -2827,6 +2827,7 @@ function(
 					}
 
 					this._deregisterPopupResize();
+					this.addStyleClass("sapMFocus");
 				}, this)
 				.attachBeforeOpen(function () {
 					oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
