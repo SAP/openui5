@@ -92,6 +92,11 @@ sap.ui.define([
 		return $element[0].scrollWidth > ($element.innerWidth() + iTolerance);
 	}
 
+	/**
+	 * Possible error for fractions comparison
+	 */
+	var EPS = 0.2;
+
 	QUnit.module("Initial Check");
 
 	QUnit.test("Initialization", function (assert) {
@@ -265,8 +270,7 @@ sap.ui.define([
 		this.dialog._onResize();
 
 		// assert
-		assert.equal(this.dialog.$('cont').scrollTop(), this.SCROLL_TOP, "Content's scroll position should be preserved");
-
+		assert.ok(Math.abs(this.dialog.$('cont').scrollTop() - this.SCROLL_TOP) < EPS, "Content's scroll position should be preserved");
 	});
 
 	QUnit.module("Resizing on mobile while using OverflowToolbar", {
@@ -2802,12 +2806,12 @@ sap.ui.define([
 		this.oDialog.open();
 		this.clock.tick(500);
 		var $dialog = this.oDialog.$(),
-			iExpectedTop = Math.round((window.innerHeight - $dialog.outerHeight()) / 2),
-			iExpectedLeft = Math.round((window.innerWidth - $dialog.outerWidth()) / 2);
+			fExpectedTop = Math.round((window.innerHeight - $dialog.outerHeight()) / 2),
+			fExpectedLeft = Math.round((window.innerWidth - $dialog.outerWidth())) / 2;
 
 		// Assert
-		assert.strictEqual($dialog.offset().top, iExpectedTop, "Top coordinate is correctly calculated based on Window");
-		assert.strictEqual($dialog.offset().left, iExpectedLeft, "Left coordinate is correctly calculated based on Window");
+		assert.ok(Math.abs($dialog.offset().top - fExpectedTop) < EPS, "Top coordinate is correctly calculated based on Window");
+		assert.ok(Math.abs($dialog.offset().left - fExpectedLeft) < EPS, "Left coordinate is correctly calculated based on Window");
 	});
 
 	QUnit.test("Custom Within Area. 'top' and 'left' of Within Area should be included", function (assert) {
