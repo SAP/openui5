@@ -88,6 +88,26 @@
 							id="CurrencyCode::new" value="{CurrencyCode}"/>
 					</form:SimpleForm>
 				</Dialog>
+				<Dialog id="onStrictMessagesDialog"
+						title="Messages during order confirmation, do you want to continue?"
+						resizable="true" contentHeight="50%" contentWidth="50%"
+						verticalScrolling="false" state="Warning">
+					<buttons>
+						<Button id="confirmStrictMode" text="Yes"
+								tooltip="Ignore warnings and confirm anyhow"
+							press="onConfirmStrictMessages"/>
+						<Button id="cancelStrictMode" text="No"
+								tooltip="Cancel confirmation"
+							press="onCancelStrictMessages" type="Emphasized"/>
+					</buttons>
+					<MessageView items="{ui>/aStrictMessages}">
+						<MessageItem
+							type="{ui>type}"
+							title="{ui>message}"
+							subtitle="{ui>target}">
+						</MessageItem>
+					</MessageView>
+				</Dialog>
 			</dependents>
 		</Toolbar>
 		<!-- Note: 'BuyerID' is selected below because it is used when creating new entries -->
@@ -139,7 +159,7 @@
 						id="refreshSelectedSalesOrder" press="onRefreshSelectedSalesOrder"
 						tooltip="Refresh selected sales order"/>
 					<Button
-						enabled="{= ${ui>/bSalesOrderSelected} &amp;&amp; ${ui>/bRealOData}
+						enabled="{= ${ui>/bSalesOrderSelected}
 							&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
 							&amp;&amp; !${ui>/bCreateItemPending}}"
 						id="confirmSalesOrder"

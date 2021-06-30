@@ -92,7 +92,8 @@ sap.ui.define([
 								bSortGrossAmountDescending : undefined,
 								bSortSalesOrderIDDescending : undefined,
 								sSortGrossAmountIcon : "",
-								sSortSalesOrderIDIcon : ""
+								sSortSalesOrderIDIcon : "",
+								aStrictMessages : []
 							}
 						)},
 						type : ViewType.XML,

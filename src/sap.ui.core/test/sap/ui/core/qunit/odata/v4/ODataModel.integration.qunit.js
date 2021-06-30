@@ -1168,7 +1168,8 @@ sap.ui.define([
 						if (oError.$insideBatch) {
 							// convert the error back to a response
 							return {
-								headers : {"Content-Type" : "application/json"},
+								headers : Object.assign({"Content-Type" : "application/json"},
+									oError.headers),
 								status : oError.status,
 								body : {error : oError.error}
 							};
@@ -1312,6 +1313,7 @@ sap.ui.define([
 						oResponseBody.requestUrl = that.oModel.sServiceUrl + sUrl;
 						// this is also missing for $batch itself! @see processRequest
 						oResponseBody.resourcePath = sOriginalResourcePath;
+						oResponseBody.headers = mResponseHeaders;
 						throw oResponseBody;
 					}
 
@@ -2714,7 +2716,7 @@ sap.ui.define([
 			});
 
 			return Promise.all([
-				that.oView.byId("action").getElementBinding().execute(),
+				that.oView.byId("action").getObjectBinding().execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -2945,7 +2947,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				that.oView.byId("action").getElementBinding().execute(),
+				that.oView.byId("action").getObjectBinding().execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -30607,8 +30609,212 @@ sap.ui.define([
 				.expectChange("status", "C");
 
 			return Promise.all([
-				that.oView.byId("action").getElementBinding().execute(),
+				that.oView.byId("action").getObjectBinding().execute(),
 				that.oView.byId("form").getBindingContext().requestSideEffects(["LifecycleStatus"]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: "Prefer:handling=strict"
+	// Execute an action with an fnOnStrictHandlingFailed callback given in order to have the
+	// "Prefer:handling=strict" HTTP header set. bConfirm controls how the callback is resolved.
+	//
+	// JIRA: CPOUI5ODATAV4-943
+[true, false].forEach(function(bConfirm) {
+	QUnit.test("CPOUI5ODATAV4-943: handling=strict, confirm=" + bConfirm, function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oActionPromise,
+			oError = createErrorInsideBatch({
+				code : "STRICT",
+				details : [{
+					"@Common.numericSeverity" : 3,
+					code : "CODE1",
+					message : "Note is empty",
+					target : "SalesOrder/Note"
+				}, {
+					"@Common.numericSeverity" : 2,
+					code : "CODE2",
+					message : "Some unbound info"
+				}],
+				message : "Strict Handling"
+			}, 412),
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			fnResolve,
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="status" text="{LifecycleStatus}"/>\
+	<FlexBox id="action" binding="{' + sAction + '(...)}"/>\
+</FlexBox>',
+			that = this;
+
+		function onStrictHandlingFailed(aMessages) {
+			assert.strictEqual(aMessages.length, 2);
+			assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
+			assert.strictEqual(aMessages[0].getCode(), "CODE1");
+			assert.strictEqual(aMessages[0].getTarget(), "/SalesOrderList('1')/Note");
+			assert.strictEqual(aMessages[0].getType(), "Warning");
+			assert.strictEqual(aMessages[1].getMessage(), "Some unbound info");
+			assert.strictEqual(aMessages[1].getCode(), "CODE2");
+			assert.strictEqual(aMessages[1].getTarget(), "");
+			assert.strictEqual(aMessages[1].getType(), "Information");
+
+			return new Promise(function (resolve) {
+				fnResolve = resolve;
+			});
+		}
+
+		this.expectRequest("SalesOrderList('1')?$select=LifecycleStatus,SalesOrderID", {
+				LifecycleStatus : "N",
+				SalesOrderID : "1"
+			})
+			.expectChange("status", "N");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					headers : {
+						"Prefer" : "handling=strict"
+					},
+					method : "POST",
+					url : "SalesOrderList('1')/" + sAction,
+					payload : {}
+				}, oError, {
+					"Preference-Applied" : "handling=strict"
+				}
+			);
+
+			oActionPromise = that.oView.byId("action").getObjectBinding()
+				.execute("$auto", false, onStrictHandlingFailed);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			if (bConfirm) {
+				that.expectRequest({
+						method : "POST",
+						url : "SalesOrderList('1')/" + sAction,
+						payload : {}
+					}, {
+						LifecycleStatus : "C",
+						SalesOrderID : "1"
+					})
+					.expectChange("status", "C");
+			}
+
+			// code under test
+			fnResolve(bConfirm);
+
+			return Promise.all([
+				oActionPromise.then(function () {
+					assert.ok(bConfirm);
+				}, function (oError) {
+					assert.notOk(bConfirm);
+					assert.strictEqual(oError.message, "Action canceled due to strict handling");
+					assert.strictEqual(oError.canceled, true);
+				}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: "Prefer:handling=strict"
+	// 1. Successful execution of a) a bound and b) an unbound action with "handling=strict" in the
+	//    same change set
+	// 2. Another execution of a bound action with "handling=strict" in a different change set (of
+	//    the same $batch) that will result in a rejection of this action
+	// 3. Test whether "handling=strict" is allowed only for an action
+	//
+	// JIRA: CPOUI5ODATAV4-943
+	QUnit.test("CPOUI5ODATAV4-943: handling=strict, multiple strict executions", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'0\')}">\
+	<Text id="status" text="{LifecycleStatus}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('0')?$select=LifecycleStatus,SalesOrderID", {
+				LifecycleStatus : "N",
+				SalesOrderID : "0"
+			})
+			.expectChange("status", "N");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("form").getBindingContext();
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to execute /SalesOrderList('0')/"
+					+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)",
+					sinon.match(
+						"All requests with strict handling must belong to the same change set"),
+					"sap.ui.model.odata.v4.ODataContextBinding");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to execute /GetProductStock(...)",
+					sinon.match("Not an action: /GetProductStock(...)"),
+					"sap.ui.model.odata.v4.ODataContextBinding");
+			that.expectRequest({
+					headers : {
+						"Prefer" : "handling=strict"
+					},
+					method : "POST",
+					url : "SalesOrderList('0')/" + sAction,
+					payload : {}
+				}, {
+					LifecycleStatus : "C",
+					SalesOrderID : "0"
+				})
+				.expectRequest({
+					headers : {
+						"Prefer" : "handling=strict"
+					},
+					method : "POST",
+					url : "RegenerateEPMData",
+					payload : {}
+				}, {})
+				.expectRequest("GetProductStock()", {})
+				.expectChange("status", "C")
+				.expectMessages([{
+					message : "All requests with strict handling must belong to the same change"
+						+ " set",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}, {
+					message : "Not an action: /GetProductStock(...)",
+					persistent : true,
+					technical : true,
+					type : "Error"
+			}]);
+
+			return Promise.all([
+				// only to issue a GET request (non change set) at the beginning
+				oModel.bindContext("/GetProductStock(...)")
+					.execute("confirm"),
+				// code under test (1a)
+				oModel.bindContext(sAction + "(...)", oContext)
+					.execute("confirm", false, function () {}),
+				// code under test (1b)
+				oModel.bindContext("/RegenerateEPMData(...)")
+					.execute("confirm", false, function () {}),
+				oModel.submitBatch("confirm"), //create 2nd change set in $batch
+				// code under test (2)
+				oModel.bindContext(sAction + "(...)", oContext)
+					.execute("confirm", false, function () {})
+					.then(mustFail(assert), function (oError) {
+						assert.strictEqual(oError.message,
+							"All requests with strict handling must belong to the same change set");
+					}),
+				// code under test (3)
+				oModel.bindContext("/GetProductStock(...)")
+					.execute("confirm", false, function () {})
+					.then(mustFail(assert), function (oError) {
+						assert.strictEqual(oError.message,
+							"Not an action: /GetProductStock(...)");
+					}),
 				that.waitForChanges(assert)
 			]);
 		});

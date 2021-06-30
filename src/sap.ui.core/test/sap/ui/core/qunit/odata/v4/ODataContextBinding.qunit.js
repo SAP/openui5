@@ -1207,11 +1207,13 @@ sap.ui.define([
 			.returns(mParameters);
 		this.mock(oBinding).expects("_execute")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters),
-				"~bIgnoreETag~")
+				"~bIgnoreETag~", "~fnOnStrictHandlingFailed~")
 			.returns(oPromise);
 
 		// code under test
-		assert.strictEqual(oBinding.execute("groupId", "~bIgnoreETag~"), oPromise);
+		assert.strictEqual(
+			oBinding.execute("groupId", "~bIgnoreETag~", "~fnOnStrictHandlingFailed~"),
+			oPromise);
 	});
 
 	//*********************************************************************************************
@@ -1238,7 +1240,7 @@ sap.ui.define([
 				.returns(mParameters);
 			this.mock(oBinding).expects("_execute")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters),
-					"~bIgnoreETag~")
+					"~bIgnoreETag~", undefined)
 				.returns(oPromise);
 
 			// code under test
@@ -1411,7 +1413,7 @@ sap.ui.define([
 			oBindingMock.expects("createCacheAndRequest")
 				.withExactArgs(sinon.match.same(oGroupLock), "/OperationImport(...)",
 					sinon.match.same(oOperationMetadata), sinon.match.same(mParameters), undefined,
-					"~bIgnoreETag~")
+					"~bIgnoreETag~", "~fnOnStrictHandlingFailed~")
 				.returns(SyncPromise.resolve({/*oResult*/}));
 			oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
@@ -1419,7 +1421,8 @@ sap.ui.define([
 				.returns(SyncPromise.resolve(Promise.resolve()));
 
 			// code under test
-			oPromise = oBinding._execute(oGroupLock, mParameters, "~bIgnoreETag~");
+			oPromise = oBinding._execute(oGroupLock, mParameters, "~bIgnoreETag~",
+				"~fnOnStrictHandlingFailed~");
 
 			assert.ok(oPromise instanceof Promise, "a Promise, not a SyncPromise");
 			return oPromise.then(function (oResult) {
@@ -1491,13 +1494,13 @@ sap.ui.define([
 						.withExactArgs(sinon.match.same(oGroupLock0),
 							"/EntitySet(ID='1')/navigation1/" + sOperation + "(...)",
 							sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-							undefined, "~bIgnoreETag~");
+							undefined, "~bIgnoreETag~", undefined);
 				} else {
 					oExpectation = oBindingMock.expects("createCacheAndRequest")
 						.withExactArgs(sinon.match.same(oGroupLock0),
 							"/EntitySet(ID='1')/navigation1/" + sOperation + "(...)",
 							sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-							sinon.match.func, "~bIgnoreETag~");
+							sinon.match.func, "~bIgnoreETag~", undefined);
 					this.mock(oParentContext1).expects("getValue").on(oParentContext1)
 						.withExactArgs(sPathPrefix).returns(oEntity);
 				}
@@ -1528,13 +1531,13 @@ sap.ui.define([
 							.withExactArgs(sinon.match.same(oGroupLock1),
 								"/EntitySet(ID='2')/navigation1/" + sOperation + "(...)",
 								sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-								undefined, "~bIgnoreETag~");
+								undefined, "~bIgnoreETag~", undefined);
 					} else {
 						oExpectation = oBindingMock.expects("createCacheAndRequest")
 							.withExactArgs(sinon.match.same(oGroupLock1),
 								"/EntitySet(ID='2')/navigation1/" + sOperation + "(...)",
 								sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-								sinon.match.func, "~bIgnoreETag~");
+								sinon.match.func, "~bIgnoreETag~", undefined);
 						that.mock(oParentContext2).expects("getValue").on(oParentContext2)
 							.withExactArgs(sPathPrefix).returns(oEntity);
 					}
@@ -1620,7 +1623,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oGroupLock),
 					sParentContextPath + "/name.space.Operation(...)",
 					sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-					sinon.match.func, "~bIgnoreETag~")
+					sinon.match.func, "~bIgnoreETag~", undefined)
 				.returns(Promise.resolve(oResponseEntity));
 			oBindingMock.expects("_fireChange")
 				.withExactArgs({reason : ChangeReason.Change});
@@ -1655,7 +1658,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock),
 						sParentContextPath + "/name.space.Operation(...)",
 						sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-						sinon.match.func, "~bIgnoreETag~")
+						sinon.match.func, "~bIgnoreETag~", undefined)
 					.returns(Promise.resolve(oResponseEntity));
 				oBindingMock.expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Change});
@@ -1690,7 +1693,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock),
 						sParentContextPath + "/name.space.Operation(...)",
 						sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-						sinon.match.func, "~bIgnoreETag~")
+						sinon.match.func, "~bIgnoreETag~", undefined)
 					.returns(Promise.reject(oError));
 				oBindingMock.expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Change});
@@ -1754,7 +1757,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oGroupLock),
 					"/TEAMS('42')/name.space.Operation(...)",
 					sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-					sinon.match.func, "~bIgnoreETag~")
+					sinon.match.func, "~bIgnoreETag~", undefined)
 				.returns(Promise.resolve(oResponseEntity));
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 			oBindingMock.expects("getDependentBindings").withExactArgs().returns([]);
@@ -1806,7 +1809,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oGroupLock),
 					"/TEAMS('42')/TEAM_2_MANAGER/name.space.Operation(...)",
 					sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-					sinon.match.func, "~bIgnoreETag~")
+					sinon.match.func, "~bIgnoreETag~", undefined)
 				.returns(Promise.resolve(oResponseEntity));
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 			oBindingMock.expects("getDependentBindings").withExactArgs().returns([]);
@@ -1850,7 +1853,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve([oOperationMetadata]));
 		oBindingMock.expects("createCacheAndRequest").withExactArgs(sinon.match.same(oGroupLock),
 				"/OperationImport(...)", sinon.match.same(oOperationMetadata),
-				sinon.match.same(mParameters), undefined, "~bIgnoreETag~")
+				sinon.match.same(mParameters), undefined, "~bIgnoreETag~", undefined)
 			.returns(SyncPromise.reject(oError));
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
@@ -1893,7 +1896,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve([oOperationMetadata]));
 		oBindingMock.expects("createCacheAndRequest").withExactArgs(sinon.match.same(oGroupLock),
 				"/OperationImport(...)", sinon.match.same(oOperationMetadata),
-				sinon.match.same(mParameters), undefined, "~bIgnoreETag~")
+				sinon.match.same(mParameters), undefined, "~bIgnoreETag~", undefined)
 			.returns(SyncPromise.resolve({/*oResult*/}));
 		// Note: if control's handler fails, we don't care about state of dependent bindings
 		oBindingMock.expects("getDependentBindings").never();
@@ -1950,7 +1953,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock),
 				"/TEAMS('42')/name.space.Operation(...)",
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-				sinon.match.func, "~bIgnoreETag~")
+				sinon.match.func, "~bIgnoreETag~", undefined)
 			.rejects(oError);
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
@@ -2005,7 +2008,7 @@ sap.ui.define([
 		oBindingMock.expects("createCacheAndRequest")
 			.withExactArgs(sinon.match.same(oGroupLock), "/ActionImport(...)",
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters), undefined,
-				"~bIgnoreETag~")
+				"~bIgnoreETag~", undefined)
 			.rejects(oError);
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
@@ -2163,7 +2166,7 @@ sap.ui.define([
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParametersCopy),
-				undefined, undefined)
+				undefined, undefined, undefined)
 			.returns(oPromise);
 
 		assert.strictEqual(
@@ -2227,7 +2230,7 @@ sap.ui.define([
 				.returns(oSingleCache);
 			this.mock(oSingleCache).expects("post")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParametersCopy),
-					sinon.match.same(oEntity), "~bIgnoreETag~")
+					sinon.match.same(oEntity), "~bIgnoreETag~", undefined)
 				.returns(oPromise);
 
 			assert.strictEqual(
@@ -2437,6 +2440,113 @@ sap.ui.define([
 	});
 });
 
+	//*********************************************************************************************
+	QUnit.test("createCacheAndRequest: Strict handling w/o action", function (assert) {
+		var oBinding = this.bindContext("n/a(...)"),
+			oOperationMetadata = {
+				$kind : "notAnAction"
+			};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.createCacheAndRequest({/*oGroupLock*/}, "/Foo(...)", oOperationMetadata,
+				{/*mParameters*/}, {/*fnGetEntity*/}, {/*bIgnoreEtag*/},
+				function() {/* fnOnStrictHandlingFailed*/});
+		}, new Error("Not an action: /Foo(...)"));
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bRelative) {
+	[false, true].forEach(function (bCallbackReturnsPromise) {
+		var sTitle = "createCacheAndRequest: fnOnStrictHandlingFailed, relative=" + bRelative
+				+ ", callbackReturnsPromise=" + bCallbackReturnsPromise;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = bRelative
+				? this.bindContext("action(...)", Context.create(this.oModel, {}, "/bar"))
+				: this.bindContext("/action(...)"),
+			oError = new Error("message"),
+			oExpectation,
+			oModelMock = this.mock(this.oModel),
+			oPromise = Promise.resolve(),
+			fnOnStrictHandlingFailed = sinon.spy(function () {
+				return bCallbackReturnsPromise ? oPromise : "foo";
+			}),
+			oOperationMetadata = {$kind : "Action"},
+			sPath = "/ActionImport(...)",
+			oRawMessages = {
+				bound : ["~boundMessage0", "~boundMessage1"],
+				unbound : ["~unboundMessage0", "~unboundMessage1"]
+			},
+			oSingleCache = {
+				post : function () {}
+			};
+
+		oError.error = {};
+
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, "~mParameters~")
+			.returns("~mParametersCopy~");
+		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
+			.returns("~mQueryOptions~");
+		this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions")
+			.withExactArgs(sPath, sinon.match.same(oOperationMetadata), "~mParametersCopy~",
+				"~mQueryOptions~", undefined)
+			.returns("ActionImport");
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport",
+				"~mQueryOptions~", false,
+				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, true,
+				"/ActionImport/@$ui5.overload/0/$ReturnType")
+			.returns(oSingleCache);
+		oExpectation = this.mock(oSingleCache).expects("post")
+			.withExactArgs("~oGroupLock~", "~mParametersCopy~", undefined, false,
+				sinon.match.func);
+
+		// code under test
+		oBinding.createCacheAndRequest("~oGroupLock~", sPath, oOperationMetadata, "~mParameters~",
+			undefined, false, fnOnStrictHandlingFailed);
+
+		oBinding.oParameterContext = {getPath : function () {}};
+		this.mock(oBinding.oParameterContext).expects("getPath").withExactArgs().returns("~Path~");
+		if (bRelative) {
+			this.mock(oBinding.oContext).expects("getPath")
+				.withExactArgs()
+				.returns("~contextPath~");
+		}
+		this.mock(_Helper).expects("adjustTargetsInError")
+			.withExactArgs(sinon.match.same(oError), sinon.match.same(oOperationMetadata), "~Path~",
+				bRelative ? "~contextPath~" : undefined);
+		this.mock(_Helper).expects("extractMessages")
+			.withExactArgs(sinon.match(function (oError) {
+				return oError.error.$ignoreTopLevel === true;
+			}))
+			.returns(oRawMessages);
+
+		oModelMock.expects("createUI5Message").withExactArgs(oRawMessages.bound[0])
+			.returns("~ui5message0");
+		oModelMock.expects("createUI5Message").withExactArgs(oRawMessages.bound[1])
+			.returns("~ui5message1");
+		oModelMock.expects("createUI5Message").withExactArgs(oRawMessages.unbound[0])
+			.returns("~ui5message2");
+		oModelMock.expects("createUI5Message").withExactArgs(oRawMessages.unbound[1])
+			.returns("~ui5message3");
+
+		// code under test - trigger onStrictHandlingFailed callback
+		if (bCallbackReturnsPromise) {
+			assert.strictEqual(oExpectation.args[0][4](oError), oPromise);
+		} else {
+			assert.throws(function () {
+				oExpectation.args[0][4](oError);
+			}, new Error("Not a promise: foo"));
+		}
+
+		assert.ok(fnOnStrictHandlingFailed.calledOnceWithExactly(["~ui5message0", "~ui5message1",
+			"~ui5message2", "~ui5message3"]));
+	});
+
+	});
+});
 	//*********************************************************************************************
 	QUnit.test("setParameter, execute: not deferred", function (assert) {
 		var oBinding = this.bindContext("/OperationImport()");

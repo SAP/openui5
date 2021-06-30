@@ -287,5 +287,24 @@
 				now are gone.</li>
 			<li>Close the message popover.</li>
 		</ul>
+		<h4>Strict handling scenario</h4>
+		<ul>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000000</code>.</li>
+			<li>Click on <code>Confirm selected sales order</code> in the <code>New Sales Orders
+				</code> table.</li>
+			<li><b>Check:</b> That you got a dialog showing a warning and an error and asking
+				you whether to continue or not.</li>
+			<li>Click on <code>No</code>/li>
+			<li><b>Check:</b> The dialog was closed and the Sales Order is not yet confirmed.
+				</li>
+			<li>Click again on <code>Confirm selected sales order</code> in the <code>New Sales
+				Orders</code> table.</li>
+			<li><b>Check:</b> That you got again a dialog showing a warning and an error and asking
+				you whether to continue or not.</li>
+			<li>Click on <code>Yes</code></li>
+			<li><b>Check:</b> The sales order is confirmed and is filtered out from the <code>
+				New Sales Orders</code> table.</li>
+		</ul>
 	</body>
 </html>

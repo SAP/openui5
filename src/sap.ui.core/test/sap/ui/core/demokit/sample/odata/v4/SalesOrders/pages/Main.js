@@ -384,6 +384,9 @@ sap.ui.define([
 				pressCancelSalesOrderListChangesButton : function () {
 					pressButton(this, "cancelSalesOrderListChanges");
 				},
+				pressCancelStrictModeButton : function () {
+					pressButton(this, "cancelStrictMode", true);
+				},
 				pressConfirmSalesOrderButton : function () {
 					pressButton(this, "confirmSalesOrder");
 				},
@@ -410,6 +413,9 @@ sap.ui.define([
 							});
 						}});
 					}
+				},
+				pressConfirmStrictModeButton : function () {
+					pressButton(this, "confirmStrictMode", true);
 				},
 				pressDeleteBusinessPartnerButton : function () {
 					pressButton(this, "deleteBusinessPartner");

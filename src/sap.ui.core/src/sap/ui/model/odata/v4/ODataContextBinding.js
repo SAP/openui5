@@ -255,6 +255,8 @@ sap.ui.define([
 	 * @param {boolean} [bIgnoreETag]
 	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
 	 *   actions only
+	 * @param {function} [fnOnStrictHandlingFailed]
+	 *   Callback for strict handling; supported for actions only
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or a return value context when the operation call
 	 *   succeeded, or rejected with an instance of <code>Error</code> in case of failure. A return
@@ -266,7 +268,8 @@ sap.ui.define([
 	 * @private
 	 * @see #execute for details
 	 */
-	ODataContextBinding.prototype._execute = function (oGroupLock, mParameters, bIgnoreETag) {
+	ODataContextBinding.prototype._execute = function (oGroupLock, mParameters, bIgnoreETag,
+			fnOnStrictHandlingFailed) {
 		var oMetaModel = this.oModel.getMetaModel(),
 			oOperationMetadata,
 			oPromise,
@@ -300,7 +303,7 @@ sap.ui.define([
 				}
 				oOperationMetadata = aOperationMetadata[0];
 				return that.createCacheAndRequest(oGroupLock, sResolvedPath, oOperationMetadata,
-					mParameters, fnGetEntity, bIgnoreETag);
+					mParameters, fnGetEntity, bIgnoreETag, fnOnStrictHandlingFailed);
 			}).then(function (oResponseEntity) {
 				var sContextPredicate, oOldValue, sResponsePredicate;
 
@@ -564,17 +567,21 @@ sap.ui.define([
 	 * @param {boolean} [bIgnoreETag]
 	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
 	 *   actions only
+	 * @param {function} [fnOnStrictHandlingFailed]
+	 *   Callback for strict handling; supported for actions only
 	 * @returns {SyncPromise}
 	 *   The request promise
 	 * @throws {Error}
-	 *   If a collection-valued parameter for an operation other than a V4 action is encountered,
-	 *   or if the given metadata is neither an "Action" nor a "Function", or if
-	 *   <code>bIgnoreETag</code> is used for an operation other than a bound action
+	 *   If <code>fnOnStrictHandlingFailed</code> is given but the given metadata is not an
+	 *   "Action", or the given function does not return a promise, or a collection-valued parameter
+	 *   for an operation other than a V4 action is encountered, or if the given metadata is neither
+	 *   an "Action" nor a "Function", or if <code>bIgnoreETag</code> is used for an operation other
+	 *   than a bound action
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype.createCacheAndRequest = function (oGroupLock, sPath,
-		oOperationMetadata, mParameters, fnGetEntity, bIgnoreETag) {
+		oOperationMetadata, mParameters, fnGetEntity, bIgnoreETag, fnOnStrictHandlingFailed) {
 		var bAction = oOperationMetadata.$kind === "Action",
 			oCache,
 			vEntity = fnGetEntity,
@@ -605,6 +612,35 @@ sap.ui.define([
 			return sOriginalResourcePath;
 		}
 
+		/*
+		 * Calls back into the application with the messages whether to repeat the action.
+		 * @param {Error} oError The error from the failed request
+		 * @returns {Promise} A promise resolving with a boolean
+		 * @throws {Error} If <code>fnOnStrictHandlingFailed</code> does not return a promise
+		 */
+		function onStrictHandling(oError) {
+			var oRawMessages, oResult;
+
+			_Helper.adjustTargetsInError(oError, oOperationMetadata,
+				that.oParameterContext.getPath(),
+				that.bRelative ? that.oContext.getPath() : undefined);
+			oError.error.$ignoreTopLevel = true;
+			oRawMessages = _Helper.extractMessages(oError);
+
+			oResult = fnOnStrictHandlingFailed(
+				oRawMessages.bound.concat(oRawMessages.unbound).map(function (oRawMessage) {
+					return that.oModel.createUI5Message(oRawMessage);
+			}));
+
+			if (!(oResult instanceof Promise)) {
+				throw new Error("Not a promise: " + oResult);
+			}
+			return oResult;
+		}
+
+		if (fnOnStrictHandlingFailed && oOperationMetadata.$kind !== "Action") {
+			throw new Error("Not an action: " + sPath);
+		}
 		if (!bAction && oOperationMetadata.$kind !== "Function") {
 			throw new Error("Not an operation: " + sPath);
 		}
@@ -634,8 +670,10 @@ sap.ui.define([
 			sMetaPath);
 		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
+
 		return bAction
-			? oCache.post(oGroupLock, mParameters, vEntity, bIgnoreETag)
+			? oCache.post(oGroupLock, mParameters, vEntity, bIgnoreETag,
+				fnOnStrictHandlingFailed && onStrictHandling)
 			: oCache.fetchValue(oGroupLock);
 	};
 
@@ -740,13 +778,30 @@ sap.ui.define([
 	 * @param {boolean} [bIgnoreETag]
 	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
 	 *   actions only, since 1.90.0
+	 * @param {function} [fnOnStrictHandlingFailed]
+	 *   If this callback is given for an action, the preference "handling=strict" is applied. If
+	 *   the service responds with the HTTP status code 412 and a
+	 *   "Preference-applied: handling=strict" header, the details from the OData error response are
+	 *   extracted and passed to the callback as an array of {@link sap.ui.core.message.Message}
+	 *   items. The callback has to return a <code>Promise</code> resolving with a
+	 *   <code>boolean</code> value in order to indicate whether the bound action should either be
+	 *   repeated <b>without</b> applying the preference or rejected with an <code>Error</code>
+	 *   instance <code>oError</code> where <code>oError.canceled === true</code>.
+	 *   Since 1.92.0.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or with a return value context when the operation
-	 *   call succeeded, or rejected with an instance of <code>Error</code> in case of failure,
-	 *   for instance if the operation metadata is not found, if overloading is not supported, if a
-	 *   collection-valued function parameter is encountered, or if <code>bIgnoreETag</code> is used
-	 *   for an operation other than a bound action.
-	 *
+	 *   call succeeded, or rejected with an <code>Error</code> instance <code>oError</code> in case
+	 *   of failure, for instance if the operation metadata is not found, if overloading is not
+	 *   supported, if a collection-valued function parameter is encountered, or if
+	 *   <code>bIgnoreETag</code> is used for an operation other than a bound action. It is also
+	 *   rejected if <code>fnOnStrictHandlingFailed</code> is supplied and
+	 *   <ul>
+	 *    <li> is used for an operation other than an action,
+	 *    <li> there is another call of {@link #execute} with such a function provided in a
+	 *      different change set in the same $batch request,
+	 *    <li> returns a <code>Promise</code> that resolves with <code>false</code>. In this case
+	 *      <code>oError.canceled === true</code>.
+	 *   </ul>
 	 *   A return value context is a {@link sap.ui.model.odata.v4.Context} which represents a bound
 	 *   operation response. It is created only if the operation is bound and has a single entity
 	 *   return value from the same entity set as the operation's binding parameter and has a
@@ -768,7 +823,8 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 */
-	ODataContextBinding.prototype.execute = function (sGroupId, bIgnoreETag) {
+	ODataContextBinding.prototype.execute = function (sGroupId, bIgnoreETag,
+			fnOnStrictHandlingFailed) {
 		var sResolvedPath = this.getResolvedPath();
 
 		this.checkSuspended();
@@ -790,7 +846,8 @@ sap.ui.define([
 		}
 
 		return this._execute(this.lockGroup(sGroupId, true),
-			_Helper.publicClone(this.oOperation.mParameters, true), bIgnoreETag);
+			_Helper.publicClone(this.oOperation.mParameters, true), bIgnoreETag,
+				fnOnStrictHandlingFailed);
 	};
 
 	/**
