@@ -390,6 +390,7 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarMonthGrid.prototype._toggleAppointmentSelection = function (oAppointment, bRemoveOldSelection) {
 			var aChangedApps = [],
+				oAppointmentDomRef = oAppointment && oAppointment.getDomRef(),
 				aAppointments,
 				iAppointmentsLength,
 				i;
@@ -409,6 +410,9 @@ sap.ui.define([
 			if (oAppointment) {
 				oAppointment.setProperty("selected", !oAppointment.getSelected());
 				aChangedApps.push(oAppointment);
+				this._sSelectedAppointment = oAppointment.getSelected() && oAppointmentDomRef ? oAppointment : undefined;
+			} else {
+				this._sSelectedAppointment = undefined;
 			}
 
 			return aChangedApps;
@@ -856,6 +860,12 @@ sap.ui.define([
 				}
 			}
 			return specialDates;
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype.applyFocusInfo = function() {
+			// directly focus appointment part, if there is any selected
+			this._sSelectedAppointment && this._sSelectedAppointment.focus();
+			return this;
 		};
 
 		return SinglePlanningCalendarMonthGrid;

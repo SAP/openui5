@@ -585,9 +585,14 @@ sap.ui.define([
 					}
 
 					var oDragSession = oEvent.getParameter("dragSession"),
-						$SPCGridOverlay = this.$().find(".sapMSinglePCOverlay"),
+						oDragControl = oDragSession.getDragControl(),
+						oEventTarget = oEvent.getParameter("browserEvent") && oEvent.getParameter("browserEvent").target || null;
+
+					oDragControl._sAppointmentPartSuffix = oEventTarget && oEventTarget.id ? oEventTarget.id.replace(oDragControl.getId() + "-", "") : "";
+
+					var	$SPCGridOverlay = this.$().find(".sapMSinglePCOverlay"),
 						$Indicator = jQuery(oDragSession.getIndicator()),
-						$DraggedControl = oDragSession.getDragControl().$();
+						$DraggedControl = oDragControl.$();
 
 					if (this._isResizeHandleBottomMouseDownTarget) {
 						oDragSession.setComplexData("bottomHandle", "true");
@@ -638,7 +643,7 @@ sap.ui.define([
 						iVariableBoundaryY,
 						mDraggedControlConfig;
 
-					if (!oAppointmentStartingBoundaries) {
+						if (!oAppointmentStartingBoundaries) {
 						oAppointmentStartingBoundaries = {
 							top: oAppointmentRef.offsetTop,
 							bottom: oAppointmentRef.offsetTop + oAppointmentRef.getBoundingClientRect().height,
@@ -1018,6 +1023,12 @@ sap.ui.define([
 				aVisibleAppsInDay,
 				i, j;
 
+			// directly focus appointment part, if there is any selected
+			if (this._sSelectedAppointment) {
+				this._sSelectedAppointment.focus();
+				return this;
+			}
+
 			// Search amongst the visible blockers
 			for (i = 0; i < aVisibleBlockers.length; ++i) {
 				if (aVisibleBlockers[i].getId() === oFocusInfo.id) {
@@ -1070,6 +1081,7 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarGrid.prototype._toggleAppointmentSelection = function (oAppointment, bRemoveOldSelection) {
 			var aChangedApps = [],
+				oAppointmentDomRef = oAppointment && oAppointment.getDomRef(),
 				aAppointments,
 				iAppointmentsLength,
 				i;
@@ -1089,6 +1101,9 @@ sap.ui.define([
 			if (oAppointment) {
 				oAppointment.setProperty("selected", !oAppointment.getSelected());
 				aChangedApps.push(oAppointment);
+				this._sSelectedAppointment = oAppointment.getSelected() && oAppointmentDomRef ? oAppointment : undefined;
+			} else {
+				this._sSelectedAppointment = undefined;
 			}
 
 			return aChangedApps;
@@ -1192,13 +1207,28 @@ sap.ui.define([
 			}
 		};
 
+		SinglePlanningCalendarGrid.prototype._findSrcControl = function (oEvent) {
+			if (!oEvent.target.parentElement || !oEvent.target.parentElement.classList.contains("sapUiCalendarRowApps")) {
+				return oEvent.srcControl;
+			}
+
+			// data-sap-ui-related - This is a relation to appointment object.
+			// This is the connection between the DOM Element and the Object representing an appointment.
+			var sAppointmentId = oEvent.target.parentElement.getAttribute("data-sap-ui-related");
+
+			// finding the appointment
+			return this.getAppointments().find(function (oAppointment) {
+				return oAppointment.sId === sAppointmentId;
+			});
+		};
+
 		/**
 		 * Helper function handling <code>keydown</code> or <code>tap</code> event on the grid.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		SinglePlanningCalendarGrid.prototype._fireSelectionEvent = function (oEvent) {
-			var oControl = oEvent.srcControl,
+			var oControl = this._findSrcControl(oEvent),
 				oGridCell = oEvent.target;
 
 			if (oEvent.target.classList.contains("sapMSinglePCRow") ||
@@ -1214,6 +1244,19 @@ sap.ui.define([
 					appointments: this._toggleAppointmentSelection(undefined, true)
 				});
 			} else if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment")) {
+
+				// add suffix in appointment
+				if (oGridCell.parentElement && oGridCell.parentElement.getAttribute("id")) {
+					var sTargetId = oGridCell.parentElement.getAttribute("id");
+
+					// data-sap-ui-related - This is a relation to appointment object.
+					// This is the connection between the DOM Element and the Object representing an appointment.
+					var sBaseIDPart = oGridCell.parentElement.getAttribute("data-sap-ui-related");
+					var sSuffix = sTargetId.replace(sBaseIDPart + "-", "");
+
+					oControl._setAppointmentPartSuffix(sSuffix);
+				}
+
 				this.fireAppointmentSelect({
 					appointment: oControl,
 					appointments: this._toggleAppointmentSelection(oControl, !(oEvent.ctrlKey || oEvent.metaKey))

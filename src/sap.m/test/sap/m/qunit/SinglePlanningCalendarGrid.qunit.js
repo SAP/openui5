@@ -236,6 +236,7 @@ sap.ui.define([
 
 		// act
 		oAppointment.getDomRef().focus();
+		oGrid._toggleAppointmentSelection(oAppointment, true);
 		oPopover.openBy(oAppointment);
 		this.clock.tick(500);
 
@@ -249,10 +250,6 @@ sap.ui.define([
 
 		// assert
 		assert.ok(fnApplyFocusInfoSpy.calledOnce, "applyFocusInfo was called");
-		assert.ok(fnApplyFocusInfoSpy.calledWithExactly({
-			preventScroll: true,
-			id: oAppointment.getId()
-		}), "applyFocusInfo was called with the correct parameters");
 		assert.strictEqual(oAppointment.getDomRef().id, document.activeElement.id, "Focus is back on the appointment");
 
 		// cleanup

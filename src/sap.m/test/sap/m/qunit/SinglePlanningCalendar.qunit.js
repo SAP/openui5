@@ -2011,6 +2011,53 @@ sap.ui.define([
 		assert.deepEqual(newAppPos.endDate, new Date(2020, 4, 26, 10, 0, 0), "End date hour is correct");
 	});
 
+	QUnit.test("check appointment parts after appointment resize in more than 1 day", function(assert) {
+		// prepare
+		var	sAppointmentId = "MyAppointment",
+			oAppointment = new CalendarAppointment(sAppointmentId, { // appointment is placed in one day
+				title: "Appointment",
+				text: "new appointment",
+				type: "Type01",
+				startDate: new Date(2018, 6, 9, 9, 0, 0),
+				endDate: new Date(2018, 6, 9, 10, 0, 0)
+			}),
+			oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2018, 6, 8),
+				enableAppointmentsResize: true,
+				appointments: [
+					oAppointment
+				]
+			}),
+			oSelector;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		oSelector = document.querySelectorAll('div[id^="' + sAppointmentId + '-"]');
+		assert.strictEqual(oSelector.length, 1, "There is only one appointment part displayed");
+		assert.strictEqual(oSelector[0].querySelectorAll("span.sapMSinglePCAppResizeHandleTop").length, 1, "The appointment is resizable from the top");
+		assert.strictEqual(oSelector[0].querySelectorAll("span.sapMSinglePCAppResizeHandleBottom").length, 1, "The appointment is resizable from the bottom");
+
+		// act - resize appointment to continue in two days
+		oAppointment.setEndDate(new Date(2018, 6, 10, 10, 0, 0));
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		oSelector = document.querySelectorAll('div[id^="' + sAppointmentId + '-"]');
+		assert.strictEqual(oSelector.length, 2, "There are two appointment parts displayed");
+		assert.strictEqual(oSelector[0].querySelectorAll("span.sapMSinglePCAppResizeHandleTop").length, 1, "The appointment part 1 is resizable from the top");
+		assert.strictEqual(oSelector[0].querySelectorAll("span.sapMSinglePCAppResizeHandleBottom").length, 0, "The appointment part 1 is not resizable from the bottom");
+		assert.strictEqual(oSelector[1].querySelectorAll("span.sapMSinglePCAppResizeHandleTop").length, 0, "The appointment part 2 is not resizable from the top");
+		assert.strictEqual(oSelector[1].querySelectorAll("span.sapMSinglePCAppResizeHandleBottom").length, 1, "The appointment part 2 is resizable from the bottom");
+
+		oAppointment.destroy();
+		oAppointment = null;
+		oSPC.destroy();
+		oSPC = null;
+
+	});
+
 	QUnit.module("Helper private methods", {
 		beforeEach: function() {
 			this.oSPC = new SinglePlanningCalendar({
