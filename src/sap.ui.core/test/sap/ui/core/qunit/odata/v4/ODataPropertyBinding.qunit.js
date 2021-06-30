@@ -2233,7 +2233,7 @@ sap.ui.define([
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function () {
 			var oModel = new ODataModel({
-					serviceUrl : TestUtils.proxy(sServiceUrl),
+					serviceUrl : sServiceUrl,
 					synchronizationMode : "None"
 				}),
 				oControl = new TestControl({

@@ -25,8 +25,7 @@ sap.ui.define([
 			reportUnboundMessages : function () {}
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-		sSampleServiceUrl
-			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/";
+		sSampleServiceUrl = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/";
 
 	/**
 	 * Creates a mock for jQuery's XHR wrapper.
@@ -3298,7 +3297,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/processBatch (realOData) success", function (assert) {
-			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), oModelInterface),
+			var oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
 				sResourcePath = "TEAMS('TEAM_01')",
 				that = this;
 
@@ -3329,7 +3328,7 @@ sap.ui.define([
 
 		//*****************************************************************************************
 		QUnit.test("request(...)/processBatch (realOData) fail", function (assert) {
-			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), oModelInterface);
+			var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 			oRequestor.request(
 				"GET", "TEAMS('TEAM_01')", this.createGroupLock()
@@ -3366,7 +3365,7 @@ sap.ui.define([
 		//*****************************************************************************************
 		QUnit.test("request(ProductList)/processBatch (realOData) patch", function () {
 			var oBody = {Name : "modified by QUnit test"},
-				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), oModelInterface),
+				oRequestor = _Requestor.create(sSampleServiceUrl, oModelInterface),
 				sResourcePath = "ProductList('HT-1001')";
 
 			// code under test
@@ -3387,8 +3386,7 @@ sap.ui.define([
 				oEntity = {
 					"@odata.etag" : "*"
 				},
-				sServiceUrl = TestUtils.proxy(sSampleServiceUrl),
-				oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+				oRequestor = _Requestor.create(sSampleServiceUrl, oModelInterface);
 
 			function onError(sRequestUrl, oError) {
 				if (sCommonMessage) {
@@ -3403,12 +3401,12 @@ sap.ui.define([
 			return Promise.all([
 				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
 						{"If-Match" : oEntity}, {Name : "foo"})
-					.then(undefined, onError.bind(null, sServiceUrl + "ProductList('HT-1001')")),
+					.then(undefined, onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
 				oRequestor.request("POST", "Unknown", this.createGroupLock(), undefined, {})
-					.then(undefined, onError.bind(null, sServiceUrl + "Unknown")),
+					.then(undefined, onError.bind(null, sSampleServiceUrl + "Unknown")),
 				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
 						{"If-Match" : oEntity}, {Name : "bar"})
-					.then(undefined, onError.bind(null, sServiceUrl + "ProductList('HT-1001')")),
+					.then(undefined, onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
 				oRequestor.request("GET", "SalesOrderList?$skip=0&$top=10", this.createGroupLock())
 					.then(undefined, function (oError) {
 						assert.strictEqual(oError.message,

@@ -88,9 +88,7 @@ sap.ui.define([
 			sAnnotationUri2 = "/sap(====)/bc/bsp/sap/zanno_gwsample/annotations.xml";
 			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 
-			if (bRealOData) {
-				sServiceUri = this.proxy(sServiceUri);
-			} else {
+			if (!bRealOData) {
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
 				this.aMockServers[0].simulate(/*TODO sServiceUri?!*/sMockServerBaseUri
 					+ "metadata.xml", {

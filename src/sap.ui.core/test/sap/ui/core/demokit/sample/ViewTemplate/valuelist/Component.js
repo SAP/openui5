@@ -16,9 +16,10 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/v2/ODataModel"
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/test/TestUtils"
 ], function (UriParameters, Log, library, _View, _XMLView, BaseComponent, MockServer, JSONModel,
-		ODataModel) {
+		ODataModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -36,11 +37,10 @@ sap.ui.define([
 				sClient = oUriParameters.get("sap-client"),
 				sValueList = oUriParameters.get("sap-value-list");
 
-			if (oUriParameters.get("realOData") === "true") {
+			if (TestUtils.isRealOData()) {
 				if (sClient) {
 					sServiceUri += "?sap-client=" + sClient;
 				}
-				sServiceUri = this.proxy(sServiceUri);
 			} else {
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
 				this.aMockServers[0].simulate(sMockServerBaseUri + (sValueList === "none" ?

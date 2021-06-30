@@ -50,8 +50,7 @@ sap.ui.define([
 		});
 
 	/**
-	 * Returns a URL within the service that (in case of <code>bRealOData</code>), is passed
-	 * through a proxy.
+	 * Returns a URL within the service.
 	 *
 	 * @param {string} [sPath]
 	 *   relative path (with initial /) within service
@@ -59,7 +58,7 @@ sap.ui.define([
 	 *   a URL within the service
 	 */
 	function getServiceUrl(sPath) {
-		return TestUtils.proxy(sServiceUrl + (sPath && sPath.slice(1) || ""));
+		return sServiceUrl + (sPath && sPath.slice(1) || "");
 	}
 
 	//*********************************************************************************************
@@ -2453,7 +2452,7 @@ sap.ui.define([
 
 		this.mock(_Helper).expects("createTechnicalDetails"); // ignore details
 		this.mock(_Helper).expects("makeAbsolute")
-			.withExactArgs("longtextUrl", TestUtils.proxy(sServiceUrl) + "~path~")
+			.withExactArgs("longtextUrl", sServiceUrl + "~path~")
 			.returns("~absoluteLongtextUrl~");
 
 		assert.strictEqual(

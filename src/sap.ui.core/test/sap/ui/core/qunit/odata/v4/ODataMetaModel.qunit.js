@@ -93,8 +93,7 @@ sap.ui.define([
 				}
 			}
 		},
-		sSampleServiceUrl
-			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
+		sSampleServiceUrl = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		mScope = {
 			"$Annotations" : {
 				"name.space.Id" : {
@@ -7499,10 +7498,8 @@ forEach({
 
 		//*****************************************************************************************
 		QUnit.test("getValueListType, requestValueListInfo: realOData", function (assert) {
-			var sPath = new URI(TestUtils.proxy(sSampleServiceUrl))
-					.absoluteTo(window.location.pathname).toString(),
-				oModel = new ODataModel({
-					serviceUrl : sPath,
+			var oModel = new ODataModel({
+					serviceUrl : sSampleServiceUrl,
 					synchronizationMode : "None"
 				}),
 				oMetaModel = oModel.getMetaModel(),
@@ -7524,7 +7521,7 @@ forEach({
 		//*****************************************************************************************
 		QUnit.test("requestValueListInfo: same model w/o reference, realOData", function (assert) {
 			var oModel = new ODataModel({
-					serviceUrl : TestUtils.proxy(sSampleServiceUrl),
+					serviceUrl : sSampleServiceUrl,
 					synchronizationMode : "None"
 				}),
 				oMetaModel = oModel.getMetaModel(),
@@ -7582,7 +7579,7 @@ forEach({
 	}].forEach(function (oFixture, i) {
 		QUnit.test("getUnitOrCurrencyPath, " + i, function (assert) {
 			var oModel = new ODataModel({
-					serviceUrl : TestUtils.proxy(sSampleServiceUrl),
+					serviceUrl : sSampleServiceUrl,
 					synchronizationMode : "None"
 				}),
 				oMetaModel = oModel.getMetaModel(),

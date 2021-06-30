@@ -1892,7 +1892,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 
 					oBatchRequestContent = _Batch.serializeBatchRequest(oFixture.batchRequests);
 
-					jQuery.ajax(TestUtils.proxy(sServiceUrl), {
+					jQuery.ajax(sServiceUrl, {
 						method : "HEAD",
 						headers : {
 							"X-CSRF-Token" : "Fetch"
@@ -1909,7 +1909,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 							oBatchHeaders["Prefer"] = "odata.continue-on-error";
 						}
 
-						jQuery.ajax(TestUtils.proxy(sServiceUrl) + '$batch', {
+						jQuery.ajax(sServiceUrl + "$batch", {
 							method : "POST",
 							headers : oBatchHeaders,
 							data : oBatchRequestContent.body
@@ -1938,7 +1938,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			function (assert) {
 				var oBatchRequestContent,
 					done = assert.async(),
-					sResolvedServiceUrl = TestUtils.proxy(sServiceUrl),
+					sResolvedServiceUrl = sServiceUrl,
 					aBatchRequests = [{
 						method : "GET",
 						url : "EMPLOYEES('9')",

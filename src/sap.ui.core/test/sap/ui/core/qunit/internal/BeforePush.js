@@ -316,16 +316,16 @@
 	}
 
 	// For the onload handler and the button "Run"
-	function verifyConnectionAndRun(mTests) {
+	function verifyConnectionAndRun(mTests, bRealOData) {
 		var oLoginRequest = new XMLHttpRequest();
 
 		// send a request to the service document from the v4 sample service to ensure that
 		// the credentials are known before running the test suite.
 		oLoginRequest.open("GET",
-			"proxy/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
+			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
 		oLoginRequest.addEventListener("load", function () {
 			if (oLoginRequest.status === 200) {
-				runTests(mTests);
+				runTests(mTests, bRealOData);
 			} else {
 				setStatus("Could not access the real OData server: "
 					+ oLoginRequest.status + " " + oLoginRequest.statusText);
@@ -356,10 +356,15 @@
 				.addEventListener("click", verifyConnectionAndRun.bind(null, mTests));
 			document.getElementById("runWithoutRealOData")
 				.addEventListener("click", runTests.bind(null, mTests, false));
-			if ("realOData" in mParameters) {
-				runTests(mTests, mParameters.realOData === "true");
-			} else {
-				verifyConnectionAndRun(mTests);
+			switch (mParameters.realOData) {
+				case "false":
+					runTests(mTests, false);
+					break;
+				case "true":
+					verifyConnectionAndRun(mTests, true);
+					break;
+				default:
+					verifyConnectionAndRun(mTests);
 			}
 		});
 	});
