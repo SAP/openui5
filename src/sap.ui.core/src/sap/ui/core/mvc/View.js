@@ -445,17 +445,20 @@ sap.ui.define([
 				if (defaultController) {
 					// check for controller replacement
 					var Component = sap.ui.require("sap/ui/core/Component");
+
 					if (Component && ManagedObject._sOwnerId) {
 						var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
 
 						if (oOwnerComponent) {
+							var oControllerExtensionCarrier = oOwnerComponent;
 							if (oOwnerComponent.getExtensionComponent) {
-								oOwnerComponent = oOwnerComponent.getExtensionComponent();
-								if (!oOwnerComponent) {
+								oControllerExtensionCarrier = oOwnerComponent.getExtensionComponent();
+								if (!oControllerExtensionCarrier) {
 									throw new Error("getExtensionComponent() must return an instance.");
 								}
 							}
-							var sControllerReplacement = oOwnerComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.controllerReplacements/" + defaultController, true);
+
+							var sControllerReplacement = oControllerExtensionCarrier._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.controllerReplacements/" + defaultController, true);
 							if (sControllerReplacement) {
 								defaultController = typeof sControllerReplacement === "string" ? sControllerReplacement : sControllerReplacement.controllerName;
 							}
@@ -543,13 +546,16 @@ sap.ui.define([
 		// check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
 		if (!sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
 			if (oOwnerComponent) {
+				var oViewModificationCarrier = oOwnerComponent;
 				if (oOwnerComponent.getExtensionComponent) {
-					oOwnerComponent = oOwnerComponent.getExtensionComponent();
-					if (!oOwnerComponent) {
+					oViewModificationCarrier = oOwnerComponent.getExtensionComponent();
+					if (!oViewModificationCarrier) {
 						throw new Error("getExtensionComponent() must return an instance.");
 					}
 				}
-				var mCustomSettings = oOwnerComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.viewModifications/" + this.sViewName, true);
+
+				var mCustomSettings = oViewModificationCarrier._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.viewModifications/" + this.sViewName, true);
+
 				if (!isEmptyObject(mCustomSettings)) {
 					// NOTE:
 					// nested views do not inherit the preprocessor settings function from the parent
@@ -1234,13 +1240,16 @@ sap.ui.define([
 			}
 
 			if (oOwnerComponent) {
+				var oViewReplacementCarrier = oOwnerComponent;
 				if (oOwnerComponent.getExtensionComponent) {
-					oOwnerComponent = oOwnerComponent.getExtensionComponent();
-					if (!oOwnerComponent) {
+					var oViewReplacementCarrier = oOwnerComponent.getExtensionComponent();
+					if (!oViewReplacementCarrier) {
 						throw new Error("getExtensionComponent() must return an instance.");
 					}
 				}
-				var customViewConfig = oOwnerComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.viewReplacements/" + oView.viewName, true);
+
+				var customViewConfig = oViewReplacementCarrier._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.viewReplacements/" + oView.viewName, true);
+
 				if (customViewConfig) {
 					// make sure that "async=true" will not be overriden
 					delete customViewConfig.async;
