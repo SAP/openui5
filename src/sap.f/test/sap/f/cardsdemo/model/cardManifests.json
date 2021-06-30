@@ -1852,6 +1852,9 @@
 			},
 			"sap.card": {
 				"type": "Component",
+				"data": {
+					"json": {}
+				},
 				"header": {
 					"type": "Numeric",
 					"title": "{title}",
