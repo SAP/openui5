@@ -68,6 +68,10 @@ sap.ui.define([
 			var oAttrProperties = oWebComponent.getMetadata().getPropertiesByMapping("attribute");
 			for (var sPropName in oAttrProperties) {
 				var oPropData = oAttrProperties[sPropName];
+				if (oPropData.type === "object") {
+					continue; // Properties of type "object" are set during onAfterRendering
+				}
+
 				var sAttrName = oPropData._sMapTo ? oPropData._sMapTo : hyphenate(sPropName);
 				var vPropValue = oPropData.get(oWebComponent);
 				if (oPropData._fnMappingFormatter) {
