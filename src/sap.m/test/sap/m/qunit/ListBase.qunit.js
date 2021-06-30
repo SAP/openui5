@@ -35,13 +35,12 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Title",
 	"sap/m/plugins/DataStateIndicator",
-	"sap/ui/layout/VerticalLayout",
-	"sap/base/Log"
+	"sap/ui/layout/VerticalLayout"
 
 ], function(Core, createAndAppendDiv, jQuery,
 			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
 			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator,
-			VerticalLayout, Log) {
+			VerticalLayout) {
 		"use strict";
 		jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
@@ -1441,30 +1440,32 @@ sap.ui.define([
 				growing: false
 			});
 
-			var fSpy =  sinon.spy(GrowingEnablement.prototype, "requestNewPage");
-			var fLogWarningSpy =  sinon.spy(Log, "warning");
-
+			var fRequestNewPageSpy =  sinon.spy(GrowingEnablement.prototype, "requestNewPage");
 			bindListData(oNewList, data4, "/items", createTemplateListItem());
 			assert.strictEqual(oNewList.getItems().length, 10, "List has 10 items");
 
-			oNewList.requestItems(5);
-			assert.strictEqual(oNewList.getItems().length, 10, "growing is disabled, requestItems API  did not request data");
-			assert.ok(fSpy.notCalled);
-			assert.ok(fLogWarningSpy.calledWith("The 'growing' feature is disabled on the control. Please enable 'growing' to use 'requestItems' API", oNewList.getMetadata().getName() + ": " + oNewList.getId()));
+			assert.throws(function() {oNewList.requestItems(5);}, /The prerequisites to use 'requestItems' are not met. Please read the documentation for more details./, "Expected error thrown");
+			assert.ok(fRequestNewPageSpy.notCalled, "GrowingDelegate#requestNewPage not called");
+
+			oNewList.destroy();
+			oNewList = null;
 
 			oNewList = new List({
 				growing: true,
 				growingThreshold: 2
 			});
-
 			bindListData(oNewList, data4, "/items", createTemplateListItem());
-			assert.ok(oNewList.getGrowing(), "Growing enabled on the list");
-			assert.strictEqual(oNewList.getItems().length, 2, "growing is enabled and list has 2 items");
+			assert.strictEqual(oNewList.getItems().length, 2, "List has 2 items");
+			assert.throws(function() {oNewList.requestItems(0);}, /The prerequisites to use 'requestItems' are not met. Please read the documentation for more details./, "Expected error thrown, iItems=0");
+			assert.ok(fRequestNewPageSpy.notCalled, "GrowingDelegate#requestNewPage not called");
+			assert.throws(function() {oNewList.requestItems(-10);}, /The prerequisites to use 'requestItems' are not met. Please read the documentation for more details./, "Expected error thrown, iItem is negative number");
+			assert.ok(fRequestNewPageSpy.notCalled, "GrowingDelegate#requestNewPage not called");
 			oNewList.requestItems(4);
-
 			assert.strictEqual(oNewList.getItems().length, 6, "growing is enabled, requestItems API request data");
 			assert.strictEqual(oNewList.getGrowingThreshold(), 2, "Growing threshold restored");
-			assert.ok(fSpy.calledOnce);
+			assert.ok(fRequestNewPageSpy.calledOnce, "GrowingDelegate#requestNewPage called once");
+
+			oNewList.destroy();
 		});
 
 		QUnit.test("Function _setFocus", function(assert) {

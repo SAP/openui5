@@ -2639,25 +2639,27 @@ function(
 
 	/**
 	 * Requests a specified number of items from the back end to load more data in the list.
-	 * This method has no effect on the list if the <code>growing</code> feature is disabled.
-	 * See {@link sap.m.ListBase#getGrowing} and {@link sap.m.ListBase#getGrowingThreshold}.
-	 * @param {int|undefined} iItems The number of items to be requested
+	 * If the number of items are not specified, the <code>growingThreshold</code> value is used to request more data.
+	 *
+	 * <b>Note:</b> To use this method, the <code>growing</code> feature must be enabled.
+	 *
+	 * See {@link #getGrowing growing} and {@link #getGrowingThreshold growingThreshold} for more information.
+	 * @param {int} [iItems] A positive number of items to be requested
 	 * @since 1.92
 	 * @public
 	 */
 	ListBase.prototype.requestItems = function(iItems) {
-		if (!this.getGrowing() || !this._oGrowingDelegate) {
-			Log.warning("The 'growing' feature is disabled on the control. Please enable 'growing' to use 'requestItems' API", this.getMetadata().getName() + ": " + this.getId());
-			return;
+		if (iItems <= 0 || !this.getGrowing() || !this._oGrowingDelegate) {
+			throw new Error("The prerequisites to use 'requestItems' are not met. Please read the documentation for more details.");
 		}
 
-		if (!iItems) {
-			this._oGrowingDelegate.requestNewPage();
-		} else {
+		if (iItems != null) {
 			var iOldGrowingThreshold = this.getGrowingThreshold();
 			this.setGrowingThreshold(iItems);
 			this._oGrowingDelegate.requestNewPage();
 			this.setGrowingThreshold(iOldGrowingThreshold);
+		} else {
+			this._oGrowingDelegate.requestNewPage();
 		}
 	};
 
