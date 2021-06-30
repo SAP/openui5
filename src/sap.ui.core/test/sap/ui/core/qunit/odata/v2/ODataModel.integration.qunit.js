@@ -7125,11 +7125,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// ODataUtils#_getReadIntervals.
 	// BCP: 2170020571
 	// JIRA: CPOUI5MODELS-579
+	// Scenario 2: Get the total number of entities from an analytical binding using the API
+	// AnalyticalBinding#getCount.
+	// JIRA: CPOUI5MODELS-576
 	QUnit.test("AnalyticalBinding: gap calculation", function (assert) {
 		var iItemCount = 0,
 			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS", {
-				tokenHandling : false,
-				useBatch : true
+				tokenHandling : false
 			}),
 			oTable,
 			sView = '\
@@ -7142,7 +7144,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </t:AnalyticalTable>',
 			that = this;
 
-		function getItems (iNumberOfItems) {
+		function getItems(iNumberOfItems) {
 			var i, aItems = [];
 
 			for (i = 0; i < iNumberOfItems; i += 1) {
@@ -7181,6 +7183,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// no expectChange required because only $skip&$top is relevant to be checked
 
 		return this.createView(assert, sView, oModel).then(function () {
+			// BEGIN: CPOUI5MODELS-576
+			// code under test
+			assert.strictEqual(that.oView.byId("table").getBinding("rows").getCount(), 550);
+			// getLength has one row more because of the grand total row
+			assert.strictEqual(that.oView.byId("table").getBinding("rows").getLength(), 551);
+			// END: CPOUI5MODELS-576
+		}).then(function () {
 			oTable = that.oView.byId("table");
 
 			that.expectRequest("Items"

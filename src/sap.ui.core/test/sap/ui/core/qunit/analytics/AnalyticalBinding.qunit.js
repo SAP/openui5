@@ -2834,6 +2834,7 @@ sap.ui.define([
 				oRequestDetails = {
 					aAggregationLevel : ["CostCenter"],
 					sGroupId : "/",
+					bIsFlatListRequest : true,
 					oKeyIndexMapping : {
 						sGroupId : "/",
 						iIndex : 0,
@@ -2852,6 +2853,7 @@ sap.ui.define([
 			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
 
 			assert.strictEqual(oBinding.bApplySortersToGroups, bApplySortersToGroups);
+			assert.strictEqual(oBinding.iTotalSize, 2);
 
 			oBindingMock.verify();
 			done();
@@ -3557,4 +3559,28 @@ sap.ui.define([
 			oFixture.mParameters), oFixture.bResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getCount", function (assert) {
+		var oBinding = {iTotalSize : 5};
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding.prototype.getCount.call(oBinding), 5);
+
+		oBinding.iTotalSize = -1;
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding.prototype.getCount.call(oBinding), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_processTotalSizeQueryResponse: __count is parsed as int", function (assert) {
+		var oBinding = {};
+
+		// code under test
+		AnalyticalBinding.prototype._processTotalSizeQueryResponse.call(oBinding, undefined,
+			{__count : "5"});
+
+		assert.strictEqual(oBinding.iTotalSize, 5);
+	});
 });
