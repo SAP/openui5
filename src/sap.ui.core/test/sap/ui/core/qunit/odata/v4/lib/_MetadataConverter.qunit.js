@@ -183,6 +183,8 @@ sap.ui.define([
 			"display" : "org.example.vocabularies.display."
 		};
 
+		assert.strictEqual(oMetadataConverter.resolveAlias(undefined), undefined);
+		assert.strictEqual(oMetadataConverter.resolveAlias(null), null);
 		assert.strictEqual(oMetadataConverter.resolveAlias(""), "");
 		assert.strictEqual(oMetadataConverter.resolveAlias("display.Foo"),
 			"org.example.vocabularies.display.Foo");

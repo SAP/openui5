@@ -603,11 +603,11 @@ sap.ui.define([
 	/**
 	 * Resolves an alias in the given qualified name or full name.
 	 *
-	 * @param {string} sName The name
+	 * @param {string} [sName] The name
 	 * @returns {string} The name with the alias resolved (if there was one)
 	 */
 	_MetadataConverter.prototype.resolveAlias = function (sName) {
-		var iDot = sName.indexOf("."),
+		var iDot = sName ? sName.indexOf(".") : -1,
 			sNamespace;
 
 		if (iDot >= 0 && !sName.includes(".", iDot + 1)) { // if there is exactly one dot

@@ -20,7 +20,7 @@
 		"$Key" : ["Sector", "ID"],
 		"Sector" : {
 			"$kind" : "Property",
-			"$Type" : "Edm.String",
+			"$Type" : null,
 			"$Nullable" : false,
 			"$MaxLength" : 10
 		},
