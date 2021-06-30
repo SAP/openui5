@@ -51,7 +51,7 @@
 			"progressState": "Success"
 		}
 	],
-	"tableCard3": [
+	"tableCard2": [
 		{
 			"orderId": "102223882",
 			"orderUrl": "http://www.sap.com",
@@ -84,7 +84,7 @@
 			"statusState": "None"
 		}
 	],
-	"tableCard4": [
+	"tableCard3": [
 		{
 			"salesOrder": "5000010050",
 			"isActive": true,

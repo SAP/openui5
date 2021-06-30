@@ -4,7 +4,7 @@
 			"sap.card": {
 				"header": {
 					"iconSrc": "sap-icon://accept",
-					"title": "Card Title 2x2",
+					"title": "Card Title",
 					"subTitle": "Card subtitle",
 					"status": {
 						"text": "Count"
@@ -18,33 +18,8 @@
 		"card2": {
 			"sap.card": {
 				"header": {
-					"title": "This Line is the Title of sap.f.Card",
-					"status": {
-						"text": "Count"
-					}
-				},
-				"type": "List",
-				"content": {}
-			}
-		},
-		"card3": {
-			"sap.card": {
-				"header": {
-					"title": "This Line is the Title of sap.f.Card",
-					"subTitle": " Thi is a sap.f.Card subtitle",
-					"status": {
-						"text": "Count"
-					}
-				},
-				"type": "List",
-				"content": {}
-			}
-		},
-		"card4": {
-			"sap.card": {
-				"header": {
-					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
-					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"title": "This Line is a very very very very very very very very very very very very very very very very very very long one",
+					"subTitle": " Thi is a very very  very very very very very very very very very very very very very very very very very very long one",
 					"icon": {
 						"src": "./images/Woman_avatar_01.png",
 						"shape": "Square"
@@ -57,7 +32,7 @@
 				"content": {}
 			}
 		},
-		"card5": {
+		"card3": {
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -73,7 +48,7 @@
 				"content": {}
 			}
 		},
-		"card6": {
+		"card4": {
 			"sap.card": {
 				"header": {
 					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
@@ -89,164 +64,13 @@
 				"content": {}
 			}
 		},
-		"card7": {
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "L4 Card Title 2x3",
-					"subTitle": "Card subtitle",
-					"icon": {
-						"src": "sap-icon://activity-items"
-					}
-				},
-				"content": {}
-			}
-		},
-		"card8": {
+		"defaultDataTimestamp": {
 			"sap.card": {
 				"header": {
 					"title": "Card Title with dataTimestamp",
 					"dataTimestamp": "{{parameters.NOW_ISO}}"
 				},
 				"type": "List",
-				"content": {}
-			}
-		},
-		"line": {
-			"sap.card": {
-				"type": "Analytical",
-				"header": {
-					"type": "Numeric",
-					"data": {
-						"request": {
-							"url": "./cardsdemo/cardcontent/kpi.json"
-						},
-						"path": "/kpiInfos/kpi"
-					},
-					"title": "Project Cloud Transformation",
-					"subTitle": "Revenue",
-					"unitOfMeasurement": "EUR",
-					"mainIndicator": {
-						"number": "{number}",
-						"unit": "{unit}",
-						"trend": "{trend}",
-						"state": "{state}"
-					},
-					"details": "{details}",
-					"sideIndicators": [
-						{
-							"title": "Target",
-							"number": "{target/number}",
-							"unit": "{target/unit}"
-						},
-						{
-							"title": "Deviation",
-							"number": "{deviation/number}",
-							"unit": "%"
-						}
-					]
-				},
-				"content": {}
-			}
-		},
-		"stackedColumn": {
-			"sap.card": {
-				"type": "Analytical",
-				"header": {
-					"type": "Numeric",
-					"data": {
-						"json": {
-							"n": "56",
-							"u": "%",
-							"trend": "Up",
-							"valueColor": "Good"
-						}
-					},
-					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"unitOfMeasurement": "EUR",
-					"mainIndicator": {
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
-					},
-					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [
-						{
-							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-							"number": "3252.234",
-							"unit": "K"
-						},
-						{
-							"title": "Long Deviation Long Deviation",
-							"number": "22.43",
-							"unit": "%"
-						}
-					]
-				},
-				"content": {}
-			}
-		},
-		"stackedBar": {
-			"sap.card": {
-				"type": "Analytical",
-				"header": {
-					"type": "Numeric",
-					"data": {
-						"json": {
-							"n": 6547394.45496,
-							"u": "M $",
-							"trend": "Down",
-							"valueColor": "Critical"
-						}
-					},
-					"subTitle": "Success Rate",
-					"mainIndicator": {
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
-					},
-					"sideIndicators": [
-						{
-							"title": "Decrease",
-							"number": "24",
-							"unit": "weeks"
-						}
-					]
-				},
-				"content": {}
-			}
-		},
-		"Donut": {
-			"sap.card": {
-				"type": "Analytical",
-				"header": {
-					"type": "Numeric",
-					"data": {
-						"json": {
-							"n": 6547394.45496,
-							"u": "M $",
-							"trend": "Down",
-							"valueColor": "Critical"
-						}
-					},
-					"subTitle": "Success Rate",
-					"mainIndicator": {
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
-					},
-					"sideIndicators": [
-						{
-							"title": "Decrease",
-							"number": "24",
-							"unit": "weeks"
-						}
-					]
-				},
 				"content": {}
 			}
 		}
@@ -422,7 +246,7 @@
 				}
 			}
 		},
-		"tablecard3": {
+		"tablecard2": {
 			"sap.card": {
 				"type": "Table",
 				"header": {
@@ -433,7 +257,7 @@
 						"request": {
 							"url": "./cardsdemo/cardcontent/tableitems.json"
 						},
-						"path": "/tableCard3"
+						"path": "/tableCard2"
 					},
 					"row": {
 						"columns": [
@@ -456,7 +280,7 @@
 				}
 			}
 		},
-		"tablecard4": {
+		"tablecard3": {
 			"sap.card": {
 				"type": "Table",
 				"header": {
@@ -467,7 +291,7 @@
 						"request": {
 							"url": "./cardsdemo/cardcontent/tableitems.json"
 						},
-						"path": "/tableCard4"
+						"path": "/tableCard3"
 					},
 					"row": {
 						"columns": [
@@ -1842,214 +1666,6 @@
 		}
 	},
 	"minHeight": {
-		"line": {
-			"sap.card": {
-				"type": "Analytical",
-				"header": {
-					"type": "Numeric",
-					"data": {
-						"request": {
-							"url": "./cardsdemo/cardcontent/kpi.json"
-						},
-						"path": "/kpiInfos/kpi"
-					},
-					"title": "Card with 32 rem height",
-					"subTitle": "Analytical Card",
-					"unitOfMeasurement": "EUR",
-					"mainIndicator": {
-						"number": "{number}",
-						"unit": "{unit}",
-						"trend": "{trend}",
-						"state": "{state}"
-					},
-					"details": "{details}",
-					"sideIndicators": [
-						{
-							"title": "Target",
-							"number": "{target/number}",
-							"unit": "{target/unit}"
-						},
-						{
-							"title": "Deviation",
-							"number": "{deviation/number}",
-							"unit": "%"
-						}
-					]
-				},
-				"content": {
-					"chartType": "Line",
-					"legend": {
-						"visible": true,
-						"position": "Right",
-						"alignment": "Center"
-					},
-					"plotArea": {
-						"dataLabel": {
-							"visible": true
-						}
-					},
-					"title": {
-						"text": "Line chart",
-						"visible": true,
-						"alignment": "Bottom"
-					},
-					"measureAxis": "valueAxis",
-					"dimensionAxis": "categoryAxis",
-					"data": {
-						"request": {
-							"url": "./cardsdemo/cardcontent/revenue.json"
-						},
-						"path": "/list"
-					},
-					"dimensions": [
-						{
-							"label": "Weeks",
-							"value": "{Week}"
-						}
-					],
-					"measures": [
-						{
-							"label": "Revenue",
-							"value": "{Revenue}"
-						},
-						{
-							"label": "Cost",
-							"value": "{Cost}"
-						}
-					]
-				}
-			}
-		},
-		"stackedColumn": {
-			"sap.card": {
-				"type": "Analytical",
-				"header": {
-					"type": "Numeric",
-					"data": {
-						"json": {
-							"n": "56",
-							"u": "%",
-							"trend": "Up",
-							"valueColor": "Good"
-						}
-					},
-					"title": "Card with 24rem Height",
-					"subTitle": "Analytical Card - Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"unitOfMeasurement": "EUR",
-					"mainIndicator": {
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
-					},
-					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [
-						{
-							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-							"number": "3252.234",
-							"unit": "K"
-						},
-						{
-							"title": "Long Deviation Long Deviation",
-							"number": "22.43",
-							"unit": "%"
-						}
-					]
-				},
-				"content": {
-					"chartType": "StackedColumn",
-					"legend": {
-						"visible": false
-					},
-					"plotArea": {
-						"dataLabel": {
-							"visible": false,
-							"showTotal": true
-						}
-					},
-					"title": {
-						"text": "Stacked column chart",
-						"visible": true,
-						"alignment": "Bottom"
-					},
-					"measureAxis": "valueAxis",
-					"dimensionAxis": "categoryAxis",
-					"data": {
-						"request": {
-							"url": "./cardsdemo/cardcontent/revenue.json"
-						},
-						"path": "/list"
-					},
-					"dimensions": [
-						{
-							"label": "Weeks",
-							"value": "{Week}"
-						}
-					],
-					"measures": [
-						{
-							"label": "Revenue",
-							"value": "{Revenue}"
-						},
-						{
-							"label": "Cost",
-							"value": "{Cost}"
-						}
-					]
-				}
-			}
-		},
-		"stackedBar": {
-			"sap.card": {
-				"type": "Analytical",
-				"header": {
-					"title": "Card with 12rem Height",
-					"subTitle": "Analytical Card"
-				},
-				"content": {
-					"chartType": "StackedBar",
-					"legend": {
-						"visible": true,
-						"position": "Bottom",
-						"alignment": "Center"
-					},
-					"plotArea": {
-						"dataLabel": {
-							"visible": true,
-							"showTotal": false
-						},
-						"categoryAxisText": {
-							"visible": false
-						}
-					},
-					"title": {
-						"text": "Stacked Bar chart",
-						"visible": true,
-						"alignment": "Bottom"
-					},
-					"measureAxis": "valueAxis",
-					"dimensionAxis": "categoryAxis",
-					"data": {
-						"request": {
-							"url": "./cardsdemo/cardcontent/revenue.json"
-						},
-						"path": "/list"
-					},
-					"dimensions": [
-						{
-							"label": "Weeks",
-							"value": "{Week}"
-						}
-					],
-					"measures": [
-						{
-							"label": "Revenue",
-							"value": "{Revenue}"
-						}
-					]
-				}
-			}
-		},
 		"donut": {
 			"sap.card": {
 				"type": "Analytical",
@@ -2063,7 +1679,7 @@
 							"valueColor": "Critical"
 						}
 					},
-					"title": "Card with NO Height (Content min-height 14rem)",
+					"title": "No Height (Content min-height is 14rem)",
 					"subTitle": "Analytical Card",
 					"mainIndicator": {
 						"number": "{n}",
@@ -2124,7 +1740,7 @@
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"title": "NO height (Content min-height 5rem)",
+					"title": "No Height (Content min-height is calculated)",
 					"subTitle": "List Card",
 					"icon": {
 						"src": "sap-icon://accept"

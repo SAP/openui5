@@ -294,15 +294,14 @@ describe("sap.f.Card", function () {
 		navigateBack();
 	});
 
+	var aMinHeightCardIds = [
+		"donutChart", "largeList", "staticData", "noContent", "sapFCardMinHeight", "webPageCard"
+	];
+
 	it("Min-height", function () {
 		navigateTo("Min-height of the Card Content");
 
-		var aCardIds = [
-			"lineChart", "stackedColumnChart", "stackedBarChart", "donutChart",
-			"largeList", "staticData", "noContent", "sapFCardMinHeight", "webPageCard"
-		];
-
-		aCardIds.forEach(function (sId) {
+		aMinHeightCardIds.forEach(function (sId) {
 			takePictureOfElement({
 				control: {
 					viewNamespace: "sap.f.cardsdemo.view.",
@@ -313,9 +312,12 @@ describe("sap.f.Card", function () {
 			}, "11_Min_Height_" + sId);
 		});
 
+	});
+
+	it("Min-height - Compact", function () {
 		switchToCompactDensity();
 
-		aCardIds.forEach(function (sId) {
+		aMinHeightCardIds.forEach(function (sId) {
 			takePictureOfElement({
 				control: {
 					viewNamespace: "sap.f.cardsdemo.view.",
@@ -331,7 +333,7 @@ describe("sap.f.Card", function () {
 
 	it("Default Header", function () {
 		navigateTo("Default Header");
-		var aCardIds = ["default", "default1x1", "default2x1", "default4x1", "default2x2", "default4x2", "default4x4", "defaultDataTimestamp"];
+		var aCardIds = ["card1", "card2", "card3", "card4", "defaultDataTimestamp"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({

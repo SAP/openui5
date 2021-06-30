@@ -33,8 +33,7 @@
 			}
 		},
 		"header": {
-			"title": "WebPage Card",
-			"subTitle": "Default min-height is 150px"
+			"title": "WebPage Card (Content min-height is 150px)"
 		},
 		"content": {
 			"src": "someErrorPage.html"
