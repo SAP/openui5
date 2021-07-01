@@ -8430,7 +8430,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				WeightUnit : "KG"
 			})
 			.expectRequest(
-				"SAP__UnitsOfMeasure?foo=bar&customService=custom%2Fservice", {
+				"SAP__UnitsOfMeasure?foo=bar&customService=custom%2Fservice&$skip=0&$top=5000", {
 				results : [{
 					DecimalPlaces : 3,
 					ExternalCode : "KG",
@@ -8514,7 +8514,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				CurrencyCode : "EUR"
 			})
 			.expectRequest(
-				"SAP__Currencies?foo=bar&customService=custom%2Fservice", {
+				"SAP__Currencies?foo=bar&customService=custom%2Fservice&$skip=0&$top=5000", {
 				results : [{
 					CurrencyCode : "EUR",
 					DecimalPlaces : 2,
@@ -8636,7 +8636,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				Price : "12.3",
 				CurrencyCode : "EUR"
 			})
-			.expectRequest("SAP__Currencies?foo=baz", {
+			.expectRequest("SAP__Currencies?foo=baz&$skip=0&$top=5000", {
 				results : [{
 					CurrencyCode : "EUR",
 					DecimalPlaces : 2,
@@ -8776,7 +8776,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				WeightMeasure : "12.34",
 				WeightUnit : "KG"
 			})
-			.expectRequest("SAP__UnitsOfMeasure?foo=baz", {
+			.expectRequest("SAP__UnitsOfMeasure?foo=baz&$skip=0&$top=5000", {
 				results : [{
 					DecimalPlaces : 3,
 					ExternalCode : "KG",

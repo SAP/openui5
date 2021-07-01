@@ -3620,6 +3620,7 @@ sap.ui.define([
 		this.mock(oCodeListModel).expects("read")
 			.withExactArgs("/~CollectionPath", sinon.match.object)
 			.callsFake(function (sPath, mParams) {
+				assert.deepEqual(mParams.urlParameters, {$skip : 0, $top : 5000});
 				fnResolveReadCalled(mParams.success);
 			});
 		this.mock(oMetaModel).expects("_getPropertyNamesForCodeListCustomizing")
@@ -3691,6 +3692,7 @@ sap.ui.define([
 			.withExactArgs("/~CollectionPath", sinon.match.object)
 			.callsFake(function (sPath, mParams) {
 				mParams.success({results : []});
+				assert.deepEqual(mParams.urlParameters, {$skip : 0, $top : 5000});
 			});
 		oMetaModelMock.expects("_getPropertyNamesForCodeListCustomizing").throws(oError);
 		this.oLogMock.expects("error")
