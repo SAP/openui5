@@ -1072,6 +1072,29 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
+	QUnit.test("aria-labelledby contains title reference", function(assert){
+		// Arrange
+		var sId = "OHID",
+			oObjectHeader = new ObjectHeader(sId, {
+				numberUnit: "Views",
+				number: "454"
+			}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(jQuery("#" + sId + ">.sapMOH").attr("aria-labelledby"), "There is no reference when there is no title");
+
+		// Arrange
+		oObjectHeader.setTitle("Test title level");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery("#" + sId + ">.sapMOH").attr("aria-labelledby"), "OHID-titleText-inner", "There is a reference, when there is a title");
+
+		// Clean up
+		oObjectHeader.destroy();
+	});
+
 	/******************************************************************/
 
 	var iconOH = new ObjectHeader("iconOH", {
