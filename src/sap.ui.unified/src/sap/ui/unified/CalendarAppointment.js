@@ -76,6 +76,26 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/
 			 * @since 1.46.0
 			 */
 			color: {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null}
+		},
+		aggregations: {
+			/**
+			 * Holds the content of the appointment.
+			 *
+			 * <b>Note </b>, If the <code>customContent</code> aggregation is added then:
+			 *
+			 * <ul>
+			 * <li>The <code>title</code>, <code>text</code>, <code>description</code>, and <code>icon</code> properties
+			 * are ignored.</li>
+			 * <li>The application developer has to ensure, that all the accessibility requirements are met, and that
+			 * the height of the content conforms with the height provided by the appointment.</li>
+			 * <li>Do not use interactive controls as content, as they may trigger unwanted selection of the appointment
+			 * and may lead to unpredictable results.</li>
+			 * </ul>
+			 *
+			 * @since 1.93.0
+			 * @experimental Since 1.93, providing only limited functionality. Also, the API might be changed in the future.
+			 */
+			customContent: { type: "sap.ui.core.Control", multiple: true }
 		}
 	}});
 

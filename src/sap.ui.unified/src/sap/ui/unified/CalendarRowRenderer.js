@@ -571,67 +571,74 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 
 		oRm.openEnd(); // div element
 
-		if (oArrowValues.appTimeUnitsDifRowStart > 0) {
-			oRm.icon("sap-icon://arrow-left", ["sapUiCalendarAppArrowIconLeft"], { title: null });
-		}
+		if (oAppointment.getCustomContent().length) {
+			oAppointment.getCustomContent().forEach(function (oContent) {
+				oRm.renderControl(oContent);
+			});
+		} else {
+			if (oArrowValues.appTimeUnitsDifRowStart > 0) {
+				oRm.icon("sap-icon://arrow-left", ["sapUiCalendarAppArrowIconLeft"], { title: null });
+			}
 
-		if (sIcon) {
-			var aClasses = ["sapUiCalendarAppIcon"];
-			var mAttributes = {};
+			if (sIcon) {
+				var aClasses = ["sapUiCalendarAppIcon"];
+				var mAttributes = {};
 
-			mAttributes["id"] = sId + "-Icon";
-			mAttributes["title"] = null;
-			oRm.icon(sIcon, aClasses, mAttributes);
-		}
+				mAttributes["id"] = sId + "-Icon";
+				mAttributes["title"] = null;
+				oRm.icon(sIcon, aClasses, mAttributes);
+			}
 
-		oRm.openStart("div");
-		oRm.class("sapUiCalendarAppTitleWrapper");
-		oRm.openEnd();
-
-		if (sTitle) {
-			oRm.openStart("span", sId + "-Title");
-			oRm.class("sapUiCalendarAppTitle");
-			oRm.openEnd(); // span element
-			oRm.text(sTitle);
-			oRm.close("span");
-		}
-
-		if (sText && oAppointmentInfo.size !== CalendarAppointmentHeight.HalfSize) {
-			oRm.openStart("span", sId + "-Text");
-			oRm.class("sapUiCalendarAppText");
-			oRm.openEnd(); // span element
-			oRm.text(sText);
-			oRm.close("span");
-		}
-
-		if (sDescription && oAppointmentInfo.size !== CalendarAppointmentHeight.HalfSize && (oAppointmentInfo.size !== CalendarAppointmentHeight.Regular || !sText ) ) {
-			oRm.openStart("span", sId + "-Info");
-			oRm.class("sapUiCalendarAppDescription");
+			oRm.openStart("div");
+			oRm.class("sapUiCalendarAppTitleWrapper");
 			oRm.openEnd();
-			oRm.text(sDescription);
+
+			if (sTitle) {
+				oRm.openStart("span", sId + "-Title");
+				oRm.class("sapUiCalendarAppTitle");
+				oRm.openEnd(); // span element
+				oRm.text(sTitle);
+				oRm.close("span");
+			}
+
+			if (sText && oAppointmentInfo.size !== CalendarAppointmentHeight.HalfSize) {
+				oRm.openStart("span", sId + "-Text");
+				oRm.class("sapUiCalendarAppText");
+				oRm.openEnd(); // span element
+				oRm.text(sText);
+				oRm.close("span");
+			}
+
+			if (sDescription && oAppointmentInfo.size !== CalendarAppointmentHeight.HalfSize && (oAppointmentInfo.size !== CalendarAppointmentHeight.Regular || !sText)) {
+				oRm.openStart("span", sId + "-Info");
+				oRm.class("sapUiCalendarAppDescription");
+				oRm.openEnd();
+				oRm.text(sDescription);
+				oRm.close("span");
+			}
+
+			oRm.close("div");
+
+			if (oArrowValues.appTimeUnitsDifRowEnd > 0) {
+				oRm.icon("sap-icon://arrow-right", ["sapUiCalendarAppArrowIconRight"], { title: null });
+			}
+
+			// ARIA information about start and end
+			var sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getStartDate());
+			sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getEndDate());
+
+			if (sType && sType != CalendarDayType.None) {
+
+				sAriaText = sAriaText + "; " + this.getAriaTextForType(sType, aTypes);
+			}
+
+			oRm.openStart("span", sId + "-Descr");
+			oRm.class("sapUiInvisibleText");
+			oRm.openEnd();
+			oRm.text(sAriaText);
 			oRm.close("span");
 		}
 
-		oRm.close("div");
-
-		if (oArrowValues.appTimeUnitsDifRowEnd > 0) {
-			oRm.icon("sap-icon://arrow-right", ["sapUiCalendarAppArrowIconRight"], { title: null });
-		}
-
-		// ARIA information about start and end
-		var sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getStartDate());
-		sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getEndDate());
-
-		if (sType && sType != CalendarDayType.None) {
-
-			sAriaText = sAriaText + "; " + this.getAriaTextForType(sType, aTypes);
-		}
-
-		oRm.openStart("span", sId + "-Descr");
-		oRm.class("sapUiInvisibleText");
-		oRm.openEnd();
-		oRm.text(sAriaText);
-		oRm.close("span");
 		oRm.close("div");
 
 		this.renderResizeHandle(oRm, oRow, oAppointment);
