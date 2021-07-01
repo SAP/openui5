@@ -386,8 +386,6 @@ sap.ui.define([
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core", {
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
 					: {source : "qunit/model/GWSAMPLE_BASIC.metadata.xml"},
-				"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$metadata?foo=bar&customMeta=custom%2Fmeta"
-					: {source : "internal/samples/odata/v2/Products/data/metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 					: {source : "qunit/model/GWSAMPLE_BASIC.annotations.xml"},
 				// GWSAMPLE_BASIC service with sap:message-scope-supported="true"
@@ -403,7 +401,10 @@ sap.ui.define([
 					: {source : "qunit/odata/v2/data/metadata_special_cases.xml"},
 				"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata"
 					: {source : "qunit/model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml"}
-			});
+			}, [{
+				regExp : /GET \/sap\/opu\/odata\/sap\/ZUI5_GWSAMPLE_BASIC\/\$metadata.*/,
+				response : [{source : "internal/samples/odata/v2/Products/data/metadata.xml"}]
+			}]);
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning")
 				.withExactArgs(sinon.match.string, "LegacyParametersGet", "sap.ui.support",
@@ -8348,8 +8349,28 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: If the OData service works with code list for units, the OData Unit type uses this
 	// information for formatting and parsing.
 	// JIRA: CPOUI5MODELS-437
-	QUnit.test("OData Unit type with code list for units", function (assert) {
-		var oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=bar", {
+	// If skipDecimalsValidation constraint is set to true, validation of decimal places based on
+	// the code list customizing is disabled.
+	// JIRA: CPOUI5MODELS-607
+[{
+	sConstraints : "",
+	sMessageText : "EnterInt",
+	sMessageType : "Error"
+}, {
+	sConstraints : "constraints : { skipDecimalsValidation : false },",
+	sMessageText : "EnterInt",
+	sMessageType : "Error"
+}, {
+	sConstraints : "constraints : { skipDecimalsValidation : true },",
+	sMessageText : "",
+	sMessageType : "None"
+}].forEach(function (oFixture, i) {
+	var sTitle = "OData Unit type with code list for units; " + oFixture.sConstraints;
+
+	QUnit.test(sTitle, function (assert) {
+		var oControl,
+			// Make URI distinct for each test to prevent code list caching
+			oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=bar" + i, {
 				defaultBindingMode : "TwoWay",
 				metadataUrlParams : {"customMeta" : "custom/meta"},
 				serviceUrlParams : {"customService" : "custom/service"},
@@ -8357,9 +8378,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}),
 			sView = '\
 <FlexBox binding="{/ProductSet(\'P1\')}">\
-	<Input id="weight" value="{\
+	<Input id="weight" value="{' + oFixture.sConstraints + '\
 		parts : [{\
-			constraints : { scale : \'variable\' },\
+			constraints : { precision : 13, scale : 3 },\
 			path : \'WeightMeasure\',\
 			type : \'sap.ui.model.odata.type.Decimal\'\
 		}, {\
@@ -8376,14 +8397,20 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("ProductSet('P1')?foo=bar&customService=custom%2Fservice", {
+		this.expectRequest("ProductSet('P1')?foo=bar" + i + "&customService=custom%2Fservice", {
 				ProductID : "P1",
 				WeightMeasure : "12.34",
 				WeightUnit : "KG"
 			})
-			.expectRequest(
-				"SAP__UnitsOfMeasure?foo=bar&customService=custom%2Fservice&$skip=0&$top=5000", {
+			.expectRequest("SAP__UnitsOfMeasure?foo=bar" + i + "&customService=custom%2Fservice"
+					+ "&$skip=0&$top=5000", {
 				results : [{
+					DecimalPlaces : 0,
+					ExternalCode : "EA",
+					ISOCode : "EA",
+					Text : "Each",
+					UnitCode : "EA"
+				}, {
 					DecimalPlaces : 3,
 					ExternalCode : "KG",
 					ISOCode : "KGM",
@@ -8394,8 +8421,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectValue("weight", "12.340 KG");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oControl = that.oView.byId("weight");
+			oControl = that.oView.byId("weight");
 
+			// change event for each part of the composite type
 			that.expectValue("weight", "23.400 KG")
 				.expectValue("weight", "23.400 KG");
 
@@ -8425,8 +8453,19 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(function () {
 			return that.checkValueState(assert, that.oView.byId("weight"), "Error",
 				"EnterNumberFraction 3");
+		}).then(function () {
+			that.expectValue("weight", "1.1 EA");
+
+			TestUtils.withNormalizedMessages(function () {
+				// code under test
+				oControl.setValue("1.1 EA");
+			});
+		}).then(function () {
+			return that.checkValueState(assert, that.oView.byId("weight"), oFixture.sMessageType,
+				oFixture.sMessageText);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: If the OData service works with code list for currencies, the OData Currency type

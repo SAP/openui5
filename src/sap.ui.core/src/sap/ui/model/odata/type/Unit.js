@@ -38,7 +38,12 @@ sap.ui.define([
 	 * @param {any} [oFormatOptions.emptyString=0]
 	 *   Defines how an empty string is parsed into the measure. With the default value
 	 *   <code>0</code> the measure becomes <code>0</code> when an empty string is parsed.
-	 * @param {object} [oConstraints] Not supported
+	 * @param {object} [oConstraints]
+	 *   Only the 'skipDecimalsValidation' constraint is supported. Constraints are immutable,
+	 *   that is, they can only be set once on construction.
+	 * @param {boolean} [oConstraints.skipDecimalsValidation=false]
+	 *   Whether to skip validation of the number of decimals based on the code list customizing;
+	 *   since 1.93.0
 	 * @param {string[]} [aDynamicFormatOptionNames] Not supported
 	 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
 	 *   format option <code>customUnits</code> is set

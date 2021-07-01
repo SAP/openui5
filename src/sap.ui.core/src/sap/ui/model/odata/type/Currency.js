@@ -37,7 +37,12 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
 	 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 	 *   "short" or "long"; since 1.89.0
-	 * @param {object} [oConstraints] Not supported
+	 * @param {object} [oConstraints]
+	 *   Only the 'skipDecimalsValidation' constraint is supported. Constraints are immutable,
+	 *   that is, they can only be set once on construction.
+	 * @param {boolean} [oConstraints.skipDecimalsValidation=false]
+	 *   Whether to skip validation of the number of decimals based on the code list customizing;
+	 *   since 1.93.0
 	 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
 	 *   format option <code>customCurrencies</code> is set
 	 *
