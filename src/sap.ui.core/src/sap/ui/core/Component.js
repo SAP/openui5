@@ -2064,6 +2064,7 @@ sap.ui.define([
 	 *     If it is set to a falsy value, the manifest will not be evaluated before the controller. It might still be loaded synchronously
 	 *     if declared in the Component metadata.
 	 *     A non-empty string value will be interpreted as the URL to load the manifest from.
+	 *     If the manifest could not be loaded from a given URL, the Promise returned by the </code>Component.create</code> factory rejects.
 	 *     A non-null object value will be interpreted as manifest content.
 	 * @param {string} [mOptions.altManifestUrl] @since 1.61.0 Alternative URL for the manifest.json. If <code>mOptions.manifest</code>
 	 *     is set to an object value, this URL specifies the location to which the manifest object should resolve the relative
@@ -2353,10 +2354,10 @@ sap.ui.define([
 	 *     is set to a non-empty string, this URL specifies the location of the final component defined via that
 	 *     manifest, otherwise it specifies the location of the component defined via its name <code>mOptions.name</code>.
 	 * @param {boolean|string|object} [mOptions.manifest=true] Whether and from where to load the manifest.json for the Component.
-	 *     When set to any truthy value, the manifest will be loaded and evaluated before the Component controller.
-	 *     If it is set to a falsy value, the manifest will not be evaluated before the controller. It might still be loaded synchronously
-	 *     if declared in the Component metadata.
+	 *     When set to a truthy value, the manifest will be loaded and evaluated <b>before</b> the Component controller.
+	 *     When set to a falsy value, the manifest will be loaded and evaluated <b>after</b> the Component controller.
 	 *     A non-empty string value will be interpreted as the URL to load the manifest from.
+	 *     This implies that the manifest is loaded and evaluated <b>before</b> the Component controller.
 	 *     A non-null object value will be interpreted as manifest content.
 	 * @param {string} [mOptions.altManifestUrl] @since 1.61.0 Alternative URL for the manifest.json. If <code>mOptions.manifest</code>
 	 *     is set to an object value, this URL specifies the location to which the manifest object should resolve the relative
