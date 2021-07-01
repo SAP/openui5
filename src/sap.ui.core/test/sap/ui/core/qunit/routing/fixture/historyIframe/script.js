@@ -22,7 +22,9 @@ sap.ui.define([
 				sDirection = oEvent.data.direction;
 
 			if (sHash === oHashChanger.getHash()) {
-				oHashSynchronizer.fireEvent("finish");
+				setTimeout(function() {
+					oHashSynchronizer.fireEvent("finish");
+				}, 100);
 			} else {
 				oHashChanger.replaceHash(sHash, sDirection);
 			}
