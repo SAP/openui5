@@ -43,6 +43,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		var frameType = oControl.getFrameType();
 		var sAriaRoleDescription = oControl.getAriaRoleDescription();
 		var sAriaRole = oControl.getAriaRole();
+		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
 
 		// Render a link when URL is provided, not in action scope and the state is enabled
 		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
@@ -62,7 +63,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.openStart("div",oControl );
 		}
 
-		if (sTooltipText) {
+		if (sTooltipText && sState !== LoadState.Loading) {
 			oRm.attr("title", sTooltipText);
 		}
 
@@ -84,7 +85,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		} else {
 				oRm.attr("role", "link");
 		}
-		oRm.attr("aria-label", sAriaText);
+		if (sState === LoadState.Loaded) {
+			oRm.attr("aria-label", sAriaText);
+				}
 		if (sAriaRoleDescription) {
 			oRm.attr("aria-roledescription", sAriaRoleDescription );
 		} else {
@@ -107,7 +110,46 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.class("sapMGTHeaderMode");
 		}
 		oRm.openEnd();
+		var aTileContent = oControl.getTileContent();
+		var iLength = aTileContent.length;
+		var isFooterPresent = false;
+		var isContentPresent = false;
+		if (sState === LoadState.Loading) {
 
+			oRm.openStart("div").class("sapMGTContentShimmerPlaceholderItem");
+			oRm.class("sapMGTContentShimmerPlaceholderWithDescription");
+			oRm.openEnd();
+			oRm.openStart("div")
+				.class("sapMGTContentShimmerPlaceholderRows")
+				.openEnd();
+			oRm.openStart("div")
+				.class("sapMGTContentShimmerPlaceholderItemHeader")
+				.class("sapMGTLoadingShimmer")
+				.openEnd()
+				.close("div");
+			oRm.openStart("div")
+				.class("sapMGTContentShimmerPlaceholderItemText")
+				.class("sapMGTLoadingShimmer")
+				.openEnd()
+				.close("div");
+			if (!isHalfFrame) {
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderItemBox")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+				oRm.openStart("div")
+					.class("sapMGTContentShimmerPlaceholderItemTextFooter")
+					.class("sapMGTLoadingShimmer")
+					.openEnd()
+					.close("div");
+			}
+
+
+
+			oRm.close("div");
+			oRm.close("div");
+		} else {
 		oRm.openStart("div");
 		oRm.class("sapMGTHdrContent");
 		oRm.class(frameType);
@@ -120,11 +162,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		}
 
 		this._renderHeader(oRm, oControl);
-		var aTileContent = oControl.getTileContent();
-		var iLength = aTileContent.length;
-		var isFooterPresent = false;
-		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
-		var isContentPresent = false;
 		for (var i = 0; i < iLength; i++) {
 			isFooterPresent = oControl._checkFooter(aTileContent[i], oControl) && aTileContent[i].getFooter();
 			if (aTileContent[i].getAggregation("content") !== null){
@@ -179,7 +216,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.close("div");
 			oRm.close("div");
 		}
-		if (sState !== LoadState.Loaded) {
+	}
+	if (sState !== LoadState.Loaded && sState !== LoadState.Loading) {
 			this._renderStateOverlay(oRm, oControl, sTooltipText);
 		}
 

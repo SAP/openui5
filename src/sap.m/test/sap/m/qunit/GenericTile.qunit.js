@@ -2128,6 +2128,20 @@ sap.ui.define([
 		assert.equal(sGenericTileAriaLabel.indexOf("GenericTile") === -1, true, "ARIA-label should not contain control specific information such as GenericTile applications can use ariaLabel property for additional info");
 	});
 
+	QUnit.test("Check if in loading state placeholder div is visible", function(assert) {
+		//Arrange
+		this.oGenericTile.setState("Loading");
+		sap.ui.getCore().applyChanges();
+		//Act
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		//Assert
+		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItem"), "Placeholder div is present when state is loading");
+		//Arrange
+		this.oGenericTile.setState("Loaded");
+		sap.ui.getCore().applyChanges();
+		assert.notOk(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItem"), "Placeholder div is not present when state is loaded");
+	});
+
 	QUnit.test("Explicit tooltip set by user with long header text, long subheader text", function(assert) {
 		//Arrange
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
