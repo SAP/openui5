@@ -789,6 +789,29 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_Header_IconStatic = {
+			"sap.app": {
+				"id": "test.card.loading.card17",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"data": {
+						"request": {
+							"url": "items.json"
+						}
+					},
+					"title": "{some}",
+					"subTitle": "{some}",
+					"icon": {
+						"src": "sap-icon://list"
+					}
+				},
+				"content": {}
+			}
+		};
+
 		function isLoadingIndicatorShowingHeader(oManifest, oCard, bLoading, bExpectedTitle, bExpectedSubtitle, bExpectedAvatar, assert) {
 
 			// Arrange
@@ -971,7 +994,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Default Header - No loading indicator should be present - card level request, json data on header level", function (assert) {
-			isLoadingIndicatorShowingHeader(oManifest_CardCase3_No_Loading, this.oCard, false, false, true, true, assert);
+			isLoadingIndicatorShowingHeader(oManifest_CardCase3_No_Loading, this.oCard, false, false, true, false, assert);
 		});
 
 		QUnit.test("Numeric Header - Elements should  have a loading indicator - content level request", function (assert) {
@@ -984,6 +1007,10 @@ sap.ui.define([
 
 		QUnit.test("Numeric Header - No loading indicator should be present - card level request, json data on content level", function (assert) {
 			isLoadingIndicatorShowingNumericHeader(oManifest_NumericHeader_CardLevel_ContentJson, this.oCard, false, true, true, true, true, true, assert);
+		});
+
+		QUnit.test("Header - Avatar with static icon src should not show loading placeholder", function (assert) {
+			isLoadingIndicatorShowingHeader(oManifest_Header_IconStatic, this.oCard, true, true, true, false, assert);
 		});
 
 		QUnit.test("List - Loading indicator should be present - card level request", function (assert) {

@@ -54,7 +54,7 @@ sap.ui.define([], function () {
 				.class("sapFCardHeaderImage")
 				.openEnd();
 
-			if (oBindingInfos.iconSrc) {
+			if (oBindingInfos.iconSrc && oBindingInfos.iconSrc.binding && !oBindingInfos.iconSrc.binding.getValue()) {
 				oAvatar.addStyleClass("sapFCardHeaderItemBinded");
 			}
 			oRm.renderControl(oAvatar);
