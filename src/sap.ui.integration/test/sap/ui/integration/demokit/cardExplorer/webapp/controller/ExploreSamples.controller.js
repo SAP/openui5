@@ -261,6 +261,14 @@ sap.ui.define([
 			} else {
 				exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.TEXT);
 				this._sEditSource = "codeEditor";
+				this._oFileEditor.getManifestContent().then(function (sManifest) {
+					var sJson = JSON.parse(sManifest);
+					var templatePath = this._sanitizePath(ObjectPath.get(["sap.card", "designtime"], sJson) || "");
+					if (templatePath === "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate") {
+						delete sJson["sap.card"].designtime;
+						this._oFileEditor.setManifestContent(JSON.stringify(sJson, '\t', 4));
+					}
+				}.bind(this));
 			}
 		},
 
