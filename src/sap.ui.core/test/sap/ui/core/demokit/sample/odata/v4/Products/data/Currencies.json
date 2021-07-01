@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#Currencies(CurrencyCode,DecimalPlaces,Text,ISOCode)",
 	"@odata.metadataEtag" : "W/\"20190204140701\"",
 	"value" : [{
 		"CurrencyCode" : "ADP",

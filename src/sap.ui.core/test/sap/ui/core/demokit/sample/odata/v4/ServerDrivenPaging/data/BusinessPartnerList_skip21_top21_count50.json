@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#BusinessPartnerList(BusinessPartnerID,CompanyName)",
 	"@odata.metadataEtag" : "W/\"20191022154832\"",
 	"@odata.count" : 50,
 	"value" : [{

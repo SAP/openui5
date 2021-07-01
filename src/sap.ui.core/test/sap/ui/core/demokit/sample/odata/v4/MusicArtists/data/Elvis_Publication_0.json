@@ -1,5 +1,4 @@
 {
-	"@odata.context": "../$metadata#Publications(CurrencyCode,IsActiveEntity,Name,Price,PublicationUUID,ReleaseDate)/$entity",
 	"@odata.metadataEtag": "W/\"20181218222350\"",
 	"PublicationUUID": "fa163e7a-d4f1-1ed8-b5eb-5ee09a2ba28f",
 	"Name": "Elvis Presley",

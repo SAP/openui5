@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#SEPM_C_SLSORDER_TP_100(Customer,OverallStatus,SalesOrder,SalesOrderUUID,_Item(GrossAmount,Product,SalesOrder,SalesOrderItem,SalesOrderItemUUID,SalesOrderUUID))",
 	"@odata.metadataEtag" : "W/\"20170704153235\"",
 	"@odata.count" : "10",
 	"value" : [{
