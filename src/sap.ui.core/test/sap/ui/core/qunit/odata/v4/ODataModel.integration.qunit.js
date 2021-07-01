@@ -37,6 +37,9 @@ sap.ui.define([
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		fnFireEvent = EventProvider.prototype.fireEvent,
 		sInvalidModel = "/invalid/model/",
+		sODCB = "sap.ui.model.odata.v4.ODataContextBinding",
+		sODLB = "sap.ui.model.odata.v4.ODataListBinding",
+		sODPrB = "sap.ui.model.odata.v4.ODataPropertyBinding",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		rTop = /&\$top=(\d+)/, // $top=<number>
@@ -594,8 +597,12 @@ sap.ui.define([
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
 			this.mChanges = {};
+			// A list of expected canceled errors
+			this.aExpectedCanceledErrors = [];
 			// expected events, each as [this.toString(), sEventId, mParameters]
 			this.aExpectedEvents = [];
+			// regular expression to ignore certain canceled errors according to their message
+			this.rIgnoredCanceledErrors = null;
 			// {map<string, true>}
 			// If an ID is in this.mIgnoredChanges, change events with null are ignored
 			this.mIgnoredChanges = {};
@@ -718,15 +725,16 @@ sap.ui.define([
 
 		/**
 		 * Checks the messages and finishes the test if no pending changes are left, all
-		 * expected requests have been received and the expected number of messages have been
-		 * reported.
+		 * expected requests and canceled errors have been received and the expected number of
+		 * messages have been reported.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 */
 		checkFinish : function (assert) {
 			var sControlId, aExpectedValuesPerRow, i;
 
-			if (this.aRequests.length || this.iPendingResponses) {
+			if (this.aRequests.length || this.iPendingResponses
+					|| this.aExpectedCanceledErrors.length) {
 				return;
 			}
 			for (sControlId in this.mChanges) {
@@ -1257,6 +1265,7 @@ sap.ui.define([
 		 */
 		createView : function (assert, sViewXML, oModel, oController, mPreprocessors) {
 			var fnLockGroup,
+				fnReportError,
 				that = this;
 
 			/*
@@ -1470,6 +1479,27 @@ sap.ui.define([
 				return oLock;
 			}
 
+			function reportError(sLogMessage, _sReportingClassName, oError) {
+				var oExpectedError;
+
+				if (oError.canceled) {
+					oExpectedError = that.aExpectedCanceledErrors.shift();
+					if (oExpectedError) {
+						assert.strictEqual(sLogMessage, oExpectedError.logMessage, "sLogMessage");
+						assert.strictEqual(oError.message, oExpectedError.errorMessage,
+							"oError.message");
+					} else if (!that.rIgnoredCanceledErrors
+							|| !that.rIgnoredCanceledErrors.test(oError.message)) {
+						assert.ok(false, "Unexpected canceled error:\nsLogMessage=" + sLogMessage
+							+ "\noError.message=" + oError.message);
+					}
+					that.checkFinish(assert);
+					return;
+				}
+
+				fnReportError.apply(this, arguments);
+			}
+
 			this.oModel = oModel || createTeaBusiModel();
 			if (this.oModel.submitBatch) {
 				// stub request methods for the requestor prototype to also check requests from
@@ -1483,6 +1513,8 @@ sap.ui.define([
 				this.oModel.oRequestor.sendRequest = checkRequest;
 				fnLockGroup = this.oModel.oRequestor.lockGroup;
 				this.oModel.oRequestor.lockGroup = lockGroup;
+				fnReportError = this.oModel.reportError;
+				this.oModel.reportError = reportError;
 			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 
@@ -1521,6 +1553,24 @@ sap.ui.define([
 
 		/**
 		 * The following code (either {@link #createView} or anything before
+		 * {@link #waitForChanges}) is expected to report an error with
+		 * <code>canceled === true</code>. Note: The reporting class name is ignored.
+		 *
+		 * @param {string} sLogMessage - The expected log message
+		 * @param {string} sErrorMessage - The expected error message
+		 * @returns {object} The test instance for chaining
+		 */
+		expectCanceledError : function (sLogMessage, sErrorMessage) {
+			this.aExpectedCanceledErrors.push({
+				logMessage : sLogMessage,
+				errorMessage : sErrorMessage
+			});
+
+			return this;
+		},
+
+		/**
+		 * The following code (either {@link #createView} or anything before
 		 * {@link #waitForChanges}) is expected to set a value (or multiple values) at the property
 		 * "text" of the control with the given ID. <code>vValue</code> must be a list with expected
 		 * values for each row if the control is created via a template in a list. Use a sparse list
@@ -1532,7 +1582,7 @@ sap.ui.define([
 		 * the change. If you do not expect a value initially, leave out the vValue parameter or use
 		 * an empty array.
 		 *
-		 * Examples:
+		 * @example
 		 * this.expectChange("foo", "bar"); // expect value "bar" for the control with ID "foo"
 		 * this.expectChange("foo"); // listen to changes for the control with ID "foo", but do not
 		 *                           // expect a change (in createView)
@@ -1992,6 +2042,12 @@ sap.ui.define([
 					assert.ok(false, oRequest.method + " " + oRequest.url + " (not requested)");
 				});
 				that.aRequests = [];
+				// Report (and forget about) missing canceled errors
+				that.aExpectedCanceledErrors.forEach(function (oError) {
+					assert.ok(false, "Expected canceled error:\nsLogMessage=" + oError.logMessage
+						+ "\noError.message=" + oError.errorMessage);
+				});
+				that.aExpectedCanceledErrors = [];
 				// Report (and forget about) missing changes
 				for (sControlId in that.mChanges) {
 					if (that.hasOnlyOptionalChanges(sControlId)) {
@@ -2870,6 +2926,8 @@ sap.ui.define([
 			// this removes the property from the query options again
 			that.oView.byId("legalForm").setBindingContext(null);
 
+			return that.waitForChanges(assert);
+		}).then(function () {
 			that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
 					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 					SalesOrderID : "1",
@@ -2881,6 +2939,8 @@ sap.ui.define([
 				.expectChange("companyName", "TECUM (refreshed)");
 
 			that.oView.byId("outer").getObjectBinding().refresh();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -5991,18 +6051,23 @@ sap.ui.define([
 					new Promise(function (resolve) {
 						fnResolve = resolve.bind(null, {
 							value : [
-								{ItemPosition : "10", Note : "Note 2", SalesOrderID : "2"}
+								{ItemPosition : "10", Note : "n/a", SalesOrderID : "2"}
 							]
 						});
 					})
 				)
-				.expectChange("note", ["Note 2"])
+				.expectCanceledError("Failed to get contexts for " + sSalesOrderService
+						+ "SalesOrderList('2')/SO_2_SOITEM with start index 0 and length 20",
+					sODLB + ": /SalesOrderList('2')[1]|SO_2_SOITEM"
+						+ " is ignoring response from inactive cache: " + sSalesOrderService
+						+ "SalesOrderList('2')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID")
 				.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20", {
 						value : [
 							{ItemPosition : "10", Note : "Note 2", SalesOrderID : "2"}
 						]
-					});
+					})
+				.expectChange("note", ["Note 2"]);
 
 			return Promise.all([
 				resolveLater(function () {
@@ -7099,8 +7164,7 @@ sap.ui.define([
 				if (bSkipRefresh) {
 					that.oLogMock.expects("error").withExactArgs("Failed to drill-down into"
 						+ " ('43')/SO_2_BP/CompanyName, invalid segment: SO_2_BP",
-						"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002"
-						+ "/SalesOrderList?$select=Note,SalesOrderID"
+						sSalesOrderService + "SalesOrderList?$select=Note,SalesOrderID"
 						+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)",
 						"sap.ui.model.odata.v4.lib._Cache");
 
@@ -11453,15 +11517,24 @@ sap.ui.define([
 		}).then(function () {
 			return that.checkValueState(assert, "nameCreated", "Success", "Just A Message");
 		}).then(function () {
-			that.expectRequest("Artists(ArtistID='ABC',IsActiveEntity=false)"
-					+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
+			var sResourcePath = "Artists(ArtistID='ABC',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
+				sErrorMessage = "sap.ui.model.odata.v4.ODataContextBinding:"
+					+ " /Artists|special.cases.Create(...)"
+					+ " is ignoring response from inactive cache: /special/cases/"
+					+ sResourcePath;
+
+			that.expectRequest(sResourcePath, {
 					// CPOUI5ODATAV4-980: this response is ignored anyway
 					ArtistID : "ABC",
 					IsActiveEntity : false,
-					Name : "After Refresh"
+					Name : "n/a"
 				})
-				.expectRequest("Artists(ArtistID='ABC',IsActiveEntity=false)"
-					+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
+				// Note: this is caused by "nameCreated" via R.V.C., path is a bit misleading
+				.expectCanceledError("Failed to read path special.cases.Create(...)", sErrorMessage)
+				.expectCanceledError("Failed to read path"
+					+ " /Artists(ArtistID='ABC',IsActiveEntity=false)/Name", sErrorMessage)
+				.expectRequest(sResourcePath, {
 					"@odata.etag" : "ETagAfterRefresh",
 					ArtistID : "ABC",
 					IsActiveEntity : false,
@@ -12651,8 +12724,7 @@ sap.ui.define([
 				ID : "42",
 				ProductPicture : oResponse
 			})
-			.expectChange("url",
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')");
+			.expectChange("url", sTeaBusi + "ProductPicture('42')");
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -14560,6 +14632,15 @@ sap.ui.define([
 					oTable = that.oView.byId("table"),
 					oTableBinding;
 
+				// 3 suspended ODLBs are destroyed before resume, so to say
+				that.expectCanceledError("Failed to create cache for binding " + sODLB
+						+ ": /Equipments", "Cache discarded as a new cache has been created")
+					.expectCanceledError("Failed to create cache for binding " + sODLB
+						+ ": /Equipments", "Cache discarded as a new cache has been created")
+					.expectCanceledError("Failed to create cache for binding " + sODLB
+						+ ": /Equipments", "Cache discarded as a new cache has been created");
+
+				// Note: each of these is causing a "rebind"
 				sId0 = that.addToTable(oTable, "Name", assert);
 				sId1 = that.addToTable(oTable, "EQUIPMENT_2_EMPLOYEE/Name", assert);
 				that.removeFromTable(oTable, "idEmployeeId");
@@ -14657,7 +14738,9 @@ sap.ui.define([
 	//   adding and removing a column. After resume, a new request reflecting the changes is
 	//   sent and the added column is updated.
 	[false, true].forEach(function (bRefresh) {
-		QUnit.test("suspend/resume: *not* suspended list binding", function (assert) {
+		var sTitle = "suspend/resume: *not* suspended list binding; refresh=" + bRefresh;
+
+		QUnit.test(sTitle, function (assert) {
 			var oModel = createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
@@ -14686,6 +14769,15 @@ sap.ui.define([
 					oTable = that.oView.byId("table"),
 					oTableBinding;
 
+				// 3 suspended ODLBs are destroyed before resume, so to say
+				that.expectCanceledError("Failed to create cache for binding " + sODLB
+						+ ": /Equipments", "Cache discarded as a new cache has been created")
+					.expectCanceledError("Failed to create cache for binding " + sODLB
+						+ ": /Equipments", "Cache discarded as a new cache has been created")
+					.expectCanceledError("Failed to create cache for binding " + sODLB
+						+ ": /Equipments", "Cache discarded as a new cache has been created");
+
+				// Note: each of these is causing a "rebind"
 				sId0 = that.addToTable(oTable, "Name", assert);
 				sId1 = that.addToTable(oTable, "EQUIPMENT_2_EMPLOYEE/Name", assert);
 				that.removeFromTable(oTable, "idEmployeeId");
@@ -17140,7 +17232,14 @@ sap.ui.define([
 					.expectChange("region", [/*Z*/,/*Y*/,/*Y*/,/*X*/, "W", "V", "U"])
 					.expectChange("accountResponsible", [,,,, "", "", ""])
 					.expectChange("salesAmount", [,,,, "400", "500", "600"])
-					.expectChange("salesNumber", [,,,, null, null, null]);
+					.expectChange("salesNumber", [,,,, null, null, null])
+					.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
+							+ " with start index 3 and length 3",
+						"Collapse or expand before read has finished")
+					.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
+							+ " with start index 4 and length 3",
+						"Collapse or expand before read has finished");
+
 				// code under test
 				fnRespondExpand();
 			} else {
@@ -18448,7 +18547,10 @@ sap.ui.define([
 					.expectChange("level", [,,, 1, 1])
 					.expectChange("region", [,,, "X", "W"])
 					.expectChange("accountResponsible", [,,, "", ""])
-					.expectChange("salesAmount", [,,, null, null]);
+					.expectChange("salesAmount", [,,, null, null])
+					.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
+							+ " with start index 2 and length 3",
+						"Collapse or expand before read has finished");
 
 				// code under test
 				oTable.setFirstVisibleRow(2);
@@ -18458,7 +18560,10 @@ sap.ui.define([
 					.expectChange("level", [,,, 1, 1, 1])
 					.expectChange("region", [,,, "X", "W", "V"])
 					.expectChange("accountResponsible", [,,, "", "", ""])
-					.expectChange("salesAmount", [,,, null, null, null]);
+					.expectChange("salesAmount", [,,, null, null, null])
+					.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
+							+ " with start index 3 and length 3",
+						"Collapse or expand before read has finished");
 
 				// code under test
 				oTable.setFirstVisibleRow(3);
@@ -18738,6 +18843,8 @@ sap.ui.define([
 							]
 						});
 					})
+				.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
+					+ " with start index 4 and length 4", "Collapse before read has finished")
 				.expectChange("isExpanded", [false])
 				.expectChange("isTotal", [true])
 				.expectChange("level", [1])
@@ -20094,11 +20201,11 @@ sap.ui.define([
 				that.oLogMock.expects("error").withExactArgs("Not a valid property path: " +
 					sPrefix + "@$ui5._/predicate", undefined, "sap.ui.model.odata.v4.Context");
 			}
-			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into "
-				+ sPrefix + "@$ui5._/predicate, invalid segment: @$ui5._",
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/MANAGERS('1')"
-				+ "?$expand=Manager_to_Team",
-				"sap.ui.model.odata.v4.lib._Cache")
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to drill-down into " + sPrefix
+						+ "@$ui5._/predicate, invalid segment: @$ui5._",
+					sTeaBusi + "MANAGERS('1')?$expand=Manager_to_Team",
+					"sap.ui.model.odata.v4.lib._Cache")
 				.exactly(sPrefix !== "" ? 2 : 3); // binding, getProperty, requestObject
 		}
 
@@ -20285,6 +20392,8 @@ sap.ui.define([
 			.expects("getContexts")
 			.withExactArgs(1, 3, 0, undefined)
 			.callsFake(function () {
+				that.expectCanceledError("Failed to create cache for binding " + sODLB
+						+ ": /EMPLOYEES", "Cache discarded as a new cache has been created");
 				oMeasureRangePromise = this.updateAnalyticalInfo(aAggregation)
 					.measureRangePromise.then(function (mMeasureRange) {
 						assert.deepEqual(mMeasureRange, {
@@ -23404,9 +23513,8 @@ sap.ui.define([
 				.withExactArgs("Failed to read path /TEAMS('TEAM_01')",
 					sinon.match.string, "sap.ui.model.odata.v4.ODataContextBinding");
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to get contexts for "
-						+ "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS('TEAM_01')/"
-						+ "TEAM_2_EMPLOYEES with start index 0 and length 100",
+				.withExactArgs("Failed to get contexts for " + sTeaBusi
+						+ "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES with start index 0 and length 100",
 					sinon.match.string, "sap.ui.model.odata.v4.ODataListBinding");
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id", oError1)
 				.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
@@ -25528,7 +25636,11 @@ sap.ui.define([
 			var oBinding = that.oView.byId("form").getElementBinding(),
 				oPromise;
 
-			that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID&foo=bar", {
+			that.expectCanceledError("Failed to create cache for binding " + sODCB
+					+ ": /SalesOrderList('42')", "Cache discarded as a new cache has been created")
+				.expectCanceledError("Failed to read path /SalesOrderList('42')/Note",
+					"Cache discarded as a new cache has been created")
+				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID&foo=bar", {
 					SalesOrderID : "42",
 					Note : "Note updated"
 				})
@@ -25764,7 +25876,9 @@ sap.ui.define([
 		assert.strictEqual(this.oModel.hasPendingChanges(), true);
 		assert.strictEqual(this.oView.byId("form").getObjectBinding().hasPendingChanges(), true);
 
-		this.expectChange("roomId", "2");
+		this.expectChange("roomId", "2")
+			.expectCanceledError("Failed to update path /EMPLOYEES('3')/ROOM_ID",
+				"Request canceled: PATCH EMPLOYEES('3'); group: $parked.$auto");
 
 		// code under test
 		this.oModel.resetChanges("$auto");
@@ -27256,6 +27370,11 @@ sap.ui.define([
 			}));
 
 		return this.createView(assert, sView).then(function () {
+			that.expectCanceledError("Failed to get contexts for " + sTeaBusi
+						+ "EMPLOYEES with start index 0 and length 100",
+					sODLB + ": /EMPLOYEES is ignoring response from inactive cache: " + sTeaBusi
+						+ "EMPLOYEES");
+
 			that.oView.destroy();
 			delete that.oView;
 
@@ -28534,7 +28653,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("soCurrencyCode", "EUR");
+			that.expectCanceledError("Failed to update path /SalesOrderList('1')/CurrencyCode",
+					"Request canceled: PATCH SalesOrderList('1'); group: $parked.$auto")
+				.expectChange("soCurrencyCode", "EUR");
 
 			// remove parked changes
 			oModel.resetChanges("$auto");
@@ -28544,13 +28665,16 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("soCurrencyCode", "USD")
-				.expectChange("soCurrencyCode", "EUR");
+			that.expectChange("soCurrencyCode", "USD");
 
 			that.oView.byId("soCurrencyCode").getBinding("value").setValue("USD");
 
 			assert.ok(oModel.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges("$auto"));
+
+			that.expectCanceledError("Failed to update path /SalesOrderList('1')/CurrencyCode",
+					"Request canceled: PATCH SalesOrderList('1'); group: $auto")
+				.expectChange("soCurrencyCode", "EUR");
 
 			oModel.resetChanges("$auto");
 
@@ -28950,8 +29074,7 @@ sap.ui.define([
 			that.oLogMock.expects("error").withArgs("POST on 'SalesOrderList' failed; will be"
 				+ " repeated automatically");
 			that.oLogMock.expects("error").withArgs("Failed to get contexts for "
-				+ "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/SalesOrderList"
-				+ " with start index 1 and length 2");
+				+ sSalesOrderService + "SalesOrderList with start index 1 and length 2");
 			that.oLogMock.expects("error").withArgs("$batch failed");
 			that.oLogMock.expects("error").withArgs("Failed to request side effects");
 
@@ -29549,6 +29672,9 @@ sap.ui.define([
 			// code under test
 			assert.ok(oOrdersBinding.hasPendingChanges());
 
+			that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: $auto");
+
 			return Promise.all([
 				oOrdersBinding.resetChanges().then(function () {
 					// code under test
@@ -29596,7 +29722,9 @@ sap.ui.define([
 		assert.ok(oModel.hasPendingChanges());
 		assert.ok(oBinding.hasPendingChanges());
 
-		this.expectChange("note", "New");
+		this.expectCanceledError("Failed to update path /SalesOrderList('43')/Note",
+				"Request canceled: PATCH SalesOrderList('43'); group: $auto")
+			.expectChange("note", "New");
 
 		return Promise.all([
 			// code under test
@@ -30124,7 +30252,12 @@ sap.ui.define([
 				oTable = that.oView.byId("table"),
 				oListBinding = oTable.getBinding("items");
 
-			that.expectRequest("TEAMS?$select=Team_Id&$orderby=Team_Id&$filter=Budget gt 42"
+			that.expectCanceledError("Failed to create cache for binding " + sODLB + ": /|TEAMS",
+					"Cache discarded as a new cache has been created")
+				.expectCanceledError(sODLB + ": /|TEAMS: Failed to enhance query options for"
+						+ " auto-$expand/$select for child Team_Id",
+					"Cache discarded as a new cache has been created")
+				.expectRequest("TEAMS?$select=Team_Id&$orderby=Team_Id&$filter=Budget gt 42"
 					+ "&$skip=0&$top=100", {
 					value : [{
 						Team_Id : "TEAM_01"
@@ -30331,13 +30464,17 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oPromise, fnRespond;
+			var sErrorMessage = sODCB + ": /TEAMS('TEAM_02')|"
+					+ " is ignoring response from inactive cache: "  + sTeaBusi
+					+ "TEAMS('TEAM_01')?$select=Name,Team_Id",
+				oPromise,
+				fnRespond;
 
 			// 1st, request side effects
 			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id",
 					new Promise(function (resolve) {
 						fnRespond = resolve.bind(null, {
-							Name : "Team #1",
+							Name : "n/a",
 							Team_Id : "TEAM_01"
 						});
 					}));
@@ -30349,6 +30486,8 @@ sap.ui.define([
 					Name : "Team #2",
 					Team_Id : "TEAM_02"
 				})
+				.expectCanceledError("Failed to read path ", sErrorMessage) //TODO empty relative path not helpful here!
+				.expectCanceledError("Failed to read path /TEAMS('TEAM_01')/Name", sErrorMessage)
 				.expectChange("name", "Team #2");
 
 			setTimeout(function () {
@@ -30433,6 +30572,11 @@ sap.ui.define([
 					+ "&$skip=0&$top=100", {
 					value : [{ID : "2", Name : "Frederic Fall"}]
 				})
+				.expectCanceledError("Failed to get contexts for " + sTeaBusi
+						+ "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES with start index 0 and length 100",
+					sODLB + ": /TEAMS('TEAM_02')|TEAM_2_EMPLOYEES"
+						+ " is ignoring response from inactive cache: " + sTeaBusi
+						+ "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name")
 				.expectChange("name", ["Frederic Fall"]);
 
 			setTimeout(function () {
@@ -30515,9 +30659,8 @@ sap.ui.define([
 					type : "Error"
 				}]);
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to get contexts for "
-						+ "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS"
-						+ " with start index 0 and length 100",
+				.withExactArgs("Failed to get contexts for " + sTeaBusi
+						+ "TEAMS with start index 0 and length 100",
 					sinon.match.string, "sap.ui.model.odata.v4.ODataListBinding");
 
 			oSideEffectsPromise = oListBinding.getHeaderContext()
@@ -30560,11 +30703,6 @@ sap.ui.define([
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oPromise1,
 			oPromise2,
-			oRefreshResponse = {
-				value : [
-					{Name : "Team 01*", Team_Id : "01"}
-				]
-			},
 			fnResolve,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
@@ -30581,7 +30719,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100",
-					new Promise(function (resolve) {fnResolve = resolve;})
+					new Promise(function (resolve) { fnResolve = resolve; })
 				);
 
 			oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
@@ -30591,13 +30729,21 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oRefreshResponse)
+			that.expectCanceledError("Failed to get contexts for " + sTeaBusi
+						+ "TEAMS with start index 0 and length 100",
+					sODLB + ": /TEAMS is ignoring response from inactive cache: " + sTeaBusi
+						+ "TEAMS?$select=Name,Team_Id")
+				.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+					value : [
+						{Name : "Team 01*", Team_Id : "01"}
+					]
+				})
 				.expectChange("name", ["Team 01*"]);
 
 			// code under test
 			oPromise2 = oHeaderContext.requestSideEffects([""]);
 			// now respond the first request
-			fnResolve(oRefreshResponse);
+			fnResolve({value : [/*n/a*/]});
 
 			return Promise.all([
 				oPromise1,
@@ -31040,8 +31186,7 @@ sap.ui.define([
 					payload : {}
 				}, oError, {
 					"Preference-Applied" : "handling=strict"
-				}
-			);
+				});
 
 			oActionPromise = that.oView.byId("action").getObjectBinding()
 				.execute("$auto", false, onStrictHandlingFailed);
@@ -31058,6 +31203,9 @@ sap.ui.define([
 						SalesOrderID : "1"
 					})
 					.expectChange("status", "C");
+			} else {
+				that.expectCanceledError("Failed to execute /SalesOrderList('1')/" + sAction
+						+ "(...)", "Action canceled due to strict handling");
 			}
 
 			// code under test
@@ -31240,6 +31388,7 @@ sap.ui.define([
 						transition : false
 					}]
 				})
+				.expectChange("status", "C")
 				.expectRequest({
 					headers : {
 						"Prefer" : "handling=strict"
@@ -31250,6 +31399,8 @@ sap.ui.define([
 				}, oError, {
 					"Preference-Applied" : "handling=strict"
 				})
+				.expectCanceledError("Failed to execute /SalesOrderList('42')/" + sGoodsAction
+					+ "(...)", "Action canceled due to strict handling")
 				.expectMessages([{
 					code : "CODE",
 					message : "Incorrect LifecycleStatus",
@@ -31257,8 +31408,7 @@ sap.ui.define([
 						"/SalesOrderList('42')/LifecycleStatus"
 					],
 					type : "Warning"
-				}])
-				.expectChange("status", "C");
+				}]);
 
 			// code under test
 			return Promise.all([
@@ -31289,6 +31439,13 @@ sap.ui.define([
 	</List>\
 </Table>';
 
+		this.rIgnoredCanceledErrors = /^Cache discarded as a new cache has been created$/;
+		// Timing: whether the inner list binding for the virtual context is destroyed early...
+		// this.expectCanceledError("Failed to create cache for binding " + sODLB + ": /MANAGERS",
+		// 		"Cache discarded as a new cache has been created")
+		// 	.expectCanceledError(sODLB + ": /MANAGERS: Failed to enhance query options for"
+		//			+ " auto-$expand/$select for child ID",
+		// 		"Cache discarded as a new cache has been created");
 		this.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
 				value : [
 					{ID : "2", Name : "Frederic Fall"}
@@ -31394,11 +31551,7 @@ sap.ui.define([
 			var oBinding = that.oView.byId("table").getBinding("items");
 
 			that.expectRequest("EMPLOYEES?$orderby=Name&$skip=0&$top=100", {
-					value : [
-						{Name : "Peter Burke"},
-						{Name : "Frederic Fall"},
-						{Name : "Jonathan Smith"}
-					]
+					value : [/*n/a*/]
 				})
 				.expectRequest("EMPLOYEES?$orderby=Name&$filter=AGE gt 42&$skip=0&$top=100",
 					new Promise(function (resolve) {
@@ -31411,7 +31564,11 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("name", ["Jonathan Smith"]);
+			that.expectCanceledError("Failed to get contexts for " + sTeaBusi
+						+ "EMPLOYEES with start index 0 and length 100",
+					sODLB + ": /EMPLOYEES is ignoring response from inactive cache: " + sTeaBusi
+						+ "EMPLOYEES?$orderby=Name")
+				.expectChange("name", ["Jonathan Smith"]);
 
 			fnRespond({value : [{Name : "Jonathan Smith"}]});
 
@@ -31876,6 +32033,15 @@ sap.ui.define([
 						Name : "Peter Burke"
 					}]
 				})
+				.expectCanceledError("Failed to get contexts for " + sTeaBusi
+						+ "EMPLOYEES('2')/EMPLOYEE_2_EQUIPMENTS with start index 0 and length 20",
+					"Binding already destroyed")
+				.expectCanceledError("Failed to get contexts for " + sTeaBusi
+						+ "EMPLOYEES('3')/EMPLOYEE_2_EQUIPMENTS with start index 0 and length 20",
+					"Binding already destroyed")
+				.expectCanceledError("Failed to get contexts for " + sTeaBusi
+						+ "EMPLOYEES('4')/EMPLOYEE_2_EQUIPMENTS with start index 0 and length 20",
+					"Binding already destroyed")
 				.expectChange("age", ["42", "42", "42"]) // Note: no real E.C.D. with grouping
 				.expectChange("groupHeader", 42)
 				.expectChange("category", ["P1", "P2"])
@@ -32066,8 +32232,7 @@ sap.ui.define([
 
 		return this.createView(assert, "", oModel).then(function () {
 			var oAction = oModel.bindContext("/ChangeTeamBudgetByID(...)"),
-				sMessage = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001"
-					+ "/ChangeTeamBudgetByID is read-only";
+				sMessage = sTeaBusi + "ChangeTeamBudgetByID is read-only";
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
@@ -32267,8 +32432,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "(4)");
 		}).then(function () {
-			that.expectChange("buyerId", "42");
-			// expect no PATCH request
+			that.expectCanceledError("Failed to update path /SalesOrderList('1')/BuyerID",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectChange("buyerId", "42");
 
 			oTableBinding.resetChanges();
 
@@ -34555,8 +34721,11 @@ sap.ui.define([
 		}).then(function () {
 			oListBinding = oModel.bindList("/SalesOrderList");
 
-			that.expectRequest("SalesOrderList/$count", 42)
+			that.expectRequest("SalesOrderList/$count", -1)
 				.expectRequest("SalesOrderList/$count", 42)
+				.expectCanceledError("Failed to read path /SalesOrderList/$count",
+					sODPrB + ": /SalesOrderList/$count is ignoring response from inactive cache: "
+						+ sSalesOrderService + "SalesOrderList/$count")
 				.expectChange("count", "42");
 
 			return Promise.all([
