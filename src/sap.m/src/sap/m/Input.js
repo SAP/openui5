@@ -1325,11 +1325,13 @@ function(
 
 		bFocusInPopup && this.setSelectionUpdatedFromList(true);
 
-		// The logic here works solely for suggestionItems. Once we move the whole dependent logic to coreItems
-		// it should work for suggetionRows as well.
-		if (this.getShowSuggestion() && this._bDoTypeAhead && bPopupOpened && !this._hasTabularSuggestions()) {
+		if (this.getShowSuggestion() && this._bDoTypeAhead && bPopupOpened) {
 			oSelectedItem = this._getSuggestionsPopover().getItemsContainer().getSelectedItem();
-			oSelectedItem && this.setSelectionItem(ListHelpers.getItemByListItem(aItems, oSelectedItem), true);
+			if (this._hasTabularSuggestions()) {
+				oSelectedItem && this.setSelectionRow(oSelectedItem, true);
+			} else {
+				oSelectedItem && this.setSelectionItem(ListHelpers.getItemByListItem(aItems, oSelectedItem), true);
+			}
 		}
 
 		if (bPopupOpened && !this.isComposingCharacter()) {

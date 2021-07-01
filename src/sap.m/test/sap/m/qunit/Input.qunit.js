@@ -3614,6 +3614,31 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Set selection with 'ENTER' key press with tabular suggestions opened and typeahead should call setSelectionRow method", function(assert) {
+		// Arrange
+		var oInput = createInputWithTabularSuggestions();
+		var oSetSelectionRowSpy = this.spy(oInput, "setSelectionRow");
+
+		oInput.placeAt("content");
+		oInput._bDoTypeAhead = true;
+		oInput._createSuggestionPopupContent(true);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._$input.trigger("focus").val("Auch").trigger("input");
+		oInput._getFilteredSuggestionItems("Auch");
+		oInput._openSuggestionsPopover();
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSetSelectionRowSpy.callCount, 1, "'setSelectionRow' was called once.");
+		assert.strictEqual(oSetSelectionRowSpy.firstCall.args[1], true, "Second parameter was 'true' indicating the selection was made by interaction.");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Selected item from value help is set to the input", function(assert) {
 
 		var oInput = createInputWithSuggestions(),
