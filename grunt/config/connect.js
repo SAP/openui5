@@ -148,19 +148,40 @@ module.exports = function(grunt, config) {
 								"script-src  'self' 'unsafe-eval'; " +
 								"style-src   'self' 'unsafe-inline'; " +
 								"font-src    'self' data:; " +
-								"img-src     'self' * data: blob:; " +
-								"frame-src   'self' https: data: blob:; " +
-								"child-src   'self' https: data: blob:; " +
-								"connect-src 'self' https: wss:;",
+								"img-src     'self' https: http: data: blob:; " +
+								"media-src   'self' https: http: data: blob:; " +
+								"object-src  blob:; " +
+								"frame-src   'self' https: gap: data: blob: mailto: tel:; " +
+								"worker-src  'self' blob:; " +
+								"child-src   'self' blob:; " +
+								"connect-src 'self' https: wss:; " +
+								"base-uri    'self';",
 							"sap-target-level-2":
 								"default-src 'self'; " +
 								"script-src  'self'; " +
 								"style-src   'self' 'unsafe-inline'; " +
 								"font-src    'self' data:; " +
-								"img-src     'self' * data: blob:; " +
-								"frame-src   'self' https: data: blob:; " +
-								"child-src   'self' https: data: blob:; " +
-								"connect-src 'self' https: wss:;"
+								"img-src     'self' https: http: data: blob:; " +
+								"media-src   'self' https: http: data: blob:; " +
+								"object-src  blob:; " +
+								"frame-src   'self' https: gap: data: blob: mailto: tel:; " +
+								"worker-src  'self' blob:; " +
+								"child-src   'self' blob:; " +
+								"connect-src 'self' https: wss:; " +
+								"base-uri    'self';",
+							"sap-target-level-3":
+								"default-src 'self'; " +
+								"script-src  'self'; " +
+								"style-src   'self'; " +
+								"font-src    'self'; " +
+								"img-src     'self' https:; " +
+								"media-src   'self' https:; " +
+								"object-src  'self'; " +
+								"frame-src   'self' https: gap: mailto: tel:; " +
+								"worker-src  'self'; " +
+								"child-src   'self'; " +
+								"connect-src 'self' https: wss:; " +
+								"base-uri    'self';"
 						}
 					};
 					middlewares.unshift(cspMiddleware("sap-ui-xx-csp-policy", oCspConfig));
