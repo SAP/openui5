@@ -61,6 +61,7 @@ sap.ui.define(['./library'],
 
 		if (bInLine) {
 			oRM.class("sapMITBInLine");
+			oRM.class("sapMITBTextOnly");
 		}
 
 		oRM.accessibilityState(oControl, {

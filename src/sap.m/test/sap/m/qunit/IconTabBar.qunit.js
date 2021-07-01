@@ -4217,4 +4217,32 @@ sap.ui.define([
 		assert.strictEqual(oFilter3.$().find(".sapMITHTextContent").attr("dir"), "auto", "'dir' attribute is correctly set");
 	});
 
+	QUnit.module("Inline mode icon");
+
+	QUnit.test("The inline mode icon is rendered", function(assert) {
+
+		// Arrange
+		var oIconTabBar = new IconTabBar({
+			items: [
+				new IconTabFilter({
+					text: "Tab with icon",
+					icon: "sap-icon://home",
+					headerMode: "Inline"
+				})
+			]
+		});
+
+		oIconTabBar.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		var $itbf = oIconTabBar.getItems()[0].$();
+
+		assert.ok($itbf.find("span.sapMITBInlineIcon"), "The icon is rendered");
+
+		// Clean up
+		oIconTabBar.destroy();
+
+	});
+
 });

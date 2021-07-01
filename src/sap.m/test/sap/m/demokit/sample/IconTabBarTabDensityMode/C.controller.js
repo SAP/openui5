@@ -18,6 +18,29 @@ sap.ui.define([
 					})
 				}));
 			}
+
+			var idIconTabBarInlineIcons = this.byId("iconTabBarInlineIcons");
+
+			for (var i = 1; i <= 12; i++) {
+				idIconTabBarInlineIcons.addItem(new IconTabFilter({
+					text: 'Tab ' + i,
+					key: i,
+					content: new Text({
+						text: 'IconTabBar inline header mode with icons Content ' + i
+					})
+				}));
+			}
+
+			idIconTabBarInlineIcons.setHeaderMode("Inline");
+			var aItems = idIconTabBarInlineIcons.getItems();
+			var aIcons = ["sap-icon://history", "sap-icon://home", "sap-icon://employee"];
+			var randomize = function (array) {
+				return Math.floor(Math.random() * array.length);
+			};
+
+			for (var i = 0; i < aItems.length; i++) {
+				aItems[i].setIcon(aIcons[randomize(aIcons)]);
+			}
 		},
 
 		onTabDensityModeSelect: function (oEvent) {

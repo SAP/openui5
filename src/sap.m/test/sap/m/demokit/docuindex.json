@@ -593,7 +593,8 @@
 			"sap.m.sample.IconTabBarResponsivePadding",
 			"sap.m.sample.IconTabBarSubTabs",
 			"sap.m.sample.IconTabBarBadges",
-			"sap.m.sample.IconTabBarStartAndEndOverflow"
+			"sap.m.sample.IconTabBarStartAndEndOverflow",
+			"sap.m.sample.IconTabBarInlineIcons"
 		  ]
 		},
 		{
@@ -2056,6 +2057,11 @@
 			"id": "sap.m.sample.IconTabBarStartAndEndOverflow",
 			"name": "Icon Tab Bar - Start and End Overflow",
 			"description": "This sample illustrates the start and end overflow mode of the Icon Tab Bar."
+		},
+		{
+			"id": "sap.m.sample.IconTabBarInlineIcons",
+			"name": "Icon Tab Bar - Inline mode tab icons",
+			"description": "This sample illustrates tab icons for inline mode."
 		},
 		{
 		  "id": "sap.m.sample.IconTabHeader",

@@ -122,6 +122,13 @@ describe("sap.m.IconTabBarGeneric3", function() {
 			});
 		});
 
+		// inline icons
+		it("should open the select list on the start overflow", function() {
+			browser.executeScript("document.getElementById('itb1c').scrollIntoView()").then(function() {
+				expect(takeScreenshot()).toLookAs(sType + "_16_inline_icons");
+			});
+		});
+
 	};
 
 	//check tabDensityMode property = Cozy
