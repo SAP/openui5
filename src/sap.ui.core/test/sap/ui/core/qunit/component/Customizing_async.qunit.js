@@ -107,8 +107,11 @@ sap.ui.define([
 			oRootComponent = oComponent;
 			assert.ok(oComponent, "Component created successfully.");
 
+			return oRootComponent.getRootControl().loaded();
+
+		}).then(function() {
 			// manually create a view with legacy factory
-			return oComponent.runAsOwner(function() {
+			return oRootComponent.runAsOwner(function() {
 				return sap.ui.xmlview({
 					id: "manualView",
 					async: true,
@@ -390,6 +393,9 @@ sap.ui.define([
 			assert.equal(aLayout3Content[3].getId(), "myCustomerComponent---mainView--myTypedView--defaultContentText3", "Text control is at the correct position");
 			assert.equal(aLayout3Content[4].getId(), "myCustomerComponent---mainView--myTypedView--defaultContentText4", "Text control is at the correct position");
 			assert.equal(aLayout3Content[5].getId(), "myCustomerComponent---mainView--myTypedView--defaultContentText5", "Text control is at the correct position");
+
+			// cleanup
+			oComponent.destroy();
 		}.bind(this));
 	});
 });
