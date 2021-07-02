@@ -141,30 +141,16 @@ sap.ui.define([
 			//Check p13n mode property on the chart and enable only desired buttons
 			var aP13nMode = oMDCChart.getP13nMode() || [];
 
-            if (aP13nMode.indexOf("Item") > -1) {
+            if (aP13nMode.indexOf("Sort") > -1 || aP13nMode.indexOf("Item") > -1) {
                 this._oSettingsBtn = new OverflowButton(oMDCChart.getId() + "-chart_settings", {
                     icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
                     tooltip: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
                     press: function (oEvent) {
-                        var oSource = oEvent.getSource();
-                        ChartSettings.showPanel(oMDCChart, "Chart", oSource);
+                        oMDCChart.getEngine().uimanager.show(oMDCChart, oMDCChart.getP13nMode());
                     }
                 });
                 this.addEnd(this._oSettingsBtn);
-            }
-
-            if (aP13nMode.indexOf("Sort") > -1) {
-                this._oSortBtn = new OverflowButton(oMDCChart.getId() + "-sort_settings", {
-                    icon: "sap-icon://sort",
-                    tooltip: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
-					text: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
-                    press: function (oEvent) {
-                        var oSource = oEvent.getSource();
-                        ChartSettings.showPanel(oMDCChart, "Sort", oSource, oMDCChart._getPropertyData());
-                    }
-                });
-                this.addEnd(this._oSortBtn);
             }
 
             if (aP13nMode.indexOf("Type") > -1) {

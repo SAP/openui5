@@ -314,15 +314,56 @@ sap.ui.define([
         Chart.prototype.init = function () {
             this._oManagedObjectModel = new ManagedObjectModel(this);
             this.setModel(this._oManagedObjectModel, "$mdcChart");
-
-            this.getEngine().registerAdaptation(this, {
-                controller: {
-                    Item: ChartItemController,
-                    Sort: SortController
-                }
-            });
-
+            this._bNewP13n = true;//TODO: remove with migration
             Control.prototype.init.apply(this, arguments);
+        };
+
+        Chart.prototype.setP13nMode = function(aMode) {
+            var aSortedKeys = null;
+            if (aMode && aMode.length > 1){
+                aSortedKeys = [];
+                var mKeys = aMode.reduce(function(mMap, sKey, iIndex){
+                    mMap[sKey] = true;
+                    return mMap;
+                }, {});
+
+                //as the p13nMode has no strict order we need to ensure the order of tabs here
+                if (mKeys.Item) {
+                    aSortedKeys.push("Item");
+                }
+                if (mKeys.Sort) {
+                    aSortedKeys.push("Sort");
+                }
+            } else {
+                aSortedKeys = aMode;
+            }
+
+            this.setProperty("p13nMode", aSortedKeys, true);
+
+            this._updateAdaptation(this.getP13nMode());
+
+            return this;
+        };
+
+        Chart.prototype._updateAdaptation = function(aMode) {
+            var oRegisterConfig = {
+                controller: {}
+            };
+
+            var mRegistryOptions = {
+                Item: ChartItemController,
+                Sort: SortController
+            };
+
+            if (aMode && aMode.length > 0) {
+                aMode.forEach(function(sMode){
+                    var sKey = sMode;
+                    oRegisterConfig.controller[sKey] = mRegistryOptions[sMode];
+                });
+
+                this.getEngine().registerAdaptation(this, oRegisterConfig);
+            }
+
         };
 
         /**
