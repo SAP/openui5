@@ -24,8 +24,8 @@ sap.ui.define(["sap/ui/integration/Extension", 'sap/m/MessageToast'
 		oEvent.preventDefault();
 
 		// Validates and modifies data before submitting it
-		if (mSubmitData.Name === "Enter you name") {
-			oCard.showMessage("Please enter you name", "Error");
+		if (mSubmitData.Name === "Enter your name") {
+			oCard.showMessage("Please enter your name", "Error");
 		} else if (mSubmitData.Name === "") {
 			oCard.showMessage("You can't submit an empty name", "Error");
 		} else {

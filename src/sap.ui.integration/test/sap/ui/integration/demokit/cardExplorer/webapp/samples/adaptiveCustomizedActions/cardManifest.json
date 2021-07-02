@@ -63,7 +63,7 @@
 			},
 			{
 				"type": "Input.Text",
-				"value": "Enter you name",
+				"value": "Enter your name",
 				"style": "text",
 				"id": "Name"
 			}
