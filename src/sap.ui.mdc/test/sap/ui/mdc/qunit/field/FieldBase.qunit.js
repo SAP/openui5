@@ -4097,6 +4097,44 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("external control", function(assert) {
+
+		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
+		var oConditionsType = new ConditionsType();
+		var oInput = new Input("I1", {value: {path: '$field>/conditions', type: oConditionsType}});
+
+		oField.setMaxConditions(1);
+		oField.setContent(oInput);
+		sap.ui.getCore().applyChanges();
+
+		oField.focus(); // as FieldHelp is connected with focus
+
+		var oClock = sinon.useFakeTimers();
+
+		assert.ok(oInput.getShowValueHelp(), "Input has value help");
+		assert.equal(oInput.getValueHelpIconSrc(), oFieldHelp.getIcon(), "ValueHelpIcon set");
+		oInput._$input.val("I");
+		oInput.fireLiveChange({ value: "I" });
+
+		oClock.tick(400); // fake time to open trigger
+		assert.ok(oFieldHelp.open.calledWith(true), "oFieldHelp opened as suggestion");
+		assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
+
+		oFieldHelp.open.reset();
+		oFieldHelp.close();
+		oClock.tick(400); // fake time to close trigger
+
+		oInput.fireValueHelpRequest();
+		oClock.tick(400); // fake time to open trigger
+		assert.ok(oFieldHelp.open.calledWith(false), "oFieldHelp opened as value help");
+
+		oFieldHelp.close();
+		oClock.tick(400); // fake time to close trigger
+
+		oClock.restore();
+
+	});
+
 	QUnit.module("FieldHelp for currency", {
 		beforeEach: function() {
 			var oFieldHelp = new FieldHelpBase("F1-H");

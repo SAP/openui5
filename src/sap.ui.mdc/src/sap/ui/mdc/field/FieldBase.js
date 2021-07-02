@@ -1463,6 +1463,12 @@ sap.ui.define([
 				if (sProperty === "placeholder" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
 					oContent.bindProperty(sProperty, { path: "$field>/placeholder" });
 				}
+				if (sProperty === "showValueHelp" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+					oContent.bindProperty(sProperty, { path: "$field>/_fieldHelpEnabled" });
+				}
+				if (sProperty === "valueHelpIconSrc" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
+					oContent.setValueHelpIconSrc(this._getFieldHelpIcon());
+				}
 			}
 
 			for (var sAggregation in oContent.getMetadata().getAllAggregations()) {
@@ -1505,6 +1511,10 @@ sap.ui.define([
 			// content has press event -> attach handler
 			oContent.attachEvent("press", _handleContentPress, this);
 		}
+		if (oContent.getMetadata().getEvents().valueHelpRequest) {
+			// content has valueHelpRequest event -> attach handler
+			oContent.attachEvent("valueHelpRequest", _handleValueHelpRequest, this);
+		}
 	}
 
 	function _detachContentHandlers(oContent) {
@@ -1520,6 +1530,10 @@ sap.ui.define([
 		if (oContent.getMetadata().getEvents().press) {
 			// oldContent has press event -> detach handler
 			oContent.detachEvent("press", _handleContentPress, this);
+		}
+		if (oContent.getMetadata().getEvents().valueHelpRequest) {
+			// oldContent has valueHelpRequest event -> detach handler
+			oContent.detachEvent("valueHelpRequest", _handleValueHelpRequest, this);
 		}
 	}
 
@@ -2333,8 +2347,8 @@ sap.ui.define([
 		}
 
 		// update icon
-		var oControl = this.getAggregation("_content", [])[0];
-		if (oControl) {
+		var oControl = this._getContent()[0];
+		if (oControl && oControl.setValueHelpIconSrc) {
 			oControl.setValueHelpIconSrc(this._getFieldHelpIcon());
 		}
 		_handleConditionsChange.call(this, this.getConditions()); // to update descriptions
