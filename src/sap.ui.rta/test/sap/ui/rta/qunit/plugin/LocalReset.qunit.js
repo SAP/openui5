@@ -40,7 +40,8 @@ sap.ui.define([
 			var oMockedAppComponent = {
 				getModel: function () {
 					return this.oVariantModel;
-				}.bind(this)
+				}.bind(this),
+				byId: function() {}
 			};
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
