@@ -1966,8 +1966,7 @@ sap.ui.define([
 		this.expectRequest("SalesOrderSet('1')", {
 				SalesOrderID : "1"
 			})
-			.expectChange("id", null)
-			.expectChange("id", "1");
+			.expectValue("id", "1");
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -1986,8 +1985,7 @@ sap.ui.define([
 			.expectRequest("SalesOrderSet('1')", {
 				SalesOrderID : "1"
 			})
-			.expectChange("id", null)
-			.expectChange("id", "1");
+			.expectValue("id", "1");
 
 		// code under test
 		return this.createView(assert, sView);
@@ -2107,8 +2105,7 @@ sap.ui.define([
 			.expectRequest("SalesOrderSet('1')", {
 				SalesOrderID : "1"
 			})
-			.expectChange("id", null)
-			.expectChange("id", "1")
+			.expectValue("id", "1")
 			.expectRequest("SalesOrderSet?$skip=0&$top=100", oErrorResponse)
 			.expectMessages([{
 				code : "UF0",
@@ -2339,8 +2336,7 @@ sap.ui.define([
 
 		this.expectRequest("SalesOrderSet('1')", {SalesOrderID : "1"},
 				{"sap-message" : getMessageHeader(oResponseMessage)})
-			.expectChange("id", null)
-			.expectChange("id", "1")
+			.expectValue("id", "1")
 			.expectMessage(oResponseMessage, "/SalesOrderSet('1')");
 
 		// code under test
@@ -2367,10 +2363,8 @@ sap.ui.define([
 					City : "Walldorf"
 				}
 			}, {"sap-message" : getMessageHeader(oResponseMessage)})
-			.expectChange("CompanyName", null)
-			.expectChange("CompanyName", "SAP SE")
-			.expectChange("City", null)
-			.expectChange("City", "Walldorf")
+			.expectValue("CompanyName", "SAP SE")
+			.expectValue("City", "Walldorf")
 			.expectMessage(oResponseMessage,"/BusinessPartnerSet('1')/");
 
 		// code under test
@@ -2559,12 +2553,9 @@ sap.ui.define([
 				LifecycleStatusDescription : "LifecycleStatusDescription A",
 				Note : "Note A"
 			}, {"sap-message" : getMessageHeader([oMsgNote, oMsgGrossAmount])})
-			.expectChange("Note", null)
-			.expectChange("Note", "Note A")
-			.expectChange("GrossAmount", null)
-			.expectChange("GrossAmount", "GrossAmount A")
-			.expectChange("LifecycleStatusDescription", null)
-			.expectChange("LifecycleStatusDescription", "LifecycleStatusDescription A")
+			.expectValue("Note", "Note A")
+			.expectValue("GrossAmount", "GrossAmount A")
+			.expectValue("LifecycleStatusDescription", "LifecycleStatusDescription A")
 			.expectMessage(oMsgNote, "/SalesOrderSet('1')/")
 			.expectMessage(oMsgGrossAmount, "/SalesOrderSet('1')/");
 
@@ -2577,6 +2568,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			that.expectValue("Note", "");
+
 			// code under test
 			that.oView.byId("Note").unbindProperty("value");
 
@@ -2584,8 +2577,6 @@ sap.ui.define([
 				that.checkValueState(assert, "Note", "None", ""),
 				that.waitForChanges(assert)
 			]);
-		}).then(function () {
-			assert.strictEqual(that.oView.byId("Note").getValue(), "");
 		});
 	});
 
@@ -2643,8 +2634,7 @@ sap.ui.define([
 					transition : oFixture.bTransition
 				})
 			})
-			.expectChange("note", null)
-			.expectChange("note", "NoteA")
+			.expectValue("note", "NoteA")
 			.expectMessages([oExpectedMessage]);
 
 		// code under test
@@ -2655,7 +2645,7 @@ sap.ui.define([
 					SalesOrderID : "1",
 					Note : "NoteB"
 				})
-				.expectChange("note", "NoteB")
+				.expectValue("note", "NoteB")
 				.expectMessages(oFixture.bIsPersistent ? [oExpectedMessage] : []);
 
 			// code under test
@@ -2943,12 +2933,9 @@ usePreliminaryContext : false}}">\
 				__metadata : {uri : "/I_UserContactCard('Smith')"},
 				FullName : "Smith"
 			})
-			.expectChange("id", null)
-			.expectChange("id", "10000425")
-			.expectChange("createdName", null)
-			.expectChange("createdName", "Smith")
-			.expectChange("lastChangedName", null)
-			.expectChange("lastChangedName", "Smith");
+			.expectValue("id", "10000425")
+			.expectValue("createdName", "Smith")
+			.expectValue("lastChangedName", "Smith");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest(sWCGroupRequest, {
@@ -2982,12 +2969,12 @@ usePreliminaryContext : false}}">\
 					__metadata : {uri : "/I_UserContactCard('Muller')"},
 					FullName : "Muller"
 				})
-				.expectChange("id", null)
-				.expectChange("id", "10000425")
-				.expectChange("createdName", null)
-				.expectChange("createdName", "Smith")
-				.expectChange("lastChangedName", null)
-				.expectChange("lastChangedName", "Muller");
+				.expectValue("id", "")
+				.expectValue("id", "10000425")
+				.expectValue("createdName", "")
+				.expectValue("createdName", "Smith")
+				.expectValue("lastChangedName", "")
+				.expectValue("lastChangedName", "Muller");
 
 			// code under test: refresh keeps canonical path for "/I_UserContactCard('Smith')" in
 			// ODataModel#mPathCache and does *not* replace it by "/I_UserContactCard('Muller')";
@@ -3212,15 +3199,11 @@ usePreliminaryContext : false}}">\
 				Note : "Bar",
 				SalesOrderID : "1"
 			})
-			// Do not expect changes for "note" because setting the value of the "note" input field
-			// via control is not possible if "expectChange" is used.
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1");
+			.expectValue("note", "Bar")
+			.expectValue("salesOrderID", "1");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oNoteInput = that.oView.byId("note");
-
-			assert.strictEqual(oNoteInput.getValue(), "Bar");
 
 			that.expectMessages([{
 					code : undefined,
@@ -3231,7 +3214,8 @@ usePreliminaryContext : false}}">\
 					target : oNoteInput.getId() + "/value",
 					technical : false,
 					type : "Error"
-				}]);
+				}])
+				.expectValue("note", "abcd");
 
 			// code under test - produce a validation error
 			oNoteInput.setValue("abcd");
@@ -3255,7 +3239,6 @@ usePreliminaryContext : false}}">\
 			// check validation error and current value on the UI
 			that.checkValueState(assert, oNoteInput, "Error",
 				"Enter a text with a maximum of 3 characters and spaces");
-			assert.strictEqual(oNoteInput.getValue(), "abcd");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3265,7 +3248,8 @@ usePreliminaryContext : false}}">\
 					Note : "Bar",
 					SalesOrderID : "2"
 				})
-				.expectChange("salesOrderID", "2")
+				.expectValue("note", "Bar")
+				.expectValue("salesOrderID", "2")
 				.expectMessages([]);
 
 			// code under test - rebinding the form causes cleanup of the validation error and the
@@ -3276,7 +3260,6 @@ usePreliminaryContext : false}}">\
 		}).then(function () {
 			// code under test - check validation error and current value on the UI reverted
 			that.checkValueState(assert, oNoteInput, "None", "");
-			assert.strictEqual(oNoteInput.getValue(), "Bar");
 
 			return that.waitForChanges(assert);
 		});
@@ -4460,8 +4443,7 @@ usePreliminaryContext : false}}">\
 				"sap-message" : getMessageHeader(
 					[oSalesOrderNoteError, oSalesOrderToItem10NoteError])
 			})
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
+			.expectValue("salesOrderID", "1")
 			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
 			.expectMessage(oSalesOrderItem10NoteError, "/SalesOrderLineItemSet",
 				"/SalesOrderSet('1')/ToLineItems");
@@ -5039,8 +5021,6 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectChange("productName", null);
-
 		return this.createView(assert, sView, oModel).then(function () {
 			var oErrorGET = createErrorResponse({message : "GET failed", statusCode : 424}),
 				oErrorPOST = createErrorResponse({message : "POST failed", statusCode : 400}),
@@ -5124,7 +5104,7 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("productName", "Product 1");
+			that.expectValue("productName", "Product 1");
 
 			// code under test
 			that.oView.byId("productDetails").setBindingContext(oCreatedContext);
@@ -5295,6 +5275,7 @@ usePreliminaryContext : false}}">\
 						+ "(SalesOrderID='1',ItemPosition='10')",
 					"sap-message" : getMessageHeader(oNoteError)
 				})
+				.expectValue("note", "foo")
 				.expectMessage(oNoteError,
 					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/");
 
@@ -5306,7 +5287,6 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.strictEqual(that.oView.byId("note").getValue(), "foo");
 			that.checkValueState(assert, "note", "Error", oNoteError.message);
 		});
 	});
@@ -5343,8 +5323,7 @@ usePreliminaryContext : false}}">\
 					results : []
 				}
 			})
-			.expectChange("noteSalesOrder", null)
-			.expectChange("noteSalesOrder", "foo");
+			.expectValue("noteSalesOrder", "foo");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oNoteErrorCopy = cloneODataMessage(oNoteError,
@@ -5375,6 +5354,7 @@ usePreliminaryContext : false}}">\
 						+ "(SalesOrderID='1',ItemPosition='10')",
 					"sap-message" : getMessageHeader(oNoteError)
 				})
+				.expectValue("noteLineItem", "bar")
 				.expectMessage(oNoteErrorCopy, "/SalesOrderLineItemSet",
 					"/SalesOrderSet('1')/ToLineItems");
 
@@ -5389,7 +5369,6 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.strictEqual(that.oView.byId("noteLineItem").getValue(), "bar");
 			that.checkValueState(assert, "noteLineItem", "Error", oNoteError.message);
 		});
 	});
@@ -5412,9 +5391,7 @@ usePreliminaryContext : false}}">\
 			.expectRequest("SalesOrderSet('1')", {
 				__metadata : {uri : "SalesOrderSet('1')"},
 				SalesOrderID : "1"
-			})
-			.expectChange("name", null)
-			.expectChange("name", undefined);
+			});
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oCompanyNameError = that.createResponseMessage("CompanyName");
@@ -5442,7 +5419,7 @@ usePreliminaryContext : false}}">\
 					location : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('BP1')",
 					"sap-message" : getMessageHeader(oCompanyNameError)
 				})
-				.expectChange("name", "SAP")
+				.expectValue("name", "SAP")
 				.expectMessage(oCompanyNameError, "/BusinessPartnerSet('BP1')/",
 					"/SalesOrderSet('1')/ToBusinessPartner/");
 
@@ -5506,14 +5483,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					}
 				}
 			})
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "0500000005")
-			.expectChange("itemPosition", null)
-			.expectChange("itemPosition", "0000000010")
-			.expectChange("productID", null)
-			.expectChange("productID", "HT-1500")
-			.expectChange("businessPartnerID", null)
-			.expectChange("businessPartnerID", "0100000069");
+			.expectValue("salesOrderID", "0500000005")
+			.expectValue("itemPosition", "0000000010")
+			.expectValue("productID", "HT-1500")
+			.expectValue("businessPartnerID", "0100000069");
 
 		return this.createView(assert, sView).then(function () {
 			return that.waitForChanges(assert);
@@ -5552,8 +5525,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				"sap-message" : getMessageHeader(oErrorWithoutTarget)
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo")
+			.expectValue("note", "Foo")
 			.expectMessages([{
 				code : "code-0",
 				fullTarget : sExpectedTarget,
@@ -5595,8 +5567,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				Note : "Foo",
 				SalesOrderID : "1"
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo");
+			.expectValue("note", "Foo");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
@@ -5626,7 +5597,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					headers : {etag : "W/\"2020-05-19T08:09:00.146Z\""},
 					statusCode : 200
 				})
-				.expectChange("note", "Bar");
+				.expectValue("note", "Bar");
 
 			// code under test
 			oModel.setProperty("/SalesOrderSet('1')/Note", "Bar");
@@ -5664,8 +5635,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				Note : "Foo",
 				SalesOrderID : "1"
 			})
-			.expectChange("note", null)
-			.expectChange("note", "Foo");
+			.expectValue("note", "Foo");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
@@ -5686,13 +5656,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, NO_CONTENT, {
 					etag : "ETagAfter1stModification"
 				})
-				.expectChange("note", "Bar");
+				.expectValue("note", "Bar");
 
 			// code under test
 			oModel.setProperty("/SalesOrderSet('1')/Note", "Bar");
 			oModel.submitChanges();
 
-			that.expectChange("note", "Baz");
+			that.expectValue("note", "Baz");
 
 			// code under test do a second modification but do not yet submit the change
 			oModel.setProperty("/SalesOrderSet('1')/Note", "Baz");
@@ -5765,8 +5735,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					oSalesOrderToItem10ToProductPriceError
 				])
 			})
-			.expectChange("salesOrderID", null)
-			.expectChange("salesOrderID", "1")
+			.expectValue("salesOrderID", "1")
 			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
 			.expectMessage(oSalesOrderItem10ToProductPriceError, "/SalesOrderLineItemSet",
 				"/SalesOrderSet('1')/ToLineItems");
@@ -5781,7 +5750,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					method : "DELETE",
 					requestUri : "SalesOrderSet('1')"
 				}, {})
-				.expectChange("salesOrderID", undefined)
+				.expectValue("salesOrderID", "")
 				.expectMessages([]);
 
 			if (!bWithMessageScope) {
@@ -5823,12 +5792,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				LifecycleStatusDescription : "LifecycleStatusDescription A",
 				Note : "Note A"
 			}, {"sap-message" : getMessageHeader(oMsgNoteAndGrossAmount)})
-			.expectChange("Note", null)
-			.expectChange("Note", "Note A")
-			.expectChange("GrossAmount", null)
-			.expectChange("GrossAmount", "GrossAmount A")
-			.expectChange("LifecycleStatusDescription", null)
-			.expectChange("LifecycleStatusDescription", "LifecycleStatusDescription A")
+			.expectValue("Note", "Note A")
+			.expectValue("GrossAmount", "GrossAmount A")
+			.expectValue("LifecycleStatusDescription", "LifecycleStatusDescription A")
 			.expectMessage(oMsgNoteAndGrossAmount, "/SalesOrderSet('1')/");
 
 		// code under test
@@ -6156,12 +6122,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				"/SalesOrderSet('1')/ToBusinessPartner/")
 			.expectMessage(oProductADescriptionError, "/ProductSet",
 				"/SalesOrderSet('1')/ToBusinessPartner/ToProducts")
-			.expectChange("bpID0", null)
-			.expectChange("bpID0", "100");
+			.expectValue("bpID0", "100");
 
 		if (bMultipleOccurrences) {
-			this.expectChange("bpID1", null)
-				.expectChange("bpID1", "100");
+			this.expectValue("bpID1", "100");
 		}
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
@@ -6247,7 +6211,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				__metadata : {uri : "SalesOrderSet('1')"},
 				SalesOrderID : "1"
 			})
-			.expectChange("bpID0", null)
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
 				headers : {"sap-message-scope" : "BusinessObject"},
@@ -6261,7 +6224,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				"/SalesOrderSet('1')/ToBusinessPartner/")
 			.expectMessage(oProductADescriptionError, "/ProductSet",
 				"/SalesOrderSet('1')/ToBusinessPartner/ToProducts")
-			.expectChange("bpID0", "100");
+			.expectValue("bpID0", "100");
 		if (bResultingEntityOnUI) {
 			this.expectRequest({
 					deepPath : "/ProductSet('Z')",
@@ -6271,7 +6234,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					__metadata : {uri : "ProductSet('Z')"},
 					ProductID : "Z"
 				})
-				.expectChange("bpID1", null)
 				.expectRequest({
 					deepPath : "/ProductSet('Z')/ToSupplier",
 					headers : {"sap-message-scope" : "BusinessObject"},
@@ -6280,7 +6242,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					__metadata : {uri : "BusinessPartnerSet('200')"},
 					BusinessPartnerID : "200"
 				})
-				.expectChange("bpID1", "200");
+				.expectValue("bpID1", "200");
 		}
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
@@ -6357,7 +6319,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				__metadata : {uri : "SalesOrderSet('1')"},
 				SalesOrderID : "1"
 			})
-			.expectChange("bpID0", null)
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
 				headers : {"sap-message-scope" : "BusinessObject"},
@@ -6368,7 +6329,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {"sap-message" : getMessageHeader([oCompanyNameError, oToProductADescriptionError])})
 			// the same entity is returned with a different deep path in another request, so the old
 			// messages are removed
-			.expectChange("bpID0", "100")
+			.expectValue("bpID0", "100")
 			.expectRequest({
 				deepPath : "/ProductSet('Z')",
 				headers : {"sap-message-scope" : "BusinessObject"},
@@ -6377,7 +6338,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				__metadata : {uri : "ProductSet('Z')"},
 				ProductID : "Z"
 			})
-			.expectChange("bpID1", null)
 			.expectRequest({
 				deepPath : "/ProductSet('Z')/ToSupplier",
 				headers : {"sap-message-scope" : "BusinessObject"},
@@ -6391,7 +6351,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				"/ProductSet('Z')/ToSupplier/")
 			.expectMessage(oProductADescriptionError, "/ProductSet",
 				"/ProductSet('Z')/ToSupplier/ToProducts")
-			.expectChange("bpID1", "100");
+			.expectValue("bpID1", "100");
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -6871,21 +6831,28 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				Note : "Note",
 				SalesOrderID : '1'
 			}, {"sap-message" : getMessageHeader(oNoteWarning)})
-			.expectChange("Note0", null)
-			.expectChange("Note0", "Note")
-			.expectChange("Note1", null)
-			.expectChange("Note1", "Note")
-			.expectChange("Note2", null)
-			.expectChange("Note2", "Note")
+			.expectValue("Note0", "Note")
+			.expectValue("Note1", "Note")
+			.expectValue("Note2", "Note")
+			.expectValue("Composite0", "null - null")
+			.expectValue("Composite0", "1 - null")
+			.expectValue("Composite0", "1 - Note")
+			.expectValue("Composite1", "null - null")
+			.expectValue("Composite1", "1 - null")
+			.expectValue("Composite1", "1 - Note")
+			.expectValue("Composite2", "null - null")
+			.expectValue("Composite2", "1 - null")
+			.expectValue("Composite2", "1 - Note")
+			.expectValue("Composite3", " - ")
+			.expectValue("Composite3", "1 - ")
+			.expectValue("Composite3", "1 - Note")
+			.expectValue("Composite4", " - ")
+			.expectValue("Composite4", "1 - ")
+			.expectValue("Composite4", "1 - Note")
 			.expectMessage(oNoteWarning, "/SalesOrderSet('1')/");
 
 		// code under test
 		return this.createView(assert, sView).then(function () {
-			assert.strictEqual(that.oView.byId("Composite0").getValue(), "1 - Note");
-			assert.strictEqual(that.oView.byId("Composite1").getValue(), "1 - Note");
-			assert.strictEqual(that.oView.byId("Composite2").getValue(), "1 - Note");
-			assert.strictEqual(that.oView.byId("Composite3").getValue(), "1 - Note");
-			assert.strictEqual(that.oView.byId("Composite4").getValue(), "1 - Note");
 			return Promise.all([
 				that.checkValueState(assert, "Note0", "Warning", "Foo"),
 				that.checkValueState(assert, "Note1", "Warning", "Foo"),
@@ -6965,12 +6932,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				SalesOrderID : "1"
 			}, {"sap-message" : getMessageHeader(oCurrencyCodeWarning)})
 			// change event for each part of the composite type
-			.expectChange("Amount0", "12,345.00")
-			.expectChange("Amount0", "12,345")
-			.expectChange("Amount1", "12,345.00")
-			.expectChange("Amount1", "12,345")
-			.expectChange("Amount2", "12,345.00")
-			.expectChange("Amount2", "12,345")
+			.expectValue("Amount0", "12,345.00")
+			.expectValue("Amount0", "12,345")
+			.expectValue("Amount1", "12,345.00")
+			.expectValue("Amount1", "12,345")
+			.expectValue("Amount2", "12,345.00")
+			.expectValue("Amount2", "12,345")
 			.expectMessage(oCurrencyCodeWarning, "/SalesOrderSet('1')/");
 
 		// code under test
@@ -7027,8 +6994,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				Note : "bar"
 			})
-			.expectChange("idNote", null)
-			.expectChange("idNote", "bar");
+			.expectValue("idNote", "bar");
 
 		this.oLogMock.expects("error")
 			.withExactArgs("Request failed with status code 404: "
@@ -7068,7 +7034,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				technical : true,
 				type : "Error"
 			}])
-			.expectChange("idNote", null);
+			.expectValue("idNote", false);
 
 		this.oLogMock.expects("error")
 			.withExactArgs("Request failed with status code 404: GET SalesOrderSet('1')",
@@ -7096,8 +7062,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					target : !bPersistTechnicalMessages ? "" : "/SalesOrderSet('1')",
 					technical : true,
 					type : "Error"
-				}])
-				.expectChange("idNote", null);
+				}]);
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Request failed with status code 404: GET SalesOrderSet('1')",
@@ -7269,7 +7234,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				requestUri : "SalesOrderSet('1')/ToBusinessPartner"
 			}, NO_CONTENT
 			/* we expect a NO_CONTENT response to have no messages and explicitly ignore them! */)
-			.expectChange("id", null)
 			.expectMessage(oBusinessPartnerError, "/SalesOrderSet('1')/");
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
@@ -7337,10 +7301,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					oCompanyNameError2,
 					oToProductADescriptionError2
 				])})
-			.expectChange("companyName1", null)
-			.expectChange("companyName2", null)
-			.expectChange("companyName1", "company1")
-			.expectChange("companyName2", "company2")
+			.expectValue("companyName1", "company1")
+			.expectValue("companyName2", "company2")
 			.expectMessage(oCompanyNameError1, "/BusinessPartnerSet('1')/")
 			.expectMessage(oProductADescriptionError1, "/ProductSet",
 				"/BusinessPartnerSet('1')/ToProducts")
@@ -7375,7 +7337,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						oToProductADescriptionError2
 					])
 				})
-				.expectChange("companyName2", "companyName2New")
+				.expectValue("companyName2", "companyName2New")
 				.expectMessage(oCompanyNameError2_Update, "/BusinessPartnerSet", undefined, true)
 				.expectMessage(oProductADescriptionError2, "/ProductSet",
 					"/BusinessPartnerSet('2')/ToProducts")
@@ -7515,8 +7477,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
-		this.expectChange("productName", null);
-
 		return this.createView(assert, sView, oModel).then(function () {
 			var oEventHandlers = {
 					error : function () {},
@@ -7604,7 +7564,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}).contextCreated(),
 				that.waitForChanges(assert)
 			]).then(function () {
-				that.expectChange("productName", "Product 1");
+				that.expectValue("productName", "Product 1");
 
 				// code under test
 				that.oView.byId("productDetails")
@@ -7825,10 +7785,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					// "DrillDownState" : "collapsed"
 				}]
 			})
-			.expectChange("reqID", null)
-			.expectChange("reqID", "Request ID")
-			.expectChange("orgID", null, null) //TODO why does this happen?
-			.expectChange("orgID", ["4711"]);
+			.expectValue("reqID", "Request ID")
+			.expectValue("orgID", [""]) //TODO why does this happen?
+			.expectValue("orgID", ["4711"]);
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -7879,7 +7838,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}]
 			})
 			.ignoreNullChanges("maintenanceOrder") //FIXME: unexpected change occurring in testsuite
-			.expectChange("maintenanceOrder", ["Foo"]);
+			.expectValue("maintenanceOrder", ["Foo"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
@@ -7906,7 +7865,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						MaintenanceOrder : "Bar"
 					}]
 				})
-				.expectChange("maintenanceOrder", ["Bar"]);
+				.expectValue("maintenanceOrder", ["Bar"]);
 
 			// code under test
 			oModel.setProperty("/C_RSHMaintSchedSmltdOrdAndOp('~0~')/MaintenanceOrder", "Bar");
@@ -7970,33 +7929,29 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				GrossAmount : "10",
 				SalesOrderID : "2"
 			})
-			.expectChange("Amount0", "10.00")
-			.expectChange("Currency0", "")
-			.expectChange("Currency0", "USD")
-			.expectChange("Amount1", null)
-			.expectChange("Amount1", "10")
-			.expectChange("Currency1", null)
-			.expectChange("Currency1", "USD");
+			.expectValue("Amount0", "10.00")
+			.expectValue("Currency0", "USD")
+			.expectValue("Amount1", "10")
+			.expectValue("Currency1", "USD");
 
 		return this.createView(assert, sView, {undefined : oModel, JSONModel : oJSONModel}).then(
 				function () {
 			oAmount0 = that.oView.byId("Amount0");
 			oCurrency0 = that.oView.byId("Currency0");
-			// remove the formatter so that we can call setValue at the control
-			oAmount0.getBinding("value").setFormatter(undefined);
-			oCurrency0.getBinding("value").setFormatter(undefined);
 
 			that.expectMessages([{
-				descriptionUrl : undefined,
-				message : "EnterNumber",
-				target : oAmount0.getId() + "/value",
-				type : "Error"
-			}, {
-				descriptionUrl : undefined,
-				message : "EnterTextMaxLength 3",
-				target : oCurrency0.getId() + "/value",
-				type : "Error"
-			}]);
+					descriptionUrl : undefined,
+					message : "EnterNumber",
+					target : oAmount0.getId() + "/value",
+					type : "Error"
+				}, {
+					descriptionUrl : undefined,
+					message : "EnterTextMaxLength 3",
+					target : oCurrency0.getId() + "/value",
+					type : "Error"
+				}])
+				.expectValue("Amount0", "invalid amount")
+				.expectValue("Currency0", "invalid currency");
 
 
 			TestUtils.withNormalizedMessages(function () {
@@ -8011,15 +7966,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectMessages([]);
+			that.expectMessages([])
+				.expectValue("Amount0", "10.00")
+				.expectValue("Currency0", "USD");
 
 			// code under test
 			oAmount0.setBindingContext(that.oView.byId("Amount1").getBindingContext());
 			oCurrency0.setBindingContext(that.oView.byId("Currency1").getBindingContext());
 
-			assert.strictEqual(oAmount0.getValue(), "10.00");
 			assert.strictEqual(oAmount0.getBindingContext().getPath(), "/SalesOrderSet('2')");
-			assert.strictEqual(oCurrency0.getValue(), "USD");
 			assert.strictEqual(oCurrency0.getBindingContext().getPath(), "/SalesOrderSet('2')");
 
 			return Promise.all([
@@ -8094,9 +8049,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '<Input id="note" value="{/Note}" />',
 			that = this;
 
-		return this.createView(assert, sView, oModel).then(function () {
-			assert.strictEqual(that.oView.byId("note").getValue("value"), "Foo");
+		this.expectValue("note", "Foo");
 
+		return this.createView(assert, sView, oModel).then(function () {
 			that.expectMessages([{
 					descriptionUrl : undefined,
 					message : "Some message",
@@ -8116,6 +8071,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			that.expectValue("note", "");
+
 			// code under test
 			that.oView.byId("note").unbindProperty("value");
 
@@ -8123,8 +8080,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.checkValueState(assert, "note", "None", ""),
 				that.waitForChanges(assert)
 			]);
-		}).then(function () {
-			assert.strictEqual(that.oView.byId("note").getValue("value"), "");
 		});
 	});
 
@@ -8136,9 +8091,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			sView = '<Input id="note" value="{/Note}" />',
 			that = this;
 
-		return this.createView(assert, sView, oModel).then(function () {
-			assert.strictEqual(that.oView.byId("note").getValue("value"), "Foo");
+		this.expectValue("note", "Foo");
 
+		return this.createView(assert, sView, oModel).then(function () {
 			that.expectMessages([{
 					descriptionUrl : undefined,
 					message : "Some message",
@@ -8158,6 +8113,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			that.expectValue("note", "Bar");
+
 			// code under test
 			that.oView.setModel(new JSONModel({Note : "Bar"}));
 
@@ -8165,8 +8122,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.checkValueState(assert, "note", "None", ""),
 				that.waitForChanges(assert)
 			]);
-		}).then(function () {
-			assert.strictEqual(that.oView.byId("note").getValue("value"), "Bar");
 		});
 	});
 
@@ -8203,24 +8158,22 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				WeightMeasure : "12.34",
 				WeightUnit : "mass-kilogram"
 			})
-			.expectChange("weight", "12.34")
-			.expectChange("weight", "12.34 kg");
+			.expectValue("weight", "12.34")
+			.expectValue("weight", "12.34 kg");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oControl = that.oView.byId("weight");
 
-			// remove the formatter so that we can call setValue at the control
-			oControl.getBinding("value").setFormatter(null);
+			that.expectValue("weight", "23.4 kg");
 
 			// code under test
 			oControl.setValue("23.4 kg");
 
-			assert.strictEqual(oControl.getValue(), "23.4 kg");
+			that.expectValue("weight", "0 kg")
+				.expectValue("weight", "0 kg");
 
 			// code under test
 			oControl.setValue("");
-
-			assert.strictEqual(oControl.getValue(), "0 kg");
 		});
 	});
 
@@ -8257,24 +8210,23 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				Price : "12.3",
 				CurrencyCode : "EUR"
 			})
-			.expectChange("price", "12.30")
-			.expectChange("price", "12.30\u00a0EUR"); // "\u00a0" is a non-breaking space
+			.expectValue("price", "12.30")
+			.expectValue("price", "12.30\u00a0EUR"); // "\u00a0" is a non-breaking space
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oControl = that.oView.byId("price");
 
-			// remove the formatter so that we can call setValue at the control
-			oControl.getBinding("value").setFormatter(null);
+			that.expectValue("price", "42\u00a0JPY")
+				.expectValue("price", "42\u00a0JPY");
 
 			// code under test
 			oControl.setValue("42 JPY");
 
-			assert.strictEqual(oControl.getValue(), "42\u00a0JPY");
+			that.expectValue("price", "0\u00a0JPY")
+				.expectValue("price", "0\u00a0JPY");
 
 			// code under test
 			oControl.setValue("");
-
-			assert.strictEqual(oControl.getValue(), "0\u00a0JPY");
 		});
 	});
 
@@ -8439,30 +8391,30 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					UnitCode : "KG"
 				}]
 			})
-			.expectChange("weight", "12.340 KG");
+			.expectValue("weight", "12.340 KG");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oControl = that.oView.byId("weight");
 
-			// remove the formatter so that we can call setValue at the control
-			oControl.getBinding("value").setFormatter(null);
+			that.expectValue("weight", "23.400 KG")
+				.expectValue("weight", "23.400 KG");
 
 			// code under test
 			oControl.setValue("23.4 KG");
 
-			assert.strictEqual(oControl.getValue(), "23.400 KG");
+			that.expectValue("weight", "0.000 KG")
+				.expectValue("weight", "0.000 KG");
 
 			// code under test
 			oControl.setValue("");
 
-			assert.strictEqual(oControl.getValue(), "0.000 KG");
-
 			that.expectMessages([{
-				descriptionUrl: undefined,
-				message : "EnterNumberFraction 3",
-				target : oControl.getId() + "/value",
-				type : "Error"
-			}]);
+					descriptionUrl: undefined,
+					message : "EnterNumberFraction 3",
+					target : oControl.getId() + "/value",
+					type : "Error"
+				}])
+				.expectValue("weight", "12.3456 KG");
 
 			TestUtils.withNormalizedMessages(function () {
 				// code under test
@@ -8528,30 +8480,30 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}]
 			})
 			// "\u00a0" is a non-breaking space
-			.expectChange("price", "12.30\u00a0EUR");
+			.expectValue("price", "12.30\u00a0EUR");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oControl = that.oView.byId("price");
 
-			// remove the formatter so that we can call setValue at the control
-			oControl.getBinding("value").setFormatter(null);
+			that.expectValue("price", "42.12345\u00a0USDN")
+				.expectValue("price", "42.12345\u00a0USDN");
 
 			// code under test
 			oControl.setValue("42.12345 USDN");
 
-			assert.strictEqual(oControl.getValue(), "42.12345\u00a0USDN");
+			that.expectValue("price", "0.00000\u00a0USDN")
+				.expectValue("price", "0.00000\u00a0USDN");
 
 			// code under test
 			oControl.setValue("");
 
-			assert.strictEqual(oControl.getValue(), "0.00000\u00a0USDN");
-
 			that.expectMessages([{
-				descriptionUrl: undefined,
-				message : "EnterNumberFraction 2",
-				target : oControl.getId() + "/value",
-				type : "Error"
-			}]);
+					descriptionUrl: undefined,
+					message : "EnterNumberFraction 2",
+					target : oControl.getId() + "/value",
+					type : "Error"
+				}])
+				.expectValue("price", "1.234 EUR");
 
 			TestUtils.withNormalizedMessages(function () {
 				// code under test
