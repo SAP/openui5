@@ -983,7 +983,9 @@ function (
 		// Assert
 		assert.strictEqual(oItemWrapper5.getAttribute("tabindex"), "0", "Focus should remain on the fifth GridItem if there is no other item below it");
 
-		assert.ok(oScrollSpy.called, "scrollIntoView is called");
+		if (!Device.browser.firefox) {
+			assert.ok(oScrollSpy.called, "scrollIntoView is called");
+		}
 
 		oScrollSpy.reset();
 	});
