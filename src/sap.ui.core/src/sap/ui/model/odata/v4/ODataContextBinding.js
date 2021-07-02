@@ -572,11 +572,15 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   The request promise
 	 * @throws {Error}
-	 *   If <code>fnOnStrictHandlingFailed</code> is given but the given metadata is not an
-	 *   "Action", or the given function does not return a promise, or a collection-valued parameter
-	 *   for an operation other than a V4 action is encountered, or if the given metadata is neither
-	 *   an "Action" nor a "Function", or if <code>bIgnoreETag</code> is used for an operation other
-	 *   than a bound action
+	 *   If
+	 *   <ul>
+	 *    <li> the given metadata is neither an "Action" nor a "Function",
+	 *    <li> a collection-valued parameter for an operation other than a V4 action is encountered,
+	 *    <li> <code>bIgnoreETag</code> is used for an operation other than a bound action,
+	 *    <li> <code>fnOnStrictHandlingFailed</code> is given but the given metadata is not an
+	 *         "Action",
+	 *    <li> <code>fnOnStrictHandlingFailed</code> is given and it does not return a promise.
+	 *   </ul>
 	 *
 	 * @private
 	 */
@@ -797,8 +801,8 @@ sap.ui.define([
 	 *   rejected if <code>fnOnStrictHandlingFailed</code> is supplied and
 	 *   <ul>
 	 *    <li> is used for an operation other than an action,
-	 *    <li> there is another call of {@link #execute} with such a function provided in a
-	 *      different change set in the same $batch request,
+	 *    <li> another request that applies the preference "handling=strict" exists in a different
+	 *      change set of the same $batch request,
 	 *    <li> returns a <code>Promise</code> that resolves with <code>false</code>. In this case
 	 *      <code>oError.canceled === true</code>.
 	 *   </ul>
@@ -818,7 +822,9 @@ sap.ui.define([
 	 *   {@link sap.ui.model.Binding#isResolved}) or relative to a transient context (see
 	 *   {@link sap.ui.model.odata.v4.Context#isTransient}), or if deferred operation bindings are
 	 *   nested, or if the OData resource path for a deferred operation binding's context cannot be
-	 *   determined.
+	 *   determined, or if <code>fnOnStrictHandlingFailed</code> is called and does not return a
+	 *   <code>Promise</code>.
+
 	 *
 	 * @public
 	 * @since 1.37.0
