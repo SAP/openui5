@@ -261,28 +261,27 @@ sap.ui.define([
 		//#################################################################################################
 
 		/**
-		 * Write the given texts to the buffer
+		 * Write the given texts to the buffer.
 		 * @param {...string|number} sText (can be a number too)
 		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @deprecated Since 1.92. Instead, use the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 		 *   There is no 1:1 replacement for <code>write</code>. Typically, <code>write</code> is used to create
-		 *   a longer sequence of HTML markup (e.g. an element with attibutes and children) in a single call.
+		 *   a longer sequence of HTML markup (e.g. an element with attributes and children) in a single call.
 		 *   Such a markup sequence has to be split into the individual calls of the Semantic Rendering API.
 		 *
-		 *   Example:<br>
-		 *   <pre>
-		 *     oRm.write("<span id=\"" + oCtrl.getId() + "-outer\" class=\"myCtrlOuter\">"
-		 *        + "&nbsp;" + oResourceBundle.getText("TEXT_KEY") + "&nbsp;</span>");
-		 *   </pre>
+		 *   <br><br>Example:<br>
+		 *     oRm.write("&lt;span id=\"" + oCtrl.getId() + "-outer\" class=\"myCtrlOuter\"&gt;"
+		 *        + "&amp;nbsp;" + oResourceBundle.getText("TEXT_KEY") + "&amp;nbsp;&lt;/span&gt;");
+		 *   <br><br>
 		 *   has to be transformed to
-		 *   <pre>
-		 *     oRm.openStart("span", oCtrl.getId() + "-outer")
-		 *        .class("myCtrlOuter")
-		 *        .openEnd()
-		 *        .text("\u00a0" + oResourceBundle.getText("TEXT_KEY") + "\u00a0") // \u00a0 replaces &nbsp;
-		 *        .close("span");
-		 *   </pre>
+		 *   <br><br>
+		 *   oRm.openStart("span", oCtrl.getId() + "-outer").class("myCtrlOuter").openEnd().text("\u00a0" + oResourceBundle.getText("TEXT_KEY") + "\u00a0").close("span");
+		 *   <br><br>
+		 *   Note that "&amp;nbsp;" was replaced with "\u00a0" (no-break-space). In general, HTML entities
+		 *   have to be replaced by the corresponding Unicode character escapes. A mapping table can be found
+		 *   at {@link https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references}.
+		 *
 		 * @SecSink {*|XSS}
 		 */
 		this.write = function(/** string|number */ sText /* ... */) {
