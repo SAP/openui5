@@ -80,8 +80,8 @@ sap.ui.define([
 			.then(function(oIFrame) {
 				return oModifier.insertAggregation(oOPSubSection, "blocks", oIFrame, 0, oView);
 			})
-			.then(function () {
-				var iIndex = getTargetAggregationIndex(oChange, oControl, mPropertyBag);
+			.then(getTargetAggregationIndex.bind(null, oChange, oControl, mPropertyBag))
+			.then(function(iIndex) {
 				return oModifier.insertAggregation(oControl, "sections", oOPSection, iIndex, oView);
 			})
 			.then(function () {
