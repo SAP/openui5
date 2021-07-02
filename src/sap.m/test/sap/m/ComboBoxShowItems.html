@@ -101,6 +101,55 @@
 										</f:fields>
 									</f:FormElement>
 
+									<f:FormElement label="MultiInput (List)">
+										<f:fields>
+											<Button id="btnMultiInput1" text="showItems()" press="handleOpen" />
+											<Button id="btnMultiInput1Filter" text="showItems(fnFilter)"
+													press="handleOpen"/>
+											<MultiInput
+													id="multiInput1"
+													showSuggestion="true"
+													suggestionItems="{/}">
+												<suggestionItems>
+													<core:Item text="{Name}" key="{ProductId}"/>
+												</suggestionItems>
+											</MultiInput>
+										</f:fields>
+									</f:FormElement>
+
+									<f:FormElement label="MultiInput (Table)">
+										<f:fields>
+											<Button id="btnMultiInput2" text="showItems()" press="handleOpen"/>
+											<Button id="btnMultiInput2Filter" text="showItems(fnFilter)"
+													press="handleOpen"/>
+											<MultiInput
+													id="multiInput2"
+													showSuggestion="true"
+													suggestionRows="{/}">
+												<suggestionColumns>
+													<Column>
+														<header>
+															<Label text="Name"/>
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Label text="Key"/>
+														</header>
+													</Column>
+												</suggestionColumns>
+												<suggestionRows>
+													<ColumnListItem>
+														<cells>
+															<Label text="{Name}"/>
+															<Label text="{ProductId}"/>
+														</cells>
+													</ColumnListItem>
+												</suggestionRows>
+											</MultiInput>
+										</f:fields>
+									</f:FormElement>
+
 									<f:FormElement label="ComboBox">
 										<f:fields>
 											<Button id="btnComboBox1" text="showItems()" press="handleOpen"/>
@@ -244,8 +293,9 @@
 			sap.ui.require([
 				"sap/ui/core/mvc/XMLView",
 				'sap/ui/core/mvc/Controller',
-				'sap/ui/model/json/JSONModel'
-			], function (XMLView, Controller, JSONModel) {
+				'sap/ui/model/json/JSONModel',
+				'sap/m/Token'
+			], function (XMLView, Controller, JSONModel, Token) {
 
 				Controller.extend("myController", {
 					_btnToControlMap: {
@@ -253,6 +303,10 @@
 						"btnInput1Filter": "input1",
 						"btnInput2": "input2",
 						"btnInput2Filter": "input2",
+						"btnMultiInput1": "multiInput1",
+						"btnMultiInput1Filter": "multiInput1",
+						"btnMultiInput2": "multiInput2",
+						"btnMultiInput2Filter": "multiInput2",
 						"btnComboBox1": "combo1",
 						"btnComboBox1Filter": "combo1",
 						"btnComboBox2": "combo2",
@@ -271,6 +325,19 @@
 						var oModel = new JSONModel("../ui/documentation/sdk/mockserver/ProductCollection.json");
 
 						this.getView().setModel(oModel);
+						this.setUpMultiInput();
+					},
+
+					setUpMultiInput: function () {
+						this.getView().byId("multiInput2").addValidator(function (args) {
+							if (args.suggestionObject){
+								var key = args.suggestionObject.getCells()[1].getText();
+								var text = args.suggestionObject.getCells()[0].getText();
+
+								return new Token({key: key, text: text});
+							}
+							return null;
+						});
 					},
 
 					handleOpenByGroup: function (oEvent) {
