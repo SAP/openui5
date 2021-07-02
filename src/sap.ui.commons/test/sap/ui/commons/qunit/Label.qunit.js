@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/commons/library",
 	"sap/ui/commons/Label",
-	"sap/ui/core/Control"
+	"sap/ui/core/Control",
+	"sap/base/util/isEmptyObject"
 ], function(
 	createAndAppendDiv,
 	TextField,
 	coreLibrary,
 	commonsLibrary,
 	Label,
-	Control
+	Control,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -147,20 +149,13 @@ sap.ui.define([
 		assert.ok(sClasses.indexOf("sapUiLblEmph") == -1, "l1 className still contains 'sapUiLblEmph'");
 	});
 
-	function isEmpty(oObject) {
-		for (var i in oObject) { // eslint-disable-line no-unused-vars
-			return false;
-		}
-		return true;
-	}
-
 	QUnit.test("MetadataOk", function(assert) {
 		var oMetadata = l1.getMetadata();
 		assert.ok(oMetadata !== null, "l1.getMetadata() should not be null");
 		assert.ok(oMetadata.getParent() != null, "l1.getMetadata().getParent() should not be null");
 		assert.ok(Control.getMetadata() === oMetadata.getParent());
 		assert.strictEqual(oMetadata.getProperties()["text"]["type"], "string");
-		assert.ok(isEmpty(oMetadata.getAggregations()));
+		assert.ok(isEmptyObject(oMetadata.getAggregations()));
 		assert.ok(oMetadata.getAssociations() !== undefined);
 		assert.ok(oMetadata.getAssociations()["labelFor"] !== undefined);
 	});

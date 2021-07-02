@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/commons/TextField",
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/base/util/isEmptyObject"
 ], function(
 	createAndAppendDiv,
 	coreLibrary,
 	TextField,
 	Control,
 	jQuery,
-	Device
+	Device,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -199,12 +201,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("ariaDescribedBy", function (assert) {
-		assert.ok(isEmpty(t1.getAriaDescribedBy()), "t1.getAriaDescribedBy()");
+		assert.ok(isEmptyObject(t1.getAriaDescribedBy()), "t1.getAriaDescribedBy()");
 		assert.deepEqual(t2.getAriaDescribedBy(), aAriaDescribedBy, "t2.getAriaDescribedBy()");
 	});
 
 	QUnit.test("ariaLabelledBy", function (assert) {
-		assert.ok(isEmpty(t1.getAriaLabelledBy()), "t1.getAriaLabelledBy()");
+		assert.ok(isEmptyObject(t1.getAriaLabelledBy()), "t1.getAriaLabelledBy()");
 		assert.deepEqual(t2.getAriaLabelledBy(), aAriaLabelledBy, "t2.getAriaLabelledBy()");
 	});
 
@@ -243,20 +245,13 @@ sap.ui.define([
 
 	// test misc (control interaction, metadata, styles, etc.)
 
-	function isEmpty(oObject) {
-		for (var i in oObject) { // eslint-disable-line no-unused-vars
-			return false;
-		}
-		return true;
-	}
-
 	QUnit.test("MetadataOk", function (assert) {
 		var oMetadata = t1.getMetadata();
 		assert.ok(oMetadata, "t1.getMetadata() should not be null");
 		assert.ok(oMetadata.getParent(), "t1.getMetadata().getParent() should not be null");
 		assert.ok(oMetadata.getParent() === Control.getMetadata());
 		assert.strictEqual(oMetadata.getProperties()["value"]["type"], "string");
-		assert.ok(isEmpty(oMetadata.getAggregations()));
+		assert.ok(isEmptyObject(oMetadata.getAggregations()));
 		var oAssociations = oMetadata.getAssociations();
 		assert.strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
 		assert.ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");

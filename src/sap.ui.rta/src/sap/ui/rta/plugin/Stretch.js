@@ -377,6 +377,7 @@ function (
 			aChildrensChildrenOverlays = aChildrensChildrenOverlays.concat(OverlayUtil.getAllChildOverlays(oChildOverlay));
 		});
 
+		// eslint-disable-next-line no-unsafe-negation
 		if (!aChildrensChildrenOverlays.length > 0) {
 			return false;
 		}

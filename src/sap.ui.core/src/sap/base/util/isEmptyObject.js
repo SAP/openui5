@@ -25,11 +25,10 @@ sap.ui.define([], function() {
 	 * @returns {boolean} whether or not the given object is empty
 	 */
 	var fnIsEmptyObject = function isEmptyObject(obj) {
-		/*eslint-disable no-unused-vars */
+		// eslint-disable-next-line no-unreachable-loop
 		for (var sName in obj) {
 			return false;
 		}
-		/*eslint-enable no-unused-vars */
 		return true;
 	};
 

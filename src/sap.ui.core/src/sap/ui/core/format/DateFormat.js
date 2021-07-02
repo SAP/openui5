@@ -1510,6 +1510,7 @@ sap.ui.define([
 		sResult = aBuffer.join("");
 
 		if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
+			// eslint-disable-next-line no-new-wrappers
 			sResult = new String(sResult);
 			sResult.originInfo = {
 				source: "Common Locale Data Repository",

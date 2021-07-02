@@ -23,7 +23,7 @@ sap.ui.define([
 
 			var mConditionsData, aConditions = null, oModifier = mPropertyBag.modifier;
 
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "filterConditions"))
 				.then(function(mFilterConditions) {
 					// 'filterConditions' property needs to be updated for change selector
@@ -81,7 +81,7 @@ sap.ui.define([
 		return new Promise(function(resolve, reject) {
 			var mConditionsData, aConditions, nDelIndex = -1, oModifier = mPropertyBag.modifier;
 
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "filterConditions"))
 				.then(function(mFilterConditions) {
 					// 'filterConditions' property needs to be updated for change selector

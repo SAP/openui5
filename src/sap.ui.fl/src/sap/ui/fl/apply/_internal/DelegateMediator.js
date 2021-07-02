@@ -187,7 +187,7 @@ sap.ui.define([
 			) {
 				reject(new Error("The input control should be a managed object"));
 			}
-			return resolve();
+			resolve();
 		});
 	}
 

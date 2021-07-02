@@ -32,7 +32,8 @@
 	function noop() {}
 
 	function isEmpty(obj) {
-		for (var key in obj ) { //eslint-disable-line no-unused-vars
+		// eslint-disable-next-line no-unreachable-loop
+		for (var key in obj ) {
 			return false;
 		}
 		return true;

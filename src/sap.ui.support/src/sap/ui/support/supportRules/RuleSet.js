@@ -139,6 +139,7 @@ function (jQuery, library, storage, constants) {
 			return "Support rule with the id " + oSettings.id + " needs a description.";
 		}
 
+		// eslint-disable-next-line no-unsafe-negation
 		if (!oSettings.resolution && (!oSettings.resolutionurls || !oSettings.resolutionurls.length > 0)) {
 			jQuery.sap.log.error("Support rule with the id " + oSettings.id + " needs either a resolution or resolutionurls or should have a ticket handler function");
 			return "Support rule with the id " + oSettings.id + " needs either a resolution or resolutionurls or should have a ticket handler function";

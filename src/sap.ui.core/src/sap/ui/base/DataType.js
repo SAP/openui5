@@ -623,6 +623,7 @@ sap.ui.define([
 	 */
 	DataType.registerInterfaceTypes = function(aTypes) {
 		for (var i = 0; i < aTypes.length; i++) {
+			// eslint-disable-next-line no-new-wrappers
 			ObjectPath.set(aTypes[i], mInterfaces[aTypes[i]] = new String(aTypes[i]));
 		}
 	};

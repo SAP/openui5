@@ -108,6 +108,7 @@ sap.ui.define([
 			]
 		},
 		"string": {
+			// eslint-disable-next-line no-new-wrappers
 			valid: ["a", "", new String("abc")],
 			invalid: [0, true, {}],
 			parseValue: [

@@ -5744,9 +5744,7 @@ sap.ui.define([], function() {
       "      </m:properties>\n" +
       "    </content>\n" +
       "  </entry>\n" +
-      "</feed>"
-      ;
-
+      "</feed>";
   var sCategories2XML = "\<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\
   <entry xml:base=\"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns=\"http://www.w3.org/2005/Atom\">\
     <id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(2)</id>\
@@ -5808,8 +5806,7 @@ sap.ui.define([], function() {
       "		\"Description\" : \"Soft drinks, coffees, teas, beers, and ales\",\n" +
       "		\"Picture\" : \"\"\n" +
       "	}\n" +
-      "}"
-    ;
+      "}";
   var sCategory3JSON = "{\n" +
       "	\"d\" : {\n" +
       "		\"__metadata\" : {\n" +
@@ -5827,8 +5824,7 @@ sap.ui.define([], function() {
       "		\"Description\" : \"Desserts, candies, and sweet breads\",\n" +
       "		\"Picture\" : \"\"\n" +
       "	}\n" +
-      "}"
-    ;
+      "}";
   var sCategory4JSON = "{\n" +
       "	\"d\" : {\n" +
       "		\"__metadata\" : {\n" +
@@ -5846,8 +5842,7 @@ sap.ui.define([], function() {
       "		\"Description\" : \"Cheeses\",\n" +
       "		\"Picture\" : \"\"\n" +
       "	}\n" +
-      "}"
-    ;
+      "}";
   var sCategoryBrokenJSON = "{\n" +
       "	\"d\" : { \"results\" : {\n" +
       "		\"__metadata\" : {\n" +
@@ -5865,8 +5860,7 @@ sap.ui.define([], function() {
       "		\"Description\" : \"Breads, crackers, pasta, and cereal\",\n" +
       "		\"Picture\" : \"\"\n" +
       "	} }\n" +
-      "}"
-    ;
+      "}";
   var sCategorySelectJSON = "\n" +
       "\n" +
       "{\n" +
@@ -5949,8 +5943,7 @@ sap.ui.define([], function() {
       "		},\n" +
       "		\"CategoryID\" : 1\n" +
       "	}\n" +
-      "}"
-  ;
+      "}";
   var sCategoryWithResultProp = "{\n" +
   "	\"d\" : {\n" +
   "		\"__metadata\" : {\n" +
@@ -5969,8 +5962,7 @@ sap.ui.define([], function() {
   "		\"Description\" : \"Soft drinks, coffees, teas, beers, and ales\",\n" +
   "		\"Picture\" : \"\"\n" +
   "	}\n" +
-  "}"
-;
+  "}";
   var sProductExpandJSON = "\n" +
       "\n" +
       "{\n" +

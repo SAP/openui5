@@ -73,8 +73,8 @@ var sSingleLangTest = "de",
         "uk": ["Нікотинамідаденіндинуклеотидфосфат", "Ніко-ти-на-мі-да-де-нін-ди-ну-кле-о-тид-фо-сфат"]
     },
     mCompoundWords = {
-        "en": ["factory-made", "fac-tory-​made"],
-        "de": ["Geheimzahl-Aufschreiber", "Geheim-zahl-​Auf-schrei-ber"]
+        "en": ["factory-made", "fac-tory-\u200bmade"],
+        "de": ["Geheimzahl-Aufschreiber", "Geheim-zahl-\u200bAuf-schrei-ber"]
     },
     mTexts = {
         // lang: [not hyphenated, hyphenated]

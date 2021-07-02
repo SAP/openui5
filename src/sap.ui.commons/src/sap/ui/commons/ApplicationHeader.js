@@ -141,14 +141,14 @@ sap.ui.define([
 		this.oLogoffBtn.attachPress(this.logoff,this);
 		this.oLogoffBtn.setParent(this);
 		this.oLogoffBtn.setLite(true);
-	}
+	};
 
 
 	/**
 	*  This event is fired when the user clicks on the Log Off button
 	*  @param oEvent The event triggered
 	*  @private
-	*/;
+	*/
 	ApplicationHeader.prototype.logoff = function(oEvent){
 		this.fireLogoff();
 	};

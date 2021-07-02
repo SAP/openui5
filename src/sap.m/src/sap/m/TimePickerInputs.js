@@ -316,6 +316,8 @@ sap.ui.define([
 				if (iActiveInput >= aInputs.length) {
 					iActiveInput = bWrapAround ? 0 : iInputsCount - 1;
 				}
+			// false-positive finding of no-unmodified-loop-condition rule
+			// eslint-disable-next-line no-unmodified-loop-condition
 			} while (!aInputs[iActiveInput].getEnabled() && iActiveInput !== iStartActiveInput && (bWrapAround || iActiveInput < iInputsCount - 1));
 
 			if (iActiveInput !== iStartActiveInput && aInputs[iActiveInput].getEnabled()) {

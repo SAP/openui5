@@ -556,6 +556,7 @@ function(
 				// instance if found
 				if (sId) {
 					var theTemplate = sap.ui.getCore().getTemplate(sId);
+					// eslint-disable-next-line no-unsafe-negation
 					if (!theTemplate instanceof Template) {
 						throw new Error("Object for id \"" + sId + "\" is no sap.ui.core.tmpl.Template!");
 					} else {

@@ -984,6 +984,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 						} else if ( c > a ) {
 							var j = offset(a,c,va,0),
 								end = j + params[c].n;
+							// eslint-disable-next-line no-unmodified-loop-condition
 							for (count = occurs[j]; count > 0 && i < end; j++ ) {
 								if ( occurs[j] < count ) {
 									count = occurs[j];

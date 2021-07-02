@@ -313,6 +313,7 @@ sap.ui.define([
 			var currentPreset = this.model.getProperty("/selectionPresetsCurrent"),
 				oExecutionContext = this._getExecutionContext();
 
+			// eslint-disable-next-line no-unsafe-negation
 			if (!currentPreset.selections.length > 0) {
 				MessageToast.show("Select some rules to be analyzed.");
 				return;

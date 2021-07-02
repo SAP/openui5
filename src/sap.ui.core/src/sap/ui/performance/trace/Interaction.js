@@ -192,16 +192,18 @@ sap.ui.define([
 		if (oSrcElement) {
 			var Component, oComponent;
 			Component = sap.ui.require("sap/ui/core/Component");
-			while (Component && oSrcElement && oSrcElement.getParent) {
-				oComponent = Component.getOwnerComponentFor(oSrcElement);
-				if (oComponent || oSrcElement instanceof Component) {
-					oComponent = oComponent || oSrcElement;
-					var oApp = oComponent.getManifestEntry("sap.app");
-					// get app id or module name for FESR
-					sId = oApp && oApp.id || oComponent.getMetadata().getName();
-					sVersion = oApp && oApp.applicationVersion && oApp.applicationVersion.version;
+			if (Component) {
+				while (oSrcElement && oSrcElement.getParent) {
+					oComponent = Component.getOwnerComponentFor(oSrcElement);
+					if (oComponent || oSrcElement instanceof Component) {
+						oComponent = oComponent || oSrcElement;
+						var oApp = oComponent.getManifestEntry("sap.app");
+						// get app id or module name for FESR
+						sId = oApp && oApp.id || oComponent.getMetadata().getName();
+						sVersion = oApp && oApp.applicationVersion && oApp.applicationVersion.version;
+					}
+					oSrcElement = oSrcElement.getParent();
 				}
-				oSrcElement = oSrcElement.getParent();
 			}
 		}
 		return {

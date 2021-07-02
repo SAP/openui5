@@ -194,7 +194,8 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			var oPopover = oTarget.getPopover();
 			if (!oPopover.isOpen()) {
-				return resolve();
+				resolve();
+				return;
 			}
 			oPopover.attachEventOnce("afterClose", resolve);
 
@@ -202,7 +203,6 @@ sap.ui.define([
 			var oParams = {};
 			oParams.keyCode = KeyCodes.ESCAPE;
 			QUnitUtils.triggerEvent("keydown", oPopover.getDomRef(), oParams);
-			return undefined;
 		});
 	};
 

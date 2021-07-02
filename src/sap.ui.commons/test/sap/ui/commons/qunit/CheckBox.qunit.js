@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/commons/CheckBox",
-	"sap/ui/core/Control"
-], function(createAndAppendDiv, CheckBox, Control) {
+	"sap/ui/core/Control",
+	"sap/base/util/isEmptyObject"
+], function(createAndAppendDiv, CheckBox, Control, isEmptyObject) {
 	"use strict";
 
 	// prepare DOM
@@ -135,23 +136,13 @@ sap.ui.define([
 		c1.attachChange(foo);
 	});
 
-	// test methods
-
-	// test misc (control interaction, metadata, styles, etc.)
-	function isEmpty(oObject) {
-		for (var i in oObject) { //eslint-disable-line no-unused-vars
-			return false;
-		}
-		return true;
-	}
-
 	QUnit.test("MetadataOk", function(assert) {
 		var oMetadata = c1.getMetadata();
 		assert.ok(oMetadata !== null, "c1.getMetadata() should not be null");
 		assert.ok(oMetadata.getParent() !== null, "c1.getMetadata().getParent() should not be null");
 		assert.ok(Control.getMetadata() === oMetadata.getParent());
 		assert.strictEqual(oMetadata.getProperties()["text"]["type"], "string");
-		assert.ok(isEmpty(oMetadata.getAggregations()));
+		assert.ok(isEmptyObject(oMetadata.getAggregations()));
 		var oAssociations = oMetadata.getAssociations();
 		assert.strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
 		assert.ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");

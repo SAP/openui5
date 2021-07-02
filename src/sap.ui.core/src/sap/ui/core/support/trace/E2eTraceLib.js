@@ -211,8 +211,8 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/performance/trace/Passport', 'sap/base/L
 						} else {
 							// alternatively allow upload via form
 							try {
-								var bDone = true;
-								while (bDone) {
+								var bDone = false;
+								while (!bDone) {
 
 									/*eslint-disable no-alert */
 									var sUrl = window.prompt('Please enter a valid URL for the store server', 'http://<host>:<port>');
@@ -230,7 +230,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/performance/trace/Passport', 'sap/base/L
 										xmlHttpPost.open("POST", sUrl + '/E2EClientTraceUploadW/UploadForm.jsp', false);
 										xmlHttpPost.setRequestHeader('Content-type', 'multipart/form-data; boundary="' + boundary + '"');
 										xmlHttpPost.send(postBody);
-										break;
+										bDone = true;
 									}
 								}
 							} catch (ex) {

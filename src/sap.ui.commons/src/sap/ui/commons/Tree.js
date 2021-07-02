@@ -756,10 +756,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Tree.prototype.getSelection = function(){
-		for (var sId in this.mSelectedNodes) {
-			return this.mSelectedNodes[sId];
-		}
-		return null;
+		var aKeys = Object.keys(this.mSelectedNodes);
+		return aKeys.length ? this.mSelectedNodes[aKeys[0]] : null;
 	};
 
 	/** Sets the selected node reference of the Tree.

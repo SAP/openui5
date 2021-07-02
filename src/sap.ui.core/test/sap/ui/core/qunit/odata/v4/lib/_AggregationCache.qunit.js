@@ -392,8 +392,7 @@ sap.ui.define([
 		oHelperMock.expects("setPrivateAnnotation").exactly(iTopBottomCallCount)
 			.withExactArgs(sinon.match.same(oGrandTotalCopy), "predicate", "($isTotal=true)");
 		oHelperMock.expects("setPrivateAnnotation").exactly(iTopBottomCallCount)
-			.withExactArgs(sinon.match.same(oGrandTotal), "copy", sinon.match.same(oGrandTotalCopy))
-			;
+			.withExactArgs(sinon.match.same(oGrandTotal), "copy", sinon.match.same(oGrandTotalCopy));
 		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oGrandTotal), "predicate", "()");
 

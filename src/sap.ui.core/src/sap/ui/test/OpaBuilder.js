@@ -67,6 +67,7 @@ sap.ui.define(
                     return vToTest instanceof vTypeToCheck;
                 }
 
+                // eslint-disable-next-line valid-typeof
                 return typeof vToTest === vTypeToCheck;
             }, false);
         }

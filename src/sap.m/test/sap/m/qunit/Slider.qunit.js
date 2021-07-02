@@ -762,9 +762,8 @@ sap.ui.define([
 		// act
 		var oReturnedValue = oSlider.setValue("96");	// string
 		oSlider.setValue(NaN);
-		oSlider.setValue(Infinity);
-		oSlider.setValue(1e+309);	// infinite positive number
-		oSlider.setValue(-1e+309);	// infinite negative number
+		oSlider.setValue(Infinity);		// infinite positive number
+		oSlider.setValue(-Infinity);	// infinite negative number
 
 		// assert
 		assert.strictEqual(fnErrorSpy.callCount, 0, "sap.base.log.error method was not called");

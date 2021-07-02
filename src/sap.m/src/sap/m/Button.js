@@ -350,7 +350,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype._getBadgeInvisibleText = function() {
-		return this._oBadgeInvisibleText || (this._oBadgeInvisibleText = new InvisibleText(this.getId() + "-badge").toStatic());
+		if (!this._oBadgeInvisibleText) {
+			this._oBadgeInvisibleText = new InvisibleText(this.getId() + "-badge").toStatic();
+		}
+		return this._oBadgeInvisibleText;
 	};
 
 	/**

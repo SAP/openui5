@@ -47,6 +47,7 @@ sap.ui.define([
 			if (mParameters === undefined || mParameters[sParameterName] === undefined || !Array.isArray(mParameters[sParameterName])) {
 				throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
 			}
+		// eslint-disable-next-line valid-typeof
 		} else if (mParameters === undefined || mParameters[sParameterName] === undefined || typeof mParameters[sParameterName] !== sType) {
 			throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
 		}

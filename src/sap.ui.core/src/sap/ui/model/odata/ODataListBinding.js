@@ -334,6 +334,7 @@ sap.ui.define([
 					// TODO: what if nested list is not complete, because it was too large?
 					var oRef = this.oModel._getObject(this.sPath, this.oContext);
 					this.aExpandRefs = oRef;
+					// eslint-disable-next-line no-unsafe-negation
 					if (Array.isArray(oRef) && !this.aSorters.length > 0 && !this.aFilters.length > 0) {
 						this.aKeys = oRef;
 						this.iLength = oRef.length;

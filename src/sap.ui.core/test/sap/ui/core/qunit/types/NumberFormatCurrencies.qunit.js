@@ -52,7 +52,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format("-123.456789e-2", "EUR"), "-1.23\xa0EUR", "-123.456789e-2");
 		assert.equal(oFormat.format("1000.00", "EUR"), "1,000.00\xa0EUR", "1000.00");
 		assert.equal(oFormat.format("1000.0000", "EUR"), "1,000.00\xa0EUR", "1000.0000");
-		assert.equal(oFormat.format(123456789.123456789, "EUR"), "123,456,789.12\xa0EUR", "123456789.123456789 (number)");
+		assert.equal(oFormat.format(123456789.12345679, "EUR"), "123,456,789.12\xa0EUR", "123456789.123456789 (number)");
 		assert.equal(oFormat.format("123456789.123456789", "EUR"), "123,456,789.12\xa0EUR", "123456789.123456789 (string)");
 	});
 
@@ -89,7 +89,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format("1000.00", "EUR"), "1,000.00\xa0EUR", "1000.00");
 		assert.equal(oFormat.format("1000.0000", "EUR"), "1,000.00\xa0EUR", "1000.0000");
 		assert.equal(oFormat.format("1000.00000000", "EUR"), "1,000.00\xa0EUR", "1000.00000000");
-		assert.equal(oFormat.format(123456789.123456789, "EUR"), "123,456,789.12345679\xa0EUR", "123456789.123456789 (number)");
+		assert.equal(oFormat.format(123456789.12345679, "EUR"), "123,456,789.12345679\xa0EUR", "123456789.123456789 (number)");
 		assert.equal(oFormat.format("123456789.123456789", "EUR"), "123,456,789.123456789\xa0EUR", "123456789.123456789 (string)");
 	});
 
@@ -540,7 +540,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			}
 		}), sFormatted = oFormat.format(123456.789, "Bitcoin");
 
-		assert.equal(sFormatted, "Ƀ" + "\xa0" + "123,456.789", "'Ƀ 123,456.789' is formatted");
+		assert.equal(sFormatted, "Ƀ" + "\xa0" + "123,456.789", "'Ƀ\xa0123,456.789' is formatted");
 		assert.deepEqual(oFormat.parse(sFormatted), [123456.789, 'Bitcoin'], "[123456.789, 'Bitcoin']");
 	});
 
@@ -570,7 +570,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		});
 
 		// symbol lookup in global configuration
-		assert.equal(oFormat.format(123456.789, "Bitcoin"), "Ƀ" + "\xa0" + "123,456.789", "Ƀ 123,456.789 - symbol lookup in global configuration.");
+		assert.equal(oFormat.format(123456.789, "Bitcoin"), "Ƀ" + "\xa0" + "123,456.789", "Ƀ\xa0123,456.789 - symbol lookup in global configuration.");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "Bitcoin")), [123456.789, "Bitcoin"], "[123456.789, 'Bitcoin']");
 
 		// symbol lookup in CLDR
@@ -599,10 +599,10 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			currencyCode: false
 		});
 
-		assert.equal(oFormat.format(123456.789, "BTC"), "Ƀ" + "\xa0" + "123,456.79", "Ƀ 123,456.79 - symbol lookup in global configuration.");
+		assert.equal(oFormat.format(123456.789, "BTC"), "Ƀ" + "\xa0" + "123,456.79", "Ƀ\xa0123,456.79 - symbol lookup in global configuration.");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "BTC")), [123456.79, "BTC"], "[123456.79, 'BTC']");
 
-		assert.equal(oFormat.format(123456.789, "Bitcoin"), "Bitcoin" + "\xa0" + "123,456.789", "Bitcoin 123,456.789 - No symbol found");
+		assert.equal(oFormat.format(123456.789, "Bitcoin"), "Bitcoin" + "\xa0" + "123,456.789", "Bitcoin\xa0123,456.789 - No symbol found");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "Bitcoin")), [123456.789, "Bitcoin"], "[123456.789, 'Bitcoin']");
 
 		// currency symbol is n/a in the options
@@ -627,10 +627,10 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			currencyCode: true
 		});
 
-		assert.equal(oFormat.format(123456.789, "BTC"), "BTC" + "\xa0" + "123,456.79", "Ƀ 123,456.79 - symbol lookup in global configuration.");
+		assert.equal(oFormat.format(123456.789, "BTC"), "BTC" + "\xa0" + "123,456.79", "Ƀ\xa0123,456.79 - symbol lookup in global configuration.");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "BTC")), [123456.79, "BTC"], "[123456.79, 'BTC']");
 
-		assert.equal(oFormat.format(123456.789, "Bitcoin"), "Bitcoin" + "\xa0" + "123,456.789", "Bitcoin 123,456.789 - No symbol found");
+		assert.equal(oFormat.format(123456.789, "Bitcoin"), "Bitcoin" + "\xa0" + "123,456.789", "Bitcoin\xa0123,456.789 - No symbol found");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "Bitcoin")), [123456.789, "Bitcoin"], "[123456.789, 'Bitcoin']");
 
 		// currency symbol is n/a in the options
@@ -1136,7 +1136,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			}
 		});
 
-		assert.equal(oFormat.format(123, "Bitcoin"), "Bitcoin 123.000");
+		assert.equal(oFormat.format(123, "Bitcoin"), "Bitcoin\xa0123.000");
 
 		assert.equal(oSpy.callCount, 0, "Error log for duplicated currencies was was not called");
 

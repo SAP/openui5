@@ -2823,6 +2823,7 @@ sap.ui.define([
 				bUIUpdated = mUIAreas[sId].rerender() || bUIUpdated;
 			}
 
+		// eslint-disable-next-line no-unmodified-loop-condition
 		} while ( bLooped && this._sRerenderTimer ); // iterate if there are new rendering tasks
 
 		this._bRendering = false;

@@ -24,8 +24,8 @@ sap.ui.define([
 	QUnit.module("DTToolListItem API", function () {
 		QUnit.test("Rendering DTToolListItems", function (assert) {
 			var aPropNames = ["someBooleanProperty", "someIntProperty", "someFloatProperty", "someStringProperty", "someEnumProperty", "someOtherProperty"];
-			var aDefVals = [false, 3, 6.28318530717958647692, "Fluffy Dirks", "Div", "some random value"];
-			var aVals = [true, 7, 3.14159265358979323846, "Fluffier Dirks", "Bare", ""];
+			var aDefVals = [false, 3, 6.283185307179586, "Fluffy Dirks", "Div", "some random value"];
+			var aVals = [true, 7, 3.141592653589793, "Fluffier Dirks", "Bare", ""];
 			var aTypes = ["boolean", "int", "float", "string", "sap.m.FlexRendertype", "thatOtherType"];
 
 			var aDTTLs = [];

@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/base/strings/escapeRegExp",
 	"sap/ui/core/Core",
 	"sap/ui/util/Storage",
-	"test-resources/sap/ui/core/qunit/test/starter/find/discovery"
-], function(testfwk, jQuery, escapeRegExp, oCore, Storage, discovery) {
+	"test-resources/sap/ui/core/qunit/test/starter/find/discovery",
+	"sap/base/util/isEmptyObject"
+], function(testfwk, jQuery, escapeRegExp, oCore, Storage, discovery, isEmptyObject) {
 	"use strict";
 
 	oCore.attachInit(function onLoadPage() {
@@ -270,15 +271,7 @@ sap.ui.define([
 	}
 
 	function isEmpty(oTree) {
-		if ( !oTree ) {
-			return true;
-		}
-		/* eslint-disable no-unused-vars */
-		for (var i in oTree) {
-			return false;
-		}
-		/* eslint-enable no-unused-vars */
-		return true;
+		return !oTree || isEmptyObject(oTree);
 	}
 
 	function compare(v1, v2) {

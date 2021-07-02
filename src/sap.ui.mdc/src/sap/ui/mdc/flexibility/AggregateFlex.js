@@ -40,7 +40,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "aggregateConditions"))
 				.then(function(oAggregateConditions) {
 					var oAggregations = oAggregateConditions ? oAggregateConditions : {};
@@ -62,7 +62,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			return Promise.resolve()
+			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "aggregateConditions"))
 				.then(function(oAggregateConditions) {
 					var aValue = oAggregateConditions ? oAggregateConditions : {};

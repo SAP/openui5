@@ -32,6 +32,7 @@ sap.ui.define([
 		this._hasStarted = true;
 		this._testRecorderConfig = aTestRecorderConfig || sap.ui.getCore().getConfiguration().getTestRecorderMode();
 
+		// eslint-disable-next-line no-unsafe-negation
 		if (this._testRecorderConfig && !this._testRecorderConfig.indexOf("silent") > -1 && !this._isInIframe()) {
 			sap.ui.require([
 				"sap/ui/testrecorder/UIContextInjector",

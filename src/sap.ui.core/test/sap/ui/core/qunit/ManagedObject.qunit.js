@@ -392,6 +392,7 @@ sap.ui.define([
 		setAndTest("stringValue", 23.45, "" + 23.45);
 		setAndTest("stringValue", true, "" + true);
 		setAndTest("stringValue", oDate, "" + oDate);
+		// eslint-disable-next-line no-new-wrappers
 		setAndTest("stringValue", new String("0815"), "0815");
 		setAndTest("stringValue", null, '');
 		setAndTest("stringValue", undefined, '');
@@ -489,6 +490,7 @@ sap.ui.define([
 		setAndTest("_hiddenValue", 23.45, "" + 23.45);
 		setAndTest("_hiddenValue", true, "" + true);
 		setAndTest("_hiddenValue", oDate, "" + oDate);
+		// eslint-disable-next-line no-new-wrappers
 		setAndTest("_hiddenValue", new String("0815"), "0815");
 		setAndTest("_hiddenValue", null, '');
 		setAndTest("_hiddenValue", undefined, '');

@@ -320,18 +320,14 @@ function(ManagedObject, encodeXML) {
 			this._oRenderParent.firstChild.addEventListener("change", function(oEvent) {
 
 				var oDomRef = oEvent.target,
-					bResult = false,
 					aReasons = [],
 					sValue = [oDomRef.value, oDomRef];
-				while (!bResult) {
-					if (oDomRef.getAttribute("raise")) {
-						if (oDomRef.getAttribute("args")) {
-							var aArgs = oDomRef.getAttribute("args").split(",");
-							aArgs = aArgs.concat(aReasons,sValue);
-							bResult = that[oDomRef.getAttribute("raise")].apply(that, aArgs);
-						}
+				if (oDomRef.getAttribute("raise")) {
+					if (oDomRef.getAttribute("args")) {
+						var aArgs = oDomRef.getAttribute("args").split(",");
+						aArgs = aArgs.concat(aReasons,sValue);
+						that[oDomRef.getAttribute("raise")].apply(that, aArgs);
 					}
-					break;
 				}
 			});
 			this._oRenderParent.firstChild.addEventListener("mouseout", function(oEvent) {

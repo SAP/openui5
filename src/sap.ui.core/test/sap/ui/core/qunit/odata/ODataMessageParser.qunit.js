@@ -22,7 +22,7 @@ sap.ui.define([
 	ODataMetadata,
 	ODataMessageParser,
 	BindingMode,
-	String,
+	StringType,
 	MessageManager,
 	Input,
 	Button,
@@ -1183,7 +1183,7 @@ sap.ui.define([
 		var oInput3 = new Input({
 			value: {
 				path: "/Products(1)/ProductName",
-				type: new String(null, {
+				type: new StringType(null, {
 					maxLength: 3
 				})
 			}
@@ -1228,7 +1228,7 @@ sap.ui.define([
 
 			oInput3.bindProperty("value",  {
 				path: "ProductName",
-				type: new String(null, {
+				type: new StringType(null, {
 					maxLength: 3
 				})
 			});
