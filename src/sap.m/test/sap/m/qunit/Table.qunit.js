@@ -758,6 +758,96 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Test for multiSelectMode", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var sut = createSUT("idTblMultiSelectMode", true, false, "MultiSelect");
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.ok(sut._selectAllCheckBox, "Table contains select all checkBox");
+		assert.notOk(sut._clearAllButton, "Table does not contain clear all icon");
+		sut.setMultiSelectMode("ClearAll");
+		Core.applyChanges();
+		assert.ok(sut._clearAllButton, "Table contains select all clear all icon button");
+		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by adding style class since no items selected");
+
+		var $tblHeader = sut.$("tblHeader").trigger("focus");
+		qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
+		assert.notOk(sut.getSelectedItems().length, "Select All is disabled with keyboard. Space on column header");
+
+		// Check if clear all icon has aria-label attribute
+		var $clearSelection = sut.$("clearSelection");
+		var sText = $clearSelection.attr("aria-label");
+		assert.strictEqual(sText, oResourceBundle.getText("TABLE_ICON_DESELECT_ALL"), "The clear all icon has an aria-label assigned");
+
+		var oItem = sut.getItems()[0];
+		oItem.setSelected(true);
+		Core.applyChanges();
+		this.clock.tick(1);
+		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is active by adding style class since items selected");
+		sut.destroy();
+		this.clock.restore();
+	});
+
+	QUnit.test("Test for multiSelectMode - Growing enabled", function(assert) {
+		var oData = {
+			items: [
+				{ name: "Michelle", color: "orange", number: 3.14 , selected:false},
+				{ name: "Michelle", color: "orange", number: 3.14, selected:false},
+				{ name: "Michelle", color: "orange", number: 3.14, selected:false},
+				{ name: "Joseph", color: "blue", number: 1.618, selected:false},
+				{ name: "Joseph", color: "blue", number: 1.618, selected:false},
+				{ name: "Joseph", color: "blue", number: 1.618, selected:false},
+				{ name: "David", color: "green", number: 0, selected:true},
+				{ name: "David", color: "green", number: 0, selected:false},
+				{ name: "David", color: "green", number: 0, selected:false},
+				{ name: "Michelle", color: "orange", number: 3.14, selected:false},
+				{ name: "Michelle", color: "orange", number: 3.14, selected:false},
+				{ name: "Michelle", color: "orange", number: 3.14, selected:false}
+			],
+			cols: ["Name", "Color", "Number"]
+		};
+
+		var sut = new Table("idTblGrowing", {
+			growing: true,
+			growingThreshold: 5,
+			multiSelectMode: "ClearAll",
+			mode: "MultiSelect"
+		});
+
+		var aColumns = oData.cols.map(function (colname) {
+			if (colname === "Name") {
+				return new Column({ header: new Label({ text: colname })});
+			}
+			return new Column({ header: new Label({ text: colname })});
+		}),
+		i = aColumns.length;
+
+		while (i--) {
+			sut.addColumn(aColumns[aColumns.length - i - 1]);
+		}
+
+		sut.setModel(new JSONModel(oData));
+		sut.bindAggregation("items", "/items", new ColumnListItem({
+			selected: "{selected}",
+			cells: oData.cols.map(function (colname) {
+				return new Label({ text: "{" + colname.toLowerCase() + "}" });
+			})
+		}));
+
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.ok(sut._clearAllButton, "Table contains clear all icon button");
+		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by removing style class since no items selected");
+
+		var $trigger = sut.$("trigger").trigger("focus");
+		qutils.triggerKeydown($trigger, KeyCodes.SPACE);
+		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is active by adding style class after growing");
+		sut.destroy();
+	});
+
 	QUnit.test("Test for destroyItems", function(assert) {
 		var sut = createSUT("idTableDestroyItems", true, true);
 		sut.placeAt("qunit-fixture");

@@ -24,7 +24,8 @@ sap.ui.define([
 			"sap.ui.mdc.RowCountMode",
 			"sap.ui.mdc.SelectionMode",
 			"sap.ui.mdc.TableRowAction",
-			"sap.ui.mdc.FilterExpression"
+			"sap.ui.mdc.FilterExpression",
+			"sap.ui.mdc.MultiSelectMode"
 			],
 		interfaces: [
 			"sap.ui.mdc.IFilterSource",
@@ -559,6 +560,25 @@ sap.ui.define([
 		cell: "cell",
 		fax: "fax",
 		preferred: "preferred"
+	};
+
+	/**
+	 * Enumeration of the <code>multiSelectMode>/code> in <code>ListBase</code>.
+	 * @enum {string}
+	 * @public
+	 */
+	thisLib.MultiSelectMode = {
+		/**
+		 * Renders the <code>selectAll</code> checkbox (default behavior).
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * Renders the <code>clearAll</code> icon.
+		 * @public
+		 */
+		ClearAll: "ClearAll"
 	};
 
 	/**

@@ -9,7 +9,8 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 
 	// shortcut for sap.m.ListKeyboardMode
 	var ListKeyboardMode = library.ListKeyboardMode;
-
+	// shortcut for sap.m.MultiSelectMode
+	var MultiSelectMode = library.MultiSelectMode;
 
 	/**
 	 * Table renderer.
@@ -142,7 +143,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 				rm.class(clsPrefix + "SelCol");
 				rm.attr("role", "presentation");
 				rm.openEnd();
-				rm.renderControl(oTable._getSelectAllCheckbox());
+				rm.renderControl(oTable.getMultiSelectMode() == MultiSelectMode.Default ? oTable._getSelectAllCheckbox() : oTable._getClearAllButton());
 				rm.close("th");
 				index++;
 			} else {

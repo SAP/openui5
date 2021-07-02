@@ -17,10 +17,11 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ListBaseRenderer",
+	"sap/ui/core/Icon",
 	// jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(Core, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, ResizeHandler, PasteHelper, KeyCodes, jQuery, ListBaseRenderer) {
+	function(Core, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, ResizeHandler, PasteHelper, KeyCodes, jQuery, ListBaseRenderer, Icon) {
 	"use strict";
 
 
@@ -493,6 +494,10 @@ sap.ui.define([
 			this._selectAllCheckBox.destroy();
 			this._selectAllCheckBox = null;
 		}
+		if (this._clearAllButton) {
+			this._clearAllButton.destroy();
+			this._clearAllButton = null;
+		}
 	};
 
 	Table.prototype.destroyItems = function() {
@@ -793,6 +798,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method takes care of the clear all icon for table lists. It
+	 * will automatically be created on demand and returned when needed
+	 *
+	 * @private
+	 * @return {sap.ui.core.Icon} reference to the internal select all checkbox
+	 */
+	Table.prototype._getClearAllButton = function() {
+		if (!this._clearAllButton) {
+			this._clearAllButton = new Icon({
+				id: this.getId() + "-clearSelection",
+				src: "sap-icon://clear-all",
+				decorative: false,
+				press: this.removeSelections.bind(this, false, true)
+			}).setParent(this, null, true).addEventDelegate({
+				onAfterRendering: function() {
+					this._clearAllButton.getDomRef().setAttribute("tabindex", -1);
+				}
+			}, this);
+		}
+
+		return this._clearAllButton;
+	};
+
+	/**
 	 * This method takes care of the select all checkbox for table lists. It
 	 * will automatically be created on demand and returned when needed
 	 *
@@ -833,7 +862,10 @@ sap.ui.define([
 	 */
 	Table.prototype.updateSelectAllCheckbox = function () {
 		// checks if the list is in multi select mode and has selectAll checkbox
-		if (this._selectAllCheckBox && this.getMode() === "MultiSelect") {
+		if (this.getMode() !== "MultiSelect") {
+			return;
+		}
+		if (this._selectAllCheckBox && this.getMultiSelectMode() == "Default") {
 			var aItems = this.getItems(),
 				iSelectedItemCount = this.getSelectedItems().length,
 				iSelectableItemCount = aItems.filter(function(oItem) {
@@ -842,6 +874,8 @@ sap.ui.define([
 
 			// set state of the checkbox by comparing item length and selected item length
 			this._selectAllCheckBox.setSelected(aItems.length > 0 && iSelectedItemCount == iSelectableItemCount);
+		} else if (this._clearAllButton) {
+			this._clearAllButton.toggleStyleClass("sapMTableDisableClearAll", !this.getSelectedItems().length);
 		}
 	};
 
@@ -856,7 +890,10 @@ sap.ui.define([
 	 * @protected
 	 */
 	Table.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
-		if (oElement == this._selectAllCheckBox) {
+		if (oElement == this._clearAllButton) {
+			var oBundle = Core.getLibraryResourceBundle("sap.m");
+			mAriaProps.label = oBundle.getText("TABLE_ICON_DESELECT_ALL");
+		} else if (oElement == this._selectAllCheckBox) {
 			var oBundle = Core.getLibraryResourceBundle("sap.m");
 			mAriaProps.label = oBundle.getText("TABLE_CHECKBOX_SELECT_ALL");
 		}
@@ -977,7 +1014,7 @@ sap.ui.define([
 			oEvent.preventDefault();
 
 			// toggle select all header checkbox and fire its event
-			if (this._selectAllCheckBox) {
+			if (this._selectAllCheckBox && this.getMultiSelectMode() == "Default") {
 				this._selectAllCheckBox.setSelected(!this._selectAllCheckBox.getSelected()).fireSelect();
 				oEvent.setMarked();
 			}

@@ -69,6 +69,8 @@ function(
 	// shortcut for sap.m.Sticky
 	var Sticky = library.Sticky;
 
+	// shortcut for sap.m.MultiSelectMode
+	var MultiSelectMode = library.MultiSelectMode;
 
 	/**
 	 * Constructor for a new ListBase.
@@ -241,7 +243,24 @@ function(
 			 *
 			 * @since 1.58
 			 */
-			sticky : {type : "sap.m.Sticky[]", group : "Appearance"}
+			sticky : {type : "sap.m.Sticky[]", group : "Appearance"},
+
+			/**
+			 * Defines the multi selection mode for the control.
+			 * If this property is set to the <code>Default</code> value, the <code>sap.m.Table</code> control renders
+			 * the Select All checkbox in the column header, otherwise the Deselect All icon is rendered.
+			 * The Select All checkbox allows the user to select all the items in the control, and
+			 * the Deselect All icon deselects the items.
+			 * If the property is set to <code>ClearAll</code>, then selecting items via the <code>selectAll</code> method is not possible. See {@link #selectAll selectAll} for more details.
+			 *
+			 * <b>Note:</b> This property must be used with the <code>MultiSelect</code> mode.
+			 * If this property is set to <code>ClearAll</code>, then a selection of multiple items is still possible
+			 * via the range selection feature except <i>CTRL + A</i>.
+			 * Additionally, the <i>CTRL + SHIFT + A</i> key combination can be used for deselecting all the items.
+			 * For details on the range selection, please see {@link topic:8a0d4efa29d44ef39219c18d832012da Keyboard Handling for Item Selection}.
+			 * @since 1.93
+			 */
+			 multiSelectMode : {type: "sap.m.MultiSelectMode", group: "Behavior", defaultValue: MultiSelectMode.Default}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -960,9 +979,10 @@ function(
 
 
 	/**
-	 * Select all items in "MultiSelection" mode.
+	 * Selects all items in the <code>MultiSelection</code> mode.
 	 *
-	 * <b>Note:</b> In case <code>growing</code> is enabled, only the visible items in the list will be selected.
+	 * <b>Note:</b> If <code>growing</code> is enabled, only the visible items in the list are selected.
+	 * Since version 1.93, the items are not selected if <code>getMultiSelectMode=ClearAll</code>.
 	 *
 	 * @type this
 	 * @public
@@ -970,7 +990,7 @@ function(
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.selectAll = function (bFireEvent) {
-		if (this.getMode() != "MultiSelect") {
+		if (this.getMode() != "MultiSelect" || this.getMultiSelectMode() == MultiSelectMode.ClearAll) {
 			return this;
 		}
 
@@ -1030,7 +1050,6 @@ function(
 		// update property with invalidate
 		return this.setProperty("mode", sMode);
 	};
-
 
 	/**
 	 * Returns growing information as object with "actual" and "total" keys.
@@ -1431,7 +1450,7 @@ function(
 	ListBase.prototype.onItemSelect = function(oListItem, bSelected) {
 		var sMode = this.getMode();
 
-		if (this._mRangeSelection && !this.bPreventMassSelection) {
+		if (this._mRangeSelection) {
 			// if this._mRangeSelection.selected == false, then simply select the item
 			if (!this._mRangeSelection.selected) {
 				this._fireSelectionChangeEvent([oListItem]);
@@ -1544,7 +1563,6 @@ function(
 			oEvent.metaKey ||
 			this.getMode() !== ListMode.MultiSelect ||
 			!oItem.isSelectable() ||
-			this.bPreventMassSelection ||
 			oEvent.which === KeyCodes.F6) {
 			if (this._mRangeSelection) {
 				this._mRangeSelection = null;
@@ -2296,13 +2314,22 @@ function(
 	// Ctrl + A to switch select all/none
 	ListBase.prototype.onkeydown = function(oEvent) {
 		var bCtrlA = (oEvent.which == KeyCodes.A) && (oEvent.metaKey || oEvent.ctrlKey);
-		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass) || this.bPreventMassSelection) {
+
+		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass) ) {
+			return;
+		}
+		var sMultiSelectMode = this.getMultiSelectMode();
+		var bCtrlShiftA = bCtrlA && oEvent.shiftKey && sMultiSelectMode == MultiSelectMode.ClearAll;
+		if (bCtrlShiftA) {
+			oEvent.preventDefault();
+			oEvent.setMarked();
+			this.removeSelections(false, true);
 			return;
 		}
 
 		oEvent.preventDefault();
 
-		if (this.getMode() !== ListMode.MultiSelect) {
+		if (this.getMode() !== ListMode.MultiSelect || sMultiSelectMode ===  MultiSelectMode.ClearAll) {
 			return;
 		}
 
@@ -2436,7 +2463,7 @@ function(
 	};
 
 	ListBase.prototype.onItemUpDownModifiers = function(oItem, oEvent, iDirection) {
-		if (!this._mRangeSelection || this.bPreventMassSelection) {
+		if (!this._mRangeSelection) {
 			return;
 		}
 

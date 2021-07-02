@@ -138,13 +138,13 @@ sap.ui.define([
 	 * @typedef {Object} sap.ui.table.utils.TableUtils.ThemeParameters
 	 * @property {string} navigationIcon - Name of the navigation icon.
 	 * @property {string} deleteIcon - Name of the delete icon.
-	 * @property {string} resetIcon - Name of the reset icon.
+	 * @property {string} clearSelectionIcon - Name of the clearSelection icon.
 	 * @property {int} navIndicatorWidth - Width of the navigation indicator
 	 */
 	var mThemeParameters = {
 		navigationIcon: "navigation-right-arrow",
 		deleteIcon: "sys-cancel",
-		resetIcon: "undo",
+		clearSelectionIcon: "clear-all",
 		navIndicatorWidth: 3
 	};
 
@@ -1457,7 +1457,7 @@ sap.ui.define([
 
 			mThemeParameters.navigationIcon = ThemeParameters.get("_sap_ui_table_NavigationIcon");
 			mThemeParameters.deleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
-			mThemeParameters.resetIcon = ThemeParameters.get("_sap_ui_table_ResetIcon");
+			mThemeParameters.clearSelectionIcon = ThemeParameters.get("_sap_ui_table_ClearSelectionIcon");
 			mThemeParameters.navIndicatorWidth = getPixelValue("_sap_ui_table_NavIndicatorWidth");
 		},
 
