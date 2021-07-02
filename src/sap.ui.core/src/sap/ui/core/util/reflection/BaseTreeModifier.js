@@ -42,6 +42,24 @@ sap.ui.define([
 	return /** @lends sap.ui.core.util.reflection.BaseTreeModifier */{
 
 		/**
+		 * Function determining the control targeted by the change. It is also possible to pass an extensionpoint selector.
+		 * In this case an extension point is referenced in the selector but the parent control of the extensionpoint will be returned.
+		 *
+		 * @param {object} oSelector - Target of a flexibility change
+		 * @param {string} [oSelector.id] - ID of the control targeted by the change. (name or id property is mandatory for selector)
+		 * @param {boolean} [oSelector.isLocalId] - <code>true</code> if the ID within the selector is a local ID or a global ID
+		 * @param {string} [oSelector.name] - Name of the extension point targeted by the change. (name or id property is mandatory for selector)
+		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component
+		 * @param {Element} oView - For XML processing only: XML node of the view
+		 * @returns {Promise<sap.ui.base.ManagedObject|Element>} Control representation targeted within the selector, wrapped in a Promise
+		 * @throws {Error} In case no control could be determined, an error is thrown
+		 * @public
+		 */
+		bySelectorExtensionPointEnabled: function (oSelector, oAppComponent, oView) {
+			return Promise.resolve(this.bySelector(oSelector, oAppComponent, oView));
+		},
+
+		/**
 		 * Function determining the control targeted by the change.
 		 *
 		 * @param {object} oSelector - Target of a flexibility change
