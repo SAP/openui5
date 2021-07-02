@@ -26,7 +26,11 @@ sap.ui.define([
 		},
 
 		createContent : function () {
-			var oLayout = new HBox({
+			var bRealOData = TestUtils.isRealOData(),
+				sBaseUrl = bRealOData
+					? TestUtils.proxy("/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/")
+					: "test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/",
+				oLayout = new HBox({
 					renderType : "Bare"
 				}),
 				oModel = this.getModel();
@@ -39,7 +43,15 @@ sap.ui.define([
 						sCode : "",
 						bCodeVisible : false,
 						iMessages : 0,
-						bRealOData : TestUtils.isRealOData()
+						bRealOData : bRealOData,
+						sCurrencyUrl : bRealOData
+							? sBaseUrl
+								+ "Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode"
+							: sBaseUrl + "Currencies.json",
+						sUnitUrl : TestUtils.isRealOData()
+							? sBaseUrl
+								+ "UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode"
+							: sBaseUrl + "UnitsOfMeasure.json"
 					})
 				},
 				preprocessors : {
