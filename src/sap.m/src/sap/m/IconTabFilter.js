@@ -76,6 +76,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.InvisibleMessageMode
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
+	var POPOVER_OFFSET_Y_TOOL_HEADER = -8;
+
 	/**
 	 * Constructor for a new IconTabFilter.
 	 *
@@ -935,6 +937,19 @@ sap.ui.define([
 
 			if (Device.system.phone) {
 				this._oPopover._oControl.addButton(this._createPopoverCloseButton());
+			}
+
+			if (this._getIconTabHeader()._isInsideToolHeader()) {
+				this._oPopover.addStyleClass("sapMITBFilterPopoverInToolHeader");
+				this._oPopover.setOffsetY(POPOVER_OFFSET_Y_TOOL_HEADER);
+
+				if (!Device.system.phone) {
+					this._oPopover.addEventDelegate({
+						onAfterRendering: function (oEvent) {
+							this._oPopover.getDomRef().style.minWidth = this.$().outerWidth(true) + "px";
+						}.bind(this)
+					});
+				}
 			}
 
 			this.addDependent(this._oPopover);

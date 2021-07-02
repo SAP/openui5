@@ -1341,6 +1341,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns if the control is inside a sap.tnt.ToolHeader.
+	 * @private
+	 */
+	IconTabHeader.prototype._isInsideToolHeader = function() {
+		var oParent = this.getParent();
+		return oParent instanceof Control && oParent.isA('sap.tnt.ToolHeader');
+	};
+
+	/**
 	 * Invalidates the parent if it is an IconTabBar
 	 * @private
 	 */
@@ -1380,9 +1389,8 @@ sap.ui.define([
 		var aItems = this.getItems(),
 			sSelectedKey = this.getSelectedKey(),
 			i = 0,
-			oParent = this.getParent(),
 			bIsParentIconTabBar = this._isInsideIconTabBar(),
-			bIsParentToolHeader = oParent && oParent.isA("sap.tnt.ToolHeader");
+			bIsParentToolHeader = this._isInsideToolHeader();
 
 		if (!aItems.length) {
 			return;

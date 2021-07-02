@@ -23,7 +23,7 @@
 .sapMIBar.sapTntToolHeader .sapMBarChild.sapMITH {
 	height: @_sap_tnt_ToolHeader_Height;
 	box-shadow: none;
-	padding: 0 1rem;
+	padding: 0 0.5rem;
 	flex: 1;
 	min-width: 0; // fixes Chrome flex issue
 
@@ -31,18 +31,20 @@
 		padding-top: 0;
 		padding-bottom: 0;
 
-		.sapMITBText  {
-			font-size: @sapMFontLargeSize;
-		}
-
 		.sapMITBFilter .sapMITBText + .sapMITBContentArrow  {
-			height: 0.75rem;
+			&:after {
+				border-radius: 0.125rem 0.125rem 0.125rem 0.125rem;
+				box-shadow: none;
+				margin-bottom: 0.188rem;
+			}
 		}
 	}
 }
 
-.sap-phone .sapTntToolHeader .sapMITH .sapMITBHead .sapMITBFilter .sapMITBText + .sapMITBContentArrow  {
-	height: 0.825rem;
+.sapMITBFilterPopover.sapMITBFilterPopoverInToolHeader {
+	.sapUiIcon {
+		color: @sapUiContentNonInteractiveIconColor;
+	}
 }
 
 // ==========================================================================
