@@ -32,6 +32,7 @@ sap.ui.define([
 			if ( mComponentConfig.manifest === undefined ) {
 				mComponentConfig.manifest = false;
 			}
+
 			var oPromise = Component.create(mComponentConfig);
 
 			_loadingStarted = true;

@@ -156,6 +156,12 @@ sap.ui.define(function() {
 					libs: "sap.m",
 					language: "en-US"
 				}
+			},
+			"Component_dependencyLoading": {
+				title: "QUnit test: Dependency loading",
+				qunit: {
+					reorder: false
+				}
 			}
 		}
 	};
