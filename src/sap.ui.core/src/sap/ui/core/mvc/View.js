@@ -1272,6 +1272,9 @@ sap.ui.define([
 
 		// view creation
 		if (sViewClass) {
+			if (oViewSettings.type) {
+				Log.error("When using the view factory, the 'type' setting must be omitted for typed views. When embedding typed views in XML, don't use the <JSView> tag, use the <View> tag instead.");
+			}
 			return sViewClass;
 		}
 		if (!oViewSettings.type) {
@@ -1446,17 +1449,19 @@ sap.ui.define([
 		};
 
 		return ManagedObject.runWithPreprocessors(function() {
+			var vContent = this.createContent(oController);
 			if (mSettings.async) {
-				var vContent = this.createContent(oController);
-				vContent = vContent instanceof Promise ? vContent : Promise.resolve(vContent);
+				vContent = Promise.resolve(vContent);
 				return vContent.then(function(vContent) {
 					this.applySettings({
 						content : vContent
 					});
 				}.bind(this));
+			} else if (vContent instanceof Promise) {
+				throw new Error("An asynchronous view (createContent) cannot be instantiated synchronously. Affected view: '" + this.getMetadata().getName() + "'.");
 			} else {
 				this.applySettings({
-					content : this.createContent(oController)
+					content : vContent
 				});
 			}
 		}.bind(this), mPreprocessorSettings);

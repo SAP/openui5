@@ -1121,7 +1121,7 @@ function(
 						} else if (oInfo && oInfo._iKind === -1) {
 							// SPECIAL SETTING - currently only allowed for:
 							// - View's async setting
-							if (View.prototype.isPrototypeOf(oClass.prototype) && sName == "async") {
+							if (oMetadata.isA("sap.ui.core.mvc.View") && sName == "async") {
 								mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController, oRequireModules);
 							} else {
 								Log.warning(oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
