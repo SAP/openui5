@@ -7,7 +7,11 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
     "sap/ui/core/library",
-    "sap/chart/Chart"
+    "sap/chart/Chart",
+	"sap/m/Button",
+	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
+	"sap/ui/mdc/enum/ActionToolbarActionAlignment",
+	"sap/m/ToolbarSeparator"
 ],
 function(
 	Core,
@@ -16,7 +20,11 @@ function(
 	UIComponent,
 	ComponentContainer,
     CoreLibrary,
-    InnerChart
+    InnerChart,
+	Button,
+	ActionToolbarAction,
+	Alignment,
+	ToolbarSeparator
 ) {
     "use strict";
 
@@ -345,6 +353,74 @@ function(
 			this.oMDCChart._renderOverlay(false);
 			oOverlay = this.oMDCChart.getControlDelegate().getInnerChart().$().find(".sapUiMdcChartOverlay");
 			assert.ok(oOverlay, "Overlay was removed from inner chart");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.module("sap.ui.mdc.Chart: Toolbar Actions", {
+
+		beforeEach: function() {
+			var TestComponent = UIComponent.extend("test", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "",
+							"type": "application"
+						}
+					}
+				},
+				createContent: function() {
+
+					return new Chart("IDChart", {delegate: {
+							name: sDelegatePath,
+							payload: {
+							collectionPath: "/testPath" }},
+						actions: [new ActionToolbarAction( {
+							action: new Button("testButton", {text: "testButtonText"}),
+							layoutInformation: {  aggregationName: "end",alignment: Alignment.End }
+						})]
+					});
+				}
+			});
+			this.oUiComponent = new TestComponent("IDComponent");
+			this.oUiComponentContainer = new ComponentContainer({
+				component: this.oUiComponent,
+				async: false
+			});
+            this.oMDCChart = this.oUiComponent.getRootControl();
+
+			this.oUiComponentContainer.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+			this.oUiComponent.destroy();
+		}
+
+    });
+
+	QUnit.test("MDC Chart _getInitialToolbarActions", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+
+			assert.ok(this.oMDCChart._getInitialToolbarActions().length === 1, "Initial toolbar actions are returned");
+			assert.ok(this.oMDCChart._getInitialToolbarActions()[0].getAction().getText() === "testButtonText", "Initial toolbar actions are returned");
+
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("MDC Chart Initial Action is added to toolbar with the correct layout", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+
+			assert.ok(this.oMDCChart.getAggregation("_toolbar"), "Toolbar exists");
+			assert.ok(this.oMDCChart.getAggregation("_toolbar").getEnd().length === 7, "Toolbar has correct amount of actions in end aggregation");
+			assert.ok(this.oMDCChart.getAggregation("_toolbar").getEnd()[6].getAction().getText() === "testButtonText", "Action from constructor property is correctly aligned");
+			assert.ok(this.oMDCChart.getAggregation("_toolbar").getEnd()[5] instanceof ToolbarSeparator, "Action has seperator to the left");
+
 			done();
 		}.bind(this));
 	});

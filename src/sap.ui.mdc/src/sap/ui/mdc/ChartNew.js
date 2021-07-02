@@ -547,13 +547,22 @@ sap.ui.define([
          */
         Chart.prototype._createToolbar = function () {
             var toolbar = new ChartToolbar(this.getId() + "--toolbar", {
-                design: "Transparent",
-                actions: this._aInitialToolbarActions
+                design: "Transparent"
             });
 
             toolbar.createToolbarContent(this);
 
             this.setAggregation("_toolbar", toolbar);
+        };
+
+        /**
+         * Gets initial actions for toolbar as they cannot not be forwarded on init due to sorting issues
+         * @returns {array} intial actions
+         *
+         * @private
+         */
+        Chart.prototype._getInitialToolbarActions = function() {
+            return this._aInitialToolbarActions ? this._aInitialToolbarActions : [];
         };
 
         /**
