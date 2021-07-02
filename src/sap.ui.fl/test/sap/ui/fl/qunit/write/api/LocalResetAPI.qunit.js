@@ -91,17 +91,18 @@ sap.ui.define([
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
 			});
-			var oRemoveStub = sandbox.stub(PersistenceWriteAPI, "remove");
+			var oRemoveStub = sandbox.stub(PersistenceWriteAPI, "remove").resolves();
 			var oRevertStub = sandbox.stub(ChangesWriteAPI, "revert").resolves();
-			return LocalResetAPI.resetChanges(aNestedChanges, this.oComponent).then(function () {
-				assert.strictEqual(oRemoveStub.callCount, 2, "Then all changes are removed");
-				assert.strictEqual(oRevertStub.callCount, 2, "Then all changes are reverted");
-				assert.strictEqual(
-					oRevertStub.firstCall.args[0].change.getFileName(),
-					"foo2",
-					"then the changes are reverted in the correct order"
-				);
-			});
+			return LocalResetAPI.resetChanges(aNestedChanges, this.oComponent)
+				.then(function () {
+					assert.strictEqual(oRemoveStub.callCount, 2, "Then all changes are removed");
+					assert.strictEqual(oRevertStub.callCount, 2, "Then all changes are reverted");
+					assert.strictEqual(
+						oRevertStub.firstCall.args[0].change.getFileName(),
+						"foo2",
+						"then the changes are reverted in the correct order"
+					);
+				});
 		});
 
 		QUnit.test("when a reset is restored", function (assert) {

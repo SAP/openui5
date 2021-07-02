@@ -1269,10 +1269,25 @@ function(
 		 * @param {string} sAggregationName - Aggregation name
 		 * @returns {sap.ui.base.ManagedObject[]|Element[]} Aggregation content
 		 */
-		 getAggregation: function (oParent, sAggregationName) {
+		getAggregation: function (oParent, sAggregationName) {
 			var oAggregation = Utils.findAggregation(oParent, sAggregationName);
 			if (oAggregation) {
 				return oParent[oAggregation._sGetter]();
+			}
+			return undefined;
+		},
+
+		/**
+		 * Returns property value.
+		 * @param {sap.ui.base.ManagedObject|Element} oControl - Control representation
+		 * @param {string} sPropertyName - Property name
+		 * @returns {any} Value of the property
+		 */
+		getProperty: function (oControl, sPropertyName) {
+			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
+			if (oMetadata) {
+				var sPropertyGetter = oMetadata._sGetter;
+				return oControl[sPropertyGetter]();
 			}
 			return undefined;
 		}

@@ -327,14 +327,17 @@ sap.ui.define([
 		 * The original Change doesn't get deleted there, and therefore can't be applied again without this
 		 *
 		 * @param {sap.ui.rta.command.BaseCommand[]} aCommands Commands whose change should be cleaned up
+		 * @return {Promise} resolves when cleanup after undo is done
 		 */
 		function cleanUpAfterUndo(aCommands) {
+			var aPromises = [];
 			aCommands.forEach(function(oCommand) {
 				var oChange = oCommand.getPreparedChange();
 				if (oCommand.getAppComponent) {
-					PersistenceWriteAPI.remove({change: oChange, selector: oCommand.getAppComponent()});
+					aPromises.push(PersistenceWriteAPI.remove({change: oChange, selector: oCommand.getAppComponent()}));
 				}
 			});
+			return Promise.all(aPromises);
 		}
 
 		function applyChangeOnXML(assert) {
@@ -408,7 +411,7 @@ sap.ui.define([
 					}.bind(this))
 
 					.then(function() {
-						cleanUpAfterUndo(this.aCommands);
+						return cleanUpAfterUndo(this.aCommands);
 					}.bind(this))
 
 					.then(function() {
@@ -432,7 +435,7 @@ sap.ui.define([
 					}.bind(this))
 
 					.then(function() {
-						cleanUpAfterUndo(this.aCommands);
+						return cleanUpAfterUndo(this.aCommands);
 					}.bind(this))
 
 					.then(function() {

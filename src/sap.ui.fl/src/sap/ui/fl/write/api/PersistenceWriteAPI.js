@@ -250,32 +250,38 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Change} mPropertyBag.change - Change to be removed
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-	 *
+	 * @returns {Promise} resolves when changes are removed
 	 * @private
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.remove = function(mPropertyBag) {
-		if (!mPropertyBag.selector) {
-			throw new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId());
-		}
-		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-		if (!oAppComponent) {
-			throw new Error("Invalid application component for selector, change could not be removed with id: " + mPropertyBag.change.getId());
-		}
-		// descriptor change
-		if (isDescriptorChange(mPropertyBag.change)) {
-			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oAppComponent);
-			oDescriptorFlexController.deleteChange(mPropertyBag.change, oAppComponent);
-			return;
-		}
-		var oElement = JsControlTreeModifier.bySelector(mPropertyBag.change.getSelector(), oAppComponent);
-		var oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
-		// remove custom data for flex change
-		if (oElement) {
-			FlexCustomData.destroyAppliedCustomData(oElement, mPropertyBag.change, JsControlTreeModifier);
-		}
-		// delete from flex persistence map
-		oFlexController.deleteChange(mPropertyBag.change, oAppComponent);
+		var oFlexController;
+		var oAppComponent;
+		return Promise.resolve()
+			.then(function () {
+				if (!mPropertyBag.selector) {
+					return Promise.reject(new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId()));
+				}
+				oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+				if (!oAppComponent) {
+					return Promise.reject(new Error("Invalid application component for selector, change could not be removed with id: " + mPropertyBag.change.getId()));
+				}
+				// descriptor change
+				if (isDescriptorChange(mPropertyBag.change)) {
+					var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oAppComponent);
+					oDescriptorFlexController.deleteChange(mPropertyBag.change, oAppComponent);
+					return undefined;
+				}
+				var oElement = JsControlTreeModifier.bySelector(mPropertyBag.change.getSelector(), oAppComponent);
+				oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
+				// remove custom data for flex change
+				if (oElement) {
+					FlexCustomData.sync.destroyAppliedCustomData(oElement, mPropertyBag.change, JsControlTreeModifier);
+				}
+				// delete from flex persistence map
+				oFlexController.deleteChange(mPropertyBag.change, oAppComponent);
+				return undefined;
+			});
 	};
 
 	/**

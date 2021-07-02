@@ -82,7 +82,7 @@ function (
 		}
 	}, function() {
 		QUnit.test("addAppliedCustomData", function (assert) {
-			FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, false);
+			FlexCustomData.sync.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, false);
 			var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
 			assert.ok(oCustomData, "the custom data was added");
 			assert.equal(oCustomData.getValue(), "true", "the value is the standard 'true'");
@@ -93,17 +93,19 @@ function (
 				value: "revert"
 			};
 			this.oChange.setRevertData(oRevertData);
-			FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true);
+			FlexCustomData.sync.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true);
 			var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
 			assert.ok(oCustomData, "the custom data was added");
 			assert.equal(oCustomData.getValue(), '\\{\"value\":\"revert\"\\}', "the value is the standard 'true'");
 		});
 
 		QUnit.test("addFailedCustomData", function (assert) {
-			FlexCustomData.addFailedCustomData(this.oControl, this.oChange, this.mPropertyBag, "my.identifier");
-			var oCustomData = getCustomData(this.oControl, "my.identifier.a1");
-			assert.ok(oCustomData, "the custom data was added");
-			assert.equal(oCustomData.getValue(), "true", "the value is 'true'");
+			return FlexCustomData.addFailedCustomData(this.oControl, this.oChange, this.mPropertyBag, "my.identifier")
+				.then(function () {
+					var oCustomData = getCustomData(this.oControl, "my.identifier.a1");
+					assert.ok(oCustomData, "the custom data was added");
+					assert.equal(oCustomData.getValue(), "true", "the value is 'true'");
+				}.bind(this));
 		});
 
 		QUnit.test("getCustomDataIdentifier", function(assert) {
@@ -114,7 +116,7 @@ function (
 		});
 
 		QUnit.test("hasChangeApplyFinishedCustomData", function(assert) {
-			assert.notOk(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has no flex custom data");
+			assert.notOk(FlexCustomData.sync.hasChangeApplyFinishedCustomData(this.oControl, this.oChange), "the control has no flex custom data");
 		});
 	});
 
@@ -163,7 +165,7 @@ function (
 		}
 	}, function() {
 		QUnit.test("addAppliedCustomData", function(assert) {
-			FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, false);
+			FlexCustomData.sync.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, false);
 			var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
 			assert.equal(oCustomData.getValue(), "true", "the value got replaced");
 		});
@@ -173,30 +175,35 @@ function (
 				value: "revert2"
 			};
 			this.oChange.setRevertData(oRevertData);
-			FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true);
+			FlexCustomData.sync.addAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag, true);
 			var oCustomData = getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey));
 			assert.equal(oCustomData.getValue(), '\\{\"value\":\"revert2\"\\}', "the value got replaced");
 		});
 
-		QUnit.test("getParsedRevertDataFromCustomData", function(assert) {
-			var oParsedRevertData = FlexCustomData.getParsedRevertDataFromCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier);
+		QUnit.test("getParsedRevertDataFromCustomData with js control tree modifier", function(assert) {
+			var oParsedRevertData = FlexCustomData.sync.getParsedRevertDataFromCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier);
 			assert.deepEqual(oParsedRevertData, {value: "revert"}, "the parsed data is correct");
 		});
 
-		QUnit.test("getParsedRevertDataFromCustomData without custom data", function(assert) {
-			var oParsedRevertData = FlexCustomData.getParsedRevertDataFromCustomData(this.oControl5, this.oChange2, this.mPropertyBag.modifier);
+		QUnit.test("getParsedRevertDataFromCustomData with js control tree modifier without custom data", function(assert) {
+			var oParsedRevertData = FlexCustomData.sync.getParsedRevertDataFromCustomData(this.oControl5, this.oChange2, this.mPropertyBag.modifier);
 			assert.notOk(oParsedRevertData, "the parsed data returns undefined");
 		});
 
 		QUnit.test("destroyAppliedCustomData", function(assert) {
-			FlexCustomData.destroyAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier);
-			assert.notOk(getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey)));
+			return FlexCustomData.destroyAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier)
+				.then(function () {
+					assert.notOk(getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey)));
+				}.bind(this));
 		});
 
 		QUnit.test("hasChangeApplyFinishedCustomData", function(assert) {
-			assert.notOk(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChangeNoValidCustomData, this.mPropertyBag.modifier), "the control has NO applied flex custom data");
-			assert.notOk(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChangeWithoutCustomData, this.mPropertyBag.modifier), "the control has NO applied flex custom data");
-			assert.ok(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has applied flex custom data");
+			assert.notOk(FlexCustomData.sync.hasChangeApplyFinishedCustomData(this.oControl, this.oChangeNoValidCustomData),
+				"the control has NO applied flex custom data");
+			assert.notOk(FlexCustomData.sync.hasChangeApplyFinishedCustomData(this.oControl, this.oChangeWithoutCustomData),
+				"the control has NO applied flex custom data");
+			assert.ok(FlexCustomData.sync.hasChangeApplyFinishedCustomData(this.oControl, this.oChange),
+				"the control has applied flex custom data");
 		});
 	});
 
