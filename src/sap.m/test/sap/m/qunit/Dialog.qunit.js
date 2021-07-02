@@ -2807,11 +2807,15 @@ sap.ui.define([
 		this.clock.tick(500);
 		var $dialog = this.oDialog.$(),
 			fExpectedTop = Math.round((window.innerHeight - $dialog.outerHeight()) / 2),
-			fExpectedLeft = Math.round((window.innerWidth - $dialog.outerWidth())) / 2;
+			fExpectedLeft = Math.round((window.innerWidth - $dialog.outerWidth()) / 2);
 
 		// Assert
 		assert.ok(Math.abs($dialog.offset().top - fExpectedTop) < EPS, "Top coordinate is correctly calculated based on Window");
-		assert.ok(Math.abs($dialog.offset().left - fExpectedLeft) < EPS, "Left coordinate is correctly calculated based on Window");
+		assert.ok(
+			Math.abs($dialog.offset().left - fExpectedLeft) < EPS,
+			"Left coordinate is correctly calculated based on Window. " +
+			"Expected " + fExpectedLeft  + " , actual is " + $dialog.offset().left + " . Possible error is " + EPS
+		);
 	});
 
 	QUnit.test("Custom Within Area. 'top' and 'left' of Within Area should be included", function (assert) {
