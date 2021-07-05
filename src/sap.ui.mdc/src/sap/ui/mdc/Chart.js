@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/ChartItemController",
 	"sap/ui/mdc/p13n/subcontroller/SortController",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/mdc/actiontoolbar/ActionToolbarAction"
+	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
+	'sap/ui/mdc/p13n/panels/ChartItemPanelNew'
 ],
 	function (
 		Core,
@@ -48,7 +49,8 @@ sap.ui.define([
 		ChartItemController,
 		SortController,
 		KeyCodes,
-		ActionToolbarAction
+		ActionToolbarAction,
+		ChartItemPanel
 	) {
 		"use strict";
 
@@ -1774,6 +1776,55 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * This function is used by P13n to determine which chart type supports which layout options.
+		 * There might be chart tyoes which do not support certain layout options (i.e. "Axis3").
+		 * Layout config is defined as followed:
+		 * {
+		 *  key: string //identifier for the chart type
+		 *  allowedLayoutOptions : [] //array containing allowed layout options as string
+		 * }
+		 *
+		 * @returns {array}
+		 */
+		Chart.prototype.getChartTypeLayoutConfig = function() {
+
+			if (this._aChartTypeLayout) {
+				return this._aChartTypeLayout;
+			}
+
+			var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+
+			var aStandardSetup = [
+				{kind: "Dimension", availableRoles:[{key: MDCLib.ChartItemRoleType.category, text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')}, {key: MDCLib.ChartItemRoleType.series, text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')}]},
+				{kind: "Measure", availableRoles: [{key: MDCLib.ChartItemRoleType.axis1, text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')}]}
+			];
+
+
+			this._aChartTypeLayout = [
+				{key: "column", allowedLayoutOptions: [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.series], templateConfig: aStandardSetup},
+				{key: "bar", allowedLayoutOptions:  [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.series], templateConfig: aStandardSetup},
+				{key: "dual_column", allowedLayoutOptions:  [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.series], templateConfig: aStandardSetup}
+			];
+			return this._aChartTypeLayout;
+		};
+
+		Chart.prototype.getAdaptationUI = function() {
+
+			var oLayoutConfig = this.getChartTypeLayoutConfig().find(function(it){return it.key === this.getChartType();}.bind(this));
+
+			var oArguments = {panelConfig: oLayoutConfig};
+
+			return Promise.resolve(new ChartItemPanel(oArguments));
+		};
+
+		Chart.prototype.getAllowedRolesForKinds = function() {
+			return [
+				{kind: "Measure", allowedRoles: this._getLayoutOptionsForType("aggregatable")},
+				{kind: "Dimension", allowedRoles: this._getLayoutOptionsForType("groupable")}
+			];
+		};
+
 		Chart.prototype.onkeydown = function(oEvent) {
 			if (oEvent.isMarked()) {
 				return;
@@ -1802,6 +1853,41 @@ sap.ui.define([
 
 			return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
 		};
+    /**
+     * This returns the layout options for a specific type of Item (measure/dimension,groupable/aggregatable)
+     * It is used by p13n to determine which layout options to show in the p13n panel
+     * @param {string} sType the type for which the layout options are requested
+     */
+	 Chart.prototype._getLayoutOptionsForType = function(sType){
+        var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var oAvailableRoles = {
+		    groupable: [
+				{
+					key: MDCLib.ChartItemRoleType.category,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
+				}, {
+					key: MDCLib.ChartItemRoleType.category2,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
+				}, {
+					key: MDCLib.ChartItemRoleType.series,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
+				}
+			],
+			aggregatable: [
+				{
+					key: MDCLib.ChartItemRoleType.axis1,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
+				}, {
+					key: MDCLib.ChartItemRoleType.axis2,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
+				}, {
+					key: MDCLib.ChartItemRoleType.axis3,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
+				}
+			]
+		};
+		return oAvailableRoles[sType];
+    };
 
 		return Chart;
 	}, true);

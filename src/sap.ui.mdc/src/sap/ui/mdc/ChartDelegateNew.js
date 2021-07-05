@@ -223,6 +223,21 @@ sap.ui.define([
     };
 
     /**
+     * This function is used by P13n to determine which chart type supports which layout options.
+     * There might be chart tyoes which do not support certain layout options (i.e. "Axis3").
+     * Layout config is defined as followed:
+     * {
+     *  key: string //identifier for the chart type
+     *  allowedLayoutOptions : [] //array containing allowed layout options as string
+     * }
+     *
+     * @returns {array}
+     */
+    ChartDelegate.getChartTypeLayoutConfig = function() {
+
+    };
+
+    /**
      * Gets the available chart types for the current state of the inner chart.
      *
      * @returns {array<ChartTypeObject>} Array containing the available chart types

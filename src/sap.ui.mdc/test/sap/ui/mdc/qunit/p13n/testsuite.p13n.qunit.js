@@ -273,6 +273,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"ChartItemPanelNew": {
+				group: "UI Panels",
+				module: "./ChartItemPanelNew.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"UIManager": {
 				group: "P13n logic",
 				module: "./UIManager.qunit",

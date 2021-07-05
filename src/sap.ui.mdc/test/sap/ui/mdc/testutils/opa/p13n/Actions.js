@@ -14,7 +14,9 @@ sap.ui.define([
 	"./waitForP13nButtonWithMatchers",
 	"./waitForP13nDialog",
 	"./waitForSelectWithSelectedTextOnPanel",
-	"./Util"
+	"./Util",
+	"sap/base/Log",
+	"sap/base/util/UriParameters"
 ], function(
 	Opa5,
 	Matcher,
@@ -27,7 +29,9 @@ sap.ui.define([
 	waitForP13nButtonWithMatchers,
 	waitForP13nDialog,
 	waitForSelectWithSelectedTextOnPanel,
-	Util
+	Util,
+	Log,
+	UriParameters
 ) {
 	"use strict";
 
@@ -617,13 +621,154 @@ sap.ui.define([
 		iPersonalizeChart: function(oControl, sChartType, aItems) {
 			return iPersonalize.call(this, oControl, Util.texts.chart, {
 				success: function(oP13nDialog) {
-					this.waitFor({
-						controlType: "sap.m.P13nDimMeasurePanel",
-						matchers: new Ancestor(oP13nDialog, false),
-						success: function(aP13nDimMeasurePanels) {
-							var oP13nDimMeasurePanel = aP13nDimMeasurePanels[0];
-							// Setup chart type
-							this.waitFor({
+
+					if (UriParameters.fromQuery(window.location.search).get("newChartP13n") === "true") {
+
+						this.waitFor({
+							controlType: "sap.ui.mdc.p13n.panels.ChartItemPanelNew",
+							matchers: new Ancestor(oP13nDialog, false),
+							success: function() {
+								// Setup chart type
+								var aItemsToRemoveIds = [];
+								var aItemsAlreadyPresent = [];
+
+								this.waitFor({
+
+									controlType: "sap.m.ColumnListItem",
+									matchers: [
+										new Ancestor(oP13nDialog, false)
+									],
+									actions: function(oColumnListItem) {
+										this.waitFor({
+											controlType: "sap.m.ComboBox",
+											matchers: new Ancestor(oColumnListItem),
+											success: function(aComboBoxes) {
+												var oComboBox = aComboBoxes[0];
+												var oItem = aItems.find(function(oItem) {
+													return oComboBox.getSelectedKey() === oItem.key;
+												});
+												var bItemIsPresent = !!oItem;
+
+												//Remove if not selected
+												if (!bItemIsPresent) {
+
+													//Template has only one cell (no role & remove)
+													var  bTemplate = oColumnListItem.getCells().length === 1;
+
+													if (!bTemplate){
+														this.waitFor({
+															controlType: "sap.m.Button",
+															matchers: new Ancestor(oColumnListItem, false),
+															actions: function(oBtn) {
+																aItemsToRemoveIds.push(oBtn.getId());
+															}
+														});
+													}
+												} else {
+													aItemsAlreadyPresent.push(oComboBox.getSelectedKey());
+												}
+											}
+										});
+									}.bind(this),
+									success: function() {
+
+										aItemsToRemoveIds.forEach(function(oBtnId){
+
+											this.waitFor({
+
+												controlType: "sap.m.Button",
+												matchers: [
+													new Ancestor(oP13nDialog, false),
+													new Properties({
+														id: oBtnId
+													})
+												],
+												success: function(aBtns) {
+													new Press().executeOn(aBtns[0]);
+												}
+											});
+
+										}.bind(this));
+
+										var aItemsToAdd = aItems.filter(function(oItem){return aItemsAlreadyPresent.indexOf(oItem.key) === -1;});
+
+										aItemsToAdd.forEach(function(oItem) {
+
+											if (oItem.kind) {
+												this.waitFor({
+													controlType: "sap.m.ComboBox",
+													matchers: [
+														new Ancestor(oP13nDialog, false),
+														new Properties({
+															id: "p13nPanel-templateComboBox-" + oItem.kind
+														})
+													],
+													actions: function(oComboBox) {
+														iChangeComboBoxSelection.call(this, oComboBox, oItem.key);
+													}.bind(this)
+												});
+											} else {
+												Log.error("P13nChartPersonalizationOPA: No kind field given for " + oItem.key + ". Ignoring the field!");
+											}
+
+
+										}.bind(this));
+
+										//Make sure every new item has the correct role
+										this.waitFor({
+
+											controlType: "sap.m.ColumnListItem",
+											matchers: [
+												new Ancestor(oP13nDialog, false)
+											],
+											actions: function(oColumnListItem) {
+												this.waitFor({
+													controlType: "sap.m.ComboBox",
+													matchers: new Ancestor(oColumnListItem),
+													success: function(aComboBoxes) {
+														var oComboBox = aComboBoxes[0];
+														var oItem = aItems.find(function(oItem) {
+															return oComboBox.getSelectedKey() === oItem.key;
+														});
+														var bItemIsPresent = !!oItem;
+
+														if (bItemIsPresent) {
+
+															var bMobile = oColumnListItem.getTable().getParent().getParent()._bMobileMode;
+															if (bMobile && oColumnListItem.getCells()[0].getItems[1].getVisible() == false) {
+																return;
+															}
+
+															if (!bMobile && !oColumnListItem.getCells()[1].getVisible()) {
+																return;
+															}
+
+															//Select correct role if selected
+															this.waitFor({
+																controlType: "sap.m.Select",
+																matchers: new Ancestor(oColumnListItem),
+																actions: function(oSelect) {
+																	iChangeSelectSelection.call(this, oSelect, oItem.role);
+																}.bind(this)
+															});
+														}
+													}.bind(this)
+												});
+											}.bind(this)
+										});
+
+										iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+									}
+								});
+							}
+						});
+					} else {
+						this.waitFor({
+							controlType: "sap.m.P13nDimMeasurePanel",
+							matchers: new Ancestor(oP13nDialog, false),
+							success: function(aP13nDimMeasurePanels) {
+								var oP13nDimMeasurePanel = aP13nDimMeasurePanels[0];
+								this.waitFor({
 								controlType: "sap.m.OverflowToolbar",
 								matchers: new Ancestor(oP13nDimMeasurePanel, false),
 								success: function(aOverflowToolbars) {
@@ -684,9 +829,10 @@ sap.ui.define([
 										}
 									});
 								}
-							});
-						}
-					});
+								});
+							}
+						});
+					}
 				}
 			});
 		},

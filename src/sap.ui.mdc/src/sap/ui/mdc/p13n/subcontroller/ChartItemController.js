@@ -5,8 +5,9 @@
 sap.ui.define([
     "./BaseController",
     "sap/ui/mdc/p13n/P13nBuilder",
+    "sap/base/util/UriParameters",
     "sap/ui/mdc/p13n/panels/ChartItemPanel"
-], function (BaseController, P13nBuilder, ChartItemPanel) {
+], function (BaseController, P13nBuilder, UriParameters, ChartItemPanel) {
     "use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -14,9 +15,37 @@ sap.ui.define([
     var ChartItemController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ChartItemController");
 
     ChartItemController.prototype.getAdaptationUI = function(oPropertyHelper) {
-        var oChartItemPanel = new ChartItemPanel();
-        oChartItemPanel.setP13nModel(this._getP13nModel(oPropertyHelper));
-        return Promise.resolve(oChartItemPanel);
+
+        if (UriParameters.fromQuery(window.location.search).get("newChartP13n") === "true"){
+
+            var fnResolve;
+
+            this._oAdaptationControl.getAdaptationUI().then(function(oPanel){
+                this._oPanel = oPanel;
+                this._oPropHelper = oPropertyHelper;
+                var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+                oPanel.setP13nData(oAdaptationData.items);
+                fnResolve(oPanel);
+            }.bind(this));
+
+            return new Promise(function (resolve, reject) {
+                fnResolve = resolve;
+            });
+
+        } else {
+            var oChartItemPanel = new ChartItemPanel();
+            oChartItemPanel.setP13nModel(this._getP13nModel(oPropertyHelper));
+            return Promise.resolve(oChartItemPanel);
+        }
+
+    };
+
+    ChartItemController.prototype.update = function(){
+        BaseController.prototype.update.apply(this, arguments);
+
+        if (UriParameters.fromQuery(window.location.search).get("newChartP13n") === "true"){
+            this._oPanel.setP13nData(this.mixInfoAndState(this._oPropHelper).items);
+        }
     };
 
     ChartItemController.prototype.getDelta = function(mPropertyBag) {

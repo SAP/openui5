@@ -190,6 +190,87 @@ sap.ui.define([
 			});
 		},
 
+		waitForP13nChartItemTemplateBox: function(oSettings){
+			var bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
+			var sPopoverTitle = oSettings.title;
+			var sKind = oSettings.kind;
+			var fSuccess = oSettings.success;
+
+			var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			var sPlaceholderName;
+
+			switch (sKind) {
+				case "Measure":
+					sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_MEASURE');
+					break;
+				case "Aggregation":
+					sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_MEASURE');
+					break;
+				case "Dimension":
+					sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_DIMENSION');
+					break;
+				case "Groupable":
+					sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_DIMENSION');
+					break;
+			}
+
+			var aMatchers = [];
+
+			if (sPopoverTitle){
+				aMatchers.push(new PropertyStrictEquals({
+					name: "title",
+					value: sPopoverTitle
+				}));
+			}
+
+			return this.waitFor({
+				controlType: bModal ? "sap.m.Dialog" : "sap.m.ResponsivePopover",
+				matchers: aMatchers,
+				success: function () {
+					this.waitFor({
+						searchOpenDialogs: true,
+						controlType: "sap.m.ComboBox",
+						matchers: new PropertyStrictEquals({
+							name: "placeholder",
+							value: sPlaceholderName
+						}),
+						success: function (aComboBox) {
+							fSuccess(aComboBox[0]);
+						}
+					});
+				}
+			});
+		},
+
+		iChangeComboBoxSelection : function(oComboBox, sNew, oSettings) {
+			new Press().executeOn(oComboBox);
+			this.waitFor({
+				controlType: "sap.m.Popover",
+				matchers: new Ancestor(oComboBox),
+				success: function(aPopovers) {
+					Opa5.assert.ok(aPopovers.length === 1, "ComboBox popover found");
+					var oPopover = aPopovers[0];
+					this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: [
+							new Ancestor(oPopover, false),
+							new PropertyStrictEquals({
+								name: "title",
+								value: sNew
+							})
+						],
+						actions: new Press(),
+						success: function(oSelect) {
+							if (oSettings && typeof oSettings.success === "function") {
+								oSettings.success.call(this, oSelect);
+							}
+						},
+						errorMessage: "ComboBox StandardListItem with text '" + sNew + "' not found"
+					});
+				}
+			});
+		},
+
 		iEnterTextInFilterDialog: function(sFilterName, sText, bLive) {
 			return this.waitForP13nItem({
 				itemNameSpace: "sap.m.ListItemBase",
@@ -294,6 +375,59 @@ sap.ui.define([
 				}
 			});
 		},
+		iAddDimension : function(sColumnName, sPopoverTitle, aP13nItems, bModal){
+			return this.waitForP13nChartItemTemplateBox({
+				title: sPopoverTitle,
+				items: aP13nItems,
+				kind: "Dimension",
+				modal: typeof bModal === "boolean" ? bModal : true,
+				success: function(oComboBox) {
+					this.iChangeComboBoxSelection(oComboBox, sColumnName);
+				}.bind(this)
+			});
+		},
+		iAddMeasure : function(sColumnName, sPopoverTitle, aP13nItems, bModal){
+			return this.waitForP13nChartItemTemplateBox({
+				title: sPopoverTitle,
+				items: aP13nItems,
+				kind: "Measure",
+				modal: typeof bModal === "boolean" ? bModal : true,
+				success: function(oComboBox) {
+					this.iChangeComboBoxSelection(oComboBox, sColumnName);
+				}.bind(this)
+			});
+		},
+		iRemoveDimension : function(sColumnName){
+
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.ComboBox",
+				matchers: function(oComboBox){
+					return oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() === sColumnName : false;
+				},
+				success: function(aComboBox){
+					this.waitFor({
+						searchOpenDialogs: true,
+						controlType: "sap.m.ColumnListItem",
+						matchers: new Descendant(aComboBox[0]),
+						success: function(aListItem){
+							this.waitFor({
+								searchOpenDialogs: true,
+								controlType: "sap.m.Button",
+								matchers: [
+									new PropertyStrictEquals({
+										name: "icon",
+										value: "sap-icon://decline"
+									}),
+									new Ancestor(aListItem[0])
+								],
+								actions: new Press()
+							});
+						}
+					});
+				}
+			});
+		},
 		iClickOnListItem: function (sItemText) {
 			return this.waitFor({
 				searchOpenDialogs: true,
@@ -353,6 +487,22 @@ sap.ui.define([
 					name: "text",
 					value: sItemText
 				}),
+				success: function (aLabels) {
+					this.waitFor({
+						controlType: "sap.m.ColumnListItem",
+						matchers: new Descendant(aLabels[0]),
+						actions: new Press()
+					});
+				}
+			});
+		},
+		iClickOnTableItemWithComboBox: function (sItemName) {
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.ComboBox",
+				matchers: function(oComboBox){
+					return oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() === sItemName : false;
+				},
 				success: function (aLabels) {
 					this.waitFor({
 						controlType: "sap.m.ColumnListItem",

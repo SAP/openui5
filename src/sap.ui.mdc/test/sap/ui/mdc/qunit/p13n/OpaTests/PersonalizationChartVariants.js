@@ -5,8 +5,9 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
-	'sap/ui/Device'
-], function(Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
+	'sap/ui/Device',
+	"sap/base/util/UriParameters"
+], function(Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device, UriParameters) {
 	'use strict';
 
 	if (window.blanket) {
@@ -200,23 +201,43 @@ sap.ui.define([
 		]);
 	});
 	opaTest("When I deselect 'Genre' and select 'Title', the chart should be changed", function(Given, When, Then) {
-		When.iSelectColumn("Genre", sViewSettings).and.iSelectColumn("Title", sViewSettings);
+		if (UriParameters.fromQuery(window.location.search).get("newChartP13n") === "true"){
+			When.iRemoveDimension("Genre", sViewSettings).and.iAddDimension("Title", sViewSettings);
 
-		Then.iShouldSeeP13nItems([
-			{p13nItem: "Genre", selected: false},
-			{p13nItem: "Price (average)", selected: true},
-			{p13nItem: "Author ID", selected: false},
-			{p13nItem: "Classification", selected: false},
-			{p13nItem: "DetailGenre", selected: false},
-			{p13nItem: "Language", selected: false},
-			{p13nItem: "Price (max)", selected: false},
-			{p13nItem: "Price (min)", selected: false},
-			{p13nItem: "SubGenre", selected: false},
-			{p13nItem: "Title", selected: true},
-			{p13nItem: "Words (average)", selected: false},
-			{p13nItem: "Words (max)", selected: false},
-			{p13nItem: "Words (min)", selected: false}
-		]);
+			Then.iShouldSeeP13nItems([
+				{p13nItem: "Genre", selected: false},
+				{p13nItem: "Title", selected: true},
+				{p13nItem: "Price (average)", selected: true},
+				{p13nItem: "Author ID", selected: false},
+				{p13nItem: "Classification", selected: false},
+				{p13nItem: "DetailGenre", selected: false},
+				{p13nItem: "Language", selected: false},
+				{p13nItem: "Price (max)", selected: false},
+				{p13nItem: "Price (min)", selected: false},
+				{p13nItem: "SubGenre", selected: false},
+				{p13nItem: "Words (average)", selected: false},
+				{p13nItem: "Words (max)", selected: false},
+				{p13nItem: "Words (min)", selected: false}
+			]);
+		} else {
+			When.iSelectColumn("Genre", sViewSettings).and.iSelectColumn("Title", sViewSettings);
+
+			Then.iShouldSeeP13nItems([
+				{p13nItem: "Genre", selected: false},
+				{p13nItem: "Price (average)", selected: true},
+				{p13nItem: "Author ID", selected: false},
+				{p13nItem: "Classification", selected: false},
+				{p13nItem: "DetailGenre", selected: false},
+				{p13nItem: "Language", selected: false},
+				{p13nItem: "Price (max)", selected: false},
+				{p13nItem: "Price (min)", selected: false},
+				{p13nItem: "SubGenre", selected: false},
+				{p13nItem: "Title", selected: true},
+				{p13nItem: "Words (average)", selected: false},
+				{p13nItem: "Words (max)", selected: false},
+				{p13nItem: "Words (min)", selected: false}
+			]);
+		}
 
 		When.iPressDialogOk();
 

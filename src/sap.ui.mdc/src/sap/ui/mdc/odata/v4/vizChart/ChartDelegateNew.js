@@ -17,7 +17,8 @@ sap.ui.define([
     "sap/ui/model/Sorter",
     "sap/m/VBox",
     "sap/ui/base/ManagedObjectObserver",
-    "sap/ui/core/ResizeHandler"
+    "sap/ui/core/ResizeHandler",
+    "sap/ui/mdc/p13n/panels/ChartItemPanelNew"
 ], function (
     V4ChartDelegate,
     loadModules,
@@ -33,7 +34,8 @@ sap.ui.define([
     Sorter,
     VBox,
     ManagedObjectObserver,
-    ResizeHandler
+    ResizeHandler,
+    ChartItemPanel
 ) {
     "use strict";
     /**
@@ -239,6 +241,89 @@ sap.ui.define([
      */
     ChartDelegate.getInnerChartSelectionHandler = function (oMDCChart) {
         return {eventId: "_selectionDetails", listener: this._getChart(oMDCChart)};
+    };
+
+    /**
+     * This function is used by P13n to determine which chart type supports which layout options.
+     * There might be chart tyoes which do not support certain layout options (i.e. "Axis3").
+     * Layout config is defined as followed:
+     * {
+     *  key: string //identifier for the chart type
+     *  allowedLayoutOptions : [] //array containing allowed layout options as string
+     * }
+     *
+     * @returns {array}
+     */
+    ChartDelegate.getChartTypeLayoutConfig = function() {
+
+        if (this._aChartTypeLayout) {
+            return this._aChartTypeLayout;
+        }
+
+        var aAxis1Only = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.series];
+		var aAxis1And2 = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.series];
+		var aCat2Axis1Only = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.category2];
+		var aCat1AllAxis = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.axis3, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.series];
+
+        this._aChartTypeLayout = [
+            {key: "column", allowedLayoutOptions: aAxis1Only},
+            {key: "bar", allowedLayoutOptions:  aAxis1Only},
+			{key: "line", allowedLayoutOptions:  aAxis1Only},
+			{key: "combination", allowedLayoutOptions:  aAxis1Only},
+			{key: "pie", allowedLayoutOptions:  aAxis1Only},
+			{key: "donut", allowedLayoutOptions:  aAxis1Only},
+            {key: "dual_column", allowedLayoutOptions:  aAxis1And2},
+			{key: "dual_bar", allowedLayoutOptions:  aAxis1And2},
+			{key: "dual_line", allowedLayoutOptions:  aAxis1And2},
+			{key: "stacked_bar", allowedLayoutOptions:  aAxis1Only},
+			{key: "scatter", allowedLayoutOptions:  aAxis1And2},
+			{key: "bubble", allowedLayoutOptions:  aCat1AllAxis},
+			{key: "heatmap", allowedLayoutOptions:  aCat2Axis1Only},
+			{key: "bullet", allowedLayoutOptions:  aAxis1Only},
+			{key: "vertical_bullet", allowedLayoutOptions:  aAxis1Only},
+			{key: "dual_stacked_bar", allowedLayoutOptions:  aAxis1And2},
+			{key: "100_stacked_bar", allowedLayoutOptions:  aAxis1Only},
+			{key: "stacked_column", allowedLayoutOptions:  aAxis1Only},
+			{key: "dual_stacked_column", allowedLayoutOptions:  aAxis1And2},
+			{key: "100_stacked_column", allowedLayoutOptions:  aAxis1Only},
+			{key: "dual_combination", allowedLayoutOptions:  aAxis1And2},
+			{key: "dual_horizontal_combination", allowedLayoutOptions:  aAxis1And2},
+			{key: "dual_horizontal_combination", allowedLayoutOptions:  aAxis1And2},
+			{key: "dual_stacked_combination", allowedLayoutOptions:  aAxis1And2},
+			{key: "dual_horizontal_stacked_combination", allowedLayoutOptions:  aAxis1And2},
+			{key: "stacked_combination", allowedLayoutOptions:  aAxis1Only},
+			{key: "100_dual_stacked_bar", allowedLayoutOptions:  aAxis1Only},
+			{key: "100_dual_stacked_column", allowedLayoutOptions:  aAxis1Only},
+			{key: "horizontal_stacked_combination", allowedLayoutOptions:  aAxis1Only},
+			{key: "waterfall", allowedLayoutOptions:  aCat2Axis1Only},
+			{key: "horizontal_waterfall", allowedLayoutOptions:  aCat2Axis1Only}
+        ];
+
+        return this._aChartTypeLayout;
+    };
+
+    ChartDelegate.getAdaptionUI = function(oMDCChart) {
+
+        var oLayoutConfig = this.getChartTypeLayoutConfig().find(function(it){return it.key === oMDCChart.getChartType();});
+
+        //Default case -> everything allowed
+        if (!oLayoutConfig) {
+            var aRoles = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.axis3, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.category2, MDCLib.ChartItemRoleType.series];
+            oLayoutConfig = {key: oMDCChart.getChartType(), allowedLayoutOptions: aRoles};
+        }
+
+        var aStandardSetup = [
+            {kind: "Groupable"},
+            {kind: "Aggregatable"}
+        ];
+
+        oLayoutConfig.templateConfig = aStandardSetup;
+
+
+        //var aRolesAvailable = [MDCLib.ChartItemRoleType.axis1, MDCLib.ChartItemRoleType.axis2, MDCLib.ChartItemRoleType.axis3, MDCLib.ChartItemRoleType.category, MDCLib.ChartItemRoleType.category2, MDCLib.ChartItemRoleType.series];
+        var oArguments = {panelConfig: oLayoutConfig};
+
+        return Promise.resolve(new ChartItemPanel(oArguments));
     };
 
     /**
