@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#TEAMS",
 	"value" : [{
 		"Team_Id" : "TEAM_01",
 		"Name" : "Business Suite",

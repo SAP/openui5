@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList",
 	"@odata.metadataEtag" : "W/\"20200804153016\"",
 	"@odata.count" : "0",
 	"value" : []

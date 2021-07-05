@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "../$metadata#EMPLOYEES",
 	"value" : [ {
 		"@odata.etag" : "W/\"19770724000000.0000000\"",
 		"ID" : "1",

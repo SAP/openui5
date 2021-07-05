@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "../$metadata#SalesOrderList('0500000009')/SO_2_SOITEM(CurrencyCode,GrossAmount,ItemPosition,ProductID,Quantity,QuantityUnit,SalesOrderID)",
 	"@odata.metadataEtag" : "W/\"20200714143235.2254550 \"",
 	"@odata.count" : "4",
 	"value" : [{

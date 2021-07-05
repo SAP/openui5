@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#UnitsOfMeasure(ExternalCode,DecimalPlaces,Text,ISOCode,UnitCode)",
 	"@odata.metadataEtag" : "W/\"20190204140701\"",
 	"value" : [{
 		"UnitCode" : "%",
