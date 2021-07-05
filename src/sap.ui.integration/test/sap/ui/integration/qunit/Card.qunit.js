@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/m/BadgeCustomData",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/m/library",
-	"sap/base/util/LoaderExtensions"
+	"sap/base/util/LoaderExtensions",
+	"sap/m/HBox",
+	"sap/ui/model/json/JSONModel"
 ],
 	function (
 		Card,
@@ -24,7 +26,9 @@ sap.ui.define([
 		BadgeCustomData,
 		DataProviderFactory,
 		mLibrary,
-		LoaderExtensions
+		LoaderExtensions,
+		HBox,
+		JSONModel
 	) {
 		"use strict";
 
@@ -900,6 +904,34 @@ sap.ui.define([
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
+		});
+
+		QUnit.test("Default model is not propagated", function (assert) {
+			// Arrange
+			var oContainer = new HBox({
+					items: [
+						new Card({
+							manifest: oManifest_ListCard
+						})
+					]
+				}),
+				oModel = new JSONModel({"test": "propagated value"}),
+				oCard;
+
+			oContainer.setModel(oModel);
+
+			oCard = oContainer.getItems()[0];
+
+			// Act
+			oContainer.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oCard.getModel().getProperty("/test"), undefined, "Default model is not propagated to the card.");
+
+			// Clean up
+			oContainer.destroy();
+			oModel.destroy();
 		});
 
 		QUnit.module("Methods", {
