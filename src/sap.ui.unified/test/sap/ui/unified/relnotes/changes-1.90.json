@@ -19,5 +19,32 @@
         ]
       }
     ]
+  },
+  "1.90.2": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "a807976ceb3013e35333a9e31f6a31c3dfc5ec83",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: Use monospaced font only for unit part",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180216104"
+          }
+        ]
+      },
+      {
+        "id": "63d3ab3ed8f8ea9a2dad4d5032bc47958a64127c",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: selects correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003918772021"
+          }
+        ]
+      }
+    ]
   }
 }

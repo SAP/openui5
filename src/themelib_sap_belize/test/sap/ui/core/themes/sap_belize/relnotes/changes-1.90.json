@@ -25,5 +25,25 @@
         ]
       }
     ]
+  },
+  "1.90.2": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "673d5be8fc8bae2a8f1257100a7ba38180da014d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected background in belize-deep",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003104972021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003709152021"
+          }
+        ]
+      }
+    ]
   }
 }

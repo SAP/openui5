@@ -140,5 +140,76 @@
         ]
       }
     ]
+  },
+  "1.90.2": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "a87fdb302ecba132ba37a9e5e1866afcab9d357b",
+        "type": "FIX",
+        "text": " core.routing: propagate 'routeRelevant' to parent target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180218006"
+          }
+        ]
+      },
+      {
+        "id": "185c9f6794b880509d6711b6385955914fec1827",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#fetchCodeList: consider local annotations when loading code lists",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180201135"
+          }
+        ]
+      },
+      {
+        "id": "c383ab832983a86a305824bcba4026e61b6ff37c",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: decode existing hash before using it to restore the history state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180169665"
+          }
+        ]
+      },
+      {
+        "id": "2edcbea81684521e7676e376bf1a7c30af20a634",
+        "type": "FIX",
+        "text": " jquery.js: make 'offset' work with SVG child elements in Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170112268"
+          }
+        ]
+      },
+      {
+        "id": "a1a0ee6241d1bd92c672b05a4b08b11477d54c95",
+        "type": "FIX",
+        "text": " Adjust MediaQueryList usage for Safari 13 and older",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003708942021"
+          }
+        ]
+      },
+      {
+        "id": "2e35db2af157731adec0f712d57a774ef1820fe5",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel#reportError: handle JSON error response from $batch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180171988"
+          }
+        ]
+      }
+    ]
   }
 }

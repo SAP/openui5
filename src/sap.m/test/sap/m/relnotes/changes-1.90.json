@@ -52,5 +52,92 @@
         ]
       }
     ]
+  },
+  "1.90.2": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "63d3ab3ed8f8ea9a2dad4d5032bc47958a64127c",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: selects correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003918772021"
+          }
+        ]
+      },
+      {
+        "id": "17efe062a4be86dfe80293bd722bba6f12549d0c",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: pure numeric keyboard for iPhone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2030097892"
+          }
+        ]
+      },
+      {
+        "id": "2a9715e08a366828d4b00a11f549e8e4e2d4b5fa",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Revert \"Closing value state popup on value state change\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180203385"
+          }
+        ]
+      },
+      {
+        "id": "7c577218c709ab88f0d398bcf3919ddbb1506046",
+        "type": "FIX",
+        "text": " sap.m.Input: Typed in value reset on user interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180175014"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170029208"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001736212021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002232792021"
+          }
+        ]
+      },
+      {
+        "id": "78f14ec2f7a23ba27e330da6884d6995e41138ff",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Remove 'readonly' attribute on mobile devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002364292021"
+          }
+        ]
+      },
+      {
+        "id": "807f1f9b25a91cd786357c78d55b480c913d23f7",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Closing value state popup on value state change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180155920"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003150742021"
+          }
+        ]
+      }
+    ]
   }
 }
