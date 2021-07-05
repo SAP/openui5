@@ -115,11 +115,39 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when context menu is opened for a sap.ui.comp.smartform.GroupElement and no fields are available", function(assert) {
+			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
+			oGroupElementOverlay.focus();
+			oGroupElementOverlay.setSelected(true);
+			// fake no Elements available (with empty CachedElements)
+			var oAdditionalElementsPlugin = this.oRta.getPlugins()["additionalElements"];
+			sandbox.stub(oAdditionalElementsPlugin, "_combineAnalyzerResults").resolves([]);
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				var sText = "";
+				oContextMenuControl.getButtons().forEach(function(oButton) {
+					sText = sText + " - " + oButton.data("id");
+				});
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
+				if (oContextMenuControl.getButtons().length === 5) {
+					assert.equal(oContextMenuControl.getButtons().length, 5, "5 Menu Buttons are available");
+					assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
+					assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
+					assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "add field Button is disabled, because there are no fields available");
+					assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
+					assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut field");
+					assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste field");
+				} else {
+					assert.ok(false, sText);
+				}
+			}.bind(this));
+		});
+
 		QUnit.test("when context menu is opened and there are no Fields available to be added", function(assert) {
 			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
 			oGroupElementOverlay.focus();
 			oGroupElementOverlay.setSelected(true);
-			// fake no Elements available
+			// fake no Elements available (with undefined CachedElements)
 			var oAdditionalElementsPlugin = this.oRta.getPlugins()["additionalElements"];
 			sandbox.stub(oAdditionalElementsPlugin, "getAllElements").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
