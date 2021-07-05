@@ -213,6 +213,7 @@ sap.ui.define([
 				assert.equal(oSettings.isKeyUser(), true);
 				assert.equal(oSettings.isAppVariantSaveAsEnabled(), true);
 				assert.equal(oSettings.isModelS(), true);
+				assert.equal(oSettings.isKeyUserTranslationEnabled(), false);
 				Settings.getInstance().then(function(oSettings2) {
 					assert.equal(oSettings, oSettings2);
 				});
@@ -224,6 +225,7 @@ sap.ui.define([
 			Settings._oLoadSettingsPromise = undefined;
 			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oSettings.isKeyUser(), false);
+				assert.equal(oSettings.isKeyUserTranslationEnabled(), false);
 				assert.equal(oSettings.isAppVariantSaveAsEnabled(), false);
 				assert.equal(oSettings.isModelS(), false);
 				assert.equal(oSettings.isVariantSharingEnabled(), false);

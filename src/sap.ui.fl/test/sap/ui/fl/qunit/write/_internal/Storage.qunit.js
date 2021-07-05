@@ -823,6 +823,7 @@ sap.ui.define([
 
 			var oExpectedResponse = {
 				isKeyUser: true,
+				isKeyUserTranslationEnabled: false,
 				isVariantSharingEnabled: false,
 				isVariantPersonalizationEnabled: true,
 				isAtoAvailable: false,
@@ -902,6 +903,7 @@ sap.ui.define([
 
 			var DEFAULT_FEATURES = {
 				isKeyUser: false,
+				isKeyUserTranslationEnabled: false,
 				isVariantSharingEnabled: false,
 				isVariantPersonalizationEnabled: true,
 				isAtoAvailable: false,
