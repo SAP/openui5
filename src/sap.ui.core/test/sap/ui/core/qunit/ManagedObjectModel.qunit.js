@@ -1065,6 +1065,43 @@ sap.ui.define([
 		assert.deepEqual(aTrueBindings[0], oBinding1, "And this is exactly the first binding");
 	});
 
+	QUnit.test("Check Update with binding test function async", function (assert) {
+		var aTrueBindings = [];
+		var oModel = this.oManagedObjectModel;
+		var oBinding1 = oModel.bindProperty("/value");
+		var oBinding2 = oModel.bindProperty("/stringValue");
+		var oBinding3 = oModel.bindProperty("/floatValue");
+		oModel.addBinding(oBinding1);
+		oModel.addBinding(oBinding2);
+		oModel.addBinding(oBinding3);
+
+		assert.equal(oModel.getBindings().length, 3, "There are three bindings");
+
+		var fnFilter = function (oBinding) {
+			if (oBinding == oBinding1) {
+				aTrueBindings.push(oBinding);
+				return true;
+			}
+			return false;
+		};
+
+		sinon.spy(oBinding1, "checkUpdate");
+		sinon.spy(oBinding2, "checkUpdate");
+		sinon.spy(oBinding3, "checkUpdate");
+		var fnDone = assert.async();
+		oModel.checkUpdate(true, true, fnFilter);
+		oModel.checkUpdate(false, true, fnFilter); // to test foceUpdate wins
+		setTimeout(function() { // wait for Model update
+			assert.equal(aTrueBindings.length, 1, "The test is called an delivers true for one binding");
+			assert.deepEqual(aTrueBindings[0], oBinding1, "And this is exactly the first binding");
+			assert.ok(oBinding1.checkUpdate.calledWith(true), "chechUpdate called as forced");
+			assert.ok(oBinding1.checkUpdate.calledOnce, "chechUpdate called only once");
+			assert.notOk(oBinding2.checkUpdate.called, "chechUpdate not called on other Binding");
+			assert.notOk(oBinding3.checkUpdate.called, "chechUpdate not called on other Binding");
+			fnDone();
+		}, 0);
+	});
+
 	QUnit.test("ManagedObject Model - handle object properties", function(assert) {
 		var oData = {value: "A string", text: "A text"};
 		var oModel = new JSONModel({
