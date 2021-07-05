@@ -165,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			if (bWithCredentials === undefined) {
 				// ... so we assume that for all cross-origins except the UI5 bootstrap we need credentials.
 				// Setting the XHR's "withCredentials" flag does not do anything for same origin requests.
-				if (sUrl.startsWith(sBootstrapOrigin)) {
+				if (sUrl.indexOf(sBootstrapOrigin) == 0) {
 					aWithCredentials = [false, true];
 				} else {
 					aWithCredentials = [true, false];
