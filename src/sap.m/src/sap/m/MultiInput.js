@@ -263,7 +263,6 @@ function(
 		this.setAggregation("tokenizer", oTokenizer);
 
 		oTokenizer.getTokensPopup()
-			.setInitialFocus(this)
 			.attachBeforeOpen(this._onBeforeOpenTokensPicker.bind(this))
 			.attachAfterClose(this._onAfterCloseTokensPicker.bind(this))
 
