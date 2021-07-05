@@ -369,7 +369,7 @@ sap.ui.define([
 	};
 
 	UIReconstruction.addChange = function(mUIReconstructions, oCondenserInfo) {
-		INDEX_RELATED[oCondenserInfo.classification].addToReconstructionMap(mUIReconstructions, oCondenserInfo);
+		return INDEX_RELATED[oCondenserInfo.classification].addToReconstructionMap(mUIReconstructions, oCondenserInfo);
 	};
 
 	UIReconstruction.compareAndUpdate = function(mReducedChanges, mUIReconstructions) {

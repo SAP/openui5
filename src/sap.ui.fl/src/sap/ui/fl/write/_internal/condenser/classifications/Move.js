@@ -15,27 +15,33 @@ sap.ui.define([
 		 *
 		 * @param {Map} mUIReconstructions - Map of UI reconstructions
 		 * @param {object} oCondenserInfo - Condenser specific information
+		 * @returns {Promise} resolves when a create change is added to UI Reconstruction Map
 		 */
 		addToReconstructionMap: function(mUIReconstructions, oCondenserInfo) {
-			var aSourceContainerElementIds = CondenserUtils.getContainerElementIds(oCondenserInfo.sourceContainer, oCondenserInfo.sourceAggregation);
-			var aTargetContainerElementIds = CondenserUtils.getContainerElementIds(oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation);
+			return Promise.all([
+				CondenserUtils.getContainerElementIds(oCondenserInfo.sourceContainer, oCondenserInfo.sourceAggregation),
+				CondenserUtils.getContainerElementIds(oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation)
+			]).then(function (aSourceTargetElementIds) {
+				var aSourceContainerElementIds = aSourceTargetElementIds[0];
+				var aTargetContainerElementIds = aSourceTargetElementIds[1];
 
-			var aContainerElementIds;
-			var iTargetIndex;
-			if (
-				oCondenserInfo.targetContainer === oCondenserInfo.sourceContainer
-				&& oCondenserInfo.targetAggregation === oCondenserInfo.sourceAggregation
-			) {
-				aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation, aTargetContainerElementIds);
-				iTargetIndex = aContainerElementIds.indexOf(oCondenserInfo.affectedControl);
-				CondenserUtils.shiftElement(aContainerElementIds, iTargetIndex, oCondenserInfo.sourceIndex);
-			} else {
-				aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation, aTargetContainerElementIds);
-				iTargetIndex = aContainerElementIds.indexOf(oCondenserInfo.affectedControl);
-				aContainerElementIds.splice(iTargetIndex, 1);
-				aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.sourceContainer, oCondenserInfo.sourceAggregation, aSourceContainerElementIds);
-				aContainerElementIds.splice(oCondenserInfo.sourceIndex, 0, oCondenserInfo.affectedControl);
-			}
+				var aContainerElementIds;
+				var iTargetIndex;
+				if (
+					oCondenserInfo.targetContainer === oCondenserInfo.sourceContainer
+					&& oCondenserInfo.targetAggregation === oCondenserInfo.sourceAggregation
+				) {
+					aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation, aTargetContainerElementIds);
+					iTargetIndex = aContainerElementIds.indexOf(oCondenserInfo.affectedControl);
+					CondenserUtils.shiftElement(aContainerElementIds, iTargetIndex, oCondenserInfo.sourceIndex);
+				} else {
+					aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation, aTargetContainerElementIds);
+					iTargetIndex = aContainerElementIds.indexOf(oCondenserInfo.affectedControl);
+					aContainerElementIds.splice(iTargetIndex, 1);
+					aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.sourceContainer, oCondenserInfo.sourceAggregation, aSourceContainerElementIds);
+					aContainerElementIds.splice(oCondenserInfo.sourceIndex, 0, oCondenserInfo.affectedControl);
+				}
+			});
 		},
 
 		/**
