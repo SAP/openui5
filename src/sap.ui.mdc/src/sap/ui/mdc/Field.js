@@ -209,6 +209,18 @@ sap.ui.define([
 
 	};
 
+	Field.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
+
+		if (sPropertyName === "value" && this._bParseError && deepEqual(this.getValue(), this.validateProperty(sPropertyName, oValue))) {
+			// in parse error and same value - no update on property - so remove error here
+			this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates (additionalValue will follow)
+			this._bParseError = false;
+		}
+
+		return FieldBase.prototype.setProperty.apply(this, arguments);
+
+	};
+
 	/**
 	 * This property must not be set for the <code>Field</code>
 	 *
