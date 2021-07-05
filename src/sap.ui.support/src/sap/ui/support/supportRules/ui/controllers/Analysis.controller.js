@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/support/supportRules/ui/controllers/BaseController",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment",
 	"sap/m/MessageToast",
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
@@ -22,6 +23,7 @@ sap.ui.define([
 	deepExtend,
 	BaseController,
 	JSONModel,
+	Fragment,
 	MessageToast,
 	CommunicationBus,
 	channelNames,
@@ -89,13 +91,27 @@ sap.ui.define([
 		},
 
 		loadAdditionalUI: function () {
-			this._ruleDetails = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.RuleDetails", this);
-			this.byId("rulesDisplayPage").addContentArea(this._ruleDetails);
+			if (!this._ruleDetails) {
+				this._ruleDetails = Fragment.load({
+					name: "sap.ui.support.supportRules.ui.views.RuleDetails",
+					controller: this
+				}).then(function (ruleDetails) {
+					this.byId("rulesDisplayPage").addContentArea(ruleDetails);
+				}.bind(this));
+			}
 
-			this._ruleCreateUpdatePages = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.RuleUpdate", this);
-			this._ruleCreateUpdatePages.forEach(function (rcuPage) {
-				this.byId("rulesNavContainer").insertPage(rcuPage);
-			}, this);
+			if (!this._ruleCreateUpdatePages) {
+				this._ruleCreateUpdatePages = Fragment.load({
+					name: "sap.ui.support.supportRules.ui.views.RuleUpdate",
+					controller: this
+				}).then(function (ruleCreateUpdatePages) {
+					ruleCreateUpdatePages.forEach(function (rcuPage) {
+						this.byId("rulesNavContainer").insertPage(rcuPage);
+					}, this);
+
+				}.bind(this));
+			}
+
 			this._updateRuleList();
 		},
 
@@ -490,14 +506,23 @@ sap.ui.define([
 		},
 
 		onAnalyzeSettings: function (oEvent) {
+			var oSource = oEvent.getSource();
+
 			CommunicationBus.publish(channelNames.GET_AVAILABLE_COMPONENTS);
 
-			if (!this._settingsPopover) {
-				this._settingsPopover = sap.ui.xmlfragment("sap.ui.support.supportRules.ui.views.AnalyzeSettings", this);
-				this.getView().addDependent(this._settingsPopover);
+			if (!this._analyzeSettingsPopover) {
+				this._analyzeSettingsPopover = Fragment.load({
+					name: "sap.ui.support.supportRules.ui.views.AnalyzeSettings",
+					controller: this
+				}).then(function (analyzeSettingsPopover) {
+					this.getView().addDependent(analyzeSettingsPopover);
+					return analyzeSettingsPopover;
+				}.bind(this));
 			}
 
-			this._settingsPopover.openBy(oEvent.getSource());
+			this._analyzeSettingsPopover.then(function (analyzeSettingsPopover) {
+				analyzeSettingsPopover.openBy(oSource);
+			});
 		},
 
 		onContextSelect: function (oEvent) {
