@@ -237,6 +237,25 @@ sap.ui.define([
 			if (oDomRef._individualSlot) {
 				this.__slot = oDomRef._individualSlot; // If the component creates individual slots for children, f.e. columns-3 or default-1, update the __slot property, otherwise RenderManager will set the normal slot name, f.e. columns or ""
 			}
+			this.__updateObjectProperties(oDomRef);
+		};
+
+		/**
+		 * Updates all object properties (can't be done via the renderer)
+		 * @param oDomRef
+		 * @private
+		 */
+		WebComponent.prototype.__updateObjectProperties = function(oDomRef) {
+			var oAttrProperties = this.getMetadata().getPropertiesByMapping("attribute");
+			for (var sPropName in oAttrProperties) {
+				var oPropData = oAttrProperties[sPropName];
+
+				if (oPropData.type === "object") {
+					var sWebComponentPropName = oPropData._sMapTo ? oPropData._sMapTo : sPropName;
+					var vPropValue = oPropData.get(this);
+					oDomRef[sWebComponentPropName] = vPropValue;
+				}
+			}
 		};
 
 		/**
