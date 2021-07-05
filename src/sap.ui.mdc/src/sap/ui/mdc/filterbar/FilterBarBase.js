@@ -1559,10 +1559,7 @@ sap.ui.define([
 		//clean-up fields in error state
 		this._cleanUpAllFilterFieldsInErrorState();
 
-		this._bExecuteOnSelect = false;
-		if (oVariant.hasOwnProperty("executeOnSelect") && oVariant.executeOnSelect) {
-			this._bExecuteOnSelect = true;
-		}
+		this._bExecuteOnSelect = this._getExecuteOnSelectionOnVariant(oVariant);
 
 		this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = undefined;
 		if (oVariant.hasOwnProperty("createScenario") && (oVariant.createScenario === "saveAs")) {
@@ -1577,15 +1574,30 @@ sap.ui.define([
 		}
 	};
 
-
-	FilterBarBase.prototype._hasAssignedVariantManagement = function() {
-		var sVariantControlId = this.getVariantBackreference();
-
-		if (sVariantControlId && sap.ui.getCore().byId(sVariantControlId) && sap.ui.getCore().byId(sVariantControlId).isA("sap.ui.fl.variants.VariantManagement")) {
-			return true;
+	FilterBarBase.prototype._getExecuteOnSelectionOnVariant = function(oVariant) {
+		var bExecuteOnSelect = false, oVariantManagement = this._getAssignedVariantManagement();
+		if (oVariantManagement) {
+			bExecuteOnSelect = oVariantManagement.getApplyAutomaticallyOnVariant(oVariant);
 		}
 
-		return false;
+		return bExecuteOnSelect;
+	};
+
+	FilterBarBase.prototype._hasAssignedVariantManagement = function() {
+		return this._getAssignedVariantManagement() ? true : false;
+	};
+
+	FilterBarBase.prototype._getAssignedVariantManagement = function() {
+		var sVariantControlId = this.getVariantBackreference();
+
+		if (sVariantControlId) {
+			var oVariantManagement = sap.ui.getCore().byId(sVariantControlId);
+			if (oVariantManagement && oVariantManagement.isA("sap.ui.fl.variants.VariantManagement")) {
+				return oVariantManagement;
+			}
+		}
+
+		return null;
 	};
 
 
