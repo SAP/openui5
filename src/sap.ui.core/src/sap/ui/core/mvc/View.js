@@ -440,6 +440,7 @@ sap.ui.define([
 				bAsync = mSettings.async;
 
 			if (!oController && oThis.getControllerName) {
+				oThis.bControllerIsViewManaged = true;
 				// get optional default controller name
 				var defaultController = oThis.getControllerName();
 				if (defaultController) {
@@ -472,6 +473,7 @@ sap.ui.define([
 					}
 				}
 			} else if (oController) {
+				oThis.bControllerIsViewManaged = false;
 				// if passed controller is not extended yet we need to do it.
 				var sOwnerId = ManagedObject._sOwnerId;
 				if (!oController._isExtended()) {
@@ -740,7 +742,10 @@ sap.ui.define([
 	 */
 	View.prototype.exit = function() {
 		this.fireBeforeExit();
-		delete this.oController;
+		if (this.oController && this.bControllerIsViewManaged) {
+			this.oController.destroy();
+			delete this.oController;
+		}
 		delete this.oPreprocessorInfo;
 		if (this.oAsyncState) {
 			var fnDelete = deleteAsyncState.bind(this);

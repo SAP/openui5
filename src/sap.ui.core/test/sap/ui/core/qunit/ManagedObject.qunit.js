@@ -2905,4 +2905,73 @@ sap.ui.define([
 		obj.setSkippedPropagation(new Control());
 		assert.ok(obj.getSkippedPropagation().getModel() === undefined, "Model not propagated");
 	});
+
+	QUnit.module("isDestroyed / isDestroyStarted");
+
+	QUnit.test("Require module - duplicate ID issue", function(assert) {
+		assert.expect(1);
+		var done = assert.async();
+		sap.ui.define("my.Element", ["sap/ui/core/Element"], function(Element) {
+			return Element.extend("my.Element", {
+				init: function() {
+					sap.ui.require(["sap/ui/core/Element"], function(Element) {
+						try {
+							new Element({id: "table"});
+						} catch (exc) {
+							assert.equal(exc.message, "Error: adding element with duplicate id 'table'", "duplicate ID error occured");
+							done();
+						}
+					});
+				}
+			});
+		});
+
+		sap.ui.require(["my.Element"], function(Element) {
+			var oElement = new Element();
+			oElement.destroy();
+			oElement = new Element();
+			oElement.destroy();
+		});
+	});
+
+	QUnit.test("Require module - check isDestroyStarted: no duplicate ID issue", function(assert) {
+		assert.expect(2);
+		var done = assert.async();
+
+		sap.ui.define("my.Element2", ["sap/ui/core/Element"], function(Element) {
+			return Element.extend("my.Element2", {
+				init: function() {
+					assert.ok(!this.isDestroyStarted(), "Element not yet destroyed");
+					sap.ui.require(["sap/ui/core/Element"], function(Element) {
+						assert.ok(this.isDestroyStarted(), "Must be marked as destroy started");
+						done();
+					}.bind(this));
+				}
+			});
+		});
+
+		sap.ui.require(["my.Element2"], function(Element) {
+			var oElement = new Element();
+			oElement.destroy();
+		});
+	});
+
+	QUnit.test("Destroy Element: isDestroyed must return true", function(assert) {
+		var done = assert.async();
+		assert.expect(4);
+		sap.ui.define("my.Element3", ["sap/ui/core/Element"], function(Element) {
+			return Element.extend("my.Element3", {
+			});
+		});
+
+		sap.ui.require(["my.Element3"], function(Element) {
+			var oElement = new Element({id: "myElement"});
+			assert.ok(!oElement.isDestroyed(), "Element not yet destroyed");
+			assert.ok(!oElement.isDestroyStarted(), "Element not yet destroyed");
+			oElement.destroy();
+			assert.ok(oElement.isDestroyStarted(), "Must be marked as destroy started");
+			assert.ok(oElement.isDestroyed(), "Must be marked as destroy started");
+			done();
+		});
+	});
 });

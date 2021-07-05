@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/Controller",
 	'sap/base/util/LoaderExtensions',
 	"jquery.sap.dom"
-], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, LoaderExtensions) {
+], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, Controller, LoaderExtensions) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -1059,7 +1060,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Async XML Fragment from string with binding error", function(assert) {
+	QUnit.test("Asynchronous XML Fragment from string with binding error", function(assert) {
 		return Fragment.load({
 			id: "asyncFragment",
 			definition:
@@ -1116,5 +1117,4 @@ sap.ui.define([
 		// clean up panel
 		oFrag.destroy();
 	});
-
 });

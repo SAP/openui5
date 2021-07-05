@@ -5313,6 +5313,34 @@ sap.ui.define([
 		this._onContextualSettingsChanged();
 	};
 
+	/**
+	 * Checks if an object's destruction has been started. During the
+	 * descruction of an object its ID is still registered, and child
+	 * objects could be still aggregated.
+	 * Creating another object with the same ID would lead to duplicate ID
+	 * issues.
+	 * To check if the destruction is finished, call <code>isDestroyed</code>.
+	 *
+	 * @return {boolean} Whether an object's destruction has been started
+	 * @since 1.93
+	 * @protected
+	 */
+	ManagedObject.prototype.isDestroyStarted = function() {
+		return !!this._bIsBeingDestroyed;
+	};
+
+	/**
+	 * Returns whether this object is destroyed or not. A
+	 * destroyed object cannot be used anymore.
+	 *
+	 * @return {boolean} Whether the object is destroyed
+	 * @since 1.93
+	 * @public
+	 */
+	ManagedObject.prototype.isDestroyed = function() {
+		return !!this.bIsDestroyed;
+	};
+
 	ManagedObject._defaultContextualSettings = {};
 
 	return ManagedObject;

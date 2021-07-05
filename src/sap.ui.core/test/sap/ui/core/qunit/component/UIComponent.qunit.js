@@ -1317,7 +1317,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Component with async content crestion and missing Interface", function(assert) {
+	QUnit.test("Component with async content creation and missing Interface", function(assert) {
 		assert.expect(1);
 		var oManifest = {
 			"sap.app" : {
@@ -1348,6 +1348,111 @@ sap.ui.define([
 		}).catch(function(oErr) {
 			assert.equal(oErr.message, "Interface 'sap.ui.core.IAsyncContentCreation' must be implemented for component 'manifestModules.scenario12' when 'createContent' is implemented asynchronously", "Creation rejected");
 		});
+	});
+
+	QUnit.skip("Nested component - duplicate ID issue expected", function(assert) {
+		assert.expect(1);
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			},
+			"sap.ui5": {
+
+			}
+		};
+		this.setRespondedManifest(oManifest, "scenario13");
+
+		sap.ui.predefine("manifestModules/scenario13/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View", "sap/m/Panel"], function(UIComponent, View, Panel) {
+			return UIComponent.extend("manifestModules.scenario13.Component", {
+				metadata: {
+					manifest: "json"
+				},
+				constructor: function() {
+					UIComponent.apply(this, arguments);
+				},
+				createContent: function() {
+					var oPanel = new Panel();
+					this.pView = View.create({
+						viewName: "testdata.view.MainAsync",
+						type: "XML",
+						id: "testView"
+					}).then(function(oView) {
+						oPanel.addContent(oView);
+					}).catch(function() {
+						assert.ok(false, "duplicate ID issue");
+					});
+					return oPanel;
+				}
+			});
+		});
+
+		Component.create({
+			name: "manifestModules.scenario13"
+		}).then(function(oComponent) {
+			oComponent.destroy();
+		});
+		return Component.create({
+			name: "manifestModules.scenario13"
+		}).then(function(oComponent) {
+			return oComponent.pView.then(function() {
+				oComponent.destroy();
+			});
+		});
+
+	});
+
+	QUnit.test("Nested component - no duplicate ID issue expected", function(assert) {
+		assert.expect(4);
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			},
+			"sap.ui5": {
+
+			}
+		};
+		this.setRespondedManifest(oManifest, "scenario13");
+
+		sap.ui.predefine("manifestModules/scenario13/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View", "sap/m/Panel"], function(UIComponent, View, Panel) {
+			return UIComponent.extend("manifestModules.scenario13.Component", {
+				metadata: {
+					manifest: "json"
+				},
+				constructor: function() {
+					UIComponent.apply(this, arguments);
+				},
+				createContent: function() {
+					var oPanel = new Panel();
+					this.pView = View.create({
+						viewName: "testdata.view.MainAsync",
+						type: "XML",
+						id: "testView"
+					}).then(function(oView) {
+						oPanel.addContent(oView);
+						return oView;
+					}).catch(function() {
+						assert.ok(false, "duplicate ID issue");
+					});
+					this.registerForDestroy(this.pView);
+					return oPanel;
+				}
+			});
+		});
+
+		return Component.create({
+			name: "manifestModules.scenario13"
+		}).then(function(oComponent) {
+			return oComponent.destroy().then(function() {
+				return Component.create({
+					name: "manifestModules.scenario13"
+				}).then(function(oComponent) {
+					return oComponent.pView.then(function() {
+						oComponent.destroy();
+					});
+				});
+			});
+		});
+
 	});
 });
 
