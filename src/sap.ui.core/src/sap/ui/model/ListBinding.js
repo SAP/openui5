@@ -167,6 +167,25 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 	};
 
 	/**
+	 * Returns the count of entries in the list, or <code>undefined</code> if it is unknown.
+	 * The count is by default identical to the list length if it is final. Concrete subclasses may,
+	 * however, override the method, for example:
+	 * <ul>
+	 *   <li> for server-side models where lists are not completely read by the client,
+	 *   <li> for lists representing hierarchical data.
+	 * </ul>
+	 *
+	 * @returns {number|undefined} The count of entries
+	 * @public
+	 * @see #getLength
+	 * @see #isLengthFinal
+	 * @since 1.93.0
+	 */
+	ListBinding.prototype.getCount = function() {
+		return this.isLengthFinal() ? this.getLength() : undefined;
+	};
+
+	/**
 	 * Returns the number of entries in the list.
 	 *
 	 * This might be an estimated or preliminary length, in case the full length is not known yet, see method

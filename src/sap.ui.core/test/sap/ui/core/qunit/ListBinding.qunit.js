@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Control",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ListBinding",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/Sorter"
@@ -10,6 +11,7 @@ sap.ui.define([
 	Element,
 	Control,
 	ChangeReason,
+	ListBinding,
 	JSONModel,
 	JSONListBinding,
 	Sorter
@@ -233,6 +235,35 @@ sap.ui.define([
 		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
+	//**********************************************************************************************
+	QUnit.test("getCount: Count is returned", function(assert) {
+		var oBinding = {
+				getLength : function () {},
+				isLengthFinal : function () {}
+			};
+
+		sinon.mock(oBinding).expects("isLengthFinal").returns(true);
+		sinon.mock(oBinding).expects("getLength").returns("~length");
+
+		// code under test
+		assert.strictEqual(ListBinding.prototype.getCount.call(oBinding), "~length");
+	});
+
+	//**********************************************************************************************
+	QUnit.test("getCount: Length is not final", function(assert) {
+		var oBinding = {
+				getLength : function () {},
+				isLengthFinal : function () {}
+			};
+
+		sinon.mock(oBinding).expects("isLengthFinal").returns(false);
+		sinon.mock(oBinding).expects("getLength").exactly(0);
+
+		// code under test
+		assert.strictEqual(ListBinding.prototype.getCount.call(oBinding), undefined);
+	});
+
+	//**********************************************************************************************
 	QUnit.module("Sorter");
 
 	QUnit.test("getGroupFunction", function(assert) {
