@@ -959,7 +959,7 @@ sap.ui.define([
 	/**
 	 * Toggle visibility of the suggestion list.
 	 *
-	 * @param {boolean | undefined} [bShow=true] If the value is <code>true</code> the suggestions are displayed.
+	 * @param {boolean} [bShow=true] If the value is <code>true</code> the suggestions are displayed.
 	 * If the value is <code>false</code> the suggestions are hidden.
 	 * An empty suggestion list is not shown on desktop and tablet devices.<br>
 	 *

@@ -3697,7 +3697,7 @@ sap.ui.define([
 	 *   Name of the model to bind against; when <code>undefined</code> or omitted, the default model is used
 	 * @property {sap.ui.base.ManagedObject} [template]
 	 *   The template to clone for each item in the aggregation; either a template or a factory must be given
-	 * @property {boolean|undefined} [templateShareable=undefined]
+	 * @property {boolean} [templateShareable=undefined]
 	 *   Whether the framework should assume that the application takes care of the lifecycle of the given
 	 *   template; when set to <code>true</code>, the template can be used in multiple bindings, either in
 	 *   parallel or over time, and the framework won't clone it when this <code>ManagedObject</code> is cloned;
@@ -4867,7 +4867,7 @@ sap.ui.define([
 	 * Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
 	 * refers to the default model.
 	 *
-	 * @param {string|undefined} [sModelName] name of the model to be retrieved
+	 * @param {string} [sModelName] name of the model to be retrieved
 	 * @return {sap.ui.model.Model} oModel
 	 * @public
 	 */

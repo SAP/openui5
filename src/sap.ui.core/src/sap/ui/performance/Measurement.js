@@ -486,7 +486,7 @@ sap.ui.define(['sap/base/Log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 * }</code>
 		 *
 		 * @param {function} [fnFilter] a filter function that returns true if the passed measurement should be added to the result
-		 * @param {boolean|undefined} [bCompleted] Optional parameter to determine if either completed or incomplete measurements should be returned (both if not set or undefined)
+		 * @param {boolean} [bCompleted] Optional parameter to determine if either completed or incomplete measurements should be returned (both if not set or undefined)
 		 * @param {string[]} [aCategories] The function returns only measurements which match these specified categories
 		 *
 		 * @return {module:sap/ui/performance/Measurement.Entry[]} filtered array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
