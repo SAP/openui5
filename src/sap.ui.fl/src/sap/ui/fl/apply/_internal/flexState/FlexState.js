@@ -95,6 +95,7 @@ sap.ui.define([
 			pathInResponse: ["comp.variants", "comp.standardVariants", "comp.defaultVariants", "comp.changes"]
 		}
 	};
+	var _mExternalCompVariantInputData = {};
 
 	function updateComponentData(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
@@ -328,6 +329,20 @@ sap.ui.define([
 			_mInstances = {};
 			_mInitPromises = {};
 		}
+	};
+
+	FlexState.setInitialNonFlCompVariantData = function(sReference, sPersistencyKey, oStandardVariant, aVariants) {
+		_mExternalCompVariantInputData[sReference] = {};
+		_mExternalCompVariantInputData[sReference][sPersistencyKey] = {};
+		_mExternalCompVariantInputData[sReference][sPersistencyKey].standardVariant = oStandardVariant;
+		_mExternalCompVariantInputData[sReference][sPersistencyKey].variants = aVariants;
+	};
+
+	FlexState.getInitialNonFlCompVariantData = function(sReference, sPersistencyKey) {
+		if (_mExternalCompVariantInputData[sReference] && _mExternalCompVariantInputData[sReference][sPersistencyKey]) {
+			return _mExternalCompVariantInputData[sReference][sPersistencyKey];
+		}
+		return undefined;
 	};
 
 	/**

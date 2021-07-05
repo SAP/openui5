@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
@@ -18,6 +19,7 @@ sap.ui.define([
 	ManifestUtils,
 	ChangesController,
 	CompVariantState,
+	CompVariantMerger,
 	ChangePersistenceFactory,
 	LayerUtils,
 	CompVariantsUtils,
@@ -49,6 +51,14 @@ sap.ui.define([
 		var mCompEntities = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var aEntities = [];
 		for (var sPersistencyKey in mCompEntities) {
+			//Enhance CompVariantsMap with external data and standard variant after FlexState has been cleared and reinitialized
+			if (mPropertyBag.invalidateCache) {
+				var oDataToRestore = FlexState.getInitialNonFlCompVariantData(mPropertyBag.reference, sPersistencyKey);
+				if (oDataToRestore) {
+					mCompEntities._initialize(sPersistencyKey, oDataToRestore.variants);
+					CompVariantMerger.merge(sPersistencyKey, mCompEntities[sPersistencyKey], oDataToRestore.standardVariant);
+				}
+			}
 			var mCompVariantsOfPersistencyKey = mCompEntities[sPersistencyKey];
 			for (var sId in mCompVariantsOfPersistencyKey.byId) {
 				aEntities.push(mCompVariantsOfPersistencyKey.byId[sId]);
@@ -106,15 +116,8 @@ sap.ui.define([
 	FlexObjectState.getFlexObjects = function (mPropertyBag) {
 		return initFlexStateAndSetReference(mPropertyBag)
 			.then(function () {
-				var aCompVariantEntities = getCompVariantEntities(mPropertyBag);
-				var aChangePersistenceEntities = getChangePersistenceEntities(mPropertyBag);
-
-				return Promise.all([
-					aCompVariantEntities,
-					aChangePersistenceEntities
-				]).then(function (aEntities) {
-					return aEntities[0] // compVariant entities (changes of type defaultVariant / standardVariant, variant)
-						.concat(aEntities[1]); // ChangePersistence entities (change, ctrl_variant, ctrl_variant_change, ctrl_variant_management_change)
+				return getChangePersistenceEntities(mPropertyBag).then(function (aChangePersistenceEntities) {
+					return getCompVariantEntities(mPropertyBag).concat(aChangePersistenceEntities);
 				});
 			});
 	};
