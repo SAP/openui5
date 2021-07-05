@@ -113,8 +113,6 @@ sap.ui.define([
 
 					/**
 					 * Fired when a message from channels like navigator.serviceWorker is received.
-					 * @private
-					 * @ui5-restricted
 					 * @experimental since 1.91
 					 */
 					message: {
@@ -244,6 +242,7 @@ sap.ui.define([
 		 * Call this method if you want to use the experimental caching for all cards.
 		 * @private
 		 * @ui5-restricted
+		 * @experimental Since 1.91. The API might change.
 		 */
 		Host.prototype.useExperimentalCaching = function () {
 			this.bUseExperimentalCaching = true;
@@ -253,37 +252,36 @@ sap.ui.define([
 		/**
 		 * Modify request headers before sending a data request.
 		 * Override if you need to change the default cache headers behavior.
-		 * @param {*} mHeaders
-		 * @param {*} oSettings
-		 * @param {*} oCard
-		 * @returns {map}
+		 * @param {map} mHeaders The current map of headers.
+		 * @param {map} mSettings The map of request settings defined in the card manifest.
+		 * @param {sap.ui.integration.widgets.Card} oCard The card for which the request is made.
+		 * @returns {map} Map of http headers.
 		 * @private
 		 * @ui5-restricted
 	 	 * @experimental Since 1.91. The API might change.
 		 */
-		Host.prototype.modifyRequestHeaders = function (mHeaders, oSettings, oCard) {
-			var oCacheSettings = oSettings.cache,
+		Host.prototype.modifyRequestHeaders = function (mHeaders, mSettings, oCard) {
+			var oCacheSettings = mSettings.cache,
 				aCacheControl = [];
 
-			if (oCacheSettings && !oCacheSettings.noStore) {
-				aCacheControl.push("max-age=" + parseInt(oCacheSettings.maxAge || 0));
-				aCacheControl.push("stale-while-revalidate=" + parseInt(oCacheSettings.staleWhileRevalidate || 0));
-			} else {
+			if (oCacheSettings.noStore) {
 				// cache disabled
 				aCacheControl.push("max-age=0");
-				aCacheControl.push("stale-while-revalidate=0");
 				aCacheControl.push("no-store");
+			} else {
+				aCacheControl.push("max-age=" + parseInt(oCacheSettings.maxAge || 0));
+
+				if (oCacheSettings.staleWhileRevalidate) {
+					aCacheControl.push("x-stale-while-revalidate");
+				}
 			}
 
 			if (aCacheControl.length) {
 				mHeaders["Cache-Control"] = aCacheControl.join(", ");
 			}
 
-			if (oSettings.businessData !== undefined) {
-				mHeaders["x-sap-business-data"] = oSettings.businessData ? "true" : "false";
-			}
-
 			mHeaders["x-sap-card"] = "true";
+			mHeaders["x-use-cryptocache"] = "true";
 
 			return mHeaders;
 		};

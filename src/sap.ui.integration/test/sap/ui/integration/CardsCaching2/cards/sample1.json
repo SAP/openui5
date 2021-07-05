@@ -78,12 +78,7 @@
 			"data": {
 				"request": {
 					"url": "../mock/data1.json"
-				},
-				"cache": {
-					"maxAge": 0,
-					"staleWhileRevalidate": 3000000
-				},
-				"businessData": true
+				}
 			},
 			"maxItems": 5,
 			"item": {

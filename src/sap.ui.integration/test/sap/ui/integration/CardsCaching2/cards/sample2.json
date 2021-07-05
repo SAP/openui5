@@ -34,10 +34,8 @@
 			},
 			"cache": {
 				"maxAge": 0,
-				"staleWhileRevalidate": 3000000
-			},
-			"requestStrategy": "staleWhileRevalidate",
-			"businessData": true
+				"staleWhileRevalidate": true
+			}
 		},
 		"header": {
 			"title": "Stale while revalidate",

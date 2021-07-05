@@ -8,6 +8,11 @@ sap.ui.define([
 	"use strict";
 	/*global URL*/
 
+	/**
+	 * @const The amount of seconds in a common calendar year.
+	 */
+	var SECONDS_IN_YEAR = 31536000;
+
 	function getFullUrl(oRequest) {
 		var sUrl = oRequest.url,
 			vData = oRequest.data,
@@ -143,18 +148,18 @@ sap.ui.define([
 
 		if (!oCache) {
 			oCache = {
-				noStore: true,
-				maxAge: 0
+				maxAge: 0,
+				staleWhileRevalidate: true
 			};
 		}
 
 		if (!oCache.noStore) {
 			if (this._bCacheOnly) {
-				oCache.maxAge = 3000000;
-				oCache.staleWhileRevalidate = 3000000;
+				oCache.maxAge = SECONDS_IN_YEAR;
+				oCache.staleWhileRevalidate = false;
 			} else if (this._bNoCache) {
 				oCache.maxAge = 0;
-				oCache.staleWhileRevalidate = 0;
+				oCache.staleWhileRevalidate = false;
 			}
 		}
 
