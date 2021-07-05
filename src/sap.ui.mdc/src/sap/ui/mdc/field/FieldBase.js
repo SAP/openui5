@@ -2047,7 +2047,6 @@ sap.ui.define([
 				oFieldHelp.close(); // if focus is not in field, Field help closes automatically
 			}
 			this._sFilterValue = "";
-			oFieldHelp.setFilterValue("");
 			if (!bAsync && bValid) {
 				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 				oFieldHelp.onFieldChange();
@@ -2513,7 +2512,6 @@ sap.ui.define([
 				// remove typed value from MultiInput
 				oContent.setDOMValue("");
 				this._sFilterValue = "";
-				oFieldHelp.setFilterValue("");
 				this._bIgnoreInputValue = false; // just clean up
 			} else {
 				this._bIgnoreInputValue = true; // after something is selected, the value just stays for filtering -> don't use to create token
