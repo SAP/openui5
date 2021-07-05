@@ -35,6 +35,7 @@ sap.ui.define([
 
 	var oFilterBar;
 	var HasPopup = CoreLibrary.aria.HasPopup;
+	var ValueState = CoreLibrary.ValueState;
 
 	QUnit.module("FilterBar", {
 		beforeEach: function () {
@@ -172,7 +173,6 @@ sap.ui.define([
 		assert.equal(oFilterBar.getAggregation("layout").getFilterFields().length, 0);
 
 		oFilterField.destroy();
-
 	});
 
 	QUnit.test("check condition model", function (assert) {
@@ -220,6 +220,34 @@ sap.ui.define([
 			oFB.destroy();
 			done();
 		});
+	});
+
+	QUnit.test("check api setFocusOnFirstErroneousField", function (assert) {
+		var oFilterField0 = new FilterField({ conditions: "{cm>/conditions/filter0}" });
+		var oFilterField1 = new FilterField({ conditions: "{cm>/conditions/filter1}" });
+		var oFilterField2 = new FilterField({ conditions: "{cm>/conditions/filter2}" });
+
+		oFilterBar.addFilterItem(oFilterField0);
+		oFilterBar.addFilterItem(oFilterField1);
+		oFilterBar.addFilterItem(oFilterField2);
+
+		var oFilterField = oFilterBar.setFocusOnFirstErroneousField();
+		assert.ok(!oFilterField);
+
+		oFilterField1.setValueState(ValueState.Error);
+		oFilterField = oFilterBar.setFocusOnFirstErroneousField();
+		assert.ok(oFilterField === oFilterField1);
+
+		oFilterField0.setValueState(ValueState.Error);
+		oFilterField = oFilterBar.setFocusOnFirstErroneousField();
+		assert.ok(oFilterField === oFilterField0);
+
+		oFilterField0.setValueState(ValueState.None);
+		oFilterField1.setValueState(ValueState.None);
+		oFilterField = oFilterBar.setFocusOnFirstErroneousField();
+		assert.ok(!oFilterField);
+
+		oFilterBar.destroyFilterItems();
 	});
 
 	QUnit.module("FilterBar adaptation", {
