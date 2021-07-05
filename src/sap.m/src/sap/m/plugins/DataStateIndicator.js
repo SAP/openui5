@@ -256,8 +256,6 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			return;
 		}
 
-
-		var oParent = this.getParent();
 		var oControl = this.getControl();
 		var oBinding = oControl && oControl.getBinding(this._getBindingName());
 		if (oBinding && oBinding.bIsBeingDestroyed) {
@@ -268,7 +266,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 		var fnFilter = this.getFilter();
 		if (fnFilter) {
 			aMessages = aMessages.filter(function(oMessage) {
-				return fnFilter(oMessage, oParent);
+				return fnFilter(oMessage, oControl);
 			});
 		}
 
