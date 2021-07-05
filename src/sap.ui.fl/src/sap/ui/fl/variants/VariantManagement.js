@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/Grid",
+	'sap/base/Log',
 	"sap/m/SearchField",
 	"sap/m/RadioButton",
 	"sap/m/ColumnListItem",
@@ -55,6 +56,7 @@ sap.ui.define([
 	Icon,
 	HorizontalLayout,
 	Grid,
+	Log,
 	SearchField,
 	RadioButton,
 	ColumnListItem,
@@ -413,6 +415,44 @@ sap.ui.define([
 		this.oVariantInvisibleText.toStatic();
 
 		this.addDependent(this.oVariantLayout);
+
+		this._fRegisteredApplyAutomaticallyOnStandardVariant = null;
+	};
+
+	/**
+	 * Registration of a callback function. The provided callback function is executed to check if apply automatically on standard variant should be considered.
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @since 1.93
+	 * @param {function} fCallBack Called when standard variant must be applied. It determines if apply automatically on standard variant should be considered.
+	 * @returns {this} Reference to this in order to allow method chaining.
+	 */
+	VariantManagement.prototype.registerApplyAutomaticallyOnStandardVariant = function(fCallBack) {
+		this._fRegisteredApplyAutomaticallyOnStandardVariant = fCallBack;
+
+		return this;
+	};
+
+	/**
+	 * Retrieves the apply automatically state for a variant.
+	 * @private
+	 * @ui5-restricted sap.mdc
+	 * @since 1.93
+	 * @param {object} oVariant the inner variant object
+	 * @returns {boolean} apply automatically state
+	 */
+	VariantManagement.prototype.getApplyAutomaticallyOnVariant = function(oVariant) {
+		var bExecuteOnSelection = oVariant.executeOnSelect;
+
+		if (this._fRegisteredApplyAutomaticallyOnStandardVariant && this.getDisplayTextForExecuteOnSelectionForStandardVariant() && (oVariant.key === this.getStandardVariantKey())) {
+			try {
+				bExecuteOnSelection = this._fRegisteredApplyAutomaticallyOnStandardVariant();
+			} catch (ex) {
+				Log.error("callback for determination of apply automatically on standard variant failed");
+			}
+		}
+
+		return bExecuteOnSelection;
 	};
 
 	/**
@@ -2113,6 +2153,8 @@ sap.ui.define([
 		if (this._sStyleClass) {
 			this._sStyleClass = undefined;
 		}
+
+		this._fRegisteredApplyAutomaticallyOnStandardVariant = null;
 	};
 
 	return VariantManagement;

@@ -1,4 +1,4 @@
-/* global QUnit Promise */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
@@ -89,7 +89,8 @@ sap.ui.define([
 							layer: Layer.USER,
 							favorite: true,
 							originalFavorite: true,
-							visible: true
+							visible: true,
+							executeOnSelect: true
 						}, {
 							key: "2",
 							title: "Two",
@@ -993,7 +994,7 @@ sap.ui.define([
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oVariantManagement._createManagementDialog();
 
-			this.oVariantManagement._handleManageExecuteOnSelectionChanged({});
+			this.oVariantManagement._handleManageExecuteOnSelectionChanged();
 			assert.ok(this.oVariantManagement.oManagementSave.getEnabled());
 		});
 
@@ -1112,7 +1113,7 @@ sap.ui.define([
 			assert.ok(bSavePressed);
 		});
 
-		QUnit.test("check displayTextForExecuteOnSelectionForStandardVariant property", function(assert) {
+		QUnit.test("check displayTextForOnSelectionForStandardVariant property", function(assert) {
 			assert.ok(!this.oVariantManagement.getDisplayTextForExecuteOnSelectionForStandardVariant());
 
 			this.oVariantManagement.setDisplayTextForExecuteOnSelectionForStandardVariant("TEST");
@@ -1148,6 +1149,32 @@ sap.ui.define([
 
 			assert.ok(aCells[VariantManagement.COLUMN_EXEC_IDX].isA("sap.m.CheckBox"));
 			assert.equal(aCells[VariantManagement.COLUMN_EXEC_IDX].getText(), "TEST");
+		});
+
+		QUnit.test("check getApplyAutomaticallyOnVariant method", function(assert) {
+			var nCount = 0;
+			var fCallBack = function() { nCount++; return true; };
+
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			assert.equal(nCount, 0);
+			var oStdVariant = this.oVariantManagement._getItemByKey("Standard");
+			assert.ok(oStdVariant);
+			assert.ok(!this.oVariantManagement.getApplyAutomaticallyOnVariant(oStdVariant));
+
+			var oVariant = this.oVariantManagement._getItemByKey("1");
+			assert.ok(oVariant);
+			assert.ok(this.oVariantManagement.getApplyAutomaticallyOnVariant(oVariant));
+
+			this.oVariantManagement.registerApplyAutomaticallyOnStandardVariant(fCallBack);
+			assert.ok(!this.oVariantManagement.getApplyAutomaticallyOnVariant(oStdVariant));
+
+			this.oVariantManagement.setDisplayTextForExecuteOnSelectionForStandardVariant("TEST");
+			assert.ok(this.oVariantManagement.getApplyAutomaticallyOnVariant(oStdVariant));
+			assert.equal(nCount, 1);
+
+			assert.ok(this.oVariantManagement.getApplyAutomaticallyOnVariant(oVariant));
+			assert.equal(nCount, 1);
 		});
 	});
 
