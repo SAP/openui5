@@ -2,8 +2,18 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/library"],
-	function(Device, InvisibleText, coreLibrary) {
+sap.ui.define([
+	"sap/ui/Device",
+	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/library"
+],
+	function(
+	Device,
+	Core,
+	InvisibleText,
+	coreLibrary
+) {
 	"use strict";
 
 	/**
@@ -31,7 +41,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/librar
 			return;
 		}
 
-		var sPlaceholder = oSF.getPlaceholder(),
+		var sPlaceholder = oSF.getPlaceholder() || Core.getLibraryResourceBundle("sap.m").getText("FACETFILTER_SEARCH", true),
 			sValue = oSF.getValue(),
 			sWidth = oSF.getProperty("width"),
 			sId = oSF.getId(),

@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/core/Core",
@@ -128,12 +128,9 @@ sap.ui.define([
 		}
 	});
 
-	// test properties
 	QUnit.test("Properties", function(assert) {
 		assert.equal(this.sf1.getValue(), sValue, "Value property, UI5");
 		assert.equal(this.sf1Dom.value, sValue, "Value property, DOM");
-		assert.equal(this.sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
-		assert.equal(this.sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
 		assert.equal(this.sf2.getEnabled(), false, "Enabled property, UI5");
 		assert.equal(this.sf2Dom.disabled, true, "Disabled property, DOM");
 		assert.ok(this.sf2.$().hasClass("sapMSFDisabled"),"CSS class name for \"disabled\" is set");
@@ -144,6 +141,43 @@ sap.ui.define([
 		assert.ok(jQuery("#sf4-search").length == 0, "Search button is not rendered if showSearchButton == false");
 		var rightOffset = window.getComputedStyle(jQuery("#sf4-reset")[0]).getPropertyValue("right");
 		assert.strictEqual(rightOffset, "0px", "Reset button is right aligned if showSearchButton == false");
+	});
+
+	QUnit.test("Placeholder property - default value", function (assert) {
+		// arrange
+		var oSF = new SearchField();
+		oSF.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		var oSFDomRef = oSF.getFocusDomRef();
+
+		// assert
+		assert.strictEqual(oSF.getPlaceholder(), "", "Default value of placeholder property is empty string");
+		assert.strictEqual(
+			oSFDomRef.placeholder,
+			Core.getLibraryResourceBundle("sap.m").getText("FACETFILTER_SEARCH"),
+			"Default placeholder is added to the DOM"
+		);
+
+		// clean up
+		oSF.destroy();
+	});
+
+	QUnit.test("Placeholder property - set value", function (assert) {
+		// arrange
+		var sPlaceholder = "New Placeholder";
+		var oSF = new SearchField({
+			placeholder: sPlaceholder
+		});
+		oSF.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		var oSFDomRef = oSF.getFocusDomRef();
+
+		// assert
+		assert.strictEqual(oSF.getPlaceholder(), sPlaceholder, "Set value of placeholder property is empty string");
+		assert.strictEqual(oSFDomRef.placeholder, sPlaceholder, "Set placeholder is added to the DOM");
+
+		// clean up
+		oSF.destroy();
 	});
 
 	QUnit.test("Screen Reader", function(assert) {
@@ -735,4 +769,41 @@ sap.ui.define([
 		// Assert
 		assert.ok(this.oSearchField.$().hasClass("sapMFocus"), "Focus class should still be present after invalidation");
 	});
+
+	QUnit.module("Translations", {
+		beforeEach: function () {
+			this.oSearchField = new SearchField({
+				value: "some value"
+			});
+			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			this.TRANSLATED_TEXT = "Translated text";
+			this.getTextStub = sinon.stub(Core.getLibraryResourceBundle("sap.m"), "getText")
+				.returns(this.TRANSLATED_TEXT);
+		},
+		afterEach: function () {
+			this.oSearchField.destroy();
+			this.getTextStub.restore();
+		}
+	});
+
+	QUnit.test("Placeholder is updated when language is changed", function (assert) {
+		// act
+		this.oSearchField.invalidate();
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(this.oSearchField.getFocusDomRef().placeholder, this.TRANSLATED_TEXT, "Placeholder text is updated");
+	});
+
+	QUnit.test("Tooltips are updated when language is changed", function (assert) {
+		// act
+		this.oSearchField.invalidate();
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(this.oSearchField.$("reset").attr("title"), this.TRANSLATED_TEXT, "Reset tooltip is updated");
+		assert.strictEqual(this.oSearchField.$("search").attr("title"), this.TRANSLATED_TEXT, "Search tooltip is updated");
+	});
+
 });

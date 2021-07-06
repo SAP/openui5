@@ -31,13 +31,6 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
-	SearchFieldRenderer.oSearchFieldToolTips = {
-		SEARCH_BUTTON_TOOLTIP: oResourceBundle.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"),
-		RESET_BUTTON_TOOLTIP: oResourceBundle.getText("SEARCHFIELD_RESET_BUTTON_TOOLTIP"),
-		REFRESH_BUTTON_TOOLTIP: oResourceBundle.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP")
-	};
-
 	/**
 	* Constructor for a new SearchField.
 	*
@@ -268,15 +261,11 @@ sap.ui.define([
 	}});
 
 	EnabledPropagator.call(SearchField.prototype);
-
 	IconPool.insertFontFaceStyle();
-	SearchField.prototype.init = function() {
 
+	SearchField.prototype.init = function() {
 		// last changed value
 		this._lastValue = "";
-
-		// Default placeholder: "Search"
-		this.setProperty("placeholder", oResourceBundle.getText("FACETFILTER_SEARCH"), true);
 	};
 
 	SearchField.prototype.getFocusDomRef = function() {
@@ -318,6 +307,7 @@ sap.ui.define([
 
 	SearchField.prototype.onBeforeRendering = function() {
 		this._unregisterEventListeners();
+		this._updateTranslations();
 	};
 
 	SearchField.prototype.onAfterRendering = function() {
@@ -367,6 +357,16 @@ sap.ui.define([
 		}
 
 		Core.detachThemeChanged(this._handleThemeLoad, this);
+	};
+
+	SearchField.prototype._updateTranslations = function() {
+		var oRb = Core.getLibraryResourceBundle("sap.m");
+
+		SearchFieldRenderer.oSearchFieldToolTips = {
+			SEARCH_BUTTON_TOOLTIP: oRb.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"),
+			RESET_BUTTON_TOOLTIP: oRb.getText("SEARCHFIELD_RESET_BUTTON_TOOLTIP"),
+			REFRESH_BUTTON_TOOLTIP: oRb.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP")
+		};
 	};
 
 	/**
@@ -898,15 +898,16 @@ sap.ui.define([
 	 */
 	SearchField.prototype._applySuggestionAcc = function () {
 		var sAriaText = "",
-			iNumItems = this.getSuggestionItems().length;
+			iNumItems = this.getSuggestionItems().length,
+			oRb = Core.getLibraryResourceBundle("sap.m");
 
 		// add items to list
 		if (iNumItems === 1) {
-			sAriaText = oResourceBundle.getText("INPUT_SUGGESTIONS_ONE_HIT");
+			sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
 		} else if (iNumItems > 1) {
-			sAriaText = oResourceBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", iNumItems);
+			sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", iNumItems);
 		} else {
-			sAriaText = oResourceBundle.getText("INPUT_SUGGESTIONS_NO_HIT");
+			sAriaText = oRb.getText("INPUT_SUGGESTIONS_NO_HIT");
 		}
 
 		// update Accessibility text for suggestion
