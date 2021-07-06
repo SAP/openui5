@@ -23,22 +23,13 @@ sap.ui.define([
 	 */
 	var TableDelegate = Object.assign({}, AggregationBaseDelegate);
 
-	TableDelegate.addItem = function(sPropertyName, oTable, mPropertyBag) {
-		return Promise.resolve(null);
-	};
-
-	TableDelegate.removeItem = function(sPropertyName, oTable, mPropertyBag) {
-		// return true within the Promise for default behaviour (e.g. continue to destroy the column)
-		return Promise.resolve(true);
-	};
-
 	/**
 	 * Provides hook to update the binding info object that is used to bind the table to the model.
 	 *
-	 * @abstract
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
 	 * @param {object} oDelegatePayload The delegate payload
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
+	 * @protected
 	 */
 	TableDelegate.updateBindingInfo = function(oMDCTable, oDelegatePayload, oBindingInfo) {
 		oBindingInfo.parameters = {};
@@ -51,10 +42,10 @@ sap.ui.define([
 	 *
 	 * The default implementation rebinds the table but model-specific subclasses must call dedicated binding methods to update the binding instead of using {@link #rebindTable}.
 	 *
-	 * @virtual
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
+	 * @protected
 	 */
 	TableDelegate.updateBinding = function(oMDCTable, oBindingInfo, oBinding) {
 		this.rebindTable(oMDCTable, oBindingInfo);
@@ -65,6 +56,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oMDCTable The MDC table instance
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
+	 * @protected
 	 */
 	TableDelegate.rebindTable = function(oMDCTable, oBindingInfo) {
 		if (oMDCTable._oTable) {
@@ -84,18 +76,18 @@ sap.ui.define([
 	 * 			return oFilterFieldPromise;
 	 * 		}
 	 * }
-	 * @returns {Object} Object for the tables filter personalization
-	 * @public
+	 * @returns {{addItem: (function(string, sap.ui.mdc.Table): Promise<sap.ui.mdc.FilterField>)}} Object for the tables filter personalization
+	 * @protected
 	 */
 	TableDelegate.getFilterDelegate = function() {
 		return {
 			/**
+			 * Creates an instance of a <code>sap.ui.mdc.FilterField</code>.
 			 *
-			 * @param {String} sPropertyName The property name
-			 * @param {Object} oTable Instance of the table
-			 *
-			 * @returns {Promise} Promise that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
-			 * For more information, see {@link sap.ui.mdc.AggregationBaseDelegate#addItem AggregationBaseDelegate}.
+			 * @param {string} sPropertyName The property name
+			 * @param {sap.ui.mdc.Table} oTable Instance of the table
+			 * @returns {Promise<sap.ui.mdc.FilterField>} Promise that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
+			 * @see sap.ui.mdc.AggregationBaseDelegate#addItem
 			 */
 			addItem: function(sPropertyName, oTable) {
 				return Promise.resolve(null);
