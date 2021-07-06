@@ -885,13 +885,16 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._setFocusOnFirstErroneousField = function() {
+		var oFilterField = null;
 		this.getFilterItems().some(function(oFilterItem) {
 			if (oFilterItem.getValueState() !== ValueState.None) {
+				oFilterField = oFilterItem;
 				setTimeout(oFilterItem["focus"].bind(oFilterItem), 0);
-				return true;
 			}
-			return false;
+			return oFilterField != null;
 		});
+
+		return oFilterField;
 	};
 
 	FilterBarBase.prototype._handleAsyncValidation = function(bFireSearch) {
