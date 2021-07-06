@@ -92,6 +92,7 @@ sap.ui.define([
 			"sapUiAccent8",
 			"sapUiAccent9",
 			"sapUiAccent10",
+			"sapUiTileIconColor",
 			"sapUiContentImagePlaceholderBackground"
 		];
 		var mParams = Parameters.get({
