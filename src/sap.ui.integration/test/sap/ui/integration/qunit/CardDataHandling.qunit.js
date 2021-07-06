@@ -414,7 +414,7 @@ function (
 
 				// Assert
 				assert.notOk(oControlToTest.isLoading(), 'control is not loading any more');
-				assert.notOk(oControlToTest.getModel(), "Should NOT set a model when there is no data section.");
+				assert.notOk(oControlToTest.getModel().getData().length, "Should have empty model when there is no data section.");
 
 				done();
 			}.bind(this));

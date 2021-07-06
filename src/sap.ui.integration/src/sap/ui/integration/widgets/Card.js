@@ -383,6 +383,7 @@ sap.ui.define([
 		CardBase.prototype.init.call(this);
 
 		this.setAggregation("_loadingProvider", new LoadingProvider());
+		this.setModel(new JSONModel()); // always create a default model to isolate the card from a propagated default model
 		this.setModel(new JSONModel(), "parameters");
 		this.setModel(new JSONModel(), "filters");
 		this.setModel(new ContextModel(), "context");
