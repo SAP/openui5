@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Button",
 	"sap/ui/model/odata/v4/ODataListBinding",
-	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
@@ -47,7 +46,6 @@ sap.ui.define([
 	Text,
 	Button,
 	ODataListBinding,
-	ODataListBindingV2,
 	Sorter,
 	Filter,
 	JSONModel,
@@ -830,7 +828,6 @@ sap.ui.define([
 			return waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRowBinding = sinon.createStubInstance(ODataListBinding);
-			var oRowBindingV2 = sinon.createStubInstance(ODataListBindingV2);
 
 			oRowBinding.isLengthFinal.returns(true);
 			oRowBinding.getContexts.returns([]);
@@ -854,19 +851,19 @@ sap.ui.define([
 			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
 			assert.ok(fCustomDataReceived.calledTwice);
 
-			oRowBindingV2.getLength.returns(10);
-			oRowBindingV2.isLengthFinal.returns(true);
-
-			this.oTable._oTable.getBinding.returns(oRowBindingV2);
+			// Check Binding without a getCount function
+			oRowBinding.getLength.returns(10);
+			oRowBinding.isLengthFinal.returns(true);
+			oRowBinding.getCount = undefined;
 
 			oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
 
-			fDataReceived(new UI5Event("dataReceived", oRowBindingV2));
+			fDataReceived(new UI5Event("dataReceived", oRowBinding));
 			assert.equal(this.oTable._oTitle.getText(), "Test (10)");
 			assert.equal(fCustomDataReceived.callCount, 3);
 
-			oRowBindingV2.isLengthFinal.returns(false);
-			fDataReceived(new UI5Event("dataReceived", oRowBindingV2));
+			oRowBinding.isLengthFinal.returns(false);
+			fDataReceived(new UI5Event("dataReceived", oRowBinding));
 			assert.equal(this.oTable._oTitle.getText(), "Test");
 			assert.equal(fCustomDataReceived.callCount, 4);
 

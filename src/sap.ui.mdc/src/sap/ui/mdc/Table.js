@@ -2483,6 +2483,8 @@ sap.ui.define([
 		if (oRowBinding.getCount) {
 			iRowCount = oRowBinding.getCount();
 		} else if (oRowBinding.isLengthFinal()) {
+			// TBD: For a Treebinding this branch makes no sense and should be excluded when MDCTable will support TreeBinding
+			// in future (see also getCountFromBinding in Spreadsheet)
 			iRowCount = oRowBinding.getLength();
 		}
 
