@@ -31,6 +31,12 @@ sap.ui.define([
 			oSettings.isVariantSharingEnabled = true;
 		}
 
+		if (oSettings.isPublicFlVariantEnabled === undefined) {
+			oSettings.isPublicFlVariantEnabled =
+				oSettings.isVariantSharingEnabled
+				&& oSettings.isPublicLayerAvailable;
+		}
+
 		this._oSettings = oSettings;
 	};
 
@@ -84,6 +90,7 @@ sap.ui.define([
 					isKeyUser: false,
 					isKeyUserTranslationEnabled: false,
 					isVariantSharingEnabled: false,
+					isPublicFlVariantEnabled: false,
 					isVariantPersonalizationEnabled: true,
 					isAtoAvailable: false,
 					isAtoEnabled: false,
@@ -159,7 +166,7 @@ sap.ui.define([
 	 * Reads boolean property of settings.
 	 *
 	 * @param {string} sPropertyName name of property
-	 * @returns {boolean} true if the property exists and is true
+	 * @returns {boolean} <code>true</code> if the property exists and is true
 	 */
 	Settings.prototype._getBooleanProperty = function(sPropertyName) {
 		return this._oSettings[sPropertyName] || false;
@@ -168,7 +175,7 @@ sap.ui.define([
 	/**
 	 * Returns the key user status of the current user.
 	 *
-	 * @returns {boolean} true if the user is a flexibility key user, false if not supported
+	 * @returns {boolean} <code>true</code> if the user is a flexibility key user, <code>false</code> if not supported
 	 */
 	Settings.prototype.isKeyUser = function() {
 		return this._getBooleanProperty("isKeyUser");
@@ -186,7 +193,7 @@ sap.ui.define([
 	/**
 	 * Returns the information if a back end supports the PUBLIC layer.
 	 *
-	 * @returns {boolean} true if the PUBLIC layer is supported
+	 * @returns {boolean} <code>true</code> if the PUBLIC layer is supported
 	 */
 	Settings.prototype.isPublicLayerAvailable = function() {
 		return this._getBooleanProperty("isPublicLayerAvailable");
@@ -195,7 +202,7 @@ sap.ui.define([
 	/**
 	 * Returns the information if the adaptation of <code>sap.ui.comp.smartvariant.SmartVariantManagement</code> is enabled.
 	 *
-	 * @returns {boolean} true if the adaptation of <code>sap.ui.comp.smartvariant.SmartVariantManagement</code> is supported
+	 * @returns {boolean} <code>true</code> if the adaptation of <code>sap.ui.comp.smartvariant.SmartVariantManagement</code> is supported
 	 */
 	Settings.prototype.isVariantAdaptationEnabled = function() {
 		return this._getBooleanProperty("isVariantAdaptationEnabled");
@@ -204,7 +211,7 @@ sap.ui.define([
 	/**
 	 * Returns a flag if save as app variants is enabled in the backend
 	 *
-	 * @returns {boolean} true if the underlying ABAP system allows app variants, false if not supported
+	 * @returns {boolean} <code>true</code> if the underlying ABAP system allows app variants, <code>false</code> if not supported
 	 */
 	Settings.prototype.isAppVariantSaveAsEnabled = function() {
 		return this._getBooleanProperty("isAppVariantSaveAsEnabled");
@@ -214,7 +221,7 @@ sap.ui.define([
 	 * Returns a flag if the versioning is enabled for a given layer.
 	 *
 	 * @param {string} sLayer - Layer to check.
-	 * @returns {boolean} true if versioning is supported in the given layer
+	 * @returns {boolean} <code>true</code> if versioning is supported in the given layer
 	 */
 	Settings.prototype.isVersioningEnabled = function(sLayer) {
 		// there may be a versioning information for all layers
@@ -222,27 +229,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns true if back end is ModelS back end.
+	 * Returns <code>true</code> if back end is ModelS back end.
 	 *
-	 * @returns {boolean} true if ATO coding exists in back end
+	 * @returns {boolean} <code>true</code> if ATO coding exists in back end
 	 */
 	Settings.prototype.isModelS = function() {
 		return this._getBooleanProperty("isAtoAvailable");
 	};
 
 	/**
-	 * Returns true if ATO is enabled in the back end.
+	 * Returns <code>true</code> if ATO is enabled in the back end.
 	 *
-	 * @returns {boolean} true if ATO is enabled
+	 * @returns {boolean} <code>true</code> if ATO is enabled
 	 */
 	Settings.prototype.isAtoEnabled = function() {
 		return this._getBooleanProperty("isAtoEnabled");
 	};
 
 	/**
-	 * Returns true if ATO is available in the back end.
+	 * Returns <code>true</code> if ATO is available in the back end.
 	 *
-	 * @returns {boolean} true if ATO is available
+	 * @returns {boolean} <code>true</code> if ATO is available
 	 */
 	Settings.prototype.isAtoAvailable = function() {
 		return this._getBooleanProperty("isAtoAvailable");
@@ -251,25 +258,34 @@ sap.ui.define([
 	/**
 	 * Checks whether the current system is defined as a productive system.
 	 *
-	 * @returns {boolean} true if system is productive system
+	 * @returns {boolean} <code>true</code> if system is productive system
 	 */
 	Settings.prototype.isProductiveSystem = function() {
 		return this._getBooleanProperty("isProductiveSystem");
 	};
 
 	/**
-	 * Checks whether sharing of variants is enabled for the given user.
+	 * Checks whether sharing of <code>sap.ui.fl.apply._internal.flexObjects.CompVariant</code>s  is enabled for the given user.
 	 *
-	 * @returns {boolean} true if sharing of variants is enabled
+	 * @returns {boolean} <code>true</code> if sharing of <code>sap.ui.comp</code> variants is enabled
 	 */
 	Settings.prototype.isVariantSharingEnabled = function() {
 		return this._getBooleanProperty("isVariantSharingEnabled");
 	};
 
 	/**
+	 * Checks whether sharing of <code>sap.ui.fl</code> variants is enabled for the given user.
+	 *
+	 * @returns {boolean} <code>true</code> if sharing of <code>sap.ui.fl</code> variants is enabled
+	 */
+	Settings.prototype.isPublicFlVariantEnabled = function() {
+		return this._getBooleanProperty("isPublicFlVariantEnabled");
+	};
+
+	/**
 	 * Checks whether personalization of variants is enabled or not.
 	 *
-	 * @returns {boolean} true if personalization of variants is enabled
+	 * @returns {boolean} <code>true</code> if personalization of variants is enabled
 	 */
 	Settings.prototype.isVariantPersonalizationEnabled = function() {
 		return this._getBooleanProperty("isVariantPersonalizationEnabled");
@@ -278,7 +294,7 @@ sap.ui.define([
 	/**
 	 * Checks whether condensing of changes is enabled for the used backend.
 	 *
-	 * @returns {boolean} true if condensing of changes is enabled
+	 * @returns {boolean} <code>true</code> if condensing of changes is enabled
 	 */
 	Settings.prototype.isCondensingEnabled = function() {
 		return this._getBooleanProperty("isCondensingEnabled");

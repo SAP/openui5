@@ -860,7 +860,7 @@ sap.ui.define([
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: Layer.VENDOR,
+				layer: Layer.CUSTOMER,
 				title: "variant A Copy"
 			};
 
@@ -868,6 +868,7 @@ sap.ui.define([
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 			oSourceVariantCopy.content.fileName = "newVariant";
 			oSourceVariantCopy.content.variantReference = "variant0";
+			oSourceVariantCopy.content.layer = Layer.CUSTOMER;
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
@@ -916,7 +917,7 @@ sap.ui.define([
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: Layer.VENDOR,
+				layer: Layer.CUSTOMER,
 				title: "variant A Copy"
 			};
 
@@ -924,6 +925,7 @@ sap.ui.define([
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 			oSourceVariantCopy.content.fileName = "newVariant";
 			oSourceVariantCopy.content.variantReference = "variant0";
+			oSourceVariantCopy.content.layer = Layer.CUSTOMER;
 
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
@@ -986,14 +988,15 @@ sap.ui.define([
 				newVariantReference: "newVariant",
 				sourceVariantReference: "variant0",
 				variantManagementReference: "variantMgmtId1",
-				layer: Layer.VENDOR,
-				title: "variant A Copy"
+				title: "variant A Copy",
+				layer: Layer.USER
 			};
 
 			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 			oSourceVariantCopy.content.fileName = "newVariant";
 			oSourceVariantCopy.content.variantReference = "variant0";
+			oSourceVariantCopy.content.layer = Layer.USER;
 
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
@@ -1141,6 +1144,154 @@ sap.ui.define([
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oChange0.getDefinition().fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
 			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().support.sourceChangeFileName, oChange1.getDefinition().fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
 			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.variantReference, "then the duplicate variant references to the reference of the source variant");
+		});
+
+		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer with reference to a variant on the same layer", function(assert) {
+			// non-personalization mode
+			this.oModel._bDesignTimeMode = true;
+			var oChange0 = new Change({
+				fileName: "change0",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: Layer.PUBLIC,
+				support: {},
+				reference: "test.Component"
+			});
+			var oChange1 = new Change({
+				fileName: "change1",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: Layer.PUBLIC,
+				support: {},
+				reference: "test.Component"
+			});
+
+			var oSourceVariant = {
+				content: {
+					fileName: "variant0",
+					fileType: "ctrl_variant",
+					variantManagementReference: "variantMgmtId1",
+					variantReference: "variant2",
+					content: {
+						title: "variant A"
+					},
+					selector: {},
+					layer: Layer.PUBLIC,
+					namespace: "Dummy.Component"
+				},
+				controlChanges: [oChange0, oChange1],
+				variantChanges: {}
+			};
+
+			var mPropertyBag = {
+				newVariantReference: "newVariant",
+				sourceVariantReference: "variant0",
+				variantManagementReference: "variantMgmtId1",
+				layer: Layer.PUBLIC,
+				title: "variant A Copy"
+			};
+
+			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
+
+			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
+			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
+			oSourceVariantCopy.content.fileName = "newVariant";
+			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+
+			assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
+			assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
+			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
+			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
+			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oChange0.getDefinition().fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().support.sourceChangeFileName, oChange1.getDefinition().fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.variantReference, "then the duplicate variant references to the reference of the source variant");
+		});
+
+		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer with reference to a variant on the USER layer", function(assert) {
+			// non-personalization mode
+			this.oModel._bDesignTimeMode = true;
+			var oChange0 = new Change({
+				fileName: "change0",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: Layer.PUBLIC,
+				support: {},
+				reference: "test.Component"
+			});
+			var oChange1 = new Change({
+				fileName: "change1",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: Layer.USER,
+				support: {},
+				reference: "test.Component"
+			});
+
+			var oSourceVariant = {
+				content: {
+					fileName: "variant0",
+					fileType: "ctrl_variant",
+					variantManagementReference: "variantMgmtId1",
+					variantReference: "variant2",
+					content: {
+						title: "variant A"
+					},
+					selector: {},
+					layer: Layer.USER,
+					namespace: "Dummy.Component"
+				},
+				controlChanges: [oChange0, oChange1],
+				variantChanges: {}
+			};
+
+			var oSourceVariant2 = {
+				content: {
+					fileName: "variant3",
+					fileType: "ctrl_variant",
+					variantManagementReference: "variantMgmtId1",
+					variantReference: "variantMgmtId1",
+					content: {
+						title: "variant B"
+					},
+					selector: {},
+					layer: Layer.PUBLIC,
+					namespace: "Dummy.Component"
+				},
+				controlChanges: [],
+				variantChanges: {}
+			};
+
+			var mPropertyBag = {
+				newVariantReference: "newVariant",
+				sourceVariantReference: "variant0",
+				variantManagementReference: "variantMgmtId1",
+				layer: Layer.PUBLIC,
+				title: "variant A Copy"
+			};
+
+			sandbox.stub(this.oModel, "getVariant").callsFake(function (sId) {
+				return {
+					variant0: oSourceVariant,
+					variant2: oSourceVariant2
+				}[sId];
+			});
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
+
+			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
+			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
+			oSourceVariantCopy.content.fileName = "newVariant";
+			oSourceVariantCopy.content.layer = Layer.PUBLIC;
+			oSourceVariantCopy.content.variantReference = "variantMgmtId1";
+			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+
+			assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
+			assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
+			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
+			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
+			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oChange0.getDefinition().fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().support.sourceChangeFileName, oChange1.getDefinition().fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariantCopy.content.variantReference, "then the duplicate variant references to the reference of the source variant");
 		});
 
 		QUnit.test("when calling '_ensureStandardVariantExists'", function(assert) {

@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/Log",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeRegistryItem",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/requireAsync"
 ], function(
 	each,
 	Log,
+	Layer,
 	ChangeRegistryItem,
 	Settings,
 	requireAsync
@@ -114,6 +116,9 @@ sap.ui.define([
 		if (!oRegistryItem) {
 			throw Error("No Change handler registered for the Control and Change type");
 		}
+
+		// all USER layer changes are also enabled in the PUBLIC layer
+		sLayer = sLayer === Layer.PUBLIC ? Layer.USER : sLayer;
 
 		if (!oRegistryItem.getLayers()[sLayer]) {
 			throw Error("Change type " + sChangeType + " not enabled for layer " + sLayer);

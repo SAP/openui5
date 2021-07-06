@@ -115,6 +115,65 @@ sap.ui.define([
 			assert.equal(bIsVariantPersonalizationEnabled, false);
 		});
 
+		QUnit.test("fl variants sharing is disabled by default", function(assert) {
+			assert.equal(this.cut._oSettings.isPublicFlVariantEnabled, false);
+			var bIsPublicFlVariantEnabled = this.cut.isPublicFlVariantEnabled();
+			assert.equal(bIsPublicFlVariantEnabled, false);
+		});
+
+		QUnit.test("fl variants sharing is set to true", function(assert) {
+			var oSettings = {
+				isPublicFlVariantEnabled: true
+			};
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut._oSettings.isPublicFlVariantEnabled, true);
+			var bIsPublicFlVariantEnabled = this.cut.isPublicFlVariantEnabled();
+			assert.equal(bIsPublicFlVariantEnabled, true);
+		});
+
+		QUnit.test("fl variants sharing is set to false", function(assert) {
+			var oSettings = {
+				isPublicFlVariantEnabled: false
+			};
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut._oSettings.isPublicFlVariantEnabled, false);
+			var bIsPublicFlVariantEnabled = this.cut.isPublicFlVariantEnabled();
+			assert.equal(bIsPublicFlVariantEnabled, false);
+		});
+
+		QUnit.test("fl variants sharing is set to false by determine it via PUBLIC layer and variantSharing", function(assert) {
+			[{
+				settings: {
+					isVariantSharingEnabled: false,
+					isPublicLayerAvailable: false
+				},
+				expected: false
+			}, {
+				settings: {
+					isVariantSharingEnabled: true,
+					isPublicLayerAvailable: false
+				},
+				expected: false
+			}, {
+				settings: {
+					isVariantSharingEnabled: false,
+					isPublicLayerAvailable: true
+				},
+				expected: false
+			}, {
+				settings: {
+					isVariantSharingEnabled: true,
+					isPublicLayerAvailable: true
+				},
+				expected: true
+			}].forEach(function (oScenario) {
+				this.cut = new Settings(oScenario.settings);
+				assert.equal(this.cut._oSettings.isPublicFlVariantEnabled, oScenario.expected);
+				var bIsPublicFlVariantEnabled = this.cut.isPublicFlVariantEnabled();
+				assert.equal(bIsPublicFlVariantEnabled, oScenario.expected);
+			}.bind(this));
+		});
+
 		QUnit.test("isPublicLayerAvailable is false by default", function(assert) {
 			assert.equal(this.cut._oSettings.isPublicLayerAvailable, false);
 			var bIsPublicLayerAvailable = this.cut.isPublicLayerAvailable();
@@ -229,6 +288,7 @@ sap.ui.define([
 				assert.equal(oSettings.isAppVariantSaveAsEnabled(), false);
 				assert.equal(oSettings.isModelS(), false);
 				assert.equal(oSettings.isVariantSharingEnabled(), false);
+				assert.equal(oSettings.isPublicFlVariantEnabled(), false);
 				assert.equal(oSettings.isAtoEnabled(), false);
 				assert.equal(oSettings.isProductiveSystem(), true);
 				Settings.getInstance().then(function(oSettings2) {
@@ -287,6 +347,7 @@ sap.ui.define([
 				assert.equal(oSettings.isAtoEnabled(), false);
 				assert.equal(oSettings.isProductiveSystem(), true);
 				assert.equal(oSettings.isVariantSharingEnabled(), false);
+				assert.equal(oSettings.isPublicFlVariantEnabled(), false);
 			});
 		});
 	});

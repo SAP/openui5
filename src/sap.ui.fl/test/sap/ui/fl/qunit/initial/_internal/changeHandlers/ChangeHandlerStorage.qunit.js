@@ -256,6 +256,70 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("ChangeHandlerStorage handles the PUBLIC layer the same way as USER", {
+		beforeEach: function() {
+			// when the library is loaded the library loads the predefined change handlers
+			ChangeHandlerStorage.clearAll();
+
+			this.oValidChangeHandler1 = {
+				name: "name1",
+				applyChange: sandbox.stub(),
+				revertChange: sandbox.stub(),
+				completeChangeContent: sandbox.stub()
+			};
+			this.oValidChangeHandler2 = {
+				name: "name2",
+				applyChange: sandbox.stub(),
+				revertChange: sandbox.stub(),
+				completeChangeContent: sandbox.stub()
+			};
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when registering something for the USER Layer", function (assert) {
+			var mChangeHandlers = {
+				myFancyControl: {
+					doSomething: {
+						changeHandler: this.oValidChangeHandler1,
+						layers: {
+							USER: true
+						}
+					}
+				}
+			};
+			return ChangeHandlerStorage.registerChangeHandlersForLibrary(mChangeHandlers)
+				.then(ChangeHandlerStorage.getChangeHandler.bind(undefined, "doSomething", "myFancyControl", undefined, JsControlTreeModifier, Layer.USER))
+				.then(function (oChangeHandler) {
+					assert.equal(oChangeHandler, this.oValidChangeHandler1, "the change handler is registered for the USER layer");
+				}.bind(this))
+				.then(ChangeHandlerStorage.getChangeHandler.bind(undefined, "doSomething", "myFancyControl", undefined, JsControlTreeModifier, Layer.PUBLIC))
+				.then(function (oChangeHandler) {
+					assert.equal(oChangeHandler, this.oValidChangeHandler1, "the change handler is also registered for the PUBLIC layer");
+				}.bind(this));
+		});
+
+		QUnit.test("when registering something for the USER Layer but not for the PUBLIC layer", function (assert) {
+			var mChangeHandlers1 = {
+				myFancyControl: {
+					doSomething: {
+						changeHandler: this.oValidChangeHandler1,
+						layers: {
+							USER: true,
+							PUBLIC: false
+						}
+					}
+				}
+			};
+			return ChangeHandlerStorage.registerChangeHandlersForLibrary(mChangeHandlers1)
+				.then(ChangeHandlerStorage.getChangeHandler.bind(undefined, "doSomething", "myFancyControl", undefined, JsControlTreeModifier, Layer.PUBLIC))
+				.then(function (oChangeHandler) {
+					assert.equal(oChangeHandler, this.oValidChangeHandler1, "the USER layer still determines the PUBLIC layer change handler");
+				}.bind(this));
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

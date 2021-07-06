@@ -25,6 +25,7 @@ sap.ui.define([
 				isKeyUser: false,
 				isKeyUserTranslationEnabled: false,
 				isVariantSharingEnabled: false,
+				isPublicFlVariantEnabled: false,
 				isVariantPersonalizationEnabled: true,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
