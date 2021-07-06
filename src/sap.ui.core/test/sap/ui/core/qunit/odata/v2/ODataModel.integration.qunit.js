@@ -2856,7 +2856,7 @@ sap.ui.define([
 						"/SalesOrderSet('1')/ToLineItems");
 
 			// do paging
-			that.oView.byId("table-trigger").firePress();
+			that.oView.byId("table").requestItems();
 
 			return that.waitForChanges(assert);
 		});
@@ -3481,7 +3481,7 @@ usePreliminaryContext : false}}">\
 			.expectChange("note::item", "Quux", 3);
 
 			// do paging
-			that.oView.byId("table-trigger").firePress();
+			that.oView.byId("table").requestItems();
 
 			return that.waitForChanges(assert);
 		});
