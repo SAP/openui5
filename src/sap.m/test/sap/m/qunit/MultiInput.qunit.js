@@ -2919,7 +2919,7 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
-	QUnit.skip("Read-only popover should be opened on ENTER keypress", function (assert) {
+	QUnit.test("Read-only popover should be opened on ENTER keypress", function (assert) {
 		// arrange
 		var oMultiInput = new MultiInput({
 			editable: false,
@@ -2942,8 +2942,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.ok(containsOrEquals(oMultiInput.getAggregation("tokenizer")._getTokensList().getItems()[0].getDomRef(), document.activeElement),
-			"Popover should be on focus when opened");
+		assert.strictEqual(oMultiInput.getAggregation("tokenizer")._getTokensList().getItems()[0].getDomRef(), document.activeElement, "Popover should be on focus when opened");
 
 		// delete
 		oMultiInput.destroy();
