@@ -737,7 +737,7 @@ function(
 		return this._handleReloadOnExit(bSkipRestart)
 			.then(function(oReloadInfo) {
 				return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep(this))
-				.then(this._checkToolbarAndExecuteFunction.bind(this, "hide"))
+				.then(this._checkToolbarAndExecuteFunction.bind(this, "hide", bDontSaveChanges))
 				.then(function() {
 					this.fireStop();
 					if (oReloadInfo.reloadMethod && (oReloadInfo.reloadMethod !== this._RELOAD.NOT_NEEDED)) {

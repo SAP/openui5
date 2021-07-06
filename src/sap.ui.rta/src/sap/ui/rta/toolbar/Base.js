@@ -172,20 +172,25 @@ function(
 
 	/**
 	 * Makes the Toolbar invisible
+	 * @param {boolean} bSkipTransition - skips the transition for cases like page reloads - where the animation won't be visible and can cause timing issues
 	 * @return {Promise} - returns Promise which resolves after animation has been completed
 	 * @public
 	 */
-	Base.prototype.hide = function() {
+	Base.prototype.hide = function(bSkipTransition) {
+		var oPromise = Promise.resolve();
 		// 1) animate DomRef
-		return (
-			this.animation
-				? Animation.waitTransition(this.$(), this.removeStyleClass.bind(this, 'is_visible'))
-				: Promise.resolve()
-		)
+		if (this.animation) {
+			if (bSkipTransition) {
+				this.removeStyleClass('is_visible');
+			} else {
+				oPromise = Animation.waitTransition(this.$(), this.removeStyleClass.bind(this, 'is_visible'));
+			}
+		}
+		return oPromise
 		// 2) hide DomRef
-		.then(function () {
-			this.setVisible(false);
-		}.bind(this));
+			.then(function () {
+				this.setVisible(false);
+			}.bind(this));
 	};
 
 	/**
