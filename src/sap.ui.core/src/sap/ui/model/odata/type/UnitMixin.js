@@ -255,7 +255,8 @@ sap.ui.define([
 				throw new ValidateException("Cannot validate value without customizing");
 			}
 
-			if (!vNumber || !sUnit || !this.mCustomUnits) {
+			if (!vNumber || !sUnit || !this.mCustomUnits
+					|| this.oConstraints.skipDecimalsValidation) {
 				return;
 			}
 
@@ -291,7 +292,12 @@ sap.ui.define([
 		 *   Defines how an empty string is parsed into the amount/measure. With the default value
 		 *   <code>0</code> the amount/measure becomes <code>0</code> when an empty string is
 		 *   parsed.
-		 * @param {object} [oConstraints] Not supported
+		 * @param {object} [oConstraints]
+		 *   Only the 'skipDecimalsValidation' constraint is supported. Constraints are immutable,
+		 *   that is, they can only be set once on construction.
+		 * @param {boolean} [oConstraints.skipDecimalsValidation=false]
+		 *   Whether to skip validation of the number of decimals based on the code list
+		 *   customizing; since 1.93.0
 		 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
 		 *   format option <code>sFormatOptionName</code> is set
 		 *
@@ -299,14 +305,20 @@ sap.ui.define([
 		 * @mixin
 		 */
 		function UnitMixin(oFormatOptions, oConstraints) {
+			var aConstraintKeys = oConstraints ? Object.keys(oConstraints) : [];
+
+			function checkConstraint(sConstraint) {
+				if (sConstraint !== "skipDecimalsValidation") {
+					throw new Error("Only 'skipDecimalsValidation' constraint is supported");
+				}
+			}
+
 			if (oFormatOptions && oFormatOptions[sFormatOptionName]) {
 				throw new Error("Format option " + sFormatOptionName + " is not supported");
 			}
-			if (oConstraints) {
-				throw new Error("Constraints not supported");
-			}
+			aConstraintKeys.forEach(checkConstraint);
 			if (arguments.length > 2) {
-				throw new Error("Only the parameter oFormatOptions is supported");
+				throw new Error("Only parameters oFormatOptions and oConstraints are supported");
 			}
 
 			// format option preserveDecimals is set in the base type
@@ -319,6 +331,7 @@ sap.ui.define([
 						})
 				}, oFormatOptions);
 
+			oConstraints = Object.assign({}, oConstraints);
 			fnBaseType.call(this, oFormatOptions, oConstraints);
 			// initialize mixin members after super c'tor as it overrides several members!
 
@@ -327,7 +340,7 @@ sap.ui.define([
 			// must not overwrite setConstraints and setFormatOptions on prototype as they are
 			// called in SimpleType constructor
 			this.setConstraints = function () {
-				throw new Error("Constraints not supported");
+				throw new Error("Constraints are immutable");
 			};
 			this.setFormatOptions = function () {
 				throw new Error("Format options are immutable");

@@ -52,15 +52,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("constructor", function (assert) {
-		var oFormatOptions = {groupingEnabled : false},
-			oType;
+		var oConstraints, oType,
+			oFormatOptions = {groupingEnabled : false};
 
 		// code under test
 		oType = new UnitMixin();
 
 		assert.deepEqual(oType.oConstraints, {});
-		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions,
-			"format options are immutable: clone");
 		assert.ok(oType.hasOwnProperty("mCustomUnits"));
 		assert.strictEqual(oType.mCustomUnits, undefined);
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, parseAsString : true,
@@ -68,17 +66,44 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oType.setConstraints({"Minimum" : 42});
-		}, new Error("Constraints not supported"));
+			oType.setConstraints({skipDecimalsValidation : true});
+		}, new Error("Constraints are immutable"));
 
 		assert.throws(function () {
 			// code under test
-			oType.setFormatOptions({"parseAsString" : false});
+			oType.setFormatOptions({parseAsString : false});
 		}, new Error("Format options are immutable"));
+
+		[undefined, false, true, "foo"].forEach(function (vSkipDecimalsValidation) {
+			oConstraints = {skipDecimalsValidation : vSkipDecimalsValidation};
+
+			// code under test
+			oType = new UnitMixin(undefined, oConstraints);
+
+			assert.deepEqual(oType.oConstraints,
+				{skipDecimalsValidation : vSkipDecimalsValidation});
+			assert.notStrictEqual(oType.oConstraints, oConstraints);
+		});
+
+		// code under test
+		oType = new UnitMixin(undefined, {});
+
+		assert.deepEqual(oType.oConstraints, {});
+
+		assert.throws(function () {
+			// code under test
+			oType = new UnitMixin(undefined, {minimum : 42, skipDecimalsValidation : true});
+		}, new Error("Only 'skipDecimalsValidation' constraint is supported"));
+
+		assert.throws(function () {
+			// code under test
+			oType = new UnitMixin(undefined, {minimum : 42});
+		}, new Error("Only 'skipDecimalsValidation' constraint is supported"));
 
 		// code under test
 		oType = new UnitMixin(oFormatOptions);
 
+		assert.notStrictEqual(oType.oFormatOptions, oFormatOptions, "cloned");
 		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
 			parseAsString : true, unitOptional : true});
 
@@ -89,12 +114,12 @@ sap.ui.define([
 			unitOptional : "~unitOptional"});
 
 		assert.throws(function () {
-			oType = new UnitMixin({}, {"minimum" : 42});
-		}, new Error("Constraints not supported"));
+			oType = new UnitMixin({}, {minimum : 42});
+		}, new Error("Only 'skipDecimalsValidation' constraint is supported"));
 
 		assert.throws(function () {
 			oType = new UnitMixin({}, undefined, []);
-		}, new Error("Only the parameter oFormatOptions is supported"));
+		}, new Error("Only parameters oFormatOptions and oConstraints are supported"));
 
 		assert.throws(function () {
 			oType = new UnitMixin({customUnitsOrCurrencies : {}});
@@ -530,6 +555,15 @@ sap.ui.define([
 
 		// code under test: no custom units check if mCustomUnits=null
 		oType.validateValue(["77", "G"]);
+
+		oType = new UnitMixin(undefined, {skipDecimalsValidation : true});
+		this.mock(oType).expects("getCustomUnitForKey")
+			.withExactArgs({"G" : {Text : "gram", UnitSpecificScale : 1}}, "G")
+			.returns({displayName : "gram", decimals : 1, "unitPattern-count-other" : "{0} G"});
+		oType.formatValue(["42", "G", {"G" : {Text : "gram", UnitSpecificScale : 1}}], "string");
+
+		// code under test - decimals validation skipped
+		oType.validateValue(["1.23", "G"]);
 	});
 
 	//*********************************************************************************************
