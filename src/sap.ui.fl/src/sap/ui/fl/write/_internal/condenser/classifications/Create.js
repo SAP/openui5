@@ -17,18 +17,20 @@ sap.ui.define([
 		 *
 		 * @param {Map} mUIReconstructions - Map of UI reconstructions
 		 * @param {object} oCondenserInfo - Condenser specific information
+		 * @returns {Promise} resolves when a create change is added to UI Reconstruction Map
 		 */
 		addToReconstructionMap: function(mUIReconstructions, oCondenserInfo) {
 			var oAffectedControl = Core.byId(oCondenserInfo.affectedControl);
 			var sAggregationName = oAffectedControl && oAffectedControl.sParentAggregationName || oCondenserInfo.targetAggregation;
-			var aTargetContainerElementIds = CondenserUtils.getContainerElementIds(oCondenserInfo.targetContainer, sAggregationName);
-			var aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation, aTargetContainerElementIds);
-			var iIndex = aContainerElementIds.indexOf(oCondenserInfo.affectedControl);
-
-			// if the index is -1 the element was already removed by a different add change
-			if (iIndex > -1) {
-				aContainerElementIds.splice(iIndex, 1);
-			}
+			return CondenserUtils.getContainerElementIds(oCondenserInfo.targetContainer, sAggregationName)
+				.then(function (aTargetContainerElementIds) {
+					var aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation, aTargetContainerElementIds);
+					var iIndex = aContainerElementIds.indexOf(oCondenserInfo.affectedControl);
+					// if the index is -1 the element was already removed by a different add change
+					if (iIndex > -1) {
+						aContainerElementIds.splice(iIndex, 1);
+					}
+				});
 		},
 
 		/**

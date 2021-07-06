@@ -62,14 +62,17 @@ sap.ui.define([
 	 *
 	 * @param {string} sContainerId - Container Id
 	 * @param {string} sAggregationName Name of the aggregation
-	 * @returns {string[]} Array of Ids
+	 * @returns {Promise<string[]>} Array of Ids wrapped in Promise
 	 */
 	Utils.getContainerElementIds = function(sContainerId, sAggregationName) {
 		var oContainer = Core.byId(sContainerId);
-		var aContainerElements = JsControlTreeModifier.getAggregation(oContainer, sAggregationName);
-		return aContainerElements.map(function(oElement) {
-			return oElement.getId();
-		});
+		return Promise.resolve()
+			.then(JsControlTreeModifier.getAggregation.bind(JsControlTreeModifier, oContainer, sAggregationName))
+			.then(function (aContainerElements) {
+				return aContainerElements.map(function(oElement) {
+					return oElement.getId();
+				});
+			});
 	};
 
 	/**

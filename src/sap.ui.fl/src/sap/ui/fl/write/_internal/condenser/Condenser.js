@@ -95,6 +95,7 @@ sap.ui.define([
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions that holds key-value pairs. A key is a selector ID of the container. A value is a nested map which contains initial and target UI reconstructions
 	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.Change} oChange - Change instance that will be added to the array
+	 * @returns {Promise} resolves when the change is added to the data structure
 	 */
 	function addIndexRelatedChange(mClassifications, mUIReconstructions, oCondenserInfo, oChange) {
 		if (
@@ -129,8 +130,7 @@ sap.ui.define([
 				delete mClassifications[sap.ui.fl.condenser.Classification.Destroy];
 			}
 		}
-
-		UIReconstruction.addChange(mUIReconstructions, oCondenserInfo);
+		return UIReconstruction.addChange(mUIReconstructions, oCondenserInfo);
 	}
 
 	/**
@@ -141,6 +141,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change[]} aIndexRelatedChanges - Array of all index related changes
 	 * @param {Object} oCondenserInfo - Condenser-specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.Change} oChange - Change instance that will be added to the array
+	 * @returns {Promise} returns when change is added to the data structures
 	 */
 	function addClassifiedChange(mTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange) {
 		if (!mTypes[oCondenserInfo.type]) {
@@ -154,10 +155,10 @@ sap.ui.define([
 			}
 			var mProperties = mClassifications[oCondenserInfo.classification];
 			NON_INDEX_RELEVANT[oCondenserInfo.classification].addToChangesMap(mProperties, oCondenserInfo.uniqueKey, oChange);
-		} else {
-			aIndexRelatedChanges.push(oChange);
-			addIndexRelatedChange(mClassifications, mUIReconstructions, oCondenserInfo, oChange);
+			return Promise.resolve();
 		}
+		aIndexRelatedChanges.push(oChange);
+		return addIndexRelatedChange(mClassifications, mUIReconstructions, oCondenserInfo, oChange);
 	}
 
 	/**
@@ -281,11 +282,11 @@ sap.ui.define([
 			var mTypes = getTypesMap(mReducedChanges, oCondenserInfo, oChange, oAppComponent);
 			if (oCondenserInfo !== undefined) {
 				addType(oCondenserInfo);
-				addClassifiedChange(mTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange);
-			} else {
-				addUnclassifiedChange(mTypes, UNCLASSIFIED, oChange);
-				mReducedChanges[UNCLASSIFIED] = true;
+				return addClassifiedChange(mTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange);
 			}
+			addUnclassifiedChange(mTypes, UNCLASSIFIED, oChange);
+			mReducedChanges[UNCLASSIFIED] = true;
+			return undefined;
 		});
 	}
 
