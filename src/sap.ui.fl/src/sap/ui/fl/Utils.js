@@ -1242,6 +1242,39 @@ function(
 				return false;
 			}
 			return oUriParams.get(sParameterName);
+		},
+
+		/**
+		 * Searches in the control metadata for the aggregation defintion
+		 * @param {sap.ui.base.ManagedObject|Element} oControl - Control which has the aggregation
+		 * @param {string} sAggregationName - Aggregation name
+		 * @returns {object} Aggregation metadata
+		 */
+		findAggregation: function(oControl, sAggregationName) {
+			if (oControl) {
+				if (oControl.getMetadata) {
+					var oMetadata = oControl.getMetadata();
+					var oAggregations = oMetadata.getAllAggregations();
+					if (oAggregations) {
+						return oAggregations[sAggregationName];
+					}
+				}
+			}
+			return undefined;
+		},
+
+		/**
+		 * Returns aggregation content for the given aggregation name.
+		 * @param {sap.ui.base.ManagedObject|Element} oParent - Control which has the aggregation
+		 * @param {string} sAggregationName - Aggregation name
+		 * @returns {sap.ui.base.ManagedObject[]|Element[]} Aggregation content
+		 */
+		 getAggregation: function (oParent, sAggregationName) {
+			var oAggregation = Utils.findAggregation(oParent, sAggregationName);
+			if (oAggregation) {
+				return oParent[oAggregation._sGetter]();
+			}
+			return undefined;
 		}
 	};
 	return Utils;

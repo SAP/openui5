@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils"
 ], function(
 	ManagedObjectObserver,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	FlUtils
 ) {
 	"use strict";
 
@@ -39,7 +41,7 @@ sap.ui.define([
 		mExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			var sAggregationName = oExtensionPoint.aggregationName;
 			if (sAggregationName === oEvent.name) {
-				var vControlIds = JsControlTreeModifier.getAggregation(oEvent.object, sAggregationName);
+				var vControlIds = FlUtils.getAggregation(oEvent.object, sAggregationName);
 				var aControlIds = [].concat(vControlIds || []).map(function(oControl) {
 					return oControl.getId();
 				});
@@ -89,7 +91,7 @@ sap.ui.define([
 
 	function addExtensionPoint(oParent, sAggregationName, mExtensionPointInfo) {
 		var sViewId = mExtensionPointInfo.view.getId();
-		var vAggregation = JsControlTreeModifier.getAggregation(oParent, sAggregationName);
+		var vAggregation = FlUtils.getAggregation(oParent, sAggregationName);
 		var aControlIds = [].concat(vAggregation || []).map(function(oControl) {
 			return oControl.getId();
 		});
