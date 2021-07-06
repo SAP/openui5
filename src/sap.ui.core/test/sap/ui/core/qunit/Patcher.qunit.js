@@ -350,7 +350,8 @@ sap.ui.define([
 		this.html("<div></div>").patch(function() {
 			Patcher.openStart("div").style("background-image", 'url("a;b.png")').openEnd().close("div");
 		}, function(aMutations, oElement) {
-			assert.equal(oElement.style.backgroundImage, 'url("a;b.png")', "escaping did not modify semicolons");
+			// safari is returning the full path e.g. "url("http://localhost:8080/testsuite/~!@#$%^&()_+{}'.jpg")"
+			assert.equal(oElement.style.backgroundImage.replace(/http.*\//, ""), 'url("a;b.png")', "escaping did not modify semicolons");
 		});
 
 		this.html("<div id='x' tabindex='0' title='t'></div>").patch(function() {
