@@ -1256,29 +1256,6 @@ sap.ui.define([
 		sap.ui.getCore().getConfiguration().setLanguage(sLanguage);
 	});
 
-//	QUnit.test("check search is triggered, when basic search changes", function (assert) {
-//
-//		var oProperty = {
-//			name: "$search",
-//			label: "B",
-//			type: "Edm.String",
-//			filterExpression: "SigleValue",
-//			baseType: new ModelString()
-//		};
-//
-//		sinon.stub(oFilterBar, "triggerSearch");
-//		sinon.stub(oFilterBar, "_toInternal").returns({ operator: "EQ", values: ["BASIC SEARCH"] });
-//		sinon.stub(oFilterBar, "_getPropertyByName").returns(oProperty);
-//
-//		return oFilterBar.addCondition("$search", {}).then(function () {
-//			assert.ok(oFilterBar.triggerSearch.calledOnce);
-//			oFilterBar.triggerSearch.reset();
-//			return oFilterBar.removeCondition("$search", {}).then(function () {
-//				assert.ok(oFilterBar.triggerSearch.calledOnce);
-//			});
-//		});
-//	});
-
 	QUnit.test("check _handleConditionModelPropertyChange", function (assert) {
 
 		var oEvent1 = {
@@ -1355,6 +1332,55 @@ sap.ui.define([
 				done();
 			});
 		});
+	});
+
+
+	QUnit.test("check validate with not yet complete change appliance", function (assert) {
+
+		var fResolvePromise, oWaitPromise = new Promise(function(resolve) {
+			fResolvePromise = resolve;
+		});
+		var fnSearch = function(oEvent) {
+			fResolvePromise();
+
+			oWaitPromise = new Promise(function(resolve) {
+				fResolvePromise = resolve;
+			});
+		};
+
+		var done = assert.async();
+
+		oFilterBar.attachSearch(fnSearch);
+
+		sinon.spy(oFilterBar, "_validate");
+		sinon.spy(oFilterBar, "_waitForChangeAppliance");
+
+		sinon.stub(oFilterBar, "waitForInitialization").returns(Promise.resolve());
+
+		oFilterBar.triggerSearch();
+		oWaitPromise.then(function() {
+
+			assert.ok(!oFilterBar._waitForChangeAppliance.called);
+			assert.ok(oFilterBar._validate.calledOnce);
+			oFilterBar._validate.reset();
+
+
+			var fResolveChangePromise, oChangePromise = new Promise(function(resolve) {
+				fResolveChangePromise = resolve;
+			});
+			oFilterBar._aCollectedChangePromises = [oChangePromise];
+
+			oFilterBar.triggerSearch();
+
+			var oTimeOut = setTimeout(fResolveChangePromise, 10);
+			Promise.all([oChangePromise, oWaitPromise]).then(function() {
+				clearTimeout(oTimeOut);
+				assert.ok(oFilterBar._waitForChangeAppliance.calledOnce);
+				assert.ok(oFilterBar._validate.calledTwice);
+			done();
+			});
+		});
+
 	});
 
 	QUnit.test("check suspendSelection", function (assert) {

@@ -668,6 +668,7 @@ var oVariantMap = {
 		Log.error.reset();
 
 		assert.ok(oFB.getVariantBackreference(), oVM.getId());
+		assert.ok(oVM === oFB._getAssignedVariantManagement());
 
 		oVM2.destroy();
 		oFB.destroy();
@@ -682,6 +683,7 @@ var oVariantMap = {
 
 	QUnit.test("check variant switch without waitForChanges on the FB", function (assert) {
 
+		var oFB, oModel, nCalledOnStandard = 0;
 		var oManifestObj = {
 				"sap.app": {
 					id: "Component",
@@ -717,7 +719,7 @@ var oVariantMap = {
 		var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 		sinon.stub(oFlexController, "applyVariantChanges").returns(Promise.resolve());
 
-		var oModel = new VariantModel({}, oFlexController, oComponent);
+		oModel = new VariantModel({}, oFlexController, oComponent);
 
 
 		var fResolveWaitForSwitch, oWaitForSwitchPromise = new Promise(function(resolve) {
@@ -757,7 +759,7 @@ var oVariantMap = {
 			visible: true
 		}];
 
-		var oFB = new FilterBar({
+		oFB = new FilterBar({
 			variantBackreference: oVM.getId(),
 			delegate: { name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate", payload: { modelName: undefined, collectionName: "test" } }
 
@@ -786,23 +788,37 @@ var oVariantMap = {
 					ControlVariantApplyAPI.activateVariant({
 						variantReference: "id_1589359343056_37"
 					}).then(function() {
+
 						assert.ok(!sap.ui.mdc.FilterBar.prototype.triggerSearch.called);
+						assert.equal(nCalledOnStandard, 0);
 
-						oFB.destroy();
-						oVM.destroy();
-						oModel.destroy();
+						var fCallBack = function() { nCalledOnStandard++; return false; };
+						oVM.registerApplyAutomaticallyOnStandardVariant(fCallBack);
+						oVM.setDisplayTextForExecuteOnSelectionForStandardVariant("TEST");
 
-						sap.ui.mdc.FilterBar.prototype.triggerSearch.restore();
-						sap.ui.mdc.FilterBar.prototype._handleVariantSwitch = fOrigVariantSwitch;
-						FlUtils.getAppComponentForControl.restore();
-						FlUtils.getComponentClassName.restore();
-						URLHandler.attachHandlers.restore();
-						FlexState.getVariantsState.restore();
-						VariantManagementState.waitForInitialVariantChanges.restore();
+						ControlVariantApplyAPI.activateVariant({
+							variantReference: "VMId"
+						}).then(function() {
 
-						ControlVariantApplyAPI.detachVariantApplied.restore();
+							assert.ok(!sap.ui.mdc.FilterBar.prototype.triggerSearch.called);
+							assert.equal(nCalledOnStandard, 1);
 
-						done();
+							oFB.destroy();
+							oVM.destroy();
+							oModel.destroy();
+
+							sap.ui.mdc.FilterBar.prototype.triggerSearch.restore();
+							sap.ui.mdc.FilterBar.prototype._handleVariantSwitch = fOrigVariantSwitch;
+							FlUtils.getAppComponentForControl.restore();
+							FlUtils.getComponentClassName.restore();
+							URLHandler.attachHandlers.restore();
+							FlexState.getVariantsState.restore();
+							VariantManagementState.waitForInitialVariantChanges.restore();
+
+							ControlVariantApplyAPI.detachVariantApplied.restore();
+
+							done();
+						});
 					});
 				});
 			});
