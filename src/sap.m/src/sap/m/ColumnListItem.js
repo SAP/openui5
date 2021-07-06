@@ -241,7 +241,11 @@ sap.ui.define([
 			aCells = this.getCells(),
 			aColumns = oTable.getColumns(true);
 
-		aColumns.forEach(function(oColumn) {
+		aColumns.sort(function(oCol1, oCol2) {
+		    if (oCol1.getIndex() < 0) { return 1; }
+		    if (oCol2.getIndex() < 0) { return -1; }
+		    return (oCol1.getIndex() - oCol2.getIndex());
+		}).forEach(function(oColumn) {
 			var oCell = aCells[oColumn.getInitialOrder()];
 			if (!oCell || !oColumn.getVisible() || (oColumn.isHidden() && !oColumn.isPopin())) {
 				return;

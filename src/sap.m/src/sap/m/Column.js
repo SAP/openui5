@@ -391,6 +391,14 @@ sap.ui.define([
 		this._index = +nIndex;
 	};
 
+	/**
+	 * Gets the rendering index of the column
+	 *
+	 * @protected
+	 */
+	Column.prototype.getIndex = function() {
+		return this._index;
+	};
 
 	/**
 	 * Sets the order of the column
