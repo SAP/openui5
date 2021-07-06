@@ -2718,10 +2718,13 @@ sap.ui.define([
 		function cancelHandler() {
 			// Step 3
 			// Open ViewSettingsDialog
-			that.oVSD._dialog.attachEventOnce("afterOpen", afterThirdOpen);
+			that.oVSD._getNavContainer().attachEvent("afterNavigate", function (oEvent) {
+				if (oEvent.getParameter("toId") === that.oVSD.getId() + "-page2") {
+					afterThirdOpen();
+				}
+			});
 			that.oVSD.open();
 		}
-
 
 		function afterThirdOpen() {
 			var aInternalFilterDetailItems = that.oVSD._filterDetailList.getItems(),
