@@ -101,6 +101,33 @@ sap.ui.define([
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			formatter: globalFormatter,
 
+			_arrToTreeConverter: function() {
+				var aNodes,
+					aOriginalArr = this._aNeoAppVersions.slice(),
+					aResultArr = [],
+					iCounter = 0,
+					sCurrGroupTitle = "";
+
+				for (var i = 0; i < aOriginalArr.length; i++) {
+					sCurrGroupTitle = aOriginalArr[i].groupTitle;
+					iCounter = 0;
+					aNodes = [];
+					while (aOriginalArr[i] && aOriginalArr[i].groupTitle && aOriginalArr[i].groupTitle === sCurrGroupTitle) {
+						aNodes.push(aOriginalArr[i]);
+						iCounter++;
+						i++;
+					}
+					i--;
+					aResultArr.push({
+						"groupTitle": sCurrGroupTitle,
+						"version": sCurrGroupTitle + " (" + iCounter + " versions)",
+						"nodes": aNodes
+					});
+				}
+
+				return aResultArr;
+			},
+
 			onInit : function () {
 				BaseController.prototype.onInit.call(this);
 
@@ -979,9 +1006,19 @@ sap.ui.define([
 			onChangeVersionDialogSearch: function (oEvent) {
 				var sSearchedValue = oEvent.getParameter("newValue"),
 					oFilter = new Filter("version", FilterOperator.Contains, sSearchedValue),
-					oBinding = Core.byId("versionList").getBinding("items");
+					oTree = Core.byId("versionList"),
+					oBinding = oTree.getBinding("items");
 
 				oBinding.filter([oFilter]);
+
+				// If only one branch of the version info tree is currently left after filtering
+				if (oBinding.getChildCount() === 1) {
+					// expand the only branch of the version info tree
+					oBinding.expand(0);
+				} else {
+					// collapse all of the branches of the version info tree
+					oTree.collapseAll();
+				}
 			},
 
 			onLogoIconPress: function () {
@@ -1052,6 +1089,8 @@ sap.ui.define([
 
 				oChangeVersionDialogModel.setSizeLimit(1000);
 				oChangeVersionDialogModel.setData(this._aNeoAppVersions);
+
+				oChangeVersionDialogModel.setData(this._arrToTreeConverter(this._aNeoAppVersions));
 
 				return oChangeVersionDialogModel;
 			},

@@ -21,7 +21,7 @@
 				</contentMiddle>
 			</Bar>
 		</subHeader>
-		<List
+		<Tree
 				id="versionList"
 				itemPress="onVersionItemPress"
 				items="{
@@ -36,13 +36,13 @@
 						descending: true
 					}]
 				}">
-			<StandardListItem
+			<StandardTreeItem
 					title="{path: 'version'}"
-					type="Active">
+					type="{= ${path: 'path'} ? 'Active' : 'Inactive'}">
 				<customData>
 					<core:CustomData key="path" value="{path: 'path'}" />
 				</customData>
-			</StandardListItem>
-		</List>
+			</StandardTreeItem>
+		</Tree>
 	</Dialog>
 </core:FragmentDefinition>
