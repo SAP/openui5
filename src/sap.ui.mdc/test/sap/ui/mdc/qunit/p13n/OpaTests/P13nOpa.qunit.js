@@ -18,6 +18,7 @@ sap.ui.require([
 
 	Opa5.extendConfig({
 		autoWait: true,
+		timeout: 30,
 		appParams: {
 			"sap-ui-animation": false,
 			"sap-ui-xx-mdcTableP13n": "Table"
