@@ -3208,6 +3208,78 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
+	QUnit.test("synchronizeSelection is not called with Virtual Context", function(assert) {
+		// Arrange
+		var oSelectList = new SelectList({
+			items: {
+				path: "/contries",
+				template: new Item({
+					key: "{code}",
+					text: "{name}"
+				})
+			},
+			selectedKey: {
+				path: "/selected"
+			}
+		}),
+		oModel = new JSONModel(),
+		mData = {
+			"contries": [
+				{
+					"code": "GER",
+					"name": "Germany"
+				}, {
+					"code": "CU",
+					"name": "Cuba"
+				}
+			],
+
+			// path : selectedKey
+			"selected": "CU"
+		},
+		oSpy = this.spy(oSelectList, "synchronizeSelection"),
+		oBinding;
+
+		oModel.setData(mData);
+		oSelectList.setModel(oModel);
+		oBinding = oSelectList.getBinding("items");
+		oSelectList.placeAt("content");
+		Core.applyChanges();
+
+		// Act - Fake the add virtual context process.
+		oSpy.reset();
+		oBinding.fireEvent("change", {
+			detailedReason: "AddVirtualContext",
+			reason: "change"
+		});
+
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "synchronizeSelection is not called from updateItems with add virtual context (only called from beforeRendering");
+
+		// Act - Fake the remove virtual context process.
+		oSpy.reset();
+		oBinding.fireEvent("change", {
+			detailedReason: "RemoveVirtualContext",
+			reason: "change"
+		});
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "synchronizeSelection is not called from updateItems with remove virtual context");
+
+		// Act - Fake the remove virtual context process.
+		oSpy.reset();
+		oBinding.fireEvent("change", {});
+
+		// Assert
+		assert.ok(oSpy.called, "synchronizeSelection is called from updateItems with real update");
+
+		// Cleanup
+		oSelectList.destroy();
+		oModel.destroy();
+	});
+
 	QUnit.module("destroy()");
 
 	QUnit.test("destroy()", function(assert) {
