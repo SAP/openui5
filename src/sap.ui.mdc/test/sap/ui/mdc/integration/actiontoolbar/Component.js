@@ -10,10 +10,6 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.mdc.ActionToolbarTesting.Component", {
 		metadata : {
 			manifest: "json"
-		},
-        init : function () {
-			// call the init function of the parent
-			UIComponent.prototype.init.apply(this, arguments);
-        }
+		}
 	});
 });

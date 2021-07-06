@@ -63,5 +63,14 @@ sap.ui.define([
         }
     };
 
+    /**
+     *
+     * @returns {String} a text defining the label of this <code>ActionToolbarAction</code> defined by the inner action.
+     */
+    ActionToolbarAction.prototype.getLabel = function() {
+        var oAction = this.getAction();
+        return oAction && oAction.getText ? oAction.getText() : this.getId();
+    };
+
     return ActionToolbarAction;
 });

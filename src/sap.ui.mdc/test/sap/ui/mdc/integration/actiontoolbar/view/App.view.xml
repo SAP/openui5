@@ -1,53 +1,71 @@
 <mvc:View controllerName="sap.ui.mdc.ActionToolbarTesting.controller.App"
 	xmlns="sap.m"
+    xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
     xmlns:mdc="sap.ui.mdc"
+    xmlns:mdccn="sap.ui.mdc.chartNew"
     xmlns:mdcat="sap.ui.mdc.actiontoolbar">
     <App id="app">
-        <mdc:ActionToolbar width="100%">
-            <mdc:begin>
-                <Title text="Test Title"/>
-            </mdc:begin>
-            <mdc:between>
-                <Button text="Test Between 1" />
-            </mdc:between>
-            <mdc:end>
-                <Button text="Test End 1" />
-                <Button text="Test End 2" />
-                <Button text="Test End 3" />
-            </mdc:end>
-            <mdc:actions>
-                <mdcat:ActionToolbarAction>
-                    <Button text="Test Action 1" />
-                </mdcat:ActionToolbarAction>
-                <mdcat:ActionToolbarAction layoutInformation="{
-                        aggregationName: 'end',
-                        alignment: 'End'
-                    }">
-                    <Button text="Test Action 2" />
-                </mdcat:ActionToolbarAction>
+        <Page id="pageId">
+			<headerContent>
+				<Button id="RTAButtonId" icon="sap-icon://wrench" press="onPressRTA"/>
+			</headerContent>
+			<content class="sapUiContentPadding">
+                <mdc:ActionToolbar id="actionToolbarId" width="100%">
+                    <mdc:begin>
+                        <Title id="idTitle" text="Test Title"/>
+                    </mdc:begin>
+                    <mdc:between>
+                        <Button text="Between" />
+                    </mdc:between>
+                    <mdc:end>
+                        <Button text="Test End" />
+                    </mdc:end>
+                    <mdc:actions>
+                        <mdcat:ActionToolbarAction id="idAction1">
+                            <Button text="Test Action 1" />
+                        </mdcat:ActionToolbarAction>
+                        <mdcat:ActionToolbarAction id="idAction2" layoutInformation="{
+                                aggregationName: 'end',
+                                alignment: 'End'
+                            }">
+                            <Button text="Test Action 2" />
+                        </mdcat:ActionToolbarAction>
 
 
-                <mdcat:ActionToolbarAction>
-                    <Button text="Test Action 3" />
-                </mdcat:ActionToolbarAction>
-                <mdcat:ActionToolbarAction>
-                    <Button text="Test Action 4" />
-                </mdcat:ActionToolbarAction>
-                <mdcat:ActionToolbarAction>
-                    <Button text="Test Action 5" />
-                </mdcat:ActionToolbarAction>
-                <mdcat:ActionToolbarAction>
-                    <Button text="Test Action 6" />
-                </mdcat:ActionToolbarAction>
-                <mdcat:ActionToolbarAction>
-                    <Button text="Test Action 7" />
-                </mdcat:ActionToolbarAction>
-                <mdcat:ActionToolbarAction>
-                    <Button text="Test Action 8" />
-                </mdcat:ActionToolbarAction>
-            </mdc:actions>
-        </mdc:ActionToolbar>
+                        <mdcat:ActionToolbarAction id="idAction3" layoutInformation="{
+                            aggregationName: 'end',
+                            alignment: 'End'
+                        }">
+                            <Button text="Test Action 3" />
+                        </mdcat:ActionToolbarAction>
+
+                        <mdcat:ActionToolbarAction id="idAction4">
+                            <Button text="Test Action 4" />
+                        </mdcat:ActionToolbarAction>
+                        <mdcat:ActionToolbarAction id="idAction5">
+                            <Button text="Test Action 5" />
+                        </mdcat:ActionToolbarAction>
+                    </mdc:actions>
+                </mdc:ActionToolbar>
+
+                <mdc:Table id="actionToolbarTable" header="Dummy Table" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/mdc/ActionToolbarTesting/delegates/Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" threshold="50" width="100%">
+                    <mdc:actions>
+                        <mdcat:ActionToolbarAction id="tableAction1">
+                            <Button type="Emphasized" text="Dummy Action 1" />
+                        </mdcat:ActionToolbarAction>
+                        <mdcat:ActionToolbarAction id="tableAction2">
+                            <Button type="Emphasized" text="Dummy Action 2" />
+                        </mdcat:ActionToolbarAction>
+                        <Button type="Emphasized" text="Dummy Action 3" id="tableButton" />
+                    </mdc:actions>
+                    <mdc:type>
+                        <mdc:table.ResponsiveTableType growingMode="Scroll" />
+                    </mdc:type>
+                </mdc:Table>
+
+            </content>
+        </Page>
 	</App>
 </mvc:View>

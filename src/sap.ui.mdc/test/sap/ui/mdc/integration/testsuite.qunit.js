@@ -38,7 +38,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				module: "./v4server/V4ServerIntegration.qunit",
 				sinon: false
 			},
-
 			"ListReportOPATests": {
 				loader: {
 					paths: {
@@ -85,6 +84,18 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				},
 				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
 				module: "test-resources/sap/ui/mdc/integration/valuehelp/opaTests.qunit",
+				sinon: false
+			},
+			"ActionToolbar": {
+				loader: {
+					paths: {
+						"sap/ui/mdc/ActionToolbarTesting": "test-resources/sap/ui/mdc/integration/actiontoolbar",
+						"testutils/opa": "test-resources/sap/ui/mdc/testutils/opa",
+						"delegates": "test-resources/sap/ui/mdc/delegates"
+					}
+				},
+				autostart: false,
+				module: "test-resources/sap/ui/mdc/integration/actiontoolbar/opaTests.qunit",
 				sinon: false
 			}
 		}

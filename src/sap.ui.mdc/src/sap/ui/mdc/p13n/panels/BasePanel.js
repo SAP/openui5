@@ -644,19 +644,19 @@ sap.ui.define([
 		var aFields = this.getP13nModel().getProperty("/items");
 
 		// index of the item in the model not the index in the aggregation
-		var iOldIndex = aFields.indexOf(oItem.getBindingContext(this.P13N_MODEL).getObject());
+		var iOlModelIndex = aFields.indexOf(oItem.getBindingContext(this.P13N_MODEL).getObject());
 
 		// limit the minumum and maximum index
 		iNewIndex = (iNewIndex <= 0) ? 0 : Math.min(iNewIndex, aItems.length - 1);
 
 		// new index of the item in the model
-		iNewIndex = aFields.indexOf(aItems[iNewIndex].getBindingContext(this.P13N_MODEL).getObject());
-		if (iNewIndex == iOldIndex) {
+		var iNewModelIndex = aFields.indexOf(aItems[iNewIndex].getBindingContext(this.P13N_MODEL).getObject());
+		if (iNewModelIndex == iOlModelIndex) {
 			return;
 		}
 
 		// remove data from old position and insert it into new position
-		aFields.splice(iNewIndex, 0, aFields.splice(iOldIndex, 1)[0]);
+		aFields.splice(iNewModelIndex, 0, aFields.splice(iOlModelIndex, 1)[0]);
 		this.getP13nModel().setProperty("/items", aFields);
 
 		// store the moved item again due to binding
@@ -685,12 +685,13 @@ sap.ui.define([
 
 	BasePanel.prototype._updateEnableOfMoveButtons = function(oTableItem, bFocus) {
 		var iTableItemPos = this._oListControl.getItems().indexOf(oTableItem);
+		var iLastItemPos =  this._oListControl.getItems().length - 1;
 		var bUpEnabled = true, bDownEnabled = true;
 		if (iTableItemPos == 0) {
 			// disable move buttons upwards, if the item is at the top
 			bUpEnabled = false;
 		}
-		if (iTableItemPos == this._oListControl.getItems().length - 1) {
+		if (iTableItemPos == iLastItemPos) {
 			// disable move buttons downwards, if the item is at the bottom
 			bDownEnabled = false;
 		}

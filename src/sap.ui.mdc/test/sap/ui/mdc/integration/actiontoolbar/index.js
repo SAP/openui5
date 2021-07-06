@@ -9,6 +9,8 @@ sap.ui.define([
 
 	new ComponentContainer({
 		name: "sap.ui.mdc.ActionToolbarTesting",
+		manifest: true,
+		height: "100%",
 		settings : {
 			id : "ActionToolbarTesting"
 		},
