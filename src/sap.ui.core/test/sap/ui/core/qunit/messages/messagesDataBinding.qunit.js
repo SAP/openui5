@@ -100,7 +100,11 @@ sap.ui.define([
 				done();
 			});
 			oTreeBinding.initialize();
-			oTreeBinding.getContexts();
+			// refresh indicates that the adapter code has been loaded and the binding has been
+			// successfully initialized
+			oTreeBinding.attachEventOnce("refresh", function () {
+				oTreeBinding.getContexts();
+			});
 		});
 	});
 	QUnit.module("Message: control id", {

@@ -1385,6 +1385,17 @@ sap.ui.define([
 				bIsCompositeType,
 				that = this;
 
+			function observeRow(oRow) {
+				var oCellControl;
+
+				//TODO find cell with observed control, currently assume 0
+				//TODO aggregation "cells" is only valid for sap.ui.table.Table
+				oCellControl = oRow.getAggregation("cells")[0];
+				that.checkValue(assert, oCellControl.getProperty(sProperty), sControlId,
+					oRow.getIndex());
+				that.oObserver.observe(oCellControl, {properties : [sProperty]});
+			}
+
 			if (this.bCheckValue) { // ManagedObjectObserver checks value changes on the control
 				this.oObserver = this.oObserver || new ManagedObjectObserver(function (oChange) {
 					var i,
@@ -1403,17 +1414,10 @@ sap.ui.define([
 				if (bInList) {
 					this.oTemplateObserver = this.oTemplateObserver
 						|| new ManagedObjectObserver(function (oChange) {
-						var oCellControl;
-
 						if (oChange.mutation === "remove") {
 							that.oObserver.unobserve(oChange.child);
 						} else if (oChange.mutation === "insert") {
-							//TODO find cell with observed control, currently assume 0
-							//TODO aggregation "cells" is only valid for sap.ui.table.Table
-							oCellControl = oChange.child.getAggregation("cells")[0];
-							that.checkValue(assert, oCellControl.getProperty(sProperty), sControlId,
-								oChange.child.getIndex());
-							that.oObserver.observe(oCellControl, {properties : [sProperty]});
+							observeRow(oChange.child);
 						}
 					});
 					oControl = oControl.getParent().getParent();
@@ -1421,6 +1425,7 @@ sap.ui.define([
 					oConfiguration = {aggregations : ["rows"]};
 					if (!this.oTemplateObserver.isObserved(oControl, oConfiguration)) {
 						this.oTemplateObserver.observe(oControl, oConfiguration);
+						oControl.getRows().forEach(observeRow); // observe initial rows (TreeTable)
 					}
 				} else {
 					oConfiguration = {properties : [sProperty]};
@@ -7034,8 +7039,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				target : bPersistTechnicalMessages ? "" : "/SalesOrderSet('1')",
 				technical : true,
 				type : "Error"
-			}])
-			.expectValue("idNote", false);
+			}]);
 
 		this.oLogMock.expects("error")
 			.withExactArgs("Request failed with status code 404: GET SalesOrderSet('1')",
@@ -7871,6 +7875,59 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test
 			oModel.setProperty("/C_RSHMaintSchedSmltdOrdAndOp('~0~')/MaintenanceOrder", "Bar");
 			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: TreeTable with relative binding works with async adapter loading
+	// JIRA: CPOUI5MODELS-650
+	QUnit.test("ODataTreeBinding: relative binding, async adapter loading", function (assert) {
+		var oModel = createSpecialCasesModel({preliminaryContext : true}),
+			sView = '\
+<FlexBox id="box">\
+	<t:TreeTable id="table"\
+			rows="{\
+				parameters : {\
+					countMode : \'Inline\',\
+					treeAnnotationProperties : {\
+						hierarchyDrillStateFor : \'OrderOperationIsExpanded\',\
+						hierarchyLevelFor : \'OrderOperationRowLevel\',\
+						hierarchyNodeDescendantCountFor : \'HierarchyDescendantCount\',\
+						hierarchyNodeFor : \'OrderOperationRowID\',\
+						hierarchyParentNodeFor : \'OrderOperationParentRowID\'\
+					}\
+				},\
+				path : \'to_C_RSHMaintSchedSmltdOrdAndOp\'\
+			}"\
+			visibleRowCount="1"\
+			visibleRowCountMode="Fixed" \>\
+		<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
+	</t:TreeTable>\
+</FlexBox>',
+		that = this;
+
+			return this.createView(assert, sView, oModel).then(function () {
+				that.expectHeadRequest()
+					.expectRequest("DummySet('42')", {DummyID : "42"})
+					.expectRequest({
+						deepPath : "/DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp",
+						requestUri : "DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp"
+							+ "?$skip=0&$top=101&$inlinecount=allpages&"
+							+ "$filter=OrderOperationRowLevel%20le%200"
+					}, {
+						__count : "1",
+						results : [{
+							__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"},
+							MaintenanceOrder : "Bar"
+						}]
+					})
+					.expectValue("maintenanceOrder", [""])
+					.expectValue("maintenanceOrder", ["Bar"]);
+
+			// code under test
+			that.oView.byId("box").bindElement({path : "/DummySet('42')"});
 
 			return that.waitForChanges(assert);
 		});

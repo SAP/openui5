@@ -14,6 +14,15 @@ sap.ui.define([
 		oModel.addBinding(oBinding);
 	}
 
+	// request data
+	function requestData(oBinding, iStartIndex, iLength, iThreshold) {
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(iStartIndex, iLength, iThreshold);
+		});
+	}
+
 	QUnit.module("ODataTreeBindingFlat - Tree State: Expand", {
 		beforeEach: function() {
 			ODataTreeBindingFakeService.setup();
@@ -90,7 +99,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.test("Restore tree state: Expand deep node", function(assert){
@@ -161,7 +170,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.test("Restore tree state: Expand error handling, the whole batch request fails", function(assert){
@@ -209,7 +218,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.test("Restore tree state: Expand error handling, the whole batch request is aborted", function(assert){
@@ -257,7 +266,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.test("Restore tree state: Expand error handling, restore of deep nodes fails", function(assert){
@@ -316,7 +325,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.test("Restore tree state: Expand error handling, restore of server index nodes fails", function(assert){
@@ -373,7 +382,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.test("Restore tree state: Expand error handling, all sub requests fail", function(assert){
@@ -431,7 +440,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.module("ODataTreeBindingFlat - Tree State: Collapse", {
@@ -492,7 +501,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.test("Restore tree state: Collapse deep node", function(assert){
@@ -563,7 +572,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.test("Restore tree state: Collapse error handling, whole batch fails", function(assert){
@@ -605,7 +614,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 120, 0);
+		requestData(oBinding, 0, 120, 0);
 	});
 
 	QUnit.module("ODataTreeBindingFlat - Tree State: Remove", {
@@ -621,87 +630,100 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore tree state: adapt server node sections - remove", function(assert) {
+		var done = assert.async();
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
-			threshold: 10,
-			countMode: "Inline",
-			operationMode: "Server",
-			numberOfExpandedLevels: 0,
-			restoreTreeStateAfterChange: true
+			threshold : 10,
+			countMode : "Inline",
+			operationMode : "Server",
+			numberOfExpandedLevels : 0,
+			restoreTreeStateAfterChange : true
 		});
 
-		var aSections = [
-			{ iSkip: 0, iTop: 20 },
-			{ iSkip: 80, iTop: 20 },
-			{ iSkip: 120, iTop: 40 },
-			{ iSkip: 200, iTop: 40 }
-		];
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
 
-		var aRemovedNodes = [
-			{ serverIndex: 10, magnitude: 5 },
-			{ serverIndex: 17, magnitude: 2 },
-			{ serverIndex: 90, magnitude: 15 },
-			{ serverIndex: 120, magnitude: 50 },
-			{ serverIndex: 200, magnitude: 10 }
-		];
+			var aSections = [
+				{ iSkip : 0, iTop : 20 },
+				{ iSkip : 80, iTop : 20 },
+				{ iSkip : 120, iTop : 40 },
+				{ iSkip : 200, iTop : 40 }
+			];
 
-		oBinding._adaptSections(aSections, {
-			removed: aRemovedNodes,
-			added: []
+			var aRemovedNodes = [
+				{ serverIndex : 10, magnitude : 5 },
+				{ serverIndex : 17, magnitude : 2 },
+				{ serverIndex : 90, magnitude : 15 },
+				{ serverIndex : 120, magnitude : 50 },
+				{ serverIndex : 200, magnitude : 10 }
+			];
+
+			oBinding._adaptSections(aSections, {
+				removed : aRemovedNodes,
+				added : []
+			});
+
+			var aExpectedSections = [
+				{ iSkip :0, iTop :13 },
+				{ iSkip :71, iTop :13 },
+				{ iSkip :124, iTop :34 }
+			];
+
+			assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+			done();
 		});
-
-		var aExpectedSections = [
-			{ iSkip:0, iTop:13 },
-			{ iSkip:71, iTop:13 },
-			{ iSkip:124, iTop:34 }
-		];
-
-		assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
 	});
 
 	QUnit.test("Restore tree state: adapt deep node sections - remove", function(assert) {
+		var done = assert.async();
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
-			threshold: 10,
-			countMode: "Inline",
-			operationMode: "Server",
-			numberOfExpandedLevels: 0,
-			restoreTreeStateAfterChange: true
+			threshold : 10,
+			countMode : "Inline",
+			operationMode : "Server",
+			numberOfExpandedLevels : 0,
+			restoreTreeStateAfterChange : true
 		});
 
-		var aSections = [
-			{ iSkip: 0, iTop: 20 },
-			{ iSkip: 80, iTop: 20 },
-			{ iSkip: 120, iTop: 40 },
-			{ iSkip: 200, iTop: 40 }
-		];
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			var aSections = [
+				{ iSkip : 0, iTop : 20 },
+				{ iSkip : 80, iTop : 20 },
+				{ iSkip : 120, iTop : 40 },
+				{ iSkip : 200, iTop : 40 }
+			];
 
-		var aRemovedNodes = [
-			{ positionInParent: 0, magnitude: 0 }, // magnitude properties should be ignored
-			{ positionInParent: 1, magnitude: 3 },
-			{ positionInParent: 2, magnitude: 0 },
-			{ positionInParent: 5, magnitude: 2 },
-			{ positionInParent: 19, magnitude: 0 },
-			{ positionInParent: 85, magnitude: 15 },
-			{ positionInParent: 200, magnitude: 0 },
-			{ positionInParent: 205, magnitude: 0 },
-			{ positionInParent: 239, magnitude: 0 }
-		];
+			var aRemovedNodes = [
+				{ positionInParent : 0, magnitude : 0 }, // magnitude properties should be ignored
+				{ positionInParent : 1, magnitude : 3 },
+				{ positionInParent : 2, magnitude : 0 },
+				{ positionInParent : 5, magnitude : 2 },
+				{ positionInParent : 19, magnitude : 0 },
+				{ positionInParent : 85, magnitude : 15 },
+				{ positionInParent : 200, magnitude : 0 },
+				{ positionInParent : 205, magnitude : 0 },
+				{ positionInParent : 239, magnitude : 0 }
+			];
 
-		oBinding._adaptSections(aSections, {
-			removed: aRemovedNodes,
-			added: []
-		}, {
-			indexName: "positionInParent",
-			ignoreMagnitude: true
+			oBinding._adaptSections(aSections, {
+				removed : aRemovedNodes,
+				added : []
+			}, {
+				indexName : "positionInParent",
+				ignoreMagnitude : true
+			});
+
+			var aExpectedSections = [
+				{ iSkip : 0, iTop : 15 },
+				{ iSkip : 75, iTop : 19 },
+				{ iSkip : 114, iTop : 40 },
+				{ iSkip : 194, iTop : 37 }
+			];
+
+			assert.deepEqual(aSections, aExpectedSections, "The deep sections are correctly adapted");
+			done();
 		});
-
-		var aExpectedSections = [
-			{ iSkip: 0, iTop: 15 },
-			{ iSkip: 75, iTop: 19 },
-			{ iSkip: 114, iTop: 40 },
-			{ iSkip: 194, iTop: 37 }
-		];
-
-		assert.deepEqual(aSections, aExpectedSections, "The deep sections are correctly adapted");
 	});
 
 	QUnit.test("Restore tree state: after delete server index nodes (UC5)", function(assert) {
@@ -765,7 +787,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Restore tree state: Delete server index node w/ generated server index node (UCx2)", function(assert) {
@@ -806,7 +828,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.module("ODataTreeBindingFlat - Tree State: Insert", {
@@ -840,132 +862,149 @@ sap.ui.define([
 	}
 
 	QUnit.test("Restore tree state: adapt server node sections - add nodes", function(assert) {
+		var done = assert.async();
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
-			threshold: 10,
-			countMode: "Inline",
-			operationMode: "Server",
-			numberOfExpandedLevels: 0,
-			restoreTreeStateAfterChange: true
+			threshold : 10,
+			countMode : "Inline",
+			operationMode : "Server",
+			numberOfExpandedLevels : 0,
+			restoreTreeStateAfterChange : true
 		});
 
 		var aAdded = [];
 
 		var aSections = [
-			{ iSkip: 0, iTop: 20 },
-			{ iSkip: 80, iTop: 20 },
-			{ iSkip: 120, iTop: 40 },
-			{ iSkip: 200, iTop: 40 }
+			{ iSkip : 0, iTop : 20 },
+			{ iSkip : 80, iTop : 20 },
+			{ iSkip : 120, iTop : 40 },
+			{ iSkip : 200, iTop : 40 }
 		];
 
 		var aAddedNodesConfig = [
-			{preorderPosition: 1},
-			{preorderPosition: 40},
-			{preorderPosition: 41},
-			{preorderPosition: 300}
+			{preorderPosition : 1},
+			{preorderPosition : 40},
+			{preorderPosition : 41},
+			{preorderPosition : 300}
 		];
 
 		aAddedNodesConfig.forEach(function(oConfig) {
 			aAdded.push(createAddedNode(oConfig));
 		});
 
-		oBinding._adaptSections(aSections, {
-			added: aAdded
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding._adaptSections(aSections, {
+				added : aAdded
+			});
+
+			var aExpectedSections = [
+				{ iSkip : 0, iTop : 21 },
+				{ iSkip : 40, iTop : 2 },
+				{ iSkip : 83, iTop : 20 },
+				{ iSkip : 123, iTop : 40 },
+				{ iSkip : 203, iTop : 40 },
+				{ iSkip : 300, iTop : 1 }
+			];
+
+			assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+			done();
 		});
-
-		var aExpectedSections = [
-			{ iSkip: 0, iTop: 21 },
-			{ iSkip: 40, iTop: 2 },
-			{ iSkip: 83, iTop: 20 },
-			{ iSkip: 123, iTop: 40 },
-			{ iSkip: 203, iTop: 40 },
-			{ iSkip: 300, iTop: 1 }
-		];
-
-		assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
 	});
 
 	QUnit.test("Restore tree state: adapt server node sections - add nodes with magnitudes", function(assert) {
+		var done = assert.async();
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
-			threshold: 10,
-			countMode: "Inline",
-			operationMode: "Server",
-			numberOfExpandedLevels: 0,
-			restoreTreeStateAfterChange: true
+			threshold : 10,
+			countMode : "Inline",
+			operationMode : "Server",
+			numberOfExpandedLevels : 0,
+			restoreTreeStateAfterChange : true
 		});
 
 		var aAdded = [];
 
 		var aSections = [
-			{ iSkip: 0, iTop: 20 },
-			{ iSkip: 80, iTop: 10 }
+			{ iSkip : 0, iTop : 20 },
+			{ iSkip : 80, iTop : 10 }
 		];
 
 		var aAddedNodesConfig = [
-			{preorderPosition: 1, magnitude: 9}
-			// {preorderPosition: 2, magnitude: 1} //  // Never happens: optimizeOptimizedChanges ignores adds inside added parents
+			{preorderPosition : 1, magnitude : 9}
+			// {preorderPosition : 2, magnitude : 1} //  // Never happens: optimizeOptimizedChanges ignores adds inside added parents
 		];
 
 		aAddedNodesConfig.forEach(function(oConfig) {
 			aAdded.push(createAddedNode(oConfig));
 		});
 
-		oBinding._adaptSections(aSections, {
-			added: aAdded
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding._adaptSections(aSections, {
+				added : aAdded
+			});
+
+			var aExpectedSections = [
+				{ iSkip : 0, iTop : 30 },
+				{ iSkip : 90, iTop : 10 }
+			];
+
+			assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+			done();
 		});
-
-		var aExpectedSections = [
-			{ iSkip: 0, iTop: 30 },
-			{ iSkip: 90, iTop: 10 }
-		];
-
-		assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
 	});
 
 	QUnit.test("Restore tree state: adapt deep node sections - add nodes", function(assert) {
+		var done = assert.async();
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
-			threshold: 10,
-			countMode: "Inline",
-			operationMode: "Server",
-			numberOfExpandedLevels: 0,
-			restoreTreeStateAfterChange: true
+			threshold : 10,
+			countMode : "Inline",
+			operationMode : "Server",
+			numberOfExpandedLevels : 0,
+			restoreTreeStateAfterChange : true
 		});
 
 		var aSections = [
-			{ iSkip: 0, iTop: 20 },
-			{ iSkip: 80, iTop: 20 },
-			{ iSkip: 120, iTop: 40 },
-			{ iSkip: 200, iTop: 40 }
+			{ iSkip : 0, iTop : 20 },
+			{ iSkip : 80, iTop : 20 },
+			{ iSkip : 120, iTop : 40 },
+			{ iSkip : 200, iTop : 40 }
 		];
 
 		var aAddedNodesConfig = [
-			{siblingsPosition: 1, isDeepOne: true}, // New node at actual position 1
-			{siblingsPosition: 40, isDeepOne: true}, // New node at actual position 40 (abap starts at 1)
-			{siblingsPosition: 41, isDeepOne: true},
-			{siblingsPosition: 300, isDeepOne: true}
+			{siblingsPosition : 1, isDeepOne : true}, // New node at actual position 1
+			{siblingsPosition : 40, isDeepOne : true}, // New node at actual position 40 (abap starts at 1)
+			{siblingsPosition : 41, isDeepOne : true},
+			{siblingsPosition : 300, isDeepOne : true}
 		];
 
 		var aAdded = [];
 		aAddedNodesConfig.forEach(function(oConfig) {
 			aAdded.push(createAddedNode(oConfig));
 		});
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding._adaptSections(aSections, {
+				added : aAdded
+			}, {
+				indexName : "positionInParent",
+				ignoreMagnitude : true
+			});
 
-		oBinding._adaptSections(aSections, {
-			added: aAdded
-		}, {
-			indexName: "positionInParent",
-			ignoreMagnitude: true
+			var aExpectedSections = [
+				{ iSkip : 0, iTop : 21 },
+				{ iSkip : 40, iTop : 2 },
+				{ iSkip : 83, iTop : 20 },
+				{ iSkip : 123, iTop : 40 },
+				{ iSkip : 203, iTop : 40 },
+				{ iSkip : 300, iTop : 1 }
+			];
+
+			assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+			done();
 		});
-
-		var aExpectedSections = [
-			{ iSkip: 0, iTop: 21 },
-			{ iSkip: 40, iTop: 2 },
-			{ iSkip: 83, iTop: 20 },
-			{ iSkip: 123, iTop: 40 },
-			{ iSkip: 203, iTop: 40 },
-			{ iSkip: 300, iTop: 1 }
-		];
-
-		assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
 	});
 
 	QUnit.test("Restore tree state: insert server index node (UC1)", function(assert) {
@@ -1010,7 +1049,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Restore tree state: insert deep node (UC2)", function(assert) {
@@ -1069,7 +1108,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Restore tree state: insert deep nodes (UC3)", function(assert) {
@@ -1137,7 +1176,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Restore tree state: insert server index- and deep nodes (UC4)", function(assert) {
@@ -1212,7 +1251,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Restore tree state: insert server index- and deep nodes (UC4b)", function(assert) {
@@ -1295,7 +1334,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 
@@ -1345,7 +1384,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Restore tree state: insert server index node w/ generated server index node (UCx4)", function(assert) {
@@ -1394,7 +1433,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.module("ODataTreeBindingFlat - Tree State: Move", {
@@ -1412,29 +1451,30 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore tree state: adapt server node sections - move nodes", function(assert) {
+		var done = assert.async();
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
-			threshold: 10,
-			countMode: "Inline",
-			operationMode: "Server",
-			numberOfExpandedLevels: 0,
-			restoreTreeStateAfterChange: true
+			threshold : 10,
+			countMode : "Inline",
+			operationMode : "Server",
+			numberOfExpandedLevels : 0,
+			restoreTreeStateAfterChange : true
 		});
 
 		var aSections = [
-			{ iSkip: 0, iTop: 20 },
-			{ iSkip: 80, iTop: 20 },
-			{ iSkip: 120, iTop: 40 },
-			{ iSkip: 180, iTop: 2 },
-			{ iSkip: 200, iTop: 40 }
+			{ iSkip : 0, iTop : 20 },
+			{ iSkip : 80, iTop : 20 },
+			{ iSkip : 120, iTop : 40 },
+			{ iSkip : 180, iTop : 2 },
+			{ iSkip : 200, iTop : 40 }
 		];
 
 		var aAddedNodesConfig = [
-			{preorderPosition: 1}, // New node at actual position 1
-			{preorderPosition: 40}, // New node at actual position 40 (abap starts at 1)
-			{preorderPosition: 41},
-			{preorderPosition: 100},
-			{preorderPosition: 129},
-			{preorderPosition: 300}
+			{preorderPosition : 1}, // New node at actual position 1
+			{preorderPosition : 40}, // New node at actual position 40 (abap starts at 1)
+			{preorderPosition : 41},
+			{preorderPosition : 100},
+			{preorderPosition : 129},
+			{preorderPosition : 300}
 		];
 
 		var aAdded = [];
@@ -1443,52 +1483,56 @@ sap.ui.define([
 		});
 
 		var aRemovedNodes = [
-			{ serverIndex: 10, magnitude: 1 },
-			{ serverIndex: 17, magnitude: 2 },
-			{ serverIndex: 90, magnitude: 90 }, // removes end of section 80, full 120 and start of 180
-			// { serverIndex: 91, magnitude: 1 }, // Never happens: optimizeChanges ignores removes inside removed parents
-			{ serverIndex: 239, magnitude: 0 }
+			{ serverIndex : 10, magnitude : 1 },
+			{ serverIndex : 17, magnitude : 2 },
+			{ serverIndex : 90, magnitude : 90 }, // removes end of section 80, full 120 and start of 180
+			// { serverIndex : 91, magnitude : 1 }, // Never happens: optimizeChanges ignores removes inside removed parents
+			{ serverIndex : 239, magnitude : 0 }
 		];
 
-		oBinding._adaptSections(aSections, {
-			added: aAdded,
-			removed: aRemovedNodes
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding._adaptSections(aSections, {
+				added : aAdded,
+				removed : aRemovedNodes
+			});
+
+			var aExpectedSections = [
+				{ iSkip : 0, iTop : 18 },
+				{ iSkip : 40, iTop : 2 }, // New section does not need to calculate in potentially generated server index nodes. Position is already provided by service
+				{ iSkip : 78, iTop : 13 },
+				{ iSkip : 87, iTop : 4 },
+				{ iSkip : 100, iTop : 1 },
+				{ iSkip : 108, iTop : 44 }, // Was section { iSkip : 200, iTop : 40 }
+				{ iSkip : 300, iTop : 1 }
+			];
+
+			assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+			done();
 		});
-
-		var aExpectedSections = [
-			{ iSkip: 0, iTop: 18 },
-			{ iSkip: 40, iTop: 2 }, // New section does not need to calculate in potentially generated server index nodes. Position is already provided by service
-			{ iSkip: 78, iTop: 13 },
-			{ iSkip: 87, iTop: 4 },
-			{ iSkip: 100, iTop: 1 },
-			{ iSkip: 108, iTop: 44 }, // Was section { iSkip: 200, iTop: 40 }
-			{ iSkip: 300, iTop: 1 }
-		];
-
-		assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
 	});
 
 	QUnit.test("Restore tree state: adapt deep node sections - move nodes", function(assert) {
+		var done = assert.async();
 		createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
-			threshold: 10,
-			countMode: "Inline",
-			operationMode: "Server",
-			numberOfExpandedLevels: 0,
-			restoreTreeStateAfterChange: true
+			threshold : 10,
+			countMode : "Inline",
+			operationMode : "Server",
+			numberOfExpandedLevels : 0,
+			restoreTreeStateAfterChange : true
 		});
 
 		var aSections = [
-			{ iSkip: 0, iTop: 20 },
-			{ iSkip: 80, iTop: 20 },
-			{ iSkip: 120, iTop: 40 },
-			{ iSkip: 200, iTop: 40 }
+			{ iSkip : 0, iTop : 20 },
+			{ iSkip : 80, iTop : 20 },
+			{ iSkip : 120, iTop : 40 },
+			{ iSkip : 200, iTop : 40 }
 		];
 
 		var aAddedNodesConfig = [
-			{siblingsPosition: 1, isDeepOne: true}, // New node at actual position 1
-			{siblingsPosition: 40, isDeepOne: true}, // New node at actual position 40 (abap starts at 1)
-			{siblingsPosition: 41, isDeepOne: true},
-			{siblingsPosition: 300, isDeepOne: true}
+			{siblingsPosition : 1, isDeepOne : true}, // New node at actual position 1
+			{siblingsPosition : 40, isDeepOne : true}, // New node at actual position 40 (abap starts at 1)
+			{siblingsPosition : 41, isDeepOne : true},
+			{siblingsPosition : 300, isDeepOne : true}
 		];
 
 		var aAdded = [];
@@ -1497,31 +1541,34 @@ sap.ui.define([
 		});
 
 		var aRemovedNodes = [
-			{ positionInParent: 10, magnitude: 5 }, // magnitude properties should be ignored
-			{ positionInParent: 17, magnitude: 2 },
-			{ positionInParent: 90, magnitude: 15 },
-			{ positionInParent: 120, magnitude: 50 },
-			{ positionInParent: 239, magnitude: 10 }
+			{ positionInParent : 10, magnitude : 5 }, // magnitude properties should be ignored
+			{ positionInParent : 17, magnitude : 2 },
+			{ positionInParent : 90, magnitude : 15 },
+			{ positionInParent : 120, magnitude : 50 },
+			{ positionInParent : 239, magnitude : 10 }
 		];
 
-		oBinding._adaptSections(aSections, {
-			added: aAdded,
-			removed: aRemovedNodes
-		}, {
-			indexName: "positionInParent",
-			ignoreMagnitude: true
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding._adaptSections(aSections, {
+				added : aAdded,
+				removed : aRemovedNodes
+			}, {
+				indexName : "positionInParent",
+				ignoreMagnitude : true
+			});
+
+			var aExpectedSections = [
+				{ iSkip : 0, iTop : 19 },
+				{ iSkip : 40, iTop : 2 },
+				{ iSkip : 81, iTop : 19 },
+				{ iSkip : 120, iTop : 39 },
+				{ iSkip : 199, iTop : 39 },
+				{ iSkip : 300, iTop : 1 }
+			];
+
+			assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+			done();
 		});
-
-		var aExpectedSections = [
-			{ iSkip: 0, iTop: 19 },
-			{ iSkip: 40, iTop: 2 },
-			{ iSkip: 81, iTop: 19 },
-			{ iSkip: 120, iTop: 39 },
-			{ iSkip: 199, iTop: 39 },
-			{ iSkip: 300, iTop: 1 }
-		];
-
-		assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
 	});
 
 	QUnit.test("Restore tree state: move server index node to deep nodes (UC8)", function(assert) {
@@ -1575,7 +1622,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 	QUnit.test("Restore tree state: Move one level down - server-index child nodes become deep nodes (UC10)", function(assert) {
@@ -1623,7 +1670,7 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 
 
@@ -1696,6 +1743,6 @@ sap.ui.define([
 			done();
 		}
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 20, 100);
+		requestData(oBinding, 0, 20, 100);
 	});
 });

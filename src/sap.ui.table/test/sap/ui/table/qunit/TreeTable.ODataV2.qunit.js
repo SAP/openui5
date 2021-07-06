@@ -672,7 +672,8 @@ sap.ui.define([
 			}
 		});
 
-		this.assertState(assert, "After initialization", {pendingRequests: true, busy: false});
+		// the underlying TreeBinding adapter is loaded async and therefore no requests are pending initially
+		this.assertState(assert, "After initialization", {pendingRequests: false, busy: false});
 	});
 
 	QUnit.test("Initial request; Automatic BusyIndicator enabled", function(assert) {
@@ -704,7 +705,8 @@ sap.ui.define([
 			}
 		});
 
-		this.assertState(assert, "After initialization", {pendingRequests: true, busy: true});
+		// the underlying TreeBinding adapter is loaded async and therefore no requests are pending initially
+		this.assertState(assert, "After initialization", {pendingRequests: false, busy: false});
 	});
 
 	QUnit.test("Multiple sequential and parallel requests", function(assert) {
@@ -739,7 +741,8 @@ sap.ui.define([
 			}
 		});
 
-		this.assertState(assert, "After initialization", {pendingRequests: true, busy: true});
+		// the underlying TreeBinding adapter is loaded async and therefore no requests are pending initially
+		this.assertState(assert, "After initialization", {pendingRequests: false, busy: false});
 	});
 
 	QUnit.module("NoData", {
@@ -803,7 +806,9 @@ sap.ui.define([
 		this.oTable = TableQUnitUtils.createTable(TreeTable, function(oTable) {
 			pDone = new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
-					TableQUnitUtils.assertNoDataVisible(assert, oTable, false);
+					// the underlying TreeBinding adapter is loaded async and therefore no requests are pending initially
+					// this means the no data message is visible
+					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
 					resolve();
 				});
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
@@ -826,7 +831,9 @@ sap.ui.define([
 		}, function(oTable) {
 			pDone = new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
-					TableQUnitUtils.assertNoDataVisible(assert, oTable, false);
+					// the underlying TreeBinding adapter is loaded async and therefore no requests are pending
+					// this means the no data message is visible
+					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
 					resolve();
 				});
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {

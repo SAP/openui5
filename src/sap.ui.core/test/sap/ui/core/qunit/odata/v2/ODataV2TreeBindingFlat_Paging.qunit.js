@@ -38,6 +38,24 @@ sap.ui.define([
 		oModel.addBinding(oBinding);
 	}
 
+	// request data
+	function requestData(oBinding, iStartIndex, iLength, iThreshold) {
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(iStartIndex, iLength, iThreshold);
+		});
+	}
+
+	// request data
+	function loadData(oBinding, iSkip, iTop, iThreshold) {
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding._loadData(iSkip, iTop, iThreshold);
+		});
+	}
+
 	QUnit.module("ODataTreeBinding - AutoExpand", {
 		beforeEach: function() {
 			fnSetupNewMockServer();
@@ -51,6 +69,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialize & Adapter check", function(assert){
+		var done = assert.async();
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
 			countMode: "Inline",
@@ -58,16 +77,19 @@ sap.ui.define([
 			select: "LEVEL,DRILLDOWN_STATE", //incomplete annotation set in $select
 			numberOfExpandedLevels: 2
 		});
+		oBinding.attachEventOnce("refresh", function () {
+			// API Check
+			assert.ok(oBinding.getContexts, "getContexts function is present");
+			assert.ok(oBinding.getNodes, "getNodes function is present");
+			assert.ok(oBinding.getLength, "getLength function is present");
+			assert.ok(oBinding.expand, "expand function is present");
+			assert.ok(oBinding.collapse, "collapse function is present");
 
-		// API Check
-		assert.ok(oBinding.getContexts, "getContexts function is present");
-		assert.ok(oBinding.getNodes, "getNodes function is present");
-		assert.ok(oBinding.getLength, "getLength function is present");
-		assert.ok(oBinding.expand, "expand function is present");
-		assert.ok(oBinding.collapse, "collapse function is present");
-
-		// $select validation
-		assert.equal(oBinding.mParameters.select, "LEVEL,DRILLDOWN_STATE,PARENT_NODE,HIERARCHY_NODE,MAGNITUDE", "$select is complete incl. Magnitude");
+			// $select validation
+			assert.equal(oBinding.mParameters.select, "LEVEL,DRILLDOWN_STATE,PARENT_NODE,"
+				+ "HIERARCHY_NODE,MAGNITUDE", "$select is complete incl. Magnitude");
+			done();
+		});
 	});
 
 	QUnit.test("Initial getContexts and Thresholding", function(assert){
@@ -117,7 +139,7 @@ sap.ui.define([
 		oBinding.attachChange(handler1);
 		oBinding.attachDataRequested(oDataRequestedSpy);
 		oBinding.attachDataReceived(dataReceived);
-		oBinding.getContexts(0, 10, 20);
+		requestData(oBinding, 0, 10, 20);
 	});
 
 	QUnit.test("Simple Paging", function(assert){
@@ -151,8 +173,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 20);
-
+		requestData(oBinding, 0, 10, 20);
 	});
 
 	QUnit.test("Succeeding _loadData() calls for same section only trigger one request", function(assert){
@@ -182,7 +203,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding._loadData(0, 10, 0);
+		loadData(oBinding, 0, 10, 0);
 	});
 
 	QUnit.test("Succeeding _loadData() calls for partially equal sections trigger delta requests", function(assert){
@@ -236,7 +257,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding._loadData(0, 10, 0);
+		loadData(oBinding, 0, 10, 0);
 	});
 
 	QUnit.test("Succeeding _loadData() calls for partially equal threshold-sections trigger threshold requests", function(assert){
@@ -288,7 +309,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding._loadData(0, 10, 0);
+		loadData(oBinding, 0, 10, 0);
 	});
 
 	QUnit.test("Succeeding _loadData() calls within threshold of each other trigger exactly one request", function(assert){
@@ -319,7 +340,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding._loadData(0, 10, 0);
+		loadData(oBinding, 0, 10, 0);
 	});
 
 	QUnit.test("Succeeding _loadChildren() calls for same section only trigger one request", function(assert){
@@ -350,7 +371,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding._loadData(0, 10, 0);
+		loadData(oBinding, 0, 10, 0);
 	});
 
 	QUnit.test("Succeeding _loadChildren() calls for partially equal sections trigger delta requests", function(assert){
@@ -404,7 +425,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding._loadData(0, 10, 0);
+		loadData(oBinding, 0, 10, 0);
 	});
 
 	QUnit.test("Succeeding _loadChildren() calls for separate parents trigger separate requests", function(assert){
@@ -453,7 +474,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding._loadData(0, 10, 0);
+		loadData(oBinding, 0, 10, 0);
 	});
 
 	QUnit.test("Advanced Paging", function(assert){
@@ -554,7 +575,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 0);
+		requestData(oBinding, 0, 10, 0);
 	});
 
 	QUnit.test("Paging when collapsing nodes", function(assert){
@@ -653,7 +674,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 100);
+		requestData(oBinding, 0, 10, 100);
 	});
 
 	QUnit.test("Application Filters are sent", function(assert){
@@ -741,7 +762,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(changeHandler1);
-		oBinding.getContexts(0, 20, 10);
+		requestData(oBinding, 0, 20, 10);
 	});
 
 	QUnit.test("getContexts: length falls back to model size limit", function(assert){
@@ -765,7 +786,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0);
+		requestData(oBinding, 0);
 	});
 });
 

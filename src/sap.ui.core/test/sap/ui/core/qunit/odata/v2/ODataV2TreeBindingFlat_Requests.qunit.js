@@ -34,6 +34,15 @@ sap.ui.define([
 		oModel.addBinding(oBinding);
 	}
 
+	// request data
+	function requestData(oBinding, iStartIndex, iLength, iThreshold) {
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(iStartIndex, iLength, iThreshold);
+		});
+	}
+
 	QUnit.module("Remove and reinsert", {
 		beforeEach: function() {
 			fnSetupNewMockServer();
@@ -209,7 +218,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - CREATE & UPDATE & DELETE", function(assert){
@@ -280,7 +289,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - DELETE - 1", function(assert){
@@ -329,7 +338,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - DELETE - 2", function(assert){
@@ -387,7 +396,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - DELETE - 3 - deep to initially collapsed", function(assert){
@@ -442,7 +451,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 
@@ -509,7 +518,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - Refresh after Success - Event-Timing", function(assert){
@@ -598,7 +607,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("Request Creation - No Refresh after Error - Event-Timing", function(assert){
@@ -672,7 +681,7 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
 	QUnit.test("addContexts() & removeContext() API - Array Arguments and Requests", function(assert){
@@ -717,10 +726,12 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 100, 0);
+		requestData(oBinding, 0, 100, 0);
 	});
 
-	QUnit.test("abortPendingRequest - Aborts all pending requests", function(assert){
+	QUnit.test("abortPendingRequest - Aborts all pending requests", function (assert){
+		var done = assert.async();
+
 		createTreeBinding("/orgHierarchy", null, [], {
 			threshold: 10,
 			countMode: "Inline",
@@ -735,13 +746,22 @@ sap.ui.define([
 				}
 			}
 		};
-		oBinding._aPendingRequests = [oFakeRequest, oFakeRequest];
-		oBinding._aPendingChildrenRequests = [oFakeRequest, oFakeRequest];
 
-		oBinding._abortPendingRequest();
-		assert.equal(iAbortCalled, 4, "All four fake requests got aborted");
-		assert.equal(oBinding._aPendingRequests.length, 0, "There are no more pending requests");
-		assert.equal(oBinding._aPendingChildrenRequests.length, 0, "There are no more pending children requests");
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding._aPendingRequests = [oFakeRequest, oFakeRequest];
+			oBinding._aPendingChildrenRequests = [oFakeRequest, oFakeRequest];
+
+			oBinding._abortPendingRequest();
+
+			assert.equal(iAbortCalled, 4, "All four fake requests got aborted");
+			assert.equal(oBinding._aPendingRequests.length, 0,
+				"There are no more pending requests");
+			assert.equal(oBinding._aPendingChildrenRequests.length, 0,
+				"There are no more pending children requests");
+			done();
+		});
 	});
 
 	QUnit.test("Reset followed by Request - Should fire a single pair of data* events", function(assert){
@@ -771,8 +791,12 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(handler1);
-		oBinding.getContexts(0, 10, 20);
-		oBinding.resetData();
-		oBinding.getContexts(0, 10, 20);
+		// refresh indicates that the adapter code has been loaded and the binding has been
+		// successfully initialized
+		oBinding.attachEventOnce("refresh", function () {
+			oBinding.getContexts(0, 10, 20);
+			oBinding.resetData();
+			oBinding.getContexts(0, 10, 20);
+		});
 	});
 });
