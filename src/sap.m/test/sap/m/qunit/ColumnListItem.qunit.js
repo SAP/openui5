@@ -82,22 +82,27 @@ sap.ui.define([
 		// SUT
 		var sut = new ColumnListItem({
 				cells : [new Text({
-					text: "Cell"
+					text: "Cell1"
 				}), new Text({
-					text: "Cell"
+					text: "Cell2"
 				})]
 			}),
-			column = new Column({
+			column1 = new Column({
 				header : new Text({
-					text : "Header"
+					text : "Header1"
 				}),
 
 				// make the size bigger than the screen to force to go to popin
 				minScreenWidth : "48000px",
 				demandPopin : true
 			}),
+			column2 = new Column({
+				header : new Text({
+					text : "Header2"
+				})
+			}),
 			table = new Table({
-				columns : [column, new Column()],
+				columns : [column1, column2],
 				items : sut
 			});
 
@@ -111,8 +116,9 @@ sap.ui.define([
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 1, "Popin header is found in the dom");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 1, "Popin separator is found in the dom");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
+		assert.equal(sut.getContentAnnouncement(), "Header2 Cell2 . Header1 Cell1", "content announcement is correct");
 
-		column.setPopinDisplay("WithoutHeader");
+		column1.setPopinDisplay("WithoutHeader");
 		Core.applyChanges();
 
 		assert.strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
@@ -120,7 +126,7 @@ sap.ui.define([
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 0, "Popin separator is not found in the dom");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
 
-		column.destroy();
+		column1.destroy();
 		Core.applyChanges();
 
 		assert.strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
