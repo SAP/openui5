@@ -68,6 +68,22 @@ sap.ui.define([
 		WebComponentAggregation.prototype.constructor = WebComponentAggregation;
 		WebComponentMetadata.prototype.metaFactoryAggregation = WebComponentAggregation;
 
+		// Enrich association factory
+		var OriginalAssociation = ElementMetadata.prototype.metaFactoryAssociation;
+		var WebComponentAssociation = function(oClass, name, info) {
+			OriginalAssociation.apply(this, arguments);
+
+			if (!info.mapping || typeof info.mapping !== "object") {
+				this._sMapping = ""; // For associations, "mapping" must be an object, because "to" is required
+			} else {
+				this._sMapping = "property"; // Associations map only to properties, no matter what is set, it's always "property" mapping
+				this._sMapTo = info.mapping.to; // The property, to which the association is related
+			}
+		};
+		WebComponentAssociation.prototype = Object.create(OriginalAssociation.prototype);
+		WebComponentAssociation.prototype.constructor = WebComponentAssociation;
+		WebComponentMetadata.prototype.metaFactoryAssociation = WebComponentAssociation;
+
 		WebComponentMetadata.prototype.applySettings = function(oClassInfo) {
 			var oStaticInfo = oClassInfo.metadata;
 
@@ -151,6 +167,25 @@ sap.ui.define([
 					var propData = mProperties[propName];
 					if (propData._sMapping === sMapping) {
 						mFiltered[propName] = propData;
+					}
+				}
+			}
+
+			return mFiltered;
+		};
+
+		/**
+		 * Returns a map of all associations that control properties (have mapping to properties)
+		 * returns {Object}
+		 */
+		WebComponentMetadata.prototype.getAssociationsWithMapping = function() {
+			var mFiltered = {};
+			var mAssociations = this.getAllAssociations();
+			for (var sAssocName in mAssociations) {
+				if (mAssociations.hasOwnProperty(sAssocName)) {
+					var oAssocData = mAssociations[sAssocName];
+					if (oAssocData._sMapping) {
+						mFiltered[sAssocName] = oAssocData;
 					}
 				}
 			}
