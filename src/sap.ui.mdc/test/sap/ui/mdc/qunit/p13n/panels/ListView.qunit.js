@@ -223,4 +223,14 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Use growing only when necessary (e.g. factory provided)", function(assert){
+
+        assert.ok(this.oListView._oListControl.getGrowing(), "Growing enabled as factory is provided");
+
+        this.oListView.setItemFactory();
+
+        assert.ok(!this.oListView._oListControl.getGrowing(), "Growing disabled as no factory is provided");
+
+    });
+
 });

@@ -73,6 +73,12 @@ sap.ui.define([
         this.setEnableReorder(true);
     };
 
+    ListView.prototype.setItemFactory = function(fnItemFactory) {
+        this.setProperty("itemFactory", fnItemFactory);
+        this._oListControl.setGrowing(!!fnItemFactory);
+        return this;
+    };
+
     ListView.prototype._getListTemplate = function() {
         return new ColumnListItem({
             selected: "{" + this.P13N_MODEL + ">visible}",
@@ -272,7 +278,7 @@ sap.ui.define([
 
     ListView.prototype._createInnerListControl = function() {
 		return new Table(this.getId() + "-innerListViewTable", Object.assign({
-            growing: true,
+            growing: false,
             growingThreshold: 25,
             growingScrollToLoad: true,
             updateStarted: function() {
