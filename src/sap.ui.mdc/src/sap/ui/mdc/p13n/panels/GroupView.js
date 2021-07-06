@@ -143,6 +143,14 @@ sap.ui.define([
 	GroupView.prototype._createGroupListTemplate = function() {
 		var oList = new List({
 			keyboardMode: ListKeyboardMode.Navigation,
+			updateStarted: function() {
+				this._removeFactoryControl();
+			}.bind(this),
+			updateFinished: function(oEvt) {
+				if (this.getShowFactory() && this._aInitializedLists.indexOf(oEvt.getSource().getId()) > -1) {
+					this._addFactoryControl(oEvt.getSource());
+				}
+			}.bind(this),
 			selectionChange: function(oBindingInfo) {
 				var sPath = oBindingInfo.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
 				var oItem = this.getP13nModel().getProperty(sPath);
@@ -336,8 +344,6 @@ sap.ui.define([
 			return;
 		}
 
-		var aInitializedGroups = this._removeFactoryControl();
-
 		this._oListControl.getItems().forEach(function(oOuterItem){
 			var oPanel = oOuterItem.getContent()[0];
 			var oInnerList = oPanel.getContent()[0];
@@ -347,9 +353,6 @@ sap.ui.define([
 				this._togglePanelVisibility(oPanel);
 			}
 
-			if (this.getShowFactory() && aInitializedGroups.indexOf(oInnerList.getId()) > -1) {
-				this._addFactoryControl(oInnerList);
-			}
 		}.bind(this));
 
 		this._aCurrentFilters = aFilter;
@@ -413,7 +416,7 @@ sap.ui.define([
 			){
 				this._bInitialized = true;
 				var oFirstList = this._oListControl.getItems()[0].getContent()[0].getContent()[0];
-				this._addFactoryControl(oFirstList);
+				this._addFactoryControl(oFirstList); //TODO: remove this call
 				this._addInitializedList(oFirstList);
 			}
 	};

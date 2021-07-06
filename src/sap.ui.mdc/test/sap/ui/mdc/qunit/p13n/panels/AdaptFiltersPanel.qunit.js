@@ -274,6 +274,8 @@ sap.ui.define([
 
     QUnit.test("Check 'itemFactory' execution for only necessary groups", function(assert){
 
+        var done = assert.async();
+
         var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
         var fnItemFactoryCallback = function(oContext) {
@@ -283,12 +285,17 @@ sap.ui.define([
         this.oAFPanel.setItemFactory(fnItemFactoryCallback);
 
         this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
-        this.oAFPanel.getCurrentViewContent()._loopGroupList(function(oItem, sKey){
-            var oProp = this.oAFPanel.getP13nModel().getProperty(oItem.getBindingContext(this.oAFPanel.P13N_MODEL).sPath);
-            var iExpectedLength = oProp.group === "G1" ? 2 : 1;
 
-            assert.equal(oItem.getContent().length, iExpectedLength, "Only required callbacks executed");
+        //timeout for list update
+        setTimeout(function(){
+            this.oAFPanel.getCurrentViewContent()._loopGroupList(function(oItem, sKey){
+                var oProp = this.oAFPanel.getP13nModel().getProperty(oItem.getBindingContext(this.oAFPanel.P13N_MODEL).sPath);
+                var iExpectedLength = oProp.group === "G1" ? 2 : 1;
 
+                assert.equal(oItem.getContent().length, iExpectedLength, "Only required callbacks executed");
+
+            }.bind(this));
+            done();
         }.bind(this));
 
     });
@@ -296,24 +303,29 @@ sap.ui.define([
     QUnit.test("Check 'itemFactory' execution for expanded groups", function(assert){
 
         //6 items in 2 groups --> 6x callback excuted after expanding --> +3x for initial filtering
-        var done = assert.async(9);
+        var done = assert.async(12);
 
         var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
         var fnItemFactoryCallback = function (oContext) {
             assert.ok(oContext, "Callback executed with binding context");
-            done(6);
+            done(9);
         };
 
         this.oAFPanel.setItemFactory(fnItemFactoryCallback);
 
         this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
 
-        this.oAFPanel.setGroupExpanded("G2");
+        //ensure expanding only after list is bound
+        setTimeout(function(){
+            this.oAFPanel.setGroupExpanded("G2");
+        }.bind(this));
 
     });
 
     QUnit.test("Check 'itemFactory' execution for expanded groups by checking created controls", function(assert){
+
+        var done = assert.async();
 
         var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
@@ -328,12 +340,16 @@ sap.ui.define([
 
         this.oAFPanel.setGroupExpanded("G2");
 
-        this.oAFPanel.getCurrentViewContent()._loopGroupList(function(oItem, sKey){
+        //timeout for list update
+        setTimeout(function(){
+            this.oAFPanel.getCurrentViewContent()._loopGroupList(function(oItem, sKey){
 
-            //All Panels expanded --> all fields created
-            assert.equal(oItem.getContent().length, 2, "Only required callbacks executed");
+                //All Panels expanded --> all fields created
+                assert.equal(oItem.getContent().length, 2, "Only required callbacks executed");
 
-        });
+            });
+            done();
+        }.bind(this));
 
     });
 
@@ -403,6 +419,8 @@ sap.ui.define([
 
     QUnit.test("Check 'itemFactory' model propagation", function(assert){
 
+        var done = assert.async();
+
         var oSecondModel = new JSONModel({
             data: [
                 {
@@ -439,14 +457,18 @@ sap.ui.define([
         var oFirstGroup = aGroups[0].getContent()[0];
         var oFirstList = oFirstGroup.getContent()[0];
 
-        //List created via template 'oTestFactory'
-        var oCustomList = oFirstList.getItems()[0].getContent()[1];
+        setTimeout(function(){
+            //List created via template 'oTestFactory'
+            var oCustomList = oFirstList.getItems()[0].getContent()[1];
 
-        assert.equal(oCustomList.getItems().length, 1, "Custom template list has one item (oSecondModel, data)");
-        assert.deepEqual(oCustomList.getModel(), oSecondModel, "Manual model propagated");
-        assert.ok(oCustomList.getModel(this.oAFPanel.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Inner panel p13n model propagated");
+            assert.equal(oCustomList.getItems().length, 1, "Custom template list has one item (oSecondModel, data)");
+            assert.deepEqual(oCustomList.getModel(), oSecondModel, "Manual model propagated");
+            assert.ok(oCustomList.getModel(this.oAFPanel.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Inner panel p13n model propagated");
 
-        assert.equal(oCustomList.getItems()[0].getContent()[0].getText(), "Some Test Text", "Custom binding from outside working in factory");
+            assert.equal(oCustomList.getItems()[0].getContent()[0].getText(), "Some Test Text", "Custom binding from outside working in factory");
+
+            done();
+        }.bind(this));
 
     });
 

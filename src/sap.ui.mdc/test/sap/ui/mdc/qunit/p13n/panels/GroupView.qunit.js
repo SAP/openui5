@@ -63,7 +63,12 @@ sap.ui.define([
             this.oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, fnEnhancer, true);
 
             this.oGroupView.placeAt("qunit-fixture");
+
+            this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
+
             sap.ui.getCore().applyChanges();
+
+            return Promise.resolve();
         },
         afterEach: function(){
             this.sDefaultGroup = null;
@@ -80,7 +85,6 @@ sap.ui.define([
     });
 
     var fnCheckListCreation = function(assert) {
-        this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
 
         var oOuterList = this.oGroupView._oListControl;
         assert.ok(oOuterList.isA("sap.m.ListBase"), "Inner control is a list");
@@ -102,7 +106,6 @@ sap.ui.define([
     });
 
     QUnit.test("Check column toggle", function(assert){
-        this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
 
         var oOuterList = this.oGroupView._oListControl;
 
@@ -116,7 +119,6 @@ sap.ui.define([
     });
 
     QUnit.test("Check 'active' icon'", function(assert){
-        this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
 
         //Go in 'active' with icon view --> hide filter fields
         this.oGroupView.showFactory(false);
@@ -135,7 +137,6 @@ sap.ui.define([
     });
 
     QUnit.test("Check 'labelFor' association on fields", function(assert){
-        this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
 
         var aPanels = this.oGroupView.getPanels();
 
