@@ -138,7 +138,7 @@ sap.ui.define([
 		var oConfig = this.getConfig();
 
 		var aItems = [];
-		aValue.forEach(function(oValue, iIndex) {
+		(aValue || []).forEach(function(oValue, iIndex) {
 			var oValueCopy = deepClone(oValue);
 			var oDesigntimeMetadata = this.getNestedDesigntimeMetadata(iIndex);
 			var mItem = {

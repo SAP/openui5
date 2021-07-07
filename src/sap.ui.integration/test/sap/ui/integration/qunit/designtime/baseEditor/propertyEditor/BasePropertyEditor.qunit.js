@@ -28,6 +28,12 @@ function (
 					label: "foo",
 					path: "foo",
 					type: "string"
+				},
+				inactiveFoo: {
+					label: "foo2",
+					path: "foo",
+					type: "string",
+					visible: "{= !!${/inactiveControl}}"
 				}
 			};
 			var mConfig = {
@@ -100,6 +106,60 @@ function (
 					'Then the i18n property key is returned as a fallback'
 				);
 			});
+		});
+
+		QUnit.test("when an editor is invisible from the beginning", function(assert) {
+			return this.oBaseEditor.getPropertyEditorsByName("inactiveFoo").then(function(aPropertyEditors) {
+				var oFooEditor = aPropertyEditors[0];
+				assert.strictEqual(
+					oFooEditor.getAggregation("propertyEditor").getValue(),
+					undefined,
+					"then the underlying editor receives no value"
+				);
+
+				this.oBaseEditor.setJson({
+					foo: "barUpdate"
+				});
+				assert.strictEqual(
+					oFooEditor.getAggregation("propertyEditor").getValue(),
+					undefined,
+					"then the value is not updated"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("when an invisible editor gets activated", function(assert) {
+			return this.oBaseEditor.getPropertyEditorsByName("inactiveFoo").then(function(aPropertyEditors) {
+				var oFooEditor = aPropertyEditors[0];
+				this.oBaseEditor.setJson({
+					foo: "bar",
+					inactiveControl: true
+				});
+				assert.strictEqual(
+					oFooEditor.getAggregation("propertyEditor").getValue(),
+					"bar",
+					"then the editor receives a value"
+				);
+
+				this.oBaseEditor.setJson({
+					foo: "barUpdate"
+				});
+				assert.strictEqual(
+					oFooEditor.getAggregation("propertyEditor").getValue(),
+					"barUpdate",
+					"then the value is properly updated"
+				);
+
+				this.oBaseEditor.setJson({
+					foo: "shouldNotUpdate",
+					inactiveControl: false
+				});
+				assert.strictEqual(
+					oFooEditor.getAggregation("propertyEditor").getValue(),
+					"barUpdate",
+					"then the editor can be deactivated again"
+				);
+			}.bind(this));
 		});
 	});
 
