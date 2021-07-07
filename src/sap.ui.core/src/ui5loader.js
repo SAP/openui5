@@ -2533,7 +2533,7 @@
 		 *
 		 * </pre>
 		 *
-		 * @param {object|undefined} [cfg]
+		 * @param {object} [cfg]
 		 *   The provided configuration gets merged with the UI5 loader configuration in use.
 		 *   If <code>cfg</code> is omitted or <code>undefined</code>, a copy of the current configuration
 		 *   gets returned, containing at least the properties <code>amd</code> and <code>async</code>.

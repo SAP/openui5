@@ -3714,7 +3714,7 @@ sap.ui.define([
 	 * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
 	 * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name.
 	 *
-	 * @param {string|undefined} [sName] name of the model to be retrieved
+	 * @param {string} [sName] name of the model to be retrieved
 	 * @return {sap.ui.model.Model} oModel
 	 * @public
 	 */
