@@ -1,4 +1,4 @@
-/*!
+  /*!
  * ${copyright}
  */
 
@@ -516,6 +516,9 @@ sap.ui.define([
 				initials: this.getIconInitials(),
 				displaySize: this.getIconSize()
 			}).addStyleClass("sapMFeedInImage");
+			if (sIconSrc) {
+				this.oAvatar.addStyleClass("sapMFeedInImageBgColor");
+			}
 		} else {
 			this.oAvatar
 				.setSrc(sIconSrc)
