@@ -1913,10 +1913,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Popover should use compact arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to true", function (assert){
-		var stubGetParameters = sinon.stub(Parameters, "get"),
+		var stubGetParameters = sinon.stub(Parameters, "get");
 			oPopover = new Popover();
 
-		stubGetParameters.withArgs("_sap_m_Popover_ForceCompactArrowOffset").returns("true");
+		stubGetParameters.withArgs({name: "_sap_m_Popover_ForceCompactArrowOffset"}).returns("true");
 		oPopover.openBy(oButton2);
 
 		assert.equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
@@ -1927,10 +1927,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Popover should use normal arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to be false", function (assert){
-		var stubGetParameters = sinon.stub(Parameters, "get"),
+		var stubGetParameters = sinon.stub(Parameters, "get", function () { return "false";}),
 			oPopover = new Popover();
 
-		stubGetParameters.withArgs("_sap_m_Popover_ForceCompactArrowOffset").returns("false");
 		oPopover.openBy(oButton2);
 
 		assert.equal(oPopover._arrowOffset, 18, "_arrowoffset should be 18");

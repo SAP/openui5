@@ -804,7 +804,12 @@ sap.ui.define([
 
 			// A theme can force the usage of compact arrow offset in all content density modes, by setting sapMPopoverForceCompactArrowOffset variable.
 			// This is needed when a theme defines only a compact arrow for all modes.
-			bForceCompactArrowOffset = Parameters.get("_sap_m_Popover_ForceCompactArrowOffset") === "true";
+			bForceCompactArrowOffset = Parameters.get({
+					name: "_sap_m_Popover_ForceCompactArrowOffset"
+			}) || "true"; // ensure a default value is added in case the parameter is not loaded
+
+			// cast the string value to boolean
+			bForceCompactArrowOffset = bForceCompactArrowOffset === "true";
 
 			// Determines if the Popover will be rendered in a compact mode
 			this._bSizeCompact = library._bSizeCompact || !!aCompactParents.length || this.hasStyleClass("sapUiSizeCompact");
