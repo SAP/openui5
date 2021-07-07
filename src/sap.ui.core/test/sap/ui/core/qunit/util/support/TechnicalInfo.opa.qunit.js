@@ -540,14 +540,12 @@ sap.ui.define([
 			oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.ErrorNotFound");
 
 		// Arrange
-		When.onTheConfigDialog.iEnterCustomBootstrapUrl("").iCloseThePopup();
-		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("None");
-
-		// Act
+		When.anywhere.iPressCtrlAltShiftP();
+		When.onTheDialog.iOpenSupportAssistantSettings();
+		When.onTheConfigDialog.iEnterCustomBootstrapUrl("");
 		When.onTheDialog.iPressStartSupportAssistantButton();
 
 		// Assert
-		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
 		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("Error").
 		and.theMessageIs(sErrorForResourceNotFound);
 
