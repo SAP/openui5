@@ -5,23 +5,20 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>Shopping Cart</title>
+	<title>History in iFrame</title>
 
-	<!-- keep index.html mocked as well for consistency -->
 	<script
 		id='sap-ui-bootstrap'
 		src='../../../../../../../../../resources/sap-ui-core.js'
 		data-sap-ui-theme='sap_fiori_3'
+		data-sap-ui-lib='sap.ui.core'
 		data-sap-ui-compatVersion="edge"
 		data-sap-ui-async="true"
-		>
+		data-sap-ui-resourceroots='{"iframe": "."}'
+		data-sap-ui-oninit="module:iframe/script" >
 	</script>
-
-	<script src='script.js'></script>
-
 </head>
 <body class='sapUiBody' id='content'>
 	<h1>Inner Frame</h1>
-	<div id="uiarea"></div>
 </body>
 </html>
