@@ -3,36 +3,31 @@
 	"value" : [{
 		"@odata.id" : null,
 		"LocalCurrency" : "EUR",
-		"Region" : "6",
-		"RegionText" : "Saxony",
+		"Region" : "Saxony",
 		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
 		"SalesAmountLocalCurrency" : 1161590
 	}, {
 		"@odata.id" : null,
 		"LocalCurrency" : "EUR",
-		"Region" : "5",
-		"RegionText" : "Lower Saxony",
+		"Region" : "Lower Saxony",
 		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
 		"SalesAmountLocalCurrency" : 3160739
 	}, {
 		"@odata.id" : null,
 		"LocalCurrency" : "EUR",
-		"Region" : "3",
-		"RegionText" : "Hessia",
+		"Region" : "Hessia",
 		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
 		"SalesAmountLocalCurrency" : 5913956
 	}, {
 		"@odata.id" : null,
 		"LocalCurrency" : "EUR",
-		"Region" : "4",
-		"RegionText" : "Hamburg",
+		"Region" : "Hamburg",
 		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
 		"SalesAmountLocalCurrency" : 2309561
 	}, {
 		"@odata.id" : null,
 		"LocalCurrency" : "EUR",
-		"Region" : "7",
-		"RegionText" : "Berlin",
+		"Region" : "Berlin",
 		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
 		"SalesAmountLocalCurrency" : 1670139
 	}]

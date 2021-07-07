@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	return function (Given, When, Then) {
-		TestUtils.setData("sap.ui.core.sample.odata.v4.DataAggregation.filter", "RegionText GT M");
+		TestUtils.setData("sap.ui.core.sample.odata.v4.DataAggregation.filter", "Region GT M");
 		When.onAnyPage.applySupportAssistant();
 		Given.iStartMyUIComponent({
 			autoWait : true,
@@ -25,7 +25,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "29,709,155",
+			salesAmountLocalCurrency : "29,709,155.00",
 			localCurrency : "",
 			salesNumber : "",
 			subtotal : true
@@ -36,7 +36,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "2,507,155",
+			salesAmountLocalCurrency : "2,507,155.00",
 			localCurrency : "GBP",
 			salesNumber : "",
 			subtotal : true
@@ -47,7 +47,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "26,040,410",
+			salesAmountLocalCurrency : "26,040,410.00",
 			localCurrency : "USD",
 			salesNumber : "",
 			subtotal : true
@@ -58,7 +58,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "1,161,590",
+			salesAmountLocalCurrency : "1,161,590.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -76,7 +76,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "29,709,155",
+			salesAmountLocalCurrency : "29,709,155.00",
 			localCurrency : "",
 			salesNumber : "",
 			subtotal : true
@@ -87,7 +87,7 @@ sap.ui.define([
 			region : "Saxony",
 			segment : "Large",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "1,019,044",
+			salesAmountLocalCurrency : "1,019,044.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -98,7 +98,7 @@ sap.ui.define([
 			region : "Saxony",
 			segment : "Mid-size",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "116,096",
+			salesAmountLocalCurrency : "116,096.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -109,7 +109,7 @@ sap.ui.define([
 			region : "Saxony",
 			segment : "Small",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "26,450",
+			salesAmountLocalCurrency : "26,450.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -120,7 +120,7 @@ sap.ui.define([
 			region : "Saxony",
 			segment : "Small",
 			accountResponsible : "Michael Meier",
-			salesAmountLocalCurrency : "26,450",
+			salesAmountLocalCurrency : "26,450.00",
 			localCurrency : "EUR",
 			salesNumber : "500",
 			subtotal : false

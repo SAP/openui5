@@ -11,7 +11,7 @@
 	<Table id="table" ariaLabelledBy="title" fixedRowCount="1"
 		rows="{path : '/BusinessPartners', parameters : {
 				$count : false,
-				$orderby : 'CountryText desc,RegionText desc,Segment,AccountResponsible'
+				$orderby : 'Country desc,Region desc,Segment,AccountResponsible'
 			}, suspended : true}" selectionMode="None" threshold="0"
 		visibleRowCount="{ui>/iVisibleRowCount}">
 		<extension>
@@ -46,10 +46,10 @@
 					/>
 			</template>
 		</Column>
-		<Column template="CountryText">
+		<Column template="Country">
 			<m:Label text="Country"/>
 		</Column>
-		<Column template="RegionText">
+		<Column template="Region">
 			<m:Label text="Region"/>
 		</Column>
 		<Column template="Segment">
@@ -58,13 +58,31 @@
 		<Column template="AccountResponsible">
 			<m:Label text="Account Responsible"/>
 		</Column>
-		<Column hAlign="End" template="SalesAmountLocalCurrency">
+		<Column hAlign="End">
 			<m:Label text="Sales Amount"/>
+			<template>
+				<m:Text text="{
+					parts : ['SalesAmountLocalCurrency', 'LocalCurrency', {
+						mode : 'OneTime',
+						path : '/##@@requestCurrencyCodes',
+						targetType : 'any'
+					}],
+					type : 'sap.ui.model.odata.type.Currency',
+					formatOptions : { showMeasure : false }
+				}" wrapping="false"/>
+			</template>
 		</Column>
 		<Column template="LocalCurrency">
 			<m:Label text="Local Currency"/>
 		</Column>
-		<Column hAlign="End" template="SalesNumber">
+		<Column hAlign="End">
+			<template>
+				<m:Text text="{
+					path : 'SalesNumber',
+					type : 'sap.ui.model.odata.type.Decimal',
+					constraints : { scale : 0 }
+				}" wrapping="false"/>
+			</template>
 			<m:Label text="Sales Number"/>
 		</Column>
 		<Column hAlign="Center" width="5em">
