@@ -1257,44 +1257,55 @@ sap.ui.define([
 		};
 
 		NotificationBar.prototype.getHeightOfStatus = function(sStatus) {
-			var sParam = "";
-
-			if (sStatus == NotificationBarStatus.Min) {
-				sParam = "sapUiNotificationBarHeightMinimized";
-			} else if (sStatus == NotificationBarStatus.Default) {
-				sParam = "sapUiNotificationBarHeight";
-			} else if (sStatus == NotificationBarStatus.Max) {
-				sParam = "sapUiNotificationBarHeightMaximized";
-				sParam = Parameters.get(sParam);
-
-				var iIndex = sParam.indexOf("%");
-				if (iIndex != -1) {
-					var iPercentage = sParam.substring(0, iIndex);
-					var iHeight = jQuery(window).height();
-					iHeight = parseInt(iHeight / 100 * iPercentage);
-
-					// Ensure that the MaxHeight is at least 1 px larger than the
-					// Default
-					// Maybe disabling the resize feature would be the better
-					// approach in this case
-					var _iHeight = parseInt(this.getHeightOfStatus(NotificationBarStatus.Default));
-					if (iHeight < _iHeight) {
-						iHeight = _iHeight + 1;
-					}
-				} else {
-					var sMessage = "No valid percantage value given for maximized size. 400px is used";
-					Log.warning(sMessage);
-
-					iHeight = 400;
-				}
-				return iHeight + "px";
-			} else {
-				// sStatus == sap.ui.ux3.NotificationBarStatus.None
+			if (sStatus == NotificationBarStatus.None) {
 				return "0px";
 			}
 
-			sParam = Parameters.get(sParam);
-			return sParam;
+			var mParamеters = Object.assign({
+				// add base styles as default
+				"sapUiNotificationBarHeightMinimized": "0px",
+				"sapUiNotificationBarHeight": "40px",
+				"sapUiNotificationBarHeightMaximized": "40%"
+			}, Parameters.get({
+				name: ["sapUiNotificationBarHeightMinimized", "sapUiNotificationBarHeight", "sapUiNotificationBarHeightMaximized"],
+				callback: this.invalidate.bind(this)
+			}));
+
+			switch (sStatus) {
+				case NotificationBarStatus.Min:
+					return mParamеters["sapUiNotificationBarHeightMinimized"];
+
+				case NotificationBarStatus.Max:
+					return this.calculateStatusHeightMax(mParamеters["sapUiNotificationBarHeightMaximized"]);
+
+				case NotificationBarStatus.Default:
+				default:
+					return mParamеters["sapUiNotificationBarHeight"];
+			}
+		};
+
+		NotificationBar.prototype.calculateStatusHeightMax = function(sParam) {
+			var iIndex = sParam.indexOf("%");
+			if (iIndex !== -1) {
+				var iPercentage = parseInt(sParam),
+					iHeight = jQuery(window).height();
+
+				iHeight = parseInt(iHeight / 100 * iPercentage);
+
+				// Ensure that the MaxHeight is at least 1 px larger than the
+				// Default
+				// Maybe disabling the resize feature would be the better
+				// approach in this case
+				var _iHeight = parseInt(this.getHeightOfStatus(NotificationBarStatus.Default));
+				if (iHeight < _iHeight) {
+					iHeight = _iHeight + 1;
+				}
+			} else {
+				Log.warning("No valid percantage value given for maximized size. 400px is used");
+
+				iHeight = 400;
+			}
+			return iHeight + "px";
 		};
 
 		NotificationBar.prototype.setVisibleStatus = function(toStatus) {
