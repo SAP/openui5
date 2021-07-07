@@ -2,7 +2,11 @@
 * ${copyright}
 */
 
-sap.ui.define(function () {
+sap.ui.define([
+	'sap/ui/core/IconPool'
+], function (
+	IconPool
+) {
 	"use strict";
 
 	/**
@@ -41,7 +45,16 @@ sap.ui.define(function () {
 	MessageStripUtilities.getIconURI = function () {
 		var sType = this.getType(),
 			sCustomIconURI = this.getCustomIcon(),
-			sIconURI = "sap-icon://message-" + sType.toLowerCase();
+			sIconURI;
+
+		var oIconsMapping = {
+			"Error": "error",
+			"Warning": "alert",
+			"Success": "sys-enter-2",
+			"Information": "information"
+		};
+
+		sIconURI = IconPool.getIconURI(oIconsMapping[sType]);
 
 		return sCustomIconURI || sIconURI;
 	};
