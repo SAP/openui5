@@ -1,10 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/routing/History",
 	"sap/ui/core/routing/HashChanger",
-	"sap/m/Button",
 	"sap/base/util/Deferred",
 	"sap/ui/base/EventProvider"
-], function(History, HashChanger, Button, Deferred, EventProvider) {
+], function(History, HashChanger, Deferred, EventProvider) {
 	"use strict";
 
 	var oReady = new Deferred();
