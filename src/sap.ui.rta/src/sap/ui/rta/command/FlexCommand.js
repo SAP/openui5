@@ -159,6 +159,7 @@ sap.ui.define([
 	 * Creates a change.
 	 * @param {object} mFlexSettings Map containing the flexibility settings
 	 * @param {string} sVariantManagementReference Reference to the variant management
+	 * @param {string} sCommand Command name
 	 * @returns {object} Returns the change object
 	 * @private
 	 */
@@ -173,6 +174,7 @@ sap.ui.define([
 	 * @param {object} mChangeSpecificData - Map containing change specific data
 	 * @param {object} mFlexSettings - Map containing flex settings
 	 * @param {string} sVariantManagementReference - Reference to the variant management
+	 * @param {string} sCommand Command name
 	 * @returns {Promise.<object>} Change object wrapped in a promise.
 	 * @private
 	 */
@@ -245,6 +247,7 @@ sap.ui.define([
 			if (!oResult.success) {
 				return Promise.reject(oResult.error);
 			}
+			return undefined;
 		});
 	};
 

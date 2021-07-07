@@ -376,6 +376,7 @@ sap.ui.define([
 				if (oChangeHandler && typeof oChangeHandler.getChangeVisualizationInfo === "function") {
 					return oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent);
 				}
+				return undefined;
 			});
 		}
 
@@ -460,6 +461,7 @@ sap.ui.define([
 				if (!this._oChangeIndicatorRegistry.hasChangeIndicator(sSelectorId)) {
 					this._createChangeIndicator(oOverlay, sSelectorId);
 				}
+				return undefined;
 			}.bind(this));
 
 		if (

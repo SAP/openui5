@@ -63,6 +63,7 @@ function(
 					if (bValidParameters) {
 						return [];
 					}
+					return undefined;
 				});
 		},
 
@@ -88,6 +89,7 @@ function(
 							true/*async*/
 						);
 					}
+					return undefined;
 				});
 		},
 
@@ -110,8 +112,7 @@ function(
 								mPropertyBag.fieldSelector,
 								{
 									text: "{" + mPropertyBag.bindingPath + "}"
-								},
-								true/*async*/
+								}
 							)
 						];
 						if (mPropertyBag.payload.valueHelpId) {
@@ -135,6 +136,7 @@ function(
 								};
 							});
 					}
+					return undefined;
 				});
 		},
 
@@ -153,42 +155,50 @@ function(
 				&& mPropertyBag.fieldSelector && typeof mPropertyBag.fieldSelector === "object" && typeof mPropertyBag.fieldSelector.id === "string";
 
 			if (bParametersValid) {
-				return new Promise(function(resolve) {
-					if (!mPropertyBag.payload.useCreateLayout) {
-						return resolve();
-					}
-					var oLayout;
-					var oValueHelp;
-					var mLayoutSettings = merge({}, mPropertyBag);
-					mLayoutSettings.fieldSelector.id += "-field";
+				if (!mPropertyBag.payload.useCreateLayout) {
+					return Promise.resolve();
+				}
+				var oLayout;
+				var oValueHelp;
+				var mSpecificControlInfo;
+				var mLayoutSettings = merge({}, mPropertyBag);
+				var oModifier = mLayoutSettings.modifier;
+				mLayoutSettings.fieldSelector.id += "-field";
 
-					TestDelegate.createControlForProperty(mLayoutSettings)
-						.then(function(mSpecificControlInfo) {
-							oValueHelp = mSpecificControlInfo.valueHelp;
-							oLayout = mLayoutSettings.modifier.createControl(mLayoutSettings.payload.layoutType, mLayoutSettings.appComponent, mLayoutSettings.view, mPropertyBag.fieldSelector);
-							mLayoutSettings.modifier.insertAggregation(oLayout, mLayoutSettings.payload.aggregation, mSpecificControlInfo.control, 0, mLayoutSettings.view);
-
-							// some layout controls do not require a label control
-							if (mLayoutSettings.payload.labelAggregation) {
-								var mCreateLabelInfo = Object.assign({
-									labelFor: mLayoutSettings.modifier.getId(mSpecificControlInfo.control)
-								}, mLayoutSettings);
-								return TestDelegate.createLabel(mCreateLabelInfo);
-							}
-						})
-						.then(function(oLabel) {
-							if (oLabel) {
-								mLayoutSettings.modifier.insertAggregation(oLayout, mLayoutSettings.payload.labelAggregation, oLabel, 0, mLayoutSettings.view);
-							}
-						})
-						.then(function() {
-							resolve({
-								control: oLayout,
-								valueHelp: oValueHelp
-							});
-						});
-				});
+				return TestDelegate.createControlForProperty(mLayoutSettings)
+					.then(function(mCreatedSpecificControlInfo) {
+						mSpecificControlInfo = mCreatedSpecificControlInfo;
+						oValueHelp = mSpecificControlInfo.valueHelp;
+						return oModifier.createControl(mLayoutSettings.payload.layoutType, mLayoutSettings.appComponent, mLayoutSettings.view, mPropertyBag.fieldSelector);
+					})
+					.then(function (oCreatedLayout) {
+						oLayout = oCreatedLayout;
+						return oModifier.insertAggregation(oLayout, mLayoutSettings.payload.aggregation, mSpecificControlInfo.control, 0, mLayoutSettings.view);
+					})
+					.then(function () {
+						// some layout controls do not require a label control
+						if (mLayoutSettings.payload.labelAggregation) {
+							var mCreateLabelInfo = Object.assign({
+								labelFor: oModifier.getId(mSpecificControlInfo.control)
+							}, mLayoutSettings);
+							return TestDelegate.createLabel(mCreateLabelInfo);
+						}
+						return undefined;
+					})
+					.then(function(oLabel) {
+						if (oLabel) {
+							return oModifier.insertAggregation(oLayout, mLayoutSettings.payload.labelAggregation, oLabel, 0, mLayoutSettings.view);
+						}
+						return undefined;
+					})
+					.then(function() {
+						return {
+							control: oLayout,
+							valueHelp: oValueHelp
+						};
+					});
 			}
+			return undefined;
 		}
 	};
 
