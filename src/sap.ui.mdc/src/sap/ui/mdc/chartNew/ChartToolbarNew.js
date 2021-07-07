@@ -153,7 +153,7 @@ sap.ui.define([
                 this.addEnd(this._oSettingsBtn);
             }
 
-            if (aP13nMode.indexOf("Type") > -1) {
+            if (oMDCChart._getTypeBtnActive()) {
                 this._oChartTypeBtn = new ChartTypeButton(oMDCChart);
                 this.addEnd(this._oChartTypeBtn);
             }
