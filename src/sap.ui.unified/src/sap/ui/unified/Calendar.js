@@ -532,7 +532,6 @@ sap.ui.define([
 
 		this._updateHeader(oCalDate);
 
-		this._iSize = 0; // initialize to recalculate new after rendering
 		this._updateHeadersButtons();
 
 	};
@@ -2569,6 +2568,12 @@ sap.ui.define([
 			return;
 		}
 
+		if (iWidth === this._iPrevWidth) {
+			return;
+		}
+
+		this._iPrevWidth = iWidth;
+
 		var iOldSize = this._iSize;
 		if (iWidth < this._iBreakPointTablet) {
 			this._iSize = 0; // phone
@@ -2642,6 +2647,8 @@ sap.ui.define([
 				var oMonth = aMonths[i];
 				oMonth.setWidth(sWidth);
 			}
+
+			this.invalidate();
 		}
 
 		this._setPrimaryHeaderMonthButtonText();
