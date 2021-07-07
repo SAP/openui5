@@ -16,6 +16,7 @@ sap.ui.define([
 	'./DateTimeField',
 	'./Button',
 	'./ResponsivePopover',
+	"./ValueStateHeader",
 	'sap/ui/core/date/UniversalDate',
 	'./library',
 	'sap/ui/core/Control',
@@ -44,6 +45,7 @@ sap.ui.define([
 		DateTimeField,
 		Button,
 		ResponsivePopover,
+		ValueStateHeader,
 		UniversalDate,
 		library,
 		Control,
@@ -483,7 +485,7 @@ sap.ui.define([
 	DatePicker.prototype.onfocusin = function(oEvent) {
 
 		if (!jQuery(oEvent.target).hasClass("sapUiIcon")) {
-			InputBase.prototype.onfocusin.apply(this, arguments);
+			DateTimeField.prototype.onfocusin.apply(this, arguments);
 		}
 
 		this._bFocusNoPopup = undefined;
@@ -1206,6 +1208,11 @@ sap.ui.define([
 
 				this._oPopup._getButtonFooter().setVisible(this.getShowFooter());
 				this._getCalendar()._bSkipCancelButtonRendering = true;
+				if (!this._oPopup.getContent().length) {
+					var oHeader = this._getValueStateHeader();
+					this._oPopup.addContent(this._getValueStateHeader());
+					oHeader.setPopup(this._oPopup._oControl);
+				}
 				this._oPopup.addContent(this._getCalendar());
 
 				if (!this.getDateValue()) {

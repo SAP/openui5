@@ -3,10 +3,8 @@
 sap.ui.define(
 	["sap/ui/qunit/QUnitUtils", "sap/m/DateTimeField"],
 	function(QUnitUtils, DateTimeField) {
-		var DateTimeField = sap.m.DateTimeField;
 
 		QUnit.module("Public API", function () {
-
 
 			QUnit.module("displayFormat", function () {
 				QUnit.test("Given DateTimeField, when I set displayFormat", function (assert) {
@@ -24,8 +22,21 @@ sap.ui.define(
 				});
 			});
 
-			QUnit.test("Fake test to have a root module with at least one test, otherwise qunit-2 will fail", function (assert) {
-				assert.ok(true, "assert ok");
+			QUnit.test("onfocusin", function (assert) {
+				// Arrange
+				var oDTF = new DateTimeField({valueState: "Error"}),
+					oSpy = this.spy(oDTF, "openValueStateMessage");
+
+				// Act
+				oDTF.onfocusin({
+					target: oDTF.$("sapMInputBaseInner").get(0)
+				});
+
+				// Assert
+				assert.strictEqual(oSpy.callCount, 1, "There is valueState message shown");
+
+				// Clean up
+				oDTF.destroy();
 			});
 		});
 
@@ -47,6 +58,29 @@ sap.ui.define(
 
 				// Cleanup
 				oSut.destroy();
+			});
+
+			QUnit.test("_getTextForPickerValueStateContent", function (assert) {
+				// Arrange
+				var oDTF = new DateTimeField();
+
+				// Assert
+				assert.strictEqual(oDTF._getTextForPickerValueStateContent(), "", "There is no text when there is no valueState");
+
+				// Arrange
+				oDTF.setValueState("Error");
+
+				// Assert
+				assert.strictEqual(oDTF._getTextForPickerValueStateContent(), "Invalid entry", "The default value state text is correct when the valueState is set");
+
+				// Arrange
+				oDTF.setValueStateText("Custom text");
+
+				// Assert
+				assert.strictEqual(oDTF._getTextForPickerValueStateContent(), "Custom text", "The custom valueStateTest is shown when it exists");
+
+				// Clean up
+				oDTF.destroy();
 			});
 		});
 	}

@@ -3159,6 +3159,33 @@ sap.ui.define([
 		oTp2.destroy();
 	});
 
+	QUnit.module("Private methods", {
+		beforeEach: function () {
+			this.oTP = new TimePicker();
+		},
+		afterEach: function () {
+			this.oTP.destroy();
+			this.oTP = null;
+		}
+	});
+
+	QUnit.test("_createPopupContent", function (assert) {
+		var oPopupContent;
+
+		// Arrange
+		this.oTP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		this.oTP.toggleOpen();
+
+		oPopupContent = this.oTP.getAggregation("_picker").getContent();
+
+		// Assert
+		assert.ok(oPopupContent[0].isA("sap.m.ValueStateHeader"), "There is a sap.m.ValueStateHeader created in the popup content");
+		assert.ok(oPopupContent[1].isA("sap.m.TimePickerClocks"), "There is a sap.m.TimePickerClocks created in the popup content");
+	});
+
 
 	function triggerMultipleKeypress(timePicker, sFeed) {
 		var aFeed = sFeed.split(""),

@@ -523,15 +523,20 @@ sap.ui.define([
 				type: ButtonType.Emphasized,
 				press: _handleOkPress.bind(this)
 			});
+			var oHeader = this._getValueStateHeader();
 			this._oPopup = new ResponsivePopover(this.getId() + "-RP", {
 				showCloseButton: false,
 				showHeader: false,
 				placement: PlacementType.VerticalPreferedBottom,
 				beginButton: this._oOKButton,
-				content: this._oPopupContent,
+				content: [
+					oHeader,
+					this._oPopupContent
+				],
 				afterOpen: _handleAfterOpen.bind(this),
 				afterClose: _handleAfterClose.bind(this)
 			});
+			oHeader.setPopup(this._oPopup._oControl);
 
 
 			if (Device.system.phone) {
@@ -577,7 +582,7 @@ sap.ui.define([
 
 		this._oPopup.openBy(this);
 
-		var oSliders = this._oPopup.getContent()[0] && this._oPopup.getContent()[0].getTimeSliders();
+		var oSliders = this._oPopup.getContent()[1] && this._oPopup.getContent()[1].getTimeSliders();
 		if (oSliders) {//Sliders values need to be updated after a popup is (especially sliders) is really visible
 			setTimeout(oSliders._updateSlidersValues.bind(oSliders), 0);
 		}
@@ -710,14 +715,14 @@ sap.ui.define([
 	 * @private
 	 */
 	DateTimePicker.prototype._handleWindowResize = function(mParams) {
-		var oSwitcher = this.getAggregation("_popup").getContent()[0].getAggregation("_switcher"),
-			oCalendar = this.getAggregation("_popup").getContent()[0].getCalendar(),
-			oSliders = this.getAggregation("_popup").getContent()[0].getTimeSliders();
+		var oSwitcher = this.getAggregation("_popup").getContent()[1].getAggregation("_switcher"),
+			oCalendar = this.getAggregation("_popup").getContent()[1].getCalendar(),
+			oSliders = this.getAggregation("_popup").getContent()[1].getTimeSliders();
 
 		if (mParams.name === STANDART_PHONE_RANGESET) {
 			oSwitcher.setVisible(true);
 			// Getting "sap.m.internal.DateTimePickerPopup" instance in order to call "_switchVisibility(sKey)" method
-			this.getAggregation("_popup").getContent()[0]._switchVisibility(oSwitcher.getSelectedKey());
+			this.getAggregation("_popup").getContent()[1]._switchVisibility(oSwitcher.getSelectedKey());
 		} else {
 			oSwitcher.setVisible(false);
 			oSliders.$().css("display", "");

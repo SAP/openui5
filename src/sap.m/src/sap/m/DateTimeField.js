@@ -8,6 +8,8 @@ sap.ui.define([
 	'sap/ui/model/odata/type/ODataType',
 	'sap/ui/model/odata/type/DateTimeBase',
 	'./InputBase',
+	'./ValueStateHeader',
+	'sap/ui/core/Core',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/library',
 	'sap/ui/core/format/DateFormat',
@@ -22,6 +24,8 @@ sap.ui.define([
 	ODataType,
 	DateTimeBase,
 	InputBase,
+	ValueStateHeader,
+	Core,
 	LocaleData,
 	coreLibrary,
 	DateFormat,
@@ -34,6 +38,9 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.CalendarType
 	var CalendarType = coreLibrary.CalendarType;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new <code>sap.m.DateTimeField</code>.
@@ -209,6 +216,35 @@ sap.ui.define([
 
 	DateTimeField.prototype.getDisplayFormatType = function () {
 		return null;
+	};
+
+	DateTimeField.prototype.onfocusin = function(oEvent) {
+
+		if (!jQuery(oEvent.target).hasClass("sapUiIcon")) {
+			this.addStyleClass("sapMFocus");
+		}
+
+		if (!jQuery(oEvent.target).hasClass("sapMInputBaseIconContainer") && !(this._oPopup && this._oPopup.isOpen())) {
+			// open value state message popup when focus is in the input
+			this.openValueStateMessage();
+		} else if (this._oValueStateHeader) {
+			this._oValueStateHeader.setVisible(!!this._getTextForPickerValueStateContent());
+		}
+
+	};
+
+	DateTimeField.prototype._getValueStateHeader = function () {
+
+		if (!this._oValueStateHeader) {
+			var sText = this._getTextForPickerValueStateContent();
+			this._oValueStateHeader = new ValueStateHeader({
+				text: sText,
+				valueState: this.getValueState(),
+				visible: !!sText
+			});
+		}
+
+		return this._oValueStateHeader;
 	};
 
 	DateTimeField.prototype._dateValidation = function (oDate) {
@@ -459,6 +495,44 @@ sap.ui.define([
 	// because Date object in the test is different than the Date object in the application (due to the iframe).
 	DateTimeField.prototype._isValidDate = function (oDate) {
 		return !oDate || Object.prototype.toString.call(oDate) === "[object Date]";
+	};
+
+	/**
+	 * Gets the text for the picker's subheader title.
+	 * In case <code>valueStateText</code> is not set, a default value is returned.
+	 * @returns {string}
+	 * @private
+	 */
+	DateTimeField.prototype._getTextForPickerValueStateContent = function() {
+		var sValueStateText = this.getValueStateText(),
+			sText;
+
+		if (sValueStateText) {
+			sText = sValueStateText;
+		} else {
+			sText = this._getDefaultTextForPickerValueStateContent();
+		}
+		return sText;
+	};
+
+	/**
+	 * Gets the default text for the picker's subheader title.
+	 * @returns {string}
+	 * @private
+	 */
+	DateTimeField.prototype._getDefaultTextForPickerValueStateContent = function() {
+		var sValueState = this.getValueState(),
+			oResourceBundle,
+			sText;
+
+		if (sValueState === ValueState.None) {
+			sText = "";
+		} else {
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
+			sText = oResourceBundle.getText("VALUE_STATE_" + sValueState.toUpperCase());
+		}
+
+		return sText;
 	};
 
 	return DateTimeField;

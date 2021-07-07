@@ -220,7 +220,7 @@ sap.ui.define([
 
 		oDTP._createPopup();
 		oDTP._createPopupContent();
-		oTPS = oDTP._oPopup.getContent()[0].getTimeSliders();
+		oTPS = oDTP._oPopup.getContent()[1].getTimeSliders();
 		oSpyUpdateSlidersFn = sinon.spy(oTPS, "_updateSlidersValues");
 
 		//Act
@@ -602,8 +602,8 @@ sap.ui.define([
 		oDTP._openPopup();
 
 		setTimeout(function() {
-			var oYearButton = oDTP._oPopup.getContent()[0].getCalendar().getAggregation("header").getDomRef("B2"),
-				oHoursSlider = oDTP._oPopup.getContent()[0].getTimeSliders().getAggregation("_columns")[0];
+			var oYearButton = oDTP._oPopup.getContent()[1].getCalendar().getAggregation("header").getDomRef("B2"),
+				oHoursSlider = oDTP._oPopup.getContent()[1].getTimeSliders().getAggregation("_columns")[0];
 			oYearButton.focus();
 			sap.ui.getCore().applyChanges();
 			qutils.triggerKeydown(oYearButton, KeyCodes.TAB);
@@ -625,10 +625,10 @@ sap.ui.define([
 		//Act
 		oDTP._createPopup();
 		oDTP._createPopupContent();
-		var oRenderSpy = this.spy(oDTP._oPopup.getContent()[0].getTimeSliders().getAggregation("_columns")[0], "focus");
+		var oRenderSpy = this.spy(oDTP._oPopup.getContent()[1].getTimeSliders().getAggregation("_columns")[0], "focus");
 		sap.ui.getCore().applyChanges();
 		oDTP._openPopup();
-		oDTP._oPopup.getContent()[0].getTimeSliders().getAggregation("_columns")[0].fireTap({ setMarked:  jQuery.noop });
+		oDTP._oPopup.getContent()[1].getTimeSliders().getAggregation("_columns")[0].fireTap({ setMarked:  jQuery.noop });
 
 		// Assert
 		assert.strictEqual(oRenderSpy.callCount, 1, "The slider's value is focused after a tap");
@@ -816,5 +816,25 @@ sap.ui.define([
 		// clean
 		oDTP.destroy();
 		oGetFormatterSpy.restore();
+	});
+
+	QUnit.test("_createPopupContent", function (assert) {
+		// Arrange
+		var oDTP = new DateTimePicker().placeAt("qunit-fixture"),
+			oPopupContent;
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDTP.toggleOpen();
+
+		oPopupContent = oDTP._oPopup.getContent();
+
+		// Assert
+		assert.ok(oPopupContent[0].isA("sap.m.ValueStateHeader"), "There is a sap.m.ValueStateHeader created in the popup content");
+		assert.ok(oPopupContent[1].isA("sap.m.internal.DateTimePickerPopup"), "There is a sap.m.internal.DateTimePickerPopup created in the popup content");
+
+		// Clean up
+		oDTP.destroy();
 	});
 });
