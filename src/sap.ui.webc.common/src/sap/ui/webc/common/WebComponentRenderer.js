@@ -36,6 +36,8 @@ sap.ui.define([
 			this.renderAttributeProperties(oRm, oWebComponent);
 			// Properties with mapping="style"
 			this.renderStyleProperties(oRm, oWebComponent);
+			// Properties, managed by associations
+			this.renderAssociationProperties(oRm, oWebComponent);
 			// Hook for customization
 			this.customRenderInOpeningTag(oRm, oWebComponent);
 			// Attributes/Styles that the component sets internally
@@ -174,6 +176,25 @@ sap.ui.define([
 
 				if (vPropValue != null) {
 					oRm.style(sStyleName, vPropValue);
+				}
+			}
+		};
+
+		/**
+		 * Renders properties, controlled by associations
+		 * @private
+		 * @param oRm
+		 * @param oWebComponent
+		 */
+		WebComponentRenderer.renderAssociationProperties = function(oRm, oWebComponent) {
+			var oAssociations = oWebComponent.getMetadata().getAssociationsWithMapping();
+			for (var sAssocName in oAssociations) {
+				var oAssocData = oAssociations[sAssocName];
+				var vAssocValue = oAssocData.get(oWebComponent);
+				var sPropName = oAssocData._sMapTo; // The name of the property to be set with the association's ID value
+				var sPropValue = typeof vAssocValue === "object" ? vAssocValue.getId() : vAssocValue; // The ID, held by the association
+				if (sPropValue) { // Only set the property, if the association is set
+					oRm.attr(sPropName, sPropValue);
 				}
 			}
 		};
