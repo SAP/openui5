@@ -262,10 +262,8 @@ sap.ui.define([
 			});
 		});
 
-		// Condenser is not able to find the correct sorting of the given changes -> abort and skip condensing for that container
-		QUnit.test("move and add within one group - condense not possible", function(assert) {
-			var oErrorLog = sandbox.stub(Log, "error");
-			return loadApplyCondenseChanges.call(this, "addMoveNoCondensePossible.json", 3, 3, assert)
+		QUnit.test("move and add within one group", function(assert) {
+			return loadApplyCondenseChanges.call(this, "addMoveNoCondensePossible.json", 3, 2, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
 				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
@@ -278,8 +276,6 @@ sap.ui.define([
 				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sCompanyCodeFieldId);
 				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 2) + sComplexProperty01FieldId);
 				assert.strictEqual(aFirstGroupElements[3].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 3) + sNameFieldId);
-
-				assert.ok(oErrorLog.calledWith("Error during Condensing: no correct sorting found for the container: Comp1---idMain1--GeneralLedgerDocument", "No Condensing performed for index-relevant changes."), "the correct error was logged");
 			});
 		});
 
