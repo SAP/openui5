@@ -671,7 +671,7 @@ sap.ui.define([
 		QUnit.test("when Dialog with the same app component is opened and then closed / destroyed", function(assert) {
 			//to open the dialog
 			this.oButton.firePress();
-			var fnOpenDone = assert.async();
+			var fnCloseDone = assert.async();
 			this.oDialog.attachAfterOpen(function() {
 				assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then '_createPopupOverlays' called once");
 				assert.notEqual(this.oRta._oDesignTime.getRootElements().map(function(oRootElement) {
@@ -681,15 +681,14 @@ sap.ui.define([
 				this.oRta._oDesignTime.attachEventOnce("synced", function() {
 					assert.ok(findOverlay(this.oDialog, this.oRta._oDesignTime), "then overlay exists for root dialog element");
 					assert.ok(findOverlay(sap.ui.getCore().byId("formindialog"), this.oRta._oDesignTime), "then overlay exists for root dialog element");
-					fnOpenDone();
-				}.bind(this));
-				this.oDialog.close();
-				var fnCloseDone = assert.async();
-				this.oDialog.attachAfterClose(function() {
-					assert.notEqual(this.fnRemoveDialogInstanceSpy.callCount, 0, "then removeRootElement from DesignTime called at least once");
-					assert.ok(this.fnRemoveDialogInstanceSpy.calledWith(this.oDialog), "then 'removeRootElement from DesignTime is called with the opened dialog");
-					assert.strictEqual(this.oRta._oDesignTime.getRootElements().indexOf(this.oDialog.getId()), -1, "then the opened dialog is not present in the list of root elements");
-					fnCloseDone();
+
+					this.oDialog.attachAfterClose(function() {
+						assert.notEqual(this.fnRemoveDialogInstanceSpy.callCount, 0, "then removeRootElement from DesignTime called at least once");
+						assert.ok(this.fnRemoveDialogInstanceSpy.calledWith(this.oDialog), "then 'removeRootElement from DesignTime is called with the opened dialog");
+						assert.strictEqual(this.oRta._oDesignTime.getRootElements().indexOf(this.oDialog.getId()), -1, "then the opened dialog is not present in the list of root elements");
+						fnCloseDone();
+					}.bind(this));
+					this.oDialog.close();
 				}.bind(this));
 			}.bind(this));
 		});
