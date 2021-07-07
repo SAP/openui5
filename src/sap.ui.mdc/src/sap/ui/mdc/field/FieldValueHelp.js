@@ -811,15 +811,15 @@ sap.ui.define([
 			var oDialog;
 
 			if (oChanges.name === "content") {
-				_contentChanged.call(this, oChanges.mutation, oChanges.child);
+				_contentChanged.call(this, oChanges.mutation, oChanges.child, oChanges.name);
 			}
 
 			if (oChanges.name === "suggestContent") {
-				_contentChanged.call(this, oChanges.mutation, oChanges.child);
+				_contentChanged.call(this, oChanges.mutation, oChanges.child, oChanges.name);
 			}
 
 			if (oChanges.name === "dialogContent") {
-				_contentChanged.call(this, oChanges.mutation, oChanges.child);
+				_contentChanged.call(this, oChanges.mutation, oChanges.child, oChanges.name);
 			}
 
 			if (oChanges.name === "filterBar") {
@@ -2277,7 +2277,7 @@ sap.ui.define([
 		oValueHelpPanel.setTable(oContent);
 	}
 
-	function _contentChanged(sMutation, oWrapper) {
+	function _contentChanged(sMutation, oWrapper, sName) {
 
 		var oPopover = this.getAggregation("_popover");
 		var oDialog = this.getAggregation("_dialog");
@@ -2317,7 +2317,7 @@ sap.ui.define([
 			this._bOpenIfContent = false;
 			this.open(true);
 		}
-		if (oDialog) {
+		if (oDialog && sName !== "suggestContent" && !(sName === "content" && this.getDialogContent())) {
 			// update ValueHelpPanel
 			if (oWrapper) {
 				oWrapper.initialize(false);

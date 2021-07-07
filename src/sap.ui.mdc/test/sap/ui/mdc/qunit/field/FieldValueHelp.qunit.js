@@ -2690,11 +2690,13 @@ sap.ui.define([
 	QUnit.test("assign wrapper while opening", function(assert) {
 
 		oClock.restore(); // to test async loading
+		var oWrapper2 = new FieldValueHelpContentWrapperBase("W2");
 		oFieldHelp.setDialogContent();
 		oFieldHelp.attachOpen(function(){
 			if (!oFieldHelp.getDialogContent()) {
 				setTimeout( function(){
 					oFieldHelp.setDialogContent(oWrapper);
+					oFieldHelp.setSuggestContent(oWrapper2); // to check for no influence on dialog
 				}, 0);
 			}
 		});
@@ -2714,7 +2716,7 @@ sap.ui.define([
 			var oContent = oVHP.getTable();
 			assert.ok(oContent, "ValueHelpPanel has table assigned");
 			assert.equal(oContent.getId(), "DC1", "Content ID");
-			assert.equal(iDataUpdate, 1, "DataUpdate event fired");
+			assert.equal(iDataUpdate, 2, "DataUpdate event fired");
 
 			oFieldHelp.close();
 			oClock.tick(iDialogDuration); // fake closing time
