@@ -519,6 +519,49 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Typed View", {
+		beforeEach: function() {
+			this.oShell = new ShellSubstitute();
+
+			this.oTargetsConfig = {
+				typedView: {
+					type: "View",
+					viewName: "module:test/routing/target/TypedView",
+					controlId: this.oShell.getId(),
+					controlAggregation: "content",
+					id: "myView"
+				}
+			};
+
+			this.oViews = new Views({async: true});
+			// System under test + Arrange
+			this.oTargets = new Targets({
+				targets: this.oTargetsConfig,
+				views: this.oViews,
+				config: {
+					async: true
+				}
+			});
+		},
+		afterEach: function() {
+			this.oViews.destroy();
+			this.oTargets.destroy();
+			this.oShell.destroy();
+		}
+	});
+
+	QUnit.test("Display Typed View", function(assert) {
+		return this.oTargets.display("typedView").then(function(aDisplayed) {
+			assert.equal(aDisplayed.length, 1, "One target is displayed");
+
+			var oView = aDisplayed[0].view;
+			assert.equal(oView.getId(), "myView", "View has the correct id set");
+
+			var oPanel = oView.byId("myPanel");
+			assert.ok(oPanel.isA("sap.m.Panel"), "The view's content is created");
+		});
+	});
+
 	QUnit.module("suspend", {
 		beforeEach: function () {
 			// System under test + Arrange

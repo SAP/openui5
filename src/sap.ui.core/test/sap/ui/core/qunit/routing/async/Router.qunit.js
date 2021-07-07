@@ -2640,6 +2640,48 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Typed View", {
+		beforeEach: function() {
+			hasher.setHash("");
+			this.oShell = new ShellSubstitute();
+			this.oRouter = fnCreateRouter([{
+				name: "typed",
+				pattern: "typedView",
+				target: "typedView"
+			}], {async: true}, null, {
+				typedView: {
+					type: "View",
+					name: "module:test/routing/target/TypedView",
+					id: "myView",
+					controlId: this.oShell.getId(),
+					controlAggregation: "content"
+				}
+			});
+		},
+		afterEach: function() {
+			this.oRouter.destroy();
+			this.oShell.destroy();
+		}
+	});
+
+	QUnit.test("navTo a route that displays a Typed View target", function(assert) {
+		var oRoute = this.oRouter.getRoute("typed");
+		var oRouteMatchedSpy = sinon.spy(oRoute, "_routeMatched");
+		this.oRouter.initialize();
+		this.oRouter.navTo("typed");
+
+		assert.equal(oRouteMatchedSpy.callCount, 1, "The route is matched");
+		return oRouteMatchedSpy.getCall(0).returnValue.then(function(oRouteMatchedInfo) {
+			var oView = oRouteMatchedInfo.view;
+			assert.equal(oView.getId(), "myView", "The view is created with the given Id");
+
+			var oPanel = oView.byId("myPanel");
+			assert.ok(oPanel.isA("sap.m.Panel"), "The view's content is created");
+
+			oRouteMatchedSpy.restore();
+		});
+	});
+
 	QUnit.module("nested components", {
 		beforeEach: function() {
 			hasher.setHash("");
