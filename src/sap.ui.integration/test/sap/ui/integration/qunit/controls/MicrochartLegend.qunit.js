@@ -61,7 +61,8 @@ sap.ui.define([
 
 		this.oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-		var oFirstBarBackground = this.oMicrochartLegend.$().find(".sapUiIntegrationMicrochartLegendItem :first-child")[0].style.background;
+
+		var oFirstBarBackground = this.oMicrochartLegend.$().find(".sapUiIntegrationMicrochartLegendItem :first-child")[0].style.backgroundColor;
 
 		// assert
 		assert.strictEqual(oFirstBarBackground, sExpectedBackground, "The item should have expected background from chart color palette.");
@@ -84,7 +85,7 @@ sap.ui.define([
 		this.oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
-		var oThirdBarBackground = this.oMicrochartLegend.$().find(".sapUiIntegrationMicrochartLegendItem :first-child")[2].style.background;
+		var oThirdBarBackground = this.oMicrochartLegend.$().find(".sapUiIntegrationMicrochartLegendItem > :first-child")[2].style.backgroundColor;
 
 		// assert
 		assert.strictEqual(oThirdBarBackground, this.COLOR_CSS, "The item should have background set as CSS value.");
