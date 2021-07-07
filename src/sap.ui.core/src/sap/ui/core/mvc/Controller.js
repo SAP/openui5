@@ -717,64 +717,76 @@ sap.ui.define([
 		 * fragment content.
 		 * Otherwise the content must be destroyed by the caller as usual.
 		 * If the controller has an owner component, it is passed to the fragment content.
-		 * The fragment content will be prefixed with the view ID to avoid duplicate ID issues, even when a prefix ID
-		 * is given. The fragment content can be accessed by calling {@link sap.ui.core.mvc.Controller.byId}.
+		 * The fragment content will be prefixed with the view ID to avoid duplicate ID issues.
+		 * The prefixing is enabled by default and can be switched off by the <code>autoPrefixId</code> option.
 		 *
-		 * Example (no prefix ID given):
+		 * When <code>autoPrefixId</code> is enabled, the fragment content can be accessed by calling {@link sap.ui.core.mvc.Controller.byId}.
+		 *
+		 * Example (no mOptions.id given):
 		 * var myCOntrol = this.byId("myControl");
 		 *
-		 * Example (prefix ID given):
+		 * Example (mOptions.id given):
 		 * var myCOntrol = this.byId("prefix--myControl");
 		 *
-		 * The fragment content will be added to the <code>dependents</code> aggregation of the view per default.
+		 * The fragment content will be added to the <code>dependents</code> aggregation of the view by default.
+		 * This behavior can be suppressed by setting <code>mOptions.addToDependents</code> to false.
 		 *
 		 * Note: If the fragment content is not aggregated within a control, it must be destroyed manually in
 		 * the exit hook of the controller.
 		 *
-		 * @param {object} mSettings Settings for fragment creation {@link sap.ui.core.Fragment.load}
-		 * @param {object} [oOptions] Additional settings regarding fragment loading
-		 * @param {object} [oOptions.addToDependents=true] Whether the fragment content should be added to the <code>dependents</code> aggregation of the view
-		 * @param {object} [oOptions.autoPrefixId=true] Whether the IDs of the fragment content will be prefixed by the view ID
+		 * The controller is passed to the Fragment by default so the (event handler) methods referenced in the Fragment will
+		 * be called on this Controller.
+		 *
+		 * @param {object} mOptions Options regarding fragment loading
+		 * @param {string} mOptions.name The Fragment name, which must correspond to a Fragment which can be loaded via the module system
+		 *    (fragmentName + suffix ".fragment.[typeextension]") and which contains the Fragment definition.
+		 * @param {object} [mOptions.addToDependents=true] Whether the fragment content should be added to the <code>dependents</code> aggregation of the view
+		 * @param {object} [mOptions.autoPrefixId=true] Whether the IDs of the fragment content will be prefixed by the view ID
+		 * @param {string} [mOptions.id] the ID of the Fragment
+		 * @param {string} [mOptions.type=XML] the Fragment type, e.g. "XML", "JS", or "HTML" (see above). Default is "XML"
 		 * @return {Promise} A Promise that resolves with the fragment content
 		 *
 		 * @since 1.93
 		 * @public
 		 */
-		Controller.prototype.loadFragment = function(mSettings, oOptions) {
+		Controller.prototype.loadFragment = function(mOptions) {
+			if (!this.getView()) {
+				throw new Error("Calling 'loadFragment' without a view attached is not supported!");
+			} else if (!mOptions || !mOptions.name) {
+				throw new Error("oOptions must provide at least a fragment name!");
+			}
+
 			var oOwnerComponent = this.getOwnerComponent();
+			var bAddToDependents = mOptions.addToDependents !== false;
+			var bAutoPrefixId = mOptions.autoPrefixId !== false;
 
-			oOptions = oOptions || {};
-
-			if (oOptions.addToDependents === undefined) {
-				oOptions.addToDependents = true;
-			}
-			if (oOptions.autoPrefixId === undefined) {
-				oOptions.autoPrefixId = true;
-			}
+			var oFragmentOptions = {
+				name: mOptions.name,
+				type: mOptions.type,
+				id: mOptions.id,
+				controller: this
+			};
 
 			var pRequire = new Promise(function(resolve, reject) {
 				sap.ui.require(["sap/ui/core/Fragment"], function(Fragment) {
 					resolve(Fragment);
 				}, reject);
 			}).then(function(Fragment) {
-				if (!mSettings.id && oOptions.autoPrefixId) {
-					mSettings.id = this.getView().getId();
-				} else if (oOptions.autoPrefixId) {
-					mSettings.id = this.createId(mSettings.id);
+				if (!mOptions.id && bAutoPrefixId) {
+					oFragmentOptions.id = this.getView().getId();
+				} else if (bAutoPrefixId) {
+					oFragmentOptions.id = this.createId(mOptions.id);
 				}
 				if (oOwnerComponent) {
 					return oOwnerComponent.runAsOwner(function() {
-						return Fragment.load(mSettings);
+						return Fragment.load(oFragmentOptions);
 					});
 				} else {
-					return Fragment.load(mSettings);
+					return Fragment.load(oFragmentOptions);
 				}
 			}.bind(this)).then(function(vContent) {
-				if (oOptions.addToDependents) {
-					vContent = Array.isArray(vContent) ? vContent : [vContent];
-					for (var i = 0; i < vContent.length; i++) {
-						this.getView().addDependent(vContent[i]);
-					}
+				if (bAddToDependents) {
+					this.getView().applySettings({"dependents": vContent});
 				}
 				/* if already resolved remove from bookkeeping. App needs to destroy or it is
 				implicitly destroyed via the dependents (or other) aggregation */
