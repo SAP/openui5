@@ -130,10 +130,12 @@ sap.ui.define([
 	JSONView._sType = ViewType.JSON;
 
 	/**
-	* Flag for feature detection of asynchronous loading/rendering
-	* @public
-	* @since 1.30
-	*/
+	 * Flag for feature detection of asynchronous loading/rendering.
+	 * @public
+	 * @readonly
+	 * @type {boolean}
+	 * @since 1.30
+	 */
 	JSONView.asyncSupport = true;
 
 	JSONView.prototype.initViewSettings = function(mSettings) {

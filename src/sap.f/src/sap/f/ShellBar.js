@@ -696,6 +696,7 @@ function(
 	 *
 	 * @returns {Object} with all available contexts
 	 * @protected
+	 * @function
 	 * @since 1.65
 	 */
 	ShellBar.prototype.getContext = BarInPageEnabler.prototype.getContext;

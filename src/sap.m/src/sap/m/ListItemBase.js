@@ -771,10 +771,11 @@ function(
 	 * Returns the state of the item selection as a boolean
 	 *
 	 * @public
-	 * @return boolean
+	 * @returns {boolean}
 	 * @deprecated Since version 1.10.2.
-	 * API Change makes this method unnecessary. Use getSelected method instead.
+	 * API Change makes this method unnecessary. Use the {@link #getSelected} method instead.
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @function
 	 */
 	ListItemBase.prototype.isSelected = ListItemBase.prototype.getSelected;
 

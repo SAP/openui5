@@ -2148,6 +2148,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * @function
 	 * @public
 	 * @deprecated since 1.75, please use {@link #setExtraContent} instead.
 	 */

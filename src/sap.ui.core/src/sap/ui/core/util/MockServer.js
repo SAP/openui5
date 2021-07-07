@@ -3700,13 +3700,32 @@ sap.ui
 			/**
 			 * Enum for the method.
 			 * @public
+			 * @enum {string}
 			 */
 			MockServer.HTTPMETHOD = {
+				/**
+				 * @public
+				 */
 				GET: "GET",
+				/**
+				 * @public
+				 */
 				POST: "POST",
+				/**
+				 * @public
+				 */
 				DELETE: "DELETE",
+				/**
+				 * @public
+				 */
 				PUT: "PUT",
+				/**
+				 * @public
+				 */
 				MERGE: "MERGE",
+				/**
+				 * @public
+				 */
 				PATCH: "PATCH"
 			};
 

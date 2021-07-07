@@ -1117,6 +1117,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 * @see {sap.ui.view}
+	 * @function
 	 */
 	View._create = viewFactory;
 

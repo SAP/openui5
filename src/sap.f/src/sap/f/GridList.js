@@ -262,6 +262,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.layout.cssgrid.GridLayoutBase} The grid layout
 	 * @protected
+	 * @function
 	 */
 	GridList.prototype.getGridLayoutConfiguration = GridList.prototype.getCustomLayout;
 

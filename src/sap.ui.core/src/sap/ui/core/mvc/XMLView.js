@@ -258,6 +258,8 @@ sap.ui.define([
 	/**
 	 * Flag for feature detection of asynchronous loading/rendering
 	 * @public
+	 * @readonly
+	 * @type {boolean}
 	 * @since 1.30
 	 */
 	XMLView.asyncSupport = true;

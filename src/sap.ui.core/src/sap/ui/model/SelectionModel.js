@@ -49,12 +49,16 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
 	/**
 	 * SelectionMode: Single Selection
 	 * @public
+	 * @readonly
+	 * @type {int}
 	 */
 	SelectionModel.SINGLE_SELECTION = 0;
 
 	/**
 	 * SelectionMode: Multi Selection
 	 * @public
+	 * @readonly
+	 * @type {int}
 	 */
 	SelectionModel.MULTI_SELECTION = 1;
 

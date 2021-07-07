@@ -481,6 +481,7 @@ sap.ui.define([
 	 *
 	 * @returns {Object} with all available contexts
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.getContext = BarInAnyContentEnabler.prototype.getContext;
 
@@ -490,6 +491,7 @@ sap.ui.define([
 	 * Implementation of the IBar interface.
 	 * @returns {boolean} isContextSensitive
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.isContextSensitive = BarInAnyContentEnabler.prototype.isContextSensitive;
 
@@ -498,12 +500,15 @@ sap.ui.define([
 	 * @param {sap.m.IBarHTMLTag} sTag The HTML tag of the root element
 	 * @returns {sap.m.IBar} this for chaining
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.setHTMLTag = BarInAnyContentEnabler.prototype.setHTMLTag;
+
 	/**
 	 * Gets the HTML tag of the root element.
 	 * @returns {sap.m.IBarHTMLTag} The HTML-tag
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.getHTMLTag  = BarInAnyContentEnabler.prototype.getHTMLTag;
 
@@ -511,6 +516,7 @@ sap.ui.define([
 	 * Sets classes and HTML tag according to the context of the page. Possible contexts are header, footer and subheader.
 	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype.applyTagAndContextClassFor  = BarInAnyContentEnabler.prototype.applyTagAndContextClassFor;
 
@@ -518,6 +524,7 @@ sap.ui.define([
 	 * Sets classes according to the context of the page. Possible contexts are header, footer and subheader.
 	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype._applyContextClassFor  = BarInAnyContentEnabler.prototype._applyContextClassFor;
 
@@ -525,6 +532,7 @@ sap.ui.define([
 	 * Sets HTML tag according to the context of the page. Possible contexts are header, footer and subheader.
 	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Bar.prototype._applyTag  = BarInAnyContentEnabler.prototype._applyTag;
 
@@ -535,6 +543,7 @@ sap.ui.define([
 	 * @param {string} sContext allowed values are header, footer, subheader.
 	 * @returns {object|null}
 	 * @private
+	 * @function
 	 */
 	Bar.prototype._getContextOptions  = BarInAnyContentEnabler.prototype._getContextOptions;
 
@@ -544,6 +553,7 @@ sap.ui.define([
 	 * @param {string} sRole AccessibilityRole of the root Element
 	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
 	 * @private
+	 * @function
 	 */
 	Bar.prototype._setRootAccessibilityRole = BarInAnyContentEnabler.prototype._setRootAccessibilityRole;
 
@@ -552,6 +562,7 @@ sap.ui.define([
 	 *
 	 * @returns {string} Accessibility role
 	 * @private
+	 * @function
 	 */
 	Bar.prototype._getRootAccessibilityRole = BarInAnyContentEnabler.prototype._getRootAccessibilityRole;
 
@@ -562,6 +573,7 @@ sap.ui.define([
 	 * @param {string} sLevel aria-level attribute of the root Element
 	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
 	 * @private
+	 * @function
 	 */
 	Bar.prototype._setRootAriaLevel = BarInAnyContentEnabler.prototype._setRootAriaLevel;
 
@@ -571,6 +583,7 @@ sap.ui.define([
 	 * This is only needed if <code>sap.m.Bar</code> has role="heading"
 	 * @returns {string} aria-level
 	 * @private
+	 * @function
 	 */
 	Bar.prototype._getRootAriaLevel = BarInAnyContentEnabler.prototype._getRootAriaLevel;
 

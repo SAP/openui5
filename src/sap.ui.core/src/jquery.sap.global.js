@@ -1683,6 +1683,7 @@ sap.ui.define([
 		 * @static
 		 * @deprecated since 1.58 set path mappings via {@link sap.ui.loader.config} instead.
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
+		 * @function
 		 */
 		jQuery.sap.registerResourcePath = LoaderExtensions.registerResourcePath;
 
@@ -1707,6 +1708,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core, sap.ui.export, sap.ui.vk
 		 * @deprecated Since 1.58, use {@link sap.ui.loader.config} instead
+		 * @function
 		 */
 		jQuery.sap.registerModuleShims = function(mShims) {
 			jQuery.sap.assert( typeof mShims === 'object', "mShims must be an object");
@@ -1764,6 +1766,7 @@ sap.ui.define([
 		 * @public
 		 * @static
 		 * @deprecated since 1.58
+		 * @function
 		 */
 		jQuery.sap.getAllDeclaredModules = LoaderExtensions.getAllRequiredModules;
 
@@ -2039,6 +2042,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core,sap.ushell
 		 * @deprecated since 1.58
+		 * @function
 		 */
 		jQuery.sap._loadJSResourceAsync = _ui5loader.loadJSResourceAsync;
 

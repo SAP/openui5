@@ -753,6 +753,7 @@ sap.ui.define([
 		 *            [mProps] A map of additional properties that should be added or changed.
 		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @function
 		 */
 		this.accessibilityState = this.writeAccessibilityState;
 
@@ -775,6 +776,7 @@ sap.ui.define([
 		 * Currently the attributes <code>class</code> and <code>style</code> are not allowed
 		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
+		 * @function
 		 */
 		this.icon = this.writeIcon;
 
