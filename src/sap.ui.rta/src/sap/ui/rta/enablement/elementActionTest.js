@@ -112,15 +112,11 @@ sap.ui.define([
 		var ASYNC = true;
 		var Comp = UIComponent.extend(UI_COMPONENT_NAME, {
 			metadata: {
+				interfaces: ["sap.ui.core.IAsyncContentCreation"],
 				manifest: {
 					"sap.app": {
 						id: UI_COMPONENT_NAME,
 						type: "application"
-					},
-					getEntry: function() {
-						return {
-							type: "application"
-						};
 					}
 				}
 			},
@@ -132,8 +128,9 @@ sap.ui.define([
 					// async = true will trigger the xml preprocessors on the xml view, but if defined preprocessors need async, we will always trigger async
 					mViewSettings.async = this.getComponentData().async;
 				}
-				var oView = new XMLView(mViewSettings);
-				return oView;
+				mViewSettings.definition = mViewSettings.viewContent;
+				this.oViewPromise = XMLView.create(mViewSettings);
+				return this.oViewPromise;
 			}
 		});
 
@@ -145,26 +142,24 @@ sap.ui.define([
 					async: bAsync
 				}
 			});
+			return this.oUiComponent.oViewPromise.then(function() {
+				// Place component in container and display
+				this.oUiComponentContainer = new ComponentContainer({
+					component: this.oUiComponent,
+					height: "100%"
+				});
+				this.oUiComponentContainer.placeAt(mOptions.placeAt || "qunit-fixture");
 
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent,
-				height: '100%'
-			});
-			this.oUiComponentContainer.placeAt(mOptions.placeAt || "qunit-fixture");
+				this.oView = this.oUiComponent.getRootControl();
 
-			this.oView = this.oUiComponent.getRootControl();
+				if (mOptions.model instanceof Model) {
+					this.oView.setModel(mOptions.model);
+				}
 
-			if (mOptions.model instanceof Model) {
-				this.oView.setModel(mOptions.model);
-			}
+				sap.ui.getCore().applyChanges();
 
-			sap.ui.getCore().applyChanges();
-
-			return Promise.all([
-				this.oView.loaded(),
-				mOptions.model && mOptions.model.getMetaModel() && mOptions.model.getMetaModel().loaded()
-			]);
+				return mOptions.model && mOptions.model.getMetaModel() && mOptions.model.getMetaModel().loaded();
+			}.bind(this));
 		}
 
 		function buildAndExecuteCommands(assert) {
@@ -373,9 +368,8 @@ sap.ui.define([
 						return createViewInComponent.call(this, ASYNC);
 					}.bind(this));
 			}.bind(this), Promise.resolve())
-				.then(function (oView) {
+				.then(function() {
 					this.aCommands = aCommands;
-					return oView;
 				}.bind(this));
 		}
 
@@ -400,10 +394,9 @@ sap.ui.define([
 				}
 			}, function() {
 				QUnit.test("When applying the change directly on the XMLView", function(assert) {
-					return applyChangeOnXML.call(this, assert).then(function(args) {
-						var oView = args[0];
+					return applyChangeOnXML.call(this, assert).then(function() {
 						// Verify that UI change has been applied on XML view
-						return mOptions.afterAction(this.oUiComponent, oView, assert);
+						return mOptions.afterAction(this.oUiComponent, this.oView, assert);
 					}.bind(this));
 				});
 
