@@ -528,24 +528,6 @@ sap.ui.define([
 			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
 		});
 
-		QUnit.test("getResetAndPublishInfo when there is no change", function(assert) {
-			var mPropertyBag = {
-				selector: this.vSelector,
-				layer: Layer.CUSTOMER
-			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
-
-			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
-			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
-
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
-				assert.equal(fnPersistenceStub.callCount, 1, "flex/info is called once");
-				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
-				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
-			});
-		});
-
 		QUnit.test("getResetAndPublishInfo when there is change but layer is not transportable", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector,
@@ -581,6 +563,61 @@ sap.ui.define([
 				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
 				assert.equal(oResetAndPublishInfo.allContextsProvided, true, "allContextsProvided is true by default");
+			});
+		});
+
+		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is no change, layer is transportable, publish is allowed by system settings, publish is not enabled by backend", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector,
+				layer: Layer.CUSTOMER
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
+
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.callCount, 1, "flex/info is called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
+			});
+		});
+
+		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is no change, layer is transportable, publish is not allowed by system settings, publish is enabled by backend", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector,
+				layer: Layer.CUSTOMER
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: true}));
+
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
+				assert.equal(oResetAndPublishInfo.allContextsProvided, true, "allContextProvided is true by default");
+			});
+		});
+
+		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is no change, layer is transportable, publish is allowed by system settings, publish is enabled by backend", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector,
+				layer: Layer.CUSTOMER
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: true}));
+
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.callCount, 1, "flex/info is called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
 			});
 		});
 
