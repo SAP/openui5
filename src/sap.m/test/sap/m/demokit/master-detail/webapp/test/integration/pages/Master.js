@@ -32,7 +32,7 @@ sap.ui.define([
 				},
 
 				iRemoveListGrouping: function () {
-					return this.iChooseASorter("groupButton", "None");
+					return this.iChooseASorter("groupButton", "(Not Grouped)");
 				},
 				iOpenViewSettingsDialog: function () {
 					return this.waitFor({
@@ -142,7 +142,7 @@ sap.ui.define([
 										errorMessage: "The ok button in the dialog was not found and could not be pressed"
 									});
 								},
-								errorMessage: "Did not find the" +  sSort + " element in select"
+								errorMessage: "Did not find the " +  sSort + " element in select"
 							});
 						},
 						errorMessage: "Did not find the " + sSelect + " select"
