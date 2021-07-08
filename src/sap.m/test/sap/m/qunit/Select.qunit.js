@@ -2675,6 +2675,7 @@ sap.ui.define([
 			// assert
 			assert.strictEqual(oSelectDomRef.attr("name"), "select-name0", 'The attribute name is "select-name0"');
 			assert.strictEqual(oSelectDomRef.attr("value"), "lorem");
+			assert.strictEqual(oSelectDomRef.attr("type"), "hidden");
 
 			// cleanup
 			oSelect.destroy();
