@@ -3950,6 +3950,38 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Reset to no sorting", function(assert) {
+		// arrange
+		var oVSD = new ViewSettingsDialog({
+			sortItems: [
+				new ViewSettingsItem({ text: "text1", key: "key1" }),
+				new ViewSettingsItem({ text: "text2", key: "key2" })
+			]
+		});
+		oVSD.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oVSD.open();
+		sap.ui.getCore().applyChanges();
+
+		// act - select a sort item
+		oVSD.setSelectedSortItem(oVSD.getSortItems()[0]);
+		oVSD._switchToPage(0);
+
+		// assert
+		assert.equal(oVSD.getSelectedSortItem(), oVSD.getSortItems()[0].getId(), "first sort item is selected");
+		assert.strictEqual(oVSD._getResetButton().getEnabled(), true, "reset button is enabled");
+
+		// act - press reset
+		oVSD._getResetButton().firePress();
+
+		// assert
+		assert.equal(oVSD.getSelectedSortItem(), null, "no selected sort item");
+		assert.strictEqual(oVSD._getResetButton().getEnabled(), false, "reset button is disabled again");
+
+		oVSD.destroy();
+	});
+
 	QUnit.test("Reset functionality", function (assert) {
 
 		// open the VSD
