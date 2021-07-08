@@ -1183,16 +1183,16 @@ function(
 				"Could not set selected sort item. Item is not found: '" + vItemOrKey + "'"
 			);
 
-		//change selected item only if it is found among the sort items
-		if (validateViewSettingsItem(oItem)) {
+		//change selected item only if it is found among the sort items or if there is no selected item
+		if (!oItem || validateViewSettingsItem(oItem)) {
 			// set selected = true for this item & selected = false for all others items
 			for (i = 0; i < aItems.length; i++) {
-				if (aItems[i].getId() !== oItem.getId()) {
+				if (!oItem || aItems[i].getId() !== oItem.getId()) {
 					aItems[i].setProperty('selected', false, true);
 				}
 			}
 
-			if (oItem.getProperty('selected') !== true) {
+			if (oItem && oItem.getProperty('selected') !== true) {
 				oItem.setProperty('selected', true, true);
 			}
 
@@ -1744,7 +1744,7 @@ function(
 				}
 
 				// check if the sortItem or sortDescending are different than initial
-				if ((this._oInitialState.sortItem && this._oInitialState.sortItem !== this.getSelectedSortItem()) || this._oInitialState.sortDescending !== this.getSortDescending()) {
+				if (this._oInitialState.sortItem !== this.getSelectedSortItem() || this._oInitialState.sortDescending !== this.getSortDescending()) {
 					bChanges = true;
 				}
 
@@ -1779,7 +1779,7 @@ function(
 		this.clearFilters();
 
 		// clear sortItem/sortDescending
-		this._oInitialState.sortItem !== undefined && this.setSelectedSortItem(sap.ui.getCore().byId(this._oInitialState.sortItem));
+		this.setSelectedSortItem(sap.ui.getCore().byId(this._oInitialState.sortItem));
 		this.setSortDescending(this._oInitialState.sortDescending);
 		this._updateListSelection(this._sortOrderList, this._oInitialState.sortDescending);
 
