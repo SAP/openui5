@@ -691,6 +691,37 @@
 							startDate: new Date("2015", "0", "1", "08", "00"),
 							endDate: new Date("2015", "0", "2", "09", "00"),
 							type: sap.ui.unified.CalendarDayType.Type03,
+							customContent: [
+								new sap.m.FlexBox({
+									direction: "Column",
+									items: [
+										new sap.m.Text({
+											text: "TG2P11: Maintenance"
+										}),
+										new sap.m.FlexBox({
+											items: [
+												new sap.ui.core.Icon({
+													src: "sap-icon://pharmacy"
+												}),
+												new sap.ui.core.Icon({
+													src: "sap-icon://add-product"
+												}),
+												new sap.ui.core.Icon({
+													src: "sap-icon://employee-rejections"
+												}),
+												new sap.ui.core.Icon({
+													blocked: true,
+													src: "sap-icon://doctor"
+												}),
+												new sap.ui.core.Icon({
+													blocked: true,
+													src: "sap-icon://add-employee"
+												})
+											]
+										})
+									]
+								})
+							],
 							title: "2 days meeting",
 							icon: "../ui/unified/images/m_01.png",
 							tooltip: "2 days meeting",
