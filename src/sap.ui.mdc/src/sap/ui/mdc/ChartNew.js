@@ -334,6 +334,11 @@ sap.ui.define([
                 if (mKeys.Sort) {
                     aSortedKeys.push("Sort");
                 }
+                if (mKeys.Type) {
+                    this._typeBtnActive = true;
+                } else {
+                    this._typeBtnActive = false;
+                }
             } else {
                 aSortedKeys = aMode;
             }
@@ -1020,6 +1025,9 @@ sap.ui.define([
 
         };
 
+        Chart.prototype._getTypeBtnActive = function(){
+            return !!this._typeBtnActive;
+        };
 
         /**
 		 * Callback for when fuilters changed
