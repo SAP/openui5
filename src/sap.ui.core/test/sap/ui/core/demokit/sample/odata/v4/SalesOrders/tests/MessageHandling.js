@@ -15,9 +15,8 @@ sap.ui.define([
 
 	return {
 		checkMessages : function (Given, When, Then, sUIComponent) {
-			var sDiscountFailure =
-					"User John Doe is not authorized to approve more than 50% discount "
-					+ "w/o approver",
+			var sDiscountFailure = "User John Doe is not authorized to approve more than 50%"
+					+ " discount w/o approver",
 				sItemNoteWarning = "Enter a Note",
 				aExpectedLogs = [],
 				sNoteWarning = "Enter customer reference if available",
