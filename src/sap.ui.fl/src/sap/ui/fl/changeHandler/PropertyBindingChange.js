@@ -30,8 +30,9 @@ sap.ui.define([
 	/**
 	 * @param {object} oChange - change object with instructions to be applied on the control
 	 * @param {object} oControl - the control which has been determined by the selector id
-	 * @param {object} mPropertyBag
+	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
+	 * @returns {Promise} Promise that resolves with setting the property binding
 	 * @public
 	 * @name sap.ui.fl.changeHandler.PropertyBindingChange#applyChange
 	 */
@@ -46,18 +47,20 @@ sap.ui.define([
 		// 	throw new Error(sNoBindingError);
 		// }
 
-		var vOriginalValue = oModifier.getPropertyBindingOrProperty(oControl, sPropertyName);
-		oChange.setRevertData({
-			originalValue: vOriginalValue
-		});
-
-		oModifier.setPropertyBinding(oControl, sPropertyName, vPropertyValue);
+		return Promise.resolve()
+			.then(oModifier.getPropertyBindingOrProperty.bind(oModifier, oControl, sPropertyName))
+			.then(function(vOriginalValue) {
+				oChange.setRevertData({
+					originalValue: vOriginalValue
+				});
+				oModifier.setPropertyBinding(oControl, sPropertyName, vPropertyValue);
+			});
 	};
 
 	/**
 	 * @param {object} oChange - change object with instructions to be applied on the control
 	 * @param {object} oControl - the control which has been determined by the selector id
-	 * @param {object} mPropertyBag
+	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
 	 * @public
 	 * @name sap.ui.fl.changeHandler.PropertyBindingChange#revertChange
@@ -75,10 +78,7 @@ sap.ui.define([
 			oChange.resetRevertData();
 		} else {
 			Log.error("Attempt to revert an unapplied change.");
-			return false;
 		}
-
-		return true;
 	};
 
 	/**

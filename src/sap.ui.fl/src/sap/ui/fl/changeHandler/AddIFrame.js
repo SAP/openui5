@@ -31,6 +31,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @returns {Promise} Promise resolving when the change is successfully applied
 	 * @ui5-restricted sap.ui.fl
 	 */
 	AddIFrame.applyChange = function(oChange, oControl, mPropertyBag) {
@@ -38,14 +39,27 @@ sap.ui.define([
 		var oChangeDefinition = oChange.getDefinition();
 		var oView = mPropertyBag.view;
 		var sAggregationName = oChangeDefinition.content.targetAggregation;
-		var oAggregationDefinition = oModifier.findAggregation(oControl, sAggregationName);
-		if (!oAggregationDefinition) {
-			throw new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl));
-		}
-		var iIndex = getTargetAggregationIndex(oChange, oControl, mPropertyBag);
-		var oIFrame = createIFrame(oChange, mPropertyBag, oChangeDefinition.content.selector);
-		oModifier.insertAggregation(oControl, sAggregationName, oIFrame, iIndex, oView);
-		oChange.setRevertData([oModifier.getId(oIFrame)]);
+		var iIndex;
+		var oIFrame;
+		return Promise.resolve()
+			.then(oModifier.findAggregation.bind(oModifier, oControl, sAggregationName))
+			.then(function(oAggregationDefinition) {
+				if (!oAggregationDefinition) {
+					throw new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl));
+				}
+				return getTargetAggregationIndex(oChange, oControl, mPropertyBag);
+			})
+			.then(function(iRetrievedIndex) {
+				iIndex = iRetrievedIndex;
+				return createIFrame(oChange, mPropertyBag, oChangeDefinition.content.selector);
+			})
+			.then(function(oCreatedIFrame) {
+				oIFrame = oCreatedIFrame;
+				return oModifier.insertAggregation(oControl, sAggregationName, oIFrame, iIndex, oView);
+			})
+			.then(function() {
+				oChange.setRevertData([oModifier.getId(oIFrame)]);
+			});
 	};
 
 	/**

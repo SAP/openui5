@@ -41,21 +41,28 @@ function(
 			var oControl = new Control();
 
 			oControl.setVisible(false);
-			this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
-			assert.equal(oControl.getVisible(), true);
 
-			oControl.setVisible(true);
-			this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
-			assert.equal(oControl.getVisible(), true);
+			return this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier})
+				.then(function() {
+					assert.equal(oControl.getVisible(), true);
+					oControl.setVisible(true);
+					return this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
+				}.bind(this))
+				.then(function() {
+					assert.equal(oControl.getVisible(), true);
+				});
 		});
 
 		QUnit.test('revertChange functionality with state persistence', function(assert) {
 			var oControl = new Control();
 
 			oControl.setVisible(true);
-			this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
-			this.oChangeHandler.revertChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
-			assert.equal(oControl.getVisible(), true, 'should be visible');
+
+			return this.oChangeHandler.applyChange(this.oChange, oControl, {modifier: JsControlTreeModifier})
+				.then(function() {
+					this.oChangeHandler.revertChange(this.oChange, oControl, {modifier: JsControlTreeModifier});
+					assert.equal(oControl.getVisible(), true, 'should be visible');
+				}.bind(this));
 		});
 
 		QUnit.test('applyChange on a xml tree', function(assert) {
@@ -63,16 +70,20 @@ function(
 			var oXmlDocument = oDOMParser.parseFromString("<Button xmlns='sap.m' text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
 			this.oXmlButton = oXmlDocument.childNodes[0];
 
-			assert.ok(this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}));
-
-			assert.strictEqual(this.oXmlButton.getAttribute("visible"), null, "xml button node has no longer the visible attribute");
+			return this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier})
+				.then(function() {
+					assert.strictEqual(this.oXmlButton.getAttribute("visible"), null, "xml button node has no longer the visible attribute");
+				}.bind(this));
 		});
 
 		QUnit.test('applyChange throws an error if the change is not applyable', function(assert) {
-			assert.throws(function () {
-				var oElement = new Element();
-				this.oChangeHandler.applyChange(this.oChange, oElement, {modifier: JsControlTreeModifier});
-			}, new Error("Provided control instance has no setVisible method"), "change handler throws an error that the control has no setter for visible");
+			var oElement = new Element();
+			return this.oChangeHandler.applyChange(this.oChange, oElement, {modifier: JsControlTreeModifier})
+				.catch(function(oError) {
+					assert.equal(oError.message,
+						"Provided control instance has no setVisible method",
+						"change handler throws an error that the control has no setter for visible");
+				});
 		});
 	});
 

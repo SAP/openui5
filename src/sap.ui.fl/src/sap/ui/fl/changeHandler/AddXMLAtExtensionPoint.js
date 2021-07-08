@@ -45,35 +45,46 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oModifier = mPropertyBag.modifier;
 		var oSelector = oChange.getDefinition().selector;
-		var mExtensionPointInfo = (oChange.getExtensionPointInfo && oChange.getExtensionPointInfo())
-			|| oModifier.getExtensionPointInfo(oSelector.name, oView);
-		if (!mExtensionPointInfo) {
-			throw new Error("AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '"
-				 + (oSelector && oSelector.name)
-				 + "' or multiple Extension-Points available with the given name in the view (view.id='"
-				 + (oView && oModifier.getId(oView))
-				 + "'). Multiple Extension-points with the same name in one view are not supported!");
-		}
-		(mExtensionPointInfo.defaultContent || []).forEach(function (vControl) {
-			// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) sceanrios
-			if (vControl) {
-				oModifier.destroy(vControl);
-			}
-		});
-		mExtensionPointInfo.defaultContent = [];
-		// calculate index from nested extensionpoints
-		mExtensionPointInfo.index = calculateExtensionPointIndex(mExtensionPointInfo);
+		var mExtensionPointInfo;
 
-		if (oModifier.targets === "xmlTree") {
-			mExtensionPointInfo.skipAdjustIndex = true;
-		}
-
-		var aNewControls = BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
-		if (mExtensionPointInfo.ready) {
-			// Confirm with ready function in sync apply scenario (preprocessing with JSView)
-			mExtensionPointInfo.ready(aNewControls);
-		}
-		return true;
+		return Promise.resolve()
+			.then(function() {
+				var mChangeExtensionPointInfo = oChange.getExtensionPointInfo && oChange.getExtensionPointInfo();
+				if (!mChangeExtensionPointInfo) {
+					return oModifier.getExtensionPointInfo(oSelector.name, oView);
+				}
+				return mChangeExtensionPointInfo;
+			})
+			.then(function(mRetrievedExtensionPointInfo) {
+				mExtensionPointInfo = mRetrievedExtensionPointInfo;
+				if (!mExtensionPointInfo) {
+					throw new Error("AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '"
+					+ (oSelector && oSelector.name)
+					+ "' or multiple Extension-Points available with the given name in the view (view.id='"
+					+ (oView && oModifier.getId(oView))
+					+ "'). Multiple Extension-points with the same name in one view are not supported!");
+				}
+				(mExtensionPointInfo.defaultContent || []).forEach(function (vControl) {
+					// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) sceanrios
+					if (vControl) {
+						oModifier.destroy(vControl);
+					}
+				});
+				mExtensionPointInfo.defaultContent = [];
+				// calculate index from nested extensionpoints
+				mExtensionPointInfo.index = calculateExtensionPointIndex(mExtensionPointInfo);
+				if (oModifier.targets === "xmlTree") {
+					mExtensionPointInfo.skipAdjustIndex = true;
+				}
+				return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
+			})
+			.then(function(aNewControls) {
+				if (mExtensionPointInfo.ready) {
+					// Confirm with ready function in sync apply scenario (preprocessing with JSView)
+					mExtensionPointInfo.ready(aNewControls);
+				}
+				return true;
+			});
 	};
 
 	/**

@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.appComponent App component
 	 * @param {object} mPropertyBag.view Root view
-	 * @return {boolean} Returns true if change has been reverted successfully
+	 * @return {Promise} Promise resolving to true if change has been reverted successfully
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return function(oChange, oControl, mPropertyBag) {
@@ -41,14 +41,24 @@ sap.ui.define([
 			return oModifier.bySelector(sControlId, oAppComponent, oView) || oView && oView.createId && oModifier.bySelector(oView.createId(sControlId));
 		});
 
+		var aPromises = [];
 		aControlsToRemove.forEach(function(oControlToRemove) {
-			oModifier.removeAggregation(oControl, sAggregationName, oControlToRemove);
-			if (oControlToRemove.destroy) {
-				oControlToRemove.destroy();
-			}
+			var fnPromise = function() {
+				return Promise.resolve()
+					.then(oModifier.removeAggregation.bind(oModifier, oControl, sAggregationName, oControlToRemove))
+					.then(function() {
+						if (oControlToRemove.destroy) {
+							oControlToRemove.destroy();
+						}
+					});
+			};
+			aPromises.push(fnPromise);
 		});
 
-		oChange.resetRevertData();
-		return true;
+		return Utils.execPromiseQueueSequentially(aPromises, true, true)
+			.then(function() {
+				oChange.resetRevertData();
+				return true;
+			});
 	};
 });

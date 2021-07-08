@@ -23,7 +23,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sUrl = "http://www.sap.com";
+	var sUrl = "testURL";
 
 	QUnit.module("Given a AddIFrame Change Handler", {
 		beforeEach: function() {
@@ -161,38 +161,46 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("When applying the change on a js control tree", function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
-			assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
-			var oCreatedControl = this.oHBox.getItems()[1];
-			assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
-			assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
+				.then(function() {
+					assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
+					var oCreatedControl = this.oHBox.getItems()[1];
+					assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
+					assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
+				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a js control tree (index = 0)", function(assert) {
 			this.mChangeSpecificContent.index = 0;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
-			assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
-			var oCreatedControl = this.oHBox.getItems()[0];
-			assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
-			assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
+				.then(function() {
+					assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
+					var oCreatedControl = this.oHBox.getItems()[0];
+					assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
+					assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
+				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
 			this.mChangeSpecificContent.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);},
-				Error,
-				"then apply change throws an error"
-			);
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
+				.catch(function(vError) {
+					assert.equal(
+						vError.message,
+						"The given Aggregation is not available in the given control: " + this.oHBox.getId(),
+						"then apply change throws an error");
+				}.bind(this));
 		});
 
 		QUnit.test("When reverting the change on a js control tree", function(assert) {
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.mPropertyBag);
-			assert.strictEqual(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the horizontal box");
-			assert.strictEqual(this.oChange.getRevertData(), null, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.mPropertyBag))
+				.then(function() {
+					assert.strictEqual(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the horizontal box");
+					assert.strictEqual(this.oChange.getRevertData(), null, "and the revert data got reset");
+				}.bind(this));
 		});
 	});
 
@@ -262,40 +270,48 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When applying the change on a xml control tree", function(assert) {
 			var oHBoxItemsAggregation = this.oHBox.childNodes[0];
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
-			assert.strictEqual(oHBoxItemsAggregation.childNodes.length, 2, "after the addXML there are two children in the horizontal box");
-			var oCreatedControl = oHBoxItemsAggregation.childNodes[1];
-			assert.ok(oCreatedControl.getAttribute("id").match(/test$/), "the created IFrame ends with the expected baseId");
-			assert.strictEqual(oCreatedControl.getAttribute("url"), sUrl, "the created IFrame has the correct URL");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
+				.then(function() {
+					assert.strictEqual(oHBoxItemsAggregation.childNodes.length, 2, "after the addXML there are two children in the horizontal box");
+					var oCreatedControl = oHBoxItemsAggregation.childNodes[1];
+					assert.ok(oCreatedControl.getAttribute("id").match(/test$/), "the created IFrame ends with the expected baseId");
+					assert.strictEqual(oCreatedControl.getAttribute("url"), sUrl, "the created IFrame has the correct URL");
+				});
 		});
 
 		QUnit.test("When applying the change on a xml control tree (index = 0)", function(assert) {
 			var oHBoxItemsAggregation = this.oHBox.childNodes[0];
 			this.mChangeSpecificContent.index = 0;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
-			assert.strictEqual(oHBoxItemsAggregation.childNodes.length, 2, "after the addXML there are two children in the horizontal box");
-			var oCreatedControl = oHBoxItemsAggregation.childNodes[0];
-			assert.ok(oCreatedControl.getAttribute("id").match(/test$/), "the created IFrame ends with the expected baseId");
-			assert.strictEqual(oCreatedControl.getAttribute("url"), sUrl, "the created IFrame has the correct URL");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
+				.then(function() {
+					assert.strictEqual(oHBoxItemsAggregation.childNodes.length, 2, "after the addXML there are two children in the horizontal box");
+					var oCreatedControl = oHBoxItemsAggregation.childNodes[0];
+					assert.ok(oCreatedControl.getAttribute("id").match(/test$/), "the created IFrame ends with the expected baseId");
+					assert.strictEqual(oCreatedControl.getAttribute("url"), sUrl, "the created IFrame has the correct URL");
+				});
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {
 			this.mChangeSpecificContent.targetAggregation = "invalidAggregation";
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);},
-				Error,
-				"then apply change throws an error"
-			);
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
+				.catch(function(vError) {
+					assert.equal(
+						vError.message,
+						"The given Aggregation is not available in the given control: " + this.oHBox.id,
+						"then apply change throws an error");
+				}.bind(this));
 		});
 
 		QUnit.test("When reverting the change on an xml control tree", function(assert) {
 			var oHBoxItemsAggregation = this.oHBox.childNodes[0];
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
-			this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.mPropertyBag);
-			assert.strictEqual(oHBoxItemsAggregation.childNodes.length, 1, "after reversal there is again only one child in the horizontal box");
-			assert.strictEqual(this.oChange.getRevertData(), null, "and the revert data got reset");
+			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.mPropertyBag))
+				.then(function() {
+					assert.strictEqual(oHBoxItemsAggregation.childNodes.length, 1, "after reversal there is again only one child in the horizontal box");
+					assert.strictEqual(this.oChange.getRevertData(), null, "and the revert data got reset");
+				}.bind(this));
 		});
 	});
 

@@ -130,7 +130,6 @@ sap.ui.define([
 	}, function() {
 		QUnit.test('When providing change data for a change with previous binding, Then', function(assert) {
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificValueChangeData);
-
 			assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");
 			assert.deepEqual(this.oChange.getContent(), this.mExpectedValueChangeContent,
 				"the change CONTENT is filled correctly");
@@ -139,7 +138,6 @@ sap.ui.define([
 
 		QUnit.test('When providing change data for a change with previous set value, Then', function(assert) {
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificShowValueHelpChangeData);
-
 			assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");
 			assert.deepEqual(this.oChange.getContent(), this.mExpectedShowValueHelpChangeContent,
 				"the change CONTENT is filled correctly");
@@ -164,50 +162,65 @@ sap.ui.define([
 
 			assert.throws(
 				function() {this.oChangeHandler.completeChangeContent(this.oChange, mExpectedChangeContentWithBinding);},
-				Error(this.sNoBindingError),
+				Error("oSpecificChangeInfo attribute required"),
 				"an Error is thrown"
 			);
 		});
 
 		QUnit.test('When applying the value property binding change on a js control tree and reverting it afterwards, Then', function(assert) {
-			this.oChangeHandler.applyChange(this.oValueChange, this.oInput, {modifier: JsControlTreeModifier});
-			assert.strictEqual(this.oInput.getValue(), this.NEW_VALUE, "property value has changed the value as expected");
-			var oBindingInfo = this.oInput.getBindingInfo("value");
-			assert.ok(oBindingInfo.type instanceof Integer, "property value binding type has changed as expected");
-			assert.equal(oBindingInfo.parts[0].path, "/numberAsString", "property value binding path has changed as expected");
-			assert.equal(oBindingInfo.parts[0].model, "namedModel", "property value binding model has changed as expected");
+			var oBindingInfo;
 
-			this.oChangeHandler.revertChange(this.oValueChange, this.oInput, {modifier: JsControlTreeModifier});
-			oBindingInfo = this.oInput.getBindingInfo("value");
-			assert.equal(this.oInput.getValue(), this.OLD_VALUE_FIELD1, "property value has original value as expected");
-			assert.equal(oBindingInfo.parts[0].path, "/field1", "property value binding path is reverted");
-			assert.equal(oBindingInfo.parts[0].model, undefined, "property value binding model is reverted");
+			return this.oChangeHandler.applyChange(this.oValueChange, this.oInput, {modifier: JsControlTreeModifier})
+				.then(function() {
+					assert.strictEqual(this.oInput.getValue(), this.NEW_VALUE, "property value has changed the value as expected");
+					oBindingInfo = this.oInput.getBindingInfo("value");
+					assert.ok(oBindingInfo.type instanceof Integer, "property value binding type has changed as expected");
+					assert.equal(oBindingInfo.parts[0].path, "/numberAsString", "property value binding path has changed as expected");
+					assert.equal(oBindingInfo.parts[0].model, "namedModel", "property value binding model has changed as expected");
+				}.bind(this))
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oValueChange, this.oInput, {modifier: JsControlTreeModifier}))
+				.then(function() {
+					oBindingInfo = this.oInput.getBindingInfo("value");
+					assert.equal(this.oInput.getValue(), this.OLD_VALUE_FIELD1, "property value has original value as expected");
+					assert.equal(oBindingInfo.parts[0].path, "/field1", "property value binding path is reverted");
+					assert.equal(oBindingInfo.parts[0].model, undefined, "property value binding model is reverted");
+				}.bind(this));
 		});
 
 		QUnit.test('When applying the value property binding change on a js control tree without binding and reverting it afterwards, Then', function(assert) {
-			this.oChangeHandler.applyChange(this.oTextChange, this.oButton, {modifier: JsControlTreeModifier});
-			assert.strictEqual(this.oButton.getText(), this.NEW_VALUE, "text property has changed as expected");
-			var oBindingInfo = this.oButton.getBindingInfo("text");
-			assert.ok(oBindingInfo.type instanceof Integer, "property text binding type has changed as expected");
-			assert.equal(oBindingInfo.parts[0].path, "/numberAsString", "property text binding path has changed as expected");
-			assert.equal(oBindingInfo.parts[0].model, "namedModel", "property text binding model has changed as expected");
-
-			this.oChangeHandler.revertChange(this.oTextChange, this.oButton, {modifier: JsControlTreeModifier});
-			assert.strictEqual(this.oButton.getText(), this.OLD_VALUE_WITHOUT_BINDING, "text property has changed back as expected");
-			assert.notOk(this.oButton.getBindingInfo("text"), "text binding has reverted back");
+			return this.oChangeHandler.applyChange(this.oTextChange, this.oButton, {modifier: JsControlTreeModifier})
+				.then(function() {
+					assert.strictEqual(this.oButton.getText(), this.NEW_VALUE, "text property has changed as expected");
+					var oBindingInfo = this.oButton.getBindingInfo("text");
+					assert.ok(oBindingInfo.type instanceof Integer, "property text binding type has changed as expected");
+					assert.equal(oBindingInfo.parts[0].path, "/numberAsString", "property text binding path has changed as expected");
+					assert.equal(oBindingInfo.parts[0].model, "namedModel", "property text binding model has changed as expected");
+				}.bind(this))
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oTextChange, this.oButton, {modifier: JsControlTreeModifier}))
+				.then(function() {
+					assert.strictEqual(this.oButton.getText(), this.OLD_VALUE_WITHOUT_BINDING, "text property has changed back as expected");
+					assert.notOk(this.oButton.getBindingInfo("text"), "text binding has reverted back");
+				}.bind(this));
 		});
 
 		QUnit.test('When applying the showValueHelp property binding change on a js control tree and reverting it afterwards, Then', function(assert) {
-			this.oChangeHandler.applyChange(this.oShowValueHelpChange, this.oInput, {modifier: JsControlTreeModifier});
-			assert.strictEqual(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "property showValueHelpChange has changed the value as expected");
-			var oBindingInfo = this.oInput.getBindingInfo("showValueHelp");
-			assert.equal(oBindingInfo.bindingString, this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS, "property showValueHelpChange binding has changed as expected //this assert need the SAPUI5 data-sap-ui-xx-designMode");
-			assert.equal(oBindingInfo.parts[0].path, "/field1", "property showValueHelpChange binding paths have changed as expected");
-			assert.equal(oBindingInfo.parts[1].path, "/field2", "property showValueHelpChange binding paths have changed as expected");
-
-			this.oChangeHandler.revertChange(this.oShowValueHelpChange, this.oInput, {modifier: JsControlTreeModifier});
-			assert.strictEqual(this.oInput.getShowValueHelp(), this.OLD_BOOLEAN_VALUE, "property showValueHelpChange has been reverted");
-			assert.equal(this.oInput.getBindingInfo("showValueHelp"), undefined, "property showValueHelpChange binding has changed as expected //this assert need the SAPUI5 data-sap-ui-xx-designMode");
+			return this.oChangeHandler.applyChange(this.oShowValueHelpChange, this.oInput, {modifier: JsControlTreeModifier})
+				.then(function() {
+					assert.strictEqual(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "property showValueHelpChange has changed the value as expected");
+					var oBindingInfo = this.oInput.getBindingInfo("showValueHelp");
+					assert.equal(oBindingInfo.bindingString,
+						this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS,
+						"property showValueHelpChange binding has changed as expected //this assert need the SAPUI5 data-sap-ui-xx-designMode");
+					assert.equal(oBindingInfo.parts[0].path, "/field1", "property showValueHelpChange binding paths have changed as expected");
+					assert.equal(oBindingInfo.parts[1].path, "/field2", "property showValueHelpChange binding paths have changed as expected");
+				}.bind(this))
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oShowValueHelpChange, this.oInput, {modifier: JsControlTreeModifier}))
+				.then(function() {
+					assert.strictEqual(this.oInput.getShowValueHelp(), this.OLD_BOOLEAN_VALUE, "property showValueHelpChange has been reverted");
+					assert.equal(this.oInput.getBindingInfo("showValueHelp"),
+						undefined,
+						"property showValueHelpChange binding has changed as expected //this assert need the SAPUI5 data-sap-ui-xx-designMode");
+				}.bind(this));
 		});
 
 		// TODO: enable again when apps have adapted
@@ -221,37 +234,40 @@ sap.ui.define([
 				}
 			});
 
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(oChange, this.oInput, {modifier: JsControlTreeModifier});},
-				Error(this.sNoBindingError),
-				"an Error is thrown"
-			);
+			return this.oChangeHandler.applyChange(oChange, this.oInput, {modifier: JsControlTreeModifier})
+				.catch(function(sError) {
+					assert.equal(sError, this.sNoBindingError, "an error is thrown");
+				}.bind(this));
 		});
 
 		QUnit.test("When reverting an unapplied change", function(assert) {
 			var oErrorLogSpy = sandbox.spy(Log, "error");
-			var bResult = this.oChangeHandler.revertChange(this.oChange, this.oInput, {modifier: JsControlTreeModifier});
 
-			assert.notOk(bResult, "the revertChange function returns false");
+			this.oChangeHandler.revertChange(this.oChange, this.oInput, {modifier: JsControlTreeModifier});
 			assert.equal(oErrorLogSpy.callCount, 1, "an Error was logged");
 			assert.equal(oErrorLogSpy.firstCall.args[0], "Attempt to revert an unapplied change.");
 		});
 
 		QUnit.test('When applying the value property binding change on a xml control tree and reverting it afterwards, Then', function(assert) {
-			this.oChangeHandler.applyChange(this.oValueChange, this.oXmlInput, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlInput.getAttribute("value"), this.NEW_VALUE_BINDING, "property value has changed as expected");
-
-			assert.throws(function() {
-				this.oChangeHandler.revertChange(this.oValueChange, this.oXmlInput, {modifier: XmlTreeModifier});
-			}, Error, "Revert change throws an error, because this is not supported yet.");
+			return this.oChangeHandler.applyChange(this.oValueChange, this.oXmlInput, {modifier: XmlTreeModifier})
+				.then(function() {
+					assert.equal(this.oXmlInput.getAttribute("value"), this.NEW_VALUE_BINDING, "property value has changed as expected");
+				}.bind(this))
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oValueChange, this.oXmlInput, {modifier: XmlTreeModifier}))
+				.catch(function() {
+					assert.ok(true, "Revert change throws an error, because this is not supported yet.");
+				});
 		});
 
 		QUnit.test('When applying the showValueHelp property binding change on a xml control tree and reverting it afterwards, Then', function(assert) {
-			this.oChangeHandler.applyChange(this.oShowValueHelpChange, this.oXmlInput, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlInput.getAttribute("showValueHelp"), this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS, "property showValueHelp has changed as expected");
-
-			this.oChangeHandler.revertChange(this.oShowValueHelpChange, this.oXmlInput, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlInput.getAttribute("showValueHelp"), "false", "property showValueHelp has changed as expected");
+			return this.oChangeHandler.applyChange(this.oShowValueHelpChange, this.oXmlInput, {modifier: XmlTreeModifier})
+				.then(function() {
+					assert.equal(this.oXmlInput.getAttribute("showValueHelp"), this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS, "property showValueHelp has changed as expected");
+				}.bind(this))
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oShowValueHelpChange, this.oXmlInput, {modifier: XmlTreeModifier}))
+				.then(function() {
+					assert.equal(this.oXmlInput.getAttribute("showValueHelp"), "false", "property showValueHelp has changed as expected");
+				}.bind(this));
 		});
 
 		// TODO: enable again when apps have adapted
@@ -265,11 +281,10 @@ sap.ui.define([
 				}
 			});
 
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(oChange, this.oXmlInput, {modifier: XmlTreeModifier});},
-				Error(this.sNoBindingError),
-				"an Error is thrown"
-			);
+			return this.oChangeHandler.applyChange(oChange, this.oXmlInput, {modifier: XmlTreeModifier})
+				.catch(function(sError) {
+					assert.equal(sError, this.sNoBindingError, "an error is thrown");
+				}.bind(this));
 		});
 	});
 

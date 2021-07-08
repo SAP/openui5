@@ -48,8 +48,9 @@ sap.ui.define([
 	 *
 	 * @param {object} oChange - change object with instructions to be applied on the control
 	 * @param {object} oControl - the control which has been determined by the selector id
-	 * @param {object} mPropertyBag
+	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
+	 * @returns {Promise} Promise resolving when change is applied
 	 * @public
 	 * @name sap.ui.fl.changeHandler.PropertyChange#applyChange
 	 */
@@ -64,11 +65,14 @@ sap.ui.define([
 		// 	throw new Error(sBindingError);
 		// }
 
-		oChange.setRevertData({
-			originalValue: oModifier.getPropertyBindingOrProperty(oControl, sPropertyName)
-		});
-
-		changeProperty(oControl, sPropertyName, vPropertyValue, oModifier);
+		return Promise.resolve()
+			.then(oModifier.getPropertyBindingOrProperty.bind(oModifier, oControl, sPropertyName))
+			.then(function(oOriginalValue) {
+				oChange.setRevertData({
+					originalValue: oOriginalValue
+				});
+				changeProperty(oControl, sPropertyName, vPropertyValue, oModifier);
+			});
 	};
 
 	/**
@@ -76,9 +80,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oChange - change object with instructions to be applied on the control
 	 * @param {object} oControl - the control which has been determined by the selector id
-	 * @param {object} mPropertyBag
+	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {boolean} true - if change has been reverted
 	 * @public
 	 */
 	PropertyChange.revertChange = function(oChange, oControl, mPropertyBag) {
@@ -94,10 +97,7 @@ sap.ui.define([
 			oChange.resetRevertData();
 		} else {
 			Log.error("Attempt to revert an unapplied change.");
-			return false;
 		}
-
-		return true;
 	};
 
 	/**
@@ -106,21 +106,25 @@ sap.ui.define([
 	 * @param {object} oChange change object to be completed
 	 * @param {object} oSpecificChangeInfo with attribute property which contains an array which holds objects which have attributes
 	 * 				   id and index - id is the id of the field to property and index the new position of the field in the smart form group
+	 * @returns {Promise} Promise that resolves completing the change content
 	 * @public
 	 * @name sap.ui.fl.changeHandler.PropertyChange#completeChangeContent
 	 */
 	PropertyChange.completeChangeContent = function(oChange, oSpecificChangeInfo) {
-		var oChangeJson = oChange.getDefinition();
+		return Promise.resolve()
+			.then(function() {
+				var oChangeJson = oChange.getDefinition();
 
-		if (!oSpecificChangeInfo.content) {
-			throw new Error("oSpecificChangeInfo attribute required");
-		}
-		// TODO: enable again when apps have adapted
-		// if (isBinding(oSpecificChangeInfo.content.newValue)) {
-		// 	throw new Error(sBindingError);
-		// }
+				if (!oSpecificChangeInfo.content) {
+					throw new Error("oSpecificChangeInfo attribute required");
+				}
+				// TODO: enable again when apps have adapted
+				// if (isBinding(oSpecificChangeInfo.content.newValue)) {
+				// 	throw new Error(sBindingError);
+				// }
 
-		oChangeJson.content = oSpecificChangeInfo.content;
+				oChangeJson.content = oSpecificChangeInfo.content;
+			});
 	};
 
 	/**

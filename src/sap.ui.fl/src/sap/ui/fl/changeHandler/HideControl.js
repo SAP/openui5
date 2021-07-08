@@ -29,16 +29,19 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - map of properties
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {boolean} true - if change could be applied
+	 * @return {Promise} Promise resolving when change is applied
 	 * @public
 	 */
 	HideControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		oChange.setRevertData({
-			originalValue: mPropertyBag.modifier.getVisible(oControl)
-		});
-
-		mPropertyBag.modifier.setVisible(oControl, false);
-		return true;
+		var oModifier = mPropertyBag.modifier;
+		return Promise.resolve()
+			.then(oModifier.getVisible.bind(oModifier, oControl))
+			.then(function(bVisible) {
+				oChange.setRevertData({
+					originalValue: bVisible
+				});
+				oModifier.setVisible(oControl, false);
+			});
 	};
 
 
@@ -49,21 +52,21 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag	- map of properties
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {boolean} true - if change has been reverted
+	 * @return {Promise} Promise resolving when change was successfully reverted
 	 * @public
 	 */
 	HideControl.revertChange = function(oChange, oControl, mPropertyBag) {
 		var mRevertData = oChange.getRevertData();
 
-		if (mRevertData) {
-			mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);
-			oChange.resetRevertData();
-		} else {
-			Log.error("Attempt to revert an unapplied change.");
-			return false;
-		}
-
-		return true;
+		return Promise.resolve()
+			.then(function() {
+				if (mRevertData) {
+					mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);
+					oChange.resetRevertData();
+				} else {
+					Log.error("Attempt to revert an unapplied change.");
+				}
+			});
 	};
 
 	/**

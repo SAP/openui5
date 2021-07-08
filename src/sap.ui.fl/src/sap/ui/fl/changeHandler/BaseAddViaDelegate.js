@@ -237,31 +237,37 @@ sap.ui.define([
 
 					var oParentControl = oChange.getDependentControl(mAddViaDelegateSettings.parentAlias, mPropertyBag)
 						|| /*fallback and legacy changes*/ oControl;
-					oModifier.removeAggregation(oParentControl, mAddViaDelegateSettings.aggregationName, oNewField);
-					oModifier.destroy(oNewField);
 
-					if (mValueHelpSelector) {
-						var oValueHelp = oModifier.bySelector(mValueHelpSelector, oAppComponent);
-						oModifier.removeAggregation(oParentControl, "dependents", oValueHelp);
-						oModifier.destroy(oValueHelp);
-					}
-					var mAddPropertySettings = merge({},
-						{
-							control: oControl,
-							change: oChange
-						},
-						mPropertyBag
-					);
+					return Promise.resolve()
+						.then(oModifier.removeAggregation.bind(oModifier, oParentControl, mAddViaDelegateSettings.aggregationName, oNewField))
+						.then(oModifier.destroy.bind(oModifier, oNewField))
+						.then(function() {
+							if (mValueHelpSelector) {
+								var oValueHelp = oModifier.bySelector(mValueHelpSelector, oAppComponent);
+								return Promise.resolve()
+									.then(oModifier.removeAggregation.bind(oModifier, oParentControl, "dependents", oValueHelp))
+									.then(oModifier.destroy.bind(oModifier, oValueHelp));
+							}
+						})
+						.then(function() {
+							var mAddPropertySettings = merge({},
+								{
+									control: oControl,
+									change: oChange
+								},
+								mPropertyBag
+							);
 
-					if (isFunction(mAddViaDelegateSettings.revertAdditionalControls)) {
-						//-------------------------------------
-						//Call 'revertAdditionalControls' hook!
-						//-------------------------------------
-						mAddViaDelegateSettings.revertAdditionalControls(mAddPropertySettings);
-					}
+							if (isFunction(mAddViaDelegateSettings.revertAdditionalControls)) {
+								//-------------------------------------
+								//Call 'revertAdditionalControls' hook!
+								//-------------------------------------
+								mAddViaDelegateSettings.revertAdditionalControls(mAddPropertySettings);
+							}
 
-					oChange.resetRevertData();
-					return true;
+							oChange.resetRevertData();
+							return true;
+						});
 				},
 
 				/**

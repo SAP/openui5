@@ -69,46 +69,53 @@ function (
 		}
 	}, function() {
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called for default handler', function (assert) {
-			this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-			this.oDefaultRenameChangeHandler.applyChange(this.oChange, this.oButton, mPropertyBag);
-
-			assert.equal(this.oButton.getText(), this.mSpecificChangeInfo.value, "then the button text changes");
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+				.then(function() {
+					assert.equal(this.oButton.getText(), this.mSpecificChangeInfo.value, "then the button text changes");
+				}.bind(this));
 		});
 
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called for default handler and then reverted', function (assert) {
 			var originalText = this.oButton.getText();
-			this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-			this.oDefaultRenameChangeHandler.applyChange(this.oChange, this.oButton, mPropertyBag);
-			this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oButton, mPropertyBag);
 
-			assert.equal(this.oButton.getText(), originalText, "then the button text doesn't change");
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+				.then(this.oDefaultRenameChangeHandler.revertChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+				.then(function() {
+					assert.equal(this.oButton.getText(), originalText, "then the button text doesn't change");
+				}.bind(this));
 		});
 
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called for special handler', function (assert) {
-			this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-			this.oSpecialRenameChangeHandler.applyChange(this.oChange, this.oButton, mPropertyBag);
-
-			assert.equal(this.oButton.getText(), this.mSpecificChangeInfo.value, "then the button text changes");
+			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(this.oSpecialRenameChangeHandler.applyChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+				.then(function() {
+					assert.equal(this.oButton.getText(), this.mSpecificChangeInfo.value, "then the button text changes");
+				}.bind(this));
 		});
 
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called for special handler and then reverted', function (assert) {
 			var originalText = this.oButton.getText();
-			this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-			this.oSpecialRenameChangeHandler.applyChange(this.oChange, this.oButton, mPropertyBag);
-			this.oSpecialRenameChangeHandler.revertChange(this.oChange, this.oButton, mPropertyBag);
 
-			assert.equal(this.oButton.getText(), originalText, "then the button text doesn't change");
+			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(this.oSpecialRenameChangeHandler.applyChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+				.then(this.oSpecialRenameChangeHandler.revertChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+				.then(function() {
+					assert.equal(this.oButton.getText(), originalText, "then the button text doesn't change");
+				}.bind(this));
 		});
 
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier and binding value are called', function (assert) {
 			this.mSpecificChangeInfo.value = "{i18n>textKey}";
 
-			this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-			this.oDefaultRenameChangeHandler.applyChange(this.oChange, this.oButton, mPropertyBag);
-
-			var oBindingInfo = this.oButton.getBindingInfo("text");
-			assert.equal(oBindingInfo.parts[0].path, "textKey", "property value binding path has changed as expected");
-			assert.equal(oBindingInfo.parts[0].model, "i18n", "property value binding model has changed as expected");
+			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(this.oSpecialRenameChangeHandler.applyChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+				.then(function() {
+					var oBindingInfo = this.oButton.getBindingInfo("text");
+					assert.equal(oBindingInfo.parts[0].path, "textKey", "property value binding path has changed as expected");
+					assert.equal(oBindingInfo.parts[0].model, "i18n", "property value binding model has changed as expected");
+				}.bind(this));
 		});
 
 		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later', function (assert) {
@@ -133,14 +140,16 @@ function (
 			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[0];
 
-			this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-			this.oDefaultRenameChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
-
-			this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlButton.getAttribute("text"), "Initial Text", "then the button text doesn't change");
-
-			this.oLayout.destroy();
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}))
+				.then(function() {
+					assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
+					return this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oXmlButton.getAttribute("text"), "Initial Text", "then the button text doesn't change");
+					this.oLayout.destroy();
+				}.bind(this));
 		});
 
 		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later in XML and JS (on button with binding)', function (assert) {
@@ -169,53 +178,63 @@ function (
 			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[0];
 
-			this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-			this.oDefaultRenameChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}))
+				.then(function() {
+					assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
+					return this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
+				}.bind(this))
+				.catch(function() {
+					assert.ok(true, "revert on XML throws an error");
 
-			assert.throws(function() {
-				this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
-			}, Error, "revert on XML throws an error");
+					// the revert data are saved on the change; set button text also on button control
+					this.oButton.setText(this.mSpecificChangeInfo.value);
+					return this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oButton.getText(), "Initial Text", "the text binding got reset and the value is correct");
 
-			// the revert data are saved on the change; set button text also on button control
-			this.oButton.setText(this.mSpecificChangeInfo.value);
-			this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
-			assert.equal(this.oButton.getText(), "Initial Text", "the text binding got reset and the value is correct");
-
-			this.oLayout.destroy();
-			oModel.destroy();
+					this.oLayout.destroy();
+					oModel.destroy();
+				}.bind(this));
 		});
 
 		QUnit.test('when completeChangeContent is called without a value', function (assert) {
 			this.mSpecificChangeInfo.value = null;
 
-			assert.throws(
-				this.oDefaultRenameChangeHandler.completeChangeContent.bind(this, this.oChange, this.mSpecificChangeInfo, mPropertyBag),
-				"then an error is thrown");
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.catch(function() {
+					assert.ok(true, "then an error is thrown");
+				});
 		});
 
 		QUnit.test('when completeChangeContent for default is called', function (assert) {
-			this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-
-			assert.equal(this.oChange.getContent().originalControlType, "sap.m.Button", "then the original control type is stored in the change");
-			assert.equal(this.oChange.getText("newText"), this.mSpecificChangeInfo.value, "then text is stored with the default change property Name inside the translateable part of the change");
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(function() {
+					assert.equal(this.oChange.getContent().originalControlType, "sap.m.Button", "then the original control type is stored in the change");
+					assert.equal(this.oChange.getText("newText"), this.mSpecificChangeInfo.value, "then text is stored with the default change property Name inside the translateable part of the change");
+				}.bind(this));
 		});
 
 		QUnit.test('when completeChangeContent for special is called', function (assert) {
-			this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-
-			assert.equal(this.oChange.getContent().originalControlType, "sap.m.Button", "then the original control type is stored in the change");
-			assert.equal(this.oChange.getText("buttonText"), this.mSpecificChangeInfo.value, "then text is stored with the default change property Name inside the translateable part of the change");
+			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(function() {
+					assert.equal(this.oChange.getContent().originalControlType, "sap.m.Button", "then the original control type is stored in the change");
+					assert.equal(this.oChange.getText("buttonText"), this.mSpecificChangeInfo.value, "then text is stored with the default change property Name inside the translateable part of the change");
+				}.bind(this));
 		});
 
 		QUnit.test('when getChangeVisualization is called', function (assert) {
-			this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
-			this.oChange.setRevertData("Button Old Text");
-
-			var mVisualizationInfo = this.oDefaultRenameChangeHandler.getChangeVisualizationInfo(this.oChange);
-
-			assert.equal(mVisualizationInfo.payload.originalLabel, "Button Old Text", "then the returned payload contains the original label");
-			assert.equal(mVisualizationInfo.payload.newLabel, "Button New Text", "then the returned payload contains the new label");
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+				.then(function() {
+					this.oChange.setRevertData("Button Old Text");
+					return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
+				}.bind(this))
+				.then(function() {
+					var mVisualizationInfo = this.oDefaultRenameChangeHandler.getChangeVisualizationInfo(this.oChange);
+					assert.equal(mVisualizationInfo.payload.originalLabel, "Button Old Text", "then the returned payload contains the original label");
+					assert.equal(mVisualizationInfo.payload.newLabel, "Button New Text", "then the returned payload contains the new label");
+				}.bind(this));
 		});
 	});
 
