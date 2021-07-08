@@ -23,6 +23,8 @@ sap.ui.define([
 		executionDelay: 50
 	});
 
+	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
+
 	// Apply a variant and switch back to the standard
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimensions and measures appears", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame({
@@ -34,7 +36,6 @@ sap.ui.define([
 		When.iLookAtTheScreen();
 
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		Then.iShouldSeeVisibleDimensionsInOrder([
 			"Genre"
@@ -67,7 +68,7 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.chart);
+		Then.iShouldSeeDialogTitle(sViewSettings);
 
 		var aLanguageFirst = [
 			{p13nItem: "Language", selected: true},
@@ -120,7 +121,7 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.chart);
+		Then.iShouldSeeDialogTitle(sViewSettings);
 
 		Then.iShouldSeeP13nItems([
 			{p13nItem: "Genre", selected: true},
@@ -166,7 +167,6 @@ sap.ui.define([
 		When.iLookAtTheScreen();
 
 		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
 
 		Then.iShouldSeeVisibleDimensionsInOrder([
 			"Genre"
@@ -182,7 +182,7 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
 		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.chart);
+		Then.iShouldSeeDialogTitle(sViewSettings);
 
 		Then.iShouldSeeP13nItems([
 			{p13nItem: "Genre", selected: true},
@@ -201,7 +201,7 @@ sap.ui.define([
 		]);
 	});
 	opaTest("When I deselect 'Genre' and select 'Title', the chart should be changed", function(Given, When, Then) {
-		When.iSelectColumn("Genre", Arrangement.P13nDialog.Titles.chart).and.iSelectColumn("Title", Arrangement.P13nDialog.Titles.chart);
+		When.iSelectColumn("Genre", sViewSettings).and.iSelectColumn("Title", sViewSettings);
 
 		Then.iShouldSeeP13nItems([
 			{p13nItem: "Genre", selected: false},
@@ -236,10 +236,13 @@ sap.ui.define([
 		Then.thePersonalizationDialogShouldBeClosed();
 	});
 	opaTest("When I press on 'Define Sort Properties' button and sort ascending by 'Price (average)', the chart should be changed", function(Given, When, Then) {
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon).and.iSelectColumn("Price (average)", Arrangement.P13nDialog.Titles.sort);
+		//open 'sort' tab
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		When.iSwitchToP13nTab("Sort");
 
-		Then.iShouldSeeP13nItem("Price (average)", 5, true);
-		Then.iShouldSeeEnabledSelectControl("Price (average)", true);
+		//open select (empty) select control in sort panel and select 'Country'
+		When.iClickOnP13nSelect("$_none");
+		When.iSelectP13nMenuItem("Price (average)");
 
 		When.iPressDialogOk();
 

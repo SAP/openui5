@@ -2,7 +2,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns="sap.m"
-	xmlns:chart="sap.ui.mdc.chart"
+	xmlns:chart="sap.ui.mdc.chartNew"
 	xmlns:fl="sap.ui.fl.variants"
 	class="sapUiSizeCompact"
 	displayBlock="true"
@@ -15,26 +15,25 @@
 			<fl:VariantManagement id="IDVariantManagementOfAppUnderTestChart" for="IDChartOfAppUnderTestChart"/>
 			<VBox>
 				<items>
-					<mdc:Chart id="IDChartOfAppUnderTestChart"
-								data="{path: '/Books'}"
+					<mdc:ChartNew id="IDChartOfAppUnderTestChart"
 								delegate='{
-									"name": "sap/ui/mdc/odata/v4/ChartDelegate",
+									"name": "sap/ui/mdc/odata/v4/vizChart/ChartDelegateNew",
 									"payload": {
 									   		collectionName: "Books"
 										}
 									}'
 								p13nMode="Item,Sort,Type"
-								chartType="column"
+								autoBindOnInit="true" 
 								header="MDC: Chart Sample"
 								height="400px"
 								width="1000px">
 						<mdc:items>
-							<chart:DimensionItem id="IDGenre" key="genre_code" role="series"
+							<chart:ItemNew id="IDGenre" name="genre_code" role="series" type="groupable"
 												 label="Genre"/>
-							<chart:MeasureItem id="IDPrice" key="averageprice" role="axis1"
+							<chart:ItemNew id="IDPrice" name="averageprice" role="axis1" type="aggregatable"
 							label="Price (average)"/>
 						</mdc:items>
-					</mdc:Chart>
+					</mdc:ChartNew>
 				</items>
 			</VBox>
 		</ScrollContainer>
