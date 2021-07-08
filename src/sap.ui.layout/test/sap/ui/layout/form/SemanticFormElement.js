@@ -152,10 +152,19 @@ function(
 						         new Input({value: {parts: [{path: '/depth'}, {path: '/unit'}], type: new UnitType({showMeasure:false})}, description: {path: "/unit"}/*, layoutData: new ColumnElementData({cellsSmall: 11, cellsLarge: 4})*/})]
 					}),
 					new SemanticFormElement("C2FE2", {
+						fieldLabels: [new Label({text: "width"}),
+						              new Label({text: "hight"}),
+						              new Label({text: "depth"})],
+						delimiter: "*",
+						fields: [new Input({value: {parts: [{path: '/width'}, {path: '/unit'}], type: new UnitType({showMeasure:false})}, layoutData: new ColumnElementData({cellsSmall: 11, cellsLarge: 1})}),
+						         new Input({value: {parts: [{path: '/height'}, {path: '/unit'}], type: new UnitType({showMeasure:false})}, visible: false, layoutData: new ColumnElementData({cellsSmall: 11, cellsLarge: 1})}),
+						         new Input({value: {parts: [{path: '/depth'}, {path: '/unit'}], type: new UnitType({showMeasure:false})}, description: {path: "/unit"}/*, layoutData: new ColumnElementData({cellsSmall: 11, cellsLarge: 4})*/})]
+					}),
+					new SemanticFormElement("C2FE3", {
 						label: "Date of birth",
 						fields: [new DatePicker({value: {path: "/date", type: new DateType({style: "long"})}, layoutData: new ColumnElementData({cellsSmall: 6, cellsLarge: 3})})]
 					}),
-					new SemanticFormElement("C2FE3", {
+					new SemanticFormElement("C2FE4", {
 						label: "Size",
 						fields: [new RadioButtonGroup({selectedIndex: {path: "/size", type: new IntegerType()},
 								buttons: {path: "/sizes", template: new RadioButton({text: {path: "text"}})}}),
@@ -163,7 +172,7 @@ function(
 							new CheckBox({selected: {path: "/bool"}, layoutData: new ColumnElementData({cellsSmall: 1, cellsLarge: 1})})
 						]
 					}),
-					new SemanticFormElement("C2FE4", {
+					new SemanticFormElement("C2FE5", {
 						label: "text",
 						fields: [new Text({text: {path: "/text"}})]
 					})

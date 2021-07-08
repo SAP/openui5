@@ -356,6 +356,65 @@ sap.ui.define([
 		}, 0);
 	});
 
+	QUnit.test("visibility change", function(assert) {
+		var oLabel1 = new Label("L1", {text: "Label 1"});
+		var oLabel2 = new Label("L2", {text: "Label 2"});
+		var oLabel3 = new Label("L3", {text: "Label 3"});
+		oFormElement.addFieldLabel(oLabel1);
+		oFormElement.addFieldLabel(oLabel2);
+		oFormElement.addFieldLabel(oLabel3);
+		var oField1 = new Input("F1", {value: "Text 1"});
+		var oField2 = new Input("F2", {value: "Text 2", visible: false});
+		var oField3 = new Text("F3", {text: "Text 3"});
+		oFormElement.addField(oField1);
+		oFormElement.addField(oField2);
+		oFormElement.addField(oField3);
+		sap.ui.getCore().applyChanges();
+
+		var aFields = oFormElement.getFieldsForRendering();
+		var oLabel = oFormElement.getLabelControl();
+
+		assert.ok(oLabel, "Label created");
+		assert.equal(oLabel && oLabel.getText(), "Label 1 / Label 3", "Label text");
+
+		assert.equal(aFields.length, 3, "3 controls rendered");
+		assert.equal(aFields[0], oField1, "First field rendered");
+		assert.ok(aFields[1].isA("sap.m.Text"), "Delimiter rendered");
+		assert.equal(aFields[2], oField3, "Third field rendered on second position");
+
+		oField2.setVisible(true);
+		oField3.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		aFields = oFormElement.getFieldsForRendering();
+		oLabel = oFormElement.getLabelControl();
+
+		assert.ok(oLabel, "Label created");
+		assert.equal(oLabel && oLabel.getText(), "Label 1 / Label 2", "Label text");
+
+		assert.equal(aFields.length, 3, "3 controls rendered");
+		assert.equal(aFields[0], oField1, "First field rendered");
+		assert.ok(aFields[1].isA("sap.m.Text"), "Delimiter rendered");
+		assert.equal(aFields[2], oField2, "Second field rendered on second position");
+
+		oField3.setVisible(true);
+		sap.ui.getCore().applyChanges();
+
+		aFields = oFormElement.getFieldsForRendering();
+		oLabel = oFormElement.getLabelControl();
+
+		assert.ok(oLabel, "Label created");
+		assert.equal(oLabel && oLabel.getText(), "Label 1 / Label 2 / Label 3", "Label text");
+
+		assert.equal(aFields.length, 5, "5 controls rendered");
+		assert.equal(aFields[0], oField1, "First field rendered");
+		assert.ok(aFields[1].isA("sap.m.Text"), "Delimiter rendered");
+		assert.equal(aFields[2], oField2, "Second field rendered");
+		assert.ok(aFields[3].isA("sap.m.Text"), "Delimiter rendered");
+		assert.equal(aFields[4], oField3, "Third field rendered");
+
+	});
+
 	QUnit.module("display mode", {
 		beforeEach: initTest,
 		afterEach: afterTest
@@ -532,6 +591,60 @@ sap.ui.define([
 		assert.ok(oField.isA("sap.m.Text"), "Text control rendered");
 		assert.equal(oField.getText && oField.getText(), "Text 1 / Text 2", "rendered text");
 		assert.ok(oDeleimiter._bIsBeingDestroyed, "oDeleimiter control destroyed;");
+	});
+
+	QUnit.test("visibility change", function(assert) {
+		var oLabel1 = new Label("L1", {text: "Label 1"});
+		var oLabel2 = new Label("L2", {text: "Label 2"});
+		var oLabel3 = new Label("L3", {text: "Label 3"});
+		oFormElement.addFieldLabel(oLabel1);
+		oFormElement.addFieldLabel(oLabel2);
+		oFormElement.addFieldLabel(oLabel3);
+		var oField1 = new Input("F1", {value: "Text 1"});
+		var oField2 = new Input("F2", {value: "Text 2", visible: false});
+		var oField3 = new Text("F3", {text: "Text 3"});
+		oFormElement.addField(oField1);
+		oFormElement.addField(oField2);
+		oFormElement.addField(oField3);
+		sap.ui.getCore().applyChanges();
+
+		var aFields = oFormElement.getFieldsForRendering();
+		var oLabel = oFormElement.getLabelControl();
+
+		assert.ok(oLabel, "Label created");
+		assert.equal(oLabel && oLabel.getText(), "Label 1 / Label 3", "Label text");
+
+		assert.equal(aFields.length, 1, "1 control rendered");
+		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
+		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 / Text 3", "rendered text");
+
+		oField2.setVisible(true);
+		oField3.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		aFields = oFormElement.getFieldsForRendering();
+		oLabel = oFormElement.getLabelControl();
+
+		assert.ok(oLabel, "Label created");
+		assert.equal(oLabel && oLabel.getText(), "Label 1 / Label 2", "Label text");
+
+		assert.equal(aFields.length, 1, "1 control rendered");
+		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
+		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 / Text 2", "rendered text");
+
+		oField3.setVisible(true);
+		sap.ui.getCore().applyChanges();
+
+		aFields = oFormElement.getFieldsForRendering();
+		oLabel = oFormElement.getLabelControl();
+
+		assert.ok(oLabel, "Label created");
+		assert.equal(oLabel && oLabel.getText(), "Label 1 / Label 2 / Label 3", "Label text");
+
+		assert.equal(aFields.length, 1, "1 control rendered");
+		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
+		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 / Text 2 / Text 3", "rendered text");
+
 	});
 
 });

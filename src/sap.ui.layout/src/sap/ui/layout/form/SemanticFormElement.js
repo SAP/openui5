@@ -184,9 +184,11 @@ sap.ui.define([
 			var aDelemiters = this.getAggregation("_delimiters", []);
 			for (var i = 0; i < aFields.length; i++) {
 				var oField = aFields[i];
-				aFieldsForRendering.push(oField);
-				if (i < aFields.length - 1 && aDelemiters[i]) {
-					aFieldsForRendering.push(aDelemiters[i]);
+				if (oField.getVisible()) {
+					if (aFieldsForRendering.length > 0 && aDelemiters[i - 1]) {
+						aFieldsForRendering.push(aDelemiters[i - 1]);
+					}
+					aFieldsForRendering.push(oField);
 				}
 			}
 		} else {
@@ -250,19 +252,17 @@ sap.ui.define([
 			if (!oField.isA("sap.ui.core.IFormContent") || !oField.isA("sap.ui.core.ISemanticFormContent")) {
 				throw new Error(oField + " is not valid Form content. " + this); // only support allowed Fields
 			}
+			var aProperties = ["visible"];
 			if (oField.getFormValueProperty) {
-				this._oObserver.observe(oField, {
-					properties: [oField.getFormValueProperty()]
-				});
+					aProperties.push(oField.getFormValueProperty());
 			} else if (oField.getMetadata().getProperty("value")) {
-				this._oObserver.observe(oField, {
-					properties: ["value"]
-				});
+				aProperties.push("value");
 			} else if (oField.getMetadata().getProperty("text")) {
-				this._oObserver.observe(oField, {
-					properties: ["text"]
-				});
+				aProperties.push("text");
 			}
+			this._oObserver.observe(oField, {
+				properties: aProperties
+			});
 		} else {
 			// unobserve is done in FormElement
 			var oLayoutData = oField.getLayoutData();
@@ -277,6 +277,8 @@ sap.ui.define([
 		} else {
 			_updateControlsForDisplay.call(this, true);
 		}
+
+		_updateLabelText.call(this); // to hide labels of invisible Field
 
 	}
 
@@ -317,6 +319,14 @@ sap.ui.define([
 			if (!this.getProperty("_editable")) {
 				_updateDisplayText.call(this, false);
 			}
+		} else if (oChanges.name === "visible") {
+			if (this.getProperty("_editable")) {
+				_updateControlsForEdit.call(this);
+			} else {
+				_updateControlsForDisplay.call(this, true);
+			}
+			_updateLabelText.call(this); // to hide labels of invisible Field
+			this.invalidate(); // to force rerendering
 		}
 
 	}
@@ -395,21 +405,23 @@ sap.ui.define([
 
 			for (var i = 0; i < aFields.length; i++) {
 				var oField = aFields[i];
-				var sProperyName = oField.getFormValueProperty ? oField.getFormValueProperty() : null;
-				var vText;
-				if (oField.getFormFormattedValue) {
-					vText = oField.getFormFormattedValue();
-					if (vText instanceof Promise) {
-						bAsync = true;
+				if (oField.getVisible()) {
+					var sProperyName = oField.getFormValueProperty ? oField.getFormValueProperty() : null;
+					var vText;
+					if (oField.getFormFormattedValue) {
+						vText = oField.getFormFormattedValue();
+						if (vText instanceof Promise) {
+							bAsync = true;
+						}
+					} else if (sProperyName) {
+						vText = oField.getProperty(sProperyName);
+					} else if (oField.getMetadata().getProperty("value")) {
+						vText = oField.getValue();
+					} else if (oField.getMetadata().getProperty("text")) {
+						vText = oField.getText();
 					}
-				} else if (sProperyName) {
-					vText = oField.getProperty(sProperyName);
-				} else if (oField.getMetadata().getProperty("value")) {
-					vText = oField.getValue();
-				} else if (oField.getMetadata().getProperty("text")) {
-					vText = oField.getText();
+					aTexts.push(vText);
 				}
-				aTexts.push(vText);
 			}
 
 			oDisplay._bNoForceUpdate = true; // prevent double update, as setText might trigger re-rendering
@@ -449,13 +461,16 @@ sap.ui.define([
 		if (!this.getLabel()) {
 			// only use if no Label is set on FormElement level
 			var aFieldLabels = this.getFieldLabels();
+			var aFields = this.getFields();
 			var aTexts = [];
 			for (var i = 0; i < aFieldLabels.length; i++) {
-				var oFieldLabel = aFieldLabels[i];
-				if (typeof oFieldLabel === "string") {
-					aTexts.push(oFieldLabel);
-				} else {
-					aTexts.push(oFieldLabel.getText());
+				if (aFields[i] && aFields[i].getVisible()) { // if Field not already assigned update if assigned
+					var oFieldLabel = aFieldLabels[i];
+					if (typeof oFieldLabel === "string") {
+						aTexts.push(oFieldLabel);
+					} else {
+						aTexts.push(oFieldLabel.getText());
+					}
 				}
 			}
 
@@ -469,7 +484,9 @@ sap.ui.define([
 	// the used Layout can be unknown. But latest on rendering it is known, so there the LayoutData can be set latest.
 	function _updateLayoutData() {
 
-		var aFields = this.getFields();
+		var aFields = this.getFields().filter(function(oField) {
+			return oField.getVisible();
+		});
 		var aDelemiters = this.getAggregation("_delimiters", []);
 		var oFormContainer = this.getParent();
 		var oForm = oFormContainer && oFormContainer.getParent();
