@@ -15,6 +15,7 @@
 		</subHeader>
 
 		<SegmentedButton
+			id="sizeSwitch"
 			selectedKey="cozy"
 			selectionChange=".onFormFactorChange"
 			class="VizTestDensityBtn sapUiSmallMargin">

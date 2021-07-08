@@ -1,10 +1,12 @@
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/integration/Extension",
 	"sap/ui/integration/widgets/Card",
 	"sap/base/Log",
 	"sap/m/MessageToast",
 	"sap/m/Dialog"
 ], function (
+	Core,
 	Extension,
 	Card,
 	Log,
@@ -97,6 +99,10 @@ sap.ui.define([
 			showHeader: false,
 			contentWidth: "40%"
 		});
+
+		if (Core.byId("cardsplayground---footer--sizeSwitch").getSelectedKey() === "compact") {
+			this._oSnackDialog.addStyleClass("sapUiSizeCompact");
+		}
 
 		this._oSnackDialog.open();
 	};
