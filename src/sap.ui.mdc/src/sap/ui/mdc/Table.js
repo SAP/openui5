@@ -1021,6 +1021,7 @@ sap.ui.define([
 			}
 
 			oFilterInfoBar.setVisible(false);
+			oTable._oTable.removeAriaLabelledBy(oFilterInfoBarText);
 
 			return;
 		}
@@ -1033,7 +1034,11 @@ sap.ui.define([
 			var oListFormat = ListFormat.getInstance();
 			var sFilterText = oResourceBundle.getText("table.FILTER_INFO", oListFormat.format(aPropertyLabels));
 
-			oFilterInfoBar.setVisible(true);
+			if (!oFilterInfoBar.getVisible()) {
+				oFilterInfoBar.setVisible(true);
+				oTable._oTable.addAriaLabelledBy(oFilterInfoBarText);
+			}
+
 			oFilterInfoBarText.setText(sFilterText);
 		});
 	}
@@ -1052,10 +1057,12 @@ sap.ui.define([
 		if (oTable._bMobileTable) {
 			if (oTable._oTable.getInfoToolbar() !== oFilterInfoBar) {
 				oTable._oTable.setInfoToolbar(oFilterInfoBar);
-				oTable._oTable.addAriaLabelledBy(getFilterInfoBarText(oTable));
 			}
 		} else if (oTable._oTable.indexOfExtension(oFilterInfoBar) === -1) {
 			oTable._oTable.insertExtension(oFilterInfoBar, 1);
+		}
+
+		if (oFilterInfoBar.getVisible()) {
 			oTable._oTable.addAriaLabelledBy(getFilterInfoBarText(oTable));
 		}
 	}
