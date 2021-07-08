@@ -240,6 +240,11 @@
 					"pattern": "extensionAndHost",
 					"name": "extensionAndHost",
 					"target": "extensionAndHost"
+				},
+				{
+					"pattern": "listContentActions",
+					"name": "listContentActions",
+					"target": "listContentActions"
 				}
 			],
 			"targets": {
@@ -416,6 +421,11 @@
 				"extensionAndHost": {
 					"viewId": "extensionAndHost",
 					"viewName": "ExtensionAndHost",
+					"viewLevel": 1
+				},
+				"listContentActions": {
+					"viewId": "listContentActions",
+					"viewName": "ListContentActions",
 					"viewLevel": 1
 				}
 			}

@@ -79,7 +79,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.strictEqual(oLCI.$().find(".sapMSLIDiv").css("flex-direction"), "column", "The content should be in column.");
+		assert.strictEqual(oLCI.$().find(".sapMSLIDiv").css("flex-direction"), "row", "The list item should be in row.");
 
 		// clean up
 		oLCI.destroy();

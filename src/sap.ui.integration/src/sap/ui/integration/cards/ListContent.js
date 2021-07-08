@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/controls/Microchart",
 	"sap/ui/integration/controls/MicrochartLegend",
-	"sap/ui/integration/controls/ListContentItem"
+	"sap/ui/integration/controls/ListContentItem",
+	"sap/ui/integration/controls/Toolbar"
 ], function (
 	BaseListContent,
 	ListContentRenderer,
@@ -22,7 +23,8 @@ sap.ui.define([
 	BindingHelper,
 	Microchart,
 	MicrochartLegend,
-	ListContentItem
+	ListContentItem,
+	Toolbar
 ) {
 	"use strict";
 
@@ -34,6 +36,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.ListType;
 	var ListType = mLibrary.ListType;
+
+	// shortcut for sap.m.ListSeparators;
+	var ListSeparators = mLibrary.ListSeparators;
 
 	// shortcut for sap.ui.integration.CardActionArea
 	var ActionArea = library.CardActionArea;
@@ -171,8 +176,7 @@ sap.ui.define([
 			this._oList = new List({
 				id: this.getId() + "-list",
 				growing: false,
-				showNoData: false,
-				showSeparators: "None"
+				showNoData: false
 			});
 		}
 
@@ -187,7 +191,8 @@ sap.ui.define([
 	 * @param {Object} mItem The item template of the configuration object.
 	 */
 	ListContent.prototype._setItem = function (mItem) {
-		var mSettings = {
+		var oList = this._getList(),
+			mSettings = {
 			iconDensityAware: false,
 			title: mItem.title && (mItem.title.value || mItem.title),
 			description: mItem.description && (mItem.description.value || mItem.description),
@@ -218,6 +223,13 @@ sap.ui.define([
 			mSettings.microchart = this._createChartAndAddLegend(mItem.chart);
 		}
 
+		if (mItem.toolbar) {
+			mSettings.toolbar = Toolbar.create(this.getCardInstance(), mItem.toolbar, ActionArea.ContentItemToolbar);
+			oList.setShowSeparators(ListSeparators.All);
+		} else {
+			oList.setShowSeparators(ListSeparators.None);
+		}
+
 		this._oItemTemplate = new ListContentItem(mSettings);
 		this._oActions.attach({
 			area: ActionArea.ContentItem,
@@ -227,14 +239,13 @@ sap.ui.define([
 			enabledPropertyName: "type",
 			enabledPropertyValue: ListType.Navigation,
 			disabledPropertyValue: ListType.Inactive
-
 		});
 
 		var oBindingInfo = {
 			template: this._oItemTemplate
 		};
 		this._filterHiddenNavigationItems(mItem, oBindingInfo);
-		this._bindAggregationToControl("items", this._getList(), oBindingInfo);
+		this._bindAggregationToControl("items", oList, oBindingInfo);
 	};
 
 	ListContent.prototype._createChartAndAddLegend = function (oChartSettings) {
