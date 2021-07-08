@@ -3,12 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Component",
-	"sap/ui/core/UIComponent",
+	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Placeholder",
 	"sap/ui/core/library"
-], function(Log, Component, UIComponent, ComponentContainer, Placeholder, coreLib) {
+], function(Log, ManagedObjectMetadata, ComponentContainer, Placeholder, coreLib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ComponentLifecycle
@@ -219,7 +218,7 @@ sap.ui.define([
 					fnResolve = resolve;
 				});
 				if (bIsComponentTarget) {
-					oTargetCreateInfo.componentId = that._oOptions.id || UIComponent.getMetadata().uid();
+					oTargetCreateInfo.componentId = that._oOptions.id || ManagedObjectMetadata.uid("uicomponent");
 				}
 				pLoaded = this._load(oTargetCreateInfo).then(function (oObject) {
 					if (oObject.isA("sap.ui.core.UIComponent")) {
