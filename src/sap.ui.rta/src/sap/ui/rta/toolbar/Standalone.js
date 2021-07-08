@@ -30,9 +30,9 @@ function(
 		metadata: {
 			library: "sap.ui.rta"
 		},
-		renderer: 'sap.ui.rta.toolbar.AdaptationRenderer',
-		type: 'standalone'
+		renderer: "sap.ui.rta.toolbar.AdaptationRenderer",
+		type: "standalone"
 	});
 
 	return Standalone;
-}, true);
+});

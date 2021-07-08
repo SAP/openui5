@@ -3,24 +3,25 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Fragment",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/Device",
-	"./Base",
+	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
 	"sap/ui/fl/library",
 	"sap/ui/rta/Utils",
-	"sap/ui/rta/toolbar/translation/Translation"
-],
-function(
-	Fragment,
+	"sap/ui/rta/toolbar/translation/Translation",
+	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/rta/toolbar/Base",
+	"sap/ui/Device"
+], function(
 	DateFormat,
-	Device,
-	Base,
+	Fragment,
 	coreLibrary,
 	flexLibrary,
 	Utils,
-	Translation
+	Translation,
+	AppVariantFeature,
+	Base,
+	Device
 ) {
 	"use strict";
 
@@ -58,9 +59,6 @@ function(
 				restore: {},
 				transport: {},
 				modeChange: {},
-				manageApps: {},
-				appVariantOverview: {},
-				saveAs: {},
 				activate: {},
 				discardDraft: {},
 				switchVersion: {},
@@ -103,7 +101,7 @@ function(
 		Base.prototype.exit.apply(this, arguments);
 	};
 
-	function _setButtonProperties(sButtonName, sIcon, sTextKey, sToolTipKey) {
+	function setButtonProperties(sButtonName, sIcon, sTextKey, sToolTipKey) {
 		var oButton = this.getControl(sButtonName);
 		var sText = sTextKey ? this.getTextResources().getText(sTextKey) : "";
 		var sToolTip = sToolTipKey ? this.getTextResources().getText(sToolTipKey) : "";
@@ -254,7 +252,8 @@ function(
 	};
 
 	Adaptation.prototype.showTranslationPopover = function (oEvent) {
-		return Translation.showTranslationPopover(oEvent, this);
+		var oTranslation = this.addExtension("translation", Translation);
+		return oTranslation.showTranslationPopover(oEvent, this);
 	};
 
 	Adaptation.prototype.showRestore = function (bVersioningEnabled) {
@@ -262,11 +261,11 @@ function(
 	};
 
 	Adaptation.prototype._showButtonIcon = function(sButtonName, sIcon, sToolTipKey) {
-		_setButtonProperties.call(this, sButtonName, sIcon, "", sToolTipKey);
+		setButtonProperties.call(this, sButtonName, sIcon, "", sToolTipKey);
 	};
 
 	Adaptation.prototype._showButtonText = function(sButtonName, sTextKey) {
-		_setButtonProperties.call(this, sButtonName, "", sTextKey, "");
+		setButtonProperties.call(this, sButtonName, "", sTextKey, "");
 	};
 
 	Adaptation.prototype._switchToIcons = function() {
@@ -315,14 +314,7 @@ function(
 	};
 
 	/**
-	 * format of the controls that get added here:
-	 * 	HBox (this)
-	 * 		HBox
-	 * 			place for Icon in Fiori Toolbar
-	 * 		HBox
-	 * 			OverflowToolbar
-	 * 				Segmented Button, Buttons for Undo, Redo, manageApps, appVariantOverview, restore, publish, saveAs
-	 * 			Save & Exit Button
+	 * Loads and creates the Fragment of the Toolbar
 	 *
 	 * @returns {sap.ui.core.Control[]} Returns the controls in a structure described above.
 	 */
@@ -339,11 +331,11 @@ function(
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
 				toggleChangeVisualization: this.eventHandler.bind(this, "ToggleChangeVisualization"),
-				manageApps: this.eventHandler.bind(this, "ManageApps"),
-				appVariantOverview: this.eventHandler.bind(this, "AppVariantOverview"),
+				manageApps: onManageAppsPressed.bind(this),
+				appVariantOverview: onOverviewPressed.bind(this),
+				saveAs: onSaveAsPressed.bind(this),
 				restore: this.eventHandler.bind(this, "Restore"),
 				publish: this.eventHandler.bind(this, "Transport"),
-				saveAs: this.eventHandler.bind(this, "SaveAs"),
 				exit: this.eventHandler.bind(this, "Exit"),
 				formatVersionButtonText: this.formatVersionButtonText.bind(this),
 				showVersionHistory: this.showVersionHistory.bind(this),
@@ -352,13 +344,27 @@ function(
 		});
 	};
 
-	function _resetDialog() {
+	function onSaveAsPressed() {
+		AppVariantFeature.onSaveAs(true, true, this.getRtaInformation().flexSettings.layer, null);
+	}
+
+	function onOverviewPressed(oEvent) {
+		var oItem = oEvent.getParameter("item");
+		var bTriggeredForKeyUser = oItem.getId().endsWith("keyUser");
+		return AppVariantFeature.onGetOverview(bTriggeredForKeyUser, this.getRtaInformation().flexSettings.layer);
+	}
+
+	function onManageAppsPressed() {
+		AppVariantFeature.onGetOverview(true, this.getRtaInformation().flexSettings.layer);
+	}
+
+	function resetDialog() {
 		this.getControl("versionTitleInput").setValue("");
 		this.getControl("confirmVersionTitleButton").setEnabled(false);
 		return Promise.resolve(this._oDialog);
 	}
 
-	function _createDialog() {
+	function createDialog() {
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.VersionTitleDialog",
 			id: this.getId() + "_fragment",
@@ -391,9 +397,9 @@ function(
 		var oDialogPromise;
 
 		if (this._oDialog) {
-			oDialogPromise = _resetDialog.call(this);
+			oDialogPromise = resetDialog.call(this);
 		} else {
-			oDialogPromise = _createDialog.call(this);
+			oDialogPromise = createDialog.call(this);
 		}
 
 		return oDialogPromise.then(function () {
@@ -424,9 +430,5 @@ function(
 		}
 	};
 
-	/* Methods propagation */
-	Adaptation.prototype.show = function () { return Base.prototype.show.apply(this, arguments); };
-	Adaptation.prototype.hide = function () { return Base.prototype.hide.apply(this, arguments); };
-
 	return Adaptation;
-}, true);
+});

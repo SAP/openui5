@@ -20,7 +20,7 @@ function(
 	 * This class is being assigned to the original Fiori Header Toolbar when RTA Toolbar shows
 	 * @type {string}
 	 */
-	var FIORI_HIDDEN_CLASS = 'sapUiRtaFioriHeaderInvisible';
+	var FIORI_HIDDEN_CLASS = "sapUiRtaFioriHeaderInvisible";
 
 	/**
 	 * Constructor for a new sap.ui.rta.toolbar.Fiori control
@@ -42,8 +42,8 @@ function(
 		metadata: {
 			library: "sap.ui.rta"
 		},
-		renderer: 'sap.ui.rta.toolbar.AdaptationRenderer',
-		type: 'fiori'
+		renderer: "sap.ui.rta.toolbar.AdaptationRenderer",
+		type: "fiori"
 	});
 
 	Fiori.prototype.init = function () {
@@ -63,7 +63,7 @@ function(
 
 			if (this._oFioriHeader.getShowLogo() && sLogoPath) {
 				// Unstable: if FLP changes ID of <img> element, logo could be not found
-				var $logo = this._oFioriHeader.$().find('#shell-header-icon');
+				var $logo = this._oFioriHeader.$().find("#shell-header-icon");
 				var iWidth;
 				var iHeight;
 
@@ -79,8 +79,8 @@ function(
 				this.getControl("iconBox").addItem(
 					new Image(this.getId() + "_fragment--sapUiRta_icon", {
 						src: sLogoPath,
-						width: iWidth ? iWidth + 'px' : iWidth,
-						height: iHeight ? iHeight + 'px' : iHeight
+						width: iWidth ? iWidth + "px" : iWidth,
+						height: iHeight ? iHeight + "px" : iHeight
 					})
 				);
 			}
@@ -104,7 +104,7 @@ function(
 				"sap.ui.rta: please check Fiori Launchpad logo, expected size is",
 				iWidth + "x" + iHeight + ",",
 				"but actual is " + iNaturalWidth + "x" + iNaturalHeight
-			].join(' '));
+			].join(" "));
 		}
 	};
 
@@ -119,4 +119,4 @@ function(
 	};
 
 	return Fiori;
-}, true);
+});

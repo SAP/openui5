@@ -29,8 +29,8 @@ function(
 	 * @experimental Since 1.48. This class is experimental. API might be changed in future.
 	 */
 	var Personalization = Base.extend("sap.ui.rta.toolbar.Personalization", {
-		renderer: 'sap.ui.rta.toolbar.BaseRenderer',
-		type: 'personalization',
+		renderer: "sap.ui.rta.toolbar.BaseRenderer",
+		type: "personalization",
 		metadata: {
 			library: "sap.ui.rta",
 			events: {
@@ -53,13 +53,13 @@ function(
 				type: "Transparent",
 				text: "{i18n>BTN_RESTORE}",
 				visible: true,
-				press: this.eventHandler.bind(this, 'Restore')
-			}).data('name', 'restore'),
+				press: this.eventHandler.bind(this, "Restore")
+			}).data("name", "restore"),
 			new Button("sapUiRta_exit", {
 				type: "Emphasized",
 				text: "{i18n>BTN_DONE}",
-				press: this.eventHandler.bind(this, 'Exit')
-			}).data('name', 'exit')
+				press: this.eventHandler.bind(this, "Exit")
+			}).data("name", "exit")
 		].forEach(function (oControl) {
 			this.addItem(oControl);
 		}.bind(this));
@@ -68,4 +68,4 @@ function(
 	};
 
 	return Personalization;
-}, true);
+});
