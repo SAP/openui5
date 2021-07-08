@@ -208,7 +208,7 @@ sap.ui.define([
 				},
 
 				iResetGrouping: function () {
-					return this.iChooseGrouping("None");
+					return this.iChooseGrouping("(Not Grouped)");
 				},
 
 				iChooseGrouping: function (sGroupBy) {
@@ -234,7 +234,7 @@ sap.ui.define([
 										errorMessage: "The ok button in the grouping dialog could not be pressed"
 									});
 								},
-								errorMessage: "Did not find the" +  sGroupBy + " element in grouping dialog"
+								errorMessage: "Did not find the " +  sGroupBy + " element in grouping dialog"
 							});
 						},
 						errorMessage: "Did not find the group button"
