@@ -47,10 +47,21 @@ sap.ui.define([
 		metadata: {
             library: "sap.ui.mdc",
             properties: {
+				/**
+				 * Shows an additional header with a SearchField and 'Show Selected' button
+				 */
                 showHeader: {
                     type: "boolean",
                     defaultValue: false
-                }
+                },
+				/**
+				 * Enables a count for selected items compared to available items as '<fields> (3 / 12)' in addition
+				 * for the first provided column text
+				 */
+				enableCount: {
+					type: "boolean",
+					defaultValue: false
+				}
             }
         },
 		renderer: {
@@ -215,8 +226,18 @@ sap.ui.define([
         }
     };
 
+	ListView.prototype._updateCount = function() {
+        this.getP13nModel().setProperty("/selectedItems", this._oListControl.getSelectedItems().length);
+	};
+
+	ListView.prototype._selectTableItem = function(oTableItem, bSelectAll) {
+		BasePanel.prototype._selectTableItem.apply(this, arguments);
+		this._updateCount();
+	};
+
     ListView.prototype.setP13nModel = function(oModel) {
         this.setModel(oModel, "$p13n");
+		this._updateCount();
         this.setPanelMode(true);
         this._getDragDropConfig().setEnabled(this.getEnableReorder());
     };
@@ -262,6 +283,35 @@ sap.ui.define([
         }
 
         this.setPanelColumns(aColumns);
+    };
+
+    ListView.prototype.setPanelColumns = function(aColumns) {
+        this._sText = aColumns[0];
+		var bEnableCount = this.getEnableCount();
+
+		if (bEnableCount) {
+			var oColumn = new Column({
+				header: new Text({
+					text: {
+						parts: [
+							{
+								path: this.P13N_MODEL + '>/selectedItems'
+							}, {
+								path: this.P13N_MODEL + '>/items'
+							}
+						],
+						formatter: function(iSelected, aAll) {
+							return this._sText + " " + this.getResourceText('p13nDialog.HEADER_COUNT', [
+								iSelected, aAll.length
+							]);
+						}.bind(this)
+					}
+				})
+			});
+			aColumns[0] = oColumn;
+		}
+
+        BasePanel.prototype.setPanelColumns.apply(this, arguments);
     };
 
     ListView.prototype._addFactoryControl = function(oList) {

@@ -37,7 +37,8 @@ sap.ui.define([
 
         var oSelectionPanel = this.getAdaptationControl()._bNewP13n ? new ListView({
             enableReorder: true,
-            showHeader: true
+            showHeader: true,
+            enableCount: true
         }) : new SelectionPanel();
 
         if (this.getAdaptationControl()._bNewP13n){

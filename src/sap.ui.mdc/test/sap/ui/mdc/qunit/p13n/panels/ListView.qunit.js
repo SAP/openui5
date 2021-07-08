@@ -233,4 +233,28 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check 'enableCount' property", function(assert){
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+
+        var aColumns = [
+            "Fields",
+            "Test"
+        ];
+
+        //Feature is disabled by default
+        this.oListView.setPanelColumns(aColumns);
+
+        var sTextFirstColumn = this.oListView._oListControl.getColumns()[0].getHeader().getText();
+        assert.equal(sTextFirstColumn, "Fields", "The text is similar to the provided text");
+
+        //enable the feature
+        this.oListView.setEnableCount(true);
+        this.oListView.setPanelColumns(aColumns);//update the columns
+        var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+        sTextFirstColumn = this.oListView._oListControl.getColumns()[0].getHeader().getText();
+
+        assert.equal(sTextFirstColumn, "Fields " + oRB.getText("p13nDialog.HEADER_COUNT", [3, 6]), "The text has been enhanced with a count (3 are selected, 6 are available)");
+
+    });
+
 });
