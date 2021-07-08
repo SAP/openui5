@@ -2812,10 +2812,10 @@ sap.ui.define([
 			if (iFrameId === undefined) {
 				iFrameId = window.requestAnimationFrame(function() {
 					iFrameId = undefined;
-					oResizeObserver.unobserve(aEntries[0].target);
 					fnResolve(oDomRef);
 				});
 			}
+			oResizeObserver.unobserve(aEntries[0].target);
 		});
 
 		oResizeObserver.observe(oDomRef);
