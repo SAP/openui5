@@ -643,6 +643,16 @@ sap.ui.define([
 	}
 
 	/**
+	 * Checks whether an element is a tree icon.
+	 *
+	 * @param {HTMLElement} oElement The element to check.
+	 * @returns {boolean} Whether the element is a tree icon.
+	 */
+	function isTreeIcon(oElement) {
+		return oElement.classList.contains("sapUiTableTreeIconNodeOpen") || oElement.classList.contains("sapUiTableTreeIconNodeClosed");
+	}
+
+	/**
 	 * Checks whether an element is in the list of elements which can allow expanding and collapsing a group, if a specific key is pressed on them.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
@@ -657,8 +667,7 @@ sap.ui.define([
 				   && oElement.classList.contains("sapUiTableCellFirst")
 				   && (oElement.querySelector(".sapUiTableTreeIconNodeOpen")
 					   || oElement.querySelector(".sapUiTableTreeIconNodeClosed")))
-			   || oElement.classList.contains("sapUiTableTreeIconNodeOpen")
-			   || oElement.classList.contains("sapUiTableTreeIconNodeClosed");
+			   || isTreeIcon(oElement);
 	};
 
 	/**
@@ -1036,11 +1045,17 @@ sap.ui.define([
 			}
 
 			return;
+		}
 
 		// Expand/Collapse group.
-		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F4) &&
-				   KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
+		if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F4) && KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
 			getRowByDomRef(this, oEvent.target).toggleExpandedState();
+			return;
+		}
+
+		// Prevent page scrolling when pressing Space on the tree icon.
+		if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE) && isTreeIcon(oEvent.target)) {
+			oEvent.preventDefault(); // Prevent scrolling the page.
 			return;
 		}
 
