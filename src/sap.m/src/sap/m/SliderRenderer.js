@@ -211,7 +211,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMin());
 			oRm.openStart("li")
 				.class(SliderRenderer.CSS_CLASS + "Tick")
-				.style("width", fTickmarksDistance + "%;")
+				.style("width", fTickmarksDistance + "%")
 				.openEnd()
 				.close("li");
 
@@ -222,7 +222,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 				}
 
 				oRm.openStart("li").class(SliderRenderer.CSS_CLASS + "Tick")
-					.style("width", fTickmarksDistance + "%;")
+					.style("width", fTickmarksDistance + "%")
 					.openEnd()
 					.close("li");
 			}
