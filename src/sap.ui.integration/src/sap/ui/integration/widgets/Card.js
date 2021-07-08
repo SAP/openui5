@@ -28,13 +28,13 @@ sap.ui.define([
 	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
-	"sap/ui/integration/util/FooterFactory",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/util/FilterBarFactory",
 	"sap/ui/integration/util/CardActions",
-	"sap/ui/integration/util/CardObserver"
+	"sap/ui/integration/util/CardObserver",
+	"sap/ui/integration/controls/Toolbar"
 ], function (
 	CardRenderer,
 	ActionsToolbar,
@@ -62,13 +62,13 @@ sap.ui.define([
 	Destinations,
 	LoadingProvider,
 	HeaderFactory,
-	FooterFactory,
 	ContentFactory,
 	BindingResolver,
 	IconFormatter,
 	FilterBarFactory,
 	CardActions,
-	CardObserver
+	CardObserver,
+	Toolbar
 ) {
 	"use strict";
 	/* global Map */
@@ -78,8 +78,8 @@ sap.ui.define([
 		DATA: "/sap.card/data",
 		HEADER: "/sap.card/header",
 		HEADER_POSITION: "/sap.card/headerPosition",
-		FOOTER: "/sap.card/footer",
 		CONTENT: "/sap.card/content",
+		FOOTER: "/sap.card/footer",
 		SERVICES: "/sap.ui5/services",
 		APP_TYPE: "/sap.app/type",
 		PARAMS: "/sap.card/configuration/parameters",
@@ -101,6 +101,9 @@ sap.ui.define([
 	var CARD_DESTROYED_ERROR = "Card is destroyed!";
 
 	var CardArea = library.CardArea;
+
+	// shortcut for sap.ui.integration.CardActionArea
+	var ActionArea = library.CardActionArea;
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -1442,11 +1445,6 @@ sap.ui.define([
 		this.setAggregation("_filterBar", oFilterBar);
 	};
 
-	/**
-	 * Lazily load and create a footer
-	 *
-	 * @private
-	 */
 	Card.prototype._applyFooterManifestSettings = function () {
 		var oFooter = this.createFooter();
 
@@ -1533,10 +1531,13 @@ sap.ui.define([
 	};
 
 	Card.prototype.createFooter = function () {
-		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER),
-			oFooterFactory = new FooterFactory(this);
+		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER);
 
-		return oFooterFactory.create(oManifestFooter);
+		if (!oManifestFooter || !oManifestFooter.toolbar) {
+			return;
+		}
+
+		return Toolbar.create(this, oManifestFooter.toolbar, ActionArea.FooterToolbar);
 	};
 
 	Card.prototype.getContentManifest = function () {

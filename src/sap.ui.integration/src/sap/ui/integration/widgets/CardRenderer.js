@@ -27,14 +27,17 @@ sap.ui.define([
 			if (oCardManifest && oCardManifest.get(MANIFEST_PATHS.TYPE) && oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase() === "analytical") {
 				oRm.class("sapUiIntCardAnalytical");
 			}
+
+			if (oCard.getAggregation("_footer")) {
+				oRm.class("sapUiIntCardWithFooter");
+			}
 		},
 
 		/**
 		 * @override
 		 */
 		renderContentSection: function (oRm, oCard) {
-			var oFilterBar = oCard.getAggregation("_filterBar"),
-				oFooter = oCard.getAggregation("_footer"); // move to sap.f.CardRenderer
+			var oFilterBar = oCard.getAggregation("_filterBar");
 
 			if (oFilterBar) {
 				oRm.openStart("div")
@@ -47,9 +50,16 @@ sap.ui.define([
 			}
 
 			FCardRenderer.renderContentSection.apply(this, arguments);
+		},
+
+		/**
+		 * @override
+		 */
+		renderFooterSection: function (oRm, oCard) {
+			var oFooter = oCard.getAggregation("_footer");
 
 			if (oFooter) {
-				oRm.openStart("div")
+				oRm.openStart("div", oFooter)
 					.class("sapFCardFooter")
 					.openEnd();
 

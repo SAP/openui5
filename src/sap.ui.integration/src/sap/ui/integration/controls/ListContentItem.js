@@ -71,6 +71,8 @@ sap.ui.define([
 			aggregations: {
 				microchart: { type: "sap.ui.integration.controls.Microchart", multiple: false },
 
+				toolbar: { type: "sap.ui.integration.controls.Toolbar", multiple: false },
+
 				/**
 				 * Defines the inner avatar control.
 				 */

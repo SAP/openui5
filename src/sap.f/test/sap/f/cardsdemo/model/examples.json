@@ -192,5 +192,11 @@
 		"description": "Example with cards using Extension and Host",
 		"route": "extensionAndHost",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "List Content Quick Actions",
+		"description": "List Content Quick Actions",
+		"route": "listContentActions",
+		"group": "Other Card Examples"
 	}
 ]

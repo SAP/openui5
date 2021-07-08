@@ -49,6 +49,9 @@ sap.ui.define([
 			oRm.renderControl(oHeader);
 		}
 
+		// footer
+		this.renderFooterSection(oRm, oCard);
+
 		oRm.renderControl(oCard._ariaText);
 		oRm.renderControl(oCard._ariaContentText);
 
@@ -121,6 +124,18 @@ sap.ui.define([
 
 			oRm.close("div");
 		}
+	};
+
+	/**
+	 * Render footer section.
+	 * Will be overwritten by subclasses.
+	 *
+	 * @protected
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oCard An object representation of the control that should be rendered.
+	 */
+	CardRenderer.renderFooterSection = function (oRm, oCard) {
+
 	};
 
 	return CardRenderer;

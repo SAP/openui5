@@ -304,10 +304,6 @@
 		}
 	}
 
-	.sapMListItems li:last-child {
-		border-bottom: none;
-	}
-
 	.sapUiView.sapUiXMLView > .sapMImg {
 		display: block; // Fix for unwanted space under the only image inside Component Card content
 	}
@@ -487,10 +483,5 @@ html[data-sap-ui-browser^="ie"] .sapFCardHeader:focus::before {
 }
 
 .sapFCardFooter {
-	padding: 0.5rem @_sap_f_Card_ContentPadding 0.7rem;
-
-	.sapMTBStandard {
-		padding: 0;
-		border-bottom: none;
-	}
+	padding: @_sap_f_Card_ContentPadding;
 }
