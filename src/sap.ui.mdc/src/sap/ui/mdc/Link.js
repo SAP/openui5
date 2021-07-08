@@ -189,7 +189,7 @@ sap.ui.define([
 	/**
 	 * Checks if a given {@link sap.ui.mdc.LinkDelegate.LinkType} contains a directLink value.
 	 * @param {sap.ui.mdc.LinkDelegate.LinkType} oLinkType the <code>LinkType</code> which should be checked
-	 * @returns {Boolean} bHasDirectLink
+	 * @returns {boolean} bHasDirectLink
 	 * @private
 	 */
 	Link.prototype._linkTypeHasDirectLink = function(oLinkType) {

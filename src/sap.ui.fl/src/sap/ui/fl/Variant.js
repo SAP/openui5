@@ -568,26 +568,26 @@ sap.ui.define([
 	/**
 	 * Creates and returns an instance of change instance
 	 *
-	 * @param {Object}  [oPropertyBag] property bag
-	 * @param {Object}  [oPropertyBag.content] content of the new change
-	 * @param {String}  [oPropertyBag.content.fileName] name/id of the file. if not set implicitly created
-	 * @param {String}  [oPropertyBag.content.content.title] title of the variant
-	 * @param {String}  [oPropertyBag.content.fileType] file type of a variant
-	 * @param {String}  [oPropertyBag.content.variantManagementReference] Reference to the variant management control
-	 * @param {String}  [oPropertyBag.content.variantReference] Reference to another variant
-	 * @param {String}  [oPropertyBag.content.reference] Application component name
-	 * @param {String}  [oPropertyBag.content.packageName] Package name for transport
-	 * @param {String}  [oPropertyBag.content.layer] Layer of the variant
-	 * @param {Object}  [oPropertyBag.content.texts] map object with all referenced texts within the file
+	 * @param {object}  [oPropertyBag] property bag
+	 * @param {object}  [oPropertyBag.content] content of the new change
+	 * @param {string}  [oPropertyBag.content.fileName] name/id of the file. if not set implicitly created
+	 * @param {string}  [oPropertyBag.content.content.title] title of the variant
+	 * @param {string}  [oPropertyBag.content.fileType] file type of a variant
+	 * @param {string}  [oPropertyBag.content.variantManagementReference] Reference to the variant management control
+	 * @param {string}  [oPropertyBag.content.variantReference] Reference to another variant
+	 * @param {string}  [oPropertyBag.content.reference] Application component name
+	 * @param {string}  [oPropertyBag.content.packageName] Package name for transport
+	 * @param {string}  [oPropertyBag.content.layer] Layer of the variant
+	 * @param {object}  [oPropertyBag.content.texts] map object with all referenced texts within the file
 	 *                                               these texts will be connected to the translation process
-	 * @param {String}  [oPropertyBag.content.namespace] The namespace of the change file
-	 * @param {String}  [oPropertyBag.service] name of the OData service
-	 * @param {Boolean} [oPropertyBag.isVariant] ctrl_variant?
-	 * @param {Boolean} [oPropertyBag.isUserDependent] true for enduser changes
-	 * @param {String}  !!!![oPropertyBag.context] ID of the context
-	 * @param {String}  [oPropertyBag.generator] Tool which is used to generate the variant change file
+	 * @param {string}  [oPropertyBag.content.namespace] The namespace of the change file
+	 * @param {string}  [oPropertyBag.service] name of the OData service
+	 * @param {boolean} [oPropertyBag.isVariant] ctrl_variant?
+	 * @param {boolean} [oPropertyBag.isUserDependent] true for enduser changes
+	 * @param {string}  !!!![oPropertyBag.context] ID of the context
+	 * @param {string}  [oPropertyBag.generator] Tool which is used to generate the variant change file
 	 *
-	 * @returns {Object} The content of the change file
+	 * @returns {object} The content of the change file
 	 *
 	 * @public
 	 */

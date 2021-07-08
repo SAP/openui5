@@ -988,7 +988,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 		/**
 		 * Returns if a child item is selected
-		 * @return {Boolean} if a child item is selected
+		 * @return {boolean} if a child item is selected
 		 * @private
 		 */
 		NavigationListItem.prototype._hasSelectedChild =  function(selectedItem) {

@@ -57,7 +57,7 @@ sap.ui.define([
 	* Checks and determines if the type is supported.
 	*
 	* @param {String} sType
-	* @returns {Boolean}
+	* @returns {boolean}
 	*/
 	SemanticConfiguration.isKnownSemanticType = function (sType) {
 		return SemanticConfiguration.getConfiguration(sType) !== null;
@@ -135,7 +135,7 @@ sap.ui.define([
 	/**
 	 * Determines if the <code>SemanticControl</code> should be preprocessed.
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	SemanticConfiguration.shouldBePreprocessed = function (sType) {
 		if (SemanticConfiguration.isKnownSemanticType(sType)) {
@@ -148,7 +148,7 @@ sap.ui.define([
 	/**
 	* Determines if the <code>SemanticControl</code> is a <code>MainAction</code>.
 	*
-	* @returns {Boolean}
+	* @returns {boolean}
 	*/
 	SemanticConfiguration.isMainAction = function (sType) {
 		if (SemanticConfiguration.isKnownSemanticType(sType)) {
@@ -162,7 +162,7 @@ sap.ui.define([
 	* Determines if the <code>SemanticControl</code> is a <code>Navigation</code> type of action,
 	* such as <code>FullScreenAction</code> and <code>CloseAction</code>.
 	*
-	* @returns {Boolean}
+	* @returns {boolean}
 	*/
 	SemanticConfiguration.isNavigationAction = function (sType) {
 		if (SemanticConfiguration.isKnownSemanticType(sType)) {

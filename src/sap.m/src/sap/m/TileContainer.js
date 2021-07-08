@@ -930,7 +930,7 @@ function(
 	 * To be used within jQuery.filter function.
 	 * @param {int} index Index of the element within an array
 	 * @param {Element} element DOM element to check
-	 * @returns {Boolean} If a DOM element is focusable
+	 * @returns {boolean} If a DOM element is focusable
 	 * @private
 	 */
 	TileContainer.prototype._isFocusable = function(index, element) {

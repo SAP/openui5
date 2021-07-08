@@ -1223,7 +1223,7 @@ sap.ui.define([
 	 * (to avoid a problem with scrollbar appearing for a small instance
 	 * while we snap/unsnap header)
 	 * @private
-	 * @param {Boolean} bEnable used to supress scrolling
+	 * @param {boolean} bEnable used to supress scrolling
 	 */
 	ObjectPageLayout.prototype._toggleScrolling = function (bEnable) {
 		if (this._$opWrapper.length) {
@@ -1917,7 +1917,7 @@ sap.ui.define([
 	/**
 	 * Schedules for execution a layout adjustment task.
 	 * This task is throttled by default (unless the bImmediate parameter is specified).
-	 * @param {Boolean} bImmediate - whether the task should be executed immediately, rather than throttled
+	 * @param {boolean} bImmediate - whether the task should be executed immediately, rather than throttled
 	 * @returns {Promise} - promise that will be resolved upon the task execution
 	 * @since 1.44
 	 * @private
@@ -2796,8 +2796,8 @@ sap.ui.define([
 
 	/**
 	 * Determines if the <code>ObjectPageLayout</code> should set <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
-	 * @param {Object} oSectionBase <code>ObjectPageSectionBase</code> instance
-	 * @returns {Boolean}
+	 * @param {sap.uxap.ObjectPageSectionBase} oSectionBase <code>ObjectPageSectionBase</code> instance
+	 * @returns {boolean}
 	 * @since 1.44
 	 * @private
 	 */

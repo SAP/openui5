@@ -60,7 +60,7 @@ sap.ui.define([
 	 * defined in <code>sap.f.semantic.SemanticConfiguration</code>.
 	 *
 	 * @param {sap.f.semantic.SemanticControl} oControl
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	SemanticContainer.prototype._shouldBePreprocessed = function(oControl) {
 		var sType = (oControl._getType && oControl._getType()) || oControl.getMetadata().getName();
@@ -109,7 +109,7 @@ sap.ui.define([
 	/**
 	* Determines if the <code>SemanticControl</code> is a <code>sap.f.semantic.MainAction</code>.
 	*
-	* @returns {Boolean}
+	* @returns {boolean}
 	*/
 	SemanticContainer.prototype._isMainAction = function(oControl) {
 		return SemanticConfiguration.isMainAction(oControl.getMetadata().getName());
@@ -119,7 +119,7 @@ sap.ui.define([
 	* Determines if the <code>SemanticControl</code> is a <code>Navigation</code> action,
 	* such as  <code>sap.f.semantic.FullScreenAction</code> and <code>sap.f.semantic.CloseAction</code>.
 	*
-	* @returns {Boolean}
+	* @returns {boolean}
 	*/
 	SemanticContainer.prototype._isNavigationAction = function(oControl) {
 		return SemanticConfiguration.isNavigationAction(oControl.getMetadata().getName());

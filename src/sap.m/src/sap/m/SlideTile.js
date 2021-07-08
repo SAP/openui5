@@ -475,8 +475,8 @@ sap.ui.define([
 	 * Scrolls to the next tile, forward or backward
 	 *
 	 * @private
-	 * @param {Boolean} pause Triggers if the animation gets paused or not
-	 * @param {Boolean} backward Sets the direction backward or forward
+	 * @param {boolean} pause Triggers if the animation gets paused or not
+	 * @param {boolean} backward Sets the direction backward or forward
 	 */
 	SlideTile.prototype._scrollToNextTile = function (pause, backward) {
 		var iTransitionTime = this._iCurrAnimationTime - this.getDisplayTime(),

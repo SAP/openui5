@@ -220,7 +220,7 @@ sap.ui.define([
 
 		/**
 		 * Updates <code>DynamicPageHeader</code> ARIA attributes values according to expanded/collapsed (snapped) state.
-		 * @param {Boolean} bExpanded expanded or collapsed (snapped)
+		 * @param {boolean} bExpanded expanded or collapsed (snapped)
 		 * @private
 		 */
 		DynamicPageHeader.prototype._updateARIAState = function (bExpanded) {

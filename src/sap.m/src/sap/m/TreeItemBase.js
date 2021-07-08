@@ -155,7 +155,7 @@ sap.ui.define([
 	/**
 	 * Gets the expanding information of the node.
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 * @public
 	 * @since 1.42.0
 	 */
@@ -198,7 +198,7 @@ sap.ui.define([
 	/**
 	 * Gets the expander control for rendering purposes.
 	 *
-	 * @returns {Boolean}
+	 * @returns {sap.ui.core.Control}
 	 * @private
 	 * @since 1.42.0
 	 */
@@ -249,7 +249,7 @@ sap.ui.define([
 	/**
 	 * Gets the indentation of the node for rendering purposes.
 	 *
-	 * @returns {Boolean}
+	 * @returns {float}
 	 * @private
 	 * @since 1.42.0
 	 */

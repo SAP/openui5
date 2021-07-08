@@ -384,7 +384,7 @@ function(
 	 * Checks if the given sUri is valid depending on the validateUrl property
 	 *
 	 * @param {String} sUri
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 * @private
 	 */
 	Link.prototype._isHrefValid = function (sUri) {

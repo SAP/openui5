@@ -205,7 +205,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {sap.ui.base.ManagedObject} oControl - Control to add extensions
-	 * @returns {Boolean} true, if prerequisites are met
+	 * @returns {boolean} true, if prerequisites are met
 	 */
 	Utils.checkControlPrerequisites = function(oControl) {
 		if (oControl) {

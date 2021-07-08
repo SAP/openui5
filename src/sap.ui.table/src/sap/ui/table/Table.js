@@ -3050,7 +3050,7 @@ sap.ui.define([
 	 * Pushes the sorted column to array.
 	 *
 	 * @param {sap.ui.table.Column} oColumn Column to be sorted
-	 * @param {Boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
+	 * @param {boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
 	 * @private
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3083,7 +3083,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.table.Column | undefined} oColumn Column to be sorted or undefined to clear sorting
 	 * @param {sap.ui.table.SortOrder} oSortOrder Sort order of the column (if undefined the default will be ascending)
-	 * @param {Boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
+	 * @param {boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

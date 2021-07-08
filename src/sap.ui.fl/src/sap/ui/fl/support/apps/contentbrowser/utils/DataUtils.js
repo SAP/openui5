@@ -72,7 +72,7 @@ sap.ui.define(["sap/m/GroupHeaderListItem", "sap/ui/thirdparty/jquery"],
 			/**
 			 * Verifies if item content is not in the exclude list.
 			 * @param {Object} oContentItem - content item needs to be verified
-			 * @returns {Boolean} - <code>true</code> if the item is not excluded
+			 * @returns {boolean} - <code>true</code> if the item is not excluded
 			 * @public
 			 */
 			isNotExcluded: function (oContentItem) {

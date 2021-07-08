@@ -91,7 +91,7 @@ sap.ui.define([
 	 * Determines whether the plugin is applicable to the control.
 	 *
 	 * @param {sap.ui.core.Control} oControl The control the plugin should be applied to
-	 * @returns {Boolean} Whether it is applicable
+	 * @returns {boolean} Whether it is applicable
 	 * @protected
 	 * @virtual
 	 */

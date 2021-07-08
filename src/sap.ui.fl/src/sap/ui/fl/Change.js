@@ -1068,33 +1068,33 @@ sap.ui.define([
 	/**
 	 * Creates and returns an instance of a change instance.
 	 *
-	 * @param {Object}  [oPropertyBag] - Property bag
-	 * @param {String}  [oPropertyBag.service] - Name of the OData service
-	 * @param {String}  [oPropertyBag.changeType] - Type of the change
-	 * @param {Object}  [oPropertyBag.texts] - Map object with all referenced texts within the file; these texts will be connected to the translation process
-	 * @param {Object}  [oPropertyBag.content] - Content of the new change
-	 * @param {Boolean} [oPropertyBag.isVariant] - Indicates whether the change is a variant
-	 * @param {String}  [oPropertyBag.packageName] - ABAP package name
-	 * @param {Object}  [oPropertyBag.selector] - Name-value pair of the attribute and value
-	 * @param {String}  [oPropertyBag.id] - Name/ID of the file; if it's not set, it's created implicitly
-	 * @param {Boolean} [oPropertyBag.isVariant] - Name of the component
-	 * @param {Boolean} [oPropertyBag.isUserDependent] - <code>true</code> in case of end user changes
-	 * @param {Object}  [oPropertyBag.dependentSelector] - List of selectors saved under an alias for creating the dependencies between changes
-	 * @param {String}  [oPropertyBag.reference] - Application component name
-	 * @param {String}  [oPropertyBag.namespace] - Namespace of the change file
-	 * @param {String}  [oPropertyBag.projectId] - Project ID of the change file
-	 * @param {String}  [oPropertyBag.moduleName] - Name of the module which this changes refers to (XML or JS)
-	 * @param {String}  [oPropertyBag.generator] - Tool that is used to generate the change file
-	 * @param {Boolean} [oPropertyBag.jsOnly] - Indicates that the change can only be applied with the JS modifier
-	 * @param {Object}  [oPropertyBag.oDataInformation] - Object with information about the oData service
-	 * @param {String}  [oPropertyBag.oDataInformation.propertyName] - Name of the OData property
-	 * @param {String}  [oPropertyBag.oDataInformation.entityType] - Name of the OData entity type that the property belongs to
-	 * @param {String}  [oPropertyBag.oDataInformation.oDataServiceUri] - URI of the OData service
-	 * @param {String}  [oPropertyBag.variantReference] - Variant reference of a change belonging to a variant
-	 * @param {String}  [oPropertyBag.support.sourceChangeFileName] - File name of the source change in case of a copied change
-	 * @param {String}  [oPropertyBag.support.compositeCommand] - Unique ID that defines which changes belong together in a composite command
+	 * @param {object}  [oPropertyBag] - Property bag
+	 * @param {string}  [oPropertyBag.service] - Name of the OData service
+	 * @param {string}  [oPropertyBag.changeType] - Type of the change
+	 * @param {object}  [oPropertyBag.texts] - Map object with all referenced texts within the file; these texts will be connected to the translation process
+	 * @param {object}  [oPropertyBag.content] - Content of the new change
+	 * @param {boolean} [oPropertyBag.isVariant] - Indicates whether the change is a variant
+	 * @param {string}  [oPropertyBag.packageName] - ABAP package name
+	 * @param {object}  [oPropertyBag.selector] - Name-value pair of the attribute and value
+	 * @param {string}  [oPropertyBag.id] - Name/ID of the file; if it's not set, it's created implicitly
+	 * @param {boolean} [oPropertyBag.isVariant] - Name of the component
+	 * @param {boolean} [oPropertyBag.isUserDependent] - <code>true</code> in case of end user changes
+	 * @param {object}  [oPropertyBag.dependentSelector] - List of selectors saved under an alias for creating the dependencies between changes
+	 * @param {string}  [oPropertyBag.reference] - Application component name
+	 * @param {string}  [oPropertyBag.namespace] - Namespace of the change file
+	 * @param {string}  [oPropertyBag.projectId] - Project ID of the change file
+	 * @param {string}  [oPropertyBag.moduleName] - Name of the module which this changes refers to (XML or JS)
+	 * @param {string}  [oPropertyBag.generator] - Tool that is used to generate the change file
+	 * @param {boolean} [oPropertyBag.jsOnly] - Indicates that the change can only be applied with the JS modifier
+	 * @param {object}  [oPropertyBag.oDataInformation] - Object with information about the oData service
+	 * @param {string}  [oPropertyBag.oDataInformation.propertyName] - Name of the OData property
+	 * @param {string}  [oPropertyBag.oDataInformation.entityType] - Name of the OData entity type that the property belongs to
+	 * @param {string}  [oPropertyBag.oDataInformation.oDataServiceUri] - URI of the OData service
+	 * @param {string}  [oPropertyBag.variantReference] - Variant reference of a change belonging to a variant
+	 * @param {string}  [oPropertyBag.support.sourceChangeFileName] - File name of the source change in case of a copied change
+	 * @param {string}  [oPropertyBag.support.compositeCommand] - Unique ID that defines which changes belong together in a composite command
 	 *
-	 * @returns {Object} Content of the change file
+	 * @returns {object} Content of the change file
 	 *
 	 * @public
 	 */

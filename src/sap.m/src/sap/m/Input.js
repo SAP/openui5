@@ -1772,7 +1772,7 @@ function(
 	/**
 	 * Opens the <code>SuggestionsPopover</code> and adjusts the corresponding acc
 	 *
-	 * @param {Boolean} bOpenCondition Additional open condition
+	 * @param {boolean} bOpenCondition Additional open condition
 	 * @private
 	 */
 	Input.prototype._openSuggestionPopup = function (bOpenCondition) {
@@ -2930,7 +2930,7 @@ function(
 	/**
 	 * Indicates whether the control should use <code>sap.m.Dialog</code> or not.
 	 *
-	 * @returns {Boolean} Boolean.
+	 * @returns {boolean} Boolean.
 	 * @protected
 	 */
 	Input.prototype.isMobileDevice = function () {
@@ -2996,7 +2996,7 @@ function(
 	 *
 	 * @protected
 	 * @param {HTMLElement|undefined} oTarget The target of the event.
-	 * @returns {Boolean} Boolean indicating if the target is a valid opener.
+	 * @returns {boolean} Boolean indicating if the target is a valid opener.
 	 */
 	Input.prototype.isValueHelpOnlyOpener = function (oTarget) {
 		return true;
