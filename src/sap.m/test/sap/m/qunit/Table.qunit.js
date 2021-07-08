@@ -181,6 +181,12 @@ sap.ui.define([
 		}
 	}
 
+	function waitRequestAnimationFrame() {
+		return new Promise(function(resolve) {
+			window.requestAnimationFrame(resolve);
+		});
+	}
+
 	QUnit.module("Display");
 
 	QUnit.test("Basic Properties", function(assert) {
@@ -2381,6 +2387,85 @@ sap.ui.define([
 			assert.strictEqual(oBigColumn.getDomRef().style.width, "", "column occupies the available width and not bigger than the table");
 			done();
 		}.bind(this), 1);
+	});
+
+	QUnit.test("Table should update trigger button width when columns are hidden via onColumnResize and hiddenInPopin", function(assert) {
+		var clock = sinon.useFakeTimers();
+		var done = assert.async();
+		this.sut.destroy();
+
+		var data = [
+			{firstName: "Peter", lastName: "Mueller", age: 10},
+			{firstName: "Petra", lastName: "Maier", age: 20},
+			{firstName: "Thomas", lastName: "Smith", age: 30},
+			{firstName: "John", lastName: "Williams", age: 40},
+			{firstName: "Maria", lastName: "Jones", age: 50}
+		];
+
+		var oModel = new JSONModel();
+		oModel.setData(data);
+
+		this.sut = new Table({
+			growing: true,
+			growingThreshold: 2,
+			fixedLayout: "Strict",
+			hiddenInPopin: ["None"],
+			columns: [
+				new Column({
+					width: "100px"
+				}),
+				new Column({
+					width: "100px",
+					demandPopin: true,
+					minScreenWidth: "700px"
+				}),
+				new Column({
+					width: "100px",
+					demandPopin: true,
+					minScreenWidth: "900px"
+				})
+			]
+		});
+
+		this.sut.setModel(oModel);
+
+		this.sut.bindItems({
+			path: "/",
+			template : new ColumnListItem({
+				cells: [
+					new Text({text: "{lastName}"}),
+					new Text({text: "{firstName}"}),
+					new Text({text: "{age}"})
+				]
+			})
+		});
+
+		var fOnColumnResizeSpy = sinon.spy(this.sut, "onColumnResize");
+
+		this.sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var oTriggerDomRef = this.sut.getDomRef("trigger");
+		assert.ok(fOnColumnResizeSpy.notCalled, "onColumnResize is not called yet");
+		var oOldTriggerClientWidth = oTriggerDomRef.clientWidth;
+
+		this.sut.setContextualWidth("800px");
+		Core.applyChanges();
+		clock.tick(1);
+		assert.ok(fOnColumnResizeSpy.called, "onColumnResize is called since the contextualWidth changed");
+		waitRequestAnimationFrame().then(function() {
+			assert.ok(oTriggerDomRef.clientWidth < oOldTriggerClientWidth, "Trigger width was adapted via onColumnResize");
+			oOldTriggerClientWidth = oTriggerDomRef.clientWidth;
+			this.sut.setContextualWidth("600px");
+			Core.applyChanges();
+			clock.tick(1);
+			assert.ok(fOnColumnResizeSpy.called, "onColumnResize is called since the contextualWidth changed");
+			waitRequestAnimationFrame().then(function() {
+				assert.ok(oTriggerDomRef.clientWidth < oOldTriggerClientWidth, "Trigger width was adapted via onColumnResize");
+				clock.restore();
+				done();
+			});
+		}.bind(this));
 	});
 
 	QUnit.module("popinChanged event", {

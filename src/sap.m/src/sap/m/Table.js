@@ -700,6 +700,7 @@ sap.ui.define([
 			if (!hasPopin) {
 				oColumn.setDisplay(this.getTableDomRef(), !oColumn.isHidden());
 				this._firePopinChangedEvent();
+				this._oGrowingDelegate && this._oGrowingDelegate.adaptTriggerButtonWidth(this);
 				return;
 			}
 		}
