@@ -1135,7 +1135,10 @@ sap.ui.define([
 	 */
 	UIArea.prototype._handleGroupChange = function(oEvent, oElement) {
 		var oKey = UIArea._oFieldGroupValidationKey;
-		if (oEvent.type === "focusin") {
+		if (oEvent.type === "focusin" || oEvent.type === "focusout") {
+			if (oEvent.type === "focusout") {
+				oElement = jQuery(oEvent.relatedTarget).control(0);
+			}
 			// delay the check for a field group change to allow focus forwarding and resetting focus after selection
 			if (UIArea._iFieldGroupDelayTimer) {
 				clearTimeout(UIArea._iFieldGroupDelayTimer);
