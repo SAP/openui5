@@ -227,21 +227,21 @@
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
 							<custom:TitleLink
-								level="H1"
-								titleStyle="H1"
-								text="{/cardExplorer/text}"
-								href="{/cardExplorer/href}"
-								target="_blank"
-								class="sapUiSmallMarginBottom"/>
+									level="H1"
+									titleStyle="H1"
+									text="{/cardExplorer/text}"
+									href="{/cardExplorer/href}"
+									target="_blank"
+									class="sapUiSmallMarginBottom"/>
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_5_TEXT}" />
 							<HBox wrap="Wrap">
 								<Link text="{i18n>TOOLS_VIEW_DOC}"
-									target="_blank"
-									href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html"
-									class="sapUiMediumMarginEnd"/>
+								      target="_blank"
+								      href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html"
+								      class="sapUiMediumMarginEnd"/>
 								<Link text="{i18n>TOOLS_CARD_5_LINK_1}"
-									target="_blank"
-									href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/list"/>
+								      target="_blank"
+								      href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/list"/>
 							</HBox>
 						</VBox>
 						<Image src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.jpg" class="toolsPageImage"/>

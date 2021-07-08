@@ -1,0 +1,47 @@
+<mvc:View controllerName="sap.ui.demo.accessibilityGuide.controller.App" displayBlock="true" height="100%"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:tnt="sap.tnt"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<App>
+		<tnt:ToolPage id="toolPage">
+			<tnt:header>
+				<tnt:ToolHeader>
+					<Button id="sideNavigationToggleButton" icon="sap-icon://menu2" type="Transparent" press="onSideNavButtonPress">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow" />
+						</layoutData>
+					</Button>
+					<Image width="2rem" height="2rem" src="{home>/logoSrc}" densityAware="false"/>
+					<Title text="Accessibility Guide" />
+					<IconTabHeader backgroundDesign="Transparent" id="iconTabHeader" select="onTabSelect">
+						<items>
+							<IconTabFilter key="overview" text="Overview" />
+							<IconTabFilter key="exploreSamples" text="Explore" />
+						</items>
+					</IconTabHeader>
+				</tnt:ToolHeader>
+			</tnt:header>
+			<tnt:sideContent>
+				<tnt:SideNavigation id="sideNavigation" selectedKey="{/selectedKey}" itemSelect="onSideNavigationItemSelect">
+					<tnt:NavigationList items="{path: '/navigation'}">
+						<tnt:NavigationListItem text="{title}" icon="{icon}" enabled="{enabled}" expanded="{expanded}" items="{path: 'items', templateShareable: false}" key="{key}" hasExpander="{hasExpander}" visible="{= !${hidden}}">
+							<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" key="{key}" enabled="{enabled}" visible="{= !${hidden}}">
+								<tnt:customData>
+									<core:CustomData key="type" value="child"/>
+								</tnt:customData>
+						</tnt:NavigationListItem>
+							<tnt:customData>
+								<core:CustomData key="type" value="root"/>
+							</tnt:customData>
+						</tnt:NavigationListItem>
+					</tnt:NavigationList>
+				</tnt:SideNavigation>
+			</tnt:sideContent>
+			<tnt:mainContents>
+				<NavContainer id="navContainer"></NavContainer>
+			</tnt:mainContents>
+		</tnt:ToolPage>
+	</App>
+</mvc:View>

@@ -1,0 +1,8 @@
+.sapUiCardExplorerFileEditor {
+	display: flex;
+	flex-direction: column;
+}
+
+.sapUiCardExplorerFileEditor .sapUiCardExplorerFileEditorContent {
+	flex: 1;
+}
