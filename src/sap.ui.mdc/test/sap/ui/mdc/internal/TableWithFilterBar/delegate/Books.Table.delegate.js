@@ -1,27 +1,19 @@
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
-	"sap/ui/mdc/Field"
-], function (ODataTableDelegate, Field) {
+	"sap/ui/mdc/Field",
+	"sap/ui/mdc/Link"
+], function (ODataTableDelegate, Field, Link) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 
 	BooksTableDelegate.fetchProperties = function (oTable) {
 		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
-		return oODataProps.then(function (aProps) {
-			var aFrontProps = [{
-				filterable: true,
-				label: "Author",
-				name: "author/name",
-				path: "author/name",
-				sortable: false,
-				type: "Edm.String",
-				typeConfig: oTable.getTypeUtil().getTypeConfig("Edm.String")
-			}];
+		return oODataProps.then(function (aProperties) {
 
 			// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
 			// Provide the fieldHelp for some of the properties. Without fieldHelp the filter panel will not provide the expected VH.
 			// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
-			aProps.forEach(function(oProperty){
+			aProperties.forEach(function(oProperty){
 				if (oProperty.name === "language_code") {
 					oProperty.fieldHelp = "FHLanguage";
 				}
@@ -36,64 +28,76 @@ sap.ui.define([
 					oProperty.label = "Sub Genre";
 				}
 			});
-			return aFrontProps.concat(aProps);
+
+			return aProperties;
 		});
 	};
 
-	BooksTableDelegate._createColumnTemplate = function (oInfo) {
+	BooksTableDelegate._createColumnTemplate = function (oProperty) {
 
-		var oProps = { value: "{" + (oInfo.path || oInfo.name) + "}", editMode: "Display", width:"100%", multipleLines: false };
+		var oCtrlProperties = {
+			value: "{" + (oProperty.path || oProperty.name) + "}",
+			editMode: "Display",
+			width:"100%",
+			multipleLines: false
+		};
 
 
-		if (oInfo.name === "price") {
-			oProps.value = "{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}";
+		if (oProperty.name === "price") {
+			oCtrlProperties.value = "{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}";
 		}
 
-		if (["title", "descr"].indexOf(oInfo.name) != -1) {
-			oProps.multipleLines = true;
+		if (["title", "descr"].indexOf(oProperty.name) != -1) {
+			oCtrlProperties.multipleLines = true;
 		}
 
-		if (oInfo.name === "language_code") {
+		if (oProperty.name === "language_code") {
 
-			return Promise.resolve(new sap.ui.mdc.Field({
+			return new Field({
 				id: "tFieldLink",
 				value: "{language/name}",
 				editMode: "Display"
-			}));
+			});
 
 		}
 
-		if (oInfo.name === "title") {
+		if (oProperty.name === "title") {
 
-			return Promise.resolve(new sap.ui.mdc.Field({
+			return new Field({
 				id: "tFieldLinkTitle",
 				value: "{title}",
 				editMode: "Display",
-
 				multipleLines: true,
-				fieldInfo: new sap.ui.mdc.Link({ sourceControl:"fTitle", delegate: {
-					name: "sap/ui/mdc/flp/FlpLinkDelegate", payload: {
-						semanticObjects: ["FakeFlpSemanticObject"],
-						mainSemanticObject: "FakeFlpSemanticObject"
+				fieldInfo: new Link({
+					sourceControl:"tFieldLinkTitle",
+					delegate: {
+						name: "sap/ui/mdc/flp/FlpLinkDelegate",
+						payload: {
+							semanticObjects: ["FakeFlpSemanticObject"],
+							mainSemanticObject: "FakeFlpSemanticObject"
+						}
 					}
-				} })
-			}));
+				})
+			});
 
 		}
 
-		if (oInfo.name === "author_name") {
+		if (oProperty.name === "author_ID") {
 
-			return Promise.resolve(new sap.ui.mdc.Field({
-				id: "tFieldLink",
+			return new Field({
+				id: "tFieldLinkAuthor",
 				value: "{author/name}",
+				additionalValue:"{author_ID}",
+				display: "ValueDescription",
 				editMode: "Display",
-				multipleLines: true,
-				fieldInfo: new sap.ui.mdc.Link({ delegate: { name: 'sap/ui/v4demo/delegate/Books.Link.delegate' } })
-			}));
+				fieldInfo: new Link({
+					delegate: { name: "sap/ui/v4demo/delegate/Books.Link.delegate" }
+				})
+			});
 
 		}
 
-		return new Field(oProps);
+		return new Field(oCtrlProperties);
 	};
 
 	BooksTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
@@ -106,8 +110,14 @@ sap.ui.define([
 				oColumn.setWidth(["actions", "stock", "ID"].indexOf(oProperty.name) != -1 ? "6rem" : "10rem");
 			}
 
-			oColumn.getTemplate().destroy();
-			oColumn.setTemplate(BooksTableDelegate._createColumnTemplate(oProperty));
+			//oColumn.getTemplate().destroy();
+			// if (oColumn._oTemplateClone) {
+			// 	oColumn._oTemplateClone.destroy();
+			// 	delete oColumn._oTemplateClone;
+			// }
+
+			var oTemplate = BooksTableDelegate._createColumnTemplate(oProperty);
+			oColumn.setTemplate(oTemplate);
 
 			return oColumn;
 		});

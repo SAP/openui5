@@ -37,10 +37,10 @@
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection>
 						<uxap:blocks>
-							<f:SimpleForm id="detailForm" layout="ResponsiveGridLayout" editable="{view>/editMode}">
+							<f:SimpleForm id="detailForm" layout="ColumnLayout" editable="{view>/editMode}">
 								<f:content>
 									<Label text="ID" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{path: 'ID', type: 'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
 									<Label text="Author ID" />
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fAuthor" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="FH1" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
 										<mdc:dependents>
