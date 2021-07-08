@@ -471,7 +471,7 @@ sap.ui.define([
 			oTable._getSelectionPlugin().onHeaderSelectorPress();
 
 		// Expand/Collapse group.
-		} else if (KeyboardDelegate._isElementGroupToggler(oTable, oEvent.target)) {
+		} else if (KeyboardDelegate._allowsToggleExpandedState(oTable, oEvent.target)) {
 			getRowByDomRef(oTable, oEvent.target).toggleExpandedState();
 
 		// Select/Deselect row.
@@ -653,15 +653,15 @@ sap.ui.define([
 	}
 
 	/**
-	 * Checks whether an element is in the list of elements which can allow expanding and collapsing a group, if a specific key is pressed on them.
+	 * Checks whether an element allows a group or a tree node to be expanded or collapsed on user interaction.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
 	 * @param {HTMLElement} oElement The element to check.
-	 * @returns {boolean} Returns <code>true</code>, if pressing a specific key on this element can cause a group to expand or to collapse.
+	 * @returns {boolean} Whether user interaction with this element can trigger expand or collapse of a group or tree node.
 	 * @private
 	 * @static
 	 */
-	KeyboardDelegate._isElementGroupToggler = function(oTable, oElement) {
+	KeyboardDelegate._allowsToggleExpandedState = function(oTable, oElement) {
 		return TableUtils.Grouping.isInGroupHeaderRow(oElement)
 			   || (TableUtils.Grouping.isInTreeMode(oTable)
 				   && oElement.classList.contains("sapUiTableCellFirst")
@@ -1048,7 +1048,7 @@ sap.ui.define([
 		}
 
 		// Expand/Collapse group.
-		if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F4) && KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
+		if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F4) && KeyboardDelegate._allowsToggleExpandedState(this, oEvent.target)) {
 			getRowByDomRef(this, oEvent.target).toggleExpandedState();
 			return;
 		}
@@ -1117,13 +1117,13 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, "+")) {
-			if (KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
+			if (KeyboardDelegate._allowsToggleExpandedState(this, oEvent.target)) {
 				getRowByDomRef(this, oEvent.target).expand();
 			} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) {
 				oKeyboardExtension.setActionMode(true);
 			}
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, "-")) {
-			if (KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
+			if (KeyboardDelegate._allowsToggleExpandedState(this, oEvent.target)) {
 				getRowByDomRef(this, oEvent.target).collapse();
 			} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) {
 				oKeyboardExtension.setActionMode(true);
@@ -1370,7 +1370,7 @@ sap.ui.define([
 		var oKeyboardExtension = this._getKeyboardExtension();
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT) &&
-			KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
+			KeyboardDelegate._allowsToggleExpandedState(this, oEvent.target)) {
 
 			preventItemNavigation(oEvent);
 			getRowByDomRef(this, oEvent.target).expand();
@@ -1446,7 +1446,7 @@ sap.ui.define([
 		}
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT) &&
-			KeyboardDelegate._isElementGroupToggler(this, oEvent.target)) {
+			KeyboardDelegate._allowsToggleExpandedState(this, oEvent.target)) {
 
 			preventItemNavigation(oEvent);
 			getRowByDomRef(this, oEvent.target).collapse();
