@@ -483,7 +483,7 @@ function(
 	 * @public
 	 * @static
 	 * @since 1.58
-	 * @returns {Promise} resolves with the resulting {sap.ui.core.Control|sap.ui.core.Control[]} after fragment parsing and instantiation
+	 * @returns {Promise<sap.ui.core.Control|sap.ui.core.Control[]>} a <code>Promise</code> resolving with the resulting control (array) after fragment parsing and instantiation
 	 */
 	Fragment.load = function(mOptions) {
 		var mParameters = Object.assign({}, mOptions);
