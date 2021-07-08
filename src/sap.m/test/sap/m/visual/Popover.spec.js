@@ -23,49 +23,42 @@ describe("sap.m.Popover", function () {
 
 		it("Should open Popover Right", function () {
 			element(by.id("btn1")).click();
-			element(by.id("pop1-title-inner")).click(); // Remove the focus from input
 
 			expect(takeScreenshot()).toLookAs("popover-right" + "-" + sMode);
 		});
 
 		it("Should open Popover Bottom", function () {
 			element(by.id("btn0")).click();
-			element(by.id("pop1-title-inner")).click(); // Remove the focus from input
 
 			expect(takeScreenshot()).toLookAs("popover-bottom" + "-" + sMode);
 		});
 
 		it("Should open Popover Top", function () {
 			element(by.id("btn3")).click();
-			element(by.id("pop1-title-inner")).click(); // Remove the focus from input
 
 			expect(takeScreenshot()).toLookAs("popover-top" + "-" + sMode);
 		});
 
 		it("Should open Popover Left", function () {
 			element(by.id("btn2")).click();
-			element(by.id("pop1-title-inner")).click(); // Remove the focus from input
 
 			expect(takeScreenshot()).toLookAs("popover-left" + "-" + sMode);
 		});
 
 		it("Should open Popover Vertical", function () {
 			element(by.id("btn4")).click();
-			element(by.id("pop1-title-inner")).click(); // Remove the focus from input
 
 			expect(takeScreenshot()).toLookAs("popover-vertical" + "-" + sMode);
 		});
 
 		it("Should open Popover with header and footer", function () {
 			element(by.id("with-h-with-f")).click();
-			element(by.id("pop1-title-inner")).click(); // Remove the focus from input
 
 			expect(takeScreenshot(element(by.id("pop1")))).toLookAs("popover-header-footer" + "-" + sMode);
 		});
 
 		it("Should open Popover without header and with footer", function () {
 			element(by.id("no-h-with-f")).click();
-			element(by.id("__item0-__list0-0")).click(); // Remove the focus from input
 
 			expect(takeScreenshot(element(by.id("pop1")))).toLookAs("popover-footer" + "-" + sMode);
 		});
@@ -77,7 +70,7 @@ describe("sap.m.Popover", function () {
 
 		it("Should open Popover with header and no footer", function () {
 			element(by.id("with-h-no-f")).click();
-			element(by.id("pop1-title-inner")).click(); // Remove the focus from input
+
 			expect(takeScreenshot(element(by.id("pop1")))).toLookAs("popover-header" + "-" + sMode);
 		});
 
@@ -91,7 +84,7 @@ describe("sap.m.Popover", function () {
 		it("Should open Popover with responsive paddings", function () {
 			element(by.id("change-fiori-theme")).click();
 			element(by.id("btn11")).click();
-			expect(takeScreenshot()).toLookAs("popover-with-responsive-paddings" + "-" + sMode);
+			expect(takeScreenshot()).toLookAs("popover-responsivePaddings" + "-" + sMode);
 			//cleanup
 			element(by.id("change-belize-theme")).click();
 		});
@@ -99,7 +92,7 @@ describe("sap.m.Popover", function () {
 		it("Should resize Popover to 700px with responsive paddings", function () {
 			element(by.id("btn11")).click();
 			element(by.id("btn-set-width-700")).click();
-			expect(takeScreenshot()).toLookAs("popover-700-responsive-paddings" + "-" + sMode);
+			expect(takeScreenshot()).toLookAs("700px-responsivePaddings" + "-" + sMode);
 			//cleanup
 			element(by.id("change-belize-theme")).click();
 		});
@@ -108,7 +101,7 @@ describe("sap.m.Popover", function () {
 			element(by.id("change-fiori-theme")).click();
 			element(by.id("btn11")).click();
 			element(by.id("btn-set-width-1024")).click();
-			expect(takeScreenshot()).toLookAs("popover-1024-responsive-paddings" + "-" + sMode);
+			expect(takeScreenshot()).toLookAs("1024px-responsivePaddings" + "-" + sMode);
 			//cleanup
 			element(by.id("change-belize-theme")).click();
 		});
@@ -134,7 +127,7 @@ describe("sap.m.Popover", function () {
 
 			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 
-			expect(takeScreenshot()).toLookAs("popover-nested-popovers-outer-closed" + "-" + sMode);
+			expect(takeScreenshot()).toLookAs("nested-popovers-inner-closed" + "-" + sMode);
 		});
 	}
 
