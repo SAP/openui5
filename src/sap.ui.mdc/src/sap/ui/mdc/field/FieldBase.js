@@ -826,6 +826,11 @@ sap.ui.define([
 			oFieldInfo.attachEvent("dataUpdate", _handleInfoDataUpdate, this);
 		}
 
+		if (this._bTriggerable) {
+			// render Link as default on clone if Link rendered on original (only change if needed in _handleInfoDataUpdate)
+			oClone._bTriggerable = this._bTriggerable;
+		}
+
 		return oClone;
 
 	};
