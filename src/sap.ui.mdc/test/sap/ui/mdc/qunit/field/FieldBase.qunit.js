@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/field/content/DefaultContent",
 	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/enum/ConditionValidated",
@@ -65,6 +66,7 @@ sap.ui.define([
 	FieldValueHelpDelegate,
 	FieldInput,
 	FieldMultiInput,
+	DefaultContent,
 	EditMode,
 	FieldDisplay,
 	ConditionValidated,
@@ -4787,6 +4789,8 @@ sap.ui.define([
 				return oCloneFieldInfo;
 			};
 
+			sinon.spy(DefaultContent, "createDisplay"); // to check if sap.m.Text is created before sap.m.Link
+
 			var oClone = oField.clone("myClone");
 			oClone.placeAt("content");
 			sap.ui.getCore().applyChanges();
@@ -4801,6 +4805,7 @@ sap.ui.define([
 				assert.equal(oCloneFieldInfo && oCloneFieldInfo.getId(), "F1-I-myClone", "FieldInfo is cloned");
 				assert.equal(oCloneContent.getMetadata().getName(), "sap.m.Link", "sap.m.Link is used on Clone");
 				assert.equal(oCloneContent.getText && oContent.getText(), "Test", "Text used on Clone");
+				assert.notOk(DefaultContent.createDisplay.called, "no sap.m.Text control created before sap.m.Link");
 
 				oCloneFieldInfo.isTriggerable.returns(Promise.resolve(false));
 				oCloneFieldInfo.fireDataUpdate();
