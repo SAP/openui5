@@ -14,7 +14,7 @@
 			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
 		</headerContent>
 		<content>
-			<sap.ui.layout:VerticalLayout id="layout0" width="100%" sap.ui.dt:designtime="not-adaptable-tree">
+			<Panel id="layout0" expandable="true" headerText="Not Adaptable Panel" width="auto" class="sapUiResponsiveMargin" expanded="true">
 				<ObjectHeader id="obheader0" title="{CompanyCodeName}" number="{Summary}" numberUnit="{CoCodeCurrency}">
 					<attributes>
 						<ObjectAttribute id="attribute1" title="{AccountingDocumentTypeName}" text="{AccountingDocument}" active="false"/>
@@ -33,8 +33,9 @@
 				<sap.ui.layout:VerticalLayout id="layout01" width="100%">
 					<Text id="headerText11" text="This nested Layout and Text should also not be adaptable" />
 				</sap.ui.layout:VerticalLayout>
-			</sap.ui.layout:VerticalLayout>
-			<sap.ui.layout:VerticalLayout id="layout1" width="100%">
+			</Panel>
+
+			<Panel id="layout1" expandable="true" headerText="Panel with QUnit Test Area and SimpleForm" width="auto" class="sapUiResponsiveMargin" expanded="true">
 				<Button id="smartFormPopoverButton" text="Open Popover" press=".openSmartFormPopover" />
 				<Button id="smartFormDialogButton" text="Open Smart Form Dialog" press=".openSmartFormDialog" />
 				<Button id="createDeleteButton" text="Create/Delete SmartForm" press=".createOrDeleteContent" />
@@ -87,9 +88,9 @@
 						<Input id="Input9" value="234424333" type="Tel" />
 					</form:content>
 				</form:SimpleForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
+			<Panel expandable="true" headerText="Panel with expandable SmartForm" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm id="MainFormExpandable" title="Expandable SmartForm" editable="true" entityType="Header" ignoredFields="TransactionCode" expandable="true" expanded="true">
 					<smartForm:Group id="MainFormExpandable.GeneralLedgerDocument" label="General Ledger Document" expandable="true">
 						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.Name" >
@@ -179,9 +180,9 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
+			<Panel expandable="true" headerText="Panel with Form" width="auto" class="sapUiResponsiveMargin">
 				<form:Form id="LayoutFormGeneralResponsiveGridLayout" width="100%" title="ResponsiveGridLayout Form">
 					<form:layout>
 						<form:ResponsiveGridLayout/>
@@ -212,9 +213,9 @@
 					</form:formContainers>
 
 				</form:Form>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
+			<Panel expandable="true" headerText="Panel with SimpleForm with Toolbars" width="auto" class="sapUiResponsiveMargin">
 				<form:SimpleForm title="SimpleForm with toolbars" id="SimpleFormWithToolbars"
 								 maxContainerCols="3"
 								 editable="true"
@@ -292,9 +293,9 @@
 						<Input id="Tinput11" value="More text"  />
 					</form:content>
 				</form:SimpleForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout id="verticalLayoutSameSize">
+			<Panel id="verticalLayoutSameSize" expandable="true" headerText="Panel with SimpleForm" width="auto" class="sapUiResponsiveMargin">
 				<VBox>
 					<form:SimpleForm id="SimpleFormChangeColumn_twoGroups234"
 						editable="true"
@@ -350,9 +351,9 @@
 						</form:content>
 					</form:SimpleForm>
 				</VBox>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
+			<Panel expandable="true" headerText="Panel with SmartForm without stable IDs" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm title="SmartForm without stable ids" entityType="Header, Tax">
 					<smartForm:layout>
 						<smartForm:Layout columnsL="2" breakpointL="900" />
@@ -380,9 +381,9 @@
 						<Input id="SFWithoutStableIdInput0" value="" />
 					</form:content>
 				</form:SimpleForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout id = "smartFilterLayout" width="100%">
+			<Panel id="smartFilterLayout" expandable="true" headerText="Panel with SmartFilterBar / SmartTable" width="auto" class="sapUiResponsiveMargin">
 				<Button id="toggleUpdateMode" text="Change to 'LiveMode'" press="toggleUpdateMode"></Button>
 				<smartFilterBar:SmartFilterBar id="smartFilterBar"
 											   entityType="LineItems">
@@ -413,9 +414,9 @@
 						<FlexItemData growFactor="1" baseSize="0%" />
 					</smartTable:layoutData>
 				</smartTable:SmartTable>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%"  class="sapUiLargeMarginTop">
+			<Panel expandable="true" headerText="Panel with SmartForm" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm id="SmartForm01" title="Smart Form with standard layout" editable="true" entityType="Header" ignoredFields="TransactionCode">
 					<smartForm:Group id="SmartFormGroup01" label="SmartForm Group 01">
 						<smartForm:GroupElement id="SmartFormGroup01.CompanyCodeName" >
@@ -443,9 +444,9 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
+			<Panel expandable="true" headerText="Panel with SmartForm with horizontal layout" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
 					<smartForm:Group id="SmartForm02Group01" label="SmartForm Group 01" >
 						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentType" >
@@ -462,9 +463,9 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
+			<Panel expandable="true" headerText="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" width="auto" class="sapUiResponsiveMargin">
 				<smartForm:SmartForm id="SmartForm03" title="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
 					<smartForm:layout>
 						<smartForm:Layout gridDataSpan="L1 M1 S1" />
@@ -481,9 +482,9 @@
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 
-			<sap.ui.layout:VerticalLayout width="100%">
+			<Panel expandable="true" headerText="Panel with Form with GridLayout" width="auto" class="sapUiResponsiveMargin">
 				<form:Form id="LayoutFormGeneralFormGridLayout" width="100%" title="GridLayout Form - all actions should be disabled">
 					<form:layout>
 						<form:GridLayout/>
@@ -514,8 +515,9 @@
 					</form:formContainers>
 
 				</form:Form>
-			</sap.ui.layout:VerticalLayout>
-			<sap.ui.layout:VerticalLayout id="tableLayout" width="100%">
+			</Panel>
+
+			<Panel id="tableLayout" expandable="true" headerText="Panel with Table" width="auto" class="sapUiResponsiveMargin">
 				<Table id="idProductsTable"
 					items="{ path: 'ProductCollection>/'}"
 					inset="false">
@@ -542,7 +544,7 @@
 								<sap.ui.layout:VerticalLayout id="columnLayout">
 									<Text id="LayoutText01"
 										text="{ProductCollection>MainCategory}" />
-									<sap.ui.layout:VerticalLayout id="columnLayout02">	
+									<sap.ui.layout:VerticalLayout id="columnLayout02">
 										<Text id="LayoutText02"
 											text="{ProductCollection>Category}" />
 										<Text id="LayoutText03"
@@ -553,7 +555,7 @@
 						</ColumnListItem>
 					</items>
 				</Table>
-			</sap.ui.layout:VerticalLayout>
+			</Panel>
 		</content>
 	</Page>
 </mvc:View>
