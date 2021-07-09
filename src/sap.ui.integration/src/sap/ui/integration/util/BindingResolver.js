@@ -156,7 +156,7 @@ sap.ui.define([
 				return false;
 			}
 
-			return oObj.hasOwnProperty("path") || (oObj.hasOwnProperty("parts") && oObj.hasOwnProperty("formatter"));
+			return oObj.hasOwnProperty("path") || (oObj.hasOwnProperty("parts") && (oObj.hasOwnProperty("formatter") || oObj.hasOwnProperty("binding")));
 		};
 
 		return BindingResolver;
