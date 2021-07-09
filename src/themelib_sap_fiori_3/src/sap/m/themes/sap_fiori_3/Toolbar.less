@@ -33,6 +33,10 @@ html.sap-desktop .sapMTBActive:focus {
 		color: @sapUiBaseText;
 	}
 
+	> .sapUiIcon:focus {
+		color: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapContent_FocusColor;
+	}
+
 	&.sapMTBActive {
 		background: @sapUiInfobarBackground;
 		.generate-contrast-color-toolbar(@sapUiInfobarBackground);
