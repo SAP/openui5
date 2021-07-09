@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.mdc.filterbar.p13n.FilterGroupLayout.
-sap.ui.define(['sap/ui/core/Control',  'sap/m/Label'
-], function(Control,  Label) {
+sap.ui.define(['sap/ui/core/Control'
+], function (Control) {
 	"use strict";
 
 	/**
@@ -42,7 +42,13 @@ sap.ui.define(['sap/ui/core/Control',  'sap/m/Label'
 		this._sFieldPath = oFilterField.getFieldPath();
 	};
 
-	FilterGroupLayout.prototype.getItems = function() {
+	FilterGroupLayout.prototype.getAccessibilityInfo = function () {
+		return {
+			children: this.getItems()
+		};
+	};
+
+	FilterGroupLayout.prototype.getItems = function () {
 		var aContent = [];
 		aContent.push(this._oFilterField);
 		return aContent;
