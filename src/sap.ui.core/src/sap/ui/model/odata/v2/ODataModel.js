@@ -1548,7 +1548,8 @@ sap.ui.define([
 			// Prevents writing invalid entries into cache, like /Product(1) : /Product(2).
 			// This could occur, when a navigation target changes on the server and the old target was resolved from cache before invalidation.
             if (sCanonicalPath === "/" + sKey || (sCanonicalPath && sCanonicalPath.split("/").length > 2)) {
-				// try to resolve/cache paths containing mutiple nav properties likes "SalesOrderItem(123)/ToProduct/ToSupplier" => Product(123)/ToSupplier
+				// try to resolve/cache paths containing multiple nav properties like
+	            // "SalesOrderItem(123)/ToProduct/ToSupplier" => Product(123)/ToSupplier
                 this._writePathCache(sCanonicalPath, "/" + sKey, bFunctionImport);
             }
 
@@ -3538,7 +3539,7 @@ sap.ui.define([
 			var bAborted = oError.message == "Request aborted";
 
 			oError.$reported = true; // avoid that individual requests log the error
-			// Call procesError for all contained requests first
+			// Call processError for all contained requests first
 			each(aRequests, function(i, oRequest) {
 				if (Array.isArray(oRequest)) {
 					oRequest.forEach(function(oRequest) {
@@ -5142,7 +5143,7 @@ sap.ui.define([
 	 *   handler can have the following parameters: <code>oData</code> and <code>response</code>.
 	 * @param {Object<string,string>} [mParameters.urlParameters]
 	 *   Maps the function import parameter name as specified in the function import's metadata to
-	 *   its value; the value is formatted based on the paramter's type as specified in the metadata
+	 *   its value; the value is formatted based on the parameter's type as specified in the metadata
 	 * @param {string} [mParameters.batchGroupId]
 	 *   <b>Deprecated - use <code>groupId</code> instead</b>
 	 *
@@ -5932,7 +5933,7 @@ sap.ui.define([
 	 * @param {array} [aPath] 	Array of paths that should be reset.
 	 * 							If no array is passed, all changes will be reset.
 	 * @param {boolean}[bAll=false] If set to true, also deferred requests are taken into account.
-	 * @returns {Promise} Resolves when all regarded changes have been reseted.
+	 * @returns {Promise} Resolves when all regarded changes have been reset.
 	 * @public
 	 */
 	ODataModel.prototype.resetChanges = function(aPath, bAll) {
@@ -7384,7 +7385,8 @@ sap.ui.define([
 	 * Get all messages for an entity path.
 	 *
 	 * @param {string} sEntity The entity path or key
-	 * @param {boolean} bExcludePersistent If set true persitent flagged messages are excluded.
+	 * @param {boolean} bExcludePersistent If set to true, messages flagged as persistent are
+	 *    excluded.
 	 * @private
 	 */
 	ODataModel.prototype.getMessagesByEntity = function(sEntity, bExcludePersistent) {
@@ -7577,7 +7579,7 @@ sap.ui.define([
 	/**
 	 * Check if a Context already exists for the model
 	 * @param {string} [sPath] The path to check
-	 * @returns {boolean} True if COntext for the given path exists
+	 * @returns {boolean} True if a context for the given path exists
 	 * @private
 	 */
 	ODataModel.prototype.hasContext = function(sPath){
