@@ -111,10 +111,9 @@ sap.ui.define([
 
 		handleLiveChange: function (oEvent) {
 			var oView = this.getView(),
-				oInput = oView.byId(this.inputId);
+				oText = oView.byId("liveChangeText");
 
-			oInput.setValue(oEvent.getParameter("colorString"));
-			oInput.setValueState(ValueState.None);
+			oText.setText(oEvent.getParameter("colorString"));
 		}
 	});
 
