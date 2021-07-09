@@ -334,8 +334,7 @@ sap.ui.define([
 				pFragmentReady = new Promise(function(res, rej) {
 					this.loadFragment({
 						name: "testdata.fragments.XMLView",
-						type: "XML"
-					}, {
+						type: "XML",
 						addToDependents: false
 					}).then(function() {
 						res([]);
@@ -365,8 +364,7 @@ sap.ui.define([
 				pFragmentReady = new Promise(function(res, rej) {
 					this.loadFragment({
 						name: "testdata.fragments.XMLView",
-						type: "XML"
-					}, {
+						type: "XML",
 						autoPrefixId: false
 					}).then(function() {
 						res([]);
@@ -398,8 +396,7 @@ sap.ui.define([
 					this.loadFragment({
 						name: "testdata.fragments.XMLView",
 						type: "XML",
-						id: "myFragment"
-					}, {
+						id: "myFragment",
 						autoPrefixId: false
 					}).then(function() {
 						res([]);
