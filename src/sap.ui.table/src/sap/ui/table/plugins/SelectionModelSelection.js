@@ -12,7 +12,6 @@ sap.ui.define([
 	TableUtils,
 	library
 ) {
-
 	"use strict";
 
 	var SelectionMode = library.SelectionMode;
@@ -74,19 +73,22 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	SelectionModelSelection.prototype.onActivate = function() {
+	SelectionModelSelection.prototype.onActivate = function(oTable) {
 		SelectionPlugin.prototype.onActivate.apply(this, arguments);
 		this.oSelectionModel.attachSelectionChanged(this._onSelectionChange, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, onTotalRowCountChanged, this);
+		this._bIgnoreNextTotalRowCountChange = oTable._getTotalRowCount() === 0;
 	};
 
 	/**
 	 * @inheritDoc
 	 */
-	SelectionModelSelection.prototype.onDeactivate = function() {
+	SelectionModelSelection.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
 		this.oSelectionModel.detachSelectionChanged(this._onSelectionChange, this);
 		this.oSelectionModel.clearSelection();
 		detachFromBinding(this, this.getTableBinding());
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, onTotalRowCountChanged, this);
 	};
 
 	/**
@@ -306,6 +308,9 @@ sap.ui.define([
 	 */
 	SelectionModelSelection.prototype.onTableRowsBound = function(oBinding) {
 		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+		if (!this.hasOwnProperty("_bIgnoreNextTotalRowCountChange")) {
+			this._bIgnoreNextTotalRowCountChange = true;
+		}
 		attachToBinding(this, oBinding);
 	};
 
@@ -343,6 +348,15 @@ sap.ui.define([
 			this.clearSelection();
 		}
 	};
+
+	function onTotalRowCountChanged() {
+		if (!this._bIgnoreNextTotalRowCountChange) {
+			// If rows are added or removed, the index-based selection of the SelectionModel is invalid and needs to be cleared.
+			// The initial change is ignored for compatibility, so it is possible to select something before the initial rows update is done.
+			this.clearSelection();
+		}
+		delete this._bIgnoreNextTotalRowCountChange;
+	}
 
 	return SelectionModelSelection;
 });

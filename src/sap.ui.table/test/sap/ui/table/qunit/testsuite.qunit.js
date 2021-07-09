@@ -267,6 +267,14 @@ sap.ui.define([
 					qunitBridge: true
 				}
 			},
+			"SelectionModelSelection": {
+				group: "Plugins",
+				module: "./plugins/{name}.qunit",
+				sinon: {
+					version: "edge",
+					qunitBridge: true
+				}
+			},
 			"MultiSelectionPlugin": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit",

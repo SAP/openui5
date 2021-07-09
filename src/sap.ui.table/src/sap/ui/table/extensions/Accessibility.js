@@ -896,6 +896,22 @@ sap.ui.define([
 		},
 
 		/**
+		 * @override
+		 * @inheritDoc
+		 */
+		_attachEvents: function() {
+			TableUtils.Hook.register(this.getTable(), TableUtils.Hook.Keys.Table.TotalRowCountChanged, this._updateAriaRowCount, this);
+		},
+
+		/**
+		 * @override
+		 * @inheritDoc
+		 */
+		_detachEvents: function() {
+			TableUtils.Hook.deregister(this.getTable(), TableUtils.Hook.Keys.Table.TotalRowCountChanged, this._updateAriaRowCount, this);
+		},
+
+		/**
 		 * Enables debugging for the extension. Internal helper classes become accessible.
 		 *
 		 * @private

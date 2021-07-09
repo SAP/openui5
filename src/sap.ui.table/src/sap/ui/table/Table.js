@@ -2444,13 +2444,11 @@ sap.ui.define([
 	Table.prototype._adjustToTotalRowCount = function() {
 		var oBinding = this.getBinding();
 		var iTotalRowCount = this._getTotalRowCount();
-		var oScrollExtension = this._getScrollExtension();
 
 		if (this._iBindingLength !== iTotalRowCount) {
 			this._iBindingLength = iTotalRowCount;
 			this._updateFixedBottomRows();
-			this._getAccExtension()._updateAriaRowCount();
-			oScrollExtension.adjustToTotalRowCount();
+			TableUtils.Hook.call(this, Hook.TotalRowCountChanged);
 
 			if (!oBinding || !TableUtils.hasPendingRequests(this)) {
 				// A client binding -or- an $expand filled list binding does not fire dataReceived events. Therefore we need to update the no data area here.
