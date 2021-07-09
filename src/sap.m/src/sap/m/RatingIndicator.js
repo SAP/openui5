@@ -240,7 +240,6 @@ sap.ui.define([
 	RatingIndicator.prototype.onBeforeRendering = function () {
 		var fVal = this.getValue();
 		var iMVal = this.getMaxValue();
-		var oSizes = {};
 
 		if (fVal > iMVal) {
 			this.setValue(iMVal);
@@ -253,56 +252,97 @@ sap.ui.define([
 		var sIconSize = this.getIconSize();
 
 		if (sIconSize) {
-			oSizes = this._getRegularSizes(sIconSize);
+			this._setRegularSizes(sIconSize);
 		} else if (this.getDisplayOnly()) {
-			oSizes = this._getDisplayOnlySizes();
+			this._setDisplayOnlySizes();
 		} else {
-			oSizes = this._getContentDensitySizes();
+			this._setContentDensitySizes();
+		}
+	};
+
+	RatingIndicator.prototype._setDisplayOnlySizes = function () {
+		var sIconSize = "sapUiRIIconSizeDisplayOnly",
+			sIconPaddingSize = "sapUiRIIconPaddingDisplayOnly";
+
+		if (RatingIndicator.sizeMapppings[sIconSize] && RatingIndicator.paddingValueMappping[sIconPaddingSize]) {
+			this._iPxIconSize = RatingIndicator.sizeMapppings[sIconSize];
+			this._iPxPaddingSize = RatingIndicator.paddingValueMappping[sIconPaddingSize];
+
+			return;
 		}
 
-		this._iPxIconSize = oSizes.icon;
-		this._iPxPaddingSize = oSizes.padding;
+		var mParamеters = Object.assign({
+				// add global styles as default
+				"sapUiRIIconSizeDisplayOnly": "1rem",
+				"sapUiRIIconPaddingDisplayOnly": "0.125rem"
+			}, Parameters.get({
+				name: [sIconSize, sIconPaddingSize],
+				callback: function(mParams) {
+					this.setIconAndPaddingSizes(sIconSize, sIconPaddingSize, mParams[sIconSize], mParams[sIconPaddingSize]);
+				}.bind(this)
+			}));
+
+		this.setIconAndPaddingSizes(sIconSize, sIconPaddingSize, mParamеters[sIconSize], mParamеters[sIconPaddingSize]);
 	};
 
-	RatingIndicator.prototype._getDisplayOnlySizes = function () {
-		RatingIndicator.sizeMapppings["displayOnly"] = RatingIndicator.sizeMapppings["displayOnly"] || this._toPx(Parameters.get("sapUiRIIconSizeDisplayOnly"));
-		RatingIndicator.paddingValueMappping["displayOnlyPadding"] = RatingIndicator.paddingValueMappping["displayOnlyPadding"] || this._toPx(Parameters.get("sapUiRIIconPaddingDisplayOnly"));
-
-		return {
-			icon: RatingIndicator.sizeMapppings["displayOnly"],
-			padding: RatingIndicator.paddingValueMappping["displayOnlyPadding"]
-		};
-	};
-
-	RatingIndicator.prototype._getContentDensitySizes = function () {
+	RatingIndicator.prototype._setContentDensitySizes = function () {
 		var sDensityMode = this._getDensityMode();
 		var sSizeKey = "sapUiRIIconSize" + sDensityMode;
 		var sPaddingKey = "sapUiRIIconPadding" + sDensityMode;
 
-		RatingIndicator.sizeMapppings[sSizeKey] = RatingIndicator.sizeMapppings[sSizeKey] || this._toPx(Parameters.get(sSizeKey));
-		RatingIndicator.paddingValueMappping[sPaddingKey] = RatingIndicator.paddingValueMappping[sPaddingKey] || this._toPx(Parameters.get(sPaddingKey));
+		if (RatingIndicator.sizeMapppings[sSizeKey] && RatingIndicator.paddingValueMappping[sPaddingKey]) {
+			this._iPxIconSize = RatingIndicator.sizeMapppings[sSizeKey];
+			this._iPxPaddingSize = RatingIndicator.paddingValueMappping[sPaddingKey];
 
-		return {
-			icon: RatingIndicator.sizeMapppings[sSizeKey],
-			padding: RatingIndicator.paddingValueMappping[sPaddingKey]
-		};
+			return;
+		}
+
+		var mParamеters = Parameters.get({
+			name: [sSizeKey, sPaddingKey],
+			callback: function(mParams) {
+				this.setIconAndPaddingSizes(sSizeKey, sPaddingKey, mParams[sSizeKey], mParams[sPaddingKey]);
+			}.bind(this)
+		});
+
+		if (mParamеters) {
+			this.setIconAndPaddingSizes(sSizeKey, sPaddingKey, mParamеters[sSizeKey], mParamеters[sPaddingKey]);
+		}
 	};
 
-	RatingIndicator.prototype._getRegularSizes = function (sIconSize) {
+	RatingIndicator.prototype._setRegularSizes = function (sIconSize) {
 		RatingIndicator.sizeMapppings[sIconSize] = RatingIndicator.sizeMapppings[sIconSize] || this._toPx(sIconSize);
 
 		var iPxIconSize = RatingIndicator.sizeMapppings[sIconSize];
 
 		RatingIndicator.iconPaddingMappings[iPxIconSize] = RatingIndicator.iconPaddingMappings[iPxIconSize] || "sapUiRIIconPadding" + this._getIconSizeLabel(iPxIconSize);
 
-		var paddingClass = RatingIndicator.iconPaddingMappings[iPxIconSize];
+		var sPaddingClass = RatingIndicator.iconPaddingMappings[iPxIconSize];
 
-		RatingIndicator.paddingValueMappping[paddingClass] = RatingIndicator.paddingValueMappping[paddingClass] || this._toPx(Parameters.get(paddingClass));
+		if (RatingIndicator.paddingValueMappping[sPaddingClass]) {
+			this._iPxIconSize = RatingIndicator.sizeMapppings[sIconSize];
+			this._iPxPaddingSize = RatingIndicator.paddingValueMappping[sPaddingClass];
 
-		return {
-			icon: RatingIndicator.sizeMapppings[sIconSize],
-			padding: RatingIndicator.paddingValueMappping[paddingClass]
-		};
+			return;
+		}
+
+		var sParam = Parameters.get({
+			name: sPaddingClass,
+			callback: function (sPadding) {
+				this.setIconAndPaddingSizes(sIconSize, sPaddingClass, RatingIndicator.sizeMapppings[sIconSize], sPadding);
+			}.bind(this)
+		});
+
+		if (sParam) {
+			this.setIconAndPaddingSizes(sIconSize, sPaddingClass, RatingIndicator.sizeMapppings[sIconSize], sParam);
+		}
+	};
+
+	RatingIndicator.prototype.setIconAndPaddingSizes = function (sSizeKey, sPaddingKey, sSize, sPadding) {
+		RatingIndicator.sizeMapppings[sSizeKey] = this._toPx(sSize);
+		RatingIndicator.paddingValueMappping[sPaddingKey] = this._toPx(sPadding);
+
+		this._iPxIconSize = RatingIndicator.sizeMapppings[sSizeKey];
+		this._iPxPaddingSize = RatingIndicator.paddingValueMappping[sPaddingKey];
 	};
 
 	/**
