@@ -23,6 +23,10 @@ sap.ui.define([
 	oMatrixLayout.setLayoutFixed(false);
 
 	oMatrixLayout.createRow(
+		new Label({text: "Field 0 of group0",labelFor:"field00"}),
+		new TextField({id:"field100",width:"200px", fieldGroupIds:"group0"})
+	);
+	oMatrixLayout.createRow(
 			new Label({text: "Field 1 of group1",labelFor:"field11"}),
 			new TextField({id:"field11",width:"200px", fieldGroupIds:"group1"})
 	);
@@ -121,6 +125,7 @@ sap.ui.define([
 
 	oVerticalLayout.addContent(oMatrixLayout);
 	oVerticalLayout.placeAt("content");
+	sap.ui.getCore().applyChanges();
 
 	// Attach handler for testing
 	var bPauseEventing = false;
@@ -172,6 +177,21 @@ sap.ui.define([
 			}
 		},1);
 	}
+
+	QUnit.test("focus not focusable area", function(assert) {
+		assert.expect(1);
+		var done = assert.async();
+		//focus a field and the non focusable content
+		var oControl = sap.ui.getCore().byId("field100");
+		oControl.focus();
+		oControl.attachValidateFieldGroup(function() {
+			assert.ok(true, "fieldgroup validation fired!");
+			done();
+		});
+		setTimeout(function() {
+			oControl.getDomRef().blur();
+		},0);
+	});
 
 	QUnit.test("focus field of group 1", function(assert) {
 		assert.expect(1);
@@ -276,11 +296,11 @@ sap.ui.define([
 		aGroup = oVerticalLayout.getControlsByFieldGroupId("group3");
 		assert.equal(aGroup.length,4,"4 controls in group3");
 		aGroup = oVerticalLayout.getControlsByFieldGroupId([]);
-		assert.equal(aGroup.length,48,"48 controls with no field group");
+		assert.equal(aGroup.length,50,"50 controls with no field group");
 		aGroup = oVerticalLayout.getControlsByFieldGroupId("");
-		assert.equal(aGroup.length,48,"48 controls with no field group");
+		assert.equal(aGroup.length,50,"50 controls with no field group");
 		aGroup = oVerticalLayout.getControlsByFieldGroupId();
-		assert.equal(aGroup.length,20,"20 controls with  field groups");
+		assert.equal(aGroup.length,21,"21 controls with  field groups");
 		aGroup = oVerticalLayout.getControlsByFieldGroupId(["group5","group4","group6"]);
 		assert.equal(aGroup.length,1,"1 controls with  field groups ['group5','group4','group6']");
 		aGroup = oVerticalLayout.getControlsByFieldGroupId(["group6","group4","group5"]);
@@ -298,9 +318,9 @@ sap.ui.define([
 		aGroup = sap.ui.getCore().byFieldGroupId("group3");
 		assert.equal(aGroup.length,4,"4 controls in group3");
 		aGroup = sap.ui.getCore().byFieldGroupId([]);
-		assert.equal(aGroup.length,49,"49 controls with no field group");
+		assert.equal(aGroup.length,51,"51 controls with no field group");
 		aGroup = sap.ui.getCore().byFieldGroupId();
-		assert.equal(aGroup.length,20,"20 controls with  field groups");
+		assert.equal(aGroup.length,21,"21 controls with  field groups");
 		aGroup = sap.ui.getCore().byFieldGroupId(["group5","group4","group6"]);
 		assert.equal(aGroup.length,1,"1 controls with  field groups ['group5','group4','group6']");
 		aGroup = sap.ui.getCore().byFieldGroupId(["group6","group4","group5"]);
