@@ -67,7 +67,7 @@
     "cheerio": "1.0.0-rc.9",
     "coffee-script": "^1.9.1",
     "cross-env": "^5.2.0",
-    "eslint": "^7.27.0",
+    "eslint": "^7.31.0",
     "extend": "^2.0.0",
     "glob": "^7.1.3",
     "grunt": "^1.3.0",

@@ -99,7 +99,7 @@ sap.ui.define([
 
 	  // get the new Value and calculate Pixels
 	  VerticalPercent = iPercentage;
-	  if (VerticalPercent < 0 || VerticalPercent == Number.NaN) {
+	  if (VerticalPercent < 0) {
 			VerticalPercent = 0;
 	  }
 	  if (VerticalPercent > 100) {
