@@ -5,14 +5,16 @@
 	<Panel
 		headerText="{i18n>helloPanelTitle}"
 		class="sapUiResponsiveMargin"
-		width="auto">
+		width="auto"
+		expandable="{device>/system/phone}"
+		expanded="{= !${device>/system/phone} }">
 		<content>
 			<Button
 				id="helloDialogButton"
 				icon="sap-icon://world"
 				text="{i18n>openDialogButtonText}"
 				press=".onOpenDialog"
-				class="sapUiSmallMarginEnd"/>
+				class="sapUiSmallMarginEnd sapUiVisibleOnlyOnDesktop"/>
 			<Button
 				text="{i18n>showHelloButtonText}"
 				press=".onShowHello"

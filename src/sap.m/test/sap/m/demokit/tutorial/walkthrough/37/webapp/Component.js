@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
-	"./controller/HelloDialog",
 	"sap/ui/Device"
-], function (UIComponent, JSONModel, HelloDialog, Device) {
+], function (UIComponent, JSONModel, Device) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.walkthrough.Component", {
@@ -31,25 +30,8 @@ sap.ui.define([
 			oDeviceModel.setDefaultBindingMode("OneWay");
 			this.setModel(oDeviceModel, "device");
 
-			// set dialog
-			this.rootControlLoaded().then(function() {
-				this._helloDialog = new HelloDialog(this.getRootControl());
-			}.bind(this));
-
 			// create the views based on the url/hash
 			this.getRouter().initialize();
-
-		},
-
-		exit : function () {
-			if (this._helloDialog) {
-				this._helloDialog.destroy();
-				delete this._helloDialog;
-			}
-		},
-
-		openHelloDialog : function () {
-			this._helloDialog.open();
 		},
 
 		getContentDensityClass : function () {

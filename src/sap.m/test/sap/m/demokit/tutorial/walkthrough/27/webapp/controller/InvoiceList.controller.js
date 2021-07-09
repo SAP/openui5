@@ -18,8 +18,7 @@ sap.ui.define([
 			this.getView().setModel(oViewModel, "view");
 		},
 
-		onFilterInvoices : function (oEvent) {
-
+		onFilterInvoices: function (oEvent) {
 			// build filter array
 			var aFilter = [];
 			var sQuery = oEvent.getParameter("query");

@@ -4,20 +4,6 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true">
 	<Shell>
-		<App class="myAppDemoWT">
-			<pages>
-				<Page title="{i18n>homePageTitle}">
-					<headerContent>
-						<Button
-							icon="sap-icon://hello-world"
-							press=".onOpenDialog"/>
-					</headerContent>
-					<content>
-						<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.HelloPanel" />
-						<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.InvoiceList" />
-					</content>
-				</Page>
-			</pages>
-		</App>
+		<App class="myAppDemoWT" id="app"/>
 	</Shell>
 </mvc:View>

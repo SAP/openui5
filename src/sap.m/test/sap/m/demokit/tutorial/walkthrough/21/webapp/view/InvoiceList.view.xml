@@ -1,5 +1,5 @@
 <mvc:View
-		controllerName="sap.ui.demo.walkthrough.controller.InvoiceList"
+	controllerName="sap.ui.demo.walkthrough.controller.InvoiceList"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<List
@@ -17,7 +17,8 @@
 						showMeasure: false
 					}
 				}"
-				numberUnit="{view>/currency}"/>
+				numberUnit="{view>/currency}"
+				numberState="{=	${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }"/>
 		</items>
 	</List>
 </mvc:View>

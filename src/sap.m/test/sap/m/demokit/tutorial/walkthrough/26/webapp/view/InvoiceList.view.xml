@@ -22,16 +22,16 @@
 		</headerToolbar>
 		<items>
 			<ObjectListItem
-					title="{invoice>Quantity} x {invoice>ProductName}"
-					number="{
+				title="{invoice>Quantity} x {invoice>ProductName}"
+				number="{
 					parts: [{path: 'invoice>ExtendedPrice'}, {path: 'view>/currency'}],
 					type: 'sap.ui.model.type.Currency',
 					formatOptions: {
 						showMeasure: false
 					}
 				}"
-					numberUnit="{view>/currency}"
-					numberState="{=	${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }">
+				numberUnit="{view>/currency}"
+				numberState="{=	${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }">
 				<firstStatus>
 					<ObjectStatus text="{
 						path: 'invoice>Status',

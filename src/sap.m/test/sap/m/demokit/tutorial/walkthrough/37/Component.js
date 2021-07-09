@@ -13,7 +13,6 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/control/ProductRating.js",
 							"webapp/controller/App.controller.js",
 							"webapp/controller/Detail.controller.js",
-							"webapp/controller/HelloDialog.js",
 							"webapp/controller/HelloPanel.controller.js",
 							"webapp/controller/InvoiceList.controller.js",
 							"webapp/css/style.css",
@@ -37,7 +36,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/test/integration/NavigationJourney.js",
 							"webapp/test/integration/opaTests.qunit.html",
 							"webapp/test/unit/model/formatter.js",
-							"webapp/test/unit/unitTests.qunit.html"
+							"webapp/test/unit/unitTests.qunit.html",
+							"ui5.yaml",
+							"package.json"
 						]
 					}
 				}

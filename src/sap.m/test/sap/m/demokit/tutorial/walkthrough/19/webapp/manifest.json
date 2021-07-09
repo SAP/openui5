@@ -31,8 +31,9 @@
 			"id": "app"
 		},
 		"dependencies": {
-			"minUI5Version": "1.90",
+			"minUI5Version": "1.93",
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {}
 			}
 		},
@@ -46,6 +47,10 @@
 					],
 					"fallbackLocale": ""
 				}
+			},
+			"invoice": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "Invoices.json"
 			}
 		},
 		"resources": {
