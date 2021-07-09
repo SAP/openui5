@@ -571,10 +571,10 @@ sap.ui.define([
 					oField.setValueStateText("");
 				}
 				this._message = null;
-				if (bTriggerValidationAgain) {
-					//check validations
-					this._triggerValidation(this.getConfiguration().value);
-				}
+			}
+			if (!this._message && bFromDataRequest && bTriggerValidationAgain) {
+				//check validations
+				this._triggerValidation(this.getConfiguration().value);
 			}
 		}
 	};
