@@ -173,6 +173,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				group: "Delegates",
 				module: "./odata/v4/FilterBarDelegate.qunit"
 			},
+			"FilterUtil": {
+				group: "Util",
+				module: "./util/FilterUtil.qunit"
+			},
 			"DateUtil": {
 				group: "Util",
 				module: "./util/DateUtil.qunit",

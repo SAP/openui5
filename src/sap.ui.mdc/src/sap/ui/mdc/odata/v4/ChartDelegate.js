@@ -446,7 +446,7 @@ sap.ui.define([
 					oBindingInfo.filters = oFilterInfo.filters;
 				}
 
-				var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
+				var sParameterPath = DelegateUtil.getParametersInfo(oFilter);
 				if (sParameterPath) {
 					oBindingInfo.path = sParameterPath;
 				}
@@ -472,8 +472,8 @@ sap.ui.define([
 	/**
 	 * Checks the binding of the table and rebinds it if required.
 	 *
-	 * @param {Object} oMDCTable The MDC table instance
-	 * @param {Object} oRowBindingInfo The row binding info of the table
+	 * @param {Object} oMDCChart The MDC chart instance
+	 * @param {Object} oBindingInfo The row binding info of the table
 	 */
 	ChartDelegate.rebindChart = function(oMDCChart, oBindingInfo) {
 		BaseChartDelegate.rebindChart(oMDCChart, oBindingInfo);
