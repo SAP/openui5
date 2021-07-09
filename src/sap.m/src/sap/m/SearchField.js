@@ -108,7 +108,7 @@ sap.ui.define([
 			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 
 			/**
-			 * Text shown when no value available. Default placeholder text is the word "Search" in the current local language (if supported) or in English.
+			 * Text shown when no value available. If no placeholder value is set, the word "Search" in the current local language (if supported) or in English will be displayed as a placeholder (property value will still be <code>null</code> in that case).
 			 */
 			placeholder : {type : "string", group : "Misc", defaultValue : null},
 
