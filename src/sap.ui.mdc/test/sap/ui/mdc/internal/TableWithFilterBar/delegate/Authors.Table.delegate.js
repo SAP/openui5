@@ -6,23 +6,40 @@ sap.ui.define([
 
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);
 
-	AuthorsTableDelegate._createColumnTemplate = function (oInfo) {
+	AuthorsTableDelegate._createColumnTemplate = function (oProperty) {
 
-		var oProps = { value: "{" + (oInfo.path || oInfo.name) + "}", editMode: "Display", multipleLines: false};
+		var oCtrlProperties = { value: "{" + (oProperty.path || oProperty.name) + "}", editMode: "Display", multipleLines: false};
 
-		if (oInfo.name === "countryOfOrigin_code") {
-			oProps.value = "{countryOfOrigin/descr}";
+		if (oProperty.name === "countryOfOrigin_code") {
+			oCtrlProperties.value = "{countryOfOrigin/descr}";
 		}
 
-		if (oInfo.name === "regionOfOrigin_code") {
-			oProps.value = "{regionOfOrigin/text}";
+		if (oProperty.name === "regionOfOrigin_code") {
+			oCtrlProperties.value = "{regionOfOrigin/text}";
 		}
 
-		if (oInfo.name === "cityOfOrigin_city") {
-			oProps.value = "{cityOfOrigin/text}";
+		if (oProperty.name === "cityOfOrigin_city") {
+			oCtrlProperties.value = "{cityOfOrigin/text}";
 		}
 
-		return Promise.resolve(new Field(oProps));
+		return new Field(oCtrlProperties);
+	};
+
+	AuthorsTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
+		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
+			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
+
+			// oColumn.getTemplate().destroy();
+			// if (oColumn._oTemplateClone) {
+			// 	oColumn._oTemplateClone.destroy();
+			// 	delete oColumn._oTemplateClone;
+			// }
+
+			var oTemplate = AuthorsTableDelegate._createColumnTemplate(oProperty);
+			oColumn.setTemplate(oTemplate);
+
+			return oColumn;
+		});
 	};
 
 	return AuthorsTableDelegate;

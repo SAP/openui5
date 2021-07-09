@@ -45,6 +45,7 @@ sap.ui.define([
 		var fncGetDefaultSearchTemplateTable = function() {
 			if (!this._oDefaultSearchTemplateTable) {
 				this._oDefaultSearchTemplateTable = new sap.m.Table({
+					growing: true, growingScrollToLoad: true, growingThreshold: 20,
 					autoPopinMode: true,
 					contextualWidth: "Auto",
 					hiddenInPopin: ["Low"],
