@@ -12,8 +12,8 @@ sap.ui.define([
 
 	var SandboxModelHelper = {
 			/**
-			 * Adapts OData V4 Model parameters. For the "realOData" case, the serviceUrl is adapted
-			 * to a proxy Url and certain constructor parameters are taken from URL parameters.
+			 * Adapts OData V4 Model parameters taking certain constructor parameters from URL
+			 * parameters.
 			 *
 			 * @param {object} mParameters
 			 *   The original OData V4 model's constructor parameters
@@ -29,7 +29,7 @@ sap.ui.define([
 				return Object.assign({}, mParameters, {
 					earlyRequests : oUriParameters.get("earlyRequests") !== "false",
 					groupId : oUriParameters.get("$direct") ? "$direct" : mParameters.groupId,
-					serviceUrl : TestUtils.proxy(mParameters.serviceUrl),
+					serviceUrl : mParameters.serviceUrl,
 					updateGroupId : sUpdateGroupId || oUriParameters.get("updateGroupId")
 						|| mParameters.updateGroupId
 				});

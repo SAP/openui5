@@ -28,7 +28,7 @@ sap.ui.define([
 		createContent : function () {
 			var bRealOData = TestUtils.isRealOData(),
 				sBaseUrl = bRealOData
-					? TestUtils.proxy("/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/")
+					? "/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/"
 					: "test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/",
 				oLayout = new HBox({
 					renderType : "Bare"

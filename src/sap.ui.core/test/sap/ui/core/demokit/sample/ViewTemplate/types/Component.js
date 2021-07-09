@@ -45,10 +45,7 @@ sap.ui.define([
 						title : "Error"});
 				};
 
-			if (bRealOData) {
-				sUriV2 = this.proxy(sUriV2);
-				sUriV4 = this.proxy(sUriV4);
-			} else {
+			if (!bRealOData) {
 				TestUtils.useFakeServer(this.oSandbox,
 					"sap/ui/core/sample/ViewTemplate/types/data", {
 					"/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata" : {

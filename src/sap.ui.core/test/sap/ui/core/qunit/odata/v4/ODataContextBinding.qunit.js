@@ -4339,8 +4339,7 @@ sap.ui.define([
 		//*****************************************************************************************
 		QUnit.test("Action import on navigation property", function () {
 			var oModel = new ODataModel({
-					serviceUrl :
-						TestUtils.proxy("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"),
+					serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 					synchronizationMode : "None"
 				}),
 				oBinding = oModel.bindContext("EMPLOYEE_2_TEAM/" +
