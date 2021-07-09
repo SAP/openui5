@@ -4117,7 +4117,7 @@ sap.ui.define([
 			{keyName: "PageDown", trigger: qutils.triggerKeydown, arguments: [null, Key.Page.DOWN, false, false, false]}
 		];
 
-		assert.expect(aEventTargetGetters.length + aEventTargetGetters.length * aKeystrokes.length);
+		assert.expect(aEventTargetGetters.length + aEventTargetGetters.length * aKeystrokes.length + 2);
 
 		oTable.addEventDelegate({
 			onkeydown: function(oEvent) {
@@ -4143,6 +4143,17 @@ sap.ui.define([
 				oKeystroke.trigger.apply(qutils, aArguments);
 			}
 		}
+
+		oTreeTable.addEventDelegate({
+			onkeydown: function(oEvent) {
+				assert.ok(oEvent.isDefaultPrevented(), "Space (keydown): Default action was prevented (Page scrolling)");
+			}
+		});
+
+		var oTreeIcon = getCell(0, 0, null, null, oTreeTable).find(".sapUiTableTreeIconNodeClosed");
+		oTreeIcon.focus();
+		checkFocus(oTreeIcon, assert);
+		qutils.triggerKeydown(oTreeIcon, Key.SPACE, false, false, false);
 	});
 
 	QUnit.test("After leaving action mode", function(assert) {
