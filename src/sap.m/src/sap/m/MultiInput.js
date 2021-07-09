@@ -1654,7 +1654,7 @@ function(
 	 *
 	 * @protected
 	 * @param {HTMLElement} oTarget The target of the event.
-	 * @returns {Boolean} Boolean indicating if the target is a valid opener.
+	 * @returns {boolean} Boolean indicating if the target is a valid opener.
 	 */
 	MultiInput.prototype.isValueHelpOnlyOpener = function (oTarget) {
 		return [this._$input[0], this._getValueHelpIcon().getDomRef()].indexOf(oTarget) > -1;

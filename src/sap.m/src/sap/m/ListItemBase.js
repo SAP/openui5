@@ -752,7 +752,7 @@ function(
 	 * By default, when item should be in selectable mode
 	 *
 	 * Subclasses can overwrite in case of unselectable item.
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 * @private
 	 */
 	ListItemBase.prototype.isSelectable = function() {
@@ -832,7 +832,7 @@ function(
 	/**
 	 * Determines whether group header item or not.
 	 *
-	 * @return {Boolean}
+	 * @return {boolean}
 	 */
 	ListItemBase.prototype.isGroupHeader = function() {
 		return this._bGroupHeader;
@@ -842,7 +842,7 @@ function(
 	 * Determines whether item is in SingleSelectMaster mode or
 	 * other selection modes when includeItemInSelection is true
 	 *
-	 * @return {Boolean}
+	 * @return {boolean}
 	 */
 	ListItemBase.prototype.isIncludedIntoSelection = function() {
 		if (!this.isSelectable()) {
@@ -885,7 +885,7 @@ function(
 	/**
 	 * Determines whether item needs icon to render type or not
 	 *
-	 * @return {Boolean}
+	 * @return {boolean}
 	 */
 	ListItemBase.prototype.hasActiveType = function() {
 		var sType = this.getType();

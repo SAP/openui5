@@ -953,7 +953,7 @@ sap.ui.define([
 
 	/**
 	 * Shows/Hides the header pin button
-	 * @param {Boolean} bToggle
+	 * @param {boolean} bToggle
 	 * @private
 	 */
 	DynamicPage.prototype._togglePinButtonVisibility = function (bToggle) {
@@ -966,7 +966,7 @@ sap.ui.define([
 
 	/**
 	 * Toggles the header pin button pressed state
-	 * @param {Boolean} bPressed
+	 * @param {boolean} bPressed
 	 * @private
 	 */
 	DynamicPage.prototype._togglePinButtonPressedState = function (bPressed) {
@@ -1373,7 +1373,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the Header ARIA state depending on the <code>DynamicPageHeader</code> expanded/collapsed (snapped) state.
-	 * @param {Boolean} bExpanded determines if the header is expanded or collapsed (snapped).
+	 * @param {boolean} bExpanded determines if the header is expanded or collapsed (snapped).
 	 * @private
 	 */
 	DynamicPage.prototype._updateHeaderARIAState = function (bExpanded) {

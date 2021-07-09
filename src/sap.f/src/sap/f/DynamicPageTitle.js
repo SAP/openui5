@@ -686,7 +686,7 @@ sap.ui.define([
 	 * Checks if an action already exists in <code>DynamicPageTitle</code> actions/navigationActions.
 	 * @param {sap.ui.core.Control} oAction
 	 * @param {String} sAggregationName
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 * @private
 	 */
 	DynamicPageTitle.prototype._actionExists = function (oAction, sAggregationName) {
@@ -761,7 +761,7 @@ sap.ui.define([
 
 	/**
 	 * Toggles the <code>DynamicPageTitle</code>'s <code>tabindex</code> according to the provided state.
-	 * @param {Boolean} bFocusable
+	 * @param {boolean} bFocusable
 	 * @private
 	 */
 	DynamicPageTitle.prototype._toggleFocusableState = function (bFocusable) {
@@ -974,7 +974,7 @@ sap.ui.define([
 	/**
 	 * Updates the top title area visibility.
 	 *
-	 * @param {Boolean} bShoudShowTopArea
+	 * @param {boolean} bShoudShowTopArea
 	 * @private
 	 */
 	DynamicPageTitle.prototype._toggleTopAreaVisibility = function(bShoudShowTopArea) {
@@ -985,7 +985,7 @@ sap.ui.define([
 
 	/**
 	 * Determines if the <code>ToolbarSeparator</code> should be displayed.
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 * @private
 	 */
 	DynamicPageTitle.prototype._shouldShowSeparator = function() {
@@ -1040,7 +1040,7 @@ sap.ui.define([
 	/**
 	 * Determines if the <code>navigationActions</code> should be rendered in the top area.
 	 * @param {Number} iCurrentWidth
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 * @private
 	 */
 	DynamicPageTitle.prototype._shouldRenderNavigationActionsInTopArea = function (iCurrentWidth) {

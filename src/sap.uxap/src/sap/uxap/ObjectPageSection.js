@@ -199,7 +199,7 @@ sap.ui.define([
 	/**
 	 * Determines if the <code>ObjectPageSection</code> title is visible.
 	 * @private
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	ObjectPageSection.prototype._isTitleVisible = function () {
 		return (this.getShowTitle() && this._getInternalTitleVisible())

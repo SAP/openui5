@@ -520,7 +520,7 @@ sap.ui.define([
 	/**
 	 * Getter for aggregation columns.
 	 *
-	 * @param {Boolean} [bSort] set true to get the columns in an order that respects personalization settings
+	 * @param {boolean} [bSort] set true to get the columns in an order that respects personalization settings
 	 * @returns {sap.m.Column[]} columns of the Table
 	 * @public
 	 */

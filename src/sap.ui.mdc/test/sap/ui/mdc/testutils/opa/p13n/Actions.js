@@ -509,8 +509,8 @@ sap.ui.define([
 		},
 		/**
 		 *
-		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be personalized
-		 * @param {String[]} aColumns Array containing the keys of the columns that should be result of the personalisation
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be personalized
+		 * @param {string[]} aColumns Array containing the keys of the columns that should be result of the personalisation
 		 * @returns {Promise} Opa waitFor
 		 */
 		 iPersonalizeColumns: function(oControl, aColumns) {
@@ -593,15 +593,15 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * @typedef {Object} FilterPersonalizationConfiguration
-		 * @property {String} key of the item that should be result of the personalisation
-		 * @property {String} operator operator in which the items should be filtered
-		 * @property {String[]} values filter values for the given operator
-		 * @property {String} inputControl
+		 * @typedef {object} FilterPersonalizationConfiguration
+		 * @property {string} key of the item that should be result of the personalisation
+		 * @property {string} operator operator in which the items should be filtered
+		 * @property {string[]} values filter values for the given operator
+		 * @property {string} inputControl
 		 */
 		/**
 		 *
-		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be reset
 		 * @param {FilterPersonalizationConfiguration[]} aConfigurations an array containing the group personalization configuration objects
 		 * @returns {Promise} Opa waitFor
 		 */
@@ -649,13 +649,13 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * @typedef {Object} GroupPersonalizationConfiguration
-		 * @property {String} key of the item that should be result of the personalisation
-		 * @property {Boolean} showFieldAsColumn determinating if the "Show Field as Column" checkbox should be checked
+		 * @typedef {object} GroupPersonalizationConfiguration
+		 * @property {string} key of the item that should be result of the personalisation
+		 * @property {boolean} showFieldAsColumn determinating if the "Show Field as Column" checkbox should be checked
 		 */
 		/**
 		 *
-		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be reset
 		 * @param {GroupPersonalizationConfiguration[]} aConfigurations an array containing the group personalization configuration objects
 		 * @returns {Promise} Opa waitFor
 		 */
@@ -691,13 +691,13 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * @typedef {Object} SortPersonalizationConfiguration
-		 * @property {String} key of the item that should be result of the personalisation
-		 * @property {Boolean} descending determinating if the sort direction is descending
+		 * @typedef {object} SortPersonalizationConfiguration
+		 * @property {string} key of the item that should be result of the personalisation
+		 * @property {boolean} descending determinating if the sort direction is descending
 		 */
 		/**
 		 *
-		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be reset
 		 * @param {SortPersonalizationConfiguration[]} aConfigurations an array containing the sort personalization configuration objects
 		 * @returns {Promise} Opa waitFor
 		 */
@@ -734,7 +734,7 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * @param {sap.ui.core.Control | String} oControl Instance / ID of the control which is to be reset
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be reset
 		 * @returns {Promise} Opa waitFor
 		 */
 		iResetThePersonalization: function (oControl) {

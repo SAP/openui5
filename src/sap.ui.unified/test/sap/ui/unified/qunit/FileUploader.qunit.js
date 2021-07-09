@@ -43,8 +43,8 @@ sap.ui.define([
 	 * Helper function to create a fake file object, which has the same properties
 	 * as a real native File-Object.
 	 * If the browser is Firefox we need to wrap the file object in a Blob.
-	 * @param {Object} mProps
-	 * @param {Boolean} bIsFirefox
+	 * @param {object} mProps
+	 * @param {boolean} bIsFirefox
 	 */
 	var createFakeFile = function (mProps, bIsFirefox) {
 		var mProps = mProps || {},

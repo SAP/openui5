@@ -735,7 +735,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sKey The key to remove. If <code>null</code>, then the value of sText will be used as the key
 	 * @param {string} sText If key is <code>null</code> then this parameter will be used as the key
-	 * @returns {Boolean} <code>true</code> if the key was removed
+	 * @returns {boolean} <code>true</code> if the key was removed
 	 */
 	FacetFilterList.prototype._removeSelectedKey = function(sKey, sText) {
 

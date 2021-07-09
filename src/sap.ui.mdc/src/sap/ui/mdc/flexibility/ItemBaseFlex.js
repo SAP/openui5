@@ -58,7 +58,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sChangeType The current change type
 		 * @param {object} oControl The control defined as <code>selectorElement</code> in the change
-		 * @param {Boolean} bIsRevert Indicates if the current change is a revert
+		 * @param {boolean} bIsRevert Indicates if the current change is a revert
 		 */
 		beforeApply: function(sChangeType, oControl, bIsRevert) {
 			return;

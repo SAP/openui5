@@ -435,7 +435,7 @@ sap.ui.define([
 	 * for the current screen size.
 	 *
 	 * @private
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	ObjectPageSectionBase.prototype._getIsHidden = function () {
 		return this._isHidden;

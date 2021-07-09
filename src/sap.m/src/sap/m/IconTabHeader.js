@@ -502,7 +502,7 @@ sap.ui.define([
 	 * Sets the selected item, updates the UI, and fires the select event.
 	 * @private
 	 * @param {sap.m.IconTabFilter} oItem The item to be selected
-	 * @param {Boolean} bAPIChange whether this function is called through the API
+	 * @param {boolean} bAPIChange whether this function is called through the API
 	 * @returns {this} this pointer for chaining
 	 */
 	IconTabHeader.prototype.setSelectedItem = function (oItem, bAPIChange) {
@@ -841,7 +841,7 @@ sap.ui.define([
 
 	/**
 	 * Sets whether the currently selected item is preserved.
-	 * @param {Boolean} bPreserveSelection The new value
+	 * @param {boolean} bPreserveSelection The new value
 	 * @private
 	 */
 	IconTabHeader.prototype._setPreserveSelection = function (bPreserveSelection) {

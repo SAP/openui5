@@ -574,7 +574,7 @@ sap.ui.define([
 	 * Checks whether or not the menu has items. This function considers table and column
 	 * properties to determine whether the column menu would have items. If there is a menu set,
 	 * it will just check whether there are items in the item aggregation.
-	 * @returns {Boolean} True if the menu has or could have items.
+	 * @returns {boolean} True if the menu has or could have items.
 	 * @private
 	 */
 	Column.prototype._menuHasItems = function() {

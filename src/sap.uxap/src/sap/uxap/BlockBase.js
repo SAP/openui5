@@ -827,7 +827,7 @@ sap.ui.define([
 		 * Determines whether the <code>sap.uxap.BlockBase</code> should be loaded lazily.
 		 * There are 3 prerequisites - lazy loading sould be enabled, the block should not be connected
 		 * and the block is used whithin <code>sap.uxap.ObjectPageSubSection</code>
-		 * @returns {Boolean}
+		 * @returns {boolean}
 		 * @private
 		 */
 		BlockBase.prototype._shouldLazyLoad = function () {

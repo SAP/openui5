@@ -536,7 +536,7 @@ function(
 		 * Checks whether the provided control is a view
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {Boolean} Flag
+		 * @returns {boolean} Flag
 		 * @see sap.ui.core.Component.getOwnerIdFor
 		 * @private
 		 */

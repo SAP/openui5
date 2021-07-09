@@ -294,7 +294,7 @@ sap.ui.define([
 	 * in order to update the <code>ShareMenu</code> mode.
 	 *
 	 * @param {sap.f.semantic.SemanticControl} oControl
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	SemanticShareMenu.prototype._onControlAdded = function(oControl) {
 		if (this._isInitialMode()) {
@@ -306,7 +306,7 @@ sap.ui.define([
 	 * The method is called after a control has been removed
 	 * in order to update the <code>ShareMenu</code> mode.
 	 *
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	SemanticShareMenu.prototype._onControlRemoved = function() {
 		var iActions = this._aShareMenuActions.length,

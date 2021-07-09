@@ -165,8 +165,8 @@ sap.ui.define([
 	 * old name are added so that existing applications will still run.
 	 *
 	 * @deprecated
-	 * @param {Boolean} bReqiuredAtBegin new value for property requiredAtBegin.
-	 * @returns {Object} Result of function execution.
+	 * @param {boolean} bReqiuredAtBegin new value for property requiredAtBegin.
+	 * @returns {this} Result of function execution.
 	 */
 	Label.prototype.setReqiuredAtBegin = function(bReqiuredAtBegin){
 		return this.setRequiredAtBegin(bReqiuredAtBegin);
@@ -179,7 +179,7 @@ sap.ui.define([
 	 * old name are added so that existing applications will still run.
 	 *
 	 * @deprecated
-	 * @returns {Object} Result of function execution.
+	 * @returns {boolean} Result of function execution.
 	 */
 	Label.prototype.getReqiuredAtBegin = function(){
 		return this.getRequiredAtBegin();

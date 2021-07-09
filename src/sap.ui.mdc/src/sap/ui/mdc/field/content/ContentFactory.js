@@ -131,7 +131,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.field.content.DefaultContent} oContentType The content type object
 	 * @param {sap.ui.mdc.enum.EditMode} sEditMode The display mode of the {@link sap.ui.mdc.field.FieldBase}
 	 * @param {Integer} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
-	 * @param {Boolean} bMultipleLines Determines if the content type has a multiple line input
+	 * @param {boolean} bMultipleLines Determines if the content type has a multiple line input
 	 * @param {String[]} aOperators Names of the operators if the <code>EditOperator</code> content mode is used
 	 * @returns {sap.ui.mdc.enum.ContentMode} sContentMode A given content mode
 	 */
@@ -154,7 +154,7 @@ sap.ui.define([
 	 * Determines which content type object to use.
 	 * @param {sap.ui.mdc.enum.BaseType} sBaseType Base type determined by {@link sap.ui.mdc.field.FieldBase}
 	 * @param {Integer} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
-	 * @param {Boolean} bIsTriggerable Checks if the {@link sap.ui.mdc.field.FieldBase} is triggerable or not - needed for link content type
+	 * @param {boolean} bIsTriggerable Checks if the {@link sap.ui.mdc.field.FieldBase} is triggerable or not - needed for link content type
 	 * @returns {sap.ui.mdc.field.content.DefaultContent} oContentType Content type object
 	 */
 	ContentFactory.prototype.getContentType = function(sBaseType, iMaxConditions, bIsTriggerable) {

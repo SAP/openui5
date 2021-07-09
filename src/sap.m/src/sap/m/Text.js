@@ -291,7 +291,7 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 	 *
 	 * @since 1.20
 	 * @protected
-	 * @return {Boolean}
+	 * @return {boolean}
 	 */
 	Text.prototype.canUseNativeLineClamp = function () {
 		// has line clamp feature

@@ -25,9 +25,9 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 *
 	 * @param {String} sLayer - determines the layer for obtaining the content
 	 * @param {String} sContentSuffix - namespace plus filename and file type of content
-	 * @param {Boolean} bReadContextMetadata - read content plus metadata information
-	 * @param {Boolean} bReadRuntimeContext - gets the content in runtime instead of design time
-	 * @param {Boolean} bRequestAsText - gets content data as plain text
+	 * @param {boolean} bReadContextMetadata - read content plus metadata information
+	 * @param {boolean} bReadRuntimeContext - gets the content in runtime instead of design time
+	 * @param {boolean} bRequestAsText - gets content data as plain text
 	 * @returns {Promise} Promise of GET content request to the back end
 	 * @public
 	 */
@@ -174,8 +174,8 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * Get context suffix for request URL.
 	 *
 	 * @param {String} sLayerSuffix - layer suffix based on selected layer
-	 * @param {Boolean} bReadRuntimeContext - gets content in runtime instead of design time
-	 * @param {Boolean} bReadContextMetadata - reads content plus metadata information
+	 * @param {boolean} bReadRuntimeContext - gets content in runtime instead of design time
+	 * @param {boolean} bReadContextMetadata - reads content plus metadata information
 	 * @returns {String} correct context suffix for URL request
 	 * @private
 	 */
@@ -212,7 +212,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @param {String} sUrl - request URL
 	 * @param {Function} fnResolve - callback function if request was resolved
 	 * @param {Function} fnReject - callback function if request was rejected
-	 * @param {Boolean} bRequestAsText - sends ajax request with data type as plain text
+	 * @param {boolean} bRequestAsText - sends ajax request with data type as plain text
 	 * @private
 	 */
 	LrepConnector._sendContentRequest = function (sUrl, fnResolve, fnReject, bRequestAsText) {
