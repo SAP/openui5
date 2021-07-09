@@ -3141,17 +3141,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 ["~aElements", undefined].forEach(function (aElements, i) {
-	[true, undefined].forEach(function (vFinalLength, j) {
+	[
+		{vFinalLength : true, iLimit : 100},
+		{vFinalLength : false, iLimit : undefined},
+		{vFinalLength : undefined, iLimit : undefined}
+	].forEach(function (oFixture, j) {
 	QUnit.test("_calculateRequiredGroupSection: use ODataUtils._getReadIntervals " + i + ", " + j,
 			function (assert) {
 		var oBinding = {
-				mFinalLength : {"/" : vFinalLength},
+				mFinalLength : {"/" : oFixture.vFinalLength},
 				mKeyIndex : {"/" : aElements},
 				mLength : {"/" : 100}
 			};
 
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(aElements ? "~aElements" : [], 20, 70, 0, vFinalLength ? 100 : undefined)
+			.withExactArgs(aElements ? "~aElements" : [], 20, 70, 0, oFixture.iLimit)
 			.returns([{start : 30, end : 71}]);
 
 		// code under test

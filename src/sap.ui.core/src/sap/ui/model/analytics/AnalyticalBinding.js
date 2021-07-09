@@ -3492,7 +3492,7 @@ sap.ui.define([
 	AnalyticalBinding.prototype._calculateRequiredGroupSection = function (sGroupId, iStartIndex,
 			iLength, iThreshold) {
 		var aElements = this.mKeyIndex[sGroupId] || [],
-			iLimit = this.mFinalLength[sGroupId] && this.mLength[sGroupId],
+			iLimit = this.mFinalLength[sGroupId] ? this.mLength[sGroupId] : undefined,
 			aIntervals = ODataUtils._getReadIntervals(aElements, iStartIndex, iLength, iThreshold,
 				iLimit);
 
