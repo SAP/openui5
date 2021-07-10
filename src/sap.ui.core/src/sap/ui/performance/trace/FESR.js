@@ -273,7 +273,8 @@ sap.ui.define([
 	 * @since 1.58
 	 * @alias module:sap/ui/performance/trace/FESR
 	 * @static
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ushell
 	 */
 	var FESR = {};
 

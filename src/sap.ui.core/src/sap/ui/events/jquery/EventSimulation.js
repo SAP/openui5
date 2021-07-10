@@ -17,7 +17,8 @@ sap.ui.define([
 	/**
 	 * @namespace
 	 * @alias module:sap/ui/events/jquery/EventSimulation
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	var oEventSimulation = {};
 
@@ -30,10 +31,10 @@ sap.ui.define([
 	 * This function adds the simulated event prefixed with string "sap" to ControlEvents.events.
 	 *
 	 * When UIArea binds to the simulated event with prefix, it internally binds to the original events with the given handler and
-	 * also provides the additional configuration data in the follwing format:
+	 * also provides the additional configuration data in the following format:
 	 *
 	 * {
-	 * 	domRef: // the dom reference of the UIArea
+	 * 	domRef: // the DOM reference of the UIArea
 	 * 	eventName: // the simulated event name
 	 * 	sapEventName: // the simulated event name with sap prefix
 	 * 	eventHandle: // the handler that should be registered to simulated event with sap prefix
@@ -114,8 +115,8 @@ sap.ui.define([
 			sTouchStartControlId = $DomRef.data("__touchstart_control"),
 			oTouchStartControlDOM = sTouchStartControlId && window.document.getElementById(sTouchStartControlId);
 
-		// Checks if the mouseout event should be handled, the mouseout of the inner dom shouldn't be handled when the mouse cursor
-		// is still inside the control's root dom node
+		// Checks if the mouseout event should be handled, the mouseout of the inner DOM shouldn't be handled when the mouse cursor
+		// is still inside the control's root DOM node
 		if (oEvent.type === "mouseout" && !checkMouseEnterOrLeave(oEvent, oConfig.domRef)
 			&& (!oTouchStartControlDOM || !checkMouseEnterOrLeave(oEvent, oTouchStartControlDOM))
 		) {
@@ -377,7 +378,7 @@ sap.ui.define([
 		//
 		// UIArea binds to both touchstart and saptouchstart event and saptouchstart internally also binds to touchstart event. Before
 		// jQuery version 1.9.1, the touchstart event handler is called before the saptouchstart event handler and our flags (e.g. _sapui_handledByUIArea)
-		// still work. However since the order of event registration is inversed from jQuery version 1.9.1, the saptouchstart event hanlder is called
+		// still work. However since the order of event registration is inversed from jQuery version 1.9.1, the saptouchstart event handler is called
 		// before the touchstart one, our flags don't work anymore.
 		//
 		// Therefore jQuery version needs to be checked in order to decide the event order in ControlEvents.events.

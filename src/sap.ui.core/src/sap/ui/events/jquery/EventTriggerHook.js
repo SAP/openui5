@@ -35,7 +35,7 @@ sap.ui.define([
 					oEvent.stopImmediatePropagation();
 					if (bIsLoggable) {
 						t1 = window.performance.now();
-						Log.debug("Perf: jQuery trigger supression event handler " + oEvent.type + " took " + (t1 - t0) + " milliseconds.");
+						Log.debug("Perf: jQuery trigger suppression event handler " + oEvent.type + " took " + (t1 - t0) + " milliseconds.");
 					}
 					return false; //prevent further jQuery processing.
 				}
