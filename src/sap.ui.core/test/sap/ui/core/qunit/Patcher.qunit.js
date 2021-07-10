@@ -6,6 +6,8 @@ sap.ui.define([
 	"use strict";
 	/*global QUnit, CSS*/
 
+	var oPatcher = new Patcher();
+
 	QUnit.module("Patching", {
 		before: function() {
 			this.oContainer = document.getElementById("qunit-fixture");
@@ -28,58 +30,61 @@ sap.ui.define([
 				});
 
 				var oElement = this.oContainer.firstChild;
-				Patcher.setRootNode(oElement);
+				oPatcher.setRootNode(oElement);
 				fnPatch(oElement);
-				Patcher.reset();
+				oPatcher.reset();
 
 				var aMutations = this.oObserver.takeRecords();
 				this.oObserver.disconnect();
 
 				fnMutation(aMutations, this.oContainer.firstChild);
 			};
+		},
+		after: function() {
+			QUnit.assert.deepEqual(oPatcher, new Patcher());
 		}
 	});
 
 	QUnit.test("No DOM patching needed - Normal tag", function(assert) {
 
 		this.html("<div></div>").patch(function() {
-			Patcher.openStart("div").openEnd().close("div");
+			oPatcher.openStart("div").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - empty");
 		});
 
 		this.html("<div id='x'></div>").patch(function() {
-			Patcher.openStart("div").attr("id", "x").openEnd().close("div");
+			oPatcher.openStart("div").attr("id", "x").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - key");
 		});
 
 		this.html("<div tabindex='0'></div>").patch(function() {
-			Patcher.openStart("div").attr("tabindex", 0).openEnd().close("div");
+			oPatcher.openStart("div").attr("tabindex", 0).openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - attribute");
 		});
 
 		this.html("<div tabindex='0' role='application'></div>").patch(function() {
-			Patcher.openStart("div").attr("tabindex", 0).attr("role", "application").openEnd().close("div");
+			oPatcher.openStart("div").attr("tabindex", 0).attr("role", "application").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - attributes");
 		});
 
 		this.html("<div title='" + encodeXML("~!@#$%^&*()_+{}:<>?\'\"") + "'></div>").patch(function() {
-			Patcher.openStart("div").attr("title", "~!@#$%^&*()_+{}:<>?\'\"").openEnd().close("div");
+			oPatcher.openStart("div").attr("title", "~!@#$%^&*()_+{}:<>?\'\"").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - attribute escaped");
 		});
 
 		this.html("<div class='x'></div>").patch(function() {
-			Patcher.openStart("div").class("x").openEnd().close("div");
+			oPatcher.openStart("div").class("x").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - class");
 		});
 
 		this.html("<div class='x y z'></div>").patch(function() {
-			Patcher.openStart("div").class("x").class("y").class("z").openEnd().close("div");
+			oPatcher.openStart("div").class("x").class("y").class("z").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - classes");
 		});
@@ -87,7 +92,7 @@ sap.ui.define([
 		this.html("<div></div>", function(oElement) {
 			oElement.style.width = "10px";
 		}).patch(function() {
-			Patcher.openStart("div").style("width", "10px").openEnd().close("div");
+			oPatcher.openStart("div").style("width", "10px").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - style");
 		});
@@ -95,7 +100,7 @@ sap.ui.define([
 		this.html("<div></div>", function(oElement) {
 			oElement.style = "width: 10px; background-color: pink;";
 		}).patch(function() {
-			Patcher.openStart("div").style("width", "10px").style("background-color", "pink").openEnd().close("div");
+			oPatcher.openStart("div").style("width", "10px").style("background-color", "pink").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - styles");
 		});
@@ -103,31 +108,31 @@ sap.ui.define([
 		this.html("<div></div>", function(oElement) {
 			oElement.style = 'font-family: "He\\"rb;width:0";';
 		}).patch(function() {
-			Patcher.openStart("div").style("font-family", '"He\\"rb;width:0"').openEnd().close("div");
+			oPatcher.openStart("div").style("font-family", '"He\\"rb;width:0"').openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - style with semicolon");
 		});
 
 		this.html("<div>Text</div>").patch(function() {
-			Patcher.openStart("div").openEnd().text("Text").close("div");
+			oPatcher.openStart("div").openEnd().text("Text").close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - text node");
 		});
 
 		this.html(" <div>Te xt</div>\t\n").patch(function() {
-			Patcher.text(" ").openStart("div").openEnd().text("Te xt").close("div").text("\t\n");
+			oPatcher.text(" ").openStart("div").openEnd().text("Te xt").close("div").text("\t\n");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - whitespace - text node");
 		});
 
 		this.html("<div tabindex='0'>Text</div>").patch(function() {
-			Patcher.openStart("div").attr("tabindex", 0).openEnd().text("Text").close("div");
+			oPatcher.openStart("div").attr("tabindex", 0).openEnd().text("Text").close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Normal tag - attribute - text node");
 		});
 
 		this.html("<div id='x' tabindex='0' title='t'></div>").patch(function() {
-			Patcher.openStart("div").attr("title", "t").attr("id", "x").attr("tabindex", 0).openEnd().close("div");
+			oPatcher.openStart("div").attr("title", "t").attr("id", "x").attr("tabindex", 0).openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 0, "Normal tag - attribute order changes");
 		});
@@ -144,7 +149,7 @@ sap.ui.define([
 				document.getElementById("n").style.width = "10px";
 			}
 		).patch(function() {
-			Patcher.
+			oPatcher.
 			openStart("div", "d").attr("title", "t").openEnd().
 				openStart("div").class("x").openEnd().close("div").openStart("div").class("x").openEnd().close("div").
 				openStart("div", "n").style("width", "10px").openEnd().openStart("div").openEnd().close("div").close("div").
@@ -161,43 +166,43 @@ sap.ui.define([
 	QUnit.test("No DOM patching needed - Void tag", function(assert) {
 
 		this.html("<img>").patch(function() {
-			Patcher.voidStart("img").voidEnd();
+			oPatcher.voidStart("img").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - empty");
 		});
 
 		this.html("<img id='x'>").patch(function() {
-			Patcher.voidStart("img").attr("id", "x").voidEnd();
+			oPatcher.voidStart("img").attr("id", "x").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - key");
 		});
 
 		this.html("<img tabindex='0'>").patch(function() {
-			Patcher.voidStart("img").attr("tabindex", 0).voidEnd();
+			oPatcher.voidStart("img").attr("tabindex", 0).voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - attribute");
 		});
 
 		this.html("<img tabindex='0' role='application'>").patch(function() {
-			Patcher.voidStart("img").attr("tabindex", 0).attr("role", "application").voidEnd();
+			oPatcher.voidStart("img").attr("tabindex", 0).attr("role", "application").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - attributes");
 		});
 
 		this.html("<img title='" + encodeXML("~!@#$%^&*()_+{}:<>?\'\"") + "'>").patch(function() {
-			Patcher.voidStart("img").attr("title", "~!@#$%^&*()_+{}:<>?\'\"").voidEnd();
+			oPatcher.voidStart("img").attr("title", "~!@#$%^&*()_+{}:<>?\'\"").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - attribute escaped");
 		});
 
 		this.html("<img class='x'>").patch(function() {
-			Patcher.voidStart("img").class("x").voidEnd();
+			oPatcher.voidStart("img").class("x").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - class");
 		});
 
 		this.html("<img class='x y z'>").patch(function() {
-			Patcher.voidStart("img").class("x").class("y").class("z").voidEnd();
+			oPatcher.voidStart("img").class("x").class("y").class("z").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - classes");
 		});
@@ -205,7 +210,7 @@ sap.ui.define([
 		this.html("<img>", function(oElement) {
 			oElement.style.width = "10px";
 		}).patch(function() {
-			Patcher.voidStart("img").style("width", "10px").voidEnd();
+			oPatcher.voidStart("img").style("width", "10px").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - style");
 		});
@@ -214,7 +219,7 @@ sap.ui.define([
 			oElement.style.width = "10px";
 			oElement.style.height = "20px";
 		}).patch(function() {
-			Patcher.voidStart("img").style("width", "10px").style("height", "20px").voidEnd();
+			oPatcher.voidStart("img").style("width", "10px").style("height", "20px").voidEnd();
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "Void tag - styles");
 		});
@@ -235,7 +240,7 @@ sap.ui.define([
 				oElement.lastChild.style.height = "100%";
 			}
 		).patch(function() {
-			Patcher.
+			oPatcher.
 			openStart("svg", "x").attr("viewBox", "-5 -5 10 10").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
 				openStart("linearGradient").attr("gradientTransform", "rotate(90)").openEnd().
 					openStart("stop").attr("offset", '5%').attr("stop-color", "gold").openEnd().close("stop").
@@ -252,49 +257,49 @@ sap.ui.define([
 	QUnit.test("Attribute/property/text changes", function(assert) {
 
 		this.html("<div id='x'></div>").patch(function() {
-			Patcher.openStart("div").attr("id", "y").openEnd().close("div");
+			oPatcher.openStart("div").attr("id", "y").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.id, "y", "id attribute is changed");
 		});
 
 		this.html("<div id='x'></div>").patch(function() {
-			Patcher.openStart("div").openEnd().close("div");
+			oPatcher.openStart("div").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.getAttribute("id"), null, "id is removed");
 		});
 
 		this.html("<div>X</div>").patch(function() {
-			Patcher.openStart("div").openEnd().text("Y").close("div");
+			oPatcher.openStart("div").openEnd().text("Y").close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(aMutations[0].target.nodeValue, "Y", "text node patched");
 		});
 
 		this.html("<div>X</div>").patch(function() {
-			Patcher.openStart("div").openEnd().close("div");
+			oPatcher.openStart("div").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.textContent, "", "no text left");
 		});
 
 		this.html("<div class='x'></div>").patch(function() {
-			Patcher.openStart("div").class("y").openEnd().close("div");
+			oPatcher.openStart("div").class("y").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.className, "y", "class attribute is changed");
 		});
 
 		this.html("<div class='x'></div>").patch(function() {
-			Patcher.openStart("div").openEnd().close("div");
+			oPatcher.openStart("div").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.notOk(oElement.getAttribute("class"), "class attribute is removed");
 		});
 
 		this.html("<div class='x y'></div>").patch(function() {
-			Patcher.openStart("div").class("y").class("x").openEnd().close("div");
+			oPatcher.openStart("div").class("y").class("x").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.className, "y x", "class attribute is changed, order is ignored");
@@ -303,7 +308,7 @@ sap.ui.define([
 		this.html("<div></div>", function(oElement) {
 			oElement.style.width = "calc(100% - 3rem)";
 		}).patch(function() {
-			Patcher.openStart("div").style("width", "calc(100% - 2rem)").openEnd().close("div");
+			oPatcher.openStart("div").style("width", "calc(100% - 2rem)").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.getAttribute("style"), "width: calc(100% - 2rem);", "style is changed");
@@ -312,7 +317,7 @@ sap.ui.define([
 		this.html("<div></div>", function(oElement) {
 			oElement.style.width = "10px";
 		}).patch(function() {
-			Patcher.openStart("div").openEnd().close("div");
+			oPatcher.openStart("div").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.getAttribute("style"), null, "style attribute is removed");
@@ -321,7 +326,7 @@ sap.ui.define([
 		this.html("<div></div>", function(oElement) {
 			oElement.style.width = "10px";
 		}).patch(function() {
-			Patcher.openStart("div").style("width", "").openEnd().close("div");
+			oPatcher.openStart("div").style("width", "").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.getAttribute("style"), null, "style attribute is removed since it had no value");
@@ -330,7 +335,7 @@ sap.ui.define([
 		this.html("<div></div>", function(oElement) {
 			oElement.style.width = "10px";
 		}).patch(function() {
-			Patcher.openStart("div").style("width", "10px; color: red").openEnd().close("div");
+			oPatcher.openStart("div").style("width", "10px; color: red").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.getAttribute("style"), "", "style attribute is empty");
@@ -339,7 +344,7 @@ sap.ui.define([
 		});
 
 		this.html("<div></div>").patch(function() {
-			Patcher.openStart("div").style("background-image", "url(\"" + CSS.escape("~!@#$%^&(;)_+{}'.jpg") + "\")").openEnd().close("div");
+			oPatcher.openStart("div").style("background-image", "url(\"" + CSS.escape("~!@#$%^&(;)_+{}'.jpg") + "\")").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change - style attribute");
 
@@ -348,14 +353,14 @@ sap.ui.define([
 		});
 
 		this.html("<div></div>").patch(function() {
-			Patcher.openStart("div").style("background-image", 'url("a;b.png")').openEnd().close("div");
+			oPatcher.openStart("div").style("background-image", 'url("a;b.png")').openEnd().close("div");
 		}, function(aMutations, oElement) {
 			// safari is returning the full path e.g. "url("http://localhost:8080/testsuite/~!@#$%^&()_+{}'.jpg")"
 			assert.equal(oElement.style.backgroundImage.replace(/http.*\//, ""), 'url("a;b.png")', "escaping did not modify semicolons");
 		});
 
 		this.html("<div id='x' tabindex='0' title='t'></div>").patch(function() {
-			Patcher.openStart("div", "y").attr("tabindex", 1).attr("title", "i").openEnd().close("div");
+			oPatcher.openStart("div", "y").attr("tabindex", 1).attr("title", "i").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 3, "3 changes");
 			assert.equal(oElement.id, "y", "id key is changed");
@@ -364,7 +369,7 @@ sap.ui.define([
 		});
 
 		this.html("<input value='1'>").patch(function(oElement) {
-			Patcher.voidStart("input").voidEnd();
+			oPatcher.voidStart("input").voidEnd();
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.value, "", "value property is changed");
@@ -372,7 +377,7 @@ sap.ui.define([
 
 		this.html("<input value='1'>").patch(function(oElement) {
 			oElement.value = 10;
-			Patcher.voidStart("input").attr("value", 0).voidEnd();
+			oPatcher.voidStart("input").attr("value", 0).voidEnd();
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.getAttribute("value"), "0", "value attribute is changed");
@@ -381,14 +386,14 @@ sap.ui.define([
 
 		this.html("<input type='radio' checked='checked'>").patch(function(oElement) {
 			oElement.checked = false;
-			Patcher.voidStart("input").attr("type", "radio").attr("checked", "checked").voidEnd();
+			oPatcher.voidStart("input").attr("type", "radio").attr("checked", "checked").voidEnd();
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 0, "No change");
 			assert.equal(oElement.checked, true, "but checked property is updated");
 		});
 
 		this.html("<input type='radio' checked=''>").patch(function(oElement) {
-			Patcher.voidStart("input").attr("type", "radio").voidEnd();
+			oPatcher.voidStart("input").attr("type", "radio").voidEnd();
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Boolean checked attribute is removed");
 			assert.equal(oElement.checked, false, "checked property is up-to-date");
@@ -401,7 +406,7 @@ sap.ui.define([
 			"</select>"
 		).patch(function(oElement) {
 			oElement.lastChild.selected = false;
-			Patcher.openStart("select").openEnd().
+			oPatcher.openStart("select").openEnd().
 				openStart("option").openEnd().close("option").
 				openStart("option").attr("selected", "selected").openEnd().close("option").
 			close("select");
@@ -411,7 +416,7 @@ sap.ui.define([
 		});
 
 		this.html("<div value='value'></div>").patch(function(oElement) {
-			Patcher.openStart("div").
+			oPatcher.openStart("div").
 				attr("value", "newvalue").
 				attr("checked", "checked").
 				attr("selected", "selected").
@@ -431,7 +436,7 @@ sap.ui.define([
 	QUnit.test("NodeName changes", function(assert) {
 
 		this.html("<div></div>").patch(function() {
-			Patcher.openStart("span").openEnd().close("span");
+			oPatcher.openStart("span").openEnd().close("span");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "One change - div is replaced with span");
 			assert.equal(oElement.tagName, "SPAN", "span is rendered");
@@ -440,7 +445,7 @@ sap.ui.define([
 		});
 
 		this.html("<div></div>").patch(function() {
-			Patcher.voidStart("input").voidEnd();
+			oPatcher.voidStart("input").voidEnd();
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "One change - div is replaced with input");
 			assert.equal(oElement.tagName, "INPUT", "input is rendered");
@@ -449,7 +454,7 @@ sap.ui.define([
 		});
 
 		this.html("<input>").patch(function() {
-			Patcher.openStart("svg").attr("viewBox", "-5 -5 10 10").openEnd().close("svg");
+			oPatcher.openStart("svg").attr("viewBox", "-5 -5 10 10").openEnd().close("svg");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "One change - input is replaced with svg element");
 			assert.equal(oElement.tagName, "svg", "svg is rendered");
@@ -459,7 +464,7 @@ sap.ui.define([
 		});
 
 		this.html("<span>Text</span>").patch(function() {
-			Patcher.openStart("span").openEnd().
+			oPatcher.openStart("span").openEnd().
 				openStart("div").openEnd().close("div").
 			close("span");
 		}, function(aMutations, oElement) {
@@ -470,7 +475,7 @@ sap.ui.define([
 		});
 
 		this.html("<span>Text<img></span>").patch(function() {
-			Patcher.openStart("span").openEnd().
+			oPatcher.openStart("span").openEnd().
 				voidStart("img").voidEnd().text("Text").
 			close("span");
 		}, function(aMutations, oElement) {
@@ -487,20 +492,20 @@ sap.ui.define([
 	QUnit.test("Patching - Keys", function(assert) {
 
 		this.html("<div id='x'></div>").patch(function() {
-			Patcher.openStart("div", "x").openEnd().close("div");
+			oPatcher.openStart("div", "x").openEnd().close("div");
 		}, function(aMutations) {
 			assert.equal(aMutations.length, 0, "No patching is needed");
 		});
 
 		this.html("<div id='x'></div>").patch(function() {
-			Patcher.openStart("div", "y").openEnd().close("div");
+			oPatcher.openStart("div", "y").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
 			assert.equal(oElement.id, "y", "id key is changed, this is only allowed for the root node");
 		});
 
 		this.html("<div id='x'></div>").patch(function() {
-			Patcher.openStart("span", "x").openEnd().close("span");
+			oPatcher.openStart("span", "x").openEnd().close("span");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "One change: tag is replaced while keys are equal");
 			assert.equal(oElement.id, "x", "id is not changed");
@@ -510,7 +515,7 @@ sap.ui.define([
 		});
 
 		this.html("<ul><li id='x'></li></ul>").patch(function() {
-			Patcher.openStart("ul").openEnd().openStart("li", "y").openEnd().close("li").close("ul");
+			oPatcher.openStart("ul").openEnd().openStart("li", "y").openEnd().close("li").close("ul");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 2, "Two changes: no reuse of old element with key");
 			assert.equal(oElement.firstChild.id, "y", "id is updated");
@@ -519,7 +524,7 @@ sap.ui.define([
 		});
 
 		this.html("<ul><li></li></ul>").patch(function() {
-			Patcher.openStart("ul").openEnd().openStart("li", "y").openEnd().close("li").close("ul");
+			oPatcher.openStart("ul").openEnd().openStart("li", "y").openEnd().close("li").close("ul");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "One change: reuse of old element because has no id");
 			assert.equal(oElement.firstChild.id, "y", "id is updated");
@@ -530,7 +535,7 @@ sap.ui.define([
 				"<li id='x'></li>" +
 			"</ul>"
 		).patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				openStart("li", "y").openEnd().close("li").
 				openStart("li", "x").openEnd().close("li").
 			close("ul");
@@ -547,7 +552,7 @@ sap.ui.define([
 				"<li id='y'>Y</li>" +
 			"</ul>"
 		).patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				openStart("li", "x").openEnd().text("X").close("li").
 			close("ul");
 		}, function(aMutations, oElement) {
@@ -562,7 +567,7 @@ sap.ui.define([
 				"<li id='y'>Y</li>" +
 			"</ul>"
 		).patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				openStart("li", "y").openEnd().text("Y").close("li").
 				openStart("li", "x").openEnd().text("X").close("li").
 			close("ul");
@@ -580,7 +585,7 @@ sap.ui.define([
 				"<li id='y'>Y</li>" +
 			"</ul>"
 		).patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				openStart("li", "x").openEnd().text("X").close("li").
 				openStart("li", "z").openEnd().text("Z").close("li").
 				openStart("li", "y").openEnd().text("Y").close("li").
@@ -599,7 +604,7 @@ sap.ui.define([
 				"<li id='prefix-y'></li>" +
 			"</ul>"
 		).patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				openStart("li", "y").openEnd().close("li").
 			close("ul");
 		}, function(aMutations, oElement) {
@@ -609,7 +614,7 @@ sap.ui.define([
 
 		this.html("<ul></ul>").patch(function() {
 
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				openStart("li", "a").attr("title", "a").openEnd().text("a").close("li").
 				openStart("li", "b").attr("title", "b").openEnd().text("b").close("li").
 				openStart("li", "c").attr("data-title", "c").class("c").style("color", "red").openEnd().
@@ -647,7 +652,7 @@ sap.ui.define([
 				"<li id='y'>2</li>" +
 			"</ul>"
 		).patch(function() {
-			Patcher.openStart("ul").openEnd().close("ul");
+			oPatcher.openStart("ul").openEnd().close("ul");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change: all children are removed with one delete operation");
 			assert.equal(aMutations[0].removedNodes.length, 2, "Two children are removed");
@@ -660,7 +665,7 @@ sap.ui.define([
 				"<li id='x'><input><b>Test</b></li>" +
 			"</ul>"
 		).patch(function() {
-			Patcher.openStart("ul").openEnd().openStart("li").openEnd().close("li").close("ul");
+			oPatcher.openStart("ul").openEnd().openStart("li").openEnd().close("li").close("ul");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change: last item is removed with one delete operation");
 			assert.equal(oElement.childElementCount, 1, "Has only one child");
@@ -668,7 +673,7 @@ sap.ui.define([
 		});
 
 		this.html("<ul></ul>").patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				openStart("li").attr("title", "x").openEnd().
 					openStart("b").openEnd().text(1).close("b").
 				close("li").
@@ -687,7 +692,7 @@ sap.ui.define([
 	QUnit.test("Patching unsafeHtml", function(assert) {
 
 		this.html("<div>Here can be any content from outside</div>").patch(function() {
-			Patcher.openStart("div").openEnd().
+			oPatcher.openStart("div").openEnd().
 				unsafeHtml("Plain text actually not supported with unsafeHtml").
 			close("div");
 		}, function(aMutations, oElement) {
@@ -696,7 +701,7 @@ sap.ui.define([
 		});
 
 		this.html("<ul></ul>").patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				unsafeHtml("<li id='x'><input><b>Test</b></li>").
 				unsafeHtml("<li id='y'><input><b>Test</b></li>").
 			close("ul");
@@ -706,14 +711,14 @@ sap.ui.define([
 		});
 
 		this.html("<div></div>").patch(function() {
-			Patcher.unsafeHtml("<img>");
+			oPatcher.unsafeHtml("<img>");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 0, "There is no update since replacing the root node output is not supported");
 			assert.equal(oElement.tagName, "DIV", "Root node is not changed");
 		});
 
 		this.html("<div id='x'></div>").patch(function() {
-			Patcher.unsafeHtml("", "x");
+			oPatcher.unsafeHtml("", "x");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "One change: outerHTML is replaced");
 			assert.equal(aMutations[0].removedNodes[0].tagName, "DIV", "div element is removed");
@@ -727,7 +732,7 @@ sap.ui.define([
 				"<li id='z'>Z</li>" +
 			"</ul>"
 		).patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				unsafeHtml("<li id='a'>A</li>").
 				openStart("li", "y").openEnd().unsafeHtml("text").close("li").
 				unsafeHtml("<li id='b'>B</li>").
@@ -754,7 +759,7 @@ sap.ui.define([
 				"<li id='q'>Q</li>" +
 			"</ul>"
 		).patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				unsafeHtml("<li id='a'>A</li><li id='d'>D</li>", "a", function(aDomNodes) {
 			assert.equal(aDomNodes[0].id, "a");
 			assert.equal(aDomNodes[0].textContent, "A");
@@ -781,7 +786,7 @@ sap.ui.define([
 		});
 
 		this.html("<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>").patch(function() {
-			Patcher.openStart("ul").openEnd().
+			oPatcher.openStart("ul").openEnd().
 				unsafeHtml("<li id='x'>5</li>").
 			close("ul");
 		}, function(aMutations, oElement) {
@@ -796,7 +801,7 @@ sap.ui.define([
 		});
 
 		this.html("<div>A<i id='i'>B</i>C</div>").patch(function() {
-			Patcher.openStart("div").openEnd().
+			oPatcher.openStart("div").openEnd().
 				text("A").
 				unsafeHtml("<i id='i'>D</i>", "i").
 				text("C").
@@ -807,7 +812,7 @@ sap.ui.define([
 		});
 
 		this.html("<div>ABC</div>").patch(function() {
-			Patcher.openStart("div").openEnd().
+			oPatcher.openStart("div").openEnd().
 				text("A").
 				unsafeHtml("DC").
 			close("div");
@@ -819,15 +824,16 @@ sap.ui.define([
 
 	QUnit.test("Patching context", function(assert) {
 		this.html("<div id='x'></div>").patch(function() {
-			var span = document.createElement("span");
+			var oSpan = document.createElement("span");
+			var oPatcher2 = new Patcher();
 
-			Patcher.openStart("div", "x").openEnd();
-				Patcher.setRootNode(span);
-				Patcher.openStart("span").openEnd().text("inner").close("span");
+			oPatcher.openStart("div", "x").openEnd();
+				oPatcher2.setRootNode(oSpan);
+				oPatcher2.openStart("span").openEnd().text("inner").close("span");
 
-				assert.equal(Patcher.getCurrentNode().textContent, "inner", "Inner is patched");
-				Patcher.reset();
-			Patcher.text("outer").close("div");
+				assert.equal(oPatcher2.getCurrentNode().textContent, "inner", "Inner is patched");
+				oPatcher2.reset();
+			oPatcher.text("outer").close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Two changes");
 			assert.equal(oElement.textContent, "outer", "Outer is patched");
@@ -842,7 +848,7 @@ sap.ui.define([
 				"<rect width='100' height='100' />" +
 			"</svg>"
 		).patch(function() {
-			Patcher.
+			oPatcher.
 			openStart("svg").class("c").attr("viewBox", "0 0 220 100").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
 				openStart("rect").attr("width", "100").attr("height", "100").openEnd().close("rect").
 				openStart("rect").attr("x", 120).attr("width", "100").attr("height", "100").openEnd().close("rect").
@@ -858,7 +864,7 @@ sap.ui.define([
 				"<rect width='100' height='100' />" +
 			"</svg>"
 		).patch(function() {
-			Patcher.
+			oPatcher.
 			openStart("svg").attr("viewBox", "0 0 220 100").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
 				openStart("rect").attr("width", "100").attr("height", "100").openEnd().close("rect").
 				openStart("foreignObject").attr("x", "20").attr("y", "20").openEnd().
@@ -889,9 +895,9 @@ sap.ui.define([
 					subtree: true
 				});
 
-				Patcher.setRootNode();
+				oPatcher.setRootNode();
 				fnRender.call(this);
-				var oRootNode = Patcher.getRootNode();
+				var oRootNode = oPatcher.getRootNode();
 
 				var aMutations = this.oObserver.takeRecords();
 				this.oObserver.disconnect();
@@ -900,18 +906,21 @@ sap.ui.define([
 				fnAfterRendering.call(this, this.oContainer.firstChild, aMutations);
 
 				this.oContainer.textContent = "";
-				Patcher.reset();
+				oPatcher.reset();
 			};
+		},
+		after: function() {
+			QUnit.assert.deepEqual(oPatcher, new Patcher());
 		}
 	});
 
 	QUnit.test("no existing elements", function(assert) {
 
 		this.render(function() {
-			Patcher.
+			oPatcher.
 			openStart("div", "d").attr("title", "t").openEnd().
 				openStart("div").class("x").openEnd().close("div").
-				openStart("p").attr("data-x", "~!@#$%^&*()_+{}:<>?\'\"").openEnd().close("div").
+				openStart("p").attr("data-x", "~!@#$%^&*()_+{}:<>?\'\"").openEnd().close("p").
 				openStart("div").style("width", "10px").openEnd().openStart("div").style("width", "20px").openEnd().close("div").close("div").
 				text(0).
 				openStart("span").openEnd().text(1).voidStart("img", "s").voidEnd().text(2).close("span").
@@ -936,7 +945,7 @@ sap.ui.define([
 		});
 
 		this.render(function() {
-			Patcher.
+			oPatcher.
 			openStart("svg", "x").attr("viewBox", "-5 -5 10 10").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
 				openStart("linearGradient").attr("gradientTransform", "rotate(90)").openEnd().
 					openStart("stop").attr("offset", '5%').attr("stop-color", "gold").openEnd().close("stop").
@@ -956,7 +965,7 @@ sap.ui.define([
 		});
 
 		this.render(function() {
-			Patcher.
+			oPatcher.
 			openStart("div").openEnd().close("div").
 			voidStart("img").voidEnd().
 			openStart("p").openEnd().close("p");
@@ -971,7 +980,7 @@ sap.ui.define([
 
 		document.body.insertAdjacentHTML("beforeend", '<div id="outer"><i>text</i></div>');
 		this.render(function() {
-			Patcher.openStart("div", "outer").attr("draggable", "true").openEnd().
+			oPatcher.openStart("div", "outer").attr("draggable", "true").openEnd().
 				openStart("i").attr("title", "t").openEnd().text("text").close("i").
 			close("div");
 		}, function(oElement, aMutations) {
@@ -990,7 +999,7 @@ sap.ui.define([
 	QUnit.test("unsafeHtml", function(assert) {
 
 		this.render(function() {
-			Patcher.openStart("div").openEnd().
+			oPatcher.openStart("div").openEnd().
 				unsafeHtml("<div></div><img><p></p><b>b<i>bi<u>biu</u></i></b><input>").
 			close("div");
 		}, function(oElement) {
@@ -1002,7 +1011,7 @@ sap.ui.define([
 		});
 
 		this.render(function() {
-			Patcher.openStart("svg").attr("xmlns", "http://www.w3.org/2000/svg").attr("viewBox", "0 0 30 10").openEnd().
+			oPatcher.openStart("svg").attr("xmlns", "http://www.w3.org/2000/svg").attr("viewBox", "0 0 30 10").openEnd().
 				unsafeHtml('<circle id="circle" cx="5" cy="5" r="4" stroke="blue"></circle>', "circle", function(aElements) {
 					assert.equal(aElements[0].namespaceURI, "http://www.w3.org/2000/svg", "Parsed SVG element NS is valid");
 				}).
@@ -1017,7 +1026,7 @@ sap.ui.define([
 		});
 
 		this.render(function() {
-			Patcher.unsafeHtml("<div></div>");
+			oPatcher.unsafeHtml("<div></div>");
 		}, function(oElement) {
 			assert.notOk(oElement, "unsafeHtml is not supported without openStart/voidStart call");
 		});

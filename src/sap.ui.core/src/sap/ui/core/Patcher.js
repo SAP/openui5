@@ -2,12 +2,15 @@
  * ${copyright}
  */
 
-// Provides the Patcher for RenderManager
+// Provides in-place rendering module for the RenderManager
 sap.ui.define([], function() {
 	"use strict";
 
 	// points a dummy CSSStyleDeclaration for style validation purposes
 	var oCSSStyleDeclaration = document.createElement("title").style;
+
+	// stores a <template> element to convert HTML strings to a DocumentFragment
+	var oTemplateElement = document.createElement("template");
 
 	/**
 	 * Provides custom mutators for attributes.
@@ -55,20 +58,25 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * Provides an API for an in-place DOM patching.
+	 * @class Creates a <code>Patcher</code> instance which can be used for in-place DOM patching.
 	 *
 	 * @alias sap.ui.core.Patcher
 	 * @class
-	 * @static
 	 * @private
-	 * @ui5-restricted sap.ui.core
+	 * @ui5-restricted sap.ui.core.RenderManager
 	 */
-	var Patcher = {
-		_sStyles: "",                                    // Style collection of the current node
-		_sClasses: "",                                   // Class name collection of the current node
-		_aContexts: [],                                  // Context stack of the Patcher
-		_mAttributes: Object.create(null),               // Set of all attributes name-value pair
-		_oTemplate: document.createElement("template")   // template element to convert HTML strings to fragment
+	var Patcher = function() {
+		this._oRoot = null;                      // Root node where the patching is started
+		this._oCurrent = null;                   // Current node being patched, this value is always up-to-date
+		this._oParent = null;                    // Parent node of the current node being patched, this valule is not alway up-to-date
+		this._oReference = null;                 // Reference node that corresponds to the position of the current node
+		this._oNewElement = null;                // Newly created element which is not yet inserted into the DOM tree
+		this._oNewParent = null;                 // HTML element where the newly created element to be inserted
+		this._oNewReference = null;              // Reference element that corresponds to the position of the newly created element
+		this._iTagOpenState = 0;                 // 0: Tag is Closed, 1: Tag is Open and just Created, has no attributes, 2: Tag is Open and Existing, might have attributes
+		this._sStyles = "";                      // Style collection of the current node
+		this._sClasses = "";                     // Class name collection of the current node
+		this._mAttributes = Object.create(null); // Set of all attributes name-value pair of the current node
 	};
 
 	/**
@@ -79,14 +87,12 @@ sap.ui.define([], function() {
 	 *
 	 * @param {HTMLElement} [oRootNode] The DOM node from which the patching will be started
 	 */
-	Patcher.setRootNode = function(oRootNode) {
+	Patcher.prototype.setRootNode = function(oRootNode) {
 		if (this._oRoot) {
-			this._aContexts.push(this._getContext());
+			this.reset();
 		}
 
-		this._setContext({
-			_oRoot: oRootNode || document.createDocumentFragment()
-		});
+		this._oRoot = oRootNode || document.createDocumentFragment();
 	};
 
 	/**
@@ -94,7 +100,7 @@ sap.ui.define([], function() {
 	 *
 	 * @return {Node} The root node of the Patcher
 	 */
-	Patcher.getRootNode = function() {
+	Patcher.prototype.getRootNode = function() {
 		return this._oRoot;
 	};
 
@@ -103,55 +109,22 @@ sap.ui.define([], function() {
 	 *
 	 * @returns {Node} The node being patched
 	 */
-	Patcher.getCurrentNode = function() {
+	Patcher.prototype.getCurrentNode = function() {
 		return this._oCurrent;
 	};
 
 	/**
 	 * Cleans up the current patching references and makes the patcher ready for the next patching.
 	 */
-	Patcher.reset = function() {
-		this._setContext(this._aContexts.pop());
-		this._oParent = this._oReference = null;
-	};
-
-	/**
-	 * Returns the current patching context of the <code>Patcher</code>.
-	 */
-	Patcher._getContext = function() {
-		return this._applyContext(this, {});
-	};
-
-	/**
-	 * Sets the given context as a current context of the <code>Patcher</code>.
-	 *
-	 * @param {object} Context object to be set
-	 */
-	Patcher._setContext = function(oContext) {
-		this._applyContext(oContext || {}, this);
-	};
-
-	/**
-	 * Gets the context object from the source and sets it to the target.
-	 *
-	 * @param {object} Source object from which the context is retrieved
-	 * @param {object} Target object where the retrieved context is set
-	 * @returns {object} New context of the target
-	 */
-	Patcher._applyContext = function(oSource, oTarget) {
-		oTarget._oRoot = oSource._oRoot || null;                 // Root node where the patching is started
-		oTarget._oCurrent = oSource._oCurrent || null;           // Current node being patched
-		oTarget._oNewElement = oSource._oNewElement || null;     // Newly created element which is not yet inserted into the DOM tree.
-		oTarget._oNewParent = oSource._oNewParent || null;       // HTML element where the newly created element to be inserted
-		oTarget._oNewReference = oSource._oNewReference || null; // Reference element that corresponds to the position of the newly created element
-		oTarget._iTagOpenState = oSource._iTagOpenState || 0;    // 0: Tag is Closed, 1: Tag is Created, has no attributes, 2: Tag is Existing, might have attributes
-		return oTarget;
+	Patcher.prototype.reset = function() {
+		this._oRoot = this._oCurrent = this._oParent = this._oReference = this._oNewElement = this._oNewParent = this._oNewReference = null;
+		this._iTagOpenState = 0; /* Tag is Closed */
 	};
 
 	/**
 	 * Sets the next node that is going to be patched.
 	 */
-	Patcher._walkOnTree = function() {
+	Patcher.prototype._walkOnTree = function() {
 		this._oReference = null;
 		if (!this._oCurrent) {
 			// if the current node does not exist yet, that means we are on the first call after the root node is set
@@ -165,12 +138,12 @@ sap.ui.define([], function() {
 				this._oParent = this._oRoot.parentNode;
 				this._oCurrent = this._oRoot;
 			}
-		} else if (this._iTagOpenState) {
+		} else if (this._iTagOpenState /* Tag is Open */) {
 			// a new tag is opened while the previous tag was already open e.g. <div><span
 			this._oParent = this._oCurrent;
 			this._oCurrent = this._oCurrent.firstChild;
 		} else {
-			// after the previous tag has been closed a new tag is opened e.g. <div></div><span
+			// after the previous tag has been closed, a new tag is opened e.g. <div></div><span
 			this._oParent = this._oCurrent.parentNode;
 			this._oCurrent = this._oCurrent.nextSibling;
 		}
@@ -179,7 +152,7 @@ sap.ui.define([], function() {
 	/**
 	 * Finds the matching HTML element from the given ID and moves the corresponding element to the correct location.
 	 */
-	Patcher._matchElement = function(sId) {
+	Patcher.prototype._matchElement = function(sId) {
 		if (!sId) {
 			return;
 		}
@@ -210,7 +183,7 @@ sap.ui.define([], function() {
 	 * Checks whether the current node being patched matches the specified node name.
 	 * If there is no match, the old DOM node must be removed, and new nodes must be created.
 	 */
-	Patcher._matchNodeName = function(sNodeName) {
+	Patcher.prototype._matchNodeName = function(sNodeName) {
 		if (!this._oCurrent) {
 			return;
 		}
@@ -230,7 +203,7 @@ sap.ui.define([], function() {
 	 * Using getAttributeNames along with getAttribute is a memory-efficient and performant alternative to accessing Element.attributes.
 	 * For more information, see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames}.
 	 */
-	Patcher._getAttributes = function() {
+	Patcher.prototype._getAttributes = function() {
 		for (var i = 0, aAttributeNames = this._oCurrent.getAttributeNames(); i < aAttributeNames.length; i++) {
 			this._mAttributes[aAttributeNames[i]] = this._oCurrent.getAttribute(aAttributeNames[i]);
 		}
@@ -239,7 +212,7 @@ sap.ui.define([], function() {
 	/**
 	 * Stores the specified element that is going to be inserted into the document after patching has been completed.
 	 */
-	Patcher._setNewElement = function(oNewElement) {
+	Patcher.prototype._setNewElement = function(oNewElement) {
 		if (!oNewElement) {
 			return;
 		}
@@ -256,7 +229,7 @@ sap.ui.define([], function() {
 	/**
 	 * Inserts the stored new element into the document after patching has been completed.
 	 */
-	Patcher._insertNewElement = function() {
+	Patcher.prototype._insertNewElement = function() {
 		if (this._oCurrent == this._oNewElement) {
 			this._oNewParent[this._oNewReference == this._oRoot ? "replaceChild" : "insertBefore"](this._oNewElement, this._oNewReference);
 			this._oNewElement = this._oNewParent = this._oNewReference = null;
@@ -272,18 +245,18 @@ sap.ui.define([], function() {
 	 * @param {sap.ui.core.ID} [sId] ID to identify the element
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
-	Patcher.openStart = function(sTagName, sId) {
+	Patcher.prototype.openStart = function(sTagName, sId) {
 		this._walkOnTree();
 		this._matchElement(sId);
 		this._matchNodeName(sTagName);
 
 		if (this._oCurrent) {
 			this._getAttributes();
-			this._iTagOpenState = 2; /* Existing */
+			this._iTagOpenState = 2; /* Tag is Open and Existing */
 		} else {
 			this._oCurrent = createElement(sTagName, this._oParent);
 			this._setNewElement(this._oCurrent);
-			this._iTagOpenState = 1; /* Created */
+			this._iTagOpenState = 1; /* Tag is Open and Created */
 		}
 
 		if (sId) {
@@ -302,7 +275,7 @@ sap.ui.define([], function() {
 	 * @param {sap.ui.core.ID} [sId] ID to identify the element
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
-	Patcher.voidStart = Patcher.openStart;
+	Patcher.prototype.voidStart = Patcher.prototype.openStart;
 
 
 	/**
@@ -315,8 +288,8 @@ sap.ui.define([], function() {
 	 * @param {*} vValue Value of the attribute; any non-string value specified is converted automatically into a string
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
-	Patcher.attr = function(sAttr, vValue) {
-		if (this._iTagOpenState == 1 /* Created */) {
+	Patcher.prototype.attr = function(sAttr, vValue) {
+		if (this._iTagOpenState == 1 /* Tag is Open and Created */) {
 			this._oCurrent.setAttribute(sAttr, vValue);
 			return this;
 		}
@@ -349,7 +322,7 @@ sap.ui.define([], function() {
 	 * @param {string} sClass Class name to be written
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
-	Patcher.class = function(sClass) {
+	Patcher.prototype.class = function(sClass) {
 		if (sClass) {
 			this._sClasses += (this._sClasses) ? " " + sClass : sClass;
 		}
@@ -367,7 +340,7 @@ sap.ui.define([], function() {
 	 * @param {string} sValue Value of the style property
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
-	Patcher.style = function(sName, vValue) {
+	Patcher.prototype.style = function(sName, vValue) {
 		if (!sName || vValue == null || vValue == "") {
 			return this;
 		}
@@ -390,7 +363,7 @@ sap.ui.define([], function() {
 	 *
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 */
-	Patcher.openEnd = function() {
+	Patcher.prototype.openEnd = function() {
 		if (this._sClasses) {
 			// className can also be an instance of SVGAnimatedString if the element is an SVGElement. Therefore do not use
 			// HTMLElement.className property, it is better to set the classes of an element using HTMLElement.setAttribute.
@@ -418,7 +391,7 @@ sap.ui.define([], function() {
 			this._sStyles = "";
 		}
 
-		if (this._iTagOpenState == 1 /* Created */) {
+		if (this._iTagOpenState == 1 /* Tag is Open and Created */) {
 			return this;
 		}
 
@@ -440,7 +413,7 @@ sap.ui.define([], function() {
 	 *
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
-	Patcher.voidEnd = function() {
+	Patcher.prototype.voidEnd = function() {
 		this.openEnd();
 		this._iTagOpenState = 0; /* Closed */
 		this._insertNewElement();
@@ -453,7 +426,7 @@ sap.ui.define([], function() {
 	 * @param {string} sText Text to be set
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
-	Patcher.text = function(sText) {
+	Patcher.prototype.text = function(sText) {
 		this._walkOnTree();
 		this._matchNodeName("#text");
 
@@ -477,9 +450,9 @@ sap.ui.define([], function() {
 	 * @param {string} sTagName The tag name of the HTML element
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
-	Patcher.close = function(sTagName) {
+	Patcher.prototype.close = function(sTagName) {
 		if (this._iTagOpenState) {
-			this._iTagOpenState = 0;
+			this._iTagOpenState = 0; /* Closed */
 			this._oCurrent.textContent = "";
 		} else {
 			var oParent = this._oCurrent.parentNode;
@@ -505,16 +478,16 @@ sap.ui.define([], function() {
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @SecSink {*|XSS}
 	 */
-	Patcher.unsafeHtml = function(sHtml, sId, fnCallback) {
+	Patcher.prototype.unsafeHtml = function(sHtml, sId, fnCallback) {
 		var oReference = null;
 		var oCurrent = this._oCurrent;
 
 		if (!oCurrent) {
 			oReference = this._oRoot;
-		} else if (this._iTagOpenState) {
+		} else if (this._iTagOpenState /* Tag is Open */) {
 			oReference = oCurrent.firstChild;
 			if (sHtml) {
-				this._iTagOpenState = 0;
+				this._iTagOpenState = 0; /* Tag is Closed */
 				oCurrent.insertAdjacentHTML("afterbegin", sHtml);
 				this._oCurrent = oReference ? oReference.previousSibling : oCurrent.lastChild;
 			}
@@ -524,8 +497,8 @@ sap.ui.define([], function() {
 				if (oCurrent.nodeType == 1 /* Node.ELEMENT_NODE */) {
 					oCurrent.insertAdjacentHTML("afterend", sHtml);
 				} else {
-					this._oTemplate.innerHTML = sHtml;
-					oCurrent.parentNode.insertBefore(this._oTemplate.content, oReference);
+					oTemplateElement.innerHTML = sHtml;
+					oCurrent.parentNode.insertBefore(oTemplateElement.content, oReference);
 				}
 				this._oCurrent = oReference ? oReference.previousSibling : oCurrent.parentNode.lastChild;
 			}
