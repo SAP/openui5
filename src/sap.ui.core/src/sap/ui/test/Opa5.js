@@ -571,7 +571,7 @@ sap.ui.define([
 		 * @param {string} [options.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa5 is QUnit.
 		 * This message is displayed if Opa5 has reached its timeout before QUnit has reached it.
-		 * @param {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} options.actions
+		 * @param {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} [options.actions]
 		 * Available since 1.34.0. An array of functions or Actions or a mixture of both.
 		 * An action has an 'executeOn' function that will receive a single control as a parameter.
 		 * If there are multiple actions defined all of them

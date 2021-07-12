@@ -88,12 +88,11 @@ sap.ui.define([
 	 * @function
 	 * @static
 	 * @param {string} testName name of the QUnit test.
-	 * @param {int|function} expected integer value only supported in QUnit v1.x: denotes how many assertions are expected to be made in the test.
-	 * If a function is passed instead, it is considered to be the callback parameter
+	 * @param {int} [expected] only supported in QUnit v1.x: denotes how many assertions are expected to be made in the test.
 	 * @param {function} callback the test function. Expects 3 arguments, in order:
 	 * {@link sap.ui.test.Opa.config}.arrangements, {@link sap.ui.test.Opa.config}.actions, {@link sap.ui.test.Opa.config}.assertions.
 	 * These arguments will be prefilled by OPA
-	 * @param {boolean} async available only in QUnit v1.x. Indicates whether the test is asynchronous. False by default.
+	 * @param {boolean} [async=false] available only in QUnit v1.x. Indicates whether the test is asynchronous. False by default.
 	 */
 	function opaTest() {
 		callQUnit("test", arguments, function (assert, fnDone) {
@@ -137,12 +136,11 @@ sap.ui.define([
 	 * @function
 	 * @static
 	 * @param {string} testName name of the QUnit test.
-	 * @param {int|function} expected integer value only supported in QUnit v1.x: denotes how many assertions are expected to be made in the test.
-	 * If a function is passed instead, it is considered to be the callback parameter
+	 * @param {int} [expected] only supported in QUnit v1.x: denotes how many assertions are expected to be made in the test.
 	 * @param {function} callback the test function. Expects 3 arguments, in order:
 	 * {@link sap.ui.test.Opa.config}.arrangements, {@link sap.ui.test.Opa.config}.actions, {@link sap.ui.test.Opa.config}.assertions.
 	 * These arguments will be prefilled by OPA
-	 * @param {boolean} async available only in QUnit v1.x. Indicates whether the test is asynchronous. False by default.
+	 * @param {boolean} [async=false] available only in QUnit v1.x. Indicates whether the test is asynchronous. False by default.
 	 */
 	function opaTodo() {
 		callQUnit("todo", arguments, function (assert, fnDone) {
@@ -170,12 +168,11 @@ sap.ui.define([
 	 * @function
 	 * @static
 	 * @param {string} testName name of the QUnit test.
-	 * @param {int|function} expected integer value only supported in QUnit v1.x: denotes how many assertions are expected to be made in the test.
-	 * If a function is passed instead, it is considered to be the callback parameter
+	 * @param {int} [expected] only supported in QUnit v1.x: denotes how many assertions are expected to be made in the test.
 	 * @param {function} callback the test function. Expects 3 arguments, in order:
 	 * {@link sap.ui.test.Opa.config}.arrangements, {@link sap.ui.test.Opa.config}.actions, {@link sap.ui.test.Opa.config}.assertions.
 	 * These arguments will be prefilled by OPA
-	 * @param {boolean} async available only in QUnit v1.x. Indicates whether the test is asynchronous. False by default.
+	 * @param {boolean} [async=false] available only in QUnit v1.x. Indicates whether the test is asynchronous. False by default.
 	 */
 	function opaSkip(testName, expected, callback, async) {
 		configQUnit();
