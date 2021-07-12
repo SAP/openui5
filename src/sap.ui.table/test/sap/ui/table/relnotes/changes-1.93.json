@@ -1,0 +1,18 @@
+{
+  "1.93.0": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "3cf6dd8fb326ccc72036c75df8755799c06711a9",
+        "type": "FIX",
+        "text": " TreeTable: Prevent page scrolling when pressing SPACE on tree expand icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180212724"
+          }
+        ]
+      }
+    ]
+  }
+}

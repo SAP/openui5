@@ -3,6 +3,22 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "210ef87102deb50e1c6a0c54d4945921b1762e03",
+        "type": "FIX",
+        "text": "[INTERNAL] MDC Chart: Fix for CharType button not being visible"
+      },
+      {
+        "id": "391c0d0c39c6115282cd803518fb46395285119a",
+        "type": "FIX",
+        "text": " FieldValueHelp: don't update dialog if suggestContent changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180230887"
+          }
+        ]
+      },
+      {
         "id": "a83754d97f8997ba0082b06fe101fffae6acde30",
         "type": "FIX",
         "text": " Field: update required indicator if editMode changed"

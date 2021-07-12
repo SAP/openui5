@@ -3,6 +3,11 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "33a15facb33ff73abada4e9a6b45957022c91961",
+        "type": "FIX",
+        "text": " JSDoc: fix pseudo-fields, declare type for real fields"
+      },
+      {
         "id": "8fa72ea2fa27733b6f327f6463f69b4b5db56491",
         "type": "FIX",
         "text": " Integration cards: Avatar with static URL no longer shows loading placeholder",
