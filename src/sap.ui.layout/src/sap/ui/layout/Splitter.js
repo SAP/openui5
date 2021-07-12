@@ -229,7 +229,7 @@ sap.ui.define([
 	 * Returns the current actual content sizes as pixel value - these values can change with every
 	 * resize.
 	 *
-	 * @returns {Number[]} Array of px values that correspond to the content area sizes
+	 * @returns {number[]} Array of px values that correspond to the content area sizes
 	 * @protected
 	 * @deprecated As of version 1.21. This method is declared as protected in order to assess the need for this feature. It is declared as deprecated because the API might change in case the need for this is high enough to make it part of the official Splitter interface
 	 */
