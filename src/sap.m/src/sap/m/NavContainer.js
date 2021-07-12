@@ -290,6 +290,7 @@ sap.ui.define([
 
 	NavContainer.prototype.exit = function () {
 		this._mFocusObject = null; // allow partial garbage collection when app code leaks the NavContainer (based on a real scenario)
+		this._placeholder = undefined;
 	};
 
 
@@ -1821,14 +1822,15 @@ sap.ui.define([
 			this.hidePlaceholder();
 		}
 
-		this._placeholder = mSettings.placeholder;
+		if (mSettings.placeholder) {
+			this._placeholder = mSettings.placeholder;
+		}
 
 		if (this.getDomRef()) {
 			this._placeholder.show(this);
-		} else {
-			// Add an event delegate to reinsert the placeholder after it's removed after a rerendering
-			this.addEventDelegate(oPlaceholderDelegate, this);
 		}
+		// Add an event delegate to reinsert the placeholder after it's removed after a rerendering
+		this.addEventDelegate(oPlaceholderDelegate, this);
 	};
 
 	/**
@@ -1843,7 +1845,6 @@ sap.ui.define([
 
 			// remove the delegate because the placeholder is hidden
 			this.removeEventDelegate(oPlaceholderDelegate);
-			this._placeholder = undefined;
 		}
 	};
 
