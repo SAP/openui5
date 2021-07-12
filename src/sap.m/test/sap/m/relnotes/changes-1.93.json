@@ -3,6 +3,82 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "d415482be25c0f364ebca9470ff9384f16da3615",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: sorting is reset correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180244898"
+          }
+        ]
+      },
+      {
+        "id": "ffb65d221d569bd63264483cf21cd955fbb6a82b",
+        "type": "FIX",
+        "text": " sap.m.Slider: Tickmarks are now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180246858"
+          }
+        ]
+      },
+      {
+        "id": "33a15facb33ff73abada4e9a6b45957022c91961",
+        "type": "FIX",
+        "text": " JSDoc: fix pseudo-fields, declare type for real fields"
+      },
+      {
+        "id": "9e6e56dc673a2988ce91f7488aa99bd2bfe5468f",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.CalendarAppointment: has new customContent aggregation"
+      },
+      {
+        "id": "53b95e930a469fe26c16e0a3926207b21d2d254d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: NMore popup now receives focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180225509"
+          }
+        ]
+      },
+      {
+        "id": "14a11b62e067e16654e8641a6682aaf9753d9cce",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Placeholder text is now changed when language is changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180224875"
+          }
+        ]
+      },
+      {
+        "id": "f0bc2c7910ff7952c805cde78322932116332638",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.m.Toolbar: Fixed focus color of icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180218347"
+          }
+        ]
+      },
+      {
+        "id": "e865ddcdb1c86320b769dd0c808dda9d3c7693fd",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: title has an aria-labelled reference only when title is existing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180224632"
+          }
+        ]
+      },
+      {
         "id": "46e901ad6165fedb9d61d6e73039e9acc6fee37a",
         "type": "FIX",
         "text": " sap.m.Input: setSelectionRow called on sapenter",

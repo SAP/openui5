@@ -3,6 +3,54 @@
     "date": "July 2021",
     "notes": [
       {
+        "id": "e73bd3cf345ffc8e753ad46d2491706925a764d4",
+        "type": "FIX",
+        "text": " sap.ui.core.UIArea: validateFieldgroup on focusout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180158578"
+          }
+        ]
+      },
+      {
+        "id": "33a15facb33ff73abada4e9a6b45957022c91961",
+        "type": "FIX",
+        "text": " JSDoc: fix pseudo-fields, declare type for real fields"
+      },
+      {
+        "id": "25d562ff255472717b13e8ee6a52e94d6f3de6f6",
+        "type": "FIX",
+        "text": " core.routing.History: use data-sap-ui-onInit in iFrame test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180258155"
+          }
+        ]
+      },
+      {
+        "id": "60a37e4dff8750885cd033045dbcd1d45f94f0dd",
+        "type": "FIX",
+        "text": " sap.ui.core.InvisibleMessage: Span content is now cleared",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180195538"
+          }
+        ]
+      },
+      {
+        "id": "c660c9040f84cc21ae581fb716c18c5bcc51dcfb",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.(Currency|Unit): new constraint 'skipDecimalsValidation' to skip validation of decimals allowed"
+      },
+      {
+        "id": "e75f611366c37f437ef472ec235755f9fdb4642f",
+        "type": "FEATURE",
+        "text": " New managed functions to handle asynchronous destroy"
+      },
+      {
         "id": "fdba8838d940c5af236cb23b2017248d3607da1e",
         "type": "FIX",
         "text": " core.routing.history: stablize the test by using timeout between actions",
