@@ -294,6 +294,7 @@ sap.ui.define([
 			"sap.m.SegmentedButton",
 			"sap.m.Select",
 			"sap.m.SelectDialog",
+			"sap.m.SelectDialogBase",
 			"sap.m.SelectList",
 			"sap.m.SelectionDetails",
 			"sap.m.Shell",

@@ -919,7 +919,7 @@ sap.ui.define([
 			var oDialogCloseSpy = this.spy(this.oSelectDialog._oDialog, "close");
 
 			// Act
-			this.oSelectDialog._selectionChange();
+			this.oSelectDialog._selectionChange({});
 
 			// Assert
 			assert.strictEqual(oDialogAttachSpy.callCount, 1, "Event was attached once.");
@@ -1032,7 +1032,7 @@ sap.ui.define([
 			this.oSelectDialog.setMultiSelect(true);
 
 			// Act
-			this.oSelectDialog._selectionChange();
+			this.oSelectDialog._selectionChange({});
 
 			// Assert
 			assert.strictEqual(oUpdateSelectionSpy.callCount, 1, "Selection indicator was updated once.");
@@ -1137,6 +1137,31 @@ sap.ui.define([
 
 			this.oSelectDialog._oDialog.close();
 			this.clock.tick(350);
+		});
+
+		QUnit.test("List events", function (assert) {
+			var oUpdateStartedSpy = this.spy(this.oSelectDialog, "fireUpdateStarted"),
+				oUpdateFinishedSpy = this.spy(this.oSelectDialog, "fireUpdateFinished"),
+				oSelectionChangeSpy = this.spy(this.oSelectDialog, "fireSelectionChange");
+
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+
+			this.oSelectDialog._oList.fireEvent("updateStarted", {});
+			assert.ok(oUpdateStartedSpy.calledOnce, "updateStarted event is fired");
+
+			this.oSelectDialog._oList.fireEvent("updateFinished", {});
+			assert.ok(oUpdateFinishedSpy.calledOnce, "updateFinished event is fired");
+
+			this.oSelectDialog._oList.fireEvent("selectionChange", {});
+			assert.ok(oSelectionChangeSpy.calledOnce, "selectionChange event is fired");
+
+			this.oSelectDialog._oDialog.close();
+			this.clock.tick(350);
+
+			oUpdateStartedSpy.reset();
+			oUpdateFinishedSpy.reset();
+			oSelectionChangeSpy.reset();
 		});
 
 		QUnit.module("Destroy", {
@@ -1306,7 +1331,7 @@ sap.ui.define([
 
 			this.stub(Device, "system", oSystem);
 
-			jQuery.when(that.oSelectDialog.open(), that.oSelectDialog._updateFinished() ).then(function(){
+			jQuery.when(that.oSelectDialog.open(), that.oSelectDialog._updateFinished({ getParameters : function () { return {}; } })).then(function(){
 				assert.ok(jQuery('#selectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no items in the list');
 
 				that.oSelectDialog._oDialog.close();
@@ -1329,7 +1354,7 @@ sap.ui.define([
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 			sap.ui.getCore().applyChanges();
 
-			jQuery.when(that.oSelectDialog.open(), that.oSelectDialog._updateFinished() ).then(function(){
+			jQuery.when(that.oSelectDialog.open(), that.oSelectDialog._updateFinished({ getParameters : function () { return {}; } })).then(function(){
 				assert.ok(that.oSelectDialog.getItems()[0].$().is(':focus'), 'The first item of the list should be focused');
 
 				// Clean
