@@ -12,7 +12,8 @@ sap.ui.define(['./BlockLayerUtils'], //require of sap/ui/core/library not possib
 	/**
 	 * @alias sap.ui.core.BusyIndicatorUtils
 	 * @namespace
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.chart
 	 */
 	var BusyIndicatorUtils = function() {};
 
@@ -22,6 +23,8 @@ sap.ui.define(['./BlockLayerUtils'], //require of sap/ui/core/library not possib
 	 *
 	 * @param {string} sSize either "Large" or "Medium". Other sizes will be mapped to "Medium"
 	 * @returns {DOM.element} the element for the busy indicator
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.chart
 	 */
 	BusyIndicatorUtils.getElement = function(sSize) {
 		//default size is medium
