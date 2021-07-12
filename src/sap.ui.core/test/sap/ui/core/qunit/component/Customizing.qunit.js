@@ -70,7 +70,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("CustomizingConfiguration returning the customizing data", function(assert) {
-		assert.expect(8);
+		assert.expect(9);
 
 		var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
 		assert.equal(CustomizingConfiguration.getViewReplacement("testdata.customizing.sap.Sub1").viewName,
@@ -92,6 +92,9 @@ sap.ui.define([
 				false,
 				"CustomizingConfiguration should return the View modification data");
 		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub4", "customizableText1").visible,
+				false,
+				"CustomizingConfiguration should return the View modification data");
+		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub4Typed", "typedCustomizableText1").visible,
 				false,
 				"CustomizingConfiguration should return the View modification data");
 		assert.strictEqual(CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub5", "Button2").visible,

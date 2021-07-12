@@ -340,7 +340,7 @@ sap.ui.define([
 		 * Controls should have the correct owner ID.
 		 * (Component which contains a JSView which contains XMLViews)
 		 */
-		QUnit.test("Owner component setting for Controls", function(assert) {
+		QUnit.test("Owner component setting for Controls with JSView", function(assert) {
 
 			var iNumberOfComponents = 3;
 
@@ -382,6 +382,58 @@ sap.ui.define([
 				var fnViewFactory = this.viewFactory.bind(null, (bAsyncView ? "async" : "sync") + sProcessingMode + "view" + i, "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRec");
 
 				testComponentFactory("my.test." + (bAsyncView ? "async" : "sync") + sProcessingMode + "." + i, fnViewFactory, fnAssertions);
+
+			}
+
+		});
+
+		/**
+		 * Test setting the ._sOwnerId for asynchronously loaded components within stacked views.
+		 * Controls should have the correct owner ID.
+		 * (Component which contains a Typed View which contains XMLViews)
+		 */
+		QUnit.test("Owner component setting for Controls with Typed View", function(assert) {
+
+			var iNumberOfComponents = 3;
+
+			//@see ViewProcessingRec.view.js
+			var iNumberOfSubViews = 2;
+
+			var iCnt = 0;
+			// test processing will be completed in onExit of the view extension
+			var done = assert.async();
+			function fnCheckDone() {
+				if (++iCnt === iNumberOfComponents * iNumberOfSubViews) {
+					done();
+				}
+			}
+
+			window._test_fnCallbackSubInit = function() {
+				var oParent = this.getParent();
+				while (oParent) {
+					var newParent = oParent.getParent();
+					// leave out UIArea as it gets always the first owner component id when #placeAt is called
+					if (newParent) {
+						assert.ok(oParent._sOwnerId, "OwnerId is set for parent control");
+						assert.equal(oParent._sOwnerId, this._sOwnerId, "OwnerId matches parent");
+					}
+					oParent = newParent;
+				}
+				fnCheckDone();
+			};
+
+			function fnAssertions(oView, oComponentContext) {
+				var oPanel = oView.byId("Panel");
+				assert.ok(oPanel, "panel is present within " + oView.getId());
+				assert.equal(Component.getOwnerIdFor(oPanel), oComponentContext.getId(), "Propagation of owner component to view creation works!");
+			}
+
+			//create async xml view
+			for (var i = 0; i < iNumberOfComponents; i++) {
+
+				var fnViewFactory = this.viewFactory.bind(null, (bAsyncView ? "async" : "sync") + sProcessingMode + "view" + i, "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRecWithTypedView");
+
+				testComponentFactory("my.test.typedview." + (bAsyncView ? "async" : "sync") + sProcessingMode + "." + i, fnViewFactory, fnAssertions);
 
 			}
 

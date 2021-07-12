@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/Controller",
 	'sap/base/util/LoaderExtensions',
+	"my/TypedView",
 	"jquery.sap.dom"
-], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, Controller, LoaderExtensions) {
+], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, Controller, LoaderExtensions, TypedView) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -303,50 +304,69 @@ sap.ui.define([
 
 	QUnit.module("Inline Fragments");
 
-	var oViewWithFragments;
+	QUnit.test("Inline Fragments within JSView", function(assert) {
+		assert.expect(10); // incl. Button click handler
 
-	QUnit.test("Inline Fragments preconditions", function(assert) {
+		// Inline Fragments preconditions
 		assert.ok(!document.getElementById("jsfragbtn"), "Fragment should not be rendered");
 		assert.ok(!document.getElementById("xmlfragbtn"), "Fragment should not be rendered");
 		assert.ok(!document.getElementById("htmlfragbtn"), "Fragment should not be rendered");
-	});
 
-	QUnit.test("JSView creation with Fragments used inside", function(assert) {
-		oViewWithFragments = sap.ui.jsview("myView", "example.fragment.test");
+		// JSView creation with Fragments used inside
+		var oViewWithFragments = sap.ui.jsview("myView", "example.fragment.test");
 		oViewWithFragments.placeAt("content2");
 		sap.ui.getCore().applyChanges();
-
 		assert.ok(document.getElementById("myView"), "JSView should be rendered");
-	});
 
-	QUnit.test("Inline JS Fragment", function(assert) {
-		assert.expect(2); // incl. Button click handler
-
+		// Inline JS Fragment
 		assert.ok(document.getElementById("jsfragbtn"), "Fragment should be rendered");
-
 		// Fragment knows Controller, Fragment calling Controller methods
 		triggerClickEvent("jsfragbtn");
-	});
 
-	QUnit.test("Inline XML Fragment", function(assert) {
-		assert.expect(2); // incl. Button click handler
-
+		// Inline XML Fragment
 		assert.ok(document.getElementById("xmlfragbtn"), "Fragment should be rendered");
-
 		// Fragment knows Controller, Fragment calling Controller methods
 		triggerClickEvent("xmlfragbtn");
-	});
 
-	QUnit.test("Inline HTML Fragment", function(assert) {
-		assert.expect(2); // incl. Button click handler
-
+		// Inline HTML Fragment
 		assert.ok(document.getElementById("htmlfragbtn"), "Fragment should be rendered");
-
 		// Fragment knows Controller, Fragment calling Controller methods
 		triggerClickEvent("htmlfragbtn");
+
+		oViewWithFragments.destroy();
 	});
 
+	QUnit.test("Inline Fragments within Typed View", function(assert) {
+		assert.expect(10); // incl. Button click handler
 
+		// Inline Fragments preconditions
+		assert.ok(!document.getElementById("jsfragbtn"), "Fragment should not be rendered");
+		assert.ok(!document.getElementById("xmlfragbtn"), "Fragment should not be rendered");
+		assert.ok(!document.getElementById("htmlfragbtn"), "Fragment should not be rendered");
+
+		// JSView creation with Fragments used inside
+		var oViewWithFragments = new TypedView("myView");
+		oViewWithFragments.placeAt("content2");
+		sap.ui.getCore().applyChanges();
+		assert.ok(document.getElementById("myView"), "JSView should be rendered");
+
+		// Inline JS Fragment
+		assert.ok(document.getElementById("jsfragbtn"), "Fragment should be rendered");
+		// Fragment knows Controller, Fragment calling Controller methods
+		triggerClickEvent("jsfragbtn");
+
+		// Inline XML Fragment
+		assert.ok(document.getElementById("xmlfragbtn"), "Fragment should be rendered");
+		// Fragment knows Controller, Fragment calling Controller methods
+		triggerClickEvent("xmlfragbtn");
+
+		// Inline HTML Fragment
+		assert.ok(document.getElementById("htmlfragbtn"), "Fragment should be rendered");
+		// Fragment knows Controller, Fragment calling Controller methods
+		triggerClickEvent("htmlfragbtn");
+
+		oViewWithFragments.destroy();
+	});
 
 	QUnit.module("Fragments referenced from XMLViews");
 
