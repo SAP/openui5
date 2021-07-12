@@ -12,6 +12,7 @@
 
 //Provides class sap.ui.model.odata.v2.ODataModel
 sap.ui.define([
+	"./Context",
 	"./ODataAnnotations",
 	"./ODataContextBinding",
 	"./ODataListBinding",
@@ -46,11 +47,12 @@ sap.ui.define([
 	"sap/ui/model/odata/UpdateMethod",
 	"sap/ui/thirdparty/datajs",
 	"sap/ui/thirdparty/URI"
-], function(ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding, assert, Log,
-		encodeURL, deepEqual, deepExtend, each, extend, isEmptyObject, isPlainObject, merge, uid,
-		UriParameters, coreLibrary, Message, MessageParser, BindingMode, Context, FilterProcessor,
-		Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
-		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, URI
+], function(Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding,
+		assert, Log, encodeURL, deepEqual, deepExtend, each, extend, isEmptyObject, isPlainObject,
+		merge, uid, UriParameters, coreLibrary, Message, MessageParser, BindingMode, BaseContext,
+		FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel,
+		ODataMessageParser, ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData,
+		URI
 ) {
 
 	"use strict";
@@ -1768,7 +1770,7 @@ sap.ui.define([
 			} else {
 				oEntry = this.oData[vEntry];
 			}
-		} else if (vEntry instanceof Context) {
+		} else if (vEntry instanceof BaseContext) {
 			oEntry = this._getObject(vEntry.getPath());
 		}
 		if (oEntry && oEntry.__metadata) {
@@ -2129,9 +2131,14 @@ sap.ui.define([
 	 *   information, see
 	 *   {@link topic:6c47b2b39db9404582994070ec3d57a2#loio62149734b5c24507868e722fe87a75db Optimizing Dependent Bindings}
 	 * @param {Object<string,string>} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
-	 * @param {function} [fnCallBack] Function to be called when context has been created. The parameter of the callback function is the newly created binding context.
+	 * @param {function} [fnCallBack]
+	 *   The function to be called when the context has been created. The parameter of the callback
+	 *   function is the newly created binding context, an instance of
+	 *   {@link sap.ui.model.odata.v2.Context}.
 	 * @param {boolean} [bReload] Whether to reload data
-	 * @return {sap.ui.model.Context} The created binding context, only if the data is already available and the binding context could be created synchronously
+	 * @return {sap.ui.model.odata.v2.Context}
+	 *   The created binding context, only if the data is already available and the binding context
+	 *   could be created synchronously
 	 * @public
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
@@ -2143,7 +2150,8 @@ sap.ui.define([
 			that = this, bCanonical;
 
 		// optional parameter handling
-		if (oContext !== null && typeof oContext === "object" && !(oContext instanceof sap.ui.model.Context)) {
+		if (oContext !== null && typeof oContext === "object"
+				&& !(oContext instanceof BaseContext)) {
 			bReload = fnCallBack;
 			fnCallBack = mParameters;
 			mParameters = oContext;
@@ -2259,27 +2267,23 @@ sap.ui.define([
 
 		if (fnCallBack) {
 			var bIsRelative = !sPath.startsWith("/");
-			if (sResolvedPath) {
-				var aParams = [],
-				sCustomParams = this.createCustomParams(mParameters);
-				if (sCustomParams) {
-					aParams.push(sCustomParams);
-				}
-				if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
-					sGroupId = mParameters.groupId || mParameters.batchGroupId;
-				}
-				this.read(sPath, {
-					canonicalRequest : bCanonical,
-					context : oContext,
-					error : handleError,
-					groupId : sGroupId,
-					success : handleSuccess,
-					updateAggregatedMessages : true,
-					urlParameters : aParams
-				});
-			} else {
-				fnCallBack(null); // error - notify to recreate contexts
+			var aParams = [],
+			sCustomParams = this.createCustomParams(mParameters);
+			if (sCustomParams) {
+				aParams.push(sCustomParams);
 			}
+			if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
+				sGroupId = mParameters.groupId || mParameters.batchGroupId;
+			}
+			this.read(sPath, {
+				canonicalRequest : bCanonical,
+				context : oContext,
+				error : handleError,
+				groupId : sGroupId,
+				success : handleSuccess,
+				updateAggregatedMessages : true,
+				urlParameters : aParams
+			});
 		}
 
 		if (mParameters && mParameters.createPreliminaryContext) {
@@ -2683,7 +2687,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._getKey = function(vValue) {
 		var sKey, sURI;
-		if (vValue instanceof Context) {
+		if (vValue instanceof BaseContext) {
 			sKey = vValue.getPath().substr(1);
 		} else if (vValue && vValue.__metadata && vValue.__metadata.uri) {
 			sURI = vValue.__metadata.uri;
@@ -6431,6 +6435,11 @@ sap.ui.define([
 	 *   The ID of the <code>ChangeSet</code> that this request should belong to
 	 * @param {sap.ui.model.Context} [mParameters.context]
 	 *   The binding context
+	 * @param {function} [mParameters.created]
+	 *   The callback function that is called after the metadata of the service is loaded and the
+	 *   {@link sap.ui.model.odata.v2.Context} instance for the newly created entry is available;
+	 *   The {@link sap.ui.model.odata.v2.Context} instance for the newly created entry is passed as
+	 *   the first and only parameter.
 	 * @param {function} [mParameters.error]
 	 *   The error callback function
 	 * @param {string} [mParameters.expand]
@@ -6462,7 +6471,10 @@ sap.ui.define([
 	 * @param {Object<string,string>} [mParameters.urlParameters]
 	 *   A map of URL parameters
 	 *
-	 * @return {sap.ui.model.Context} A Context object that points to the newly created entry.
+	 * @return {sap.ui.model.odata.v2.Context|undefined}
+	 *   An OData V2 context object that points to the newly created entry; or
+	 *   <code>undefined</code> if the service metadata are not yet loaded or if a
+	 *   <code>created</code> callback parameter is given
 	 * @throws {Error}
 	 *   If the <code>expand</code> parameter is used but the batch mode is disabled
 	 * @public
@@ -7559,18 +7571,26 @@ sap.ui.define([
 
 	/**
 	 * Enriches the context with the deep path information.
-	 * @param {string} context path
-	 * @param {string} [sDeepPath=sPath] context deep path
-	 * @returns {sap.ui.model.Context} Enriched context
+	 * Gets the OData V2 context instance for the given path. The returned context is cached by the
+	 * given path.
+	 *
+	 * @param {string} sPath
+	 *   The absolute path
+	 * @param {string} [sDeepPath]
+	 *   The absolute deep path representing the same data as the given <code>sPath</code>
+	 * @returns {sap.ui.model.odata.v2.Context}
+	 *   The ODate V2 context for the given path
 	 * @private
 	 */
-	ODataModel.prototype.getContext = function(sPath, sDeepPath){
-		var oContext = Model.prototype.getContext.apply(this, arguments);
-		if (sDeepPath){ // define or override
-			oContext.sDeepPath = sDeepPath;
-		} else if (!sDeepPath && !oContext.sDeepPath){ // set default value
-			oContext.sDeepPath = sPath;
+	ODataModel.prototype.getContext = function (sPath, sDeepPath) {
+		var oContext = this.mContexts[sPath];
+
+		if (!oContext) {
+			oContext = this.mContexts[sPath] = new Context(this, sPath, sDeepPath);
+		} else {
+			oContext.setDeepPath(sDeepPath || oContext.getDeepPath() || sPath);
 		}
+
 		return oContext;
 	};
 

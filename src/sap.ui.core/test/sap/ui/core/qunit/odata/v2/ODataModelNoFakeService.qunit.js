@@ -16,16 +16,17 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataPropertyBinding",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v2/Context",
 	"sap/ui/model/odata/v2/ODataAnnotations",
 	"sap/ui/model/odata/v2/ODataContextBinding",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, coreLibrary, Message, Context, FilterProcessor, Model,
+], function (Log, SyncPromise, coreLibrary, Message, BaseContext, FilterProcessor, Model,
 		_ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel,
-		ODataPropertyBinding, ODataUtils, ODataAnnotations, ODataContextBinding, ODataListBinding,
-		ODataModel, ODataTreeBinding, TestUtils
+		ODataPropertyBinding, ODataUtils, Context, ODataAnnotations, ODataContextBinding,
+		ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
 ) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -112,7 +113,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("read: updateAggregatedMessages passed to _createRequest", function (assert) {
 		var bCanonicalRequest = "{boolean} bCanonicalRequest",
-			oContext = "{sap.ui.model.Context} oContext",
+			oContext = "{sap.ui.model.odata.v2.Context} oContext",
 			sDeepPath = "~deepPath",
 			oEntityType = "{object} oEntityType",
 			fnError = {/*function*/},
@@ -1709,28 +1710,32 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("createBindingContext calls #read with updateAggregatedMessages", function (assert) {
-		var fnCallBack = function () {},
+	QUnit.test("createBindingContext calls #read with updateAggregatedMessages and calls"
+			+ " callback with a V2 context", function (assert) {
+		var fnCallBack = sinon.stub(),
 			oModel = {
 				createCustomParams : function () {},
+				_getKey : function () {},
 				_isCanonicalRequestNeeded : function () {},
 				_isReloadNeeded : function () {},
+				getContext : function () {},
 				read : function () {},
 				resolve : function () {},
 				resolveDeep : function () {}
-			};
+			},
+			oModelMock = this.mock(oModel),
+			oReadExpectation;
 
-		this.mock(oModel).expects("_isCanonicalRequestNeeded").withExactArgs(undefined)
-			.returns("bCanonical");
-		this.mock(oModel).expects("resolve").withExactArgs("path", "context", "bCanonical")
-			.returns("sResolvedPath");
-		this.mock(oModel).expects("resolveDeep").withExactArgs("path", "context")
-			.returns("sDeepPath");
-		this.mock(oModel).expects("createCustomParams").withExactArgs(undefined)
-			.returns(undefined);
-		this.mock(oModel).expects("read").withExactArgs("path", {
-			canonicalRequest : "bCanonical",
-			context : "context",
+		oModelMock.expects("_isCanonicalRequestNeeded").withExactArgs(undefined)
+			.returns("~bCanonical");
+		oModelMock.expects("resolve").withExactArgs("~path/ToZ", "~context", "~bCanonical")
+			.returns("~sResolvedPath");
+		oModelMock.expects("resolveDeep").withExactArgs("~path/ToZ", "~context")
+			.returns("~sDeepPath");
+		oModelMock.expects("createCustomParams").withExactArgs(undefined).returns(undefined);
+		oReadExpectation = oModelMock.expects("read").withExactArgs("~path/ToZ", {
+			canonicalRequest : "~bCanonical",
+			context : "~context",
 			error : sinon.match.func,
 			groupId : undefined,
 			success : sinon.match.func,
@@ -1738,10 +1743,125 @@ sap.ui.define([
 			urlParameters : []
 		});
 
-		// code under test
-		ODataModel.prototype.createBindingContext.call(oModel, "path", "context",
+		// code under test - updateAggregatedMessages set to true
+		ODataModel.prototype.createBindingContext.call(oModel, "~path/ToZ", "~context",
 			/*mParameters*/undefined, fnCallBack, /*bReload*/true);
+
+		oModelMock.expects("_getKey").withExactArgs("~oData").returns("~sKey");
+		oModelMock.expects("getContext").withExactArgs("/~sKey", "~sDeepPath")
+			.returns("~v2.Context");
+
+		// code under test - call success handler with key data
+		oReadExpectation.args[0][1].success("~oData");
+
+		assert.ok(fnCallBack.calledOnceWithExactly("~v2.Context"));
+		fnCallBack.resetHistory();
+
+		oModelMock.expects("_getKey").withExactArgs("~oData").returns(undefined);
+		oModelMock.expects("getContext").never();
+
+		// code under test - call success handler without key data
+		oReadExpectation.args[0][1].success("~oData");
+
+		assert.ok(fnCallBack.calledOnceWithExactly(null));
+		fnCallBack.resetHistory();
+
+		// code under test - call error handler
+		oReadExpectation.args[0][1].error({/*oError*/});
+
+		assert.ok(fnCallBack.calledOnceWithExactly(null));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("createBindingContext: unresolved -> return null", function (assert) {
+		var fnCallBack = sinon.stub(),
+			oModel = {
+				_isCanonicalRequestNeeded: function() {},
+				resolve: function() {},
+				resolveDeep: function() {}
+			};
+
+		this.mock(oModel).expects("_isCanonicalRequestNeeded").withExactArgs(undefined)
+			.returns(false);
+		this.mock(oModel).expects("resolve").withExactArgs("~sPath", undefined, false)
+			.returns(undefined);
+		this.mock(oModel).expects("resolveDeep").withExactArgs("~sPath", undefined)
+			.returns("~sDeepPath");
+
+		// code under test - path cannot be resolved
+		assert.strictEqual(
+			ODataModel.prototype.createBindingContext.call(oModel, "~sPath", /*oContext*/undefined,
+				/*mParameters*/undefined, fnCallBack, /*bReload*/true),
+			null);
+
+		assert.ok(fnCallBack.calledOnceWithExactly(null));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createBindingContext: resolved with createPreliminaryContext", function (assert) {
+		var oModel = {
+				_isCanonicalRequestNeeded: function() {},
+				resolve: function() {},
+				resolveDeep: function() {},
+				getContext: function() {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_isCanonicalRequestNeeded").withExactArgs(undefined)
+			.returns(false);
+		oModelMock.expects("resolve").exactly(2).withExactArgs("~sPath", undefined, false)
+			.returns("/~sResolvedPath");
+		oModelMock.expects("resolveDeep").withExactArgs("~sPath", undefined)
+			.returns("~sDeepPath");
+		oModelMock.expects("getContext").withExactArgs("/~sResolvedPath", "~sDeepPath")
+			.returns("~v2.Context");
+
+		// code under test - resolved with createPreliminaryContext set
+		assert.strictEqual(
+			ODataModel.prototype.createBindingContext.call(oModel, "~sPath", /*oContext*/undefined,
+				/*mParameters*/{
+					createPreliminaryContext: true
+				}, /*fnCallBack*/undefined, /*bReload*/true),
+				"~v2.Context");
+	});
+
+	//*********************************************************************************************
+["/~sCanonicalPath", undefined].forEach(function (sCanonicalPath) {
+	var sTitle = "createBindingContext: resolved without reload; returns V2 Context with"
+			+ " canonicalPath=" + sCanonicalPath;
+
+	QUnit.test(sTitle, function (assert) {
+		var fnCallBack = sinon.stub(),
+			oExpectedContext = sCanonicalPath ? "~v2.Context" : null,
+			oModel = {
+				_isCanonicalRequestNeeded: function() {},
+				resolve: function() {},
+				resolveDeep: function() {},
+				getContext: function() {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_isCanonicalRequestNeeded").withExactArgs(undefined)
+			.returns(/*bCanonical*/false);
+		oModelMock.expects("resolve").withExactArgs("/~sPath", undefined, false)
+			.returns("/~sResolvedPath");
+		oModelMock.expects("resolveDeep").withExactArgs("/~sPath", undefined)
+			.returns("~sDeepPath");
+		oModelMock.expects("resolve").withExactArgs("/~sPath", undefined, true)
+			.returns(sCanonicalPath);
+		oModelMock.expects("getContext").withExactArgs("/~sCanonicalPath", "~sDeepPath")
+			.exactly(sCanonicalPath ? 1 : 0)
+			.returns("~v2.Context");
+
+		// code under test - path cannot be resolved
+		assert.strictEqual(
+			ODataModel.prototype.createBindingContext.call(oModel, "/~sPath", /*oContext*/undefined,
+				/*mParameters*/undefined, fnCallBack, /*bReload*/false),
+			oExpectedContext);
+
+		assert.ok(fnCallBack.calledOnceWithExactly(oExpectedContext));
+	});
+});
 
 	//*********************************************************************************************
 	// BCP: 1970052240
@@ -2103,6 +2223,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("createEntry: no created callback, before metadata is available", function (assert) {
+		var oModel = {
+				sDefaultChangeGroup : "~sDefaultChangeGroup",
+				oMetadata : {
+					isLoaded : function () {}
+				},
+				_getRefreshAfterChange : function () {},
+				_isCanonicalRequestNeeded : function () {},
+				_normalizePath : function () {},
+				resolveDeep : function () {}
+			};
+
+		this.mock(oModel).expects("_isCanonicalRequestNeeded").withExactArgs(undefined)
+			.returns(false);
+		this.mock(oModel).expects("_getRefreshAfterChange").withExactArgs(undefined, undefined)
+			.returns(false);
+		this.mock(oModel).expects("_normalizePath").withExactArgs("/~path", undefined, false)
+			.returns("sNormalizedPath");
+		this.mock(oModel).expects("resolveDeep").withExactArgs("/~path", undefined)
+			.returns("~sDeepPath");
+		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(false);
+		this.oLogMock.expects("error")
+			.withExactArgs("Tried to use createEntry without created-callback, before metadata is"
+				+ " available!");
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.createEntry.call(oModel, "/~path"),
+			undefined);
+	});
+
+
+	//*********************************************************************************************
 [undefined, "~expand"].forEach(function (sExpand) {
 	[true, false].forEach(function (bWithCallbackHandlers) {
 		(!sExpand
@@ -2265,7 +2418,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var fnAfterMetadataLoaded,
-			oCreatedContext = {},
+			oCreatedContext = {/*sap.ui.model.odata.v2.Context*/},
 			oEntity,
 			oEntityMetadata = {entityType : "~entityType"},
 			fnError,
@@ -4298,7 +4451,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_updateContext", function (assert) {
 		var oModel = {mContexts : {}},
-			oContext = new Context(oModel, "/path");
+			oContext = new BaseContext(oModel, "/path");
 
 		oModel.mContexts["/path"] = oContext;
 
@@ -4372,5 +4525,57 @@ sap.ui.define([
 		fnError("~error");
 
 		assert.strictEqual(oModel.bTokenHandling, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContext", function (assert) {
+		var oContext, oContext1,
+			oContextPrototypeMock = this.mock(Context.prototype),
+			oModel = {mContexts : {}};
+
+		// oContextPrototypeMock.expects("getDeepPath").never();
+		oContextPrototypeMock.expects("setDeepPath").never();
+
+		// code under test
+		oContext = ODataModel.prototype.getContext.call(oModel, "/~sPath");
+
+		assert.ok(oContext instanceof Context);
+		assert.strictEqual(oContext.getModel(), oModel);
+		assert.strictEqual(oContext.getPath(), "/~sPath");
+		assert.strictEqual(oContext.getDeepPath(), "/~sPath");
+
+		// code under test
+		oContext1 = ODataModel.prototype.getContext.call(oModel, "/~sPath1", "/~sDeepPath1");
+
+		assert.notStrictEqual(oContext1, oContext);
+		assert.strictEqual(oContext1.getPath(), "/~sPath1");
+		assert.strictEqual(oContext1.getDeepPath(), "/~sDeepPath1");
+
+		oContextPrototypeMock.expects("getDeepPath").never();
+		oContextPrototypeMock.expects("setDeepPath").on(oContext).withArgs("/~sDeepPath");
+
+		// code under test - cached instance
+		oContext1 = ODataModel.prototype.getContext.call(oModel, "/~sPath", "/~sDeepPath");
+
+		assert.strictEqual(oContext1, oContext);
+
+		oContextPrototypeMock.expects("getDeepPath").on(oContext).withArgs()
+			.returns("/~sDeepPathFromGetter");
+		oContextPrototypeMock.expects("setDeepPath").on(oContext).withArgs("/~sDeepPathFromGetter");
+
+		// code under test - existing deep path must not be overwritten by path
+		oContext1 = ODataModel.prototype.getContext.call(oModel, "/~sPath");
+
+		oContextPrototypeMock.expects("getDeepPath").never();
+		oContextPrototypeMock.expects("setDeepPath").on(oContext).withArgs("/~sDeepPath2");
+
+		// code under test - existing deep path overwrite
+		oContext1 = ODataModel.prototype.getContext.call(oModel, "/~sPath", "/~sDeepPath2");
+
+		oContextPrototypeMock.expects("getDeepPath").on(oContext).withArgs().returns("");
+		oContextPrototypeMock.expects("setDeepPath").on(oContext).withArgs("/~sPath");
+
+		// code under test - empty deep path
+		oContext1 = ODataModel.prototype.getContext.call(oModel, "/~sPath", "");
 	});
 });

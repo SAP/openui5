@@ -147,7 +147,8 @@ sap.ui.define([
 	 * @param {int} [iStartIndex] The start index of the requested contexts
 	 * @param {int} [iLength] The requested amount of contexts
 	 * @param {int} [iThreshold] The threshold value
-	 * @return {sap.ui.model.Context[]} The array of contexts for each row of the bound list
+	 * @return {sap.ui.model.odata.v2.Context[]}
+	 *   The array of contexts for each row of the bound list
 	 * @protected
 	 */
 	ODataListBinding.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
@@ -278,13 +279,13 @@ sap.ui.define([
 	 * @param {int} [iStartIndex=0] The start index of the requested contexts
 	 * @param {int} [iLength] The requested amount of contexts
 	 *
-	 * @return {Array} The contexts array
+	 * @return {sap.ui.model.odata.v2.Context[]} The contexts
 	 * @private
 	 */
 	ODataListBinding.prototype._getContexts = function(iStartIndex, iLength) {
-		var aContexts = [],
-		oContext,
-		sKey;
+		var oContext, sKey,
+			aContexts = [],
+			sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
 
 		if (!iStartIndex) {
 			iStartIndex = 0;
@@ -302,9 +303,9 @@ sap.ui.define([
 			if (!sKey) {
 				break;
 			}
-			oContext = this.oModel.getContext('/' + sKey, this.oModel.resolveDeep(this.sPath, this.oContext) + sKey.substr(sKey.indexOf("(")));
+			oContext = this.oModel.getContext('/' + sKey,
+				sDeepPath + sKey.substr(sKey.indexOf("(")));
 			aContexts.push(oContext);
-
 		}
 
 		return aContexts;

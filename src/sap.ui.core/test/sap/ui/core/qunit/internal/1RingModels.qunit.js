@@ -146,6 +146,7 @@ sap.ui.require([
 		// ***************************************************************************************
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
 		// "sap/ui/core/qunit/odata/v2/CanonicalRequests.qunit",
+		"sap/ui/core/qunit/odata/v2/Context.qunit",
 		"sap/ui/core/qunit/odata/v2/datajs.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
 		// "sap/ui/core/qunit/odata/v2/DerivedTypes.qunit",
