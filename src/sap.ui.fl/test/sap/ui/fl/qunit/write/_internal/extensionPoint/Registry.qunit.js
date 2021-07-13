@@ -105,7 +105,6 @@ sap.ui.define([
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId()).length, 0, "then after exit the registration map for parentId is empty");
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName2, this.oXMLView), undefined, "then after exit the registration map for viewId is empty");
 		});
-
 		QUnit.test("given the extensionpoint is the single node in aggregation when calling 'registerExtensionPoint'", function(assert) {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			var oObserverObserveSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
@@ -114,7 +113,6 @@ sap.ui.define([
 			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName5, this.oXMLView), mExtensionPoint, "then after registration one item is registered by viewId");
 			assert.equal(oObserverObserveSpy.callCount, 1, "then after registration one observer is registered");
 		});
-
 		QUnit.test("given the extensionpoint in an aggregation with cardinality '0..1'", function(assert) {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			var oObserverObserveSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
@@ -126,7 +124,6 @@ sap.ui.define([
 			assert.propEqual(mExtensionPoint.aggregation, ["newLabel1"], "and after adding an object the observer uses an array for the aggregation");
 			oLabel1.destroy();
 		});
-
 		QUnit.test("given a control containing two extension points in an aggregation", function(assert) {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
@@ -134,7 +131,6 @@ sap.ui.define([
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
 			var oLabel1 = new Label("newLabel1");
 			var oLabel2 = new Label("newLabel2");
-
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0, "the index is '0' for the first extension point at the beginning");
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index is '2' for the second extension point at the beginning");
 			mExtensionPointInfo2.targetControl.addContent(oLabel1);
@@ -149,11 +145,9 @@ sap.ui.define([
 			mExtensionPointInfo2.targetControl.removeContent(oLabel2);
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 0, "the index is the same as before when a control is removed from the same index");
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index is decreased when a control is removed from a lower index");
-
 			oLabel1.destroy();
 			oLabel2.destroy();
 		});
-
 		QUnit.test("given a control containing an two extension points in two aggregations", function(assert) {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			var mExtensionPointInfo1 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName1, this.oHBox, "items", 1);
@@ -163,7 +157,6 @@ sap.ui.define([
 			var oLabel2 = new Label("newLabel4");
 			var oLabel3 = new Label("newLabel5");
 			var oLabel4 = new Label("newLabel6");
-
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1, "the index is '1' for the first extension point at the beginning");
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index is '1' for the second extension point at the beginning");
 			mExtensionPointInfo1.targetControl.addItem(oLabel1);
@@ -190,7 +183,6 @@ sap.ui.define([
 			mExtensionPointInfo4.targetControl.removeDependent(oLabel4);
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[0].index, 1, "the in the other aggregation index stays the same");
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)[1].index, 1, "the index is decreased when a control is removed from a lower index");
-
 			oLabel1.destroy();
 			oLabel2.destroy();
 			oLabel3.destroy();
