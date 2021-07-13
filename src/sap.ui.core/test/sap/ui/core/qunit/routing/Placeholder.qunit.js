@@ -106,10 +106,10 @@ sap.ui.define([
 		}).then(function() {
 			assert.equal(oHidePlaceholderSpy.callCount, 1, "Placeholder.hide should be called");
 			assert.notOk(oNavContainer.getDomRef().contains(document.getElementById("myPlaceholder")), "NavContainer shouldn't contain the placeholder anymore");
-			assert.notOk(oNavContainer._placeholder, "Placeholder reference should be removed from the NavContainer");
 
 			// cleanup
 			oNavContainer.destroy();
+			assert.notOk(oNavContainer._placeholder, "Placeholder reference should be removed from the NavContainer");
 			oShowPlaceholderSpy.restore();
 			oHidePlaceholderSpy.restore();
 		});
@@ -216,6 +216,10 @@ sap.ui.define([
 				"my/placeholder.fragment.html":"<div id='myPlaceholder'></div>"
 			});
 
+			sap.ui.require.preload({
+				"my/placeholder1.fragment.html":"<div id='myPlaceholder1'></div>"
+			});
+
 			sap.ui.jsview("sampleView", {
 				createContent : function() {
 					return new Panel(this.createId("panel"));
@@ -235,6 +239,12 @@ sap.ui.define([
 			});
 
 			sap.ui.jsview("sampleView4", {
+				createContent : function() {
+					return new Panel(this.createId("panel"));
+				}
+			});
+
+			sap.ui.jsview("sampleView5", {
 				createContent : function() {
 					return new Panel(this.createId("panel"));
 				}
@@ -309,7 +319,7 @@ sap.ui.define([
 			});
 		});
 
-		assert.expect(6);
+		assert.expect(5);
 
 		var oNavConShowPlaceholderSpy = sinon.spy(NavContainer.prototype, "showPlaceholder"),
 			oNavConHidePlaceholderSpy = sinon.spy(NavContainer.prototype, "hidePlaceholder");
@@ -359,8 +369,6 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				oRouter.getRoute("route1").attachMatched(function(oEvent) {
 					assert.equal(oNavConShowPlaceholderSpy.callCount, 2, "NavContainer.showPlaceholder should be called a second time");
-					assert.equal(oNavConHidePlaceholderSpy.callCount, 1, "NavContainer.hidePlaceholder shouldn't be called a second time");
-
 					resolve(oNavContainer);
 				});
 			});
@@ -642,7 +650,7 @@ sap.ui.define([
 						{
 							pattern: "route1",
 							name: "route1",
-							target: ["target1", "target2", "targetAutoCloseFalse"]
+							target: ["target4", "targetAutoCloseFalse"]
 						}],
 						targets: {
 							target1: {
@@ -651,7 +659,7 @@ sap.ui.define([
 								name: "sampleView",
 								type: "View",
 								placeholder: {
-									autoClose: true,
+									autoClose: false,
 									html: "my/placeholder.fragment.html"
 								}
 							},
@@ -675,6 +683,16 @@ sap.ui.define([
 									html: "my/placeholder.fragment.html"
 								}
 							},
+							target4: {
+								controlAggregation: "midColumnPages",
+								id: "sampleView5",
+								name: "sampleView5",
+								type: "View",
+								placeholder: {
+									autoClose: true,
+									html: "my/placeholder.fragment.html"
+								}
+							},
 							targetAutoCloseFalse: {
 								controlAggregation: "endColumnPages",
 								id: "sampleView4",
@@ -682,7 +700,7 @@ sap.ui.define([
 								type: "View",
 								placeholder: {
 									autoClose: false,
-									html: "my/placeholder.fragment.html"
+									html: "my/placeholder1.fragment.html"
 								}
 							}
 						}
@@ -737,10 +755,9 @@ sap.ui.define([
 			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(2).args[0], "endColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'endColumnPages' aggregation");
 
 			// hidePlaceholder
-			assert.equal(oFlexLayoutHidePlaceholderSpy.callCount, 3, "FlexibleColumnLayout.hidePlaceholder should be called three times");
-			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(0).args[0].aggregation, "beginColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'beginColumnPages' aggregation");
-			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(1).args[0].aggregation, "midColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'midColumnPages' aggregation");
-			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(2).args[0].aggregation, "endColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'endColumnPages' aggregation");
+			assert.equal(oFlexLayoutHidePlaceholderSpy.callCount, 2, "FlexibleColumnLayout.hidePlaceholder should be called two times");
+			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(0).args[0].aggregation, "midColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'midColumnPages' aggregation");
+			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(1).args[0].aggregation, "endColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'endColumnPages' aggregation");
 
 			return new Promise(function(resolve, reject) {
 				oFlexColumnLayout.getEndColumnPages()[0].addEventDelegate({
@@ -749,27 +766,27 @@ sap.ui.define([
 							resolve(oFlexColumnLayout);
 						});
 
-						// target1, target2, targetAutoCloseFalse
+						// targetAutoCloseFalse, target4
 						oRouter.navTo("route1");
 					}
 				});
 			});
 		}).then(function(oFlexColumnLayout) {
 			// showPlaceholder
-			assert.equal(oFlexLayoutShowPlaceholderSpy.callCount, 4, "FlexibleColumnLayout.showPlaceholder should be called four times");
-			assert.equal(oFlexLayoutShowPlaceholderSpy.getCall(3).args[0].aggregation, "endColumnPages",
-				"FlexibleColumnLayout.showPlaceholder should be called on 'endColumnPages' aggregation - 'beginColumnPages' and 'midColumnPages' didn't change");
+			assert.equal(oFlexLayoutShowPlaceholderSpy.callCount, 5, "FlexibleColumnLayout.showPlaceholder should be called four times");
+			assert.equal(oFlexLayoutShowPlaceholderSpy.getCall(3).args[0].aggregation, "midColumnPages",
+				"FlexibleColumnLayout.showPlaceholder should be called on 'midColumnPages' aggregation - 'beginColumnPages' didn't change");
+			assert.equal(oFlexLayoutShowPlaceholderSpy.getCall(4).args[0].aggregation, "endColumnPages",
+				"FlexibleColumnLayout.showPlaceholder should be called on 'endColumnPages' aggregation - 'beginColumnPages' didn't change");
 
 			// needPlaceholder
-			assert.equal(oFlexLayoutNeedPlaceholderSpy.callCount, 6, "FlexibleColumnLayout.needPlaceholder should be called six times");
-			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(3).args[0], "beginColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'beginColumnPages' aggregation");
-			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(4).args[0], "midColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'midColumnPages' aggregation");
-			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(5).args[0], "endColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'endColumnPages' aggregation");
+			assert.equal(oFlexLayoutNeedPlaceholderSpy.callCount, 5, "FlexibleColumnLayout.needPlaceholder should be called six times");
+			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(3).args[0], "midColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'midColumnPages' aggregation");
+			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(4).args[0], "endColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'endColumnPages' aggregation");
 
 			// hidePlaceholder
-			assert.equal(oFlexLayoutHidePlaceholderSpy.callCount, 5, "FlexibleColumnLayout.hidePlaceholder should be called five times");
-			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(3).args[0].aggregation, "beginColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'beginColumnPages' aggregation");
-			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(4).args[0].aggregation, "midColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'midColumnPages' aggregation");
+			assert.equal(oFlexLayoutHidePlaceholderSpy.callCount, 3, "FlexibleColumnLayout.hidePlaceholder should be called three times");
+			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(2).args[0].aggregation, "midColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'midColumnPages' aggregation");
 
 			return new Promise(function(resolve, reject) {
 				oFlexColumnLayout.getEndColumnPages()[1].addEventDelegate({
@@ -779,12 +796,18 @@ sap.ui.define([
 				});
 			});
 		}).then(function(oFlexColumnLayout) {
+			assert.ok(oFlexColumnLayout._getBeginColumn()
+				.getDomRef().contains(document.getElementById("myPlaceholder")), "beginColumn should still contain the placeholder (autoClose: false)");
 			assert.ok(oFlexColumnLayout._getEndColumn()
-				.getDomRef().contains(document.getElementById("myPlaceholder")), "endColumn should still contain the placeholder (autoClose: false)");
+				.getDomRef().contains(document.getElementById("myPlaceholder1")), "endColumn should still contain the placeholder (autoClose: false)");
+
+			oFlexColumnLayout.hidePlaceholder({ aggregation: "beginColumPages" });
+			assert.notOk(oFlexColumnLayout._getEndColumn()
+				.getDomRef().contains(document.getElementById("myPlaceholder")), "beginColumn shouldn't contain the placeholder anymore");
 
 			oFlexColumnLayout.hidePlaceholder({ aggregation: "endColumnPages" });
 			assert.notOk(oFlexColumnLayout._getEndColumn()
-				.getDomRef().contains(document.getElementById("myPlaceholder")), "endColumn shouldn't contain the placeholder anymore");
+				.getDomRef().contains(document.getElementById("myPlaceholder1")), "endColumn shouldn't contain the placeholder anymore");
 
 			// cleanup
 			oComponentContainer.destroy();

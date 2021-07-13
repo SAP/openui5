@@ -192,7 +192,8 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/f/Flexib
 				sViewId = oParams.view.getId(),
 				aColumnsCurrentPages,
 				bIsFCL = oTargetControl instanceof FlexibleColumnLayout,
-				bSkipNavigation = false;
+				bSkipNavigation = false,
+				oPlaceholderConfig = oParams.placeholderConfig;
 
 			if (bIsFCL) {
 				aColumnsCurrentPages = [
@@ -209,7 +210,9 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/f/Flexib
 			// If the page we are going to navigate is already displayed,
 			// we are skipping the navigation.
 			if (bSkipNavigation) {
-				oTargetControl.hidePlaceholder(oParams.placeholderConfig);
+				if (oPlaceholderConfig.autoClose) {
+					oTargetControl.hidePlaceholder(oPlaceholderConfig);
+				}
 				Log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.f.routing.TargetHandler");
 				return false;
 			}
@@ -220,6 +223,10 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/f/Flexib
 				oTargetControl._safeBackToPage(sViewId, sTransition, oArguments, oTransitionParameters);
 			} else {
 				oTargetControl.to(sViewId, sTransition, oArguments, oTransitionParameters);
+			}
+
+			if (oPlaceholderConfig.autoClose) {
+				oTargetControl.hidePlaceholder(oPlaceholderConfig);
 			}
 
 			return true;

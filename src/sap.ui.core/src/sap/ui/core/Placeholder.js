@@ -75,6 +75,7 @@ sap.ui.define([
 					this.blockState = BlockLayerUtils.block(oControl, oControl.getId() + "--placeholder", sBlockedSection);
 
 					var oDomRef = this.blockState.$blockLayer[0];
+					oDomRef.className += " sapUiPlaceholder";
 					oDomRef.insertAdjacentHTML("beforeend", sPlaceholderContent);
 					this.placeholder = oDomRef;
 				}
