@@ -495,10 +495,30 @@ html.sap-desktop .sapTntToolHeader .sapMFocus > .sapMSFF::before {
 	.sapMITH {
 		border-color: transparent;
 	}
-}
 
-.sapTntToolHeader .sapMITH .sapMITBHead .sapMITBFilter .sapMITBText + .sapMITBContentArrow {
-	height: 0.875rem;
+	.sapMITH {
+		.sapMITHStartOverflow,
+		.sapMITHEndOverflow {
+			.sapMITBItem {
+				color: @sapUiShellInteractiveTextColor;
+				background-color: transparent;
+				border: none;
+
+				&:not(.sapUiDnDDragging):focus::after {
+					border-color: @sapUiShellInteractiveTextColor;
+					border-radius: unset;
+				}
+
+				.sapMITHShowSubItemsIcon {
+					color: @sapUiShellInteractiveTextColor;
+				}
+			}
+		}
+	}
+
+	.sapMITBHead .sapMITBFilter .sapMITBText + .sapMITBContentArrow {
+		height: 0.875rem;
+	}
 }
 
 /* Focus Colors*/

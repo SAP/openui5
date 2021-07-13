@@ -67,6 +67,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.IconColor
 	var IconColor = coreLibrary.IconColor;
 
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
+
 	/**
 	 * The time between tab activation and the disappearance of the badge.
 	 * @constant {int}
@@ -183,7 +186,8 @@ sap.ui.define([
 			 */
 			_expandButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
 
-			/** The badge of the expand button
+			/**
+			 * The badge of the expand button
 			 * @since 1.83
 			 */
 			_expandButtonBadge : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
@@ -843,7 +847,7 @@ sap.ui.define([
 			});
 			this._oSelectList._oIconTabHeader = this.getParent();
 			this._oSelectList._oTabFilter = this;
-			this._oSelectList._bIsOverflow = this._isOverflow;
+			this._oSelectList._bIsOverflow = this._isOverflow();
 		}
 		return this._oSelectList;
 	};
@@ -863,6 +867,19 @@ sap.ui.define([
 		}
 	};
 
+	IconTabFilter.prototype._updateTabCountText = function () {
+		if (!this._isOverflow()) {
+			return;
+		}
+
+		var iTabFilters = this._getIconTabHeader()
+			._getItemsForOverflow(this._bIsStartOverflow)
+			.filter(function (oItem) { return oItem.isA("sap.m.IconTabFilter"); })
+			.length;
+
+		this.setText("+" + iTabFilters);
+	};
+
 	/**
 	 * Returns the expand button for this instance.
 	 * This button is conditionally shown in the DOM
@@ -878,6 +895,7 @@ sap.ui.define([
 				icon: IconPool.getIconURI("slim-arrow-down"),
 				tooltip: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE"),
 				tabIndex: "-1",
+				ariaHasPopup: AriaHasPopup.Menu,
 				press: this._expandButtonPress.bind(this)
 			}).addStyleClass("sapMITBFilterExpandBtn");
 

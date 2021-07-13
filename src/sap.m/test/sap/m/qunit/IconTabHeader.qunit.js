@@ -895,6 +895,27 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Both overflows show how many tabs they hold", function (assert) {
+		// Arrange
+		this.oITH.setSelectedKey("50");
+		Core.applyChanges();
+
+		var aItems = this.oITH.getItems(),
+			aVisibleTabs = this.oITH._getItemsInStrip(),
+			oFirstVisibleTab = aVisibleTabs[0],
+			oLastVisibleTab = aVisibleTabs[aVisibleTabs.length - 1];
+
+		var iOverflownTabsInStartOverflow = aItems.slice(0, aItems.indexOf(oFirstVisibleTab)).length,
+			iOverflownTabsInEndOverflow = aItems.slice(aItems.indexOf(oLastVisibleTab) + 1).length;
+
+		var oStartOverflowText = this.oITH._getStartOverflow().getText(),
+			oEndOverflowText = this.oITH._getOverflow().getText();
+
+		// Assert
+		assert.strictEqual("+" + iOverflownTabsInStartOverflow, oStartOverflowText, "start overflow has correct tab count: " + iOverflownTabsInStartOverflow);
+		assert.strictEqual("+" + iOverflownTabsInEndOverflow, oEndOverflowText, "end overflow has correct tab count: " + iOverflownTabsInEndOverflow);
+	});
+
 	QUnit.module("Badges - Start overflow", {
 		beforeEach: function () {
 			this.oITH = new IconTabHeader({

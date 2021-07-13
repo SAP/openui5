@@ -69,5 +69,37 @@ html.sap-desktop .sapTntToolHeader .sapMBtn:focus > .sapMBtnEmphasized.sapMFocus
 }
 
 .sapTntToolHeader span.sapMBtnInner.sapMBtnEmphasized .sapMBtnIcon {
-    color: @sapContent_IconColor;
+	color: @sapContent_IconColor;
+}
+
+.sapTntToolHeader .sapMITH.sapMITBTextOnly .sapMITHEndOverflow {
+	margin-top: 0;
+}
+
+.sapTntToolHeader {
+	.sapMITH {
+		.sapMITHStartOverflow,
+		.sapMITHEndOverflow {
+			.sapMITBItem {
+				background-color: transparent;
+				border-color: transparent;
+
+				&:hover {
+					background: fade(lighten(@sapPrimary1, 18%), 50%);
+				}
+
+				&:active {
+					background: @sapButton_Active_Background;
+
+					.sapMITBText {
+						color: @sapUiShellActiveTextColor;
+
+						.sapMITHShowSubItemsIcon .sapUiIcon {
+							color: @sapUiShellActiveTextColor;
+						}
+					}
+				}
+			}
+		}
+	}
 }
