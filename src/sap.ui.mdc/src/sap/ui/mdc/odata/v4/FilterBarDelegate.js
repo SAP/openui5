@@ -50,43 +50,48 @@ sap.ui.define([
 
 		var oDelegate, sModelName, sCollectionName, oModel, sFilterBarId;
 
-		if (mPropertyBag) {
-			var oModifier = mPropertyBag.modifier;
+		return Promise.resolve()
+			.then(function() {
+				if (mPropertyBag) {
+					var oModifier = mPropertyBag.modifier;
 
-			oDelegate = oModifier.getProperty(oControl, "delegate");
-			sModelName =  oDelegate.payload.modelName === null ? undefined : oDelegate.payload.modelName;
-			sCollectionName = oDelegate.payload.collectionName;
-			oModel = mPropertyBag.appComponent.getModel(sModelName);
-		} else {
-
-			oDelegate = oControl.getProperty("delegate");
-			sModelName =  oDelegate.payload.modelName === null ? undefined : oDelegate.payload.modelName;
-			sCollectionName = oDelegate.payload.collectionName;
-			oModel = oControl.getModel(sModelName);
-		}
-
-		sFilterBarId = oControl.getId ? oControl.getId() :  oControl.id;
-
-		var oObj = {
-				getDelegate: function() {
-					return {
-						payload : {
-							modelName : sModelName,
-							collectionName: sCollectionName
-						}
-					};
-				},
-
-				getModel : function (s) {
-					return oModel;
-				},
-
-				getId : function() {
-					return sFilterBarId;
+					return Promise.resolve()
+						.then(oModifier.getProperty.bind(oModifier, oControl, "delegate"))
+						.then(function(oDelegate) {
+							sModelName =  oDelegate.payload.modelName === null ? undefined : oDelegate.payload.modelName;
+							sCollectionName = oDelegate.payload.collectionName;
+							oModel = mPropertyBag.appComponent.getModel(sModelName);
+						});
 				}
-		};
+				oDelegate = oControl.getProperty("delegate");
+				sModelName =  oDelegate.payload.modelName === null ? undefined : oDelegate.payload.modelName;
+				sCollectionName = oDelegate.payload.collectionName;
+				oModel = oControl.getModel(sModelName);
+			})
+			.then(function() {
+				sFilterBarId = oControl.getId ? oControl.getId() :  oControl.id;
 
-		return mPropertyBag ? this.fetchProperties(oObj) : oControl.getControlDelegate().fetchProperties(oControl);
+				var oObj = {
+						getDelegate: function() {
+							return {
+								payload : {
+									modelName : sModelName,
+									collectionName: sCollectionName
+								}
+							};
+						},
+
+						getModel : function (s) {
+							return oModel;
+						},
+
+						getId : function() {
+							return sFilterBarId;
+						}
+				};
+
+				return mPropertyBag ? this.fetchProperties(oObj) : oControl.getControlDelegate().fetchProperties(oControl);
+			}.bind(this));
 	};
 
 	ODataFilterBarDelegate._ensureSingleRangeEQOperators = function() {
@@ -176,50 +181,51 @@ sap.ui.define([
 			return Promise.resolve(oExistingFilterField);
 		}
 
-		return oModifier.createControl("sap.ui.mdc.FilterField", oAppComponent, oView, sId, {
-			dataType: oProperty.typeConfig.className,
-			conditions: "{$filters>/conditions/" + sName + '}',
-			required: oProperty.required,
-			label: oProperty.label || oProperty.name,
-			maxConditions: oProperty.maxConditions,
-			delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}}
-		}, true).then(function(oFilterField) {
-			if (oProperty.fieldHelp) {
+		return Promise.resolve()
+			.then(oModifier.createControl.bind(oModifier, "sap.ui.mdc.FilterField", oAppComponent, oView, sId, {
+				dataType: oProperty.typeConfig.className,
+				conditions: "{$filters>/conditions/" + sName + '}',
+				required: oProperty.required,
+				label: oProperty.label || oProperty.name,
+				maxConditions: oProperty.maxConditions,
+				delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}}
+			})).then(function(oFilterField) {
+				if (oProperty.fieldHelp) {
 
-				var sFieldHelp = oProperty.fieldHelp;
-				if (!sViewId) { // viewId is only set during xmlTree processing
-					sFieldHelp = oView.createId(oProperty.fieldHelp);
-				} else {
-					sFieldHelp = sViewId + "--" + oProperty.fieldHelp;
+					var sFieldHelp = oProperty.fieldHelp;
+					if (!sViewId) { // viewId is only set during xmlTree processing
+						sFieldHelp = oView.createId(oProperty.fieldHelp);
+					} else {
+						sFieldHelp = sViewId + "--" + oProperty.fieldHelp;
+					}
+					oModifier.setAssociation(oFilterField, "fieldHelp", sFieldHelp);
 				}
-				oModifier.setAssociation(oFilterField, "fieldHelp", sFieldHelp);
-			}
 
-			if (oProperty.filterOperators) {
-				if (oFilterBar.getId) {
-					oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators);
-				} else {
-					oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators.join(','));
+				if (oProperty.filterOperators) {
+					if (oFilterBar.getId) {
+						oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators);
+					} else {
+						oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators.join(','));
+					}
 				}
-			}
 
-			if (oProperty.tooltip) {
-				oModifier.setProperty(oFilterField, "tooltip", oProperty.tooltip);
-			}
+				if (oProperty.tooltip) {
+					oModifier.setProperty(oFilterField, "tooltip", oProperty.tooltip);
+				}
 
-			if (oProperty.constraints) {
-				oModifier.setProperty(oFilterField, "dataTypeConstraints", oProperty.constraints);
-			}
+				if (oProperty.constraints) {
+					oModifier.setProperty(oFilterField, "dataTypeConstraints", oProperty.constraints);
+				}
 
-			if (oProperty.formatOptions) {
-				oModifier.setProperty(oFilterField, "dataTypeFormatOptions", oProperty.formatOptions);
-			}
+				if (oProperty.formatOptions) {
+					oModifier.setProperty(oFilterField, "dataTypeFormatOptions", oProperty.formatOptions);
+				}
 
-			if (oProperty.display) {
-				oModifier.setProperty(oFilterField, "display", oProperty.display);
-			}
-			return oFilterField;
-		});
+				if (oProperty.display) {
+					oModifier.setProperty(oFilterField, "display", oProperty.display);
+				}
+				return oFilterField;
+			});
 	};
 
 	ODataFilterBarDelegate._createFilter = function(sPropertyName, oFilterBar, mPropertyBag) {

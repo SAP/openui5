@@ -14,11 +14,23 @@ sap.ui.define([
 	};
 
 	oChartItemFlex.findItem = function(oModifier, aItems, sName) {
-		return aItems.find(function(oItem) {
-			var sKey = oModifier.getProperty(oItem, "key");
-			var sKeyNew = oModifier.getProperty(oItem, "name"); // for chart remake
-			return (sKey === sName || sKeyNew === sName);
-		});
+		return aItems.reduce(function(oPreviousPromise, oItem) {
+			return oPreviousPromise
+				.then(function(oFoundItem) {
+					if (!oFoundItem) {
+						return Promise.all([
+							oModifier.getProperty(oItem, "key"),
+							oModifier.getProperty(oItem, "name") // for chart remake
+						])
+						.then(function(aProperties) {
+							if (aProperties[0] === sName || aProperties[1] === sName) {
+								return oItem;
+							}
+						});
+					}
+					return oFoundItem;
+				});
+		}, Promise.resolve());
 	};
 
 	oChartItemFlex.addItem = oChartItemFlex.createAddChangeHandler();

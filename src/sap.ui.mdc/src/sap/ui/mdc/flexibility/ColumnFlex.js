@@ -24,10 +24,21 @@ sap.ui.define([
 	};
 
 	ColumnFlex.findItem = function(oModifier, aColumns, sName) {
-		return aColumns.find(function(oColumn) {
-			var sDataProperty = oModifier.getProperty(oColumn, "dataProperty");
-			return sDataProperty === sName;
-		});
+		return aColumns.reduce(function(oPreviousPromise, oColumn) {
+			return oPreviousPromise
+				.then(function(oFoundColumn) {
+					if (!oFoundColumn) {
+						return Promise.resolve()
+							.then(oModifier.getProperty.bind(oModifier, oColumn, "dataProperty"))
+							.then(function(sDataProperty) {
+								if (sDataProperty === sName) {
+									return oColumn;
+								}
+							});
+					}
+					return oFoundColumn;
+				});
+		}, Promise.resolve());
 	};
 
 	ColumnFlex.afterApply = function(sChangeType, oTable, bIsRevert) {

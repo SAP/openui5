@@ -56,16 +56,19 @@ sap.ui.define([
 		}
 
 		var sLabel = aFoundValue && aFoundValue.length > 0 ? aFoundValue[0].label : sPropertyInfoName;
+		var oTemplate;
 
 		if (oTable.isA === undefined) {
 			return oModifier.createControl("sap.m.Text", mPropertyBag.appComponent, mPropertyBag.view, sId + "--text--" + sPropertyInfoName,{
 				text: "{" + sPropertyInfoName + "}"
-			}, true).then(function(oTemplate){
-				var oColumn = oModifier.createControl("sap.ui.mdc.table.Column", mPropertyBag.appComponent, mPropertyBag.view, sId, {
+			}).then(function(oCreatedTemplate){
+				oTemplate = oCreatedTemplate;
+				return oModifier.createControl("sap.ui.mdc.table.Column", mPropertyBag.appComponent, mPropertyBag.view, sId, {
 					dataProperty: sPropertyInfoName,
 					width: "150px",
 					header: sLabel
 				});
+			}).then(function(oColumn) {
 				oColumn.appendChild(oTemplate);
 				return oColumn;
 			});

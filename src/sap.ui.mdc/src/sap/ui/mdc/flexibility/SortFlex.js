@@ -38,23 +38,29 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		return new Promise(function(resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			var oSortConditions = oModifier.getProperty(oControl, "sortConditions");
-			var aValue = oSortConditions ? oSortConditions.sorters : [];
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
+				.then(function(oSortConditions) {
+					var aValue = oSortConditions ? oSortConditions.sorters : [];
 
-			var oSortContent = {
-				name: oChangeContent.name,
-				descending: oChangeContent.descending
-			};
+					var oSortContent = {
+						name: oChangeContent.name,
+						descending: oChangeContent.descending
+					};
 
-			aValue.splice(oChangeContent.index, 0, oSortContent);
+					aValue.splice(oChangeContent.index, 0, oSortContent);
 
-			oSortConditions = {
-				sorters: aValue
-			};
-			oModifier.setProperty(oControl, "sortConditions", oSortConditions);
+					oSortConditions = {
+						sorters: aValue
+					};
+					oModifier.setProperty(oControl, "sortConditions", oSortConditions);
 
-			fFinalizeSortChange(oChange, oControl, oSortContent, bIsRevert);
-			resolve();
+					fFinalizeSortChange(oChange, oControl, oSortContent, bIsRevert);
+					resolve();
+				})
+				.catch(function(oError){
+					reject(oError);
+				});
 		});
 	};
 
@@ -62,28 +68,34 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		return new Promise(function(resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			var oSortConditions = oModifier.getProperty(oControl, "sortConditions");
-			var aValue = oSortConditions ? oSortConditions.sorters : [];
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
+				.then(function(oSortConditions) {
+					var aValue = oSortConditions ? oSortConditions.sorters : [];
 
-			if (!aValue) {
-				// Nothing to remove
-				reject();
-			}
+					if (!aValue) {
+						// Nothing to remove
+						reject();
+					}
 
-			var aFoundValue = aValue.filter(function(o) {
-				return o.name === oChangeContent.name;
-			});
-			var iIndex = aValue.indexOf(aFoundValue[0]);
+					var aFoundValue = aValue.filter(function(o) {
+						return o.name === oChangeContent.name;
+					});
+					var iIndex = aValue.indexOf(aFoundValue[0]);
 
-			aValue.splice(iIndex, 1);
+					aValue.splice(iIndex, 1);
 
-			oSortConditions = {
-				sorters: aValue
-			};
-			oModifier.setProperty(oControl, "sortConditions", oSortConditions);
+					oSortConditions = {
+						sorters: aValue
+					};
+					oModifier.setProperty(oControl, "sortConditions", oSortConditions);
 
-			fFinalizeSortChange(oChange, oControl, oChangeContent, bIsRevert);
-			resolve();
+					fFinalizeSortChange(oChange, oControl, oChangeContent, bIsRevert);
+					resolve();
+				})
+				.catch(function(oError){
+					reject(oError);
+				});
 		});
 	};
 
@@ -91,25 +103,31 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		return new Promise(function(resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			var oSortConditions = oModifier.getProperty(oControl, "sortConditions");
-			var aValue = oSortConditions ? oSortConditions.sorters : [];
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
+				.then(function(oSortConditions) {
+					var aValue = oSortConditions ? oSortConditions.sorters : [];
 
-			var aFoundValue = aValue.filter(function(o) {
-				return o.name === oChangeContent.name;
-			});
+					var aFoundValue = aValue.filter(function(o) {
+						return o.name === oChangeContent.name;
+					});
 
-			//remove the item from the 'sortConditions' array, insert it at the new position
-			var iOldIndex = aValue.indexOf(aFoundValue[0]);
-			aValue.splice(oChangeContent.index, 0, aValue.splice(iOldIndex, 1)[0]);
+					//remove the item from the 'sortConditions' array, insert it at the new position
+					var iOldIndex = aValue.indexOf(aFoundValue[0]);
+					aValue.splice(oChangeContent.index, 0, aValue.splice(iOldIndex, 1)[0]);
 
-			oSortConditions = {
-				sorters: aValue
-			};
-			oModifier.setProperty(oControl, "sortConditions", oSortConditions);
+					oSortConditions = {
+						sorters: aValue
+					};
+					oModifier.setProperty(oControl, "sortConditions", oSortConditions);
 
-			//finalize the 'moveSort' change (only persist name + index)
-			fFinalizeSortChange(oChange, oControl, oChangeContent, bIsRevert);
-			resolve();
+					//finalize the 'moveSort' change (only persist name + index)
+					fFinalizeSortChange(oChange, oControl, oChangeContent, bIsRevert);
+					resolve();
+				})
+				.catch(function(oError){
+					reject(oError);
+				});
 		});
 	};
 

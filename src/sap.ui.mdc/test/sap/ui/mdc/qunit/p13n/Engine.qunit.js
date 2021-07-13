@@ -141,25 +141,25 @@ sap.ui.define([
 
         this.oUnregisteredControl = new Control("myControl");
 
-        assert.throws(function() {
-			this.oEngine.enhanceXConfig(this.oUnregisteredControl, {});
-		}, "The Engine expects the control to be registered to enhance the xConfig");
-
+        return this.oEngine.enhanceXConfig(this.oUnregisteredControl, {})
+            .catch(function(oError) {
+                assert.ok(oError.message, "The Engine expects the control to be registered to enhance the xConfig");
+            });
     });
 
     QUnit.test("Check 'enhanceXConfig' throws error if aggregation does not exist", function(assert){
 
-        assert.throws(function() {
-			this.oEngine.enhanceXConfig(this.ocontrol , {
-                controlMeta: {
-                    aggregation: "items",
-                    property: "text"
-                },
-                name: "test",
-                value: "someTestText"
-            });
-		}, "The Engine expects the control to be registered to enhance the xConfig");
-
+		return this.oEngine.enhanceXConfig(this.ocontrol , {
+			controlMeta: {
+				aggregation: "items",
+				property: "text"
+			},
+			name: "test",
+			value: "someTestText"
+		})
+		.catch(function(oError) {
+			assert.ok(oError.message, "The Engine expects the control to be registered to enhance the xConfig");
+		});
     });
 
     QUnit.test("Check 'enhanceXConfig' and 'readXConfig' ", function(assert){
@@ -184,22 +184,22 @@ sap.ui.define([
             }
         });
 
-        this.oEngine.enhanceXConfig(this.oCustomAggregationControl , {
+        return this.oEngine.enhanceXConfig(this.oCustomAggregationControl , {
             controlMeta: {
                 aggregation: "items",
                 property: "text"
             },
             name: "test",
             value: "someTestText"
+        })
+        .then(this.oEngine.readXConfig.bind(this.oEngine, this.oCustomAggregationControl))
+        .then(function(oAggregationConfig) {
+            assert.equal(oAggregationConfig.aggregations.items.test.text, "someTestText", "The xConfig customdata has been written and read correctly");
+
+            assert.ok(oFMHStub.calledOnce, "Check that the correct modification handler has been called");
+
+            FlexModificationHandler.getInstance().enhanceConfig.restore();
         });
-
-        var oAggregationConfig = this.oEngine.readXConfig(this.oCustomAggregationControl);
-
-        assert.equal(oAggregationConfig.aggregations.items.test.text, "someTestText", "The xConfig customdata has been written and read correctly");
-
-        assert.ok(oFMHStub.calledOnce, "Check that the correct modification handler has been called");
-
-        FlexModificationHandler.getInstance().enhanceConfig.restore();
     });
 
 	QUnit.module("Generic API tests", {

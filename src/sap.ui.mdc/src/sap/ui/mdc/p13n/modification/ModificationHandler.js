@@ -86,7 +86,7 @@ sap.ui.define([
 	 * @param {object} oModificationPayload.value The value that should be written in nthe xConfig
 	 * @param {object} [oModificationPayload.propertyBag] Optional propertybag for different modification handler derivations
 	 *
-	 * @returns {object} The adapted xConfig object
+	 * @returns {Promise<object>} Promise resolving to the adapted xConfig object
 	 */
 	ModificationHandler.prototype.enhanceConfig = function(oControl, oModificationPayload) {
 		var mPropertyBag = oModificationPayload.propertyBag;
@@ -98,55 +98,78 @@ sap.ui.define([
         var sAffectedProperty = mControlMeta.property;
 
         var vValue = oModificationPayload.value;
+		var oControlMetadata;
+		var sAggregationName;
+		var oXConfig;
 
-		var oControlMetadata = oModifier.getControlMetadata(oControl);
-		var sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().name;
+		return Promise.resolve()
+			.then(oModifier.getControlMetadata.bind(oModifier, oControl))
+			.then(function(oRetrievedControlMetadata) {
+				oControlMetadata = oRetrievedControlMetadata;
+				sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().name;
+				return Promise.resolve()
+					.then(oModifier.getAggregation.bind(oModifier, oControl, "customData"))
+					.then(function(aCustomData) {
+						return aCustomData.find(function(oCustomData) {
+							return Promise.resolve()
+								.then(oModifier.getProperty.bind(oModifier, oCustomData, "key"))
+								.then(function(sKey) {
+									return sKey == "xConfig";
+								});
+						});
+					})
+					.then(function(oRetrievedXConfig) {
+						oXConfig = oRetrievedXConfig;
+						if (oXConfig) {
+							return oModifier.getProperty(oXConfig, "value");
+						}
+						return {
+							aggregations: {}
+						};
+					})
+					.then(function(oConfig) {
+						if (!oConfig.aggregations.hasOwnProperty(sAggregationName)) {
+							if (oControlMetadata.hasAggregation(sAggregationName)) {
+								oConfig.aggregations[sAggregationName] = {};
+							} else {
+								throw new Error("The aggregation " + sAggregationName + " does not exist for" + oControl);
+							}
+						}
 
-		var oXConfig = oModifier.getAggregation(oControl, "customData").find(function(oCustomData){
-            return oModifier.getProperty(oCustomData, "key") == "xConfig";
-        });
+						if (!oConfig.aggregations.hasOwnProperty(sPropertyInfoKey)) {
+							oConfig.aggregations[sAggregationName][sPropertyInfoKey] = {};
+						}
 
-        var oConfig = oXConfig ? oModifier.getProperty(oXConfig, "value") : {
-			aggregations: {}
-		};
+						if (vValue !== null) {
+							oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue;
+						} else {
+							delete oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty];
 
-		if (!oConfig.aggregations.hasOwnProperty(sAggregationName)) {
-			if (oControlMetadata.hasAggregation(sAggregationName)) {
-				oConfig.aggregations[sAggregationName] = {};
-			} else {
-				throw new Error("The aggregation " + sAggregationName + " does not exist for" + oControl);
-			}
-		}
+							//Delete empty property name object
+							if (Object.keys(oConfig.aggregations[sAggregationName][sPropertyInfoKey]).length === 0) {
+								delete oConfig.aggregations[sAggregationName][sPropertyInfoKey];
 
-		if (!oConfig.aggregations.hasOwnProperty(sPropertyInfoKey)) {
-			oConfig.aggregations[sAggregationName][sPropertyInfoKey] = {};
-		}
+								//Delete empty aggregation name object
+								if (Object.keys(oConfig.aggregations[sAggregationName]).length === 0) {
+									delete oConfig.aggregations[sAggregationName];
+								}
+							}
+						}
 
-        if (vValue !== null) {
-            oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue;
-        } else {
-            delete oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty];
+						var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
 
-            //Delete empty property name object
-            if (Object.keys(oConfig.aggregations[sAggregationName][sPropertyInfoKey]).length === 0) {
-                delete oConfig.aggregations[sAggregationName][sPropertyInfoKey];
-
-                //Delete empty aggregation name object
-                if (Object.keys(oConfig.aggregations[sAggregationName]).length === 0) {
-                    delete oConfig.aggregations[sAggregationName];
-                }
-            }
-        }
-
-		var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
-
-		if (!oXConfig) {
-			oModifier.createAndAddCustomData(oControl, "xConfig", oConfig, oAppComponent);
-		} else {
-			oModifier.setProperty(oXConfig, "value", oConfig);
-		}
-
-		return oConfig;
+						if (!oXConfig) {
+							return Promise.resolve()
+								.then(oModifier.createAndAddCustomData.bind(oModifier, oControl, "xConfig", oConfig, oAppComponent))
+								.then(function() {
+									return oConfig;
+								});
+						} else {
+							oModifier.setProperty(oXConfig, "value", oConfig);
+							return oConfig;
+						}
+					});
+			});
 	};
 
 	/**
@@ -156,16 +179,73 @@ sap.ui.define([
 	 * @param {object} [oModificationPayload] An object providing a modification handler specific payload
 	 * @param {object} [oModificationPayload.propertyBag] Optional propertybag for different modification handler derivations
 	 *
-	 * @returns {object} The adapted xConfig object
+	 * @returns {Promise<object>|object} A promise resolving to the adapted xConfig object or the object directly
 	 */
 	ModificationHandler.prototype.readConfig = function(oControl, oModificationPayload) {
         var oConfig, oAggregationConfig;
-		var oModifier = oModificationPayload && oModificationPayload.propertyBag ? oModificationPayload.propertyBag .modifier : JsControlTreeModifier;
-		oAggregationConfig = oModifier.getAggregation(oControl, "customData").find(function(oCustomData){
-			return oModifier.getProperty(oCustomData, "key") == "xConfig";
+
+		if (oModificationPayload) {
+			var oModifier = oModificationPayload.propertyBag ? oModificationPayload.propertyBag.modifier : JsControlTreeModifier;
+			return Promise.resolve()
+				.then(oModifier.getAggregation.bind(oModifier, oControl, "customData"))
+				.then(function(aCustomData) {
+					return aCustomData.find(function(oCustomData) {
+						return Promise.resolve()
+							.then(oModifier.getProperty.bind(oModifier, oCustomData, "key"))
+							.then(function(sKey) {
+								return sKey == "xConfig";
+							});
+					});
+				})
+				.then(function(oAggregationConfig) {
+					if (oAggregationConfig) {
+						return Promise.resolve()
+							.then(oModifier.getProperty.bind(oModifier, oAggregationConfig, "value"))
+							.then(function(oValue) {
+								return merge({}, oValue);
+							});
+					}
+					return null;
+				});
+		}
+
+		// These functions are used instead of the modifier to avoid that the
+		// entire call stack is changed to async when it's not needed
+		var fnGetAggregationSync = function(oParent, sAggregationName) {
+			var fnFindAggregation = function(oControl, sAggregationName) {
+				if (oControl) {
+					if (oControl.getMetadata) {
+						var oMetadata = oControl.getMetadata();
+						var oAggregations = oMetadata.getAllAggregations();
+						if (oAggregations) {
+							return oAggregations[sAggregationName];
+						}
+					}
+				}
+				return undefined;
+			};
+
+			var oAggregation = fnFindAggregation(oParent, sAggregationName);
+			if (oAggregation) {
+				return oParent[oAggregation._sGetter]();
+			}
+			return undefined;
+		};
+
+		var fnGetPropertySync = function(oControl, sPropertyName) {
+			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
+			if (oMetadata) {
+				var sPropertyGetter = oMetadata._sGetter;
+				return oControl[sPropertyGetter]();
+			}
+			return undefined;
+		};
+
+		oAggregationConfig = fnGetAggregationSync(oControl, "customData").find(function(oCustomData){
+			return fnGetPropertySync(oCustomData, "key") == "xConfig";
 		});
-		oConfig = oAggregationConfig ? merge({}, oModifier.getProperty(oAggregationConfig, "value")) : null;
-        return oConfig;
+		oConfig = oAggregationConfig ? merge({}, fnGetPropertySync(oAggregationConfig, "value")) : null;
+		return oConfig;
 	};
 
 	ModificationHandler.getInstance = function() {

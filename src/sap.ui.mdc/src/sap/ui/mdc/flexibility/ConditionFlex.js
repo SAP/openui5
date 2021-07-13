@@ -19,52 +19,54 @@ sap.ui.define([
 			oFilterControl.applyConditionsAfterChangesApplied();
 		}
 
-		return new Promise(function(resolve) {
+		return new Promise(function(resolve, reject) {
 
 			var mConditionsData, aConditions = null, oModifier = mPropertyBag.modifier;
 
-			// 'filterConditions' property needs to be updated for change selector
-			mConditionsData = merge({}, oModifier.getProperty(oControl, "filterConditions"));
-			if (mConditionsData) {
-				for (var sFieldPath in mConditionsData) {
-					if (sFieldPath === oChangeContent.name) {
-						aConditions = mConditionsData[sFieldPath];
-						break;
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "filterConditions"))
+				.then(function(mFilterConditions) {
+					// 'filterConditions' property needs to be updated for change selector
+					mConditionsData = merge({}, mFilterConditions);
+					if (mConditionsData) {
+						for (var sFieldPath in mConditionsData) {
+							if (sFieldPath === oChangeContent.name) {
+								aConditions = mConditionsData[sFieldPath];
+								break;
+							}
+						}
 					}
-				}
-			}
 
-			if (!aConditions) {
-				mConditionsData[oChangeContent.name] = [];
-				aConditions = mConditionsData[oChangeContent.name];
-			}
+					if (!aConditions) {
+						mConditionsData[oChangeContent.name] = [];
+						aConditions = mConditionsData[oChangeContent.name];
+					}
 
-			var nConditionIdx = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
-			if (nConditionIdx < 0) {
-				aConditions.push(oChangeContent.condition);
+					var nConditionIdx = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
+					if (nConditionIdx < 0) {
+						aConditions.push(oChangeContent.condition);
 
-				// 'filterConditions' property needs to be updated for change selector
-				oModifier.setProperty(oControl, "filterConditions", mConditionsData);
+						// 'filterConditions' property needs to be updated for change selector
+						oModifier.setProperty(oControl, "filterConditions", mConditionsData);
 
-				if (!bIsRevert) {
-					// Set revert data on the change
-					oChange.setRevertData({
-						name: oChangeContent.name,
-						condition: oChangeContent.condition
-					});
-				}
+						if (!bIsRevert) {
+							// Set revert data on the change
+							oChange.setRevertData({
+								name: oChangeContent.name,
+								condition: oChangeContent.condition
+							});
+						}
 
-				// the control providing the filter functionality needs to be used to update the ConditionModel
-				if (oFilterControl && oFilterControl.addCondition) {
-					oFilterControl.addCondition(oChangeContent.name, oChangeContent.condition).then(function() {
-						resolve();
-					});
-				} else {
-					resolve();
-				}
-			} else {
-				resolve();
-			}
+						// the control providing the filter functionality needs to be used to update the ConditionModel
+						if (oFilterControl && oFilterControl.addCondition) {
+							return oFilterControl.addCondition(oChangeContent.name, oChangeContent.condition);
+						}
+					}
+				})
+				.then(resolve)
+				.catch(function(oError) {
+					reject(oError);
+				});
 		});
 	};
 
@@ -76,54 +78,54 @@ sap.ui.define([
 			oFilterControl.applyConditionsAfterChangesApplied();
 		}
 
-		return new Promise(function(resolve) {
+		return new Promise(function(resolve, reject) {
 			var mConditionsData, aConditions, nDelIndex = -1, oModifier = mPropertyBag.modifier;
 
-			// 'filterConditions' property needs to be updated for change selector
-			mConditionsData = merge({}, oModifier.getProperty(oControl, "filterConditions"));
-			if (mConditionsData) {
-				for (var sFieldPath in mConditionsData) {
-					if (sFieldPath === oChangeContent.name) {
-						aConditions = mConditionsData[sFieldPath];
-						break;
-					}
-				}
-			}
-
-			if (aConditions && (aConditions.length > 0)) {
-
-				nDelIndex = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
-				if (nDelIndex >= 0) {
-					aConditions.splice(nDelIndex, 1);
-					//					if (aConditions.length === 0) {
-					//						delete mConditionsData[oChangeContent.name];
-					//					}
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "filterConditions"))
+				.then(function(mFilterConditions) {
 					// 'filterConditions' property needs to be updated for change selector
-					oModifier.setProperty(oControl, "filterConditions", mConditionsData);
+					mConditionsData = merge({}, mFilterConditions);
 
-					if (!bIsRevert) {
-						// Set revert data on the change
-						oChange.setRevertData({
-							name: oChangeContent.name,
-							condition: oChangeContent.condition
-						});
+					if (mConditionsData) {
+						for (var sFieldPath in mConditionsData) {
+							if (sFieldPath === oChangeContent.name) {
+								aConditions = mConditionsData[sFieldPath];
+								break;
+							}
+						}
 					}
 
-					// the control providing the filter functionality needs to be used to update the ConditionModel
-					if (oFilterControl && oFilterControl.removeCondition) {
-						oFilterControl.removeCondition(oChangeContent.name, oChangeContent.condition).then(function() {
-							resolve();
-						});
-					} else {
-						resolve();
-					}
-				} else {
-					resolve();
-				}
-			} else {
-				resolve();
-			}
+					if (aConditions && (aConditions.length > 0)) {
 
+						nDelIndex = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
+						if (nDelIndex >= 0) {
+							aConditions.splice(nDelIndex, 1);
+							//					if (aConditions.length === 0) {
+							//						delete mConditionsData[oChangeContent.name];
+							//					}
+							// 'filterConditions' property needs to be updated for change selector
+							oModifier.setProperty(oControl, "filterConditions", mConditionsData);
+
+							if (!bIsRevert) {
+								// Set revert data on the change
+								oChange.setRevertData({
+									name: oChangeContent.name,
+									condition: oChangeContent.condition
+								});
+							}
+
+							// the control providing the filter functionality needs to be used to update the ConditionModel
+							if (oFilterControl && oFilterControl.removeCondition) {
+								return oFilterControl.removeCondition(oChangeContent.name, oChangeContent.condition);
+							}
+						}
+					}
+				})
+				.then(resolve)
+				.catch(function(oError) {
+					reject(oError);
+				});
 		});
 	};
 

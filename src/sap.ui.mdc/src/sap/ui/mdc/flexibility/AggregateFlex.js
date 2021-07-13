@@ -40,17 +40,21 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			var oAggregateConditions = oModifier.getProperty(oControl, "aggregateConditions");
-			var oAggregations = oAggregateConditions ? oAggregateConditions : {};
-			oAggregations[oChangeContent.name] = {};
-
-			var oAggregateContent = {
-				name: oChangeContent.name
-			};
-			oModifier.setProperty(oControl, "aggregateConditions", oAggregations);
-
-			fFinalizeAggregateChange(oChange, oControl, oAggregateContent, bIsRevert);
-			resolve();
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "aggregateConditions"))
+				.then(function(oAggregateConditions) {
+					var oAggregations = oAggregateConditions ? oAggregateConditions : {};
+					oAggregations[oChangeContent.name] = {};
+					var oAggregateContent = {
+						name: oChangeContent.name
+					};
+					oModifier.setProperty(oControl, "aggregateConditions", oAggregations);
+					fFinalizeAggregateChange(oChange, oControl, oAggregateContent, bIsRevert);
+					resolve();
+				})
+				.catch(function(oError) {
+					reject(oError);
+				});
 		});
 	};
 
@@ -58,19 +62,24 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			var oAggregateConditions = oModifier.getProperty(oControl, "aggregateConditions");
-			var aValue = oAggregateConditions ? oAggregateConditions : {};
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "aggregateConditions"))
+				.then(function(oAggregateConditions) {
+					var aValue = oAggregateConditions ? oAggregateConditions : {};
 
-			if (!aValue) {
-				// Nothing to remove
-				reject();
-			}
+					if (!aValue) {
+						// Nothing to remove
+						reject();
+					}
 
-			delete aValue[oChangeContent.name];
-			oModifier.setProperty(oControl, "aggregateConditions", aValue);
-
-			fFinalizeAggregateChange(oChange, oControl, oChangeContent, bIsRevert);
-			resolve();
+					delete aValue[oChangeContent.name];
+					oModifier.setProperty(oControl, "aggregateConditions", aValue);
+					fFinalizeAggregateChange(oChange, oControl, oChangeContent, bIsRevert);
+					resolve();
+				})
+				.catch(function(oError) {
+					reject(oError);
+				});
 		});
 	};
 

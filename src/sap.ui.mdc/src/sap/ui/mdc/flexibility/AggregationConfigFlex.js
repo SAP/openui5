@@ -56,42 +56,45 @@ sap.ui.define([
             "changeHandler": {
                 applyChange: function (oChange, oControl, mPropertyBag) {
 
-                    var oPriorAggregationConfig = Engine.getInstance().readXConfig(oControl, {
+                    return Engine.getInstance().readXConfig(oControl, {
                         propertyBag: mPropertyBag
+                    })
+                    .then(function(oPriorAggregationConfig) {
+                        var sOldValue = null;
+
+                        if (oPriorAggregationConfig
+                            && oPriorAggregationConfig.aggregations
+                            && oPriorAggregationConfig.aggregations[sAffectedAggregation]
+                            && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name]
+                            && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name][sAffectedProperty]
+                            ){
+                                sOldValue = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name][sAffectedProperty];
+                        }
+
+                        oChange.setRevertData({
+                            name: oChange.getContent().name,
+                            value: sOldValue
+                        });
+
+                        return Engine.getInstance().enhanceXConfig(oControl, {
+                            controlMeta: {
+                                aggregation: sAffectedAggregation,
+                                property: sAffectedProperty
+                            },
+                            name: oChange.getContent().name,
+                            value: oChange.getContent().value,
+                            propertyBag: mPropertyBag
+                        });
+                    })
+                    .then(function() {
+                        fConfigModified(oControl);
                     });
-                    var sOldValue = null;
-
-                    if (oPriorAggregationConfig
-                        && oPriorAggregationConfig.aggregations
-                        && oPriorAggregationConfig.aggregations[sAffectedAggregation]
-                        && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name]
-                        && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name][sAffectedProperty]
-                        ){
-                            sOldValue = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name][sAffectedProperty];
-                    }
-
-                    oChange.setRevertData({
-                        name: oChange.getContent().name,
-                        value: sOldValue
-                    });
-
-                    Engine.getInstance().enhanceXConfig(oControl, {
-                        controlMeta: {
-                            aggregation: sAffectedAggregation,
-                            property: sAffectedProperty
-                        },
-                        name: oChange.getContent().name,
-                        value: oChange.getContent().value,
-                        propertyBag: mPropertyBag
-                    });
-                    fConfigModified(oControl);
-
                 },
                 completeChangeContent: function (oChange, mChangeSpecificInfo, mPropertyBag) {
                     // Not used, but needs to be there
                 },
                 revertChange: function (oChange, oControl, mPropertyBag) {
-                    Engine.getInstance().enhanceXConfig(oControl, {
+                    return Engine.getInstance().enhanceXConfig(oControl, {
                         controlMeta: {
                             aggregation: sAffectedAggregation,
                             property: sAffectedProperty
@@ -99,10 +102,11 @@ sap.ui.define([
                         name: oChange.getRevertData().name,
                         value: oChange.getRevertData().value,
                         propertyBag: mPropertyBag
+                    })
+                    .then(function() {
+                        oChange.resetRevertData();
+                        fConfigModified(oControl);
                     });
-
-                    oChange.resetRevertData();
-                    fConfigModified(oControl);
                 }
             },
             "layers": {

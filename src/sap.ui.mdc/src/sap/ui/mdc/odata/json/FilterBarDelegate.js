@@ -36,6 +36,7 @@ sap.ui.define([
 		}
 		var sSelectorId = oModifier.getControlIdBySelector(oSelector, mPropertyBag.appComponent);
 		var sId = sSelectorId +  "--filter--" + IdentifierUtil.replace(sName);
+		var oFilterField;
 
 		return oModifier.createControl("sap.ui.mdc.FilterField", mPropertyBag.appComponent, mPropertyBag.view, sId, {
 			dataType: oProperty.typeConfig.className,
@@ -44,7 +45,9 @@ sap.ui.define([
 			label: oProperty.label,
 			maxConditions: oProperty.maxConditions,
 			delegate: {name: "sap/ui/mdc/field/FieldBaseDelegate", payload: {}}
-		}, true).then(function(oFilterField) {
+		}, true)
+		.then(function(oCreatedFilterField) {
+			oFilterField = oCreatedFilterField;
 			if (oProperty.fieldHelp) {
 				var sFieldHelp = oProperty.fieldHelp;
 				if (mPropertyBag.view.getId) {
@@ -54,15 +57,15 @@ sap.ui.define([
 				}
 				oModifier.setAssociation(oFilterField, "fieldHelp", sFieldHelp);
 			}
-
 			if (oProperty.filterOperators) {
 				if (oFilterBar.getId) {
-					oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators);
+					return oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators);
 				} else {
-					oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators.join(','));
+					return oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators.join(','));
 				}
 			}
-
+		})
+		.then(function() {
 			if (oProperty.tooltip) {
 				oModifier.setProperty(oFilterField, "tooltip", oProperty.tooltip);
 			}
@@ -96,9 +99,7 @@ sap.ui.define([
 			});
 
 			if (oProperty) {
-				return Promise.resolve(JSONFilterBarDelegate._createFilterField(oProperty, oFilterBar, mPropertyBag));
-			} else {
-				return Promise.resolve(null);
+				return JSONFilterBarDelegate._createFilterField(oProperty, oFilterBar, mPropertyBag);
 			}
 		});
 	};

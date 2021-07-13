@@ -351,37 +351,42 @@ sap.ui.define([
 	 * @param {object} mEnhanceConfig.controlMeta.property The affected property name (such as <code>width</code> or <code>lable</code>)
 	 * @param {object} mEnhanceConfig.value The value that should be written in the xConfig
 	 * @param {object} [mEnhanceConfig.propertyBag] Optional propertybag for the <code>ModificationHandler</code>
+	 * @returns {Promise} Promise resolving when the XConfig is successfully enhanced
 	 */
 	Engine.prototype.enhanceXConfig = function(vControl, mEnhanceConfig) {
 
 		var oControl = Engine.getControlInstance(vControl);
 		var oRegistryEntry = this._getRegistryEntry(vControl);
 
-		if (oRegistryEntry) {
-			var oModificationHandler = this.getModificationHandler(vControl);
-			var oConfig = oModificationHandler.enhanceConfig(oControl, mEnhanceConfig);
-
-			oRegistryEntry.xConfig = oConfig;
-		} else {
-			throw new Error("The control instance needs to be registered to use xConfig!");
-		}
-
+		return Promise.resolve()
+			.then(function() {
+				if (oRegistryEntry) {
+					var oModificationHandler = this.getModificationHandler(vControl);
+					return oModificationHandler.enhanceConfig(oControl, mEnhanceConfig)
+						.then(function(oConfig){
+							oRegistryEntry.xConfig = oConfig;
+						});
+				} else {
+					throw new Error("The control instance needs to be registered to use xConfig!");
+				}
+			}.bind(this));
 	};
 
 	/**
 	 * Returns a copy of the xConfig object
 	 *
-	 * @param {sap.ui.core.Element} oControl The according element which should be checked
-	 * @param {object} [oModificationPayload] An object providing a modification handler specific payload
-	 * @param {object} [oModificationPayload.propertyBag] Optional propertybag for different modification handler derivations
+	 * @param {sap.ui.core.Element} vControl The according element which should be checked
+	 * @param {object} [mEnhanceConfig] An object providing a modification handler specific payload
+	 * @param {object} [mEnhanceConfig.propertyBag] Optional propertybag for different modification handler derivations
+	 * @param {boolean} [bSync] If the method should be executed synchronously; e.g. for the Table
 	 *
-	 * @returns {object} The adapted xConfig object
+	 * @returns {Promise<object>} Promise resolving with the adapted xConfig object
 	 */
-	Engine.prototype.readXConfig = function(vControl, mEnhanceConfig) {
+	Engine.prototype.readXConfig = function(vControl, mEnhanceConfig, bSync) {
 
 		var oControl = Engine.getControlInstance(vControl);
 		var oModificationHandler = this.getModificationHandler(vControl);
-		return oModificationHandler.readConfig(oControl, mEnhanceConfig) || {};
+		return oModificationHandler.readConfig(oControl, mEnhanceConfig, bSync) || Promise.resolve({});
 
 	};
 

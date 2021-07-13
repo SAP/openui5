@@ -38,10 +38,15 @@ sap.ui.define([
 				completeChangeContent: function(oChange, mSpecificChangeInfo) {
 				},
 				applyChange: function(oChange, oChart, mPropertyBag) {
-					// First store the old value for revert
-					oChange.setRevertData(mPropertyBag.modifier.getProperty(oChart, "chartType"));
-					// Then set the new value
-					mPropertyBag.modifier.setProperty(oChart, "chartType", oChange.getContent().chartType);
+					var oModifier = mPropertyBag.modifier;
+					return Promise.resolve()
+						.then(oModifier.getProperty.bind(oModifier, oChart, "chartType"))
+						.then(function(vOldValue) {
+							// First store the old value for revert
+							oChange.setRevertData(vOldValue);
+							// Then set the new value
+							oModifier.setProperty(oChart, "chartType", oChange.getContent().chartType);
+						});
 				},
 				revertChange: function(oChange, oChart, mPropertyBag) {
 					mPropertyBag.modifier.setProperty(oChart, "chartType", oChange.getRevertData());

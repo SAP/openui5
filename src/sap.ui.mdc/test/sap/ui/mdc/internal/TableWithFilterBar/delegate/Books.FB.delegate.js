@@ -115,14 +115,15 @@ sap.ui.define([
 				return oModifier.createControl("sap.ui.v4demo.controls.CustomRangeSlider", mPropertyBag.appComponent, mPropertyBag.view, "customSlider", {
 					max: 9999,
 					width: "100%"
-				}, true).then(function(oCustomRangeSlider) {
+				}).then(function(oCustomRangeSlider) {
 
 					if (oCustomRangeSlider.addStyleClass) {
 						oCustomRangeSlider.addStyleClass("sapUiMediumMarginBottom");
 					} else {
 						oModifier.setAssociation(oCustomRangeSlider, "class", "sapUiMediumMarginBottom");
 					}
-					oModifier.insertAggregation(oFilterField, "contentEdit", oCustomRangeSlider, 0, mPropertyBag.view);
+					return oModifier.insertAggregation(oFilterField, "contentEdit", oCustomRangeSlider, 0, mPropertyBag.view);
+				}).then(function() {
 					return oFilterField;
 				});
 			}

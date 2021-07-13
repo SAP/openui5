@@ -40,22 +40,28 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			var oGroupConditions = oModifier.getProperty(oControl, "groupConditions");
-			var aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "groupConditions"))
+				.then(function(oGroupConditions) {
+					var aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
 
-			var oGroupContent = {
-				name: oChangeContent.name
-			};
+					var oGroupContent = {
+						name: oChangeContent.name
+					};
 
-			aValue.splice(oChangeContent.index, 0, oGroupContent);
+					aValue.splice(oChangeContent.index, 0, oGroupContent);
 
-			oGroupConditions = {
-				groupLevels: aValue
-			};
-			oModifier.setProperty(oControl, "groupConditions", oGroupConditions);
+					oGroupConditions = {
+						groupLevels: aValue
+					};
+					oModifier.setProperty(oControl, "groupConditions", oGroupConditions);
 
-			fFinalizeGroupChange(oChange, oControl, oGroupContent, bIsRevert);
-			resolve();
+					fFinalizeGroupChange(oChange, oControl, oGroupContent, bIsRevert);
+					resolve();
+				})
+				.catch(function(oError) {
+					reject(oError);
+				});
 		});
 	};
 
@@ -63,28 +69,34 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			var oGroupConditions = oModifier.getProperty(oControl, "groupConditions");
-			var aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "groupConditions"))
+				.then(function(oGroupConditions) {
+					var aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
 
-			if (!aValue) {
-				// Nothing to remove
-				reject();
-			}
+					if (!aValue) {
+						// Nothing to remove
+						reject();
+					}
 
-			var aFoundValue = aValue.filter(function (o) {
-				return o.name === oChangeContent.name;
-			});
-			var iIndex = aValue.indexOf(aFoundValue[0]);
+					var aFoundValue = aValue.filter(function (o) {
+						return o.name === oChangeContent.name;
+					});
+					var iIndex = aValue.indexOf(aFoundValue[0]);
 
-			aValue.splice(iIndex, 1);
+					aValue.splice(iIndex, 1);
 
-			oGroupConditions = {
-				groupLevels: aValue
-			};
-			oModifier.setProperty(oControl, "groupConditions", oGroupConditions);
+					oGroupConditions = {
+						groupLevels: aValue
+					};
+					oModifier.setProperty(oControl, "groupConditions", oGroupConditions);
 
-			fFinalizeGroupChange(oChange, oControl, oChangeContent, bIsRevert);
-			resolve();
+					fFinalizeGroupChange(oChange, oControl, oChangeContent, bIsRevert);
+					resolve();
+				})
+				.catch(function(oError) {
+					reject(oError);
+				});
 		});
 	};
 
@@ -92,25 +104,31 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 		return new Promise(function (resolve, reject) {
 			var oModifier = mPropertyBag.modifier;
 			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-			var oGroupConditions = oModifier.getProperty(oControl, "groupConditions");
-			var aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
+			return Promise.resolve()
+				.then(oModifier.getProperty.bind(oModifier, oControl, "groupConditions"))
+				.then(function(oGroupConditions) {
+					var aValue = oGroupConditions ? oGroupConditions.groupLevels : [];
 
-			var aFoundValue = aValue.filter(function (o) {
-				return o.name === oChangeContent.name;
+					var aFoundValue = aValue.filter(function (o) {
+						return o.name === oChangeContent.name;
+					});
+
+					//remove the item from the 'GroupConditions' array, insert it at the new position
+					var iOldIndex = aValue.indexOf(aFoundValue[0]);
+					aValue.splice(oChangeContent.index, 0, aValue.splice(iOldIndex, 1)[0]);
+
+					oGroupConditions = {
+						groupLevels: aValue
+					};
+					oModifier.setProperty(oControl, "groupConditions", oGroupConditions);
+
+					//finalize the 'moveGroup' change (only persist name + index)
+					fFinalizeGroupChange(oChange, oControl, oChangeContent, bIsRevert);
+					resolve();
+				})
+			.catch(function(oError) {
+				reject(oError);
 			});
-
-			//remove the item from the 'GroupConditions' array, insert it at the new position
-			var iOldIndex = aValue.indexOf(aFoundValue[0]);
-			aValue.splice(oChangeContent.index, 0, aValue.splice(iOldIndex, 1)[0]);
-
-			oGroupConditions = {
-				groupLevels: aValue
-			};
-			oModifier.setProperty(oControl, "groupConditions", oGroupConditions);
-
-			//finalize the 'moveGroup' change (only persist name + index)
-			fFinalizeGroupChange(oChange, oControl, oChangeContent, bIsRevert);
-			resolve();
 		});
 	};
 

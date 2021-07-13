@@ -58,12 +58,14 @@ sap.ui.define([
 						sap.ui.require([
 							'sap/ui/mdc/link/PanelItem', mPropertyBag.modifier.getProperty(oPanel, "metadataHelperPath")
 						], function(PanelItem, MetadataHelper) {
-							if (mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view)) {
+							var oModifier = mPropertyBag.modifier;
+							if (oModifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view)) {
 								return resolve();
 								// return Base.markAsNotApplicable("applyChange of createItem: the item with selector " + oSelector + " is already existing and therefore can not be created.", true);
 							}
 
 							var aMetadataItems = MetadataHelper.retrieveAllMetadata(oPanel);
+							var iItemsIndex;
 
 							var fnIndexOfItemId = function(sId, aItems) {
 								var iFoundIndex = -1;
@@ -75,47 +77,57 @@ sap.ui.define([
 								});
 								return iFoundIndex;
 							};
-							var sId = mPropertyBag.modifier.getControlIdBySelector(oSelector, mPropertyBag.appComponent);
-							var aItems = mPropertyBag.modifier.getAggregation(oPanel, "items");
-							var iItemsIndex = -1;
-							var oMetadataOfNewItem = null;
-							aMetadataItems.some(function(oMetadataItem) {
-								var iItemsIndex_ = fnIndexOfItemId(oMetadataItem.id, aItems);
-								if (iItemsIndex_ > -1) {
-									iItemsIndex = iItemsIndex_;
-								}
-								if (oMetadataItem.id === sId) {
-									oMetadataOfNewItem = oMetadataItem;
-									return true;
-								}
-							});
+							var sId = oModifier.getControlIdBySelector(oSelector, mPropertyBag.appComponent);
 
-							if (!oMetadataOfNewItem) {
-								return resolve();
-								// return Base.markAsNotApplicable("applyChange of createItem: the item with selector " + oSelector + " is not existing in the metadata and therefore can not be created.", true);
-							}
+							return Promise.resolve()
+								.then(oModifier.getAggregation.bind(oModifier, oPanel, "items"))
+								.then(function(aItems) {
+									iItemsIndex = -1;
+									var oMetadataOfNewItem = null;
+									aMetadataItems.some(function(oMetadataItem) {
+										var iItemsIndex_ = fnIndexOfItemId(oMetadataItem.id, aItems);
+										if (iItemsIndex_ > -1) {
+											iItemsIndex = iItemsIndex_;
+										}
+										if (oMetadataItem.id === sId) {
+											oMetadataOfNewItem = oMetadataItem;
+											return true;
+										}
+									});
 
-							var oItem = mPropertyBag.modifier.createControl("sap.ui.mdc.link.PanelItem", mPropertyBag.appComponent, mPropertyBag.view, oMetadataOfNewItem.id, {
-								text: oMetadataOfNewItem.text,
-								description: oMetadataOfNewItem.description,
-								href: oMetadataOfNewItem.href,
-								target: oMetadataOfNewItem.target,
-								icon: oMetadataOfNewItem.icon,
-								visible: oMetadataOfNewItem.visible
-							});
-							mPropertyBag.modifier.insertAggregation(oPanel, "items", oItem, iItemsIndex + 1);
-							return resolve();
+									if (!oMetadataOfNewItem) {
+										return resolve();
+										// return Base.markAsNotApplicable("applyChange of createItem: the item with selector " + oSelector + " is not existing in the metadata and therefore can not be created.", true);
+									}
+
+									return oModifier.createControl("sap.ui.mdc.link.PanelItem", mPropertyBag.appComponent, mPropertyBag.view, oMetadataOfNewItem.id, {
+										text: oMetadataOfNewItem.text,
+										description: oMetadataOfNewItem.description,
+										href: oMetadataOfNewItem.href,
+										target: oMetadataOfNewItem.target,
+										icon: oMetadataOfNewItem.icon,
+										visible: oMetadataOfNewItem.visible
+									});
+								})
+								.then(function(oItem){
+									return oModifier.insertAggregation(oPanel, "items", oItem, iItemsIndex + 1);
+								})
+								.then(function() {
+									resolve();
+								});
 						});
 					});
 				},
 				revertChange: function(oChange, oPanel, mPropertyBag) {
+					var oModifier = mPropertyBag.modifier;
 					if (oChange.getContent() && oChange.getContent().selector) {
 						var sId = oChange.getContent().selector.id;
-						var oItem = mPropertyBag.modifier.bySelector(sId, mPropertyBag.appComponent, mPropertyBag.view);
+						var oItem = oModifier.bySelector(sId, mPropertyBag.appComponent, mPropertyBag.view);
 						if (!oItem) {
 							return Base.markAsNotApplicable("revertChange of createItem: the item with id " + sId + " is not existing and therefore can not be removed.", true);
 						}
-						mPropertyBag.modifier.removeAggregation(oPanel, "items", oItem);
+						return Promise.resolve()
+							.then(oModifier.removeAggregation.bind(oModifier, oPanel, "items", oItem));
 					}
 				},
 				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
