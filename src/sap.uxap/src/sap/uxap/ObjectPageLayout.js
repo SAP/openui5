@@ -288,6 +288,29 @@ sap.ui.define([
 				headerContentPinnable: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
+				 * Determines whether the <code>sap.uxap.ObjectPageDynamicHeaderContent</code> is pinned.
+				 *
+				 * The property can be changed explicitly with its setter or in the occurrence of
+				 * the following user interactions:
+				 * <ul>
+				 * <li>Toggling the pin/unpin button of <code>sap.uxap.ObjectPageDynamicHeaderContent</code></li>
+				 * <li>Snapping the <code>sap.uxap.ObjectPageDynamicHeaderContent</code> by explicitly clicking on
+				 * the <code>sap.uxap.ObjectPageDynamicHeaderTitle</code></li>
+				 * </ul>
+				 *
+				 * <b>Note: </b> The property will only apply if the following rules are currently in use:
+				 * <ul>
+				 * <li>An instance of <code>sap.uxap.ObjectPageDynamicHeaderTitle</code> is used for the <code>headerTitle</code> aggregation.</li>
+				 * <li>The <code>headerContentPinnable</code> property is <code>true</code></li>
+				 * <li>The <code>sap.uxap.ObjectPageDynamicHeaderContent</code> is expanded</li>
+				 * <li>The <code>preserveHeaderStateOnScroll</code> property or the rules for it to work are <code>false</code></li>
+				 * </ul>
+				 *
+				 * @since 1.93
+				 */
+				 headerContentPinned: {type: "boolean", group: "Behavior", defaultValue: false},
+
+				/**
 				 * Determines whether the user can switch between the expanded/collapsed states of the
 				 * <code>sap.uxap.ObjectPageDynamicHeaderContent</code> by clicking on the <code>sap.uxap.ObjectPageDynamicHeaderTitle</code>.
 				 * If set to <code>false</code>, the <code>sap.uxap.ObjectPageDynamicHeaderTitle</code> is not clickable and the application
@@ -393,6 +416,21 @@ sap.ui.define([
 				_customScrollBar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			},
 			events: {
+
+				/**
+				 * The event is fired when the <code>headerContentPinned</code> property is changed via user interaction.
+				 *
+				 * @since 1.93
+				 */
+				 headerContentPinnedStateChange: {
+					parameters: {
+
+						/**
+						 * False or True values indicate the new pinned property value.
+						 */
+						pinned: {type: "boolean"}
+					}
+				},
 
 				/**
 				 * The event is fired when the Anchor bar is switched from moving to fixed or the other way round.
@@ -794,16 +832,16 @@ sap.ui.define([
 	 *
 	 * (2) If the <code>bAppendHeaderToContent</code> is <code>false</code>, then the
 	 * snapping is done by ensuring the header content is not visible using <code>display:none</code>
-	 *
+	 * @param {boolean} bUserInteraction - indicates if snapping was caused by user interaction (scroll, collapse button press, etc.)
 	 * @private
 	 */
-	ObjectPageLayout.prototype._snapHeader = function (bAppendHeaderToContent) {
+	ObjectPageLayout.prototype._snapHeader = function (bAppendHeaderToContent, bUserInteraction) {
 
 		var bIsPageTop,
 			oHeaderContent = this._getHeaderContent();
 
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin() && this._bPinned) {
-			this._unPin();
+			this._unPin(bUserInteraction);
 			oHeaderContent.getAggregation("_pinButton").setPressed(false);
 			bAppendHeaderToContent = true;
 		}
@@ -893,7 +931,7 @@ sap.ui.define([
 			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea() &&
 			(!this._bAllContentFitsContainer || this._headerBiggerThanAllowedToBeExpandedInTitleArea());
 			// the <code>bAppendHeaderToContent</code> parameter determines if the header should snap *with* or *without* scroll
-			this._snapHeader(bAppendHeaderToContent);
+			this._snapHeader(bAppendHeaderToContent, true);
 		}
 
 		this.getHeaderTitle()._getFocusSpan().trigger("focus");
@@ -1134,6 +1172,7 @@ sap.ui.define([
 
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
 			this.$().toggleClass("sapUxAPObjectPageLayoutHeaderPinnable", oHeaderContent.getPinnable());
+			this._updatePinButtonState();
 		}
 
 		if (oFooter) {
@@ -4378,9 +4417,9 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._onPinUnpinButtonPress = function () {
 		if (this._bPinned) {
-			this._unPin();
+			this._unPin(true);
 		} else {
-			this._pin();
+			this._pin(true);
 			this._restorePinButtonFocus();
 		}
 	};
@@ -4397,14 +4436,16 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype._pin = function () {
-		var $oObjectPage = this.$();
-
+	ObjectPageLayout.prototype._pin = function (bUserInteraction) {
 		if (this._bPinned) {
 			return;
 		}
 
 		this._bPinned = true;
+		if (bUserInteraction) {
+			this.setProperty("headerContentPinned", true, true);
+			this.fireEvent("headerContentPinnedStateChange", {pinned: true});
+		}
 		this._toggleHeaderTitle(true /* expand */);
 		this._moveAnchorBarToTitleArea();
 		this._moveHeaderToTitleArea();
@@ -4412,23 +4453,38 @@ sap.ui.define([
 		this._requestAdjustLayout();
 		this._updateToggleHeaderVisualIndicators();
 
-		if (exists($oObjectPage)) {
-			$oObjectPage.addClass("sapUxAPObjectPageLayoutHeaderPinned");
-		}
+		this.addStyleClass("sapUxAPObjectPageLayoutHeaderPinned");
 	};
 
-	ObjectPageLayout.prototype._unPin = function () {
-		var $oObjectPage = this.$();
-
+	ObjectPageLayout.prototype._unPin = function (bUserInteraction) {
 		if (!this._bPinned) {
 			return;
 		}
 
 		this._bPinned = false;
+		if (bUserInteraction) {
+			this.setProperty("headerContentPinned", false, true);
+			this.fireEvent("headerContentPinnedStateChange", {pinned: false});
+		}
 		this._updateToggleHeaderVisualIndicators();
 
-		if (exists($oObjectPage)) {
-			$oObjectPage.removeClass("sapUxAPObjectPageLayoutHeaderPinned");
+		this.removeStyleClass("sapUxAPObjectPageLayoutHeaderPinned");
+	};
+
+	ObjectPageLayout.prototype._isHeaderPinnable = function () {
+		var oHeader = this._getHeaderContent();
+		return oHeader && oHeader.getPinnable()
+			&& this._bHeaderExpanded
+			&& !this.getPreserveHeaderStateOnScroll();
+	};
+
+	ObjectPageLayout.prototype._updatePinButtonState = function() {
+		var bShouldPin = this.getHeaderContentPinned() && this._isHeaderPinnable();
+		this._getHeaderContent()._togglePinButton(bShouldPin);
+		if (bShouldPin) {
+			this._pin();
+		} else {
+			this._unPin();
 		}
 	};
 

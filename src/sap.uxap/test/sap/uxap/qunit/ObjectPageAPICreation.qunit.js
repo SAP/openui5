@@ -3739,6 +3739,87 @@ function (
 		assert.strictEqual(oComponentContainer._oComponent, oComponent, "component instance is not changed");
 	});
 
+	QUnit.module("ObjectPageLayout - API - headerContentPinned property", {
+		beforeEach: function () {
+
+			// Setup
+			this.oObjectPage = oFactory.getObjectPage();
+			this.oObjectPage.setHeaderContentPinned(true);
+			this.oObjectPage.setHeaderTitle(oFactory.getObjectPageDynamicHeaderTitle());
+			this.oHeader = this.oObjectPage._getHeaderContent();
+			helpers.renderObject(this.oObjectPage);
+		},
+		afterEach: function () {
+
+			// Clean up
+			this.oObjectPage.destroy();
+			this.oObjectPage = null;
+			this.oHeader = null;
+		}
+	});
+
+	QUnit.test("Pin button is pinned initially when all the requirements are met and the headerContentPinned property is true", function (assert) {
+
+		// Assert
+		assert.strictEqual(this.oObjectPage._bPinned, true, "Internal pin flag of the ObjectPage is 'true'");
+		assert.strictEqual(this.oHeader._getPinButton().getPressed(), true, "The pin button of the header is pressed.");
+	});
+
+	QUnit.test("Pin button is pinned initially, but becomes unpinned once the headerContentPinned property of the ObjectPage is set to 'false'", function (assert) {
+
+		// Act - Setting the headerContentPinned property to 'false' and forcing re-rendering
+		this.oObjectPage.setHeaderContentPinned(false);
+		this.oObjectPage.onAfterRendering();
+
+		// Assert
+		assert.strictEqual(this.oObjectPage._bPinned, false, "Internal pin flag of the ObjectPage is 'false'");
+		assert.strictEqual(this.oHeader._getPinButton().getPressed(), false, "The pin button of the header is not pressed.");
+	});
+
+	QUnit.test("The headerContentPinned property is altered and an event is fired when the pin button is toggled", function (assert) {
+
+		// Assert
+		assert.expect(3);
+
+		// Arrange
+		var oObjectPage = this.oObjectPage,
+			done = assert.async();
+		this.oObjectPage.attachEventOnce("headerContentPinnedStateChange", function (oEvent) {
+
+			// Assert
+			assert.strictEqual(oObjectPage._bPinned, false, "Internal pin flag of the ObjectPage is 'false'");
+			assert.strictEqual(oObjectPage.getHeaderContentPinned(), false, "headerContentPinned property is forced to 'false'");
+			assert.strictEqual(oEvent.getParameter("pinned"), false, "headerContentPinnedStateChange event is fired with 'false' as parameter'");
+
+			done();
+		});
+
+		// Act - Simulating pin button press
+		this.oObjectPage._onPinUnpinButtonPress();
+	});
+
+	QUnit.test("The headerContentPinned property is altered and an event is fired when header is snapped by the user", function (assert) {
+
+		// Assert
+		assert.expect(3);
+
+		// Arrange
+		var oObjectPage = this.oObjectPage,
+			done = assert.async();
+		this.oObjectPage.attachEventOnce("headerContentPinnedStateChange", function (oEvent) {
+
+			// Assert
+			assert.strictEqual(oObjectPage._bPinned, false, "Internal pin flag of the ObjectPage is 'false'");
+			assert.strictEqual(oObjectPage.getHeaderContentPinned(), false, "headerContentPinned property is forced to 'false'");
+			assert.strictEqual(oEvent.getParameter("pinned"), false, "headerContentPinnedStateChange event is fired with 'false' as parameter'");
+
+			done();
+		});
+
+		// Act - Simulating snapping of header by user interaction
+		this.oObjectPage._snapHeader(true, true);
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;
