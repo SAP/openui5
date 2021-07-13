@@ -997,23 +997,28 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the instance annotation key with a given name for the given message, ignoring the
+		 * Returns the instance annotation key with a given name for the given object, ignoring the
 		 * alias. Logs a warning if duplicates are found.
 		 *
-		 * @param {object} oMessage
-		 *   A single message from an OData error response
-		 * @param {object} sName
-		 *   The name of the annotation without prefix "@" and namespace, e.g. ".ContentID" for a
+		 * @param {object} oObject
+		 *   Any object
+		 * @param {string} sName
+		 *   The name of the annotation w/o prefix "@" and namespace, e.g. ".ContentID" for a
 		 *   annotation "@Org.OData.Core.V1.ContentID"
+		 * @param {string} [sProperty]
+		 *   The name of the annotated property, e.g. "Budget" in "Budget@Core.Permissions" for a
+		 *   property "Budget" annotated with "@Core.Permissions"
 		 * @returns {string|undefined}
 		 *   The key of the annotation, or <code>undefined</code> in case there is not exactly one
 		 *   such annotation (ignoring the alias)
 		 */
-		getAnnotationKey : function (oMessage, sName) {
-			var sAnnotationKey, bDuplicate;
+		getAnnotationKey : function (oObject, sName, sProperty) {
+			var sAnnotationKey,
+				bDuplicate,
+				sPrefix = (sProperty || "") + "@";
 
-			Object.keys(oMessage).forEach(function (sKey) {
-				if (sKey[0] === "@" && sKey.endsWith(sName)) {
+			Object.keys(oObject).forEach(function (sKey) {
+				if (sKey.startsWith(sPrefix) && sKey.endsWith(sName)) {
 					if (sAnnotationKey) {
 						Log.warning("Cannot distinguish " + sAnnotationKey + " from " + sKey,
 							undefined, sClassName);

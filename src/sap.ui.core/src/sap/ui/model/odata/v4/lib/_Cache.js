@@ -483,7 +483,7 @@ sap.ui.define([
 
 		/*
 		 * Determines the implicit value if the value is missing in the cache. Reports an invalid
-		 * segment if there is no implicit value.
+		 * segment if there is no @Core.Permissions: 'None' annotation and no implicit value.
 		 *
 		 * @param {object} oValue The object that is expected to have the value
 		 * @param {string} sSegment The path segment that is missing
@@ -501,6 +501,8 @@ sap.ui.define([
 			return that.oRequestor.getModelInterface()
 				.fetchMetadata(that.sMetaPath + "/" + _Helper.getMetaPath(sPropertyPath))
 				.then(function (oProperty) {
+					var vPermissions;
+
 					if (!oProperty) {
 						return invalidSegment(sSegment);
 					}
@@ -512,6 +514,11 @@ sap.ui.define([
 							|| _Helper.buildPath(sServiceUrl + that.sResourcePath, sPropertyPath);
 					}
 					if (!bTransient) {
+						vPermissions = oValue[
+							_Helper.getAnnotationKey(oValue, ".Permissions", sSegment)];
+						if (vPermissions === 0 || vPermissions === "None") {
+							return undefined;
+						}
 						// If there is no entity with a key predicate, try it with the cache root
 						// object (in case of SimpleCache, the root object of CollectionCache is an
 						// array)

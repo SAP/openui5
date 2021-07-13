@@ -3737,28 +3737,38 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getAnnotationKey", function (assert) {
 		// code under test
-		assert.strictEqual(_Helper.getAnnotationKey({}, ".AnyAnnotation"), undefined);
+		assert.strictEqual(_Helper.getAnnotationKey({}, ".AnyAnnotation"), undefined,
+			"empty object");
 
 		// code under test
-		assert.strictEqual(_Helper.getAnnotationKey({"@Foo.NoAnyAnnotation" : "n/a"},
-			".AnyAnnotation"), undefined);
+		assert.strictEqual(
+			_Helper.getAnnotationKey({"@Foo.NotAnyAnnotation" : "n/a"}, ".AnyAnnotation"),
+			undefined, "wrong term");
 
 		// code under test
-		assert.strictEqual(_Helper.getAnnotationKey({"@Foo.Bar" : "n/a"}, "bar"), undefined);
+		assert.strictEqual(_Helper.getAnnotationKey({"@Foo.Bar" : "n/a"}, "bar"), undefined,
+			"case matters");
 
 		// code under test
-		assert.strictEqual(_Helper.getAnnotationKey({"message@Core.AnyAnnotation" : "n/a"},
-			".AnyAnnotation"), undefined);
-
-		this.oLogMock.expects("warning")
-			.withExactArgs("Cannot distinguish @Core.AnyAnnotation from @SAP__core.AnyAnnotation",
-				undefined, sClassName);
+		assert.strictEqual(
+			_Helper.getAnnotationKey({"foo@Core.AnyAnnotation" : "n/a"}, ".AnyAnnotation"),
+			undefined, "wrong property");
 
 		// code under test
-		assert.strictEqual(_Helper.getAnnotationKey({
-				"@Core.AnyAnnotation" : "1.0",
-				"@SAP__core.AnyAnnotation" : "1.0"
-			}, ".AnyAnnotation"), undefined, "duplicate alias");
+		assert.strictEqual(
+			_Helper.getAnnotationKey({"foo@Core.AnyAnnotation" : "1.0"}, ".AnyAnnotation", "foo"),
+			"foo@Core.AnyAnnotation", "success");
+
+		// code under test
+		assert.strictEqual(
+			_Helper.getAnnotationKey({"@SAP__core.AnyAnnotation" : "1.0"}, ".AnyAnnotation"),
+			"@SAP__core.AnyAnnotation", "underscores welcome");
+
+		// code under test
+		assert.strictEqual(
+			_Helper.getAnnotationKey({"foo@Org.OData.Core.V1.AnyAnnotation" : "3.2"},
+				".AnyAnnotation", "foo"),
+			"foo@Org.OData.Core.V1.AnyAnnotation", "namespace, not alias");
 
 		this.oLogMock.expects("warning")
 			.withExactArgs("Cannot distinguish @Core.AnyAnnotation from @Foo.AnyAnnotation",
@@ -3772,22 +3782,7 @@ sap.ui.define([
 				"@Core.AnyAnnotation" : "1.0",
 				"@Foo.AnyAnnotation" : "1.0",
 				"@SAP__core.AnyAnnotation" : "1.0"
-			}, ".AnyAnnotation"), undefined, "toggling sAnyAnnotation is not enough");
-
-		// code under test
-		assert.strictEqual(_Helper.getAnnotationKey({"@SAP__core.AnyAnnotation" : "1.0"},
-			".AnyAnnotation"), "@SAP__core.AnyAnnotation");
-
-		// code under test
-		assert.strictEqual(
-			_Helper.getAnnotationKey({"@Core.AnyAnnotation" : "2.1"},".AnyAnnotation"),
-			"@Core.AnyAnnotation");
-
-		// code under test
-		assert.strictEqual(
-			_Helper.getAnnotationKey({"@Org.OData.Core.V1.AnyAnnotation" : "3.2"},
-				".AnyAnnotation"),
-			"@Org.OData.Core.V1.AnyAnnotation");
+			}, ".AnyAnnotation"), undefined, "multiple alias");
 	});
 
 	//*********************************************************************************************

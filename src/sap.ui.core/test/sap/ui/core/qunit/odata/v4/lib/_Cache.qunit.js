@@ -1050,8 +1050,11 @@ sap.ui.define([
 			.withExactArgs("/Products/foo")
 			.returns(SyncPromise.resolve({
 				$kind : "Property",
-				$Type : "Edm.String"
+				$Type : "some.ComplexType"
 			}));
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oData), ".Permissions", "foo")
+			.returns(undefined);
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData), "", "foo/bar",
 				"foo")
@@ -1076,8 +1079,11 @@ sap.ui.define([
 			.withExactArgs("/Products/foo")
 			.returns(SyncPromise.resolve({
 				$kind : "Property",
-				$Type : "Edm.String"
+				$Type : "some.ComplexType"
 			}));
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(aData[0]), ".Permissions", "foo")
+			.returns(undefined);
 		this.mock(oCache).expects("fetchLateProperty").never();
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into 0/foo/bar, invalid segment: foo",
@@ -1108,8 +1114,11 @@ sap.ui.define([
 			.withExactArgs("/Products/entity/foo/bar")
 			.returns(SyncPromise.resolve({
 				$kind : "Property",
-				$Type : "Edm.String"
+				$Type : "some.ComplexType"
 			}));
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oData[0].entity.foo), ".Permissions", "bar")
+			.returns(undefined);
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData[0].entity),
 				"('42')/entity", "foo/bar/baz", "foo/bar")
@@ -1144,8 +1153,11 @@ sap.ui.define([
 			.withExactArgs("/Products/entity/foo/bar")
 			.returns(SyncPromise.resolve({
 				$kind : "Property",
-				$Type : "Edm.String"
+				$Type : "some.ComplexType"
 			}));
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs({}, ".Permissions", "bar")
+			.returns(undefined);
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData[0].entity),
 				"('42')/entity", "foo/bar/baz", "foo/bar")
@@ -1159,6 +1171,39 @@ sap.ui.define([
 				assert.strictEqual(vValue, undefined);
 			});
 	});
+
+	//*********************************************************************************************
+[0, "None"].forEach(function (vPermissions) {
+	QUnit.test("_Cache#drillDown: @Core.Permissions: " + vPermissions, function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products"),
+			oData = [{
+				entity : {
+					foo : {"bar@Core.Permissions" : vPermissions}
+				}
+			}];
+
+		oData.$byPredicate = {"('42')" : oData[0]};
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("('42')/entity/foo/bar")
+			.returns("entity/foo/bar");
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/entity/foo/bar")
+			.returns(SyncPromise.resolve({
+				$kind : "Property",
+				$Type : "some.ComplexType"
+			}));
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oData[0].entity.foo), ".Permissions", "bar")
+			.returns("bar@Core.Permissions");
+		this.mock(oCache).expects("fetchLateProperty").never();
+
+		// code under test
+		return oCache.drillDown(oData, "('42')/entity/foo/bar/baz", {/*oGroupLock*/})
+			.then(function (vValue) {
+				assert.strictEqual(vValue, undefined);
+			});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: unread navigation property", function (assert) {
@@ -1176,6 +1221,9 @@ sap.ui.define([
 				$kind : "NavigationProperty",
 				$Type : "name.space.BusinessPartner"
 			}));
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oData[0]), ".Permissions", "PRODUCT_2_BP")
+			.returns(undefined);
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData[0]), "('42')",
 				"PRODUCT_2_BP", "PRODUCT_2_BP")
@@ -1251,6 +1299,9 @@ sap.ui.define([
 		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/productPicture")
 			.returns(SyncPromise.resolve({$Type : "some.ComplexType"}));
+		this.mock(_Helper).expects("getAnnotationKey")
+			.withExactArgs(sinon.match.same(oData[0]), ".Permissions", "productPicture")
+			.returns(undefined);
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into ('42')/productPicture/picture, "
 				+ "invalid segment: productPicture",

@@ -34630,4 +34630,29 @@ sap.ui.define([
 			return that.waitForChanges(assert); // to get all group locks unlocked
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Do not log drill-down errors for missing properties annotated with
+	// @Core.Permissions: 'None'
+	//
+	// JIRA: CPOUI5ODATAV4-1065
+	QUnit.test("Do not log drill-down errors for properties w/o permissions", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
+	<Text id="name" text="{Name}"/>\
+	<Text id="budget" text="{Budget}"/>\
+	<Text id="budgetCurency" text="{BudgetCurrency}"/>\
+</FlexBox>';
+
+		this.expectRequest("TEAMS('TEAM_01')", {
+				Name : "Business Suite",
+				"Budget@Core.Permissions" : 0,
+				"BudgetCurrency@Core.Permissions" : "None"
+			})
+			.expectChange("name", "Business Suite")
+			.expectChange("budget", null)
+			.expectChange("budgetCurency", null);
+
+		return this.createView(assert, sView);
+	});
 });
