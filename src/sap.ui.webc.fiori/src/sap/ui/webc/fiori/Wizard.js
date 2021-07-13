@@ -124,7 +124,7 @@ sap.ui.define([
 						 * the step change occurs due to user's click or 'Enter'/'Space' key press on step within the navigation
 						 */
 						changeWithClick: {
-							type: "Boolean"
+							type: "boolean"
 						}
 					}
 				}

@@ -252,7 +252,7 @@ sap.ui.define([
 						 * The current scroll position
 						 */
 						scrollTop: {
-							type: "Integer"
+							type: "int"
 						},
 
 						/**

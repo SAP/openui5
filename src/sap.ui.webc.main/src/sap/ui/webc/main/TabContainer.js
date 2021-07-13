@@ -162,7 +162,7 @@ sap.ui.define([
 						 * The selected <code>tab</code> index.
 						 */
 						tabIndex: {
-							type: "Integer"
+							type: "int"
 						}
 					}
 				}
