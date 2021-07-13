@@ -1317,6 +1317,12 @@ sap.ui.define([
 		return this;
 	};
 
+	Table.prototype.setShowRowCount = function(bShowCount) {
+		this.setProperty("showRowCount", bShowCount, true);
+		this._updateHeaderText();
+		return this;
+	};
+
 	Table.prototype.setEnableExport = function(bEnableExport) {
 		if (bEnableExport !== this.getEnableExport()) {
 			this.setProperty("enableExport", bEnableExport, true);
@@ -2403,9 +2409,9 @@ sap.ui.define([
 		if (this._oTitle && this.getHeader()) {
 			sHeader = this.getHeader();
 			if (this.getShowRowCount()) {
-				iRowCount = this._getRowCount();
-				var sValue = this._oNumberFormatInstance.format(iRowCount);
-				if (sValue) {
+				iRowCount = this._getRowCount(true);
+				if (iRowCount > 0) {
+					var sValue = this._oNumberFormatInstance.format(iRowCount);
 					sHeader += " (" + sValue + ")";
 				}
 			}
@@ -2433,7 +2439,7 @@ sap.ui.define([
 			var sText = this.getHeader();
 
 			// iRowCount will be undefined if table property showRowCount is set to false
-			if (iRowCount === undefined && this._getRowCount() > 0) {
+			if (iRowCount === undefined && this._getRowCount(false) > 0) {
 				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED", [sText]));
 			} else if (iRowCount > 1) {
 				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED_MULT", [sText, iRowCount]));
@@ -2478,21 +2484,25 @@ sap.ui.define([
 	 * @private
 	 * @returns {int} the row count
 	 */
-	Table.prototype._getRowCount = function() {
+	Table.prototype._getRowCount = function(bConsiderTotal) {
 		var oRowBinding = this._getRowBinding();
 
 		if (!oRowBinding) {
-			return 0;
+			return bConsiderTotal ? undefined : 0;
 		}
 
 		var iRowCount;
-
-		if (oRowBinding.getCount) {
-			iRowCount = oRowBinding.getCount();
-		} else if (oRowBinding.isLengthFinal()) {
-			// TBD: For a Treebinding this branch makes no sense and should be excluded when MDCTable will support TreeBinding
-			// in future (see also getCountFromBinding in Spreadsheet)
+		if (!bConsiderTotal) {
 			iRowCount = oRowBinding.getLength();
+		} else {
+			if (typeof oRowBinding.getCount === 'function') {
+				iRowCount = oRowBinding.getCount();
+			} else if (oRowBinding.isLengthFinal()) {
+				// This branch is only fallback and for TreeBindings (TreeBindings should be excluded when MDCTable will support TreeBinding,
+				// see corresponding function in SmartTable for reference)
+				// ListBindings should in general get a getCount function in nearer future (5341464)
+				iRowCount = oRowBinding.getLength();
+			}
 		}
 
 		if (iRowCount < 0 || iRowCount === "0") {

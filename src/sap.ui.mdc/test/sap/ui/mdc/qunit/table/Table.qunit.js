@@ -1279,6 +1279,35 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Header count display", function(assert) {
+		var done = assert.async();
+		this.oTable.setShowRowCount(false);
+
+		this.oTable._getRowCount = function() {
+			return 5;
+		};
+
+		this.oTable.initialized().then(function() {
+			var oTitle = this.oTable._oTitle;
+			var sHeaderText = "myTestHeader";
+			this.oTable.setHeader(sHeaderText);
+			assert.equal(oTitle.getText(), sHeaderText, "Header text is correct.");
+
+			this.oTable.setShowRowCount(true);
+
+			assert.equal(this.oTable.getHeader(), sHeaderText, "Header Property has not changed");
+			assert.equal(oTitle.getText(), sHeaderText + " (5)", "Header has to contain row count");
+
+			this.oTable._getRowCount = function() {
+				return 0;
+			};
+			this.oTable._updateHeaderText();
+			assert.equal(oTitle.getText(), sHeaderText, "Header text does not contain row count when it is 0");
+
+			done();
+		}.bind(this));
+	});
+
 	var fnRearrangeTest = function(iColumnIndexFrom, iColumnIndexTo) {
 		return new Promise(function(resolve) {
 			this.oTable.addColumn(new Column({
