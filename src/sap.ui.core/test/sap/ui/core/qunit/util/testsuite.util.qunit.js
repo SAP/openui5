@@ -69,14 +69,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"jquery.sap.encoder": {
 				group: "jQuery plugins"
 			},
-			"jquery.sap.history": {
-				group: "jQuery plugins",
-				qunit: {
-					// FIXME: Quick fix for the moment
-					version: 1
-				},
-				skip: Device.browser.msie
-			},
 			"jquery.sap.logger": {
 				group: "jQuery plugins",
 				ui5: {
