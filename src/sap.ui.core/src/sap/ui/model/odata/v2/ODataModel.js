@@ -7154,7 +7154,7 @@ sap.ui.define([
 	 * a nearest entity exists.
 	 *
 	 * @param {string} sPath path to an entity
-	 * @param {sap.ui.core.Context} [oContext] Context to resolve a relative path against
+	 * @param {sap.ui.model.Context} [oContext] Context to resolve a relative path against
 	 * @param {object} [oEntityInfo] Object that will receive information about the nearest entity
 	 * @param {string} [oEntityInfo.key] The key of the entity
 	 * @param {string} [oEntityInfo.propertyPath] The property path within the entity
@@ -7244,7 +7244,7 @@ sap.ui.define([
 	 * canonical path can be resolved that will not contain navigation properties.
 	 *
 	 * @param {string} sPath Path to resolve
-	 * @param {sap.ui.core.Context} [oContext] Context to resolve a relative path against
+	 * @param {sap.ui.model.Context} [oContext] Context to resolve a relative path against
 	 * @param {boolean} [bCanonical] If true the canonical path is returned
 	 * @return {string} Resolved path, canonical path or undefined
 	 */
@@ -7270,7 +7270,7 @@ sap.ui.define([
 	 * (deepPath), we resolve with this deepPath instead the canonical one.
 	 *
 	 * @param {string} sPath Path to resolve
-	 * @param {sap.ui.core.Context} [oContext] Context to resolve a relative path against
+	 * @param {sap.ui.model.Context} [oContext] Context to resolve a relative path against
 	 * @return {string} Resolved path, canonical path or undefined
 	 * @private
 	 */
@@ -7294,7 +7294,7 @@ sap.ui.define([
 	 * data was accepted or rejected.
 	 *
 	 * @param {string} sPath Path to resolve
-	 * @param {sap.ui.core.Context} [oContext] Context to resolve a relative path against
+	 * @param {sap.ui.model.Context} [oContext] Context to resolve a relative path against
 	 * @returns {boolean} <code>true</code> if the data in this path is laundering
 	 */
 	ODataModel.prototype.isLaundering = function(sPath, oContext) {

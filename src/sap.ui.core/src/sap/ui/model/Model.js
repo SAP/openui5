@@ -737,7 +737,7 @@ sap.ui.define([
 	 * is automatically converted into an absolute path.
 	 *
 	 * @param {string} sPath path to resolve
-	 * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+	 * @param {sap.ui.model.Context} [oContext] context to resolve a relative path against
 	 * @return {string} resolved path or undefined
 	 */
 	Model.prototype.resolve = function(sPath, oContext) {
@@ -1102,7 +1102,7 @@ sap.ui.define([
 	 * data was accepted or rejected
 	 *
 	 * @param {string} sPath Path to resolve
-	 * @param {sap.ui.core.Context} [oContext] Context to resolve a relative path against
+	 * @param {sap.ui.model.Context} [oContext] Context to resolve a relative path against
 	 * @returns {boolean} true if the data in this path is laundering
 	 */
 	Model.prototype.isLaundering = function(sPath, oContext) {
