@@ -9152,4 +9152,31 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: The total number of entities can be requested from the v2.ODataListBinding.
+	// JIRA: CPOUI5MODELS-577
+	QUnit.test("ODLB#getCount returns final count", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<Table id="table" items="{/SalesOrderSet}">\
+	<Text id="id" text="{SalesOrderID}" />\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=100", {
+				results : [
+					{SalesOrderID : "0500000001"},
+					{SalesOrderID : "0500000002"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+
+			// code under test
+			assert.strictEqual(that.oView.byId("table").getBinding("items").getCount(), 2);
+		});
+	});
 });
