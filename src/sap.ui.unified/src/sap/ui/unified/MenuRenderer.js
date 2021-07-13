@@ -55,6 +55,11 @@ sap.ui.define([],
 
 		oRm.class("sapUiMnu");
 
+		//do not remove - the class is only to distinguish between menu and submenu
+		if (oMenu.isSubMenu()) {
+			oRm.class("sapUiSubmenu");
+		}
+
 		if (oRootMenu.bUseTopStyle) {
 			oRm.class("sapUiMnuTop");
 		}
