@@ -1213,11 +1213,11 @@ sap.ui.define([
 				appointmentItems:  createLegendItems(1, 10, "Type Private Appointment")
 			});
 
-			this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed = function(sIntervalType, fnExtendSut) {
+			this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed = function(sIntervalType, fnExtendSut, oPCStartDate) {
 				//Prepare
 				var sMessagePrefix = "After legend is destroyed",
 					aAppointments = _createAppointmentsOfTypes(1, 20, new Date(2015, 0, 1, 19)),
-					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, new Date(2015, 0, 1, 19)),
+					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || new Date(2015, 0, 1, 19)),
 					oSut = createPlanningCalendar("accPC-LegendDestoyed", new SearchField(), new Button(),
 						new Date(2015, 0, 1, 19),
 						null, // View key
@@ -1254,11 +1254,11 @@ sap.ui.define([
 				this.destroySut(oSut);
 			};
 
-			this._testAriaAppointmentsAndSpecialDates = function(sIntervalType, fnExtendSut) {
+			this._testAriaAppointmentsAndSpecialDates = function(sIntervalType, fnExtendSut, oPCStartDate) {
 				//Prepare
 				var sMessagePrefix = "Initial legend is available",
 					aAppointments = _createAppointmentsOfTypes(1, 20, new Date(2015, 0, 1, 19)),
-					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, new Date(2015, 0, 1, 19)),
+					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || new Date(2015, 0, 1, 19)),
 					oSut = createPlanningCalendar("accPC", new SearchField(), new Button(),
 						new Date(2015, 0, 1, 19),
 						null, // View key
@@ -1556,8 +1556,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("1 Week view: appointments and special dates", function (assert) {
-		this._testAriaAppointmentsAndSpecialDates(CalendarIntervalType.Week);
-		this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed(CalendarIntervalType.Week);
+		this._testAriaAppointmentsAndSpecialDates(CalendarIntervalType.Week, undefined, new Date(2015, 0, 6, 19));
+		this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed(CalendarIntervalType.Week, undefined, new Date(2015, 0, 6, 19));
 	});
 
 	QUnit.test("1 Month view: appointments and special dates", function (assert) {
