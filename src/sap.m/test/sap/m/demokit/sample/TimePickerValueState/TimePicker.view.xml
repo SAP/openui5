@@ -7,7 +7,8 @@
 			<Label text="{label}" />
 			<TimePicker
 				width="100%"
-				valueState="{valueState}"/>
+				valueState="{valueState}"
+				valueStateText="{valueStateText}"/>
 		</VBox>
 	</FlexBox>
 </mvc:View>

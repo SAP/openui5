@@ -45,9 +45,13 @@ html.sap-phone {
 	.sapMTimePickerDropDown {
 		/* This centers content in landscape & portrait mode */
 		.sapMDialogScrollCont {
-			display: flex;
 			height: 100%;
 			padding: 0;
 		}
 	}
+}
+
+/* DESKTOP STYLES */
+html.sap-desktop .sapMValueStateHeaderRoot {
+	margin-right: -12px; // fixing a right margin set from popover
 }

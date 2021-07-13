@@ -1399,6 +1399,7 @@ function(
 			});
 			oClocks._setAcceptCallback(this._handleOkPress.bind(this));
 
+			var oHeader = this._getValueStateHeader();
 			oPicker = new ResponsivePopover(that.getId() + "-RP", {
 				showCloseButton: false,
 				showHeader: false,
@@ -1415,13 +1416,17 @@ function(
 					text: sCancelButtonText,
 					press: this._handleCancelPress.bind(this)
 				}),
-				content: [oClocks],
+				content: [
+					oHeader,
+					oClocks
+				],
 				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "TIMEPICKER_SET_TIME"),
 				beforeOpen: this.onBeforeOpen.bind(this),
 				beforeClose: this.onBeforeClose.bind(this),
 				afterOpen: this.onAfterOpen.bind(this),
 				afterClose: this.onAfterClose.bind(this)
 			});
+			oHeader.setPopup(oPicker._oControl);
 
 			oPopover = oPicker.getAggregation("_popup");
 			// hide arrow in case of popover as dialog does not have an arrow
@@ -1550,7 +1555,7 @@ function(
 			if (!oPicker) {
 				return null;
 			}
-			return oPicker.getContent()[0];
+			return oPicker.getContent()[1];
 		};
 
 		/**

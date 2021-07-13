@@ -104,10 +104,6 @@ sap.ui.define([
 
 	var Log = sap.ui.require("sap/base/Log");
 
-	var JSONModel = sap.ui.model.json.JSONModel;
-	var DatePicker = sap.m.DatePicker;
-	var DateFormat = sap.ui.core.format.DateFormat;
-
 	var bChange = false;
 	var sValue = "";
 	var bValid = false;
@@ -2326,6 +2322,23 @@ sap.ui.define([
 		// clean
 		oDeviceStub.restore();
 		oLabel.destroy();
+	});
+
+	QUnit.test("_createPopupContent", function (assert) {
+		var oPopupContent;
+
+		// Arrange
+		this.oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		this.oDP.toggleOpen();
+
+		oPopupContent = this.oDP._oPopup.getContent();
+
+		// Assert
+		assert.ok(oPopupContent[0].isA("sap.m.ValueStateHeader"), "There is a sap.m.ValueStateHeader created in the popup content");
+		assert.ok(oPopupContent[1].isA("sap.ui.unified.Calendar"), "There is a sap.ui.unified.Calendar created in the popup content");
 	});
 
 	//set the input value to an invalid one
