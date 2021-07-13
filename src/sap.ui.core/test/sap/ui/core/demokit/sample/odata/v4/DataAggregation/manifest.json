@@ -7,7 +7,7 @@
 		},
 		"dataSources" : {
 			"default" : {
-				"uri" : "/serviceroot.svc/",
+				"uri" : "/odata/v4/sap.fe.managepartners.ManagePartnersService/",
 				"type" : "OData",
 				"settings" : {
 					"odataVersion" : "4.0"

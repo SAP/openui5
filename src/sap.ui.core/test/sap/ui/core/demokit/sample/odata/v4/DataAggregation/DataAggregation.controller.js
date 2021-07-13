@@ -34,10 +34,9 @@ sap.ui.define([
 					},
 					group : {
 						AccountResponsible : {},
-						Country : {additionally : ['CountryText']},
-						Region : {additionally : ['RegionText']}
+						Country_Code : {additionally : ['Country']}
 					},
-					groupLevels : ['Country', 'Region', 'Segment']
+					groupLevels : ['Country_Code', 'Region', 'Segment']
 				},
 				oUriParameters = UriParameters.fromQuery(location.search),
 				sFilter = TestUtils.retrieveData( // controlled by OPA

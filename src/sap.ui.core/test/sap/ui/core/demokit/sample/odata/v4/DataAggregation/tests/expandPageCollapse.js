@@ -18,7 +18,7 @@ sap.ui.define([
 				region : "Baden-Württemberg",
 				segment : "",
 				accountResponsible : "",
-				salesAmountLocalCurrency : "4,416,538",
+				salesAmountLocalCurrency : "4,416,538.00",
 				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
@@ -30,7 +30,7 @@ sap.ui.define([
 				region : "Baden-Württemberg",
 				segment : "Small",
 				accountResponsible : "",
-				salesAmountLocalCurrency : "125,093",
+				salesAmountLocalCurrency : "125,093.00",
 				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
@@ -42,7 +42,7 @@ sap.ui.define([
 				region : "",
 				segment : "",
 				accountResponsible : "",
-				salesAmountLocalCurrency : "24,489,638",
+				salesAmountLocalCurrency : "24,489,638.00",
 				localCurrency : "EUR",
 				salesNumber : "",
 				subtotal : true
@@ -116,7 +116,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "79,443,315",
+			salesAmountLocalCurrency : "79,443,315.00",
 			localCurrency : "",
 			salesNumber : "",
 			subtotal : true
@@ -127,7 +127,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "14,548,502",
+			salesAmountLocalCurrency : "14,548,502.00",
 			localCurrency : "GBP",
 			salesNumber : "",
 			subtotal : true
@@ -138,7 +138,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "40,405,175",
+			salesAmountLocalCurrency : "40,405,175.00",
 			localCurrency : "USD",
 			salesNumber : "",
 			subtotal : true
@@ -156,7 +156,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "79,443,315",
+			salesAmountLocalCurrency : "79,443,315.00",
 			localCurrency : "",
 			salesNumber : "",
 			subtotal : true
@@ -167,7 +167,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "14,548,502",
+			salesAmountLocalCurrency : "14,548,502.00",
 			localCurrency : "GBP",
 			salesNumber : "",
 			subtotal : true
@@ -178,7 +178,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "40,405,175",
+			salesAmountLocalCurrency : "40,405,175.00",
 			localCurrency : "USD",
 			salesNumber : "",
 			subtotal : true
@@ -189,7 +189,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "24,489,638",
+			salesAmountLocalCurrency : "24,489,638.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -200,7 +200,7 @@ sap.ui.define([
 			region : "Saxony",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "1,161,590",
+			salesAmountLocalCurrency : "1,161,590.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -214,7 +214,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "79,443,315",
+			salesAmountLocalCurrency : "79,443,315.00",
 			localCurrency : "",
 			salesNumber : "",
 			subtotal : true
@@ -225,7 +225,7 @@ sap.ui.define([
 			region : "Hamburg",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "2,309,561",
+			salesAmountLocalCurrency : "2,309,561.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -236,7 +236,7 @@ sap.ui.define([
 			region : "Berlin",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "1,670,139",
+			salesAmountLocalCurrency : "1,670,139.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -247,7 +247,7 @@ sap.ui.define([
 			region : "Bavaria",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "5,857,115",
+			salesAmountLocalCurrency : "5,857,115.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -263,7 +263,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "79,443,315",
+			salesAmountLocalCurrency : "79,443,315.00",
 			localCurrency : "",
 			salesNumber : "",
 			subtotal : true
@@ -274,7 +274,7 @@ sap.ui.define([
 			region : "Baden-Württemberg",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "4,416,538",
+			salesAmountLocalCurrency : "4,416,538.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -285,7 +285,7 @@ sap.ui.define([
 			region : "Baden-Württemberg",
 			segment : "Large",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "3,765,323",
+			salesAmountLocalCurrency : "3,765,323.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -296,7 +296,7 @@ sap.ui.define([
 			region : "Baden-Württemberg",
 			segment : "Mid-size",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "526,122",
+			salesAmountLocalCurrency : "526,122.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -312,7 +312,7 @@ sap.ui.define([
 			region : "",
 			segment : "",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "79,443,315",
+			salesAmountLocalCurrency : "79,443,315.00",
 			localCurrency : "",
 			salesNumber : "",
 			subtotal : true
@@ -323,7 +323,7 @@ sap.ui.define([
 			region : "Baden-Württemberg",
 			segment : "Mid-size",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "526,122",
+			salesAmountLocalCurrency : "526,122.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -334,7 +334,7 @@ sap.ui.define([
 			region : "Baden-Württemberg",
 			segment : "Small",
 			accountResponsible : "",
-			salesAmountLocalCurrency : "125,093",
+			salesAmountLocalCurrency : "125,093.00",
 			localCurrency : "EUR",
 			salesNumber : "",
 			subtotal : true
@@ -345,7 +345,7 @@ sap.ui.define([
 			region : "Baden-Württemberg",
 			segment : "Small",
 			accountResponsible : "Erwin Fischer",
-			salesAmountLocalCurrency : "61,632",
+			salesAmountLocalCurrency : "61,632.00",
 			localCurrency : "EUR",
 			salesNumber : "1,032",
 			subtotal : false
@@ -356,7 +356,7 @@ sap.ui.define([
 			region : "Baden-Württemberg",
 			segment : "Small",
 			accountResponsible : "Winfried Maier",
-			salesAmountLocalCurrency : "63,461",
+			salesAmountLocalCurrency : "63,461.00",
 			localCurrency : "EUR",
 			salesNumber : "1,178",
 			subtotal : false
