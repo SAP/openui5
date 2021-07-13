@@ -146,6 +146,27 @@ sap.ui.define([
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
+				 * Determines whether the <code>DynamicPageHeader</code> is pinned.
+				 *
+				 * The property can be changed programmatically or in the occurrence of
+				 * the following user interactions:
+				 * <ul>
+				 * <li>Toggling the pin/unpin button of <code>DynamicPageHeader</code></li>
+				 * <li>Snapping the <code>DynamicPageHeader</code> by explicitly clicking on the <code>DynamicPageTitle</code></li>
+				 * </ul>
+				 *
+				 * <b>Note: </b> The property will only apply if the header is effectively pinnable, i.e. if the following conditions are met:
+				 * <ul>
+				 * <li><code>DynamicPageHeader</code> <code>pinnable</code> property is <code>true</code></li>
+				 * <li><code>DynamicPageHeader</code> is expanded</li>
+				 * <li><code>DynamicPage</code> <code>preserveHeaderStateOnScroll</code> property is effectively disabled</li>
+				 * </ul>
+				 *
+				 * @since 1.93
+				 */
+				 headerPinned: {type: "boolean", group: "Behavior", defaultValue: false},
+
+				/**
 				 * Determines whether the user can switch between the expanded/collapsed states of the
 				 * <code>DynamicPageHeader</code> by clicking on the <code>DynamicPageTitle</code>
 				 * or by using the expand/collapse visual indicators,
@@ -265,6 +286,23 @@ sap.ui.define([
 				 * <code>DynamicPage</code> custom <code>ScrollBar</code>.
 				 */
 				_scrollBar: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
+			},
+			events: {
+
+				/**
+				 * The event is fired when the <code>headerPinned</code> property is changed via user interaction.
+				 *
+				 * @since 1.93
+				 */
+				pinnedStateChange: {
+					parameters: {
+
+						/**
+						 * False or True values indicate the new pinned property value.
+						 */
+						pinned: {type: "boolean"}
+					}
+				}
 			},
 			dnd: { draggable: false, droppable: true },
 			designtime: "sap/f/designtime/DynamicPage.designtime"
@@ -419,6 +457,7 @@ sap.ui.define([
 		this._updateScrollBar();
 		this._attachPageChildrenAfterRenderingDelegates();
 		this._updatePinButtonState();
+		this._hidePinButtonIfNotApplicable();
 
 		if (!this.getHeaderExpanded()) {
 			this._snapHeader(false);
@@ -538,6 +577,8 @@ sap.ui.define([
 		}
 
 		this.setProperty("headerExpanded", bHeaderExpanded, true);
+
+		this._updatePinButtonState();
 
 		return this;
 	};
@@ -751,7 +792,7 @@ sap.ui.define([
 		Log.debug("DynamicPage :: snapped header", this);
 
 		if (this._bPinned && bUserInteraction) {
-			this._unPin();
+			this._unPin(bUserInteraction);
 			this._togglePinButtonPressedState(false);
 		}
 
@@ -914,16 +955,37 @@ sap.ui.define([
 		this._setScrollPosition(iNewScrollPosition, true /* suppress toggle header on scroll */);
 	};
 
+	DynamicPage.prototype._isHeaderPinnable = function () {
+		var oHeader = this.getHeader();
+		return oHeader && oHeader.getPinnable()
+			&& this.getHeaderExpanded()
+			&& !this.getPreserveHeaderStateOnScroll();
+	};
+
+	DynamicPage.prototype._updatePinButtonState = function() {
+		var bShouldPin = this.getHeaderPinned() && this._isHeaderPinnable();
+		this._togglePinButtonPressedState(bShouldPin);
+		if (bShouldPin) {
+			this._pin();
+		} else {
+			this._unPin();
+		}
+	};
+
 	/**
 	 * Pins the header.
 	 * @private
 	 */
-	DynamicPage.prototype._pin = function () {
+	DynamicPage.prototype._pin = function (bUserInteraction) {
 		if (this._bPinned) {
 			return;
 		}
 
 		this._bPinned = true;
+		if (bUserInteraction) {
+			this.setProperty("headerPinned", true, true);
+			this.fireEvent("pinnedStateChange", {pinned: true});
+		}
 
 		if (!this._bHeaderInTitleArea) {
 			this._moveHeaderToTitleArea(true);
@@ -940,12 +1002,16 @@ sap.ui.define([
 	 * Unpins the header.
 	 * @private
 	 */
-	DynamicPage.prototype._unPin = function () {
+	DynamicPage.prototype._unPin = function (bUserInteraction) {
 		if (!this._bPinned) {
 			return;
 		}
 
 		this._bPinned = false;
+		if (bUserInteraction) {
+			this.setProperty("headerPinned", false, true);
+			this.fireEvent("pinnedStateChange", {pinned: false});
+		}
 		this._updateToggleHeaderVisualIndicators();
 
 		this.removeStyleClass("sapFDynamicPageHeaderPinned");
@@ -979,14 +1045,10 @@ sap.ui.define([
 
 
 	/**
-	 * Resets the header pin button state if the header is no longer pinnable
+	 * Hides the pin button if no pin scenario is possible
 	 * @private
 	 */
-	DynamicPage.prototype._updatePinButtonState = function () {
-		if (this._bPinned && !this._isHeaderPinnable()) {
-			this._togglePinButtonPressedState(false);
-			this._unPin();
-		}
+	DynamicPage.prototype._hidePinButtonIfNotApplicable = function () {
 		if (this._preserveHeaderStateOnScroll()) {
 			this._togglePinButtonVisibility(false);
 		}
@@ -1544,6 +1606,7 @@ sap.ui.define([
 				this._togglePinButtonPressedState(false);
 			} else {
 				this._togglePinButtonVisibility(true);
+				this._updatePinButtonState();
 			}
 
 			if (this.getHeaderExpanded() && this._bHeaderInTitleArea && this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
@@ -2117,9 +2180,9 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._onPinUnpinButtonPress = function () {
 		if (this._bPinned) {
-			this._unPin();
+			this._unPin(true);
 		} else {
-			this._pin();
+			this._pin(true);
 			this._restorePinButtonFocus();
 		}
 	};
@@ -2265,13 +2328,23 @@ sap.ui.define([
 
 		if (exists(oHeader) && !this._bAlreadyAttachedHeaderObserver) {
 			if (!this._oHeaderObserver) {
-				this._oHeaderObserver = new ManagedObjectObserver(this._updateToggleHeaderVisualIndicators.bind(this));
+				this._oHeaderObserver = new ManagedObjectObserver(this._onHeaderFieldChange.bind(this));
 			}
 
-			this._oHeaderObserver.observe(oHeader, {aggregations: ["content"], properties: ["visible"]});
+			this._oHeaderObserver.observe(oHeader, {aggregations: ["content"], properties: ["visible", "pinnable"]});
 
 			this._bAlreadyAttachedHeaderObserver = true;
 		}
+	};
+
+	DynamicPage.prototype._onHeaderFieldChange = function (oEvent) {
+
+		if ((oEvent.type === "property") && (oEvent.name === "pinnable")) {
+			this._updatePinButtonState();
+			return;
+		}
+
+		this._updateToggleHeaderVisualIndicators();
 	};
 
 	/**
