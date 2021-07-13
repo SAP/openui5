@@ -51,6 +51,11 @@ sap.ui.define([],
 				"id": "ui5WebComponents",
 				"text": "UI5 Web Components",
 				"href": "https://sap.github.io/ui5-webcomponents/"
+			},
+			{
+				"id": "liveEditor",
+				"text": "Live Editor",
+				"href": "liveEditor"
 			}
 		];
 
