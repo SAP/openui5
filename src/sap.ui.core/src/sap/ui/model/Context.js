@@ -101,6 +101,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	/**
 	 * Sets the force refresh flag of the context. If this is set, the context will force a refresh of dependent
 	 * bindings, when the context is propagated.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @param {boolean} bForceRefresh the force refresh flag
 	 */
@@ -110,6 +113,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 
 	/**
 	 * This method returns, whether dependent bindings need to be refreshed.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @return {boolean} the force refresh flag
 	 */
@@ -121,6 +127,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	 * Sets the preliminary flag of the context. If this is set, the context is not yet linked to actual model
 	 * data, but does just contain path information. This can be used by dependent bindings to send their request
 	 * in parallel to the request of the context binding.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @param {boolean} bPreliminary the preliminary flag
 	 */
@@ -130,6 +139,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 
 	/**
 	 * This method returns, whether the context is preliminary.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @ui5-restricted sap.suite.ui.generic
 	 * @return {boolean} the preliminary flag
@@ -141,6 +153,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	/**
 	 * Sets the updated flag of the context. If this is set, the context was updated. E.g. the path changed from
 	 * a preliminary path to the canonical one.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @param {boolean} bUpdated the preliminary flag
 	 */
@@ -150,11 +165,25 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 
 	/**
 	 * This method returns, whether the context is updated.
+	 *
+	 * @deprecated since 1.93.0; only supported by the OData V2 Model; use V2 specific Context
+	 *   instead
 	 * @private
 	 * @return {boolean} the updated flag
 	 */
 	Context.prototype.isUpdated = function() {
 		return this.bUpdated;
+	};
+
+	/**
+	 * Whether this context has changed. By default this context cannot be changed but subclasses
+	 * can override this behaviour.
+	 *
+	 * @return {boolean} Whether this context has changed
+	 * @private
+	 */
+	 Context.prototype.hasChanged = function() {
+		return this.isUpdated() || this.isRefreshForced();
 	};
 
 	/**
@@ -167,17 +196,8 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	 * @private
 	 */
 	Context.hasChanged = function(oOldContext, oNewContext) {
-		var bChanged = false;
-
-		if (oOldContext !== oNewContext) {
-			bChanged = true;
-		} else if (oNewContext && oNewContext.isUpdated()) {
-			bChanged = true;
-		} else if (oNewContext && oNewContext.isRefreshForced()) {
-			bChanged = true;
-		}
-
-		return bChanged;
+		return oOldContext !== oNewContext
+			|| !!oNewContext && !!oNewContext.hasChanged();
 	};
 
 	/**

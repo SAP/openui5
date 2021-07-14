@@ -41,6 +41,8 @@ sap.ui.define([
 
 		constructor : function(oModel, sPath, oContext, mParameters, oEvents){
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
+			// this.oElementContext is owned by the super class; it is either set to null or it
+			// references an instance of sap.ui.model.odata.v2.Context
 			this.sRefreshGroupId = undefined;
 			this.bPendingRequest = false;
 			this.mParameters = deepExtend({}, this.mParameters);
@@ -51,6 +53,16 @@ sap.ui.define([
 			this.bPendingRequest = false;
 		}
 	});
+
+	/**
+	 * Returns the bound context.
+	 *
+	 * @returns {sap.ui.model.odata.v2.Context}
+	 *   The context object used by this context binding or <code>null</code>
+	 * @function
+	 * @name sap.ui.model.odata.v2.ODataContextBinding#getBoundContext
+	 * @public
+	 */
 
 	/**
 	 * Initializes the binding, will create the binding context.
@@ -268,6 +280,7 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.setContext = function(oContext) {
 		var that = this,
+			oBindingContext,
 			oData,
 			sResolvedPath,
 			bCreated = oContext && oContext.bCreated,
@@ -315,7 +328,8 @@ sap.ui.define([
 				this.fireDataRequested();
 				this.bPendingRequest = true;
 			}
-			var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
+			oBindingContext = this.oModel.createBindingContext(this.sPath, this.oContext,
+					this.mParameters, function(oContext) {
 				if (that.bCreatePreliminaryContext && oContext && that.oElementContext) {
 					that.oElementContext.setPreliminary(false);
 					that.oModel._updateContext(that.oElementContext, oContext.getPath());
@@ -335,10 +349,10 @@ sap.ui.define([
 					that.bPendingRequest = false;
 				}
 			}, bReloadNeeded);
-			if (oContext) {
+			if (oBindingContext) {
 				if (this.bCreatePreliminaryContext) {
-					oContext.setPreliminary(true);
-					this.oElementContext = oContext;
+					oBindingContext.setPreliminary(true);
+					this.oElementContext = oBindingContext;
 					sContextPath = this.oElementContext.sPath;
 					this.oModel._updateContext(this.oElementContext, sResolvedPath);
 					this._fireChange({ reason: ChangeReason.Context }, bForceUpdate);

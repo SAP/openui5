@@ -7,12 +7,13 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/ListBinding",
+	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, ChangeReason, Context, Filter, FilterOperator, ListBinding, ODataUtils,
-		ODataListBinding, TestUtils) {
+], function (Log, ChangeReason, Context, Filter, FilterOperator, CountMode, ODataUtils,
+		OperationMode, ODataListBinding, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -758,5 +759,75 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype._getEntityType.call(oBinding), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getContexts: return V2 contexts", function (assert) {
+		var oModel = {
+				getContext : function () {},
+				resolveDeep : function () {}
+			},
+			oBinding = {
+				oContext : "~context",
+				aKeys : ["~key(0)", "~key(1)"],
+				oModel : oModel,
+				sPath : "~path",
+				getResolvedPath : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("resolveDeep").withExactArgs("~path", "~context").returns("/~sDeepPath");
+		oModelMock.expects("getContext").withExactArgs("/~key(0)", "/~sDeepPath(0)")
+			.returns("~V2Context0");
+		oModelMock.expects("getContext").withExactArgs("/~key(1)", "/~sDeepPath(1)")
+			.returns("~V2Context1");
+
+		// code under test
+		assert.deepEqual(ODataListBinding.prototype._getContexts.call(oBinding, 0, 2),
+			["~V2Context0", "~V2Context1"]);
+	});
+
+	//*********************************************************************************************
+[{
+	bInitial : true
+}, {
+	sCountMode : CountMode.Request,
+	bLengthFinal : false,
+	bLengthRequested : true,
+	sOperationMode : OperationMode.Auto
+}, {
+	sCountMode : CountMode.Both,
+	bLengthFinal : false,
+	bLengthRequested : true,
+	sOperationMode : OperationMode.Auto
+}].forEach(function (oBinding, i) {
+	QUnit.test("getContexts: return empty array; #" + i, function (assert) {
+		// code under test
+		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 2), []);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts: return V2 contexts returned by _getContexts", function (assert) {
+		var aResultContexts,
+			oBinding = {
+				aAllKeys : [],
+				bLengthFinal : true,
+				bRefresh : true,
+				_getContexts : function () {},
+				useClientMode : function () {}
+			},
+			aContexts = ["~V2Context0", "~V2Context1"];
+
+		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns(aContexts);
+		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+
+		// code under test
+		aResultContexts = ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);
+
+		assert.strictEqual(aResultContexts, aContexts);
+		assert.strictEqual(oBinding.iLastLength, 2);
+		assert.strictEqual(oBinding.iLastStartIndex, 0);
+		assert.strictEqual(oBinding.iLastThreshold, undefined);
 	});
 });
