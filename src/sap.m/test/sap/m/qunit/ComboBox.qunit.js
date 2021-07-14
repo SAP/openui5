@@ -12478,6 +12478,23 @@ sap.ui.define([
 		assert.strictEqual(this.oCombobox.isOpen(), false, "The Popover should not be displayed.");
 	});
 
+	QUnit.test("Should display the empty item.", function (assert) {
+		var аListItems, oEmptyItem, iItemIdx;
+
+		// Act
+		this.oCombobox.addItem(new Item({text: "", key: "emptyItem"}));
+		sap.ui.getCore().applyChanges();
+
+		this.oCombobox.open();
+
+		аListItems = this.oCombobox._getList().getItems();
+		iItemIdx = аListItems.length - 1;
+		oEmptyItem = аListItems[iItemIdx];
+
+		// Assert
+		assert.ok(oEmptyItem.getDomRef(), "The empty item is shown");
+	});
+
 	QUnit.module("List configuration");
 
 	QUnit.test("List css classes", function (assert) {

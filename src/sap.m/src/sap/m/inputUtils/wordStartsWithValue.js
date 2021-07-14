@@ -18,8 +18,12 @@ sap.ui.define([], function () {
 	var wordStartsWithValue = function (sText, sValue) {
 		var index;
 
-		if (!sText || typeof sText !== "string" || typeof sValue !== "string") {
+		if (typeof sText !== "string" || typeof sValue !== "string") {
 			return false;
+		}
+
+		if (sValue === "") {
+			return true;
 		}
 
 		while (sText) {
