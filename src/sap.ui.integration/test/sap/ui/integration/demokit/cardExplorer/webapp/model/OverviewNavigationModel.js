@@ -23,6 +23,12 @@ sap.ui.define([
 				icon: "sap-icon://header",
 				target: "overview",
 				key: "developingCards"
+			},
+			{
+				title: "References",
+				icon: "sap-icon://list",
+				target: "overview",
+				key: "references"
 			}
 		]
 	});
