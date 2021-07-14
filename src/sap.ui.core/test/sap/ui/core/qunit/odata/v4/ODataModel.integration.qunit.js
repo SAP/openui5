@@ -33,11 +33,13 @@ sap.ui.define([
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+		rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		fnFireEvent = EventProvider.prototype.fireEvent,
 		sInvalidModel = "/invalid/model/",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+		rTop = /&\$top=(\d+)/, // $top=<number>
 		rTransientPredicate = /\(\$uid=[-\w]+\)/g;
 
 	/**
@@ -1601,12 +1603,18 @@ sap.ui.define([
 		 * @param {any|Error|Promise|function} [vResponse]
 		 *   The response message to be returned from the requestor or a promise on it or a function
 		 *   (invoked "just in time" when the request is actually sent) returning the response
-		 *   message (any, error, or promise)
+		 *   message (any, error, or promise). May be omitted in case it does not matter.
 		 * @param {object} [mResponseHeaders]
 		 *   The response headers to be returned from the requestor
 		 * @returns {object} The test instance for chaining
+		 * @throws {Error} In case some sanity check around "@odata.count" and $count fails
 		 */
 		expectRequest : function (vRequest, vResponse, mResponseHeaders) {
+			var iCount,
+				iLength,
+				aMatches,
+				iTop;
+
 			if (typeof vRequest === "string") {
 				vRequest = {
 					method : "GET",
@@ -1622,6 +1630,23 @@ sap.ui.define([
 					// methods it must be possible to insert the ETag from the header
 					|| (vRequest.method === "GET" ? null : {});
 			vRequest.url = vRequest.url.replace(/ /g, "%20");
+			if (rCountTrue.test(vRequest.url) && vResponse
+					&& !(vResponse instanceof Promise)) {
+				if (!("@odata.count" in vResponse)) {
+					throw new Error('Missing "@odata.count" in response for ' + vRequest.method
+						+ " " + vRequest.url);
+				}
+				aMatches = rTop.exec(vRequest.url);
+				if (aMatches) {
+					iCount = parseInt(vResponse["@odata.count"]);
+					iLength = vResponse.value.length;
+					iTop = parseInt(aMatches[1]);
+					if (iLength !== iCount && iLength !== iTop) {
+						//TODO take $skip into consideration once it becomes necessary
+						throw new Error("Unexpected short read?");
+					}
+				}
+			}
 			this.aRequests.push(vRequest);
 
 			return this;
@@ -4955,7 +4980,7 @@ sap.ui.define([
 						Budget : "1234.1234",
 						TeamID : "TEAM_01"
 					}
-				}, {/* response does not matter here */});
+				}); // response does not matter here
 
 			oOperationBinding.execute();
 
@@ -19115,6 +19140,7 @@ sap.ui.define([
 			that.expectRequest("BusinessPartners?$count=true&$search=covfefe&$apply"
 					+ "=filter(Name eq 'Foo')/search(tee)/groupby((Region),aggregate(SalesNumber))"
 					+ "&$filter=SalesNumber gt 0&$skip=0&$top=100", {
+					"@odata.count" : 0,
 					value : [
 						// ... (don't care)
 					]
@@ -19634,6 +19660,7 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))&$count=true"
 					+ "&$skip=0&$top=100", {
+					"@odata.count" : 1,
 					value : [{LifecycleStatus : "Y"}]
 				})
 				.expectChange("grossAmount", [null])
@@ -32380,7 +32407,7 @@ sap.ui.define([
 					batchNo : 4,
 					method : "GET",
 					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123&$top=0"
-				}, {/*does not matter, fails with DELETE in same $batch*/})
+				}) // response does not matter, fails with DELETE in same $batch
 				.expectChange("objectPageGrossAmount", null)
 				.expectChange("objectPageNote", null)
 				.expectRequest({
