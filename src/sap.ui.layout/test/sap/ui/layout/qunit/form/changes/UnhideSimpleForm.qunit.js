@@ -77,8 +77,10 @@ sap.ui.define([
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
 		//Call CUT
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function() {
+				assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+			}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier and a legacy change", function (assert) {
@@ -101,12 +103,14 @@ sap.ui.define([
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
+		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
 			appComponent: this.oMockedComponent,
 			modifier : XmlTreeModifier,
 			view : this.oXmlDocument
-		}), "no errors occur");
-		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
+		})
+			.then(function() {
+				assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
+			}.bind(this));
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.UnhideSimpleForm with new change format", {
@@ -189,22 +193,28 @@ sap.ui.define([
 	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
 		//Call CUT
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function() {
+				assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+			}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing a local Id", function (assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
 		//Call CUT
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithLocalIdWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+		return this.oChangeHandler.applyChange(this.oChangeWithLocalIdWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function() {
+				assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+			}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing a global Id", function (assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
 		//Call CUT
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function() {
+				assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+			}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -227,25 +237,24 @@ sap.ui.define([
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oXmlSimpleForm, {
+		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oXmlSimpleForm, {
 			appComponent: this.oMockedComponent,
 			modifier : XmlTreeModifier,
 			view : this.oXmlDocument
-		}), "no errors occur");
-		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
+		})
+			.then(function() {
+				assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
+			}.bind(this));
 	});
 
-	QUnit.test("applyChange shall raise an exception if the control does not have the required methods", function (assert) {
-		var exception, oControl;
-		oControl = {};
+	QUnit.test("applyChange shall raise an error if the control is invalid", function (assert) {
+		var oControl = {};
 		this.mPropertyBag.modifier = JsControlTreeModifier;
 		//Call CUT
-		try {
-			this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, oControl, this.mPropertyBag);
-		} catch (ex) {
-			exception = ex;
-		}
-		assert.ok(exception, "Shall raise an exception");
+		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, oControl, this.mPropertyBag)
+			.catch(function(oError) {
+				assert.ok(oError, "Shall raise an error");
+			});
 	});
 
 	QUnit.test('when calling completeChangeContent', function (assert) {

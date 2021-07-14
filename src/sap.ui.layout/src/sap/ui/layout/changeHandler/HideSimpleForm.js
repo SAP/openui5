@@ -2,7 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"], function(JsControlTreeModifier, Log) {
+sap.ui.define([
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/base/Log"
+], function(
+	JsControlTreeModifier,
+	Log
+) {
 	"use strict";
 
 	/**
@@ -29,6 +35,7 @@ sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"],
 				return aContent[iIndex];
 			}
 		}
+		return undefined;
 	};
 
 	/**
@@ -37,89 +44,115 @@ sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"],
 	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - map of properties
-	 * @returns {boolean} true - if change could be applied
+	 * @returns {Promise} Promise resolving when change is successfully applied
 	 * @public
 	 */
 	HideForm.applyChange = function(oChange, oControl, mPropertyBag) {
-		try {
-			var oModifier = mPropertyBag.modifier;
-			var oView = mPropertyBag.view;
-			var oAppComponent = mPropertyBag.appComponent;
+		var oModifier = mPropertyBag.modifier;
+		var oView = mPropertyBag.view;
+		var oAppComponent = mPropertyBag.appComponent;
 
-			var oChangeDefinition = oChange.getDefinition();
+		var oChangeDefinition = oChange.getDefinition();
 
-			// !important : sHideId was used in 1.40, do not remove for compatibility!
-			var oRemovedElement = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sHideId, oAppComponent, oView);
-			var aContent = oModifier.getAggregation(oControl, "content");
-			var iStart = -1;
-			var mState = this._getState(oControl, oModifier, oAppComponent);
-			oChange.setRevertData(mState);
+		// !important : sHideId was used in 1.40, do not remove for compatibility!
+		var oRemovedElement = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sHideId, oAppComponent, oView);
+		var aContent;
 
-			// this is needed to trigger a refresh of a simpleform! Otherwise simpleForm content and visualization are not in sync
-			oModifier.removeAllAggregation(oControl, "content");
-			for (var i = 0; i < aContent.length; ++i) {
-				oModifier.insertAggregation(oControl, "content", aContent[i], i, oView);
-			}
-
-			if (oChangeDefinition.changeType === "hideSimpleFormField") {
-				aContent.some(function (oField, index) {
-					if (oField === oRemovedElement) {
-						iStart = index;
-						oModifier.setVisible(oField, false);
-					}
-					if (iStart >= 0 && index > iStart) {
-						if ((oModifier.getControlType(oField) === "sap.m.Label") ||
-							(oModifier.getControlType(oField) === "sap.ui.comp.smartfield.SmartLabel") ||
-							fnIsTitleOrToolbar(oField, oModifier)) {
-							return true;
-						} else {
-							oModifier.setVisible(oField, false);
-						}
-					}
-				});
-			} else if (oChangeDefinition.changeType === "removeSimpleFormGroup") {
-				var oTitleOrToolbar = fnGetFirstToolbarOrTitle(aContent, oModifier);
-				var bFirstContainerWithoutTitle = oTitleOrToolbar && !oRemovedElement;
-				aContent.some(function (oField, index) {
-					// if there is no Title/Toolbar, there is only the one FormContainer without Title/Toolbar.
-					// Therefor all Fields will be hidden.
-					if (!oTitleOrToolbar) {
-						oModifier.setVisible(oField, false);
-					} else if (bFirstContainerWithoutTitle) {
-						// if there is oTitleOrToolbar but no oRemovedElement the first FormContainer needs to be hidden.
-						// This FormContainer has no Title/Toolbar, but there are FormContainers with Title/Toolbar
-						// Therefor we have to set iStart to 0 and hide the first Field once
-						iStart = 0;
-						oModifier.setVisible(oField, false);
-						bFirstContainerWithoutTitle = false;
-					} else {
+		return this._getState(oControl, oModifier, oAppComponent)
+			.then(function(mState) {
+				oChange.setRevertData(mState);
+				return oModifier.getAggregation(oControl, "content");
+			})
+			.then(function(aAggregationContent) {
+				aContent = aAggregationContent;
+				// this is needed to trigger a refresh of a simpleform! Otherwise simpleForm content and visualization are not in sync
+				return oModifier.removeAllAggregation(oControl, "content");
+			})
+			.then(function() {
+				return aContent.reduce(function(oPreviousPromise, oContent, i) {
+					return oPreviousPromise
+						.then(oModifier.insertAggregation.bind(oModifier, oControl, "content", oContent, i, oView));
+				}, Promise.resolve());
+			})
+			.then(function() {
+				var iStart = -1;
+				if (oChangeDefinition.changeType === "hideSimpleFormField") {
+					aContent.some(function (oField, index) {
 						if (oField === oRemovedElement) {
 							iStart = index;
+							oModifier.setVisible(oField, false);
 						}
 						if (iStart >= 0 && index > iStart) {
-							if (fnIsTitleOrToolbar(oField, oModifier)) {
-								if (iStart === 0) {
-									oModifier.removeAggregation(oControl, "content", oField, oView);
-									oModifier.insertAggregation(oControl, "content", oField, 0, oView);
-								}
+							if ((oModifier.getControlType(oField) === "sap.m.Label") ||
+								(oModifier.getControlType(oField) === "sap.ui.comp.smartfield.SmartLabel") ||
+								fnIsTitleOrToolbar(oField, oModifier)) {
 								return true;
 							} else {
 								oModifier.setVisible(oField, false);
 							}
 						}
+					});
+				} else if (oChangeDefinition.changeType === "removeSimpleFormGroup") {
+					var aPromises = [];
+					var oTitleOrToolbar = fnGetFirstToolbarOrTitle(aContent, oModifier);
+					var bFirstContainerWithoutTitle = oTitleOrToolbar && !oRemovedElement;
+					aContent.some(function (oField, index) {
+						// if there is no Title/Toolbar, there is only the one FormContainer without Title/Toolbar.
+						// Therefor all Fields will be hidden.
+						if (!oTitleOrToolbar) {
+							oModifier.setVisible(oField, false);
+						} else if (bFirstContainerWithoutTitle) {
+							// if there is oTitleOrToolbar but no oRemovedElement the first FormContainer needs to be hidden.
+							// This FormContainer has no Title/Toolbar, but there are FormContainers with Title/Toolbar
+							// Therefor we have to set iStart to 0 and hide the first Field once
+							iStart = 0;
+							oModifier.setVisible(oField, false);
+							bFirstContainerWithoutTitle = false;
+						} else {
+							if (oField === oRemovedElement) {
+								iStart = index;
+							}
+							if (iStart >= 0 && index > iStart) {
+								if (fnIsTitleOrToolbar(oField, oModifier)) {
+									if (iStart === 0) {
+										aPromises.push(function() {
+											return Promise.resolve()
+												.then(oModifier.removeAggregation.bind(oModifier, oControl, "content", oField, oView));
+										});
+										aPromises.push(function() {
+											return Promise.resolve()
+												.then(oModifier.insertAggregation.bind(oModifier, oControl, "content", oField, 0, oView));
+										});
+									}
+									return true;
+								} else {
+									oModifier.setVisible(oField, false);
+								}
+							}
+						}
+					});
+					if (oRemovedElement) {
+						aPromises.push(function() {
+							return Promise.resolve()
+								.then(oModifier.removeAggregation.bind(oModifier, oControl, "content", oRemovedElement, oView));
+						});
+						aPromises.push(function() {
+							return Promise.resolve()
+								.then(oModifier.insertAggregation.bind(oModifier, oControl, "dependents", oRemovedElement, 0, oView));
+						});
 					}
-				});
-				if (oRemovedElement) {
-					oModifier.removeAggregation(oControl, "content", oRemovedElement, oView);
-					oModifier.insertAggregation(oControl, "dependents", oRemovedElement, 0, oView);
+					if (aPromises.length > 0) {
+						return aPromises.reduce(function(oPreviousPromise, oCurrentPromise) {
+							return oPreviousPromise.then(oCurrentPromise);
+						}, Promise.resolve());
+					}
 				}
-			}
-
-			return true;
-		} catch (oError) {
-			oChange.resetRevertData();
-			Log.error(oError.message || oError.name);
-		}
+				return Promise.resolve();
+			})
+			. catch(function(oError) {
+				oChange.resetRevertData();
+				Log.error(oError.message || oError.name);
+			});
 	};
 
 	/**
@@ -158,37 +191,68 @@ sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"],
 	};
 
 	HideForm._getState = function (oControl, oModifier, oAppComponent) {
-		var aContent = oModifier.getAggregation(oControl, "content");
-		return {
-			content : aContent.map(function(oElement) {
-				return {
-					elementSelector : oModifier.getSelector(oModifier.getId(oElement), oAppComponent),
-					visible : oElement.getVisible ? oElement.getVisible() : undefined,
-					index : aContent.indexOf(oElement)
-				};
+		return Promise.resolve()
+			.then(function(){
+				return oModifier.getAggregation(oControl, "content");
 			})
-		};
+			.then(function(aContent){
+				if (!aContent){
+					return Promise.reject(new Error("Cannot get control state: 'content' aggregation doesn't exist"));
+				}
+				return {
+					content : aContent.map(function(oElement) {
+						return {
+							elementSelector : oModifier.getSelector(oModifier.getId(oElement), oAppComponent),
+							visible : oElement.getVisible ? oElement.getVisible() : undefined,
+							index : aContent.indexOf(oElement)
+						};
+					})
+				};
+			});
 	};
 
+	/**
+	 * Reverts the hide simple form change.
+	 *
+	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
+	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
+	 * @param {object} mPropertyBag - map of properties
+	 * @returns {Promise} Promise resolving when change is successfully reverted
+	 * @public
+	 */
 	HideForm.revertChange = function (oChange, oControl, mPropertyBag) {
 		var mState = oChange.getRevertData();
 		var oAppComponent = mPropertyBag.appComponent;
 		var oModifier = mPropertyBag.modifier;
-		oModifier.removeAllAggregation(oControl, "content");
-		mState.content.forEach(function(oElementState) {
-			var oElement = oModifier.bySelector(oElementState.elementSelector, oAppComponent, mPropertyBag.view);
-			var aDependents = oModifier.getAggregation(oControl, "dependents");
-			aDependents.some(function(oDependent) {
-				if (oModifier.getProperty(oDependent, "id") === oModifier.getProperty(oElement, "id")) {
-					oModifier.removeAggregation(oControl, "dependents", oDependent, mPropertyBag.view);
-					return true;
-				}
+
+		return Promise.resolve()
+			.then(oModifier.removeAllAggregation.bind(oModifier, oControl, "content"))
+			.then(function() {
+				return mState.content.reduce(function(oPreviousPromise, oElementState) {
+					var oElement = oModifier.bySelector(oElementState.elementSelector, oAppComponent, mPropertyBag.view);
+					var sElementId = oModifier.getId(oElement);
+					return oPreviousPromise
+						.then(oModifier.getAggregation.bind(oModifier, oControl, "dependents"))
+						.then(function(aDependents) {
+							var oPromise = Promise.resolve();
+							aDependents.some(function(oDependent) {
+								var sDependentId = oModifier.getId(oDependent);
+								if (sDependentId === sElementId) {
+									oPromise = oPromise.then(oModifier.removeAggregation.bind(oModifier, oControl, "dependents", oDependent, mPropertyBag.view));
+									return true;
+								}
+							});
+							return oPromise;
+						})
+						.then(oModifier.insertAggregation.bind(oModifier, oControl, "content", oElement, oElementState.index, mPropertyBag.view))
+						.then(function() {
+							oModifier.setProperty(oElement, "visible", oElementState.visible);
+						});
+				}, Promise.resolve())
+					.then(function() {
+						oChange.resetRevertData();
+					});
 			});
-			oModifier.insertAggregation(oControl, "content", oElement, oElementState.index, mPropertyBag.view);
-			oModifier.setProperty(oElement, "visible", oElementState.visible);
-		});
-		oChange.resetRevertData();
-		return true;
 	};
 
 	HideForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {

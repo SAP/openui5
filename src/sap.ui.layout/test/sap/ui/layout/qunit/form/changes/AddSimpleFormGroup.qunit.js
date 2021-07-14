@@ -108,9 +108,11 @@ sap.ui.define([
 	});
 
 	function _testApplyChangeWithJsControlTreeModifier (oChange, sExpectedId, iIndex, assert){
-		assert.ok(this.oChangeHandler.applyChange(oChange, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.equal(this.oSimpleForm.getContent()[iIndex].getId(), sExpectedId, "the FormContainer has the correct id");
-		assert.equal(this.oSimpleForm.getContent()[iIndex].getText(), "New Control", "the FormContainer is added");
+		return this.oChangeHandler.applyChange(oChange, this.oSimpleForm, this.mPropertyBag)
+			.then(function() {
+				assert.equal(this.oSimpleForm.getContent()[iIndex].getId(), sExpectedId, "the FormContainer has the correct id");
+				assert.equal(this.oSimpleForm.getContent()[iIndex].getText(), "New Control", "the FormContainer is added");
+			}.bind(this));
 	}
 
 	function _testApplyChangeWithXMLTreeModifier (oXmlString, oChange, sExpectedId, iIndex, assert){
@@ -119,24 +121,26 @@ sap.ui.define([
 
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 
-		assert.ok(this.oChangeHandler.applyChange(this.oLegacyChangeWrapper, this.oXmlSimpleForm, {
+		return this.oChangeHandler.applyChange(this.oLegacyChangeWrapper, this.oXmlSimpleForm, {
 			modifier: this.oXmlTreeModifier,
 			view: this.oXmlDocument
-		}), "no errors occur");
-		this.testControl = this.oXmlSimpleForm.childNodes[0].childNodes[iIndex];
-		assert.equal(this.testControl.getAttribute("text"), "New Control", "the FormContainer is added");
+		})
+			.then(function() {
+				this.testControl = this.oXmlSimpleForm.childNodes[0].childNodes[iIndex];
+				assert.equal(this.testControl.getAttribute("text"), "New Control", "the FormContainer is added");
+			}.bind(this));
 	}
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 5, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -153,7 +157,7 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		_testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
+		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform without title and having old index", {
@@ -238,15 +242,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 0, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 0, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 0, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 0, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 0, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 0, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -262,21 +266,19 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		_testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 0, assert);
+		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 0, assert);
 	});
 
-	QUnit.test("applyChange shall raise an exception if the control does not have the required methods", function (assert) {
-		var exception, oControl;
+	QUnit.test("applyChange shall raise an exception if the control is invalid", function (assert) {
+		var oControl;
 
 		oControl = {};
 
 		//Call CUT
-		try {
-			this.oChangeHandler.applyChange(this.oLegacyChangeWrapper, oControl, {modifier: this.JsControlTreeModifier});
-		} catch (ex) {
-			exception = ex;
-		}
-		assert.ok(exception, "Shall raise an exception");
+		return this.oChangeHandler.applyChange(this.oLegacyChangeWrapper, oControl, {modifier: this.JsControlTreeModifier})
+			.catch(function(oError) {
+				assert.ok(oError, "Shall raise an exception");
+		});
 	});
 
 	QUnit.test('when calling completeChangeContent with relative index', function (assert) {
@@ -396,15 +398,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 5, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -421,7 +423,7 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		_testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
+		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform without title and having relative index", {
@@ -506,15 +508,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 0, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 0, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 0, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 0, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 0, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 0, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -530,7 +532,7 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		_testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 0, assert);
+		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 0, assert);
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with two form containers having title and relative index", {
@@ -623,27 +625,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier twice with the same control to add", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
-		// add the same change another time
-		assert.throws(function() {
-			this.oChangeHandler.applyChange(this.oLegacyChangeWrapper, this.oSimpleForm, this.mPropertyBag);
-		}, function(oReturn) {
-			return oReturn && oReturn.message ? oReturn.message.indexOf("Control to be created already exists") >= 0 : false;
-		}, "the second change to add the same group throws a not applicable info message");
-		assert.equal(this.oSimpleForm.getContent()[5].getId(), "newId", "the FormContainer has the correct id");
-		assert.equal(this.oSimpleForm.getContent()[5].getText(), "New Control", "the FormContainer is still available");
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert)
+			// add the same change another time
+			.then(this.oChangeHandler.applyChange.bind(this.oChangeHandler, this.oLegacyChangeWrapper, this.oSimpleForm, this.mPropertyBag))
+				.catch(function(oError) {
+					assert.ok(oError.message.indexOf("Control to be created already exists") >= 0,
+						"the second change to add the same group throws a not applicable info message");
+					assert.equal(this.oSimpleForm.getContent()[5].getId(), "newId", "the FormContainer has the correct id");
+					assert.equal(this.oSimpleForm.getContent()[5].getText(), "New Control", "the FormContainer is still available");
+				}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		_testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 5, assert);
+		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -665,6 +667,6 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		_testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
+		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
 	});
 });

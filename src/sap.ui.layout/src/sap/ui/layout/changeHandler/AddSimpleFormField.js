@@ -65,15 +65,17 @@ sap.ui.define([
 	}
 
 	function recreateContentAggregation(oSimpleForm, aContentClone, oModifier, mPropertyBag) {
-		oModifier.removeAllAggregation(oSimpleForm, "content");
-			for (var i = 0; i < aContentClone.length; ++i) {
-				oModifier.insertAggregation(oSimpleForm,
-					"content",
-					aContentClone[i],
-					i,
-					mPropertyBag.view
-				);
-			}
+		return aContentClone.reduce(function(oPreviousPromise, oContentClone, iIndex) {
+			return oPreviousPromise
+				.then(function() {
+					return oModifier.insertAggregation(oSimpleForm,
+						"content",
+						oContentClone,
+						iIndex,
+						mPropertyBag.view
+					);
+				});
+		}, Promise.resolve());
 	}
 
 	/**
@@ -97,27 +99,38 @@ sap.ui.define([
 			var mInnerControls = mPropertyBag.innerControls;
 			var oModifier = mPropertyBag.modifier;
 			var oAppComponent = mPropertyBag.appComponent;
+			var aContent;
+			var iNewIndex;
+			var aContentClone;
 
 			var oChange = mPropertyBag.change;
 			// as the label is stored independent of the field and will not be destroyed by destroying the field, is needs to be remembered
 			var oRevertData = oChange.getRevertData();
 			oRevertData.labelSelector = oModifier.getSelector(mInnerControls.label, oAppComponent);
 
-			var aContent = oModifier.getAggregation(oSimpleForm, "content");
-			var iNewIndex = getIndex(aContent, mPropertyBag);
-			var aContentClone = insertLabelAndField(aContent, iNewIndex, mInnerControls);
-
-			recreateContentAggregation(oSimpleForm, aContentClone, oModifier, mPropertyBag);
-
-			if (mInnerControls.valueHelp) {
-				oModifier.insertAggregation(
-					oSimpleForm,
-					"dependents",
-					mInnerControls.valueHelp,
-					0,
-					mPropertyBag.view
-				);
-			}
+			return Promise.resolve()
+				.then(oModifier.getAggregation.bind(oModifier, oSimpleForm, "content"))
+				.then(function(aAggregationContent) {
+					aContent = aAggregationContent;
+					iNewIndex = getIndex(aContent, mPropertyBag);
+					aContentClone = insertLabelAndField(aContent, iNewIndex, mInnerControls);
+					return oModifier.removeAllAggregation(oSimpleForm, "content");
+				})
+				.then(function() {
+					return recreateContentAggregation(oSimpleForm, aContentClone, oModifier, mPropertyBag);
+				})
+				.then(function() {
+					if (mInnerControls.valueHelp) {
+						return oModifier.insertAggregation(
+							oSimpleForm,
+							"dependents",
+							mInnerControls.valueHelp,
+							0,
+							mPropertyBag.view
+						);
+					}
+					return undefined;
+				});
 		},
 		revertAdditionalControls : function(mPropertyBag) {
 			var oSimpleForm = mPropertyBag.control;
@@ -128,9 +141,11 @@ sap.ui.define([
 			var mLabelSelector = oChange.getRevertData().labelSelector;
 			if (mLabelSelector) {
 				var oLabel = oModifier.bySelector(mLabelSelector, oAppComponent);
-				oModifier.removeAggregation(oSimpleForm, "content", oLabel);
-				oModifier.destroy(oLabel);
+				return Promise.resolve()
+					.then(oModifier.removeAggregation.bind(oModifier, oSimpleForm, "content", oLabel))
+					.then(oModifier.destroy.bind(oModifier, oLabel));
 			}
+			return Promise.resolve();
 		},
 		aggregationName: "content",
 		mapParentIdIntoChange: function (oChange, mSpecificChangeInfo, mPropertyBag) {

@@ -35,37 +35,47 @@ sap.ui.define([
 			var mFieldSelector = mChangeContent.newFieldSelector;
 
 			var oCreatedFormElement;
+			var oParentFormContainer;
 
-			// "layoutControl" property is present only when the control is returned from Delegate.createLayout()
-			if (!mInnerControls.layoutControl) {
-				oCreatedFormElement = oModifier.createControl(
-					"sap.ui.layout.form.FormElement",
-					oAppComponent,
-					oView,
-					mFieldSelector
-				);
-				oModifier.insertAggregation(oCreatedFormElement, "label", mInnerControls.label, 0, oView);
-				oModifier.insertAggregation(oCreatedFormElement, "fields", mInnerControls.control, 0, oView);
-			} else {
-				oCreatedFormElement = mInnerControls.control;
-			}
+			return Promise.resolve()
+				.then(function(){
+					// "layoutControl" property is present only when the control is returned from Delegate.createLayout()
+					if (!mInnerControls.layoutControl) {
+						return Promise.resolve()
+							.then(oModifier.createControl.bind(oModifier, "sap.ui.layout.form.FormElement", oAppComponent, oView, mFieldSelector))
+							.then(function(oCreatedControl) {
+								oCreatedFormElement = oCreatedControl;
+								return Promise.all([
+									oModifier.insertAggregation(oCreatedFormElement, "label", mInnerControls.label, 0, oView),
+									oModifier.insertAggregation(oCreatedFormElement, "fields", mInnerControls.control, 0, oView)
+								]);
+							});
+					}
+					oCreatedFormElement = mInnerControls.control;
+					return undefined;
+				})
+				.then(function(){
+					oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
+					return oModifier.insertAggregation(oParentFormContainer,
+						"formElements",
+						oCreatedFormElement,
+						iIndex,
+						oView
+					);
+				})
+				.then(function(){
+					if (mInnerControls.valueHelp) {
+						return oModifier.insertAggregation(
+							oParentFormContainer,
+							"dependents",
+							mInnerControls.valueHelp,
+							0,
+							oView
+						);
+					}
+					return undefined;
+				});
 
-			var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
-			oModifier.insertAggregation(oParentFormContainer,
-				"formElements",
-				oCreatedFormElement,
-				iIndex,
-				oView
-			);
-			if (mInnerControls.valueHelp) {
-				oModifier.insertAggregation(
-					oParentFormContainer,
-					"dependents",
-					mInnerControls.valueHelp,
-					0,
-					oView
-				);
-			}
 		},
 		aggregationName: "formElements",
 		parentAlias: "parentFormContainer",

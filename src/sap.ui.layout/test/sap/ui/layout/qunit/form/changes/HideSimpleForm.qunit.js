@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/Toolbar",
-	"sap/m/Title"
+	"sap/m/Title",
+	"sap/base/Log",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	HideSimpleForm,
 	SimpleForm,
@@ -21,9 +23,13 @@ sap.ui.define([
 	Label,
 	Input,
 	Toolbar,
-	mobileTitle
+	mobileTitle,
+	Log,
+	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("using HideSimpleForm with old change format", {
 		beforeEach: function () {
@@ -65,14 +71,17 @@ sap.ui.define([
 
 		afterEach: function () {
 			this.oSimpleForm.destroy();
+			sandbox.restore();
 		}
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
 		//Call CUT
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
+		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function(){
+				assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
+			}.bind(this));
 	});
 
 	QUnit.module("using HideSimpleForm with a new change format", {
@@ -155,22 +164,28 @@ sap.ui.define([
 	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
 		//Call CUT
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
+		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function(){
+				assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
+			}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing local ids", function (assert) {
 		//Call CUT
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithLocalIdsWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
+		return this.oChangeHandler.applyChange(this.oChangeWithLocalIdsWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function() {
+				assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
+			}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing global ids", function (assert) {
 		//Call CUT
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
+		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function(){
+				assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
+			}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -198,20 +213,23 @@ sap.ui.define([
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oXmlSimpleForm, {
+		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oXmlSimpleForm, {
 			modifier : this.oXmlTreeModifier,
 			appComponent: this.oMockedComponent,
 			view : this.oXmlDocument
-		}), "no errors occur");
-		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
+		})
+		.then(function(){
+			assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
+		}.bind(this));
 	});
 
-	QUnit.test("applyChange shall not return true if the control does not have the required methods", function (assert) {
-		var vReturn;
+	QUnit.test("applyChange shall fail if the control is invalid", function (assert) {
+		var fnLogErrorSpy = sandbox.spy(Log, "error");
 
-		vReturn = this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, {}, {modifier : this.JsControlTreeModifier});
-
-		assert.notOk(vReturn, "Does not return true");
+		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, {}, {modifier : this.JsControlTreeModifier})
+			.then(function() {
+				assert.ok(fnLogErrorSpy.calledOnce, "then an error is raised on the log");
+			});
 	});
 
 	QUnit.test('when calling completeChangeContent', function (assert) {
@@ -320,16 +338,18 @@ sap.ui.define([
 
 	QUnit.test("when removing a FormContainer in SimpleForm with Toolbars", function(assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.ok(this.oLabel0.getVisible(), "the label of first FormElement is visible");
-		assert.ok(this.oLabel1.getVisible(), "the label of first FormElement is visible");
-		assert.ok(this.oInput0.getVisible(), "the input of first FormElement is visible");
-		assert.ok(this.oInput1.getVisible(), "the input of first FormElement is visible");
-		assert.notOk(this.oLabel10.getVisible(), "the label of second FormElement is hidden");
-		assert.notOk(this.oLabel11.getVisible(), "the label of second FormElement is hidden");
-		assert.notOk(this.oInput10.getVisible(), "the input of second FormElement is hidden");
-		assert.notOk(this.oInput11.getVisible(), "the input of second FormElement is hidden");
-		assert.equal(this.oSimpleForm.getDependents()[0].getId(), this.oChangeWrapper.getContent().elementSelector, "then removed element was added to the dependents aggregation");
+		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function(){
+				assert.ok(this.oLabel0.getVisible(), "the label of first FormElement is visible");
+				assert.ok(this.oLabel1.getVisible(), "the label of first FormElement is visible");
+				assert.ok(this.oInput0.getVisible(), "the input of first FormElement is visible");
+				assert.ok(this.oInput1.getVisible(), "the input of first FormElement is visible");
+				assert.notOk(this.oLabel10.getVisible(), "the label of second FormElement is hidden");
+				assert.notOk(this.oLabel11.getVisible(), "the label of second FormElement is hidden");
+				assert.notOk(this.oInput10.getVisible(), "the input of second FormElement is hidden");
+				assert.notOk(this.oInput11.getVisible(), "the input of second FormElement is hidden");
+				assert.equal(this.oSimpleForm.getDependents()[0].getId(), this.oChangeWrapper.getContent().elementSelector, "then removed element was added to the dependents aggregation");
+			}.bind(this));
 	});
 
 	QUnit.test("when removing a FormContainer in SimpleForm with Toolbars using XmlTreeModifier", function (assert) {
@@ -367,13 +387,15 @@ sap.ui.define([
 				view : this.oXmlDocument
 		};
 
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, mPropertyBag), "no errors occur");
-		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
-		assert.ok(Array.prototype.slice.call(this.oXmlSimpleForm.childNodes).some(function(oChildDom) {
-			if (oChildDom.localName === "dependents") {
-				return oChildDom.childNodes[0].getAttribute("id") === this.oChangeWrapper.getContent().elementSelector;
-			}
-		}.bind(this)), "then removed element was added to the dependents aggregation");
+		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, mPropertyBag)
+			.then(function() {
+				assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
+				assert.ok(Array.prototype.slice.call(this.oXmlSimpleForm.childNodes).some(function(oChildDom) {
+					if (oChildDom.localName === "dependents") {
+						return oChildDom.childNodes[0].getAttribute("id") === this.oChangeWrapper.getContent().elementSelector;
+					}
+				}.bind(this)), "then removed element was added to the dependents aggregation");
+			}.bind(this));
 	});
 
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {
@@ -441,27 +463,31 @@ sap.ui.define([
 
 	QUnit.test("when removing a FormContainer in SimpleForm with Toolbars, and the first FormContainer has no Toolbar", function(assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.ok(this.oLabel0.getVisible(), "the label of first FormElement is visible");
-		assert.ok(this.oLabel1.getVisible(), "the label of first FormElement is visible");
-		assert.ok(this.oInput0.getVisible(), "the input of first FormElement is visible");
-		assert.ok(this.oInput1.getVisible(), "the input of first FormElement is visible");
-		assert.notOk(this.oLabel10.getVisible(), "the label of second FormElement is hidden");
-		assert.notOk(this.oLabel11.getVisible(), "the label of second FormElement is hidden");
-		assert.notOk(this.oInput10.getVisible(), "the input of second FormElement is hidden");
-		assert.notOk(this.oInput11.getVisible(), "the input of second FormElement is hidden");
+		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
+			.then(function() {
+				assert.ok(this.oLabel0.getVisible(), "the label of first FormElement is visible");
+				assert.ok(this.oLabel1.getVisible(), "the label of first FormElement is visible");
+				assert.ok(this.oInput0.getVisible(), "the input of first FormElement is visible");
+				assert.ok(this.oInput1.getVisible(), "the input of first FormElement is visible");
+				assert.notOk(this.oLabel10.getVisible(), "the label of second FormElement is hidden");
+				assert.notOk(this.oLabel11.getVisible(), "the label of second FormElement is hidden");
+				assert.notOk(this.oInput10.getVisible(), "the input of second FormElement is hidden");
+				assert.notOk(this.oInput11.getVisible(), "the input of second FormElement is hidden");
+			}.bind(this));
 	});
 
 	QUnit.test("when removing the first FormContainer (without Toolbar) in SimpleForm with Toolbars", function(assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper1, this.oSimpleForm, this.mPropertyBag), "no errors occur");
-		assert.notOk(this.oLabel0.getVisible(), "the label of first FormElement is hidden");
-		assert.notOk(this.oLabel1.getVisible(), "the label of first FormElement is hidden");
-		assert.notOk(this.oInput0.getVisible(), "the input of first FormElement is hidden");
-		assert.notOk(this.oInput1.getVisible(), "the input of first FormElement is hidden");
-		assert.ok(this.oLabel10.getVisible(), "the label of second FormElement is visible");
-		assert.ok(this.oLabel11.getVisible(), "the label of second FormElement is visible");
-		assert.ok(this.oInput10.getVisible(), "the input of second FormElement is visible");
-		assert.ok(this.oInput11.getVisible(), "the input of second FormElement is visible");
+		return this.oChangeHandler.applyChange(this.oChangeWrapper1, this.oSimpleForm, this.mPropertyBag)
+			.then(function() {
+				assert.notOk(this.oLabel0.getVisible(), "the label of first FormElement is hidden");
+				assert.notOk(this.oLabel1.getVisible(), "the label of first FormElement is hidden");
+				assert.notOk(this.oInput0.getVisible(), "the input of first FormElement is hidden");
+				assert.notOk(this.oInput1.getVisible(), "the input of first FormElement is hidden");
+				assert.ok(this.oLabel10.getVisible(), "the label of second FormElement is visible");
+				assert.ok(this.oLabel11.getVisible(), "the label of second FormElement is visible");
+				assert.ok(this.oInput10.getVisible(), "the input of second FormElement is visible");
+				assert.ok(this.oInput11.getVisible(), "the input of second FormElement is visible");
+			}.bind(this));
 	});
 });

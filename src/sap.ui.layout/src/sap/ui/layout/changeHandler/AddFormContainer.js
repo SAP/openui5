@@ -33,20 +33,25 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
 	 * @param {object} mPropertyBag.view Application view
+	 * @returns {Promise} Promise resolving when change is successfully applied
 	 * @public
 	 */
 	AddGroup.applyChange = function(oChange, oForm, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier,
-			oAppComponent = mPropertyBag.appComponent,
-			oView = mPropertyBag.view,
-			oChangeDefinition = oChange.getDefinition(),
-			oTitle, oGroup;
+		var oModifier = mPropertyBag.modifier;
+		var oAppComponent = mPropertyBag.appComponent;
+		var oView = mPropertyBag.view;
+		var oChangeDefinition = oChange.getDefinition();
 
-		if (oChangeDefinition.texts && oChangeDefinition.texts.groupLabel && oChangeDefinition.texts.groupLabel.value && oChangeDefinition.content && oChangeDefinition.content.group && (oChangeDefinition.content.group.selector || oChangeDefinition.content.group.id)) {
-			var sTitleText = oChangeDefinition.texts.groupLabel.value,
-				iInsertIndex = oChangeDefinition.content.group.index,
-				mNewGroupSelector = oChangeDefinition.content.group.selector || { id : oChangeDefinition.content.group.id },
-				mNewTitleSelector = jQuery.extend({}, mNewGroupSelector);
+		if (oChangeDefinition.texts
+			&& oChangeDefinition.texts.groupLabel
+			&& oChangeDefinition.texts.groupLabel.value
+			&& oChangeDefinition.content
+			&& oChangeDefinition.content.group
+			&& (oChangeDefinition.content.group.selector || oChangeDefinition.content.group.id)) {
+			var sTitleText = oChangeDefinition.texts.groupLabel.value;
+			var iInsertIndex = oChangeDefinition.content.group.index;
+			var mNewGroupSelector = oChangeDefinition.content.group.selector || { id : oChangeDefinition.content.group.id };
+			var mNewTitleSelector = jQuery.extend({}, mNewGroupSelector);
 
 			mNewTitleSelector.id = mNewTitleSelector.id + "--title"; //same as FormRenderer does it
 			oChange.setRevertData({newGroupSelector: mNewGroupSelector});
@@ -57,15 +62,30 @@ sap.ui.define([
 			} else if (oModifier.bySelector(mNewGroupSelector, oAppComponent)) {
 				return Base.markAsNotApplicable("Control to be created already exists:" + mNewGroupSelector);
 			}
-			oTitle = oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, mNewTitleSelector);
-			oGroup = oModifier.createControl("sap.ui.layout.form.FormContainer", oAppComponent, oView, mNewGroupSelector);
 
-			oModifier.setProperty(oTitle, "text", sTitleText);
-			oModifier.insertAggregation(oGroup, "title", oTitle, 0, oView);
-			oModifier.insertAggregation(oForm, "formContainers", oGroup, iInsertIndex, oView);
+			return Promise.resolve()
+				.then(function() {
+					return Promise.all([
+						oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, mNewTitleSelector),
+						oModifier.createControl("sap.ui.layout.form.FormContainer", oAppComponent, oView, mNewGroupSelector)
+					]);
+				})
+				.then(function(aControls) {
+					var oTitle = aControls[0];
+					var oGroup = aControls[1];
+					oModifier.setProperty(oTitle, "text", sTitleText);
+					return Promise.resolve()
+						.then(oModifier.insertAggregation.bind(oModifier, oGroup, "title", oTitle, 0, oView))
+						.then(oModifier.insertAggregation.bind(oModifier, oForm, "formContainers", oGroup, iInsertIndex, oView));
+				});
 		} else {
-			Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
+			Log.error("Change does not contain sufficient information to be applied: ["
+				+ oChangeDefinition.layer + "]"
+				+ oChangeDefinition.namespace + "/"
+				+ oChangeDefinition.fileName + "."
+				+ oChangeDefinition.fileType);
 			//however subsequent changes should be applied
+			return Promise.resolve();
 		}
 	};
 
@@ -81,8 +101,8 @@ sap.ui.define([
 	 * @public
 	 */
 	AddGroup.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
-		var oChangeDefinition = oChange.getDefinition(),
-			oAppComponent = mPropertyBag.appComponent;
+		var oChangeDefinition = oChange.getDefinition();
+		var	oAppComponent = mPropertyBag.appComponent;
 
 		if (oSpecificChangeInfo.newLabel) {
 			Base.setTextInChange(oChangeDefinition, "groupLabel", oSpecificChangeInfo.newLabel, "XFLD");
@@ -118,6 +138,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
 	 * @param {object} mPropertyBag.view Application view
+	 * @returns {Promise} Promise resolving when change is successfully reverted
 	 * @public
 	 */
 	AddGroup.revertChange = function (oChange, oForm, mPropertyBag) {
@@ -127,9 +148,15 @@ sap.ui.define([
 		var mNewGroupSelector = oChange.getRevertData().newGroupSelector;
 
 		var oGroup = oModifier.bySelector(mNewGroupSelector, oAppComponent, oView);
-		oModifier.removeAggregation(oForm, "formContainers", oGroup);
-		oModifier.destroy(oGroup);
-		oChange.resetRevertData();
+
+		return Promise.resolve()
+			.then(function() {
+				return oModifier.removeAggregation(oForm, "formContainers", oGroup);
+			})
+			.then(function() {
+				oModifier.destroy(oGroup);
+				oChange.resetRevertData();
+			});
 	};
 
 	return AddGroup;

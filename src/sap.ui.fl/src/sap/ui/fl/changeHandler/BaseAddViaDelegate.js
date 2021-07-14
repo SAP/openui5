@@ -207,12 +207,16 @@ sap.ui.define([
 						//------------------------
 						//Call 'addProperty' hook!
 						//------------------------
-						mAddViaDelegateSettings.addProperty(mAddPropertySettings);
-
-						if (mInnerControls.valueHelp) {
-							var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
-							oRevertData.valueHelpSelector = oValueHelpSelector;
-						}
+						return Promise.resolve()
+							.then(function() {
+								return mAddViaDelegateSettings.addProperty(mAddPropertySettings);
+							})
+							.then(function() {
+								if (mInnerControls.valueHelp) {
+									var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
+									oRevertData.valueHelpSelector = oValueHelpSelector;
+								}
+							});
 					});
 				},
 
@@ -262,11 +266,14 @@ sap.ui.define([
 								//-------------------------------------
 								//Call 'revertAdditionalControls' hook!
 								//-------------------------------------
-								mAddViaDelegateSettings.revertAdditionalControls(mAddPropertySettings);
+								return Promise.resolve()
+									.then(function() {
+										return mAddViaDelegateSettings.revertAdditionalControls(mAddPropertySettings);
+									})
+									.then(function() {
+										oChange.resetRevertData();
+									});
 							}
-
-							oChange.resetRevertData();
-							return true;
 						});
 				},
 
