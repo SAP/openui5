@@ -22,22 +22,23 @@ sap.ui.define(function () {
 	 * @param {sap.m.Link} oControl - Link which target should be changed
 	 * @param {object} mPropertyBag - Map of properties
 	 * @param {object} mPropertyBag.modifier - Modifier for the controls
-	 * @return {boolean} true if change could be applied
+	 * @return {Promise} Promise resolving when change was successfully applied
 	 *
 	 * @public
 	 */
 	ChangeLinkTarget.applyChange = function(oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier,
-			oChangeDefinition = oChange.getDefinition(),
-			sTarget = oChangeDefinition.content,
-			oRevertData = {
-				target: oModifier.getProperty(oControl, "target")
-			};
-
-		oModifier.setProperty(oControl, "target", sTarget);
-		oChange.setRevertData(oRevertData);
-
-		return true;
+		var oModifier = mPropertyBag.modifier;
+		var oChangeDefinition = oChange.getDefinition();
+		var sTarget = oChangeDefinition.content;
+		return Promise.resolve()
+			.then(oModifier.getProperty.bind(oModifier, oControl, "target"))
+			.then(function(oProperty) {
+				var oRevertData = {
+					target: oProperty
+				};
+				oModifier.setProperty(oControl, "target", sTarget);
+				oChange.setRevertData(oRevertData);
+			});
 	};
 
 	/**
@@ -47,17 +48,14 @@ sap.ui.define(function () {
 	 * @param {sap.m.Link} oControl - Link that matches the change selector for reverting the change
 	 * @param {object} mPropertyBag - Property bag containing the modifier and the view
 	 * @param {object} mPropertyBag.modifier - Modifier for the controls
-	 * @return {boolean} true if successful
 	 * @public
 	 */
 	ChangeLinkTarget.revertChange = function(oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier,
-			oRevertData = oChange.getRevertData(),
-			sTarget = oRevertData.target;
+		var oModifier = mPropertyBag.modifier;
+		var oRevertData = oChange.getRevertData();
+		var sTarget = oRevertData.target;
 
 		oModifier.setProperty(oControl, "target", sTarget);
-
-		return true;
 	};
 
 	/**
@@ -70,10 +68,7 @@ sap.ui.define(function () {
 	 *
 	 * @public
 	 */
-	ChangeLinkTarget.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
-
-		return true;
-	};
+	ChangeLinkTarget.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {};
 
 
 	return ChangeLinkTarget;

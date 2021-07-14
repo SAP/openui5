@@ -117,7 +117,7 @@ sap.ui.define([
 			window.oPressSpy.resetHistory();
 		};
 
-		elementActionTest("Checking the press action for a Button", {
+		elementActionTest("Checking the press action for a Button (combine action)", {
 			jsOnly: true,
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -181,7 +181,7 @@ sap.ui.define([
 			assert.strictEqual(oButton.getEnabled(), false, "enabled false");
 		};
 
-		elementActionTest("Enable / Disable Button when the property is bound", {
+		elementActionTest("Enable / Disable Button when the property is bound (combine action)", {
 			jsOnly: true,
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -258,7 +258,7 @@ sap.ui.define([
 			assert.ok(bIsFound, "Button has the correct customData after undo");
 		};
 
-		elementActionTest("CustomData of the Button is copied to MenuItem", {
+		elementActionTest("CustomData of the Button is copied to MenuItem (combine action)", {
 			jsOnly: true,
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core">' +
@@ -318,7 +318,7 @@ sap.ui.define([
 			assert.ok(true, "original Button id");
 		};
 
-		elementActionTest("CustomData of the MenuItem contains original button id", {
+		elementActionTest("CustomData of the MenuItem contains original button id (combine action)", {
 			jsOnly: true,
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -365,7 +365,7 @@ sap.ui.define([
 			assert.ok(true, "text in RTL");
 		};
 
-		elementActionTest("MenuButton text should be created from the original Buttons names in reverse order in RTL mode", {
+		elementActionTest("MenuButton text should be created from the original Buttons names in reverse order in RTL mode (combine action)", {
 			jsOnly: true,
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -420,7 +420,7 @@ sap.ui.define([
 			assert.ok(true, "MenuButton enabled");
 		};
 
-		elementActionTest("MenuButton visibility is bound to the original Buttons enablement", {
+		elementActionTest("MenuButton visibility is bound to the original Buttons enablement (combine action)", {
 			jsOnly: true,
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -467,7 +467,7 @@ sap.ui.define([
 			assert.ok(true, "MenuButton visibility");
 		};
 
-		elementActionTest("MenuButton visibility is bound to the original Buttons visibility", {
+		elementActionTest("MenuButton visibility is bound to the original Buttons visibility (combine action)", {
 			jsOnly: true,
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -518,7 +518,7 @@ sap.ui.define([
 			assert.strictEqual(oBar.getContentMiddle().indexOf(oButton3), 3);
 		};
 
-		elementActionTest("Buttons are reverted in the initial order", {
+		elementActionTest("Buttons are reverted in the initial order (combine action)", {
 			jsOnly: true,
 			xmlView:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
