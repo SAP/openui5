@@ -94,6 +94,11 @@ sap.ui.define([
 					type: "sap.ui.core.Icon",
 					multiple: false,
 					visibility: "hidden"
+				},
+				_messageStrip: {
+					type: "sap.m.MessageStrip",
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
 			events: {
@@ -186,6 +191,11 @@ sap.ui.define([
 		this._readyPromise = new Promise(function (resolve) {
 			this._fieldResolver = resolve;
 		}.bind(this));
+	};
+
+	BaseField.prototype.getMessagestrip = function () {
+		var sMessageStripId = this.getAssociation("_messageStrip");
+		return Core.byId(sMessageStripId);
 	};
 
 	BaseField.prototype.setConfiguration = function (oConfig, bSuppress) {
@@ -478,7 +488,7 @@ sap.ui.define([
 
 	BaseField.prototype.onAfterRendering = function () {
 		this._applyMessage();
-		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
+		var oMessageStrip = this.getMessagestrip();
 		if (oMessageStrip && oMessageStrip.getDomRef()) {
 			oMessageStrip.getDomRef().style.opacity = "0";
 		}
@@ -512,7 +522,7 @@ sap.ui.define([
 		if (bFromDataRequest) {
 			this._messageFrom = "request";
 		}
-		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
+		var oMessageStrip = this.getMessagestrip();
 		if (oField.setValueState) {
 			this._message.atControl = true;
 			if (oField.setShowValueStateMessage) {
@@ -522,8 +532,6 @@ sap.ui.define([
 			oField.setValueStateText(sMessage);
 		} else if (oMessageStrip && oMessageStrip.getVisible()) {
 			this._showMessage();
-		} else {
-			MessageToast.show(sMessage);
 		}
 		this._applyMessage();
 	};
@@ -532,7 +540,7 @@ sap.ui.define([
 		if (!this.getParent()) {
 			return;
 		}
-		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
+		var oMessageStrip = this.getMessagestrip();
 		if (this._message) {
 			if ((bFromDataRequest && this._messageFrom === "request")
 				|| (!bFromDataRequest && this._messageFrom === "validation")) {
@@ -592,7 +600,7 @@ sap.ui.define([
 		if (!this.getParent()) {
 			return;
 		}
-		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
+		var oMessageStrip = this.getMessagestrip();
 		if (this._message && oMessageStrip) {
 			oMessageStrip.applySettings({
 				type: this._message.enum,
@@ -609,15 +617,18 @@ sap.ui.define([
 					oMessageStrip.getDomRef().style.marginTop = "0";
 					oMessageStrip.getDomRef().style.marginLeft = "0";
 				}
-				oMessageStrip.getDomRef().style.width = (oField.getDomRef().offsetWidth - 2) + "px";
+				var width = oField.getDomRef().offsetWidth - 5;
+				if (width < 100) {
+					width = oField.getParent().getDomRef().offsetWidth - 35;
+				}
+				oMessageStrip.getDomRef().style.width = width + "px";
 			};
 			oMessageStrip.rerender();
 		}
 	};
 
 	BaseField.prototype._hideMessage = function () {
-		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
-
+		var oMessageStrip = this.getMessagestrip();
 		var oField = this.getAggregation("_field"),
 			bFocusInField = oField.getDomRef().contains(window.document.activeElement);
 		if (oMessageStrip) {
