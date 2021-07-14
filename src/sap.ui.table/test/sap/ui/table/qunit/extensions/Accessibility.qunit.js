@@ -165,7 +165,9 @@ sap.ui.define([
 
 		if (bGroup) {
 			aLabels.push(sTableId + "-ariarowgrouplabel");
-			aLabels.push(sRowId + "-groupHeader");
+			if (bRowChange) {
+				aLabels.push(sRowId + "-groupHeader");
+			}
 		}
 
 		if (bSum) {
@@ -502,6 +504,7 @@ sap.ui.define([
 				$Cell = getCell(1, i, true, assert);
 				testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {
 					firstTime: i == 0,
+					rowChange: i == 0,
 					colChange: true,
 					group: true
 				});
@@ -1084,7 +1087,6 @@ sap.ui.define([
 			var bFirstTime = !!mParams.firstTime;
 			var bFocus = !!mParams.focus;
 			var bRowChange = !!mParams.rowChange;
-			var bColChange = !!mParams.colChange;
 			var bGroup = !!mParams.group;
 			var bSum = !!mParams.sum;
 			var bExpanded = !!mParams.expanded;
@@ -1100,12 +1102,8 @@ sap.ui.define([
 			}
 
 			if (bFocus) {
-				if (bFirstTime || bRowChange) {
-					aLabels.push(sTableId + "-rownumberofrows");
-				}
-				if (bColChange) {
-					aLabels.push(sTableId + "-colnumberofcols");
-				}
+				aLabels.push(sTableId + "-rownumberofrows");
+				aLabels.push(sTableId + "-colnumberofcols");
 				aLabels.push(sTableId + "-rowacthdr");
 				if (iRow == 0) {
 					aLabels.push(sTableId + "-ariarowselected");
@@ -1115,7 +1113,9 @@ sap.ui.define([
 				}
 				if (bGroup) {
 					aLabels.push(sTableId + "-ariarowgrouplabel");
-					aLabels.push(sRowId + "-groupHeader");
+					if (bRowChange) {
+						aLabels.push(sRowId + "-groupHeader");
+					}
 					aLabels.push(sTableId + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 				} else if (bSum) {
 					aLabels.push(sTableId + "-ariagrandtotallabel");
@@ -1186,6 +1186,17 @@ sap.ui.define([
 					expanded: true
 				});
 			}
+
+			$Cell = getCell(1, 4, true);
+			$Cell = getRowAction(1, true, assert);
+			that.testAriaLabels($Cell, 1, assert, {
+				firstTime: false,
+				rowChange: false,
+				colChange: true,
+				focus: true,
+				group: true,
+				expanded: true
+			});
 
 			TableQUnitUtils.setFocusOutsideOfTable(assert);
 			setTimeout(function () {

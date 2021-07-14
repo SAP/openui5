@@ -382,7 +382,6 @@ sap.ui.define([
 
 			if (bIsGroupHeader) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
-				aLabels.push(sRowId + "-groupHeader");
 			} else if (oRow.isTotalSummary()) {
 				aLabels.push(sTableId + "-ariagrandtotallabel");
 			} else if (oRow.isGroupSummary()) {
@@ -422,7 +421,10 @@ sap.ui.define([
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, sText,
-				function(aLabels, aDescriptions, bRowChange, bColChange, bInitial) {
+				function(aLabels, aDescriptions, bRowChange, bColChange) {
+					if (bIsGroupHeader && bRowChange) {
+						aLabels.splice(3, 0, sRowId + "-groupHeader");
+					}
 					var bContainsTreeIcon = $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1;
 
 					if ((bContainsTreeIcon || bIsGroupHeader) && (bRowChange || bColChange)) {
@@ -539,10 +541,10 @@ sap.ui.define([
 			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.ROWACTION)["aria-labelledby"] || [];
 			var aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"].concat(aDefaultLabels);
 			var aDescriptions = [];
+			var bIsGroupHeader = oRow.isGroupHeader();
 
-			if (oRow.isGroupHeader()) {
+			if (bIsGroupHeader) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
-				aLabels.push(sRowId + "-groupHeader");
 				aLabels.push(sTableId + (oRow.isExpanded() ? "-rowcollapsetext" : "-rowexpandtext"));
 			}
 
@@ -575,7 +577,14 @@ sap.ui.define([
 				}
 			}
 
-			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, [], aLabels, aDescriptions, sText);
+			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, [], aLabels, aDescriptions, sText,
+				function(aLabels, aDescriptions, bRowChange) {
+					if (bIsGroupHeader && bRowChange) {
+						var iIndex = aLabels.indexOf(sTableId + "-ariarowgrouplabel") + 1;
+						aLabels.splice(iIndex, 0, sRowId + "-groupHeader");
+					}
+				}
+			);
 		},
 
 		/**
