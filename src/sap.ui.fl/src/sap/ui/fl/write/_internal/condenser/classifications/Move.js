@@ -53,8 +53,13 @@ sap.ui.define([
 		 */
 		simulate: function(aContainerElements, oCondenserInfo, aInitialUIElementIds) {
 			var sAffectedControlId = oCondenserInfo.affectedControl;
-			var iSourceIndex = aInitialUIElementIds.indexOf(sAffectedControlId);
-			CondenserUtils.extendElementsArray(aContainerElements, iSourceIndex, undefined, sAffectedControlId);
+			var iInitialSourceIndex = aInitialUIElementIds.indexOf(sAffectedControlId);
+			// the move itself should not extend the array, just replace the placeholder
+			CondenserUtils.extendElementsArray(aContainerElements, iInitialSourceIndex, undefined, sAffectedControlId);
+
+			var iCurrentSourceIndex = aContainerElements.indexOf(sAffectedControlId);
+			var iTargetIndex = oCondenserInfo.getTargetIndex(oCondenserInfo.change);
+			aContainerElements.splice(iTargetIndex, 0, aContainerElements.splice(iCurrentSourceIndex, 1)[0]);
 		}
 	};
 });
