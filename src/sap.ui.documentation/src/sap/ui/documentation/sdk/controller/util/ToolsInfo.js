@@ -56,6 +56,11 @@ sap.ui.define([],
 				"id": "liveEditor",
 				"text": "Live Editor",
 				"href": "liveEditor"
+			},
+			{
+				"id": "fioriTools",
+				"text": "SAP Fiori Tools",
+				"href": "https://help.sap.com/viewer/product/SAP_FIORI_tools/Latest/en-US"
 			}
 		];
 
