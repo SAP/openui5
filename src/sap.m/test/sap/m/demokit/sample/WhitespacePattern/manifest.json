@@ -1,0 +1,40 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.WhitespacePattern",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.WhitespacePattern.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"whitespaces.json",
+					"manifest.json"
+				]
+			}
+		},
+		"models": {
+		  "": {
+			"type": "sap.ui.model.json.JSONModel"
+		  },
+		  "whitespace": {
+			"type": "sap.ui.model.json.JSONModel",
+			"uri": "whitespaces.json",
+			"preload": true
+		  }
+		}
+	}
+}
