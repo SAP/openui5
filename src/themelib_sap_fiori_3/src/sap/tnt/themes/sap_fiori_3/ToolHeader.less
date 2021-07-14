@@ -225,20 +225,17 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus > .sapMBtnEmph
 // ==========================================================================
 
 .sapTntToolHeader {
-	.sapUiIcon {
+	.sapUiIcon:not(.sapMITBInlineIcon) {
 		color: @sapUiShellTextColor;
-	}
-
-	.sapUiIcon {
 		outline-color: transparent;
-	}
 
-	.sapUiIcon.sapUiIconPointer:focus {
-		outline-color: @sapUiContentContrastFocusColor;
+		&.sapUiIconPointer:focus {
+			outline-color: @sapUiContentContrastFocusColor;
+		}
 	}
 
 	// no backgrounds
-	.sapUiIcon {
+	.sapUiIcon:not(.sapMITBInlineIcon) {
 		&.sapUiIconColorCritical {
 			color: lighten(saturate(spin(@sapUiCriticalText, 8), 4), 21);
 		}
@@ -256,34 +253,33 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus > .sapMBtnEmph
 		}
 	}
 
-		// backgrounds
-		.sapUiIcon {
-			&.sapUiIconBGColorContrast {
-				color: @sapUiShellTextColor;
-				background: transparent;
-			}
-
-			&.sapUiIconBGColorCritical {
-				color: @sapUiBaseText;
-				background: lighten(saturate(spin(@sapUiCriticalElement, 8), 4), 21);
-			}
-
-			&.sapUiIconBGColorNegative  {
-				color: @sapUiBaseText;
-				background: lighten(@sapUiNegativeElement, 40);
-			}
-
-			&.sapUiIconBGColorNeutral {
-				color: @sapUiBaseText;
-				background: lighten(saturate(spin(@sapUiNeutralElement, 350), 4), 41);
-			}
-
-			&.sapUiIconBGColorPositive {
-				color: @sapUiBaseText;
-				background: lighten(desaturate(spin(@sapUiPositiveElement, 335), 28), 50);
-			}
+	// backgrounds
+	.sapUiIcon:not(.sapMITBInlineIcon) {
+		&.sapUiIconBGColorContrast {
+			color: @sapUiShellTextColor;
+			background: transparent;
 		}
 
+		&.sapUiIconBGColorCritical {
+			color: @sapUiBaseText;
+			background: lighten(saturate(spin(@sapUiCriticalElement, 8), 4), 21);
+		}
+
+		&.sapUiIconBGColorNegative {
+			color: @sapUiBaseText;
+			background: lighten(@sapUiNegativeElement, 40);
+		}
+
+		&.sapUiIconBGColorNeutral {
+			color: @sapUiBaseText;
+			background: lighten(saturate(spin(@sapUiNeutralElement, 350), 4), 41);
+		}
+
+		&.sapUiIconBGColorPositive {
+			color: @sapUiBaseText;
+			background: lighten(desaturate(spin(@sapUiPositiveElement, 335), 28), 50);
+		}
+	}
 }
 
 // ==========================================================================

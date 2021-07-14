@@ -237,20 +237,17 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusD
 // ==========================================================================
 
 .sapTntToolHeader {
-	.sapUiIcon {
+	.sapUiIcon:not(.sapMITBInlineIcon) {
 		color: @sapUiShellTextColor;
+		outline-color: transparent;
 
 		&.sapUiIconPointer:focus {
 			outline-color: @sapUiContentFocusColor;
 		}
 	}
 
-	.sapUiIcon:focus {
-		outline-color: transparent;
-	}
-
 	// no backgrounds
-	.sapUiIcon{
+	.sapUiIcon:not(.sapMITBInlineIcon) {
 		&.sapUiIconColorCritical {
 			color: @sapUiCriticalText;
 		}
@@ -268,34 +265,33 @@ html.sap-desktop .sapTntToolHeader .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusD
 		}
 	}
 
-		// backgrounds
-		.sapUiIcon{
-			&.sapUiIconBGColorContrast {
-				color: @sapUiShellTextColor;
-				background: transparent;
-			}
-
-			&.sapUiIconBGColorCritical {
-				color: @sapUiContentContrastTextColor;
-				background: @sapUiCriticalElement;
-			}
-
-			&.sapUiIconBGColorNegative  {
-				color: @sapUiContentContrastTextColor;
-				background: @sapUiNegativeElement;
-			}
-
-			&.sapUiIconBGColorNeutral {
-				color: @sapUiContentContrastTextColor;
-				background: @sapUiNeutralElement;
-			}
-
-			&.sapUiIconBGColorPositive {
-				color: @sapUiContentContrastTextColor;
-				background: @sapUiPositiveElement;
-			}
+	// backgrounds
+	.sapUiIcon:not(.sapMITBInlineIcon) {
+		&.sapUiIconBGColorContrast {
+			color: @sapUiShellTextColor;
+			background: transparent;
 		}
 
+		&.sapUiIconBGColorCritical {
+			color: @sapUiContentContrastTextColor;
+			background: @sapUiCriticalElement;
+		}
+
+		&.sapUiIconBGColorNegative {
+			color: @sapUiContentContrastTextColor;
+			background: @sapUiNegativeElement;
+		}
+
+		&.sapUiIconBGColorNeutral {
+			color: @sapUiContentContrastTextColor;
+			background: @sapUiNeutralElement;
+		}
+
+		&.sapUiIconBGColorPositive {
+			color: @sapUiContentContrastTextColor;
+			background: @sapUiPositiveElement;
+		}
+	}
 }
 
 // ==========================================================================
