@@ -1707,6 +1707,10 @@ sap.ui.define([
 		if (oPreview) {
 			oPreview.destroy();
 		}
+		var oMessageStrip = Core.byId(MessageStripId);
+		if (oMessageStrip) {
+			oMessageStrip.destroy();
+		}
 		this._manifestModel = null;
 		this._originalManifestModel = null;
 		this._settingsModel = null;
