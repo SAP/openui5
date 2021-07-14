@@ -688,7 +688,7 @@ sap.ui.define([
 				this._oTable.scrollToIndex(iIndex).then(resolve).catch(reject);
 			} else {
 				if (iIndex === -1) {
-					iIndex = this.getRowBinding() ? this.getRowBinding().getLength() : 0;
+					iIndex = this._getRowCount(false);
 				}
 
 				if (this._oTable._setFirstVisibleRowIndex(iIndex)) {
@@ -1587,9 +1587,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._updateExportState = function(bUpdateFilename) {
-		var oRowBinding = this._getRowBinding();
 		if (this._oExportButton) {
-			this._oExportButton.setEnabled(!!(oRowBinding && oRowBinding.getLength() > 0));
+			this._oExportButton.setEnabled(this._getRowCount(false) > 0);
 			if (bUpdateFilename && this._cachedExportSettings) {
 				this._cachedExportSettings.fileName = this.getHeader();
 			}
