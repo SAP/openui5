@@ -287,11 +287,12 @@ sap.ui.define([
 	 * If the binding uses <ColumnListItem>, <columns> is not allowed. The columns are automatically
 	 * determined from the number of the elements in <ColumnListItem>.
 	 *
-	 * @param {string} sViewXML The view content as XML string
+	 * @param {string} sViewXML - The view content as XML string
 	 * @returns {Document} The view as XML document
+	 * @throws {Error} In case parsing fails
 	 */
 	function xml(sViewXML) {
-		var oDocument;
+		var oDocument, oParseError;
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:plugins="sap.m.plugins"'
@@ -301,6 +302,10 @@ sap.ui.define([
 			+ '</mvc:View>',
 			"application/xml"
 		);
+		oParseError = XMLHelper.getParseError(oDocument);
+		if (oParseError.errorCode) {
+			throw new Error("Parse error: " + JSON.stringify(oParseError));
+		}
 		xmlConvertMTables(oDocument);
 		xmlConvertGridTables(oDocument);
 
@@ -15463,6 +15468,7 @@ sap.ui.define([
 				])
 				.expectRequest("BusinessPartnerList?$apply=groupby((BusinessPartnerRole))"
 					+ "&$count=true&$skip=0&$top=100", {
+					"@odata.count" : "2",
 					value : [{
 						BusinessPartnerRole : "01"
 					}, {
@@ -17430,6 +17436,7 @@ sap.ui.define([
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'A')"
 					+ "/groupby((LocalCurrency),aggregate(SalesAmountLocalCurrency))"
 					+ "&$count=true&$skip=0&$top=100", {
+					"@odata.count" : "1",
 					value : [{
 						LocalCurrency : "EUR",
 						SalesAmountLocalCurrency : "10"
@@ -17460,6 +17467,7 @@ sap.ui.define([
 					+ "?$apply=filter(Country eq 'A' and LocalCurrency eq 'EUR')"
 					+ "/groupby((Region),aggregate(SalesAmountLocalCurrency,LocalCurrency))"
 					+ "&$count=true&$skip=0&$top=100", {
+					"@odata.count" : "3",
 					value : [{
 						LocalCurrency : "EUR",
 						Region : "a",
@@ -17610,6 +17618,7 @@ sap.ui.define([
 
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'A')"
 					+ "/groupby((LocalCurrency))&$count=true&$skip=0&$top=100", {
+					"@odata.count" : "1",
 					value : [{
 						LocalCurrency : "EUR"
 					}]
@@ -17636,6 +17645,7 @@ sap.ui.define([
 			that.expectRequest("BusinessPartners"
 					+ "?$apply=filter(Country eq 'A' and LocalCurrency eq 'EUR')"
 					+ "/groupby((Region))&$count=true&$skip=0&$top=100", {
+					"@odata.count" : "3",
 					value : [{
 						Region : "a"
 					}, {
@@ -19022,13 +19032,64 @@ sap.ui.define([
 			]);
 		});
 	});
-	//TODO QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache" --> grandTotal : true
+
+	//*********************************************************************************************
+	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
+	// - those filters that can be applied before aggregating
+	// - those filters that must be applied after aggregating (Note: this is currently unsupported
+	//   with grand total)
+	// JIRA: CPOUI5ODATAV4-119
+	//
+	// Add searching before aggregating and sorting.
+	// JIRA: CPOUI5ODATAV4-1030
+	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache", function (assert) {
+		var oModel = createAggregationModel({autoExpandSelect : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oListBinding = that.oModel.bindList("/BusinessPartners", null, null, [
+					new Filter("Name", FilterOperator.EQ, "Foo")
+					//TODO new Filter("SalesNumber", FilterOperator.GT, 0)
+				], {
+					$$aggregation : {
+						aggregate : {
+							SalesNumber : {grandTotal : true}
+						},
+						group : {
+							Region : {}
+						},
+						search : "covfefe"
+					},
+					$orderby : "Region asc,SalesNumber desc"
+				});
+
+			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')/search(covfefe)"
+					+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
+					+ "/orderby(Region asc,SalesNumber desc)"
+					// Note: $count is requested automatically
+					+ "/concat(aggregate($count as UI5__count),top(99)))", {
+					value : [
+						{SalesNumber : 351, "SalesNumber@odata.type" : "#Int32"},
+						{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"}
+						// ... (don't care)
+					]
+				});
+
+			return Promise.all([
+				oListBinding.requestContexts(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
 	// - those filters that can be applied before aggregating
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
+	//
+	// Add $count as well as searching before and after aggregating.
+	// JIRA: CPOUI5ODATAV4-1030
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _Cache.CollectionCache", function (assert) {
 		var oModel = createAggregationModel({autoExpandSelect : true}),
 			that = this;
@@ -19044,13 +19105,16 @@ sap.ui.define([
 						},
 						group : {
 							Region : {}
-						}
-					}
+						},
+						search : "tee"
+					},
+					$count : true,
+					$search : "covfefe"
 				});
 
-			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
-					+ "/groupby((Region),aggregate(SalesNumber))&$filter=SalesNumber gt 0"
-					+ "&$skip=0&$top=100", {
+			that.expectRequest("BusinessPartners?$count=true&$search=covfefe&$apply"
+					+ "=filter(Name eq 'Foo')/search(tee)/groupby((Region),aggregate(SalesNumber))"
+					+ "&$filter=SalesNumber gt 0&$skip=0&$top=100", {
 					value : [
 						// ... (don't care)
 					]
@@ -19068,6 +19132,9 @@ sap.ui.define([
 	// were needed (at least w/o visual grouping).
 	// BCP: 2170032897
 	// JIRA: CPOUI5ODATAV4-119
+	//
+	// Add searching before aggregating and sorting.
+	// JIRA: CPOUI5ODATAV4-1030
 	QUnit.test("BCP: 2170032897 with UI5 filters", function (assert) {
 		var oListBinding,
 			oModel = createAggregationModel({autoExpandSelect : true}),
@@ -19087,11 +19154,12 @@ sap.ui.define([
 					group : {
 						Region : {}
 					},
-					"grandTotal like 1.84" : true // code under test
+					"grandTotal like 1.84" : true, // code under test
+					search : "covfefe"
 				}
 			});
 
-			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
+			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')/search(covfefe)"
 					+ "/groupby((Region),aggregate(SalesAmount,Currency))"
 					+ "/filter(SalesAmount gt 0)/orderby(Region)"
 					+ "/concat(aggregate(SalesAmount,Currency),aggregate($count as UI5__count)"
@@ -19327,6 +19395,122 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Data aggregation with visual grouping, grand total and subtotals, leaf count,
+	// sorting; filtering and searching before aggregation; expand and paging.
+	//
+	// JIRA: CPOUI5ODATAV4-1030
+	QUnit.test("Data Aggregation: search before aggregation", function (assert) {
+		var oListBinding,
+			oModel = createAggregationModel(),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesNumber : {grandTotal : true, subtotals : true}\
+				},\
+				group : {\
+					Region : {}\
+				},\
+				groupLevels : [\'Country\'],\
+				search : \'covfefe\'\
+			},\
+			$count : true,\
+			$orderby : \'Country asc,Region,SalesNumber desc\'\
+		},\
+		filters : {path : \'Name\', operator : \'EQ\', value1 : \'Foo\'}\
+	}" threshold="0" visibleRowCount="3">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')/search(covfefe)"
+				+ "/concat(groupby((Country,Region))/aggregate($count as UI5__leaves)"
+				+ ",aggregate(SalesNumber),groupby((Country),aggregate(SalesNumber))"
+				+ "/orderby(Country asc,SalesNumber desc)"
+				+ "/concat(aggregate($count as UI5__count),top(2)))", {
+				value : [
+					{UI5__leaves : "42", "UI5__leaves@odata.type" : "#Decimal"},
+					{SalesNumber : 351, "SalesNumber@odata.type" : "#Int32"},
+					{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
+					{Country : "A", SalesNumber : 101},
+					{Country : "B", SalesNumber : 102}
+				]
+			})
+			.expectChange("isExpanded", [true, false, false])
+			.expectChange("isTotal", [true, true, true])
+			.expectChange("level", [0, 1, 1])
+			.expectChange("country", ["", "A", "B"])
+			.expectChange("region", ["", "", ""])
+			.expectChange("salesNumber", ["351", "101", "102"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("rows");
+
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+			assert.strictEqual(oListBinding.getLength(), 1 + 26, "flat list as currently expanded");
+			assert.strictEqual(oListBinding.getCount(), 42, "count of leaves");
+
+			that.expectChange("isExpanded", [, true])
+				.expectRequest("BusinessPartners?$apply=filter(Country eq 'A' and (Name eq 'Foo'))"
+					+ "/search(covfefe)/groupby((Region),aggregate(SalesNumber))"
+					+ "/orderby(Region,SalesNumber desc)&$count=true&$skip=0&$top=3", {
+					"@odata.count" : "12",
+					value : [
+						{Region : "a", SalesNumber : 1},
+						{Region : "b", SalesNumber : 2},
+						{Region : "c", SalesNumber : 3}
+					]
+				})
+				.expectChange("isExpanded", [,, undefined])
+				.expectChange("isTotal", [,, false])
+				.expectChange("level", [,, 2])
+				.expectChange("country", [,, "A"])
+				.expectChange("region", [,, "a"])
+				.expectChange("salesNumber", [,, "1"]);
+
+			// code under test
+			oTable.getRows()[1].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "expand");
+		}).then(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+			assert.strictEqual(oListBinding.getLength(), 1 + 26 + 12,
+				"flat list as currently expanded");
+			assert.strictEqual(oListBinding.getCount(), 42, "count of leaves");
+
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'A' and (Name eq 'Foo'))"
+				+ "/search(covfefe)/groupby((Region),aggregate(SalesNumber))"
+				+ "/orderby(Region,SalesNumber desc)&$skip=5&$top=3", {
+					value : [
+						{Region : "f", SalesNumber : 6},
+						{Region : "g", SalesNumber : 7},
+						{Region : "h", SalesNumber : 8}
+					]
+				})
+				.expectResets(oTable, 3, 1)
+				.expectChange("isExpanded", [,,,,,,, /*undefined*/, /*undefined*/, /*undefined*/])
+				.expectChange("isTotal", [,,,,,,, false, false, false])
+				.expectChange("level", [,,,,,,, 2, 2, 2])
+				.expectChange("country", [,,,,,,, "A", "A", "A"])
+				.expectChange("region", [,,,,,,, "f", "g", "h"])
+				.expectChange("salesNumber", [,,,,,,, "6", "7", "8"]);
+
+			// scroll down
+			oTable.setFirstVisibleRow(7);
+
+			return that.waitForChanges(assert, "paging");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: check that $$aggregation can be removed again
 	// Note: Key properties are omitted from response data to improve readability.
 	// BCP: 2080047558
@@ -19466,6 +19650,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList"
 					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
 					+ "&$count=true&$skip=0&$top=100", {
+					"@odata.count" : "1",
 					value : [{GrossAmount : "3", LifecycleStatus : "X"}]
 				})
 				.expectChange("grossAmount", ["3"])
@@ -19519,7 +19704,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true&$skip=0&$top=100",
-				{value : [{Region : "A"}]})
+				{"@odata.count" : "1", value : [{Region : "A"}]})
 			.expectChange("region", ["A"])
 			.expectChange("salesAmount", [null]);
 
@@ -19535,7 +19720,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100", {value : [{Region : "A"}]});
+					+ "&$skip=0&$top=100", {"@odata.count" : "1", value : [{Region : "A"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$NavigationPropertyPath : ""}]),
@@ -19543,7 +19728,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100", {value : [{Region : "A"}]});
+					+ "&$skip=0&$top=100", {"@odata.count" : "1", value : [{Region : "A"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "SalesAmount"}]),
@@ -19551,7 +19736,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100", {value : [{Region : "A"}]});
+					+ "&$skip=0&$top=100", {"@odata.count" : "1", value : [{Region : "A"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "Region"}]),
@@ -19560,7 +19745,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
 					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
-					{value : [{Region : "A"}]});
+					{"@odata.count" : "1", value : [{Region : "A"}]});
 
 			oBinding.filter(new Filter("Country", FilterOperator.EQ, "US"));
 
@@ -19568,7 +19753,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
 					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
-					{value : [{Region : "A"}]});
+					{"@odata.count" : "1", value : [{Region : "A"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "Country"}]),
@@ -20027,6 +20212,9 @@ sap.ui.define([
 	// Scenario: Simulate a chart that requests minimum and maximum values for a measure via
 	// #updateAnalyticalInfo on a suspended binding
 	// JIRA: CPOUI5UISERVICESV3-1754
+	//
+	// Add searching before aggregating.
+	// JIRA: CPOUI5ODATAV4-1030
 	QUnit.test("ODLB#updateAnalyticalInfo with min/max while suspended", function (assert) {
 		var aAggregation = [{ // dimension
 				grouped : false,
@@ -20052,7 +20240,7 @@ sap.ui.define([
 			var oListBinding = that.oView.byId("table").getBinding("items"),
 				oMeasureRangePromise;
 
-			that.expectRequest("EMPLOYEES?$apply=groupby((Name),aggregate(AGE))"
+			that.expectRequest("EMPLOYEES?$apply=search(covfefe)/groupby((Name),aggregate(AGE))"
 					+ "/concat(aggregate(AGE with min as UI5min__AGE,AGE with max as UI5max__AGE)"
 					+ ",top(100))", {
 					value : [{
@@ -20070,6 +20258,9 @@ sap.ui.define([
 				})
 				.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"])
 				.expectChange("age", ["50", "70", "77"]);
+
+			// code under test
+			oListBinding.setAggregation({search : "covfefe"});
 
 			// code under test
 			oMeasureRangePromise

@@ -780,11 +780,13 @@ sap.ui.define([
 			bHasGroupLevels = !!oAggregation.groupLevels.length;
 			bHasMinOrMax = _AggregationHelper.hasMinOrMax(oAggregation.aggregate);
 
-			if (bHasGrandTotal && mQueryOptions.$filter && !oAggregation["grandTotal like 1.84"]) {
+			if (mQueryOptions.$filter
+				&& (bHasGrandTotal && !oAggregation["grandTotal like 1.84"]
+					|| bHasGroupLevels)) {
 				throw new Error("Unsupported system query option: $filter");
 			}
-			if (bHasGroupLevels && mQueryOptions.$filter) {
-				throw new Error("Unsupported system query option: $filter");
+			if (mQueryOptions.$search && (bHasGrandTotal || bHasGroupLevels)) {
+				throw new Error("Unsupported system query option: $search");
 			}
 			if (bHasMinOrMax) {
 				if (bHasGrandTotal) {

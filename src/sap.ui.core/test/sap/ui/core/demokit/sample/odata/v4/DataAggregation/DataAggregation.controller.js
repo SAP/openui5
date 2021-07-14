@@ -23,22 +23,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oAggregation = {
-					aggregate : {
-						SalesAmountLocalCurrency : {
-							grandTotal : true,
-							subtotals : true,
-							unit : 'LocalCurrency'
-						},
-						SalesNumber : {}
-					},
-					group : {
-						AccountResponsible : {},
-						Country_Code : {additionally : ['Country']}
-					},
-					groupLevels : ['Country_Code', 'Region', 'Segment']
-				},
-				oUriParameters = UriParameters.fromQuery(location.search),
+			var oUriParameters = UriParameters.fromQuery(location.search),
 				sFilter = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.DataAggregation.filter")
 					|| oUriParameters.get("filter"),
@@ -60,16 +45,32 @@ sap.ui.define([
 
 			this.getView().setModel(new JSONModel({
 				iMessages : 0,
+				sSearch : "",
 				iVisibleRowCount : parseInt(sVisibleRowCount) || 5
 			}), "ui");
 			this.initMessagePopover("showMessages");
 
+			this._oAggregation = {
+				aggregate : {
+					SalesAmountLocalCurrency : {
+						grandTotal : true,
+						subtotals : true,
+						unit : 'LocalCurrency'
+					},
+					SalesNumber : {}
+				},
+				group : {
+					AccountResponsible : {},
+					Country_Code : {additionally : ['Country']}
+				},
+				groupLevels : ['Country_Code', 'Region', 'Segment']
+			};
 			if (sGrandTotalAtBottomOnly) {
 				if (sGrandTotalAtBottomOnly === "true") {
 					oTable.setFixedRowCount(0);
 				}
 				oTable.setFixedBottomRowCount(1);
-				oAggregation.grandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true";
+				this._oAggregation.grandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true";
 			}
 			if (sLeafCount) {
 				oRowsBinding.changeParameters({$count : sLeafCount === "true"});
@@ -79,9 +80,9 @@ sap.ui.define([
 				});
 			}
 			if (sSubtotalsAtBottomOnly) {
-				oAggregation.subtotalsAtBottomOnly = sSubtotalsAtBottomOnly === "true";
+				this._oAggregation.subtotalsAtBottomOnly = sSubtotalsAtBottomOnly === "true";
 			}
-			oRowsBinding.setAggregation(oAggregation);
+			oRowsBinding.setAggregation(this._oAggregation);
 			if (sFilter) { // e.g. "LocalCurrency GT G,Region LT S"
 				oRowsBinding.filter(sFilter.split(",").map(function (sSingleFilter) {
 					var aPieces = sSingleFilter.split(" ");
@@ -95,6 +96,12 @@ sap.ui.define([
 				}));
 			}
 			oRowsBinding.resume(); // now that "ui" model is available...
+		},
+
+		onSearch : function (oEvent) {
+			this._oAggregation.search
+				= this.getView().getModel("ui").getProperty("/sSearch");
+			this.byId("table").getBinding("rows").setAggregation(this._oAggregation);
 		},
 
 		onToggleExpand : function (oEvent) {

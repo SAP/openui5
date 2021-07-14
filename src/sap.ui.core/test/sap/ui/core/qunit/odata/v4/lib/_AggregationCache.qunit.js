@@ -185,6 +185,17 @@ sap.ui.define([
 	hasMinOrMax : false,
 	message : "Unsupported system query option: $filter",
 	queryOptions : {$filter : "answer eq 42"}
+}, {
+	hasGrandTotal : true,
+	hasMinOrMax : false,
+	message : "Unsupported system query option: $search",
+	queryOptions : {$search : "blue OR green"}
+}, {
+	groupLevels : ["BillToParty"],
+	hasGrandTotal : false,
+	hasMinOrMax : false,
+	message : "Unsupported system query option: $search",
+	queryOptions : {$search : "blue OR green"}
 }].forEach(function (oFixture) {
 	QUnit.test("create: " + oFixture.message, function (assert) {
 		var oAggregation = {

@@ -30,6 +30,7 @@ sap.ui.define([
 				}
 			},
 			groupLevels : ["string"],
+			search : "string",
 			subtotalsAtBottomOnly : "boolean"
 		},
 		rComma = /,|%2C|%2c/,
@@ -314,6 +315,9 @@ sap.ui.define([
 				} else if (sLeaves) {
 					sApply = "concat(" + sLeaves + "," + sApply + ")";
 				}
+			}
+			if (oAggregation.search) {
+				sApply = "search(" + oAggregation.search + ")/" + sApply;
 			}
 			if (mQueryOptions.$$filterBeforeAggregate) {
 				sApply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/" + sApply;

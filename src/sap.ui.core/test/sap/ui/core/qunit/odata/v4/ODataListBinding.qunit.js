@@ -5412,9 +5412,11 @@ sap.ui.define([
 					TransactionCurrency : {},
 					// Note: property which was neither dimension nor measure
 					UnitProperty : {}
-				}
+				},
+				search : "covfefe"
 			};
 
+		oBinding.mParameters.$$aggregation = {search : "covfefe"};
 		this.mock(oBinding).expects("setAggregation").withExactArgs(oTransformedAggregation);
 
 		// code under test
@@ -5450,7 +5452,8 @@ sap.ui.define([
 			},
 			group : {
 				Currency : {}
-			}
+			},
+			search : undefined
 		}
 	}, {
 		aAggregation : [{
@@ -5468,7 +5471,8 @@ sap.ui.define([
 			},
 			group : {
 				Currency : {}
-			}
+			},
+			search : undefined
 		}
 	}, {
 		aAggregation : [{
@@ -5488,7 +5492,8 @@ sap.ui.define([
 					"with" : "average"
 				}
 			},
-			group : {}
+			group : {},
+			search : undefined
 		}
 	}].forEach(function (oFixture, i) {
 		[false, true].forEach(function (bHasMeasureRangePromiseAfterResume) {
