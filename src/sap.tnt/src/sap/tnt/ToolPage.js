@@ -51,6 +51,13 @@ sap.ui.define([
 				 * The control to appear in the header area.
 				 */
 				header: {type: "sap.tnt.IToolHeader", multiple: false},
+
+				/**
+				 * The control to appear in the sub header area.
+				 * @since 1.93
+				 * @experimental Since 1.93
+				 */
+				subHeader: {type: "sap.tnt.IToolHeader", multiple: false },
 				/**
 				 * The side menu of the layout.
 				 */
