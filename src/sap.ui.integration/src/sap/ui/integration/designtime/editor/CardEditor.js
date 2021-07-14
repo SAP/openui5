@@ -97,7 +97,8 @@ sap.ui.define([
 	}
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
 		CONTEXT_TIMEOUT = 5000,
-		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+		MessageStripId = "__strip0";
 		/* hide multi language function since there has a translation issue in Portal
 		aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/designtime/editor/languages.json", {
 			dataType: "json",
@@ -1122,6 +1123,7 @@ sap.ui.define([
 		this._addValueListModel(oConfig, oField);
 		oField._cols = oConfig.cols || 2; //by default 2 cols
 		oField._oProviderCard = this._oProviderCard;
+		oField.setAssociation("_messageStrip", this.getAggregation("_messageStrip"));
 		return oField;
 	};
 
@@ -1335,6 +1337,17 @@ sap.ui.define([
 					},
 					items: {
 						path: "items>/form/items"
+					}
+				},
+				expand: function (oEvent) {
+					var oControl = oEvent.getSource();
+					if (!oEvent.mParameters.expand && oControl.getParent().getAggregation("_messageStrip") !== null) {
+						MessageStripId = oControl.getParent().getAggregation("_messageStrip").getId();
+					}
+					if (oEvent.mParameters.expand) {
+						var oMessageStrip = Core.byId(MessageStripId);
+						oControl.addContent(oMessageStrip);
+						oControl.focus();
 					}
 				}
 			});
