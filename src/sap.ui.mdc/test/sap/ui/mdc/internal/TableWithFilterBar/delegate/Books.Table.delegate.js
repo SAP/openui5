@@ -27,6 +27,11 @@ sap.ui.define([
 					oProperty.fieldHelp = "FHSubGenreSingle";
 					oProperty.label = "Sub Genre";
 				}
+
+				if (oProperty.name === "title") {
+					oProperty.caseSensitive = false;
+				}
+
 			});
 
 			return aProperties;

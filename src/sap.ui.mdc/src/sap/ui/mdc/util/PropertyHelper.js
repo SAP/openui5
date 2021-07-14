@@ -87,6 +87,10 @@ sap.ui.define([
 			defaultValue: -1,
 			valueForComplexProperty: null
 		},
+		caseSensitive: {
+			type: "boolean",
+			defaultValue: true
+		},
 		group: { // Key of the group the property is inside. Used to visually group properties in personalization dialogs.
 			type: "string",
 			allowedForComplexProperty: true
@@ -143,7 +147,7 @@ sap.ui.define([
 		// extension - Used to add model-specific information. For example, for analytics in OData, see sap.ui.mdc.odata.v4.TableDelegate.
 	};
 
-	var aCommonAttributes = ["name", "label", "visible", "path", "typeConfig", "maxConditions", "group", "groupLabel"];
+	var aCommonAttributes = ["name", "label", "visible", "path", "typeConfig", "maxConditions", "group", "groupLabel", "caseSensitive"];
 	var aPropertyMethods = [];
 	var _private = new WeakMap();
 

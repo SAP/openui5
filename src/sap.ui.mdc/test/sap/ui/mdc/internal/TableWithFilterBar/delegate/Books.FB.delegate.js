@@ -33,6 +33,7 @@ sap.ui.define([
 				if (oPropertyInfo.name === "title") {
 					oPropertyInfo.fieldHelp = "FH4";
 					oPropertyInfo.label = "Title";
+					oPropertyInfo.caseSensitive = false;
 				}
 
 				if (oPropertyInfo.name === "published") {

@@ -131,6 +131,25 @@ function(
 					oAnyOrAllFilterParam = null;
 					var aConditions = oConditions[sFieldPath];
 
+					if (sFieldPath === "$search") {
+						continue;
+					}
+
+					var oDataType;
+					var bCaseSensitiveType = true;
+
+					if (oConditionTypes) {
+						if (oConditionTypes[sFieldPath]) {
+							oDataType = oConditionTypes[sFieldPath].type;
+							bCaseSensitiveType = oConditionTypes[sFieldPath].caseSensitive;
+
+							if (!oDataType) {
+								// We only shown a warning, because the oDataType might not be required for creating the Filter.
+								Log.warning("FilterConverter", "Not able to retrieve the type of path '" + sFieldPath + "!");
+							}
+						}
+					}
+
 					for (i = 0; i < aConditions.length; i++) {
 						oCondition = aConditions[i];
 
@@ -139,19 +158,8 @@ function(
 							continue; // ignore unknown operators
 						}
 
-						var oDataType;
-						if (oConditionTypes) {
-							if (oConditionTypes[sFieldPath]) {
-								oDataType = oConditionTypes[sFieldPath].type;
-								if (!oDataType) {
-									// We only shown a warning, because the oDataType might not be required for creating the Filter.
-									Log.warning("FilterConverter", "Not able to retrieve the type of path '" + sFieldPath + "!");
-								}
-							}
-						}
-
 						try {
-							oFilter = oOperator.getModelFilter(oCondition, sFieldPath, oDataType);
+							oFilter = oOperator.getModelFilter(oCondition, sFieldPath, oDataType, bCaseSensitiveType);
 						} catch (error) {
 							// in case the getModelFilter fails - because the oDataType is missing - we show a console error.
 							Log.error("FilterConverter", "Not able to convert the condition for path '" + sFieldPath + "' into a filter! The type is missing!");
@@ -263,7 +271,7 @@ function(
 			prettyPrintFilters: function (oFilter) {
 				var sRes;
 				if (!oFilter) {
-					return "";
+					return "no filters set";
 				}
 				if (oFilter._bMultiFilter) {
 					sRes = "";
@@ -279,7 +287,11 @@ function(
 					if ( oFilter.sOperator === FilterOperator.Any || oFilter.sOperator === FilterOperator.All ) {
 						sRes = oFilter.sPath + " " + oFilter.sOperator + " " + FilterConverter.prettyPrintFilters(oFilter.oCondition);
 					} else {
-						sRes = oFilter.sPath + " " + oFilter.sOperator + " '" + oFilter.oValue1 + "'";
+						if (oFilter.bCaseSensitive === false) {
+							sRes = "tolower(" + oFilter.sPath + ") " + oFilter.sOperator + " tolower('" + oFilter.oValue1 + "')";
+						} else {
+							sRes = oFilter.sPath + " " + oFilter.sOperator + " '" + oFilter.oValue1 + "'";
+						}
 						if ([FilterOperator.BT, FilterOperator.NB].indexOf(oFilter.sOperator) >= 0) {
 							sRes += "...'" + oFilter.oValue2 + "'";
 						}
