@@ -278,7 +278,21 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("City of Origin", 9, false);
 		Then.iShouldSeeP13nItem("Created (Complex)", 10, false);
 		Then.iShouldSeeP13nItem("Created By", 11, false);
+		Given.closeModalDialog("OK");
+	});
+
+	opaTest("Quit RTA", function(Given, When, Then){
+		//Quit RTA
 		When.iPressButtonWithText("Save & Exit");
+
+		//Just to check that runtime Dialog opens again (no more overlays)
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+
+		//close Dialog
+		When.iPressDialogOk();
+		Then.thePersonalizationDialogShouldBeClosed();
+
+		//tear down app
 		Then.iTeardownMyAppFrame();
 	});
 

@@ -81,7 +81,20 @@ sap.ui.define([
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Country"]);
 		Then.iShouldSeeConditionValuesInFilterBar(["1989"], "foundingYear");
+	});
+
+	opaTest("Quit RTA", function(Given, When, Then){
+		//Quit RTA
 		When.iPressButtonWithText("Save & Exit");
+
+		//Just to check that runtime Dialog opens again (no more overlays)
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+
+		//close Dialog
+		When.iPressDialogOk();
+		Then.thePersonalizationDialogShouldBeClosed();
+
+		//tear down app
 		Then.iTeardownMyAppFrame();
 	});
 });
