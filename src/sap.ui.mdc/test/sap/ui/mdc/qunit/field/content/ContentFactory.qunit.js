@@ -87,9 +87,19 @@ sap.ui.define([
 		assert.equal(this.oContentFactory.getFieldHelpIcon(), this.oField._getFieldHelpIcon(), "Correct FieldHelpIcon returned.");
 	});
 
+	QUnit.test("getConditionType", function(assert) {
+		var done = assert.async();
+		this.oField.awaitControlDelegate().then(function() {
+			assert.notOk(this.oContentFactory.getConditionType(true), "No ConditionType returned.");
+			assert.ok(this.oContentFactory.getConditionType(), "Correct ConditionType returned.");
+			done();
+		}.bind(this));
+	});
+
 	QUnit.test("getConditionsType", function(assert) {
 		var done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
+			assert.notOk(this.oContentFactory.getConditionsType(true), "No ConditionsType returned.");
 			assert.ok(this.oContentFactory.getConditionsType(), "Correct ConditionsType returned.");
 			done();
 		}.bind(this));
@@ -98,6 +108,7 @@ sap.ui.define([
 	QUnit.test("getUnitConditionsType", function(assert) {
 		var done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
+			assert.notOk(this.oContentFactory.getUnitConditionsType(true), "No UnitConditionsType returned.");
 			assert.ok(this.oContentFactory.getUnitConditionsType(), "Correct UnitConditionsType returned.");
 			done();
 		}.bind(this));

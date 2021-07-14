@@ -2484,8 +2484,8 @@ sap.ui.define([
 				var aValue = this.getControlDelegate().enhanceValueForUnit(this.getPayload(), [null, aNewConditions[0].values[0]], this._oTypeInitialization); // Delegate must be initialized right now
 				oCondition = Condition.createCondition(oOperator.name, [aValue], aNewConditions[0].inParameters, aNewConditions[0].outParameters, ConditionValidated.NotValidated);
 				aConditions.push(oCondition);
-				var oConditionType = this._oContentFactory.getConditionType();
-				var oConditionsType = this._oContentFactory.getUnitConditionsType();
+				var oConditionType = this._oContentFactory.getConditionType(true);
+				var oConditionsType = this._oContentFactory.getUnitConditionsType(true);
 				// TODO: format once to update current value in type (as empty condtions are not displayed as token)
 				if (oConditionType) {
 					sDOMValue = oConditionType.formatValue(oCondition);
@@ -2527,9 +2527,9 @@ sap.ui.define([
 				// so we need to set the DOM value here. Otherwise it is not updated or, if empty, selected.
 				if (this._oContentFactory.isMeasure() && this._oContentFactory.getUnitConditionsType()) {
 					sDOMValue = this._oContentFactory.getUnitConditionsType().formatValue(aConditions);
-				} else if (this._oContentFactory.getConditionType()) {
+				} else if (this._oContentFactory.getConditionType(true)) {
 					sDOMValue = this._oContentFactory.getConditionType().formatValue(aConditions[0]);
-				} else if (this._oContentFactory.getConditionsType()) {
+				} else if (this._oContentFactory.getConditionsType(true)) {
 					sDOMValue = this._oContentFactory.getConditionsType().formatValue(aConditions);
 				}
 
@@ -2650,9 +2650,9 @@ sap.ui.define([
 			if (!sDOMValue) {
 				if (this._oContentFactory.isMeasure() && this._oContentFactory.getUnitConditionsType() && this._oNavigateCondition) {
 					sDOMValue = this._oContentFactory.getUnitConditionsType().formatValue([this._oNavigateCondition]);
-				} else if (this._oContentFactory.getConditionType() && this._oNavigateCondition) {
+				} else if (this._oContentFactory.getConditionType(true) && this._oNavigateCondition) {
 					sDOMValue = this._oContentFactory.getConditionType().formatValue(this._oNavigateCondition);
-				} else if (this._oContentFactory.getConditionsType() && this._oNavigateCondition) {
+				} else if (this._oContentFactory.getConditionsType(true) && this._oNavigateCondition) {
 					sDOMValue = this._oContentFactory.getConditionsType().formatValue([this._oNavigateCondition]);
 				} else {
 					sDOMValue = sValue || vKey;
