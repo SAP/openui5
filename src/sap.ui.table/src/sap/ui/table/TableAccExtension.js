@@ -740,7 +740,7 @@ sap.ui.define([
 				case TableAccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 					mAttributes["role"] = TableUtils.Grouping.isGroupMode(oTable) || TableUtils.Grouping.isTreeMode(oTable) ? "treegrid" : "grid";
 
-					mAttributes["aria-labelledby"] = oTable.getAriaLabelledBy();
+					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
 					if (oTable.getTitle()) {
 						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 					}
@@ -878,7 +878,7 @@ sap.ui.define([
 
 				case TableAccExtension.ELEMENTTYPES.OVERLAY: //The overlay container
 					mAttributes["role"] = "region";
-					mAttributes["aria-labelledby"] = oTable.getAriaLabelledBy();
+					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
 					if (oTable.getTitle()) {
 						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 					}
