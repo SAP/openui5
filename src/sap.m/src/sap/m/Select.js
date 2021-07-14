@@ -669,7 +669,7 @@ function(
 		 * @since 1.22.0
 		 */
 		Select.prototype.getList = function() {
-			if (this.bIsDestroyed) {
+			if (this._bIsBeingDestroyed) {
 				return null;
 			}
 
@@ -790,7 +790,7 @@ function(
 		};
 
 		Select.prototype._getValueIcon = function() {
-			if (this.bIsDestroyed) {
+			if (this._bIsBeingDestroyed) {
 				return null;
 			}
 
@@ -986,7 +986,7 @@ function(
 		 * @private
 		 */
 		Select.prototype.getPicker = function() {
-			if (this.bIsDestroyed) {
+			if (this._bIsBeingDestroyed) {
 				return null;
 			}
 
@@ -1001,7 +1001,7 @@ function(
 		 * @private
 		 */
 		Select.prototype.getValueStateTextInvisibleText = function() {
-			if (this.bIsDestroyed) {
+			if (this._bIsBeingDestroyed) {
 				return null;
 			}
 
@@ -1014,7 +1014,7 @@ function(
 		};
 
 		Select.prototype.getSimpleFixFlex = function() {
-			if (this.bIsDestroyed) {
+			if (this._bIsBeingDestroyed) {
 				return null;
 			} else if (this.oSimpleFixFlex) {
 				return this.oSimpleFixFlex;
@@ -1073,7 +1073,8 @@ function(
 		 * @private
 		 */
 		Select.prototype._updatePickerValueStateContentText = function() {
-			var oPickerValueStateContent = this.getPicker().getContent()[0].getFixContent(),
+			var oPicker = this.getPicker(),
+				oPickerValueStateContent = oPicker && oPicker.getContent()[0].getFixContent(),
 				sText;
 
 			if (oPickerValueStateContent) {
@@ -1132,7 +1133,7 @@ function(
 				sCssClass = PICKER_CSS_CLASS + sValueState + "State",
 				sPickerWithSubHeader = PICKER_CSS_CLASS + "WithSubHeader",
 				oPicker = this.getPicker(),
-				oCustomHeader = oPicker.getContent()[0].getFixContent();
+				oCustomHeader = oPicker && oPicker.getContent()[0].getFixContent();
 
 			if (oCustomHeader) {
 				this._removeValueStateClassesForPickerValueStateContent(oPicker);
@@ -2507,9 +2508,14 @@ function(
 
 		Select.prototype._updatePickerAriaLabelledBy = function (sValueState) {
 			var oPicker = this.getPicker(),
-				// to avoid double speech output, referenced element should not be nested inside picker
-				// so we set aria-labelledby to element which is in the static area
-				sPickerValueStateContentId = this.getValueStateTextInvisibleText().getId();
+				sPickerValueStateContentId;
+
+			if (!oPicker) {
+				return;
+			}
+			// to avoid double speech output, referenced element should not be nested inside picker
+			// so we set aria-labelledby to element which is in the static area
+			sPickerValueStateContentId = this.getValueStateTextInvisibleText().getId();
 
 			if (sValueState === ValueState.None) {
 				oPicker.removeAriaLabelledBy(sPickerValueStateContentId);
@@ -2852,7 +2858,9 @@ function(
 
 			this.setProperty("valueStateText", sValueStateText);
 
-			oInvisibleText.setText(sValueStateText);
+			if (oInvisibleText) {
+				oInvisibleText.setText(sValueStateText);
+			}
 
 			if (this.getDomRefForValueState()) {
 				this._updatePickerValueStateContentText();

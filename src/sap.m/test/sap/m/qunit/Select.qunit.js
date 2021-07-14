@@ -5877,6 +5877,20 @@ sap.ui.define([
 			assert.ok(oSelect.getList() === null);
 		});
 
+		QUnit.test("update valueState during destroy", function (assert) {
+			var oSelect = new sap.m.Select({
+				valueState: "Error"
+			});
+			// Setup: trigger destroy
+			oSelect.destroy();
+
+			// Act: reset valueState
+			var oResult = oSelect.setValueState("None");
+
+			// Check
+			assert.ok(oResult, "valueState can be reset during destroy");
+		});
+
 		// Tests for methods borrowed from class sap.ui.core.Control
 
 		// Tests for methods borrowed from class sap.ui.core.Element
