@@ -20,8 +20,6 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.filterbar.vh.GenericFilterBarDelegate
 	 */
 	var GenericFilterBarDelegate = Object.assign({}, FilterBarDelegate);
-	var _oObserver;
-	var _aProperties = [];
 
 	/**
 	 * Fetches the relevant metadata (from the FilterItems of the FiterBar) for the FilterBar and returns property info array
@@ -30,26 +28,26 @@ sap.ui.define([
 	 * @returns {Array} array of property info
 	 */
 	GenericFilterBarDelegate.fetchProperties = function(oFilterBar) {
-		if (!_oObserver) {
-			_oObserver = new ManagedObjectObserver(_observeChanges);
-			_oObserver.observe(oFilterBar, {
+		if (!oFilterBar.__oObserver) {
+			oFilterBar.__oObserver = new ManagedObjectObserver(_observeChanges);
+			oFilterBar.__oObserver.observe(oFilterBar, {
 				aggregations: ["filterItems"]
 			});
 		}
 
 		return new Promise(function(fResolve) {
 			var aFilterItems = oFilterBar.getFilterItems();
-			_aProperties = [];
+			oFilterBar.__aProperties = [];
 			aFilterItems.forEach(function(oFF){
-				addFilterField(oFF);
+				addFilterField(oFF, oFilterBar.__aProperties);
 			});
 
-			fResolve(_aProperties);
+			fResolve(oFilterBar.__aProperties);
 		});
 
 	};
 
-	function addFilterField(oFF) {
+	function addFilterField(oFF, aProperties) {
 		var sPath = oFF.getBindingPath("conditions");
 		if (!sPath) {
 			return;
@@ -57,7 +55,7 @@ sap.ui.define([
 		var aPathParts = sPath.split("/");
 		var sFieldPath = aPathParts[aPathParts.length - 1];
 
-		_aProperties.push({
+		aProperties.push({
 			name: sFieldPath,
 			label: oFF.getLabel() || sFieldPath,
 			type: oFF.getDataType(),
@@ -72,11 +70,40 @@ sap.ui.define([
 		});
 	}
 
-	function removeFilterField(oFF) {
+	function removeFilterField(oFF, aProperties) {
 		var sPath = oFF.getBindingPath("conditions");
 		if (!sPath) {
 			return;
 		}
+
+		function _getProperty(sName) {
+			var oNamedProperty = null;
+			aProperties.some(function(oProperty) {
+				if (oProperty.name === sName) {
+					oNamedProperty = oProperty;
+				}
+				return oNamedProperty !== null;
+			});
+
+			return oNamedProperty;
+		}
+
+		function _removeProperty(sName) {
+			var nIdx = -1;
+			aProperties.some(function(oProperty, index) {
+				if (oProperty.name === sName) {
+					nIdx = index;
+				}
+				return nIdx !== -1;
+			});
+
+			if (nIdx >= 0) {
+				aProperties.splice(nIdx, 1);
+			}
+
+			return nIdx;
+		}
+
 		var aPathParts = sPath.split("/");
 		var sFieldPath = aPathParts[aPathParts.length - 1];
 		if (_getProperty(sFieldPath)) {
@@ -84,49 +111,38 @@ sap.ui.define([
 		}
 	}
 
-	function _getProperty(sName) {
-		var oNamedProperty = null;
-		_aProperties.some(function(oProperty) {
-			if (oProperty.name === sName) {
-				oNamedProperty = oProperty;
-			}
-			return oNamedProperty !== null;
-		});
 
-		return oNamedProperty;
-	}
-
-	function _removeProperty(sName) {
-		var nIdx = -1;
-		_aProperties.some(function(oProperty, index) {
-			if (oProperty.name === sName) {
-				nIdx = index;
-			}
-			return nIdx !== -1;
-		});
-
-		if (nIdx >= 0) {
-			_aProperties.splice(nIdx, 1);
-		}
-
-		return nIdx;
-	}
 
 	function _observeChanges(oChanges) {
+		var oFilterBar, aProperties;
 
 		if (oChanges.name === "filterItems") {
 			if (oChanges.mutation === "insert") {
 				var oNewFF = oChanges.child;
-				addFilterField(oNewFF);
+				oFilterBar = oNewFF.getParent();
+				aProperties = oFilterBar.__aProperties;
+				addFilterField(oNewFF, aProperties);
 				return;
 			}
 			if (oChanges.mutation === "remove") {
 				var oRemoveFF = oChanges.child;
-				removeFilterField(oRemoveFF);
+				oFilterBar = oRemoveFF.getParent();
+				aProperties = oFilterBar.__aProperties;
+				removeFilterField(oRemoveFF, aProperties);
 				return;
 			}
 		}
 	}
+
+	GenericFilterBarDelegate.cleanup = function(oFilterBar) {
+
+		if (oFilterBar.__oObserver) {
+			oFilterBar.__oObserver.disconnect();
+			delete oFilterBar.__oObserver;
+			delete oFilterBar.__aProperties;
+		}
+
+	};
 
 	return GenericFilterBarDelegate;
 });
