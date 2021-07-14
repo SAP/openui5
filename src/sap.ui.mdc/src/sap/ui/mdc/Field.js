@@ -406,6 +406,7 @@ sap.ui.define([
 			if (this._bTypeInitialized && this._oContentFactory.getUnitOriginalType()) {
 				// internal type already created, initialize it too
 				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._oContentFactory.getDataType(), this._oTypeInitialization);
+				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._oContentFactory.getUnitType(), this._oTypeInitialization);
 			}
 		}
 
