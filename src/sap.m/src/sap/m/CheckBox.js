@@ -341,10 +341,14 @@ sap.ui.define([
 		}
 	};
 
-	CheckBox.prototype.getFormFormattedValue = function() {
+	CheckBox.prototype.getFormattedState = function() {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		return this.getSelected() ? oBundle.getText("ACC_CTR_STATE_CHECKED") : oBundle.getText("ACC_CTR_STATE_NOT_CHECKED");
+	};
+
+	CheckBox.prototype.getFormFormattedValue = function() {
+		return this.getFormattedState();
 	};
 
 	CheckBox.prototype.getFormValueProperty = function () {
@@ -539,11 +543,12 @@ sap.ui.define([
 	 * @returns {object} The <code>sap.m.CheckBox</code> accessibility information
 	 */
 	CheckBox.prototype.getAccessibilityInfo = function() {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sText = this.getText();
 		return {
 			role: "checkbox",
 			type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
-			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : ""),
+			description: (sText ? sText + " " : "") + this.getFormattedState(),
 			focusable: this.getEnabled() && !this.getDisplayOnly(),
 			enabled: this.getEnabled(),
 			editable: this.getEditable()

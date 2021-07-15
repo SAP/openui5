@@ -1143,7 +1143,7 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "checkbox", "AriaRole");
 		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
-		assert.strictEqual(oInfo.description, "Text", "Description");
+		assert.strictEqual(oInfo.description, "Text " + Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_NOT_CHECKED"), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
