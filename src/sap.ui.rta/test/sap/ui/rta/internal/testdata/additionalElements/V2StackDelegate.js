@@ -146,6 +146,7 @@ sap.ui.define([
 		if (vBinding) {
 			return bAbsoluteAggregationBinding ? vBinding.path : vBinding.getPath();
 		}
+		return undefined;
 	}
 	function _loadODataMetaModel(oElement, mPayload) {
 		return Promise.resolve()
@@ -160,6 +161,7 @@ sap.ui.define([
 						});
 					}
 				}
+				return undefined;
 			});
 	}
 	function _getODataEntityFromMetaModel(oMetaModel, sBindingContextPath) {
@@ -253,6 +255,8 @@ sap.ui.define([
 				//Don't provide form handling
 				return Promise.resolve();
 			}
+			var oVBox;
+			var mInnerControls;
 			//TODO validate with object page header/VBox/HBox
 			return oModifier.createControl("sap.m.VBox",
 				mPropertyBag.appComponent,
@@ -260,7 +264,8 @@ sap.ui.define([
 				mPropertyBag.fieldSelector,
 				{},
 				/*async*/true
-			).then(function(oVBox) {
+			).then(function(oCreatedVBox) {
+				oVBox = oCreatedVBox;
 				var mFieldPropertyBag = Object.assign({}, mPropertyBag);
 				var mSmartFieldSelector = Object.assign({}, mPropertyBag.fieldSelector);
 				mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
@@ -277,20 +282,24 @@ sap.ui.define([
 							valueHelp: mField.valueHelp
 						};
 					});
-				}).then(function(mInnerControls) {
-					//do some custom placement here
-					oModifier.insertAggregation(oVBox, "items", mInnerControls.label, 0, mPropertyBag.view);
-					oModifier.insertAggregation(oVBox, "items", mInnerControls.control, 1, mPropertyBag.view);
-					return {
-						//modifier created container containing already the label and control
-						//as it is needed for the current control type or position in the app (can be derived from payload)
-						//control type of relevant container (e.g. Form, ObjectPageLayout, Table)
-						//aggregation name of control insertion is given to support
-						control: oVBox,
-						//if available it has to be added to the relevant containers dependents aggregation otherwise it is expected for not being needed or included in the control
-						valueHelp: mInnerControls.valueHelp
-					};
 				});
+			})
+			.then(function(mCreatedInnerControls) {
+				mInnerControls = mCreatedInnerControls;
+				//do some custom placement here
+				return oModifier.insertAggregation(oVBox, "items", mInnerControls.label, 0, mPropertyBag.view);
+			})
+			.then(oModifier.insertAggregation.bind(oModifier, oVBox, "items", mInnerControls.control, 1, mPropertyBag.view))
+			.then(function () {
+				return {
+					//modifier created container containing already the label and control
+					//as it is needed for the current control type or position in the app (can be derived from payload)
+					//control type of relevant container (e.g. Form, ObjectPageLayout, Table)
+					//aggregation name of control insertion is given to support
+					control: oVBox,
+					//if available it has to be added to the relevant containers dependents aggregation otherwise it is expected for not being needed or included in the control
+					valueHelp: mInnerControls.valueHelp
+				};
 			});
 		}
 	};

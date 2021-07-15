@@ -232,6 +232,7 @@ sap.ui.define([
 					return Promise.reject(oError);
 				}.bind(this));
 			}
+			return undefined;
 		}.bind(this));
 		return this._oLastCommand;
 	};

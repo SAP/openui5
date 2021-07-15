@@ -82,6 +82,7 @@ sap.ui.define([
 						});
 					}, new flUtils.FakePromise());
 			}
+			return undefined;
 		})
 		.then(PersistenceWriteAPI.reset.bind(undefined, {
 			selector: oComponent,
@@ -201,6 +202,7 @@ sap.ui.define([
 			var oParams = {};
 			oParams.keyCode = KeyCodes.ESCAPE;
 			QUnitUtils.triggerEvent("keydown", oPopover.getDomRef(), oParams);
+			return undefined;
 		});
 	};
 

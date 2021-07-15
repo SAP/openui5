@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/rta/command/CompositeCommand",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/m/MessageToast",
 	"sap/ui/dt/OverlayRegistry"
 ], function(
@@ -17,7 +16,6 @@ sap.ui.define([
 	FlUtils,
 	LocalResetAPI,
 	CompositeCommand,
-	JsControlTreeModifier,
 	MessageToast,
 	OverlayRegistry
 ) {
