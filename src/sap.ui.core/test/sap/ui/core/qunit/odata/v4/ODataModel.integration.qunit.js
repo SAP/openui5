@@ -31014,6 +31014,99 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: "Prefer:handling=strict"
+	// Two actions in one batch in separate change sets.
+	// First one succeeds with a warning state message.
+	// Second one fails due to a strict handling error, but without error details.
+	// Show that the warning state message of the first action can be retrieved in the
+	// fnStrictHandlingFailed callback.
+	//
+	// JIRA: CPOUI5ODATAV4-1034
+	QUnit.test("CPOUI5ODATAV4-1034: handling=strict, simulate draft save", function (assert) {
+		var sConfirmAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			sGoodsAction = "com.sap.gateway.default.zui5_epm_sample.v0002."
+				+ "SalesOrder_GoodsIssueCreated",
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "confirm"}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
+	<Text id="status" text="{LifecycleStatus}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=LifecycleStatus,SalesOrderID", {
+				LifecycleStatus : "N",
+				SalesOrderID : "42"
+			})
+			.expectChange("status", "N");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext(),
+				oConfirmBinding = oModel.bindContext(sConfirmAction + "(...)", oContext),
+				oError = createErrorInsideBatch({
+					code : "STRICT",
+					message : "Strict Handling"
+				}, 412),
+				oGoodsBinding = oModel.bindContext(sGoodsAction + "(...)", oContext);
+
+			function fnStrictHandlingFailed(aMessages) {
+				assert.deepEqual(aMessages, [], "no details in strict error response");
+				// code under test
+				aMessages = oContext.getMessages();
+				assert.strictEqual(aMessages.length, 1);
+				assert.strictEqual(aMessages[0].message, "Incorrect LifecycleStatus");
+
+				return Promise.resolve(false);
+			}
+
+			that.expectRequest({
+					method : "POST",
+					headers : {},
+					url : "SalesOrderList('42')/" + sConfirmAction,
+					payload : {}
+				}, {
+					LifecycleStatus : "C",
+					SalesOrderID : "42",
+					Messages : [{
+						code : "CODE",
+						message : "Incorrect LifecycleStatus",
+						numericSeverity : 3,
+						target : "LifecycleStatus",
+						transition : false
+					}]
+				})
+				.expectRequest({
+					headers : {
+						"Prefer" : "handling=strict"
+					},
+					method : "POST",
+					url : "SalesOrderList('42')/" + sGoodsAction,
+					payload : {}
+				}, oError, {
+					"Preference-Applied" : "handling=strict"
+				})
+				.expectMessages([{
+					code : "CODE",
+					message : "Incorrect LifecycleStatus",
+					targets : [
+						"/SalesOrderList('42')/LifecycleStatus"
+					],
+					type : "Warning"
+				}])
+				.expectChange("status", "C");
+
+			// code under test
+			return Promise.all([
+				oConfirmBinding.execute("confirm"),
+				oModel.submitBatch("confirm"),
+				checkCanceled(assert,
+					oGoodsBinding.execute("confirm", false, fnStrictHandlingFailed)),
+				oModel.submitBatch("confirm"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: A list binding with $$sharedRequest below another list binding.
 	// JIRA: CPOUI5ODATAV4-269
 	QUnit.test("CPOUI5ODATAV4-269: Nested lists and $$sharedRequest", function (assert) {
