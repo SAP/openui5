@@ -268,21 +268,33 @@ sap.ui.define([
 	 *
 	 * @param {object} mSettings Object containing the placeholder object
 	 * @param {sap.ui.core.Placeholder} mSettings.placeholder The placeholder instance
+	 * @return {Promise} Promise that resolves with the placeholder
+	 *
 	 * @public
 	 * @since 1.91
 	 */
 	ComponentContainer.prototype.showPlaceholder = function(mSettings) {
+		var pLoaded;
+
 		if (this._placeholder) {
 			this.hidePlaceholder();
 		}
 
-		if (this.getDomRef() && mSettings.placeholder) {
+		if (mSettings.placeholder) {
 			this._placeholder = mSettings.placeholder;
+			pLoaded = this._placeholder._load();
+		} else {
+			pLoaded = Promise.resolve();
+		}
+
+		if (this.getDomRef() && this._placeholder) {
 			this._placeholder.show(this);
 		}
 
 		// Add an event delegate to reinsert the placeholder after it's removed after a rerendering
 		this.addEventDelegate(oPlaceholderDelegate, this);
+
+		return pLoaded;
 	};
 
 	/**

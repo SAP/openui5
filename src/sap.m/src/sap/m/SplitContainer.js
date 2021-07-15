@@ -2142,10 +2142,9 @@ function(
 	SplitContainer.prototype.showPlaceholder = function(mSettings) {
 		switch (mSettings.aggregation) {
 			case "masterPages":
-				this.getAggregation("_navMaster").showPlaceholder(mSettings);
-				break;
+				return this.getAggregation("_navMaster").showPlaceholder(mSettings);
 			default:
-				this.getAggregation("_navDetail").showPlaceholder(mSettings);
+				return this.getAggregation("_navDetail").showPlaceholder(mSettings);
 		}
 	};
 
@@ -2191,7 +2190,7 @@ function(
 				oContainer = this.getAggregation("_navDetail");
 		}
 
-		return oContainer.getCurrentPage() !== oObject;
+		return !oObject || (oContainer.getCurrentPage() !== oObject);
 	};
 	/**************************************************************
 	* END - Private methods

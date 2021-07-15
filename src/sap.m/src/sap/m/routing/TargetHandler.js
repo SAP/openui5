@@ -3,8 +3,8 @@
  */
 
 /*global Promise*/
-sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device', "sap/base/Log"],
-	function(SyncPromise, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device, Log) {
+sap.ui.define(['sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device', "sap/base/Log"],
+	function(InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device, Log) {
 		"use strict";
 
 		var oOnAfterShowDelegate = {
@@ -260,7 +260,7 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 				//Parameters for the nav Container
 				oArguments = oParams.eventData,
 				//Nav container does not work well if you pass undefined as transition
-				sTransition = oParams.transition || "",
+				sTransition = oParams.placeholderShown ? "show" : (oParams.transition || ""),
 				oTransitionParameters = oParams.transitionParameters,
 				sViewId = oParams.view && oParams.view.getId(),
 				//this is only necessary if the target control is a Split container since the nav container only has a pages aggregation
@@ -354,6 +354,7 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 		 * @param {object} mSettings Object containing the container control and the view object to display
 		 * @param {sap.ui.core.Control} mSettings.container The navigation target container
 		 * @param {sap.ui.core.Control|Promise} mSettings.object The component/view object
+		 * @return {Promise} Promise that resolves after the placeholder is loaded
 		 *
 		 * @private
 	 	 * @ui5-restricted sap.ui.core.routing
@@ -361,24 +362,20 @@ sap.ui.define(['sap/ui/base/SyncPromise', 'sap/m/InstanceManager', 'sap/m/NavCon
 		TargetHandler.prototype.showPlaceholder = function(mSettings) {
 			var oContainer = mSettings.container,
 				bNeedsPlaceholder = true,
-				pObject;
+				oObject;
 
-			if (mSettings.object) {
-				if (mSettings.object instanceof Promise) {
-					pObject = mSettings.object;
-				} else {
-					pObject = SyncPromise.resolve(mSettings.object);
-				}
+			if (mSettings.object && !(mSettings.object instanceof Promise)) {
+				oObject = mSettings.object;
+			}
 
-				pObject.then(function(oObject) {
-					if (mSettings.container && typeof mSettings.container.needPlaceholder === "function") {
-						bNeedsPlaceholder = mSettings.container.needPlaceholder(mSettings.aggregation, oObject);
-					}
+			if (mSettings.container && typeof mSettings.container.needPlaceholder === "function") {
+				bNeedsPlaceholder = mSettings.container.needPlaceholder(mSettings.aggregation, oObject);
+			}
 
-					if (bNeedsPlaceholder) {
-						oContainer.showPlaceholder(mSettings);
-					}
-				});
+			if (bNeedsPlaceholder) {
+				return oContainer.showPlaceholder(mSettings);
+			} else {
+				return Promise.resolve();
 			}
 		};
 

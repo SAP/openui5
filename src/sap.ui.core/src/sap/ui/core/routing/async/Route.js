@@ -112,7 +112,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/extend", "sap/ui/core/Component"],
 				// update the targets config so defaults are taken into account - since targets cannot be added in runtime they don't merge configs like routes do
 				oTarget._updateOptions(this._convertToTargetOptions(oConfig));
 
-				oSequencePromise = oTarget._place(oSequencePromise);
+				oSequencePromise = oTarget._place(oSequencePromise, { legacy: true });
 
 				// this is for sap.m.routing.Router to chain the promise to the navigation promise in TargetHandler
 				if (this._oRouter._oTargetHandler && this._oRouter._oTargetHandler._chainNavigation) {

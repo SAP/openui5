@@ -1815,23 +1815,32 @@ sap.ui.define([
 	 *
 	 * @param {object} mSettings Object containing the placeholder instance
 	 * @param {sap.ui.core.Placeholder} mSettings.placeholder The placeholder instance
+	 * @return {Promise} Promise that resolves with the placeholder
+	 *
 	 * @public
 	 * @since 1.91
 	 */
 	NavContainer.prototype.showPlaceholder = function(mSettings) {
+		var pLoaded;
+
 		if (this._placeholder) {
 			this.hidePlaceholder();
 		}
 
 		if (mSettings.placeholder) {
 			this._placeholder = mSettings.placeholder;
+			pLoaded = this._placeholder._load();
+		} else {
+			pLoaded = Promise.resolve();
 		}
 
-		if (this.getDomRef()) {
+		if (this.getDomRef() && this._placeholder) {
 			this._placeholder.show(this);
 		}
 		// Add an event delegate to reinsert the placeholder after it's removed after a rerendering
 		this.addEventDelegate(oPlaceholderDelegate, this);
+
+		return pLoaded;
 	};
 
 	/**
@@ -1862,7 +1871,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.core.routing
 	 */
 	NavContainer.prototype.needPlaceholder = function(sAggregationName, oObject) {
-		return this.getCurrentPage() !== oObject;
+		return !oObject || (this.getCurrentPage() !== oObject);
 	};
 
 	/**

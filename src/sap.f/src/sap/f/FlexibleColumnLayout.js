@@ -2225,13 +2225,11 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype.showPlaceholder = function(mSettings) {
 		switch (mSettings.aggregation) {
 			case "beginColumnPages":
-				this.getAggregation("_beginColumnNav").showPlaceholder(mSettings);
-				break;
+				return this.getAggregation("_beginColumnNav").showPlaceholder(mSettings);
 			case "midColumnPages":
-				this.getAggregation("_midColumnNav").showPlaceholder(mSettings);
-				break;
+				return this.getAggregation("_midColumnNav").showPlaceholder(mSettings);
 			default:
-				this.getAggregation("_endColumnNav").showPlaceholder(mSettings);
+				return this.getAggregation("_endColumnNav").showPlaceholder(mSettings);
 		}
 	};
 
@@ -2281,7 +2279,7 @@ sap.ui.define([
 				oContainer = this.getAggregation("_endColumnNav");
 		}
 
-		return oContainer.getCurrentPage() !== oObject;
+		return !oObject || (oContainer.getCurrentPage() !== oObject);
 	};
 
 	/**

@@ -24,7 +24,7 @@ sap.ui.define([
 		Page,
 		Panel,
 		SplitApp,
-		mTargetHandler
+		MTargetHandler
 	) {
 
 	"use strict";
@@ -39,8 +39,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Placeholder - show / hide", function(assert) {
-		assert.expect(3);
-
 		var done = assert.async();
 		var oButton,
 			oButtonDelegate,
@@ -122,7 +120,6 @@ sap.ui.define([
 
 		oNavContainer.addPage(oPage1);
 
-		assert.expect(2);
 		assert.equal(oNavContainer.needPlaceholder("", oPage1), false, "Should return 'false' as oPage1 is already the current page.");
 		assert.equal(oNavContainer.needPlaceholder("", oPage2), true, "Should return 'true' as oPage2 isn't the current page.");
 
@@ -132,7 +129,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("sap/m/TargetHandler - showPlaceholder (sync)", function(assert) {
-		var oTargetHandler = new mTargetHandler(),
+		var oTargetHandler = new MTargetHandler(),
 			oNavContainer = new NavContainer(),
 			oPage1 = new Page(),
 			oPage2 = new Page();
@@ -167,7 +164,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("sap/m/TargetHandler - showPlaceholder (async)", function(assert) {
-		var oTargetHandler = new mTargetHandler(),
+		var oTargetHandler = new MTargetHandler(),
 			oNavContainer = new NavContainer(),
 			oPage1 = new Page(),
 			oPage2 = new Page();
@@ -186,7 +183,7 @@ sap.ui.define([
 
 		return pObject.then(function() {
 			assert.equal(oNavContainerNeedPlaceholderSpy.callCount, 1, "NavContainer.needPlaceholder should be called");
-			assert.equal(oNavContainerShowPlaceholderSpy.callCount, 0, "NavContainer.showPlaceholder shouldn't be called");
+			assert.equal(oNavContainerShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder should still be called when the page is still under loading");
 
 			pObject = Promise.resolve(oPage2);
 
@@ -197,7 +194,7 @@ sap.ui.define([
 
 			return pObject.then(function() {
 				assert.equal(oNavContainerNeedPlaceholderSpy.callCount, 2, "NavContainer.needPlaceholder should be called");
-				assert.equal(oNavContainerShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder shouldn't be called");
+				assert.equal(oNavContainerShowPlaceholderSpy.callCount, 2, "NavContainer.showPlaceholder should still be called before the page is finished with loading");
 
 				// cleanup
 				oTargetHandler.destroy();
@@ -281,7 +278,7 @@ sap.ui.define([
 							viewType: "JS"
 						},
 						routes: [{
-							pattern: "",
+							pattern: ":?query:",
 							name: "home",
 							target: {
 								name: "home",
@@ -319,8 +316,6 @@ sap.ui.define([
 			});
 		});
 
-		assert.expect(5);
-
 		var oNavConShowPlaceholderSpy = sinon.spy(NavContainer.prototype, "showPlaceholder"),
 			oNavConHidePlaceholderSpy = sinon.spy(NavContainer.prototype, "hidePlaceholder");
 
@@ -338,53 +333,48 @@ sap.ui.define([
 			oComponentContainer.attachEvent("componentCreated", function(oEvent) {
 				resolve(oEvent.getParameter("component"));
 			});
-
 		}).then(function(oComponent) {
 			oRouter = oComponent.getRouter();
 			oRouter.initialize();
 
 			return new Promise(function(resolve, reject) {
-				oRouter.attachEvent("routeMatched", function(oEvent) {
+				oRouter.attachEventOnce("routeMatched", function(oEvent) {
+					assert.equal(oNavConShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder should be called");
+					assert.equal(oNavConHidePlaceholderSpy.callCount, 1, "NavContainer.hidePlaceholder should be called");
+
+					oNavConShowPlaceholderSpy.resetHistory();
+					oNavConHidePlaceholderSpy.resetHistory();
 					resolve(oEvent.getParameter("targetControl"));
 				});
 			});
-
 		}).then(function(oNavContainer) {
-			assert.equal(oNavConShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder should be called");
-
-			return new Promise(function(resolve, reject) {
-				oNavContainer.getCurrentPage().addEventDelegate({
-					"onAfterShow": function() {
-						resolve(oNavContainer);
-					}
-				});
+			oRouter.navTo("home", {
+				"?query": {
+					a: "b"
+				}
 			});
 
+			return new Promise(function(resolve, reject) {
+				oRouter.attachEventOnce("routeMatched", function(oEvent) {
+					assert.equal(oNavConShowPlaceholderSpy.callCount, 0, "Placeholder shouldn't be shown when the same route is matched again");
+					resolve(oEvent.getParameter("targetControl"));
+				});
+			});
 		}).then(function(oNavContainer) {
-			assert.equal(oNavConHidePlaceholderSpy.callCount, 1, "NavContainer.hidePlaceholder should be called");
-
 			// Navigate to route1 which has autoClose config set to 'false'
 			oRouter.navTo("route1");
 
 			return new Promise(function(resolve, reject) {
-				oRouter.getRoute("route1").attachMatched(function(oEvent) {
-					assert.equal(oNavConShowPlaceholderSpy.callCount, 2, "NavContainer.showPlaceholder should be called a second time");
+				oRouter.attachEventOnce("routeMatched", function(oEvent) {
+					assert.equal(oNavConShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder should be called for another time");
 					resolve(oNavContainer);
 				});
 			});
 		}).then(function(oNavContainer) {
-			return new Promise(function(resolve, reject) {
-				oNavContainer.getCurrentPage().addEventDelegate({
-					"onAfterShow": function() {
-						assert.ok(oNavContainer.getDomRef().contains(document.getElementById("myPlaceholder")), "Placeholder should be visible inside NavContainer");
+			assert.ok(oNavContainer.getDomRef().contains(document.getElementById("myPlaceholder")), "Placeholder should be visible inside NavContainer");
+			oNavContainer.hidePlaceholder();
+			assert.notOk(oNavContainer.getDomRef().contains(document.getElementById("myPlaceholder")), "Placeholder shouldn't be visible inside NavContainer anymore");
 
-						oNavContainer.hidePlaceholder();
-						assert.notOk(oNavContainer.getDomRef().contains(document.getElementById("myPlaceholder")), "Placeholder shouldn't be visible inside NavContainer anymore");
-						resolve();
-					}
-				});
-			});
-		}).then(function() {
 			// cleanup
 			oComponentContainer.destroy();
 			oNavConShowPlaceholderSpy.restore();
@@ -478,12 +468,11 @@ sap.ui.define([
 			});
 		});
 
-		assert.expect(22);
-
 		// spies creation
 		var oSplitAppShowPlaceholderSpy = sinon.spy(SplitApp.prototype, "showPlaceholder");
 		var oSplitAppNeedPlaceholderSpy = sinon.spy(SplitApp.prototype, "needPlaceholder");
 		var oSplitAppHidePlaceholderSpy = sinon.spy(SplitApp.prototype, "hidePlaceholder");
+		var oHomeDisplayed = sinon.spy();
 
 		var oRouter;
 		var oComponentContainer = new ComponentContainer({
@@ -499,9 +488,11 @@ sap.ui.define([
 			oComponentContainer.attachEvent("componentCreated", function(oEvent) {
 				resolve(oEvent.getParameter("component"));
 			});
-
 		}).then(function(oComponent) {
 			oRouter = oComponent.getRouter();
+
+			oRouter.getTarget("home").attachDisplay(oHomeDisplayed);
+
 			// 1) home, target1
 			oRouter.initialize();
 
@@ -522,99 +513,91 @@ sap.ui.define([
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(0).args[0], "masterPages", "SplitApp.needPlaceholder should be called only on 'masterPages' aggregation");
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(1).args[0], "detailPages", "SplitApp.needPlaceholder should be called only on 'detailPages' aggregation");
 
+			// hidePlaceholder
+			assert.equal(oSplitAppHidePlaceholderSpy.callCount, 2, "SplitApp.hidePlaceholder should be called twice");
+			assert.equal(oSplitAppHidePlaceholderSpy.getCall(0).args[0].aggregation, "masterPages", "SplitApp.hidePlaceholder should be called only on 'masterPages' aggregation");
+			assert.equal(oSplitAppHidePlaceholderSpy.getCall(1).args[0].aggregation, "detailPages", "SplitApp.hidePlaceholder should be called only on 'detailPages' aggregation");
+
+			assert.equal(oHomeDisplayed.callCount, 1, "Home target is displayed");
+			assert.ok(oSplitAppShowPlaceholderSpy.getCall(1).calledBefore(oHomeDisplayed.getCall(0)), "showPlaceholder for the second target shouldn't wait for the display process of the first target");
+
+			oSplitAppShowPlaceholderSpy.resetHistory();
+			oSplitAppNeedPlaceholderSpy.resetHistory();
+			oSplitAppHidePlaceholderSpy.resetHistory();
+			oHomeDisplayed.resetHistory();
+
 			return new Promise(function(resolve, reject) {
-				// masterPage
-				oSplitApp.getCurrentMasterPage().addEventDelegate({
-					"onAfterShow": function() {
-						// detailPage
-						oSplitApp.getCurrentDetailPage().addEventDelegate({
-							"onAfterShow": function() {
-								resolve(oSplitApp);
-							}
-						});
-					}
+				oRouter.getRoute("route1").attachMatched(function(oEvent) {
+					resolve(oSplitApp);
 				});
-			}).then(function(oSplitApp) {
-				return new Promise(function(resolve, reject) {
-					oRouter.getRoute("route1").attachMatched(function(oEvent) {
-						resolve(oSplitApp);
-					});
 
-					// 2) home, target2
-					oRouter.navTo("route1");
-				});
-			}).then(function(oSplitApp) {
-				// showPlaceholder
-				assert.equal(oSplitAppShowPlaceholderSpy.callCount, 3, "SplitApp.showPlaceholder should be called only a third time");
-				assert.equal(oSplitAppShowPlaceholderSpy.getCall(2).args[0].aggregation, "detailPages",
-					"SplitApp.showPlaceholder should be called only on 'detailPages' aggregation - 'masterPages' didn't change");
-
-				// needPlaceholder
-				assert.equal(oSplitAppNeedPlaceholderSpy.callCount, 4	, "SplitApp.needPlaceholder should be called four times");
-				assert.equal(oSplitAppNeedPlaceholderSpy.getCall(2).args[0], "masterPages", "SplitApp.needPlaceholder should be called on 'masterPages' aggregation");
-				assert.equal(oSplitAppNeedPlaceholderSpy.getCall(3).args[0], "detailPages", "SplitApp.needPlaceholder should be called on 'detailPages' aggregation");
-
-				return new Promise(function(resolve, reject) {
-					oSplitApp.getCurrentDetailPage().addEventDelegate({
-						"onAfterShow": function() {
-							resolve(oSplitApp);
-						}
-					});
-				});
-			}).then(function(oSplitApp) {
-				// hidePlaceholder
-				assert.equal(oSplitAppHidePlaceholderSpy.callCount, 1, "SplitApp.hidePlaceholder should be called");
-				assert.equal(oSplitAppHidePlaceholderSpy.getCall(0).args[0].aggregation, "masterPages", "SplitApp.hidePlaceholder should be called on 'masterPages' aggregation");
-
-				return new Promise(function(resolve, reject) {
-					oRouter.getRoute("route2").attachMatched(function(oEvent) {
-						resolve(oSplitApp);
-					});
-
-					// 3) home, targetAutoCloseFalse
-					oRouter.navTo("route2");
-				});
-			}).then(function(oSplitApp) {
-				// showPlaceholder
-				assert.equal(oSplitAppShowPlaceholderSpy.callCount, 4, "SplitApp.showPlaceholder should be called only a third time");
-				assert.equal(oSplitAppShowPlaceholderSpy.getCall(2).args[0].aggregation,
-					"detailPages", "SplitApp.showPlaceholder should be called only on 'detailPages' aggregation - 'masterPages' didn't change");
-
-				// needPlaceholder
-				assert.equal(oSplitAppNeedPlaceholderSpy.callCount, 6, "SplitApp.needPlaceholder should be called four times");
-				assert.equal(oSplitAppNeedPlaceholderSpy.getCall(4).args[0], "masterPages", "SplitApp.needPlaceholder should be called on 'masterPages' aggregation");
-				assert.equal(oSplitAppNeedPlaceholderSpy.getCall(5).args[0], "detailPages", "SplitApp.needPlaceholder should be called on 'detailPages' aggregation");
-
-				return new Promise(function(resolve, reject) {
-					oSplitApp.getCurrentDetailPage().addEventDelegate({
-						"onAfterShow": function() {
-							resolve(oSplitApp);
-						}
-					});
-				});
-			}).then(function() {
-				return new Promise(function(resolve, reject) {
-					assert.equal(oSplitAppHidePlaceholderSpy.callCount, 2, "SplitApp.hidePlaceholder should be called");
-					assert.equal(oSplitAppHidePlaceholderSpy.getCall(1).args[0].aggregation, "masterPages", "SplitApp.hidePlaceholder should be called on 'masterPages' aggregation");
-
-					var oDetailPageNavContainer = oSplitApp.getCurrentDetailPage().getParent();
-					assert.ok(oDetailPageNavContainer.getDomRef()
-						.contains(document.getElementById("myPlaceholder")), "DetailPage NavContainer should contain the placeholder");
-
-					// manually call hidePlaceholder
-					oDetailPageNavContainer.hidePlaceholder();
-					assert.notOk(oDetailPageNavContainer.getDomRef()
-						.contains(document.getElementById("myPlaceholder")), "DetailPage NavContainer shouldn't contain the placeholder anymore");
-
-					resolve();
-				});
-			}).then(function() {
-				// cleanup
-				oComponentContainer.destroy();
-				oSplitAppShowPlaceholderSpy.restore();
-				oSplitAppNeedPlaceholderSpy.restore();
-				oSplitAppHidePlaceholderSpy.restore();
+				// 2) home, target2
+				oRouter.navTo("route1");
 			});
+		}).then(function(oSplitApp) {
+			// showPlaceholder
+			assert.equal(oSplitAppShowPlaceholderSpy.callCount, 1, "SplitApp.showPlaceholder should be called once");
+			assert.equal(oSplitAppShowPlaceholderSpy.getCall(0).args[0].aggregation, "detailPages",
+				"SplitApp.showPlaceholder should be called only on 'detailPages' aggregation - 'masterPages' didn't change");
+
+			// needPlaceholder
+			assert.equal(oSplitAppNeedPlaceholderSpy.callCount, 2, "SplitApp.needPlaceholder should be called for another two times");
+			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(0).args[0], "masterPages", "SplitApp.needPlaceholder should be called on 'masterPages' aggregation");
+			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(1).args[0], "detailPages", "SplitApp.needPlaceholder should be called on 'detailPages' aggregation");
+
+			// hidePlaceholder
+			assert.equal(oSplitAppHidePlaceholderSpy.callCount, 1, "SplitApp.hidePlaceholder should be called");
+			assert.equal(oSplitAppHidePlaceholderSpy.getCall(0).args[0].aggregation, "masterPages", "SplitApp.hidePlaceholder should be called on 'masterPages' aggregation");
+
+			assert.equal(oHomeDisplayed.callCount, 1, "Home target is displayed");
+			assert.ok(oSplitAppShowPlaceholderSpy.getCall(0).calledBefore(oHomeDisplayed.getCall(0)), "showPlaceholder for the second target shouldn't wait for the display process of the first target");
+
+			oSplitAppShowPlaceholderSpy.resetHistory();
+			oSplitAppNeedPlaceholderSpy.resetHistory();
+			oSplitAppHidePlaceholderSpy.resetHistory();
+			oHomeDisplayed.resetHistory();
+
+			return new Promise(function(resolve, reject) {
+				oRouter.getRoute("route2").attachMatched(function(oEvent) {
+					resolve(oSplitApp);
+				});
+
+				// 3) home, targetAutoCloseFalse
+				oRouter.navTo("route2");
+			});
+		}).then(function(oSplitApp) {
+			// showPlaceholder
+			assert.equal(oSplitAppShowPlaceholderSpy.callCount, 1, "SplitApp.showPlaceholder should be called for another time");
+			assert.equal(oSplitAppShowPlaceholderSpy.getCall(0).args[0].aggregation,
+				"detailPages", "SplitApp.showPlaceholder should be called only on 'detailPages' aggregation - 'masterPages' didn't change");
+
+			// needPlaceholder
+			assert.equal(oSplitAppNeedPlaceholderSpy.callCount, 2, "SplitApp.needPlaceholder should be called for another 2 times");
+			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(0).args[0], "masterPages", "SplitApp.needPlaceholder should be called on 'masterPages' aggregation");
+			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(1).args[0], "detailPages", "SplitApp.needPlaceholder should be called on 'detailPages' aggregation");
+
+			// hidePlaceholder
+			assert.equal(oSplitAppHidePlaceholderSpy.callCount, 1, "SplitApp.hidePlaceholder should be called");
+			assert.equal(oSplitAppHidePlaceholderSpy.getCall(0).args[0].aggregation, "masterPages", "SplitApp.hidePlaceholder should be called on 'masterPages' aggregation");
+
+			oSplitAppShowPlaceholderSpy.resetHistory();
+			oSplitAppNeedPlaceholderSpy.resetHistory();
+			oSplitAppHidePlaceholderSpy.resetHistory();
+
+			var oDetailPageNavContainer = oSplitApp.getCurrentDetailPage().getParent();
+			assert.ok(oDetailPageNavContainer.getDomRef()
+				.contains(document.getElementById("myPlaceholder")), "DetailPage NavContainer should contain the placeholder");
+
+			// manually call hidePlaceholder
+			oDetailPageNavContainer.hidePlaceholder();
+			assert.notOk(oDetailPageNavContainer.getDomRef()
+				.contains(document.getElementById("myPlaceholder")), "DetailPage NavContainer shouldn't contain the placeholder anymore");
+
+			// cleanup
+			oComponentContainer.destroy();
+			oSplitAppShowPlaceholderSpy.restore();
+			oSplitAppNeedPlaceholderSpy.restore();
+			oSplitAppHidePlaceholderSpy.restore();
 		});
 	});
 
@@ -713,6 +696,7 @@ sap.ui.define([
 		var oFlexLayoutShowPlaceholderSpy = sinon.spy(FlexibleColumnLayout.prototype, "showPlaceholder");
 		var oFlexLayoutNeedPlaceholderSpy = sinon.spy(FlexibleColumnLayout.prototype, "needPlaceholder");
 		var oFlexLayoutHidePlaceholderSpy = sinon.spy(FlexibleColumnLayout.prototype, "hidePlaceholder");
+		var oTargetDisplayed = sinon.spy();
 
 		var oRouter;
 		var oComponentContainer = new ComponentContainer({
@@ -724,14 +708,15 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		assert.expect(23);
-
 		return new Promise(function(resolve, reject) {
 			oComponentContainer.attachEvent("componentCreated", function(oEvent) {
 				resolve(oEvent.getParameter("component"));
 			});
 		}).then(function(oComponent) {
 			oRouter = oComponent.getRouter();
+
+			var oTarget1 = oRouter.getTarget("target1");
+			oTarget1.attachDisplay(oTargetDisplayed);
 
 			// 1) target1, target2, target3
 			oRouter.initialize();
@@ -759,43 +744,40 @@ sap.ui.define([
 			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(0).args[0].aggregation, "midColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'midColumnPages' aggregation");
 			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(1).args[0].aggregation, "endColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'endColumnPages' aggregation");
 
-			return new Promise(function(resolve, reject) {
-				oFlexColumnLayout.getEndColumnPages()[0].addEventDelegate({
-					"onAfterShow": function() {
-						oRouter.getRoute("route1").attachMatched(function(oEvent) {
-							resolve(oFlexColumnLayout);
-						});
+			assert.equal(oTargetDisplayed.callCount, 1, "first target is displayed");
+			assert.ok(oFlexLayoutShowPlaceholderSpy.getCall(1).calledBefore(oTargetDisplayed.getCall(0)), "showPlaceholder for the second target shouldn't wait for the display process of the first target");
+			assert.ok(oFlexLayoutShowPlaceholderSpy.getCall(2).calledBefore(oTargetDisplayed.getCall(0)), "showPlaceholder for the third target shouldn't wait for the display process of the first target");
 
-						// targetAutoCloseFalse, target4
-						oRouter.navTo("route1");
-					}
+			oFlexLayoutShowPlaceholderSpy.resetHistory();
+			oFlexLayoutNeedPlaceholderSpy.resetHistory();
+			oFlexLayoutHidePlaceholderSpy.resetHistory();
+			oTargetDisplayed.resetHistory();
+
+			return new Promise(function(resolve, reject) {
+				oRouter.getRoute("route1").attachMatched(function(oEvent) {
+					resolve(oFlexColumnLayout);
 				});
+
+				// targetAutoCloseFalse, target4
+				oRouter.navTo("route1");
 			});
 		}).then(function(oFlexColumnLayout) {
 			// showPlaceholder
-			assert.equal(oFlexLayoutShowPlaceholderSpy.callCount, 5, "FlexibleColumnLayout.showPlaceholder should be called four times");
-			assert.equal(oFlexLayoutShowPlaceholderSpy.getCall(3).args[0].aggregation, "midColumnPages",
+			assert.equal(oFlexLayoutShowPlaceholderSpy.callCount, 2, "FlexibleColumnLayout.showPlaceholder should be called for another two times");
+			assert.equal(oFlexLayoutShowPlaceholderSpy.getCall(0).args[0].aggregation, "midColumnPages",
 				"FlexibleColumnLayout.showPlaceholder should be called on 'midColumnPages' aggregation - 'beginColumnPages' didn't change");
-			assert.equal(oFlexLayoutShowPlaceholderSpy.getCall(4).args[0].aggregation, "endColumnPages",
+			assert.equal(oFlexLayoutShowPlaceholderSpy.getCall(1).args[0].aggregation, "endColumnPages",
 				"FlexibleColumnLayout.showPlaceholder should be called on 'endColumnPages' aggregation - 'beginColumnPages' didn't change");
 
 			// needPlaceholder
-			assert.equal(oFlexLayoutNeedPlaceholderSpy.callCount, 5, "FlexibleColumnLayout.needPlaceholder should be called six times");
-			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(3).args[0], "midColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'midColumnPages' aggregation");
-			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(4).args[0], "endColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'endColumnPages' aggregation");
+			assert.equal(oFlexLayoutNeedPlaceholderSpy.callCount, 2, "FlexibleColumnLayout.needPlaceholder should be called for another two times");
+			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(0).args[0], "midColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'midColumnPages' aggregation");
+			assert.equal(oFlexLayoutNeedPlaceholderSpy.getCall(1).args[0], "endColumnPages", "FlexibleColumnLayout.needPlaceholder should be called on 'endColumnPages' aggregation");
 
 			// hidePlaceholder
-			assert.equal(oFlexLayoutHidePlaceholderSpy.callCount, 3, "FlexibleColumnLayout.hidePlaceholder should be called three times");
-			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(2).args[0].aggregation, "midColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'midColumnPages' aggregation");
+			assert.equal(oFlexLayoutHidePlaceholderSpy.callCount, 1, "FlexibleColumnLayout.hidePlaceholder should be called for another time");
+			assert.equal(oFlexLayoutHidePlaceholderSpy.getCall(0).args[0].aggregation, "midColumnPages", "FlexibleColumnLayout.hidePlaceholder should be called on 'midColumnPages' aggregation");
 
-			return new Promise(function(resolve, reject) {
-				oFlexColumnLayout.getEndColumnPages()[1].addEventDelegate({
-					"onAfterShow": function() {
-						resolve(oFlexColumnLayout);
-					}
-				});
-			});
-		}).then(function(oFlexColumnLayout) {
 			assert.ok(oFlexColumnLayout._getBeginColumn()
 				.getDomRef().contains(document.getElementById("myPlaceholder")), "beginColumn should still contain the placeholder (autoClose: false)");
 			assert.ok(oFlexColumnLayout._getEndColumn()

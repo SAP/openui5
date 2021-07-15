@@ -39,7 +39,7 @@ sap.ui.define([], function() {
 
 		},
 		showPlaceholder : function(mSettings) {
-			this._oTargetHandler.showPlaceholder(mSettings);
+			return this._oTargetHandler.showPlaceholder(mSettings);
 		},
 		hidePlaceholder : function(mSettings) {
 		/**

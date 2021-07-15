@@ -31,7 +31,8 @@ sap.ui.define([], function() {
 						aggregationName: that._oOptions.controlAggregation,
 						view: oViewInfo.view,
 						preservePageInSplitContainer: that._oOptions.preservePageInSplitContainer,
-						placeholderConfig: oViewInfo.placeholderConfig
+						placeholderConfig: oViewInfo.placeholderConfig,
+						placeholderShown: oViewInfo.placeholderShown
 					});
 
 					// do not forward the route config to navigation
@@ -45,7 +46,7 @@ sap.ui.define([], function() {
 		},
 
 		showPlaceholder : function(mSettings) {
-			this._oTargetHandler.showPlaceholder(mSettings);
+			return this._oTargetHandler.showPlaceholder(mSettings);
 		},
 		hidePlaceholder : function() {
 		/**
