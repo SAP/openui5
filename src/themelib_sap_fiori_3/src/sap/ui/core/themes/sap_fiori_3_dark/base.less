@@ -755,7 +755,7 @@
 @sapButton_Attention_BorderColor: @sapCriticalElementColor;
 
 // [Tags "!Protected"]
-@sapButton_Attention_TextColor: contrast(@sapButton_Attention_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Attention_TextColor: contrast(@sapButton_Attention_Background, @sapCriticalTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapButton_Attention_Hover_Background: @sapWarningBackground;
@@ -764,7 +764,7 @@
 @sapButton_Attention_Hover_BorderColor: @sapButton_Attention_BorderColor;
 
 // [Tags "!Protected"]
-@sapButton_Attention_Hover_TextColor: contrast(@sapButton_Attention_Hover_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Attention_Hover_TextColor: contrast(@sapButton_Attention_Hover_Background, @sapCriticalTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 @sapButton_Attention_Active_Background: darken(@sapCriticalElementColor, 5);
