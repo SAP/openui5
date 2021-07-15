@@ -2111,6 +2111,28 @@ function (
 		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPage-Std-Desktop-XL"), "Desktop-XL class is applied");
 	});
 
+	QUnit.test("DynamicPage _needsVerticalScrollBar() floors the current max scrollHeight", function (assert) {
+		// Arrange
+		var iScrollHeight = this.oDynamicPage.$wrapper[0].scrollHeight;
+		// mock the conditions of the tested scenario:
+		this.oDynamicPage.$wrapper[0] = {
+			scrollHeight: iScrollHeight,
+			// the browser returns a ceiled value for <code>clientHeight</code>
+			clientHeight: iScrollHeight - 1,
+			getBoundingClientRect: function() {
+				return {
+					// the actual height is only a fraction of a pixel smaller than the scrollHeight
+					height: (iScrollHeight - 0.1)
+				};
+			}
+		};
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage._needsVerticalScrollBar(), false,
+			"no scrollbar needed");
+
+	});
+
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
 	QUnit.module("DynamicPage - Toggle Header On Scroll", {
 		beforeEach: function () {

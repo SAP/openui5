@@ -1182,11 +1182,14 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getMaxScrollPosition = function() {
-		var $wrapperDom;
+		var $wrapperDom,
+			iClientHeightPrecise;
 
 		if (exists(this.$wrapper)) {
 			$wrapperDom = this.$wrapper[0];
-			return $wrapperDom.scrollHeight - $wrapperDom.clientHeight;
+			iClientHeightPrecise = $wrapperDom.getBoundingClientRect().height;
+			// compare with precise height to avoid 1px difference due to rounding
+			return $wrapperDom.scrollHeight - iClientHeightPrecise;
 		}
 		return 0;
 	};
@@ -1202,7 +1205,9 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		return this._getMaxScrollPosition() > 0;
+		// use Math.floor in order to avoid adding a scrollbar when
+		// the returned max scrollHeight is less than 1px
+		return Math.floor(this._getMaxScrollPosition()) > 0;
 	};
 
 	/**
