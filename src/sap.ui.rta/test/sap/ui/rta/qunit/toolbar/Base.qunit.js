@@ -4,13 +4,17 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/core/BusyIndicator",
-	"sap/m/Button"
+	"sap/ui/rta/util/Animation",
+	"sap/m/Button",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	jQuery,
 	BaseToolbar,
 	BusyIndicator,
-	Button
+	Animation,
+	Button,
+	sinon
 ) {
 	'use strict';
 
@@ -20,6 +24,8 @@ function(
 
 	//RTA Toolbar needs RTA Mode settings
 	jQuery("body").addClass("sapUiRtaMode");
+
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module('Basic functionality', {
 		beforeEach: function() {
@@ -50,6 +56,18 @@ function(
 
 		QUnit.test('hide() method', function(assert) {
 			var oPromise = this.oToolbar.hide();
+
+			assert.ok(oPromise instanceof Promise, 'hide() method returns Promise');
+
+			return oPromise.then(function () {
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(this.oToolbar.getDomRef(), null, 'Toolbar is not rendered');
+				assert.ok(this.oToolbar.$().filter(':visible').length === 0, 'Toolbar is not visible');
+			}.bind(this));
+		});
+
+		QUnit.test('hide() method with deactivated animation transition', function(assert) {
+			var oPromise = this.oToolbar.hide(true);
 
 			assert.ok(oPromise instanceof Promise, 'hide() method returns Promise');
 
@@ -220,6 +238,7 @@ function(
 		afterEach: function() {
 			this.oToolbar.destroy();
 			this.$styles.remove();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test('show() with animation', function(assert) {
@@ -230,12 +249,30 @@ function(
 		});
 
 		QUnit.test('show()/hide() combination with animation', function(assert) {
+			var oWaitTransitionSpy = sandbox.spy(Animation, "waitTransition");
+
 			return this.oToolbar.show().then(function () {
 				assert.ok(true, 'animation is completed');
 				assert.ok(this.oToolbar.hasStyleClass('is_visible'), 'Toolbar has proper animation class');
 
 				return this.oToolbar.hide().then(function () {
 					assert.ok(true, 'animation is completed');
+					assert.ok(oWaitTransitionSpy.calledTwice, "waitTransition called for showing and hiding");
+					assert.ok(!this.oToolbar.hasStyleClass('is_visible'), 'Toolbar has no animation class');
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test('show()/hide() combination with animation, but transition skipped when hiding', function(assert) {
+			var oWaitTransitionSpy = sandbox.spy(Animation, "waitTransition");
+
+			return this.oToolbar.show().then(function () {
+				assert.ok(true, 'animation is completed');
+				assert.ok(this.oToolbar.hasStyleClass('is_visible'), 'Toolbar has proper animation class');
+
+				return this.oToolbar.hide(true).then(function () {
+					assert.ok(true, 'animation is completed');
+					assert.ok(oWaitTransitionSpy.calledOnce, "waitTransition called only for showing");
 					assert.ok(!this.oToolbar.hasStyleClass('is_visible'), 'Toolbar has no animation class');
 				}.bind(this));
 			}.bind(this));
