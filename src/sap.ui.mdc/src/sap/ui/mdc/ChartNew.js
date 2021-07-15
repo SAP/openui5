@@ -525,16 +525,21 @@ sap.ui.define([
          * @param {object} oChange the change object from the ManagedObjectModel observer
          */
         Chart.prototype._propagateItemChangeToInnerChart = function (oChange) {
+
+            if (this._bIsDestroyed){
+                return; //Don't propagate changes when CHart is destroyed
+            }
+
             this.setBusy(true);
             switch (oChange.mutation) {
 
                 case "insert":
                     var iIndex = this.getItems().indexOf(oChange.child);
 
-                    this.getControlDelegate().insertItemToInnerChart(oChange.child, iIndex);
+                    this.getControlDelegate().insertItemToInnerChart(this, oChange.child, iIndex);
                     break;
                 case "remove":
-                    this.getControlDelegate().removeItemFromInnerChart(oChange.child);
+                    this.getControlDelegate().removeItemFromInnerChart(this, oChange.child);
                     break;
                 default:
                     Log.error("Unknown mutation on MDC Chart Item Aggregation. This will not sync to inner chart!");
@@ -568,7 +573,7 @@ sap.ui.define([
 
             this.setBusy(true);
 
-            if (!this.getControlDelegate().getInnerChartBound()) {
+            if (!this.getControlDelegate().getInnerChartBound(this)) {
                 this._createContentfromPropertyInfos();
                 return;
             }
@@ -632,7 +637,7 @@ sap.ui.define([
          */
         Chart.prototype._getInnerChart = function () {
             if (this._bInnerChartReady) {
-                return this.getControlDelegate().getInnerChart();
+                return this.getControlDelegate().getInnerChart(this);
             } else {
                 Log.error("Trying to acces inner chart while inner chart is not yet initialized!");
             }
@@ -696,7 +701,7 @@ sap.ui.define([
                 iValue = 10;
             }
 
-            this.getControlDelegate().zoomIn(iValue);
+            this.getControlDelegate().zoomIn(this, iValue);
         };
 
         /**
@@ -712,7 +717,7 @@ sap.ui.define([
                 iValue = 10;
             }
 
-            this.getControlDelegate().zoomOut(iValue);
+            this.getControlDelegate().zoomOut(this, iValue);
         };
 
         /**
@@ -729,11 +734,11 @@ sap.ui.define([
          * @ui5-restricted sap.ui.mdc, sap.fe
          */
         Chart.prototype.getZoomState = function () {
-            return this.getControlDelegate().getZoomState();
+            return this.getControlDelegate().getZoomState(this);
         };
 
         Chart.prototype.getSelectionHandler = function () {
-            return this.getControlDelegate().getInnerChartSelectionHandler();
+            return this.getControlDelegate().getInnerChartSelectionHandler(this);
         };
 
         /**
@@ -750,7 +755,7 @@ sap.ui.define([
 
             //Skip if no control delegate; gets propagated by _propagatePropertiesToInnerChart after init
             try {
-                this.getControlDelegate().setLegendVisible(bVisible);
+                this.getControlDelegate().setLegendVisible(this, bVisible);
             } catch (e) {
                 Log.info("Trying to set legend visiblity for Chart before delegate was initialized");
             }
@@ -769,12 +774,18 @@ sap.ui.define([
 
             //Skip if no control delegate; gets propagated by _propagatePropertiesToInnerChart after init
             try {
-                this.getControlDelegate().setChartTooltipVisibility(bValue);
+                this.getControlDelegate().setChartTooltipVisibility(this, bValue);
             } catch (e) {
                 Log.info("Trying to set tooltip visibility before delegate was initialized");
             }
 
             return this;
+        };
+
+        Chart.prototype.destroy = function() {
+            this._bIsDestroyed = true;
+
+            Control.prototype.destroy.apply(this, arguments);
         };
 
         /**
@@ -836,7 +847,7 @@ sap.ui.define([
             var mInfo;
 
             try {
-                mInfo = this.getControlDelegate().getChartTypeInfo();
+                mInfo = this.getControlDelegate().getChartTypeInfo(this);
             } catch (error) {
                 //Inner chart is not yet ready
                 if (!mInfo) {
@@ -860,7 +871,7 @@ sap.ui.define([
          * @ui5-restricted Fiori Elements
          */
         Chart.prototype.getAvailableChartTypes = function () {
-            return this.getControlDelegate().getAvailableChartTypes();
+            return this.getControlDelegate().getAvailableChartTypes(this);
         };
 
 
@@ -873,7 +884,7 @@ sap.ui.define([
             this.setProperty("chartType", sChartType);
 
             try {
-                this.getControlDelegate().setChartType(sChartType);
+                this.getControlDelegate().setChartType(this, sChartType);
             } catch (e) {
                 Log.info("Trying to set chart type for Chart before delegate was initialized");
             }
@@ -901,15 +912,18 @@ sap.ui.define([
          * @private
          */
         //TODO: Pass this as an callback function to the delegate instead of calling it form the delegate directly
-        Chart.prototype._innerChartDataLoadComplete = function () {
-            this.setBusy(false);
-            this._renderOverlay(false);
+        Chart.prototype._innerChartDataLoadComplete = function (mArguments) {
+            if (this.getControlDelegate().checkEventForDataLoaded(mArguments)){
+                this.setBusy(false);
+                this._renderOverlay(false);
 
-            this._updateToolbar();
+                this._updateToolbar();
 
-            this.fireEvent("innerChartLoadedData ", {
-                innerChart: this.getControlDelegate().getInnerChart()
-            });
+                this.fireEvent("innerChartLoadedData ", {
+                    innerChart: this.getControlDelegate().getInnerChart(this)
+                });
+            }
+
         };
 
         /**
@@ -1040,7 +1054,7 @@ sap.ui.define([
 		 * @ui5-restricted Fiori Elements, sap.ui.mdc
 		 */
 		Chart.prototype._onFiltersChanged = function(oEvent) {
-			if (this._bInnerChartReady && this.getControlDelegate() && this.getControlDelegate().getInnerChartBound() && oEvent.getParameter("conditionsBased")) {
+			if (this._bInnerChartReady && this.getControlDelegate() && this.getControlDelegate().getInnerChartBound(this) && oEvent.getParameter("conditionsBased")) {
 				this._renderOverlay(true);
 			}
 		};
@@ -1055,9 +1069,9 @@ sap.ui.define([
 		 */
 		Chart.prototype._renderOverlay = function(bShow) {
 
-			if (this.getControlDelegate().getInnerChart()) {
+			if (this.getControlDelegate().getInnerChart(this)) {
 
-				var $this = this.getControlDelegate().getInnerChart().$(), $overlay = $this.find(".sapUiMdcChartOverlay");
+				var $this = this.getControlDelegate().getInnerChart(this).$(), $overlay = $this.find(".sapUiMdcChartOverlay");
 				if (bShow && $overlay.length === 0) {
 					$overlay = jQuery("<div>").addClass("sapUiOverlay sapUiMdcChartOverlay").css("z-index", "1");
 					$this.append($overlay);
