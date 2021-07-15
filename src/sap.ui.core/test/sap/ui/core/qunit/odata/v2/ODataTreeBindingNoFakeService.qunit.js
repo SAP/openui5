@@ -521,4 +521,394 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.mRequestHandles["~requestKey"], "~readHandler");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getRootContexts: initial", function (assert) {
+		var oBinding = {
+				isInitial : function () {}
+			};
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(true);
+
+		// code under test
+		assert.deepEqual(
+			ODataTreeBinding.prototype.getRootContexts.call(oBinding, /*iStartIndex*/ undefined,
+				/*iLength*/undefined, /*iThreshold*/undefined),
+			[]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRootContexts: returns V2 Contexts with tree annotations", function (assert) {
+		var oBinding = {
+				bHasTreeAnnotations : true,
+				_getContextsForNodeId : function () {},
+				isInitial : function () {}
+			};
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_getContextsForNodeId")
+			.withExactArgs(null, "~iStartIndex", "~ilength", "~iThreshold")
+			.returns("~V2Context[]");
+
+		// code under test
+		assert.strictEqual(
+			ODataTreeBinding.prototype.getRootContexts.call(oBinding, "~iStartIndex", "~ilength",
+				"~iThreshold"),
+			"~V2Context[]");
+
+		assert.strictEqual(oBinding.bDisplayRootNode, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRootContexts: returns existing single V2 root context", function (assert) {
+		var oModel = {
+				isList : function () {}
+			},
+			oBinding = {
+				bDisplayRootNode : true, //TODO: how can this be set initially
+				oModel : oModel,
+				sPath : "~sPath",
+				// oRootContext is only set in _loadSingleRootNodeByNavigationProperties with an
+				// OData V2 context instance
+				oRootContext : "~V2RootContext",
+				getContext : function () {},
+				getResolvedPath : function () {},
+				isInitial : function () {}
+			};
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("getContext").withExactArgs().returns("~oContext");
+		this.mock(oModel).expects("isList").withExactArgs("~sPath", "~oContext").returns(false);
+
+		// code under test
+		assert.deepEqual(
+			ODataTreeBinding.prototype.getRootContexts.call(oBinding, "~iStartIndex", "~ilength",
+				"~iThreshold"),
+			["~V2RootContext"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRootContexts: missing root", function (assert) {
+		var oModel = {
+				isList : function () {}
+			},
+			oBinding = {
+				_bRootMissing : true,
+				bDisplayRootNode : true, //TODO: how can this be set initially
+				oModel : oModel,
+				sPath : "~sPath",
+				getContext : function () {},
+				getResolvedPath : function () {},
+				isInitial : function () {}
+			};
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("getContext").withExactArgs().returns("~oContext");
+		this.mock(oModel).expects("isList").withExactArgs("~sPath", "~oContext").returns(false);
+
+		// code under test
+		assert.deepEqual(
+			ODataTreeBinding.prototype.getRootContexts.call(oBinding, "~iStartIndex", "~ilength",
+				"~iThreshold"),
+			[]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRootContexts: calls _loadSingleRootNodeByNavigationProperties and returns []",
+			function (assert) {
+		var oModel = {
+				isList : function () {}
+			},
+			oBinding = {
+				_iPageSize : "~iPageSize",
+				bDisplayRootNode : true, //TODO: how can this be set initially
+				oModel : oModel,
+				sPath : "~sPath",
+				_loadSingleRootNodeByNavigationProperties : function () {},
+				getContext : function () {},
+				getResolvedPath : function () {},
+				isInitial : function () {}
+			};
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("getContext").withExactArgs().returns("~oContext");
+		this.mock(oModel).expects("isList").withExactArgs("~sPath", "~oContext").returns(false);
+		this.mock(oBinding).expects("_loadSingleRootNodeByNavigationProperties")
+			.withExactArgs("~resolvedPath", "null-~iStartIndex-~iPageSize-~iThreshold");
+
+		// code under test
+		assert.deepEqual(
+			ODataTreeBinding.prototype.getRootContexts.call(oBinding, "~iStartIndex", "~ilength",
+				"~iThreshold"),
+			[]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRootContexts: returns V2 Contexts without tree annotations", function (assert) {
+		var oModel = {
+				isList : function () {}
+			},
+			oBinding = {
+				_iPageSize : "~iPageSize",
+				oModel : oModel,
+				iNumberOfExpandedLevels : "~iNumberOfExpandedLevels",
+				sPath : "~sPath",
+				_getContextsForNodeId : function () {},
+				_getNavPath : function () {},
+				getContext : function () {},
+				getPath : function () {},
+				getResolvedPath : function () {},
+				isInitial : function () {}
+			};
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("getContext").withExactArgs().returns("~oContext");
+		this.mock(oModel).expects("isList").withExactArgs("~sPath", "~oContext").returns(false);
+		this.mock(oBinding).expects("getPath").withExactArgs().returns("~getPath");
+		this.mock(oBinding).expects("_getNavPath").withExactArgs("~getPath").returns("~navPath");
+		this.mock(oBinding).expects("_getContextsForNodeId")
+			.withExactArgs("~resolvedPath/~navPath", "~iStartIndex", "~ilength", "~iThreshold", {
+				navPath : "~navPath",
+				numberOfExpandedLevels : "~iNumberOfExpandedLevels"
+			})
+			.returns("~V2Context[]");
+
+		// code under test
+		assert.strictEqual(
+			ODataTreeBinding.prototype.getRootContexts.call(oBinding, "~iStartIndex", "~ilength",
+				"~iThreshold"),
+			"~V2Context[]");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadSingleRootNodeByNavigationProperties: success handler sets V2 Context as root"
+			+ " context", function (assert) {
+		var oModel = {
+				_getKey : function () {},
+				callAfterUpdate : function () {},
+				getContext : function () {},
+				read : function () {}
+			},
+			oBinding = {
+				sGroupId : "~sGroupId",
+				oModel : oModel,
+				_getNavPath : function () {},
+				_processODataObject : function () {},
+				getPath : function () {},
+				mRequestHandles : {},
+				getResolvedPath : function () {}
+			},
+			oExpectation,
+			oV2Context = {
+				getObject : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		oExpectation = this.mock(oModel).expects("read").withExactArgs("~resolvedPath", {
+			error : sinon.match.func, groupId : "~sGroupId", success : sinon.match.func
+		}).returns("~readHandle");
+
+		// code under test
+		ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties.call(oBinding,
+			"~sNodeId", "~sRequestKey");
+
+		assert.strictEqual(oBinding.mRequestHandles["~sRequestKey"], "~readHandle");
+
+		this.mock(oBinding).expects("getPath").withExactArgs().returns("~getPath");
+		this.mock(oBinding).expects("_getNavPath").withExactArgs("~getPath").returns("~navPath");
+		this.mock(oModel).expects("_getKey").withExactArgs("~oData").returns("~key");
+		this.mock(oModel).expects("getContext").withExactArgs("/~key").returns(oV2Context);
+		this.mock(oV2Context).expects("getObject").withExactArgs().returns("~object");
+		this.mock(oBinding).expects("_processODataObject")
+			.withExactArgs("~object", "~sNodeId", "~navPath");
+		this.mock(oModel).expects("callAfterUpdate").withExactArgs(sinon.match.func);
+
+		// code under test
+		oExpectation.args[0][1].success("~oData");
+
+		assert.strictEqual(oBinding.oRootContext, oV2Context);
+		assert.strictEqual(oBinding.bNeedsUpdate, true);
+		assert.notOk(oBinding.mRequestHandles.hasOwnProperty("~sRequestKey"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadSingleRootNodeByNavigationProperties: error handler sets _bRootMissing to"
+			+ " true", function (assert) {
+		var oModel = {
+				read : function () {}
+			},
+			oBinding = {
+				sGroupId : "~sGroupId",
+				oModel : oModel,
+				oRootContext : "~oldRootContext",
+				mRequestHandles : {},
+				fireDataReceived : function () {},
+				getResolvedPath : function () {}
+			},
+			oError = {statusCode : 400},
+			oExpectation;
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		oExpectation = this.mock(oModel).expects("read").withExactArgs("~resolvedPath", {
+			error : sinon.match.func, groupId : "~sGroupId", success : sinon.match.func
+		}).returns("~readHandle");
+
+		// code under test
+		ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties.call(oBinding,
+			"~sNodeId", "~sRequestKey");
+
+		assert.strictEqual(oBinding.mRequestHandles["~sRequestKey"], "~readHandle");
+
+		// code under test
+		oExpectation.args[0][1].error(oError);
+
+		assert.strictEqual(oBinding._bRootMissing, true);
+		assert.strictEqual(oBinding.bNeedsUpdate, true);
+		assert.strictEqual(oBinding.oRootContext, "~oldRootContext"); //TODO: not modified, why?
+		assert.notOk(oBinding.mRequestHandles.hasOwnProperty("~sRequestKey"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getNodeContexts: initial", function (assert) {
+		var oBinding = {
+				isInitial : function () {}
+			};
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(true);
+
+		// code under test
+		assert.deepEqual(
+			ODataTreeBinding.prototype.getNodeContexts.call(oBinding, /*oContext*/ undefined,
+				/*iStartIndex*/ undefined, /*iLength*/undefined, /*iThreshold*/undefined),
+			[]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getNodeContexts: with neither tree annotations nor navigation path",
+			function (assert) {
+		var oBinding = {
+				bHasTreeAnnotations : false,
+				isInitial : function () {},
+				_getNavPath : function () {}
+			},
+			oContext = {
+				getPath : function () {}
+			};
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("~getPath");
+		this.mock(oBinding).expects("_getNavPath").withExactArgs("~getPath").returns(undefined);
+
+		// code under test
+		assert.deepEqual(
+			ODataTreeBinding.prototype.getNodeContexts.call(oBinding, oContext,
+				/*iStartIndex*/ undefined, /*iLength*/undefined, /*iThreshold*/undefined),
+			[]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getNodeContexts: with navigation path and without tree annotations",
+			function (assert) {
+		var oModel = {
+				resolve : function () {}
+			},
+			oBinding = {
+				bHasTreeAnnotations : false,
+				oModel : oModel,
+				oNavigationPaths : {"~navPath" : "~foo"},
+				isInitial : function () {},
+				_getContextsForNodeId : function () {},
+				_getNavPath : function () {}
+			},
+			oContext = {
+				getPath : function () {}
+			};
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(false);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("~getPath");
+		this.mock(oBinding).expects("_getNavPath").withExactArgs("~getPath").returns("~navPath");
+		this.mock(oModel).expects("resolve").withExactArgs("~navPath", sinon.match.same(oContext))
+			.returns("~resolvedPath");
+		this.mock(oBinding).expects("_getContextsForNodeId")
+			.withExactArgs("~resolvedPath", "~iStartIndex", "~ilength", "~iThreshold", {
+				navPath : "~foo"
+			})
+			.returns("~V2Context[]");
+
+		// code under test
+		assert.strictEqual(
+			ODataTreeBinding.prototype.getNodeContexts.call(oBinding, oContext, "~iStartIndex",
+				"~ilength", "~iThreshold"),
+			"~V2Context[]");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getContextsForNodeId: with operation mode 'Auto' and without"
+			+ " iTotalCollectionCount", function (assert) {
+		var oBinding = {
+				bCollectionCountRequested : true,
+				sOperationMode : OperationMode.Auto,
+				iTotalCollectionCount : null
+			};
+
+		// code under test
+		assert.deepEqual(
+			ODataTreeBinding.prototype._getContextsForNodeId.call(oBinding, "~sNodeId",
+					"~iStartIndex", "~iLength", "~iThreshold", "~mRequestParameters"),
+				[]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getContextsForNodeId: no keys for node ID available", function (assert) {
+		var oModel = {
+				getServiceMetadata : function () {}
+			},
+			oBinding = {
+				_mLoadedSections : {"~sNodeId" : [{length : 100, startIndex : 0}]},
+				_iPageSize : 50,
+				oFinalLengths : {},
+				oKeys : {},
+				oModel : oModel,
+				sOperationMode : OperationMode.Default
+			};
+
+		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns({/*not relevant*/});
+
+		// code under test
+		assert.deepEqual(
+			ODataTreeBinding.prototype._getContextsForNodeId.call(oBinding, "~sNodeId",
+					/*iStartIndex*/0, /*iLength*/20, /*iThreshold*/100, "~mRequestParameters"),
+				[]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getContextsForNodeId: node ID available", function (assert) {
+		var oModel = {
+				getContext : function () {},
+				getServiceMetadata : function () {}
+			},
+			oBinding = {
+				_mLoadedSections : {},
+				_iPageSize : 50,
+				bClientOperation : true,
+				oFinalLengths : {},
+				oKeys : {"~sNodeId" : ["~sKey0", undefined]},
+				oLengths : {"~sNodeId" : 2},
+				oModel : oModel,
+				sOperationMode : OperationMode.Default
+			};
+
+		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns({/*not relevant*/});
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey0").returns("~V2Context");
+
+		// code under test
+		assert.deepEqual(
+			ODataTreeBinding.prototype._getContextsForNodeId.call(oBinding, "~sNodeId",
+					/*iStartIndex*/0, /*iLength*/20, /*iThreshold*/100, "~mRequestParameters"),
+				["~V2Context", undefined]);
+	});
 });

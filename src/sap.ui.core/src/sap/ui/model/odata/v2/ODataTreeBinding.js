@@ -273,20 +273,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns root contexts for the tree. You can specify the start index and the length for paging requests.
-	 * This function is not available when the annotation "hierarchy-node-descendant-count-for" is exposed on the service.
+	 * Returns root contexts for the tree. You can specify the start index and the length for paging
+	 * requests. This function is not available when the annotation
+	 * "hierarchy-node-descendant-count-for" is exposed on the service.
 	 *
-	 * @param {int} [iStartIndex=0] the start index of the requested contexts
-	 * @param {int} [iLength=v2.ODataModel.sizeLimit] the requested amount of contexts. If none given, the default value is the size limit of the underlying
-	 *												 sap.ui.model.odata.v2.ODataModel instance.
-	 * @param {int} [iThreshold=0] the number of entities which should be retrieved in addition to the given length.
-	 *				  A higher threshold reduces the number of backend requests, yet these request blow up in size, since more data is loaded.
-	 * @return {sap.ui.model.Context[]} an array containing the contexts for the entities returned by the backend, might be fewer than requested
-	 *								  if the backend does not have enough data.
+	 * @param {int} [iStartIndex=0]
+	 *   The start index of the requested contexts
+	 * @param {int} [iLength=v2.ODataModel.sizeLimit]
+	 *   The requested amount of contexts. If none given, the default value is the size limit of the
+	 *   underlying sap.ui.model.odata.v2.ODataModel instance.
+	 * @param {int} [iThreshold=0]
+	 *   The number of entities which should be retrieved in addition to the given length. A higher
+	 *   threshold reduces the number of backend requests, yet these request blow up in size, since
+	 *   more data is loaded.
+	 * @return {sap.ui.model.odata.v2.Context[]}
+	 *   The root contexts for the tree
 	 * @public
 	 */
 	ODataTreeBinding.prototype.getRootContexts = function(iStartIndex, iLength, iThreshold) {
-
 		var sNodeId = null,
 			mRequestParameters = {
 				numberOfExpandedLevels: this.iNumberOfExpandedLevels
@@ -346,15 +350,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the contexts of the child nodes for the given context. This function is not available when the annotation "hierarchy-node-descendant-count-for"
-	 * is exposed on the service.
+	 * Returns the contexts of the child nodes for the given context. This function is not available
+	 * when the annotation "hierarchy-node-descendant-count-for" is exposed on the service.
 	 *
-	 * @param {sap.ui.model.Context} oContext the context for which the child nodes should be retrieved
-	 * @param {int} iStartIndex the start index of the requested contexts
-	 * @param {int} iLength the requested amount of contexts
-	 * @param {int} [iThreshold=0] the maximum number of contexts to read before and after the given range; with this,
-	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a table.
-	 * @return {sap.ui.model.Context[]} the contexts array
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context for which the child nodes should be retrieved
+	 * @param {int} iStartIndex
+	 *   The start index of the requested contexts
+	 * @param {int} iLength
+	 *   The requested amount of contexts
+	 * @param {int} [iThreshold=0]
+	 *   The maximum number of contexts to read before and after the given range; with this,
+	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
+	 *   table.
+	 * @return {sap.ui.model.odata.v2.Context[]}
+	 *   The contexts of the child nodes for the given context
 	 * @public
 	 */
 	ODataTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength, iThreshold) {
@@ -477,16 +487,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets or loads all contexts for a specified node id (dependent on mode)
+	 * Gets or loads all contexts for a specified node id (dependent on mode).
 	 *
-	 * @param {string} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
-	 * @param {int} iStartIndex start index of the page
-	 * @param {int} iLength length of the page
-	 * @param {int} iThreshold additionally loaded entities
-	 * @param {object} mParameters additional request parameters
-	 *
-	 * @return {sap.ui.model.Context[]} Array of contexts
-	 *
+	 * @param {string} sNodeId
+	 *   The value of the hierarchy node property on which a parent node filter will be performed
+	 * @param {int} iStartIndex
+	 *   The start index of the page
+	 * @param {int} iLength
+	 *   The length of the page
+	 * @param {int} iThreshold
+	 *   The additionally loaded entities
+	 * @param {object} mRequestParameters
+	 *   The additional request parameters
+	 * @param {string} mRequestParameters.navPath
+	 *   The navigation path
+	 * @return {sap.ui.model.odata.v2.Context[]}
+	 *   Contexts for the given node ID
 	 * @private
 	 */
 	ODataTreeBinding.prototype._getContextsForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mRequestParameters) {
@@ -1055,8 +1071,6 @@ sap.ui.define([
 	 * @param {array} aParams OData URL parameters, already concatenated with "="
 	 * @param {object} mParameters additional request parameters
 	 * @param {object} mParameters.navPath the navigation path
-	 *
-	 * @return {sap.ui.model.Context[]} Array of contexts
 	 *
 	 * @private
 	 */
