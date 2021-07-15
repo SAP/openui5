@@ -542,6 +542,7 @@ sap.ui.define([
 		/**
 		 * Uses the <code>ResponsiveLayout</code> layout to render the <code>SimpleForm</code> control
 		 * @public
+		 * @deprecated As of version 1.93, replaced by {@link sap.ui.layout.form.SimpleFormLayout.ColumnLayout ColumnLayout}
 		 */
 		ResponsiveLayout : "ResponsiveLayout",
 
