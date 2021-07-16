@@ -946,12 +946,14 @@ sap.ui.define([
 			assert.equal(oInnerColumnListItem.getCells()[0].getText(), "template2");
 			assert.equal(oInnerColumnListItem.getCells()[1].getText(), "template1");
 
+			var oColumnDestroy = sinon.spy(this.oTable._oTable.getColumns()[1], "destroy");
 			this.oTable.removeColumn("foo1");
 			aMDCColumns = this.oTable.getColumns();
 			aInnerColumns = this.oTable._oTable.getColumns();
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
 			assert.equal(aInnerColumns[0].getHeader().getText(), "Test2");
 			assert.equal(oInnerColumnListItem.getCells()[0].getText(), "template2");
+			assert.ok(oColumnDestroy.calledOnceWithExactly("KeepDom"), "Inner column destroyed without removing DOM");
 		}.bind(this));
 	});
 

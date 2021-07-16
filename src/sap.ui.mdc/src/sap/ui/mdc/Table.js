@@ -2126,7 +2126,7 @@ sap.ui.define([
 		oMDCColumn = this.removeAggregation("columns", oMDCColumn, true);
 		if (this._oTable) {
 			var oColumn = this._oTable.removeColumn(oMDCColumn.getId() + "-innerColumn");
-			oColumn.destroy(); // TODO: avoid destroy
+			oColumn.destroy("KeepDom");
 
 			// update template for ResponsiveTable
 			if (this._bMobileTable) {
@@ -2543,6 +2543,7 @@ sap.ui.define([
 		}
 	};
 
+	// TODO: Delete!
 	Table.prototype.rebindTable = function() {
 		this.rebind();
 	};

@@ -64,6 +64,7 @@ sap.ui.define([
 				/*
 				 * Only used during creation of table for initial/1st rendering, 0 based index
 				 */
+				// TODO: Delete!
 				initialIndex: {
 					type: "int",
 					defaultValue: -1
