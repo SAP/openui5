@@ -6,122 +6,121 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.DynamicDateRange';
 
 	it("Suggestion popover gets opened", function() {
-		var oInput = element(by.id("DDR1-input-inner"));
-		oInput.click();
+		var oInput = element(by.id("DDR1-input-inner")),
+			oVBox = element(by.id("vertical-box"));
 
+		oInput.click();
 		browser.actions().sendKeys("10").perform();
-		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		expect(takeScreenshot(oVBox)).toLookAs("suggestion_popover_opened");
 
-		expect(takeScreenshot(element(by.id("vertical-box")))).toLookAs("error_state_applied");
-	});
-
-	it("Input error state", function() {
-		var oInput = element(by.id("DDR1-input-inner"));
-		oInput.click();
-
-		browser.actions().sendKeys("abc").perform();
-	});
-
-	it("Group headers disabled when there are more then ten options available", function() {
-		var oValueHelp = element(by.id("DDR1-input-vhi"));
-		oValueHelp.click();
-
-		var oPopover = element(by.id("DDR1-RP-popover"));
-
-		expect(takeScreenshot(oPopover)).toLookAs("group_headers_disabled");
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	});
 
-	it("Fixed date and date range options with 'Calendar' based UI", function() {
-		var oValueHelp = element(by.id("DDR2-input-vhi"));
-		oValueHelp.click();
+	it("Input error state", function() {
+		var oInput = element(by.id("DDR1-input-inner")),
+			oVBox = element(by.id("vertical-box"));
 
-		var oPopover = element(by.id("DDR2-RP-popover"));
+		oInput.click();
+		browser.actions().sendKeys("abc").perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		expect(takeScreenshot(oVBox)).toLookAs("error_state_applied");
+
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+	});
+
+	it("Group headers disabled when there are more then ten options available", function() {
+		var oValueHelp = element(by.id("DDR1-input-vhi")),
+			oPopover;
+
+		oValueHelp.click();
+		oPopover = element(by.id("DDR1-RP-popover"));
+		expect(takeScreenshot(oPopover)).toLookAs("group_headers_disabled");
+
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+	});
+
+	it("Group headers enabled when there are less then ten options available", function() {
+		var oValueHelp = element(by.id("DDR2-input-vhi")),
+			oPopover;
+
+		oValueHelp.click();
+		oPopover = element(by.id("DDR2-RP-popover"));
 		expect(takeScreenshot(oPopover)).toLookAs("group_headers_enabled");
 
-		var aListItems = element.all(by.css("#DDR2-RP-popover .sapMListItems .sapMSLI"));
-		aListItems.get(0).click();
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+	});
 
-		expect(takeScreenshot(oPopover)).toLookAs("date_range_standard_option_ui");
+	it("Fixed date and date range with 'Calendar' based UI", function() {
+		var oValueHelp = element(by.id("DDR2-input-vhi")),
+			aListItems, oPopover;
 
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		oValueHelp.click();
 
+		aListItems = element.all(by.css("#DDR2-RP-popover .sapMListItems .sapMSLI"));
+		oPopover = element(by.id("DDR2-RP-popover"));
+
+		aListItems.get(1).click(); // select the date range option
+		expect(takeScreenshot(oPopover)).toLookAs("date_range_ui");
+
+		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select start date
 		expect(takeScreenshot(oPopover)).toLookAs("date_range_start_date_preview");
 
 		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
 		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
-		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-
+		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select end date
 		expect(takeScreenshot(oPopover)).toLookAs("date_range_end_date_preview");
 
-		element(by.css("#DDR2-RP-popover .sapMBtnBack")).click();
+		element(by.css("#DDR2-RP-popover .sapMBtnBack")).click(); // get back to suggestions popover
+		aListItems.get(2).click(); // select "from" date option
+		expect(takeScreenshot(oPopover)).toLookAs("from_date_ui");
 
-		aListItems.get(1).click();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date
+		expect(takeScreenshot(oPopover)).toLookAs("from_date_ui_selected");
 
-		expect(takeScreenshot(oPopover)).toLookAs("from_standard_option_ui");
+		element(by.css("#DDR2-RP-popover .sapMBtnBack")).click(); // get back to suggestions popover
+		aListItems.get(4).click(); // select "month" option
+		expect(takeScreenshot(oPopover)).toLookAs("month_ui");
 
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-
-		expect(takeScreenshot(oPopover)).toLookAs("from_value_preview");
-
-		element(by.css("#DDR2-RP-popover .sapMBtnBack")).click();
-
-		aListItems.get(3).click();
-
-		expect(takeScreenshot(oPopover)).toLookAs("month_standard_option_ui");
-
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-
-		expect(takeScreenshot(oPopover)).toLookAs("month_value_preview");
+		expect(takeScreenshot(oPopover)).toLookAs("month_ui_selected");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	});
 
-	it("Relative date and date range option with 'StepInput' based UI", function() {
-		var oValueHelp = element(by.id("DDR3-input-vhi"));
-		oValueHelp.click();
+	it("Relative date and date range", function() {
+		var oValueHelp = element(by.id("DDR3-input-vhi")),
+			oPopover, aListItems;
 
-		var oPopover = element(by.id("DDR3-RP-popover"));
+		oValueHelp.click();
+		oPopover = element(by.id("DDR3-RP-popover"));
 		expect(takeScreenshot(oPopover)).toLookAs("relative_options_list");
 
-		var aListItems = element.all(by.css("#DDR3-RP-popover .sapMListItems .sapMSLI"));
-		aListItems.get(0).click();
-
-		expect(takeScreenshot(oPopover)).toLookAs("last_x_days_months_years");
+		aListItems = element.all(by.css("#DDR3-RP-popover .sapMListItems .sapMSLI"));
+		aListItems.get(0).click(); // select Last X days
+		expect(takeScreenshot(oPopover)).toLookAs("last_x_days");
 
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		expect(takeScreenshot(oPopover)).toLookAs("last_x_months");
 
-		expect(takeScreenshot(oPopover)).toLookAs("last_x_option_value_preview");
-
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-
-		expect(takeScreenshot(oPopover)).toLookAs("last_x_option_value_preview_update");
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		expect(takeScreenshot(oPopover)).toLookAs("last_x_years");
 
 		element(by.css("#DDR3-RP-popover .sapMBtnBack")).click();
-
-		aListItems.get(1).click();
-
+		aListItems.get(1).click(); // select Next X days
 		expect(takeScreenshot(oPopover)).toLookAs("next_x_days");
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
+
 		browser.actions().sendKeys("10000").perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-
 		expect(takeScreenshot(oPopover)).toLookAs("next_x_days_max_value_exceeded");
 
 		element(by.css("#DDR3-RP-popover .sapMBtnBack")).click();
+		aListItems.get(2).click(); // select Today -X/+Y
+		expect(takeScreenshot(oPopover)).toLookAs("today_x_y");
 
-		aListItems.get(2).click();
-
-		expect(takeScreenshot(oPopover)).toLookAs("today_x_y_offset_option");
-
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 
@@ -129,7 +128,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 
-		expect(takeScreenshot(oPopover)).toLookAs("today_x_y_value_preview");
+		expect(takeScreenshot(oPopover)).toLookAs("today_x_y_values_changed");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	});
