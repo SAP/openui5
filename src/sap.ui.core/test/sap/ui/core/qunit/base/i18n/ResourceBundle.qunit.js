@@ -769,6 +769,46 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getText should print meaningful assertion error when key is not found", function(assert) {
+		var oPropertiesCreateStub = sinon.stub(Properties, "create");
+			oPropertiesCreateStub
+			.withArgs({
+				url: "my_en_US.properties",
+				async: true,
+				returnNullIfMissing: true,
+				headers: undefined
+			}).returns(createFakePropertiesPromise({ "foo": "bar" }))
+			.withArgs({
+				url: "my_en.properties",
+				async: false,
+				returnNullIfMissing: true,
+				headers: undefined
+			}).returns(createFakeProperties({ "foo": "bar" }));
+
+		var oConsoleAssertStub = sinon.stub(console, "assert");
+
+		// Only supported locale is "de". No fallback to my.properties
+		return ResourceBundle.create({url: 'my.properties', locale: "en_US", async: true, supportedLocales: ["en_US", "en"]}).then(function(oResourceBundle) {
+			assert.equal(oPropertiesCreateStub.callCount, 1);
+			assert.equal(oPropertiesCreateStub.getCall(0).args[0].url, "my_en_US.properties", "en_US properties file is requested");
+
+			// fallback locale is loaded since key is not within properties.
+			assert.equal(oResourceBundle.getText("unknown"), "unknown", "Not present in any bundle");
+
+			assert.equal(oPropertiesCreateStub.callCount, 2);
+			assert.equal(oPropertiesCreateStub.getCall(1).args[0].url, "my_en.properties", "en properties file is requested as fallback");
+
+			assert.equal(oConsoleAssertStub.callCount, 1, "console.assert should be called once");
+			assert.deepEqual(oConsoleAssertStub.getCall(0).args, [
+				false,
+				"could not find any translatable text for key 'unknown' in bundle file(s): 'my_en_US.properties', 'my_en.properties'"
+			], "console.assert should be called with expected message");
+
+			oPropertiesCreateStub.restore();
+			oConsoleAssertStub.restore();
+		});
+	});
+
 	QUnit.test("constructor with fallback chain - locale 'de_CH'", function(assert) {
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 

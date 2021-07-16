@@ -24,20 +24,6 @@ sap.ui.define(function() {
 			ContextMenuSupport: {
 				title: "sap.ui.core.ContextMenuSupport"
 			},
-			i18n_CLDR_Format: {
-				title: "sap.ui.core: i18n (CLDR, Format)",
-				qunit: {
-					reorder: false
-				},
-				loader: {
-					paths: {
-						performance: "test-resources/sap/ui/core/qunit/performance"
-					}
-				},
-				module: [
-					"testdata/core/base/i18n/ResourceBundle.qunit"
-				]
-			},
 			JSON: {
 				title: "sap.ui.core: JSON Native Support",
 				ui5: {
