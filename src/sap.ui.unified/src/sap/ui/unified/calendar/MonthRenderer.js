@@ -382,6 +382,15 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		var aDayTypes = oMonth._getDateTypes(oDay);
 		var bEnabled = oMonth._checkDateEnabled(oDay);
 		var i = 0;
+		var oMonthDate;
+		if (oMonth.getDate()) {
+			oMonthDate = oMonth.getDate();
+		} else if (oMonth.getStartDate && oMonth.getStartDate()) { // DatesRow instance case
+			oMonthDate = oMonth.getStartDate();
+		} else { // date not set at all
+			oMonthDate = new Date();
+		}
+		var bInsideCurrentMonth = CalendarUtils._isSameMonthAndYear(oDay, CalendarDate.fromLocalJSDate(oMonthDate));
 
 		// Days before 0001.01.01 should be disabled.
 		if (bBeforeFirstYear) {
@@ -427,20 +436,23 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
 		}
 
-		aDayTypes.forEach(function(oDayType) {
-			if (oDayType.type !== CalendarDayType.None) {
-				if (oDayType.type === CalendarDayType.NonWorking) {
-					oRm.class("sapUiCalItemWeekEnd");
-					sNonWorkingDayText = this._addNonWorkingDayText(mAccProps);
-					return;
+		if (bInsideCurrentMonth) {
+			aDayTypes.forEach(function(oDayType) {
+				if (oDayType.type !== CalendarDayType.None) {
+					if (oDayType.type === CalendarDayType.NonWorking) {
+						oRm.class("sapUiCalItemWeekEnd");
+						sNonWorkingDayText = this._addNonWorkingDayText(mAccProps);
+						return;
+					}
+					oRm.class("sapUiCalItem" + oDayType.type);
+					sAriaType = oDayType.type;
+					if (oDayType.tooltip) {
+						oRm.attr('title', oDayType.tooltip);
+					}
 				}
-				oRm.class("sapUiCalItem" + oDayType.type);
-				sAriaType = oDayType.type;
-				if (oDayType.tooltip) {
-					oRm.attr('title', oDayType.tooltip);
-				}
-			}
-		}.bind(this));
+			}.bind(this));
+		}
+
 
 		if (!sNonWorkingDayText) { // if sNonWorkingDayText exists, it is already included above as specialDate of type NonWorking
 			if (oHelper.aNonWorkingDays) { // check if there are nonWorkingDays passed and add text to them
@@ -497,7 +509,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		oRm.accessibilityState(null, mAccProps);
 		oRm.openEnd(); // div element
 
-		if (aDayTypes[0]){ //if there's a special date, render it
+		if (aDayTypes[0] && bInsideCurrentMonth){ //if there's a special date inside current month, render it
 			oRm.openStart("div");
 			oRm.class("sapUiCalSpecialDate");
 			if (aDayTypes[0].color) { // if there's a custom color, render it

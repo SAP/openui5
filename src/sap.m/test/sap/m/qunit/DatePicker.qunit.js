@@ -2123,10 +2123,14 @@ sap.ui.define([
 		},
 		fHandleNavigate: function (oEvent) {
 			var oDateRange = oEvent.getParameter("dateRange"),
+				oStartDate = new Date(oDateRange.getStartDate()),
+				oEndDate = new Date(oDateRange.getEndDate()),
 				oDP = oEvent.getSource();
 
-			this.oStartDate = oDateRange.getStartDate();
-			this.oEndDate = oDateRange.getEndDate();
+			oStartDate.setDate(oStartDate.getDate() + 6); // ensure that the special date is always in the displayed
+			oEndDate.setDate(oEndDate.getDate() - 6); // month, otherwise it would not be rendered
+			this.oStartDate = oStartDate;
+			this.oEndDate = oEndDate;
 
 			// Clear currently loaded special dates
 			oDP.removeAllAggregation("specialDates");

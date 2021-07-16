@@ -328,6 +328,26 @@ sap.ui.define([
 				"aggregation 'specialDates' focus should be returned");
 		});
 
+		QUnit.test("specialDates outside current month are not rendered as such", function (oAssert) {
+			// Arrange
+			var $Date;
+			this.oM.setDate(new Date(2016, 6, 1));
+			this.oM.addSpecialDate(
+				new DateTypeRange({
+					startDate: new Date(2016, 5, 30),
+					endDate:  new Date(2016, 5, 30)
+			}));
+
+			// Act
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			$Date = jQuery("#" + this.oM.getId() + "-20160630");
+			oAssert.notOk($Date.hasClass("sapUiCalItemType01"), "specialDates type indicator is not rendered");
+			oAssert.notOk($Date.children().hasClass("sapUiCalSpecialDate"), "specialDates HTML element is not rendered");
+		});
+
 		QUnit.test("_isValueInThreshold return true if provided value is in provided threshold", function (assert) {
 			assert.ok(this.oM._isValueInThreshold(248, 258, 10), "value is between 238 and 258 - upper boundary"); // (reference value, actual value, threshold)
 			assert.ok(this.oM._isValueInThreshold(248, 238, 10), "value is between 238 and 258 - lower boundary"); // (reference value, actual value, threshold)
