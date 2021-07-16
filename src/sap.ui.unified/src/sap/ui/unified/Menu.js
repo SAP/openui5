@@ -830,11 +830,12 @@ sap.ui.define([
 
 		if (checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			this.setHoveredItem(null);
-		} else if (oEvent.srcControl.isA("sap.ui.unified.MenuItemBase")) {
-			this.setHoveredItem(this.oHoveredItem);
-		}
+			if (!this.oOpenedSubMenu || !(this.oOpenedSubMenu.getParent() === this.oHoveredItem)) {
+				this.setHoveredItem(this.oHoveredItem);
 
-		this._discardOpenSubMenuDelayed();
+			}
+			this._discardOpenSubMenuDelayed();
+		}
 	};
 
 	/**
