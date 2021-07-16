@@ -988,17 +988,25 @@ sap.ui.define([
 	 */
 	ManagedObjectModel.prototype.checkUpdate = function (bForceUpdate, bAsync, fnFilter) {
 		if (bAsync) {
+			this.bForceUpdate = this.bForceUpdate || bForceUpdate;
 			if (!this.sUpdateTimer) {
+				this.fnFilter = this.fnFilter || fnFilter;
 				this.sUpdateTimer = setTimeout(function () {
-					this.checkUpdate(bForceUpdate, false, fnFilter);
+					this.checkUpdate(this.bForceUpdate, false, this.fnFilter);
 				}.bind(this), 0);
+			} else if (this.fnFilter && this.fnFilter !== fnFilter) {
+				this.fnFilter = undefined; // if different filter set use no filter
 			}
 			return;
 		}
+		bForceUpdate = this.bForceUpdate || bForceUpdate;
+		fnFilter = !this.fnFilter || this.fnFilter === fnFilter ? fnFilter : undefined; // if different filter set use no filter
 
 		if (this.sUpdateTimer) {
 			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
+			this.bForceUpdate = undefined;
+			this.fnFilter = undefined;
 		}
 		var aBindings = this.aBindings.slice(0);
 		aBindings.forEach(function (oBinding) {
