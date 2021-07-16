@@ -380,6 +380,28 @@ sap.ui.define([
 			this.oCP._updateColorStringProperty(true, true);
 		});
 
+		QUnit.test("", function(assert) {
+			// arrange
+			var oCP = new ColorPicker();
+			var oFireChangeSpy = this.spy(oCP, "fireChange");
+
+			// act
+			oCP.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(oFireChangeSpy.callCount, 0, "no events are fired on rendering");
+
+			// act
+			oCP.setColorString("red");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oFireChangeSpy.callCount, 0, "no events are fired on rendering");
+
+			// clean
+			oCP.destroy();
+		});
+
 		QUnit.test("_updateControlVisualState - mock commons control mode", function (oAssert) {
 			// Arrange
 			this.oCP.bResponsive = false; // Mock commons mode
