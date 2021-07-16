@@ -127,7 +127,7 @@ sap.ui.define([
 				/**
 				 * Defines the <code>sap.ui.webc.fiori.ShellBar</code> aditional items. <br>
 				 * <br>
-				 * <b>Note:</b> You can use the &nbsp;&lt;ui5-shellbar-item>&lt;/ui5-shellbar-item>.
+				 * <b>Note:</b> You can use the &lt;ui5-shellbar-item>&lt;/ui5-shellbar-item>.
 				 */
 				items: {
 					type: "sap.ui.webc.fiori.IShellBarItem",
@@ -146,7 +146,7 @@ sap.ui.define([
 				/**
 				 * Defines the items displayed in menu after a click on the primary title. <br>
 				 * <br>
-				 * <b>Note:</b> You can use the &nbsp;&lt;ui5-li>&lt;/ui5-li> and its ancestors.
+				 * <b>Note:</b> You can use the &lt;ui5-li>&lt;/ui5-li> and its ancestors.
 				 */
 				menuItems: {
 					type: "sap.ui.webc.main.IListItem",

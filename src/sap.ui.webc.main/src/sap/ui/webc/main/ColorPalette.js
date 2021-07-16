@@ -82,7 +82,7 @@ sap.ui.define([
 						 * the selected color
 						 */
 						color: {
-							type: "String"
+							type: "string"
 						}
 					}
 				}

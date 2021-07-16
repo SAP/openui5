@@ -180,7 +180,7 @@ sap.ui.define([
 						 * the current <code>selectedIndex</code>.
 						 */
 						selectedIndex: {
-							type: "Integer"
+							type: "int"
 						}
 					}
 				}
