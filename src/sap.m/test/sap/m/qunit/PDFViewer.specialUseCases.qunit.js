@@ -15,8 +15,7 @@ sap.ui.define( [
 	});
 
 	// if the environment does not have pdf plugin, then it is not possible to run standard test suite
-	// Headless chrome doesn't have any pdf plugins installed, so ignoring it
-	if (!PDFViewerRenderer._isPdfPluginEnabled() || Device.browser.chrome) {
+	if (!PDFViewerRenderer._isPdfPluginEnabled()) {
 		return;
 	}
 
