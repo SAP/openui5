@@ -7409,7 +7409,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache: read w/ transient context", function (assert) {
+	QUnit.test("CollectionCache: read w/ transient context; wait for prefetch", function (assert) {
 		var oCache = this.createCache("Employees"),
 			oEntityData = {name : "John Doe"},
 			oGroupLock = {getGroupId : function () {}},
@@ -7441,21 +7441,24 @@ sap.ui.define([
 		this.mock(oReadGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		return oCache.read(0, 3, 0, oReadGroupLock).then(function (oResult) {
+		return oCache.read(0, 1, 2, oReadGroupLock).then(function (oResult) {
 			var oGroupLock0 = {unlock : function () {}},
 				oGroupLock1 = {unlock : function () {}};
 
-			assert.strictEqual(oResult.value.length, 3);
+			assert.strictEqual(oResult.value.length, 1);
 			assert.ok(_Helper.getPrivateAnnotation(oResult.value[0], "transient"));
-			assert.strictEqual(oResult.value[1], oReadResult.value[0]);
-			assert.strictEqual(oResult.value[2], oReadResult.value[1]);
+			assert.strictEqual(oResult.value[0].name, "John Doe");
 
 			that.mock(oGroupLock0).expects("unlock").withExactArgs();
 
 			// code under test
-			oResult = oCache.read(0, 1, 0, oGroupLock0).getResult();
-			assert.strictEqual(oResult.value.length, 1);
+			oResult = oCache.read(0, 3, 0, oGroupLock0).getResult();
+
+			assert.strictEqual(oResult.value.length, 3);
+			assert.ok(_Helper.getPrivateAnnotation(oResult.value[0], "transient"));
 			assert.strictEqual(oResult.value[0].name, "John Doe");
+			assert.strictEqual(oResult.value[1], oReadResult.value[0]);
+			assert.strictEqual(oResult.value[2], oReadResult.value[1]);
 
 			that.mock(oGroupLock1).expects("unlock").withExactArgs();
 

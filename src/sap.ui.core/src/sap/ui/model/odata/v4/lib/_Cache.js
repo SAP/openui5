@@ -2403,7 +2403,7 @@ sap.ui.define([
 
 		oGroupLock.unlock();
 
-		aElementsRange = this.aElements.slice(iIndex, iIndex + iLength);
+		aElementsRange = this.aElements.slice(iIndex, iIndex + iLength + iPrefetchLength);
 		if (this.aElements.$tail && iIndex + iLength > this.aElements.length) {
 			aElementsRange.push(this.aElements.$tail);
 		}

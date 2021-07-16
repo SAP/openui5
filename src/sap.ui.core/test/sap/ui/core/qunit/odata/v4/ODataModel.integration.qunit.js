@@ -13460,6 +13460,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Retrieve existing data from cache and prefetch further entries. Make sure that a
+	// dataReceived event is sent after each dataRequested.
+	//
+	// BCP: 2180279839
+	QUnit.test("BCP: 2180279839: dataReceived follows each dataRequested", function (assert) {
+		var oListBinding,
+			aValues = [],
+			i,
+			that = this;
+
+		for (i = 0; i < 10; i += 1) {
+			aValues[i] = {Team_Id : "TEAM_" + i};
+		}
+
+		return this.createView(assert).then(function () {
+			oListBinding = that.oModel.bindList("/TEAMS");
+
+			that.expectRequest("TEAMS?$skip=0&$top=7", {value : aValues.slice(0, 7)})
+				.expectEvents(assert, oListBinding, [
+					[, "dataRequested"],
+					[, "change", {reason : "change"}],
+					[, "dataReceived", {data : {}}]
+				]);
+
+			oListBinding.getContexts(0, 7);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS?$skip=7&$top=3", {value : aValues.slice(7, 3)})
+				.expectEvents(assert, oListBinding, [
+					[, "dataRequested"],
+					[, "change", {reason : "change"}],
+					[, "dataReceived", {data : {}}]
+				]);
+
+			// code under test
+			oListBinding.getContexts(3, 2, 5);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODataListBinding contains ODataContextBinding contains ODataPropertyBinding;
 	//   only one cache; hasPendingChanges()
 	QUnit.test("hasPendingChanges on dependent bindings", function (assert) {
