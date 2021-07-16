@@ -93,6 +93,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * This function enhances the value with unit or currency information if needed by the data type.
+	 *
+	 * @param {object} oPayload Payload for delegate
+	 * @param {any[]} aValues Value
+	 * @param {object} oTypeInitialization Information needed to initialize internal type
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since: 1.93.0
+	 */
+	FieldBaseDelegate.enhanceValueForUnit = function(oPayload, aValue, oTypeInitialization) {
+
+		return aValue;
+
+	};
+
+	/**
 	 * Defines if the input of the <code>Field</code> or <code>FilterField</code> control is
 	 * checked to determine the key and description.
 	 *

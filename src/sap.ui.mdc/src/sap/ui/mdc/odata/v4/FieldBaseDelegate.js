@@ -91,6 +91,15 @@ sap.ui.define([
 
 	};
 
+	ODataFieldBaseDelegate.enhanceValueForUnit = function(oPayload, aValue, oTypeInitialization) {
+
+		if (oTypeInitialization && oTypeInitialization.bTypeInitialized && aValue.length === 2) {
+			aValue.push(oTypeInitialization.mCustomUnits);
+			return aValue;
+		}
+
+	};
+
 	ODataFieldBaseDelegate.getDefaultFieldValueHelpDelegate = function(oPayload) {
 
 		return {name: "sap/ui/mdc/odata/v4/FieldValueHelpDelegate", payload: {}};
