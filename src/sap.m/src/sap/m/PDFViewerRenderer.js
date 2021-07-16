@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
- /* global ActiveXObject:false */
-
 sap.ui.define(['sap/ui/Device'],
 	function (Device) {
 		"use strict";
@@ -44,30 +42,11 @@ sap.ui.define(['sap/ui/Device'],
 				return bIsEnabled;
 			}
 
-			if (Device.browser.internet_explorer) {
-				// hacky code how to recognize that pdf plugin is installed and enabled
-				try {
-					/* eslint-disable no-new */
-					new ActiveXObject("AcroPDF.PDF");
-					/* eslint-enable no-new */
-				} catch (e) {
-					bIsEnabled = false;
-				}
-
-				return bIsEnabled;
-			}
-
 			var aMimeTypes = navigator.mimeTypes;
-			if (aMimeTypes.length) {
-				bIsEnabled = aAllowedMimeTypes.some(function (sAllowedMimeType) {
-					var oMimeTypeItem = aMimeTypes.namedItem(sAllowedMimeType);
-					return oMimeTypeItem !== null;
-				});
-			} else {
-				if (Device.browser.chrome) {
-					return bIsEnabled;
-				}
-			}
+			bIsEnabled = aAllowedMimeTypes.some(function (sAllowedMimeType) {
+				var oMimeTypeItem = aMimeTypes.namedItem(sAllowedMimeType);
+				return oMimeTypeItem !== null;
+			});
 
 			return bIsEnabled;
 		};
