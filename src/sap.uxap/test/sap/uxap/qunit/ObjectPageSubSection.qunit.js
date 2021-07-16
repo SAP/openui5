@@ -821,8 +821,10 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 			}),
 			oBlock1 = oHelpers.getBlock(),
 			oBlock2 = oHelpers.getBlock(),
-			oStub = this.stub(oSubSection, "_applyLayout", function () {}),
-			oSpy = this.spy(oSubSection._oBlocksObserver, "_fnCallback");
+			oApplyLayoutSpy = this.spy(oSubSection, "_applyLayout"),
+			oSpyObserverCallback = this.spy(oSubSection._oBlocksObserver, "_fnCallback"),
+			oInnerGrid,
+			oGridAddAggregationSpy;
 
 		oSubSection.addBlock(oBlock1);
 		oSubSection.addBlock(oBlock2);
@@ -830,25 +832,30 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 		oObjectPageLayout.placeAt("qunit-fixture");
 		Core.applyChanges();
 
+		oInnerGrid = oSubSection._getGrid();
+		oGridAddAggregationSpy = this.spy(oInnerGrid, "addAggregation");
+
 		// Act: change visibility of one of the blocks
 		oBlock2.setVisible(false);
 
 		// Assert: check if _onBlocksChange listener and _applyLayout are called
-		assert.strictEqual(oSpy.callCount, 1, "_onBlocksChange is called once, when visibility of one of the blocks is changed");
-		assert.strictEqual(oStub.callCount, 2, "_applyLayout is called from onBeforeRendering and _onBlocksChange");
+		assert.strictEqual(oSpyObserverCallback.callCount, 1, "_onBlocksChange is called once, when visibility of one of the blocks is changed");
+		assert.strictEqual(oApplyLayoutSpy.callCount, 2, "_applyLayout is called from onBeforeRendering and _onBlocksChange");
+		assert.ok(oGridAddAggregationSpy.notCalled, "addAggregation is not called to inner Grid when visibility of the blocks is changed");
 
 		// Act - remove all blocks and change visibility again
-		oSpy.reset();
+		oSpyObserverCallback.reset();
 		oSubSection.removeAllBlocks();
 		oBlock2.setVisible(true);
 
 		// Assert: _onBlocksChange listener should not be called if block is removed and its visibility is changed
-		assert.strictEqual(oSpy.callCount, 0, "_onBlocksChange is not called, when blocks are removed");
+		assert.strictEqual(oSpyObserverCallback.callCount, 0, "_onBlocksChange is not called, when blocks are removed");
 
 		// Clean up
 		oSubSection.destroy();
-		oStub.restore();
-		oSpy.restore();
+		oApplyLayoutSpy.restore();
+		oSpyObserverCallback.restore();
+		oGridAddAggregationSpy.restore();
 	});
 
 

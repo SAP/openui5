@@ -359,7 +359,6 @@ sap.ui.define([
 			return;
 		}
 
-		this._getGrid().removeAllContent();
 		this._applyLayout(oObjectPageLayout);
 	};
 
@@ -539,6 +538,7 @@ sap.ui.define([
 	ObjectPageSubSection.prototype._applyLayout = function (oLayoutProvider) {
 		var aVisibleBlocks,
 			oGrid = this._getGrid(),
+			oGridContent = oGrid.getAggregation("content"),
 			sCurrentMode = this.getMode(),
 			sLayout = oLayoutProvider.getSubSectionLayout(),
 			oLayoutConfig = this._calculateLayoutConfiguration(sLayout, oLayoutProvider),
@@ -560,7 +560,11 @@ sap.ui.define([
 		try {
 			aVisibleBlocks.forEach(function (oBlock) {
 				this._setBlockMode(oBlock, sCurrentMode);
-				oGrid.addAggregation("content", oBlock, true); // this is always called onBeforeRendering so suppress invalidate
+
+				// Add Block to Grid content only if it's not already added
+				if (!oGridContent || (oGridContent && oGridContent.indexOf(oBlock) < 0)) {
+				    oGrid.addAggregation("content", oBlock, true); // this is always called onBeforeRendering so suppress invalidate
+				}
 			}, this);
 		} catch (sError) {
 			Log.error("ObjectPageSubSection :: error while building layout " + sLayout + ": " + sError);
