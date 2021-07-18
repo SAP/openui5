@@ -3146,17 +3146,20 @@ sap.ui.define([
 		{vFinalLength : false, iLimit : undefined},
 		{vFinalLength : undefined, iLimit : undefined}
 	].forEach(function (oFixture, j) {
-	QUnit.test("_calculateRequiredGroupSection: use ODataUtils._getReadIntervals " + i + ", " + j,
-			function (assert) {
+	QUnit.test("_calculateRequiredGroupSection: use ODataUtils " + i + ", " + j, function (assert) {
 		var oBinding = {
 				mFinalLength : {"/" : oFixture.vFinalLength},
 				mKeyIndex : {"/" : aElements},
 				mLength : {"/" : 100}
-			};
+			},
+			aIntervals = [{start : 30, end : 71}];
 
 		this.mock(ODataUtils).expects("_getReadIntervals")
 			.withExactArgs(aElements ? "~aElements" : [], 20, 70, 0, oFixture.iLimit)
-			.returns([{start : 30, end : 71}]);
+			.returns(aIntervals);
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs(sinon.match.same(aIntervals))
+			.returns({start : 30, end : 71});
 
 		// code under test
 		assert.deepEqual(
@@ -3173,8 +3176,7 @@ sap.ui.define([
 	[{start : 30, end : 41}, {start : 51, end : 71}],
 	[{start : 30, end : 41}, {start : 51, end : 61}, {start : 65, end : 71}]
 ].forEach(function (aIntervals, i) {
-	var sTitle = "_calculateRequiredGroupSection: use ODataUtils._getReadIntervals, multiple "
-			+ "intervals #" + i;
+	var sTitle = "_calculateRequiredGroupSection: use ODataUtils, multiple intervals #" + i;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
@@ -3186,6 +3188,9 @@ sap.ui.define([
 		this.mock(ODataUtils).expects("_getReadIntervals")
 			.withExactArgs("~aElements", 20, 70, 0, 100)
 			.returns(aIntervals);
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs(sinon.match.same(aIntervals))
+			.returns({start : 30, end : 71});
 
 		// code under test
 		assert.deepEqual(
@@ -3200,19 +3205,22 @@ sap.ui.define([
 	{length : 70, expected : 0},
 	{length : -1, expected : -1}
 ].forEach(function (oFixture, i) {
-	var sTitle = "_calculateRequiredGroupSection: use ODataUtils._getReadIntervals, no intervals #"
-			+ i;
+	var sTitle = "_calculateRequiredGroupSection: use ODataUtils, no intervals #" + i;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				mFinalLength : {"/" : true},
 				mKeyIndex : {"/" : "~aElements"},
 				mLength : {"/" : 100}
-			};
+			},
+			aIntervals = [];
 
 		this.mock(ODataUtils).expects("_getReadIntervals")
 			.withExactArgs("~aElements", 20, oFixture.length, 0, 100)
-			.returns([]);
+			.returns(aIntervals);
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs(sinon.match.same(aIntervals))
+			.returns(undefined);
 
 		// code under test
 		assert.deepEqual(
