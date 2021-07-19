@@ -433,6 +433,54 @@ sap.ui.define([
 		assert.strictEqual(this.oPopover.isOpen(), false, "The Popover should be closed.");
 	});
 
+	QUnit.test("Focus is correctly restored to the last control that opened the Popover", function (assert){
+		var oPopover = new Popover({
+			content: [new Label({text: "Hello World!"})]
+		});
+		var oButton = new Button({
+			text: "Click me!",
+			press: function () {
+				oPopover.openBy(this);
+			}
+		}).placeAt("content");
+		var oButton2 = new Button({
+			text: "Click me!",
+			press: function () {
+				oPopover.openBy(this);
+			}
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oButton.focus();
+		oButton.firePress();
+		this.clock.tick(500);
+
+		oButton2.focus();
+		oButton2.firePress();
+		this.clock.tick(500);
+
+		oButton.focus();
+		oButton.firePress();
+		this.clock.tick(500);
+
+		oButton2.focus();
+		oButton2.firePress();
+		this.clock.tick(500);
+
+		sap.ui.test.qunit.triggerKeydown(oPopover.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(document.activeElement, oButton2.getDomRef(), "Focus is correctly restored to the new opener");
+
+		// Cleanup
+		oButton.destroy();
+		oButton2.destroy();
+		oPopover.destroy();
+	});
+
 	QUnit.module("Position calculation");
 
 	QUnit.test("vertical calculation of Popover positioning should be correct", function (assert){

@@ -828,6 +828,10 @@ sap.ui.define([
 						this.openBy(oControl);
 					};
 					oPopup.attachClosed(afterClosed, this);
+
+					// the focus should not be restored to the control that previously opened the popover,
+					// because the focus info of the new control opening it is getting lost: BCP2170040819
+					this._oPreviousFocus = null;
 					this.close();
 					return this;
 				}
