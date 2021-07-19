@@ -1544,7 +1544,7 @@ sap.ui.define([
 					oHeader = this.oCard.getAggregation("_header"),
 					oHeaderDomRef = oHeader.getDomRef(),
 					oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
-					sAriaLabelledByIds = oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
+					sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
 
 				// Assert Card Container
 				assert.equal(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
@@ -1582,7 +1582,7 @@ sap.ui.define([
 				// Assert
 				var oHeader = this.oCard.getAggregation("_header"),
 					oHeaderDomRef = oHeader.getDomRef(),
-					sAriaLabelledByIds = oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
+					sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
 
 				// Assert Card Header
 				assert.equal(oHeaderDomRef.getAttribute("role"), "button", "Card header should have a role - button");
@@ -1610,7 +1610,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				var oHeaderDomRef = oHeader.getDomRef(),
-					sAriaLabelledByIds = oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader._getUnitOfMeasurement().getId() + " " + oHeader._getMainIndicator().getId() + oHeader._getSideIndicatorIds() + " " + oHeader._getDetails().getId();
+					sAriaLabelledByIds = oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader._getUnitOfMeasurement().getId() + " " + oHeader._getMainIndicator().getId() + oHeader._getSideIndicatorIds() + " " + oHeader._getDetails().getId();
 
 				assert.equal(oHeaderDomRef.getAttribute("role"), "heading", "Card header should have a role - heading");
 				assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");

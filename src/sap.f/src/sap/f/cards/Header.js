@@ -231,10 +231,11 @@ sap.ui.define([
 	 * @returns {string} IDs of controls
 	 */
 	Header.prototype._getHeaderAccessibility = function () {
-		var sSubtitleId = this.getSubtitle() ? this._getSubtitle().getId() : "",
+		var sTitleId = this.getTitle() ? this._getTitle().getId() : "",
+			sSubtitleId = this.getSubtitle() ? this._getSubtitle().getId() : "",
 			sStatusTextId = this.getStatusText() ? this.getId() + "-status" : "",
 			sAvatarId = this.getIconSrc() || this.getIconInitials() ? this.getId() + "-ariaAvatarText " : "",
-			sIds = sSubtitleId + " " + sStatusTextId + " " + sAvatarId;
+			sIds = sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sAvatarId;
 
 		// remove whitespace from both sides
 		// and merge the consecutive whitespaces into one

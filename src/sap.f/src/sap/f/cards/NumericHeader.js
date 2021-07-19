@@ -409,13 +409,14 @@ sap.ui.define([
 	 * @returns {string} IDs of controls
 	 */
 	NumericHeader.prototype._getHeaderAccessibility = function () {
-		var sSubtitleId = this.getSubtitle() ? this._getSubtitle().getId() : "",
+		var sTitleId = this.getTitle() ? this._getTitle().getId() : "",
+			sSubtitleId = this.getSubtitle() ? this._getSubtitle().getId() : "",
 			sStatusTextId = this.getStatusText() ? this.getId() + "-status" : "",
 			sUnitOfMeasureId = this._getUnitOfMeasurement() ? this._getUnitOfMeasurement().getId() : "",
 			sSideIndicatorsIds = this.getSideIndicators() ? this._getSideIndicatorIds() : "",
 			sDetailsId = this.getDetails() ? this._getDetails().getId() : "",
 			sMainIndicatorId = this.getNumber() || this.getScale() ? this._getMainIndicator().getId() : "",
-			sIds = sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + sSideIndicatorsIds + " " + sDetailsId;
+			sIds = sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + sSideIndicatorsIds + " " + sDetailsId;
 
 		// remove whitespace from both sides
 		// and merge the consecutive whitespaces into one
