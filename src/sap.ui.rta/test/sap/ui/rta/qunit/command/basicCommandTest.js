@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -13,6 +14,7 @@ sap.ui.define([
 	Control,
 	UIComponent,
 	ElementDesignTimeMetadata,
+	JSONModel,
 	ChangesWriteAPI,
 	Layer,
 	FlUtils,
@@ -21,6 +23,59 @@ sap.ui.define([
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
+
+	function actualTest(assert, bJsOnly, bVariantIndependent, bVariantPresent) {
+		var oInnerActionsObject = Object.assign({}, this.mCurrentInfo.additionalDesigntimeAttributes, {
+			changeType: this.mCurrentCommandProperties.changeType,
+			jsOnly: bJsOnly,
+			CAUTION_variantIndependent: bVariantIndependent
+		});
+
+		var oActionsObject = {};
+		if (Array.isArray(this.mCurrentInfo.designtimeActionStructure)) {
+			oActionsObject[this.mCurrentInfo.designtimeActionStructure[0]] = {};
+			oActionsObject[this.mCurrentInfo.designtimeActionStructure[0]][this.mCurrentInfo.designtimeActionStructure[1]] = oInnerActionsObject;
+		} else {
+			oActionsObject[this.mCurrentInfo.designtimeActionStructure] = oInnerActionsObject;
+		}
+
+		var oData = {
+			actions: {},
+			aggregations: {}
+		};
+		if (this.mCurrentInfo.aggregation) {
+			oData.aggregations.customData = {
+				actions: oActionsObject
+			};
+		} else {
+			oData.actions = oActionsObject;
+		}
+		var oDesignTimeMetadata = new ElementDesignTimeMetadata({
+			data: oData
+		});
+
+		var sVariantManagementReference = bVariantPresent ? "variantReference" : "";
+		var oCommandFactory = new CommandFactory();
+		return oCommandFactory.getCommandFor(this.oControl, this.mCurrentInfo.commandName, this.mCurrentCommandProperties, oDesignTimeMetadata, sVariantManagementReference)
+
+		.then(function(oCommand) {
+			assert.ok(oCommand, "the command was created");
+			assert.equal(this.oCreateStub.callCount, 1, "the change got created");
+
+			// add some default properties to the specific data
+			this.mCurrentExpectedSpecificData.command = this.mCurrentInfo.commandName;
+			this.mCurrentExpectedSpecificData.jsOnly = bJsOnly;
+			this.mCurrentExpectedSpecificData.layer = Layer.CUSTOMER;
+			this.mCurrentExpectedSpecificData.developerMode = true;
+			this.mCurrentExpectedSpecificData.generator = "sap.ui.rta.command";
+			if (!bVariantIndependent && bVariantPresent) {
+				this.mCurrentExpectedSpecificData.variantManagementReference = "variantReference";
+				this.mCurrentExpectedSpecificData.variantReference = "variantReference";
+			}
+
+			assert.deepEqual(this.oCreateStub.lastCall.args[0].changeSpecificData, this.mCurrentExpectedSpecificData, "the correct change specific data were passed");
+		}.bind(this));
+	}
 
 	/**
 	 * Executes a test for a command. The test mocks the needed designtime metadata and calls the <code>sap.ui.rta.command.CommandFactory</code> to create the Command.
@@ -38,7 +93,15 @@ sap.ui.define([
 		var sMsg = mInfo.moduleName || "Test for '" + mInfo.commandName + "' command";
 		QUnit.module(sMsg, {
 			beforeEach: function() {
+				this.mCurrentInfo = Object.assign({}, mInfo);
+				this.mCurrentCommandProperties = Object.assign({}, mCommandProperties);
+				this.mCurrentExpectedSpecificData = Object.assign({}, mExpectedSpecificData);
 				this.oMockedAppComponent = new UIComponent();
+				var oVariantModel = new JSONModel();
+				oVariantModel.getCurrentVariantReference = function(sVariantManagementReference) {
+					return sVariantManagementReference;
+				};
+				this.oMockedAppComponent.setModel(oVariantModel, FlUtils.VARIANT_MODEL_NAME);
 				sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 				sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 				this.oCreateStub = sandbox.stub(ChangesWriteAPI, "create").resolves();
@@ -50,49 +113,35 @@ sap.ui.define([
 				this.oMockedAppComponent.destroy();
 			}
 		}, function() {
-			QUnit.test("when creating the Command via the CommandFactory", function(assert) {
-				var oInnerActionsObject = Object.assign({}, mInfo.additionalDesigntimeAttributes, {
-					changeType: mCommandProperties.changeType
+			if (mInfo.designtimeAction) {
+				QUnit.test("when creating the Command via the CommandFactory", function(assert) {
+					return actualTest.call(this, assert, false, false, false);
 				});
 
-				var oActionsObject = {};
-				if (Array.isArray(mInfo.designtimeActionStructure)) {
-					oActionsObject[mInfo.designtimeActionStructure[0]] = {};
-					oActionsObject[mInfo.designtimeActionStructure[0]][mInfo.designtimeActionStructure[1]] = oInnerActionsObject;
-				} else {
-					oActionsObject[mInfo.designtimeActionStructure] = oInnerActionsObject;
-				}
-
-				var oData = {
-					actions: {},
-					aggregations: {}
-				};
-				if (mInfo.aggregation) {
-					oData.aggregations.customData = {
-						actions: oActionsObject
-					};
-				} else {
-					oData.actions = oActionsObject;
-				}
-				var oDesignTimeMetadata = new ElementDesignTimeMetadata({
-					data: oData
+				QUnit.test("when creating the Command via the CommandFactory with jsOnly=true and a VariantManagement", function(assert) {
+					return actualTest.call(this, assert, true, false, true);
 				});
 
-				return CommandFactory.getCommandFor(this.oControl, mInfo.commandName, mCommandProperties, oDesignTimeMetadata)
-				.then(function(oCommand) {
-					assert.ok(oCommand, "the command was created");
-					assert.equal(this.oCreateStub.callCount, 1, "the change got created");
+				QUnit.test("when creating the Command via the CommandFactory with variantIndependent=true and a VariantManagement", function(assert) {
+					return actualTest.call(this, assert, false, true, true);
+				});
 
-					// add some default properties to the specific data
-					mExpectedSpecificData.command = mInfo.commandName;
-					mExpectedSpecificData.jsOnly = undefined;
-					mExpectedSpecificData.layer = Layer.CUSTOMER;
-					mExpectedSpecificData.developerMode = true;
-					mExpectedSpecificData.generator = "sap.ui.rta.command";
+				QUnit.test("when creating the Command via the CommandFactory with variantIndependent=true and no VariantManagement", function(assert) {
+					return actualTest.call(this, assert, false, true, false);
+				});
 
-					assert.deepEqual(this.oCreateStub.lastCall.args[0].changeSpecificData, mExpectedSpecificData, "the correct change specific data were passed");
-				}.bind(this));
-			});
+				QUnit.test("when creating the Command via the CommandFactory with jsOnly=true and variantIndependent=true and a VariantManagement", function(assert) {
+					return actualTest.call(this, assert, true, true, true);
+				});
+			} else {
+				QUnit.test("when creating the Command via the CommandFactory", function(assert) {
+					return actualTest.call(this, assert, false, false, false);
+				});
+
+				QUnit.test("when creating the Command via the CommandFactory and a VariantManagement", function(assert) {
+					return actualTest.call(this, assert, false, false, true);
+				});
+			}
 		});
 	}
 

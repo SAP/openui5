@@ -730,7 +730,7 @@ sap.ui.define([
 						propertyName: "Name1",
 						name: "addDelegateProperty",
 						changeType: sChangeType,
-						jsOnly: undefined,
+						jsOnly: false,
 						oDataServiceUri: "",
 						oDataServiceVersion: undefined,
 						modelType: undefined,
@@ -740,7 +740,8 @@ sap.ui.define([
 							id: oElement.getId(),
 							appComponent: oMockedAppComponent,
 							controlType: oElement.getMetadata().getName()
-						}
+						},
+						variantIndependent: false
 					};
 					var oCompositeCommand = oEvent.getParameter("command");
 					var aCommands = oCompositeCommand.getCommands();
@@ -801,7 +802,7 @@ sap.ui.define([
 						propertyName: "Name1",
 						name: "addDelegateProperty",
 						changeType: sChangeType,
-						jsOnly: undefined,
+						jsOnly: false,
 						oDataServiceUri: "",
 						oDataServiceVersion: undefined,
 						modelType: "sap.ui.rta.qunit.test.Model",
@@ -811,7 +812,8 @@ sap.ui.define([
 							id: oElement.getId(),
 							appComponent: oMockedAppComponent,
 							controlType: oElement.getMetadata().getName()
-						}
+						},
+						variantIndependent: false
 					};
 					var oCompositeCommand = oEvent.getParameter("command");
 					var aCommands = oCompositeCommand.getCommands();

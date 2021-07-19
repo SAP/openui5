@@ -12,7 +12,7 @@ sap.ui.define([
 ], function(
 	BaseCommand,
 	JsControlTreeModifier,
-	flUtils,
+	FlUtils,
 	Log,
 	merge,
 	ChangesWriteAPI,
@@ -47,13 +47,21 @@ sap.ui.define([
 				 * Change can only be applied on js, other modifiers like xml will not work
 				 */
 				jsOnly: {
-					type: "boolean"
+					type: "boolean",
+					defaultValue: false
 				},
 				/**
 				 * selector object containing id, appComponent and controlType to create a command for an element, which is not instantiated
 				 */
 				selector: {
 					type: "object"
+				},
+				/**
+				 * Change is independent of any Fl variant
+				 */
+				variantIndependent: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			associations: {},
@@ -80,7 +88,7 @@ sap.ui.define([
 	 */
 	FlexCommand.prototype.getAppComponent = function() {
 		var oElement = this.getElement();
-		return oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
+		return oElement ? FlUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 	};
 
 	/**
@@ -94,14 +102,14 @@ sap.ui.define([
 			oSelector = {
 				id: mFlexSettings.templateSelector,
 				appComponent: this.getAppComponent(),
-				controlType: flUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
+				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
 			};
 			this.setSelector(oSelector);
 		} else if (!this.getSelector() && this.getElement()) {
 			oSelector = {
 				id: this.getElement().getId(),
 				appComponent: this.getAppComponent(),
-				controlType: flUtils.getControlType(this.getElement())
+				controlType: FlUtils.getControlType(this.getElement())
 			};
 			this.setSelector(oSelector);
 		}
@@ -183,16 +191,16 @@ sap.ui.define([
 			mChangeSpecificData = merge({}, mChangeSpecificData, mFlexSettings);
 		}
 		mChangeSpecificData.jsOnly = this.getJsOnly();
-		var oModel = this.getAppComponent().getModel(flUtils.VARIANT_MODEL_NAME);
+		var oModel = this.getAppComponent().getModel(FlUtils.VARIANT_MODEL_NAME);
 		var sVariantReference;
 		if (oModel && sVariantManagementReference) {
 			sVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
 		}
-		var mVariantObj = {
-			variantManagementReference: sVariantManagementReference,
-			variantReference: sVariantReference
-		};
-		if (sVariantReference) {
+		if (sVariantReference && !this.getVariantIndependent()) {
+			var mVariantObj = {
+				variantManagementReference: sVariantManagementReference,
+				variantReference: sVariantReference
+			};
 			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
 		mChangeSpecificData.command = sCommand;
@@ -239,7 +247,7 @@ sap.ui.define([
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,
 			appComponent: oAppComponent,
-			view: flUtils.getViewForControl(oSelectorElement)
+			view: FlUtils.getViewForControl(oSelectorElement)
 		};
 		return ChangesWriteAPI.apply(Object.assign({change: oChange, element: oSelectorElement}, mPropertyBag))
 
@@ -256,7 +264,7 @@ sap.ui.define([
 			return {
 				id: mFlexSettings.originalSelector,
 				appComponent: this.getAppComponent(),
-				controlType: flUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
+				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
 			};
 		}
 		return this.getElement() || this.getSelector();

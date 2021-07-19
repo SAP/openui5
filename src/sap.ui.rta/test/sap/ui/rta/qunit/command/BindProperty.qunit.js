@@ -9,7 +9,8 @@ sap.ui.define([
 
 	basicCommandTest({
 		commandName: "bindProperty",
-		designtimeActionStructure: "propertyBindingChange"
+		designtimeActionStructure: "propertyBindingChange",
+		designtimeAction: false
 	}, {
 		changeType: "propertyBindingChange",
 		propertyName: "myFancyPropertyName",
