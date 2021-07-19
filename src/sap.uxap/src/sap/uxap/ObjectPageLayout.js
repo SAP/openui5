@@ -2095,7 +2095,6 @@ sap.ui.define([
 		this._oSectionInfo[oSectionBase.getId()] = {
 			$dom: [],
 			positionTop: 0,
-			positionTopMobile: 0,
 			buttonId: "",
 			isSection: (oSectionBase instanceof ObjectPageSection),
 			sectionReference: oSectionBase
@@ -2300,9 +2299,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._computeScrollPosition = function (oTargetSection) {
 
-		var bFirstLevel = oTargetSection && (oTargetSection instanceof ObjectPageSection),
-			sId = oTargetSection.getId(),
-			iScrollTo = this._bMobileScenario || bFirstLevel ? this._oSectionInfo[sId].positionTopMobile : this._oSectionInfo[sId].positionTop,
+		var iScrollTo = this._oSectionInfo[oTargetSection.getId()].positionTop,
 			bExpandedMode = !this._bStickyAnchorBar;
 
 		if (bExpandedMode && this._isFirstVisibleSectionBase(oTargetSection)) { // preserve expanded header if no need to stick
@@ -2530,7 +2527,8 @@ sap.ui.define([
 		this._aSectionBases.forEach(function (oSectionBase) {
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
 				$this = oSectionBase.$(),
-				$mobileAnchor,
+				oSection,
+				$title,
 				bPromoted = false;
 
 			if (!oInfo /* sectionBase is visible */ || !$this.length) {
@@ -2550,29 +2548,22 @@ sap.ui.define([
 			//the amount of scrolling required is the distance between their position().top and the bottom of the anchorBar
 			oInfo.positionTop = Math.ceil(realTop);
 
-			//the amount of scrolling required for the mobile scenario
-			//we want to navigate just below its title
-			//as of UX specs Oct 7, 2014
 			if (oInfo.isSection) {
-				$mobileAnchor = oSectionBase.$("header");
+				$title = oSectionBase.$("header");
 			} else {
-				$mobileAnchor = oSectionBase.$("headerTitle");
+				$title = oSectionBase.$("headerTitle");
 			}
 
-			bPromoted = $mobileAnchor.length === 0;
+			bPromoted = $title.length === 0;
 
-			//calculate the mobile position
-			if (!bPromoted) {
-				oInfo.positionTopMobile =
-					Math.ceil(library.Utilities.getChildPosition($mobileAnchor, this._$contentContainer).top)
-					+ $mobileAnchor.outerHeight();
-			} else {
-				//title wasn't found (=first section, hidden title, promoted subsection), scroll to the same position as desktop
-				oInfo.positionTopMobile = oInfo.positionTop;
+			if (bPromoted && !oInfo.isSection && (oSection = oSectionBase.getParent())) {
+				// the scrollTop required to scroll to a promoted subsection
+				// is the top of the parent section (UX rule)
+				var parentRealTop = oSection.$().position().top;
+				oInfo.positionTop = Math.ceil(parentRealTop);
 			}
 
 			if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea) { // in sticky mode the anchor bar is not part of the content
-				oInfo.positionTopMobile -= this.iAnchorBarHeight;
 				oInfo.positionTop -= this.iAnchorBarHeight;
 			}
 
@@ -2620,7 +2611,7 @@ sap.ui.define([
 				bIsFirstVisibleSubSection = bParentIsFirstVisibleSection && (iSubSectionIndex === 0); /* index of *visible* subSections is first */
 				bIsFullscreenSection = oSectionBase.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
 
-				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection, oInfo.positionTop));
+				oSectionBase._setHeight(this._computeSubSectionHeight(bIsFirstVisibleSubSection, bIsFullscreenSection, Math.ceil(realTop)));
 			}
 
 		}, this);
@@ -2793,13 +2784,14 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {
-		var iPosition = Math.ceil(library.Utilities.getChildPosition(oSectionBase.$(), this._$contentContainer).top);
+		var iCachedPosition = this._oSectionInfo[oSectionBase.getId()].positionTop;
 
-		if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea && bShouldStick) { // in sticky mode the anchor bar is not part of the content
-			iPosition -= this.iAnchorBarHeight;
+		// in expanded mode the anchorBar is still part of the content
+		if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea) {
+			iCachedPosition += this.iAnchorBarHeight;
 		}
 
-		return iPosition;
+		return iCachedPosition;
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionBottom = function(oSectionBase, bShouldStick) {
@@ -2876,11 +2868,6 @@ sap.ui.define([
 				//therefore we need to create enough space below the last subsection to get it displayed on top = the spacer
 				//the "top" is just below the sticky header + anchorBar, therefore we just need enough space to get the last subsection below these elements
 				iSpacerHeight = iScrollableViewportHeight - iLastVisibleHeight;
-
-				//take into account that we may need to scroll down to the positionMobile, thus we need to make sure we have enough space at the bottom
-				if (this._bMobileScenario) {
-					iSpacerHeight += (this._oSectionInfo[oLastVisibleSubSection.getId()].positionTopMobile - this._oSectionInfo[oLastVisibleSubSection.getId()].positionTop);
-				}
 			} else {
 				iSpacerHeight = 0;
 			}

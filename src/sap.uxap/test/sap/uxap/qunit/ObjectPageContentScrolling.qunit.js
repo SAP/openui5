@@ -441,13 +441,14 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
 			iScrollPosition,
 			iExpectedPosition,
+			sTargetSectionId = "UxAP-objectPageContentScrolling--secondSection",
 			done = assert.async();
 
 		setTimeout(function() {
-			oObjectPage.scrollToSection("UxAP-objectPageContentScrolling--secondSection", 0);
+			oObjectPage.scrollToSection(sTargetSectionId, 0);
 			setTimeout(function() {
 				iScrollPosition = oObjectPage._$opWrapper[0].scrollTop;
-				iExpectedPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
+				iExpectedPosition =  oObjectPage._oSectionInfo[sTargetSectionId].positionTop;
 				assert.strictEqual(iScrollPosition, iExpectedPosition, "scrollPosition is correct");
 				done();
 			}, 1000); // throttling delay
@@ -473,7 +474,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 				oObjectPage.removeSection(oFirstSection);
 				setTimeout(function () {
 					iScrollPositionAfterRemove = Math.ceil(oObjectPage._$opWrapper[0].scrollTop);
-					iExpectedPositionAfterRemove = Math.ceil(jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top); // top of third section content
+					iExpectedPositionAfterRemove = oObjectPage._oSectionInfo[oThirdSection.getId()].positionTop; // top of third section
 					assert.strictEqual(iScrollPositionAfterRemove, iExpectedPositionAfterRemove, "scrollPosition is correct");
 					oFirstSection.destroy();
 					done();
