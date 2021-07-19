@@ -263,5 +263,43 @@
         ]
       }
     ]
+  },
+  "1.84.15": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "3c5a4c33b165a3caf9254bdee0a9b5867c220a4b",
+        "type": "FIX",
+        "text": " SinglePlanningCalendarMonthGrid: appointments in Month view are now selectable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180178688"
+          }
+        ]
+      },
+      {
+        "id": "fb4931ec669e346e724bd39dd2a16e2d8306f82a",
+        "type": "FIX",
+        "text": " AnalyticalTable: Make text in sum rows bold",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004074212021"
+          }
+        ]
+      },
+      {
+        "id": "03f9b38dc0cb3f7864e4443573306343a74da904",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: selects correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003918772021"
+          }
+        ]
+      }
+    ]
   }
 }

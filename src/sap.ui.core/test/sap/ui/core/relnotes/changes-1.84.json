@@ -387,5 +387,32 @@
         ]
       }
     ]
+  },
+  "1.84.15": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "cf8f336bc16a200d71b2119318f0dd9c77d2b58b",
+        "type": "FIX",
+        "text": " Fragment.qunit.js: fix failing IE11 tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180264111"
+          }
+        ]
+      },
+      {
+        "id": "2c4c1e95bf2425b2676902769563e398ff399d83",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#requestFilterForMessages: decode key predicate value before creating the filter object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170093336"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -690,5 +690,98 @@
         ]
       }
     ]
+  },
+  "1.84.15": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "7eaed4e0912e4573fa2307c8fda997abe52368fb",
+        "type": "FIX",
+        "text": " sap.m.Input: aria-describedby announcement with delayed filtering fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170166116"
+          }
+        ]
+      },
+      {
+        "id": "e2a299752c9434770eda1be8cf43dd8600db19ee",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Update internal item properties when an external is changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170113391"
+          }
+        ]
+      },
+      {
+        "id": "3c5a4c33b165a3caf9254bdee0a9b5867c220a4b",
+        "type": "FIX",
+        "text": " SinglePlanningCalendarMonthGrid: appointments in Month view are now selectable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180178688"
+          }
+        ]
+      },
+      {
+        "id": "931e75239e2f9dd1e2994b8f2543388b51c4056f",
+        "type": "FIX",
+        "text": " SinglePlanningCalendar: We no longer have duplicate ID in appointment parts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004018172021"
+          }
+        ]
+      },
+      {
+        "id": "77008105681f2032f4106236a0b12eb1ec2b01c5",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Buttons are now not included in announce",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180165971"
+          }
+        ]
+      },
+      {
+        "id": "fb4931ec669e346e724bd39dd2a16e2d8306f82a",
+        "type": "FIX",
+        "text": " AnalyticalTable: Make text in sum rows bold",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004074212021"
+          }
+        ]
+      },
+      {
+        "id": "03f9b38dc0cb3f7864e4443573306343a74da904",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: selects correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003918772021"
+          }
+        ]
+      },
+      {
+        "id": "89ee4588699666fc0b8935ef12c1b026b7ee496d",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Empty containers now are removed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006795502020"
+          }
+        ]
+      }
+    ]
   }
 }
