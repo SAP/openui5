@@ -1233,7 +1233,7 @@ sap.ui.define([
 			fnCompare;
 
 		if (!oEntityType) {
-			Log.warning("Cannot determine sort/filter comparators, as entitytype of the collection is unkown!");
+			Log.warning("Cannot determine sort/filter comparators, as entitytype of the collection is unknown!");
 			return;
 		}
 		aEntries.forEach(function(oEntry) {

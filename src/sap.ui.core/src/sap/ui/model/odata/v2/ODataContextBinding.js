@@ -121,7 +121,7 @@ sap.ui.define([
 				if (that.oElementContext) {
 					oData = that.oElementContext.getObject(that.mParameters);
 				}
-				//register datareceived call as  callAfterUpdate
+				// register datareceived call as callAfterUpdate
 				that.oModel.callAfterUpdate(function() {
 					that.fireDataReceived({data: oData});
 				});
