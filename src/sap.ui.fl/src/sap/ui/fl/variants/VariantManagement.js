@@ -1238,6 +1238,7 @@ sap.ui.define([
 						this._checkVariantNameConstraints(this.oInputName);
 
 						if (this.oInputName.getValueState() === "Error") {
+							this.oInputName.focus();
 							return;
 						}
 
