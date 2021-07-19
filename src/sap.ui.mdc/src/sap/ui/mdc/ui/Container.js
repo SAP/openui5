@@ -40,7 +40,7 @@ sap.ui.define([
 				 * Defines the default view for the <code>Container</code> content area
 				 */
                 defaultView: {
-                    type: "String"
+                    type: "string"
                 }
 			},
 			aggregations: {

@@ -76,10 +76,10 @@ sap.ui.define([
 				 */
 				change: {
 					reason: {
-						type: "String"
+						type: "string"
 					},
 					item: {
-						type: "Object"
+						type: "object"
 					}
 				}
 			}
