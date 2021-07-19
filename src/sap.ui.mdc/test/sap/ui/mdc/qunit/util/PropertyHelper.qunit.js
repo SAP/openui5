@@ -769,6 +769,7 @@ sap.ui.define([
 				group: "",
 				groupLabel: "",
 				exportSettings: null,
+				caseSensitive: true,
 				maxConditions: -1,
 				typeConfig: null,
 				required: false

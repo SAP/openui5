@@ -33,7 +33,7 @@ sap.ui.define([
 		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 		assert.strictEqual(oFilter, null, "filter is null");
 		var result = FilterConverter.prettyPrintFilters(oFilter);
-		assert.strictEqual(result, "", "result should be an empty filter");
+		assert.strictEqual(result, "no filters set", "result should be an empty filter");
 
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("EQ", ["foo"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("BT", [1, 100]));
@@ -193,5 +193,24 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("FilterConverter.createFilters: testing caseSensitive types", function(assert) {
+		oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["Foo1"]));
+		oCM.addCondition("fieldPath2", Condition.createCondition("EQ", ["Foo2"]));
+		oCM.addCondition("fieldPath3", Condition.createCondition("EQ", ["Foo3"]));
+
+		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {
+			"fieldPath1" : {type: null, caseSensitive: false},	// the first property should be handled caseInsensitive
+			"fieldPath2" : {type: null, caseSensitive: true},
+			"fieldPath3" : {type: null}
+		});
+
+		var result = FilterConverter.prettyPrintFilters(oFilter);
+		assert.strictEqual(oFilter.aFilters.length, 3, "three filters must be returned on top level");
+		assert.ok(oFilter.aFilters[0].bCaseSensitive === false, "first Filter should have caseSensitive false");
+		assert.ok(oFilter.aFilters[1].bCaseSensitive === undefined, "second Filter should have caseSensitive undefined/true");
+		assert.ok(oFilter.aFilters[2].bCaseSensitive === undefined, "last Filter should have caseSensitive undefined/true");
+		assert.strictEqual(result, "(tolower(fieldPath1) EQ tolower('Foo1') and fieldPath2 EQ 'Foo2' and fieldPath3 EQ 'Foo3')", "result contains the filter");
+
+	});
 
 });

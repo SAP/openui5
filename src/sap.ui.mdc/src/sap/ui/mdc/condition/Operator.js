@@ -284,11 +284,12 @@ sap.ui.define([
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 		 * @param {string} sFieldPath Path of filter
 		 * @param {sap.ui.model.Type} oType Data type of the used filter field
+		 * @param {boolean} [bCaseSensitive] creates a caseSensitive filter
 		 * @returns {sap.ui.model.Filter} filter object
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		Operator.prototype.getModelFilter = function(oCondition, sFieldPath, oType) {
+		Operator.prototype.getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive) {
 
 			var vValue = oCondition.values[0];
 			var oFilter;
@@ -305,14 +306,18 @@ sap.ui.define([
 				oFilter = oFilterUnit;
 				oFilterUnit = undefined;
 			} else if (!this.valueTypes[1]) {
-				oFilter = new Filter({ path: sFieldPath, operator: this.filterOperator, value1: vValue });
+				if (!bCaseSensitive && oCondition.validated === ConditionValidated.Validated)  {
+					// for validated Item conditions we always set caseSensitive to true;
+					bCaseSensitive = true;
+				}
+				oFilter = new Filter({ path: sFieldPath, operator: this.filterOperator, value1: vValue, caseSensitive: bCaseSensitive === false ? false : undefined });
 			} else {
 				var vValue2 = oCondition.values[1];
 				if (Array.isArray(vValue2) && aFieldPaths.length > 1) {
 					vValue2 = vValue2[0];
 					// use same unit as for value1
 				}
-				oFilter = new Filter({ path: sFieldPath, operator: this.filterOperator, value1: vValue, value2: vValue2 });
+				oFilter = new Filter({ path: sFieldPath, operator: this.filterOperator, value1: vValue, value2: vValue2, caseSensitive: bCaseSensitive === false ? false : undefined });
 			}
 
 			if (oFilterUnit) {

@@ -186,6 +186,7 @@ sap.ui.define([
 					var bUnitIsFromNavigationProperty = oUnitAnnotation != null && oUnitAnnotation.$Path.includes("/")[0];
 					var oTextAnnotation = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"];
 					var bTextIsFromNavigationProperty = oTextAnnotation != null && oTextAnnotation.$Path.includes("/")[0];
+					var bIsUpperCase = !!oPropertyAnnotations["@com.sap.vocabularies.Common.v1.IsUpperCase"];
 
 					var oPropertyInfo = {
 						name: sKey,
@@ -198,7 +199,8 @@ sap.ui.define([
 						groupable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] || false,
 						unit: oUnitAnnotation && !bUnitIsFromNavigationProperty ? oUnitAnnotation.$Path : undefined,
 						text: oTextAnnotation && bTextIsFromNavigationProperty ? oTextAnnotation.$Path : undefined,
-						key: oEntityType.$Key.indexOf(sKey) > -1
+						key: oEntityType.$Key.indexOf(sKey) > -1,
+						caseSensitive : !bIsUpperCase
 					};
 
 					aProperties.push(oPropertyInfo);

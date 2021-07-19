@@ -353,7 +353,7 @@ function(
 						tokenParse: "^<#tokenText#>$",
 						tokenFormat: "<#tokenText#>",
 						valueTypes: [],
-						getModelFilter: function(oCondition, sFieldPath, oType) {
+						getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive) {
 							var isNullable = false;
 							if (oType) {
 								var vResult = oType.parseValue("", "string");
@@ -385,7 +385,7 @@ function(
 						tokenFormat: "!(<#tokenText#>)",
 						valueTypes: [],
 						exclude: true,
-						getModelFilter: function(oCondition, sFieldPath, oType) {
+						getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive) {
 							var isNullable = false;
 							if (oType) {
 								var vResult = oType.parseValue("", "string");

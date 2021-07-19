@@ -85,7 +85,7 @@ sap.ui.define([
 			}
 		});
 
-		RangeOperator.prototype.getModelFilter = function(oCondition, sFieldPath, oType) {
+		RangeOperator.prototype.getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive) {
 			var aRange = this._getRange(oCondition.values, oType);
 			return new Filter({ path: sFieldPath, operator: "BT", value1: aRange[0], value2: aRange[1] });
 		};

@@ -293,6 +293,10 @@ sap.ui.define([
 			}
 		}
 
+		var bIsUpperCase = false;
+		if (oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@com.sap.vocabularies.Common.v1.IsUpperCase")) {
+			bIsUpperCase = true;
+		}
 
 		var sLabel = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@com.sap.vocabularies.Common.v1.Label") || sKey;
 		var sTooltip = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@com.sap.vocabularies.Common.v1.QuickInfo") || null;
@@ -335,7 +339,8 @@ sap.ui.define([
 				name: sKey,
 				label: sLabel,
 				tooltip: sTooltip,
-				hiddenFilter: bHiddenFilter
+				hiddenFilter: bHiddenFilter,
+				caseSensitive: !bIsUpperCase
 		};
 
 		if (sDisplay) {
@@ -353,9 +358,6 @@ sap.ui.define([
 		if (oConstraints) {
 			oProperty.constraints = oConstraints;
 		}
-
-		//TODO: what should be considered for format options ???
-		//oProperty.formatOptions = ;
 
 		if (oFilterDefaultValue) {
 			oProperty.defaultFilterConditions = [{ fieldPath: sKey, operator: "EQ", values: [oFilterDefaultValue] }];
