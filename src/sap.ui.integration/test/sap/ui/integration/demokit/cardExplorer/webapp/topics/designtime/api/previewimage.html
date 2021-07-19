@@ -35,8 +35,8 @@
 		<div class="content">
 
 			<h1 id="overview">Preview Images</h1>
-			<h3 id="preview">Configure the editor's preview</h3>
-			<p>An additional section in the configuration allows to influence the preview shown in the Card editor
+			<h3 id="preview">Configure the Editor's Preview</h3>
+			<p>An additional section in the configuration allows to influence the preview shown in the Configuration Editor
 			</p>
 			<div class="tableWrapper">
 				<table style="background-color: transparent; border:none;">
@@ -104,9 +104,9 @@
 						<td>No</td>
 						<td>""</td>
 						<td>Relative path to an image (png, gif, jpeg) within the card bundle. Is image will be used as
-							the abstract view and can replace the card internal preview. If omited the abstract preview
-							is created based on the Card type and settings in the card manifest. The path to the image
-							is relative to the baseUrl of the Card. To support
+							the abstract view and can replace the card internal preview. If omitted the abstract preview
+							is created based on the card type and settings in the card manifest. The path to the image
+							is relative to the baseUrl of the card. To support
 							theming options on the customer side, the image should use transparency settings and gray
 							shades explained
 							<a href="#previewimage">here</a>.<br>
@@ -118,7 +118,7 @@
 
 			</div>
 
-			<h2 id="preview">Preview of the Card in Card Editor</h2>
+			<h2 id="preview">Preview of the Card in Configuration Editor</h2>
 			<h3>Preview Modes</h3>
 			<ul>
 				<li>
@@ -144,12 +144,12 @@
 			</ul>
 
 			</p>
-			<h3>Create a themeable preview for a Card</h3>
+			<h3>Create a Themeable Preview for a Card</h3>
 			<p>
-				Preview images for Card should an abstract preview to give the user an impression of look of the final
-				Card. As a Card developer, you should create the picture for such abstract in case you want to override
+				Preview images for card should present an abstract preview to give the user an impression of look of the final
+				card. As a card developer, you should create the picture for such abstract in case you want to override
 				the default representation that is created based
-				on the Card type you chose. To avoid additional overhead the preview image should be created in a
+				on the card type you chose. To avoid additional overhead the preview image should be created in a
 				themable fashion. Working with gray shades and transparency this is easily possible. The image should
 				work with these sizes and colors.
 			<ul>
@@ -165,7 +165,7 @@
 
 			</p>
 
-			After creation of the image save it with the Card sources, ideally in the configuration folder, and refer to
+			After creation of the image save it with the card sources, ideally in the configuration folder, and refer to
 			the image in the preview section's src property.
 			<pre class="prettyprint lang-js collapsed" lines="12-14"
 				caption="Custom image within preview section designtime.js">

@@ -30,21 +30,21 @@
 
 			<h1 id="overview">Configurations and APIs</h1>
 			<p>
-				The Card Editor will use the configuration module to create the user interface for administrator,
+				The Configuration Editor will use the configuration module to create the user interface for administrator,
 				page/content administrator and translator.
-				Build in configuration settings allow to easily create an appealing UI for the user.
+				Build-in configuration settings allow to easily create an appealing UI for the user.
 			</p>
 			<img src="img/ConfigurationEditorSample.png" style="margin-left:auto;width:400px;border:1px solid #f5f5f5"></td>
 			<div>
-				<h2 id="createfile">Create a configuration module and register it in the Cards manifest</h2>
+				<h2 id="createfile">Create a Configuration Module and Register it in the Cards Manifest</h2>
 				<p>
-					Advanced design-time configuration and implementation should happen outside the manifest of the Card.
-					With that design-time code will not harm or influence the runtime or the Card instance for the end-user.
+					Advanced design-time configuration and implementation should happen outside the manifest of the card.
+					With that, design-time code will not harm or influence the runtime or the card instance for the end-user.
 
 					<br>
 					Create a folder "dt" besides the manifest.json to store all configuration related artifacts.
 					Create a designtime.js file in this new folder.<br>
-					Add the following inital module setup into the js file.
+					Add the following initial module setup into the js file.
 				</p>
 				<pre class="prettyprint lang-js">
 					sap.ui.define(["sap/ui/integration/Designtime"], function (
@@ -66,7 +66,7 @@
 					}); 
 				</pre>
 				<p>
-					Similar to a Card Extension, the configuration module is registered in the manifest. As soon as the Card
+					Similar to a Card Extension, the configuration module is registered in the manifest. As soon as the Configuration
 					Editor is launched.
 				</p>
 
@@ -81,9 +81,9 @@
 
 
 
-				<h3 id="form">Configure the editor's form</h3>
+				<h3 id="form">Configure the Editor's Form</h3>
 				<p style="margin-bottom: auto;">
-					Within the configuration the form section will contain the items that are shown in the Editor
+					Within the configuration the form section will contain the items that are shown in the editor
 				</p>
 				<div class="tableWrapper">
 					<table style="background-color: transparent; border:none;">
@@ -168,7 +168,7 @@
 							<td>No</td>
 							<td>Name of the item in the form/items collection</td>
 							<td>Defines the label string. This value can be bound to values in the i18n file used in the
-								connected Card.
+								connected card.
 								<pre
 									class="prettyprint lang-js">label : "fixedString"<br>label : "{i18n>translatedStringKey}"</pre>
 							</td>
@@ -179,7 +179,7 @@
 							<td>boolean</td>
 							<td>No</td>
 							<td>false</td>
-							<td>Defines whether the value is required or not. The editors label for the field will get a "*"
+							<td>Defines whether the value is required or not. The editor's label for the field will get a "*"
 								to indicate this state.
 								<pre class="prettyprint lang-js">required : true</pre>
 							</td>
@@ -208,7 +208,7 @@
 								be needed to make them consistent from the user.
 								In future version an administrator is able to change the editable property for the
 								page/content administrator. This will only apply for
-								parameters that are editable to the administrator.
+								parameters that are editable by the administrator.
 								<pre class="prettyprint lang-js">editable : true</pre>
 							</td>
 							<td>1.83</td>
@@ -218,7 +218,7 @@
 							<td>boolean</td>
 							<td>No</td>
 							<td>false</td>
-							<td>Defines whether the value is potentially translatable and should be shown in the Card Editor
+							<td>Defines whether the value is potentially translatable and should be shown in the Configuration Editor
 								in translation mode.
 								This setting should be used for fields of type string only.
 								to indicate this state.
@@ -272,7 +272,7 @@
 								The default value for an administrator and content admin is false. In translation mode this
 								property is ignored.
 								To activate the feature additionally the allowDynamicValues property
-								of the Card Editor control needs to be enabled.
+								of the Configuration Editor control needs to be enabled.
 								<pre class="prettyprint lang-js">allowDynamicValues : true</pre>
 							</td>
 							<td>1.84</td>
@@ -285,7 +285,7 @@
 							<td>Defines whether the administrator is allowed to change the settings of the field.
 								For example the administrator can hide or disable fields for the content mode.
 								To activate the feature additionally the allowSettings property
-								of the Card Editor control needs to be enabled.
+								of the Configuration Editor control needs to be enabled.
 								<pre class="prettyprint lang-js">allowSettings : true</pre>
 							</td>
 							<td>1.84</td>
@@ -295,7 +295,7 @@
 							<td>string</td>
 							<td>No</td>
 							<td>none</td>
-							<td>Define a placeholder string that appears within a default input for string parameters.
+							<td>Defines a placeholder string that appears within a default input for string parameters.
 
 								<pre class="prettyprint lang-js">placeholder : "My Placeholder"</pre>
 							</td>
@@ -317,7 +317,7 @@
 							<td>string</td>
 							<td>No</td>
 							<td>none</td>
-							<td>Define a hint string that appears below a group or an item with the formatted text.
+							<td>Defines a hint string that appears below a group or an item with the formatted text.
 								<pre class="prettyprint lang-js">hint : "Hint Message"</pre>
 							</td>
 							<td>1.86</td>
@@ -387,10 +387,10 @@
 					</table>
 				</div>
 			</div>
-			<h3 id="lists">Providing Lists for string</h3>
+			<h3 id="lists">Providing Lists for String</h3>
 			<p>
 				To allow a selection of values for fields of type "string", you can add a values section.
-				Similar to the Card data section, the list can be filled with a static json or a request.
+				Similar to the card data section, the list can be filled with a static JSON or a request.
 				The item section in the values definition links the data. The "key" property of the item is used as
 				the value for the setting referred by the "manifestPath".</p>
 			<strong>Static Data List</strong>
@@ -418,7 +418,7 @@
 				}
             </pre>
 			<strong>Request Data List</strong>
-			<p>There referred url will deliver the data asynchronous. Also an extension could be used as a data
+			<p>The referred URL will deliver the data asynchronously. Also an extension could be used as a data
 				propvider.</p>
 			<pre class="prettyprint lang-js collapsed" lines="6-9" caption="Request Values">
 				"stringWithStaticList": {
@@ -446,11 +446,11 @@
 					{ "text": "From JSON 3", "key": "key3" }
 				]
             </pre>
-			<h3 id="lists">Providing Lists for string arrays</h3>
+			<h3 id="lists">Providing Lists for String Arrays</h3>
 			<p>
 				To allow a selection of values for fields of type "string[]", you can add the same values sections as
 				above.
-				Similar to the Card data section, the list can be filled with a static json or a request.
+				Similar to the card data section, the list can be filled with a static JSON or a request.
 				The item section in the values definition links the data. The "key" property of the item is used as
 				the value for the setting referred by the "manifestPath".
 			</p>
@@ -478,7 +478,7 @@
 				}
             </pre>
 			<strong>Request Data List</strong>
-			<p>There referred url will deliver the data asynchronous. Also an extension could be used as a data
+			<p>The referred URL will deliver the data asynchronously. Also an extension could be used as a data
 				propvider.</p>
 			<pre class="prettyprint lang-js collapsed" lines="3" caption="String Array Lists with requests">
 				"stringWithStaticList": {
@@ -506,7 +506,7 @@
 					{ "text": "From JSON 3", "key": "key3" }
 				]
 			</pre>
-			<h3>Validation of field value</h3>
+			<h3>Validation of Field Value</h3>
 			<p>
 				Validation of value can be added to the validation(s) settings in the configuration of each
 				field.
@@ -515,7 +515,7 @@
 			<pre class="prettyprint lang-js collapsed" caption="String/Integer fields with validations">
 					"string1": {
 						"type": "string",
-						"required": true,  //this is a validation rule, it will automaticall check for empty value, no need to define a validation for it.
+						"required": true,  //this is a validation rule, it will automatically check for empty value, no need to define a validation for it.
 						"validation": {
 							"type": "error",
 							"maxLength": 20
@@ -523,7 +523,7 @@
 					},
 					"int1": {
 						"type": "integer",
-						"required": true, //this is a validation rule, it will automaticall check for empty value, no need to define a validation
+						"required": true, //this is a validation rule, it will automatically check for empty value, no need to define a validation
 						for it.
 						"validation": {
 							"type": "error",
@@ -548,7 +548,7 @@
 							},
 							{
 								"type": "warning",
-								"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$", //american phone number
+								"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$", //American phone number
 								"message": "Your message" //optional
 							},
 							{
@@ -735,7 +735,7 @@
 						<td>No</td>
 						<td>none</td>
 						<td>all</td>
-						<td>Defines the error message that should apprear. If not given a default message will appear.
+						<td>Defines the error message that should appear. If not given a default message will appear.
 							<pre class="prettyprint lang-js">message: "{i18n>TRANSLATABLE_ERROR_MESSAGE}"</pre>
 						</td>
 						<td>1.86</td>
@@ -770,7 +770,7 @@ Maximal size of a string array value.
 						<td>No</td>
 						<td>none</td>
 						<td>string</td>
-						<td>String values are only valid if thex match the given Regular Expression.
+						<td>String values are only valid if text matches the given Regular Expression.
 							<pre class="prettyprint lang-js">pattern : "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$"</pre>
 						</td>
 						<td>1.86</td>
