@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"./CardRenderer",
-	"../controls/ActionsStrip",
+	"../cards/Footer",
 	"../controls/ActionsToolbar",
 	"sap/ui/base/Interface",
 	"sap/ui/thirdparty/jquery",
@@ -36,7 +36,7 @@ sap.ui.define([
 	"sap/ui/integration/util/CardObserver"
 ], function (
 	CardRenderer,
-	ActionsStrip,
+	Footer,
 	ActionsToolbar,
 	Interface,
 	jQuery,
@@ -1530,11 +1530,11 @@ sap.ui.define([
 	Card.prototype.createFooter = function () {
 		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER);
 
-		if (!oManifestFooter || !oManifestFooter.actionsStrip) {
+		if (!oManifestFooter) {
 			return null;
 		}
 
-		return ActionsStrip.create(this, oManifestFooter.actionsStrip);
+		return Footer.create(this, oManifestFooter);
 	};
 
 	Card.prototype.getContentManifest = function () {

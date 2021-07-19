@@ -59,13 +59,7 @@ sap.ui.define([
 			var oFooter = oCard.getAggregation("_footer");
 
 			if (oFooter) {
-				oRm.openStart("div", oFooter)
-					.class("sapFCardFooter")
-					.openEnd();
-
 				oRm.renderControl(oFooter);
-
-				oRm.close("div");
 			}
 		}
 	});

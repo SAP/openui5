@@ -29,28 +29,38 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	 * @override
 	 */
 	ListContentRenderer.getMinHeight = function (oConfiguration, oContent) {
-		if (!oConfiguration) {
+		if (!oConfiguration || !oConfiguration.maxItems || !oConfiguration.item) {
 			return this.DEFAULT_MIN_HEIGHT;
 		}
 
-		if (!oConfiguration.maxItems || !oConfiguration.item) {
-			return this.DEFAULT_MIN_HEIGHT;
+		var fItemHeight = this.getItemMinHeight(oConfiguration, oContent),
+			iCount = parseInt(oConfiguration.maxItems) || 0;
+
+		return (iCount * fItemHeight) + "rem";
+	};
+
+	ListContentRenderer.getItemMinHeight = function (oConfiguration, oControl) {
+		if (!oConfiguration || !oConfiguration.item) {
+			return 0;
 		}
 
-		var bIsCompact = this.isCompact(oContent),
-			iCount = parseInt(oConfiguration.maxItems) || 0,
+		var bIsCompact = this.isCompact(oControl),
 			oTemplate = oConfiguration.item,
-			iItemHeight = bIsCompact ? 2 : 2.75; // list item height in "rem"
+			fItemHeight = bIsCompact ? 2 : 2.75; // list item height in "rem"
 
 		if (oTemplate.description || oTemplate.chart) {
-			iItemHeight = 5; // list item height with description or chart in "rem"
+			fItemHeight = 5; // list item height with description or chart in "rem"
 		}
 
 		if (oTemplate.description && oTemplate.chart) {
-			iItemHeight = 6; // list item height with description and chart in "rem"
+			fItemHeight = 6; // list item height with description and chart in "rem"
 		}
 
-		return (iCount * iItemHeight) + "rem";
+		if (oTemplate.actionsStrip) {
+			fItemHeight += bIsCompact ? 2.5 : 3.25; // actions strip height in "rem"
+		}
+
+		return fItemHeight;
 	};
 
 	return ListContentRenderer;

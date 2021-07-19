@@ -197,7 +197,7 @@ sap.ui.define([
 			return this;
 		}
 
-		this._oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(oConfiguration, sType);
+		this._oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(oConfiguration, sType, this.getCardInstance());
 		this._setDataConfiguration(oConfiguration.data);
 
 		return this;
