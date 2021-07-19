@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/integration/controls/Microchart",
 	"sap/ui/integration/controls/MicrochartLegend",
 	"sap/ui/integration/controls/ListContentItem",
-	"sap/ui/integration/controls/Toolbar"
+	"sap/ui/integration/controls/ActionsStrip"
 ], function (
 	BaseListContent,
 	ListContentRenderer,
@@ -24,7 +24,7 @@ sap.ui.define([
 	Microchart,
 	MicrochartLegend,
 	ListContentItem,
-	Toolbar
+	ActionsStrip
 ) {
 	"use strict";
 
@@ -223,8 +223,8 @@ sap.ui.define([
 			mSettings.microchart = this._createChartAndAddLegend(mItem.chart);
 		}
 
-		if (mItem.toolbar) {
-			mSettings.toolbar = Toolbar.create(this.getCardInstance(), mItem.toolbar, ActionArea.ContentItemToolbar);
+		if (mItem.actionsStrip) {
+			mSettings.actionsStrip = ActionsStrip.create(this.getCardInstance(), mItem.actionsStrip);
 			oList.setShowSeparators(ListSeparators.All);
 		} else {
 			oList.setShowSeparators(ListSeparators.None);

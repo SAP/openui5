@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"./CardRenderer",
+	"../controls/ActionsStrip",
 	"../controls/ActionsToolbar",
 	"sap/ui/base/Interface",
 	"sap/ui/thirdparty/jquery",
@@ -12,7 +13,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/base/util/deepEqual",
-	"sap/base/util/isPlainObject",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/m/HBox",
 	"sap/ui/core/Icon",
@@ -33,10 +33,10 @@ sap.ui.define([
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/util/FilterBarFactory",
 	"sap/ui/integration/util/CardActions",
-	"sap/ui/integration/util/CardObserver",
-	"sap/ui/integration/controls/Toolbar"
+	"sap/ui/integration/util/CardObserver"
 ], function (
 	CardRenderer,
+	ActionsStrip,
 	ActionsToolbar,
 	Interface,
 	jQuery,
@@ -46,7 +46,6 @@ sap.ui.define([
 	Log,
 	merge,
 	deepEqual,
-	isPlainObject,
 	DataProviderFactory,
 	HBox,
 	Icon,
@@ -67,8 +66,7 @@ sap.ui.define([
 	IconFormatter,
 	FilterBarFactory,
 	CardActions,
-	CardObserver,
-	Toolbar
+	CardObserver
 ) {
 	"use strict";
 	/* global Map */
@@ -101,9 +99,6 @@ sap.ui.define([
 	var CARD_DESTROYED_ERROR = "Card is destroyed!";
 
 	var CardArea = library.CardArea;
-
-	// shortcut for sap.ui.integration.CardActionArea
-	var ActionArea = library.CardActionArea;
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -1535,11 +1530,11 @@ sap.ui.define([
 	Card.prototype.createFooter = function () {
 		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER);
 
-		if (!oManifestFooter || !oManifestFooter.toolbar) {
-			return;
+		if (!oManifestFooter || !oManifestFooter.actionsStrip) {
+			return null;
 		}
 
-		return Toolbar.create(this, oManifestFooter.toolbar, ActionArea.FooterToolbar);
+		return ActionsStrip.create(this, oManifestFooter.actionsStrip);
 	};
 
 	Card.prototype.getContentManifest = function () {

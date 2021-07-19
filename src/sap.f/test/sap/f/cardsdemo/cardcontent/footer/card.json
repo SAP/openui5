@@ -109,7 +109,7 @@
 			]
 		},
 		"footer": {
-			"toolbar": [
+			"actionsStrip": [
 				{
 					"text": "Approve",
 					"overflowPriority": "High",

@@ -542,8 +542,7 @@ sap.ui.define([
 			return [ActionArea.Header,
 				ActionArea.Content,
 				ActionArea.ContentItemDetail,
-				ActionArea.FooterToolbar,
-				ActionArea.ContentItemToolbar].indexOf(sActionArea) > -1;
+				ActionArea.ActionsStrip].indexOf(sActionArea) > -1;
 		};
 
 		return CardActions;
