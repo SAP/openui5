@@ -15809,6 +15809,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: create a suspended ODCB in the controller code, bind it and resume.
+	//
+	// JIRA: CPOUI5ODATAV4-474
+	QUnit.test("suspend/resume: suspended ODCB created by app", function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form">\
+	<Text id="note" text="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectCanceledError("Failed to read path /SalesOrderList('1')/Note",
+					"Suspended binding provides no value");
+
+			oBinding = oModel.bindContext("/SalesOrderList('1')");
+			oBinding.suspend();
+			that.oView.byId("form").setBindingContext(oBinding.getBoundContext());
+
+			return resolveLater(); // expectCanceledError doesn't wait, but we have to wait
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID", {
+					Note : "Note 1",
+					SalesOrderID : "1"
+				})
+				.expectChange("note", "Note 1");
+
+			oBinding.resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: A quasi-absolute ODCB is suspended, then #setContext is called.
 	// JIRA: CPOUI5ODATAV4-979
 	QUnit.test("setContext on a suspended quasi-absolute ODCB", function (assert) {
