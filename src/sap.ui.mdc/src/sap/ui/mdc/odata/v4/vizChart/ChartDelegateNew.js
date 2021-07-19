@@ -357,17 +357,26 @@ sap.ui.define([
 
                         //TODO: Alias might be changing after backend request
                         aVisibleMeasures.push(this._getAggregatedMeasureNameForMDCItem(oItem));
-                        var oMeasure = new Measure({
+
+                        var oMeasureSettings = {
                             name: this._getAggregatedMeasureNameForMDCItem(oItem),//"average" + oItem.getName(),
                             label: oItem.getLabel(),
-                            role: "axis1",
-                            analyticalInfo: {
-                                propertyPath: propertyPath, //TODO: What to fill here without PropertyInfos? Consider property at MDC Item level
+                            role: oItem.getRole() ? oItem.getRole() : "axis1"
+                        };
+
+                        if (aggregationMethod && propertyPath) {
+                            oMeasureSettings.analyticalInfo = {
+                                propertyPath: propertyPath,
                                 "with": aggregationMethod
-                            }
-                        });
+                            };
+                        }
+
+                        var oMeasure = new Measure(oMeasureSettings);
                         this._oInnerChart.addMeasure(oMeasure);
                         break;
+
+                    default:
+                        Log.error("MDC Chart Item " + oItem.getId() + " with label " + oItem.getLabel() + " has no known type. Supported typed are: \"groupable\" & \"aggregatable\"");
                 }
 
                 aColorPromises.push(this._prepareColoringForItem(oItem));
@@ -836,15 +845,22 @@ sap.ui.define([
             var propertyPath = oPropertyInfo.propertyPath;
 
             //TODO: Check for Criticality, Coloring and so on
-            var oMeasure = new Measure({
+
+            var oMeasureSettings = {
                 name: this._getAggregatedMeasureNameForMDCItem(oMDChartItem),//"average" + oItem.getName(),
                 label: oMDChartItem.getLabel(),
-                role: "axis1",
-                analyticalInfo: {
+                role: oMDChartItem.getRole() ? oMDChartItem.getRole() : "axis1"
+            };
+
+            if (aggregationMethod && propertyPath) {
+                oMeasureSettings.analyticalInfo = {
                     propertyPath: propertyPath, //TODO: What to fill here without PropertyInfos? Consider property at MDC Item level
                     "with": aggregationMethod
-                }
-            });
+                };
+            }
+
+
+            var oMeasure = new Measure(oMeasureSettings);
             this._oInnerChart.addMeasure(oMeasure);
         }.bind(this));
 
