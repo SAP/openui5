@@ -241,9 +241,10 @@ sap.ui.define([
 	ConditionFieldHelp.prototype._handleAfterClose = function(oEvent) {
 
 		this._oDefineConditionPanel.getBinding("conditions").suspend();
-		this._oDefineConditionPanel.cleanUp();
-
-		this.setProperty("_enableOK", true, true); // initialize
+		setTimeout(function() { // as model update for focusleave on input might be async.
+			this._oDefineConditionPanel.cleanUp();
+			this.setProperty("_enableOK", true, true); // initialize
+		}.bind(this), 0);
 
 		FieldHelpBase.prototype._handleAfterClose.apply(this, arguments);
 

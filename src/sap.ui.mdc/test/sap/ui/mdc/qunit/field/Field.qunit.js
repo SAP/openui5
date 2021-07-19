@@ -591,35 +591,7 @@ sap.ui.define([
 				oPromise.then(function(vResult) {
 					assert.ok(true, "Promise resolved");
 					assert.equal(vResult, null, "Promise result");
-
-					// DatePicker
-					iCount = 0;
-					sId = undefined;
-					sValue = undefined;
-					oPromise = undefined;
-					oField.setValue(new Date(2017, 8, 19));
-					oField.setDataType("sap.ui.model.type.Date");
-					sap.ui.getCore().applyChanges();
-
-					aContent = oField.getAggregation("_content");
-					oContent = aContent && aContent.length > 0 && aContent[0];
-					oContent.focus();
-					jQuery(oContent.getFocusDomRef()).val("XXXX");
-					qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-					assert.equal(iParseError, 1, "ParseError fired");
-					assert.equal(iCount, 1, "change event fired again");
-					assert.notOk(bValid, "Value is not valid");
-					assert.equal(sValue, "XXXX", "Value of change event");
-					assert.deepEqual(oField.getValue(), new Date(2017, 8, 19), "Field value");
-					assert.ok(oPromise, "Promise returned");
-					oPromise.then(function(vResult) {
-						assert.notOk(true, "Promise must not be resolved");
-						fnDone();
-					}).catch(function(oException) {
-						assert.ok(true, "Promise rejected");
-						assert.equal(oException, "XXXX", "wrongValue");
-						fnDone();
-					});
+					fnDone();
 				});
 			});
 		});
@@ -657,6 +629,48 @@ sap.ui.define([
 		assert.equal(iPressCount, 1, "Press event fired once");
 		assert.equal(sPressId, "F1", "Press event fired on Field");
 		oSlider.destroy();
+
+	});
+
+	QUnit.test("clenaup wrong input", function(assert) {
+
+		var fnDone = assert.async();
+		sap.ui.getCore().getMessageManager().registerObject(oField, true); // to test valueState
+		oField.setDataType("sap.ui.model.type.Date");
+		sap.ui.getCore().applyChanges();
+
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent.focus();
+		jQuery(oContent.getFocusDomRef()).val("XXXX");
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		assert.equal(iParseError, 1, "ParseError fired");
+		assert.equal(iCount, 1, "change event fired again");
+		assert.notOk(bValid, "Value is not valid");
+		assert.equal(sValue, "XXXX", "Value of change event");
+		assert.deepEqual(oField.getValue(), null, "Field value");
+		assert.ok(oPromise, "Promise returned");
+		setTimeout(function() { // to wait for valueStateMessage
+			oPromise.then(function(vResult) {
+				assert.notOk(true, "Promise must not be resolved");
+				fnDone();
+			}).catch(function(oException) {
+				assert.ok(true, "Promise rejected");
+				assert.equal(oException, "XXXX", "wrongValue");
+				assert.equal(oField.getValueState(), "Error", "ValueState");
+
+				// cleanup should remove valueState
+				oField.setValue();
+				setTimeout(function() { // to wait for ManagedObjectModel update
+					setTimeout(function() { // to wait for Message update
+						assert.equal(jQuery(oContent.getFocusDomRef()).val(), "", "no value shown");
+						assert.equal(oField.getValueState(), "None", "ValueState removed");
+
+						fnDone();
+					}, 0);
+				}, 0);
+			});
+		}, 0);
 
 	});
 

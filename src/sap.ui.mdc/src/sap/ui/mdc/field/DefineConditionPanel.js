@@ -261,12 +261,6 @@ sap.ui.define([
 				if (iRow === iIndex && oField instanceof Field && oField.hasOwnProperty("_iValueIndex")) {
 					if (oField._bParseError) { // TODO: better was to find out parsing error
 						oField.setValue(null); // to remove invalid value from parsing
-						jQuery(oField.getFocusDomRef()).val(""); // TODO better solution to clean value
-						oField._bParseError = false;
-					}
-					if (oField.getValueState() !== ValueState.None) {
-						oField.setValueState(ValueState.None);
-						oField.setValueStateText();
 					}
 				}
 				if (oField instanceof Button && oField.getId().endsWith("-removeBtnLarge")) {
@@ -501,10 +495,6 @@ sap.ui.define([
 				if (oField instanceof Field && oField.hasOwnProperty("_iValueIndex")) {
 					if (oField._bParseError) { // TODO: better was to find out parsing error
 						oField.setValue(); // to remove invalid value from parsing
-					}
-					if (oField.getValueState() !== ValueState.None) {
-						oField.setValueState(ValueState.None);
-						oField.setValueStateText();
 					}
 				}
 			}

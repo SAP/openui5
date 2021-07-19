@@ -515,11 +515,7 @@ sap.ui.define([
 										oField1._bParseError = true; // fake parse error
 										oDefineConditionPanel.cleanUp();
 										assert.equal(oField1.getValue(), null, "first Field value cleared");
-										assert.equal(oField1.getValueState(), "None", "first Field has no Error state");
-										assert.notOk(oField1.getValueStateText(), "first Field has no Error state text");
-										assert.equal(oField2.getValueState(), "None", "second Field has no Error state");
-										assert.notOk(oField2.getValueStateText(), "second Field has no Error state text");
-										assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
+										// removing valueStae is tested in Field.qunit -> needs a real parse error to work
 
 										fnDone();
 									}, 0);
