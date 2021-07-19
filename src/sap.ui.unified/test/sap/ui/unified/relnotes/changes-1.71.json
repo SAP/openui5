@@ -403,5 +403,21 @@
         ]
       }
     ]
+  },
+  "1.71.35": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "9af29782c59326981eaddff3cff7491634906edc",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: year range picker text is fully visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180255853"
+          }
+        ]
+      }
+    ]
   }
 }
