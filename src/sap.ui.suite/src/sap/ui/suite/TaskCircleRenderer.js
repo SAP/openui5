@@ -33,13 +33,13 @@ sap.ui.define(['sap/ui/core/Core', './library'],
 		var minvalue = oControl.getMinValue();
 		var maxvalue = oControl.getMaxValue();
 		var value = oControl.getValue();
-		if (minvalue < 0 || minvalue == Number.NaN) {
+		if (minvalue < 0) {
 			minvalue = 0;
 		}
-		if (maxvalue < 0 || maxvalue == Number.NaN) {
+		if (maxvalue < 0) {
 			maxvalue = 1;
 		}
-		if (value < 0 || value == Number.NaN) {
+		if (value < 0) {
 			value = 0;
 		}
 		var valuestring = value.toString();

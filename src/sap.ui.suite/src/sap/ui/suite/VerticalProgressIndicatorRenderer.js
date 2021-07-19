@@ -27,7 +27,7 @@ sap.ui.define(function() {
 
 		//calculate percentage
 	    var VerticalPercent = oControl.getPercentage();
-	    if (VerticalPercent < 0 || VerticalPercent == Number.NaN) {
+	    if (VerticalPercent < 0) {
 				VerticalPercent = 0;
 	    }
 	    if (VerticalPercent > 100) {
