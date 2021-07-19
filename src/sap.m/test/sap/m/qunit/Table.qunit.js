@@ -883,6 +883,12 @@ sap.ui.define([
 
 		assert.strictEqual(oListItem.getContentAnnouncement(), "First Name Max . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
 		assert.strictEqual(oListItem.getAccessibilityInfo().description, oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max . Last Name Mustermann . " + oBundle.getText("LIST_ITEM_NOT_SELECTED"), "Accessibility punctuation test for ColumnListItem");
+
+		this.oTable.getColumns()[0].setOrder(1);
+		this.oTable.getColumns()[1].setOrder(0);
+		assert.strictEqual(oListItem.getContentAnnouncement(), "Last Name Mustermann . First Name Max", "Accessibility order is updated");
+
+		this.oTable.destroy();
 	});
 
 	QUnit.test("Internal SelectAll checkbox should not be disabled by the EnabledPropagator",function(assert) {

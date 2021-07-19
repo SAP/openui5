@@ -242,9 +242,11 @@ sap.ui.define([
 			aColumns = oTable.getColumns(true);
 
 		aColumns.sort(function(oCol1, oCol2) {
-		    if (oCol1.getIndex() < 0) { return 1; }
-		    if (oCol2.getIndex() < 0) { return -1; }
-		    return (oCol1.getIndex() - oCol2.getIndex());
+			var iCol1Index = oCol1.getIndex(), iCol2Index = oCol2.getIndex(), iIndexDiff = iCol1Index - iCol2Index;
+			if (iIndexDiff == 0) { return 0; }
+		    if (iCol1Index < 0) { return 1; }
+		    if (iCol2Index < 0) { return -1; }
+		    return iIndexDiff;
 		}).forEach(function(oColumn) {
 			var oCell = aCells[oColumn.getInitialOrder()];
 			if (!oCell || !oColumn.getVisible() || (oColumn.isHidden() && !oColumn.isPopin())) {

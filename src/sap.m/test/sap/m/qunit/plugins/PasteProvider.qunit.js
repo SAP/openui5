@@ -101,7 +101,7 @@ sap.ui.define([
 			assert.notOk(this.oTable.$().hasClass("sapMPluginsPasteProviderHighlight"));
 			assert.ok(getPopover());
 
-			oClock.tick(400);
+			oClock.tick(500);
 			assert.notOk(getPopover().isOpen());
 			assert.equal(document.activeElement, this.oButton.getFocusDomRef());
 
@@ -109,7 +109,7 @@ sap.ui.define([
 			oDeviceStub.restore();
 			oClock.restore();
 			done();
-		}.bind(this), 500 /* focus is not testable otherwise */);
+		}.bind(this), 600 /* focus is not testable otherwise */);
 	});
 
 	QUnit.test("navigator.clipboard API: Clipboard Access Denied", function(assert) {
