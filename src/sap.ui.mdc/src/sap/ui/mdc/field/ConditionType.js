@@ -125,8 +125,10 @@ sap.ui.define([
 				var sDisplay = _getDisplay.call(this);
 				var aOperators = _getOperators.call(this);
 				var oEQOperator = FilterOperatorUtil.getEQOperator(aOperators);
-				this._oCalls.active++;
-				this._oCalls.last++;
+				if (!this.oFormatOptions.maxConditions || this.oFormatOptions.maxConditions === 1) { // as Tokens in FilterField using the same ConditionType, do not use the last value
+					this._oCalls.active++;
+					this._oCalls.last++;
+				}
 				var iCallCount = this._oCalls.last;
 
 				if (!bPreventGetDescription && sDisplay !== FieldDisplay.Value && oCondition.validated === ConditionValidated.Validated &&
@@ -207,7 +209,9 @@ sap.ui.define([
 
 	function _returnResult(oCondition, oException, iCallCount, bFormat, oType) {
 
-		this._oCalls.active--;
+		if (this._oCalls.active > 0) {
+			this._oCalls.active--;
+		}
 		if (iCallCount < this._oCalls.last && (this._oCalls.condition !== undefined || this._oCalls.exception !== undefined)) {
 			// there is already a newer result
 			oCondition = this._oCalls.condition;
