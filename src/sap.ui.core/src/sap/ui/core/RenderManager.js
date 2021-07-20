@@ -199,7 +199,8 @@ sap.ui.define([
 			sLegacyRendererControlId = "", // stores the id of the control that has a legacy renderer while its parent has the new semantic renderer
 			oStringInterface = {},         // holds old string based rendering API and the string implementation of the new semantic rendering API
 			oDomInterface = {},            // semantic rendering API for the controls whose renderer provides apiVersion=2 marker
-			aRenderingStyles = [];         // during string-based rendering, stores the styles that couldn't be set via style attribute due to CSP restrictions
+			aRenderingStyles = [],         // during string-based rendering, stores the styles that couldn't be set via style attribute due to CSP restrictions
+			oPatcher = new Patcher();      // the Patcher instance to handle in-place DOM patching
 
 		/**
 		 * Sets the focus handler to be used by the RenderManager.
@@ -792,11 +793,11 @@ sap.ui.define([
 			sOpenTag = sTagName;
 
 			if (!vControlOrId) {
-				Patcher.openStart(sTagName);
+				oPatcher.openStart(sTagName);
 			} else if (typeof vControlOrId == "string") {
-				Patcher.openStart(sTagName, vControlOrId);
+				oPatcher.openStart(sTagName, vControlOrId);
 			} else {
-				Patcher.openStart(sTagName, vControlOrId.getId());
+				oPatcher.openStart(sTagName, vControlOrId.getId());
 				renderElementData(this, vControlOrId);
 			}
 
@@ -816,7 +817,7 @@ sap.ui.define([
 			assertValidAttr(sName);
 			assertOpenTagHasStarted("attr");
 
-			Patcher.attr(sName, vValue);
+			oPatcher.attr(sName, vValue);
 			return this;
 		};
 
@@ -826,7 +827,7 @@ sap.ui.define([
 				assertValidClass.apply(this, arguments);
 				assertOpenTagHasStarted("class");
 
-				Patcher.class(sClass);
+				oPatcher.class(sClass);
 			}
 
 			return this;
@@ -837,7 +838,7 @@ sap.ui.define([
 			assertValidStyle(sName);
 			assertOpenTagHasStarted("style");
 
-			Patcher.style(sName, vValue);
+			oPatcher.style(sName, vValue);
 			return this;
 		};
 
@@ -847,7 +848,7 @@ sap.ui.define([
 				var oStyle = aStyleStack[aStyleStack.length - 1];
 				var aStyleClasses = oStyle.aCustomStyleClasses;
 				if (aStyleClasses) {
-					aStyleClasses.forEach(Patcher.class, Patcher);
+					aStyleClasses.forEach(oPatcher.class, oPatcher);
 					oStyle.aCustomStyleClasses = null;
 				}
 			}
@@ -857,7 +858,7 @@ sap.ui.define([
 			assert(bExludeStyleClasses === undefined || bExludeStyleClasses === true, "The private parameter bExludeStyleClasses must be true or omitted!");
 			sOpenTag = "";
 
-			Patcher.openEnd();
+			oPatcher.openEnd();
 			return this;
 		};
 
@@ -867,7 +868,7 @@ sap.ui.define([
 				var oStyle = aStyleStack[aStyleStack.length - 1];
 				var aStyleClasses = oStyle.aCustomStyleClasses;
 				if (aStyleClasses) {
-					aStyleClasses.forEach(Patcher.class, Patcher);
+					aStyleClasses.forEach(oPatcher.class, oPatcher);
 					oStyle.aCustomStyleClasses = null;
 				}
 			}
@@ -877,7 +878,7 @@ sap.ui.define([
 			bVoidOpen = false;
 			sOpenTag = "";
 
-			Patcher.voidEnd();
+			oPatcher.voidEnd();
 			return this;
 		};
 
@@ -886,7 +887,7 @@ sap.ui.define([
 			assertOpenTagHasEnded();
 
 			if (sText != null) {
-				Patcher.text(sText);
+				oPatcher.text(sText);
 			}
 
 			return this;
@@ -896,7 +897,7 @@ sap.ui.define([
 		oDomInterface.unsafeHtml = function(sHtml) {
 			assertOpenTagHasEnded();
 
-			Patcher.unsafeHtml(sHtml);
+			oPatcher.unsafeHtml(sHtml);
 			return this;
 		};
 
@@ -905,7 +906,7 @@ sap.ui.define([
 			assertValidName(sTagName, "tag");
 			assertOpenTagHasEnded();
 
-			Patcher.close(sTagName);
+			oPatcher.close(sTagName);
 			return this;
 		};
 
@@ -1111,7 +1112,7 @@ sap.ui.define([
 							}
 
 							// set the starting point of the Patcher
-							Patcher.setRootNode(oDomRef);
+							oPatcher.setRootNode(oDomRef);
 
 							// remember that we are using DOM based rendering interface
 							bDomInterface = true;
@@ -1147,17 +1148,17 @@ sap.ui.define([
 				if (bDomInterface) {
 
 					// remember the cursor of the Patcher before the control renderer is executed
-					var oCurrentNode = Patcher.getCurrentNode();
+					var oCurrentNode = oPatcher.getCurrentNode();
 
 					// execute the control renderer with DOM rendering interface
 					oRenderer.render(oDomInterface, oControl);
 
 					// during the rendering the cursor of the Patcher should move to the next element when openStart or voidStart is called
 					// compare after rendering cursor with before rendering cursor to determine whether the control produced any output
-					if (Patcher.getCurrentNode() == oCurrentNode) {
+					if (oPatcher.getCurrentNode() == oCurrentNode) {
 
 						// we need to remove the control DOM if there is no output produced
-						Patcher.unsafeHtml("", oControl.getId());
+						oPatcher.unsafeHtml("", oControl.getId());
 						oControl.bOutput = false;
 					} else {
 						oControl.bOutput = true;
@@ -1180,7 +1181,7 @@ sap.ui.define([
 
 				// at the end of the rendering apply the rendering buffer of the control that is forced to render string interface
 				if (sLegacyRendererControlId && sLegacyRendererControlId === oControl.getId()) {
-					Patcher.unsafeHtml(aBuffer.join(""), sLegacyRendererControlId, restoreStyles);
+					oPatcher.unsafeHtml(aBuffer.join(""), sLegacyRendererControlId, restoreStyles);
 					sLegacyRendererControlId = "";
 					bDomInterface = true;
 					aBuffer = [];
@@ -1324,7 +1325,7 @@ sap.ui.define([
 				}
 			} else {
 				// get the root node of the Patcher to determine whether we are in the initial rendering or the re-rendering phase
-				var oRootNode = Patcher.getRootNode();
+				var oRootNode = oPatcher.getRootNode();
 
 				// in case of DOM-based initial rendering, the Patcher creates a DocumentFragment to assemble all created control DOM nodes within it
 				if (oRootNode.nodeType == 11 /* Node.DOCUMENT_FRAGMENT_NODE */) {
@@ -1342,7 +1343,7 @@ sap.ui.define([
 				}
 
 				// make the Patcher ready for the next patching
-				Patcher.reset();
+				oPatcher.reset();
 			}
 
 			finalizeRendering(oStoredFocusInfo);
