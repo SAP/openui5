@@ -22385,7 +22385,13 @@ sap.ui.define([
 				}, {
 					code : "foo-77",
 					message : "text1",
-					numericSeverity : 2
+					numericSeverity : 2,
+					target : null // JIRA: CPOUI5ODATAV4-1086
+				}, {
+					code : "foo-22",
+					message : "text2",
+					numericSeverity : 1,
+					target : "n/a" // JIRA: CPOUI5ODATAV4-1086
 				}],
 				oModel = createTeaBusiModel({groupId : sGroupId}),
 				sView = '\
@@ -22414,6 +22420,14 @@ sap.ui.define([
 						originalMessage : aMessages[1]
 					},
 					type : "Information"
+				}, {
+					code : "foo-22",
+					message : "text2",
+					persistent : true,
+					technicalDetails : {
+						originalMessage : aMessages[2]
+					},
+					type : "Success"
 				}])
 				.expectChange("id", "23");
 

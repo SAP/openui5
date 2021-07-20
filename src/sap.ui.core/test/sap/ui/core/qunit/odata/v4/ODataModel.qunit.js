@@ -1698,9 +1698,11 @@ sap.ui.define([
 			sResourcePath = "~res~";
 
 		oModelMock.expects("createUI5Message")
-			.withExactArgs(sinon.match.same(aMessages[0]), sResourcePath).returns("~UI5msg0~");
+			.withExactArgs(sinon.match.same(aMessages[0]), sResourcePath, undefined, true)
+			.returns("~UI5msg0~");
 		oModelMock.expects("createUI5Message")
-			.withExactArgs(sinon.match.same(aMessages[1]), sResourcePath).returns("~UI5msg1~");
+			.withExactArgs(sinon.match.same(aMessages[1]), sResourcePath, undefined, true)
+			.returns("~UI5msg1~");
 		oModelMock.expects("fireMessageChange")
 			.withExactArgs(sinon.match({newMessages: ["~UI5msg0~", "~UI5msg1~"]}));
 
@@ -2527,6 +2529,34 @@ sap.ui.define([
 
 		assert.deepEqual(oUI5Message.getTargets(), oFixture.expectedTargets);
 		assert.strictEqual(oUI5Message.getPersistent(), oFixture.expectedPersistent || false);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	target : null
+}, {
+	target : "n/a"
+}, {
+	target : "n/a",
+	additionalTargets : ["add0", "add1"]
+}].forEach(function (oFixture, i) {
+	QUnit.test("createUI5Message: unbound: " + i, function (assert) {
+		var oModel = this.createModel(),
+			oRawMessage = {
+				target : oFixture.target,
+				additionalTargets : oFixture.additionalTargets
+			},
+			oUI5Message;
+
+		this.mock(_Helper).expects("createTechnicalDetails"); // ignore details
+		this.mock(_Helper).expects("buildPath").never();
+
+		// code under test
+		oUI5Message = oModel.createUI5Message(oRawMessage, "~resourcePath~", "n/a", true);
+
+		assert.deepEqual(oUI5Message.getTargets(), [""]);
+		assert.strictEqual(oUI5Message.getPersistent(), true);
 	});
 });
 });
