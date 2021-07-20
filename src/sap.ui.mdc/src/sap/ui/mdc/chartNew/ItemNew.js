@@ -48,7 +48,7 @@ sap.ui.define([
                     },
                     //TODO: Create a proper type map for groupable and aggregateable
                     type: {
-                        type:"String",
+                        type:"string",
                         defaultValue:""
                     },
                     /**
