@@ -932,7 +932,7 @@ sap.ui.define([
                     oBindingInfo.filters = oFilterInfo.filters;
                 }
 
-                var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
+                var sParameterPath = DelegateUtil.getParametersInfo(oFilter);
                 if (sParameterPath) {
                     oBindingInfo.path = sParameterPath;
                 }
