@@ -8,15 +8,14 @@ sap.ui.define([
 
 	var CustomControl = Control.extend("CustomControl", {
 		renderer: function(oRM, oControl) {
-			oRM.write("<Button");
-			oRM.writeControlData(oControl);
+			oRM.openStart("button", oControl);
 
 			if (!oControl.getEnabled()) {
-				oRM.writeAttribute("disabled", true);
+				oRM.attr("disabled", "");
 			}
 
-			oRM.write(">");
-			oRM.write("</Button>");
+			oRM.openEnd();
+			oRM.close("button");
 		}
 	});
 
@@ -28,15 +27,14 @@ sap.ui.define([
 			}
 		},
 		renderer: function(oRM, oControl) {
-			oRM.write("<Button");
-			oRM.writeControlData(oControl);
+			oRM.openStart("button", oControl);
 
 			if (!oControl.getEnabled()) {
-				oRM.writeAttribute("disabled", true);
+				oRM.attr("disabled", "");
 			}
 
-			oRM.write(">");
-			oRM.write("</Button>");
+			oRM.openEnd();
+			oRM.close("button");
 		}
 	});
 	var CustomContainerControl = Control.extend("CustomContainerControl", {
@@ -50,11 +48,11 @@ sap.ui.define([
 			}
 		},
 		renderer: function(oRM, oControl) {
-			oRM.write("<div tabindex='-1'");
-			oRM.writeControlData(oControl);
-			oRM.write(">");
+			oRM.openStart("div", oControl);
+			oRM.attr("tabindex", "-1");
+			oRM.openEnd();
 			oRM.renderControl(oControl.getContent());
-			oRM.write("</div>");
+			oRM.close("div");
 		}
 	});
 
@@ -76,6 +74,7 @@ sap.ui.define([
 			var oControl = new ControlClass();
 			assert.ok(typeof oControl.setEnabled === 'function', "'setEnabled' should be a function.");
 			assert.ok(typeof oControl.getEnabled === 'function', "'getEnabled' should be a function.");
+			assert.ok(typeof oControl.useEnabledPropagator === 'function', "'useEnabledPropagator' should be a function.");
 
 			oControl.destroy();
 		});
@@ -90,6 +89,19 @@ sap.ui.define([
 			oParentControl.setEnabled(false);
 			assert.equal(oParentControl.getEnabled(), false, "Parent control should be disabled.");
 			assert.equal(oChildControl.getEnabled(), false, "Child control should be disabled as well.");
+
+			oParentControl.setEnabled(true);
+			assert.equal(oParentControl.getEnabled(), true, "Parent control should be enabled again.");
+			assert.equal(oChildControl.getEnabled(), true, "Child control should be disabled as enabled again.");
+
+			oChildControl.useEnabledPropagator(false);
+			oParentControl.setEnabled(false);
+			assert.equal(oParentControl.getEnabled(), false, "Parent control is disabled.");
+			assert.equal(oChildControl.getEnabled(), true, "Child control is not disabled with the parent since EnabledPropagator is disabled for the child control");
+
+			oChildControl.useEnabledPropagator(true);
+			oParentControl.rerender();
+			assert.equal(oChildControl.getEnabled(), false, "Child control is disabled since EnabledPropagator is active and the parent is disabled");
 
 			oParentControl.destroy();
 		});

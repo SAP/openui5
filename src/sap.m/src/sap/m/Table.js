@@ -847,9 +847,7 @@ sap.ui.define([
 		}
 
 		// prevent disabling of internal controls by the sap.ui.core.EnabledPropagator
-		this._selectAllCheckBox.getEnabled = function() {
-			return this._selectAllCheckBox.getProperty("enabled");
-		}.bind(this);
+		this._selectAllCheckBox.useEnabledPropagator(false);
 
 		return this._selectAllCheckBox;
 	};
