@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+ /* global ActiveXObject:false */
+
 sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 	function (Device, Log) {
 		"use strict";
@@ -39,6 +41,19 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 			if (Device.browser.firefox) {
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=1293406
 				// mimeType is missing for firefox even though it is enabled
+				return bIsEnabled;
+			}
+
+			if (Device.browser.internet_explorer) {
+				// hacky code how to recognize that pdf plugin is installed and enabled
+				try {
+					/* eslint-disable no-new */
+					new ActiveXObject("AcroPDF.PDF");
+					/* eslint-enable no-new */
+				} catch (e) {
+					bIsEnabled = false;
+				}
+
 				return bIsEnabled;
 			}
 
