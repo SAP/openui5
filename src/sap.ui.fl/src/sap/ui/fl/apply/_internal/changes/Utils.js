@@ -23,6 +23,15 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 	 */
 
+	 function isDependencyStillValid(oChange, bHasChangeApplyFinishedCustomData) {
+		// if change is already applied OR if apply process has started,
+		// then dependency is no more valid
+		if (bHasChangeApplyFinishedCustomData || oChange.hasApplyProcessStarted()) {
+			return false;
+		}
+		return true;
+	}
+
 	var Utils = {
 		/**
 		 * Returns the control map containing control, controlType, bTemplateAffected and originalControl
@@ -85,16 +94,18 @@ sap.ui.define([
 			});
 		},
 
+		checkIfDependencyIsStillValidSync: function(oAppComponent, oModifier, mChangesMap, sChangeId) {
+			var oChange = FlUtils.getChangeFromChangesMap(mChangesMap.mChanges, sChangeId);
+			var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
+			var bHasChangeApplyFinishedCustomData = FlexCustomData.sync.hasChangeApplyFinishedCustomData(oControl, oChange);
+			return isDependencyStillValid(oChange, bHasChangeApplyFinishedCustomData);
+		},
+
 		checkIfDependencyIsStillValid: function(oAppComponent, oModifier, mChangesMap, sChangeId) {
 			var oChange = FlUtils.getChangeFromChangesMap(mChangesMap.mChanges, sChangeId);
 			var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
-
-			// if change is already applied OR if apply process has started,
-			// then dependency is no more valid
-			if (FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier) || oChange.hasApplyProcessStarted()) {
-				return false;
-			}
-			return true;
+			return FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier)
+				.then(isDependencyStillValid.bind(null, oChange));
 		}
 	};
 

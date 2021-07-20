@@ -36,7 +36,7 @@ sap.ui.define([
 	Change,
 	FlexController,
 	Layer,
-	Utils,
+	FlUtils,
 	UIComponent,
 	jQuery,
 	sinon
@@ -77,10 +77,10 @@ sap.ui.define([
 			}.bind(this));
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").callsFake(function() {
-				return new Utils.FakePromise({success: true});
+				return new FlUtils.FakePromise({success: true});
 			});
 			this.oAppComponent = new UIComponent("appComponent");
-			sandbox.stub(Utils, "getAppComponentForControl").callThrough().withArgs(this.oControl).returns(this.oAppComponent);
+			sandbox.stub(FlUtils, "getAppComponentForControl").callThrough().withArgs(this.oControl).returns(this.oAppComponent);
 		},
 		afterEach: function() {
 			this.oControl.destroy();
@@ -120,7 +120,7 @@ sap.ui.define([
 					}
 				});
 			};
-			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
+			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMapSync");
 
 			var fnResolve;
 			Applier.addPreConditionForInitialChangeApplying(new Promise(function(resolve) {
@@ -130,9 +130,9 @@ sap.ui.define([
 			var oReturnPromise = Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl);
 
 			assert.equal(this.oApplyChangeOnControlStub.callCount, 0, "no change for the control was applied yet");
-			assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 2, "and update dependencies was called twice");
 			fnResolve();
 			return oReturnPromise.then(function() {
+				assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 2, "and update dependencies was called twice");
 				assert.equal(this.oApplyChangeOnControlStub.callCount, 2, "all two changes for the control were applied");
 				assert.equal(this.oApplyChangeOnControlStub.getCall(0).args[0], oChange0, "the first change was applied first");
 				assert.equal(this.oApplyChangeOnControlStub.getCall(1).args[0], oChange1, "the second change was applied second");
@@ -143,6 +143,7 @@ sap.ui.define([
 			this.oApplyChangeOnControlStub.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
 			var oChange0 = new Change(getLabelChangeContent("a"));
+			var oSetQueuedForApplySpy = sandbox.spy(oChange0, "setQueuedForApply");
 			var fnGetChangesMap = function() {
 				return getInitialChangesMap({
 					mChanges: {
@@ -152,8 +153,8 @@ sap.ui.define([
 			};
 
 			var oPromise = Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl);
-			assert.ok(oChange0.isQueuedForApply(), "the change is already queued for apply, but not applied");
 			return oPromise.then(function() {
+				assert.ok(oSetQueuedForApplySpy.calledOnce, "the change was queued for apply");
 				assert.equal(this.oApplyChangeOnControlStub.callCount, 1, "the change was applied");
 			}.bind(this));
 		});
@@ -189,9 +190,9 @@ sap.ui.define([
 					}
 				});
 			};
-			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
-			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(true);
-			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").returns(oRevertData);
+			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMapSync");
+			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(true);
+			sandbox.stub(FlexCustomData.sync, "getParsedRevertDataFromCustomData").returns(oRevertData);
 			var oMarkFinishedSpy0 = sandbox.spy(oChange0, "markFinished");
 			var oMarkFinishedSpy1 = sandbox.spy(oChange1, "markFinished");
 
@@ -411,23 +412,24 @@ sap.ui.define([
 				return this.oFlexController._oChangePersistence._mChanges;
 			};
 
-			return Applier.applyAllChangesForControl(fnGetChangesMap.bind(this), {}, this.oFlexController, oAppliedControl).then(function() {
-				// mock oAppliedChange applied on oAppliedControl successfully
-				sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData")
-					.callThrough()
-					.withArgs(oAppliedControl, oAppliedChange, sinon.match.any)
-					.returns(true);
-			})
-			.then(Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap.bind(this), {}, this.oFlexController, oProcessedControl))
-			.then(Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap.bind(this), {}, this.oFlexController, oNotProcessedControl))
-			.then(function() {
-				assert.equal(this.oApplyChangeOnControlStub.callCount, 2, "then two changes were processed");
-				assert.equal(this.oApplyChangeOnControlStub.getCall(0).args[0].getId(), "appliedChange", "then first change was processed");
-				assert.equal(this.oApplyChangeOnControlStub.getCall(1).args[0].getId(), "processedChange", "then second change was processed");
-				oAppliedControl.destroy();
-				oProcessedControl.destroy();
-				oNotProcessedControl.destroy();
-			}.bind(this));
+			return Applier.applyAllChangesForControl(fnGetChangesMap.bind(this), {}, this.oFlexController, oAppliedControl)
+				.then(function() {
+					// mock oAppliedChange applied on oAppliedControl successfully
+					sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData")
+						.callThrough()
+						.withArgs(oAppliedControl, oAppliedChange)
+						.returns(true);
+				})
+				.then(Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap.bind(this), {}, this.oFlexController, oProcessedControl))
+				.then(Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap.bind(this), {}, this.oFlexController, oNotProcessedControl))
+				.then(function() {
+					assert.equal(this.oApplyChangeOnControlStub.callCount, 2, "then two changes were processed");
+					assert.equal(this.oApplyChangeOnControlStub.getCall(0).args[0].getId(), "appliedChange", "then first change was processed");
+					assert.equal(this.oApplyChangeOnControlStub.getCall(1).args[0].getId(), "processedChange", "then second change was processed");
+					oAppliedControl.destroy();
+					oProcessedControl.destroy();
+					oNotProcessedControl.destroy();
+				}.bind(this));
 		});
 
 		QUnit.test("applyAllChangesForControl dependency test 3", function(assert) {
@@ -442,7 +444,7 @@ sap.ui.define([
 
 			this.oFlexController._oChangePersistence._mChangesInitial = jQuery.extend(true, {}, oDependencySetup);
 			this.oFlexController._oChangePersistence._mChanges = oDependencySetup;
-			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(false);
+			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(false);
 
 			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField2)
 			.then(Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField1))
@@ -506,9 +508,9 @@ sap.ui.define([
 			this.oApplyChangeOnControlStub.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl")
 			.onCall(0).resolves({success: true})
-			.onCall(1).returns(new Utils.FakePromise({success: true}))
+			.onCall(1).returns(new FlUtils.FakePromise({success: true}))
 			.onCall(2).resolves({success: true})
-			.onCall(3).returns(new Utils.FakePromise({success: true}))
+			.onCall(3).returns(new FlUtils.FakePromise({success: true}))
 			.onCall(4).resolves({success: true});
 
 			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField2)
@@ -542,9 +544,9 @@ sap.ui.define([
 			this.oApplyChangeOnControlStub.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl")
 				.onCall(0).resolves({success: true})
-				.onCall(1).returns(new Utils.FakePromise({success: true}))
+				.onCall(1).returns(new FlUtils.FakePromise({success: true}))
 				.onCall(2).resolves({success: true})
-				.onCall(3).returns(new Utils.FakePromise({success: true}))
+				.onCall(3).returns(new FlUtils.FakePromise({success: true}))
 				.onCall(4).resolves({success: true});
 
 			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField2)
@@ -701,13 +703,13 @@ sap.ui.define([
 			sandbox.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl")
 				.onFirstCall().callsFake(function() {
-					return new Utils.FakePromise({success: false, error: new Error("testError")});
+					return new FlUtils.FakePromise({success: false, error: new Error("testError")});
 				})
 				.onSecondCall().callsFake(function() {
-					return new Utils.FakePromise({success: false, error: new Error("testError")});
+					return new FlUtils.FakePromise({success: false, error: new Error("testError")});
 				})
 				.callsFake(function() {
-					return new Utils.FakePromise({success: true});
+					return new FlUtils.FakePromise({success: true});
 				});
 
 			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlGroup1)
@@ -937,7 +939,7 @@ sap.ui.define([
 			}.bind(this));
 
 			return Applier.applyChangeOnControl(this.oChange, this.oControl, this.mPropertyBag).then(function() {
-				assert.ok(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChange, JsControlTreeModifier), "the change is applied");
+				assert.ok(FlexCustomData.sync.hasChangeApplyFinishedCustomData(this.oControl, this.oChange, JsControlTreeModifier), "the change is applied");
 				assert.ok(this.oControl instanceof Text, "then the refreshed control was initialized in changeHandler.applyChange()");
 			}.bind(this));
 		});
@@ -970,7 +972,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when change handler throws a not-Applicable exception", function(assert) {
-			var oAddFailedCustomDataStub = sandbox.stub(FlexCustomData, "addFailedCustomData");
+			var oAddFailedCustomDataStub = sandbox.stub(FlexCustomData, "addFailedCustomData").resolves();
 			var sNotApplicableMessage1 = "myNotApplicableMessage1";
 			this.oChangeHandlerApplyChangeStub.onFirstCall().callsFake(function() {
 				return ChangeHandlerBase.markAsNotApplicable(sNotApplicableMessage1, true /* asyncronous return */);
@@ -990,8 +992,8 @@ sap.ui.define([
 			var sLabelId = "labelId";
 			this.oChange = new Change(getLabelChangeContent("fileName", sLabelId));
 
-			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
-			this.oAddFailedCustomDataStub = sandbox.stub(FlexCustomData, "addFailedCustomData");
+			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData").resolves();
+			this.oAddFailedCustomDataStub = sandbox.stub(FlexCustomData, "addFailedCustomData").resolves();
 			this.oChangeHandlerApplyChangeStub = sandbox.stub();
 			sandbox.stub(ChangeUtils, "getChangeHandler").resolves({
 				applyChange: this.oChangeHandlerApplyChangeStub,
@@ -1203,7 +1205,7 @@ sap.ui.define([
 
 		QUnit.test("updates change status if change was already applied (viewCache)", function(assert) {
 			this.oApplyChangeOnControlStub.resolves({success: true});
-			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(true);
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").resolves(true);
 			var oMarkFinishedSpy = sandbox.spy(this.oChange, "markFinished");
 
 			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange]).then(function() {
@@ -1215,7 +1217,7 @@ sap.ui.define([
 
 		QUnit.test("resets change status if change is not applied anymore", function(assert) {
 			this.oApplyChangeOnControlStub.resolves({success: true});
-			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(false);
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").resolves(false);
 			this.oChange.markFinished();
 			var oSetInitialStateStub = sandbox.stub(this.oChange, "setInitialApplyState");
 			var oCheckDependencyStub = sandbox.stub(ChangeUtils, "checkIfDependencyIsStillValid");

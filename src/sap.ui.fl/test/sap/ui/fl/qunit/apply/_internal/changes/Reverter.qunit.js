@@ -211,7 +211,7 @@ sap.ui.define([
 				}
 			};
 			this.oLogStub = sandbox.stub(Log, "warning");
-			this.oDestroyCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
+			this.oDestroyCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData").resolves();
 			sandbox.stub(Reverter, "revertChangeOnControl")
 				.onCall(0).resolves(false)
 				.onCall(1).resolves(true)

@@ -87,6 +87,7 @@ sap.ui.define([
 			}).then(function() {
 				var aCommands = this.getCommandStack().getSubCommands(oParams.command);
 				if (oParams.undo) {
+					var aRemovePromises = [];
 					aCommands.forEach(function(oCommand) {
 						// for revertable changes which don't belong to LREP (variantSwitch) or runtime only changes
 						if (!(oCommand instanceof FlexCommand || oCommand instanceof AppDescriptorCommand)
@@ -96,34 +97,34 @@ sap.ui.define([
 						var oChange = oCommand.getPreparedChange();
 						var oAppComponent = oCommand.getAppComponent();
 						if (oAppComponent) {
-							PersistenceWriteAPI.remove({change: oChange, selector: oAppComponent});
+							aRemovePromises.push(PersistenceWriteAPI.remove({change: oChange, selector: oAppComponent}));
 						}
 					});
-				} else {
-					var aDescriptorCreateAndAdd = [];
-					aCommands.forEach(function(oCommand) {
-						// Runtime only changes should not be added to the persistence
-						if (oCommand.getRuntimeOnly()) {
-							return;
-						}
-						if (oCommand instanceof FlexCommand) {
-							var oAppComponent = oCommand.getAppComponent();
-							if (oAppComponent) {
-								var oPreparedChange = oCommand.getPreparedChange();
-								if (oPreparedChange.getState() === Change.states.DELETED) {
-									oPreparedChange.setState(Change.states.NEW);
-								}
-								if (!this._isPersistedChange(oPreparedChange)) {
-									PersistenceWriteAPI.add({change: oCommand.getPreparedChange(), selector: oAppComponent});
-								}
-							}
-						} else if (oCommand instanceof AppDescriptorCommand) {
-							aDescriptorCreateAndAdd.push(oCommand.createAndStoreChange());
-						}
-					}.bind(this));
-
-					return Promise.all(aDescriptorCreateAndAdd);
+					return Promise.all(aRemovePromises);
 				}
+				var aDescriptorCreateAndAdd = [];
+				aCommands.forEach(function(oCommand) {
+					// Runtime only changes should not be added to the persistence
+					if (oCommand.getRuntimeOnly()) {
+						return;
+					}
+					if (oCommand instanceof FlexCommand) {
+						var oAppComponent = oCommand.getAppComponent();
+						if (oAppComponent) {
+							var oPreparedChange = oCommand.getPreparedChange();
+							if (oPreparedChange.getState() === Change.states.DELETED) {
+								oPreparedChange.setState(Change.states.NEW);
+							}
+							if (!this._isPersistedChange(oPreparedChange)) {
+								PersistenceWriteAPI.add({change: oCommand.getPreparedChange(), selector: oAppComponent});
+							}
+						}
+					} else if (oCommand instanceof AppDescriptorCommand) {
+						aDescriptorCreateAndAdd.push(oCommand.createAndStoreChange());
+					}
+				}.bind(this));
+
+				return Promise.all(aDescriptorCreateAndAdd);
 			}.bind(this));
 			return this._lastPromise;
 		}.bind(this))(oEvent);

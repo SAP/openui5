@@ -86,16 +86,17 @@ sap.ui.define([
 
 		var aRevertQueue = aReverseChanges.map(function (oChange) {
 			var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-			PersistenceWriteAPI.remove({
-				change: oChange,
-				selector: oControl
-			});
-
-			oChange.setQueuedForRevert();
 			return function () {
-				return ChangesWriteAPI.revert({
+				return PersistenceWriteAPI.remove({
 					change: oChange,
-					element: oControl
+					selector: oControl
+				})
+				.then(function () {
+					oChange.setQueuedForRevert();
+					return ChangesWriteAPI.revert({
+						change: oChange,
+						element: oControl
+					});
 				});
 			};
 		});
