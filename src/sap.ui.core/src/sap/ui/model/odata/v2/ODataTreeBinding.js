@@ -415,7 +415,7 @@ sap.ui.define([
 			if (iLength === 0 && this.oFinalLengths[sNodeKey]) {
 				return false;
 			}
-			// leaves do not have childre, only "expanded" and "collapsed" nodes
+			// leaves do not have children, only "expanded" and "collapsed" nodes
 			// Beware: the drilldownstate may be undefined/empty string,
 			//		 in case the entity (oContext) has no value for the drilldown state property
 			if (sDrilldownState === "expanded" || sDrilldownState === "collapsed") {
@@ -1229,7 +1229,7 @@ sap.ui.define([
 				for (var k = 0; k < oData.results.length; k++) {
 					oDataObj = oData.results[k];
 					var sDataKey = oDataObj[that.oTreeProperties["hierarchy-node-for"]];
-					// sanity check: if we have duplicate keys, the data is messed up. Has already happend...
+					// sanity check: if we have duplicate keys, the data is messed up. Has already happened...
 					if (mParentIds[sDataKey]) {
 						Log.warning("ODataTreeBinding - Duplicate data entry for key: " + sDataKey + "!");
 					}
@@ -1710,7 +1710,7 @@ sap.ui.define([
 		var oPropertyMetadata, sType;
 
 		if (!oEntityType) {
-			Log.warning("Cannot determine sort comparators, as entitytype of the collection is unkown!");
+			Log.warning("Cannot determine sort comparators, as entitytype of the collection is unknown!");
 			return;
 		}
 		each(aSorters, function(i, oSorter) {
@@ -1875,7 +1875,7 @@ sap.ui.define([
 		};
 
 		// Checks if no tree annotations are missing
-		// true: everythings fine
+		// true: everything is fine
 		// false: we can't proceed
 		var fnSanityCheckTreeAnnotations = function () {
 
@@ -1894,7 +1894,7 @@ sap.ui.define([
 			} else if (iFoundAnnotations > 0 && iFoundAnnotations < iMaxAnnotationLength) {
 				Log.warning("Incomplete hierarchy tree annotations. Please check your service metadata definition!");
 			}
-			//if no annotations where found -> we are in the navigtion property mode
+			//if no annotations where found -> we are in the navigation property mode
 			return false;
 		};
 
@@ -1962,7 +1962,7 @@ sap.ui.define([
 
 	/**
 	 * Private initialize.
-	 * Triggers metadata checks for annotations and applys adapters if necessary.
+	 * Triggers metadata checks for annotations and applies adapters if necessary.
 	 * @private
 	 */
 	ODataTreeBinding.prototype._initialize = function () {
@@ -2251,7 +2251,7 @@ sap.ui.define([
 		if (this.getFilterParams()) {
 			aParams.push("$filter=" + this.getFilterParams());
 		}
-		//also includes the selct parameters
+		//also includes the select parameters
 		//in hierarchy annotated trees, the mapping properties are mandatory
 		if (this.sCustomParams) {
 			aParams.push(this.sCustomParams);
