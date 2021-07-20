@@ -2795,6 +2795,19 @@ sap.ui.define([
 			this.iSuppressInvalidate++;
 		}
 
+		// Data Binding
+		for (sName in this.mBindingInfos) {
+			if (this.mBindingInfos[sName].factory) {
+				this._detachAggregationBindingHandlers(sName);
+			} else {
+				this._detachPropertyBindingHandlers(sName);
+			}
+		}
+
+		for (sName in this.mObjectBindingInfos) {
+			this._detachObjectBindingHandlers(sName);
+		}
+
 		if (this.exit) {
 			this.exit();
 		}
@@ -3098,6 +3111,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Detach all object binding event handler
+	 *
+	 * @param {string} sModelName Name of the model to detach the handler for.
+	 * @private
+	 */
+	ManagedObject.prototype._detachObjectBindingHandlers = function(sModelName) {
+		var oBindingInfo = this.mObjectBindingInfos[sModelName];
+		if (oBindingInfo) {
+			if (oBindingInfo.binding) {
+				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				if (this.refreshDataState) {
+					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
+				}
+			}
+		}
+	};
+
+	/**
 	 * Removes the defined binding context of this object, all bindings will now resolve
 	 * relative to the parent context again.
 	 *
@@ -3109,10 +3141,8 @@ sap.ui.define([
 		var oBindingInfo = this.mObjectBindingInfos[sModelName];
 		if (oBindingInfo) {
 			if (oBindingInfo.binding) {
-				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-				oBindingInfo.binding.detachEvents(oBindingInfo.events);
-				if (this.refreshDataState) {
-					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
+				if (!this._bIsBeingDestroyed) {
+					this._detachObjectBindingHandlers(sModelName);
 				}
 				oBindingInfo.binding.destroy();
 			}
@@ -3514,6 +3544,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Detach all property binding event handler
+	 *
+	 * Note: The DataState event handler could not be detached here. This must happen after
+	 * the destroy call to correctly cleanup messages. We leave it in unbindProperty and
+	 * check for destroy state in the handler itself.
+	 *
+	 * @param {string} sName the name of the property
+	 * @private
+	 */
+	ManagedObject.prototype._detachPropertyBindingHandlers = function(sName) {
+		var oBindingInfo = this.mBindingInfos[sName],
+			oBinding;
+		if (oBindingInfo) {
+			oBinding = oBindingInfo.binding;
+			if (oBinding) {
+				oBinding.detachChange(oBindingInfo.modelChangeHandler);
+				oBinding.detachEvents(oBindingInfo.events);
+				/* to reset messages on a control we need to detach the datastate handler after destroy,
+				as binding destroy clears up validation messages */
+				if (this.refreshDataState && this._bIsBeingDestroyed) {
+					oBinding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
+				}
+			}
+		}
+	};
+
+	/**
 	 * Unbind the property from the model
 	 *
 	 * @param {string} sName the name of the property
@@ -3527,17 +3584,18 @@ sap.ui.define([
 		if (oBindingInfo) {
 			oBinding = oBindingInfo.binding;
 			if (oBinding) {
-				oBinding.detachChange(oBindingInfo.modelChangeHandler);
-				oBinding.detachEvents(oBindingInfo.events);
+				if (!this._bIsBeingDestroyed) {
+					this._detachPropertyBindingHandlers(sName);
+				}
 				oBinding.destroy();
 				/* to reset messages on a control we need to detach the datastate handler after destroy,
 				   as binding destroy clears up validation messages */
-				if (this.refreshDataState) {
+				if (this.refreshDataState && !this._bIsBeingDestroyed) {
 					oBinding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
 				}
 			}
 
-			if (this._observer) {
+			if (this._observer && !this._bIsBeingDestroyed) {
 				this._observer.bindingChange(this,sName,"remove", this.mBindingInfos[sName], "property");
 			}
 
@@ -3940,6 +3998,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Detach all aggregation binding event handler
+	 *
+	 * @param {string} sName the name of the aggregation
+	 * @private
+	 */
+	ManagedObject.prototype._detachAggregationBindingHandlers = function(sName) {
+		var oBindingInfo = this.mBindingInfos[sName];
+		if (oBindingInfo) {
+			if (oBindingInfo.binding) {
+				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+				oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
+				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				if (this.refreshDataState) {
+					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
+				}
+			}
+		}
+	};
+
+	/**
 	 * Unbind the aggregation from the model.
 	 *
 	 * After unbinding, the current content of the aggregation is destroyed by default.
@@ -3961,11 +4039,8 @@ sap.ui.define([
 			oAggregationInfo = this.getMetadata().getAggregation(sName);
 		if (oBindingInfo) {
 			if (oBindingInfo.binding) {
-				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-				oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
-				oBindingInfo.binding.detachEvents(oBindingInfo.events);
-				if (this.refreshDataState) {
-					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
+				if (!this._bIsBeingDestroyed) {
+					this._detachAggregationBindingHandlers(sName);
 				}
 				oBindingInfo.binding.destroy();
 			}
@@ -3978,8 +4053,7 @@ sap.ui.define([
 					oBindingInfo.template._sapui_candidateForDestroy = true;
 				}
 			}
-
-			if (this._observer) {
+			if (this._observer && !this._bIsBeingDestroyed) {
 				this._observer.bindingChange(this,sName,"remove", this.mBindingInfos[sName], "aggregation");
 			}
 			delete this.mBindingInfos[sName];
