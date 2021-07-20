@@ -19,10 +19,37 @@
 				The List Card is used to display multiple list items of various types.
 			</p>
 			<h2 id="properties">Properties</h2>
-			<p>The List Card contains an array of list items.</p>
 
-			<h4>List item properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>item</td>
+						<td><a href="#listItemProperties">ListItem</a></td>
+						<td>Yes</td>
+						<td>The item template from which all the items in the list will be created.</td>
+						<td>1.14.0.</td>
+						<td>1.62</td>
+					</tr>
+					<tr>
+						<td>maxItems</td>
+						<td>int</td>
+						<td>No</td>
+						<td>The maximum number of items.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+				</table>
+			</div>
 
+			<h4 id="listItemProperties">ListItem properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -75,7 +102,7 @@
 					</tr>
 					<tr>
 						<td>actions</td>
-						<td>array</td>
+						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
 						<td>No</td>
 						<td>Defines actions that can be applied on the item.</td>
 						<td>1.15.0</td>
@@ -87,13 +114,25 @@
 						</td>
 						<td>No</td>
 						<td>Defines the chart for the item.</td>
-						<td>1.24</td>
+						<td>1.24.0</td>
 						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>actionsStrip</td>
+						<td><a target="_parent" href="../../../index.html#/learn/footer/actionsStripItemProperties">ActionsStripItem[]</a></td>
+						<td>No</td>
+						<td>
+							An array of items that will be displayed in the footer.
+							<br>
+							<b>Note:</b> This property is experimental.
+						</td>
+						<td>1.35.0</td>
+						<td>1.93</td>
 					</tr>
 				</table>
 			</div>
 
-			<h4 id="iconApi">Icon Properties</h4>
+			<h4 id="iconApi">Icon properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>

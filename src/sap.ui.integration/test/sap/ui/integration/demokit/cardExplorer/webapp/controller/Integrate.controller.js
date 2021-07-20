@@ -26,27 +26,42 @@ sap.ui.define([
 			this.setModel(this.oDefaultModel);
 		},
 
+		/**
+		 * @override
+		 */
+		getNavigationModel: function() {
+			return IntegrateNavigationModel;
+		},
+
 		_onRouteMatched: function (oEvent) {
 			var oArgs = oEvent.getParameter("arguments"),
 				sTopic = oArgs.topic,
-				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/integrate/" + sTopic + '.html'),
-				oCurrentEntry;
+				sSubTopic = oArgs.subTopic || "",
+				sElementId = oArgs.id;
 
-			var aNavEntries = IntegrateNavigationModel.getProperty('/navigation');
+			// Check for deep link (id of element inside the page)
+			// Note: id of element shouldn't equal any subTopic, else it won't work.
+			if (sSubTopic) {
+				if (this.isSubTopic(sSubTopic)) {
+					sSubTopic = "/" + sSubTopic;
+				} else {
+					sElementId = sSubTopic;
+					sSubTopic = "";
+				}
+			}
 
-			oCurrentEntry = aNavEntries.find(function (oElement) {
-				return oElement.key === sTopic;
-			});
+			var oNavEntry = this.findNavEntry(sTopic),
+				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/integrate/" + sTopic + sSubTopic + '.html');
 
 			var oJsonObj = {
-				pageTitle: oCurrentEntry.title,
-				topicURL: sTopicURL,
-				bIsPhone: Device.system.phone
+				pageTitle: oNavEntry.title,
+				topicURL : sTopicURL,
+				bIsPhone : Device.system.phone
 			};
 
 			this.oDefaultModel.setData(oJsonObj);
 			this.onFrameSourceChange();
-			this.scrollTo(oArgs.id);
+			this.scrollTo(sElementId);
 		}
 	});
 

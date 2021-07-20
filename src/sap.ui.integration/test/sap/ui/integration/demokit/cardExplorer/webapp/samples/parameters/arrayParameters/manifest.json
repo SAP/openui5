@@ -1,7 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "card.explorer.object.card",
+		"id": "card.explorer.parameters.arrayParameters",
 		"type": "card",
 		"title": "Sample of an Object Card",
 		"subTitle": "Sample of an Object Card",
