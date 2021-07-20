@@ -290,7 +290,7 @@
 							<Text class="sapUiMediumMarginTop" text="{i18n>WELCOME_BLOCK_6_TEXT_1}"/>
 							<HBox width="100%">
 								<Text class="sapUiSmallMarginTop" text="{i18n>WELCOME_BLOCK_6_TEXT_2}"/>
-								<Link class="liveEditorLink sapUiSmallMarginTop" text="Live Editor." href="liveEditor" />
+								<Link class="liveEditorLink sapUiSmallMarginTop" text="Live Editor" href="liveEditor" />
 							</HBox>
 						</HBox>
 					</l:BlockLayoutCell>
