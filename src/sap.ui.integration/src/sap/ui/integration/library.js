@@ -117,10 +117,9 @@ sap.ui.define([
 		None: "None",
 		Content: "Content",
 		ContentItem: "ContentItem",
-		ContentItemToolbar: "ContentItemToolbar",
+		ActionsStrip: "ActionsStrip",
 		ContentItemDetail: "ContentItemDetail",
-		Header: "Header",
-		FooterToolbar: "FooterToolbar"
+		Header: "Header"
 	};
 
 	/**

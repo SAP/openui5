@@ -3,6 +3,7 @@
 */
 
 sap.ui.define([
+	"../library",
 	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer"
 ], function (
 	library,
+	mLibrary,
 	Core,
 	Control,
 	CardActions,
@@ -27,10 +29,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ToolbarStyle = library.ToolbarStyle;
+	var ToolbarStyle = mLibrary.ToolbarStyle;
+
+	var ActionArea = library.CardActionArea;
 
 	/**
-	 * Constructor for a new Toolbar.
+	 * Constructor for a new ActionsStrip.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -44,9 +48,10 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.integration.controls.Toolbar
+	 * @since 1.93
+	 * @alias sap.ui.integration.controls.ActionsStrip
 	 */
-	var Toolbar = Control.extend("sap.ui.integration.controls.Toolbar", {
+	var ActionsStrip = Control.extend("sap.ui.integration.controls.ActionsStrip", {
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
@@ -76,7 +81,7 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function (oRm, oControl) {
 				oRm.openStart("div", oControl)
-					.class("sapUiIntToolbar")
+					.class("sapUiIntActionsStrip")
 					.openEnd();
 
 				oRm.renderControl(oControl._getToolbar());
@@ -86,7 +91,7 @@ sap.ui.define([
 		}
 	});
 
-	Toolbar.prototype._getToolbar = function () {
+	ActionsStrip.prototype._getToolbar = function () {
 		var oToolbar = this.getAggregation("_toolbar");
 		if (!oToolbar) {
 			oToolbar = new OverflowToolbar({
@@ -98,7 +103,7 @@ sap.ui.define([
 		return oToolbar;
 	};
 
-	Toolbar.prototype._initButtons = function (aButtons, sActionArea) {
+	ActionsStrip.prototype._initButtons = function (aButtons) {
 		if (!aButtons || !aButtons.length) {
 			return null;
 		}
@@ -150,7 +155,7 @@ sap.ui.define([
 			oButton.setLayoutData(oOverflow);
 
 			oActions.attach({
-				area: sActionArea,
+				area: ActionArea.ActionsStrip,
 				control: oButton,
 				actions: aActions,
 				enabledPropertyName: "enabled"
@@ -164,13 +169,13 @@ sap.ui.define([
 		}
 	};
 
-	Toolbar.create = function (oChart, aButtons, sActionArea) {
-		var oToolbar = new Toolbar();
-		oToolbar.setCard(oChart);
-		oToolbar._initButtons(aButtons, sActionArea);
+	ActionsStrip.create = function (oChart, aButtons) {
+		var oActionsStrip = new ActionsStrip();
+		oActionsStrip.setCard(oChart);
+		oActionsStrip._initButtons(aButtons);
 
-		return oToolbar;
+		return oActionsStrip;
 	};
 
-	return Toolbar;
+	return ActionsStrip;
 });

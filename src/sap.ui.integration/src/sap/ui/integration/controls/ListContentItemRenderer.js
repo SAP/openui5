@@ -142,9 +142,9 @@ sap.ui.define([
 	ListContentItemRenderer.renderFooter = function(rm, oLI) {
 
 		var oMicrochart = oLI.getMicrochart(),
-			oToolbar = oLI.getToolbar();
+			oActionsStrip = oLI.getActionsStrip();
 
-		if (!oMicrochart && !oToolbar) {
+		if (!oMicrochart && !oActionsStrip) {
 			return;
 		}
 
@@ -156,8 +156,8 @@ sap.ui.define([
 			rm.renderControl(oMicrochart);
 		}
 
-		if (oToolbar) {
-			rm.renderControl(oToolbar);
+		if (oActionsStrip) {
+			rm.renderControl(oActionsStrip);
 		}
 
 		rm.close("div");

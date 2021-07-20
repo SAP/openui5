@@ -34,7 +34,7 @@
 						"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Exceeded' : 'In Range' }",
 						"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
 					},
-					"toolbar": [
+					"actionsStrip": [
 						{
 							"buttonType": "Reject",
 							"overflowPriority": "High",
@@ -106,7 +106,7 @@
 				}
 			},
 			"footer": {
-				"toolbar": [
+				"actionsStrip": [
 					{
 						"buttonType": "Reject",
 						"overflowPriority": "High",
