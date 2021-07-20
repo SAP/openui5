@@ -48,10 +48,7 @@
 		</Panel>
 		<l:Grid defaultSpan="XL3 L4 M4 S12" class="toolpageResponsiveMargins">
 			<!-- UI Theme Designer -->
-			<f:Card height="25rem">
-				<f:layoutData>
-					<l:GridData spanM="6" spanL="6" spanXL="4"/>
-				</f:layoutData>
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -60,7 +57,8 @@
 										level="H1"
 										titleStyle="H1"
 										text="{/uiThemeDesigner/text}"
-										target="_blank"/>
+										target="_blank"
+										wrapping="true"/>
 							</html:div>
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_2_TEXT}" />
 							<HBox wrap="Wrap">
@@ -90,11 +88,39 @@
 					</VBox>
 				</f:content>
 			</f:Card>
+			<!-- Fiori tools -->
+			<f:Card class="threeColumnLayoutCard">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin toolspageCardInfo">
+							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="{/fioriTools/text}"
+										href="{/fioriTools/href}"
+										target="_blank"/>
+							</html:div>
+							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_12_TEXT}" />
+							<HBox wrap="Wrap">
+								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
+									<Link text="{i18n>TOOLS_VIEW_DOC}"
+										target="_blank"
+										href="https://help.sap.com/viewer/17d50220bcd848aa854c9c182d65b699/Latest/en-US"/>
+									<Image
+										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+										tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
+										width="1.25rem"
+										press="onDisclaimerLinkPress"/>
+								</html:div>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/FioriTools.png" class="toolsPageImage" alt="{i18n>TOOLS_CARD_12_IMG_ALT}"/>
+					</VBox>
+				</f:content>
+			</f:Card>
 			<!-- Business Application Studio -->
-			<f:Card height="25rem">
-				<f:layoutData>
-					<l:GridData spanM="6" spanL="6" spanXL="4"/>
-				</f:layoutData>
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -130,9 +156,9 @@
 				</f:content>
 			</f:Card>
 			<!-- UI5 Tooling -->
-			<f:Card class="threeColumnLayoutCard">
+			<f:Card height="25rem">
 				<f:layoutData>
-					<l:GridData spanXL="4"/>
+					<l:GridData spanM="6" spanL="6"/>
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
@@ -179,7 +205,10 @@
 				</f:content>
 			</f:Card>
 			<!-- UI5 Inspector -->
-			<f:Card class="threeColumnLayoutCard">
+			<f:Card height="25rem">
+				<f:layoutData>
+					<l:GridData spanM="6" spanL="6" spanXL="4"/>
+				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -223,6 +252,9 @@
 			</f:Card>
 			<!-- Card Explorer -->
 			<f:Card class="threeColumnLayoutCard">
+				<f:layoutData>
+					<l:GridData spanXL="4"/>
+				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -249,9 +281,9 @@
 				</f:content>
 			</f:Card>
 			<!-- Support Assistant -->
-			<f:Card height="25rem">
+			<f:Card class="threeColumnLayoutCard">
 				<f:layoutData>
-					<l:GridData spanM="6" spanL="6"/>
+					<l:GridData spanXL="4"/>
 				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
@@ -281,10 +313,7 @@
 				</f:content>
 			</f:Card>
 			<!-- Icon Explorer -->
-			<f:Card height="25rem">
-				<f:layoutData>
-					<l:GridData spanM="6" spanL="6"/>
-				</f:layoutData>
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -319,9 +348,6 @@
 			</f:Card>
 			<!-- Theme Parameter Toolbox -->
 			<f:Card class="threeColumnLayoutCard">
-				<f:layoutData>
-					<l:GridData spanXL="4"/>
-				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -340,9 +366,6 @@
 			</f:Card>
 			<!-- UI5 Web Components -->
 			<f:Card class="threeColumnLayoutCard">
-				<f:layoutData>
-					<l:GridData spanXL="4"/>
-				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -389,9 +412,6 @@
 			</f:Card>
 			<!-- Live Editor -->
 			<f:Card class="threeColumnLayoutCard" visible="{=! (${device>/system/phone} || ${device>/browser/msie}) }">
-				<f:layoutData>
-					<l:GridData spanXL="4"/>
-				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
