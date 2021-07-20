@@ -313,35 +313,35 @@ sap.ui.define([
 		Device.os.macintosh = bIsMacintosh;
 	});
 
-	QUnit.test("_isElementGroupToggler", function(assert) {
+	QUnit.test("_allowsToggleExpandedState", function(assert) {
 		initRowActions(oTable, 2, 2);
 
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getCell(0, 0)[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, getCell(0, 0)[0]),
 			"Returned False: Pressing a key on a normal data cell can not toggle a group");
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, TableUtils.getInteractiveElements(getCell(0, 0))[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, TableUtils.getInteractiveElements(getCell(0, 0))[0]),
 			"Returned False: Pressing a key on an interactive element inside a normal data cell can not toggle a group");
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getRowHeader(0)[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, getRowHeader(0)[0]),
 			"Returned False: Pressing a key on a normal row header cell can not toggle a group");
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getRowAction(0)[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, getRowAction(0)[0]),
 			"Returned False: Pressing a key on a normal row action cell can not toggle a group");
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getColumnHeader(0)[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, getColumnHeader(0)[0]),
 			"Returned False: Pressing a key on a column header cell can not toggle a group");
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTable, getSelectAll()[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, getSelectAll()[0]),
 			"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
 
 		oTable.setEnableGrouping(true);
 		oTable.setGroupBy(oTable.getColumns()[0]);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTable, getCell(0, 1)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTable, getCell(0, 1)[0]),
 			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTable, getRowHeader(0)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTable, getRowHeader(0)[0]),
 			"Returned True: Pressing a key on a row header cell in a grouping row can toggle a group");
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTable, getRowAction(0)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTable, getRowAction(0)[0]),
 			"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
 	});
 
-	QUnit.test("_isElementGroupToggler - TreeTable", function(assert) {
+	QUnit.test("_allowsToggleExpandedState - TreeTable", function(assert) {
 		initRowActions(oTreeTable, 2, 2);
 
 		var oTreeIconCell = getCell(0, 0, null, null, oTreeTable)[0];
@@ -350,51 +350,51 @@ sap.ui.define([
 		var sTreeIconLeafClass = "sapUiTableTreeIconLeaf";
 
 		// Closed node
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, oTreeIconCell),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, oTreeIconCell),
 			"Returned True: Pressing a key on a tree icon cell of a closed node can toggle a group");
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
 			"Returned True: Pressing a key on a close node element can toggle a group");
 
 		// Open node
 		oTreeIconCell.classList.remove(sTreeIconClosedClass);
 		oTreeIconCell.classList.add(sTreeIconOpenClass);
 
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, oTreeIconCell),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, oTreeIconCell),
 			"Returned True: Pressing a key on a tree icon cell of a open node can toggle a group");
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
 			"Returned True: Pressing a key on a open node element can toggle a group");
 
 		// Leaf node
 		oTreeIconCell.classList.remove(sTreeIconOpenClass);
 		oTreeIconCell.classList.add(sTreeIconLeafClass);
 
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, oTreeIconCell),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, oTreeIconCell),
 			"Returned True: Pressing a key on a tree icon cell of a leaf node can toggle a group");
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[0]),
 			"Returned True: Pressing a key on a leaf node element can toggle a group");
 
 		// Other elements
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[1]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTreeTable, TableUtils.getInteractiveElements(oTreeIconCell)[1]),
 			"Returned False: Pressing a key on an interactive element inside a cell can not toggle a group");
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
 			"Returned False: Pressing a key on a normal row header cell can not toggle a group");
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
 			"Returned False: Pressing a key on a normal row action cell can not toggle a group");
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, getColumnHeader(0, null, null, oTreeTable)[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTreeTable, getColumnHeader(0, null, null, oTreeTable)[0]),
 			"Returned False: Pressing a key on a column header cell can not toggle a group");
-		assert.ok(!KeyboardDelegate._isElementGroupToggler(oTreeTable, getSelectAll(null, null, oTreeTable)[0]),
+		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTreeTable, getSelectAll(null, null, oTreeTable)[0]),
 			"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
 
 		oTreeTable.setUseGroupMode(true);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, getCell(0, 0, null, null, oTreeTable)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, getCell(0, 0, null, null, oTreeTable)[0]),
 			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, getCell(0, 1, null, null, oTreeTable)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, getCell(0, 1, null, null, oTreeTable)[0]),
 			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, getRowHeader(0, null, null, oTreeTable)[0]),
 			"Returned True: Pressing a key on a row header cell in a grouping row can toggle a group");
-		assert.ok(KeyboardDelegate._isElementGroupToggler(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
+		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, getRowAction(0, null, null, oTreeTable)[0]),
 			"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
 	});
 
