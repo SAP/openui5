@@ -375,43 +375,38 @@ sap.ui.define([
 	QUnit.test("named component", function(assert) {
 		var sName = "foo.sap.ui.fesr.test.a.component.name.with.seventy.characters.Component.js";
 
-		try {
-			// mock a component initialization
-			Component.create({name:sName});
-		} catch (e) {/* we do not really want to load the component */}
+		// mock a component initialization
+		Component.create({name:sName});
 
 		var fnSpy = this.spy;
 		var done = assert.async();
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
 		oReq.send();
 
 		// we need to use the timeout here, as the request-timing is not found otherwise
-		setTimeout(function() {
+		jQuery.sap.interaction.notifyStepEnd();
+		jQuery.sap.interaction.notifyStepStart(null, true);
 
-			jQuery.sap.interaction.notifyStepEnd();
-			jQuery.sap.interaction.notifyStepStart(null, true);
+		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+		assert.strictEqual(oMeasurement.component, "undetermined");
+		assert.strictEqual(oMeasurement.stepComponent, sName);
 
-			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-			assert.strictEqual(oMeasurement.component, "undetermined");
-			assert.strictEqual(oMeasurement.stepComponent, sName);
+		oReq = new XMLHttpRequest();
+		var spy = fnSpy(oReq, "setRequestHeader");
+		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.send();
 
-			oReq = new XMLHttpRequest();
-			var spy = fnSpy(oReq, "setRequestHeader");
-			oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
-			oReq.send();
+		var aHeaderValues = getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",");
+		var sComponentName20Chars = aHeaderValues[0];
+		assert.strictEqual(sComponentName20Chars.length, 20);
+		assert.strictEqual(sComponentName20Chars, "racters.Component.js");
+		var sComponentName70Chars = aHeaderValues[19];
+		assert.strictEqual(sComponentName70Chars.length, 70);
+		assert.strictEqual(sComponentName70Chars, "sap.ui.fesr.test.a.component.name.with.seventy.characters.Component.js");
+		done();
 
-			var aHeaderValues = getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",");
-			var sComponentName20Chars = aHeaderValues[0];
-			assert.strictEqual(sComponentName20Chars.length, 20);
-			assert.strictEqual(sComponentName20Chars, "racters.Component.js");
-			var sComponentName70Chars = aHeaderValues[19];
-			assert.strictEqual(sComponentName70Chars.length, 70);
-			assert.strictEqual(sComponentName70Chars, "sap.ui.fesr.test.a.component.name.with.seventy.characters.Component.js");
-			done();
-
-			spy.restore();
-		}, 100);
+		spy.restore();
 	});
 
 });
