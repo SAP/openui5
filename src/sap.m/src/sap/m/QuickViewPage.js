@@ -683,11 +683,11 @@ sap.ui.define([
 			});
 		}
 
-		if (this.getTitleUrl() && !oAvatar.hasListeners("press")) {
-			oAvatar.attachPress(this._crossApplicationNavigation.bind(this));
-		}
-
 		if (oAvatar) {
+			if (this.getTitleUrl() && !oAvatar.hasListeners("press")) {
+				oAvatar.attachPress(this._crossApplicationNavigation.bind(this));
+			}
+
 			oAvatar.addStyleClass("sapMQuickViewThumbnail");
 		}
 

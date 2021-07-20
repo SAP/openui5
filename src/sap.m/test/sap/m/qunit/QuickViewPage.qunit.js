@@ -309,4 +309,16 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oRenderedAvatar.getSrc(), "sap-icon://hint", "Properties should have same values");
 	});
+
+	QUnit.test("No avatar but titleUrl", function (assert) {
+
+		this.oQuickViewPage.setTitle("Title");
+		this.oQuickViewPage.setTitleUrl("www.sap.com");
+		Core.applyChanges();
+
+		var oRenderedAvatar = this.oQuickViewPage._getAvatar();
+
+		// Assert
+		assert.notOk(oRenderedAvatar, "Avatar is not created and error is not thrown");
+	});
 });
