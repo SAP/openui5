@@ -94,10 +94,12 @@ sap.ui.define([
 	 *   properties "code" and "message" are provided in that case
 	 * @param {number} [iHttpStatus=500]
 	 *   The HTTP status code for the simulated error response
+	 * @param {Date} [dRetryAfter]
+	 *   The data corresponding to a "Retry-After" HTTP response header value in case of 503
 	 * @returns {Error}
 	 *   The error object for {@link #expectRequest}
 	 */
-	function createError(oErrorResponse, iHttpStatus) {
+	function createError(oErrorResponse, iHttpStatus, dRetryAfter) {
 		var oError;
 
 		iHttpStatus = iHttpStatus || 500;
@@ -111,6 +113,7 @@ sap.ui.define([
 		}
 		// oError.requestUrl = undefined; // @see checkRequest
 		// oError.resourcePath = undefined; // @see checkRequest
+		oError.retryAfter = dRetryAfter;
 		oError.status = iHttpStatus;
 		// oError.statusText = ""; // not needed
 
@@ -2026,22 +2029,24 @@ sap.ui.define([
 	//*********************************************************************************************
 	// verify that error responses are processed correctly for direct requests
 	QUnit.test("error response: $direct (framework test)", function (assert) {
-		var sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
+		var dRetryAfter = new Date(),
+			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
 
 		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
 
-		this.expectRequest("EMPLOYEES('1')/ID", createError({}))
+		this.expectRequest("EMPLOYEES('1')/ID", createError({}, 503, dRetryAfter))
 			.expectMessages([{
 				code : "CODE",
 				message : "Request intentionally failed",
 				persistent : true,
 				technical : true,
 				technicalDetails : {
-					httpStatus : 500, // CPOUI5ODATAV4-428
+					httpStatus : 503, // CPOUI5ODATAV4-428, CPOUI5ODATAV4-965
 					originalMessage : {
 						code : "CODE",
 						message : "Request intentionally failed"
-					}
+					},
+					retryAfter : dRetryAfter
 				},
 				type : "Error"
 			}]);

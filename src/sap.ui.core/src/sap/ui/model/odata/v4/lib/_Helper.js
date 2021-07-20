@@ -327,6 +327,9 @@ sap.ui.define([
 		 *     <li> <code>requestUrl</code>: (optional) The absolute request URL
 		 *     <li> <code>resourcePath</code>: (optional) The path by which this resource has
 		 *       originally been requested
+		 *     <li> <code>retryAfter</code>: (optional) The absolute <code>Date</code> value
+		 *       corresponding to the value of the "Retry-After" HTTP response header, no matter if
+		 *       that header value was an HTTP date or a delay in seconds.
 		 *     <li> <code>status</code>: HTTP status code
 		 *     <li> <code>statusText</code>: (optional) HTTP status text
 		 *   </ul>
@@ -338,7 +341,9 @@ sap.ui.define([
 			var sBody = jqXHR.responseText,
 				sContentType = jqXHR.getResponseHeader("Content-Type"),
 				sPreference,
-				oResult = new Error(sMessage + ": " + jqXHR.status + " " + jqXHR.statusText);
+				oResult = new Error(sMessage + ": " + jqXHR.status + " " + jqXHR.statusText),
+				sRetryAfter = jqXHR.getResponseHeader("Retry-After"),
+				iRetryAfter;
 
 			oResult.status = jqXHR.status;
 			oResult.statusText = jqXHR.statusText;
@@ -359,6 +364,12 @@ sap.ui.define([
 				} else {
 					oResult.isConcurrentModification = true;
 				}
+			}
+			if (sRetryAfter) {
+				iRetryAfter = parseInt(sRetryAfter);
+				oResult.retryAfter = new Date(Number.isNaN(iRetryAfter)
+					? sRetryAfter
+					: Date.now() + iRetryAfter * 1000);
 			}
 			if (sContentType === "application/json") {
 				try {
@@ -452,6 +463,7 @@ sap.ui.define([
 		/**
 		 * Creates a technical details object that contains a property <code>originalMessage</code>
 		 * and an optional property <code>httpStatus</code> with the original error's HTTP status.
+		 * <code>isConcurrentModification</code> and <code>retryAfter</code> are copied as well.
 		 *
 		 * @param {object} oMessage
 		 *   The message for which to get technical details
@@ -473,6 +485,9 @@ sap.ui.define([
 				oTechnicalDetails.httpStatus = oError.status;
 				if (oError.isConcurrentModification) {
 					oTechnicalDetails.isConcurrentModification = true;
+				}
+				if (oError.retryAfter) {
+					oTechnicalDetails.retryAfter = oError.retryAfter;
 				}
 			}
 			// We don't need the original message for internal errors (errors NOT returned from the

@@ -301,6 +301,36 @@ sap.ui.define([
 			"status" : 500,
 			"statusText" : "Internal Server Error"
 		}
+	}, {
+		retryAfter : new Date(1234567890),
+		message : "message: 503 Service Unavailable",
+		"response" : {
+			"headers" : {
+				"Retry-After" : "0"
+			},
+			"status" : 503,
+			"statusText" : "Service Unavailable"
+		}
+	}, {
+		retryAfter : new Date(1234567890 + 42 * 1000),
+		message : "message: 503 Service Unavailable",
+		"response" : {
+			"headers" : {
+				"Retry-After" : "42"
+			},
+			"status" : 503,
+			"statusText" : "Service Unavailable"
+		}
+	}, {
+		retryAfter : new Date("Fri, 16 Jul 2021 14:04:39 GMT"),
+		message : "message: 503 Service Unavailable",
+		"response" : {
+			"headers" : {
+				"Retry-After" : "Fri, 16 Jul 2021 14:04:39 GMT"
+			},
+			"status" : 503,
+			"statusText" : "Service Unavailable"
+		}
 	}].forEach(function (oFixture) {
 		QUnit.test("createError: " + oFixture.message, function (assert) {
 			var oError,
@@ -313,6 +343,9 @@ sap.ui.define([
 					"responseText" : oFixture.response.responseText || JSON.stringify(oFixture.body)
 				};
 
+			if (oFixture.retryAfter) {
+				this.mock(Date).expects("now").atLeast(0).withExactArgs().returns(1234567890);
+			}
 			if (oFixture.warning) {
 				this.oLogMock.expects("warning").withExactArgs(oFixture.warning,
 					oFixture.response.responseText, "sap.ui.model.odata.v4.lib._Helper");
@@ -329,6 +362,11 @@ sap.ui.define([
 			assert.strictEqual(oError.statusText, oFixture.response.statusText);
 			assert.strictEqual(oError.requestUrl, "/request/path");
 			assert.strictEqual(oError.resourcePath, "original/path");
+			if (oFixture.retryAfter) {
+				assert.strictEqual(oError.retryAfter.getTime(), oFixture.retryAfter.getTime());
+			} else {
+				assert.notOk("retryAfter" in oError);
+			}
 		});
 	});
 
@@ -416,6 +454,28 @@ sap.ui.define([
 		assert.deepEqual(_Helper.createTechnicalDetails(oMessage), {
 			httpStatus : 412,
 			isConcurrentModification : true
+		});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bCause) {
+	var sTitle = "createTechnicalDetails: retryAfter; cause = " + bCause;
+
+	QUnit.test(sTitle, function (assert) {
+		var oError = {
+				retryAfter : {},
+				status : 503
+			},
+			oMessage = new Error();
+
+		oMessage["@$ui5.error"] = bCause ? {cause : oError} : oError;
+		this.mock(_Helper).expects("publicClone").never();
+
+		// code under test
+		assert.deepEqual(_Helper.createTechnicalDetails(oMessage), {
+			httpStatus : 503,
+			retryAfter : oError.retryAfter
 		});
 	});
 });
