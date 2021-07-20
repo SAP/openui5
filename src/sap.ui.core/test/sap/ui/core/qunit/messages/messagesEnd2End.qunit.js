@@ -431,15 +431,6 @@ sap.ui.define([
 
 			oInput.refreshDataState = function (sName, oDataState) {
 				fnOriginalRefreshDataState.apply(this, arguments);
-				if (bCall1 && bCall2) {
-					// destroying the input field causes an additional refreshDataState call for
-					// removing the data state
-					assert.strictEqual(sName, "value");
-					assert.strictEqual(oInput.getValueStateText(), "", "while destroying");
-					assert.strictEqual(oInput.getValueState(), "None");
-					done();
-					return;
-				}
 				if (sName === "value") {
 					assert.strictEqual(oInput.getValueStateText(), "Correct text",
 						"refreshDataState for property 'value'");
@@ -454,6 +445,7 @@ sap.ui.define([
 				}
 				if (bCall1 && bCall2) {
 					oInput.destroy();
+					done();
 				}
 			};
 		});
