@@ -164,9 +164,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.m.upload.UploadSetItem} oItem Item representing the file to be uploaded.
 	 * @param {sap.ui.core.Item[]} [aHeaderFields] Collection of request header fields to be send along.
+     * @param {Object} [options] Options to control behavior of uploadItem
 	 * @public
 	 */
-	Uploader.prototype.uploadItem = function (oItem, aHeaderFields) {
+	Uploader.prototype.uploadItem = function (oItem, aHeaderFields, options) {
 		var oXhr = new window.XMLHttpRequest(),
 			oFile = oItem.getFileObject(),
 			that = this,
@@ -213,7 +214,13 @@ sap.ui.define([
 		oXhr.onreadystatechange = function () {
 			var oHandler = that._mRequestHandlers[oItem.getId()];
 			if (this.readyState === window.XMLHttpRequest.DONE && !oHandler.aborted) {
-				that.fireUploadCompleted({item: oItem});
+			    var eventArguments = {item: oItem};
+
+			    if (options && options.passXhrToEvent) {
+			        eventArguments.xhr = oHandler.xhr;
+			    }
+
+				that.fireUploadCompleted(eventArguments);
 			}
 		};
 
