@@ -781,7 +781,7 @@ sap.ui.define([
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @param {boolean} [bIgnoreETag]
 	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
-	 *   actions only, since 1.90.0
+	 *   actions only, since 1.90.0. Ignored if there is no ETag (since 1.93.0).
 	 * @param {function} [fnOnStrictHandlingFailed]
 	 *   If this callback is given for an action, the preference "handling=strict" is applied. If
 	 *   the service responds with the HTTP status code 412 and a

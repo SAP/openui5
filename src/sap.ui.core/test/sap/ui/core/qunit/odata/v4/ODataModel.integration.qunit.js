@@ -11561,8 +11561,16 @@ sap.ui.define([
 	// Note: there are 3 binding types for __FAKE__AcOverload, but only Worker has Is_Manager
 	//
 	// If-Match:* is sent (JIRA: CPOUI5ODATAV4-869)
-	QUnit.test("Bound action w/ overloading", function (assert) {
-		var sView = '\
+	// If-Match:* is not sent if there's no ETag (JIRA: CPOUI5ODATAV4-1067)
+[false, true].forEach(function (bHasETag) {
+	QUnit.test("Bound action w/ overloading, has ETag: " + bHasETag, function (assert) {
+		var oEmployee = bHasETag
+			? {
+				Name : "Jonathan Smith",
+				"@odata.etag" : "ETag"
+			}
+			: {Name : "Jonathan Smith"},
+			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name" text="{Name}"/>\
 	<FlexBox id="action" \
@@ -11573,17 +11581,14 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES('1')", {
-				Name : "Jonathan Smith",
-				"@odata.etag" : "ETag"
-			})
+		this.expectRequest("EMPLOYEES('1')", oEmployee)
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("isManager", null);
 
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "*"},
+					headers : bHasETag ? {"If-Match" : "*"} : {},
 					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 						+ ".__FAKE__AcOverload",
 					payload : {Message : "The quick brown fox jumps over the lazy dog"}
@@ -11599,6 +11604,7 @@ sap.ui.define([
 			]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect on an operation

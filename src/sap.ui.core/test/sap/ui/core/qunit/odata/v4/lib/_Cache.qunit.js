@@ -8495,13 +8495,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache: post for bound operation", function () {
+[false, true].forEach(function (bHasETag) {
+	QUnit.test("SingleCache: post for bound operation, has ETag: " + bHasETag, function () {
 		var oGroupLock = {getGroupId : function () {}},
 			sMetaPath = "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType/$Type",
 			sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
 			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, false, undefined,
 				true, sMetaPath),
-			oEntity = {},
+			oEntity = bHasETag ? {"@odata.etag" : 'W/"19700101000000.0000000"'} : {},
 			oReturnValue = {},
 			mTypes = {};
 
@@ -8510,8 +8511,8 @@ sap.ui.define([
 			.withExactArgs("$parked.group", "group", sinon.match.same(oEntity));
 		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), {"If-Match" : "*"},
-				null)
+			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock),
+				{"If-Match" : bHasETag ? "*" : {}}, null)
 			.resolves(oReturnValue);
 		this.mock(oCache).expects("fetchTypes")
 			.withExactArgs()
@@ -8522,6 +8523,7 @@ sap.ui.define([
 		// code under test
 		return oCache.post(oGroupLock, /*oData*/null, oEntity, /*bIgnoreETag*/true);
 	});
+});
 	//TODO with an expand on 1..n navigation properties, compute the count of the nested collection
 	//   --> comes with implementation of $$inheritExpandSelect
 
