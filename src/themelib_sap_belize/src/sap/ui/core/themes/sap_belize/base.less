@@ -7,9 +7,6 @@
 // Theme Specifics/Internals
 // =====================================
 
-// [Tags "ThemeSpecific", "Base", "Content", "Color", "Protected"]
-@sapBackgroundColorDefault: @sapPrimary5;
-
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
 @sapContent_GridSize: 1rem;
 
@@ -1110,7 +1107,7 @@
 @sapList_HeaderTextColor: contrast(@sapList_HeaderBackground, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
-@sapList_BorderColor: darken(@sapList_Background, 10.15);
+@sapList_BorderColor: darken(@sapList_Background, 10.2);
 
 // [Tags "!Protected"]
 @sapList_BorderWidth: @sapElement_BorderWidth;
@@ -1677,17 +1674,16 @@
 // Deprecated
 // =====================================
 
-// [Tags "!Protected"]
-@sapGroup_Title_FontSize: @sapFontSize;
+@sapBackgroundColorDefault: @sapPrimary5;
 
-// [Tags "!Protected"]
 @sapList_HighlightColor: @sapHighlightColor;
+
+@sapGroup_Title_FontSize: @sapFontSize;
 
 @sapContent_ElementHeight: 1.37em;
 
 @sapContent_ElementHeight_PX: 22px;
 
-// [Tags "Protected", "Deprecated"]
 @sapField_Disabled_TextColor: fade(@sapField_TextColor, (100 - (@sapContent_DisabledOpacity * 100)));
 
 
@@ -1697,25 +1693,25 @@
 // Deprecated Theme Specifics/Internals
 // =====================================
 
-// [Tags "Protected", "Deprecated"]
+// [Tags "ThemeSpecific", "Protected", "Deprecated"]
 @sapBackgroundGradientBaseColor: @sapDeprecated_Color;
 
-// [Tags "Protected", "Deprecated"]
+// [Tags "ThemeSpecific", "Protected", "Deprecated"]
 @sapContent_BackgroundGradientStartColor: @sapDeprecated_Color;
 
-// [Tags "Protected", "Deprecated"]
+// [Tags "ThemeSpecific", "Protected", "Deprecated"]
 @sapContent_BackgroundGradientMiddleColor: @sapDeprecated_Color;
 
-// [Tags "Protected", "Deprecated"]
+// [Tags "ThemeSpecific", "Protected", "Deprecated"]
 @sapContent_BackgroundGradientEndColor: @sapDeprecated_Color;
 
-// [Tags "Protected", "Deprecated"]
+// [Tags "ThemeSpecific", "Protected", "Deprecated"]
 @sapContent_BackgroundGradientMixedStartColor: @sapDeprecated_Color;
 
-// [Tags "Protected", "Deprecated"]
+// [Tags "ThemeSpecific", "Protected", "Deprecated"]
 @sapContent_BackgroundGradientMixedMiddleColor: @sapDeprecated_Color;
 
-// [Tags "Protected", "Deprecated"]
+// [Tags "ThemeSpecific", "Protected", "Deprecated"]
 @sapContent_BackgroundGradientMixedEndColor: @sapDeprecated_Color;
 @sapDarkShadowColor: @sapDeprecated_Color;
 @sapLightShadowColor: @sapDeprecated_Color;
