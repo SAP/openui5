@@ -1395,11 +1395,17 @@ sap.ui.define([
 	DynamicPageTitle.prototype._getARIALabelReferences = function (bExpanded) {
 		var sReferences = "",
 			oTitle,
+			sTitleId,
 			oHeading = this.getHeading() || (bExpanded ? this.getExpandedHeading() : this.getSnappedHeading());
 
 		if (oHeading) {
 			oTitle = oHeading.getTitle && oHeading.getTitle();
-			sReferences += oTitle ? oTitle.getId() : oHeading.getId();
+
+			if (oTitle && oTitle.getId) {
+				sTitleId = oTitle.getId();
+			}
+
+			sReferences += sTitleId || oHeading.getId();
 		}
 
 		return sReferences;
