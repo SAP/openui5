@@ -11,8 +11,8 @@ sap.ui.define([
 ], function (_Helper, SyncPromise, ChangeReason, OperationMode, Context) {
 	"use strict";
 
-	var aChangeReasonPrecedence = [ChangeReason.Change, ChangeReason.Refresh, ChangeReason.Sort,
-			ChangeReason.Filter],
+	var aChangeReasonPrecedence = [ChangeReason.Context, ChangeReason.Change, ChangeReason.Refresh,
+			ChangeReason.Sort, ChangeReason.Filter],
 		sClassName = "sap.ui.model.odata.v4.ODataBinding",
 		// Whether a path segment is an index or contains a transient predicate
 		rIndexOrTransientPredicate = /\/\d|\(\$uid=/;

@@ -2952,6 +2952,14 @@ sap.ui.define([
 							&& !this.mParameters.$$aggregation) {
 						this.sChangeReason = "AddVirtualContext"; // JIRA: CPOUI5ODATAV4-848
 					}
+					if (oContext.getBinding
+							&& oContext.getBinding().getRootBinding().isSuspended()) {
+						// when becoming suspended, remain silent until resume
+						this.oContext = oContext;
+						this.setResumeChangeReason(ChangeReason.Context);
+
+						return;
+					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext,

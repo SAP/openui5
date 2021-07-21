@@ -15880,6 +15880,56 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: create a suspended ODCB with a dependent list in the controller code, and bind it.
+	// The list binding's state transitions from unresolved to suspended. It must remain silent
+	// until it is resumed.
+	//
+	// JIRA: CPOUI5ODATAV4-474
+	QUnit.test("ODLB implicitly switching from unresolved to suspended", function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form">\
+	<Text id="note" text="{Note}"/>\
+	<Table items="{SO_2_SOITEM}">\
+		<Text id="position" text="{ItemPosition}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("note")
+			.expectChange("position", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectCanceledError("Failed to read path /SalesOrderList('1')/Note",
+					"Suspended binding provides no value");
+
+			oBinding = oModel.bindContext("/SalesOrderList('1')");
+			oBinding.suspend();
+			// code under test
+			that.oView.byId("form").setBindingContext(oBinding.getBoundContext());
+
+			return resolveLater(null, 0); // expectCanceledError doesn't wait, but we have to wait
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+					Note : "Note 1",
+					SalesOrderID : "1",
+					SO_2_SOITEM : [{
+						ItemPosition : "0010",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("note", "Note 1")
+				.expectChange("position", ["0010"]);
+
+			oBinding.resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Deferred operation binding returns a collection. A dependent list binding for
 	// "value" with auto-$expand/$select displays the result.
 	QUnit.test("Deferred operation returns collection, auto-$expand/$select", function (assert) {

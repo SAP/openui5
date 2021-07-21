@@ -2742,13 +2742,20 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 
 		// code under test
+		oBinding.setResumeChangeReason(ChangeReason.Context);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Context);
+
+		// code under test
 		oBinding.setResumeChangeReason(ChangeReason.Change);
+		oBinding.setResumeChangeReason(ChangeReason.Context);
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 
 		// code under test
 		oBinding.setResumeChangeReason(ChangeReason.Refresh);
 		oBinding.setResumeChangeReason(ChangeReason.Change);
+		oBinding.setResumeChangeReason(ChangeReason.Context);
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Refresh);
 
@@ -2756,6 +2763,7 @@ sap.ui.define([
 		oBinding.setResumeChangeReason(ChangeReason.Sort);
 		oBinding.setResumeChangeReason(ChangeReason.Refresh);
 		oBinding.setResumeChangeReason(ChangeReason.Change);
+		oBinding.setResumeChangeReason(ChangeReason.Context);
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Sort);
 
@@ -2764,6 +2772,7 @@ sap.ui.define([
 		oBinding.setResumeChangeReason(ChangeReason.Sort);
 		oBinding.setResumeChangeReason(ChangeReason.Refresh);
 		oBinding.setResumeChangeReason(ChangeReason.Change);
+		oBinding.setResumeChangeReason(ChangeReason.Context);
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Filter);
 	});
