@@ -3446,6 +3446,7 @@ sap.ui.define([
 			var oBinding = oModel.bindList("/Customers", null, null, null, {});
 
 			var fnHandler1 = function() {
+				// retrieve 20 entries (skip=0 top=60)
 				oBinding.detachChange(fnHandler1);
 				assert.equal(oBinding.getPath(), "/Customers", "ListBinding path");
 				assert.equal(oBinding.getLength(), 91, "length of items");
@@ -3455,17 +3456,11 @@ sap.ui.define([
 			};
 
 			var fnHandler2 = function() {
+				// retrieve 20 entries (skip=20 top=40)
 				oBinding.detachChange(fnHandler2);
 				assert.equal(oBinding.getLength(), 91, "length of items");
 				assert.equal(oBinding.aKeys.length, 40);
-				oBinding.attachChange(fnHandler3);
 				oBinding.getContexts(0, 10, 50);
-			};
-
-			var fnHandler3 = function() {
-				oBinding.detachChange(fnHandler3);
-				assert.equal(oBinding.getLength(), 91, "length of items");
-				assert.equal(oBinding.aKeys.length, 60);
 				done();
 			};
 
@@ -3488,6 +3483,7 @@ sap.ui.define([
 			var oBinding = oModel.bindList("/Customers", null, null, null, {});
 
 			var fnHandler1 = function() {
+				// retrieve 20 entries (skip=0 top=60)
 				oBinding.detachChange(fnHandler1);
 				assert.equal(oBinding.getPath(), "/Customers", "ListBinding path");
 				assert.equal(oBinding.getLength(), 91, "length of items");
@@ -3497,17 +3493,11 @@ sap.ui.define([
 			};
 
 			var fnHandler2 = function() {
+				// retrieve 20 entries (skip=20 top=40)
 				oBinding.detachChange(fnHandler2);
 				assert.equal(oBinding.getLength(), 91, "length of items");
 				assert.equal(oBinding.aKeys.length, 40);
-				oBinding.attachChange(fnHandler3);
 				oBinding.getContexts(0, 10, 50);
-			};
-
-			var fnHandler3 = function() {
-				oBinding.detachChange(fnHandler3);
-				assert.equal(oBinding.getLength(), 91, "length of items");
-				assert.equal(oBinding.aKeys.length, 60);
 				done();
 			};
 

@@ -9233,4 +9233,122 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(that.oView.byId("table").getItems().length, 0);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: When scrolling in a table then, the ODataListBinding requests an appropriate number
+	// of items according to the defined threshold. See implementation of
+	// ODataUtils#_getReadIntervals.
+	// JIRA: CPOUI5MODELS-605
+	QUnit.test("ODataListBinding paging and gap calculation", function (assert) {
+		var oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" threshold="10" visibleRowCount="2">\
+	<Text id="textId" text="{SalesOrderID}" />\
+</t:Table>',
+			that = this;
+
+		function getItems(iStart, iLength) {
+			var i, aItems = [];
+
+			for (i = 0; i < iLength; i += 1) {
+				aItems.push({
+					__metadata : {
+						uri : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet" +
+							"('" + iStart + "')"
+					},
+					SalesOrderID : "ID " + iStart
+				});
+				iStart += 1;
+			}
+
+			return aItems;
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=12&$inlinecount=allpages", {
+				__count : "550",
+				results : getItems(0, 12)
+			})
+			.expectValue("textId", "ID 0", 0)
+			.expectValue("textId", "ID 1", 1);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest("SalesOrderSet?$skip=12&$top=6", {
+					results : getItems(12, 6)
+				})
+				.expectValue("textId", "ID 6", 6)
+				.expectValue("textId", "ID 7", 7);
+
+			// code under test
+			// when setting the first visible row to 6
+			// the next 7 entries are checked if they are available (iLength + threshold / 2)
+			// because only indices 0 to 11 are loaded, and the 12th one is not, we expect a request
+			// reading entries up to index 18 (iStart + iLength + threshold)
+			oTable.setFirstVisibleRow(6);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// Not visible in test output because correct values are only output up to index 10
+			that.expectValue("textId", "ID 11", 11)
+				.expectValue("textId", "ID 12", 12);
+
+			// code under test
+			// when setting the first visible row to 11
+			// the next 7 entries are checked if they are available (iLength + threshold / 2)
+			// because indices 0 to 17 are loaded, no request needed
+			oTable.setFirstVisibleRow(11);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet?$skip=90&$top=22", {
+					results : getItems(90, 22)
+				})
+				.expectValue("textId", "", 100) //TODO: Why do these values come?
+				.expectValue("textId", "", 101) //TODO: Why do these values come?
+				.expectValue("textId", "ID 100", 100)
+				.expectValue("textId", "ID 101", 101);
+
+			// code under test
+			// when setting the first visible row to 100
+			// the next 7 entries are checked if they are available (iLength + threshold / 2) and
+			// the previous 5 entries are checked (threshold / 2)
+			// because only indices 0 to 17 are loaded, and the item 95 is not, we expect a request
+			// reading entries up to index 112 (iLength + threshold * 2)
+			// these are the 2 visible rows plus 10 entries before and behind them
+			oTable.setFirstVisibleRow(100);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("textId", "ID 95", 95)
+				.expectValue("textId", "ID 96", 96);
+
+			// code under test
+			// when setting the first visible row to 95
+			// the next 7 entries are checked if they are available (iLength + threshold / 2) and
+			// the previous 5 entries are checked (threshold / 2)
+			// because indices 90 to 111 are loaded, no request needed
+			oTable.setFirstVisibleRow(95);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet?$skip=84&$top=6", {
+					results : getItems(84, 6)
+				})
+				.expectValue("textId", "ID 94", 94)
+				.expectValue("textId", "ID 95", 95);
+
+			// code under test
+			// when setting the first visible row to 94
+			// the next 7 entries are checked if they are available (iLength + threshold / 2) and
+			// the previous 5 entries are checked (threshold / 2)
+			// because indices 90 to 111 are loaded, but item 89 is not, we expect a request
+			// reading entries up to index 90
+			oTable.setFirstVisibleRow(94);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

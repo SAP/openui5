@@ -114,119 +114,6 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[{ // no data
-	oIn : {aData : [], iLength : 100, iStart : 0, iThreshold : 0},
-	oOut : {length : 100, startIndex : 0}
-}, { // data at the beginning
-	oIn : {aData : [{iLength : 10, iStart : 0}], iLength : 100, iStart : 0, iThreshold : 0},
-	oOut : {length : 90, startIndex : 10}
-}, { // data at the end
-	oIn : {aData : [{iLength : 10, iStart : 90}], iLength : 100, iStart : 0, iThreshold : 0},
-	oOut : {length : 90, startIndex : 0}
-}, { // data at the beginning and at the end
-	oIn : {
-		aData : [{iLength : 10, iStart : 0}, {iLength : 10, iStart : 90}],
-		iLength : 100,
-		iStart : 0,
-		iThreshold : 0
-	},
-	oOut : {length : 80, startIndex : 10}
-}, { // data in middle of the requested range
-	oIn : {aData : [{iLength : 10, iStart : 30}], iLength : 100, iStart : 0, iThreshold : 0},
-	oOut : {length : 100, startIndex : 0}
-}, { // no data with threshold
-	oIn : {aData : [], iLength : 100, iStart : 0, iThreshold : 50},
-	oOut : {length : 150, startIndex : 0}
-}, { // data at the beginning with threshold
-	oIn : {aData : [{iLength : 10, iStart : 0}], iLength : 100, iStart : 0, iThreshold : 50},
-	oOut : {length : 140, startIndex : 10}
-}, { // data at the end of the requested range with threshold
-	oIn : {aData : [{iLength : 10, iStart : 90}], iLength : 100, iStart : 0, iThreshold : 50},
-	oOut : {length : 150, startIndex : 0}
-}, { // data at the end (requested range including threshold)
-	oIn : {aData : [{iLength : 60, iStart : 90}], iLength : 100, iStart : 0, iThreshold : 50},
-	oOut : {length : 90, startIndex : 0}
-}, { // data at the beginning and in the middle of the requested range with threshold
-	oIn : {
-		aData : [{iLength : 10, iStart : 0}, {iLength : 10, iStart : 90}],
-		iLength : 100,
-		iStart : 0,
-		iThreshold : 50
-	},
-	oOut : {length : 140, startIndex : 10}
-}, { // data at the beginning and at the end with threshold
-	oIn : {
-		aData : [{iLength : 10, iStart : 0}, {iLength : 20, iStart : 130}],
-		iLength : 100,
-		iStart : 0,
-		iThreshold : 50
-	},
-	oOut : {length : 120, startIndex : 10}
-}, { // prepend complete threshold
-	oIn : {aData : [], iLength : 30, iStart : 80, iThreshold : 50},
-	oOut : {length : 130, startIndex : 30}
-}, { // prepend complete threshold start with 0
-	oIn : {aData : [], iLength : 30, iStart : 40, iThreshold : 50},
-	oOut : {length : 120, startIndex : 0}
-}, { // read at most to final length
-	oIn : {aData : [], iFinalLength : 80, iLength : 30, iStart : 20, iThreshold : 50},
-	oOut : {length : 80, startIndex : 0}
-}, { // read at least threshold data
-	oIn : {aData : [{iLength : 120, iStart : 0}], iLength : 100, iStart : 0, iThreshold : 50},
-	oOut : {length : 50, startIndex : 120}
-}, { // read at least threshold data start > threshold
-	oIn : {aData : [{iLength : 60, iStart : 70}], iLength : 20, iStart : 70, iThreshold : 50},
-	oOut : {length : 120, startIndex : 20}
-}, { // only few entries missing at the beginning and the end
-	oIn : {aData : [{iLength : 100, iStart : 30}], iLength : 20, iStart : 70, iThreshold : 50},
-	oOut : {length : 120, startIndex : 20}
-}, { // all data available
-	oIn : {aData : [{iLength : 100, iStart : 0}], iLength : 20, iStart : 0, iThreshold : 50},
-	oOut : {length : 0, startIndex : 70}
-}, { // extend length because it is less than threshold but close the gap only
-	oIn : {
-		aData : [{iLength : 70, iStart : 0}, {iLength : 100, iStart : 90}],
-		iLength : 20,
-		iStart : 20,
-		iThreshold : 50
-	},
-	oOut : {length : 20, startIndex : 70}
-}, { // extend length because it is less than threshold; final length ignored
-	oIn : {
-		aData : [{iLength : 70, iStart : 0}],
-		iFinalLength : 80,
-		iLength : 20,
-		iStart : 20,
-		iThreshold : 50
-	},
-	oOut : {length : 50, startIndex : 70}
-}].forEach(function (oFixture, i) {
-	QUnit.test("calculateSection: #" + i, function (assert) {
-		var oBinding = {
-				aKeys : [],
-				bLengthFinal : !!oFixture.oIn.iFinalLength,
-				iLength : oFixture.oIn.iFinalLength
-			},
-			oResult;
-
-		oFixture.oIn.aData.forEach(function (oAvailableData) {
-			var i = oAvailableData.iStart,
-				n = i + oAvailableData.iLength;
-
-			for (; i < n; i += 1) {
-				oBinding.aKeys[i] = "key" + i;
-			}
-		});
-
-		// code under test
-		oResult = ODataListBinding.prototype.calculateSection.call(oBinding, oFixture.oIn.iStart,
-			oFixture.oIn.iLength, oFixture.oIn.iThreshold);
-
-		assert.deepEqual(oResult, oFixture.oOut);
-	});
-});
-
-	//*********************************************************************************************
 ["resolvedPath", undefined, null].forEach(function (sResolvedPath) {
 	QUnit.test("_checkDataStateMessages: with deepPath: " + sResolvedPath, function (assert) {
 		var oModel = {
@@ -830,4 +717,88 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iLastStartIndex, 0);
 		assert.strictEqual(oBinding.iLastThreshold, undefined);
 	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bLengthFinal) {
+	QUnit.test("getContexts: use ODataUtils, bLengthFinal = " + bLengthFinal, function (assert) {
+		var oBinding = {
+				aKeys : [],
+				iLength : 550,
+				bLengthFinal : bLengthFinal,
+				oModel : {getServiceMetadata : function () {}},
+				bPendingRequest : false,
+				_getContexts : function () {},
+				_getLength : function () {},
+				loadData : function () {},
+				useClientMode : function () {}
+			},
+			aContexts = [],
+			oInterval = {start : 0, end : 110},
+			aIntervals = [{start : 0, end : 110}];
+
+		this.mock(oBinding).expects("_getLength").withExactArgs().exactly(bLengthFinal ? 0 : 1);
+		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 10).returns(aContexts);
+		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(false);
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(oBinding.aKeys , 0, 10, 100, bLengthFinal ? oBinding.iLength : undefined)
+			.returns(aIntervals);
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs(sinon.match.same(aIntervals))
+			.returns(oInterval);
+		this.mock(oBinding.oModel).expects("getServiceMetadata").withExactArgs().returns(true);
+		this.mock(oBinding).expects("loadData")
+			.withExactArgs(sinon.match.same(oInterval.start),
+				sinon.match.same(oInterval.end - oInterval.start));
+
+		// code under test
+		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100),
+			aContexts);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{pendingRequest : false, interval : {start : 0, end : 110}, expectLoad : true},
+	{pendingRequest : true, interval : {start : 0, end : 110}, expectLoad : false},
+	{pendingRequest : true, interval : undefined, expectLoad : false},
+	{pendingRequest : false, interval : undefined, expectLoad : false}
+].forEach(function (oFixture) {
+	var sTitle = "getContexts: use ODataUtils: pendingRequest = " + oFixture.pendingRequest
+			+ ", interval = " + oFixture.interval;
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				aKeys : [],
+				iLength : 550,
+				bLengthFinal : true,
+				oModel : { getServiceMetadata : function () {}},
+				bPendingRequest : oFixture.pendingRequest,
+				_getContexts : function () {},
+				_getLength : function () {},
+				loadData : function () {},
+				useClientMode : function () {}
+			},
+			aContexts = [],
+			aIntervals = [{start : 0, end : 110}];
+
+		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 10).returns(aContexts);
+		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(false);
+		this.mock(ODataUtils).expects("_getReadIntervals")
+			.withExactArgs(oBinding.aKeys , 0, 10, 100, oBinding.iLength)
+			.returns(aIntervals);
+		this.mock(ODataUtils).expects("_mergeIntervals")
+			.withExactArgs(sinon.match.same(aIntervals))
+			.returns(oFixture.interval);
+		this.mock(oBinding.oModel).expects("getServiceMetadata").withExactArgs().returns(true);
+		if (oFixture.interval) {
+			this.mock(oBinding).expects("loadData")
+				.withExactArgs(oFixture.interval.start,
+					oFixture.interval.end - oFixture.interval.start)
+				.exactly(oFixture.expectLoad ? 1 : 0);
+		}
+
+		// code under test
+		assert.deepEqual(ODataListBinding.prototype.getContexts.call(oBinding, 0, 10, 100),
+			aContexts);
+	});
+});
 });
