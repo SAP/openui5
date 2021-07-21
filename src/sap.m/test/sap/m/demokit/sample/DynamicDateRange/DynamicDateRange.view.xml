@@ -20,7 +20,9 @@
 					<DynamicDateRange
 						id="dynamic-range"
 						enableGroupHeaders="false"
-						change="onChange"/>
+						change="onChange"
+						options="{/dynamicDateFilterKeys}"
+						width="{env>/filterInputWidth}"/>
 				</content>
 			</OverflowToolbar>
 		</headerToolbar>

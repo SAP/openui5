@@ -32,14 +32,24 @@ sap.ui.define([
 	// Get control constants
 	var CONSTANTS = new UnifiedColorPicker()._getConstants();
 
+	function getColors(oColorPicker) {
+		return {
+			r: oColorPicker.Color.r,
+			g: oColorPicker.Color.g,
+			b: oColorPicker.Color.b,
+			h: oColorPicker.Color.h,
+			s: oColorPicker.Color.s,
+			v: oColorPicker.Color.v,
+			l: oColorPicker.Color.l,
+			alpha: oColorPicker.Color.a,
+			hex: oColorPicker.Color.hex,
+			formatHSL: oColorPicker.Color.formatHSL
+		};
+	}
+
 	/****************************************************
 	* EVENT-HANDLER
 	*****************************************************/
-	//	Eventhandler for Change Event of ColorPicker 2
-	function handleColorPicker2Change(oEvent) {
-		colors2 = oEvent.getParameters();
-	}
-
 	//	Eventhandler for Change Event of ColorPicker 6
 	function handleColorPicker6Change(oEvent) {
 		colors6 = oEvent.getParameters();
@@ -55,7 +65,6 @@ sap.ui.define([
 
 	// Control 2 = Set parameter to 'lime'
 	var oColorPicker2 =  new ColorPicker(sCtrlId + "2");
-	oColorPicker2.attachChange(handleColorPicker2Change);
 	oColorPicker2.setColorString('lime');
 	oColorPicker2.placeAt("uiArea2");
 
@@ -291,6 +300,9 @@ sap.ui.define([
 
 	//Testcase 14: Results of named parameter
 	QUnit.test("Result of Input Parameter 'lime' [Control 2]: ", function(assert) {
+		sap.ui.getCore().applyChanges();
+		colors2 = getColors(oColorPicker2);
+
 		assert.expect(7);
 		assert.equal(oColorPicker2.oRedField.getValue(), colors2.r.toString() , "Value of RED: ");
 		assert.equal(oColorPicker2.oGreenField.getValue(), colors2.g.toString() , "Value of GREEN: ");

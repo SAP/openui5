@@ -57,7 +57,8 @@ sap.ui.define([
 			"SPECIFICMONTH": new StandardDynamicDateOption({ key: "SPECIFICMONTH", valueTypes: ["int"] }),
 			"DATERANGE": new StandardDynamicDateOption({ key: "DATERANGE", valueTypes: ["date", "date"] }),
 			"DATE": new StandardDynamicDateOption({ key: "DATE", valueTypes: ["date"] })
-		}
+		},
+		_allKeys: StandardDynamicDateRangeKeys.slice(0)
 	};
 
 	/**
@@ -72,7 +73,24 @@ sap.ui.define([
 			return;
 		}
 
-		DynamicDateUtil._options[option.getKey()] = option;
+		var sKey = option.getKey();
+
+		DynamicDateUtil._options[sKey] = option;
+
+		if (DynamicDateUtil._allKeys.indexOf(sKey) === -1) {
+			DynamicDateUtil._allKeys.push(sKey);
+		}
+	};
+
+	/**
+	 * Gets all available standard and custom dynamic date option keys.
+	 *
+	 * @static
+	 * @public
+	 * @returns {string[]} An array of all option keys
+	 */
+	DynamicDateUtil.getAllOptionKeys = function() {
+		return DynamicDateUtil._allKeys.slice(0);
 	};
 
 	/**

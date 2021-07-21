@@ -1239,7 +1239,7 @@ sap.ui.define([
 			this.oAlphaField2.setValue(this.Color.a);
 		}
 
-		this._updateColorStringProperty(true, true);
+		this._updateColorStringProperty(false, false);
 	};
 
 	/**

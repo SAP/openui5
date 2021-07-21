@@ -520,48 +520,38 @@ sap.ui.define([
 
 	//Testcase 15: Results of named parameter
 	QUnit.test("Result of Input Parameter 'lime': ", function(assert) {
-		var colors = {};
-		function handleColorPickerChange(oEvent) {
-			colors = oEvent.getParameters();
-		}
 		var oColorPicker = createColorPicker();
-			oColorPicker.attachChange(handleColorPickerChange);
-			oColorPicker.setColorString("lime");
 
+		oColorPicker.setColorString("lime");
 		oColorPicker.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 0");
-		assert.equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 255");
-		assert.equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
-		assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 120");
-		assert.equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
-		assert.equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
-		assert.equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #00ff00");
+		assert.equal(oColorPicker.oRedField.getValue(), 0, "Value of RED: 0");
+		assert.equal(oColorPicker.oGreenField.getValue(), 255, "Value of GREEN: 255");
+		assert.equal(oColorPicker.oBlueField.getValue(), 0, "Value of BLUE: 0");
+		assert.equal(oColorPicker.oHueField.getValue(), 120, "Value of HUE: 120");
+		assert.equal(oColorPicker.oSatField.getValue(), 100, "Value of SATURATION: 100");
+		assert.equal(oColorPicker.oLitField.getValue(), 50, "Value of LIGHTNESS: 50");
+		assert.equal(oColorPicker.Color.hex, "#00ff00" , "Value of HEX: #00ff00");
 
 		oColorPicker.destroy();
 	});
 
 	//Testcase 16: Results of wrong parameter
 	QUnit.test("Result of wrong parameter set hsl(370,44,88): ", function(assert) {
-		var colors = {};
-		function handleColorPickerChange(oEvent) {
-			colors = oEvent.getParameters();
-		}
 		var oColorPicker = createColorPicker();
-			oColorPicker.attachChange(handleColorPickerChange);
-			oColorPicker.setColorString("hsl(370,44,88)");
 
+		oColorPicker.setColorString("hsl(370,44,88)");
 		oColorPicker.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oColorPicker.oRedField.getValue(), colors.r.toString() , "Value of RED: 255");
-		assert.equal(oColorPicker.oGreenField.getValue(), colors.g.toString() , "Value of GREEN: 255");
-		assert.equal(oColorPicker.oBlueField.getValue(), colors.b.toString() , "Value of BLUE: 255");
-		assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE: 0");
-		assert.equal(oColorPicker.oSatField.getValue(), colors.s.toString() , "Value of SATURATION: 0");
-		assert.equal(oColorPicker.oLitField.getValue(), colors.l.toString() , "Value of LIGHTNESS: 100");
-		assert.equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: ffffff");
+		assert.equal(oColorPicker.oRedField.getValue(), 255, "Value of RED: 255");
+		assert.equal(oColorPicker.oGreenField.getValue(), 255, "Value of GREEN: 255");
+		assert.equal(oColorPicker.oBlueField.getValue(), 255, "Value of BLUE: 255");
+		assert.equal(oColorPicker.oHueField.getValue(), 0, "Value of HUE: 0");
+		assert.equal(oColorPicker.oSatField.getValue(), 0, "Value of SATURATION: 0");
+		assert.equal(oColorPicker.oLitField.getValue(), 100, "Value of LIGHTNESS: 100");
+		assert.equal(oColorPicker.Color.hex, "#ffffff", "Value of HEX: ffffff");
 
 		oColorPicker.destroy();
 	});
@@ -586,7 +576,7 @@ sap.ui.define([
 		oColorPicker.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE before mouse events: 193");
+		assert.equal(oColorPicker.oHueField.getValue(), 193, "Value of HUE before mouse events: 193");
 		qutils.triggerMouseEvent("ColorPicker-hSLD", "click", 166, 0, 0, 0 );
 		assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString() , "Value of HUE after mouse click 1: " + colors.h.toString());
 		qutils.triggerMouseEvent("ColorPicker-hSLD", "click", 16, 0, 0, 0 );
@@ -610,7 +600,7 @@ sap.ui.define([
 		oColorPicker.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oColorPicker.oAlphaField.getValue(), colors.alpha.toString(), "Value of Alpha before mouse events: 1");
+		assert.equal(oColorPicker.oAlphaField.getValue(), 1, "Value of Alpha before mouse events: 1");
 		qutils.triggerMouseEvent("ColorPickerA-aSLD", "click", 166, 0, 0, 0 );
 		assert.equal(oColorPicker.oAlphaField.getValue(), colors.alpha.toString() , "Value of Alpha after mouse click 1: " + colors.alpha.toString());
 		qutils.triggerMouseEvent("ColorPickerA-aSLD", "click", 16, 0, 0, 0 );
@@ -687,7 +677,7 @@ sap.ui.define([
 
 		// Assert
 		oColorPicker.setColorString("#18a");
-		assert.strictEqual(oSpy.callCount, 1, "Chnage event was fired");
+		assert.strictEqual(oSpy.callCount, 0, "Chnage event was fired");
 
 		// clean up
 		oColorPicker.destroy();
@@ -707,49 +697,11 @@ sap.ui.define([
 
 		// Assert
 		oColorPicker.setColorString("#18a");
-		assert.strictEqual(oSpy.callCount, 1, "LiveChnage event was fired");
+		assert.strictEqual(oSpy.callCount, 0, "LiveChnage event was fired");
 
 		// clean up
 		oColorPicker.destroy();
 	});
-
-	//Testcase: LiveChange evnt
-	QUnit.test("ColorPicker change event gets new color values", function(assert) {
-		//Arrange
-		var colors = {};
-		function handleColorPickerChange(oEvent) {
-			colors = oEvent.getParameters();
-		}
-		var oColorPicker = createColorPicker();
-			oColorPicker.attachChange(handleColorPickerChange);
-			oColorPicker.setColorString("red");
-
-		oColorPicker.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 255");
-		assert.equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 0");
-		assert.equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
-		assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 0");
-		assert.equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
-		assert.equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
-		assert.equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #ff0000");
-
-		oColorPicker.setColorString("lime");
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 0");
-		assert.equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 255");
-		assert.equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
-		assert.equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 120");
-		assert.equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
-		assert.equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
-		assert.equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #00ff00");
-
-		// clean up
-		oColorPicker.destroy();
-	});
-
 
 	QUnit.module("test isColor function e.g. test _parseColorString with bCheckOnly parameter set to true");
 
