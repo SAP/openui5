@@ -265,11 +265,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @private
 		 */
 		SelectRenderer.renderIcon = function(oRm, oSelect) {
-			var sTooltip = oSelect.getTooltip_AsString();
+			var sTooltip = oSelect.getTooltip_AsString(),
+				oIconInfo = IconPool.getIconInfo(oSelect.getIcon()),
+				sIconText = oIconInfo && oIconInfo.text;
 
 			oRm.icon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon", {
 				id: oSelect.getId() + "-icon",
-				title: sTooltip || null
+				title: sTooltip || sIconText || null
 			});
 		};
 

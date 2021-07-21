@@ -4315,6 +4315,30 @@ sap.ui.define([
 
 		QUnit.module("setTooltip()");
 
+		QUnit.test("it should display the default tooltip of the icon if control toolitp is not set", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				type: SelectType.IconOnly,
+				icon: IconPool.getIconURI("filter")
+			}),
+			oSelectDomRef,
+			oIconInfo = IconPool.getIconInfo(oSelect.getIcon()),
+			sIconText = oIconInfo && oIconInfo.text;
+
+			// arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			oSelectDomRef = oSelect.getFocusDomRef();
+			// assert
+			assert.strictEqual(oSelectDomRef.getAttribute("title"), sIconText);
+			assert.strictEqual(oSelect.$("icon").attr("title"), sIconText);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		// BCP 1580232802
 		QUnit.test("it should display the control tooltip instead of the default tooltip of the icon", function (assert) {
 
