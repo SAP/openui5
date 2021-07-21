@@ -8,6 +8,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/AccessKeysEnablement',
 	'sap/ui/core/library',
 	'./CheckBoxRenderer',
 	'sap/ui/events/KeyCodes',
@@ -19,6 +20,7 @@ sap.ui.define([
 		library,
 		Control,
 		EnabledPropagator,
+		AccessKeysEnablement,
 		coreLibrary,
 		CheckBoxRenderer,
 		KeyCodes,
@@ -79,7 +81,7 @@ sap.ui.define([
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/checkbox/ Check Box}
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent, sap.ui.core.IAccessKeySupport
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -91,7 +93,11 @@ sap.ui.define([
 	 */
 	var CheckBox = Control.extend("sap.m.CheckBox", /** @lends sap.m.CheckBox.prototype */ { metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent", "sap.ui.core.ISemanticFormContent"],
+		interfaces : [
+			"sap.ui.core.IFormContent",
+			"sap.ui.core.ISemanticFormContent",
+			"sap.ui.core.IAccessKeySupport"
+		],
 		library : "sap.m",
 		properties : {
 
@@ -206,7 +212,23 @@ sap.ui.define([
 			 *
 			 * @since 1.54
 			 */
-			wrapping: {type : "boolean", group : "Appearance", defaultValue : false}
+			wrapping: {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Indicates whether the access keys ref of the control should be highlighted.
+			 * NOTE: this property is used only when access keys feature is turned on.
+			 *
+			 * @private
+			 */
+			highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
+
+			/**
+			 * Indicates which keyboard key should be pressed to focus the access key ref
+			 * NOTE: this property is used only when access keys feature is turned on.
+			 *
+			 * @private
+			 */
+			accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
 		},
 		aggregations: {
 			/**
@@ -256,6 +278,22 @@ sap.ui.define([
 	 */
 	CheckBox.prototype.init = function() {
 		this._handleReferencingLabels();
+
+		AccessKeysEnablement.registerControl(this);
+	};
+
+	CheckBox.prototype.onAccKeysHighlightStart = function () {
+		this._getLabel().setProperty("highlightAccKeysRef", true);
+	};
+
+	CheckBox.prototype.onAccKeysHighlightEnd = function () {
+		this._getLabel().setProperty("highlightAccKeysRef", false);
+	};
+
+	CheckBox.prototype.onBeforeRendering = function () {
+		if (this.getText()) {
+			this.setProperty("accesskey", this.getText()[0].toLowerCase(), true);
+		}
 	};
 
 	CheckBox.prototype.exit = function() {
@@ -434,6 +472,10 @@ sap.ui.define([
 	CheckBox.prototype._getLabel = function() {
 		if (!this._oLabel) {
 			this._oLabel = new Label(this.getId() + "-label").addStyleClass("sapMCbLabel");
+
+			this._oLabel.getAccessKeysFocusTarget = function () {
+				return this.getFocusDomRef();
+			}.bind(this);
 
 			this.setAggregation("_label", this._oLabel, true);
 		}

@@ -46,6 +46,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 		// CheckBox wrapper
 		oRm.openStart("div", oCheckBox);
 		oRm.class("sapMCb");
+		oRm.attr("data-ui5-accesskey", oCheckBox.getProperty("accesskey"));
 
 		if (!bEditable) {
 			oRm.class("sapMCbRo");

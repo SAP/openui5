@@ -5,9 +5,11 @@
 // Provides control sap.m.Link.
 sap.ui.define([
 	"./library",
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/EnabledPropagator",
+	"sap/ui/core/AccessKeysEnablement",
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/core/library",
 	"sap/ui/Device",
@@ -17,9 +19,11 @@ sap.ui.define([
 ],
 function(
 	library,
+	Core,
 	Control,
 	InvisibleText,
 	EnabledPropagator,
+	AccessKeysEnablement,
 	LabelEnablement,
 	coreLibrary,
 	Device,
@@ -77,7 +81,7 @@ function(
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/link/ Link}
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ITitleContent
+	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ITitleContent, sap.ui.core.IAccessKeySupport
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -93,7 +97,8 @@ function(
 		interfaces : [
 			"sap.ui.core.IShrinkable",
 			"sap.ui.core.IFormContent",
-			"sap.ui.core.ITitleContent"
+			"sap.ui.core.ITitleContent",
+			"sap.ui.core.IAccessKeySupport"
 		],
 		library : "sap.m",
 		designtime: "sap/m/designtime/Link.designtime",
@@ -209,7 +214,23 @@ function(
 			 *
 			 * @since 1.89
 			 */
-			emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
+			emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off },
+
+			/**
+			 * Indicates whether the access keys ref of the control should be highlighted.
+			 * NOTE: this property is used only when access keys feature is turned on.
+			 *
+			 * @private
+			 */
+			highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
+
+			/**
+			 * Indicates which keyboard key should be pressed to focus the access key ref
+			 * NOTE: this property is used only when access keys feature is turned on.
+			 *
+			 * @private
+			 */
+			accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
 		},
 		associations : {
 
@@ -255,6 +276,10 @@ function(
 
 	EnabledPropagator.call(Link.prototype); // inherit "disabled" state from parent controls
 
+	Link.prototype.init = function () {
+		AccessKeysEnablement.registerControl(this);
+	};
+
 	/**
 	 * Required adaptations before rendering.
 	 *
@@ -281,6 +306,18 @@ function(
 		} else if (!this.getText()) {
 			this.getDomRef().removeAttribute("href");
 		}
+	};
+
+	Link.prototype.getAccessKeysFocusTarget = function () {
+		return this.getFocusDomRef();
+	};
+
+	Link.prototype.onAccKeysHighlightStart = function () {
+		setRefLabelsHighlightAccKeysRef.call(this, true);
+	};
+
+	Link.prototype.onAccKeysHighlightEnd = function () {
+		setRefLabelsHighlightAccKeysRef.call(this, false);
 	};
 
 	/**
@@ -484,6 +521,20 @@ function(
 		// When the link has aria-labelledby attribute, screen readers will read the references inside, rather
 		// than the link's text. For this reason a self-reference should be added in such cases.
 		return !bAlreadyHasSelfReference && (aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent);
+	};
+
+	var setRefLabelsHighlightAccKeysRef = function (bHighlightAccKeysRef) {
+		var aLabels = this.getAriaLabelledBy();
+
+		if (aLabels.length) {
+			var oLabel = Core.byId(aLabels[0]);
+
+			oLabel.setProperty("highlightAccKeysRef", bHighlightAccKeysRef);
+
+			if (oLabel.getText && oLabel.getText()) {
+				this.setProperty("accesskey", oLabel.getText()[0].toLowerCase());
+			}
+		}
 	};
 
 	return Link;
