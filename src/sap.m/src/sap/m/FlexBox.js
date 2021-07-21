@@ -7,6 +7,7 @@ sap.ui.define([
 	'./FlexBoxStylingHelper',
 	'./FlexItemData',
 	'./library',
+	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/core/Control',
 	'sap/ui/core/InvisibleRenderer',
 	'./FlexBoxRenderer',
@@ -16,6 +17,7 @@ function(
 	FlexBoxStylingHelper,
 	FlexItemData,
 	library,
+	ManagedObjectObserver,
 	Control,
 	InvisibleRenderer,
 	FlexBoxRenderer,
@@ -168,66 +170,28 @@ function(
 		this._oItemDelegate = {
 			onAfterRendering: this._onAfterItemRendering
 		};
+
+		this._oItemsObserver = new ManagedObjectObserver(this._onItemsChange.bind(this));
+		this._oItemsObserver.observe(this, { aggregations: ["items"] });
 	};
 
-	/**
-	 * Adds item in the FlexBox.
-	 *
-	 * @public
-	 * @param {object} oItem Added item.
-	 * @returns {this} <code>this</code> FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.addItem = function(oItem) {
-		this.addAggregation("items", oItem);
-		this._onItemInserted(oItem);
-
-		return this;
-	};
-
-	/**
-	 * Inserts single item.
-	 *
-	 * @public
-	 * @param {object} oItem Inserted item.
-	 * @param {int} iIndex Index of the inserted item.
-	 * @returns {this} <code>this</code> FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.insertItem = function(oItem, iIndex) {
-		this.insertAggregation("items", oItem, iIndex);
-		this._onItemInserted(oItem);
-
-		return this;
-	};
-
-	/**
-	 * Removes single item.
-	 *
-	 * @public
-	 * @param {any} vItem Item to be removed.
-	 * @returns {object} The removed item.
-	 */
-	FlexBox.prototype.removeItem = function(vItem) {
-		var oItem = this.removeAggregation("items", vItem);
-
-		this._onItemRemoved(oItem);
-
-		return oItem;
-	};
-
-	/**
-	 * Removes all items.
-	 *
-	 * @public
-	 * @returns {object} The removed items from flexbox.
-	 */
-	FlexBox.prototype.removeAllItems = function() {
-		var aItems = this.getItems();
-
-		for (var i = 0; i < aItems.length; i++) {
-			this._onItemRemoved(aItems[i]);
+	FlexBox.prototype.exit = function() {
+		if (this._oItemsObserver) {
+			this._oItemsObserver.disconnect();
+			this._oItemsObserver = null;
 		}
+	};
 
-		return this.removeAllAggregation("items");
+	FlexBox.prototype._onItemsChange = function(oChanges) {
+		if (oChanges.name === "items" && oChanges.child) {
+			if (oChanges.mutation === "insert") {
+				this._onItemInserted(oChanges.child);
+			} else if (oChanges.mutation === "remove") {
+				this._onItemRemoved(oChanges.child);
+			}
+		} else if (oChanges.name === "visible") {
+			this._onItemVisibilityChange(oChanges);
+		}
 	};
 
 	/**
@@ -238,7 +202,8 @@ function(
 	 */
 	FlexBox.prototype._onItemInserted = function(oItem) {
 		if (oItem && !(oItem instanceof FlexBox)) {
-			oItem.attachEvent("_change", this._onItemChange, this);
+			this._oItemsObserver.observe(oItem, { properties: ["visible"] });
+
 			if (this.getRenderType() === FlexRendertype.Bare) {
 				oItem.addEventDelegate(this._oItemDelegate, oItem);
 			}
@@ -253,7 +218,8 @@ function(
 	 */
 	FlexBox.prototype._onItemRemoved = function(oItem) {
 		if (oItem && !(oItem instanceof FlexBox)) {
-			oItem.detachEvent("_change", this._onItemChange, this);
+			this._oItemsObserver.unobserve(oItem, { properties: ["visible"] });
+
 			if (this.getRenderType() === FlexRendertype.Bare) {
 				oItem.removeEventDelegate(this._oItemDelegate, oItem);
 			}
@@ -261,21 +227,20 @@ function(
 	};
 
 	/**
-	 * Helper that gets called when an item is changed.
+	 * Helper that gets called when an item visibility is changed.
+	 * Syncs the visibility of flex item wrapper, if visibility changes.
 	 *
 	 * @private
-	 * @param {object} oControlEvent Onchange event.
 	 */
-	FlexBox.prototype._onItemChange = function(oControlEvent) {
+	FlexBox.prototype._onItemVisibilityChange = function(oChanges) {
+		var oItem = oChanges.object,
+			$wrapper;
+
 		// Early return conditions
-		if (oControlEvent.getParameter("name") !== "visible"
-			|| (this.getRenderType() !== FlexRendertype.List && this.getRenderType() !== FlexRendertype.Div)) {
+		if (this.getRenderType() !== FlexRendertype.List &&
+			this.getRenderType() !== FlexRendertype.Div) {
 			return;
 		}
-
-		// Sync visibility of flex item wrapper, if visibility changes
-		var oItem = sap.ui.getCore().byId(oControlEvent.getParameter("id")),
-			$wrapper = null;
 
 		if (oItem.getLayoutData()) {
 			$wrapper = jQuery(document.getElementById(oItem.getLayoutData().getId()));
@@ -283,7 +248,7 @@ function(
 			$wrapper = jQuery(document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oItem))).parent();
 		}
 
-		if (oControlEvent.getParameter("newValue")) {
+		if (oChanges.current) {
 			$wrapper.removeClass("sapUiHiddenPlaceholder").removeAttr("aria-hidden");
 		} else {
 			$wrapper.addClass("sapUiHiddenPlaceholder").attr("aria-hidden", "true");

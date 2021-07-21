@@ -1,4 +1,4 @@
-/*global document, QUnit*/
+/*global sinon document, QUnit*/
 
 sap.ui.define([
 	"sap/m/FlexBox",
@@ -962,5 +962,31 @@ sap.ui.define([
 		assert.ok(oInfo.enabled === undefined || oInfo.editable === null, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
+	});
+
+	QUnit.module("Clone", {
+		beforeEach: function() {
+			this.oBox = new FlexBox({
+				items: [
+					new Button({ text: "Button 1"}),
+					new Button({ text: "Button 2"})
+				]
+			});
+			this.oBox.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oBox.destroy();
+			this.oBox = null;
+		}
+	});
+
+	QUnit.test("Cloned FlexBox child visibility change", function(assert) {
+		var oItemVisibilityChangeSpy = sinon.spy(FlexBox.prototype, "_onItemVisibilityChange");
+		var oClonedBox = this.oBox.clone();
+
+		oClonedBox.getItems()[0].setVisible(false);
+
+		assert.ok(oItemVisibilityChangeSpy.calledOnce, "_onItemVisibilityChange method is called once");
 	});
 });
