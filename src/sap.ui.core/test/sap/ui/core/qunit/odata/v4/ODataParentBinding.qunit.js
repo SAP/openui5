@@ -257,7 +257,6 @@ sap.ui.define([
 					applyParameters : function () {}
 				});
 
-			this.mock(oBinding).expects("checkSuspended").never();
 			this.mock(oBinding).expects("hasPendingChanges").returns(false);
 			this.mock(oBinding).expects("applyParameters").withExactArgs(
 				oFixture.mExpectedParameters, oFixture.sChangeReason || ChangeReason.Change);
@@ -272,11 +271,10 @@ sap.ui.define([
 		var oBinding = new ODataParentBinding({
 				oModel : {},
 				mParameters : {},
-				sPath : "/EMPLOYEES",
-				applyParameters : function () {}
+				sPath : "/EMPLOYEES"
 			});
 
-		this.mock(oBinding).expects("applyParameters").never();
+		this.mock(oBinding).expects("hasPendingChanges").never();
 
 		// code under test
 		assert.throws(function () {
@@ -290,13 +288,10 @@ sap.ui.define([
 		var oBinding = new ODataParentBinding({
 				oModel : {},
 				mParameters : {},
-				sPath : "/EMPLOYEES",
-				applyParameters : function () {}
-			}),
-			oBindingMock = this.mock(oBinding);
+				sPath : "/EMPLOYEES"
+			});
 
-		oBindingMock.expects("applyParameters").never();
-		oBindingMock.expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("hasPendingChanges").never();
 
 		//code under test
 		assert.throws(function () {
@@ -334,16 +329,13 @@ sap.ui.define([
 		var oBinding = new ODataParentBinding({
 				oModel : {},
 				mParameters : {},
-				sPath : "/EMPLOYEES",
-				applyParameters : function () {}
-			}),
-			oBindingMock = this.mock(oBinding);
+				sPath : "/EMPLOYEES"
+			});
 
-		oBindingMock.expects("applyParameters").never();
-		oBindingMock.expects("hasPendingChanges").returns(true);
+		this.mock(oBinding).expects("hasPendingChanges").returns(true);
 
 		assert.throws(function () {
-			//code under test
+			// code under test
 			oBinding.changeParameters({"$filter" : "Amount gt 3"});
 		}, new Error("Cannot change parameters due to pending changes"));
 		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
@@ -353,13 +345,10 @@ sap.ui.define([
 	QUnit.test("changeParameters: with empty map", function () {
 		var oBinding = new ODataParentBinding({
 				oModel : {},
-				sPath : "/EMPLOYEES",
-				applyParameters : function () {}
-			}),
-			oBindingMock = this.mock(oBinding);
+				sPath : "/EMPLOYEES"
+			});
 
-		oBindingMock.expects("hasPendingChanges").returns(false);
-		oBindingMock.expects("applyParameters").never();
+		this.mock(oBinding).expects("hasPendingChanges").never();
 
 		// code under test
 		oBinding.changeParameters({});
@@ -368,15 +357,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("changeParameters: try to delete non-existing parameters", function (assert) {
 		var oBinding = new ODataParentBinding({
-				applyParameters : function () {},
 				oModel : {},
 				mParameters : {},
 				sPath : "/EMPLOYEES"
 			});
 
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		// refreshing the binding is unnecessary, if the binding parameters are unchanged
-		this.mock(oBinding).expects("applyParameters").never();
+		this.mock(oBinding).expects("hasPendingChanges").never();
 
 		// code under test
 		oBinding.changeParameters({$apply : undefined});
@@ -385,25 +372,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("changeParameters: try to change existing parameter", function () {
-		var mParameters = {
-				$apply : "filter(Amount gt 3)"
-			},
-			oBinding = new ODataParentBinding({
+	QUnit.test("changeParameters: no change to existing parameter", function () {
+		var oBinding = new ODataParentBinding({
 					oModel : {},
 					mParameters : {
 						$apply : "filter(Amount gt 3)"
 					},
-					sPath : "/EMPLOYEES",
-					applyParameters : function () {}
-				}),
-			oBindingMock = this.mock(oBinding);
+					sPath : "/EMPLOYEES"
+				});
 
-		oBindingMock.expects("hasPendingChanges").returns(false);
-		oBindingMock.expects("applyParameters").never();
+		this.mock(oBinding).expects("hasPendingChanges").never();
 
 		// code under test
-		oBinding.changeParameters(mParameters);
+		oBinding.changeParameters({$apply : "filter(Amount gt 3)"});
 	});
 
 	//*********************************************************************************************
@@ -426,6 +407,10 @@ sap.ui.define([
 			};
 
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("applyParameters")
+			.withExactArgs({$expand : {SO_2_SOITEM : {$orderby : "ItemPosition"}}},
+				ChangeReason.Change)
+			.callThrough();
 
 		// code under test
 		oBinding.changeParameters(mParameters);
@@ -440,34 +425,77 @@ sap.ui.define([
 		name : "$select",
 		parameters : {$select : "foo"}
 	}, {
+		name : "$select",
+		parameters : {$select : ["bar"]}
+	}, {
 		name : "$expand",
 		parameters : {$expand : "foo"}
 	}, {
 		name : "$expand",
-		parameters : {$expand : undefined}
+		parameters : {$expand : {foo : {}}}
 	}, {
 		name : "$expand",
-		parameters : {$expand : {foo : {}}}
+		parameters : {$expand : {bar : {}}}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("changeParameters: auto-$expand/$select, " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
 					oModel : {
 						bAutoExpandSelect : true
 					},
-					mParameters : {},
+					mParameters : {
+						$expand : {bar : {}},
+						$select : "bar"
+					},
 					applyParameters : function () {}
-				});
+				}),
+				sParametersAsJSON = JSON.stringify(oBinding.mParameters);
 
+			this.mock(oBinding).expects("hasPendingChanges").never();
 			this.mock(oBinding).expects("applyParameters").never();
 
 			// code under test
 			assert.throws(function () {
 				oBinding.changeParameters(oFixture.parameters);
-			}, new Error("Cannot change $expand or $select parameter in auto-$expand/$select mode: "
-				+ oFixture.name + "=" + JSON.stringify(oFixture.parameters[oFixture.name]))
+			}, new Error("Cannot change " + oFixture.name
+				+ " parameter in auto-$expand/$select mode: "
+				+ JSON.stringify(oFixture.parameters[oFixture.name]) + " !== "
+				+ (oFixture.name === "$select" ? '"bar"' : '{"bar":{}}'))
 			);
 
-			assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+			assert.strictEqual(JSON.stringify(oBinding.mParameters), sParametersAsJSON,
+				"parameters unchanged on error");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeParameters: ignore unchanged $expand/$select strings(!)", function () {
+		var oBinding = new ODataParentBinding({
+				oModel : {bAutoExpandSelect : true},
+				mParameters : {
+					$$ownRequest : true,
+					$expand : "oldExpand",
+					$select : "oldSelect"
+				},
+				sPath : "/ProductList",
+				applyParameters : function () {}
+			});
+
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("applyParameters")
+			.withExactArgs({
+				$$ownRequest : true,
+				$count : true,
+				$expand : "oldExpand",
+				$select : "oldSelect"
+			}, ChangeReason.Change);
+
+		// code under test
+		oBinding.changeParameters({
+			$$ownRequest : true,
+			$$sharedRequest : undefined,
+			$count : true,
+			$expand : "oldExpand",
+			$select : "oldSelect"
 		});
 	});
 

@@ -305,7 +305,9 @@ sap.ui.define([
 	 *   If there are pending changes or if <code>mParameters</code> is missing, contains
 	 *   binding-specific or unsupported parameters, contains unsupported values, or contains the
 	 *   property "$expand" or "$select" when the model is in auto-$expand/$select mode.
-	 *   Since 1.90.0, binding-specific parameters are ignored if they are unchanged.
+	 *   Since 1.90.0, binding-specific parameters are ignored if they are unchanged. Since 1.93.0,
+	 *   string values for "$expand" and "$select" are ignored if they are unchanged; pending
+	 *   changes are ignored if all parameters are unchanged.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -315,14 +317,6 @@ sap.ui.define([
 			sChangeReason, // @see sap.ui.model.ChangeReason
 			sKey,
 			that = this;
-
-		function checkExpandSelect(sName) {
-			if (that.oModel.bAutoExpandSelect && sName in mParameters) {
-				throw new Error("Cannot change $expand or $select parameter in "
-					+ "auto-$expand/$select mode: "
-					+ sName + "=" + JSON.stringify(mParameters[sName]));
-			}
-		}
 
 		/*
 		 * Updates <code>sChangeReason</code> depending on the given custom or system query option
@@ -335,8 +329,16 @@ sap.ui.define([
 		 *
 		 * @param {string} sName
 		 *   The name of a custom or system query option
+		 * @throws {Error}
+		 *   If name is "$expand" or "$select" when the model is in auto-$expand/$select mode
 		 */
 		function updateChangeReason(sName) {
+			if (that.oModel.bAutoExpandSelect && (sName === "$expand" || sName === "$select")) {
+				throw new Error("Cannot change " + sName
+					+ " parameter in auto-$expand/$select mode: "
+					+ JSON.stringify(mParameters[sName])
+					+ " !== " + JSON.stringify(mBindingParameters[sName]));
+			}
 			if (sName === "$filter" || sName === "$search") {
 				sChangeReason = ChangeReason.Filter;
 			} else if (sName === "$orderby" && sChangeReason !== ChangeReason.Filter) {
@@ -348,11 +350,6 @@ sap.ui.define([
 
 		if (!mParameters) {
 			throw new Error("Missing map of binding parameters");
-		}
-		checkExpandSelect("$expand");
-		checkExpandSelect("$select");
-		if (this.hasPendingChanges()) {
-			throw new Error("Cannot change parameters due to pending changes");
 		}
 
 		for (sKey in mParameters) {
@@ -376,6 +373,9 @@ sap.ui.define([
 		}
 
 		if (sChangeReason) {
+			if (this.hasPendingChanges()) {
+				throw new Error("Cannot change parameters due to pending changes");
+			}
 			this.applyParameters(mBindingParameters, sChangeReason);
 		}
 	};
