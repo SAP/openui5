@@ -144,7 +144,7 @@ sap.ui.define([
 		var oCard = this.getCardInstance(),
 			oHost = oCard.getHostInstance(),
 			oNewSettings = Object.assign({}, oSettings),
-			oCache = oNewSettings.cache;
+			oCache = oNewSettings.request.cache;
 
 		if (!oCache) {
 			oCache = {
@@ -163,7 +163,7 @@ sap.ui.define([
 			}
 		}
 
-		oNewSettings.cache = oCache;
+		oNewSettings.request.cache = oCache;
 
 		if (oHost && oHost.modifyRequestHeaders) {
 			return oHost.modifyRequestHeaders(Object.assign({}, mHeaders), oNewSettings, oCard);

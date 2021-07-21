@@ -30,10 +30,10 @@
 		"designtime": "dt/Configuration",
 		"data": {
 			"request": {
-				"url": "../mock/data3.json"
-			},
-			"cache": {
-				"noStore": true
+				"url": "../mock/data3.json",
+				"cache": {
+					"noStore": true
+				}
 			}
 		},
 		"header": {
