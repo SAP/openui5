@@ -2279,14 +2279,16 @@ sap.ui.define([
 			});
 			var oDeleteSpy = sandbox.spy(this.oChangePersistence, "deleteChange");
 			var oRemoveSpy = sandbox.spy(this.oChangePersistence, "removeChange");
+			var oCacheDeleteSpy = sandbox.spy(Cache, "deleteChange");
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
 				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
-				assert.equal(oDeleteSpy.callCount, 0, "no change got deleted");
-				assert.equal(oRemoveSpy.callCount, 0, "no change got deleted");
+				assert.equal(oDeleteSpy.callCount, 0, "no change got deleted from persistence");
+				assert.equal(oRemoveSpy.callCount, 0, "no change got removed from the map");
+				assert.equal(oCacheDeleteSpy.callCount, 0, "no change got deleted from the cache");
 
 				addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 				this.oCondenserStub.resolves([]);
@@ -2296,8 +2298,9 @@ sap.ui.define([
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called again");
 				assert.equal(this.oChangePersistence._aDirtyChanges.length, 0, "both dirty changes were removed from the persistence");
-				assert.equal(oDeleteSpy.callCount, 0, "no change got deleted");
-				assert.equal(oRemoveSpy.callCount, 4, "four changes got deleted");
+				assert.equal(oDeleteSpy.callCount, 0, "no change got deleted from persistence");
+				assert.equal(oRemoveSpy.callCount, 4, "four changes got removed from the map");
+				assert.equal(oCacheDeleteSpy.callCount, 4, "four changes got potentially deleted from the cache");
 			}.bind(this));
 		});
 
@@ -2584,7 +2587,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("shall remove the change from the dirty changes, after is has been saved", function(assert) {
+		QUnit.test("shall remove the change from the dirty changes, after it has been saved", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
