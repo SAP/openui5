@@ -20,7 +20,10 @@ sap.ui.define([
 		assertions: new Assertion(),
 		viewNamespace: "view.",
 		autoWait: true,
-		executionDelay: 50
+		executionDelay: 50,
+		appParams: {
+			"sap-ui-fl-max-layer": "USER"
+		}
 	});
 
 	var sViewSettings = Arrangement.P13nDialog.Titles.settings;

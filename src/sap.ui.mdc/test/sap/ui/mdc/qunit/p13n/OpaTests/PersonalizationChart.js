@@ -19,7 +19,10 @@ sap.ui.define([
 		actions: new Action(),
 		assertions: new Assertion(),
 		viewNamespace: "view.",
-		autoWait: true
+		autoWait: true,
+		appParams: {
+			"sap-ui-fl-max-layer": "USER"
+		}
 	});
 
 	var aChartItems = [
