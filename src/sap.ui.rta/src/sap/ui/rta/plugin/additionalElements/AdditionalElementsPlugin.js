@@ -361,9 +361,10 @@ sap.ui.define([
 				var mAllActions = this._getActionsOrUndef(bOverlayIsSibling, oOverlay);
 				var mActions = mAllActions[sAggregationName];
 				if (
-					(mActions.reveal && mActions.reveal.elements.length > 0)
+					mActions &&
+					((mActions.reveal && mActions.reveal.elements.length > 0)
 					|| mActions.addViaCustom
-					|| mActions.addViaDelegate
+					|| mActions.addViaDelegate)
 				) {
 					bIsEnabled = true;
 				}
