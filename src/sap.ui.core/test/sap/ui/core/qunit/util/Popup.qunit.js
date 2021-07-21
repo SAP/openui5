@@ -1,4 +1,4 @@
-/* global sinon, QUnit, ResizeObserver */
+/* global sinon, QUnit */
 
 sap.ui.define([
 	"sap/ui/core/Popup",
@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Panel",
 	"sap/m/Button",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/ui/core/ResizeHandler"
 ], function(
 	Popup,
 	Log,
@@ -25,7 +26,8 @@ sap.ui.define([
 	QUnitUtils,
 	Panel,
 	Button,
-	Text
+	Text,
+	ResizeHandler
 ){
 	"use strict";
 
@@ -2801,30 +2803,29 @@ sap.ui.define([
 		return document.getElementById("sap-ui-blocklayer-popup");
 	}
 
-	function waitTillResize(oDomRef) {
-		var fnResolve;
-		var pFirstTimeResizePromise = new Promise(function(resolve, reject){
-			fnResolve = resolve;
-		});
-		var iFrameId;
+	function waitTillResize(oDomRef, iTimeout) {
+		return  new Promise(function(resolve, reject){
+			var sHandlerId;
 
-		var oResizeObserver = new ResizeObserver(function(aEntries){
-			if (iFrameId === undefined) {
-				iFrameId = window.requestAnimationFrame(function() {
-					iFrameId = undefined;
-					fnResolve(oDomRef);
-				});
+			sHandlerId = ResizeHandler.register(oDomRef, function(oEvent) {
+				ResizeHandler.deregister(sHandlerId);
+				resolve(oEvent.target);
+			});
+
+			if (iTimeout !== undefined) {
+				setTimeout(function() {
+					ResizeHandler.deregister(sHandlerId);
+					resolve({
+						timeout: true,
+						dom: oDomRef
+					});
+				}, iTimeout);
 			}
-			oResizeObserver.unobserve(aEntries[0].target);
 		});
-
-		oResizeObserver.observe(oDomRef);
-
-		return pFirstTimeResizePromise;
 	}
 
-	function waitTillBlockLayerResize() {
-		return waitTillResize(getBlockLayer());
+	function waitTillBlockLayerResize(iTimeout) {
+		return waitTillResize(getBlockLayer(), iTimeout);
 	}
 
 	QUnit.module("Within Area", {
@@ -3136,7 +3137,6 @@ sap.ui.define([
 		var oDomRef = jQuery.sap.domById("popup");
 		var oPopup = new Popup(oDomRef, true);
 		var oWithinArea = document.getElementById("withinArea");
-
 		var oDomRef1 = jQuery.sap.domById("popup1");
 		var oPopup1 = new Popup(oDomRef1, true);
 		var oWithinArea1 = document.getElementById("withinArea1");
@@ -3168,8 +3168,9 @@ sap.ui.define([
 		}).then(function() {
 			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea1.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
 		}).then(function(){
-			var pBlockLayerResized = waitTillBlockLayerResize().then(function(oBlockLayerDomRef){
-				assert.deepEqual(oBlockLayerDomRef.style.width, "400px", "The blocklayer has the same width as the defined within area.");
+			var pBlockLayerResized = waitTillBlockLayerResize(200).then(function(oTimeout){
+				assert.ok(oTimeout.timeout, "No size change on block layer");
+				assert.deepEqual(oTimeout.dom.style.width, "400px", "The blocklayer has the same width as the defined within area.");
 			});
 			// resize the the first within area, should have no effect on the current top level popup
 			oWithinArea.style.width = "700px";
