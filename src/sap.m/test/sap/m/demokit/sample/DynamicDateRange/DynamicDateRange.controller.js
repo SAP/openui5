@@ -133,19 +133,17 @@ var aPayments = [
 var DynamicDateRangeController = Controller.extend("sap.m.sample.DynamicDateRange.DynamicDateRange", {
 
 	onInit: function() {
-		var oModel = new JSONModel();
-		oModel.setData({
-			payments: aPayments
-		});
+		var oModel = new JSONModel({
+				payments: aPayments,
+				dynamicDateFilterKeys: DynamicDateUtil.getAllOptionKeys()
+			}),
+			oEnvModel = new JSONModel({
+				filterInputWidth: !Device.system.phone ? '300px' : "auto"
+			}),
+			oView = this.getView();
 
-		this.getView().setModel(oModel);
-
-		var oDDR = this.getView().byId("dynamic-range");
-		oDDR.setOptions(["DATERANGE", "SPECIFICMONTH", "THISMONTH", "LASTMONTH", "LASTDAYS", "TODAY", "TODAYFROMTO"]);
-
-		if (!Device.system.phone) {
-			oDDR.setWidth("300px");
-		}
+		oView.setModel(oModel);
+		oView.setModel(oEnvModel, "env");
 	},
 
 	onChange: function(oEvent) {
