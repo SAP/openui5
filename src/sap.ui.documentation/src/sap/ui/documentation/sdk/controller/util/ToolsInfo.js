@@ -14,7 +14,7 @@ sap.ui.define([],
 			},
 			{
 				"id": "businessApplicationStudio",
-				"text": "Business Application Studio",
+				"text": "SAP Business Application Studio",
 				"href": "http://www.sap.com/appstudio"
 			},
 			{
