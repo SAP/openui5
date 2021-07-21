@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="https://github.com/SAP/odata-vocabularies/blob/main/vocabularies/UI.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWBEP/GWSAMPLE_BASIC">
+		<edmx:Include Namespace="GWSAMPLE_BASIC"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="zanno4sample_anno_mdl.v1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<Annotations Target="GWSAMPLE_BASIC.BusinessPartner">
+				<Annotation Term="com.sap.vocabularies.UI.v1.Badge">
+					<Record Type="com.sap.vocabularies.UI.v1.BadgeType">
+						<PropertyValue Property="HeadLine" Path="BusinessPartnerID"/>
+						<PropertyValue Property="Title">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Name"/>
+								<PropertyValue Property="Value">
+									<Apply Function="odata.concat">
+										<Path>CompanyName</Path>
+										<String/>
+										<Path>LegalForm</Path>
+									</Apply>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="MainInfo">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Phone"/>
+								<PropertyValue Property="Value" Path="PhoneNumber"/>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="SecondaryInfo">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Web"/>
+								<PropertyValue Property="Value" Path="WebAddress"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

@@ -26,9 +26,9 @@ sap.ui.define([
 
 		createContent : function () {
 			var oModel = new ODataModel(
-					"proxy/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", {
-					annotationURI : "proxy/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
-						+ "/Annotations(TechnicalName='ZANNO4SAMPLE_ANNO_MDL',Version='0001')/$value",
+					"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", {
+					annotationURI : "/test-resources/sap/ui/core/demokit/sample/ViewTemplate/tiny"
+						+ "/annotations.xml",
 					json : true,
 					loadMetadataAsync : true
 				}),
