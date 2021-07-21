@@ -500,13 +500,12 @@ sap.ui.define([
 		 * @public
 		 * @since 1.67
 		 */
-		this.openEnd = function(bExludeStyleClasses /* private */) {
+		this.openEnd = function() {
 			assertOpenTagHasStarted("openEnd");
 			assertOpenTagHasEnded(!bVoidOpen);
-			assert(bExludeStyleClasses === undefined || bExludeStyleClasses === true, "The private parameter bExludeStyleClasses must be true or omitted!");
 			sOpenTag = "";
 
-			this.writeClasses(bExludeStyleClasses === true ? false : undefined);
+			this.writeClasses();
 			this.writeStyles();
 			this.write(">");
 			return this;
@@ -561,13 +560,13 @@ sap.ui.define([
 		 * @public
 		 * @since 1.67
 		 */
-		this.voidEnd = function (bExludeStyleClasses /* private */) {
+		this.voidEnd = function () {
 			assertOpenTagHasStarted("voidEnd");
 			assertOpenTagHasEnded(bVoidOpen || !sOpenTag);
 			bVoidOpen = false;
 			sOpenTag = "";
 
-			this.writeClasses(bExludeStyleClasses ? false : undefined);
+			this.writeClasses();
 			this.writeStyles();
 			this.write(">");
 			return this;
@@ -843,19 +842,16 @@ sap.ui.define([
 		};
 
 		// @see sap.ui.core.RenderManager#openEnd
-		oDomInterface.openEnd = function(bExludeStyleClasses /* private */) {
-			if (bExludeStyleClasses !== true) {
-				var oStyle = aStyleStack[aStyleStack.length - 1];
-				var aStyleClasses = oStyle.aCustomStyleClasses;
-				if (aStyleClasses) {
-					aStyleClasses.forEach(oPatcher.class, oPatcher);
-					oStyle.aCustomStyleClasses = null;
-				}
+		oDomInterface.openEnd = function() {
+			var oStyle = aStyleStack[aStyleStack.length - 1];
+			var aStyleClasses = oStyle.aCustomStyleClasses;
+			if (aStyleClasses) {
+				aStyleClasses.forEach(oPatcher.class, oPatcher);
+				oStyle.aCustomStyleClasses = null;
 			}
 
 			assertOpenTagHasStarted("openEnd");
 			assertOpenTagHasEnded(!bVoidOpen);
-			assert(bExludeStyleClasses === undefined || bExludeStyleClasses === true, "The private parameter bExludeStyleClasses must be true or omitted!");
 			sOpenTag = "";
 
 			oPatcher.openEnd();
@@ -863,14 +859,12 @@ sap.ui.define([
 		};
 
 		// @see sap.ui.core.RenderManager#voidEnd
-		oDomInterface.voidEnd = function(bExludeStyleClasses /* private */) {
-			if (!bExludeStyleClasses) {
-				var oStyle = aStyleStack[aStyleStack.length - 1];
-				var aStyleClasses = oStyle.aCustomStyleClasses;
-				if (aStyleClasses) {
-					aStyleClasses.forEach(oPatcher.class, oPatcher);
-					oStyle.aCustomStyleClasses = null;
-				}
+		oDomInterface.voidEnd = function() {
+			var oStyle = aStyleStack[aStyleStack.length - 1];
+			var aStyleClasses = oStyle.aCustomStyleClasses;
+			if (aStyleClasses) {
+				aStyleClasses.forEach(oPatcher.class, oPatcher);
+				oStyle.aCustomStyleClasses = null;
 			}
 
 			assertOpenTagHasStarted("voidEnd");
@@ -1137,7 +1131,7 @@ sap.ui.define([
 
 				// before the rendering get custom style classes of the control
 				var oControlStyles = {};
-				if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
+				if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length && oControl.getVisible()) {
 					oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses;
 				}
 
@@ -2352,7 +2346,7 @@ sap.ui.define([
 	 * @static
 	 */
 	RenderManager.getApiVersion = function(oRenderer) {
-		if (oRenderer.hasOwnProperty("apiVersion")) {
+		if (oRenderer && oRenderer.hasOwnProperty("apiVersion")) {
 			return oRenderer.apiVersion;
 		}
 
@@ -2409,8 +2403,6 @@ sap.ui.define([
 
 		return this;
 	}
-
-
 
 	/**
 	 * Inserts a given Node or HTML string at a given position relative to the provided HTML element.
