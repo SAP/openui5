@@ -265,10 +265,12 @@ sap.ui.define([
 			this._oInput = new DynamicDateRangeInput(this.getId() + "-input", {
 				showValueHelp: true,
 				valueHelpIconSrc: IconPool.getIconURI("sap-icon://check-availability"),
-				valueHelpRequest: this.open.bind(this),
+				valueHelpRequest: this._toggleOpen.bind(this),
 				showSuggestion: true,
 				suggest: this._handleSuggest.bind(this)
 			});
+
+			this._oListItemDelegate = undefined;
 
 			this._onBeforeInputRenderingDelegate = {
 				onBeforeRendering: function() {
@@ -299,6 +301,16 @@ sap.ui.define([
 
 			this._infoDatesFooter = undefined;
 			this.aInputControls = undefined;
+
+			this._removeAllListItemDelegates();
+		};
+
+		DynamicDateRange.prototype._removeAllListItemDelegates = function() {
+			if (this._oOptionsList) {
+				this._oOptionsList.getItems().forEach(function(oItem) {
+					oItem.removeDelegate(this._oListItemDelegate);
+				}, this);
+			}
 		};
 
 		DynamicDateRange.prototype.onBeforeRendering = function() {
@@ -322,6 +334,14 @@ sap.ui.define([
 			return this;
 		};
 
+		DynamicDateRange.prototype._toggleOpen = function() {
+			if (this._oPopup && this._oPopup.isOpen()) {
+				this._closePopup();
+			} else {
+				this.open();
+			}
+		};
+
 		/**
 		 * Opens the value help dialog.
 		 *
@@ -334,11 +354,22 @@ sap.ui.define([
 				this._createPopup();
 				this._createPopupContent();
 
-				//re-create items
-				this._oOptionsList.removeAllItems();
+				if (!this._oListItemDelegate) {
+					this._oListItemDelegate = {
+						// Handle when F4 or Alt + DOWN arrow are pressed.
+						onsapshow: this._closePopup.bind(this),
+						// Handle when Alt + UP arrow are pressed.
+						onsaphide: this._closePopup.bind(this)
+					};
+				}
 
-				this._createValueHelpItems().forEach(function(item) {
-					this._oOptionsList.addItem(item);
+				//re-create items
+				this._removeAllListItemDelegates();
+				this._oOptionsList.destroyAggregation("items");
+
+				this._createValueHelpItems().forEach(function(oItem) {
+					oItem.addDelegate(this._oListItemDelegate, this);
+					this._oOptionsList.addItem(oItem);
 				}, this);
 
 				//reset value help page
@@ -382,7 +413,10 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicDateRange.prototype._handleSuggest = function(oEvent) {
-			this._closePopover();
+			if (this._oPopup && this._oPopup.isOpen()) {
+				this._closePopup();
+			}
+
 			var sQuery = oEvent.getParameter("suggestValue");
 
 			this._oInput.removeAllSuggestionItems();
@@ -571,6 +605,7 @@ sap.ui.define([
 				this._oPopup.attachAfterClose(function() {
 					this._setFooterVisibility(false);
 					this.invalidate();
+					this.getAggregation("_input").focus();
 				}, this);
 
 				this._oPopup.setBeginButton(new Button({
@@ -581,7 +616,7 @@ sap.ui.define([
 
 				this._oPopup.setEndButton(new Button({
 					text: oResourceBundle.getText("DYNAMIC_DATE_RANGE_CANCEL"),
-					press: this._closePopover.bind(this)
+					press: this._closePopup.bind(this)
 				}));
 
 				this._setFooterVisibility(false);
@@ -883,8 +918,12 @@ sap.ui.define([
 				}, this);
 			}
 
-			// There is a custom initial focus handling logic for both options list page and option details page
-			this._applyNavContainerPageFocus(oToPage);
+			if (this._oPopup && this._oPopup.isOpen()) {
+				// There is a custom initial focus handling logic for both options list page and option details page
+				this._applyNavContainerPageFocus(oToPage);
+			} else {
+				this.getAggregation("_input").focus();
+			}
 		};
 
 		/**
@@ -919,14 +958,10 @@ sap.ui.define([
 			this.setValue(this._oOutput);
 			this.fireChange({ prevValue: prevValue, value: this.getValue(), valid: true });
 
-			this._closePopover();
+			this._closePopup();
 		};
 
-		DynamicDateRange.prototype._closePopover = function() {
-			if (!this._oPopup) {
-				return;
-			}
-
+		DynamicDateRange.prototype._closePopup = function() {
 			this._setFooterVisibility(false);
 			this._oNavContainer.to(this._oNavContainer.getPages()[0]);
 			this._oPopup.close();
