@@ -1,12 +1,9 @@
-/*global URI*/
-
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariant",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
-	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView"
 ], function(
 	UIComponent,
@@ -14,7 +11,6 @@ sap.ui.define([
 	ABAPExtensibilityVariant,
 	JSONModel,
 	App,
-	library,
 	XMLView
 ) {
 	"use strict";
@@ -82,22 +78,12 @@ sap.ui.define([
 				Container: {
 					getService: function() {
 						return {
-							hrefForExternal: function(mData) {
-								return "./testdata/additionalElements/extensibilityTool.html?" + URI.encodeQuery(JSON.stringify(mData));
-							},
-							parseShellHash: function() {
-								//dummy
-							},
-							registerNavigationFilter: function() {
-								//dummy
-							},
-							unregisterNavigationFilter: function() {
-								//dummy
-							},
-							getUser: function() {
-								//dummy
-							}
-
+							hrefForExternal: function() {},
+							parseShellHash: function() {},
+							registerNavigationFilter: function() {},
+							unregisterNavigationFilter: function() {},
+							getUser: function() {},
+							toExternal: function() {}
 						};
 					},
 					getLogonSystem: function() {
