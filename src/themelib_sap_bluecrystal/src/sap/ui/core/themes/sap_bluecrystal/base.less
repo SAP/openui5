@@ -7,16 +7,6 @@
 // Theme Specifics/Internals
 // =====================================
 
-// [Label "Default Background Color"]
-// [Description "The default background color of this theme."]
-// [Tags "ThemeSpecific", "Base", "Content", "Color", "Protected"]
-@sapBackgroundColorDefault: #f2f2f2;
-
-// [Label "Background Gradient Color"]
-// [Description "The color which is used as base for the background gradient. It only applies when the background color is not modified."]
-// [Tags "ThemeSpecific", "Quick", "Color"]
-@sapBackgroundGradientBaseColor: #178299;
-
 // [Tags "SapInternal", "Base", "Color", "Protected"]
 @sapDarkShadowColor: #000;
 
@@ -97,24 +87,6 @@
 
 // [Tags "SapInternal", "Base", "Color", "Protected"]
 @sapExtraDarkTextColor: lighten(@sapTextColor, 13.4);
-
-// [Tags "Base", "Content", "Color", "Protected"]
-@sapContent_BackgroundGradientStartColor: lighten(desaturate(spin(@sapContent_BackgroundGradientMiddleColor, 353), 14), 9);
-
-// [Tags "Base", "Content", "Color", "Protected"]
-@sapContent_BackgroundGradientMiddleColor: @sapBackgroundGradientBaseColor;
-
-// [Tags "Base", "Content", "Color", "Protected"]
-@sapContent_BackgroundGradientEndColor: darken(desaturate(spin(@sapContent_BackgroundGradientMiddleColor, 19), 8), 5);
-
-// [Tags "Base", "Content", "Color", "Protected"]
-@sapContent_BackgroundGradientMixedStartColor: mix(@sapContent_BackgroundGradientStartColor, #fff, 15);
-
-// [Tags "Base", "Content", "Color", "Protected"]
-@sapContent_BackgroundGradientMixedMiddleColor: mix(@sapContent_BackgroundGradientMiddleColor, #fff, 15);
-
-// [Tags "Base", "Content", "Color", "Protected"]
-@sapContent_BackgroundGradientMixedEndColor: mix(@sapContent_BackgroundGradientEndColor, #fff, 15);
 
 
 
@@ -259,8 +231,6 @@
 @sapElement_Compact_Height: @sapElement_Height;
 @sapElement_Condensed_LineHeight: @sapElement_LineHeight;
 @sapElement_Condensed_Height: @sapElement_Height;
-@sapContent_ElementHeight: 1.37em;
-@sapContent_ElementHeight_PX: 22px;
 
 
 
@@ -706,7 +676,6 @@
 
 // [Tags "!Protected"]
 @sapGroup_TitleTextColor: contrast(@sapBackgroundColor, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
-@sapGroup_Title_FontSize: 1.0em;
 @sapGroup_ContentBackground: @sapLightestBackground;
 @sapGroup_ContentBorderColor: @sapLightBorderColor;
 @sapGroup_BorderWidth: @sapElement_BorderWidth;
@@ -1099,6 +1068,9 @@
 // =====================================
 
 // [Tags "!Protected"]
+@sapBackgroundColorDefault: #f2f2f2;
+
+// [Tags "!Protected"]
 @sapList_HighlightColor: @sapHighlightColor;
 
 // [Tags "!Protected"]
@@ -1121,3 +1093,32 @@
 
 // [Tags "!Protected"]
 @sapField_Disabled_HelpBackground: @sapField_Disabled_Background;
+
+@sapContent_ElementHeight: 1.37em;
+
+@sapContent_ElementHeight_PX: 22px;
+
+@sapGroup_Title_FontSize: 1.0em;
+
+// [Label "Background Gradient Color"]
+// [Description "The color which is used as base for the background gradient. It only applies when the background color is not modified."]
+// [Tags "ThemeSpecific", "Quick", "Color"]
+@sapBackgroundGradientBaseColor: #178299;
+
+// [Tags "Base", "Content", "Color", "Protected"]
+@sapContent_BackgroundGradientStartColor: lighten(desaturate(spin(@sapContent_BackgroundGradientMiddleColor, 353), 14), 9);
+
+// [Tags "Base", "Content", "Color", "Protected"]
+@sapContent_BackgroundGradientMiddleColor: @sapBackgroundGradientBaseColor;
+
+// [Tags "Base", "Content", "Color", "Protected"]
+@sapContent_BackgroundGradientEndColor: darken(desaturate(spin(@sapContent_BackgroundGradientMiddleColor, 19), 8), 5);
+
+// [Tags "Base", "Content", "Color", "Protected"]
+@sapContent_BackgroundGradientMixedStartColor: mix(@sapContent_BackgroundGradientStartColor, #fff, 15);
+
+// [Tags "Base", "Content", "Color", "Protected"]
+@sapContent_BackgroundGradientMixedMiddleColor: mix(@sapContent_BackgroundGradientMiddleColor, #fff, 15);
+
+// [Tags "Base", "Content", "Color", "Protected"]
+@sapContent_BackgroundGradientMixedEndColor: mix(@sapContent_BackgroundGradientEndColor, #fff, 15);

@@ -7,9 +7,6 @@
 // Theme Specifics/Internals
 // =====================================
 
-// [Tags "ThemeSpecific", "Base", "Content", "Color", "Protected"]
-@sapBackgroundColorDefault: darken(@sapPrimary3, 6);
-
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
 @sapContent_GridSize: 1rem;
 
@@ -1678,19 +1675,10 @@
 // Deprecated
 // =====================================
 
-// [Tags "!Protected"]
-@sapGroup_Title_FontSize: @sapFontSize;
+@sapBackgroundColorDefault: darken(@sapPrimary3, 6);
 
 @sapList_HighlightColor: @sapHighlightColor;
 
-// [Label "Content Element Height"]
-// [Description "The height of inline elements in the content area (in em)."]
-// [Tags "Base", "Content", "Dimension", "Protected"]
-@sapContent_ElementHeight: 1.37em;
-
-// [Label "Content Element Height PX"]
-// [Description "The height of lines in the content area (in pixel)."]
-// [Tags "Base", "Content", "Dimension", "Protected"]
-@sapContent_ElementHeight_PX: 22px;
+@sapGroup_Title_FontSize: @sapFontSize;
 
 @sapShell_BackgroundGradient: linear-gradient(to bottom, darken(@sapShell_Background, 5), lighten(@sapShell_Background, 2));

@@ -2774,6 +2774,11 @@
 // Deprecated
 // =====================================
 
+// [Label "Default Background Color"]
+// [Description "The default background color of this theme."]
+// [Tags "ThemeSpecific", "Base", "Content", "Color", "Protected", "Deprecated"]
+@sapBackgroundColorDefault: @sapDeprecated_Color;
+
 // sapList_HighlightColor has been used in themes before Belize to visualize
 // selected - selection column cells, header cells, grid cells
 // [Label "deprecated - List Highlight Color"]
@@ -2891,9 +2896,6 @@
 // =====================================
 // Theme Specifics/Internals
 // =====================================
-
-// [Tags "ThemeSpecific", "Base", "Content", "Color", "Protected"]
-@sapBackgroundColorDefault: @sapBackgroundColor;
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
 @sapContent_GridSize: 1rem;
@@ -4619,11 +4621,11 @@
 // Deprecated
 // =====================================
 
-// [Tags "!Protected"]
-@sapGroup_Title_FontSize: @sapFontSize;
+@sapBackgroundColorDefault: @sapBackgroundColor;
 
-// [Tags "!Protected"]
 @sapList_HighlightColor: @sapHighlightColor;
+
+@sapGroup_Title_FontSize: @sapFontSize;
 
 @sapContent_ElementHeight: 1.37em;
 
