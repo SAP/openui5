@@ -688,6 +688,27 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Returns the list of Promises for which an automatic destroy is scheduled.
+	 * Logs an error in case the application Component is missing a mandatory
+	 * constructor super call.
+	 * For compatibility reason we must not fail in this obviously broken scenario!
+	 *
+	 * @private
+	 */
+	Component.prototype._getDestroyables = function() {
+		if (!this._aDestroyables) {
+			Log.error("Mandatory super constructor not called for Component: '" + this.getManifestObject().getComponentName() + "'.",
+				null,
+				"sap.ui.support",
+				function() {
+					return { type: "missingSuperConstructor" };
+				});
+			this._aDestroyables = [];
+		}
+		return this._aDestroyables;
+	};
+
 	/*
 	 * clean up the component and its dependent entities like models or event handlers
 	 */
@@ -734,8 +755,9 @@ sap.ui.define([
 		}
 
 		// trigger an async destroy for all registered commponent promises
-		for (var i = 0; i < this._aDestroyables.length; i++ ) {
-			this._aDestroyables[i] = this._aDestroyables[i].then(fnDestroy);
+		var aDestroyables = this._getDestroyables();
+		for (var i = 0; i < aDestroyables.length; i++ ) {
+			aDestroyables[i] = aDestroyables[i].then(fnDestroy);
 		}
 
 		// destroy the object
@@ -752,7 +774,7 @@ sap.ui.define([
 			this._oManifest.exit(this);
 			delete this._oManifest;
 		}
-		return Promise.all(this._aDestroyables);
+		return Promise.all(aDestroyables);
 	};
 
 
@@ -3601,12 +3623,13 @@ sap.ui.define([
 	 * @private
 	 */
 	Component.prototype.registerForDestroy = function(pInstance) {
+		var aDestroyables = this._getDestroyables();
 		pInstance = pInstance.then(function(oInstance) {
 			// if already resolved, destroy must be done by the application
-			this._aDestroyables.splice(this._aDestroyables.indexOf(pInstance),1);
+			aDestroyables.splice(aDestroyables.indexOf(pInstance),1);
 			return oInstance;
-		}.bind(this));
-		this._aDestroyables.push(pInstance);
+		});
+		aDestroyables.push(pInstance);
 	};
 
 	/**

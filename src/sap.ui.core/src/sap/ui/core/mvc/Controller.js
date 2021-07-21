@@ -595,6 +595,27 @@ sap.ui.define([
 		};
 
 		/**
+		 * Returns the list of Promises for which an automatic destroy is scheduled.
+		 * Logs an error in case the application controller is missing a mandatory
+		 * constructor super call.
+		 * For compatibility reason we must not fail in this obviously broken scenario!
+		 *
+		 * @private
+		 */
+		Controller.prototype._getDestroyables = function() {
+			if (!this._aDestroyables) {
+				Log.error("Mandatory super constructor not called for Controller: '" + this.getMetadata().getName() + "'.",
+					null,
+					"sap.ui.support",
+					function() {
+						return { type: "missingSuperConstructor" };
+					});
+				this._aDestroyables = [];
+			}
+			return this._aDestroyables;
+		};
+
+		/**
 		 * Takes care of async destruction of fragments created with {@link sap.ui.core.Controller.loadFragment loadFragment}
 		 *
 		 * @private
@@ -609,8 +630,9 @@ sap.ui.define([
 				}
 			}
 			// chain each cancelable to trigger an async destroy
-			for (var i = 0; i < this._aDestroyables.length; i++ ) {
-				this._aDestroyables[i] = this._aDestroyables[i].then(fnDestroy);
+			var aDestroyables = this._getDestroyables();
+			for (var i = 0; i < aDestroyables.length; i++ ) {
+				aDestroyables[i] = aDestroyables[i].then(fnDestroy);
 			}
 		};
 
@@ -767,6 +789,8 @@ sap.ui.define([
 				controller: this
 			};
 
+			var aDestroyables = this._getDestroyables();
+
 			var pRequire = new Promise(function(resolve, reject) {
 				sap.ui.require(["sap/ui/core/Fragment"], function(Fragment) {
 					resolve(Fragment);
@@ -790,10 +814,10 @@ sap.ui.define([
 				}
 				/* if already resolved remove from bookkeeping. App needs to destroy or it is
 				implicitly destroyed via the dependents (or other) aggregation */
-				this._aDestroyables.splice(this._aDestroyables.indexOf(pRequire),1);
+				aDestroyables.splice(aDestroyables.indexOf(pRequire),1);
 				return vContent;
 			}.bind(this));
-			this._aDestroyables.push(pRequire);
+			aDestroyables.push(pRequire);
 			return pRequire;
 		};
 

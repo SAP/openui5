@@ -437,5 +437,39 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mv
 		}
 	};
 
-	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule, oControllerExtensionRule, oJQueryThreeDeprecationRule, oMissingSuperInitRule, oJSViewRule];
+	/**
+	 * Checks for missing super constructor calls on sap.ui.core.Component and sap.ui.core.mvc.Controller.
+	 */
+	 var oMissingSuperConstructorRule = {
+		id: "missingSuperConstructor",
+		audiences: [Audiences.Application, Audiences.Control, Audiences.Internal],
+		categories: [Categories.Functionality],
+		enabled: true,
+		minversion: "1.93",
+		title: "Missing super constructor call",
+		description: "A sub-class of sap.ui.core.Component or sap.ui.core.mvc.Controller which overrides the constructor must apply the super constructor as well.",
+		resolution: "A bound call to sap.ui.core.Component or sap.ui.core.mvc.Controller must be introduced in the sub-class.",
+		resolutionurls: [{
+			text: "API Documentation: sap.ui.core.mvc.Controller",
+			href: "https://openui5.hana.ondemand.com/api/sap.ui.core.mvc.Controller"
+		},
+		{
+			text: "API Documentation: sap.ui.core.Component",
+			href: "https://openui5.hana.ondemand.com/api/sap.ui.core.Component"
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var oLoggedObjects = oScope.getLoggedObjects("missingSuperConstructor");
+			oLoggedObjects.forEach(function(oLoggedObject) {
+				oIssueManager.addIssue({
+					severity: Severity.High,
+					details: oLoggedObject.message,
+					context: {
+						id: "WEBPAGE"
+					}
+				});
+			});
+		}
+	};
+
+	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule, oControllerExtensionRule, oJQueryThreeDeprecationRule, oMissingSuperInitRule, oMissingSuperConstructorRule, oJSViewRule];
 }, true);
