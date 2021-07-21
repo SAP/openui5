@@ -138,10 +138,16 @@ sap.ui.define([
 				if (oContext === that.oCurrentCreateContext) {
 					that.setSalesOrderBindingContext(oContext);
 				}
+
+				return oContext.requestSideEffects([
+					"/com.sap.gateway.default.zui5_epm_sample.v0002.Container/SalesOrderList/$count"
+				], that.getView().getModel().getGroupId());
+			}).then(function () {
 				MessageBox.success("SalesOrder created: " + oContext.getProperty("SalesOrderID")
 					+ ", " + oContext.getProperty("SO_2_BP/CompanyName"));
-			}, function (oError) {
+			}).catch(function (oError) {
 				if (!oError.canceled) {
+					MessageBox.error("" + oError);
 					throw oError; // unexpected error
 				}
 			});
@@ -220,7 +226,9 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrder : function () {
-			var sMessage,
+				// Use "$auto" or "$direct" just like selected when creating the model
+			var sGroupId = this.getView().getModel().getGroupId(),
+				sMessage,
 				sOrderID,
 				oTable = this.byId("SalesOrderList"),
 				oSalesOrderContext = oTable.getSelectedItem().getBindingContext();
@@ -229,11 +237,22 @@ sap.ui.define([
 				if (sCode !== "OK") {
 					return;
 				}
-				// Use "$auto" or "$direct" just like selected when creating the model
-				oSalesOrderContext.delete(oSalesOrderContext.getModel().getGroupId())
-					.then(function () {
-						MessageBox.success("Deleted Sales Order " + sOrderID);
-					});
+				Promise.all([
+					oSalesOrderContext.delete(sGroupId),
+					oSalesOrderContext.isTransient()
+						|| oTable.getBinding("items").getHeaderContext()
+							.requestSideEffects([
+								"/com.sap.gateway.default.zui5_epm_sample.v0002.Container"
+									+ "/SalesOrderList/$count"
+							], sGroupId)
+				]).then(function () {
+					MessageBox.success("Deleted Sales Order " + sOrderID);
+				}).catch(function (oError) {
+					if (!oError.canceled) {
+						MessageBox.error("" + oError);
+						throw oError; // unexpected error
+					}
+				});
 			}
 
 			sOrderID = oSalesOrderContext.getProperty("SalesOrderID", true);
