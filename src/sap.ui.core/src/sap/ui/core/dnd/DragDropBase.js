@@ -57,7 +57,7 @@ sap.ui.define([
 				 * Indicates whether this configuration is active or not.
 				 * @since 1.56
 				 */
-				enabled: {type: "boolean", defaultValue: true}
+				enabled: {type: "boolean", defaultValue: true, invalidate: false}
 			}
 		}
 	});
@@ -98,13 +98,6 @@ sap.ui.define([
 		}
 
 		return true;
-	};
-
-	/*
-	 * Enabled property should only invalidate for DragInfos.
-	 */
-	DragDropBase.prototype.setEnabled = function(bEnabled) {
-		return this.setProperty("enabled", bEnabled, !this.isA("sap.ui.core.dnd.IDragInfo"));
 	};
 
 	/*
