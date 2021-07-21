@@ -797,7 +797,7 @@
 
 				assert.equal(xhr.readyState, 0, "Initial readyState");
 
-				xhr.open("GET", "", false);
+				xhr.open("GET", "./", false);
 
 				assert.equal(xhr.readyState, 1, "readyState after open should be 1");
 
@@ -837,7 +837,7 @@
 
 				assert.equal(xhr.readyState, 0, "Initial readyState");
 
-				xhr.open("GET", "", true);
+				xhr.open("GET", "./", true);
 
 				assert.equal(xhr.readyState, 1, "readyState after open should be 1");
 
