@@ -2736,7 +2736,7 @@ var html = (function(html4) {
     'lt': '<',
     'gt': '>',
     'amp': '&',
-    'nbsp': '\240',
+    'nbsp': '\xA0',
     'quot': '"',
     'apos': '\''
   };
