@@ -382,16 +382,16 @@ sap.ui.define([
 
 		switch (sButtonType) {
 			case ButtonType.Critical:
-				this._sTypeIconURI = "sap-icon://message-warning";
+				this._sTypeIconURI = "sap-icon://alert";
 				break;
 			case ButtonType.Negative:
-				this._sTypeIconURI = "sap-icon://message-error";
+				this._sTypeIconURI = "sap-icon://error";
 				break;
 			case ButtonType.Success:
-				this._sTypeIconURI = "sap-icon://message-success";
+				this._sTypeIconURI = "sap-icon://sys-enter-2";
 				break;
 			case ButtonType.Neutral:
-				this._sTypeIconURI = "sap-icon://message-information";
+				this._sTypeIconURI = "sap-icon://information";
 				break;
 			case ButtonType.Back:
 			case ButtonType.Up:

@@ -40,6 +40,12 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	position: relative;
 	border-radius: @sapUiButtonBorderCornerRadius;
 	text-shadow: none;
+	&.sapMBtnCritical,
+	&.sapMBtnNegative,
+	&.sapMBtnSuccess,
+	&.sapMBtnNeutral {
+		font-weight: bold;
+	}
 }
 
 /* ------------------- */

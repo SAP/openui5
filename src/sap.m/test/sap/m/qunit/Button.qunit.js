@@ -897,7 +897,7 @@ sap.ui.define([
 		// assert
 		assert.equal(
 			oButton.$("img").attr("data-sap-ui-icon-content"),
-			IconPool.getIconInfo("sap-icon://message-error").content,
+			IconPool.getIconInfo("sap-icon://error").content,
 			"icon is right"
 		);
 
@@ -908,7 +908,7 @@ sap.ui.define([
 		//assert
 		assert.equal(
 			oButton.$("img").attr("data-sap-ui-icon-content"),
-			IconPool.getIconInfo("sap-icon://message-warning").content,
+			IconPool.getIconInfo("sap-icon://alert").content,
 			"icon is right"
 		);
 
@@ -919,7 +919,7 @@ sap.ui.define([
 		// assert
 		assert.equal(
 			oButton.$("img").attr("data-sap-ui-icon-content"),
-			IconPool.getIconInfo("sap-icon://message-success").content,
+			IconPool.getIconInfo("sap-icon://sys-enter-2").content,
 			"icon is right"
 		);
 
@@ -930,7 +930,7 @@ sap.ui.define([
 		// assert
 		assert.equal(
 			oButton.$("img").attr("data-sap-ui-icon-content"),
-			IconPool.getIconInfo("sap-icon://message-information").content,
+			IconPool.getIconInfo("sap-icon://information").content,
 			"icon is right"
 		);
 
@@ -965,7 +965,7 @@ sap.ui.define([
 		// assert
 		assert.equal(
 			oButton.$("img").attr("data-sap-ui-icon-content"),
-			IconPool.getIconInfo("sap-icon://message-error").content,
+			IconPool.getIconInfo("sap-icon://error").content,
 			"when icon is removed, type's implied icon is applied"
 		);
 
