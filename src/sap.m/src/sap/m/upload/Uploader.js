@@ -214,13 +214,13 @@ sap.ui.define([
 		oXhr.onreadystatechange = function () {
 			var oHandler = that._mRequestHandlers[oItem.getId()];
 			if (this.readyState === window.XMLHttpRequest.DONE && !oHandler.aborted) {
-			    var eventArguments = {item: oItem};
+			    var eventItem = {item: oItem};
 
 			    if (options && options.passXhrToEvent) {
-			        eventArguments.xhr = oHandler.xhr;
+			        eventItem.xhr = oHandler.xhr;
 			    }
 
-				that.fireUploadCompleted(eventArguments);
+				that.fireUploadCompleted(eventItem);
 			}
 		};
 
