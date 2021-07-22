@@ -432,7 +432,6 @@ sap.ui.define([
 			subHeader: this._oSubHeader,
 			content: [this._oBusyIndicator, this._oTable],
 			endButton: this._getCancelButton(),
-			initialFocus: ((Device.system.desktop && this._oSearchField) ? this._oSearchField : null),
 			draggable: this.getDraggable() && Device.system.desktop,
 			resizable: this.getResizable() && Device.system.desktop,
 			escapeHandler: function (oPromiseWrapper) {
@@ -448,7 +447,6 @@ sap.ui.define([
 		this._sSearchFieldValue = "";
 
 		// flags to control the busy indicator behaviour because the growing table will always show the no data text when updating
-		this._bFirstRequest = true; // to only show the busy indicator for the first request when the dialog has been openend
 		this._iTableUpdateRequested = 0; // to only show the busy indicator when we initiated the change
 
 		this._oDialog.getProperty = function (sName) {
@@ -473,7 +471,6 @@ sap.ui.define([
 		this._oBusyIndicator = null;
 		this._sSearchFieldValue = null;
 		this._iTableUpdateRequested = null;
-		this._bFirstRequest = false;
 		this._bInitBusy = false;
 		this._bFirstRender = false;
 
@@ -555,16 +552,13 @@ sap.ui.define([
 			this._bAppendedToUIArea = true;
 		}
 
-		// reset internal variables
-		this._bFirstRequest = true;
-
 		// set search field value
 		this._oSearchField.setValue(sSearchValue);
 		this._sSearchFieldValue = sSearchValue || "";
 
 		// open the dialog
+		this._setInitialFocus();
 		this._oDialog.open();
-
 
 		// open dialog with busy state if a list update is still in progress
 		if (this._bInitBusy) {
@@ -1064,31 +1058,8 @@ sap.ui.define([
 			this._bInitBusy = false;
 		}
 
-		if (Device.system.desktop) {
-
-			if (this._oTable.getItems()[0]) {
-				this._oDialog.setInitialFocus(this._oTable.getItems()[0]);
-			} else {
-				this._oDialog.setInitialFocus(this._oSearchField);
-			}
-
-			// set initial focus manually after all items are visible
-			if (this._bFirstRequest) {
-				var oFocusControl = this._oTable.getItems()[0];
-				if (!oFocusControl) {
-				oFocusControl = this._oSearchField;
-				}
-
-				if (oFocusControl.getFocusDomRef()) {
-					oFocusControl.getFocusDomRef().focus();
-				}
-			}
-		}
-
-	this._bFirstRequest = false;
-
-	// we received a request (from this or from another control) so set the counter to 0
-	this._iTableUpdateRequested = 0;
+		// we received a request (from this or from another control) so set the counter to 0
+		this._iTableUpdateRequested = 0;
 	};
 
 	/**

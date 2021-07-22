@@ -4,9 +4,11 @@
 
 // Provides control sap.m.SelectDialogBase.
 sap.ui.define([
+		'sap/ui/Device',
 		'sap/ui/core/Control'
 ],
 function(
+	Device,
 	Control
 ) {
 	"use strict";
@@ -125,6 +127,20 @@ function(
 			}
 		}
 	});
+
+	SelectDialogBase.prototype._setInitialFocus = function () {
+		if (!Device.system.desktop) {
+			return;
+		}
+
+		var oInitiallyFocusedControl = this._oSearchField;
+
+		if (this.getItems().length) {
+			oInitiallyFocusedControl = this.getItems()[0];
+		}
+
+		this._oDialog.setInitialFocus(oInitiallyFocusedControl);
+	};
 
 	return SelectDialogBase;
 });
