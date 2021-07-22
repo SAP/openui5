@@ -98,10 +98,15 @@ sap.ui.define([
 
     SortQueryPanel.prototype._selectKey = function(oEvt) {
         QueryPanel.prototype._selectKey.apply(this, arguments);
+
         //Enable SegmentedButton
         var oListItem = oEvt.getSource().getParent().getParent();
         var sNewKey = oEvt.getParameter("selectedItem").getKey();
         oListItem.getContent()[0].getContent()[1].setEnabled(sNewKey !== this.NONE_KEY);
+
+        //keep existing 'sortorder' selection
+        var bDescending = oListItem.getContent()[0].getContent()[1].getSelectedKey() === "desc";
+        this._changeOrder(sNewKey, bDescending);
     };
 
     SortQueryPanel.prototype._getSortOrderText = function(bDesc) {
