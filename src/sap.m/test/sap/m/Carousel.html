@@ -700,11 +700,11 @@
 
 		var appCarousel = new sap.m.App("myApp", {initialPage:"carouselPage"});
 
-		var carouselPage = new sap.m.Page("carouselPage",
-			{title: "Carousel Test Page",
-			enableScrolling: true }
-		);
-
+		var carouselPage = new sap.m.Page("carouselPage", {
+			title: "Carousel Test Page",
+			headerContent: new sap.m.Button({text: "focus trap"}),
+			enableScrolling: true
+		});
 
 		var buttonChangeHeightTo50Percents = new sap.m.Button("btnHeight50", {
 			text: "change height to 50%",
