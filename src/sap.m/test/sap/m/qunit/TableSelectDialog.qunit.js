@@ -1372,5 +1372,42 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.module("Event Testing", {
+		beforeEach : function () {
+			sinon.config.useFakeTimers = true;
+		},
+		afterEach : function () {
+			sinon.config.useFakeTimers = false;
+		}
+	});
+
+	QUnit.test("Table events", function (assert) {
+		var oDialog = new TableSelectDialog(),
+			oUpdateStartedSpy = this.spy(oDialog, "fireUpdateStarted"),
+			oUpdateFinishedSpy = this.spy(oDialog, "fireUpdateFinished"),
+			oSelectionChangeSpy = this.spy(oDialog, "fireSelectionChange");
+
+		oDialog.open();
+		this.clock.tick(350);
+
+		oDialog._oTable.fireEvent("updateStarted", {});
+		assert.ok(oUpdateStartedSpy.calledOnce, "updateStarted event is fired");
+
+		oDialog._oTable.fireEvent("updateFinished", {});
+		assert.ok(oUpdateFinishedSpy.calledOnce, "updateFinished event is fired");
+
+		oDialog._oTable.fireEvent("selectionChange", {});
+		assert.ok(oSelectionChangeSpy.calledOnce, "selectionChange event is fired");
+
+		oDialog._oDialog.close();
+		this.clock.tick(350);
+
+		oUpdateStartedSpy.reset();
+		oUpdateFinishedSpy.reset();
+		oSelectionChangeSpy.reset();
+
+		oDialog.destroy();
+	});
+
 	return waitForThemeApplied();
 });

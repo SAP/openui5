@@ -1,0 +1,10 @@
+<mvc:View
+	controllerName="sap.m.sample.SelectDialogLazyLoading.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+		<Button
+			text="Show Select Dialog"
+			press=".onOpenDialogPress"
+			class="sapUiSmallMargin"
+			ariaHasPopup="Dialog" />
+</mvc:View>

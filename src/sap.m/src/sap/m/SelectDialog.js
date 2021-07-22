@@ -10,7 +10,7 @@ sap.ui.define([
 	'./List',
 	'./SearchField',
 	'./library',
-	'sap/ui/core/Control',
+	'./SelectDialogBase',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
@@ -27,7 +27,7 @@ function(
 	List,
 	SearchField,
 	library,
-	Control,
+	SelectDialogBase,
 	InvisibleText,
 	Device,
 	Toolbar,
@@ -107,7 +107,7 @@ function(
 	 * <li> On desktop and tablet devices, the select dialog appears as a popover. </li>
 	 * </ul>
 	 * When using the <code>sap.m.SelectDialog</code> in SAP Quartz themes, the breakpoints and layout paddings could be determined by the dialog's width. To enable this concept and add responsive paddings to an element of the control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.m.SelectDialogBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -118,7 +118,7 @@ function(
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/select-dialog/ Select Dialog}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var SelectDialog = Control.extend("sap.m.SelectDialog", /** @lends sap.m.SelectDialog.prototype */ { metadata : {
+	var SelectDialog = SelectDialogBase.extend("sap.m.SelectDialog", /** @lends sap.m.SelectDialog.prototype */ { metadata : {
 
 		library : "sap.m",
 		properties : {
@@ -340,7 +340,9 @@ function(
 					})
 				]
 			}),
-			selectionChange: this._selectionChange.bind(this)
+			selectionChange: this._selectionChange.bind(this),
+			updateStarted: this._updateStarted.bind(this),
+			updateFinished: this._updateFinished.bind(this)
 		});
 
 		this._oList.getInfoToolbar().addEventDelegate({
@@ -350,10 +352,6 @@ function(
 		});
 
 		this._list = this._oList; // for downward compatibility
-
-		// attach events to listen to model updates and show/hide a busy indicator
-		this._oList.attachUpdateStarted(this._updateStarted, this);
-		this._oList.attachUpdateFinished(this._updateFinished, this);
 
 		// store a reference to the busyIndicator to display when data is currently loaded by a service
 		this._oBusyIndicator = new BusyIndicator(this.getId() + "-busyIndicator").addStyleClass("sapMSelectDialogBusyIndicator", true);
@@ -591,7 +589,7 @@ function(
 		if (this._oDialog && (!arguments[0] || arguments[0] && arguments[0].getId() !== this.getId() + "-dialog")) {
 			this._oDialog.invalidate(arguments);
 		} else {
-			Control.prototype.invalidate.apply(this, arguments);
+			SelectDialogBase.prototype.invalidate.apply(this, arguments);
 		}
 
 		return this;
@@ -905,7 +903,7 @@ function(
 
 		// pass the model to the list and also to the local control to allow binding of own properties
 		this._oList.setModel(oModel, sModelName);
-		Control.prototype.setModel.apply(this, arguments);
+		SelectDialogBase.prototype.setModel.apply(this, arguments);
 
 		// clear the selection label when setting the model
 		this._updateSelectionIndicator();
@@ -926,7 +924,7 @@ function(
 	SelectDialog.prototype.setBindingContext = function (oContext, sModelName) {
 		// pass the model to the list and also to the local control to allow binding of own properties
 		this._oList.setBindingContext(oContext, sModelName);
-		Control.prototype.setBindingContext.apply(this, arguments);
+		SelectDialogBase.prototype.setBindingContext.apply(this, arguments);
 
 		return this;
 	};
@@ -1016,6 +1014,8 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	SelectDialog.prototype._updateStarted = function (oEvent) {
+		this.fireUpdateStarted(oEvent.getParameters());
+
 		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
 			if (this._oDialog.isOpen() && this._iListUpdateRequested) {
 				// only set busy mode when we have an OData model
@@ -1033,6 +1033,8 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	SelectDialog.prototype._updateFinished = function (oEvent) {
+		this.fireUpdateFinished(oEvent.getParameters());
+
 		// only reset busy mode when we have an OData model
 		this._updateSelectionIndicator();
 		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
@@ -1237,7 +1239,11 @@ function(
 	 *
 	 * @private
 	 */
-	SelectDialog.prototype._selectionChange = function () {
+	SelectDialog.prototype._selectionChange = function (oEvent) {
+		if (oEvent.getParameters) {
+			this.fireSelectionChange(oEvent.getParameters());
+		}
+
 		if (!this._oDialog) {
 			return;
 		}
