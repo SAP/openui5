@@ -30,11 +30,11 @@
 		"designtime": "dt/Configuration",
 		"data": {
 			"request": {
-				"url": "../mock/data5.json"
-			},
-			"cache": {
-				"maxAge": 86400,
-				"staleWhileRevalidate": true
+				"url": "../mock/data5.json",
+				"cache": {
+					"maxAge": 86400,
+					"staleWhileRevalidate": true
+				}
 			}
 		},
 		"header": {

@@ -261,7 +261,7 @@ sap.ui.define([
 	 	 * @experimental Since 1.91. The API might change.
 		 */
 		Host.prototype.modifyRequestHeaders = function (mHeaders, mSettings, oCard) {
-			var oCacheSettings = mSettings.cache,
+			var oCacheSettings = mSettings.request.cache,
 				aCacheControl = [];
 
 			if (oCacheSettings.noStore) {

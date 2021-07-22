@@ -56,11 +56,11 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "../mock/data4.json"
-				},
-				"cache": {
-					"maxAge": 0,
-					"staleWhileRevalidate": true
+					"url": "../mock/data4.json",
+					"cache": {
+						"maxAge": 0,
+						"staleWhileRevalidate": true
+					}
 				},
 				"updateInterval": 30
 			},
