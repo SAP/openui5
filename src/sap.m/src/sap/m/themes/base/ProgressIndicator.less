@@ -6,6 +6,7 @@
 @sapMPIPopoverCloseIconWidth: 1.4375rem;
 @sapMPIPopoverCloseIconHeight: 1.375rem;
 @sapMPIPopoverCloseIconMargin: 0.125rem;
+@sapMPITextLeftTextThreshold: @sapUiContentContrastTextThreshold;
 
 .sapMPI {
 	&.sapMPIHoverable:hover {
@@ -190,27 +191,27 @@
 
 /* Progress Indicator Value Text */
 .sapMPIBarNeutral .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNeutralElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiNeutralElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
 }
 
 .sapMPIBarPositive .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiPositiveElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiPositiveElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
 }
 
 .sapMPIBarNegative .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNegativeElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiNegativeElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
 }
 
 .sapMPIBarCritical .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiCriticalElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiCriticalElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
 }
 
 .sapMPIBarInformation .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiHighlight, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiHighlight, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
 }
 
 .sapMPIBarInformation.sapMPIDisplayOnly .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiBaseText, @sapUiContentContrastTextColor, @sapUiBaseText, @sapUiContentContrastTextThreshold);
+	color: contrast(@sapUiBaseText, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
 }
 
 /* Compact */
