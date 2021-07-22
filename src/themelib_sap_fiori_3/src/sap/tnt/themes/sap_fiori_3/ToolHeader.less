@@ -477,11 +477,37 @@ html.sap-desktop .sapTntToolHeader .sapMFocus > .sapMSFF::before {
 	.sapMITH {
 		border-color: transparent;
 	}
-}
 
+	.sapMITH {
+		.sapMITHStartOverflow,
+		.sapMITHEndOverflow {
+			.sapMITBItem {
+				background-color: transparent;
+				border: none;
 
-.sapTntToolHeader .sapMITH .sapMITBHead .sapMITBFilter .sapMITBText + .sapMITBContentArrow {
-	height: 0.875rem;
+				&:hover {
+					background: @sapUiShellHoverBackground;
+				}
+
+				&:active {
+					background: @sapUiShellActiveBackground;
+					color: @sapUiShellActiveTextColor;
+				}
+
+				.sapMITBText {
+					color: @sapUiShellInteractiveTextColor;
+
+					.sapMITHShowSubItemsIcon .sapUiIcon {
+						color: @sapUiShellInteractiveTextColor;
+					}
+				}
+			}
+		}
+	}
+
+	.sapMITBHead .sapMITBFilter .sapMITBText + .sapMITBContentArrow {
+		height: 0.875rem;
+	}
 }
 
 /* Focus Colors*/
@@ -493,6 +519,15 @@ html.sap-desktop .sapTntToolHeader {
 	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
 		&::after {
 			border-color: @_sap_tnt_ToolHeader_BorderColor;
+		}
+	}
+
+	.sapMITHStartOverflow,
+	.sapMITHEndOverflow {
+		.sapMITBItem:not(.sapUiDnDDragging) {
+			&:focus::after {
+				border-color: @_sap_tnt_ToolHeader_BorderColor;
+			}
 		}
 	}
 }

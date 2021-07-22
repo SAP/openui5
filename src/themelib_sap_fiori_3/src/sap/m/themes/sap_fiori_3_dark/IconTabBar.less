@@ -465,4 +465,16 @@ html.sap-desktop {
 			}
 		}
 	}
+
+	.sapMITH {
+		.sapMITHStartOverflow,
+		.sapMITHEndOverflow {
+			.sapMITBItem {
+				&:active::after {
+					// when overflow is pressed, make the focus white
+					border-color: @_sap_m_IconTabBar_Overflow_TextColorPressed;
+				}
+			}
+		}
+	}
 }

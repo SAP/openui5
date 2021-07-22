@@ -1050,6 +1050,7 @@ sap.ui.define([
 				aItems[i].classList.add("sapMITBFilterHidden");
 			}
 
+			oOverflow._updateTabCountText();
 			oOverflow._updateExpandButtonBadge();
 			return;
 		}
@@ -1070,6 +1071,7 @@ sap.ui.define([
 				aItems[i].classList.add("sapMITBFilterHidden");
 			}
 
+			oStartOverflow._updateTabCountText();
 			oStartOverflow._updateExpandButtonBadge();
 			return;
 		}
@@ -1099,6 +1101,8 @@ sap.ui.define([
 		}
 
 		oStartOverflow._updateExpandButtonBadge();
+		oStartOverflow._updateTabCountText();
+		oOverflow._updateTabCountText();
 		oOverflow._updateExpandButtonBadge();
 	};
 
