@@ -43,6 +43,13 @@ sap.ui.define([
 
 			onInit: function () {
 				this._objectPage = this.byId("apiDetailObjectPage");
+
+				if ( !window.hljs ) {
+					//solarized-light
+					jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/highlight.js/styles.css");
+					jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js" });
+
+				}
 			},
 
 			/* =========================================================== */
@@ -134,26 +141,28 @@ sap.ui.define([
 				this._buildHeaderLayout(this._oControlData, this._oEntityData);
 
 				setTimeout(function () {
-					// Initial prettify
-					this._prettify();
+					// Initial hljs
+					this._hljs();
 
-					// Attach prettify for un-stashed sub sections
+					// Attach hljs for un-stashed sub sections
 					this._objectPage.attachEvent("subSectionEnteredViewPort", function () {
 						// Clear previous calls if any
-						if (this._sPrettyPrintDelayedCallID) {
-							clearTimeout(this._sPrettyPrintDelayedCallID);
+						if (this._sHljsDelayedCallID) {
+							clearTimeout(this._sHljsDelayedCallID);
 						}
-						this._sPrettyPrintDelayedCallID = setTimeout(function () {
-							// The event is called even if all the sub-sections are un-stashed so apply the class and prettyPrint only when we have un-processed targets.
-							var $aNotApplied = jQuery('.sapUxAPObjectPageContainer .APIDetailMethodsSection pre:not(.prettyprint)', this._objectPage.$());
-							if ($aNotApplied.length > 0) {
-								$aNotApplied.addClass('prettyprint');
-								window.prettyPrint();
+						this._sHljsDelayedCallID = setTimeout(function () {
+							//The event is called even if all the sub-sections are un-stashed so apply the class and highlights only when we have un-processed targets.
+							var $aNotApplied = jQuery('.sapUxAPObjectPageContainer .APIDetailMethodsSection pre:not(.hljs)', this._objectPage.$());
+							if ($aNotApplied.length > 0 && window.hljs) {
+								$aNotApplied.addClass('hljs');
+								document.querySelectorAll('pre').forEach(function(block) {
+									window.hljs.highlightBlock(block);
+								});
 							}
 						}.bind(this), 200);
 					}, this);
 
-					// Init scrolling right after busy indicator is cleared and prettify is ready
+					// Init scrolling right after busy indicator is cleared
 					setTimeout(function () {
 
 						if (this._sEntityType) {
@@ -286,10 +295,12 @@ sap.ui.define([
 
 			},
 
-			_prettify: function () {
-				// Google Prettify requires this class
-				jQuery('.sapUxAPObjectPageContainer pre', this._objectPage.$()).addClass('prettyprint');
-				window.prettyPrint();
+			_hljs: function () {
+				if (window.hljs) {
+					document.querySelectorAll('pre').forEach(function(block) {
+						window.hljs.highlightBlock(block);
+					});
+				}
 			},
 
 			scrollToMethod: function (oEvent) {
