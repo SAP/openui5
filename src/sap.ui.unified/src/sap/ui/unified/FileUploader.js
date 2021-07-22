@@ -787,7 +787,9 @@ sap.ui.define([
 
 		if (this.oFileUpload) {
 			jQuery(this.oFileUpload).off();
-			this.oFileUpload.parentElement.removeChild(this.oFileUpload);
+			if (this.oFileUpload.parentElement) {
+				this.oFileUpload.parentElement.removeChild(this.oFileUpload);
+			}
 			this.oFileUpload = null;
 		}
 
