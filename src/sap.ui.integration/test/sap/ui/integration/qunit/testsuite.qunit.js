@@ -238,7 +238,9 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"cards/Footer": {},
 			"controls/ActionsToolbar": {},
+			"controls/ActionsStrip": {},
 			"controls/ListContentItem": {},
 			"controls/Microchart": {},
 			"controls/MicrochartLegend": {},
