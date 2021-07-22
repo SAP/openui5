@@ -1164,13 +1164,16 @@ sap.ui.define([
 	 *   the longtext URL
 	 * @param {string} [sCachePath]
 	 *   The cache-relative path to the entity; used to resolve the targets
+	 * @param {boolean} [bIgnoreTargets]
+	 *   Whether to ignore all (main or additional) targets
 	 * @returns {sap.ui.core.message.Message}
 	 *   The created UI5 message object
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.createUI5Message = function (oRawMessage, sResourcePath, sCachePath) {
-		var bIsBound = oRawMessage.target !== undefined,
+	ODataModel.prototype.createUI5Message = function (oRawMessage, sResourcePath, sCachePath,
+			bIgnoreTargets) {
+		var bIsBound = !bIgnoreTargets && typeof oRawMessage.target === "string",
 			sMessageLongtextUrl = oRawMessage.longtextUrl,
 			aTargets;
 
@@ -1786,7 +1789,7 @@ sap.ui.define([
 		if (aMessages && aMessages.length) {
 			this.fireMessageChange({
 				newMessages : aMessages.map(function (oMessage) {
-					return that.createUI5Message(oMessage, sResourcePath);
+					return that.createUI5Message(oMessage, sResourcePath, undefined, true);
 				})
 			});
 		}
