@@ -454,6 +454,8 @@ sap.ui.define([
 		var iYear = oStartDate.getFullYear();
 		CalendarUtils._checkYearInValidRange(iYear);
 
+		this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true);
+
 		this.setProperty("startDate", oStartDate);
 
 		return this;

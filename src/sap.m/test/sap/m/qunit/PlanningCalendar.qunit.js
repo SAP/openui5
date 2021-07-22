@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/waitForThemeApplied",
@@ -70,6 +71,7 @@ sap.ui.define([
 	DatesRow,
 	coreLibrary,
 	Control,
+	Core,
 	Element,
 	InvisibleText,
 	waitForThemeApplied
@@ -2333,6 +2335,118 @@ sap.ui.define([
 		// Assert
 		// argument: true - desktop; false - tablet or phone
 		this.checkItemPlacementAfterHidingRowHeaders(false);
+	});
+
+	QUnit.test("firstDayOfWeek", function() {
+		var oStartDate = new Date(2015, 0, 1, 8),
+			sCurrentPickerId, oPicker, oRow, aDays, $24thDec;
+
+		// Prepare
+		this.oPC.placeAt("bigUiArea");
+		Core.applyChanges();
+
+		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
+		oPicker = Core.byId(sCurrentPickerId);
+		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
+
+		// Act
+		this.oPC.setFirstDayOfWeek(3);
+
+		// Assert
+		assert.strictEqual(oPicker.getFirstDayOfWeek(), 3, "firstDayOfWeek in Hours view propagated to picker");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of TimesRow not changed");
+
+		// Act
+		this.oPC.setViewKey("Day");
+		Core.applyChanges();
+
+		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
+		oPicker = Core.byId(sCurrentPickerId);
+		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
+
+		// Assert
+		assert.strictEqual(oPicker.getFirstDayOfWeek(), 3, "firstDayOfWeek in Days view propagated to picker");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of DatesRow not changed");
+
+		// Act
+		this.oPC.setViewKey("Month");
+		Core.applyChanges();
+
+		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
+		oPicker = Core.byId(sCurrentPickerId);
+		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
+
+		// Assert
+		assert.strictEqual(oPicker.getFirstDayOfWeek(), -1, "firstDayOfWeek in Month view not propagated to picker");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of MonthsRow not changed");
+
+		// Act
+		this.oPC.setViewKey("Week");
+		Core.applyChanges();
+
+		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
+		oPicker = Core.byId(sCurrentPickerId);
+		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
+		oStartDate.setFullYear(2014, 11, 31, 8);
+
+		// Assert
+		assert.strictEqual(oPicker.getFirstDayOfWeek(), 3, "firstDayOfWeek in Week view propagated to picker");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of WeeksRow changed");
+
+		// Act
+		this.oPC.setFirstDayOfWeek(2);
+		Core.applyChanges();
+
+		oStartDate.setDate(30);
+
+		// Assert
+		assert.strictEqual(oPicker.getFirstDayOfWeek(), 2, "firstDayOfWeek in Week view propagated to picker");
+		assert.strictEqual(oRow.getFirstDayOfWeek(), 2, "firstDayOfWeek of WeeksRow changed");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of WeeksRow changed");
+
+		// Act
+		this.oPC.setStartDate(new Date(2014, 11, 22, 8));
+		Core.applyChanges();
+
+		aDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
+		$24thDec = aDays[6];
+
+		// Assert
+		assert.strictEqual($24thDec.getAttribute("data-sap-day"), "20141222", "passed startDate is always visible");
+
+		// Act
+		this.oPC.setViewKey("One Month");
+		Core.applyChanges();
+
+		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
+		oPicker = Core.byId(sCurrentPickerId);
+		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
+		oStartDate.setDate(1);
+
+		// Assert
+		assert.strictEqual(oPicker.getFirstDayOfWeek(), -1, "firstDayOfWeek in OneMonth view not propagated to picker");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of DatesRow changed");
+
+		// Act
+		this.oPC.placeAt("smallUiArea");
+		Core.applyChanges();
+		oStartDate.setFullYear(2014, 11, 1, 8);
+
+		// Assert
+		assert.strictEqual(oRow.getFirstDayOfWeek(), 2, "firstDayOfWeek of DatesRow changed");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of DatesRow changed");
+
+		// Act
+		this.oPC.setFirstDayOfWeek(5);
+		Core.applyChanges();
+
+		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
+		oPicker = Core.byId(sCurrentPickerId);
+
+		// Assert
+		assert.strictEqual(oPicker.getFirstDayOfWeek(), 5, "firstDayOfWeek in OneMonth view propagated to picker");
+		assert.strictEqual(oRow.getFirstDayOfWeek(), 5, "firstDayOfWeek of DatesRow changed");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate.getTime(), "startDate of DatesRow changed");
 	});
 
 	QUnit.module("NonWorking Special Dates", {

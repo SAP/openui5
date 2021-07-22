@@ -199,25 +199,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for property <code>firstDayOfWeek</code>.
-	 *
-	 * Property <code>firstDayOfWeek</code> is not supported in <code>sap.ui.unified.calendar.DatesRow</code> control.
-	 *
-	 * @protected
-	 * @param {int} iFirstDayOfWeek The first day of the week
-	 * @returns {this} <code>this</code> to allow method chaining
-	 */
-	DatesRow.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
-
-		if (iFirstDayOfWeek == -1) {
-			return this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
-		} else {
-			throw new Error("Property firstDayOfWeek not supported " + this);
-		}
-
-	};
-
-	/**
 	 * Handler used for controling the behaviour when border is reached.
 	 *
 	 * The method this._getRelativeInfo provides information from the PlanningCalendar about the relative views.
