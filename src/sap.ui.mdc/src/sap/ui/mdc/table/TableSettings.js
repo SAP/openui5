@@ -46,11 +46,21 @@ sap.ui.define([
 			if (!oRb) {
 				this._loadResourceBundle();
 			}
+
+			var oBtn = TableSettings.createSettingsButton(sIdPrefix, aEventInfo);
+			oBtn.setText(oRb.getText("table.SETTINGS_COLUMN"));
+			oBtn.setTooltip(oRb.getText("table.SETTINGS_COLUMN"));
+			return oBtn;
+		},
+		createSettingsButton: function(sIdPrefix, aEventInfo) {
+			if (!oRb) {
+				this._loadResourceBundle();
+			}
 			var oBtn = this._createButton(sIdPrefix + "-settings", {
 				icon: "sap-icon://action-settings",
-				text: oRb.getText("table.SETTINGS_COLUMN"),
+				text: oRb.getText("table.SETTINGS"),
 				press: aEventInfo,
-				tooltip: oRb.getText("table.SETTINGS_COLUMN"),
+				tooltip: oRb.getText("table.SETTINGS"),
 				ariaHasPopup: HasPopup.Dialog
 			});
 
