@@ -506,7 +506,7 @@ sap.ui.define([
 						if (oCondition.operator !== "EQ") {
 							throw new ParseException("unsupported operator");
 						}
-						var vNumber = oType._aCurrentValue && oType._aCurrentValue[0];
+						var vNumber = oType._aCurrentValue && oType._aCurrentValue[0] !== undefined ? oType._aCurrentValue[0] : null; // undefined not valid for formatting, needs to be null
 						var sUnit = oCondition.values[0]; // use key of unit
 						oCondition.values = [[vNumber, sUnit]];
 					} else if (vValue === "") {

@@ -481,7 +481,7 @@ sap.ui.define([
 				// but add only the parts that have entries in array after parsing ( not set one-time parts)
 				for (var j = 0; j < vValue.length; j++) {
 					if (vValue[j] === undefined) {
-						vValue[j] = oType._aCurrentValue[j];
+						vValue[j] = oType._aCurrentValue[j] === undefined ? null : oType._aCurrentValue[j]; // undefined not valid for formatting, needs to be null
 					}
 				}
 			}

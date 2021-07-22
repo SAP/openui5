@@ -205,8 +205,8 @@ sap.ui.define([
 
 		var bIsUnit = _isUnit(this.oFormatOptions.valueType);
 
-		if (bIsUnit) {
-			// update all conditions with unit
+		if (bIsUnit && this.oFormatOptions.getConditions) {
+			// update all conditions with unit; only if not only a unit is shown
 			// TODO better solution
 			var sUnit = oCondition && oCondition.values[0][1];
 			var oInParameters = oCondition && oCondition.inParameters;
