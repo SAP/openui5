@@ -7,11 +7,13 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/v4demo/test/pages/ListReport"
+	"sap/ui/v4demo/test/pages/ListReport",
+	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary"
 ], function(
 	Opa5,
 	opaTest,
-	ListReport
+	ListReport,
+	TestLibrary
 ) {
 	"use strict";
 
@@ -26,11 +28,6 @@ sap.ui.define([
 		// service has been optimized or if the timeout timer increase does
 		// not have any effect on the success rate of the tests.
 		timeout: 45,
-
-
-		appParams: {
-			"sap-ui-xx-complexP13n": true
-		},
 
 		arrangements: {
 			iStartMyUIComponentInViewMode: function() {
@@ -75,7 +72,6 @@ sap.ui.define([
 
 		// Toolbar tests
 		Then.onTheBooksListReportPage.iShouldSeeTheTableHeader("Books");
-		Then.onTheBooksListReportPage.iShouldSeeASortButtonForTheTable();
 		Then.onTheBooksListReportPage.iShouldSeeAP13nButtonForTheTable();
 		Then.onTheBooksListReportPage.iShouldSeeAButtonWithTextForTheTable("Add Book");
 
@@ -100,42 +96,39 @@ sap.ui.define([
 		// check unsorted state
 		Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["Pride and Prejudice"]);
 
-		var fnSortByColumnTitle = function(sSortBy, sResultBookKey) {
-			When.onTheBooksListReportPage.iClickOnTheSortButton();
-			Then.onTheBooksListReportPage.iShouldSeeTheSortDialog();
-			When.onTheBooksListReportPage.iSelectAColumnToBeSorted(sSortBy);
-			When.onTheBooksListReportPage.iPressSortDialogOk();
-			Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books[sResultBookKey]);
-		};
-
-		var fnChangeSortByColumnTitle = function(sSortBy, sColumnTitle ,bDescending, sResultBookKey) {
-			When.onTheBooksListReportPage.iClickOnTheSortButton();
-			Then.onTheBooksListReportPage.iShouldSeeTheSortDialog();
-			When.onTheBooksListReportPage.iChangeASelectedColumnSortDirection(sSortBy, bDescending);
-			When.onTheBooksListReportPage.iPressSortDialogOk();
-
-			if (bDescending) {
-				Then.onTheBooksListReportPage.iShouldSeeADescendingSortedColumn(sColumnTitle);
-			} else {
-				Then.onTheBooksListReportPage.iShouldSeeAAscendingSortedColumn(sColumnTitle);
+		// 1) Sort by 'Title' (ascending)
+		When.waitFor({
+			controlType: "sap.ui.mdc.Table",
+			success: function(aTables) {
+				When.onTable.iPersonalizeSort(aTables[0].getId(), [
+					{key: "Title", descending: false}
+				]);
+				Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["...So They Baked a Cake"]);
 			}
+		});
 
-			Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books[sResultBookKey]);
-		};
+		// 2) Change 'Title' sorter to descending
+		When.waitFor({
+			controlType: "sap.ui.mdc.Table",
+			success: function(aTables) {
+				When.onTable.iPersonalizeSort(aTables[0].getId(), [
+					{key: "Title", descending: true}
+				]);
+				Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["Youth"]);
+			}
+		});
 
-		fnSortByColumnTitle("Title", "...So They Baked a Cake");
-		Then.onTheBooksListReportPage.iShouldSeeAAscendingSortedColumn("Title");
-
-		fnChangeSortByColumnTitle("Title", "Title", true, "Youth");
-
-		fnSortByColumnTitle("Author ID", "Youth");
-		When.onTheBooksListReportPage.iClickOnTheSortButton();
-		Then.onTheBooksListReportPage.iShouldSeeTheSortDialog();
-		When.onTheBooksListReportPage.iClickOnTheSortReorderButton();
-		When.onTheBooksListReportPage.iMoveSortOrderOfColumnToTheTop("Author ID");
-		When.onTheBooksListReportPage.iPressSortDialogOk();
-
-		Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["The Complete Project Gutenberg Works of Jane Austen: A Linked Index of all PG Editions of Jane Austen"]);
+		// 3) Multiple sortings (+reorder sorting)
+		When.waitFor({
+			controlType: "sap.ui.mdc.Table",
+			success: function(aTables) {
+				When.onTable.iPersonalizeSort(aTables[0].getId(), [
+					{key: "Author ID", descending: false},
+					{key: "Title", descending: true}
+				]);
+				Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["The Complete Project Gutenberg Works of Jane Austen: A Linked Index of all PG Editions of Jane Austen"]);
+			}
+		});
 
 		Then.iTeardownMyUIComponent();
 	});

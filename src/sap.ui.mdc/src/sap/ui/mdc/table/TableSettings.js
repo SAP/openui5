@@ -30,28 +30,6 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.TableSettings
 	 */
 	var TableSettings = {
-		createSortButton: function(sIdPrefix, aEventInfo) {
-			if (!oRb) {
-				this._loadResourceBundle();
-			}
-			return this._createButton(sIdPrefix + "-sort", {
-				icon: "sap-icon://sort",
-				text: oRb.getText("table.SETTINGS_SORT"),
-				press: aEventInfo,
-				tooltip: oRb.getText("table.SETTINGS_SORT"),
-				ariaHasPopup: HasPopup.Dialog
-			});
-		},
-		createColumnsButton: function(sIdPrefix, aEventInfo) {
-			if (!oRb) {
-				this._loadResourceBundle();
-			}
-
-			var oBtn = TableSettings.createSettingsButton(sIdPrefix, aEventInfo);
-			oBtn.setText(oRb.getText("table.SETTINGS_COLUMN"));
-			oBtn.setTooltip(oRb.getText("table.SETTINGS_COLUMN"));
-			return oBtn;
-		},
 		createSettingsButton: function(sIdPrefix, aEventInfo) {
 			if (!oRb) {
 				this._loadResourceBundle();
@@ -73,30 +51,6 @@ sap.ui.define([
 			);
 
 			return oBtn;
-		},
-		createFilterButton: function(sIdPrefix, aEventInfo) {
-			if (!oRb) {
-				this._loadResourceBundle();
-			}
-			return this._createButton(sIdPrefix + "-filter", {
-				icon: "sap-icon://filter",
-				text: oRb.getText("filter.PERSONALIZATION_DIALOG_TITLE"),
-				press: aEventInfo,
-				tooltip: oRb.getText("filter.PERSONALIZATION_DIALOG_TITLE"),
-				ariaHasPopup: HasPopup.Dialog
-			});
-		},
-		createGroupButton: function (sIdPrefix, aEventInfo) {
-			if (!oRb) {
-				this._loadResourceBundle();
-			}
-			return this._createButton(sIdPrefix + "-group", {
-				icon: "sap-icon://group-2",
-				text: oRb.getText("table.SETTINGS_GROUP"),
-				press: aEventInfo,
-				tooltip: oRb.getText("table.SETTINGS_GROUP"),
-				ariaHasPopup: HasPopup.Dialog
-			});
 		},
 		createPasteButton: function (sIdPrefix) {
 			var oPasteButton = this._createButton(sIdPrefix + "-paste");
@@ -162,21 +116,12 @@ sap.ui.define([
 		},
 
 		showUIColumns: function(oControl, oSource) {
-			oControl.getEngine().uimanager.show(oControl, oControl._bNewP13n ? oControl.getP13nMode() : "Column", oSource);
-		},
-
-		showUISort: function(oControl, oSource) {
-			oControl.getEngine().uimanager.show(oControl, "Sort", oSource);
+			oControl.getEngine().uimanager.show(oControl, oControl.getP13nMode(), oSource);
 		},
 
 		showUIFilter: function(oControl, oSource) {
 			oControl.getEngine().uimanager.show(oControl, "Filter", oSource);
 		},
-
-		showUIGroup: function (oControl, oSource) {
-			oControl.getEngine().uimanager.show(oControl, "Group", oSource);
-		},
-
 
 		/**
 		 * Adds sorting to a column by calling <code>createChanges</code> in the <code>Engine</code>.

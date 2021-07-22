@@ -14,7 +14,7 @@ sap.ui.define([
     };
 
     SortController.prototype.getResetEnabled = function() {
-        return !!this.getAdaptationControl()._bNewP13n;
+        return true;
     };
 
     SortController.prototype.getUISettings = function() {
@@ -31,7 +31,16 @@ sap.ui.define([
 
     SortController.prototype.getAdaptationUI = function(oPropertyHelper){
 
-        var oSortPanel = this.getAdaptationControl()._bNewP13n ? new SortQueryPanel() : new SortPanel();
+        var oAdaptationControl = this.getAdaptationControl();
+        var oSortPanel;
+
+        //TODO: remove this condition once 'ChartNew' migration has been merged
+        if (oAdaptationControl.isA("sap.ui.mdc.Chart") && !oAdaptationControl._bNewP13n) {
+            oSortPanel = new SortPanel();
+        } else {
+            oSortPanel = new SortQueryPanel();
+        }
+
         this._oPanel = oSortPanel;
         var oAdaptationModel = this._getP13nModel(oPropertyHelper);
         oSortPanel.setP13nModel(oAdaptationModel);

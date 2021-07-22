@@ -25,7 +25,7 @@ sap.ui.define([
 
     GroupController.prototype.getAdaptationUI = function(oPropertyHelper){
 
-        var oGroupPanel = this.getAdaptationControl()._bNewP13n ? new GroupPanel() : new SelectionPanel();
+        var oGroupPanel = new GroupPanel();
         this._oPanel = oGroupPanel;
         var oAdaptationModel = this._getP13nModel(oPropertyHelper);
         oGroupPanel.setP13nModel(oAdaptationModel);

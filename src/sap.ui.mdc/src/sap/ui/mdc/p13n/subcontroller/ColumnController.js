@@ -18,7 +18,7 @@ sap.ui.define([
     };
 
     ColumnController.prototype.getResetEnabled = function() {
-        return !!this.getAdaptationControl()._bNewP13n;
+        return true;
     };
 
     ColumnController.prototype.model2State = function() {
@@ -35,19 +35,17 @@ sap.ui.define([
 
     ColumnController.prototype.getAdaptationUI = function(oPropertyHelper){
 
-        var oSelectionPanel = this.getAdaptationControl()._bNewP13n ? new ListView({
+        var oSelectionPanel = new ListView({
             enableReorder: true,
             showHeader: true,
             enableCount: true
-        }) : new SelectionPanel();
+        });
 
-        if (this.getAdaptationControl()._bNewP13n){
-            oSelectionPanel.setPanelColumns([oResourceBundle.getText("fieldsui.COLUMNS"), new Column({
-                width: "25%",
-                hAlign: "Center",
-                vAlign: "Middle"
-            })]);
-        }
+        oSelectionPanel.setPanelColumns([oResourceBundle.getText("fieldsui.COLUMNS"), new Column({
+            width: "25%",
+            hAlign: "Center",
+            vAlign: "Middle"
+        })]);
 
         var oAdaptationModel = this._getP13nModel(oPropertyHelper);
         oSelectionPanel.setP13nModel(oAdaptationModel);
