@@ -834,6 +834,7 @@ sap.ui.define([
 			oModel = this.oModel,
 			sPath = this.getResolvedPath(),
 			sPredicate,
+			aPreviousPaths,
 			bStartBeyondRange = iStart > this.aContexts.length,
 			i, that = this;
 
@@ -884,8 +885,9 @@ sap.ui.define([
 			}
 		}
 		// destroy previous contexts which are not reused or kept-alive
-		if (Object.keys(this.mPreviousContextsByPath).length) {
-			oModel.addPrerenderingTask(this.destroyPreviousContexts.bind(this));
+		aPreviousPaths = Object.keys(this.mPreviousContextsByPath);
+		if (aPreviousPaths.length) {
+			oModel.addPrerenderingTask(this.destroyPreviousContexts.bind(this, aPreviousPaths));
 		}
 		if (iCount !== undefined) { // server count is available or "non-empty short read"
 			this.bLengthFinal = true;
@@ -928,7 +930,7 @@ sap.ui.define([
 		this.aContexts.forEach(function (oContext) {
 			oContext.destroy();
 		});
-		this.destroyPreviousContexts(true);
+		this.destroyPreviousContexts();
 		if (this.oHeaderContext) {
 			this.oHeaderContext.destroy();
 		}
@@ -986,24 +988,26 @@ sap.ui.define([
 	/**
 	 * Removes and destroys contexts from mPreviousContextsByPath.
 	 *
-	 * @param {boolean} [bAllContexts]
-	 *   If <code>true</code>, all contexts are removed and destroyed, otherwise only those that
-	 *   are not kept alive (see {@link sap.ui.model.odata.v4.Context#isKeepAlive})
+	 * @param {string[]} [aPathsToDelete]
+	 *   If given, only contexts with paths in this list except kept-alive ones are removed and
+	 *   destroyed; otherwise all contexts in the list are removed and destroyed
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.destroyPreviousContexts = function (bAllContexts) {
+	ODataListBinding.prototype.destroyPreviousContexts = function (aPathsToDelete) {
 		var mPreviousContextsByPath = this.mPreviousContextsByPath;
 
 		if (mPreviousContextsByPath) { // binding may have been destroyed already
-			Object.keys(mPreviousContextsByPath).forEach(function (sPath) {
+			(aPathsToDelete || Object.keys(mPreviousContextsByPath)).forEach(function (sPath) {
 				var oContext = mPreviousContextsByPath[sPath];
 
-				if (bAllContexts || !oContext.isKeepAlive()) {
-					oContext.destroy();
-					delete mPreviousContextsByPath[sPath];
-				} else {
-					oContext.iIndex = undefined;
+				if (oContext) {
+					if (aPathsToDelete && oContext.isKeepAlive()) {
+						oContext.iIndex = undefined;
+					} else {
+						oContext.destroy();
+						delete mPreviousContextsByPath[sPath];
+					}
 				}
 			});
 		}
