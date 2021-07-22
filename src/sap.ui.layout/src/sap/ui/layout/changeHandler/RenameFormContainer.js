@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/*global sap */
-
 sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/base/Log"
@@ -53,14 +51,19 @@ sap.ui.define([
 				if (oChangeDefinition.texts && oChangeDefinition.texts.formText && this._isProvided(oChangeDefinition.texts.formText.value)) {
 
 					var sValue = oChangeDefinition.texts.formText.value;
-
+					var oRevertDataPromise;
 					if (typeof oTitle === "string") {
-						oChangeWrapper.setRevertData(oModifier.getProperty(oRenamedElement, "title"));
-						oModifier.setProperty(oRenamedElement, "title", sValue);
+						oRevertDataPromise = Promise.resolve(oModifier.getProperty(oRenamedElement, "title")).then(function(sTitle) {
+							oChangeWrapper.setRevertData(sTitle);
+							oModifier.setProperty(oRenamedElement, "title", sValue);
+						});
 					} else {
-						oChangeWrapper.setRevertData(oModifier.getProperty(oTitle, "text"));
-						oModifier.setProperty(oTitle, "text", sValue);
+						oRevertDataPromise = Promise.resolve(oModifier.getProperty(oTitle, "text")).then(function(sText) {
+							oChangeWrapper.setRevertData(sText);
+							oModifier.setProperty(oTitle, "text", sValue);
+						});
 					}
+					return oRevertDataPromise;
 				} else {
 					Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
 					//however subsequent changes should be applied
