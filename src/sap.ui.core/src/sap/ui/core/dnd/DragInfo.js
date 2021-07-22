@@ -141,6 +141,46 @@ sap.ui.define(["./DragDropBase"],
 			});
 		};
 
+		this.setEnabled = function(bEnabled) {
+			this.setProperty("enabled", bEnabled, false);
+			this.invalidateDraggables();
+			return this;
+		};
+
+		this.setParent = function() {
+			DragDropBase.prototype.setParent.apply(this, arguments);
+			this.invalidateDraggables();
+			return this;
+		};
+
+		this.setSourceAggregation = function(sSourceAggregation) {
+			var sOldSourceAggregation = this.getSourceAggregation();
+			if (sOldSourceAggregation == sSourceAggregation) {
+				return this;
+			}
+
+			sOldSourceAggregation && this.invalidateDraggables();
+			this.setProperty("sourceAggregation", sSourceAggregation, false);
+			this.invalidateDraggables();
+			return this;
+		};
+
+		this.invalidateDraggables = function() {
+			var oParent = this.getParent();
+			if (oParent && oParent.bOutput == true) {
+				var sSourceAggregation = this.getSourceAggregation();
+				if (sSourceAggregation) {
+					[].concat(this.getAggregation(sSourceAggregation)).forEach(function(oAggregation) {
+						if (oAggregation && oAggregation.bOutput == true) {
+							oAggregation.invalidate();
+						}
+					});
+				} else {
+					oParent.invalidate();
+				}
+			}
+		};
+
 	};
 
 	DragInfo.Mixin.apply(DragInfo.prototype);

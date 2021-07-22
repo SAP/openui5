@@ -77,10 +77,43 @@ sap.ui.define([
 			children: oControl
 		});
 
+		oParent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: Child control is in the defined sourceAggregation");
+		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: Child control is in the defined sourceAggregation");
 
 		oDragInfo.setSourceAggregation("thereIsNoSuchAnAggregationName");
+		sap.ui.getCore().applyChanges();
+
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: Child control is not in the defined sourceAggregation");
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: Child control is not in the defined sourceAggregation");
+
+		oDragInfo.setSourceAggregation("children");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oDragInfo.isDraggable(oControl), "Draggable Again: Child control is in the defined sourceAggregation");
+		assert.ok(oControl.getDomRef().draggable, "Dom Draggable Again: Child control is in the defined sourceAggregation");
+
+		oDragInfo.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: DragInfo is disabled");
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: DragInfo is disabled");
+
+		oDragInfo.setEnabled(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: DragInfo is enabled");
+		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: DragInfo is enabled");
+
+		oDragInfo.setSourceAggregation();
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: sourceAggregation is empty");
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: sourceAggregation is empty");
+		assert.ok(oDragInfo.isDraggable(oParent), "Parent Draggable: sourceAggregation is empty");
+		assert.ok(oParent.getDomRef().draggable, "Parent Dom Draggable: sourceAggregation is empty");
 
 		oParent.destroy();
 	});
@@ -93,10 +126,17 @@ sap.ui.define([
 			dragDropConfig: oDragInfo
 		});
 
+		oControl.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not draggable: DragInfo is not enabled");
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not draggable: DragInfo is not enabled");
 
 		oDragInfo.setEnabled(true);
+		sap.ui.getCore().applyChanges();
+
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: DragInfo is enabled and drag source is the control itself");
+		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: DragInfo is enabled and drag source is the control itself");
 
 		oControl.destroy();
 	});
