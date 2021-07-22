@@ -1522,7 +1522,7 @@ sap.ui.define([
 		}
 
 		if (aP13nMode.indexOf("Column") > -1 || (this._bNewP13n && aP13nMode.length > 0)) {
-			aButtons.push(TableSettings.createColumnsButton(this.getId(), [
+			aButtons.push(TableSettings[this._bNewP13n ? "createSettingsButton" : "createColumnsButton"](this.getId(), [
 				this._showSettings, this
 			]));
 		}
