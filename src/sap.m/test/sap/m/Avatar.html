@@ -13,6 +13,8 @@
 			}'>
 	</script>
 	<script>
+		new sap.ui.core.InvisibleText("avatar_label", {text: "My label"}).toStatic();
+
 		function onAvatarPress (oEvent) {
 			sap.m.MessageToast.show(oEvent.getSource().getId() + " pressed");
 		}
@@ -46,6 +48,7 @@
 					displaySize: "XL"
 				}),
 				new sap.m.Avatar("imageXLSquareCover", {
+					ariaLabelledBy: 'avatar_label',
 					src: "images/Screw_avatar_01.jpg",
 					displaySize: "XL",
 					displayShape: "Square",
@@ -53,6 +56,7 @@
 					press: onAvatarPress
 				}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 				new sap.m.Avatar("imageXLSquareContain", {
+					ariaLabelledBy: 'avatar_label',
 					src: "images/Lamp_avatar_01.jpg",
 					displaySize: "XL",
 					displayShape: "Square",
@@ -60,6 +64,7 @@
 					press: onAvatarPress
 				}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
 				new sap.m.Avatar("initialsCustomAvatar", {
+					ariaLabelledBy: 'avatar_label',
 					initials: "BP",
 					displaySize: "Custom",
 					customDisplaySize: "10rem",
@@ -68,11 +73,12 @@
 					press: onAvatarPress
 				}),
 				new sap.m.Avatar({
+					ariaLabelledBy: 'avatar_label',
 					initials: "LB",
 					displaySize: "M",
 
 					detailBox: new sap.m.LightBox({
-						imageContent: sap.m.LightBoxItem({
+						imageContent: new sap.m.LightBoxItem({
 							imageSrc: "images/Woman_avatar_01.png",
 							title: "LightBox example"
 						})

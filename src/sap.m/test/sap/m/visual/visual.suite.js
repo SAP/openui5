@@ -5,6 +5,7 @@ module.exports = [
 	"ActionSheet.spec.js",
 	"App.spec.js",
 	"AppWithBackground.spec.js",
+	"Avatar.spec.js",
 	"Breadcrumbs.spec.js",
 	"ButtonToggleButtonInBarsVisual.spec.js",
 	"ButtonStandaloneVisual.spec.js",

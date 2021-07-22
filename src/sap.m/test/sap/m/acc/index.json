@@ -26,6 +26,11 @@
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
+			"control": "sap.m.Avatar",
+			"url": "../Avatar.html",
+			"appComponent": "CA-UI5-CTR-PIR"
+		},
+		{
 			"control": "sap.m.Bar",
 			"url": "Bar.html",
 			"appComponent": "CA-UI5-CTR-BAL"

@@ -1,6 +1,6 @@
 /*global describe,it,element,by,takeScreenshot,expect*/
 
-describe('sap.f.Avatar', function() {
+describe('sap.m.Avatar', function() {
 	'use strict';
 
 	it('Test page loaded', function() {
