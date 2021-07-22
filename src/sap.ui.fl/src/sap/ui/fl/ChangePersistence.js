@@ -573,6 +573,8 @@ sap.ui.define([
 		}).forEach(function(oChange) {
 			if (bAlreadyDeletedViaCondense) {
 				this.removeChange(oChange);
+				// Remove also from Cache if the persisted change is still there (e.g. navigate away and back to the app)
+				Cache.deleteChange(this._mComponent, oChange.getDefinition());
 			} else {
 				this.deleteChange(oChange);
 			}
