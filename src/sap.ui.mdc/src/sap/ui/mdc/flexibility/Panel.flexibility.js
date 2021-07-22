@@ -50,17 +50,27 @@ sap.ui.define([
 				applyChange: function(oChange, oPanel, mPropertyBag) {
 					var oSelector = oChange.getContent().selector;
 
-					return new Promise(function(resolve) {
-
-						// Let's break in XML use-case which is caught by flex. This leads that the change will be triggered again via JS.
-						oPanel.getModel();
-
-						sap.ui.require([
-							'sap/ui/mdc/link/PanelItem', mPropertyBag.modifier.getProperty(oPanel, "metadataHelperPath")
-						], function(PanelItem, MetadataHelper) {
+					return Promise.resolve()
+						.then(function () {
+							// Let's break in XML use-case which is caught by flex. This leads that the change will be triggered again via JS.
+							oPanel.getModel();
+							return mPropertyBag.modifier.getProperty(oPanel, "metadataHelperPath");
+						})
+						.then(function (sMediaHelperPath) {
+							return new Promise(function(resolve, reject) {
+								sap.ui.require([
+									'sap/ui/mdc/link/PanelItem', sMediaHelperPath
+								], function(PanelItem, MetadataHelper) {
+									resolve(MetadataHelper);
+								}, function (vError) {
+									reject(vError);
+								});
+							});
+						})
+						.then(function (MetadataHelper) {
 							var oModifier = mPropertyBag.modifier;
 							if (oModifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view)) {
-								return resolve();
+								return undefined;
 								// return Base.markAsNotApplicable("applyChange of createItem: the item with selector " + oSelector + " is already existing and therefore can not be created.", true);
 							}
 
@@ -96,7 +106,7 @@ sap.ui.define([
 									});
 
 									if (!oMetadataOfNewItem) {
-										return resolve();
+										return undefined;
 										// return Base.markAsNotApplicable("applyChange of createItem: the item with selector " + oSelector + " is not existing in the metadata and therefore can not be created.", true);
 									}
 
@@ -111,12 +121,8 @@ sap.ui.define([
 								})
 								.then(function(oItem){
 									return oModifier.insertAggregation(oPanel, "items", oItem, iItemsIndex + 1);
-								})
-								.then(function() {
-									resolve();
 								});
 						});
-					});
 				},
 				revertChange: function(oChange, oPanel, mPropertyBag) {
 					var oModifier = mPropertyBag.modifier;

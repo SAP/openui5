@@ -83,25 +83,28 @@ sap.ui.define([
 					// ManagedObjectModel should be placed in `dependents` aggregation of MenuItem
 					return oModifier.insertAggregation(oMenuItem, "dependents", oManagedObjectModel, 0, oView);
 				})
-				.then(function() {
+				.then(function () {
+					return oModifier.createControl(
+						"sap.ui.core.CustomData",
+						oAppComponent,
+						oView,
+						Object.assign({}, oSelector, {
+							id: oSelector.id + '-customData'
+						}),
+						{
+							key: "{ path: '" + sCombineButtonsModelName + ">key' }",
+							value: "{ path: '" + sCombineButtonsModelName + ">value' }"
+						}
+					);
+				})
+				.then(function(oCustomData) {
 					oModifier.bindProperty(oMenuItem, "text", sCombineButtonsModelName + ">/text");
 					oModifier.bindProperty(oMenuItem, "icon", sCombineButtonsModelName + ">/icon");
 					oModifier.bindProperty(oMenuItem, "enabled", sCombineButtonsModelName + ">/enabled");
 					oModifier.bindProperty(oMenuItem, "visible", sCombineButtonsModelName + ">/visible");
 					return oModifier.bindAggregation(oMenuItem, "customData", {
 						path: sCombineButtonsModelName + ">/customData",
-						template: oModifier.createControl(
-							"sap.ui.core.CustomData",
-							oAppComponent,
-							oView,
-							Object.assign({}, oSelector, {
-								id: oSelector.id + '-customData'
-							}),
-							{
-								key: "{ path: '" + sCombineButtonsModelName + ">key' }",
-								value: "{ path: '" + sCombineButtonsModelName + ">value' }"
-							}
-						),
+						template: oCustomData,
 						templateShareable: false
 					}, oView);
 				})
