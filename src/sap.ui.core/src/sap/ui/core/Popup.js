@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- /* global Set, HTMLElement, ResizeObserver */
+ /* global Set, HTMLElement */
 
 // Provides helper class sap.ui.core.Popup
 sap.ui.define([
@@ -58,7 +58,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	// shortcut for sap.ui.core.CSSSize
 	var CSSSize = library.CSSSize;
 
@@ -69,9 +68,33 @@ sap.ui.define([
 
 	var vGlobalWithinArea;
 
-	var oResizeObserver = new ResizeObserver(function(aEntries){
-		adaptSizeAndPosition(jQuery("#sap-ui-blocklayer-popup"), aEntries[0].target);
-	});
+	var oResizeObserver;
+	var sResizeHandlerIdAttribute = "sapUiPopupResize";
+
+	if (window.ResizeObserver) {
+		oResizeObserver = new window.ResizeObserver(function(aEntries){
+			adaptSizeAndPosition(jQuery("#sap-ui-blocklayer-popup"), aEntries[0].target);
+		});
+	} else {
+		oResizeObserver = {
+			observe: function(oElement) {
+				var sHandlerId = oElement.dataset[sResizeHandlerIdAttribute];
+				if (!sHandlerId) {
+					sHandlerId = ResizeHandler.register(oElement, function(oEvent) {
+						adaptSizeAndPosition(jQuery("#sap-ui-blocklayer-popup"), oEvent.target);
+					});
+					oElement.dataset[sResizeHandlerIdAttribute] = sHandlerId;
+				}
+			},
+			unobserve: function(oElement) {
+				var sHandlerId = oElement.dataset[sResizeHandlerIdAttribute];
+				if (sHandlerId) {
+					ResizeHandler.deregister(sHandlerId);
+					delete oElement.dataset[sResizeHandlerIdAttribute];
+				}
+			}
+		};
+	}
 
 	function getStaticUIArea() {
 		if (oStaticUIArea) {
