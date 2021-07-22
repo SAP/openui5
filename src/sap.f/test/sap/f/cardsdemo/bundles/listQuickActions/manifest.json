@@ -8,8 +8,7 @@
 		"type": "List",
 		"header": {
 			"title": "List Card - Legacy Extension Actions",
-			"subTitle": "City",
-			"status": "100 of 200"
+			"subTitle": "City"
 		},
 		"content": {
 			"data": {
@@ -47,7 +46,8 @@
 						]
 					}
 				]
-			}
+			},
+			"maxItems": 3
 		},
 		"footer": {
 			"actionsStrip": [
@@ -62,6 +62,10 @@
 							}
 						}
 					]
+				},
+				{
+					"buttonType": "Accept",
+					"text": "{someBindingPath}"
 				}
 			]
 		}

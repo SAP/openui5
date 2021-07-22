@@ -42,6 +42,10 @@ sap.ui.define([
 				 */
 				item: {
 					type: "any"
+				},
+
+				itemHeight: {
+					type: "sap.ui.core.CSSSize"
 				}
 			}
 		},
@@ -70,21 +74,9 @@ sap.ui.define([
 
 				for (var i = 0; i < iMaxItems; i++) {
 					oRm.openStart("div")
-						.class("sapFCardContentShimmerPlaceholderItem");
-
-					if (oItem && oItem.icon) {
-						oRm.class("sapFCardContentShimmerPlaceholderWithIcon");
-					}
-
-					if (oItem && oItem.description) {
-						oRm.class("sapFCardContentShimmerPlaceholderWithDescription");
-					}
-
-					if (oItem && oItem.chart) {
-						oRm.class("sapFCardContentShimmerPlaceholderWithChart");
-					}
-
-					oRm.openEnd();
+						.class("sapFCardContentShimmerPlaceholderItem")
+						.style("height", oControl.getItemHeight())
+						.openEnd();
 
 					if (oItem && oItem.icon) {
 						oRm.openStart("div")
@@ -99,33 +91,33 @@ sap.ui.define([
 						.openEnd();
 
 					if (oItem && oItem.title) {
-						oRm.openStart("div")
-							.class("sapFCardContentShimmerPlaceholderItemText")
-							.class("sapFCardLoadingShimmer")
-							.openEnd()
-							.close("div");
+						this.renderRow(oRm);
 					}
 
 					if (oItem && oItem.description) {
-						oRm.openStart("div")
-							.class("sapFCardContentShimmerPlaceholderItemText")
-							.class("sapFCardLoadingShimmer")
-							.openEnd()
-							.close("div");
+						this.renderRow(oRm);
 					}
 
 					if (oItem && oItem.chart) {
-						oRm.openStart("div")
-							.class("sapFCardContentShimmerPlaceholderItemText")
-							.class("sapFCardLoadingShimmer")
-							.openEnd()
-							.close("div");
+						this.renderRow(oRm);
+					}
+
+					if (oItem && oItem.actionsStrip) {
+						this.renderRow(oRm);
 					}
 
 					oRm.close("div");
 					oRm.close("div");
 				}
 				oRm.close("div");
+			},
+
+			renderRow: function (oRm) {
+				oRm.openStart("div")
+					.class("sapFCardContentShimmerPlaceholderRow")
+					.class("sapFCardLoadingShimmer")
+					.openEnd()
+					.close("div");
 			}
 		}
 	});

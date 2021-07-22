@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
+	"../cards/ListContentRenderer",
 	"sap/ui/integration/library",
 	"sap/ui/core/Element",
 	"sap/f/cards/loading/GenericPlaceholder",
 	"sap/f/cards/loading/ListPlaceholder"
-], function (library, Element, GenericPlaceholder, ListPlaceholder) {
+], function (ListContentRenderer, library, Element, GenericPlaceholder, ListPlaceholder) {
 	"use strict";
 
 	/**
@@ -66,12 +67,13 @@ sap.ui.define([
 		Element.prototype.destroy.apply(this, arguments);
 	};
 
-	LoadingProvider.prototype.createContentPlaceholder = function (oConfiguration, sType) {
+	LoadingProvider.prototype.createContentPlaceholder = function (oConfiguration, sType, oCard) {
 		switch (sType) {
 			case "List":
 				this._oContentPlaceholder = new ListPlaceholder({
 					maxItems: oConfiguration.maxItems ? parseInt(oConfiguration.maxItems) : 2,
-					item: oConfiguration.item
+					item: oConfiguration.item,
+					itemHeight: ListContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
 				});
 				break;
 

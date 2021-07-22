@@ -1881,6 +1881,43 @@
 					]
 				}
 			}
+		},
+		"listWithActionsStrip": {
+			"sap.app": {
+				"id": "cardsdemo.preview.listWithActionsStrip",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/cost.json"
+					}
+				},
+				"header": {
+					"title": "{title}",
+					"subTitle": "{subTitle}"
+				},
+				"content": {
+					"maxItems": 3,
+					"item": {
+						"title": "{subTitle}",
+						"icon": {
+							"src": "{icon}"
+						},
+						"highlight": "{state}",
+						"description": "{state}",
+						"actionsStrip": [{
+							"text": "{text}"
+						}]
+					}
+				},
+				"footer": {
+					"actionsStrip": [{
+						"text": "{milk/0/Revenue}"
+					}]
+				}
+			}
 		}
 	},
 	"filters": {

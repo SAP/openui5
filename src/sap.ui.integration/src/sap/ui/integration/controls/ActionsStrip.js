@@ -169,9 +169,10 @@ sap.ui.define([
 		}
 	};
 
-	ActionsStrip.create = function (oChart, aButtons) {
-		var oActionsStrip = new ActionsStrip();
-		oActionsStrip.setCard(oChart);
+	ActionsStrip.create = function (oCard, aButtons) {
+		var oActionsStrip = new ActionsStrip({
+			card: oCard
+		});
 		oActionsStrip._initButtons(aButtons);
 
 		return oActionsStrip;
