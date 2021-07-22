@@ -20,13 +20,15 @@
 				"sap/m/Page",
 				"sap/m/VBox",
 				"sap/m/Label",
-				"sap/m/DynamicDateRange"
+				"sap/m/DynamicDateRange",
+				"sap/m/DynamicDateUtil"
 			], function(
 				App,
 				Page,
 				VBox,
 				Label,
-				DynamicDateRange
+				DynamicDateRange,
+				DynamicDateUtil
 			) {
 				"use strict";
 
@@ -48,19 +50,7 @@
 							enableGroupHeaders: false,
 							change: handleChange,
 							width: '300px',
-							options: [
-								"DATERANGE",
-								"SPECIFICMONTH",
-								"THISMONTH",
-								"LASTMONTH",
-								"NEXTMONTH",
-								"LASTDAYS",
-								"NEXTDAYS",
-								"FROM",
-								"TO",
-								"YEARTODATE",
-								"TODAYFROMTO"
-							],
+							options: DynamicDateUtil.getAllOptionKeys()
 						}),
 						new Label("DDR2-label", {text: "Fixed date and date range options with 'Calendar' based UI", labelFor: "DDR2"}),
 						new DynamicDateRange("DDR2", {
@@ -71,7 +61,7 @@
 								"DATERANGE",
 								"SPECIFICMONTH",
 								"FROM",
-								"TO",
+								"TO"
 							],
 						}),
 						new Label("DDR3-label", {text: "Relative date and date range options with 'StepInput' based UI", labelFor: "DDR3"}),

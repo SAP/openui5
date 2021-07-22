@@ -667,6 +667,7 @@ sap.ui.define([
 			return new DynamicDateRangeListItem({
 				type: bIsFixedOption ? ListType.Active : ListType.Navigation,
 				title: oOption.getText(this),
+				wrapping: true,
 				optionKey: oOption.getKey(),
 				press: this._handleOptionPress.bind(this)
 			});
