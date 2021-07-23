@@ -241,9 +241,11 @@ function(
 			assert.equal(oInstance.getFileName(), "0815_1");
 		});
 
-		QUnit.test("Change.getPackage", function(assert) {
+		QUnit.test("Change.getPackage & Change.setPackage", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			assert.equal(oInstance.getPackage(), "$TMP");
+			oInstance.setPackage("PACKAGE_A");
+			assert.equal(oInstance.getPackage(), "PACKAGE_A");
 		});
 
 		QUnit.test("getNamespace should return the namespace of the defintion", function(assert) {
