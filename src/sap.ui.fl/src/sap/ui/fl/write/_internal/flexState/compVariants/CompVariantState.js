@@ -381,6 +381,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
 	 * @param {string} mPropertyBag.id - ID of the variant
 	 * @param {string} [mPropertyBag.packageName] - ID of the package in which the update should be transported - only valid for sap-ui-layer=VENDOR use case
+	 * @param {string} [mPropertyBag.transportId] - ID of the transport in which the update should be transported
 	 * @param {object} [mPropertyBag.revert=false] - Flag if the update is a revert operation
 	 * @param {object} [mPropertyBag.name] - Title of the variant
 	 * @param {object} [mPropertyBag.content] - Content of the new change
@@ -395,7 +396,7 @@ sap.ui.define([
 	CompVariantState.updateVariant = function (mPropertyBag) {
 		function variantCanBeUpdated(oVariant, sLayer) {
 			var bSameLayer = oVariant.getLayer() === sLayer;
-			var sPackageName = oVariant.getDefinition().packageName;
+			var sPackageName = oVariant.getPackage();
 			var bNotTransported = !sPackageName || sPackageName === "$TMP";
 			// in case changes were already done within the layer, no update of the variant can be done to safeguard the execution order
 			var bIsChangedOnLayer = oVariant.getChanges().some(function (oChange) {
@@ -444,8 +445,8 @@ sap.ui.define([
 			if (mPropertyBag.name) {
 				oVariant.storeName(mPropertyBag.name);
 			}
-			if (mPropertyBag.packageName) {
-				oVariant.setRequest(mPropertyBag.packageName);
+			if (mPropertyBag.transportId) {
+				oVariant.setRequest(mPropertyBag.transportId);
 			}
 			oVariant.storeContent(mPropertyBag.content || oVariant.getContent());
 		}
@@ -486,6 +487,9 @@ sap.ui.define([
 				};
 			}
 			oChange.setContent(oChangeContent);
+			if (mPropertyBag.transportId) {
+				oChange.setRequest(mPropertyBag.transportId);
+			}
 			CompVariantMerger.applyChangeOnVariant(oVariant, oChange);
 			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.UpdateVariantViaChangeUpdate, oChange);
 		}
@@ -529,6 +533,9 @@ sap.ui.define([
 			}
 
 			var oChange = new Change(oChangeDefinition);
+			if (mPropertyBag.transportId) {
+				oChange.setRequest(mPropertyBag.transportId);
+			}
 			addChange(oChange);
 			storeRevertDataInVariant(mPropertyBag, oVariant, CompVariantState.operationType.NewChange, oChange);
 			CompVariantMerger.applyChangeOnVariant(oVariant, oChange);
