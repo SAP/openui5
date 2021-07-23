@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/core/Core"],
-	function (ManagedObject, Core) {
+sap.ui.define(["sap/ui/base/ManagedObject"],
+	function (ManagedObject) {
 	"use strict";
 
 	/**
@@ -40,6 +40,10 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/core/Core"],
 				settingsJson: {
 					type: "string"
 				},
+
+				/**
+				 * The base url where resources for card or editor are located.
+				 */
 				baseRuntimeUrl: {
 					type : "string"
 				}
