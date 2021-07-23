@@ -1066,7 +1066,8 @@
 		  "samples": [
 			"sap.m.sample.Popover",
 			"sap.m.sample.PopoverNavCon",
-			"sap.m.sample.PopoverControllingCloseBehavior"
+			"sap.m.sample.PopoverControllingCloseBehavior",
+			"sap.m.sample.PopoverWithinArea"
 		  ]
 		},
 		{
@@ -3078,6 +3079,11 @@
 		  "id": "sap.m.sample.PopoverNavCon",
 		  "name": "Popover With NavContainer",
 		  "description": "You can nest NavContainers in Popovers (and Dialogs) to navigate to further details in place."
+		},
+		{
+		  "id": "sap.m.sample.PopoverWithinArea",
+		  "name": "Popover in Custom Within Area",
+		  "description": "Within area of sap.ui.core.Popup determines where all popups (including popovers) are positioned."
 		},
 		{
 		  "id": "sap.m.sample.PopoverControllingCloseBehavior",
