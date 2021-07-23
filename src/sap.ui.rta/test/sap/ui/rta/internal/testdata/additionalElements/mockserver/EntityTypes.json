@@ -14,6 +14,8 @@
         "Property03": "propValue03",
         "Property04": "propValue04",
         "Property05": "propValue05",
+        "Property10b": "Property with name starting like Property10",
+        "Property10": "Property10Value",
         "Property08": "PropertyWithoutLabel",
         "CommonPropertyName" : "Property on EntityType01",
         "PropertyNav" : "EntityType02Property01Value",

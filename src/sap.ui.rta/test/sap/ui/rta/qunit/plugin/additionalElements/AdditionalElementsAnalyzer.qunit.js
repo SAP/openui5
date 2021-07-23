@@ -219,7 +219,7 @@ sap.ui.define([
 			};
 
 			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
-				assert.equal(aAdditionalElements.length, 3, "then 3 additional properties are available");
+				assert.equal(aAdditionalElements.length, 4, "then 4 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected: false,
 					label: "Entity1-Property06-Unbound",
@@ -273,7 +273,7 @@ sap.ui.define([
 			};
 
 			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
-				assert.equal(aAdditionalElements.length, 3, "then all properties of EntityType01 are available, because the GroupElements are not bound to any of them");
+				assert.equal(aAdditionalElements.length, 4, "then all properties of EntityType01 are available, because the GroupElements are not bound to any of them");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected: false,
 					label: "Entity1-Property06-Unbound",
@@ -593,6 +593,33 @@ sap.ui.define([
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
 				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the other field is not available on the dialog");
+			});
+		});
+
+		QUnit.test("when getting invisible elements of a bound group with delegate containing a field with name starting with the same property name as a technically hidden field", function(assert) {
+			var oGroup = this.oView.byId("GroupEntityType01");
+			// Property10 is technically invisible (UI.hidden annotation), but Property10b is not
+			var oGroupElement1 = this.oView.byId("EntityType01.Property10b");
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal: {
+					elements: [{
+						element: oGroupElement1,
+						action: {} //not relevant for test
+					}]
+				},
+				addViaDelegate: {
+					action: {}, //not relevant for test,
+					delegateInfo: {
+						payload: {},
+						delegate: this.oDelegate
+					}
+				}
+			};
+
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
 			});
 		});
 
