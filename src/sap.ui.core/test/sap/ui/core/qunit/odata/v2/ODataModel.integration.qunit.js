@@ -9184,44 +9184,21 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: Set created context as binding context for a table with a relative list binding.
 	// The table becomes empty and there is no request.
 	// JIRA: CPOUI5MODELS-605, CPOUI5MODELS-612
-	QUnit.test("Set created binding context for a table", function (assert) {
-		var sView = '\
-<FlexBox id="objectPage" binding="{/SalesOrderSet(\'1\')}">\
+	QUnit.test("ODLB: transient context, no request", function (assert) {
+		var oCreatedContext,
+			sView = '\
+<FlexBox id="objectPage">\
 	<Text id="salesOrderId" text="{SalesOrderID}" />\
-	<Table id="table" items="{ToLineItems}">\
+	<t:Table id="table" rows="{ToLineItems}" visibleRowCount="2">\
 		<Text id="itemPosition" text="{ItemPosition}" />\
-	</Table>\
+	</t:Table>\
 </FlexBox>',
 			that = this;
 
-		this.expectHeadRequest()
-			.expectRequest("SalesOrderSet('1')", {
-				Note : "Note 1",
-				SalesOrderID : "1"
-			})
-			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
-				results : [{
-					__metadata : {
-						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
-					},
-					ItemPosition : "10",
-					SalesOrderID : "1"
-				}, {
-					__metadata : {
-						uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
-					},
-					ItemPosition : "20",
-					SalesOrderID : "1"
-				}]
-			})
-			.expectChange("salesOrderId", null)
-			.expectChange("salesOrderId", "1")
-			.expectChange("itemPosition", ["10", "20"]);
+		this.expectValue("itemPosition", ["", ""]);
 
 		return this.createView(assert, sView).then(function () {
-			var oCreatedContext;
-
-			that.expectChange("salesOrderId", "42");
+			that.expectValue("salesOrderId", "42");
 
 			// code under test - no requests are executed
 			oCreatedContext = that.oModel.createEntry("/SalesOrderSet",
@@ -9230,7 +9207,43 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.strictEqual(that.oView.byId("table").getItems().length, 0);
+			that.expectHeadRequest()
+				.expectRequest("SalesOrderSet('1')", {
+					Note : "Note 1",
+					SalesOrderID : "1"
+				})
+				.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=102", {
+					results : [{
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						},
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					}, {
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+						},
+						ItemPosition : "20",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectValue("salesOrderId", "1")
+				.expectValue("itemPosition", ["10", "20"]);
+
+			// code under test
+			that.oView.byId("objectPage").bindElement({path : "/SalesOrderSet('1')"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("salesOrderId", "4711")
+				.expectValue("itemPosition", ["", ""]);
+
+			// code under test - no requests are executed
+			oCreatedContext = that.oModel.createEntry("/SalesOrderSet",
+				{properties : {SalesOrderID : "4711"}});
+			that.oView.byId("objectPage").bindElement({path : oCreatedContext.getPath()});
+
+			return that.waitForChanges(assert);
 		});
 	});
 
