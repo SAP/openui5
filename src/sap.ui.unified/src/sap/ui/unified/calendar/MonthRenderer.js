@@ -383,14 +383,12 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		var bEnabled = oMonth._checkDateEnabled(oDay);
 		var i = 0;
 		var oMonthDate;
-		if (oMonth.getDate()) {
+		if (oMonth.getDate()) { // Month instance case
 			oMonthDate = oMonth.getDate();
-		} else if (oMonth.getStartDate && oMonth.getStartDate()) { // DatesRow instance case
+		} else if (oMonth.isA("sap.ui.unified.calendar.OneMonthDatesRow") && oMonth.getStartDate && oMonth.getStartDate()) { // OneMonthDatesRow instance case
 			oMonthDate = oMonth.getStartDate();
-		} else { // date not set at all
-			oMonthDate = new Date();
 		}
-		var bInsideCurrentMonth = CalendarUtils._isSameMonthAndYear(oDay, CalendarDate.fromLocalJSDate(oMonthDate));
+		var bInsideCurrentMonth = oMonthDate ? CalendarUtils._isSameMonthAndYear(oDay, CalendarDate.fromLocalJSDate(oMonthDate)) : true; // DatesRow instance case
 
 		// Days before 0001.01.01 should be disabled.
 		if (bBeforeFirstYear) {
