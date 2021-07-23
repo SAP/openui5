@@ -238,8 +238,8 @@ function (
 				}.bind(this));
 
 			// Attach stored browser events
-			this.attachEventOnce('afterRendering', function (oEvent) {
-				var $DomRef = jQuery(oEvent.getParameter('domRef'));
+			this.attachEventOnce("afterRendering", function (oEvent) {
+				var $DomRef = jQuery(oEvent.getParameter("domRef"));
 				this._aBindParameters.forEach(function (mBrowserEvent) {
 					$DomRef.on(mBrowserEvent.sEventType, mBrowserEvent.fnProxy);
 				});
@@ -273,7 +273,7 @@ function (
 		 * @type {Array.<string>}
 		 * @private
 		 */
-		_aStyleClasses: ['sapUiDtOverlay'],
+		_aStyleClasses: ["sapUiDtOverlay"],
 
 		_bShouldBeDestroyed: false,
 
@@ -291,7 +291,7 @@ function (
 	 */
 	Overlay.getOverlayContainer = function() {
 		if (!$OverlayContainer) {
-			$OverlayContainer = jQuery("<div></div>").attr('id', OVERLAY_CONTAINER_ID).appendTo("body");
+			$OverlayContainer = jQuery("<div></div>").attr("id", OVERLAY_CONTAINER_ID).appendTo("body");
 		}
 		return $OverlayContainer;
 	};
@@ -364,9 +364,9 @@ function (
 			return this.getDomRef();
 		}
 
-		this._$DomRef = jQuery('<div></div>').attr(this._getAttributes());
+		this._$DomRef = jQuery("<div></div>").attr(this._getAttributes());
 
-		this._$Children = jQuery('<div></div>').attr({
+		this._$Children = jQuery("<div></div>").attr({
 			"class": "sapUiDtOverlayChildren"
 		}).appendTo(this._$DomRef);
 
@@ -421,7 +421,7 @@ function (
 	};
 
 	Overlay.prototype.toggleStyleClass = function (sClassName) {
-		this[(this.hasStyleClass(sClassName) ? 'remove' : 'add') + 'StyleClass'](sClassName);
+		this[(this.hasStyleClass(sClassName) ? "remove" : "add") + "StyleClass"](sClassName);
 	};
 
 	Overlay.prototype.setElement = function (vElement) {
@@ -436,7 +436,7 @@ function (
 
 	Overlay.prototype.destroy = function () {
 		if (this.bIsDestroyed) {
-			Log.error('FIXME: Do not destroy overlay twice (overlayId = ' + this.getId() + ')!');
+			Log.error("FIXME: Do not destroy overlay twice (overlayId = " + this.getId() + ")!");
 			return;
 		}
 
@@ -467,7 +467,7 @@ function (
 		if (!this.getElement()) {
 			this._designTimeMetadataCache = vMetadata;
 		} else {
-			this.setAggregation('designTimeMetadata', vMetadata);
+			this.setAggregation("designTimeMetadata", vMetadata);
 		}
 	};
 
@@ -518,7 +518,7 @@ function (
 	 * @public
 	 */
 	Overlay.prototype.getElement = function () {
-		return ElementUtil.getElementInstance(this.getAssociation('element'));
+		return ElementUtil.getElementInstance(this.getAssociation("element"));
 	};
 
 	/**
@@ -595,8 +595,8 @@ function (
 						if (oScrollbarSynchronizer.isSyncing()) {
 							aPromises.push(
 								new Promise(function (fnResolve) {
-									oScrollbarSynchronizer.attachEventOnce('synced', fnResolve);
-									oScrollbarSynchronizer.attachEventOnce('destroyed', fnResolve);
+									oScrollbarSynchronizer.attachEventOnce("synced", fnResolve);
+									oScrollbarSynchronizer.attachEventOnce("destroyed", fnResolve);
 								})
 							);
 						}
@@ -622,8 +622,8 @@ function (
 		return oGeometryChangedPromise
 			.catch(function (vError) {
 				Log.error(Util.createError(
-					'Overlay#applyStyles',
-					'Error occured during applySizes calculation: ' + vError
+					"Overlay#applyStyles",
+					"Error occured during applySizes calculation: " + vError
 				));
 			})
 			.then(function () {
@@ -645,7 +645,7 @@ function (
 				var mParameters = {};
 				mParameters.bForceScrollbarSync = bForceScrollbarSync;
 				return new Promise(function (fnResolve) {
-					oChild.attachEventOnce('geometryChanged', fnResolve);
+					oChild.attachEventOnce("geometryChanged", fnResolve);
 					oChild.fireApplyStylesRequired(mParameters);
 				});
 			});
@@ -813,18 +813,14 @@ function (
 			var oDummyScrollContainer = $TargetDomRef.find("> .sapUiDtDummyScrollContainer");
 			var oScrollbarSynchronizer;
 			if (!oDummyScrollContainer.length) {
-				oDummyScrollContainer = jQuery("<div></div>", {
-					css: {
-						height: iScrollHeight + "px",
-						width: iScrollWidth + "px"
-					}
-				});
-				oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
+				oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer'></div>");
+				oDummyScrollContainer.height(iScrollHeight);
+				oDummyScrollContainer.width(iScrollWidth);
 
 				if (
 					oTargetOverlay
 					&& DOMUtil.hasVerticalScrollBar(oOriginalDomRef)
-					&& oTargetOverlay._hasSameSize(oGeometry, 'height')
+					&& oTargetOverlay._hasSameSize(oGeometry, "height")
 				) {
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarVertical");
@@ -833,7 +829,7 @@ function (
 				if (
 					oTargetOverlay
 					&& DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)
-					&& oTargetOverlay._hasSameSize(oGeometry, 'width')
+					&& oTargetOverlay._hasSameSize(oGeometry, "width")
 				) {
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
@@ -931,7 +927,7 @@ function (
 		bValue = !!bValue;
 
 		if (this.getIsRoot() !== bValue) {
-			this.setProperty('isRoot', bValue);
+			this.setProperty("isRoot", bValue);
 			this.fireIsRootChanged({
 				value: bValue
 			});
