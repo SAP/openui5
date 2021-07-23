@@ -618,6 +618,24 @@
 	QUnit.test("Warning Message", function(assert) {
 		var done = assert.async();
 
+		// to get a loader-independent notification for the end of the async script loading,
+		// we intercept head.appendChild calls and listen to the load/error events of the script in question
+		var scriptCompleted = new Promise(function(resolve, reject) {
+			var _fnOriginalAppendChild = document.head.appendChild;
+			sinon.stub(document.head, "appendChild").callsFake(function(oElement) {
+				// when the script tag for the module is appended, register for its load/error events
+				if ( oElement.getAttribute("data-sap-ui-module") === "fixture/async-sync-conflict/simple.js" ) {
+					oElement.addEventListener("load", resolve);
+					oElement.addEventListener("error", reject);
+				}
+				return _fnOriginalAppendChild.call(this, oElement);
+			});
+			// add a timeout of 20 sec.
+			setTimeout(function() {
+				reject(new Error("script for module was not added within 20 seconds"));
+			}, 20000);
+		});
+
 		// Act:
 		// first require async
 		sap.ui.require(["fixture/async-sync-conflict/simple"], function() {
@@ -633,6 +651,9 @@
 			),
 			"a warning with the expected text fragments should have been logged");
 
+		return scriptCompleted.finally(function() {
+			document.head.appendChild.restore();
+		});
 	});
 
 	// this test only exists to prove that the module is executed twice in case of an async/sync conflict
@@ -1028,16 +1049,17 @@
 	});
 
 	QUnit.test("Conflicting named and unnamed modules", function(assert) {
+		// Expectation:
+		// - when the named module is processed first, a later unnamed module should be reported as error
+
 		var done = assert.async();
-		sap.ui.require(["fixture/multiple-modules-per-file/conflicting-unnamed-and-named-define"], function(mod) {
-			var expected = {
-				id: "fixture/multiple-modules-per-file/conflicting-unnamed-and-named-define#unnamed"
-			};
-			assert.ok(true, "request should succeed");
-			assert.deepEqual(mod, expected, "import should match the export of the first module (unnamed)");
+		sap.ui.require(["fixture/multiple-modules-per-file/conflicting-named-and-unnamed-define"], function(mod) {
+			assert.ok(false, "request should not succeed");
 			done();
-		}, function() {
-			assert.ok(false, "request should not fail");
+		}, function(oErr) {
+			assert.ok(true, "request should fail");
+			assert.ok(/anonymous/.test(oErr.message) && /require.*call/.test(oErr.message),
+				"the expected error should be reported");
 			done();
 		});
 	});
