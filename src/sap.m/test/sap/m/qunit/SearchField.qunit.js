@@ -550,6 +550,16 @@ sap.ui.define([
 		assert.strictEqual(fnFireChangeSpy.callCount, 3, "The change event is fired");
 	});
 
+	QUnit.test("'submit' form event", function(assert) {
+		var oEventSpy = sinon.spy(jQuery.Event.prototype, "preventDefault");
+
+		this.oSearchField.$("F").trigger("submit");
+
+		assert.ok(oEventSpy.called, "preventDefault is called and page is not refreshed.");
+
+		oEventSpy.restore();
+	});
+
 	QUnit.test("Order of clear and focus of the input is correct when pressing reset", function (assert) {
 		// Arrange
 		var fnClearSpy = this.spy(SearchField.prototype, "clear"),

@@ -332,7 +332,10 @@ sap.ui.define([
 			.on("blur", this.onBlur.bind(this));
 
 		jQuery(this.getDomRef("F"))
-			.on("click", this.onFormClick.bind(this));
+			.on("click", this.onFormClick.bind(this))
+			.on("submit", function (e) {
+				e.preventDefault();
+			});
 
 		if (Device.system.desktop || Device.system.combi) {
 			// Listen to native touchstart/mousedown.
