@@ -148,6 +148,10 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				coverage: {
 					only: "[sap/ui/mdc/field]"
 				}
+			},
+			"MultiValueField": {
+				module: "./MultiValueField.qunit",
+				sinon: true
 			}
 		}
 	};

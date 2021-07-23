@@ -5,11 +5,11 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/ButtonType",
-	'sap/m/Text',
+	"sap/m/Text",
 	"sap/m/MessageToast",
-	"sap/ui/mdc/condition/ConditionModel"
-
-], function (Controller, UIComponent, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, ConditionModel) {
+	"sap/ui/mdc/condition/ConditionModel",
+	"sap/ui/mdc/field/MultiValueFieldDelegate"
+], function (Controller, UIComponent, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, ConditionModel, MultiValueFieldDelegate) {
 
 	"use strict";
 
@@ -25,6 +25,62 @@ sap.ui.define([
 
 			UIComponent.getRouterFor(this).getRoute("authordetails").attachPatternMatched(this._onRouteMatched, this);
 
+			// fake own delegate implementation
+			MultiValueFieldDelegate.updateItems = function(oPayload, aConditions, oMultiValueField) {
+
+				var oListBinding = oMultiValueField.getBinding("items");
+
+				if (oListBinding.isA("sap.ui.model.odata.v4.ODataListBinding")) {
+					// check if conditions are added, removed or changed
+					var oBindingInfo = oMultiValueField.getBindingInfo("items");
+					var oTemplate = oBindingInfo.template;
+					var oKeyBindingInfo = oTemplate.getBindingInfo("key");
+					var oDescriptionBindingInfo = oTemplate.getBindingInfo("description");
+					var sKeyPath = oKeyBindingInfo && oKeyBindingInfo.parts[0].path;
+					var sDescriptionPath = oDescriptionBindingInfo && oDescriptionBindingInfo.parts[0].path;
+					var aContexts = oListBinding.getCurrentContexts();
+					var oContext;
+					var i = 0;
+
+					// first remove items not longer exist
+					if (aContexts.length > aConditions.length) {
+						for (i = aConditions.length; i < aContexts.length; i++) {
+							oContext = aContexts[i];
+							oContext.delete("$auto");
+						}
+					}
+
+					for (i = 0; i < aConditions.length; i++) {
+						var oCondition = aConditions[i];
+						oContext = aContexts[i];
+						if (!oContext) {
+							// new Condition -> add item
+							var oItem = {};
+							if (sKeyPath) {
+								var iIndex = sKeyPath.indexOf("/");
+								if (iIndex >= 0) {
+									// TODO: how to get the object if bound to key of an object?
+									var sPropertyPath = sKeyPath.substr(iIndex + 1);
+									sKeyPath = sKeyPath.substr(0, iIndex);
+									var oKey = {};
+									oKey[sPropertyPath] = oCondition.values[0];
+									oItem[sKeyPath] = oKey;
+								} else {
+									oItem[sKeyPath] = oCondition.values[0];
+								}
+							}
+							if (sDescriptionPath) {
+								oItem[sDescriptionPath] = oCondition.values[1];
+							}
+							oListBinding.create(oItem, false, true); // put on end
+						} else if (oCondition.values[0] !== oContext.getValue(sKeyPath)) {
+							// condition changed -> remove item and insert new
+
+						}
+					}
+				}
+
+			};
 		},
 
 		onEditButtonPress: function (oEvent) {
@@ -124,6 +180,11 @@ sap.ui.define([
 					oView.setBindingContext(oContext);
 					oViewModel.setProperty("/editMode", true);
 			}
+		},
+
+		onMultiChange: function(oEvent) {
+			var oModel = this.getView().getModel();
+			oModel.submitBatch(oModel.getUpdateGroupId());
 		}
 
 	});

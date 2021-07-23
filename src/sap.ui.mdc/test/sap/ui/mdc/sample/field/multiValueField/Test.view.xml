@@ -1,0 +1,136 @@
+<mvc:View height="100%" controllerName="sap.ui.mdc.sample.field.multiValueField.Test"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:l="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:c="sap.ui.core">
+
+	<m:App id="MyApp" defaultTransitionName="show">
+		<m:Page id="P0" title="MultiValueField" titleLevel="H1">
+			<form:SimpleForm layout="ColumnLayout" editable="true"
+				columnsXL="4" columnsL="3" columnsM="2">
+				<c:Title text="items in JSON Model"></c:Title>
+
+				<m:Label text="editable field"></m:Label>
+				<mdc:MultiValueField id="F1"
+					items="{path: 'view>/items'}"
+					display="Description"
+					placeholder="{/#Product/ProductId/@sap:label}"
+					change="handleChange"
+					liveChange="handleLiveChange"
+					fieldHelp="FVH1">
+					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String'}" description="{view>Name}" />
+					<mdc:dependents>
+						<mdcField:FieldValueHelp id="FVH1"
+							title="Product"
+							filterFields="*ProductId,Name*"
+							keyPath="ProductId"
+							descriptionPath="Name">
+							<mdcField:FieldValueHelpMTableWrapper id="FVH1-W">
+								<m:Table items="{path: '/ProductCollection'}" width="26rem">
+									<m:columns>
+										<m:Column>
+											<m:Label text="{/#Product/ProductId/@sap:label}"></m:Label>
+										</m:Column>
+										<m:Column width="10rem">
+											<m:Label text="{/#Product/Name/@sap:label}"></m:Label>
+										</m:Column>
+										<m:Column width="2rem">
+											<m:Label text="Icon"></m:Label>
+										</m:Column>
+									</m:columns>
+									<m:items>
+										<m:ColumnListItem type="Active">
+											<m:Text text="{ProductId}"></m:Text>
+											<m:Text text="{Name}"></m:Text>
+											<m:Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"></m:Image>
+										</m:ColumnListItem>
+									</m:items>
+								</m:Table>
+							</mdcField:FieldValueHelpMTableWrapper>
+						</mdcField:FieldValueHelp>
+					</mdc:dependents>
+				</mdc:MultiValueField>
+
+				<m:Label text="field in display mode"></m:Label>
+				<mdc:MultiValueField id="F2"
+					items="{path: 'view>/items'}"
+					display="Description"
+					editMode="Display"
+					placeholder="Placeholder"
+					change="handleChange"
+					liveChange="handleLiveChange"
+					fieldHelp="FVH1">
+					<mdcField:MultiValueFieldItem key="{view>ProductId}" description="{view>Name}" />
+				</mdc:MultiValueField>
+
+				<m:Label text="editable date field"></m:Label>
+				<mdc:MultiValueField id="F3"
+					items="{path: 'view>/dateItems'}"
+					display="Value"
+					placeholder="{/#Product/ProductId/@sap:label}"
+					change="handleChange"
+					liveChange="handleLiveChange">
+					<mdcField:MultiValueFieldItem key="{path: 'view>date', type:'sap.ui.model.type.Date', formatOptions: {style: 'short'}}" />
+				</mdc:MultiValueField>
+
+				<m:Label text="date field in display mode"></m:Label>
+				<mdc:MultiValueField id="F4"
+					items="{path: 'view>/dateItems'}"
+					display="Value"
+					editMode="Display"
+					placeholder="Placeholder"
+					change="handleChange"
+					liveChange="handleLiveChange">
+					<mdcField:MultiValueFieldItem key="{path: 'view>date', type:'sap.ui.model.type.Date', formatOptions: {style: 'long'}}" />
+				</mdc:MultiValueField>
+
+				<c:Title text="Model data"></c:Title>
+
+				<m:Label text="Items"></m:Label>
+				<m:TextArea id="Items" value="{path: 'view>/items', formatter: '._formatItems'}" editable="false" rows="5"></m:TextArea>
+
+				<m:Label text="DateItems"></m:Label>
+				<m:TextArea id="DateItems" value="{path: 'view>/dateItems', formatter: '._formatDateItems'}" editable="false" rows="5"></m:TextArea>
+
+				<c:Title text="items in oData Model"></c:Title>
+
+				<m:Label text="editable field"></m:Label>
+				<mdc:MultiValueField id="F5"
+					items="{path: '/StatusCollection'}"
+					display="Description"
+					placeholder="{/#Product/Status/@sap:label}"
+					change="handleChange"
+					liveChange="handleLiveChange">
+					<mdcField:MultiValueFieldItem key="{path: 'StatusId', type:'sap.ui.model.type.String'}" description="{Name}" />
+				</mdc:MultiValueField>
+
+				<m:Label text="field in display mode"></m:Label>
+				<mdc:MultiValueField id="F7"
+					items="{path: '/StatusCollection'}"
+					display="Description"
+					editMode="Display"
+					placeholder="Placeholder"
+					change="handleChange"
+					liveChange="handleLiveChange">
+					<mdcField:MultiValueFieldItem key="{StatusId}" description="{Name}" />
+				</mdc:MultiValueField>
+			</form:SimpleForm>
+			<m:footer>
+				<m:Bar>
+					<m:contentLeft>
+						<c:Icon id="MyIcon"></c:Icon>
+						<m:Text id="MyText" text="Event" width="400px" wrapping="false"></m:Text>
+					</m:contentLeft>
+					<m:contentRight>
+						<c:Icon id="MyIconRight"></c:Icon>
+						<m:Text id="MyTextRight" text="LiveChange" width="400px" wrapping="false"></m:Text>
+					</m:contentRight>
+				</m:Bar>
+			</m:footer>
+		</m:Page>
+	</m:App>
+
+</mvc:View>
