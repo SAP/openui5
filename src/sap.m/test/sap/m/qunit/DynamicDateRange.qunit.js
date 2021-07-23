@@ -441,4 +441,47 @@ sap.ui.define([
 
 		oOption.destroy();
 	});
+
+	QUnit.test("Last/Next 1 days values", function(assert) {
+		// arrange
+		this.ddr.setOptions(["LASTDAYS", "NEXTDAYS"]);
+
+		// act
+		this.ddr.setValue({ operator: "LASTDAYS", values:[1] });
+
+		// assert
+		assert.deepEqual(this.ddr.getValue(), { operator: "YESTERDAY", values: [] }, "the value is correctly substituted");
+		assert.equal(this.ddr._oInput.getValue().indexOf("Yesterday"), 0, "the formatted value is correct");
+
+		// act
+		this.ddr.setValue({ operator: "NEXTDAYS", values:[1] });
+
+		// assert
+		assert.deepEqual(this.ddr.getValue(), { operator: "TOMORROW", values: [] }, "the value is correctly substituted");
+		assert.equal(this.ddr._oInput.getValue().indexOf("Tomorrow"), 0, "the formatted value is correct");
+	});
+
+	QUnit.test("Next 0 days values", function(assert) {
+		// arrange
+		this.ddr.setOptions(["NEXTDAYS", "TODAY"]);
+
+		// act
+		this.ddr.setValue({ operator: "NEXTDAYS", values:[0] });
+
+		// assert
+		assert.deepEqual(this.ddr.getValue(), { operator: "TODAY", values: [] }, "the value is correctly substituted");
+		assert.equal(this.ddr._oInput.getValue().indexOf("Today"), 0, "the formatted value is correct");
+	});
+
+	QUnit.test("Last 0 days values", function(assert) {
+		// arrange
+		this.ddr.setOptions(["LASTDAYS", "TODAY"]);
+
+		// act
+		this.ddr.setValue({ operator: "LASTDAYS", values:[0] });
+
+		// assert
+		assert.deepEqual(this.ddr.getValue(), { operator: "TODAY", values: [] }, "the value is correctly substituted");
+		assert.equal(this.ddr._oInput.getValue().indexOf("Today"), 0, "the formatted value is correct");
+	});
 });

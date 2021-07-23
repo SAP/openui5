@@ -163,12 +163,23 @@ sap.ui.define([
 				var oDate = new Date();
 				oDate.setMonth(aParams[0]);
 				aParams[0] = this._monthFormatter.format(oDate);
+			} else if (sKey === "LASTDAYS" && aParams[0] === 1) {
+				sKey = "YESTERDAY";
+				aParams = [];
+			} else if (sKey === "NEXTDAYS" && aParams[0] === 1) {
+				sKey = "TOMORROW";
+				aParams = [];
+			} else if ((sKey === "LASTDAYS" || sKey === "NEXTDAYS") && aParams[0] === 0) {
+				sKey = "TODAY";
+				aParams = [];
 			}
 
 			var aFormattedParams = aParams.map(function(param) {
 				if (param instanceof Date) {
 					return this._dateFormatter.format(param);
-				} if (typeof (param) === "number") {
+				}
+
+				if (typeof (param) === "number") {
 					return this._numberFormatter.format(param);
 				} else {
 					return param.toString();

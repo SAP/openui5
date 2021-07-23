@@ -314,6 +314,9 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype.setValue = function(oValue) {
+			// substutude the semantically equivalent values
+			oValue = this._substitudeValue(oValue);
+
 			this.setProperty("value", oValue);
 
 			// Forward Dynamic Date Range control property values to inner sap.m.Input instance.
@@ -509,7 +512,9 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype._enhanceInputValue = function(sFormattedValue, oVal) {
-			if (DynamicDateUtil.getOption(oVal.operator).enhanceFormattedValue()) {
+			if (DynamicDateUtil.getOption(oVal.operator).enhanceFormattedValue()
+				|| (oVal.operator === "LASTDAYS" && oVal.values[0] <= 1)
+				|| (oVal.operator === "NEXTDAYS" && oVal.values[0] <= 1)) {
 				return sFormattedValue + " (" + this._toDatesString(oVal) + ")";
 			}
 
@@ -973,6 +978,44 @@ sap.ui.define([
 			}, this);
 
 			return aResults.length ? aResults[0] : null;
+		};
+
+		/**
+		 * Some of the values are semantically equivalent to others.
+		 * So we substitute them everywhere, if needed. Example: Last 1 days === Yesterday
+		 *
+		 * @param {object} oValue A valid control value
+		 * @private
+		 * @returns {object} A substituted value if needed, or the same value if not
+		 */
+		DynamicDateRange.prototype._substitudeValue = function(oValue) {
+			var sKey, aParams, oNewValue;
+
+			if (!oValue || !oValue.operator || !oValue.values) {
+				return oValue;
+			}
+
+			sKey = oValue.operator;
+			aParams = oValue.values;
+
+			if (sKey === "LASTDAYS" && aParams[0] === 1) {
+				oNewValue = {
+					operator: "YESTERDAY",
+					values: []
+				};
+			} else if (sKey === "NEXTDAYS" && aParams[0] === 1) {
+				oNewValue = {
+					operator: "TOMORROW",
+					values: []
+				};
+			} else if ((sKey === "LASTDAYS" || sKey === "NEXTDAYS") && aParams[0] === 0) {
+				oNewValue = {
+					operator: "TODAY",
+					values: []
+				};
+			}
+
+			return oNewValue ? oNewValue : oValue;
 		};
 
 		var DynamicDateRangeInputRenderer = Renderer.extend(InputRenderer);
