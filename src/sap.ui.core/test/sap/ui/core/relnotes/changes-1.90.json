@@ -211,5 +211,32 @@
         ]
       }
     ]
+  },
+  "1.90.3": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "ffa5a85b455cbd5a076e13044546451613c36542",
+        "type": "FIX",
+        "text": " sap.ui.core.qunit.util.Popup.qunit: fix error reporting on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180263530"
+          }
+        ]
+      },
+      {
+        "id": "b48761ed1d7ae144571187ad84047a6a83ceebbe",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser: Aliases are properly resolved even if there is an alias which is an infix of another alias",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180241022"
+          }
+        ]
+      }
+    ]
   }
 }

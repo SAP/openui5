@@ -1,0 +1,18 @@
+{
+  "1.90.3": {
+    "date": "July 2021",
+    "notes": [
+      {
+        "id": "6d4a07a95710303cbad1d2efd80c8b728f88d770",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.m.Toolbar: Fixed focus color of icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180218347"
+          }
+        ]
+      }
+    ]
+  }
+}
