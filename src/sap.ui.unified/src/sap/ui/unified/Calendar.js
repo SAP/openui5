@@ -1446,7 +1446,7 @@ sap.ui.define([
 				break;
 			case 2: // year picker
 			case 3: // year range picker
-				this._togglePrevNexYearPicker();
+				this._getYearPicker().getDomRef() && this._togglePrevNexYearPicker();
 				break;
 			// no default
 		}
