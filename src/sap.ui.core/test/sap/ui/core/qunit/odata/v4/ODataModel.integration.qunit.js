@@ -534,7 +534,8 @@ sap.ui.define([
 			if (getGroupLocks().length) {
 				return resolveLater(function () {
 					getGroupLocks().forEach(function (oGroupLock) {
-						assert.ok(false, "GroupLock remained: " + oGroupLock);
+						assert.ok(false, "GroupLock remained: " + oGroupLock + "\n"
+							+ oGroupLock.sStack);
 					});
 
 					cleanup();
@@ -5433,10 +5434,15 @@ sap.ui.define([
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
 
 		return this.createView(assert, sView).then(function () {
-			that.expectRequest("EMPLOYEES?$select=ID,Name&foo=bar&$search=Fall"
+			that.expectRequest("EMPLOYEES?$select=ID,Name&foo=bar"
+					+ "&$expand=EMPLOYEE_2_MANAGER($select=ID)&$search=Fall"
 					+ "&sap-valid-from=2016-01-01&sap-valid-to=2016-12-31T23:59:59.9Z"
 					+ "&$skip=0&$top=100", {
-					value : [{ID : "2", Name : "Frederic Fall"}]
+					value : [{
+						EMPLOYEE_2_MANAGER : {ID : "0"},
+						ID : "2",
+						Name : "Frederic Fall"
+					}]
 				})
 				.expectChange("name", ["Frederic Fall"]);
 
@@ -5444,8 +5450,9 @@ sap.ui.define([
 			that.oView.byId("table").getBinding("items").changeParameters({
 				$$ownRequest : true,
 				$$sharedRequest : undefined,
+				$expand : {EMPLOYEE_2_MANAGER : {$select : "ID"}},
 				$search : "Fall",
-				$select : "ID,Name",
+				$select : ["ID", "Name"],
 				// foo : "bar",
 				"sap-valid-at" : undefined,
 				"sap-valid-from" : "2016-01-01",
@@ -5679,26 +5686,31 @@ sap.ui.define([
 	// Scenario: (not possible with the SalesOrders app)
 	// * Add a filter to the sales orders list using changeParameters(), so that there are less
 	// * See that the count decreases
+	//
+	// Also check that unchanged $expand/$select is tolerated by #changeParameters
+	// JIRA: CPOUI5ODATAV4-1098
 	QUnit.test("ODLB: $count and changeParameters()", function (assert) {
-		var oTable,
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
 			oTableBinding,
 			sView = '\
 <Text id="count" text="{$count}"/>\
-<Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
+<Table id="table" items="{path : \'/SalesOrderList\',\
+		parameters : {$expand : \'SO_2_BP\', $select : \'SalesOrderID\'}}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$expand=SO_2_BP&$select=SalesOrderID&$skip=0&$top=100", {
 				value : [
-					{SalesOrderID : "0500000001"},
-					{SalesOrderID : "0500000002"}
+					{SalesOrderID : "0500000001", SO_2_BP : null},
+					{SalesOrderID : "0500000002", SO_2_BP : null}
 				]
 			})
 			.expectChange("count")
 			.expectChange("id", ["0500000001", "0500000002"]);
 
-		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 			oTableBinding = oTable.getBinding("items");
 
@@ -5709,15 +5721,19 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$select=SalesOrderID"
+			that.expectRequest("SalesOrderList?$expand=SO_2_BP&$select=SalesOrderID"
 					+ "&$filter=SalesOrderID gt '0500000001'&$skip=0&$top=100",
-					{value : [{SalesOrderID : "0500000002"}]}
+					{value : [{SalesOrderID : "0500000002", SO_2_BP : null}]}
 				)
 				.expectChange("count", "1")
 				.expectChange("id", ["0500000002"]);
 
 			// code under test
-			oTableBinding.changeParameters({$filter : "SalesOrderID gt '0500000001'"});
+			oTableBinding.changeParameters({
+				$expand : "SO_2_BP",
+				$filter : "SalesOrderID gt '0500000001'",
+				$select : "SalesOrderID"
+			});
 
 			return that.waitForChanges(assert);
 		});
@@ -32323,7 +32339,7 @@ sap.ui.define([
 	// BCP: 2080303042
 	QUnit.test("Context#requestProperty (JIRA: CPOUI5ODATAV4-339)", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
-			oContext = oModel.bindContext("/SalesOrderList(\'1\')").getBoundContext(),
+			oContext = oModel.bindContext("/SalesOrderList('1')").getBoundContext(),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -34512,4 +34528,50 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A parent binding is created with object values for $expand/$select. See that these
+	// cannot be changed via #changeParameters in auto-$expand/$select mode.
+	//
+	// JIRA: CPOUI5ODATAV4-1098
+	QUnit.test("ODPaB#changeParameters: object values", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var mExpand = {SO_2_BP : {$select : ["BusinessPartnerRole"]}},
+				aSelect = ["Note"],
+				oContextBinding = oModel.bindContext("/SalesOrderList('1')", null, {
+					$expand : mExpand,
+					$select : aSelect
+				});
+
+			mExpand.SO_2_BP.$select.push("CompanyName");
+			aSelect.push("NoteLanguage");
+
+			assert.throws(function () {
+				// code under test
+				oContextBinding.changeParameters({$expand : mExpand, $select : aSelect});
+			}, /Cannot change \$expand parameter in auto-\$expand\/\$select mode/);
+
+			return that.waitForChanges(assert); // to get all group locks unlocked
+		}).then(function () {
+			var mExpand = {SO_2_BP : {$select : ["BusinessPartnerRole"]}},
+				aSelect = ["Note"],
+				oListBinding = oModel.bindList("/SalesOrderList", null, [], [], {
+					$expand : mExpand,
+					$select : aSelect
+				});
+
+			mExpand.SO_2_BP.$select.push("CompanyName");
+			aSelect.push("NoteLanguage");
+
+			assert.throws(function () {
+				// code under test
+				oListBinding.changeParameters({$expand : mExpand, $select : aSelect});
+			}, /Cannot change \$expand parameter in auto-\$expand\/\$select mode/);
+
+			return that.waitForChanges(assert); // to get all group locks unlocked
+		});
+	});
 });
