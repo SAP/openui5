@@ -15,9 +15,9 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.cardExplorer.Component", {
 
 		metadata: {
-			manifest: "json",
 			includes: [
-				"css/style.css"
+				"css/style.css",
+				"css/FileEditor.css"
 			]
 		},
 
