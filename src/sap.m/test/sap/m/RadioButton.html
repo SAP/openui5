@@ -103,6 +103,12 @@
 			width: '50px',
 			layoutData: new sap.m.FlexItemData({growFactor: 0})
 		});
+		var oRadioButton11a = new sap.m.RadioButton({
+			groupName: "Gruppe4",
+			text: 'Width = 100%',
+			width: '100%',
+			layoutData: new sap.m.FlexItemData({growFactor: 0})
+		});
 		var oRadioButton12 = new sap.m.RadioButton({
 			groupName: "Gruppe4",
 			text: 'Text RTL',
@@ -117,7 +123,7 @@
 			selected: true,
 			enabled: true,
 			editable: false
-		})
+		});
 
 		var randomControl = new sap.m.Label({text: "A label to rerender the whole page"});
 		var anotherRandomControl = new sap.m.Label({text: "A second label to rerender the whole page"});
@@ -155,6 +161,7 @@
 			items: [
 				oRadioButton10,
 				oRadioButton11,
+				oRadioButton11a,
 				oRadioButton12,
 				oRadioButton13
 			]
