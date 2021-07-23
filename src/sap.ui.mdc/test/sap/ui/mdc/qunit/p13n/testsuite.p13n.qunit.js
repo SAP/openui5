@@ -359,7 +359,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.fl", "sap.ui.mdc"
 					]
 				}
-			},/*
+			},
 			"PersonalizationTableRTA": {
 				group: "Table UI Test",
 				autostart: false,
@@ -369,7 +369,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.fl", "sap.ui.mdc"
 					]
 				}
-			},*/
+			},
 			"PersonalizationTableVariants": {
 				group: "Table UI Test",
 				autostart: false,
@@ -409,7 +409,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.fl", "sap.ui.mdc"
 					]
 				}
-			},/*
+			},
 			"PersonalizationFilterBarRTA": {
 				group: "FilterBar UI Test",
 				autostart: false,
@@ -419,7 +419,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.fl", "sap.ui.mdc"
 					]
 				}
-			},*/
+			},
 			"InternalAndExternalFiltering": {
 				group: "FilterBar UI Test",
 				autostart: false,
