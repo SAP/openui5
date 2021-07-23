@@ -9,7 +9,8 @@ sap.ui.define([
 
 	basicCommandTest({
 		commandName: "settings",
-		designtimeActionStructure: "settings"
+		designtimeActionStructure: "settings",
+		designtimeAction: false
 	}, {
 		changeType: "settings",
 		content: "myFancyContent"
